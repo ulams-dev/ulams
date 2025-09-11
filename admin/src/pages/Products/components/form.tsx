@@ -1,4 +1,5 @@
 import ProductablesSelect from '@/components/ProductablesSelect';
+import { MenuOutlined } from '@ant-design/icons';
 import ProCard from '@ant-design/pro-card';
 import ProForm, {
   ProFormDigit,
@@ -7,7 +8,11 @@ import ProForm, {
   ProFormText,
 } from '@ant-design/pro-form';
 import { Col, Input, Row, Spin, Tag } from 'antd';
+import { arrayMoveImmutable } from 'array-move';
+import type { ComponentClass } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { SortableContainerProps, SortableElementProps } from 'react-sortable-hoc';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { FormattedMessage, useIntl, useModel } from 'umi';
 
 import CategoryCheckboxTree from '@/components/CategoryCheckboxTree';
@@ -26,6 +31,7 @@ import TemplateManuallyTriggerForProduct from '@/components/TemplateManuallyTrig
 import UserSubmissions from '@/components/UsersSubmissions';
 import WysiwygMarkdown from '@/components/WysiwygMarkdown';
 import PACKAGES from '@/consts/packages';
+import { useGetLocales } from '@/hooks/useLocales';
 import { useShowNotification } from '@/hooks/useMessage';
 import { createHavePackageInstalled } from '@/utils/access';
 import { categoriesArrToIds, tagsArrToIds } from '@/utils/utils';
@@ -47,6 +53,21 @@ enum SubscriptionPeriod {
   MONTHLY = 'monthly',
   YEARLY = 'yearly',
 }
+
+// Draggable components for Selected Products table
+const SortableItem: ComponentClass<SortableElementProps & { className?: string }, any> =
+  SortableElement((props: React.HTMLAttributes<HTMLTableRowElement>) => <tr {...props} />);
+const SortableBody = SortableContainer((props: React.HTMLAttributes<HTMLTableSectionElement>) => (
+  <tbody {...props} />
+));
+const DragHandle = SortableHandle(() => (
+  <MenuOutlined
+    style={{
+      cursor: 'grab',
+      color: '#999',
+    }}
+  />
+));
 
 type MinimumProductProductable = {
   class: string;
@@ -112,6 +133,7 @@ const ProductsForm: React.FC<{
   const [, updateState] = useState({});
   const forceUpdate = useCallback(() => updateState({}), []);
   const [form] = ProForm.useForm();
+  const { currentLocale, currentLocales } = useGetLocales();
 
   const { initialState } = useModel('@@initialState');
   const currentCurrency = initialState?.config?.find(
@@ -125,6 +147,33 @@ const ProductsForm: React.FC<{
     initialState?.packages,
   ]);
   const { showNotification } = useShowNotification();
+
+  // Drag and drop functionality for Selected Products table
+  const onSortEnd = ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }) => {
+    if (oldIndex !== newIndex) {
+      const newData = arrayMoveImmutable(currProductables.slice(), oldIndex, newIndex).filter(
+        Boolean,
+      );
+      setCurrProductables(newData);
+    }
+  };
+
+  const DraggableContainer = (props: SortableContainerProps) => {
+    return (
+      <SortableBody
+        useDragHandle
+        disableAutoscroll
+        helperClass="row-dragging"
+        onSortEnd={onSortEnd}
+        {...props}
+      />
+    );
+  };
+
+  const DraggableBodyRow = ({ ...restProps }) => {
+    const index = currProductables.findIndex((item) => item.id === restProps['data-row-key']);
+    return <SortableItem index={index} {...restProps} />;
+  };
 
   useEffect(() => {
     if (productable && productable.class_id && productable.class_type) {
@@ -714,6 +763,17 @@ const ProductsForm: React.FC<{
                 defaultMessage: 'teaser_url',
               })}
             />
+            <ProFormSelect
+              name="language"
+              width="xs"
+              label={<FormattedMessage id="language" />}
+              placeholder={intl.formatMessage({
+                id: 'language',
+                defaultMessage: 'language',
+              })}
+              valueEnum={currentLocales}
+              initialValue={currentLocale}
+            />
             {havePackageInstalled(PACKAGES.RevenuecatIntegration) && (
               <>
                 <ProFormText
@@ -770,6 +830,13 @@ const ProductsForm: React.FC<{
               rowKey="id"
               columns={[
                 {
+                  title: 'Sort',
+                  dataIndex: 'sort',
+                  width: '5%',
+                  className: 'drag-visible',
+                  render: () => <DragHandle />,
+                },
+                {
                   title: <FormattedMessage id="id" defaultMessage="id" />,
                   dataIndex: 'id',
                   width: '80px',
@@ -816,6 +883,12 @@ const ProductsForm: React.FC<{
                   },
                 },
               ]}
+              components={{
+                body: {
+                  wrapper: DraggableContainer,
+                  row: DraggableBodyRow,
+                },
+              }}
             />
           )}
         </ProForm>{' '}

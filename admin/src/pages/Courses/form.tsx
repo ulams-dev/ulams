@@ -14,6 +14,7 @@ import TagsInput from '@/components/TagsInput';
 import UserSelect from '@/components/UserSelect';
 import UserSubmissions from '@/components/UsersSubmissions';
 import WysiwygMarkdown from '@/components/WysiwygMarkdown';
+import { useGetLocales } from '@/hooks/useLocales';
 import { useShowNotification } from '@/hooks/useMessage';
 import useValidateFormEdit from '@/hooks/useValidateFormEdit';
 import { CourseSuccessModal } from '@/pages/Courses/components/CourseSuccessModal';
@@ -31,16 +32,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { Alert, Button, Col, Row, Spin } from 'antd';
 import { isAfter, isBefore } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  FormattedMessage,
-  getAllLocales,
-  getLocale,
-  history,
-  useAccess,
-  useIntl,
-  useModel,
-  useParams,
-} from 'umi';
+import { FormattedMessage, history, useAccess, useIntl, useModel, useParams } from 'umi';
 import CourseAccess from './components/CourseAccess';
 import CourseCertificateForm from './components/CourseCertificateForm';
 
@@ -74,8 +66,9 @@ export default () => {
     courseId: 0,
   });
   const [isFirstTimeEdit, setIsFirstTimeEdit] = useState(true);
+  const { currentLocale, currentLocales } = useGetLocales();
+
   const { showNotification } = useShowNotification();
-  const locales: string[] = getAllLocales() || [];
 
   const { setInitialState, initialState } = useModel('@@initialState');
   const [form] = ProForm.useForm();
@@ -197,21 +190,6 @@ export default () => {
     }),
     [course, data, manageCourseEdit, form],
   );
-
-  const currentLocales = useMemo(() => {
-    const l = locales
-      .map((locale) => locale.split('-')[0])
-      .reduce((a, v) => ({ ...a, [v]: v }), {});
-
-    const additionalLocales = JSON.parse(
-      initialState?.config?.find((e) => e.key === 'locales')?.value || '{}',
-    );
-
-    if (additionalLocales) {
-      return { ...l, ...additionalLocales };
-    }
-    return l;
-  }, [locales]);
 
   if (!data) {
     return <Spin />;
@@ -473,7 +451,7 @@ export default () => {
                   defaultMessage: 'language',
                 })}
                 valueEnum={currentLocales}
-                initialValue={getLocale().split('-')[0]}
+                initialValue={currentLocale}
                 disabled={manageCourseEdit.disableEdit}
               />
 
