@@ -1,4 +1,5 @@
-FROM node:20-buster AS base
+ARG NODE_VERSION=20.18.1
+FROM node:${NODE_VERSION}-bookworm AS base
 
 # docker image build -t abc . && docker run -p 80:80 --env API_URL="https://api-stage.escolalms.com" abc
 
