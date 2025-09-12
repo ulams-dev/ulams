@@ -38,7 +38,7 @@
     "playwright:headed": "PORT=8000 playwright install && playwright test --headed --project=chromium",
     "playwright:debug": "PORT=8000 playwright install && playwright test --debug",
     "playwright:local": "PORT=8000 playwright test",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org sentry --project admin-panel ./dist && sentry-cli --url https://sentry.escolait.pl/ sourcemaps upload --org sentry --project admin-panel ./dist"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org sentry --project admin-panel ./dist && sentry-cli --url https://escolasoft.sentry.io sourcemaps upload --org sentry --project admin-panel ./dist"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": "npm run lint-staged:js",
