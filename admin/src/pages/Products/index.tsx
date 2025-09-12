@@ -15,7 +15,7 @@ import { deleteProduct, products } from '@/services/escola-lms/products';
 
 const ProductableItems: React.FC<{ items: API.ProductProductable[] }> = ({ items }) => {
   return (
-    <Space>
+    <Space style={{ flexWrap: 'wrap' }}>
       {items.map((item) => (
         <TypeButtonDrawer
           key={`${item.productable_type}:${item.productable_id}`}

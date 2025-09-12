@@ -170,8 +170,16 @@ const ProductsForm: React.FC<{
     );
   };
 
+  const currProductablesIdToIndex = useMemo(() => {
+    const map = new Map();
+    currProductables.forEach((item, idx) => {
+      map.set(item.id, idx);
+    });
+    return map;
+  }, [currProductables]);
+
   const DraggableBodyRow = ({ ...restProps }) => {
-    const index = currProductables.findIndex((item) => item.id === restProps['data-row-key']);
+    const index = currProductablesIdToIndex.get(restProps['data-row-key']);
     return <SortableItem index={index} {...restProps} />;
   };
 
