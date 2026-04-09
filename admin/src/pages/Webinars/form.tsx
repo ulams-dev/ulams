@@ -100,13 +100,13 @@ const WebinarForm = () => {
         if (isNew) {
           response = await createWebinar(postData);
           if (response.success) {
-            history.push(`/courses/webinars/${response.data.id}`);
+            history.push(`/courses/webinars/webinar/${response.data.id}`);
           }
         } else {
           response = await updateWebinar(Number(webinar), postData);
           if (response.success) {
             validateCourseEdit(response.data);
-            history.push(`/courses/webinars/${response.data.id}/${tab}`);
+            history.push(`/courses/webinars/webinar/${response.data.id}/${tab}`);
           }
         }
         message.success(response.message);
@@ -131,7 +131,7 @@ const WebinarForm = () => {
   return (
     <PageContainer
       title={
-        isNew ? <FormattedMessage id="menu.Webinars" /> : <FormattedMessage id="webinar.edit" />
+        isNew ? <FormattedMessage id="menu.NewWebinar" /> : <FormattedMessage id="webinar.edit" />
       }
       header={{
         breadcrumb: {
@@ -175,7 +175,7 @@ const WebinarForm = () => {
                 showConfirmModal: true,
               });
             } else {
-              history.push(`/courses/webinars/${webinar}/${key}`);
+              history.push(`/courses/webinars/webinar/${webinar}/${key}`);
             }
           },
         }}
@@ -369,7 +369,7 @@ const WebinarForm = () => {
               <ProFormImageUpload
                 folder={`webinar/${webinar}`}
                 title="image"
-                action={`/api/admin/webinars/${webinar}`}
+                action={`/api/admin/webinars/webinar/${webinar}`}
                 src_name="image_url"
                 form_name="image"
                 getUploadedSrcField={(info) => info.file.response.data.image_url}
@@ -414,7 +414,7 @@ const WebinarForm = () => {
               <ProFormImageUpload
                 folder={`webinar/${webinar}`}
                 title="logotype"
-                action={`/api/admin/webinars/${webinar}`}
+                action={`/api/admin/webinars/webinar/${webinar}`}
                 src_name="logotype_url"
                 form_name="logotype"
                 getUploadedSrcField={(info) => info.file.response.data.logotype_url}

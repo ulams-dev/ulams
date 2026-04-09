@@ -575,3 +575,71 @@ export const redirectPrefix = () => {
   // return routerType() === "HashRouter" ? "/#" : "";
   return '';
 };
+
+export const ANALYSIS_COLORS = {
+  green: '#52c41a',
+  orange: '#faad14',
+  red: '#f5222d',
+  border: '#f0f0f0',
+  textSecondary: '#8c8c8c',
+  bgLight: '#fbfbfb',
+  white: '#ffffff',
+  darkText: '#434343',
+};
+
+export const getLabelColorByValue = (val: number) => {
+  if (val < 35) return ANALYSIS_COLORS.red;
+  if (val < 70) return ANALYSIS_COLORS.orange;
+  return ANALYSIS_COLORS.green;
+};
+
+export enum EmotionKey {
+  SURPRISED = 'surprised',
+  DISGUSTED = 'disgusted',
+  SAD = 'sad',
+  FEARFUL = 'fearful',
+  HAPPY = 'happy',
+  ANGRY = 'angry',
+  NEUTRAL = 'neutral',
+}
+
+export const EMOTION_POOL = [
+  { icon: '😳', key: EmotionKey.SURPRISED, labelId: `emotion_${EmotionKey.SURPRISED}` },
+  { icon: '🤢', key: EmotionKey.DISGUSTED, labelId: `emotion_${EmotionKey.DISGUSTED}` },
+  { icon: '🙁', key: EmotionKey.SAD, labelId: `emotion_${EmotionKey.SAD}` },
+  { icon: '😨', key: EmotionKey.FEARFUL, labelId: `emotion_${EmotionKey.FEARFUL}` },
+  { icon: '😆', key: EmotionKey.HAPPY, labelId: `emotion_${EmotionKey.HAPPY}` },
+  { icon: '😡', key: EmotionKey.ANGRY, labelId: `emotion_${EmotionKey.ANGRY}` },
+  { icon: '😐', key: EmotionKey.NEUTRAL, labelId: `emotion_${EmotionKey.NEUTRAL}` },
+] as const;
+
+export type EmotionType = (typeof EMOTION_POOL)[number]['key'];
+
+export const formatPercent = (val: string | number) => {
+  const num = typeof val === 'string' ? parseFloat(val) : val;
+  return isNaN(num) ? '0' : Math.round(num * 100).toString();
+};
+
+export const formatRating = (rating: number | string): string => {
+  const num = typeof rating === 'string' ? parseFloat(rating) : rating;
+
+  if (isNaN(num)) return '0.00';
+
+  return num.toFixed(2);
+};
+
+export const formatTime = (seconds: number) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
+
+export const formatExpirationTime = (ms: number | null) => {
+  if (!ms || ms <= 0) return '0s';
+  const totalSeconds = Math.floor(ms / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const pad = (num: number) => num.toString().padStart(2, '0');
+  return hours > 0 ? `${hours}h ${pad(minutes)}m ${pad(seconds)}s` : `${minutes}m ${pad(seconds)}s`;
+};

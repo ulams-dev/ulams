@@ -1,3 +1,4 @@
+import type { RecommenderParams } from '@/pages/Consultations/consultations';
 import type { AxiosRequestConfig } from '@umijs/max';
 import { request } from 'umi';
 
@@ -88,6 +89,47 @@ export async function changeTermDate(
       data: {
         executed_at: newDate,
       },
+      ...(options || {}),
+    },
+  );
+}
+
+/** GET /api/admin/recommender/terms/{modelType} */
+export async function getRecommenderTerms(modelType: string, params?: RecommenderParams) {
+  return request<API.DefaultMetaResponse<API.Consultation>>(
+    `/api/admin/recommender/terms/${modelType}`,
+    {
+      method: 'GET',
+      params,
+    },
+  );
+}
+
+export async function getModelAnalytics(
+  modelType: string,
+  modelId: string | number,
+  term: string | number,
+  options?: AxiosRequestConfig,
+) {
+  return request<API.DefaultResponse<any>>(
+    `/api/admin/recommender/analytics/${modelType}/${modelId}/${term}`,
+    {
+      method: 'GET',
+      ...(options || {}),
+    },
+  );
+}
+
+export async function getAnalyticsChartFrames(
+  id: number,
+  params: { interval: number },
+  options?: AxiosRequestConfig,
+) {
+  return request<API.DefaultResponse<any[]>>(
+    `/api/admin/recommender/analytics/aggregated-frames/${id}`,
+    {
+      method: 'GET',
+      params,
       ...(options || {}),
     },
   );

@@ -119,8 +119,6 @@ const Translations: React.FC = () => {
             });
 
             if (sortArr) {
-              console.log('rows: ', rows);
-              console.log('sortArr: ', sortArr);
               rows = rows.sort(
                 sortByKey<LangRow>(sortArr[0], sortArr[1] === 'ascend' ? false : true),
               );

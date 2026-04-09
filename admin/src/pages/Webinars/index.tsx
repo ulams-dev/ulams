@@ -1,9 +1,13 @@
+import ProCard from '@ant-design/pro-card';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import React, { useCallback, useRef, useState } from 'react';
-import { FormattedMessage, Link, useIntl } from 'umi';
+import { FormattedMessage, Link, history, useIntl, useParams } from 'umi';
 
+import Tags from '@/components/Tags';
+import { DAY_FORMAT } from '@/consts/dates';
+import { useShowNotification } from '@/hooks/useMessage';
 import { deleteWebinar, generateYoutubeToken, webinars } from '@/services/escola-lms/webinars';
 import { roundTo } from '@/utils/utils';
 import {
@@ -13,21 +17,16 @@ import {
   FireOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { Button, Popconfirm, Select, Tag, Tooltip, Typography, message } from 'antd';
+import { Button, Popconfirm, Select, Tag, Typography, message } from 'antd';
 import { format } from 'date-fns';
-
-import Tags from '@/components/Tags';
-import { DATETIME_FORMAT, DAY_FORMAT } from '@/consts/dates';
-
-import { useShowNotification } from '@/hooks/useMessage';
+import EffectivenessAnalysis from '../Consultations/components/EffectivenessAnalysis';
 import TokenForm from './components/TokenForm';
 
 export const TableColumns: ProColumns<API.Webinar>[] = [
   {
-    title: <FormattedMessage id="ID" defaultMessage="ID" />,
+    title: <FormattedMessage id="ID" />,
     dataIndex: 'id',
     hideInSearch: true,
-    sorter: true,
     width: '80px',
   },
   {
@@ -42,12 +41,12 @@ export const TableColumns: ProColumns<API.Webinar>[] = [
     },
   },
   {
-    title: <FormattedMessage id="name" defaultMessage="name" />,
+    title: <FormattedMessage id="name" />,
     dataIndex: 'name',
     sorter: true,
   },
   {
-    title: <FormattedMessage id="status" defaultMessage="status" />,
+    title: <FormattedMessage id="status" />,
     dataIndex: 'status',
     hideInSearch: true,
     sorter: true,
@@ -75,56 +74,45 @@ export const TableColumns: ProColumns<API.Webinar>[] = [
         </Select>
       );
     },
-
     valueEnum: {
       draft: {
         text: (
           <Tag>
-            <FormattedMessage id="draft" defaultMessage="draft" />
+            <FormattedMessage id="draft" />
           </Tag>
         ),
-        status: 'draft',
       },
       archived: {
         text: (
           <Tag color="error">
-            <FormattedMessage id="archived" defaultMessage="archived" />
+            <FormattedMessage id="archived" />
           </Tag>
         ),
-        status: 'archived',
       },
       published: {
         text: (
           <Tag color="success">
-            <FormattedMessage id="published" defaultMessage="published" />
+            <FormattedMessage id="published" />
           </Tag>
         ),
-        status: 'published',
       },
     },
   },
   {
-    title: <FormattedMessage id="product" defaultMessage="base_price" />,
+    title: <FormattedMessage id="product" />,
     dataIndex: 'product',
-    sorter: false,
-    valueType: 'textarea',
-    search: false,
-    render: (_, record) => {
-      if (record.product && record.product.price) {
-        return (
-          <Link to={`/courses/webinars/${record.id}/product`}>
-            <Button type="primary" icon={<DollarOutlined />}>
-              <span>{roundTo(record.product.price, 2, 100)}</span>
-            </Button>
-          </Link>
-        );
-      }
-      return (
+    render: (_, record) =>
+      record.product?.price ? (
+        <Link to={`/courses/webinars/webinar/${record.id}/product`}>
+          <Button type="primary" icon={<DollarOutlined />}>
+            {roundTo(record.product.price, 2, 100)}
+          </Button>
+        </Link>
+      ) : (
         <Typography>
-          <FireOutlined /> <FormattedMessage id="no_pricing" defaultMessage="no pricing" />
+          <FireOutlined /> <FormattedMessage id="no_pricing" />
         </Typography>
-      );
-    },
+      ),
   },
   {
     title: <FormattedMessage id="duration" defaultMessage="duration" />,
@@ -186,127 +174,143 @@ const Webinars: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const intl = useIntl();
   const { showNotification } = useShowNotification();
+  const { tab } = useParams<{ tab?: string }>();
+  const activeTab = tab || 'list';
 
   const handleRemove = useCallback(
     async (id: number) => {
       setLoading(true);
-      const hide = message.loading(<FormattedMessage id="loading" defaultMessage="loading" />);
       try {
-        await deleteWebinar(id).then((response) => {
-          setLoading(false);
-          if (response.success) {
-            showNotification(response);
-          }
-        });
-        hide();
-        setLoading(false);
+        const response = await deleteWebinar(id);
+        if (response.success) showNotification(response);
         actionRef.current?.reload();
-        return true;
       } catch (error) {
-        hide();
-        message.error(<FormattedMessage id="error" defaultMessage="error" />);
+        message.error(<FormattedMessage id="error" />);
+      } finally {
         setLoading(false);
-        return false;
       }
     },
-    [actionRef],
+    [showNotification],
   );
 
   return (
     <PageContainer>
-      <ProTable<API.Webinar, API.WebinarsParams>
-        headerTitle={intl.formatMessage({
-          id: 'menu.Courses.Webinars',
-          defaultMessage: 'Webinars',
-        })}
-        loading={loading}
-        actionRef={actionRef}
-        rowKey="id"
-        search={{
-          layout: 'vertical',
-        }}
-        toolBarRender={() => [
-          <Link key="addnew" to="/courses/webinars/new">
-            <Button type="primary" key="primary">
-              <PlusOutlined /> <FormattedMessage id="new" defaultMessage="new" />
-            </Button>
-          </Link>,
-        ]}
-        request={({ name, status, dateRange, pageSize, current, tag }, sort) => {
-          setLoading(true);
-          const sortArr = sort && Object.entries(sort)[0];
-          const date_from =
-            dateRange && dateRange[0] ? format(new Date(dateRange[0]), DATETIME_FORMAT) : undefined;
-          const date_to =
-            dateRange && dateRange[1] ? format(new Date(dateRange[1]), DATETIME_FORMAT) : undefined;
-
-          return webinars({
-            name,
-            per_page: pageSize,
-            page: current,
-            date_from,
-            date_to,
-            status,
-            tags: tag,
-            order_by: sortArr && sortArr[0],
-            order: sortArr ? (sortArr[1] === 'ascend' ? 'ASC' : 'DESC') : undefined,
-          })
-            .then((response) => {
-              if (response.success) {
-                return {
-                  data: response.data,
-                  total: response.meta.total,
-                  success: true,
-                };
-              }
-              return [];
-            })
-            .catch(async (error) => {
-              const err = await error.response.json();
-              console.log(err);
-              if (err.data.code === 400 && err.data.message.includes('Youtube')) {
-                message.error(err.data.message);
-                setGenarateToken(true);
-              }
-              return [];
-            })
-            .finally(() => {
-              setLoading(false);
-            });
-        }}
-        columns={[
-          ...TableColumns,
-          {
-            title: <FormattedMessage id="options" defaultMessage="options" />,
-            dataIndex: 'option',
-            valueType: 'option',
-            width: '10%',
-            render: (_, record) => [
-              <Link key="edit" to={`/courses/webinars/${record.id}`}>
-                <Tooltip title={<FormattedMessage id="edit" defaultMessage="edit" />}>
-                  <Button type="primary" icon={<EditOutlined />} />
-                </Tooltip>
-              </Link>,
-              <Popconfirm
-                key="delete"
-                title={
-                  <FormattedMessage
-                    id="deleteQuestion"
-                    defaultMessage="Are you sure to delete this record?"
-                  />
-                }
-                onConfirm={() => record.id && handleRemove(record.id)}
-                okText={<FormattedMessage id="yes" defaultMessage="Yes" />}
-                cancelText={<FormattedMessage id="no" defaultMessage="No" />}
-              >
-                <Tooltip title={<FormattedMessage id="delete" defaultMessage="delete" />}>
-                  <Button type="primary" icon={<DeleteOutlined />} danger />
-                </Tooltip>
-              </Popconfirm>,
-            ],
+      <ProCard
+        tabs={{
+          type: 'card',
+          activeKey: activeTab,
+          onChange: (key) => {
+            history.push(`/courses/webinars/${key}`);
           },
-        ]}
-      />
+        }}
+      >
+        <ProCard.TabPane key="list" tab={<FormattedMessage id="list" />}>
+          <ProTable<API.Webinar, API.WebinarsParams>
+            headerTitle={intl.formatMessage({ id: 'menu.Courses.Webinars' })}
+            loading={loading}
+            actionRef={actionRef}
+            rowKey="id"
+            search={{ layout: 'vertical' }}
+            toolBarRender={() => [
+              <Link key="addnew" to="/courses/webinars/webinar/new">
+                <Button type="primary">
+                  <PlusOutlined /> <FormattedMessage id="new" />
+                </Button>
+              </Link>,
+            ]}
+            request={async (params, sort) => {
+              setLoading(true);
+              const { name, status, dateRange, pageSize, current, tag } = params;
+              const sortArr = sort ? Object.entries(sort)[0] : null;
+              const date_from =
+                dateRange && dateRange[0] ? format(new Date(dateRange[0]), DAY_FORMAT) : undefined;
+              const date_to =
+                dateRange && dateRange[1] ? format(new Date(dateRange[1]), DAY_FORMAT) : undefined;
+
+              try {
+                const response = await webinars({
+                  name,
+                  per_page: pageSize,
+                  page: current,
+                  date_from,
+                  date_to,
+                  status,
+                  tags: tag,
+                  order_by: sortArr?.[0],
+                  order: sortArr ? (sortArr[1] === 'ascend' ? 'ASC' : 'DESC') : undefined,
+                });
+
+                if (response && response.success) {
+                  return {
+                    data: response.data,
+                    total: response.meta.total,
+                    success: true,
+                  };
+                }
+
+                return { data: [], total: 0, success: false };
+              } catch (error) {
+                try {
+                  if (error && typeof error === 'object' && 'response' in error) {
+                    const response = (error as any).response;
+                    const err = await response?.json();
+
+                    console.error('API Error:', err);
+
+                    if (err?.data?.code === 400 && err?.data?.message?.includes('Youtube')) {
+                      message.error(err.data.message);
+                      setGenarateToken(true);
+                    } else {
+                      message.error(
+                        intl.formatMessage({
+                          id: 'error.fetch',
+                          defaultMessage: 'Failed to fetch webinars',
+                        }),
+                      );
+                    }
+                  } else {
+                    message.error(intl.formatMessage({ id: 'error.fetch' }));
+                  }
+                } catch (parseError) {
+                  console.error('Failed to parse error response', parseError);
+                }
+
+                return { data: [], total: 0, success: false };
+              } finally {
+                setLoading(false);
+              }
+            }}
+            columns={[
+              ...TableColumns,
+              {
+                title: <FormattedMessage id="options" />,
+                valueType: 'option',
+                width: '10%',
+                render: (_, record) => [
+                  <Link key="edit" to={`/courses/webinars/webinar/${record.id}`}>
+                    <Button type="primary" icon={<EditOutlined />} />
+                  </Link>,
+                  <Popconfirm
+                    key="delete"
+                    title={<FormattedMessage id="deleteQuestion" />}
+                    onConfirm={() => record.id && handleRemove(record.id)}
+                  >
+                    <Button type="primary" icon={<DeleteOutlined />} danger />
+                  </Popconfirm>,
+                ],
+              },
+            ]}
+          />
+        </ProCard.TabPane>
+
+        <ProCard.TabPane
+          key="effectiveness-analysis"
+          tab={<FormattedMessage id="effectiveness_analysis" />}
+        >
+          <EffectivenessAnalysis modelType="webinar" />
+        </ProCard.TabPane>
+      </ProCard>
+
       <TokenForm
         visible={generateToken}
         onVisibleChange={(value) => {
@@ -320,7 +324,7 @@ const Webinars: React.FC = () => {
               setGenarateToken(false);
             }
           } catch (error) {
-            console.log(error);
+            console.error(error);
           }
         }}
       />
