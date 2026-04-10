@@ -6,10 +6,10 @@ import type {
   ChartPoint,
 } from '@/pages/Consultations/components/types';
 import { getAnalyticsChartFrames, getModelAnalytics } from '@/services/escola-lms/consultations';
-import { ANALYSIS_COLORS, EmotionKey, formatRating, getLabelColorByValue } from '@/utils/utils';
+import {ANALYSIS_COLORS, EmotionKey, formatExpirationTime, formatRating, getLabelColorByValue} from '@/utils/utils';
 import { PageContainer } from '@ant-design/pro-components';
 import { Card, Col, Select, Space, Typography, message } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { FormattedMessage, Link, useParams, useSelectedRoutes } from 'umi';
 
@@ -191,7 +191,12 @@ const EffectivenessAnalysisDetails = () => {
               <Space size="large">
                 <RatingValue color={color}>{formatRating(analysisMeta?.rating || 0)}</RatingValue>
                 <RatingDescription type="secondary">
-                  <FormattedMessage id="ai_analysis_average" />
+                  <FormattedMessage
+                    id="ai_analysis_average"
+                    values={{
+                      modelType: <FormattedMessage id={modelType === 'webinar' ? "webinarFragment" : "consultationFragment"}/>,
+                    }}
+                  />
                 </RatingDescription>
               </Space>
             </Space>
