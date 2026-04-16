@@ -6,7 +6,10 @@ import type {
   ChartPoint,
 } from '@/pages/Consultations/components/types';
 import { getAnalyticsChartFrames, getModelAnalytics } from '@/services/escola-lms/consultations';
-import {ANALYSIS_COLORS, EmotionKey, formatExpirationTime, formatRating, getLabelColorByValue} from '@/utils/utils';
+import {
+  ANALYSIS_COLORS, EmotionKey, formatRating, getLabelColorByValue,
+  getRatingLabelColorByValue
+} from '@/utils/utils';
 import { PageContainer } from '@ant-design/pro-components';
 import { Card, Col, Select, Space, Typography, message } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -78,6 +81,10 @@ const EffectivenessAnalysisDetails = () => {
   const routes = useSelectedRoutes();
   const color = useMemo(
     () => getLabelColorByValue(analysisMeta?.rating ? analysisMeta.rating : 0),
+    [analysisMeta?.rating],
+  );
+  const ratingColor = useMemo(
+    () => getRatingLabelColorByValue(analysisMeta?.rating ? analysisMeta.rating : 0),
     [analysisMeta?.rating],
   );
 
@@ -189,7 +196,7 @@ const EffectivenessAnalysisDetails = () => {
                 <FormattedMessage id="engagement_rating" />
               </SectionTitle>
               <Space size="large">
-                <RatingValue color={color}>{formatRating(analysisMeta?.rating || 0)}</RatingValue>
+                <RatingValue color={ratingColor}>{formatRating(analysisMeta?.rating || 0)}</RatingValue>
                 <RatingDescription type="secondary">
                   <FormattedMessage
                     id="ai_analysis_average"

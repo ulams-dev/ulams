@@ -6,7 +6,7 @@ import {
   createTableOrderObject,
   EMOTION_POOL,
   formatPercent,
-  getLabelColorByValue,
+  getLabelColorByValue, getRatingLabelColorByValue,
 } from '@/utils/utils';
 import { Link } from '@@/exports';
 import {
@@ -79,10 +79,12 @@ const ValueTag = React.memo(
     value,
     suffix = '',
     isRaw = false,
+    rating,
   }: {
     value: string | number;
     suffix?: string;
     isRaw?: boolean;
+    rating?: boolean;
   }) => {
     const displayValue = useMemo(() => {
       if (isRaw) return formatPercent(value);
@@ -90,7 +92,7 @@ const ValueTag = React.memo(
       return isNaN(num) ? '0.00' : num.toFixed(2);
     }, [value, isRaw]);
 
-    const color = useMemo(() => getLabelColorByValue(parseFloat(displayValue)), [displayValue]);
+    const color = useMemo(() => rating ? getRatingLabelColorByValue(parseFloat(displayValue)) : getLabelColorByValue(parseFloat(displayValue)), [displayValue]);
 
     return (
       <StyledValueTag $color={color}>
@@ -100,6 +102,15 @@ const ValueTag = React.memo(
     );
   },
 );
+
+const createEmotionColumn = (emoji: string, dataKey: string): ProColumns<RecommenderTerm> => ({
+  title: <EmojiHeader>{emoji}</EmojiHeader>,
+  dataIndex: `avg_emotions_${dataKey}` as keyof RecommenderTerm,
+  hideInSearch: true,
+  align: 'center',
+  width: 45,
+  render: (val) => `${formatPercent(val as string)}%`,
+});
 
 export const EffectivenessAnalysis = ({
   modelType = 'consultation',
@@ -117,14 +128,7 @@ export const EffectivenessAnalysis = ({
     [modelType],
   );
 
-  const createEmotionColumn = (emoji: string, dataKey: string): ProColumns<RecommenderTerm> => ({
-    title: <EmojiHeader>{emoji}</EmojiHeader>,
-    dataIndex: `avg_emotions_${dataKey}` as keyof RecommenderTerm,
-    hideInSearch: true,
-    align: 'center',
-    width: 45,
-    render: (val) => `${formatPercent(val as string)}%`,
-  });
+
 
   const columns: ProColumns<RecommenderTerm>[] = useMemo(
     () => [
@@ -156,7 +160,7 @@ export const EffectivenessAnalysis = ({
         title: <FormattedMessage id="categories" />,
         dataIndex: 'category_id',
         hideInTable: true,
-        renderFormItem: ({ type, ...rest }) => <CategoryTree {...rest} />,
+        renderFormItem: ({ ...rest }) => <CategoryTree {...rest} />,
       },
       {
         title: <FormattedMessage id="average_attention" />,
@@ -182,7 +186,7 @@ export const EffectivenessAnalysis = ({
         dataIndex: 'rating',
         hideInSearch: true,
         width: 60,
-        render: (_, record) => <ValueTag value={record.rating ?? 0.0} />,
+        render: (_, record) => <ValueTag rating value={record.rating ?? 0.0} />,
       },
       {
         title: <FormattedMessage id="recording_short" />,

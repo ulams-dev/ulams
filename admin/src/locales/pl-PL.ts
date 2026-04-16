@@ -379,6 +379,8 @@ export default {
   target_group: 'Grupa docelowa',
   author_tutor: 'Autor / Nauczyciel',
   short_description: 'Krótki opis',
+  ai_analysis_enable_label: 'Analiza nagrania AI',
+  ai_analysis_enable_tooltip: 'Zaznacz tę opcję aby włączyć analizę badania atencji oraz satystakcji użytkowników na spotkaniu',
   summary: 'Podsumowanie',
   summary_tooltip:
     'Dany edytor WYSIWYG zawiera narzędzia do formatowania, zachowując jednocześnie możliwość pisania Markdown z klawiatury oraz wyświetlania zwykłego Markdown.',

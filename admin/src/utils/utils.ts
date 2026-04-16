@@ -593,6 +593,12 @@ export const getLabelColorByValue = (val: number) => {
   return ANALYSIS_COLORS.green;
 };
 
+export const getRatingLabelColorByValue = (val: number) => {
+  if (val < 3.5) return ANALYSIS_COLORS.red;
+  if (val < 7.0) return ANALYSIS_COLORS.orange;
+  return ANALYSIS_COLORS.green;
+};
+
 export enum EmotionKey {
   SURPRISED = 'surprised',
   DISGUSTED = 'disgusted',

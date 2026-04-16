@@ -398,6 +398,8 @@ export default {
   short_description: 'Short description',
   description_tooltip:
     'The editor is WYSIWYG and includes formatting tools whilst retaining the ability to write markdown shortcuts inline and output plain Markdown.',
+  ai_analysis_enable_label: 'AI Recording Analysis',
+  ai_analysis_enable_tooltip: 'Check this option to enable AI-powered analysis of user attention and satisfaction during the meeting',
   attributes: 'Attributes',
   new_course: 'New course',
   new_questionnaire: 'New Questionnaire',
