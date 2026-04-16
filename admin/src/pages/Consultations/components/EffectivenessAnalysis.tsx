@@ -11,7 +11,6 @@ import {
 import { Link } from '@@/exports';
 import {
   DownloadOutlined,
-  PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
   VerticalAlignMiddleOutlined,
@@ -235,9 +234,6 @@ export const EffectivenessAnalysis = ({
       }}
       columnEmptyText="0%"
       toolBarRender={() => [
-        <Button key="add" type="primary" icon={<PlusOutlined />} style={{ borderRadius: '6px' }}>
-          <FormattedMessage id="new" />
-        </Button>,
         <ActionIcon
           key="reload"
           component={ReloadOutlined}
