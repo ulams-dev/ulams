@@ -5,7 +5,7 @@ namespace Ulams\Webinar\Tests\Mocks;
 use Ulams\Youtube\Dto\Contracts\YTLiveDtoContract;
 use Ulams\Youtube\Dto\Contracts\YTStreamDtoContract;
 
-class YTLiveDtoMock extends MockTest implements YTLiveDtoContract
+class YTLiveDtoMock extends MockTestHelper implements YTLiveDtoContract
 {
     private string $ytUrl;
     private bool $ytAutostartStatus;

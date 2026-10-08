@@ -4,7 +4,7 @@ namespace Ulams\Webinar\Tests\Mocks;
 
 use Ulams\Youtube\Dto\Contracts\YTCdnDtoContract;
 
-class YTCdnDtoMock extends MockTest implements YTCdnDtoContract
+class YTCdnDtoMock extends MockTestHelper implements YTCdnDtoContract
 {
     private string $streamUrl;
     private string $streamName;

@@ -28,7 +28,7 @@ env:
     tasks-topics=tasks,topic-types,topic-type-project,categories,tags,stationary-events
     gift-reports=topic-type-gift,reports,dictionaries
     commerce=cart,vouchers,payments,invoices,consultations,consultation-access,webinar,assign-without-account
-    platform=Integrations,auth,core,permissions,settings,tenancy,translations,model-fields,csv-users,tracker
+    platform=Integrations,auth,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,tracker
     content=templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
   # Known failures on a CI-style prepared database, identical on Laravel 9 to 13
   # (docs/plans/phase-0.md, B.11): excluded from the blocking run, re-run non-blocking.
@@ -197,6 +197,14 @@ jobs:
             exit 1
           fi
 
+      # ffprobe reads the length of audio/video topics (topic-types, php-ffmpeg) and ffmpeg
+      # transcodes in packages/video; both are in our PHP image (api/docker/php/install.sh).
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends ffmpeg
+          ffprobe -version | head -1
+
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
@@ -246,13 +254,19 @@ jobs:
           --filter "/^(?!.*(?:${PHPUNIT_QUARANTINE}))/"
           --log-junit "junit-${{ matrix.shard }}.xml"
 
+      # PHPUnit exits 1 on "No tests executed!": skip shards without quarantined tests.
       - name: Quarantined tests (non-blocking)
         if: success() || failure()
         continue-on-error: true
-        run: >-
-          ./vendor/bin/phpunit
-          --testsuite "${{ steps.shard.outputs.suites }}"
-          --filter "/(?:${PHPUNIT_QUARANTINE})/"
+        run: |
+          if ! ./vendor/bin/phpunit --testsuite "${{ steps.shard.outputs.suites }}" \
+              --filter "/(?:${PHPUNIT_QUARANTINE})/" --list-tests | grep -q '^ - '; then
+            echo "No quarantined tests in this shard."
+            exit 0
+          fi
+          ./vendor/bin/phpunit \
+            --testsuite "${{ steps.shard.outputs.suites }}" \
+            --filter "/(?:${PHPUNIT_QUARANTINE})/"
 
       - name: Upload JUnit report
         if: failure()

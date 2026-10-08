@@ -4,7 +4,7 @@ namespace Ulams\Webinar\Tests\Mocks;
 
 use Illuminate\Foundation\Testing\WithFaker;
 
-abstract class MockTest
+abstract class MockTestHelper
 {
     use WithFaker;
 

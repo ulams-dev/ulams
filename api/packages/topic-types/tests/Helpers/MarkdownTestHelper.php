@@ -4,7 +4,10 @@ namespace Tests\Helpers;
 
 use Ulams\TopicTypes\Helpers\Markdown;
 
-class MarkdownTest extends Markdown
+/**
+ * Exposes the protected Markdown::unparseUrl() to tests.
+ */
+class MarkdownTestHelper extends Markdown
 {
     public function verifyParseUrl(array $url): string
     {
