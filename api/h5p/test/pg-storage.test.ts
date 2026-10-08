@@ -248,6 +248,31 @@ describe('Postgres + S3 storage (integration)', () => {
             expect(ids).toContain(id);
             expect(ids.every((x) => /^\d+$/.test(x))).toBe(true);
         });
+
+        it('deletes the files of contents without a row, and only in its own prefix', async () => {
+            const kept = await content.addContent(metadata(), {}, author);
+            await content.addFile(kept, 'images/a.png', streamOf('keep'), author);
+            // files whose row is gone (e.g. an interrupted delete), here and in another tenant's prefix
+            const orphan = await content.addContent(metadata(), {}, author);
+            await content.addFile(orphan, 'images/b.png', streamOf('orphan'), author);
+            await pool.query(`DELETE FROM ${qi(cfg.db.schema)}.contents WHERE id = $1::bigint`, [orphan]);
+            const other = testConfig();
+            const otherTenant = new PgContentStorage(pool, s3, {
+                schema: cfg.db.schema,
+                s3Bucket: cfg.s3.bucket,
+                s3Prefix: other.s3.prefix
+            });
+            await s3.putObject({ Bucket: cfg.s3.bucket, Key: otherTenant.getS3Key(orphan, 'c.png'), Body: 'other tenant' });
+
+            const result = await content.deleteOrphanedFiles();
+
+            expect(result.contentIds).toContain(orphan);
+            expect(result.contentIds).not.toContain(kept);
+            expect(await content.listFiles(orphan, author)).toEqual([]);
+            expect(await content.listFiles(kept, author)).toEqual(['images/a.png']);
+            expect(await otherTenant.listFiles(orphan, author)).toEqual(['c.png']);
+            await deletePrefix(s3, cfg.s3.bucket, other.s3.prefix);
+        });
     });
 
     describe('PgContentUserDataStorage', () => {

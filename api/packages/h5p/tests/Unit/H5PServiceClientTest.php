@@ -133,6 +133,28 @@ class H5PServiceClientTest extends TestCase
         $this->client()->delete(1);
     }
 
+    public function testDeleteOrphansAsksTheTenantsServiceWithTheInternalToken(): void
+    {
+        Http::fake(['http://h5p.test:8080/h5p/contents/orphans/delete' => Http::response([
+            'success' => true,
+            'data' => ['contentIds' => ['7', 9], 'files' => 3],
+            'message' => 'Orphaned content files deleted',
+        ])]);
+
+        $this->assertSame(['contentIds' => ['7', '9'], 'files' => 3], $this->client()->deleteOrphans());
+
+        Http::assertSent(fn (Request $request) => $request->method() === 'POST'
+            && $request->hasHeader('X-Internal-Token', 'test-internal-token')
+            && $request->hasHeader('X-Forwarded-Host', parse_url((string) config('app.url'), PHP_URL_HOST)));
+    }
+
+    public function testDeleteOrphansFailureThrows(): void
+    {
+        Http::fake(['*' => Http::response(['success' => false, 'message' => 'Forbidden.'], 403)]);
+        $this->expectException(H5PServiceException::class);
+        $this->client()->deleteOrphans();
+    }
+
     public function testModelIsReadOnly(): void
     {
         $content = H5PContentFactory::create();

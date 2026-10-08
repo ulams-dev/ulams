@@ -189,6 +189,7 @@ export default defineConfig({
     '@ulams/markdown-editor': path.resolve(__dirname, '../src/lib/markdown-editor'),
     '@ulams/scorm-player': path.resolve(__dirname, '../../front/src/lib/scorm-player'),
     '@ulams/tenant': path.resolve(__dirname, '../../front/src/lib/tenant/resolveApiUrl.ts'),
+    '@ulams/demo': path.resolve(__dirname, '../../front/src/lib/demo/demoMode.ts'),
   },
   plugins: [require.resolve('./plugin-scorm.ts')],
 });

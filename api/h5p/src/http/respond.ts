@@ -50,6 +50,25 @@ export function requireAny(...permissions: string[]): RequestHandler {
 }
 
 /**
+ * Route guard for server-to-server maintenance calls: only the system user
+ * (a valid X-Internal-Token of the request's tenant) passes.
+ */
+export function requireSystem(): RequestHandler {
+    return (req, res, next) => {
+        const user = userOf(req);
+        if (!isAuthenticated(user)) {
+            res.status(401).json({ success: false, message: 'Unauthenticated.' });
+            return;
+        }
+        if (user.isSystem !== true) {
+            res.status(403).json({ success: false, message: 'Forbidden.' });
+            return;
+        }
+        next();
+    };
+}
+
+/**
  * JSON error handler for the REST routes: `{success:false, message}` with
  * the H5pError status, translated through req.t when available.
  */

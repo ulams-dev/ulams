@@ -155,6 +155,25 @@ class CreateTenantCommandTest extends TestCase
         $this->assertSame('nightsky', Tenant::query()->firstWhere('slug', 'acme')->theme);
     }
 
+    public function testDemoModeIsWrittenToTheEnvFileAndCanBeToggled(): void
+    {
+        $this->database->shouldReceive('ensure')->once();
+        $this->buckets->shouldReceive('ensure')->once();
+        $written = [];
+        $this->domains->shouldReceive('add')->twice()->andReturnUsing(function (string $host, array $values) use (&$written) {
+            $written[] = [$values['DEMO_MODE'], $values['ADMIN_URL']];
+        });
+
+        $this->artisan('ulams:tenant:create', ['slug' => 'acme'])->assertExitCode(0);
+        $this->runner->calls = [];
+        $this->artisan('ulams:tenant:create', ['slug' => 'acme', '--demo' => 'on'])->assertExitCode(0);
+
+        $this->assertSame([['false', 'http://acme.admin.localhost'], ['true', 'http://acme.admin.localhost']], $written);
+        // only the env file changes
+        $this->assertSame([], $this->runner->commands());
+        $this->assertTrue(Tenant::query()->firstWhere('slug', 'acme')->demo);
+    }
+
     public function testRedoRerunsTheGivenStep(): void
     {
         $this->database->shouldReceive('ensure')->once();
@@ -190,6 +209,7 @@ class CreateTenantCommandTest extends TestCase
         $this->artisan('ulams:tenant:create', ['slug' => 'admin'])->assertExitCode(1);
         $this->artisan('ulams:tenant:create', ['slug' => 'acme', '--accent' => 'red'])->assertExitCode(1);
         $this->artisan('ulams:tenant:create', ['slug' => 'acme', '--redo' => ['nope']])->assertExitCode(1);
+        $this->artisan('ulams:tenant:create', ['slug' => 'acme', '--demo' => 'maybe'])->assertExitCode(1);
 
         $this->assertSame(0, Tenant::query()->where('slug', 'acme')->count());
     }

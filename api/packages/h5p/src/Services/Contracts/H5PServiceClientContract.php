@@ -43,4 +43,13 @@ interface H5PServiceClientContract
      * @throws H5PServiceException (status 404 for unknown content)
      */
     public function show(int $id): array;
+
+    /**
+     * Deletes the stored files of contents that have no row any more (left by an
+     * interrupted import or delete), in this tenant's storage only.
+     *
+     * @return array{contentIds: string[], files: int}
+     * @throws H5PServiceException
+     */
+    public function deleteOrphans(): array;
 }

@@ -15,6 +15,9 @@ import templates from './en-US/templates';
 import vouchers from './en-US/vouchers';
 
 export default {
+  // demo tenants (api/packages/demo)
+  'demo_mode.badge': 'Demo mode – reset hourly',
+  'demo_mode.open_front': 'Open the learner site',
   // H5P (api/h5p service)
   'menu.Courses.H5PLibraries': 'H5P Libraries',
   H5P_libraries: 'Libraries',

@@ -93,7 +93,7 @@ to 4.7.1.
 | `ENV_DIR` | – | directory with Laravel's `.env` and `.env.<host>` files (compose: `/laravel`, a read-only mount of `api/`) |
 | `KEYS_DIR` | `$ENV_DIR/storage` | Laravel storage dir with `oauth-public.key` and `<host_with_underscores>/oauth-public.key` |
 | `PLATFORM_HOSTS` | `api.localhost` | comma list of hosts served by the platform tenant (`.env`) |
-| `TENANT_FRONT_ORIGIN_PATTERNS` | `http://{slug}.app.localhost,https://{slug}.app.localhost,http://{slug}.admin.localhost,https://{slug}.admin.localhost` | per-tenant CORS / frame-ancestors origins added to `CORS_ORIGINS` |
+| `TENANT_FRONT_ORIGIN_PATTERNS` | `http://{slug}.app.localhost,https://{slug}.app.localhost,http://{slug}.app.localhost:4321,http://{slug}.admin.localhost,https://{slug}.admin.localhost,http://{slug}.admin.localhost:8000` | per-tenant CORS / frame-ancestors origins added to `CORS_ORIGINS` (exact origins; ports matter) |
 | `TENANT_RELOAD_CHECK_MS` | `2000` | how often env/key files and host lookups are re-checked |
 | `TENANT_DB_POOL_MAX` | `5` | Postgres pool size per tenant (env-files mode) |
 | `H5P_ROOT` | `./h5p` | base for the next three paths in development |
@@ -115,6 +115,7 @@ All routes are under `/h5p`. The REST routes answer with the Laravel envelope:
 | `GET /h5p/contents/:id` | anyone | row summary + h5p.json metadata |
 | `PATCH /h5p/contents/:id` | `h5p_update`, or `h5p_author_update` on own content | same body as POST |
 | `DELETE /h5p/contents/:id` | `h5p_delete`, or `h5p_author_delete` on own content | deletes the row, S3 files, user states and results |
+| `POST /h5p/contents/orphans/delete` | internal token only | deletes the S3 files of content ids that have no row (left by an interrupted import or delete) in the request's tenant (its bucket and prefix) → `{contentIds, files}`. Used by the demo reset (`api/packages/demo`) |
 | `GET /h5p/contents/:id/play` | anyone | player model (`IPlayerModel`); `?contextId=`, `?asUserId=` (needs `h5p_read`), `?readOnlyState=yes`, `?language=`. `Cache-Control: no-store` |
 | `GET /h5p/contents/:id/edit` | `h5p_create` (`:id` = `new`) / edit permission | editor model + `{library, metadata, params}` |
 | `GET /h5p/contents/:id/download` | anyone | .h5p package (`Content-Disposition: attachment`) |
@@ -387,7 +388,8 @@ From the tenant's env file the service takes:
   `Host: <tenant host>` (platform: the host of `APP_URL`);
   `H5P_INTERNAL_TOKEN` from the file, else the service's own.
 - **Origins**: `CORS_ORIGINS` + `TENANT_FRONT_ORIGIN_PATTERNS` with `{slug}`
-  = `TENANT_SLUG` (else the first host label) + the origin of `FRONTEND_URL`.
+  = `TENANT_SLUG` (else the first host label) + the origins of `FRONTEND_URL`
+  and `ADMIN_URL`, ports included.
   They drive CORS and the embed pages' `frame-ancestors` / postMessage
   allow-list, so `coffee.app.localhost` can frame `coffee.localhost/h5p/embed/*`
   but not `oncall.localhost/h5p/embed/*`.

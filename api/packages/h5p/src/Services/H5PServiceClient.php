@@ -82,6 +82,16 @@ class H5PServiceClient implements H5PServiceClientContract
         return $this->send(fn () => $this->request()->get($this->url("contents/{$id}")))->json('data') ?? [];
     }
 
+    public function deleteOrphans(): array
+    {
+        $data = $this->send(fn () => $this->request()->post($this->url('contents/orphans/delete')))->json('data') ?? [];
+
+        return [
+            'contentIds' => array_map('strval', (array) ($data['contentIds'] ?? [])),
+            'files' => (int) ($data['files'] ?? 0),
+        ];
+    }
+
     private function request(): PendingRequest
     {
         $request = Http::acceptJson()->timeout((int) config('h5p.timeout', 300));

@@ -20,6 +20,7 @@ class CreateTenantCommand extends Command
         {--theme= : Front theme preset key, e.g. coffee, oncall, nightsky}
         {--accent= : Accent colour, e.g. #C2552D}
         {--users=5 : Number of demo students}
+        {--demo= : Demo mode (DEMO_MODE: login without password, hourly reset): on or off}
         {--redo=* : Step to run again even if recorded as done: database, bucket, env, migrate, passport_keys, passport_client, permissions or demo}';
 
     protected $description = 'Provision a tenant (database, bucket, env file, migrations, keys, demo users). Safe to re-run: finished steps are skipped.';
@@ -64,6 +65,7 @@ class CreateTenantCommand extends Command
             ['API', $tenant->apiUrl()],
             ['Front', $tenant->frontUrl()],
             ['Admin', $tenant->adminUrl()],
+            ['Demo mode', $tenant->demo ? 'on (login without password, reset hourly)' : 'off'],
             ['Admin user', TenantNaming::adminEmail($tenant)],
             ['Tutor', 'tutor@' . TenantNaming::emailDomain($tenant)],
             ['Students', 'student1..' . (int) $this->option('users') . '@' . TenantNaming::emailDomain($tenant)],
@@ -77,7 +79,7 @@ class CreateTenantCommand extends Command
     {
         TenantNaming::assertValidSlug($slug);
 
-        foreach (['theme' => '/^[A-Za-z0-9_-]{1,40}$/', 'accent' => '/^#[0-9A-Fa-f]{6}$/'] as $option => $pattern) {
+        foreach (['theme' => '/^[A-Za-z0-9_-]{1,40}$/', 'accent' => '/^#[0-9A-Fa-f]{6}$/', 'demo' => '/^(on|off)$/'] as $option => $pattern) {
             $value = $this->option($option);
             if ($value !== null && !preg_match($pattern, $value)) {
                 throw new InvalidArgumentException("Invalid --{$option} value '{$value}'.");
@@ -93,10 +95,16 @@ class CreateTenantCommand extends Command
             'accent' => $this->option('accent'),
         ], fn ($value) => $value !== null && $value !== '');
         $tenant->fill($changes);
+        if ($this->option('demo') !== null) {
+            $tenant->demo = $this->option('demo') === 'on';
+        }
 
         if ($tenant->exists && $tenant->isDirty(['name', 'theme', 'accent'])) {
             // Display name and theme live in the env file and the settings table.
             $tenant->forget('env', 'demo');
+        } elseif ($tenant->exists && $tenant->isDirty('demo')) {
+            // DEMO_MODE lives in the env file only.
+            $tenant->forget('env');
         }
         $redo = (array) $this->option('redo');
         $unknown = array_diff($redo, TenantProvisioner::STEPS);

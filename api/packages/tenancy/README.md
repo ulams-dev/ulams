@@ -12,7 +12,9 @@ platform (`api.localhost`) and any number of tenants, each on its own host
 - `APP_KEY` and Passport key pair (a token from one tenant is rejected by every other),
 - Redis key prefix for queues, cache and Horizon (`ulams_<slug>_`),
 - demo users and the public settings the front reads (`global.companyName`,
-  `global.frontURL`, `theme.theme`, `theme.accent`).
+  `global.frontURL`, `theme.theme`, `theme.accent`),
+- optionally demo mode (`tenants.demo` → `DEMO_MODE` in the env file, see
+  [packages/demo](../demo/README.md)).
 
 The registry of tenants is the `tenants` table in the platform database. Secrets in it
 (`db_password`, `app_key`, Passport keys) are encrypted with the platform `APP_KEY`.
@@ -31,6 +33,10 @@ php artisan ulams:tenant:create coffee --name="The Coffee Atlas" --theme=coffee 
 
 # run one step again
 php artisan ulams:tenant:create coffee --redo=migrate
+
+# demo mode (packages/demo): DEMO_MODE=true in the env file, login without password,
+# hourly reset; only the env file is rewritten
+php artisan ulams:tenant:create coffee --demo=on
 
 php artisan ulams:tenant:list
 php artisan ulams:tenant:list --hosts         # active API hosts, one per line

@@ -15,6 +15,9 @@ import templates from './pl-PL/templates';
 import vouchers from './pl-PL/vouchers';
 
 export default {
+  // demo tenants (api/packages/demo)
+  'demo_mode.badge': 'Tryb demo – reset co godzinę',
+  'demo_mode.open_front': 'Otwórz stronę kursanta',
   // H5P (api/h5p service)
   'menu.Courses.H5PLibraries': 'Biblioteki H5P',
   H5P_libraries: 'Biblioteki',

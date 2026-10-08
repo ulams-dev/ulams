@@ -13,6 +13,7 @@ import { routerType } from "@/utils/router";
 import ScrollToTop from "../Common/ScrollToTop";
 
 import { Loader } from "./../_App/Loader/Loader";
+import { DemoModeGate } from "./../_App/DemoMode";
 import routeRoutes from "./routes";
 
 // Tenant experience landing or the default home (see pages/landing/selectLanding.ts)
@@ -131,80 +132,87 @@ const Routes: React.FC = (): ReactElement => {
   return (
     <ConditionalRouter basename={BASENAME}>
       <ScrollToTop />
-      <Suspense fallback={<Loader />}>
-        <Switch>
-          <Route exact path={home} component={HomePage} />
-          <Route exact path={register} component={RegisterPage} />
+      {/* demo tenants: automatic login as the demo student (api/packages/demo) */}
+      <DemoModeGate>
+        <Suspense fallback={<Loader />}>
+          <Switch>
+            <Route exact path={home} component={HomePage} />
+            <Route exact path={register} component={RegisterPage} />
 
-          <Route exact path={login} component={LoginPage} />
+            <Route exact path={login} component={LoginPage} />
 
-          <Route exact path={reset} component={ResetPage} />
-          <Route exact path={emailVerify} component={VerifyEmail} />
-          <Route exact path={subscriptions} component={SubscriptionsPage} />
-          {/* <Route exact path={authentication} component={AuthPage} /> */}
-          {/* platform visibility pages*/}
-          {/* <ConfigRoute exact path={tutors} component={TutorsPage} /> */}
-          <ConfigRoute
-            exact
-            path={consultations}
-            component={ConsultationsPage}
-          />
-          <ConfigRoute exact path={consultation} component={ConsultationPage} />
-          {/* <ConfigRoute exact path={tutor} component={TutorPage} /> */}
-          <ConfigRoute exact path={course} component={CoursePage} />
-          <ConfigRoute exact path={preview} component={CoursePreviewPage} />
-          <ConfigRouteExtend exact path={courses} component={CoursesPage} />
-          {/* <ConfigRoute exact path={events} component={EventsPage} />
+            <Route exact path={reset} component={ResetPage} />
+            <Route exact path={emailVerify} component={VerifyEmail} />
+            <Route exact path={subscriptions} component={SubscriptionsPage} />
+            {/* <Route exact path={authentication} component={AuthPage} /> */}
+            {/* platform visibility pages*/}
+            {/* <ConfigRoute exact path={tutors} component={TutorsPage} /> */}
+            <ConfigRoute
+              exact
+              path={consultations}
+              component={ConsultationsPage}
+            />
+            <ConfigRoute
+              exact
+              path={consultation}
+              component={ConsultationPage}
+            />
+            {/* <ConfigRoute exact path={tutor} component={TutorPage} /> */}
+            <ConfigRoute exact path={course} component={CoursePage} />
+            <ConfigRoute exact path={preview} component={CoursePreviewPage} />
+            <ConfigRouteExtend exact path={courses} component={CoursesPage} />
+            {/* <ConfigRoute exact path={events} component={EventsPage} />
           <ConfigRoute exact path={event} component={EventPage} />*/}
-          <ConfigRoute exact path={webinars} component={WebinarsPage} />
-          <ConfigRoute exact path={webinar} component={WebinarPage} />
-          {/* <ConfigRoute exact path={packages} component={PackagesPage} /> */}
-          <ConfigRoute exact path={packageProduct} component={PackagePage} />
-          {/* privates pages*/}
-          <PrivateRoute exact path={onboarding} component={OnboardingPage} />
-          <PrivateRoute exact path={myProfile} component={MyProfilePage} />
-          {/* <PrivateRoute exact path={myTasks} component={MyTasks} />
+            <ConfigRoute exact path={webinars} component={WebinarsPage} />
+            <ConfigRoute exact path={webinar} component={WebinarPage} />
+            {/* <ConfigRoute exact path={packages} component={PackagesPage} /> */}
+            <ConfigRoute exact path={packageProduct} component={PackagePage} />
+            {/* privates pages*/}
+            <PrivateRoute exact path={onboarding} component={OnboardingPage} />
+            <PrivateRoute exact path={myProfile} component={MyProfilePage} />
+            {/* <PrivateRoute exact path={myTasks} component={MyTasks} />
           <PrivateRoute exact path={myBookmarks} component={MyBookmarks} /> */}
-          <PrivateRoute exact path={myWebinars} component={MyWebinarsPage} />
-          <PrivateRoute
-            exact
-            path={mySubscriptions}
-            component={MySubscriptions}
-          />
-          <PrivateRoute
-            exact
-            path={myCertificates}
-            component={MyCertificatesPage}
-          />
-          {/* <PrivateRoute
+            <PrivateRoute exact path={myWebinars} component={MyWebinarsPage} />
+            <PrivateRoute
+              exact
+              path={mySubscriptions}
+              component={MySubscriptions}
+            />
+            <PrivateRoute
+              exact
+              path={myCertificates}
+              component={MyCertificatesPage}
+            />
+            {/* <PrivateRoute
             exact
             path={myStationaryEvents}
             component={MyStationaryEvents}
           /> */}
-          <PrivateRoute
-            exact
-            path={myConsultations}
-            component={MyConsultationsPage}
-          />
-          <PrivateRoute exact path={myOrders} component={MyOrdersPage} />
-          <PrivateRoute
-            exact
-            path={myNotifications}
-            component={MyNotificationsPage}
-          />
-          <PrivateRoute exact path={myData} component={MyDataPage} />
-          <PrivateRoute
-            exact
-            path={courseProgram}
-            component={CourseProgramPage}
-          />
-          <PrivateRoute exact path={home} component={MyProfilePage} />
-          <PrivateRoute exact path={cart} component={CartPage} />
-          <Route exact path={notFound} component={NotFoundPage} />
-          <Route exact path={page} component={StaticPage} />
-          <Route exact component={NotFoundPage} />
-        </Switch>
-      </Suspense>
+            <PrivateRoute
+              exact
+              path={myConsultations}
+              component={MyConsultationsPage}
+            />
+            <PrivateRoute exact path={myOrders} component={MyOrdersPage} />
+            <PrivateRoute
+              exact
+              path={myNotifications}
+              component={MyNotificationsPage}
+            />
+            <PrivateRoute exact path={myData} component={MyDataPage} />
+            <PrivateRoute
+              exact
+              path={courseProgram}
+              component={CourseProgramPage}
+            />
+            <PrivateRoute exact path={home} component={MyProfilePage} />
+            <PrivateRoute exact path={cart} component={CartPage} />
+            <Route exact path={notFound} component={NotFoundPage} />
+            <Route exact path={page} component={StaticPage} />
+            <Route exact component={NotFoundPage} />
+          </Switch>
+        </Suspense>
+      </DemoModeGate>
     </ConditionalRouter>
   );
 };

@@ -59,6 +59,7 @@ return [
                     base_path('packages/templates-pdf/src'),
                     base_path('packages/assign-without-account/src'),
                     base_path('packages/translations/src'),
+                    base_path('packages/demo/src'),
                     base_path('packages/questionnaire/src'),
                     base_path('packages/consultations/src'),
                     base_path('packages/consultation-access/src'),

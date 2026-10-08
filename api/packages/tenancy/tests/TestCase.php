@@ -22,6 +22,8 @@ class TestCase extends CoreTestCase
         if (!Schema::hasTable('tenants')) {
             (require __DIR__ . '/../database/migrations/2026_10_08_000000_create_tenants_table.php')->up();
         }
+        // idempotent: adds tenants.demo to a test database migrated before it existed
+        (require __DIR__ . '/../database/migrations/2026_10_09_000000_add_demo_to_tenants_table.php')->up();
     }
 
     protected function getPackageProviders($app): array

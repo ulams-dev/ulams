@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $name
  * @property ?string $theme
  * @property ?string $accent
+ * @property bool $demo
  * @property string $api_host
  * @property string $front_host
  * @property string $admin_host
@@ -40,6 +41,7 @@ class Tenant extends Model
         'name',
         'theme',
         'accent',
+        'demo',
         'api_host',
         'front_host',
         'admin_host',
@@ -62,6 +64,7 @@ class Tenant extends Model
         'passport_private_key' => 'encrypted',
         'passport_public_key' => 'encrypted',
         'steps' => 'array',
+        'demo' => 'boolean',
     ];
 
     protected $hidden = [

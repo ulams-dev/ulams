@@ -84,6 +84,9 @@ class TenantNaming
             'APP_KEY' => $tenant->app_key,
             'TENANT_SLUG' => $tenant->slug,
             'FRONTEND_URL' => $tenant->frontUrl(),
+            'ADMIN_URL' => $tenant->adminUrl(),
+            // packages/demo: password-less login and an hourly reset of the tenant
+            'DEMO_MODE' => $tenant->demo ? 'true' : 'false',
             'DB_DATABASE' => $tenant->db_name,
             'DB_USERNAME' => $tenant->db_user,
             'DB_PASSWORD' => $tenant->db_password,

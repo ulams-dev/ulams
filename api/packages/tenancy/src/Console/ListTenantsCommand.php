@@ -23,11 +23,12 @@ class ListTenantsCommand extends Command
         }
 
         $this->table(
-            ['slug', 'name', 'theme', 'status', 'api', 'front', 'admin', 'steps'],
+            ['slug', 'name', 'theme', 'demo', 'status', 'api', 'front', 'admin', 'steps'],
             $tenants->map(fn (Tenant $tenant) => [
                 $tenant->slug,
                 $tenant->name,
                 $tenant->theme,
+                $tenant->demo ? 'on' : 'off',
                 $tenant->status,
                 $tenant->api_host,
                 $tenant->front_host,

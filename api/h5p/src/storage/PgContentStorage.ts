@@ -377,6 +377,57 @@ export default class PgContentStorage implements IContentStorage {
     }
 
     /**
+     * Content ids that have files in S3 (`${prefix}/content/{id}/...`), whether
+     * or not they still have a row. Other "directories" are ignored.
+     */
+    public async listStoredContentIds(): Promise<string[]> {
+        const ids: string[] = [];
+        let token: string | undefined;
+        do {
+            const ret = await this.s3.listObjectsV2({
+                Bucket: this.options.s3Bucket,
+                Prefix: this.keyPrefix,
+                Delimiter: '/',
+                ContinuationToken: token,
+                MaxKeys: 1000
+            });
+            for (const p of ret.CommonPrefixes ?? []) {
+                const id = p.Prefix?.substring(this.keyPrefix.length).replace(/\/$/, '');
+                if (PgContentStorage.isValidId(id)) {
+                    ids.push(id);
+                }
+            }
+            token = ret.IsTruncated ? ret.NextContinuationToken : undefined;
+        } while (token);
+        return ids;
+    }
+
+    /**
+     * Deletes the S3 files of content ids without a row in this storage's table
+     * (left behind by a failed import or delete). Only this storage's bucket and
+     * prefix, i.e. only its tenant, are touched.
+     */
+    public async deleteOrphanedFiles(): Promise<{ contentIds: string[]; files: number }> {
+        const stored = await this.listStoredContentIds();
+        if (stored.length === 0) {
+            return { contentIds: [], files: 0 };
+        }
+        const { rows } = await this.pool.query<{ id: string }>(
+            `SELECT id::text AS id FROM ${this.table} WHERE id = ANY($1::bigint[])`,
+            [stored]
+        );
+        const known = new Set(rows.map((r) => r.id));
+        const orphans = stored.filter((id) => !known.has(id));
+        let files = 0;
+        for (const id of orphans) {
+            const keys = (await this.listFiles(id, undefined as unknown as IUser)).map((f) => this.getS3Key(id, f));
+            await deleteObjects(keys, this.options.s3Bucket, this.s3);
+            files += keys.length;
+        }
+        return { contentIds: orphans, files };
+    }
+
+    /**
      * Lists the files (relative paths, e.g. "images/a.png") stored for a
      * content object. Returns [] if there are none or S3 cannot be listed.
      */

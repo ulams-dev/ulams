@@ -9,6 +9,11 @@ const resources = {
   en: {
     translation: {
       ...ComponentTranslations.en.translation,
+      DemoMode: {
+        Label: "Demo mode",
+        Badge: "Demo mode – reset hourly",
+        OpenAdmin: "Open the admin panel",
+      },
       Show: "Show",
       Agenda: "Agenda",
       ReadAll: "Read all",
@@ -736,6 +741,11 @@ const resources = {
   pl: {
     translation: {
       ...ComponentTranslations.pl.translation,
+      DemoMode: {
+        Label: "Tryb demo",
+        Badge: "Tryb demo – reset co godzinę",
+        OpenAdmin: "Otwórz panel administracyjny",
+      },
       Show: "Zobacz",
       Agenda: "Program",
       ReadAll: "Odznacz wszystkie",

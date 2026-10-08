@@ -132,4 +132,22 @@ Read on the platform by `ulams:tenant:*`, see [multidomain.md](multidomain.md).
 
 Set per tenant in `.env.<host>` (do not set them on the platform): `TENANT_SLUG`,
 `REDIS_PREFIX`, `CACHE_PREFIX`, `HORIZON_PREFIX`, `INITIAL_USER_EMAIL`,
-`INITIAL_USER_PASSWORD`, `FRONTEND_URL`.
+`INITIAL_USER_PASSWORD`, `FRONTEND_URL`, `ADMIN_URL`, `DEMO_MODE`.
+
+## Demo mode (`packages/demo`)
+
+Read inside a tenant. `DEMO_MODE` is written by `ulams:tenant:create <slug> --demo=on|off`;
+the others are optional overrides. See [packages/demo/README.md](../packages/demo/README.md).
+
+| Variable name           | Description                                                                         | Default                          |
+| ----------------------- | ----------------------------------------------------------------------------------- | -------------------------------- |
+| `DEMO_MODE`             | Login without password (`/api/demo/*`) and an hourly reset. **Never on production data** | `false`                     |
+| `DEMO_ADMIN_EMAIL`      | Account of the automatic admin login                                                | `INITIAL_USER_EMAIL`             |
+| `DEMO_STUDENT_EMAIL`    | Account of the automatic student login                                              | `student1@<admin e-mail domain>` |
+| `DEMO_ADMIN_URL`        | Admin panel link on the front's demo badge                                          | `ADMIN_URL`                      |
+| `DEMO_RESET_SCHEDULE`   | Schedule `ulams:demo:reset`                                                          | `true`                           |
+| `DEMO_RESET_CRON`       | When                                                                                 | `0 * * * *`                      |
+| `DEMO_RESET_WIPE_FILES` | Also delete every file in the tenant bucket on reset                                | `false`                          |
+| `DEMO_RESET_STUDENTS`   | Demo students when no baseline was captured                                         | `5`                              |
+| `DEMO_CONTENT_SEEDER`   | Seeder of the demo courses                                                           | `Database\Seeders\DemoCoursesSeeder` |
+| `ULAMS_DEMO_EXPERIENCE` | Demo course(s) to seed                                                               | `TENANT_SLUG`                    |

@@ -215,6 +215,7 @@ return [
         Ulams\TemplatesPdf\UlamsTemplatesPdfServiceProvider::class,
         Ulams\TemplatesSms\UlamsTemplatesSmsServiceProvider::class,
         Ulams\Tenancy\UlamsTenancyServiceProvider::class,
+        Ulams\Demo\UlamsDemoServiceProvider::class,
         Ulams\TopicTypeGift\UlamsTopicTypeGiftServiceProvider::class,
         Ulams\TopicTypeProject\UlamsTopicTypeProjectServiceProvider::class,
         Ulams\TopicTypes\UlamsTopicTypesServiceProvider::class,

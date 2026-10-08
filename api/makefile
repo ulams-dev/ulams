@@ -111,3 +111,14 @@ demo-seed-tenants:
 	- $(MAKE) demo-seed-tenant DOMAIN=coffee.localhost EXPERIENCE=coffee
 	- $(MAKE) demo-seed-tenant DOMAIN=oncall.localhost EXPERIENCE=oncall
 	- $(MAKE) demo-seed-tenant DOMAIN=nightsky.localhost EXPERIENCE=nightsky
+
+# Demo mode (packages/demo): login without password and an hourly reset, on the three demo
+# tenants only. Writes DEMO_MODE=true to their env files (kept by ulams:tenant:sync-env).
+demo-mode-on:
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create coffee --demo=on"
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create oncall --demo=on"
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create nightsky --demo=on"
+
+# reset one demo tenant now (the scheduler does it hourly): make demo-reset DOMAIN=coffee.localhost
+demo-reset:
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:demo:reset --force --domain=$(DOMAIN)"

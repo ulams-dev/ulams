@@ -16,6 +16,7 @@ use Ulams\H5P\Models\H5PContent;
  *  - GET    /h5p/contents/{id}         row summary
  *  - GET    /h5p/contents/{id}/download a minimal .h5p built from the row
  *  - DELETE /h5p/contents/{id}         deletes the row
+ *  - POST   /h5p/contents/orphans/delete nothing to sweep (rows have no files here)
  *
  * For tests only.
  */
@@ -35,6 +36,9 @@ class H5PServiceFake
 
         if ($method === 'POST' && $path === 'contents/upload') {
             return self::upload($request);
+        }
+        if ($method === 'POST' && $path === 'contents/orphans/delete') {
+            return Http::response(['success' => true, 'data' => ['contentIds' => [], 'files' => 0], 'message' => '']);
         }
         if (preg_match('#^contents/(\d+)(/download)?$#', $path, $m)) {
             $content = H5PContent::query()->find((int) $m[1]);
