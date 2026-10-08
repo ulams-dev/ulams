@@ -286,9 +286,7 @@ const ProductsForm: React.FC<{
         const related_products = values.related_products?.every(
           (related_product) => typeof related_product === 'object',
         )
-          ? (values.related_products as Ulams.Cart.Models.Product[]).map(
-              (product) => product.id,
-            )
+          ? (values.related_products as Ulams.Cart.Models.Product[]).map((product) => product.id)
           : values.related_products;
 
         const postData = {

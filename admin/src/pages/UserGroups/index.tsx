@@ -86,10 +86,7 @@ export const TableColumns: ProColumns<API.UserGroup>[] = [
     render: (_, record) => {
       if (record.parent_id) {
         return (
-          <TypeButtonDrawer
-            type={'Ulams\\Auth\\Models\\UserGroup'}
-            type_id={record.parent_id}
-          />
+          <TypeButtonDrawer type={'Ulams\\Auth\\Models\\UserGroup'} type_id={record.parent_id} />
         );
       }
       return (

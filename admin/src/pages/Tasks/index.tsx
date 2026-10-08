@@ -90,11 +90,7 @@ const TableList: React.FC = () => {
       },
       render: (_, record) =>
         record.user?.id && (
-          <TypeButtonDrawer
-            key={'user'}
-            type="Ulams\Core\Models\User"
-            type_id={record.user?.id}
-          />
+          <TypeButtonDrawer key={'user'} type="Ulams\Core\Models\User" type_id={record.user?.id} />
         ),
     },
     {

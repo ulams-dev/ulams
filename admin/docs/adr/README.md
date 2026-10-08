@@ -1,19 +1,9 @@
 # Architecture Decision Records — admin
 
-This folder holds the Architecture Decision Records (ADRs) for the Wellms admin panel (`admin/`,
-formerly the `EscolaLMS/Admin` repository). We use the [MADR](https://adr.github.io/madr/) format:
-each record states the context, the options considered, the decision and its consequences, and lists
-evidence. To add a record, copy the structure of an existing file, take the next free number, name it
-`NNNN-kebab-case-title.md`, set the status (Proposed / Accepted / Superseded by NNNN), and add a row to
-the table below. Records are never deleted; a replaced decision is marked "Superseded by …".
-Numbers **0001–0099 are retroactive**: they were reconstructed in 2026 from the git history imported
-into the monorepo, after the decisions had been made. Their dates are the dates of the decisive commits,
-their evidence cites monorepo commit hashes (and, for vendored libraries, hashes from those libraries'
-own repositories, labelled by repo), and any motivation not written down in the history is labelled
-"Inferred:". Numbers **0100 and above are reserved for monorepo-era decisions**.
+This folder holds the Architecture Decision Records (ADRs) for the Wellms admin panel (`admin/`, formerly the `EscolaLMS/Admin` repository). We use the [MADR](https://adr.github.io/madr/) format: each record states the context, the options considered, the decision and its consequences, and lists evidence. To add a record, copy the structure of an existing file, take the next free number, name it `NNNN-kebab-case-title.md`, set the status (Proposed / Accepted / Superseded by NNNN), and add a row to the table below. Records are never deleted; a replaced decision is marked "Superseded by …". Numbers **0001–0099 are retroactive**: they were reconstructed in 2026 from the git history imported into the monorepo, after the decisions had been made. Their dates are the dates of the decisive commits, their evidence cites monorepo commit hashes (and, for vendored libraries, hashes from those libraries' own repositories, labelled by repo), and any motivation not written down in the history is labelled "Inferred:". Numbers **0100 and above are reserved for monorepo-era decisions**.
 
-| No.  | Title | Status | Date |
-|------|-------|--------|------|
+| No. | Title | Status | Date |
+| --- | --- | --- | --- |
 | [0000](0000-record-architecture-decisions.md) | Record architecture decisions | Accepted | 2026-10-08 |
 | [0001](0001-ant-design-pro-umi3-scaffold.md) | Build the admin panel on Ant Design Pro (umi 3 + antd 4) | Superseded by 0003 | 2021-02-26 |
 | [0002](0002-upgrade-to-react-18.md) | Upgrade to React 18 | Accepted (retroactive) | 2022-04-01 |

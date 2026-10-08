@@ -56,11 +56,7 @@ const TableList: React.FC = () => {
         },
         render: (_, record) =>
           record.user?.id && (
-            <TypeButtonDrawer
-              key={'user'}
-              type="Ulams\Core\Models\User"
-              type_id={record.user?.id}
-            >
+            <TypeButtonDrawer key={'user'} type="Ulams\Core\Models\User" type_id={record.user?.id}>
               <Tag>{record.user.email}</Tag>
             </TypeButtonDrawer>
           ),
@@ -111,9 +107,7 @@ const TableList: React.FC = () => {
           ) : (
             <Space direction="vertical">
               {record.proposed_terms.map(
-                (
-                  term: Ulams.ConsultationAccess.Models.ConsultationAccessEnquiryProposedTerm,
-                ) => (
+                (term: Ulams.ConsultationAccess.Models.ConsultationAccessEnquiryProposedTerm) => (
                   <Button
                     key={term.id}
                     size="small"

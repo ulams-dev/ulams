@@ -1,8 +1,4 @@
-import {
-  createTranslation,
-  translations,
-  updateTranslation,
-} from '@/services/ulams/translations';
+import { createTranslation, translations, updateTranslation } from '@/services/ulams/translations';
 import { sortByKey } from '@/utils/utils';
 import { localeInfo } from '@@/plugin-locale/localeExports';
 import { EditOutlined } from '@ant-design/icons';

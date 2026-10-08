@@ -112,7 +112,11 @@ jobs:
       # admin's `lint` script runs prettier with --write, which never fails; check formatting here.
       - name: Prettier check (admin)
         working-directory: admin
-        run: npx --no prettier --check "**/**.{js,jsx,tsx,ts,less,md,json}" --end-of-line auto
+        # Resolve prettier the way Node does from admin/, so a hoisted copy from another workspace can't win
+        run: |
+          PRETTIER=$(node -p "require.resolve('prettier/bin-prettier.js', { paths: [process.cwd()] })")
+          node "$PRETTIER" --version
+          node "$PRETTIER" --check "**/**.{js,jsx,tsx,ts,less,md,json}" --end-of-line auto
 
       - name: Restore Turborepo cache
         uses: actions/cache@v4

@@ -206,7 +206,6 @@ export const LessonList: React.FC<LessonListProps> = ({ onNewLesson }) => {
             </Tooltip>
             <span className="title">{item.data.title}</span>
           </NavLink>
-
         </>
       );
     },

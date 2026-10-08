@@ -25,14 +25,11 @@ export async function createVoucher(body?: Record<string, any>, options?: AxiosR
 
 /**  GET /api/admin/vouchers/:id */
 export async function getVoucher(id: number, options?: AxiosRequestConfig) {
-  return request<API.DefaultResponse<Ulams.Vouchers.Models.Coupon>>(
-    `/api/admin/vouchers/${id}`,
-    {
-      method: 'GET',
-      /* useCache: true */ useCache: false,
-      ...(options || {}),
-    },
-  );
+  return request<API.DefaultResponse<Ulams.Vouchers.Models.Coupon>>(`/api/admin/vouchers/${id}`, {
+    method: 'GET',
+    /* useCache: true */ useCache: false,
+    ...(options || {}),
+  });
 }
 
 /**  PATCH /api/admin/vouchers */
@@ -41,17 +38,14 @@ export async function updateVoucher(
   body?: Ulams.Vouchers.Http.Requests.UpdateCouponRequest,
   options?: AxiosRequestConfig,
 ) {
-  return request<API.DefaultResponse<Ulams.Vouchers.Models.Coupon>>(
-    `/api/admin/vouchers/${id}`,
-    {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      data: body,
-      ...(options || {}),
+  return request<API.DefaultResponse<Ulams.Vouchers.Models.Coupon>>(`/api/admin/vouchers/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
     },
-  );
+    data: body,
+    ...(options || {}),
+  });
 }
 
 /**  DELETE /api/admin/vouchers/:id */

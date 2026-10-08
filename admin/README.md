@@ -1,8 +1,6 @@
 # ulams admin
 
-The admin and author panel: courses and their programs (all topic types), H5P content and
-libraries, quizzes, users, products, certificates (pdfme designer), templates, settings and
-reports. React 18 with umi/max and Ant Design.
+The admin and author panel: courses and their programs (all topic types), H5P content and libraries, quizzes, users, products, certificates (pdfme designer), templates, settings and reports. React 18 with umi/max and Ant Design.
 
 ## Run
 
@@ -17,7 +15,7 @@ Platform login: `admin@ulams.app` / `secret`. On a tenant, `admin@<slug>.ulams.a
 ## Where things are
 
 | Path | What |
-|---|---|
+| --- | --- |
 | `config/` | umi config and routes (`routes.ts`), aliases (`@ulams/*` from `../front/src/lib`) |
 | `src/pages/` | Screens; menu access in `src/access.ts` (permissions + installed packages) |
 | `src/services/ulams/` | API calls |
@@ -29,8 +27,7 @@ Platform login: `admin@ulams.app` / `secret`. On a tenant, `admin@<slug>.ulams.a
 
 ## Configuration
 
-`REACT_APP_API_URL` sets a fixed API URL; without it the API comes from the host rule
-`REACT_APP_TENANT_API_HOST_PATTERN` (default `{slug}.admin.localhost=>http://{slug}.localhost`).
+`REACT_APP_API_URL` sets a fixed API URL; without it the API comes from the host rule `REACT_APP_TENANT_API_HOST_PATTERN` (default `{slug}.admin.localhost=>http://{slug}.localhost`).
 
 ## Tests
 

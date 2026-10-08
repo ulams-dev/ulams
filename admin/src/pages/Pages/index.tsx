@@ -49,11 +49,7 @@ const TableList: React.FC = () => {
       hideInSearch: true,
       sorter: true,
       render: (_, record) => (
-        <TypeButtonDrawer
-          key={'user'}
-          type="Ulams\Core\Models\User"
-          type_id={record.author_id}
-        />
+        <TypeButtonDrawer key={'user'} type="Ulams\Core\Models\User" type_id={record.author_id} />
       ),
     },
     {

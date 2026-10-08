@@ -9,14 +9,11 @@ export async function fields(
     },
   options?: AxiosRequestConfig,
 ) {
-  return request<API.DefaultResponse<Ulams.ModelFields.Models.Metadata[]>>(
-    `/api/model-fields`,
-    {
-      method: 'GET',
-      params,
-      ...(options || {}),
-    },
-  );
+  return request<API.DefaultResponse<Ulams.ModelFields.Models.Metadata[]>>(`/api/model-fields`, {
+    method: 'GET',
+    params,
+    ...(options || {}),
+  });
 }
 
 /**  POST /api/aadmin/model-fields */
