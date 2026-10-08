@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { useTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { Note } from "@escolalms/components/lib/components/atoms/Note/Note";
-import Title from "@escolalms/components/lib/components/atoms/Typography/Title";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { Note } from "@lms/components/components/atoms/Note/Note";
+import Title from "@lms/components/components/atoms/Typography/Title";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import { EventAgendaStyles } from "./EventAgendaStyles";
 
 type Agenda = {

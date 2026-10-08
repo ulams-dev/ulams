@@ -8,7 +8,13 @@ on:
       - main
       - master
       - develop
+    paths: ["admin/**", "package.json", "yarn.lock", "turbo.json", "front/src/lib/**"]
   pull_request:
+    paths: ["admin/**", "package.json", "yarn.lock", "turbo.json", "front/src/lib/**"]
+
+defaults:
+  run:
+    working-directory: admin
 
 jobs:
   playwright-e2e:
@@ -89,7 +95,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Cache node modules
         id: cache-npm
@@ -99,7 +105,7 @@ jobs:
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
@@ -108,18 +114,18 @@ jobs:
       - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
         name: List the state of node modules
         continue-on-error: true
-        run: npm list
+        run: yarn list --depth=0
 
       - name: Node dependencies
-        run: npm i --legacy-peer-deps
+        run: yarn install --frozen-lockfile
 
       - name: Build
-        run: cp .env.ci .env && REACT_APP_API_URL=http://localhost npm run --openssl-legacy-provider build
+        run: cp .env.ci .env && REACT_APP_API_URL=http://localhost yarn build
 
       - name: Install Playwright
         run: npx playwright install --with-deps
       - name: Run your tests
-        run: npm run test:e2e
+        run: yarn test:e2e
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v2

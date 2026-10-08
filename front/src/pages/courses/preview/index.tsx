@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import Preloader from "@/components/_App/Preloader";
 import Layout from "@/components/_App/Layout";
-import { ScormPreview } from "@escolalms/scorm-player";
+import { ScormPreview } from "@lms/scorm-player";
 import CourseProgramLessonsPreview from "@/components/Courses/Course/CourseProgramLessonsPreview";
 import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";

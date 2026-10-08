@@ -1,6 +1,6 @@
 import ProfileLayout from "@/components/Profile/ProfileLayout";
 import { useTranslation } from "react-i18next";
-import { BookmarkNotes } from "@escolalms/components/lib/components/organisms/BookmarkNotes/index";
+import { BookmarkNotes } from "@lms/components/components/organisms/BookmarkNotes/index";
 import { useHistory } from "react-router-dom";
 import { toast } from "@/utils/toast";
 

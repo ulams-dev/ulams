@@ -1,15 +1,15 @@
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
-import { PricingCard } from "@escolalms/components/lib/components/atoms/PricingCard/PricingCard";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { PricingCard } from "@lms/components/components/atoms/PricingCard/PricingCard";
 import React, { useCallback, useContext, useMemo } from "react";
-import { CartItem, Consultation } from "@escolalms/sdk/lib/types";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
-import { IconText } from "@escolalms/components/lib/components/atoms/IconText/IconText";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { CartItem, Consultation } from "@lms/sdk/types";
+import { Button } from "@lms/components/components/atoms/Button/Button";
+import { IconText } from "@lms/components/components/atoms/IconText/IconText";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import { IconBadge, IconQuestion, IconTime } from "../../../icons";
 import { formatPrice } from "@/utils/index";
 import isPast from "date-fns/isPast";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import { useHistory } from "react-router-dom";
 import {
   StyledConsultationSidebar,

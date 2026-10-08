@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import { useHistory } from "react-router-dom";
 import Layout from "@/components/_App/Layout";
 import { isMobile } from "react-device-detect";
 import { useLocation } from "react-router-dom";
-import { ResetPasswordForm } from "@escolalms/components/lib/components/organisms/ResetPasswordForm/ResetPasswordForm";
-import { LoginForm } from "@escolalms/components/lib/components/organisms/LoginForm/LoginForm";
+import { ResetPasswordForm } from "@lms/components/components/organisms/ResetPasswordForm/ResetPasswordForm";
+import { LoginForm } from "@lms/components/components/organisms/LoginForm/LoginForm";
 import { useTranslation } from "react-i18next";
 import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";

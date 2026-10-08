@@ -1,5 +1,5 @@
 import React from "react";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { useTranslation } from "react-i18next";
 import { getTopicType } from "../../../../utils";
 

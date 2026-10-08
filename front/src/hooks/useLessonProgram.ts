@@ -1,11 +1,11 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { API } from "@escolalms/sdk/lib";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { API } from "@lms/sdk";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import {
   getFlatLessons,
   getFlatTopics,
-} from "@escolalms/components/lib/utils/course";
+} from "@lms/components/utils/course";
 
 export function useLessonProgram(
   program: API.CourseProgram,

@@ -1,10 +1,10 @@
 import { FC, useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { Tags } from "@escolalms/components/lib/components/molecules/Tags/Tags";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { Tags } from "@lms/components/components/molecules/Tags/Tags";
 import { isMobile } from "react-device-detect";
 import { useTheme } from "styled-components";
-// import { Tag } from "@escolalms/sdk/lib/types";
+// import { Tag } from "@lms/sdk/types";
 
 interface TagsSelectFilterProps {
   selectedTags?: string[];

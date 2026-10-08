@@ -1,0 +1,39 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "stream",
+  "envMode": "loose",
+  "globalDependencies": [".nvmrc"],
+  "tasks": {
+    "build": {
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "env": ["VITE_*", "REACT_APP_*", "SENTRY_*", "BASE_PATH", "UMI_ENV"],
+      "outputs": ["dist/**"]
+    },
+    "admin#build": {
+      "inputs": ["$TURBO_DEFAULT$", ".env*", "$TURBO_ROOT$/front/src/lib/**"],
+      "env": ["REACT_APP_*", "SENTRY_*", "BASE_PATH", "UMI_ENV"],
+      "outputs": ["dist/**"]
+    },
+    "typecheck": {
+      "outputs": []
+    },
+    "admin#typecheck": {
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/front/src/lib/**"],
+      "outputs": []
+    },
+    "lint": {
+      "outputs": []
+    },
+    "test": {
+      "outputs": ["coverage/**"]
+    },
+    "admin#test": {
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/front/src/lib/**"],
+      "outputs": ["coverage/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": ["ES2021", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
 
@@ -20,11 +20,27 @@
     /* Linting */
     "strict": true,
 
-    "types": ["vite/client"]
-  },
-  "exclude": ["components"],
-  "include": ["src", "node_modules/@escolalms/ts-models"],
+    "types": ["vite/client"],
 
-  "references": [{ "path": "./tsconfig.node.json" }],
-  "extends": "./tsconfig.paths.json"
+    /* Path aliases (resolved by vite-tsconfig-paths in vite.config.mjs) */
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": ["src/components/*"],
+      "@/utils/*": ["src/utils/*"],
+      "@/config/*": ["src/config/*"],
+      "@/types/*": ["src/types/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/icons/*": ["src/icons/*"],
+      "@/pages/*": ["src/pages/*"],
+      "@lms/components": ["src/lib/components/index.ts"],
+      "@lms/components/*": ["src/lib/components/*"],
+      "@lms/sdk": ["src/lib/sdk/index.ts"],
+      "@lms/sdk/*": ["src/lib/sdk/*"],
+      "@lms/scorm-player": ["src/lib/scorm-player/index.ts"],
+      "@lms/scorm-player/*": ["src/lib/scorm-player/*"]
+    }
+  },
+  "include": ["src"],
+
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

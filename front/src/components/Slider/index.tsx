@@ -1,6 +1,6 @@
 import React, { ReactNode, useState } from "react";
 import styled from "styled-components";
-import { Slider as SliderLMS } from "@escolalms/components/lib/components/atoms/Slider/Slider";
+import { Slider as SliderLMS } from "@lms/components/components/atoms/Slider/Slider";
 import { Settings } from "react-slick";
 
 const Content = styled.div`

@@ -1,0 +1,16 @@
+# dependencies (one root yarn.lock; workspaces may still get nested node_modules)
+node_modules/
+
+# turborepo
+.turbo/
+
+# logs and OS noise
+*.log
+.DS_Store
+.idea/
+.vscode/
+
+# local secrets (e.g. the Anthropic API key)
+.env
+.env.*
+!.env.example

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Spin } from "@escolalms/components/lib/components/atoms/Spin/Spin";
+import { Spin } from "@lms/components/components/atoms/Spin/Spin";
 import { useTheme } from "styled-components";
 import { Col, Row } from "react-grid-system";
 import Pagination from "@/components/Common/Pagination";

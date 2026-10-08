@@ -4,7 +4,7 @@ declare const REACT_APP_API_URL: string;
 
 // @ts-ignore
 import { ReportBro } from 'reportbro-designer';
-import '../../../node_modules/reportbro-designer/dist/reportbro.css';
+import 'reportbro-designer/dist/reportbro.css';
 import './index.css';
 
 import type { ReportBroTemplate } from './types';

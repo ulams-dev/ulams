@@ -1,0 +1,26 @@
+{
+  // Separate TypeScript project for the vendored markdown-editor, using its upstream (b747a1d)
+  // settings: non-strict, strictNullChecks on. admin/tsconfig.json references this project, so
+  // admin's strict typecheck consumes the generated declarations instead of re-checking these
+  // sources under admin's stricter options. Built by `yarn typecheck` (tsc -b) in admin.
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "../../../node_modules/.cache/lms-markdown-editor",
+    "rootDir": ".",
+    "strict": false,
+    "strictNullChecks": true,
+    "noImplicitAny": false,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "target": "es2018",
+    "lib": ["dom", "dom.iterable", "es2019"],
+    "jsx": "react",
+    "types": ["react"]
+  },
+  "include": ["./**/*"]
+}

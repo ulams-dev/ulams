@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { toast } from "@/utils/toast";
 import routeRoutes from "@/components/Routes/routes";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 
 const useDeleteAccountModal = () => {
   const [loading, setLoading] = useState(false);

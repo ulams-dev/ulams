@@ -1,12 +1,12 @@
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { FC } from "react";
 import { Container } from "./styles";
 
-import { Avatar } from "@escolalms/components/lib/components/atoms/Avatar/Avatar";
-import { Row } from "@escolalms/components/lib/components/atoms/Row/index";
-import { Stack } from "@escolalms/components/lib/components/atoms/Stack/index";
+import { Avatar } from "@lms/components/components/atoms/Avatar/Avatar";
+import { Row } from "@lms/components/components/atoms/Row/index";
+import { Stack } from "@lms/components/components/atoms/Stack/index";
 import { APP_CONFIG } from "@/config/app";
 import { formatDate } from "@/utils/date";
 

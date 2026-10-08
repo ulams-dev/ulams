@@ -1,5 +1,6 @@
 // https://umijs.org/config/
 import { defineConfig } from '@umijs/max';
+import path from 'path';
 import defaultSettings from './defaultSettings';
 //import proxy from './proxy';
 import routes from './routes';
@@ -159,5 +160,15 @@ export default defineConfig({
       typeof REACT_APP_SENTRY_RELEASE !== 'undefined' ? REACT_APP_SENTRY_RELEASE : '',
   },
   devtool: 'source-map',
+  /**
+   * Vendored libraries (provenance: README.md in each src/lib/<name> folder).
+   * scorm-player and ts-models live once in front/src/lib and are shared with admin.
+   * Keep in sync with "paths" in tsconfig.json.
+   */
+  alias: {
+    '@lms/gift-pegjs': path.resolve(__dirname, '../src/lib/gift-pegjs'),
+    '@lms/markdown-editor': path.resolve(__dirname, '../src/lib/markdown-editor'),
+    '@lms/scorm-player': path.resolve(__dirname, '../../front/src/lib/scorm-player'),
+  },
   plugins: [require.resolve('./plugin-scorm.ts')],
 });

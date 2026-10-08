@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import EventDetailsSidebar from "@/components/Events/Event/EventDetailsSidebar";
 import { DetailsSidebarContainer } from "@/components/DetailsSidebarContainer";
 

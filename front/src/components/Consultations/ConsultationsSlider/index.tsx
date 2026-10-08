@@ -1,10 +1,10 @@
 import { Settings } from "react-slick";
 import { SectionConsultationsSlider } from "@/components/Consultations/ConsultationsSlider/styles";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 import { Col, Row } from "react-grid-system";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import ConsultationCard from "@/components/Consultations/ConsultationCard";
-import { Slider } from "@escolalms/components/lib/components/atoms/Slider/Slider";
+import { Slider } from "@lms/components/components/atoms/Slider/Slider";
 import { useState } from "react";
 
 interface ConsultationsSliderProps {

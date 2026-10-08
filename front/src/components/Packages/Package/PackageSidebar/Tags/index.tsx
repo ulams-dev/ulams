@@ -1,7 +1,7 @@
 import { useContext, useMemo } from "react";
 import { Row } from "react-grid-system";
 import styled from "styled-components";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import { groupProductablesByType, ProductableEnum } from "@/utils/productables";
 import { PackageSidebarTag } from "./Tag";
 

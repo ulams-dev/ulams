@@ -4,12 +4,12 @@ import React, {
   useContext,
   useState,
 } from "react";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { Button } from "@lms/components/components/atoms/Button/Button";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import styled, { css } from "styled-components";
 import { useTranslation } from "react-i18next";
 import { ResizeIcon } from "../../../../icons";
-import { ScormPreview } from "@escolalms/scorm-player";
+import { ScormPreview } from "@lms/scorm-player";
 
 const StyledDiv = styled.div<{ fullview: boolean }>`
   > button {

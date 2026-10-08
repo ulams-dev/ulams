@@ -1,4 +1,4 @@
-import { getStylesBasedOnTheme } from "@escolalms/components/lib/utils/utils";
+import { getStylesBasedOnTheme } from "@lms/components/utils/utils";
 import styled, { css } from "styled-components";
 
 export const CartPageStyled = styled.section<{ $isMobile: boolean }>`

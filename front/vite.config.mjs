@@ -43,8 +43,13 @@ export default defineConfig(({ mode }) => {
             url: "https://escolasoft.sentry.io",
           })
         : undefined,
-      visualizer({ open: true }),
+      // set ANALYZE=1 to open the bundle report after build
+      visualizer({ open: !!process.env.ANALYZE }),
     ],
+    // web workers (src/workers) are bundled separately and need the same @/… and @lms/… aliases
+    worker: {
+      plugins: () => [viteTsconfigPaths()],
+    },
     server: {
       open: true,
       port: 3000,

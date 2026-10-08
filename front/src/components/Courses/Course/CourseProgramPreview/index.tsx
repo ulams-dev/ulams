@@ -1,15 +1,15 @@
 import React, { useContext, useMemo } from "react";
-import { API } from "@escolalms/sdk/lib";
-import { TopicType } from "@escolalms/sdk/lib/services/courses";
-import { OEmbedPlayer } from "@escolalms/components/lib/components/players/OEmbedPlayer/OEmbedPlayer";
-import { AudioVideoPlayer } from "@escolalms/components/lib/components/players/AudioVideoPlayer/AudioVideoPlayer";
-import { PdfPlayer } from "@escolalms/components/lib/components/players/PdfPlayer/PdfPlayer";
-import { MarkdownPlayer } from "@escolalms/components/lib/components/players/MarkdownPlayer/MarkdownPlayer";
-import { ImagePlayer } from "@escolalms/components/lib/components/players/ImagePlayer/ImagePlayer";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { H5Player } from "@escolalms/components/lib/components/players/H5Player/H5Player";
-import GiftQuizPlayer from "@escolalms/components/lib/components/quizzes";
-import { ScormPreview } from "@escolalms/scorm-player";
+import { API } from "@lms/sdk";
+import { TopicType } from "@lms/sdk/services/courses";
+import { OEmbedPlayer } from "@lms/components/components/players/OEmbedPlayer/OEmbedPlayer";
+import { AudioVideoPlayer } from "@lms/components/components/players/AudioVideoPlayer/AudioVideoPlayer";
+import { PdfPlayer } from "@lms/components/components/players/PdfPlayer/PdfPlayer";
+import { MarkdownPlayer } from "@lms/components/components/players/MarkdownPlayer/MarkdownPlayer";
+import { ImagePlayer } from "@lms/components/components/players/ImagePlayer/ImagePlayer";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { H5Player } from "@lms/components/components/players/H5Player/H5Player";
+import GiftQuizPlayer from "@lms/components/components/quizzes";
+import { ScormPreview } from "@lms/scorm-player";
 
 export const CourseProgramPreview: React.FC<{
   topic: API.Topic;

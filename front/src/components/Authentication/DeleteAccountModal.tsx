@@ -1,6 +1,6 @@
-import { Modal } from "@escolalms/components/lib/components/atoms/Modal/Modal";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { Modal } from "@lms/components/components/atoms/Modal/Modal";
+import { Button } from "@lms/components/components/atoms/Button/Button";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 

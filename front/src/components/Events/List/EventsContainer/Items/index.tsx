@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { EventsContext } from "@/components/Events/List/EventsContext";
-import { Spin } from "@escolalms/components/lib/components/atoms/Spin/Spin";
+import { Spin } from "@lms/components/components/atoms/Spin/Spin";
 import { useTheme } from "styled-components";
 import { Col, Row } from "react-grid-system";
 import EventsContainerItem from "./Item";

@@ -1,5 +1,5 @@
-import Modal from "@escolalms/components/lib/components/atoms/Modal/Modal";
-import { API } from "@escolalms/sdk/lib";
+import Modal from "@lms/components/components/atoms/Modal/Modal";
+import { API } from "@lms/sdk";
 import ProposedTermsContent from "./ProposedTermsContent";
 import UserSelectDatePicker from "./UserSelectDatePicker";
 

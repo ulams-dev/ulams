@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import PricingCard from "@escolalms/components/lib/components/atoms/PricingCard/PricingCard";
-import { IconText } from "@escolalms/components/lib/components/atoms/IconText/IconText";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import PricingCard from "@lms/components/components/atoms/PricingCard/PricingCard";
+import { IconText } from "@lms/components/components/atoms/IconText/IconText";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import ProductPrices from "@/components/ProductPrices";
 import { DetailsSidebarContainer } from "@/components/DetailsSidebarContainer";
 import { IconTime, IconSquares } from "@/icons/index";

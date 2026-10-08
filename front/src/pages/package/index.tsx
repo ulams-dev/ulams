@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 
 import Layout from "@/components/_App/Layout";
 import Container from "@/components/Common/Container";

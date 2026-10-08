@@ -1,18 +1,18 @@
 import React, { useContext, useEffect, useMemo } from "react";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import styled from "styled-components";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
-import { PageListItem, PaginatedMetaList } from "@escolalms/sdk/lib/types";
-import { Link as LmsLink } from "@escolalms/components/lib/components/atoms/Link/Link";
+import { PageListItem, PaginatedMetaList } from "@lms/sdk/types";
+import { Link as LmsLink } from "@lms/components/components/atoms/Link/Link";
 import { Link } from "react-router-dom";
 import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";
 import { WellmsLogo } from "@/icons/index";
 import GoTop from "@/components/_App/GoTop";
-import { getStylesBasedOnTheme } from "@escolalms/components/lib/utils/utils";
-import { MarkdownRenderer } from "@escolalms/components/lib/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { getStylesBasedOnTheme } from "@lms/components/utils/utils";
+import { MarkdownRenderer } from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
 import { EU_BANNER_LINK } from "@/utils/constants";
 import EuBanner from "../../../images/eu-banner.png";
 

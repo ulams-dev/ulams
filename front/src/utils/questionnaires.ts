@@ -1,6 +1,6 @@
 import { QuestionType, QuestionnaireModelType } from "@/types/questionnaire";
 import { toast } from "@/utils/toast";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { t } from "i18next";
 
 type getQuestionnaireProps = {

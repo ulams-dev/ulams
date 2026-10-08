@@ -1,7 +1,7 @@
 import { ExportOutlined, MenuOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import { ProTable } from '@ant-design/pro-table';
-import { parse } from '@escolalms/gift-pegjs';
+import { parse } from '@lms/gift-pegjs';
 import { Button, Drawer, message } from 'antd';
 import { arrayMoveImmutable } from 'array-move';
 import React, { useCallback, useEffect, useRef, useState } from 'react';

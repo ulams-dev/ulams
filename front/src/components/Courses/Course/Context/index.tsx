@@ -8,8 +8,8 @@ import React, {
 
 import { useHistory, useParams } from "react-router-dom";
 import { isAfter } from "date-fns";
-import { API } from "@escolalms/sdk/lib";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { API } from "@lms/sdk";
+import { EscolaLMSContext } from "@lms/sdk/react";
 
 import {
   getFlatLessons,

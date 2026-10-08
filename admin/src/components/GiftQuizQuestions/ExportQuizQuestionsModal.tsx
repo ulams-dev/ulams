@@ -1,5 +1,5 @@
 import ProForm, { ModalForm, ProFormSelect } from '@ant-design/pro-form';
-import { parse } from '@escolalms/gift-pegjs';
+import { parse } from '@lms/gift-pegjs';
 import React, { useCallback, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
 

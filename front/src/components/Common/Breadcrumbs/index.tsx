@@ -1,5 +1,5 @@
 import React from "react";
-import { BreadCrumbs } from "@escolalms/components/lib/components/atoms/BreadCrumbs/BreadCrumbs";
+import { BreadCrumbs } from "@lms/components/components/atoms/BreadCrumbs/BreadCrumbs";
 import styled from "styled-components";
 
 type Props = {

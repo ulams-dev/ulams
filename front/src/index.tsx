@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { EscolaLMSContextProvider } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContextProvider } from "@lms/sdk/react/context";
 import App from "./App";
 import WebFont from "webfontloader";
 import "./i18n";
 import "./sentry";
-import { GlobalThemeProvider } from "@escolalms/components/lib/theme/provider";
+import { GlobalThemeProvider } from "@lms/components/theme/provider";
 import { API_URL, VITE_APP_PUBLIC_IMG_URL } from "./config";
 
 declare global {

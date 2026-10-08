@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import styled from "styled-components";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 
 type Props = {
   title: string;

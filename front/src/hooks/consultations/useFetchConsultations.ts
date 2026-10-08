@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import {
   Consultation,
   CourseParams,
   PaginatedMetaList,
-} from "@escolalms/sdk/lib/types";
+} from "@lms/sdk/types";
 
 const useFetchConsultations = (params?: CourseParams, noAutoFech?: boolean) => {
   const [consultations, setConsultations] =

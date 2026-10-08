@@ -1,15 +1,15 @@
 import { Link, useParams } from "react-router-dom";
 import React, { useContext, useEffect } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import Preloader from "@/components/_App/Preloader";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import Breadcrumbs from "@/components/Common/Breadcrumbs";
 import { Col, Row } from "react-grid-system";
 import { useTranslation } from "react-i18next";
 import ConsultationHero from "@/components/Consultations/Consultation/ConsultationHero";
 import ConsultationSidebar from "@/components/Consultations/Consultation/ConsultationSidebar";
-import { MarkdownRenderer } from "@escolalms/components/lib/components/molecules/MarkdownRenderer/MarkdownRenderer";
-import { fixContentForMarkdown } from "@escolalms/components/lib/utils/components/markdown";
+import { MarkdownRenderer } from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { fixContentForMarkdown } from "@lms/components/utils/components/markdown";
 import {
   StyledDescription,
   StyledRelatedConsultations,
@@ -22,7 +22,7 @@ import SidebarSkeleton from "@/components/Skeletons/CoursePage/sidebar";
 import { StyledCoursePage } from "@/pages/courses/course/styles";
 import ConsultationPageContentSkeleton from "@/components/Skeletons/Consultation";
 import { CourseAuthor } from "@/pages/courses/course/Components";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 
 const Consultation = () => {
   const { t } = useTranslation();

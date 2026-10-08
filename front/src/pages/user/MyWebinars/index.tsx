@@ -1,10 +1,10 @@
 import { useContext, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import ProfileLayout from "@/components/Profile/ProfileLayout";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
-import { Tabs } from "@escolalms/components/lib/components/atoms/Tabs/Tabs";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { Tabs } from "@lms/components/components/atoms/Tabs/Tabs";
 import ProfileWebinars from "@/components/Profile/ProfileWebinars";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 
 export enum WebinarStatus {
   UPCOMING = "in_coming",

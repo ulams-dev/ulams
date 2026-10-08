@@ -1,4 +1,4 @@
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { useTranslation } from "react-i18next";
 import { addTimeToDate, extractTimeUnits } from "@/utils/date";
 import DateInfo, { DateInfoTypes } from "@/components/Common/DateInfo";

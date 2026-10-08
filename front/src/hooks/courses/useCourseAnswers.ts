@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { API } from "@escolalms/sdk/lib";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { API } from "@lms/sdk";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import { QuestionnaireModelType } from "../../types/questionnaire";
 import { useTranslation } from "react-i18next";
 import { toast } from "@/utils/toast";

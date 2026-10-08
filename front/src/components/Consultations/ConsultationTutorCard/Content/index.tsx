@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import ConsultationTutorCardContentUserInfo from "./UserInfo";
 import ConsultationTutorCardContentDateInfo from "./DateInfo";
 import TimeInfo from "@/components/Common/TimeInfo";

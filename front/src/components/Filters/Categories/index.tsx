@@ -2,9 +2,9 @@ import { FC, useContext } from "react";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import Categories from "@escolalms/components/lib/components/molecules/Categories/Categories";
-import Title from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import Categories from "@lms/components/components/molecules/Categories/Categories";
+import Title from "@lms/components/components/atoms/Typography/Title";
 
 interface CategoriesFilterProps {
   selectedCategories: number[];

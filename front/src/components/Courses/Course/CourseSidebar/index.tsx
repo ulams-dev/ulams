@@ -1,15 +1,15 @@
 import React, { useContext, useState, useMemo } from "react";
 import { t } from "i18next";
 import { isAfter } from "date-fns";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { useHistory } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import styled, { css } from "styled-components";
-import { CourseAgenda } from "@escolalms/components/lib/components/organisms/CourseAgenda/CourseAgenda";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { getFlatTopics } from "@escolalms/components/lib/utils/course";
+import { CourseAgenda } from "@lms/components/components/organisms/CourseAgenda/CourseAgenda";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { getFlatTopics } from "@lms/components/utils/course";
 import { useLessonProgram } from "@/hooks/useLessonProgram";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
+import { Button } from "@lms/components/components/atoms/Button/Button";
 import { userIsCourseAuthor } from "@/utils/index";
 
 const StyledSidebar = styled.aside`

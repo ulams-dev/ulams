@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import Layout from "@/components/_App/Layout";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 import { useTranslation } from "react-i18next";
-import { Spin } from "@escolalms/components/lib/components/atoms/Spin/Spin";
+import { Spin } from "@lms/components/components/atoms/Spin/Spin";
 
 const StyledDiv = styled.div`
   display: flex;

@@ -1,8 +1,8 @@
 import { FC, useCallback, useContext } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import styled, { css } from "styled-components";
 import { isMobile } from "react-device-detect";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import { CloseIcon } from "../../../icons";
 import { FiltersState } from "@/types/filters";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import { Link } from "react-router-dom";
 
 const StyledPagination = styled.div`

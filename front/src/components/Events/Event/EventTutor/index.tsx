@@ -2,9 +2,9 @@ import { useContext } from "react";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
-import { Tutor } from "@escolalms/components/lib/components/molecules/Tutor/Tutor";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Tutor } from "@lms/components/components/molecules/Tutor/Tutor";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import { EventTutorStyles } from "./EventTutorStyles";
 import { API_URL } from "@/config/index";
 

@@ -1,0 +1,14 @@
+# Used by BuildKit for `docker build -f admin/Dockerfile .` (context = repo root)
+.git
+**/node_modules
+**/dist
+**/.turbo
+**/.env
+admin/src/.umi
+admin/src/.umi-production
+admin/test-results
+api
+!api/package.json
+front
+!front/package.json
+!front/src/lib

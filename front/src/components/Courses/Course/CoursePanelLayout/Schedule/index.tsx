@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { isMobile } from "react-device-detect";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { CourseAgenda } from "@escolalms/components/lib/components/organisms/CourseAgenda/CourseAgenda";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { CourseAgenda } from "@lms/components/components/organisms/CourseAgenda/CourseAgenda";
 import {
   CourseScheduleContent,
   CourseScheduleTitle,

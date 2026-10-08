@@ -6,8 +6,8 @@ import type {
   Numerical,
   ShortAnswer,
   TrueFalse,
-} from '@escolalms/gift-pegjs';
-import { parse } from '@escolalms/gift-pegjs';
+} from '@lms/gift-pegjs';
+import { parse } from '@lms/gift-pegjs';
 
 import { QuestionType } from '@/services/escola-lms/enums';
 import type {

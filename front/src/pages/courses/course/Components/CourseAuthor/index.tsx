@@ -1,8 +1,8 @@
 import { FC } from "react";
 // import { Link } from "react-router-dom";
 import { isMobile } from "react-device-detect";
-import { Tutor } from "@escolalms/components/lib/components/molecules/Tutor/Tutor";
-import { API } from "@escolalms/sdk/lib";
+import { Tutor } from "@lms/components/components/molecules/Tutor/Tutor";
+import { API } from "@lms/sdk";
 import { APP_CONFIG } from "@/config/app";
 import { API_URL } from "@/config/index";
 import { Col } from "react-grid-system";

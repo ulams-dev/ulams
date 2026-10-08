@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
-import { Badge } from "@escolalms/components/lib/components/atoms/Badge/Badge";
-import { API } from "@escolalms/sdk/lib";
+import { Badge } from "@lms/components/components/atoms/Badge/Badge";
+import { API } from "@lms/sdk";
 
 const StyledDiv = styled("div")`
   align-self: end;

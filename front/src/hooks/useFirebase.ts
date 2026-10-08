@@ -1,11 +1,11 @@
 import { useContext, useEffect } from "react";
 import { FirebaseMessaging } from "@capacitor-firebase/messaging";
 import { LocalNotifications } from "@capacitor/local-notifications";
-import { notyficationTokens } from "@escolalms/sdk/lib/services/notify";
+import { notyficationTokens } from "@lms/sdk/services/notify";
 import { initializeApp } from "firebase/app";
 import { API_URL, VITE_APP_FIREBASE_VAPID_KEY } from "@/config/index";
 import { firebaseConfig } from "@/utils/firebase";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 
 export const useFirebase = () => {
   const { token } = useContext(EscolaLMSContext);

@@ -6,19 +6,19 @@ import React, {
   useState,
 } from "react";
 import styled from "styled-components";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import isPast from "date-fns/isPast";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { Capacitor } from "@capacitor/core";
 import { Purchases } from "@revenuecat/purchases-capacitor";
 import { VITE_APP_ANDROID_APIKEY, VITE_APP_IOS_APIKEY } from "@/config/index";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
-import { API } from "@escolalms/sdk/lib";
+import { Button } from "@lms/components/components/atoms/Button/Button";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { API } from "@lms/sdk";
 import { isMobilePlatform, userIsCourseAuthor } from "@/utils/index";
 import routeRoutes from "@/components/Routes/routes";
-import { Modal } from "@escolalms/components/lib/components/atoms/Modal/Modal";
+import { Modal } from "@lms/components/components/atoms/Modal/Modal";
 import ProductModal from "@/components/Courses/SingleCoursesTwo/CoursesDetailsSidebar/ProductModal";
 import useSubscriptions from "@/hooks/useSubscriptions";
 import {

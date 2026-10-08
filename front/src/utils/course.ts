@@ -1,4 +1,4 @@
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 
 export const getFlatLessons = (lessons: API.Lesson[]): API.Lesson[] =>
   lessons.reduce<API.Lesson[]>(

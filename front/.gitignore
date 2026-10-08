@@ -17,3 +17,6 @@ ios
 public/firebase-messaging-sw.js
 # Sentry Config File
 .env.sentry-build-plugin
+
+# rollup-plugin-visualizer report (set ANALYZE=1 to open it)
+stats.html

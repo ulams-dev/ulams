@@ -1,9 +1,9 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import RateCourse from "@/components/Courses/RateCourse";
 import { QuestionnaireModelType } from "@/types/questionnaire";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import { useQuestionnaires } from "@/hooks/questionnaires";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { useRoles } from "@/hooks/useRoles";
 import { metaDataKeys } from "@/utils/meta";
 

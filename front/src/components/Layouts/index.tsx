@@ -1,6 +1,6 @@
 import Container from "@/components/Common/Container";
 import styled from "styled-components";
-import { Title } from "@escolalms/components/lib/index";
+import { Title } from "@lms/components";
 
 const Wrapper = styled.section`
   padding-top: 31px;

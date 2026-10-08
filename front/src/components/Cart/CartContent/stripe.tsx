@@ -2,18 +2,18 @@ import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/_App/Layout";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
-import { CheckoutCard } from "@escolalms/components/lib/components/molecules/CheckoutCard/CheckoutCard";
-import { CartCard } from "@escolalms/components/lib/components/molecules/CartCard/CartCard";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
-import { Link as ComponentLink } from "@escolalms/components/lib/components/atoms/Link/Link";
-import { CartItem } from "@escolalms/sdk/lib/types";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { CheckoutCard } from "@lms/components/components/molecules/CheckoutCard/CheckoutCard";
+import { CartCard } from "@lms/components/components/molecules/CartCard/CartCard";
+import { Button } from "@lms/components/components/atoms/Button/Button";
+import { Link as ComponentLink } from "@lms/components/components/atoms/Link/Link";
+import { CartItem } from "@lms/sdk/types";
 import { isMobile } from "react-device-detect";
 import Preloader from "@/components/_App/Preloader";
 import Collapse from "@/components/Common/Collapse";
 import PaymentForm from "@/components/Cart/PaymentForm";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import {
   useStripe,
   useElements,

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { API } from "@escolalms/sdk/lib";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { API } from "@lms/sdk";
 
 type PogressState = {
   data: API.CourseProgressDetails | undefined;

@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import { StyledTitle } from "../styles";
 import { useCourseRatingContext } from "../Provider";
 import { CourseRatingsQuestionnairesContent } from "./Content";

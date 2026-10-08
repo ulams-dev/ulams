@@ -1,5 +1,5 @@
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { Notification } from "@escolalms/sdk/lib/types";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { Notification } from "@lms/sdk/types";
 import { useContext, useEffect, useState, useCallback } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 import debounce from "lodash.debounce";

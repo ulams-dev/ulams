@@ -1,10 +1,10 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
-import { Navigation } from "@escolalms/components/lib/components/molecules/Navigation/Navigation";
-import { Avatar } from "@escolalms/components/lib/components/atoms/Avatar/Avatar";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
-import { SearchCourses } from "@escolalms/components/lib/components/organisms/SearchCourses/SearchCourses";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { Navigation } from "@lms/components/components/molecules/Navigation/Navigation";
+import { Avatar } from "@lms/components/components/atoms/Avatar/Avatar";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { SearchCourses } from "@lms/components/components/organisms/SearchCourses/SearchCourses";
 import { Link, NavLink, useHistory } from "react-router-dom";
 import styled, { useTheme } from "styled-components";
 import { isMobile } from "react-device-detect";
@@ -15,14 +15,14 @@ import {
   ProfileIcon,
 } from "../../../icons";
 import { useTranslation } from "react-i18next";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
+import { Button } from "@lms/components/components/atoms/Button/Button";
 import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";
-import { DropdownMenu } from "@escolalms/components/lib/index";
-import { DropdownMenuItem } from "@escolalms/components/lib/components/molecules/DropdownMenu/DropdownMenu";
+import { DropdownMenu } from "@lms/components";
+import { DropdownMenuItem } from "@lms/components/components/molecules/DropdownMenu/DropdownMenu";
 import NotificationsDrawer from "@/components/Notifications/drawer";
 import MobileDrawer from "@/components/_App/MobileDrawer";
-import { ResponsiveImage } from "@escolalms/components/lib/components/organisms/ResponsiveImage/ResponsiveImage";
+import { ResponsiveImage } from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import useDeleteAccountModal from "@/hooks/useDeleteAccount";
 import DeleteAccountModal from "@/components/Authentication/DeleteAccountModal";
 import { isMobilePlatform } from "@/utils/index";

@@ -4,10 +4,10 @@ import {
   OnboardingStepType,
 } from "@/components/Onboarding";
 import SlideOption from "@/components/Onboarding/Step/slide";
-import ResponsiveImage from "@escolalms/components/lib/components/organisms/ResponsiveImage/ResponsiveImage";
-import { Radio, Text, Title } from "@escolalms/components/lib/index";
-import { getStylesBasedOnTheme } from "@escolalms/components/lib/utils/utils";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import ResponsiveImage from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
+import { Radio, Text, Title } from "@lms/components";
+import { getStylesBasedOnTheme } from "@lms/components/utils/utils";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import { useCallback, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";

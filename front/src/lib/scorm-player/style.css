@@ -1,0 +1,30 @@
+.scorm-error {
+  color: red;
+}
+
+.scorm-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.scorm-loader {
+  width: 48px;
+  height: 48px;
+  border: 3px solid #fff;
+  border-bottom-color: grey;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  margin: 0px auto !important;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

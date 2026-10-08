@@ -1,4 +1,4 @@
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import { useContext, useEffect, useMemo } from "react";
 
 export function usePages() {

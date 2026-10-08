@@ -1,9 +1,9 @@
 import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
-import Image from "@escolalms/sdk/lib/react/components/Image";
-import { API } from "@escolalms/sdk/lib";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
+import Image from "@lms/sdk/react/components/Image";
+import { API } from "@lms/sdk";
 
 const Sidebar = () => {
   const { t } = useTranslation();

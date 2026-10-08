@@ -15,13 +15,13 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import { useMeetingSockets } from "@/hooks/useAnalyticsWebsockets";
 import { ConsultationModalContext } from "@/components/Consultations/ConsultationCard/Buttons/context";
 import { useRoles } from "@/hooks/useRoles";
 import { DataPoint, EMOTION_POOL, EmotionHistory } from "@/types/sockets";
 import { useTranslation } from "react-i18next";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { useJitsyAnalyticsControl } from "@/hooks/meeting/useJitsyAnalyticsControl";
 
 const getColorByValue = (val: number) => {

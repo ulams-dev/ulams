@@ -1,5 +1,5 @@
-import { Stack } from "@escolalms/components/lib/components/atoms/Stack/index";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { Stack } from "@lms/components/components/atoms/Stack/index";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 import styled from "styled-components";
 
 export const StyledStack = styled(Stack)`

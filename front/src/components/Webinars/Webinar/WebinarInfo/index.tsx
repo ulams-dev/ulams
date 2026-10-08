@@ -2,11 +2,11 @@ import { useContext } from "react";
 import { Row, Col } from "react-grid-system";
 import { useTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
-import Title from "@escolalms/components/lib/components/atoms/Typography/Title";
-import ResponsiveImage from "@escolalms/components/lib/components/organisms/ResponsiveImage/ResponsiveImage";
-import LabelListItem from "@escolalms/components/lib/components/molecules/LabelListItem/LabelListItem";
+import Title from "@lms/components/components/atoms/Typography/Title";
+import ResponsiveImage from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
+import LabelListItem from "@lms/components/components/molecules/LabelListItem/LabelListItem";
 import { formatDate } from "@/utils/date";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import { WebinarInfoStyles } from "./WebinarInfoStyles";
 import { Medal, StarOrange, ThumbUp } from "../../../../icons";
 

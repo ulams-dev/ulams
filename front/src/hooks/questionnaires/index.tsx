@@ -1,9 +1,9 @@
 import { useCallback, useContext, useState } from "react";
 import { QuestionType } from "@/types/questionnaire";
 import { toast } from "@/utils/toast";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { t } from "i18next";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 
 type UseQuestionnairesProps = {
   entityId: number;

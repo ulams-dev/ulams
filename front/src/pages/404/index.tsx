@@ -2,9 +2,9 @@ import Layout from "@/components/_App/Layout";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { Button } from "@lms/components/components/atoms/Button/Button";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";
 

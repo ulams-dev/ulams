@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { API } from "@escolalms/sdk/lib";
-import ResponsiveImage from "@escolalms/components/lib/components/organisms/ResponsiveImage/ResponsiveImage";
+import { API } from "@lms/sdk";
+import ResponsiveImage from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import CourseImgPlaceholder from "../../../Courses/CourseImgPlaceholder";
 
 interface Props {

@@ -6,8 +6,8 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { Responsive, WidthProvider, type Layout } from 'react-grid-layout';
 import { useModel } from 'umi';
 
-import '../../../node_modules/react-grid-layout/css/styles.css';
-import '../../../node_modules/react-resizable/css/styles.css';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 import Add from './Add';
 import CurrentUsers from './CurrentUsers';
 import Customers from './Customers';

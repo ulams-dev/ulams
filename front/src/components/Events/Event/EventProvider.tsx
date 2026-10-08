@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import { useParams } from "react-router-dom";
 
 export const EventContext: React.Context<{}> = React.createContext({});

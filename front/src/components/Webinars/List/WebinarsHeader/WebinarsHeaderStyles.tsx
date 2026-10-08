@@ -1,7 +1,7 @@
 import { FC, ReactNode, useContext } from "react";
 import { isMobile } from "react-device-detect";
 import styled from "styled-components";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { WebinarsContext } from "@/components/Webinars/List/WebinarsContext";
 
 interface WebinarsHeaderStylesProps {

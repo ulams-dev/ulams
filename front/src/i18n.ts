@@ -1,6 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import { resources as ComponentTranslations } from "@escolalms/components/lib/styleguide/i18n";
+import { resources as ComponentTranslations } from "@lms/components/styleguide/i18n";
 
 // the translations
 // (tip move them in a JSON file and import them,

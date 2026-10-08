@@ -1,10 +1,10 @@
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 
 import { useTranslation } from "react-i18next";
 
-import { ResponsiveImage } from "@escolalms/components/lib/components/organisms/ResponsiveImage/ResponsiveImage";
+import { ResponsiveImage } from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
 
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import { useContext } from "react";
 
 export const CourseCompanies = () => {

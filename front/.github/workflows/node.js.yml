@@ -3,8 +3,14 @@ name: static analysis
 on:
   push:
     branches: [main]
+    paths: ["front/**", "package.json", "yarn.lock", "turbo.json"]
   pull_request:
     types: [assigned, opened, synchronize, reopened]
+    paths: ["front/**", "package.json", "yarn.lock", "turbo.json"]
+
+defaults:
+  run:
+    working-directory: front
 
 jobs:
   static-analysis:
@@ -13,7 +19,7 @@ jobs:
     strategy:
       matrix:
         #node-version: [10.x, 12.x, 14.x, 15.x]
-        node-version: [20]
+        node-version: [22]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -24,10 +30,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install and Build
-        run: npm i
+        run: yarn install --frozen-lockfile
 
       - name: ESLint
-        run: ./node_modules/.bin/eslint --fix --max-warnings 25 src
+        run: yarn eslint --fix --max-warnings 25 src
 
       - name: TypeScript tsc
-        run: ./node_modules/.bin/tsc --project tsconfig.json --noEmit
+        run: yarn typecheck

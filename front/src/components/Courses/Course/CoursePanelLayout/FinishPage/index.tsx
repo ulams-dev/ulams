@@ -4,13 +4,13 @@ import { CoursePanelFinishPageCongrats } from "@/components/Courses/Course/Cours
 import { CongratsWrapper } from "@/components/Courses/Course/CoursePanelLayout/FinishPage/styles";
 import { QuestionnairesModal } from "@/components/Courses/Course/CoursePanelLayout/FinishPage/Rate";
 import { CoursePanelFinishPageCertificate } from "@/components/Courses/Course/CoursePanelLayout/FinishPage/Certificate";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import { useCoursePanel } from "@/components/Courses/Course/Context";
 import routeRoutes from "@/components/Routes/routes";
 import {
   Certificate,
   CertificateAssignableTypes,
-} from "@escolalms/sdk/lib/types";
+} from "@lms/sdk/types";
 
 import { QuestionnaireModelType } from "@/types/questionnaire";
 

@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import ResponsiveImage from "@escolalms/components/lib/components/organisms/ResponsiveImage/ResponsiveImage";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import ResponsiveImage from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import { CompaniesSectionStyles } from "./CompaniesSectionStyles";
 
 interface CompaniesSectionProps {

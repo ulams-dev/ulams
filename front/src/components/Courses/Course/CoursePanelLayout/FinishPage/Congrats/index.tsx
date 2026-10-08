@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { Button } from "@lms/components/components/atoms/Button/Button";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 import { CenteredWrapper } from "@/components/Courses/Course/CoursePanelLayout/FinishPage/styles";
 import { IconCongrats } from "@/icons/index";
 

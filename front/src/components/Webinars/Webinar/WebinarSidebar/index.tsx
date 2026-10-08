@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { isMobile } from "react-device-detect";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { PricingCard } from "@escolalms/components/lib/components/atoms/PricingCard/PricingCard";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { PricingCard } from "@lms/components/components/atoms/PricingCard/PricingCard";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 import { WebinarSidebarStyles } from "./WebinarSidebarStyles";
-import { IconText } from "@escolalms/components/lib/components/atoms/IconText/IconText";
+import { IconText } from "@lms/components/components/atoms/IconText/IconText";
 import { IconCamera, IconSquares } from "../../../../icons";
 import { useTranslation } from "react-i18next";
 import WebinarSidebarButtons from "./Buttons";

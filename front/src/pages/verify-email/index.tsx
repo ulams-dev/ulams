@@ -2,14 +2,14 @@ import React, { useContext, useEffect, useState, useCallback } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import Layout from "@/components/_App/Layout";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { Spin } from "@escolalms/components/lib/components/atoms/Spin/Spin";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { Spin } from "@lms/components/components/atoms/Spin/Spin";
 import { useTheme } from "styled-components";
 import routeRoutes from "@/components/Routes/routes";
 import { ThankYouIcon } from "@/icons/index";
 import styled from "styled-components";
-import { getStylesBasedOnTheme } from "@escolalms/components/lib/utils/utils";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { getStylesBasedOnTheme } from "@lms/components/utils/utils";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 
 const StyledEmailConfirmation = styled.div`
   background-color: ${({ theme }) => theme.gray4};

@@ -1,5 +1,5 @@
 import { toast } from "@/utils/toast";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import { useContext, useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 

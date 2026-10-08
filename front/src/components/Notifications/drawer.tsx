@@ -3,7 +3,7 @@ import Drawer from "rc-drawer";
 import { isMobile } from "react-device-detect";
 import Notifications from "@/components/Notifications";
 import { useContext } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 
 const GlobalDrawer = createGlobalStyle`
     .drawer-handle {

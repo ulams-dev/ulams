@@ -1,10 +1,10 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import ProfileLayout from "@/components/Profile/ProfileLayout";
-import { Orders as OrdersList } from "@escolalms/components/lib/components/molecules/Orders/Orders";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
-import { API } from "@escolalms/sdk/lib";
+import { Orders as OrdersList } from "@lms/components/components/molecules/Orders/Orders";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Button } from "@lms/components/components/atoms/Button/Button";
+import { API } from "@lms/sdk";
 import styled from "styled-components";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";

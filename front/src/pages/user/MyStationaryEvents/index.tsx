@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
-import { Tabs } from "@escolalms/components/lib/components/atoms/Tabs/Tabs";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { Tabs } from "@lms/components/components/atoms/Tabs/Tabs";
 import ProfileStationaryEvents from "@/components/Profile/ProfileStationaryEvents";
 
 import ProfileLayout from "@/components/Profile/ProfileLayout";

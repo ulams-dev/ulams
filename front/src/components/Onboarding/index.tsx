@@ -1,4 +1,4 @@
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import {
   useCallback,
   useContext,
@@ -12,11 +12,11 @@ import { Navigation, A11y, Pagination } from "swiper/modules";
 import { Swiper as SwiperType } from "swiper/types";
 import Container from "@/components/Common/Container";
 import Step from "@/components/Onboarding/Step";
-import { Button, Text, Title } from "@escolalms/components/lib/index";
+import { Button, Text, Title } from "@lms/components";
 import styled, { css } from "styled-components";
 import { Col } from "react-grid-system";
 import { useTranslation } from "react-i18next";
-import ResponsiveImage from "@escolalms/components/lib/components/organisms/ResponsiveImage/ResponsiveImage";
+import ResponsiveImage from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import { useHistory } from "react-router-dom";
 import routeRoutes from "@/components/Routes/routes";
 import "swiper/css";

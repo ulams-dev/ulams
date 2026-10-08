@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { useLocation, useHistory } from "react-router-dom";
 import qs from "query-string";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import { PackagesParams } from "@/types/params";
 import { PackagesContext } from "../PackagesContext";
 

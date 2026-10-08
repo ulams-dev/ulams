@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
+import { Button } from "@lms/components/components/atoms/Button/Button";
 import { ConsultationModalContext } from "@/components/Consultations/ConsultationCard/Buttons/context";
 
 interface Props {

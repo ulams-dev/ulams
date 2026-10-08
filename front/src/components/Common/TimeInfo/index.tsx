@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import { IconTime } from "../../../icons";
 
 const TimeInfoStyles = styled.div`

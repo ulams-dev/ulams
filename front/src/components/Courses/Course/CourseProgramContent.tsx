@@ -1,17 +1,17 @@
 import React, { useCallback, useContext, useEffect } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import { XAPIEvent } from "@escolalms/h5p-react";
 import TextPlayer from "./Players/TextPlayer";
-import { API } from "@escolalms/sdk/lib";
-import { ImagePlayer } from "@escolalms/components/lib/components/players/ImagePlayer/ImagePlayer";
-import { AudioVideoPlayer } from "@escolalms/components/lib/components/players/AudioVideoPlayer/AudioVideoPlayer";
-import { OEmbedPlayer } from "@escolalms/components/lib/components/players/OEmbedPlayer/OEmbedPlayer";
-import { H5Player } from "@escolalms/components/lib/components/players/H5Player/H5Player";
-import { PdfPlayer } from "@escolalms/components/lib/components/players/PdfPlayer/PdfPlayer";
-import { ProjectPlayer } from "@escolalms/components/lib/components/players/ProjectPlayer/ProjectPlayer";
+import { API } from "@lms/sdk";
+import { ImagePlayer } from "@lms/components/components/players/ImagePlayer/ImagePlayer";
+import { AudioVideoPlayer } from "@lms/components/components/players/AudioVideoPlayer/AudioVideoPlayer";
+import { OEmbedPlayer } from "@lms/components/components/players/OEmbedPlayer/OEmbedPlayer";
+import { H5Player } from "@lms/components/components/players/H5Player/H5Player";
+import { PdfPlayer } from "@lms/components/components/players/PdfPlayer/PdfPlayer";
+import { ProjectPlayer } from "@lms/components/components/players/ProjectPlayer/ProjectPlayer";
 import { isMobile } from "react-device-detect";
 import ScormPlayer from "./Players/ScormPlayer";
-import GiftQuizPlayer from "@escolalms/components/lib/components/quizzes";
+import GiftQuizPlayer from "@lms/components/components/quizzes";
 import { useCoursePanel } from "@/components/Courses/Course/Context";
 
 export const CourseProgramContent: React.FC<{

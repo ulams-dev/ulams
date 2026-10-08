@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import qs from "query-string";
 import { CoursesContext } from "./CoursesContext";
 import { COURSES_ON_PAGE } from "@/config/courses";

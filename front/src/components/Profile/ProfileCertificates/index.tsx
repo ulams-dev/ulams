@@ -1,13 +1,13 @@
 import React, { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { API } from "@escolalms/sdk/lib";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { API } from "@lms/sdk";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 import styled from "styled-components";
 import { PdfIcon } from "../../../icons";
 import { useCertificateDownload } from "@/hooks/useDownloadCertificate";
-import { CertificateCard } from "@escolalms/components/lib/index";
+import { CertificateCard } from "@lms/components";
 import { Col, Row } from "react-grid-system";
 import ContentLoader from "@/components/_App/ContentLoader";
 

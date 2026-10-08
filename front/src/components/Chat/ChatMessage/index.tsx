@@ -1,4 +1,4 @@
-import { Text } from "@escolalms/components/lib/index";
+import { Text } from "@lms/components";
 import styled from "styled-components";
 
 const StyledMessage = styled.div<{ $isAI: boolean }>`

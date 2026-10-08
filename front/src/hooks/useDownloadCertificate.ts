@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 
 export const useCertificateDownload = () => {
   const [loadingId, setLoadingId] = useState<number>(-1);

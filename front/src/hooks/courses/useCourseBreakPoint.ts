@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { API } from "@escolalms/sdk/lib";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { API } from "@lms/sdk";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 
 interface Props {
   courseId: number | undefined;

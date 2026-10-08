@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Input } from "@escolalms/components/lib/components/atoms/Input/Input";
+import { Input } from "@lms/components/components/atoms/Input/Input";
 import {
   CardCvcElement,
   CardExpiryElement,
@@ -8,7 +8,7 @@ import {
 import styled, { useTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
 import { Col, Row } from "react-grid-system";
-import { getFontFromTheme } from "@escolalms/components/lib/theme/provider";
+import { getFontFromTheme } from "@lms/components/theme/provider";
 
 type Props = {
   billingDetails: {

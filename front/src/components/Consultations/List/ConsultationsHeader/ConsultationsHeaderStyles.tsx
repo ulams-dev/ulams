@@ -1,7 +1,7 @@
 import { FC, ReactNode } from "react";
 import { isMobile } from "react-device-detect";
 import styled from "styled-components";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { useSearchParams } from "../../../../hooks/useSearchParams";
 
 interface ConsultationsHeaderStylesProps {

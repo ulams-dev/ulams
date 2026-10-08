@@ -1,14 +1,14 @@
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import React from "react";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 import { Link, useHistory } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import CourseImgPlaceholder from "@/components/Courses/CourseImgPlaceholder";
-import { ResponsiveImage } from "@escolalms/components/lib/components/organisms/ResponsiveImage/ResponsiveImage";
+import { ResponsiveImage } from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import CourseCardWrapper from "@/components/Courses/CourseCardWrapper";
 import CategoriesBreadCrumbs from "@/components/Categories/CategoriesBreadCrumbs";
 import { CourseCardActions } from "../../CourseCardActions";
-import { NewCourseCard } from "@escolalms/components/lib/index";
+import { NewCourseCard } from "@lms/components";
 import { isPast } from "date-fns/esm";
 
 type Props = {

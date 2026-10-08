@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { fixContentForMarkdown } from "@escolalms/components/lib/utils/components/markdown";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
-import MarkdownRenderer from "@escolalms/components/lib/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { fixContentForMarkdown } from "@lms/components/utils/components/markdown";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
+import MarkdownRenderer from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
 
 interface DescriptionSectionProps {
   description?: string | null;

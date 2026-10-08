@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import CategoriesSection from "../../../Categories/CategoriesSection";
 import WebinarsHeader from "../WebinarsHeader";
 import WebinarsContainerItems from "./Items";

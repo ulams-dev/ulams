@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { Modal } from "@escolalms/components/lib/components/atoms/Modal/Modal";
-import { JitsyData } from "@escolalms/sdk/lib/types";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { Modal } from "@lms/components/components/atoms/Modal/Modal";
+import { JitsyData } from "@lms/sdk/types";
 import ContentLoader from "@/components/_App/ContentLoader";
 import { WebinarMeetModalStyles } from "./WebinarMeetModalStyles";
 import { useTranslation } from "react-i18next";
@@ -11,7 +11,7 @@ import JitsyMeeting from "@/components/Consultations/ConsultationCard/JitsyMeeti
 import MeetingAnalyticsOverlay from "@/components/MeetingAnalyticsOverlay/MeetingAnalyticsOverlay";
 import { EndMeetingQuestionnairesModal } from "@/components/Consultations/ConsultationCard/EndMeetingQuestionnaires";
 import { QuestionnaireModelType } from "@/types/questionnaire";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 
 interface Props {
   onClose: () => void;

@@ -1,9 +1,9 @@
 import { useCallback, useContext, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import DatePicker from "@/components/Common/DatePicker";
-import Button from "@escolalms/components/lib/components/atoms/Button/Button";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import Button from "@lms/components/components/atoms/Button/Button";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import ModalTitle from "@/components/Common/StyledTitle/ModalTitle";
 import SelectedTermContent from "../SelectedTermContent";
 import { ProfileConsultationsContext } from "@/components/Profile/ProfileConsultations/ProfileConsultationsProvider";

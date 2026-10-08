@@ -9,3 +9,5 @@ mock
 cypress.config.ts
 /cypress
 src/service-worker.js
+# vendored libraries (see src/lib/<name>/README.md)
+src/lib

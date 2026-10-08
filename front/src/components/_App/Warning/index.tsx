@@ -1,11 +1,11 @@
 import React, { useContext, useState } from "react";
 
 import styled from "styled-components";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import { useTranslation } from "react-i18next";
-import { MarkdownRenderer } from "@escolalms/components/lib/components/molecules/MarkdownRenderer/MarkdownRenderer";
-import { Note } from "@escolalms/components/lib/components/atoms/Note/Note";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
+import { MarkdownRenderer } from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { Note } from "@lms/components/components/atoms/Note/Note";
+import { Button } from "@lms/components/components/atoms/Button/Button";
 import { metaDataKeys } from "@/utils/meta";
 
 const StyledAside = styled.aside`

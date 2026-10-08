@@ -1,0 +1,14 @@
+{
+  "name": "api",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Laravel API. Node tooling only wraps docker compose; PHP dependencies live in composer.json.",
+  "scripts": {
+    "dev": "docker compose up -d",
+    "up": "docker compose up -d",
+    "down": "docker compose down",
+    "logs": "docker compose logs -f api",
+    "artisan": "docker compose exec api php artisan",
+    "test": "docker compose exec -T api ./vendor/bin/phpunit"
+  }
+}

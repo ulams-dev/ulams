@@ -4,16 +4,16 @@ import { isMobile } from "react-device-detect";
 import { Link, useHistory } from "react-router-dom";
 import { differenceInHours } from "date-fns";
 
-import { CourseCard } from "@escolalms/components/lib/components/molecules/CourseCard/CourseCard";
-import ResponsiveImage from "@escolalms/components/lib/components/organisms/ResponsiveImage/ResponsiveImage";
-import { API } from "@escolalms/sdk/lib";
+import { CourseCard } from "@lms/components/components/molecules/CourseCard/CourseCard";
+import ResponsiveImage from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
+import { API } from "@lms/sdk";
 import CourseImgPlaceholder from "@/components/Courses/CourseImgPlaceholder";
-import Title from "@escolalms/components/lib/components/atoms/Typography/Title";
-import Button from "@escolalms/components/lib/components/atoms/Button/Button";
-import IconText from "@escolalms/components/lib/components/atoms/IconText/IconText";
+import Title from "@lms/components/components/atoms/Typography/Title";
+import Button from "@lms/components/components/atoms/Button/Button";
+import IconText from "@lms/components/components/atoms/IconText/IconText";
 import { IconTime } from "../../../../../../icons";
 import Tags from "@/components/Tags";
-import { Tag } from "@escolalms/sdk/lib/types";
+import { Tag } from "@lms/sdk/types";
 
 interface Props {
   webinar: API.Webinar;

@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
 import styled from "styled-components";
-import { BreadCrumbs } from "@escolalms/components/lib/components/atoms/BreadCrumbs/BreadCrumbs";
+import { BreadCrumbs } from "@lms/components/components/atoms/BreadCrumbs/BreadCrumbs";
 
 const StyledDiv = styled("div")<{ isOpen?: boolean }>`
   .more-icon {

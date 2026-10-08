@@ -1,4 +1,4 @@
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import React, { ReactElement } from "react";
 import { useContext } from "react";
 import { routerType } from "@/utils/router";

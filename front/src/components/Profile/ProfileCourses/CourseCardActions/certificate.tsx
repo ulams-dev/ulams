@@ -3,9 +3,9 @@ import ContentLoader from "@/components/_App/ContentLoader";
 import { useCertificateDownload } from "@/hooks/useDownloadCertificate";
 import { IconCertificate } from "@/icons/index";
 import { toast } from "@/utils/toast";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { Certificate } from "@escolalms/sdk/lib/types/educycle";
-import { CertificateAssignableTypes } from "@escolalms/sdk/lib/types/enums";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { Certificate } from "@lms/sdk/types/educycle";
+import { CertificateAssignableTypes } from "@lms/sdk/types/enums";
 import { useCallback, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 

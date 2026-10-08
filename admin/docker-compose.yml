@@ -25,7 +25,8 @@ services:
 
   dist_test:
     build:
-      context: .
+      context: ..
+      dockerfile: admin/Dockerfile
     environment:
       - API_URL=https://api.escolalms.com
     ports:

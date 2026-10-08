@@ -1,10 +1,10 @@
 import { ReactElement, FunctionComponent, useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { MarkdownRenderer } from "@escolalms/components/lib/components/molecules/MarkdownRenderer/MarkdownRenderer";
-import { API } from "@escolalms/sdk/lib";
-import { Download } from "@escolalms/components/lib/components/atoms/Download/Download";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { MarkdownRenderer } from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { API } from "@lms/sdk";
+import { Download } from "@lms/components/components/atoms/Download/Download";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 
 const TextPlayerStyles = styled.div`
   h1 {

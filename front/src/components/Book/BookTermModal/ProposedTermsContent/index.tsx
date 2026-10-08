@@ -1,9 +1,9 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DatePicker from "@/components/Common/DatePicker";
-import { API } from "@escolalms/sdk/lib";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { API } from "@lms/sdk";
+import { Button } from "@lms/components/components/atoms/Button/Button";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import {
   sortDates,
   removePastDates,
@@ -11,7 +11,7 @@ import {
   isTwoDatesEqual,
   formatDate,
 } from "@/utils/date";
-import { Tag } from "@escolalms/components/lib/components/atoms/Tag/Tag";
+import { Tag } from "@lms/components/components/atoms/Tag/Tag";
 import SelectedTermContent from "../SelectedTermContent";
 import { ProfileConsultationsContext } from "@/components/Profile/ProfileConsultations/ProfileConsultationsProvider";
 import { StyledBookTermButtons } from "../styles";

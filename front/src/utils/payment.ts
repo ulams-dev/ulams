@@ -1,4 +1,4 @@
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import {
   PURCHASES_ERROR_CODE,
   PurchasesPackage,

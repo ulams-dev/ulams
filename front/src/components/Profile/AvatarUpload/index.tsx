@@ -1,7 +1,7 @@
 import React, { useCallback, useContext } from "react";
-import { Avatar } from "@escolalms/components/lib/components/atoms/Avatar/Avatar";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { Avatar } from "@lms/components/components/atoms/Avatar/Avatar";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import styled from "styled-components";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";

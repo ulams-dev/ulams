@@ -1,15 +1,15 @@
 import { FC, useState } from "react";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
-import { Rate } from "@escolalms/components/lib/components/molecules/Rate/Rate";
-import { Stack } from "@escolalms/components/lib/components/atoms/Stack/index";
-import { TextArea } from "@escolalms/components/lib/components/atoms/TextArea/TextArea";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { Button } from "@lms/components/components/atoms/Button/Button";
+import { Rate } from "@lms/components/components/molecules/Rate/Rate";
+import { Stack } from "@lms/components/components/atoms/Stack/index";
+import { TextArea } from "@lms/components/components/atoms/TextArea/TextArea";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import { QuestionBoxWrapper } from "@/components/QuestionBox/styles";
-import { Row } from "@escolalms/components/lib/components/atoms/Row";
+import { Row } from "@lms/components/components/atoms/Row";
 import { QuestionnaireModelType } from "@/types/questionnaire";
 
 interface QuestionBoxProps {

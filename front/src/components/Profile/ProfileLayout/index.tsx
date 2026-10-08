@@ -4,7 +4,7 @@ import ProfileHeader from "@/components/Profile/ProfileHeader";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { ReactNode, useContext, useEffect, useMemo } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import { Col, Row } from "react-grid-system";
 import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";

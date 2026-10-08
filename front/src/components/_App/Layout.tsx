@@ -7,7 +7,7 @@ import { setConfiguration } from "react-grid-system";
 import Warning from "./Warning";
 import { StyledToastContainer } from "@/components/_App/StyledToastContainer";
 import { isMobile } from "react-device-detect";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import { ConsultationModalProvider } from "@/components/Consultations/ConsultationCard/Buttons/context";
 
 declare global {

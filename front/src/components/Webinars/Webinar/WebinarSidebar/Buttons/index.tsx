@@ -1,9 +1,9 @@
 import { useContext, useEffect, useMemo, useState, useCallback } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import { isPast } from "date-fns";
 
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Button } from "@lms/components/components/atoms/Button/Button";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import WebinarMeetModal from "@/components/Webinars/Webinar/WebinarMeetModal";

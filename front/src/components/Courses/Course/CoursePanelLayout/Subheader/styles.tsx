@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 import { mediaQueriesMixin } from "src/style/mixins";
 
 export const SubheaderWrapper = styled.div`

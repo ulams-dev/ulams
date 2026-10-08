@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import {
   Course,
   CourseParams,
   PaginatedMetaList,
-} from "@escolalms/sdk/lib/types";
+} from "@lms/sdk/types";
 
 const useFetchCourses = (params?: CourseParams, noAutoFech?: boolean) => {
   const [courses, setCourses] = useState<PaginatedMetaList<Course>>();

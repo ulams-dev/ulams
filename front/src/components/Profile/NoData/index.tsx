@@ -1,6 +1,6 @@
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { Button } from "@lms/components/components/atoms/Button/Button";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import { NoDataStyles } from "./styles";
 import { Link } from "react-router-dom";
 

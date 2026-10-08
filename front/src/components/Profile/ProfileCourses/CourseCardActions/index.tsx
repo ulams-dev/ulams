@@ -4,13 +4,13 @@ import {
   relativeTimeFormatter,
 } from "@/utils/index";
 
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
-import { Modal } from "@escolalms/components/lib/components/atoms/Modal/Modal";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
-import { API } from "@escolalms/sdk/lib";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { CourseProgressItem } from "@escolalms/sdk/lib/types";
+import { Button } from "@lms/components/components/atoms/Button/Button";
+import { Modal } from "@lms/components/components/atoms/Modal/Modal";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { API } from "@lms/sdk";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { CourseProgressItem } from "@lms/sdk/types";
 import {
   FC,
   useCallback,

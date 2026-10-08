@@ -3,10 +3,10 @@ import {
   EventTypes,
   Notification,
   Order,
-} from "@escolalms/sdk/lib/types";
+} from "@lms/sdk/types";
 import { APP_CONFIG } from "../config/app";
 import { formatDate } from "../utils/date";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import {
   differenceInDays,
   differenceInHours,

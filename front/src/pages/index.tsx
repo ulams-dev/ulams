@@ -1,13 +1,13 @@
 import { useContext, useEffect } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import Layout from "@/components/_App/Layout";
-import { Banner } from "@escolalms/components/lib/components/molecules/Banner/Banner";
-import { ResponsiveImage } from "@escolalms/components/lib/components/organisms/ResponsiveImage/ResponsiveImage";
+import { Banner } from "@lms/components/components/molecules/Banner/Banner";
+import { ResponsiveImage } from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import styled from "styled-components";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
 import CategoriesSection from "@/components/Categories/CategoriesSection";
-import { MarkdownRenderer } from "@escolalms/components/lib/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { MarkdownRenderer } from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
 import { useHistory } from "react-router-dom";
 import Container from "@/components/Common/Container";
 import DisplayCourses from "@/components/Courses/DisplayCoursesSlider";

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import styled, { useTheme } from "styled-components";
 import { formatDate } from "@/utils/date";
 import { APP_CONFIG } from "@/config/app";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import { IconCalendar } from "../../../icons";
 
 const DateInfoStyles = styled.div`

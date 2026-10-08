@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Row, Col } from "react-grid-system";
 
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import Loader from "@/components/_App/Preloader";
 
 import EventBreadcrumbs from "@/components/Events/Event/EventBreadcrumbs";

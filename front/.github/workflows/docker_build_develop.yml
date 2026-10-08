@@ -5,6 +5,11 @@ on:
   push:
     branches:
       - "main"
+    paths: ["front/**", "package.json", "yarn.lock", "turbo.json"]
+defaults:
+  run:
+    working-directory: front
+
 jobs:
   source-code:
     runs-on: ubuntu-latest
@@ -14,7 +19,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
         env:
@@ -22,7 +27,7 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
           node -v 
-          yarn
+          yarn install --frozen-lockfile
           yarn build
           echo "${{github.ref_name}}" >> dist/version.html
           #yarn sentry:sourcemaps
@@ -36,7 +41,7 @@ jobs:
           SENTRY_URL: https://escolasoft.sentry.io
         with:
           environment: production
-          sourcemaps: ./dist
+          sourcemaps: ./front/dist
           version: front@${{github.ref_name}}
           ignore_missing: true
           ignore_empty: true
@@ -59,6 +64,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
+          context: .
+          file: front/Dockerfile
           push: true
           # Cannot be built at the moment https://github.com/nodejs/docker-node/issues/1335
           # platforms: linux/amd64,linux/arm64

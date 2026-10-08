@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { API } from "@escolalms/sdk/lib";
-import Button from "@escolalms/components/lib/components/atoms/Button/Button";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { API } from "@lms/sdk";
+import Button from "@lms/components/components/atoms/Button/Button";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import routeRoutes from "@/components/Routes/routes";
 
 interface Props {

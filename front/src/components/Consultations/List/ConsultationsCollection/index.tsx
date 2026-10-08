@@ -1,10 +1,10 @@
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 import { StyledHeader, StyledTabs } from "./styles";
 import { ConsultationsContext } from "@/components/Consultations/List/ConsultationsContext";
 import { useContext } from "react";
 import ConsultationsSlider from "@/components/Consultations/ConsultationsSlider";
-import { Tabs } from "@escolalms/components/lib/components/atoms/Tabs/Tabs";
-import { API } from "@escolalms/sdk/lib";
+import { Tabs } from "@lms/components/components/atoms/Tabs/Tabs";
+import { API } from "@lms/sdk";
 import ConsultationCard from "@/components/Consultations/ConsultationCard";
 import { Col, Row } from "react-grid-system";
 import Preloader from "@/components/_App/Preloader";

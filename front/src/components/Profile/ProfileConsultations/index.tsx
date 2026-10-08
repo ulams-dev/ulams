@@ -10,12 +10,12 @@ import { useTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
 import { Col, Row } from "react-grid-system";
 import { ConsultationStatus } from "../../../pages/user/my-consultations";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import ConsultationCard from "@/components/Consultations/ConsultationCard";
 import ProfileConsultationsProvider from "./ProfileConsultationsProvider";
 import { CourseCardSkeleton } from "@/components/Skeletons/CourseCard";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { API_URL } from "@/config/index";
 interface ProfileConsultationsProps {
   type: ConsultationStatus;

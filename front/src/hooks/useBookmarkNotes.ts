@@ -1,7 +1,7 @@
 import { useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
-import { API } from "@escolalms/sdk/lib";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { API } from "@lms/sdk";
 import { toast } from "@/utils/toast";
 
 interface Props {

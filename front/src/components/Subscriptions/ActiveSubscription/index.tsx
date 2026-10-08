@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { getStylesBasedOnTheme } from "@escolalms/components/lib/utils/utils";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { getStylesBasedOnTheme } from "@lms/components/utils/utils";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 
 import { formatDate } from "@/utils/date";
 import { StarIcon } from "@/icons/index";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
+import { Button } from "@lms/components/components/atoms/Button/Button";
 import { useCallback, useState } from "react";
 
 enum SubscriptionStatus {

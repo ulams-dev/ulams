@@ -1,6 +1,6 @@
-import { ThemeCustomizer as Wrapper } from "@escolalms/components/lib/styleguide/ThemeCustomizer";
-import { useLocalTheme } from "@escolalms/components/lib/styleguide/useLocalTheme";
-import defaultTheme from "@escolalms/components/lib/theme/contrast";
+import { ThemeCustomizer as Wrapper } from "@lms/components/styleguide/ThemeCustomizer";
+import { useLocalTheme } from "@lms/components/styleguide/useLocalTheme";
+import defaultTheme from "@lms/components/theme/contrast";
 import { useEffect, useState } from "react";
 import styled, { DefaultTheme } from "styled-components";
 import { useTranslation } from "react-i18next";

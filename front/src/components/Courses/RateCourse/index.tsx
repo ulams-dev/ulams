@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useState } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import { useTranslation } from "react-i18next";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { QuestionBox } from "../../QuestionBox";
 import { QuestionnaireModelType, QuestionType } from "@/types/questionnaire";
 import { StyledModal } from "@/components/Courses/RateCourse/styles";

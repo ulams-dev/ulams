@@ -1,11 +1,11 @@
 import React, { useContext, useMemo } from "react";
-import { API } from "@escolalms/sdk/lib";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { API } from "@lms/sdk";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 
-import { IconText } from "@escolalms/components/lib/components/atoms/IconText/IconText";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
-import { CourseProgress } from "@escolalms/components/lib/components/atoms/CourseProgress/CourseProgress";
-import { PricingCard } from "@escolalms/components/lib/components/atoms/PricingCard/PricingCard";
+import { IconText } from "@lms/components/components/atoms/IconText/IconText";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { CourseProgress } from "@lms/components/components/atoms/CourseProgress/CourseProgress";
+import { PricingCard } from "@lms/components/components/atoms/PricingCard/PricingCard";
 import { IconWin } from "../../../../icons";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";

@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
-import { API } from "@escolalms/sdk/lib";
-import Button from "@escolalms/components/lib/components/atoms/Button/Button";
+import { API } from "@lms/sdk";
+import Button from "@lms/components/components/atoms/Button/Button";
 import { formatDate } from "@/utils/date";
 import { APP_CONFIG } from "@/config/app";
 import ModalTitle from "@/components/Common/StyledTitle/ModalTitle";
 import InfoBox from "@/components/InfoBox";
-import { Tutor } from "@escolalms/components/lib/components/molecules/Tutor/Tutor";
+import { Tutor } from "@lms/components/components/molecules/Tutor/Tutor";
 import { API_URL } from "@/config/index";
 
 interface Props {

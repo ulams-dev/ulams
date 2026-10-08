@@ -1,9 +1,9 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
-import { API } from "@escolalms/sdk/lib";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { API } from "@lms/sdk";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Button } from "@lms/components/components/atoms/Button/Button";
 import styled from "styled-components";
 import { useHistory, useLocation } from "react-router-dom";
 import { isMobile } from "react-device-detect";

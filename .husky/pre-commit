@@ -1,0 +1,3 @@
+# No global yarn needed: run the workspace-installed lint-staged binary directly.
+# lint-staged is a no-op when no staged file matches (e.g. api/ PHP-only commits).
+./node_modules/.bin/lint-staged

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { addTimeToDate, extractTimeUnits } from "@/utils/date";
 import DateInfo, { DateInfoTypes } from "@/components/Common/DateInfo";
 

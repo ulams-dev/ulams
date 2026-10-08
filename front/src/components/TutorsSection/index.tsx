@@ -2,10 +2,10 @@ import { isMobile } from "react-device-detect";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-import { Tutor } from "@escolalms/components/lib/components/molecules/Tutor/Tutor";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { Tutor } from "@lms/components/components/molecules/Tutor/Tutor";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 import { TutorsSectionStyles } from "./TutorsSectionStyles";
-import { User } from "@escolalms/sdk/lib/types";
+import { User } from "@lms/sdk/types";
 import { API_URL } from "@/config/index";
 
 const TutorStyled = styled(Tutor)`

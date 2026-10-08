@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Row, Col } from "react-grid-system";
 import { useTranslation } from "react-i18next";
 
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import Loader from "@/components/_App/Preloader";
 
 import { PackageSidebar } from "@/components/Packages/Package/PackageSidebar";

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import { addTimeToDate, extractTimeUnits, formatDate } from "@/utils/date";
 import DateInfo, { DateInfoTypes } from "@/components/Common/DateInfo";
 import ConsultationCardJoinButton from "@/components/Consultations/ConsultationCard/Buttons/JoinButton";

@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { API } from "@escolalms/sdk/lib";
+import { API } from "@lms/sdk";
 import ConsultationCard from "@/components/Consultations/ConsultationCard";
 
 interface Props {

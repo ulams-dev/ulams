@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { API } from "@escolalms/sdk/lib";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { API } from "@lms/sdk";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import { IconCircleError, IconSuccess } from "@/icons/index";
-import IconText from "@escolalms/components/lib/components/atoms/IconText/IconText";
+import IconText from "@lms/components/components/atoms/IconText/IconText";
 import { useContext } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
+import { EscolaLMSContext } from "@lms/sdk/react";
 import { useTranslation } from "react-i18next";
 import Status, { StatusTypes } from "@/components/Common/Status";
 

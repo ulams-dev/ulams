@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useMemo } from "react";
 import { useParams, Redirect, Link } from "react-router-dom";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import routes from "@/components/Routes/routes";
 import usePrevious from "../../hooks/usePrevious";
 import Layout from "@/components/_App/Layout";
 import styled from "styled-components";
-import { MarkdownRenderer } from "@escolalms/components/lib/components/molecules/MarkdownRenderer/MarkdownRenderer";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { MarkdownRenderer } from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import { isMobile } from "react-device-detect";
 import Breadcrumbs from "@/components/Common/Breadcrumbs";
 import { useTranslation } from "react-i18next";

@@ -1,16 +1,16 @@
 import React, { useContext, useEffect } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import Layout from "../../components/_App/Layout";
-import { API } from "@escolalms/sdk/lib";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { API } from "@lms/sdk";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 import { useTranslation } from "react-i18next";
 
 import styled, { useTheme } from "styled-components";
-import { Spin } from "@escolalms/components/lib/components/atoms/Spin/Spin";
-import { CourseCard } from "@escolalms/components/lib/components/molecules/CourseCard/CourseCard";
-import Image from "@escolalms/sdk/lib/react/components/Image";
+import { Spin } from "@lms/components/components/atoms/Spin/Spin";
+import { CourseCard } from "@lms/components/components/molecules/CourseCard/CourseCard";
+import Image from "@lms/sdk/react/components/Image";
 import { Link } from "react-router-dom";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import Breadcrumbs from "@/components/Common/Breadcrumbs";
 import { Col, Row } from "react-grid-system";
 import Container from "@/components/Common/Container";

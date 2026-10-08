@@ -1,10 +1,10 @@
 import { Col, Row } from "react-grid-system";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 import { isMobile } from "react-device-detect";
 
-import { ResponsiveImage } from "@escolalms/components/lib/components/organisms/ResponsiveImage/ResponsiveImage";
+import { ResponsiveImage } from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import React from "react";
-import { Consultation } from "@escolalms/sdk/lib/types";
+import { Consultation } from "@lms/sdk/types";
 import CategoriesBreadCrumbs from "@/components/Categories/CategoriesBreadCrumbs";
 import { useHistory } from "react-router-dom";
 

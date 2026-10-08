@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import Layout from "@/components/_App/Layout";
 import { Loader } from "@/components/_App/Loader/Loader";
 import WebinarContent from "@/components/Webinars/Webinar";

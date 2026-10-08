@@ -5,9 +5,9 @@ volumes:
 
 services:
   build:
-    image: node:20-alpine
+    image: node:22-alpine
     volumes:
-      - ./:/srv/app
+      - ../:/srv/app
       - frontend-node-modules:/srv/app/node_modules/
-    working_dir: /srv/app
+    working_dir: /srv/app/front
     command: "sh -c 'yarn &&  yarn build'"

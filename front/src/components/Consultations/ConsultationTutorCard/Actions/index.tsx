@@ -1,11 +1,11 @@
 import { useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react";
-import { API } from "@escolalms/sdk/lib";
-import IconText from "@escolalms/components/lib/components/atoms/IconText/IconText";
+import { EscolaLMSContext } from "@lms/sdk/react";
+import { API } from "@lms/sdk";
+import IconText from "@lms/components/components/atoms/IconText/IconText";
 import { IconCircleError, IconMenuVertical, IconSuccess } from "@/icons/index";
-import DropdownMenu from "@escolalms/components/lib/components/molecules/DropdownMenu/DropdownMenu";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
+import DropdownMenu from "@lms/components/components/molecules/DropdownMenu/DropdownMenu";
+import { Button } from "@lms/components/components/atoms/Button/Button";
 
 interface Props {
   consultation: API.AppointmentTerm;

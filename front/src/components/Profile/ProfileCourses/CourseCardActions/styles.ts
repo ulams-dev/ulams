@@ -1,4 +1,4 @@
-import { Stack } from "@escolalms/components/lib/components/atoms/Stack/index";
+import { Stack } from "@lms/components/components/atoms/Stack/index";
 import styled from "styled-components";
 
 export const Wrapper = styled(Stack)`

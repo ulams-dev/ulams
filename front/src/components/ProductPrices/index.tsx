@@ -3,7 +3,7 @@ import React from "react";
 import {
   Text,
   TextSize,
-} from "@escolalms/components/lib/components/atoms/Typography/Text";
+} from "@lms/components/components/atoms/Typography/Text";
 import styled from "styled-components";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";

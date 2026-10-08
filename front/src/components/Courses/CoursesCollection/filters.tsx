@@ -1,18 +1,18 @@
 import React from "react";
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
 import {
   DropdownCategories,
   DropdownMenu,
-} from "@escolalms/components/lib/index";
+} from "@lms/components";
 import { isMobile } from "react-device-detect";
 import styled from "styled-components";
 import { ArrowDown, IconSquares } from "@/icons/index";
-import { Category, CourseParams } from "@escolalms/sdk/lib/types";
+import { Category, CourseParams } from "@lms/sdk/types";
 import {
   MobileDrawerTypes,
   SortOrder,
 } from "@/components/Courses/CoursesCollection";
-import { DropdownMenuItem } from "@escolalms/components/lib/components/molecules/DropdownMenu/DropdownMenu";
+import { DropdownMenuItem } from "@lms/components/components/molecules/DropdownMenu/DropdownMenu";
 import { useTranslation } from "react-i18next";
 
 const FiltersHeader = styled.div`

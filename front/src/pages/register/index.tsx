@@ -1,20 +1,20 @@
 import { SetStateAction, useContext, useEffect, useState } from "react";
-import { EscolaLMSContext } from "@escolalms/sdk/lib/react/context";
+import { EscolaLMSContext } from "@lms/sdk/react/context";
 import { Link, useHistory } from "react-router-dom";
 import Layout from "@/components/_App/Layout";
 import { isMobile } from "react-device-detect";
 import { useLocation } from "react-router-dom";
-import { Title } from "@escolalms/components/lib/components/atoms/Typography/Title";
+import { Title } from "@lms/components/components/atoms/Typography/Title";
 
-import { Text } from "@escolalms/components/lib/components/atoms/Typography/Text";
-import { RegisterForm } from "@escolalms/components/lib/components/organisms/RegisterForm/RegisterForm";
+import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { RegisterForm } from "@lms/components/components/organisms/RegisterForm/RegisterForm";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { MarkdownRenderer } from "@escolalms/components/lib/components/molecules/MarkdownRenderer/MarkdownRenderer";
-import { Modal } from "@escolalms/components/lib/components/atoms/Modal/Modal";
-import { Button } from "@escolalms/components/lib/components/atoms/Button/Button";
+import { MarkdownRenderer } from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { Modal } from "@lms/components/components/atoms/Modal/Modal";
+import { Button } from "@lms/components/components/atoms/Button/Button";
 
-import { Link as LinkComponent } from "@escolalms/components/lib/components/atoms/Link/Link";
+import { Link as LinkComponent } from "@lms/components/components/atoms/Link/Link";
 import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";
 import { EmailActivationImg } from "@/icons/index";
