@@ -100,12 +100,12 @@ stale content.
 
 ### 0.1c Security and audit follow-ups (new)
 - [x] (new) Replace the GPL PHP libraries `trax2/framework` (lrs) and `laraveldaily/laravel-invoices` with first-party code
-- [ ] (new) Payment callbacks must verify the payment with the provider (Stripe signature/status, P24
+- [x] (new) Payment callbacks must verify the payment with the provider (Stripe signature/status, P24
       verification); RevenueCat off by default and server-verified
-- [ ] (new) Remove the consultation webcam capture and its unauthenticated upload endpoints (recommender leftover)
-- [ ] (new) Authenticate the Jitsi recording webhook and restrict the downloaded URL (SSRF)
+- [x] (new) Remove the consultation webcam capture and its unauthenticated upload endpoints (recommender leftover)
+- [x] (new) Authenticate the Jitsi recording webhook and restrict the downloaded URL (SSRF)
 - [x] (new) Verify JWT signatures in the LRS guard
-- [ ] (new) Fix the ungrouped `orWhere` in `CourseAccessService::getUserCourseIds` and similar queries
+- [x] (new) Fix the ungrouped `orWhere` in `CourseAccessService::getUserCourseIds` and similar queries
 - [ ] (new) Remove the tracker Logs screen in admin and other tracker leftovers
 - [x] (new) Fix the tenant video processing queue (jobs dispatched to a queue no tenant worker consumes)
 - [ ] (new) `Relation::enforceMorphMap` for topic types so class renames never orphan data
@@ -119,6 +119,20 @@ stale content.
       internal MinIO endpoint for server-side fetches (e.g. Image topic creation)
 - [x] (new) Platform bucket publicly readable by default (`MINIO_DEFAULT_BUCKETS=ulams:download`)
 - [x] (new) Demo course seeders for the three experiences (`make demo-seed`, `demo-seed-tenants`)
+
+- [ ] (new) Security follow-ups (medium): require `auth:api` on admin tag routes; rate-limit/authorise
+      `POST api/images/img`; review `POST api/cmi5/fetch`; client-set `has_trial`, client currency override
+      and `payProduct` skipping `purchasable`; vouchers admin search OR grouping; `getChildGroups` depth;
+      keep `_ignition` off in production
+- [ ] (new) Stripe: handle the 3-D Secure redirect in the front and document the webhook setup
+      (`PAYMENTS_STRIPE_WEBHOOK_SECRET`, `/api/payments-gateways/webhook/stripe`); RevenueCat receipt verifier
+- [ ] (new) Jitsi: confirm the JaaS webhook signature format against the JaaS docs; configure
+      `JITSI_RECORDING_HOSTS`
+- [ ] (new) Drop the unused `analyze_enabled` columns (consultations, webinars) and clean up stored meeting
+      frames in tenant buckets
+- [ ] (new) Remove the Stripe test key committed in `api/docker/envs/*.example`
+- [ ] (new) Responsible disclosure: the payment-callback, LRS-token, webcam-upload and course-access issues
+      exist in the upstream EscolaLMS packages; notify upstream users
 
 ### 0.2 Framework upgrade
 - [x] Upgrade plan from Laravel 9 (EOL) to supported Laravel/PHP: order, breaking changes,
