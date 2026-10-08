@@ -14,6 +14,7 @@ use Illuminate\Database\SQLiteConnection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,6 +37,11 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(\L5Swagger\L5SwaggerServiceProvider::class);
+
+        // Passport 13 enables the device authorization grant and its oauth/device* routes by
+        // default. Nothing uses them: the API issues personal access tokens only. Set before
+        // any provider boots, because Passport registers its routes in boot().
+        Passport::$deviceCodeGrantEnabled = false;
 
         // swagger-php 6 (l5-swagger 11) reads only PHP attributes by default. The API is
         // documented with `@OA\` docblock annotations (223 files), which need the DocBlock
