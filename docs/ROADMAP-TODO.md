@@ -80,7 +80,10 @@ stale content.
 - [x] (new) Vendor the JS libraries into `front/src/lib` and `admin/src/lib`; Yarn workspaces + Turborepo
 - [x] (new) Rename to ulams, with data migration for existing databases
 - [ ] (new) H5P as the isolated Lumi service `api/h5p` (partial: service, Laravel index package, Caddy
-      routing done; admin/front iframe embedding in progress)
+      routing and admin/front iframe embedding done; multi-tenant resolver in progress)
+- [x] (new) Remove the PHP H5P server completely and replace it with the Node.js service: no
+      `h5p/h5p-core`, `h5p/h5p-editor` or `headless-h5p` left in `composer.json`/`composer.lock` or the
+      code; Laravel keeps only the read-only `api/packages/h5p` index and HTTP client (ADR 0003)
 - [ ] (new) Remove `recommender` and its admin/front screens (partial: API removal in progress)
 - [ ] (new) Replace styled-components with CSS custom properties everywhere (partial: theme contract
       and presets done; component conversion pending)
@@ -280,10 +283,23 @@ Quality
 
 ### 6.1 Certificates and compliance
 - [ ] Extend existing Wellms certificates (don't duplicate)
-- [ ] (new) Replace ReportBro (AGPL-3.0 designer bundled in admin, AGPL server image, default
-      REPORTBRO_URL sends data to reportbro.com) with pdfme (MIT): `@pdfme/ui` designer in admin,
-      JSON templates per course (blueprint/course-as-code friendly), QR schema for verification URLs,
-      rendering in a small MIT Node worker `api/pdf`; convert or re-create existing templates
+- [ ] (new) Remove ReportBro completely and replace it with **pdfme** (recommended: MIT, actively
+      maintained, WYSIWYG designer for variable-based PDF templates, JSON templates, QR/barcode schemas).
+      Why: the ReportBro designer (`reportbro-designer`, AGPL-3.0) is bundled into admin, the server image
+      runs `reportbro-lib` (AGPL-3.0), and the default `REPORTBRO_URL` sends certificate data to
+      reportbro.com. Removal checklist:
+  - [ ] Admin: replace `components/PdfEditor` and `components/TemplateFields` with the `@pdfme/ui`
+        designer; drop `reportbro-designer` from `admin/package.json`
+  - [ ] API `templates-pdf`: replace `ReportBroService`/contract, the `reportbro/report/run` routes and
+        `FabricPdfController` with a pdfme renderer client; keep the existing variables and
+        `CourseFinished` flow; store templates as pdfme JSON
+  - [ ] Renderer: small MIT Node worker `api/pdf` (pdfme generator; the API image has no Node), reached
+        over HTTP like `api/h5p`; QR schema for certificate verification URLs (6.1)
+  - [ ] Remove the `reportbro` service from `api/docker-compose.yml`, `REPORTBRO_URL` from config and
+        `.env.example`, and its mentions in docs and `LICENSING.md`
+  - [ ] Migrate existing templates (one-off converter or re-create); pdfme templates for the demo
+        certificates; tests for template CRUD, rendering and the CourseFinished certificate
+  - [ ] Until then: set `REPORTBRO_URL` to the local server so no data leaves the installation
 - [ ] Verification URL/QR, expiry, recertification, reminders
 - [ ] Mandatory training with due dates and manager escalation
 - [ ] Compliance reports and audit export (linked to Phase 3 audit trail)
