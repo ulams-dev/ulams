@@ -1,0 +1,49 @@
+/* Generated from theme/orange.ts via cssVars.ts: static defaults so the first paint is themed before applyTheme() runs. */
+:root {
+  --ulams-color-primary: #F47820;
+  --ulams-color-secondary: #b55918;
+  --ulams-color-header: #111111;
+  --ulams-color-text: #000;
+  --ulams-color-bg: #FFFFFF;
+  --ulams-color-card-bg: #F8F8F8;
+  --ulams-color-accent-bg: #F47820;
+  --ulams-color-error: #EB5757;
+  --ulams-color-invert: #FFCC00;
+  --ulams-color-white: #FFFFFF;
+  --ulams-color-black: #000000;
+  --ulams-gray-1: #4A4A4A;
+  --ulams-gray-2: #6D6D6D;
+  --ulams-gray-3: #BDBDBD;
+  --ulams-gray-4: #F2F2F2;
+  --ulams-gray-5: #F8F8F8;
+  --ulams-color-positive: #6FC988;
+  --ulams-color-positive-2: #C9F7DC;
+  --ulams-color-input-bg: #FFFFFF;
+  --ulams-color-input-disabled-bg: #F2F2F2;
+  --ulams-color-label-list-value: #F47820;
+  --ulams-color-button-disabled: #BDBDBD;
+  --ulams-color-outline-button: #000;
+  --ulams-color-outline-button-invert: #000;
+  --ulams-color-breadcrumbs: #000;
+  --ulams-color-numerations: #F47820;
+  --ulams-color-primary-on-light: #F47820;
+  --ulams-radius: 0px;
+  --ulams-radius-button: 0px;
+  --ulams-radius-input: 0px;
+  --ulams-radius-note: 0px;
+  --ulams-radius-checkbox: 0px;
+  --ulams-radius-card: 0px;
+  --ulams-radius-modal: 0px;
+  --ulams-font-family: 'Inter', sans-serif;
+  --ulams-font-family-body: 'Inter', sans-serif;
+}
+
+:root[data-mode="dark"] {
+  --ulams-color-text: #FFF;
+  --ulams-color-bg: #4A4A4A;
+  --ulams-color-card-bg: #6D6D6D;
+  --ulams-color-button-disabled: #6D6D6D;
+  --ulams-color-outline-button: #FFF;
+  --ulams-color-outline-button-invert: #FFF;
+  --ulams-color-breadcrumbs: #FFF;
+}
