@@ -11,7 +11,7 @@ import { DATETIME_FORMAT } from '@/consts/dates';
 import {
   deleteCompetencyChallenge,
   getCompetencyChallenges,
-} from '@/services/escola-lms/competency-challenges';
+} from '@/services/ulams/competency-challenges';
 import { createTableOrderObject } from '@/utils/utils';
 
 const staticColumns: ProColumns<API.CompetencyChallenge>[] = [
@@ -87,7 +87,7 @@ const staticColumns: ProColumns<API.CompetencyChallenge>[] = [
     dataIndex: 'quiz_id',
     title: <FormattedMessage id="CompetencyChallenges.diagnostic-test" />,
     render: (_n, record) => (
-      <TypeButtonDrawer type="EscolaLms\TopicTypeGift\Models\GiftQuiz" type_id={record.quiz_id} />
+      <TypeButtonDrawer type="Ulams\TopicTypeGift\Models\GiftQuiz" type_id={record.quiz_id} />
     ),
     hideInSearch: true,
   },

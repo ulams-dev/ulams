@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Database\Factories;
+namespace Ulams\Bookmarks\Database\Factories;
 
-use EscolaLms\Bookmarks\Models\Bookmark;
-use EscolaLms\Core\Models\User;
+use Ulams\Bookmarks\Models\Bookmark;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -18,7 +18,7 @@ class BookmarkFactory extends Factory
         return [
             'value' => $this->faker->word,
             'user_id' => User::factory()->state(['email' => $this->faker->unique()->email]),
-            'bookmarkable_type' => 'EscolaLms\\' . $type . '\\Models\\' . $type,
+            'bookmarkable_type' => 'Ulams\\' . $type . '\\Models\\' . $type,
             'bookmarkable_id' => $this->faker->numberBetween(1),
         ];
     }

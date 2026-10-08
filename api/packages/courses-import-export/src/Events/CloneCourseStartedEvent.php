@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Events;
+namespace Ulams\CoursesImportExport\Events;
 
-use EscolaLms\Courses\Models\Course;
+use Ulams\Courses\Models\Course;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;

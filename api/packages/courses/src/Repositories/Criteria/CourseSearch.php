@@ -1,9 +1,9 @@
 <?php
 
 
-namespace EscolaLms\Courses\Repositories\Criteria;
+namespace Ulams\Courses\Repositories\Criteria;
 
-use EscolaLms\Core\Repositories\Criteria\Criterion;
+use Ulams\Core\Repositories\Criteria\Criterion;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 

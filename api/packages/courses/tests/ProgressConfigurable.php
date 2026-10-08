@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Courses\Tests;
+namespace Ulams\Courses\Tests;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Enum\ProgressStatus;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
+use Ulams\Core\Models\User;
+use Ulams\Courses\Enum\ProgressStatus;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\ValueObjects\CourseProgressCollection;
 
 trait ProgressConfigurable
 {

@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\Cart\Tests\API;
+namespace Ulams\Cart\Tests\API;
 
-use EscolaLms\Cart\Database\Seeders\CartPermissionSeeder;
-use EscolaLms\Cart\Enums\QuantityOperationEnum;
-use EscolaLms\Cart\Events\ProductAddedToCart;
-use EscolaLms\Cart\Events\ProductRemovedFromCart;
-use EscolaLms\Cart\Facades\Shop;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductProductable;
-use EscolaLms\Cart\Services\Contracts\ShopServiceContract;
-use EscolaLms\Cart\Tests\Mocks\ExampleProductable;
-use EscolaLms\Cart\Tests\TestCase;
-use EscolaLms\Cart\Tests\Traits\CreatesPaymentMethods;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Payments\Facades\PaymentGateway;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Cart\Database\Seeders\CartPermissionSeeder;
+use Ulams\Cart\Enums\QuantityOperationEnum;
+use Ulams\Cart\Events\ProductAddedToCart;
+use Ulams\Cart\Events\ProductRemovedFromCart;
+use Ulams\Cart\Facades\Shop;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductProductable;
+use Ulams\Cart\Services\Contracts\ShopServiceContract;
+use Ulams\Cart\Tests\Mocks\ExampleProductable;
+use Ulams\Cart\Tests\TestCase;
+use Ulams\Cart\Tests\Traits\CreatesPaymentMethods;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Core\Models\User;
+use Ulams\Payments\Facades\PaymentGateway;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;

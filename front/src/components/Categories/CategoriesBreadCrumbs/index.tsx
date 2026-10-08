@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
 import styled from "styled-components";
-import { BreadCrumbs } from "@lms/components/components/atoms/BreadCrumbs/BreadCrumbs";
+import { BreadCrumbs } from "@ulams/components/components/atoms/BreadCrumbs/BreadCrumbs";
 
 const StyledDiv = styled("div")<{ isOpen?: boolean }>`
   .more-icon {
@@ -44,7 +44,7 @@ const StyledDiv = styled("div")<{ isOpen?: boolean }>`
 `;
 
 export interface CategoriesProps {
-  categories: EscolaLms.Categories.Models.Category[] | undefined;
+  categories: Ulams.Categories.Models.Category[] | undefined;
   onCategoryClick?: (id: number) => void;
 }
 

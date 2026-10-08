@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Database\Seeders;
+namespace Ulams\TemplatesEmail\Database\Seeders;
 
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
+use Ulams\Templates\Facades\Template;
+use Ulams\TemplatesEmail\Core\EmailChannel;
 use Illuminate\Database\Seeder;
 
 class TemplatesEmailSeeder extends Seeder

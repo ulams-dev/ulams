@@ -1,4 +1,4 @@
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 
 export enum ProductableEnum {
   Consultation = "App\\Models\\Consultation",

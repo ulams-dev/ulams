@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Images\Enum;
+namespace Ulams\Images\Enum;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class ConstantEnum extends BasicEnum
 {

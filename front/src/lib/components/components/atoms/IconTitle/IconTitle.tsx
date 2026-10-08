@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled, { withTheme } from "styled-components";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { getFontFromTheme } from "../../../theme/provider";
 import { HeaderLevelInt, HeaderLevelStr } from "../../../types/titleTypes";
 import { setFontSizeByHeaderLevel } from "../../../utils/components/primitives/titleUtils";
@@ -79,7 +79,7 @@ export const IconTitle: React.FC<IconTitleProps> = (props) => {
     <StyledHeader
       as={tagName}
       level={level}
-      className={`lms-icon-title wellms-component ${className}`}
+      className={`lms-icon-title ulams-component ${className}`}
       style={styles?.container}
     >
       <span

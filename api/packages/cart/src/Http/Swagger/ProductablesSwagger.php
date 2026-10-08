@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Swagger;
+namespace Ulams\Cart\Http\Swagger;
 
-use EscolaLms\Cart\Http\Requests\ProductableAttachRequest;
+use Ulams\Cart\Http\Requests\ProductableAttachRequest;
 use Illuminate\Http\JsonResponse;
 
 interface ProductablesSwagger

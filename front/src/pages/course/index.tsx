@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import Layout from "@/components/_App/Layout";
 import { CoursePanel } from "@/components/Courses/Course";
 
 const CourseProgram = () => {
-  const { program } = useContext(EscolaLMSContext);
+  const { program } = useContext(UlamsContext);
 
   return (
     <Layout metaTitle={program.value?.title || "Course"}>

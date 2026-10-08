@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Testing;
+namespace Ulams\TemplatesSms\Testing;
 
 class Sms
 {

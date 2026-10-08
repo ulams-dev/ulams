@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Youtube\Services\Contracts;
+namespace Ulams\Youtube\Services\Contracts;
 
-use EscolaLms\Youtube\Dto\Contracts\YTLiveDtoContract;
-use EscolaLms\Youtube\Dto\YTBroadcastDto;
+use Ulams\Youtube\Dto\Contracts\YTLiveDtoContract;
+use Ulams\Youtube\Dto\YTBroadcastDto;
 use Illuminate\Support\Collection;
 
 interface YoutubeServiceContract

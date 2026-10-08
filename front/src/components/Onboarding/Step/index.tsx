@@ -4,10 +4,10 @@ import {
   OnboardingStepType,
 } from "@/components/Onboarding";
 import SlideOption from "@/components/Onboarding/Step/slide";
-import ResponsiveImage from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
-import { Radio, Text, Title } from "@lms/components";
-import { getStylesBasedOnTheme } from "@lms/components/utils/utils";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import ResponsiveImage from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
+import { Radio, Text, Title } from "@ulams/components";
+import { getStylesBasedOnTheme } from "@ulams/components/utils/utils";
+import { UlamsContext } from "@ulams/sdk/react";
 import { useCallback, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -96,7 +96,7 @@ type Props = {
 };
 
 const Step: React.FC<Props> = ({ step, onAnswer, answers }) => {
-  const { settings } = useContext(EscolaLMSContext);
+  const { settings } = useContext(UlamsContext);
   const { i18n } = useTranslation();
 
   const getImage = useCallback(() => {

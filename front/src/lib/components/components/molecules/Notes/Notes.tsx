@@ -6,7 +6,7 @@ import { IconTitle } from "../../atoms/IconTitle/IconTitle";
 import Text from "../../atoms/Typography/Text";
 import { Button } from "../../atoms/Button/Button";
 import { useTranslation } from "react-i18next";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 const NoteIcon = () => {
   return (
@@ -51,7 +51,7 @@ export const Notes: React.FC<NotesProps> = (props) => {
   const { t } = useTranslation();
 
   return (
-    <StyledNotes className={`wellms-component ${className}`}>
+    <StyledNotes className={`ulams-component ${className}`}>
       {noteGroups.map((noteGroup, index) => {
         return (
           <div key={index} className="notes-container">

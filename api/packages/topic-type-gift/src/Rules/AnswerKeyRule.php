@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Rules;
+namespace Ulams\TopicTypeGift\Rules;
 
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Strategies\GiftQuestionStrategyFactory;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Strategies\GiftQuestionStrategyFactory;
 use Illuminate\Contracts\Validation\Rule;
 
 class AnswerKeyRule implements Rule

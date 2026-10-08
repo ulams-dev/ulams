@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Youtube\Services\Contracts;
+namespace Ulams\Youtube\Services\Contracts;
 
 use Google_Client;
 

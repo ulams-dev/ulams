@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Http\Controllers\Swagger;
+namespace Ulams\StationaryEvents\Http\Controllers\Swagger;
 
-use EscolaLms\StationaryEvents\Http\Requests\CreateStationaryEventRequest;
-use EscolaLms\StationaryEvents\Http\Requests\DeleteStationaryEventRequest;
-use EscolaLms\StationaryEvents\Http\Requests\ListStationaryEventRequest;
-use EscolaLms\StationaryEvents\Http\Requests\ReadStationaryEventRequest;
-use EscolaLms\StationaryEvents\Http\Requests\UpdateStationaryEventRequest;
+use Ulams\StationaryEvents\Http\Requests\CreateStationaryEventRequest;
+use Ulams\StationaryEvents\Http\Requests\DeleteStationaryEventRequest;
+use Ulams\StationaryEvents\Http\Requests\ListStationaryEventRequest;
+use Ulams\StationaryEvents\Http\Requests\ReadStationaryEventRequest;
+use Ulams\StationaryEvents\Http\Requests\UpdateStationaryEventRequest;
 use Illuminate\Http\JsonResponse;
 
 interface StationaryEventAdminApiSwagger

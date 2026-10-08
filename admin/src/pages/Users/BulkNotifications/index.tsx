@@ -1,5 +1,5 @@
 import TableList from '@/pages/Users/BulkNotifications/List';
-import { BulkNotificationChannelsEnum } from '@/services/escola-lms/enums';
+import { BulkNotificationChannelsEnum } from '@/services/ulams/enums';
 import ProCard from '@ant-design/pro-card';
 import { PageContainer } from '@ant-design/pro-layout';
 import React from 'react';

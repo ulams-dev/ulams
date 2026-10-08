@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Permissions\Tests\Api;
+namespace Ulams\Permissions\Tests\Api;
 
-use EscolaLms\Permissions\Tests\TestCase;
+use Ulams\Permissions\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;

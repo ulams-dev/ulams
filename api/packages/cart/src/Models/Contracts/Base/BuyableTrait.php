@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Models\Contracts\Base;
+namespace Ulams\Cart\Models\Contracts\Base;
 
 /**
- * @see \EscolaLms\Cart\Contracts\Buyable
+ * @see \Ulams\Cart\Contracts\Buyable
  * @see \Treestoneit\ShoppingCart\BuyableTrait
  */
 trait BuyableTrait

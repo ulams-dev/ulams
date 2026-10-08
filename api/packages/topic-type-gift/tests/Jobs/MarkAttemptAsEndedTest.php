@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Tests\Jobs;
+namespace Ulams\TopicTypeGift\Tests\Jobs;
 
-use EscolaLms\TopicTypeGift\Events\QuizAttemptFinishedEvent;
-use EscolaLms\TopicTypeGift\Jobs\MarkAttemptAsEnded;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
-use EscolaLms\TopicTypeGift\Tests\TestCase;
+use Ulams\TopicTypeGift\Events\QuizAttemptFinishedEvent;
+use Ulams\TopicTypeGift\Jobs\MarkAttemptAsEnded;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
+use Ulams\TopicTypeGift\Tests\TestCase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 

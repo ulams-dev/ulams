@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Models;
+namespace Ulams\Dictionaries\Models;
 
-use EscolaLms\Auth\Models\User as AuthUser;
+use Ulams\Auth\Models\User as AuthUser;
 
 /**
- * Class EscolaLms\Dictionaries\Models\User
+ * Class Ulams\Dictionaries\Models\User
  *
  * @property int $id
  * @property string $email

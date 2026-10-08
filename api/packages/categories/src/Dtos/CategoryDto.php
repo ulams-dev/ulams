@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Categories\Dtos;
+namespace Ulams\Categories\Dtos;
 
-use EscolaLms\Categories\Dtos\Contracts\ModelDtoContract;
-use EscolaLms\Categories\Models\Category;
+use Ulams\Categories\Dtos\Contracts\ModelDtoContract;
+use Ulams\Categories\Models\Category;
 
 class CategoryDto extends BaseDto implements ModelDtoContract
 {

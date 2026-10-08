@@ -7,8 +7,8 @@ import React, {
   useEffect,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextListState,
   ContextPaginatedMetaState,
 } from "./types";
@@ -21,7 +21,7 @@ import { getDefaultData } from "./index";
 import { pages as getPages } from "./../../services/pages";
 
 export const PagesContext: React.Context<
-  Pick<EscolaLMSContextConfig, "pages" | "fetchPages">
+  Pick<UlamsContextConfig, "pages" | "fetchPages">
 > = createContext({
   pages: defaultConfig.pages,
   fetchPages: defaultConfig.fetchPages,
@@ -29,7 +29,7 @@ export const PagesContext: React.Context<
 
 export interface PagesContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "pages">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "pages">>;
   ssrHydration?: boolean;
 }
 

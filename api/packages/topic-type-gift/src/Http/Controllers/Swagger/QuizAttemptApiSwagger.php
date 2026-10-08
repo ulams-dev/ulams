@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Controllers\Swagger;
+namespace Ulams\TopicTypeGift\Http\Controllers\Swagger;
 
-use EscolaLms\TopicTypeGift\Http\Requests\EndQuizAttemptRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\GetActiveAttemptRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\ListQuizAttemptRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\ReadQuizAttemptRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\SaveAttemptAnswerRequest;
+use Ulams\TopicTypeGift\Http\Requests\EndQuizAttemptRequest;
+use Ulams\TopicTypeGift\Http\Requests\GetActiveAttemptRequest;
+use Ulams\TopicTypeGift\Http\Requests\ListQuizAttemptRequest;
+use Ulams\TopicTypeGift\Http\Requests\ReadQuizAttemptRequest;
+use Ulams\TopicTypeGift\Http\Requests\SaveAttemptAnswerRequest;
 use Illuminate\Http\JsonResponse;
 
 interface QuizAttemptApiSwagger

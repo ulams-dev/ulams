@@ -1,108 +1,108 @@
 export default {
   // AUTH
-  'EscolaLms\\Auth\\Events\\AccountBlocked': 'Compte bloqué',
-  'EscolaLms\\Auth\\Events\\AccountConfirmed': 'Compte confirmé',
-  'EscolaLms\\Auth\\Events\\AccountDeleted': 'Compte supprimé',
-  'EscolaLms\\Auth\\Events\\AccountMustBeEnableByAdmin':
+  'Ulams\\Auth\\Events\\AccountBlocked': 'Compte bloqué',
+  'Ulams\\Auth\\Events\\AccountConfirmed': 'Compte confirmé',
+  'Ulams\\Auth\\Events\\AccountDeleted': 'Compte supprimé',
+  'Ulams\\Auth\\Events\\AccountMustBeEnableByAdmin':
     "Le compte doit être activé par l'administrateur",
-  'EscolaLms\\Auth\\Events\\AccountRegistered': 'Compte enregistré',
-  'EscolaLms\\Auth\\Events\\ForgotPassword': 'Mot de passe oublié',
-  'EscolaLms\\Auth\\Events\\Login': 'Connexion',
-  'EscolaLms\\Auth\\Events\\Logout': 'Déconnexion',
-  'EscolaLms\\Auth\\Events\\PasswordChanged': 'Mot de passe modifié',
-  'EscolaLms\\Auth\\Events\\ResetPassword': 'Réinitialiser le mot de passe',
-  'EscolaLms\\Auth\\Events\\UserAddedToGroup': 'Utilisateur ajouté au groupe',
-  'EscolaLms\\Auth\\Events\\UserRemovedFromGroup': 'Utilisateur supprimé du groupe',
+  'Ulams\\Auth\\Events\\AccountRegistered': 'Compte enregistré',
+  'Ulams\\Auth\\Events\\ForgotPassword': 'Mot de passe oublié',
+  'Ulams\\Auth\\Events\\Login': 'Connexion',
+  'Ulams\\Auth\\Events\\Logout': 'Déconnexion',
+  'Ulams\\Auth\\Events\\PasswordChanged': 'Mot de passe modifié',
+  'Ulams\\Auth\\Events\\ResetPassword': 'Réinitialiser le mot de passe',
+  'Ulams\\Auth\\Events\\UserAddedToGroup': 'Utilisateur ajouté au groupe',
+  'Ulams\\Auth\\Events\\UserRemovedFromGroup': 'Utilisateur supprimé du groupe',
   // SETTINGS
-  'EscolaLms\\Settings\\Events\\SettingPackageConfigUpdated':
+  'Ulams\\Settings\\Events\\SettingPackageConfigUpdated':
     'Configuration du package de configuration mise à jour',
   // CSV USER
-  'EscolaLms\\CsvUsers\\Events\\EscolaLmsImportedNewUserTemplateEvent':
+  'Ulams\\CsvUsers\\Events\\UlamsImportedNewUserTemplateEvent':
     "Importation d'un nouvel événement de modèle d'utilisateur",
   // TOPIC
-  'EscolaLms\\TopicTypes\\Events\\TopicTypeChanged': 'Type de sujet modifié',
+  'Ulams\\TopicTypes\\Events\\TopicTypeChanged': 'Type de sujet modifié',
   // CONSULTATIONS
-  'EscolaLms\\Consultations\\Events\\ApprovedTerm': 'Durée approuvée de la consultation',
-  'EscolaLms\\Consultations\\Events\\ApprovedTermWithTrainer':
+  'Ulams\\Consultations\\Events\\ApprovedTerm': 'Durée approuvée de la consultation',
+  'Ulams\\Consultations\\Events\\ApprovedTermWithTrainer':
     'Consultation terme approuvé avec le formateur',
-  'EscolaLms\\Consultations\\Events\\ChangeTerm': 'Consultation changement terme',
-  'EscolaLms\\Consultations\\Events\\RejectTerm': 'Condition de rejet de la consultation',
-  'EscolaLms\\Consultations\\Events\\RejectTermWithTrainer':
+  'Ulams\\Consultations\\Events\\ChangeTerm': 'Consultation changement terme',
+  'Ulams\\Consultations\\Events\\RejectTerm': 'Condition de rejet de la consultation',
+  'Ulams\\Consultations\\Events\\RejectTermWithTrainer':
     'La consultation a rejeté le terme avec le formateur',
-  'EscolaLms\\Consultations\\Events\\ReminderAboutTerm': 'Rappel de consultation sur le terme',
-  'EscolaLms\\Consultations\\Events\\ReminderTrainerAboutTerm':
+  'Ulams\\Consultations\\Events\\ReminderAboutTerm': 'Rappel de consultation sur le terme',
+  'Ulams\\Consultations\\Events\\ReminderTrainerAboutTerm':
     'Consultation rappel formateur sur terme',
-  'EscolaLms\\Consultations\\Events\\ReportTerm': 'Durée du rapport de consultation',
+  'Ulams\\Consultations\\Events\\ReportTerm': 'Durée du rapport de consultation',
   // WEBINAR
-  'EscolaLms\\Webinar\\Events\\ReminderAboutTerm': 'Rappel du webinaire sur le terme',
-  'EscolaLms\\Webinar\\Events\\WebinarTrainerAssigned': 'Formateur Webinart affecté',
-  'EscolaLms\\Webinar\\Events\\WebinarTrainerUnassigned': 'Formateur de webinaire non attribué',
+  'Ulams\\Webinar\\Events\\ReminderAboutTerm': 'Rappel du webinaire sur le terme',
+  'Ulams\\Webinar\\Events\\WebinarTrainerAssigned': 'Formateur Webinart affecté',
+  'Ulams\\Webinar\\Events\\WebinarTrainerUnassigned': 'Formateur de webinaire non attribué',
   // PAYMENT
-  'EscolaLms\\Payments\\Events\\PaymentCancelled': 'Paiement annulé',
-  'EscolaLms\\Payments\\Events\\PaymentFailed': 'Paiement échoué',
-  'EscolaLms\\Payments\\Events\\PaymentRegistered': 'Paiement enregistré',
-  'EscolaLms\\Payments\\Events\\PaymentSuccess': 'Paiement réussi',
+  'Ulams\\Payments\\Events\\PaymentCancelled': 'Paiement annulé',
+  'Ulams\\Payments\\Events\\PaymentFailed': 'Paiement échoué',
+  'Ulams\\Payments\\Events\\PaymentRegistered': 'Paiement enregistré',
+  'Ulams\\Payments\\Events\\PaymentSuccess': 'Paiement réussi',
   // COURSE
-  'EscolaLms\\Courses\\Events\\CourseAccessFinished': 'Accès au cours terminé',
-  'EscolaLms\\Courses\\Events\\CourseAccessStarted': "L'accès au cours a commencé",
-  'EscolaLms\\Courses\\Events\\CourseAssigned': 'Cours attribué',
-  'EscolaLms\\Courses\\Events\\CourseDeadlineSoon': 'Date limite du cours bientôt',
-  'EscolaLms\\Courses\\Events\\CoursedPublished': 'Cours publié',
-  'EscolaLms\\Courses\\Events\\CourseFinished': 'Cours terminé',
-  'EscolaLms\\Courses\\Events\\CourseStarted': 'Cours commencé',
-  'EscolaLms\\Courses\\Events\\CourseStatusChanged': 'Le statut du cours a changé',
-  'EscolaLms\\Courses\\Events\\CourseTutorAssigned': 'Tuteur de cours assigné',
-  'EscolaLms\\Courses\\Events\\CourseTutorUnassigned': 'Tuteur de cours non affecté',
-  'EscolaLms\\Courses\\Events\\CourseUnassigned': 'Cours non attribué',
-  'EscolaLms\\Courses\\Events\\TopicFinished': 'Sujet terminé',
+  'Ulams\\Courses\\Events\\CourseAccessFinished': 'Accès au cours terminé',
+  'Ulams\\Courses\\Events\\CourseAccessStarted': "L'accès au cours a commencé",
+  'Ulams\\Courses\\Events\\CourseAssigned': 'Cours attribué',
+  'Ulams\\Courses\\Events\\CourseDeadlineSoon': 'Date limite du cours bientôt',
+  'Ulams\\Courses\\Events\\CoursedPublished': 'Cours publié',
+  'Ulams\\Courses\\Events\\CourseFinished': 'Cours terminé',
+  'Ulams\\Courses\\Events\\CourseStarted': 'Cours commencé',
+  'Ulams\\Courses\\Events\\CourseStatusChanged': 'Le statut du cours a changé',
+  'Ulams\\Courses\\Events\\CourseTutorAssigned': 'Tuteur de cours assigné',
+  'Ulams\\Courses\\Events\\CourseTutorUnassigned': 'Tuteur de cours non affecté',
+  'Ulams\\Courses\\Events\\CourseUnassigned': 'Cours non attribué',
+  'Ulams\\Courses\\Events\\TopicFinished': 'Sujet terminé',
   // STATIONARY EVENT
-  'EscolaLms\\StationaryEvents\\Events\\StationaryEventAssigned': 'Evénement stationnaire affecté',
-  'EscolaLms\\StationaryEvents\\Events\\StationaryEventUnassigned':
+  'Ulams\\StationaryEvents\\Events\\StationaryEventAssigned': 'Evénement stationnaire affecté',
+  'Ulams\\StationaryEvents\\Events\\StationaryEventUnassigned':
     'Événement stationnaire non affecté',
-  'EscolaLms\\StationaryEvents\\Events\\StationaryEventAuthorAssigned':
+  'Ulams\\StationaryEvents\\Events\\StationaryEventAuthorAssigned':
     "Auteur d'événement stationnaire attribué",
-  'EscolaLms\\StationaryEvents\\Events\\StationaryEventAuthorUnassigned':
+  'Ulams\\StationaryEvents\\Events\\StationaryEventAuthorUnassigned':
     "Auteur d'événement stationnaire non attribué",
   // CART
-  'EscolaLms\\Cart\\Events\\AbandonedCartEvent': 'Événement de panier abandonné',
-  'EscolaLms\\Cart\\Events\\OrderCancelled': 'Commande de panier annulée',
-  'EscolaLms\\Cart\\Events\\OrderCreated': 'Commande de panier créée',
-  'EscolaLms\\Cart\\Events\\OrderPaid': 'Commande du panier payée',
-  'EscolaLms\\Cart\\Events\\ProductableAttached': 'Produit produit attaché au panier',
-  'EscolaLms\\Cart\\Events\\ProductableDetached': 'Panier productible détaché',
-  'EscolaLms\\Cart\\Events\\ProductAddedToCart': 'Produit ajouté au panier',
-  'EscolaLms\\Cart\\Events\\ProductAttached': 'Produit du panier joint',
-  'EscolaLms\\Cart\\Events\\ProductBought': 'Produit du panier acheté',
-  'EscolaLms\\Cart\\Events\\ProductDetached': 'Produit du panier détaché',
-  'EscolaLms\\Cart\\Events\\ProductRemovedFromCart': 'Produit supprimé du panier',
+  'Ulams\\Cart\\Events\\AbandonedCartEvent': 'Événement de panier abandonné',
+  'Ulams\\Cart\\Events\\OrderCancelled': 'Commande de panier annulée',
+  'Ulams\\Cart\\Events\\OrderCreated': 'Commande de panier créée',
+  'Ulams\\Cart\\Events\\OrderPaid': 'Commande du panier payée',
+  'Ulams\\Cart\\Events\\ProductableAttached': 'Produit produit attaché au panier',
+  'Ulams\\Cart\\Events\\ProductableDetached': 'Panier productible détaché',
+  'Ulams\\Cart\\Events\\ProductAddedToCart': 'Produit ajouté au panier',
+  'Ulams\\Cart\\Events\\ProductAttached': 'Produit du panier joint',
+  'Ulams\\Cart\\Events\\ProductBought': 'Produit du panier acheté',
+  'Ulams\\Cart\\Events\\ProductDetached': 'Produit du panier détaché',
+  'Ulams\\Cart\\Events\\ProductRemovedFromCart': 'Produit supprimé du panier',
   // TEMPLATES
-  'EscolaLms\\Templates\\Events\\ManuallyTriggeredEvent':
+  'Ulams\\Templates\\Events\\ManuallyTriggeredEvent':
     "Modèle d'événement déclenché manuellement",
   // ASSIGN WITHOUT ACCOUNT
-  'EscolaLms\\AssignWithoutAccount\\Events\\AssignToProductable':
+  'Ulams\\AssignWithoutAccount\\Events\\AssignToProductable':
     'Assign to productable without account',
-  'EscolaLms\\AssignWithoutAccount\\Events\\AssignToProduct': 'Attribuer au produit sans compte',
+  'Ulams\\AssignWithoutAccount\\Events\\AssignToProduct': 'Attribuer au produit sans compte',
   // Youtube
-  'EscolaLms\\Youtube\\Events\\YtProblem': 'Erreur YouTube',
+  'Ulams\\Youtube\\Events\\YtProblem': 'Erreur YouTube',
   // COURSE ACCESS
-  'EscolaLms\\CourseAccess\\Events\\CourseAccessEnquiryAdminCreatedEvent':
+  'Ulams\\CourseAccess\\Events\\CourseAccessEnquiryAdminCreatedEvent':
     "Événement créé par l'administrateur de la demande d'accès au cours",
   // TASKS
-  'EscolaLms\\Tasks\\Events\\TaskAssignedEvent': 'Événement affecté à la tâche',
-  'EscolaLms\\Tasks\\Events\\TaskCompleteUserConfirmationEvent':
+  'Ulams\\Tasks\\Events\\TaskAssignedEvent': 'Événement affecté à la tâche',
+  'Ulams\\Tasks\\Events\\TaskCompleteUserConfirmationEvent':
     "Événement de confirmation de l'utilisateur de la tâche terminée",
-  'EscolaLms\\Tasks\\Events\\TaskCompleteRequestEvent': 'Événement de demande de tâche terminée',
-  'EscolaLms\\Tasks\\Events\\TaskOverdueEvent': 'Événement de tâche en retard',
-  'EscolaLms\\Tasks\\Events\\TaskIncompleteEvent': 'Événement de tâche incomplète',
-  'EscolaLms\\Tasks\\Events\\TaskNoteCreatedEvent': 'Événement de création de note de tâche',
+  'Ulams\\Tasks\\Events\\TaskCompleteRequestEvent': 'Événement de demande de tâche terminée',
+  'Ulams\\Tasks\\Events\\TaskOverdueEvent': 'Événement de tâche en retard',
+  'Ulams\\Tasks\\Events\\TaskIncompleteEvent': 'Événement de tâche incomplète',
+  'Ulams\\Tasks\\Events\\TaskNoteCreatedEvent': 'Événement de création de note de tâche',
   // CONSULTATION ACCESS
-  'EscolaLms\\ConsultationAccess\\Events\\ConsultationAccessEnquiryAdminCreatedEvent':
+  'Ulams\\ConsultationAccess\\Events\\ConsultationAccessEnquiryAdminCreatedEvent':
     "Événement créé par l'administrateur de la demande d'accès à la consultation",
-  'EscolaLms\\ConsultationAccess\\Events\\ConsultationAccessEnquiryDisapprovedEvent':
+  'Ulams\\ConsultationAccess\\Events\\ConsultationAccessEnquiryDisapprovedEvent':
     "Événement de demande d'accès à la consultation refusé",
-  'EscolaLms\\ConsultationAccess\\Events\\ConsultationAccessEnquiryApprovedEvent':
+  'Ulams\\ConsultationAccess\\Events\\ConsultationAccessEnquiryApprovedEvent':
     "Événement approuvé de demande d'accès à la consultation",
   // TOPIC TYPE PROJECT
-  'EscolaLms\\TopicTypeProject\\Events\\ProjectSolutionCreatedEvent':
+  'Ulams\\TopicTypeProject\\Events\\ProjectSolutionCreatedEvent':
     'Événement créé par la solution de projet',
 };

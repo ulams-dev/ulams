@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Tests;
+namespace Ulams\BulkNotifications\Tests;
 
-use EscolaLms\BulkNotifications\Channels\NotificationChannel;
-use EscolaLms\BulkNotifications\ValueObjects\Notification;
+use Ulams\BulkNotifications\Channels\NotificationChannel;
+use Ulams\BulkNotifications\ValueObjects\Notification;
 use Illuminate\Support\Collection;
 
 class FakeNotificationChannel implements NotificationChannel

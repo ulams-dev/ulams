@@ -1,11 +1,11 @@
-import { getStationaryEvent } from '@/services/escola-lms/stationary_events';
+import { getStationaryEvent } from '@/services/ulams/stationary_events';
 import { Button, message } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
 
 export const StationaryEventRow: React.FC<{
   id: number;
-  onLoaded: (model: EscolaLms.StationaryEvents.Models.StationaryEvent) => void;
+  onLoaded: (model: Ulams.StationaryEvents.Models.StationaryEvent) => void;
 }> = ({ id, onLoaded }) => {
   const [loading, setLoading] = useState(false);
   const intl = useIntl();

@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests\Admin;
+namespace Ulams\Cart\Http\Requests\Admin;
 
-use EscolaLms\Cart\Dtos\OrdersSearchDto;
-use EscolaLms\Cart\Enums\OrderStatus;
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Rules\ProductableRegisteredRule;
-use EscolaLms\Core\Models\User;
+use Ulams\Cart\Dtos\OrdersSearchDto;
+use Ulams\Cart\Enums\OrderStatus;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Rules\ProductableRegisteredRule;
+use Ulams\Core\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;

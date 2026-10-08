@@ -1,4 +1,4 @@
-import { addQuestion, deleteQuestion, editQuestion } from '@/services/escola-lms/questionnaire';
+import { addQuestion, deleteQuestion, editQuestion } from '@/services/ulams/questionnaire';
 import { sortArrayByKey } from '@/utils/utils';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';

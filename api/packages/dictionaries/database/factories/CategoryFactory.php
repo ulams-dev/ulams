@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Database\Factories;
+namespace Ulams\Dictionaries\Database\Factories;
 
-use EscolaLms\Dictionaries\Models\Category;
+use Ulams\Dictionaries\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CategoryFactory extends Factory

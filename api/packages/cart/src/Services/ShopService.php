@@ -1,23 +1,23 @@
 <?php
 
-namespace EscolaLms\Cart\Services;
+namespace Ulams\Cart\Services;
 
 use Carbon\Carbon;
-use EscolaLms\Cart\Dtos\ClientDetailsDto;
-use EscolaLms\Cart\Enums\OrderStatus;
-use EscolaLms\Cart\Enums\ProductType;
-use EscolaLms\Cart\Enums\QuantityOperationEnum;
-use EscolaLms\Cart\Events\ProductAddedToCart;
-use EscolaLms\Cart\Events\ProductRemovedFromCart;
-use EscolaLms\Cart\Http\Resources\CartResource;
-use EscolaLms\Cart\Models\Cart;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Services\Contracts\OrderServiceContract;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
-use EscolaLms\Cart\Services\Contracts\ShopServiceContract;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Payments\Enums\PaymentStatus;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Cart\Dtos\ClientDetailsDto;
+use Ulams\Cart\Enums\OrderStatus;
+use Ulams\Cart\Enums\ProductType;
+use Ulams\Cart\Enums\QuantityOperationEnum;
+use Ulams\Cart\Events\ProductAddedToCart;
+use Ulams\Cart\Events\ProductRemovedFromCart;
+use Ulams\Cart\Http\Resources\CartResource;
+use Ulams\Cart\Models\Cart;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Services\Contracts\OrderServiceContract;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Cart\Services\Contracts\ShopServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Payments\Enums\PaymentStatus;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Resources\Json\JsonResource;
 use InvalidArgumentException;

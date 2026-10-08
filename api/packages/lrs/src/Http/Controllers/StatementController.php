@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Lrs\Http\Controllers;
+namespace Ulams\Lrs\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Lrs\Dto\StatementSearchDto;
-use EscolaLms\Lrs\Http\Controllers\Swagger\StatementSwagger;
-use EscolaLms\Lrs\Http\Requests\StatementListRequest;
-use EscolaLms\Lrs\Http\Resources\StatementResource;
-use EscolaLms\Lrs\Services\Contracts\StatementServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Lrs\Dto\StatementSearchDto;
+use Ulams\Lrs\Http\Controllers\Swagger\StatementSwagger;
+use Ulams\Lrs\Http\Requests\StatementListRequest;
+use Ulams\Lrs\Http\Resources\StatementResource;
+use Ulams\Lrs\Services\Contracts\StatementServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class StatementController extends EscolaLmsBaseController implements StatementSwagger
+class StatementController extends UlamsBaseController implements StatementSwagger
 {
     private StatementServiceContract $statementService;
 

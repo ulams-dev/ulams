@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Models;
+namespace Ulams\Cart\Models;
 
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Throwable;
 
 /**
- * EscolaLms\Cart\Models\ProductProductable
+ * Ulams\Cart\Models\ProductProductable
  *
  * @property int $id
  * @property int $product_id
@@ -22,7 +22,7 @@ use Throwable;
  * @property int $quantity
  * @property ?int $position
  * @property-read Productable|null $canonical_productable
- * @property-read \EscolaLms\Cart\Models\Product|null $product
+ * @property-read \Ulams\Cart\Models\Product|null $product
  * @property-read Model|\Eloquent $productable
  * @method static \Illuminate\Database\Eloquent\Builder|ProductProductable newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProductProductable newQuery()

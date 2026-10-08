@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Recommender\Repositories;
+namespace Ulams\Recommender\Repositories;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Recommender\Dto\TermAnalyticsFilterListDto;
-use EscolaLms\Recommender\Models\TermAnalytic;
-use EscolaLms\Questionnaire\Models\QuestionAnswer;
-use EscolaLms\Questionnaire\Models\QuestionnaireModel;
-use EscolaLms\Questionnaire\Models\QuestionnaireModelType;
-use EscolaLms\Recommender\Repositories\Contracts\TermAnalyticsRepositoryContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Recommender\Dto\TermAnalyticsFilterListDto;
+use Ulams\Recommender\Models\TermAnalytic;
+use Ulams\Questionnaire\Models\QuestionAnswer;
+use Ulams\Questionnaire\Models\QuestionnaireModel;
+use Ulams\Questionnaire\Models\QuestionnaireModelType;
+use Ulams\Recommender\Repositories\Contracts\TermAnalyticsRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 

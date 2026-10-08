@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Exceptions;
+namespace Ulams\PencilSpaces\Exceptions;
 
 use Exception;
 

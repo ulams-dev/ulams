@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Models;
+namespace Ulams\Questionnaire\Models;
 
-use EscolaLms\Questionnaire\Database\Factories\QuestionnaireFactory;
+use Ulams\Questionnaire\Database\Factories\QuestionnaireFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

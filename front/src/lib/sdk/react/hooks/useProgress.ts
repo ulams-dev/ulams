@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { CourseProgress, DefaultResponseSuccess } from "../../types";
-import { EscolaLMSContext } from "../context";
+import { UlamsContext } from "../context";
 
 type PogressState = {
   data: CourseProgress | undefined;
@@ -14,7 +14,7 @@ export const useProgress = () => {
     loaded: false,
     loading: false,
   });
-  const { user, fetchProgress } = useContext(EscolaLMSContext);
+  const { user, fetchProgress } = useContext(UlamsContext);
 
   const getProgressData = useCallback(() => {
     setProgress({

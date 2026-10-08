@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class EventOrderByEnum extends BasicEnum
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\TopicTypeProject;
+namespace Ulams\TemplatesEmail\TopicTypeProject;
 
 class ProjectSolutionCreatedVariables extends CommonProjectSolutionVariables
 {

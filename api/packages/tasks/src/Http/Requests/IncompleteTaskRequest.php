@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Requests;
+namespace Ulams\Tasks\Http\Requests;
 
-use EscolaLms\Tasks\Models\Task;
+use Ulams\Tasks\Models\Task;
 use Illuminate\Support\Facades\Gate;
 
 class IncompleteTaskRequest extends TaskRequest

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\CsvUsers;
+namespace Ulams\TemplatesEmail\CsvUsers;
 
-use EscolaLms\TemplatesEmail\Auth\ResetPasswordVariables;
+use Ulams\TemplatesEmail\Auth\ResetPasswordVariables;
 use Illuminate\Support\Facades\Lang;
 
 class ImportedNewUserVariables extends ResetPasswordVariables

@@ -3,7 +3,7 @@ import styled, { withTheme } from "styled-components";
 import { ReactNode } from "react";
 import chroma from "chroma-js";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface StyledPricingCardProps extends ExtendableStyledComponent {
   mobile?: boolean;
@@ -81,7 +81,7 @@ export const PricingCard: React.FC<PricingCardProps> = (props) => {
 
   return (
     <StyledPricingCard
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
       mobile={mobile}
       free={free}
     >

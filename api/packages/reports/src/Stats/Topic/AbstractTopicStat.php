@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Topic;
+namespace Ulams\Reports\Stats\Topic;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Reports\Stats\StatsContract;
+use Ulams\Courses\Models\Topic;
+use Ulams\Reports\Stats\StatsContract;
 
 abstract class AbstractTopicStat implements StatsContract
 {

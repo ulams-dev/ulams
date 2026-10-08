@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Categories\Http\Requests;
+namespace Ulams\Categories\Http\Requests;
 
-use EscolaLms\Categories\Models\Category;
+use Ulams\Categories\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CategoryReadRequest extends FormRequest

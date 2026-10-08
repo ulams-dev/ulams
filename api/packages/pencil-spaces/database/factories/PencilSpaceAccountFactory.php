@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Database\Factories;
+namespace Ulams\PencilSpaces\Database\Factories;
 
-use EscolaLms\PencilSpaces\Models\PencilSpaceAccount;
-use EscolaLms\PencilSpaces\Models\User;
+use Ulams\PencilSpaces\Models\PencilSpaceAccount;
+use Ulams\PencilSpaces\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PencilSpaceAccountFactory extends Factory

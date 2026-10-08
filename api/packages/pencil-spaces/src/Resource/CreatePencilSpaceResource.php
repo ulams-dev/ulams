@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Resource;
+namespace Ulams\PencilSpaces\Resource;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\PencilSpaces\Enums\SpaceVisibilityEnum;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\PencilSpaces\Enums\SpaceVisibilityEnum;
 use Illuminate\Support\Collection;
 
 class CreatePencilSpaceResource

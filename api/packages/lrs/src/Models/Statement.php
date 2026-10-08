@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Lrs\Models;
+namespace Ulams\Lrs\Models;
 
-use EscolaLms\Lrs\Database\Factories\StatementFactory;
+use Ulams\Lrs\Database\Factories\StatementFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Statement extends \Trax\XapiStore\Stores\Statements\Statement

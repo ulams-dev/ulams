@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Tests;
+namespace Ulams\TopicTypeGift\Tests;
 
-use EscolaLms\TopicTypeGift\Enum\QuestionTypeEnum;
+use Ulams\TopicTypeGift\Enum\QuestionTypeEnum;
 
 trait GiftQuestionTesting
 {

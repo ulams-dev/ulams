@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Tasks\Repositories\Contracts;
+namespace Ulams\Tasks\Repositories\Contracts;
 
 use Illuminate\Support\Carbon;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Payments;
+namespace Ulams\TemplatesEmail\Payments;
 
 class PaymentFailedVariables extends PaymentsVariables
 {

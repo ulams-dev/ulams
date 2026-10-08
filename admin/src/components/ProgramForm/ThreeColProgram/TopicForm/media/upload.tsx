@@ -1,5 +1,5 @@
 import SecureUploadBrowser from '@/components/SecureUpload/browser';
-import { TopicType } from '@/services/escola-lms/enums';
+import { TopicType } from '@/services/ulams/enums';
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Pagination, Progress, Row, Spin, Typography } from 'antd';
 import type { UploadChangeParam, UploadFile } from 'antd/lib/upload';

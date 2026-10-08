@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Http\Controllers\Swagger;
+namespace Ulams\BulkNotifications\Http\Controllers\Swagger;
 
-use EscolaLms\BulkNotifications\Http\Requests\CreateDeviceTokenRequest;
+use Ulams\BulkNotifications\Http\Requests\CreateDeviceTokenRequest;
 use Illuminate\Http\JsonResponse;
 
 interface DeviceTokenControllerSwagger

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Policies;
+namespace Ulams\CoursesImportExport\Policies;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\CoursesImportExport\Enums\CoursesImportExportPermissionsEnum;
-use EscolaLms\CoursesImportExport\Models\Course;
+use Ulams\Core\Models\User;
+use Ulams\CoursesImportExport\Enums\CoursesImportExportPermissionsEnum;
+use Ulams\CoursesImportExport\Models\Course;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 

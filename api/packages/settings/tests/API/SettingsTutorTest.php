@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Settings\Tests\API;
+namespace Ulams\Settings\Tests\API;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Settings\Database\Seeders\DatabaseSeeder;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\Settings\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Settings\Database\Seeders\DatabaseSeeder;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\Settings\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class SettingsTutorTest extends TestCase

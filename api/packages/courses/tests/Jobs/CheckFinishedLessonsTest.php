@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\Jobs;
+namespace Ulams\Courses\Tests\Jobs;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Enum\ProgressStatus;
-use EscolaLms\Courses\Events\LessonFinished;
-use EscolaLms\Courses\Jobs\CheckFinishedLessons;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\CourseProgress;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Enum\ProgressStatus;
+use Ulams\Courses\Events\LessonFinished;
+use Ulams\Courses\Jobs\CheckFinishedLessons;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;

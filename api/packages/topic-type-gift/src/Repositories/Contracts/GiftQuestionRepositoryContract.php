@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Repositories\Contracts;
+namespace Ulams\TopicTypeGift\Repositories\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 
 interface GiftQuestionRepositoryContract extends BaseRepositoryContract
 {

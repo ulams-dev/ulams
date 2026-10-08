@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Courses\Models;
+namespace Ulams\Courses\Models;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Core\Models\Traits\QueryCacheable;
-use EscolaLms\Core\Models\User as CoreUser;
-use EscolaLms\Courses\Database\Factories\CourseFactory;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Enum\PlatformVisibility;
-use EscolaLms\Courses\Events\CourseStatusChanged;
-use EscolaLms\Tags\Models\Tag;
+use Ulams\Categories\Models\Category;
+use Ulams\Core\Models\Traits\QueryCacheable;
+use Ulams\Core\Models\User as CoreUser;
+use Ulams\Courses\Database\Factories\CourseFactory;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Enum\PlatformVisibility;
+use Ulams\Courses\Events\CourseStatusChanged;
+use Ulams\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -165,8 +165,8 @@ use Peopleaps\Scorm\Model\ScormScoModel;
  *      ),
  * )
  *
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $lessons
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Topic[] $topics
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Courses\Models\Lesson[] $lessons
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Courses\Models\Topic[] $topics
  * @property string $status
  * @property ?Carbon $active_from
  * @property ?Carbon $active_to
@@ -349,7 +349,7 @@ class Course extends Model
 
     protected static function newFactory(): CourseFactory
     {
-        return \EscolaLms\Courses\Database\Factories\CourseFactory::new();
+        return \Ulams\Courses\Database\Factories\CourseFactory::new();
     }
 
     public function getImageUrlAttribute(): ?string
@@ -469,7 +469,7 @@ class Course extends Model
     {
         self::creating(function (Course $course) {
             if (is_null($course->findable)) {
-                $course->findable = config('escolalms_courses.platform_visibility', PlatformVisibility::VISIBILITY_PUBLIC) === PlatformVisibility::VISIBILITY_PUBLIC;
+                $course->findable = config('ulams_courses.platform_visibility', PlatformVisibility::VISIBILITY_PUBLIC) === PlatformVisibility::VISIBILITY_PUBLIC;
             }
         });
         /** Backwards compatibility */

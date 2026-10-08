@@ -8,9 +8,9 @@ import { FormattedMessage, Link, useIntl } from 'umi';
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';
 import UserSelect from '@/components/UserSelect';
 import { DATETIME_FORMAT } from '@/consts/dates';
-import { program } from '@/services/escola-lms/course';
-import { TopicType } from '@/services/escola-lms/enums';
-import { deleteProjectSolution, projectSolutions } from '@/services/escola-lms/projects';
+import { program } from '@/services/ulams/course';
+import { TopicType } from '@/services/ulams/enums';
+import { deleteProjectSolution, projectSolutions } from '@/services/ulams/projects';
 
 const handleRemove = async (id: number) => {
   const res = await deleteProjectSolution(id);
@@ -92,7 +92,7 @@ export const ProjectsList: React.FC<Props> = ({ courseId }) => {
           record.user_id && (
             <TypeButtonDrawer
               key={'user'}
-              type="EscolaLms\Core\Models\User"
+              type="Ulams\Core\Models\User"
               type_id={record.user_id}
             />
           ),

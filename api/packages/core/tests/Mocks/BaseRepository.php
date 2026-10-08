@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Mocks;
+namespace Ulams\Core\Tests\Mocks;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Repositories\BaseRepository as CoreBaseRepository;
+use Ulams\Core\Models\User;
+use Ulams\Core\Repositories\BaseRepository as CoreBaseRepository;
 
 class BaseRepository extends CoreBaseRepository
 {

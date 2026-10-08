@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Consultations\Http\Requests;
+namespace Ulams\Consultations\Http\Requests;
 
-use EscolaLms\Consultations\Enum\ConsultationsPermissionsEnum;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Rules\UserTermExist;
+use Ulams\Consultations\Enum\ConsultationsPermissionsEnum;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Rules\UserTermExist;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

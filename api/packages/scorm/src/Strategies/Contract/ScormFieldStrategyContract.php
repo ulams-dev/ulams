@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Scorm\Strategies\Contract;
+namespace Ulams\Scorm\Strategies\Contract;
 
 use Peopleaps\Scorm\Entity\ScoTracking;
 

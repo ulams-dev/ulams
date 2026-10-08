@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Payments\Services\Contracts;
+namespace Ulams\Payments\Services\Contracts;
 
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Payments\Contracts\Payable;
-use EscolaLms\Payments\Entities\PaymentsConfig;
-use EscolaLms\Payments\Models\Payment;
-use EscolaLms\Payments\Entities\PaymentProcessor;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Payments\Contracts\Payable;
+use Ulams\Payments\Entities\PaymentsConfig;
+use Ulams\Payments\Models\Payment;
+use Ulams\Payments\Entities\PaymentProcessor;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 

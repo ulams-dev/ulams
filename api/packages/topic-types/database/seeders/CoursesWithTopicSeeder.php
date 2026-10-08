@@ -1,25 +1,25 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Database\Seeders;
+namespace Ulams\TopicTypes\Database\Seeders;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Models\UserSetting;
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Courses\Database\Factories\FakerMarkdownProvider\FakerProvider;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\TopicResource;
-use EscolaLms\HeadlessH5P\Models\H5PContent;
-use EscolaLms\Tags\Models\Tag;
-use EscolaLms\TopicTypes\Models\TopicContent\Audio;
-use EscolaLms\TopicTypes\Models\TopicContent\H5P;
-use EscolaLms\TopicTypes\Models\TopicContent\Image;
-use EscolaLms\TopicTypes\Models\TopicContent\OEmbed;
-use EscolaLms\TopicTypes\Models\TopicContent\PDF;
-use EscolaLms\TopicTypes\Models\TopicContent\RichText;
-use EscolaLms\TopicTypes\Models\TopicContent\ScormSco;
-use EscolaLms\TopicTypes\Models\TopicContent\Video;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Models\UserSetting;
+use Ulams\Categories\Models\Category;
+use Ulams\Courses\Database\Factories\FakerMarkdownProvider\FakerProvider;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Models\TopicResource;
+use Ulams\HeadlessH5P\Models\H5PContent;
+use Ulams\Tags\Models\Tag;
+use Ulams\TopicTypes\Models\TopicContent\Audio;
+use Ulams\TopicTypes\Models\TopicContent\H5P;
+use Ulams\TopicTypes\Models\TopicContent\Image;
+use Ulams\TopicTypes\Models\TopicContent\OEmbed;
+use Ulams\TopicTypes\Models\TopicContent\PDF;
+use Ulams\TopicTypes\Models\TopicContent\RichText;
+use Ulams\TopicTypes\Models\TopicContent\ScormSco;
+use Ulams\TopicTypes\Models\TopicContent\Video;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Eloquent\Model;
@@ -63,7 +63,7 @@ class CoursesWithTopicSeeder extends Seeder
             $this->faker->name
         ];
         $hasH5P = false;
-        if (class_exists(EscolaLms\HeadlessH5P\Models\H5PContent::class)) {
+        if (class_exists(Ulams\HeadlessH5P\Models\H5PContent::class)) {
             $hasH5P = H5PContent::first() !== null;
         }
         $path = Storage::disk('public')->path('tutor_avatar.jpg');

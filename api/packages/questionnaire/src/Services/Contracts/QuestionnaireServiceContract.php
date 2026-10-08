@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Services\Contracts;
+namespace Ulams\Questionnaire\Services\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Questionnaire\Models\Questionnaire;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Models\User;
+use Ulams\Questionnaire\Models\Questionnaire;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
  * Interface QuestionnaireServiceContract
- * @package EscolaLms\Questionnaire\Http\Services\Contracts
+ * @package Ulams\Questionnaire\Http\Services\Contracts
  */
 interface QuestionnaireServiceContract
 {

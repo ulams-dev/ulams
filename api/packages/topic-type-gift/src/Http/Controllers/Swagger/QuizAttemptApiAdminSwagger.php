@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Controllers\Swagger;
+namespace Ulams\TopicTypeGift\Http\Controllers\Swagger;
 
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminExportQuizResultsRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminListQuizAttemptRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminReadQuizAttemptRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminUpdateQuizAttemptFeedbackRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminExportQuizResultsRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminListQuizAttemptRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminReadQuizAttemptRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminUpdateQuizAttemptFeedbackRequest;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 

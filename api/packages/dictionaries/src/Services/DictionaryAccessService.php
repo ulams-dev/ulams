@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Services;
+namespace Ulams\Dictionaries\Services;
 
-use EscolaLms\Dictionaries\Dtos\DictionaryAccessDto;
-use EscolaLms\Dictionaries\Models\Dictionary;
-use EscolaLms\Dictionaries\Repositories\Contracts\DictionaryUserRepositoryContract;
-use EscolaLms\Dictionaries\Services\Contracts\DictionaryAccessServiceContract;
+use Ulams\Dictionaries\Dtos\DictionaryAccessDto;
+use Ulams\Dictionaries\Models\Dictionary;
+use Ulams\Dictionaries\Repositories\Contracts\DictionaryUserRepositoryContract;
+use Ulams\Dictionaries\Services\Contracts\DictionaryAccessServiceContract;
 use Illuminate\Support\Collection;
 
 class DictionaryAccessService implements DictionaryAccessServiceContract

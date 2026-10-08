@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Settings\Http\Controllers\Swagger;
+namespace Ulams\Settings\Http\Controllers\Swagger;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

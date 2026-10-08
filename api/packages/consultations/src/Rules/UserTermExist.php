@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Consultations\Rules;
+namespace Ulams\Consultations\Rules;
 
-use EscolaLms\Consultations\Models\ConsultationUserTerm;
+use Ulams\Consultations\Models\ConsultationUserTerm;
 use Illuminate\Contracts\Validation\Rule;
 
 class UserTermExist implements Rule

@@ -1,14 +1,14 @@
 <?php
 
 
-namespace EscolaLms\Tags\Repository;
+namespace Ulams\Tags\Repository;
 
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Tags\Models\Tag;
-use EscolaLms\Tags\Repository\Contracts\TagRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Models\Course;
+use Ulams\Tags\Models\Tag;
+use Ulams\Tags\Repository\Contracts\TagRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 

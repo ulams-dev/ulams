@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Webinar\Tests\APIs;
+namespace Ulams\Webinar\Tests\APIs;
 
-use EscolaLms\Auth\Dtos\Admin\UserAssignableDto;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Services\Contracts\UserServiceContract;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Tags\Models\Tag;
-use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
-use EscolaLms\Webinar\Dto\WebinarUserDto;
-use EscolaLms\Webinar\Enum\WebinarPermissionsEnum;
-use EscolaLms\Webinar\Enum\WebinarStatusEnum;
-use EscolaLms\Webinar\Models\Webinar;
-use EscolaLms\Webinar\Tests\TestCase;
-use EscolaLms\Youtube\Services\Contracts\AuthServiceContract;
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
+use Ulams\Auth\Dtos\Admin\UserAssignableDto;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Services\Contracts\UserServiceContract;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Tags\Models\Tag;
+use Ulams\Webinar\Database\Seeders\WebinarsPermissionSeeder;
+use Ulams\Webinar\Dto\WebinarUserDto;
+use Ulams\Webinar\Enum\WebinarPermissionsEnum;
+use Ulams\Webinar\Enum\WebinarStatusEnum;
+use Ulams\Webinar\Models\Webinar;
+use Ulams\Webinar\Tests\TestCase;
+use Ulams\Youtube\Services\Contracts\AuthServiceContract;
+use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;

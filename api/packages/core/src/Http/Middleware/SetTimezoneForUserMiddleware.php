@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Core\Http\Middleware;
+namespace Ulams\Core\Http\Middleware;
 
 use Closure;
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 use Illuminate\Http\Request;
 
 class SetTimezoneForUserMiddleware

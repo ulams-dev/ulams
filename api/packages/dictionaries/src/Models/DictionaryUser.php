@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Models;
+namespace Ulams\Dictionaries\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;

@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Repositories;
+namespace Ulams\StationaryEvents\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
-use EscolaLms\StationaryEvents\Models\StationaryEventAuthorPivot;
-use EscolaLms\StationaryEvents\Models\StationaryEventUserPivot;
-use EscolaLms\StationaryEvents\Repositories\Contracts\StationaryEventRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\StationaryEvents\Models\StationaryEvent;
+use Ulams\StationaryEvents\Models\StationaryEventAuthorPivot;
+use Ulams\StationaryEvents\Models\StationaryEventUserPivot;
+use Ulams\StationaryEvents\Repositories\Contracts\StationaryEventRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 

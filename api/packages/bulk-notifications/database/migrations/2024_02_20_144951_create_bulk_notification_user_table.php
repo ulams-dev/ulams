@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\BulkNotifications\Models\BulkNotification;
-use EscolaLms\BulkNotifications\Models\User;
+use Ulams\BulkNotifications\Models\BulkNotification;
+use Ulams\BulkNotifications\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

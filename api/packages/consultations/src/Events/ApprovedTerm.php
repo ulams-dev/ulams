@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Consultations\Events;
+namespace Ulams\Consultations\Events;
 
 class ApprovedTerm extends ConsultationTerm
 {

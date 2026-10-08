@@ -4,9 +4,9 @@ namespace App\Repositories;
 
 use App\Enum\EventOrderByEnum;
 use App\Repositories\Contracts\SearchableEventRepositoryContract;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\StationaryEvents\Models\StationaryEvent;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Database\MySqlConnection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;

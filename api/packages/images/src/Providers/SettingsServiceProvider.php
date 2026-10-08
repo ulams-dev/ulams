@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Images\Providers;
+namespace Ulams\Images\Providers;
 
-use EscolaLms\Images\Enum\PackageStatusEnum;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Settings\Facades\AdministrableConfig;
+use Ulams\Images\Enum\PackageStatusEnum;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Settings\Facades\AdministrableConfig;
 use Illuminate\Support\ServiceProvider;
 
 class SettingsServiceProvider extends ServiceProvider
@@ -13,9 +13,9 @@ class SettingsServiceProvider extends ServiceProvider
 
     public function register()
     {
-        if (class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
-            if (!$this->app->getProviders(EscolaLmsSettingsServiceProvider::class)) {
-                $this->app->register(EscolaLmsSettingsServiceProvider::class);
+        if (class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
+            if (!$this->app->getProviders(UlamsSettingsServiceProvider::class)) {
+                $this->app->register(UlamsSettingsServiceProvider::class);
             }
 
             AdministrableConfig::registerConfig(self::CONFIG_KEY . '.private.rate_limiter_status', ['required', 'string', 'in:' . implode(',', PackageStatusEnum::getValues())], false);

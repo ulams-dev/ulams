@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Cart\Support;
+namespace Ulams\Cart\Support;
 
 use Treestoneit\ShoppingCart\Models\CartItemCollection as BaseCartItemCollection;
 

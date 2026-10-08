@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Cart\Models;
+namespace Ulams\Cart\Models;
 
-use EscolaLms\Cart\Models\Contracts\Base\Taxable;
+use Ulams\Cart\Models\Contracts\Base\Taxable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Config;
 use Treestoneit\ShoppingCart\Models\CartItem as BaseCartItem;
 
 /**
- * EscolaLms\Cart\Models\CartItem
+ * Ulams\Cart\Models\CartItem
  *
  * @property int $id
  * @property int $cart_id
@@ -19,7 +19,7 @@ use Treestoneit\ShoppingCart\Models\CartItem as BaseCartItem;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $buyable
- * @property-read \EscolaLms\Cart\Models\Cart $cart
+ * @property-read \Ulams\Cart\Models\Cart $cart
  * @property-read mixed $description
  * @property-read float|int $extra_fees
  * @property-read string $identifier

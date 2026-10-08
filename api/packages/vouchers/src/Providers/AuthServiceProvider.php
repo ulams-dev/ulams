@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Vouchers\Providers;
+namespace Ulams\Vouchers\Providers;
 
-use EscolaLms\Vouchers\Models\Coupon;
-use EscolaLms\Vouchers\Policies\CouponPolicy;
+use Ulams\Vouchers\Models\Coupon;
+use Ulams\Vouchers\Policies\CouponPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

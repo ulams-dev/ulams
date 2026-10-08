@@ -4,7 +4,7 @@ import {
   createDictionary,
   getDictionary,
   updateDictionary,
-} from '@/services/escola-lms/dictionary';
+} from '@/services/ulams/dictionary';
 import ProCard from '@ant-design/pro-card';
 import ProForm, { ProFormDigit, ProFormText } from '@ant-design/pro-form';
 import { PageContainer } from '@ant-design/pro-layout';

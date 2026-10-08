@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Courses\Models;
+namespace Ulams\Courses\Models;
 
-use EscolaLms\Courses\Database\Factories\CourseProgressFactory;
+use Ulams\Courses\Database\Factories\CourseProgressFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * EscolaLms\Courses\Models\CourseProgress
+ * Ulams\Courses\Models\CourseProgress
  *
  * @property int $id
  * @property int $user_id
@@ -79,6 +79,6 @@ class CourseProgress extends Model
 
     protected static function newFactory(): CourseProgressFactory
     {
-        return \EscolaLms\Courses\Database\Factories\CourseProgressFactory::new();
+        return \Ulams\Courses\Database\Factories\CourseProgressFactory::new();
     }
 }

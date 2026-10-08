@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Requests;
+namespace Ulams\Tasks\Http\Requests;
 
 use Illuminate\Support\Facades\Gate;
 

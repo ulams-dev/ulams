@@ -4,14 +4,14 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useCallback } from 'react';
 import { FormattedMessage } from 'umi';
 
-import { pdf, pdfs } from '@/services/escola-lms/pdfs';
+import { pdf, pdfs } from '@/services/ulams/pdfs';
 
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';
 
-type Request = EscolaLms.TemplatesPdf.Http.Requests.PdfListingAdminRequest & {
+type Request = Ulams.TemplatesPdf.Http.Requests.PdfListingAdminRequest & {
   template_id?: number;
 };
-type Model = EscolaLms.TemplatesPdf.Models.FabricPDF;
+type Model = Ulams.TemplatesPdf.Models.FabricPDF;
 
 type ModelState =
   | {

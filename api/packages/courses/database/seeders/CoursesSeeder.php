@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Database\Seeders;
+namespace Ulams\Courses\Database\Seeders;
 
-use EscolaLms\TopicTypes\Database\Seeders\CoursesWithTopicSeeder;
+use Ulams\TopicTypes\Database\Seeders\CoursesWithTopicSeeder;
 use Illuminate\Database\Seeder;
 
 class CoursesSeeder extends Seeder

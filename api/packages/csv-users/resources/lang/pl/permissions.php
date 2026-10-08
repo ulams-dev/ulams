@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\CsvUsers\Enums\CsvUserPermissionsEnum;
+use Ulams\CsvUsers\Enums\CsvUserPermissionsEnum;
 
 return [
     CsvUserPermissionsEnum::CSV_USERS_EXPORT => 'Eksportuj użytkowników do csv',

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Repository\Criteria;
+namespace Ulams\Questionnaire\Repository\Criteria;
 
-use EscolaLms\Core\Repositories\Criteria\Criterion;
+use Ulams\Core\Repositories\Criteria\Criterion;
 use Illuminate\Database\Eloquent\Builder;
 
 class QuestionAnswersCriterion extends Criterion

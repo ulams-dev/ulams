@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cart\Policies;
+namespace Ulams\Cart\Policies;
 
-use EscolaLms\Cart\Enums\CartPermissionsEnum;
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Core\Models\User;
+use Ulams\Cart\Enums\CartPermissionsEnum;
+use Ulams\Cart\Models\Order;
+use Ulams\Core\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class OrderPolicy

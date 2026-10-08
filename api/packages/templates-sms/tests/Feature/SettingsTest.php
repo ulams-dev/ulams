@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Tests\Feature;
+namespace Ulams\TemplatesSms\Tests\Feature;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\TemplatesSms\Enums\ConfigEnum;
-use EscolaLms\TemplatesSms\Enums\SmsDriversEnum;
-use EscolaLms\TemplatesSms\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\TemplatesSms\Enums\ConfigEnum;
+use Ulams\TemplatesSms\Enums\SmsDriversEnum;
+use Ulams\TemplatesSms\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -20,12 +20,12 @@ class SettingsTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
+        if (!class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
             $this->markTestSkipped('Settings package not installed');
         }
 
         $this->seed(PermissionTableSeeder::class);
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
 
         $this->user = config('auth.providers.users.model')::factory()->create();
         $this->user->guard_name = 'api';

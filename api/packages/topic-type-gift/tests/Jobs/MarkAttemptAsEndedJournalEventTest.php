@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Tests\Jobs;
+namespace Ulams\TopicTypeGift\Tests\Jobs;
 
-use EscolaLms\TopicTypeGift\Events\QuizAttemptFinishedEvent;
-use EscolaLms\TopicTypeGift\Events\QuizAttemptJournalGradeReadyEvent;
-use EscolaLms\TopicTypeGift\Jobs\MarkAttemptAsEnded;
-use EscolaLms\TopicTypeGift\Models\AttemptAnswer;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
-use EscolaLms\TopicTypeGift\Tests\TestCase;
+use Ulams\TopicTypeGift\Events\QuizAttemptFinishedEvent;
+use Ulams\TopicTypeGift\Events\QuizAttemptJournalGradeReadyEvent;
+use Ulams\TopicTypeGift\Jobs\MarkAttemptAsEnded;
+use Ulams\TopicTypeGift\Models\AttemptAnswer;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
+use Ulams\TopicTypeGift\Tests\TestCase;
 use Illuminate\Support\Facades\Event;
 
 class MarkAttemptAsEndedJournalEventTest extends TestCase

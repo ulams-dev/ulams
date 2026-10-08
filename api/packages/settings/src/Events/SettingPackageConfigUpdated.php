@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Settings\Events;
+namespace Ulams\Settings\Events;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 

@@ -56,7 +56,7 @@ export type QuizQuestion =
   | QuizQuestion_Essay
   | QuizQuestion_Description;
 
-export type QuizAttempt = EscolaLms.TopicTypeGift.Models.QuizAttempt & {
+export type QuizAttempt = Ulams.TopicTypeGift.Models.QuizAttempt & {
   max_score: number;
   questions: QuizQuestion[];
   result_score: number;

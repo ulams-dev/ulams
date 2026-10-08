@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Repository\Contracts;
+namespace Ulams\Questionnaire\Repository\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\Questionnaire\Dtos\QuestionAnswerFilterCriteriaDto;
-use EscolaLms\Questionnaire\Models\QuestionAnswer;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Questionnaire\Dtos\QuestionAnswerFilterCriteriaDto;
+use Ulams\Questionnaire\Models\QuestionAnswer;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 

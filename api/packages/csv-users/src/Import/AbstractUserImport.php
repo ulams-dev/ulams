@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Import;
+namespace Ulams\CsvUsers\Import;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;

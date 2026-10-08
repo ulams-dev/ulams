@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Youtube\Dto\Traits;
+namespace Ulams\Youtube\Dto\Traits;
 
 use Illuminate\Support\Str;
 

@@ -4,7 +4,7 @@ import { FormattedMessage, history, useIntl, useParams } from 'umi';
 import UserForm from './form';
 
 import LogsWidget from '@/components/LogsWidget';
-import { user as fetchUser } from '@/services/escola-lms/user';
+import { user as fetchUser } from '@/services/ulams/user';
 import { categoriesArrToIds } from '@/utils/utils';
 import { useCallback, useEffect, useState } from 'react';
 import UserCategories from './components/Categories';

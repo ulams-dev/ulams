@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Cart\Services\Contracts;
+namespace Ulams\Cart\Services\Contracts;
 
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Cart\Dtos\PageDto;
-use EscolaLms\Cart\Dtos\ProductSearchMyCriteriaDto;
-use EscolaLms\Cart\Dtos\ProductsSearchDto;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductProductable;
-use EscolaLms\Cart\Models\ProductUser;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Models\User;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Cart\Dtos\PageDto;
+use Ulams\Cart\Dtos\ProductSearchMyCriteriaDto;
+use Ulams\Cart\Dtos\ProductsSearchDto;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductProductable;
+use Ulams\Cart\Models\ProductUser;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;

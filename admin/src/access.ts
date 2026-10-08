@@ -10,7 +10,7 @@
 
 import PACKAGES from '@/consts/packages';
 import PERMISSIONS from '@/consts/permissions';
-import { isUserHavePermissions } from '@/services/escola-lms/permissions';
+import { isUserHavePermissions } from '@/services/ulams/permissions';
 import { createHavePackageInstalled } from './utils/access';
 
 /**

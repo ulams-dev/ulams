@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Services;
+namespace Ulams\TopicTypes\Services;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypes\Services\Contracts\TopicTypeServiceContract;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypes\Services\Contracts\TopicTypeServiceContract;
 
 class TopicTypeService implements TopicTypeServiceContract
 {
@@ -31,11 +31,11 @@ class TopicTypeService implements TopicTypeServiceContract
     public function fixTopicTypeColumnName(): int
     {
         $index = 0;
-        $topics = Topic::where('topicable_type', 'like', 'EscolaLms\\\\Courses\\\\Models\\\\TopicContent%')->get();
+        $topics = Topic::where('topicable_type', 'like', 'Ulams\\\\Courses\\\\Models\\\\TopicContent%')->get();
         foreach ($topics as $topic) {
             $topic->topicable_type = str_replace(
-                'EscolaLms\Courses\Models\TopicContent',
-                "EscolaLms\TopicTypes\Models\TopicContent",
+                'Ulams\Courses\Models\TopicContent',
+                "Ulams\TopicTypes\Models\TopicContent",
                 $topic->topicable_type
             );
             $topic->save();

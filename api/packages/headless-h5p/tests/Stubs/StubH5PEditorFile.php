@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Tests\Stubs;
+namespace Ulams\HeadlessH5P\Tests\Stubs;
 
 use H5peditorFile;
 

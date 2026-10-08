@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Jitsi\Services;
+namespace Ulams\Jitsi\Services;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Jitsi\Services\Contracts\JaasServiceContract;
+use Ulams\Auth\Models\User;
+use Ulams\Jitsi\Services\Contracts\JaasServiceContract;
 use Gnello\Mattermost\Driver;
 use Firebase\JWT\JWT;
 

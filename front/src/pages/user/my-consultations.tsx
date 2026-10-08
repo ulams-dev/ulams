@@ -1,6 +1,6 @@
 import { useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Tabs } from "@lms/components/components/atoms/Tabs/Tabs";
+import { Tabs } from "@ulams/components/components/atoms/Tabs/Tabs";
 import ProfileConsultations from "@/components/Profile/ProfileConsultations";
 import ProfileTutorConsultations from "@/components/Profile/ProfileTutorConsultations";
 import { useRoles } from "@/hooks/useRoles";

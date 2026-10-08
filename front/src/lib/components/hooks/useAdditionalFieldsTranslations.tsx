@@ -1,4 +1,4 @@
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next"; // assuming you are using react-i18next for translations
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Repositories\Contracts;
+namespace Ulams\StationaryEvents\Repositories\Contracts;
 
 use Illuminate\Database\Eloquent\Builder;
 

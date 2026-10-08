@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Templates\Http\Requests;
+namespace Ulams\Templates\Http\Requests;
 
-use EscolaLms\Templates\Enums\TemplatesPermissionsEnum;
-use EscolaLms\Templates\Models\Template;
+use Ulams\Templates\Enums\TemplatesPermissionsEnum;
+use Ulams\Templates\Models\Template;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EventTriggerRequest extends FormRequest

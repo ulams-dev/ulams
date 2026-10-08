@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { files, findFile, remove } from '@/services/escola-lms/files';
+import { files, findFile, remove } from '@/services/ulams/files';
 import { Button, Input, List, Pagination, Space, Typography } from 'antd';
 
 import { DeleteOutlined, DownloadOutlined, FolderOutlined } from '@ant-design/icons';

@@ -2,15 +2,15 @@
 
 namespace Tests\Commands;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypes\Tests\TestCase;
-use EscolaLms\TopicTypes\Models\TopicContent\Video;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypes\Tests\TestCase;
+use Ulams\TopicTypes\Models\TopicContent\Video;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\App;
-use EscolaLms\TopicTypes\Services\Contracts\TopicTypeServiceContract;
+use Ulams\TopicTypes\Services\Contracts\TopicTypeServiceContract;
 
 class FixColumnNameCommand extends TestCase
 {
@@ -58,7 +58,7 @@ class FixColumnNameCommand extends TestCase
         } finally {
             // TODO FIXME
             // $this->assertNull($this->topic_video->topicable);
-            // Artisan::call('escolalms:fix-type-column-name');
+            // Artisan::call('ulams:fix-type-column-name');
             $service = App::make(TopicTypeServiceContract::class);
             $service->fixTopicTypeColumnName();
 
@@ -82,7 +82,7 @@ class FixColumnNameCommand extends TestCase
         } finally {
             // TODO FIXME
             // $this->assertNull($this->topic_video->topicable);
-            Artisan::call('escolalms:fix-type-column-name');
+            Artisan::call('ulams:fix-type-column-name');
             /*
             $service = App::make(TopicTypeServiceContract::class);
             $service->fixTopicTypeColumnName();

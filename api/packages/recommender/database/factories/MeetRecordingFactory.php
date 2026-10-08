@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Recommender\Database\Factories;
+namespace Ulams\Recommender\Database\Factories;
 
-use EscolaLms\Recommender\Enum\MeetRecordingEnum;
-use EscolaLms\Recommender\Models\MeetRecording;
+use Ulams\Recommender\Enum\MeetRecordingEnum;
+use Ulams\Recommender\Models\MeetRecording;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class MeetRecordingFactory extends Factory

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Events;
+namespace Ulams\TopicTypes\Events;
 
-use EscolaLms\TopicTypes\Models\TopicContent\AbstractTopicContent;
+use Ulams\TopicTypes\Models\TopicContent\AbstractTopicContent;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;

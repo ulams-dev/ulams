@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Dtos;
+namespace Ulams\Bookmarks\Dtos;
 
 use Illuminate\Http\Request;
 

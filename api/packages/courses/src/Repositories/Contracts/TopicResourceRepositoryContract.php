@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Courses\Repositories\Contracts;
+namespace Ulams\Courses\Repositories\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\TopicResource;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Models\TopicResource;
 use Illuminate\Http\UploadedFile;
 
 interface TopicResourceRepositoryContract extends BaseRepositoryContract

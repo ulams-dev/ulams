@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Http\Requests;
+namespace Ulams\PencilSpaces\Http\Requests;
 
-use EscolaLms\PencilSpaces\Enums\PencilSpacesPermissionEnum;
+use Ulams\PencilSpaces\Enums\PencilSpacesPermissionEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Import;
+namespace Ulams\CsvUsers\Import;
 
-use EscolaLms\CsvUsers\Services\Contracts\CsvUserServiceContract;
+use Ulams\CsvUsers\Services\Contracts\CsvUserServiceContract;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToCollection;

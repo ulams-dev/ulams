@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Scorm\Tests\Models;
+namespace Ulams\Scorm\Tests\Models;
 
 class Client extends \Laravel\Passport\Client
 {

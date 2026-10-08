@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Webinar\Http\Resources;
+namespace Ulams\Webinar\Http\Resources;
 
 use Carbon\Carbon;
-use EscolaLms\Auth\Traits\ResourceExtandable;
+use Ulams\Auth\Traits\ResourceExtandable;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class WebinarSimpleResource extends JsonResource

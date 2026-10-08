@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Consultations\Dto;
+namespace Ulams\Consultations\Dto;
 
-use EscolaLms\Consultations\Dto\Contracts\ModelDtoContract;
-use EscolaLms\Consultations\Models\ConsultationUserTerm;
-use EscolaLms\Consultations\Repositories\Criteria\UserTermUserExistsCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\HasCriterion;
+use Ulams\Consultations\Dto\Contracts\ModelDtoContract;
+use Ulams\Consultations\Models\ConsultationUserTerm;
+use Ulams\Consultations\Repositories\Criteria\UserTermUserExistsCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\HasCriterion;
 use Illuminate\Database\Eloquent\Builder;
 
 class FilterScheduleForTutorDto extends BaseDto implements ModelDtoContract

@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Course;
+namespace Ulams\Reports\Stats\Course;
 
-use EscolaLms\Auth\Models\GroupUser;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\CourseGroupPivot;
-use EscolaLms\Courses\Models\CourseProgress;
-use EscolaLms\Courses\Models\CourseUserPivot;
-use EscolaLms\Courses\Models\Group;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Reports\Stats\Course\Strategies\TopicTitleStrategyContext;
+use Ulams\Auth\Models\GroupUser;
+use Ulams\Core\Models\User;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\CourseGroupPivot;
+use Ulams\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\CourseUserPivot;
+use Ulams\Courses\Models\Group;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Reports\Stats\Course\Strategies\TopicTitleStrategyContext;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;

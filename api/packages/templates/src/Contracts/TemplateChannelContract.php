@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Templates\Contracts;
+namespace Ulams\Templates\Contracts;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Core\TemplateSectionSchema;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\Templates\Models\Template;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Core\TemplateSectionSchema;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\Templates\Models\Template;
 use Illuminate\Support\Collection;
 
 interface TemplateChannelContract

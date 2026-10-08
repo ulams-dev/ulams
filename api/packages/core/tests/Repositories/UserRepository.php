@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Repositories;
+namespace Ulams\Core\Tests\Repositories;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Core\Repositories\Traits\Activationable;
+use Ulams\Core\Models\User;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Core\Repositories\Traits\Activationable;
 
 class UserRepository extends BaseRepository
 {

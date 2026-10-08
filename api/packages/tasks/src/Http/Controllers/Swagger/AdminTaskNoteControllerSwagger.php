@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Controllers\Swagger;
+namespace Ulams\Tasks\Http\Controllers\Swagger;
 
-use EscolaLms\Tasks\Http\Requests\Admin\AdminCreateTaskNoteRequest;
-use EscolaLms\Tasks\Http\Requests\Admin\AdminDeleteTaskNoteRequest;
-use EscolaLms\Tasks\Http\Requests\Admin\AdminUpdateTaskNoteRequest;
+use Ulams\Tasks\Http\Requests\Admin\AdminCreateTaskNoteRequest;
+use Ulams\Tasks\Http\Requests\Admin\AdminDeleteTaskNoteRequest;
+use Ulams\Tasks\Http\Requests\Admin\AdminUpdateTaskNoteRequest;
 use Illuminate\Http\JsonResponse;
 
 interface AdminTaskNoteControllerSwagger

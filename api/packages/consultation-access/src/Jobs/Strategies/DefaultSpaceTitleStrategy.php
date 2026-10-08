@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Jobs\Strategies;
+namespace Ulams\ConsultationAccess\Jobs\Strategies;
 
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
 use Illuminate\Support\Carbon;
 
 class DefaultSpaceTitleStrategy implements SpaceTitleStrategy

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Http\Requests;
+namespace Ulams\CourseAccess\Http\Requests;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Dtos\PaginationDto;
-use EscolaLms\CourseAccess\Dtos\CriteriaDto;
-use EscolaLms\CourseAccess\Models\CourseAccessEnquiry;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Dtos\PaginationDto;
+use Ulams\CourseAccess\Dtos\CriteriaDto;
+use Ulams\CourseAccess\Models\CourseAccessEnquiry;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Reports\Stats;
+namespace Ulams\Reports\Stats;
 
 use Carbon\Carbon;
-use EscolaLms\Reports\ValueObject\DateRange;
+use Ulams\Reports\ValueObject\DateRange;
 
 abstract class AbstractDateRangeStats implements StatsContract
 {

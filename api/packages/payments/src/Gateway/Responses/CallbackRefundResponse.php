@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Payments\Gateway\Responses;
+namespace Ulams\Payments\Gateway\Responses;
 
 class CallbackRefundResponse
 {

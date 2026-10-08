@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Jitsi\Strategies\VideoConferenceMode;
+namespace Ulams\Jitsi\Strategies\VideoConferenceMode;
 
-use EscolaLms\Jitsi\Services\Contracts\JaasServiceContract;
-use EscolaLms\Jitsi\Strategies\Contracts\VideoConferenceModeStrategyContract;
+use Ulams\Jitsi\Services\Contracts\JaasServiceContract;
+use Ulams\Jitsi\Strategies\Contracts\VideoConferenceModeStrategyContract;
 
 class JaasVideoConferenceModeStrategy implements VideoConferenceModeStrategyContract
 {

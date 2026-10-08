@@ -2,10 +2,10 @@
 
 namespace App\Http\Resources;
 
-use EscolaLms\StationaryEvents\Http\Resources\StationaryEventResource;
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
-use EscolaLms\Webinar\Http\Resources\WebinarSimpleResource;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\StationaryEvents\Http\Resources\StationaryEventResource;
+use Ulams\StationaryEvents\Models\StationaryEvent;
+use Ulams\Webinar\Http\Resources\WebinarSimpleResource;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class EventResource extends JsonResource

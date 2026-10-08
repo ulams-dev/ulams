@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Database\Seeders;
+namespace Ulams\StationaryEvents\Database\Seeders;
 
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\StationaryEvents\Enum\StationaryEventPermissionsEnum;
+use Ulams\Core\Enums\UserRole;
+use Ulams\StationaryEvents\Enum\StationaryEventPermissionsEnum;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Illuminate\Database\Seeder;

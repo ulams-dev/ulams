@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Models;
+namespace Ulams\Questionnaire\Models;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Questionnaire\Database\Factories\QuestionAnswerFactory;
+use Ulams\Core\Models\User;
+use Ulams\Questionnaire\Database\Factories\QuestionAnswerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

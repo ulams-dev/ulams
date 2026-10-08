@@ -2,19 +2,19 @@
 
 namespace Tests\Commands;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\Components\H5PHelper;
-use EscolaLms\TopicTypes\Models\TopicContent\H5P;
-use EscolaLms\TopicTypes\Models\TopicContent\OEmbed;
-use EscolaLms\TopicTypes\Models\TopicContent\RichText;
-use EscolaLms\TopicTypes\Tests\TestCase;
-use EscolaLms\TopicTypes\Models\TopicContent\Audio;
-use EscolaLms\TopicTypes\Models\TopicContent\Image;
-use EscolaLms\TopicTypes\Models\TopicContent\PDF;
-use EscolaLms\TopicTypes\Models\TopicContent\Video;
-use EscolaLms\TopicTypes\Services\Contracts\TopicTypeServiceContract;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypes\Database\Factories\TopicContent\Components\H5PHelper;
+use Ulams\TopicTypes\Models\TopicContent\H5P;
+use Ulams\TopicTypes\Models\TopicContent\OEmbed;
+use Ulams\TopicTypes\Models\TopicContent\RichText;
+use Ulams\TopicTypes\Tests\TestCase;
+use Ulams\TopicTypes\Models\TopicContent\Audio;
+use Ulams\TopicTypes\Models\TopicContent\Image;
+use Ulams\TopicTypes\Models\TopicContent\PDF;
+use Ulams\TopicTypes\Models\TopicContent\Video;
+use Ulams\TopicTypes\Services\Contracts\TopicTypeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
@@ -119,7 +119,7 @@ class FixAssetCommand extends TestCase
     {
         Storage::assertExists(['dummy.mp3', 'dummy.mp4', 'dummy.pdf', 'dummy.jpg', 'dummy.png']);
 
-        Artisan::call('escolalms:fix-topic-types-paths');
+        Artisan::call('ulams:fix-topic-types-paths');
 
         $this->assertAssetPathFix();
     }

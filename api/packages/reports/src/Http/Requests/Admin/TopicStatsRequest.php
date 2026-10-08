@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Reports\Http\Requests\Admin;
+namespace Ulams\Reports\Http\Requests\Admin;
 
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Courses\Models\Topic;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

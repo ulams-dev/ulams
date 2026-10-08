@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Http\Resources;
+namespace Ulams\Bookmarks\Http\Resources;
 
-use EscolaLms\Bookmarks\Models\User;
+use Ulams\Bookmarks\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 

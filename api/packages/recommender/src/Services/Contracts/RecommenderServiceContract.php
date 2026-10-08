@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Recommender\Services\Contracts;
+namespace Ulams\Recommender\Services\Contracts;
 
-use EscolaLms\Recommender\Dto\AggregatedFrameDto;
-use EscolaLms\Recommender\Dto\MeetRecordingDto;
-use EscolaLms\Recommender\Dto\MeetRecordingScreenDto;
-use EscolaLms\Recommender\Models\MeetRecording;
+use Ulams\Recommender\Dto\AggregatedFrameDto;
+use Ulams\Recommender\Dto\MeetRecordingDto;
+use Ulams\Recommender\Dto\MeetRecordingScreenDto;
+use Ulams\Recommender\Models\MeetRecording;
 
 interface RecommenderServiceContract
 {

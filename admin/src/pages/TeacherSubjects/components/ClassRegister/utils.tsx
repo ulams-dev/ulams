@@ -1,6 +1,6 @@
 import AttendanceCheckbox from '@/components/AttendanceCheckbox';
 import { DAY_FORMAT } from '@/consts/dates';
-import { ExamGradeType } from '@/services/escola-lms/enums';
+import { ExamGradeType } from '@/services/ulams/enums';
 import { DeleteOutlined } from '@ant-design/icons';
 import type { ProColumns } from '@ant-design/pro-table';
 import { Space } from 'antd';

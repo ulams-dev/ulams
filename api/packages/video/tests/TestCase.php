@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Video\Tests;
+namespace Ulams\Video\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
-use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
-use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
-use EscolaLms\TopicTypes\EscolaLmsTopicTypesServiceProvider;
-use EscolaLms\Video\EscolaLmsVideoServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\Categories\UlamsCategoriesServiceProvider;
+use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\Scorm\UlamsScormServiceProvider;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Tags\UlamsTagsServiceProvider;
+use Ulams\TopicTypes\UlamsTopicTypesServiceProvider;
+use Ulams\Video\UlamsVideoServiceProvider;
 use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\Passport;
@@ -19,7 +19,7 @@ use Laravel\Passport\PassportServiceProvider;
 use ProtoneMedia\LaravelFFMpeg\Support\ServiceProvider as FFMpegServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     use DatabaseTransactions;
 
@@ -35,16 +35,16 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsAuthServiceProvider::class,
+            UlamsAuthServiceProvider::class,
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
-            EscolaLmsScormServiceProvider::class,
-            EscolaLmsCategoriesServiceProvider::class,
-            EscolaLmsCourseServiceProvider::class,
-            EscolaLmsTopicTypesServiceProvider::class,
-            EscolaLmsTagsServiceProvider::class,
-            EscolaLmsSettingsServiceProvider::class,
-            EscolaLmsVideoServiceProvider::class,
+            UlamsScormServiceProvider::class,
+            UlamsCategoriesServiceProvider::class,
+            UlamsCourseServiceProvider::class,
+            UlamsTopicTypesServiceProvider::class,
+            UlamsTagsServiceProvider::class,
+            UlamsSettingsServiceProvider::class,
+            UlamsVideoServiceProvider::class,
             FFMpegServiceProvider::class,
         ];
     }

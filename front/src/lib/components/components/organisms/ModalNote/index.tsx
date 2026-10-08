@@ -1,9 +1,9 @@
 import {
   NewNoteData,
   NoteData,
-} from "@lms/components/components/molecules/CourseTopNav/CourseTopNav";
+} from "@ulams/components/components/molecules/CourseTopNav/CourseTopNav";
 import { Button, Title, TextArea } from "../../../";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { Formik, FormikErrors } from "formik";
 import { FC, useContext } from "react";
 import { useTranslation } from "react-i18next";
@@ -45,7 +45,7 @@ const ModalNote: FC<NoteModalProps> = ({
     noteValue: currentNote ? currentNote.value : "",
   };
   const { fetchBookmarkNotes, createBookmarkNote, updateBookmarkNote } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
 
   const { t } = useTranslation();
 

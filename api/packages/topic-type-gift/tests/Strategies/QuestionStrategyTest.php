@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Tests\Strategies;
+namespace Ulams\TopicTypeGift\Tests\Strategies;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypeGift\Exceptions\UnknownGiftTypeException;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Strategies\GiftQuestionStrategyFactory;
-use EscolaLms\TopicTypeGift\Tests\GiftQuestionTesting;
-use EscolaLms\TopicTypeGift\Tests\TestCase;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypeGift\Exceptions\UnknownGiftTypeException;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Strategies\GiftQuestionStrategyFactory;
+use Ulams\TopicTypeGift\Tests\GiftQuestionTesting;
+use Ulams\TopicTypeGift\Tests\TestCase;
 
 class QuestionStrategyTest extends TestCase
 {

@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled, { withTheme } from "styled-components";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { getFontFromTheme } from "../../../theme/provider";
 
 export interface ComponentProps extends ExtendableStyledComponent {
@@ -60,7 +60,7 @@ export const Download: React.FC<ComponentProps> = (props) => {
   }, [href, fileName]);
 
   return (
-    <StyledDiv {...props} className={`wellms-component ${className}`}>
+    <StyledDiv {...props} className={`ulams-component ${className}`}>
       <a className="download-btn" download href={href} target="_blank">
         <span className="name">{name}</span>
         <span className="icon" role="button" aria-label={name as string}>

@@ -1,13 +1,5 @@
 # Auth
 
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Auth/)
-[![codecov](https://codecov.io/gh/EscolaLMS/Auth/branch/main/graph/badge.svg?token=O91FHNKI6R)](https://codecov.io/gh/EscolaLMS/Auth)
-[![phpunit](https://github.com/EscolaLMS/Auth/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Core/actions/workflows/test.yml)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/auth)](https://packagist.org/packages/escolalms/auth)
-[![downloads](https://img.shields.io/packagist/v/escolalms/auth)](https://packagist.org/packages/escolalms/auth)
-[![downloads](https://img.shields.io/packagist/l/escolalms/auth)](https://packagist.org/packages/escolalms/auth)
-[![Maintainability](https://api.codeclimate.com/v1/badges/b8df1362d2c9363e6e6e/maintainability)](https://codeclimate.com/github/EscolaLMS/Auth/maintainability)
-[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FEscolaLMS%2FAuth%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/EscolaLMS/Auth/main)
 
 ## What does it do
 
@@ -19,15 +11,15 @@ Package for user authentication. In addition, the package includes:
 
 ## Installing
 
-- `composer require escolalms/auth`
+- `composer require ulams/auth`
 - `php artisan migrate`
-- `php artisan db:seed --class="EscolaLms\Auth\Database\Seeders\AuthPermissionSeeder"`
+- `php artisan db:seed --class="Ulams\Auth\Database\Seeders\AuthPermissionSeeder"`
 
 Optional: 
-- Run command `escolalms:admin`. 
+- Run command `ulams:admin`. 
 
 ## Commands
-- `escolalms:admin` - create account with role admin
+- `ulams:admin` - create account with role admin
 
 ## Database
 
@@ -42,20 +34,18 @@ User 1 -> n Groups
 
 ## Endpoints
 
-All the endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Auth/)
+All the endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/Auth/)
 
 ## Tests
 
 Run `./vendor/bin/phpunit` to run tests.
-[![phpunit](https://github.com/EscolaLMS/Auth/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Core/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/EscolaLMS/Auth/branch/main/graph/badge.svg?token=O91FHNKI6R)](https://codecov.io/gh/EscolaLMS/Auth)
 
 ## Events
 
 - `AccountBlocked` - Event is dispatched after blocking the user's account (`is_active=false`).
 - `AccountConfirmed` - Event is dispatched after the user verifies the account.
 - `AccountDeleted` - Event is dispatched after deleting the user.
-- `AccountMustBeEnableByAdmin` - Event is dispatched when the user registers and `Config::get('escola_auth.account_must_be_enabled_by_admin') === SettingStatusEnum::ENABLED`
+- `AccountMustBeEnableByAdmin` - Event is dispatched when the user registers and `Config::get('ulams_auth.account_must_be_enabled_by_admin') === SettingStatusEnum::ENABLED`
 - `AccountRegistered` - Event is dispatched after the account is registered.
 - `ForgotPassword` - Event is dispatched when a password reset request is sent.
 - `Login` - Event is dispatched on successful login.

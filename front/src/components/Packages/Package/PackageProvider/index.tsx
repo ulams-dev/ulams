@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 
 export const PackageContext: React.Context<{}> = React.createContext({});
 
@@ -9,7 +9,7 @@ const PackageProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const { id } = useParams<{ id: string }>();
-  const { fetchProduct } = useContext(EscolaLMSContext);
+  const { fetchProduct } = useContext(UlamsContext);
 
   useEffect(() => {
     if (id) {

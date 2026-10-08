@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Tests\Api;
+namespace Ulams\CourseAccess\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\CourseAccess\Database\Seeders\CourseAccessPermissionSeeder;
-use EscolaLms\CourseAccess\Models\CourseAccessEnquiry;
-use EscolaLms\CourseAccess\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\CourseAccess\Database\Seeders\CourseAccessPermissionSeeder;
+use Ulams\CourseAccess\Models\CourseAccessEnquiry;
+use Ulams\CourseAccess\Tests\TestCase;
 
 class CourseAccessEnquiryDeleteApiTest extends TestCase
 {

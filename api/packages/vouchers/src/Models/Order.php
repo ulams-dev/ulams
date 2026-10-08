@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Vouchers\Models;
+namespace Ulams\Vouchers\Models;
 
-use EscolaLms\Cart\Models\Order as BaseOrder;
+use Ulams\Cart\Models\Order as BaseOrder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * EscolaLms\Vouchers\Models\Order
+ * Ulams\Vouchers\Models\Order
  *
  * @property int $id
  * @property int|null $user_id
@@ -25,40 +25,40 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $client_country
  * @property string|null $client_company
  * @property string|null $client_taxid
- * @property-read \EscolaLms\Vouchers\Models\Coupon|null $coupon
+ * @property-read \Ulams\Vouchers\Models\Coupon|null $coupon
  * @property-read int $quantity
  * @property-read string $status_name
- * @property-read \EscolaLms\Cart\Support\OrderItemCollection|\EscolaLms\Cart\Models\OrderItem[] $items
+ * @property-read \Ulams\Cart\Support\OrderItemCollection|\Ulams\Cart\Models\OrderItem[] $items
  * @property-read int|null $items_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Payments\Models\Payment[] $payments
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Payments\Models\Payment[] $payments
  * @property-read int|null $payments_count
- * @property-read \EscolaLms\Cart\Models\User|null $user
- * @method static \EscolaLms\Cart\Database\Factories\OrderFactory factory(...$parameters)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order newModelQuery()
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order newQuery()
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order query()
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereClientCity($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereClientCompany($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereClientCountry($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereClientName($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereClientPostal($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereClientStreet($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereClientTaxid($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereCouponId($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereCreatedAt($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereDiscount($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereHasBuyable(string $buyable_type, int $buyable_id)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereHasProduct(int $product_id)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereHasProductable(\Illuminate\Database\Eloquent\Model $productable)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereHasProductableClass(string $productable_type)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereHasProductableClassAndId(string $productable_type, int $productable_id)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereId($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereStatus($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereSubtotal($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereTax($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereTotal($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereUpdatedAt($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereUserId($value)
+ * @property-read \Ulams\Cart\Models\User|null $user
+ * @method static \Ulams\Cart\Database\Factories\OrderFactory factory(...$parameters)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order newModelQuery()
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order newQuery()
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order query()
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereClientCity($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereClientCompany($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereClientCountry($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereClientName($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereClientPostal($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereClientStreet($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereClientTaxid($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereCouponId($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereCreatedAt($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereDiscount($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereHasBuyable(string $buyable_type, int $buyable_id)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereHasProduct(int $product_id)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereHasProductable(\Illuminate\Database\Eloquent\Model $productable)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereHasProductableClass(string $productable_type)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereHasProductableClassAndId(string $productable_type, int $productable_id)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereId($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereStatus($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereSubtotal($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereTax($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereTotal($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereUpdatedAt($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderModelQueryBuilder|Order whereUserId($value)
  * @mixin \Eloquent
  */
 class Order extends BaseOrder

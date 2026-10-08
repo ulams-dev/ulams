@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Mattermost\Tests\API;
+namespace Ulams\Mattermost\Tests\API;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Mattermost\Enum\PackageStatusEnum;
-use EscolaLms\Mattermost\Services\Contracts\MattermostServiceContract;
-use EscolaLms\Mattermost\Tests\TestCase;
-use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
-use EscolaLms\Webinar\Models\Webinar;
-use EscolaLms\Webinar\Tests\Mocks\YTLiveDtoMock;
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Mattermost\Enum\PackageStatusEnum;
+use Ulams\Mattermost\Services\Contracts\MattermostServiceContract;
+use Ulams\Mattermost\Tests\TestCase;
+use Ulams\Webinar\Database\Seeders\WebinarsPermissionSeeder;
+use Ulams\Webinar\Models\Webinar;
+use Ulams\Webinar\Tests\Mocks\YTLiveDtoMock;
+use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Config;
 use Mockery\MockInterface;
@@ -24,7 +24,7 @@ class WebinarApiTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\Webinar\EscolaLmsWebinarServiceProvider::class)) {
+        if (!class_exists(\Ulams\Webinar\UlamsWebinarServiceProvider::class)) {
             $this->markTestSkipped('Webinar package not installed');
         }
 
@@ -37,7 +37,7 @@ class WebinarApiTest extends TestCase
         ]);
 
         $this->seed(WebinarsPermissionSeeder::class);
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
         $this->user = config('auth.providers.users.model')::factory()->create();
         $this->user->guard_name = 'api';
         $this->user->assignRole('admin');
@@ -46,7 +46,7 @@ class WebinarApiTest extends TestCase
 
     protected function tearDown(): void
     {
-        \EscolaLms\Settings\Models\Config::truncate();
+        \Ulams\Settings\Models\Config::truncate();
         User::query()->delete();
         Webinar::query()->delete();
     }

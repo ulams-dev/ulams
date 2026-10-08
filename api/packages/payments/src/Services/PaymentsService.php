@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Payments\Services;
+namespace Ulams\Payments\Services;
 
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Payments\Contracts\Payable;
-use EscolaLms\Payments\Entities\PaymentsConfig;
-use EscolaLms\Payments\Events\PaymentRegistered;
-use EscolaLms\Payments\Facades\PaymentGateway;
-use EscolaLms\Payments\Gateway\Drivers\RevenueCatDriver;
-use EscolaLms\Payments\Models\Payment;
-use EscolaLms\Payments\Repositories\Contracts\PaymentsRepositoryContract;
-use EscolaLms\Payments\Services\Contracts\PaymentsServiceContract;
-use EscolaLms\Payments\Entities\PaymentProcessor;
-use EscolaLms\Payments\Gateway\Drivers\Przelewy24Driver;
-use EscolaLms\Payments\Gateway\Drivers\StripeDriver;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Payments\Contracts\Payable;
+use Ulams\Payments\Entities\PaymentsConfig;
+use Ulams\Payments\Events\PaymentRegistered;
+use Ulams\Payments\Facades\PaymentGateway;
+use Ulams\Payments\Gateway\Drivers\RevenueCatDriver;
+use Ulams\Payments\Models\Payment;
+use Ulams\Payments\Repositories\Contracts\PaymentsRepositoryContract;
+use Ulams\Payments\Services\Contracts\PaymentsServiceContract;
+use Ulams\Payments\Entities\PaymentProcessor;
+use Ulams\Payments\Gateway\Drivers\Przelewy24Driver;
+use Ulams\Payments\Gateway\Drivers\StripeDriver;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;

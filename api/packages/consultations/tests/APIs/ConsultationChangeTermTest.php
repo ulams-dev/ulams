@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Consultations\Tests\APIs;
+namespace Ulams\Consultations\Tests\APIs;
 
-use EscolaLms\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Events\ChangeTerm;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Tests\TestCase;
-use EscolaLms\Core\Models\User;
+use Ulams\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Events\ChangeTerm;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Tests\TestCase;
+use Ulams\Core\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 

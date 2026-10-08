@@ -9,7 +9,7 @@ import { ReactMarkdownOptions } from "react-markdown/lib/react-markdown";
 import "katex/dist/katex.min.css";
 import { Gallery, Item } from "react-photoswipe-gallery";
 import chroma from "chroma-js";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { getFontFromTheme } from "../../../theme/provider";
 import { setFontSizeByHeaderLevel } from "../../../utils/components/primitives/titleUtils";
 import { fixContentForMarkdown } from "../../../utils/components/markdown";
@@ -226,7 +226,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = (props) => {
 
   return (
     <StyledMarkdownRenderer
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
       mobile={mobile}
       fontSize={fontSize}
     >

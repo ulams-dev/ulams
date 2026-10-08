@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Vouchers\Services\Contracts;
+namespace Ulams\Vouchers\Services\Contracts;
 
-use EscolaLms\Cart\Models\Cart as BaseCart;
-use EscolaLms\Cart\Services\Contracts\ShopServiceContract as BaseShopServiceContract;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Vouchers\Models\Cart;
-use EscolaLms\Vouchers\Services\CartManager;
+use Ulams\Cart\Models\Cart as BaseCart;
+use Ulams\Cart\Services\Contracts\ShopServiceContract as BaseShopServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Vouchers\Models\Cart;
+use Ulams\Vouchers\Services\CartManager;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 interface ShopServiceContract extends BaseShopServiceContract

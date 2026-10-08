@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Youtube\Http\Controllers\GoogleController;
+use Ulams\Youtube\Http\Controllers\GoogleController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin'], function () {

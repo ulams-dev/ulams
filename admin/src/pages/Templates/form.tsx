@@ -2,13 +2,13 @@ import PdfList from '@/components/Pdf/list';
 import TemplateFields from '@/components/TemplateFields';
 import TemplateManuallyTrigger from '@/components/TemplateManuallyTrigger';
 import TemplateManuallyTriggerProduct from '@/components/TemplateManuallyTrigger/product';
-import { TemplateChannelValue, TemplateEvents } from '@/services/escola-lms/enums';
+import { TemplateChannelValue, TemplateEvents } from '@/services/ulams/enums';
 import {
   createTemplate,
   template as fetchTemplate,
   variables as fetchVariables,
   updateTemplate,
-} from '@/services/escola-lms/templates';
+} from '@/services/ulams/templates';
 import ProCard from '@ant-design/pro-card';
 import ProForm, { ProFormCheckbox, ProFormSelect, ProFormText } from '@ant-design/pro-form';
 import { PageContainer } from '@ant-design/pro-layout';

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Images\Tests\Mock;
+namespace Ulams\Images\Tests\Mock;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;

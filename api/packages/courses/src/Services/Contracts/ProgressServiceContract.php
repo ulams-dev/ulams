@@ -1,14 +1,14 @@
 <?php
 
 
-namespace EscolaLms\Courses\Services\Contracts;
+namespace Ulams\Courses\Services\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\H5PUserProgress;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Models\User;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\H5PUserProgress;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 

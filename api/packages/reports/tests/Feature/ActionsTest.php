@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Reports\Tests\Feature;
+namespace Ulams\Reports\Tests\Feature;
 
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Reports\Actions\FindReport;
-use EscolaLms\Reports\Tests\TestCase;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Reports\Actions\FindReport;
+use Ulams\Reports\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use InvalidArgumentException;

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Database\Factories;
+namespace Ulams\ConsultationAccess\Database\Factories;
 
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ConsultationAccessEnquiryProposedTermFactory extends Factory

@@ -1,24 +1,24 @@
 <?php
 
-namespace EscolaLms\Courses\Services;
+namespace Ulams\Courses\Services;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Enum\ProgressFilterEnum;
-use EscolaLms\Courses\Enum\ProgressStatus;
-use EscolaLms\Courses\Events\CourseAccessFinished;
-use EscolaLms\Courses\Events\CourseAccessStarted;
-use EscolaLms\Courses\Events\CourseFinished;
-use EscolaLms\Courses\Events\CourseStarted;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Group;
-use EscolaLms\Courses\Models\H5PUserProgress;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\User as CoursesUser;
-use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
-use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Models\User;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Enum\ProgressFilterEnum;
+use Ulams\Courses\Enum\ProgressStatus;
+use Ulams\Courses\Events\CourseAccessFinished;
+use Ulams\Courses\Events\CourseAccessStarted;
+use Ulams\Courses\Events\CourseFinished;
+use Ulams\Courses\Events\CourseStarted;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Group;
+use Ulams\Courses\Models\H5PUserProgress;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Models\User as CoursesUser;
+use Ulams\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
+use Ulams\Courses\Services\Contracts\ProgressServiceContract;
+use Ulams\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;

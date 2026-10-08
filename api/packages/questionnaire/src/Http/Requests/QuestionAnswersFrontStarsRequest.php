@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Http\Requests;
+namespace Ulams\Questionnaire\Http\Requests;
 
-use EscolaLms\Questionnaire\Models\Question;
-use EscolaLms\Questionnaire\Models\QuestionnaireModelType;
-use EscolaLms\Questionnaire\Rules\ClassExist;
-use EscolaLms\Questionnaire\Rules\ModelExist;
+use Ulams\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Models\QuestionnaireModelType;
+use Ulams\Questionnaire\Rules\ClassExist;
+use Ulams\Questionnaire\Rules\ModelExist;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

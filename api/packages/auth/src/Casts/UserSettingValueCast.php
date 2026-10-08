@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Auth\Casts;
+namespace Ulams\Auth\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Support\Str;

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Reports\Http\Requests\Admin;
+namespace Ulams\Reports\Http\Requests\Admin;
 
-use EscolaLms\Courses\Models\Course;
+use Ulams\Courses\Models\Course;
 use Illuminate\Validation\Rule;
 
 class ExportCourseStatRequest extends CourseStatsRequest

@@ -194,7 +194,7 @@ export type FieldsParams = {
   class_type: string;
 };
 
-export type Metadata = Omit<EscolaLms.ModelFields.Models.Metadata, "rules"> & {
+export type Metadata = Omit<Ulams.ModelFields.Models.Metadata, "rules"> & {
   rules: string | string[] | null;
 };
 

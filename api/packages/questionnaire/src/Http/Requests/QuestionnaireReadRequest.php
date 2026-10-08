@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Http\Requests;
+namespace Ulams\Questionnaire\Http\Requests;
 
-use EscolaLms\Questionnaire\Models\Questionnaire;
+use Ulams\Questionnaire\Models\Questionnaire;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

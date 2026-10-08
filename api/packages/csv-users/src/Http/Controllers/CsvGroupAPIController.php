@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Http\Controllers;
+namespace Ulams\CsvUsers\Http\Controllers;
 
-use EscolaLms\Auth\Dtos\UserFilterCriteriaDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\CsvUsers\Enums\ExportFormatEnum;
-use EscolaLms\CsvUsers\Export\UserGroupExport;
-use EscolaLms\CsvUsers\Http\Controllers\Swagger\CsvGroupAPISwagger;
-use EscolaLms\CsvUsers\Http\Requests\ExportUserGroupToCsvAPIRequest;
-use EscolaLms\CsvUsers\Http\Requests\ImportUserGroupFromCsvAPIRequest;
-use EscolaLms\CsvUsers\Import\UserGroupImport;
+use Ulams\Auth\Dtos\UserFilterCriteriaDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\CsvUsers\Enums\ExportFormatEnum;
+use Ulams\CsvUsers\Export\UserGroupExport;
+use Ulams\CsvUsers\Http\Controllers\Swagger\CsvGroupAPISwagger;
+use Ulams\CsvUsers\Http\Requests\ExportUserGroupToCsvAPIRequest;
+use Ulams\CsvUsers\Http\Requests\ImportUserGroupFromCsvAPIRequest;
+use Ulams\CsvUsers\Import\UserGroupImport;
 use Illuminate\Http\JsonResponse;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class CsvGroupAPIController extends EscolaLmsBaseController implements CsvGroupAPISwagger
+class CsvGroupAPIController extends UlamsBaseController implements CsvGroupAPISwagger
 {
     public function export(ExportUserGroupToCsvAPIRequest $request): BinaryFileResponse
     {

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Export;
+namespace Ulams\TopicTypeGift\Export;
 
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
 use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;

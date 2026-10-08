@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Consultations\Models;
+namespace Ulams\Consultations\Models;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Consultations\Database\Factories\ConsultationFactory;
-use EscolaLms\Consultations\Services\Contracts\ConsultationServiceContract;
-use EscolaLms\ModelFields\Traits\ModelFields;
+use Ulams\Categories\Models\Category;
+use Ulams\Consultations\Database\Factories\ConsultationFactory;
+use Ulams\Consultations\Services\Contracts\ConsultationServiceContract;
+use Ulams\ModelFields\Traits\ModelFields;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
-use EscolaLms\Core\Models\User as CoreUser;
+use Ulams\Core\Models\User as CoreUser;
 
 
 /**

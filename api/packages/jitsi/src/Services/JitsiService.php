@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Jitsi\Services;
+namespace Ulams\Jitsi\Services;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Jitsi\Enum\JitsiEnum;
-use EscolaLms\Jitsi\Enum\PackageStatusEnum;
-use EscolaLms\Jitsi\Helpers\StrategyHelper;
-use EscolaLms\Jitsi\Services\Contracts\JitsiServiceContract;
+use Ulams\Auth\Models\User;
+use Ulams\Jitsi\Enum\JitsiEnum;
+use Ulams\Jitsi\Enum\PackageStatusEnum;
+use Ulams\Jitsi\Helpers\StrategyHelper;
+use Ulams\Jitsi\Services\Contracts\JitsiServiceContract;
 use Gnello\Mattermost\Driver;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Storage;
@@ -50,7 +50,7 @@ class JitsiService implements JitsiServiceContract
     /**
      * Generates data to pass for Jitsi player
      *
-     * @param \EscolaLms\Auth\Models\User $user
+     * @param \Ulams\Auth\Models\User $user
      * @param string $channelDisplayName name of the channel, will be converted with cammelCase
      * @param bool $isModerator, is this user moderator
      * @param array $configOverwrite, https://github.com/jitsi/jitsi-meet/blob/master/config.js

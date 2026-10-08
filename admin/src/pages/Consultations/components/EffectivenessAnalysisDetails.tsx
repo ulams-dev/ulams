@@ -5,7 +5,7 @@ import type {
   AnalysisMeta,
   ChartPoint,
 } from '@/pages/Consultations/components/types';
-import { getAnalyticsChartFrames, getModelAnalytics } from '@/services/escola-lms/consultations';
+import { getAnalyticsChartFrames, getModelAnalytics } from '@/services/ulams/consultations';
 import {
   ANALYSIS_COLORS,
   EmotionKey,

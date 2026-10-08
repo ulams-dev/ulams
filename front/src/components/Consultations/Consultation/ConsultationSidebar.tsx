@@ -1,15 +1,15 @@
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { PricingCard } from "@lms/components/components/atoms/PricingCard/PricingCard";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { PricingCard } from "@ulams/components/components/atoms/PricingCard/PricingCard";
 import React, { useCallback, useContext, useMemo } from "react";
-import { CartItem, Consultation } from "@lms/sdk/types";
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { IconText } from "@lms/components/components/atoms/IconText/IconText";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { CartItem, Consultation } from "@ulams/sdk/types";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { IconText } from "@ulams/components/components/atoms/IconText/IconText";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { IconBadge, IconQuestion, IconTime } from "../../../icons";
 import { formatPrice } from "@/utils/index";
 import isPast from "date-fns/isPast";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import { useHistory } from "react-router-dom";
 import {
   StyledConsultationSidebar,
@@ -29,7 +29,7 @@ interface ConsultationSidebarProps {
 
 const ConsultationSidebar: React.FC<ConsultationSidebarProps> = (props) => {
   const { consultation } = props;
-  const { cart, addToCart, user } = useContext(EscolaLMSContext);
+  const { cart, addToCart, user } = useContext(UlamsContext);
   const { t } = useTranslation();
   const { push } = useHistory();
   const buyableType = useEntityBuyableType(consultation);

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Courses;
+namespace Ulams\TemplatesEmail\Courses;
 
 class UserFinishedCourseVariables extends CommonUserAndCourseVariables
 {

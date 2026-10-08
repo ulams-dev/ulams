@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Course;
+namespace Ulams\Reports\Stats\Course;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\CourseUserPivot;
-use EscolaLms\Reports\Stats\AbstractDateRangeStats;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\CourseUserPivot;
+use Ulams\Reports\Stats\AbstractDateRangeStats;
 use Illuminate\Support\Collection;
 
 class Finished extends AbstractDateRangeStats

@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Models\Course;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Models\Course;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

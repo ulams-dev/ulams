@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Reports\Http\Requests;
+namespace Ulams\Reports\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;

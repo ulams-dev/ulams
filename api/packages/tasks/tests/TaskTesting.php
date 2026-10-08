@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Tasks\Tests;
+namespace Ulams\Tasks\Tests;
 
 use Illuminate\Support\Carbon;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Tasks\Models\Task;
+use Ulams\Core\Models\User;
+use Ulams\Tasks\Models\Task;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
 
@@ -21,7 +21,7 @@ trait TaskTesting
             'description' => $this->faker->text,
             'type' => $this->faker->word,
             'due_date' => Carbon::now()->addDay(),
-            'related_type' => 'EscolaLms\\' . $type . '\\Models\\' . $type,
+            'related_type' => 'Ulams\\' . $type . '\\Models\\' . $type,
             'related_id' => $this->faker->randomNumber(),
         ];
 
@@ -38,7 +38,7 @@ trait TaskTesting
             'type' => $this->faker->word,
             'user_id' => User::factory()->create(['email' => $this->faker->email . Carbon::now()->getTimestamp()])->getKey(),
             'due_date' => Carbon::now()->addDay(),
-            'related_type' => 'EscolaLms\\' . $type . '\\Models\\' . $type,
+            'related_type' => 'Ulams\\' . $type . '\\Models\\' . $type,
             'related_id' => $this->faker->randomNumber(),
         ];
 

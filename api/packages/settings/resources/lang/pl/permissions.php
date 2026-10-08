@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Settings\Enums\SettingsPermissionsEnum;
+use Ulams\Settings\Enums\SettingsPermissionsEnum;
 
 return [
     SettingsPermissionsEnum::SETTINGS_MANAGE => 'Zarządzaj ustawieniami',

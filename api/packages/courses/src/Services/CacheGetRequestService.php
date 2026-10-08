@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Courses\Services;
+namespace Ulams\Courses\Services;
 
 use Illuminate\Http\Request;
 use Spatie\ResponseCache\CacheProfiles\CacheAllSuccessfulGetRequests;

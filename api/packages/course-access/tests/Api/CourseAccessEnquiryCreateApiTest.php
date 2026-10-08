@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Tests\Api;
+namespace Ulams\CourseAccess\Tests\Api;
 
-use EscolaLms\Auth\Enums\SettingStatusEnum;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\CourseAccess\Database\Seeders\CourseAccessPermissionSeeder;
-use EscolaLms\CourseAccess\Enum\CourseAccessPermissionEnum;
-use EscolaLms\CourseAccess\Enum\EnquiryStatusEnum;
-use EscolaLms\CourseAccess\EscolaLmsCourseAccessServiceProvider;
-use EscolaLms\CourseAccess\Events\CourseAccessEnquiryAdminCreatedEvent;
-use EscolaLms\CourseAccess\Events\CourseAccessEnquiryStudentCreatedEvent;
-use EscolaLms\CourseAccess\Models\Course;
-use EscolaLms\CourseAccess\Models\CourseAccessEnquiry;
-use EscolaLms\CourseAccess\Tests\TestCase;
+use Ulams\Auth\Enums\SettingStatusEnum;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\CourseAccess\Database\Seeders\CourseAccessPermissionSeeder;
+use Ulams\CourseAccess\Enum\CourseAccessPermissionEnum;
+use Ulams\CourseAccess\Enum\EnquiryStatusEnum;
+use Ulams\CourseAccess\UlamsCourseAccessServiceProvider;
+use Ulams\CourseAccess\Events\CourseAccessEnquiryAdminCreatedEvent;
+use Ulams\CourseAccess\Events\CourseAccessEnquiryStudentCreatedEvent;
+use Ulams\CourseAccess\Models\Course;
+use Ulams\CourseAccess\Models\CourseAccessEnquiry;
+use Ulams\CourseAccess\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 
@@ -69,7 +69,7 @@ class CourseAccessEnquiryCreateApiTest extends TestCase
 
     public function testCourseAccessEnquiryCreateAutoApprove(): void
     {
-        Config::set(EscolaLmsCourseAccessServiceProvider::CONFIG_KEY . '.auto_accept_access_request', SettingStatusEnum::ENABLED);
+        Config::set(UlamsCourseAccessServiceProvider::CONFIG_KEY . '.auto_accept_access_request', SettingStatusEnum::ENABLED);
         Event::fake([CourseAccessEnquiryStudentCreatedEvent::class]);
 
         $data = [

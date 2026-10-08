@@ -1,7 +1,7 @@
 import {
   Text,
   TextProps,
-} from "@lms/components/components/atoms/Typography/Text";
+} from "@ulams/components/components/atoms/Typography/Text";
 import { useTheme } from "styled-components";
 import { StyledSpan, StyledSpanTail, StyledSpanChild } from "./styles";
 

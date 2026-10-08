@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cmi5\Models;
+namespace Ulams\Cmi5\Models;
 
-use EscolaLms\Cmi5\Database\Factories\Cmi5Factory;
+use Ulams\Cmi5\Database\Factories\Cmi5Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

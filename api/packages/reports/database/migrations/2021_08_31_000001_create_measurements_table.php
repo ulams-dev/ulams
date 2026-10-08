@@ -1,11 +1,11 @@
 <?php
 
-use EscolaLms\Core\Migrations\EscolaMigration;
-use EscolaLms\Reports\Models\Report;
+use Ulams\Core\Migrations\UlamsMigration;
+use Ulams\Reports\Models\Report;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMeasurementsTable extends EscolaMigration
+class CreateMeasurementsTable extends UlamsMigration
 {
     public function up()
     {

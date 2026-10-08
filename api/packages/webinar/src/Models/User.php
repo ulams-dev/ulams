@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Webinar\Models;
+namespace Ulams\Webinar\Models;
 
-use EscolaLms\Auth\Models\User as AuthUser;
-use EscolaLms\Webinar\Models\Traits\HasWebinars;
-use EscolaLms\Webinar\Tests\Database\Factories\UserFactory;
+use Ulams\Auth\Models\User as AuthUser;
+use Ulams\Webinar\Models\Traits\HasWebinars;
+use Ulams\Webinar\Tests\Database\Factories\UserFactory;
 
 class User extends AuthUser
 {

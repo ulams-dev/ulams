@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Youtube\Exceptions;
+namespace Ulams\Youtube\Exceptions;
 
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
+use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Throwable;

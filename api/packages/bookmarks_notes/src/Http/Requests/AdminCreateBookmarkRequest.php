@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Http\Requests;
+namespace Ulams\Bookmarks\Http\Requests;
 
-use EscolaLms\Bookmarks\Dtos\CreateBookmarkDto;
-use EscolaLms\Bookmarks\Models\Bookmark;
+use Ulams\Bookmarks\Dtos\CreateBookmarkDto;
+use Ulams\Bookmarks\Models\Bookmark;
 use Illuminate\Support\Facades\Gate;
 
 

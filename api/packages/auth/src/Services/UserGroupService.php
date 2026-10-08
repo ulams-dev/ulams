@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Auth\Services;
+namespace Ulams\Auth\Services;
 
 
-use EscolaLms\Auth\Dtos\UserGroupDto;
-use EscolaLms\Auth\Events\UserAddedToGroup;
-use EscolaLms\Auth\Events\UserRemovedFromGroup;
-use EscolaLms\Auth\Models\Group;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Repositories\Contracts\UserGroupRepositoryContract;
-use EscolaLms\Auth\Services\Contracts\UserGroupServiceContract;
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Auth\Dtos\UserGroupDto;
+use Ulams\Auth\Events\UserAddedToGroup;
+use Ulams\Auth\Events\UserRemovedFromGroup;
+use Ulams\Auth\Models\Group;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Repositories\Contracts\UserGroupRepositoryContract;
+use Ulams\Auth\Services\Contracts\UserGroupServiceContract;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 

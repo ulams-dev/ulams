@@ -2,13 +2,13 @@
 
 namespace API;
 
-use EscolaLms\Cart\Database\Seeders\CartPermissionSeeder;
-use EscolaLms\Cart\Enums\ExportFormatEnum;
-use EscolaLms\Cart\Enums\OrderStatus;
-use EscolaLms\Cart\Exports\OrdersExport;
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Tests\TestCase;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\Cart\Database\Seeders\CartPermissionSeeder;
+use Ulams\Cart\Enums\ExportFormatEnum;
+use Ulams\Cart\Enums\OrderStatus;
+use Ulams\Cart\Exports\OrdersExport;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Maatwebsite\Excel\Facades\Excel;
 

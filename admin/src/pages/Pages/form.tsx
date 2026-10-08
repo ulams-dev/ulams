@@ -1,4 +1,4 @@
-import { createPage, page as fetchPage, updatePage } from '@/services/escola-lms/pages';
+import { createPage, page as fetchPage, updatePage } from '@/services/ulams/pages';
 import ProCard from '@ant-design/pro-card';
 import ProForm, { ProFormSwitch, ProFormText } from '@ant-design/pro-form';
 import { Spin, message } from 'antd';
@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react';
 import WysiwygMarkdown from '@/components/WysiwygMarkdown';
 import { PageContainer } from '@ant-design/pro-layout';
 
-import { slugify } from '@/services/escola-lms/slug';
+import { slugify } from '@/services/ulams/slug';
 import { createRequiredFieldValidator } from '@/utils/validate';
 import { useCallback } from 'react';
 import { FormattedMessage, history, useIntl, useParams } from 'umi';

@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Consultations\Http\Requests;
+namespace Ulams\Consultations\Http\Requests;
 
-use EscolaLms\Consultations\Enum\ConstantEnum;
-use EscolaLms\Consultations\Enum\ConsultationStatusEnum;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Files\Rules\FileOrStringRule;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Consultations\Enum\ConstantEnum;
+use Ulams\Consultations\Enum\ConsultationStatusEnum;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Files\Rules\FileOrStringRule;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 

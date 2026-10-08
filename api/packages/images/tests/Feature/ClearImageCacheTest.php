@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Images\Feature;
+namespace Ulams\Images\Feature;
 
-use EscolaLms\Images\Enum\ConstantEnum;
-use EscolaLms\Images\Models\ImageCache;
-use EscolaLms\Images\Tests\TestCase;
+use Ulams\Images\Enum\ConstantEnum;
+use Ulams\Images\Models\ImageCache;
+use Ulams\Images\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;

@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Payments\Concerns;
+namespace Ulams\Payments\Concerns;
 
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait Billable
 {
     public function payments(): HasMany
     {
-        /** @var \EscolaLms\Core\Models\User $this */
+        /** @var \Ulams\Core\Models\User $this */
         return $this->hasMany(Payment::class);
     }
 }

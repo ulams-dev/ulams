@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Models;
+namespace Ulams\HeadlessH5P\Models;
 
-use EscolaLms\HeadlessH5P\Database\Factories\H5PLibraryLanguageFactory;
+use Ulams\HeadlessH5P\Database\Factories\H5PLibraryLanguageFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

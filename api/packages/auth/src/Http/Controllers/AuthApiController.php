@@ -1,25 +1,25 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers;
+namespace Ulams\Auth\Http\Controllers;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Events\AccountConfirmed;
-use EscolaLms\Auth\Events\AccountRegistered;
-use EscolaLms\Auth\Exceptions\AuthException;
-use EscolaLms\Auth\Http\Controllers\Swagger\AuthSwagger;
-use EscolaLms\Auth\Http\Requests\CompleteSocialDataRequest;
-use EscolaLms\Auth\Http\Requests\ForgotPasswordRequest;
-use EscolaLms\Auth\Http\Requests\RefreshTokenRequest;
-use EscolaLms\Auth\Http\Requests\ResendVerificationEmailRequest;
-use EscolaLms\Auth\Http\Requests\ResetPasswordRequest;
-use EscolaLms\Auth\Http\Requests\SocialAuthRequest;
-use EscolaLms\Auth\Http\Resources\LoginResource;
-use EscolaLms\Auth\Http\Resources\UserGroupResource;
-use EscolaLms\Auth\Repositories\Contracts\UserRepositoryContract;
-use EscolaLms\Auth\Services\Contracts\AuthServiceContract;
-use EscolaLms\Auth\Services\Contracts\SocialAccountServiceContract;
-use EscolaLms\Auth\Services\Contracts\UserGroupServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Events\AccountConfirmed;
+use Ulams\Auth\Events\AccountRegistered;
+use Ulams\Auth\Exceptions\AuthException;
+use Ulams\Auth\Http\Controllers\Swagger\AuthSwagger;
+use Ulams\Auth\Http\Requests\CompleteSocialDataRequest;
+use Ulams\Auth\Http\Requests\ForgotPasswordRequest;
+use Ulams\Auth\Http\Requests\RefreshTokenRequest;
+use Ulams\Auth\Http\Requests\ResendVerificationEmailRequest;
+use Ulams\Auth\Http\Requests\ResetPasswordRequest;
+use Ulams\Auth\Http\Requests\SocialAuthRequest;
+use Ulams\Auth\Http\Resources\LoginResource;
+use Ulams\Auth\Http\Resources\UserGroupResource;
+use Ulams\Auth\Repositories\Contracts\UserRepositoryContract;
+use Ulams\Auth\Services\Contracts\AuthServiceContract;
+use Ulams\Auth\Services\Contracts\SocialAccountServiceContract;
+use Ulams\Auth\Services\Contracts\UserGroupServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\JsonResponse;
@@ -28,7 +28,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Laravel\Socialite\Facades\Socialite;
 
-class AuthApiController extends EscolaLmsBaseController implements AuthSwagger
+class AuthApiController extends UlamsBaseController implements AuthSwagger
 {
     private AuthServiceContract $authService;
     private UserRepositoryContract $userRepository;
@@ -149,7 +149,7 @@ class AuthApiController extends EscolaLmsBaseController implements AuthSwagger
         $user = $this->userRepository->findByEmail($request->input('email'));
 
         if ($user instanceof MustVerifyEmail && !$user->hasVerifiedEmail()) {
-            event(new AccountRegistered($user, $request->input('return_url', Config::get(EscolaLmsAuthServiceProvider::CONFIG_KEY . '.return_url'))));
+            event(new AccountRegistered($user, $request->input('return_url', Config::get(UlamsAuthServiceProvider::CONFIG_KEY . '.return_url'))));
         }
 
         return $this->sendSuccess(__('Verification message resent if email exists in database'));

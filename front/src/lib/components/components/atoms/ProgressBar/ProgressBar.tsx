@@ -2,7 +2,7 @@ import * as React from "react";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { getFontFromTheme } from "../../../theme/provider";
 import { calcPercentage, getStylesBasedOnTheme } from "../../../utils/utils";
 
@@ -112,7 +112,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = (props) => {
   return (
     <StyledDiv
       {...props}
-      className={`wellms-component lms-progress-bar ${className}`}
+      className={`ulams-component lms-progress-bar ${className}`}
       $variant={variant}
     >
       <div className="label-container">

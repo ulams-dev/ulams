@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Models\TopicContent;
+namespace Ulams\TopicTypes\Models\TopicContent;
 
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\H5PFactory;
+use Ulams\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
+use Ulams\TopicTypes\Database\Factories\TopicContent\H5PFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;

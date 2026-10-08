@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Permissions\Services\Contracts;
+namespace Ulams\Permissions\Services\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Permissions\Dtos\RoleFilterCriteriaDto;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Permissions\Dtos\RoleFilterCriteriaDto;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Contracts\Role;
 
 /**
- * @package EscolaLms\Permissions\Http\Services\Contracts
+ * @package Ulams\Permissions\Http\Services\Contracts
  */
 interface PermissionsServiceContract
 {

@@ -1,6 +1,6 @@
 networks:
-  escola_lms:
-    name: escola_lms
+  ulams:
+    name: ulams
     driver: bridge
 services:
   caddy:
@@ -11,7 +11,7 @@ services:
       - ./caddy/data:/data
       - ./caddy/config:/config
     networks:
-      - escola_lms
+      - ulams
     ports:
       - "80:80"
       - "443:443"
@@ -25,7 +25,7 @@ services:
       context: .
       dockerfile: Dockerfile.develop
     environment:
-      - LARAVEL_APP_NAME=Wellms
+      - LARAVEL_APP_NAME=Ulams
       - LARAVEL_APP_ENV=local
       - LARAVEL_APP_KEY=base64:jgaCduGIEEmn4/UMJR5d38Y5ncfNE+rXqV3Fvewd37w=
       - LARAVEL_APP_DEBUG=true
@@ -38,7 +38,7 @@ services:
       - LARAVEL_DB_USERNAME=default
       - LARAVEL_DB_PASSWORD=secret
       - LARAVEL_REDIS_HOST=redis
-      - LARAVEL_REDIS_PASSWORD=escola_lms
+      - LARAVEL_REDIS_PASSWORD=ulams
       - LARAVEL_REDIS_PORT=6379
       - LARAVEL_BROADCAST_DRIVER=log
       - LARAVEL_CACHE_DRIVER=redis
@@ -56,22 +56,22 @@ services:
       - LARAVEL_AWS_ACCESS_KEY_ID=admin
       - LARAVEL_AWS_SECRET_ACCESS_KEY=minio_secretpassword
       - LARAVEL_AWS_DEFAULT_REGION=us-east-1
-      - LARAVEL_AWS_BUCKET=wellms
+      - LARAVEL_AWS_BUCKET=ulams
       # Intenal Docker address
       - LARAVEL_AWS_ENDPOINT="http://minio:9000"
-      - LARAVEL_AWS_URL="http://storage.localhost/wellms"
+      - LARAVEL_AWS_URL="http://storage.localhost/ulams"
       - LARAVEL_AWS_USE_PATH_STYLE_ENDPOINT=true
       - LARAVEL_INITIAL_USER_PASSWORD=secret
     volumes:
       - ./:/var/www/html
     networks:
-      - escola_lms
+      - ulams
 
-  # escola_lms_queue_cron:
+  # ulams_queue_cron:
   #   command: "./init.sh"
   #   image: escolalms/php:8.2-prod ## or escolalms/php:8-work for debugginh
   #   environment:
-  #     - LARAVEL_APP_NAME=Wellms
+  #     - LARAVEL_APP_NAME=Ulams
   #     - LARAVEL_APP_ENV=local
   #     - LARAVEL_APP_KEY=base64:jgaCduGIEEmn4/UMJR5d38Y5ncfNE+rXqV3Fvewd37w=
   #     - LARAVEL_APP_DEBUG=true
@@ -84,7 +84,7 @@ services:
   #     - LARAVEL_DB_USERNAME=default
   #     - LARAVEL_DB_PASSWORD=secret
   #     - LARAVEL_REDIS_HOST=redis
-  #     - LARAVEL_REDIS_PASSWORD=escola_lms
+  #     - LARAVEL_REDIS_PASSWORD=ulams
   #     - LARAVEL_REDIS_PORT=6379
   #     - LARAVEL_BROADCAST_DRIVER=log
   #     - LARAVEL_CACHE_DRIVER=redis
@@ -102,21 +102,21 @@ services:
   #     - LARAVEL_AWS_ACCESS_KEY_ID=masoud
   #     - LARAVEL_AWS_SECRET_ACCESS_KEY=tg9t712TG1Odn17fisxXM9y01YrD
   #     - LARAVEL_AWS_DEFAULT_REGION=us-east-1
-  #     - LARAVEL_AWS_BUCKET=wellms
+  #     - LARAVEL_AWS_BUCKET=ulams
   #     - LARAVEL_AWS_ENDPOINT="http://minio:9000"
-  #     - LARAVEL_AWS_URL="http://storage.localhost:1001/wellms"
+  #     - LARAVEL_AWS_URL="http://storage.localhost:1001/ulams"
   #     - LARAVEL_AWS_USE_PATH_STYLE_ENDPOINT=true
   #   volumes:
   #     - ./:/var/www/html
   #   networks:
-  #     - escola_lms
+  #     - ulams
 
   postgres:
     image: postgres:12
     # ports:
     #   - "5432:5432"
     networks:
-      - escola_lms
+      - ulams
     volumes:
       - ./docker/postgres-data:/var/lib/postgresql/data
       - ./docker/postgres-backups:/var/lib/postgresql/backups
@@ -128,14 +128,14 @@ services:
 
   adminer:
     networks:
-      - escola_lms
+      - ulams
     image: adminer
     ports:
       - 8078:8080
 
   mailhog:
     networks:
-      - escola_lms
+      - ulams
     image: mailhog/mailhog
     logging:
       driver: "none" # disable saving logs
@@ -145,13 +145,13 @@ services:
 
   redis:
     networks:
-      - escola_lms
+      - ulams
     image: "redis"
-    command: "redis-server --requirepass ${REDIS_PASSWORD:-escola_lms}"
+    command: "redis-server --requirepass ${REDIS_PASSWORD:-ulams}"
 
   reportbro:
     networks:
-      - escola_lms
+      - ulams
     image: escolalms/reportbro-server:latest
 
   mjml:
@@ -164,7 +164,7 @@ services:
     # bitnami/* images were removed from Docker Hub; the same image lives under bitnamilegacy/*
     image: bitnamilegacy/minio:latest
     networks:
-      - escola_lms
+      - ulams
     # ports:
     #   - "9000:9000"
     #   - "9001:9001"
@@ -172,18 +172,18 @@ services:
       - ./docker/minio_storage:/bitnami/minio/data
       - ./docker/conf/minio:/docker-entrypoint-initdb.d
     environment:
-      MINIO_DEFAULT_BUCKETS: "${MINIO_DEFAULT_BUCKETS:-wellms}"
+      MINIO_DEFAULT_BUCKETS: "${MINIO_DEFAULT_BUCKETS:-ulams}"
       MINIO_ROOT_USER: "${MINIO_ROOT_USER:-admin}"
       MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD:-minio_secretpassword}"
       # AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}:admin
       # AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}:minio_secretpassword
-      # AWS_BUCKET: ${AWS_BUCKET}:wellms"
+      # AWS_BUCKET: ${AWS_BUCKET}:ulams"
       # AWS_ENDPOINT: ${AWS_ENDPOINT}
 
   soketi:
     image: quay.io/soketi/soketi:latest
     networks:
-      - escola_lms
+      - ulams
     expose:
       - "6001"
       - "9601"
@@ -194,6 +194,6 @@ services:
       SOKETI_ADAPTER: redis
       SOKETI_REDIS_HOST: redis
       SOKETI_REDIS_PORT: 6379
-      SOKETI_REDIS_PASSWORD: escola_lms
+      SOKETI_REDIS_PASSWORD: ulams
       SOKETI_METRICS_SERVER_PORT: 9601
       SOKETI_METRICS_ENABLED: 1

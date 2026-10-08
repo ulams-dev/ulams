@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Controllers;
+namespace Ulams\Courses\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Resources\Status;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Http\Controllers\Swagger\CourseProgressAPISwagger;
-use EscolaLms\Courses\Http\Requests\CourseProgressAPIRequest;
-use EscolaLms\Courses\Http\Requests\CourseProgressPaginatedListRequest;
-use EscolaLms\Courses\Http\Resources\ProgressResource;
-use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
-use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
-use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Resources\Status;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Http\Controllers\Swagger\CourseProgressAPISwagger;
+use Ulams\Courses\Http\Requests\CourseProgressAPIRequest;
+use Ulams\Courses\Http\Requests\CourseProgressPaginatedListRequest;
+use Ulams\Courses\Http\Resources\ProgressResource;
+use Ulams\Courses\Repositories\Contracts\CourseRepositoryContract;
+use Ulams\Courses\Repositories\Contracts\TopicRepositoryContract;
+use Ulams\Courses\Services\Contracts\ProgressServiceContract;
+use Ulams\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

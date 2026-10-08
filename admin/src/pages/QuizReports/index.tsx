@@ -11,7 +11,7 @@ import CourseSelect from '@/components/CourseSelect';
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';
 import UserSelect from '@/components/UserSelect';
 import { DATETIME_FORMAT } from '@/consts/dates';
-import { getQuizAttempts } from '@/services/escola-lms/gift_quiz';
+import { getQuizAttempts } from '@/services/ulams/gift_quiz';
 //import type { ProTableRequest } from '@/types';
 import { createTableOrderObject } from '@/utils/utils';
 import type { ProTableProps } from '@ant-design/pro-components';
@@ -53,7 +53,7 @@ export const TableColumns: ProColumns<API.QuizAttempt>[] = [
     hideInSearch: true,
     render: (_, record) => (
       <TypeButtonDrawer
-        type="EscolaLms\TopicTypeGift\Models\GiftQuiz"
+        type="Ulams\TopicTypeGift\Models\GiftQuiz"
         type_id={record.topic_gift_quiz_id}
       />
     ),
@@ -89,7 +89,7 @@ export const TableColumns: ProColumns<API.QuizAttempt>[] = [
     render: (_n, record) =>
       typeof record?.course?.id === 'number' ? (
         <TypeButtonDrawer
-          type="EscolaLms\Cart\Models\Course"
+          type="Ulams\Cart\Models\Course"
           type_id={record.course.id}
           text={record?.course?.title}
         />
@@ -116,7 +116,7 @@ export const TableColumns: ProColumns<API.QuizAttempt>[] = [
     },
     render: (_, record) => (
       <TypeButtonDrawer
-        type="EscolaLms\Core\Models\User"
+        type="Ulams\Core\Models\User"
         type_id={record.user_id}
         text={
           record?.user?.first_name && record?.user?.last_name

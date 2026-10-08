@@ -1,16 +1,16 @@
 import { useContext, useEffect, useState } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import {
   Consultation,
   CourseParams,
   PaginatedMetaList,
-} from "@lms/sdk/types";
+} from "@ulams/sdk/types";
 
 const useFetchConsultations = (params?: CourseParams, noAutoFech?: boolean) => {
   const [consultations, setConsultations] =
     useState<PaginatedMetaList<Consultation & { analyze_enabled?: boolean }>>();
   const [loading, setLoading] = useState(true);
-  const { fetchConsultations } = useContext(EscolaLMSContext);
+  const { fetchConsultations } = useContext(UlamsContext);
 
   const fetchConsultationsData = async (params: CourseParams) => {
     setLoading(true);

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Database\Factories\TopicContent;
+namespace Ulams\TopicTypes\Database\Factories\TopicContent;
 
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\Components\Cmi5AuHelper;
-use EscolaLms\TopicTypes\Models\TopicContent\Cmi5Au;
+use Ulams\TopicTypes\Database\Factories\TopicContent\Components\Cmi5AuHelper;
+use Ulams\TopicTypes\Models\TopicContent\Cmi5Au;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use EscolaLms\Cmi5\Models\Cmi5Au as Cmi5AuModel;
+use Ulams\Cmi5\Models\Cmi5Au as Cmi5AuModel;
 
 class Cmi5AuFactory extends Factory
 {

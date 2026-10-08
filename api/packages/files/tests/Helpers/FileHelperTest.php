@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Files\Tests\Helpers;
+namespace Ulams\Files\Tests\Helpers;
 
-use EscolaLms\Files\Helpers\FileHelper;
-use EscolaLms\Files\Tests\TestCase;
+use Ulams\Files\Helpers\FileHelper;
+use Ulams\Files\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 

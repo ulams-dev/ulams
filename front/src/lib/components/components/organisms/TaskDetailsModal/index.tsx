@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { Title } from "../../../";
 
 import { PersonalContent } from "./content/PersonalContent";

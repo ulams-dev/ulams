@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Tests\Fixture;
+namespace Ulams\HeadlessH5P\Tests\Fixture;
 
 use Carbon\Carbon;
 use DateTime;

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Models;
+namespace Ulams\AssignWithoutAccount\Models;
 
-use EscolaLms\AssignWithoutAccount\Database\Factories\UserSubmissionFactory;
+use Ulams\AssignWithoutAccount\Database\Factories\UserSubmissionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;

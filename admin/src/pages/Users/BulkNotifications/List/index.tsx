@@ -2,11 +2,11 @@ import TypeButtonDrawer from '@/components/TypeButtonDrawer';
 import UserSelect from '@/components/UserSelect';
 import PERMISSIONS from '@/consts/permissions';
 import { usePermissions } from '@/hooks/usePermissions';
-import { bulkNotifications } from '@/services/escola-lms/bulk-notifications';
+import { bulkNotifications } from '@/services/ulams/bulk-notifications';
 import {
   type BulkNotificationChannelsEnum,
   BulkNotificationSectionsKeysEnum,
-} from '@/services/escola-lms/enums';
+} from '@/services/ulams/enums';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';

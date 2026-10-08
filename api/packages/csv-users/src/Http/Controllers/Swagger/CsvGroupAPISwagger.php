@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Http\Controllers\Swagger;
+namespace Ulams\CsvUsers\Http\Controllers\Swagger;
 
-use EscolaLms\CsvUsers\Http\Requests\ExportUserGroupToCsvAPIRequest;
-use EscolaLms\CsvUsers\Http\Requests\ImportUserGroupFromCsvAPIRequest;
+use Ulams\CsvUsers\Http\Requests\ExportUserGroupToCsvAPIRequest;
+use Ulams\CsvUsers\Http\Requests\ImportUserGroupFromCsvAPIRequest;
 
 interface CsvGroupAPISwagger
 {
@@ -64,7 +64,7 @@ interface CsvGroupAPISwagger
      *                  @OA\Property(
      *                      property="return_url",
      *                      type="string",
-     *                      example="https://escolalms.com/set-password",
+     *                      example="https://ulams.app/set-password",
      *                      description="Address where the new user set the password"
      *                 ),
      *              )

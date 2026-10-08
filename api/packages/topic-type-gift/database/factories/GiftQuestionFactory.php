@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Database\Factories;
+namespace Ulams\TopicTypeGift\Database\Factories;
 
-use EscolaLms\TopicTypeGift\Enum\QuestionTypeEnum;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Enum\QuestionTypeEnum;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class GiftQuestionFactory extends Factory

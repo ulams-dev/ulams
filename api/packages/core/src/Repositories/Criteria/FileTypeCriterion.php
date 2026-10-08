@@ -1,9 +1,9 @@
 <?php
 
 
-namespace EscolaLms\Core\Repositories\Criteria;
+namespace Ulams\Core\Repositories\Criteria;
 
-use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\InCriterion;
 
 class FileTypeCriterion extends InCriterion
 {

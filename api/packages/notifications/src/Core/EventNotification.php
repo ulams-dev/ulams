@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Notifications\Core;
+namespace Ulams\Notifications\Core;
 
 use Illuminate\Contracts\Database\ModelIdentifier;
 use Illuminate\Database\Eloquent\Model;

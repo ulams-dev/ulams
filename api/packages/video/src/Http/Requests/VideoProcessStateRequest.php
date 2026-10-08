@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Video\Http\Requests;
+namespace Ulams\Video\Http\Requests;
 
-use EscolaLms\Video\Dto\VideoSearchDto;
-use EscolaLms\Video\Models\Video;
+use Ulams\Video\Dto\VideoSearchDto;
+use Ulams\Video\Models\Video;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

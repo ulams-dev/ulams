@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Repositories;
+namespace Ulams\PencilSpaces\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\PencilSpaces\Models\User;
-use EscolaLms\PencilSpaces\Repositories\Contracts\UserRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\PencilSpaces\Models\User;
+use Ulams\PencilSpaces\Repositories\Contracts\UserRepositoryContract;
 
 class UserRepository extends BaseRepository implements UserRepositoryContract
 {

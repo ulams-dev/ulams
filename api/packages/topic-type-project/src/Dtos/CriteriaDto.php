@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Dtos;
+namespace Ulams\TopicTypeProject\Dtos;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
-use EscolaLms\Core\Dtos\CriteriaDto as BaseCriteriaDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\HasCriterion;
-use EscolaLms\Courses\Repositories\Criteria\Primitives\OrderCriterion;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\CriteriaDto as BaseCriteriaDto;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\HasCriterion;
+use Ulams\Courses\Repositories\Criteria\Primitives\OrderCriterion;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;

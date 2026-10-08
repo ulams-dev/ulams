@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Recommender\Dto;
+namespace Ulams\Recommender\Dto;
 
-use EscolaLms\Recommender\Models\MeetRecording;
+use Ulams\Recommender\Models\MeetRecording;
 
 class MeetRecordingDto extends BaseDto
 {

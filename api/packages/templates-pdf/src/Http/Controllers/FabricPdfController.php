@@ -1,23 +1,23 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Http\Controllers;
+namespace Ulams\TemplatesPdf\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\TemplatesPdf\Http\Controllers\Swagger\FabricPdfControllerSwagger;
-use EscolaLms\TemplatesPdf\Http\Requests\PdfListingAdminRequest;
-use EscolaLms\TemplatesPdf\Http\Requests\PdfListingRequest;
-use EscolaLms\TemplatesPdf\Http\Requests\PdfReadRequest;
-use EscolaLms\TemplatesPdf\Http\Resources\PdfListResource;
-use EscolaLms\TemplatesPdf\Http\Resources\PdfResource;
-use EscolaLms\TemplatesPdf\Models\FabricPDF;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\TemplatesPdf\Http\Controllers\Swagger\FabricPdfControllerSwagger;
+use Ulams\TemplatesPdf\Http\Requests\PdfListingAdminRequest;
+use Ulams\TemplatesPdf\Http\Requests\PdfListingRequest;
+use Ulams\TemplatesPdf\Http\Requests\PdfReadRequest;
+use Ulams\TemplatesPdf\Http\Resources\PdfListResource;
+use Ulams\TemplatesPdf\Http\Resources\PdfResource;
+use Ulams\TemplatesPdf\Models\FabricPDF;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use EscolaLms\TemplatesPdf\Services\Contracts\ReportBroServiceContract;
+use Ulams\TemplatesPdf\Services\Contracts\ReportBroServiceContract;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class FabricPdfController extends EscolaLmsBaseController implements FabricPdfControllerSwagger
+class FabricPdfController extends UlamsBaseController implements FabricPdfControllerSwagger
 {
     public function index(PdfListingRequest $request): JsonResponse
     {

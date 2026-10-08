@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Templates\Events;
+namespace Ulams\Templates\Events;
 
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Models\Course;
+use Ulams\Cart\Models\Product;
+use Ulams\Core\Models\User;
+use Ulams\Courses\Models\Course;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

@@ -213,10 +213,10 @@ Here’s a detailed, step-by-step breakdown of the provided Bash script:
 ### 1. Echo a start message
 
 ```bash
-echo "Wellms multidomains init script!"
+echo "Ulams multidomains init script!"
 ```
 
-Displays a message indicating the start of the multi-domain initialization script for the Wellms application.
+Displays a message indicating the start of the multi-domain initialization script for the Ulams application.
 
 ### 2. Enable or Disable PHP-FPM
 

@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers;
+namespace Ulams\Auth\Http\Controllers;
 
-use EscolaLms\Auth\Http\Controllers\Swagger\LoginSwagger;
-use EscolaLms\Auth\Http\Requests\ImpersonateRequest;
-use EscolaLms\Auth\Http\Requests\LoginRequest;
-use EscolaLms\Auth\Http\Resources\LoginResource;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Services\Contracts\AuthServiceContract;
-use EscolaLms\Auth\Services\Contracts\UserServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Auth\Http\Controllers\Swagger\LoginSwagger;
+use Ulams\Auth\Http\Requests\ImpersonateRequest;
+use Ulams\Auth\Http\Requests\LoginRequest;
+use Ulams\Auth\Http\Resources\LoginResource;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Services\Contracts\AuthServiceContract;
+use Ulams\Auth\Services\Contracts\UserServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Sentry\Tracing\TransactionContext;
 
-class LoginApiController extends EscolaLmsBaseController implements LoginSwagger
+class LoginApiController extends UlamsBaseController implements LoginSwagger
 {
     private UserServiceContract $userService;
     private AuthServiceContract $authService;

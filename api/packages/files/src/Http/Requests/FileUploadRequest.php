@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Files\Http\Requests;
+namespace Ulams\Files\Http\Requests;
 
-use EscolaLms\Files\Enums\FilePermissionsEnum;
-use EscolaLms\Files\Helpers\FileHelper;
+use Ulams\Files\Enums\FilePermissionsEnum;
+use Ulams\Files\Helpers\FileHelper;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Foundation\Http\FormRequest;
 

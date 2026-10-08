@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests;
+namespace Ulams\Auth\Http\Requests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\Rule;
 
@@ -17,7 +17,7 @@ class ResendVerificationEmailRequest extends ExtendableRequest
     {
         return [
             'email' => ['required', 'string', 'email'],
-            'return_url' => ['nullable', 'url', Rule::requiredIf(fn () => !Config::get(EscolaLmsAuthServiceProvider::CONFIG_KEY . '.return_url'))],
+            'return_url' => ['nullable', 'url', Rule::requiredIf(fn () => !Config::get(UlamsAuthServiceProvider::CONFIG_KEY . '.return_url'))],
         ];
     }
 }

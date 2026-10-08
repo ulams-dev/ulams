@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\Pages\Http\Controllers;
+namespace Ulams\Pages\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Pages\Dtos\PagesFilterCriteriaDto;
-use EscolaLms\Pages\Http\Controllers\Contracts\PagesAdminApiContract;
-use EscolaLms\Pages\Http\Requests\PageCreateRequest;
-use EscolaLms\Pages\Http\Requests\PageDeleteRequest;
-use EscolaLms\Pages\Http\Requests\PageListingRequest;
-use EscolaLms\Pages\Http\Requests\PageReadRequest;
-use EscolaLms\Pages\Http\Requests\PageUpdateRequest;
-use EscolaLms\Pages\Http\Resources\PageResource;
-use EscolaLms\Pages\Http\Services\Contracts\PageServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Pages\Dtos\PagesFilterCriteriaDto;
+use Ulams\Pages\Http\Controllers\Contracts\PagesAdminApiContract;
+use Ulams\Pages\Http\Requests\PageCreateRequest;
+use Ulams\Pages\Http\Requests\PageDeleteRequest;
+use Ulams\Pages\Http\Requests\PageListingRequest;
+use Ulams\Pages\Http\Requests\PageReadRequest;
+use Ulams\Pages\Http\Requests\PageUpdateRequest;
+use Ulams\Pages\Http\Resources\PageResource;
+use Ulams\Pages\Http\Services\Contracts\PageServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
-class PagesAdminApiController extends EscolaLmsBaseController implements PagesAdminApiContract
+class PagesAdminApiController extends UlamsBaseController implements PagesAdminApiContract
 {
     private PageServiceContract $pageService;
 

@@ -1,7 +1,7 @@
 import { DefaultMetaResponse, DefaultResponse } from "./core";
 import { User } from "./user";
 
-export type Product = Omit<EscolaLms.Cart.Models.Product, "productables"> & {
+export type Product = Omit<Ulams.Cart.Models.Product, "productables"> & {
   available_quantity: number;
   created_at?: string | null;
   updated_at?: string | null;
@@ -32,7 +32,7 @@ export type Product = Omit<EscolaLms.Cart.Models.Product, "productables"> & {
   };
 };
 
-export type ProductItems = EscolaLms.Cart.Models.ProductProductable & {
+export type ProductItems = Ulams.Cart.Models.ProductProductable & {
   name?: string;
   description?: string;
 };
@@ -55,7 +55,7 @@ export type CartProductParameters = {
   productable_type: string;
 };
 
-export type CartItem = EscolaLms.Cart.Models.CartItem & {
+export type CartItem = Ulams.Cart.Models.CartItem & {
   product?: Product & {
     productables: CartProductParameters[];
   };

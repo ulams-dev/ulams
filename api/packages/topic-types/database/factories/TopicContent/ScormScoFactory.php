@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Database\Factories\TopicContent;
+namespace Ulams\TopicTypes\Database\Factories\TopicContent;
 
-use EscolaLms\Scorm\Services\Contracts\ScormServiceContract;
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\Components\ScormScoHelper;
-use EscolaLms\TopicTypes\Models\TopicContent\ScormSco;
+use Ulams\Scorm\Services\Contracts\ScormServiceContract;
+use Ulams\TopicTypes\Database\Factories\TopicContent\Components\ScormScoHelper;
+use Ulams\TopicTypes\Models\TopicContent\ScormSco;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Http\UploadedFile;
 use Peopleaps\Scorm\Model\ScormScoModel;

@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Vouchers\Http\Resources;
+namespace Ulams\Vouchers\Http\Resources;
 
-use EscolaLms\Cart\Http\Resources\ProductResource;
-use EscolaLms\Categories\Http\Resources\CategoryResource;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Vouchers\Models\Coupon;
-use EscolaLms\Vouchers\Services\Contracts\CouponServiceContract;
+use Ulams\Cart\Http\Resources\ProductResource;
+use Ulams\Categories\Http\Resources\CategoryResource;
+use Ulams\Core\Models\User;
+use Ulams\Vouchers\Models\Coupon;
+use Ulams\Vouchers\Services\Contracts\CouponServiceContract;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CouponResource extends JsonResource

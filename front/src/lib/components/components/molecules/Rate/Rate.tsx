@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { Button } from "../../atoms/Button/Button";
 import { Rating } from "../../atoms/Rating/Rating";
 // import { Text } from "../../atoms/Typography/Text";
@@ -65,7 +65,7 @@ export const Rate: React.FC<Props> = (props) => {
   // }, [selectedRate, hoverRate]);
 
   return (
-    <StyledRate className={`wellms-component ${className}`}>
+    <StyledRate className={`ulams-component ${className}`}>
       <Title className="title" level={4}>
         {t(header)}
       </Title>

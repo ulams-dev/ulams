@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import { PropsWithChildren } from "react";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 export interface RatioBoxProps extends ExtendableStyledComponent {
   ratio: number;
@@ -48,7 +48,7 @@ export const RatioBox: React.FC<PropsWithChildren<RatioBoxProps>> = (props) => {
   return (
     <StyledDiv
       {...props}
-      className={`wellms-component ${props.className ?? ""}`}
+      className={`ulams-component ${props.className ?? ""}`}
     >
       {children}
     </StyledDiv>

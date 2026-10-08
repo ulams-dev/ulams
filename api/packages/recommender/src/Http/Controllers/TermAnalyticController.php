@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\Recommender\Http\Controllers;
+namespace Ulams\Recommender\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Recommender\Dto\SatisfactionDto;
-use EscolaLms\Recommender\Http\Controllers\Swagger\TermAnalyticControllerContract;
-use EscolaLms\Recommender\Http\Requests\AggregatedFrameListRequest;
-use EscolaLms\Recommender\Http\Requests\SatisfactionSaveRequest;
-use EscolaLms\Recommender\Http\Requests\TermAnalyticListRequest;
-use EscolaLms\Recommender\Http\Requests\TermAnalyticRequest;
-use EscolaLms\Recommender\Http\Resources\AggregatedFrameResource;
-use EscolaLms\Recommender\Http\Resources\ModelAnalyticsResource;
-use EscolaLms\Recommender\Http\Resources\TermAnalyticResource;
-use EscolaLms\Recommender\Services\Contracts\TermAnalyticServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Recommender\Dto\SatisfactionDto;
+use Ulams\Recommender\Http\Controllers\Swagger\TermAnalyticControllerContract;
+use Ulams\Recommender\Http\Requests\AggregatedFrameListRequest;
+use Ulams\Recommender\Http\Requests\SatisfactionSaveRequest;
+use Ulams\Recommender\Http\Requests\TermAnalyticListRequest;
+use Ulams\Recommender\Http\Requests\TermAnalyticRequest;
+use Ulams\Recommender\Http\Resources\AggregatedFrameResource;
+use Ulams\Recommender\Http\Resources\ModelAnalyticsResource;
+use Ulams\Recommender\Http\Resources\TermAnalyticResource;
+use Ulams\Recommender\Services\Contracts\TermAnalyticServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
 
-class TermAnalyticController extends EscolaLmsBaseController implements TermAnalyticControllerContract
+class TermAnalyticController extends UlamsBaseController implements TermAnalyticControllerContract
 {
     public function __construct(
         private TermAnalyticServiceContract $termAnalyticService

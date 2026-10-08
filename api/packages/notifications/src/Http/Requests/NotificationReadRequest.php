@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Notifications\Http\Requests;
+namespace Ulams\Notifications\Http\Requests;
 
-use EscolaLms\Notifications\Models\DatabaseNotification;
+use Ulams\Notifications\Models\DatabaseNotification;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

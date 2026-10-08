@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Controllers;
+namespace Ulams\Cart\Http\Controllers;
 
-use EscolaLms\Cart\Http\Requests\ProductReadRequest;
-use EscolaLms\Cart\Http\Requests\ProductRecursiveCancelRequest;
-use EscolaLms\Cart\Http\Requests\ProductSearchMyRequest;
-use EscolaLms\Cart\Http\Requests\ProductSearchRequest;
-use EscolaLms\Cart\Http\Resources\MyProductResource;
-use EscolaLms\Cart\Http\Resources\ProductResource;
-use EscolaLms\Cart\Http\Swagger\ProductSwagger;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
-use EscolaLms\Cart\Services\Contracts\ShopServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Core\Models\User;
+use Ulams\Cart\Http\Requests\ProductReadRequest;
+use Ulams\Cart\Http\Requests\ProductRecursiveCancelRequest;
+use Ulams\Cart\Http\Requests\ProductSearchMyRequest;
+use Ulams\Cart\Http\Requests\ProductSearchRequest;
+use Ulams\Cart\Http\Resources\MyProductResource;
+use Ulams\Cart\Http\Resources\ProductResource;
+use Ulams\Cart\Http\Swagger\ProductSwagger;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Cart\Services\Contracts\ShopServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Core\Models\User;
 use Illuminate\Http\JsonResponse;
-use EscolaLms\Core\Dtos\OrderDto as SortDto;
+use Ulams\Core\Dtos\OrderDto as SortDto;
 
-class ProductApiController extends EscolaLmsBaseController implements ProductSwagger
+class ProductApiController extends UlamsBaseController implements ProductSwagger
 {
     protected ProductServiceContract $productService;
     protected ShopServiceContract $shopService;

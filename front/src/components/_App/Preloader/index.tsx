@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Spin } from "@lms/components/components/atoms/Spin/Spin";
+import { Spin } from "@ulams/components/components/atoms/Spin/Spin";
 import styled, { useTheme } from "styled-components";
 
 const StyledLoader = styled.div`

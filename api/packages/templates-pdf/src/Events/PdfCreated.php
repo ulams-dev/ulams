@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Events;
+namespace Ulams\TemplatesPdf\Events;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\TemplatesPdf\Models\FabricPDF;
+use Ulams\Core\Models\User;
+use Ulams\TemplatesPdf\Models\FabricPDF;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

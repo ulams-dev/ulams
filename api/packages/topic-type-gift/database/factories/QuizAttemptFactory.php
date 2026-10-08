@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Database\Factories;
+namespace Ulams\TopicTypeGift\Database\Factories;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
+use Ulams\Auth\Models\User;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 

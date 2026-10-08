@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Strategies\Contract;
+namespace Ulams\CoursesImportExport\Strategies\Contract;
 
 interface TopicImportStrategy
 {

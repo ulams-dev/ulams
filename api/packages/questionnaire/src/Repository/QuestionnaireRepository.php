@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Repository;
+namespace Ulams\Questionnaire\Repository;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Questionnaire\EscolaLmsQuestionnaireServiceProvider;
-use EscolaLms\Questionnaire\Models\Questionnaire;
-use EscolaLms\Questionnaire\Repository\Contracts\QuestionnaireRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Questionnaire\UlamsQuestionnaireServiceProvider;
+use Ulams\Questionnaire\Models\Questionnaire;
+use Ulams\Questionnaire\Repository\Contracts\QuestionnaireRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -72,6 +72,6 @@ class QuestionnaireRepository extends BaseRepository implements QuestionnaireRep
         return $this
             ->applyCriteria($query, $criteria)
             ->with($with)
-            ->paginate(config(EscolaLmsQuestionnaireServiceProvider::CONFIG_KEY . '.per_page', 15));
+            ->paginate(config(UlamsQuestionnaireServiceProvider::CONFIG_KEY . '.per_page', 15));
     }
 }

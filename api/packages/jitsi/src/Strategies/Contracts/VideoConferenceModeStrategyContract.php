@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Jitsi\Strategies\Contracts;
+namespace Ulams\Jitsi\Strategies\Contracts;
 
 interface VideoConferenceModeStrategyContract
 {

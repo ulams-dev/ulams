@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Models;
+namespace Ulams\TopicTypeGift\Models;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\TopicTypeGift\Database\Factories\GiftQuestionFactory;
+use Ulams\Categories\Models\Category;
+use Ulams\TopicTypeGift\Database\Factories\GiftQuestionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * EscolaLms\TopicTypeGift\Models\GiftQuestion
+ * Ulams\TopicTypeGift\Models\GiftQuestion
  *
  * @property int $id
  * @property int $topic_gift_quiz_id

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 
 export enum EntityRedirectBuyType {
   BUYABLE = "buyable",

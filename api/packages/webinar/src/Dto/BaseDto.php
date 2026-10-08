@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Webinar\Dto;
+namespace Ulams\Webinar\Dto;
 
-use EscolaLms\Webinar\Dto\Traits\DtoHelper;
+use Ulams\Webinar\Dto\Traits\DtoHelper;
 
 abstract class BaseDto
 {

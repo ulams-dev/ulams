@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EscolaLms\Core\Repositories\Criteria;
+namespace Ulams\Core\Repositories\Criteria;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;

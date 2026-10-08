@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Auth\Tests;
+namespace Ulams\Auth\Tests;
 
-use EscolaLms\Auth\Database\Seeders\AuthPermissionSeeder;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
-use EscolaLms\ModelFields\ModelFieldsServiceProvider;
-use EscolaLms\Templates\EscolaLmsTemplatesServiceProvider;
+use Ulams\Auth\Database\Seeders\AuthPermissionSeeder;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\Categories\UlamsCategoriesServiceProvider;
+use Ulams\ModelFields\ModelFieldsServiceProvider;
+use Ulams\Templates\UlamsTemplatesServiceProvider;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
@@ -27,15 +27,15 @@ class TestCase extends CoreTestCase
     {
         $providers = [
             ...parent::getPackageProviders($app),
-            EscolaLmsAuthServiceProvider::class,
+            UlamsAuthServiceProvider::class,
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
-            EscolaLmsCategoriesServiceProvider::class,
+            UlamsCategoriesServiceProvider::class,
             ModelFieldsServiceProvider::class,
         ];
 
-        if (class_exists(EscolaLmsTemplatesServiceProvider::class)) {
-            array_push($providers, EscolaLmsTemplatesServiceProvider::class);
+        if (class_exists(UlamsTemplatesServiceProvider::class)) {
+            array_push($providers, UlamsTemplatesServiceProvider::class);
         }
 
         return $providers;

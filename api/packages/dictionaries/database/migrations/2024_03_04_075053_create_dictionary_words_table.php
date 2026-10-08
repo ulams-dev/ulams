@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Dictionaries\Models\Dictionary;
+use Ulams\Dictionaries\Models\Dictionary;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

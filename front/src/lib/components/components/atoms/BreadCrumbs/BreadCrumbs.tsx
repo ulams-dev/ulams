@@ -4,7 +4,7 @@ import styled, { withTheme } from "styled-components";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { getUniqueId } from "../../../utils/utils";
 import { getFontFromTheme } from "../../../theme/provider";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface BreadCrumbsProps extends ExtendableStyledComponent {
   items: React.ReactNode[];
@@ -68,7 +68,7 @@ export const BreadCrumbs: React.FC<BreadCrumbsProps> = ({
 }) => {
   return (
     <StyledNav
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
       aria-label={getUniqueId("nav")}
     >
       <ul>

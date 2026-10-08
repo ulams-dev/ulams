@@ -1,29 +1,29 @@
 <?php
 
-namespace EscolaLms\Courses\Tests;
+namespace Ulams\Courses\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
-use EscolaLms\Courses\AuthServiceProvider;
-use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
-use EscolaLms\Courses\Facades\Topic;
-use EscolaLms\Courses\Tests\Models\TopicContent\SecondExampleTopicType;
-use EscolaLms\Courses\Tests\Http\Resources\TopicType\Admin\ExampleTopicTypeResource;
-use EscolaLms\Courses\Tests\Models\TopicContent\ExampleTopicType;
-use EscolaLms\Courses\Tests\Models\User as UserTest;
-use EscolaLms\Files\EscolaLmsFilesServiceProvider;
-use EscolaLms\ModelFields\ModelFieldsServiceProvider;
-use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\Categories\UlamsCategoriesServiceProvider;
+use Ulams\Courses\AuthServiceProvider;
+use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\Courses\Facades\Topic;
+use Ulams\Courses\Tests\Models\TopicContent\SecondExampleTopicType;
+use Ulams\Courses\Tests\Http\Resources\TopicType\Admin\ExampleTopicTypeResource;
+use Ulams\Courses\Tests\Models\TopicContent\ExampleTopicType;
+use Ulams\Courses\Tests\Models\User as UserTest;
+use Ulams\Files\UlamsFilesServiceProvider;
+use Ulams\ModelFields\ModelFieldsServiceProvider;
+use Ulams\Scorm\UlamsScormServiceProvider;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Tags\UlamsTagsServiceProvider;
 use Illuminate\Testing\TestResponse;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 use Spatie\ResponseCache\ResponseCacheServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     protected ?TestResponse $response;
 
@@ -42,15 +42,15 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsAuthServiceProvider::class,
+            UlamsAuthServiceProvider::class,
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
-            EscolaLmsCategoriesServiceProvider::class,
-            EscolaLmsCourseServiceProvider::class,
+            UlamsCategoriesServiceProvider::class,
+            UlamsCourseServiceProvider::class,
             AuthServiceProvider::class,
-            EscolaLmsSettingsServiceProvider::class,
-            EscolaLmsTopicTypeTestServiceProvider::class,
-            EscolaLmsFilesServiceProvider::class,
+            UlamsSettingsServiceProvider::class,
+            UlamsTopicTypeTestServiceProvider::class,
+            UlamsFilesServiceProvider::class,
             ResponseCacheServiceProvider::class,
             ModelFieldsServiceProvider::class,
         ];
@@ -62,7 +62,7 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
         $app['config']->set('passport.client_uuids', true);
         $app['config']->set('database.connections.mysql.strict', false);
         $app['config']->set('app.debug', (bool) env('APP_DEBUG', true));
-        $app['config']->set('escolalms.tags.ignore_migrations', false);
+        $app['config']->set('ulams.tags.ignore_migrations', false);
 
         $app['config']->set('scorm', [
             'table_names' => [

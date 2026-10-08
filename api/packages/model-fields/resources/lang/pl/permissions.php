@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\ModelFields\Enum\MetaFieldPermissionsEnum;
+use Ulams\ModelFields\Enum\MetaFieldPermissionsEnum;
 
 return [
     MetaFieldPermissionsEnum::METADATA_CREATE_UPDATE => 'Utwórz zapisz metadane',

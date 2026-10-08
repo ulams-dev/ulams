@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Templates\Facades;
+namespace Ulams\Templates\Facades;
 
-use EscolaLms\Templates\Core\TemplatePreview;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\Templates\Models\Template as TemplateModel;
-use EscolaLms\Templates\Services\Contracts\TemplateEventServiceContract;
-use EscolaLms\Templates\Testing\TemplateFake;
+use Ulams\Templates\Core\TemplatePreview;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\Templates\Models\Template as TemplateModel;
+use Ulams\Templates\Services\Contracts\TemplateEventServiceContract;
+use Ulams\Templates\Testing\TemplateFake;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Facade;
 
@@ -19,11 +19,11 @@ use Illuminate\Support\Facades\Facade;
  * @method static           array getRegisteredEventsWithTokens()
  * @method static            bool assertEventHandled(string $eventClass, string $channelClass, ?string $variableClass = null) 
  * @method static            void createDefaultTemplatesForChannel(string $channelClass)
- * @method static TemplatePreview sendPreview(\EscolaLms\Core\Models\User $user, \EscolaLms\Templates\Models\Template $template)
- * @method static   TemplateModel processTemplateAfterSaving(\EscolaLms\Templates\Models\Template $template)
+ * @method static TemplatePreview sendPreview(\Ulams\Core\Models\User $user, \Ulams\Templates\Models\Template $template)
+ * @method static   TemplateModel processTemplateAfterSaving(\Ulams\Templates\Models\Template $template)
  * @method static      Collection listAssignableTemplates(?string $assignableClass = null, ?string $eventClass = null, ?string $channelClass = null)
  * 
- * @see \EscolaLms\Templates\Services\TemplateEventService
+ * @see \Ulams\Templates\Services\TemplateEventService
  */
 class Template extends Facade
 {

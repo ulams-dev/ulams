@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Policies;
+namespace Ulams\StationaryEvents\Policies;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\StationaryEvents\Enum\StationaryEventPermissionsEnum;
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
+use Ulams\Auth\Models\User;
+use Ulams\StationaryEvents\Enum\StationaryEventPermissionsEnum;
+use Ulams\StationaryEvents\Models\StationaryEvent;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class StationaryEventPolicy

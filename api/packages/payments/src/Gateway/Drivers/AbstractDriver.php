@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Payments\Gateway\Drivers;
+namespace Ulams\Payments\Gateway\Drivers;
 
-use EscolaLms\Payments\Entities\PaymentsConfig;
-use EscolaLms\Payments\Exceptions\ParameterMissingException;
-use EscolaLms\Payments\Exceptions\PaymentException;
-use EscolaLms\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
+use Ulams\Payments\Entities\PaymentsConfig;
+use Ulams\Payments\Exceptions\ParameterMissingException;
+use Ulams\Payments\Exceptions\PaymentException;
+use Ulams\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
 use Illuminate\Support\Arr;
 use Omnipay\Common\Message\ResponseInterface;
 

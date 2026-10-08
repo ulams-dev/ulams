@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Core;
+namespace Ulams\TemplatesPdf\Core;
 
 use Illuminate\Mail\Mailable;
 

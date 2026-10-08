@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Templates\Tests\Api;
+namespace Ulams\Templates\Tests\Api;
 
-use EscolaLms\Templates\Facades\Template as FacadesTemplate;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Models\TemplateSection;
-use EscolaLms\Templates\Tests\Mock\TestChannel;
-use EscolaLms\Templates\Tests\Mock\TestEventWithGetters;
-use EscolaLms\Templates\Tests\Mock\TestVariables;
-use EscolaLms\Templates\Tests\TestCase;
+use Ulams\Templates\Facades\Template as FacadesTemplate;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Models\TemplateSection;
+use Ulams\Templates\Tests\Mock\TestChannel;
+use Ulams\Templates\Tests\Mock\TestEventWithGetters;
+use Ulams\Templates\Tests\Mock\TestVariables;
+use Ulams\Templates\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class TemplatesUpdateTest extends TestCase

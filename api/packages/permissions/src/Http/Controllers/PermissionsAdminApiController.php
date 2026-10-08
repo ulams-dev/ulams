@@ -1,26 +1,26 @@
 <?php
 
-namespace EscolaLms\Permissions\Http\Controllers;
+namespace Ulams\Permissions\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Permissions\Dtos\RoleFilterCriteriaDto;
-use EscolaLms\Permissions\Events\PermissionRoleChanged;
-use EscolaLms\Permissions\Http\Controllers\Contracts\PermissionsAdminApiContract;
-use EscolaLms\Permissions\Http\Requests\RoleCreateRequest;
-use EscolaLms\Permissions\Http\Requests\RoleDeleteRequest;
-use EscolaLms\Permissions\Http\Requests\RoleListingRequest;
-use EscolaLms\Permissions\Http\Requests\RoleReadRequest;
-use EscolaLms\Permissions\Http\Requests\RoleUpdateRequest;
-use EscolaLms\Permissions\Http\Resources\RoleResource;
-use EscolaLms\Permissions\Http\Resources\PermissionResource;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Permissions\Dtos\RoleFilterCriteriaDto;
+use Ulams\Permissions\Events\PermissionRoleChanged;
+use Ulams\Permissions\Http\Controllers\Contracts\PermissionsAdminApiContract;
+use Ulams\Permissions\Http\Requests\RoleCreateRequest;
+use Ulams\Permissions\Http\Requests\RoleDeleteRequest;
+use Ulams\Permissions\Http\Requests\RoleListingRequest;
+use Ulams\Permissions\Http\Requests\RoleReadRequest;
+use Ulams\Permissions\Http\Requests\RoleUpdateRequest;
+use Ulams\Permissions\Http\Resources\RoleResource;
+use Ulams\Permissions\Http\Resources\PermissionResource;
 
-use EscolaLms\Permissions\Services\Contracts\PermissionsServiceContract;
+use Ulams\Permissions\Services\Contracts\PermissionsServiceContract;
 use Illuminate\Http\JsonResponse;
 use Exception;
-use EscolaLms\Permissions\Exceptions\AdminRoleException;
+use Ulams\Permissions\Exceptions\AdminRoleException;
 
-class PermissionsAdminApiController extends EscolaLmsBaseController implements PermissionsAdminApiContract
+class PermissionsAdminApiController extends UlamsBaseController implements PermissionsAdminApiContract
 {
     private PermissionsServiceContract $service;
 

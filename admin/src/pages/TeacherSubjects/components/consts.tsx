@@ -1,4 +1,4 @@
-import { ExamGradePassType } from '@/services/escola-lms/enums';
+import { ExamGradePassType } from '@/services/ulams/enums';
 import { FormattedMessage } from 'umi';
 
 export const TEACHER_SUBJECTS_PAGE_SIZE = 30;

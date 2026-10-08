@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Mattermost\Services;
+namespace Ulams\Mattermost\Services;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Mattermost\Enum\MattermostRoleEnum;
-use EscolaLms\Mattermost\Enum\TeamNameEnum;
-use EscolaLms\Mattermost\Services\Contracts\MattermostServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Mattermost\Enum\MattermostRoleEnum;
+use Ulams\Mattermost\Enum\TeamNameEnum;
+use Ulams\Mattermost\Services\Contracts\MattermostServiceContract;
 use Gnello\Mattermost\Driver;
 use Gnello\Mattermost\Laravel\Facades\Mattermost;
 use Illuminate\Support\Str;

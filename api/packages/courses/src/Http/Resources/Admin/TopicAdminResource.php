@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Resources\Admin;
+namespace Ulams\Courses\Http\Resources\Admin;
 
-use EscolaLms\Courses\Facades\Topic;
-use EscolaLms\Courses\Http\Resources\TopicResourceResource;
+use Ulams\Courses\Facades\Topic;
+use Ulams\Courses\Http\Resources\TopicResourceResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TopicAdminResource extends JsonResource

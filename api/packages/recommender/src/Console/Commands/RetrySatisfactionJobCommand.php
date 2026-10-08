@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Recommender\Console\Commands;
+namespace Ulams\Recommender\Console\Commands;
 
-use EscolaLms\Recommender\Enum\SatisfactionStatusEnum;
-use EscolaLms\Recommender\Jobs\PredictSatisfactionJob;
-use EscolaLms\Recommender\Models\TermAnalytic;
+use Ulams\Recommender\Enum\SatisfactionStatusEnum;
+use Ulams\Recommender\Jobs\PredictSatisfactionJob;
+use Ulams\Recommender\Models\TermAnalytic;
 use Illuminate\Console\Command;
 
 class RetrySatisfactionJobCommand extends Command

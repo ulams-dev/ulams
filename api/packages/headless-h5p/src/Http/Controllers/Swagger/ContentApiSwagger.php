@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Http\Controllers\Swagger;
+namespace Ulams\HeadlessH5P\Http\Controllers\Swagger;
 
-use EscolaLms\HeadlessH5P\Http\Requests\ContentCreateRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\ContentDeleteRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\ContentListRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\AdminContentReadRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\ContentReadRequest;
+use Ulams\HeadlessH5P\Http\Requests\ContentCreateRequest;
+use Ulams\HeadlessH5P\Http\Requests\ContentDeleteRequest;
+use Ulams\HeadlessH5P\Http\Requests\ContentListRequest;
+use Ulams\HeadlessH5P\Http\Requests\AdminContentReadRequest;
+use Ulams\HeadlessH5P\Http\Requests\ContentReadRequest;
 use Illuminate\Http\JsonResponse;
 
-use EscolaLms\HeadlessH5P\Http\Requests\ContentUpdateRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
+use Ulams\HeadlessH5P\Http\Requests\ContentUpdateRequest;
+use Ulams\HeadlessH5P\Http\Requests\LibraryStoreRequest;
 
     /**
      * @OA\Schema(

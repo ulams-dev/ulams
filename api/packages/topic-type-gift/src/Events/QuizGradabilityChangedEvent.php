@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Events;
+namespace Ulams\TopicTypeGift\Events;
 
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

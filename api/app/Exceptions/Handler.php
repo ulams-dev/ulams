@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use EscolaLms\Auth\Exceptions\OnboardingNotCompleted;
+use Ulams\Auth\Exceptions\OnboardingNotCompleted;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;

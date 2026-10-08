@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests\Feature;
+namespace Ulams\TemplatesEmail\Tests\Feature;
 
-use EscolaLms\Tasks\Events\TaskOverdueEvent;
-use EscolaLms\Tasks\Models\Task;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\TemplatesEmail\Core\EmailMailable;
-use EscolaLms\TemplatesEmail\Tests\TestCase;
+use Ulams\Tasks\Events\TaskOverdueEvent;
+use Ulams\Tasks\Models\Task;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\TemplatesEmail\Core\EmailMailable;
+use Ulams\TemplatesEmail\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
@@ -20,7 +20,7 @@ class TaskTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\Tasks\EscolaLmsTasksServiceProvider::class)) {
+        if (!class_exists(\Ulams\Tasks\UlamsTasksServiceProvider::class)) {
             $this->markTestSkipped('Task package not installed');
         }
     }

@@ -16,7 +16,7 @@ const PROFILE = {
         name: 'Root Admin',
         first_name: 'Root',
         last_name: 'Admin',
-        email: 'admin@escolalms.com',
+        email: 'admin@ulams.app',
         roles: ['admin'],
         permissions: ['h5p_list', 'h5p_create', 'access dashboard']
     }
@@ -75,7 +75,7 @@ describe('auth middleware (JWT + profile + internal token)', () => {
         expect(res.body.user).toMatchObject({
             id: '1',
             name: 'Root Admin',
-            email: 'admin@escolalms.com',
+            email: 'admin@ulams.app',
             type: 'local',
             roles: ['admin'],
             permissions: ['h5p_list', 'h5p_create', 'access dashboard'],

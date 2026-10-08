@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Resources;
+namespace Ulams\Auth\Http\Resources;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Auth\Models\User;
+use Ulams\ModelFields\Enum\MetaFieldVisibilityEnum;
+use Ulams\ModelFields\Facades\ModelFields;
 
 class UserFullResource extends UserResource
 {

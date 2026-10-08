@@ -1,25 +1,25 @@
 <?php
 
-namespace EscolaLms\Reports\Tests\Feature;
+namespace Ulams\Reports\Tests\Feature;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Questionnaire\Models\Question;
-use EscolaLms\Questionnaire\Models\QuestionAnswer;
-use EscolaLms\Questionnaire\Models\Questionnaire;
-use EscolaLms\Questionnaire\Models\QuestionnaireModel;
-use EscolaLms\Reports\Metrics\CoursesBestRatedMetric;
-use EscolaLms\Reports\Metrics\CoursesMoneySpentMetric;
-use EscolaLms\Reports\Metrics\CoursesPopularityMetric;
-use EscolaLms\Reports\Metrics\CoursesSecondsSpentMetric;
-use EscolaLms\Reports\Metrics\CoursesTopSellingMetric;
-use EscolaLms\Reports\Metrics\TutorsPopularityMetric;
-use EscolaLms\Reports\Tests\Models\TestUser;
-use EscolaLms\Reports\Tests\TestCase;
-use EscolaLms\Reports\Tests\Traits\CoursesTestingTrait;
-use EscolaLms\Reports\Tests\Traits\QuestionnaireTestingTrait;
+use Ulams\Core\Models\User;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\Course;
+use Ulams\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Models\QuestionAnswer;
+use Ulams\Questionnaire\Models\Questionnaire;
+use Ulams\Questionnaire\Models\QuestionnaireModel;
+use Ulams\Reports\Metrics\CoursesBestRatedMetric;
+use Ulams\Reports\Metrics\CoursesMoneySpentMetric;
+use Ulams\Reports\Metrics\CoursesPopularityMetric;
+use Ulams\Reports\Metrics\CoursesSecondsSpentMetric;
+use Ulams\Reports\Metrics\CoursesTopSellingMetric;
+use Ulams\Reports\Metrics\TutorsPopularityMetric;
+use Ulams\Reports\Tests\Models\TestUser;
+use Ulams\Reports\Tests\TestCase;
+use Ulams\Reports\Tests\Traits\CoursesTestingTrait;
+use Ulams\Reports\Tests\Traits\QuestionnaireTestingTrait;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -67,7 +67,7 @@ class MetricsTest extends TestCase
         $this->assertEquals($report->getKey(), $measurement->report->getKey());
         $this->assertEquals($course->getKey(), $measurement->measurable->getKey());
 
-        $this->assertEquals(class_exists(\EscolaLms\Courses\EscolaLmsCourseServiceProvider::class), CoursesSecondsSpentMetric::make()->requiredPackageInstalled());
+        $this->assertEquals(class_exists(\Ulams\Courses\UlamsCourseServiceProvider::class), CoursesSecondsSpentMetric::make()->requiredPackageInstalled());
         $this->assertIsString(CoursesSecondsSpentMetric::make()->requiredPackage());
     }
 
@@ -100,7 +100,7 @@ class MetricsTest extends TestCase
         $this->assertEquals($report->getKey(), $measurement->report->getKey());
         $this->assertEquals($course->getKey(), $measurement->measurable->getKey());
 
-        $this->assertEquals(class_exists(\EscolaLms\Courses\EscolaLmsCourseServiceProvider::class), CoursesPopularityMetric::make()->requiredPackageInstalled());
+        $this->assertEquals(class_exists(\Ulams\Courses\UlamsCourseServiceProvider::class), CoursesPopularityMetric::make()->requiredPackageInstalled());
         $this->assertIsString(CoursesPopularityMetric::make()->requiredPackage());
     }
 
@@ -142,7 +142,7 @@ class MetricsTest extends TestCase
         $this->assertEquals($report->getKey(), $measurement->report->getKey());
         $this->assertEquals($tutor->getKey(), $measurement->measurable->getKey());
 
-        $this->assertEquals(class_exists(\EscolaLms\Courses\EscolaLmsCourseServiceProvider::class), TutorsPopularityMetric::make()->requiredPackageInstalled());
+        $this->assertEquals(class_exists(\Ulams\Courses\UlamsCourseServiceProvider::class), TutorsPopularityMetric::make()->requiredPackageInstalled());
         $this->assertIsString(TutorsPopularityMetric::make()->requiredPackage());
     }
 
@@ -176,7 +176,7 @@ class MetricsTest extends TestCase
         $this->assertEquals($report->getKey(), $measurement->report->getKey());
         $this->assertEquals($course->getKey(), $measurement->measurable->getKey());
 
-        $this->assertEquals(class_exists(\EscolaLms\Courses\EscolaLmsCourseServiceProvider::class), CoursesMoneySpentMetric::make()->requiredPackageInstalled());
+        $this->assertEquals(class_exists(\Ulams\Courses\UlamsCourseServiceProvider::class), CoursesMoneySpentMetric::make()->requiredPackageInstalled());
         $this->assertIsString(CoursesMoneySpentMetric::make()->requiredPackage());
     }
 
@@ -224,7 +224,7 @@ class MetricsTest extends TestCase
         $this->assertEquals($report->getKey(), $measurement->last()->report->getKey());
         $this->assertEquals($course2->getKey(), $measurement->last()->measurable->getKey());
 
-        $this->assertEquals(class_exists(\EscolaLms\Courses\EscolaLmsCourseServiceProvider::class), CoursesTopSellingMetric::make()->requiredPackageInstalled());
+        $this->assertEquals(class_exists(\Ulams\Courses\UlamsCourseServiceProvider::class), CoursesTopSellingMetric::make()->requiredPackageInstalled());
         $this->assertIsString(CoursesTopSellingMetric::make()->requiredPackage());
     }
 
@@ -284,8 +284,8 @@ class MetricsTest extends TestCase
         $this->assertEquals($questionAnswer3->sum(fn ($answer) => $answer->rate), $measurement->last()->value);
         $this->assertEquals($course3->title, $measurement->last()->label);
 
-        $this->assertEquals(class_exists(\EscolaLms\Courses\EscolaLmsCourseServiceProvider::class), CoursesBestRatedMetric::make()->requiredPackageInstalled());
-        $this->assertEquals(class_exists(\EscolaLms\Questionnaire\EscolaLmsQuestionnaireServiceProvider::class), CoursesBestRatedMetric::make()->requiredPackageInstalled());
+        $this->assertEquals(class_exists(\Ulams\Courses\UlamsCourseServiceProvider::class), CoursesBestRatedMetric::make()->requiredPackageInstalled());
+        $this->assertEquals(class_exists(\Ulams\Questionnaire\UlamsQuestionnaireServiceProvider::class), CoursesBestRatedMetric::make()->requiredPackageInstalled());
         $this->assertIsString(CoursesBestRatedMetric::make()->requiredPackage());
     }
 }

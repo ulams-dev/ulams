@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Recommender\Jobs;
+namespace Ulams\Recommender\Jobs;
 
-use EscolaLms\Recommender\Models\AggregatedFrame;
-use EscolaLms\Recommender\Services\Contracts\TermAnalyticServiceContract;
+use Ulams\Recommender\Models\AggregatedFrame;
+use Ulams\Recommender\Services\Contracts\TermAnalyticServiceContract;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

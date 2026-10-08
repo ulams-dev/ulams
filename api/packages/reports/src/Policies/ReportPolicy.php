@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Reports\Policies;
+namespace Ulams\Reports\Policies;
 
-use EscolaLms\Reports\Enums\ReportsPermissionsEnum;
+use Ulams\Reports\Enums\ReportsPermissionsEnum;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Foundation\Auth\User;
 

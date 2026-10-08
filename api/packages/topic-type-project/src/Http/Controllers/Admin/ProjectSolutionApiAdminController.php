@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Http\Controllers\Admin;
+namespace Ulams\TopicTypeProject\Http\Controllers\Admin;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\TopicTypeProject\Http\Controllers\Admin\Swagger\ProjectSolutionApiAdminSwagger;
-use EscolaLms\TopicTypeProject\Http\Requests\Admin\AdminDeleteProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Http\Requests\Admin\AdminGradeProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Http\Requests\Admin\AdminListProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Http\Requests\Admin\AdminReadProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Http\Requests\Admin\AdminUpdateProjectSolutionFeedbackRequest;
-use EscolaLms\TopicTypeProject\Http\Resources\ProjectSolutionResource;
-use EscolaLms\TopicTypeProject\Services\Contracts\ProjectSolutionServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\TopicTypeProject\Http\Controllers\Admin\Swagger\ProjectSolutionApiAdminSwagger;
+use Ulams\TopicTypeProject\Http\Requests\Admin\AdminDeleteProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\Admin\AdminGradeProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\Admin\AdminListProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\Admin\AdminReadProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\Admin\AdminUpdateProjectSolutionFeedbackRequest;
+use Ulams\TopicTypeProject\Http\Resources\ProjectSolutionResource;
+use Ulams\TopicTypeProject\Services\Contracts\ProjectSolutionServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class ProjectSolutionApiAdminController extends EscolaLmsBaseController implements ProjectSolutionApiAdminSwagger
+class ProjectSolutionApiAdminController extends UlamsBaseController implements ProjectSolutionApiAdminSwagger
 {
     private ProjectSolutionServiceContract $projectSolutionService;
 

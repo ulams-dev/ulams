@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Models\Traits;
+namespace Ulams\Courses\Models\Traits;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\CourseAuthorPivot;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\CourseAuthorPivot;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait HasAuthoredCourses

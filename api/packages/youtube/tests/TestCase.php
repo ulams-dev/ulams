@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Youtube\Tests;
+namespace Ulams\Youtube\Tests;
 
-use EscolaLms\Youtube\EscolaLmsYoutubeServiceProvider;
+use Ulams\Youtube\UlamsYoutubeServiceProvider;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
 use GuzzleHttp\Psr7\Response;
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 
 
 class TestCase extends CoreTestCase
@@ -28,8 +28,8 @@ class TestCase extends CoreTestCase
 
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsYoutubeServiceProvider::class,
-            EscolaLmsSettingsServiceProvider::class,
+            UlamsYoutubeServiceProvider::class,
+            UlamsSettingsServiceProvider::class,
         ];
     }
 

@@ -21,7 +21,7 @@ class UserTableSeeder extends Seeder
         $student = User::firstOrCreate([
             'first_name' => 'Osman',
             'last_name' => 'Kanu',
-            'email' => 'student@escolalms.com',
+            'email' => 'student@ulams.app',
             'password' => bcrypt('secret'),
             'is_active' => 1,
             'email_verified_at' => Carbon::now(),
@@ -32,7 +32,7 @@ class UserTableSeeder extends Seeder
         $admin = User::firstOrCreate([
             'first_name' => 'Admin',
             'last_name' => 'A',
-            'email' => 'admin2@escolalms.com',
+            'email' => 'admin2@ulams.app',
             'password' => bcrypt('secret'),
             'is_active' => 1,
             'email_verified_at' => Carbon::now(),
@@ -44,7 +44,7 @@ class UserTableSeeder extends Seeder
         $tutor = User::firstOrCreate([
             'first_name' => 'Angela',
             'last_name' => 'Yu',
-            'email' => 'tutor@escolalms.com',
+            'email' => 'tutor@ulams.app',
             'password' => bcrypt('secret'),
             'is_active' => 1,
             'email_verified_at' => Carbon::now(),

@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { EscolaLMSContext } from "../context";
+import { UlamsContext } from "../context";
 import { Cart, DefaultResponseSuccess } from "../../types";
 
 type PogressState = {
@@ -14,7 +14,7 @@ export const useCart = () => {
     loaded: false,
     loading: false,
   });
-  const { user, fetchCart } = useContext(EscolaLMSContext);
+  const { user, fetchCart } = useContext(UlamsContext);
 
   const getCartData = useCallback(() => {
     setCart({

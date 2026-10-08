@@ -6,10 +6,10 @@ import type {
   Numerical,
   ShortAnswer,
   TrueFalse,
-} from '@lms/gift-pegjs';
-import { parse } from '@lms/gift-pegjs';
+} from '@ulams/gift-pegjs';
+import { parse } from '@ulams/gift-pegjs';
 
-import { QuestionType } from '@/services/escola-lms/enums';
+import { QuestionType } from '@/services/ulams/enums';
 import type {
   DescriptionFormData,
   EssayFormData,

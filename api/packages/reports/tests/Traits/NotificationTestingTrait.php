@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Reports\Tests\Traits;
+namespace Ulams\Reports\Tests\Traits;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Notifications\Models\DatabaseNotification;
+use Ulams\Core\Models\User;
+use Ulams\Notifications\Models\DatabaseNotification;
 use Faker\Factory;
 use Ramsey\Uuid\Uuid;
 

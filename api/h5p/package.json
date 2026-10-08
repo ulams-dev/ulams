@@ -2,7 +2,7 @@
     "name": "api-h5p",
     "version": "0.1.0",
     "private": true,
-    "description": "H5P microservice (Lumi h5p-nodejs-library) for the Wellms LMS",
+    "description": "H5P microservice (Lumi h5p-nodejs-library) for the Ulams LMS",
     "license": "GPL-3.0-or-later",
     "type": "commonjs",
     "main": "dist/index.js",

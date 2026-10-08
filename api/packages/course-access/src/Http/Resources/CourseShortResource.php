@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Http\Resources;
+namespace Ulams\CourseAccess\Http\Resources;
 
-use EscolaLms\CourseAccess\Models\Course;
+use Ulams\CourseAccess\Models\Course;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

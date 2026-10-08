@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Jobs\Strategies;
+namespace Ulams\ConsultationAccess\Jobs\Strategies;
 
 class SpaceTitleRelatedToLessonStrategy extends DefaultSpaceTitleStrategy
 {

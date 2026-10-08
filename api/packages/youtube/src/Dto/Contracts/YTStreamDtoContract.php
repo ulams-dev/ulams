@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Youtube\Dto\Contracts;
+namespace Ulams\Youtube\Dto\Contracts;
 
 interface YTStreamDtoContract
 {

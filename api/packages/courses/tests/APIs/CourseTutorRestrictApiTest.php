@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\APIs;
+namespace Ulams\Courses\Tests\APIs;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Courses\Database\Factories\LessonFactory;
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Tests\TestCase;
+use Ulams\Categories\Models\Category;
+use Ulams\Courses\Database\Factories\LessonFactory;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CourseTutorRestrictApiTest extends TestCase

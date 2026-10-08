@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { Modal } from "@lms/components/components/atoms/Modal/Modal";
-import { JitsyData } from "@lms/sdk/types";
+import { UlamsContext } from "@ulams/sdk/react";
+import { Modal } from "@ulams/components/components/atoms/Modal/Modal";
+import { JitsyData } from "@ulams/sdk/types";
 import ContentLoader from "@/components/_App/ContentLoader";
 import { ConsultationMeetModalStyles } from "./MeetModalStyles";
 import JitsyMeeting from "@/components/Consultations/ConsultationCard/JitsyMeeting";
@@ -27,7 +27,7 @@ const ConsultationMeetModal = ({ onClose }: Props) => {
   const [meetData, setMeetData] = useState<JitsyData | null>(null);
   const [isEnded, setIsEnded] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { generateConsultationJitsy } = useContext(EscolaLMSContext);
+  const { generateConsultationJitsy } = useContext(UlamsContext);
   const consultationModalContext = useContext(ConsultationModalContext);
   const [recordingUrl, setRecordingUrl] = useState<string | null>(null);
   const [participantCount, setParticipantCount] = useState<number>(0);

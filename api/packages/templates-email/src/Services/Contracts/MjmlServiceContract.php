@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Services\Contracts;
+namespace Ulams\TemplatesEmail\Services\Contracts;
 
 interface MjmlServiceContract
 {

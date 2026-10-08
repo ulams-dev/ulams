@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Tests\APIs;
+namespace Ulams\CsvUsers\Tests\APIs;
 
-use EscolaLms\Auth\Models\GroupUser;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\CsvUsers\Enums\CsvUserPermissionsEnum;
-use EscolaLms\CsvUsers\Import\UserGroupImport;
-use EscolaLms\CsvUsers\Tests\Models\User;
-use EscolaLms\CsvUsers\Tests\TestCase;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Auth\Models\GroupUser;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\CsvUsers\Enums\CsvUserPermissionsEnum;
+use Ulams\CsvUsers\Import\UserGroupImport;
+use Ulams\CsvUsers\Tests\Models\User;
+use Ulams\CsvUsers\Tests\TestCase;
+use Ulams\ModelFields\Enum\MetaFieldVisibilityEnum;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;

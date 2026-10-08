@@ -23,7 +23,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: escolalms/api:${{github.ref_name}}, escolalms/api:latest
+          tags: ulams/api:${{github.ref_name}}, ulams/api:latest
           platforms: linux/amd64,linux/arm64
       - name: create release note
         run: ./docker/release_note.sh
@@ -37,9 +37,9 @@ jobs:
 
       - name: Create the Mattermost Message
         run: |
-          echo "{\"text\":\"There is a new version ${{ github.ref_name }} [escolalms/api:latest](https://hub.docker.com/r/escolalms/api/tags?page=1&name=latest) image built. k8s rollout will happen soon\"}" > mattermost.json
+          echo "{\"text\":\"There is a new version ${{ github.ref_name }} [ulams/api:latest](https://hub.docker.com/r/escolalms/api/tags?page=1&name=latest) image built. k8s rollout will happen soon\"}" > mattermost.json
       - uses: mattermost/action-mattermost-notify@master
         with:
           MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
           PAYLOAD: |-
-            {"text":"There is a new version ${{ github.ref_name }} [escolalms/api:latest](https://hub.docker.com/r/escolalms/api/tags?page=1&name=latest) image built. k8s rollout will happen soon"}
+            {"text":"There is a new version ${{ github.ref_name }} [ulams/api:latest](https://hub.docker.com/r/escolalms/api/tags?page=1&name=latest) image built. k8s rollout will happen soon"}

@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\APIs;
+namespace Ulams\Courses\Tests\APIs;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Courses\Enum\CoursesConstant;
-use EscolaLms\Courses\Enum\CourseVisibilityEnum;
-use EscolaLms\Courses\Enum\PlatformVisibility;
-use EscolaLms\Courses\Tests\TestCase;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder as SettingsPermissionSeeder;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\Courses\Enum\CoursesConstant;
+use Ulams\Courses\Enum\CourseVisibilityEnum;
+use Ulams\Courses\Enum\PlatformVisibility;
+use Ulams\Courses\Tests\TestCase;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder as SettingsPermissionSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 
@@ -30,7 +30,7 @@ class CourseAdministrableConfigTest extends TestCase
         $this->user->guard_name = 'api';
         $this->user->assignRole('admin');
 
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
     }
 
     public function test_course_administrable_config()
@@ -41,7 +41,7 @@ class CourseAdministrableConfigTest extends TestCase
         );
         $this->response->assertOk();
         $this->response->assertJsonFragment([
-            'escolalms_courses' => [
+            'ulams_courses' => [
                 'platform_visibility' => PlatformVisibility::VISIBILITY_PUBLIC,
                 'reminder_of_deadline_count_days' => CoursesConstant::REMINDER_OF_DEADLINE_COUNT_DAYS,
                 'course_visibility' => CourseVisibilityEnum::SHOW_ALL,
@@ -54,9 +54,9 @@ class CourseAdministrableConfigTest extends TestCase
         );
         $this->response->assertOk();
         $this->response->assertJsonFragment([
-            'escolalms_courses' => [
+            'ulams_courses' => [
                 'platform_visibility' => [
-                    'full_key' => 'escolalms_courses.platform_visibility',
+                    'full_key' => 'ulams_courses.platform_visibility',
                     'key' => 'platform_visibility',
                     'rules' => ['required', 'string', 'in:public,registered'],
                     'public' => true,
@@ -64,7 +64,7 @@ class CourseAdministrableConfigTest extends TestCase
                     'value' => 'public',
                 ],
                 'reminder_of_deadline_count_days' => [
-                    'full_key' => 'escolalms_courses.reminder_of_deadline_count_days',
+                    'full_key' => 'ulams_courses.reminder_of_deadline_count_days',
                     'key' => 'reminder_of_deadline_count_days',
                     'rules' => ['integer', 'min: 1'],
                     'public' => true,
@@ -72,7 +72,7 @@ class CourseAdministrableConfigTest extends TestCase
                     'value' => CoursesConstant::REMINDER_OF_DEADLINE_COUNT_DAYS,
                 ],
                 'course_visibility' => [
-                    'full_key' => 'escolalms_courses.course_visibility',
+                    'full_key' => 'ulams_courses.course_visibility',
                     'key' => 'course_visibility',
                     'rules' => ['required', 'string', 'in:' . implode(',', CourseVisibilityEnum::getValues())],
                     'public' => true,
@@ -88,11 +88,11 @@ class CourseAdministrableConfigTest extends TestCase
             [
                 'config' => [
                     [
-                        'key' => 'escolalms_courses.platform_visibility',
+                        'key' => 'ulams_courses.platform_visibility',
                         'value' => PlatformVisibility::VISIBILITY_REGISTERED
                     ],
                     [
-                        'key' => 'escolalms_courses.course_visibility',
+                        'key' => 'ulams_courses.course_visibility',
                         'value' => CourseVisibilityEnum::SHOW_ONLY_MY,
                     ],
                 ]
@@ -106,7 +106,7 @@ class CourseAdministrableConfigTest extends TestCase
         );
         $this->response->assertOk();
         $this->response->assertJsonFragment([
-            'escolalms_courses' => [
+            'ulams_courses' => [
                 'platform_visibility' => PlatformVisibility::VISIBILITY_REGISTERED,
                 'reminder_of_deadline_count_days' => CoursesConstant::REMINDER_OF_DEADLINE_COUNT_DAYS,
                 'course_visibility' => CourseVisibilityEnum::SHOW_ONLY_MY,

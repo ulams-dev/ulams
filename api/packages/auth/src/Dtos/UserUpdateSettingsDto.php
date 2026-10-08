@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Dtos;
+namespace Ulams\Auth\Dtos;
 
-use EscolaLms\Auth\Http\Requests\Admin\UserSettingsUpdateRequest;
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Auth\Http\Requests\Admin\UserSettingsUpdateRequest;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;

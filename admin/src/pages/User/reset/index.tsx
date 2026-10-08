@@ -4,7 +4,7 @@ import { message } from 'antd';
 import React, { useState } from 'react';
 import { FormattedMessage, history, useIntl } from 'umi';
 
-import { reset as passwordReset } from '@/services/escola-lms/auth';
+import { reset as passwordReset } from '@/services/ulams/auth';
 
 import AuthLayout from '../components/AuthLayout';
 import styles from '../components/index.less';

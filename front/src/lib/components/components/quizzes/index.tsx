@@ -7,14 +7,14 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { withTheme } from "styled-components";
-import { API } from "@lms/sdk/index";
+import { API } from "@ulams/sdk/index";
 import {
   quizAttempt as fetchQuizAttempt,
   quizAnswer,
   quizAttemptFinish,
-} from "@lms/sdk/services/gfit_quiz";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { GiftQuizAnswer } from "@lms/components/types/gift-quiz";
+} from "@ulams/sdk/services/gfit_quiz";
+import { UlamsContext } from "@ulams/sdk/react";
+import { GiftQuizAnswer } from "@ulams/components/types/gift-quiz";
 import { Button, Spin } from "../../";
 import GiftQuizPlayerContent from "./GiftQuizPlayerContent";
 
@@ -47,7 +47,7 @@ const StartButtonWrapper = styled.div`
 
 function useQuiz(quizId: number | undefined, onTopicEnd?: () => void) {
   const [data, setData] = useState<QuizData>({ loading: false });
-  const { token, apiUrl } = useContext(EscolaLMSContext);
+  const { token, apiUrl } = useContext(UlamsContext);
 
   const topicEndCb = useRef(onTopicEnd);
 

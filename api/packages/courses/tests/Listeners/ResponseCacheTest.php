@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Tests\TestCase;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;

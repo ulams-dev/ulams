@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Resources;
+namespace Ulams\Cart\Http\Resources;
 
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Cart\Facades\Shop;
-use EscolaLms\Cart\Models\ProductProductable;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Cart\Facades\Shop;
+use Ulams\Cart\Models\ProductProductable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 

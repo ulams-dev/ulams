@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Database\Factories;
+namespace Ulams\HeadlessH5P\Database\Factories;
 
-use EscolaLms\HeadlessH5P\Models\H5PContent;
-use EscolaLms\HeadlessH5P\Models\H5PContentLibrary;
-use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use Ulams\HeadlessH5P\Models\H5PContent;
+use Ulams\HeadlessH5P\Models\H5PContentLibrary;
+use Ulams\HeadlessH5P\Models\H5PLibrary;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class H5PContentLibraryFactory extends Factory

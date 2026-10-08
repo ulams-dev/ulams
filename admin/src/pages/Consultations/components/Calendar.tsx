@@ -1,4 +1,4 @@
-import { changeTermDate, getSchedule } from '@/services/escola-lms/consultations';
+import { changeTermDate, getSchedule } from '@/services/ulams/consultations';
 import type { ProColumns } from '@ant-design/pro-table';
 import { Badge, Calendar, DatePicker, Spin, Tooltip, message } from 'antd';
 import type { Moment } from 'moment';

@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Tests;
+namespace Ulams\StationaryEvents\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
-use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
-use EscolaLms\StationaryEvents\EscolaLmsStationaryEventsServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\Categories\UlamsCategoriesServiceProvider;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
+use Ulams\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
+use Ulams\StationaryEvents\UlamsStationaryEventsServiceProvider;
 use Illuminate\Testing\TestResponse;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
@@ -29,11 +29,11 @@ class TestCase extends CoreTestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsAuthServiceProvider::class,
+            UlamsAuthServiceProvider::class,
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
-            EscolaLmsCategoriesServiceProvider::class,
-            EscolaLmsStationaryEventsServiceProvider::class,
+            UlamsCategoriesServiceProvider::class,
+            UlamsStationaryEventsServiceProvider::class,
         ];
     }
 

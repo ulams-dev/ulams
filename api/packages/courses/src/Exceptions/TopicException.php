@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Courses\Exceptions;
+namespace Ulams\Courses\Exceptions;
 
 use Exception;
 

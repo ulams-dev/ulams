@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Repositories\Contracts;
+namespace Ulams\HeadlessH5P\Repositories\Contracts;
 
 use H5PFrameworkInterface as H5PFrameworkInterfaceCore;
 

@@ -1,4 +1,4 @@
-import { preview as previewTemplate } from '@/services/escola-lms/templates';
+import { preview as previewTemplate } from '@/services/ulams/templates';
 import { Alert, Button } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage } from 'umi';

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Recommender\Repositories\Contracts;
+namespace Ulams\Recommender\Repositories\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Support\Collection;
 
 interface TopicRepositoryContract extends BaseRepositoryContract

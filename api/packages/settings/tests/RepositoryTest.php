@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Settings\Tests;
+namespace Ulams\Settings\Tests;
 
-use EscolaLms\Settings\Tests\TestCase;
-use EscolaLms\Settings\Repositories\Contracts\SettingsRepositoryContract;
-use EscolaLms\Settings\Models\Setting;
-use EscolaLms\Settings\Database\Seeders\DatabaseSeeder;
+use Ulams\Settings\Tests\TestCase;
+use Ulams\Settings\Repositories\Contracts\SettingsRepositoryContract;
+use Ulams\Settings\Models\Setting;
+use Ulams\Settings\Database\Seeders\DatabaseSeeder;
 use Illuminate\Support\Facades\Storage;
 
 class RepositoryTest extends TestCase
@@ -96,8 +96,8 @@ class RepositoryTest extends TestCase
             ],
             'default' => [
                 'type' => 'text',
-                'value' => 'hello wellms',
-                'expected' => 'hello wellms',
+                'value' => 'hello ulams',
+                'expected' => 'hello ulams',
             ],
         ];
     }

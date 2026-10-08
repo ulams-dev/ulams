@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Mocks\ExampleEntity;
+namespace Ulams\Core\Tests\Mocks\ExampleEntity;
 
-use EscolaLms\Core\Enums\StatusEnum;
+use Ulams\Core\Enums\StatusEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ExampleEntityFactory extends Factory

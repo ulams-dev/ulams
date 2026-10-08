@@ -3,7 +3,7 @@ import styled, { withTheme } from "styled-components";
 import { Document, Page, pdfjs } from "react-pdf";
 import { Button, Text } from "../../..";
 import { useTranslation } from "react-i18next";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
@@ -77,7 +77,7 @@ export const PdfPlayer: React.FunctionComponent<PdfPlayerProps> = ({
   }
 
   return (
-    <StyledWrapper className={`wellms-component ${className}`}>
+    <StyledWrapper className={`ulams-component ${className}`}>
       {isMounted && url && (
         <Document
           loading={t<string>("Loading")}

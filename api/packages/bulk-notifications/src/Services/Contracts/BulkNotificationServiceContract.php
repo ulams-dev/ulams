@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Services\Contracts;
+namespace Ulams\BulkNotifications\Services\Contracts;
 
-use EscolaLms\BulkNotifications\Dtos\OrderDto;
-use EscolaLms\BulkNotifications\Dtos\PageDto;
-use EscolaLms\BulkNotifications\Dtos\SendUserBulkNotificationDto;
-use EscolaLms\BulkNotifications\Dtos\SendMulticastBulkNotificationDto;
-use EscolaLms\BulkNotifications\Models\BulkNotification;
-use EscolaLms\BulkNotifications\Dtos\CriteriaBulkNotificationDto;
+use Ulams\BulkNotifications\Dtos\OrderDto;
+use Ulams\BulkNotifications\Dtos\PageDto;
+use Ulams\BulkNotifications\Dtos\SendUserBulkNotificationDto;
+use Ulams\BulkNotifications\Dtos\SendMulticastBulkNotificationDto;
+use Ulams\BulkNotifications\Models\BulkNotification;
+use Ulams\BulkNotifications\Dtos\CriteriaBulkNotificationDto;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface BulkNotificationServiceContract

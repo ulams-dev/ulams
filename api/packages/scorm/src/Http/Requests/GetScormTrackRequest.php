@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Scorm\Http\Requests;
+namespace Ulams\Scorm\Http\Requests;
 
 use App\Models\User;
-use EscolaLms\Scorm\Enums\ScormPermissionsEnum;
+use Ulams\Scorm\Enums\ScormPermissionsEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
 class GetScormTrackRequest extends FormRequest

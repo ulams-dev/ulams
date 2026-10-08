@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Permissions\Policies;
+namespace Ulams\Permissions\Policies;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Permissions\Enums\PermissionsPermissionsEnum;
+use Ulams\Core\Models\User;
+use Ulams\Permissions\Enums\PermissionsPermissionsEnum;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use EscolaLms\Permissions\Models\UserAdmin;
+use Ulams\Permissions\Models\UserAdmin;
 
 class PermissionsPolicy
 {

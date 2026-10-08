@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Requests\Admin;
+namespace Ulams\Tasks\Http\Requests\Admin;
 
-use EscolaLms\Tasks\Http\Requests\CreateTaskNoteRequest;
-use EscolaLms\Tasks\Models\TaskNote;
+use Ulams\Tasks\Http\Requests\CreateTaskNoteRequest;
+use Ulams\Tasks\Models\TaskNote;
 use Illuminate\Support\Facades\Gate;
 
 class AdminCreateTaskNoteRequest extends CreateTaskNoteRequest

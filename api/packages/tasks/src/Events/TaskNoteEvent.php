@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Tasks\Events;
+namespace Ulams\Tasks\Events;
 
-use EscolaLms\Tasks\Models\TaskNote;
-use EscolaLms\Tasks\Models\User;
+use Ulams\Tasks\Models\TaskNote;
+use Ulams\Tasks\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Translations\Enum\TranslationsPermissionsEnum;
+use Ulams\Translations\Enum\TranslationsPermissionsEnum;
 
 return [
     TranslationsPermissionsEnum::TRANSLATION_LIST => 'Lista tłumaczeń',

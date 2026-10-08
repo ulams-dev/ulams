@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Tests\Services;
+namespace Ulams\TopicTypeProject\Tests\Services;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypeProject\Dtos\GradeProjectSolutionDto;
-use EscolaLms\TopicTypeProject\Events\ProjectSolutionGradedEvent;
-use EscolaLms\TopicTypeProject\Models\Project;
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
-use EscolaLms\TopicTypeProject\Services\Contracts\ProjectSolutionServiceContract;
-use EscolaLms\TopicTypeProject\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypeProject\Dtos\GradeProjectSolutionDto;
+use Ulams\TopicTypeProject\Events\ProjectSolutionGradedEvent;
+use Ulams\TopicTypeProject\Models\Project;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
+use Ulams\TopicTypeProject\Services\Contracts\ProjectSolutionServiceContract;
+use Ulams\TopicTypeProject\Tests\TestCase;
 use Illuminate\Support\Facades\Event;
 
 class ProjectSolutionGradedEventTest extends TestCase

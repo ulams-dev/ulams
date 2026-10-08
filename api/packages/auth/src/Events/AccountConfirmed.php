@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Auth\Events;
+namespace Ulams\Auth\Events;
 
 use Illuminate\Auth\Events\Verified;
 

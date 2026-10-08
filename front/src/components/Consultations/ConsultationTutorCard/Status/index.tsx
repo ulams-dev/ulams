@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import Status, { StatusTypes } from "@/components/Common/Status";
 import ConsultationTutorCardButtons from "../Actions";
 

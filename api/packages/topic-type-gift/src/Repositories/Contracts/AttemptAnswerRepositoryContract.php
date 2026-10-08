@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Repositories\Contracts;
+namespace Ulams\TopicTypeGift\Repositories\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\TopicTypeGift\Models\AttemptAnswer;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\TopicTypeGift\Models\AttemptAnswer;
 
 interface AttemptAnswerRepositoryContract extends BaseRepositoryContract
 {

@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Controllers;
+namespace Ulams\Courses\Http\Controllers;
 
-use EscolaLms\Courses\Http\Controllers\Swagger\TopicResourcesAPISwagger;
-use EscolaLms\Courses\Http\Requests\DeleteTopicResourceAPIRequest;
-use EscolaLms\Courses\Http\Requests\ListTopicResourceAPIRequest;
-use EscolaLms\Courses\Http\Requests\RenameTopicResourceAPIRequest;
-use EscolaLms\Courses\Http\Requests\UploadTopicResourceAPIRequest;
-use EscolaLms\Courses\Http\Resources\TopicResourceResource;
-use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
-use EscolaLms\Courses\Repositories\Contracts\TopicResourceRepositoryContract;
+use Ulams\Courses\Http\Controllers\Swagger\TopicResourcesAPISwagger;
+use Ulams\Courses\Http\Requests\DeleteTopicResourceAPIRequest;
+use Ulams\Courses\Http\Requests\ListTopicResourceAPIRequest;
+use Ulams\Courses\Http\Requests\RenameTopicResourceAPIRequest;
+use Ulams\Courses\Http\Requests\UploadTopicResourceAPIRequest;
+use Ulams\Courses\Http\Resources\TopicResourceResource;
+use Ulams\Courses\Repositories\Contracts\TopicRepositoryContract;
+use Ulams\Courses\Repositories\Contracts\TopicResourceRepositoryContract;
 use Illuminate\Http\JsonResponse;
 
 class TopicResourcesAPIController extends AppBaseController implements TopicResourcesAPISwagger

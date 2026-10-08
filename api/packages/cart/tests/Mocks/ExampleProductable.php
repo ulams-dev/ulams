@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Cart\Tests\Mocks;
+namespace Ulams\Cart\Tests\Mocks;
 
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Cart\Contracts\ProductableTrait;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Core\Models\User;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Cart\Contracts\ProductableTrait;
+use Ulams\Cart\Models\Product;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ExampleProductable extends ExampleProductableBase implements Productable

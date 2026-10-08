@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Cart\Models;
+namespace Ulams\Cart\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * EscolaLms\Cart\Models\ProductUser
+ * Ulams\Cart\Models\ProductUser
  *
  * @property int $id
  * @property int $product_id
@@ -14,8 +14,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int $quantity
- * @property-read \EscolaLms\Cart\Models\Product|null $product
- * @property-read \EscolaLms\Cart\Models\User|null $user
+ * @property-read \Ulams\Cart\Models\Product|null $product
+ * @property-read \Ulams\Cart\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|ProductUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProductUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProductUser query()

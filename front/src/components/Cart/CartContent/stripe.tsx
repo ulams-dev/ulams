@@ -2,18 +2,18 @@ import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/_App/Layout";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { CheckoutCard } from "@lms/components/components/molecules/CheckoutCard/CheckoutCard";
-import { CartCard } from "@lms/components/components/molecules/CartCard/CartCard";
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { Link as ComponentLink } from "@lms/components/components/atoms/Link/Link";
-import { CartItem } from "@lms/sdk/types";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { CheckoutCard } from "@ulams/components/components/molecules/CheckoutCard/CheckoutCard";
+import { CartCard } from "@ulams/components/components/molecules/CartCard/CartCard";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { Link as ComponentLink } from "@ulams/components/components/atoms/Link/Link";
+import { CartItem } from "@ulams/sdk/types";
 import { isMobile } from "react-device-detect";
 import Preloader from "@/components/_App/Preloader";
 import Collapse from "@/components/Common/Collapse";
 import PaymentForm from "@/components/Cart/PaymentForm";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import {
   useStripe,
   useElements,
@@ -46,7 +46,7 @@ const StripeContent = ({ stripeKey }: { stripeKey: string }) => {
     setDiscountStatus,
   } = usePayment();
 
-  const { removeFromCart } = useContext(EscolaLMSContext);
+  const { removeFromCart } = useContext(UlamsContext);
 
   const { t } = useTranslation();
 
@@ -163,7 +163,7 @@ const StripeContent = ({ stripeKey }: { stripeKey: string }) => {
                         <Text size="14">
                           {t("Cart.UseTestCard")}:{" "}
                           <ComponentLink
-                            href="https://docs.wellms.io/getting-started/demo.html"
+                            href="https://docs.ulams.app/getting-started/demo.html"
                             target="_blank"
                             rel="noreferrer nofollow"
                           >

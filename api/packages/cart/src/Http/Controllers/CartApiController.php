@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Controllers;
+namespace Ulams\Cart\Http\Controllers;
 
-use EscolaLms\Cart\Http\Requests\AddMissingProductsRequest;
-use EscolaLms\Cart\Http\Requests\ProductableAddToCartRequest;
-use EscolaLms\Cart\Http\Requests\ProductRemoveFromCartRequest;
-use EscolaLms\Cart\Http\Requests\ProductSetQuantityInCartRequest;
-use EscolaLms\Cart\Http\Swagger\CartSwagger;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
-use EscolaLms\Cart\Services\Contracts\ShopServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Core\Models\User;
+use Ulams\Cart\Http\Requests\AddMissingProductsRequest;
+use Ulams\Cart\Http\Requests\ProductableAddToCartRequest;
+use Ulams\Cart\Http\Requests\ProductRemoveFromCartRequest;
+use Ulams\Cart\Http\Requests\ProductSetQuantityInCartRequest;
+use Ulams\Cart\Http\Swagger\CartSwagger;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Cart\Services\Contracts\ShopServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Core\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class CartApiController extends EscolaLmsBaseController implements CartSwagger
+class CartApiController extends UlamsBaseController implements CartSwagger
 {
     protected ProductServiceContract $productService;
     protected ShopServiceContract $shopService;

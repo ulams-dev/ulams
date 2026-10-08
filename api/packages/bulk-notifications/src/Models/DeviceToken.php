@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Models;
+namespace Ulams\BulkNotifications\Models;
 
-use EscolaLms\BulkNotifications\Database\Factories\DeviceTokenFactory;
+use Ulams\BulkNotifications\Database\Factories\DeviceTokenFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +12,7 @@ use Illuminate\Support\Carbon;
  *
  * Class DeviceToken
  *
- * @package EscolaLms\BulkNotifications\Models
+ * @package Ulams\BulkNotifications\Models
  *
  * @property int $id
  * @property string $token

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Tests\Unit;
+namespace Ulams\HeadlessH5P\Tests\Unit;
 
-use EscolaLms\HeadlessH5P\Http\Middleware\H5PLangMiddleware;
-use EscolaLms\HeadlessH5P\Tests\TestCase;
+use Ulams\HeadlessH5P\Http\Middleware\H5PLangMiddleware;
+use Ulams\HeadlessH5P\Tests\TestCase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;

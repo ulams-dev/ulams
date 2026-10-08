@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Templates\Repository\Contracts;
+namespace Ulams\Templates\Repository\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\Templates\Models\Template;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Templates\Models\Template;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 

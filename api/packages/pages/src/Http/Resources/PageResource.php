@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Pages\Http\Resources;
+namespace Ulams\Pages\Http\Resources;
 
-use EscolaLms\Pages\Models\Page;
+use Ulams\Pages\Models\Page;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PageResource extends JsonResource

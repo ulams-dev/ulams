@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Repositories;
+namespace Ulams\TopicTypeProject\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
-use EscolaLms\TopicTypeProject\Repositories\Contracts\ProjectSolutionRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
+use Ulams\TopicTypeProject\Repositories\Contracts\ProjectSolutionRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ProjectSolutionRepository extends BaseRepository implements ProjectSolutionRepositoryContract

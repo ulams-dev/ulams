@@ -1,8 +1,8 @@
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { useContext, useEffect, useMemo } from "react";
 
 export function usePages() {
-  const { fetchPages, pages } = useContext(EscolaLMSContext);
+  const { fetchPages, pages } = useContext(UlamsContext);
 
   useEffect(() => {
     fetchPages().then(() => {});

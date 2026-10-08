@@ -9,10 +9,10 @@ import { useCallback, useState } from 'react';
 import { FormattedMessage, request } from 'umi';
 import type { SecureUploadType } from './index';
 
-type PostResponse = API.DefaultResponse<EscolaLms.ModelFields.Models.Metadata>;
+type PostResponse = API.DefaultResponse<Ulams.ModelFields.Models.Metadata>;
 
 const post = async (url: string, body: Record<string, string>, options?: AxiosRequestConfig) => {
-  return request<API.DefaultResponse<EscolaLms.ModelFields.Models.Metadata>>(url, {
+  return request<API.DefaultResponse<Ulams.ModelFields.Models.Metadata>>(url, {
     method: 'POST',
     data: body,
     ...(options || {}),

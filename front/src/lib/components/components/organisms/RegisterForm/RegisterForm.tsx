@@ -1,23 +1,23 @@
 import { Formik, FormikErrors } from "formik";
 import { useContext, useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import type {
   DefaultResponse,
   DefaultResponseError,
   RegisterResponse,
-} from "@lms/sdk/types";
+} from "@ulams/sdk/types";
 import type { ResponseError } from "umi-request";
 
-//import "@lms/ts-models";
-//import "@lms/sdk/types";
+//import "@ulams/ts-models";
+//import "@ulams/sdk/types";
 
 import styled, { withTheme } from "styled-components";
 
 import { Input, Button, Title, Link, Text, Checkbox } from "../../../";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
-import { API } from "@lms/sdk";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import { API } from "@ulams/sdk";
 import useAdditionalFieldTranslations from "../../../hooks/useAdditionalFieldsTranslations";
 import MarkdownRenderer from "../../molecules/MarkdownRenderer/MarkdownRenderer";
 
@@ -145,7 +145,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   });
   const { t } = useTranslation();
   const { register, fields, fetchFields, settings } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
   const { getFieldTranslations, filterByKey } =
     useAdditionalFieldTranslations();
   useEffect(() => {
@@ -186,7 +186,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   );
 
   return (
-    <StyledDiv className={`wellms-component ${className}`} mobile={mobile}>
+    <StyledDiv className={`ulams-component ${className}`} mobile={mobile}>
       <Title level={3} style={{ maxWidth: "480px", textAlign: "center" }}>
         {submitText ? submitText : t<string>("RegisterForm.Header")}
       </Title>

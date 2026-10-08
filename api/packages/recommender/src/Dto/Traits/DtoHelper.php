@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Recommender\Dto\Traits;
+namespace Ulams\Recommender\Dto\Traits;
 
 use Illuminate\Support\Str;
 

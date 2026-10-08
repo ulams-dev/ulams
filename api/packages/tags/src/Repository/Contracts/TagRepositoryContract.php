@@ -1,11 +1,11 @@
 <?php
 
 
-namespace EscolaLms\Tags\Repository\Contracts;
+namespace Ulams\Tags\Repository\Contracts;
 
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\Tags\Models\Tag;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Collection;
 
 interface TagRepositoryContract extends BaseRepositoryContract

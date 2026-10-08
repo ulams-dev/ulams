@@ -1,9 +1,9 @@
 export { default as Image } from "./components/Image";
 
 export {
-  EscolaLMSContextProvider,
+  UlamsContextProvider,
   SCORMPlayer,
-  EscolaLMSContext,
+  UlamsContext,
   sortProgram,
 } from "./context/index";
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Lrs\Repositories;
+namespace Ulams\Lrs\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Lrs\Models\Statement;
-use EscolaLms\Lrs\Repositories\Contracts\StatementRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Lrs\Models\Statement;
+use Ulams\Lrs\Repositories\Contracts\StatementRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class StatementRepository extends BaseRepository implements StatementRepositoryContract

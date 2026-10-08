@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Channels;
+namespace Ulams\BulkNotifications\Channels;
 
-use EscolaLms\BulkNotifications\EscolaLmsBulkNotificationsServiceProvider;
-use EscolaLms\BulkNotifications\Exceptions\UnsupportedNotification;
-use EscolaLms\BulkNotifications\ValueObjects\Notification;
-use EscolaLms\BulkNotifications\ValueObjects\PushNotification;
+use Ulams\BulkNotifications\UlamsBulkNotificationsServiceProvider;
+use Ulams\BulkNotifications\Exceptions\UnsupportedNotification;
+use Ulams\BulkNotifications\ValueObjects\Notification;
+use Ulams\BulkNotifications\ValueObjects\PushNotification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Kreait\Firebase\Contract\Messaging;
@@ -50,7 +50,7 @@ class PushNotificationChannel implements NotificationChannel
 
     private function getServiceAccount(): array
     {
-        return json_decode(Config::get(EscolaLmsBulkNotificationsServiceProvider::CONFIG_KEY . '.push.service_account'), true) ?? [];
+        return json_decode(Config::get(UlamsBulkNotificationsServiceProvider::CONFIG_KEY . '.push.service_account'), true) ?? [];
     }
 
     public static function sections(): Collection

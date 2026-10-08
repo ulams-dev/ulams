@@ -1,4 +1,4 @@
-import { semesters as fetchSemesters } from '@/services/escola-lms/semester_subject';
+import { semesters as fetchSemesters } from '@/services/ulams/semester_subject';
 import { Select, Spin } from 'antd';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'umi';

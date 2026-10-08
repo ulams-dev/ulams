@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Controllers;
+namespace Ulams\Tasks\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Tasks\Http\Controllers\Swagger\AdminTaskControllerSwagger;
-use EscolaLms\Tasks\Http\Requests\Admin\AdminCompleteTaskRequest;
-use EscolaLms\Tasks\Http\Requests\Admin\AdminDeleteTaskRequest;
-use EscolaLms\Tasks\Http\Requests\Admin\AdminIncompleteTaskRequest;
-use EscolaLms\Tasks\Http\Requests\Admin\AdminListTaskRequest;
-use EscolaLms\Tasks\Http\Requests\Admin\AdminDetailsTaskRequest;
-use EscolaLms\Tasks\Http\Resources\TaskDetailsResource;
-use EscolaLms\Tasks\Http\Resources\TaskResource;
-use EscolaLms\Tasks\Http\Requests\Admin\AdminCreateTaskRequest;
-use EscolaLms\Tasks\Http\Requests\Admin\AdminUpdateTaskRequest;
-use EscolaLms\Tasks\Services\TaskService;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Tasks\Http\Controllers\Swagger\AdminTaskControllerSwagger;
+use Ulams\Tasks\Http\Requests\Admin\AdminCompleteTaskRequest;
+use Ulams\Tasks\Http\Requests\Admin\AdminDeleteTaskRequest;
+use Ulams\Tasks\Http\Requests\Admin\AdminIncompleteTaskRequest;
+use Ulams\Tasks\Http\Requests\Admin\AdminListTaskRequest;
+use Ulams\Tasks\Http\Requests\Admin\AdminDetailsTaskRequest;
+use Ulams\Tasks\Http\Resources\TaskDetailsResource;
+use Ulams\Tasks\Http\Resources\TaskResource;
+use Ulams\Tasks\Http\Requests\Admin\AdminCreateTaskRequest;
+use Ulams\Tasks\Http\Requests\Admin\AdminUpdateTaskRequest;
+use Ulams\Tasks\Services\TaskService;
 use Illuminate\Http\JsonResponse;
 
-class AdminTaskController extends EscolaLmsBaseController implements AdminTaskControllerSwagger
+class AdminTaskController extends UlamsBaseController implements AdminTaskControllerSwagger
 {
     private TaskService $taskService;
 

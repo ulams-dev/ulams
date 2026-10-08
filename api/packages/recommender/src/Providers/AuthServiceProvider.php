@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Recommender\Providers;
+namespace Ulams\Recommender\Providers;
 
-use EscolaLms\Recommender\Models\Course;
-use EscolaLms\Recommender\Models\Lesson;
-use EscolaLms\Recommender\Policies\RecommenderPolicy;
+use Ulams\Recommender\Models\Course;
+use Ulams\Recommender\Models\Lesson;
+use Ulams\Recommender\Policies\RecommenderPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

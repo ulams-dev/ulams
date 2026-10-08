@@ -10,7 +10,7 @@ import {
   getTask as fetchTask,
   incompleteTask,
   updateTask,
-} from '@/services/escola-lms/tasks';
+} from '@/services/ulams/tasks';
 
 import { PageContainer } from '@ant-design/pro-layout';
 
@@ -57,8 +57,8 @@ export default () => {
       onFinish: async (values) => {
         let response: API.DefaultResponse<API.Task>;
         const postData:
-          | EscolaLms.Tasks.Http.Requests.Admin.AdminCreateTaskRequest
-          | EscolaLms.Tasks.Http.Requests.Admin.AdminUpdateTaskRequest = {
+          | Ulams.Tasks.Http.Requests.Admin.AdminCreateTaskRequest
+          | Ulams.Tasks.Http.Requests.Admin.AdminUpdateTaskRequest = {
           ...values,
           related_id: values.related ? values.related.split(':')[1] : undefined,
           related_type: values.related ? values.related.split(':')[0] : undefined,

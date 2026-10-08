@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Strategies;
+namespace Ulams\AssignWithoutAccount\Strategies;
 
-use EscolaLms\AssignWithoutAccount\Events\AssignToProduct;
-use EscolaLms\AssignWithoutAccount\Strategies\Contracts\AssignStrategy;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\AssignWithoutAccount\Events\AssignToProduct;
+use Ulams\AssignWithoutAccount\Strategies\Contracts\AssignStrategy;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
 use Illuminate\Database\Eloquent\Model;
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 
 class AssignProductStrategy extends AbstractAssignStrategy implements AssignStrategy
 {

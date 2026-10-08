@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Vouchers\Http\Requests;
+namespace Ulams\Vouchers\Http\Requests;
 
-use EscolaLms\Vouchers\Dtos\CouponSearchDto;
-use EscolaLms\Vouchers\Enums\CouponTypeEnum;
-use EscolaLms\Vouchers\Models\Coupon;
+use Ulams\Vouchers\Dtos\CouponSearchDto;
+use Ulams\Vouchers\Enums\CouponTypeEnum;
+use Ulams\Vouchers\Models\Coupon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;

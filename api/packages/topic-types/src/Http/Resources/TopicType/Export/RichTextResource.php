@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Http\Resources\TopicType\Export;
+namespace Ulams\TopicTypes\Http\Resources\TopicType\Export;
 
-use EscolaLms\TopicTypes\Facades\Markdown;
-use EscolaLms\TopicTypes\Facades\Path;
-use EscolaLms\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
+use Ulams\TopicTypes\Facades\Markdown;
+use Ulams\TopicTypes\Facades\Path;
+use Ulams\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RichTextResource extends JsonResource implements TopicTypeResourceContract

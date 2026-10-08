@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Recommender\Dto;
+namespace Ulams\Recommender\Dto;
 
-use EscolaLms\Recommender\Dto\Traits\DtoHelper;
+use Ulams\Recommender\Dto\Traits\DtoHelper;
 
 abstract class BaseDto
 {

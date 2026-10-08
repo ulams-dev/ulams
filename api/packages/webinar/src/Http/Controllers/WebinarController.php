@@ -1,29 +1,29 @@
 <?php
 
-namespace EscolaLms\Webinar\Http\Controllers;
+namespace Ulams\Webinar\Http\Controllers;
 
-use EscolaLms\Auth\Dtos\Admin\UserAssignableDto;
-use EscolaLms\Auth\Http\Resources\UserFullResource;
-use EscolaLms\Auth\Services\Contracts\UserServiceContract;
-use EscolaLms\Webinar\Dto\WebinarUserDto;
-use EscolaLms\Webinar\Http\Requests\DeleteWebinarRequest;
-use EscolaLms\Webinar\Http\Requests\ShowWebinarRequest;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Webinar\Enum\WebinarPermissionsEnum;
-use EscolaLms\Webinar\Http\Requests\StoreWebinarRequest;
-use EscolaLms\Webinar\Http\Requests\UpdateWebinarRequest;
-use EscolaLms\Webinar\Dto\WebinarDto;
-use EscolaLms\Webinar\Enum\ConstantEnum;
-use EscolaLms\Webinar\Http\Controllers\Swagger\WebinarSwagger;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Webinar\Http\Requests\ListWebinarsRequest;
-use EscolaLms\Webinar\Http\Requests\WebinarAssignableUserListRequest;
-use EscolaLms\Webinar\Http\Requests\WebinarUserRequest;
-use EscolaLms\Webinar\Http\Resources\WebinarSimpleResource;
-use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
+use Ulams\Auth\Dtos\Admin\UserAssignableDto;
+use Ulams\Auth\Http\Resources\UserFullResource;
+use Ulams\Auth\Services\Contracts\UserServiceContract;
+use Ulams\Webinar\Dto\WebinarUserDto;
+use Ulams\Webinar\Http\Requests\DeleteWebinarRequest;
+use Ulams\Webinar\Http\Requests\ShowWebinarRequest;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Webinar\Enum\WebinarPermissionsEnum;
+use Ulams\Webinar\Http\Requests\StoreWebinarRequest;
+use Ulams\Webinar\Http\Requests\UpdateWebinarRequest;
+use Ulams\Webinar\Dto\WebinarDto;
+use Ulams\Webinar\Enum\ConstantEnum;
+use Ulams\Webinar\Http\Controllers\Swagger\WebinarSwagger;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Webinar\Http\Requests\ListWebinarsRequest;
+use Ulams\Webinar\Http\Requests\WebinarAssignableUserListRequest;
+use Ulams\Webinar\Http\Requests\WebinarUserRequest;
+use Ulams\Webinar\Http\Resources\WebinarSimpleResource;
+use Ulams\Webinar\Services\Contracts\WebinarServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class WebinarController extends EscolaLmsBaseController implements WebinarSwagger
+class WebinarController extends UlamsBaseController implements WebinarSwagger
 {
     private WebinarServiceContract $webinarServiceContract;
     private UserServiceContract $userService;
@@ -44,7 +44,7 @@ class WebinarController extends EscolaLmsBaseController implements WebinarSwagge
             ->getWebinarsList($search, false, $orderDto)
             ->paginate(
                 $listWebinarsRequest->get('per_page') ??
-                config('escolalms_webinar.perPage', ConstantEnum::PER_PAGE)
+                config('ulams_webinar.perPage', ConstantEnum::PER_PAGE)
             );
 
         return $this->sendResponseForResource(

@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Core;
+namespace Ulams\TemplatesPdf\Core;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Contracts\TemplateChannelContract;
-use EscolaLms\Templates\Core\AbstractTemplateChannelClass;
-use EscolaLms\Templates\Core\SettingsVariables;
-use EscolaLms\Templates\Core\TemplateSectionSchema;
-use EscolaLms\Templates\Enums\TemplateSectionTypeEnum;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Models\TemplateSection;
-use EscolaLms\TemplatesPdf\Models\FabricPDF;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Contracts\TemplateChannelContract;
+use Ulams\Templates\Core\AbstractTemplateChannelClass;
+use Ulams\Templates\Core\SettingsVariables;
+use Ulams\Templates\Core\TemplateSectionSchema;
+use Ulams\Templates\Enums\TemplateSectionTypeEnum;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Models\TemplateSection;
+use Ulams\TemplatesPdf\Models\FabricPDF;
 use Illuminate\Support\Collection;
-use EscolaLms\Templates\Facades\Template as TemplateFacade;
+use Ulams\Templates\Facades\Template as TemplateFacade;
 use ReflectionClass;
 use ReflectionProperty;
 

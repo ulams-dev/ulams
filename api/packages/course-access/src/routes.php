@@ -1,9 +1,9 @@
 <?php
 
-use EscolaLms\CourseAccess\Http\Controllers\Admin\CourseAccessAPIController;
-use EscolaLms\CourseAccess\Http\Controllers\CourseAccessApiController as CourseAccessApiStudentController;
-use EscolaLms\CourseAccess\Http\Controllers\Admin\CourseAccessEnquiryApiAdminController;
-use EscolaLms\CourseAccess\Http\Controllers\CourseAccessEnquiryApiController;
+use Ulams\CourseAccess\Http\Controllers\Admin\CourseAccessAPIController;
+use Ulams\CourseAccess\Http\Controllers\CourseAccessApiController as CourseAccessApiStudentController;
+use Ulams\CourseAccess\Http\Controllers\Admin\CourseAccessEnquiryApiAdminController;
+use Ulams\CourseAccess\Http\Controllers\CourseAccessEnquiryApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')->middleware(['auth:api'])->group(function () {

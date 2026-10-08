@@ -1,13 +1,13 @@
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import CoursesSlider from "../CoursesSlider";
 
-import { Button } from "@lms/components/components/atoms/Button/Button";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
 import useFetchCourses from "@/hooks/courses/useFetchCourses";
 import { SwiperSlide } from "swiper/react";
 import { useHistory } from "react-router-dom";
 import routeRoutes from "@/components/Routes/routes";
 import { useTranslation } from "react-i18next";
-import { CourseParams } from "@lms/sdk/types";
+import { CourseParams } from "@ulams/sdk/types";
 import styled from "styled-components";
 import SwiperSlider from "@/components/Courses/CoursesSlider/swiper";
 import { CourseCardSkeleton } from "@/components/Skeletons/CourseCard";

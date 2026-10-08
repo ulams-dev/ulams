@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Reports\Metrics;
+namespace Ulams\Reports\Metrics;
 
 class CoursesPopularityMetric extends AbstractCoursesPopularityMetric
 {

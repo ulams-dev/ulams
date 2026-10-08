@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Http\Resources;
+namespace Ulams\Questionnaire\Http\Resources;
 
-use EscolaLms\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Models\Question;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class QuestionResource extends JsonResource

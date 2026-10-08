@@ -7,7 +7,7 @@ import { PropsWithChildren } from "react";
 
 import Spin from "../Spin/Spin";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 const ModeTypes = {
   PRIMARY: "primary",
@@ -367,7 +367,7 @@ export const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
       loading={loading}
       block={block}
       {...props}
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
       role="button"
       aria-labelledby="labeldiv"
     >

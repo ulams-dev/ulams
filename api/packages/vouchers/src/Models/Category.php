@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Vouchers\Models;
+namespace Ulams\Vouchers\Models;
 
-use EscolaLms\Cart\Models\Category as BaseCategory;
-use EscolaLms\Vouchers\Database\Factories\CategoryFactory;
+use Ulams\Cart\Models\Category as BaseCategory;
+use Ulams\Vouchers\Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * EscolaLms\Vouchers\Models\Category
+ * Ulams\Vouchers\Models\Category
  *
  * @property int $id
  * @property string $name
@@ -19,13 +19,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string|null $icon_class
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Categories\Models\Category[] $children
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Categories\Models\Category[] $children
  * @property-read int|null $children_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Vouchers\Models\Coupon[] $coupons
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Vouchers\Models\Coupon[] $coupons
  * @property-read int|null $coupons_count
  * @property-read string $name_with_breadcrumbs
- * @property-read \EscolaLms\Categories\Models\Category|null $parent
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Cart\Models\Product[] $products
+ * @property-read \Ulams\Categories\Models\Category|null $parent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Cart\Models\Product[] $products
  * @property-read int|null $products_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Illuminate\Foundation\Auth\User[] $users
  * @property-read int|null $users_count

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Models;
+namespace Ulams\Auth\Models;
 
-use Database\Factories\EscolaLms\Auth\Models\GroupFactory;
-use EscolaLms\Auth\Models\User;
+use Database\Factories\Ulams\Auth\Models\GroupFactory;
+use Ulams\Auth\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

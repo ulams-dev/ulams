@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Models;
+namespace Ulams\Courses\Models;
 
-use EscolaLms\Courses\Database\Factories\CourseUserAttendanceFactory;
+use Ulams\Courses\Database\Factories\CourseUserAttendanceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,6 +34,6 @@ class CourseUserAttendance extends Model
 
     protected static function newFactory(): CourseUserAttendanceFactory
     {
-        return \EscolaLms\Courses\Database\Factories\CourseUserAttendanceFactory::new();
+        return \Ulams\Courses\Database\Factories\CourseUserAttendanceFactory::new();
     }
 }

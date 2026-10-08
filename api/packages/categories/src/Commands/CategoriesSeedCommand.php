@@ -1,9 +1,9 @@
 <?php
 
 
-namespace EscolaLms\Categories\Commands;
+namespace Ulams\Categories\Commands;
 
-use EscolaLms\Categories\Enums\CategoriesPermissionsEnum;
+use Ulams\Categories\Enums\CategoriesPermissionsEnum;
 use Illuminate\Console\Command;
 use Spatie\Permission\Models\Permission;
 

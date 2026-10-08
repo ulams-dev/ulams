@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Jitsi\Tests\Services;
+namespace Ulams\Jitsi\Tests\Services;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Jitsi\Enum\JitsiEnum;
-use EscolaLms\Jitsi\Helpers\StringHelper;
-use EscolaLms\Jitsi\Tests\TestCase;
-use EscolaLms\Jitsi\Facades\Jitsi;
-use EscolaLms\Jitsi\Enum\PackageStatusEnum;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Jitsi\Enum\JitsiEnum;
+use Ulams\Jitsi\Helpers\StringHelper;
+use Ulams\Jitsi\Tests\TestCase;
+use Ulams\Jitsi\Facades\Jitsi;
+use Ulams\Jitsi\Enum\PackageStatusEnum;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
 

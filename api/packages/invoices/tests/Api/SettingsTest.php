@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Invoices\Tests\Api;
+namespace Ulams\Invoices\Tests\Api;
 
-use EscolaLms\Auth\Database\Seeders\AuthPermissionSeeder;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Invoices\EscolaLmsInvoicesServiceProvider;
-use EscolaLms\Invoices\Tests\TestCase;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
+use Ulams\Auth\Database\Seeders\AuthPermissionSeeder;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Invoices\UlamsInvoicesServiceProvider;
+use Ulams\Invoices\Tests\TestCase;
+use Ulams\Settings\UlamsSettingsServiceProvider;
 use Illuminate\Foundation\Testing\WithFaker;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
 use Illuminate\Support\Facades\Config;
 
 class SettingsTest extends TestCase
@@ -19,19 +19,19 @@ class SettingsTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(EscolaLmsSettingsServiceProvider::class)) {
+        if (!class_exists(UlamsSettingsServiceProvider::class)) {
             $this->markTestSkipped('Settings package not installed');
         }
 
         $this->seed(PermissionTableSeeder::class);
         $this->seed(AuthPermissionSeeder::class);
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
     }
 
     public function testAdministrableConfigApi(): void
     {
         $user = $this->makeAdmin();
-        $configKey = EscolaLmsInvoicesServiceProvider::CONFIG_KEY;
+        $configKey = UlamsInvoicesServiceProvider::CONFIG_KEY;
 
         $payUntilDays = $this->faker->numberBetween(7, 30);
         $currencyCode = $this->faker->currencyCode;

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Payments\Tests\Traits;
+namespace Ulams\Payments\Tests\Traits;
 
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Payments\Models\User;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Payments\Models\User;
 use Illuminate\Support\Str;
 
 trait CreatesBillable

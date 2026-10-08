@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Strategies;
+namespace Ulams\AssignWithoutAccount\Strategies;
 
-use EscolaLms\AssignWithoutAccount\Strategies\Contracts\AssignStrategy;
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Cart\Models\Product;
+use Ulams\AssignWithoutAccount\Strategies\Contracts\AssignStrategy;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Cart\Models\Product;
 
 class StrategyContext
 {

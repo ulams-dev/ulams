@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Recommender\Tests;
+namespace Ulams\Recommender\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
-use EscolaLms\HeadlessH5P\HeadlessH5PServiceProvider;
-use EscolaLms\Recommender\EscolaLmsRecommenderServiceProvider;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
-use EscolaLms\TopicTypes\EscolaLmsTopicTypesServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Models\User;
+use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\HeadlessH5P\HeadlessH5PServiceProvider;
+use Ulams\Recommender\UlamsRecommenderServiceProvider;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
+use Ulams\TopicTypes\UlamsTopicTypesServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
@@ -23,11 +23,11 @@ class TestCase extends CoreTestCase
             ...parent::getPackageProviders($app),
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
-            EscolaLmsAuthServiceProvider::class,
-            EscolaLmsCourseServiceProvider::class,
-            EscolaLmsTopicTypesServiceProvider::class,
+            UlamsAuthServiceProvider::class,
+            UlamsCourseServiceProvider::class,
+            UlamsTopicTypesServiceProvider::class,
             HeadlessH5PServiceProvider::class,
-            EscolaLmsRecommenderServiceProvider::class,
+            UlamsRecommenderServiceProvider::class,
         ];
     }
 

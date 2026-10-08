@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\ValueObjects;
+namespace Ulams\BulkNotifications\ValueObjects;
 
-use EscolaLms\BulkNotifications\Models\BulkNotificationUser;
+use Ulams\BulkNotifications\Models\BulkNotificationUser;
 use Illuminate\Support\Collection;
 
 abstract class Notification

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Youtube\Dto;
+namespace Ulams\Youtube\Dto;
 
-use EscolaLms\Youtube\Dto\Contracts\YTCdnDtoContract;
-use EscolaLms\Youtube\Dto\Contracts\YTStreamDtoContract;
+use Ulams\Youtube\Dto\Contracts\YTCdnDtoContract;
+use Ulams\Youtube\Dto\Contracts\YTStreamDtoContract;
 use Google\Service\YouTube\CdnSettings;
 use Google\Service\YouTube\LiveStream;
 

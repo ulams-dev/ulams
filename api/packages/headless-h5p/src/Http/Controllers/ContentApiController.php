@@ -1,29 +1,29 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Http\Controllers;
+namespace Ulams\HeadlessH5P\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\HeadlessH5P\Dtos\ContentFilterCriteriaDto;
-use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\ContentApiSwagger;
-use EscolaLms\HeadlessH5P\Http\Requests\ContentCreateRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\ContentDeleteRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\ContentListRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\AdminContentReadRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\ContentReadRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\ContentUpdateRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
-use EscolaLms\HeadlessH5P\Http\Resources\ContentIndexResource;
-use EscolaLms\HeadlessH5P\Http\Resources\ContentResource;
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
-use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\HeadlessH5P\Dtos\ContentFilterCriteriaDto;
+use Ulams\HeadlessH5P\Http\Controllers\Swagger\ContentApiSwagger;
+use Ulams\HeadlessH5P\Http\Requests\ContentCreateRequest;
+use Ulams\HeadlessH5P\Http\Requests\ContentDeleteRequest;
+use Ulams\HeadlessH5P\Http\Requests\ContentListRequest;
+use Ulams\HeadlessH5P\Http\Requests\AdminContentReadRequest;
+use Ulams\HeadlessH5P\Http\Requests\ContentReadRequest;
+use Ulams\HeadlessH5P\Http\Requests\ContentUpdateRequest;
+use Ulams\HeadlessH5P\Http\Requests\LibraryStoreRequest;
+use Ulams\HeadlessH5P\Http\Resources\ContentIndexResource;
+use Ulams\HeadlessH5P\Http\Resources\ContentResource;
+use Ulams\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
+use Ulams\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class ContentApiController extends EscolaLmsBaseController implements ContentApiSwagger
+class ContentApiController extends UlamsBaseController implements ContentApiSwagger
 {
     private HeadlessH5PServiceContract $hh5pService;
     private H5PContentRepositoryContract $contentRepository;

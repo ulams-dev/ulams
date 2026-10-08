@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Payments\Events;
+namespace Ulams\Payments\Events;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Core\Models\User;
+use Ulams\Payments\Models\Payment;
 
 class PaymentFailed extends PaymentEvent
 {

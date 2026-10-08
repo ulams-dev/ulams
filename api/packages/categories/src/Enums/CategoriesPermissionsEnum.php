@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Categories\Enums;
+namespace Ulams\Categories\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class CategoriesPermissionsEnum extends BasicEnum
 {

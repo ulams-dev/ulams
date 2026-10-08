@@ -24,7 +24,7 @@ const QuizReportDetailsDescription: React.FC<Props> = ({ data }) => (
         label={<FormattedMessage id="student" defaultMessage="Student" />}
       >
         <TypeButtonDrawer
-          type="EscolaLms\Core\Models\User"
+          type="Ulams\Core\Models\User"
           type_id={data.user_id}
           text={
             data?.user?.first_name && data?.user?.last_name
@@ -38,7 +38,7 @@ const QuizReportDetailsDescription: React.FC<Props> = ({ data }) => (
         label={<FormattedMessage id="gift_quiz" defaultMessage="GIFT Quiz" />}
       >
         <TypeButtonDrawer
-          type="EscolaLms\TopicTypeGift\Models\GiftQuiz"
+          type="Ulams\TopicTypeGift\Models\GiftQuiz"
           type_id={data.topic_gift_quiz_id}
         />
       </Descriptions.Item>

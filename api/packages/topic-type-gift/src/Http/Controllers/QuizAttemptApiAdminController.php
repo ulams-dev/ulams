@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Controllers;
+namespace Ulams\TopicTypeGift\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\TopicTypeGift\Export\QuizResultsExport;
-use EscolaLms\TopicTypeGift\Http\Controllers\Swagger\QuizAttemptApiAdminSwagger;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminExportQuizResultsRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminListQuizAttemptRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminReadQuizAttemptRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminUpdateQuizAttemptFeedbackRequest;
-use EscolaLms\TopicTypeGift\Http\Resources\QuizAttemptResource;
-use EscolaLms\TopicTypeGift\Http\Resources\QuizAttemptSimpleResource;
-use EscolaLms\TopicTypeGift\Services\Contracts\QuizAttemptServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\TopicTypeGift\Export\QuizResultsExport;
+use Ulams\TopicTypeGift\Http\Controllers\Swagger\QuizAttemptApiAdminSwagger;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminExportQuizResultsRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminListQuizAttemptRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminReadQuizAttemptRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminUpdateQuizAttemptFeedbackRequest;
+use Ulams\TopicTypeGift\Http\Resources\QuizAttemptResource;
+use Ulams\TopicTypeGift\Http\Resources\QuizAttemptSimpleResource;
+use Ulams\TopicTypeGift\Services\Contracts\QuizAttemptServiceContract;
 use Illuminate\Http\JsonResponse;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class QuizAttemptApiAdminController extends EscolaLmsBaseController implements QuizAttemptApiAdminSwagger
+class QuizAttemptApiAdminController extends UlamsBaseController implements QuizAttemptApiAdminSwagger
 {
     private QuizAttemptServiceContract $attemptService;
 

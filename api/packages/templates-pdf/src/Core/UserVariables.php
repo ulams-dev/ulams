@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Core;
+namespace Ulams\TemplatesPdf\Core;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
 use Illuminate\Support\Facades\Lang;
 
 class UserVariables extends PdfVariables

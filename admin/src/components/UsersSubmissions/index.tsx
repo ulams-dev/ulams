@@ -8,7 +8,7 @@ import {
   assignUserSubmission,
   deleteUserSubmission,
   userSubmissions,
-} from '@/services/escola-lms/users_submissions';
+} from '@/services/ulams/users_submissions';
 import { createTableOrderObject } from '@/utils/utils';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
@@ -16,7 +16,7 @@ import ProTable from '@ant-design/pro-table';
 import AddUserSubmission from './form';
 import './index.css';
 
-export const TableColumns: ProColumns<EscolaLms.AssignWithoutAccount.Models.UserSubmission>[] = [
+export const TableColumns: ProColumns<Ulams.AssignWithoutAccount.Models.UserSubmission>[] = [
   {
     title: <FormattedMessage id="ID" defaultMessage="ID" />,
     dataIndex: 'id',
@@ -84,7 +84,7 @@ export const UserSubmissions: React.FC<{
   return (
     <Fragment>
       <ProTable<
-        EscolaLms.AssignWithoutAccount.Models.UserSubmission,
+        Ulams.AssignWithoutAccount.Models.UserSubmission,
         API.PageParams & { email?: string; morphable_id?: number; morphable_type?: string }
       >
         defaultSize="small"

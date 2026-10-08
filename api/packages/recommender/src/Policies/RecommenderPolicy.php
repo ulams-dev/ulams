@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Recommender\Policies;
+namespace Ulams\Recommender\Policies;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
-use EscolaLms\Recommender\Models\Course;
-use EscolaLms\Recommender\Models\Lesson;
+use Ulams\Auth\Models\User;
+use Ulams\Courses\Enum\CoursesPermissionsEnum;
+use Ulams\Recommender\Models\Course;
+use Ulams\Recommender\Models\Lesson;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class RecommenderPolicy

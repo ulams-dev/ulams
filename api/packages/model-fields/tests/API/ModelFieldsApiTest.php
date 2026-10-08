@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\ModelFields\Tests\API;
+namespace Ulams\ModelFields\Tests\API;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\ModelFields\Models\Metadata;
-use EscolaLms\ModelFields\Tests\TestCase;
-use EscolaLms\ModelFields\Enum\MetaFieldTypeEnum;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\ModelFields\Tests\Models\User;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\ModelFields\Models\Metadata;
+use Ulams\ModelFields\Tests\TestCase;
+use Ulams\ModelFields\Enum\MetaFieldTypeEnum;
+use Ulams\Core\Enums\UserRole;
+use Ulams\ModelFields\Tests\Models\User;
 use Illuminate\Support\Facades\App;
-use EscolaLms\ModelFields\Services\Contracts\ModelFieldsServiceContract;
+use Ulams\ModelFields\Services\Contracts\ModelFieldsServiceContract;
 use Illuminate\Support\Facades\Config;
 
 class ModelFieldsApiTest extends TestCase

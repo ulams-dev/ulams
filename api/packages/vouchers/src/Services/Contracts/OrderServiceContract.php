@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Vouchers\Services\Contracts;
+namespace Ulams\Vouchers\Services\Contracts;
 
-use EscolaLms\Cart\Dtos\ClientDetailsDto;
-use EscolaLms\Cart\Models\Cart as BaseCart;
-use EscolaLms\Cart\Services\CartManager as BaseCartManager;
-use EscolaLms\Cart\Services\Contracts\OrderServiceContract as BaseOrderServiceContract;
-use EscolaLms\Vouchers\Models\Order;
+use Ulams\Cart\Dtos\ClientDetailsDto;
+use Ulams\Cart\Models\Cart as BaseCart;
+use Ulams\Cart\Services\CartManager as BaseCartManager;
+use Ulams\Cart\Services\Contracts\OrderServiceContract as BaseOrderServiceContract;
+use Ulams\Vouchers\Models\Order;
 
 interface OrderServiceContract extends BaseOrderServiceContract
 {

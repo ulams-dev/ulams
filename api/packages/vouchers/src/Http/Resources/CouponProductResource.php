@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Vouchers\Http\Resources;
+namespace Ulams\Vouchers\Http\Resources;
 
-use EscolaLms\Vouchers\Models\CouponProduct;
+use Ulams\Vouchers\Models\CouponProduct;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CouponProductResource extends JsonResource

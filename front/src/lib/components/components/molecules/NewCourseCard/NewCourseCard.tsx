@@ -7,7 +7,7 @@ import {
 } from "../../atoms/ProgressBar/ProgressBar";
 import { RatioBox } from "../../atoms/RatioBox/RatioBox";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { Text } from "../../../";
 import { useTranslation } from "react-i18next";
 
@@ -140,7 +140,7 @@ const StyledCourseCard = styled("div")<StyledCourseCardProps>`
     }
   }
 
-  .escolalms-image {
+  .ulams-image {
     height: 100%;
     overflow: hidden;
   }
@@ -267,7 +267,7 @@ export const NewCourseCard: React.FC<CourseCardProps> = (props) => {
 
   return (
     <StyledCourseCard
-      className={`wellms-component ${className} ${disabled ? "disabled" : ""}`}
+      className={`ulams-component ${className} ${disabled ? "disabled" : ""}`}
       hideImage={hideImage}
       mobile={mobile}
     >
@@ -278,7 +278,7 @@ export const NewCourseCard: React.FC<CourseCardProps> = (props) => {
               {React.isValidElement(image) ? (
                 image
               ) : (
-                <div className="escolalms-image">
+                <div className="ulams-image">
                   <img
                     {...imageSectionProps}
                     className="image"

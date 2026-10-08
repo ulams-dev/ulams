@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Enum;
+namespace Ulams\ConsultationAccess\Enum;
 
 class MeetingLinkTypeEnum
 {

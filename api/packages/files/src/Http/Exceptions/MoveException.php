@@ -1,10 +1,10 @@
 <?php
 
 
-namespace EscolaLms\Files\Http\Exceptions;
+namespace Ulams\Files\Http\Exceptions;
 
 
-use EscolaLms\Files\Http\Exceptions\Contracts\Renderable;
+use Ulams\Files\Http\Exceptions\Contracts\Renderable;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

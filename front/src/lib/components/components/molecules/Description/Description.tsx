@@ -6,7 +6,7 @@ import { Title } from "../../atoms/Typography/Title";
 import { Text } from "../../atoms/Typography/Text";
 import { PropsWithChildren } from "react";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 export interface DescriptionProps
   extends React.HTMLProps<HTMLDivElement>,
@@ -28,7 +28,7 @@ export const Description: React.FC<PropsWithChildren<DescriptionProps>> = (
   const theme = React.useContext(ThemeContext);
 
   return (
-    <StyledDescription className={`wellms-component ${className}`}>
+    <StyledDescription className={`ulams-component ${className}`}>
       <Text
         style={{
           textTransform: "uppercase",

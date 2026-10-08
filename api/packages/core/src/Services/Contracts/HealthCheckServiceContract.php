@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Core\Services\Contracts;
+namespace Ulams\Core\Services\Contracts;
 
 interface HealthCheckServiceContract
 {

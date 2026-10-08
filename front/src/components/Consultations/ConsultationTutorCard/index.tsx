@@ -1,6 +1,6 @@
 import React from "react";
-import { CourseCard } from "@lms/components/components/molecules/CourseCard/CourseCard";
-import { API } from "@lms/sdk";
+import { CourseCard } from "@ulams/components/components/molecules/CourseCard/CourseCard";
+import { API } from "@ulams/sdk";
 import { ConsultationTutorCardStyles } from "./ConsultationTutorCardStyles";
 import ConsultationTutorCardImage from "./Image";
 import ConsultationTutorCardContent from "./Content";

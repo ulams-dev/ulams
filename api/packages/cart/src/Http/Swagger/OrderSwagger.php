@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Swagger;
+namespace Ulams\Cart\Http\Swagger;
 
-use EscolaLms\Cart\Http\Requests\OrderSearchRequest;
-use EscolaLms\Cart\Http\Requests\OrderViewRequest;
+use Ulams\Cart\Http\Requests\OrderSearchRequest;
+use Ulams\Cart\Http\Requests\OrderViewRequest;
 use Illuminate\Http\JsonResponse;
 
 interface OrderSwagger

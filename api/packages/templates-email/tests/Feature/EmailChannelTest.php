@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests\Feature;
+namespace Ulams\TemplatesEmail\Tests\Feature;
 
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\Templates\Repository\Contracts\TemplateRepositoryContract;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
-use EscolaLms\TemplatesEmail\Core\EmailMailable;
-use EscolaLms\TemplatesEmail\Database\Seeders\TemplatesEmailSeeder;
-use EscolaLms\TemplatesEmail\Tests\Mocks\TestEvent;
-use EscolaLms\TemplatesEmail\Tests\Mocks\TestVariables;
-use EscolaLms\TemplatesEmail\Tests\TestCase;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Templates\Facades\Template;
+use Ulams\Templates\Repository\Contracts\TemplateRepositoryContract;
+use Ulams\TemplatesEmail\Core\EmailChannel;
+use Ulams\TemplatesEmail\Core\EmailMailable;
+use Ulams\TemplatesEmail\Database\Seeders\TemplatesEmailSeeder;
+use Ulams\TemplatesEmail\Tests\Mocks\TestEvent;
+use Ulams\TemplatesEmail\Tests\Mocks\TestVariables;
+use Ulams\TemplatesEmail\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Event;

@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Payments\Gateway;
+namespace Ulams\Payments\Gateway;
 
-use EscolaLms\Payments\Entities\PaymentsConfig;
-use EscolaLms\Payments\Exceptions\GatewayConfigException;
-use EscolaLms\Payments\Gateway\Drivers\FreeDriver;
-use EscolaLms\Payments\Gateway\Drivers\Przelewy24Driver;
-use EscolaLms\Payments\Gateway\Drivers\RevenueCatDriver;
-use EscolaLms\Payments\Gateway\Drivers\StripeDriver;
+use Ulams\Payments\Entities\PaymentsConfig;
+use Ulams\Payments\Exceptions\GatewayConfigException;
+use Ulams\Payments\Gateway\Drivers\FreeDriver;
+use Ulams\Payments\Gateway\Drivers\Przelewy24Driver;
+use Ulams\Payments\Gateway\Drivers\RevenueCatDriver;
+use Ulams\Payments\Gateway\Drivers\StripeDriver;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Manager;
 
@@ -18,7 +18,7 @@ class GatewayManager extends Manager
     public function __construct(Container $container)
     {
         parent::__construct($container);
-        $this->paymentsConfig = new PaymentsConfig($this->config['escolalms_payments']);
+        $this->paymentsConfig = new PaymentsConfig($this->config['ulams_payments']);
     }
 
     public function getPaymentsConfig(): PaymentsConfig

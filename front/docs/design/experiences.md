@@ -1,6 +1,6 @@
 # E-learning experiences: content and Google Stitch prompts
 
-> Three deliberately different learning experiences used to design the Wellms front-end in [Google Stitch](https://stitch.withgoogle.com/).
+> Three deliberately different learning experiences used to design the Ulams front-end in [Google Stitch](https://stitch.withgoogle.com/).
 > The same courses, lessons, quizzes and projects are created by `DemoCoursesSeeder`, so every design is backed by real data in the app.
 
 

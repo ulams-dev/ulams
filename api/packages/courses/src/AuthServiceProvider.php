@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Courses;
+namespace Ulams\Courses;
 
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Policies\CoursesPolicy;
-use EscolaLms\Courses\Policies\LessonPolicy;
-use EscolaLms\Courses\Policies\TopicPolicy;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Policies\CoursesPolicy;
+use Ulams\Courses\Policies\LessonPolicy;
+use Ulams\Courses\Policies\TopicPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {

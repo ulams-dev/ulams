@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Jobs;
+namespace Ulams\ConsultationAccess\Jobs;
 
-use EscolaLms\ConsultationAccess\Enum\MeetingLinkTypeEnum;
-use EscolaLms\ConsultationAccess\Events\ConsultationAccessEnquiryApprovedEvent;
-use EscolaLms\ConsultationAccess\Jobs\Strategies\SpaceTitleStrategyFactory;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\ConsultationAccess\Repositories\Contracts\ConsultationAccessEnquiryRepositoryContract;
-use EscolaLms\PencilSpaces\Facades\PencilSpace;
-use EscolaLms\PencilSpaces\Resource\CreatePencilSpaceResource;
+use Ulams\ConsultationAccess\Enum\MeetingLinkTypeEnum;
+use Ulams\ConsultationAccess\Events\ConsultationAccessEnquiryApprovedEvent;
+use Ulams\ConsultationAccess\Jobs\Strategies\SpaceTitleStrategyFactory;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\ConsultationAccess\Repositories\Contracts\ConsultationAccessEnquiryRepositoryContract;
+use Ulams\PencilSpaces\Facades\PencilSpace;
+use Ulams\PencilSpaces\Resource\CreatePencilSpaceResource;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

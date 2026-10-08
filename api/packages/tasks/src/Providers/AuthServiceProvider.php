@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Tasks\Providers;
+namespace Ulams\Tasks\Providers;
 
-use EscolaLms\Tasks\Policies\TaskNotePolicy;
-use EscolaLms\Tasks\Policies\TaskPolicy;
+use Ulams\Tasks\Policies\TaskNotePolicy;
+use Ulams\Tasks\Policies\TaskPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

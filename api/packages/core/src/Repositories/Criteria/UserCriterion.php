@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EscolaLms\Core\Repositories\Criteria;
+namespace Ulams\Core\Repositories\Criteria;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;

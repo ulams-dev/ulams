@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Cart\Dtos;
+namespace Ulams\Cart\Dtos;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
-use EscolaLms\Core\Dtos\CriteriaDto as BaseCriteriaDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\HasCriterion;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\CriteriaDto as BaseCriteriaDto;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\HasCriterion;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;

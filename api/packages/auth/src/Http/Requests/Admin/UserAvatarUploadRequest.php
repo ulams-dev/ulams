@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests\Admin;
+namespace Ulams\Auth\Http\Requests\Admin;
 
-use EscolaLms\Files\Rules\FileOrStringRule;
+use Ulams\Files\Rules\FileOrStringRule;
 
 class UserAvatarUploadRequest extends AbstractUserIdInRouteRequest
 {

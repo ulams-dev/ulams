@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Categories\Http\Requests;
+namespace Ulams\Categories\Http\Requests;
 
-use EscolaLms\Categories\Enums\ConstantEnum;
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Files\Rules\FileOrStringRule;
+use Ulams\Categories\Enums\ConstantEnum;
+use Ulams\Categories\Models\Category;
+use Ulams\Files\Rules\FileOrStringRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CategoryUpdateRequest extends FormRequest

@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Core;
+namespace Ulams\TemplatesEmail\Core;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Contracts\TemplateVariableContract;
-use EscolaLms\Templates\Core\AbstractTemplateVariableClass;
-use EscolaLms\Templates\Core\SettingsVariables;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\TemplatesEmail\EscolaLmsTemplatesEmailServiceProvider;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Contracts\TemplateVariableContract;
+use Ulams\Templates\Core\AbstractTemplateVariableClass;
+use Ulams\Templates\Core\SettingsVariables;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\TemplatesEmail\UlamsTemplatesEmailServiceProvider;
 use Illuminate\Support\Str;
 
 abstract class EmailVariables extends AbstractTemplateVariableClass implements TemplateVariableContract
@@ -40,7 +40,7 @@ abstract class EmailVariables extends AbstractTemplateVariableClass implements T
         }
 
         $template = config(
-            EscolaLmsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.default_template',
+            UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.default_template',
             <<<MJML_TEMPLATE
             <mjml>
             <mj-body>

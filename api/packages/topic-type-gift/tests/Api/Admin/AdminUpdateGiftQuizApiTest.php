@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Tests\Api\Admin;
+namespace Ulams\TopicTypeGift\Tests\Api\Admin;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Tests\TestCase;
 
 class AdminUpdateGiftQuizApiTest extends TestCase
 {

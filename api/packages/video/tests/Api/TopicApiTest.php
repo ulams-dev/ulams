@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Video\Tests\Api;
+namespace Ulams\Video\Tests\Api;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypes\Models\TopicContent\Video as TopicContentVideo;
-use EscolaLms\Video\Tests\TestCase;
+use Ulams\Core\Models\User;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypes\Models\TopicContent\Video as TopicContentVideo;
+use Ulams\Video\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;

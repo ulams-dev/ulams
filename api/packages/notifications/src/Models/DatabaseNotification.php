@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Notifications\Models;
+namespace Ulams\Notifications\Models;
 
-use EscolaLms\Notifications\Casts\DatabaseNotificationData;
+use Ulams\Notifications\Casts\DatabaseNotificationData;
 use Illuminate\Notifications\DatabaseNotification as IlluminateDatabaseNotification;
 
 /**

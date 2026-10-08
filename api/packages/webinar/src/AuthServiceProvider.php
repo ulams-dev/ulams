@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Webinar;
+namespace Ulams\Webinar;
 
-use EscolaLms\Webinar\Models\Webinar;
-use EscolaLms\Webinar\Policies\WebinarPolicy;
+use Ulams\Webinar\Models\Webinar;
+use Ulams\Webinar\Policies\WebinarPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\Templates\Tests\Feature;
+namespace Ulams\Templates\Tests\Feature;
 
 use BadMethodCallException;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Settings\Models\Setting;
-use EscolaLms\Templates\Core\SettingsVariables;
-use EscolaLms\Templates\Enums\TemplateSectionTypeEnum;
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\Templates\Tests\Mock\TestChannel;
-use EscolaLms\Templates\Tests\Mock\TestEventUnusable;
-use EscolaLms\Templates\Tests\Mock\TestEventWithGetters;
-use EscolaLms\Templates\Tests\Mock\TestEventWithGettersAndToArray;
-use EscolaLms\Templates\Tests\Mock\TestEventWithNoAccessors;
-use EscolaLms\Templates\Tests\Mock\TestEventWithToArray;
-use EscolaLms\Templates\Tests\Mock\TestVariables;
-use EscolaLms\Templates\Tests\Mock\TestVariablesWithMissingDefaultContent;
-use EscolaLms\Templates\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Settings\Models\Setting;
+use Ulams\Templates\Core\SettingsVariables;
+use Ulams\Templates\Enums\TemplateSectionTypeEnum;
+use Ulams\Templates\Facades\Template;
+use Ulams\Templates\Tests\Mock\TestChannel;
+use Ulams\Templates\Tests\Mock\TestEventUnusable;
+use Ulams\Templates\Tests\Mock\TestEventWithGetters;
+use Ulams\Templates\Tests\Mock\TestEventWithGettersAndToArray;
+use Ulams\Templates\Tests\Mock\TestEventWithNoAccessors;
+use Ulams\Templates\Tests\Mock\TestEventWithToArray;
+use Ulams\Templates\Tests\Mock\TestVariables;
+use Ulams\Templates\Tests\Mock\TestVariablesWithMissingDefaultContent;
+use Ulams\Templates\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class FacadeTest extends TestCase
@@ -68,7 +68,7 @@ class FacadeTest extends TestCase
 
         $registeredEvents = Template::getRegisteredEventsWithTokens();
         $this->assertEquals([
-            "class" => "EscolaLms\Templates\Tests\Mock\TestVariables",
+            "class" => "Ulams\Templates\Tests\Mock\TestVariables",
             'assignable_class' => null,
             "variables" =>  [
                 0 => "@GlobalSettingsSettingText",
@@ -116,7 +116,7 @@ class FacadeTest extends TestCase
         try {
             Template::register(TestEventWithGettersAndToArray::class, TestChannel::class, TestVariablesWithMissingDefaultContent::class);
         } catch (\Throwable $th) {
-            $this->assertEquals('Variable class EscolaLms\Templates\Tests\Mock\TestVariablesWithMissingDefaultContent can not be used for channel EscolaLms\Templates\Tests\Mock\TestChannel.', $th->getMessage());
+            $this->assertEquals('Variable class Ulams\Templates\Tests\Mock\TestVariablesWithMissingDefaultContent can not be used for channel Ulams\Templates\Tests\Mock\TestChannel.', $th->getMessage());
         }
     }
 
@@ -131,7 +131,7 @@ class FacadeTest extends TestCase
         try {
             event(new TestEventUnusable($user));
         } catch (\Throwable $th) {
-            $this->assertEquals('Call to undefined method EscolaLms\Templates\Events\EventWrapper::getFriend()', $th->getMessage());
+            $this->assertEquals('Call to undefined method Ulams\Templates\Events\EventWrapper::getFriend()', $th->getMessage());
             throw $th;
         }
     }

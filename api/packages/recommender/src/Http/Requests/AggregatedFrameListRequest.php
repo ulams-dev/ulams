@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Recommender\Http\Requests;
+namespace Ulams\Recommender\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

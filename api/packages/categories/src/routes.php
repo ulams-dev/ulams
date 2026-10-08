@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Categories\Http\Controllers\CategoryAPIController;
+use Ulams\Categories\Http\Controllers\CategoryAPIController;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 

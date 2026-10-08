@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Models\Traits;
+namespace Ulams\Auth\Models\Traits;
 
-use EscolaLms\Auth\Models\Group;
-use EscolaLms\Auth\Models\GroupUser;
+use Ulams\Auth\Models\Group;
+use Ulams\Auth\Models\GroupUser;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 

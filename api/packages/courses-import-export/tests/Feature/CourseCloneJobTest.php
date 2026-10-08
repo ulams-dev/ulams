@@ -1,29 +1,29 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Tests\Feature;
+namespace Ulams\CoursesImportExport\Tests\Feature;
 
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\CoursesImportExport\Events\CloneCourseFailedEvent;
-use EscolaLms\CoursesImportExport\Events\CloneCourseFinishedEvent;
-use EscolaLms\CoursesImportExport\Events\CloneCourseStartedEvent;
-use EscolaLms\CoursesImportExport\Jobs\CloneCourse;
-use EscolaLms\CoursesImportExport\Services\Contracts\ExportImportServiceContract;
-use EscolaLms\CoursesImportExport\Tests\TestCase;
-use EscolaLms\HeadlessH5P\Models\H5PContent;
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
-use EscolaLms\Scorm\Services\Contracts\ScormServiceContract;
-use EscolaLms\Tags\Models\Tag;
-use EscolaLms\TopicTypes\Models\TopicContent\Audio;
-use EscolaLms\TopicTypes\Models\TopicContent\H5P;
-use EscolaLms\TopicTypes\Models\TopicContent\Image;
-use EscolaLms\TopicTypes\Models\TopicContent\PDF;
-use EscolaLms\TopicTypes\Models\TopicContent\ScormSco;
-use EscolaLms\TopicTypes\Models\TopicContent\Video;
+use Ulams\Categories\Models\Category;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\CoursesImportExport\Events\CloneCourseFailedEvent;
+use Ulams\CoursesImportExport\Events\CloneCourseFinishedEvent;
+use Ulams\CoursesImportExport\Events\CloneCourseStartedEvent;
+use Ulams\CoursesImportExport\Jobs\CloneCourse;
+use Ulams\CoursesImportExport\Services\Contracts\ExportImportServiceContract;
+use Ulams\CoursesImportExport\Tests\TestCase;
+use Ulams\HeadlessH5P\Models\H5PContent;
+use Ulams\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
+use Ulams\Scorm\Services\Contracts\ScormServiceContract;
+use Ulams\Tags\Models\Tag;
+use Ulams\TopicTypes\Models\TopicContent\Audio;
+use Ulams\TopicTypes\Models\TopicContent\H5P;
+use Ulams\TopicTypes\Models\TopicContent\Image;
+use Ulams\TopicTypes\Models\TopicContent\PDF;
+use Ulams\TopicTypes\Models\TopicContent\ScormSco;
+use Ulams\TopicTypes\Models\TopicContent\Video;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;

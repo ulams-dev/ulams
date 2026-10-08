@@ -17,7 +17,7 @@ import { Button, Tooltip } from 'antd';
 import { useCallback, useState } from 'react';
 
 import { topicTypeToSettingName } from '@/pages/Settings/global';
-import { TopicType } from '@/services/escola-lms/enums';
+import { TopicType } from '@/services/ulams/enums';
 import { createHavePackageInstalled } from '@/utils/access';
 import { FormattedMessage, useModel } from 'umi';
 import '../types.css';

@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Cart\Models;
+namespace Ulams\Cart\Models;
 
-use EscolaLms\Cart\Contracts\CanOrder;
-use EscolaLms\Cart\Contracts\CanOrderTrait;
-use EscolaLms\Cart\Database\Factories\UserFactory;
-use EscolaLms\Core\Models\User as CoreUser;
-use EscolaLms\Payments\Concerns\Billable;
-use EscolaLms\Payments\Contracts\Billable as ContractsBillable;
+use Ulams\Cart\Contracts\CanOrder;
+use Ulams\Cart\Contracts\CanOrderTrait;
+use Ulams\Cart\Database\Factories\UserFactory;
+use Ulams\Core\Models\User as CoreUser;
+use Ulams\Payments\Concerns\Billable;
+use Ulams\Payments\Contracts\Billable as ContractsBillable;
 
 /**
- * EscolaLms\Cart\Models\User
+ * Ulams\Cart\Models\User
  *
  * @property int $id
  * @property string $first_name
@@ -31,7 +31,7 @@ use EscolaLms\Payments\Contracts\Billable as ContractsBillable;
  * @property string|null $postcode
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \EscolaLms\Cart\Models\Cart|null $cart
+ * @property-read \Ulams\Cart\Models\Cart|null $cart
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
  * @property-read int|null $clients_count
  * @property-read string|null $avatar_url
@@ -39,19 +39,19 @@ use EscolaLms\Payments\Contracts\Billable as ContractsBillable;
  * @property-read string $name
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Cart\Models\Order[] $orders
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Cart\Models\Order[] $orders
  * @property-read int|null $orders_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Payments\Models\Payment[] $payments
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Payments\Models\Payment[] $payments
  * @property-read int|null $payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
  * @property-read int|null $permissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Cart\Models\Product[] $products
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Cart\Models\Product[] $products
  * @property-read int|null $products_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
  * @property-read int|null $tokens_count
- * @method static \EscolaLms\Cart\Database\Factories\UserFactory factory(...$parameters)
+ * @method static \Ulams\Cart\Database\Factories\UserFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User permission($permissions)

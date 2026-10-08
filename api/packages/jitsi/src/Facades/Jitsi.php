@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Jitsi\Facades;
+namespace Ulams\Jitsi\Facades;
 
-use EscolaLms\Jitsi\Services\Contracts\JitsiServiceContract;
+use Ulams\Jitsi\Services\Contracts\JitsiServiceContract;
 
 use Illuminate\Support\Facades\Facade;
 

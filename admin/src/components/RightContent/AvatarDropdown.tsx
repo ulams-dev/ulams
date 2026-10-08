@@ -1,4 +1,4 @@
-import { logout } from '@/services/escola-lms/auth';
+import { logout } from '@/services/ulams/auth';
 import { LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Spin, message } from 'antd';

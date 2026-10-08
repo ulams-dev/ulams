@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Policies;
+namespace Ulams\CourseAccess\Policies;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\CourseAccess\Enum\CourseAccessPermissionEnum;
-use EscolaLms\CourseAccess\Models\CourseAccessEnquiry;
+use Ulams\Auth\Models\User;
+use Ulams\CourseAccess\Enum\CourseAccessPermissionEnum;
+use Ulams\CourseAccess\Models\CourseAccessEnquiry;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class CourseAccessEnquiryPolicy

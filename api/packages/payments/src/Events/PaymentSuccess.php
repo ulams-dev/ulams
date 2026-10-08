@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Payments\Events;
+namespace Ulams\Payments\Events;
 
 class PaymentSuccess extends PaymentEvent
 {

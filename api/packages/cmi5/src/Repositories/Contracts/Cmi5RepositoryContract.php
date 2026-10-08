@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cmi5\Repositories\Contracts;
+namespace Ulams\Cmi5\Repositories\Contracts;
 
-use EscolaLms\Cmi5\Models\Cmi5;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Cmi5\Models\Cmi5;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Support\Collection;
 
 interface Cmi5RepositoryContract extends BaseRepositoryContract

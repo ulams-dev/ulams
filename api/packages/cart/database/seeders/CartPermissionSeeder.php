@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Database\Seeders;
+namespace Ulams\Cart\Database\Seeders;
 
-use EscolaLms\Cart\Enums\CartPermissionsEnum;
-use EscolaLms\Core\Enums\UserRole;
+use Ulams\Cart\Enums\CartPermissionsEnum;
+use Ulams\Core\Enums\UserRole;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

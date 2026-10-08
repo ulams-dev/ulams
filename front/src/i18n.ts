@@ -1,6 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import { resources as ComponentTranslations } from "@lms/components/styleguide/i18n";
+import { resources as ComponentTranslations } from "@ulams/components/styleguide/i18n";
 
 // the translations
 // (tip move them in a JSON file and import them,
@@ -425,7 +425,7 @@ const resources = {
         Info: "The page you are looking for might have been removed had its name changed or is temporarily unavailable.",
       },
       Notifications: {
-        EscolaLmsTopicFinishedTemplateEvent: "Topic finished",
+        UlamsTopicFinishedTemplateEvent: "Topic finished",
         NoNotifications: "You have no notification",
         UserLogged: "User logged in",
         list: "List",
@@ -439,100 +439,100 @@ const resources = {
         CourseStarted: "Course started",
         // NEW TRANLATIONS
         // STATIONARY EVENTS
-        "EscolaLms\\StationaryEvents\\Events\\StationaryEventAssigned":
+        "Ulams\\StationaryEvents\\Events\\StationaryEventAssigned":
           "You are assigned to stationary event {{name}}",
-        "EscolaLms\\StationaryEvents\\Events\\StationaryEventUnassigned":
+        "Ulams\\StationaryEvents\\Events\\StationaryEventUnassigned":
           "You are unassigned from stationary event {{name}}",
-        "EscolaLms\\StationaryEvents\\Events\\StationaryEventAuthorAssigned":
+        "Ulams\\StationaryEvents\\Events\\StationaryEventAuthorAssigned":
           "You are assigned to stationary event {{name}} as author",
-        "EscolaLms\\StationaryEvents\\Events\\StationaryEventAuthorUnassigned":
+        "Ulams\\StationaryEvents\\Events\\StationaryEventAuthorUnassigned":
           "You are unassigned from stationary event {{name}} as author",
         // CART
-        "EscolaLms\\Cart\\Events\\AbandonedCartEvent": "Cart cleared",
-        "EscolaLms\\Cart\\Events\\OrderCancelled": "Order canceled",
-        "EscolaLms\\Cart\\Events\\OrderCreated": "Order created",
-        "EscolaLms\\Cart\\Events\\OrderPaid": "Order {{name}} paid",
-        "EscolaLms\\Cart\\Events\\ProductableAttached":
+        "Ulams\\Cart\\Events\\AbandonedCartEvent": "Cart cleared",
+        "Ulams\\Cart\\Events\\OrderCancelled": "Order canceled",
+        "Ulams\\Cart\\Events\\OrderCreated": "Order created",
+        "Ulams\\Cart\\Events\\OrderPaid": "Order {{name}} paid",
+        "Ulams\\Cart\\Events\\ProductableAttached":
           "Productable {{name}} attached",
-        "EscolaLms\\Cart\\Events\\ProductableDetached":
+        "Ulams\\Cart\\Events\\ProductableDetached":
           "Productable {{name}} detached",
-        "EscolaLms\\Cart\\Events\\ProductAddedToCart":
+        "Ulams\\Cart\\Events\\ProductAddedToCart":
           "Product {{name}} added to cart",
-        "EscolaLms\\Cart\\Events\\ProductAttached": "Product {{name}} attached",
-        "EscolaLms\\Cart\\Events\\ProductBought": "Product {{name}} bought",
-        "EscolaLms\\Cart\\Events\\ProductDetached": "Product {{name}} detached",
-        "EscolaLms\\Cart\\Events\\ProductRemovedFromCart":
+        "Ulams\\Cart\\Events\\ProductAttached": "Product {{name}} attached",
+        "Ulams\\Cart\\Events\\ProductBought": "Product {{name}} bought",
+        "Ulams\\Cart\\Events\\ProductDetached": "Product {{name}} detached",
+        "Ulams\\Cart\\Events\\ProductRemovedFromCart":
           "Product {{name}} removed from cart",
         // PAYMENT
-        "EscolaLms\\Payments\\Events\\PaymentCancelled":
+        "Ulams\\Payments\\Events\\PaymentCancelled":
           "Payment for {{name}} product for the amount {{amount}} zł cancelled",
-        "EscolaLms\\Payments\\Events\\PaymentFailed":
+        "Ulams\\Payments\\Events\\PaymentFailed":
           "Payment for {{name}} product for the amount {{amount}} zł failed",
-        "EscolaLms\\Payments\\Events\\PaymentRegistered":
+        "Ulams\\Payments\\Events\\PaymentRegistered":
           "Payment for the amount {{amount}} zł reqistered",
-        "EscolaLms\\Payments\\Events\\PaymentSuccess":
+        "Ulams\\Payments\\Events\\PaymentSuccess":
           "Payment for {{name}} product for the amount {{amount}} zł success",
         // COURSE
-        "EscolaLms\\Courses\\Events\\CourseAccessFinished":
+        "Ulams\\Courses\\Events\\CourseAccessFinished":
           "You don't have access to course {{name}}",
-        "EscolaLms\\Courses\\Events\\CourseAccessStarted":
+        "Ulams\\Courses\\Events\\CourseAccessStarted":
           "You have access to course {{name}}",
-        "EscolaLms\\Courses\\Events\\CourseAssigned":
+        "Ulams\\Courses\\Events\\CourseAssigned":
           "Course {{name}} assigned to you",
-        "EscolaLms\\Courses\\Events\\CourseDeadlineSoon":
+        "Ulams\\Courses\\Events\\CourseDeadlineSoon":
           "Course {{name}} finishing soon {{date}}",
-        "EscolaLms\\Courses\\Events\\CoursedPublished":
+        "Ulams\\Courses\\Events\\CoursedPublished":
           "Course {{name}} published",
-        "EscolaLms\\Courses\\Events\\CourseFinished":
+        "Ulams\\Courses\\Events\\CourseFinished":
           "Course {{name}} finished",
-        "EscolaLms\\Courses\\Events\\CourseStarted": "Course {{name}} started",
-        "EscolaLms\\Courses\\Events\\CourseStatusChanged":
+        "Ulams\\Courses\\Events\\CourseStarted": "Course {{name}} started",
+        "Ulams\\Courses\\Events\\CourseStatusChanged":
           "Status of course {{name}} changed",
-        "EscolaLms\\Courses\\Events\\CourseTutorAssigned":
+        "Ulams\\Courses\\Events\\CourseTutorAssigned":
           "You are assigned as tutor to course {{name}}",
-        "EscolaLms\\Courses\\Events\\CourseTutorUnassigned":
+        "Ulams\\Courses\\Events\\CourseTutorUnassigned":
           "You are unassigned as tutor to course {{name}}",
-        "EscolaLms\\Courses\\Events\\CourseUnassigned":
+        "Ulams\\Courses\\Events\\CourseUnassigned":
           "You are assigned to course {{name}}",
-        "EscolaLms\\Courses\\Events\\TopicFinished":
+        "Ulams\\Courses\\Events\\TopicFinished":
           "Topic of course {{name}} finished",
-        "EscolaLms\\Courses\\Events\\LessonFinished": "Course lesson finished",
-        "EscolaLms\\TemplatesPdf\\Events\\PdfCreated":
+        "Ulams\\Courses\\Events\\LessonFinished": "Course lesson finished",
+        "Ulams\\TemplatesPdf\\Events\\PdfCreated":
           'Certificate for course "{{name}}" created',
-        "EscolaLms\\CourseAccess\\Events\\CourseAccessEnquiryStudentCreatedEvent":
+        "Ulams\\CourseAccess\\Events\\CourseAccessEnquiryStudentCreatedEvent":
           "Course access enquiry created",
         // TOPIC
-        "EscolaLms\\TopicTypes\\Events\\TopicTypeChanged":
+        "Ulams\\TopicTypes\\Events\\TopicTypeChanged":
           "Topic {{name}} changed",
         // CONSULTATIONS
-        "EscolaLms\\Consultations\\Events\\ApprovedTerm":
+        "Ulams\\Consultations\\Events\\ApprovedTerm":
           "Term approved at {{date}}",
-        "EscolaLms\\Consultations\\Events\\ApprovedTermWithTrainer":
+        "Ulams\\Consultations\\Events\\ApprovedTermWithTrainer":
           "Term approved with trainer at {{date}}",
-        "EscolaLms\\Consultations\\Events\\ChangeTerm":
+        "Ulams\\Consultations\\Events\\ChangeTerm":
           "Term changed at {{date}}",
-        "EscolaLms\\Consultations\\Events\\RejectTerm":
+        "Ulams\\Consultations\\Events\\RejectTerm":
           "Term at {{date}} rejected",
-        "EscolaLms\\Consultations\\Events\\RejectTermWithTrainer":
+        "Ulams\\Consultations\\Events\\RejectTermWithTrainer":
           "Term with trainer at {{date}} rejected",
-        "EscolaLms\\Consultations\\Events\\ReminderAboutTerm":
+        "Ulams\\Consultations\\Events\\ReminderAboutTerm":
           "Reminder! Term at {{date}}",
-        "EscolaLms\\Consultations\\Events\\ReminderTrainerAboutTerm":
+        "Ulams\\Consultations\\Events\\ReminderTrainerAboutTerm":
           "Reminder! Term at {{date}}",
-        "EscolaLms\\Consultations\\Events\\ReportTerm":
+        "Ulams\\Consultations\\Events\\ReportTerm":
           "User {{user}} report new term {{date}} for consultation {{name}}",
         // WEBINAR
-        "EscolaLms\\Webinar\\Events\\ReminderAboutTerm":
+        "Ulams\\Webinar\\Events\\ReminderAboutTerm":
           "Reminder! Webinar at {{date}}",
-        "EscolaLms\\Webinar\\Events\\WebinarTrainerAssigned":
+        "Ulams\\Webinar\\Events\\WebinarTrainerAssigned":
           "Webinar trainer assigned",
-        "EscolaLms\\Webinar\\Events\\WebinarTrainerUnassigned":
+        "Ulams\\Webinar\\Events\\WebinarTrainerUnassigned":
           "Webinar trainer unassigned",
         // VIDEO
         ProcessVideoStarted: "Video process started",
         ProcessVideoFailed: "Video process failed",
         // CSV USER
-        "EscolaLms\\CsvUsers\\Events\\EscolaLmsImportedNewUserTemplateEvent":
+        "Ulams\\CsvUsers\\Events\\UlamsImportedNewUserTemplateEvent":
           "Imported new user template",
         // UNLOGGED USER
         AssignToProduct: "Unlogged user assigned to product",
@@ -541,25 +541,25 @@ const resources = {
         FileDeleted: "File deleted",
         FileStored: "File stored",
         // SETTINGS
-        "EscolaLms\\Settings\\Events\\SettingPackageConfigUpdated":
+        "Ulams\\Settings\\Events\\SettingPackageConfigUpdated":
           "Setting package config updated",
         // AUTH
-        "EscolaLms\\Auth\\Events\\AccountBlocked": "Account blocked",
-        "EscolaLms\\Auth\\Events\\AccountConfirmed": "Account confirmed",
-        "EscolaLms\\Auth\\Events\\AccountDeleted": "Account deleted",
-        "EscolaLms\\Auth\\Events\\AccountMustBeEnableByAdmin":
+        "Ulams\\Auth\\Events\\AccountBlocked": "Account blocked",
+        "Ulams\\Auth\\Events\\AccountConfirmed": "Account confirmed",
+        "Ulams\\Auth\\Events\\AccountDeleted": "Account deleted",
+        "Ulams\\Auth\\Events\\AccountMustBeEnableByAdmin":
           "Account must be enable by admin",
-        "EscolaLms\\Auth\\Events\\AccountRegistered": "Account registered",
-        "EscolaLms\\Auth\\Events\\ForgotPassword": "Forgot password",
-        "EscolaLms\\Auth\\Events\\Login": "Successfully logged in",
-        "EscolaLms\\Auth\\Events\\Logout": "Logout",
-        "EscolaLms\\Auth\\Events\\PasswordChanged": "Password changed",
-        "EscolaLms\\Auth\\Events\\ResetPassword": "Reset password",
-        "EscolaLms\\Auth\\Events\\UserAddedToGroup":
+        "Ulams\\Auth\\Events\\AccountRegistered": "Account registered",
+        "Ulams\\Auth\\Events\\ForgotPassword": "Forgot password",
+        "Ulams\\Auth\\Events\\Login": "Successfully logged in",
+        "Ulams\\Auth\\Events\\Logout": "Logout",
+        "Ulams\\Auth\\Events\\PasswordChanged": "Password changed",
+        "Ulams\\Auth\\Events\\ResetPassword": "Reset password",
+        "Ulams\\Auth\\Events\\UserAddedToGroup":
           "You have been added to the group",
-        "EscolaLms\\Auth\\Events\\UserRemovedFromGroup":
+        "Ulams\\Auth\\Events\\UserRemovedFromGroup":
           "You have been removed from the group",
-        "EscolaLms\\BulkNotifications\\Events\\NotificationSent": "{{name}}",
+        "Ulams\\BulkNotifications\\Events\\NotificationSent": "{{name}}",
         AccountConfirmed: "Account confirmed",
 
         ProductableAttached: "Productable attached???",
@@ -1186,7 +1186,7 @@ const resources = {
         Info: "Strona której szukasz może być usunięta albo zmienione jej nazwę albo jest czasowo niedostępna",
       },
       Notifications: {
-        EscolaLmsTopicFinishedTemplateEvent: "Temat zakończony",
+        UlamsTopicFinishedTemplateEvent: "Temat zakończony",
         NoNotifications: "Nie masz notyfikacji",
         UserLogged: "Użytkownik zalogowany",
         list: "Lista",
@@ -1198,106 +1198,106 @@ const resources = {
         SettingPackageConfigUpdated: "Zaktualizowano konfigurację pakietu",
         CourseTutorAssigned: "Instruktor przypisany",
         CourseStarted: "Kurs rozpoczęty",
-        "Notifications.EscolaLms\\TemplatesPdf\\Events\\PdfCreated":
+        "Notifications.Ulams\\TemplatesPdf\\Events\\PdfCreated":
           "PDF stworzony",
         // STATIONARY EVENT
-        "EscolaLms\\StationaryEvents\\Events\\StationaryEventAssigned":
+        "Ulams\\StationaryEvents\\Events\\StationaryEventAssigned":
           "Zostałeś przypisany do wydarzenia stacjonarnego {{name}}",
-        "EscolaLms\\StationaryEvents\\Events\\StationaryEventUnassigned":
+        "Ulams\\StationaryEvents\\Events\\StationaryEventUnassigned":
           "Zostałeś wypisany z wydarzenia stacjonarnego {{name}}",
-        "EscolaLms\\StationaryEvents\\Events\\StationaryEventAuthorAssigned":
+        "Ulams\\StationaryEvents\\Events\\StationaryEventAuthorAssigned":
           "Zostałeś przypisany do wydarzenia stacjonarnego {{name}} jako autor",
-        "EscolaLms\\StationaryEvents\\Events\\StationaryEventAuthorUnassigned":
+        "Ulams\\StationaryEvents\\Events\\StationaryEventAuthorUnassigned":
           "Zostałeś wypisany z wydarzenia stacjonarnego {{name}} jako autor",
         // CART
-        "EscolaLms\\Cart\\Events\\AbandonedCartEvent": "Wyczyszczono koszyk",
-        "EscolaLms\\Cart\\Events\\OrderCancelled": "Zamówienie anulowane",
-        "EscolaLms\\Cart\\Events\\OrderCreated": "Zamówienie stworzone",
-        "EscolaLms\\Cart\\Events\\OrderPaid": "Zamówienie {{name}} zapłacone",
-        "EscolaLms\\Cart\\Events\\ProductableAttached":
+        "Ulams\\Cart\\Events\\AbandonedCartEvent": "Wyczyszczono koszyk",
+        "Ulams\\Cart\\Events\\OrderCancelled": "Zamówienie anulowane",
+        "Ulams\\Cart\\Events\\OrderCreated": "Zamówienie stworzone",
+        "Ulams\\Cart\\Events\\OrderPaid": "Zamówienie {{name}} zapłacone",
+        "Ulams\\Cart\\Events\\ProductableAttached":
           "Produkt {{name}} został dołączony",
-        "EscolaLms\\Cart\\Events\\ProductableDetached":
+        "Ulams\\Cart\\Events\\ProductableDetached":
           "Produkt {{name}} został odłączony",
-        "EscolaLms\\Cart\\Events\\ProductAddedToCart":
+        "Ulams\\Cart\\Events\\ProductAddedToCart":
           "Produkt {{name}} dodany do koszyka",
-        "EscolaLms\\Cart\\Events\\ProductAttached":
+        "Ulams\\Cart\\Events\\ProductAttached":
           "Produkt {{name}} dołączony",
-        "EscolaLms\\Cart\\Events\\ProductBought": "Produkt {{name}} zakupiony",
-        "EscolaLms\\Cart\\Events\\ProductDetached":
+        "Ulams\\Cart\\Events\\ProductBought": "Produkt {{name}} zakupiony",
+        "Ulams\\Cart\\Events\\ProductDetached":
           "Produkt {{name}} odłączony",
-        "EscolaLms\\Cart\\Events\\ProductRemovedFromCart":
+        "Ulams\\Cart\\Events\\ProductRemovedFromCart":
           "Produkt {{name}} usunięty z koszyka",
         // PAYMENT
-        "EscolaLms\\Payments\\Events\\PaymentCancelled":
+        "Ulams\\Payments\\Events\\PaymentCancelled":
           "Płatność za produkty {{name}} na kwotę {{amount}} zł anulowana",
-        "EscolaLms\\Payments\\Events\\PaymentFailed":
+        "Ulams\\Payments\\Events\\PaymentFailed":
           "Błąd płatności za produkty {{name}} na kwotę {{amount}} zł",
-        "EscolaLms\\Payments\\Events\\PaymentRegistered":
+        "Ulams\\Payments\\Events\\PaymentRegistered":
           "Płatność na kwotę {{amount}} zł zarejestrowana",
-        "EscolaLms\\Payments\\Events\\PaymentSuccess":
+        "Ulams\\Payments\\Events\\PaymentSuccess":
           "Płatność za produkty {{name}} na kwotę {{amount}} zł udana",
         // COURSE
-        "EscolaLms\\Courses\\Events\\CourseAccessFinished":
+        "Ulams\\Courses\\Events\\CourseAccessFinished":
           "Nie masz dostępu do kursu {{name}}",
-        "EscolaLms\\Courses\\Events\\CourseAccessStarted":
+        "Ulams\\Courses\\Events\\CourseAccessStarted":
           "Masz dostęp do kursu {{name}}",
-        "EscolaLms\\Courses\\Events\\CourseAssigned":
+        "Ulams\\Courses\\Events\\CourseAssigned":
           "Kurs {{name}} został przypisany do Ciebie",
-        "EscolaLms\\Courses\\Events\\CourseDeadlineSoon":
+        "Ulams\\Courses\\Events\\CourseDeadlineSoon":
           "Kurs {{name}} zakończy się {{date}}",
-        "EscolaLms\\Courses\\Events\\CoursedPublished":
+        "Ulams\\Courses\\Events\\CoursedPublished":
           "Kurs {{name}} opublikowany",
-        "EscolaLms\\Courses\\Events\\CourseFinished":
+        "Ulams\\Courses\\Events\\CourseFinished":
           "Kurs {{name}} zakończony",
-        "EscolaLms\\Courses\\Events\\CourseStarted":
+        "Ulams\\Courses\\Events\\CourseStarted":
           "Kurs {{name}} wystartował",
-        "EscolaLms\\Courses\\Events\\CourseStatusChanged":
+        "Ulams\\Courses\\Events\\CourseStatusChanged":
           "Status kursu {{name}} zmieniony",
-        "EscolaLms\\Courses\\Events\\CourseTutorAssigned":
+        "Ulams\\Courses\\Events\\CourseTutorAssigned":
           "Zostałeś przypisany jako trener do kursu {{name}}",
-        "EscolaLms\\Courses\\Events\\CourseTutorUnassigned":
+        "Ulams\\Courses\\Events\\CourseTutorUnassigned":
           "Zostałeś wypisany jako trener do kursu  {{name}}",
-        "EscolaLms\\Courses\\Events\\CourseUnassigned":
+        "Ulams\\Courses\\Events\\CourseUnassigned":
           "Zostałeś przypisany {{name}}",
-        "EscolaLms\\Courses\\Events\\TopicFinished":
+        "Ulams\\Courses\\Events\\TopicFinished":
           "Temat kursu {{name}} zakończony",
-        "EscolaLms\\Courses\\Events\\LessonFinished": "Lekcja zakończona",
-        "EscolaLms\\TemplatesPdf\\Events\\PdfCreated":
+        "Ulams\\Courses\\Events\\LessonFinished": "Lekcja zakończona",
+        "Ulams\\TemplatesPdf\\Events\\PdfCreated":
           "Certyfikat dla kursu {{name}} stworzony",
-        "EscolaLms\\CourseAccess\\Events\\CourseAccessEnquiryStudentCreatedEvent":
+        "Ulams\\CourseAccess\\Events\\CourseAccessEnquiryStudentCreatedEvent":
           "Zgłoszenie o dostęp do kursu stworzone",
         // TOPIC
-        "EscolaLms\\TopicTypes\\Events\\TopicTypeChanged":
+        "Ulams\\TopicTypes\\Events\\TopicTypeChanged":
           "Temat {{name}} zmianiony",
         // CONSULTATIONS
-        "EscolaLms\\Consultations\\Events\\ApprovedTerm":
+        "Ulams\\Consultations\\Events\\ApprovedTerm":
           "Termin zatwierdzony {{date}}",
-        "EscolaLms\\Consultations\\Events\\ApprovedTermWithTrainer":
+        "Ulams\\Consultations\\Events\\ApprovedTermWithTrainer":
           "Termin z trenerem zatwierdzony {{date}}",
-        "EscolaLms\\Consultations\\Events\\ChangeTerm":
+        "Ulams\\Consultations\\Events\\ChangeTerm":
           "Termin zmieniony na {{date}}",
-        "EscolaLms\\Consultations\\Events\\RejectTerm":
+        "Ulams\\Consultations\\Events\\RejectTerm":
           "Termin {{date}} odrzucony",
-        "EscolaLms\\Consultations\\Events\\RejectTermWithTrainer":
+        "Ulams\\Consultations\\Events\\RejectTermWithTrainer":
           "Termin z trenerem {{date}} odrzucony",
-        "EscolaLms\\Consultations\\Events\\ReminderAboutTerm":
+        "Ulams\\Consultations\\Events\\ReminderAboutTerm":
           "Przypomnienie! Termin o {{date}}",
-        "EscolaLms\\Consultations\\Events\\ReminderTrainerAboutTerm":
+        "Ulams\\Consultations\\Events\\ReminderTrainerAboutTerm":
           "Przypomnienie! Termin o {{date}}",
-        "EscolaLms\\Consultations\\Events\\ReportTerm":
+        "Ulams\\Consultations\\Events\\ReportTerm":
           "Użytkownik zgłosił nowy termin {{date}} na konsultacje {{name}}",
         // WEBINAR
-        "EscolaLms\\Webinar\\Events\\ReminderAboutTerm":
+        "Ulams\\Webinar\\Events\\ReminderAboutTerm":
           "Przypomnienie! Webinar startuje {{date}}",
-        "EscolaLms\\Webinar\\Events\\WebinarTrainerAssigned":
+        "Ulams\\Webinar\\Events\\WebinarTrainerAssigned":
           "Trener został przypisany do webinaru",
-        "EscolaLms\\Webinar\\Events\\WebinarTrainerUnassigned":
+        "Ulams\\Webinar\\Events\\WebinarTrainerUnassigned":
           "Trener został wypisany z webinaru",
         // VIDEO
         ProcessVideoStarted: "Wideo zostało włączone",
         ProcessVideoFailed: "Błąd podczas włączania wideo",
         // CSV USER
-        "EscolaLms\\CsvUsers\\Events\\EscolaLmsImportedNewUserTemplateEvent":
+        "Ulams\\CsvUsers\\Events\\UlamsImportedNewUserTemplateEvent":
           "Zaimportowano nowy szablon użytkownika",
         // UNLOGGED USER
         AssignToProduct:
@@ -1307,24 +1307,24 @@ const resources = {
         FileDeleted: "Plik usunięty",
         FileStored: "Plik przechowywany",
         // SETTINGS
-        "EscolaLms\\Settings\\Events\\SettingPackageConfigUpdated":
+        "Ulams\\Settings\\Events\\SettingPackageConfigUpdated":
           "Pakiet ustawień został zaktualizowany",
         // AUTH
-        "EscolaLms\\Auth\\Events\\AccountBlocked": "Konto zablokowane",
-        "EscolaLms\\Auth\\Events\\AccountConfirmed": "Konto potwierdzone",
-        "EscolaLms\\Auth\\Events\\AccountDeleted": "Konto usuniete",
-        "EscolaLms\\Auth\\Events\\AccountMustBeEnableByAdmin":
+        "Ulams\\Auth\\Events\\AccountBlocked": "Konto zablokowane",
+        "Ulams\\Auth\\Events\\AccountConfirmed": "Konto potwierdzone",
+        "Ulams\\Auth\\Events\\AccountDeleted": "Konto usuniete",
+        "Ulams\\Auth\\Events\\AccountMustBeEnableByAdmin":
           "Konto musi został aktywowane przez administratora",
-        "EscolaLms\\Auth\\Events\\AccountRegistered": "Konto zarejestrowane",
-        "EscolaLms\\Auth\\Events\\ForgotPassword": "Zapomniano hasła",
-        "EscolaLms\\Auth\\Events\\Login": "Poprawnie zalogowano",
-        "EscolaLms\\Auth\\Events\\Logout": "Wylogowano",
-        "EscolaLms\\Auth\\Events\\PasswordChanged": "Hasło zmienione",
-        "EscolaLms\\Auth\\Events\\ResetPassword": "Hasło zresetowane",
-        "EscolaLms\\Auth\\Events\\UserAddedToGroup": "Zostałeś dodany do grupy",
-        "EscolaLms\\Auth\\Events\\UserRemovedFromGroup":
+        "Ulams\\Auth\\Events\\AccountRegistered": "Konto zarejestrowane",
+        "Ulams\\Auth\\Events\\ForgotPassword": "Zapomniano hasła",
+        "Ulams\\Auth\\Events\\Login": "Poprawnie zalogowano",
+        "Ulams\\Auth\\Events\\Logout": "Wylogowano",
+        "Ulams\\Auth\\Events\\PasswordChanged": "Hasło zmienione",
+        "Ulams\\Auth\\Events\\ResetPassword": "Hasło zresetowane",
+        "Ulams\\Auth\\Events\\UserAddedToGroup": "Zostałeś dodany do grupy",
+        "Ulams\\Auth\\Events\\UserRemovedFromGroup":
           "Zostałeś usunięty z grupy",
-        "EscolaLms\\BulkNotifications\\Events\\NotificationSent": "{{name}}",
+        "Ulams\\BulkNotifications\\Events\\NotificationSent": "{{name}}",
         AccountConfirmed: "Konto potwierdzone",
         ProductAddedToCart: "Produkt dodany do koszyka",
         ProductRemovedFromCart: "Produkt usunięty z koszyka",

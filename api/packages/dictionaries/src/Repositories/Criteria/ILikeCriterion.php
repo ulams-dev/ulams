@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Repositories\Criteria;
+namespace Ulams\Dictionaries\Repositories\Criteria;
 
-use EscolaLms\Core\Repositories\Criteria\Criterion;
+use Ulams\Core\Repositories\Criteria\Criterion;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 

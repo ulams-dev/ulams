@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Permissions\Tests\Api;
+namespace Ulams\Permissions\Tests\Api;
 
-use EscolaLms\Permissions\Events\PermissionRoleChanged;
-use EscolaLms\Permissions\Tests\TestCase;
+use Ulams\Permissions\Events\PermissionRoleChanged;
+use Ulams\Permissions\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;

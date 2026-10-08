@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Models;
+namespace Ulams\Courses\Models;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 

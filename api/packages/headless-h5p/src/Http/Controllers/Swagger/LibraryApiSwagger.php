@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Http\Controllers\Swagger;
+namespace Ulams\HeadlessH5P\Http\Controllers\Swagger;
 
-use EscolaLms\HeadlessH5P\Http\Requests\LibraryDeleteRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\LibraryFilterRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\LibraryInstallRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\LibraryListRequest;
-use EscolaLms\HeadlessH5P\Http\Requests\LibraryUploadRequest;
+use Ulams\HeadlessH5P\Http\Requests\LibraryDeleteRequest;
+use Ulams\HeadlessH5P\Http\Requests\LibraryFilterRequest;
+use Ulams\HeadlessH5P\Http\Requests\LibraryInstallRequest;
+use Ulams\HeadlessH5P\Http\Requests\LibraryListRequest;
+use Ulams\HeadlessH5P\Http\Requests\LibraryUploadRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-use EscolaLms\HeadlessH5P\Http\Requests\LibraryStoreRequest;
+use Ulams\HeadlessH5P\Http\Requests\LibraryStoreRequest;
 
 interface LibraryApiSwagger
 {

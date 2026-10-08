@@ -1,4 +1,4 @@
-import { getGiftQuiz } from '@/services/escola-lms/gift_quiz';
+import { getGiftQuiz } from '@/services/ulams/gift_quiz';
 import { Button, message } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';

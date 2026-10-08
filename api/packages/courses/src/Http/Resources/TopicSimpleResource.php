@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Resources;
+namespace Ulams\Courses\Http\Resources;
 
-use EscolaLms\Courses\Facades\Topic;
+use Ulams\Courses\Facades\Topic;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TopicSimpleResource extends JsonResource

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Repositories;
+namespace Ulams\Auth\Repositories;
 
-use EscolaLms\Auth\Models\SocialAccount;
-use EscolaLms\Auth\Repositories\Contracts\SocialAccountRepositoryContract;
-use EscolaLms\Core\Repositories\BaseRepository;
+use Ulams\Auth\Models\SocialAccount;
+use Ulams\Auth\Repositories\Contracts\SocialAccountRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
 
 class SocialAccountRepository extends BaseRepository implements SocialAccountRepositoryContract
 {

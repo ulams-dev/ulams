@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Services;
+namespace Ulams\Bookmarks\Services;
 
-use EscolaLms\Bookmarks\Dtos\CreateBookmarkDto;
-use EscolaLms\Bookmarks\Dtos\CriteriaDto;
-use EscolaLms\Bookmarks\Dtos\OrderDto;
-use EscolaLms\Bookmarks\Dtos\PageDto;
-use EscolaLms\Bookmarks\Dtos\UpdateBookmarkDto;
-use EscolaLms\Bookmarks\Models\Bookmark;
-use EscolaLms\Bookmarks\Repositories\Contracts\BookmarkRepositoryContract;
-use EscolaLms\Bookmarks\Services\Contracts\BookmarkServiceContract;
+use Ulams\Bookmarks\Dtos\CreateBookmarkDto;
+use Ulams\Bookmarks\Dtos\CriteriaDto;
+use Ulams\Bookmarks\Dtos\OrderDto;
+use Ulams\Bookmarks\Dtos\PageDto;
+use Ulams\Bookmarks\Dtos\UpdateBookmarkDto;
+use Ulams\Bookmarks\Models\Bookmark;
+use Ulams\Bookmarks\Repositories\Contracts\BookmarkRepositoryContract;
+use Ulams\Bookmarks\Services\Contracts\BookmarkServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class BookmarkService implements BookmarkServiceContract

@@ -1,9 +1,9 @@
 <?php
 
 
-namespace EscolaLms\Scorm\Services\Contracts;
+namespace Ulams\Scorm\Services\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
+use Ulams\Core\Dtos\OrderDto;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 

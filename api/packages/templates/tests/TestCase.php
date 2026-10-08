@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Templates\Tests;
+namespace Ulams\Templates\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Templates\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\Templates\EscolaLmsTemplatesServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Categories\UlamsCategoriesServiceProvider;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Templates\Database\Seeders\PermissionTableSeeder;
+use Ulams\Templates\UlamsTemplatesServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     use DatabaseTransactions;
 
@@ -30,14 +30,14 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             ...parent::getPackageProviders($app),
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
-            EscolaLmsTemplatesServiceProvider::class,
-            EscolaLmsSettingsServiceProvider::class,
+            UlamsTemplatesServiceProvider::class,
+            UlamsSettingsServiceProvider::class,
         ];
-        if (class_exists(EscolaLmsAuthServiceProvider::class)) {
-            $providers[] = EscolaLmsAuthServiceProvider::class;
+        if (class_exists(UlamsAuthServiceProvider::class)) {
+            $providers[] = UlamsAuthServiceProvider::class;
         }
-        if (class_exists(EscolaLmsCategoriesServiceProvider::class)) {
-            $providers[] = EscolaLmsCategoriesServiceProvider::class;
+        if (class_exists(UlamsCategoriesServiceProvider::class)) {
+            $providers[] = UlamsCategoriesServiceProvider::class;
         }
         return $providers;
     }

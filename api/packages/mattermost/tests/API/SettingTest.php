@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Mattermost\Tests\API;
+namespace Ulams\Mattermost\Tests\API;
 
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Mattermost\Enum\PackageStatusEnum;
-use EscolaLms\Mattermost\Providers\SettingsServiceProvider;
-use EscolaLms\Mattermost\Tests\TestCase;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Mattermost\Enum\PackageStatusEnum;
+use Ulams\Mattermost\Providers\SettingsServiceProvider;
+use Ulams\Mattermost\Tests\TestCase;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Config;
 
@@ -19,12 +19,12 @@ class SettingTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
+        if (!class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
             $this->markTestSkipped('Settings package not installed');
         }
 
         $this->seed(PermissionTableSeeder::class);
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
         $this->user = config('auth.providers.users.model')::factory()->create();
         $this->user->guard_name = 'api';
         $this->user->assignRole('admin');
@@ -33,7 +33,7 @@ class SettingTest extends TestCase
 
     protected function tearDown(): void
     {
-        \EscolaLms\Settings\Models\Config::truncate();
+        \Ulams\Settings\Models\Config::truncate();
     }
 
     public function testAdministrableConfigApi(): void

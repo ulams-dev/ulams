@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Reports\Exports\Stats\Course;
+namespace Ulams\Reports\Exports\Stats\Course;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Reports\Exports\Stats\Course\Sheets\FinishedTopicsAttemptsSheet;
-use EscolaLms\Reports\Exports\Stats\Course\Sheets\FinishedTopicsInfoSheet;
-use EscolaLms\Reports\Exports\Stats\Course\Sheets\FinishedTopicsSecondsSheet;
-use EscolaLms\Reports\Exports\Stats\Course\Sheets\FinishedTopicsStatusesSheet;
-use EscolaLms\Reports\Stats\Course\FinishedTopics;
+use Ulams\Courses\Models\Course;
+use Ulams\Reports\Exports\Stats\Course\Sheets\FinishedTopicsAttemptsSheet;
+use Ulams\Reports\Exports\Stats\Course\Sheets\FinishedTopicsInfoSheet;
+use Ulams\Reports\Exports\Stats\Course\Sheets\FinishedTopicsSecondsSheet;
+use Ulams\Reports\Exports\Stats\Course\Sheets\FinishedTopicsStatusesSheet;
+use Ulams\Reports\Stats\Course\FinishedTopics;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;

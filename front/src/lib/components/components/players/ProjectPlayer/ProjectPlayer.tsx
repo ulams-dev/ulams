@@ -2,13 +2,13 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import styled, { withTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
-import { API } from "@lms/sdk";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { API } from "@ulams/sdk";
+import { UlamsContext } from "@ulams/sdk/react";
 import {
   addProject,
   removeProject,
   fetchProjects,
-} from "@lms/sdk/services/project";
+} from "@ulams/sdk/services/project";
 
 import { DATETIME_FORMAT } from "../../../utils/utils";
 import { Button } from "../../atoms/Button/Button";
@@ -96,7 +96,7 @@ const ProjectsList: React.FC<ProjectsListProps> = ({
   className,
 }) => {
   const { t } = useTranslation();
-  const { token, apiUrl } = useContext(EscolaLMSContext);
+  const { token, apiUrl } = useContext(UlamsContext);
   const [isDeleting, setIsDeleting] = useState<number[]>([]);
 
   const onFileDeleteFactory = useCallback(
@@ -149,7 +149,7 @@ export const ProjectPlayer: React.FC<ProjectPlayerProps> = ({
   className,
   onProjectsChange,
 }) => {
-  const { token, apiUrl } = useContext(EscolaLMSContext);
+  const { token, apiUrl } = useContext(UlamsContext);
   const [projects, setProjects] = useState<ProjectsData>({
     data: [],
     loading: false,
@@ -208,7 +208,7 @@ export const ProjectPlayer: React.FC<ProjectPlayerProps> = ({
 
   return (
     <ProjectPlayerWrapper
-      className={"wellms-component" + ` ${className}`}
+      className={"ulams-component" + ` ${className}`}
       data-testid="project-player"
     >
       {topic.description && (

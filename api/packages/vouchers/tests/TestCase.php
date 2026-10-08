@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Vouchers\Tests;
+namespace Ulams\Vouchers\Tests;
 
-use EscolaLms\Cart\EscolaLmsCartServiceProvider;
-use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
-use EscolaLms\Payments\Providers\PaymentsServiceProvider;
-use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
-use EscolaLms\Vouchers\EscolaLmsVouchersServiceProvider;
+use Ulams\Cart\UlamsCartServiceProvider;
+use Ulams\Categories\UlamsCategoriesServiceProvider;
+use Ulams\Core\Models\User;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
+use Ulams\Payments\Providers\PaymentsServiceProvider;
+use Ulams\Tags\UlamsTagsServiceProvider;
+use Ulams\Vouchers\UlamsVouchersServiceProvider;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
@@ -26,10 +26,10 @@ class TestCase extends CoreTestCase
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
             PaymentsServiceProvider::class,
-            EscolaLmsCategoriesServiceProvider::class,
-            EscolaLmsTagsServiceProvider::class,
-            EscolaLmsCartServiceProvider::class,
-            EscolaLmsVouchersServiceProvider::class,
+            UlamsCategoriesServiceProvider::class,
+            UlamsTagsServiceProvider::class,
+            UlamsCartServiceProvider::class,
+            UlamsVouchersServiceProvider::class,
         ];
         return $providers;
     }

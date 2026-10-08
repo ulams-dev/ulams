@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Models;
+namespace Ulams\StationaryEvents\Models;
 
 use Carbon\Carbon;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\StationaryEvents\Database\Factories\StationaryEventFactory;
-use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
+use Ulams\Auth\Models\User;
+use Ulams\Categories\Models\Category;
+use Ulams\StationaryEvents\Database\Factories\StationaryEventFactory;
+use Ulams\StationaryEvents\Enum\StationaryEventStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

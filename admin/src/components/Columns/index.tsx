@@ -1,4 +1,4 @@
-import { dataRangeStats } from '@/services/escola-lms/user';
+import { dataRangeStats } from '@/services/ulams/user';
 import { Column } from '@ant-design/plots';
 import ProCard from '@ant-design/pro-card';
 import { Alert, Spin } from 'antd';

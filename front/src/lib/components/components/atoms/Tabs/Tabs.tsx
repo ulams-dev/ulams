@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { getFontFromTheme } from "../../../theme/provider";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { getUniqueId } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface TabProps {
   label: string;
@@ -85,7 +85,7 @@ export const Tabs: React.FC<TabsProps> = (props) => {
   const panel = tabs && tabs.find((tab) => tab.key === selectedTab);
 
   return (
-    <StyledTabs className={`wellms-component ${className}`}>
+    <StyledTabs className={`ulams-component ${className}`}>
       <div className={"tabs-menu"}>
         <div className={"tabs-menu-inner"}>
           {tabs.map((tab) => {

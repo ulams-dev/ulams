@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Gallery, Item } from "react-photoswipe-gallery";
 import styled, { withTheme, createGlobalStyle } from "styled-components";
-import { API } from "@lms/sdk";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { API } from "@ulams/sdk";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { SharedLightboxStyle } from "../../../utils/utils";
 import { ResponsiveImage } from "../../organisms/ResponsiveImage/ResponsiveImage";
 
@@ -55,7 +55,7 @@ export const ImagePlayer: React.FC<ImagePlayerProps> = ({
         }}
       >
         <LightBoxOverwrite />
-        <StyledImagePlayer className={`wellms-component ${className}`}>
+        <StyledImagePlayer className={`ulams-component ${className}`}>
           <Item
             original={imgSrc}
             width={topic.topicable.width}

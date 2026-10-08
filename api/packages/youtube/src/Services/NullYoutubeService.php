@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Youtube\Services;
+namespace Ulams\Youtube\Services;
 
-use EscolaLms\Youtube\Dto\Contracts\YTLiveDtoContract;
-use EscolaLms\Youtube\Dto\YTBroadcastDto;
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
+use Ulams\Youtube\Dto\Contracts\YTLiveDtoContract;
+use Ulams\Youtube\Dto\YTBroadcastDto;
+use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Support\Collection;
 
 class NullYoutubeService implements YoutubeServiceContract

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Providers;
+namespace Ulams\Bookmarks\Providers;
 
-use EscolaLms\Bookmarks\Policies\BookmarkPolicy;
+use Ulams\Bookmarks\Policies\BookmarkPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Jobs;
+namespace Ulams\BulkNotifications\Jobs;
 
-use EscolaLms\BulkNotifications\Channels\NotificationChannel;
-use EscolaLms\BulkNotifications\Events\NotificationSent;
-use EscolaLms\BulkNotifications\ValueObjects\Notification;
+use Ulams\BulkNotifications\Channels\NotificationChannel;
+use Ulams\BulkNotifications\Events\NotificationSent;
+use Ulams\BulkNotifications\ValueObjects\Notification;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

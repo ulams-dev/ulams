@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Auth;
+namespace Ulams\TemplatesEmail\Auth;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
 
 abstract class CommonAuthVariables extends UserVariables
 {

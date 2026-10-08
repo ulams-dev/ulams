@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Tests\Api;
+namespace Ulams\HeadlessH5P\Tests\Api;
 
-use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use EscolaLms\HeadlessH5P\Tests\TestCase;
-use EscolaLms\HeadlessH5P\Tests\Traits\H5PTestingTrait;
+use Ulams\HeadlessH5P\Models\H5PLibrary;
+use Ulams\HeadlessH5P\Tests\TestCase;
+use Ulams\HeadlessH5P\Tests\Traits\H5PTestingTrait;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class LibraryLanguageApiTest extends TestCase

@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from "react";
 import styled, { css } from "styled-components";
-import { API } from "@lms/sdk";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { API } from "@ulams/sdk";
+import { UlamsContext } from "@ulams/sdk/react";
 import { TreeSelect, TreeSelectProps } from "../../atoms/TreeSelect";
 import { Stack } from "../../../";
 import { getFontFromTheme } from "../../../theme/provider";
@@ -21,9 +21,9 @@ interface TreeNode {
 
 // `${class}:${id}`
 export type RelatedValue =
-  | `EscolaLMS\\Courses\\Course:${number}`
-  | `EscolaLMS\\Courses\\Topic:${number}`
-  | `EscolaLMS\\Courses\\Lesson:${number}`;
+  | `Ulams\\Courses\\Course:${number}`
+  | `Ulams\\Courses\\Topic:${number}`
+  | `Ulams\\Courses\\Lesson:${number}`;
 
 function isLesson(el: API.Lesson | API.Topic): el is API.Lesson {
   return (el as API.Lesson).lessons !== undefined;
@@ -39,7 +39,7 @@ const traverseTree = (
       return {
         title: br.title,
         label,
-        value: `EscolaLMS\\Courses\\Lesson:${br.id}`,
+        value: `Ulams\\Courses\\Lesson:${br.id}`,
         children: [
           ...traverseTree(br.lessons as API.Lesson[], label),
           ...traverseTree(br?.topics ?? [], label),
@@ -50,7 +50,7 @@ const traverseTree = (
     return {
       title: br.title,
       label: `${currLabel} - ${br.title}`,
-      value: `EscolaLMS\\Courses\\Topic:${br.id}`,
+      value: `Ulams\\Courses\\Topic:${br.id}`,
     };
   });
 };
@@ -79,7 +79,7 @@ export const RelatedTreeSelect = <ValueType,>({
   error,
   ...props
 }: Props<ValueType>) => {
-  const { program } = useContext(EscolaLMSContext);
+  const { program } = useContext(UlamsContext);
 
   const treeData: TreeNode[] = useMemo(() => {
     if (!program || !program.byId) return [];
@@ -93,7 +93,7 @@ export const RelatedTreeSelect = <ValueType,>({
           {
             title: courseProgram.value.title,
             label: courseProgram.value.title,
-            value: `EscolaLMS\\Courses\\Course:${courseProgram.value.id}`,
+            value: `Ulams\\Courses\\Course:${courseProgram.value.id}`,
             children: traverseTree(
               courseProgram.value?.lessons ?? [],
               courseProgram.value.title

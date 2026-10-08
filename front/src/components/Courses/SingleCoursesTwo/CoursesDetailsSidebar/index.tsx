@@ -1,11 +1,11 @@
 import React, { useContext, useMemo } from "react";
-import { API } from "@lms/sdk";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { API } from "@ulams/sdk";
+import { UlamsContext } from "@ulams/sdk/react/context";
 
-import { IconText } from "@lms/components/components/atoms/IconText/IconText";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { CourseProgress } from "@lms/components/components/atoms/CourseProgress/CourseProgress";
-import { PricingCard } from "@lms/components/components/atoms/PricingCard/PricingCard";
+import { IconText } from "@ulams/components/components/atoms/IconText/IconText";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { CourseProgress } from "@ulams/components/components/atoms/CourseProgress/CourseProgress";
+import { PricingCard } from "@ulams/components/components/atoms/PricingCard/PricingCard";
 import { IconWin } from "../../../../icons";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -67,7 +67,7 @@ const CoursesDetailsSidebar: React.FC<Props> = ({
   course,
   onRequestAccess,
 }) => {
-  const { user, courseAccess } = useContext(EscolaLMSContext);
+  const { user, courseAccess } = useContext(UlamsContext);
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { progress } = useCourseProgress(Number(id));

@@ -1,27 +1,27 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests;
+namespace Ulams\TemplatesEmail\Tests;
 
-use EscolaLms\AssignWithoutAccount\EscolaLmsAssignWithoutAccountServiceProvider;
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\Cart\EscolaLmsCartServiceProvider;
-use EscolaLms\ConsultationAccess\EscolaLmsConsultationAccessServiceProvider;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
-use EscolaLms\CourseAccess\EscolaLmsCourseAccessServiceProvider;
-use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
-use EscolaLms\CsvUsers\EscolaLmsCsvUsersServiceProvider;
-use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Tasks\EscolaLmsTasksServiceProvider;
-use EscolaLms\Templates\EscolaLmsTemplatesServiceProvider;
-use EscolaLms\TemplatesEmail\Database\Seeders\TemplatesEmailSeeder;
-use EscolaLms\TemplatesEmail\EscolaLmsTemplatesEmailServiceProvider;
-use EscolaLms\TemplatesEmail\Services\Contracts\MjmlServiceContract;
-use EscolaLms\TemplatesEmail\Services\MjmlService;
-use EscolaLms\TopicTypeProject\EscolaLmsTopicTypeProjectServiceProvider;
-use EscolaLms\Youtube\EscolaLmsYoutubeServiceProvider;
+use Ulams\AssignWithoutAccount\UlamsAssignWithoutAccountServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\Cart\UlamsCartServiceProvider;
+use Ulams\ConsultationAccess\UlamsConsultationAccessServiceProvider;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
+use Ulams\CourseAccess\UlamsCourseAccessServiceProvider;
+use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\CsvUsers\UlamsCsvUsersServiceProvider;
+use Ulams\Scorm\UlamsScormServiceProvider;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Tasks\UlamsTasksServiceProvider;
+use Ulams\Templates\UlamsTemplatesServiceProvider;
+use Ulams\TemplatesEmail\Database\Seeders\TemplatesEmailSeeder;
+use Ulams\TemplatesEmail\UlamsTemplatesEmailServiceProvider;
+use Ulams\TemplatesEmail\Services\Contracts\MjmlServiceContract;
+use Ulams\TemplatesEmail\Services\MjmlService;
+use Ulams\TopicTypeProject\UlamsTopicTypeProjectServiceProvider;
+use Ulams\Youtube\UlamsYoutubeServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 use Laravel\Passport\Passport;
@@ -40,8 +40,8 @@ class TestCase extends CoreTestCase
 
         Passport::useClientModel(Client::class);
 
-        Config::set('escola_settings.use_database', true);
-        Config::set(EscolaLmsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.use_api', true);
+        Config::set('ulams_settings.use_database', true);
+        Config::set(UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.use_api', true);
         $this->instance(
             MjmlServiceContract::class,
             Mockery::mock(MjmlService::class, function (MockInterface $mock) {
@@ -57,44 +57,44 @@ class TestCase extends CoreTestCase
             ...parent::getPackageProviders($app),
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
-            EscolaLmsTemplatesServiceProvider::class,
-            EscolaLmsTemplatesEmailServiceProvider::class,
+            UlamsTemplatesServiceProvider::class,
+            UlamsTemplatesEmailServiceProvider::class,
         ];
-        if (class_exists(EscolaLmsYoutubeServiceProvider::class)) {
-            $providers[] = EscolaLmsYoutubeServiceProvider::class;
+        if (class_exists(UlamsYoutubeServiceProvider::class)) {
+            $providers[] = UlamsYoutubeServiceProvider::class;
         }
-        if (class_exists(\EscolaLms\Auth\EscolaLmsAuthServiceProvider::class)) {
-            $providers[] = EscolaLmsAuthServiceProvider::class;
+        if (class_exists(\Ulams\Auth\UlamsAuthServiceProvider::class)) {
+            $providers[] = UlamsAuthServiceProvider::class;
         }
-        if (class_exists(\EscolaLms\Courses\EscolaLmsCourseServiceProvider::class)) {
-            $providers[] = EscolaLmsCourseServiceProvider::class;
+        if (class_exists(\Ulams\Courses\UlamsCourseServiceProvider::class)) {
+            $providers[] = UlamsCourseServiceProvider::class;
         }
-        if (class_exists(\EscolaLms\CourseAccess\EscolaLmsCourseAccessServiceProvider::class)) {
-            $providers[] = EscolaLmsCourseAccessServiceProvider::class;
+        if (class_exists(\Ulams\CourseAccess\UlamsCourseAccessServiceProvider::class)) {
+            $providers[] = UlamsCourseAccessServiceProvider::class;
         }
-        if (class_exists(\EscolaLms\Scorm\EscolaLmsScormServiceProvider::class)) {
-            $providers[] = EscolaLmsScormServiceProvider::class;
+        if (class_exists(\Ulams\Scorm\UlamsScormServiceProvider::class)) {
+            $providers[] = UlamsScormServiceProvider::class;
         }
-        if (class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
-            $providers[] = EscolaLmsSettingsServiceProvider::class;
+        if (class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
+            $providers[] = UlamsSettingsServiceProvider::class;
         }
-        if (class_exists(\EscolaLms\CsvUsers\EscolaLmsCsvUsersServiceProvider::class)) {
-            $providers[] = EscolaLmsCsvUsersServiceProvider::class;
+        if (class_exists(\Ulams\CsvUsers\UlamsCsvUsersServiceProvider::class)) {
+            $providers[] = UlamsCsvUsersServiceProvider::class;
         }
-        if (class_exists(\EscolaLms\AssignWithoutAccount\EscolaLmsAssignWithoutAccountServiceProvider::class)) {
-            $providers[] = EscolaLmsAssignWithoutAccountServiceProvider::class;
+        if (class_exists(\Ulams\AssignWithoutAccount\UlamsAssignWithoutAccountServiceProvider::class)) {
+            $providers[] = UlamsAssignWithoutAccountServiceProvider::class;
         }
-        if (class_exists(\EscolaLms\Cart\EscolaLmsCartServiceProvider::class)) {
-            $providers[] = EscolaLmsCartServiceProvider::class;
+        if (class_exists(\Ulams\Cart\UlamsCartServiceProvider::class)) {
+            $providers[] = UlamsCartServiceProvider::class;
         }
-        if (class_exists(\EscolaLms\Tasks\EscolaLmsTasksServiceProvider::class)) {
-            $providers[] = EscolaLmsTasksServiceProvider::class;
+        if (class_exists(\Ulams\Tasks\UlamsTasksServiceProvider::class)) {
+            $providers[] = UlamsTasksServiceProvider::class;
         }
-        if (class_exists(\EscolaLms\ConsultationAccess\EscolaLmsConsultationAccessServiceProvider::class)) {
-            $providers[] = EscolaLmsConsultationAccessServiceProvider::class;
+        if (class_exists(\Ulams\ConsultationAccess\UlamsConsultationAccessServiceProvider::class)) {
+            $providers[] = UlamsConsultationAccessServiceProvider::class;
         }
-        if (class_exists(\EscolaLms\TopicTypeProject\EscolaLmsTopicTypeProjectServiceProvider::class)) {
-            $providers[] = EscolaLmsTopicTypeProjectServiceProvider::class;
+        if (class_exists(\Ulams\TopicTypeProject\UlamsTopicTypeProjectServiceProvider::class)) {
+            $providers[] = UlamsTopicTypeProjectServiceProvider::class;
         }
         return $providers;
     }
@@ -103,7 +103,7 @@ class TestCase extends CoreTestCase
     {
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('passport.client_uuids', true);
-        $app['config']->set(EscolaLmsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.use_api', true);
+        $app['config']->set(UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.use_api', true);
         // Add api keys to local phpunit.xml / testbench.yaml; use github repository secrets in github actions
     }
 }

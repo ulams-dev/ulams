@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Services;
+namespace Ulams\TopicTypeProject\Services;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\TopicTypeProject\Dtos\CreateProjectSolutionDto;
-use EscolaLms\TopicTypeProject\Dtos\CriteriaDto;
-use EscolaLms\TopicTypeProject\Dtos\GradeProjectSolutionDto;
-use EscolaLms\TopicTypeProject\Dtos\PageDto;
-use EscolaLms\TopicTypeProject\Events\ProjectSolutionCreatedEvent;
-use EscolaLms\TopicTypeProject\Events\ProjectSolutionGradedEvent;
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
-use EscolaLms\TopicTypeProject\Repositories\Contracts\ProjectSolutionRepositoryContract;
-use EscolaLms\TopicTypeProject\Services\Contracts\ProjectSolutionServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\TopicTypeProject\Dtos\CreateProjectSolutionDto;
+use Ulams\TopicTypeProject\Dtos\CriteriaDto;
+use Ulams\TopicTypeProject\Dtos\GradeProjectSolutionDto;
+use Ulams\TopicTypeProject\Dtos\PageDto;
+use Ulams\TopicTypeProject\Events\ProjectSolutionCreatedEvent;
+use Ulams\TopicTypeProject\Events\ProjectSolutionGradedEvent;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
+use Ulams\TopicTypeProject\Repositories\Contracts\ProjectSolutionRepositoryContract;
+use Ulams\TopicTypeProject\Services\Contracts\ProjectSolutionServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 

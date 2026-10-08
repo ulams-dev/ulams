@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Database\Factories;
+namespace Ulams\TopicTypeProject\Database\Factories;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
+use Ulams\Auth\Models\User;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProjectSolutionFactory extends Factory

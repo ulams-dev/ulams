@@ -9,9 +9,9 @@ import React, {
 import { useTranslation } from "react-i18next";
 import styled, { withTheme } from "styled-components";
 import { Formik } from "formik";
-import { API } from "@lms/sdk";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { getQuizAttempts } from "@lms/sdk/services/gfit_quiz";
+import { API } from "@ulams/sdk";
+import { UlamsContext } from "@ulams/sdk/react";
+import { getQuizAttempts } from "@ulams/sdk/services/gfit_quiz";
 
 import {
   GiftQuizBooleanAnswer,
@@ -21,7 +21,7 @@ import {
   GiftQuizNumericAnswer,
   GiftQuizTextAnswer,
   GiftQuizMatchingAnswer,
-} from "@lms/components/types/gift-quiz";
+} from "@ulams/components/types/gift-quiz";
 
 import { Button, Countdown, Row, Stack, Title } from "../../";
 import MultipleChoice from "./questions/MultipleChoice/MultipleChoice";
@@ -98,7 +98,7 @@ function isMatchingAnswer(
 
 const getDefaultValues = (
   questions: API.QuizQuestion[],
-  answers?: EscolaLms.TopicTypeGift.Models.AttemptAnswer[] | null
+  answers?: Ulams.TopicTypeGift.Models.AttemptAnswer[] | null
 ) => {
   const findAnswer = (questionId: number) =>
     answers?.find((ansObj) => ansObj.topic_gift_question_id === questionId)
@@ -158,7 +158,7 @@ const getDefaultValues = (
 };
 
 function useAttemptsTooltip(quizId: number | undefined) {
-  const { token, apiUrl } = useContext(EscolaLMSContext);
+  const { token, apiUrl } = useContext(UlamsContext);
   const [attempts, setAttempts] = useState({
     loading: false,
     count: 0,

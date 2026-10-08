@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Jitsi\Exceptions;
+namespace Ulams\Jitsi\Exceptions;
 
 use Exception;
 use Illuminate\Http\JsonResponse;

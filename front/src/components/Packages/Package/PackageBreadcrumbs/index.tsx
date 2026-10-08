@@ -1,13 +1,13 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import Breadcrumbs from "@/components/Common/Breadcrumbs";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import routeRoutes from "@/components/Routes/routes";
 
 export const PackageBreadcrumbs = () => {
-  const { product } = useContext(EscolaLMSContext);
+  const { product } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   if (!product.value) {

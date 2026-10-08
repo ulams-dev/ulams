@@ -28,7 +28,7 @@ services:
       context: ..
       dockerfile: admin/Dockerfile
     environment:
-      - API_URL=https://api.escolalms.com
+      - API_URL=https://api.ulams.app
     ports:
       - 88:80
     volumes:

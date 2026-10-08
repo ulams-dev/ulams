@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Requests;
+namespace Ulams\Courses\Http\Requests;
 
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\User;
-use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\User;
+use Ulams\Courses\Repositories\Contracts\CourseRepositoryContract;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AssignAuthorApiRequest extends FormRequest

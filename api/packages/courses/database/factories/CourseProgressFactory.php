@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Database\Factories;
+namespace Ulams\Courses\Database\Factories;
 
-use EscolaLms\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\CourseProgress;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CourseProgressFactory extends Factory

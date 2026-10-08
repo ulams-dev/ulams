@@ -4,7 +4,7 @@ import { Collapse, Space, Spin, Typography } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage, useParams } from 'umi';
 
-import { getQuizAttemptDetails } from '@/services/escola-lms/gift_quiz';
+import { getQuizAttemptDetails } from '@/services/ulams/gift_quiz';
 import QuizReportDetailsDescription from './components/QuizReportDetailsDescription';
 import QuizReportQuestionAnswerDetails from './components/QuizReportQuestionAnswerDetails';
 import QuizReportQuestionDetails from './components/QuizReportQuestionDetails';

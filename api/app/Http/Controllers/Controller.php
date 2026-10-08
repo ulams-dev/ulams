@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\RedirectResponse;
 use Redirect;
 use Session;
 
-class Controller extends EscolaLmsBaseController
+class Controller extends UlamsBaseController
 {
     public static function getColumnTable($table)
     {

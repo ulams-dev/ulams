@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Jitsi\Enum;
+namespace Ulams\Jitsi\Enum;
 
 use BenSampo\Enum\Enum;
 

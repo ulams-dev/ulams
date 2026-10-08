@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Scorm\Repositories\Contracts;
+namespace Ulams\Scorm\Repositories\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 
 interface ScormRepositoryContract extends BaseRepositoryContract

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Courses\Models\TopicContent;
+namespace Ulams\Courses\Models\TopicContent;
 
-use EscolaLms\Core\Models\Traits\QueryCacheable;
-use EscolaLms\Courses\Models\Contracts\TopicContentContract;
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Core\Models\Traits\QueryCacheable;
+use Ulams\Courses\Models\Contracts\TopicContentContract;
+use Ulams\Courses\Models\Topic;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 

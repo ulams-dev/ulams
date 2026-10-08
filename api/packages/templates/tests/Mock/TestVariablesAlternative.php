@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Templates\Tests\Mock;
+namespace Ulams\Templates\Tests\Mock;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Contracts\TemplateVariableContract;
-use EscolaLms\Templates\Core\AbstractTemplateVariableClass;
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Contracts\TemplateVariableContract;
+use Ulams\Templates\Core\AbstractTemplateVariableClass;
+use Ulams\Templates\Events\EventWrapper;
 
 class TestVariablesAlternative extends AbstractTemplateVariableClass implements TemplateVariableContract
 {

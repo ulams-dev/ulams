@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useCallback, useMemo } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { Category } from "@lms/sdk/types";
+import { UlamsContext } from "@ulams/sdk/react";
+import { Category } from "@ulams/sdk/types";
 import { useHistory, useLocation } from "react-router-dom";
 import queryString from "query-string";
 import { CoursesContext } from "@/components/Courses/CoursesContext";
@@ -12,7 +12,7 @@ type EntityType = "courses" | "consultations";
 const useFilter = (entityType: EntityType = "courses") => {
   const coursesContext = useContext(CoursesContext);
   const consultationsContext = useContext(ConsultationsContext);
-  const { fetchCategories, categoryTree } = useContext(EscolaLMSContext);
+  const { fetchCategories, categoryTree } = useContext(UlamsContext);
 
   const { search, pathname } = useLocation();
   const history = useHistory();

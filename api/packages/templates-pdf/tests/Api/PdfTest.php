@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Tests\Api;
+namespace Ulams\TemplatesPdf\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\TemplatesPdf\Models\FabricPDF;
-use EscolaLms\TemplatesPdf\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\TemplatesPdf\Models\FabricPDF;
+use Ulams\TemplatesPdf\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Http;
 
@@ -129,7 +129,7 @@ class PdfTest extends TestCase
         $pdf1 = FabricPDF::factory()->createOne(
             [
                 'user_id' => $this->user->id,
-                'assignable_type' => 'EscolaLms\Test\Models\Test',
+                'assignable_type' => 'Ulams\Test\Models\Test',
                 'assignable_id' => '1'
             ]
         );
@@ -140,7 +140,7 @@ class PdfTest extends TestCase
         );
 
         $response =  $this->actingAs($this->user)
-            ->getJson('/api/pdfs?assignable_type=EscolaLms\Test\Models\Test&assignable_id=1');
+            ->getJson('/api/pdfs?assignable_type=Ulams\Test\Models\Test&assignable_id=1');
 
         $response->assertOk();
         $response->assertJsonCount(1, 'data');

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Translations\Enum;
+namespace Ulams\Translations\Enum;
 
 class ConstantEnum
 {

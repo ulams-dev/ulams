@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Video\Http\Controllers\Swagger;
+namespace Ulams\Video\Http\Controllers\Swagger;
 
-use EscolaLms\Video\Http\Requests\VideoProcessStateRequest;
+use Ulams\Video\Http\Requests\VideoProcessStateRequest;
 use Illuminate\Http\JsonResponse;
 
 interface VideoControllerSwagger

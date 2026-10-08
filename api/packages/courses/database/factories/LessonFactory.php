@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Database\Factories;
+namespace Ulams\Courses\Database\Factories;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class LessonFactory extends Factory

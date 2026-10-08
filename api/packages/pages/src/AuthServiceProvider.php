@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Pages;
+namespace Ulams\Pages;
 
-use EscolaLms\Pages\Models\Page;
-use EscolaLms\Pages\Policies\PagePolicy;
+use Ulams\Pages\Models\Page;
+use Ulams\Pages\Policies\PagePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider

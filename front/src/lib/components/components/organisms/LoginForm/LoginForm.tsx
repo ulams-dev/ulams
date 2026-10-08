@@ -1,17 +1,17 @@
 import { Formik, FormikProps } from "formik";
 import { useContext, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import type {
   DefaultResponseError,
   DefaultResponse,
-} from "@lms/sdk/types";
+} from "@ulams/sdk/types";
 import type { ResponseError } from "umi-request";
 
 import styled, { withTheme } from "styled-components";
 
 import { Input, Button, Title, Link, Text, Checkbox } from "../../../";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 const StyledDiv = styled.div<{ mobile: boolean }>`
   margin: 0;
@@ -85,7 +85,7 @@ export const LoginForm: React.FC<Props> = ({
     remember_me: false,
   };
   const { t } = useTranslation();
-  const { login, user } = useContext(EscolaLMSContext);
+  const { login, user } = useContext(UlamsContext);
 
   const formikRef = useRef<FormikProps<MyFormValues>>(null);
 
@@ -111,7 +111,7 @@ export const LoginForm: React.FC<Props> = ({
   }, [user.value, onSuccess]);
 
   return (
-    <StyledDiv className={`wellms-component ${className}`} mobile={mobile}>
+    <StyledDiv className={`ulams-component ${className}`} mobile={mobile}>
       <Title level={3}>{t("Login.Header")}</Title>{" "}
       <Formik
         innerRef={formikRef}

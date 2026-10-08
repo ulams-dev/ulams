@@ -1,13 +1,13 @@
 <?php
-namespace EscolaLms\HeadlessH5P\Repositories\Contracts;
+namespace Ulams\HeadlessH5P\Repositories\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\HeadlessH5P\Dtos\ContentFilterCriteriaDto;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\HeadlessH5P\Dtos\ContentFilterCriteriaDto;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 
-use EscolaLms\HeadlessH5P\Models\H5PContent;
-use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use Ulams\HeadlessH5P\Models\H5PContent;
+use Ulams\HeadlessH5P\Models\H5PLibrary;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 interface H5PContentRepositoryContract

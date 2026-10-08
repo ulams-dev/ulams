@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests;
+namespace Ulams\Cart\Http\Requests;
 
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\User;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 abstract class ProductRequest extends FormRequest

@@ -1,8 +1,8 @@
 import styled, { useTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
-import { Button } from "@lms/components/components/atoms/Button/Button";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
 import { IconSuccess } from "../../../../icons";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 
 const SuccessContentStyles = styled.div`
   text-align: center;

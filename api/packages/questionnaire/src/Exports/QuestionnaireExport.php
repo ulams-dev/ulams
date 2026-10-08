@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Exports;
+namespace Ulams\Questionnaire\Exports;
 
-use EscolaLms\Questionnaire\Models\QuestionAnswer;
+use Ulams\Questionnaire\Models\QuestionAnswer;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Exportable;

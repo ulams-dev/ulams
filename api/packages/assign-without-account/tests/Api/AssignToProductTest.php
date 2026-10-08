@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Tests\Api;
+namespace Ulams\AssignWithoutAccount\Tests\Api;
 
-use EscolaLms\AssignWithoutAccount\Database\Seeders\AssignWithoutAccountPermissionSeeder;
-use EscolaLms\AssignWithoutAccount\Events\AssignToProduct;
-use EscolaLms\AssignWithoutAccount\Tests\TestCase;
-use EscolaLms\Auth\Events\AccountRegistered;
-use EscolaLms\Auth\Models\User as AuthUser;
-use EscolaLms\Cart\Events\ProductAttached;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\AssignWithoutAccount\Database\Seeders\AssignWithoutAccountPermissionSeeder;
+use Ulams\AssignWithoutAccount\Events\AssignToProduct;
+use Ulams\AssignWithoutAccount\Tests\TestCase;
+use Ulams\Auth\Events\AccountRegistered;
+use Ulams\Auth\Models\User as AuthUser;
+use Ulams\Cart\Events\ProductAttached;
+use Ulams\Cart\Models\Product;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;

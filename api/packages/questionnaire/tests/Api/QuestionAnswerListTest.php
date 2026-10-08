@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Tests\Api;
+namespace Ulams\Questionnaire\Tests\Api;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Questionnaire\Database\Seeders\QuestionnairePermissionsSeeder;
-use EscolaLms\Questionnaire\Models\Question;
-use EscolaLms\Questionnaire\Models\QuestionAnswer;
-use EscolaLms\Questionnaire\Models\Questionnaire;
-use EscolaLms\Questionnaire\Models\QuestionnaireModel;
-use EscolaLms\Questionnaire\Models\QuestionnaireModelType;
-use EscolaLms\Questionnaire\Tests\TestCase;
+use Ulams\Core\Models\User;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\Course;
+use Ulams\Questionnaire\Database\Seeders\QuestionnairePermissionsSeeder;
+use Ulams\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Models\QuestionAnswer;
+use Ulams\Questionnaire\Models\Questionnaire;
+use Ulams\Questionnaire\Models\QuestionnaireModel;
+use Ulams\Questionnaire\Models\QuestionnaireModelType;
+use Ulams\Questionnaire\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Maatwebsite\Excel\Facades\Excel;
 

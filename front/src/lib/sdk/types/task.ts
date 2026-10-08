@@ -1,11 +1,11 @@
 import { DefaultMetaResponse, PageParams, PaginationParams } from "./core";
 import { TaskRelatedType } from "./enums";
 
-export type TaskNote = EscolaLms.Tasks.Models.TaskNote & {
+export type TaskNote = Ulams.Tasks.Models.TaskNote & {
   note: string;
 };
 
-type AbstractTask = EscolaLms.Tasks.Models.Task & {
+type AbstractTask = Ulams.Tasks.Models.Task & {
   title: string;
   due_date?: string;
   notes?: TaskNote[];

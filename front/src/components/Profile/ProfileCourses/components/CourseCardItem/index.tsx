@@ -1,14 +1,14 @@
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import React from "react";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { Link, useHistory } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import CourseImgPlaceholder from "@/components/Courses/CourseImgPlaceholder";
-import { ResponsiveImage } from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
+import { ResponsiveImage } from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import CourseCardWrapper from "@/components/Courses/CourseCardWrapper";
 import CategoriesBreadCrumbs from "@/components/Categories/CategoriesBreadCrumbs";
 import { CourseCardActions } from "../../CourseCardActions";
-import { NewCourseCard } from "@lms/components";
+import { NewCourseCard } from "@ulams/components";
 import { isPast } from "date-fns/esm";
 
 type Props = {
@@ -54,7 +54,7 @@ const CourseCardItem: React.FC<Props> = ({ course }) => {
         categories={
           <CategoriesBreadCrumbs
             categories={
-              course.categories as EscolaLms.Categories.Models.Category[]
+              course.categories as Ulams.Categories.Models.Category[]
             }
             onCategoryClick={(id) => {
               history.push(`/courses/?categories[]=${id}`);

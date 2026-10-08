@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Commands;
+namespace Ulams\HeadlessH5P\Commands;
 
-use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
+use Ulams\HeadlessH5P\Repositories\H5PFileStorageRepository;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\ExpectationFailedException;

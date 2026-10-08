@@ -1,14 +1,14 @@
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { useContext } from "react";
 import { Button, Spin } from "../../../";
 
 const Authbtn = () => {
-  const { login, user } = useContext(EscolaLMSContext);
+  const { login, user } = useContext(UlamsContext);
   return (
     <Button
       mode="secondary"
       onClick={() => {
-        login({ email: "student@escolalms.com", password: "secret" });
+        login({ email: "student@ulams.app", password: "secret" });
       }}
     >
       {user.loading && <Spin />}

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Auth\Notifications;
+namespace Ulams\Auth\Notifications;
 
 use Illuminate\Auth\Notifications\ResetPassword as NotificationsResetPassword;
 

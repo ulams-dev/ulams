@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Tests\Api\Admin;
+namespace Ulams\ConsultationAccess\Tests\Api\Admin;
 
-use EscolaLms\ConsultationAccess\Database\Seeders\ConsultationAccessPermissionSeeder;
-use EscolaLms\ConsultationAccess\Events\ConsultationAccessEnquiryDisapprovedEvent;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
-use EscolaLms\ConsultationAccess\Tests\TestCase;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\ConsultationAccess\Database\Seeders\ConsultationAccessPermissionSeeder;
+use Ulams\ConsultationAccess\Events\ConsultationAccessEnquiryDisapprovedEvent;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
+use Ulams\ConsultationAccess\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Support\Facades\Event;
 
 class ConsultationAccessEnquiryAdminDisapproveApiTest extends TestCase

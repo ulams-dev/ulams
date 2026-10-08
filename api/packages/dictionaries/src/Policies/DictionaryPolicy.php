@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Policies;
+namespace Ulams\Dictionaries\Policies;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Dictionaries\Enums\DictionariesPermissionEnum;
-use EscolaLms\Dictionaries\Models\Dictionary;
+use Ulams\Auth\Models\User;
+use Ulams\Dictionaries\Enums\DictionariesPermissionEnum;
+use Ulams\Dictionaries\Models\Dictionary;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class DictionaryPolicy

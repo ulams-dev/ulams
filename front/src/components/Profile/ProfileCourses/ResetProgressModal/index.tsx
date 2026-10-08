@@ -1,11 +1,11 @@
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { Row } from "@lms/components/components/atoms/Row/index";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { Modal } from "@lms/components/components/atoms/Modal/Modal";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { Row } from "@ulams/components/components/atoms/Row/index";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { Modal } from "@ulams/components/components/atoms/Modal/Modal";
 
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { CourseProgressItem } from "@lms/sdk/types";
+import { UlamsContext } from "@ulams/sdk/react";
+import { CourseProgressItem } from "@ulams/sdk/types";
 import { FC, useCallback, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -21,7 +21,7 @@ export const ResetProgressModal: FC<Props> = ({
   visible,
   onClose,
 }) => {
-  const { sendProgress } = useContext(EscolaLMSContext);
+  const { sendProgress } = useContext(UlamsContext);
   const { t } = useTranslation();
   const { push } = useHistory();
 

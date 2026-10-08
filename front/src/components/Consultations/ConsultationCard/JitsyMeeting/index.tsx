@@ -4,17 +4,17 @@ import { IJitsiMeetExternalApi } from "@jitsi/react-sdk/lib/types";
 import JitsyMeetingMessage from "@/components/Consultations/ConsultationCard/JitsyMeeting/Message";
 import { useRoles } from "@/hooks/useRoles";
 import { useTranslation } from "react-i18next";
-import { Modal } from "@lms/components/components/atoms/Modal/Modal";
+import { Modal } from "@ulams/components/components/atoms/Modal/Modal";
 import styled from "styled-components";
 import JitsyMeetingSkeleton from "@/components/Skeletons/JitsyMeeting";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import { API_URL } from "@/config/index";
 import useCamera, { cameraPermissions } from "@/hooks/meeting/useCamera";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { IMeetRecording } from "@/components/Consultations/ConsultationCard/JitsyMeeting/types";
 import { JITSY_ANALYTICS_INTERVAL } from "@/utils/constants";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { Button } from "@lms/components/components/atoms/Button/Button";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
 import { useJitsyAnalyticsControl } from "@/hooks/meeting/useJitsyAnalyticsControl";
 
 export const StyledModal = styled(Modal)`
@@ -72,7 +72,7 @@ const JitsyMeeting: React.FC<JitsyMeetingProps> = ({
   const [showMeeting, setShowMeeting] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isRecordingActive, setIsRecordingActive] = useState(false);
-  const { consultation, token } = useContext(EscolaLMSContext);
+  const { consultation, token } = useContext(UlamsContext);
   const { isStudent } = useRoles();
   const { t } = useTranslation();
   const { camera, getDataUrl, cameraAccessStatus, stopCamera } = useCamera();

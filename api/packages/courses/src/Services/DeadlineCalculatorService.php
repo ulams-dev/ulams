@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Services;
+namespace Ulams\Courses\Services;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Services\Contracts\DeadlineCalculatorServiceContract;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Services\Contracts\DeadlineCalculatorServiceContract;
 use Carbon\Carbon;
 
 class DeadlineCalculatorService implements DeadlineCalculatorServiceContract

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Reports\Metrics;
+namespace Ulams\Reports\Metrics;
 
 use Cron\CronExpression;
-use EscolaLms\Reports\Enums\ReportsPermissionsEnum;
-use EscolaLms\Reports\Metrics\Contracts\MetricContract;
+use Ulams\Reports\Enums\ReportsPermissionsEnum;
+use Ulams\Reports\Metrics\Contracts\MetricContract;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Auth;

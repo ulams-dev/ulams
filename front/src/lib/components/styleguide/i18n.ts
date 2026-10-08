@@ -35,7 +35,7 @@ export const resources = {
       "CourseTopNav.finishLesson": "Finish lesson",
       "CourseTopNav.next": "Next",
       "CourseTopNav.prev": "Previous",
-      "I18n.welcomeToWellms": "Welcome to Wellms and react-i18next",
+      "I18n.welcomeToUlams": "Welcome to Ulams and react-i18next",
       "NoteEditor.descInputLabel": "Text",
       "NoteEditor.descInputPlaceholder": "enter note's text",
       "NoteEditor.Discard": "Discard",
@@ -260,7 +260,7 @@ export const resources = {
   },
   fr: {
     translation: {
-      "I18n.welcomeToWellms": "Bienvenue à Wellms et react-i18next",
+      "I18n.welcomeToUlams": "Bienvenue à Ulams et react-i18next",
     },
   },
   pl: {
@@ -293,7 +293,7 @@ export const resources = {
       "CourseTopNav.finishLesson": "Zakończ lekcję",
       "CourseTopNav.next": "Dalej",
       "CourseTopNav.prev": "Cofnij",
-      "I18n.welcomeToWellms": "Witaj w Wellms i react-i18next",
+      "I18n.welcomeToUlams": "Witaj w Ulams i react-i18next",
       "NoteEditor.descInputLabel": "Treść",
       "NoteEditor.descInputPlaceholder": "wpisz treść notatki",
       "NoteEditor.Discard": "Odrzuć",

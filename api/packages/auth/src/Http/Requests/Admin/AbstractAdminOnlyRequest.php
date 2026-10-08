@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests\Admin;
+namespace Ulams\Auth\Http\Requests\Admin;
 
-use EscolaLms\Auth\Http\Requests\ExtendableRequest;
-use EscolaLms\Core\Enums\UserRole;
+use Ulams\Auth\Http\Requests\ExtendableRequest;
+use Ulams\Core\Enums\UserRole;
 
 abstract class AbstractAdminOnlyRequest extends ExtendableRequest
 {

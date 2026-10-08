@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Helpers;
+namespace Ulams\TopicTypes\Helpers;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;

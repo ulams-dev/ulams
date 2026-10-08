@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Reports\Tests\Api\Admin;
+namespace Ulams\Reports\Tests\Api\Admin;
 
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Reports\Enums\ReportsPermissionsEnum;
-use EscolaLms\Reports\Metrics\CoursesPopularityMetric;
-use EscolaLms\Reports\Models\Report;
-use EscolaLms\Reports\Tests\TestCase;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Enum\CoursesPermissionsEnum;
+use Ulams\Courses\Models\Course;
+use Ulams\Reports\Enums\ReportsPermissionsEnum;
+use Ulams\Reports\Metrics\CoursesPopularityMetric;
+use Ulams\Reports\Models\Report;
+use Ulams\Reports\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Carbon;
@@ -33,15 +33,15 @@ class ReportsTest extends TestCase
     public function testMetrics()
     {
         $metrics = [
-            \EscolaLms\Reports\Metrics\CoursesMoneySpentMetric::class,
-            \EscolaLms\Reports\Metrics\CoursesPopularityMetric::class,
-            \EscolaLms\Reports\Metrics\CoursesSecondsSpentMetric::class,
-            \EscolaLms\Reports\Metrics\TutorsPopularityMetric::class,
-            \EscolaLms\Reports\Metrics\CoursesBestRatedMetric::class,
-            \EscolaLms\Reports\Metrics\CoursesTopSellingMetric::class,
-            \EscolaLms\Reports\Metrics\CoursesAuthoredPopularityMetric::class,
-            \EscolaLms\Reports\Metrics\CoursesAuthoredMoneySpentMetric::class,
-            \EscolaLms\Reports\Metrics\CoursesAuthoredSecondsSpentMetric::class,
+            \Ulams\Reports\Metrics\CoursesMoneySpentMetric::class,
+            \Ulams\Reports\Metrics\CoursesPopularityMetric::class,
+            \Ulams\Reports\Metrics\CoursesSecondsSpentMetric::class,
+            \Ulams\Reports\Metrics\TutorsPopularityMetric::class,
+            \Ulams\Reports\Metrics\CoursesBestRatedMetric::class,
+            \Ulams\Reports\Metrics\CoursesTopSellingMetric::class,
+            \Ulams\Reports\Metrics\CoursesAuthoredPopularityMetric::class,
+            \Ulams\Reports\Metrics\CoursesAuthoredMoneySpentMetric::class,
+            \Ulams\Reports\Metrics\CoursesAuthoredSecondsSpentMetric::class,
         ];
 
         config('reports.metrics', $metrics);
@@ -65,7 +65,7 @@ class ReportsTest extends TestCase
         $student2->courses()->saveMany([$course, $course2]);
 
         $response = $this->actingAs($this->admin)->json('GET', '/api/admin/reports/report', [
-            'metric' => \EscolaLms\Reports\Metrics\CoursesPopularityMetric::class,
+            'metric' => \Ulams\Reports\Metrics\CoursesPopularityMetric::class,
         ]);
 
         $response->assertOk();
@@ -83,7 +83,7 @@ class ReportsTest extends TestCase
     public function testReportNotFound()
     {
         $response = $this->actingAs($this->admin)->json('GET', '/api/admin/reports/report', [
-            'metric' => \EscolaLms\Reports\Metrics\CoursesPopularityMetric::class,
+            'metric' => \Ulams\Reports\Metrics\CoursesPopularityMetric::class,
             'date' => Carbon::yesterday()
         ]);
 
@@ -104,7 +104,7 @@ class ReportsTest extends TestCase
         $student2->courses()->saveMany([$course, $course2]);
 
         $response = $this->actingAs($this->admin)->json('GET', '/api/admin/reports/report', [
-            'metric' => \EscolaLms\Reports\Metrics\CoursesPopularityMetric::class,
+            'metric' => \Ulams\Reports\Metrics\CoursesPopularityMetric::class,
             'date' => Carbon::today(),
         ]);
 
@@ -134,7 +134,7 @@ class ReportsTest extends TestCase
         $student2->courses()->saveMany([$course, $course2]);
 
         $response = $this->actingAs($this->admin)->json('GET', '/api/admin/reports/report', [
-            'metric' => \EscolaLms\Reports\Metrics\CoursesPopularityMetric::class,
+            'metric' => \Ulams\Reports\Metrics\CoursesPopularityMetric::class,
             'date' => Carbon::today(),
         ]);
 
@@ -155,7 +155,7 @@ class ReportsTest extends TestCase
 
         // Will return same report that first call
         $response = $this->actingAs($this->admin)->json('GET', '/api/admin/reports/report', [
-            'metric' => \EscolaLms\Reports\Metrics\CoursesPopularityMetric::class,
+            'metric' => \Ulams\Reports\Metrics\CoursesPopularityMetric::class,
             'date' => Carbon::today(),
         ]);
 
@@ -173,7 +173,7 @@ class ReportsTest extends TestCase
 
         // Will calculate fresh report that has different value for course 2
         $response = $this->actingAs($this->admin)->json('GET', '/api/admin/reports/report', [
-            'metric' => \EscolaLms\Reports\Metrics\CoursesPopularityMetric::class,
+            'metric' => \Ulams\Reports\Metrics\CoursesPopularityMetric::class,
         ]);
 
         $response->assertOk();
@@ -191,7 +191,7 @@ class ReportsTest extends TestCase
 
         // Will again calculate fresh report because we are trying to fetch more data points that were available in last saved report
         $response = $this->actingAs($this->admin)->json('GET', '/api/admin/reports/report', [
-            'metric' => \EscolaLms\Reports\Metrics\CoursesPopularityMetric::class,
+            'metric' => \Ulams\Reports\Metrics\CoursesPopularityMetric::class,
             'limit' => 11,
             'date' => Carbon::today(),
         ]);
@@ -224,7 +224,7 @@ class ReportsTest extends TestCase
         $student2->courses()->saveMany([$course, $course2]);
 
         $response = $this->actingAs($this->admin)->json('GET', '/api/admin/reports/report', [
-            'metric' => \EscolaLms\Reports\Metrics\CoursesPopularityMetric::class,
+            'metric' => \Ulams\Reports\Metrics\CoursesPopularityMetric::class,
             'limit' => 1,
         ]);
 
@@ -246,7 +246,7 @@ class ReportsTest extends TestCase
 
         $this
             ->actingAs($this->admin)->json('GET', '/api/admin/reports/report', [
-                'metric' => \EscolaLms\Reports\Metrics\CoursesPopularityMetric::class,
+                'metric' => \Ulams\Reports\Metrics\CoursesPopularityMetric::class,
                 'limit' => -1,
             ])
             ->assertOk()
@@ -271,7 +271,7 @@ class ReportsTest extends TestCase
         $report->save();
 
         $response = $this->actingAs($this->admin)->json('GET', '/api/admin/reports/report', [
-            'metric' => \EscolaLms\Reports\Metrics\CoursesPopularityMetric::class,
+            'metric' => \Ulams\Reports\Metrics\CoursesPopularityMetric::class,
             'date' => Carbon::yesterday()
         ]);
 
@@ -287,7 +287,7 @@ class ReportsTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->admin)->json('GET', '/api/admin/reports/report', [
-            'metric' => \EscolaLms\Reports\Metrics\CoursesPopularityMetric::class,
+            'metric' => \Ulams\Reports\Metrics\CoursesPopularityMetric::class,
             'date' => Carbon::yesterday()->subDay()
         ]);
 
@@ -338,7 +338,7 @@ class ReportsTest extends TestCase
         $this
             ->actingAs($tutor1)
             ->json('GET', '/api/admin/reports/report', [
-                'metric' => \EscolaLms\Reports\Metrics\CoursesAuthoredPopularityMetric::class,
+                'metric' => \Ulams\Reports\Metrics\CoursesAuthoredPopularityMetric::class,
             ])
             ->assertOk()
             ->assertJsonCount(1, 'data')

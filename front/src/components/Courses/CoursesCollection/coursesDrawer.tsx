@@ -1,6 +1,6 @@
 import React from "react";
-import { Button, DropdownCategories } from "@lms/components";
-import { Category } from "@lms/sdk/types";
+import { Button, DropdownCategories } from "@ulams/components";
+import { Category } from "@ulams/sdk/types";
 import { useTranslation } from "react-i18next";
 import {
   MobileDrawerTypes,

@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Providers;
+namespace Ulams\TemplatesSms\Providers;
 
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Settings\Facades\AdministrableConfig;
-use EscolaLms\TemplatesSms\Enums\ConfigEnum;
-use EscolaLms\TemplatesSms\Enums\SmsDriversEnum;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Settings\Facades\AdministrableConfig;
+use Ulams\TemplatesSms\Enums\ConfigEnum;
+use Ulams\TemplatesSms\Enums\SmsDriversEnum;
 use Illuminate\Support\ServiceProvider;
 
 class SettingsServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        if (class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
-            if (!$this->app->getProviders(EscolaLmsSettingsServiceProvider::class)) {
-                $this->app->register(EscolaLmsSettingsServiceProvider::class);
+        if (class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
+            if (!$this->app->getProviders(UlamsSettingsServiceProvider::class)) {
+                $this->app->register(UlamsSettingsServiceProvider::class);
             }
 
             AdministrableConfig::registerConfig(ConfigEnum::CONFIG_KEY . '.default', ['required', 'string', 'in:' . implode(',', SmsDriversEnum::getValues())], false);

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Webinar\Http\Resources;
+namespace Ulams\Webinar\Http\Resources;
 
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\ModelFields\Enum\MetaFieldVisibilityEnum;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TrainerResource extends JsonResource

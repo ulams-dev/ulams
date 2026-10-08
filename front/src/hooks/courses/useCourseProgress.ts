@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { API } from "@lms/sdk";
+import { UlamsContext } from "@ulams/sdk/react";
+import { API } from "@ulams/sdk";
 
 type PogressState = {
   data: API.CourseProgressDetails | undefined;
@@ -15,7 +15,7 @@ export const useCourseProgress = (courseId: number) => {
     loading: false,
   });
   const { user, fetchCourseProgress, courseProgressDetails } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
 
   useEffect(() => {
     if (

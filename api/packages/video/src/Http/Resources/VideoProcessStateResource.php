@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Video\Http\Resources;
+namespace Ulams\Video\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

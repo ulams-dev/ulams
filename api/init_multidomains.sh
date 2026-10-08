@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Wellms multidomains init script!" 
+echo "Ulams multidomains init script!" 
 
 if [ "$DISABLE_PHP_FPM" == 'true' ]
 then
@@ -38,8 +38,8 @@ rm -f /etc/supervisor/custom.d/scheduler.conf
 
 # set env from `LARAVEL_` prefixed env vars
 # this also setup MULTI_DOMAINS eg 
-# when MULTI_DOMAINS: "api-sprawnymarketing.escolalms.com,api-gest.escolalms.com" 
-# then API_SPRAWNYMARKETING_ESCOLALMS_COM_APP_NAME: '"Sprawny Marketing"'
+# when MULTI_DOMAINS: "api-sprawnymarketing.ulams.app,api-gest.ulams.app" 
+# then API_SPRAWNYMARKETING_ULAMS_COM_APP_NAME: '"Sprawny Marketing"'
 
 # if binded by k8s or docker those folders might need to be recreated
 if [ ! -d "storage" ]; then mkdir storage; fi

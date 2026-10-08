@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\Reports\Http\Controllers\Admin;
+namespace Ulams\Reports\Http\Controllers\Admin;
 
-use EscolaLms\Cart\Models\Cart;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Reports\Http\Controllers\Admin\Swagger\StatsSwagger;
-use EscolaLms\Reports\Http\Requests\Admin\CartStatsRequest;
-use EscolaLms\Reports\Http\Requests\Admin\CourseStatsRequest;
-use EscolaLms\Reports\Http\Requests\Admin\DateRangeStatsRequest;
-use EscolaLms\Reports\Http\Requests\Admin\ExportCourseStatRequest;
-use EscolaLms\Reports\Http\Requests\Admin\ExportTopicStatRequest;
-use EscolaLms\Reports\Http\Requests\Admin\ImportCoursesStatsRequest;
-use EscolaLms\Reports\Http\Requests\Admin\TopicStatsRequest;
-use EscolaLms\Reports\Services\Contracts\StatsServiceContract;
+use Ulams\Cart\Models\Cart;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Reports\Http\Controllers\Admin\Swagger\StatsSwagger;
+use Ulams\Reports\Http\Requests\Admin\CartStatsRequest;
+use Ulams\Reports\Http\Requests\Admin\CourseStatsRequest;
+use Ulams\Reports\Http\Requests\Admin\DateRangeStatsRequest;
+use Ulams\Reports\Http\Requests\Admin\ExportCourseStatRequest;
+use Ulams\Reports\Http\Requests\Admin\ExportTopicStatRequest;
+use Ulams\Reports\Http\Requests\Admin\ImportCoursesStatsRequest;
+use Ulams\Reports\Http\Requests\Admin\TopicStatsRequest;
+use Ulams\Reports\Services\Contracts\StatsServiceContract;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class StatsController extends EscolaLmsBaseController implements StatsSwagger
+class StatsController extends UlamsBaseController implements StatsSwagger
 {
     private StatsServiceContract $statsService;
 

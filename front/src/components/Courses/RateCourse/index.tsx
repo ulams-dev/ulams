@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useState } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { useTranslation } from "react-i18next";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { QuestionBox } from "../../QuestionBox";
 import { QuestionnaireModelType, QuestionType } from "@/types/questionnaire";
 import { StyledModal } from "@/components/Courses/RateCourse/styles";
@@ -27,7 +27,7 @@ const RateCourse: React.FC<Props> = ({
   questionnaire,
   onClose,
 }) => {
-  const { sendQuestionnaireAnswer } = useContext(EscolaLMSContext);
+  const { sendQuestionnaireAnswer } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   const [state, setState] = useState(initialState);

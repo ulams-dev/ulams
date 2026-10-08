@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Database\Factories\TopicContent\Enums;
+namespace Ulams\TopicTypes\Database\Factories\TopicContent\Enums;
 
 class TextHelperEnum
 {

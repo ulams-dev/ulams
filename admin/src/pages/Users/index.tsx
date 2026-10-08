@@ -20,8 +20,8 @@ import AuthenticatedLinkButton from '@/components/AuthenticatedLinkButton';
 import SecureUpload from '@/components/SecureUpload';
 import { DATETIME_FORMAT } from '@/consts/dates';
 import useModelFields from '@/hooks/useModelFields';
-import { FieldType } from '@/services/escola-lms/enums';
-import { deleteUser, users } from '@/services/escola-lms/user';
+import { FieldType } from '@/services/ulams/enums';
+import { deleteUser, users } from '@/services/ulams/user';
 import { createTableOrderObject, objectToQueryString, redirectPrefix } from '@/utils/utils';
 import './index.css';
 
@@ -177,7 +177,7 @@ export const TableColumns: ProColumns<API.UserItem>[] = [
 const TableList: React.FC = () => {
   const intl = useIntl();
   const [params, setParams] = useState({});
-  const additionalFields = useModelFields('EscolaLms\\Auth\\Models\\User');
+  const additionalFields = useModelFields('Ulams\\Auth\\Models\\User');
 
   const dynamicAdditionalFieldsColumns: ProColumns<API.UserItem>[] = useMemo(() => {
     if (additionalFields.state !== 'loaded') return [];
@@ -291,7 +291,7 @@ const TableList: React.FC = () => {
             API.UserListItem,
             API.PageParams &
               API.PaginationParams &
-              EscolaLms.Auth.Http.Requests.Admin.UsersListRequest & {
+              Ulams.Auth.Http.Requests.Admin.UsersListRequest & {
                 search: string;
                 role: string;
                 gt_last_login_day?: number;

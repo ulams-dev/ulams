@@ -1,8 +1,8 @@
 <?php
 
-use EscolaLms\Payments\Http\Controllers\Admin\PaymentsController as PaymentsAdminController;
-use EscolaLms\Payments\Http\Controllers\GatewayController;
-use EscolaLms\Payments\Http\Controllers\PaymentsController;
+use Ulams\Payments\Http\Controllers\Admin\PaymentsController as PaymentsAdminController;
+use Ulams\Payments\Http\Controllers\GatewayController;
+use Ulams\Payments\Http\Controllers\PaymentsController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api'], function () {

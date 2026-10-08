@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Cart;
+namespace Ulams\TemplatesEmail\Cart;
 
 class CartOrderCancelledVariables extends CartVariables
 {

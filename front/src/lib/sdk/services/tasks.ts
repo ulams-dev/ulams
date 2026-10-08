@@ -109,7 +109,7 @@ export async function updateTask(
   apiUrl: string,
   token: string,
   id: number,
-  body: EscolaLms.Tasks.Http.Requests.UpdateTaskRequest,
+  body: Ulams.Tasks.Http.Requests.UpdateTaskRequest,
   options?: RequestOptionsInit
 ) {
   return request<API.DefaultResponse<API.Task>>(`${apiUrl}/api/tasks/${id}`, {
@@ -129,7 +129,7 @@ export async function updateTask(
 export async function createTask(
   apiUrl: string,
   token: string,
-  body: EscolaLms.Tasks.Http.Requests.CreateTaskRequest
+  body: Ulams.Tasks.Http.Requests.CreateTaskRequest
 ) {
   return request<API.DefaultResponse<API.Task>>(`${apiUrl}/api/tasks`, {
     method: "POST",

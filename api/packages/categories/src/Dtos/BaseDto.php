@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Categories\Dtos;
+namespace Ulams\Categories\Dtos;
 
-use EscolaLms\Categories\Dtos\Traits\DtoHelper;
+use Ulams\Categories\Dtos\Traits\DtoHelper;
 
 abstract class BaseDto
 {

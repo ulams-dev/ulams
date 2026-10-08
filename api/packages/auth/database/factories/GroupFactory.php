@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Factories\EscolaLms\Auth\Models;
+namespace Database\Factories\Ulams\Auth\Models;
 
-use EscolaLms\Auth\Models\Group;
+use Ulams\Auth\Models\Group;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class GroupFactory extends Factory

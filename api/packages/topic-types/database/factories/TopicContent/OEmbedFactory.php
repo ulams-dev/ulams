@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Database\Factories\TopicContent;
+namespace Ulams\TopicTypes\Database\Factories\TopicContent;
 
-use EscolaLms\TopicTypes\Models\TopicContent\OEmbed;
+use Ulams\TopicTypes\Models\TopicContent\OEmbed;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class OEmbedFactory extends Factory

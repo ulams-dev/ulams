@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Courses\Repositories;
+namespace Ulams\Courses\Repositories;
 
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Repositories\Contracts\LessonRepositoryContract;
-use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Repositories\Contracts\LessonRepositoryContract;
+use Ulams\Courses\Repositories\Contracts\TopicRepositoryContract;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Application;
 

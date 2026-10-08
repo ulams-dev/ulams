@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Database\Seeders;
+namespace Ulams\TemplatesSms\Database\Seeders;
 
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\TemplatesSms\Core\SmsChannel;
+use Ulams\Templates\Facades\Template;
+use Ulams\TemplatesSms\Core\SmsChannel;
 use Illuminate\Database\Seeder;
 
 class TemplateSmsSeeder extends Seeder

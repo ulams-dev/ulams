@@ -3,7 +3,7 @@ import ProTable from '@ant-design/pro-table';
 import React, { useState } from 'react';
 import { FormattedMessage } from 'umi';
 
-import { getExam } from '@/services/escola-lms/exams';
+import { getExam } from '@/services/ulams/exams';
 import { TEACHER_SUBJECTS_PAGE_SIZE } from './consts';
 
 interface Props {

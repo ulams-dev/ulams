@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\ModelFields\Http\Controllers;
+namespace Ulams\ModelFields\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\ModelFields\Http\Controllers\Contracts\ModelFieldsAdminApiContract;
-use EscolaLms\ModelFields\Http\Requests\MetadataCreateOrUpdateRequest;
-use EscolaLms\ModelFields\Http\Requests\MetadataDeleteRequest;
-use EscolaLms\ModelFields\Http\Requests\MetadataListRequest;
-use EscolaLms\ModelFields\Http\Resources\MetadataResource;
-use EscolaLms\ModelFields\Services\Contracts\ModelFieldsServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\ModelFields\Http\Controllers\Contracts\ModelFieldsAdminApiContract;
+use Ulams\ModelFields\Http\Requests\MetadataCreateOrUpdateRequest;
+use Ulams\ModelFields\Http\Requests\MetadataDeleteRequest;
+use Ulams\ModelFields\Http\Requests\MetadataListRequest;
+use Ulams\ModelFields\Http\Resources\MetadataResource;
+use Ulams\ModelFields\Services\Contracts\ModelFieldsServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class ModelFieldsAdminApiController extends EscolaLmsBaseController implements ModelFieldsAdminApiContract
+class ModelFieldsAdminApiController extends UlamsBaseController implements ModelFieldsAdminApiContract
 {
     private ModelFieldsServiceContract $service;
 

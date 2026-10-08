@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Vouchers\Strategies\Abstracts;
+namespace Ulams\Vouchers\Strategies\Abstracts;
 
-use EscolaLms\Vouchers\Models\Coupon;
-use EscolaLms\Vouchers\Strategies\Contracts\DiscountStrategyContract;
+use Ulams\Vouchers\Models\Coupon;
+use Ulams\Vouchers\Strategies\Contracts\DiscountStrategyContract;
 
 abstract class DiscountStrategy implements DiscountStrategyContract
 {

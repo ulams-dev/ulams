@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Courses\Database\Factories\FakerMarkdownProvider;
+namespace Ulams\Courses\Database\Factories\FakerMarkdownProvider;
 
 use DavidBadura\FakerMarkdownGenerator\FakerProvider as FakerMarkdownGeneratorFakerProvider;
 use DavidBadura\MarkdownBuilder\MarkdownBuilder;

@@ -2,16 +2,16 @@ import { useContext } from "react";
 import { Row, Col } from "react-grid-system";
 import { useTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
-import Title from "@lms/components/components/atoms/Typography/Title";
-import ResponsiveImage from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
-import LabelListItem from "@lms/components/components/molecules/LabelListItem/LabelListItem";
+import Title from "@ulams/components/components/atoms/Typography/Title";
+import ResponsiveImage from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
+import LabelListItem from "@ulams/components/components/molecules/LabelListItem/LabelListItem";
 import { formatDate } from "@/utils/date";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { EventInfoStyles } from "./EventInfoStyles";
 import { Medal, StarOrange, ThumbUp } from "../../../../icons";
 
 const EventInfo = () => {
-  const { stationaryEvent } = useContext(EscolaLMSContext);
+  const { stationaryEvent } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   if (!stationaryEvent.value) {

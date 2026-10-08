@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Http\Controllers\Swagger;
+namespace Ulams\HeadlessH5P\Http\Controllers\Swagger;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-use EscolaLms\HeadlessH5P\Http\Requests\FilesStoreRequest;
+use Ulams\HeadlessH5P\Http\Requests\FilesStoreRequest;
 
 interface FilesApiSwagger
 {

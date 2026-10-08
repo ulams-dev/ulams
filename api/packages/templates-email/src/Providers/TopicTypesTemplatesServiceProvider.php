@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Providers;
+namespace Ulams\TemplatesEmail\Providers;
 
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
-use EscolaLms\TemplatesEmail\TopicTypes\TopicTypeChangedVariables;
-use EscolaLms\TopicTypes\Events\TopicTypeChanged;
+use Ulams\Templates\Facades\Template;
+use Ulams\TemplatesEmail\Core\EmailChannel;
+use Ulams\TemplatesEmail\TopicTypes\TopicTypeChangedVariables;
+use Ulams\TopicTypes\Events\TopicTypeChanged;
 use Illuminate\Support\ServiceProvider;
 
 class TopicTypesTemplatesServiceProvider extends ServiceProvider

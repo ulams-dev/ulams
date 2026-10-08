@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Services\Contracts;
+namespace Ulams\CourseAccess\Services\Contracts;
 
-use EscolaLms\Core\Dtos\PaginationDto;
-use EscolaLms\CourseAccess\Dtos\CourseAccessEnquiry\CreateCourseAccessEnquiryDto;
-use EscolaLms\CourseAccess\Dtos\CriteriaDto;
-use EscolaLms\CourseAccess\Exceptions\EnquiryAlreadyExistsException;
-use EscolaLms\CourseAccess\Models\CourseAccessEnquiry;
+use Ulams\Core\Dtos\PaginationDto;
+use Ulams\CourseAccess\Dtos\CourseAccessEnquiry\CreateCourseAccessEnquiryDto;
+use Ulams\CourseAccess\Dtos\CriteriaDto;
+use Ulams\CourseAccess\Exceptions\EnquiryAlreadyExistsException;
+use Ulams\CourseAccess\Models\CourseAccessEnquiry;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface CourseAccessEnquiryServiceContract

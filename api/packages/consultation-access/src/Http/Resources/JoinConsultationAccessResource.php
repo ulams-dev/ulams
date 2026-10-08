@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Http\Resources;
+namespace Ulams\ConsultationAccess\Http\Resources;
 
-use EscolaLms\ConsultationAccess\Enum\MeetingLinkTypeEnum;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\PencilSpaces\Facades\PencilSpace;
+use Ulams\ConsultationAccess\Enum\MeetingLinkTypeEnum;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\PencilSpaces\Facades\PencilSpace;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 

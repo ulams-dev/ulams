@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Http\Controllers\Swagger;
+namespace Ulams\ConsultationAccess\Http\Controllers\Swagger;
 
-use EscolaLms\ConsultationAccess\Http\Requests\CreateConsultationAccessEnquiryRequest;
-use EscolaLms\ConsultationAccess\Http\Requests\DeleteConsultationAccessEnquiryRequest;
-use EscolaLms\ConsultationAccess\Http\Requests\ListConsultationAccessEnquiryRequest;
-use EscolaLms\ConsultationAccess\Http\Requests\ReadConsultationAccessEnquiryRequest;
-use EscolaLms\ConsultationAccess\Http\Requests\UpdateConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Requests\CreateConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Requests\DeleteConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Requests\ListConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Requests\ReadConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Requests\UpdateConsultationAccessEnquiryRequest;
 use Illuminate\Http\JsonResponse;
 
 interface ConsultationAccessEnquiryApiSwagger

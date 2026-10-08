@@ -5,7 +5,7 @@
 set -eu
 H5P="${H5P:-http://localhost:18080}"
 API="${API:-http://api.localhost}"
-EMAIL="${EMAIL:-admin@escolalms.com}"
+EMAIL="${EMAIL:-admin@ulams.app}"
 PASSWORD="${PASSWORD:-secret}"
 SAMPLE="${1:-}"
 WORK="$(mktemp -d)"

@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Services;
+namespace Ulams\CsvUsers\Services;
 
-use EscolaLms\Auth\Dtos\UserFilterCriteriaDto;
-use EscolaLms\Auth\Models\Group;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Repositories\Contracts\UserRepositoryContract;
-use EscolaLms\CsvUsers\Events\EscolaLmsImportedNewUserTemplateEvent;
-use EscolaLms\CsvUsers\Services\Contracts\CsvUserServiceContract;
+use Ulams\Auth\Dtos\UserFilterCriteriaDto;
+use Ulams\Auth\Models\Group;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Repositories\Contracts\UserRepositoryContract;
+use Ulams\CsvUsers\Events\UlamsImportedNewUserTemplateEvent;
+use Ulams\CsvUsers\Services\Contracts\CsvUserServiceContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
@@ -38,7 +38,7 @@ class CsvUserService implements CsvUserServiceContract
             $data->put('is_active', true);
             $user = $this->userRepository->create($data->toArray());
             $user->markEmailAsVerified();
-            event(new EscolaLmsImportedNewUserTemplateEvent($user, $returnUrl));
+            event(new UlamsImportedNewUserTemplateEvent($user, $returnUrl));
         }
 
         $user->syncRoles($data->get('roles'));

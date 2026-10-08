@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Cmi5\Tests\Models;
+namespace Ulams\Cmi5\Tests\Models;
 
 class Client extends \Laravel\Passport\Client
 {

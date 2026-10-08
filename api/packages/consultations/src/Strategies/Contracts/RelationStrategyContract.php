@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Consultations\Strategies\Contracts;
+namespace Ulams\Consultations\Strategies\Contracts;
 
 interface RelationStrategyContract
 {

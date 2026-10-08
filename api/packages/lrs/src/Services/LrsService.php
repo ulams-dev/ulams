@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Lrs\Services;
+namespace Ulams\Lrs\Services;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Lrs\Enums\XApiEnum;
-use EscolaLms\Lrs\Services\Contracts\LrsServiceContract;
+use Ulams\Courses\Models\Topic;
+use Ulams\Lrs\Enums\XApiEnum;
+use Ulams\Lrs\Services\Contracts\LrsServiceContract;
 use Illuminate\Http\Request;
 use Trax\Auth\Stores\Accesses\Access;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +32,7 @@ class LrsService implements LrsServiceContract
             'actor' => [
                 'objectType' => 'Agent',
                 'account' => [
-                    'homePage' => "https://escolalms.com",
+                    'homePage' => "https://ulams.app",
                     'name' => isset($user) ? $user->email : '',
                 ]
             ],

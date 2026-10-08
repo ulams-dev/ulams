@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Tests;
+namespace Ulams\BulkNotifications\Tests;
 
-use EscolaLms\BulkNotifications\Channels\PushNotificationChannel;
-use EscolaLms\BulkNotifications\Dtos\SendMulticastBulkNotificationDto;
-use EscolaLms\BulkNotifications\Dtos\SendUserBulkNotificationDto;
-use EscolaLms\BulkNotifications\Models\BulkNotification;
-use EscolaLms\BulkNotifications\Models\BulkNotificationSection;
-use EscolaLms\BulkNotifications\Models\DeviceToken;
+use Ulams\BulkNotifications\Channels\PushNotificationChannel;
+use Ulams\BulkNotifications\Dtos\SendMulticastBulkNotificationDto;
+use Ulams\BulkNotifications\Dtos\SendUserBulkNotificationDto;
+use Ulams\BulkNotifications\Models\BulkNotification;
+use Ulams\BulkNotifications\Models\BulkNotificationSection;
+use Ulams\BulkNotifications\Models\DeviceToken;
 use Illuminate\Foundation\Testing\WithFaker;
 
 trait BulkNotificationTesting

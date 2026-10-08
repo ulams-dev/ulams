@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Recommender\Models;
+namespace Ulams\Recommender\Models;
 
-use EscolaLms\Recommender\Database\Factories\MeetRecordingFactory;
+use Ulams\Recommender\Database\Factories\MeetRecordingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

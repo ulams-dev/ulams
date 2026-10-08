@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Video\Events;
+namespace Ulams\Video\Events;
 
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Courses\Models\Topic;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;

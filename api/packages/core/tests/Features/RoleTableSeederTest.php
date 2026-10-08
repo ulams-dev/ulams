@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Features;
+namespace Ulams\Core\Tests\Features;
 
-use EscolaLms\Core\Seeders\RoleTableSeeder;
-use EscolaLms\Core\Tests\TestCase;
+use Ulams\Core\Seeders\RoleTableSeeder;
+use Ulams\Core\Tests\TestCase;
 use Spatie\Permission\Models\Permission;
 
 class RoleTableSeederTest extends TestCase

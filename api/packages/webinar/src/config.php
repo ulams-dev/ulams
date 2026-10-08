@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Webinar\Enum\WebinarTermReminderStatusEnum;
+use Ulams\Webinar\Enum\WebinarTermReminderStatusEnum;
 
 return [
     'perPage' => 15,

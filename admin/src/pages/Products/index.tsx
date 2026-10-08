@@ -11,7 +11,7 @@ import TypeButtonDrawer from '@/components/TypeButtonDrawer';
 import { createTableOrderObject } from '@/utils/utils';
 
 import ProductSelect from '@/components/ProductablesSelect';
-import { deleteProduct, products } from '@/services/escola-lms/products';
+import { deleteProduct, products } from '@/services/ulams/products';
 
 const ProductableItems: React.FC<{ items: API.ProductProductable[] }> = ({ items }) => {
   return (
@@ -27,7 +27,7 @@ const ProductableItems: React.FC<{ items: API.ProductProductable[] }> = ({ items
   );
 };
 
-export const TableColumns: ProColumns<EscolaLms.Cart.Models.Product>[] = [
+export const TableColumns: ProColumns<Ulams.Cart.Models.Product>[] = [
   {
     title: <FormattedMessage id="ID" defaultMessage="ID" />,
     dataIndex: 'id',
@@ -183,10 +183,10 @@ const Products: React.FC = () => {
   return (
     <PageContainer>
       <ProTable<
-        EscolaLms.Cart.Models.Product,
+        Ulams.Cart.Models.Product,
         API.PageParams &
           API.PaginationParams &
-          EscolaLms.Cart.Http.Requests.ProductSearchRequest & {
+          Ulams.Cart.Http.Requests.ProductSearchRequest & {
             productable: string;
             type: 'bundle' | 'single' | 'all';
             purchasable: string;

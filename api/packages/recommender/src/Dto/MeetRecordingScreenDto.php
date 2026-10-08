@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Recommender\Dto;
+namespace Ulams\Recommender\Dto;
 
 class MeetRecordingScreenDto extends BaseDto
 {

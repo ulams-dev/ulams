@@ -158,7 +158,7 @@ return [
         'ghasedak' => \Tzsk\Sms\Drivers\Ghasedak::class,
         'sms77' => \Tzsk\Sms\Drivers\Sms77::class,
         'sabapayamak' => \Tzsk\Sms\Drivers\SabaPayamak::class,
-        'mail' => \EscolaLms\TemplatesSms\Drivers\MailDriver::class,
-        'requestbin' => \EscolaLms\TemplatesSms\Drivers\RequestBinDriver::class,
+        'mail' => \Ulams\TemplatesSms\Drivers\MailDriver::class,
+        'requestbin' => \Ulams\TemplatesSms\Drivers\RequestBinDriver::class,
     ],
 ];

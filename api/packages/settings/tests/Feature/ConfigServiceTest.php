@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use EscolaLms\Settings\ConfigRewriter\FileRewriter;
-use EscolaLms\Settings\Facades\AdministrableConfig;
-use EscolaLms\Settings\Models\Config as ModelsConfig;
-use EscolaLms\Settings\Services\AdministrableConfigService;
-use EscolaLms\Settings\Tests\TestCase;
+use Ulams\Settings\ConfigRewriter\FileRewriter;
+use Ulams\Settings\Facades\AdministrableConfig;
+use Ulams\Settings\Models\Config as ModelsConfig;
+use Ulams\Settings\Services\AdministrableConfigService;
+use Ulams\Settings\Tests\TestCase;
 use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\App;
@@ -75,7 +75,7 @@ class ConfigServiceTest extends TestCase
             Config::set('test_config_file', []);
         }
 
-        Config::set('escola_settings.use_database', false);
+        Config::set('ulams_settings.use_database', false);
 
         Config::set('test_config_file.test_key', 'test_value');
         Config::set('test_config_file.test_key2', 'test_value');
@@ -146,7 +146,7 @@ class ConfigServiceTest extends TestCase
 
     public function test_store_to_database()
     {
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
 
         Config::set('test_config_file.test_key', 'test_value');
         Config::set('test_config_file.test_key2', 'test_value');
@@ -167,7 +167,7 @@ class ConfigServiceTest extends TestCase
 
     public function test_load_from_database()
     {
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
 
         Config::set('test_config_file.test_key', 'test_value');
         AdministrableConfig::registerConfig('test_config_file.test_key', ['required', 'string']);
@@ -187,7 +187,7 @@ class ConfigServiceTest extends TestCase
 
     public function test_load_from_cache()
     {
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
 
         Config::set('test_config_file.test_key', 'test_value');
         AdministrableConfig::registerConfig('test_config_file.test_key', ['required', 'string']);
@@ -207,7 +207,7 @@ class ConfigServiceTest extends TestCase
 
     public function test_load_from_database_fails_if_not_enabled_or_forced()
     {
-        Config::set('escola_settings.use_database', false);
+        Config::set('ulams_settings.use_database', false);
 
         Config::set('test_config_file.test_key', 'test_value');
         AdministrableConfig::registerConfig('test_config_file.test_key', ['required', 'string']);
@@ -240,8 +240,8 @@ class ConfigServiceTest extends TestCase
     public function test_config_rewriter_exception_on_missing_key()
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage("Config file 'escola_settings' does not exist or doesn't have key 'test_key'");
-        Config::write('escola_settings.test_key', 'test_value');
+        $this->expectExceptionMessage("Config file 'ulams_settings' does not exist or doesn't have key 'test_key'");
+        Config::write('ulams_settings.test_key', 'test_value');
     }
 
     public function test_file_rewriter_exception_on_missing_key()

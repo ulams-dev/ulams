@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Database\Factories;
+namespace Ulams\PencilSpaces\Database\Factories;
 
-use EscolaLms\PencilSpaces\Models\User;
-use Database\Factories\EscolaLms\Core\Models\UserFactory as CoreUserFactory;
+use Ulams\PencilSpaces\Models\User;
+use Database\Factories\Ulams\Core\Models\UserFactory as CoreUserFactory;
 
 class UserFactory extends CoreUserFactory
 {

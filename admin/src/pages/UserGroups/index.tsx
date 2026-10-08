@@ -1,6 +1,6 @@
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';
 import UserGroupSelect from '@/components/UserGroupSelect';
-import { deleteUserGroup, userGroups, userGroupsTree } from '@/services/escola-lms/user_groups';
+import { deleteUserGroup, userGroups, userGroupsTree } from '@/services/ulams/user_groups';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
@@ -87,7 +87,7 @@ export const TableColumns: ProColumns<API.UserGroup>[] = [
       if (record.parent_id) {
         return (
           <TypeButtonDrawer
-            type={'EscolaLms\\Auth\\Models\\UserGroup'}
+            type={'Ulams\\Auth\\Models\\UserGroup'}
             type_id={record.parent_id}
           />
         );

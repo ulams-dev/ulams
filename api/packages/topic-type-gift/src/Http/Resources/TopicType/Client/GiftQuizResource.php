@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Resources\TopicType\Client;
+namespace Ulams\TopicTypeGift\Http\Resources\TopicType\Client;
 
-use EscolaLms\Courses\Http\Resources\TopicType\Contracts\TopicTypeResourceContract;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
+use Ulams\Courses\Http\Resources\TopicType\Contracts\TopicTypeResourceContract;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

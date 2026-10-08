@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Categories\Dtos\Contracts;
+namespace Ulams\Categories\Dtos\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 

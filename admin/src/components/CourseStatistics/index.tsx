@@ -1,6 +1,6 @@
 import { CourseTopicsStatistics } from '@/components/CourseTopicsStatistics';
 import { getFlatTopics } from '@/components/ProgramForm/Context';
-import { program as fetchProgram, getCourseStats } from '@/services/escola-lms/course';
+import { program as fetchProgram, getCourseStats } from '@/services/ulams/course';
 import ProCard from '@ant-design/pro-card';
 import { Alert, Spin, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';

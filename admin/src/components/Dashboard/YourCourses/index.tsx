@@ -1,5 +1,5 @@
 import ResponsiveImage from '@/components/ResponsiveImage';
-import { course } from '@/services/escola-lms/course';
+import { course } from '@/services/ulams/course';
 import { PlusCircleFilled } from '@ant-design/icons';
 import ProCard from '@ant-design/pro-card';
 import { useModel } from '@umijs/max';

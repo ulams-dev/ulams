@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Requests;
+namespace Ulams\Tasks\Http\Requests;
 
-use EscolaLms\Tasks\Dtos\UpdateTaskDto;
+use Ulams\Tasks\Dtos\UpdateTaskDto;
 use Illuminate\Support\Facades\Gate;
 
 class UpdateTaskRequest extends CreateTaskRequest

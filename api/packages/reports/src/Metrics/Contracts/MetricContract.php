@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Reports\Metrics\Contracts;
+namespace Ulams\Reports\Metrics\Contracts;
 
-use EscolaLms\Reports\Models\Report;
+use Ulams\Reports\Models\Report;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Collection;
 

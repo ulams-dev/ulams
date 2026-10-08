@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Database\Factories\TopicContent\Components;
+namespace Ulams\TopicTypes\Database\Factories\TopicContent\Components;
 
-use EscolaLms\HeadlessH5P\Models\H5PContent;
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
+use Ulams\HeadlessH5P\Models\H5PContent;
+use Ulams\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use Illuminate\Http\UploadedFile;
 
 class H5PHelper

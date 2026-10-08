@@ -8,8 +8,8 @@ import {
   useContext,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextPaginatedMetaState,
 } from "./types";
 import { defaultConfig } from "./defaults";
@@ -28,7 +28,7 @@ import { UserContext } from "./user";
 
 export const TasksContext: React.Context<
   Pick<
-    EscolaLMSContextConfig,
+    UlamsContextConfig,
     "tasks" | "fetchTasks" | "addTask" | "deleteTask"
   >
 > = createContext({
@@ -40,7 +40,7 @@ export const TasksContext: React.Context<
 
 export interface TasksContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "tasks">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "tasks">>;
   ssrHydration?: boolean;
 }
 
@@ -94,7 +94,7 @@ export const TasksContextProvider: FunctionComponent<
   );
 
   const addTask = useCallback(
-    (data: EscolaLms.Tasks.Http.Requests.CreateTaskRequest) => {
+    (data: Ulams.Tasks.Http.Requests.CreateTaskRequest) => {
       return token
         ? createTask(apiUrl, token, data)
         : Promise.reject("noToken");

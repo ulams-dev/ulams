@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Courses\Repositories;
+namespace Ulams\Courses\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository as BaseEscolaRepository;
+use Ulams\Core\Repositories\BaseRepository as BaseUlamsRepository;
 use Illuminate\Database\Eloquent\Model;
 
-abstract class BaseRepository extends BaseEscolaRepository
+abstract class BaseRepository extends BaseUlamsRepository
 {
     /**
      * Find model record for given id with relations

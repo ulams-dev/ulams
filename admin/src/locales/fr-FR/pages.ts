@@ -25,7 +25,7 @@ export default {
   'pages.welcome.advancedComponent': 'Composant avancé',
   'pages.welcome.link': 'Bienvenue',
   'pages.welcome.advancedLayout': 'Mise en page avancée',
-  'pages.welcome.content': 'Bonjour et bienvenue sur EscolaLMS !',
+  'pages.welcome.content': 'Bonjour et bienvenue sur Ulams !',
   'pages.welcome.alertMessage': 'Des composants plus performants et plus robustes ont été publiés.',
   'pages.admin.subPage.title': 'Cette page ne peut être vue que par un administrateur',
   'pages.admin.subPage.alertMessage':

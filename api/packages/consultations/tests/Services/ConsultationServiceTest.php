@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Consultations\Tests\Services;
+namespace Ulams\Consultations\Tests\Services;
 
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Services\Contracts\ConsultationServiceContract;
-use EscolaLms\Consultations\Tests\Models\User;
-use EscolaLms\Consultations\Tests\TestCase;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Services\Contracts\ConsultationServiceContract;
+use Ulams\Consultations\Tests\Models\User;
+use Ulams\Consultations\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 

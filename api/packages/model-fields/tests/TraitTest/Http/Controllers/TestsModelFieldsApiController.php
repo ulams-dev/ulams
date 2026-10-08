@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\ModelFields\Tests\TraitTest\Http\Controllers;
+namespace Ulams\ModelFields\Tests\TraitTest\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use EscolaLms\ModelFields\Tests\TraitTest\Http\Resources\UserResource;
-use EscolaLms\ModelFields\Tests\TraitTest\Http\Resources\UserAdminResource;
+use Ulams\ModelFields\Tests\TraitTest\Http\Resources\UserResource;
+use Ulams\ModelFields\Tests\TraitTest\Http\Resources\UserAdminResource;
 
-use EscolaLms\ModelFields\Tests\TraitTest\Models\User;
-use EscolaLms\ModelFields\Tests\TraitTest\Http\Requests\UserCreateRequest;
+use Ulams\ModelFields\Tests\TraitTest\Models\User;
+use Ulams\ModelFields\Tests\TraitTest\Http\Requests\UserCreateRequest;
 
 class TestsModelFieldsApiController extends Controller
 {

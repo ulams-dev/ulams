@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Video\Policies;
+namespace Ulams\Video\Policies;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Video\Enums\VideoPermissionEnum;
+use Ulams\Auth\Models\User;
+use Ulams\Video\Enums\VideoPermissionEnum;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class VideoPolicy

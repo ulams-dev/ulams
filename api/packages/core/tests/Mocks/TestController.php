@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Mocks;
+namespace Ulams\Core\Tests\Mocks;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 
-class TestController extends EscolaLmsBaseController {
+class TestController extends UlamsBaseController {
 
 }

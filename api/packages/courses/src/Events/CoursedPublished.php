@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Courses\Events;
+namespace Ulams\Courses\Events;
 
 class CoursedPublished extends Course
 {

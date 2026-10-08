@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Payments\Http\Requests\Admin;
+namespace Ulams\Payments\Http\Requests\Admin;
 
 use BenSampo\Enum\Rules\EnumValue;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Payments\Enums\PaymentStatus;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Payments\Enums\PaymentStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

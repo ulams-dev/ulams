@@ -1,7 +1,7 @@
 import { Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 
-import { user as fetchUser } from '@/services/escola-lms/user';
+import { user as fetchUser } from '@/services/ulams/user';
 import { Link } from 'umi';
 
 export const UserLink: React.FC<{

@@ -2,22 +2,14 @@
 
 Package for generate pdf invoice from order
 
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Invoices/)
-[![codecov](https://codecov.io/gh/EscolaLMS/Invoices/branch/main/graph/badge.svg?token=O91FHNKI6R)](https://codecov.io/gh/EscolaLMS/Invoices)
-[![Tests PHPUnit in environments](https://github.com/EscolaLMS/Invoices/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Invoices/actions/workflows/test.yml)
-[![Maintainability](https://api.codeclimate.com/v1/badges/60eb83351d2d550c15cb/maintainability)](https://codeclimate.com/github/EscolaLMS/Invoices/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/60eb83351d2d550c15cb/test_coverage)](https://codeclimate.com/github/EscolaLMS/Invoices/test_coverage)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/invoices)](https://packagist.org/packages/escolalms/invoices)
-[![downloads](https://img.shields.io/packagist/v/escolalms/invoices)](https://packagist.org/packages/escolalms/invoices)
-[![downloads](https://img.shields.io/packagist/l/escolalms/invoices)](https://packagist.org/packages/escolalms/invoices)
 
 ## What does it do
 
-This package is adapter for EscolaLMS to create pdf invoice by [laraveldaily/laravel-invoices](https://github.com/LaravelDaily/laravel-invoices)
+This package is adapter for Ulams to create pdf invoice by [laraveldaily/laravel-invoices](https://github.com/LaravelDaily/laravel-invoices)
 
 ## Installing
 
-- `composer require escolalms/invoices`
+- `composer require ulams/invoices`
 
 ## Config
 
@@ -102,7 +94,7 @@ return [
          * Default attributes for Seller::class
          */
         'attributes' => [
-            'name'          => 'Escola',
+            'name'          => 'Ulams',
             'address'       => 'Chłodna 22A, 00-891 Warszawa',
             'code'          => '00-891',
             'vat'           => '123456789',
@@ -126,13 +118,12 @@ return [
 
 ## Endpoints
 
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Invoices/)
 
 ## Tests
 
 Run `./vendor/bin/phpunit` to run tests. See [tests](https://github.com/EscolaLMS/Invoices/tree/main/tests) folder as it's quite good staring point as documentation appendix.
 
-Test details [![codecov](https://codecov.io/gh/EscolaLMS/Invoices/branch/main/graph/badge.svg?token=O91FHNKI6R)](https://codecov.io/gh/EscolaLMS/Invoices) [![Tests PHPUnit in environments](https://github.com/EscolaLMS/Invoices/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Invoices/actions/workflows/test.yml)
+Test details [![codecov](https://codecov.io/gh/Ulams/Invoices/branch/main/graph/badge.svg?token=O91FHNKI6R)](https://codecov.io/gh/Ulams/Invoices) [![Tests PHPUnit in environments](https://github.com/EscolaLMS/Invoices/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Invoices/actions/workflows/test.yml)
 
 ## Events
 

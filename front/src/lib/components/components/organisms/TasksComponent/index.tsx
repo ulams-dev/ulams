@@ -16,9 +16,9 @@ import {
   Stack,
   Icon,
 } from "../../..";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { isAfter, isBefore, isToday, isTomorrow } from "date-fns";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { t } from "i18next";
 import { OptionType } from "../../atoms/Option/Option";
 import {
@@ -80,7 +80,7 @@ const ChangeStatusCheckbox: FC<ChangeStatusCheckboxProps> = ({
   ...props
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { updateTaskStatus } = useContext(EscolaLMSContext);
+  const { updateTaskStatus } = useContext(UlamsContext);
 
   return (
     <Checkbox
@@ -113,7 +113,7 @@ export const TasksComponent: FC<TasksComponentProps> = ({
   const [taskForActions, setTaskForActions] = useState<API.Task>();
 
   const { fetchTasks, addTask, deleteTask, tasks } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
 
   const tasksList = tasks.list?.data;
   const [pagination] = useState<{ current: number; pageSize: number }>({

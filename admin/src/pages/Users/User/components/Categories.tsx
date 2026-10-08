@@ -1,5 +1,5 @@
 import CategoryCheckboxTree from '@/components/CategoryCheckboxTree';
-import { updateUserInterests } from '@/services/escola-lms/user';
+import { updateUserInterests } from '@/services/ulams/user';
 import ProForm from '@ant-design/pro-form';
 import { message } from 'antd';
 import { useMemo } from 'react';

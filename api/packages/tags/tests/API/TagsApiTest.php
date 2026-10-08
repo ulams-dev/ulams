@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Tags\Tests\API;
+namespace Ulams\Tags\Tests\API;
 
-use EscolaLms\Tags\Models\Tag;
-use EscolaLms\Tags\Tests\TestCase;
-use EscolaLms\Tags\Database\Seeders\TagsPermissionSeeder;
+use Ulams\Tags\Models\Tag;
+use Ulams\Tags\Tests\TestCase;
+use Ulams\Tags\Database\Seeders\TagsPermissionSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 
@@ -19,7 +19,7 @@ class TagsApiTest extends TestCase
         $this->user = config('auth.providers.users.model')::factory()->create();
         $this->user->guard_name = 'api';
         $this->user->assignRole('admin');
-        Config::set('escolalms_tags.tag_model_map.test', 'test');
+        Config::set('ulams_tags.tag_model_map.test', 'test');
     }
 
     public function testTagsInsert() : void

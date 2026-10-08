@@ -1,21 +1,21 @@
 <?php
 
-namespace EscolaLms\MailerLite\Providers;
+namespace Ulams\MailerLite\Providers;
 
-use EscolaLms\MailerLite\Enum\PackageStatusEnum;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Settings\Facades\AdministrableConfig;
+use Ulams\MailerLite\Enum\PackageStatusEnum;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Settings\Facades\AdministrableConfig;
 use Illuminate\Support\ServiceProvider;
 
 class SettingsServiceProvider extends ServiceProvider
 {
-    const CONFIG_KEY = 'escolalms_mailer_lite';
+    const CONFIG_KEY = 'ulams_mailer_lite';
 
     public function register()
     {
-        if (class_exists(EscolaLmsSettingsServiceProvider::class)) {
-            if (!$this->app->getProviders(EscolaLmsSettingsServiceProvider::class)) {
-                $this->app->register(EscolaLmsSettingsServiceProvider::class);
+        if (class_exists(UlamsSettingsServiceProvider::class)) {
+            if (!$this->app->getProviders(UlamsSettingsServiceProvider::class)) {
+                $this->app->register(UlamsSettingsServiceProvider::class);
             }
         }
 

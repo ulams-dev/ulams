@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Course;
+namespace Ulams\Reports\Stats\Course;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\CourseProgress;
-use EscolaLms\Courses\Models\CourseUserAttendance;
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Core\Models\User;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\CourseUserAttendance;
+use Ulams\Courses\Models\Topic;
 
 class AttendanceList extends AbstractCourseStat
 {

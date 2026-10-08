@@ -32,12 +32,12 @@
       "@/hooks/*": ["src/hooks/*"],
       "@/icons/*": ["src/icons/*"],
       "@/pages/*": ["src/pages/*"],
-      "@lms/components": ["src/lib/components/index.ts"],
-      "@lms/components/*": ["src/lib/components/*"],
-      "@lms/sdk": ["src/lib/sdk/index.ts"],
-      "@lms/sdk/*": ["src/lib/sdk/*"],
-      "@lms/scorm-player": ["src/lib/scorm-player/index.ts"],
-      "@lms/scorm-player/*": ["src/lib/scorm-player/*"]
+      "@ulams/components": ["src/lib/components/index.ts"],
+      "@ulams/components/*": ["src/lib/components/*"],
+      "@ulams/sdk": ["src/lib/sdk/index.ts"],
+      "@ulams/sdk/*": ["src/lib/sdk/*"],
+      "@ulams/scorm-player": ["src/lib/scorm-player/index.ts"],
+      "@ulams/scorm-player/*": ["src/lib/scorm-player/*"]
     }
   },
   "include": ["src"],

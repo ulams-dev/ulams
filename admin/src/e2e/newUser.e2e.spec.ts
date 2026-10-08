@@ -10,7 +10,7 @@ test.describe('New user', () => {
   test('create new user', async ({ page }) => {
     const email = generateRandomName('newuser') + '@pwtest.pl';
 
-    await page.goto(`${BASE_URL}/#/configuration/settings/escola_auth`);
+    await page.goto(`${BASE_URL}/#/configuration/settings/ulams_auth`);
     await page.waitForLoadState();
     await page.waitForSelector('text=Settings', { state: 'visible' });
     await page.click('[data-row-key="return_url"] button');

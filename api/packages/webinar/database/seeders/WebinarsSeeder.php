@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Webinar\Database\Seeders;
+namespace Ulams\Webinar\Database\Seeders;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Auth\Models\User;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Database\Seeder;
 
 class WebinarsSeeder extends Seeder

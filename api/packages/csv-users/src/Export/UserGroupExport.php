@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Export;
+namespace Ulams\CsvUsers\Export;
 
-use EscolaLms\Auth\Http\Resources\UserFullResource;
-use EscolaLms\Auth\Http\Resources\UserGroupResource;
-use EscolaLms\CsvUsers\Export\Sheets\GroupSheet;
-use EscolaLms\CsvUsers\Http\Resources\GroupExportResource;
-use EscolaLms\CsvUsers\Models\Group;
+use Ulams\Auth\Http\Resources\UserFullResource;
+use Ulams\Auth\Http\Resources\UserGroupResource;
+use Ulams\CsvUsers\Export\Sheets\GroupSheet;
+use Ulams\CsvUsers\Http\Resources\GroupExportResource;
+use Ulams\CsvUsers\Models\Group;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;

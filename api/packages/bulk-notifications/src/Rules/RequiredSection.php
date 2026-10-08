@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Rules;
+namespace Ulams\BulkNotifications\Rules;
 
-use EscolaLms\BulkNotifications\Channels\NotificationChannel;
+use Ulams\BulkNotifications\Channels\NotificationChannel;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;

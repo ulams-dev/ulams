@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\AssignWithoutAccount\Enums\AssignWithoutAccountPermissionEnum;
+use Ulams\AssignWithoutAccount\Enums\AssignWithoutAccountPermissionEnum;
 
 return [
     AssignWithoutAccountPermissionEnum::USER_SUBMISSION_LIST => 'Lista zgłoszeń użytkowników bez konta',

@@ -20,8 +20,8 @@ import {
   updateLesson as apiUpdateLesson,
   updateTopic as apiUpdateTopic,
   sort,
-} from '@/services/escola-lms/course';
-import { RecommenderType, TopicType } from '@/services/escola-lms/enums';
+} from '@/services/ulams/course';
+import { RecommenderType, TopicType } from '@/services/ulams/enums';
 import { createHavePackageInstalled } from '@/utils/access';
 import { NewLessonListItem } from '../NewLessonListItem';
 import { Recommender } from '../Recommender';
@@ -71,7 +71,7 @@ export const LessonList: React.FC<LessonListProps> = ({ onNewLesson }) => {
 
   const havePackageInstalled = useCallback(() => {
     const isRecomendarePackageEnabled =
-      initialState?.packagesConfigs?.escolalms_recommender?.enabled?.value;
+      initialState?.packagesConfigs?.ulams_recommender?.enabled?.value;
 
     const checkPackage = createHavePackageInstalled(initialState?.packages);
     return isRecomendarePackageEnabled && checkPackage(PACKAGES.Recommender);

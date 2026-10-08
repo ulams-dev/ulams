@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Webinar\Database\Seeders;
+namespace Ulams\Webinar\Database\Seeders;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Webinar\Enum\WebinarStatusEnum;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Core\Models\User;
+use Ulams\Webinar\Enum\WebinarStatusEnum;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Database\Seeder;
 
 class WebinarsTermsSeeder extends Seeder

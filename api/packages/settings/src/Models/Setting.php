@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Settings\Models;
+namespace Ulams\Settings\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use EscolaLms\Settings\Casts\Setting as SettingCast;
+use Ulams\Settings\Casts\Setting as SettingCast;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 

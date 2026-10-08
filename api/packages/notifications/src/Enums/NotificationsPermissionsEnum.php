@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Notifications\Enums;
+namespace Ulams\Notifications\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class NotificationsPermissionsEnum extends BasicEnum
 {

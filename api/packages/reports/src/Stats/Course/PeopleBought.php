@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Course;
+namespace Ulams\Reports\Stats\Course;
 
-use EscolaLms\Cart\Enums\OrderStatus;
-use EscolaLms\Cart\Models\OrderItem;
-use EscolaLms\Cart\Models\Product;
+use Ulams\Cart\Enums\OrderStatus;
+use Ulams\Cart\Models\OrderItem;
+use Ulams\Cart\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 
 // TODO: Abstract this as Productable People Bought so that any productable can be checked, and not only Courses

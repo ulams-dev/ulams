@@ -3,7 +3,7 @@ import * as React from "react";
 import { RefObject, useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { getFontFromTheme } from "../../../theme/provider";
 
 const notTextAreaProps = {
@@ -232,7 +232,7 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
       disabled={disabled}
       error={error}
       required={required}
-      className={`wellms-component lsm-input ${helper ? "has-helper" : ""} ${
+      className={`ulams-component lsm-input ${helper ? "has-helper" : ""} ${
         error ? "has-error" : ""
       } ${className}`}
     >

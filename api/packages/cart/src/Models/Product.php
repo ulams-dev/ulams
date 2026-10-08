@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Cart\Models;
+namespace Ulams\Cart\Models;
 
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Cart\Database\Factories\ProductFactory;
-use EscolaLms\Cart\Enums\ProductType;
-use EscolaLms\Cart\Models\Contracts\ProductInterface;
-use EscolaLms\Cart\Models\Contracts\ProductTrait;
-use EscolaLms\Cart\Models\User;
-use EscolaLms\Cart\QueryBuilders\ProductModelQueryBuilder;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
-use EscolaLms\Core\Models\User as CoreUser;
-use EscolaLms\Tags\Models\Tag;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Cart\Database\Factories\ProductFactory;
+use Ulams\Cart\Enums\ProductType;
+use Ulams\Cart\Models\Contracts\ProductInterface;
+use Ulams\Cart\Models\Contracts\ProductTrait;
+use Ulams\Cart\Models\User;
+use Ulams\Cart\QueryBuilders\ProductModelQueryBuilder;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Core\Models\User as CoreUser;
+use Ulams\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * EscolaLms\Cart\Models\Product
+ * Ulams\Cart\Models\Product
  *
  * @OA\Schema (
  *      schema="Product",
@@ -59,7 +59,7 @@ use Illuminate\Support\Facades\Storage;
  * @property string|null $language
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read Collection|\EscolaLms\Cart\Models\Category[] $categories
+ * @property-read Collection|\Ulams\Cart\Models\Category[] $categories
  * @property-read int|null $categories_count
  * @property-read Collection $authors
  * @property-read bool $buyable_by_user
@@ -67,7 +67,7 @@ use Illuminate\Support\Facades\Storage;
  * @property-read bool $owned_by_user
  * @property-read int $owned_by_user_quantity
  * @property-read string|null $poster_absolute_url
- * @property-read Collection|\EscolaLms\Cart\Models\ProductProductable[] $productables
+ * @property-read Collection|\Ulams\Cart\Models\ProductProductable[] $productables
  * @property-read int|null $productables_count
  * @property-read Collection|Product[] $relatedProducts
  * @property-read int|null $related_products_count
@@ -77,21 +77,21 @@ use Illuminate\Support\Facades\Storage;
  * @property-read int|null $users_count
  * @property-read int|null $available_quantity
  * @property-read int $sold_quantity
- * @method static \EscolaLms\Cart\Database\Factories\ProductFactory factory(...$parameters)
+ * @method static \Ulams\Cart\Database\Factories\ProductFactory factory(...$parameters)
  * @method static ProductModelQueryBuilder|Product newModelQuery()
  * @method static ProductModelQueryBuilder|Product newQuery()
  * @method static ProductModelQueryBuilder|Product query()
  * @method static ProductModelQueryBuilder|Product whereCreatedAt($value)
  * @method static ProductModelQueryBuilder|Product whereDescription($value)
- * @method static ProductModelQueryBuilder|Product whereDoesntHaveProductablesNotBuyableByUser(?\EscolaLms\Core\Models\User $user = null)
- * @method static ProductModelQueryBuilder|Product whereDoesntHaveProductablesNotOwnedByUser(?\EscolaLms\Core\Models\User $user = null)
+ * @method static ProductModelQueryBuilder|Product whereDoesntHaveProductablesNotBuyableByUser(?\Ulams\Core\Models\User $user = null)
+ * @method static ProductModelQueryBuilder|Product whereDoesntHaveProductablesNotOwnedByUser(?\Ulams\Core\Models\User $user = null)
  * @method static ProductModelQueryBuilder|Product whereDuration($value)
  * @method static ProductModelQueryBuilder|Product whereExtraFees($value)
  * @method static ProductModelQueryBuilder|Product whereHasProductable(\Illuminate\Database\Eloquent\Model|Productable $productable)
  * @method static ProductModelQueryBuilder|Product whereHasProductableClass(string $productable_type)
  * @method static ProductModelQueryBuilder|Product whereHasProductableClassAndId(string $productable_type, int $productable_id)
- * @method static ProductModelQueryBuilder|Product whereHasUser(\EscolaLms\Core\Models\User $user)
- * @method static ProductModelQueryBuilder|Product whereHasUserWithType(\EscolaLms\Core\Models\User $user, string $productType)
+ * @method static ProductModelQueryBuilder|Product whereHasUser(\Ulams\Core\Models\User $user)
+ * @method static ProductModelQueryBuilder|Product whereHasUserWithType(\Ulams\Core\Models\User $user, string $productType)
  * @method static ProductModelQueryBuilder|Product whereId($value)
  * @method static ProductModelQueryBuilder|Product whereLimitPerUser($value)
  * @method static ProductModelQueryBuilder|Product whereLimitTotal($value)
@@ -119,7 +119,7 @@ use Illuminate\Support\Facades\Storage;
  * @method static ProductModelQueryBuilder|Product whereTrialPeriod($value)
  * @property array|null $fields
  * @method static ProductModelQueryBuilder|Product whereFields($value)
- * @method static ProductModelQueryBuilder|Product whereHasUserWithProductType(\EscolaLms\Core\Models\User $user, string $productType, ?bool $active = true)
+ * @method static ProductModelQueryBuilder|Product whereHasUserWithProductType(\Ulams\Core\Models\User $user, string $productType, ?bool $active = true)
  * @mixin \Eloquent
  */
 class Product extends Model implements ProductInterface

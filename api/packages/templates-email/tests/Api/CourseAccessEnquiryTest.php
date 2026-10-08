@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests\Api;
+namespace Ulams\TemplatesEmail\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\CourseAccess\Database\Seeders\CourseAccessPermissionSeeder;
-use EscolaLms\CourseAccess\Events\CourseAccessEnquiryAdminCreatedEvent;
-use EscolaLms\CourseAccess\Models\CourseAccessEnquiry;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Templates\Listeners\TemplateEventListener;
-use EscolaLms\TemplatesEmail\Core\EmailMailable;
-use EscolaLms\TemplatesEmail\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\CourseAccess\Database\Seeders\CourseAccessPermissionSeeder;
+use Ulams\CourseAccess\Events\CourseAccessEnquiryAdminCreatedEvent;
+use Ulams\CourseAccess\Models\CourseAccessEnquiry;
+use Ulams\Courses\Models\Course;
+use Ulams\Templates\Listeners\TemplateEventListener;
+use Ulams\TemplatesEmail\Core\EmailMailable;
+use Ulams\TemplatesEmail\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
@@ -23,7 +23,7 @@ class CourseAccessEnquiryTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\CourseAccess\EscolaLmsCourseAccessServiceProvider::class)) {
+        if (!class_exists(\Ulams\CourseAccess\UlamsCourseAccessServiceProvider::class)) {
             $this->markTestSkipped('Course-Access package not installed');
         }
         

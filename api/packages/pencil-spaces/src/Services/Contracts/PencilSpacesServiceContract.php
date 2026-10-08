@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Services\Contracts;
+namespace Ulams\PencilSpaces\Services\Contracts;
 
-use EscolaLms\PencilSpaces\Resource\CreatePencilSpaceResource;
+use Ulams\PencilSpaces\Resource\CreatePencilSpaceResource;
 
 interface PencilSpacesServiceContract
 {

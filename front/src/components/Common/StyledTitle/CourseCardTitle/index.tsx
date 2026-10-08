@@ -1,4 +1,4 @@
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import React from "react";
 import styled from "styled-components";
 

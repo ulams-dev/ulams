@@ -1,9 +1,9 @@
 import { useContext, useEffect, useMemo, useState, useCallback } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import { isPast } from "date-fns";
 
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { Button } from "@lms/components/components/atoms/Button/Button";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import WebinarMeetModal from "@/components/Webinars/Webinar/WebinarMeetModal";
@@ -30,7 +30,7 @@ const WebinarSidebarButtons = () => {
     addToCart,
     user,
     webinar: { value: webinarObj },
-  } = useContext(EscolaLMSContext);
+  } = useContext(UlamsContext);
   const { t } = useTranslation();
   const { push } = useHistory();
 

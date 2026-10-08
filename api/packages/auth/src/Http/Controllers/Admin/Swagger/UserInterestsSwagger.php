@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers\Admin\Swagger;
+namespace Ulams\Auth\Http\Controllers\Admin\Swagger;
 
-use EscolaLms\Auth\Http\Requests\Admin\UserInterestAddRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserInterestDeleteRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserInterestsListRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserInterestsUpdateRequest;
+use Ulams\Auth\Http\Requests\Admin\UserInterestAddRequest;
+use Ulams\Auth\Http\Requests\Admin\UserInterestDeleteRequest;
+use Ulams\Auth\Http\Requests\Admin\UserInterestsListRequest;
+use Ulams\Auth\Http\Requests\Admin\UserInterestsUpdateRequest;
 use Illuminate\Http\JsonResponse;
 
 interface UserInterestsSwagger

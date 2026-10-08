@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Resources;
+namespace Ulams\Cart\Http\Resources;
 
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductProductable;
-use EscolaLms\Tags\Models\Tag;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductProductable;
+use Ulams\Tags\Models\Tag;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
 

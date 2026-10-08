@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Strategies\Contracts;
+namespace Ulams\AssignWithoutAccount\Strategies\Contracts;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 interface AssignStrategy

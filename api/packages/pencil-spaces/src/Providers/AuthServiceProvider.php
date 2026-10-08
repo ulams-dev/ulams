@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Providers;
+namespace Ulams\PencilSpaces\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 

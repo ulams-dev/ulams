@@ -8,8 +8,8 @@ RUN cd /tmp && curl -fsSL -o excimer.tgz https://codeload.github.com/wikimedia/m
   && cd /tmp && rm -rf excimer.tgz php-excimer-1.2.7
 RUN \
   cp docker/conf/supervisor/supervisord.conf /etc/supervisord.conf \
-  && cp docker/conf/php/escolalms-custom-php.ini /usr/local/etc/php/conf.d/escolalms-custom-php.ini \  
-  && cp docker/conf/php/escolalms-custom-develop-php.ini /usr/local/etc/php/conf.d/escolalms-custom-develop-php.ini \  
+  && cp docker/conf/php/ulams-custom-php.ini /usr/local/etc/php/conf.d/ulams-custom-php.ini \  
+  && cp docker/conf/php/ulams-custom-develop-php.ini /usr/local/etc/php/conf.d/ulams-custom-develop-php.ini \  
   && cp docker/conf/php/php-fpm-custom.conf /usr/local/etc/php-fpm.d/php-fpm-custom.conf
 RUN composer install --no-scripts --no-dev
 

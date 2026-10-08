@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Providers;
+namespace Ulams\Dictionaries\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 

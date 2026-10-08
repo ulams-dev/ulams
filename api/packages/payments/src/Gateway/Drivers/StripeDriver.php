@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Payments\Gateway\Drivers;
+namespace Ulams\Payments\Gateway\Drivers;
 
-use EscolaLms\Payments\Dtos\PaymentDto;
-use EscolaLms\Payments\Entities\PaymentsConfig;
-use EscolaLms\Payments\Exceptions\ActionNotSupported;
-use EscolaLms\Payments\Exceptions\CardDeclined;
-use EscolaLms\Payments\Exceptions\ExpiredCard;
-use EscolaLms\Payments\Exceptions\IncorrectCvc;
-use EscolaLms\Payments\Exceptions\ProcessingError;
-use EscolaLms\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
-use EscolaLms\Payments\Gateway\Responses\CallbackRefundResponse;
-use EscolaLms\Payments\Gateway\Responses\CallbackResponse;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Payments\Dtos\PaymentDto;
+use Ulams\Payments\Entities\PaymentsConfig;
+use Ulams\Payments\Exceptions\ActionNotSupported;
+use Ulams\Payments\Exceptions\CardDeclined;
+use Ulams\Payments\Exceptions\ExpiredCard;
+use Ulams\Payments\Exceptions\IncorrectCvc;
+use Ulams\Payments\Exceptions\ProcessingError;
+use Ulams\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
+use Ulams\Payments\Gateway\Responses\CallbackRefundResponse;
+use Ulams\Payments\Gateway\Responses\CallbackResponse;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Http\Request;
 use Omnipay\Common\GatewayInterface;
 use Omnipay\Common\Message\ResponseInterface;

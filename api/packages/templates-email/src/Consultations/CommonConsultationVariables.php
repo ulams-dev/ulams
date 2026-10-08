@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Consultations;
+namespace Ulams\TemplatesEmail\Consultations;
 
 use Carbon\Carbon;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Services\Contracts\ConsultationServiceContract;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\TemplatesEmail\Core\EmailVariables;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Services\Contracts\ConsultationServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\TemplatesEmail\Core\EmailVariables;
 
 abstract class CommonConsultationVariables extends EmailVariables
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Tasks\Models;
+namespace Ulams\Tasks\Models;
 
-use EscolaLms\Core\Models\User as CoreUser;
+use Ulams\Core\Models\User as CoreUser;
 
 /**
  * Class User
  *
- * @package EscolaLms\Tasks\Models
+ * @package Ulams\Tasks\Models
  *
  * @property int $id
  * @property string $first_name

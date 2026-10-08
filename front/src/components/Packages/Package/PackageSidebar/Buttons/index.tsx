@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { API } from "@lms/sdk";
-import Button from "@lms/components/components/atoms/Button/Button";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { UlamsContext } from "@ulams/sdk/react";
+import { API } from "@ulams/sdk";
+import Button from "@ulams/components/components/atoms/Button/Button";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import routeRoutes from "@/components/Routes/routes";
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export const PackageSidebarButtons = ({ product }: Props) => {
-  const { cart, addToCart, user } = useContext(EscolaLMSContext);
+  const { cart, addToCart, user } = useContext(UlamsContext);
   const { t } = useTranslation();
   const { push } = useHistory();
   const userId = user.value?.id;

@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\StationaryEvents\Enum\StationaryEventPermissionsEnum;
+use Ulams\StationaryEvents\Enum\StationaryEventPermissionsEnum;
 
 return [
     StationaryEventPermissionsEnum::STATIONARY_EVENT_LIST => 'Stationary event list',

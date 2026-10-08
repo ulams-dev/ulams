@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Mocks\ExampleEntity;
+namespace Ulams\Core\Tests\Mocks\ExampleEntity;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Repositories\Criteria\PeriodCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\IsNullCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Repositories\Criteria\PeriodCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\DateCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\InCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\IsNullCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\LikeCriterion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 

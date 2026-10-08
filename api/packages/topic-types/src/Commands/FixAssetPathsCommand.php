@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Commands;
+namespace Ulams\TopicTypes\Commands;
 
-use EscolaLms\TopicTypes\Services\Contracts\TopicTypeServiceContract;
+use Ulams\TopicTypes\Services\Contracts\TopicTypeServiceContract;
 use Illuminate\Console\Command;
 
 class FixAssetPathsCommand extends Command
@@ -12,7 +12,7 @@ class FixAssetPathsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'escolalms:fix-topic-types-paths';
+    protected $signature = 'ulams:fix-topic-types-paths';
 
     /**
      * The console command description.

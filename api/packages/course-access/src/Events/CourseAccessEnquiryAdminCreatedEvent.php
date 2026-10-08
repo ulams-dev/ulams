@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Events;
+namespace Ulams\CourseAccess\Events;
 
 class CourseAccessEnquiryAdminCreatedEvent extends CourseAccessEnquiryEvent
 {

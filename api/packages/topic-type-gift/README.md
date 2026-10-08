@@ -1,12 +1,5 @@
 # Topic Type GIFT
 
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Topic-Type-GIFT/)
-[![codecov](https://codecov.io/gh/EscolaLMS/Topic-Type-GIFT/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Topic-Type-GIFT)
-[![phpunit](https://github.com/EscolaLMS/Topic-Type-GIFT/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Topic-Type-GIFT/actions/workflows/test.yml)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/topic-type-gift)](https://packagist.org/packages/escolalms/topic-type-gift)
-[![downloads](https://img.shields.io/packagist/v/escolalms/topic-type-gift)](https://packagist.org/packages/escolalms/topic-type-gift)
-[![downloads](https://img.shields.io/packagist/l/escolalms/topic-type-gift)](https://packagist.org/packages/escolalms/topic-type-gift)
-[![Maintainability](https://api.codeclimate.com/v1/badges/0c9e2593fb30e2048f95/maintainability)](https://codeclimate.com/github/EscolaLMS/Topic-Type-GIFT/maintainability)
 
 ## What does it do
 
@@ -26,7 +19,7 @@ This package supports the following types of questions:
 Each question is stored in the database as a string. In the tests you can see examples of questions of different types. See [examples](https://github.com/EscolaLMS/Topic-Type-GIFT/blob/main/tests/GiftQuestionTesting.php)
 
 The quiz can have a set maximum number of attempts for the user to solve the test and a maximum time for each attempt.
-If the user doesn't complete the attempt then it is closed automatically after the time set by the variable `Config::get('escolalms_gift_quiz.max_quiz_time');`
+If the user doesn't complete the attempt then it is closed automatically after the time set by the variable `Config::get('ulams_gift_quiz.max_quiz_time');`
 The user will see the results when the attempt is finished.
 
 The answer to an essay type question is not automatically graded. The teacher should do it.
@@ -41,13 +34,13 @@ questions still shuffle their columns, as they always have, otherwise the pairs 
 
 ## Installing
 
-- `composer require escolalms/topic-type-gift`
+- `composer require ulams/topic-type-gift`
 - `php artisan migrate`
-- `php artisan db:seed --class="EscolaLms\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder"`
+- `php artisan db:seed --class="Ulams\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder"`
 
 ## Endpoints
 
-The endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Topic-Type-GIFT/)
+The endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/Topic-Type-GIFT/)
 
 ## Database
 
@@ -119,7 +112,7 @@ H --> K[End]
 ## Tests
 
 Run `./vendor/bin/phpunit` to run tests.
-Test details [![codecov](https://codecov.io/gh/EscolaLMS/Topic-Type-GIFT/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Topic-Type-GIFT)
+Test details [![codecov](https://codecov.io/gh/Ulams/Topic-Type-GIFT/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Topic-Type-GIFT)
 
 ## Events
 

@@ -1,12 +1,12 @@
 <?php
 
 
-namespace EscolaLms\Courses\Http\Resources;
+namespace Ulams\Courses\Http\Resources;
 
-use EscolaLms\Categories\Http\Resources\CategoryResource;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\ValueObjects\CourseContent;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
+use Ulams\Categories\Http\Resources\CategoryResource;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\ValueObjects\CourseContent;
+use Ulams\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProgressResource extends JsonResource

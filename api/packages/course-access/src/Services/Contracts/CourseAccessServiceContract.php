@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Services\Contracts;
+namespace Ulams\CourseAccess\Services\Contracts;
 
-use EscolaLms\CourseAccess\Models\Course;
+use Ulams\CourseAccess\Models\Course;
 
 interface CourseAccessServiceContract
 {

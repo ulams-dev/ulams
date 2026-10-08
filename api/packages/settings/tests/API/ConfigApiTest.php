@@ -2,10 +2,10 @@
 
 namespace Tests\APIs;
 
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\Settings\Events\SettingPackageConfigUpdated;
-use EscolaLms\Settings\Facades\AdministrableConfig;
-use EscolaLms\Settings\Tests\TestCase;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\Settings\Events\SettingPackageConfigUpdated;
+use Ulams\Settings\Facades\AdministrableConfig;
+use Ulams\Settings\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;

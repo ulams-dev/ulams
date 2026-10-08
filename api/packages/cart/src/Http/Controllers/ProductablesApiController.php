@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Controllers;
+namespace Ulams\Cart\Http\Controllers;
 
-use EscolaLms\Cart\Exceptions\InactiveSubscription;
-use EscolaLms\Cart\Http\Requests\ProductableAttachRequest;
-use EscolaLms\Cart\Http\Swagger\ProductablesSwagger;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Core\Models\User;
+use Ulams\Cart\Exceptions\InactiveSubscription;
+use Ulams\Cart\Http\Requests\ProductableAttachRequest;
+use Ulams\Cart\Http\Swagger\ProductablesSwagger;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Core\Models\User;
 use Illuminate\Http\JsonResponse;
 
-class ProductablesApiController extends EscolaLmsBaseController implements ProductablesSwagger
+class ProductablesApiController extends UlamsBaseController implements ProductablesSwagger
 {
     protected ProductServiceContract $productService;
 

@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests\Api;
+namespace Ulams\TemplatesEmail\Tests\Api;
 
-use EscolaLms\Tasks\Database\Seeders\TaskPermissionSeeder;
-use EscolaLms\Tasks\Events\TaskAssignedEvent;
-use EscolaLms\Tasks\Events\TaskCompleteRequestEvent;
-use EscolaLms\Tasks\Events\TaskCompleteUserConfirmationEvent;
-use EscolaLms\Tasks\Events\TaskIncompleteEvent;
-use EscolaLms\Tasks\Events\TaskNoteCreatedEvent;
-use EscolaLms\Tasks\Models\Task;
-use EscolaLms\Tasks\Models\TaskNote;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Templates\Listeners\TemplateEventListener;
-use EscolaLms\TemplatesEmail\Core\EmailMailable;
-use EscolaLms\TemplatesEmail\Tests\TestCase;
+use Ulams\Tasks\Database\Seeders\TaskPermissionSeeder;
+use Ulams\Tasks\Events\TaskAssignedEvent;
+use Ulams\Tasks\Events\TaskCompleteRequestEvent;
+use Ulams\Tasks\Events\TaskCompleteUserConfirmationEvent;
+use Ulams\Tasks\Events\TaskIncompleteEvent;
+use Ulams\Tasks\Events\TaskNoteCreatedEvent;
+use Ulams\Tasks\Models\Task;
+use Ulams\Tasks\Models\TaskNote;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Templates\Listeners\TemplateEventListener;
+use Ulams\TemplatesEmail\Core\EmailMailable;
+use Ulams\TemplatesEmail\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
@@ -28,7 +28,7 @@ class TaskTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\Tasks\EscolaLmsTasksServiceProvider::class)) {
+        if (!class_exists(\Ulams\Tasks\UlamsTasksServiceProvider::class)) {
             $this->markTestSkipped('Task package not installed');
         }
 

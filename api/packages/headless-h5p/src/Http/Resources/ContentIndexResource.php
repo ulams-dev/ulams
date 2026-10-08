@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Http\Resources;
+namespace Ulams\HeadlessH5P\Http\Resources;
 
-use EscolaLms\HeadlessH5P\Traits\ResourceExtendable;
+use Ulams\HeadlessH5P\Traits\ResourceExtendable;
 use Illuminate\Http\Resources\Json\JsonResource;
-use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use Ulams\HeadlessH5P\Models\H5PLibrary;
 
 class ContentIndexResource extends JsonResource
 {

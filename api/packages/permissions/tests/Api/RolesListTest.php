@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Permissions\Tests\Api;
+namespace Ulams\Permissions\Tests\Api;
 
-use EscolaLms\Permissions\Models\Template;
-use EscolaLms\Permissions\Tests\TestCase;
+use Ulams\Permissions\Models\Template;
+use Ulams\Permissions\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Spatie\Permission\Models\Role;
 

@@ -1,4 +1,4 @@
-import { permisions, setRolePermisions } from '@/services/escola-lms/roles';
+import { permisions, setRolePermisions } from '@/services/ulams/roles';
 import ProCard from '@ant-design/pro-card';
 import ProForm from '@ant-design/pro-form';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -10,7 +10,7 @@ import { FormattedMessage, useParams } from 'umi';
 
 import './index.css';
 
-import { getTranslationRetrieve } from '@/services/escola-lms/translations';
+import { getTranslationRetrieve } from '@/services/ulams/translations';
 import type { CheckboxValueType } from './components/CustomCheckbox';
 import CustomCheckbox from './components/CustomCheckbox';
 

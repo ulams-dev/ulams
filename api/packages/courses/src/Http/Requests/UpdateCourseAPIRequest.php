@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Requests;
+namespace Ulams\Courses\Http\Requests;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Rules\ValidAuthor;
-use EscolaLms\Files\Rules\FileOrStringRule;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Rules\ValidAuthor;
+use Ulams\Files\Rules\FileOrStringRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCourseAPIRequest extends FormRequest

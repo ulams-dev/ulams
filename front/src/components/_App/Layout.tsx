@@ -7,7 +7,7 @@ import { setConfiguration } from "react-grid-system";
 import Warning from "./Warning";
 import { StyledToastContainer } from "@/components/_App/StyledToastContainer";
 import { isMobile } from "react-device-detect";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { ConsultationModalProvider } from "@/components/Consultations/ConsultationCard/Buttons/context";
 
 declare global {
@@ -31,7 +31,7 @@ const Layout: React.FC<{
   metaTitle?: string | undefined;
 }> = ({ children, metaTitle }) => {
   const { pathname } = useLocation();
-  const { settings } = useContext(EscolaLMSContext);
+  const { settings } = useContext(UlamsContext);
 
   useEffect(() => {
     // ybug

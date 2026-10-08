@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests\Admin;
+namespace Ulams\Auth\Http\Requests\Admin;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Rules\NoHtmlTags;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Rules\NoHtmlTags;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Validation\Rule;
 
 class UserUpdateRequest extends AbstractUserIdInRouteRequest

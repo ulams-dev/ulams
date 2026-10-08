@@ -4,7 +4,7 @@ import styled, { withTheme } from "styled-components";
 import { getFontFromTheme } from "../../../theme/provider";
 import { PropsWithChildren } from "react";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 export interface LinkProps
   extends React.AnchorHTMLAttributes<HTMLAnchorElement>,
@@ -72,7 +72,7 @@ export const Link: React.FC<PropsWithChildren<LinkProps>> = ({
     <StyledAnchor
       underline={underline}
       {...props}
-      className={`wellms-component ${props.className ?? ""}`}
+      className={`ulams-component ${props.className ?? ""}`}
     >
       {props.children}
     </StyledAnchor>

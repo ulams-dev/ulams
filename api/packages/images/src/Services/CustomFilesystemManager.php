@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Images\Services;
+namespace Ulams\Images\Services;
 
-use EscolaLms\Images\Events\FileDeleted;
-use EscolaLms\Images\Events\FileStored;
+use Ulams\Images\Events\FileDeleted;
+use Ulams\Images\Events\FileStored;
 use Illuminate\Filesystem\FilesystemManager;
 
 class CustomFilesystemManager extends FilesystemManager

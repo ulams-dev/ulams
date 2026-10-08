@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Video;
+namespace Ulams\TemplatesEmail\Video;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\TemplatesEmail\Core\EmailVariables;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\TemplatesEmail\Core\EmailVariables;
 
 abstract class CommonVideoVariables extends EmailVariables
 {

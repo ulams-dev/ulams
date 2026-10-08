@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Cmi5\Http\Controllers\Cmi5Controller;
+use Ulams\Cmi5\Http\Controllers\Cmi5Controller;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Dtos\Admin;
+namespace Ulams\Auth\Dtos\Admin;
 
-use EscolaLms\Auth\Dtos\UserUpdateKeysDto as BasicUserUpdateKeysDto;
+use Ulams\Auth\Dtos\UserUpdateKeysDto as BasicUserUpdateKeysDto;
 use Illuminate\Http\Request;
 
 class UserUpdateKeysDto extends BasicUserUpdateKeysDto

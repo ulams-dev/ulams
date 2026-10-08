@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Images\Repositories\Contracts;
+namespace Ulams\Images\Repositories\Contracts;
 
 interface ImageCacheRepositoryContract
 {

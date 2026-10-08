@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Consultations\Tests\APIs;
+namespace Ulams\Consultations\Tests\APIs;
 
-use EscolaLms\Consultations\Http\Resources\ConsultationAuthorResource;
-use EscolaLms\Consultations\Http\Resources\ConsultationTermResource;
-use EscolaLms\Consultations\Models\ConsultationUserTerm;
-use EscolaLms\Consultations\Services\Contracts\ConsultationServiceContract;
-use EscolaLms\Consultations\Tests\Models\User;
-use EscolaLms\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Models\ConsultationProposedTerm;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Tests\TestCase;
+use Ulams\Consultations\Http\Resources\ConsultationAuthorResource;
+use Ulams\Consultations\Http\Resources\ConsultationTermResource;
+use Ulams\Consultations\Models\ConsultationUserTerm;
+use Ulams\Consultations\Services\Contracts\ConsultationServiceContract;
+use Ulams\Consultations\Tests\Models\User;
+use Ulams\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\ConsultationProposedTerm;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Illuminate\Testing\Fluent\AssertableJson;

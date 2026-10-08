@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Cart\Events;
+namespace Ulams\Cart\Events;
 
 class AbandonedCartEvent extends AbstractCartEvent
 {

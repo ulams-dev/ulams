@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Images\Tests\Api;
+namespace Ulams\Images\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Images\Enum\PackageStatusEnum;
-use EscolaLms\Images\Providers\SettingsServiceProvider;
-use EscolaLms\Images\Tests\TestCase;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Images\Enum\PackageStatusEnum;
+use Ulams\Images\Providers\SettingsServiceProvider;
+use Ulams\Images\Tests\TestCase;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class SettingsTest extends TestCase
@@ -17,7 +17,7 @@ class SettingsTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
+        if (!class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
             $this->markTestSkipped('Settings package not installed');
         }
 

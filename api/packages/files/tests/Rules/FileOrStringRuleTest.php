@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Files\Tests\Rules;
+namespace Ulams\Files\Tests\Rules;
 
-use EscolaLms\Files\Rules\FileOrStringRule;
-use EscolaLms\Files\Tests\TestCase;
+use Ulams\Files\Rules\FileOrStringRule;
+use Ulams\Files\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 

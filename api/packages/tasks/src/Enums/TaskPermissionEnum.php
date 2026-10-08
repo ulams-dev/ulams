@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Tasks\Enums;
+namespace Ulams\Tasks\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class TaskPermissionEnum extends BasicEnum
 {

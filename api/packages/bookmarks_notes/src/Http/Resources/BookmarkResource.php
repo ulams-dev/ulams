@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Http\Resources;
+namespace Ulams\Bookmarks\Http\Resources;
 
-use EscolaLms\Bookmarks\Models\Bookmark;
+use Ulams\Bookmarks\Models\Bookmark;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 
@@ -37,7 +37,7 @@ class BookmarkResource extends JsonResource
 {
     public function toArray($request): array
     {
-        $resourceClass = ('\EscolaLms\Bookmarks\Http\Resources\\' . class_basename($this->bookmarkable_type) . 'Resource');
+        $resourceClass = ('\Ulams\Bookmarks\Http\Resources\\' . class_basename($this->bookmarkable_type) . 'Resource');
 
         return [
             'id' => $this->id,

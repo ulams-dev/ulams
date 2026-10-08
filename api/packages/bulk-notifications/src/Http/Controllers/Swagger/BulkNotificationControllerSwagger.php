@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Http\Controllers\Swagger;
+namespace Ulams\BulkNotifications\Http\Controllers\Swagger;
 
-use EscolaLms\BulkNotifications\Http\Requests\ListBulkNotificationRequest;
-use EscolaLms\BulkNotifications\Http\Requests\SendUserBulkNotificationRequest;
-use EscolaLms\BulkNotifications\Http\Requests\SendMulticastBulkNotificationRequest;
+use Ulams\BulkNotifications\Http\Requests\ListBulkNotificationRequest;
+use Ulams\BulkNotifications\Http\Requests\SendUserBulkNotificationRequest;
+use Ulams\BulkNotifications\Http\Requests\SendMulticastBulkNotificationRequest;
 use Illuminate\Http\JsonResponse;
 
 interface BulkNotificationControllerSwagger
@@ -126,7 +126,7 @@ interface BulkNotificationControllerSwagger
      *      ),
      *      @OA\Parameter(
      *          name="channel",
-     *          description="Bulk notification channel [EscolaLms\BulkNotifications\Channels\PushNotificationChannel]",
+     *          description="Bulk notification channel [Ulams\BulkNotifications\Channels\PushNotificationChannel]",
      *          required=false,
      *          in="query",
      *          @OA\Schema(

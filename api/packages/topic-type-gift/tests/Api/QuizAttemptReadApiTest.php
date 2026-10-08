@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Tests\Api;
+namespace Ulams\TopicTypeGift\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder;
-use EscolaLms\TopicTypeGift\Enum\QuestionTypeEnum;
-use EscolaLms\TopicTypeGift\Models\AttemptAnswer;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
-use EscolaLms\TopicTypeGift\Strategies\GiftQuestionStrategyFactory;
-use EscolaLms\TopicTypeGift\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder;
+use Ulams\TopicTypeGift\Enum\QuestionTypeEnum;
+use Ulams\TopicTypeGift\Models\AttemptAnswer;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
+use Ulams\TopicTypeGift\Strategies\GiftQuestionStrategyFactory;
+use Ulams\TopicTypeGift\Tests\TestCase;
 use Illuminate\Support\Carbon;
 
 class QuizAttemptReadApiTest extends TestCase

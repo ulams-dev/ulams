@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Services;
+namespace Ulams\TopicTypeGift\Services;
 
-use EscolaLms\TopicTypeGift\Dtos\AdminUpdateAttemptAnswerDto;
-use EscolaLms\TopicTypeGift\Dtos\SaveAllAttemptAnswersDto;
-use EscolaLms\TopicTypeGift\Dtos\SaveAttemptAnswerDto;
-use EscolaLms\TopicTypeGift\Events\QuizAttemptJournalGradeReadyEvent;
-use EscolaLms\TopicTypeGift\Jobs\MarkAttemptAsEnded;
-use EscolaLms\TopicTypeGift\Models\AttemptAnswer;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Repositories\AttemptAnswerRepository;
-use EscolaLms\TopicTypeGift\Repositories\Contracts\GiftQuestionRepositoryContract;
-use EscolaLms\TopicTypeGift\Services\Contracts\AttemptAnswerServiceContract;
-use EscolaLms\TopicTypeGift\Strategies\GiftQuestionStrategyFactory;
+use Ulams\TopicTypeGift\Dtos\AdminUpdateAttemptAnswerDto;
+use Ulams\TopicTypeGift\Dtos\SaveAllAttemptAnswersDto;
+use Ulams\TopicTypeGift\Dtos\SaveAttemptAnswerDto;
+use Ulams\TopicTypeGift\Events\QuizAttemptJournalGradeReadyEvent;
+use Ulams\TopicTypeGift\Jobs\MarkAttemptAsEnded;
+use Ulams\TopicTypeGift\Models\AttemptAnswer;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Repositories\AttemptAnswerRepository;
+use Ulams\TopicTypeGift\Repositories\Contracts\GiftQuestionRepositoryContract;
+use Ulams\TopicTypeGift\Services\Contracts\AttemptAnswerServiceContract;
+use Ulams\TopicTypeGift\Strategies\GiftQuestionStrategyFactory;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;

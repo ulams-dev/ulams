@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\PencilSpaces\Http\Controllers\PencilSpaceApiController;
+use Ulams\PencilSpaces\Http\Controllers\PencilSpaceApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')->middleware(['auth:api'])->group(function () {

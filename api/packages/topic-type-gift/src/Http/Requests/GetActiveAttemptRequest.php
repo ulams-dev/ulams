@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Requests;
+namespace Ulams\TopicTypeGift\Http\Requests;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypeGift\Dtos\QuizAttemptDto;
-use EscolaLms\TopicTypeGift\Enum\TopicTypeGiftPermissionEnum;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypeGift\Dtos\QuizAttemptDto;
+use Ulams\TopicTypeGift\Enum\TopicTypeGiftPermissionEnum;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

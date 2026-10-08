@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Payments\Http\Controllers;
+namespace Ulams\Payments\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Payments\Dtos\PaymentFilterCriteriaDto;
-use EscolaLms\Payments\Facades\Payments;
-use EscolaLms\Payments\Http\Controllers\Swagger\PaymentsSwagger;
-use EscolaLms\Payments\Http\Requests\PaymentShowRequest;
-use EscolaLms\Payments\Http\Requests\PaymentsSearchRequest;
-use EscolaLms\Payments\Http\Resources\PaymentCollection;
-use EscolaLms\Payments\Http\Resources\PaymentResource;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Payments\Dtos\PaymentFilterCriteriaDto;
+use Ulams\Payments\Facades\Payments;
+use Ulams\Payments\Http\Controllers\Swagger\PaymentsSwagger;
+use Ulams\Payments\Http\Requests\PaymentShowRequest;
+use Ulams\Payments\Http\Requests\PaymentsSearchRequest;
+use Ulams\Payments\Http\Resources\PaymentCollection;
+use Ulams\Payments\Http\Resources\PaymentResource;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Http\JsonResponse;
 
-class PaymentsController extends EscolaLmsBaseController implements PaymentsSwagger
+class PaymentsController extends UlamsBaseController implements PaymentsSwagger
 {
     public function search(PaymentsSearchRequest $request): JsonResponse
     {

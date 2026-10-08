@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Models;
+namespace Ulams\TemplatesPdf\Models;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use EscolaLms\TemplatesPdf\Database\Factories\FabricPdfFactory;
-use EscolaLms\Templates\Services\Contracts\TemplateServiceContract;
+use Ulams\TemplatesPdf\Database\Factories\FabricPdfFactory;
+use Ulams\Templates\Services\Contracts\TemplateServiceContract;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\TemplatesPdf\Events\PdfCreated;
+use Ulams\Templates\Models\Template;
+use Ulams\TemplatesPdf\Events\PdfCreated;
 
 /**
  * @OA\Schema(

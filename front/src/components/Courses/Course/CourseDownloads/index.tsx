@@ -1,8 +1,8 @@
 import React from "react";
-import { Downloads } from "@lms/components/components/molecules/Downloads/Downloads";
+import { Downloads } from "@ulams/components/components/molecules/Downloads/Downloads";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 
 type Props = {
   resources: API.TopicResource[];

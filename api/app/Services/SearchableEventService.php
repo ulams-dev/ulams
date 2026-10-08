@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Repositories\Contracts\SearchableEventRepositoryContract;
 use App\Services\Contracts\SearchableEventServiceContract;
-use EscolaLms\Core\Dtos\OrderDto;
+use Ulams\Core\Dtos\OrderDto;
 use Illuminate\Database\Query\Builder;
 
 class SearchableEventService implements SearchableEventServiceContract

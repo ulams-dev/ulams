@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Tasks\Repositories;
+namespace Ulams\Tasks\Repositories;
 
 use Illuminate\Support\Carbon;
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Tasks\Models\Task;
-use EscolaLms\Tasks\Repositories\Contracts\TaskRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Tasks\Models\Task;
+use Ulams\Tasks\Repositories\Contracts\TaskRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 

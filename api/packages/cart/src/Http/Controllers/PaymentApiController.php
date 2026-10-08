@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Controllers;
+namespace Ulams\Cart\Http\Controllers;
 
-use EscolaLms\Cart\Http\Requests\PaymentCartRequest;
-use EscolaLms\Cart\Http\Requests\PaymentProductRequest;
-use EscolaLms\Cart\Http\Swagger\PaymentSwagger;
-use EscolaLms\Cart\Services\Contracts\ShopServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Payments\Http\Resources\PaymentResource;
+use Ulams\Cart\Http\Requests\PaymentCartRequest;
+use Ulams\Cart\Http\Requests\PaymentProductRequest;
+use Ulams\Cart\Http\Swagger\PaymentSwagger;
+use Ulams\Cart\Services\Contracts\ShopServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Core\Models\User;
+use Ulams\Payments\Http\Resources\PaymentResource;
 use Illuminate\Http\JsonResponse;
 
-class PaymentApiController extends EscolaLmsBaseController implements PaymentSwagger
+class PaymentApiController extends UlamsBaseController implements PaymentSwagger
 {
     protected ShopServiceContract $shopService;
 

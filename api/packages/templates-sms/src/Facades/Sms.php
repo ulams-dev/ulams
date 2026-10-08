@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Facades;
+namespace Ulams\TemplatesSms\Facades;
 
-use EscolaLms\TemplatesSms\Testing\SmsFake;
+use Ulams\TemplatesSms\Testing\SmsFake;
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @see \Tzsk\Sms\Sms
- * @see \EscolaLms\TemplatesSms\Testing\SmsFake
+ * @see \Ulams\TemplatesSms\Testing\SmsFake
  */
 class Sms extends Facade
 {

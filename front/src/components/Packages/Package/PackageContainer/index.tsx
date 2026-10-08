@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Row, Col } from "react-grid-system";
 import { useTranslation } from "react-i18next";
 
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import Loader from "@/components/_App/Preloader";
 
 import { PackageSidebar } from "@/components/Packages/Package/PackageSidebar";
@@ -15,7 +15,7 @@ import PackageDescription from "@/components/Packages/Package/PackageDescription
 import { PackageContainerStyles } from "./styles";
 
 const PackageContainer = () => {
-  const { product } = useContext(EscolaLMSContext);
+  const { product } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   if (product.loading || !product.value) {

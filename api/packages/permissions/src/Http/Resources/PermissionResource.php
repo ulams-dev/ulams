@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Permissions\Http\Resources;
+namespace Ulams\Permissions\Http\Resources;
 
 
 use Spatie\Permission\Models\Permission;

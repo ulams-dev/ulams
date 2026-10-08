@@ -10,7 +10,7 @@ import {
   createCompetencyChallengeScale,
   deleteCompetencyChallengeScale,
   updateCompetencyChallengeScale,
-} from '@/services/escola-lms/competency-challenges';
+} from '@/services/ulams/competency-challenges';
 import { useCompetencyChallengeContext } from '../context';
 import { CompetencyChallengeCategoryTree } from './CompetencyChallengeCategoryTree';
 

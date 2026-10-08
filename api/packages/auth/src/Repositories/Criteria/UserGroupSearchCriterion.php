@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Repositories\Criteria;
+namespace Ulams\Auth\Repositories\Criteria;
 
-use EscolaLms\Auth\Models\Group;
-use EscolaLms\Core\Repositories\Criteria\Criterion;
+use Ulams\Auth\Models\Group;
+use Ulams\Core\Repositories\Criteria\Criterion;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 

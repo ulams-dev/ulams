@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { QuestionType } from '@/services/escola-lms/enums';
+import { QuestionType } from '@/services/ulams/enums';
 import { GiftQuizQuestionEssayEditor } from './Essay';
 import { GiftQuizQuestionMatchingEditor } from './Matching';
 import { GiftQuizQuestionMultipleChoiceEditor } from './MultipleChoice';

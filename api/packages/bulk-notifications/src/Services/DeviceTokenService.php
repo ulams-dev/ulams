@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Services;
+namespace Ulams\BulkNotifications\Services;
 
-use EscolaLms\BulkNotifications\Dtos\CreateDeviceTokenDto;
-use EscolaLms\BulkNotifications\Models\DeviceToken;
-use EscolaLms\BulkNotifications\Repositories\Contracts\DeviceTokenRepositoryContract;
-use EscolaLms\BulkNotifications\Services\Contracts\DeviceTokenServiceContract;
+use Ulams\BulkNotifications\Dtos\CreateDeviceTokenDto;
+use Ulams\BulkNotifications\Models\DeviceToken;
+use Ulams\BulkNotifications\Repositories\Contracts\DeviceTokenRepositoryContract;
+use Ulams\BulkNotifications\Services\Contracts\DeviceTokenServiceContract;
 
 class DeviceTokenService implements DeviceTokenServiceContract
 {

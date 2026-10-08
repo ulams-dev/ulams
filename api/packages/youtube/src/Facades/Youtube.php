@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Youtube\Facades;
+namespace Ulams\Youtube\Facades;
 
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
+use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Support\Facades\Facade;
 
 class Youtube extends Facade

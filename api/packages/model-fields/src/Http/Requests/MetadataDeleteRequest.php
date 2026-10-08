@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\ModelFields\Http\Requests;
+namespace Ulams\ModelFields\Http\Requests;
 
-use EscolaLms\ModelFields\Models\Metadata;
+use Ulams\ModelFields\Models\Metadata;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

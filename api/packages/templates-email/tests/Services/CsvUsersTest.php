@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests\Services;
+namespace Ulams\TemplatesEmail\Tests\Services;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\CsvUsers\Events\EscolaLmsImportedNewUserTemplateEvent;
-use EscolaLms\CsvUsers\Services\Contracts\CsvUserServiceContract;
-use EscolaLms\Templates\Listeners\TemplateEventListener;
-use EscolaLms\TemplatesEmail\Core\EmailMailable;
-use EscolaLms\TemplatesEmail\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\CsvUsers\Events\UlamsImportedNewUserTemplateEvent;
+use Ulams\CsvUsers\Services\Contracts\CsvUserServiceContract;
+use Ulams\Templates\Listeners\TemplateEventListener;
+use Ulams\TemplatesEmail\Core\EmailMailable;
+use Ulams\TemplatesEmail\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
@@ -20,7 +20,7 @@ class CsvUsersTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        if (!class_exists(\EscolaLms\CsvUsers\EscolaLmsCsvUsersServiceProvider::class)) {
+        if (!class_exists(\Ulams\CsvUsers\UlamsCsvUsersServiceProvider::class)) {
             $this->markTestSkipped('Auth package not installed');
         }
     }
@@ -40,13 +40,13 @@ class CsvUsersTest extends TestCase
         $service = app(CsvUserServiceContract::class);
         $user = $service->saveUserFromImport($userToImport, 'http://localhost/set-password');
 
-        Event::assertDispatched(EscolaLmsImportedNewUserTemplateEvent::class,
-            function (EscolaLmsImportedNewUserTemplateEvent $event) use ($userToImport) {
+        Event::assertDispatched(UlamsImportedNewUserTemplateEvent::class,
+            function (UlamsImportedNewUserTemplateEvent $event) use ($userToImport) {
                 return $event->getUser()->email === $userToImport['email'];
             });
 
         $listener = app(TemplateEventListener::class);
-        $listener->handle(new EscolaLmsImportedNewUserTemplateEvent($user,'http://localhost/set-password'));
+        $listener->handle(new UlamsImportedNewUserTemplateEvent($user,'http://localhost/set-password'));
 
         Mail::assertSent(EmailMailable::class, function (EmailMailable $mailable) use ($user) {
             $this->assertEquals('User Import Notification', $mailable->subject);

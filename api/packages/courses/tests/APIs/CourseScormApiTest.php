@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\APIs;
+namespace Ulams\Courses\Tests\APIs;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Tests\TestCase;
-use EscolaLms\Scorm\Database\Seeders\DatabaseSeeder;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Tests\TestCase;
+use Ulams\Scorm\Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Peopleaps\Scorm\Model\ScormModel;
 

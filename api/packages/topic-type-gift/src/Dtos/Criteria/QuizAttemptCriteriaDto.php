@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Dtos\Criteria;
+namespace Ulams\TopicTypeGift\Dtos\Criteria;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
-use EscolaLms\Core\Dtos\CriteriaDto as BaseCriteriaDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\TopicTypeGift\Enum\TopicTypeGiftPermissionEnum;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Repositories\Criterion\RawCriterion;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\CriteriaDto as BaseCriteriaDto;
+use Ulams\Core\Repositories\Criteria\Primitives\DateCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\TopicTypeGift\Enum\TopicTypeGiftPermissionEnum;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Repositories\Criterion\RawCriterion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 

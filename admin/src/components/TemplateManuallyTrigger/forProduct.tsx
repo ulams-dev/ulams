@@ -1,5 +1,5 @@
-import { TemplateEvents } from '@/services/escola-lms/enums';
-import { triggerManualEventForProduct } from '@/services/escola-lms/templates';
+import { TemplateEvents } from '@/services/ulams/enums';
+import { triggerManualEventForProduct } from '@/services/ulams/templates';
 import { Button, Space, Tooltip, message } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';

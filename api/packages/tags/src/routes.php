@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Tags\Http\Controllers\TagsAPIController;
+use Ulams\Tags\Http\Controllers\TagsAPIController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api/tags'], function () {

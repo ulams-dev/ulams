@@ -1,4 +1,4 @@
-import { Spin } from "@lms/components/components/atoms/Spin/Spin";
+import { Spin } from "@ulams/components/components/atoms/Spin/Spin";
 import styled, { useTheme } from "styled-components";
 
 interface Props {

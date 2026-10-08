@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Translations\Tests\TranslationLoader;
+namespace Ulams\Translations\Tests\TranslationLoader;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Translations\Tests\TestCase;
-use EscolaLms\Translations\Translations\TranslationLoaderManager;
+use Ulams\Auth\Models\User;
+use Ulams\Translations\Tests\TestCase;
+use Ulams\Translations\Translations\TranslationLoaderManager;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\App;

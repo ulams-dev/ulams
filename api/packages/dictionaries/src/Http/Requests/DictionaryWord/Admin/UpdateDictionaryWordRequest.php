@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Http\Requests\DictionaryWord\Admin;
+namespace Ulams\Dictionaries\Http\Requests\DictionaryWord\Admin;
 
-use EscolaLms\Dictionaries\Models\DictionaryWord;
+use Ulams\Dictionaries\Models\DictionaryWord;
 use Illuminate\Support\Facades\Gate;
 
 class UpdateDictionaryWordRequest extends CreateDictionaryWordRequest

@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Controllers;
+namespace Ulams\Tasks\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Tasks\Http\Controllers\Swagger\TaskControllerSwagger;
-use EscolaLms\Tasks\Http\Requests\CompleteTaskRequest;
-use EscolaLms\Tasks\Http\Requests\DeleteTaskRequest;
-use EscolaLms\Tasks\Http\Requests\DetailsTaskRequest;
-use EscolaLms\Tasks\Http\Requests\IncompleteTaskRequest;
-use EscolaLms\Tasks\Http\Requests\ListTaskRequest;
-use EscolaLms\Tasks\Http\Resources\TaskDetailsResource;
-use EscolaLms\Tasks\Http\Resources\TaskResource;
-use EscolaLms\Tasks\Http\Requests\CreateTaskRequest;
-use EscolaLms\Tasks\Http\Requests\UpdateTaskRequest;
-use EscolaLms\Tasks\Services\TaskService;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Tasks\Http\Controllers\Swagger\TaskControllerSwagger;
+use Ulams\Tasks\Http\Requests\CompleteTaskRequest;
+use Ulams\Tasks\Http\Requests\DeleteTaskRequest;
+use Ulams\Tasks\Http\Requests\DetailsTaskRequest;
+use Ulams\Tasks\Http\Requests\IncompleteTaskRequest;
+use Ulams\Tasks\Http\Requests\ListTaskRequest;
+use Ulams\Tasks\Http\Resources\TaskDetailsResource;
+use Ulams\Tasks\Http\Resources\TaskResource;
+use Ulams\Tasks\Http\Requests\CreateTaskRequest;
+use Ulams\Tasks\Http\Requests\UpdateTaskRequest;
+use Ulams\Tasks\Services\TaskService;
 use Illuminate\Http\JsonResponse;
 
-class TaskController extends EscolaLmsBaseController implements TaskControllerSwagger
+class TaskController extends UlamsBaseController implements TaskControllerSwagger
 {
     private TaskService $taskService;
 

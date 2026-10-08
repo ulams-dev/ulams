@@ -1,4 +1,4 @@
-import { Text } from "@lms/components";
+import { Text } from "@ulams/components";
 import styled from "styled-components";
 
 const StyledMessage = styled.div<{ $isAI: boolean }>`

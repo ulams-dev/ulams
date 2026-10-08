@@ -1,5 +1,5 @@
-import { ExamGradeType } from '@/services/escola-lms/enums';
-import { createExam, getExam, updateExam } from '@/services/escola-lms/exams';
+import { ExamGradeType } from '@/services/ulams/enums';
+import { createExam, getExam, updateExam } from '@/services/ulams/exams';
 import ProForm, { ProFormDatePicker, ProFormText } from '@ant-design/pro-form';
 import ProTable, { type ProColumns } from '@ant-design/pro-table';
 import { Button, Col, InputNumber, Row, Spin } from 'antd';

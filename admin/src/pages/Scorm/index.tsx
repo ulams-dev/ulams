@@ -6,7 +6,7 @@ import React, { useRef } from 'react';
 import { FormattedMessage, Link, useIntl } from 'umi';
 
 import UploadScorm from '@/components/Scorm/upload';
-import { deleteScorm, scorms } from '@/services/escola-lms/scorm';
+import { deleteScorm, scorms } from '@/services/ulams/scorm';
 import { DeleteOutlined, SendOutlined } from '@ant-design/icons';
 
 const handleRemove = async (id: number) => {

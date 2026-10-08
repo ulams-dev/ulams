@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Models;
+namespace Ulams\BulkNotifications\Models;
 
-use EscolaLms\Core\Models\User as CoreUser;
+use Ulams\Core\Models\User as CoreUser;
 
 class User extends CoreUser
 {

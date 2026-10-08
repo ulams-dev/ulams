@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Scorm\Commands;
+namespace Ulams\Scorm\Commands;
 
 use Illuminate\Console\Command;
-use EscolaLms\Scorm\Services\Contracts\ScormServiceContract;
+use Ulams\Scorm\Services\Contracts\ScormServiceContract;
 
 class CopyServiceWorkerJSCommand extends Command
 {

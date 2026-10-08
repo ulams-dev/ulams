@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Models;
+namespace Ulams\BulkNotifications\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  *
  * Class BulkNotificationUser
  *
- * @package EscolaLms\BulkNotifications\Models
+ * @package Ulams\BulkNotifications\Models
  *
  * @property int $id
  * @property int $user_id

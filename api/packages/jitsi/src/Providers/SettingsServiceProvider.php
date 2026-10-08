@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Jitsi\Providers;
+namespace Ulams\Jitsi\Providers;
 
-use EscolaLms\Jitsi\Enum\PackageStatusEnum;
-use EscolaLms\Settings\Facades\AdministrableConfig;
+use Ulams\Jitsi\Enum\PackageStatusEnum;
+use Ulams\Settings\Facades\AdministrableConfig;
 use Illuminate\Support\ServiceProvider;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
+use Ulams\Settings\UlamsSettingsServiceProvider;
 
 class SettingsServiceProvider extends ServiceProvider
 {
@@ -13,9 +13,9 @@ class SettingsServiceProvider extends ServiceProvider
 
     public function register()
     {
-        if (class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
-            if (!$this->app->getProviders(EscolaLmsSettingsServiceProvider::class)) {
-                $this->app->register(EscolaLmsSettingsServiceProvider::class);
+        if (class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
+            if (!$this->app->getProviders(UlamsSettingsServiceProvider::class)) {
+                $this->app->register(UlamsSettingsServiceProvider::class);
             }
 
             AdministrableConfig::registerConfig(self::CONFIG_KEY . '.package_status', ['nullable', 'string', 'in:' . implode(',', PackageStatusEnum::getValues())], false);

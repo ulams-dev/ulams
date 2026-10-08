@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Rules;
+namespace Ulams\StationaryEvents\Rules;
 
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
+use Ulams\StationaryEvents\Models\StationaryEvent;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 

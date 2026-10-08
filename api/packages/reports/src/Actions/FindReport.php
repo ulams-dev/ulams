@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Reports\Actions;
+namespace Ulams\Reports\Actions;
 
-use EscolaLms\Reports\Metrics\Contracts\MetricContract;
-use EscolaLms\Reports\Models\Report;
+use Ulams\Reports\Metrics\Contracts\MetricContract;
+use Ulams\Reports\Models\Report;
 use Exception;
 use Illuminate\Support\Carbon;
 use InvalidArgumentException;

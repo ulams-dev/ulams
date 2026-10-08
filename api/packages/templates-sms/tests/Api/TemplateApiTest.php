@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Tests\Api;
+namespace Ulams\TemplatesSms\Tests\Api;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Templates\Events\ManuallyTriggeredEvent;
-use EscolaLms\Templates\Listeners\TemplateEventListener;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Models\TemplateSection;
-use EscolaLms\TemplatesSms\Core\SmsChannel;
-use EscolaLms\TemplatesSms\Facades\Sms;
-use EscolaLms\TemplatesSms\Tests\TestCase;
+use Ulams\Core\Models\User;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Templates\Events\ManuallyTriggeredEvent;
+use Ulams\Templates\Listeners\TemplateEventListener;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Models\TemplateSection;
+use Ulams\TemplatesSms\Core\SmsChannel;
+use Ulams\TemplatesSms\Facades\Sms;
+use Ulams\TemplatesSms\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 
@@ -25,8 +25,8 @@ class TemplateApiTest extends TestCase
         $this->tutor = User::factory()->create([
             'phone' => '666888111',
             'notification_channels' => json_encode([
-                "EscolaLms\\TemplatesEmail\\Core\\EmailChannel",
-                "EscolaLms\\TemplatesSms\\Core\\SmsChannel"
+                "Ulams\\TemplatesEmail\\Core\\EmailChannel",
+                "Ulams\\TemplatesSms\\Core\\SmsChannel"
             ])
         ]);
         $this->tutor->guard_name = 'api';

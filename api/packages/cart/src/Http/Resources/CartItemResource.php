@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Resources;
+namespace Ulams\Cart\Http\Resources;
 
-use EscolaLms\Auth\Traits\ResourceExtandable;
-use EscolaLms\Cart\Models\CartItem;
-use EscolaLms\Cart\Models\Product;
+use Ulams\Auth\Traits\ResourceExtandable;
+use Ulams\Cart\Models\CartItem;
+use Ulams\Cart\Models\Product;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CartItemResource extends JsonResource

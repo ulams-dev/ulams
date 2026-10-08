@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Courses\Models;
+namespace Ulams\Courses\Models;
 
-use EscolaLms\Auth\Models\Traits\HasGroups;
-use EscolaLms\Auth\Models\Traits\HasOnboardingStatus;
-use EscolaLms\Auth\Models\Traits\UserHasSettings;
-use EscolaLms\Auth\Models\User as AuthUser;
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Courses\Models\Traits\HasAuthoredCourses;
-use EscolaLms\Courses\Models\Traits\HasCourses;
-use EscolaLms\Courses\Tests\Database\Factories\UserFactory;
+use Ulams\Auth\Models\Traits\HasGroups;
+use Ulams\Auth\Models\Traits\HasOnboardingStatus;
+use Ulams\Auth\Models\Traits\UserHasSettings;
+use Ulams\Auth\Models\User as AuthUser;
+use Ulams\Categories\Models\Category;
+use Ulams\Courses\Models\Traits\HasAuthoredCourses;
+use Ulams\Courses\Models\Traits\HasCourses;
+use Ulams\Courses\Tests\Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends AuthUser

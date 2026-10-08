@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Services;
+namespace Ulams\Questionnaire\Services;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Repositories\Criteria\Primitives\WhereCriterion;
-use EscolaLms\Questionnaire\Models\Question;
-use EscolaLms\Questionnaire\Models\QuestionAnswer;
-use EscolaLms\Questionnaire\Models\Questionnaire;
-use EscolaLms\Questionnaire\Models\QuestionnaireModel;
-use EscolaLms\Questionnaire\Repository\Contracts\QuestionnaireModelRepositoryContract;
-use EscolaLms\Questionnaire\Repository\Contracts\QuestionnaireRepositoryContract;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionnaireModelServiceContract;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionnaireServiceContract;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Models\User;
+use Ulams\Core\Repositories\Criteria\Primitives\WhereCriterion;
+use Ulams\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Models\QuestionAnswer;
+use Ulams\Questionnaire\Models\Questionnaire;
+use Ulams\Questionnaire\Models\QuestionnaireModel;
+use Ulams\Questionnaire\Repository\Contracts\QuestionnaireModelRepositoryContract;
+use Ulams\Questionnaire\Repository\Contracts\QuestionnaireRepositoryContract;
+use Ulams\Questionnaire\Services\Contracts\QuestionnaireModelServiceContract;
+use Ulams\Questionnaire\Services\Contracts\QuestionnaireServiceContract;
+use Ulams\Questionnaire\Services\Contracts\QuestionServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;

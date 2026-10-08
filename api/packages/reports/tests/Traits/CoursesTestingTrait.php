@@ -1,24 +1,24 @@
 <?php
 
-namespace EscolaLms\Reports\Tests\Traits;
+namespace Ulams\Reports\Tests\Traits;
 
-use EscolaLms\Cart\Enums\ProductType;
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Models\OrderItem;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductProductable;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Enum\ProgressStatus;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
-use EscolaLms\Courses\Repositories\CourseProgressRepository;
-use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
-use EscolaLms\Courses\Services\ProgressService;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Cart\Enums\ProductType;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Models\OrderItem;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductProductable;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Enum\ProgressStatus;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
+use Ulams\Courses\Repositories\CourseProgressRepository;
+use Ulams\Courses\Services\Contracts\ProgressServiceContract;
+use Ulams\Courses\Services\ProgressService;
+use Ulams\Payments\Models\Payment;
 
 trait CoursesTestingTrait
 {

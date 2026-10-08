@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Providers;
+namespace Ulams\ConsultationAccess\Providers;
 
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\ConsultationAccess\Policies\ConsultationAccessEnquiryPolicy;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\ConsultationAccess\Policies\ConsultationAccessEnquiryPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

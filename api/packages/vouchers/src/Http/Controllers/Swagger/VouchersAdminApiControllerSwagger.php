@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Vouchers\Http\Controllers\Swagger;
+namespace Ulams\Vouchers\Http\Controllers\Swagger;
 
-use EscolaLms\Vouchers\Http\Requests\CreateCouponRequest;
-use EscolaLms\Vouchers\Http\Requests\DeleteCouponRequest;
-use EscolaLms\Vouchers\Http\Requests\ListCouponsRequest;
-use EscolaLms\Vouchers\Http\Requests\ReadCouponRequest;
-use EscolaLms\Vouchers\Http\Requests\UpdateCouponRequest;
+use Ulams\Vouchers\Http\Requests\CreateCouponRequest;
+use Ulams\Vouchers\Http\Requests\DeleteCouponRequest;
+use Ulams\Vouchers\Http\Requests\ListCouponsRequest;
+use Ulams\Vouchers\Http\Requests\ReadCouponRequest;
+use Ulams\Vouchers\Http\Requests\UpdateCouponRequest;
 use Illuminate\Http\JsonResponse;
 
 interface VouchersAdminApiControllerSwagger

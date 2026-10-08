@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Cart\Contracts;
+namespace Ulams\Cart\Contracts;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests\Admin;
+namespace Ulams\Cart\Http\Requests\Admin;
 
-use EscolaLms\Templates\Models\Template;
+use Ulams\Templates\Models\Template;
 use Illuminate\Support\Facades\Gate;
 
 class ProductManuallyTriggerRequest extends ProductReadRequest

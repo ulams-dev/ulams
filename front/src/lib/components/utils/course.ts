@@ -1,4 +1,4 @@
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 
 export function getFlatTopics(lessons: API.Lesson[]): API.Topic[] {
   return lessons.reduce<API.Topic[]>(

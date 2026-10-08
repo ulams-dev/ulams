@@ -6,7 +6,7 @@ import styled from "styled-components";
 import ProfileNoData from "../NoData";
 import routes from "../../Routes/routes";
 import WebinarsContainerItem from "../../Webinars/List/WebinarsContainer/Items/Item";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { ProfileWebinarItemFooter } from "./ItemFooter";
 import { ProfileWebinarItemActions } from "./ItemActions";
 import WebinarMeetModal from "@/components/Webinars/Webinar/WebinarMeetModal";

@@ -3,7 +3,7 @@ import styled, { withTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
 import { Text } from "../../atoms/Typography/Text";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface OrdersProps
   extends React.InputHTMLAttributes<HTMLTableElement>,
@@ -86,7 +86,7 @@ export const Orders: React.FC<OrdersProps> = (props) => {
   }, [data]);
 
   return (
-    <StyledOrders className={`wellms-component ${className}`} mobile={mobile}>
+    <StyledOrders className={`ulams-component ${className}`} mobile={mobile}>
       {data.length === 0 && <Text>{t<string>("Orders.NoRecords")}</Text>}
       {data.length > 0 && (
         <React.Fragment>

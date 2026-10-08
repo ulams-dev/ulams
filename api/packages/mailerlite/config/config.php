@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\MailerLite\Enum\GroupNamesEnum;
-use EscolaLms\MailerLite\Enum\PackageStatusEnum;
+use Ulams\MailerLite\Enum\GroupNamesEnum;
+use Ulams\MailerLite\Enum\PackageStatusEnum;
 
 return [
     'package_status' => PackageStatusEnum::DISABLED,

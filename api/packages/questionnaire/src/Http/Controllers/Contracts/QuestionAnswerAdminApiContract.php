@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Http\Controllers\Contracts;
+namespace Ulams\Questionnaire\Http\Controllers\Contracts;
 
-use EscolaLms\Questionnaire\Http\Requests\QuestionAnswerListingRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionAnswerVisibilityRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionAnswerListingRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionAnswerVisibilityRequest;
 use Illuminate\Http\JsonResponse;
 
 interface QuestionAnswerAdminApiContract

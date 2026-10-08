@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Jitsi\Http\Controllers;
+namespace Ulams\Jitsi\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Jitsi\Dto\RecordedVideoDto;
-use EscolaLms\Jitsi\Http\Requests\RecordedVideoRequest;
-use EscolaLms\Jitsi\Services\Contracts\JitsiVideoServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Jitsi\Dto\RecordedVideoDto;
+use Ulams\Jitsi\Http\Requests\RecordedVideoRequest;
+use Ulams\Jitsi\Services\Contracts\JitsiVideoServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class JitsiApiController extends EscolaLmsBaseController
+class JitsiApiController extends UlamsBaseController
 {
     public function __construct(
         private JitsiVideoServiceContract $jitsiVideoService,

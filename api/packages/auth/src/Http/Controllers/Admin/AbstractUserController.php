@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers\Admin;
+namespace Ulams\Auth\Http\Controllers\Admin;
 
-use EscolaLms\Auth\Exceptions\UserNotFoundException;
-use EscolaLms\Auth\Http\Requests\Admin\AbstractUserIdInRouteRequest;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Repositories\Contracts\UserRepositoryContract;
-use EscolaLms\Auth\Services\Contracts\UserGroupServiceContract;
-use EscolaLms\Auth\Services\Contracts\UserServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Auth\Exceptions\UserNotFoundException;
+use Ulams\Auth\Http\Requests\Admin\AbstractUserIdInRouteRequest;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Repositories\Contracts\UserRepositoryContract;
+use Ulams\Auth\Services\Contracts\UserGroupServiceContract;
+use Ulams\Auth\Services\Contracts\UserServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 
-class AbstractUserController extends EscolaLmsBaseController
+class AbstractUserController extends UlamsBaseController
 {
     protected UserRepositoryContract $userRepository;
     protected UserServiceContract $userService;

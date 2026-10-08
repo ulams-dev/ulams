@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Requests\Admin;
+namespace Ulams\TopicTypeGift\Http\Requests\Admin;
 
-use EscolaLms\TopicTypeGift\Dtos\Criteria\ExportQuestionsCriteriaDto;
-use EscolaLms\TopicTypeGift\Enum\TopicTypeGiftPermissionEnum;
+use Ulams\TopicTypeGift\Dtos\Criteria\ExportQuestionsCriteriaDto;
+use Ulams\TopicTypeGift\Enum\TopicTypeGiftPermissionEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AdminExportGiftQuestionsRequest extends FormRequest

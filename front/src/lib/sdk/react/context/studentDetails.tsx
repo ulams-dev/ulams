@@ -9,8 +9,8 @@ import {
   useContext,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextPaginatedMetaState,
   ContextStateValue,
 } from "./types";
@@ -30,7 +30,7 @@ import { changePassword as postNewPassword } from "../../services/profile";
 import { UserContext } from "./user";
 
 type StudentDetailsContextType = Pick<
-  EscolaLMSContextConfig,
+  UlamsContextConfig,
   "fetchSemesters" | "semesters" | "fetchAcademicYears" | "academicYears"
 >;
 
@@ -45,7 +45,7 @@ export const StudentDetailsContext: React.Context<StudentDetailsContextType> =
 export interface StudentDetailsContextProviderType {
   apiUrl: string;
   defaults?: Partial<
-    Pick<EscolaLMSContextReadConfig, "semesters" | "academicYears">
+    Pick<UlamsContextReadConfig, "semesters" | "academicYears">
   >;
 
   ssrHydration?: boolean;

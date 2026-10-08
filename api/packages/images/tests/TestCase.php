@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Images\Tests;
+namespace Ulams\Images\Tests;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
-use EscolaLms\Images\EscolaLmsImagesServiceProvider;
+use Ulams\Core\Models\User;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
+use Ulams\Images\UlamsImagesServiceProvider;
 
 class TestCase extends CoreTestCase
 {
@@ -18,8 +18,8 @@ class TestCase extends CoreTestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsImagesServiceProvider::class,
-            EscolaLmsSettingsServiceProvider::class,
+            UlamsImagesServiceProvider::class,
+            UlamsSettingsServiceProvider::class,
         ];
     }
 

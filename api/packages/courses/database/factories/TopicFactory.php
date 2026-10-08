@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Courses\Database\Factories;
+namespace Ulams\Courses\Database\Factories;
 
-use EscolaLms\Courses\Database\Factories\FakerMarkdownProvider\FakerProvider;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Courses\Database\Factories\FakerMarkdownProvider\FakerProvider;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TopicFactory extends Factory

@@ -1,21 +1,21 @@
 <?php
 
-namespace EscolaLms\Cart\Models;
+namespace Ulams\Cart\Models;
 
-use EscolaLms\Cart\Database\Factories\OrderFactory;
-use EscolaLms\Cart\Enums\OrderStatus;
-use EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Payments\Concerns\Payable;
-use EscolaLms\Payments\Contracts\Payable as PayableContract;
-use EscolaLms\Payments\Enums\Currency;
+use Ulams\Cart\Database\Factories\OrderFactory;
+use Ulams\Cart\Enums\OrderStatus;
+use Ulams\Cart\QueryBuilders\OrderModelQueryBuilder;
+use Ulams\Core\Models\User;
+use Ulams\Payments\Concerns\Payable;
+use Ulams\Payments\Contracts\Payable as PayableContract;
+use Ulams\Payments\Enums\Currency;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * EscolaLms\Cart\Models\Order
+ * Ulams\Cart\Models\Order
  *
  * @OA\Schema (
  *      schema="Order",
@@ -50,12 +50,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $client_street_number
  * @property-read int $quantity
  * @property-read string $status_name
- * @property-read \EscolaLms\Cart\Support\OrderItemCollection|\EscolaLms\Cart\Models\OrderItem[] $items
+ * @property-read \Ulams\Cart\Support\OrderItemCollection|\Ulams\Cart\Models\OrderItem[] $items
  * @property-read int|null $items_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Payments\Models\Payment[] $payments
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Payments\Models\Payment[] $payments
  * @property-read int|null $payments_count
  * @property-read User|null $user
- * @method static \EscolaLms\Cart\Database\Factories\OrderFactory factory(...$parameters)
+ * @method static \Ulams\Cart\Database\Factories\OrderFactory factory(...$parameters)
  * @method static OrderModelQueryBuilder|Order newModelQuery()
  * @method static OrderModelQueryBuilder|Order newQuery()
  * @method static OrderModelQueryBuilder|Order query()

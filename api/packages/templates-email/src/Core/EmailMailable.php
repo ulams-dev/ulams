@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Core;
+namespace Ulams\TemplatesEmail\Core;
 
 use Illuminate\Mail\Mailable;
 

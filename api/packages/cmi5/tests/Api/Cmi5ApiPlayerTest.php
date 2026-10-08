@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Cmi5\Tests\Api;
+namespace Ulams\Cmi5\Tests\Api;
 
-use EscolaLms\Cmi5\Database\Seeders\Cmi5PermissionSeeder;
-use EscolaLms\Cmi5\Tests\TestCase;
-use EscolaLms\Cmi5\Tests\Traits\Cmi5Testing;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Lrs\Database\Seeders\LrsSeeder;
+use Ulams\Cmi5\Database\Seeders\Cmi5PermissionSeeder;
+use Ulams\Cmi5\Tests\TestCase;
+use Ulams\Cmi5\Tests\Traits\Cmi5Testing;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Lrs\Database\Seeders\LrsSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class Cmi5ApiPlayerTest extends TestCase

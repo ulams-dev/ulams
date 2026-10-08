@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Services;
+namespace Ulams\TopicTypeGift\Services;
 
-use EscolaLms\TopicTypeGift\Dtos\QuizDto;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Repositories\Contracts\GiftQuizRepositoryContract;
-use EscolaLms\TopicTypeGift\Services\Contracts\GiftQuizServiceContract;
+use Ulams\TopicTypeGift\Dtos\QuizDto;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Repositories\Contracts\GiftQuizRepositoryContract;
+use Ulams\TopicTypeGift\Services\Contracts\GiftQuizServiceContract;
 use Illuminate\Database\Eloquent\Collection;
 
 class GiftQuizService implements GiftQuizServiceContract

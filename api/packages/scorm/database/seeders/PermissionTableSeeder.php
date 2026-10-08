@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Scorm\Database\Seeders;
+namespace Ulams\Scorm\Database\Seeders;
 
-use EscolaLms\Scorm\Enums\ScormPermissionsEnum;
+use Ulams\Scorm\Enums\ScormPermissionsEnum;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 

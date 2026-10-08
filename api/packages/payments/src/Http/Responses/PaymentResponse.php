@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Payments\Http\Responses;
+namespace Ulams\Payments\Http\Responses;
 
-use EscolaLms\Payments\Http\Resources\PaymentResource;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Payments\Http\Resources\PaymentResource;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Contracts\Support\Responsable;
 
 class PaymentResponse implements Responsable

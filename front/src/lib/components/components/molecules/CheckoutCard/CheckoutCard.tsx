@@ -6,7 +6,7 @@ import { ReactNode } from "react";
 import { Button } from "../../atoms/Button/Button";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { t } from "i18next";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 const IconBin = () => {
   return (
@@ -158,7 +158,7 @@ export const CheckoutCard: React.FC<CheckoutCardProps> = (props) => {
 
   const thumbnail = () => {
     return (
-      <div className={`wellms-component checkout-card-img ${className}`}>
+      <div className={`ulams-component checkout-card-img ${className}`}>
         <img
           src={(img as CheckoutImgProps).src}
           alt={(img as CheckoutImgProps).alt}
@@ -168,7 +168,7 @@ export const CheckoutCard: React.FC<CheckoutCardProps> = (props) => {
   };
 
   return (
-    <StyledCheckoutCard className="wellms-component" mobile={mobile}>
+    <StyledCheckoutCard className="ulams-component" mobile={mobile}>
       <div className="image-title">
         {thumbnail()}
         <div>

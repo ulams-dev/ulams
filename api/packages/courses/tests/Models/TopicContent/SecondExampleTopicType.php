@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\Models\TopicContent;
+namespace Ulams\Courses\Tests\Models\TopicContent;
 
-use EscolaLms\Courses\Models\TopicContent\AbstractTopicContent;
-use EscolaLms\Courses\Tests\Database\Factories\ExampleTopicTypeFactory;
+use Ulams\Courses\Models\TopicContent\AbstractTopicContent;
+use Ulams\Courses\Tests\Database\Factories\ExampleTopicTypeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SecondExampleTopicType extends AbstractTopicContent

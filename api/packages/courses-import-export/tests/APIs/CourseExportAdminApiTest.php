@@ -1,21 +1,21 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Tests\APIs;
+namespace Ulams\CoursesImportExport\Tests\APIs;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\CoursesImportExport\Database\Seeders\CoursesExportImportPermissionSeeder;
-use EscolaLms\CoursesImportExport\Models\Course as CourseImportExport;
-use EscolaLms\CoursesImportExport\Tests\TestCase;
-use EscolaLms\Tags\Models\Tag;
-use EscolaLms\TopicTypes\Models\TopicContent\Audio;
-use EscolaLms\TopicTypes\Models\TopicContent\Image;
-use EscolaLms\TopicTypes\Models\TopicContent\PDF;
-use EscolaLms\TopicTypes\Models\TopicContent\RichText;
-use EscolaLms\TopicTypes\Models\TopicContent\Video;
+use Ulams\Categories\Models\Category;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\CoursesImportExport\Database\Seeders\CoursesExportImportPermissionSeeder;
+use Ulams\CoursesImportExport\Models\Course as CourseImportExport;
+use Ulams\CoursesImportExport\Tests\TestCase;
+use Ulams\Tags\Models\Tag;
+use Ulams\TopicTypes\Models\TopicContent\Audio;
+use Ulams\TopicTypes\Models\TopicContent\Image;
+use Ulams\TopicTypes\Models\TopicContent\PDF;
+use Ulams\TopicTypes\Models\TopicContent\RichText;
+use Ulams\TopicTypes\Models\TopicContent\Video;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;

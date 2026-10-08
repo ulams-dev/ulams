@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Vouchers\Tests\Api;
+namespace Ulams\Vouchers\Tests\Api;
 
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Vouchers\Database\Seeders\VoucherPermissionsSeeder;
-use EscolaLms\Vouchers\Http\Resources\CouponResource;
-use EscolaLms\Vouchers\Models\CartItem;
-use EscolaLms\Vouchers\Models\Category;
-use EscolaLms\Vouchers\Models\Coupon;
-use EscolaLms\Vouchers\Models\User;
-use EscolaLms\Vouchers\Services\Contracts\CouponServiceContract;
-use EscolaLms\Vouchers\Tests\TestCase;
+use Ulams\Cart\Models\Product;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Vouchers\Database\Seeders\VoucherPermissionsSeeder;
+use Ulams\Vouchers\Http\Resources\CouponResource;
+use Ulams\Vouchers\Models\CartItem;
+use Ulams\Vouchers\Models\Category;
+use Ulams\Vouchers\Models\Coupon;
+use Ulams\Vouchers\Models\User;
+use Ulams\Vouchers\Services\Contracts\CouponServiceContract;
+use Ulams\Vouchers\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Testing\TestResponse;
 

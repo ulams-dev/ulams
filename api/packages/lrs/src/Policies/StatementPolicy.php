@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Lrs\Policies;
+namespace Ulams\Lrs\Policies;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Lrs\Enums\LrsPermissionEnum;
+use Ulams\Auth\Models\User;
+use Ulams\Lrs\Enums\LrsPermissionEnum;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class StatementPolicy

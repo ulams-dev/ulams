@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Payments\Gateway\Responses;
+namespace Ulams\Payments\Gateway\Responses;
 
-use EscolaLms\Payments\Gateway\Requests\NoneGatewayRequest;
+use Ulams\Payments\Gateway\Requests\NoneGatewayRequest;
 use Omnipay\Common\Message\RedirectResponseInterface;
 use Omnipay\Common\Message\ResponseInterface;
 use Przelewy24\Api\Responses\Transaction\RegisterTransactionResponse;

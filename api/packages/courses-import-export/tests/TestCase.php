@@ -1,24 +1,24 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Tests;
+namespace Ulams\CoursesImportExport\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
-use EscolaLms\Courses\AuthServiceProvider;
-use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
-use EscolaLms\Courses\Tests\Models\User as UserTest;
-use EscolaLms\CoursesImportExport\EscolaLmsCoursesImportExportServiceProvider;
-use EscolaLms\HeadlessH5P\HeadlessH5PServiceProvider;
-use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
-use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
-use EscolaLms\TopicTypes\EscolaLmsTopicTypesServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\Categories\UlamsCategoriesServiceProvider;
+use Ulams\Courses\AuthServiceProvider;
+use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\Courses\Tests\Models\User as UserTest;
+use Ulams\CoursesImportExport\UlamsCoursesImportExportServiceProvider;
+use Ulams\HeadlessH5P\HeadlessH5PServiceProvider;
+use Ulams\Scorm\UlamsScormServiceProvider;
+use Ulams\Tags\UlamsTagsServiceProvider;
+use Ulams\TopicTypes\UlamsTopicTypesServiceProvider;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
+use Ulams\Settings\UlamsSettingsServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     protected $response;
 
@@ -32,17 +32,17 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsAuthServiceProvider::class,
+            UlamsAuthServiceProvider::class,
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
-            EscolaLmsCategoriesServiceProvider::class,
-            EscolaLmsCourseServiceProvider::class,
+            UlamsCategoriesServiceProvider::class,
+            UlamsCourseServiceProvider::class,
             AuthServiceProvider::class,
-            EscolaLmsScormServiceProvider::class,
-            EscolaLmsTagsServiceProvider::class,
-            EscolaLmsCoursesImportExportServiceProvider::class,
-            EscolaLmsSettingsServiceProvider::class,
-            EscolaLmsTopicTypesServiceProvider::class,
+            UlamsScormServiceProvider::class,
+            UlamsTagsServiceProvider::class,
+            UlamsCoursesImportExportServiceProvider::class,
+            UlamsSettingsServiceProvider::class,
+            UlamsTopicTypesServiceProvider::class,
             HeadlessH5PServiceProvider::class
         ];
     }
@@ -53,7 +53,7 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
         $app['config']->set('passport.client_uuids', true);
         $app['config']->set('database.connections.mysql.strict', false);
         $app['config']->set('app.debug', (bool) env('APP_DEBUG', true));
-        $app['config']->set('escolalms.tags.ignore_migrations', false);
+        $app['config']->set('ulams.tags.ignore_migrations', false);
         $app['config']->set('hh5p.h5p_export', true);
         $app['config']->set('filesystems.disks.local', [
             'driver' => 'local',

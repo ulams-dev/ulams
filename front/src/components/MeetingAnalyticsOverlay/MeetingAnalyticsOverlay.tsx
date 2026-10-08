@@ -15,13 +15,13 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { useMeetingSockets } from "@/hooks/useAnalyticsWebsockets";
 import { ConsultationModalContext } from "@/components/Consultations/ConsultationCard/Buttons/context";
 import { useRoles } from "@/hooks/useRoles";
 import { DataPoint, EMOTION_POOL, EmotionHistory } from "@/types/sockets";
 import { useTranslation } from "react-i18next";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { useJitsyAnalyticsControl } from "@/hooks/meeting/useJitsyAnalyticsControl";
 
 const getColorByValue = (val: number) => {
@@ -47,7 +47,7 @@ export default function MeetingAnalyticsOverlay({
 }) {
   const { isTutor } = useRoles();
   const { fetchConsultation, consultation, token } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
   const consultationModalContext = useContext(ConsultationModalContext);
   const { t } = useTranslation();
   const [hoveredPanel, setHoveredPanel] = useState<

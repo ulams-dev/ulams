@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Tests\Notifications;
+namespace Ulams\CourseAccess\Tests\Notifications;
 
-use EscolaLms\Core\Models\User as ModelsUser;
-use EscolaLms\CourseAccess\Tests\TestCase;
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Events\CourseAccessStarted;
-use EscolaLms\Courses\Events\CourseAssigned;
-use EscolaLms\Courses\Events\CourseUnassigned;
-use EscolaLms\CourseAccess\Models\Course;
-use EscolaLms\Courses\Models\User;
+use Ulams\Core\Models\User as ModelsUser;
+use Ulams\CourseAccess\Tests\TestCase;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Events\CourseAccessStarted;
+use Ulams\Courses\Events\CourseAssigned;
+use Ulams\Courses\Events\CourseUnassigned;
+use Ulams\CourseAccess\Models\Course;
+use Ulams\Courses\Models\User;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 

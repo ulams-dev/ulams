@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Providers;
+namespace Ulams\TemplatesEmail\Providers;
 
 class AuthTemplatesEventServiceProvider extends \Illuminate\Foundation\Support\Providers\EventServiceProvider
 {

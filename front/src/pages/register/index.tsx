@@ -1,20 +1,20 @@
 import { SetStateAction, useContext, useEffect, useState } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import { Link, useHistory } from "react-router-dom";
 import Layout from "@/components/_App/Layout";
 import { isMobile } from "react-device-detect";
 import { useLocation } from "react-router-dom";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { RegisterForm } from "@lms/components/components/organisms/RegisterForm/RegisterForm";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { RegisterForm } from "@ulams/components/components/organisms/RegisterForm/RegisterForm";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { MarkdownRenderer } from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
-import { Modal } from "@lms/components/components/atoms/Modal/Modal";
-import { Button } from "@lms/components/components/atoms/Button/Button";
+import { MarkdownRenderer } from "@ulams/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { Modal } from "@ulams/components/components/atoms/Modal/Modal";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
 
-import { Link as LinkComponent } from "@lms/components/components/atoms/Link/Link";
+import { Link as LinkComponent } from "@ulams/components/components/atoms/Link/Link";
 import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";
 import { EmailActivationImg } from "@/icons/index";
@@ -113,10 +113,10 @@ const StyledModal = styled(Modal)`
 
 const RegisterPage = () => {
   const { search } = useLocation();
-  const { user, socialAuthorize } = useContext(EscolaLMSContext);
+  const { user, socialAuthorize } = useContext(UlamsContext);
   const [view, setView] = useState<"" | "success" | "register">("");
   const [modalVisible, setModalVisible] = useState(false);
-  const { settings } = useContext(EscolaLMSContext);
+  const { settings } = useContext(UlamsContext);
 
   const [email, setEmail] = useState<string>("");
   const history = useHistory();
@@ -160,10 +160,10 @@ const RegisterPage = () => {
   }, [view]);
 
   const EmailActivation = () => {
-    const { config } = useContext(EscolaLMSContext);
+    const { config } = useContext(UlamsContext);
 
     const accountActivationByAdmin =
-      config?.value?.escola_auth?.account_must_be_enabled_by_admin ===
+      config?.value?.ulams_auth?.account_must_be_enabled_by_admin ===
       "enabled";
 
     return (

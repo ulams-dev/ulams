@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Auth\Repositories;
+namespace Ulams\Auth\Repositories;
 
-use EscolaLms\Auth\Dtos\UserUpdateInterestsDto;
-use EscolaLms\Auth\Dtos\UserUpdateSettingsDto;
-use EscolaLms\Auth\Events\PasswordChanged;
-use EscolaLms\Auth\Models\Traits\UserHasSettings;
-use EscolaLms\Auth\Models\User as AuthUser;
-use EscolaLms\Auth\Models\UserSetting;
-use EscolaLms\Auth\Repositories\Contracts\UserRepositoryContract;
-use EscolaLms\Categories\Models\Traits\HasInterests;
-use EscolaLms\Core\Repositories\BaseRepository;
+use Ulams\Auth\Dtos\UserUpdateInterestsDto;
+use Ulams\Auth\Dtos\UserUpdateSettingsDto;
+use Ulams\Auth\Events\PasswordChanged;
+use Ulams\Auth\Models\Traits\UserHasSettings;
+use Ulams\Auth\Models\User as AuthUser;
+use Ulams\Auth\Models\UserSetting;
+use Ulams\Auth\Repositories\Contracts\UserRepositoryContract;
+use Ulams\Categories\Models\Traits\HasInterests;
+use Ulams\Core\Repositories\BaseRepository;
 use Illuminate\Contracts\Auth\Authenticatable as User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +20,7 @@ use InvalidArgumentException;
 
 /**
  * Class CourseRatingRepository
- * @package EscolaLms\Auth\Repositories
+ * @package Ulams\Auth\Repositories
  * @version December 1, 2020, 11:46 am UTC
  */
 class UserRepository extends BaseRepository implements UserRepositoryContract

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Webinar\Http\Requests;
+namespace Ulams\Webinar\Http\Requests;
 
-use EscolaLms\Files\Rules\FileOrStringRule;
-use EscolaLms\Webinar\Enum\ConstantEnum;
-use EscolaLms\Webinar\Enum\WebinarStatusEnum;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Files\Rules\FileOrStringRule;
+use Ulams\Webinar\Enum\ConstantEnum;
+use Ulams\Webinar\Enum\WebinarStatusEnum;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

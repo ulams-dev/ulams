@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Templates\Services\Contracts;
+namespace Ulams\Templates\Services\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Dtos\TemplateFilterCriteriaDto;
-use EscolaLms\Templates\Models\Template;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Dtos\TemplateFilterCriteriaDto;
+use Ulams\Templates\Models\Template;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 

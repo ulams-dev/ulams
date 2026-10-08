@@ -1,5 +1,5 @@
 import { toast } from "@/utils/toast";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { useContext, useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -14,7 +14,7 @@ const useSubscriptions = () => {
     user,
     attachProduct,
     cancelSubscription,
-  } = useContext(EscolaLMSContext);
+  } = useContext(UlamsContext);
 
   const { t } = useTranslation();
 

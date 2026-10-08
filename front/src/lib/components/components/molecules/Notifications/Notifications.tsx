@@ -8,7 +8,7 @@ import { useOnClickOutside } from "../../../hooks/useOnClickOutside";
 import { Title, Text, Link } from "../../../";
 import { useTranslation } from "react-i18next";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 export interface ComponentProps extends ExtendableStyledComponent {
   notifications: NotificationProps[];
@@ -153,7 +153,7 @@ export const Notifications: React.FC<ComponentProps> = (props) => {
   }, []);
 
   return (
-    <StyledWrapper className={`wellms-component ${className}`} ref={ref}>
+    <StyledWrapper className={`ulams-component ${className}`} ref={ref}>
       <StyledIcon onClick={() => setActive(!active)}>
         <svg
           width="19"
@@ -168,9 +168,9 @@ export const Notifications: React.FC<ComponentProps> = (props) => {
       </StyledIcon>
 
       {active && (
-        <StyledNotifications className="wellms-component">
+        <StyledNotifications className="ulams-component">
           <div>
-            <StyledNotificationsHeader className="wellms-component">
+            <StyledNotificationsHeader className="ulams-component">
               <Title level={4} noMargin>
                 {t("Notifications.Notifications")}
               </Title>

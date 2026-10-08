@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Vouchers\Services\Contracts;
+namespace Ulams\Vouchers\Services\Contracts;
 
-use EscolaLms\Cart\Services\Contracts\CartManagerContract as BaseCartManagerContract;
-use EscolaLms\Vouchers\Models\CartItem;
-use EscolaLms\Vouchers\Models\Coupon;
+use Ulams\Cart\Services\Contracts\CartManagerContract as BaseCartManagerContract;
+use Ulams\Vouchers\Models\CartItem;
+use Ulams\Vouchers\Models\Coupon;
 
 interface CartManagerContract extends BaseCartManagerContract
 {

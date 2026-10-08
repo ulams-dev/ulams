@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Services\Contracts;
+namespace Ulams\StationaryEvents\Services\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\StationaryEvents\Models\StationaryEvent;
 use Illuminate\Database\Eloquent\Builder;
 
 interface StationaryEventServiceContract

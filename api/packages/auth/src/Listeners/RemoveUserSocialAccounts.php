@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Listeners;
+namespace Ulams\Auth\Listeners;
 
-use EscolaLms\Auth\Events\AccountDeleted;
-use EscolaLms\Auth\Repositories\Contracts\SocialAccountRepositoryContract;
+use Ulams\Auth\Events\AccountDeleted;
+use Ulams\Auth\Repositories\Contracts\SocialAccountRepositoryContract;
 
 class RemoveUserSocialAccounts
 {

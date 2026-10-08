@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests\Admin;
+namespace Ulams\Auth\Http\Requests\Admin;
 
-use EscolaLms\Auth\Models\Group;
+use Ulams\Auth\Models\Group;
 use Illuminate\Validation\Rule;
 
 class UserGroupUpdateRequest extends AbstractGroupIdInRouteRequest

@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Col, Row } from "react-grid-system";
 import { useTranslation } from "react-i18next";
 import Container from "@/components/Common/Container";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import CompaniesSection from "@/components/CompaniesSection";
 import TutorsSection from "@/components/TutorsSection";
 import DescriptionSection from "@/components/DescriptionSection";
@@ -12,7 +12,7 @@ import WebinarSidebar from "./WebinarSidebar";
 import { WebinarContentStyles } from "./WebinarContentStyles";
 
 const WebinarContent = () => {
-  const { webinar } = useContext(EscolaLMSContext);
+  const { webinar } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   return (

@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Tasks\Tests\Api;
+namespace Ulams\Tasks\Tests\Api;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Tasks\Database\Seeders\TaskPermissionSeeder;
-use EscolaLms\Tasks\Models\Task;
-use EscolaLms\Tasks\Models\TaskNote;
-use EscolaLms\Tasks\Tests\CreatesUsers;
-use EscolaLms\Tasks\Tests\TaskTesting;
-use EscolaLms\Tasks\Tests\TestCase;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Tasks\Database\Seeders\TaskPermissionSeeder;
+use Ulams\Tasks\Models\Task;
+use Ulams\Tasks\Models\TaskNote;
+use Ulams\Tasks\Tests\CreatesUsers;
+use Ulams\Tasks\Tests\TaskTesting;
+use Ulams\Tasks\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 
@@ -81,14 +81,14 @@ class TaskIndexApiTest extends TestCase
             ],
             [
                 'filter' => [
-                    'related_type' => 'EscolaLms\\Courses\\Models\\Topic',
+                    'related_type' => 'Ulams\\Courses\\Models\\Topic',
                 ],
                 'data' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Course', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Course', 'user_id' => $userId]));
 
                     return $tasks;
                 }),
@@ -96,15 +96,15 @@ class TaskIndexApiTest extends TestCase
             ],
             [
                 'filter' => [
-                    'related_type' => 'EscolaLms\\Courses\\Models\\Topic',
+                    'related_type' => 'Ulams\\Courses\\Models\\Topic',
                     'related_id' => 123,
                 ],
                 'data' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'related_id' => 123, 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Course', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 123, 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Course', 'user_id' => $userId]));
 
                     return $tasks;
                 }),
@@ -112,18 +112,18 @@ class TaskIndexApiTest extends TestCase
             ],
             [
                 'filter' => [
-                    'related_type' => 'EscolaLms\\Courses\\Models\\Topic',
+                    'related_type' => 'Ulams\\Courses\\Models\\Topic',
                     'related_ids' => [123, 456, 789],
                 ],
                 'data' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'related_id' => 123, 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'related_id' => 456, 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'related_id' => 789, 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Course', 'related_id' => 789, 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Course', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 123, 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 456, 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 789, 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Course', 'related_id' => 789, 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Course', 'user_id' => $userId]));
 
                     return $tasks;
                 }),
@@ -132,10 +132,10 @@ class TaskIndexApiTest extends TestCase
             [
                 'filter' => [
                     'related_typed_ids' => [
-                        'EscolaLms\\Courses\\Models\\Course' => [
+                        'Ulams\\Courses\\Models\\Course' => [
                             123
                         ],
-                        'EscolaLms\\Courses\\Models\\Topic' => [
+                        'Ulams\\Courses\\Models\\Topic' => [
                             456, 789
                         ]
                     ],
@@ -143,11 +143,11 @@ class TaskIndexApiTest extends TestCase
                 'data' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Course', 'related_id' => 123, 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'related_id' => 456, 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'related_id' => 789, 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Course', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Course', 'related_id' => 123, 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 456, 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 789, 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Course', 'user_id' => $userId]));
 
                     return $tasks;
                 }),
@@ -329,15 +329,15 @@ class TaskIndexApiTest extends TestCase
             [
                 'filter' => (function($params) {
                     return [
-                        'related_type' => 'EscolaLms\\Courses\\Models\\Topic',
+                        'related_type' => 'Ulams\\Courses\\Models\\Topic',
                     ];
                 }),
                 'data' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic']));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Course', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic']));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Course', 'user_id' => $userId]));
 
                     return $tasks;
                 }),
@@ -346,17 +346,17 @@ class TaskIndexApiTest extends TestCase
             [
                 'filter' => (function($params) {
                     return [
-                        'related_type' => 'EscolaLms\\Courses\\Models\\Topic',
+                        'related_type' => 'Ulams\\Courses\\Models\\Topic',
                         'related_id' => 123,
                     ];
                 }),
                 'data' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'related_id' => 123]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'related_id' => 123, 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Course', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 123]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 123, 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Course', 'user_id' => $userId]));
 
                     return $tasks;
                 }),
@@ -365,19 +365,19 @@ class TaskIndexApiTest extends TestCase
             [
                 'filter' => (function($params) {
                     return [
-                        'related_type' => 'EscolaLms\\Courses\\Models\\Topic',
+                        'related_type' => 'Ulams\\Courses\\Models\\Topic',
                         'related_ids' => [123, 456, 789],
                     ];
                 }),
                 'data' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'related_id' => 123]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'related_id' => 456]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'related_id' => 789]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Course', 'related_id' => 789]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Course', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 123]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 456]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 789]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Course', 'related_id' => 789]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Course', 'user_id' => $userId]));
 
                     return $tasks;
                 }),
@@ -387,10 +387,10 @@ class TaskIndexApiTest extends TestCase
                 'filter' => (function($params) {
                     return [
                         'related_typed_ids' => [
-                            'EscolaLms\\Courses\\Models\\Course' => [
+                            'Ulams\\Courses\\Models\\Course' => [
                                 123
                             ],
-                            'EscolaLms\\Courses\\Models\\Topic' => [
+                            'Ulams\\Courses\\Models\\Topic' => [
                                 456, 789
                             ]
                         ],
@@ -399,11 +399,11 @@ class TaskIndexApiTest extends TestCase
                 'data' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Course', 'related_id' => 123]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'related_id' => 456]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'related_id' => 789]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Topic', 'user_id' => $userId]));
-                    $tasks->push(Task::factory()->state(['related_type' => 'EscolaLms\\Courses\\Models\\Course', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Course', 'related_id' => 123]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 456]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 789]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'user_id' => $userId]));
+                    $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Course', 'user_id' => $userId]));
 
                     return $tasks;
                 }),

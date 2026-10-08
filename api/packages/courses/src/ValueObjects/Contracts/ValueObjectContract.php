@@ -1,10 +1,10 @@
 <?php
 
 
-namespace EscolaLms\Courses\ValueObjects\Contracts;
+namespace Ulams\Courses\ValueObjects\Contracts;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Courses\ValueObjects\ValueObject;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Courses\ValueObjects\ValueObject;
 
 interface ValueObjectContract extends DtoContract
 {

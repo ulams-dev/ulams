@@ -1,7 +1,7 @@
 import { ExportOutlined, MenuOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import { ProTable } from '@ant-design/pro-table';
-import { parse } from '@lms/gift-pegjs';
+import { parse } from '@ulams/gift-pegjs';
 import { Button, Drawer, message } from 'antd';
 import { arrayMoveImmutable } from 'array-move';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -11,7 +11,7 @@ import { FormattedMessage, useIntl } from 'umi';
 import SecureUpload from '@/components/SecureUpload';
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';
 import type { CompetencyChallengeCategoryTreeProps } from '@/pages/CompetencyChallenges/components/CompetencyChallengeCategoryTree';
-import { createQuestion, deleteQuestion, updateQuestion } from '@/services/escola-lms/gift_quiz';
+import { createQuestion, deleteQuestion, updateQuestion } from '@/services/ulams/gift_quiz';
 import { ExportQuizQuestionsModal } from './ExportQuizQuestionsModal';
 import { GiftQuizQuestionEditor } from './editor';
 import type { QuizQuestionSubmitData } from './editor/types';

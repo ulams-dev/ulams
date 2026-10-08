@@ -6,7 +6,7 @@ import MobileDrawerContent from "@/components/Courses/CoursesCollection/coursesD
 import CoursesFilters from "@/components/Courses/CoursesCollection/filters";
 import useFilter from "@/hooks/courses/useFilter";
 import SelectedCategories from "@/components/Filters/SelectedCategories";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 
 export type SortOrder = "ASC" | "DESC";
 

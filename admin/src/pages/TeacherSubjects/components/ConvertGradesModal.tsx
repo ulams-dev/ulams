@@ -1,6 +1,6 @@
 import SecureUpload from '@/components/SecureUpload';
-import { ExamGradeType } from '@/services/escola-lms/enums';
-import { getGroupFinalGrades as fetchGroupFinalGrades } from '@/services/escola-lms/grades';
+import { ExamGradeType } from '@/services/ulams/enums';
+import { getGroupFinalGrades as fetchGroupFinalGrades } from '@/services/ulams/grades';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import ProForm from '@ant-design/pro-form';
 import { Button, Image, Modal, Select, Space, Tooltip } from 'antd';

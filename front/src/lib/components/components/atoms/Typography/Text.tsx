@@ -2,7 +2,7 @@ import * as React from "react";
 
 import styled, { withTheme } from "styled-components";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 import { getFontFromTheme } from "../../../theme/provider";
 
@@ -63,7 +63,7 @@ export const Text: React.FC<TextProps> = (props) => {
       size={size}
       type={type}
       {...props}
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
     >
       {children}
     </StyledP>

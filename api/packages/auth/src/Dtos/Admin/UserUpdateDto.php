@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Dtos\Admin;
+namespace Ulams\Auth\Dtos\Admin;
 
-use EscolaLms\Auth\Dtos\UserUpdateDto as BasicUserUpdateDto;
+use Ulams\Auth\Dtos\UserUpdateDto as BasicUserUpdateDto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 

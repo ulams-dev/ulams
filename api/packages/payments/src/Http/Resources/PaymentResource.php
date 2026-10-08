@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Payments\Http\Resources;
+namespace Ulams\Payments\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Requests\Admin;
+namespace Ulams\TopicTypeGift\Http\Requests\Admin;
 
-use EscolaLms\TopicTypeGift\Enum\TopicTypeGiftPermissionEnum;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
+use Ulams\TopicTypeGift\Enum\TopicTypeGiftPermissionEnum;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Http\Resources\TopicType\Export;
+namespace Ulams\TopicTypeProject\Http\Resources\TopicType\Export;
 
-use EscolaLms\TopicTypes\Facades\Markdown;
-use EscolaLms\TopicTypes\Facades\Path;
-use EscolaLms\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
-use EscolaLms\TopicTypeProject\Models\Project;
+use Ulams\TopicTypes\Facades\Markdown;
+use Ulams\TopicTypes\Facades\Path;
+use Ulams\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
+use Ulams\TopicTypeProject\Models\Project;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

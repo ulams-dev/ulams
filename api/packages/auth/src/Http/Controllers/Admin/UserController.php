@@ -1,28 +1,28 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers\Admin;
+namespace Ulams\Auth\Http\Controllers\Admin;
 
-use EscolaLms\Auth\Dtos\Admin\UserUpdateDto;
-use EscolaLms\Auth\Dtos\Admin\UserUpdateKeysDto;
-use EscolaLms\Auth\Dtos\UserFilterCriteriaDto;
-use EscolaLms\Auth\Dtos\UserSaveDto;
-use EscolaLms\Auth\Dtos\UserUpdateSettingsDto;
-use EscolaLms\Auth\Enums\SettingStatusEnum;
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Events\AccountRegistered;
-use EscolaLms\Auth\Exceptions\UserNotFoundException;
-use EscolaLms\Auth\Http\Controllers\Admin\Swagger\UserSwagger;
-use EscolaLms\Auth\Http\Requests\Admin\UserAvatarDeleteRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserAvatarUploadRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserCreateRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserDeleteRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserGetRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UsersListRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserUpdateRequest;
-use EscolaLms\Auth\Http\Resources\UserFullCollection;
-use EscolaLms\Auth\Http\Resources\UserFullResource;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Dtos\OrderDto;
+use Ulams\Auth\Dtos\Admin\UserUpdateDto;
+use Ulams\Auth\Dtos\Admin\UserUpdateKeysDto;
+use Ulams\Auth\Dtos\UserFilterCriteriaDto;
+use Ulams\Auth\Dtos\UserSaveDto;
+use Ulams\Auth\Dtos\UserUpdateSettingsDto;
+use Ulams\Auth\Enums\SettingStatusEnum;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Events\AccountRegistered;
+use Ulams\Auth\Exceptions\UserNotFoundException;
+use Ulams\Auth\Http\Controllers\Admin\Swagger\UserSwagger;
+use Ulams\Auth\Http\Requests\Admin\UserAvatarDeleteRequest;
+use Ulams\Auth\Http\Requests\Admin\UserAvatarUploadRequest;
+use Ulams\Auth\Http\Requests\Admin\UserCreateRequest;
+use Ulams\Auth\Http\Requests\Admin\UserDeleteRequest;
+use Ulams\Auth\Http\Requests\Admin\UserGetRequest;
+use Ulams\Auth\Http\Requests\Admin\UsersListRequest;
+use Ulams\Auth\Http\Requests\Admin\UserUpdateRequest;
+use Ulams\Auth\Http\Resources\UserFullCollection;
+use Ulams\Auth\Http\Resources\UserFullResource;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Dtos\OrderDto;
 use Exception;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -75,7 +75,7 @@ class UserController extends AbstractUserController implements UserSwagger
             if ($user instanceof MustVerifyEmail && !$user->hasVerifiedEmail()) {
                 event(new AccountRegistered($user, $request->input(
                     'return_url',
-                    Config::get(EscolaLmsAuthServiceProvider::CONFIG_KEY . '.return_url')
+                    Config::get(UlamsAuthServiceProvider::CONFIG_KEY . '.return_url')
                 )));
             }
             return $this->sendResponseForResource(UserFullResource::make($user->refresh()), __('Created user'));

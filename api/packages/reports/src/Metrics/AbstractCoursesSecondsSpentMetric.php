@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Reports\Metrics;
+namespace Ulams\Reports\Metrics;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\CourseProgress;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 

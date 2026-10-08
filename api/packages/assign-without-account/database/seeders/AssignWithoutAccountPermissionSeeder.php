@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Database\Seeders;
+namespace Ulams\AssignWithoutAccount\Database\Seeders;
 
 
-use EscolaLms\AssignWithoutAccount\Enums\AssignWithoutAccountPermissionEnum;
+use Ulams\AssignWithoutAccount\Enums\AssignWithoutAccountPermissionEnum;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 

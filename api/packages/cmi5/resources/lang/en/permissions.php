@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Cmi5\Enums\Cmi5PermissionEnum;
+use Ulams\Cmi5\Enums\Cmi5PermissionEnum;
 
 return [
     Cmi5PermissionEnum::CMI5_UPLOAD => 'Upload cmi5',

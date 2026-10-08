@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Services;
+namespace Ulams\HeadlessH5P\Services;
 
-use EscolaLms\HeadlessH5P\Exceptions\H5PException;
-use EscolaLms\HeadlessH5P\Helpers\JSONHelper;
-use EscolaLms\HeadlessH5P\Helpers\MergeFiles;
-use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
-use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use Ulams\HeadlessH5P\Exceptions\H5PException;
+use Ulams\HeadlessH5P\Helpers\JSONHelper;
+use Ulams\HeadlessH5P\Helpers\MergeFiles;
+use Ulams\HeadlessH5P\Models\H5PLibrary;
+use Ulams\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
+use Ulams\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use Exception;
 use H5PContentValidator;
 use H5PCore;
@@ -590,8 +590,8 @@ class HeadlessH5PService implements HeadlessH5PServiceContract
                 ],
             ],
             'user' => [
-                "name" => "Escola123x! Wojczal",
-                "mail" => "mateusz@escolasoft.com"
+                "name" => "Ulams123x! Wojczal",
+                "mail" => "mateusz@ulams.app"
             ],
             'nonce' => $content['nonce'],
         ];

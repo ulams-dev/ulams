@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Payments\Tests\Traits;
+namespace Ulams\Payments\Tests\Traits;
 
-use EscolaLms\Payments\Facades\Payments;
+use Ulams\Payments\Facades\Payments;
 use Illuminate\Support\Carbon;
 use Omnipay\Common\CreditCard;
 use Omnipay\Omnipay;

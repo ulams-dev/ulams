@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Services\Contracts;
+namespace Ulams\Courses\Services\Contracts;
 
-use EscolaLms\Courses\Models\Course;
+use Ulams\Courses\Models\Course;
 use Carbon\Carbon;
 
 interface DeadlineCalculatorServiceContract

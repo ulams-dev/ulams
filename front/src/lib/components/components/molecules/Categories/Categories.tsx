@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { Category } from "@lms/sdk/types";
+import type { Category } from "@ulams/sdk/types";
 import styled, {
   createGlobalStyle,
   ThemeContext,
@@ -13,7 +13,7 @@ import Drawer from "rc-drawer";
 import { useTranslation } from "react-i18next";
 import { getFontFromTheme } from "../../../theme/provider";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface StyledCategoriesProps {
   mobile?: boolean;
@@ -305,7 +305,7 @@ const CategoryTreeOptions: React.FC<CategoriesProps> = (props) => {
 
   return (
     <StyledCategoryTreeOptions
-      className={`wellms-component ${
+      className={`ulams-component ${
         mobile ? "categories-drawer-list" : "categories-dropdown-options"
       } ${className}`}
     >
@@ -391,7 +391,7 @@ const CategoriesDropdown: React.FC<CategoriesProps> = (props) => {
     <StyledCategoriesDropdown
       open={open}
       ref={ref}
-      className="wellms-component"
+      className="ulams-component"
       lightContrast={cts}
       backgroundColor={backgroundColor}
     >

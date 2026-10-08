@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Enum;
+namespace Ulams\CourseAccess\Enum;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class EnquiryStatusEnum extends BasicEnum
 {

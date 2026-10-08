@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Repositories;
+namespace Ulams\HeadlessH5P\Repositories;
 
-use EscolaLms\HeadlessH5P\Models\H5PContent;
+use Ulams\HeadlessH5P\Models\H5PContent;
 use Exception;
 use H5PEditorAjaxInterface;
-use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
-use EscolaLms\HeadlessH5P\Helpers\Helpers;
-use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use Ulams\HeadlessH5P\Models\H5pLibrariesHubCache;
+use Ulams\HeadlessH5P\Helpers\Helpers;
+use Ulams\HeadlessH5P\Models\H5PLibrary;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Lcobucci\JWT\Parser;

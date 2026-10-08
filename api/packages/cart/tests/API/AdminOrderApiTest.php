@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Cart\Tests\API;
+namespace Ulams\Cart\Tests\API;
 
-use EscolaLms\Cart\Database\Seeders\CartPermissionSeeder;
-use EscolaLms\Cart\Enums\OrderStatus;
-use EscolaLms\Cart\Facades\Shop;
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Models\OrderItem;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductProductable;
-use EscolaLms\Cart\Tests\Mocks\ExampleProductable;
-use EscolaLms\Cart\Tests\TestCase;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Core\Models\User;
+use Ulams\Cart\Database\Seeders\CartPermissionSeeder;
+use Ulams\Cart\Enums\OrderStatus;
+use Ulams\Cart\Facades\Shop;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Models\OrderItem;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductProductable;
+use Ulams\Cart\Tests\Mocks\ExampleProductable;
+use Ulams\Cart\Tests\TestCase;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Core\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Illuminate\Testing\TestResponse;

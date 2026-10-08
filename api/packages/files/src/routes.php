@@ -1,6 +1,6 @@
 <?php
 
-use \EscolaLms\Files\Http\Controllers\FileApiController;
+use \Ulams\Files\Http\Controllers\FileApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api', 'middleware' => ['auth:api']], function () {

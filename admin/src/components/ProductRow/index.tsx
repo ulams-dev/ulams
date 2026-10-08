@@ -1,11 +1,11 @@
-import { getProduct } from '@/services/escola-lms/products';
+import { getProduct } from '@/services/ulams/products';
 import { Button, message } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
 
 export const ProductRow: React.FC<{
   id: number;
-  onLoaded: (course: EscolaLms.Cart.Models.Product) => void;
+  onLoaded: (course: Ulams.Cart.Models.Product) => void;
 }> = ({ id, onLoaded }) => {
   const [loading, setLoading] = useState(false);
   const intl = useIntl();

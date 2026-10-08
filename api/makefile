@@ -23,10 +23,10 @@ composer-update:
 	- docker compose exec api bash -c "XDEBUG_MODE=off composer self-update"
 	- docker compose exec api bash -c "XDEBUG_MODE=off composer update"
 ## supervisd must be restarted, horizon & scheduler must fetch new code
-	- docker compose restart escola_lms_queue_cron
+	- docker compose restart ulams_queue_cron
 
 restart_queue_cron:
-	- docker compose restart escola_lms_queue_cron
+	- docker compose restart ulams_queue_cron
 
 update-composer-to-git:
 	- git checkout develop

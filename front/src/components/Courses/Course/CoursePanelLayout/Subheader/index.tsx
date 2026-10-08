@@ -6,7 +6,7 @@ import {
   SubheaderWrapper,
 } from "@/components/Courses/Course/CoursePanelLayout/Subheader/styles";
 import { IconMenuSchedule } from "@/icons/index";
-import { ProgressBar } from "@lms/components";
+import { ProgressBar } from "@ulams/components";
 import { useTranslation } from "react-i18next";
 
 interface Props {

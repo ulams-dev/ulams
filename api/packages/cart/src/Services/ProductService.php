@@ -1,29 +1,29 @@
 <?php
 
-namespace EscolaLms\Cart\Services;
+namespace Ulams\Cart\Services;
 
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Cart\Dtos\PageDto;
-use EscolaLms\Cart\Dtos\ProductSearchMyCriteriaDto;
-use EscolaLms\Cart\Dtos\ProductsSearchDto;
-use EscolaLms\Cart\Enums\ConstantEnum;
-use EscolaLms\Cart\Enums\PeriodEnum;
-use EscolaLms\Cart\Enums\ProductType;
-use EscolaLms\Cart\Enums\SubscriptionStatus;
-use EscolaLms\Cart\Events\ProductableAttached;
-use EscolaLms\Cart\Events\ProductableDetached;
-use EscolaLms\Cart\Events\ProductAttached;
-use EscolaLms\Cart\Events\ProductDetached;
-use EscolaLms\Cart\Models\Cart;
-use EscolaLms\Cart\Models\CartItem;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductProductable;
-use EscolaLms\Cart\Models\ProductUser;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Repositories\Criteria\Criterion;
-use EscolaLms\Files\Helpers\FileHelper;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Cart\Dtos\PageDto;
+use Ulams\Cart\Dtos\ProductSearchMyCriteriaDto;
+use Ulams\Cart\Dtos\ProductsSearchDto;
+use Ulams\Cart\Enums\ConstantEnum;
+use Ulams\Cart\Enums\PeriodEnum;
+use Ulams\Cart\Enums\ProductType;
+use Ulams\Cart\Enums\SubscriptionStatus;
+use Ulams\Cart\Events\ProductableAttached;
+use Ulams\Cart\Events\ProductableDetached;
+use Ulams\Cart\Events\ProductAttached;
+use Ulams\Cart\Events\ProductDetached;
+use Ulams\Cart\Models\Cart;
+use Ulams\Cart\Models\CartItem;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductProductable;
+use Ulams\Cart\Models\ProductUser;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Models\User;
+use Ulams\Core\Repositories\Criteria\Criterion;
+use Ulams\Files\Helpers\FileHelper;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -250,7 +250,7 @@ class ProductService implements ProductServiceContract
      * Maps productable to JsonResource
      * Returns (almost) empty JsonResource if productable does not exist in database anymore
      *
-     * @see \EscolaLms\Cart\Http\Resources\ProductableGenericResource
+     * @see \Ulams\Cart\Http\Resources\ProductableGenericResource
      */
     public function mapProductProductableToJsonResource(ProductProductable $productProductable): JsonResource
     {

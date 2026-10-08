@@ -2,7 +2,7 @@ import React from 'react';
 
 import UserGroupSelect from '@/components/UserGroupSelect';
 import UserSelect from '@/components/UserSelect';
-import { access as fetchAccess, setAccess as postSetAccess } from '@/services/escola-lms/course';
+import { access as fetchAccess, setAccess as postSetAccess } from '@/services/ulams/course';
 import ProForm from '@ant-design/pro-form';
 import { message } from 'antd';
 import { FormattedMessage } from 'umi';

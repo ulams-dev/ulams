@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\Consultations\Dto;
+namespace Ulams\Consultations\Dto;
 
-use EscolaLms\Consultations\Dto\Contracts\ModelDtoContract;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Models\ConsultationUserTerm;
-use EscolaLms\Consultations\Repositories\Criteria\UserExistsCriterion;
-use EscolaLms\Consultations\Repositories\Criteria\UserTermConsultationCriterion;
-use EscolaLms\Consultations\Repositories\Criteria\UserTermUserExistsCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\NotNullCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\WhereCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\WhereNotInOrIsNullCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
+use Ulams\Consultations\Dto\Contracts\ModelDtoContract;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Models\ConsultationUserTerm;
+use Ulams\Consultations\Repositories\Criteria\UserExistsCriterion;
+use Ulams\Consultations\Repositories\Criteria\UserTermConsultationCriterion;
+use Ulams\Consultations\Repositories\Criteria\UserTermUserExistsCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\NotNullCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\WhereCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\WhereNotInOrIsNullCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\DateCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\InCriterion;
 
 class FilterConsultationTermsListDto extends BaseDto implements ModelDtoContract
 {

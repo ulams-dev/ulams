@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Consultations\Http\Resources;
+namespace Ulams\Consultations\Http\Resources;
 
 use Carbon\Carbon;
-use EscolaLms\Auth\Traits\ResourceExtandable;
-use EscolaLms\Consultations\Services\Contracts\ConsultationServiceContract;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Auth\Traits\ResourceExtandable;
+use Ulams\Consultations\Services\Contracts\ConsultationServiceContract;
+use Ulams\ModelFields\Enum\MetaFieldVisibilityEnum;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ConsultationSimpleResource extends JsonResource

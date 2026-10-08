@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Categories\Database\Seeders;
+namespace Ulams\Categories\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use EscolaLms\Categories\Models\Category;
+use Ulams\Categories\Models\Category;
 
 class CategoriesSeeder extends Seeder
 {

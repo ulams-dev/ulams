@@ -1,7 +1,7 @@
 import { Select, Spin } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { user as fetchUser, users as fetchUsers } from '@/services/escola-lms/user';
+import { user as fetchUser, users as fetchUsers } from '@/services/ulams/user';
 import type { DefaultOptionType } from 'antd/lib/select';
 import { useCallback } from 'react';
 import { FormattedMessage } from 'umi';

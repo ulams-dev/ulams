@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Controllers;
+namespace Ulams\Cart\Http\Controllers;
 
-use EscolaLms\Cart\Http\Requests\OrderSearchRequest;
-use EscolaLms\Cart\Http\Requests\OrderViewRequest;
-use EscolaLms\Cart\Http\Resources\OrderResource;
-use EscolaLms\Cart\Http\Swagger\OrderSwagger;
-use EscolaLms\Cart\Services\Contracts\OrderServiceContract;
-use EscolaLms\Core\Dtos\OrderDto as SortDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Cart\Http\Requests\OrderSearchRequest;
+use Ulams\Cart\Http\Requests\OrderViewRequest;
+use Ulams\Cart\Http\Resources\OrderResource;
+use Ulams\Cart\Http\Swagger\OrderSwagger;
+use Ulams\Cart\Services\Contracts\OrderServiceContract;
+use Ulams\Core\Dtos\OrderDto as SortDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\JsonResponse;
 
-class OrderApiController extends EscolaLmsBaseController implements OrderSwagger
+class OrderApiController extends UlamsBaseController implements OrderSwagger
 {
     protected OrderServiceContract $orderService;
 

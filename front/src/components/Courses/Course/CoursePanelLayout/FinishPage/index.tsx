@@ -4,13 +4,13 @@ import { CoursePanelFinishPageCongrats } from "@/components/Courses/Course/Cours
 import { CongratsWrapper } from "@/components/Courses/Course/CoursePanelLayout/FinishPage/styles";
 import { QuestionnairesModal } from "@/components/Courses/Course/CoursePanelLayout/FinishPage/Rate";
 import { CoursePanelFinishPageCertificate } from "@/components/Courses/Course/CoursePanelLayout/FinishPage/Certificate";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { useCoursePanel } from "@/components/Courses/Course/Context";
 import routeRoutes from "@/components/Routes/routes";
 import {
   Certificate,
   CertificateAssignableTypes,
-} from "@lms/sdk/types";
+} from "@ulams/sdk/types";
 
 import { QuestionnaireModelType } from "@/types/questionnaire";
 
@@ -30,7 +30,7 @@ export const CoursePanelFinishPage = () => {
   });
 
   const { courseId } = useCoursePanel();
-  const { fetchCertificates } = useContext(EscolaLMSContext);
+  const { fetchCertificates } = useContext(UlamsContext);
   const history = useHistory();
 
   const getCertificate = useCallback(async () => {

@@ -19,9 +19,9 @@
       "@/*": ["./src/*"],
       "@@/*": ["./src/.umi/*"],
       "@@test/*": ["./src/.umi-test/*"],
-      "@lms/gift-pegjs": ["./src/lib/gift-pegjs"],
-      "@lms/markdown-editor": ["./src/lib/markdown-editor"],
-      "@lms/scorm-player": ["../front/src/lib/scorm-player"]
+      "@ulams/gift-pegjs": ["./src/lib/gift-pegjs"],
+      "@ulams/markdown-editor": ["./src/lib/markdown-editor"],
+      "@ulams/scorm-player": ["../front/src/lib/scorm-player"]
     },
 
     "inlineSources": true,
@@ -35,7 +35,7 @@
     "./**/*.d.ts",
     "./**/*.ts",
     "./**/*.tsx",
-    "./src/services/escola-lms/typings.d.ts",
+    "./src/services/ulams/typings.d.ts",
     "../front/src/lib/ts-models/models.d.ts"
   ],
   "exclude": ["node_modules", "src/lib/markdown-editor"],

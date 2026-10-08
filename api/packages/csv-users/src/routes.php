@@ -1,8 +1,8 @@
 <?php
 
 // admin endpoints
-use EscolaLms\CsvUsers\Http\Controllers\CsvGroupAPIController;
-use EscolaLms\CsvUsers\Http\Controllers\CsvUserAPIController;
+use Ulams\CsvUsers\Http\Controllers\CsvGroupAPIController;
+use Ulams\CsvUsers\Http\Controllers\CsvUserAPIController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin/csv'], function () {

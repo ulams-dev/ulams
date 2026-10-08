@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Reports\Http\Requests\Admin;
+namespace Ulams\Reports\Http\Requests\Admin;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Reports\Models\Report;
+use Ulams\Courses\Models\Course;
+use Ulams\Reports\Models\Report;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

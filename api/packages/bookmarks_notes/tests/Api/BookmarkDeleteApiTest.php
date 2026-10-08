@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Tests\Api;
+namespace Ulams\Bookmarks\Tests\Api;
 
-use EscolaLms\Bookmarks\Database\Seeders\BookmarkPermissionSeeder;
-use EscolaLms\Bookmarks\Models\Bookmark;
-use EscolaLms\Bookmarks\Tests\BookmarkTesting;
-use EscolaLms\Bookmarks\Tests\TestCase;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\Bookmarks\Database\Seeders\BookmarkPermissionSeeder;
+use Ulams\Bookmarks\Models\Bookmark;
+use Ulams\Bookmarks\Tests\BookmarkTesting;
+use Ulams\Bookmarks\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
 
 class BookmarkDeleteApiTest extends TestCase
 {

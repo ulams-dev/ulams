@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Consultations\Database\Seeders;
+namespace Ulams\Consultations\Database\Seeders;
 
-use EscolaLms\Consultations\Enum\ConsultationsPermissionsEnum;
-use EscolaLms\Core\Enums\UserRole;
+use Ulams\Consultations\Enum\ConsultationsPermissionsEnum;
+use Ulams\Core\Enums\UserRole;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 

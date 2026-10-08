@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Video\Jobs;
+namespace Ulams\Video\Jobs;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Video\Enums\VideoProcessState;
-use EscolaLms\Video\Events\ProcessVideoFailed;
-use EscolaLms\Video\Events\ProcessVideoFinished;
-use EscolaLms\Video\Events\ProcessVideoStarted;
-use EscolaLms\Video\Events\ProcessVideoState;
-use EscolaLms\Video\Models\Video;
+use Ulams\Courses\Models\Topic;
+use Ulams\Video\Enums\VideoProcessState;
+use Ulams\Video\Events\ProcessVideoFailed;
+use Ulams\Video\Events\ProcessVideoFinished;
+use Ulams\Video\Events\ProcessVideoStarted;
+use Ulams\Video\Events\ProcessVideoState;
+use Ulams\Video\Models\Video;
 use Exception;
 use FFMpeg\Format\Video\X264;
 use Illuminate\Bus\Queueable;
@@ -41,10 +41,10 @@ class ProcessVideo implements ShouldQueue
         $this->video = $video;
         $this->topic = $video->topic;
         $this->user = $user;
-        $this->disk = $disk ?? config('escolalms_video.disk');
+        $this->disk = $disk ?? config('ulams_video.disk');
 
-        $this->onConnection(config('escolalms_video.queue_connection'));
-        $this->onQueue(config('escolalms_video.queue'));
+        $this->onConnection(config('ulams_video.queue_connection'));
+        $this->onQueue(config('ulams_video.queue'));
     }
     public function handle(): bool
     {
@@ -90,7 +90,7 @@ class ProcessVideo implements ShouldQueue
 
     private function getFFMpeg(string $input): HLSExporter
     {
-        $bitRates = config('escolalms_video.bitrates');
+        $bitRates = config('ulams_video.bitrates');
 
         $ffmpeg = FFMpeg::fromDisk($this->disk)
             ->open($input)

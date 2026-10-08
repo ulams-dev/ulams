@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Consultations\Enum\ConsultationTermReminderStatusEnum;
+use Ulams\Consultations\Enum\ConsultationTermReminderStatusEnum;
 
 return [
     'perPage' => 15,

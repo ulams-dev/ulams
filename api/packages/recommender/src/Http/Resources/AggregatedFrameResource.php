@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Recommender\Http\Resources;
+namespace Ulams\Recommender\Http\Resources;
 
 use Carbon\Carbon;
-use EscolaLms\Recommender\Enum\EmotionsEnum;
+use Ulams\Recommender\Enum\EmotionsEnum;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 

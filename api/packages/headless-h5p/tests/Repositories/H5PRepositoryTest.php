@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Tests\Repositories;
+namespace Ulams\HeadlessH5P\Tests\Repositories;
 
-use EscolaLms\HeadlessH5P\Models\H5PContent;
-use EscolaLms\HeadlessH5P\Models\H5PContentLibrary;
-use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
-use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
-use EscolaLms\HeadlessH5P\Tests\Fixture\H5PContentTypeFixture;
-use EscolaLms\HeadlessH5P\Tests\TestCase;
+use Ulams\HeadlessH5P\Models\H5PContent;
+use Ulams\HeadlessH5P\Models\H5PContentLibrary;
+use Ulams\HeadlessH5P\Models\H5PLibrary;
+use Ulams\HeadlessH5P\Models\H5PLibraryDependency;
+use Ulams\HeadlessH5P\Repositories\H5PRepository;
+use Ulams\HeadlessH5P\Tests\Fixture\H5PContentTypeFixture;
+use Ulams\HeadlessH5P\Tests\TestCase;
 use GuzzleHttp\Psr7\Response;
 use H5PHubEndpoints;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

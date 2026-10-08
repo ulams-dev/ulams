@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Templates\Http\Requests;
+namespace Ulams\Templates\Http\Requests;
 
-use EscolaLms\Templates\Facades\Template as FacadesTemplate;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Rules\TemplateValidContentRule;
+use Ulams\Templates\Facades\Template as FacadesTemplate;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Rules\TemplateValidContentRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

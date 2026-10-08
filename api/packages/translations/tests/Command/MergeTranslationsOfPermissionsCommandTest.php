@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Translations\Tests\Command;
+namespace Ulams\Translations\Tests\Command;
 
-use EscolaLms\Translations\Console\Command\MergeTranslationsOfPermissionsCommand;
-use EscolaLms\Translations\Enum\TranslationsPermissionsEnum;
-use EscolaLms\Translations\Tests\TestCase;
+use Ulams\Translations\Console\Command\MergeTranslationsOfPermissionsCommand;
+use Ulams\Translations\Enum\TranslationsPermissionsEnum;
+use Ulams\Translations\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 
@@ -16,7 +16,7 @@ class MergeTranslationsOfPermissionsCommandTest extends TestCase
     {
         $this->artisan(MergeTranslationsOfPermissionsCommand::class);
 
-        $languages = Config::get('escolalms_translations.languages');
+        $languages = Config::get('ulams_translations.languages');
         $keys = TranslationsPermissionsEnum::getValues();
 
         foreach ($languages as $langKey) {

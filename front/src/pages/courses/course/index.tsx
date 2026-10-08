@@ -1,21 +1,21 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import CoursesDetailsSidebar from "@/components/Courses/SingleCoursesTwo/CoursesDetailsSidebar/index";
 import { Link, useHistory, useParams } from "react-router-dom";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/_App/Layout";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { CourseProgram } from "@lms/components/components/organisms/CourseProgram/CourseProgram";
-import { MarkdownRenderer } from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { CourseProgram } from "@ulams/components/components/organisms/CourseProgram/CourseProgram";
+import { MarkdownRenderer } from "@ulams/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
 import CourseProgramPreview from "@/components/Courses/Course/CourseProgramPreview";
-import { API } from "@lms/sdk";
-import { Modal } from "@lms/components/components/atoms/Modal/Modal";
+import { API } from "@ulams/sdk";
+import { Modal } from "@ulams/components/components/atoms/Modal/Modal";
 import Breadcrumbs from "@/components/Common/Breadcrumbs";
-import { fixContentForMarkdown } from "@lms/components/utils/components/markdown";
+import { fixContentForMarkdown } from "@ulams/components/utils/components/markdown";
 import { Col, Row } from "react-grid-system";
 import Container from "@/components/Common/Container";
-import { ModalCourseAccess } from "@lms/components/components/organisms/ModalCourseAccess";
+import { ModalCourseAccess } from "@ulams/components/components/organisms/ModalCourseAccess";
 import { QuestionnaireModelType } from "@/types/questionnaire";
 import { ModalOverwriteGlobal, StyledCoursePage } from "./styles";
 import {
@@ -60,7 +60,7 @@ const CoursePage = () => {
     fetchCourses,
     fetchCourseAccess,
     fetchQuestionnaires,
-  } = useContext(EscolaLMSContext);
+  } = useContext(UlamsContext);
 
   const closeCourseAccessModal = useCallback(
     () => setCourseAccessModalVisible(false),

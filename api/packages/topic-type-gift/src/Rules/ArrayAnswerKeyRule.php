@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Rules;
+namespace Ulams\TopicTypeGift\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 

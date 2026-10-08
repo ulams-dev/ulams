@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Rules;
+namespace Ulams\Questionnaire\Rules;
 
-use EscolaLms\Questionnaire\Models\QuestionnaireModelType;
+use Ulams\Questionnaire\Models\QuestionnaireModelType;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 

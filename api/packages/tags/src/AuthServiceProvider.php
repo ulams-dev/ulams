@@ -1,10 +1,10 @@
 <?php
 
 
-namespace EscolaLms\Tags;
+namespace Ulams\Tags;
 
-use EscolaLms\Tags\Models\Tag;
-use EscolaLms\Tags\Policies\TagPolicy;
+use Ulams\Tags\Models\Tag;
+use Ulams\Tags\Policies\TagPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

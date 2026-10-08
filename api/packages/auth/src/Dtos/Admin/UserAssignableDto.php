@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Auth\Dtos\Admin;
+namespace Ulams\Auth\Dtos\Admin;
 
-use EscolaLms\Auth\Repositories\Criteria\AssignableByCriterion;
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Repositories\Criteria\UserSearchCriterion;
+use Ulams\Auth\Repositories\Criteria\AssignableByCriterion;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Repositories\Criteria\UserSearchCriterion;
 use Illuminate\Support\Collection;
 
 class UserAssignableDto extends CriteriaDto implements DtoContract

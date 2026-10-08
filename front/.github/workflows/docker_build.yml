@@ -32,9 +32,9 @@ jobs:
         uses: getsentry/action-release@v1
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: escolasoft
-          SENTRY_PROJECT: wellms-front
-          SENTRY_URL: https://escolasoft.sentry.io
+          SENTRY_ORG: ulams
+          SENTRY_PROJECT: ulams-front
+          SENTRY_URL: https://ulams.sentry.io
         with:
           environment: production
           sourcemaps: ./front/dist
@@ -65,18 +65,18 @@ jobs:
           push: true
           # Cannot be built at the moment https://github.com/nodejs/docker-node/issues/1335
           # platforms: linux/amd64,linux/arm64
-          tags: escolalms/demo:${{github.ref_name}}, escolalms/demo:latest
+          tags: ulams/demo:${{github.ref_name}}, ulams/demo:latest
           build-args: APP_VERSION=${{github.ref_name}}
 
       # - name: Create the Mattermost Message
       #   run: |
-      #     echo "{\"text\":\"There is a new [escolalms/demo:latest](https://hub.docker.com/r/escolalms/demo/tags?page=1&name=latest) and version `${{github.ref_name}}` image built. k8s rollout will happen soon\"}" > mattermost.json
+      #     echo "{\"text\":\"There is a new [ulams/demo:latest](https://hub.docker.com/r/escolalms/demo/tags?page=1&name=latest) and version `${{github.ref_name}}` image built. k8s rollout will happen soon\"}" > mattermost.json
       - uses: mattermost/action-mattermost-notify@master
         with:
           MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
           PAYLOAD: |-
             {
-              "text": "There is a new [escolalms/demo:latest](https://hub.docker.com/r/escolalms/demo/tags?page=1&name=latest) and version `${{github.ref_name}}` image built. k8s rollout will happen soon"        
+              "text": "There is a new [ulams/demo:latest](https://hub.docker.com/r/escolalms/demo/tags?page=1&name=latest) and version `${{github.ref_name}}` image built. k8s rollout will happen soon"        
             }
 
       - name: Send webook to hooks to rollout all devs on k8s

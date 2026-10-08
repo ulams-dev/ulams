@@ -84,7 +84,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: 'Wellms LMS Admin Panel',
+  title: 'Ulams LMS Admin Panel',
   layout: {
     locale: true,
     ...defaultSettings,
@@ -166,9 +166,9 @@ export default defineConfig({
    * Keep in sync with "paths" in tsconfig.json.
    */
   alias: {
-    '@lms/gift-pegjs': path.resolve(__dirname, '../src/lib/gift-pegjs'),
-    '@lms/markdown-editor': path.resolve(__dirname, '../src/lib/markdown-editor'),
-    '@lms/scorm-player': path.resolve(__dirname, '../../front/src/lib/scorm-player'),
+    '@ulams/gift-pegjs': path.resolve(__dirname, '../src/lib/gift-pegjs'),
+    '@ulams/markdown-editor': path.resolve(__dirname, '../src/lib/markdown-editor'),
+    '@ulams/scorm-player': path.resolve(__dirname, '../../front/src/lib/scorm-player'),
   },
   plugins: [require.resolve('./plugin-scorm.ts')],
 });

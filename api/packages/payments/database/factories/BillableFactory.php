@@ -1,9 +1,9 @@
 <?php
 
-namespace Database\Factories\EscolaLms\Payments\Models;
+namespace Database\Factories\Ulams\Payments\Models;
 
-use Database\Factories\EscolaLms\Core\Models\UserFactory;
-use EscolaLms\Payments\Models\Billable;
+use Database\Factories\Ulams\Core\Models\UserFactory;
+use Ulams\Payments\Models\Billable;
 
 class BillableFactory extends UserFactory
 {

@@ -24,8 +24,8 @@ jobs:
         env:
           CI: false
           BASE_PATH: /
-          REACT_APP_PUBLIC_URL: https://admin-stage.escolalms.com/
-          REACT_APP_API_URL: https://api-stage.escolalms.com
+          REACT_APP_PUBLIC_URL: https://admin-stage.ulams.app/
+          REACT_APP_API_URL: https://api-stage.ulams.app
           REACT_APP_SENTRYDSN: https://c4d0f362cbbea902bf00f6f35e5c4b9b@o4508812125929472.ingest.de.sentry.io/4510006312239184
           REACT_APP_YBUG: 01m1nn5zqystt1qq5n11
           REACT_APP_SENTRY_RELEASE: admin@dev-${{github.ref_name}}
@@ -45,9 +45,9 @@ jobs:
         env:
           #SENTRY_LOG_LEVEL: debug
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: escolasoft
-          SENTRY_PROJECT: wellms-admin
-          SENTRY_URL: https://escolasoft.sentry.io
+          SENTRY_ORG: ulams
+          SENTRY_PROJECT: ulams-admin
+          SENTRY_URL: https://ulams.sentry.io
         with:
           environment: production
           sourcemaps: ./admin/dist
@@ -57,11 +57,11 @@ jobs:
 
       - name: Create the Mattermost Message
         run: |
-          echo "{\"text\":\"There is a [admin-stage.escolalms.com](https://admin-stage.escolalms.com/) available\"}" > mattermost.json
+          echo "{\"text\":\"There is a [admin-stage.ulams.app](https://admin-stage.ulams.app/) available\"}" > mattermost.json
       - uses: mattermost/action-mattermost-notify@master
         with:
           MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
           PAYLOAD: |-
             {
-              "text": "There is a [admin-stage.escolalms.com](https://admin-stage.escolalms.com/) available"
+              "text": "There is a [admin-stage.ulams.app](https://admin-stage.ulams.app/) available"
             }

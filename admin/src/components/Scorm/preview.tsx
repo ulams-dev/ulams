@@ -1,4 +1,4 @@
-import { ScormPreview as ScormPlayer } from '@lms/scorm-player';
+import { ScormPreview as ScormPlayer } from '@ulams/scorm-player';
 import React from 'react';
 declare const REACT_APP_API_URL: string;
 

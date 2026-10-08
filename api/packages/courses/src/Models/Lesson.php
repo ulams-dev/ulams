@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Courses\Models;
+namespace Ulams\Courses\Models;
 
-use EscolaLms\Core\Models\Traits\QueryCacheable;
-use EscolaLms\Courses\Database\Factories\LessonFactory;
-use EscolaLms\ModelFields\Traits\ModelFields;
+use Ulams\Core\Models\Traits\QueryCacheable;
+use Ulams\Courses\Database\Factories\LessonFactory;
+use Ulams\ModelFields\Traits\ModelFields;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -74,9 +74,9 @@ use Illuminate\Support\Carbon;
  * @property string $title
  * @property string $summary
  * @property string $duration
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Topic[] $topics
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $lessons
- * @property-read \EscolaLms\Courses\Models\Lesson|null $parentLesson
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Courses\Models\Topic[] $topics
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Courses\Models\Lesson[] $lessons
+ * @property-read \Ulams\Courses\Models\Lesson|null $parentLesson
  */
 class Lesson extends Model
 {
@@ -155,7 +155,7 @@ class Lesson extends Model
 
     protected static function newFactory(): LessonFactory
     {
-        return \EscolaLms\Courses\Database\Factories\LessonFactory::new();
+        return \Ulams\Courses\Database\Factories\LessonFactory::new();
     }
 
     public function scopeActive(Builder $query): Builder

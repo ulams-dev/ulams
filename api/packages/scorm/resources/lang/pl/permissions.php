@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Scorm\Enums\ScormPermissionsEnum;
+use Ulams\Scorm\Enums\ScormPermissionsEnum;
 
 return [
     ScormPermissionsEnum::SCORM_LIST => 'Lista scorm',

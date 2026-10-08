@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Http\Requests;
+namespace Ulams\CsvUsers\Http\Requests;
 
-use EscolaLms\CsvUsers\Models\Group;
+use Ulams\CsvUsers\Models\Group;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ImportUserGroupFromCsvAPIRequest extends FormRequest

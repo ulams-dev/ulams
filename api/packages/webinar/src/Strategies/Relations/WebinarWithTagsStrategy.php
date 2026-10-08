@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Webinar\Strategies\Relations;
+namespace Ulams\Webinar\Strategies\Relations;
 
-use EscolaLms\Tags\Models\Tag;
-use EscolaLms\Webinar\Strategies\Contracts\RelationStrategyContract;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Tags\Models\Tag;
+use Ulams\Webinar\Strategies\Contracts\RelationStrategyContract;
+use Ulams\Webinar\Models\Webinar;
 
 class WebinarWithTagsStrategy implements RelationStrategyContract
 {

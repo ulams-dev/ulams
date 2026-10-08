@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Tests\Api\Admin;
+namespace Ulams\TopicTypeGift\Tests\Api\Admin;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder;
-use EscolaLms\TopicTypeGift\Export\QuestionExport;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Tests\TestCase;
+use Ulams\Categories\Models\Category;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder;
+use Ulams\TopicTypeGift\Export\QuestionExport;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Tests\TestCase;
 use Maatwebsite\Excel\Facades\Excel;
 
 class AdminExportGiftQuestionTest extends TestCase

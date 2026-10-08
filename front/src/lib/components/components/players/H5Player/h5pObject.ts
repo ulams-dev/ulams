@@ -1,6 +1,6 @@
 export const hp5Object = {
   baseUrl: "domain",
-  url: "https://api-stage.escolalms.com/h5p",
+  url: "https://api-stage.ulams.app/h5p",
   postUserStatistics: false,
   ajax: {
     setFinished: "ajaxSetFinished",
@@ -130,12 +130,12 @@ export const hp5Object = {
   loadedCss: [],
   core: {
     styles: [
-      "https://api-stage.escolalms.com/h5p-core/styles/h5p.css",
-      "https://api-stage.escolalms.com/h5p-core/styles/h5p-confirmation-dialog.css",
-      "https://api-stage.escolalms.com/h5p-core/styles/h5p-core-button.css",
+      "https://api-stage.ulams.app/h5p-core/styles/h5p.css",
+      "https://api-stage.ulams.app/h5p-core/styles/h5p-confirmation-dialog.css",
+      "https://api-stage.ulams.app/h5p-core/styles/h5p-core-button.css",
     ],
     scripts: [
-      "https://api-stage.escolalms.com/h5p-editor/js/402e665f88b6b88af75fe15ec311c2b2.js",
+      "https://api-stage.ulams.app/h5p-editor/js/402e665f88b6b88af75fe15ec311c2b2.js",
     ],
   },
   contents: {
@@ -673,7 +673,7 @@ export const hp5Object = {
         '{"taskDescription":"Why should you join us?  Everything we do is guided by our values that lay at the heart of our company.  What are our values? Find them on the grid below. Click the first letter of the word and drag the line. Click again on the last letter of the word to","wordList":"Respect,Community,Ownership,Inspiration,Customers,Passion,Competence,Innovation","behaviour":{"orientations":{"horizontal":true,"horizontalBack":true,"vertical":true,"verticalUp":true,"diagonal":true,"diagonalBack":true,"diagonalUp":true,"diagonalUpBack":true},"fillPool":"abcdefghijklmnopqrstuvwxyz","preferOverlap":true,"showVocabulary":true,"enableShowSolution":true,"enableRetry":true},"l10n":{"check":"Check","tryAgain":"Retry","showSolution":"Show Solution","found":"@found of @totalWords found","timeSpent":"Time Spent","score":"You got @score of @total points","wordListHeader":"Values"}}',
       fullScreen: 0,
       exportUrl:
-        "https://api-stage.escolalms.com/api/admin/hh5p/content/23/export",
+        "https://api-stage.ulams.app/api/admin/hh5p/content/23/export",
       title: "New Content (from file)",
       displayOptions: {
         frame: false,
@@ -690,10 +690,10 @@ export const hp5Object = {
       ],
       nonce: "460164f2",
       scripts: [
-        "https://api-stage.escolalms.com/h5p/cachedassets/de78a1aafbb36c56cdfe731b1831a04267611de5.js",
+        "https://api-stage.ulams.app/h5p/cachedassets/de78a1aafbb36c56cdfe731b1831a04267611de5.js",
       ],
       styles: [
-        "https://api-stage.escolalms.com/h5p/cachedassets/de78a1aafbb36c56cdfe731b1831a04267611de5.css",
+        "https://api-stage.ulams.app/h5p/cachedassets/de78a1aafbb36c56cdfe731b1831a04267611de5.css",
       ],
     },
   },

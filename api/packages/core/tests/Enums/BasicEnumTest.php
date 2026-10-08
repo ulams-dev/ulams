@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Enums;
+namespace Ulams\Core\Tests\Enums;
 
-use EscolaLms\Core\Enums\StatusEnum;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Core\Http\Resources\Status;
-use EscolaLms\Core\Tests\TestCase;
+use Ulams\Core\Enums\StatusEnum;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Core\Http\Resources\Status;
+use Ulams\Core\Tests\TestCase;
 use Illuminate\Http\Request;
 
 class BasicEnumTest extends TestCase

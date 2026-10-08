@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests;
+namespace Ulams\Auth\Http\Requests;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Rules\MatchOldPassword;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Rules\MatchOldPassword;
 
 class ProfileUpdatePasswordRequest extends ExtendableRequest
 {

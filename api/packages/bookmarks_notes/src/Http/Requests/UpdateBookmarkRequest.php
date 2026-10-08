@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Http\Requests;
+namespace Ulams\Bookmarks\Http\Requests;
 
-use EscolaLms\Bookmarks\Dtos\UpdateBookmarkDto;
+use Ulams\Bookmarks\Dtos\UpdateBookmarkDto;
 use Illuminate\Support\Facades\Gate;
 
 class UpdateBookmarkRequest extends BookmarkRequest

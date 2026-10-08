@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Webinar\Strategies\Contracts;
+namespace Ulams\Webinar\Strategies\Contracts;
 
 interface RelationStrategyContract
 {

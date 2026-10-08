@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Scorm\Database\Seeders;
+namespace Ulams\Scorm\Database\Seeders;
 
-use EscolaLms\Scorm\Services\Contracts\ScormTrackServiceContract;
+use Ulams\Scorm\Services\Contracts\ScormTrackServiceContract;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
 
-use EscolaLms\Scorm\Services\ScormService;
+use Ulams\Scorm\Services\ScormService;
 use Peopleaps\Scorm\Model\ScormModel;
 
 class DatabaseSeeder extends Seeder

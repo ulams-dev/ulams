@@ -1,5 +1,5 @@
 import { RecommenderIcon } from '@/icons';
-import { RecommenderType, TopicType } from '@/services/escola-lms/enums';
+import { RecommenderType, TopicType } from '@/services/ulams/enums';
 import { Spin } from 'antd';
 import React, { useCallback, useContext } from 'react';
 import { FormattedMessage, history } from 'umi';

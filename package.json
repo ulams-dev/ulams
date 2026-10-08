@@ -1,7 +1,7 @@
 {
-  "name": "wellms",
+  "name": "ulams",
   "private": true,
-  "description": "Wellms LMS monorepo: api (Laravel), admin (umi/max) and front (Vite).",
+  "description": "Ulams LMS monorepo: api (Laravel), admin (umi/max) and front (Vite).",
   "packageManager": "yarn@1.22.22",
   "engines": {
     "node": ">=22.12"

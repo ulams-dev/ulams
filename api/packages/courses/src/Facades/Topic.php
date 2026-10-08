@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Facades;
+namespace Ulams\Courses\Facades;
 
-use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
+use Ulams\Courses\Repositories\Contracts\TopicRepositoryContract;
 use Illuminate\Support\Facades\Facade;
 
 class Topic extends Facade

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Tags\Enums;
+namespace Ulams\Tags\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class TagsPermissionsEnum extends BasicEnum
 {

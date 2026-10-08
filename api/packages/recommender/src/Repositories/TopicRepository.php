@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Recommender\Repositories;
+namespace Ulams\Recommender\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Recommender\Models\Topic;
-use EscolaLms\Recommender\Repositories\Contracts\TopicRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Recommender\Models\Topic;
+use Ulams\Recommender\Repositories\Contracts\TopicRepositoryContract;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 

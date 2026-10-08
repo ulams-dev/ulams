@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Http\Resources;
+namespace Ulams\CsvUsers\Http\Resources;
 
-use EscolaLms\Auth\Traits\ResourceExtandable;
-use EscolaLms\CsvUsers\Models\Group;
+use Ulams\Auth\Traits\ResourceExtandable;
+use Ulams\CsvUsers\Models\Group;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class GroupExportResource extends JsonResource

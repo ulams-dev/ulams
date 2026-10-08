@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Consultations\Enum;
+namespace Ulams\Consultations\Enum;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class ConsultationsPermissionsEnum extends BasicEnum
 {

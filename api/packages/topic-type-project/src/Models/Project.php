@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Models;
+namespace Ulams\TopicTypeProject\Models;
 
-use EscolaLms\TopicTypeProject\Database\Factories\ProjectFactory;
-use EscolaLms\TopicTypeProject\Events\ProjectGradabilityChangedEvent;
-use EscolaLms\TopicTypes\Facades\Markdown;
-use EscolaLms\TopicTypes\Models\TopicContent\AbstractTopicContent;
+use Ulams\TopicTypeProject\Database\Factories\ProjectFactory;
+use Ulams\TopicTypeProject\Events\ProjectGradabilityChangedEvent;
+use Ulams\TopicTypes\Facades\Markdown;
+use Ulams\TopicTypes\Models\TopicContent\AbstractTopicContent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Carbon;
 
@@ -52,7 +52,7 @@ use Illuminate\Support\Carbon;
  */
 
 /**
- * EscolaLms\TopicTypeProject\Models\Project
+ * Ulams\TopicTypeProject\Models\Project
  *
  * @property int $id
  * @property string $value

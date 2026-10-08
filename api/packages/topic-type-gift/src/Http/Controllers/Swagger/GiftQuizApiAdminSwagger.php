@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Controllers\Swagger;
+namespace Ulams\TopicTypeGift\Http\Controllers\Swagger;
 
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminListGiftQuizRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminReadGiftQuizRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminUpdateGiftQuizRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminListGiftQuizRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminReadGiftQuizRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminUpdateGiftQuizRequest;
 use Illuminate\Http\JsonResponse;
 
 interface GiftQuizApiAdminSwagger

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Repositories;
+namespace Ulams\TopicTypeGift\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Repositories\Contracts\GiftQuestionRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Repositories\Contracts\GiftQuestionRepositoryContract;
 
 class GiftQuestionRepository extends BaseRepository implements GiftQuestionRepositoryContract
 {

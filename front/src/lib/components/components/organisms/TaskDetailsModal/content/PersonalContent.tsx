@@ -1,10 +1,10 @@
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { format, isAfter } from "date-fns";
 import { Formik, FormikErrors } from "formik";
-import { Task, TaskNote } from "@lms/sdk/types";
+import { Task, TaskNote } from "@ulams/sdk/types";
 import { AddTaskNote, EditTaskNote } from "../../TaskNote";
 
 import {
@@ -66,7 +66,7 @@ export const PersonalContent: React.FC<Props> = ({
   const [taskDone, setTaskDone] = useState(!!taskForAction.completed_at);
   const { t } = useTranslation();
   const { updateTask, updateTaskStatus, createTaskNote, fetchTask, task } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
 
   const initialValues = {
     title: taskForAction.title,

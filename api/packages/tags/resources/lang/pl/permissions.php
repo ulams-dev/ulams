@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Tags\Enums\TagsPermissionsEnum;
+use Ulams\Tags\Enums\TagsPermissionsEnum;
 
 return [
     TagsPermissionsEnum::TAGS_CREATE => 'Utwórz tag',

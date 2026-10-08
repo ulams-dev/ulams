@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Templates\Tests\Api;
+namespace Ulams\Templates\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Templates\Events\ManuallyTriggeredEvent;
-use EscolaLms\Templates\Facades\Template as FacadesTemplate;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Models\TemplateSection;
-use EscolaLms\Templates\Tests\Mock\TestChannel;
-use EscolaLms\Templates\Tests\Mock\TestUserVariables;
-use EscolaLms\Templates\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Templates\Events\ManuallyTriggeredEvent;
+use Ulams\Templates\Facades\Template as FacadesTemplate;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Models\TemplateSection;
+use Ulams\Templates\Tests\Mock\TestChannel;
+use Ulams\Templates\Tests\Mock\TestUserVariables;
+use Ulams\Templates\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Rules;
+namespace Ulams\Courses\Rules;
 
-use EscolaLms\Courses\Models\Course;
+use Ulams\Courses\Models\Course;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Http\Requests;
+namespace Ulams\HeadlessH5P\Http\Requests;
 
-use EscolaLms\HeadlessH5P\Exceptions\H5PException;
+use Ulams\HeadlessH5P\Exceptions\H5PException;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LibraryFilterRequest extends FormRequest

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Cart\Models\Contracts;
+namespace Ulams\Cart\Models\Contracts;
 
-use EscolaLms\Cart\Models\Contracts\Base\BuyableTrait;
+use Ulams\Cart\Models\Contracts\Base\BuyableTrait;
 
 /**
- * @see \EscolaLms\Cart\Models\Contracts\ProductInterface
+ * @see \Ulams\Cart\Models\Contracts\ProductInterface
  */
 trait ProductTrait
 {

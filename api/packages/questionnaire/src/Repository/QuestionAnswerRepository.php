@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Repository;
+namespace Ulams\Questionnaire\Repository;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Questionnaire\Dtos\QuestionAnswerFilterCriteriaDto;
-use EscolaLms\Questionnaire\Enums\QuestionTypeEnum;
-use EscolaLms\Questionnaire\EscolaLmsQuestionnaireServiceProvider;
-use EscolaLms\Questionnaire\Models\Question;
-use EscolaLms\Questionnaire\Models\QuestionAnswer;
-use EscolaLms\Questionnaire\Repository\Contracts\QuestionAnswerRepositoryContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Questionnaire\Dtos\QuestionAnswerFilterCriteriaDto;
+use Ulams\Questionnaire\Enums\QuestionTypeEnum;
+use Ulams\Questionnaire\UlamsQuestionnaireServiceProvider;
+use Ulams\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Models\QuestionAnswer;
+use Ulams\Questionnaire\Repository\Contracts\QuestionAnswerRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -120,7 +120,7 @@ class QuestionAnswerRepository extends BaseRepository implements QuestionAnswerR
 
         return $this
             ->applyCriteria($query, $criteria)
-            ->paginate($perPage ?? config(EscolaLmsQuestionnaireServiceProvider::CONFIG_KEY . '.per_page', 15));
+            ->paginate($perPage ?? config(UlamsQuestionnaireServiceProvider::CONFIG_KEY . '.per_page', 15));
     }
 
     public function getReviewReport(array $criteria): QuestionAnswer

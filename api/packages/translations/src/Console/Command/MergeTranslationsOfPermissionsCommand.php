@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Translations\Console\Command;
+namespace Ulams\Translations\Console\Command;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
@@ -24,9 +24,9 @@ class MergeTranslationsOfPermissionsCommand extends Command
     public function handle(Filesystem $filesystem): void
     {
         $this->disk = $filesystem;
-        $this->path = Config::get('escolalms_translations.lang_path');
-        $this->languages = Config::get('escolalms_translations.languages');
-        $this->fileName = Config::get('escolalms_translations.permission_translation_file_name');
+        $this->path = Config::get('ulams_translations.lang_path');
+        $this->languages = Config::get('ulams_translations.languages');
+        $this->fileName = Config::get('ulams_translations.permission_translation_file_name');
         $this->createEmptyLanguageFiles();
 
         foreach ($this->languages as $language) {

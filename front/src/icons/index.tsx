@@ -1687,7 +1687,7 @@ export const IconCongrats = () => (
   </svg>
 );
 
-export const WellmsLogo = ({ width = "100px", height = "30px" }) => {
+export const UlamsLogo = ({ width = "100px", height = "30px" }) => {
   return (
     <svg
       width={width}

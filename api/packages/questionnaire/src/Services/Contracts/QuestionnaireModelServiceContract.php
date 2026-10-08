@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Services\Contracts;
+namespace Ulams\Questionnaire\Services\Contracts;
 
-use EscolaLms\Questionnaire\Dtos\QuestionnaireModelDto;
-use EscolaLms\Questionnaire\Models\QuestionnaireModel;
-use EscolaLms\Questionnaire\Models\QuestionnaireModelType;
+use Ulams\Questionnaire\Dtos\QuestionnaireModelDto;
+use Ulams\Questionnaire\Models\QuestionnaireModel;
+use Ulams\Questionnaire\Models\QuestionnaireModelType;
 use Illuminate\Support\Collection;
 
 /**
  * Interface QuestionnaireModelServiceContract
- * @package EscolaLms\Questionnaire\Http\Services\Contracts
+ * @package Ulams\Questionnaire\Http\Services\Contracts
  */
 interface QuestionnaireModelServiceContract
 {

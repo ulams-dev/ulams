@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Tests\Traits;
+namespace Ulams\HeadlessH5P\Tests\Traits;
 
-use EscolaLms\HeadlessH5P\Models\H5PContent;
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
+use Ulams\HeadlessH5P\Models\H5PContent;
+use Ulams\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use Illuminate\Http\UploadedFile;
 
 trait H5PTestingTrait

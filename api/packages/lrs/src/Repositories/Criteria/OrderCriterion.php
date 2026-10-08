@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Lrs\Repositories\Criteria;
+namespace Ulams\Lrs\Repositories\Criteria;
 
-use EscolaLms\Core\Repositories\Criteria\Criterion;
+use Ulams\Core\Repositories\Criteria\Criterion;
 use Illuminate\Database\Eloquent\Builder;
 
 class OrderCriterion extends Criterion

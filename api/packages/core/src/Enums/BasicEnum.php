@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Core\Enums;
+namespace Ulams\Core\Enums;
 
 use BenSampo\Enum\Enum;
 use Illuminate\Support\Collection;

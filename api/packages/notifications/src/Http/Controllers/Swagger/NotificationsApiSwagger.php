@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Notifications\Http\Controllers\Swagger;
+namespace Ulams\Notifications\Http\Controllers\Swagger;
 
-use EscolaLms\Notifications\Http\Requests\NotificationEventsRequest;
-use EscolaLms\Notifications\Http\Requests\NotificationReadAllRequest;
-use EscolaLms\Notifications\Http\Requests\NotificationReadRequest;
-use EscolaLms\Notifications\Http\Requests\NotificationsRequest;
-use EscolaLms\Notifications\Http\Requests\NotificationsUserRequest;
+use Ulams\Notifications\Http\Requests\NotificationEventsRequest;
+use Ulams\Notifications\Http\Requests\NotificationReadAllRequest;
+use Ulams\Notifications\Http\Requests\NotificationReadRequest;
+use Ulams\Notifications\Http\Requests\NotificationsRequest;
+use Ulams\Notifications\Http\Requests\NotificationsUserRequest;
 use Illuminate\Http\JsonResponse;
 
 interface NotificationsApiSwagger

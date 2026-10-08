@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Consultations\Listeners;
+namespace Ulams\Consultations\Listeners;
 
-use EscolaLms\Consultations\Events\ReminderAboutTerm;
-use EscolaLms\Consultations\Services\Contracts\ConsultationServiceContract;
+use Ulams\Consultations\Events\ReminderAboutTerm;
+use Ulams\Consultations\Services\Contracts\ConsultationServiceContract;
 
 class ReminderAboutTermListener
 {

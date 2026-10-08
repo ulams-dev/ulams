@@ -4,9 +4,9 @@ import SubscriptionBox from "@/components/Subscriptions/Box";
 import ContentLoader from "@/components/_App/ContentLoader";
 import Layout from "@/components/_App/Layout";
 import useSubscriptions from "@/hooks/useSubscriptions";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { UlamsContext } from "@ulams/sdk/react";
 import { useContext } from "react";
 import { isMobile } from "react-device-detect";
 import { Col, Row } from "react-grid-system";
@@ -40,7 +40,7 @@ const SubscriptionsPage = () => {
     getActiveSubscription,
     subscriptionCancel,
   } = useSubscriptions();
-  const { user } = useContext(EscolaLMSContext);
+  const { user } = useContext(UlamsContext);
 
   return (
     <Layout metaTitle={t("Subscriptions.Subs")}>

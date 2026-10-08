@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Resources;
+namespace Ulams\Cart\Http\Resources;
 
-use EscolaLms\Auth\Enums\AuthPermissionsEnum;
-use EscolaLms\Cart\Http\Resources\ProductResource;
-use EscolaLms\Cart\Models\User;
+use Ulams\Auth\Enums\AuthPermissionsEnum;
+use Ulams\Cart\Http\Resources\ProductResource;
+use Ulams\Cart\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class ProductDetailedResource extends ProductResource

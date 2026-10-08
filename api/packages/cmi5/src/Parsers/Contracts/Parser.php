@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Cmi5\Parsers\Contracts;
+namespace Ulams\Cmi5\Parsers\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;

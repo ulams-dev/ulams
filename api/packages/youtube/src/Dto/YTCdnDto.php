@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Youtube\Dto;
+namespace Ulams\Youtube\Dto;
 
-use EscolaLms\Youtube\Dto\Contracts\YTCdnDtoContract;
+use Ulams\Youtube\Dto\Contracts\YTCdnDtoContract;
 use Google\Service\YouTube\CdnSettings;
 
 class YTCdnDto implements YTCdnDtoContract

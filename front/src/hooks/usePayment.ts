@@ -1,8 +1,8 @@
 import { useContext, useCallback, useState, useMemo } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { InvoiceData } from "@lms/sdk/types";
+import { InvoiceData } from "@ulams/sdk/types";
 import { APP_URL } from "@/config/index";
 import { toast } from "@/utils/toast";
 
@@ -24,7 +24,7 @@ const usePayment = () => {
     courses,
     realizeVoucher,
     resetCart,
-  } = useContext(EscolaLMSContext);
+  } = useContext(UlamsContext);
 
   const { t } = useTranslation();
   const { push, location } = useHistory();
@@ -127,7 +127,7 @@ const usePayment = () => {
   );
 
   const defaultGateway = useMemo(() => {
-    return config?.value?.escolalms_payments?.default_gateway ===
+    return config?.value?.ulams_payments?.default_gateway ===
       PaymentGateway.Przelewy24
       ? PaymentGateway.Przelewy24
       : PaymentGateway.Stripe;

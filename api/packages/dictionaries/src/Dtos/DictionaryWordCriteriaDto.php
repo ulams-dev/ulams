@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Dtos;
+namespace Ulams\Dictionaries\Dtos;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
-use EscolaLms\Core\Dtos\CriteriaDto as BaseCriteriaDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\HasCriterion;
-use EscolaLms\Dictionaries\Repositories\Criteria\ILikeCriterion;
-use EscolaLms\Dictionaries\Repositories\Criteria\StartILikeCriterion;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\CriteriaDto as BaseCriteriaDto;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\HasCriterion;
+use Ulams\Dictionaries\Repositories\Criteria\ILikeCriterion;
+use Ulams\Dictionaries\Repositories\Criteria\StartILikeCriterion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 

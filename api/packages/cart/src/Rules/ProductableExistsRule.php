@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cart\Rules;
+namespace Ulams\Cart\Rules;
 
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\Rule;
 

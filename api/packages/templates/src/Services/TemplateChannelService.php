@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Templates\Services;
+namespace Ulams\Templates\Services;
 
-use EscolaLms\Templates\Contracts\TemplateChannelContract;
-use EscolaLms\Templates\Core\TemplateSectionSchema;
-use EscolaLms\Templates\Enums\TemplateSectionTypeEnum;
-use EscolaLms\Templates\Services\Contracts\TemplateChannelServiceContract;
+use Ulams\Templates\Contracts\TemplateChannelContract;
+use Ulams\Templates\Core\TemplateSectionSchema;
+use Ulams\Templates\Enums\TemplateSectionTypeEnum;
+use Ulams\Templates\Services\Contracts\TemplateChannelServiceContract;
 use Exception;
 use InvalidArgumentException;
 

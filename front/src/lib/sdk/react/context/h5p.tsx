@@ -6,8 +6,8 @@ import React, {
   useRef,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextStateValue,
 } from "./types";
 import { defaultConfig } from "./defaults";
@@ -19,7 +19,7 @@ import { getDefaultData } from "./index";
 import { getH5p } from "../../services/h5p";
 
 export const H5pContext: React.Context<
-  Pick<EscolaLMSContextConfig, "h5p" | "fetchH5P">
+  Pick<UlamsContextConfig, "h5p" | "fetchH5P">
 > = createContext({
   h5p: defaultConfig.h5p,
   fetchH5P: defaultConfig.fetchH5P,
@@ -27,7 +27,7 @@ export const H5pContext: React.Context<
 
 export interface H5pContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "h5p">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "h5p">>;
   ssrHydration?: boolean;
 }
 

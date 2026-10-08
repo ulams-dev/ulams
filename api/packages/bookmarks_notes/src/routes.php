@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\Bookmarks\Http\Controllers\AdminBookmarkController;
-use EscolaLms\Bookmarks\Http\Controllers\BookmarkController;
+use Ulams\Bookmarks\Http\Controllers\AdminBookmarkController;
+use Ulams\Bookmarks\Http\Controllers\BookmarkController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api/admin/bookmarks')

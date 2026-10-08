@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Consultations;
+namespace Ulams\TemplatesEmail\Consultations;
 
-use EscolaLms\Consultations\Services\Contracts\ConsultationServiceContract;
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Consultations\Services\Contracts\ConsultationServiceContract;
+use Ulams\Templates\Events\EventWrapper;
 use Illuminate\Support\Facades\Log;
 
 class ReminderAboutTermVariables extends CommonConsultationVariables

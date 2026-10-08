@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Dtos;
+namespace Ulams\BulkNotifications\Dtos;
 
 use Illuminate\Http\Request;
 

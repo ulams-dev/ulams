@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Translations\Repositories\Contracts;
+namespace Ulams\Translations\Repositories\Contracts;
 
 use Illuminate\Database\Eloquent\Builder;
 

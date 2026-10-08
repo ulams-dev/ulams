@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Http\Requests;
+namespace Ulams\ConsultationAccess\Http\Requests;
 
-use EscolaLms\ConsultationAccess\Dtos\ConsultationAccessEnquiryDto;
-use EscolaLms\ConsultationAccess\Dtos\UpdateConsultationAccessEnquiryDto;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\ConsultationAccess\Dtos\ConsultationAccessEnquiryDto;
+use Ulams\ConsultationAccess\Dtos\UpdateConsultationAccessEnquiryDto;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

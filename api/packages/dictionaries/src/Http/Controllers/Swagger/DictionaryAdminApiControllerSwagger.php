@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Http\Controllers\Swagger;
+namespace Ulams\Dictionaries\Http\Controllers\Swagger;
 
-use EscolaLms\Dictionaries\Http\Requests\Dictionary\CreateDictionaryRequest;
-use EscolaLms\Dictionaries\Http\Requests\Dictionary\DeleteDictionaryRequest;
-use EscolaLms\Dictionaries\Http\Requests\Dictionary\ListDictionaryRequest;
-use EscolaLms\Dictionaries\Http\Requests\Dictionary\ReadDictionaryRequest;
-use EscolaLms\Dictionaries\Http\Requests\Dictionary\UpdateDictionaryRequest;
+use Ulams\Dictionaries\Http\Requests\Dictionary\CreateDictionaryRequest;
+use Ulams\Dictionaries\Http\Requests\Dictionary\DeleteDictionaryRequest;
+use Ulams\Dictionaries\Http\Requests\Dictionary\ListDictionaryRequest;
+use Ulams\Dictionaries\Http\Requests\Dictionary\ReadDictionaryRequest;
+use Ulams\Dictionaries\Http\Requests\Dictionary\UpdateDictionaryRequest;
 use Illuminate\Http\JsonResponse;
 
 interface DictionaryAdminApiControllerSwagger

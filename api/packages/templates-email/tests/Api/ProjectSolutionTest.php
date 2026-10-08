@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests\Api;
+namespace Ulams\TemplatesEmail\Tests\Api;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Templates\Listeners\TemplateEventListener;
-use EscolaLms\TemplatesEmail\Core\EmailMailable;
-use EscolaLms\TemplatesEmail\Tests\TestCase;
-use EscolaLms\TopicTypeProject\Database\Seeders\TopicTypeProjectPermissionSeeder;
-use EscolaLms\TopicTypeProject\Events\ProjectSolutionCreatedEvent;
-use EscolaLms\TopicTypeProject\Models\Project;
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
+use Ulams\Core\Models\User;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Templates\Listeners\TemplateEventListener;
+use Ulams\TemplatesEmail\Core\EmailMailable;
+use Ulams\TemplatesEmail\Tests\TestCase;
+use Ulams\TopicTypeProject\Database\Seeders\TopicTypeProjectPermissionSeeder;
+use Ulams\TopicTypeProject\Events\ProjectSolutionCreatedEvent;
+use Ulams\TopicTypeProject\Models\Project;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -31,7 +31,7 @@ class ProjectSolutionTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\TopicTypeProject\EscolaLmsTopicTypeProjectServiceProvider::class)) {
+        if (!class_exists(\Ulams\TopicTypeProject\UlamsTopicTypeProjectServiceProvider::class)) {
             $this->markTestSkipped('TopicTypeProject package not installed');
         }
 

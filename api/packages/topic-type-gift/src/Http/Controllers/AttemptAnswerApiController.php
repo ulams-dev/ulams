@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Controllers;
+namespace Ulams\TopicTypeGift\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\TopicTypeGift\Http\Requests\SaveAllAttemptAnswersRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\SaveAttemptAnswerRequest;
-use EscolaLms\TopicTypeGift\Http\Resources\QuizAttemptResource;
-use EscolaLms\TopicTypeGift\Services\Contracts\AttemptAnswerServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\TopicTypeGift\Http\Requests\SaveAllAttemptAnswersRequest;
+use Ulams\TopicTypeGift\Http\Requests\SaveAttemptAnswerRequest;
+use Ulams\TopicTypeGift\Http\Resources\QuizAttemptResource;
+use Ulams\TopicTypeGift\Services\Contracts\AttemptAnswerServiceContract;
 use Illuminate\Http\JsonResponse;
-use EscolaLms\TopicTypeGift\Http\Controllers\Swagger\AttemptAnswerApiSwagger;
+use Ulams\TopicTypeGift\Http\Controllers\Swagger\AttemptAnswerApiSwagger;
 
-class AttemptAnswerApiController extends EscolaLmsBaseController implements AttemptAnswerApiSwagger
+class AttemptAnswerApiController extends UlamsBaseController implements AttemptAnswerApiSwagger
 {
     private AttemptAnswerServiceContract $answerService;
 

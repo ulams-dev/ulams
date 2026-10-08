@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Cmi5\Tests;
+namespace Ulams\Cmi5\Tests;
 
-use EscolaLms\Cmi5\Tests\Models\Client;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Cmi5\EscolaLmsCmi5ServiceProvider;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
-use EscolaLms\Lrs\EscolaLmsLrsServiceProvider;
+use Ulams\Cmi5\Tests\Models\Client;
+use Ulams\Core\Models\User;
+use Ulams\Cmi5\UlamsCmi5ServiceProvider;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
+use Ulams\Lrs\UlamsLrsServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
@@ -29,8 +29,8 @@ class TestCase extends CoreTestCase
             ...parent::getPackageProviders($app),
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
-            EscolaLmsLrsServiceProvider::class,
-            EscolaLmsCmi5ServiceProvider::class
+            UlamsLrsServiceProvider::class,
+            UlamsCmi5ServiceProvider::class
         ];
     }
 

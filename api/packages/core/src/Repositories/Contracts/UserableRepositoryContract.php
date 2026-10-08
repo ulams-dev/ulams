@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Core\Repositories\Contracts;
+namespace Ulams\Core\Repositories\Contracts;
 
 use Illuminate\Contracts\Auth\Authenticatable as User;
 use Illuminate\Database\Eloquent\Builder;

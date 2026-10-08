@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Tests\Feature;
+namespace Ulams\ConsultationAccess\Tests\Feature;
 
 use Carbon\Carbon;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\ConsultationAccess\Enum\EnquiryStatusEnum;
-use EscolaLms\ConsultationAccess\Jobs\Strategies\SpaceTitleStrategyFactory;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\ConsultationAccess\Tests\TestCase;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Models\ConsultationUserTerm;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Auth\Models\User;
+use Ulams\ConsultationAccess\Enum\EnquiryStatusEnum;
+use Ulams\ConsultationAccess\Jobs\Strategies\SpaceTitleStrategyFactory;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\ConsultationAccess\Tests\TestCase;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Models\ConsultationUserTerm;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
 
 class SpaceTitleStrategyTest extends TestCase
 {

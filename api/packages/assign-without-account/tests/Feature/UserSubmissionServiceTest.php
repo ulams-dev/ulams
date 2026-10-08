@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Tests\Feature;
+namespace Ulams\AssignWithoutAccount\Tests\Feature;
 
-use EscolaLms\AssignWithoutAccount\Dto\UserSubmissionDto;
-use EscolaLms\AssignWithoutAccount\Enums\UserSubmissionStatusEnum;
-use EscolaLms\AssignWithoutAccount\Events\AssignToProduct;
-use EscolaLms\AssignWithoutAccount\Events\AssignToProductable;
-use EscolaLms\AssignWithoutAccount\Services\Contracts\UserSubmissionServiceContract;
-use EscolaLms\AssignWithoutAccount\Tests\TestCase;
-use EscolaLms\Cart\Facades\Shop;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Tests\Mocks\ExampleProductable;
+use Ulams\AssignWithoutAccount\Dto\UserSubmissionDto;
+use Ulams\AssignWithoutAccount\Enums\UserSubmissionStatusEnum;
+use Ulams\AssignWithoutAccount\Events\AssignToProduct;
+use Ulams\AssignWithoutAccount\Events\AssignToProductable;
+use Ulams\AssignWithoutAccount\Services\Contracts\UserSubmissionServiceContract;
+use Ulams\AssignWithoutAccount\Tests\TestCase;
+use Ulams\Cart\Facades\Shop;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Tests\Mocks\ExampleProductable;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use InvalidArgumentException;

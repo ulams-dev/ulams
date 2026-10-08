@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Tests;
+namespace Ulams\Dictionaries\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
-use EscolaLms\Dictionaries\EscolaLmsDictionariesServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
+use Ulams\Dictionaries\UlamsDictionariesServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Passport\Passport;
@@ -29,8 +29,8 @@ class TestCase extends CoreTestCase
             ...parent::getPackageProviders($app),
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
-            EscolaLmsAuthServiceProvider::class,
-            EscolaLmsDictionariesServiceProvider::class,
+            UlamsAuthServiceProvider::class,
+            UlamsDictionariesServiceProvider::class,
         ];
     }
 

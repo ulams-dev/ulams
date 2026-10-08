@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests;
+namespace Ulams\Cart\Http\Requests;
 
 class PaymentCartRequest extends PaymentRequest
 {

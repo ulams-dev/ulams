@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Http\Requests\Admin;
+namespace Ulams\TopicTypeProject\Http\Requests\Admin;
 
-use EscolaLms\TopicTypeProject\Http\Requests\ListProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
+use Ulams\TopicTypeProject\Http\Requests\ListProjectSolutionRequest;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
 use Illuminate\Support\Facades\Gate;
 
 class AdminListProjectSolutionRequest extends ListProjectSolutionRequest

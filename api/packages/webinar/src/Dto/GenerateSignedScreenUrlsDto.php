@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Webinar\Dto;
+namespace Ulams\Webinar\Dto;
 
 class GenerateSignedScreenUrlsDto extends BaseDto
 {

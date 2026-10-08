@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Common;
+namespace Ulams\PencilSpaces\Common;
 
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;

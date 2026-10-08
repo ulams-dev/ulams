@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Providers;
+namespace Ulams\TemplatesPdf\Providers;
 
-use EscolaLms\Templates\Events\ManuallyTriggeredEvent;
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\TemplatesPdf\Core\PdfChannel;
-use EscolaLms\TemplatesPdf\Core\UserVariables;
+use Ulams\Templates\Events\ManuallyTriggeredEvent;
+use Ulams\Templates\Facades\Template;
+use Ulams\TemplatesPdf\Core\PdfChannel;
+use Ulams\TemplatesPdf\Core\UserVariables;
 use Illuminate\Support\ServiceProvider;
 
 class UserTemplateServiceProvider extends ServiceProvider

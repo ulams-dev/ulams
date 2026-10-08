@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Payments\Database\Seeders;
+namespace Ulams\Payments\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Testing\WithFaker;

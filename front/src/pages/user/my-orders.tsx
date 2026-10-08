@@ -1,10 +1,10 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import ProfileLayout from "@/components/Profile/ProfileLayout";
-import { Orders as OrdersList } from "@lms/components/components/molecules/Orders/Orders";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { API } from "@lms/sdk";
+import { Orders as OrdersList } from "@ulams/components/components/molecules/Orders/Orders";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { API } from "@ulams/sdk";
 import styled from "styled-components";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
@@ -34,7 +34,7 @@ const StyledOrdersList = styled.section`
 
 const Orders = () => {
   const { orders, fetchOrders, fetchOrderInvoice } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
 
   const { t } = useTranslation();
   const [loadingId, setLoadingId] = useState(-1);

@@ -3,7 +3,7 @@ import styled, { withTheme } from "styled-components";
 import { Row, Col } from "react-grid-system";
 import { Button } from "../../atoms/Button/Button";
 import { ReactNode } from "react";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface StyledBannerProps {
   mobile?: boolean;
@@ -46,7 +46,7 @@ export const Banner: React.FC<BannerProps> = (props) => {
 
   return (
     <StyledBanner
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
       mobile={mobile}
       background={background}
     >

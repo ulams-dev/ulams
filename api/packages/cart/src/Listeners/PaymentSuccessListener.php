@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cart\Listeners;
+namespace Ulams\Cart\Listeners;
 
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Services\Contracts\OrderServiceContract;
-use EscolaLms\Payments\Events\PaymentSuccess;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Services\Contracts\OrderServiceContract;
+use Ulams\Payments\Events\PaymentSuccess;
 
 class PaymentSuccessListener
 {

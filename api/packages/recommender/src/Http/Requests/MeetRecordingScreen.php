@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Recommender\Http\Requests;
+namespace Ulams\Recommender\Http\Requests;
 
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

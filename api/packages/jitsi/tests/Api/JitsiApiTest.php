@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Jitsi\Tests\Api;
+namespace Ulams\Jitsi\Tests\Api;
 
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Jitsi\Services\FileService;
-use EscolaLms\Jitsi\Tests\TestCase;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Jitsi\Services\FileService;
+use Ulams\Jitsi\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -39,7 +39,7 @@ class JitsiApiTest extends TestCase
             "data" => [
                 "participants" => [
                     [
-                        "name" => "admin.escolalms",
+                        "name" => "admin.ulams",
                         "id" => "auth0|66dffe0e58e320bf6575969c"
                     ]
                 ],

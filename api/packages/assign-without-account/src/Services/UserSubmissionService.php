@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Services;
+namespace Ulams\AssignWithoutAccount\Services;
 
-use EscolaLms\AssignWithoutAccount\Dto\UserSubmissionDto;
-use EscolaLms\AssignWithoutAccount\Dto\UserSubmissionSearchDto;
-use EscolaLms\AssignWithoutAccount\Enums\UserSubmissionStatusEnum;
-use EscolaLms\AssignWithoutAccount\Events\UnassignProduct;
-use EscolaLms\AssignWithoutAccount\Events\UnassignProductable;
-use EscolaLms\AssignWithoutAccount\Models\UserSubmission;
-use EscolaLms\AssignWithoutAccount\Repositories\Contracts\UserSubmissionRepositoryContract;
-use EscolaLms\AssignWithoutAccount\Services\Contracts\UserSubmissionServiceContract;
-use EscolaLms\AssignWithoutAccount\Strategies\Contracts\AssignStrategy;
-use EscolaLms\AssignWithoutAccount\Strategies\StrategyContext;
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Dtos\PaginationDto;
-use EscolaLms\Core\Models\User;
+use Ulams\AssignWithoutAccount\Dto\UserSubmissionDto;
+use Ulams\AssignWithoutAccount\Dto\UserSubmissionSearchDto;
+use Ulams\AssignWithoutAccount\Enums\UserSubmissionStatusEnum;
+use Ulams\AssignWithoutAccount\Events\UnassignProduct;
+use Ulams\AssignWithoutAccount\Events\UnassignProductable;
+use Ulams\AssignWithoutAccount\Models\UserSubmission;
+use Ulams\AssignWithoutAccount\Repositories\Contracts\UserSubmissionRepositoryContract;
+use Ulams\AssignWithoutAccount\Services\Contracts\UserSubmissionServiceContract;
+use Ulams\AssignWithoutAccount\Strategies\Contracts\AssignStrategy;
+use Ulams\AssignWithoutAccount\Strategies\StrategyContext;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Cart\Models\Product;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Dtos\PaginationDto;
+use Ulams\Core\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class UserSubmissionService implements UserSubmissionServiceContract

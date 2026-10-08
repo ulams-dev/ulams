@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Lrs;
+namespace Ulams\Lrs;
 
-use EscolaLms\Lrs\Extensions\AccessTokenGuard;
-use EscolaLms\Lrs\Models\Statement;
-use EscolaLms\Lrs\Policies\StatementPolicy;
+use Ulams\Lrs\Extensions\AccessTokenGuard;
+use Ulams\Lrs\Models\Statement;
+use Ulams\Lrs\Policies\StatementPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\Passport;

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Http\Requests\DictionaryWord;
+namespace Ulams\Dictionaries\Http\Requests\DictionaryWord;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Dictionaries\Dtos\DictionaryWordCriteriaDto;
-use EscolaLms\Dictionaries\Dtos\PageDto;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Dictionaries\Dtos\DictionaryWordCriteriaDto;
+use Ulams\Dictionaries\Dtos\PageDto;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ListDictionaryWordRequest extends FormRequest

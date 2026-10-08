@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Repositories\Contracts;
+namespace Ulams\BulkNotifications\Repositories\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface BulkNotificationRepositoryContract extends BaseRepositoryContract

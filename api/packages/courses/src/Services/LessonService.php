@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Courses\Services;
+namespace Ulams\Courses\Services;
 
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Repositories\Contracts\LessonRepositoryContract;
-use EscolaLms\Courses\Services\Contracts\LessonServiceContract;
-use EscolaLms\Courses\Services\Contracts\TopicServiceContract;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Repositories\Contracts\LessonRepositoryContract;
+use Ulams\Courses\Services\Contracts\LessonServiceContract;
+use Ulams\Courses\Services\Contracts\TopicServiceContract;
 use Illuminate\Database\Eloquent\Model;
 
 class LessonService implements LessonServiceContract

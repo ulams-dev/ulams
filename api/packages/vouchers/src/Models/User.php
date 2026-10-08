@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Vouchers\Models;
+namespace Ulams\Vouchers\Models;
 
-use EscolaLms\Cart\Models\User as CartUser;
+use Ulams\Cart\Models\User as CartUser;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * EscolaLms\Vouchers\Models\User
+ * Ulams\Vouchers\Models\User
  *
  * @property int $id
  * @property string $first_name
@@ -29,29 +29,29 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string|null $postcode
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \EscolaLms\Vouchers\Models\Cart|null $cart
+ * @property-read \Ulams\Vouchers\Models\Cart|null $cart
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
  * @property-read int|null $clients_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Vouchers\Models\Coupon[] $coupons
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Vouchers\Models\Coupon[] $coupons
  * @property-read int|null $coupons_count
  * @property-read string|null $avatar_url
  * @property-read bool $email_verified
  * @property-read string $name
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Vouchers\Models\Order[] $orders
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Vouchers\Models\Order[] $orders
  * @property-read int|null $orders_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Payments\Models\Payment[] $payments
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Payments\Models\Payment[] $payments
  * @property-read int|null $payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
  * @property-read int|null $permissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Vouchers\Models\Product[] $products
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Vouchers\Models\Product[] $products
  * @property-read int|null $products_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
  * @property-read int|null $tokens_count
- * @method static \EscolaLms\Cart\Database\Factories\UserFactory factory(...$parameters)
+ * @method static \Ulams\Cart\Database\Factories\UserFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User permission($permissions)

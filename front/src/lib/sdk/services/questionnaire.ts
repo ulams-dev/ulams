@@ -103,10 +103,10 @@ export async function questionnaireAnswer(
   model: string,
   modelID: number,
   id: number,
-  data: Partial<EscolaLms.Questionnaire.Models.QuestionAnswer>
+  data: Partial<Ulams.Questionnaire.Models.QuestionAnswer>
 ) {
   return request<
-    API.DefaultResponse<EscolaLms.Questionnaire.Models.QuestionAnswer>
+    API.DefaultResponse<Ulams.Questionnaire.Models.QuestionAnswer>
   >(`${apiUrl}/api/questionnaire/${model}/${modelID}/${id}`, {
     method: "POST",
     headers: {

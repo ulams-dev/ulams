@@ -1,24 +1,24 @@
 <?php
 
-namespace EscolaLms\Courses\Services;
+namespace Ulams\Courses\Services;
 
 use Carbon\Carbon;
 use Error;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\HasCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\WhereCriterion;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
-use EscolaLms\Courses\Repositories\Criteria\CourseSearch;
-use EscolaLms\Courses\Repositories\Criteria\Primitives\OrderCriterion;
-use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
-use EscolaLms\Scorm\Services\Contracts\ScormServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\Criteria\Primitives\DateCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\HasCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\InCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\WhereCriterion;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Repositories\Contracts\CourseRepositoryContract;
+use Ulams\Courses\Repositories\Criteria\CourseSearch;
+use Ulams\Courses\Repositories\Criteria\Primitives\OrderCriterion;
+use Ulams\Courses\Services\Contracts\CourseServiceContract;
+use Ulams\Scorm\Services\Contracts\ScormServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Peopleaps\Scorm\Model\ScormScoModel;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\MailerLite\Services;
+namespace Ulams\MailerLite\Services;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\MailerLite\Providers\SettingsServiceProvider;
-use EscolaLms\MailerLite\Services\Contracts\MailerLiteServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\MailerLite\Providers\SettingsServiceProvider;
+use Ulams\MailerLite\Services\Contracts\MailerLiteServiceContract;
 use Http\Adapter\Guzzle7\Client;
 use Illuminate\Support\Facades\Config;
 use MailerLiteApi\Api\Subscribers;

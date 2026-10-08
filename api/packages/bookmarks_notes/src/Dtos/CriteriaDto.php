@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Dtos;
+namespace Ulams\Bookmarks\Dtos;
 
-use EscolaLms\Bookmarks\Enums\BookmarkPermissionEnum;
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
-use EscolaLms\Core\Dtos\CriteriaDto as BaseCriteriaDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\IsNullCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\NotNullCriterion;
+use Ulams\Bookmarks\Enums\BookmarkPermissionEnum;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\CriteriaDto as BaseCriteriaDto;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\InCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\IsNullCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\NotNullCriterion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 

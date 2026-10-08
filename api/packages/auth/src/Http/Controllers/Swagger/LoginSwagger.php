@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers\Swagger;
+namespace Ulams\Auth\Http\Controllers\Swagger;
 
-use EscolaLms\Auth\Http\Requests\ImpersonateRequest;
-use EscolaLms\Auth\Http\Requests\LoginRequest;
+use Ulams\Auth\Http\Requests\ImpersonateRequest;
+use Ulams\Auth\Http\Requests\LoginRequest;
 use Illuminate\Http\JsonResponse;
 
 interface LoginSwagger

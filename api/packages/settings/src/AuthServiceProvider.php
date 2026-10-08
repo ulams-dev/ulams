@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Settings;
+namespace Ulams\Settings;
 
-use EscolaLms\Settings\Policies\SettingsPolicy;
-use EscolaLms\Settings\Models\Setting;
+use Ulams\Settings\Policies\SettingsPolicy;
+use Ulams\Settings\Models\Setting;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

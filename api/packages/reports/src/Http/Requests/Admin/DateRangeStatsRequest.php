@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Reports\Http\Requests\Admin;
+namespace Ulams\Reports\Http\Requests\Admin;
 
 use Carbon\Carbon;
-use EscolaLms\Reports\Models\Report;
-use EscolaLms\Reports\ValueObject\DateRange;
+use Ulams\Reports\Models\Report;
+use Ulams\Reports\ValueObject\DateRange;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

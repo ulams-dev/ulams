@@ -1,10 +1,10 @@
 <?php
 
 
-namespace EscolaLms\Pages\Http\Exceptions;
+namespace Ulams\Pages\Http\Exceptions;
 
 
-use EscolaLms\Pages\Models\Page;
+use Ulams\Pages\Models\Page;
 
 class PageAlreadyExistsException extends \Exception
 {

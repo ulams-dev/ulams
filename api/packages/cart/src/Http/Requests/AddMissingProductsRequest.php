@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests;
+namespace Ulams\Cart\Http\Requests;
 
-use EscolaLms\Cart\Enums\CartPermissionsEnum;
-use EscolaLms\Cart\Models\Product;
+use Ulams\Cart\Enums\CartPermissionsEnum;
+use Ulams\Cart\Models\Product;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

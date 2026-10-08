@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Course\Strategies;
+namespace Ulams\Reports\Stats\Course\Strategies;
 
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Courses\Models\Topic;
 
 class DefaultTopicTitleStrategy implements TopicTitleStrategy
 {

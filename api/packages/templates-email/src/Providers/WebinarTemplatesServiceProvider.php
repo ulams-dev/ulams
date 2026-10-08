@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Providers;
+namespace Ulams\TemplatesEmail\Providers;
 
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
-use EscolaLms\TemplatesEmail\Webinar\ReminderAboutTermVariables;
-use EscolaLms\TemplatesEmail\Webinar\WebinarTrainerAssignedVariables;
-use EscolaLms\TemplatesEmail\Webinar\WebinarTrainerUnassignedVariables;
-use EscolaLms\Webinar\Events\ReminderAboutTerm;
-use EscolaLms\Webinar\Events\WebinarTrainerAssigned;
-use EscolaLms\Webinar\Events\WebinarTrainerUnassigned;
+use Ulams\TemplatesEmail\Core\EmailChannel;
+use Ulams\TemplatesEmail\Webinar\ReminderAboutTermVariables;
+use Ulams\TemplatesEmail\Webinar\WebinarTrainerAssignedVariables;
+use Ulams\TemplatesEmail\Webinar\WebinarTrainerUnassignedVariables;
+use Ulams\Webinar\Events\ReminderAboutTerm;
+use Ulams\Webinar\Events\WebinarTrainerAssigned;
+use Ulams\Webinar\Events\WebinarTrainerUnassigned;
 use Illuminate\Support\ServiceProvider;
-use EscolaLms\Templates\Facades\Template;
+use Ulams\Templates\Facades\Template;
 
 class WebinarTemplatesServiceProvider extends ServiceProvider
 {

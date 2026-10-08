@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount;
+namespace Ulams\AssignWithoutAccount;
 
-use EscolaLms\AssignWithoutAccount\Models\UserSubmission;
-use EscolaLms\AssignWithoutAccount\Policies\UserSubmissionPolicy;
+use Ulams\AssignWithoutAccount\Models\UserSubmission;
+use Ulams\AssignWithoutAccount\Policies\UserSubmissionPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

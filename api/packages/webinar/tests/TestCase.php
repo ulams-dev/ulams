@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Webinar\Tests;
+namespace Ulams\Webinar\Tests;
 
-use EscolaLms\Webinar\Providers\EventServiceProvider;
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\Webinar\AuthServiceProvider;
-use EscolaLms\Webinar\EscolaLmsWebinarServiceProvider;
-use EscolaLms\Youtube\EscolaLmsYoutubeServiceProvider;
+use Ulams\Webinar\Providers\EventServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\Webinar\AuthServiceProvider;
+use Ulams\Webinar\UlamsWebinarServiceProvider;
+use Ulams\Youtube\UlamsYoutubeServiceProvider;
 use Illuminate\Testing\TestResponse;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     protected ?TestResponse $response;
 
@@ -37,12 +37,12 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsAuthServiceProvider::class,
-            EscolaLmsWebinarServiceProvider::class,
+            UlamsAuthServiceProvider::class,
+            UlamsWebinarServiceProvider::class,
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
             AuthServiceProvider::class,
-            EscolaLmsYoutubeServiceProvider::class,
+            UlamsYoutubeServiceProvider::class,
             EventServiceProvider::class,
         ];
     }

@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Tests\Api\Admin;
+namespace Ulams\TopicTypeProject\Tests\Api\Admin;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypeProject\Database\Seeders\TopicTypeProjectPermissionSeeder;
-use EscolaLms\TopicTypeProject\Models\Project;
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
-use EscolaLms\TopicTypeProject\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypeProject\Database\Seeders\TopicTypeProjectPermissionSeeder;
+use Ulams\TopicTypeProject\Models\Project;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
+use Ulams\TopicTypeProject\Tests\TestCase;
 
 class ProjectSolutionAdminGradeApiTest extends TestCase
 {

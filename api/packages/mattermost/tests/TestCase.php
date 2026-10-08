@@ -1,24 +1,24 @@
 <?php
 
-namespace EscolaLms\Mattermost\Tests;
+namespace Ulams\Mattermost\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\CourseAccess\EscolaLmsCourseAccessServiceProvider;
-use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
-use EscolaLms\Mattermost\Providers\SettingsServiceProvider;
-use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
-use EscolaLms\Settings\Facades\AdministrableConfig;
-use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
-use EscolaLms\Webinar\EscolaLmsWebinarServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\CourseAccess\UlamsCourseAccessServiceProvider;
+use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\Mattermost\Providers\SettingsServiceProvider;
+use Ulams\Scorm\UlamsScormServiceProvider;
+use Ulams\Settings\Facades\AdministrableConfig;
+use Ulams\Tags\UlamsTagsServiceProvider;
+use Ulams\Webinar\UlamsWebinarServiceProvider;
 use GuzzleHttp\Middleware;
-use EscolaLms\Mattermost\EscolaLmsMattermostServiceProvider;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
+use Ulams\Mattermost\UlamsMattermostServiceProvider;
+use Ulams\Settings\UlamsSettingsServiceProvider;
 use Gnello\Mattermost\Laravel\MattermostServiceProvider;
 use Illuminate\Support\Facades\Config;
 use Laravel\Passport\Passport;
-use EscolaLms\Lrs\Tests\Models\Client;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
+use Ulams\Lrs\Tests\Models\Client;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
@@ -39,15 +39,15 @@ class TestCase extends CoreTestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsMattermostServiceProvider::class,
+            UlamsMattermostServiceProvider::class,
             MattermostServiceProvider::class,
-            EscolaLmsAuthServiceProvider::class,
-            EscolaLmsCourseServiceProvider::class,
-            EscolaLmsScormServiceProvider::class,
-            EscolaLmsSettingsServiceProvider::class,
-            EscolaLmsTagsServiceProvider::class,
-            EscolaLmsWebinarServiceProvider::class,
-            EscolaLmsCourseAccessServiceProvider::class,
+            UlamsAuthServiceProvider::class,
+            UlamsCourseServiceProvider::class,
+            UlamsScormServiceProvider::class,
+            UlamsSettingsServiceProvider::class,
+            UlamsTagsServiceProvider::class,
+            UlamsWebinarServiceProvider::class,
+            UlamsCourseAccessServiceProvider::class,
         ];
     }
 
@@ -67,7 +67,7 @@ class TestCase extends CoreTestCase
     public function setPackageStatus($packageStatus): void
     {
         Config::set(SettingsServiceProvider::CONFIG_KEY . '.package_status', $packageStatus);
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
         AdministrableConfig::storeConfig();
         $this->refreshApplication();
     }

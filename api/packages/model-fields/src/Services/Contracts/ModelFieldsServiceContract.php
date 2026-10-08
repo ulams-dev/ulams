@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\ModelFields\Services\Contracts;
+namespace Ulams\ModelFields\Services\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\ModelFields\Models\Metadata;
-use EscolaLms\ModelFields\Models\Model;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\ModelFields\Models\Metadata;
+use Ulams\ModelFields\Models\Model;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Tests\Api;
+namespace Ulams\PencilSpaces\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\PencilSpaces\Database\Seeders\PencilSpacesPermissionSeeder;
-use EscolaLms\PencilSpaces\Facades\PencilSpace;
-use EscolaLms\PencilSpaces\Models\User;
-use EscolaLms\PencilSpaces\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\PencilSpaces\Database\Seeders\PencilSpacesPermissionSeeder;
+use Ulams\PencilSpaces\Facades\PencilSpace;
+use Ulams\PencilSpaces\Models\User;
+use Ulams\PencilSpaces\Tests\TestCase;
 
 class PencilSpacesLoginApiTest extends TestCase
 {

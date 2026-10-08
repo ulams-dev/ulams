@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Core\Repositories\Contracts;
+namespace Ulams\Core\Repositories\Contracts;
 
-use EscolaLms\Core\Dtos\Contracts\CompareDtoContract;
-use EscolaLms\Core\Dtos\PaginationDto;
+use Ulams\Core\Dtos\Contracts\CompareDtoContract;
+use Ulams\Core\Dtos\PaginationDto;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

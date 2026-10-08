@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Notifications\Tests\Feature;
+namespace Ulams\Notifications\Tests\Feature;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Notifications\Core\EventNotification;
-use EscolaLms\Notifications\Models\DatabaseNotification;
-use EscolaLms\Notifications\Models\User as ModelsUser;
-use EscolaLms\Notifications\Tests\Mocks\TestEvent;
-use EscolaLms\Notifications\Tests\TestCase;
+use Ulams\Core\Models\User;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Notifications\Core\EventNotification;
+use Ulams\Notifications\Models\DatabaseNotification;
+use Ulams\Notifications\Models\User as ModelsUser;
+use Ulams\Notifications\Tests\Mocks\TestEvent;
+use Ulams\Notifications\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;

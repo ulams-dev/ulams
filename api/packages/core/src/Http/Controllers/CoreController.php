@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Core\Http\Controllers;
+namespace Ulams\Core\Http\Controllers;
 
 use Composer\InstalledVersions;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Support\Str;
 
 /**
- * @OA\Info(title="EscolaLMS", version="0.0.1")
+ * @OA\Info(title="Ulams", version="0.0.1")
  *
  * @OA\SecurityScheme(
  *      securityScheme="passport",
@@ -18,18 +18,18 @@ use Illuminate\Support\Str;
  *      bearerFormat="JWT",
  * )
  */
-class CoreController extends EscolaLmsBaseController
+class CoreController extends UlamsBaseController
 {
 
     /**
      * @OA\Get(
      *      path="/api/core/packages",
-     *      summary="List installed escolalms packages",
+     *      summary="List installed ulams packages",
      *      tags={"Core Admin"},
      *      security={
      *          {"passport": {}},
      *      },
-     *      description="List of installed escolalms packages with versions",
+     *      description="List of installed ulams packages with versions",
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
@@ -57,22 +57,22 @@ class CoreController extends EscolaLmsBaseController
      */
     public function packages()
     {
-        $escolaLmsPackagesWithVersions = array_reduce(
-            array_filter(InstalledVersions::getInstalledPackages(), fn (string $package) => Str::startsWith($package, 'escolalms/')),
+        $ulamsPackagesWithVersions = array_reduce(
+            array_filter(InstalledVersions::getInstalledPackages(), fn (string $package) => Str::startsWith($package, 'ulams/')),
             fn (array $accumulator, string $package) => array_merge($accumulator, [$package => InstalledVersions::getPrettyVersion($package)]),
             []
         );
 
-        // EscolaLMS modules vendored as source into api/packages/* are not composer packages any more;
+        // Ulams modules vendored as source into api/packages/* are not composer packages any more;
         // their imported versions are listed in packages/versions.json.
         $vendoredManifest = dirname(__DIR__, 4) . '/versions.json';
         if (is_file($vendoredManifest)) {
             $vendored = json_decode((string) file_get_contents($vendoredManifest), true);
             if (is_array($vendored)) {
-                $escolaLmsPackagesWithVersions = array_merge($vendored, $escolaLmsPackagesWithVersions);
+                $ulamsPackagesWithVersions = array_merge($vendored, $ulamsPackagesWithVersions);
             }
         }
 
-        return $this->sendResponse($escolaLmsPackagesWithVersions);
+        return $this->sendResponse($ulamsPackagesWithVersions);
     }
 }

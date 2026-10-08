@@ -6,7 +6,7 @@ import { Title } from "../../atoms/Typography/Title";
 import { Text } from "../../atoms/Typography/Text";
 import { IconTitle } from "../../atoms/IconTitle/IconTitle";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 export interface TitleProps
   extends Omit<React.HTMLProps<HTMLDivElement>, "title">,
@@ -39,7 +39,7 @@ export const LabelListItem: React.FC<PropsWithChildren<TitleProps>> = (
   const theme = React.useContext(ThemeContext);
 
   return (
-    <StyledLabelListItem className={`wellms-component ${className}`}>
+    <StyledLabelListItem className={`ulams-component ${className}`}>
       {variant === "header" ? (
         <React.Fragment>
           {title &&

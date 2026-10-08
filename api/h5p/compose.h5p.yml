@@ -1,15 +1,15 @@
 # Snippet for api/docker-compose.yml (or use with
 # `docker compose -f docker-compose.yml -f h5p/compose.h5p.yml up -d h5p`).
-# The service joins the existing escola_lms network; Caddy routes
+# The service joins the existing ulams network; Caddy routes
 # http://api.localhost/h5p/* to it (see Caddyfile.snippet).
 services:
   h5p:
     build:
       context: ./h5p
-    image: wellms/h5p:dev
+    image: ulams/h5p:dev
     restart: unless-stopped
     networks:
-      - escola_lms
+      - ulams
     depends_on:
       - postgres
       - redis
@@ -28,14 +28,14 @@ services:
       DB_SCHEMA: h5p
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      REDIS_PASSWORD: escola_lms
+      REDIS_PASSWORD: ulams
       REDIS_DB: 0
       REDIS_KEY_PREFIX: "h5p:"
       S3_ENDPOINT: http://minio:9000
       S3_REGION: us-east-1
       S3_KEY: admin
       S3_SECRET: minio_secretpassword
-      S3_BUCKET: wellms
+      S3_BUCKET: ulams
       S3_PREFIX: h5p
       S3_FORCE_PATH_STYLE: "true"
       JWT_PUBLIC_KEY_PATH: /keys/oauth-public.key
@@ -52,5 +52,5 @@ volumes:
   h5p_libraries:
 
 networks:
-  escola_lms:
+  ulams:
     external: true

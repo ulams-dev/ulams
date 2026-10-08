@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\Repositories\Mocks;
+namespace Ulams\Courses\Tests\Repositories\Mocks;
 
-use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
+use Ulams\Courses\Http\Requests\CreateTopicAPIRequest;
 
 class CreateTopicApiRequestMock extends CreateTopicAPIRequest
 {

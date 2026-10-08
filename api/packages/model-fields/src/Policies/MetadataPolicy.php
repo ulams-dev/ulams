@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\ModelFields\Policies;
+namespace Ulams\ModelFields\Policies;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\ModelFields\Enum\MetaFieldPermissionsEnum;
-use EscolaLms\ModelFields\Models\Metadata;
+use Ulams\Core\Models\User;
+use Ulams\ModelFields\Enum\MetaFieldPermissionsEnum;
+use Ulams\ModelFields\Models\Metadata;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class MetadataPolicy

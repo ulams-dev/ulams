@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Templates\Core;
+namespace Ulams\Templates\Core;
 
-use EscolaLms\Settings\Models\Setting;
+use Ulams\Settings\Models\Setting;
 use Illuminate\Mail\Markdown;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;

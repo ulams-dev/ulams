@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Enums;
+namespace Ulams\TemplatesSms\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class SmsDriversEnum extends BasicEnum
 {

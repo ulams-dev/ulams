@@ -1,5 +1,5 @@
 # Build from the repository root (one root yarn.lock; admin also compiles front/src/lib):
-#   docker build -f admin/Dockerfile -t abc . && docker run -p 80:80 --env API_URL="https://api-stage.escolalms.com" abc
+#   docker build -f admin/Dockerfile -t abc . && docker run -p 80:80 --env API_URL="https://api-stage.ulams.app" abc
 ARG NODE_VERSION=22.12.0
 FROM node:${NODE_VERSION}-bookworm AS base
 ENV HUSKY=0

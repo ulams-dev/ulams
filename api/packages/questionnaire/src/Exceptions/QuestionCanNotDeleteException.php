@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Exceptions;
+namespace Ulams\Questionnaire\Exceptions;
 
 use Exception;
 

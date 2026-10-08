@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { isMobile } from "react-device-detect";
-import { CourseTopNav } from "@lms/components/components/molecules/CourseTopNav/CourseTopNav";
+import { CourseTopNav } from "@ulams/components/components/molecules/CourseTopNav/CourseTopNav";
 import { useCoursePanel } from "@/components/Courses/Course/Context";
 
 export const ButtonsNav = () => {

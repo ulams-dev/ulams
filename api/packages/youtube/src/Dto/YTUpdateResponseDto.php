@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Youtube\Dto;
+namespace Ulams\Youtube\Dto;
 
 use Google\Service\YouTube\Video;
 

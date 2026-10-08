@@ -1,4 +1,4 @@
-import { AttendanceValue } from '@/services/escola-lms/enums';
+import { AttendanceValue } from '@/services/ulams/enums';
 import type { AttendanceMap, Status } from './types';
 
 export function parseToStatus(attendance: AttendanceValue | null): Status {

@@ -8,8 +8,8 @@ import {
   useMemo,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextPaginatedMetaState,
   ContextStateValue,
 } from "./types";
@@ -41,7 +41,7 @@ import {
 } from "../../services/profile";
 
 type UserContextType = Pick<
-  EscolaLMSContextConfig,
+  UlamsContextConfig,
   | "user"
   | "socialAuthorize"
   | "changePassword"
@@ -86,7 +86,7 @@ export const UserContext: React.Context<UserContextType> =
 
 export interface UserContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "user" | "token">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "user" | "token">>;
   ssrHydration?: boolean;
 }
 

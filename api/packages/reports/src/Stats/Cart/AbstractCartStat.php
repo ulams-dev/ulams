@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Cart;
+namespace Ulams\Reports\Stats\Cart;
 
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Reports\Stats\StatsContract;
+use Ulams\Cart\Models\Order;
+use Ulams\Core\Models\User;
+use Ulams\Reports\Stats\StatsContract;
 
 abstract class AbstractCartStat implements StatsContract
 {

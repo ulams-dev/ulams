@@ -1,7 +1,7 @@
 import { Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 
-import { getCourse } from '@/services/escola-lms/course';
+import { getCourse } from '@/services/ulams/course';
 import { Link } from 'umi';
 
 export const CourseLink: React.FC<{

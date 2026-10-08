@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Jobs;
+namespace Ulams\Cart\Jobs;
 
-use EscolaLms\Cart\Models\ProductUser;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Cart\Models\ProductUser;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use EscolaLms\Scorm\Tests\ScormTestTrait;
+use Ulams\Scorm\Tests\ScormTestTrait;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Scorm\Tests\TestCase;
+use Ulams\Scorm\Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Peopleaps\Scorm\Entity\Scorm;
 use Peopleaps\Scorm\Model\ScormModel;

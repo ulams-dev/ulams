@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cmi5\Http\Requests;
+namespace Ulams\Cmi5\Http\Requests;
 
-use EscolaLms\Cmi5\Models\Cmi5;
-use EscolaLms\Cmi5\Rules\Cmi5Rule;
+use Ulams\Cmi5\Models\Cmi5;
+use Ulams\Cmi5\Rules\Cmi5Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

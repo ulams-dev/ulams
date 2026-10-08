@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\TopicTypes;
+namespace Ulams\TemplatesEmail\TopicTypes;
 
 class TopicTypeChangedVariables extends TopicTypeVariables
 {

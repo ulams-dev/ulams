@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Database\Factories;
+namespace Ulams\StationaryEvents\Database\Factories;
 
-use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
+use Ulams\StationaryEvents\Enum\StationaryEventStatusEnum;
+use Ulams\StationaryEvents\Models\StationaryEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class StationaryEventFactory extends Factory

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Images\Feature;
+namespace Ulams\Images\Feature;
 
-use EscolaLms\Images\Events\FileDeleted;
-use EscolaLms\Images\Events\FileStored;
-use EscolaLms\Images\Tests\TestCase;
+use Ulams\Images\Events\FileDeleted;
+use Ulams\Images\Events\FileStored;
+use Ulams\Images\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;

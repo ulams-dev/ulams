@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Templates\Database\Factories;
+namespace Ulams\Templates\Database\Factories;
 
-use EscolaLms\Templates\Contracts\TemplateChannelContract;
-use EscolaLms\Templates\Contracts\TemplateVariableContract;
-use EscolaLms\Templates\Models\Template;
+use Ulams\Templates\Contracts\TemplateChannelContract;
+use Ulams\Templates\Contracts\TemplateVariableContract;
+use Ulams\Templates\Models\Template;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

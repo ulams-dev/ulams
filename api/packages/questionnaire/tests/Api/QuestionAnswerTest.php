@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Tests\Api;
+namespace Ulams\Questionnaire\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Questionnaire\Database\Seeders\QuestionnairePermissionsSeeder;
-use EscolaLms\Questionnaire\Enums\QuestionTypeEnum;
-use EscolaLms\Questionnaire\EscolaLmsQuestionnaireServiceProvider;
-use EscolaLms\Questionnaire\Models\Question;
-use EscolaLms\Questionnaire\Models\QuestionAnswer;
-use EscolaLms\Questionnaire\Models\Questionnaire;
-use EscolaLms\Questionnaire\Models\QuestionnaireModel;
-use EscolaLms\Questionnaire\Models\QuestionnaireModelType;
-use EscolaLms\Questionnaire\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Questionnaire\Database\Seeders\QuestionnairePermissionsSeeder;
+use Ulams\Questionnaire\Enums\QuestionTypeEnum;
+use Ulams\Questionnaire\UlamsQuestionnaireServiceProvider;
+use Ulams\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Models\QuestionAnswer;
+use Ulams\Questionnaire\Models\Questionnaire;
+use Ulams\Questionnaire\Models\QuestionnaireModel;
+use Ulams\Questionnaire\Models\QuestionnaireModelType;
+use Ulams\Questionnaire\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 
@@ -379,7 +379,7 @@ class QuestionAnswerTest extends TestCase
         $this->question->public_answers = $public;
         $this->question->save();
 
-        Config::set(EscolaLmsQuestionnaireServiceProvider::CONFIG_KEY . '.new_answers_visible_by_default', false);
+        Config::set(UlamsQuestionnaireServiceProvider::CONFIG_KEY . '.new_answers_visible_by_default', false);
 
         $this
             ->actingAs($this->user)
@@ -412,7 +412,7 @@ class QuestionAnswerTest extends TestCase
         $this->question->public_answers = $public;
         $this->question->save();
 
-        Config::set(EscolaLmsQuestionnaireServiceProvider::CONFIG_KEY . '.new_answers_visible_by_default', true);
+        Config::set(UlamsQuestionnaireServiceProvider::CONFIG_KEY . '.new_answers_visible_by_default', true);
 
         $this
             ->actingAs($this->user)

@@ -1,4 +1,4 @@
-import { ExamGradePassType, ExamGradeType } from '@/services/escola-lms/enums';
+import { ExamGradePassType, ExamGradeType } from '@/services/ulams/enums';
 
 export const defaultResaltGrade = (examType: ExamGradeType) => {
   switch (examType) {

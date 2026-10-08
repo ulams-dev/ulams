@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Payments\Gateway\Drivers;
+namespace Ulams\Payments\Gateway\Drivers;
 
-use EscolaLms\Payments\Entities\PaymentsConfig;
-use EscolaLms\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
-use EscolaLms\Payments\Gateway\Responses\CallbackRefundResponse;
-use EscolaLms\Payments\Gateway\Responses\CallbackResponse;
-use EscolaLms\Payments\Gateway\Responses\Przelewy24GatewayResponse;
-use EscolaLms\Payments\Gateway\Responses\Przelewy24RefundResponse;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Payments\Entities\PaymentsConfig;
+use Ulams\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
+use Ulams\Payments\Gateway\Responses\CallbackRefundResponse;
+use Ulams\Payments\Gateway\Responses\CallbackResponse;
+use Ulams\Payments\Gateway\Responses\Przelewy24GatewayResponse;
+use Ulams\Payments\Gateway\Responses\Przelewy24RefundResponse;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Http\Request;
 use Omnipay\Common\Message\ResponseInterface;
 use Przelewy24\Api\Requests\Items\RefundItem;

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Http\Requests;
+namespace Ulams\CsvUsers\Http\Requests;
 
-use EscolaLms\Auth\Http\Requests\Admin\UsersListRequest;
-use EscolaLms\CsvUsers\Enums\ExportFormatEnum;
-use EscolaLms\CsvUsers\Models\User;
+use Ulams\Auth\Http\Requests\Admin\UsersListRequest;
+use Ulams\CsvUsers\Enums\ExportFormatEnum;
+use Ulams\CsvUsers\Models\User;
 use Illuminate\Validation\Rule;
 
 class ExportUsersToCsvAPIRequest extends UsersListRequest

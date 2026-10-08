@@ -1,32 +1,32 @@
 <?php
 
-namespace EscolaLms\Consultations\Http\Controllers;
+namespace Ulams\Consultations\Http\Controllers;
 
-use EscolaLms\Consultations\Dto\ConsultationUserTermDto;
-use EscolaLms\Consultations\Dto\ConsultationSaveScreenDto;
-use EscolaLms\Consultations\Dto\FilterScheduleForTutorDto;
-use EscolaLms\Consultations\Dto\FinishTermDto;
-use EscolaLms\Consultations\Dto\GenerateSignedScreenUrlsDto;
-use EscolaLms\Consultations\Enum\ConstantEnum;
-use EscolaLms\Consultations\Http\Controllers\Swagger\ConsultationAPISwagger;
-use EscolaLms\Consultations\Http\Requests\ConsultationUserTermRequest;
-use EscolaLms\Consultations\Http\Requests\ConsultationScreenSaveRequest;
-use EscolaLms\Consultations\Http\Requests\FinishTermRequest;
-use EscolaLms\Consultations\Http\Requests\GenerateSignedScreenUrlsRequest;
-use EscolaLms\Consultations\Http\Requests\ListAPIConsultationsRequest;
-use EscolaLms\Consultations\Http\Requests\ListConsultationsRequest;
-use EscolaLms\Consultations\Http\Requests\ReportTermConsultationRequest;
-use EscolaLms\Consultations\Http\Requests\ScheduleConsultationAPIRequest;
-use EscolaLms\Consultations\Http\Requests\ShowAPIConsultationRequest;
-use EscolaLms\Consultations\Http\Resources\ConsultationProposedTermResource;
-use EscolaLms\Consultations\Http\Resources\ConsultationSimpleResource;
-use EscolaLms\Consultations\Http\Resources\ConsultationTermsResource;
-use EscolaLms\Consultations\Services\Contracts\ConsultationServiceContract;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Consultations\Dto\ConsultationUserTermDto;
+use Ulams\Consultations\Dto\ConsultationSaveScreenDto;
+use Ulams\Consultations\Dto\FilterScheduleForTutorDto;
+use Ulams\Consultations\Dto\FinishTermDto;
+use Ulams\Consultations\Dto\GenerateSignedScreenUrlsDto;
+use Ulams\Consultations\Enum\ConstantEnum;
+use Ulams\Consultations\Http\Controllers\Swagger\ConsultationAPISwagger;
+use Ulams\Consultations\Http\Requests\ConsultationUserTermRequest;
+use Ulams\Consultations\Http\Requests\ConsultationScreenSaveRequest;
+use Ulams\Consultations\Http\Requests\FinishTermRequest;
+use Ulams\Consultations\Http\Requests\GenerateSignedScreenUrlsRequest;
+use Ulams\Consultations\Http\Requests\ListAPIConsultationsRequest;
+use Ulams\Consultations\Http\Requests\ListConsultationsRequest;
+use Ulams\Consultations\Http\Requests\ReportTermConsultationRequest;
+use Ulams\Consultations\Http\Requests\ScheduleConsultationAPIRequest;
+use Ulams\Consultations\Http\Requests\ShowAPIConsultationRequest;
+use Ulams\Consultations\Http\Resources\ConsultationProposedTermResource;
+use Ulams\Consultations\Http\Resources\ConsultationSimpleResource;
+use Ulams\Consultations\Http\Resources\ConsultationTermsResource;
+use Ulams\Consultations\Services\Contracts\ConsultationServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\JsonResponse;
 
-class ConsultationAPIController extends EscolaLmsBaseController implements ConsultationAPISwagger
+class ConsultationAPIController extends UlamsBaseController implements ConsultationAPISwagger
 {
     private ConsultationServiceContract $consultationServiceContract;
 
@@ -43,7 +43,7 @@ class ConsultationAPIController extends EscolaLmsBaseController implements Consu
             ->getConsultationsList($search, true, OrderDto::instantiateFromRequest($listConsultationsRequest))
             ->paginate(
                 $listConsultationsRequest->get('per_page') ??
-                config('escolalms_consultations.perPage', ConstantEnum::PER_PAGE)
+                config('ulams_consultations.perPage', ConstantEnum::PER_PAGE)
             );
 
         return $this->sendResponseForResource(

@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Tests\Api;
+namespace Ulams\ConsultationAccess\Tests\Api;
 
-use EscolaLms\ConsultationAccess\Database\Seeders\ConsultationAccessPermissionSeeder;
-use EscolaLms\ConsultationAccess\Enum\EnquiryStatusEnum;
-use EscolaLms\ConsultationAccess\Events\ConsultationAccessEnquiryAdminUpdatedEvent;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
-use EscolaLms\ConsultationAccess\Tests\TestCase;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\ConsultationAccess\Database\Seeders\ConsultationAccessPermissionSeeder;
+use Ulams\ConsultationAccess\Enum\EnquiryStatusEnum;
+use Ulams\ConsultationAccess\Events\ConsultationAccessEnquiryAdminUpdatedEvent;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
+use Ulams\ConsultationAccess\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 

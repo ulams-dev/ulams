@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Repositories;
+namespace Ulams\HeadlessH5P\Repositories;
 
 use Exception;
 use H5PCore;

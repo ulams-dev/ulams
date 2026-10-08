@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Vouchers\Http\Requests;
+namespace Ulams\Vouchers\Http\Requests;
 
-use EscolaLms\Vouchers\Enums\CouponTypeEnum;
-use EscolaLms\Vouchers\Models\Category;
-use EscolaLms\Vouchers\Models\Coupon;
-use EscolaLms\Vouchers\Models\Product;
-use EscolaLms\Vouchers\Models\User;
+use Ulams\Vouchers\Enums\CouponTypeEnum;
+use Ulams\Vouchers\Models\Category;
+use Ulams\Vouchers\Models\Coupon;
+use Ulams\Vouchers\Models\Product;
+use Ulams\Vouchers\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

@@ -1,4 +1,4 @@
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import {
   useCallback,
   useContext,
@@ -12,11 +12,11 @@ import { Navigation, A11y, Pagination } from "swiper/modules";
 import { Swiper as SwiperType } from "swiper/types";
 import Container from "@/components/Common/Container";
 import Step from "@/components/Onboarding/Step";
-import { Button, Text, Title } from "@lms/components";
+import { Button, Text, Title } from "@ulams/components";
 import styled, { css } from "styled-components";
 import { Col } from "react-grid-system";
 import { useTranslation } from "react-i18next";
-import ResponsiveImage from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
+import ResponsiveImage from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import { useHistory } from "react-router-dom";
 import routeRoutes from "@/components/Routes/routes";
 import "swiper/css";
@@ -118,7 +118,7 @@ type State = {
 
 const Onboarding = () => {
   const { settings, fetchSettings, updateProfile, fetchProfile, user } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
   const { t, i18n } = useTranslation();
   const history = useHistory();
   const [state, setState] = useState<State>({

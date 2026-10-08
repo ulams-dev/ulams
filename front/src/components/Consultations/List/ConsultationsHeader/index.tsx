@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import ConsultationsHeaderFilters from "./ConsultationsFilter";
 import ConsultationsHeaderStyles from "./ConsultationsHeaderStyles";
 

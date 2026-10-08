@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Repositories;
+namespace Ulams\Dictionaries\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Dictionaries\Models\DictionaryUser;
-use EscolaLms\Dictionaries\Repositories\Contracts\DictionaryUserRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Dictionaries\Models\DictionaryUser;
+use Ulams\Dictionaries\Repositories\Contracts\DictionaryUserRepositoryContract;
 
 class DictionaryUserRepository extends BaseRepository implements DictionaryUserRepositoryContract
 {

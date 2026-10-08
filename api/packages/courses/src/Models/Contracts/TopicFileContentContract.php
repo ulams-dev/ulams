@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Courses\Models\Contracts;
+namespace Ulams\Courses\Models\Contracts;
 
 use Illuminate\Foundation\Http\FormRequest;
 

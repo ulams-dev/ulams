@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Lrs\Database\Factories;
+namespace Ulams\Lrs\Database\Factories;
 
-use EscolaLms\Lrs\Models\Statement;
+use Ulams\Lrs\Models\Statement;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Trax\Auth\Stores\Accesses\Access;
@@ -34,7 +34,7 @@ class StatementFactory extends Factory
             'actor' => [
                 'objectType' => 'Agent',
                 'account' => [
-                    'homePage' => "https://escolalms.com",
+                    'homePage' => "https://ulams.app",
                     'name' => $this->faker->firstName . ' ' . $this->faker->lastName,
                 ]
             ],

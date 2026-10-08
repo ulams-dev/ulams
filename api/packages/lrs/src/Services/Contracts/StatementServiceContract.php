@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Lrs\Services\Contracts;
+namespace Ulams\Lrs\Services\Contracts;
 
-use EscolaLms\Lrs\Dto\StatementSearchDto;
+use Ulams\Lrs\Dto\StatementSearchDto;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface StatementServiceContract

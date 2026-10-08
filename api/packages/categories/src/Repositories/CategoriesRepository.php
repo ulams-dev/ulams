@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Categories\Repositories;
+namespace Ulams\Categories\Repositories;
 
 use Carbon\Carbon;
-use EscolaLms\Categories\Dtos\CategoryCriteriaFilterDto;
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Categories\Repositories\Contracts\CategoriesRepositoryContract;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Dtos\PaginationDto;
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Core\Repositories\Traits\Activationable;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
+use Ulams\Categories\Dtos\CategoryCriteriaFilterDto;
+use Ulams\Categories\Models\Category;
+use Ulams\Categories\Repositories\Contracts\CategoriesRepositoryContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Dtos\PaginationDto;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Core\Repositories\Traits\Activationable;
+use Ulams\Courses\Enum\CourseStatusEnum;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -119,7 +119,7 @@ class CategoriesRepository extends BaseRepository implements CategoriesRepositor
 
     private function withCoursesCount(Builder $query): Builder
     {
-        if (class_exists(\EscolaLms\Courses\Models\Course::class)) {
+        if (class_exists(\Ulams\Courses\Models\Course::class)) {
             $query->withCount([
                 'courses as published_courses' => function (Builder $query) {
                     $query->where('status','=', CourseStatusEnum::PUBLISHED);

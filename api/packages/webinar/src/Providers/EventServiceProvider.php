@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Webinar\Providers;
+namespace Ulams\Webinar\Providers;
 
-use EscolaLms\Webinar\Events\ReminderAboutTerm;
-use EscolaLms\Webinar\Listeners\ReminderAboutTermListener;
+use Ulams\Webinar\Events\ReminderAboutTerm;
+use Ulams\Webinar\Listeners\ReminderAboutTermListener;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider

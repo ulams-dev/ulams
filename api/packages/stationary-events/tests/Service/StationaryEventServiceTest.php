@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Tests\Service;
+namespace Ulams\StationaryEvents\Tests\Service;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\StationaryEvents\Events\StationaryEventAssigned;
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
-use EscolaLms\StationaryEvents\Services\Contracts\StationaryEventServiceContract;
-use EscolaLms\StationaryEvents\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\StationaryEvents\Events\StationaryEventAssigned;
+use Ulams\StationaryEvents\Models\StationaryEvent;
+use Ulams\StationaryEvents\Services\Contracts\StationaryEventServiceContract;
+use Ulams\StationaryEvents\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 

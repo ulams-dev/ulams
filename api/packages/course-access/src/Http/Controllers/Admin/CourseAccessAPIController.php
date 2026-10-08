@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Http\Controllers\Admin;
+namespace Ulams\CourseAccess\Http\Controllers\Admin;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\CourseAccess\Http\Controllers\Admin\Swagger\CoursesAccessAPISwagger;
-use EscolaLms\CourseAccess\Http\Requests\Admin\AddAccessAPIRequest;
-use EscolaLms\CourseAccess\Http\Requests\Admin\ListAccessAPIRequest;
-use EscolaLms\CourseAccess\Http\Requests\Admin\RemoveAccessAPIRequest;
-use EscolaLms\CourseAccess\Http\Requests\Admin\SetAccessAPIRequest;
-use EscolaLms\CourseAccess\Http\Resources\UserGroupResource;
-use EscolaLms\CourseAccess\Http\Resources\UserShortResource;
-use EscolaLms\CourseAccess\Models\Course;
-use EscolaLms\CourseAccess\Services\Contracts\CourseAccessServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\CourseAccess\Http\Controllers\Admin\Swagger\CoursesAccessAPISwagger;
+use Ulams\CourseAccess\Http\Requests\Admin\AddAccessAPIRequest;
+use Ulams\CourseAccess\Http\Requests\Admin\ListAccessAPIRequest;
+use Ulams\CourseAccess\Http\Requests\Admin\RemoveAccessAPIRequest;
+use Ulams\CourseAccess\Http\Requests\Admin\SetAccessAPIRequest;
+use Ulams\CourseAccess\Http\Resources\UserGroupResource;
+use Ulams\CourseAccess\Http\Resources\UserShortResource;
+use Ulams\CourseAccess\Models\Course;
+use Ulams\CourseAccess\Services\Contracts\CourseAccessServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class CourseAccessAPIController extends EscolaLmsBaseController implements CoursesAccessAPISwagger
+class CourseAccessAPIController extends UlamsBaseController implements CoursesAccessAPISwagger
 {
     private CourseAccessServiceContract $courseAccessService;
 

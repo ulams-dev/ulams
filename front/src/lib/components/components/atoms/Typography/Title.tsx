@@ -1,6 +1,6 @@
 import * as React from "react";
 import styled, { css, withTheme } from "styled-components";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { getFontFromTheme } from "../../../theme/provider";
 import { HeaderLevelInt, HeaderLevelStr } from "../../../types/titleTypes";
 import { setFontSizeByHeaderLevel } from "../../../utils/components/primitives/titleUtils";
@@ -48,7 +48,7 @@ export const Title: React.FC<TitleProps> = (props) => {
       level={level}
       mobile={mobile}
       {...props}
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
     >
       {children}
     </StyledHeader>

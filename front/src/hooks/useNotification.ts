@@ -1,5 +1,5 @@
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { Notification } from "@lms/sdk/types";
+import { UlamsContext } from "@ulams/sdk/react";
+import { Notification } from "@ulams/sdk/types";
 import { useContext, useEffect, useState, useCallback } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 import debounce from "lodash.debounce";
@@ -11,7 +11,7 @@ export const useNotifications = () => {
     notifications,
     readNotify,
     readAllNotifications,
-  } = useContext(EscolaLMSContext);
+  } = useContext(UlamsContext);
   const loading = notifications.loading;
   const current_page = notifications.list?.meta?.current_page || 1;
   const last_page = notifications.list?.meta?.last_page || 1;

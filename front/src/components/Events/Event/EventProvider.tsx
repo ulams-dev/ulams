@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import { useParams } from "react-router-dom";
 
 export const EventContext: React.Context<{}> = React.createContext({});
@@ -9,7 +9,7 @@ const EventProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const { id } = useParams<{ id: string }>();
-  const { fetchStationaryEvent } = useContext(EscolaLMSContext);
+  const { fetchStationaryEvent } = useContext(UlamsContext);
 
   useEffect(() => {
     if (id) {

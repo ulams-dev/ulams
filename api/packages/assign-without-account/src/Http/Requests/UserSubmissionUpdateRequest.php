@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Http\Requests;
+namespace Ulams\AssignWithoutAccount\Http\Requests;
 
-use EscolaLms\AssignWithoutAccount\Enums\UserSubmissionStatusEnum;
+use Ulams\AssignWithoutAccount\Enums\UserSubmissionStatusEnum;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 

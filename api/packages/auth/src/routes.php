@@ -1,15 +1,15 @@
 <?php
 
-use EscolaLms\Auth\Http\Controllers\Admin\UserController;
-use EscolaLms\Auth\Http\Controllers\Admin\UserGroupsController;
-use EscolaLms\Auth\Http\Controllers\Admin\UserInterestsController;
-use EscolaLms\Auth\Http\Controllers\Admin\UserSettingsController;
-use EscolaLms\Auth\Http\Controllers\AuthApiController;
-use EscolaLms\Auth\Http\Controllers\LoginApiController;
-use EscolaLms\Auth\Http\Controllers\LogoutApiController;
-use EscolaLms\Auth\Http\Controllers\ProfileAPIController;
-use EscolaLms\Auth\Http\Controllers\RegisterApiController;
-use EscolaLms\Auth\Http\Middleware\RegistrationEnabled;
+use Ulams\Auth\Http\Controllers\Admin\UserController;
+use Ulams\Auth\Http\Controllers\Admin\UserGroupsController;
+use Ulams\Auth\Http\Controllers\Admin\UserInterestsController;
+use Ulams\Auth\Http\Controllers\Admin\UserSettingsController;
+use Ulams\Auth\Http\Controllers\AuthApiController;
+use Ulams\Auth\Http\Controllers\LoginApiController;
+use Ulams\Auth\Http\Controllers\LogoutApiController;
+use Ulams\Auth\Http\Controllers\ProfileAPIController;
+use Ulams\Auth\Http\Controllers\RegisterApiController;
+use Ulams\Auth\Http\Middleware\RegistrationEnabled;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api'], function () {

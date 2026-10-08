@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Webinar\Dto;
+namespace Ulams\Webinar\Dto;
 
-use EscolaLms\Core\Repositories\Criteria\Primitives\HasCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\WhereCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\WhereNotInOrIsNullCriterion;
-use EscolaLms\Webinar\Enum\WebinarPermissionsEnum;
-use EscolaLms\Webinar\Models\Webinar;
-use EscolaLms\Webinar\Repositories\Criteria\WebinarIncomingCriterion;
-use EscolaLms\Webinar\Repositories\Criteria\WebinarSearch;
-use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
-use EscolaLms\Webinar\Repositories\Criteria\WebinarTagsCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\HasCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\WhereCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\WhereNotInOrIsNullCriterion;
+use Ulams\Webinar\Enum\WebinarPermissionsEnum;
+use Ulams\Webinar\Models\Webinar;
+use Ulams\Webinar\Repositories\Criteria\WebinarIncomingCriterion;
+use Ulams\Webinar\Repositories\Criteria\WebinarSearch;
+use Ulams\Core\Repositories\Criteria\Primitives\DateCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\InCriterion;
+use Ulams\Webinar\Repositories\Criteria\WebinarTagsCriterion;
 use Illuminate\Database\Eloquent\Builder;
 
 class FilterListDto extends BaseDto

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Tasks\Policies;
+namespace Ulams\Tasks\Policies;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Tasks\Enums\TaskPermissionEnum;
-use EscolaLms\Tasks\Models\Task;
+use Ulams\Auth\Models\User;
+use Ulams\Tasks\Enums\TaskPermissionEnum;
+use Ulams\Tasks\Models\Task;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class TaskPolicy

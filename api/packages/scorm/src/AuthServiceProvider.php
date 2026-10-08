@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Scorm;
+namespace Ulams\Scorm;
 
-use EscolaLms\Scorm\Policies\ScormPolicy;
+use Ulams\Scorm\Policies\ScormPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Peopleaps\Scorm\Model\ScormModel;
 

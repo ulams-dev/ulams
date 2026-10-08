@@ -1,4 +1,4 @@
-import { reports } from '@/services/escola-lms/reports';
+import { reports } from '@/services/ulams/reports';
 import { FileExcelOutlined } from '@ant-design/icons';
 import type { PieConfig } from '@ant-design/plots';
 import { Pie } from '@ant-design/plots';

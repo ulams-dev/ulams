@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Row, Col } from "react-grid-system";
 
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import Loader from "@/components/_App/Preloader";
 
 import EventBreadcrumbs from "@/components/Events/Event/EventBreadcrumbs";
@@ -15,7 +15,7 @@ import { EventContainerStyles } from "./EventContainerStyles";
 import EventAgenda from "@/components/Events/Event/EventAgenda";
 
 const EventContainer = () => {
-  const { stationaryEvent } = useContext(EscolaLMSContext);
+  const { stationaryEvent } = useContext(UlamsContext);
 
   if (stationaryEvent.loading || !stationaryEvent.value) {
     return <Loader />;

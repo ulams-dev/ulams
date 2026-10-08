@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Resources;
+namespace Ulams\Courses\Http\Resources;
 
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Courses\Models\Lesson;
+use Ulams\ModelFields\Enum\MetaFieldVisibilityEnum;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

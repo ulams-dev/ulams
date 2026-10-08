@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Tests\Feature;
+namespace Ulams\TemplatesPdf\Tests\Feature;
 
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\Templates\Repository\Contracts\TemplateRepositoryContract;
-use EscolaLms\TemplatesPdf\Core\PdfChannel;
-use EscolaLms\TemplatesPdf\Database\Seeders\TemplatesPdfSeeder;
-use EscolaLms\TemplatesPdf\Tests\Mocks\TestEvent;
-use EscolaLms\TemplatesPdf\Tests\Mocks\TestVariables;
-use EscolaLms\TemplatesPdf\Tests\TestCase;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Templates\Facades\Template;
+use Ulams\Templates\Repository\Contracts\TemplateRepositoryContract;
+use Ulams\TemplatesPdf\Core\PdfChannel;
+use Ulams\TemplatesPdf\Database\Seeders\TemplatesPdfSeeder;
+use Ulams\TemplatesPdf\Tests\Mocks\TestEvent;
+use Ulams\TemplatesPdf\Tests\Mocks\TestVariables;
+use Ulams\TemplatesPdf\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Event;

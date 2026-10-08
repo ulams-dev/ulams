@@ -1,14 +1,14 @@
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';
 import UserSelect from '@/components/UserSelect';
 import { DATETIME_FORMAT } from '@/consts/dates';
-import { track } from '@/services/escola-lms/tracker';
+import { track } from '@/services/ulams/tracker';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import { format } from 'date-fns';
 import React, { useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
 
-export const TableColumns: ProColumns<EscolaLms.Tracker.Models.TrackRoute>[] = [
+export const TableColumns: ProColumns<Ulams.Tracker.Models.TrackRoute>[] = [
   {
     title: <FormattedMessage id="ID" defaultMessage="ID" />,
     dataIndex: 'id',
@@ -57,7 +57,7 @@ const LogsWidget: React.FC<{ useAsWidget?: boolean; userID?: number }> = ({
   const intl = useIntl();
   return (
     <ProTable<
-      EscolaLms.Tracker.Models.TrackRoute,
+      Ulams.Tracker.Models.TrackRoute,
       API.PageParams & {
         user_id?: number;
         method: 'string';

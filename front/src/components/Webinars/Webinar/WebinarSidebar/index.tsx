@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { isMobile } from "react-device-detect";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { PricingCard } from "@lms/components/components/atoms/PricingCard/PricingCard";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { UlamsContext } from "@ulams/sdk/react";
+import { PricingCard } from "@ulams/components/components/atoms/PricingCard/PricingCard";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { WebinarSidebarStyles } from "./WebinarSidebarStyles";
-import { IconText } from "@lms/components/components/atoms/IconText/IconText";
+import { IconText } from "@ulams/components/components/atoms/IconText/IconText";
 import { IconCamera, IconSquares } from "../../../../icons";
 import { useTranslation } from "react-i18next";
 import WebinarSidebarButtons from "./Buttons";
@@ -13,7 +13,7 @@ import ProductPrices from "@/components/ProductPrices";
 const WebinarSidebar = () => {
   const {
     webinar: { value: webinarObject },
-  } = useContext(EscolaLMSContext);
+  } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   return (

@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Consultations\Tests\APIs;
+namespace Ulams\Consultations\Tests\APIs;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
-use EscolaLms\Consultations\Enum\ConsultationStatusEnum;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Tests\Models\User;
-use EscolaLms\Consultations\Tests\TestCase;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\Categories\Models\Category;
+use Ulams\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
+use Ulams\Consultations\Enum\ConsultationStatusEnum;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Tests\Models\User;
+use Ulams\Consultations\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Collection;
 use Illuminate\Testing\Fluent\AssertableJson;

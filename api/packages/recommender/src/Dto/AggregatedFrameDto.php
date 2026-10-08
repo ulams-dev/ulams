@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Recommender\Dto;
+namespace Ulams\Recommender\Dto;
 
-use EscolaLms\Recommender\Models\AggregatedFrame;
+use Ulams\Recommender\Models\AggregatedFrame;
 
 class AggregatedFrameDto extends BaseDto
 {

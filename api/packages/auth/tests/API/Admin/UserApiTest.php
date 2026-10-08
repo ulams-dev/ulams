@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\Auth\Tests\API\Admin;
+namespace Ulams\Auth\Tests\API\Admin;
 
-use EscolaLms\Auth\Events\AccountBlocked;
-use EscolaLms\Auth\Events\AccountConfirmed;
-use EscolaLms\Auth\Events\AccountDeleted;
-use EscolaLms\Auth\Events\AccountRegistered;
-use EscolaLms\Auth\Listeners\SendEmailVerificationNotification;
-use EscolaLms\Auth\Models\Group;
-use EscolaLms\Auth\Models\SocialAccount;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Tests\TestCase;
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Auth\Events\AccountBlocked;
+use Ulams\Auth\Events\AccountConfirmed;
+use Ulams\Auth\Events\AccountDeleted;
+use Ulams\Auth\Events\AccountRegistered;
+use Ulams\Auth\Listeners\SendEmailVerificationNotification;
+use Ulams\Auth\Models\Group;
+use Ulams\Auth\Models\SocialAccount;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Tests\TestCase;
+use Ulams\Categories\Models\Category;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\ModelFields\Enum\MetaFieldVisibilityEnum;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -38,7 +38,7 @@ class UserApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
         Cache::flush();
     }
 
@@ -291,7 +291,7 @@ class UserApiTest extends TestCase
 
         $this->response = $this
             ->actingAs($admin)
-            ->json('POST', '/api/admin/users/', $userData + ['return_url' => 'https://escolalms.com/email/verify']);
+            ->json('POST', '/api/admin/users/', $userData + ['return_url' => 'https://ulams.app/email/verify']);
 
         unset($userData['password']);
         unset($userData['roles']);
@@ -307,7 +307,7 @@ class UserApiTest extends TestCase
 
         $newUser = User::where('email', $userData['email'])->first();
         $listener = app(SendEmailVerificationNotification::class);
-        $listener->handle(new AccountRegistered($newUser, 'https://escolalms.com/email/verify'));
+        $listener->handle(new AccountRegistered($newUser, 'https://ulams.app/email/verify'));
 
         Notification::assertSentTo($newUser, VerifyEmail::class);
     }
@@ -362,7 +362,7 @@ class UserApiTest extends TestCase
 
         $this->response = $this
             ->actingAs($admin)
-            ->json('POST', '/api/admin/users/', $userData + ['return_url' => 'https://escolalms.com/email/verify']);
+            ->json('POST', '/api/admin/users/', $userData + ['return_url' => 'https://ulams.app/email/verify']);
 
         unset($userData['password']);
         unset($userData['roles']);
@@ -378,7 +378,7 @@ class UserApiTest extends TestCase
 
         $newUser = User::where('email', $userData['email'])->first();
         $listener = app(SendEmailVerificationNotification::class);
-        $listener->handle(new AccountRegistered($newUser, 'https://escolalms.com/email/verify'));
+        $listener->handle(new AccountRegistered($newUser, 'https://ulams.app/email/verify'));
 
         Notification::assertSentTo($newUser, VerifyEmail::class);
     }
@@ -413,7 +413,7 @@ class UserApiTest extends TestCase
 
         $this->response = $this
             ->actingAs($admin)
-            ->json('POST', '/api/admin/users/', $userData + ['return_url' => 'https://escolalms.com/email/verify']);
+            ->json('POST', '/api/admin/users/', $userData + ['return_url' => 'https://ulams.app/email/verify']);
 
         unset($userData['password']);
         unset($userData['roles']);
@@ -475,7 +475,7 @@ class UserApiTest extends TestCase
         $this->response = $this->actingAs($admin)
             ->json('POST', '/api/admin/users/', array_merge($userData, [
                 'additional_field_visibility_for_admin' => 123,
-                'return_url' => 'https://escolalms.com/email/verify',
+                'return_url' => 'https://ulams.app/email/verify',
             ]))
             ->assertStatus(422);
 
@@ -488,7 +488,7 @@ class UserApiTest extends TestCase
             ->json('POST', '/api/admin/users/', array_merge($userData, [
                 'additional_field_a' => 'string1',
                 'additional_field_visibility_for_admin' => 'string2',
-                'return_url' => 'https://escolalms.com/email/verify',
+                'return_url' => 'https://ulams.app/email/verify',
             ]))
             ->assertCreated()
             ->assertJsonFragment([
@@ -519,7 +519,7 @@ class UserApiTest extends TestCase
 
         $this->response = $this
             ->actingAs($admin)
-            ->json('POST', '/api/admin/users/', $userData + ['return_url' => 'https://escolalms.com/email/verify']);
+            ->json('POST', '/api/admin/users/', $userData + ['return_url' => 'https://ulams.app/email/verify']);
 
         unset($userData['password']);
         unset($userData['roles']);

@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Consultations\Tests\APIs;
+namespace Ulams\Consultations\Tests\APIs;
 
-use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
-use EscolaLms\Webinar\Tests\Mocks\YTLiveDtoMock;
-use EscolaLms\Webinar\Events\WebinarTrainerAssigned;
-use EscolaLms\Webinar\Events\WebinarTrainerUnassigned;
-use EscolaLms\Webinar\Tests\TestCase;
-use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
-use EscolaLms\Webinar\Models\Webinar;
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
+use Ulams\Webinar\Services\Contracts\WebinarServiceContract;
+use Ulams\Webinar\Tests\Mocks\YTLiveDtoMock;
+use Ulams\Webinar\Events\WebinarTrainerAssigned;
+use Ulams\Webinar\Events\WebinarTrainerUnassigned;
+use Ulams\Webinar\Tests\TestCase;
+use Ulams\Webinar\Database\Seeders\WebinarsPermissionSeeder;
+use Ulams\Webinar\Models\Webinar;
+use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;

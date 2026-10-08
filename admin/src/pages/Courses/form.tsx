@@ -18,7 +18,7 @@ import { useGetLocales } from '@/hooks/useLocales';
 import { useShowNotification } from '@/hooks/useMessage';
 import useValidateFormEdit from '@/hooks/useValidateFormEdit';
 import { CourseSuccessModal } from '@/pages/Courses/components/CourseSuccessModal';
-import { createCourse, getCourse, updateCourse } from '@/services/escola-lms/course';
+import { createCourse, getCourse, updateCourse } from '@/services/ulams/course';
 import { categoriesArrToIds, splitImagePath, tagsArrToIds } from '@/utils/utils';
 import ProCard from '@ant-design/pro-card';
 import ProForm, {

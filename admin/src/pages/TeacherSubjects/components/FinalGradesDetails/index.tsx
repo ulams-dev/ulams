@@ -9,7 +9,7 @@ import { FormattedMessage, history } from 'umi';
 import AttendanceCheckbox from '@/components/AttendanceCheckbox';
 import { UserCourseAttempts, UserProgress } from '@/components/CourseStatistics/userProgress';
 import { DAY_FORMAT } from '@/consts/dates';
-import { createFinalGrade, updateFinalGrade } from '@/services/escola-lms/grades';
+import { createFinalGrade, updateFinalGrade } from '@/services/ulams/grades';
 import { useTeacherSubject } from '../../context';
 import {
   useFinalGrades,

@@ -4,7 +4,7 @@ import { Spin, Link } from "../../..";
 import { useTranslation } from "react-i18next";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { getUniqueId } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type">,
@@ -154,7 +154,7 @@ export const Upload: React.FC<InputProps> = (props) => {
   const id = buttonTitle ? getUniqueId("upload") : null;
 
   return (
-    <StyledDiv className={`wellms-component upload ${className}`}>
+    <StyledDiv className={`ulams-component upload ${className}`}>
       <input
         type="file"
         {...rest}

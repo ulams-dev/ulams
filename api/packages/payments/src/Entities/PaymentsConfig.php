@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Payments\Entities;
+namespace Ulams\Payments\Entities;
 
-use EscolaLms\Payments\Enums\Currency;
+use Ulams\Payments\Enums\Currency;
 
 class PaymentsConfig
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Services\Contracts;
+namespace Ulams\CoursesImportExport\Services\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;

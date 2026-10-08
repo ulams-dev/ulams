@@ -1,5 +1,5 @@
 import { OnboardingOption } from "@/components/Onboarding";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import React, { useCallback, useEffect } from "react";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";

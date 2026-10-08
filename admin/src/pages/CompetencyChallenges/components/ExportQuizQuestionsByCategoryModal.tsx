@@ -2,7 +2,7 @@ import ProForm, { ModalForm } from '@ant-design/pro-form';
 import React, { useCallback } from 'react';
 import { FormattedMessage } from 'umi';
 
-import { exportQuizQuestions } from '@/services/escola-lms/gift_quiz';
+import { exportQuizQuestions } from '@/services/ulams/gift_quiz';
 import { CompetencyChallengeCategoryTree } from './CompetencyChallengeCategoryTree';
 
 interface FormData {

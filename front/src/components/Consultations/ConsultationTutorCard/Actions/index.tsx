@@ -1,11 +1,11 @@
 import { useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { API } from "@lms/sdk";
-import IconText from "@lms/components/components/atoms/IconText/IconText";
+import { UlamsContext } from "@ulams/sdk/react";
+import { API } from "@ulams/sdk";
+import IconText from "@ulams/components/components/atoms/IconText/IconText";
 import { IconCircleError, IconMenuVertical, IconSuccess } from "@/icons/index";
-import DropdownMenu from "@lms/components/components/molecules/DropdownMenu/DropdownMenu";
-import { Button } from "@lms/components/components/atoms/Button/Button";
+import DropdownMenu from "@ulams/components/components/molecules/DropdownMenu/DropdownMenu";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
 
 interface Props {
   consultation: API.AppointmentTerm;
@@ -13,7 +13,7 @@ interface Props {
 
 const ConsultationTutorCardButtons = ({ consultation }: Props) => {
   const { approveConsultationTerm, rejectConsultationTerm } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
   const { t } = useTranslation();
 
   const menuItems = useMemo(

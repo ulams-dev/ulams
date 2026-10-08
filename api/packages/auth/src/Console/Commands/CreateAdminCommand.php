@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Console\Commands;
+namespace Ulams\Auth\Console\Commands;
 
 use Carbon\Carbon;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Enums\UserRole;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Enums\UserRole;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -17,7 +17,7 @@ class CreateAdminCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'escolalms:admin';
+    protected $signature = 'ulams:admin';
 
     /**
      * The console command description.
@@ -41,7 +41,7 @@ class CreateAdminCommand extends Command
      */
     public function handle(): void
     {
-        $email = $this->ask('Email', 'admin@escolalms.com');
+        $email = $this->ask('Email', 'admin@ulams.app');
         $data = [
             'email' => $email,
             'first_name' => 'Admin',

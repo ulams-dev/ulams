@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Payments\Models;
+namespace Ulams\Payments\Models;
 
-use EscolaLms\Core\Models\User as CoreUser;
-use EscolaLms\Payments\Concerns\Billable as BillableTrait;
-use EscolaLms\Payments\Contracts\Billable as ContractsBillable;
+use Ulams\Core\Models\User as CoreUser;
+use Ulams\Payments\Concerns\Billable as BillableTrait;
+use Ulams\Payments\Contracts\Billable as ContractsBillable;
 
 /**
- * EscolaLms\Payments\Models\User
+ * Ulams\Payments\Models\User
  *
  * @property int $id
  * @property string $first_name
@@ -35,7 +35,7 @@ use EscolaLms\Payments\Contracts\Billable as ContractsBillable;
  * @property-read string $name
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Payments\Models\Payment[] $payments
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Payments\Models\Payment[] $payments
  * @property-read int|null $payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
  * @property-read int|null $permissions_count

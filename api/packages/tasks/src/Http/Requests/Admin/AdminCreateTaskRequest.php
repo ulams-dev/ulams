@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Requests\Admin;
+namespace Ulams\Tasks\Http\Requests\Admin;
 
-use EscolaLms\Tasks\Dtos\AdminCreateTaskDto;
-use EscolaLms\Tasks\Http\Requests\TaskRequest;
-use EscolaLms\Tasks\Models\Task;
+use Ulams\Tasks\Dtos\AdminCreateTaskDto;
+use Ulams\Tasks\Http\Requests\TaskRequest;
+use Ulams\Tasks\Models\Task;
 use Illuminate\Support\Facades\Gate;
 
 

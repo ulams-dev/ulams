@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Providers;
+namespace Ulams\TemplatesEmail\Providers;
 
-use EscolaLms\ConsultationAccess\Events\ConsultationAccessEnquiryAdminCreatedEvent;
-use EscolaLms\ConsultationAccess\Events\ConsultationAccessEnquiryApprovedEvent;
-use EscolaLms\ConsultationAccess\Events\ConsultationAccessEnquiryDisapprovedEvent;
-use EscolaLms\TemplatesEmail\ConsultationAccess\ConsultationAccessEnquiryAdminCreatedVariables;
-use EscolaLms\TemplatesEmail\ConsultationAccess\ConsultationAccessEnquiryApprovedVariables;
-use EscolaLms\TemplatesEmail\ConsultationAccess\ConsultationAccessEnquiryDisapprovedVariables;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
+use Ulams\ConsultationAccess\Events\ConsultationAccessEnquiryAdminCreatedEvent;
+use Ulams\ConsultationAccess\Events\ConsultationAccessEnquiryApprovedEvent;
+use Ulams\ConsultationAccess\Events\ConsultationAccessEnquiryDisapprovedEvent;
+use Ulams\TemplatesEmail\ConsultationAccess\ConsultationAccessEnquiryAdminCreatedVariables;
+use Ulams\TemplatesEmail\ConsultationAccess\ConsultationAccessEnquiryApprovedVariables;
+use Ulams\TemplatesEmail\ConsultationAccess\ConsultationAccessEnquiryDisapprovedVariables;
+use Ulams\TemplatesEmail\Core\EmailChannel;
 use Illuminate\Support\ServiceProvider;
-use EscolaLms\Templates\Facades\Template;
+use Ulams\Templates\Facades\Template;
 
 class ConsultationAccessTemplatesServiceProvider extends ServiceProvider
 {

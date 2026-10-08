@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { getFontFromTheme } from "../../../theme/provider";
 
 interface IconProps {
@@ -120,7 +120,7 @@ export const Rating: React.FC<RatingProps> = (props) => {
     <StyledRating
       size={props.count}
       ratingValue={ratingValue}
-      className={`wellms-component lms-rating ${className}`}
+      className={`ulams-component lms-rating ${className}`}
     >
       {startToRender.map((index) => {
         return index + 1 <= Math.round(ratingValue) ? (

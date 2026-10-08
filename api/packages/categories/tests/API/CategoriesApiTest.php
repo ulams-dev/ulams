@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Categories\Tests\API;
+namespace Ulams\Categories\Tests\API;
 
-use EscolaLms\Categories\Database\Seeders\CategoriesPermissionSeeder;
-use EscolaLms\Categories\Enums\CategoriesPermissionsEnum;
-use EscolaLms\Categories\Enums\ConstantEnum;
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Categories\Tests\TestCase;
-use EscolaLms\Core\Models\User;
+use Ulams\Categories\Database\Seeders\CategoriesPermissionSeeder;
+use Ulams\Categories\Enums\CategoriesPermissionsEnum;
+use Ulams\Categories\Enums\ConstantEnum;
+use Ulams\Categories\Models\Category;
+use Ulams\Categories\Tests\TestCase;
+use Ulams\Core\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\UploadedFile;

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Webinar\Listeners;
+namespace Ulams\Webinar\Listeners;
 
-use EscolaLms\Webinar\Events\ReminderAboutTerm;
-use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
+use Ulams\Webinar\Events\ReminderAboutTerm;
+use Ulams\Webinar\Services\Contracts\WebinarServiceContract;
 
 class ReminderAboutTermListener
 {

@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Repositories;
+namespace Ulams\HeadlessH5P\Repositories;
 
-use EscolaLms\HeadlessH5P\Exceptions\H5PException;
-use EscolaLms\HeadlessH5P\Helpers\Helpers;
-use EscolaLms\HeadlessH5P\Helpers\JSONHelper;
-use EscolaLms\HeadlessH5P\Models\H5PContent;
-use EscolaLms\HeadlessH5P\Models\H5PContentLibrary;
-use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use EscolaLms\HeadlessH5P\Models\H5PLibraryDependency;
-use EscolaLms\HeadlessH5P\Models\H5pLibrariesHubCache;
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PLibraryLanguageRepositoryContract;
+use Ulams\HeadlessH5P\Exceptions\H5PException;
+use Ulams\HeadlessH5P\Helpers\Helpers;
+use Ulams\HeadlessH5P\Helpers\JSONHelper;
+use Ulams\HeadlessH5P\Models\H5PContent;
+use Ulams\HeadlessH5P\Models\H5PContentLibrary;
+use Ulams\HeadlessH5P\Models\H5PLibrary;
+use Ulams\HeadlessH5P\Models\H5PLibraryDependency;
+use Ulams\HeadlessH5P\Models\H5pLibrariesHubCache;
+use Ulams\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
+use Ulams\HeadlessH5P\Repositories\Contracts\H5PLibraryLanguageRepositoryContract;
 use H5PPermission;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -56,7 +56,7 @@ class H5PRepository implements H5PFrameworkInterface
     public function getPlatformInfo()
     {
         return array(
-            'name' => 'Wellms.io',
+            'name' => 'Ulams.io',
             'version' => '0.1.0',
             'h5pVersion' => '0.1.0',
         );

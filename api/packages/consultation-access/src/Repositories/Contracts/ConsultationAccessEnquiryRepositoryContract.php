@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Repositories\Contracts;
+namespace Ulams\ConsultationAccess\Repositories\Contracts;
 
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface ConsultationAccessEnquiryRepositoryContract extends BaseRepositoryContract

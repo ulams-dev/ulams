@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Reports\Exports\Stats\Course\Sheets;
+namespace Ulams\Reports\Exports\Stats\Course\Sheets;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;

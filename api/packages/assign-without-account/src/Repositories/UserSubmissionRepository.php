@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Repositories;
+namespace Ulams\AssignWithoutAccount\Repositories;
 
-use EscolaLms\AssignWithoutAccount\Dto\UserSubmissionSearchDto;
-use EscolaLms\AssignWithoutAccount\Models\UserSubmission;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Dtos\PaginationDto;
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\AssignWithoutAccount\Repositories\Contracts\UserSubmissionRepositoryContract;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
+use Ulams\AssignWithoutAccount\Dto\UserSubmissionSearchDto;
+use Ulams\AssignWithoutAccount\Models\UserSubmission;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Dtos\PaginationDto;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\AssignWithoutAccount\Repositories\Contracts\UserSubmissionRepositoryContract;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\LikeCriterion;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class UserSubmissionRepository extends BaseRepository implements UserSubmissionRepositoryContract

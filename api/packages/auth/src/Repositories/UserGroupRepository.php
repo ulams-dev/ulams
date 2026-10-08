@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Auth\Repositories;
+namespace Ulams\Auth\Repositories;
 
-use EscolaLms\Auth\Models\Group;
-use EscolaLms\Auth\Repositories\Contracts\UserGroupRepositoryContract;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\BaseRepository;
+use Ulams\Auth\Models\Group;
+use Ulams\Auth\Repositories\Contracts\UserGroupRepositoryContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
 
 class UserGroupRepository extends BaseRepository implements UserGroupRepositoryContract

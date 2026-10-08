@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Jobs;
+namespace Ulams\TopicTypeGift\Jobs;
 
-use EscolaLms\TopicTypeGift\Events\QuizAttemptFinishedEvent;
-use EscolaLms\TopicTypeGift\Events\QuizAttemptJournalGradeReadyEvent;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
-use EscolaLms\TopicTypeGift\Repositories\Contracts\QuizAttemptRepositoryContract;
+use Ulams\TopicTypeGift\Events\QuizAttemptFinishedEvent;
+use Ulams\TopicTypeGift\Events\QuizAttemptJournalGradeReadyEvent;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
+use Ulams\TopicTypeGift\Repositories\Contracts\QuizAttemptRepositoryContract;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

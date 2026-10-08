@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Templates\Testing;
+namespace Ulams\Templates\Testing;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Core\TemplatePreview;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Repository\Contracts\TemplateRepositoryContract;
-use EscolaLms\Templates\Services\Contracts\TemplateChannelServiceContract;
-use EscolaLms\Templates\Services\Contracts\TemplateEventServiceContract;
-use EscolaLms\Templates\Services\Contracts\TemplateVariablesServiceContract;
-use EscolaLms\Templates\Services\TemplateEventService;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Core\TemplatePreview;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Repository\Contracts\TemplateRepositoryContract;
+use Ulams\Templates\Services\Contracts\TemplateChannelServiceContract;
+use Ulams\Templates\Services\Contracts\TemplateEventServiceContract;
+use Ulams\Templates\Services\Contracts\TemplateVariablesServiceContract;
+use Ulams\Templates\Services\TemplateEventService;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Assert as PHPUnit;
 

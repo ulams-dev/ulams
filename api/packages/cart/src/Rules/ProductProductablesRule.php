@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Rules;
+namespace Ulams\Cart\Rules;
 
-use EscolaLms\Cart\Enums\ProductType;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Cart\Enums\ProductType;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Arr;

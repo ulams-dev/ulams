@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Repositories;
+namespace Ulams\Dictionaries\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Dictionaries\Models\DictionaryWord;
-use EscolaLms\Dictionaries\Repositories\Contracts\DictionaryWordRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Dictionaries\Models\DictionaryWord;
+use Ulams\Dictionaries\Repositories\Contracts\DictionaryWordRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class DictionaryWordRepository extends BaseRepository implements DictionaryWordRepositoryContract

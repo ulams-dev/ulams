@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Translations\Tests\Middleware;
+namespace Ulams\Translations\Tests\Middleware;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Translations\Database\Seeders\TranslationsPermissionSeeder;
-use EscolaLms\Translations\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Translations\Database\Seeders\TranslationsPermissionSeeder;
+use Ulams\Translations\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class AcceptLanguageTest extends TestCase

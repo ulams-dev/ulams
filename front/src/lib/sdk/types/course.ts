@@ -36,7 +36,7 @@ export type Course = {
   duration?: string | null;
   findable: boolean;
   video_url?: string | null;
-  categories?: Array<EscolaLms.Categories.Models.Category> & {
+  categories?: Array<Ulams.Categories.Models.Category> & {
     description?: string | null;
   };
   tags?: Tag[] | string[] | null;
@@ -74,7 +74,7 @@ export type CourseProgressItem = {
 };
 
 export type Lesson = Omit<
-  EscolaLms.Courses.Models.Lesson,
+  Ulams.Courses.Models.Lesson,
   "topics" | "lessons"
 > & {
   id: number;
@@ -99,21 +99,21 @@ export type CourseProgram = Course & {
 export type CourseAccessEnquiryList = DefaultMetaResponse<CourseAccessEnquiry>;
 
 export type CourseAccessEnquiry =
-  EscolaLms.CourseAccess.Models.CourseAccessEnquiry & {
+  Ulams.CourseAccess.Models.CourseAccessEnquiry & {
     data?: object;
   };
 
 export type CourseAccessEnquiryStatus = "pending" | "approved";
 
 export type CourseAccessEnquiryListParams =
-  EscolaLms.CourseAccess.Http.Requests.ListCourseAccessEnquiryRequest &
+  Ulams.CourseAccess.Http.Requests.ListCourseAccessEnquiryRequest &
     PaginatedListParams & {
       course_id?: number;
       status?: CourseAccessEnquiryStatus;
     };
 
 export type CourseAccessEnquiryCreateRequest =
-  EscolaLms.CourseAccess.Http.Requests.CreateCourseAccessEnquiryApiRequest & {
+  Ulams.CourseAccess.Http.Requests.CreateCourseAccessEnquiryApiRequest & {
     data?: object;
   };
 

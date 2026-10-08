@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Http\Requests;
+namespace Ulams\StationaryEvents\Http\Requests;
 
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
+use Ulams\StationaryEvents\Models\StationaryEvent;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
-use EscolaLms\StationaryEvents\Exceptions\StationaryEventNotFoundException;
+use Ulams\StationaryEvents\Exceptions\StationaryEventNotFoundException;
 
 class ReadStationaryEventRequest extends FormRequest
 {

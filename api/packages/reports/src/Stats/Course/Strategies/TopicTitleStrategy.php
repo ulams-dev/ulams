@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Course\Strategies;
+namespace Ulams\Reports\Stats\Course\Strategies;
 
 interface TopicTitleStrategy
 {

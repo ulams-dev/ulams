@@ -4,7 +4,7 @@ import { ConsultationsContext } from "./ConsultationsContext";
 import { useLocation, useHistory } from "react-router-dom";
 import { COURSES_ON_PAGE } from "@/config/courses";
 import useFetchConsultations from "@/hooks/consultations/useFetchConsultations";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import qs from "query-string";
 
 const parseParams = (params: API.CourseParams = {}) => {

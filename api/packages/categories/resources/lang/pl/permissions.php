@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Categories\Enums\CategoriesPermissionsEnum;
+use Ulams\Categories\Enums\CategoriesPermissionsEnum;
 
 return [
     CategoriesPermissionsEnum::CATEGORY_LIST => 'Lista kategorii',

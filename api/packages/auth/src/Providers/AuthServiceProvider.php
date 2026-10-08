@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Auth\Providers;
+namespace Ulams\Auth\Providers;
 
-use EscolaLms\Auth\Models\Group;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Policies\GroupPolicy;
-use EscolaLms\Auth\Policies\UserPolicy;
+use Ulams\Auth\Models\Group;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Policies\GroupPolicy;
+use Ulams\Auth\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

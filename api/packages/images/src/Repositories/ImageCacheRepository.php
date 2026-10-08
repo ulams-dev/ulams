@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Images\Repositories;
+namespace Ulams\Images\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Images\Models\ImageCache;
-use EscolaLms\Images\Repositories\Contracts\ImageCacheRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Images\Models\ImageCache;
+use Ulams\Images\Repositories\Contracts\ImageCacheRepositoryContract;
 
 class ImageCacheRepository extends BaseRepository implements ImageCacheRepositoryContract
 {

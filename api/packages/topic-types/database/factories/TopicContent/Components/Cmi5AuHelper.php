@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Database\Factories\TopicContent\Components;
+namespace Ulams\TopicTypes\Database\Factories\TopicContent\Components;
 
-use EscolaLms\Cmi5\Models\Cmi5;
-use EscolaLms\Cmi5\Models\Cmi5Au;
-use EscolaLms\Cmi5\Services\Contracts\Cmi5UploadServiceContract;
+use Ulams\Cmi5\Models\Cmi5;
+use Ulams\Cmi5\Models\Cmi5Au;
+use Ulams\Cmi5\Services\Contracts\Cmi5UploadServiceContract;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 

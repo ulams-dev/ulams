@@ -3,8 +3,8 @@
 namespace Tests;
 
 use App\Repositories\Contracts\CourseProgressRepositoryContract;
-use EscolaLms\Categories\Services\Contracts\CategoryServiceContracts;
-use App\Services\EscolaLMS\Contracts\CourseServiceContract;
+use Ulams\Categories\Services\Contracts\CategoryServiceContracts;
+use App\Services\Ulams\Contracts\CourseServiceContract;
 
 trait MakeServices
 {

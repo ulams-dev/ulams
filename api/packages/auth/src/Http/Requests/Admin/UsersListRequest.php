@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests\Admin;
+namespace Ulams\Auth\Http\Requests\Admin;
 
-use EscolaLms\Auth\Enums\OnboardingStatus;
-use EscolaLms\Core\Enums\StatusEnum;
-use EscolaLms\Core\Enums\UserRole;
+use Ulams\Auth\Enums\OnboardingStatus;
+use Ulams\Core\Enums\StatusEnum;
+use Ulams\Core\Enums\UserRole;
 use BenSampo\Enum\Rules\EnumValue;
-use EscolaLms\Auth\Models\User;
+use Ulams\Auth\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UsersListRequest extends FormRequest

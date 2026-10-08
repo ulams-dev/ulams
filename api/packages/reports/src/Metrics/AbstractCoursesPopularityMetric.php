@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Reports\Metrics;
+namespace Ulams\Reports\Metrics;
 
-use EscolaLms\Courses\Models\Course;
+use Ulams\Courses\Models\Course;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 

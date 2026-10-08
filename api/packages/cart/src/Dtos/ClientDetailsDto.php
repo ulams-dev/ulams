@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Cart\Dtos;
+namespace Ulams\Cart\Dtos;
 
 class ClientDetailsDto
 {

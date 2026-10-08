@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Requests;
+namespace Ulams\Courses\Http\Requests;
 
-use EscolaLms\Courses\Http\Requests\Abstracts\TopicResourceAPIRequest;
-use EscolaLms\Courses\Rules\TopicResourceRule;
+use Ulams\Courses\Http\Requests\Abstracts\TopicResourceAPIRequest;
+use Ulams\Courses\Rules\TopicResourceRule;
 
 class UploadTopicResourceAPIRequest extends TopicResourceAPIRequest
 {
@@ -19,7 +19,7 @@ class UploadTopicResourceAPIRequest extends TopicResourceAPIRequest
 
     public function getMimesRule(): ?string
     {
-        $mimes = config('escolalms_courses.topic_resource_mimes');
+        $mimes = config('ulams_courses.topic_resource_mimes');
         return $mimes ? 'mimes:' . $mimes : null;
     }
 

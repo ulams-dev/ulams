@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Exceptions;
+namespace Ulams\BulkNotifications\Exceptions;
 
 use Exception;
 

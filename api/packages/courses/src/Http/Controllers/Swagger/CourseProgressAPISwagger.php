@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Controllers\Swagger;
+namespace Ulams\Courses\Http\Controllers\Swagger;
 
-use EscolaLms\Courses\Http\Requests\CourseProgressAPIRequest;
-use EscolaLms\Courses\Http\Requests\CourseProgressPaginatedListRequest;
+use Ulams\Courses\Http\Requests\CourseProgressAPIRequest;
+use Ulams\Courses\Http\Requests\CourseProgressPaginatedListRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

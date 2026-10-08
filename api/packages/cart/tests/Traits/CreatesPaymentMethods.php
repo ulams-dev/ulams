@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cart\Tests\Traits;
+namespace Ulams\Cart\Tests\Traits;
 
-use EscolaLms\Payments\Tests\Traits\CreatesPaymentMethods as PaymentsCreatesPaymentMethods;
+use Ulams\Payments\Tests\Traits\CreatesPaymentMethods as PaymentsCreatesPaymentMethods;
 
 trait CreatesPaymentMethods
 {

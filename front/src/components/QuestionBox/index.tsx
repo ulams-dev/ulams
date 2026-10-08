@@ -1,15 +1,15 @@
 import { FC, useState } from "react";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { Rate } from "@lms/components/components/molecules/Rate/Rate";
-import { Stack } from "@lms/components/components/atoms/Stack/index";
-import { TextArea } from "@lms/components/components/atoms/TextArea/TextArea";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { Rate } from "@ulams/components/components/molecules/Rate/Rate";
+import { Stack } from "@ulams/components/components/atoms/Stack/index";
+import { TextArea } from "@ulams/components/components/atoms/TextArea/TextArea";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { QuestionBoxWrapper } from "@/components/QuestionBox/styles";
-import { Row } from "@lms/components/components/atoms/Row";
+import { Row } from "@ulams/components/components/atoms/Row";
 import { QuestionnaireModelType } from "@/types/questionnaire";
 
 interface QuestionBoxProps {

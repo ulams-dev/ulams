@@ -2,9 +2,9 @@
 
 namespace Tests\APIs;
 
-use EscolaLms\Settings\Models\Setting;
+use Ulams\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Settings\Tests\TestCase;
+use Ulams\Settings\Tests\TestCase;
 
 class SettingsAnonymousTest extends TestCase
 {

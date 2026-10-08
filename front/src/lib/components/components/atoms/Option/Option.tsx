@@ -2,7 +2,7 @@ import * as React from "react";
 
 import styled, { withTheme } from "styled-components";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 import { getFontFromTheme } from "../../../theme/provider";
 
@@ -156,7 +156,7 @@ export const Option: React.FC<OptionType> = (props) => {
           {required && <span className="required">*</span>}
           <StyledDiv
             type={type}
-            className={`wellms-component lms-${type} ${className}`}
+            className={`ulams-component lms-${type} ${className}`}
           >
             <label>
               <input {...props} type={type} /> <span>{label}</span>
@@ -172,7 +172,7 @@ export const Option: React.FC<OptionType> = (props) => {
     <StyledContainer>
       <StyledWrapper>
         {required && <span className="required">*</span>}
-        <StyledDiv className="wellms-component" type={type}>
+        <StyledDiv className="ulams-component" type={type}>
           <input {...props} type={type} />{" "}
         </StyledDiv>{" "}
       </StyledWrapper>

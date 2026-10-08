@@ -1,5 +1,5 @@
 import ProfileLayout from "@/components/Profile/ProfileLayout";
-import { MyProfileForm } from "@lms/components/components/organisms/MyProfileForm/MyProfileForm";
+import { MyProfileForm } from "@ulams/components/components/organisms/MyProfileForm/MyProfileForm";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 

@@ -1,4 +1,4 @@
-import { getStylesBasedOnTheme } from "@lms/components/utils/utils";
+import { getStylesBasedOnTheme } from "@ulams/components/utils/utils";
 import styled, { css } from "styled-components";
 
 export const CartPageStyled = styled.section<{ $isMobile: boolean }>`

@@ -1,12 +1,12 @@
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
-import ResponsiveImage from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import ResponsiveImage from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
+import { UlamsContext } from "@ulams/sdk/react";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { EventCompaniesStyles } from "./EventCompaniesStyles";
 
 const EventCompanies = () => {
-  const { settings } = useContext(EscolaLMSContext);
+  const { settings } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   return (

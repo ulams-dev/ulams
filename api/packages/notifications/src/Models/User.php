@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Notifications\Models;
+namespace Ulams\Notifications\Models;
 
-use EscolaLms\Core\Models\User as CoreUser;
-use EscolaLms\Notifications\Models\Traits\HasEventNotifications;
+use Ulams\Core\Models\User as CoreUser;
+use Ulams\Notifications\Models\Traits\HasEventNotifications;
 
 class User extends CoreUser
 {

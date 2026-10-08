@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests\Admin;
+namespace Ulams\Auth\Http\Requests\Admin;
 
-use EscolaLms\Auth\Http\Requests\ExtendableRequest;
-use EscolaLms\Auth\Models\Group;
+use Ulams\Auth\Http\Requests\ExtendableRequest;
+use Ulams\Auth\Models\Group;
 use Illuminate\Validation\Rule;
 
 class UserGroupCreateRequest extends ExtendableRequest

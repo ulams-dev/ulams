@@ -10,15 +10,15 @@ import { usePermissions } from '@/hooks/usePermissions';
 import {
   groupAttendanceSchedule as fetchGroupAttendanceSchedule,
   removeAttendanceColumn,
-} from '@/services/escola-lms/attendances';
-import { getExams as fetchExams } from '@/services/escola-lms/exams';
+} from '@/services/ulams/attendances';
+import { getExams as fetchExams } from '@/services/ulams/exams';
 import {
   getGradeTerms as fetchGradeTerms,
   getGroupFinalGrades as fetchGroupFinalGrades,
   getSubjectGradeScales as fetchSubjectGradeScales,
   getSubjectTutorGrades as fetchSubjectTutorGrades,
-} from '@/services/escola-lms/grades';
-import { studentUserGroup as fetchStudentUserGroup } from '@/services/escola-lms/student_user_groups';
+} from '@/services/ulams/grades';
+import { studentUserGroup as fetchStudentUserGroup } from '@/services/ulams/student_user_groups';
 import { EditOutlined } from '@ant-design/icons';
 import { useTeacherSubject } from '../../context';
 import {

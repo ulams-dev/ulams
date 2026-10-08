@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Enum;
+namespace Ulams\TopicTypeGift\Enum;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class QuestionTypeEnum extends BasicEnum
 {

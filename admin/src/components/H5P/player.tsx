@@ -1,4 +1,4 @@
-import { contentSettings } from '@/services/escola-lms/h5p';
+import { contentSettings } from '@/services/ulams/h5p';
 import type { EditorSettings, XAPIEvent } from '@escolalms/h5p-react';
 import { ContextlessPlayer } from '@escolalms/h5p-react';
 import { Alert, Col, Divider, Row, Spin, Typography } from 'antd';

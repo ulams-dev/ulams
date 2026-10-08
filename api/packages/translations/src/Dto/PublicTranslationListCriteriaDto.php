@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Translations\Dto;
+namespace Ulams\Translations\Dto;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
-use EscolaLms\Translations\Enum\ConstantEnum;
-use EscolaLms\Translations\Repositories\Criteria\OrderCriterion;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\InCriterion;
+use Ulams\Translations\Enum\ConstantEnum;
+use Ulams\Translations\Repositories\Criteria\OrderCriterion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 

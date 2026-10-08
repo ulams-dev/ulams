@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Consultations\Tests\APIs;
+namespace Ulams\Consultations\Tests\APIs;
 
-use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
-use EscolaLms\Webinar\Tests\TestCase;
-use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
-use EscolaLms\Webinar\Models\Webinar;
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
+use Ulams\Webinar\Services\Contracts\WebinarServiceContract;
+use Ulams\Webinar\Tests\TestCase;
+use Ulams\Webinar\Database\Seeders\WebinarsPermissionSeeder;
+use Ulams\Webinar\Models\Webinar;
+use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class WebinarShowApiTest extends TestCase

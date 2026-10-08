@@ -14,10 +14,10 @@ import {
   getRevenuecatIdForSubscription,
   revenuecatErrorHandler,
 } from "@/utils/payment";
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { getStylesBasedOnTheme } from "@lms/components/utils/utils";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { getStylesBasedOnTheme } from "@ulams/components/utils/utils";
 import { CapacitorPaymentError } from "@/types/index";
 
 const StyledSubscription = styled.div<{ $isMobile: boolean }>`

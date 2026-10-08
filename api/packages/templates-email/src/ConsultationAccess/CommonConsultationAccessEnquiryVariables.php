@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\ConsultationAccess;
+namespace Ulams\TemplatesEmail\ConsultationAccess;
 
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\TemplatesEmail\Core\EmailVariables;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\TemplatesEmail\Core\EmailVariables;
 
 abstract class CommonConsultationAccessEnquiryVariables extends EmailVariables
 {

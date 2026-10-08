@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Http\Controllers\Contracts;
+namespace Ulams\Questionnaire\Http\Controllers\Contracts;
 
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireAssignUnassignRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireCreateRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireDeleteRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireListingRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireReadRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireReportRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireUpdateRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireAssignUnassignRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireCreateRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireDeleteRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireListingRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireReadRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireReportRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireUpdateRequest;
 use Illuminate\Http\JsonResponse;
 
 interface QuestionnaireAdminApiContract

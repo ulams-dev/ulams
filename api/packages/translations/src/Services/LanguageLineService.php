@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Translations\Services;
+namespace Ulams\Translations\Services;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Translations\Dto\PublicTranslationListCriteriaDto;
-use EscolaLms\Translations\Models\LanguageLine;
-use EscolaLms\Translations\Enum\ConstantEnum;
-use EscolaLms\Translations\Repositories\Contracts\LanguageLineRepositoryContract;
-use EscolaLms\Translations\Repositories\Criteria\OrderCriterion;
-use EscolaLms\Translations\Services\Contracts\LanguageLineServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Translations\Dto\PublicTranslationListCriteriaDto;
+use Ulams\Translations\Models\LanguageLine;
+use Ulams\Translations\Enum\ConstantEnum;
+use Ulams\Translations\Repositories\Contracts\LanguageLineRepositoryContract;
+use Ulams\Translations\Repositories\Criteria\OrderCriterion;
+use Ulams\Translations\Services\Contracts\LanguageLineServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Http\Requests\Admin;
+namespace Ulams\TopicTypeProject\Http\Requests\Admin;
 
-use EscolaLms\TopicTypeProject\Dtos\GradeProjectSolutionDto;
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
+use Ulams\TopicTypeProject\Dtos\GradeProjectSolutionDto;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

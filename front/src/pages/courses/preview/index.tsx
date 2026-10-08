@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import Preloader from "@/components/_App/Preloader";
 import Layout from "@/components/_App/Layout";
-import { ScormPreview } from "@lms/scorm-player";
+import { ScormPreview } from "@ulams/scorm-player";
 import CourseProgramLessonsPreview from "@/components/Courses/Course/CourseProgramLessonsPreview";
 import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";
@@ -20,7 +20,7 @@ const CourseProgramScorm: React.FC<{ program: API.CourseProgram }> = ({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState(0);
   const headerAndFooterHeight = 610;
-  const { apiUrl } = useContext(EscolaLMSContext);
+  const { apiUrl } = useContext(UlamsContext);
 
   useEffect(() => {
     if (iframeRef.current) {
@@ -67,7 +67,7 @@ const CourseProgram = () => {
   const { t } = useTranslation();
 
   const { id } = useParams<{ id: string }>();
-  const { program, fetchProgram } = useContext(EscolaLMSContext);
+  const { program, fetchProgram } = useContext(UlamsContext);
 
   useEffect(() => {
     if (id) {

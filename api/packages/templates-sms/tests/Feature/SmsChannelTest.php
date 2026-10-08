@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Tests\Feature;
+namespace Ulams\TemplatesSms\Tests\Feature;
 
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\Templates\Repository\Contracts\TemplateRepositoryContract;
-use EscolaLms\TemplatesSms\Database\Seeders\TemplateSmsSeeder;
-use EscolaLms\TemplatesSms\Facades\Sms;
-use EscolaLms\TemplatesSms\Tests\Mocks\TestEvent;
-use EscolaLms\TemplatesSms\Tests\Mocks\TestVariables;
-use EscolaLms\TemplatesSms\Tests\TestCase;
-use EscolaLms\TemplatesSms\Core\SmsChannel;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Templates\Facades\Template;
+use Ulams\Templates\Repository\Contracts\TemplateRepositoryContract;
+use Ulams\TemplatesSms\Database\Seeders\TemplateSmsSeeder;
+use Ulams\TemplatesSms\Facades\Sms;
+use Ulams\TemplatesSms\Tests\Mocks\TestEvent;
+use Ulams\TemplatesSms\Tests\Mocks\TestVariables;
+use Ulams\TemplatesSms\Tests\TestCase;
+use Ulams\TemplatesSms\Core\SmsChannel;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -70,8 +70,8 @@ class SmsChannelTest extends TestCase
                 'last_name' => $this->faker->lastName,
                 'phone' => $this->faker->phoneNumber,
                 'notification_channels' => json_encode([
-                    "EscolaLms\\TemplatesEmail\\Core\\EmailChannel",
-                    "EscolaLms\\TemplatesSms\\Core\\SmsChannel"
+                    "Ulams\\TemplatesEmail\\Core\\EmailChannel",
+                    "Ulams\\TemplatesSms\\Core\\SmsChannel"
                 ])
             ]
         );

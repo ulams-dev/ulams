@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Api;
+namespace Ulams\Core\Tests\Api;
 
-use EscolaLms\Core\Tests\TestCase;
+use Ulams\Core\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class HealthCheckTest extends TestCase

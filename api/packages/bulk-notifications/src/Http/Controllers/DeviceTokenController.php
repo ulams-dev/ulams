@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Http\Controllers;
+namespace Ulams\BulkNotifications\Http\Controllers;
 
-use EscolaLms\BulkNotifications\Http\Controllers\Swagger\DeviceTokenControllerSwagger;
-use EscolaLms\BulkNotifications\Http\Requests\CreateDeviceTokenRequest;
-use EscolaLms\BulkNotifications\Services\Contracts\DeviceTokenServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\BulkNotifications\Http\Controllers\Swagger\DeviceTokenControllerSwagger;
+use Ulams\BulkNotifications\Http\Requests\CreateDeviceTokenRequest;
+use Ulams\BulkNotifications\Services\Contracts\DeviceTokenServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\JsonResponse;
 
-class DeviceTokenController extends EscolaLmsBaseController implements DeviceTokenControllerSwagger
+class DeviceTokenController extends UlamsBaseController implements DeviceTokenControllerSwagger
 {
     public function __construct(private DeviceTokenServiceContract $deviceTokenService)
     {

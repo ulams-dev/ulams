@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\Tags\Http\Controllers;
+namespace Ulams\Tags\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Tags\Dto\TagDto;
-use EscolaLms\Tags\Http\Request\TagInsertRequest;
-use EscolaLms\Tags\Http\Request\TagRemoveRequest;
-use EscolaLms\Tags\Models\Tag;
-use EscolaLms\Tags\Repository\Contracts\TagRepositoryContract;
-use EscolaLms\Tags\Services\Contracts\TagServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Tags\Dto\TagDto;
+use Ulams\Tags\Http\Request\TagInsertRequest;
+use Ulams\Tags\Http\Request\TagRemoveRequest;
+use Ulams\Tags\Models\Tag;
+use Ulams\Tags\Repository\Contracts\TagRepositoryContract;
+use Ulams\Tags\Services\Contracts\TagServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Exception;
 
-class TagsAPIController extends EscolaLmsBaseController
+class TagsAPIController extends UlamsBaseController
 {
     private TagServiceContract $tagService;
     private TagRepositoryContract $tagRepository;

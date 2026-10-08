@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Courses\Database\Factories;
+namespace Ulams\Courses\Database\Factories;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Courses\Database\Factories\FakerMarkdownProvider\FakerProvider;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Models\Course;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Courses\Database\Factories\FakerMarkdownProvider\FakerProvider;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\File;

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Services\Contracts;
+namespace Ulams\Auth\Services\Contracts;
 
-use EscolaLms\Auth\Exceptions\TokenExpiredException;
+use Ulams\Auth\Exceptions\TokenExpiredException;
 
 interface SocialAccountServiceContract
 {

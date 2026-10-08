@@ -1,5 +1,5 @@
-import { slugify } from '@/services/escola-lms/slug';
-import { getTranslation } from '@/services/escola-lms/translations';
+import { slugify } from '@/services/ulams/slug';
+import { getTranslation } from '@/services/ulams/translations';
 import ProForm, { ModalForm, ProFormSwitch, ProFormText } from '@ant-design/pro-form';
 import { Form } from 'antd';
 import React, { useEffect } from 'react';

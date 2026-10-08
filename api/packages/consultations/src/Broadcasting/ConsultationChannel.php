@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Consultations\Broadcasting;
+namespace Ulams\Consultations\Broadcasting;
 
-use EscolaLms\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\Consultation;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class ConsultationChannel

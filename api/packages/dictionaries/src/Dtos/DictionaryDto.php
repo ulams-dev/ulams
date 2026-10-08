@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Dtos;
+namespace Ulams\Dictionaries\Dtos;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
 use Illuminate\Http\Request;
 
 class DictionaryDto implements DtoContract, InstantiateFromRequest

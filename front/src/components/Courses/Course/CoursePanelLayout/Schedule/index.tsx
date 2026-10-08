@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { isMobile } from "react-device-detect";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { CourseAgenda } from "@lms/components/components/organisms/CourseAgenda/CourseAgenda";
+import { UlamsContext } from "@ulams/sdk/react";
+import { CourseAgenda } from "@ulams/components/components/organisms/CourseAgenda/CourseAgenda";
 import {
   CourseScheduleContent,
   CourseScheduleTitle,
@@ -15,7 +15,7 @@ import { useCoursePanel } from "@/components/Courses/Course/Context";
 
 export const CourseSchedule = () => {
   const { t } = useTranslation();
-  const { user } = useContext(EscolaLMSContext);
+  const { user } = useContext(UlamsContext);
   const {
     currentTopic,
     finishedTopicsIds,

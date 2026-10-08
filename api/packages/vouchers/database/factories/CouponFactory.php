@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Vouchers\Database\Factories;
+namespace Ulams\Vouchers\Database\Factories;
 
-use EscolaLms\Vouchers\Enums\CouponTypeEnum;
-use EscolaLms\Vouchers\Models\Coupon;
+use Ulams\Vouchers\Enums\CouponTypeEnum;
+use Ulams\Vouchers\Models\Coupon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

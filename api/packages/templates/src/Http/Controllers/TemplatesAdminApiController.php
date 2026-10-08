@@ -1,28 +1,28 @@
 <?php
 
-namespace EscolaLms\Templates\Http\Controllers;
+namespace Ulams\Templates\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Templates\Dtos\TemplateFilterCriteriaDto;
-use EscolaLms\Templates\Facades\Template as FacadesTemplate;
-use EscolaLms\Templates\Http\Controllers\Contracts\TemplatesAdminApiContract;
-use EscolaLms\Templates\Http\Requests\TemplateAssignedRequest;
-use EscolaLms\Templates\Http\Requests\TemplateAssignRequest;
-use EscolaLms\Templates\Http\Requests\TemplateCreateRequest;
-use EscolaLms\Templates\Http\Requests\TemplateDeleteRequest;
-use EscolaLms\Templates\Http\Requests\TemplateListAssignableRequest;
-use EscolaLms\Templates\Http\Requests\TemplateListingRequest;
-use EscolaLms\Templates\Http\Requests\TemplateReadRequest;
-use EscolaLms\Templates\Http\Requests\TemplateUpdateRequest;
-use EscolaLms\Templates\Http\Resources\TemplateResource;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Services\Contracts\TemplateServiceContract;
-use EscolaLms\Templates\Services\Contracts\TemplateVariablesServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Templates\Dtos\TemplateFilterCriteriaDto;
+use Ulams\Templates\Facades\Template as FacadesTemplate;
+use Ulams\Templates\Http\Controllers\Contracts\TemplatesAdminApiContract;
+use Ulams\Templates\Http\Requests\TemplateAssignedRequest;
+use Ulams\Templates\Http\Requests\TemplateAssignRequest;
+use Ulams\Templates\Http\Requests\TemplateCreateRequest;
+use Ulams\Templates\Http\Requests\TemplateDeleteRequest;
+use Ulams\Templates\Http\Requests\TemplateListAssignableRequest;
+use Ulams\Templates\Http\Requests\TemplateListingRequest;
+use Ulams\Templates\Http\Requests\TemplateReadRequest;
+use Ulams\Templates\Http\Requests\TemplateUpdateRequest;
+use Ulams\Templates\Http\Resources\TemplateResource;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Services\Contracts\TemplateServiceContract;
+use Ulams\Templates\Services\Contracts\TemplateVariablesServiceContract;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class TemplatesAdminApiController extends EscolaLmsBaseController implements TemplatesAdminApiContract
+class TemplatesAdminApiController extends UlamsBaseController implements TemplatesAdminApiContract
 {
     private TemplateServiceContract $templateService;
 

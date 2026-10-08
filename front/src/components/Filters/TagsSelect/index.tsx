@@ -1,10 +1,10 @@
 import { FC, useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { Tags } from "@lms/components/components/molecules/Tags/Tags";
+import { UlamsContext } from "@ulams/sdk/react";
+import { Tags } from "@ulams/components/components/molecules/Tags/Tags";
 import { isMobile } from "react-device-detect";
 import { useTheme } from "styled-components";
-// import { Tag } from "@lms/sdk/types";
+// import { Tag } from "@ulams/sdk/types";
 
 interface TagsSelectFilterProps {
   selectedTags?: string[];
@@ -15,7 +15,7 @@ const TagsSelectFilter: FC<TagsSelectFilterProps> = ({
   selectedTags,
   handleChange,
 }) => {
-  const { uniqueTags } = useContext(EscolaLMSContext);
+  const { uniqueTags } = useContext(UlamsContext);
   const { t } = useTranslation();
   const theme = useTheme();
 

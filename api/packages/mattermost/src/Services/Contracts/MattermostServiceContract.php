@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Mattermost\Services\Contracts;
+namespace Ulams\Mattermost\Services\Contracts;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Mattermost\Enum\MattermostRoleEnum;
+use Ulams\Core\Models\User;
+use Ulams\Mattermost\Enum\MattermostRoleEnum;
 use Psr\Http\Message\ResponseInterface;
 
 interface MattermostServiceContract

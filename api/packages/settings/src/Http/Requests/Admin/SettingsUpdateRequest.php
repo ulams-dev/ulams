@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Settings\Http\Requests\Admin;
+namespace Ulams\Settings\Http\Requests\Admin;
 
-use EscolaLms\Settings\Models\Setting;
-use EscolaLms\Settings\Enums\SettingTypes;
+use Ulams\Settings\Models\Setting;
+use Ulams\Settings\Enums\SettingTypes;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;

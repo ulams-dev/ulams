@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Database\Factories;
+namespace Ulams\Cart\Database\Factories;
 
-use EscolaLms\Cart\Enums\OrderStatus;
-use EscolaLms\Cart\Models\Order;
+use Ulams\Cart\Enums\OrderStatus;
+use Ulams\Cart\Models\Order;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class OrderFactory extends Factory

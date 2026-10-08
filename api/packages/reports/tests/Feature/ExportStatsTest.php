@@ -1,29 +1,29 @@
 <?php
 
-namespace EscolaLms\Reports\Tests\Feature;
+namespace Ulams\Reports\Tests\Feature;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\CourseProgress;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\HeadlessH5P\Models\H5PContent;
-use EscolaLms\Reports\Exports\Stats\Course\Sheets\FinishedTopicsAttemptsSheet;
-use EscolaLms\Reports\Exports\Stats\Course\Sheets\FinishedTopicsInfoSheet;
-use EscolaLms\Reports\Exports\Stats\Course\Sheets\FinishedTopicsSecondsSheet;
-use EscolaLms\Reports\Exports\Stats\Course\Sheets\FinishedTopicsStatusesSheet;
-use EscolaLms\Reports\Exports\Stats\Topic\QuizSummaryForTopicTypeGIFTExport;
-use EscolaLms\Reports\Stats\Course\FinishedTopics;
-use EscolaLms\Reports\Tests\Models\Course;
-use EscolaLms\Reports\Tests\TestCase;
-use EscolaLms\TopicTypeGift\Models\AttemptAnswer;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
-use EscolaLms\TopicTypes\Models\TopicContent\Audio;
-use EscolaLms\TopicTypes\Models\TopicContent\H5P;
-use EscolaLms\TopicTypes\Models\TopicContent\PDF;
+use Ulams\Core\Models\User;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\HeadlessH5P\Models\H5PContent;
+use Ulams\Reports\Exports\Stats\Course\Sheets\FinishedTopicsAttemptsSheet;
+use Ulams\Reports\Exports\Stats\Course\Sheets\FinishedTopicsInfoSheet;
+use Ulams\Reports\Exports\Stats\Course\Sheets\FinishedTopicsSecondsSheet;
+use Ulams\Reports\Exports\Stats\Course\Sheets\FinishedTopicsStatusesSheet;
+use Ulams\Reports\Exports\Stats\Topic\QuizSummaryForTopicTypeGIFTExport;
+use Ulams\Reports\Stats\Course\FinishedTopics;
+use Ulams\Reports\Tests\Models\Course;
+use Ulams\Reports\Tests\TestCase;
+use Ulams\TopicTypeGift\Models\AttemptAnswer;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
+use Ulams\TopicTypes\Models\TopicContent\Audio;
+use Ulams\TopicTypes\Models\TopicContent\H5P;
+use Ulams\TopicTypes\Models\TopicContent\PDF;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ExportStatsTest extends TestCase
@@ -120,7 +120,7 @@ class ExportStatsTest extends TestCase
     public function testQuizSummarySheet(): void
     {
         $giftQuiz = GiftQuiz::factory()->create();
-        $course = \EscolaLms\Reports\Tests\Models\Course::factory()->create();
+        $course = \Ulams\Reports\Tests\Models\Course::factory()->create();
         $lesson = Lesson::factory()->state(['course_id' => $course->getKey()])->create();
 
         /** @var Topic $topic */

@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Tests;
+namespace Ulams\BulkNotifications\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\BulkNotifications\Channels\PushNotificationChannel;
-use EscolaLms\BulkNotifications\EscolaLmsBulkNotificationsServiceProvider;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Models\User;
+use Ulams\BulkNotifications\Channels\PushNotificationChannel;
+use Ulams\BulkNotifications\UlamsBulkNotificationsServiceProvider;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
@@ -21,8 +21,8 @@ class TestCase extends CoreTestCase
             ...parent::getPackageProviders($app),
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
-            EscolaLmsAuthServiceProvider::class,
-            EscolaLmsBulkNotificationsServiceProvider::class
+            UlamsAuthServiceProvider::class,
+            UlamsBulkNotificationsServiceProvider::class
         ];
     }
 

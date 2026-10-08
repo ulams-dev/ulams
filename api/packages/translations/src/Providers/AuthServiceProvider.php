@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Translations\Providers;
+namespace Ulams\Translations\Providers;
 
-use EscolaLms\Translations\Models\LanguageLine;
-use EscolaLms\Translations\Policies\LanguageLinePolicy;
+use Ulams\Translations\Models\LanguageLine;
+use Ulams\Translations\Policies\LanguageLinePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

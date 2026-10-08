@@ -1,30 +1,30 @@
 <?php
 
-namespace EscolaLms\Cart\Tests\API;
+namespace Ulams\Cart\Tests\API;
 
-use EscolaLms\Auth\Database\Seeders\AuthPermissionSeeder;
-use EscolaLms\Cart\Database\Seeders\CartPermissionSeeder;
-use EscolaLms\Cart\Enums\ConstantEnum;
-use EscolaLms\Cart\Enums\ProductType;
-use EscolaLms\Cart\EscolaLmsCartServiceProvider;
-use EscolaLms\Cart\Events\ProductableAttached;
-use EscolaLms\Cart\Events\ProductableDetached;
-use EscolaLms\Cart\Events\ProductAttached;
-use EscolaLms\Cart\Events\ProductBought;
-use EscolaLms\Cart\Events\ProductDetached;
-use EscolaLms\Cart\Facades\Shop;
-use EscolaLms\Cart\Http\Resources\ProductDetailedResource;
-use EscolaLms\Cart\Http\Resources\ProductResource;
-use EscolaLms\Cart\Models\Category;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductProductable;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
-use EscolaLms\Cart\Services\Contracts\ShopServiceContract;
-use EscolaLms\Cart\Tests\Mocks\ExampleProductable;
-use EscolaLms\Cart\Tests\Mocks\ExampleProductableBase;
-use EscolaLms\Cart\Tests\TestCase;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Payments\Facades\PaymentGateway;
+use Ulams\Auth\Database\Seeders\AuthPermissionSeeder;
+use Ulams\Cart\Database\Seeders\CartPermissionSeeder;
+use Ulams\Cart\Enums\ConstantEnum;
+use Ulams\Cart\Enums\ProductType;
+use Ulams\Cart\UlamsCartServiceProvider;
+use Ulams\Cart\Events\ProductableAttached;
+use Ulams\Cart\Events\ProductableDetached;
+use Ulams\Cart\Events\ProductAttached;
+use Ulams\Cart\Events\ProductBought;
+use Ulams\Cart\Events\ProductDetached;
+use Ulams\Cart\Facades\Shop;
+use Ulams\Cart\Http\Resources\ProductDetailedResource;
+use Ulams\Cart\Http\Resources\ProductResource;
+use Ulams\Cart\Models\Category;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductProductable;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Cart\Services\Contracts\ShopServiceContract;
+use Ulams\Cart\Tests\Mocks\ExampleProductable;
+use Ulams\Cart\Tests\Mocks\ExampleProductableBase;
+use Ulams\Cart\Tests\TestCase;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Payments\Facades\PaymentGateway;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
@@ -260,7 +260,7 @@ class AdminProductApiTest extends TestCase
             ])
             ->assertJsonFragment([
                 'productable_id' => $productable->getKey(),
-                'productable_type' => 'EscolaLms\Cart\Tests\Mocks\ExampleProductable',
+                'productable_type' => 'Ulams\Cart\Tests\Mocks\ExampleProductable',
             ]);
     }
 
@@ -290,7 +290,7 @@ class AdminProductApiTest extends TestCase
             ])
             ->assertJsonFragment([
                 'productable_id' => $productable->getKey(),
-                'productable_type' => 'EscolaLms\Cart\Tests\Mocks\ExampleProductable',
+                'productable_type' => 'Ulams\Cart\Tests\Mocks\ExampleProductable',
             ]);
     }
 
@@ -365,7 +365,7 @@ class AdminProductApiTest extends TestCase
 
     public function test_create_product_min_price(): void
     {
-        Config::set(EscolaLmsCartServiceProvider::CONFIG_KEY . '.min_product_price', 1000);
+        Config::set(UlamsCartServiceProvider::CONFIG_KEY . '.min_product_price', 1000);
         /** @var ExampleProductable $productable */
         $productable = ExampleProductable::factory()->create();
 
@@ -394,12 +394,12 @@ class AdminProductApiTest extends TestCase
                 ])
                 ->etc()
         );
-        Config::set(EscolaLmsCartServiceProvider::CONFIG_KEY . '.min_product_price', 0);
+        Config::set(UlamsCartServiceProvider::CONFIG_KEY . '.min_product_price', 0);
     }
 
     public function test_update_product_min_price(): void
     {
-        Config::set(EscolaLmsCartServiceProvider::CONFIG_KEY . '.min_product_price', 1000);
+        Config::set(UlamsCartServiceProvider::CONFIG_KEY . '.min_product_price', 1000);
         /** @var ExampleProductable $productable */
         $productable = ExampleProductable::factory()->create();
 
@@ -429,7 +429,7 @@ class AdminProductApiTest extends TestCase
                 ])
                 ->etc()
         );
-        Config::set(EscolaLmsCartServiceProvider::CONFIG_KEY . '.min_product_price', 0);
+        Config::set(UlamsCartServiceProvider::CONFIG_KEY . '.min_product_price', 0);
     }
 
     public function test_update_product(): void

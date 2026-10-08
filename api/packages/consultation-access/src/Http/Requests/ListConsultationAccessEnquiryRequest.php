@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Http\Requests;
+namespace Ulams\ConsultationAccess\Http\Requests;
 
-use EscolaLms\ConsultationAccess\Dtos\CriteriaDto;
-use EscolaLms\ConsultationAccess\Dtos\PageDto;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Dtos\PaginationDto;
+use Ulams\ConsultationAccess\Dtos\CriteriaDto;
+use Ulams\ConsultationAccess\Dtos\PageDto;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Dtos\PaginationDto;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

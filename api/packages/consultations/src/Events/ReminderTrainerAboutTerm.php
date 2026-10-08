@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Consultations\Events;
+namespace Ulams\Consultations\Events;
 
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Models\ConsultationUserTerm;
-use EscolaLms\Core\Models\User;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Models\ConsultationUserTerm;
+use Ulams\Core\Models\User;
 
 class ReminderTrainerAboutTerm extends ConsultationTerm
 {

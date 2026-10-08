@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Tests\Api;
+namespace Ulams\Bookmarks\Tests\Api;
 
-use EscolaLms\Bookmarks\Database\Seeders\BookmarkPermissionSeeder;
-use EscolaLms\Bookmarks\Models\Bookmark;
-use EscolaLms\Bookmarks\Tests\BookmarkTesting;
-use EscolaLms\Bookmarks\Tests\TestCase;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Bookmarks\Database\Seeders\BookmarkPermissionSeeder;
+use Ulams\Bookmarks\Models\Bookmark;
+use Ulams\Bookmarks\Tests\BookmarkTesting;
+use Ulams\Bookmarks\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
 use Illuminate\Support\Arr;
 
 class BookmarkIndexApiTest extends TestCase
@@ -87,7 +87,7 @@ class BookmarkIndexApiTest extends TestCase
         Bookmark::factory()->create([
             'user_id' => $user->getKey(),
             'bookmarkable_id' => $topic->getKey(),
-            'bookmarkable_type' => 'EscolaLms\Courses\Models\Topic'
+            'bookmarkable_type' => 'Ulams\Courses\Models\Topic'
         ]);
 
         $this->actingAs($user, 'api')
@@ -205,17 +205,17 @@ class BookmarkIndexApiTest extends TestCase
             ],
             [
                 'filter' => [
-                    'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Topic',
+                    'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic',
                 ],
                 'data' => (function (int $userId) {
                     $items = collect();
                     $items->push(Bookmark::factory());
                     $items->push(Bookmark::factory()->state(['user_id' => $userId]));
-                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Topic']));
-                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Topic']));
-                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Topic']));
-                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Course']));
-                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Course']));
+                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic']));
+                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic']));
+                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic']));
+                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'Ulams\\Courses\\Models\\Course']));
+                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'Ulams\\Courses\\Models\\Course']));
 
                     return $items;
                 }),
@@ -224,16 +224,16 @@ class BookmarkIndexApiTest extends TestCase
             [
                 'filter' => [
                     'bookmarkable_id' => 123,
-                    'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Topic',
+                    'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic',
                 ],
                 'data' => (function (int $userId) {
                     $items = collect();
                     $items->push(Bookmark::factory());
                     $items->push(Bookmark::factory()->state(['user_id' => $userId]));
-                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Topic', 'bookmarkable_id' => 123]));
-                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Topic']));
-                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Topic']));
-                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Course']));
+                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic', 'bookmarkable_id' => 123]));
+                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic']));
+                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic']));
+                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'Ulams\\Courses\\Models\\Course']));
 
                     return $items;
                 }),
@@ -242,16 +242,16 @@ class BookmarkIndexApiTest extends TestCase
             [
                 'filter' => [
                     'bookmarkable_ids' => [123, 456],
-                    'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Topic',
+                    'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic',
                 ],
                 'data' => (function (int $userId) {
                     $items = collect();
                     $items->push(Bookmark::factory());
                     $items->push(Bookmark::factory()->state(['user_id' => $userId]));
-                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Topic', 'bookmarkable_id' => 123]));
-                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Topic', 'bookmarkable_id' => 456]));
-                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Topic']));
-                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'EscolaLms\\Courses\\Models\\Course']));
+                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic', 'bookmarkable_id' => 123]));
+                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic', 'bookmarkable_id' => 456]));
+                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic']));
+                    $items->push(Bookmark::factory()->state(['user_id' => $userId, 'bookmarkable_type' => 'Ulams\\Courses\\Models\\Course']));
 
                     return $items;
                 }),

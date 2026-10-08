@@ -1,27 +1,27 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Tests\Api;
+namespace Ulams\TemplatesPdf\Tests\Api;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Core\Models\User as CoreUser;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Events\CourseFinished;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\User;
-use EscolaLms\Courses\Tests\ProgressConfigurable;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
-use EscolaLms\Templates\Listeners\TemplateEventListener;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\TemplatesPdf\Core\PdfChannel;
-use EscolaLms\TemplatesPdf\Courses\UserFinishedCourseVariables;
-use EscolaLms\TemplatesPdf\Database\Seeders\TemplatesPdfSeeder;
-use EscolaLms\TemplatesPdf\Events\PdfCreated;
-use EscolaLms\TemplatesPdf\Models\FabricPDF;
-use EscolaLms\TemplatesPdf\Tests\TestCase;
+use Ulams\Categories\Models\Category;
+use Ulams\Core\Models\User as CoreUser;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Events\CourseFinished;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Models\User;
+use Ulams\Courses\Tests\ProgressConfigurable;
+use Ulams\Courses\ValueObjects\CourseProgressCollection;
+use Ulams\Templates\Listeners\TemplateEventListener;
+use Ulams\Templates\Models\Template;
+use Ulams\TemplatesPdf\Core\PdfChannel;
+use Ulams\TemplatesPdf\Courses\UserFinishedCourseVariables;
+use Ulams\TemplatesPdf\Database\Seeders\TemplatesPdfSeeder;
+use Ulams\TemplatesPdf\Events\PdfCreated;
+use Ulams\TemplatesPdf\Models\FabricPDF;
+use Ulams\TemplatesPdf\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Log\Events\MessageLogged;
@@ -41,10 +41,10 @@ class CoursesTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        if (!class_exists(\EscolaLms\Courses\EscolaLmsCourseServiceProvider::class)) {
+        if (!class_exists(\Ulams\Courses\UlamsCourseServiceProvider::class)) {
             $this->markTestSkipped('Courses package not installed');
         }
-        if (!class_exists(\EscolaLms\Scorm\EscolaLmsScormServiceProvider::class)) {
+        if (!class_exists(\Ulams\Scorm\UlamsScormServiceProvider::class)) {
             $this->markTestSkipped('Scorm package not installed');
         }
         $this->seed(TemplatesPdfSeeder::class);

@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Vouchers\Tests\Api;
+namespace Ulams\Vouchers\Tests\Api;
 
-use EscolaLms\Cart\Database\Seeders\CartPermissionSeeder;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Payments\Facades\PaymentGateway;
-use EscolaLms\Payments\Models\Payment;
-use EscolaLms\Vouchers\Database\Seeders\VoucherPermissionsSeeder;
-use EscolaLms\Vouchers\Models\Cart;
-use EscolaLms\Vouchers\Models\Category;
-use EscolaLms\Vouchers\Models\Coupon;
-use EscolaLms\Vouchers\Models\CouponCategory;
-use EscolaLms\Vouchers\Models\CouponProduct;
-use EscolaLms\Vouchers\Models\User;
-use EscolaLms\Vouchers\Tests\TestCase;
+use Ulams\Cart\Database\Seeders\CartPermissionSeeder;
+use Ulams\Cart\Models\Product;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Payments\Facades\PaymentGateway;
+use Ulams\Payments\Models\Payment;
+use Ulams\Vouchers\Database\Seeders\VoucherPermissionsSeeder;
+use Ulams\Vouchers\Models\Cart;
+use Ulams\Vouchers\Models\Category;
+use Ulams\Vouchers\Models\Coupon;
+use Ulams\Vouchers\Models\CouponCategory;
+use Ulams\Vouchers\Models\CouponProduct;
+use Ulams\Vouchers\Models\User;
+use Ulams\Vouchers\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Notification;

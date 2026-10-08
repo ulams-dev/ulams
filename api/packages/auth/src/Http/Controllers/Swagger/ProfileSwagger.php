@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers\Swagger;
+namespace Ulams\Auth\Http\Controllers\Swagger;
 
-use EscolaLms\Auth\Http\Requests\InitProfileDeletionRequest;
-use EscolaLms\Auth\Http\Requests\ProfileDeleteRequest;
-use EscolaLms\Auth\Http\Requests\ProfileUpdateAuthDataRequest;
-use EscolaLms\Auth\Http\Requests\ProfileUpdatePasswordRequest;
-use EscolaLms\Auth\Http\Requests\ProfileUpdateRequest;
-use EscolaLms\Auth\Http\Requests\UploadAvatarRequest;
-use EscolaLms\Auth\Http\Requests\MyProfileRequest;
-use EscolaLms\Auth\Http\Requests\UpdateInterests;
-use EscolaLms\Auth\Http\Requests\UserSettingsUpdateRequest;
+use Ulams\Auth\Http\Requests\InitProfileDeletionRequest;
+use Ulams\Auth\Http\Requests\ProfileDeleteRequest;
+use Ulams\Auth\Http\Requests\ProfileUpdateAuthDataRequest;
+use Ulams\Auth\Http\Requests\ProfileUpdatePasswordRequest;
+use Ulams\Auth\Http\Requests\ProfileUpdateRequest;
+use Ulams\Auth\Http\Requests\UploadAvatarRequest;
+use Ulams\Auth\Http\Requests\MyProfileRequest;
+use Ulams\Auth\Http\Requests\UpdateInterests;
+use Ulams\Auth\Http\Requests\UserSettingsUpdateRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -418,7 +418,7 @@ interface ProfileSwagger
      *          in="query",
      *          @OA\Schema(
      *              type="string",
-     *              example="https://escolalms.com/delete-account",
+     *              example="https://ulams.app/delete-account",
      *          ),
      *      ),
      *      @OA\Response(

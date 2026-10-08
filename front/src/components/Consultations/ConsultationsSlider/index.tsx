@@ -1,10 +1,10 @@
 import { Settings } from "react-slick";
 import { SectionConsultationsSlider } from "@/components/Consultations/ConsultationsSlider/styles";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { Col, Row } from "react-grid-system";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import ConsultationCard from "@/components/Consultations/ConsultationCard";
-import { Slider } from "@lms/components/components/atoms/Slider/Slider";
+import { Slider } from "@ulams/components/components/atoms/Slider/Slider";
 import { useState } from "react";
 
 interface ConsultationsSliderProps {
@@ -53,7 +53,7 @@ const ConsultationsSlider: React.FC<ConsultationsSliderProps> = (props) => {
 
   const filteredConsultations = consultations.filter((item) =>
     item.categories?.some(
-      (cat: EscolaLms.Categories.Models.Category) => cat.name === category
+      (cat: Ulams.Categories.Models.Category) => cat.name === category
     )
   );
 

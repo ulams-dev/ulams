@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Video;
+namespace Ulams\Video;
 
-use EscolaLms\Video\Models\Video;
-use EscolaLms\Video\Policies\VideoPolicy;
+use Ulams\Video\Models\Video;
+use Ulams\Video\Policies\VideoPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

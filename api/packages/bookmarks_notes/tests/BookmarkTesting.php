@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Tests;
+namespace Ulams\Bookmarks\Tests;
 
-use EscolaLms\Bookmarks\Models\Bookmark;
+use Ulams\Bookmarks\Models\Bookmark;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
 
@@ -22,7 +22,7 @@ trait BookmarkTesting
         $payload = [
             'value' => $this->faker->word,
             'bookmarkable_id' => $this->faker->randomNumber(),
-            'bookmarkable_type' => 'EscolaLms\\' . $type . '\\Models\\' . $type,
+            'bookmarkable_type' => 'Ulams\\' . $type . '\\Models\\' . $type,
         ];
 
         return array_merge($payload, $data);

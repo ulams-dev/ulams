@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Enums;
+namespace Ulams\Bookmarks\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class BookmarkPermissionEnum extends BasicEnum
 {

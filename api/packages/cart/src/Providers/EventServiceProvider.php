@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Providers;
+namespace Ulams\Cart\Providers;
 
-use EscolaLms\Cart\Listeners\PaymentSuccessListener;
-use EscolaLms\Payments\Events\PaymentSuccess;
+use Ulams\Cart\Listeners\PaymentSuccessListener;
+use Ulams\Payments\Events\PaymentSuccess;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider

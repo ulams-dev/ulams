@@ -1,4 +1,4 @@
-import { TopicType } from '@/services/escola-lms/enums';
+import { TopicType } from '@/services/ulams/enums';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
@@ -12,7 +12,7 @@ import {
   deleteSettings,
   settings,
   updateSettings,
-} from '@/services/escola-lms/settings';
+} from '@/services/ulams/settings';
 
 import { DeleteOutlined, EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import SettingsModalForm from './components/ModalForm';
@@ -193,7 +193,7 @@ const preInitialData: InitialDataRecords = {
     enumerable: true,
     sort: 0,
     type: 'image',
-    data: 'EscolaLMS',
+    data: 'Ulams',
   },
   frontURL: {
     id: -2,
@@ -204,7 +204,7 @@ const preInitialData: InitialDataRecords = {
     enumerable: true,
     sort: 0,
     type: 'text',
-    data: 'EscolaLMS',
+    data: 'Ulams',
   },
 
   maxLessonsNestingInProgram: {
@@ -235,23 +235,23 @@ const preInitialData: InitialDataRecords = {
     id: -6,
     key: 'companyName',
     group: 'global',
-    value: 'Wellms',
+    value: 'Ulams',
     public: true,
     enumerable: true,
     sort: 0,
     type: 'text',
-    data: 'Wellms',
+    data: 'Ulams',
   },
   companyURL: {
     id: -7,
     key: 'companyURL',
     group: 'global',
-    value: 'https://www.wellms.io/',
+    value: 'https://www.ulams.app/',
     public: true,
     enumerable: true,
     sort: 0,
     type: 'text',
-    data: 'https://www.wellms.io/',
+    data: 'https://www.ulams.app/',
   },
 
   logoLogin: {
@@ -263,7 +263,7 @@ const preInitialData: InitialDataRecords = {
     enumerable: true,
     sort: 0,
     type: 'image',
-    data: 'EscolaLMS',
+    data: 'Ulams',
   },
   logoFooter: {
     id: -9,
@@ -274,7 +274,7 @@ const preInitialData: InitialDataRecords = {
     enumerable: true,
     sort: 0,
     type: 'image',
-    data: 'EscolaLMS',
+    data: 'Ulams',
   },
   footerFontColor: {
     id: -10,
@@ -285,7 +285,7 @@ const preInitialData: InitialDataRecords = {
     enumerable: true,
     sort: 0,
     type: 'text',
-    data: 'EscolaLMS',
+    data: 'Ulams',
   },
   showLoginBackgroundImage: {
     id: -11,
@@ -296,7 +296,7 @@ const preInitialData: InitialDataRecords = {
     enumerable: true,
     sort: 0,
     type: 'boolean',
-    data: 'EscolaLMS',
+    data: 'Ulams',
   },
   loginHeaderBackgroundColor: {
     id: -12,
@@ -307,7 +307,7 @@ const preInitialData: InitialDataRecords = {
     enumerable: true,
     sort: 0,
     type: 'text',
-    data: 'EscolaLMS',
+    data: 'Ulams',
   },
   loginHeaderFontColor: {
     id: -13,
@@ -318,7 +318,7 @@ const preInitialData: InitialDataRecords = {
     enumerable: true,
     sort: 0,
     type: 'text',
-    data: 'EscolaLMS',
+    data: 'Ulams',
   },
   loginFormBackgroundColor: {
     id: -14,
@@ -329,7 +329,7 @@ const preInitialData: InitialDataRecords = {
     enumerable: true,
     sort: 0,
     type: 'text',
-    data: 'EscolaLMS',
+    data: 'Ulams',
   },
   contentBackgroundColor: {
     id: -15,
@@ -340,7 +340,7 @@ const preInitialData: InitialDataRecords = {
     enumerable: true,
     sort: 0,
     type: 'text',
-    data: 'EscolaLMS',
+    data: 'Ulams',
   },
   technicalMaintenance: {
     id: -16,
@@ -351,7 +351,7 @@ const preInitialData: InitialDataRecords = {
     enumerable: true,
     sort: 0,
     type: 'boolean',
-    data: 'EscolaLMS',
+    data: 'Ulams',
   },
   technicalMaintenanceText: {
     id: -17,
@@ -362,7 +362,7 @@ const preInitialData: InitialDataRecords = {
     enumerable: true,
     sort: 0,
     type: 'text',
-    data: 'EscolaLMS',
+    data: 'Ulams',
   },
   ...booleanSettings,
 };

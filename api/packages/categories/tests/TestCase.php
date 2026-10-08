@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Categories\Tests;
+namespace Ulams\Categories\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Categories\AuthServiceProvider;
-use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
-use EscolaLms\Core\Models\User;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Categories\AuthServiceProvider;
+use Ulams\Categories\UlamsCategoriesServiceProvider;
+use Ulams\Core\Models\User;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     protected function getPackageProviders($app)
     {
@@ -17,8 +17,8 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             ...parent::getPackageProviders($app),
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
-            EscolaLmsAuthServiceProvider::class,
-            EscolaLmsCategoriesServiceProvider::class,
+            UlamsAuthServiceProvider::class,
+            UlamsCategoriesServiceProvider::class,
             AuthServiceProvider::class,
         ];
     }

@@ -1,6 +1,6 @@
-import { Input } from "@lms/components/components/atoms/Input/Input";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { InvoiceData } from "@lms/sdk/types";
+import { Input } from "@ulams/components/components/atoms/Input/Input";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { InvoiceData } from "@ulams/sdk/types";
 import { Formik, FormikProps } from "formik";
 import { Col, Row } from "react-grid-system";
 import { useTranslation } from "react-i18next";

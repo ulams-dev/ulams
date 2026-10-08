@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Database\Seeders;
+namespace Ulams\TemplatesPdf\Database\Seeders;
 
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\TemplatesPdf\Enums\PdfPermissionsEnum;
+use Ulams\Core\Enums\UserRole;
+use Ulams\TemplatesPdf\Enums\PdfPermissionsEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

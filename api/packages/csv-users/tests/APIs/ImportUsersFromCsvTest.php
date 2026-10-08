@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Tests\APIs;
+namespace Ulams\CsvUsers\Tests\APIs;
 
-use EscolaLms\Auth\Models\Group;
-use EscolaLms\Auth\Models\User as AuthUser;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\CsvUsers\Enums\CsvUserPermissionsEnum;
-use EscolaLms\CsvUsers\Events\EscolaLmsImportedNewUserTemplateEvent;
-use EscolaLms\CsvUsers\Import\UsersImport;
-use EscolaLms\CsvUsers\Tests\Models\User;
-use EscolaLms\CsvUsers\Tests\TestCase;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Auth\Models\Group;
+use Ulams\Auth\Models\User as AuthUser;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\CsvUsers\Enums\CsvUserPermissionsEnum;
+use Ulams\CsvUsers\Events\UlamsImportedNewUserTemplateEvent;
+use Ulams\CsvUsers\Import\UsersImport;
+use Ulams\CsvUsers\Tests\Models\User;
+use Ulams\CsvUsers\Tests\TestCase;
+use Ulams\ModelFields\Enum\MetaFieldVisibilityEnum;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -174,8 +174,8 @@ class ImportUsersFromCsvTest extends TestCase
             return true;
         });
 
-        Event::assertDispatched(EscolaLmsImportedNewUserTemplateEvent::class,
-            function (EscolaLmsImportedNewUserTemplateEvent $event) use ($userToImport) {
+        Event::assertDispatched(UlamsImportedNewUserTemplateEvent::class,
+            function (UlamsImportedNewUserTemplateEvent $event) use ($userToImport) {
                 $eventUser = $event->getUser();
                 $this->assertEquals($userToImport['email'], $eventUser->email);
                 $this->assertTrue($eventUser->is_active);

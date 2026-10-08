@@ -2,7 +2,7 @@ import {
   assignQuestionnaire,
   questionnaire,
   unassignQuestionnaire,
-} from '@/services/escola-lms/questionnaire';
+} from '@/services/ulams/questionnaire';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import { Switch, message } from 'antd';

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Tasks\Models;
+namespace Ulams\Tasks\Models;
 
-use EscolaLms\Tasks\Database\Factories\TaskNoteFactory;
+use Ulams\Tasks\Database\Factories\TaskNoteFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +12,7 @@ use Illuminate\Support\Carbon;
  *
  * Class TaskNote
  *
- * @package EscolaLms\Tasks\Models
+ * @package Ulams\Tasks\Models
  *
  * @property int $id
  * @property string $note

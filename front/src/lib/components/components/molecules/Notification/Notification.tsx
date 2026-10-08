@@ -4,7 +4,7 @@ import format from "date-fns/format";
 import isToday from "date-fns/isToday";
 import { Icon, Text } from "../../../";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 export interface ComponentProps extends ExtendableStyledComponent {
   notification: NotificationProps;
@@ -88,7 +88,7 @@ export const Notification: React.FC<ComponentProps> = ({
 
   return (
     <StyledNotification
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
       unread={unread}
       modularView={modularView}
     >

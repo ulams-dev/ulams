@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Dtos;
+namespace Ulams\ConsultationAccess\Dtos;
 
-use EscolaLms\ConsultationAccess\Enum\EnquiryStatusEnum;
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\ConsultationAccess\Enum\EnquiryStatusEnum;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
 use Illuminate\Http\Request;
 
 class ConsultationAccessEnquiryDto implements DtoContract, InstantiateFromRequest

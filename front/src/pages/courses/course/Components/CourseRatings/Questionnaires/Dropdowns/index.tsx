@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
-import { Dropdown } from "@lms/components/components/molecules/Dropdown/Dropdown";
+import { Dropdown } from "@ulams/components/components/molecules/Dropdown/Dropdown";
 import { useCourseRatingContext } from "../../Provider";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { QuestionType } from "@/types/questionnaire";
 import { StyledStack } from "../../styles";
 

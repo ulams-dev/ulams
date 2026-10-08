@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Http\Controllers\Admin\Swagger;
+namespace Ulams\CourseAccess\Http\Controllers\Admin\Swagger;
 
-use EscolaLms\CourseAccess\Http\Requests\Admin\AdminApproveCourseAccessEnquiry;
-use EscolaLms\CourseAccess\Http\Requests\Admin\AdminDeleteCourseAccessEnquiryRequest;
-use EscolaLms\CourseAccess\Http\Requests\Admin\AdminListCourseAccessEnquiryRequest;
+use Ulams\CourseAccess\Http\Requests\Admin\AdminApproveCourseAccessEnquiry;
+use Ulams\CourseAccess\Http\Requests\Admin\AdminDeleteCourseAccessEnquiryRequest;
+use Ulams\CourseAccess\Http\Requests\Admin\AdminListCourseAccessEnquiryRequest;
 use Illuminate\Http\JsonResponse;
 
 interface CourseAccessEnquiryApiAdminSwagger

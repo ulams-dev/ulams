@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport;
+namespace Ulams\CoursesImportExport;
 
-use EscolaLms\CoursesImportExport\Models\Course;
-use EscolaLms\CoursesImportExport\Policies\CoursesExportPolicy;
+use Ulams\CoursesImportExport\Models\Course;
+use Ulams\CoursesImportExport\Policies\CoursesExportPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

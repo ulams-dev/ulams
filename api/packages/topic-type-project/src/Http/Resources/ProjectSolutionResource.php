@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Http\Resources;
+namespace Ulams\TopicTypeProject\Http\Resources;
 
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 

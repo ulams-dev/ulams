@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Permissions\Events;
+namespace Ulams\Permissions\Events;
 
 class PermissionRoleChanged extends Permission
 {

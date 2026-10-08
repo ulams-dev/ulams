@@ -8,8 +8,8 @@ import {
   useContext,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextPaginatedMetaState,
 } from "./types";
 import { defaultConfig } from "./defaults";
@@ -29,7 +29,7 @@ import { UserContext } from "./user";
 
 export const BookmarkNotesContext: React.Context<
   Pick<
-    EscolaLMSContextConfig,
+    UlamsContextConfig,
     | "bookmarkNotes"
     | "fetchBookmarkNotes"
     | "createBookmarkNote"
@@ -46,7 +46,7 @@ export const BookmarkNotesContext: React.Context<
 
 export interface BookmarkNotesContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "bookmarkNotes">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "bookmarkNotes">>;
   ssrHydration?: boolean;
 }
 

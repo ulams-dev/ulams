@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cart\Tests\Mocks;
+namespace Ulams\Cart\Tests\Mocks;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 

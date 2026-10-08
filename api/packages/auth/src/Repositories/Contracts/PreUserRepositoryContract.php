@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Repositories\Contracts;
+namespace Ulams\Auth\Repositories\Contracts;
 
-use EscolaLms\Auth\Models\PreUser;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Auth\Models\PreUser;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 
 interface PreUserRepositoryContract extends BaseRepositoryContract
 {

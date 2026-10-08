@@ -35,7 +35,7 @@ export interface ContextStateValue<T> {
   >;
 }
 
-export interface EscolaLMSContextReadConfig {
+export interface UlamsContextReadConfig {
   token?: string | null;
   courses: ContextPaginatedMetaState<API.CourseListItem>;
   challenges: ContextPaginatedMetaState<API.CompetencyChallenge>;
@@ -101,7 +101,7 @@ export interface EscolaLMSContextReadConfig {
   dictionariesWordsCategories: ContextListState<API.DictionariesWordsCategory>;
 }
 
-export interface EscolaLMSContextAPIConfig {
+export interface UlamsContextAPIConfig {
   apiUrl: string;
   getImagePrefix: () => string;
   getImageSvgPrefix: () => string;
@@ -427,9 +427,9 @@ export interface EscolaLMSContextAPIConfig {
     model: string,
     modelID: number,
     id: number,
-    body: Partial<EscolaLms.Questionnaire.Models.QuestionAnswer>
+    body: Partial<Ulams.Questionnaire.Models.QuestionAnswer>
   ) => Promise<
-    API.DefaultResponse<EscolaLms.Questionnaire.Models.QuestionAnswer>
+    API.DefaultResponse<Ulams.Questionnaire.Models.QuestionAnswer>
   >;
   fetchUserStationaryEvents: () => Promise<
     | void
@@ -478,7 +478,7 @@ export interface EscolaLMSContextAPIConfig {
   ) => Promise<API.DefaultResponse<API.ConsultationsAccessEnquiry>>;
 
   addTask: (
-    data: EscolaLms.Tasks.Http.Requests.CreateTaskRequest
+    data: Ulams.Tasks.Http.Requests.CreateTaskRequest
   ) => Promise<API.DefaultResponse<API.Task>>;
   deleteTask: (id: number) => Promise<API.DefaultResponse<API.Task>>;
   fetchAttendances: (
@@ -494,7 +494,7 @@ export interface EscolaLMSContextAPIConfig {
   ) => Promise<API.DefaultResponse<API.CompetencyChallenge>>;
   updateTask: (
     id: number,
-    data: EscolaLms.Tasks.Http.Requests.UpdateTaskRequest
+    data: Ulams.Tasks.Http.Requests.UpdateTaskRequest
   ) => Promise<API.DefaultResponse<API.Task>>;
   updateTaskStatus: (
     id: number,
@@ -583,7 +583,7 @@ export interface EscolaLMSContextAPIConfig {
     | API.DefaultMetaResponse<API.DictionariesWordsCategory>
   >;
 }
-export type EscolaLMSContextConfig = EscolaLMSContextReadConfig &
-  EscolaLMSContextAPIConfig;
+export type UlamsContextConfig = UlamsContextReadConfig &
+  UlamsContextAPIConfig;
 
 export type SortProgram = (lessons: API.Lesson[]) => API.Lesson[];

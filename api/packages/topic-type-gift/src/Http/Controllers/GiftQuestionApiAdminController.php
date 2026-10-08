@@ -1,25 +1,25 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Controllers;
+namespace Ulams\TopicTypeGift\Http\Controllers;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\TopicTypeGift\Export\QuestionExport;
-use EscolaLms\TopicTypeGift\Http\Controllers\Swagger\GiftQuestionApiAdminSwagger;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminCreateGiftQuestionRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminDeleteGiftQuestionRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminExportGiftQuestionsRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminImportGiftQuestionsRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminSortGiftQuestionRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminUpdateGiftQuestionRequest;
-use EscolaLms\TopicTypeGift\Http\Resources\AdminGiftQuestionResource;
-use EscolaLms\TopicTypeGift\Import\QuestionImport;
-use EscolaLms\TopicTypeGift\Services\Contracts\GiftQuestionServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\TopicTypeGift\Export\QuestionExport;
+use Ulams\TopicTypeGift\Http\Controllers\Swagger\GiftQuestionApiAdminSwagger;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminCreateGiftQuestionRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminDeleteGiftQuestionRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminExportGiftQuestionsRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminImportGiftQuestionsRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminSortGiftQuestionRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminUpdateGiftQuestionRequest;
+use Ulams\TopicTypeGift\Http\Resources\AdminGiftQuestionResource;
+use Ulams\TopicTypeGift\Import\QuestionImport;
+use Ulams\TopicTypeGift\Services\Contracts\GiftQuestionServiceContract;
 use Illuminate\Http\JsonResponse;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class GiftQuestionApiAdminController extends EscolaLmsBaseController implements GiftQuestionApiAdminSwagger
+class GiftQuestionApiAdminController extends UlamsBaseController implements GiftQuestionApiAdminSwagger
 {
     private GiftQuestionServiceContract $giftQuestionService;
 

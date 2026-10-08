@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Jobs;
+namespace Ulams\CoursesImportExport\Jobs;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\CoursesImportExport\Events\CloneCourseFailedEvent;
-use EscolaLms\CoursesImportExport\Events\CloneCourseFinishedEvent;
-use EscolaLms\CoursesImportExport\Events\CloneCourseStartedEvent;
-use EscolaLms\CoursesImportExport\Services\Contracts\ExportImportServiceContract;
+use Ulams\Courses\Models\Course;
+use Ulams\CoursesImportExport\Events\CloneCourseFailedEvent;
+use Ulams\CoursesImportExport\Events\CloneCourseFinishedEvent;
+use Ulams\CoursesImportExport\Events\CloneCourseStartedEvent;
+use Ulams\CoursesImportExport\Services\Contracts\ExportImportServiceContract;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Auth\Authenticatable;

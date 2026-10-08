@@ -1,10 +1,10 @@
 <?php
 
-use EscolaLms\Core\Migrations\EscolaMigration;
+use Ulams\Core\Migrations\UlamsMigration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateImageCachesTable extends EscolaMigration
+class CreateImageCachesTable extends UlamsMigration
 {
     public function up(): void
     {

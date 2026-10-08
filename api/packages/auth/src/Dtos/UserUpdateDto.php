@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Auth\Dtos;
+namespace Ulams\Auth\Dtos;
 use Illuminate\Http\Request;
 
 class UserUpdateDto extends ExtendableDto

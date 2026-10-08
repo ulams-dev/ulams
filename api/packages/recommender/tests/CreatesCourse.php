@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Recommender\Tests;
+namespace Ulams\Recommender\Tests;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypes\Models\TopicContent\AbstractTopicFileContent;
-use EscolaLms\TopicTypes\Models\TopicContent\Audio;
-use EscolaLms\TopicTypes\Models\TopicContent\H5P;
-use EscolaLms\TopicTypes\Models\TopicContent\Image;
-use EscolaLms\TopicTypes\Models\TopicContent\OEmbed;
-use EscolaLms\TopicTypes\Models\TopicContent\PDF;
-use EscolaLms\TopicTypes\Models\TopicContent\RichText;
-use EscolaLms\TopicTypes\Models\TopicContent\Video;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypes\Models\TopicContent\AbstractTopicFileContent;
+use Ulams\TopicTypes\Models\TopicContent\Audio;
+use Ulams\TopicTypes\Models\TopicContent\H5P;
+use Ulams\TopicTypes\Models\TopicContent\Image;
+use Ulams\TopicTypes\Models\TopicContent\OEmbed;
+use Ulams\TopicTypes\Models\TopicContent\PDF;
+use Ulams\TopicTypes\Models\TopicContent\RichText;
+use Ulams\TopicTypes\Models\TopicContent\Video;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;
 

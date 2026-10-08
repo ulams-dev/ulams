@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Requests;
+namespace Ulams\Courses\Http\Requests;
 
-use EscolaLms\Courses\Enum\ProgressStatus;
-use EscolaLms\Courses\Rules\ValidEnum;
+use Ulams\Courses\Enum\ProgressStatus;
+use Ulams\Courses\Rules\ValidEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CourseProgressAPIRequest extends FormRequest

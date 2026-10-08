@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Tasks\Events;
+namespace Ulams\Tasks\Events;
 
 class TaskCompleteUserConfirmationEvent extends TaskEvent
 {

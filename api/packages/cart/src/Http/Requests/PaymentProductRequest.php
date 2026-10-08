@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests;
+namespace Ulams\Cart\Http\Requests;
 
-use EscolaLms\Cart\Models\Product;
+use Ulams\Cart\Models\Product;
 
 class PaymentProductRequest extends PaymentRequest
 {

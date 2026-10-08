@@ -5,9 +5,9 @@ import { Button, Modal, ModalNote, Icon } from "../../../";
 import chroma from "chroma-js";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { getUniqueId } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { useState } from "react";
-import { BookmarkableType } from "@lms/sdk/types";
+import { BookmarkableType } from "@ulams/sdk/types";
 
 interface StyledAsideProps {
   mobile?: boolean;
@@ -205,7 +205,7 @@ export const CourseTopNav: React.FC<CourseTopNavProps> = (props) => {
       <StyledAside
         aria-label={getUniqueId("aside")}
         mobile={mobile}
-        className={`wellms-component ${className}`}
+        className={`ulams-component ${className}`}
       >
         {mobile && (
           <div className="course-nav-middle-btns">

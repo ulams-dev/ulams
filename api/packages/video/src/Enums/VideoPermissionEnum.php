@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Video\Enums;
+namespace Ulams\Video\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class VideoPermissionEnum extends BasicEnum
 {

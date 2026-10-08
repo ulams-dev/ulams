@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Courses\Repositories\Contracts;
+namespace Ulams\Courses\Repositories\Contracts;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\Courses\Models\CourseProgress;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\UserTopicTime;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Models\UserTopicTime;
+use Ulams\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 interface CourseProgressRepositoryContract extends BaseRepositoryContract

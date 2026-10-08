@@ -1,4 +1,4 @@
-import { course, program } from '@/services/escola-lms/course';
+import { course, program } from '@/services/ulams/course';
 import { TreeSelect } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import React, { useEffect, useState } from 'react';
@@ -6,23 +6,23 @@ import React, { useEffect, useState } from 'react';
 type TreeData = Omit<DefaultOptionType, 'label'>;
 
 export type RelatedValue =
-  | `EscolaLms\\Courses\\Course:${number}`
-  | `EscolaLms\\Courses\\Lesson:${number}`
-  | `EscolaLms\\Courses\\Topic:${number}`;
+  | `Ulams\\Courses\\Course:${number}`
+  | `Ulams\\Courses\\Lesson:${number}`
+  | `Ulams\\Courses\\Topic:${number}`;
 
 const traverse = (lessons: API.Lesson[]): TreeData[] => {
   return lessons.reduce(
     (acc, lesson) => [
       ...acc,
       {
-        value: `EscolaLms\\Courses\\Lesson:${lesson.id}`,
+        value: `Ulams\\Courses\\Lesson:${lesson.id}`,
         title: lesson.title,
         label: lesson.title,
         children: lesson.lessons ? traverse(lesson.lessons) : [],
       },
       ...(lesson.topics
         ? lesson.topics.map((topic) => ({
-            value: `EscolaLms\\Courses\\Topic:${topic.id}`,
+            value: `Ulams\\Courses\\Topic:${topic.id}`,
             title: `Unit: ${topic.title}`,
             label: topic.title,
           }))
@@ -58,7 +58,7 @@ export const Related: React.FC<{
         const tree = programs
           .filter((programRow) => programRow.success)
           .map((programRow) => ({
-            value: `EscolaLms\\Courses\\Course:${programRow.success && programRow.data.id}`,
+            value: `Ulams\\Courses\\Course:${programRow.success && programRow.data.id}`,
             title: programRow.success ? programRow.data.title : '',
             label: programRow.success ? programRow.data.title : '',
             children: programRow.success ? traverse(programRow.data.lessons) : undefined,

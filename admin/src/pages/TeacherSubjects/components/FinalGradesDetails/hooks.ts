@@ -1,14 +1,14 @@
 import { getFlatTopics } from '@/components/ProgramForm/Context';
-import { groupAttendanceSchedule } from '@/services/escola-lms/attendances';
-import { course, getCourseStats, program } from '@/services/escola-lms/course';
-import { getExams } from '@/services/escola-lms/exams';
+import { groupAttendanceSchedule } from '@/services/ulams/attendances';
+import { course, getCourseStats, program } from '@/services/ulams/course';
+import { getExams } from '@/services/ulams/exams';
 import {
   getGradeTerms,
   getSubjectGradeScales,
   getSubjectTutorGrades,
   getUserFinalGrades,
   removeFinalGrade,
-} from '@/services/escola-lms/grades';
+} from '@/services/ulams/grades';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import type { FetchedData, StudentExam } from './types';
@@ -258,16 +258,16 @@ export function useUserCoursesStats(group_id: number, user_id: number) {
     Promise.all(
       userCourses.data.map(({ id }) =>
         getCourseStats(Number(id), [
-          'EscolaLms\\Reports\\Stats\\Course\\FinishedTopics',
-          'EscolaLms\\Reports\\Stats\\Course\\AttendanceList',
+          'Ulams\\Reports\\Stats\\Course\\FinishedTopics',
+          'Ulams\\Reports\\Stats\\Course\\AttendanceList',
         ]).then((response) => {
           if (response.success) {
             const finishedTopics = (
-              response.data['EscolaLms\\Reports\\Stats\\Course\\FinishedTopics'] ?? []
+              response.data['Ulams\\Reports\\Stats\\Course\\FinishedTopics'] ?? []
             ).filter((userStat) => userStat.id === user_id);
 
             const attendanceList =
-              response.data['EscolaLms\\Reports\\Stats\\Course\\AttendanceList'] ?? [];
+              response.data['Ulams\\Reports\\Stats\\Course\\AttendanceList'] ?? [];
 
             setUserCoursesStats((prev) => ({
               ...prev,

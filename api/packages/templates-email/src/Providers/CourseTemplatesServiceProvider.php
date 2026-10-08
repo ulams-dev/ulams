@@ -1,27 +1,27 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Providers;
+namespace Ulams\TemplatesEmail\Providers;
 
-use EscolaLms\Courses\Events\CourseAccessFinished;
-use EscolaLms\Courses\Events\CourseAccessStarted;
-use EscolaLms\Courses\Events\CourseAssigned;
-use EscolaLms\Courses\Events\CourseDeadlineSoon;
-use EscolaLms\Courses\Events\CoursedPublished;
-use EscolaLms\Courses\Events\CourseFinished;
-use EscolaLms\Courses\Events\CourseStarted;
-use EscolaLms\Courses\Events\CourseUnassigned;
-use EscolaLms\Courses\Events\TopicFinished;
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
-use EscolaLms\TemplatesEmail\Courses\AccessFinishedCourseVariables;
-use EscolaLms\TemplatesEmail\Courses\AccessStartedCourseVariables;
-use EscolaLms\TemplatesEmail\Courses\DeadlineIncomingVariables;
-use EscolaLms\TemplatesEmail\Courses\PublishedCourseVariables;
-use EscolaLms\TemplatesEmail\Courses\StartedCourseVariables;
-use EscolaLms\TemplatesEmail\Courses\TopicFinishedCourseVariables;
-use EscolaLms\TemplatesEmail\Courses\UserAssignedToCourseVariables;
-use EscolaLms\TemplatesEmail\Courses\UserFinishedCourseVariables;
-use EscolaLms\TemplatesEmail\Courses\UserUnassignedFromCourseVariables;
+use Ulams\Courses\Events\CourseAccessFinished;
+use Ulams\Courses\Events\CourseAccessStarted;
+use Ulams\Courses\Events\CourseAssigned;
+use Ulams\Courses\Events\CourseDeadlineSoon;
+use Ulams\Courses\Events\CoursedPublished;
+use Ulams\Courses\Events\CourseFinished;
+use Ulams\Courses\Events\CourseStarted;
+use Ulams\Courses\Events\CourseUnassigned;
+use Ulams\Courses\Events\TopicFinished;
+use Ulams\Templates\Facades\Template;
+use Ulams\TemplatesEmail\Core\EmailChannel;
+use Ulams\TemplatesEmail\Courses\AccessFinishedCourseVariables;
+use Ulams\TemplatesEmail\Courses\AccessStartedCourseVariables;
+use Ulams\TemplatesEmail\Courses\DeadlineIncomingVariables;
+use Ulams\TemplatesEmail\Courses\PublishedCourseVariables;
+use Ulams\TemplatesEmail\Courses\StartedCourseVariables;
+use Ulams\TemplatesEmail\Courses\TopicFinishedCourseVariables;
+use Ulams\TemplatesEmail\Courses\UserAssignedToCourseVariables;
+use Ulams\TemplatesEmail\Courses\UserFinishedCourseVariables;
+use Ulams\TemplatesEmail\Courses\UserUnassignedFromCourseVariables;
 use Illuminate\Support\ServiceProvider;
 
 class CourseTemplatesServiceProvider extends ServiceProvider

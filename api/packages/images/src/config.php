@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\Images\Enum\ConstantEnum;
-use EscolaLms\Images\Enum\PackageStatusEnum;
+use Ulams\Images\Enum\ConstantEnum;
+use Ulams\Images\Enum\PackageStatusEnum;
 
 return [
     'private' => [

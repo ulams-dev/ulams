@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Core\Providers;
+namespace Ulams\Core\Providers;
 
 /**
  * @deprecated 1.1.0

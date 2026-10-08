@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Repositories;
+namespace Ulams\Dictionaries\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Core\Repositories\Criteria\Criterion;
-use EscolaLms\Dictionaries\Models\Category;
-use EscolaLms\Dictionaries\Repositories\Contracts\CategoryRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Core\Repositories\Criteria\Criterion;
+use Ulams\Dictionaries\Models\Category;
+use Ulams\Dictionaries\Repositories\Contracts\CategoryRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 

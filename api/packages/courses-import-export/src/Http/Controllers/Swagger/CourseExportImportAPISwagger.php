@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Http\Controllers\Swagger;
+namespace Ulams\CoursesImportExport\Http\Controllers\Swagger;
 
-use EscolaLms\CoursesImportExport\Http\Requests\CloneCourseAPIRequest;
-use EscolaLms\CoursesImportExport\Http\Requests\CourseImportAPIRequest;
-use EscolaLms\CoursesImportExport\Http\Requests\GetCourseExportAPIRequest;
+use Ulams\CoursesImportExport\Http\Requests\CloneCourseAPIRequest;
+use Ulams\CoursesImportExport\Http\Requests\CourseImportAPIRequest;
+use Ulams\CoursesImportExport\Http\Requests\GetCourseExportAPIRequest;
 use Illuminate\Http\JsonResponse;
 
 interface CourseExportImportAPISwagger

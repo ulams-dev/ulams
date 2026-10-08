@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses;
+namespace Ulams\Courses;
 
-use EscolaLms\Courses\Jobs\ActivateCourseJob;
-use EscolaLms\Courses\Jobs\CheckForDeadlines;
+use Ulams\Courses\Jobs\ActivateCourseJob;
+use Ulams\Courses\Jobs\CheckForDeadlines;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 

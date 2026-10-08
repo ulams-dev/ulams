@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Webinar\Strategies\Relations;
+namespace Ulams\Webinar\Strategies\Relations;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Webinar\Events\WebinarTrainerAssigned;
-use EscolaLms\Webinar\Events\WebinarTrainerUnassigned;
-use EscolaLms\Webinar\Strategies\Contracts\RelationStrategyContract;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Core\Models\User;
+use Ulams\Webinar\Events\WebinarTrainerAssigned;
+use Ulams\Webinar\Events\WebinarTrainerUnassigned;
+use Ulams\Webinar\Strategies\Contracts\RelationStrategyContract;
+use Ulams\Webinar\Models\Webinar;
 
 class WebinarWithTrainersStrategy implements RelationStrategyContract
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Tasks\Dtos;
+namespace Ulams\Tasks\Dtos;
 
 use Illuminate\Http\Request;
 

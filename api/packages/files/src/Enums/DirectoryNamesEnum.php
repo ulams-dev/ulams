@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Files\Enums;
+namespace Ulams\Files\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class DirectoryNamesEnum extends BasicEnum
 {

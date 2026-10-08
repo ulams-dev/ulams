@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Http\Requests\Admin;
+namespace Ulams\ConsultationAccess\Http\Requests\Admin;
 
-use EscolaLms\ConsultationAccess\Dtos\ApproveConsultationAccessEnquiryDto;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\ConsultationAccess\Dtos\ApproveConsultationAccessEnquiryDto;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

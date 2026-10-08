@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Permissions\Http\Controllers\PermissionsAdminApiController;
+use Ulams\Permissions\Http\Controllers\PermissionsAdminApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api/admin/roles', 'middleware' => ['auth:api']], function () {

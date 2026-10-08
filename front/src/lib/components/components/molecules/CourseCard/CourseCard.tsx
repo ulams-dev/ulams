@@ -13,7 +13,7 @@ import { Text } from "../../atoms/Typography/Text";
 import { Title } from "../../atoms/Typography/Title";
 import { Link } from "../../atoms/Link/Link";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 type ImageObject = {
   path?: string;
@@ -232,7 +232,7 @@ const StyledCourseCard = styled("div")<StyledCourseCardProps>`
     flex-direction: column;
   }
 
-  .escolalms-image {
+  .ulams-image {
     height: 100%;
   }
   &:hover {
@@ -403,7 +403,7 @@ export const CourseCard: React.FC<CourseCardProps> = (props) => {
 
   return (
     <StyledCourseCard
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
       hideImage={hideImage}
       mobile={mobile}
     >

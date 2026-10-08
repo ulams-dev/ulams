@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Recommender\Http\Controllers\Swagger;
+namespace Ulams\Recommender\Http\Controllers\Swagger;
 
-use EscolaLms\Recommender\Http\Requests\AggregatedFrameListRequest;
-use EscolaLms\Recommender\Http\Requests\AggregatedFrameRequest;
-use EscolaLms\Recommender\Http\Requests\CourseRecommendationRequest;
-use EscolaLms\Recommender\Http\Requests\MeetRecordingRequest;
-use EscolaLms\Recommender\Http\Requests\MeetRecordingScreen;
-use EscolaLms\Recommender\Http\Requests\TopicRecommendationRequest;
+use Ulams\Recommender\Http\Requests\AggregatedFrameListRequest;
+use Ulams\Recommender\Http\Requests\AggregatedFrameRequest;
+use Ulams\Recommender\Http\Requests\CourseRecommendationRequest;
+use Ulams\Recommender\Http\Requests\MeetRecordingRequest;
+use Ulams\Recommender\Http\Requests\MeetRecordingScreen;
+use Ulams\Recommender\Http\Requests\TopicRecommendationRequest;
 use Illuminate\Http\JsonResponse;
 
 interface RecommenderControllerSwagger

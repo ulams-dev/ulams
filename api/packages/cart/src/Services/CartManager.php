@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Cart\Services;
+namespace Ulams\Cart\Services;
 
-use EscolaLms\Cart\Models\Cart;
-use EscolaLms\Cart\Models\CartItem;
-use EscolaLms\Cart\Models\Contracts\Base\Buyable;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Services\Contracts\CartManagerContract;
+use Ulams\Cart\Models\Cart;
+use Ulams\Cart\Models\CartItem;
+use Ulams\Cart\Models\Contracts\Base\Buyable;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Services\Contracts\CartManagerContract;
 use Illuminate\Database\Eloquent\Model;
 use Treestoneit\ShoppingCart\CartManager as BaseCartManager;
 use Treestoneit\ShoppingCart\Models\Cart as BaseCart;

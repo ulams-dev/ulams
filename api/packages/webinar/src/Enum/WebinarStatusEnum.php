@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Webinar\Enum;
+namespace Ulams\Webinar\Enum;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class WebinarStatusEnum extends BasicEnum
 {

@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import Layout from "@/components/_App/Layout";
-import { ResetPasswordForm } from "@lms/components/components/organisms/ResetPasswordForm/ResetPasswordForm";
+import { ResetPasswordForm } from "@ulams/components/components/organisms/ResetPasswordForm/ResetPasswordForm";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
 import { Col, Row } from "react-grid-system";

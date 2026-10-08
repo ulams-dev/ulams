@@ -1,23 +1,23 @@
 <?php
 
-namespace EscolaLms\Jitsi\Tests;
+namespace Ulams\Jitsi\Tests;
 
 
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Jitsi\Enum\PackageStatusEnum;
-use EscolaLms\ModelFields\ModelFieldsServiceProvider;
-use EscolaLms\Core\EscolaLmsServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Jitsi\Enum\PackageStatusEnum;
+use Ulams\ModelFields\ModelFieldsServiceProvider;
+use Ulams\Core\UlamsServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-use EscolaLms\Jitsi\EscolaLmsJitsiServiceProvider;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
+use Ulams\Jitsi\UlamsJitsiServiceProvider;
+use Ulams\Settings\UlamsSettingsServiceProvider;
 
 use Laravel\Passport\Passport;
-use EscolaLms\Lrs\Tests\Models\Client;
-use EscolaLms\Auth\Models\User;
+use Ulams\Lrs\Tests\Models\Client;
+use Ulams\Auth\Models\User;
 
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
 
 // use GuzzleHttp\Client;
 
@@ -38,11 +38,11 @@ class TestCase extends CoreTestCase
 
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsJitsiServiceProvider::class,
-            EscolaLmsSettingsServiceProvider::class,
-            EscolaLmsAuthServiceProvider::class,
+            UlamsJitsiServiceProvider::class,
+            UlamsSettingsServiceProvider::class,
+            UlamsAuthServiceProvider::class,
             ModelFieldsServiceProvider::class,
-            EscolaLmsServiceProvider::class,
+            UlamsServiceProvider::class,
         ];
     }
 

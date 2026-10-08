@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\ModelFields\Tests;
+namespace Ulams\ModelFields\Tests;
 
 use Illuminate\Support\ServiceProvider;
 

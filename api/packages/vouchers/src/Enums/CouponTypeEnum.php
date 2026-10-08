@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Vouchers\Enums;
+namespace Ulams\Vouchers\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class CouponTypeEnum extends BasicEnum
 {

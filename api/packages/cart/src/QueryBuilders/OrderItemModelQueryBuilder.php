@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cart\QueryBuilders;
+namespace Ulams\Cart\QueryBuilders;
 
-use EscolaLms\Cart\Models\Product;
+use Ulams\Cart\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Policies;
+namespace Ulams\TemplatesPdf\Policies;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\TemplatesPdf\Enums\PdfPermissionsEnum;
-use EscolaLms\TemplatesPdf\Models\FabricPDF;
+use Ulams\Core\Models\User;
+use Ulams\TemplatesPdf\Enums\PdfPermissionsEnum;
+use Ulams\TemplatesPdf\Models\FabricPDF;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class TemplatePdfPolicy

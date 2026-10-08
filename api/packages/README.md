@@ -1,4 +1,4 @@
-# Vendored EscolaLMS packages
+# Vendored packages (imported from EscolaLMS)
 
 This directory holds the source of every former `escolalms/*` composer package the API
 used. They are now plain source directories owned by this repository and are no longer
@@ -9,7 +9,7 @@ directory here has a `composer.json`.
 
 Each `packages/<name>/` keeps the upstream package layout:
 
-- `src/`: runtime code. The namespace is unchanged, e.g. `EscolaLms\Courses\`.
+- `src/`: runtime code. Namespaces were renamed from `EscolaLms\` to `Ulams\` when the project became ulams, e.g. `Ulams\Courses\`.
 - `config/`, `database/` (migrations, seeders, factories, mocks), `resources/` (views,
   lang, js): loaded by each package's service provider through `__DIR__`-relative paths.
 - `tests/`: the package's PHPUnit tests. The root `phpunit.xml` runs them as one test
@@ -26,9 +26,9 @@ Files that only served standalone package development were not copied: `.git`, `
 - **Autoload**: the PSR-4 maps from each package's former `composer.json` are merged into
   `api/composer.json`.
   - Runtime namespaces (`<NS>\`, `<NS>\Database\Seeders\`, `<NS>\Database\Factories\` or
-    `Database\Factories\EscolaLms\<X>\Models\`) are in `autoload.psr-4`.
+    `Database\Factories\Ulams\<X>\Models\`) are in `autoload.psr-4`.
   - `<NS>\Tests\` maps are in `autoload-dev.psr-4`. The exceptions are
-    `EscolaLms\Courses\Tests\` and `EscolaLms\Webinar\Tests\`, which stay in `autoload`
+    `Ulams\Courses\Tests\` and `Ulams\Webinar\Tests\`, which stay in `autoload`
     because runtime code references them. For example, `Courses\Models\H5PUserProgress`
     uses `Courses\Tests\Models\User`.
   - The `App\Exceptions\` → `tests/Exceptions` dev maps of `cmi5`, `lrs` and `topic-types`
@@ -37,7 +37,7 @@ Files that only served standalone package development were not copied: `.git`, `
 - **Service providers and facades**: composer package discovery no longer sees these
   packages. Their providers are therefore listed explicitly in `config/app.php` under
   "Package Service Providers", in the order of the former discovery manifest. The two
-  facade aliases from `escolalms/payments` (`Payments` and `PaymentGateway`) are in
+  facade aliases from the payments package (`Payments` and `PaymentGateway`) are in
   `config/app.php` `aliases`. Third-party packages are still auto-discovered.
 - **Third-party dependencies**: the packages' `require` entries are merged into
   `api/composer.json` `require`. The `replace` block for `symfony/polyfill-php*` came from

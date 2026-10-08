@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Repositories\Criteria;
+namespace Ulams\Auth\Repositories\Criteria;
 
 use Carbon\Carbon;
-use EscolaLms\Auth\Events\Login;
-use EscolaLms\Core\Repositories\Criteria\Criterion;
+use Ulams\Auth\Events\Login;
+use Ulams\Core\Repositories\Criteria\Criterion;
 use Illuminate\Database\Eloquent\Builder;
 
 class LastLoginCriterion extends Criterion

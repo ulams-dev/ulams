@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Auth\Providers;
+namespace Ulams\Auth\Providers;
 
-use EscolaLms\Auth\Events\AccountDeleted;
-use EscolaLms\Auth\Events\AccountRegistered;
-use EscolaLms\Auth\Events\ForgotPassword;
-use EscolaLms\Auth\Listeners\CreatePasswordResetToken;
-use EscolaLms\Auth\Listeners\EmailAnonymisation;
-use EscolaLms\Auth\Listeners\RemoveUserSocialAccounts;
-use EscolaLms\Auth\Listeners\SendEmailVerificationNotification;
-use EscolaLms\Auth\Listeners\MaskUserData;
+use Ulams\Auth\Events\AccountDeleted;
+use Ulams\Auth\Events\AccountRegistered;
+use Ulams\Auth\Events\ForgotPassword;
+use Ulams\Auth\Listeners\CreatePasswordResetToken;
+use Ulams\Auth\Listeners\EmailAnonymisation;
+use Ulams\Auth\Listeners\RemoveUserSocialAccounts;
+use Ulams\Auth\Listeners\SendEmailVerificationNotification;
+use Ulams\Auth\Listeners\MaskUserData;
 
 class EventServiceProvider extends \Illuminate\Foundation\Support\Providers\EventServiceProvider
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Jitsi\Http\Requests;
+namespace Ulams\Jitsi\Http\Requests;
 
-use EscolaLms\Jitsi\Enum\JitsiEventsEnum;
+use Ulams\Jitsi\Enum\JitsiEventsEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

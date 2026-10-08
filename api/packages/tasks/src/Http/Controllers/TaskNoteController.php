@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Controllers;
+namespace Ulams\Tasks\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Tasks\Http\Controllers\Swagger\TaskNoteControllerSwagger;
-use EscolaLms\Tasks\Http\Requests\CreateTaskNoteRequest;
-use EscolaLms\Tasks\Http\Requests\DeleteTaskNoteRequest;
-use EscolaLms\Tasks\Http\Requests\UpdateTaskNoteRequest;
-use EscolaLms\Tasks\Http\Resources\TaskNoteResource;
-use EscolaLms\Tasks\Services\Contracts\TaskNoteServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Tasks\Http\Controllers\Swagger\TaskNoteControllerSwagger;
+use Ulams\Tasks\Http\Requests\CreateTaskNoteRequest;
+use Ulams\Tasks\Http\Requests\DeleteTaskNoteRequest;
+use Ulams\Tasks\Http\Requests\UpdateTaskNoteRequest;
+use Ulams\Tasks\Http\Resources\TaskNoteResource;
+use Ulams\Tasks\Services\Contracts\TaskNoteServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class TaskNoteController extends EscolaLmsBaseController implements TaskNoteControllerSwagger
+class TaskNoteController extends UlamsBaseController implements TaskNoteControllerSwagger
 {
     private TaskNoteServiceContract $taskNoteService;
 

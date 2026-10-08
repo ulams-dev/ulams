@@ -3,8 +3,8 @@
   "background_color": "#fff",
   "display": "standalone",
   "start_url": "/",
-  "name": "EscolaLMS",
-  "short_name": "EscolaLMS",
+  "name": "Ulams",
+  "short_name": "Ulams",
   "icons": [
     {
       "src": "../icons/icon-48.webp",

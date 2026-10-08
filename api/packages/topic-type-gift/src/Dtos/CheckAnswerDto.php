@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Dtos;
+namespace Ulams\TopicTypeGift\Dtos;
 
 class CheckAnswerDto
 {

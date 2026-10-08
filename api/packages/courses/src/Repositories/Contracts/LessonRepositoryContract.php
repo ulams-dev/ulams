@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Repositories\Contracts;
+namespace Ulams\Courses\Repositories\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\Courses\Models\Lesson;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Courses\Models\Lesson;
 use Illuminate\Database\Eloquent\Collection;
 
 interface LessonRepositoryContract extends BaseRepositoryContract

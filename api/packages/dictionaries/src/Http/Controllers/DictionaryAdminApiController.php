@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Http\Controllers;
+namespace Ulams\Dictionaries\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Dictionaries\Http\Controllers\Swagger\DictionaryAdminApiControllerSwagger;
-use EscolaLms\Dictionaries\Http\Requests\Dictionary\CreateDictionaryRequest;
-use EscolaLms\Dictionaries\Http\Requests\Dictionary\DeleteDictionaryRequest;
-use EscolaLms\Dictionaries\Http\Requests\Dictionary\ListDictionaryRequest;
-use EscolaLms\Dictionaries\Http\Requests\Dictionary\ReadDictionaryRequest;
-use EscolaLms\Dictionaries\Http\Requests\Dictionary\UpdateDictionaryRequest;
-use EscolaLms\Dictionaries\Http\Resources\DictionaryResource;
-use EscolaLms\Dictionaries\Services\Contracts\DictionaryServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Dictionaries\Http\Controllers\Swagger\DictionaryAdminApiControllerSwagger;
+use Ulams\Dictionaries\Http\Requests\Dictionary\CreateDictionaryRequest;
+use Ulams\Dictionaries\Http\Requests\Dictionary\DeleteDictionaryRequest;
+use Ulams\Dictionaries\Http\Requests\Dictionary\ListDictionaryRequest;
+use Ulams\Dictionaries\Http\Requests\Dictionary\ReadDictionaryRequest;
+use Ulams\Dictionaries\Http\Requests\Dictionary\UpdateDictionaryRequest;
+use Ulams\Dictionaries\Http\Resources\DictionaryResource;
+use Ulams\Dictionaries\Services\Contracts\DictionaryServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class DictionaryAdminApiController extends EscolaLmsBaseController implements DictionaryAdminApiControllerSwagger
+class DictionaryAdminApiController extends UlamsBaseController implements DictionaryAdminApiControllerSwagger
 {
     public function __construct(private readonly DictionaryServiceContract $dictionaryService)
     {

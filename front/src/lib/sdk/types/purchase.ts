@@ -2,7 +2,7 @@ import { Product } from "./cart";
 import { DefaultMetaResponse, DefaultResponseSuccess } from "./core";
 import { PaymentStatusType } from "./enums";
 
-export type OrderItems = EscolaLms.Cart.Models.CartItem & {
+export type OrderItems = Ulams.Cart.Models.CartItem & {
   name?: string;
   product?: Product;
 };
@@ -62,4 +62,4 @@ export type PaymentList = DefaultMetaResponse<Payment>;
 
 export type PaymentListItem = Payment;
 export type P24Response =
-  DefaultResponseSuccess<EscolaLms.Payments.Models.Payment>;
+  DefaultResponseSuccess<Ulams.Payments.Models.Payment>;

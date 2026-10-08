@@ -8,7 +8,7 @@ import { FormattedMessage, Link, useLocation } from 'umi';
 
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';
 import { DAY_FORMAT } from '@/consts/dates';
-import { deleteExam, getExams } from '@/services/escola-lms/exams';
+import { deleteExam, getExams } from '@/services/ulams/exams';
 import { useTeacherSubject } from '../context';
 import { ExamForm } from './ExamForm';
 import { ExamResults } from './ExamResults';

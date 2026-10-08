@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Services\Contracts;
+namespace Ulams\TopicTypeGift\Services\Contracts;
 
-use EscolaLms\TopicTypeGift\Dtos\AdminSortQuestionDto;
-use EscolaLms\TopicTypeGift\Dtos\GiftQuestionDto;
-use EscolaLms\TopicTypeGift\Exceptions\UnknownGiftTypeException;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Dtos\AdminSortQuestionDto;
+use Ulams\TopicTypeGift\Dtos\GiftQuestionDto;
+use Ulams\TopicTypeGift\Exceptions\UnknownGiftTypeException;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
 
 interface GiftQuestionServiceContract
 {

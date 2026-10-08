@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Helpers;
+namespace Ulams\HeadlessH5P\Helpers;
 
 use Illuminate\Support\Facades\Storage;
 

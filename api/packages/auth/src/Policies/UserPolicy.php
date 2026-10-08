@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Policies;
+namespace Ulams\Auth\Policies;
 
-use EscolaLms\Auth\Enums\AuthPermissionsEnum;
-use EscolaLms\Core\Models\User as CoreUser;
-use EscolaLms\Auth\Models\User as AuthUser;
+use Ulams\Auth\Enums\AuthPermissionsEnum;
+use Ulams\Core\Models\User as CoreUser;
+use Ulams\Auth\Models\User as AuthUser;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Foundation\Auth\User;
 

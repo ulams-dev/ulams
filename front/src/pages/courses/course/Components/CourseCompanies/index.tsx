@@ -1,16 +1,16 @@
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 
 import { useTranslation } from "react-i18next";
 
-import { ResponsiveImage } from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
+import { ResponsiveImage } from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
 
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { useContext } from "react";
 
 export const CourseCompanies = () => {
   const { t } = useTranslation();
 
-  const { settings } = useContext(EscolaLMSContext);
+  const { settings } = useContext(UlamsContext);
 
   return (
     <section className="course-companies">

@@ -7,9 +7,9 @@ import { useCheckRoles } from '@/hooks/useCheckRoles';
 import ConfigList from './ConfigList/index';
 
 export enum channelType {
-  email = 'EscolaLms\\TemplatesEmail\\Core\\EmailChannel',
-  pdf = 'EscolaLms\\TemplatesPdf\\Core\\PdfChannel',
-  sms = 'EscolaLms\\TemplatesSms\\Core\\SmsChannel',
+  email = 'Ulams\\TemplatesEmail\\Core\\EmailChannel',
+  pdf = 'Ulams\\TemplatesPdf\\Core\\PdfChannel',
+  sms = 'Ulams\\TemplatesSms\\Core\\SmsChannel',
 }
 
 const Templates: React.FC = () => {

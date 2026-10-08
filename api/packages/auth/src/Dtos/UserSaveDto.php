@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Dtos;
+namespace Ulams\Auth\Dtos;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Templates\Rules;
+namespace Ulams\Templates\Rules;
 
-use EscolaLms\Templates\Facades\Template as FacadesTemplate;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Services\Contracts\TemplateVariablesServiceContract;
+use Ulams\Templates\Facades\Template as FacadesTemplate;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Services\Contracts\TemplateVariablesServiceContract;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\Request;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Cmi5\Parsers;
+namespace Ulams\Cmi5\Parsers;
 
 use Illuminate\Support\Collection;
 

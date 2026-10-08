@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Api;
+namespace Ulams\Core\Tests\Api;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Core\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Core\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CoreControllerTest extends TestCase
@@ -21,7 +21,7 @@ class CoreControllerTest extends TestCase
 
         $response->assertJsonStructure([
             'data' => [
-                'escolalms/core'
+                'ulams/core'
             ],
         ]);
     }

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Dtos\Criteria;
+namespace Ulams\TopicTypeGift\Dtos\Criteria;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
 use Illuminate\Http\Request;
 
 class PageDto implements DtoContract, InstantiateFromRequest

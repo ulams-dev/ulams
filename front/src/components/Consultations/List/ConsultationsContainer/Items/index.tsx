@@ -1,5 +1,5 @@
 import { Col, Row } from "react-grid-system";
-import { Consultation, PaginatedMetaList } from "@lms/sdk/types";
+import { Consultation, PaginatedMetaList } from "@ulams/sdk/types";
 import ConsultationsContainerItem from "./Item";
 import Pagination from "@/components/Common/Pagination";
 import EntitySkeletonList from "@/components/Skeletons/EntityList";

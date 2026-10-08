@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\TemplatesPdf\Http\Controllers\FabricPdfController;
+use Ulams\TemplatesPdf\Http\Controllers\FabricPdfController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api/pdfs'], function () {

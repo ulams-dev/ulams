@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Database\Factories;
+namespace Ulams\BulkNotifications\Database\Factories;
 
-use EscolaLms\BulkNotifications\Models\BulkNotification;
-use EscolaLms\BulkNotifications\Models\BulkNotificationSection;
+use Ulams\BulkNotifications\Models\BulkNotification;
+use Ulams\BulkNotifications\Models\BulkNotificationSection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BulkNotificationSectionFactory extends Factory

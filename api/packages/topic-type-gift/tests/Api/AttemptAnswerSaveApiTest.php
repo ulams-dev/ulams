@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Tests\Api;
+namespace Ulams\TopicTypeGift\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder;
-use EscolaLms\TopicTypeGift\Enum\AnswerKeyEnum;
-use EscolaLms\TopicTypeGift\Enum\QuestionTypeEnum;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
-use EscolaLms\TopicTypeGift\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder;
+use Ulams\TopicTypeGift\Enum\AnswerKeyEnum;
+use Ulams\TopicTypeGift\Enum\QuestionTypeEnum;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
+use Ulams\TopicTypeGift\Tests\TestCase;
 
 class AttemptAnswerSaveApiTest extends TestCase
 {

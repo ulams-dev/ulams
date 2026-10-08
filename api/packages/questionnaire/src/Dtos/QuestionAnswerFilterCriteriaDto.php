@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Dtos;
+namespace Ulams\Questionnaire\Dtos;
 
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Questionnaire\Enums\QuestionnairePermissionsEnum;
-use EscolaLms\Questionnaire\Repository\Criteria\AuthoredModelsQuestionnaireCriterion;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Repositories\Criteria\Primitives\DateCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Questionnaire\Enums\QuestionnairePermissionsEnum;
+use Ulams\Questionnaire\Repository\Criteria\AuthoredModelsQuestionnaireCriterion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;

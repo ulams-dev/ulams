@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\Pages\Http\Controllers\PagesApiController;
-use EscolaLms\Pages\Http\Controllers\PagesAdminApiController;
+use Ulams\Pages\Http\Controllers\PagesApiController;
+use Ulams\Pages\Http\Controllers\PagesAdminApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api/admin/pages', 'middleware' => ['auth:api']], function () {

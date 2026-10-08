@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\StationaryEvents\Models\StationaryEvent;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\MySqlConnection;
 use Illuminate\Support\Facades\DB;

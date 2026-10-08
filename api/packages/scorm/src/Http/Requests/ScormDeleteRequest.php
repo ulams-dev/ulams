@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Scorm\Http\Requests;
+namespace Ulams\Scorm\Http\Requests;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Scorm\Enums\ScormPermissionsEnum;
+use Ulams\Core\Models\User;
+use Ulams\Scorm\Enums\ScormPermissionsEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Consultations\Database\Seeders;
+namespace Ulams\Consultations\Database\Seeders;
 
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Core\Models\User;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Seeder;
 
 class ConsultationTermsSeeder extends Seeder

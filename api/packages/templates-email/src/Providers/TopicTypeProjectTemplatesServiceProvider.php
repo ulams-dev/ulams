@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Providers;
+namespace Ulams\TemplatesEmail\Providers;
 
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
-use EscolaLms\TemplatesEmail\TopicTypeProject\ProjectSolutionCreatedVariables;
-use EscolaLms\TopicTypeProject\Events\ProjectSolutionCreatedEvent;
+use Ulams\Templates\Facades\Template;
+use Ulams\TemplatesEmail\Core\EmailChannel;
+use Ulams\TemplatesEmail\TopicTypeProject\ProjectSolutionCreatedVariables;
+use Ulams\TopicTypeProject\Events\ProjectSolutionCreatedEvent;
 use Illuminate\Support\ServiceProvider;
 
 class TopicTypeProjectTemplatesServiceProvider extends ServiceProvider

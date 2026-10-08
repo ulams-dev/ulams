@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Tests\Api;
+namespace Ulams\CourseAccess\Tests\Api;
 
-use EscolaLms\Auth\Models\Group;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Tests\Models\User;
-use EscolaLms\CourseAccess\Tests\TestCase;
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Events\CourseAccessStarted;
-use EscolaLms\Courses\Events\CourseFinished;
-use EscolaLms\CourseAccess\Http\Resources\UserGroupResource;
-use EscolaLms\CourseAccess\Models\Course;
+use Ulams\Auth\Models\Group;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Tests\Models\User;
+use Ulams\CourseAccess\Tests\TestCase;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Events\CourseAccessStarted;
+use Ulams\Courses\Events\CourseFinished;
+use Ulams\CourseAccess\Http\Resources\UserGroupResource;
+use Ulams\CourseAccess\Models\Course;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;

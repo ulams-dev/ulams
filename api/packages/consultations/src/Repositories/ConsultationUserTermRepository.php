@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Consultations\Repositories;
+namespace Ulams\Consultations\Repositories;
 
-use EscolaLms\Consultations\Dto\ConsultationUserResourceDto;
-use EscolaLms\Consultations\Dto\ConsultationUserTermResourceDto;
-use EscolaLms\Consultations\Dto\FilterConsultationTermsListDto;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Models\ConsultationUserTerm;
-use EscolaLms\Consultations\Repositories\Contracts\ConsultationUserTermRepositoryContract;
-use EscolaLms\Core\Repositories\BaseRepository;
+use Ulams\Consultations\Dto\ConsultationUserResourceDto;
+use Ulams\Consultations\Dto\ConsultationUserTermResourceDto;
+use Ulams\Consultations\Dto\FilterConsultationTermsListDto;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Models\ConsultationUserTerm;
+use Ulams\Consultations\Repositories\Contracts\ConsultationUserTermRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;

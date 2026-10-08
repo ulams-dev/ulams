@@ -4,12 +4,12 @@ import React, {
   useContext,
   useState,
 } from "react";
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { UlamsContext } from "@ulams/sdk/react";
 import styled, { css } from "styled-components";
 import { useTranslation } from "react-i18next";
 import { ResizeIcon } from "../../../../icons";
-import { ScormPreview } from "@lms/scorm-player";
+import { ScormPreview } from "@ulams/scorm-player";
 
 const StyledDiv = styled.div<{ fullview: boolean }>`
   > button {
@@ -61,7 +61,7 @@ interface ScormPlayerProps {
 const ScormPlayer: FunctionComponent<{
   value: ScormPlayerProps;
 }> = ({ value }): ReactElement => {
-  const { apiUrl } = useContext(EscolaLMSContext);
+  const { apiUrl } = useContext(UlamsContext);
   const { t } = useTranslation();
   const [fullView, setFullView] = useState(false);
 

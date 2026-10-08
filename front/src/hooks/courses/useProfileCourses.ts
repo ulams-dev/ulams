@@ -1,10 +1,10 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import { useHistory, useLocation } from "react-router-dom";
 import { useSearchParams } from "@/hooks/useSearchParams";
 import { CourseStatus } from "@/pages/user/MyProfile";
 import routeRoutes from "@/components/Routes/routes";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 
 type CoursesState = Array<
   API.Course & { progress?: number; courseData?: API.CourseProgressItem }
@@ -16,7 +16,7 @@ const useProfileCourses = (filter = CourseStatus.ALL) => {
     myAuthoredCourses,
     fetchPaginatedProgress,
     paginatedProgress,
-  } = useContext(EscolaLMSContext);
+  } = useContext(UlamsContext);
 
   const [coursesToMap, setCoursesToMap] = useState<CoursesState>([]);
   const history = useHistory();

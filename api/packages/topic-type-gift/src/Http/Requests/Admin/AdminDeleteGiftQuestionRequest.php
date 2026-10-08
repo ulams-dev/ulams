@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Requests\Admin;
+namespace Ulams\TopicTypeGift\Http\Requests\Admin;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypeGift\Enum\TopicTypeGiftPermissionEnum;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypeGift\Enum\TopicTypeGiftPermissionEnum;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

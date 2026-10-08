@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Files\Http\Requests;
+namespace Ulams\Files\Http\Requests;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Files\Enums\FilePermissionsEnum;
-use EscolaLms\Files\Tests\TestCase;
+use Ulams\Core\Models\User;
+use Ulams\Files\Enums\FilePermissionsEnum;
+use Ulams\Files\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 

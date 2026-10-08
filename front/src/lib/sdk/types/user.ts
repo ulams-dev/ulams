@@ -7,13 +7,13 @@ import {
 } from "./core";
 import { Subject } from "./educycle";
 
-export type User = EscolaLms.Auth.Models.User & {
+export type User = Ulams.Auth.Models.User & {
   url_avatar: string | null;
 };
 
 export type UserItem = Partial<
   Exclude<
-    EscolaLms.Auth.Models.User,
+    Ulams.Auth.Models.User,
     | "password"
     | "remember_token"
     | "password_reset_token"
@@ -35,7 +35,7 @@ export type UserItem = Partial<
   // path_avatar: string | null;
   bio?: string | null;
   categories?: Category[] | null;
-  interests?: Array<EscolaLms.Categories.Models.Category> | null | never[];
+  interests?: Array<Ulams.Categories.Models.Category> | null | never[];
 };
 
 export type UpdateUserDetails = {

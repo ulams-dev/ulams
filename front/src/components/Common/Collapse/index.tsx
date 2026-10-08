@@ -1,6 +1,6 @@
 import React, { ReactNode, useState } from "react";
 import styled from "styled-components";
-import { Checkbox } from "@lms/components/components/atoms/Option/Checkbox";
+import { Checkbox } from "@ulams/components/components/atoms/Option/Checkbox";
 
 type Props = {
   title: string;

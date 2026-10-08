@@ -3,8 +3,8 @@ import { Elements } from "@stripe/react-stripe-js";
 import { useTheme } from "styled-components";
 import { loadStripe } from "@stripe/stripe-js";
 import StripeContent from "@/components/Cart/CartContent/stripe";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { getFontFromTheme } from "@lms/components/theme/provider";
+import { UlamsContext } from "@ulams/sdk/react";
+import { getFontFromTheme } from "@ulams/components/theme/provider";
 import Przelewy24Content from "@/components/Cart/CartContent/p24";
 import styled from "styled-components";
 import usePayment from "@/hooks/usePayment";
@@ -29,11 +29,11 @@ type Props = {
 };
 
 const CartPage: React.FC<Props> = () => {
-  const { config } = useContext(EscolaLMSContext);
+  const { config } = useContext(UlamsContext);
   const stripePromise = (publishable_key: string) =>
     loadStripe(publishable_key);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const stripeConfigs: any = config?.value?.escolalms_payments?.drivers;
+  const stripeConfigs: any = config?.value?.ulams_payments?.drivers;
   const stripeKey = stripeConfigs?.stripe?.publishable_key;
   const theme = useTheme();
   const font = getFontFromTheme(theme);

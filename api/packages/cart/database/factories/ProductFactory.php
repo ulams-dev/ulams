@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cart\Database\Factories;
+namespace Ulams\Cart\Database\Factories;
 
-use EscolaLms\Cart\Enums\PeriodEnum;
-use EscolaLms\Cart\Enums\ProductType;
-use EscolaLms\Cart\Models\Product;
+use Ulams\Cart\Enums\PeriodEnum;
+use Ulams\Cart\Enums\ProductType;
+use Ulams\Cart\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProductFactory extends Factory

@@ -17,7 +17,7 @@ export const CourseCertificateForm: React.FC<{
     return currTemplates
       .map((tplId) => templates.find((tpl) => tpl.id === tplId))
       .filter((tpl) => tpl !== undefined)
-      .filter((tpl) => tpl && tpl.channel === 'EscolaLms\\TemplatesPdf\\Core\\PdfChannel');
+      .filter((tpl) => tpl && tpl.channel === 'Ulams\\TemplatesPdf\\Core\\PdfChannel');
   }, [templates, currTemplates]);
 
   return (
@@ -31,7 +31,7 @@ export const CourseCertificateForm: React.FC<{
         <Col span={12}>
           <CertificateSelector
             onTemplates={(responseTemplates) => setTemplates(responseTemplates)}
-            assignable_class="EscolaLms\Courses\Models\Course"
+            assignable_class="Ulams\Courses\Models\Course"
             assignable_id={Number(id)}
             multiple
             onChange={(values) => setCurrTemplates(values)}

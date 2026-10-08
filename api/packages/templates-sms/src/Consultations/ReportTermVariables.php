@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Consultations;
+namespace Ulams\TemplatesSms\Consultations;
 
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Templates\Events\EventWrapper;
 
 class ReportTermVariables extends CommonConsultationVariables
 {

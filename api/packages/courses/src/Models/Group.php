@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Models;
+namespace Ulams\Courses\Models;
 
-use EscolaLms\Auth\Models\Group as AuthGroup;
-use EscolaLms\Courses\Database\Factories\GroupFactory;
+use Ulams\Auth\Models\Group as AuthGroup;
+use Ulams\Courses\Database\Factories\GroupFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Group extends AuthGroup

@@ -1,16 +1,9 @@
 # Topic Types
 Extending package for courses
 
-[![codecov](https://codecov.io/gh/EscolaLMS/topic-types/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/topic-types)
-[![phpunit](https://github.com/EscolaLMS/topic-types/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/topic-types/actions/workflows/test.yml)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/topic-types)](https://packagist.org/packages/escolalms/topic-types)
-[![downloads](https://img.shields.io/packagist/v/escolalms/topic-types)](https://packagist.org/packages/escolalms/topic-types)
-[![downloads](https://img.shields.io/packagist/l/escolalms/topic-types)](https://packagist.org/packages/escolalms/topic-types)
-[![Maintainability](https://api.codeclimate.com/v1/badges/81e4d5f0e97c892bdda8/maintainability)](https://codeclimate.com/github/EscolaLMS/topic-types/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/81e4d5f0e97c892bdda8/test_coverage)](https://codeclimate.com/github/EscolaLMS/topic-types/test_coverage)
 
 ## What does it do
-This repository stores code for EscolaLMS Content Topic types. At the moment there are the following types:
+This repository stores code for Ulams Content Topic types. At the moment there are the following types:
 
 - **Audio**.
 - **H5P**. [Reusable Interactive HTML5 Content](https://h5p.org/)
@@ -34,15 +27,15 @@ See [Courses readme](https://github.com/EscolaLMS/Courses#adding-new-topicconten
 
 ## Tests
 
-Run `./vendor/bin/phpunit --filter 'EscolaLms\\TopicTypes\\Tests'` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
+Run `./vendor/bin/phpunit --filter 'Ulams\\TopicTypes\\Tests'` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
 
 
-Test details [![codecov](https://codecov.io/gh/EscolaLMS/topic-types/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/topic-types) [![phpunit](https://github.com/EscolaLMS/topic-types/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/topic-types/actions/workflows/test.yml)
+Test details [![codecov](https://codecov.io/gh/Ulams/topic-types/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/topic-types) [![phpunit](https://github.com/EscolaLMS/topic-types/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/topic-types/actions/workflows/test.yml)
 
 
 ## Events
 
-- `EscolaLms\TopicTypes\Events\TopicTypeChanged` => Event is dispatched when topic type value is changed.
+- `Ulams\TopicTypes\Events\TopicTypeChanged` => Event is dispatched when topic type value is changed.
 
 ### Admin panel
 

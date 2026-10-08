@@ -1,7 +1,7 @@
 import { differenceInSeconds } from 'date-fns';
 import type { JwtPayload } from 'jwt-decode';
 import { jwtDecode } from 'jwt-decode';
-import { refreshToken } from './escola-lms/auth';
+import { refreshToken } from './ulams/auth';
 
 const logout = () => {
   localStorage.removeItem('TOKEN');

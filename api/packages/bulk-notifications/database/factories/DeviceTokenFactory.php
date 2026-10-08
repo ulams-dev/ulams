@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Database\Factories;
+namespace Ulams\BulkNotifications\Database\Factories;
 
-use EscolaLms\BulkNotifications\Models\DeviceToken;
-use EscolaLms\Core\Models\User;
+use Ulams\BulkNotifications\Models\DeviceToken;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class DeviceTokenFactory extends Factory

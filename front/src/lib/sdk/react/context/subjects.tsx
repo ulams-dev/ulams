@@ -8,8 +8,8 @@ import React, {
   useContext,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextPaginatedMetaState,
 } from "./types";
 import { defaultConfig } from "./defaults";
@@ -22,7 +22,7 @@ import { subjects as getSubjects } from "./../../services/student/subjects";
 import { UserContext } from "./user";
 
 export const SubjectsContext: React.Context<
-  Pick<EscolaLMSContextConfig, "subjects" | "fetchSubjects">
+  Pick<UlamsContextConfig, "subjects" | "fetchSubjects">
 > = createContext({
   subjects: defaultConfig.subjects,
   fetchSubjects: defaultConfig.fetchSubjects,
@@ -30,7 +30,7 @@ export const SubjectsContext: React.Context<
 
 export interface SubjectsContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "subjects">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "subjects">>;
   ssrHydration?: boolean;
 }
 

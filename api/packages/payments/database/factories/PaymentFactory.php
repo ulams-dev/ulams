@@ -1,9 +1,9 @@
 <?php
 
-namespace Database\Factories\EscolaLms\Payments\Models;
+namespace Database\Factories\Ulams\Payments\Models;
 
-use EscolaLms\Payments\Facades\Payments;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Payments\Facades\Payments;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

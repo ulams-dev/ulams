@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Templates\Http\Controllers\Contracts;
+namespace Ulams\Templates\Http\Controllers\Contracts;
 
-use EscolaLms\Templates\Http\Requests\TemplateAssignedRequest;
-use EscolaLms\Templates\Http\Requests\TemplateAssignRequest;
-use EscolaLms\Templates\Http\Requests\TemplateCreateRequest;
-use EscolaLms\Templates\Http\Requests\TemplateDeleteRequest;
-use EscolaLms\Templates\Http\Requests\TemplateListAssignableRequest;
-use EscolaLms\Templates\Http\Requests\TemplateListingRequest;
-use EscolaLms\Templates\Http\Requests\TemplateReadRequest;
-use EscolaLms\Templates\Http\Requests\TemplateUpdateRequest;
+use Ulams\Templates\Http\Requests\TemplateAssignedRequest;
+use Ulams\Templates\Http\Requests\TemplateAssignRequest;
+use Ulams\Templates\Http\Requests\TemplateCreateRequest;
+use Ulams\Templates\Http\Requests\TemplateDeleteRequest;
+use Ulams\Templates\Http\Requests\TemplateListAssignableRequest;
+use Ulams\Templates\Http\Requests\TemplateListingRequest;
+use Ulams\Templates\Http\Requests\TemplateReadRequest;
+use Ulams\Templates\Http\Requests\TemplateUpdateRequest;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

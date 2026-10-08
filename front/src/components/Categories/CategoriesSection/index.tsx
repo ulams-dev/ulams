@@ -1,12 +1,12 @@
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { IconText } from "@lms/components/components/atoms/IconText/IconText";
-import { CategoryCard } from "@lms/components/components/molecules/CategoryCard/CategoryCard";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { IconText } from "@ulams/components/components/atoms/IconText/IconText";
+import { CategoryCard } from "@ulams/components/components/molecules/CategoryCard/CategoryCard";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { IconSquares } from "../../../icons";
 import { useHistory } from "react-router-dom";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 
 import Container from "../../Common/Container";
 import { Swiper, SwiperSlide } from "swiper/react";

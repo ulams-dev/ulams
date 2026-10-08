@@ -7,8 +7,8 @@ import React, {
   useRef,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextStateValue,
 } from "./types";
 import { defaultConfig } from "./defaults";
@@ -20,7 +20,7 @@ import { getWebinar } from "./../../services/webinars";
 import { UserContext } from "./user";
 
 export const WebinarContext: React.Context<
-  Pick<EscolaLMSContextConfig, "webinar" | "fetchWebinar">
+  Pick<UlamsContextConfig, "webinar" | "fetchWebinar">
 > = createContext({
   webinar: defaultConfig.webinar,
   fetchWebinar: defaultConfig.fetchWebinar,
@@ -28,7 +28,7 @@ export const WebinarContext: React.Context<
 
 export interface WebinarContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "webinar">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "webinar">>;
   ssrHydration?: boolean;
 }
 

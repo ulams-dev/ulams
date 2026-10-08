@@ -7,8 +7,8 @@ import React, {
   useEffect,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextListState,
   ContextPaginatedMetaState,
 } from "./types";
@@ -21,7 +21,7 @@ import { getDefaultData } from "./index";
 import { webinars as getWebinars } from "./../../services/webinars";
 
 export const WebinarsContext: React.Context<
-  Pick<EscolaLMSContextConfig, "webinars" | "fetchWebinars">
+  Pick<UlamsContextConfig, "webinars" | "fetchWebinars">
 > = createContext({
   webinars: defaultConfig.webinars,
   fetchWebinars: defaultConfig.fetchWebinars,
@@ -29,7 +29,7 @@ export const WebinarsContext: React.Context<
 
 export interface WebinarsContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "webinars">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "webinars">>;
   ssrHydration?: boolean;
 }
 

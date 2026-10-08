@@ -7,10 +7,10 @@ import { format } from 'date-fns';
 import React, { useCallback, useRef, useState } from 'react';
 import { FormattedMessage, Link, useIntl } from 'umi';
 
-import { deleteVoucher } from '@/services/escola-lms/vouchers';
+import { deleteVoucher } from '@/services/ulams/vouchers';
 
 import { DATETIME_FORMAT, DAY_FORMAT } from '@/consts/dates';
-import { vouchers } from '@/services/escola-lms/vouchers';
+import { vouchers } from '@/services/ulams/vouchers';
 import { createTableOrderObject, roundTo } from '@/utils/utils';
 
 export const TableColumns: ProColumns[] = [

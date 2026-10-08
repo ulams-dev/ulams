@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Categories\Repositories\Criteria;
+namespace Ulams\Categories\Repositories\Criteria;
 
-use EscolaLms\Categories\Services\Contracts\CategoryServiceContracts;
-use EscolaLms\Core\Repositories\Criteria\Criterion;
+use Ulams\Categories\Services\Contracts\CategoryServiceContracts;
+use Ulams\Core\Repositories\Criteria\Criterion;
 use Illuminate\Database\Eloquent\Builder;
 
 class InCategoriesOrChildrenCriterion extends Criterion

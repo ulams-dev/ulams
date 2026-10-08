@@ -1,15 +1,15 @@
 import { useContext } from "react";
 import { Container, Row, Col } from "react-grid-system";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { UlamsContext } from "@ulams/sdk/react";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { EventRelatedStyles } from "./EventRelatedEvents";
 import Slider from "@/components/Slider";
 import CourseCardWrapper from "@/components/Courses/CourseCardWrapper";
 import EventsContainerItem from "@/components/Events/List/EventsContainer/Items/Item";
 
 const EventRelatedEvents = () => {
-  const { stationaryEvents } = useContext(EscolaLMSContext);
+  const { stationaryEvents } = useContext(UlamsContext);
   const { t } = useTranslation();
   const data = stationaryEvents.list?.data;
 

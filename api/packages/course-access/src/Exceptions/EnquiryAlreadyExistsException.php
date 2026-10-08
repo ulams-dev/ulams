@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Exceptions;
+namespace Ulams\CourseAccess\Exceptions;
 
 use Symfony\Component\HttpFoundation\Response;
 use Exception;

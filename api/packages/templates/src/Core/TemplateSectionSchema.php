@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Templates\Core;
+namespace Ulams\Templates\Core;
 
 use ArrayAccess;
-use EscolaLms\Templates\Enums\TemplateSectionTypeEnum;
+use Ulams\Templates\Enums\TemplateSectionTypeEnum;
 
 class TemplateSectionSchema implements ArrayAccess
 {

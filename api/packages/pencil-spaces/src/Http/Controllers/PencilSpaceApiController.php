@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Http\Controllers;
+namespace Ulams\PencilSpaces\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\PencilSpaces\Facades\PencilSpace;
-use EscolaLms\PencilSpaces\Http\Requests\LoginPencilSpaceRequest;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\PencilSpaces\Facades\PencilSpace;
+use Ulams\PencilSpaces\Http\Requests\LoginPencilSpaceRequest;
 use Illuminate\Http\JsonResponse;
 
-class PencilSpaceApiController extends EscolaLmsBaseController
+class PencilSpaceApiController extends UlamsBaseController
 {
     public function login(LoginPencilSpaceRequest $request): JsonResponse
     {

@@ -8,7 +8,7 @@ Templates are defined in the *Templates* and *Email* tabs. From the template lis
 
 Each email template has a name, an event, and you can set the template to be the default.
 Sending an email is only possible for the default template.
-The list of events available for selection may vary depending on the installed *escolalms* packages. Each package emits its own events.
+The list of events available for selection may vary depending on the installed *ulams* packages. Each package emits its own events.
 
 ![Template form](https://github.com/EscolaLMS/Templates-Email/assets/59456825/30b51f09-4271-4911-a9aa-4fcf955cb330)
 

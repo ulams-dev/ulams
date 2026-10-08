@@ -5,7 +5,7 @@ import styled, { withTheme, ThemeContext } from "styled-components";
 import { getFontFromTheme } from "../../../theme/provider";
 import { contrast } from "chroma-js";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
@@ -64,7 +64,7 @@ export const Badge: React.FC<PropsWithChildren<BadgeProps>> = ({
       lightContrast={cts}
       color={color}
       {...props}
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
     >
       {children}
     </StyledDiv>

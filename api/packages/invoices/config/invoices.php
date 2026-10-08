@@ -80,7 +80,7 @@ return [
          * Default attributes for Seller::class
          */
         'attributes' => [
-            'name'          => 'Escola',
+            'name'          => 'Ulams',
             'address'       => 'Chłodna 22A, 00-891 Warszawa',
             'code'          => '41-1985581',
             'vat'           => '123456789',

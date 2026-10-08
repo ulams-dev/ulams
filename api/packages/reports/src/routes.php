@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\Reports\Http\Controllers\Admin\ReportsController;
-use EscolaLms\Reports\Http\Controllers\Admin\StatsController;
+use Ulams\Reports\Http\Controllers\Admin\ReportsController;
+use Ulams\Reports\Http\Controllers\Admin\StatsController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api'], function () {

@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Tests\Api;
+namespace Ulams\TopicTypeProject\Tests\Api;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypeProject\Database\Seeders\TopicTypeProjectPermissionSeeder;
-use EscolaLms\TopicTypeProject\Events\ProjectSolutionCreatedEvent;
-use EscolaLms\TopicTypeProject\Models\Project;
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
-use EscolaLms\TopicTypeProject\Tests\TestCase;
+use Ulams\Core\Models\User;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypeProject\Database\Seeders\TopicTypeProjectPermissionSeeder;
+use Ulams\TopicTypeProject\Events\ProjectSolutionCreatedEvent;
+use Ulams\TopicTypeProject\Models\Project;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
+use Ulams\TopicTypeProject\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;

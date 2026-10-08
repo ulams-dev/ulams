@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Consultations\Policies;
+namespace Ulams\Consultations\Policies;
 
-use EscolaLms\Consultations\Enum\ConsultationsPermissionsEnum;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Auth\Models\User;
+use Ulams\Consultations\Enum\ConsultationsPermissionsEnum;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Auth\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ConsultationPolicy

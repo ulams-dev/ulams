@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Notifications\Http\Requests;
+namespace Ulams\Notifications\Http\Requests;
 
-use EscolaLms\Notifications\Enums\NotificationsPermissionsEnum;
-use EscolaLms\Notifications\Models\User;
+use Ulams\Notifications\Enums\NotificationsPermissionsEnum;
+use Ulams\Notifications\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

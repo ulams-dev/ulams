@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Core\Dtos;
+namespace Ulams\Core\Dtos;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\DtoContract;
 use Illuminate\Support\Collection;
 
 class CriteriaDto implements DtoContract

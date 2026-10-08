@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Http\Requests;
+namespace Ulams\TopicTypeProject\Http\Requests;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypeProject\Dtos\CreateProjectSolutionDto;
-use EscolaLms\TopicTypeProject\Models\Project;
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypeProject\Dtos\CreateProjectSolutionDto;
+use Ulams\TopicTypeProject\Models\Project;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

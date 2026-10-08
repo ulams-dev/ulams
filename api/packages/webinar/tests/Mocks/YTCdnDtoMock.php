@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Webinar\Tests\Mocks;
+namespace Ulams\Webinar\Tests\Mocks;
 
-use EscolaLms\Youtube\Dto\Contracts\YTCdnDtoContract;
+use Ulams\Youtube\Dto\Contracts\YTCdnDtoContract;
 
 class YTCdnDtoMock extends MockTest implements YTCdnDtoContract
 {

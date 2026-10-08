@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Services;
+namespace Ulams\PencilSpaces\Services;
 
-use EscolaLms\PencilSpaces\Common\PencilSpacesRestClient;
-use EscolaLms\PencilSpaces\Common\RestClient;
-use EscolaLms\PencilSpaces\Enums\PencilSpacesRoleEnum;
-use EscolaLms\PencilSpaces\Models\PencilSpaceAccount;
-use EscolaLms\PencilSpaces\Models\User;
-use EscolaLms\PencilSpaces\Repositories\Contracts\UserRepositoryContract;
-use EscolaLms\PencilSpaces\Resource\CreatePencilSpaceResource;
-use EscolaLms\PencilSpaces\Services\Contracts\PencilSpacesServiceContract;
+use Ulams\PencilSpaces\Common\PencilSpacesRestClient;
+use Ulams\PencilSpaces\Common\RestClient;
+use Ulams\PencilSpaces\Enums\PencilSpacesRoleEnum;
+use Ulams\PencilSpaces\Models\PencilSpaceAccount;
+use Ulams\PencilSpaces\Models\User;
+use Ulams\PencilSpaces\Repositories\Contracts\UserRepositoryContract;
+use Ulams\PencilSpaces\Resource\CreatePencilSpaceResource;
+use Ulams\PencilSpaces\Services\Contracts\PencilSpacesServiceContract;
 use Exception;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Collection;

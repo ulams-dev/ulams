@@ -3,9 +3,9 @@ import ContentLoader from "@/components/_App/ContentLoader";
 import { useCertificateDownload } from "@/hooks/useDownloadCertificate";
 import { IconCertificate } from "@/icons/index";
 import { toast } from "@/utils/toast";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { Certificate } from "@lms/sdk/types/educycle";
-import { CertificateAssignableTypes } from "@lms/sdk/types/enums";
+import { UlamsContext } from "@ulams/sdk/react";
+import { Certificate } from "@ulams/sdk/types/educycle";
+import { CertificateAssignableTypes } from "@ulams/sdk/types/enums";
 import { useCallback, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -14,7 +14,7 @@ type Props = {
 };
 
 const GetCertificate: React.FC<Props> = ({ courseId }) => {
-  const { fetchCertificates } = useContext(EscolaLMSContext);
+  const { fetchCertificates } = useContext(UlamsContext);
   const { downloadCertificate, loadingId } = useCertificateDownload();
   const { t } = useTranslation();
   const [noCertificates, setNoCertificates] = useState(false);

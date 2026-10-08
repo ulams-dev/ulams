@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Recommender\Http\Requests;
+namespace Ulams\Recommender\Http\Requests;
 
-use EscolaLms\Recommender\Models\Lesson;
+use Ulams\Recommender\Models\Lesson;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

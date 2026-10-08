@@ -1,6 +1,6 @@
 import * as API from "../../types";
 
-import { EscolaLMSContextConfig } from "./types";
+import { UlamsContextConfig } from "./types";
 
 export const blackList: API.IEvent[] = [
   "http://adlnet.gov/expapi/verbs/attended",
@@ -24,7 +24,7 @@ export const guessTheAnswer: API.IEventException = "GuessTheAnswer";
 export const questionSet: API.IEventException = "QuestionSet";
 
 /** TODO this should be divide into each file and just imported here and merged into one object   */
-export const defaultReadConfig: EscolaLMSContextConfig = {
+export const defaultReadConfig: UlamsContextConfig = {
   apiUrl: "",
 
   getImagePrefix: () => "",
@@ -297,7 +297,7 @@ export const defaultReadConfig: EscolaLMSContextConfig = {
     model: string,
     modelID: number,
     id: number,
-    body: Partial<EscolaLms.Questionnaire.Models.QuestionAnswer>
+    body: Partial<Ulams.Questionnaire.Models.QuestionAnswer>
   ) => Promise.reject(),
   fetchUserStationaryEvents: () => Promise.reject(),
   userStationaryEvents: {
@@ -359,11 +359,11 @@ export const defaultReadConfig: EscolaLMSContextConfig = {
   fetchChallenge: (id: number) => Promise.reject(),
   fetchAttendances: (groupId: number) => Promise.reject(),
   deleteTask: (id: number) => Promise.reject(),
-  addTask: (data: EscolaLms.Tasks.Http.Requests.CreateTaskRequest) =>
+  addTask: (data: Ulams.Tasks.Http.Requests.CreateTaskRequest) =>
     Promise.reject(),
   updateTask: (
     id: number,
-    data: EscolaLms.Tasks.Http.Requests.UpdateTaskRequest
+    data: Ulams.Tasks.Http.Requests.UpdateTaskRequest
   ) => Promise.reject(),
   updateTaskStatus: (id: number, done: boolean) => Promise.reject(id),
   createTaskNote: (id: number, note: string) => Promise.reject(id),
@@ -385,11 +385,11 @@ export const defaultReadConfig: EscolaLMSContextConfig = {
   },
   fetchBookmarkNotes: (filter?: API.BookmarkNoteParams) => Promise.reject(),
   createBookmarkNote: (
-    body: EscolaLms.Bookmarks.Http.Requests.CreateBookmarkRequest
+    body: Ulams.Bookmarks.Http.Requests.CreateBookmarkRequest
   ) => Promise.reject(),
   updateBookmarkNote: (
     id: number,
-    body: EscolaLms.Bookmarks.Http.Requests.UpdateBookmarkRequest
+    body: Ulams.Bookmarks.Http.Requests.UpdateBookmarkRequest
   ) => Promise.reject(id),
   deleteBookmarkNote: (id: number) => Promise.reject(id),
 
@@ -430,7 +430,7 @@ export const defaultReadConfig: EscolaLMSContextConfig = {
   fetchDictionariesWordsCategories: () => Promise.reject(),
 };
 
-export const defaultApiConfig: EscolaLMSContextConfig = {
+export const defaultApiConfig: UlamsContextConfig = {
   apiUrl: "",
   myCourses: {
     loading: false,
@@ -477,7 +477,7 @@ export const defaultApiConfig: EscolaLMSContextConfig = {
   config: {
     loading: false,
     value: {
-      escola_auth: {
+      ulams_auth: {
         additional_fields: [],
         additional_fields_required: [],
       },
@@ -710,7 +710,7 @@ export const defaultApiConfig: EscolaLMSContextConfig = {
     model: string,
     modelID: number,
     id: number,
-    body: Partial<EscolaLms.Questionnaire.Models.QuestionAnswer>
+    body: Partial<Ulams.Questionnaire.Models.QuestionAnswer>
   ) => Promise.reject(),
   fetchQuestionnaireStars: (
     modelTypeTitle: string,
@@ -773,11 +773,11 @@ export const defaultApiConfig: EscolaLMSContextConfig = {
   fetchChallenge: (id: number) => Promise.reject(id),
   fetchAttendances: (groupId: number) => Promise.reject(groupId),
   deleteTask: (id: number) => Promise.reject(),
-  addTask: (data: EscolaLms.Tasks.Http.Requests.CreateTaskRequest) =>
+  addTask: (data: Ulams.Tasks.Http.Requests.CreateTaskRequest) =>
     Promise.reject(),
   updateTask: (
     id: number,
-    data: EscolaLms.Tasks.Http.Requests.UpdateTaskRequest
+    data: Ulams.Tasks.Http.Requests.UpdateTaskRequest
   ) => Promise.reject(id),
   updateTaskStatus: (id: number, done: boolean) => Promise.reject(id),
   createTaskNote: (id: number, note: string) => Promise.reject(id),
@@ -799,11 +799,11 @@ export const defaultApiConfig: EscolaLMSContextConfig = {
   },
   fetchBookmarkNotes: (filter?: API.BookmarkNoteParams) => Promise.reject(),
   createBookmarkNote: (
-    body: EscolaLms.Bookmarks.Http.Requests.CreateBookmarkRequest
+    body: Ulams.Bookmarks.Http.Requests.CreateBookmarkRequest
   ) => Promise.reject(),
   updateBookmarkNote: (
     id: number,
-    body: EscolaLms.Bookmarks.Http.Requests.UpdateBookmarkRequest
+    body: Ulams.Bookmarks.Http.Requests.UpdateBookmarkRequest
   ) => Promise.reject(id),
   deleteBookmarkNote: (id: number) => Promise.reject(id),
   subjects: {

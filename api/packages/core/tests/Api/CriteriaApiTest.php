@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Api;
+namespace Ulams\Core\Tests\Api;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Enums\StatusEnum;
-use EscolaLms\Core\Tests\Mocks\ExampleEntity\ExampleEntity;
-use EscolaLms\Core\Tests\Mocks\ExampleEntity\TestCase;
+use Ulams\Core\Enums\StatusEnum;
+use Ulams\Core\Tests\Mocks\ExampleEntity\ExampleEntity;
+use Ulams\Core\Tests\Mocks\ExampleEntity\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 

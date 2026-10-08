@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Repositories;
+namespace Ulams\HeadlessH5P\Repositories;
 
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PLibraryLanguageRepositoryContract;
+use Ulams\HeadlessH5P\Repositories\Contracts\H5PLibraryLanguageRepositoryContract;
 use H5peditorFile;
 use H5peditorStorage;
-use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
-use EscolaLms\HeadlessH5P\Models\H5PContent;
-use EscolaLms\HeadlessH5P\Models\H5PTempFile;
-use EscolaLms\HeadlessH5P\Helpers\Helpers;
+use Ulams\HeadlessH5P\Models\H5PLibrary;
+use Ulams\HeadlessH5P\Models\H5PLibraryLanguage;
+use Ulams\HeadlessH5P\Models\H5PContent;
+use Ulams\HeadlessH5P\Models\H5PTempFile;
+use Ulams\HeadlessH5P\Helpers\Helpers;
 use Illuminate\Support\Facades\Storage;
 
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Cart;
+namespace Ulams\Reports\Stats\Cart;
 
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Core\Models\User;
+use Ulams\Cart\Models\Order;
+use Ulams\Core\Models\User;
 use Illuminate\Support\Carbon;
 
 class NewCustomers extends AbstractCartStat

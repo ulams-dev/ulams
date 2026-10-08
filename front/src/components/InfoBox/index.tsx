@@ -1,4 +1,4 @@
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import styled from "styled-components";
 
 const InfoBoxStyles = styled.div`

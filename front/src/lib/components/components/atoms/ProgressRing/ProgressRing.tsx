@@ -1,6 +1,6 @@
 import styled, { withTheme } from "styled-components";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import type { ExtendableStyledComponent } from "@lms/components/types/component";
+import type { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 const StyledSvg = styled("svg")`
   .progress_ring__top {
@@ -38,7 +38,7 @@ const ProgressRing: React.FC<ProgressRingType> = ({
 
   return (
     <StyledSvg
-      className={`wellms-component progress-ring ${className}`}
+      className={`ulams-component progress-ring ${className}`}
       width={size}
       height={size}
       viewBox={viewBox}

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Tasks\Dtos;
+namespace Ulams\Tasks\Dtos;
 
 use Illuminate\Support\Carbon;
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
 use Illuminate\Http\Request;
 
 class UpdateTaskDto extends CreateTaskDto implements DtoContract, InstantiateFromRequest

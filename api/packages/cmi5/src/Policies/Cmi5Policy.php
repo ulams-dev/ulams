@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cmi5\Policies;
+namespace Ulams\Cmi5\Policies;
 
-use EscolaLms\Cmi5\Enums\Cmi5PermissionEnum;
-use EscolaLms\Cmi5\Models\Cmi5;
-use EscolaLms\Core\Models\User;
+use Ulams\Cmi5\Enums\Cmi5PermissionEnum;
+use Ulams\Cmi5\Models\Cmi5;
+use Ulams\Core\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class Cmi5Policy

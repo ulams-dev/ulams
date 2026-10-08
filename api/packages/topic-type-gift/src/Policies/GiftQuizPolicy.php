@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Policies;
+namespace Ulams\TopicTypeGift\Policies;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\TopicTypeGift\Enum\TopicTypeGiftPermissionEnum;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
+use Ulams\Auth\Models\User;
+use Ulams\TopicTypeGift\Enum\TopicTypeGiftPermissionEnum;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Carbon;
 

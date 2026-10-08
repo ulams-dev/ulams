@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers\Admin;
+namespace Ulams\Auth\Http\Controllers\Admin;
 
-use EscolaLms\Auth\Dtos\UserUpdateInterestsDto;
-use EscolaLms\Auth\Http\Controllers\Admin\Swagger\UserInterestsSwagger;
-use EscolaLms\Auth\Http\Requests\Admin\UserInterestAddRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserInterestDeleteRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserInterestsListRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserInterestsUpdateRequest;
-use EscolaLms\Auth\Http\Resources\UserInterestCollection;
+use Ulams\Auth\Dtos\UserUpdateInterestsDto;
+use Ulams\Auth\Http\Controllers\Admin\Swagger\UserInterestsSwagger;
+use Ulams\Auth\Http\Requests\Admin\UserInterestAddRequest;
+use Ulams\Auth\Http\Requests\Admin\UserInterestDeleteRequest;
+use Ulams\Auth\Http\Requests\Admin\UserInterestsListRequest;
+use Ulams\Auth\Http\Requests\Admin\UserInterestsUpdateRequest;
+use Ulams\Auth\Http\Resources\UserInterestCollection;
 use Illuminate\Http\JsonResponse;
-use EscolaLms\Auth\Models\User;
+use Ulams\Auth\Models\User;
 use Illuminate\Http\Request;
 
 class UserInterestsController extends AbstractUserController implements UserInterestsSwagger

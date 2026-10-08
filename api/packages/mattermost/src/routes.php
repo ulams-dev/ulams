@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use EscolaLms\Mattermost\Http\Controllers\MattermostController;
+use Ulams\Mattermost\Http\Controllers\MattermostController;
 
 Route::group(['prefix' => 'api/mattermost', 'middleware' => ['auth:api']], function () {
     Route::get('/me', [MattermostController::class, 'me']);

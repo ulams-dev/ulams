@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Services;
+namespace Ulams\Dictionaries\Services;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Dictionaries\Dtos\DictionaryWordCriteriaDto;
-use EscolaLms\Dictionaries\Dtos\DictionaryWordDto;
-use EscolaLms\Dictionaries\Dtos\PageDto;
-use EscolaLms\Dictionaries\Models\DictionaryUser;
-use EscolaLms\Dictionaries\Models\DictionaryWord;
-use EscolaLms\Dictionaries\Repositories\Contracts\CategoryRepositoryContract;
-use EscolaLms\Dictionaries\Repositories\Contracts\DictionaryWordRepositoryContract;
-use EscolaLms\Dictionaries\Services\Contracts\DictionaryWordServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Dictionaries\Dtos\DictionaryWordCriteriaDto;
+use Ulams\Dictionaries\Dtos\DictionaryWordDto;
+use Ulams\Dictionaries\Dtos\PageDto;
+use Ulams\Dictionaries\Models\DictionaryUser;
+use Ulams\Dictionaries\Models\DictionaryWord;
+use Ulams\Dictionaries\Repositories\Contracts\CategoryRepositoryContract;
+use Ulams\Dictionaries\Repositories\Contracts\DictionaryWordRepositoryContract;
+use Ulams\Dictionaries\Services\Contracts\DictionaryWordServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;

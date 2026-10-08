@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Youtube\Services;
+namespace Ulams\Youtube\Services;
 
 use Carbon\Carbon;
-use EscolaLms\Youtube\Services\Contracts\AuthenticateServiceContract;
+use Ulams\Youtube\Services\Contracts\AuthenticateServiceContract;
 use Google\Service\YouTube\ChannelListResponse;
 use Google_Service_YouTube_LiveBroadcast;
 use Google_Service_YouTube_LiveBroadcastSnippet;

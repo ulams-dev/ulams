@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Repository\Contracts;
+namespace Ulams\Questionnaire\Repository\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\Questionnaire\Models\Questionnaire;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Questionnaire\Models\Questionnaire;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface QuestionnaireRepositoryContract extends BaseRepositoryContract

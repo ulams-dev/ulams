@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Requests\Admin;
+namespace Ulams\Tasks\Http\Requests\Admin;
 
-use EscolaLms\Tasks\Http\Requests\UpdateTaskNoteRequest;
+use Ulams\Tasks\Http\Requests\UpdateTaskNoteRequest;
 use Illuminate\Support\Facades\Gate;
 
 class AdminUpdateTaskNoteRequest extends UpdateTaskNoteRequest

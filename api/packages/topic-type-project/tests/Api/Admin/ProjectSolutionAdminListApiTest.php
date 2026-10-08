@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Tests\Api\Admin;
+namespace Ulams\TopicTypeProject\Tests\Api\Admin;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\TopicTypeProject\Database\Seeders\TopicTypeProjectPermissionSeeder;
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
-use EscolaLms\TopicTypeProject\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\TopicTypeProject\Database\Seeders\TopicTypeProjectPermissionSeeder;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
+use Ulams\TopicTypeProject\Tests\TestCase;
 
 class ProjectSolutionAdminListApiTest extends TestCase
 {

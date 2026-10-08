@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'umi';
 
-import { getCompetencyChallenge } from '@/services/escola-lms/competency-challenges';
-import { configs as getConfig } from '@/services/escola-lms/settings';
+import { getCompetencyChallenge } from '@/services/ulams/competency-challenges';
+import { configs as getConfig } from '@/services/ulams/settings';
 
 interface CategoryDepths {
   role: number;
@@ -71,13 +71,13 @@ export const CompetencyChallengeContextProvider: React.FC<React.PropsWithChildre
       if (!res.success) return;
 
       const scale = Number(
-        (res.data?.escolalms_competency_challenge as any)?.category?.scale?.depth?.value,
+        (res.data?.ulams_competency_challenge as any)?.category?.scale?.depth?.value,
       );
       const question = Number(
-        (res.data?.escolalms_competency_challenge as any)?.category?.question?.depth?.value,
+        (res.data?.ulams_competency_challenge as any)?.category?.question?.depth?.value,
       );
       const role = Number(
-        (res.data?.escolalms_competency_challenge as any)?.category?.role?.depth?.value,
+        (res.data?.ulams_competency_challenge as any)?.category?.role?.depth?.value,
       );
 
       setCategoryDepths({

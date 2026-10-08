@@ -10,11 +10,11 @@ import { useTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
 import { Col, Row } from "react-grid-system";
 import { ConsultationStatus } from "../../../pages/user/my-consultations";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { UlamsContext } from "@ulams/sdk/react/context";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import ConsultationTutorCard from "@/components/Consultations/ConsultationTutorCard";
 import { CourseCardSkeleton } from "@/components/Skeletons/CourseCard";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { API_URL } from "@/config/index";
 interface ProfileTutorConsultationsProps {
   type: ConsultationStatus;
@@ -24,7 +24,7 @@ const ProfileTutorConsultations = ({
   type,
 }: ProfileTutorConsultationsProps) => {
   const { tutorConsultations, fetchTutorConsultations, token } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
   const { t } = useTranslation();
   const [consultationsData, setConsultationsData] = useState<
     API.AppointmentTerm[]

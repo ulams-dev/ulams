@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Drivers;
+namespace Ulams\TemplatesSms\Drivers;
 
 use Illuminate\Support\Facades\Mail;
 use Tzsk\Sms\Contracts\Driver;

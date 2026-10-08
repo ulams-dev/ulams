@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Tasks\Tests\Feature;
+namespace Ulams\Tasks\Tests\Feature;
 
-use EscolaLms\Tasks\Events\TaskOverdueEvent;
-use EscolaLms\Tasks\Jobs\OverdueTaskJob;
-use EscolaLms\Tasks\Models\Task;
-use EscolaLms\Tasks\Tests\TestCase;
+use Ulams\Tasks\Events\TaskOverdueEvent;
+use Ulams\Tasks\Jobs\OverdueTaskJob;
+use Ulams\Tasks\Models\Task;
+use Ulams\Tasks\Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;

@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Auth\Services\Contracts;
+namespace Ulams\Auth\Services\Contracts;
 
-use EscolaLms\Auth\Models\User as AuthUser;
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Dtos\OrderDto;
+use Ulams\Auth\Models\User as AuthUser;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Dtos\OrderDto;
 use Illuminate\Contracts\Auth\Authenticatable as User;
-use EscolaLms\Auth\Dtos\UserSaveDto;
-use EscolaLms\Auth\Dtos\UserUpdateDto;
-use EscolaLms\Auth\Dtos\UserUpdateKeysDto;
-use EscolaLms\Auth\Dtos\UserUpdateSettingsDto;
-use EscolaLms\Core\Dtos\PaginationDto;
+use Ulams\Auth\Dtos\UserSaveDto;
+use Ulams\Auth\Dtos\UserUpdateDto;
+use Ulams\Auth\Dtos\UserUpdateKeysDto;
+use Ulams\Auth\Dtos\UserUpdateSettingsDto;
+use Ulams\Core\Dtos\PaginationDto;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Policies;
+namespace Ulams\Questionnaire\Policies;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Questionnaire\Enums\QuestionnairePermissionsEnum;
-use EscolaLms\Questionnaire\Models\Questionnaire;
+use Ulams\Core\Models\User;
+use Ulams\Questionnaire\Enums\QuestionnairePermissionsEnum;
+use Ulams\Questionnaire\Models\Questionnaire;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class QuestionnairePolicy

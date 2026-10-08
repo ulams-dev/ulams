@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
 
 import { Table } from '@/components/GiftQuizQuestions/table';
-import { getGiftQuiz, updateGiftQuiz } from '@/services/escola-lms/gift_quiz';
+import { getGiftQuiz, updateGiftQuiz } from '@/services/ulams/gift_quiz';
 import { useCompetencyChallengeContext } from '../context';
 import { ExportQuizQuestionsByCategoryModal } from './ExportQuizQuestionsByCategoryModal';
 

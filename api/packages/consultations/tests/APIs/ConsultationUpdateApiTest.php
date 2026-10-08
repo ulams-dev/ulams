@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Consultations\Tests\APIs;
+namespace Ulams\Consultations\Tests\APIs;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
-use EscolaLms\Consultations\Enum\ConstantEnum;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Tests\TestCase;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Categories\Models\Category;
+use Ulams\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
+use Ulams\Consultations\Enum\ConstantEnum;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Consultations\Tests\Models\User;
+use Ulams\Consultations\Tests\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\Fluent\AssertableJson;

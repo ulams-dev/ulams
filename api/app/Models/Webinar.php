@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Cart\Contracts\ProductableTrait;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Webinar\Events\WebinarUserAssigned;
-use EscolaLms\Webinar\Events\WebinarUserUnassigned;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Cart\Contracts\ProductableTrait;
+use Ulams\Cart\Models\Product;
+use Ulams\Core\Models\User;
+use Ulams\Webinar\Events\WebinarUserAssigned;
+use Ulams\Webinar\Events\WebinarUserUnassigned;
 use Illuminate\Database\Eloquent\Collection;
 
-class Webinar extends \EscolaLms\Webinar\Models\Webinar implements Productable
+class Webinar extends \Ulams\Webinar\Models\Webinar implements Productable
 {
     use ProductableTrait;
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Tests\Api;
+namespace Ulams\TopicTypeProject\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\TopicTypeProject\Models\Project;
-use EscolaLms\TopicTypeProject\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\TopicTypeProject\Models\Project;
+use Ulams\TopicTypeProject\Tests\TestCase;
 
 class TopicTypeProjectCreateApiTest extends TestCase
 {

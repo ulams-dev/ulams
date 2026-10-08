@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Consultations\Tests\APIs;
+namespace Ulams\Consultations\Tests\APIs;
 
-use EscolaLms\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Tests\TestCase;
-use EscolaLms\Jitsi\Services\Contracts\JitsiServiceContract;
+use Ulams\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Tests\TestCase;
+use Ulams\Jitsi\Services\Contracts\JitsiServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -58,7 +58,7 @@ class ConsultationGenerateJitsiTest extends TestCase
         $returnData = [
             'data' =>
                 [
-                    'domain' => 'meet-stage.escolalms.com',
+                    'domain' => 'meet-stage.ulams.app',
                     'roomName' => lcfirst(Str::studly($this->consultationUserPivot->consultation->name)),
                     'configOverwrite' => [],
                     'interfaceConfigOverwrite' => [],
@@ -68,7 +68,7 @@ class ConsultationGenerateJitsiTest extends TestCase
                     ],
                     'jwt' => 'test',
                 ],
-            "domain" => "meet-stage.escolalms.com",
+            "domain" => "meet-stage.ulams.app",
             "url" => "test",
         ];
         $jitsiService = $this->mock(JitsiServiceContract::class);

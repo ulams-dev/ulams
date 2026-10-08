@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Jitsi\Services\Contracts;
+namespace Ulams\Jitsi\Services\Contracts;
 
-use EscolaLms\Jitsi\Dto\RecordedVideoDto;
+use Ulams\Jitsi\Dto\RecordedVideoDto;
 
 interface JitsiVideoServiceContract
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Http\Requests;
+namespace Ulams\TemplatesPdf\Http\Requests;
 
-use EscolaLms\TemplatesPdf\Models\FabricPDF;
+use Ulams\TemplatesPdf\Models\FabricPDF;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PdfListingAdminRequest extends FormRequest

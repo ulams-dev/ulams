@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EscolaLms\Core\Repositories\Criteria;
+namespace Ulams\Core\Repositories\Criteria;
 
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Permission\Models\Role;

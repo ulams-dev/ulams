@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Templates\Services\Contracts;
+namespace Ulams\Templates\Services\Contracts;
 
-use EscolaLms\Templates\Models\Template;
+use Ulams\Templates\Models\Template;
 
 interface EventServiceContract
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Templates\Tests\Mock;
+namespace Ulams\Templates\Tests\Mock;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Contracts\TemplateChannelContract;
-use EscolaLms\Templates\Core\AbstractTemplateChannelClass;
-use EscolaLms\Templates\Core\TemplateSectionSchema;
-use EscolaLms\Templates\Enums\TemplateSectionTypeEnum;
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Contracts\TemplateChannelContract;
+use Ulams\Templates\Core\AbstractTemplateChannelClass;
+use Ulams\Templates\Core\TemplateSectionSchema;
+use Ulams\Templates\Enums\TemplateSectionTypeEnum;
+use Ulams\Templates\Events\EventWrapper;
 use Illuminate\Database\Eloquent\Collection;
 
 class TestChannel extends AbstractTemplateChannelClass implements TemplateChannelContract

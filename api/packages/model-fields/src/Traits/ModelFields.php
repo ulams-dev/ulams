@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\ModelFields\Traits;
+namespace Ulams\ModelFields\Traits;
 
-use EscolaLms\ModelFields\Models\Field;
+use Ulams\ModelFields\Models\Field;
 use Illuminate\Support\Collection;
-use EscolaLms\ModelFields\Enum\MetaFieldTypeEnum;
-use EscolaLms\ModelFields\Facades\ModelFields as ModelFieldsFacade;
+use Ulams\ModelFields\Enum\MetaFieldTypeEnum;
+use Ulams\ModelFields\Facades\ModelFields as ModelFieldsFacade;
 use Illuminate\Support\Facades\Cache;
-use  EscolaLms\ModelFields\Services\ModelFieldsService;
+use  Ulams\ModelFields\Services\ModelFieldsService;
 
 trait ModelFields
 {

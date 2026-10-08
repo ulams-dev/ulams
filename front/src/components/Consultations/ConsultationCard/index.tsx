@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { NewCourseCard } from "@lms/components";
-import { API } from "@lms/sdk";
+import { NewCourseCard } from "@ulams/components";
+import { API } from "@ulams/sdk";
 import BookTermModal from "@/components/Book/BookTermModal";
 import ConsultationCardButtons from "./Buttons";
 import { Link, useHistory } from "react-router-dom";
 import ConsultationCardContent from "./Content";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import ConsultationCardImage from "./Image";
 import CategoriesBreadCrumbs from "@/components/Categories/CategoriesBreadCrumbs";
 import { useTranslation } from "react-i18next";

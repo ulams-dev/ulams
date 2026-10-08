@@ -1,18 +1,12 @@
 # Assign-Without-Account
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/AssignWithoutAccount/)
-[![codecov](https://codecov.io/gh/EscolaLMS/Assign-Without-Account/branch/main/graph/badge.svg?token=O91FHNKI6R)](https://codecov.io/gh/EscolaLMS/Assign-Without-Account)
-[![Tests PHPUnit in environments](https://github.com/EscolaLMS/Assign-Without-Account/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Assign-Without-Account/actions/workflows/test.yml)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/assign-without-account)](https://packagist.org/packages/escolalms/assign-without-account)
-[![downloads](https://img.shields.io/packagist/v/escolalms/assign-without-account)](https://packagist.org/packages/escolalms/assign-without-account)
-[![downloads](https://img.shields.io/packagist/l/escolalms/assign-without-account)](https://packagist.org/packages/escolalms/assign-without-account)
 
 ## What does it do
 The package is used to assign users without an account.
 
 ## Installing
-- `composer require escolalms/assing-without-account`
+- `composer require ulams/assing-without-account`
 - `php artisan migrate`
-- `php artisan db:seed --class="EscolaLms\AssignWithoutAccount\Database\Seeders\AssignWitoutAccountPermissionSeeder"`
+- `php artisan db:seed --class="Ulams\AssignWithoutAccount\Database\Seeders\AssignWitoutAccountPermissionSeeder"`
 
 ## Requirements
 You need to define email templates in the `Templates` package for `AssignToProduct` and `AssignToProductable` events.
@@ -23,7 +17,7 @@ You need to define email templates in the `Templates` package for `AssignToProdu
 | id | email | status | created\_at | updated\_at | morphable\_type | morphable\_id |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | 1 | test@email.com | sent | 2022-04-15 07:36:12 | 2022-04-15 07:36:12 | App\\Models\\Course | 1 |
-| 2 | test@email.com | accepted | 2022-04-15 07:36:30 | 2022-04-15 07:36:30 | EscolaLms\\Cart\\Models\\Product | 2 |
+| 2 | test@email.com | accepted | 2022-04-15 07:36:30 | 2022-04-15 07:36:30 | Ulams\\Cart\\Models\\Product | 2 |
 
 ## Example
 1. Create user submission like this:
@@ -34,7 +28,7 @@ POST /api/admin/user-submissions
 {
     "email": "test@email.com",
     "morphable_id": 2,
-    "morphable_type": "EscolaLms\\Cart\\Models\\Product"
+    "morphable_type": "Ulams\\Cart\\Models\\Product"
 }
 ```
 2. Create a new account.
@@ -43,13 +37,11 @@ POST /api/admin/user-submissions
 
 ## Endpoints
 All the endpoints are defined in swagger
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/AssignWithoutAccount/)
 
 ## Tests
 Run `./vendor/bin/phpunit` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
 
 Test details 
-[![codecov](https://codecov.io/gh/EscolaLMS/Assign-Without-Account/branch/main/graph/badge.svg?token=O91FHNKI6R)](https://codecov.io/gh/EscolaLMS/Assign-Without-Account)
 ![Tests PHPUnit in environments](https://github.com/EscolaLMS/Assign-Without-Account/actions/workflows/test.yml/badge.svg)
 
 ## Events

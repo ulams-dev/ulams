@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Payments\Entities;
+namespace Ulams\Payments\Entities;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Payments\Enums\Currency;
-use EscolaLms\Payments\Enums\PaymentStatus;
-use EscolaLms\Payments\Events\PaymentCancelled;
-use EscolaLms\Payments\Events\PaymentFailed;
-use EscolaLms\Payments\Events\PaymentSuccess;
-use EscolaLms\Payments\Facades\PaymentGateway;
-use EscolaLms\Payments\Facades\Payments;
-use EscolaLms\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Core\Models\User;
+use Ulams\Payments\Enums\Currency;
+use Ulams\Payments\Enums\PaymentStatus;
+use Ulams\Payments\Events\PaymentCancelled;
+use Ulams\Payments\Events\PaymentFailed;
+use Ulams\Payments\Events\PaymentSuccess;
+use Ulams\Payments\Facades\PaymentGateway;
+use Ulams\Payments\Facades\Payments;
+use Ulams\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Http\Request;
 use Omnipay\Common\Message\RedirectResponseInterface;
 use Ramsey\Uuid\Nonstandard\Uuid;

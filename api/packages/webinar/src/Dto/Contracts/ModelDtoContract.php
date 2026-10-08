@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Webinar\Dto\Contracts;
+namespace Ulams\Webinar\Dto\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 

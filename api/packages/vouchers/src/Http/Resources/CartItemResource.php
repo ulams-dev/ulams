@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Vouchers\Http\Resources;
+namespace Ulams\Vouchers\Http\Resources;
 
-use EscolaLms\Cart\Http\Resources\CartItemResource as BaseCartItemResource;
-use EscolaLms\Cart\Models\CartItem as BaseCartItem;
-use EscolaLms\Vouchers\Models\CartItem;
+use Ulams\Cart\Http\Resources\CartItemResource as BaseCartItemResource;
+use Ulams\Cart\Models\CartItem as BaseCartItem;
+use Ulams\Vouchers\Models\CartItem;
 
 class CartItemResource extends BaseCartItemResource
 {

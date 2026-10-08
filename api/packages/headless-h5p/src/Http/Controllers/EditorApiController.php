@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Http\Controllers;
+namespace Ulams\HeadlessH5P\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\EditorApiSwagger;
-use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use Ulams\HeadlessH5P\Http\Controllers\Swagger\EditorApiSwagger;
+use Ulams\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 use Exception;
 
-class EditorApiController extends EscolaLmsBaseController implements EditorApiSwagger
+class EditorApiController extends UlamsBaseController implements EditorApiSwagger
 {
     private HeadlessH5PServiceContract $hh5pService;
 

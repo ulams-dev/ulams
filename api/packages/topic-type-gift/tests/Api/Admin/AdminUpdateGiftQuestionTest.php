@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Tests\Api\Admin;
+namespace Ulams\TopicTypeGift\Tests\Api\Admin;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Tests\Api\GiftQuestionTestCase;
+use Ulams\Categories\Models\Category;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Tests\Api\GiftQuestionTestCase;
 
 class AdminUpdateGiftQuestionTest extends GiftQuestionTestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Images\Events;
+namespace Ulams\Images\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;

@@ -1,24 +1,24 @@
 <?php
 
-namespace EscolaLms\Reports\Tests;
+namespace Ulams\Reports\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Cart\EscolaLmsCartServiceProvider;
-use EscolaLms\Cart\Facades\Shop;
-use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
-use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
-use EscolaLms\HeadlessH5P\HeadlessH5PServiceProvider;
-use EscolaLms\Payments\Providers\PaymentsServiceProvider;
-use EscolaLms\Questionnaire\EscolaLmsQuestionnaireServiceProvider;
-use EscolaLms\Reports\Database\Seeders\ReportsPermissionSeeder;
-use EscolaLms\Reports\EscolaLmsReportsServiceProvider;
-use EscolaLms\Reports\Tests\Models\Client;
-use EscolaLms\Reports\Tests\Models\Course;
-use EscolaLms\Reports\Tests\Models\TestUser;
-use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
-use EscolaLms\TopicTypes\EscolaLmsTopicTypesServiceProvider;
-use EscolaLms\TopicTypeGift\EscolaLmsTopicTypeGiftServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Cart\UlamsCartServiceProvider;
+use Ulams\Cart\Facades\Shop;
+use Ulams\Categories\UlamsCategoriesServiceProvider;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
+use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\HeadlessH5P\HeadlessH5PServiceProvider;
+use Ulams\Payments\Providers\PaymentsServiceProvider;
+use Ulams\Questionnaire\UlamsQuestionnaireServiceProvider;
+use Ulams\Reports\Database\Seeders\ReportsPermissionSeeder;
+use Ulams\Reports\UlamsReportsServiceProvider;
+use Ulams\Reports\Tests\Models\Client;
+use Ulams\Reports\Tests\Models\Course;
+use Ulams\Reports\Tests\Models\TestUser;
+use Ulams\Scorm\UlamsScormServiceProvider;
+use Ulams\TopicTypes\UlamsTopicTypesServiceProvider;
+use Ulams\TopicTypeGift\UlamsTopicTypeGiftServiceProvider;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
@@ -38,19 +38,19 @@ class TestCase extends CoreTestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsAuthServiceProvider::class,
+            UlamsAuthServiceProvider::class,
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
-            EscolaLmsCategoriesServiceProvider::class,
-            EscolaLmsReportsServiceProvider::class,
-            EscolaLmsCourseServiceProvider::class,
-            EscolaLmsTopicTypesServiceProvider::class,
+            UlamsCategoriesServiceProvider::class,
+            UlamsReportsServiceProvider::class,
+            UlamsCourseServiceProvider::class,
+            UlamsTopicTypesServiceProvider::class,
             HeadlessH5PServiceProvider::class,
             PaymentsServiceProvider::class,
-            EscolaLmsCartServiceProvider::class,
-            EscolaLmsScormServiceProvider::class,
-            EscolaLmsQuestionnaireServiceProvider::class,
-            EscolaLmsTopicTypeGiftServiceProvider::class,
+            UlamsCartServiceProvider::class,
+            UlamsScormServiceProvider::class,
+            UlamsQuestionnaireServiceProvider::class,
+            UlamsTopicTypeGiftServiceProvider::class,
         ];
     }
 

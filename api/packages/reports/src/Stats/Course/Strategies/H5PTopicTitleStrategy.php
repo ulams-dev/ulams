@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Course\Strategies;
+namespace Ulams\Reports\Stats\Course\Strategies;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\HeadlessH5P\Models\H5PContent;
+use Ulams\Courses\Models\Topic;
+use Ulams\HeadlessH5P\Models\H5PContent;
 
 class H5PTopicTitleStrategy implements TopicTitleStrategy
 {

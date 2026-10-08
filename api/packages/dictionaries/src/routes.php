@@ -1,10 +1,10 @@
 <?php
 
-use EscolaLms\Dictionaries\Http\Controllers\DictionaryAccessAdminApiController;
-use EscolaLms\Dictionaries\Http\Controllers\DictionaryAdminApiController;
-use EscolaLms\Dictionaries\Http\Controllers\DictionaryAccessApiController;
-use EscolaLms\Dictionaries\Http\Controllers\DictionaryWordAdminApiController;
-use EscolaLms\Dictionaries\Http\Controllers\DictionaryWordApiController;
+use Ulams\Dictionaries\Http\Controllers\DictionaryAccessAdminApiController;
+use Ulams\Dictionaries\Http\Controllers\DictionaryAdminApiController;
+use Ulams\Dictionaries\Http\Controllers\DictionaryAccessApiController;
+use Ulams\Dictionaries\Http\Controllers\DictionaryWordAdminApiController;
+use Ulams\Dictionaries\Http\Controllers\DictionaryWordApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin/dictionaries'], function () {

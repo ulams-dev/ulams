@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Policies;
+namespace Ulams\Courses\Policies;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Core\Models\User;
+use Ulams\Courses\Models\Topic;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Gate;
 

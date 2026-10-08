@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Payments\Http\Responses;
+namespace Ulams\Payments\Http\Responses;
 
-use EscolaLms\Payments\Http\Resources\PaymentCollection;
+use Ulams\Payments\Http\Resources\PaymentCollection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Collection;

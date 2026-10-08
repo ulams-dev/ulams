@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\TemplatesPdf\Enums\PdfPermissionsEnum;
+use Ulams\TemplatesPdf\Enums\PdfPermissionsEnum;
 
 return [
     PdfPermissionsEnum::PDF_READ_ALL => 'Read all pdf',

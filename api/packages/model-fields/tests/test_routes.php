@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use EscolaLms\ModelFields\Http\Controllers\ModelFieldsApiController;
-use EscolaLms\ModelFields\Tests\Http\Controllers\TestsModelFieldsApiController;
-use EscolaLms\ModelFields\Tests\TraitTest\Http\Controllers\TestsModelFieldsApiController as TestsTraitModelFieldsApiController;
+use Ulams\ModelFields\Http\Controllers\ModelFieldsApiController;
+use Ulams\ModelFields\Tests\Http\Controllers\TestsModelFieldsApiController;
+use Ulams\ModelFields\Tests\TraitTest\Http\Controllers\TestsModelFieldsApiController as TestsTraitModelFieldsApiController;
 
 Route::group(['prefix' => 'api/trait/test-users'], function () {
     Route::get('/', [TestsTraitModelFieldsApiController::class, 'list']);

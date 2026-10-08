@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Recommender\Enum;
+namespace Ulams\Recommender\Enum;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class MeetRecordingEnum extends BasicEnum
 {

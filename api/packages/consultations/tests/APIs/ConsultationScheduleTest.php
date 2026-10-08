@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Consultations\Tests\APIs;
+namespace Ulams\Consultations\Tests\APIs;
 
-use EscolaLms\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
-use EscolaLms\Consultations\Enum\ConsultationTermReminderStatusEnum;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Events\ReminderAboutTerm;
-use EscolaLms\Consultations\Events\ReminderTrainerAboutTerm;
-use EscolaLms\Consultations\Jobs\ReminderAboutConsultationJob;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Models\ConsultationProposedTerm;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Tests\Models\User;
-use EscolaLms\Consultations\Tests\TestCase;
+use Ulams\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
+use Ulams\Consultations\Enum\ConsultationTermReminderStatusEnum;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Events\ReminderAboutTerm;
+use Ulams\Consultations\Events\ReminderTrainerAboutTerm;
+use Ulams\Consultations\Jobs\ReminderAboutConsultationJob;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\ConsultationProposedTerm;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Tests\Models\User;
+use Ulams\Consultations\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
@@ -53,7 +53,7 @@ class ConsultationScheduleTest extends TestCase
         $userTerm = $this->consultationUserPivot->userTerms()->create([
             'executed_at' => now()->modify(
                 config(
-                    'escolalms_consultations.modifier_date.' .
+                    'ulams_consultations.modifier_date.' .
                     ConsultationTermReminderStatusEnum::REMINDED_HOUR_BEFORE, '+1 hour')
             )->format('Y-m-d H:i:s'),
             'executed_status' => $this->faker->randomElement([
@@ -82,7 +82,7 @@ class ConsultationScheduleTest extends TestCase
         ])->create();
         $consultationUserTerm = $this->consultationUserPivot->userTerms()->create([
             'executed_at' => now()->modify(
-                config('escolalms_consultations.modifier_date.' .
+                config('ulams_consultations.modifier_date.' .
                     ConsultationTermReminderStatusEnum::REMINDED_HOUR_BEFORE, '+1 hour')
             )->format('Y-m-d H:i:s'),
             'executed_status' => ConsultationTermStatusEnum::APPROVED
@@ -105,7 +105,7 @@ class ConsultationScheduleTest extends TestCase
         ])->create();
 
         $consultationUserTerm = $this->consultationUserPivot->userTerms()->create([
-            'executed_at' => now()->modify(config('escolalms_consultations.modifier_date.' .
+            'executed_at' => now()->modify(config('ulams_consultations.modifier_date.' .
                 ConsultationTermReminderStatusEnum::REMINDED_DAY_BEFORE, '+1 day'))->format('Y-m-d H:i:s'),
             'executed_status' => ConsultationTermStatusEnum::APPROVED
         ]);
@@ -129,7 +129,7 @@ class ConsultationScheduleTest extends TestCase
 
         $consultationUserTerm = $this->consultationUserPivot->userTerms()->create([
             'executed_at' => now()->modify(
-                config('escolalms_consultations.modifier_date.' .
+                config('ulams_consultations.modifier_date.' .
                     ConsultationTermReminderStatusEnum::REMINDED_HOUR_BEFORE, '+1 hour')
             )->format('Y-m-d H:i:s'),
             'executed_status' => ConsultationTermStatusEnum::APPROVED,
@@ -156,7 +156,7 @@ class ConsultationScheduleTest extends TestCase
 
         $consultationUserTerm = $this->consultationUserPivot->userTerms()->create([
             'executed_at' => now()->modify(
-                config('escolalms_consultations.modifier_date.' .
+                config('ulams_consultations.modifier_date.' .
                     ConsultationTermReminderStatusEnum::REMINDED_HOUR_BEFORE, '+1 hour')
             )->format('Y-m-d H:i:s'),
             'executed_status' => ConsultationTermStatusEnum::APPROVED,
@@ -186,7 +186,7 @@ class ConsultationScheduleTest extends TestCase
 
         $consultationUserTerm = $this->consultationUserPivot->userTerms()->create([
             'executed_at' => now()->modify(
-                config('escolalms_consultations.modifier_date.' .
+                config('ulams_consultations.modifier_date.' .
                     ConsultationTermReminderStatusEnum::REMINDED_DAY_BEFORE, '+1 day')
             )->subHour()->format('Y-m-d H:i:s'),
             'executed_status' => ConsultationTermStatusEnum::APPROVED,

@@ -1,7 +1,7 @@
 import React from "react";
 import styled, { withTheme } from "styled-components";
 
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { RecursiveLessons } from "./_components/RecursiveLessons";
 import {
   CourseAgendaContextProvider,
@@ -52,7 +52,7 @@ const CourseAgendaContent: React.FC<ExtendableStyledComponent> = ({
   const { lessons } = useCourseAgendaContext();
 
   return (
-    <StyledSection className={`wellms-component ${className}`}>
+    <StyledSection className={`ulams-component ${className}`}>
       <ul className="lessons__list">
         <RecursiveLessons lessons={lessons} />
       </ul>

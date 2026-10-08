@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Translations\Services\Contracts;
+namespace Ulams\Translations\Services\Contracts;
 
 interface TranslationServiceContract
 {

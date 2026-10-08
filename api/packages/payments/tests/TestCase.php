@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Payments\Tests;
+namespace Ulams\Payments\Tests;
 
-use EscolaLms\Payments\Providers\PaymentsServiceProvider;
+use Ulams\Payments\Providers\PaymentsServiceProvider;
 use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     use DatabaseTransactions;
 

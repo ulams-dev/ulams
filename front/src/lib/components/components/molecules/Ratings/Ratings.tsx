@@ -6,7 +6,7 @@ import {
   getStylesBasedOnTheme,
   roundPercentageList,
 } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { Interval } from "../../atoms/Interval/Interval";
 import { Rating } from "../../atoms/Rating/Rating";
 import { Text } from "../../atoms/Typography/Text";
@@ -87,7 +87,7 @@ const RatingsDesktop: React.FC<RatingsViewProps> = (props) => {
 
   const { t } = useTranslation();
   return (
-    <StyledRatingsDesktop className={`wellms-component ${className}`}>
+    <StyledRatingsDesktop className={`ulams-component ${className}`}>
       {header && (
         <Title className="header" level={4} as="h1">
           {header}
@@ -160,7 +160,7 @@ const RatingsMobile: React.FC<RatingsViewProps> = (props) => {
   const { t } = useTranslation();
 
   return (
-    <StyledRatingsMobile className="wellms-component">
+    <StyledRatingsMobile className="ulams-component">
       {header && (
         <Title className="header" level={4} as="h2">
           {header}

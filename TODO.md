@@ -9,7 +9,16 @@ The project rename to **ulams** keeps these on purpose for now, because changing
 - [ ] **PHP base image.** `api/Dockerfile` and `api/Dockerfile.develop` build `FROM escolalms/php:8.3-alpine`, published on Docker Hub. Build and publish our own `ulams/php` base image (PHP 8.3 alpine with the same extensions, plus `excimer` built from source), then switch both Dockerfiles to it.
 - [ ] **Upstream provenance links.** `api/packages/README.md`, `front/src/lib/*/README.md` and `admin/src/lib/*/README.md` link to `github.com/EscolaLMS/*` at the commits the code was imported from. Decide whether to keep them as a historical "imported from" note or drop them once the packages have diverged.
 - [ ] **ADR evidence.** `api/docs/adr`, `admin/docs/adr` and `front/docs/adr` cite commit messages and package names as they were (`escolalms/*`, `@escolalms/*`, Wellms). Reword the prose to ulams and keep the quoted commit evidence unchanged.
-- [ ] **Leftover strings.** After the rename commit, run `git grep -niE 'escola|wellms'` and review every hit that isn't covered by the items above. Expected leftovers: upstream URLs, the Docker Hub base image, and the migration that rewrites old class names in stored data.
+- [ ] **Leftover strings.** After the rename, `git grep -niE 'escola|wellms'` (outside ADRs, lockfiles and provenance READMEs) should only return:
+  - upstream GitHub links;
+  - the Docker Hub images `escolalms/php` and `escolalms/reportbro-server`;
+  - `@escolalms/h5p-react`, removed when the H5P player switches to Lumi;
+  - links to the old Packagist and Docker Hub pages;
+  - the two legacy-rename helpers: `api/database/migrations/2026_10_08_120000_rename_legacy_identifiers_to_ulams.php` and `api/app/Support/LegacyMigrationNames.php`.
+- [ ] **Docker Hub publishing.** The image-publishing workflows in `api/.github` and `admin/.github` still link to `hub.docker.com/r/escolalms/...`. Point them at a ulams registry before moving them to the root `.github/`.
+- [ ] **Placeholder domain.** The hosted EscolaLMS/Wellms domains in docs, emails and test fixtures became `ulams.app`. Replace it with the real production domain once chosen.
+- [ ] **reportbro-server image.** `escolalms/reportbro-server` (the PDF report server) is pulled from Docker Hub. Build and publish it as `ulams/reportbro-server`.
+- [ ] **SQL views in old databases.** Views built before the rename (e.g. by package migrations) may still embed `EscolaLms\` class names. Recreate them after running the rename migration on an old database.
 - [ ] **Stored data from older installs.** Confirm the namespace migration (`EscolaLms\` → `Ulams\`) covers every polymorphic column and settings row in a database created before the rename, by running it against a copy of a pre-rename database.
 
 ## Monorepo hardening
@@ -19,6 +28,7 @@ The project rename to **ulams** keeps these on purpose for now, because changing
 - [ ] **Front tests.** `front` has a Jest config but Jest isn't installed and CI never runs it; Admin CI also skips Jest.
 - [ ] **Front leftovers.** `entrypoint.sh` still runs `sed` on placeholders that `index.html` no longer contains.
 - [ ] **Swagger.** `config/l5-swagger.php` scans `packages/tracker/src`, which never existed. Remove the entry.
+- [ ] **`php artisan route:list` fails** because `MattermostService::__construct` logs in to the Mattermost server, which is unreachable when Mattermost isn't configured. Make the client lazy. `Route::getRoutes()` still reports all 656 routes.
 - [ ] **Large test fixtures** in `api/packages/*/tests` and `database/mocks` (e.g. the 24 MB SCORM zip). Consider Git LFS.
 - [ ] **Exact version pins.** `davidbadura/faker-markdown-generator 1.1.0` and `tzsk/sms 6.0.0` are pinned exactly, because upstream required it. Revisit when upgrading.
 

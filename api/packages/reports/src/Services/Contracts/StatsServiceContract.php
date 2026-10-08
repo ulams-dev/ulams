@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Reports\Services\Contracts;
+namespace Ulams\Reports\Services\Contracts;
 
-use EscolaLms\Reports\Exceptions\ExportNotExistsException;
+use Ulams\Reports\Exceptions\ExportNotExistsException;
 use Illuminate\Http\UploadedFile;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 

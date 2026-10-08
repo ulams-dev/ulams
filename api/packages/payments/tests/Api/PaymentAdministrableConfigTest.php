@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Payments\Tests\Api;
+namespace Ulams\Payments\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Payments\Enums\Currency;
-use EscolaLms\Payments\Tests\TestCase;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder as SettingsPermissionSeeder;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Payments\Enums\Currency;
+use Ulams\Payments\Tests\TestCase;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder as SettingsPermissionSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 
@@ -21,9 +21,9 @@ class PaymentAdministrableConfigTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
+        if (!class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
             $this->markTestSkipped(
-                'Escolalms/Settings is not installed'
+                'Ulamslms/Settings is not installed'
             );
         }
 
@@ -33,13 +33,13 @@ class PaymentAdministrableConfigTest extends TestCase
         $this->user->guard_name = 'api';
         $this->user->assignRole('admin');
 
-        Config::set('escola_settings.use_database', true);
-        Config::set('escolalms_payments.drivers.stripe.secret_key', 'key_value');
-        Config::set('escolalms_payments.drivers.stripe.publishable_key', 'publishable_key_value');
-        Config::set('escolalms_payments.drivers.przelewy24.merchant_id', 'merchant_id_value');
-        Config::set('escolalms_payments.drivers.przelewy24.pos_id', 'pos_id_value');
-        Config::set('escolalms_payments.drivers.przelewy24.api_key', 'api_key_value');
-        Config::set('escolalms_payments.drivers.przelewy24.crc', 'crc_value');
+        Config::set('ulams_settings.use_database', true);
+        Config::set('ulams_payments.drivers.stripe.secret_key', 'key_value');
+        Config::set('ulams_payments.drivers.stripe.publishable_key', 'publishable_key_value');
+        Config::set('ulams_payments.drivers.przelewy24.merchant_id', 'merchant_id_value');
+        Config::set('ulams_payments.drivers.przelewy24.pos_id', 'pos_id_value');
+        Config::set('ulams_payments.drivers.przelewy24.api_key', 'api_key_value');
+        Config::set('ulams_payments.drivers.przelewy24.crc', 'crc_value');
     }
 
     public function test_payment_administrable_config()
@@ -50,7 +50,7 @@ class PaymentAdministrableConfigTest extends TestCase
         );
         $this->response->assertOk();
         $this->response->assertJsonFragment([
-            'escolalms_payments' => [
+            'ulams_payments' => [
                 'drivers' => [
                     'stripe' => [
                         'enabled' => true,

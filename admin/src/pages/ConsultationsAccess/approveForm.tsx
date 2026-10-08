@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { DATETIME_FORMAT } from '@/consts/dates';
 import PACKAGES from '@/consts/packages';
-import { approveConsultationAccessTerm } from '@/services/escola-lms/consultations_access';
+import { approveConsultationAccessTerm } from '@/services/ulams/consultations_access';
 
 enum MeetingType {
   Custom = 'custom',
@@ -38,7 +38,7 @@ interface FormData {
 }
 
 interface Props {
-  term?: EscolaLms.ConsultationAccess.Models.ConsultationAccessEnquiryProposedTerm;
+  term?: Ulams.ConsultationAccess.Models.ConsultationAccessEnquiryProposedTerm;
   onClose: () => void;
   onSuccess: () => void;
 }

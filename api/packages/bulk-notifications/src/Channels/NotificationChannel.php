@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Channels;
+namespace Ulams\BulkNotifications\Channels;
 
-use EscolaLms\BulkNotifications\ValueObjects\Notification;
+use Ulams\BulkNotifications\ValueObjects\Notification;
 use Illuminate\Support\Collection;
 
 interface NotificationChannel

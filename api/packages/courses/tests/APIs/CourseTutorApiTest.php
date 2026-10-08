@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\APIs;
+namespace Ulams\Courses\Tests\APIs;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Events\CourseStatusChanged;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Tests\TestCase;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Auth\Models\User;
+use Ulams\Categories\Models\Category;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Events\CourseStatusChanged;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Tests\TestCase;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 

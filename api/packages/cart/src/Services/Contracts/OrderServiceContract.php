@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Cart\Services\Contracts;
+namespace Ulams\Cart\Services\Contracts;
 
-use EscolaLms\Cart\Dtos\ClientDetailsDto;
-use EscolaLms\Cart\Dtos\OrdersSearchDto;
-use EscolaLms\Cart\Models\Cart;
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\User;
-use EscolaLms\Cart\Services\CartManager;
-use EscolaLms\Core\Dtos\OrderDto;
+use Ulams\Cart\Dtos\ClientDetailsDto;
+use Ulams\Cart\Dtos\OrdersSearchDto;
+use Ulams\Cart\Models\Cart;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\User;
+use Ulams\Cart\Services\CartManager;
+use Ulams\Core\Dtos\OrderDto;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;

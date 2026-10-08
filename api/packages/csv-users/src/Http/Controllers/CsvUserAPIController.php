@@ -1,21 +1,21 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Http\Controllers;
+namespace Ulams\CsvUsers\Http\Controllers;
 
-use EscolaLms\Auth\Dtos\UserFilterCriteriaDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\CsvUsers\Enums\ExportFormatEnum;
-use EscolaLms\CsvUsers\Export\UsersExport;
-use EscolaLms\CsvUsers\Http\Controllers\Swagger\CsvUserAPISwagger;
-use EscolaLms\CsvUsers\Http\Requests\ExportUsersToCsvAPIRequest;
-use EscolaLms\CsvUsers\Http\Requests\ImportUsersFromCsvAPIRequest;
-use EscolaLms\CsvUsers\Import\UsersImport;
-use EscolaLms\CsvUsers\Services\Contracts\CsvUserServiceContract;
+use Ulams\Auth\Dtos\UserFilterCriteriaDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\CsvUsers\Enums\ExportFormatEnum;
+use Ulams\CsvUsers\Export\UsersExport;
+use Ulams\CsvUsers\Http\Controllers\Swagger\CsvUserAPISwagger;
+use Ulams\CsvUsers\Http\Requests\ExportUsersToCsvAPIRequest;
+use Ulams\CsvUsers\Http\Requests\ImportUsersFromCsvAPIRequest;
+use Ulams\CsvUsers\Import\UsersImport;
+use Ulams\CsvUsers\Services\Contracts\CsvUserServiceContract;
 use Illuminate\Http\JsonResponse;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class CsvUserAPIController extends EscolaLmsBaseController implements CsvUserAPISwagger
+class CsvUserAPIController extends UlamsBaseController implements CsvUserAPISwagger
 {
     protected CsvUserServiceContract $csvUserService;
 

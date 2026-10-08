@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
-import Search from "@lms/components/components/molecules/Search/Search";
+import Search from "@ulams/components/components/molecules/Search/Search";
 // import { FiltersContext } from "@/components/Filters/FiltersProvider";
 
 interface SearchFilterProps {

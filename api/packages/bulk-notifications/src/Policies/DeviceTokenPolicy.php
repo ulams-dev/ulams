@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Policies;
+namespace Ulams\BulkNotifications\Policies;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\BulkNotifications\Enums\BulkNotificationPermissionEnum;
+use Ulams\Auth\Models\User;
+use Ulams\BulkNotifications\Enums\BulkNotificationPermissionEnum;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class DeviceTokenPolicy

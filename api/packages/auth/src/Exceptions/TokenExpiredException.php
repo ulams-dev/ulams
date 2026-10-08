@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Auth\Exceptions;
+namespace Ulams\Auth\Exceptions;
 
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;

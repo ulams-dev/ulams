@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Controllers\Admin;
+namespace Ulams\Cart\Http\Controllers\Admin;
 
-use EscolaLms\Cart\Http\Requests\Admin\ProductableAttachRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductableDetachRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductableListRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductableProductRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductableRegisteredListRequest;
-use EscolaLms\Cart\Http\Resources\ProductResource;
-use EscolaLms\Cart\Http\Swagger\Admin\ProductableAdminSwagger;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
-use EscolaLms\Cart\Services\Contracts\ShopServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Cart\Http\Requests\Admin\ProductableAttachRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductableDetachRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductableListRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductableProductRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductableRegisteredListRequest;
+use Ulams\Cart\Http\Resources\ProductResource;
+use Ulams\Cart\Http\Swagger\Admin\ProductableAdminSwagger;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Cart\Services\Contracts\ShopServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\JsonResponse;
 
-class ProductableAdminApiController extends EscolaLmsBaseController implements ProductableAdminSwagger
+class ProductableAdminApiController extends UlamsBaseController implements ProductableAdminSwagger
 {
     protected ProductServiceContract $productService;
     protected ShopServiceContract $shopService;

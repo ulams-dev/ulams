@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Repositories\Criteria;
+namespace Ulams\Auth\Repositories\Criteria;
 
-use EscolaLms\Core\Repositories\Criteria\Criterion;
+use Ulams\Core\Repositories\Criteria\Criterion;
 use Illuminate\Database\Eloquent\Builder;
 
 class AssignableByCriterion extends Criterion

@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Cmi5\Tests\Api;
+namespace Ulams\Cmi5\Tests\Api;
 
-use EscolaLms\Cmi5\Database\Seeders\Cmi5PermissionSeeder;
-use EscolaLms\Cmi5\Models\Cmi5;
-use EscolaLms\Cmi5\Models\Cmi5Au;
-use EscolaLms\Cmi5\Tests\TestCase;
-use EscolaLms\Cmi5\Tests\Traits\Cmi5Testing;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\Cmi5\Database\Seeders\Cmi5PermissionSeeder;
+use Ulams\Cmi5\Models\Cmi5;
+use Ulams\Cmi5\Models\Cmi5Au;
+use Ulams\Cmi5\Tests\TestCase;
+use Ulams\Cmi5\Tests\Traits\Cmi5Testing;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class Cmi5ApiIndexTest extends TestCase

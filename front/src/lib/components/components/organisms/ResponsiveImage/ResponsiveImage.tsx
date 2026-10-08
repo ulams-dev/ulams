@@ -2,7 +2,7 @@ import React, { forwardRef } from "react";
 
 import styled, { withTheme } from "styled-components";
 
-import Image from "@lms/sdk/react/components/Image";
+import Image from "@ulams/sdk/react/components/Image";
 
 interface ImageProps
   extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "onError"> {
@@ -13,8 +13,8 @@ interface ImageProps
 
 const StyledDiv = styled("div")`
   &,
-  & > .escolalms-image,
-  & > .escolalms-image img {
+  & > .ulams-image,
+  & > .ulams-image img {
     width: 100%;
     max-width: 100%;
     &:hover {
@@ -26,7 +26,7 @@ const StyledDiv = styled("div")`
 export const ResponsiveImage = forwardRef<HTMLImageElement, ImageProps>(
   (props, ref) => {
     return (
-      <StyledDiv className={`wellms-component ${props.className ?? ""}`}>
+      <StyledDiv className={`ulams-component ${props.className ?? ""}`}>
         <Image {...props} ref={ref} />
       </StyledDiv>
     );

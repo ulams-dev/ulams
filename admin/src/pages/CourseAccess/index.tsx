@@ -15,7 +15,7 @@ import {
   approveCourseAccess,
   courseAccess,
   deleteCourseAccess,
-} from '@/services/escola-lms/course_access';
+} from '@/services/ulams/course_access';
 
 const handleRemove = async (id: number) => {
   return deleteCourseAccess(id).then((response) => {
@@ -106,7 +106,7 @@ const TableList: React.FC = () => {
         record.user?.id && (
           <TypeButtonDrawer
             key={'user'}
-            type="EscolaLms\Core\Models\User"
+            type="Ulams\Core\Models\User"
             type_id={record.user?.id}
           />
         ),

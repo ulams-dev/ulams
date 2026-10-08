@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Services\Contracts;
+namespace Ulams\ConsultationAccess\Services\Contracts;
 
-use EscolaLms\ConsultationAccess\Dtos\ApproveConsultationAccessEnquiryDto;
-use EscolaLms\ConsultationAccess\Dtos\ConsultationAccessEnquiryDto;
-use EscolaLms\ConsultationAccess\Dtos\CriteriaDto;
-use EscolaLms\ConsultationAccess\Dtos\PageDto;
-use EscolaLms\ConsultationAccess\Dtos\UpdateConsultationAccessEnquiryDto;
-use EscolaLms\ConsultationAccess\Exceptions\ConsultationAccessException;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\Core\Dtos\OrderDto;
+use Ulams\ConsultationAccess\Dtos\ApproveConsultationAccessEnquiryDto;
+use Ulams\ConsultationAccess\Dtos\ConsultationAccessEnquiryDto;
+use Ulams\ConsultationAccess\Dtos\CriteriaDto;
+use Ulams\ConsultationAccess\Dtos\PageDto;
+use Ulams\ConsultationAccess\Dtos\UpdateConsultationAccessEnquiryDto;
+use Ulams\ConsultationAccess\Exceptions\ConsultationAccessException;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\Core\Dtos\OrderDto;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface ConsultationAccessEnquiryServiceContract

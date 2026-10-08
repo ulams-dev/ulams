@@ -3,7 +3,7 @@ import { MoneyInput } from '@/components/MoneyInput';
 import ProductSelect from '@/components/ProductsSelect';
 import UserSelect from '@/components/UserSelect';
 import { useShowNotification } from '@/hooks/useMessage';
-import { createVoucher, getVoucher, updateVoucher } from '@/services/escola-lms/vouchers';
+import { createVoucher, getVoucher, updateVoucher } from '@/services/ulams/vouchers';
 import { createRequiredFieldValidator } from '@/utils/validate';
 import ProCard from '@ant-design/pro-card';
 import ProForm, {
@@ -24,7 +24,7 @@ const mapper = <T extends { id: string | number } | string | number>(item: T): s
 type Idks = (string | number)[];
 
 type CouponType = Omit<
-  EscolaLms.Vouchers.Models.Coupon,
+  Ulams.Vouchers.Models.Coupon,
   'included_categories' | 'excluded_categories' | 'included_products' | 'excluded_products'
 > & {
   included_categories: Idks;
@@ -76,11 +76,11 @@ const VoucherForm = () => {
 
   const formProps = useMemo(
     () => ({
-      onFinish: async (values: EscolaLms.Vouchers.Http.Requests.CreateCouponRequest) => {
+      onFinish: async (values: Ulams.Vouchers.Http.Requests.CreateCouponRequest) => {
         const postData = {
           ...values,
         };
-        let response: API.DefaultResponse<EscolaLms.Vouchers.Models.Coupon>;
+        let response: API.DefaultResponse<Ulams.Vouchers.Models.Coupon>;
         if (isNew) {
           try {
             response = await createVoucher(postData);

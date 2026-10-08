@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Swagger;
+namespace Ulams\Cart\Http\Swagger;
 
-use EscolaLms\Cart\Http\Requests\ProductReadRequest;
-use EscolaLms\Cart\Http\Requests\ProductRecursiveCancelRequest;
-use EscolaLms\Cart\Http\Requests\ProductSearchMyRequest;
-use EscolaLms\Cart\Http\Requests\ProductSearchRequest;
+use Ulams\Cart\Http\Requests\ProductReadRequest;
+use Ulams\Cart\Http\Requests\ProductRecursiveCancelRequest;
+use Ulams\Cart\Http\Requests\ProductSearchMyRequest;
+use Ulams\Cart\Http\Requests\ProductSearchRequest;
 use Illuminate\Http\JsonResponse;
 
 interface ProductSwagger

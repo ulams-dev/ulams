@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Templates\Core;
+namespace Ulams\Templates\Core;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Contracts\TemplateChannelContract;
-use EscolaLms\Templates\Models\Template;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Contracts\TemplateChannelContract;
+use Ulams\Templates\Models\Template;
 
 abstract class AbstractTemplateChannelClass implements TemplateChannelContract
 {

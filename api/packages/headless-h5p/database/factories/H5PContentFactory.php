@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Database\Factories;
+namespace Ulams\HeadlessH5P\Database\Factories;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\HeadlessH5P\Models\H5PContent;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Enums\UserRole;
+use Ulams\HeadlessH5P\Models\H5PContent;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class H5PContentFactory extends Factory

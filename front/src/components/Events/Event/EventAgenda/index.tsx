@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { useTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { Note } from "@lms/components/components/atoms/Note/Note";
-import Title from "@lms/components/components/atoms/Typography/Title";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { UlamsContext } from "@ulams/sdk/react";
+import { Note } from "@ulams/components/components/atoms/Note/Note";
+import Title from "@ulams/components/components/atoms/Typography/Title";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { EventAgendaStyles } from "./EventAgendaStyles";
 
 type Agenda = {
@@ -17,7 +17,7 @@ type Agenda = {
 };
 
 const EventAgenda = () => {
-  const { stationaryEvent } = useContext(EscolaLMSContext);
+  const { stationaryEvent } = useContext(UlamsContext);
   // TODO: fix this
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

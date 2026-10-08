@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Exports;
+namespace Ulams\Auth\Exports;
 
-use EscolaLms\Auth\Enums\GenderType;
-use EscolaLms\Core\Enums\UserRole;
+use Ulams\Auth\Enums\GenderType;
+use Ulams\Core\Enums\UserRole;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;

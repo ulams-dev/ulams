@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Repository\Criteria;
+namespace Ulams\Questionnaire\Repository\Criteria;
 
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Core\Repositories\Criteria\Criterion;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Core\Repositories\Criteria\Criterion;
+use Ulams\Courses\Models\Course;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Auth;

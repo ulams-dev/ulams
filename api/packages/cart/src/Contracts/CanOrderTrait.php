@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Cart\Contracts;
+namespace Ulams\Cart\Contracts;
 
-use EscolaLms\Cart\Models\Cart;
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductUser;
-use EscolaLms\Core\Models\User;
+use Ulams\Cart\Models\Cart;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductUser;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;

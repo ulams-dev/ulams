@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Requests;
+namespace Ulams\Courses\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Courses\Models\Topic;
 
 class DeleteTopicAPIRequest extends FormRequest
 {

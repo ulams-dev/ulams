@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Webinar\Events;
+namespace Ulams\Webinar\Events;
 
 class WebinarUserUnassigned extends Webinar
 {

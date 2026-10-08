@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Images\Console;
+namespace Ulams\Images\Console;
 
-use EscolaLms\Images\Enum\ConstantEnum;
+use Ulams\Images\Enum\ConstantEnum;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 

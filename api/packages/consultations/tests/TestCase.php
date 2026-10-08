@@ -1,21 +1,21 @@
 <?php
 
-namespace EscolaLms\Consultations\Tests;
+namespace Ulams\Consultations\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
-use EscolaLms\Consultations\AuthServiceProvider;
-use EscolaLms\Consultations\EscolaLmsConsultationsServiceProvider;
-use EscolaLms\Consultations\Providers\EventServiceProvider;
-use EscolaLms\ModelFields\ModelFieldsServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\Categories\UlamsCategoriesServiceProvider;
+use Ulams\Consultations\AuthServiceProvider;
+use Ulams\Consultations\UlamsConsultationsServiceProvider;
+use Ulams\Consultations\Providers\EventServiceProvider;
+use Ulams\ModelFields\ModelFieldsServiceProvider;
 use Illuminate\Testing\TestResponse;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     protected ?TestResponse $response;
 
@@ -29,9 +29,9 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsAuthServiceProvider::class,
-            EscolaLmsConsultationsServiceProvider::class,
-            EscolaLmsCategoriesServiceProvider::class,
+            UlamsAuthServiceProvider::class,
+            UlamsConsultationsServiceProvider::class,
+            UlamsCategoriesServiceProvider::class,
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
             AuthServiceProvider::class,

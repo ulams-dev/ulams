@@ -2,17 +2,17 @@ import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
 import { Link, useHistory } from "react-router-dom";
-import { CourseCard } from "@lms/components/components/molecules/CourseCard/CourseCard";
-import ResponsiveImage from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
-import { API } from "@lms/sdk";
+import { CourseCard } from "@ulams/components/components/molecules/CourseCard/CourseCard";
+import ResponsiveImage from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
+import { API } from "@ulams/sdk";
 import CourseImgPlaceholder from "@/components/Courses/CourseImgPlaceholder";
-import Title from "@lms/components/components/atoms/Typography/Title";
-import Button from "@lms/components/components/atoms/Button/Button";
-import IconText from "@lms/components/components/atoms/IconText/IconText";
+import Title from "@ulams/components/components/atoms/Typography/Title";
+import Button from "@ulams/components/components/atoms/Button/Button";
+import IconText from "@ulams/components/components/atoms/IconText/IconText";
 import { UserIcon } from "../../../../../../icons";
 import Tags from "@/components/Tags";
 import CategoriesBreadCrumbs from "@/components/Categories/CategoriesBreadCrumbs";
-import { Tag } from "@lms/sdk/types";
+import { Tag } from "@ulams/sdk/types";
 
 interface Props {
   product: API.Product;
@@ -49,7 +49,7 @@ const PackagesContainerItem = ({ product, actions }: Props) => {
       categories={
         <CategoriesBreadCrumbs
           categories={
-            product.categories as EscolaLms.Categories.Models.Category[]
+            product.categories as Ulams.Categories.Models.Category[]
           }
           onCategoryClick={(id) => {
             history.push(`/packages/?categories[]=${id}`);

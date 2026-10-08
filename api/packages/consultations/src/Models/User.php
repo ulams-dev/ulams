@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Consultations\Models;
+namespace Ulams\Consultations\Models;
 
-use EscolaLms\Auth\Models\User as AuthUser;
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Consultations\Models\Traits\HasConsultations;
+use Ulams\Auth\Models\User as AuthUser;
+use Ulams\Categories\Models\Category;
+use Ulams\Consultations\Models\Traits\HasConsultations;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends AuthUser

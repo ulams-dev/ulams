@@ -1,9 +1,9 @@
 import { useContext, useState } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 
 export const useCertificateDownload = () => {
   const [loadingId, setLoadingId] = useState<number>(-1);
-  const { generateCertificate } = useContext(EscolaLMSContext);
+  const { generateCertificate } = useContext(UlamsContext);
 
   const downloadCertificate = async (id: number, title?: string) => {
     setLoadingId(id);

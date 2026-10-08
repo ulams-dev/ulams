@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Observers;
+namespace Ulams\TemplatesEmail\Observers;
 
-use EscolaLms\Settings\Models\Setting;
-use EscolaLms\TemplatesEmail\Jobs\CompleteGlobalVariableJob;
+use Ulams\Settings\Models\Setting;
+use Ulams\TemplatesEmail\Jobs\CompleteGlobalVariableJob;
 use Illuminate\Support\Str;
 
 class SettingObserver

@@ -7,8 +7,8 @@ import React, {
   useEffect,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextListState,
 } from "./types";
 import { defaultConfig } from "./defaults";
@@ -20,7 +20,7 @@ import { getDefaultData } from "./index";
 import { uniqueTags as getUniqueTags } from "./../../services/tags";
 
 export const TagsContext: React.Context<
-  Pick<EscolaLMSContextConfig, "uniqueTags" | "fetchTags">
+  Pick<UlamsContextConfig, "uniqueTags" | "fetchTags">
 > = createContext({
   uniqueTags: defaultConfig.uniqueTags,
   fetchTags: defaultConfig.fetchTags,
@@ -28,7 +28,7 @@ export const TagsContext: React.Context<
 
 export interface TagsContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "uniqueTags">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "uniqueTags">>;
   ssrHydration?: boolean;
 }
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Models\TopicContent;
+namespace Ulams\TopicTypes\Models\TopicContent;
 
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\VideoFactory;
+use Ulams\TopicTypes\Database\Factories\TopicContent\VideoFactory;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Log;

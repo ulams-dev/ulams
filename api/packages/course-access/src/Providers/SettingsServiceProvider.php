@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Providers;
+namespace Ulams\CourseAccess\Providers;
 
-use EscolaLms\Auth\Enums\SettingStatusEnum;
-use EscolaLms\CourseAccess\EscolaLmsCourseAccessServiceProvider;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Settings\Facades\AdministrableConfig;
+use Ulams\Auth\Enums\SettingStatusEnum;
+use Ulams\CourseAccess\UlamsCourseAccessServiceProvider;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Settings\Facades\AdministrableConfig;
 use Illuminate\Support\ServiceProvider;
 
 class SettingsServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        if (class_exists(EscolaLmsSettingsServiceProvider::class)) {
-            if (!$this->app->getProviders(EscolaLmsSettingsServiceProvider::class)) {
-                $this->app->register(EscolaLmsSettingsServiceProvider::class);
+        if (class_exists(UlamsSettingsServiceProvider::class)) {
+            if (!$this->app->getProviders(UlamsSettingsServiceProvider::class)) {
+                $this->app->register(UlamsSettingsServiceProvider::class);
             }
-            AdministrableConfig::registerConfig(EscolaLmsCourseAccessServiceProvider::CONFIG_KEY . '.auto_accept_access_request', ['required', 'string', 'in:' . implode(',', SettingStatusEnum::getValues())]);
+            AdministrableConfig::registerConfig(UlamsCourseAccessServiceProvider::CONFIG_KEY . '.auto_accept_access_request', ['required', 'string', 'in:' . implode(',', SettingStatusEnum::getValues())]);
         }
     }
 }

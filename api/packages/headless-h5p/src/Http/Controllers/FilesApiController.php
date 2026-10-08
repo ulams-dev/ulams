@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Http\Controllers;
+namespace Ulams\HeadlessH5P\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use EscolaLms\HeadlessH5P\Http\Controllers\Swagger\FilesApiSwagger;
-use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
-use EscolaLms\HeadlessH5P\Http\Requests\FilesStoreRequest;
+use Ulams\HeadlessH5P\Http\Controllers\Swagger\FilesApiSwagger;
+use Ulams\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use Ulams\HeadlessH5P\Http\Requests\FilesStoreRequest;
 
-class FilesApiController extends EscolaLmsBaseController implements FilesApiSwagger
+class FilesApiController extends UlamsBaseController implements FilesApiSwagger
 {
     private HeadlessH5PServiceContract $hh5pService;
 

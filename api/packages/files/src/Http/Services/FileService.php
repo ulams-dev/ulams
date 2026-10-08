@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Files\Http\Services;
+namespace Ulams\Files\Http\Services;
 
-use EscolaLms\Auth\Repositories\Contracts\UserRepositoryContract;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Files\Enums\FilePermissionsEnum;
-use EscolaLms\Files\Http\Exceptions\CannotDeleteFile;
-use EscolaLms\Files\Http\Exceptions\DirectoryOutsideOfRootException;
-use EscolaLms\Files\Http\Exceptions\MoveException;
-use EscolaLms\Files\Http\Exceptions\PutAllException;
-use EscolaLms\Files\Http\Services\Contracts\FileServiceContract;
+use Ulams\Auth\Repositories\Contracts\UserRepositoryContract;
+use Ulams\Core\Models\User;
+use Ulams\Files\Enums\FilePermissionsEnum;
+use Ulams\Files\Http\Exceptions\CannotDeleteFile;
+use Ulams\Files\Http\Exceptions\DirectoryOutsideOfRootException;
+use Ulams\Files\Http\Exceptions\MoveException;
+use Ulams\Files\Http\Exceptions\PutAllException;
+use Ulams\Files\Http\Services\Contracts\FileServiceContract;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Http\UploadedFile;

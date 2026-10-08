@@ -2,13 +2,13 @@
 
 namespace Tests\Helpers;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypes\Facades\Markdown;
-use EscolaLms\TopicTypes\Facades\Path;
-use EscolaLms\TopicTypes\Services\TopicTypeService;
-use EscolaLms\TopicTypes\Tests\TestCase;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypes\Facades\Markdown;
+use Ulams\TopicTypes\Facades\Path;
+use Ulams\TopicTypes\Services\TopicTypeService;
+use Ulams\TopicTypes\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Storage;
 

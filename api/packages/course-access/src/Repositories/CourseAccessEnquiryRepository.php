@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Repositories;
+namespace Ulams\CourseAccess\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\CourseAccess\Models\CourseAccessEnquiry;
-use EscolaLms\CourseAccess\Repositories\Contracts\CourseAccessEnquiryRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\CourseAccess\Models\CourseAccessEnquiry;
+use Ulams\CourseAccess\Repositories\Contracts\CourseAccessEnquiryRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class CourseAccessEnquiryRepository extends BaseRepository implements CourseAccessEnquiryRepositoryContract

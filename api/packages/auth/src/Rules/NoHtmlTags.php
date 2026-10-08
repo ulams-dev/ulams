@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Auth\Rules;
+namespace Ulams\Auth\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 

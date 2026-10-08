@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Http\Resources;
+namespace Ulams\TemplatesPdf\Http\Resources;
 
-use EscolaLms\TemplatesPdf\Models\FabricPDF;
-use EscolaLms\TemplatesPdf\Parsers\VarsParser;
+use Ulams\TemplatesPdf\Models\FabricPDF;
+use Ulams\TemplatesPdf\Parsers\VarsParser;
 use Illuminate\Http\Resources\Json\JsonResource;
-use EscolaLms\Auth\Models\User;
+use Ulams\Auth\Models\User;
 
 
 class PdfResource extends JsonResource

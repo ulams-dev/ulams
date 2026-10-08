@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\Repositories;
+namespace Ulams\Courses\Tests\Repositories;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Repositories\LessonRepository;
-use EscolaLms\Courses\Tests\TestCase;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Repositories\LessonRepository;
+use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class LessonRepositoryTest extends TestCase

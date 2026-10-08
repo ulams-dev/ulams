@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Database\Factories;
+namespace Ulams\HeadlessH5P\Database\Factories;
 
-use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
+use Ulams\HeadlessH5P\Models\H5PLibrary;
+use Ulams\HeadlessH5P\Models\H5PLibraryLanguage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class H5PLibraryLanguageFactory extends Factory

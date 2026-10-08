@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Recommender\Events;
+namespace Ulams\Recommender\Events;
 
-use EscolaLms\Recommender\Models\AggregatedFrame;
+use Ulams\Recommender\Models\AggregatedFrame;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;

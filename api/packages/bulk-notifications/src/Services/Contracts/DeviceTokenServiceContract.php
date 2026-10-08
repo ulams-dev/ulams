@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Services\Contracts;
+namespace Ulams\BulkNotifications\Services\Contracts;
 
-use EscolaLms\BulkNotifications\Dtos\CreateDeviceTokenDto;
-use EscolaLms\BulkNotifications\Models\DeviceToken;
+use Ulams\BulkNotifications\Dtos\CreateDeviceTokenDto;
+use Ulams\BulkNotifications\Models\DeviceToken;
 
 interface DeviceTokenServiceContract
 {

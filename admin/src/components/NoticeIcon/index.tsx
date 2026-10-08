@@ -2,7 +2,7 @@ import {
   getNotifications,
   readAllNotification,
   readNotification,
-} from '@/services/escola-lms/notifications';
+} from '@/services/ulams/notifications';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl, useModel } from 'umi';
 

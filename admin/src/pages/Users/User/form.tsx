@@ -2,13 +2,13 @@ import ResponsiveImage from '@/components/ResponsiveImage';
 import SecureUploadBrowser from '@/components/SecureUpload/browser';
 import UserGroupSelect from '@/components/UserGroupSelect';
 import useModelFields from '@/hooks/useModelFields';
-import { roles as getRoles } from '@/services/escola-lms/roles';
-import { createUser, deleteUserAvatar, resendEmail, updateUser } from '@/services/escola-lms/user';
+import { roles as getRoles } from '@/services/ulams/roles';
+import { createUser, deleteUserAvatar, resendEmail, updateUser } from '@/services/ulams/user';
 import {
   addUserToGroup,
   removeUserFromGroup,
   userGroupsTree,
-} from '@/services/escola-lms/user_groups';
+} from '@/services/ulams/user_groups';
 import ProForm, { ProFormCheckbox, ProFormSwitch, ProFormText } from '@ant-design/pro-form';
 import { Button, Divider, Form, Row, Space, Spin, Typography, message } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -92,7 +92,7 @@ export default ({
   const intl = useIntl();
   const params = useParams<{ user?: string }>();
   const { user } = params;
-  const additionalFields = useModelFields('EscolaLms\\Auth\\Models\\User');
+  const additionalFields = useModelFields('Ulams\\Auth\\Models\\User');
   const { initialState } = useModel('@@initialState');
   const baseUrl = initialState?.config?.filter((item) => item.key === 'frontURL')[0]?.data;
 
@@ -259,7 +259,7 @@ export default ({
                     {!baseUrl && (
                       <p>
                         <FormattedMessage id="no_base_url" />
-                        <Link to="/configuration/settings/escola_auth">Settings</Link>
+                        <Link to="/configuration/settings/ulams_auth">Settings</Link>
                       </p>
                     )}
                     <Button

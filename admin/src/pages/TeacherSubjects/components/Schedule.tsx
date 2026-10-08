@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'umi';
 
 import { DAYTIME_FORMAT } from '@/consts/dates';
-import { allSchedules as fetchAllSchedules } from '@/services/escola-lms/schedules';
+import { allSchedules as fetchAllSchedules } from '@/services/ulams/schedules';
 import { useTeacherSubject } from '../context';
 import './index.css';
 

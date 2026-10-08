@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Database\Factories;
+namespace Ulams\ConsultationAccess\Database\Factories;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\ConsultationAccess\Enum\EnquiryStatusEnum;
-use EscolaLms\ConsultationAccess\Models\Consultation;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
+use Ulams\Auth\Models\User;
+use Ulams\ConsultationAccess\Enum\EnquiryStatusEnum;
+use Ulams\ConsultationAccess\Models\Consultation;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Models\ConsultationUserPivot;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -24,7 +24,7 @@ class ConsultationAccessEnquiryFactory extends Factory
             'user_id' => User::factory(),
             'status' => EnquiryStatusEnum::PENDING,
             'description' => $this->faker->text(),
-            'related_type' => 'EscolaLms\\' . $type . '\\Models\\' . $type,
+            'related_type' => 'Ulams\\' . $type . '\\Models\\' . $type,
             'related_id' => $this->faker->numberBetween(1),
         ];
     }

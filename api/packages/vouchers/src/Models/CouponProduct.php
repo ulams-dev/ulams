@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Vouchers\Models;
+namespace Ulams\Vouchers\Models;
 
-use EscolaLms\Cart\Models\Product;
+use Ulams\Cart\Models\Product;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * EscolaLms\Vouchers\Models\CouponProduct
+ * Ulams\Vouchers\Models\CouponProduct
  *
  * @property int $id
  * @property int $coupon_id
@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int $product_id
- * @property-read \EscolaLms\Vouchers\Models\Coupon|null $coupon
+ * @property-read \Ulams\Vouchers\Models\Coupon|null $coupon
  * @property-read Product|null $product
  * @method static \Illuminate\Database\Eloquent\Builder|CouponProduct newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CouponProduct newQuery()

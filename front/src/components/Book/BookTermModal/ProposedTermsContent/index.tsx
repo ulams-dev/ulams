@@ -1,9 +1,9 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DatePicker from "@/components/Common/DatePicker";
-import { API } from "@lms/sdk";
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { API } from "@ulams/sdk";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { UlamsContext } from "@ulams/sdk/react";
 import {
   sortDates,
   removePastDates,
@@ -11,7 +11,7 @@ import {
   isTwoDatesEqual,
   formatDate,
 } from "@/utils/date";
-import { Tag } from "@lms/components/components/atoms/Tag/Tag";
+import { Tag } from "@ulams/components/components/atoms/Tag/Tag";
 import SelectedTermContent from "../SelectedTermContent";
 import { ProfileConsultationsContext } from "@/components/Profile/ProfileConsultations/ProfileConsultationsProvider";
 import { StyledBookTermButtons } from "../styles";
@@ -30,7 +30,7 @@ const ProposedTermsContent = ({ consultation, onClose }: Props) => {
   const [step, setStep] = useState(1);
   const { setShowBookTermSuccess } = useContext(ProfileConsultationsContext);
   const { t } = useTranslation();
-  const { bookConsultationTerm } = useContext(EscolaLMSContext);
+  const { bookConsultationTerm } = useContext(UlamsContext);
   const terms = sortDates(
     removePastDates(
       consultation?.proposed_terms?.map(

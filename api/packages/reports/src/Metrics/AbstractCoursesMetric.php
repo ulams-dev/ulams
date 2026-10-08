@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Reports\Metrics;
+namespace Ulams\Reports\Metrics;
 
-use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Reports\Models\Report;
+use Ulams\Courses\Enum\CoursesPermissionsEnum;
+use Ulams\Courses\Models\Course;
+use Ulams\Reports\Models\Report;
 
 abstract class AbstractCoursesMetric extends AbstractMetric
 {
@@ -32,7 +32,7 @@ abstract class AbstractCoursesMetric extends AbstractMetric
 
     public function requiredPackage(): string
     {
-        return 'escolalms/courses';
+        return 'ulams/courses';
     }
 
     public static function requiredPackageInstalled(): bool

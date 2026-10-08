@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Recommender\Services\Contracts;
+namespace Ulams\Recommender\Services\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Recommender\Dto\PageDto;
-use EscolaLms\Recommender\Dto\SatisfactionDto;
-use EscolaLms\Recommender\Dto\TermAnalyticsFilterListDto;
-use EscolaLms\Recommender\Models\AggregatedFrame;
-use EscolaLms\Recommender\Models\TermAnalytic;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Recommender\Dto\PageDto;
+use Ulams\Recommender\Dto\SatisfactionDto;
+use Ulams\Recommender\Dto\TermAnalyticsFilterListDto;
+use Ulams\Recommender\Models\AggregatedFrame;
+use Ulams\Recommender\Models\TermAnalytic;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;

@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Tests\Api\Admin;
+namespace Ulams\TopicTypeGift\Tests\Api\Admin;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder;
-use EscolaLms\TopicTypeGift\Export\QuizResultsExport;
-use EscolaLms\TopicTypeGift\Models\AttemptAnswer;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
-use EscolaLms\TopicTypeGift\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder;
+use Ulams\TopicTypeGift\Export\QuizResultsExport;
+use Ulams\TopicTypeGift\Models\AttemptAnswer;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
+use Ulams\TopicTypeGift\Tests\TestCase;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Maatwebsite\Excel\Facades\Excel;
 

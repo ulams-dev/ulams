@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Permissions\Http\Controllers\Contracts;
+namespace Ulams\Permissions\Http\Controllers\Contracts;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Permissions\Http\Requests\RoleCreateRequest;
-use EscolaLms\Permissions\Http\Requests\RoleDeleteRequest;
-use EscolaLms\Permissions\Http\Requests\RoleListingRequest;
-use EscolaLms\Permissions\Http\Requests\RoleReadRequest;
-use EscolaLms\Permissions\Http\Requests\RoleUpdateRequest;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Permissions\Http\Requests\RoleCreateRequest;
+use Ulams\Permissions\Http\Requests\RoleDeleteRequest;
+use Ulams\Permissions\Http\Requests\RoleListingRequest;
+use Ulams\Permissions\Http\Requests\RoleReadRequest;
+use Ulams\Permissions\Http\Requests\RoleUpdateRequest;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

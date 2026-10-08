@@ -8,8 +8,8 @@ import UserSubmissions from '@/components/UsersSubmissions';
 import WysiwygMarkdown from '@/components/WysiwygMarkdown';
 import useValidateFormEdit from '@/hooks/useValidateFormEdit';
 import ScreenSaves from '@/pages/Consultations/components/ScreenSaves';
-import { settings } from '@/services/escola-lms/settings';
-import { createWebinar, getWebinar, updateWebinar } from '@/services/escola-lms/webinars';
+import { settings } from '@/services/ulams/settings';
+import { createWebinar, getWebinar, updateWebinar } from '@/services/ulams/webinars';
 import { splitImagePath, tagsArrToIds } from '@/utils/utils';
 import ProCard from '@ant-design/pro-card';
 import ProForm, {

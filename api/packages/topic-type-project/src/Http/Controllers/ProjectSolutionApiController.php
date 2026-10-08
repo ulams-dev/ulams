@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Http\Controllers;
+namespace Ulams\TopicTypeProject\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\TopicTypeProject\Http\Controllers\Swagger\ProjectSolutionApiSwagger;
-use EscolaLms\TopicTypeProject\Http\Requests\CreateProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Http\Requests\DeleteProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Http\Requests\ListProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Http\Requests\ReadProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Http\Resources\ProjectSolutionResource;
-use EscolaLms\TopicTypeProject\Services\Contracts\ProjectSolutionServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\TopicTypeProject\Http\Controllers\Swagger\ProjectSolutionApiSwagger;
+use Ulams\TopicTypeProject\Http\Requests\CreateProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\DeleteProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\ListProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\ReadProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Resources\ProjectSolutionResource;
+use Ulams\TopicTypeProject\Services\Contracts\ProjectSolutionServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class ProjectSolutionApiController extends EscolaLmsBaseController implements ProjectSolutionApiSwagger
+class ProjectSolutionApiController extends UlamsBaseController implements ProjectSolutionApiSwagger
 {
     private ProjectSolutionServiceContract $projectSolutionService;
 

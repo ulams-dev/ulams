@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Templates\Http\Resources;
+namespace Ulams\Templates\Http\Resources;
 
-use EscolaLms\Templates\Models\Templatable;
-use EscolaLms\Templates\Models\Template;
+use Ulams\Templates\Models\Templatable;
+use Ulams\Templates\Models\Template;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TemplateResource extends JsonResource

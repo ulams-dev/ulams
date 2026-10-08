@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\ModelFields\Http\Controllers\Contracts;
+namespace Ulams\ModelFields\Http\Controllers\Contracts;
 
-use EscolaLms\ModelFields\Http\Requests\MetadataListRequest;
+use Ulams\ModelFields\Http\Requests\MetadataListRequest;
 use Illuminate\Http\JsonResponse;
 
 

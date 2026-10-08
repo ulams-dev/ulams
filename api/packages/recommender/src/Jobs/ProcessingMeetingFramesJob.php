@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Recommender\Jobs;
+namespace Ulams\Recommender\Jobs;
 
-use EscolaLms\Recommender\Models\MeetRecording;
-use EscolaLms\Recommender\Models\MeetRecordingScreen;
+use Ulams\Recommender\Models\MeetRecording;
+use Ulams\Recommender\Models\MeetRecordingScreen;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

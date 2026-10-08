@@ -44,7 +44,7 @@ export const TypeDrawer: React.FC<TypeDrawerProps> = ({ visible, data, onClose }
   };
   return (
     <Drawer width={600} open={visible} onClose={onClose} closable={true}>
-      {(data.type === 'App\\Models\\User' || data.type === 'EscolaLms\\Core\\Models\\User') && (
+      {(data.type === 'App\\Models\\User' || data.type === 'Ulams\\Core\\Models\\User') && (
         <ProDescriptions<API.UserItem>
           {...descrProps}
           title={<FormattedMessage id="user" />}
@@ -53,7 +53,7 @@ export const TypeDrawer: React.FC<TypeDrawerProps> = ({ visible, data, onClose }
       )}
 
       {(data.type === 'App\\Models\\Consultation' ||
-        data.type === 'EscolaLms\\Consultations\\Models\\Consultation') && (
+        data.type === 'Ulams\\Consultations\\Models\\Consultation') && (
         <ProDescriptions<API.Consultation>
           {...descrProps}
           title={<FormattedMessage id="Consultation" />}
@@ -62,18 +62,18 @@ export const TypeDrawer: React.FC<TypeDrawerProps> = ({ visible, data, onClose }
       )}
 
       {(data.type === 'App\\Models\\StationaryEvent' ||
-        data.type === 'EscolaLms\\StationaryEvents\\Models\\StationaryEvent') && (
-        <ProDescriptions<EscolaLms.StationaryEvents.Models.StationaryEvent>
+        data.type === 'Ulams\\StationaryEvents\\Models\\StationaryEvent') && (
+        <ProDescriptions<Ulams.StationaryEvents.Models.StationaryEvent>
           {...descrProps}
           title={<FormattedMessage id="StationaryEvent" />}
           columns={
-            StationaryEventsColumns as ProDescriptionsItemProps<EscolaLms.StationaryEvents.Models.StationaryEvent>[]
+            StationaryEventsColumns as ProDescriptionsItemProps<Ulams.StationaryEvents.Models.StationaryEvent>[]
           }
         />
       )}
 
       {(data.type === 'App\\Models\\Webinar' ||
-        data.type === 'EscolaLms\\Webinars\\Models\\Webinar') && (
+        data.type === 'Ulams\\Webinars\\Models\\Webinar') && (
         <ProDescriptions<API.Webinar>
           {...descrProps}
           title={<FormattedMessage id="Webinar" />}
@@ -81,8 +81,8 @@ export const TypeDrawer: React.FC<TypeDrawerProps> = ({ visible, data, onClose }
         />
       )}
 
-      {(data.type === 'EscolaLms\\Cart\\Models\\Order' ||
-        data.type === 'EscolaLms\\Vouchers\\Models\\Order') && (
+      {(data.type === 'Ulams\\Cart\\Models\\Order' ||
+        data.type === 'Ulams\\Vouchers\\Models\\Order') && (
         <ProDescriptions<API.Order>
           {...descrProps}
           title={<FormattedMessage id="order" />}
@@ -90,7 +90,7 @@ export const TypeDrawer: React.FC<TypeDrawerProps> = ({ visible, data, onClose }
         />
       )}
 
-      {(data.type === 'EscolaLms\\Cart\\Models\\Course' || data.type === 'App\\Models\\Course') && (
+      {(data.type === 'Ulams\\Cart\\Models\\Course' || data.type === 'App\\Models\\Course') && (
         <ProDescriptions<API.Course>
           {...descrProps}
           title={<FormattedMessage id="course" />}
@@ -98,7 +98,7 @@ export const TypeDrawer: React.FC<TypeDrawerProps> = ({ visible, data, onClose }
         />
       )}
 
-      {data.type === 'EscolaLms\\Auth\\Models\\UserGroup' && (
+      {data.type === 'Ulams\\Auth\\Models\\UserGroup' && (
         <ProDescriptions<API.UserGroup>
           {...descrProps}
           title={<FormattedMessage id="user_group" />}
@@ -107,10 +107,10 @@ export const TypeDrawer: React.FC<TypeDrawerProps> = ({ visible, data, onClose }
       )}
 
       {data.type === 'Product' && (
-        <ProDescriptions<EscolaLms.Cart.Models.Product>
+        <ProDescriptions<Ulams.Cart.Models.Product>
           {...descrProps}
           title={<FormattedMessage id="product" />}
-          columns={ProductTableColumns as ProDescriptionsItemProps<EscolaLms.Cart.Models.Product>[]}
+          columns={ProductTableColumns as ProDescriptionsItemProps<Ulams.Cart.Models.Product>[]}
         />
       )}
 
@@ -122,7 +122,7 @@ export const TypeDrawer: React.FC<TypeDrawerProps> = ({ visible, data, onClose }
         />
       )}
 
-      {data.type === 'EscolaLms\\TopicTypeGift\\Models\\GiftQuiz' && (
+      {data.type === 'Ulams\\TopicTypeGift\\Models\\GiftQuiz' && (
         <ProDescriptions<API.GiftQuiz>
           {...descrProps}
           title={<FormattedMessage id="gift_quiz" defaultMessage="GIFT Quiz" />}
@@ -154,7 +154,7 @@ export const TypeDrawer: React.FC<TypeDrawerProps> = ({ visible, data, onClose }
                         xl: 6,
                         xxl: 3,
                       }}
-                      dataSource={record.questions as EscolaLms.Questionnaire.Models.Question[]}
+                      dataSource={record.questions as Ulams.Questionnaire.Models.Question[]}
                       renderItem={(item) => (
                         <List.Item>
                           <Typography.Text mark>{item.id}</Typography.Text>{' '}

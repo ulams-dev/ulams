@@ -10,7 +10,7 @@ import {
   deleteTranslation,
   translations,
   updateTranslation,
-} from '@/services/escola-lms/translations';
+} from '@/services/ulams/translations';
 import { createTableOrderObject } from '@/utils/utils';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Popconfirm, Tooltip, message } from 'antd';

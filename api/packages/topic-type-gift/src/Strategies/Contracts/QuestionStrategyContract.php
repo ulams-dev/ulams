@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Strategies\Contracts;
+namespace Ulams\TopicTypeGift\Strategies\Contracts;
 
-use EscolaLms\TopicTypeGift\Dtos\CheckAnswerDto;
+use Ulams\TopicTypeGift\Dtos\CheckAnswerDto;
 
 interface QuestionStrategyContract
 {

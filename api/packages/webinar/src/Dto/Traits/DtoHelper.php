@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Webinar\Dto\Traits;
+namespace Ulams\Webinar\Dto\Traits;
 
 use Illuminate\Support\Str;
 

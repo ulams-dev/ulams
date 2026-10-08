@@ -2,15 +2,15 @@
 
 namespace Tests\Commands;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypes\Models\TopicContent\Audio;
-use EscolaLms\TopicTypes\Models\TopicContent\Image;
-use EscolaLms\TopicTypes\Models\TopicContent\PDF;
-use EscolaLms\TopicTypes\Models\TopicContent\RichText;
-use EscolaLms\TopicTypes\Models\TopicContent\Video;
-use EscolaLms\TopicTypes\Tests\TestCase;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypes\Models\TopicContent\Audio;
+use Ulams\TopicTypes\Models\TopicContent\Image;
+use Ulams\TopicTypes\Models\TopicContent\PDF;
+use Ulams\TopicTypes\Models\TopicContent\RichText;
+use Ulams\TopicTypes\Models\TopicContent\Video;
+use Ulams\TopicTypes\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Artisan;
@@ -64,10 +64,10 @@ class FillTopicTypeMetadataCommandTest extends TestCase
         $topic_pdf->topicable()->associate($topicable_pdf)->save();
         $topic_richtext->topicable()->associate($topicable_richtext)->save();
 
-        $this->artisan('escolalms:fill-topic-types-metadata audio')->assertSuccessful();
-        $this->artisan('escolalms:fill-topic-types-metadata video')->assertSuccessful();
-        $this->artisan('escolalms:fill-topic-types-metadata pdf')->assertSuccessful();
-        $this->artisan('escolalms:fill-topic-types-metadata richText')->assertSuccessful();
+        $this->artisan('ulams:fill-topic-types-metadata audio')->assertSuccessful();
+        $this->artisan('ulams:fill-topic-types-metadata video')->assertSuccessful();
+        $this->artisan('ulams:fill-topic-types-metadata pdf')->assertSuccessful();
+        $this->artisan('ulams:fill-topic-types-metadata richText')->assertSuccessful();
 
         $topicable_audio->refresh();
         $topicable_video->refresh();
@@ -100,7 +100,7 @@ class FillTopicTypeMetadataCommandTest extends TestCase
     public function testFillTopicTypeMetadataCommandModelNotFound(): void
     {
         $this
-            ->artisan('escolalms:fill-topic-types-metadata testModel')
+            ->artisan('ulams:fill-topic-types-metadata testModel')
             ->expectsOutput('Model TestModel does not exist')
             ->assertFailed();
     }

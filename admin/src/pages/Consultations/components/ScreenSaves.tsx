@@ -1,5 +1,5 @@
-import { getSchedule as getConsultationSchedule } from '@/services/escola-lms/consultations';
-import { getWebinarUsers } from '@/services/escola-lms/webinars';
+import { getSchedule as getConsultationSchedule } from '@/services/ulams/consultations';
+import { getWebinarUsers } from '@/services/ulams/webinars';
 import type { ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import { Badge, Spin, message } from 'antd';

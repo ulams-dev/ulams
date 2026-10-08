@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Webinar\Repositories\Contracts;
+namespace Ulams\Webinar\Repositories\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 

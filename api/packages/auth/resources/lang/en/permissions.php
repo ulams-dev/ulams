@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Auth\Enums\AuthPermissionsEnum;
+use Ulams\Auth\Enums\AuthPermissionsEnum;
 
 return [
     AuthPermissionsEnum::USER_MANAGE => 'Manage user',

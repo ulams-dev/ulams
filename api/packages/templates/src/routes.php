@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\Templates\Http\Controllers\EventAdminApiController;
-use EscolaLms\Templates\Http\Controllers\TemplatesAdminApiController;
+use Ulams\Templates\Http\Controllers\EventAdminApiController;
+use Ulams\Templates\Http\Controllers\TemplatesAdminApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api/admin/templates', 'middleware' => ['auth:api']], function () {

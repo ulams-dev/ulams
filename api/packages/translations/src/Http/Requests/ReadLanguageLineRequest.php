@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Translations\Http\Requests;
+namespace Ulams\Translations\Http\Requests;
 
-use EscolaLms\Translations\Models\LanguageLine;
+use Ulams\Translations\Models\LanguageLine;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

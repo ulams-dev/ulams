@@ -21,8 +21,8 @@ jobs:
         env:
           CI: false
           BASE_PATH: /
-          REACT_APP_PUBLIC_URL: https://admin-stage.escolalms.com/
-          REACT_APP_API_URL: https://api-stage.escolalms.com
+          REACT_APP_PUBLIC_URL: https://admin-stage.ulams.app/
+          REACT_APP_API_URL: https://api-stage.ulams.app
           REACT_APP_SENTRYDSN: https://c4d0f362cbbea902bf00f6f35e5c4b9b@o4508812125929472.ingest.de.sentry.io/4510006312239184
           REACT_APP_YBUG: 01m1nn5zqystt1qq5n11
           REACT_APP_SENTRY_RELEASE: admin@${{github.ref_name}}
@@ -38,9 +38,9 @@ jobs:
         uses: getsentry/action-release@v1
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: escolasoft
-          SENTRY_PROJECT: wellms-admin
-          SENTRY_URL: https://escolasoft.sentry.io
+          SENTRY_ORG: ulams
+          SENTRY_PROJECT: ulams-admin
+          SENTRY_URL: https://ulams.sentry.io
         with:
           environment: production
           sourcemaps: ./admin/dist
@@ -75,18 +75,18 @@ jobs:
           push: true
           # with QEMU it takes more then 3 hours to push,
           #platforms: linux/amd64,linux/arm64
-          tags: escolalms/admin:${{github.ref_name}}, escolalms/admin:latest
+          tags: ulams/admin:${{github.ref_name}}, ulams/admin:latest
           build-args: |
             ADMIN_VERSION=${{github.ref_name}}
 
       # - name: Create the Mattermost Message
       #   run: |
-      #     echo "{\"text\":\"There is a new version ${{ github.ref_name }} [escolalms/admin:latest](https://hub.docker.com/r/escolalms/admin/tags?page=1&name=latest) image built. k8s rollout will happen soon\"}" > mattermost.json
+      #     echo "{\"text\":\"There is a new version ${{ github.ref_name }} [ulams/admin:latest](https://hub.docker.com/r/escolalms/admin/tags?page=1&name=latest) image built. k8s rollout will happen soon\"}" > mattermost.json
       - uses: mattermost/action-mattermost-notify@master
         with:
           MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
           PAYLOAD: |-
-            {"text":"There is a new version ${{ github.ref_name }} [escolalms/admin:latest](https://hub.docker.com/r/escolalms/admin/tags?page=1&name=latest) image built. k8s rollout will happen soon"}
+            {"text":"There is a new version ${{ github.ref_name }} [ulams/admin:latest](https://hub.docker.com/r/escolalms/admin/tags?page=1&name=latest) image built. k8s rollout will happen soon"}
 
       - name: Send webook to hooks to rollout all devs on k8s
         uses: distributhor/workflow-webhook@v3

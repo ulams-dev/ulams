@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Tests\APIs;
+namespace Ulams\CoursesImportExport\Tests\APIs;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\CoursesImportExport\Database\Seeders\CoursesExportImportPermissionSeeder;
-use EscolaLms\CoursesImportExport\Jobs\CloneCourse;
-use EscolaLms\CoursesImportExport\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\Course;
+use Ulams\CoursesImportExport\Database\Seeders\CoursesExportImportPermissionSeeder;
+use Ulams\CoursesImportExport\Jobs\CloneCourse;
+use Ulams\CoursesImportExport\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;

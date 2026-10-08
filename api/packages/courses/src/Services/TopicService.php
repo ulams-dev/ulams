@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Courses\Services;
+namespace Ulams\Courses\Services;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\TopicResource;
-use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
-use EscolaLms\Courses\Repositories\Contracts\TopicResourceRepositoryContract;
-use EscolaLms\Courses\Services\Contracts\TopicServiceContract;
-use EscolaLms\TopicTypes\Models\TopicContent\AbstractTopicFileContent;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Models\TopicResource;
+use Ulams\Courses\Repositories\Contracts\TopicRepositoryContract;
+use Ulams\Courses\Repositories\Contracts\TopicResourceRepositoryContract;
+use Ulams\Courses\Services\Contracts\TopicServiceContract;
+use Ulams\TopicTypes\Models\TopicContent\AbstractTopicFileContent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Resources\Admin;
+namespace Ulams\Courses\Http\Resources\Admin;
 
-use EscolaLms\Auth\Traits\ResourceExtandable;
-use EscolaLms\Courses\Http\Resources\ScormScoResource;
-use EscolaLms\Courses\Http\Resources\TutorResource;
-use EscolaLms\Courses\Models\Course;
+use Ulams\Auth\Traits\ResourceExtandable;
+use Ulams\Courses\Http\Resources\ScormScoResource;
+use Ulams\Courses\Http\Resources\TutorResource;
+use Ulams\Courses\Models\Course;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseWithProgramAdminResource extends JsonResource

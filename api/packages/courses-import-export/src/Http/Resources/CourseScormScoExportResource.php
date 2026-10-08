@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Http\Resources;
+namespace Ulams\CoursesImportExport\Http\Resources;
 
-use EscolaLms\CoursesImportExport\Enums\CoursesImportExportEnum;
+use Ulams\CoursesImportExport\Enums\CoursesImportExportEnum;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

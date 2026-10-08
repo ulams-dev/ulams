@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Database\Seeders\DatabaseSeeder;
-use EscolaLms\HeadlessH5P\Database\Seeders\ContentLibrarySeeder;
+use Ulams\HeadlessH5P\Database\Seeders\ContentLibrarySeeder;
 use Database\Seeders\PostCoursesSeeder;
-use EscolaLms\Scorm\Database\Seeders\DatabaseSeeder as ScormSeeder;
+use Ulams\Scorm\Database\Seeders\DatabaseSeeder as ScormSeeder;
 
 class FullDatabaseSeeder extends Seeder
 {

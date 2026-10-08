@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Settings\ConfigRewriter;
+namespace Ulams\Settings\ConfigRewriter;
 
 use Exception;
 use Illuminate\Filesystem\Filesystem;

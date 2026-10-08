@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\TopicTypeProject\Http\Controllers\Admin\ProjectSolutionApiAdminController;
-use EscolaLms\TopicTypeProject\Http\Controllers\ProjectSolutionApiController;
+use Ulams\TopicTypeProject\Http\Controllers\Admin\ProjectSolutionApiAdminController;
+use Ulams\TopicTypeProject\Http\Controllers\ProjectSolutionApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')->middleware(['auth:api'])->group(function () {

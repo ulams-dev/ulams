@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Vouchers\Services;
+namespace Ulams\Vouchers\Services;
 
-use EscolaLms\Cart\Models\Cart as BaseCart;
-use EscolaLms\Cart\Services\CartManager as BaseCartManager;
-use EscolaLms\Vouchers\Exceptions\CouponInactiveException;
-use EscolaLms\Vouchers\Exceptions\CouponNotApplicableException;
-use EscolaLms\Vouchers\Models\Cart;
-use EscolaLms\Vouchers\Models\CartItem;
-use EscolaLms\Vouchers\Models\Coupon;
-use EscolaLms\Vouchers\Services\Contracts\CartManagerContract;
-use EscolaLms\Vouchers\Services\Contracts\CouponServiceContract;
-use EscolaLms\Vouchers\Strategies\Contracts\DiscountStrategyContract;
+use Ulams\Cart\Models\Cart as BaseCart;
+use Ulams\Cart\Services\CartManager as BaseCartManager;
+use Ulams\Vouchers\Exceptions\CouponInactiveException;
+use Ulams\Vouchers\Exceptions\CouponNotApplicableException;
+use Ulams\Vouchers\Models\Cart;
+use Ulams\Vouchers\Models\CartItem;
+use Ulams\Vouchers\Models\Coupon;
+use Ulams\Vouchers\Services\Contracts\CartManagerContract;
+use Ulams\Vouchers\Services\Contracts\CouponServiceContract;
+use Ulams\Vouchers\Strategies\Contracts\DiscountStrategyContract;
 
 class CartManager extends BaseCartManager implements CartManagerContract
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Tags\Models;
+namespace Ulams\Tags\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Tag
- * @package EscolaLms\Tags\Models
+ * @package Ulams\Tags\Models
  *
  * @property string $title
  * @property string $morphable_type

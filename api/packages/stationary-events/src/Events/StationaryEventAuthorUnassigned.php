@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Events;
+namespace Ulams\StationaryEvents\Events;
 
 class StationaryEventAuthorUnassigned extends StationaryEvent
 {

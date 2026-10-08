@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Mattermost\Http\Controllers;
+namespace Ulams\Mattermost\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Mattermost\Http\Controllers\Swagger\MattermostSwagger;
-use EscolaLms\Mattermost\Services\Contracts\MattermostServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Core\Models\User;
+use Ulams\Mattermost\Http\Controllers\Swagger\MattermostSwagger;
+use Ulams\Mattermost\Services\Contracts\MattermostServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class MattermostController extends EscolaLmsBaseController implements MattermostSwagger
+class MattermostController extends UlamsBaseController implements MattermostSwagger
 {
     private MattermostServiceContract $service;
 

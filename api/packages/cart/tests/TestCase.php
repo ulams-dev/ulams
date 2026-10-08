@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\Cart\Tests;
+namespace Ulams\Cart\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\Cart\EscolaLmsCartServiceProvider;
-use EscolaLms\Cart\Models\User;
-use EscolaLms\Cart\Providers\AuthServiceProvider;
-use EscolaLms\Cart\Tests\Mocks\ExampleProductableMigration;
-use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
-use EscolaLms\Payments\Providers\PaymentsServiceProvider;
-use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
-use EscolaLms\Templates\EscolaLmsTemplatesServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\Cart\UlamsCartServiceProvider;
+use Ulams\Cart\Models\User;
+use Ulams\Cart\Providers\AuthServiceProvider;
+use Ulams\Cart\Tests\Mocks\ExampleProductableMigration;
+use Ulams\Categories\UlamsCategoriesServiceProvider;
+use Ulams\Payments\Providers\PaymentsServiceProvider;
+use Ulams\Tags\UlamsTagsServiceProvider;
+use Ulams\Templates\UlamsTemplatesServiceProvider;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     protected function setUp(): void
     {
@@ -28,15 +28,15 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsAuthServiceProvider::class,
+            UlamsAuthServiceProvider::class,
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
             AuthServiceProvider::class,
-            EscolaLmsCategoriesServiceProvider::class,
-            EscolaLmsTagsServiceProvider::class,
+            UlamsCategoriesServiceProvider::class,
+            UlamsTagsServiceProvider::class,
             PaymentsServiceProvider::class,
-            EscolaLmsCartServiceProvider::class,
-            EscolaLmsTemplatesServiceProvider::class,
+            UlamsCartServiceProvider::class,
+            UlamsTemplatesServiceProvider::class,
         ];
     }
 

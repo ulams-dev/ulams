@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Templates\Listeners;
+namespace Ulams\Templates\Listeners;
 
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\Templates\Facades\Template;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\Templates\Facades\Template;
 
 class TemplateEventListener
 {

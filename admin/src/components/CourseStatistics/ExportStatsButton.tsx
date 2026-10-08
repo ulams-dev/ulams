@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage } from 'umi';
 
-import { exportStatForCourse } from '@/services/escola-lms/reports';
+import { exportStatForCourse } from '@/services/ulams/reports';
 
 interface Props {
   course_id: number;
@@ -12,7 +12,7 @@ interface Props {
 
 export const ExportStatsButton: React.FC<Props> = ({
   course_id,
-  stat = 'EscolaLms\\Reports\\Stats\\Course\\FinishedTopics',
+  stat = 'Ulams\\Reports\\Stats\\Course\\FinishedTopics',
 }) => {
   const [loading, setLoading] = useState(false);
 

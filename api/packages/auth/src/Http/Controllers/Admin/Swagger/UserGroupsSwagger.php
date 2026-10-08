@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers\Admin\Swagger;
+namespace Ulams\Auth\Http\Controllers\Admin\Swagger;
 
-use EscolaLms\Auth\Http\Requests\Admin\UserGroupCreateRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserGroupDeleteRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserGroupGetRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserGroupListRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserGroupMemberAddRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserGroupMemberRemoveRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserGroupUpdateRequest;
+use Ulams\Auth\Http\Requests\Admin\UserGroupCreateRequest;
+use Ulams\Auth\Http\Requests\Admin\UserGroupDeleteRequest;
+use Ulams\Auth\Http\Requests\Admin\UserGroupGetRequest;
+use Ulams\Auth\Http\Requests\Admin\UserGroupListRequest;
+use Ulams\Auth\Http\Requests\Admin\UserGroupMemberAddRequest;
+use Ulams\Auth\Http\Requests\Admin\UserGroupMemberRemoveRequest;
+use Ulams\Auth\Http\Requests\Admin\UserGroupUpdateRequest;
 use Illuminate\Http\JsonResponse;
 
 interface UserGroupsSwagger

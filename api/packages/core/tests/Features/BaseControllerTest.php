@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Features;
+namespace Ulams\Core\Tests\Features;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Tests\Mocks\TestController;
-use EscolaLms\Core\Tests\TestCase;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Core\Models\User;
+use Ulams\Core\Tests\Mocks\TestController;
+use Ulams\Core\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -14,7 +14,7 @@ class BaseControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
-    protected EscolaLmsBaseController $controller;
+    protected UlamsBaseController $controller;
 
     protected function setUp(): void
     {

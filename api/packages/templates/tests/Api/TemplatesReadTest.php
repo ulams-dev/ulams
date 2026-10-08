@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Templates\Tests\Api;
+namespace Ulams\Templates\Tests\Api;
 
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Tests\TestCase;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class TemplatesReadTest extends TestCase

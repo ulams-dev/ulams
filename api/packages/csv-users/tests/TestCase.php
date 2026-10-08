@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Tests;
+namespace Ulams\CsvUsers\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
-use EscolaLms\CsvUsers\AuthServiceProvider;
-use EscolaLms\CsvUsers\Database\Seeders\CsvUsersPermissionSeeder;
-use EscolaLms\CsvUsers\EscolaLmsCsvUsersServiceProvider;
-use EscolaLms\CsvUsers\Models\User as UserTest;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
+use Ulams\CsvUsers\AuthServiceProvider;
+use Ulams\CsvUsers\Database\Seeders\CsvUsersPermissionSeeder;
+use Ulams\CsvUsers\UlamsCsvUsersServiceProvider;
+use Ulams\CsvUsers\Models\User as UserTest;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
@@ -28,10 +28,10 @@ class TestCase extends CoreTestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsAuthServiceProvider::class,
+            UlamsAuthServiceProvider::class,
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
-            EscolaLmsCsvUsersServiceProvider::class,
+            UlamsCsvUsersServiceProvider::class,
             AuthServiceProvider::class,
         ];
     }

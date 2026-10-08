@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Templates\Contracts;
+namespace Ulams\Templates\Contracts;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\Templates\Models\Template;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\Templates\Models\Template;
 
 interface TemplateVariableContract
 {

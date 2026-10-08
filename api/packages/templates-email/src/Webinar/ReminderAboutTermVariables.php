@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Webinar;
+namespace Ulams\TemplatesEmail\Webinar;
 
 class ReminderAboutTermVariables extends CommonWebinarVariables
 {

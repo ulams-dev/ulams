@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\CourseAccess;
+namespace Ulams\TemplatesEmail\CourseAccess;
 
 class CourseAccessEnquiryAdminCreatedVariables extends CommonCourseAccessEnquiryVariables
 {

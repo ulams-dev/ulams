@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Lrs\Services;
+namespace Ulams\Lrs\Services;
 
-use EscolaLms\Lrs\Dto\StatementSearchDto;
-use EscolaLms\Lrs\Repositories\Contracts\StatementRepositoryContract;
-use EscolaLms\Lrs\Services\Contracts\StatementServiceContract;
+use Ulams\Lrs\Dto\StatementSearchDto;
+use Ulams\Lrs\Repositories\Contracts\StatementRepositoryContract;
+use Ulams\Lrs\Services\Contracts\StatementServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class StatementService implements StatementServiceContract

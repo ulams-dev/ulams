@@ -1,4 +1,4 @@
-import Modal from "@lms/components/components/atoms/Modal/Modal";
+import Modal from "@ulams/components/components/atoms/Modal/Modal";
 import SuccessContent from "../BookTermModal/SuccessContent";
 
 interface Props {

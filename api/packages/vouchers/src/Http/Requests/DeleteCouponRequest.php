@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Vouchers\Http\Requests;
+namespace Ulams\Vouchers\Http\Requests;
 
-use EscolaLms\Vouchers\Models\Coupon;
+use Ulams\Vouchers\Models\Coupon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

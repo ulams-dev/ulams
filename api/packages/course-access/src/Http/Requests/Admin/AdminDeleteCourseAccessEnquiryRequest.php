@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Http\Requests\Admin;
+namespace Ulams\CourseAccess\Http\Requests\Admin;
 
-use EscolaLms\CourseAccess\Http\Requests\DeleteCourseAccessEnquiryRequest;
+use Ulams\CourseAccess\Http\Requests\DeleteCourseAccessEnquiryRequest;
 use Illuminate\Support\Facades\Gate;
 
 class AdminDeleteCourseAccessEnquiryRequest extends DeleteCourseAccessEnquiryRequest

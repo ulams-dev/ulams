@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests;
+namespace Ulams\Cart\Http\Requests;
 
-use EscolaLms\Cart\Enums\CartPermissionsEnum;
-use EscolaLms\Cart\Rules\ProductableExistsRule;
-use EscolaLms\Cart\Rules\ProductableRegisteredRule;
+use Ulams\Cart\Enums\CartPermissionsEnum;
+use Ulams\Cart\Rules\ProductableExistsRule;
+use Ulams\Cart\Rules\ProductableRegisteredRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ProductableAddToCartRequest extends FormRequest

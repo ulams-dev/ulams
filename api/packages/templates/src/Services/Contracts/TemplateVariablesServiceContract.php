@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Templates\Services\Contracts;
+namespace Ulams\Templates\Services\Contracts;
 
 interface TemplateVariablesServiceContract
 {

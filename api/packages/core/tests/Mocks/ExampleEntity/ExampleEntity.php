@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Mocks\ExampleEntity;
+namespace Ulams\Core\Tests\Mocks\ExampleEntity;
 
-use EscolaLms\Core\Models\Traits\QueryCacheable;
+use Ulams\Core\Models\Traits\QueryCacheable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Dtos;
+namespace Ulams\Auth\Dtos;
 
-use EscolaLms\Auth\Dtos\Contracts\ModelKeysDtoContract;
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Auth\Dtos\Contracts\ModelKeysDtoContract;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
 use Illuminate\Http\Request;
 
 class UserUpdateKeysDto implements InstantiateFromRequest, DtoContract, ModelKeysDtoContract

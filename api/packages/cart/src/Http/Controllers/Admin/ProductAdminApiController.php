@@ -1,27 +1,27 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Controllers\Admin;
+namespace Ulams\Cart\Http\Controllers\Admin;
 
-use EscolaLms\Cart\Http\Requests\Admin\ProductAttachRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductCreateRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductDeleteRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductDetachRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductManuallyTriggerRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductReadRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductSearchRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductUpdateRequest;
-use EscolaLms\Cart\Http\Resources\ProductDetailedResource;
-use EscolaLms\Cart\Http\Resources\ProductResource;
-use EscolaLms\Cart\Http\Swagger\Admin\ProductAdminSwagger;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
-use EscolaLms\Cart\Services\Contracts\ShopServiceContract;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Templates\Services\Contracts\EventServiceContract;
+use Ulams\Cart\Http\Requests\Admin\ProductAttachRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductCreateRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductDeleteRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductDetachRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductManuallyTriggerRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductReadRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductSearchRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductUpdateRequest;
+use Ulams\Cart\Http\Resources\ProductDetailedResource;
+use Ulams\Cart\Http\Resources\ProductResource;
+use Ulams\Cart\Http\Swagger\Admin\ProductAdminSwagger;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Cart\Services\Contracts\ShopServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Templates\Services\Contracts\EventServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
-class ProductAdminApiController extends EscolaLmsBaseController implements ProductAdminSwagger
+class ProductAdminApiController extends UlamsBaseController implements ProductAdminSwagger
 {
     protected ProductServiceContract $productService;
     protected ShopServiceContract $shopService;

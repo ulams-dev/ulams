@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Strategies;
+namespace Ulams\TopicTypeGift\Strategies;
 
-use EscolaLms\TopicTypeGift\Dtos\CheckAnswerDto;
+use Ulams\TopicTypeGift\Dtos\CheckAnswerDto;
 
 class DescriptionQuestionStrategy extends QuestionStrategy
 {

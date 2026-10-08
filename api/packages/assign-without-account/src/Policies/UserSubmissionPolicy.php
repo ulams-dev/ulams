@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Policies;
+namespace Ulams\AssignWithoutAccount\Policies;
 
-use EscolaLms\AssignWithoutAccount\Enums\AssignWithoutAccountPermissionEnum;
-use EscolaLms\AssignWithoutAccount\Models\UserSubmission;
-use EscolaLms\Core\Models\User;
+use Ulams\AssignWithoutAccount\Enums\AssignWithoutAccountPermissionEnum;
+use Ulams\AssignWithoutAccount\Models\UserSubmission;
+use Ulams\Core\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UserSubmissionPolicy

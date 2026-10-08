@@ -3,12 +3,12 @@
 namespace Tests\Integrations;
 
 use App\Enum\EventOrderByEnum;
-use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
-use EscolaLms\StationaryEvents\Http\Resources\StationaryEventResource;
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
-use EscolaLms\Webinar\Enum\WebinarStatusEnum;
-use EscolaLms\Webinar\Http\Resources\WebinarSimpleResource;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\StationaryEvents\Enum\StationaryEventStatusEnum;
+use Ulams\StationaryEvents\Http\Resources\StationaryEventResource;
+use Ulams\StationaryEvents\Models\StationaryEvent;
+use Ulams\Webinar\Enum\WebinarStatusEnum;
+use Ulams\Webinar\Http\Resources\WebinarSimpleResource;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 

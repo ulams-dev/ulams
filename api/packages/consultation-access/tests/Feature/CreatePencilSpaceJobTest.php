@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Tests\Feature;
+namespace Ulams\ConsultationAccess\Tests\Feature;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\ConsultationAccess\Enum\EnquiryStatusEnum;
-use EscolaLms\ConsultationAccess\Enum\MeetingLinkTypeEnum;
-use EscolaLms\ConsultationAccess\Events\ConsultationAccessEnquiryApprovedEvent;
-use EscolaLms\ConsultationAccess\Jobs\CreatePencilSpaceJob;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\ConsultationAccess\Tests\TestCase;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\PencilSpaces\Facades\PencilSpace;
+use Ulams\Auth\Models\User;
+use Ulams\ConsultationAccess\Enum\EnquiryStatusEnum;
+use Ulams\ConsultationAccess\Enum\MeetingLinkTypeEnum;
+use Ulams\ConsultationAccess\Events\ConsultationAccessEnquiryApprovedEvent;
+use Ulams\ConsultationAccess\Jobs\CreatePencilSpaceJob;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\ConsultationAccess\Tests\TestCase;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\PencilSpaces\Facades\PencilSpace;
 use Illuminate\Support\Facades\Event;
 
 class CreatePencilSpaceJobTest extends TestCase

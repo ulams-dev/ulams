@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Mocks;
+namespace Ulams\Core\Tests\Mocks;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\DtoContract;
 
 class UpdateDto implements DtoContract
 {

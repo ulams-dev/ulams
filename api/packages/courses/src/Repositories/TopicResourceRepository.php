@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Courses\Repositories;
+namespace Ulams\Courses\Repositories;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\TopicResource;
-use EscolaLms\Courses\Repositories\BaseRepository;
-use EscolaLms\Courses\Repositories\Contracts\TopicResourceRepositoryContract;
-use EscolaLms\Files\Helpers\FileHelper;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Models\TopicResource;
+use Ulams\Courses\Repositories\BaseRepository;
+use Ulams\Courses\Repositories\Contracts\TopicResourceRepositoryContract;
+use Ulams\Files\Helpers\FileHelper;
 use Exception;
 use Illuminate\Contracts\Filesystem\FileExistsException;
 use Illuminate\Http\UploadedFile;

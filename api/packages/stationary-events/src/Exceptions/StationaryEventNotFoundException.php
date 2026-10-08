@@ -1,5 +1,5 @@
 <?php
-namespace EscolaLms\StationaryEvents\Exceptions;
+namespace Ulams\StationaryEvents\Exceptions;
 
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 

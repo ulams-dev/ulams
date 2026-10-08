@@ -3,7 +3,7 @@ import RightContent from '@/components/RightContent';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import type { AxiosRequestConfig, RunTimeLayoutConfig } from '@umijs/max';
 import { getLocale, history } from '@umijs/max';
-import { currentUser as queryCurrentUser } from './services/escola-lms/api';
+import { currentUser as queryCurrentUser } from './services/ulams/api';
 //import { errorConfig } from './requestErrorConfig';
 import { localeInfo } from '@@/plugin-locale/localeExports';
 import { BookOutlined } from '@ant-design/icons';
@@ -12,13 +12,13 @@ import { notification } from 'antd';
 import { FormattedMessage } from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import RestrictedPage from './pages/403';
-import { packages } from './services/escola-lms/packages';
+import { packages } from './services/ulams/packages';
 import {
   configs,
   publicSettings as fetchPublicSettings,
   settings,
-} from './services/escola-lms/settings';
-import { translations } from './services/escola-lms/translations';
+} from './services/ulams/settings';
+import { translations } from './services/ulams/translations';
 import './services/sentry';
 import { refreshTokenCallback } from './services/token_refresh';
 const authpaths = ['/user/login', '/user/reset-password'];
@@ -201,7 +201,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       <>
         <BookOutlined />
         <span>
-          <a href="http://docs.wellms.io/" target="_blank" rel="noreferrer">
+          <a href="http://docs.ulams.app/" target="_blank" rel="noreferrer">
             <FormattedMessage id="documentation" />
           </a>
         </span>

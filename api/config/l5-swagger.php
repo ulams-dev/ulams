@@ -5,7 +5,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'Escola LMS',
+                'title' => 'Ulams LMS',
             ],
             'routes' => [
                 /*

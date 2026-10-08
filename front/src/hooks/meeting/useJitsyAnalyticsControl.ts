@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { JITSY_AI_MIN_PARTICIPANT_COUNT } from "@/utils/constants";
-import { API } from "@lms/sdk";
-import { Consultation } from "@lms/sdk/types";
+import { API } from "@ulams/sdk";
+import { Consultation } from "@ulams/sdk/types";
 
 export type ExtendedConsultation = Consultation & {
   analyze_enabled?: boolean;

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Course;
+namespace Ulams\Reports\Stats\Course;
 
 class FinishedCourse extends CourseUsersAndGroupsStat
 {

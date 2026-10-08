@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Lrs\Tests\API;
+namespace Ulams\Lrs\Tests\API;
 
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Lrs\Tests\TestCase;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Lrs\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Lrs\Database\Seeders\LrsSeeder;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Lrs\Database\Seeders\LrsSeeder;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
 
 class cmi5ApiTest extends TestCase
 {
@@ -49,7 +49,7 @@ class cmi5ApiTest extends TestCase
 
         $this->course->users()->syncWithoutDetaching([$this->user->id]);
 
-        $this->token = $this->user->createToken("EscolaLMS User Token")->accessToken;
+        $this->token = $this->user->createToken("Ulams User Token")->accessToken;
     }
 
     public function test_get_course_lanuch_params()

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Models;
+namespace Ulams\Auth\Models;
 
-use Database\Factories\EscolaLms\Auth\Models\PreUserFactory;
+use Database\Factories\Ulams\Auth\Models\PreUserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -36,7 +36,7 @@ use Illuminate\Support\Carbon;
  */
 
 /**
- * EscolaLms\Auth\Models\PreUser
+ * Ulams\Auth\Models\PreUser
  *
  * @property string $first_name
  * @property string $last_name

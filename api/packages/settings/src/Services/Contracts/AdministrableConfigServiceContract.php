@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Settings\Services\Contracts;
+namespace Ulams\Settings\Services\Contracts;
 
 /**
- * @see \EscolaLms\Settings\Facades\AdministrableConfig
+ * @see \Ulams\Settings\Facades\AdministrableConfig
  */
 interface AdministrableConfigServiceContract
 {

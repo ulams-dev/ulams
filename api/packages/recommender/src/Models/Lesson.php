@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Recommender\Models;
+namespace Ulams\Recommender\Models;
 
-use EscolaLms\Courses\Models\Lesson as CoreLesson;
+use Ulams\Courses\Models\Lesson as CoreLesson;
 
 class Lesson extends CoreLesson
 {

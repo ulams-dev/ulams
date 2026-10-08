@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Consultations\Database\Factories;
+namespace Ulams\Consultations\Database\Factories;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Consultations\Enum\ConsultationStatusEnum;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Core\Enums\UserRole;
+use Ulams\Auth\Models\User;
+use Ulams\Consultations\Enum\ConsultationStatusEnum;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Core\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ConsultationFactory extends Factory

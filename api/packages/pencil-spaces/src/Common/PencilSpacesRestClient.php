@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Common;
+namespace Ulams\PencilSpaces\Common;
 
-use EscolaLms\PencilSpaces\EscolaLmsPencilSpacesServiceProvider;
-use EscolaLms\PencilSpaces\Exceptions\InvalidPencilSpaceConfigurationException;
+use Ulams\PencilSpaces\UlamsPencilSpacesServiceProvider;
+use Ulams\PencilSpaces\Exceptions\InvalidPencilSpaceConfigurationException;
 use Exception;
 use Illuminate\Support\Facades\Config;
 
@@ -20,12 +20,12 @@ class PencilSpacesRestClient extends RestClient
 
     private function getApiUrl(): ?string
     {
-        return Config::get(EscolaLmsPencilSpacesServiceProvider::CONFIG_KEY . '.api_url');
+        return Config::get(UlamsPencilSpacesServiceProvider::CONFIG_KEY . '.api_url');
     }
 
     private function getApiKey(): ?string
     {
-        return Config::get(EscolaLmsPencilSpacesServiceProvider::CONFIG_KEY . '.api_key');
+        return Config::get(UlamsPencilSpacesServiceProvider::CONFIG_KEY . '.api_key');
     }
 
     /**

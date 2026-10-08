@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Traits;
+namespace Ulams\HeadlessH5P\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 

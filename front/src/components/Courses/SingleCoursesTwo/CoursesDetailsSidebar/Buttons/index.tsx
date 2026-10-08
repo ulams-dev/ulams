@@ -6,19 +6,19 @@ import React, {
   useState,
 } from "react";
 import styled from "styled-components";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import isPast from "date-fns/isPast";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { Capacitor } from "@capacitor/core";
 import { Purchases } from "@revenuecat/purchases-capacitor";
 import { VITE_APP_ANDROID_APIKEY, VITE_APP_IOS_APIKEY } from "@/config/index";
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { API } from "@lms/sdk";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { API } from "@ulams/sdk";
 import { isMobilePlatform, userIsCourseAuthor } from "@/utils/index";
 import routeRoutes from "@/components/Routes/routes";
-import { Modal } from "@lms/components/components/atoms/Modal/Modal";
+import { Modal } from "@ulams/components/components/atoms/Modal/Modal";
 import ProductModal from "@/components/Courses/SingleCoursesTwo/CoursesDetailsSidebar/ProductModal";
 import useSubscriptions from "@/hooks/useSubscriptions";
 import {
@@ -52,7 +52,7 @@ const CourseAccessButton: React.FC<CourseAccessButtonProps> = ({
   const { t } = useTranslation();
   const { push } = useHistory();
   const { courseAccess, fetchCourseAccess, user, fetchCourse, addToCart } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
   const { attachProduct, getActiveSubscription } = useSubscriptions();
   const { payByStripe, payByP24, defaultGateway } = usePayment();
   const buyableType = useEntityBuyableType(course);
@@ -134,7 +134,7 @@ const CourseAccessButton: React.FC<CourseAccessButtonProps> = ({
   ]);
 
   const handleAttachProduct = useCallback(() => {
-    attachProduct(course.id, "EscolaLms\\Courses\\Models\\Course").then(() => [
+    attachProduct(course.id, "Ulams\\Courses\\Models\\Course").then(() => [
       push(`/course/${course.id}`),
       fetchCourseAccess({
         course_id: Number(course.id),
@@ -215,7 +215,7 @@ const CourseDetailsSidebarButtons: React.FC<Props> = ({
   userOwnThisCourse,
   onRequestAccess,
 }) => {
-  const { cart, user, fetchCourseAccess } = useContext(EscolaLMSContext);
+  const { cart, user, fetchCourseAccess } = useContext(UlamsContext);
   const { t } = useTranslation();
   const { push } = useHistory();
   const [modalVisible, setModalVisible] = useState(false);

@@ -1,5 +1,5 @@
-import { getSemesterSubjectTutors, semesterSubject } from '@/services/escola-lms/semester_subject';
-import { studentUserGroup } from '@/services/escola-lms/student_user_groups';
+import { getSemesterSubjectTutors, semesterSubject } from '@/services/ulams/semester_subject';
+import { studentUserGroup } from '@/services/ulams/student_user_groups';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 interface GroupUserData {

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Requests;
+namespace Ulams\Courses\Http\Requests;
 
-use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
-use EscolaLms\Courses\Models\Course;
+use Ulams\Courses\Enum\CoursesPermissionsEnum;
+use Ulams\Courses\Models\Course;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

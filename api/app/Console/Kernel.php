@@ -2,11 +2,11 @@
 
 namespace App\Console;
 
-use EscolaLms\Consultations\Enum\ConsultationTermReminderStatusEnum;
-use EscolaLms\Consultations\Jobs\ReminderAboutConsultationJob;
-use EscolaLms\Recommender\Jobs\RebuildTermAnalyticJob;
-use EscolaLms\Webinar\Enum\WebinarTermReminderStatusEnum;
-use EscolaLms\Webinar\Jobs\ReminderAboutWebinarJob;
+use Ulams\Consultations\Enum\ConsultationTermReminderStatusEnum;
+use Ulams\Consultations\Jobs\ReminderAboutConsultationJob;
+use Ulams\Recommender\Jobs\RebuildTermAnalyticJob;
+use Ulams\Webinar\Enum\WebinarTermReminderStatusEnum;
+use Ulams\Webinar\Jobs\ReminderAboutWebinarJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Gecche\Multidomain\Foundation\Console\Kernel as ConsoleKernel;
 

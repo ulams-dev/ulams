@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Consultations\Enum\ConsultationsPermissionsEnum;
+use Ulams\Consultations\Enum\ConsultationsPermissionsEnum;
 use Illuminate\Database\Migrations\Migration;
 use Spatie\Permission\Models\Permission;
 

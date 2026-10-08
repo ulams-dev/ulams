@@ -2,7 +2,7 @@
 
 namespace App\Services\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
+use Ulams\Core\Dtos\OrderDto;
 use Illuminate\Database\Query\Builder;
 
 interface SearchableEventServiceContract

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Recommender\Jobs;
+namespace Ulams\Recommender\Jobs;
 
-use EscolaLms\Recommender\Enum\SatisfactionStatusEnum;
-use EscolaLms\Recommender\Models\TermAnalytic;
-use EscolaLms\Recommender\Services\Contracts\TermAnalyticServiceContract;
+use Ulams\Recommender\Enum\SatisfactionStatusEnum;
+use Ulams\Recommender\Models\TermAnalytic;
+use Ulams\Recommender\Services\Contracts\TermAnalyticServiceContract;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

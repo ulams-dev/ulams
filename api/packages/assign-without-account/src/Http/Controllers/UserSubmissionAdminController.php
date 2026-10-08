@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Http\Controllers;
+namespace Ulams\AssignWithoutAccount\Http\Controllers;
 
-use EscolaLms\AssignWithoutAccount\Dto\UserSubmissionDto;
-use EscolaLms\AssignWithoutAccount\Dto\UserSubmissionSearchDto;
-use EscolaLms\AssignWithoutAccount\Http\Controllers\Swagger\UserSubmissionAdminControllerSwagger;
-use EscolaLms\AssignWithoutAccount\Http\Requests\UserSubmissionCreateRequest;
-use EscolaLms\AssignWithoutAccount\Http\Requests\UserSubmissionDeleteRequest;
-use EscolaLms\AssignWithoutAccount\Http\Requests\UserSubmissionListRequest;
-use EscolaLms\AssignWithoutAccount\Http\Requests\UserSubmissionUpdateRequest;
-use EscolaLms\AssignWithoutAccount\Http\Resources\UserSubmissionResource;
-use EscolaLms\AssignWithoutAccount\Services\Contracts\UserSubmissionServiceContract;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Dtos\PaginationDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\AssignWithoutAccount\Dto\UserSubmissionDto;
+use Ulams\AssignWithoutAccount\Dto\UserSubmissionSearchDto;
+use Ulams\AssignWithoutAccount\Http\Controllers\Swagger\UserSubmissionAdminControllerSwagger;
+use Ulams\AssignWithoutAccount\Http\Requests\UserSubmissionCreateRequest;
+use Ulams\AssignWithoutAccount\Http\Requests\UserSubmissionDeleteRequest;
+use Ulams\AssignWithoutAccount\Http\Requests\UserSubmissionListRequest;
+use Ulams\AssignWithoutAccount\Http\Requests\UserSubmissionUpdateRequest;
+use Ulams\AssignWithoutAccount\Http\Resources\UserSubmissionResource;
+use Ulams\AssignWithoutAccount\Services\Contracts\UserSubmissionServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Dtos\PaginationDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\JsonResponse;
 
-class UserSubmissionAdminController extends EscolaLmsBaseController implements UserSubmissionAdminControllerSwagger
+class UserSubmissionAdminController extends UlamsBaseController implements UserSubmissionAdminControllerSwagger
 {
     private UserSubmissionServiceContract $userSubmissionService;
 

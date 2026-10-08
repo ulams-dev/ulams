@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Consultations\Helpers;
+namespace Ulams\Consultations\Helpers;
 
 class StrategyHelper
 {
@@ -47,7 +47,7 @@ class StrategyHelper
 
     private function setNamespace(string $baseStrategyName): void
     {
-        $this->namespace = 'EscolaLms\Consultations\Strategies\\' .
+        $this->namespace = 'Ulams\Consultations\Strategies\\' .
             preg_replace('/^(.*)Strategy$/', '$1', $baseStrategyName);
     }
 }

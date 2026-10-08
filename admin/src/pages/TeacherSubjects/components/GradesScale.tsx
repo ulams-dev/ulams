@@ -6,7 +6,7 @@ import { Button, Divider, Select, Spin, Typography } from 'antd';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, useModel } from 'umi';
 
-import { createSubjectTutorGrades, getSubjectTutorGrades } from '@/services/escola-lms/grades';
+import { createSubjectTutorGrades, getSubjectTutorGrades } from '@/services/ulams/grades';
 import { useTeacherSubject } from '../context';
 
 type TableGradeScale = API.GradeScale & { id: string };

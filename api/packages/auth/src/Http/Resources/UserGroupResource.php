@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Resources;
+namespace Ulams\Auth\Http\Resources;
 
-use EscolaLms\Auth\Models\Group;
-use EscolaLms\Auth\Traits\ResourceExtandable;
+use Ulams\Auth\Models\Group;
+use Ulams\Auth\Traits\ResourceExtandable;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserGroupResource extends JsonResource

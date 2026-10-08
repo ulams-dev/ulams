@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Core\Tests;
+namespace Ulams\Core\Tests;
 
-use EscolaLms\Core\Enums\UserRole;
+use Ulams\Core\Enums\UserRole;
 use Illuminate\Contracts\Auth\Authenticatable as User;
 
 trait CreatesUsers

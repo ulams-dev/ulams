@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Video\Tests\Api;
+namespace Ulams\Video\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Video\Database\Seeders\VideoPermissionSeeder;
-use EscolaLms\Video\Models\Video;
-use EscolaLms\Video\Tests\TestCase;
-use EscolaLms\Video\Tests\VideoTesting;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Video\Database\Seeders\VideoPermissionSeeder;
+use Ulams\Video\Models\Video;
+use Ulams\Video\Tests\TestCase;
+use Ulams\Video\Tests\VideoTesting;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class VideoControllerTest extends TestCase
@@ -36,7 +36,7 @@ class VideoControllerTest extends TestCase
                                 'message' => 'Something went wrong!'
                             ]
                         ],
-                        'topicable_type' => \EscolaLms\TopicTypes\Models\TopicContent\Video::class,
+                        'topicable_type' => \Ulams\TopicTypes\Models\TopicContent\Video::class,
                         'topicable_id' => Video::factory()->create()->getKey()
                     ])
                 )
@@ -53,7 +53,7 @@ class VideoControllerTest extends TestCase
                                 'path' => '/courses/123/topic/123/video/video.m3u8'
                             ]
                         ],
-                        'topicable_type' => \EscolaLms\TopicTypes\Models\TopicContent\Video::class,
+                        'topicable_type' => \Ulams\TopicTypes\Models\TopicContent\Video::class,
                         'topicable_id' => Video::factory()->create()->getKey()
                     ])
                 )
@@ -70,7 +70,7 @@ class VideoControllerTest extends TestCase
                                 'percentage' => random_int(0, 100)
                             ]
                         ],
-                        'topicable_type' => \EscolaLms\TopicTypes\Models\TopicContent\Video::class,
+                        'topicable_type' => \Ulams\TopicTypes\Models\TopicContent\Video::class,
                         'topicable_id' => Video::factory()->create()->getKey()
                     ])
                 )

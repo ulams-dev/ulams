@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Providers;
+namespace Ulams\AssignWithoutAccount\Providers;
 
-use EscolaLms\AssignWithoutAccount\Listeners\AccountRegisteredListener;
-use EscolaLms\Auth\Events\AccountRegistered;
+use Ulams\AssignWithoutAccount\Listeners\AccountRegisteredListener;
+use Ulams\Auth\Events\AccountRegistered;
 
 class EventServiceProvider extends \Illuminate\Foundation\Support\Providers\EventServiceProvider
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Models\TopicContent;
+namespace Ulams\TopicTypes\Models\TopicContent;
 
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -54,7 +54,7 @@ class Audio extends AbstractTopicFileContent
 
     protected static function newFactory()
     {
-        return \EscolaLms\TopicTypes\Database\Factories\TopicContent\AudioFactory::new();
+        return \Ulams\TopicTypes\Database\Factories\TopicContent\AudioFactory::new();
     }
 
     protected function processUploadedFiles(): void

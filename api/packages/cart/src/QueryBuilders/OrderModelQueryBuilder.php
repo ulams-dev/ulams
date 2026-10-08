@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cart\QueryBuilders;
+namespace Ulams\Cart\QueryBuilders;
 
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Cart\Facades\Shop;
-use EscolaLms\Cart\Models\Product;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Cart\Facades\Shop;
+use Ulams\Cart\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 

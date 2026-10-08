@@ -8,8 +8,8 @@ import React, {
   useContext,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextListState,
 } from "./types";
 import { defaultConfig } from "./defaults";
@@ -22,7 +22,7 @@ import { tutors as getTutors } from "./../../services/student/tutors";
 import { UserContext } from "./user";
 
 export const ScheduleTutorsContext: React.Context<
-  Pick<EscolaLMSContextConfig, "scheduleTutors" | "fetchScheduleTutors">
+  Pick<UlamsContextConfig, "scheduleTutors" | "fetchScheduleTutors">
 > = createContext({
   scheduleTutors: defaultConfig.scheduleTutors,
   fetchScheduleTutors: defaultConfig.fetchScheduleTutors,
@@ -30,7 +30,7 @@ export const ScheduleTutorsContext: React.Context<
 
 export interface ScheduleTutorsContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "scheduleTutors">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "scheduleTutors">>;
   ssrHydration?: boolean;
 }
 

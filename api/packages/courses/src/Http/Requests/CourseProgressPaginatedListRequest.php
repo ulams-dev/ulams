@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Requests;
+namespace Ulams\Courses\Http\Requests;
 
 use BenSampo\Enum\Rules\Enum;
-use EscolaLms\Courses\Enum\ProgressFilterEnum;
-use EscolaLms\Courses\Enum\ProgressStatus;
-use EscolaLms\Courses\Rules\ValidEnum;
+use Ulams\Courses\Enum\ProgressFilterEnum;
+use Ulams\Courses\Enum\ProgressStatus;
+use Ulams\Courses\Rules\ValidEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CourseProgressPaginatedListRequest extends FormRequest

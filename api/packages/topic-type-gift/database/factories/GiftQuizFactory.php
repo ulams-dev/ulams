@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Database\Factories;
+namespace Ulams\TopicTypeGift\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
 
 class GiftQuizFactory extends Factory
 {

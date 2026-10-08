@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Core;
+namespace Ulams\TemplatesSms\Core;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
 
 class UserVariables extends SmsVariables
 {

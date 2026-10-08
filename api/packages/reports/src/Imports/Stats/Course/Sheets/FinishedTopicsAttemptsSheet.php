@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Reports\Imports\Stats\Course\Sheets;
+namespace Ulams\Reports\Imports\Stats\Course\Sheets;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Courses\Models\CourseProgress;
-use EscolaLms\Courses\Models\CourseUserAttendance;
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Auth\Models\User;
+use Ulams\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\CourseUserAttendance;
+use Ulams\Courses\Models\Topic;
 
 class FinishedTopicsAttemptsSheet extends FinishedTopicsSheet
 {

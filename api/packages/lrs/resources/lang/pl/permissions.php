@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Lrs\Enums\LrsPermissionEnum;
+use Ulams\Lrs\Enums\LrsPermissionEnum;
 
 return [
     LrsPermissionEnum::STATEMENT_LIST => 'Lista zestawienia',

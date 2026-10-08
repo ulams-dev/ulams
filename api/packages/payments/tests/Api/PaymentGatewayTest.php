@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Payments\Tests\Api;
+namespace Ulams\Payments\Tests\Api;
 
-use EscolaLms\Payments\Facades\Payments;
-use EscolaLms\Payments\Gateway\Drivers\Przelewy24Driver;
-use EscolaLms\Payments\Gateway\Drivers\RevenueCatDriver;
-use EscolaLms\Payments\Gateway\Drivers\StripeDriver;
-use EscolaLms\Payments\Tests\TestCase;
-use EscolaLms\Payments\Tests\Traits\CreatesBillable;
+use Ulams\Payments\Facades\Payments;
+use Ulams\Payments\Gateway\Drivers\Przelewy24Driver;
+use Ulams\Payments\Gateway\Drivers\RevenueCatDriver;
+use Ulams\Payments\Gateway\Drivers\StripeDriver;
+use Ulams\Payments\Tests\TestCase;
+use Ulams\Payments\Tests\Traits\CreatesBillable;
 
 class PaymentGatewayTest extends TestCase
 {

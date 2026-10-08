@@ -14,7 +14,7 @@ import {
   createCategory,
   deleteCategory,
   updateCategory,
-} from '@/services/escola-lms/category';
+} from '@/services/ulams/category';
 import { createTableOrderObject } from '@/utils/utils';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import CategoryModalForm from './components/ModalForm';

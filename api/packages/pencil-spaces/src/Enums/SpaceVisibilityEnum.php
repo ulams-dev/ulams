@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Enums;
+namespace Ulams\PencilSpaces\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class SpaceVisibilityEnum extends BasicEnum
 {

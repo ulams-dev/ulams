@@ -6,7 +6,7 @@ import React, { useMemo } from 'react';
 import { FormattedMessage, Link, useLocation } from 'umi';
 
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';
-import { getGroupFinalGrades } from '@/services/escola-lms/grades';
+import { getGroupFinalGrades } from '@/services/ulams/grades';
 import { useTeacherSubject } from '../context';
 import { FinalGradesDetails } from './FinalGradesDetails';
 import { TEACHER_SUBJECTS_PAGE_SIZE } from './consts';

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Repositories\Contracts;
+namespace Ulams\Auth\Repositories\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 
 interface UserGroupRepositoryContract extends BaseRepositoryContract

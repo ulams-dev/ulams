@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Vouchers\Http\Resources;
+namespace Ulams\Vouchers\Http\Resources;
 
-use EscolaLms\Cart\Http\Resources\CartResource as BaseCartResource;
-use EscolaLms\Cart\Models\Cart as BaseCart;
-use EscolaLms\Vouchers\Enums\CouponTypeEnum;
-use EscolaLms\Vouchers\Models\Cart;
+use Ulams\Cart\Http\Resources\CartResource as BaseCartResource;
+use Ulams\Cart\Models\Cart as BaseCart;
+use Ulams\Vouchers\Enums\CouponTypeEnum;
+use Ulams\Vouchers\Models\Cart;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class CartResource extends BaseCartResource

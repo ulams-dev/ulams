@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Tests\Api;
+namespace Ulams\HeadlessH5P\Tests\Api;
 
-use EscolaLms\HeadlessH5P\Tests\TestCase;
-use EscolaLms\HeadlessH5P\Tests\Traits\H5PTestingTrait;
+use Ulams\HeadlessH5P\Tests\TestCase;
+use Ulams\HeadlessH5P\Tests\Traits\H5PTestingTrait;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class EditorApiTest extends TestCase

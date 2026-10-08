@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Cart\Tests\Feature;
+namespace Ulams\Cart\Tests\Feature;
 
-use EscolaLms\Cart\Enums\PeriodEnum;
-use EscolaLms\Cart\Enums\SubscriptionStatus;
-use EscolaLms\Cart\Events\ProductBought;
-use EscolaLms\Cart\Jobs\RenewRecursiveProductUser;
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Services\Contracts\OrderServiceContract;
-use EscolaLms\Cart\Tests\TestCase;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Payments\Facades\PaymentGateway;
+use Ulams\Cart\Enums\PeriodEnum;
+use Ulams\Cart\Enums\SubscriptionStatus;
+use Ulams\Cart\Events\ProductBought;
+use Ulams\Cart\Jobs\RenewRecursiveProductUser;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Services\Contracts\OrderServiceContract;
+use Ulams\Cart\Tests\TestCase;
+use Ulams\Core\Models\User;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Payments\Facades\PaymentGateway;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
@@ -63,8 +63,8 @@ class RenewRecursiveProductUserTest extends TestCase
     public function testRenewRecursiveProductUserOnlyActiveUnableToRenewDriver(): void
     {
         Event::fake([ProductBought::class]);
-        Config::set('escola_settings.use_database', true);
-        Config::set('escolalms_payments.default_gateway', 'free');
+        Config::set('ulams_settings.use_database', true);
+        Config::set('ulams_payments.default_gateway', 'free');
 
         $user1 = $this->makeStudent();
         $product = Product::factory()->subscriptionWithoutTrial()->state(['subscription_period' => PeriodEnum::DAILY, 'subscription_duration' => 3, 'extra_fees' => 0])->create();

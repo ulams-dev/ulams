@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Webinar\Http\Requests;
+namespace Ulams\Webinar\Http\Requests;
 
-use EscolaLms\Webinar\Enum\WebinarPermissionsEnum;
-use EscolaLms\Webinar\Enum\WebinarStatusEnum;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Webinar\Enum\WebinarPermissionsEnum;
+use Ulams\Webinar\Enum\WebinarStatusEnum;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

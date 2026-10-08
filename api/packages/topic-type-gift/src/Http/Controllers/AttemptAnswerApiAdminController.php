@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Controllers;
+namespace Ulams\TopicTypeGift\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\TopicTypeGift\Http\Controllers\Swagger\AttemptAnswerApiAdminSwagger;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminUpdateAttemptAnswerRequest;
-use EscolaLms\TopicTypeGift\Http\Resources\AttemptAnswerResource;
-use EscolaLms\TopicTypeGift\Services\Contracts\AttemptAnswerServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\TopicTypeGift\Http\Controllers\Swagger\AttemptAnswerApiAdminSwagger;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminUpdateAttemptAnswerRequest;
+use Ulams\TopicTypeGift\Http\Resources\AttemptAnswerResource;
+use Ulams\TopicTypeGift\Services\Contracts\AttemptAnswerServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class AttemptAnswerApiAdminController extends EscolaLmsBaseController implements AttemptAnswerApiAdminSwagger
+class AttemptAnswerApiAdminController extends UlamsBaseController implements AttemptAnswerApiAdminSwagger
 {
     private AttemptAnswerServiceContract $answerService;
 

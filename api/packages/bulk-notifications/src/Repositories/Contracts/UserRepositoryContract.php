@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Repositories\Contracts;
+namespace Ulams\BulkNotifications\Repositories\Contracts;
 
 use Illuminate\Support\Collection;
 

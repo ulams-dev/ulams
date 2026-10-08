@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Http\Requests\Admin;
+namespace Ulams\CourseAccess\Http\Requests\Admin;
 
-use EscolaLms\CourseAccess\Http\Requests\Admin\Abstracts\CourseAccessAPIRequest;
+use Ulams\CourseAccess\Http\Requests\Admin\Abstracts\CourseAccessAPIRequest;
 use Illuminate\Validation\Rule;
 
 class RemoveAccessAPIRequest extends CourseAccessAPIRequest

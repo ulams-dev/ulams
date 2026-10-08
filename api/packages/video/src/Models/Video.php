@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Video\Models;
+namespace Ulams\Video\Models;
 
-use EscolaLms\TopicTypes\Models\TopicContent\Video as TopicContentVideo;
-use EscolaLms\Video\Database\Factories\VideoFactory;
+use Ulams\TopicTypes\Models\TopicContent\Video as TopicContentVideo;
+use Ulams\Video\Database\Factories\VideoFactory;
 
 /**
  * @OA\Schema(

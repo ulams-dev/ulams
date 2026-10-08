@@ -12,7 +12,7 @@ import {
   settingGroups,
   settings,
   updateSettings,
-} from '@/services/escola-lms/settings';
+} from '@/services/ulams/settings';
 
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useEffect } from 'react';

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Templates\Enums;
+namespace Ulams\Templates\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class TemplatesPermissionsEnum extends BasicEnum
 {

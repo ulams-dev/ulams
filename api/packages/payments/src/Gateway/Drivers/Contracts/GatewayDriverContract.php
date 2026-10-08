@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Payments\Gateway\Drivers\Contracts;
+namespace Ulams\Payments\Gateway\Drivers\Contracts;
 
-use EscolaLms\Payments\Gateway\Responses\CallbackRefundResponse;
-use EscolaLms\Payments\Gateway\Responses\CallbackResponse;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Payments\Gateway\Responses\CallbackRefundResponse;
+use Ulams\Payments\Gateway\Responses\CallbackResponse;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Http\Request;
 use Omnipay\Common\Message\ResponseInterface;
 

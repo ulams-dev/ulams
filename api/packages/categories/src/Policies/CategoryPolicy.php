@@ -1,11 +1,11 @@
 <?php
 
 
-namespace EscolaLms\Categories\Policies;
+namespace Ulams\Categories\Policies;
 
-use EscolaLms\Categories\Enums\CategoriesPermissionsEnum;
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Core\Models\User;
+use Ulams\Categories\Enums\CategoriesPermissionsEnum;
+use Ulams\Categories\Models\Category;
+use Ulams\Core\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class CategoryPolicy

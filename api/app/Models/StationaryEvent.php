@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Cart\Contracts\ProductableTrait;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Cart\Contracts\ProductableTrait;
 
-class StationaryEvent extends \EscolaLms\StationaryEvents\Models\StationaryEvent implements Productable
+class StationaryEvent extends \Ulams\StationaryEvents\Models\StationaryEvent implements Productable
 {
     use ProductableTrait;
 }

@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Providers;
+namespace Ulams\TemplatesEmail\Providers;
 
-use EscolaLms\AssignWithoutAccount\Events\AssignToProduct;
-use EscolaLms\AssignWithoutAccount\Events\AssignToProductable;
-use EscolaLms\AssignWithoutAccount\Events\UnassignProduct;
-use EscolaLms\AssignWithoutAccount\Events\UnassignProductable;
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\TemplatesEmail\AssignWithoutAccount\AssignToProductableVariables;
-use EscolaLms\TemplatesEmail\AssignWithoutAccount\AssignToProductVariables;
-use EscolaLms\TemplatesEmail\AssignWithoutAccount\UnassignProductableVariables;
-use EscolaLms\TemplatesEmail\AssignWithoutAccount\UnassignProductVariables;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
+use Ulams\AssignWithoutAccount\Events\AssignToProduct;
+use Ulams\AssignWithoutAccount\Events\AssignToProductable;
+use Ulams\AssignWithoutAccount\Events\UnassignProduct;
+use Ulams\AssignWithoutAccount\Events\UnassignProductable;
+use Ulams\Templates\Facades\Template;
+use Ulams\TemplatesEmail\AssignWithoutAccount\AssignToProductableVariables;
+use Ulams\TemplatesEmail\AssignWithoutAccount\AssignToProductVariables;
+use Ulams\TemplatesEmail\AssignWithoutAccount\UnassignProductableVariables;
+use Ulams\TemplatesEmail\AssignWithoutAccount\UnassignProductVariables;
+use Ulams\TemplatesEmail\Core\EmailChannel;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider;
 
 class AssignWithoutAccountTemplatesEventServiceProvider extends EventServiceProvider

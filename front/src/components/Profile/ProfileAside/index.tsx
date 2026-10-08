@@ -1,8 +1,8 @@
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { NavLink, useHistory } from "react-router-dom";
 import UserSidebar from "@/components/Profile/UserSidebar";
 import { UserIcon } from "../../../icons";
@@ -91,7 +91,7 @@ type Props = {
 
 const ProfileAside: React.FC<Props> = ({ tabs, isProfile = true }) => {
   const [menuOpened] = useState(false);
-  const { logout, fetchProgress, settings } = useContext(EscolaLMSContext);
+  const { logout, fetchProgress, settings } = useContext(UlamsContext);
   const {
     triggerDeleteAccount,
     handleDeleteAccount,

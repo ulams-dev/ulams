@@ -1,4 +1,4 @@
-import { triggerManualEvent } from '@/services/escola-lms/templates';
+import { triggerManualEvent } from '@/services/ulams/templates';
 import { Button, Space, Tooltip, message } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage } from 'umi';

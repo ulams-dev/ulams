@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Models\OrderItem;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Models\ConsultationProposedTerm;
-use EscolaLms\Consultations\Models\ConsultationTerm;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
+use Ulams\Auth\Models\User;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Models\OrderItem;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\ConsultationProposedTerm;
+use Ulams\Consultations\Models\ConsultationTerm;
+use Ulams\Consultations\Models\ConsultationUserPivot;
 use Illuminate\Database\Seeder;
 
 class ConsultationsSeeder extends Seeder

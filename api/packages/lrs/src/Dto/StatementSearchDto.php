@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Lrs\Dto;
+namespace Ulams\Lrs\Dto;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
-use EscolaLms\Lrs\Enums\QueryEnum;
-use EscolaLms\Lrs\Repositories\Criteria\JsonCriteria;
-use EscolaLms\Lrs\Repositories\Criteria\OrderCriterion;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Repositories\Criteria\Primitives\DateCriterion;
+use Ulams\Lrs\Enums\QueryEnum;
+use Ulams\Lrs\Repositories\Criteria\JsonCriteria;
+use Ulams\Lrs\Repositories\Criteria\OrderCriterion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 

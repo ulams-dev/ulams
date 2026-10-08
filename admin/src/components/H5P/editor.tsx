@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
 
 import { useTokenChangeListener } from '@/hooks/useTokenChangeListener';
-import { editorSettings, updateContent } from '@/services/escola-lms/h5p';
+import { editorSettings, updateContent } from '@/services/ulams/h5p';
 
 const H5P_EDITOR_IFRAME_ID = 'h5p-editor';
 enum EditorMessage {

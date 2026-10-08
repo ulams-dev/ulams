@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Tests\Api;
+namespace Ulams\BulkNotifications\Tests\Api;
 
-use EscolaLms\BulkNotifications\Database\Seeders\BulkNotificationPermissionSeeder;
-use EscolaLms\BulkNotifications\Models\BulkNotification;
-use EscolaLms\BulkNotifications\Models\BulkNotificationSection;
-use EscolaLms\BulkNotifications\Tests\BulkNotificationTesting;
-use EscolaLms\BulkNotifications\Tests\TestCase;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\BulkNotifications\Database\Seeders\BulkNotificationPermissionSeeder;
+use Ulams\BulkNotifications\Models\BulkNotification;
+use Ulams\BulkNotifications\Models\BulkNotificationSection;
+use Ulams\BulkNotifications\Tests\BulkNotificationTesting;
+use Ulams\BulkNotifications\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
 
 class ListBulkNotificationApiTest extends TestCase
 {
@@ -88,7 +88,7 @@ class ListBulkNotificationApiTest extends TestCase
 
     public function testListBulkNotificationFiltering(): void
     {
-        $channel = 'EscolaLms\BulkNotifications\Channels\TestingChannel';
+        $channel = 'Ulams\BulkNotifications\Channels\TestingChannel';
 
         BulkNotification::factory()
             ->count(10)

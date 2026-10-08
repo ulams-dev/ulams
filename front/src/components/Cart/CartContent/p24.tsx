@@ -1,12 +1,12 @@
 import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/_App/Layout";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { CheckoutCard } from "@lms/components/components/molecules/CheckoutCard/CheckoutCard";
-import { CartCard } from "@lms/components/components/molecules/CartCard/CartCard";
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { CartItem, InvoiceData } from "@lms/sdk/types";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { CheckoutCard } from "@ulams/components/components/molecules/CheckoutCard/CheckoutCard";
+import { CartCard } from "@ulams/components/components/molecules/CartCard/CartCard";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { CartItem, InvoiceData } from "@ulams/sdk/types";
 import { isMobile } from "react-device-detect";
 import Preloader from "@/components/_App/Preloader";
 import Collapse from "@/components/Common/Collapse";

@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Tests;
+namespace Ulams\TemplatesSms\Tests;
 
-use EscolaLms\Consultations\EscolaLmsConsultationsServiceProvider;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\TemplatesSms\EscolaLmsTemplatesSmsServiceProvider;
-use EscolaLms\Templates\Database\Seeders\PermissionTableSeeder as TemplatesPermissionTableSeeder;
-use EscolaLms\Templates\EscolaLmsTemplatesServiceProvider;
+use Ulams\Consultations\UlamsConsultationsServiceProvider;
+use Ulams\Core\Models\User;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\TemplatesSms\UlamsTemplatesSmsServiceProvider;
+use Ulams\Templates\Database\Seeders\PermissionTableSeeder as TemplatesPermissionTableSeeder;
+use Ulams\Templates\UlamsTemplatesServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 use Tzsk\Sms\SmsServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     use DatabaseTransactions;
 
@@ -29,10 +29,10 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             ...parent::getPackageProviders($app),
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
-            EscolaLmsTemplatesServiceProvider::class,
-            EscolaLmsSettingsServiceProvider::class,
-            EscolaLmsConsultationsServiceProvider::class,
-            EscolaLmsTemplatesSmsServiceProvider::class,
+            UlamsTemplatesServiceProvider::class,
+            UlamsSettingsServiceProvider::class,
+            UlamsConsultationsServiceProvider::class,
+            UlamsTemplatesSmsServiceProvider::class,
             SmsServiceProvider::class,
         ];
     }

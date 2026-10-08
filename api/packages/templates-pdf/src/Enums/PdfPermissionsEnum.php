@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Enums;
+namespace Ulams\TemplatesPdf\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class PdfPermissionsEnum extends BasicEnum
 {

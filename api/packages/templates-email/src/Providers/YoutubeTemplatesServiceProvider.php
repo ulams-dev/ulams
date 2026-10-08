@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Providers;
+namespace Ulams\TemplatesEmail\Providers;
 
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
-use EscolaLms\TemplatesEmail\Youtube\YtProblemVariables;
-use EscolaLms\Youtube\Events\YtProblem;
+use Ulams\TemplatesEmail\Core\EmailChannel;
+use Ulams\TemplatesEmail\Youtube\YtProblemVariables;
+use Ulams\Youtube\Events\YtProblem;
 use Illuminate\Support\ServiceProvider;
-use EscolaLms\Templates\Facades\Template;
+use Ulams\Templates\Facades\Template;
 
 class YoutubeTemplatesServiceProvider extends ServiceProvider
 {

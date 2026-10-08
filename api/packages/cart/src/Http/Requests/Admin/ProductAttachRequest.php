@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests\Admin;
+namespace Ulams\Cart\Http\Requests\Admin;
 
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\User;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

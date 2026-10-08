@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Payments\Gateway\Drivers;
+namespace Ulams\Payments\Gateway\Drivers;
 
-use EscolaLms\Payments\Exceptions\ActionNotSupported;
-use EscolaLms\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
-use EscolaLms\Payments\Gateway\Responses\CallbackRefundResponse;
-use EscolaLms\Payments\Gateway\Responses\CallbackResponse;
-use EscolaLms\Payments\Gateway\Responses\NoneGatewayResponse;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Payments\Exceptions\ActionNotSupported;
+use Ulams\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
+use Ulams\Payments\Gateway\Responses\CallbackRefundResponse;
+use Ulams\Payments\Gateway\Responses\CallbackResponse;
+use Ulams\Payments\Gateway\Responses\NoneGatewayResponse;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Http\Request;
 use Omnipay\Common\Message\ResponseInterface;
 

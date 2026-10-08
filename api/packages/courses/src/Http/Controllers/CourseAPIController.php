@@ -1,29 +1,29 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Controllers;
+namespace Ulams\Courses\Http\Controllers;
 
-use EscolaLms\Courses\Http\Resources\TopicResource;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Http\Controllers\Swagger\CourseAPISwagger;
-use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
-use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
-use EscolaLms\Courses\Http\Requests\GetCourseAPIRequest;
-use EscolaLms\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
-use EscolaLms\Courses\Http\Requests\ListAuthoredCourseAPIRequest;
-use EscolaLms\Courses\Http\Requests\ListCourseAPIRequest;
-use EscolaLms\Courses\Http\Requests\SortAPIRequest;
-use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
-use EscolaLms\Courses\Http\Resources\Admin\CourseWithProgramAdminResource;
-use EscolaLms\Courses\Http\Resources\CourseListResource;
-use EscolaLms\Courses\Http\Resources\CourseSimpleResource;
-use EscolaLms\Courses\Http\Resources\CourseWithProgramResource;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
-use EscolaLms\Courses\Repositories\CourseRepository;
-use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
-use EscolaLms\Tags\Repository\Contracts\TagRepositoryContract;
+use Ulams\Courses\Http\Resources\TopicResource;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Courses\Enum\CoursesPermissionsEnum;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Http\Controllers\Swagger\CourseAPISwagger;
+use Ulams\Courses\Http\Requests\CreateCourseAPIRequest;
+use Ulams\Courses\Http\Requests\DeleteCourseAPIRequest;
+use Ulams\Courses\Http\Requests\GetCourseAPIRequest;
+use Ulams\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
+use Ulams\Courses\Http\Requests\ListAuthoredCourseAPIRequest;
+use Ulams\Courses\Http\Requests\ListCourseAPIRequest;
+use Ulams\Courses\Http\Requests\SortAPIRequest;
+use Ulams\Courses\Http\Requests\UpdateCourseAPIRequest;
+use Ulams\Courses\Http\Resources\Admin\CourseWithProgramAdminResource;
+use Ulams\Courses\Http\Resources\CourseListResource;
+use Ulams\Courses\Http\Resources\CourseSimpleResource;
+use Ulams\Courses\Http\Resources\CourseWithProgramResource;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Repositories\Contracts\CourseRepositoryContract;
+use Ulams\Courses\Repositories\CourseRepository;
+use Ulams\Courses\Services\Contracts\CourseServiceContract;
+use Ulams\Tags\Repository\Contracts\TagRepositoryContract;
 use Illuminate\Http\JsonResponse;
 
 /**

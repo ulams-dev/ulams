@@ -1,10 +1,10 @@
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { StyledHeader, StyledTabs } from "./styles";
 import { ConsultationsContext } from "@/components/Consultations/List/ConsultationsContext";
 import { useContext } from "react";
 import ConsultationsSlider from "@/components/Consultations/ConsultationsSlider";
-import { Tabs } from "@lms/components/components/atoms/Tabs/Tabs";
-import { API } from "@lms/sdk";
+import { Tabs } from "@ulams/components/components/atoms/Tabs/Tabs";
+import { API } from "@ulams/sdk";
 import ConsultationCard from "@/components/Consultations/ConsultationCard";
 import { Col, Row } from "react-grid-system";
 import Preloader from "@/components/_App/Preloader";
@@ -16,7 +16,7 @@ const ConsultationsCollection = () => {
 
   const consultationsCategories = consultations?.data?.map((item) =>
     item?.categories?.reduce(
-      (acc: string[], cat: EscolaLms.Categories.Models.Category) =>
+      (acc: string[], cat: Ulams.Categories.Models.Category) =>
         cat.parent_id === null ? [...acc, cat.name] : acc,
       []
     )

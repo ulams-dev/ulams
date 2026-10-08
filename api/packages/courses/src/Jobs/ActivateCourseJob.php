@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Jobs;
+namespace Ulams\Courses\Jobs;
 
-use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
+use Ulams\Courses\Services\Contracts\CourseServiceContract;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

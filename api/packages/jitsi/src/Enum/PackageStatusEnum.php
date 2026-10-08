@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Jitsi\Enum;
+namespace Ulams\Jitsi\Enum;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class PackageStatusEnum extends BasicEnum
 {

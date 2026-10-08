@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Repositories\Contracts;
+namespace Ulams\Auth\Repositories\Contracts;
 
-use EscolaLms\Auth\Models\SocialAccount;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Auth\Models\SocialAccount;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 
 interface SocialAccountRepositoryContract extends BaseRepositoryContract
 {

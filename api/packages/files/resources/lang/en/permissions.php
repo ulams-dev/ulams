@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Files\Enums\FilePermissionsEnum;
+use Ulams\Files\Enums\FilePermissionsEnum;
 
 return [
     FilePermissionsEnum::FILE_LIST => 'File list',

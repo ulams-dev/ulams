@@ -1,9 +1,9 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
-import { API } from "@lms/sdk";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { Button } from "@lms/components/components/atoms/Button/Button";
+import { UlamsContext } from "@ulams/sdk/react/context";
+import { API } from "@ulams/sdk";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
 import styled from "styled-components";
 import { useHistory, useLocation } from "react-router-dom";
 import { isMobile } from "react-device-detect";
@@ -73,7 +73,7 @@ const ProfileCourses = ({
     myAuthoredCourses,
     fetchPaginatedProgress,
     paginatedProgress,
-  } = useContext(EscolaLMSContext);
+  } = useContext(UlamsContext);
   const [coursesToMap, setCoursesToMap] = useState<CoursesState>([]);
   const history = useHistory();
   const { t } = useTranslation();

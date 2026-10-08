@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Consultations\Dto;
+namespace Ulams\Consultations\Dto;
 
-use EscolaLms\Consultations\Enum\ConsultationsPermissionsEnum;
-use EscolaLms\Consultations\Repositories\Criteria\CategoriesCriterion;
-use EscolaLms\Consultations\Repositories\Criteria\ConsultationSearch;
-use EscolaLms\Consultations\Repositories\Criteria\ConsultationTermEqualCriterion;
-use EscolaLms\Consultations\Repositories\Criteria\Primitives\OrderCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\HasCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
+use Ulams\Consultations\Enum\ConsultationsPermissionsEnum;
+use Ulams\Consultations\Repositories\Criteria\CategoriesCriterion;
+use Ulams\Consultations\Repositories\Criteria\ConsultationSearch;
+use Ulams\Consultations\Repositories\Criteria\ConsultationTermEqualCriterion;
+use Ulams\Consultations\Repositories\Criteria\Primitives\OrderCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\DateCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\HasCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\InCriterion;
 
 class FilterListDto extends BaseDto
 {

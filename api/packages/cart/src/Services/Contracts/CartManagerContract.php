@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cart\Services\Contracts;
+namespace Ulams\Cart\Services\Contracts;
 
-use EscolaLms\Cart\Models\CartItem;
-use EscolaLms\Cart\Models\Contracts\Base\Buyable;
-use EscolaLms\Cart\Models\Product;
+use Ulams\Cart\Models\CartItem;
+use Ulams\Cart\Models\Contracts\Base\Buyable;
+use Ulams\Cart\Models\Product;
 use Treestoneit\ShoppingCart\CartContract;
 
 interface CartManagerContract extends CartContract

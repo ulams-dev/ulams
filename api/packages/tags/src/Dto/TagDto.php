@@ -1,10 +1,10 @@
 <?php
 
 
-namespace EscolaLms\Tags\Dto;
+namespace Ulams\Tags\Dto;
 
 
-use EscolaLms\Tags\Http\Request\TagInsertRequest;
+use Ulams\Tags\Http\Request\TagInsertRequest;
 
 class TagDto
 {
@@ -27,7 +27,7 @@ class TagDto
 
     public function setModelName() : void
     {
-        $this->modelName = config("escolalms_tags.tag_model_map.{$this->modelType}", null);
+        $this->modelName = config("ulams_tags.tag_model_map.{$this->modelType}", null);
     }
 
     /**

@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Tests\Api;
+namespace Ulams\TemplatesPdf\Tests\Api;
 
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Templates\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\Templates\Events\ManuallyTriggeredEvent;
-use EscolaLms\Templates\Listeners\TemplateEventListener;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Models\TemplateSection;
-use EscolaLms\TemplatesPdf\Core\PdfChannel;
-use EscolaLms\TemplatesPdf\Core\UserVariables;
-use EscolaLms\TemplatesPdf\Events\PdfCreated;
-use EscolaLms\TemplatesPdf\Models\FabricPDF;
-use EscolaLms\TemplatesPdf\Tests\TestCase;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Templates\Database\Seeders\PermissionTableSeeder;
+use Ulams\Templates\Events\ManuallyTriggeredEvent;
+use Ulams\Templates\Listeners\TemplateEventListener;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Models\TemplateSection;
+use Ulams\TemplatesPdf\Core\PdfChannel;
+use Ulams\TemplatesPdf\Core\UserVariables;
+use Ulams\TemplatesPdf\Events\PdfCreated;
+use Ulams\TemplatesPdf\Models\FabricPDF;
+use Ulams\TemplatesPdf\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Event;

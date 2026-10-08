@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Database\Factories;
+namespace Ulams\AssignWithoutAccount\Database\Factories;
 
-use EscolaLms\AssignWithoutAccount\Enums\UserSubmissionStatusEnum;
-use EscolaLms\AssignWithoutAccount\Models\UserSubmission;
+use Ulams\AssignWithoutAccount\Enums\UserSubmissionStatusEnum;
+use Ulams\AssignWithoutAccount\Models\UserSubmission;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -17,7 +17,7 @@ class UserSubmissionFactory extends Factory
 
         return [
             'email' => $this->faker->email,
-            'morphable_type' => 'EscolaLms\\' . $type . '\\Models\\' . $type,
+            'morphable_type' => 'Ulams\\' . $type . '\\Models\\' . $type,
             'morphable_id' => $this->faker->numberBetween(1),
             'status' => $this->faker->randomElement(UserSubmissionStatusEnum::getValues()),
         ];

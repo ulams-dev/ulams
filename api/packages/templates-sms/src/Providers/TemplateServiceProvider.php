@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Providers;
+namespace Ulams\TemplatesSms\Providers;
 
-use EscolaLms\Templates\Events\ManuallyTriggeredEvent;
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\TemplatesSms\Core\SmsChannel;
-use EscolaLms\TemplatesSms\Core\UserVariables;
+use Ulams\Templates\Events\ManuallyTriggeredEvent;
+use Ulams\Templates\Facades\Template;
+use Ulams\TemplatesSms\Core\SmsChannel;
+use Ulams\TemplatesSms\Core\UserVariables;
 use Illuminate\Support\ServiceProvider;
 
 class TemplateServiceProvider extends ServiceProvider

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Services\Contracts;
+namespace Ulams\Auth\Services\Contracts;
 
-use EscolaLms\Auth\Models\User;
+use Ulams\Auth\Models\User;
 use Laravel\Passport\PersonalAccessTokenResult;
 
 interface AuthServiceContract

@@ -41,7 +41,7 @@ jobs:
         image: redis
 
       api:
-        image: escolalms/api:latest
+        image: ulams/api:latest
         ports:
           - 80:80
 
@@ -51,7 +51,7 @@ jobs:
 
     steps:
       - run: |
-          docker exec -u 1000 api echo "APP_NAME=Wellms Playwright Demo \
+          docker exec -u 1000 api echo "APP_NAME=Ulams Playwright Demo \
           APP_ENV=local \
           APP_KEY=base64:pveos6JL8iCwO3MbzoyQpNx6TETMYuUpfZ18CDKl6Cw= \
           APP_DEBUG=true \

@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Webinar\Tests\APIs;
+namespace Ulams\Webinar\Tests\APIs;
 
-use EscolaLms\Webinar\Enum\WebinarStatusEnum;
-use EscolaLms\Webinar\Models\User;
-use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
-use EscolaLms\Webinar\Models\Webinar;
-use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
-use EscolaLms\Webinar\Services\WebinarService;
-use EscolaLms\Webinar\Tests\TestCase;
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
+use Ulams\Webinar\Enum\WebinarStatusEnum;
+use Ulams\Webinar\Models\User;
+use Ulams\Webinar\Database\Seeders\WebinarsPermissionSeeder;
+use Ulams\Webinar\Models\Webinar;
+use Ulams\Webinar\Services\Contracts\WebinarServiceContract;
+use Ulams\Webinar\Services\WebinarService;
+use Ulams\Webinar\Tests\TestCase;
+use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Collection;
 use Illuminate\Testing\Fluent\AssertableJson;

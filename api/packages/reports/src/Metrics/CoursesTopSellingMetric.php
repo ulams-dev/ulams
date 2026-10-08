@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Reports\Metrics;
+namespace Ulams\Reports\Metrics;
 
-use EscolaLms\Cart\Enums\OrderStatus;
-use EscolaLms\Cart\Models\Cart;
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Models\OrderItem;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductProductable;
-use EscolaLms\Courses\Models\Course;
+use Ulams\Cart\Enums\OrderStatus;
+use Ulams\Cart\Models\Cart;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Models\OrderItem;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductProductable;
+use Ulams\Courses\Models\Course;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -37,7 +37,7 @@ class CoursesTopSellingMetric extends AbstractCoursesMetric
 
     public function requiredPackage(): string
     {
-        return 'escolalms/courses & escolalms/cart';
+        return 'ulams/courses & ulams/cart';
     }
 
     public static function requiredPackageInstalled(): bool

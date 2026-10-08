@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Notifications\Tests\API;
+namespace Ulams\Notifications\Tests\API;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Notifications\Database\Seeders\NotificationsPermissionsSeeder;
-use EscolaLms\Notifications\Models\DatabaseNotification;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Notifications\Tests\Mocks\DifferentTestEvent;
-use EscolaLms\Notifications\Tests\Mocks\TestEvent;
-use EscolaLms\Notifications\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Notifications\Database\Seeders\NotificationsPermissionsSeeder;
+use Ulams\Notifications\Models\DatabaseNotification;
+use Ulams\Core\Models\User;
+use Ulams\Notifications\Tests\Mocks\DifferentTestEvent;
+use Ulams\Notifications\Tests\Mocks\TestEvent;
+use Ulams\Notifications\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;

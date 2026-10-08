@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Models;
+namespace Ulams\Questionnaire\Models;
 
-use EscolaLms\Questionnaire\Database\Factories\QuestionnaireModelTypeFactory;
-use EscolaLms\Questionnaire\Enums\QuestionnaireTargetGroupEnum;
+use Ulams\Questionnaire\Database\Factories\QuestionnaireModelTypeFactory;
+use Ulams\Questionnaire\Enums\QuestionnaireTargetGroupEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

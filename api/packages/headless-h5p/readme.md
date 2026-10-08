@@ -1,15 +1,12 @@
-# Headless H5P Laravel API for Escola LMS ecosystem
+# Headless H5P Laravel API for Ulams LMS ecosystem
 
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/H5P/)
-[![codecov](https://codecov.io/gh/EscolaLMS/H5P/branch/main/graph/badge.svg?token=ci4VPQbrOI)](https://codecov.io/gh/EscolaLMS/H5P)
+[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/H5P/)
+[![codecov](https://codecov.io/gh/Ulams/H5P/branch/main/graph/badge.svg?token=ci4VPQbrOI)](https://codecov.io/gh/Ulams/H5P)
 [![phpunit](https://github.com/EscolaLMS/H5P/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Core/actions/workflows/test.yml)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/headless-h5p)](https://packagist.org/packages/escolalms/headless-h5p)
-[![downloads](https://img.shields.io/packagist/v/escolalms/headless-h5p)](https://packagist.org/packages/escolalms/headless-h5p)
-[![downloads](https://img.shields.io/packagist/l/escolalms/headless-h5p)](https://packagist.org/packages/escolalms/headless-h5p)
-[![Maintainability](https://api.codeclimate.com/v1/badges/6316e8dc93a06d28c6a0/maintainability)](https://codeclimate.com/github/EscolaLMS/H5P/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/6316e8dc93a06d28c6a0/maintainability)](https://codeclimate.com/github/Ulams/H5P/maintainability)
 
 ## Before you begin
-This product is tightly coupled with the Escola LMS ecosystem and is not compatible with any other Laravel application.
+This product is tightly coupled with the Ulams LMS ecosystem and is not compatible with any other Laravel application.
 
 ## Working demo
 
@@ -33,20 +30,20 @@ The features includes:
 
 ## Documentation
 
-See [Swagger](https://escolalms.github.io/H5P/) documented endpoints.
+See [Swagger](https://ulams.github.io/H5P/) documented endpoints.
 
 Some [tests](tests) can also be a great point of start.
 
-To play the content you can use [EscolaLMS H5P Player](https://github.com/EscolaLMS/H5P-player)
+To play the content you can use [Ulams H5P Player](https://github.com/EscolaLMS/H5P-player)
 
 Demo [React source files](https://github.com/EscolaLMS/h5p-laravel-demo/blob/main/resources/js/index.tsx), are great starting point for frontend tutorial
 
 ## Install
 
-1. `composer require escolalms/headless-h5p`
+1. `composer require ulams/headless-h5p`
 2. `php artisan migrate`
 3. `php artisan h5p:storage-link` see below
-4. `php artisan db:seed --class="EscolaLms\HeadlessH5P\Database\Seeders\PermissionTableSeeder"` see below
+4. `php artisan db:seed --class="Ulams\HeadlessH5P\Database\Seeders\PermissionTableSeeder"` see below
 
 ### Storage links
 
@@ -85,7 +82,7 @@ User model is taken from [Auth](https://github.com/EscolaLMS/Auth) package.
 To seed content and library
 
 ```
-php artisan db:seed --class="\EscolaLms\HeadlessH5P\Database\Seeders\ContentLibrarySeeder"
+php artisan db:seed --class="\Ulams\HeadlessH5P\Database\Seeders\ContentLibrarySeeder"
 ```
 
 You can seed library and content with build-in seeders as command that are accessible with

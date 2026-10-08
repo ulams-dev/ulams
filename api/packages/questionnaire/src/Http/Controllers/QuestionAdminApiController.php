@@ -1,24 +1,24 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Http\Controllers;
+namespace Ulams\Questionnaire\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Questionnaire\Dtos\QuestionFilterCriteriaDto;
-use EscolaLms\Questionnaire\Exceptions\QuestionCanNotDeleteException;
-use EscolaLms\Questionnaire\Http\Controllers\Contracts\QuestionAdminApiContract;
-use EscolaLms\Questionnaire\Http\Requests\QuestionCreateRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionDeleteRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionListingRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionReadRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionUpdateRequest;
-use EscolaLms\Questionnaire\Http\Resources\QuestionResource;
-use EscolaLms\Questionnaire\Repository\Contracts\QuestionRepositoryContract;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Questionnaire\Dtos\QuestionFilterCriteriaDto;
+use Ulams\Questionnaire\Exceptions\QuestionCanNotDeleteException;
+use Ulams\Questionnaire\Http\Controllers\Contracts\QuestionAdminApiContract;
+use Ulams\Questionnaire\Http\Requests\QuestionCreateRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionDeleteRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionListingRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionReadRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionUpdateRequest;
+use Ulams\Questionnaire\Http\Resources\QuestionResource;
+use Ulams\Questionnaire\Repository\Contracts\QuestionRepositoryContract;
+use Ulams\Questionnaire\Services\Contracts\QuestionServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
-class QuestionAdminApiController extends EscolaLmsBaseController implements QuestionAdminApiContract
+class QuestionAdminApiController extends UlamsBaseController implements QuestionAdminApiContract
 {
     private QuestionRepositoryContract $questionRepository;
     private QuestionServiceContract $questionService;

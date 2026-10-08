@@ -2,7 +2,7 @@ import SecureUpload from '@/components/SecureUpload';
 import PERMISSIONS from '@/consts/permissions';
 import { usePermissions } from '@/hooks/usePermissions';
 import { DictionaryWordsTabNames } from '@/pages/Dictionary/components/DictionaryWords/form';
-import { deleteDictionaryWord, dictionaryWords } from '@/services/escola-lms/dictionary';
+import { deleteDictionaryWord, dictionaryWords } from '@/services/ulams/dictionary';
 import { createTableOrderObject } from '@/utils/utils';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';

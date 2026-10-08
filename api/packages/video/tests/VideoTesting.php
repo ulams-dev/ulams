@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Video\Tests;
+namespace Ulams\Video\Tests;
 
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Video\Models\Video;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Video\Models\Video;
 
 trait VideoTesting
 {
@@ -17,7 +17,7 @@ trait VideoTesting
             ->has(Lesson::factory()
                 ->has(Topic::factory()
                     ->state(fn() => [
-                        'topicable_type' => \EscolaLms\TopicTypes\Models\TopicContent\Video::class,
+                        'topicable_type' => \Ulams\TopicTypes\Models\TopicContent\Video::class,
                         'topicable_id' => $video->getKey()
                     ])
                 )
@@ -34,7 +34,7 @@ trait VideoTesting
             ->has(Lesson::factory()->state(['active' => true])
                 ->has(Topic::factory()->state(['active' => true])
                     ->state(fn() => [
-                        'topicable_type' => \EscolaLms\TopicTypes\Models\TopicContent\Video::class,
+                        'topicable_type' => \Ulams\TopicTypes\Models\TopicContent\Video::class,
                         'topicable_id' => Video::factory()->create()->getKey()
                     ])
                 )

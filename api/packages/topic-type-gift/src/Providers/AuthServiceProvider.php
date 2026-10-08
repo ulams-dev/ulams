@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Providers;
+namespace Ulams\TopicTypeGift\Providers;
 
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

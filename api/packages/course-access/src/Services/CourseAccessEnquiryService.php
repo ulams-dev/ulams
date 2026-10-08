@@ -1,23 +1,23 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Services;
+namespace Ulams\CourseAccess\Services;
 
-use EscolaLms\Auth\Enums\SettingStatusEnum;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Dtos\PaginationDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\CourseAccess\Dtos\CourseAccessEnquiry\CreateCourseAccessEnquiryDto;
-use EscolaLms\CourseAccess\Dtos\CriteriaDto;
-use EscolaLms\CourseAccess\Enum\CourseAccessPermissionEnum;
-use EscolaLms\CourseAccess\Enum\EnquiryStatusEnum;
-use EscolaLms\CourseAccess\EscolaLmsCourseAccessServiceProvider;
-use EscolaLms\CourseAccess\Events\CourseAccessEnquiryAdminCreatedEvent;
-use EscolaLms\CourseAccess\Events\CourseAccessEnquiryStudentCreatedEvent;
-use EscolaLms\CourseAccess\Exceptions\EnquiryAlreadyExistsException;
-use EscolaLms\CourseAccess\Models\CourseAccessEnquiry;
-use EscolaLms\CourseAccess\Repositories\Contracts\CourseAccessEnquiryRepositoryContract;
-use EscolaLms\CourseAccess\Services\Contracts\CourseAccessEnquiryServiceContract;
+use Ulams\Auth\Enums\SettingStatusEnum;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Dtos\PaginationDto;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\CourseAccess\Dtos\CourseAccessEnquiry\CreateCourseAccessEnquiryDto;
+use Ulams\CourseAccess\Dtos\CriteriaDto;
+use Ulams\CourseAccess\Enum\CourseAccessPermissionEnum;
+use Ulams\CourseAccess\Enum\EnquiryStatusEnum;
+use Ulams\CourseAccess\UlamsCourseAccessServiceProvider;
+use Ulams\CourseAccess\Events\CourseAccessEnquiryAdminCreatedEvent;
+use Ulams\CourseAccess\Events\CourseAccessEnquiryStudentCreatedEvent;
+use Ulams\CourseAccess\Exceptions\EnquiryAlreadyExistsException;
+use Ulams\CourseAccess\Models\CourseAccessEnquiry;
+use Ulams\CourseAccess\Repositories\Contracts\CourseAccessEnquiryRepositoryContract;
+use Ulams\CourseAccess\Services\Contracts\CourseAccessEnquiryServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Config;
 
@@ -65,7 +65,7 @@ class CourseAccessEnquiryService implements CourseAccessEnquiryServiceContract
         $this->dispatchEventToAdminsAboutCreatingCourseAccessEnquiry($entity);
         event(new CourseAccessEnquiryStudentCreatedEvent($entity->user, $entity));
 
-        if (Config::get(EscolaLmsCourseAccessServiceProvider::CONFIG_KEY . '.auto_accept_access_request', SettingStatusEnum::DISABLED) === SettingStatusEnum::ENABLED) {
+        if (Config::get(UlamsCourseAccessServiceProvider::CONFIG_KEY . '.auto_accept_access_request', SettingStatusEnum::DISABLED) === SettingStatusEnum::ENABLED) {
             $this->approve($entity);
         }
 

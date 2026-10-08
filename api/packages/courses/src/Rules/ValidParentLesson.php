@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Rules;
+namespace Ulams\Courses\Rules;
 
-use EscolaLms\Courses\Models\Lesson;
+use Ulams\Courses\Models\Lesson;
 use Illuminate\Contracts\Validation\Rule;
 
 class ValidParentLesson implements Rule

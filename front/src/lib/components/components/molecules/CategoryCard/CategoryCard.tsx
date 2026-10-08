@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { Title } from "../../atoms/Typography/Title";
 import { Button } from "../../atoms/Button/Button";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface StyledCategoryCardProps {
   mobile?: boolean;
@@ -92,7 +92,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = (props) => {
   } = props;
   return (
     <StyledCategoryCard
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
       mobile={mobile}
       variant={variant}
     >

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Mocks\ExampleEntity;
+namespace Ulams\Core\Tests\Mocks\ExampleEntity;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Dtos\PaginationDto;
-use EscolaLms\Core\Dtos\PeriodDto;
-use EscolaLms\Core\Repositories\Criteria\PeriodCriterion;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Dtos\PaginationDto;
+use Ulams\Core\Dtos\PeriodDto;
+use Ulams\Core\Repositories\Criteria\PeriodCriterion;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 

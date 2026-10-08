@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Providers;
+namespace Ulams\StationaryEvents\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;

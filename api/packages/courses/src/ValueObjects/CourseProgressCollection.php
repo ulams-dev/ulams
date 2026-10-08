@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Courses\ValueObjects;
+namespace Ulams\Courses\ValueObjects;
 
 use Carbon\Carbon;
-use EscolaLms\Courses\Enum\ProgressStatus;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\CourseProgress;
-use EscolaLms\Courses\Models\CourseUserPivot;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
-use EscolaLms\Courses\Services\Contracts\DeadlineCalculatorServiceContract;
-use EscolaLms\Courses\ValueObjects\Contracts\CourseProgressCollectionContract;
-use EscolaLms\Courses\ValueObjects\Contracts\ValueObjectContract;
+use Ulams\Courses\Enum\ProgressStatus;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\CourseUserPivot;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
+use Ulams\Courses\Services\Contracts\DeadlineCalculatorServiceContract;
+use Ulams\Courses\ValueObjects\Contracts\CourseProgressCollectionContract;
+use Ulams\Courses\ValueObjects\Contracts\ValueObjectContract;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;

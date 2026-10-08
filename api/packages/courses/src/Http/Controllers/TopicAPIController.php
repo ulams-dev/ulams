@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Controllers;
+namespace Ulams\Courses\Http\Controllers;
 
 use Error;
-use EscolaLms\Courses\Exceptions\TopicException;
-use EscolaLms\Courses\Http\Controllers\Swagger\TopicAPISwagger;
-use EscolaLms\Courses\Http\Requests\CloneTopicAPIRequest;
-use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
-use EscolaLms\Courses\Http\Requests\DeleteTopicAPIRequest;
-use EscolaLms\Courses\Http\Requests\GetTopicAPIRequest;
-use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
-use EscolaLms\Courses\Http\Resources\Admin\TopicAdminResource;
-use EscolaLms\Courses\Http\Resources\TopicResource;
-use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
-use EscolaLms\Courses\Services\Contracts\TopicServiceContract;
+use Ulams\Courses\Exceptions\TopicException;
+use Ulams\Courses\Http\Controllers\Swagger\TopicAPISwagger;
+use Ulams\Courses\Http\Requests\CloneTopicAPIRequest;
+use Ulams\Courses\Http\Requests\CreateTopicAPIRequest;
+use Ulams\Courses\Http\Requests\DeleteTopicAPIRequest;
+use Ulams\Courses\Http\Requests\GetTopicAPIRequest;
+use Ulams\Courses\Http\Requests\UpdateTopicAPIRequest;
+use Ulams\Courses\Http\Resources\Admin\TopicAdminResource;
+use Ulams\Courses\Http\Resources\TopicResource;
+use Ulams\Courses\Repositories\Contracts\TopicRepositoryContract;
+use Ulams\Courses\Services\Contracts\TopicServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;

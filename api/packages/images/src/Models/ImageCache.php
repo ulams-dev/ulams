@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Images\Models;
+namespace Ulams\Images\Models;
 
-use EscolaLms\Images\Database\Factories\ImageCacheFactory;
+use Ulams\Images\Database\Factories\ImageCacheFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

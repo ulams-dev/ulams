@@ -5,9 +5,9 @@ import Routes from "./components/Routes";
 import styled, { createGlobalStyle } from "styled-components";
 import { isMobile } from "react-device-detect";
 import * as Sentry from "@sentry/react";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import TechnicalMaintenanceScreen from "./components/_App/TechnicalMaintenanceScreen";
-import themes from "@lms/components/theme";
+import themes from "@ulams/components/theme";
 import routeRoutes from "@/components/Routes/routes";
 import { useFirebase } from "@/hooks/useFirebase";
 import { StatusBar } from "@capacitor/status-bar";
@@ -69,7 +69,7 @@ const mapStringToTheme = (theme: string) => {
 
 const App = () => {
   const { fetchSettings, settings, fetchNotifications, fetchConfig } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
 
   usePerformanceMetrics();
 

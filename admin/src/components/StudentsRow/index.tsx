@@ -1,4 +1,4 @@
-import { studentUserGroup as fetchStudentUserGroup } from '@/services/escola-lms/student_user_groups';
+import { studentUserGroup as fetchStudentUserGroup } from '@/services/ulams/student_user_groups';
 import { Button, message } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';

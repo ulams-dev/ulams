@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Reports\Metrics;
+namespace Ulams\Reports\Metrics;
 
 use ArrayObject;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\CourseAuthorPivot;
-use EscolaLms\Reports\Models\Report;
+use Ulams\Core\Models\User;
+use Ulams\Courses\Enum\CoursesPermissionsEnum;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\CourseAuthorPivot;
+use Ulams\Reports\Models\Report;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -64,7 +64,7 @@ class TutorsPopularityMetric extends AbstractMetric
 
     public function requiredPackage(): string
     {
-        return 'escolalms/courses';
+        return 'ulams/courses';
     }
 
     public static function requiredPackageInstalled(): bool

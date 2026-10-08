@@ -6,7 +6,7 @@ import { RatingProps, Rating } from "../../atoms/Rating/Rating";
 import { ReactNode } from "react";
 import { Text } from "../../atoms/Typography/Text";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface StyledTourProps {
   mobile?: boolean;
@@ -77,7 +77,7 @@ export const Tutor: React.FC<TutorProps> = (props) => {
 
   return (
     <StyledTutor
-      className={`wellms-component lms-tutor ${className}`}
+      className={`ulams-component lms-tutor ${className}`}
       mobile={mobile}
     >
       {React.isValidElement(title) ? (

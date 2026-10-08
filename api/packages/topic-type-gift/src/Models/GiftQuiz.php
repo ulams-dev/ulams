@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Models;
+namespace Ulams\TopicTypeGift\Models;
 
-use EscolaLms\TopicTypeGift\Database\Factories\GiftQuizFactory;
-use EscolaLms\TopicTypeGift\Events\QuizGradabilityChangedEvent;
-use EscolaLms\TopicTypes\Models\TopicContent\AbstractTopicContent;
+use Ulams\TopicTypeGift\Database\Factories\GiftQuizFactory;
+use Ulams\TopicTypeGift\Events\QuizGradabilityChangedEvent;
+use Ulams\TopicTypes\Models\TopicContent\AbstractTopicContent;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -60,7 +60,7 @@ use Illuminate\Support\Carbon;
  */
 
 /**
- * EscolaLms\TopicTypeGift\Models\GiftQuiz
+ * Ulams\TopicTypeGift\Models\GiftQuiz
  *
  * @property int $id
  * @property string $value

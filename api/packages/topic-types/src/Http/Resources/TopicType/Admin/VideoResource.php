@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Http\Resources\TopicType\Admin;
+namespace Ulams\TopicTypes\Http\Resources\TopicType\Admin;
 
-use EscolaLms\Auth\Traits\ResourceExtandable;
-use EscolaLms\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
+use Ulams\Auth\Traits\ResourceExtandable;
+use Ulams\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 

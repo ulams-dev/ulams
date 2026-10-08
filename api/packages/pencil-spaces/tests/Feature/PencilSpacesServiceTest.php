@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Tests\Feature;
+namespace Ulams\PencilSpaces\Tests\Feature;
 
-use EscolaLms\PencilSpaces\EscolaLmsPencilSpacesServiceProvider;
-use EscolaLms\PencilSpaces\Models\PencilSpaceAccount;
-use EscolaLms\PencilSpaces\Models\User;
-use EscolaLms\PencilSpaces\Resource\CreatePencilSpaceResource;
-use EscolaLms\PencilSpaces\Services\Contracts\PencilSpacesServiceContract;
-use EscolaLms\PencilSpaces\Tests\TestCase;
+use Ulams\PencilSpaces\UlamsPencilSpacesServiceProvider;
+use Ulams\PencilSpaces\Models\PencilSpaceAccount;
+use Ulams\PencilSpaces\Models\User;
+use Ulams\PencilSpaces\Resource\CreatePencilSpaceResource;
+use Ulams\PencilSpaces\Services\Contracts\PencilSpacesServiceContract;
+use Ulams\PencilSpaces\Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
@@ -20,8 +20,8 @@ class PencilSpacesServiceTest extends TestCase
     {
         parent::setUp();
 
-        Config::set(EscolaLmsPencilSpacesServiceProvider::CONFIG_KEY . '.api_key', 'api_key');
-        Config::set(EscolaLmsPencilSpacesServiceProvider::CONFIG_KEY . '.api_url', 'http://api-url');
+        Config::set(UlamsPencilSpacesServiceProvider::CONFIG_KEY . '.api_key', 'api_key');
+        Config::set(UlamsPencilSpacesServiceProvider::CONFIG_KEY . '.api_url', 'http://api-url');
     }
 
     public function testGetDirectLoginUrl(): void

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { TopicType } from '@/services/escola-lms/enums';
+import { TopicType } from '@/services/ulams/enums';
 import { GiftQuizStatistics } from './GiftQuizStatistics';
 
 interface TopicsGroupedByType {

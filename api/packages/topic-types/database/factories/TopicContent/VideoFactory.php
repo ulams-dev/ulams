@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Database\Factories\TopicContent;
+namespace Ulams\TopicTypes\Database\Factories\TopicContent;
 
-use EscolaLms\Courses\Facades\Topic;
-use EscolaLms\TopicTypes\Models\TopicContent\Video;
+use Ulams\Courses\Facades\Topic;
+use Ulams\TopicTypes\Models\TopicContent\Video;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;

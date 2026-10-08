@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import PricingCard from "@lms/components/components/atoms/PricingCard/PricingCard";
-import { IconText } from "@lms/components/components/atoms/IconText/IconText";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { UlamsContext } from "@ulams/sdk/react";
+import PricingCard from "@ulams/components/components/atoms/PricingCard/PricingCard";
+import { IconText } from "@ulams/components/components/atoms/IconText/IconText";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import ProductPrices from "@/components/ProductPrices";
 import { DetailsSidebarContainer } from "@/components/DetailsSidebarContainer";
 import { IconTime, IconSquares } from "@/icons/index";
@@ -13,7 +13,7 @@ import { PricingCardTitle } from "@/components/PricingCard/PricingCardTitle";
 import { PackageSidebarButtons } from "./Buttons";
 
 export const PackageSidebar = () => {
-  const { product } = useContext(EscolaLMSContext);
+  const { product } = useContext(UlamsContext);
   const { t } = useTranslation();
   const productValue = product.value;
 

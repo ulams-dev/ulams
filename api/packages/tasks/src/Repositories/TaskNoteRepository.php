@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Tasks\Repositories;
+namespace Ulams\Tasks\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Tasks\Models\TaskNote;
-use EscolaLms\Tasks\Repositories\Contracts\TaskNoteRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Tasks\Models\TaskNote;
+use Ulams\Tasks\Repositories\Contracts\TaskNoteRepositoryContract;
 
 class TaskNoteRepository extends BaseRepository implements TaskNoteRepositoryContract
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Controllers\Swagger;
+namespace Ulams\Tasks\Http\Controllers\Swagger;
 
-use EscolaLms\Tasks\Http\Requests\Admin\AdminCompleteTaskRequest;
-use EscolaLms\Tasks\Http\Requests\Admin\AdminCreateTaskRequest;
-use EscolaLms\Tasks\Http\Requests\Admin\AdminDeleteTaskRequest;
-use EscolaLms\Tasks\Http\Requests\Admin\AdminDetailsTaskRequest;
-use EscolaLms\Tasks\Http\Requests\Admin\AdminIncompleteTaskRequest;
-use EscolaLms\Tasks\Http\Requests\Admin\AdminListTaskRequest;
-use EscolaLms\Tasks\Http\Requests\Admin\AdminUpdateTaskRequest;
+use Ulams\Tasks\Http\Requests\Admin\AdminCompleteTaskRequest;
+use Ulams\Tasks\Http\Requests\Admin\AdminCreateTaskRequest;
+use Ulams\Tasks\Http\Requests\Admin\AdminDeleteTaskRequest;
+use Ulams\Tasks\Http\Requests\Admin\AdminDetailsTaskRequest;
+use Ulams\Tasks\Http\Requests\Admin\AdminIncompleteTaskRequest;
+use Ulams\Tasks\Http\Requests\Admin\AdminListTaskRequest;
+use Ulams\Tasks\Http\Requests\Admin\AdminUpdateTaskRequest;
 use Illuminate\Http\JsonResponse;
 
 interface AdminTaskControllerSwagger

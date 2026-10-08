@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Http\Requests\DictionaryWord\Admin;
+namespace Ulams\Dictionaries\Http\Requests\DictionaryWord\Admin;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Dictionaries\Dtos\DictionaryWordCriteriaDto;
-use EscolaLms\Dictionaries\Dtos\PageDto;
-use EscolaLms\Dictionaries\Models\DictionaryWord;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Dictionaries\Dtos\DictionaryWordCriteriaDto;
+use Ulams\Dictionaries\Dtos\PageDto;
+use Ulams\Dictionaries\Models\DictionaryWord;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

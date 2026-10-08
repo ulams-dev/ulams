@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\ModelFields;
+namespace Ulams\ModelFields;
 
 use Illuminate\Support\ServiceProvider;
-use EscolaLms\ModelFields\Services\Contracts\ModelFieldsServiceContract;
-use EscolaLms\ModelFields\Services\ModelFieldsService;
+use Ulams\ModelFields\Services\Contracts\ModelFieldsServiceContract;
+use Ulams\ModelFields\Services\ModelFieldsService;
 
 /**
  * SWAGGER_VERSION

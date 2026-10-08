@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Auth;
+namespace Ulams\TemplatesEmail\Auth;
 
 use Illuminate\Support\Facades\Lang;
 

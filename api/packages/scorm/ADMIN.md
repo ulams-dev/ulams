@@ -27,7 +27,7 @@ The platform is responsive and supports SCORM formats, including those specifica
 
 ![image](https://github.com/EscolaLMS/Scorm/assets/108077902/054d55ef-c216-47dc-b0ad-7ee07af02b87)
 
-As a reminder, on the Wellms platform, we can add SCORM multimedia presentations in two ways:
+As a reminder, on the Ulams platform, we can add SCORM multimedia presentations in two ways:
 
 1. Standard way, commonly used on most platforms, where the presentation serves as a complete course.
 2. Ech topic within a lesson is a separate SCORM presentation, integrated with various other interactions and content creation capabilities within the platform, all within a single lesson.

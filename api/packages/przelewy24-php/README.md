@@ -15,7 +15,7 @@ For lower PHP versions, check the [0.x](https://github.com/mnastalski/przelewy24
 ## Installation
 
 ```shell
-composer require escolalms/przelewy24-php
+composer require ulams/przelewy24-php
 ```
 
 ## Usage

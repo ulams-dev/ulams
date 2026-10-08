@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Enums;
+namespace Ulams\Auth\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class AuthPermissionsEnum extends BasicEnum
 {

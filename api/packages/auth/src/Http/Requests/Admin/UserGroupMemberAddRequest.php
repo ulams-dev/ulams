@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests\Admin;
+namespace Ulams\Auth\Http\Requests\Admin;
 
-use EscolaLms\Auth\Models\User;
+use Ulams\Auth\Models\User;
 
 class UserGroupMemberAddRequest extends AbstractGroupIdInRouteRequest
 {

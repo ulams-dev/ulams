@@ -1,5 +1,5 @@
 import { useCourseAnswers } from "@/hooks/courses/useCourseAnswers";
-import { Spin } from "@lms/components/components/atoms/Spin/Spin";
+import { Spin } from "@ulams/components/components/atoms/Spin/Spin";
 import Pagination from "@/components/Common/Pagination";
 import { AnswerComponent } from "../../AnswerComponent";
 import {

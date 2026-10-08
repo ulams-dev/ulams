@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Consultations\Dto;
+namespace Ulams\Consultations\Dto;
 
 use Carbon\Carbon;
-use EscolaLms\Consultations\Dto\Contracts\ModelDtoContract;
-use EscolaLms\Consultations\Enum\ConstantEnum;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Models\ConsultationProposedTerm;
+use Ulams\Consultations\Dto\Contracts\ModelDtoContract;
+use Ulams\Consultations\Enum\ConstantEnum;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\ConsultationProposedTerm;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 

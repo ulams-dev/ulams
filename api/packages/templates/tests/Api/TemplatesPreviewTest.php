@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Templates\Tests\Api;
+namespace Ulams\Templates\Tests\Api;
 
-use EscolaLms\Settings\Models\Setting;
-use EscolaLms\Templates\Enums\TemplateSectionTypeEnum;
-use EscolaLms\Templates\Facades\Template as FacadesTemplate;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Tests\Mock\TestChannel;
-use EscolaLms\Templates\Tests\Mock\TestEventWithGetters;
-use EscolaLms\Templates\Tests\Mock\TestVariables;
-use EscolaLms\Templates\Tests\TestCase;
+use Ulams\Settings\Models\Setting;
+use Ulams\Templates\Enums\TemplateSectionTypeEnum;
+use Ulams\Templates\Facades\Template as FacadesTemplate;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Tests\Mock\TestChannel;
+use Ulams\Templates\Tests\Mock\TestEventWithGetters;
+use Ulams\Templates\Tests\Mock\TestVariables;
+use Ulams\Templates\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class TemplatesPreviewTest extends TestCase
@@ -70,7 +70,7 @@ class TemplatesPreviewTest extends TestCase
         $variables = $json['data'];
 
         $this->assertEquals([
-            "class" => "EscolaLms\Templates\Tests\Mock\TestVariables",
+            "class" => "Ulams\Templates\Tests\Mock\TestVariables",
             'assignable_class' => null,
             "variables" =>  [
                 0 => "@GlobalSettingsSettingText",

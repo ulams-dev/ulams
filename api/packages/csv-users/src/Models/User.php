@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Models;
+namespace Ulams\CsvUsers\Models;
 
-use EscolaLms\Auth\Models\User as AuthUser;
+use Ulams\Auth\Models\User as AuthUser;
 
 class User extends AuthUser
 {

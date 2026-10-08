@@ -1,9 +1,9 @@
 import ProForm, { ModalForm, ProFormSelect } from '@ant-design/pro-form';
-import { parse } from '@lms/gift-pegjs';
+import { parse } from '@ulams/gift-pegjs';
 import React, { useCallback, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
 
-import { exportQuizQuestions } from '@/services/escola-lms/gift_quiz';
+import { exportQuizQuestions } from '@/services/ulams/gift_quiz';
 
 interface FormData {
   ids: number[];

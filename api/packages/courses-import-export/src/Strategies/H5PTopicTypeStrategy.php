@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Strategies;
+namespace Ulams\CoursesImportExport\Strategies;
 
-use EscolaLms\CoursesImportExport\Strategies\Contract\TopicImportStrategy;
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
+use Ulams\CoursesImportExport\Strategies\Contract\TopicImportStrategy;
+use Ulams\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 

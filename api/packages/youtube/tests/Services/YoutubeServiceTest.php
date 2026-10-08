@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Youtube\Tests\Services;
+namespace Ulams\Youtube\Tests\Services;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Youtube\Dto\YTBroadcastDto;
-use EscolaLms\Youtube\Events\YtProblem;
-use EscolaLms\Youtube\Services\Contracts\AuthenticateServiceContract;
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
-use EscolaLms\Youtube\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Youtube\Dto\YTBroadcastDto;
+use Ulams\Youtube\Events\YtProblem;
+use Ulams\Youtube\Services\Contracts\AuthenticateServiceContract;
+use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
+use Ulams\Youtube\Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;

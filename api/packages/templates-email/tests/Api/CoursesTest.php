@@ -1,25 +1,25 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests\Api;
+namespace Ulams\TemplatesEmail\Tests\Api;
 
-use EscolaLms\Core\Models\User as CoreUser;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Events\CourseAssigned;
-use EscolaLms\Courses\Events\CourseDeadlineSoon;
-use EscolaLms\Courses\Events\CourseFinished;
-use EscolaLms\Courses\Events\CourseUnassigned;
-use EscolaLms\Courses\Jobs\CheckForDeadlines;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\User;
-use EscolaLms\Courses\Tests\ProgressConfigurable;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
-use EscolaLms\Templates\Listeners\TemplateEventListener;
-use EscolaLms\TemplatesEmail\Core\EmailMailable;
-use EscolaLms\TemplatesEmail\Tests\TestCase;
+use Ulams\Core\Models\User as CoreUser;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Events\CourseAssigned;
+use Ulams\Courses\Events\CourseDeadlineSoon;
+use Ulams\Courses\Events\CourseFinished;
+use Ulams\Courses\Events\CourseUnassigned;
+use Ulams\Courses\Jobs\CheckForDeadlines;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Models\User;
+use Ulams\Courses\Tests\ProgressConfigurable;
+use Ulams\Courses\ValueObjects\CourseProgressCollection;
+use Ulams\Templates\Listeners\TemplateEventListener;
+use Ulams\TemplatesEmail\Core\EmailMailable;
+use Ulams\TemplatesEmail\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Carbon;
@@ -35,13 +35,13 @@ class CoursesTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        if (!class_exists(\EscolaLms\Courses\EscolaLmsCourseServiceProvider::class)) {
+        if (!class_exists(\Ulams\Courses\UlamsCourseServiceProvider::class)) {
             $this->markTestSkipped('Courses package not installed');
         }
-        if (!class_exists(\EscolaLms\CourseAccess\EscolaLmsCourseAccessServiceProvider::class)) {
+        if (!class_exists(\Ulams\CourseAccess\UlamsCourseAccessServiceProvider::class)) {
             $this->markTestSkipped('Course-Access package not installed');
         }
-        if (!class_exists(\EscolaLms\Scorm\EscolaLmsScormServiceProvider::class)) {
+        if (!class_exists(\Ulams\Scorm\UlamsScormServiceProvider::class)) {
             $this->markTestSkipped('Scorm package not installed');
         }
     }
@@ -53,7 +53,7 @@ class CoursesTest extends TestCase
         Mail::fake();
 
         $user = User::factory()->create();
-        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'active_to' => Carbon::now()->addDays(config('escolalms_courses.reminder_of_deadline_count_days'))]);
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'active_to' => Carbon::now()->addDays(config('ulams_courses.reminder_of_deadline_count_days'))]);
         $lesson = Lesson::factory()->create([
             'course_id' => $course->getKey()
         ]);

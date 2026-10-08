@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Payments\Tests\Mocks;
+namespace Ulams\Payments\Tests\Mocks;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Payments\Concerns\Payable as ConcernsPayable;
-use EscolaLms\Payments\Contracts\Payable as ContractsPayable;
-use EscolaLms\Payments\Enums\Currency;
+use Ulams\Core\Models\User;
+use Ulams\Payments\Concerns\Payable as ConcernsPayable;
+use Ulams\Payments\Contracts\Payable as ContractsPayable;
+use Ulams\Payments\Enums\Currency;
 use Illuminate\Support\Collection;
 
 class Payable implements ContractsPayable

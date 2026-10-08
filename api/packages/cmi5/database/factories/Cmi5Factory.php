@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cmi5\Database\Factories;
+namespace Ulams\Cmi5\Database\Factories;
 
-use EscolaLms\Cmi5\Models\Cmi5;
+use Ulams\Cmi5\Models\Cmi5;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class Cmi5Factory extends Factory

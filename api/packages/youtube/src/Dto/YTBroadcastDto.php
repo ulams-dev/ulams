@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Youtube\Dto;
+namespace Ulams\Youtube\Dto;
 
-use EscolaLms\Youtube\Dto\Traits\DtoHelper;
+use Ulams\Youtube\Dto\Traits\DtoHelper;
 
 class YTBroadcastDto
 {

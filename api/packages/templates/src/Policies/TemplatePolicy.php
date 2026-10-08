@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Templates\Policies;
+namespace Ulams\Templates\Policies;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Enums\TemplatesPermissionsEnum;
-use EscolaLms\Templates\Models\Template;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Enums\TemplatesPermissionsEnum;
+use Ulams\Templates\Models\Template;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class TemplatePolicy

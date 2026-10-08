@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Core\Repositories\Contracts;
+namespace Ulams\Core\Repositories\Contracts;
 
 use Illuminate\Support\Collection;
 

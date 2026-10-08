@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Webinar\Enum;
+namespace Ulams\Webinar\Enum;
 
 use BenSampo\Enum\Enum;
 

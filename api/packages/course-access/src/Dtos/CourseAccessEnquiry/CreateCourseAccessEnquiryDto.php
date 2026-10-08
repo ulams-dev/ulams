@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Dtos\CourseAccessEnquiry;
+namespace Ulams\CourseAccess\Dtos\CourseAccessEnquiry;
 
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
-use EscolaLms\CourseAccess\Enum\EnquiryStatusEnum;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\CourseAccess\Enum\EnquiryStatusEnum;
 use Illuminate\Http\Request;
 
 class CreateCourseAccessEnquiryDto extends CourseAccessEnquiryDto implements InstantiateFromRequest

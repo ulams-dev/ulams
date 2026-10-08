@@ -1,7 +1,7 @@
 import { Button, Title, Text, List, Icon, Stack } from "../../..";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { FC, ReactNode, useContext, useEffect, useMemo, useState } from "react";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { t } from "i18next";
 import {
   BookmarkNotesContainer,
@@ -42,7 +42,7 @@ export const BookmarkNotes: FC<BookmarkNotesComponentProps> = ({
   const [selectedListItem, setSelectedListItem] = useState(0);
 
   const { bookmarkNotes, fetchBookmarkNotes, deleteBookmarkNote } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
 
   const bookmarks = useMemo(
     () => bookmarkNotes.list?.data.filter((item) => item.value === null),

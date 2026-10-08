@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests\Api\Admin;
+namespace Ulams\TemplatesEmail\Tests\Api\Admin;
 
-use EscolaLms\Auth\Database\Seeders\AuthPermissionSeeder;
-use EscolaLms\Auth\Events\AccountBlocked;
-use EscolaLms\Auth\Events\AccountDeleted;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Templates\Listeners\TemplateEventListener;
-use EscolaLms\TemplatesEmail\Core\EmailMailable;
-use EscolaLms\TemplatesEmail\Tests\TestCase;
+use Ulams\Auth\Database\Seeders\AuthPermissionSeeder;
+use Ulams\Auth\Events\AccountBlocked;
+use Ulams\Auth\Events\AccountDeleted;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Templates\Listeners\TemplateEventListener;
+use Ulams\TemplatesEmail\Core\EmailMailable;
+use Ulams\TemplatesEmail\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Event;
@@ -24,7 +24,7 @@ class UserTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        if (!class_exists(\EscolaLms\Auth\EscolaLmsAuthServiceProvider::class)) {
+        if (!class_exists(\Ulams\Auth\UlamsAuthServiceProvider::class)) {
             $this->markTestSkipped('Auth package not installed');
         }
     }

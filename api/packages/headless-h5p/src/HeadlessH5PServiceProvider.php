@@ -1,23 +1,23 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P;
+namespace Ulams\HeadlessH5P;
 
-use EscolaLms\HeadlessH5P\Commands\H5PSeedCommand;
-use EscolaLms\HeadlessH5P\Commands\StorageH5PCopyStorageCommand;
-use EscolaLms\HeadlessH5P\Commands\StorageH5PLinkCommand;
-use EscolaLms\HeadlessH5P\Enums\ConfigEnum;
-use EscolaLms\HeadlessH5P\Providers\SettingsServiceProvider;
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PLibraryLanguageRepositoryContract;
-use EscolaLms\HeadlessH5P\Repositories\H5PContentRepository;
-use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
-use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
-use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
-use EscolaLms\HeadlessH5P\Repositories\H5PLibraryLanguageRepository;
-use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
-use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
-use EscolaLms\HeadlessH5P\Services\H5PCoreService;
-use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
+use Ulams\HeadlessH5P\Commands\H5PSeedCommand;
+use Ulams\HeadlessH5P\Commands\StorageH5PCopyStorageCommand;
+use Ulams\HeadlessH5P\Commands\StorageH5PLinkCommand;
+use Ulams\HeadlessH5P\Enums\ConfigEnum;
+use Ulams\HeadlessH5P\Providers\SettingsServiceProvider;
+use Ulams\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
+use Ulams\HeadlessH5P\Repositories\Contracts\H5PLibraryLanguageRepositoryContract;
+use Ulams\HeadlessH5P\Repositories\H5PContentRepository;
+use Ulams\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
+use Ulams\HeadlessH5P\Repositories\H5PEditorStorageRepository;
+use Ulams\HeadlessH5P\Repositories\H5PFileStorageRepository;
+use Ulams\HeadlessH5P\Repositories\H5PLibraryLanguageRepository;
+use Ulams\HeadlessH5P\Repositories\H5PRepository;
+use Ulams\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use Ulams\HeadlessH5P\Services\H5PCoreService;
+use Ulams\HeadlessH5P\Services\HeadlessH5PService;
 use H5PContentValidator;
 use H5peditor;
 use H5PStorage;

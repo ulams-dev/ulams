@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\MailerLite\Providers;
+namespace Ulams\MailerLite\Providers;
 
-use EscolaLms\Auth\Events\AccountBlocked;
-use EscolaLms\Auth\Events\AccountConfirmed;
-use EscolaLms\Cart\Events\AbandonedCartEvent;
-use EscolaLms\Cart\Events\OrderCreated;
-use EscolaLms\Cart\Events\ProductBought;
-use EscolaLms\MailerLite\Enum\GroupNamesEnum;
-use EscolaLms\MailerLite\Enum\PackageStatusEnum;
-use EscolaLms\MailerLite\Services\Contracts\MailerLiteServiceContract;
+use Ulams\Auth\Events\AccountBlocked;
+use Ulams\Auth\Events\AccountConfirmed;
+use Ulams\Cart\Events\AbandonedCartEvent;
+use Ulams\Cart\Events\OrderCreated;
+use Ulams\Cart\Events\ProductBought;
+use Ulams\MailerLite\Enum\GroupNamesEnum;
+use Ulams\MailerLite\Enum\PackageStatusEnum;
+use Ulams\MailerLite\Services\Contracts\MailerLiteServiceContract;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -24,7 +24,7 @@ class EventServiceProvider extends ServiceProvider
 
         Event::listen(AccountConfirmed::class, function ($event) {
             /**
-             * >>> event(new EscolaLms\Auth\Events\AccountConfirmed(App\Models\User::find(18)));
+             * >>> event(new Ulams\Auth\Events\AccountConfirmed(App\Models\User::find(18)));
              */
             $newsletterKey = Config::get(SettingsServiceProvider::CONFIG_KEY . '.newsletter_field_key');
             $user = $event->user;
@@ -38,7 +38,7 @@ class EventServiceProvider extends ServiceProvider
 
         Event::listen(ProductBought::class, function ($event) {
             /**
-             * >>> event(new EscolaLms\Cart\Events\ProductBought(EscolaLms\Cart\Models\Product::find(1), EscolaLms\Vouchers\Models\Order::find(1), EscolaLms\Core\Models\User::find(18)));
+             * >>> event(new Ulams\Cart\Events\ProductBought(Ulams\Cart\Models\Product::find(1), Ulams\Vouchers\Models\Order::find(1), Ulams\Core\Models\User::find(18)));
              */
             app(MailerLiteServiceContract::class)->addSubscriberToGroup(
                 Config::get(SettingsServiceProvider::CONFIG_KEY . '.group_order_paid', GroupNamesEnum::ORDER_PAID),
@@ -48,14 +48,14 @@ class EventServiceProvider extends ServiceProvider
 
         Event::listen(AccountBlocked::class, function ($event) {
             /**
-             * >>> event(new EscolaLms\Auth\Events\AccountBlocked(App\Models\User::find(18)));
+             * >>> event(new Ulams\Auth\Events\AccountBlocked(App\Models\User::find(18)));
              */
             app(MailerLiteServiceContract::class)->deleteSubscriber($event->getUser());
         });
 
         Event::listen(AbandonedCartEvent::class, function ($event) {
             /**
-             * >>> event(new EscolaLms\Cart\Events\AbandonedCartEvent(EscolaLms\Cart\Models\Cart::find(1)));
+             * >>> event(new Ulams\Cart\Events\AbandonedCartEvent(Ulams\Cart\Models\Cart::find(1)));
              */
             app(MailerLiteServiceContract::class)->addSubscriberToGroup(
                 Config::get(SettingsServiceProvider::CONFIG_KEY . '.group_left_cart', GroupNamesEnum::LEFT_CART),
@@ -65,7 +65,7 @@ class EventServiceProvider extends ServiceProvider
 
         Event::listen(OrderCreated::class, function ($event) {
             /**
-             * >>> event(new EscolaLms\Cart\Events\OrderCreated(EscolaLms\Cart\Models\Order::find(1)));
+             * >>> event(new Ulams\Cart\Events\OrderCreated(Ulams\Cart\Models\Order::find(1)));
              */
             app(MailerLiteServiceContract::class)->removeSubscriberFromGroup(
                 Config::get(SettingsServiceProvider::CONFIG_KEY . '.group_left_cart', GroupNamesEnum::LEFT_CART),

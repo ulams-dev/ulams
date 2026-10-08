@@ -1,7 +1,7 @@
 import { Select, Spin } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { roles as getRoles } from '@/services/escola-lms/roles';
+import { roles as getRoles } from '@/services/ulams/roles';
 import { useCallback } from 'react';
 import { FormattedMessage } from 'umi';
 

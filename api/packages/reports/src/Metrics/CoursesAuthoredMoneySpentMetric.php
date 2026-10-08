@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Reports\Metrics;
+namespace Ulams\Reports\Metrics;
 
-use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
+use Ulams\Courses\Enum\CoursesPermissionsEnum;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 

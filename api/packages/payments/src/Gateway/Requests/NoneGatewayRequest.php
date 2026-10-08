@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Payments\Gateway\Requests;
+namespace Ulams\Payments\Gateway\Requests;
 
-use EscolaLms\Payments\Gateway\Responses\NoneGatewayResponse;
+use Ulams\Payments\Gateway\Responses\NoneGatewayResponse;
 use Omnipay\Common\Message\RequestInterface;
 
 class NoneGatewayRequest implements RequestInterface

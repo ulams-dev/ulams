@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Consultations\Models;
+namespace Ulams\Consultations\Models;
 
-use EscolaLms\Consultations\Database\Factories\ConsultationUserFactory;
-use EscolaLms\Consultations\Enum\ConsultationTermReminderStatusEnum;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Database\Factories\ConsultationUserFactory;
+use Ulams\Consultations\Enum\ConsultationTermReminderStatusEnum;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

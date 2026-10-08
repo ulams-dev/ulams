@@ -91,7 +91,7 @@ jobs:
           # GitHub Action output files
           source-directory: tests/
           target-directory: api-tests
-          destination-github-username: EscolaLMS
+          destination-github-username: Ulams
           destination-repository-name: .github
           user-email: mateusz@qunabu.com
           # It defaults to `main`

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Courses\Repositories;
+namespace Ulams\Courses\Repositories;
 
-use EscolaLms\Courses\Models\H5PUserProgress;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
+use Ulams\Courses\Models\H5PUserProgress;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class CourseH5PProgressRepository extends BaseRepository implements CourseH5PProgressRepositoryContract

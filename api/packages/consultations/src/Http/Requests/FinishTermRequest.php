@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Consultations\Http\Requests;
+namespace Ulams\Consultations\Http\Requests;
 
-use EscolaLms\Consultations\Enum\ConsultationsPermissionsEnum;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Enum\ConsultationsPermissionsEnum;
+use Ulams\Consultations\Models\ConsultationUserPivot;
 use Illuminate\Support\Facades\Gate;
 
 class FinishTermRequest extends ConsultationUserTermRequest

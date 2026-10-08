@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Auth;
+namespace Ulams\TemplatesEmail\Auth;
 
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Templates\Events\EventWrapper;
 use Illuminate\Support\Str;
-use EscolaLms\Auth\Repositories\Contracts\UserRepositoryContract;
-use EscolaLms\Core\Models\User;
+use Ulams\Auth\Repositories\Contracts\UserRepositoryContract;
+use Ulams\Core\Models\User;
 use Illuminate\Support\Facades\Lang;
 
 class ResetPasswordVariables extends CommonAuthVariables

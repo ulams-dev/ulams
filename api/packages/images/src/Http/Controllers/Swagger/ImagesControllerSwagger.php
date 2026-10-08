@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Images\Http\Controllers\Swagger;
+namespace Ulams\Images\Http\Controllers\Swagger;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;

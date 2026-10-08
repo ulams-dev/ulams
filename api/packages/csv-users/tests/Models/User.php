@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Tests\Models;
+namespace Ulams\CsvUsers\Tests\Models;
 
-use EscolaLms\CsvUsers\Models\User as CsvExportUser;
+use Ulams\CsvUsers\Models\User as CsvExportUser;
 
 class User extends CsvExportUser
 {

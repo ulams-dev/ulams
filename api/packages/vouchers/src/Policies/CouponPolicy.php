@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Vouchers\Policies;
+namespace Ulams\Vouchers\Policies;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Vouchers\Enums\VoucherPermissionsEnum;
-use EscolaLms\Vouchers\Models\Coupon;
-use EscolaLms\Vouchers\Services\Contracts\CouponServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Vouchers\Enums\VoucherPermissionsEnum;
+use Ulams\Vouchers\Models\Coupon;
+use Ulams\Vouchers\Services\Contracts\CouponServiceContract;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class CouponPolicy

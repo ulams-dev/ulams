@@ -2,7 +2,7 @@ import * as React from "react";
 
 import styled, { withTheme } from "styled-components";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { Radio } from "../../atoms/Option/Radio";
 
 export interface StepsOptionProps extends ExtendableStyledComponent {
@@ -96,7 +96,7 @@ const StepsOption: React.FC<StepsOptionProps> = (props) => {
   const { value, label, checked, className = "" } = props;
 
   return (
-    <StyledStepsOption className={`wellms-component ${className}`}>
+    <StyledStepsOption className={`ulams-component ${className}`}>
       <Radio
         value={value}
         checked={checked}
@@ -117,7 +117,7 @@ export const Steps: React.FC<StepsProps> = (props) => {
 
   return (
     <StyledSteps
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
       options={options}
       checked={checked}
     >

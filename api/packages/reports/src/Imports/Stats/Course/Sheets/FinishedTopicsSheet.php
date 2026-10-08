@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Reports\Imports\Stats\Course\Sheets;
+namespace Ulams\Reports\Imports\Stats\Course\Sheets;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\CourseProgress;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Reports\Stats\Course\Strategies\TopicTitleStrategyContext;
+use Ulams\Auth\Models\User;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\Topic;
+use Ulams\Reports\Stats\Course\Strategies\TopicTitleStrategyContext;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Row;

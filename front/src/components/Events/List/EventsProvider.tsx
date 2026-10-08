@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import { useLocation, useHistory } from "react-router-dom";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
-import { API } from "@lms/sdk";
+import { UlamsContext } from "@ulams/sdk/react/context";
+import { API } from "@ulams/sdk";
 import qs from "query-string";
 import { EventsContext } from "./EventsContext";
 
@@ -18,7 +18,7 @@ const EventsProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const { fetchStationaryEvents, stationaryEvents, fetchCategories } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
   const location = useLocation();
   const { push } = useHistory();
 

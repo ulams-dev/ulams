@@ -9,14 +9,14 @@ Each Variable that that has `LARAVEL_` is converted nto variable set for `.env` 
 Example
 
 ```bash
-LARAVEL_APP_NAME=Wellms
+LARAVEL_APP_NAME=Ulams
 LARAVEL_APP_ENV=local
 ```
 
 will be saved into `.env` as
 
 ```bash
-APP_NAME=Wellms
+APP_NAME=Ulams
 APP_ENV=local
 ```
 
@@ -81,8 +81,8 @@ Each
 | `INITIAL_USER_PASSWORD`                 | Initial admin password                                           |                     |
 | `INITIAL_USER_FIRST_NAME`               | Initial admin first name                                         | Root                |
 | `INITIAL_USER_LAST_NAME`                | Initial admin last name                                          | Admin               |
-| `INITIAL_USER_EMAIL`                    | Initial admin email                                              | admin@escolalms.com |
+| `INITIAL_USER_EMAIL`                    | Initial admin email                                              | admin@ulams.app |
 | `${DOMAIN_KEY}_INITIAL_USER_PASSWORD`   | Initial admin password for domain                                |                     |
 | `${DOMAIN_KEY}_INITIAL_USER_FIRST_NAME` | Initial admin first name for domain                              | Root                |
 | `${DOMAIN_KEY}_INITIAL_USER_LAST_NAME`  | Initial admin last name for domain                               | Admin               |
-| `${DOMAIN_KEY}_INITIAL_USER_EMAIL`      | Initial admin email for domain                                   | admin@escolalms.com |
+| `${DOMAIN_KEY}_INITIAL_USER_EMAIL`      | Initial admin email for domain                                   | admin@ulams.app |

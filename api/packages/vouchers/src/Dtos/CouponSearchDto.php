@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Vouchers\Dtos;
+namespace Ulams\Vouchers\Dtos;
 
 use Illuminate\Support\Carbon;
 

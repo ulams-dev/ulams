@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Database\Seeders;
+namespace Ulams\BulkNotifications\Database\Seeders;
 
-use EscolaLms\BulkNotifications\Enums\BulkNotificationPermissionEnum;
+use Ulams\BulkNotifications\Enums\BulkNotificationPermissionEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

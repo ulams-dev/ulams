@@ -8,7 +8,7 @@ import { FormattedMessage, Link, history, useIntl, useParams } from 'umi';
 import Tags from '@/components/Tags';
 import { DAY_FORMAT } from '@/consts/dates';
 import { useShowNotification } from '@/hooks/useMessage';
-import { deleteWebinar, generateYoutubeToken, webinars } from '@/services/escola-lms/webinars';
+import { deleteWebinar, generateYoutubeToken, webinars } from '@/services/ulams/webinars';
 import { roundTo } from '@/utils/utils';
 import {
   DeleteOutlined,

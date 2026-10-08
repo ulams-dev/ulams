@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Exports;
+namespace Ulams\Cart\Exports;
 
-use EscolaLms\Cart\Http\Resources\OrderExportResource;
-use EscolaLms\Cart\Http\Resources\OrderResource;
+use Ulams\Cart\Http\Resources\OrderExportResource;
+use Ulams\Cart\Http\Resources\OrderResource;
 use Illuminate\Database\Eloquent\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;

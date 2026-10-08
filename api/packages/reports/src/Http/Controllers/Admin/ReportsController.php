@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Reports\Http\Controllers\Admin;
+namespace Ulams\Reports\Http\Controllers\Admin;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Reports\Actions\FindReport;
-use EscolaLms\Reports\Http\Controllers\Admin\Swagger\ReportsSwagger;
-use EscolaLms\Reports\Http\Requests\Admin\ReportRequest;
-use EscolaLms\Reports\Http\Resources\MeasurementCollection;
-use EscolaLms\Reports\Services\Contracts\ReportServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Reports\Actions\FindReport;
+use Ulams\Reports\Http\Controllers\Admin\Swagger\ReportsSwagger;
+use Ulams\Reports\Http\Requests\Admin\ReportRequest;
+use Ulams\Reports\Http\Resources\MeasurementCollection;
+use Ulams\Reports\Services\Contracts\ReportServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class ReportsController extends EscolaLmsBaseController implements ReportsSwagger
+class ReportsController extends UlamsBaseController implements ReportsSwagger
 {
     private ReportServiceContract $reportService;
 

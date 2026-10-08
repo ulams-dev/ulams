@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests;
+namespace Ulams\Auth\Http\Requests;
 
-use EscolaLms\Auth\Models\Group;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Rules\NoHtmlTags;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Auth\Models\Group;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Rules\NoHtmlTags;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Validation\Rule;
 
 class RegisterRequest extends ExtendableRequest

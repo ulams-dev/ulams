@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Rules;
+namespace Ulams\Questionnaire\Rules;
 
-use EscolaLms\Questionnaire\Enums\QuestionAnswersRequiredRateEnum;
-use EscolaLms\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Enums\QuestionAnswersRequiredRateEnum;
+use Ulams\Questionnaire\Models\Question;
 use Illuminate\Contracts\Validation\Rule;
 
 class QuestionAnswerRateRequired implements Rule

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Payments\Policies;
+namespace Ulams\Payments\Policies;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Payments\Enums\PaymentsPermissionsEnum;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Core\Models\User;
+use Ulams\Payments\Enums\PaymentsPermissionsEnum;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PaymentPolicy

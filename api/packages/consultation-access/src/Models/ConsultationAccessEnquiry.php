@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Models;
+namespace Ulams\ConsultationAccess\Models;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\ConsultationAccess\Database\Factories\ConsultationAccessEnquiryFactory;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Models\ConsultationUserTerm;
+use Ulams\Auth\Models\User;
+use Ulams\ConsultationAccess\Database\Factories\ConsultationAccessEnquiryFactory;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Models\ConsultationUserTerm;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
- * EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry
+ * Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry
  *
  * @property-read int $id
  * @property int $consultation_id

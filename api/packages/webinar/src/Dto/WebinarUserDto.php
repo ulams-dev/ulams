@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Webinar\Dto;
+namespace Ulams\Webinar\Dto;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Repositories\Criteria\UserSearchCriterion;
-use EscolaLms\Webinar\Repositories\Criteria\WebinarUserCriterion;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Repositories\Criteria\UserSearchCriterion;
+use Ulams\Webinar\Repositories\Criteria\WebinarUserCriterion;
 use Illuminate\Support\Collection;
 
 class WebinarUserDto extends CriteriaDto implements DtoContract

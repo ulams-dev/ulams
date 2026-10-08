@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Recommender\Tests\Api;
+namespace Ulams\Recommender\Tests\Api;
 
-use EscolaLms\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Recommender\Enum\MeetRecordingEnum;
-use EscolaLms\Recommender\EscolaLmsRecommenderServiceProvider;
-use EscolaLms\Recommender\Jobs\ProcessingMeetingFramesJob;
-use EscolaLms\Recommender\Models\MeetRecording;
-use EscolaLms\Recommender\Models\TermAnalytic;
-use EscolaLms\Recommender\Tests\CreatesCourse;
-use EscolaLms\Recommender\Tests\TestCase;
+use Ulams\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Recommender\Enum\MeetRecordingEnum;
+use Ulams\Recommender\UlamsRecommenderServiceProvider;
+use Ulams\Recommender\Jobs\ProcessingMeetingFramesJob;
+use Ulams\Recommender\Models\MeetRecording;
+use Ulams\Recommender\Models\TermAnalytic;
+use Ulams\Recommender\Tests\CreatesCourse;
+use Ulams\Recommender\Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
@@ -92,7 +92,7 @@ class MeetRecordingTest extends TestCase
             ProcessingMeetingFramesJob::class
         ]);
 
-        Config::set(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.frames_microservice_url', 'http://localhost-frames');
+        Config::set(UlamsRecommenderServiceProvider::CONFIG_KEY . '.frames_microservice_url', 'http://localhost-frames');
 
         Http::fake(['http://localhost-frames/api/frames/satisfaction' => Http::response(null, 204)]);
 

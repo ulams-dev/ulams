@@ -7,8 +7,8 @@ import {
   useRef,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextStateValue,
 } from "../types";
 import { defaultConfig } from "../defaults";
@@ -22,7 +22,7 @@ import { dictionariesAccess as getDictionariesAccess } from "../../../services/d
 import { UserContext } from "../user";
 
 export const DictionariesAccessContext: React.Context<
-  Pick<EscolaLMSContextConfig, "dictionariesAccess" | "fetchDictionariesAccess">
+  Pick<UlamsContextConfig, "dictionariesAccess" | "fetchDictionariesAccess">
 > = createContext({
   dictionariesAccess: defaultConfig.dictionariesAccess,
   fetchDictionariesAccess: defaultConfig.fetchDictionariesAccess,
@@ -30,7 +30,7 @@ export const DictionariesAccessContext: React.Context<
 
 export interface DictionariesAccessContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "dictionariesAccess">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "dictionariesAccess">>;
   ssrHydration?: boolean;
 }
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Tests\Api;
+namespace Ulams\TopicTypeGift\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\TopicTypeGift\Events\QuizAttemptStartedEvent;
-use EscolaLms\TopicTypeGift\Jobs\MarkAttemptAsEnded;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
-use EscolaLms\TopicTypeGift\Providers\SettingsServiceProvider;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\TopicTypeGift\Events\QuizAttemptStartedEvent;
+use Ulams\TopicTypeGift\Jobs\MarkAttemptAsEnded;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
+use Ulams\TopicTypeGift\Providers\SettingsServiceProvider;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Config;

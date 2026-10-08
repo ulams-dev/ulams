@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Translations\Dto;
+namespace Ulams\Translations\Dto;
 
 class TranslationDto
 {

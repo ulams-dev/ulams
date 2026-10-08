@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EscolaLms\Files\Http\Exceptions\Contracts;
+namespace Ulams\Files\Http\Exceptions\Contracts;
 
 
 use Symfony\Component\HttpFoundation\Response;

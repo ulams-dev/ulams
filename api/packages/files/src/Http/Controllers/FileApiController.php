@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Files\Http\Controllers;
+namespace Ulams\Files\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Files\Http\Controllers\Swagger\FileApiSwagger;
-use EscolaLms\Files\Http\Requests\FileDeleteRequest;
-use EscolaLms\Files\Http\Requests\FileFindByNameRequest;
-use EscolaLms\Files\Http\Requests\FileListingRequest;
-use EscolaLms\Files\Http\Requests\FileMoveRequest;
-use EscolaLms\Files\Http\Requests\FileUploadRequest;
-use EscolaLms\Files\Http\Services\Contracts\FileServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Files\Http\Controllers\Swagger\FileApiSwagger;
+use Ulams\Files\Http\Requests\FileDeleteRequest;
+use Ulams\Files\Http\Requests\FileFindByNameRequest;
+use Ulams\Files\Http\Requests\FileListingRequest;
+use Ulams\Files\Http\Requests\FileMoveRequest;
+use Ulams\Files\Http\Requests\FileUploadRequest;
+use Ulams\Files\Http\Services\Contracts\FileServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class FileApiController extends EscolaLmsBaseController implements FileApiSwagger
+class FileApiController extends UlamsBaseController implements FileApiSwagger
 {
     private FileServiceContract $service;
 

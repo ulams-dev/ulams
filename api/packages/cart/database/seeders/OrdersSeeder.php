@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Cart\Database\Seeders;
+namespace Ulams\Cart\Database\Seeders;
 
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Models\OrderItem;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\User;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Core\Models\User as ModelsUser;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Models\OrderItem;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\User;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Core\Models\User as ModelsUser;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Testing\WithFaker;

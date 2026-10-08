@@ -28,9 +28,9 @@ export const searchSubstring = (string: string = '', substring: string = '') => 
 
 export const categoriesArrToIds = (
   category:
-    | EscolaLms.Auth.Models.User
+    | Ulams.Auth.Models.User
     | API.Category
-    | EscolaLms.Categories.Models.Category
+    | Ulams.Categories.Models.Category
     | string
     | number,
 ) => (typeof category === 'object' ? category.id : category);

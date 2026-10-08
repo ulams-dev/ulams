@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Webinar\Jobs;
+namespace Ulams\Webinar\Jobs;
 
-use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
+use Ulams\Webinar\Services\Contracts\WebinarServiceContract;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

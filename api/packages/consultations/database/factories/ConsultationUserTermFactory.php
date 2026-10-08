@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Consultations\Database\Factories;
+namespace Ulams\Consultations\Database\Factories;
 
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Models\ConsultationUserTerm;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Models\ConsultationUserTerm;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ConsultationUserTermFactory extends Factory

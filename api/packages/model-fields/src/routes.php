@@ -1,8 +1,8 @@
 <?php
 
-use EscolaLms\ModelFields\Http\Controllers\ModelFieldsAdminApiController;
+use Ulams\ModelFields\Http\Controllers\ModelFieldsAdminApiController;
 use Illuminate\Support\Facades\Route;
-use EscolaLms\ModelFields\Http\Controllers\ModelFieldsApiController;
+use Ulams\ModelFields\Http\Controllers\ModelFieldsApiController;
 
 Route::group(['prefix' => 'api/model-fields'], function () {
     Route::get('/', [ModelFieldsApiController::class, 'list']);

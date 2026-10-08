@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Payments\Database\Seeders;
+namespace Ulams\Payments\Database\Seeders;
 
-use EscolaLms\Payments\Enums\PaymentsPermissionsEnum;
+use Ulams\Payments\Enums\PaymentsPermissionsEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

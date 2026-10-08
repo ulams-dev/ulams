@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Auth;
+namespace Ulams\TemplatesEmail\Auth;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\TemplatesEmail\Core\EmailVariables;
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Core\Models\User;
+use Ulams\TemplatesEmail\Core\EmailVariables;
+use Ulams\Templates\Events\EventWrapper;
 use Illuminate\Support\Facades\Lang;
 
 class VerifyUserAccountVariables extends EmailVariables

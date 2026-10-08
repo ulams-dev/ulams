@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Resources;
+namespace Ulams\Auth\Http\Resources;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Categories\Http\Resources\CategoryResource;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Auth\Models\User;
+use Ulams\Categories\Http\Resources\CategoryResource;
+use Ulams\ModelFields\Enum\MetaFieldVisibilityEnum;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Http\Resources\Json\JsonResource;
-use EscolaLms\Auth\Traits\ResourceExtandable;
+use Ulams\Auth\Traits\ResourceExtandable;
 use Illuminate\Support\Collection;
 
 class UserResource extends JsonResource

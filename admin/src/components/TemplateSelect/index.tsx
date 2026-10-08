@@ -1,4 +1,4 @@
-import { templates as fetchTemplates } from '@/services/escola-lms/templates';
+import { templates as fetchTemplates } from '@/services/ulams/templates';
 import { Select, Spin } from 'antd';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'umi';

@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Swagger\Admin;
+namespace Ulams\Cart\Http\Swagger\Admin;
 
-use EscolaLms\Cart\Http\Requests\Admin\ProductAttachRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductCreateRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductDeleteRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductDetachRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductManuallyTriggerRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductReadRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductSearchRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductUpdateRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductAttachRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductCreateRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductDeleteRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductDetachRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductManuallyTriggerRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductReadRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductSearchRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductUpdateRequest;
 use Illuminate\Http\JsonResponse;
 
 interface ProductAdminSwagger

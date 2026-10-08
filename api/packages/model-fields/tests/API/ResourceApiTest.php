@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\ModelFields\Tests\API;
+namespace Ulams\ModelFields\Tests\API;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\ModelFields\Tests\TestCase;
-use EscolaLms\ModelFields\Enum\MetaFieldTypeEnum;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\ModelFields\Tests\TestCase;
+use Ulams\ModelFields\Enum\MetaFieldTypeEnum;
+use Ulams\ModelFields\Enum\MetaFieldVisibilityEnum;
 
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\ModelFields\Tests\Models\User;
+use Ulams\Core\Enums\UserRole;
+use Ulams\ModelFields\Tests\Models\User;
 use Illuminate\Support\Facades\App;
-use EscolaLms\ModelFields\Services\Contracts\ModelFieldsServiceContract;
+use Ulams\ModelFields\Services\Contracts\ModelFieldsServiceContract;
 
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\ModelFields\Facades\ModelFields;
 
 
 class ResourceApiTest extends TestCase

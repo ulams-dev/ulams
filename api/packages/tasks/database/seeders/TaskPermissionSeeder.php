@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Tasks\Database\Seeders;
+namespace Ulams\Tasks\Database\Seeders;
 
-use EscolaLms\Tasks\Enums\TaskPermissionEnum;
+use Ulams\Tasks\Enums\TaskPermissionEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Vouchers\Models\Coupon;
+use Ulams\Vouchers\Models\Coupon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

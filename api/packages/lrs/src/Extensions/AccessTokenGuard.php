@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Lrs\Extensions;
+namespace Ulams\Lrs\Extensions;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;

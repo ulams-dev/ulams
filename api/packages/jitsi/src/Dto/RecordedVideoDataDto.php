@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Jitsi\Dto;
+namespace Ulams\Jitsi\Dto;
 
 class RecordedVideoDataDto
 {

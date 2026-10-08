@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Consultations\Http\Requests;
+namespace Ulams\Consultations\Http\Requests;
 
-use EscolaLms\Consultations\Enum\ConsultationsPermissionsEnum;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Models\Consultation;
+use Ulams\Consultations\Enum\ConsultationsPermissionsEnum;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Models\Consultation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

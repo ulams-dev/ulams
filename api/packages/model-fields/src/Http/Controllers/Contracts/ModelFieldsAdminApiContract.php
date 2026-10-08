@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\ModelFields\Http\Controllers\Contracts;
+namespace Ulams\ModelFields\Http\Controllers\Contracts;
 
-use EscolaLms\ModelFields\Http\Requests\MetadataCreateOrUpdateRequest;
-use EscolaLms\ModelFields\Http\Requests\MetadataDeleteRequest;
-use EscolaLms\ModelFields\Http\Requests\MetadataListRequest;
+use Ulams\ModelFields\Http\Requests\MetadataCreateOrUpdateRequest;
+use Ulams\ModelFields\Http\Requests\MetadataDeleteRequest;
+use Ulams\ModelFields\Http\Requests\MetadataListRequest;
 use Illuminate\Http\JsonResponse;
 
 

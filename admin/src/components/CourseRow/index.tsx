@@ -1,4 +1,4 @@
-import { getCourse as fetchCourse } from '@/services/escola-lms/course';
+import { getCourse as fetchCourse } from '@/services/ulams/course';
 import { Button, message } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';

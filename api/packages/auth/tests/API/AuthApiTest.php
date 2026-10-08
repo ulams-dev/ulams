@@ -1,28 +1,28 @@
 <?php
 
-namespace EscolaLms\Auth\Tests\API;
+namespace Ulams\Auth\Tests\API;
 
-use EscolaLms\Auth\Enums\AuthPermissionsEnum;
-use EscolaLms\Auth\Enums\SettingStatusEnum;
-use EscolaLms\Auth\Enums\TokenExpirationEnum;
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Events\AccountConfirmed;
-use EscolaLms\Auth\Events\AccountMustBeEnableByAdmin;
-use EscolaLms\Auth\Events\AccountRegistered;
-use EscolaLms\Auth\Events\ForgotPassword;
-use EscolaLms\Auth\Events\Impersonate;
-use EscolaLms\Auth\Events\Login;
-use EscolaLms\Auth\Events\Logout;
-use EscolaLms\Auth\Events\ResetPassword as ResetPasswordEvent;
-use EscolaLms\Auth\Listeners\CreatePasswordResetToken;
-use EscolaLms\Auth\Listeners\SendEmailVerificationNotification;
-use EscolaLms\Auth\Models\Group;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Notifications\ResetPassword;
-use EscolaLms\Auth\Tests\TestCase;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Auth\Enums\AuthPermissionsEnum;
+use Ulams\Auth\Enums\SettingStatusEnum;
+use Ulams\Auth\Enums\TokenExpirationEnum;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Events\AccountConfirmed;
+use Ulams\Auth\Events\AccountMustBeEnableByAdmin;
+use Ulams\Auth\Events\AccountRegistered;
+use Ulams\Auth\Events\ForgotPassword;
+use Ulams\Auth\Events\Impersonate;
+use Ulams\Auth\Events\Login;
+use Ulams\Auth\Events\Logout;
+use Ulams\Auth\Events\ResetPassword as ResetPasswordEvent;
+use Ulams\Auth\Listeners\CreatePasswordResetToken;
+use Ulams\Auth\Listeners\SendEmailVerificationNotification;
+use Ulams\Auth\Models\Group;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Notifications\ResetPassword;
+use Ulams\Auth\Tests\TestCase;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -41,7 +41,7 @@ class AuthApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
         Cache::flush();
     }
 
@@ -49,7 +49,7 @@ class AuthApiTest extends TestCase
     {
         Event::fake();
         Notification::fake();
-        Config::set(EscolaLmsAuthServiceProvider::CONFIG_KEY . '.account_must_be_enabled_by_admin', SettingStatusEnum::DISABLED);
+        Config::set(UlamsAuthServiceProvider::CONFIG_KEY . '.account_must_be_enabled_by_admin', SettingStatusEnum::DISABLED);
 
         $this->response = $this->json('POST', '/api/auth/register', [
             'email' => 'test@test.test',
@@ -57,7 +57,7 @@ class AuthApiTest extends TestCase
             'last_name' => 'tester',
             'password' => 'testtest',
             'password_confirmation' => 'testtest',
-            'return_url' => 'https://escolalms.com/email/verify',
+            'return_url' => 'https://ulams.app/email/verify',
         ]);
 
         $this->assertApiSuccess();
@@ -70,7 +70,7 @@ class AuthApiTest extends TestCase
         ]);
         $newUser = User::where('email', 'test@test.test')->first();
         $listener = app(SendEmailVerificationNotification::class);
-        $listener->handle(new AccountRegistered($newUser, 'https://escolalms.com/email/verify'));
+        $listener->handle(new AccountRegistered($newUser, 'https://ulams.app/email/verify'));
         Notification::assertSentTo($newUser, VerifyEmail::class);
     }
 
@@ -78,8 +78,8 @@ class AuthApiTest extends TestCase
     {
         Event::fake();
         Notification::fake();
-        Config::set(EscolaLmsAuthServiceProvider::CONFIG_KEY . '.account_must_be_enabled_by_admin', SettingStatusEnum::DISABLED);
-        Config::set(EscolaLmsAuthServiceProvider::CONFIG_KEY . '.auto_verified_email', SettingStatusEnum::ENABLED);
+        Config::set(UlamsAuthServiceProvider::CONFIG_KEY . '.account_must_be_enabled_by_admin', SettingStatusEnum::DISABLED);
+        Config::set(UlamsAuthServiceProvider::CONFIG_KEY . '.auto_verified_email', SettingStatusEnum::ENABLED);
 
         $this->response = $this->json('POST', '/api/auth/register', [
             'email' => 'test@test.test',
@@ -87,7 +87,7 @@ class AuthApiTest extends TestCase
             'last_name' => 'tester',
             'password' => 'testtest',
             'password_confirmation' => 'testtest',
-            'return_url' => 'https://escolalms.com/email/verify',
+            'return_url' => 'https://ulams.app/email/verify',
         ]);
 
         $this->assertApiSuccess();
@@ -108,7 +108,7 @@ class AuthApiTest extends TestCase
 
     public function testRegisterWithDeletedUserEmail(): void
     {
-        Config::set(EscolaLmsAuthServiceProvider::CONFIG_KEY . '.account_must_be_enabled_by_admin', SettingStatusEnum::DISABLED);
+        Config::set(UlamsAuthServiceProvider::CONFIG_KEY . '.account_must_be_enabled_by_admin', SettingStatusEnum::DISABLED);
 
         $deletedUser = User::factory()->create([
             'email' => 'test@test.test',
@@ -128,7 +128,7 @@ class AuthApiTest extends TestCase
                 'last_name' => 'tester',
                 'password' => 'testtest',
                 'password_confirmation' => 'testtest',
-                'return_url' => 'https://escolalms.com/email/verify',
+                'return_url' => 'https://ulams.app/email/verify',
             ]
         );
 
@@ -143,7 +143,7 @@ class AuthApiTest extends TestCase
         ]);
         $newUser = User::where('email', 'test@test.test')->first();
         $listener = app(SendEmailVerificationNotification::class);
-        $listener->handle(new AccountRegistered($newUser, 'https://escolalms.com/email/verify'));
+        $listener->handle(new AccountRegistered($newUser, 'https://ulams.app/email/verify'));
         Notification::assertSentTo($newUser, VerifyEmail::class);
     }
 
@@ -151,7 +151,7 @@ class AuthApiTest extends TestCase
     {
         Event::fake();
         Notification::fake();
-        Config::set(EscolaLmsAuthServiceProvider::CONFIG_KEY . '.account_must_be_enabled_by_admin', SettingStatusEnum::DISABLED);
+        Config::set(UlamsAuthServiceProvider::CONFIG_KEY . '.account_must_be_enabled_by_admin', SettingStatusEnum::DISABLED);
 
         /** @var Group $group */
         $group = Group::factory()->create(['registerable' => true]);
@@ -162,7 +162,7 @@ class AuthApiTest extends TestCase
             'last_name' => 'tester',
             'password' => 'testtest',
             'password_confirmation' => 'testtest',
-            'return_url' => 'https://escolalms.com/email/verify',
+            'return_url' => 'https://ulams.app/email/verify',
             'groups' => [
                 $group->getKey(),
             ],
@@ -184,7 +184,7 @@ class AuthApiTest extends TestCase
 
         $newUser = User::where('email', 'test@test.test')->first();
         $listener = app(SendEmailVerificationNotification::class);
-        $listener->handle(new AccountRegistered($newUser, 'https://escolalms.com/email/verify'));
+        $listener->handle(new AccountRegistered($newUser, 'https://ulams.app/email/verify'));
         Notification::assertSentTo($newUser, VerifyEmail::class);
 
         /** @var User $user */
@@ -215,7 +215,7 @@ class AuthApiTest extends TestCase
             ['string', 'max:255']
         );
 
-        Config::set(EscolaLmsAuthServiceProvider::CONFIG_KEY . '.account_must_be_enabled_by_admin', SettingStatusEnum::DISABLED);
+        Config::set(UlamsAuthServiceProvider::CONFIG_KEY . '.account_must_be_enabled_by_admin', SettingStatusEnum::DISABLED);
 
         $this->response = $this->json('POST', '/api/auth/register', [
             'email' => 'test@test.test',
@@ -224,7 +224,7 @@ class AuthApiTest extends TestCase
             'password' => 'testtest',
             'password_confirmation' => 'testtest',
             'additional_field_b' => 123,
-            'return_url' => 'https://escolalms.com/email/verify',
+            'return_url' => 'https://ulams.app/email/verify',
         ]);
 
         $this->response->assertStatus(422);
@@ -246,7 +246,7 @@ class AuthApiTest extends TestCase
             'password_confirmation' => 'testtest',
             'additional_field_a' => 'string1',
             'additional_field_b' => 'string2',
-            'return_url' => 'https://escolalms.com/email/verify',
+            'return_url' => 'https://ulams.app/email/verify',
         ]);
 
         $this->assertApiSuccess();
@@ -315,7 +315,7 @@ class AuthApiTest extends TestCase
             'email_verified_at' => null,
         ]);
 
-        Config::set('escola_auth.superadmins', ['test@test.test']);
+        Config::set('ulams_auth.superadmins', ['test@test.test']);
 
         $this->response = $this->json('POST', '/api/auth/login', [
             'email' => 'test@test.test',
@@ -573,7 +573,7 @@ class AuthApiTest extends TestCase
 
         $this->assertEquals(
             $expiresAt->format('Y-m-d H:i:s'),
-            $createdAt->addMinutes(Config::get(EscolaLmsAuthServiceProvider::CONFIG_KEY . '.token_expiration_minutes'))->format('Y-m-d H:i:s')
+            $createdAt->addMinutes(Config::get(UlamsAuthServiceProvider::CONFIG_KEY . '.token_expiration_minutes'))->format('Y-m-d H:i:s')
         );
     }
 
@@ -609,14 +609,14 @@ class AuthApiTest extends TestCase
 
         $this->response = $this->json('POST', '/api/auth/email/resend', [
             'email' => $user->email,
-            'return_url' => 'https://escolalms.com/email/verify',
+            'return_url' => 'https://ulams.app/email/verify',
         ]);
 
         $this->assertApiSuccess();
         Event::assertDispatched(AccountRegistered::class);
 
         $listener = app(SendEmailVerificationNotification::class);
-        $listener->handle(new AccountRegistered($user, 'https://escolalms.com/email/verify'));
+        $listener->handle(new AccountRegistered($user, 'https://ulams.app/email/verify'));
         Notification::assertSentTo($user, VerifyEmail::class);
     }
 
@@ -648,14 +648,14 @@ class AuthApiTest extends TestCase
             'last_name' => 'tester',
             'password' => 'testtest',
             'password_confirmation' => 'testtest',
-            'return_url' => 'https://escolalms.com/email/verify',
+            'return_url' => 'https://ulams.app/email/verify',
         ];
 
-        Config::set(EscolaLmsAuthServiceProvider::CONFIG_KEY  . '.registration', SettingStatusEnum::DISABLED);
+        Config::set(UlamsAuthServiceProvider::CONFIG_KEY  . '.registration', SettingStatusEnum::DISABLED);
         $this->response = $this->json('POST', '/api/auth/register', $userData);
         $this->response->assertStatus(403);
 
-        Config::set(EscolaLmsAuthServiceProvider::CONFIG_KEY  . '.registration', SettingStatusEnum::ENABLED);
+        Config::set(UlamsAuthServiceProvider::CONFIG_KEY  . '.registration', SettingStatusEnum::ENABLED);
         $this->response = $this->json('POST', '/api/auth/register', $userData);
         $this->assertApiSuccess();
     }
@@ -664,7 +664,7 @@ class AuthApiTest extends TestCase
     {
         Event::fake();
         Notification::fake();
-        Config::set(EscolaLmsAuthServiceProvider::CONFIG_KEY  . '.account_must_be_enabled_by_admin', SettingStatusEnum::ENABLED);
+        Config::set(UlamsAuthServiceProvider::CONFIG_KEY  . '.account_must_be_enabled_by_admin', SettingStatusEnum::ENABLED);
 
         $this->user = config('auth.providers.users.model')::factory()->create();
         $this->user->guard_name = 'api';
@@ -676,7 +676,7 @@ class AuthApiTest extends TestCase
             'last_name' => 'tester',
             'password' => 'testtest',
             'password_confirmation' => 'testtest',
-            'return_url' => 'https://escolalms.com/email/verify',
+            'return_url' => 'https://ulams.app/email/verify',
         ]);
 
         $this->assertApiSuccess();
@@ -739,7 +739,7 @@ class AuthApiTest extends TestCase
         SendEmailVerificationNotification::setRunEventEmailVerification(
             fn () => false
         );
-        $event = new AccountRegistered($student, 'https://escolalms.com/email/verify');
+        $event = new AccountRegistered($student, 'https://ulams.app/email/verify');
         $listener = app(SendEmailVerificationNotification::class);
         $listener->handle($event);
         Notification::assertNotSentTo($student, VerifyEmail::class);
@@ -747,7 +747,7 @@ class AuthApiTest extends TestCase
         SendEmailVerificationNotification::setRunEventEmailVerification(
             fn () => true
         );
-        $event = new AccountRegistered($student, 'https://escolalms.com/email/verify');
+        $event = new AccountRegistered($student, 'https://ulams.app/email/verify');
         $listener = app(SendEmailVerificationNotification::class);
         $listener->handle($event);
         Notification::assertSentTo($student, VerifyEmail::class);

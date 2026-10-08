@@ -3,7 +3,7 @@ import styled, { withTheme } from "styled-components";
 import { getFontFromTheme } from "../../../theme/provider";
 import { ReactNode } from "react";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface Styles {
   icon?: React.CSSProperties;
@@ -52,7 +52,7 @@ export const IconText: React.FC<IconTextProps> = (props) => {
   const { text, icon, styles, className = "" } = props;
 
   return (
-    <StyledText className={`wellms-component ${className}`} {...props}>
+    <StyledText className={`ulams-component ${className}`} {...props}>
       {icon && (
         <span
           className="icon"

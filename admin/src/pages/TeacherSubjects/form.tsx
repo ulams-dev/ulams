@@ -1,5 +1,5 @@
 import PERMISSIONS from '@/consts/permissions';
-import { isUserHavePermissions } from '@/services/escola-lms/permissions';
+import { isUserHavePermissions } from '@/services/ulams/permissions';
 import ProCard from '@ant-design/pro-card';
 import { PageContainer } from '@ant-design/pro-layout';
 import { Button, Spin } from 'antd';

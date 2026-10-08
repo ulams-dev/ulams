@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Images\Http\Controllers;
+namespace Ulams\Images\Http\Controllers;
 
-use EscolaLms\Images\Http\Controllers\Swagger\ImagesControllerSwagger;
-use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
+use Ulams\Images\Http\Controllers\Swagger\ImagesControllerSwagger;
+use Ulams\Images\Services\Contracts\ImagesServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

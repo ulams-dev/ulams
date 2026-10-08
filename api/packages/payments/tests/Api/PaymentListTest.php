@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Payments\Tests\Api;
+namespace Ulams\Payments\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Payments\Enums\PaymentStatus;
-use EscolaLms\Payments\Http\Resources\PaymentResource;
-use EscolaLms\Payments\Models\Payment;
-use EscolaLms\Payments\Tests\Traits\CreatesBillable;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Payments\Enums\PaymentStatus;
+use Ulams\Payments\Http\Resources\PaymentResource;
+use Ulams\Payments\Models\Payment;
+use Ulams\Payments\Tests\Traits\CreatesBillable;
 use Illuminate\Support\Carbon;
 use Illuminate\Testing\TestResponse;
 
-class PaymentListTest extends \EscolaLms\Payments\Tests\TestCase
+class PaymentListTest extends \Ulams\Payments\Tests\TestCase
 {
     use CreatesBillable;
     use CreatesUsers;

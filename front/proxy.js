@@ -6,7 +6,7 @@ const app = express();
 app.use(
   "/",
   createProxyMiddleware({
-    target: "https://api.escolalms.com",
+    target: "https://api.ulams.app",
     changeOrigin: true,
   })
 );

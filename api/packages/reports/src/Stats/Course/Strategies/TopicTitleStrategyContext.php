@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Course\Strategies;
+namespace Ulams\Reports\Stats\Course\Strategies;
 
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Courses\Models\Topic;
 
 class TopicTitleStrategyContext
 {
@@ -18,7 +18,7 @@ class TopicTitleStrategyContext
 
     private function resolve(): void
     {
-        if (class_exists(\EscolaLms\TopicTypes\Models\TopicContent\H5P::class) && $this->topic->topicable_type === \EscolaLms\TopicTypes\Models\TopicContent\H5P::class) {
+        if (class_exists(\Ulams\TopicTypes\Models\TopicContent\H5P::class) && $this->topic->topicable_type === \Ulams\TopicTypes\Models\TopicContent\H5P::class) {
             $this->strategy = new H5PTopicTitleStrategy($this->topic);
             return;
         }

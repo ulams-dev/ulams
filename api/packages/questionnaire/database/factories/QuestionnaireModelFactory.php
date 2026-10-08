@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Database\Factories;
+namespace Ulams\Questionnaire\Database\Factories;
 
-use EscolaLms\Questionnaire\Models\Questionnaire;
-use EscolaLms\Questionnaire\Models\QuestionnaireModel;
-use EscolaLms\Questionnaire\Models\QuestionnaireModelType;
+use Ulams\Questionnaire\Models\Questionnaire;
+use Ulams\Questionnaire\Models\QuestionnaireModel;
+use Ulams\Questionnaire\Models\QuestionnaireModelType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class QuestionnaireModelFactory extends Factory

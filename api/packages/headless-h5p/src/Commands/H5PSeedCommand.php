@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Commands;
+namespace Ulams\HeadlessH5P\Commands;
 
 use Illuminate\Console\Command;
-use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use Ulams\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
 
 class H5PSeedCommand extends Command
 {

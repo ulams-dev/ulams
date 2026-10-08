@@ -8,7 +8,7 @@ import { RatioBox } from "../../atoms/RatioBox/RatioBox";
 import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface StyledCertificateProps {
   mobile?: boolean;
@@ -134,7 +134,7 @@ export const Certificate: React.FC<CertificateProps> = (props) => {
 
   return (
     <StyledCertificate
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
       mobile={mobile}
     >
       <Title level={4} as={"h4"} style={{ marginBottom: "20px" }}>

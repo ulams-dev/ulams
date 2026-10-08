@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Templates\Core;
+namespace Ulams\Templates\Core;
 
-use EscolaLms\Core\Enums\BasicEnum;
-use EscolaLms\Templates\Contracts\TemplateVariableContract;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Services\TemplateVariablesService;
+use Ulams\Core\Enums\BasicEnum;
+use Ulams\Templates\Contracts\TemplateVariableContract;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Services\TemplateVariablesService;
 
 abstract class AbstractTemplateVariableClass extends BasicEnum implements TemplateVariableContract
 {

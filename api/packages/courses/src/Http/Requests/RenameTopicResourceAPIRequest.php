@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Requests;
+namespace Ulams\Courses\Http\Requests;
 
-use EscolaLms\Courses\Http\Requests\Abstracts\TopicResourceAPIRequest;
+use Ulams\Courses\Http\Requests\Abstracts\TopicResourceAPIRequest;
 
 class RenameTopicResourceAPIRequest extends TopicResourceAPIRequest
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Reports\Services;
+namespace Ulams\Reports\Services;
 
-use EscolaLms\Reports\Metrics\AbstractMetric;
-use EscolaLms\Reports\Services\Contracts\ReportServiceContract;
+use Ulams\Reports\Metrics\AbstractMetric;
+use Ulams\Reports\Services\Contracts\ReportServiceContract;
 
 class ReportService implements ReportServiceContract
 {

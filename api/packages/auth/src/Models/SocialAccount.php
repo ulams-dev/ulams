@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Auth\Models;
+namespace Ulams\Auth\Models;
 
-use Database\Factories\EscolaLms\Auth\Models\SocialAccountFactory;
+use Database\Factories\Ulams\Auth\Models\SocialAccountFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * EscolaLms\Auth\Models\SocialAccount
+ * Ulams\Auth\Models\SocialAccount
  *
  * @property string $user_id
  * @property string $provider

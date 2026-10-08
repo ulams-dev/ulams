@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests\Admin;
+namespace Ulams\Cart\Http\Requests\Admin;
 
-use EscolaLms\Cart\Enums\CartPermissionsEnum;
+use Ulams\Cart\Enums\CartPermissionsEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ProductableListRequest extends FormRequest

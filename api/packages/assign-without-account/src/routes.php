@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\AssignWithoutAccount\Http\Controllers\UserSubmissionAdminController;
+use Ulams\AssignWithoutAccount\Http\Controllers\UserSubmissionAdminController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api'], function () {

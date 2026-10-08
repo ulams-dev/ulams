@@ -1,23 +1,23 @@
 <?php
 
-namespace EscolaLms\Reports\Tests\Api\Admin;
+namespace Ulams\Reports\Tests\Api\Admin;
 
-use EscolaLms\Cart\Models\Cart;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Enum\ProgressStatus;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Reports\Exports\Stats\Course\FinishedTopicsExport;
-use EscolaLms\Reports\Exports\Stats\Topic\QuizSummaryForTopicTypeGIFTExport;
-use EscolaLms\Reports\Stats\Topic\QuizSummaryForTopicTypeGIFT;
-use EscolaLms\Reports\Tests\Models\TestUser;
-use EscolaLms\Courses\Models\Group;
-use EscolaLms\Reports\Tests\TestCase;
-use EscolaLms\Reports\Tests\Traits\CoursesTestingTrait;
-use EscolaLms\Reports\ValueObject\DateRange;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
+use Ulams\Cart\Models\Cart;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Enum\ProgressStatus;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Reports\Exports\Stats\Course\FinishedTopicsExport;
+use Ulams\Reports\Exports\Stats\Topic\QuizSummaryForTopicTypeGIFTExport;
+use Ulams\Reports\Stats\Topic\QuizSummaryForTopicTypeGIFT;
+use Ulams\Reports\Tests\Models\TestUser;
+use Ulams\Courses\Models\Group;
+use Ulams\Reports\Tests\TestCase;
+use Ulams\Reports\Tests\Traits\CoursesTestingTrait;
+use Ulams\Reports\ValueObject\DateRange;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Testing\TestResponse;
@@ -94,7 +94,7 @@ class StatsTest extends TestCase
 
         /** @var TestResponse $response */
         $this->actingAs($admin)->json('GET', '/api/admin/stats/course/' . $course->getKey(), [
-            'stats' => [\EscolaLms\Reports\Stats\Course\FinishedTopics::class]
+            'stats' => [\Ulams\Reports\Stats\Course\FinishedTopics::class]
         ])
             ->assertOk()
             ->assertJsonFragment([
@@ -118,13 +118,13 @@ class StatsTest extends TestCase
 
         /** @var TestResponse $response */
         $response = $this->actingAs($admin)->json('GET', '/api/admin/stats/course/' . $course->getKey(), [
-            'stats' => [\EscolaLms\Reports\Stats\Course\AverageTime::class]
+            'stats' => [\Ulams\Reports\Stats\Course\AverageTime::class]
         ]);
         $response->assertOk();
         $response->assertJsonCount(1, 'data');
         $response->assertJsonFragment([
             'data' => [
-                \EscolaLms\Reports\Stats\Course\AverageTime::class => 135
+                \Ulams\Reports\Stats\Course\AverageTime::class => 135
             ]
         ]);
     }
@@ -173,7 +173,7 @@ class StatsTest extends TestCase
         $this
             ->actingAs($this->makeAdmin())
             ->json( 'GET', '/api/admin/stats/course/' . $courseId . '/export', [
-                'stat' => \EscolaLms\Reports\Stats\Course\FinishedTopics::class,
+                'stat' => \Ulams\Reports\Stats\Course\FinishedTopics::class,
             ])
             ->assertOk();
 
@@ -193,7 +193,7 @@ class StatsTest extends TestCase
         }
 
         $giftQuiz = GiftQuiz::factory()->create();
-        $course = \EscolaLms\Reports\Tests\Models\Course::factory()->create();
+        $course = \Ulams\Reports\Tests\Models\Course::factory()->create();
         $lesson = Lesson::factory()->state(['course_id' => $course->getKey()])->create();
         $topic = Topic::factory()->state(['lesson_id' => $lesson->getKey()])->create();
         $topic->topicable()->associate($giftQuiz);
@@ -202,7 +202,7 @@ class StatsTest extends TestCase
         $this
             ->actingAs($this->makeAdmin())
             ->json( 'GET', '/api/admin/stats/topic/' . $topic->getKey() . '/export', [
-                'stat' => \EscolaLms\Reports\Stats\Topic\QuizSummaryForTopicTypeGIFT::class,
+                'stat' => \Ulams\Reports\Stats\Topic\QuizSummaryForTopicTypeGIFT::class,
             ])
             ->assertOk();
 
@@ -219,7 +219,7 @@ class StatsTest extends TestCase
         $this
             ->actingAs($this->makeAdmin())
             ->json( 'GET', '/api/admin/stats/course/' . $course->getKey() . '/export', [
-                'stat' => \EscolaLms\Reports\Stats\Course\MoneyEarned::class,
+                'stat' => \Ulams\Reports\Stats\Course\MoneyEarned::class,
             ])
             ->assertUnprocessable()
             ->assertJsonFragment([

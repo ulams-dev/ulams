@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Tests\Api;
+namespace Ulams\TemplatesSms\Tests\Api;
 
-use EscolaLms\Consultations\Enum\ConsultationTermReminderStatusEnum;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Jobs\ReminderAboutConsultationJob;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Models\ConsultationUserTerm;
-use EscolaLms\Core\Models\User;
-use EscolaLms\TemplatesSms\Database\Seeders\TemplateSmsSeeder;
-use EscolaLms\TemplatesSms\Facades\Sms;
-use EscolaLms\TemplatesSms\Tests\TestCase;
+use Ulams\Consultations\Enum\ConsultationTermReminderStatusEnum;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Jobs\ReminderAboutConsultationJob;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Models\ConsultationUserTerm;
+use Ulams\Core\Models\User;
+use Ulams\TemplatesSms\Database\Seeders\TemplateSmsSeeder;
+use Ulams\TemplatesSms\Facades\Sms;
+use Ulams\TemplatesSms\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ConsultationApiTest extends TestCase
@@ -27,8 +27,8 @@ class ConsultationApiTest extends TestCase
         $this->user = User::factory()->create([
             'phone' => '666888111',
             'notification_channels' => json_encode([
-                "EscolaLms\\TemplatesEmail\\Core\\EmailChannel",
-                "EscolaLms\\TemplatesSms\\Core\\SmsChannel"
+                "Ulams\\TemplatesEmail\\Core\\EmailChannel",
+                "Ulams\\TemplatesSms\\Core\\SmsChannel"
             ])
         ]);
         $this->user->guard_name = 'api';
@@ -85,7 +85,7 @@ class ConsultationApiTest extends TestCase
         $userTerm = $this->consultationUserPivot->userTerms()->create([
             'executed_at' => now()->modify(
                 config(
-                    'escolalms_consultations.modifier_date.' .
+                    'ulams_consultations.modifier_date.' .
                     ConsultationTermReminderStatusEnum::REMINDED_HOUR_BEFORE, '+1 hour'
                 )
             )->format('Y-m-d H:i:s'),
@@ -109,8 +109,8 @@ class ConsultationApiTest extends TestCase
         $author =  User::factory()->create([
             'phone' => '666888111',
             'notification_channels' => json_encode([
-                "EscolaLms\\TemplatesEmail\\Core\\EmailChannel",
-                "EscolaLms\\TemplatesSms\\Core\\SmsChannel"
+                "Ulams\\TemplatesEmail\\Core\\EmailChannel",
+                "Ulams\\TemplatesSms\\Core\\SmsChannel"
             ])
         ]);
         $author->guard_name = 'api';
@@ -128,7 +128,7 @@ class ConsultationApiTest extends TestCase
         $userTerm = $this->consultationUserPivot->userTerms()->create([
             'executed_at' => now()->modify(
                 config(
-                    'escolalms_consultations.modifier_date.' .
+                    'ulams_consultations.modifier_date.' .
                     ConsultationTermReminderStatusEnum::REMINDED_HOUR_BEFORE, '+1 hour'
                 )
             )->format('Y-m-d H:i:s'),

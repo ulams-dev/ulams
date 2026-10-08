@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Translations\Services;
+namespace Ulams\Translations\Services;
 
-use EscolaLms\Translations\Dto\TranslationDto;
-use EscolaLms\Translations\Services\Contracts\TranslationServiceContract;
+use Ulams\Translations\Dto\TranslationDto;
+use Ulams\Translations\Services\Contracts\TranslationServiceContract;
 use Illuminate\Support\Arr;
 
 class TranslationService implements TranslationServiceContract

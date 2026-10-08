@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Payments\Http\Requests\Admin;
+namespace Ulams\Payments\Http\Requests\Admin;
 
-use EscolaLms\Payments\Enums\ExportFormatEnum;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Payments\Enums\ExportFormatEnum;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Validation\Rule;
 
 class PaymentExportRequest extends PaymentsSearchAdminRequest

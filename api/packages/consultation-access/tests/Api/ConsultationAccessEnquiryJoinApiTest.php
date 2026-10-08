@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Tests\Api;
+namespace Ulams\ConsultationAccess\Tests\Api;
 
-use EscolaLms\ConsultationAccess\Database\Seeders\ConsultationAccessPermissionSeeder;
-use EscolaLms\ConsultationAccess\Enum\MeetingLinkTypeEnum;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
-use EscolaLms\ConsultationAccess\Tests\TestCase;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\PencilSpaces\Facades\PencilSpace;
+use Ulams\ConsultationAccess\Database\Seeders\ConsultationAccessPermissionSeeder;
+use Ulams\ConsultationAccess\Enum\MeetingLinkTypeEnum;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
+use Ulams\ConsultationAccess\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\PencilSpaces\Facades\PencilSpace;
 
 class ConsultationAccessEnquiryJoinApiTest extends TestCase
 {

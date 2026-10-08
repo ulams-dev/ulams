@@ -1,9 +1,9 @@
-import { Button } from "@lms/components/components/atoms/Button/Button";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
 import { Row, Col } from "react-grid-system";
 import { useTranslation } from "react-i18next";
 import EventsContainerItem from "@/components/Events/List/EventsContainer/Items/Item";
 import { Dispatch, FC, SetStateAction } from "react";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 
 interface SlicedFilteredEventsProps {
   filteredList: API.StationaryEvent[] | [];

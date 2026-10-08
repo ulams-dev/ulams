@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-# api-h5p: H5P microservice (Lumi h5p-nodejs-library) for Wellms.
+# api-h5p: H5P microservice (Lumi h5p-nodejs-library) for Ulams.
 
 ARG NODE_IMAGE=node:22-alpine
 # Commits pinned by Lumi (h5p-nodejs-library scripts/install.sh, v10.0.x)

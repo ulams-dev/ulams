@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Events;
+namespace Ulams\BulkNotifications\Events;
 
-use EscolaLms\BulkNotifications\Models\BulkNotification;
-use EscolaLms\BulkNotifications\Models\User;
+use Ulams\BulkNotifications\Models\BulkNotification;
+use Ulams\BulkNotifications\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

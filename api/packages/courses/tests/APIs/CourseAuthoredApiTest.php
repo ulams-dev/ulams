@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\APIs;
+namespace Ulams\Courses\Tests\APIs;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CourseAuthoredApiTest extends TestCase

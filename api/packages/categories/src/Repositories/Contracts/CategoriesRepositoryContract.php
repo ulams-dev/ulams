@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Categories\Repositories\Contracts;
+namespace Ulams\Categories\Repositories\Contracts;
 
-use EscolaLms\Categories\Dtos\CategoryCriteriaFilterDto;
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\Contracts\ActivationContract;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Categories\Dtos\CategoryCriteriaFilterDto;
+use Ulams\Categories\Models\Category;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\Contracts\ActivationContract;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface CategoriesRepositoryContract extends BaseRepositoryContract, ActivationContract

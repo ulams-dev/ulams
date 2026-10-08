@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Video\Providers;
+namespace Ulams\Video\Providers;
 
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Settings\Facades\AdministrableConfig;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Settings\Facades\AdministrableConfig;
 use Illuminate\Support\ServiceProvider;
 
 class SettingsServiceProvider extends ServiceProvider
 {
-    const CONFIG_KEY = 'escolalms_video';
+    const CONFIG_KEY = 'ulams_video';
 
     public function register()
     {
-        if (class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
-            if (!$this->app->getProviders(EscolaLmsSettingsServiceProvider::class)) {
-                $this->app->register(EscolaLmsSettingsServiceProvider::class);
+        if (class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
+            if (!$this->app->getProviders(UlamsSettingsServiceProvider::class)) {
+                $this->app->register(UlamsSettingsServiceProvider::class);
             }
 
             AdministrableConfig::registerConfig(self::CONFIG_KEY . '.bitrates', ['array'], false);

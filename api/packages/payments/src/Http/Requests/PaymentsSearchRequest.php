@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Payments\Http\Requests;
+namespace Ulams\Payments\Http\Requests;
 
 use BenSampo\Enum\Rules\EnumValue;
-use EscolaLms\Payments\Enums\PaymentStatus;
+use Ulams\Payments\Enums\PaymentStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

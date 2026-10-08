@@ -7,8 +7,8 @@ import {
   useEffect,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextPaginatedMetaState,
 } from "../types";
 import { defaultConfig } from "../defaults";
@@ -21,7 +21,7 @@ import { getDefaultData } from "../index";
 import { dictionariesWords as getDictionariesWords } from "../../../services/dictionary";
 
 export const DictionariesWordsContext: React.Context<
-  Pick<EscolaLMSContextConfig, "dictionariesWords" | "fetchDictionariesWords">
+  Pick<UlamsContextConfig, "dictionariesWords" | "fetchDictionariesWords">
 > = createContext({
   dictionariesWords: defaultConfig.dictionariesWords,
   fetchDictionariesWords: defaultConfig.fetchDictionariesWords,
@@ -29,7 +29,7 @@ export const DictionariesWordsContext: React.Context<
 
 export interface DictionariesWordsContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "dictionariesWords">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "dictionariesWords">>;
   ssrHydration?: boolean;
 }
 

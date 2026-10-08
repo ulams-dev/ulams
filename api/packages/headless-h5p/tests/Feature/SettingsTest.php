@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Tests\Feature;
+namespace Ulams\HeadlessH5P\Tests\Feature;
 
-use EscolaLms\HeadlessH5P\Enums\ConfigEnum;
-use EscolaLms\HeadlessH5P\Tests\TestCase;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
+use Ulams\HeadlessH5P\Enums\ConfigEnum;
+use Ulams\HeadlessH5P\Tests\TestCase;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\Settings\UlamsSettingsServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 
@@ -17,12 +17,12 @@ class SettingsTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(EscolaLmsSettingsServiceProvider::class)) {
+        if (!class_exists(UlamsSettingsServiceProvider::class)) {
             $this->markTestSkipped('Settings package not installed');
         }
 
         $this->seed(PermissionTableSeeder::class);
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
         $this->authenticateAsAdmin();
     }
 

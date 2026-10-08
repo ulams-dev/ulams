@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests\Admin;
+namespace Ulams\Auth\Http\Requests\Admin;
 
-use EscolaLms\Auth\Exceptions\UserNotFoundException;
-use EscolaLms\Auth\Http\Requests\ExtendableRequest;
-use EscolaLms\Auth\Models\User;
+use Ulams\Auth\Exceptions\UserNotFoundException;
+use Ulams\Auth\Http\Requests\ExtendableRequest;
+use Ulams\Auth\Models\User;
 
 abstract class AbstractUserIdInRouteRequest extends ExtendableRequest
 {

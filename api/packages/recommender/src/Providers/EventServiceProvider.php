@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Recommender\Providers;
+namespace Ulams\Recommender\Providers;
 
-use EscolaLms\Recommender\Listeners\UpdateRecommenderModels;
-use EscolaLms\Settings\Events\SettingPackageConfigUpdated;
+use Ulams\Recommender\Listeners\UpdateRecommenderModels;
+use Ulams\Settings\Events\SettingPackageConfigUpdated;
 
 class EventServiceProvider extends \Illuminate\Foundation\Support\Providers\EventServiceProvider
 {

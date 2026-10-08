@@ -8,18 +8,18 @@ export default (): React.ReactNode => {
     <PageContainer>
       <ProCard split="vertical">
         <ProCard colSpan={12} layout="center">
-          <PieChart metric={'EscolaLms\\Reports\\Metrics\\CoursesMoneySpentMetric'} />
+          <PieChart metric={'Ulams\\Reports\\Metrics\\CoursesMoneySpentMetric'} />
         </ProCard>
         <ProCard colSpan={12} layout="center">
-          <PieChart metric={'EscolaLms\\Reports\\Metrics\\CoursesPopularityMetric'} />
+          <PieChart metric={'Ulams\\Reports\\Metrics\\CoursesPopularityMetric'} />
         </ProCard>
       </ProCard>
       <ProCard split="vertical">
         <ProCard colSpan={12} layout="center">
-          <PieChart metric={'EscolaLms\\Reports\\Metrics\\CoursesSecondsSpentMetric'} />
+          <PieChart metric={'Ulams\\Reports\\Metrics\\CoursesSecondsSpentMetric'} />
         </ProCard>
         <ProCard colSpan={12} layout="center">
-          <PieChart metric={'EscolaLms\\Reports\\Metrics\\TutorsPopularityMetric'} />
+          <PieChart metric={'Ulams\\Reports\\Metrics\\TutorsPopularityMetric'} />
         </ProCard>
       </ProCard>
     </PageContainer>

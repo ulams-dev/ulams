@@ -1,9 +1,9 @@
 enum PERMISSIONS {
-  /* -------- EscolaLMS/Core -------- */
+  /* -------- Ulams/Core -------- */
 
   CoreDashboardAccess = 'access dashboard', // TODO: #1025 unused in api
 
-  /* -------- EscolaLMS/Auth -------- */
+  /* -------- Ulams/Auth -------- */
 
   // USER
   UserManage = 'user_manage', // pozwala na cofnięcie `soft delete` lub na `twarde usunięcie` użytkownika
@@ -39,7 +39,7 @@ enum PERMISSIONS {
   UserSettingUpdate = 'user-setting_update',
   UserSettingUpdateSelf = 'user-setting_update_self',
 
-  /* -------- EscolaLMS/settings -------- */
+  /* -------- Ulams/settings -------- */
 
   SettingsManage = 'settings_manage', // TODO: #1030 unused in api
   SettingsCreate = 'settings_create',
@@ -52,7 +52,7 @@ enum PERMISSIONS {
   SettingsConfigList = 'settings_config_list',
   SettingsConfigUpdate = 'settings_config_update',
 
-  /* -------- EscolaLMS/Cart -------- */
+  /* -------- Ulams/Cart -------- */
 
   ProductsList = 'products_list',
   ProductsManage = 'products_manage',
@@ -62,14 +62,14 @@ enum PERMISSIONS {
   CartOrderList = 'cart_order_list',
   CartOrderListCourseOwned = 'cart_order_list_course-authored', // order listings for courses of which you are the author (for tutor)
 
-  /* -------- EscolaLMS/Files -------- */
+  /* -------- Ulams/Files -------- */
 
   FileUpload = 'file_create',
   FileMove = 'move:files',
   FileDelete = 'file_delete',
   FileList = 'file_list',
 
-  /* -------- EscolaLMS/Courses -------- */
+  /* -------- Ulams/Courses -------- */
 
   CourseList = 'course_list',
   CourseCreate = 'course_create',
@@ -80,7 +80,7 @@ enum PERMISSIONS {
   CourseDeleteAuthored = 'course_delete_authored',
   CourseReadAuthored = 'course_read_authored',
 
-  /* -------- EscolaLMS/H5P -------- */
+  /* -------- Ulams/H5P -------- */
 
   H5PList = 'h5p_list',
   H5PRead = 'h5p_read',
@@ -99,12 +99,12 @@ enum PERMISSIONS {
   H5PLibraryInstall = 'h5p_library_install',
   H5PLibraryUpload = 'h5p_library_upload',
 
-  /* -------- EscolaLMS/payments -------- */
+  /* -------- Ulams/payments -------- */
 
   PaymentRead = 'payment_read',
   PaymentList = 'payment_list',
 
-  /* -------- EscolaLMS/Categories -------- */
+  /* -------- Ulams/Categories -------- */
 
   CategoryList = 'category_list',
   CategoryRead = 'category_read',
@@ -112,7 +112,7 @@ enum PERMISSIONS {
   CategoryUpdate = 'category_update',
   CategoryDelete = 'category_delete',
 
-  /* -------- EscolaLMS/pages -------- */
+  /* -------- Ulams/pages -------- */
 
   PageList = 'page_list',
   PageRead = 'page_read',
@@ -120,7 +120,7 @@ enum PERMISSIONS {
   PageUpdate = 'page_update',
   PageDelete = 'page_delete',
 
-  /* -------- EscolaLMS/Scorm -------- */
+  /* -------- Ulams/Scorm -------- */
 
   ScormList = 'scorm_list',
   ScormRead = 'scorm_read',
@@ -133,18 +133,18 @@ enum PERMISSIONS {
   ScormReadOwn = 'scorm_read-own',
   ScormDeleteOwn = 'scorm_delete-own',
 
-  /* -------- EscolaLMS/Reports -------- */
+  /* -------- Ulams/Reports -------- */
 
   ReportList = 'report_list',
 
-  /* -------- EscolaLMS/Courses-Import-Export -------- */
+  /* -------- Ulams/Courses-Import-Export -------- */
 
   CourseExport = 'course-import-export_export',
   CourseImport = 'course-import-export_import',
   CourseExportAuthored = 'course-import-export_export_authored',
   COURSES_CLONE = 'course-import-export_clone',
 
-  /* -------- EscolaLMS/Permissions -------- */
+  /* -------- Ulams/Permissions -------- */
 
   PermissionRoleManage = 'permission_role_manage',
   PermisionRoleList = 'permission_role_list',
@@ -153,7 +153,7 @@ enum PERMISSIONS {
   PermissionRoleRead = 'permission_role_read',
   PermissionRoleUpdate = 'permission_role_update', // access to edit permissions
 
-  /* -------- EscolaLMS/Templates -------- */
+  /* -------- Ulams/Templates -------- */
 
   TemplateList = 'template_list',
   TemplateRead = 'template_read',
@@ -161,12 +161,12 @@ enum PERMISSIONS {
   TemplateDelete = 'template_delete',
   TemplateUpdate = 'template_update',
 
-  /* -------- EscolaLMS/Notifications -------- */
+  /* -------- Ulams/Notifications -------- */
 
   NotificationListAll = 'dashboard-app_notification-list_access', // ability to read all notifications (including those not belonging to you)
   NotificationList = 'dashboard-app_notification-list_access_self',
 
-  /* -------- EscolaLMS/Questionnaire -------- */
+  /* -------- Ulams/Questionnaire -------- */
 
   QuestionnaireList = 'questionnaire_list',
   QuestionnaireRead = 'questionnaire_read',
@@ -180,7 +180,7 @@ enum PERMISSIONS {
   QuestionDelete = 'question_delete',
   QuestionUpdate = 'question_update',
 
-  /* -------- EscolaLMS/Webinar -------- */
+  /* -------- Ulams/Webinar -------- */
 
   WebinarList = 'webinar_list',
   WebinarCreate = 'webinar_create',
@@ -188,7 +188,7 @@ enum PERMISSIONS {
   WebinarDelete = 'webinar_delete',
   WebinarRead = 'webinar_read',
 
-  /* -------- EscolaLMS/Consultations -------- */
+  /* -------- Ulams/Consultations -------- */
 
   ConsultationList = 'consultation_list',
   ConsultationCreate = 'consultation_create',
@@ -196,7 +196,7 @@ enum PERMISSIONS {
   ConstulatationDelete = 'consultation_delete',
   ConsultationRead = 'consultation_read',
 
-  /* -------- EscolaLMS/Stationary-Events -------- */
+  /* -------- Ulams/Stationary-Events -------- */
 
   StationaryEventsList = 'stationary-event_list',
   StationaryEventsCreate = 'stationary-event_create',
@@ -204,11 +204,11 @@ enum PERMISSIONS {
   StationaryEventsRead = 'stationary-event_read',
   StationaryEventsDelete = 'stationary-event_delete',
 
-  /* -------- EscolaLMS/Tracker -------- */
+  /* -------- Ulams/Tracker -------- */
 
   TrackerList = 'tracker_route-list',
 
-  /* -------- EscolaLMS/Vouchers -------- */
+  /* -------- Ulams/Vouchers -------- */
 
   VoucherList = 'coupon_list',
   VoucherCreate = 'coupon_create',
@@ -217,14 +217,14 @@ enum PERMISSIONS {
   VoucherDelete = 'coupon_delete',
   VoucherUse = 'coupon_use',
 
-  /* -------- EscolaLMS/translations -------- */
+  /* -------- Ulams/translations -------- */
   TranslationList = 'translation_list',
   TranslationCreate = 'translation_create',
   TranslationRead = 'translation_read',
   TranslationUpdate = 'translation_update',
   TranslationDelete = 'translation_delete',
 
-  /* -------- EscolaLMS/Tasks -------- */
+  /* -------- Ulams/Tasks -------- */
 
   TaskCreateOwn = 'task_create-own',
   TaskUpdateOwn = 'task_update-own',
@@ -255,7 +255,7 @@ enum PERMISSIONS {
   ConsultationAccessDeleteOwn = 'consultation-access_delete-own',
   ConsultationAccessUpdateOwn = 'consultation-access_update-own',
 
-  /* -------- EscolaLMS/Quiz -------- */
+  /* -------- Ulams/Quiz -------- */
   QuizAttemptCreateOwn = 'quiz-attempt_create-own',
   QuizAttemptListOwn = 'quiz-attempt_list-own',
   QuizAttemptReadOwn = 'quiz-attempt_read-own',
@@ -264,7 +264,7 @@ enum PERMISSIONS {
   QuizAttemptRead = 'quiz-attempt_read',
   QuizAttemptUpdate = 'quiz-attempt_update',
 
-  /* -------- EscolaLMS/Teacher -------- */
+  /* -------- Ulams/Teacher -------- */
 
   /* -------- grades -------- */
   TeacherListGradeTerm = 'grade-term_list',
@@ -288,7 +288,7 @@ enum PERMISSIONS {
   TeacherSaveAttendance = 'attendance_save-admin',
   TeacherSaveTutorAttendance = 'attendance_save-own',
 
-  /* -------- EscolaLMS/pcg-integration -------- */
+  /* -------- Ulams/pcg-integration -------- */
   PCGListAcademicYears = 'pcg-integration_academic-year_list',
   PCGListSemesters = 'pcg-integration_semester_list',
   PCGListSelfSemesters = 'pcg-integration_semester_list-self',
@@ -299,10 +299,10 @@ enum PERMISSIONS {
   PCGSchedulesDeleteOwn = 'pcg-integration_schedules_delete-own',
   PCGSchedulesDelete = 'pcg-integration_schedules_delete',
 
-  /* -------- EscolaLMS/sds-integration -------- */
+  /* -------- Ulams/sds-integration -------- */
   SDSExport = 'sds-integration_export',
 
-  /* -------- EscolaLMS/competency-challenges -------- */
+  /* -------- Ulams/competency-challenges -------- */
   CompetencyChallengeScaleCreate = 'competency-challenge-scale_create',
   CompetencyChallengeScaleUpdate = 'competency-challenge-scale_update',
   CompetencyChallengeScaleDelete = 'competency-challenge-scale_delete',
@@ -313,7 +313,7 @@ enum PERMISSIONS {
   DeleteCompetencyChallenges = 'competency-challenges_delete',
   ListCompetencyChallenges = 'competency-challenges_list',
 
-  /* -------- EscolaLMS/dictionary -------- */
+  /* -------- Ulams/dictionary -------- */
   DictionaryList = 'dictionary_list',
   DictionaryCreate = 'dictionary_create',
   DictionaryRead = 'dictionary_read',

@@ -3,7 +3,7 @@ import { Form, Typography } from 'antd';
 import React, { useEffect, useMemo } from 'react';
 
 import SettingsValue from '@/pages/Settings/components/SettingsValue';
-import { updateConfig } from '@/services/escola-lms/settings';
+import { updateConfig } from '@/services/ulams/settings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import ReactJson from 'react-json-view';
 import { FormattedMessage } from 'umi';

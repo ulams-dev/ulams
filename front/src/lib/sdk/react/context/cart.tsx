@@ -13,8 +13,8 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { defaultConfig } from "./defaults";
 import { fetchDataType } from "./states";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextStateValue,
 } from "./types";
 import { UserContext } from "./user";
@@ -28,7 +28,7 @@ import { DefaultResponseError } from "../../types";
 
 export const CartContext: React.Context<
   Pick<
-    EscolaLMSContextConfig,
+    UlamsContextConfig,
     | "cart"
     | "fetchCart"
     | "addToCart"
@@ -47,7 +47,7 @@ export const CartContext: React.Context<
 
 export interface CartContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "cart">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "cart">>;
   ssrHydration?: boolean;
 }
 

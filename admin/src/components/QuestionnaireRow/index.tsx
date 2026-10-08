@@ -1,4 +1,4 @@
-import { getQuestionnaire } from '@/services/escola-lms/questionnaire';
+import { getQuestionnaire } from '@/services/ulams/questionnaire';
 import { Button, message } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';

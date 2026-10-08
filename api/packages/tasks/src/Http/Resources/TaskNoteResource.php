@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Resources;
+namespace Ulams\Tasks\Http\Resources;
 
-use EscolaLms\Tasks\Models\TaskNote;
+use Ulams\Tasks\Models\TaskNote;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

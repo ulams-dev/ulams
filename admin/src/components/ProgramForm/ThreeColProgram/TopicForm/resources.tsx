@@ -1,5 +1,5 @@
 import SecureUploadBrowser from '@/components/SecureUpload/browser';
-import { deleteResource, resources as fetchResources } from '@/services/escola-lms/course';
+import { deleteResource, resources as fetchResources } from '@/services/ulams/course';
 import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
 import { Button, List } from 'antd';
 import React, { useCallback, useEffect, useRef, useState } from 'react';

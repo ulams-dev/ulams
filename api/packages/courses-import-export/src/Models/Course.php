@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Models;
+namespace Ulams\CoursesImportExport\Models;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Courses\Models\Course as BaseCourse;
-use EscolaLms\CoursesImportExport\Enums\CoursesImportExportEnum;
-use EscolaLms\Scorm\Services\Contracts\ScormServiceContract;
+use Ulams\Categories\Models\Category;
+use Ulams\Courses\Models\Course as BaseCourse;
+use Ulams\CoursesImportExport\Enums\CoursesImportExportEnum;
+use Ulams\Scorm\Services\Contracts\ScormServiceContract;
 use Illuminate\Support\Facades\Storage;
 
 class Course extends BaseCourse

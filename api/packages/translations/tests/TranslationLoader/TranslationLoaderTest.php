@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Translations\Tests\TranslationLoader;
+namespace Ulams\Translations\Tests\TranslationLoader;
 
-use EscolaLms\Translations\Models\LanguageLine;
-use EscolaLms\Translations\Tests\TestCase;
+use Ulams\Translations\Models\LanguageLine;
+use Ulams\Translations\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\App;
 

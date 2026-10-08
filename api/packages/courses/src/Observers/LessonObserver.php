@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Observers;
+namespace Ulams\Courses\Observers;
 
-use EscolaLms\Courses\Models\Lesson;
+use Ulams\Courses\Models\Lesson;
 use Illuminate\Database\Eloquent\Builder;
 
 class LessonObserver

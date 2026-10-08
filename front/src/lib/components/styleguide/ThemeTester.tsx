@@ -126,7 +126,7 @@ const StyledDiv = styled.div<{
       th {
         padding: 3px;
         text-align: left;
-        div.wellms-component {
+        div.ulams-component {
           padding: 0 2px;
         }
         > ul {

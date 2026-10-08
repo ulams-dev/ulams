@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Events;
+namespace Ulams\ConsultationAccess\Events;
 
 class ConsultationAccessEnquiryAdminUpdatedEvent extends ConsultationAccessEnquiryEvent
 {

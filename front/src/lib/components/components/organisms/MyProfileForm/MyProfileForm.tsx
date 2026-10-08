@@ -1,16 +1,16 @@
 import { Formik, FormikErrors } from "formik";
 import { useContext, useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import type { DefaultResponseError } from "@lms/sdk/types";
+import { UlamsContext } from "@ulams/sdk/react";
+import type { DefaultResponseError } from "@ulams/sdk/types";
 import type { ResponseError } from "umi-request";
 
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { Upload } from "../../molecules/Upload/Upload";
 import styled, { withTheme } from "styled-components";
 
 import { Input, Button, Text, Checkbox, TextArea } from "../../../";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import useAdditionalFieldTranslations from "../../../hooks/useAdditionalFieldsTranslations";
 
 const StyledFormHeader = styled.div<{ mobile: boolean }>`
@@ -116,7 +116,7 @@ export const MyProfileForm: React.FC<Props> = ({
     user,
     updateAvatar,
     fetchProfile,
-  } = useContext(EscolaLMSContext);
+  } = useContext(UlamsContext);
 
   const isFetching = user.loading;
 
@@ -177,8 +177,8 @@ export const MyProfileForm: React.FC<Props> = ({
 
   return (
     <>
-      <StyledDiv className="wellms-component" mobile={mobile}>
-        <StyledFormHeader className="wellms-component" mobile={mobile}>
+      <StyledDiv className="ulams-component" mobile={mobile}>
+        <StyledFormHeader className="ulams-component" mobile={mobile}>
           <Text size="18">{t("MyProfileForm.Avatar")}</Text>
           <Upload
             path={initialValues.path_avatar}

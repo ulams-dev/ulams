@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Files\Providers;
+namespace Ulams\Files\Providers;
 
-use EscolaLms\Auth\Events\AccountConfirmed;
-use EscolaLms\Courses\Events\CourseTutorAssigned;
-use EscolaLms\Courses\Events\CourseTutorUnassigned;
-use EscolaLms\Files\Enums\DirectoryNamesEnum;
-use EscolaLms\Files\Http\Services\Contracts\FileServiceContract;
-use EscolaLms\StationaryEvents\Events\StationaryEventAuthorAssigned;
-use EscolaLms\StationaryEvents\Events\StationaryEventAuthorUnassigned;
-use EscolaLms\Webinar\Events\WebinarTrainerAssigned;
-use EscolaLms\Webinar\Events\WebinarTrainerUnassigned;
+use Ulams\Auth\Events\AccountConfirmed;
+use Ulams\Courses\Events\CourseTutorAssigned;
+use Ulams\Courses\Events\CourseTutorUnassigned;
+use Ulams\Files\Enums\DirectoryNamesEnum;
+use Ulams\Files\Http\Services\Contracts\FileServiceContract;
+use Ulams\StationaryEvents\Events\StationaryEventAuthorAssigned;
+use Ulams\StationaryEvents\Events\StationaryEventAuthorUnassigned;
+use Ulams\Webinar\Events\WebinarTrainerAssigned;
+use Ulams\Webinar\Events\WebinarTrainerUnassigned;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,7 +20,7 @@ class EventServiceProvider extends ServiceProvider
     {
         Event::listen(AccountConfirmed::class, function (AccountConfirmed $event) {
             /**
-             * >>> event(new EscolaLms\Auth\Events\AccountConfirmed(App\Models\User::find(9)));
+             * >>> event(new Ulams\Auth\Events\AccountConfirmed(App\Models\User::find(9)));
              */
             app(FileServiceContract::class)->addUserAccessToDirectory(
                 $event->user,
@@ -29,7 +29,7 @@ class EventServiceProvider extends ServiceProvider
 
         Event::listen(CourseTutorAssigned::class, function (CourseTutorAssigned $event) {
             /**
-             * >>> event(new EscolaLms\Courses\Events\CourseTutorAssigned(App\Models\User::find(9), EscolaLms\Courses\Models\Course::find(6)));
+             * >>> event(new Ulams\Courses\Events\CourseTutorAssigned(App\Models\User::find(9), Ulams\Courses\Models\Course::find(6)));
              */
             app(FileServiceContract::class)->addUserAccessToDirectory(
                 $event->getUser(),
@@ -38,7 +38,7 @@ class EventServiceProvider extends ServiceProvider
 
         Event::listen(CourseTutorUnassigned::class, function (CourseTutorUnassigned $event) {
             /**
-             * >>> event(new EscolaLms\Courses\Events\CourseTutorUnassigned(App\Models\User::find(9), EscolaLms\Courses\Models\Course::find(6)));
+             * >>> event(new Ulams\Courses\Events\CourseTutorUnassigned(App\Models\User::find(9), Ulams\Courses\Models\Course::find(6)));
              */
             app(FileServiceContract::class)->removeUserAccessToDirectory(
                 $event->getUser(),
@@ -47,7 +47,7 @@ class EventServiceProvider extends ServiceProvider
 
         Event::listen(WebinarTrainerAssigned::class, function (WebinarTrainerAssigned $event) {
             /**
-             * >>> event(new EscolaLms\Webinar\Events\WebinarTrainerAssigned(App\Models\User::find(9), EscolaLms\Webinar\Models\Webinar::find(1)));
+             * >>> event(new Ulams\Webinar\Events\WebinarTrainerAssigned(App\Models\User::find(9), Ulams\Webinar\Models\Webinar::find(1)));
              */
             app(FileServiceContract::class)->addUserAccessToDirectory(
                 $event->getUser(),
@@ -56,7 +56,7 @@ class EventServiceProvider extends ServiceProvider
 
         Event::listen(WebinarTrainerUnassigned::class, function (WebinarTrainerUnassigned $event) {
             /**
-             * >>> event(new EscolaLms\Webinar\Events\WebinarTrainerUnassigned(App\Models\User::find(9), EscolaLms\Webinar\Models\Webinar::find(1)));
+             * >>> event(new Ulams\Webinar\Events\WebinarTrainerUnassigned(App\Models\User::find(9), Ulams\Webinar\Models\Webinar::find(1)));
              */
             app(FileServiceContract::class)->removeUserAccessToDirectory(
                 $event->getUser(),
@@ -66,7 +66,7 @@ class EventServiceProvider extends ServiceProvider
         Event::listen(StationaryEventAuthorAssigned::class, function (StationaryEventAuthorAssigned $event) {
             /**
              *
-             * >>> event(new EscolaLms\StationaryEvents\Events\StationaryEventAuthorAssigned(App\Models\User::find(9), EscolaLms\StationaryEvents\Models\StationaryEvent::find(1)));
+             * >>> event(new Ulams\StationaryEvents\Events\StationaryEventAuthorAssigned(App\Models\User::find(9), Ulams\StationaryEvents\Models\StationaryEvent::find(1)));
              */
             app(FileServiceContract::class)->addUserAccessToDirectory(
                 $event->getUser(),
@@ -75,7 +75,7 @@ class EventServiceProvider extends ServiceProvider
 
         Event::listen(StationaryEventAuthorUnassigned::class, function (StationaryEventAuthorUnassigned $event) {
             /**
-             * >>> event(new EscolaLms\StationaryEvents\Events\StationaryEventAuthorUnassigned(App\Models\User::find(9), EscolaLms\StationaryEvents\Models\StationaryEvent::find(1)));
+             * >>> event(new Ulams\StationaryEvents\Events\StationaryEventAuthorUnassigned(App\Models\User::find(9), Ulams\StationaryEvents\Models\StationaryEvent::find(1)));
              */
             app(FileServiceContract::class)->removeUserAccessToDirectory(
                 $event->getUser(),

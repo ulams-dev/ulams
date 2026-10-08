@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests;
+namespace Ulams\Cart\Http\Requests;
 
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\User;
-use EscolaLms\Cart\Rules\ProductableExistsRule;
-use EscolaLms\Cart\Rules\ProductableRegisteredRule;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\User;
+use Ulams\Cart\Rules\ProductableExistsRule;
+use Ulams\Cart\Rules\ProductableRegisteredRule;
 use Illuminate\Support\Facades\Gate;
 
 class ProductableAttachRequest extends ProductRequest

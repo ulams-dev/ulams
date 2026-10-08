@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Http\Controllers\Admin\Swagger;
+namespace Ulams\TopicTypeProject\Http\Controllers\Admin\Swagger;
 
-use EscolaLms\TopicTypeProject\Http\Requests\Admin\AdminDeleteProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Http\Requests\Admin\AdminGradeProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Http\Requests\Admin\AdminListProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Http\Requests\Admin\AdminReadProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Http\Requests\Admin\AdminUpdateProjectSolutionFeedbackRequest;
+use Ulams\TopicTypeProject\Http\Requests\Admin\AdminDeleteProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\Admin\AdminGradeProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\Admin\AdminListProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\Admin\AdminReadProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\Admin\AdminUpdateProjectSolutionFeedbackRequest;
 use Illuminate\Http\JsonResponse;
 
 interface ProjectSolutionApiAdminSwagger

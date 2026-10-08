@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Consultations\Dto\Contracts;
+namespace Ulams\Consultations\Dto\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 

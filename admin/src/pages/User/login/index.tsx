@@ -7,10 +7,10 @@ import { FormattedMessage, addLocale, history, useIntl, useModel } from 'umi';
 
 import { localeInfo } from '@@/plugin-locale/localeExports';
 
-import { forgot, login } from '@/services/escola-lms/auth';
-import { packages } from '@/services/escola-lms/packages';
-import { settings } from '@/services/escola-lms/settings';
-import { translations } from '@/services/escola-lms/translations';
+import { forgot, login } from '@/services/ulams/auth';
+import { packages } from '@/services/ulams/packages';
+import { settings } from '@/services/ulams/settings';
+import { translations } from '@/services/ulams/translations';
 import { refreshTokenCallback } from '@/services/token_refresh';
 import { redirectPrefix } from '@/utils/utils';
 import AuthLayout from '../components/AuthLayout';

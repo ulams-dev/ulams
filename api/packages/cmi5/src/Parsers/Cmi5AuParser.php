@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cmi5\Parsers;
+namespace Ulams\Cmi5\Parsers;
 
-use EscolaLms\Cmi5\Models\Cmi5Au;
-use EscolaLms\Cmi5\Parsers\Contracts\Parser;
+use Ulams\Cmi5\Models\Cmi5Au;
+use Ulams\Cmi5\Parsers\Contracts\Parser;
 
 class Cmi5AuParser extends AbstractParser implements Parser
 {

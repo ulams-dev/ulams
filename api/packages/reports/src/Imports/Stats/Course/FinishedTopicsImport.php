@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Reports\Imports\Stats\Course;
+namespace Ulams\Reports\Imports\Stats\Course;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Reports\Imports\Stats\Course\Sheets\FinishedTopicsAttemptsSheet;
-use EscolaLms\Reports\Imports\Stats\Course\Sheets\FinishedTopicsSecondsSheet;
-use EscolaLms\Reports\Imports\Stats\Course\Sheets\FinishedTopicsStatusesSheet;
+use Ulams\Courses\Models\Course;
+use Ulams\Reports\Imports\Stats\Course\Sheets\FinishedTopicsAttemptsSheet;
+use Ulams\Reports\Imports\Stats\Course\Sheets\FinishedTopicsSecondsSheet;
+use Ulams\Reports\Imports\Stats\Course\Sheets\FinishedTopicsStatusesSheet;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 

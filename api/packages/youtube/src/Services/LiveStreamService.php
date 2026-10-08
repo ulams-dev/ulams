@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Youtube\Services;
+namespace Ulams\Youtube\Services;
 
 use Carbon\Carbon;
-use EscolaLms\Youtube\Dto\Contracts\YTLiveDtoContract;
-use EscolaLms\Youtube\Dto\YTBroadcastDto;
-use EscolaLms\Youtube\Dto\YTLiveDto;
-use EscolaLms\Youtube\Dto\YTStreamDto;
-use EscolaLms\Youtube\Dto\YTUpdateResponseDto;
-use EscolaLms\Youtube\Services\Contracts\LiveStreamServiceContract;
+use Ulams\Youtube\Dto\Contracts\YTLiveDtoContract;
+use Ulams\Youtube\Dto\YTBroadcastDto;
+use Ulams\Youtube\Dto\YTLiveDto;
+use Ulams\Youtube\Dto\YTStreamDto;
+use Ulams\Youtube\Dto\YTUpdateResponseDto;
+use Ulams\Youtube\Services\Contracts\LiveStreamServiceContract;
 use Google\Service\YouTube\VideoSnippet;
 use Google_Service_YouTube_CdnSettings;
 use Google_Service_YouTube_LiveBroadcast;

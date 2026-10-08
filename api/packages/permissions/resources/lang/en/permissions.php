@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Permissions\Enums\PermissionsPermissionsEnum;
+use Ulams\Permissions\Enums\PermissionsPermissionsEnum;
 
 return [
     PermissionsPermissionsEnum::PERMISSIONS_ROLE_MANAGE => 'Manage role',

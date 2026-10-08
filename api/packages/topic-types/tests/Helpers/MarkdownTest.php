@@ -2,7 +2,7 @@
 
 namespace Tests\Helpers;
 
-use EscolaLms\TopicTypes\Helpers\Markdown;
+use Ulams\TopicTypes\Helpers\Markdown;
 
 class MarkdownTest extends Markdown
 {

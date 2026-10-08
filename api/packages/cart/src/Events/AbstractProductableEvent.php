@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cart\Events;
+namespace Ulams\Cart\Events;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\SerializesModels;

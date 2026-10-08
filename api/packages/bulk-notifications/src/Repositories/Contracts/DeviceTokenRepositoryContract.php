@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Repositories\Contracts;
+namespace Ulams\BulkNotifications\Repositories\Contracts;
 
-use EscolaLms\BulkNotifications\Models\DeviceToken;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\BulkNotifications\Models\DeviceToken;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Support\Collection;
 
 interface DeviceTokenRepositoryContract extends BaseRepositoryContract

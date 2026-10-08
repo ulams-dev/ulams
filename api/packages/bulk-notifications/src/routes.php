@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\BulkNotifications\Http\Controllers\BulkNotificationController;
-use EscolaLms\BulkNotifications\Http\Controllers\DeviceTokenController;
+use Ulams\BulkNotifications\Http\Controllers\BulkNotificationController;
+use Ulams\BulkNotifications\Http\Controllers\DeviceTokenController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')

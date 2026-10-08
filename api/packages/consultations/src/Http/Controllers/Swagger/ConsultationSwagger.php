@@ -1,14 +1,14 @@
 <?php
-namespace EscolaLms\Consultations\Http\Controllers\Swagger;
+namespace Ulams\Consultations\Http\Controllers\Swagger;
 
-use EscolaLms\Consultations\Http\Requests\ChangeTermConsultationRequest;
-use EscolaLms\Consultations\Http\Requests\ConsultationAssignableUserListRequest;
-use EscolaLms\Consultations\Http\Requests\DestroyConsultationRequest;
-use EscolaLms\Consultations\Http\Requests\ListConsultationsRequest;
-use EscolaLms\Consultations\Http\Requests\ScheduleConsultationRequest;
-use EscolaLms\Consultations\Http\Requests\ShowConsultationRequest;
-use EscolaLms\Consultations\Http\Requests\StoreConsultationRequest;
-use EscolaLms\Consultations\Http\Requests\UpdateConsultationRequest;
+use Ulams\Consultations\Http\Requests\ChangeTermConsultationRequest;
+use Ulams\Consultations\Http\Requests\ConsultationAssignableUserListRequest;
+use Ulams\Consultations\Http\Requests\DestroyConsultationRequest;
+use Ulams\Consultations\Http\Requests\ListConsultationsRequest;
+use Ulams\Consultations\Http\Requests\ScheduleConsultationRequest;
+use Ulams\Consultations\Http\Requests\ShowConsultationRequest;
+use Ulams\Consultations\Http\Requests\StoreConsultationRequest;
+use Ulams\Consultations\Http\Requests\UpdateConsultationRequest;
 use Illuminate\Http\JsonResponse;
 
 interface ConsultationSwagger

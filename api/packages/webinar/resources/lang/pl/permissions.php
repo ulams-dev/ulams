@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Webinar\Enum\WebinarPermissionsEnum;
+use Ulams\Webinar\Enum\WebinarPermissionsEnum;
 
 return [
     WebinarPermissionsEnum::WEBINAR_LIST => 'Lista webinarów',

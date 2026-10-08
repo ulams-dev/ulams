@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Pages\Http\Services;
+namespace Ulams\Pages\Http\Services;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Pages\Http\Exceptions\PageAlreadyExistsException;
-use EscolaLms\Pages\Http\Services\Contracts\PageServiceContract;
-use EscolaLms\Pages\Models\Page;
-use EscolaLms\Pages\Repository\Contracts\PageRepositoryContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Pages\Http\Exceptions\PageAlreadyExistsException;
+use Ulams\Pages\Http\Services\Contracts\PageServiceContract;
+use Ulams\Pages\Models\Page;
+use Ulams\Pages\Repository\Contracts\PageRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class PageService implements PageServiceContract

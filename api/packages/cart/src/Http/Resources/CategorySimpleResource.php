@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Resources;
+namespace Ulams\Cart\Http\Resources;
 
-use EscolaLms\Cart\Models\Category;
+use Ulams\Cart\Models\Category;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

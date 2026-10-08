@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Http\Requests;
+namespace Ulams\TemplatesPdf\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

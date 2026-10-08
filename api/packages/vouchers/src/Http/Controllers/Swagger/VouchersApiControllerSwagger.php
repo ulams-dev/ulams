@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Vouchers\Http\Controllers\Swagger;
+namespace Ulams\Vouchers\Http\Controllers\Swagger;
 
-use EscolaLms\Vouchers\Http\Requests\ApplyCouponRequest;
-use EscolaLms\Vouchers\Http\Requests\UnapplyCouponRequest;
+use Ulams\Vouchers\Http\Requests\ApplyCouponRequest;
+use Ulams\Vouchers\Http\Requests\UnapplyCouponRequest;
 use Illuminate\Http\JsonResponse;
 
 interface VouchersApiControllerSwagger

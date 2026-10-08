@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Lrs\Repositories\Contracts;
+namespace Ulams\Lrs\Repositories\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface StatementRepositoryContract extends BaseRepositoryContract

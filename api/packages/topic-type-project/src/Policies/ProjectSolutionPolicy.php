@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Policies;
+namespace Ulams\TopicTypeProject\Policies;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\TopicTypeProject\Enum\TopicTypeProjectPermissionEnum;
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
+use Ulams\Auth\Models\User;
+use Ulams\TopicTypeProject\Enum\TopicTypeProjectPermissionEnum;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ProjectSolutionPolicy

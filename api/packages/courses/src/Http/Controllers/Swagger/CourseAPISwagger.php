@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Controllers\Swagger;
+namespace Ulams\Courses\Http\Controllers\Swagger;
 
 
-use EscolaLms\Courses\Http\Requests\CreateCourseAPIRequest;
-use EscolaLms\Courses\Http\Requests\ListAuthoredCourseAPIRequest;
-use EscolaLms\Courses\Http\Requests\ListCourseAPIRequest;
-use EscolaLms\Courses\Http\Requests\UpdateCourseAPIRequest;
-use EscolaLms\Courses\Http\Requests\DeleteCourseAPIRequest;
-use EscolaLms\Courses\Http\Requests\GetCourseAPIRequest;
-use EscolaLms\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
-use EscolaLms\Courses\Http\Requests\SortAPIRequest;
+use Ulams\Courses\Http\Requests\CreateCourseAPIRequest;
+use Ulams\Courses\Http\Requests\ListAuthoredCourseAPIRequest;
+use Ulams\Courses\Http\Requests\ListCourseAPIRequest;
+use Ulams\Courses\Http\Requests\UpdateCourseAPIRequest;
+use Ulams\Courses\Http\Requests\DeleteCourseAPIRequest;
+use Ulams\Courses\Http\Requests\GetCourseAPIRequest;
+use Ulams\Courses\Http\Requests\GetCourseCurriculumAPIRequest;
+use Ulams\Courses\Http\Requests\SortAPIRequest;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

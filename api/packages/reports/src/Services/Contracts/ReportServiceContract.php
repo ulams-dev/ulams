@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Reports\Services\Contracts;
+namespace Ulams\Reports\Services\Contracts;
 
 interface ReportServiceContract
 {

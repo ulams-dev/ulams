@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Translations\Http\Middleware;
+namespace Ulams\Translations\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

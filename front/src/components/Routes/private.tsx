@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Route, Redirect, RouteProps } from "react-router-dom";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import routes from "./routes";
 
 const PrivateRoute: React.FC<RouteProps> = ({
@@ -9,7 +9,7 @@ const PrivateRoute: React.FC<RouteProps> = ({
 }: // eslint-disable-next-line
 any) => {
   const { login } = routes;
-  const { user } = useContext(EscolaLMSContext);
+  const { user } = useContext(UlamsContext);
 
   const referrer = (rest.location && rest.location.pathname) || rest.path;
 

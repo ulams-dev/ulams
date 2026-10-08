@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { Row } from "../../../../";
 import styled, { css, withTheme } from "styled-components";
-import { GiftQuizMatchingAnswer } from "@lms/components/types/gift-quiz";
+import { GiftQuizMatchingAnswer } from "@ulams/components/types/gift-quiz";
 import { BezierLine } from "../../../../utils/bezierLine";
 import DefaultQuestionLayout from "../DefaultQuestionLayout";
 import { getStylesBasedOnTheme } from "../../../../utils/utils";

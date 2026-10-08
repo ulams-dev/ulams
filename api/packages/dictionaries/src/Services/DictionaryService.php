@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Services;
+namespace Ulams\Dictionaries\Services;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Dictionaries\Dtos\DictionaryCriteriaDto;
-use EscolaLms\Dictionaries\Dtos\DictionaryDto;
-use EscolaLms\Dictionaries\Dtos\PageDto;
-use EscolaLms\Dictionaries\Models\Dictionary;
-use EscolaLms\Dictionaries\Repositories\Contracts\DictionaryRepositoryContract;
-use EscolaLms\Dictionaries\Services\Contracts\DictionaryServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Dictionaries\Dtos\DictionaryCriteriaDto;
+use Ulams\Dictionaries\Dtos\DictionaryDto;
+use Ulams\Dictionaries\Dtos\PageDto;
+use Ulams\Dictionaries\Models\Dictionary;
+use Ulams\Dictionaries\Repositories\Contracts\DictionaryRepositoryContract;
+use Ulams\Dictionaries\Services\Contracts\DictionaryServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Courses;
+namespace Ulams\TemplatesEmail\Courses;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Core\Models\User;
+use Ulams\Courses\ValueObjects\CourseProgressCollection;
+use Ulams\Templates\Events\EventWrapper;
 
 class StartedCourseVariables extends CommonUserAndCourseVariables
 {

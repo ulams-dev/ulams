@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Templates\Helpers;
+namespace Ulams\Templates\Helpers;
 
 use Illuminate\Database\Eloquent\Model;
 

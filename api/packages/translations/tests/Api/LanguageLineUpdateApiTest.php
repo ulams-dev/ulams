@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Translations\Tests\Api;
+namespace Ulams\Translations\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Translations\Database\Seeders\TranslationsPermissionSeeder;
-use EscolaLms\Translations\Models\LanguageLine;
-use EscolaLms\Translations\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Translations\Database\Seeders\TranslationsPermissionSeeder;
+use Ulams\Translations\Models\LanguageLine;
+use Ulams\Translations\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class LanguageLineUpdateApiTest extends TestCase

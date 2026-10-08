@@ -1,5 +1,5 @@
 import React from "react";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 
 export const ConsultationsContext: React.Context<{
   consultations?: API.PaginatedMetaList<API.Consultation>;

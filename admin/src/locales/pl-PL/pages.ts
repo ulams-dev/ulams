@@ -26,7 +26,7 @@ export default {
   'pages.welcome.advancedLayout': 'Zaawansowany layout',
   'pages.welcome.alertMessage':
     'Wprowadzono na rynek szybsze i mocniejsze podzespoły o dużej wytrzymałości. ',
-  'pages.welcome.content': 'Cześć, witaj w EscolaLMS!',
+  'pages.welcome.content': 'Cześć, witaj w Ulams!',
   'pages.admin.subPage.title': 'Ta strona może być przeglądana tylko przez Administratora',
   'pages.admin.subPage.alertMessage':
     'Umi ui jest już wydany, zapraszamy do korzystania z npm run ui, aby rozpocząć doświadczenie.',

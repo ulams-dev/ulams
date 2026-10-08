@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Payments\Repositories;
+namespace Ulams\Payments\Repositories;
 
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Payments\Models\Payment;
-use EscolaLms\Payments\Repositories\Contracts\PaymentsRepositoryContract;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Payments\Models\Payment;
+use Ulams\Payments\Repositories\Contracts\PaymentsRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 
 class PaymentsRepository extends BaseRepository implements PaymentsRepositoryContract

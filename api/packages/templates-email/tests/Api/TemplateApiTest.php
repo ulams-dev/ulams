@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests\Api;
+namespace Ulams\TemplatesEmail\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Templates\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\Templates\Events\ManuallyTriggeredEvent;
-use EscolaLms\Templates\Listeners\TemplateEventListener;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Models\TemplateSection;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
-use EscolaLms\TemplatesEmail\Core\EmailMailable;
-use EscolaLms\TemplatesEmail\Core\UserVariables;
-use EscolaLms\TemplatesEmail\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Templates\Database\Seeders\PermissionTableSeeder;
+use Ulams\Templates\Events\ManuallyTriggeredEvent;
+use Ulams\Templates\Listeners\TemplateEventListener;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Models\TemplateSection;
+use Ulams\TemplatesEmail\Core\EmailChannel;
+use Ulams\TemplatesEmail\Core\EmailMailable;
+use Ulams\TemplatesEmail\Core\UserVariables;
+use Ulams\TemplatesEmail\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;

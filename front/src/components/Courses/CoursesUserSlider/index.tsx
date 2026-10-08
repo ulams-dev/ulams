@@ -1,4 +1,4 @@
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { SwiperSlide } from "swiper/react";
 import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
@@ -6,9 +6,9 @@ import SwiperSlider from "@/components/Courses/CoursesSlider/swiper";
 import { CourseCardSkeleton } from "@/components/Skeletons/CourseCard";
 import useProfileCourses from "@/hooks/courses/useProfileCourses";
 import { isMobile } from "react-device-detect";
-import { ResponsiveImage } from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
+import { ResponsiveImage } from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import CourseImgPlaceholder from "@/components/Courses/CourseImgPlaceholder";
-import { NewCourseCard } from "@lms/components";
+import { NewCourseCard } from "@ulams/components";
 import CategoriesBreadCrumbs from "@/components/Categories/CategoriesBreadCrumbs";
 import { isPast } from "date-fns/esm";
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Recommender\Database\Factories;
+namespace Ulams\Recommender\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 

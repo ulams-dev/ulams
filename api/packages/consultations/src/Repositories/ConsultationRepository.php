@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Consultations\Repositories;
+namespace Ulams\Consultations\Repositories;
 
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Repositories\Contracts\ConsultationRepositoryContract;
-use EscolaLms\Core\Repositories\BaseRepository;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Repositories\Contracts\ConsultationRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 

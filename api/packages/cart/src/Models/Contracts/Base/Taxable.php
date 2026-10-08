@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Cart\Models\Contracts\Base;
+namespace Ulams\Cart\Models\Contracts\Base;
 
 use Treestoneit\ShoppingCart\Taxable as BaseTaxable;
 

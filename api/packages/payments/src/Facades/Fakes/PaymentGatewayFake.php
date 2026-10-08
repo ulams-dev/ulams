@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Payments\Facades\Fakes;
+namespace Ulams\Payments\Facades\Fakes;
 
-use EscolaLms\Payments\Gateway\GatewayManager;
-use EscolaLms\Payments\Facades\Fakes\FakeDriver;
+use Ulams\Payments\Gateway\GatewayManager;
+use Ulams\Payments\Facades\Fakes\FakeDriver;
 
 class PaymentGatewayFake extends GatewayManager
 {

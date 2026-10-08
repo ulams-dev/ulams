@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Tests\Api\Admin;
+namespace Ulams\TopicTypeGift\Tests\Api\Admin;
 
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Tests\Api\GiftQuestionTestCase;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Tests\Api\GiftQuestionTestCase;
 
 class AdminDeleteGiftQuestionTest extends GiftQuestionTestCase
 {

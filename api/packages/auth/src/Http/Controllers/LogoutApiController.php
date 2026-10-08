@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers;
+namespace Ulams\Auth\Http\Controllers;
 
-use EscolaLms\Auth\Events\Logout;
-use EscolaLms\Auth\Http\Controllers\Swagger\LogoutSwagger;
-use EscolaLms\Auth\Http\Requests\LogoutRequest;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Auth\Events\Logout;
+use Ulams\Auth\Http\Controllers\Swagger\LogoutSwagger;
+use Ulams\Auth\Http\Requests\LogoutRequest;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\JsonResponse;
 
-class LogoutApiController extends EscolaLmsBaseController implements LogoutSwagger
+class LogoutApiController extends UlamsBaseController implements LogoutSwagger
 {
     public function logout(LogoutRequest $request): JsonResponse
     {

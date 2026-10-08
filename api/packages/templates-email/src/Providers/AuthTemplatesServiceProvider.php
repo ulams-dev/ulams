@@ -1,29 +1,29 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Providers;
+namespace Ulams\TemplatesEmail\Providers;
 
-use EscolaLms\Auth\Events\AccountConfirmed;
-use EscolaLms\Auth\Events\AccountDeletionRequested;
-use EscolaLms\Auth\Events\AccountMustBeEnableByAdmin;
-use EscolaLms\Auth\Events\AccountRegistered;
-use EscolaLms\Auth\Events\ForgotPassword;
-use EscolaLms\Auth\Events\PasswordChanged;
-use EscolaLms\Auth\Events\UserAddedToGroup;
-use EscolaLms\Auth\Events\UserRemovedFromGroup;
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\TemplatesEmail\Auth\AccountConfirmedVariables;
-use EscolaLms\TemplatesEmail\Auth\AccountDeletionRequestedVariables;
-use EscolaLms\TemplatesEmail\Auth\PasswordChangedVariables;
-use EscolaLms\Auth\Events\AccountBlocked;
-use EscolaLms\Auth\Events\AccountDeleted;
-use EscolaLms\TemplatesEmail\Auth\AccountBlockedVariables;
-use EscolaLms\TemplatesEmail\Auth\AccountDeletedVariables;
-use EscolaLms\TemplatesEmail\Auth\ResetPasswordVariables;
-use EscolaLms\TemplatesEmail\Auth\UserAddedToGroupVariables;
-use EscolaLms\TemplatesEmail\Auth\UserRemovedFromGroupVariables;
-use EscolaLms\TemplatesEmail\Auth\VerifyEmailVariables;
-use EscolaLms\TemplatesEmail\Auth\VerifyUserAccountVariables;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
+use Ulams\Auth\Events\AccountConfirmed;
+use Ulams\Auth\Events\AccountDeletionRequested;
+use Ulams\Auth\Events\AccountMustBeEnableByAdmin;
+use Ulams\Auth\Events\AccountRegistered;
+use Ulams\Auth\Events\ForgotPassword;
+use Ulams\Auth\Events\PasswordChanged;
+use Ulams\Auth\Events\UserAddedToGroup;
+use Ulams\Auth\Events\UserRemovedFromGroup;
+use Ulams\Templates\Facades\Template;
+use Ulams\TemplatesEmail\Auth\AccountConfirmedVariables;
+use Ulams\TemplatesEmail\Auth\AccountDeletionRequestedVariables;
+use Ulams\TemplatesEmail\Auth\PasswordChangedVariables;
+use Ulams\Auth\Events\AccountBlocked;
+use Ulams\Auth\Events\AccountDeleted;
+use Ulams\TemplatesEmail\Auth\AccountBlockedVariables;
+use Ulams\TemplatesEmail\Auth\AccountDeletedVariables;
+use Ulams\TemplatesEmail\Auth\ResetPasswordVariables;
+use Ulams\TemplatesEmail\Auth\UserAddedToGroupVariables;
+use Ulams\TemplatesEmail\Auth\UserRemovedFromGroupVariables;
+use Ulams\TemplatesEmail\Auth\VerifyEmailVariables;
+use Ulams\TemplatesEmail\Auth\VerifyUserAccountVariables;
+use Ulams\TemplatesEmail\Core\EmailChannel;
 use Illuminate\Support\ServiceProvider;
 
 class AuthTemplatesServiceProvider extends ServiceProvider

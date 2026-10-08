@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Listeners;
+namespace Ulams\Auth\Listeners;
 
-use EscolaLms\Auth\Events\AccountDeleted;
+use Ulams\Auth\Events\AccountDeleted;
 use Faker\Generator;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Schema;

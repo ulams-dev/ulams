@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tasks;
+namespace Ulams\TemplatesEmail\Tasks;
 
 class TaskCompleteRequestVariables  extends CommonTasksVariables
 {

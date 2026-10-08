@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Vouchers\Services\Contracts;
+namespace Ulams\Vouchers\Services\Contracts;
 
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Vouchers\Dtos\CouponSearchDto;
-use EscolaLms\Vouchers\Models\Cart;
-use EscolaLms\Vouchers\Models\CartItem;
-use EscolaLms\Vouchers\Models\Coupon;
-use EscolaLms\Vouchers\Strategies\Contracts\DiscountStrategyContract;
+use Ulams\Cart\Models\Product;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Models\User;
+use Ulams\Vouchers\Dtos\CouponSearchDto;
+use Ulams\Vouchers\Models\Cart;
+use Ulams\Vouchers\Models\CartItem;
+use Ulams\Vouchers\Models\Coupon;
+use Ulams\Vouchers\Strategies\Contracts\DiscountStrategyContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 

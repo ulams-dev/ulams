@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Requests;
+namespace Ulams\TopicTypeGift\Http\Requests;
 
-use EscolaLms\TopicTypeGift\Dtos\SaveAllAttemptAnswersDto;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
-use EscolaLms\TopicTypeGift\Rules\ArrayAnswerKeyRule;
+use Ulams\TopicTypeGift\Dtos\SaveAllAttemptAnswersDto;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
+use Ulams\TopicTypeGift\Rules\ArrayAnswerKeyRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

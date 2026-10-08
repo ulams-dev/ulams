@@ -8,8 +8,11 @@ use App\Services\ConsultationService;
 use App\Services\Contracts\ConsultationServiceContract;
 use App\Services\Contracts\SearchableEventServiceContract;
 use App\Services\SearchableEventService;
+use App\Support\LegacyMigrationNames;
+use Illuminate\Console\Events\CommandStarting;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -45,6 +48,11 @@ class AppServiceProvider extends ServiceProvider
         if (strpos(config('app.url'), 'https') !== false) {
             \URL::forceScheme('https');
         }
+        Event::listen(CommandStarting::class, function (CommandStarting $event) {
+            if (str_starts_with((string) $event->command, 'migrate')) {
+                LegacyMigrationNames::rename();
+            }
+        });
         if (DB::Connection() instanceof SQLiteConnection) {
             DB::connection()->getPdo()->sqliteCreateFunction('REGEXP', function ($pattern, $value) {
                 mb_regex_encoding('UTF-8');

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Jitsi\Services;
+namespace Ulams\Jitsi\Services;
 
 class FileService
 {

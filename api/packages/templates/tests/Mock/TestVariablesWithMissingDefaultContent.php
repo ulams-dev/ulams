@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Templates\Tests\Mock;
+namespace Ulams\Templates\Tests\Mock;
 
 class TestVariablesWithMissingDefaultContent extends TestVariables
 {

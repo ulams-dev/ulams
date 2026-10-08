@@ -1,8 +1,8 @@
 import { FC, useCallback, useContext } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import styled, { css } from "styled-components";
 import { isMobile } from "react-device-detect";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { CloseIcon } from "../../../icons";
 import { FiltersState } from "@/types/filters";
 
@@ -78,7 +78,7 @@ interface FiltersTagsProps {
 }
 
 const FiltersTags: FC<FiltersTagsProps> = ({ filters, onReset }) => {
-  const { categoryTree } = useContext(EscolaLMSContext);
+  const { categoryTree } = useContext(UlamsContext);
   const isButton =
     !!filters?.categories?.length || !!filters?.name || !!filters?.tags?.length;
 

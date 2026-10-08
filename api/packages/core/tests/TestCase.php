@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Core\Tests;
+namespace Ulams\Core\Tests;
 
-use EscolaLms\Core\EscolaLmsServiceProvider;
-use EscolaLms\Core\Models\User;
+use Ulams\Core\UlamsServiceProvider;
+use Ulams\Core\Models\User;
 use Laravel\Passport\PassportServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Spatie\Permission\PermissionServiceProvider;
@@ -19,7 +19,7 @@ class TestCase extends OrchestraTestCase
     {
         return [
             PermissionServiceProvider::class,
-            EscolaLmsServiceProvider::class,
+            UlamsServiceProvider::class,
             PassportServiceProvider::class,
         ];
     }

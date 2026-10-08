@@ -26,7 +26,7 @@ export async function updateTask(
   apiUrl: string,
   token: string,
   id: number,
-  body: EscolaLms.Tasks.Http.Requests.UpdateTaskRequest,
+  body: Ulams.Tasks.Http.Requests.UpdateTaskRequest,
   options?: RequestOptionsInit
 ) {
   return request<API.DefaultResponse<API.Task>>(`${apiUrl}/api/tasks/${id}`, {
@@ -46,7 +46,7 @@ export async function updateTask(
 export async function createTaskNote(
   apiUrl: string,
   token: string,
-  body: EscolaLms.Tasks.Http.Requests.CreateTaskNoteRequest
+  body: Ulams.Tasks.Http.Requests.CreateTaskNoteRequest
 ) {
   return request<API.DefaultResponse<API.TaskNote>>(
     `${apiUrl}/api/tasks/notes`,
@@ -68,7 +68,7 @@ export async function updateTaskNote(
   apiUrl: string,
   token: string,
   id: number,
-  body: EscolaLms.Tasks.Http.Requests.UpdateTaskNoteRequest
+  body: Ulams.Tasks.Http.Requests.UpdateTaskNoteRequest
 ) {
   return request<API.DefaultResponse<API.TaskNote>>(
     `${apiUrl}/api/tasks/notes/${id}`,

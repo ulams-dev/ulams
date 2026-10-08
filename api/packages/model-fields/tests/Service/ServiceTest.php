@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\ModelFields\Tests\Service;
+namespace Ulams\ModelFields\Tests\Service;
 
-use EscolaLms\ModelFields\Models\Field;
-use EscolaLms\ModelFields\Tests\TestCase;
-use EscolaLms\ModelFields\Tests\Models\User;
+use Ulams\ModelFields\Models\Field;
+use Ulams\ModelFields\Tests\TestCase;
+use Ulams\ModelFields\Tests\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\ModelFields\Enum\MetaFieldTypeEnum;
-use EscolaLms\ModelFields\Services\Contracts\ModelFieldsServiceContract;
+use Ulams\ModelFields\Enum\MetaFieldTypeEnum;
+use Ulams\ModelFields\Services\Contracts\ModelFieldsServiceContract;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\ValidationException;

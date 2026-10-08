@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cmi5\Database\Seeders;
+namespace Ulams\Cmi5\Database\Seeders;
 
-use EscolaLms\Cmi5\Enums\Cmi5PermissionEnum;
+use Ulams\Cmi5\Enums\Cmi5PermissionEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Database\Factories;
+namespace Ulams\Questionnaire\Database\Factories;
 
-use EscolaLms\Questionnaire\Models\QuestionnaireModelType;
+use Ulams\Questionnaire\Models\QuestionnaireModelType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class QuestionnaireModelTypeFactory extends Factory
@@ -13,7 +13,7 @@ class QuestionnaireModelTypeFactory extends Factory
     {
         return [
             'title' => 'course',
-            'model_class' => 'EscolaLms\Courses\Models\Course',
+            'model_class' => 'Ulams\Courses\Models\Course',
         ];
     }
 }

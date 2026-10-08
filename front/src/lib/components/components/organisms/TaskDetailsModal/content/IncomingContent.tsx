@@ -2,8 +2,8 @@ import React, { ChangeEvent, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { format } from "date-fns";
-import { API } from "@lms/sdk";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { API } from "@ulams/sdk";
+import { UlamsContext } from "@ulams/sdk/react";
 import {
   Checkbox,
   Input,
@@ -53,7 +53,7 @@ export const IncomingContent: React.FC<Props> = ({
   taskForAction,
   onTaskStatusUpdateSuccess,
 }) => {
-  const { updateTaskStatus, fetchTask, task } = useContext(EscolaLMSContext);
+  const { updateTaskStatus, fetchTask, task } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   useEffect(() => {

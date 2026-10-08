@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Resources;
+namespace Ulams\Cart\Http\Resources;
 
-use EscolaLms\Auth\Traits\ResourceExtandable;
-use EscolaLms\Cart\Enums\OrderStatus;
-use EscolaLms\Cart\Models\Order;
+use Ulams\Auth\Traits\ResourceExtandable;
+use Ulams\Cart\Enums\OrderStatus;
+use Ulams\Cart\Models\Order;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 

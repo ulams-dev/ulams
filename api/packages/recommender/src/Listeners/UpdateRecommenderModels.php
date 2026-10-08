@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Recommender\Listeners;
+namespace Ulams\Recommender\Listeners;
 
-use EscolaLms\Recommender\EscolaLmsRecommenderServiceProvider;
-use EscolaLms\Settings\Events\SettingPackageConfigUpdated;
+use Ulams\Recommender\UlamsRecommenderServiceProvider;
+use Ulams\Settings\Events\SettingPackageConfigUpdated;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -16,22 +16,22 @@ class UpdateRecommenderModels
 
     public function handle(SettingPackageConfigUpdated $event): void
     {
-        if (!config(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.api_url')) {
+        if (!config(UlamsRecommenderServiceProvider::CONFIG_KEY . '.api_url')) {
             return;
         }
 
-        $courseModel = Arr::get($event->getConfig(), EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.course_model.value');
-        $exerciseModel = Arr::get($event->getConfig(), EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.exercise_model.value');
+        $courseModel = Arr::get($event->getConfig(), UlamsRecommenderServiceProvider::CONFIG_KEY . '.course_model.value');
+        $exerciseModel = Arr::get($event->getConfig(), UlamsRecommenderServiceProvider::CONFIG_KEY . '.exercise_model.value');
 
         if ($courseModel && $this->updateModel($courseModel, self::COURSE_KEY)) {
             Http::post(
-                config(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.api_url') . 'course/model',
+                config(UlamsRecommenderServiceProvider::CONFIG_KEY . '.api_url') . 'course/model',
                 ['file_content' => $courseModel]
             );
         }
         if ($exerciseModel && $this->updateModel($exerciseModel, self::EXERCISE_KEY)) {
             Http::post(
-                config(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.api_url') . 'exercise/model',
+                config(UlamsRecommenderServiceProvider::CONFIG_KEY . '.api_url') . 'exercise/model',
                 ['file_content' => $exerciseModel]
             );
         }

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Repositories\Contracts;
+namespace Ulams\AssignWithoutAccount\Repositories\Contracts;
 
-use EscolaLms\AssignWithoutAccount\Dto\UserSubmissionSearchDto;
-use EscolaLms\Core\Dtos\PaginationDto;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\Core\Dtos\OrderDto;
+use Ulams\AssignWithoutAccount\Dto\UserSubmissionSearchDto;
+use Ulams\Core\Dtos\PaginationDto;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Core\Dtos\OrderDto;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface UserSubmissionRepositoryContract extends BaseRepositoryContract

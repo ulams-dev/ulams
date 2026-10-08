@@ -2,7 +2,7 @@ import { DrawerForm, ProFormText } from '@ant-design/pro-form';
 import React, { useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'umi';
 
-import { updateQuizAnswer } from '@/services/escola-lms/gift_quiz';
+import { updateQuizAnswer } from '@/services/ulams/gift_quiz';
 
 interface FormData {
   score: number;

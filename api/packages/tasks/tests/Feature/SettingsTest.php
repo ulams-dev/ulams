@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Tasks\Tests\Feature;
+namespace Ulams\Tasks\Tests\Feature;
 
-use EscolaLms\Auth\Database\Seeders\AuthPermissionSeeder;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Tasks\EscolaLmsTasksServiceProvider;
-use EscolaLms\Settings\Models\Config as ConfigModel;
-use EscolaLms\Tasks\Tests\TestCase;
+use Ulams\Auth\Database\Seeders\AuthPermissionSeeder;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Tasks\UlamsTasksServiceProvider;
+use Ulams\Settings\Models\Config as ConfigModel;
+use Ulams\Tasks\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
 
 class SettingsTest extends TestCase
@@ -16,13 +16,13 @@ class SettingsTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(EscolaLmsSettingsServiceProvider::class)) {
+        if (!class_exists(UlamsSettingsServiceProvider::class)) {
             $this->markTestSkipped('Settings package not installed');
         }
 
         $this->seed(PermissionTableSeeder::class);
         $this->seed(AuthPermissionSeeder::class);
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
     }
 
     public function testAdministrableConfigApi(): void
@@ -31,7 +31,7 @@ class SettingsTest extends TestCase
         $user->guard_name = 'api';
         $user->assignRole('admin');
 
-        $configKey = EscolaLmsTasksServiceProvider::CONFIG_KEY;
+        $configKey = UlamsTasksServiceProvider::CONFIG_KEY;
 
         $this->actingAs($user, 'api')
             ->postJson('/api/admin/config',

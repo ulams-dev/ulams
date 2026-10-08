@@ -1,24 +1,24 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Tests\APIs;
+namespace Ulams\CoursesImportExport\Tests\APIs;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\TopicResource;
-use EscolaLms\CoursesImportExport\Database\Seeders\CoursesExportImportPermissionSeeder;
-use EscolaLms\CoursesImportExport\Enums\CoursesImportExportPermissionsEnum;
-use EscolaLms\CoursesImportExport\Http\Resources\CourseExportResource;
-use EscolaLms\CoursesImportExport\Models\Course;
-use EscolaLms\CoursesImportExport\Tests\TestCase;
-use EscolaLms\Tags\Models\Tag;
-use EscolaLms\TopicTypes\Models\Contracts\TopicFileContentContract;
-use EscolaLms\TopicTypes\Models\TopicContent\Audio;
-use EscolaLms\TopicTypes\Models\TopicContent\Image;
-use EscolaLms\TopicTypes\Models\TopicContent\PDF;
-use EscolaLms\TopicTypes\Models\TopicContent\RichText;
-use EscolaLms\TopicTypes\Models\TopicContent\Video;
+use Ulams\Categories\Models\Category;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Models\TopicResource;
+use Ulams\CoursesImportExport\Database\Seeders\CoursesExportImportPermissionSeeder;
+use Ulams\CoursesImportExport\Enums\CoursesImportExportPermissionsEnum;
+use Ulams\CoursesImportExport\Http\Resources\CourseExportResource;
+use Ulams\CoursesImportExport\Models\Course;
+use Ulams\CoursesImportExport\Tests\TestCase;
+use Ulams\Tags\Models\Tag;
+use Ulams\TopicTypes\Models\Contracts\TopicFileContentContract;
+use Ulams\TopicTypes\Models\TopicContent\Audio;
+use Ulams\TopicTypes\Models\TopicContent\Image;
+use Ulams\TopicTypes\Models\TopicContent\PDF;
+use Ulams\TopicTypes\Models\TopicContent\RichText;
+use Ulams\TopicTypes\Models\TopicContent\Video;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -326,8 +326,8 @@ class CourseImportApiTest extends TestCase
         $lesson = $data->lessons[0];
         $topic = $lesson->topics[0];
 
-        $topicableSco = current(array_filter($lesson->topics, fn($item) => $item->topicable_type === 'EscolaLms\TopicTypes\Models\TopicContent\ScormSco'));
-        $topicableH5P = current(array_filter($lesson->topics, fn($item) => $item->topicable_type === 'EscolaLms\TopicTypes\Models\TopicContent\H5P'));
+        $topicableSco = current(array_filter($lesson->topics, fn($item) => $item->topicable_type === 'Ulams\TopicTypes\Models\TopicContent\ScormSco'));
+        $topicableH5P = current(array_filter($lesson->topics, fn($item) => $item->topicable_type === 'Ulams\TopicTypes\Models\TopicContent\H5P'));
 
         $this->assertDatabaseHas('courses', [
             'id' => $data->id,

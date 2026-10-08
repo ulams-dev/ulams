@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Translations\Http\Controllers\Swagger;
+namespace Ulams\Translations\Http\Controllers\Swagger;
 
-use EscolaLms\Translations\Http\Requests\CreateLanguageLineRequest;
-use EscolaLms\Translations\Http\Requests\DeleteLanguageLineRequest;
-use EscolaLms\Translations\Http\Requests\ListLanguageLineRequest;
-use EscolaLms\Translations\Http\Requests\ReadLanguageLineRequest;
-use EscolaLms\Translations\Http\Requests\RetrieveTranslationRequest;
-use EscolaLms\Translations\Http\Requests\UpdateLanguageLineRequest;
+use Ulams\Translations\Http\Requests\CreateLanguageLineRequest;
+use Ulams\Translations\Http\Requests\DeleteLanguageLineRequest;
+use Ulams\Translations\Http\Requests\ListLanguageLineRequest;
+use Ulams\Translations\Http\Requests\ReadLanguageLineRequest;
+use Ulams\Translations\Http\Requests\RetrieveTranslationRequest;
+use Ulams\Translations\Http\Requests\UpdateLanguageLineRequest;
 use Illuminate\Http\JsonResponse;
 
 interface TranslationAdminApiSwagger

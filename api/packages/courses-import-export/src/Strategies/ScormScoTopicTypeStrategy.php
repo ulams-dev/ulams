@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Strategies;
+namespace Ulams\CoursesImportExport\Strategies;
 
-use EscolaLms\CoursesImportExport\Strategies\Contract\TopicImportStrategy;
-use EscolaLms\Scorm\Services\Contracts\ScormServiceContract;
+use Ulams\CoursesImportExport\Strategies\Contract\TopicImportStrategy;
+use Ulams\Scorm\Services\Contracts\ScormServiceContract;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 

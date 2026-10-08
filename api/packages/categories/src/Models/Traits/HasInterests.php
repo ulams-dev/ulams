@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Categories\Models\Traits;
+namespace Ulams\Categories\Models\Traits;
 
-use EscolaLms\Categories\Models\Category;
+use Ulams\Categories\Models\Category;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait HasInterests

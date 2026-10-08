@@ -7,7 +7,7 @@ import React, { useRef } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
 
 import UserSelect from '@/components/UserSelect';
-import { orders } from '@/services/escola-lms/orders';
+import { orders } from '@/services/ulams/orders';
 
 import ProductsSelect from '@/components/ProductsSelect';
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';
@@ -180,7 +180,7 @@ const TableList: React.FC = () => {
       <ProTable<
         API.OrderListItem,
         API.PageParams &
-          EscolaLms.Cart.Http.Requests.Admin.OrderSearchRequest & {
+          Ulams.Cart.Http.Requests.Admin.OrderSearchRequest & {
             dateRange: [string, string];
             status: API.OrderStatus;
           }

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Models\TopicContent;
+namespace Ulams\TopicTypes\Models\TopicContent;
 
-use EscolaLms\Scorm\Services\Contracts\ScormServiceContract;
+use Ulams\Scorm\Services\Contracts\ScormServiceContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
 use Peopleaps\Scorm\Model\ScormScoModel;
@@ -55,7 +55,7 @@ class ScormSco extends AbstractTopicContent
 
     protected static function newFactory()
     {
-        return \EscolaLms\TopicTypes\Database\Factories\TopicContent\ScormScoFactory::new();
+        return \Ulams\TopicTypes\Database\Factories\TopicContent\ScormScoFactory::new();
     }
 
     public function fixAssetPaths(): array

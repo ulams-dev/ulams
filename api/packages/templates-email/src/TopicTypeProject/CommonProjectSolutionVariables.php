@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\TopicTypeProject;
+namespace Ulams\TemplatesEmail\TopicTypeProject;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\TemplatesEmail\Core\EmailVariables;
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\TemplatesEmail\Core\EmailVariables;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
 
 abstract class CommonProjectSolutionVariables extends EmailVariables
 {

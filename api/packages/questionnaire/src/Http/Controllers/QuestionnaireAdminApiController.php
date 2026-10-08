@@ -1,37 +1,37 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Http\Controllers;
+namespace Ulams\Questionnaire\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Questionnaire\Dtos\QuestionnairesFilterCriteriaDto;
-use EscolaLms\Questionnaire\Exceptions\QuestionnaireCanNotDeleteException;
-use EscolaLms\Questionnaire\Exports\QuestionnaireExport;
-use EscolaLms\Questionnaire\Exports\QuestionnaireExportSheet;
-use EscolaLms\Questionnaire\Http\Controllers\Contracts\QuestionnaireAdminApiContract;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireAssignUnassignRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireCreateRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireDeleteRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireExportRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireListingRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireReadRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireReportRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireUpdateRequest;
-use EscolaLms\Questionnaire\Http\Resources\QuestionnaireModelTypeCollection;
-use EscolaLms\Questionnaire\Http\Resources\QuestionnaireReportCollection;
-use EscolaLms\Questionnaire\Http\Resources\QuestionnaireResource;
-use EscolaLms\Questionnaire\Models\QuestionAnswer;
-use EscolaLms\Questionnaire\Models\QuestionnaireModelType;
-use EscolaLms\Questionnaire\Repository\Contracts\QuestionnaireModelTypeRepositoryContract;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionnaireAnswerServiceContract;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionnaireModelServiceContract;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionnaireServiceContract;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Questionnaire\Dtos\QuestionnairesFilterCriteriaDto;
+use Ulams\Questionnaire\Exceptions\QuestionnaireCanNotDeleteException;
+use Ulams\Questionnaire\Exports\QuestionnaireExport;
+use Ulams\Questionnaire\Exports\QuestionnaireExportSheet;
+use Ulams\Questionnaire\Http\Controllers\Contracts\QuestionnaireAdminApiContract;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireAssignUnassignRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireCreateRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireDeleteRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireExportRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireListingRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireReadRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireReportRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireUpdateRequest;
+use Ulams\Questionnaire\Http\Resources\QuestionnaireModelTypeCollection;
+use Ulams\Questionnaire\Http\Resources\QuestionnaireReportCollection;
+use Ulams\Questionnaire\Http\Resources\QuestionnaireResource;
+use Ulams\Questionnaire\Models\QuestionAnswer;
+use Ulams\Questionnaire\Models\QuestionnaireModelType;
+use Ulams\Questionnaire\Repository\Contracts\QuestionnaireModelTypeRepositoryContract;
+use Ulams\Questionnaire\Services\Contracts\QuestionnaireAnswerServiceContract;
+use Ulams\Questionnaire\Services\Contracts\QuestionnaireModelServiceContract;
+use Ulams\Questionnaire\Services\Contracts\QuestionnaireServiceContract;
+use Ulams\Questionnaire\Services\Contracts\QuestionServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Maatwebsite\Excel\Facades\Excel;
 
-class QuestionnaireAdminApiController extends EscolaLmsBaseController implements QuestionnaireAdminApiContract
+class QuestionnaireAdminApiController extends UlamsBaseController implements QuestionnaireAdminApiContract
 {
     private QuestionnaireAnswerServiceContract $questionAnswerService;
     private QuestionnaireModelTypeRepositoryContract $questionnaireModelTypeRepository;

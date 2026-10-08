@@ -1,4 +1,4 @@
-import type { QuestionType } from '@/services/escola-lms/enums';
+import type { QuestionType } from '@/services/ulams/enums';
 
 type BaseFormData = {
   type: QuestionType;

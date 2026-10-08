@@ -7,7 +7,7 @@ import React, { useRef } from 'react';
 import { FormattedMessage, Link, useIntl } from 'umi';
 
 import { DictionaryTabNames } from '@/pages/Dictionary/form';
-import { deleteDictionary, dictionaries } from '@/services/escola-lms/dictionary';
+import { deleteDictionary, dictionaries } from '@/services/ulams/dictionary';
 import { createTableOrderObject } from '@/utils/utils';
 
 const handleRemove = async (id: number) => {

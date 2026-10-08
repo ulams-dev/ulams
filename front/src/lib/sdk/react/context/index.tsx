@@ -96,9 +96,9 @@ import {
   ContextPaginatedMetaState,
   ContextListState,
   ContextStateValue,
-  EscolaLMSContextReadConfig,
-  EscolaLMSContextConfig,
-  EscolaLMSContextAPIConfig,
+  UlamsContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextAPIConfig,
   SortProgram,
 } from "./types";
 
@@ -177,17 +177,17 @@ import { RequestOptionsInit } from "umi-request";
 export const SCORMPlayer: React.FC<{
   uuid: string;
 }> = ({ uuid }) => {
-  const { apiUrl } = useContext(EscolaLMSContext);
+  const { apiUrl } = useContext(UlamsContext);
   return <iframe src={`${apiUrl}/api/scorm/play/${uuid}`} />;
 };
 
-export const EscolaLMSContext: React.Context<EscolaLMSContextConfig> =
+export const UlamsContext: React.Context<UlamsContextConfig> =
   React.createContext(defaultConfig);
 
-export const getDefaultData = <K extends keyof EscolaLMSContextReadConfig>(
+export const getDefaultData = <K extends keyof UlamsContextReadConfig>(
   key: K,
-  initialValues: EscolaLMSContextReadConfig & EscolaLMSContextAPIConfig
-): EscolaLMSContextReadConfig[K] => {
+  initialValues: UlamsContextReadConfig & UlamsContextAPIConfig
+): UlamsContextReadConfig[K] => {
   return initialValues[key];
 };
 
@@ -232,9 +232,9 @@ export const getCalcCourseProgress = (
   // eslint-disable-next-line react-hooks/exhaustive-deps
 };
 
-export interface EscolaLMSContextProviderType {
+export interface UlamsContextProviderType {
   apiUrl: string;
-  defaults?: Partial<EscolaLMSContextReadConfig>;
+  defaults?: Partial<UlamsContextReadConfig>;
   imagePrefix?: string;
   imageSvgPrefix?: string;
   initialFetch?: boolean;
@@ -246,8 +246,8 @@ export interface EscolaLMSContextProviderType {
  * @component
  */
 
-const EscolaLMSContextProviderInner: FunctionComponent<
-  PropsWithChildren<EscolaLMSContextProviderType>
+const UlamsContextProviderInner: FunctionComponent<
+  PropsWithChildren<UlamsContextProviderType>
 > = ({
   children,
   apiUrl,
@@ -572,7 +572,7 @@ const EscolaLMSContextProviderInner: FunctionComponent<
   );
 
   const [stationaryEvent, setStationaryEvent] = useLocalStorage<
-    ContextStateValue<EscolaLms.StationaryEvents.Models.StationaryEvent>
+    ContextStateValue<Ulams.StationaryEvents.Models.StationaryEvent>
   >(
     "lms",
     "stationaryEvent",
@@ -1814,7 +1814,7 @@ const EscolaLMSContextProviderInner: FunctionComponent<
   }, [token]);
 
   return (
-    <EscolaLMSContext.Provider
+    <UlamsContext.Provider
       value={{
         confirmAccountDelete,
         initAccountDelete,
@@ -2024,12 +2024,12 @@ const EscolaLMSContextProviderInner: FunctionComponent<
       }}
     >
       {children}
-    </EscolaLMSContext.Provider>
+    </UlamsContext.Provider>
   );
 };
 
-export const EscolaLMSContextProvider: FunctionComponent<
-  PropsWithChildren<EscolaLMSContextProviderType>
+export const UlamsContextProvider: FunctionComponent<
+  PropsWithChildren<UlamsContextProviderType>
 > = ({ children, ...props }) => {
   const contextProps = {
     defaults: props.defaults,
@@ -2073,7 +2073,7 @@ export const EscolaLMSContextProvider: FunctionComponent<
 
   const C = wrappers.reduce((acc, curr, i) => {
     return React.createElement(curr, contextProps, acc);
-  }, React.createElement(EscolaLMSContextProviderInner, props, children));
+  }, React.createElement(UlamsContextProviderInner, props, children));
 
   return C;
 };

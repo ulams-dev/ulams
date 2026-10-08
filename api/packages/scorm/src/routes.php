@@ -1,8 +1,8 @@
 <?php
 
-use EscolaLms\Scorm\Http\Controllers\ScormController;
+use Ulams\Scorm\Http\Controllers\ScormController;
 
-use EscolaLms\Scorm\Http\Controllers\ScormTrackController;
+use Ulams\Scorm\Http\Controllers\ScormTrackController;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 

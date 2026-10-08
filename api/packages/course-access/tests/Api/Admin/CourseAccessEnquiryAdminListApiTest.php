@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Tests\Api\Admin;
+namespace Ulams\CourseAccess\Tests\Api\Admin;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\CourseAccess\Database\Seeders\CourseAccessPermissionSeeder;
-use EscolaLms\CourseAccess\Enum\EnquiryStatusEnum;
-use EscolaLms\CourseAccess\Models\Course;
-use EscolaLms\CourseAccess\Models\CourseAccessEnquiry;
-use EscolaLms\CourseAccess\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\CourseAccess\Database\Seeders\CourseAccessPermissionSeeder;
+use Ulams\CourseAccess\Enum\EnquiryStatusEnum;
+use Ulams\CourseAccess\Models\Course;
+use Ulams\CourseAccess\Models\CourseAccessEnquiry;
+use Ulams\CourseAccess\Tests\TestCase;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 
 class CourseAccessEnquiryAdminListApiTest extends TestCase

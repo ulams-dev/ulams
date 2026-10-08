@@ -1,14 +1,14 @@
 import { Formik, FormikErrors } from "formik";
 import { useCallback, useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import type { DefaultResponseError } from "@lms/sdk/types";
+import { UlamsContext } from "@ulams/sdk/react";
+import type { DefaultResponseError } from "@ulams/sdk/types";
 import type { ResponseError } from "umi-request";
 
 import styled, { withTheme } from "styled-components";
 
 import { Input, Button, Title, Link, Text } from "../../../";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 const StyledDiv = styled.div<{ mobile: boolean }>`
   margin: 0;
@@ -81,7 +81,7 @@ export const ResetPasswordForm: React.FC<Props> = ({
 }) => {
   const initialValues: MyFormValues = { email: "", password: "" };
   const { t } = useTranslation();
-  const { forgot, reset } = useContext(EscolaLMSContext);
+  const { forgot, reset } = useContext(UlamsContext);
 
   const handleFirstStep = useCallback(
     (
@@ -127,7 +127,7 @@ export const ResetPasswordForm: React.FC<Props> = ({
   );
 
   return (
-    <StyledDiv className={`wellms-component ${className}`} mobile={mobile}>
+    <StyledDiv className={`ulams-component ${className}`} mobile={mobile}>
       <Title level={3}>{t<string>("ResetForm.ResetPassword")}</Title>{" "}
       <Formik
         initialValues={initialValues}

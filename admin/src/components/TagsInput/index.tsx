@@ -1,4 +1,4 @@
-import { tagsUnique } from '@/services/escola-lms/tag';
+import { tagsUnique } from '@/services/ulams/tag';
 import { Select } from 'antd';
 import React, { useEffect, useState } from 'react';
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Settings\Http\Requests\Admin;
+namespace Ulams\Settings\Http\Requests\Admin;
 
-use EscolaLms\Settings\Enums\SettingsPermissionsEnum;
+use Ulams\Settings\Enums\SettingsPermissionsEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ConfigListRequest extends FormRequest

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Payments\Exceptions;
+namespace Ulams\Payments\Exceptions;
 
 class IncorrectCvc extends PaymentException
 {

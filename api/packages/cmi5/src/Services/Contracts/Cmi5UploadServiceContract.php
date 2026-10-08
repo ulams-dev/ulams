@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cmi5\Services\Contracts;
+namespace Ulams\Cmi5\Services\Contracts;
 
-use EscolaLms\Cmi5\Models\Cmi5;
+use Ulams\Cmi5\Models\Cmi5;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\UploadedFile;
 

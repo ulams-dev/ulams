@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Recommender\Database\Factories;
+namespace Ulams\Recommender\Database\Factories;
 
-use EscolaLms\Recommender\Models\AggregatedFrame;
+use Ulams\Recommender\Models\AggregatedFrame;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AggregatedFrameFactory extends Factory

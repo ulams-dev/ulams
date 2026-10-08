@@ -1,28 +1,28 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers\Admin;
+namespace Ulams\Auth\Http\Controllers\Admin;
 
-use EscolaLms\Auth\Dtos\UserGroupDto;
-use EscolaLms\Auth\Dtos\UserGroupFilterCriteriaDto;
-use EscolaLms\Auth\Http\Controllers\Admin\Swagger\UserGroupsSwagger;
-use EscolaLms\Auth\Http\Requests\Admin\UserGroupCreateRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserGroupDeleteRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserGroupGetRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserGroupListRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserGroupMemberAddRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserGroupMemberRemoveRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserGroupUpdateRequest;
-use EscolaLms\Auth\Http\Resources\UserGroupDetailedResource;
-use EscolaLms\Auth\Http\Resources\UserGroupResource;
-use EscolaLms\Auth\Http\Resources\UserGroupTreeResource;
-use EscolaLms\Auth\Http\Resources\UserResource;
-use EscolaLms\Auth\Services\Contracts\UserGroupServiceContract;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Auth\Dtos\UserGroupDto;
+use Ulams\Auth\Dtos\UserGroupFilterCriteriaDto;
+use Ulams\Auth\Http\Controllers\Admin\Swagger\UserGroupsSwagger;
+use Ulams\Auth\Http\Requests\Admin\UserGroupCreateRequest;
+use Ulams\Auth\Http\Requests\Admin\UserGroupDeleteRequest;
+use Ulams\Auth\Http\Requests\Admin\UserGroupGetRequest;
+use Ulams\Auth\Http\Requests\Admin\UserGroupListRequest;
+use Ulams\Auth\Http\Requests\Admin\UserGroupMemberAddRequest;
+use Ulams\Auth\Http\Requests\Admin\UserGroupMemberRemoveRequest;
+use Ulams\Auth\Http\Requests\Admin\UserGroupUpdateRequest;
+use Ulams\Auth\Http\Resources\UserGroupDetailedResource;
+use Ulams\Auth\Http\Resources\UserGroupResource;
+use Ulams\Auth\Http\Resources\UserGroupTreeResource;
+use Ulams\Auth\Http\Resources\UserResource;
+use Ulams\Auth\Services\Contracts\UserGroupServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
-class UserGroupsController extends EscolaLmsBaseController implements UserGroupsSwagger
+class UserGroupsController extends UlamsBaseController implements UserGroupsSwagger
 {
     private UserGroupServiceContract $userGroupService;
 

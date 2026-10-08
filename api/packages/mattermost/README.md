@@ -1,13 +1,5 @@
 # Mattermost
 
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Mattermost/)
-[![codecov](https://codecov.io/gh/EscolaLMS/Mattermost/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Mattermost)
-[![phpunit](https://github.com/EscolaLMS/Mattermost/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Mattermost/actions/workflows/test.yml)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/mattermost)](https://packagist.org/packages/escolalms/mattermost)
-[![downloads](https://img.shields.io/packagist/v/escolalms/mattermost)](https://packagist.org/packages/escolalms/mattermost)
-[![downloads](https://img.shields.io/packagist/l/escolalms/mattermost)](https://packagist.org/packages/escolalms/mattermost)
-[![Maintainability](https://api.codeclimate.com/v1/badges/00725c6ea461fcfa2754/maintainability)](https://codeclimate.com/github/EscolaLMS/Mattermost/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/00725c6ea461fcfa2754/test_coverage)](https://codeclimate.com/github/EscolaLMS/Mattermost/test_coverage)
 
 
 ## What does it do
@@ -18,7 +10,7 @@ It listens for Events then add/remove user for mattermost and particular channel
 
 
 ## Installing
-- `composer require escolalms/mattermost`
+- `composer require ulams/mattermost`
 
 ## Example
 You can configure the package using Facade
@@ -59,24 +51,22 @@ $this->actingAs($this->user, 'api')->json(
 ```
 
 ## Endpoints
-All the endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Mattermost/)
+All the endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/Mattermost/)
 
 ## Test
 Run `./vendor/bin/phpunit` to run tests. See tests folder as it's quite good staring point as documentation appendix.
 Test details 
-[![codecov](https://codecov.io/gh/EscolaLMS/Mattermost/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Mattermost)
-[![phpunit](https://github.com/EscolaLMS/Mattermost/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Mattermost/actions/workflows/test.yml)
 
 ## Listeners
 Handling events
-- `EscolaLms\Auth\Events\AccountConfirmed` => add user to Mattermost
-- `EscolaLms\Auth\Events\AccountDeleted` => remove user from Mattermost
-- `EscolaLms\Auth\Events\AccountBlocked` => block user account
-- `EscolaLms\Courses\Events\CourseAssigned` => add user to course channel with member role
-- `EscolaLms\Courses\Events\CourseUnassigned` => remove user from course channel
-- `EscolaLms\Courses\Events\CourseTutorAssigned` => add user to course channel with channel_admin role
-- `EscolaLms\Courses\Events\CourseTutorUnassigned` => remove user from course channel
-- `EscolaLms\Webinar\Events\WebinarUserAssigned` => add user to webinar channel with member role
-- `EscolaLms\Webinar\Events\WebinarUserUnassigned` => remove user from webinar channel
-- `EscolaLms\Webinar\Events\WebinarTrainerAssigned` => add user to webinar channel with channel_admin role 
-- `EscolaLms\Webinar\Events\WebinarTrainerUnassigned` => remove user from webinar channel
+- `Ulams\Auth\Events\AccountConfirmed` => add user to Mattermost
+- `Ulams\Auth\Events\AccountDeleted` => remove user from Mattermost
+- `Ulams\Auth\Events\AccountBlocked` => block user account
+- `Ulams\Courses\Events\CourseAssigned` => add user to course channel with member role
+- `Ulams\Courses\Events\CourseUnassigned` => remove user from course channel
+- `Ulams\Courses\Events\CourseTutorAssigned` => add user to course channel with channel_admin role
+- `Ulams\Courses\Events\CourseTutorUnassigned` => remove user from course channel
+- `Ulams\Webinar\Events\WebinarUserAssigned` => add user to webinar channel with member role
+- `Ulams\Webinar\Events\WebinarUserUnassigned` => remove user from webinar channel
+- `Ulams\Webinar\Events\WebinarTrainerAssigned` => add user to webinar channel with channel_admin role 
+- `Ulams\Webinar\Events\WebinarTrainerUnassigned` => remove user from webinar channel

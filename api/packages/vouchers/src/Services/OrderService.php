@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Vouchers\Services;
+namespace Ulams\Vouchers\Services;
 
-use EscolaLms\Cart\Dtos\ClientDetailsDto;
-use EscolaLms\Cart\Models\Cart as BaseCart;
-use EscolaLms\Cart\Models\Order as BaseOrder;
-use EscolaLms\Cart\Services\CartManager as BaseCartManager;
-use EscolaLms\Cart\Services\OrderService as BaseOrderService;
-use EscolaLms\Vouchers\Models\Order;
-use EscolaLms\Vouchers\Services\CartManager;
-use EscolaLms\Vouchers\Services\Contracts\OrderServiceContract;
+use Ulams\Cart\Dtos\ClientDetailsDto;
+use Ulams\Cart\Models\Cart as BaseCart;
+use Ulams\Cart\Models\Order as BaseOrder;
+use Ulams\Cart\Services\CartManager as BaseCartManager;
+use Ulams\Cart\Services\OrderService as BaseOrderService;
+use Ulams\Vouchers\Models\Order;
+use Ulams\Vouchers\Services\CartManager;
+use Ulams\Vouchers\Services\Contracts\OrderServiceContract;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderService extends BaseOrderService implements OrderServiceContract

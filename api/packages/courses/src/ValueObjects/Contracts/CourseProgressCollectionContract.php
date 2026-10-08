@@ -1,11 +1,11 @@
 <?php
 
 
-namespace EscolaLms\Courses\ValueObjects\Contracts;
+namespace Ulams\Courses\ValueObjects\Contracts;
 
 
 use Carbon\Carbon;
-use EscolaLms\Courses\Models\Course;
+use Ulams\Courses\Models\Course;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
 

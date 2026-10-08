@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Repositories;
+namespace Ulams\HeadlessH5P\Repositories;
 
-use EscolaLms\HeadlessH5P\Models\H5PLibrary;
-use EscolaLms\HeadlessH5P\Models\H5PLibraryLanguage;
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PLibraryLanguageRepositoryContract;
+use Ulams\HeadlessH5P\Models\H5PLibrary;
+use Ulams\HeadlessH5P\Models\H5PLibraryLanguage;
+use Ulams\HeadlessH5P\Repositories\Contracts\H5PLibraryLanguageRepositoryContract;
 use Illuminate\Support\Facades\File;
 
 class H5PLibraryLanguageRepository implements H5PLibraryLanguageRepositoryContract

@@ -6,14 +6,14 @@ import { currentTimezone } from "../utils";
 
 export enum TopicType {
   Unselected = "",
-  RichText = "EscolaLms\\TopicTypes\\Models\\TopicContent\\RichText",
-  OEmbed = "EscolaLms\\TopicTypes\\Models\\TopicContent\\OEmbed",
-  Audio = "EscolaLms\\TopicTypes\\Models\\TopicContent\\Audio",
-  Video = "EscolaLms\\TopicTypes\\Models\\TopicContent\\Video",
-  H5P = "EscolaLms\\TopicTypes\\Models\\TopicContent\\H5P",
-  Image = "EscolaLms\\TopicTypes\\Models\\TopicContent\\Image",
-  Pdf = "EscolaLms\\TopicTypes\\Models\\TopicContent\\PDF",
-  Scorm = "EscolaLms\\TopicTypes\\Models\\TopicContent\\ScormSco",
+  RichText = "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+  OEmbed = "Ulams\\TopicTypes\\Models\\TopicContent\\OEmbed",
+  Audio = "Ulams\\TopicTypes\\Models\\TopicContent\\Audio",
+  Video = "Ulams\\TopicTypes\\Models\\TopicContent\\Video",
+  H5P = "Ulams\\TopicTypes\\Models\\TopicContent\\H5P",
+  Image = "Ulams\\TopicTypes\\Models\\TopicContent\\Image",
+  Pdf = "Ulams\\TopicTypes\\Models\\TopicContent\\PDF",
+  Scorm = "Ulams\\TopicTypes\\Models\\TopicContent\\ScormSco",
 }
 
 export const completed: API.IEvent[] = [

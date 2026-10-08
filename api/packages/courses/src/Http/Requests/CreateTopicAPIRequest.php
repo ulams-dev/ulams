@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Requests;
+namespace Ulams\Courses\Http\Requests;
 
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateTopicAPIRequest extends FormRequest

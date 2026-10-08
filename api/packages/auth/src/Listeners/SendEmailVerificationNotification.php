@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Auth\Listeners;
+namespace Ulams\Auth\Listeners;
 
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Auth\MustVerifyEmail;

@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Cart;
+namespace Ulams\TemplatesEmail\Cart;
 
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductProductable;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductProductable;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
 
 class ProductAttachedVariables extends CartVariables
 {

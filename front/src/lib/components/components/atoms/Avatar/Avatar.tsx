@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import styled, { withTheme } from "styled-components";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { AvatarTypesStr } from "../../../types/AvatarTypes";
 import { setAvatarBySize } from "../../../utils/components/primitives/avatarUtils";
 
@@ -24,7 +24,7 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
     <StyledAvatar
       {...props}
       size={size}
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
     />
   );
 };

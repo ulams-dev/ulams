@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Tests;
+namespace Ulams\Questionnaire\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
-use EscolaLms\Questionnaire\EscolaLmsQuestionnaireServiceProvider;
-use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Categories\UlamsCategoriesServiceProvider;
+use Ulams\Core\Models\User;
+use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\Questionnaire\UlamsQuestionnaireServiceProvider;
+use Ulams\Scorm\UlamsScormServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     use DatabaseTransactions;
 
@@ -18,11 +18,11 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsQuestionnaireServiceProvider::class,
-            EscolaLmsCourseServiceProvider::class,
-            EscolaLmsCategoriesServiceProvider::class,
-            EscolaLmsScormServiceProvider::class,
-            EscolaLmsAuthServiceProvider::class,
+            UlamsQuestionnaireServiceProvider::class,
+            UlamsCourseServiceProvider::class,
+            UlamsCategoriesServiceProvider::class,
+            UlamsScormServiceProvider::class,
+            UlamsAuthServiceProvider::class,
         ];
     }
 

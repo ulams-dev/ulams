@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Consultations\Http\Resources;
+namespace Ulams\Consultations\Http\Resources;
 
-use EscolaLms\Auth\Traits\ResourceExtandable;
-use EscolaLms\Consultations\Services\Contracts\ConsultationServiceContract;
+use Ulams\Auth\Traits\ResourceExtandable;
+use Ulams\Consultations\Services\Contracts\ConsultationServiceContract;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
 

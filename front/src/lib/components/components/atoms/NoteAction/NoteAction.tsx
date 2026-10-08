@@ -2,7 +2,7 @@ import * as React from "react";
 import { ReactNode } from "react";
 import styled from "styled-components";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface StyledNoteProps extends ExtendableStyledComponent {
   color?: string;
@@ -43,7 +43,7 @@ const StyledNote = styled("div")<StyledNoteProps>`
 export const NoteAction: React.FC<NoteProps> = (props) => {
   const { title, subtitle, color, actions, className = "" } = props;
   return (
-    <StyledNote className={`wellms-component ${className}`} color={color}>
+    <StyledNote className={`ulams-component ${className}`} color={color}>
       <div>
         <div>{title}</div>
         {subtitle && <div className={"subtitle"}>{subtitle}</div>}

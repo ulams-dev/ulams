@@ -4,7 +4,7 @@ import {
   getQuestionnaire,
   getQuestionnaireModels,
   updateQuestionare,
-} from '@/services/escola-lms/questionnaire';
+} from '@/services/ulams/questionnaire';
 import ProCard from '@ant-design/pro-card';
 import ProForm, {
   ProFormDigit,

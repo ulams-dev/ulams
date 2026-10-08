@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Strategies;
+namespace Ulams\TopicTypeGift\Strategies;
 
-use EscolaLms\TopicTypeGift\Enum\QuestionTypeEnum;
-use EscolaLms\TopicTypeGift\Exceptions\UnknownGiftTypeException;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Strategies\Contracts\QuestionStrategyContract;
+use Ulams\TopicTypeGift\Enum\QuestionTypeEnum;
+use Ulams\TopicTypeGift\Exceptions\UnknownGiftTypeException;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Strategies\Contracts\QuestionStrategyContract;
 
 final class GiftQuestionStrategyFactory
 {

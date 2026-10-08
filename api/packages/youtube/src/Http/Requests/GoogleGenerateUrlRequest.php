@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Youtube\Http\Requests;
+namespace Ulams\Youtube\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

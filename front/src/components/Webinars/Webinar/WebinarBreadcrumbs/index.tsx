@@ -1,13 +1,13 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import Breadcrumbs from "@/components/Common/Breadcrumbs";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import routeRoutes from "@/components/Routes/routes";
 
 const WebinarBreadcrumbs = () => {
-  const { webinar } = useContext(EscolaLMSContext);
+  const { webinar } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   if (!webinar.value) {

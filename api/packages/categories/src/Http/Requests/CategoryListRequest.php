@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Categories\Http\Requests;
+namespace Ulams\Categories\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;

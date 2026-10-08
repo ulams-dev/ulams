@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Facades;
+namespace Ulams\TopicTypes\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

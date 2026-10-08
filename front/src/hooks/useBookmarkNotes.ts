@@ -1,7 +1,7 @@
 import { useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
-import { API } from "@lms/sdk";
+import { UlamsContext } from "@ulams/sdk/react/context";
+import { API } from "@ulams/sdk";
 import { toast } from "@/utils/toast";
 
 interface Props {
@@ -22,7 +22,7 @@ Props) => {
     fetchBookmarkNotes,
     createBookmarkNote,
     deleteBookmarkNote,
-  } = useContext(EscolaLMSContext);
+  } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   const topicBookmark = useMemo(

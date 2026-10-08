@@ -13,10 +13,10 @@ import {
   updateLesson as apiUpdateLesson,
   updateTopic as apiUpdateTopic,
   program,
-} from '@/services/escola-lms/course';
+} from '@/services/ulams/course';
 
-import { TopicType } from '@/services/escola-lms/enums';
-import { fields } from '@/services/escola-lms/fields';
+import { TopicType } from '@/services/ulams/enums';
+import { fields } from '@/services/ulams/fields';
 import type { UploadChangeParam } from 'antd/lib/upload';
 
 type CurrentEditMode =
@@ -198,7 +198,7 @@ export const AppContext: React.FC<{ children: React.ReactNode; id: number }> = (
 
   const getAssistantId = useCallback(async () => {
     const res = await fields({
-      class_type: 'EscolaLms\\Courses\\Models\\Lesson',
+      class_type: 'Ulams\\Courses\\Models\\Lesson',
     });
     if (res.success) {
       const foundAssistantId = res.data.find(({ name }) => name === 'assistant_id');

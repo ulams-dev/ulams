@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Providers;
+namespace Ulams\TemplatesEmail\Providers;
 
-use EscolaLms\Payments\Events\PaymentCancelled;
-use EscolaLms\Payments\Events\PaymentFailed;
-use EscolaLms\Payments\Events\PaymentRegistered;
-use EscolaLms\Payments\Events\PaymentSuccess;
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
-use EscolaLms\TemplatesEmail\Payments\PaymentCanceledVariables;
-use EscolaLms\TemplatesEmail\Payments\PaymentFailedVariables;
-use EscolaLms\TemplatesEmail\Payments\PaymentRegisteredVariables;
-use EscolaLms\TemplatesEmail\Payments\PaymentSuccessVariables;
+use Ulams\Payments\Events\PaymentCancelled;
+use Ulams\Payments\Events\PaymentFailed;
+use Ulams\Payments\Events\PaymentRegistered;
+use Ulams\Payments\Events\PaymentSuccess;
+use Ulams\Templates\Facades\Template;
+use Ulams\TemplatesEmail\Core\EmailChannel;
+use Ulams\TemplatesEmail\Payments\PaymentCanceledVariables;
+use Ulams\TemplatesEmail\Payments\PaymentFailedVariables;
+use Ulams\TemplatesEmail\Payments\PaymentRegisteredVariables;
+use Ulams\TemplatesEmail\Payments\PaymentSuccessVariables;
 use Illuminate\Support\ServiceProvider;
 
 class PaymentsTemplatesServiceProvider extends ServiceProvider

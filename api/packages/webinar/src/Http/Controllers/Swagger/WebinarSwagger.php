@@ -1,13 +1,13 @@
 <?php
-namespace EscolaLms\Webinar\Http\Controllers\Swagger;
+namespace Ulams\Webinar\Http\Controllers\Swagger;
 
-use EscolaLms\Webinar\Http\Requests\DeleteWebinarRequest;
-use EscolaLms\Webinar\Http\Requests\ShowWebinarRequest;
-use EscolaLms\Webinar\Http\Requests\StoreWebinarRequest;
-use EscolaLms\Webinar\Http\Requests\UpdateWebinarRequest;
-use EscolaLms\Webinar\Http\Requests\ListWebinarsRequest;
-use EscolaLms\Webinar\Http\Requests\WebinarAssignableUserListRequest;
-use EscolaLms\Webinar\Http\Requests\WebinarUserRequest;
+use Ulams\Webinar\Http\Requests\DeleteWebinarRequest;
+use Ulams\Webinar\Http\Requests\ShowWebinarRequest;
+use Ulams\Webinar\Http\Requests\StoreWebinarRequest;
+use Ulams\Webinar\Http\Requests\UpdateWebinarRequest;
+use Ulams\Webinar\Http\Requests\ListWebinarsRequest;
+use Ulams\Webinar\Http\Requests\WebinarAssignableUserListRequest;
+use Ulams\Webinar\Http\Requests\WebinarUserRequest;
 use Illuminate\Http\JsonResponse;
 
 interface WebinarSwagger

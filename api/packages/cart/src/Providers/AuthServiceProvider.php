@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Cart\Providers;
+namespace Ulams\Cart\Providers;
 
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Policies\OrderPolicy;
-use EscolaLms\Cart\Policies\ProductPolicy;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Policies\OrderPolicy;
+use Ulams\Cart\Policies\ProductPolicy;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;

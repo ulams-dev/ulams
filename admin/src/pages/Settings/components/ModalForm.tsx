@@ -10,7 +10,7 @@ import ProForm, {
 import { AutoComplete, Button, Form, Input } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { setting } from '@/services/escola-lms/settings';
+import { setting } from '@/services/ulams/settings';
 import { FormattedMessage, useIntl } from 'umi';
 
 import FilesBrowser from '@/components/FilesBrowser';

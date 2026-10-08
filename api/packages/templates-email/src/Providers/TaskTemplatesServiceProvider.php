@@ -1,21 +1,21 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Providers;
+namespace Ulams\TemplatesEmail\Providers;
 
-use EscolaLms\Tasks\Events\TaskAssignedEvent;
-use EscolaLms\Tasks\Events\TaskCompleteRequestEvent;
-use EscolaLms\Tasks\Events\TaskCompleteUserConfirmationEvent;
-use EscolaLms\Tasks\Events\TaskIncompleteEvent;
-use EscolaLms\Tasks\Events\TaskNoteCreatedEvent;
-use EscolaLms\Tasks\Events\TaskOverdueEvent;
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
-use EscolaLms\TemplatesEmail\Tasks\TaskAssignedVariables;
-use EscolaLms\TemplatesEmail\Tasks\TaskCompleteRequestVariables;
-use EscolaLms\TemplatesEmail\Tasks\TaskCompleteUserConfirmationVariables;
-use EscolaLms\TemplatesEmail\Tasks\TaskIncompleteVariables;
-use EscolaLms\TemplatesEmail\Tasks\TaskNoteCreatedVariables;
-use EscolaLms\TemplatesEmail\Tasks\TaskOverdueVariables;
+use Ulams\Tasks\Events\TaskAssignedEvent;
+use Ulams\Tasks\Events\TaskCompleteRequestEvent;
+use Ulams\Tasks\Events\TaskCompleteUserConfirmationEvent;
+use Ulams\Tasks\Events\TaskIncompleteEvent;
+use Ulams\Tasks\Events\TaskNoteCreatedEvent;
+use Ulams\Tasks\Events\TaskOverdueEvent;
+use Ulams\Templates\Facades\Template;
+use Ulams\TemplatesEmail\Core\EmailChannel;
+use Ulams\TemplatesEmail\Tasks\TaskAssignedVariables;
+use Ulams\TemplatesEmail\Tasks\TaskCompleteRequestVariables;
+use Ulams\TemplatesEmail\Tasks\TaskCompleteUserConfirmationVariables;
+use Ulams\TemplatesEmail\Tasks\TaskIncompleteVariables;
+use Ulams\TemplatesEmail\Tasks\TaskNoteCreatedVariables;
+use Ulams\TemplatesEmail\Tasks\TaskOverdueVariables;
 use Illuminate\Support\ServiceProvider;
 
 class TaskTemplatesServiceProvider extends ServiceProvider

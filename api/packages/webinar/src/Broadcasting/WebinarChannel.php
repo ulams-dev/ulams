@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Webinar\Broadcasting;
+namespace Ulams\Webinar\Broadcasting;
 
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class WebinarChannel

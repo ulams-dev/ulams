@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { API } from "@lms/sdk";
-import Button from "@lms/components/components/atoms/Button/Button";
+import { API } from "@ulams/sdk";
+import Button from "@ulams/components/components/atoms/Button/Button";
 import { Link } from "react-router-dom";
 
 interface Props {

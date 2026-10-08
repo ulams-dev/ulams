@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Cart\Tests\Commands;
+namespace Ulams\Cart\Tests\Commands;
 
-use EscolaLms\Cart\Console\Commands\AbandonedCart;
-use EscolaLms\Cart\Database\Seeders\CartPermissionSeeder;
-use EscolaLms\Cart\Events\AbandonedCartEvent;
-use EscolaLms\Cart\Facades\Shop;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductProductable;
-use EscolaLms\Cart\Tests\Mocks\ExampleProductable;
-use EscolaLms\Cart\Tests\TestCase;
-use EscolaLms\Cart\Tests\Traits\CreatesPaymentMethods;
-use EscolaLms\Core\Enums\UserRole;
+use Ulams\Cart\Console\Commands\AbandonedCart;
+use Ulams\Cart\Database\Seeders\CartPermissionSeeder;
+use Ulams\Cart\Events\AbandonedCartEvent;
+use Ulams\Cart\Facades\Shop;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductProductable;
+use Ulams\Cart\Tests\Mocks\ExampleProductable;
+use Ulams\Cart\Tests\TestCase;
+use Ulams\Cart\Tests\Traits\CreatesPaymentMethods;
+use Ulams\Core\Enums\UserRole;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 

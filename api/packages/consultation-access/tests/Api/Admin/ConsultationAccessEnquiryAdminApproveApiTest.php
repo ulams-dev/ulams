@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Tests\Api\Admin;
+namespace Ulams\ConsultationAccess\Tests\Api\Admin;
 
-use EscolaLms\ConsultationAccess\Database\Seeders\ConsultationAccessPermissionSeeder;
-use EscolaLms\ConsultationAccess\Enum\EnquiryStatusEnum;
-use EscolaLms\ConsultationAccess\Enum\MeetingLinkTypeEnum;
-use EscolaLms\ConsultationAccess\Jobs\CreatePencilSpaceJob;
-use EscolaLms\ConsultationAccess\Models\Consultation;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
-use EscolaLms\ConsultationAccess\Tests\TestCase;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\ConsultationAccess\Database\Seeders\ConsultationAccessPermissionSeeder;
+use Ulams\ConsultationAccess\Enum\EnquiryStatusEnum;
+use Ulams\ConsultationAccess\Enum\MeetingLinkTypeEnum;
+use Ulams\ConsultationAccess\Jobs\CreatePencilSpaceJob;
+use Ulams\ConsultationAccess\Models\Consultation;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
+use Ulams\ConsultationAccess\Tests\TestCase;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Support\Facades\Bus;
 
 class ConsultationAccessEnquiryAdminApproveApiTest extends TestCase

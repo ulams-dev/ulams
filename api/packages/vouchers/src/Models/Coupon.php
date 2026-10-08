@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Vouchers\Models;
+namespace Ulams\Vouchers\Models;
 
-use EscolaLms\Payments\Services\PaymentsService;
-use EscolaLms\Vouchers\Database\Factories\CouponFactory;
-use EscolaLms\Vouchers\Enums\CouponTypeEnum;
-use EscolaLms\Vouchers\Models\Product;
+use Ulams\Payments\Services\PaymentsService;
+use Ulams\Vouchers\Database\Factories\CouponFactory;
+use Ulams\Vouchers\Enums\CouponTypeEnum;
+use Ulams\Vouchers\Models\Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 use NumberFormatter;
 
 /**
- * EscolaLms\Vouchers\Models\Coupon
+ * Ulams\Vouchers\Models\Coupon
  *
  * @OA\Schema (
  *      schema="Coupon",
@@ -128,26 +128,26 @@ use NumberFormatter;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property bool $exclude_promotions
  * @property int $value
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Vouchers\Models\Cart[] $carts
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Vouchers\Models\Cart[] $carts
  * @property-read int|null $carts_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Vouchers\Models\Category[] $categories
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Vouchers\Models\Category[] $categories
  * @property-read int|null $categories_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Vouchers\Models\Category[] $excludedCategories
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Vouchers\Models\Category[] $excludedCategories
  * @property-read int|null $excluded_categories_count
  * @property-read \Illuminate\Database\Eloquent\Collection|Product[] $excludedProducts
  * @property-read int|null $excluded_products_count
  * @property-read string $value_string
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Vouchers\Models\Category[] $includedCategories
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Vouchers\Models\Category[] $includedCategories
  * @property-read int|null $included_categories_count
  * @property-read \Illuminate\Database\Eloquent\Collection|Product[] $includedProducts
  * @property-read int|null $included_products_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Vouchers\Models\Order[] $orders
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Vouchers\Models\Order[] $orders
  * @property-read int|null $orders_count
  * @property-read \Illuminate\Database\Eloquent\Collection|Product[] $products
  * @property-read int|null $products_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Vouchers\Models\User[] $users
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Vouchers\Models\User[] $users
  * @property-read int|null $users_count
- * @method static \EscolaLms\Vouchers\Database\Factories\CouponFactory factory(...$parameters)
+ * @method static \Ulams\Vouchers\Database\Factories\CouponFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon query()

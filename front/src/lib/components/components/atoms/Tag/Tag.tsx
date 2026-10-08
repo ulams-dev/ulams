@@ -1,6 +1,6 @@
 import type * as React from "react";
 import styled, { withTheme } from "styled-components";
-import type { ExtendableStyledComponent } from "@lms/components/types/component";
+import type { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { getFontFromTheme } from "../../../theme/provider";
 
@@ -64,7 +64,7 @@ export const Tag: React.FC<LinkProps> = (props) => {
     <StyledSpan
       {...props}
       isButton={isButton}
-      className={`wellms-component ${props.className ?? ""}`}
+      className={`ulams-component ${props.className ?? ""}`}
     >
       {props.children}
     </StyledSpan>

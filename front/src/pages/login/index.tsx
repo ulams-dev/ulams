@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import { useHistory } from "react-router-dom";
 import Layout from "@/components/_App/Layout";
 import { isMobile } from "react-device-detect";
 import { useLocation } from "react-router-dom";
-import { ResetPasswordForm } from "@lms/components/components/organisms/ResetPasswordForm/ResetPasswordForm";
-import { LoginForm } from "@lms/components/components/organisms/LoginForm/LoginForm";
+import { ResetPasswordForm } from "@ulams/components/components/organisms/ResetPasswordForm/ResetPasswordForm";
+import { LoginForm } from "@ulams/components/components/organisms/LoginForm/LoginForm";
 import { useTranslation } from "react-i18next";
 import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";
@@ -17,7 +17,7 @@ import { isMobilePlatform } from "@/utils/index";
 
 const Login = () => {
   const { search, state } = useLocation<{ referrer?: string }>();
-  const { user, socialAuthorize } = useContext(EscolaLMSContext);
+  const { user, socialAuthorize } = useContext(UlamsContext);
   const [view, setView] = useState<
     "login" | "forgotPassword" | "register" | "success"
   >("login");

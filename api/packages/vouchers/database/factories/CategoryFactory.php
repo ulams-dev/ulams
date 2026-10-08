@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Vouchers\Database\Factories;
+namespace Ulams\Vouchers\Database\Factories;
 
-use Database\Factories\EscolaLms\Categories\Models\CategoryFactory as BaseCategoryFactory;
-use EscolaLms\Vouchers\Models\Category;
+use Database\Factories\Ulams\Categories\Models\CategoryFactory as BaseCategoryFactory;
+use Ulams\Vouchers\Models\Category;
 
 class CategoryFactory extends BaseCategoryFactory
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\ModelFields\Tests\TraitTest\Models;
+namespace Ulams\ModelFields\Tests\TraitTest\Models;
 
 use Illuminate\Database\Eloquent\Model;
-// use EscolaLms\ModelFields\Models\Model;
-use EscolaLms\ModelFields\Traits\ModelFields;
+// use Ulams\ModelFields\Models\Model;
+use Ulams\ModelFields\Traits\ModelFields;
 
 class User extends Model
 {

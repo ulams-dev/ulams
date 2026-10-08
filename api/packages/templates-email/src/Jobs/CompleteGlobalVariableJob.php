@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Jobs;
+namespace Ulams\TemplatesEmail\Jobs;
 
-use EscolaLms\Templates\Models\TemplateSection;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
+use Ulams\Templates\Models\TemplateSection;
+use Ulams\TemplatesEmail\Core\EmailChannel;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;

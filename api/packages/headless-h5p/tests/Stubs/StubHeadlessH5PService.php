@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Tests\Stubs;
+namespace Ulams\HeadlessH5P\Tests\Stubs;
 
-use EscolaLms\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
-use EscolaLms\HeadlessH5P\Repositories\H5PEditorStorageRepository;
-use EscolaLms\HeadlessH5P\Repositories\H5PFileStorageRepository;
-use EscolaLms\HeadlessH5P\Repositories\H5PRepository;
-use EscolaLms\HeadlessH5P\Services\HeadlessH5PService;
-use EscolaLms\HeadlessH5P\Repositories\H5PLibraryLanguageRepository;
+use Ulams\HeadlessH5P\Repositories\H5PEditorAjaxRepository;
+use Ulams\HeadlessH5P\Repositories\H5PEditorStorageRepository;
+use Ulams\HeadlessH5P\Repositories\H5PFileStorageRepository;
+use Ulams\HeadlessH5P\Repositories\H5PRepository;
+use Ulams\HeadlessH5P\Services\HeadlessH5PService;
+use Ulams\HeadlessH5P\Repositories\H5PLibraryLanguageRepository;
 use H5PContentValidator;
 use H5peditor;
 use H5PStorage;

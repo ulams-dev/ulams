@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Models\TopicContent;
+namespace Ulams\TopicTypes\Models\TopicContent;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -42,7 +42,7 @@ class OEmbed extends AbstractTopicContent
 
     protected static function newFactory()
     {
-        return \EscolaLms\TopicTypes\Database\Factories\TopicContent\OEmbedFactory::new();
+        return \Ulams\TopicTypes\Database\Factories\TopicContent\OEmbedFactory::new();
     }
 
     public function fixAssetPaths(): array

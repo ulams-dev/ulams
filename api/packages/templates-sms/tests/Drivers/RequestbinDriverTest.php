@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Tests\Drivers;
+namespace Ulams\TemplatesSms\Tests\Drivers;
 
-use EscolaLms\TemplatesSms\Enums\SmsDriversEnum;
-use EscolaLms\TemplatesSms\Facades\Sms;
-use EscolaLms\TemplatesSms\Tests\TestCase;
+use Ulams\TemplatesSms\Enums\SmsDriversEnum;
+use Ulams\TemplatesSms\Facades\Sms;
+use Ulams\TemplatesSms\Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Config;

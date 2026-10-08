@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Scorm\Http\Controllers\Swagger;
+namespace Ulams\Scorm\Http\Controllers\Swagger;
 
-use EscolaLms\Scorm\Http\Requests\GetScormTrackRequest;
-use EscolaLms\Scorm\Http\Requests\ScormCreateRequest;
-use EscolaLms\Scorm\Http\Requests\SetScormTrackRequest;
+use Ulams\Scorm\Http\Requests\GetScormTrackRequest;
+use Ulams\Scorm\Http\Requests\ScormCreateRequest;
+use Ulams\Scorm\Http\Requests\SetScormTrackRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

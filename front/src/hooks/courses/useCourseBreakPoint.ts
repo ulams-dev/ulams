@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { API } from "@lms/sdk";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { API } from "@ulams/sdk";
+import { UlamsContext } from "@ulams/sdk/react/context";
 
 interface Props {
   courseId: number | undefined;
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const useCourseBreakPoint = ({ courseId, program, topic }: Props) => {
-  const { courseProgressDetails, progress } = useContext(EscolaLMSContext);
+  const { courseProgressDetails, progress } = useContext(UlamsContext);
   const location = useLocation();
   const { push } = useHistory();
   // if pathname contain 3 splited items we cannot fire topicbreakpoint effect otherwise we can

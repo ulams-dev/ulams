@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Mocks\ExampleEntity;
+namespace Ulams\Core\Tests\Mocks\ExampleEntity;
 
 use Illuminate\Support\ServiceProvider;
 

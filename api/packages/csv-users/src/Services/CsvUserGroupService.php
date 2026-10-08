@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Services;
+namespace Ulams\CsvUsers\Services;
 
-use EscolaLms\Auth\Repositories\Contracts\UserGroupRepositoryContract;
-use EscolaLms\CsvUsers\Services\Contracts\CsvUserGroupServiceContract;
+use Ulams\Auth\Repositories\Contracts\UserGroupRepositoryContract;
+use Ulams\CsvUsers\Services\Contracts\CsvUserGroupServiceContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 

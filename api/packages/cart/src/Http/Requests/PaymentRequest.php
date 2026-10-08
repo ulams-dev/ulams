@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests;
+namespace Ulams\Cart\Http\Requests;
 
-use EscolaLms\Cart\Dtos\ClientDetailsDto;
-use EscolaLms\Cart\Enums\CartPermissionsEnum;
-use EscolaLms\Cart\Models\User;
+use Ulams\Cart\Dtos\ClientDetailsDto;
+use Ulams\Cart\Enums\CartPermissionsEnum;
+use Ulams\Cart\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 abstract class PaymentRequest extends FormRequest

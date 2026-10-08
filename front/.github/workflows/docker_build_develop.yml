@@ -36,9 +36,9 @@ jobs:
         uses: getsentry/action-release@v1
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: escolasoft
-          SENTRY_PROJECT: wellms-front
-          SENTRY_URL: https://escolasoft.sentry.io
+          SENTRY_ORG: ulams
+          SENTRY_PROJECT: ulams-front
+          SENTRY_URL: https://ulams.sentry.io
         with:
           environment: production
           sourcemaps: ./front/dist
@@ -69,7 +69,7 @@ jobs:
           push: true
           # Cannot be built at the moment https://github.com/nodejs/docker-node/issues/1335
           # platforms: linux/amd64,linux/arm64
-          tags: escolalms/demo:dev
+          tags: ulams/demo:dev
           build-args: |
             APP_VERSION=dev
             NODE_VERSION=20.18.1

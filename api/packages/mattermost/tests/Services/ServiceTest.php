@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Mattermost\Tests\Services;
+namespace Ulams\Mattermost\Tests\Services;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Mattermost\Enum\MattermostRoleEnum;
-use EscolaLms\Mattermost\Tests\TestCase;
-use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
-use EscolaLms\Webinar\Tests\Mocks\YTLiveDtoMock;
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Mattermost\Enum\MattermostRoleEnum;
+use Ulams\Mattermost\Tests\TestCase;
+use Ulams\Webinar\Services\Contracts\WebinarServiceContract;
+use Ulams\Webinar\Tests\Mocks\YTLiveDtoMock;
+use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use GuzzleHttp\Psr7\Response;
-use EscolaLms\Mattermost\Services\Contracts\MattermostServiceContract;
+use Ulams\Mattermost\Services\Contracts\MattermostServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Mockery\MockInterface;
 
@@ -31,7 +31,7 @@ class ServiceTest extends TestCase
     {
         $this->mock->reset();
         $this->mock->append(new Response(200, ['Token' => 'Token'], 'Hello, World'));
-        if (class_exists(\EscolaLms\Webinar\EscolaLmsWebinarServiceProvider::class)) {
+        if (class_exists(\Ulams\Webinar\UlamsWebinarServiceProvider::class)) {
             $this->mock(YoutubeServiceContract::class, function (MockInterface $mock) {
                 $mock->shouldReceive('generateYTStream')->zeroOrMoreTimes()->andReturn(new YTLiveDtoMock());
             });

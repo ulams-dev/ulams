@@ -7,8 +7,8 @@ import React, {
   useEffect,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextPaginatedMetaState,
 } from "./types";
 import { defaultConfig } from "./defaults";
@@ -20,7 +20,7 @@ import { getDefaultData } from "./index";
 import { consultations as getConsultations } from "./../../services/consultations";
 
 export const ConsultationsContext: React.Context<
-  Pick<EscolaLMSContextConfig, "consultations" | "fetchConsultations">
+  Pick<UlamsContextConfig, "consultations" | "fetchConsultations">
 > = createContext({
   consultations: defaultConfig.consultations,
   fetchConsultations: defaultConfig.fetchConsultations,
@@ -28,7 +28,7 @@ export const ConsultationsContext: React.Context<
 
 export interface ConsultationsContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "consultations">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "consultations">>;
   ssrHydration?: boolean;
 }
 

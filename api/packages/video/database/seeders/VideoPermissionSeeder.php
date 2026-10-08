@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Video\Database\Seeders;
+namespace Ulams\Video\Database\Seeders;
 
-use EscolaLms\Video\Enums\VideoPermissionEnum;
+use Ulams\Video\Enums\VideoPermissionEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

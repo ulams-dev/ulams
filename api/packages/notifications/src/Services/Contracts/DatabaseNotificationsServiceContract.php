@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Notifications\Services\Contracts;
+namespace Ulams\Notifications\Services\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Notifications\Dtos\NotificationsFilterCriteriaDto;
-use EscolaLms\Notifications\Dtos\PageDto;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Models\User;
+use Ulams\Notifications\Dtos\NotificationsFilterCriteriaDto;
+use Ulams\Notifications\Dtos\PageDto;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface DatabaseNotificationsServiceContract

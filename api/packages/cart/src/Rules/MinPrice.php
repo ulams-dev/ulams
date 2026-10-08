@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cart\Rules;
+namespace Ulams\Cart\Rules;
 
-use EscolaLms\Cart\EscolaLmsCartServiceProvider;
+use Ulams\Cart\UlamsCartServiceProvider;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Config;
 
@@ -11,7 +11,7 @@ class MinPrice implements Rule
     protected int $min;
     public function __construct()
     {
-        $this->min = Config::get(EscolaLmsCartServiceProvider::CONFIG_KEY . '.min_product_price', 0);
+        $this->min = Config::get(UlamsCartServiceProvider::CONFIG_KEY . '.min_product_price', 0);
     }
 
     public function passes($attribute, $value): bool

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Swagger\Admin;
+namespace Ulams\Cart\Http\Swagger\Admin;
 
-use EscolaLms\Cart\Http\Requests\Admin\OrderExportRequest;
-use EscolaLms\Cart\Http\Requests\Admin\OrderSearchRequest;
-use EscolaLms\Cart\Http\Requests\OrderViewRequest;
+use Ulams\Cart\Http\Requests\Admin\OrderExportRequest;
+use Ulams\Cart\Http\Requests\Admin\OrderSearchRequest;
+use Ulams\Cart\Http\Requests\OrderViewRequest;
 
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;

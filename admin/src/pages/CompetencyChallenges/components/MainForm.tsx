@@ -15,8 +15,8 @@ import WysiwygMarkdown from '@/components/WysiwygMarkdown';
 import {
   createCompetencyChallenge,
   updateCompetencyChallenge,
-} from '@/services/escola-lms/competency-challenges';
-import { CompetencyChallengeType } from '@/services/escola-lms/enums';
+} from '@/services/ulams/competency-challenges';
+import { CompetencyChallengeType } from '@/services/ulams/enums';
 import { useCompetencyChallengeContext } from '../context';
 
 const typeOptions = Object.values(CompetencyChallengeType).map((value) => ({

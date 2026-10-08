@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Categories\Models;
+namespace Ulams\Categories\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -87,7 +87,7 @@ class Category extends Model
 
     public function courses(): BelongsToMany
     {
-        return $this->belongsToMany(\EscolaLms\Courses\Models\Course::class);
+        return $this->belongsToMany(\Ulams\Courses\Models\Course::class);
     }
 
     public function getNameWithBreadcrumbsAttribute(): string

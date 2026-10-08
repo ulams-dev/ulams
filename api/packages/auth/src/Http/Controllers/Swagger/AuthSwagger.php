@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers\Swagger;
+namespace Ulams\Auth\Http\Controllers\Swagger;
 
-use EscolaLms\Auth\Http\Requests\CompleteSocialDataRequest;
-use EscolaLms\Auth\Http\Requests\ForgotPasswordRequest;
-use EscolaLms\Auth\Http\Requests\RefreshTokenRequest;
-use EscolaLms\Auth\Http\Requests\ResendVerificationEmailRequest;
-use EscolaLms\Auth\Http\Requests\ResetPasswordRequest;
-use EscolaLms\Auth\Http\Requests\SocialAuthRequest;
-use EscolaLms\Auth\Services\Contracts\UserGroupServiceContract;
+use Ulams\Auth\Http\Requests\CompleteSocialDataRequest;
+use Ulams\Auth\Http\Requests\ForgotPasswordRequest;
+use Ulams\Auth\Http\Requests\RefreshTokenRequest;
+use Ulams\Auth\Http\Requests\ResendVerificationEmailRequest;
+use Ulams\Auth\Http\Requests\ResetPasswordRequest;
+use Ulams\Auth\Http\Requests\SocialAuthRequest;
+use Ulams\Auth\Services\Contracts\UserGroupServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -25,12 +25,12 @@ interface AuthSwagger
      *             @OA\Property(
      *                 property="email",
      *                 type="string",
-     *                 example="user@escola-lms.com",
+     *                 example="user@ulams.com",
      *             ),
      *             @OA\Property(
      *                 property="return_url",
      *                 type="string",
-     *                 example="https://escolalms.com/password-reset",
+     *                 example="https://ulams.app/password-reset",
      *             ),
      *         )
      *     ),
@@ -55,7 +55,7 @@ interface AuthSwagger
      *             @OA\Property(
      *                 property="email",
      *                 type="string",
-     *                 example="user@escola-lms.com",
+     *                 example="user@ulams.com",
      *             ),
      *             @OA\Property(
      *                 property="token",
@@ -119,7 +119,7 @@ interface AuthSwagger
      *          in="query",
      *          @OA\Schema(
      *              type="string",
-     *              example="https://escolalms.com/auth/return",
+     *              example="https://ulams.app/auth/return",
      *          ),
      *      ),
      *     @OA\Response(
@@ -176,12 +176,12 @@ interface AuthSwagger
      *             @OA\Property(
      *                 property="email",
      *                 type="string",
-     *                 example="user@escola-lms.com",
+     *                 example="user@ulams.com",
      *             ),
      *             @OA\Property(
      *                 property="return_url",
      *                 type="string",
-     *                 example="https://escolalms.com/email/verify",
+     *                 example="https://ulams.app/email/verify",
      *             ),
      *         )
      *     ),
@@ -238,12 +238,12 @@ interface AuthSwagger
      *             @OA\Property(
      *                 property="email",
      *                 type="string",
-     *                 example="user@escola-lms.com",
+     *                 example="user@ulams.com",
      *             ),
      *             @OA\Property(
      *                 property="return_url",
      *                 type="string",
-     *                 example="https://escolalms.com/email/verify",
+     *                 example="https://ulams.app/email/verify",
      *             ),
      *         )
      *     ),

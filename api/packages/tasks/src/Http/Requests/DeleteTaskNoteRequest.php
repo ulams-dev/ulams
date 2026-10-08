@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Requests;
+namespace Ulams\Tasks\Http\Requests;
 
-use EscolaLms\Tasks\Dtos\CreateTaskNoteDto;
-use EscolaLms\Tasks\Models\TaskNote;
+use Ulams\Tasks\Dtos\CreateTaskNoteDto;
+use Ulams\Tasks\Models\TaskNote;
 use Illuminate\Support\Facades\Gate;
 
 class DeleteTaskNoteRequest extends TaskNoteRequest

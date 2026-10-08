@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Consultations;
+namespace Ulams\TemplatesSms\Consultations;
 
 class ApprovedTermWithTrainerVariables extends CommonConsultationVariables
 {

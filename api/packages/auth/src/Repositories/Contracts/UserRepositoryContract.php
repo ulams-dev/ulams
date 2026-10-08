@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Repositories\Contracts;
+namespace Ulams\Auth\Repositories\Contracts;
 
-use EscolaLms\Auth\Dtos\UserUpdateInterestsDto;
-use EscolaLms\Auth\Dtos\UserUpdateSettingsDto;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Auth\Dtos\UserUpdateInterestsDto;
+use Ulams\Auth\Dtos\UserUpdateSettingsDto;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as User;
 use Illuminate\Database\Eloquent\Collection;

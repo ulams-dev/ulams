@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Pages\Http\Controllers\Contracts;
+namespace Ulams\Pages\Http\Controllers\Contracts;
 
-use EscolaLms\Pages\Http\Requests\PageFrontListingRequest;
-use EscolaLms\Pages\Http\Requests\PageFrontReadRequest;
+use Ulams\Pages\Http\Requests\PageFrontListingRequest;
+use Ulams\Pages\Http\Requests\PageFrontReadRequest;
 use Illuminate\Http\JsonResponse;
 
 interface PagesApiContract

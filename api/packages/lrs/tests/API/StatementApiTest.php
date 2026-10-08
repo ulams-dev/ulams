@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Lrs\Tests\API;
+namespace Ulams\Lrs\Tests\API;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Lrs\Database\Seeders\LrsPermissionSeeder;
-use EscolaLms\Lrs\Database\Seeders\LrsSeeder;
-use EscolaLms\Lrs\Models\Statement;
-use EscolaLms\Lrs\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Lrs\Database\Seeders\LrsPermissionSeeder;
+use Ulams\Lrs\Database\Seeders\LrsSeeder;
+use Ulams\Lrs\Models\Statement;
+use Ulams\Lrs\Tests\TestCase;
 use Illuminate\Contracts\Auth\Authenticatable as AuthUser;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -274,7 +274,7 @@ class StatementApiTest extends TestCase
             'actor' => $actor ?? [
                 'objectType' => 'Agent',
                 'account' => [
-                    'homePage' => "https://escolalms.com",
+                    'homePage' => "https://ulams.app",
                     'name' => $this->faker->firstName . ' ' . $this->faker->lastName,
                 ]
             ],

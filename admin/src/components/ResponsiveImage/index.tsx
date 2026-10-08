@@ -30,7 +30,7 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     );
 
   return (
-    <div className="escolalms-image">
+    <div className="ulams-image">
       <Image src={src} srcSet={srcSet && srcSet.join(',')} alt={alt} {...props} />
     </div>
   );

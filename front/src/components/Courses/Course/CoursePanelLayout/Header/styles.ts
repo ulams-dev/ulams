@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { mediaQueriesMixin } from "src/style/mixins";
 
 export const CoursePanelHeaderWrapper = styled.header`

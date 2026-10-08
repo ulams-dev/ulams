@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Images\Providers;
+namespace Ulams\Images\Providers;
 
-use EscolaLms\Images\Events\File;
-use EscolaLms\Images\Events\FileDeleted;
-use EscolaLms\Images\Events\FileStored;
-use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
+use Ulams\Images\Events\File;
+use Ulams\Images\Events\FileDeleted;
+use Ulams\Images\Events\FileStored;
+use Ulams\Images\Services\Contracts\ImagesServiceContract;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 

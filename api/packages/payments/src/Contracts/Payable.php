@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Payments\Contracts;
+namespace Ulams\Payments\Contracts;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Payments\Enums\Currency;
-use EscolaLms\Payments\Entities\PaymentProcessor;
+use Ulams\Core\Models\User;
+use Ulams\Payments\Enums\Currency;
+use Ulams\Payments\Entities\PaymentProcessor;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 interface Payable

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\ValueObjects;
+namespace Ulams\BulkNotifications\ValueObjects;
 
-use EscolaLms\BulkNotifications\EscolaLmsBulkNotificationsServiceProvider;
-use EscolaLms\BulkNotifications\Models\BulkNotificationSection;
-use EscolaLms\BulkNotifications\Models\BulkNotificationUser;
+use Ulams\BulkNotifications\UlamsBulkNotificationsServiceProvider;
+use Ulams\BulkNotifications\Models\BulkNotificationSection;
+use Ulams\BulkNotifications\Models\BulkNotificationUser;
 use Illuminate\Support\Collection;
 
 class PushNotification extends Notification
@@ -74,7 +74,7 @@ class PushNotification extends Notification
 
     public function getRedirectUrlWithBasicUrl(): ?string
     {
-        $url = config(EscolaLmsBulkNotificationsServiceProvider::CONFIG_KEY . '.push.base_redirect_url');
+        $url = config(UlamsBulkNotificationsServiceProvider::CONFIG_KEY . '.push.base_redirect_url');
 
         return isset($url)
             ? rtrim($url, '/') . '/' . ltrim($this->redirectUrl, '/')

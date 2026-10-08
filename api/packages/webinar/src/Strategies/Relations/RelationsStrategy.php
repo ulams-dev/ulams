@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Webinar\Strategies\Relations;
+namespace Ulams\Webinar\Strategies\Relations;
 
-use EscolaLms\Webinar\Strategies\Contracts\RelationStrategyContract;
+use Ulams\Webinar\Strategies\Contracts\RelationStrategyContract;
 
 class RelationsStrategy
 {

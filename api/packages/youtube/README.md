@@ -2,21 +2,14 @@
 
 Package Youtube integration 
 
-[![codecov](https://codecov.io/gh/EscolaLMS/Youtube/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Youtube)
-[![phpunit](https://github.com/EscolaLMS/Youtube/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Youtube/actions/workflows/test.yml)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/youtube)](https://packagist.org/packages/escolalms/youtube)
-[![downloads](https://img.shields.io/packagist/v/escolalms/youtube)](https://packagist.org/packages/escolalms/youtube)
-[![downloads](https://img.shields.io/packagist/l/escolalms/youtube)](https://packagist.org/packages/escolalms/youtube)
-[![Maintainability](https://api.codeclimate.com/v1/badges/0fe584397e06ef32618f/maintainability)](https://codeclimate.com/github/EscolaLMS/Youtube/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/0fe584397e06ef32618f/test_coverage)](https://codeclimate.com/github/EscolaLMS/Youtube/test_coverage)
 
 ## What does it do
 
-This package is used for creating Youtube livestream for Webinar in EscolaLms.
+This package is used for creating Youtube livestream for Webinar in Ulams.
 
 ## Installing
 
-- `composer require escolalms/youtube`
+- `composer require ulams/youtube`
 - configure integration in https://console.cloud.google.com/
 
 ## Configuration in console cloude youtube
@@ -42,4 +35,4 @@ Or you can generated refresh token manual and enter for variable `services.youtu
 
 Run `./vendor/bin/phpunit --filter=Youtube` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
 
-Test details [![codecov](https://codecov.io/gh/EscolaLMS/Youtube/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Youtube) [![phpunit](https://github.com/EscolaLMS/Youtube/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Youtube/actions/workflows/test.yml)
+Test details [![codecov](https://codecov.io/gh/Ulams/Youtube/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Youtube) [![phpunit](https://github.com/EscolaLMS/Youtube/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Youtube/actions/workflows/test.yml)

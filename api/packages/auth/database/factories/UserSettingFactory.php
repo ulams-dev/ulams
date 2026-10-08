@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Factories\EscolaLms\Auth\Models;
+namespace Database\Factories\Ulams\Auth\Models;
 
-use EscolaLms\Auth\Models\UserSetting;
+use Ulams\Auth\Models\UserSetting;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

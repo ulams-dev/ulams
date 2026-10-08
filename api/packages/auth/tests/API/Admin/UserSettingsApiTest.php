@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Auth\Tests\API\Admin;
+namespace Ulams\Auth\Tests\API\Admin;
 
-use EscolaLms\Auth\Tests\TestCase;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\Auth\Tests\TestCase;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Models\UserSetting;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Models\UserSetting;
 
 class UserSettingsApiTest extends TestCase
 {

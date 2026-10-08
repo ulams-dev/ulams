@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Events;
+namespace Ulams\TopicTypeGift\Events;
 
 /**
  * Emitted when a fully graded attempt of a quiz flagged counts_to_grade is ready

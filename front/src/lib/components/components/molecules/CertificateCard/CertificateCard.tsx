@@ -1,4 +1,4 @@
-import { Certificate } from "@lms/sdk/types";
+import { Certificate } from "@ulams/sdk/types";
 import React from "react";
 import styled, { withTheme } from "styled-components";
 

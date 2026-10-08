@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Requests\Admin;
+namespace Ulams\Tasks\Http\Requests\Admin;
 
-use EscolaLms\Tasks\Dtos\AdminUpdateTaskDto;
-use EscolaLms\Tasks\Http\Requests\TaskRequest;
+use Ulams\Tasks\Dtos\AdminUpdateTaskDto;
+use Ulams\Tasks\Http\Requests\TaskRequest;
 use Illuminate\Support\Facades\Gate;
 
 class AdminUpdateTaskRequest extends TaskRequest

@@ -6,7 +6,7 @@ import format from "date-fns/format";
 import screenfull from "screenfull";
 import { findDOMNode } from "react-dom";
 import { useTranslation } from "react-i18next";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { t } from "i18next";
 
 interface StyledAudioVideoPlayerProps {
@@ -800,7 +800,7 @@ export const AudioVideoPlayer: React.FC<AudioVideoPlayerProps> = (props) => {
 
   return (
     <StyledAudioVideoPlayer
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
       state={audioVideoState}
       ref={refWrapper}
       audio={audio}

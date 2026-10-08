@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Tests\Feature;
+namespace Ulams\PencilSpaces\Tests\Feature;
 
-use EscolaLms\PencilSpaces\Facades\PencilSpace;
-use EscolaLms\PencilSpaces\Models\PencilSpaceAccount;
-use EscolaLms\PencilSpaces\Models\User;
-use EscolaLms\PencilSpaces\Resource\CreatePencilSpaceResource;
-use EscolaLms\PencilSpaces\Tests\TestCase;
+use Ulams\PencilSpaces\Facades\PencilSpace;
+use Ulams\PencilSpaces\Models\PencilSpaceAccount;
+use Ulams\PencilSpaces\Models\User;
+use Ulams\PencilSpaces\Resource\CreatePencilSpaceResource;
+use Ulams\PencilSpaces\Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 
 class PencilSpaceFacadeTest extends TestCase

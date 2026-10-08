@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Rules;
+namespace Ulams\Questionnaire\Rules;
 
-use EscolaLms\Questionnaire\Enums\QuestionTypeEnum;
-use EscolaLms\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Enums\QuestionTypeEnum;
+use Ulams\Questionnaire\Models\Question;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Database\Eloquent\Builder;
 

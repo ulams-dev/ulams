@@ -1,10 +1,10 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 
-import { EscolaLMSContext } from "@lms/sdk/react/context";
-import { Navigation } from "@lms/components/components/molecules/Navigation/Navigation";
-import { Avatar } from "@lms/components/components/atoms/Avatar/Avatar";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { SearchCourses } from "@lms/components/components/organisms/SearchCourses/SearchCourses";
+import { UlamsContext } from "@ulams/sdk/react/context";
+import { Navigation } from "@ulams/components/components/molecules/Navigation/Navigation";
+import { Avatar } from "@ulams/components/components/atoms/Avatar/Avatar";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { SearchCourses } from "@ulams/components/components/organisms/SearchCourses/SearchCourses";
 import { Link, NavLink, useHistory } from "react-router-dom";
 import styled, { useTheme } from "styled-components";
 import { isMobile } from "react-device-detect";
@@ -15,14 +15,14 @@ import {
   ProfileIcon,
 } from "../../../icons";
 import { useTranslation } from "react-i18next";
-import { Button } from "@lms/components/components/atoms/Button/Button";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
 import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";
-import { DropdownMenu } from "@lms/components";
-import { DropdownMenuItem } from "@lms/components/components/molecules/DropdownMenu/DropdownMenu";
+import { DropdownMenu } from "@ulams/components";
+import { DropdownMenuItem } from "@ulams/components/components/molecules/DropdownMenu/DropdownMenu";
 import NotificationsDrawer from "@/components/Notifications/drawer";
 import MobileDrawer from "@/components/_App/MobileDrawer";
-import { ResponsiveImage } from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
+import { ResponsiveImage } from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import useDeleteAccountModal from "@/hooks/useDeleteAccount";
 import DeleteAccountModal from "@/components/Authentication/DeleteAccountModal";
 import { isMobilePlatform } from "@/utils/index";
@@ -263,7 +263,7 @@ const Navbar = () => {
     logout,
     notifications,
     cart,
-  } = useContext(EscolaLMSContext);
+  } = useContext(UlamsContext);
   const user = userObj?.value;
   const history = useHistory();
   const theme = useTheme();
@@ -288,12 +288,12 @@ const Navbar = () => {
   }, [cart]);
 
   const getProperLogoPath = useMemo(() => {
-    const bucket = VITE_APP_PUBLIC_IMG_BUCKET_FOLDER.replace(/^\/|\/$/g, ""); // e.g. "/wellms" // -> "wellms"
+    const bucket = VITE_APP_PUBLIC_IMG_BUCKET_FOLDER.replace(/^\/|\/$/g, ""); // e.g. "/ulams" // -> "ulams"
 
     // Full link, e.g. "https://randomdomain/somefolder/folder/testimg.jpg"
     const url = settings?.value?.global?.logo;
 
-    // 1. Extract pathname: "/wellms/avatars/testimg.jpg"
+    // 1. Extract pathname: "/ulams/avatars/testimg.jpg"
     if (!url) return null;
     let relativePath: string;
     try {
@@ -310,7 +310,7 @@ const Navbar = () => {
     }
 
     // 2. Remove the bucket prefix
-    const bucketPrefix = `/${bucket}`; // "/wellms"
+    const bucketPrefix = `/${bucket}`; // "/ulams"
     if (relativePath.startsWith(bucketPrefix)) {
       relativePath = relativePath.slice(bucketPrefix.length);
     }

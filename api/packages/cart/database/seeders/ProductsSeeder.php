@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Cart\Database\Seeders;
+namespace Ulams\Cart\Database\Seeders;
 
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Cart\Facades\Shop;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductProductable;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Cart\Facades\Shop;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductProductable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Testing\WithFaker;

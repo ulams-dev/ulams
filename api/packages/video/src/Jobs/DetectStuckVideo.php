@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Video\Jobs;
+namespace Ulams\Video\Jobs;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Video\Enums\VideoProcessState;
-use EscolaLms\Video\Events\ProcessVideoFailed;
-use EscolaLms\Video\Models\Video;
-use EscolaLms\Video\Repositories\Contracts\VideoRepositoryContract;
+use Ulams\Auth\Models\User;
+use Ulams\Video\Enums\VideoProcessState;
+use Ulams\Video\Events\ProcessVideoFailed;
+use Ulams\Video\Models\Video;
+use Ulams\Video\Repositories\Contracts\VideoRepositoryContract;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

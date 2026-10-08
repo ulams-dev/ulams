@@ -7,8 +7,8 @@ import {
   useContext,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextPaginatedMetaState,
 } from "./types";
 import { defaultConfig } from "./defaults";
@@ -28,7 +28,7 @@ import { UserContext } from "./user";
 
 export const NotificationsContext: React.Context<
   Pick<
-    EscolaLMSContextConfig,
+    UlamsContextConfig,
     | "notifications"
     | "fetchNotifications"
     | "readNotify"
@@ -43,7 +43,7 @@ export const NotificationsContext: React.Context<
 
 export interface NotificationsContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "notifications">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "notifications">>;
   ssrHydration?: boolean;
 }
 

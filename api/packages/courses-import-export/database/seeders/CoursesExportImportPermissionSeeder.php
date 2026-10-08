@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Database\Seeders;
+namespace Ulams\CoursesImportExport\Database\Seeders;
 
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\CoursesImportExport\Enums\CoursesImportExportPermissionsEnum;
+use Ulams\Core\Enums\UserRole;
+use Ulams\CoursesImportExport\Enums\CoursesImportExportPermissionsEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

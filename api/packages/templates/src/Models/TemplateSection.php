@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Templates\Models;
+namespace Ulams\Templates\Models;
 
-use EscolaLms\Templates\Database\Factories\TemplateSectionFactory;
+use Ulams\Templates\Database\Factories\TemplateSectionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

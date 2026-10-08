@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Consultations;
+namespace Ulams\TemplatesEmail\Consultations;
 
-use EscolaLms\Consultations\Services\Contracts\ConsultationServiceContract;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Consultations\Services\Contracts\ConsultationServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
 
 class ReminderTrainerAboutTermVariables extends CommonConsultationVariables
 {

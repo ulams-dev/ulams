@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Core;
+namespace Ulams\TemplatesPdf\Core;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Contracts\TemplateVariableContract;
-use EscolaLms\Templates\Core\AbstractTemplateVariableClass;
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Contracts\TemplateVariableContract;
+use Ulams\Templates\Core\AbstractTemplateVariableClass;
+use Ulams\Templates\Events\EventWrapper;
 
 abstract class PdfVariables extends AbstractTemplateVariableClass implements TemplateVariableContract
 {

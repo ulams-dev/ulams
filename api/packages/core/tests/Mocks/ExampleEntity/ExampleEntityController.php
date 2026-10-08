@@ -1,14 +1,14 @@
 <?php
-namespace EscolaLms\Core\Tests\Mocks\ExampleEntity;
+namespace Ulams\Core\Tests\Mocks\ExampleEntity;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Dtos\PaginationDto;
-use EscolaLms\Core\Dtos\PeriodDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Dtos\PaginationDto;
+use Ulams\Core\Dtos\PeriodDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-class ExampleEntityController extends EscolaLmsBaseController
+class ExampleEntityController extends UlamsBaseController
 {
     private ExampleEntityService $service;
 

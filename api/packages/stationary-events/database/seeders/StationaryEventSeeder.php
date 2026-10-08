@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Database\Seeders;
+namespace Ulams\StationaryEvents\Database\Seeders;
 
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
+use Ulams\StationaryEvents\Models\StationaryEvent;
 use Illuminate\Database\Seeder;
 
 class StationaryEventSeeder extends Seeder

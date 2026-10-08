@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Courses\Repositories\Contracts;
+namespace Ulams\Courses\Repositories\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\User;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;

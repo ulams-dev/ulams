@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Tasks\Tests\Api;
+namespace Ulams\Tasks\Tests\Api;
 
 use Illuminate\Support\Carbon;
-use EscolaLms\Tasks\Database\Seeders\TaskPermissionSeeder;
-use EscolaLms\Tasks\Events\TaskAssignedEvent;
-use EscolaLms\Tasks\Tests\CreatesUsers;
-use EscolaLms\Tasks\Tests\TaskTesting;
-use EscolaLms\Tasks\Tests\TestCase;
+use Ulams\Tasks\Database\Seeders\TaskPermissionSeeder;
+use Ulams\Tasks\Events\TaskAssignedEvent;
+use Ulams\Tasks\Tests\CreatesUsers;
+use Ulams\Tasks\Tests\TaskTesting;
+use Ulams\Tasks\Tests\TestCase;
 use Illuminate\Support\Facades\Event;
 
 class TaskCreateApiTest extends TestCase

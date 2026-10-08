@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Cmi5\Tests\Traits;
+namespace Ulams\Cmi5\Tests\Traits;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -13,7 +13,7 @@ trait Cmi5Testing
     {
         $user = $this->makeAdmin();
         Passport::personalAccessTokensExpireIn(now()->addMonth());
-        return $user->createToken("EscolaLMS User Token")->accessToken;
+        return $user->createToken("Ulams User Token")->accessToken;
     }
 
     protected function getCmi5UploadedFile(string $fileName): UploadedFile

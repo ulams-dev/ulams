@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Translations\Repositories;
+namespace Ulams\Translations\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Translations\Models\LanguageLine;
-use EscolaLms\Translations\Repositories\Contracts\LanguageLineRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Translations\Models\LanguageLine;
+use Ulams\Translations\Repositories\Contracts\LanguageLineRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 
 class LanguageLineRepository extends BaseRepository implements LanguageLineRepositoryContract

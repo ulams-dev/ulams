@@ -1,23 +1,23 @@
 <?php
 
-namespace EscolaLms\Settings\Http\Controllers\Admin;
+namespace Ulams\Settings\Http\Controllers\Admin;
 
-// use EscolaLms\Settings\Http\Controllers\Swagger\LessonAPISwagger;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Settings\Http\Controllers\Admin\Swagger\SettingsControllerContract;
-use EscolaLms\Settings\Http\Requests\Admin\SettingsCreateRequest;
-use EscolaLms\Settings\Http\Requests\Admin\SettingsDeleteRequest;
-use EscolaLms\Settings\Http\Requests\Admin\SettingsListRequest;
-use EscolaLms\Settings\Http\Requests\Admin\SettingsReadRequest;
-use EscolaLms\Settings\Http\Requests\Admin\SettingsUpdateRequest;
-use EscolaLms\Settings\Http\Resources\SettingResource;
-use EscolaLms\Settings\Repositories\Contracts\SettingsRepositoryContract;
-use EscolaLms\Settings\Services\Contracts\SettingsServiceContract;
+// use Ulams\Settings\Http\Controllers\Swagger\LessonAPISwagger;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Settings\Http\Controllers\Admin\Swagger\SettingsControllerContract;
+use Ulams\Settings\Http\Requests\Admin\SettingsCreateRequest;
+use Ulams\Settings\Http\Requests\Admin\SettingsDeleteRequest;
+use Ulams\Settings\Http\Requests\Admin\SettingsListRequest;
+use Ulams\Settings\Http\Requests\Admin\SettingsReadRequest;
+use Ulams\Settings\Http\Requests\Admin\SettingsUpdateRequest;
+use Ulams\Settings\Http\Resources\SettingResource;
+use Ulams\Settings\Repositories\Contracts\SettingsRepositoryContract;
+use Ulams\Settings\Services\Contracts\SettingsServiceContract;
 
 use Error;
 use Illuminate\Http\JsonResponse;
 
-class SettingsController extends EscolaLmsBaseController implements SettingsControllerContract
+class SettingsController extends UlamsBaseController implements SettingsControllerContract
 {
     private SettingsRepositoryContract $repository;
     private SettingsServiceContract $service;

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { ThemeContext } from "styled-components";
 
 import { Icon } from "../../../atoms/Icon/Icon";

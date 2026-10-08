@@ -1,4 +1,4 @@
-import { getQuestionnaireRaport, questionnaireReport } from '@/services/escola-lms/questionnaire';
+import { getQuestionnaireRaport, questionnaireReport } from '@/services/ulams/questionnaire';
 import ProCard from '@ant-design/pro-card';
 import { Button, Select, Typography } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';

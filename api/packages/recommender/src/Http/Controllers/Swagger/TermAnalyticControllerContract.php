@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Recommender\Http\Controllers\Swagger;
+namespace Ulams\Recommender\Http\Controllers\Swagger;
 
-use EscolaLms\Recommender\Http\Requests\AggregatedFrameListRequest;
-use EscolaLms\Recommender\Http\Requests\TermAnalyticListRequest;
-use EscolaLms\Recommender\Http\Requests\TermAnalyticRequest;
+use Ulams\Recommender\Http\Requests\AggregatedFrameListRequest;
+use Ulams\Recommender\Http\Requests\TermAnalyticListRequest;
+use Ulams\Recommender\Http\Requests\TermAnalyticRequest;
 use Illuminate\Http\JsonResponse;
 
 interface TermAnalyticControllerContract

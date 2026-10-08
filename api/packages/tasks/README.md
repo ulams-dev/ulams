@@ -1,10 +1,4 @@
 # Tasks
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Tasks/)
-[![codecov](https://codecov.io/gh/EscolaLMS/Tasks/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Tasks)
-[![phpunit](https://github.com/EscolaLMS/Tasks/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Tasks/actions/workflows/test.yml)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/Tasks)](https://packagist.org/packages/escolalms/Tasks)
-[![downloads](https://img.shields.io/packagist/v/escolalms/Tasks)](https://packagist.org/packages/escolalms/Tasks)
-[![downloads](https://img.shields.io/packagist/l/escolalms/Tasks)](https://packagist.org/packages/escolalms/Tasks)
 
 ## What does it do
 This package is used to manage user tasks. Users can create their own tasks or assign tasks to other system users.
@@ -20,9 +14,9 @@ By default, the reminder period is set to 30 days.
 No notifications will be sent for tasks older than 30 days.
 
 ## Installing
-- `composer require escolalms/tasks`
+- `composer require ulams/tasks`
 - `php artisan migrate`
-- `php artisan db:seed --class="EscolaLms\Tasks\Database\Seeders\TaskPermissionSeeder"`
+- `php artisan db:seed --class="Ulams\Tasks\Database\Seeders\TaskPermissionSeeder"`
 
 ## Configuration
 In the configuration, you can specify the period until when notifications about overdue tasks should be sent.
@@ -40,10 +34,8 @@ You can specify the parameter from the [config.php file](src/config.php) or [sys
 
 ## Endpoints
 All the endpoints are defined in swagger
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Tasks/)
 
 Test details
-[![codecov](https://codecov.io/gh/EscolaLMS/Tasks/branch/main/graph/badge.svg?token=O91FHNKI6R)](https://codecov.io/gh/EscolaLMS/Tasks)
 ![Tests PHPUnit in environments](https://github.com/EscolaLMS/Tasks/actions/workflows/test.yml/badge.svg)
 
 ## Events
@@ -56,7 +48,7 @@ Test details
 - `TaskUpdatedEvent` - The task has been updated.
 - `TaskNoteCreatedEvent` - A note for the task has been created.
 
-These events are listened to by the escolalms/templates-email package, which sends emails. Additionally, notifications are stored in database.
+These events are listened to by the ulams/templates-email package, which sends emails. Additionally, notifications are stored in database.
 
 ## Permissions
 Permissions are defined in [seeder](database/seeders/TaskPermissionSeeder.php)

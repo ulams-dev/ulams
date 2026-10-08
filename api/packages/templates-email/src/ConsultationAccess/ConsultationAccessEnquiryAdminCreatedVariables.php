@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\ConsultationAccess;
+namespace Ulams\TemplatesEmail\ConsultationAccess;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
 
 class ConsultationAccessEnquiryAdminCreatedVariables extends CommonConsultationAccessEnquiryVariables
 {

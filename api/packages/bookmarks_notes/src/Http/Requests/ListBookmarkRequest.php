@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Http\Requests;
+namespace Ulams\Bookmarks\Http\Requests;
 
-use EscolaLms\Bookmarks\Dtos\CriteriaDto;
-use EscolaLms\Bookmarks\Dtos\OrderDto;
-use EscolaLms\Bookmarks\Dtos\PageDto;
-use EscolaLms\Bookmarks\Models\Bookmark;
+use Ulams\Bookmarks\Dtos\CriteriaDto;
+use Ulams\Bookmarks\Dtos\OrderDto;
+use Ulams\Bookmarks\Dtos\PageDto;
+use Ulams\Bookmarks\Models\Bookmark;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

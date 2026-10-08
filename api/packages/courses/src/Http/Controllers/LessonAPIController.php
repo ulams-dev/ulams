@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Controllers;
+namespace Ulams\Courses\Http\Controllers;
 
-use EscolaLms\Courses\Http\Controllers\Swagger\LessonAPISwagger;
-use EscolaLms\Courses\Http\Requests\CloneLessonAPIRequest;
-use EscolaLms\Courses\Http\Requests\CreateLessonAPIRequest;
-use EscolaLms\Courses\Http\Requests\DeleteLessonAPIRequest;
-use EscolaLms\Courses\Http\Requests\GetLessonAPIRequest;
-use EscolaLms\Courses\Http\Requests\UpdateLessonAPIRequest;
-use EscolaLms\Courses\Http\Resources\Admin\LessonWithTopicsAdminResource;
-use EscolaLms\Courses\Http\Resources\LessonResource;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Repositories\LessonRepository;
-use EscolaLms\Courses\Services\Contracts\LessonServiceContract;
+use Ulams\Courses\Http\Controllers\Swagger\LessonAPISwagger;
+use Ulams\Courses\Http\Requests\CloneLessonAPIRequest;
+use Ulams\Courses\Http\Requests\CreateLessonAPIRequest;
+use Ulams\Courses\Http\Requests\DeleteLessonAPIRequest;
+use Ulams\Courses\Http\Requests\GetLessonAPIRequest;
+use Ulams\Courses\Http\Requests\UpdateLessonAPIRequest;
+use Ulams\Courses\Http\Resources\Admin\LessonWithTopicsAdminResource;
+use Ulams\Courses\Http\Resources\LessonResource;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Repositories\LessonRepository;
+use Ulams\Courses\Services\Contracts\LessonServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

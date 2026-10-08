@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Translations\Translations;
+namespace Ulams\Translations\Translations;
 
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Schema;

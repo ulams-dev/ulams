@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Models;
+namespace Ulams\StationaryEvents\Models;
 
-use EscolaLms\Auth\Models\User;
+use Ulams\Auth\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 

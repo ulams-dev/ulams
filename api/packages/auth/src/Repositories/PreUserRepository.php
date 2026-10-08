@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Repositories;
+namespace Ulams\Auth\Repositories;
 
-use EscolaLms\Auth\Models\PreUser;
-use EscolaLms\Auth\Repositories\Contracts\PreUserRepositoryContract;
-use EscolaLms\Core\Repositories\BaseRepository;
+use Ulams\Auth\Models\PreUser;
+use Ulams\Auth\Repositories\Contracts\PreUserRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
 
 class PreUserRepository extends BaseRepository implements PreUserRepositoryContract
 {

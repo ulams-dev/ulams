@@ -3,8 +3,8 @@ import ModelFields from '@/components/ModelFields';
 import { DATETIME_FORMAT, DAY_FORMAT } from '@/consts/dates';
 import useModelFields from '@/hooks/useModelFields';
 import { TabNames } from '@/pages/Consultations/form';
-import { consultations, deleteConsultation } from '@/services/escola-lms/consultations';
-import { FieldType } from '@/services/escola-lms/enums';
+import { consultations, deleteConsultation } from '@/services/ulams/consultations';
+import { FieldType } from '@/services/ulams/enums';
 import { createTableOrderObject, roundTo } from '@/utils/utils';
 import { useParams } from '@@/exports';
 import {
@@ -184,7 +184,7 @@ const Consultations: React.FC = () => {
   const actionRef = useRef<ActionType>();
   const [loading, setLoading] = useState(false);
   const intl = useIntl();
-  const additionalFields = useModelFields('EscolaLms\\Consultations\\Models\\Consultation');
+  const additionalFields = useModelFields('Ulams\\Consultations\\Models\\Consultation');
 
   const dynamicAdditionalFieldsColumns: ProColumns<API.Consultation>[] = useMemo(() => {
     if (additionalFields.state !== 'loaded') return [];
@@ -355,7 +355,7 @@ const Consultations: React.FC = () => {
           />
         </ProCard.TabPane>
         <ProCard.TabPane key={'fields'} tab={<FormattedMessage id="ModelFields" />}>
-          <ModelFields class_type="EscolaLms\Consultations\Models\Consultation" />
+          <ModelFields class_type="Ulams\Consultations\Models\Consultation" />
         </ProCard.TabPane>
         <ProCard.TabPane
           key={'effectiveness-analysis'}

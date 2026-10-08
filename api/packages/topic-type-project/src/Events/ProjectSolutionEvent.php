@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Events;
+namespace Ulams\TopicTypeProject\Events;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
+use Ulams\Core\Models\User;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

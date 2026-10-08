@@ -2,7 +2,7 @@ import { TreeSelect } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'umi';
 
-import { categoryTree } from '@/services/escola-lms/category';
+import { categoryTree } from '@/services/ulams/category';
 import { useCompetencyChallengeContext } from '../context';
 
 type TreeNodeType = {

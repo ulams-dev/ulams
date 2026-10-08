@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\MailerLite\Tests;
+namespace Ulams\MailerLite\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\MailerLite\EscolaLmsMailerLiteServiceProvider;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\MailerLite\UlamsMailerLiteServiceProvider;
+use Ulams\Settings\UlamsSettingsServiceProvider;
 use Laravel\Passport\Passport;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
 
 class TestCase extends CoreTestCase
 {
@@ -22,9 +22,9 @@ class TestCase extends CoreTestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsMailerLiteServiceProvider::class,
-            EscolaLmsAuthServiceProvider::class,
-            EscolaLmsSettingsServiceProvider::class,
+            UlamsMailerLiteServiceProvider::class,
+            UlamsAuthServiceProvider::class,
+            UlamsSettingsServiceProvider::class,
         ];
     }
 
@@ -32,6 +32,6 @@ class TestCase extends CoreTestCase
     {
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('passport.client_uuids', true);
-        $app['config']->set('escolalms_mailer_lite.api_key', 'fc7b8c5b');
+        $app['config']->set('ulams_mailer_lite.api_key', 'fc7b8c5b');
     }
 }

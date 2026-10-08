@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Auth\Services;
+namespace Ulams\Auth\Services;
 
-use EscolaLms\Auth\Dtos\UserSaveDto;
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Events\AccountRegistered;
-use EscolaLms\Auth\Exceptions\TokenExpiredException;
-use EscolaLms\Auth\Models\PreUser;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Repositories\Contracts\PreUserRepositoryContract;
-use EscolaLms\Auth\Repositories\Contracts\SocialAccountRepositoryContract;
-use EscolaLms\Auth\Repositories\Contracts\UserRepositoryContract;
-use EscolaLms\Auth\Services\Contracts\AuthServiceContract;
-use EscolaLms\Auth\Services\Contracts\SocialAccountServiceContract;
-use EscolaLms\Auth\Services\Contracts\UserServiceContract;
-use EscolaLms\Core\Enums\UserRole;
+use Ulams\Auth\Dtos\UserSaveDto;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Events\AccountRegistered;
+use Ulams\Auth\Exceptions\TokenExpiredException;
+use Ulams\Auth\Models\PreUser;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Repositories\Contracts\PreUserRepositoryContract;
+use Ulams\Auth\Repositories\Contracts\SocialAccountRepositoryContract;
+use Ulams\Auth\Repositories\Contracts\UserRepositoryContract;
+use Ulams\Auth\Services\Contracts\AuthServiceContract;
+use Ulams\Auth\Services\Contracts\SocialAccountServiceContract;
+use Ulams\Auth\Services\Contracts\UserServiceContract;
+use Ulams\Core\Enums\UserRole;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
@@ -71,7 +71,7 @@ class SocialAccountService implements SocialAccountServiceContract
             $token = $this->authService
                 ->createTokenForUser(
                     $user,
-                    Config::get(EscolaLmsAuthServiceProvider::CONFIG_KEY . '.socialite_remember_me', false)
+                    Config::get(UlamsAuthServiceProvider::CONFIG_KEY . '.socialite_remember_me', false)
                 )
                 ->accessToken;
 

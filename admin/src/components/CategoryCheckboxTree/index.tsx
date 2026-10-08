@@ -1,7 +1,7 @@
 import { Spin, Tree } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { categoryTree } from '@/services/escola-lms/category';
+import { categoryTree } from '@/services/ulams/category';
 
 type TreeNodeType = {
   title: string;

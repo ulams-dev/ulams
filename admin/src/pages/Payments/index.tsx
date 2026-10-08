@@ -4,7 +4,7 @@ import ProTable from '@ant-design/pro-table';
 import React, { useRef } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
 
-import { payments } from '@/services/escola-lms/payments';
+import { payments } from '@/services/ulams/payments';
 import { format } from 'date-fns';
 
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';

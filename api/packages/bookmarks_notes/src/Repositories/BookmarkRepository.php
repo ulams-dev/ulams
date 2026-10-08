@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Repositories;
+namespace Ulams\Bookmarks\Repositories;
 
-use EscolaLms\Bookmarks\Models\Bookmark;
-use EscolaLms\Bookmarks\Repositories\Contracts\BookmarkRepositoryContract;
-use EscolaLms\Core\Repositories\BaseRepository;
+use Ulams\Bookmarks\Models\Bookmark;
+use Ulams\Bookmarks\Repositories\Contracts\BookmarkRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class BookmarkRepository extends BaseRepository implements BookmarkRepositoryContract

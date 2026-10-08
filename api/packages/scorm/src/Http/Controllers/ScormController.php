@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Scorm\Http\Controllers;
+namespace Ulams\Scorm\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Scorm\Http\Controllers\Swagger\ScormControllerContract;
-use EscolaLms\Scorm\Http\Requests\ScormDeleteRequest;
-use EscolaLms\Scorm\Services\Contracts\ScormQueryServiceContract;
-use EscolaLms\Scorm\Services\Contracts\ScormServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Scorm\Http\Controllers\Swagger\ScormControllerContract;
+use Ulams\Scorm\Http\Requests\ScormDeleteRequest;
+use Ulams\Scorm\Services\Contracts\ScormQueryServiceContract;
+use Ulams\Scorm\Services\Contracts\ScormServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Exception;
-use EscolaLms\Scorm\Http\Requests\ScormCreateRequest;
-use EscolaLms\Scorm\Http\Requests\ScormListRequest;
+use Ulams\Scorm\Http\Requests\ScormCreateRequest;
+use Ulams\Scorm\Http\Requests\ScormListRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +19,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\View as ViewFacade;
 use Peopleaps\Scorm\Model\ScormModel;
 
-class ScormController extends EscolaLmsBaseController implements ScormControllerContract
+class ScormController extends UlamsBaseController implements ScormControllerContract
 {
     private ScormServiceContract $scormService;
 

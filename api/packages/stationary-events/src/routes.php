@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\StationaryEvents\Http\Controllers\StationaryEventAdminApiController;
-use EscolaLms\StationaryEvents\Http\Controllers\StationaryEventApiController;
+use Ulams\StationaryEvents\Http\Controllers\StationaryEventAdminApiController;
+use Ulams\StationaryEvents\Http\Controllers\StationaryEventApiController;
 use Illuminate\Support\Facades\Route;
 
 // admin endpoints

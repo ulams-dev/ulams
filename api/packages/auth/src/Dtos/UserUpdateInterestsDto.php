@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Dtos;
+namespace Ulams\Auth\Dtos;
 
-use EscolaLms\Auth\Http\Requests\Admin\UserInterestsUpdateRequest;
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Auth\Http\Requests\Admin\UserInterestsUpdateRequest;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
 use Ramsey\Collection\Set;

@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Cart\Services\Contracts;
+namespace Ulams\Cart\Services\Contracts;
 
 use Carbon\Carbon;
-use EscolaLms\Cart\Dtos\ClientDetailsDto;
-use EscolaLms\Cart\Models\Cart;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Services\CartManager;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Cart\Dtos\ClientDetailsDto;
+use Ulams\Cart\Models\Cart;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Services\CartManager;
+use Ulams\Core\Models\User;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Resources\Json\JsonResource;
 

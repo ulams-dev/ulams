@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Resources;
+namespace Ulams\Cart\Http\Resources;
 
-use EscolaLms\Auth\Traits\ResourceExtandable;
-use EscolaLms\Cart\Models\Cart;
+use Ulams\Auth\Traits\ResourceExtandable;
+use Ulams\Cart\Models\Cart;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 

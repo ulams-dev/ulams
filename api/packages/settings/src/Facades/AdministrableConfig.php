@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Settings\Facades;
+namespace Ulams\Settings\Facades;
 
-use EscolaLms\Settings\Services\Contracts\AdministrableConfigServiceContract;
+use Ulams\Settings\Services\Contracts\AdministrableConfigServiceContract;
 use Illuminate\Support\Facades\Facade;
 
 /**
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getConfig(string $key = null)
  * @method static void  setConfig(array $config)
  *
- * @see \EscolaLms\Settings\Services\AdministrableConfigService
+ * @see \Ulams\Settings\Services\AdministrableConfigService
  */
 class AdministrableConfig extends Facade
 {

@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Models;
+namespace Ulams\PencilSpaces\Models;
 
-use EscolaLms\Core\Models\User as CoreUser;
-use EscolaLms\PencilSpaces\Database\Factories\UserFactory;
+use Ulams\Core\Models\User as CoreUser;
+use Ulams\PencilSpaces\Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * Class User
  *
- * @package EscolaLms\PencilSpaces\Models
+ * @package Ulams\PencilSpaces\Models
  *
  * @property int $id
  * @property string $name

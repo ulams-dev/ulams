@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Vouchers\Http\Controllers;
+namespace Ulams\Vouchers\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Vouchers\Exceptions\CouponInactiveException;
-use EscolaLms\Vouchers\Exceptions\CouponNotApplicableException;
-use EscolaLms\Vouchers\Http\Controllers\Swagger\VouchersApiControllerSwagger;
-use EscolaLms\Vouchers\Http\Requests\ApplyCouponRequest;
-use EscolaLms\Vouchers\Http\Requests\UnapplyCouponRequest;
-use EscolaLms\Vouchers\Services\Contracts\ShopServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Core\Models\User;
+use Ulams\Vouchers\Exceptions\CouponInactiveException;
+use Ulams\Vouchers\Exceptions\CouponNotApplicableException;
+use Ulams\Vouchers\Http\Controllers\Swagger\VouchersApiControllerSwagger;
+use Ulams\Vouchers\Http\Requests\ApplyCouponRequest;
+use Ulams\Vouchers\Http\Requests\UnapplyCouponRequest;
+use Ulams\Vouchers\Services\Contracts\ShopServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class VouchersApiController extends EscolaLmsBaseController implements VouchersApiControllerSwagger
+class VouchersApiController extends UlamsBaseController implements VouchersApiControllerSwagger
 {
     protected ShopServiceContract $shopService;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Http\Requests\Admin;
+namespace Ulams\TopicTypeProject\Http\Requests\Admin;
 
-use EscolaLms\TopicTypeProject\Http\Requests\DeleteProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\DeleteProjectSolutionRequest;
 use Illuminate\Support\Facades\Gate;
 
 class AdminDeleteProjectSolutionRequest extends DeleteProjectSolutionRequest

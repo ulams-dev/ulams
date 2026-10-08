@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Youtube;
+namespace Ulams\TemplatesEmail\Youtube;
 
 class YtProblemVariables extends CommonYoutubeVariables
 {

@@ -5,13 +5,13 @@ import { useCallback, useEffect, useState } from 'react';
 import type { IntlShape } from 'react-intl';
 import { FormattedMessage, history, useIntl, useModel, useParams } from 'umi';
 
-import { configs as fetchConfigs } from '@/services/escola-lms/settings';
+import { configs as fetchConfigs } from '@/services/ulams/settings';
 import GlobalSettings from './global';
 import PackageForm from './package';
 import UserSettings from './user';
 
 function transformPackageName(rawPackageName: string): string {
-  const packageName = rawPackageName.replaceAll('escolalms', '');
+  const packageName = rawPackageName.replaceAll('ulams', '');
   const words = packageName.split('_');
   const capitalizedWords = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1));
 

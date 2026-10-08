@@ -1,9 +1,9 @@
 import { useCallback, useContext, useState } from "react";
 import { QuestionType } from "@/types/questionnaire";
 import { toast } from "@/utils/toast";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { t } from "i18next";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 
 type UseQuestionnairesProps = {
   entityId: number;
@@ -15,7 +15,7 @@ export const useQuestionnaires = ({
   entityModel,
 }: UseQuestionnairesProps) => {
   const { fetchQuestionnaires, fetchQuestionnaire } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
   const [questionnaires, setQuestionnaires] = useState<API.Questionnaire[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);

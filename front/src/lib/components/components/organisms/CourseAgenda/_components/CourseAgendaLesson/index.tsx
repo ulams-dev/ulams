@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Lesson } from "@lms/sdk/types";
+import { Lesson } from "@ulams/sdk/types";
 
 import { useCourseAgendaContext } from "../context";
 import CourseAgendaTopic from "../CourseAgendaTopic";

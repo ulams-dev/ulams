@@ -1,15 +1,15 @@
 import React, { useContext, useState, useMemo } from "react";
 import { t } from "i18next";
 import { isAfter } from "date-fns";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { useHistory } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import styled, { css } from "styled-components";
-import { CourseAgenda } from "@lms/components/components/organisms/CourseAgenda/CourseAgenda";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { getFlatTopics } from "@lms/components/utils/course";
+import { CourseAgenda } from "@ulams/components/components/organisms/CourseAgenda/CourseAgenda";
+import { UlamsContext } from "@ulams/sdk/react";
+import { getFlatTopics } from "@ulams/components/utils/course";
 import { useLessonProgram } from "@/hooks/useLessonProgram";
-import { Button } from "@lms/components/components/atoms/Button/Button";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
 import { userIsCourseAuthor } from "@/utils/index";
 
 const StyledSidebar = styled.aside`
@@ -54,7 +54,7 @@ export const CourseSidebar: React.FC<{
     courseProgressDetails,
     user,
     program: courseProgram,
-  } = useContext(EscolaLMSContext);
+  } = useContext(UlamsContext);
   const currentCourseProgram = useMemo(
     () => courseProgram.value,
     [courseProgram.value]
@@ -72,7 +72,7 @@ export const CourseSidebar: React.FC<{
   const program = (course?.lessons || []).filter(
     (lesson) => (lesson?.topics?.length ?? 0) > 0
   );
-  const { topicIsFinished } = useContext(EscolaLMSContext);
+  const { topicIsFinished } = useContext(UlamsContext);
   const flatTopics = useMemo(
     () => getFlatTopics(course.lessons ?? []),
     [course.lessons]

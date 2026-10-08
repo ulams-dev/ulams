@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Settings\Tests;
+namespace Ulams\Settings\Tests;
 
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\Settings\UlamsSettingsServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     use DatabaseTransactions;
 
@@ -26,7 +26,7 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             ...parent::getPackageProviders($app),
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
-            EscolaLmsSettingsServiceProvider::class
+            UlamsSettingsServiceProvider::class
         ];
     }
 

@@ -1,8 +1,8 @@
 <?php
-namespace EscolaLms\Scorm\Repositories;
+namespace Ulams\Scorm\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Scorm\Repositories\Contracts\ScormRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Scorm\Repositories\Contracts\ScormRepositoryContract;
 use Illuminate\Support\Facades\DB;
 use PDO;
 use Peopleaps\Scorm\Model\ScormModel;

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Webinar\Tests\Models;
+namespace Ulams\Webinar\Tests\Models;
 
-use EscolaLms\Webinar\Models\User as WebinarUser;
+use Ulams\Webinar\Models\User as WebinarUser;
 
 class User extends WebinarUser
 {

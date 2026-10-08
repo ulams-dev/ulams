@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Consultations\Dto;
+namespace Ulams\Consultations\Dto;
 
-use EscolaLms\Consultations\Models\User;
+use Ulams\Consultations\Models\User;
 use Illuminate\Support\Collection;
 
 class ConsultationUserTermResourceDto

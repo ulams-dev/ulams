@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Repositories\Contracts;
+namespace Ulams\Dictionaries\Repositories\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\Dictionaries\Models\DictionaryWord;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Dictionaries\Models\DictionaryWord;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface DictionaryWordRepositoryContract extends BaseRepositoryContract

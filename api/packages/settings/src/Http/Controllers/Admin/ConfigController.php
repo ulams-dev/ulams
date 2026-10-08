@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Settings\Http\Controllers\Admin;
+namespace Ulams\Settings\Http\Controllers\Admin;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Settings\Events\SettingPackageConfigUpdated;
-use EscolaLms\Settings\Facades\AdministrableConfig;
-use EscolaLms\Settings\Http\Controllers\Admin\Swagger\ConfigControllerContract;
-use EscolaLms\Settings\Http\Requests\Admin\ConfigListRequest;
-use EscolaLms\Settings\Http\Requests\Admin\ConfigUpdateRequest;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Settings\Events\SettingPackageConfigUpdated;
+use Ulams\Settings\Facades\AdministrableConfig;
+use Ulams\Settings\Http\Controllers\Admin\Swagger\ConfigControllerContract;
+use Ulams\Settings\Http\Requests\Admin\ConfigListRequest;
+use Ulams\Settings\Http\Requests\Admin\ConfigUpdateRequest;
 use Illuminate\Http\JsonResponse;
 
-class ConfigController extends EscolaLmsBaseController implements ConfigControllerContract
+class ConfigController extends UlamsBaseController implements ConfigControllerContract
 {
     public function list(ConfigListRequest $request): JsonResponse
     {

@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Auth\Services\Contracts;
+namespace Ulams\Auth\Services\Contracts;
 
-use EscolaLms\Auth\Dtos\UserGroupDto;
-use EscolaLms\Auth\Models\Group;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Dtos\OrderDto;
+use Ulams\Auth\Dtos\UserGroupDto;
+use Ulams\Auth\Models\Group;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Dtos\OrderDto;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 

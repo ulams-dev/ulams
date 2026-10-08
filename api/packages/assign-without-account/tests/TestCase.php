@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Tests;
+namespace Ulams\AssignWithoutAccount\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\AssignWithoutAccount\EscolaLmsAssignWithoutAccountServiceProvider;
-use EscolaLms\Cart\EscolaLmsCartServiceProvider;
-use EscolaLms\Cart\Tests\Mocks\ExampleProductableMigration;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Templates\EscolaLmsTemplatesServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\AssignWithoutAccount\UlamsAssignWithoutAccountServiceProvider;
+use Ulams\Cart\UlamsCartServiceProvider;
+use Ulams\Cart\Tests\Mocks\ExampleProductableMigration;
+use Ulams\Auth\Models\User;
+use Ulams\Templates\UlamsTemplatesServiceProvider;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     protected function getPackageProviders($app): array
     {
@@ -19,10 +19,10 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             ...parent::getPackageProviders($app),
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
-            EscolaLmsAuthServiceProvider::class,
-            EscolaLmsCartServiceProvider::class,
-            EscolaLmsTemplatesServiceProvider::class,
-            EscolaLmsAssignWithoutAccountServiceProvider::class
+            UlamsAuthServiceProvider::class,
+            UlamsCartServiceProvider::class,
+            UlamsTemplatesServiceProvider::class,
+            UlamsAssignWithoutAccountServiceProvider::class
         ];
     }
 

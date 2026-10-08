@@ -8,8 +8,8 @@ import React, {
 
 import { useHistory, useParams } from "react-router-dom";
 import { isAfter } from "date-fns";
-import { API } from "@lms/sdk";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { API } from "@ulams/sdk";
+import { UlamsContext } from "@ulams/sdk/react";
 
 import {
   getFlatLessons,
@@ -67,7 +67,7 @@ const CoursePanelProvider: React.FC<React.PropsWithChildren> = ({
     fetchProgram,
     courseProgressDetails,
     fetchCourseProgress,
-  } = useContext(EscolaLMSContext);
+  } = useContext(UlamsContext);
   const [isNextTopicButtonDisabled, setIsNextTopicButtonDisabled] =
     useState(false);
   const [showFinish, setShowFinish] = useState(false);

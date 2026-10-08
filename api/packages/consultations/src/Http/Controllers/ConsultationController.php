@@ -1,32 +1,32 @@
 <?php
 
-namespace EscolaLms\Consultations\Http\Controllers;
+namespace Ulams\Consultations\Http\Controllers;
 
-use EscolaLms\Auth\Dtos\Admin\UserAssignableDto;
-use EscolaLms\Auth\Http\Resources\UserFullResource;
-use EscolaLms\Auth\Services\Contracts\UserServiceContract;
-use EscolaLms\Consultations\Dto\ChangeTermConsultationDto;
-use EscolaLms\Consultations\Dto\ConsultationDto;
-use EscolaLms\Consultations\Enum\ConstantEnum;
-use EscolaLms\Consultations\Enum\ConsultationsPermissionsEnum;
-use EscolaLms\Consultations\Http\Controllers\Swagger\ConsultationSwagger;
-use EscolaLms\Consultations\Http\Requests\ChangeTermConsultationRequest;
-use EscolaLms\Consultations\Http\Requests\ConsultationAssignableUserListRequest;
-use EscolaLms\Consultations\Http\Requests\DestroyConsultationRequest;
-use EscolaLms\Consultations\Http\Requests\ListConsultationsRequest;
-use EscolaLms\Consultations\Http\Requests\ScheduleConsultationRequest;
-use EscolaLms\Consultations\Http\Requests\ShowConsultationRequest;
-use EscolaLms\Consultations\Http\Requests\StoreConsultationRequest;
-use EscolaLms\Consultations\Http\Requests\UpdateConsultationRequest;
-use EscolaLms\Consultations\Http\Resources\ConsultationSimpleResource;
-use EscolaLms\Consultations\Http\Resources\ConsultationTermsResource;
-use EscolaLms\Consultations\Http\Resources\ConsultationUserTermsResource;
-use EscolaLms\Consultations\Services\Contracts\ConsultationServiceContract;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Auth\Dtos\Admin\UserAssignableDto;
+use Ulams\Auth\Http\Resources\UserFullResource;
+use Ulams\Auth\Services\Contracts\UserServiceContract;
+use Ulams\Consultations\Dto\ChangeTermConsultationDto;
+use Ulams\Consultations\Dto\ConsultationDto;
+use Ulams\Consultations\Enum\ConstantEnum;
+use Ulams\Consultations\Enum\ConsultationsPermissionsEnum;
+use Ulams\Consultations\Http\Controllers\Swagger\ConsultationSwagger;
+use Ulams\Consultations\Http\Requests\ChangeTermConsultationRequest;
+use Ulams\Consultations\Http\Requests\ConsultationAssignableUserListRequest;
+use Ulams\Consultations\Http\Requests\DestroyConsultationRequest;
+use Ulams\Consultations\Http\Requests\ListConsultationsRequest;
+use Ulams\Consultations\Http\Requests\ScheduleConsultationRequest;
+use Ulams\Consultations\Http\Requests\ShowConsultationRequest;
+use Ulams\Consultations\Http\Requests\StoreConsultationRequest;
+use Ulams\Consultations\Http\Requests\UpdateConsultationRequest;
+use Ulams\Consultations\Http\Resources\ConsultationSimpleResource;
+use Ulams\Consultations\Http\Resources\ConsultationTermsResource;
+use Ulams\Consultations\Http\Resources\ConsultationUserTermsResource;
+use Ulams\Consultations\Services\Contracts\ConsultationServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\JsonResponse;
 
-class ConsultationController extends EscolaLmsBaseController implements ConsultationSwagger
+class ConsultationController extends UlamsBaseController implements ConsultationSwagger
 {
     private ConsultationServiceContract $consultationServiceContract;
     private UserServiceContract $userService;
@@ -46,7 +46,7 @@ class ConsultationController extends EscolaLmsBaseController implements Consulta
             ->getConsultationsList($search, false, OrderDto::instantiateFromRequest($listConsultationsRequest))
             ->paginate(
                 $listConsultationsRequest->get('per_page') ??
-                config('escolalms_consultations.perPage', ConstantEnum::PER_PAGE)
+                config('ulams_consultations.perPage', ConstantEnum::PER_PAGE)
             );
 
         return $this->sendResponseForResource(

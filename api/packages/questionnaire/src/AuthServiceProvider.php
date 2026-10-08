@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Questionnaire;
+namespace Ulams\Questionnaire;
 
-use EscolaLms\Questionnaire\Models\Question;
-use EscolaLms\Questionnaire\Models\Questionnaire;
-use EscolaLms\Questionnaire\Policies\QuestionnairePolicy;
-use EscolaLms\Questionnaire\Policies\QuestionPolicy;
+use Ulams\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Models\Questionnaire;
+use Ulams\Questionnaire\Policies\QuestionnairePolicy;
+use Ulams\Questionnaire\Policies\QuestionPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider

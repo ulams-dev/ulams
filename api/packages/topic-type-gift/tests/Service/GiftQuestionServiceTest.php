@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Tests\Service;
+namespace Ulams\TopicTypeGift\Tests\Service;
 
-use EscolaLms\TopicTypeGift\Exceptions\UnknownGiftTypeException;
-use EscolaLms\TopicTypeGift\Services\Contracts\GiftQuestionServiceContract;
-use EscolaLms\TopicTypeGift\Tests\GiftQuestionTesting;
-use EscolaLms\TopicTypeGift\Tests\TestCase;
+use Ulams\TopicTypeGift\Exceptions\UnknownGiftTypeException;
+use Ulams\TopicTypeGift\Services\Contracts\GiftQuestionServiceContract;
+use Ulams\TopicTypeGift\Tests\GiftQuestionTesting;
+use Ulams\TopicTypeGift\Tests\TestCase;
 
 class GiftQuestionServiceTest extends TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Core\Models;
+namespace Ulams\Core\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

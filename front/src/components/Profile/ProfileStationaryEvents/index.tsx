@@ -1,6 +1,6 @@
 import { FC, useContext, useState, useEffect, useMemo } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { API } from "@lms/sdk";
+import { UlamsContext } from "@ulams/sdk/react";
+import { API } from "@ulams/sdk";
 import ContentLoader from "@/components/_App/ContentLoader";
 import ProfileStationaryEventsNoData from "./NoData";
 import SlicedFilteredEvents from "./SlicedFilteredEvents";
@@ -18,7 +18,7 @@ const ProfileStationaryEvents: FC<ProfileStationaryEventsProps> = ({
   const [filteredList, setFilteredList] = useState<API.StationaryEvent[] | []>(
     []
   );
-  const { userStationaryEvents } = useContext(EscolaLMSContext);
+  const { userStationaryEvents } = useContext(UlamsContext);
   const list = userStationaryEvents.list;
   const startedEvents = useMemo(
     () => list?.filter((event) => event.is_started),

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Reports\Stats;
+namespace Ulams\Reports\Stats;
 
 interface StatsContract
 {

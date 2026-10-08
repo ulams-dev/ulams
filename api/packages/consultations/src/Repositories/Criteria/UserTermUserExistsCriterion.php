@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Consultations\Repositories\Criteria;
+namespace Ulams\Consultations\Repositories\Criteria;
 
-use EscolaLms\Core\Repositories\Criteria\Criterion;
+use Ulams\Core\Repositories\Criteria\Criterion;
 use Illuminate\Database\Eloquent\Builder;
 
 class UserTermUserExistsCriterion extends Criterion

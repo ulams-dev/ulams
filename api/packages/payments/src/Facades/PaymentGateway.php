@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Payments\Facades;
+namespace Ulams\Payments\Facades;
 
-use EscolaLms\Payments\Dtos\PaymentDto;
-use EscolaLms\Payments\Entities\PaymentsConfig;
-use EscolaLms\Payments\Facades\Fakes\PaymentGatewayFake;
-use EscolaLms\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
+use Ulams\Payments\Dtos\PaymentDto;
+use Ulams\Payments\Entities\PaymentsConfig;
+use Ulams\Payments\Facades\Fakes\PaymentGatewayFake;
+use Ulams\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
 use Illuminate\Support\Facades\Facade;
 use Omnipay\Common\Message\ResponseInterface;
 
@@ -15,7 +15,7 @@ use Omnipay\Common\Message\ResponseInterface;
  * @method static array requiredParameters()
  * @method static PaymentsConfig getPaymentsConfig()
  * 
- * @see \EscolaLms\Payments\Gateway\GatewayManager
+ * @see \Ulams\Payments\Gateway\GatewayManager
  */
 class PaymentGateway extends Facade
 {

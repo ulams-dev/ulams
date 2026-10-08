@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Questionnaire\Models\QuestionnaireModelType;
+use Ulams\Questionnaire\Models\QuestionnaireModelType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,7 +12,7 @@ class AddRecordsWebinarToTableQuestionnaireModelType extends Migration
         if (!QuestionnaireModelType::query()->where('title', '=', 'webinar')->first()) {
             $questionnaireModelType = new QuestionnaireModelType([
                 'title' => 'webinar',
-                'model_class' => 'EscolaLms\Webinar\Models\Webinar',
+                'model_class' => 'Ulams\Webinar\Models\Webinar',
             ]);
             $questionnaireModelType->save();
         }
@@ -20,7 +20,7 @@ class AddRecordsWebinarToTableQuestionnaireModelType extends Migration
         if (!QuestionnaireModelType::query()->where('title', '=', 'consultations')->first()) {
             $questionnaireModelType = new QuestionnaireModelType([
                 'title' => 'consultations',
-                'model_class' => 'EscolaLms\Consultations\Models\Consultation',
+                'model_class' => 'Ulams\Consultations\Models\Consultation',
             ]);
             $questionnaireModelType->save();
         }

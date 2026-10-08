@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Courses\Repositories;
+namespace Ulams\Courses\Repositories;
 
 use Error;
-use EscolaLms\Courses\Exceptions\TopicException;
-use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
-use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
-use EscolaLms\Courses\Models\Contracts\TopicContentContract;
-use EscolaLms\Courses\Models\Contracts\TopicFileContentContract;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\TopicContent\AbstractTopicFileContent;
-use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
-use EscolaLms\Files\Helpers\FileHelper;
-use EscolaLms\Files\Rules\FileOrStringRule;
-use EscolaLms\TopicTypes\Events\TopicTypeChanged;
-use EscolaLms\TopicTypes\Models\TopicContent\AbstractTopicContent;
+use Ulams\Courses\Exceptions\TopicException;
+use Ulams\Courses\Http\Requests\CreateTopicAPIRequest;
+use Ulams\Courses\Http\Requests\UpdateTopicAPIRequest;
+use Ulams\Courses\Models\Contracts\TopicContentContract;
+use Ulams\Courses\Models\Contracts\TopicFileContentContract;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Models\TopicContent\AbstractTopicFileContent;
+use Ulams\Courses\Repositories\Contracts\TopicRepositoryContract;
+use Ulams\Files\Helpers\FileHelper;
+use Ulams\Files\Rules\FileOrStringRule;
+use Ulams\TopicTypes\Events\TopicTypeChanged;
+use Ulams\TopicTypes\Models\TopicContent\AbstractTopicContent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Resources\Json\JsonResource;

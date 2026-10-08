@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Auth\Models;
+namespace Ulams\Auth\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 

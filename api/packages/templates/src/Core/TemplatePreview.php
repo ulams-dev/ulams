@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Templates\Core;
+namespace Ulams\Templates\Core;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 
 class TemplatePreview
 {

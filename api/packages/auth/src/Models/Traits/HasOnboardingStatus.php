@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Models\Traits;
+namespace Ulams\Auth\Models\Traits;
 
 /**
  * Trait HasOnboardinngStatus
- * @package EscolaLms\Auth\Models\Traits
+ * @package Ulams\Auth\Models\Traits
  *
  * TODO:
  * This trait for now only checks if user has any interest (categories) added

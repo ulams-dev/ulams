@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\ModelFields\Tests\TraitTest\Http\Requests;
+namespace Ulams\ModelFields\Tests\TraitTest\Http\Requests;
 
-use EscolaLms\ModelFields\Tests\TraitTest\Models\User;
+use Ulams\ModelFields\Tests\TraitTest\Models\User;
 
 use Illuminate\Foundation\Http\FormRequest;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\ModelFields\Facades\ModelFields;
 
 class UserCreateRequest extends FormRequest
 {

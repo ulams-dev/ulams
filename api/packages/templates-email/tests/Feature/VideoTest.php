@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests\Feature;
+namespace Ulams\TemplatesEmail\Tests\Feature;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TemplatesEmail\Core\EmailMailable;
-use EscolaLms\TemplatesEmail\Tests\TestCase;
-use EscolaLms\Video\Events\ProcessVideoFailed;
-use EscolaLms\Video\Events\ProcessVideoFinished;
-use EscolaLms\Video\Events\ProcessVideoStarted;
-use EscolaLms\Video\Events\ProcessVideoState;
-use EscolaLms\Video\Models\Video;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TemplatesEmail\Core\EmailMailable;
+use Ulams\TemplatesEmail\Tests\TestCase;
+use Ulams\Video\Events\ProcessVideoFailed;
+use Ulams\Video\Events\ProcessVideoFinished;
+use Ulams\Video\Events\ProcessVideoStarted;
+use Ulams\Video\Events\ProcessVideoState;
+use Ulams\Video\Models\Video;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
@@ -25,7 +25,7 @@ class VideoTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\Video\EscolaLmsVideoServiceProvider::class)) {
+        if (!class_exists(\Ulams\Video\UlamsVideoServiceProvider::class)) {
             $this->markTestSkipped('Video package not installed');
         }
     }
@@ -111,7 +111,7 @@ class VideoTest extends TestCase
         return Topic::factory()
             ->for(Lesson::factory()->for(Course::factory()))
             ->state(fn() => [
-                'topicable_type' => \EscolaLms\TopicTypes\Models\TopicContent\Video::class,
+                'topicable_type' => \Ulams\TopicTypes\Models\TopicContent\Video::class,
                 'topicable_id' => Video::factory()->create()->getKey()
             ])
             ->create();

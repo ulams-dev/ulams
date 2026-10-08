@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\CsvUsers;
+namespace Ulams\CsvUsers;
 
-use EscolaLms\CsvUsers\Models\Group;
-use EscolaLms\CsvUsers\Models\User;
-use EscolaLms\CsvUsers\Policies\CsvUserGroupsPolicy;
-use EscolaLms\CsvUsers\Policies\CsvUsersPolicy;
+use Ulams\CsvUsers\Models\Group;
+use Ulams\CsvUsers\Models\User;
+use Ulams\CsvUsers\Policies\CsvUserGroupsPolicy;
+use Ulams\CsvUsers\Policies\CsvUsersPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

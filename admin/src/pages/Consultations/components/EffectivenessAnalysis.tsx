@@ -1,7 +1,7 @@
 import CategoryTree from '@/components/CategoryTree';
 import { DATETIME_FORMAT } from '@/consts/dates';
 import type { RecommenderTerm } from '@/pages/Consultations/consultations';
-import { getRecommenderTerms } from '@/services/escola-lms/consultations';
+import { getRecommenderTerms } from '@/services/ulams/consultations';
 import {
   createTableOrderObject,
   EMOTION_POOL,

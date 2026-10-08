@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Database\Seeders;
+namespace Ulams\Bookmarks\Database\Seeders;
 
-use EscolaLms\Bookmarks\Enums\BookmarkPermissionEnum;
+use Ulams\Bookmarks\Enums\BookmarkPermissionEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

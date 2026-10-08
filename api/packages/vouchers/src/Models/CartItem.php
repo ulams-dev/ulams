@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Vouchers\Models;
+namespace Ulams\Vouchers\Models;
 
-use EscolaLms\Cart\Models\CartItem as BaseCartItem;
+use Ulams\Cart\Models\CartItem as BaseCartItem;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * EscolaLms\Vouchers\Models\CartItem
+ * Ulams\Vouchers\Models\CartItem
  *
  * @property int $id
  * @property int $cart_id
@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $buyable
- * @property-read \EscolaLms\Vouchers\Models\Cart $cart
+ * @property-read \Ulams\Vouchers\Models\Cart $cart
  * @property-read mixed $description
  * @property-read int $discount
  * @property-read int $discount_subtotal

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tasks;
+namespace Ulams\TemplatesEmail\Tasks;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Tasks\Models\Task;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\TemplatesEmail\Core\EmailVariables;
+use Ulams\Core\Models\User;
+use Ulams\Tasks\Models\Task;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\TemplatesEmail\Core\EmailVariables;
 
 abstract class CommonTasksVariables extends EmailVariables
 {

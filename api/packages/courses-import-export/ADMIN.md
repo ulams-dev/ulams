@@ -1,6 +1,6 @@
 ## Courses-Import-Export
 
-Exporting and importing courses is possible in the **Course - List** section. An already created course can be exported from the platform to a device. Then, the course can be imported, either from a stored file on the disk or transferred between different admin panels of the Wellms platform.
+Exporting and importing courses is possible in the **Course - List** section. An already created course can be exported from the platform to a device. Then, the course can be imported, either from a stored file on the disk or transferred between different admin panels of the Ulams platform.
 
 ![image](https://github.com/EscolaLMS/Courses-Import-Export/assets/108077902/32e2561f-afbb-4105-8d11-0bb64b5d2012)
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Cart\Tests\Mocks;
+namespace Ulams\Cart\Tests\Mocks;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

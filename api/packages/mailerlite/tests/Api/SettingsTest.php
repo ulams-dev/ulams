@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\MailerLite\Tests\Api;
+namespace Ulams\MailerLite\Tests\Api;
 
-use EscolaLms\Auth\Database\Seeders\AuthPermissionSeeder;
-use EscolaLms\Auth\Events\AccountBlocked;
-use EscolaLms\Auth\Events\AccountConfirmed;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\MailerLite\Enum\PackageStatusEnum;
-use EscolaLms\MailerLite\Providers\SettingsServiceProvider;
-use EscolaLms\MailerLite\Services\Contracts\MailerLiteServiceContract;
-use EscolaLms\MailerLite\Tests\TestCase;
-use EscolaLms\ModelFields\Facades\ModelFields;
-use EscolaLms\ModelFields\Models\Field;
-use EscolaLms\ModelFields\Models\Metadata;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\Settings\Facades\AdministrableConfig;
+use Ulams\Auth\Database\Seeders\AuthPermissionSeeder;
+use Ulams\Auth\Events\AccountBlocked;
+use Ulams\Auth\Events\AccountConfirmed;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\MailerLite\Enum\PackageStatusEnum;
+use Ulams\MailerLite\Providers\SettingsServiceProvider;
+use Ulams\MailerLite\Services\Contracts\MailerLiteServiceContract;
+use Ulams\MailerLite\Tests\TestCase;
+use Ulams\ModelFields\Facades\ModelFields;
+use Ulams\ModelFields\Models\Field;
+use Ulams\ModelFields\Models\Metadata;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\Settings\Facades\AdministrableConfig;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
@@ -31,17 +31,17 @@ class SettingsTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\Auth\EscolaLmsAuthServiceProvider::class)) {
+        if (!class_exists(\Ulams\Auth\UlamsAuthServiceProvider::class)) {
             $this->markTestSkipped('Auth package not installed');
         }
 
-        if (!class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
+        if (!class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
             $this->markTestSkipped('Settings package not installed');
         }
 
         $this->seed(PermissionTableSeeder::class);
         $this->seed(AuthPermissionSeeder::class);
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
         $this->user = config('auth.providers.users.model')::factory()->create();
         $this->user->guard_name = 'api';
         $this->user->assignRole('admin');
@@ -49,7 +49,7 @@ class SettingsTest extends TestCase
 
     protected function tearDown(): void
     {
-        \EscolaLms\Settings\Models\Config::truncate();
+        \Ulams\Settings\Models\Config::truncate();
         Field::truncate();
         Metadata::truncate();
         User::query()->forceDelete();
@@ -292,7 +292,7 @@ class SettingsTest extends TestCase
     private function setPackageStatus($packageStatus): void
     {
         Config::set(SettingsServiceProvider::CONFIG_KEY . '.package_status', $packageStatus);
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
         AdministrableConfig::storeConfig();
         $this->refreshApplication();
     }

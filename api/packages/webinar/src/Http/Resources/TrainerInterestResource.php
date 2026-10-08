@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Webinar\Http\Resources;
+namespace Ulams\Webinar\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;

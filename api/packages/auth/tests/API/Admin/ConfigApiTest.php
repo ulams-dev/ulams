@@ -2,10 +2,10 @@
 
 namespace Tests\API\Admin;
 
-use EscolaLms\Auth\Enums\SettingStatusEnum;
-use EscolaLms\Auth\Enums\TokenExpirationEnum;
-use EscolaLms\Auth\Tests\TestCase;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\Auth\Enums\SettingStatusEnum;
+use Ulams\Auth\Enums\TokenExpirationEnum;
+use Ulams\Auth\Tests\TestCase;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 
@@ -17,13 +17,13 @@ class ConfigApiTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
+        if (!class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
             $this->markTestSkipped();
         }
 
         $this->seed(PermissionTableSeeder::class);
 
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
 
         $this->user = config('auth.providers.users.model')::factory()->create();
         $this->user->guard_name = 'api';
@@ -40,9 +40,9 @@ class ConfigApiTest extends TestCase
         $this->response->assertOk();
         $this->response->assertJsonFragment([
             'data' => [
-                'escola_auth' => [
+                'ulams_auth' => [
                     'registration' => [
-                        'full_key' => 'escola_auth.registration',
+                        'full_key' => 'ulams_auth.registration',
                         'key' => 'registration',
                         'rules' => [
                             'required',
@@ -53,7 +53,7 @@ class ConfigApiTest extends TestCase
                         'public' => true,
                     ],
                     'account_must_be_enabled_by_admin' => [
-                        'full_key' => 'escola_auth.account_must_be_enabled_by_admin',
+                        'full_key' => 'ulams_auth.account_must_be_enabled_by_admin',
                         'key' => 'account_must_be_enabled_by_admin',
                         'rules' => [
                             'required',
@@ -65,7 +65,7 @@ class ConfigApiTest extends TestCase
                         'public' => true,
                     ],
                     'auto_verified_email' => [
-                        'full_key' => 'escola_auth.auto_verified_email',
+                        'full_key' => 'ulams_auth.auto_verified_email',
                         'key' => 'auto_verified_email',
                         'rules' => [
                             'required',
@@ -77,7 +77,7 @@ class ConfigApiTest extends TestCase
                         'public' => true,
                     ],
                     'return_url' => [
-                        'full_key' => 'escola_auth.return_url',
+                        'full_key' => 'ulams_auth.return_url',
                         'key' => 'return_url',
                         'rules' => [
                             'required',
@@ -88,7 +88,7 @@ class ConfigApiTest extends TestCase
                         'public' => true,
                     ],
                     'socialite_remember_me' => [
-                        'full_key' => 'escola_auth.socialite_remember_me',
+                        'full_key' => 'ulams_auth.socialite_remember_me',
                         'key' => 'socialite_remember_me',
                         'rules' => [
                             'required',
@@ -99,7 +99,7 @@ class ConfigApiTest extends TestCase
                         'public' => true,
                     ],
                     'token_expiration_minutes' => [
-                        'full_key' => 'escola_auth.token_expiration_minutes',
+                        'full_key' => 'ulams_auth.token_expiration_minutes',
                         'key' => 'token_expiration_minutes',
                         'rules' => [
                             'required',
@@ -189,27 +189,27 @@ class ConfigApiTest extends TestCase
             [
                 'config' => [
                     [
-                        'key' => 'escola_auth.registration',
+                        'key' => 'ulams_auth.registration',
                         'value' => SettingStatusEnum::DISABLED,
                     ],
                     [
-                        'key' => 'escola_auth.account_must_be_enabled_by_admin',
+                        'key' => 'ulams_auth.account_must_be_enabled_by_admin',
                         'value' => SettingStatusEnum::ENABLED,
                     ],
                     [
-                        'key' => 'escola_auth.auto_verified_email',
+                        'key' => 'ulams_auth.auto_verified_email',
                         'value' => SettingStatusEnum::ENABLED,
                     ],
                     [
-                        'key' => 'escola_auth.return_url',
+                        'key' => 'ulams_auth.return_url',
                         'value' => 'https://example.com',
                     ],
                     [
-                        'key' => 'escola_auth.socialite_remember_me',
+                        'key' => 'ulams_auth.socialite_remember_me',
                         'value' => true,
                     ],
                     [
-                        'key' => 'escola_auth.token_expiration_minutes',
+                        'key' => 'ulams_auth.token_expiration_minutes',
                         'value' => TokenExpirationEnum::SHORT_TIME_IN_MINUTES,
                     ],
                 ]
@@ -223,7 +223,7 @@ class ConfigApiTest extends TestCase
         );
         $this->response->assertOk();
         $this->response->assertJsonFragment([
-            'escola_auth' => [
+            'ulams_auth' => [
                 'registration' => SettingStatusEnum::DISABLED,
                 'account_must_be_enabled_by_admin' => SettingStatusEnum::ENABLED,
                 'auto_verified_email' => SettingStatusEnum::ENABLED,

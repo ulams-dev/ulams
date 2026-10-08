@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Tests\Api\Dictionary;
+namespace Ulams\Dictionaries\Tests\Api\Dictionary;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Dictionaries\Database\Seeders\DictionariesPermissionSeeder;
-use EscolaLms\Dictionaries\Models\Dictionary;
-use EscolaLms\Dictionaries\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Dictionaries\Database\Seeders\DictionariesPermissionSeeder;
+use Ulams\Dictionaries\Models\Dictionary;
+use Ulams\Dictionaries\Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 
 class AdminReadDictionaryApiTest extends TestCase

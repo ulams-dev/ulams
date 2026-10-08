@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Reports\Http\Requests\Admin;
+namespace Ulams\Reports\Http\Requests\Admin;
 
-use EscolaLms\Reports\Models\Report;
+use Ulams\Reports\Models\Report;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 

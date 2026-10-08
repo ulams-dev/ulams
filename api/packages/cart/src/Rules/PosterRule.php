@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Rules;
+namespace Ulams\Cart\Rules;
 
-use EscolaLms\Cart\Enums\ConstantEnum;
-use EscolaLms\Files\Rules\FileOrStringRule;
+use Ulams\Cart\Enums\ConstantEnum;
+use Ulams\Files\Rules\FileOrStringRule;
 
 class PosterRule extends FileOrStringRule
 {

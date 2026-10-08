@@ -4,7 +4,7 @@ import styled, { withTheme } from "styled-components";
 import { useOnClickOutside } from "../../../hooks/useOnClickOutside";
 import { Checkbox } from "../../../";
 import { Text } from "../../../";
-import { Category } from "@lms/sdk/types";
+import { Category } from "@ulams/sdk/types";
 
 interface Props {
   categories: Category[];

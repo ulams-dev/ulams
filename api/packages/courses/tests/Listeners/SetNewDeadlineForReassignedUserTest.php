@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\Listeners;
+namespace Ulams\Courses\Tests\Listeners;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Events\CourseAssigned;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\CourseProgress;
-use EscolaLms\Courses\Models\CourseUserPivot;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Events\CourseAssigned;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\CourseUserPivot;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
 use Illuminate\Contracts\Auth\Authenticatable as User;
-use EscolaLms\Courses\Tests\TestCase;
+use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 

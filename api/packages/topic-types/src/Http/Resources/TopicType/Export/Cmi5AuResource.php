@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Http\Resources\TopicType\Export;
+namespace Ulams\TopicTypes\Http\Resources\TopicType\Export;
 
-use EscolaLms\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
-use EscolaLms\TopicTypes\Models\TopicContent\Cmi5Au;
+use Ulams\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
+use Ulams\TopicTypes\Models\TopicContent\Cmi5Au;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class Cmi5AuResource extends JsonResource implements TopicTypeResourceContract

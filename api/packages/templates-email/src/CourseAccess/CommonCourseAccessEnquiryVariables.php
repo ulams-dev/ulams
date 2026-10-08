@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\CourseAccess;
+namespace Ulams\TemplatesEmail\CourseAccess;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\CourseAccess\Models\CourseAccessEnquiry;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\TemplatesEmail\Core\EmailVariables;
+use Ulams\Core\Models\User;
+use Ulams\CourseAccess\Models\CourseAccessEnquiry;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\TemplatesEmail\Core\EmailVariables;
 
 abstract class CommonCourseAccessEnquiryVariables extends EmailVariables
 {

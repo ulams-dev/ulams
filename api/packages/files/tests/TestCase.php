@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Files\Tests;
+namespace Ulams\Files\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Core\EscolaLmsServiceProvider;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Files\Database\Seeders\DatabaseSeeder;
-use EscolaLms\Files\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\Files\Enums\FilePermissionsEnum;
-use EscolaLms\Files\EscolaLmsFilesServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Core\UlamsServiceProvider;
+use Ulams\Core\Models\User;
+use Ulams\Files\Database\Seeders\DatabaseSeeder;
+use Ulams\Files\Database\Seeders\PermissionTableSeeder;
+use Ulams\Files\Enums\FilePermissionsEnum;
+use Ulams\Files\UlamsFilesServiceProvider;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +17,7 @@ use Illuminate\Testing\TestResponse;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     protected Filesystem $disk;
 
@@ -43,11 +43,11 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsFilesServiceProvider::class,
-            EscolaLmsServiceProvider::class,
+            UlamsFilesServiceProvider::class,
+            UlamsServiceProvider::class,
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
-            EscolaLmsAuthServiceProvider::class,
+            UlamsAuthServiceProvider::class,
         ];
     }
 

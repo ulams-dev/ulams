@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Core\Models\Traits;
+namespace Ulams\Core\Models\Traits;
 
 use Rennokki\QueryCache\Traits\QueryCacheable as BaseQueryCacheable;
 

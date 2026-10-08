@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\Consultations\Http\Controllers\ConsultationAPIController;
-use EscolaLms\Consultations\Http\Controllers\ConsultationController;
+use Ulams\Consultations\Http\Controllers\ConsultationAPIController;
+use Ulams\Consultations\Http\Controllers\ConsultationController;
 use Illuminate\Support\Facades\Route;
 
 // admin endpoints

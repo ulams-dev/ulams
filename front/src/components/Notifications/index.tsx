@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
-import { Notification } from "@lms/components/components/molecules/Notification/Notification";
+import { Notification } from "@ulams/components/components/molecules/Notification/Notification";
 import { getNotificationTranslationObject } from "../../utils";
 import ContentLoader from "@/components/_App/ContentLoader";
-import { Text, Title } from "@lms/components";
+import { Text, Title } from "@ulams/components";
 import { useNotifications } from "@/hooks/useNotification";
 import { RedArrow } from "@/icons/index";
 

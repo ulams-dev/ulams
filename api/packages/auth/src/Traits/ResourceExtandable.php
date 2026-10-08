@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Auth\Traits;
+namespace Ulams\Auth\Traits;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

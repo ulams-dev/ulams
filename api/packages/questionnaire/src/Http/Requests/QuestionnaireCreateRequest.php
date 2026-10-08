@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Http\Requests;
+namespace Ulams\Questionnaire\Http\Requests;
 
-use EscolaLms\Questionnaire\Enums\QuestionnaireTargetGroupEnum;
-use EscolaLms\Questionnaire\Models\Questionnaire;
-use EscolaLms\Questionnaire\Models\QuestionnaireModelType;
+use Ulams\Questionnaire\Enums\QuestionnaireTargetGroupEnum;
+use Ulams\Questionnaire\Models\Questionnaire;
+use Ulams\Questionnaire\Models\QuestionnaireModelType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

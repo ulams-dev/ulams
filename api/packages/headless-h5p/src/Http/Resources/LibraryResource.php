@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Http\Resources;
+namespace Ulams\HeadlessH5P\Http\Resources;
 
-use EscolaLms\HeadlessH5P\Models\H5PLibrary;
+use Ulams\HeadlessH5P\Models\H5PLibrary;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class LibraryResource extends JsonResource

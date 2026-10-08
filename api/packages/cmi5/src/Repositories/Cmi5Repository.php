@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Cmi5\Repositories;
+namespace Ulams\Cmi5\Repositories;
 
-use EscolaLms\Cmi5\Models\Cmi5;
-use EscolaLms\Cmi5\Models\Cmi5Au;
-use EscolaLms\Cmi5\Repositories\Contracts\Cmi5RepositoryContract;
-use EscolaLms\Core\Repositories\BaseRepository;
+use Ulams\Cmi5\Models\Cmi5;
+use Ulams\Cmi5\Models\Cmi5Au;
+use Ulams\Cmi5\Repositories\Contracts\Cmi5RepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;

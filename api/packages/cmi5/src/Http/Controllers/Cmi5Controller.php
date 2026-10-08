@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Cmi5\Http\Controllers;
+namespace Ulams\Cmi5\Http\Controllers;
 
-use EscolaLms\Cmi5\Http\Controllers\Swagger\Cmi5ControllerSwagger;
-use EscolaLms\Cmi5\Http\Requests\Cmi5DeleteRequest;
-use EscolaLms\Cmi5\Http\Requests\Cmi5ListRequest;
-use EscolaLms\Cmi5\Http\Requests\Cmi5ReadRequest;
-use EscolaLms\Cmi5\Http\Requests\Cmi5UploadRequest;
-use EscolaLms\Cmi5\Http\Resources\Cmi5Resource;
-use EscolaLms\Cmi5\Services\Contracts\Cmi5ServiceContract;
-use EscolaLms\Cmi5\Services\Contracts\Cmi5UploadServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Cmi5\Http\Controllers\Swagger\Cmi5ControllerSwagger;
+use Ulams\Cmi5\Http\Requests\Cmi5DeleteRequest;
+use Ulams\Cmi5\Http\Requests\Cmi5ListRequest;
+use Ulams\Cmi5\Http\Requests\Cmi5ReadRequest;
+use Ulams\Cmi5\Http\Requests\Cmi5UploadRequest;
+use Ulams\Cmi5\Http\Resources\Cmi5Resource;
+use Ulams\Cmi5\Services\Contracts\Cmi5ServiceContract;
+use Ulams\Cmi5\Services\Contracts\Cmi5UploadServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 
-class Cmi5Controller extends EscolaLmsBaseController implements Cmi5ControllerSwagger
+class Cmi5Controller extends UlamsBaseController implements Cmi5ControllerSwagger
 {
     private Cmi5ServiceContract $cmi5Service;
     private Cmi5UploadServiceContract $cmi5UploadService;

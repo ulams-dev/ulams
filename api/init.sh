@@ -43,8 +43,8 @@ fi
 
 # set env from `LARAVEL_` prefixed env vars
 # this also setup MULTI_DOMAINS eg 
-# when MULTI_DOMAINS: "api-sprawnymarketing.escolalms.com,api-gest.escolalms.com" 
-# then API_SPRAWNYMARKETING_ESCOLALMS_COM_APP_NAME: '"Sprawny Marketing"'
+# when MULTI_DOMAINS: "api-sprawnymarketing.ulams.app,api-gest.ulams.app" 
+# then API_SPRAWNYMARKETING_ULAMS_COM_APP_NAME: '"Sprawny Marketing"'
 
 php docker/envs/envs.php
 

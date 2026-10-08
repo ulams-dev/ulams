@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\Consultations\Tests\APIs;
+namespace Ulams\Consultations\Tests\APIs;
 
 use Carbon\Carbon;
-use EscolaLms\Auth\Dtos\Admin\UserAssignableDto;
-use EscolaLms\Auth\Services\Contracts\UserServiceContract;
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
-use EscolaLms\Consultations\Enum\ConstantEnum;
-use EscolaLms\Consultations\Enum\ConsultationsPermissionsEnum;
-use EscolaLms\Consultations\Enum\ConsultationStatusEnum;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Models\ConsultationUserTerm;
-use EscolaLms\Consultations\Tests\Models\User;
-use EscolaLms\Consultations\Tests\TestCase;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\Auth\Dtos\Admin\UserAssignableDto;
+use Ulams\Auth\Services\Contracts\UserServiceContract;
+use Ulams\Categories\Models\Category;
+use Ulams\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
+use Ulams\Consultations\Enum\ConstantEnum;
+use Ulams\Consultations\Enum\ConsultationsPermissionsEnum;
+use Ulams\Consultations\Enum\ConsultationStatusEnum;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Models\ConsultationUserTerm;
+use Ulams\Consultations\Tests\Models\User;
+use Ulams\Consultations\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Consultations;
+namespace Ulams\TemplatesEmail\Consultations;
 
 class RejectTermWithTrainerVariables extends CommonConsultationVariables
 {

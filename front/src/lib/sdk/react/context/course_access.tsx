@@ -8,8 +8,8 @@ import {
   useContext,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextPaginatedMetaState,
   ContextStateValue,
 } from "./types";
@@ -30,7 +30,7 @@ import { UserContext } from "./user";
 
 export const CourseAccessContext: React.Context<
   Pick<
-    EscolaLMSContextConfig,
+    UlamsContextConfig,
     | "courseAccess"
     | "fetchCourseAccess"
     | "addCourseAccess"
@@ -49,7 +49,7 @@ export const CourseAccessContext: React.Context<
 
 export interface CourseAccessContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "courseAccess">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "courseAccess">>;
   ssrHydration?: boolean;
 }
 

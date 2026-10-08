@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Tests\Api\DictionaryAccess;
+namespace Ulams\Dictionaries\Tests\Api\DictionaryAccess;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Dictionaries\Database\Seeders\DictionariesPermissionSeeder;
-use EscolaLms\Dictionaries\Models\Dictionary;
-use EscolaLms\Dictionaries\Models\User;
-use EscolaLms\Dictionaries\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Dictionaries\Database\Seeders\DictionariesPermissionSeeder;
+use Ulams\Dictionaries\Models\Dictionary;
+use Ulams\Dictionaries\Models\User;
+use Ulams\Dictionaries\Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
 

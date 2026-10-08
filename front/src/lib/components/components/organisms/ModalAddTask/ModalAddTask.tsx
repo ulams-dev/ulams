@@ -1,6 +1,6 @@
 import { Button, Input, Title } from "../../..";
-import { API } from "@lms/sdk";
-import { DefaultResponseError } from "@lms/sdk/types";
+import { API } from "@ulams/sdk";
+import { DefaultResponseError } from "@ulams/sdk/types";
 import {
   RelatedTreeSelect,
   RelatedValue,

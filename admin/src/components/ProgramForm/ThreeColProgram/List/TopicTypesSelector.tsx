@@ -18,7 +18,7 @@ import {
 import { Button, Divider, Space, Tooltip } from 'antd';
 import { useCallback, useState } from 'react';
 
-import { TopicType } from '@/services/escola-lms/enums';
+import { TopicType } from '@/services/ulams/enums';
 import { FormattedMessage, useIntl, useModel } from 'umi';
 import './types.css';
 

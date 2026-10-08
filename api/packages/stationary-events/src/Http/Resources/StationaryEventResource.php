@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Http\Resources;
+namespace Ulams\StationaryEvents\Http\Resources;
 
-use EscolaLms\Auth\Traits\ResourceExtandable;
+use Ulams\Auth\Traits\ResourceExtandable;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 

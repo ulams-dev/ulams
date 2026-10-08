@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Http\Controllers\Swagger;
+namespace Ulams\AssignWithoutAccount\Http\Controllers\Swagger;
 
-use EscolaLms\AssignWithoutAccount\Http\Requests\UserSubmissionCreateRequest;
-use EscolaLms\AssignWithoutAccount\Http\Requests\UserSubmissionDeleteRequest;
-use EscolaLms\AssignWithoutAccount\Http\Requests\UserSubmissionListRequest;
-use EscolaLms\AssignWithoutAccount\Http\Requests\UserSubmissionUpdateRequest;
+use Ulams\AssignWithoutAccount\Http\Requests\UserSubmissionCreateRequest;
+use Ulams\AssignWithoutAccount\Http\Requests\UserSubmissionDeleteRequest;
+use Ulams\AssignWithoutAccount\Http\Requests\UserSubmissionListRequest;
+use Ulams\AssignWithoutAccount\Http\Requests\UserSubmissionUpdateRequest;
 use Illuminate\Http\JsonResponse;
 
 interface UserSubmissionAdminControllerSwagger

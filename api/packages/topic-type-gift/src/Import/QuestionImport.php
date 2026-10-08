@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Import;
+namespace Ulams\TopicTypeGift\Import;
 
-use EscolaLms\TopicTypeGift\Dtos\GiftQuestionDto;
-use EscolaLms\TopicTypeGift\Services\Contracts\GiftQuestionServiceContract;
+use Ulams\TopicTypeGift\Dtos\GiftQuestionDto;
+use Ulams\TopicTypeGift\Services\Contracts\GiftQuestionServiceContract;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;

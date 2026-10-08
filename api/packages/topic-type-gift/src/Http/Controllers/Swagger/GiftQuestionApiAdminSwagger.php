@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Controllers\Swagger;
+namespace Ulams\TopicTypeGift\Http\Controllers\Swagger;
 
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminCreateGiftQuestionRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminDeleteGiftQuestionRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminExportGiftQuestionsRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminImportGiftQuestionsRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminSortGiftQuestionRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminUpdateGiftQuestionRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminCreateGiftQuestionRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminDeleteGiftQuestionRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminExportGiftQuestionsRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminImportGiftQuestionsRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminSortGiftQuestionRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminUpdateGiftQuestionRequest;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 

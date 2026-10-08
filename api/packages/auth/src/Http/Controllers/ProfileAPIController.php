@@ -1,29 +1,29 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers;
+namespace Ulams\Auth\Http\Controllers;
 
-use EscolaLms\Auth\Dtos\UserUpdateAuthDataDto;
-use EscolaLms\Auth\Dtos\UserUpdateDto;
-use EscolaLms\Auth\Http\Controllers\Swagger\ProfileSwagger;
-use EscolaLms\Auth\Http\Requests\InitProfileDeletionRequest;
-use EscolaLms\Auth\Http\Requests\MyProfileRequest;
-use EscolaLms\Auth\Http\Requests\ProfileDeleteRequest;
-use EscolaLms\Auth\Http\Requests\ProfileUpdateAuthDataRequest;
-use EscolaLms\Auth\Http\Requests\ProfileUpdatePasswordRequest;
-use EscolaLms\Auth\Http\Requests\ProfileUpdateRequest;
-use EscolaLms\Auth\Http\Requests\UpdateInterests;
-use EscolaLms\Auth\Http\Requests\UploadAvatarRequest;
-use EscolaLms\Auth\Http\Requests\UserSettingsUpdateRequest;
-use EscolaLms\Auth\Http\Resources\UserFullResource;
-use EscolaLms\Auth\Http\Resources\UserSettingCollection;
-use EscolaLms\Auth\Repositories\Contracts\UserRepositoryContract;
-use EscolaLms\Auth\Services\Contracts\UserServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Core\Models\User;
+use Ulams\Auth\Dtos\UserUpdateAuthDataDto;
+use Ulams\Auth\Dtos\UserUpdateDto;
+use Ulams\Auth\Http\Controllers\Swagger\ProfileSwagger;
+use Ulams\Auth\Http\Requests\InitProfileDeletionRequest;
+use Ulams\Auth\Http\Requests\MyProfileRequest;
+use Ulams\Auth\Http\Requests\ProfileDeleteRequest;
+use Ulams\Auth\Http\Requests\ProfileUpdateAuthDataRequest;
+use Ulams\Auth\Http\Requests\ProfileUpdatePasswordRequest;
+use Ulams\Auth\Http\Requests\ProfileUpdateRequest;
+use Ulams\Auth\Http\Requests\UpdateInterests;
+use Ulams\Auth\Http\Requests\UploadAvatarRequest;
+use Ulams\Auth\Http\Requests\UserSettingsUpdateRequest;
+use Ulams\Auth\Http\Resources\UserFullResource;
+use Ulams\Auth\Http\Resources\UserSettingCollection;
+use Ulams\Auth\Repositories\Contracts\UserRepositoryContract;
+use Ulams\Auth\Services\Contracts\UserServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Core\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ProfileAPIController extends EscolaLmsBaseController implements ProfileSwagger
+class ProfileAPIController extends UlamsBaseController implements ProfileSwagger
 {
     private UserRepositoryContract $userRepository;
     private UserServiceContract $userService;

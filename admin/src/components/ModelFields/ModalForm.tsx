@@ -3,7 +3,7 @@ import { Form } from 'antd';
 import React, { useCallback, useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
 
-import { createOrUpdateField } from '@/services/escola-lms/fields';
+import { createOrUpdateField } from '@/services/ulams/fields';
 import JsonEditor from '../JsonEditor';
 
 enum ModelFieldType {
@@ -19,15 +19,15 @@ export const ModelFieldsModalForm: React.FC<{
   name: string | boolean;
   visible: boolean;
   onVisibleChange: (visible: boolean) => void;
-  onResponse: (metaField: EscolaLms.ModelFields.Models.Metadata) => void;
-  fields: EscolaLms.ModelFields.Models.Metadata[];
+  onResponse: (metaField: Ulams.ModelFields.Models.Metadata) => void;
+  fields: Ulams.ModelFields.Models.Metadata[];
 }> = ({ visible, onVisibleChange, onResponse, class_type, name = 'new', fields = [] }) => {
   const intl = useIntl();
 
   const [form] = Form.useForm();
 
   const onFinish = useCallback(
-    async (data: EscolaLms.ModelFields.Http.Requests.MetadataCreateOrUpdateRequest) => {
+    async (data: Ulams.ModelFields.Http.Requests.MetadataCreateOrUpdateRequest) => {
       await createOrUpdateField({
         ...data,
         class_type,

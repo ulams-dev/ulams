@@ -3,7 +3,7 @@ import Drawer from "rc-drawer";
 import { isMobile } from "react-device-detect";
 import Notifications from "@/components/Notifications";
 import { useContext } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 
 const GlobalDrawer = createGlobalStyle`
     .drawer-handle {
@@ -63,7 +63,7 @@ type Props = {
 };
 
 const NotificationsDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
-  const { fetchNotifications } = useContext(EscolaLMSContext);
+  const { fetchNotifications } = useContext(UlamsContext);
 
   const handleClose = () => {
     onClose();

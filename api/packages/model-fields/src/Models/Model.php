@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\ModelFields\Models;
+namespace Ulams\ModelFields\Models;
 
 use Illuminate\Database\Eloquent\Model as BaseModel;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Collection;
-use EscolaLms\ModelFields\Services\Contracts\ModelFieldsServiceContract;
+use Ulams\ModelFields\Services\Contracts\ModelFieldsServiceContract;
 use Illuminate\Support\Facades\App;
-use EscolaLms\ModelFields\Enum\MetaFieldTypeEnum;
+use Ulams\ModelFields\Enum\MetaFieldTypeEnum;
 use Illuminate\Support\Facades\Cache;
-use  EscolaLms\ModelFields\Services\ModelFieldsService;
+use  Ulams\ModelFields\Services\ModelFieldsService;
 
 abstract class Model extends BaseModel
 {

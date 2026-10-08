@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\User;
+namespace Ulams\Reports\Stats\User;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Notifications\Models\DatabaseNotification;
+use Ulams\Core\Models\User;
+use Ulams\Notifications\Models\DatabaseNotification;
 use Illuminate\Support\Collection;
 
 class ActiveUsers extends AbstractUsersStats

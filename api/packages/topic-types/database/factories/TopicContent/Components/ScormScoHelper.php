@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Database\Factories\TopicContent\Components;
+namespace Ulams\TopicTypes\Database\Factories\TopicContent\Components;
 
-use EscolaLms\Scorm\Services\Contracts\ScormServiceContract;
+use Ulams\Scorm\Services\Contracts\ScormServiceContract;
 use Illuminate\Http\UploadedFile;
 use Peopleaps\Scorm\Model\ScormScoModel;
 

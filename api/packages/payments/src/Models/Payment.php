@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Payments\Models;
+namespace Ulams\Payments\Models;
 
-use EscolaLms\Payments\Enums\Currency;
+use Ulams\Payments\Enums\Currency;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Money\Money;
-use EscolaLms\Payments\Enums\PaymentStatus;
-use EscolaLms\Payments\Models\Schemas\PaymentSchema;
+use Ulams\Payments\Enums\PaymentStatus;
+use Ulams\Payments\Models\Schemas\PaymentSchema;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * EscolaLms\Payments\Models\Payment
+ * Ulams\Payments\Models\Payment
  *
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -33,8 +33,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $gateway_request_id
  * @property string|null $gateway_refunds_uuid
  * @property-read Model|\Eloquent $payable
- * @property-read \EscolaLms\Payments\Models\User|null $user
- * @method static \Database\Factories\EscolaLms\Payments\Models\PaymentFactory factory(...$parameters)
+ * @property-read \Ulams\Payments\Models\User|null $user
+ * @method static \Database\Factories\Ulams\Payments\Models\PaymentFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Payment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Payment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Payment query()

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Tasks\Models;
+namespace Ulams\Tasks\Models;
 
 use Illuminate\Support\Carbon;
-use EscolaLms\Tasks\Database\Factories\TaskFactory;
+use Ulams\Tasks\Database\Factories\TaskFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  *
  * Class Task
  *
- * @package EscolaLms\Tasks\Models
+ * @package Ulams\Tasks\Models
  *
  * @property int $id
  * @property string $title

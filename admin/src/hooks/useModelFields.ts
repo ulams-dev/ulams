@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { fields as fetchFields } from '@/services/escola-lms/fields';
+import { fields as fetchFields } from '@/services/ulams/fields';
 
 type ModelFieldsState =
   | {

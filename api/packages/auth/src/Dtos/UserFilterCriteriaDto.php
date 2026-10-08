@@ -1,27 +1,27 @@
 <?php
 
-namespace EscolaLms\Auth\Dtos;
+namespace Ulams\Auth\Dtos;
 
-use EscolaLms\Auth\Models\User as AuthUser;
-use EscolaLms\Auth\Repositories\Criteria\AdditionalField\AdditionalFieldBooleanCriterion;
-use EscolaLms\Auth\Repositories\Criteria\AdditionalField\AdditionalFieldEqualsCriterion;
-use EscolaLms\Auth\Repositories\Criteria\AdditionalField\AdditionalFieldLikeCriterion;
-use EscolaLms\Auth\Repositories\Criteria\LastLoginToFrontCriterion;
-use EscolaLms\Auth\Repositories\Criteria\LastLoginCriterion;
-use EscolaLms\Core\Repositories\Criteria\PeriodCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\DoesntHasCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\HasCriterion;
-use EscolaLms\Core\Repositories\Criteria\RoleCriterion;
-use EscolaLms\Core\Repositories\Criteria\UserSearchCriterion;
+use Ulams\Auth\Models\User as AuthUser;
+use Ulams\Auth\Repositories\Criteria\AdditionalField\AdditionalFieldBooleanCriterion;
+use Ulams\Auth\Repositories\Criteria\AdditionalField\AdditionalFieldEqualsCriterion;
+use Ulams\Auth\Repositories\Criteria\AdditionalField\AdditionalFieldLikeCriterion;
+use Ulams\Auth\Repositories\Criteria\LastLoginToFrontCriterion;
+use Ulams\Auth\Repositories\Criteria\LastLoginCriterion;
+use Ulams\Core\Repositories\Criteria\PeriodCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\DoesntHasCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\HasCriterion;
+use Ulams\Core\Repositories\Criteria\RoleCriterion;
+use Ulams\Core\Repositories\Criteria\UserSearchCriterion;
 use Carbon\Carbon;
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
-use EscolaLms\ModelFields\Enum\MetaFieldTypeEnum;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\ModelFields\Enum\MetaFieldTypeEnum;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use EscolaLms\Core\Dtos\CriteriaDto;
+use Ulams\Core\Dtos\CriteriaDto;
 use Illuminate\Support\Facades\Schema;
 
 class UserFilterCriteriaDto extends CriteriaDto implements DtoContract, InstantiateFromRequest

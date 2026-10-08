@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Http\Controllers\Contracts;
+namespace Ulams\Questionnaire\Http\Controllers\Contracts;
 
-use EscolaLms\Questionnaire\Http\Requests\QuestionAnswersFrontReadRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionAnswersFrontStarsRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireFrontAnswerRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireFrontListingRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireFrontReadRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireStarsFrontRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionAnswersFrontReadRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionAnswersFrontStarsRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireFrontAnswerRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireFrontListingRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireFrontReadRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireStarsFrontRequest;
 use Illuminate\Http\JsonResponse;
 
 interface QuestionnaireApiContract

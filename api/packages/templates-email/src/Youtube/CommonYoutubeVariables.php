@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Youtube;
+namespace Ulams\TemplatesEmail\Youtube;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\TemplatesEmail\Core\EmailVariables;
-use EscolaLms\Webinar\Models\Webinar;
-use EscolaLms\Youtube\Facades\Youtube;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\TemplatesEmail\Core\EmailVariables;
+use Ulams\Webinar\Models\Webinar;
+use Ulams\Youtube\Facades\Youtube;
 
 abstract class CommonYoutubeVariables extends EmailVariables
 {

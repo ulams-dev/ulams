@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Webinar\Database\Factories;
+namespace Ulams\Webinar\Database\Factories;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Webinar\Enum\WebinarStatusEnum;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Webinar\Enum\WebinarStatusEnum;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class WebinarFactory extends Factory

@@ -1,4 +1,4 @@
-import { getWebinar } from '@/services/escola-lms/webinars';
+import { getWebinar } from '@/services/ulams/webinars';
 import { Button, message } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Policies;
+namespace Ulams\ConsultationAccess\Policies;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\ConsultationAccess\Enum\ConsultationAccessPermissionEnum;
-use EscolaLms\ConsultationAccess\Enum\EnquiryStatusEnum;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\Auth\Models\User;
+use Ulams\ConsultationAccess\Enum\ConsultationAccessPermissionEnum;
+use Ulams\ConsultationAccess\Enum\EnquiryStatusEnum;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ConsultationAccessEnquiryPolicy

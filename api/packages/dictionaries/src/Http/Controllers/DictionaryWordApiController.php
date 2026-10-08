@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Http\Controllers;
+namespace Ulams\Dictionaries\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Dictionaries\Http\Controllers\Swagger\DictionaryWordApiControllerSwagger;
-use EscolaLms\Dictionaries\Http\Requests\DictionaryWord\ListDictionaryWordRequest;
-use EscolaLms\Dictionaries\Http\Resources\CategorySimpleResource;
-use EscolaLms\Dictionaries\Http\Resources\DictionaryWordResource;
-use EscolaLms\Dictionaries\Http\Resources\DictionaryWordSimpleResource;
-use EscolaLms\Dictionaries\Services\Contracts\DictionaryWordServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Dictionaries\Http\Controllers\Swagger\DictionaryWordApiControllerSwagger;
+use Ulams\Dictionaries\Http\Requests\DictionaryWord\ListDictionaryWordRequest;
+use Ulams\Dictionaries\Http\Resources\CategorySimpleResource;
+use Ulams\Dictionaries\Http\Resources\DictionaryWordResource;
+use Ulams\Dictionaries\Http\Resources\DictionaryWordSimpleResource;
+use Ulams\Dictionaries\Services\Contracts\DictionaryWordServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class DictionaryWordApiController extends EscolaLmsBaseController implements DictionaryWordApiControllerSwagger
+class DictionaryWordApiController extends UlamsBaseController implements DictionaryWordApiControllerSwagger
 {
 
     public function __construct(private readonly DictionaryWordServiceContract $dictionaryWordService)

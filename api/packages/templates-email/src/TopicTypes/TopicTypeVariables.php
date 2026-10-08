@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\TopicTypes;
+namespace Ulams\TemplatesEmail\TopicTypes;
 
-use EscolaLms\TemplatesEmail\Core\EmailVariables;
+use Ulams\TemplatesEmail\Core\EmailVariables;
 
 abstract class TopicTypeVariables extends EmailVariables
 {

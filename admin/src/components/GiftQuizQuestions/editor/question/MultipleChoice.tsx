@@ -9,7 +9,7 @@ import { Button, Tooltip } from 'antd';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'umi';
 
-import { QuestionType } from '@/services/escola-lms/enums';
+import { QuestionType } from '@/services/ulams/enums';
 
 const INITIAL_VALUES = {
   [QuestionType.MULTIPLE_CHOICE]: [

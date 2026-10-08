@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Recommender\Tests\Api;
+namespace Ulams\Recommender\Tests\Api;
 
-use EscolaLms\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Recommender\Dto\SatisfactionDto;
-use EscolaLms\Recommender\EscolaLmsRecommenderServiceProvider;
-use EscolaLms\Recommender\Models\AggregatedFrame;
-use EscolaLms\Recommender\Models\MeetRecording;
-use EscolaLms\Recommender\Models\TermAnalytic;
-use EscolaLms\Recommender\Services\Contracts\TermAnalyticServiceContract;
-use EscolaLms\Recommender\Tests\TestCase;
-use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
+use Ulams\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Recommender\Dto\SatisfactionDto;
+use Ulams\Recommender\UlamsRecommenderServiceProvider;
+use Ulams\Recommender\Models\AggregatedFrame;
+use Ulams\Recommender\Models\MeetRecording;
+use Ulams\Recommender\Models\TermAnalytic;
+use Ulams\Recommender\Services\Contracts\TermAnalyticServiceContract;
+use Ulams\Recommender\Tests\TestCase;
+use Ulams\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
@@ -72,9 +72,9 @@ class SatisfactionModelsTest extends TestCase
 
     public function testPredictSatisfactionSendsSelectedModelsFromSettings(): void
     {
-        Config::set(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.frames_microservice_url', 'http://frames.test');
+        Config::set(UlamsRecommenderServiceProvider::CONFIG_KEY . '.frames_microservice_url', 'http://frames.test');
         Config::set(
-            EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.satisfaction_models',
+            UlamsRecommenderServiceProvider::CONFIG_KEY . '.satisfaction_models',
             [
                 ['model' => 'prod_elasticnet', 'enabled' => true],
                 ['model' => 'retrained_ridge3', 'enabled' => true],

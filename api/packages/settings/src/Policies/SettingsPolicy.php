@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Settings\Policies;
+namespace Ulams\Settings\Policies;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use EscolaLms\Settings\Enums\SettingsPermissionsEnum;
+use Ulams\Settings\Enums\SettingsPermissionsEnum;
 
 class SettingsPolicy
 {

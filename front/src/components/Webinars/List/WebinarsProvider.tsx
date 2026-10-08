@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import { useLocation, useHistory } from "react-router-dom";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
-import { API } from "@lms/sdk";
+import { UlamsContext } from "@ulams/sdk/react/context";
+import { API } from "@ulams/sdk";
 import qs from "query-string";
 import { WebinarsContext } from "./WebinarsContext";
 
@@ -17,7 +17,7 @@ const parseParams = (params: WebinarsParams = {}) => {
 const WebinarsProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const { fetchWebinars, webinars, fetchTags } = useContext(EscolaLMSContext);
+  const { fetchWebinars, webinars, fetchTags } = useContext(UlamsContext);
   const location = useLocation();
   const { push } = useHistory();
   const [params, setParams] = useState<WebinarsParams | undefined>();

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Providers;
+namespace Ulams\Courses\Providers;
 
-use EscolaLms\Courses\Events\CourseAssigned;
-use EscolaLms\Courses\Listeners\SetNewDeadlineForReassignedUser;
+use Ulams\Courses\Events\CourseAssigned;
+use Ulams\Courses\Listeners\SetNewDeadlineForReassignedUser;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Spatie\ResponseCache\Events\ClearedResponseCache;
@@ -20,9 +20,9 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Event::listen([
-            'eloquent.created: EscolaLms*',
-            'eloquent.updated: EscolaLms*',
-            'eloquent.deleted: EscolaLms*',
+            'eloquent.created: Ulams*',
+            'eloquent.updated: Ulams*',
+            'eloquent.deleted: Ulams*',
         ], function() {
             ResponseCache::clear();
             event(ClearedResponseCache::class);

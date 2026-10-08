@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Resources;
+namespace Ulams\TopicTypeGift\Http\Resources;
 
-use EscolaLms\TopicTypeGift\Models\AttemptAnswer;
+use Ulams\TopicTypeGift\Models\AttemptAnswer;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

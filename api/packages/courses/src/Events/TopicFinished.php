@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Events;
+namespace Ulams\Courses\Events;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Core\Models\User;
+use Ulams\Courses\Models\Topic;
+use Ulams\Core\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

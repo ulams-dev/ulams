@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Observers;
+namespace Ulams\Courses\Observers;
 
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Courses\Models\Topic;
 use Spatie\ResponseCache\Facades\ResponseCache;
 
 class TopicObserver

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers\Admin\Swagger;
+namespace Ulams\Auth\Http\Controllers\Admin\Swagger;
 
-use EscolaLms\Auth\Http\Requests\Admin\UserSettingsListRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserSettingsUpdateRequest;
+use Ulams\Auth\Http\Requests\Admin\UserSettingsListRequest;
+use Ulams\Auth\Http\Requests\Admin\UserSettingsUpdateRequest;
 use Illuminate\Http\JsonResponse;
 
 interface UserSettingsSwagger

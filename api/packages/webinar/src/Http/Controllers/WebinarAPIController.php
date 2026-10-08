@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\Webinar\Http\Controllers;
+namespace Ulams\Webinar\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Webinar\Dto\GenerateSignedScreenUrlsDto;
-use EscolaLms\Webinar\Enum\ConstantEnum;
-use EscolaLms\Webinar\Http\Controllers\Swagger\WebinarAPISwagger;
-use EscolaLms\Webinar\Http\Requests\GenerateSignedScreenUrlsRequest;
-use EscolaLms\Webinar\Http\Requests\ListWebinarsRequest;
-use EscolaLms\Webinar\Http\Resources\WebinarSimpleResource;
-use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Webinar\Dto\GenerateSignedScreenUrlsDto;
+use Ulams\Webinar\Enum\ConstantEnum;
+use Ulams\Webinar\Http\Controllers\Swagger\WebinarAPISwagger;
+use Ulams\Webinar\Http\Requests\GenerateSignedScreenUrlsRequest;
+use Ulams\Webinar\Http\Requests\ListWebinarsRequest;
+use Ulams\Webinar\Http\Resources\WebinarSimpleResource;
+use Ulams\Webinar\Services\Contracts\WebinarServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPISwagger
+class WebinarAPIController extends UlamsBaseController implements WebinarAPISwagger
 {
     private WebinarServiceContract $webinarServiceContract;
 
@@ -37,7 +37,7 @@ class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPI
             )
             ->paginate(
                 $listWebinarsRequest->get('per_page') ??
-                config('escolalms_webinar.perPage', ConstantEnum::PER_PAGE)
+                config('ulams_webinar.perPage', ConstantEnum::PER_PAGE)
             );
         return $this->sendResponseForResource(
             $this->webinarServiceContract->extendResponse(WebinarSimpleResource::collection($webinars), true),
@@ -61,7 +61,7 @@ class WebinarAPIController extends EscolaLmsBaseController implements WebinarAPI
         if ($listWebinarsRequest->input('paginate', false)) {
             $webinars = $webinars->paginate(
                 $listWebinarsRequest->get('per_page') ??
-                config('escolalms_webinar.perPage', ConstantEnum::PER_PAGE)
+                config('ulams_webinar.perPage', ConstantEnum::PER_PAGE)
             );
         } else {
             $webinars = $webinars->get();

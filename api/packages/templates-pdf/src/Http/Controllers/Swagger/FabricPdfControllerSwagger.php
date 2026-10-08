@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Http\Controllers\Swagger;
+namespace Ulams\TemplatesPdf\Http\Controllers\Swagger;
 
-use EscolaLms\TemplatesPdf\Http\Requests\PdfListingRequest;
-use EscolaLms\TemplatesPdf\Http\Requests\PdfReadRequest;
-use EscolaLms\TemplatesPdf\Http\Requests\PdfListingAdminRequest;
+use Ulams\TemplatesPdf\Http\Requests\PdfListingRequest;
+use Ulams\TemplatesPdf\Http\Requests\PdfReadRequest;
+use Ulams\TemplatesPdf\Http\Requests\PdfListingAdminRequest;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 use Illuminate\Http\JsonResponse;
@@ -43,7 +43,7 @@ interface FabricPdfControllerSwagger
      *      ),
      *      @OA\Parameter(
      *           name="assignable_type",
-     *           description="Assignable type (EscolaLms\Courses\Models\Course)",
+     *           description="Assignable type (Ulams\Courses\Models\Course)",
      *           required=false,
      *           in="query",
      *           @OA\Schema(

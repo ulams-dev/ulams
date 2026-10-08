@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cmi5\Rules;
+namespace Ulams\Cmi5\Rules;
 
-use EscolaLms\Cmi5\Enums\Cmi5Enum;
+use Ulams\Cmi5\Enums\Cmi5Enum;
 use Illuminate\Contracts\Validation\Rule;
 use ZipArchive;
 

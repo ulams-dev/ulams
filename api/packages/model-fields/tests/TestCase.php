@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\ModelFields\Tests;
+namespace Ulams\ModelFields\Tests;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
-use EscolaLms\ModelFields\ModelFieldsServiceProvider;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\ModelFields\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\ModelFields\Tests\TestModelFieldsServiceProvider;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
+use Ulams\ModelFields\ModelFieldsServiceProvider;
+use Ulams\Auth\Models\User;
+use Ulams\ModelFields\Database\Seeders\PermissionTableSeeder;
+use Ulams\ModelFields\Tests\TestModelFieldsServiceProvider;
 
 
 class TestCase extends CoreTestCase

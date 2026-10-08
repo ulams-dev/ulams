@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Services\Contracts;
+namespace Ulams\Courses\Services\Contracts;
 
-use EscolaLms\Courses\Models\Lesson;
+use Ulams\Courses\Models\Lesson;
 use Illuminate\Database\Eloquent\Model;
 
 interface LessonServiceContract

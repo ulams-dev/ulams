@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Files\Helpers;
+namespace Ulams\Files\Helpers;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;

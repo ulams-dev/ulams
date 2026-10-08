@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Controllers\Swagger;
+namespace Ulams\TopicTypeGift\Http\Controllers\Swagger;
 
-use EscolaLms\TopicTypeGift\Http\Requests\SaveAllAttemptAnswersRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\SaveAttemptAnswerRequest;
+use Ulams\TopicTypeGift\Http\Requests\SaveAllAttemptAnswersRequest;
+use Ulams\TopicTypeGift\Http\Requests\SaveAttemptAnswerRequest;
 use Illuminate\Http\JsonResponse;
 
 interface AttemptAnswerApiSwagger

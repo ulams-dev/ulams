@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useMemo } from "react";
 import { useParams, Redirect, Link } from "react-router-dom";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import routes from "@/components/Routes/routes";
 import usePrevious from "../../hooks/usePrevious";
 import Layout from "@/components/_App/Layout";
 import styled from "styled-components";
-import { MarkdownRenderer } from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { MarkdownRenderer } from "@ulams/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { isMobile } from "react-device-detect";
 import Breadcrumbs from "@/components/Common/Breadcrumbs";
 import { useTranslation } from "react-i18next";
@@ -30,7 +30,7 @@ const StyledStaticPage = styled.section`
 
 const StaticPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { fetchPage, page, fetchPages, pages } = useContext(EscolaLMSContext);
+  const { fetchPage, page, fetchPages, pages } = useContext(UlamsContext);
 
   const prevSlug = usePrevious(slug);
   const { t } = useTranslation();

@@ -2,13 +2,13 @@ import { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import Container from "@/components/Common/Container";
 
 import routeRoutes from "@/components/Routes/routes";
-import { getStylesBasedOnTheme } from "@lms/components/utils/utils";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { getStylesBasedOnTheme } from "@ulams/components/utils/utils";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { ThankYouIcon } from "@/icons/index";
 import { isMobile } from "react-device-detect";
 
@@ -58,7 +58,7 @@ const CartSuccessPageStyled = styled.div<{ $isMobile: boolean }>`
 const CartSuccess = () => {
   const { t } = useTranslation();
 
-  const { fetchProgress } = useContext(EscolaLMSContext);
+  const { fetchProgress } = useContext(UlamsContext);
 
   useEffect(() => {
     fetchProgress();

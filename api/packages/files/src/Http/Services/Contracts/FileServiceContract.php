@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Files\Http\Services\Contracts;
+namespace Ulams\Files\Http\Services\Contracts;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 use Illuminate\Support\Collection;
 
 interface FileServiceContract

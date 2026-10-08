@@ -2,45 +2,45 @@
 
 namespace Database\Seeders;
 
-use EscolaLms\AssignWithoutAccount\Database\Seeders\AssignWithoutAccountPermissionSeeder;
-use EscolaLms\Auth\Database\Seeders\AuthPermissionSeeder;
-use EscolaLms\Bookmarks\Database\Seeders\BookmarkPermissionSeeder;
-use EscolaLms\BulkNotifications\Database\Seeders\BulkNotificationPermissionSeeder;
-use EscolaLms\Cart\Database\Seeders\CartPermissionSeeder;
-use EscolaLms\Categories\Database\Seeders\CategoriesPermissionSeeder;
-use EscolaLms\Cmi5\Database\Seeders\Cmi5PermissionSeeder;
-use EscolaLms\ConsultationAccess\Database\Seeders\ConsultationAccessPermissionSeeder;
-use EscolaLms\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
-use EscolaLms\Core\Seeders\RoleTableSeeder;
-use EscolaLms\CourseAccess\Database\Seeders\CourseAccessPermissionSeeder;
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\CoursesImportExport\Database\Seeders\CoursesExportImportPermissionSeeder;
-use EscolaLms\CsvUsers\Database\Seeders\CsvUsersPermissionSeeder;
-use EscolaLms\Dictionaries\Database\Seeders\DictionariesPermissionSeeder;
-use EscolaLms\Files\Database\Seeders\PermissionTableSeeder as FilePermissionTableSeeder;
-use EscolaLms\HeadlessH5P\Database\Seeders\PermissionTableSeeder as H5PPermissionTableSeeder;
-use EscolaLms\Lrs\Database\Seeders\LrsPermissionSeeder;
-use EscolaLms\ModelFields\Database\Seeders\PermissionTableSeeder as ModelFieldsPermissionTableSeeder;
-use EscolaLms\Notifications\Database\Seeders\NotificationsPermissionsSeeder;
-use EscolaLms\Pages\Database\Seeders\PermissionTableSeeder as PagesPermissionTableSeeder;
-use EscolaLms\Payments\Database\Seeders\PaymentsPermissionsSeeder;
-use EscolaLms\Permissions\Database\Seeders\PermissionTableSeeder as PermissionsPermissionTableSeeder;
-use EscolaLms\Questionnaire\Database\Seeders\QuestionnairePermissionsSeeder;
-use EscolaLms\Reports\Database\Seeders\ReportsPermissionSeeder;
-use EscolaLms\Scorm\Database\Seeders\PermissionTableSeeder as ScormPermissionTableSeeder;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder as SettingsPermissionTableSeeder;
-use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
-use EscolaLms\Tags\Database\Seeders\TagsPermissionSeeder;
-use EscolaLms\Tasks\Database\Seeders\TaskPermissionSeeder;
-use EscolaLms\Templates\Database\Seeders\PermissionTableSeeder as TemplatesPermissionTableSeeder;
-use EscolaLms\TemplatesPdf\Database\Seeders\PermissionTableSeeder as TemplatesPdfPermissionTableSeeder;
-use EscolaLms\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder;
-use EscolaLms\TopicTypeProject\Database\Seeders\TopicTypeProjectPermissionSeeder;
-use EscolaLms\Tracker\Database\Seeders\TrackerPermissionSeeder;
-use EscolaLms\Translations\Database\Seeders\TranslationsPermissionSeeder;
-use EscolaLms\Video\Database\Seeders\VideoPermissionSeeder;
-use EscolaLms\Vouchers\Database\Seeders\VoucherPermissionsSeeder;
-use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
+use Ulams\AssignWithoutAccount\Database\Seeders\AssignWithoutAccountPermissionSeeder;
+use Ulams\Auth\Database\Seeders\AuthPermissionSeeder;
+use Ulams\Bookmarks\Database\Seeders\BookmarkPermissionSeeder;
+use Ulams\BulkNotifications\Database\Seeders\BulkNotificationPermissionSeeder;
+use Ulams\Cart\Database\Seeders\CartPermissionSeeder;
+use Ulams\Categories\Database\Seeders\CategoriesPermissionSeeder;
+use Ulams\Cmi5\Database\Seeders\Cmi5PermissionSeeder;
+use Ulams\ConsultationAccess\Database\Seeders\ConsultationAccessPermissionSeeder;
+use Ulams\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
+use Ulams\Core\Seeders\RoleTableSeeder;
+use Ulams\CourseAccess\Database\Seeders\CourseAccessPermissionSeeder;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\CoursesImportExport\Database\Seeders\CoursesExportImportPermissionSeeder;
+use Ulams\CsvUsers\Database\Seeders\CsvUsersPermissionSeeder;
+use Ulams\Dictionaries\Database\Seeders\DictionariesPermissionSeeder;
+use Ulams\Files\Database\Seeders\PermissionTableSeeder as FilePermissionTableSeeder;
+use Ulams\HeadlessH5P\Database\Seeders\PermissionTableSeeder as H5PPermissionTableSeeder;
+use Ulams\Lrs\Database\Seeders\LrsPermissionSeeder;
+use Ulams\ModelFields\Database\Seeders\PermissionTableSeeder as ModelFieldsPermissionTableSeeder;
+use Ulams\Notifications\Database\Seeders\NotificationsPermissionsSeeder;
+use Ulams\Pages\Database\Seeders\PermissionTableSeeder as PagesPermissionTableSeeder;
+use Ulams\Payments\Database\Seeders\PaymentsPermissionsSeeder;
+use Ulams\Permissions\Database\Seeders\PermissionTableSeeder as PermissionsPermissionTableSeeder;
+use Ulams\Questionnaire\Database\Seeders\QuestionnairePermissionsSeeder;
+use Ulams\Reports\Database\Seeders\ReportsPermissionSeeder;
+use Ulams\Scorm\Database\Seeders\PermissionTableSeeder as ScormPermissionTableSeeder;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder as SettingsPermissionTableSeeder;
+use Ulams\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
+use Ulams\Tags\Database\Seeders\TagsPermissionSeeder;
+use Ulams\Tasks\Database\Seeders\TaskPermissionSeeder;
+use Ulams\Templates\Database\Seeders\PermissionTableSeeder as TemplatesPermissionTableSeeder;
+use Ulams\TemplatesPdf\Database\Seeders\PermissionTableSeeder as TemplatesPdfPermissionTableSeeder;
+use Ulams\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder;
+use Ulams\TopicTypeProject\Database\Seeders\TopicTypeProjectPermissionSeeder;
+use Ulams\Tracker\Database\Seeders\TrackerPermissionSeeder;
+use Ulams\Translations\Database\Seeders\TranslationsPermissionSeeder;
+use Ulams\Video\Database\Seeders\VideoPermissionSeeder;
+use Ulams\Vouchers\Database\Seeders\VoucherPermissionsSeeder;
+use Ulams\Webinar\Database\Seeders\WebinarsPermissionSeeder;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
@@ -109,7 +109,7 @@ class PermissionsSeeder extends Seeder
                 $admin = User::firstOrCreate([
                     'first_name' => env("INITIAL_USER_FIRST_NAME", 'Root'),
                     'last_name' => env("INITIAL_USER_LAST_NAME", 'Admin'),
-                    'email' => env("INITIAL_USER_EMAIL", 'admin@escolalms.com'),
+                    'email' => env("INITIAL_USER_EMAIL", 'admin@ulams.app'),
                     'password' => Hash::make(env("INITIAL_USER_PASSWORD")),
                     'is_active' => 1,
                     'email_verified_at' => Carbon::now(),

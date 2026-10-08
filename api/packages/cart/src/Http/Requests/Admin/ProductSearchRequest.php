@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests\Admin;
+namespace Ulams\Cart\Http\Requests\Admin;
 
-use EscolaLms\Cart\Dtos\ProductsSearchDto;
-use EscolaLms\Cart\Enums\ProductType;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Rules\ProductableRegisteredRule;
+use Ulams\Cart\Dtos\ProductsSearchDto;
+use Ulams\Cart\Enums\ProductType;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Rules\ProductableRegisteredRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

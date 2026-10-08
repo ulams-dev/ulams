@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Auth;
+namespace Ulams\TemplatesEmail\Auth;
 
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Templates\Events\EventWrapper;
 
 class AccountConfirmedVariables extends CommonAuthVariables
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Tests\APIs;
+namespace Ulams\CsvUsers\Tests\APIs;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\CsvUsers\Export\UserGroupExport;
-use EscolaLms\CsvUsers\Models\Group;
-use EscolaLms\CsvUsers\Tests\TestCase;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\CsvUsers\Export\UserGroupExport;
+use Ulams\CsvUsers\Models\Group;
+use Ulams\CsvUsers\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Maatwebsite\Excel\Facades\Excel;

@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Cart\Jobs;
+namespace Ulams\Cart\Jobs;
 
-use EscolaLms\Cart\Dtos\ClientDetailsDto;
-use EscolaLms\Cart\Enums\OrderStatus;
-use EscolaLms\Cart\Enums\ProductType;
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductUser;
-use EscolaLms\Cart\Models\User;
-use EscolaLms\Cart\Services\Contracts\OrderServiceContract;
-use EscolaLms\Payments\Enums\PaymentStatus;
-use EscolaLms\Payments\Facades\PaymentGateway;
+use Ulams\Cart\Dtos\ClientDetailsDto;
+use Ulams\Cart\Enums\OrderStatus;
+use Ulams\Cart\Enums\ProductType;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductUser;
+use Ulams\Cart\Models\User;
+use Ulams\Cart\Services\Contracts\OrderServiceContract;
+use Ulams\Payments\Enums\PaymentStatus;
+use Ulams\Payments\Facades\PaymentGateway;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;

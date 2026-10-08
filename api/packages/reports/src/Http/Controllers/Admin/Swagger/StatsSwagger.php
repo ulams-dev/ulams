@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Reports\Http\Controllers\Admin\Swagger;
+namespace Ulams\Reports\Http\Controllers\Admin\Swagger;
 
-use EscolaLms\Reports\Http\Requests\Admin\CartStatsRequest;
-use EscolaLms\Reports\Http\Requests\Admin\CourseStatsRequest;
-use EscolaLms\Reports\Http\Requests\Admin\DateRangeStatsRequest;
-use EscolaLms\Reports\Http\Requests\Admin\ExportCourseStatRequest;
-use EscolaLms\Reports\Http\Requests\Admin\ExportTopicStatRequest;
-use EscolaLms\Reports\Http\Requests\Admin\TopicStatsRequest;
+use Ulams\Reports\Http\Requests\Admin\CartStatsRequest;
+use Ulams\Reports\Http\Requests\Admin\CourseStatsRequest;
+use Ulams\Reports\Http\Requests\Admin\DateRangeStatsRequest;
+use Ulams\Reports\Http\Requests\Admin\ExportCourseStatRequest;
+use Ulams\Reports\Http\Requests\Admin\ExportTopicStatRequest;
+use Ulams\Reports\Http\Requests\Admin\TopicStatsRequest;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 

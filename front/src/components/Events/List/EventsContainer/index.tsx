@@ -1,11 +1,11 @@
 import { useContext } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import CategoriesSection from "../../../Categories/CategoriesSection";
 import EventsHeader from "../EventsHeader";
 import EventsContainerItems from "./Items";
 
 const EventsContainer = () => {
-  const { categoryTree } = useContext(EscolaLMSContext);
+  const { categoryTree } = useContext(UlamsContext);
 
   return (
     <>

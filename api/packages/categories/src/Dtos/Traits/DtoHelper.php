@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Categories\Dtos\Traits;
+namespace Ulams\Categories\Dtos\Traits;
 
 use Illuminate\Support\Str;
 

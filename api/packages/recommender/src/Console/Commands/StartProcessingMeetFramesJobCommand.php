@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Recommender\Console\Commands;
+namespace Ulams\Recommender\Console\Commands;
 
-use EscolaLms\Recommender\Jobs\ProcessingMeetingFramesJob;
-use EscolaLms\Recommender\Models\MeetRecording;
+use Ulams\Recommender\Jobs\ProcessingMeetingFramesJob;
+use Ulams\Recommender\Models\MeetRecording;
 use Illuminate\Console\Command;
 
 class StartProcessingMeetFramesJobCommand extends Command

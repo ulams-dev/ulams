@@ -1,11 +1,11 @@
 import routeRoutes from "@/components/Routes/routes";
 import useSubscriptions from "@/hooks/useSubscriptions";
 import { formatPrice } from "@/utils/index";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { Button } from "@lms/components";
-import { API } from "@lms/sdk";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { Button } from "@ulams/components";
+import { API } from "@ulams/sdk";
+import { UlamsContext } from "@ulams/sdk/react";
 import { useCallback, useContext } from "react";
 import { isMobile } from "react-device-detect";
 import { Row, Col } from "react-grid-system";
@@ -55,7 +55,7 @@ type Props = {
 
 const ProductModal: React.FC<Props> = ({ course }) => {
   const { getCheapestSubscription } = useSubscriptions();
-  const { cart, addToCart } = useContext(EscolaLMSContext);
+  const { cart, addToCart } = useContext(UlamsContext);
 
   const { t } = useTranslation();
   const { push } = useHistory();

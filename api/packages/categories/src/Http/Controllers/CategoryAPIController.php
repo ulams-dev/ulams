@@ -1,28 +1,28 @@
 <?php
 
-namespace EscolaLms\Categories\Http\Controllers;
+namespace Ulams\Categories\Http\Controllers;
 
-use EscolaLms\Categories\Dtos\CategoryCriteriaFilterDto;
-use EscolaLms\Categories\Dtos\CategoryDto;
-use EscolaLms\Categories\Enums\CategoriesPermissionsEnum;
-use EscolaLms\Categories\Http\Controllers\Swagger\CategorySwagger;
-use EscolaLms\Categories\Http\Requests\CategoryCreateRequest;
-use EscolaLms\Categories\Http\Requests\CategoryDeleteRequest;
-use EscolaLms\Categories\Http\Requests\CategoryListRequest;
-use EscolaLms\Categories\Http\Requests\CategoryReadRequest;
-use EscolaLms\Categories\Http\Requests\CategorySortRequest;
-use EscolaLms\Categories\Http\Requests\CategoryUpdateRequest;
-use EscolaLms\Categories\Http\Resources\CategoryResource;
-use EscolaLms\Categories\Http\Resources\CategoryTreeAdminResource;
-use EscolaLms\Categories\Http\Resources\CategoryTreeResource;
-use EscolaLms\Categories\Repositories\Contracts\CategoriesRepositoryContract;
-use EscolaLms\Categories\Services\Contracts\CategoryServiceContracts;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Categories\Dtos\CategoryCriteriaFilterDto;
+use Ulams\Categories\Dtos\CategoryDto;
+use Ulams\Categories\Enums\CategoriesPermissionsEnum;
+use Ulams\Categories\Http\Controllers\Swagger\CategorySwagger;
+use Ulams\Categories\Http\Requests\CategoryCreateRequest;
+use Ulams\Categories\Http\Requests\CategoryDeleteRequest;
+use Ulams\Categories\Http\Requests\CategoryListRequest;
+use Ulams\Categories\Http\Requests\CategoryReadRequest;
+use Ulams\Categories\Http\Requests\CategorySortRequest;
+use Ulams\Categories\Http\Requests\CategoryUpdateRequest;
+use Ulams\Categories\Http\Resources\CategoryResource;
+use Ulams\Categories\Http\Resources\CategoryTreeAdminResource;
+use Ulams\Categories\Http\Resources\CategoryTreeResource;
+use Ulams\Categories\Repositories\Contracts\CategoriesRepositoryContract;
+use Ulams\Categories\Services\Contracts\CategoryServiceContracts;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\JsonResponse;
 
 
-class CategoryAPIController extends EscolaLmsBaseController implements CategorySwagger
+class CategoryAPIController extends UlamsBaseController implements CategorySwagger
 {
     private CategoriesRepositoryContract $categoryRepository;
     private CategoryServiceContracts $categoryService;

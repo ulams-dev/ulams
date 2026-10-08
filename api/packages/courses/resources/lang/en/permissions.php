@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
+use Ulams\Courses\Enum\CoursesPermissionsEnum;
 
 return [
     CoursesPermissionsEnum::COURSE_LIST => 'Course list',

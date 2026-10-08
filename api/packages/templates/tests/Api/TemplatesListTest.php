@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Templates\Tests\Api;
+namespace Ulams\Templates\Tests\Api;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Contracts\TemplateChannelContract;
-use EscolaLms\Templates\Contracts\TemplateVariableContract;
-use EscolaLms\Templates\Facades\Template as FacadesTemplate;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Tests\Mock\TestChannel;
-use EscolaLms\Templates\Tests\Mock\TestEventWithGettersAndToArray;
-use EscolaLms\Templates\Tests\Mock\TestVariablesWithAssignableClass;
-use EscolaLms\Templates\Tests\TestCase;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Contracts\TemplateChannelContract;
+use Ulams\Templates\Contracts\TemplateVariableContract;
+use Ulams\Templates\Facades\Template as FacadesTemplate;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Tests\Mock\TestChannel;
+use Ulams\Templates\Tests\Mock\TestEventWithGettersAndToArray;
+use Ulams\Templates\Tests\Mock\TestVariablesWithAssignableClass;
+use Ulams\Templates\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class TemplatesListTest extends TestCase

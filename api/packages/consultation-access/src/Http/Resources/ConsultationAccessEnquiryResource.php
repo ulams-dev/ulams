@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Http\Resources;
+namespace Ulams\ConsultationAccess\Http\Resources;
 
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\Consultations\Http\Resources\ConsultationTermsResource;
-use EscolaLms\Consultations\Http\Resources\ConsultationUserTermsResource;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\Consultations\Http\Resources\ConsultationTermsResource;
+use Ulams\Consultations\Http\Resources\ConsultationUserTermsResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

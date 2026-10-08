@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Settings\Repositories;
+namespace Ulams\Settings\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Settings\Models\Setting;
-use EscolaLms\Settings\Repositories\Contracts\SettingsRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Settings\Models\Setting;
+use Ulams\Settings\Repositories\Contracts\SettingsRepositoryContract;
 
 class SettingsRepository extends BaseRepository implements SettingsRepositoryContract
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Http\Controllers\Swagger;
+namespace Ulams\TopicTypeProject\Http\Controllers\Swagger;
 
-use EscolaLms\TopicTypeProject\Http\Requests\CreateProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Http\Requests\DeleteProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Http\Requests\ListProjectSolutionRequest;
-use EscolaLms\TopicTypeProject\Http\Requests\ReadProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\CreateProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\DeleteProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\ListProjectSolutionRequest;
+use Ulams\TopicTypeProject\Http\Requests\ReadProjectSolutionRequest;
 use Illuminate\Http\JsonResponse;
 
 interface ProjectSolutionApiSwagger

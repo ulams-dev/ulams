@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Settings\Http\Resources;
+namespace Ulams\Settings\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 

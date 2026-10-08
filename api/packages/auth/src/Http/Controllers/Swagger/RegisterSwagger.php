@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers\Swagger;
+namespace Ulams\Auth\Http\Controllers\Swagger;
 
-use EscolaLms\Auth\Http\Requests\RegisterRequest;
+use Ulams\Auth\Http\Requests\RegisterRequest;
 use Illuminate\Http\JsonResponse;
 
 interface RegisterSwagger
@@ -56,7 +56,7 @@ interface RegisterSwagger
      *          name="return_url",
      *          required=true,
      *          in="query",
-     *          example="https://escolalms.com/email/verify",
+     *          example="https://ulams.app/email/verify",
      *          @OA\Schema(
      *              type="string",
      *          ),

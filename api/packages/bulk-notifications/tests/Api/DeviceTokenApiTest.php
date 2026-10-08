@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Tests\Api;
+namespace Ulams\BulkNotifications\Tests\Api;
 
-use EscolaLms\BulkNotifications\Database\Seeders\BulkNotificationPermissionSeeder;
-use EscolaLms\BulkNotifications\Tests\TestCase;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\BulkNotifications\Database\Seeders\BulkNotificationPermissionSeeder;
+use Ulams\BulkNotifications\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Foundation\Testing\WithFaker;
 
 class DeviceTokenApiTest extends TestCase

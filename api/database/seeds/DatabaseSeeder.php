@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use EscolaLms\Auth\Database\Seeders\UserGroupsSeeder;
-use EscolaLms\Cart\Database\Seeders\OrdersSeeder;
-use EscolaLms\Categories\Database\Seeders\CategoriesSeeder;
-use EscolaLms\Courses\Database\Seeders\CoursesSeeder;
-use EscolaLms\Courses\Database\Seeders\ProgressSeeder;
-use EscolaLms\Pages\Database\Seeders\DatabaseSeeder as PagesDatabaseSeeder;
-use EscolaLms\Payments\Database\Seeders\PaymentsSeeder;
-use EscolaLms\Settings\Database\Seeders\DatabaseSeeder as SettingsDatabaseSeeder;
-use EscolaLms\TemplatesEmail\Database\Seeders\TemplatesEmailSeeder;
-use EscolaLms\Tags\Database\Seeders\TagsSeeder;
-use EscolaLms\Webinar\Database\Seeders\WebinarsSeeder;
+use Ulams\Auth\Database\Seeders\UserGroupsSeeder;
+use Ulams\Cart\Database\Seeders\OrdersSeeder;
+use Ulams\Categories\Database\Seeders\CategoriesSeeder;
+use Ulams\Courses\Database\Seeders\CoursesSeeder;
+use Ulams\Courses\Database\Seeders\ProgressSeeder;
+use Ulams\Pages\Database\Seeders\DatabaseSeeder as PagesDatabaseSeeder;
+use Ulams\Payments\Database\Seeders\PaymentsSeeder;
+use Ulams\Settings\Database\Seeders\DatabaseSeeder as SettingsDatabaseSeeder;
+use Ulams\TemplatesEmail\Database\Seeders\TemplatesEmailSeeder;
+use Ulams\Tags\Database\Seeders\TagsSeeder;
+use Ulams\Webinar\Database\Seeders\WebinarsSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder

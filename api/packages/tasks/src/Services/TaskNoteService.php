@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Tasks\Services;
+namespace Ulams\Tasks\Services;
 
-use EscolaLms\Tasks\Dtos\CreateTaskNoteDto;
-use EscolaLms\Tasks\Dtos\UpdateTaskNoteDto;
-use EscolaLms\Tasks\Events\TaskNoteCreatedEvent;
-use EscolaLms\Tasks\Models\TaskNote;
-use EscolaLms\Tasks\Repositories\Contracts\TaskNoteRepositoryContract;
-use EscolaLms\Tasks\Services\Contracts\TaskNoteServiceContract;
+use Ulams\Tasks\Dtos\CreateTaskNoteDto;
+use Ulams\Tasks\Dtos\UpdateTaskNoteDto;
+use Ulams\Tasks\Events\TaskNoteCreatedEvent;
+use Ulams\Tasks\Models\TaskNote;
+use Ulams\Tasks\Repositories\Contracts\TaskNoteRepositoryContract;
+use Ulams\Tasks\Services\Contracts\TaskNoteServiceContract;
 
 class TaskNoteService implements TaskNoteServiceContract
 {

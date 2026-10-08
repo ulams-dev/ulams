@@ -22,7 +22,7 @@ import {
   getProduct,
   productForModel,
   updateProduct,
-} from '@/services/escola-lms/products';
+} from '@/services/ulams/products';
 
 import { MoneyInput } from '@/components/MoneyInput';
 import ProductsSelect from '@/components/ProductsSelect';
@@ -121,7 +121,7 @@ const ProductsForm: React.FC<{
   };
   tab: string;
   onTabChange: (tab: string) => void;
-  onProductSaved?: (model: EscolaLms.Cart.Models.Product) => void;
+  onProductSaved?: (model: Ulams.Cart.Models.Product) => void;
 }> = ({ tab = 'attributes', onTabChange, id, productable, onProductSaved, type = 'card' }) => {
   const intl = useIntl();
   const requiredValidator = createRequiredFieldValidator(intl);
@@ -258,8 +258,8 @@ const ProductsForm: React.FC<{
   const formProps = useMemo(
     () => ({
       onValuesChange: (
-        values: EscolaLms.Cart.Http.Requests.Admin.ProductUpdateRequest &
-          EscolaLms.Cart.Http.Requests.Admin.ProductCreateRequest & {
+        values: Ulams.Cart.Http.Requests.Admin.ProductUpdateRequest &
+          Ulams.Cart.Http.Requests.Admin.ProductCreateRequest & {
             productables: string[] | string;
             type: ProductTypes;
             has_trial?: boolean;
@@ -275,10 +275,10 @@ const ProductsForm: React.FC<{
       },
 
       onFinish: async (
-        values: EscolaLms.Cart.Http.Requests.Admin.ProductUpdateRequest &
-          Omit<EscolaLms.Cart.Http.Requests.Admin.ProductCreateRequest, 'related_products'> & {
+        values: Ulams.Cart.Http.Requests.Admin.ProductUpdateRequest &
+          Omit<Ulams.Cart.Http.Requests.Admin.ProductCreateRequest, 'related_products'> & {
             productables: string[] | string;
-            related_products: EscolaLms.Cart.Models.Product[] | number[];
+            related_products: Ulams.Cart.Models.Product[] | number[];
             app_store: string;
             play_store: string;
           },
@@ -286,7 +286,7 @@ const ProductsForm: React.FC<{
         const related_products = values.related_products?.every(
           (related_product) => typeof related_product === 'object',
         )
-          ? (values.related_products as EscolaLms.Cart.Models.Product[]).map(
+          ? (values.related_products as Ulams.Cart.Models.Product[]).map(
               (product) => product.id,
             )
           : values.related_products;
@@ -308,7 +308,7 @@ const ProductsForm: React.FC<{
             },
           },
         };
-        let response: API.DefaultResponse<EscolaLms.Cart.Models.Product> = {
+        let response: API.DefaultResponse<Ulams.Cart.Models.Product> = {
           success: false,
           message: '',
           errors: {},
@@ -977,7 +977,7 @@ const ProductsForm: React.FC<{
           <Row>
             <Col span={12}>
               {productId && (
-                <UserSubmissions id={Number(productId)} type="EscolaLms\Cart\Models\Product" />
+                <UserSubmissions id={Number(productId)} type="Ulams\Cart\Models\Product" />
               )}
             </Col>
           </Row>

@@ -2,21 +2,21 @@
 
 namespace Tests\APIs;
 
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\CoursesImportExport\Database\Seeders\CoursesExportImportPermissionSeeder;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\Components\H5PHelper;
-use EscolaLms\TopicTypes\Models\TopicContent\Audio;
-use EscolaLms\TopicTypes\Models\TopicContent\H5P;
-use EscolaLms\TopicTypes\Models\TopicContent\OEmbed;
-use EscolaLms\TopicTypes\Models\TopicContent\PDF;
-use EscolaLms\TopicTypes\Models\TopicContent\RichText;
-use EscolaLms\TopicTypes\Models\TopicContent\Video;
-use EscolaLms\TopicTypes\Tests\TestCase;
-use EscolaLms\TopicTypes\Events\TopicTypeChanged;
-use EscolaLms\TopicTypes\Models\TopicContent\Image;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\CoursesImportExport\Database\Seeders\CoursesExportImportPermissionSeeder;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypes\Database\Factories\TopicContent\Components\H5PHelper;
+use Ulams\TopicTypes\Models\TopicContent\Audio;
+use Ulams\TopicTypes\Models\TopicContent\H5P;
+use Ulams\TopicTypes\Models\TopicContent\OEmbed;
+use Ulams\TopicTypes\Models\TopicContent\PDF;
+use Ulams\TopicTypes\Models\TopicContent\RichText;
+use Ulams\TopicTypes\Models\TopicContent\Video;
+use Ulams\TopicTypes\Tests\TestCase;
+use Ulams\TopicTypes\Events\TopicTypeChanged;
+use Ulams\TopicTypes\Models\TopicContent\Image;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
@@ -29,7 +29,7 @@ class TopicTypesAdminExportApiTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\CoursesImportExport\EscolaLmsCoursesImportExportServiceProvider::class)) {
+        if (!class_exists(\Ulams\CoursesImportExport\UlamsCoursesImportExportServiceProvider::class)) {
             $this->markTestSkipped('Course Import Export package not installed');
         }
 

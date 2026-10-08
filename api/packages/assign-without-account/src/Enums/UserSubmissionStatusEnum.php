@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Enums;
+namespace Ulams\AssignWithoutAccount\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class UserSubmissionStatusEnum extends BasicEnum
 {

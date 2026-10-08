@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Swagger\Admin;
+namespace Ulams\Cart\Http\Swagger\Admin;
 
-use EscolaLms\Cart\Http\Requests\Admin\ProductableAttachRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductableDetachRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductableListRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductableProductRequest;
-use EscolaLms\Cart\Http\Requests\Admin\ProductableRegisteredListRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductableAttachRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductableDetachRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductableListRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductableProductRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductableRegisteredListRequest;
 use Illuminate\Http\JsonResponse;
 
 interface ProductableAdminSwagger

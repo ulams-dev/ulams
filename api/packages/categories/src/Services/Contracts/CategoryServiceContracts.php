@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Categories\Services\Contracts;
+namespace Ulams\Categories\Services\Contracts;
 
-use EscolaLms\Categories\Dtos\CategoryDto;
-use EscolaLms\Categories\Dtos\CategorySortDto;
-use EscolaLms\Categories\Models\Category;
+use Ulams\Categories\Dtos\CategoryDto;
+use Ulams\Categories\Dtos\CategorySortDto;
+use Ulams\Categories\Models\Category;
 
 interface CategoryServiceContracts
 {

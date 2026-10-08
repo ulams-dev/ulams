@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Templates\Tests\Api;
+namespace Ulams\Templates\Tests\Api;
 
-use EscolaLms\Auth\Database\Seeders\AuthPermissionSeeder;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Templates\Tests\TestCase;
+use Ulams\Auth\Database\Seeders\AuthPermissionSeeder;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Templates\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 
@@ -18,7 +18,7 @@ class UserTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\Auth\EscolaLmsAuthServiceProvider::class)) {
+        if (!class_exists(\Ulams\Auth\UlamsAuthServiceProvider::class)) {
             $this->markTestSkipped('Auth package not installed');
         }
 
@@ -38,8 +38,8 @@ class UserTest extends TestCase
 
         $this->response = $this->actingAs($admin)->json('PATCH', '/api/admin/users/' . $user->getKey(), [
             'notification_channels' => [
-                "EscolaLms\\TemplatesEmail\\Core\\EmailChannel",
-                "EscolaLms\\TemplatesSms\\Core\\SmsChannel"
+                "Ulams\\TemplatesEmail\\Core\\EmailChannel",
+                "Ulams\\TemplatesSms\\Core\\SmsChannel"
             ]
         ]);
 
@@ -47,24 +47,24 @@ class UserTest extends TestCase
             ->assertOk()
             ->assertJsonFragment([
                 'notification_channels' => [
-                    "EscolaLms\\TemplatesEmail\\Core\\EmailChannel",
-                    "EscolaLms\\TemplatesSms\\Core\\SmsChannel"
+                    "Ulams\\TemplatesEmail\\Core\\EmailChannel",
+                    "Ulams\\TemplatesSms\\Core\\SmsChannel"
                 ]
             ]);
 
         $this->response = $this->actingAs($admin)
             ->json('PATCH', '/api/admin/users/' . $user->getKey(), [
                 'notification_channels' => [
-                    'EscolaLms\\TemplatesSms\\Core\\SmsChannel'
+                    'Ulams\\TemplatesSms\\Core\\SmsChannel'
                 ]
             ]);
 
         $this->response
             ->assertOk()
             ->assertJsonFragment([
-                'notification_channels' => ['EscolaLms\\TemplatesSms\\Core\\SmsChannel']
+                'notification_channels' => ['Ulams\\TemplatesSms\\Core\\SmsChannel']
             ])
-            ->assertJsonMissing(['notification_channels' => ['EscolaLms\\TemplatesEmail\\Core\\EmailChannel']]);
+            ->assertJsonMissing(['notification_channels' => ['Ulams\\TemplatesEmail\\Core\\EmailChannel']]);
     }
 
     public function testGetUser(): void
@@ -74,8 +74,8 @@ class UserTest extends TestCase
 
         $this->response = $this->actingAs($admin)->json('PATCH', '/api/admin/users/' . $user->getKey(), [
             'notification_channels' => [
-                "EscolaLms\\TemplatesEmail\\Core\\EmailChannel",
-                "EscolaLms\\TemplatesSms\\Core\\SmsChannel"
+                "Ulams\\TemplatesEmail\\Core\\EmailChannel",
+                "Ulams\\TemplatesSms\\Core\\SmsChannel"
             ]
         ]);
 
@@ -88,8 +88,8 @@ class UserTest extends TestCase
                 'email' => $user->email,
                 'first_name' => $user->first_name,
                 'notification_channels' => [
-                    "EscolaLms\\TemplatesEmail\\Core\\EmailChannel",
-                    "EscolaLms\\TemplatesSms\\Core\\SmsChannel"
+                    "Ulams\\TemplatesEmail\\Core\\EmailChannel",
+                    "Ulams\\TemplatesSms\\Core\\SmsChannel"
                 ]
             ]);
     }

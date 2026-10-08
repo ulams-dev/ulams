@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Recommender\Tests\Api;
+namespace Ulams\Recommender\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Recommender\EscolaLmsRecommenderServiceProvider;
-use EscolaLms\Recommender\Models\AggregatedFrame;
-use EscolaLms\Recommender\Models\MeetRecording;
-use EscolaLms\Recommender\Models\TermAnalytic;
-use EscolaLms\Recommender\Tests\CreatesCourse;
-use EscolaLms\Recommender\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\Recommender\UlamsRecommenderServiceProvider;
+use Ulams\Recommender\Models\AggregatedFrame;
+use Ulams\Recommender\Models\MeetRecording;
+use Ulams\Recommender\Models\TermAnalytic;
+use Ulams\Recommender\Tests\CreatesCourse;
+use Ulams\Recommender\Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
@@ -25,9 +25,9 @@ class RecommenderControllerTest extends TestCase
 
         $this->seed(CoursesPermissionSeeder::class);
 
-        Config::set(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.course_model', '{"model": "course"}');
-        Config::set(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.exercise_model', '{"model": "exercise"}');
-        Config::set(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.enabled', true);
+        Config::set(UlamsRecommenderServiceProvider::CONFIG_KEY . '.course_model', '{"model": "course"}');
+        Config::set(UlamsRecommenderServiceProvider::CONFIG_KEY . '.exercise_model', '{"model": "exercise"}');
+        Config::set(UlamsRecommenderServiceProvider::CONFIG_KEY . '.enabled', true);
     }
 
     public function testCourseRecommendation(): void
@@ -50,7 +50,7 @@ class RecommenderControllerTest extends TestCase
 
     public function testCourseRecommendationApiDisabled(): void
     {
-        Config::set(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.api_url');
+        Config::set(UlamsRecommenderServiceProvider::CONFIG_KEY . '.api_url');
 
         $this
             ->actingAs($this->makeAdmin(), 'api')
@@ -108,7 +108,7 @@ class RecommenderControllerTest extends TestCase
 
     public function testTopicRecommendationApiDisabled(): void
     {
-        Config::set(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.api_url');
+        Config::set(UlamsRecommenderServiceProvider::CONFIG_KEY . '.api_url');
 
         $this
             ->actingAs($this->makeAdmin(), 'api')
@@ -144,7 +144,7 @@ class RecommenderControllerTest extends TestCase
 
     public function testRecommenderDisabled(): void
     {
-        Config::set(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.enabled', false);
+        Config::set(UlamsRecommenderServiceProvider::CONFIG_KEY . '.enabled', false);
 
         $this
             ->actingAs($this->makeAdmin(), 'api')

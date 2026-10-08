@@ -3,7 +3,7 @@ import { Button, Tooltip, message } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage } from 'umi';
 
-import { createTeamsChat } from '@/services/escola-lms/chats';
+import { createTeamsChat } from '@/services/ulams/chats';
 
 interface Props {
   student_id: number;

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Notifications\Models\Traits;
+namespace Ulams\Notifications\Models\Traits;
 
-use EscolaLms\Notifications\Models\DatabaseNotification;
+use Ulams\Notifications\Models\DatabaseNotification;
 use Illuminate\Notifications\HasDatabaseNotifications;
 
 trait HasEventNotifications

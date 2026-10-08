@@ -1,10 +1,10 @@
 <?php
 
 
-namespace EscolaLms\Tags\Services\Contracts;
+namespace Ulams\Tags\Services\Contracts;
 
 
-use EscolaLms\Tags\Dto\TagDto;
+use Ulams\Tags\Dto\TagDto;
 use Illuminate\Support\Collection;
 
 interface TagServiceContract

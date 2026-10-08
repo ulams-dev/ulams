@@ -1,6 +1,6 @@
 import React from "react";
-import { API } from "@lms/sdk";
-import { ContextPaginatedMetaState } from "@lms/sdk/react/context/types";
+import { API } from "@ulams/sdk";
+import { ContextPaginatedMetaState } from "@ulams/sdk/react/context/types";
 import { PackagesParams } from "@/types/params";
 
 export const PackagesContext: React.Context<{

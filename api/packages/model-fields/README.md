@@ -1,14 +1,5 @@
 # Model Fields
 
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/model-fields/)
-[![codecov](https://codecov.io/gh/EscolaLMS/model-fields/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/model-fields)
-[![phpunit](https://github.com/EscolaLMS/model-fields/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/model-fields/actions/workflows/test.yml)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/model-fields)](https://packagist.org/packages/escolalms/model-fields)
-[![downloads](https://img.shields.io/packagist/v/escolalms/model-fields)](https://packagist.org/packages/escolalms/model-fields)
-[![downloads](https://img.shields.io/packagist/l/escolalms/model-fields)](https://packagist.org/packages/escolalms/model-fields)
-[![Maintainability](https://api.codeclimate.com/v1/badges/2418459a02bbf642253e/maintainability)](https://codeclimate.com/github/EscolaLMS/model-fields/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/2418459a02bbf642253e/test_coverage)](https://codeclimate.com/github/EscolaLMS/model-fields/test_coverage)
-[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FEscolaLMS%2Fmodel-fields%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/EscolaLMS/model-fields/main)
 
 ## What does it do
 
@@ -26,9 +17,9 @@ Details documentation is provided as an example
 
 ## Installing
 
-- `composer require escolalms/model-fields`
+- `composer require ulams/model-fields`
 - `php artisan migrate`
-- `php artisan db:seed --class="EscolaLms\ModelFields\Database\Seeders\PermissionTableSeeder"`
+- `php artisan db:seed --class="Ulams\ModelFields\Database\Seeders\PermissionTableSeeder"`
 
 ## Database
 
@@ -42,21 +33,21 @@ Below are examples of how matadata and values are stored in database
 
 |  id  |     created_at      |     updated_at      |        name         |  type   |              rules              | extra |   default   |               class_type                | visibility |
 | :--: | :-----------------: | :-----------------: | :-----------------: | :-----: | :-----------------------------: | :---: | :---------: | :-------------------------------------: | :--------: |
-| 2147 | 2022-03-03 12:10:05 | 2022-03-03 12:10:05 |     description     |  text   | ["required","string","max:255"] | NULL  | lorem ipsum | EscolaLms\ModelFields\Tests\Models\User |     1      |
-| 2148 | 2022-03-03 12:10:05 | 2022-03-03 12:10:05 | interested_in_tests | boolean |     ["required","boolean"]      | NULL  |      1      | EscolaLms\ModelFields\Tests\Models\User |     1      |
-| 2149 | 2022-03-03 12:10:05 | 2022-03-03 12:10:05 |        title        | varchar | ["required","string","max:255"] | NULL  |             | EscolaLms\ModelFields\Tests\Models\User |     1      |
-| 2150 | 2022-03-03 12:10:05 | 2022-03-03 12:10:05 |      consents       |  json   |       ["required","json"]       | NULL  |     []      | EscolaLms\ModelFields\Tests\Models\User |     1      |
-| 2151 | 2022-03-03 12:10:05 | 2022-03-03 12:10:05 |    extra_points     | number  |     ["required","integer"]      | NULL  |     123     | EscolaLms\ModelFields\Tests\Models\User |     1      |
-| 2153 | 2022-03-03 12:11:05 | 2022-03-03 12:11:05 |  extra_description  |  text   | ["required","string","max:255"] | NULL  | lorem ipsum | EscolaLms\ModelFields\Tests\Models\User |     1      |
+| 2147 | 2022-03-03 12:10:05 | 2022-03-03 12:10:05 |     description     |  text   | ["required","string","max:255"] | NULL  | lorem ipsum | Ulams\ModelFields\Tests\Models\User |     1      |
+| 2148 | 2022-03-03 12:10:05 | 2022-03-03 12:10:05 | interested_in_tests | boolean |     ["required","boolean"]      | NULL  |      1      | Ulams\ModelFields\Tests\Models\User |     1      |
+| 2149 | 2022-03-03 12:10:05 | 2022-03-03 12:10:05 |        title        | varchar | ["required","string","max:255"] | NULL  |             | Ulams\ModelFields\Tests\Models\User |     1      |
+| 2150 | 2022-03-03 12:10:05 | 2022-03-03 12:10:05 |      consents       |  json   |       ["required","json"]       | NULL  |     []      | Ulams\ModelFields\Tests\Models\User |     1      |
+| 2151 | 2022-03-03 12:10:05 | 2022-03-03 12:10:05 |    extra_points     | number  |     ["required","integer"]      | NULL  |     123     | Ulams\ModelFields\Tests\Models\User |     1      |
+| 2153 | 2022-03-03 12:11:05 | 2022-03-03 12:11:05 |  extra_description  |  text   | ["required","string","max:255"] | NULL  | lorem ipsum | Ulams\ModelFields\Tests\Models\User |     1      |
 
 `model_fields_values` table sample rows
 
 |  id  |     created_at      |     updated_at      |        name         |               value                |               class_type                | class_id |
 | :--: | :-----------------: | :-----------------: | :-----------------: | :--------------------------------: | :-------------------------------------: | :------: |
-| 1432 | 2022-03-03 12:17:42 | 2022-03-03 12:17:42 |      consents       | {"consent1":true,"consent2":false} | EscolaLms\ModelFields\Tests\Models\User |   1458   |
-| 1433 | 2022-03-03 12:17:42 | 2022-03-03 12:17:42 |    extra_points     |                1000                | EscolaLms\ModelFields\Tests\Models\User |   1458   |
-| 1436 | 2022-03-03 12:17:42 | 2022-03-03 12:17:42 |     description     |                zzz                 | EscolaLms\ModelFields\Tests\Models\User |   1458   |
-| 1438 | 2022-03-03 12:17:42 | 2022-03-03 12:17:42 | interested_in_tests |                true                | EscolaLms\ModelFields\Tests\Models\User |   1458   |
+| 1432 | 2022-03-03 12:17:42 | 2022-03-03 12:17:42 |      consents       | {"consent1":true,"consent2":false} | Ulams\ModelFields\Tests\Models\User |   1458   |
+| 1433 | 2022-03-03 12:17:42 | 2022-03-03 12:17:42 |    extra_points     |                1000                | Ulams\ModelFields\Tests\Models\User |   1458   |
+| 1436 | 2022-03-03 12:17:42 | 2022-03-03 12:17:42 |     description     |                zzz                 | Ulams\ModelFields\Tests\Models\User |   1458   |
+| 1438 | 2022-03-03 12:17:42 | 2022-03-03 12:17:42 | interested_in_tests |                true                | Ulams\ModelFields\Tests\Models\User |   1458   |
 
 See [tests](tests) folder as rows above are generated from the tests.
 
@@ -87,10 +78,10 @@ This is a standard way of handling this issue, but this package introduces new o
 
 ### Option 1. Extending Model
 
-This option replaces `Illuminate\Database\Eloquent\Model` with `EscolaLms\ModelFields\Models\Model`
+This option replaces `Illuminate\Database\Eloquent\Model` with `Ulams\ModelFields\Models\Model`
 
 ```php
-use EscolaLms\ModelFields\Models\Model;
+use Ulams\ModelFields\Models\Model;
 
 class User extends Model
 {
@@ -106,11 +97,11 @@ class User extends Model
 
 ### Option 2. Trait in Model.
 
-This option uses `EscolaLms\ModelFields\Traits\ModelFields` instead of extending class;
+This option uses `Ulams\ModelFields\Traits\ModelFields` instead of extending class;
 
 ```php
 use Illuminate\Database\Eloquent\Model;
-use EscolaLms\ModelFields\Traits\ModelFields;
+use Ulams\ModelFields\Traits\ModelFields;
 
 class User extends Model
 {
@@ -136,7 +127,7 @@ Now lets create new field meta description. We'll be adding new field to user, c
 
 ```php
 
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\ModelFields\Facades\ModelFields;
 
 ModelFields::addOrUpdateMetadataField(
     User::class, // Model class that we want to extents
@@ -150,7 +141,7 @@ ModelFields::addOrUpdateMetadataField(
 Interface of this method is as follows
 
 ```php
-use EscolaLms\ModelFields\Models\Metadata;
+use Ulams\ModelFields\Models\Metadata;
 
 public function addOrUpdateMetadataField(string $class_type, string $name, string $type, string $default = '', array $rules = null, $visibility = 1 << 0): Metadata;
 
@@ -226,12 +217,12 @@ assert($user->interested_in_tests === false);
 Using resources is simple, look at the following example
 
 ```php
-namespace EscolaLms\ModelFields\Tests\Http\Resources;
+namespace Ulams\ModelFields\Tests\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use EscolaLms\ModelFields\Tests\Models\User;
-use EscolaLms\ModelFields\Facades\ModelFields;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
+use Ulams\ModelFields\Tests\Models\User;
+use Ulams\ModelFields\Facades\ModelFields;
+use Ulams\ModelFields\Enum\MetaFieldVisibilityEnum;
 
 class UserResource extends JsonResource
 {
@@ -260,8 +251,8 @@ Look at the visibility field in example above. Package allows to define visibili
 
 ```php
 
-use EscolaLms\ModelFields\Facades\ModelFields;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\ModelFields\Facades\ModelFields;
+use Ulams\ModelFields\Facades\ModelFields;
 
 ModelFields::addOrUpdateMetadataField(
     User::class,
@@ -285,12 +276,12 @@ ModelFields::addOrUpdateMetadataField(
 Now we can have 2 endpoints one that list user with public fields, other with visible to admin only.
 
 ```php
-namespace EscolaLms\ModelFields\Tests\Http\Resources;
+namespace Ulams\ModelFields\Tests\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use EscolaLms\ModelFields\Tests\Models\User;
-use EscolaLms\ModelFields\Facades\ModelFields;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
+use Ulams\ModelFields\Tests\Models\User;
+use Ulams\ModelFields\Facades\ModelFields;
+use Ulams\ModelFields\Enum\MetaFieldVisibilityEnum;
 
 class UserResource extends JsonResource
 {
@@ -315,12 +306,12 @@ class UserResource extends JsonResource
 Now let's see how Admin Resource would look like.
 
 ```php
-namespace EscolaLms\ModelFields\Tests\Http\Resources;
+namespace Ulams\ModelFields\Tests\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use EscolaLms\ModelFields\Tests\Models\User;
-use EscolaLms\ModelFields\Facades\ModelFields;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
+use Ulams\ModelFields\Tests\Models\User;
+use Ulams\ModelFields\Facades\ModelFields;
+use Ulams\ModelFields\Enum\MetaFieldVisibilityEnum;
 
 class UserAdminResource extends JsonResource
 {
@@ -357,12 +348,12 @@ class UserAdminResource extends JsonResource
 Example below describes how to fetch validation rules from MetaField
 
 ```php
-namespace EscolaLms\ModelFields\Tests\Http\Requests;
+namespace Ulams\ModelFields\Tests\Http\Requests;
 
-use EscolaLms\ModelFields\Tests\Models\User;
+use Ulams\ModelFields\Tests\Models\User;
 
 use Illuminate\Foundation\Http\FormRequest;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\ModelFields\Facades\ModelFields;
 
 class UserCreateRequest extends FormRequest
 {
@@ -395,13 +386,13 @@ In php 7.4 user `array_merge` instead of spread `...` operator.
 
 ## Endpoints
 
-All the endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/model-fields/).
+All the endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/model-fields/).
 
 ## Tests
 
 Run `./vendor/bin/phpunit` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
 
-Test details [![codecov](https://codecov.io/gh/EscolaLMS/model-fields/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/model-fields) [![phpunit](https://github.com/EscolaLMS/model-fields/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/model-fields/actions/workflows/test.yml)
+Test details [![codecov](https://codecov.io/gh/Ulams/model-fields/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/model-fields) [![phpunit](https://github.com/EscolaLMS/model-fields/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/model-fields/actions/workflows/test.yml)
 
 ## Events
 
@@ -415,12 +406,12 @@ This package does not listen for any events
 
 ### Admin panel
 
-All the endpoints defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/model-fields/) are for admin panel.
+All the endpoints defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/model-fields/) are for admin panel.
 
 There is native component you can use to implement this in [admin panel](https://github.com/EscolaLMS/Admin/tree/main/src/components/ModelFields) for any model that allows extending
 
 ```jsx
-<ModelFields class_type="EscolaLms\Auth\Models\User" />
+<ModelFields class_type="Ulams\Auth\Models\User" />
 ```
 
 Example in admin panel

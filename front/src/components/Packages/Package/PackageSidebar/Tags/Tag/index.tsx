@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Col } from "react-grid-system";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { Tag } from "@lms/components/components/atoms/Tag/Tag";
-import { API } from "@lms/sdk";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { Tag } from "@ulams/components/components/atoms/Tag/Tag";
+import { API } from "@ulams/sdk";
 
 const ColStyled = styled(Col)`
   border: 1px solid ${({ theme }) => theme.primaryColor};

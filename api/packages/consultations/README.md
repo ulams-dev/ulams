@@ -1,23 +1,16 @@
 # Consultations
 One to one conversation package
 
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Consultations/)
-[![codecov](https://codecov.io/gh/EscolaLMS/Consultations/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Consultations)
-[![phpunit](https://github.com/EscolaLMS/Consultations/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Consultations/actions/workflows/test.yml)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/consultations)](https://packagist.org/packages/escolalms/consultations)
-[![downloads](https://img.shields.io/packagist/v/escolalms/consultations)](https://packagist.org/packages/escolalms/consultations)
-[![downloads](https://img.shields.io/packagist/l/escolalms/consultations)](https://packagist.org/packages/escolalms/consultations)
-[![Maintainability](https://api.codeclimate.com/v1/badges/0c9e2593fb30e2048f95/maintainability)](https://codeclimate.com/github/EscolaLMS/Consultations/maintainability)
 
 ## What does it do
 
-This package is used for creating Consultation for EscolaLms.
+This package is used for creating Consultation for Ulams.
 
 ## Installing
 
-- `composer require escolalms/consultations`
+- `composer require ulams/consultations`
 - `php artisan migrate`
-- `php artisan db:seed --class="EscolaLms\Consultations\Database\Seeders\ConsultationsPermissionSeeder"`
+- `php artisan db:seed --class="Ulams\Consultations\Database\Seeders\ConsultationsPermissionSeeder"`
 
 ## Schedule
 
@@ -27,28 +20,28 @@ This package is used for creating Consultation for EscolaLms.
 
 ## Endpoints
 
-All the endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Consultations/)
+All the endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/Consultations/)
 
 ## Tests
 
 Run `./vendor/bin/phpunit --filter=Consultation` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
 
-Test details [![codecov](https://codecov.io/gh/EscolaLMS/Consultations/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Consultations) [![phpunit](https://github.com/EscolaLMS/Consultations/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Consultations/actions/workflows/test.yml)
+Test details [![codecov](https://codecov.io/gh/Ulams/Consultations/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Consultations) [![phpunit](https://github.com/EscolaLMS/Consultations/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Consultations/actions/workflows/test.yml)
 
 ## Events
 
-- `EscolaLms\Consultations\Events\ApprovedTerm` => Event is dispatched when trainer approved term reported with buyer. Event refers to users, who have permissions students
-- `EscolaLms\Consultations\Events\ApprovedTermWithTrainer` => Event is dispatched when trainer approved term reported with buyer. Event refers to users, who have permissions tutor
-- `EscolaLms\Consultations\Events\ChangeTerm` => Event is dispatched when trainer changes term in buyed consultations. Event refers to users, who have permissions students
-- `EscolaLms\Consultations\Events\RejectTerm` => Event is dispatched when trainer rejects term reported with buyer. Event refers to users, who have permissions students
-- `EscolaLms\Consultations\Events\RejectTermWithTrainer` => Event is dispatched when trainer rejects term reported with buyer. Event refers to users, who have permissions tutor
-- `EscolaLms\Consultations\Events\ReminderAboutTerm` => Event is dispatched after execute cron job `EscolaLms\Consultations\Jobs\ReminderAboutConsultationJob`, Event is dispatched when deadline for purchased consultation before 1 hours and 1 day. Event refers to users, who have permissions students
-- `EscolaLms\Consultations\Events\ReminderTrainerAboutTerm` => Event is dispatched some time before start consultation. Event refers to users, who have permissions tutor 
-- `EscolaLms\Consultations\Events\ReportTerm` => Event is dispatched after reported term with buyer consultation
+- `Ulams\Consultations\Events\ApprovedTerm` => Event is dispatched when trainer approved term reported with buyer. Event refers to users, who have permissions students
+- `Ulams\Consultations\Events\ApprovedTermWithTrainer` => Event is dispatched when trainer approved term reported with buyer. Event refers to users, who have permissions tutor
+- `Ulams\Consultations\Events\ChangeTerm` => Event is dispatched when trainer changes term in buyed consultations. Event refers to users, who have permissions students
+- `Ulams\Consultations\Events\RejectTerm` => Event is dispatched when trainer rejects term reported with buyer. Event refers to users, who have permissions students
+- `Ulams\Consultations\Events\RejectTermWithTrainer` => Event is dispatched when trainer rejects term reported with buyer. Event refers to users, who have permissions tutor
+- `Ulams\Consultations\Events\ReminderAboutTerm` => Event is dispatched after execute cron job `Ulams\Consultations\Jobs\ReminderAboutConsultationJob`, Event is dispatched when deadline for purchased consultation before 1 hours and 1 day. Event refers to users, who have permissions students
+- `Ulams\Consultations\Events\ReminderTrainerAboutTerm` => Event is dispatched some time before start consultation. Event refers to users, who have permissions tutor 
+- `Ulams\Consultations\Events\ReportTerm` => Event is dispatched after reported term with buyer consultation
 
 ## Listeners
 
-- `EscolaLms\Webinar\Listeners\ReminderAboutTermListener` => Listener execute a method that singed the status in the webinar reminder
+- `Ulams\Webinar\Listeners\ReminderAboutTermListener` => Listener execute a method that singed the status in the webinar reminder
 
 ## How to use this on frontend.
 
@@ -68,7 +61,7 @@ Test details [![codecov](https://codecov.io/gh/EscolaLMS/Consultations/branch/ma
 
 ### Front Application
 
-See [implementation](https://github.com/search?q=repo%3AEscolaLMS%2FFront%20Consultation&type=code) in the [demo](https://demo.escolalms.com). 
+See [implementation](https://github.com/search?q=repo%3AUlams%2FFront%20Consultation&type=code) in the [demo](https://demo.ulams.app). 
 
 ## Permissions
 

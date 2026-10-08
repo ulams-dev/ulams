@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Invoices\Http\Requests;
+namespace Ulams\Invoices\Http\Requests;
 
-use EscolaLms\Cart\Models\Order;
+use Ulams\Cart\Models\Order;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

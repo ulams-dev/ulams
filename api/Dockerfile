@@ -4,7 +4,7 @@ EXPOSE 9000
 COPY / /var/www/html
 RUN \
   cp docker/conf/supervisor/supervisord.conf /etc/supervisord.conf \
-  && cp docker/conf/php/escolalms-custom-php.ini /usr/local/etc/php/conf.d/escolalms-custom-php.ini \  
+  && cp docker/conf/php/ulams-custom-php.ini /usr/local/etc/php/conf.d/ulams-custom-php.ini \  
   && cp docker/conf/php/php-fpm-custom.conf /usr/local/etc/php-fpm.d/php-fpm-custom.conf
 RUN composer install --no-scripts --no-dev
 

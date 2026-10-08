@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Courses\Repositories\Contracts;
+namespace Ulams\Courses\Repositories\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
-use EscolaLms\Courses\Http\Requests\UpdateTopicAPIRequest;
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Courses\Http\Requests\CreateTopicAPIRequest;
+use Ulams\Courses\Http\Requests\UpdateTopicAPIRequest;
+use Ulams\Courses\Models\Topic;
 
 interface TopicRepositoryContract extends BaseRepositoryContract
 {

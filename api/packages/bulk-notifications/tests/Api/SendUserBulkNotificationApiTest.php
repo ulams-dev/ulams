@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Tests\Api;
+namespace Ulams\BulkNotifications\Tests\Api;
 
-use EscolaLms\BulkNotifications\Channels\PushNotificationChannel;
-use EscolaLms\BulkNotifications\Database\Seeders\BulkNotificationPermissionSeeder;
-use EscolaLms\BulkNotifications\Jobs\SendNotification;
-use EscolaLms\Core\Models\User;
-use EscolaLms\BulkNotifications\Tests\BulkNotificationTesting;
-use EscolaLms\BulkNotifications\Tests\TestCase;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\BulkNotifications\Channels\PushNotificationChannel;
+use Ulams\BulkNotifications\Database\Seeders\BulkNotificationPermissionSeeder;
+use Ulams\BulkNotifications\Jobs\SendNotification;
+use Ulams\Core\Models\User;
+use Ulams\BulkNotifications\Tests\BulkNotificationTesting;
+use Ulams\BulkNotifications\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Support\Facades\Queue;
 
 class SendUserBulkNotificationApiTest extends TestCase

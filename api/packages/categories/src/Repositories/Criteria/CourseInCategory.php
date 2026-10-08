@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Categories\Repositories\Criteria;
+namespace Ulams\Categories\Repositories\Criteria;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Core\Repositories\Criteria\Criterion;
+use Ulams\Categories\Models\Category;
+use Ulams\Core\Repositories\Criteria\Criterion;
 use Illuminate\Database\Eloquent\Builder;
 
 class CourseInCategory extends Criterion

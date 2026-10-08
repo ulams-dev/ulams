@@ -2,11 +2,11 @@
 
 namespace Tests\APIs;
 
-use EscolaLms\Settings\Models\Setting;
+use Ulams\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Settings\Tests\TestCase;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\Settings\Database\Seeders\DatabaseSeeder;
+use Ulams\Settings\Tests\TestCase;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\Settings\Database\Seeders\DatabaseSeeder;
 
 class SettingsAnonymousAdminTest extends TestCase
 {

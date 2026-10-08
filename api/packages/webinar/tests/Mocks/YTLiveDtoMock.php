@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Webinar\Tests\Mocks;
+namespace Ulams\Webinar\Tests\Mocks;
 
-use EscolaLms\Youtube\Dto\Contracts\YTLiveDtoContract;
-use EscolaLms\Youtube\Dto\Contracts\YTStreamDtoContract;
+use Ulams\Youtube\Dto\Contracts\YTLiveDtoContract;
+use Ulams\Youtube\Dto\Contracts\YTStreamDtoContract;
 
 class YTLiveDtoMock extends MockTest implements YTLiveDtoContract
 {

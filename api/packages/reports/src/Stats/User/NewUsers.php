@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\User;
+namespace Ulams\Reports\Stats\User;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 use Illuminate\Support\Collection;
 
 class NewUsers extends AbstractUsersStats

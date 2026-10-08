@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Permissions\Http\Requests;
+namespace Ulams\Permissions\Http\Requests;
 
-use EscolaLms\Permissions\Enums\PermissionsPermissionsEnum;
+use Ulams\Permissions\Enums\PermissionsPermissionsEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

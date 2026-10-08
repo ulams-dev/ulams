@@ -1,21 +1,21 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Controllers;
+namespace Ulams\TopicTypeGift\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\TopicTypeGift\Exceptions\TooManyAttemptsException;
-use EscolaLms\TopicTypeGift\Http\Controllers\Swagger\QuizAttemptApiSwagger;
-use EscolaLms\TopicTypeGift\Http\Requests\EndQuizAttemptRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\GetActiveAttemptRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\ListQuizAttemptRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\ReadQuizAttemptRequest;
-use EscolaLms\TopicTypeGift\Http\Resources\QuizAttemptResource;
-use EscolaLms\TopicTypeGift\Http\Resources\QuizAttemptSimpleResource;
-use EscolaLms\TopicTypeGift\Jobs\MarkAttemptAsEnded;
-use EscolaLms\TopicTypeGift\Services\Contracts\QuizAttemptServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\TopicTypeGift\Exceptions\TooManyAttemptsException;
+use Ulams\TopicTypeGift\Http\Controllers\Swagger\QuizAttemptApiSwagger;
+use Ulams\TopicTypeGift\Http\Requests\EndQuizAttemptRequest;
+use Ulams\TopicTypeGift\Http\Requests\GetActiveAttemptRequest;
+use Ulams\TopicTypeGift\Http\Requests\ListQuizAttemptRequest;
+use Ulams\TopicTypeGift\Http\Requests\ReadQuizAttemptRequest;
+use Ulams\TopicTypeGift\Http\Resources\QuizAttemptResource;
+use Ulams\TopicTypeGift\Http\Resources\QuizAttemptSimpleResource;
+use Ulams\TopicTypeGift\Jobs\MarkAttemptAsEnded;
+use Ulams\TopicTypeGift\Services\Contracts\QuizAttemptServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class QuizAttemptApiController extends EscolaLmsBaseController implements QuizAttemptApiSwagger
+class QuizAttemptApiController extends UlamsBaseController implements QuizAttemptApiSwagger
 {
     private QuizAttemptServiceContract $attemptService;
 

@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Controllers;
+namespace Ulams\TopicTypeGift\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\TopicTypeGift\Http\Controllers\Swagger\GiftQuizApiAdminSwagger;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminListGiftQuizRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminReadGiftQuizRequest;
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminUpdateGiftQuizRequest;
-use EscolaLms\TopicTypeGift\Http\Resources\AdminGiftQuizResource;
-use EscolaLms\TopicTypeGift\Http\Resources\GiftQuizSimpleResource;
-use EscolaLms\TopicTypeGift\Services\Contracts\GiftQuizServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\TopicTypeGift\Http\Controllers\Swagger\GiftQuizApiAdminSwagger;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminListGiftQuizRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminReadGiftQuizRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminUpdateGiftQuizRequest;
+use Ulams\TopicTypeGift\Http\Resources\AdminGiftQuizResource;
+use Ulams\TopicTypeGift\Http\Resources\GiftQuizSimpleResource;
+use Ulams\TopicTypeGift\Services\Contracts\GiftQuizServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class GiftQuizApiAdminController extends EscolaLmsBaseController implements GiftQuizApiAdminSwagger
+class GiftQuizApiAdminController extends UlamsBaseController implements GiftQuizApiAdminSwagger
 {
     private GiftQuizServiceContract $giftQuizService;
 

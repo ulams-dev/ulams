@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Cmi5\Services;
+namespace Ulams\Cmi5\Services;
 
-use EscolaLms\Cmi5\Models\Cmi5;
-use EscolaLms\Cmi5\Repositories\Contracts\Cmi5AuRepositoryContract;
-use EscolaLms\Cmi5\Repositories\Contracts\Cmi5RepositoryContract;
-use EscolaLms\Cmi5\Services\Contracts\Cmi5ServiceContract;
-use EscolaLms\Lrs\Services\Contracts\LrsServiceContract;
+use Ulams\Cmi5\Models\Cmi5;
+use Ulams\Cmi5\Repositories\Contracts\Cmi5AuRepositoryContract;
+use Ulams\Cmi5\Repositories\Contracts\Cmi5RepositoryContract;
+use Ulams\Cmi5\Services\Contracts\Cmi5ServiceContract;
+use Ulams\Lrs\Services\Contracts\LrsServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 
@@ -38,7 +38,7 @@ class Cmi5Service implements Cmi5ServiceContract
         $launchParams = $this->lrsService->launchParams($token, $courseId, $topicId);
 
         return [
-            'url' => Storage::disk(config('escolalms_cmi5.disk'))
+            'url' => Storage::disk(config('ulams_cmi5.disk'))
                 ->url('cmi5/' . $cmi5->getKey() . '/' . $cmi5Au->url . '?' . $launchParams['url'])
         ];
     }
@@ -48,7 +48,7 @@ class Cmi5Service implements Cmi5ServiceContract
         $this->cmi5AuRepository->deleteWhere(['cmi5_id' => $cmi5->getKey()]);
         $this->cmi5Repository->delete($cmi5->getKey());
 
-        $disk = Storage::disk(config('escolalms_cmi5.disk'));
+        $disk = Storage::disk(config('ulams_cmi5.disk'));
         $path = 'cmi5/' . $cmi5->getKey();
 
         if ($disk->exists($path)) {

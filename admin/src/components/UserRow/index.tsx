@@ -1,4 +1,4 @@
-import { user as fetchUser } from '@/services/escola-lms/user';
+import { user as fetchUser } from '@/services/ulams/user';
 import { Button, message } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';

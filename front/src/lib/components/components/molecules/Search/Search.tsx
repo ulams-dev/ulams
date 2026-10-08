@@ -7,7 +7,7 @@ import { Text } from "../../../";
 import { useOnClickOutside } from "../../../hooks/useOnClickOutside";
 import { useTranslation } from "react-i18next";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface StyledSearchProps {
   isFocused?: boolean;
@@ -214,7 +214,7 @@ export const Search: React.FC<SearchProps> = (props) => {
 
   return (
     <StyledSearch
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
       ref={ref}
       isFocused={isFocused}
       loading={loading}

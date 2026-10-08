@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Settings\Models;
+namespace Ulams\Settings\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

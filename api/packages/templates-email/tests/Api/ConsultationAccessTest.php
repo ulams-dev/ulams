@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests\Api;
+namespace Ulams\TemplatesEmail\Tests\Api;
 
-use EscolaLms\ConsultationAccess\Database\Seeders\ConsultationAccessPermissionSeeder;
-use EscolaLms\ConsultationAccess\Events\ConsultationAccessEnquiryAdminCreatedEvent;
-use EscolaLms\ConsultationAccess\Events\ConsultationAccessEnquiryApprovedEvent;
-use EscolaLms\ConsultationAccess\Events\ConsultationAccessEnquiryDisapprovedEvent;
-use EscolaLms\ConsultationAccess\Models\Consultation;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Templates\Listeners\TemplateEventListener;
-use EscolaLms\TemplatesEmail\Core\EmailMailable;
-use EscolaLms\TemplatesEmail\Tests\TestCase;
+use Ulams\ConsultationAccess\Database\Seeders\ConsultationAccessPermissionSeeder;
+use Ulams\ConsultationAccess\Events\ConsultationAccessEnquiryAdminCreatedEvent;
+use Ulams\ConsultationAccess\Events\ConsultationAccessEnquiryApprovedEvent;
+use Ulams\ConsultationAccess\Events\ConsultationAccessEnquiryDisapprovedEvent;
+use Ulams\ConsultationAccess\Models\Consultation;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Templates\Listeners\TemplateEventListener;
+use Ulams\TemplatesEmail\Core\EmailMailable;
+use Ulams\TemplatesEmail\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
@@ -28,7 +28,7 @@ class ConsultationAccessTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\ConsultationAccess\EscolaLmsConsultationAccessServiceProvider::class)) {
+        if (!class_exists(\Ulams\ConsultationAccess\UlamsConsultationAccessServiceProvider::class)) {
             $this->markTestSkipped('Consultation-Access package not installed');
         }
 

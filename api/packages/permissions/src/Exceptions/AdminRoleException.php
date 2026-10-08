@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Permissions\Exceptions;
+namespace Ulams\Permissions\Exceptions;
 
 use Exception;
 

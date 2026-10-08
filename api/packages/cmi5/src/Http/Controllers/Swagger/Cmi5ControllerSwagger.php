@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Cmi5\Http\Controllers\Swagger;
+namespace Ulams\Cmi5\Http\Controllers\Swagger;
 
-use EscolaLms\Cmi5\Http\Requests\Cmi5DeleteRequest;
-use EscolaLms\Cmi5\Http\Requests\Cmi5ListRequest;
-use EscolaLms\Cmi5\Http\Requests\Cmi5ReadRequest;
-use EscolaLms\Cmi5\Http\Requests\Cmi5UploadRequest;
+use Ulams\Cmi5\Http\Requests\Cmi5DeleteRequest;
+use Ulams\Cmi5\Http\Requests\Cmi5ListRequest;
+use Ulams\Cmi5\Http\Requests\Cmi5ReadRequest;
+use Ulams\Cmi5\Http\Requests\Cmi5UploadRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 
@@ -14,7 +14,7 @@ interface Cmi5ControllerSwagger
     /**
      * @OA\Post(
      *     path="/api/admin/cmi5",
-     *     summary="Convert ZIP Cmi5 Package into Escola LMS Cmi5 storage",
+     *     summary="Convert ZIP Cmi5 Package into Ulams LMS Cmi5 storage",
      *     tags={"cmi5"},
      *     security={
      *         {"passport": {}},

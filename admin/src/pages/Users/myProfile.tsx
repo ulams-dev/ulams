@@ -1,7 +1,7 @@
 import ResponsiveImage from '@/components/ResponsiveImage';
 import SecureUploadBrowser from '@/components/SecureUpload/browser';
 import useModelFields from '@/hooks/useModelFields';
-import { profile, updateProfile, updateProfilePassword } from '@/services/escola-lms/user';
+import { profile, updateProfile, updateProfilePassword } from '@/services/ulams/user';
 import ProCard from '@ant-design/pro-card';
 import ProForm, { ProFormText } from '@ant-design/pro-form';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -16,7 +16,7 @@ export default () => {
   const params = useParams<{ tab?: string }>();
   const intl = useIntl();
   const { tab = 'general' } = params;
-  const additionalFields = useModelFields('EscolaLms\\Auth\\Models\\User');
+  const additionalFields = useModelFields('Ulams\\Auth\\Models\\User');
   const [data, setData] = useState<API.UserItem>();
 
   const fetchProfileData = useCallback(async () => {

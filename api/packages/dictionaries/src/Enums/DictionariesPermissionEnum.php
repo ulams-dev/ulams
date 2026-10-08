@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Enums;
+namespace Ulams\Dictionaries\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class DictionariesPermissionEnum extends BasicEnum
 {

@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Database\Seeders;
+namespace Ulams\TemplatesPdf\Database\Seeders;
 
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Courses\Database\Seeders\ProgressSeeder;
-use EscolaLms\Courses\Enum\ProgressStatus;
-use EscolaLms\Courses\Events\CourseFinished;
-use EscolaLms\Courses\Models\User;
-use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
-use EscolaLms\Courses\Services\Contracts\ProgressServiceContract;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\Templates\Facades\Template;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Courses\Database\Seeders\ProgressSeeder;
+use Ulams\Courses\Enum\ProgressStatus;
+use Ulams\Courses\Events\CourseFinished;
+use Ulams\Courses\Models\User;
+use Ulams\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
+use Ulams\Courses\Services\Contracts\ProgressServiceContract;
+use Ulams\Courses\ValueObjects\CourseProgressCollection;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\Templates\Facades\Template;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
@@ -30,7 +30,7 @@ class DemoPdfsSeeder extends Seeder
 
     public function run()
     {
-        if (!class_exists(\EscolaLms\Courses\EscolaLmsCourseServiceProvider::class)) {
+        if (!class_exists(\Ulams\Courses\UlamsCourseServiceProvider::class)) {
             return;
         }
 
@@ -56,7 +56,7 @@ class DemoPdfsSeeder extends Seeder
     protected function getStudents(): Collection
     {
         $students = User::role(UserRole::STUDENT)->whereHas('courses')->inRandomOrder()->take(5)->get();
-        if ($students->isEmpty() && class_exists(\EscolaLms\TopicTypes\EscolaLmsTopicTypesServiceProvider::class)) {
+        if ($students->isEmpty() && class_exists(\Ulams\TopicTypes\UlamsTopicTypesServiceProvider::class)) {
             $this->call(ProgressSeeder::class);
             $students = User::role(UserRole::STUDENT)->whereHas('courses')->inRandomOrder()->take(5)->get();
         }

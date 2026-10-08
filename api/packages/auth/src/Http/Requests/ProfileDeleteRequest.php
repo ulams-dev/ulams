@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests;
+namespace Ulams\Auth\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;

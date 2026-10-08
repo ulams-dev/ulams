@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Requests;
+namespace Ulams\Tasks\Http\Requests;
 
-use EscolaLms\Tasks\Dtos\CriteriaDto;
-use EscolaLms\Tasks\Dtos\OrderDto;
-use EscolaLms\Tasks\Dtos\PageDto;
-use EscolaLms\Tasks\Models\Task;
+use Ulams\Tasks\Dtos\CriteriaDto;
+use Ulams\Tasks\Dtos\OrderDto;
+use Ulams\Tasks\Dtos\PageDto;
+use Ulams\Tasks\Models\Task;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

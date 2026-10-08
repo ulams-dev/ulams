@@ -1,12 +1,12 @@
 <?php
 
 
-namespace EscolaLms\Cart\Http\Swagger;
+namespace Ulams\Cart\Http\Swagger;
 
-use EscolaLms\Cart\Http\Requests\AddMissingProductsRequest;
-use EscolaLms\Cart\Http\Requests\ProductableAddToCartRequest;
-use EscolaLms\Cart\Http\Requests\ProductRemoveFromCartRequest;
-use EscolaLms\Cart\Http\Requests\ProductSetQuantityInCartRequest;
+use Ulams\Cart\Http\Requests\AddMissingProductsRequest;
+use Ulams\Cart\Http\Requests\ProductableAddToCartRequest;
+use Ulams\Cart\Http\Requests\ProductRemoveFromCartRequest;
+use Ulams\Cart\Http\Requests\ProductSetQuantityInCartRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

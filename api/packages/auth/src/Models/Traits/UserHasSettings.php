@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Models\Traits;
+namespace Ulams\Auth\Models\Traits;
 
-use EscolaLms\Auth\Models\UserSetting;
-use EscolaLms\Auth\Models\User;
+use Ulams\Auth\Models\UserSetting;
+use Ulams\Auth\Models\User;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait UserHasSettings

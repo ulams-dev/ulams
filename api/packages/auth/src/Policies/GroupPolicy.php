@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Policies;
+namespace Ulams\Auth\Policies;
 
-use EscolaLms\Auth\Enums\AuthPermissionsEnum;
-use EscolaLms\Auth\Models\Group;
+use Ulams\Auth\Enums\AuthPermissionsEnum;
+use Ulams\Auth\Models\Group;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Foundation\Auth\User;
 

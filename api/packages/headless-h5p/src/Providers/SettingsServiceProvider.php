@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Providers;
+namespace Ulams\HeadlessH5P\Providers;
 
-use EscolaLms\HeadlessH5P\Enums\ConfigEnum;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Settings\Facades\AdministrableConfig;
+use Ulams\HeadlessH5P\Enums\ConfigEnum;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Settings\Facades\AdministrableConfig;
 use Illuminate\Support\ServiceProvider;
 
 class SettingsServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        if (class_exists(EscolaLmsSettingsServiceProvider::class)) {
-            if (!$this->app->getProviders(EscolaLmsSettingsServiceProvider::class)) {
-                $this->app->register(EscolaLmsSettingsServiceProvider::class);
+        if (class_exists(UlamsSettingsServiceProvider::class)) {
+            if (!$this->app->getProviders(UlamsSettingsServiceProvider::class)) {
+                $this->app->register(UlamsSettingsServiceProvider::class);
             }
 
             AdministrableConfig::registerConfig(ConfigEnum::CONFIG_KEY . '.h5p_show_display_option', ['boolean'], false);

@@ -1,10 +1,10 @@
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import React, { ReactElement } from "react";
 import { useContext } from "react";
 import { routerType } from "@/utils/router";
 
 const SocialButtons: React.FC = (): ReactElement => {
-  const { apiUrl } = useContext(EscolaLMSContext);
+  const { apiUrl } = useContext(UlamsContext);
 
   const isHashRouter = routerType() === "HashRouter";
 

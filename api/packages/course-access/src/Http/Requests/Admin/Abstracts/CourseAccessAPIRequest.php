@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Http\Requests\Admin\Abstracts;
+namespace Ulams\CourseAccess\Http\Requests\Admin\Abstracts;
 
-use EscolaLms\CourseAccess\Models\Course;
+use Ulams\CourseAccess\Models\Course;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

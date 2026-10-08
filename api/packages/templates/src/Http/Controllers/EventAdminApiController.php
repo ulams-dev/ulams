@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Templates\Http\Controllers;
+namespace Ulams\Templates\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Templates\Http\Controllers\Contracts\EventAdminApiContract;
-use EscolaLms\Templates\Http\Requests\EventTriggerRequest;
-use EscolaLms\Templates\Services\Contracts\EventServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Templates\Http\Controllers\Contracts\EventAdminApiContract;
+use Ulams\Templates\Http\Requests\EventTriggerRequest;
+use Ulams\Templates\Services\Contracts\EventServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class EventAdminApiController extends EscolaLmsBaseController implements EventAdminApiContract
+class EventAdminApiController extends UlamsBaseController implements EventAdminApiContract
 {
     private EventServiceContract $eventService;
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Scorm\Services;
+namespace Ulams\Scorm\Services;
 
 use Carbon\Carbon;
-use EscolaLms\Scorm\Services\Contracts\ScormTrackServiceContract;
-use EscolaLms\Scorm\Strategies\Scorm12FieldStrategy;
-use EscolaLms\Scorm\Strategies\Scorm2004FieldStrategy;
-use EscolaLms\Scorm\Strategies\ScormFieldStrategy;
+use Ulams\Scorm\Services\Contracts\ScormTrackServiceContract;
+use Ulams\Scorm\Strategies\Scorm12FieldStrategy;
+use Ulams\Scorm\Strategies\Scorm2004FieldStrategy;
+use Ulams\Scorm\Strategies\ScormFieldStrategy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Peopleaps\Scorm\Entity\Scorm;
@@ -413,7 +413,7 @@ class ScormTrackService implements ScormTrackServiceContract
     private function getScormFieldStrategy(string $version): ScormFieldStrategy
     {
         $scormVersion = Str::ucfirst(Str::camel($version));
-        $strategy = 'EscolaLms\\Scorm\\Strategies\\' . $scormVersion . 'FieldStrategy';
+        $strategy = 'Ulams\\Scorm\\Strategies\\' . $scormVersion . 'FieldStrategy';
 
         return new ScormFieldStrategy(new $strategy());
     }

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Resources;
+namespace Ulams\Auth\Http\Resources;
 
-use EscolaLms\Auth\Traits\ResourceExtandable;
+use Ulams\Auth\Traits\ResourceExtandable;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserSimpleResource extends JsonResource

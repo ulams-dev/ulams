@@ -1,4 +1,4 @@
-import { getUserSettings, setUserSettings } from '@/services/escola-lms/user';
+import { getUserSettings, setUserSettings } from '@/services/ulams/user';
 import { InteractionOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';

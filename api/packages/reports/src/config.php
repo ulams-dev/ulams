@@ -5,15 +5,15 @@ return [
      * By modyfing this list, you can add or remove available Metrics for which Reports can be calculated
      */
     'metrics' => [
-        \EscolaLms\Reports\Metrics\CoursesMoneySpentMetric::class,
-        \EscolaLms\Reports\Metrics\CoursesPopularityMetric::class,
-        \EscolaLms\Reports\Metrics\CoursesSecondsSpentMetric::class,
-        \EscolaLms\Reports\Metrics\TutorsPopularityMetric::class,
-        \EscolaLms\Reports\Metrics\CoursesBestRatedMetric::class,
-        \EscolaLms\Reports\Metrics\CoursesTopSellingMetric::class,
-        \EscolaLms\Reports\Metrics\CoursesAuthoredPopularityMetric::class,
-        \EscolaLms\Reports\Metrics\CoursesAuthoredMoneySpentMetric::class,
-        \EscolaLms\Reports\Metrics\CoursesAuthoredSecondsSpentMetric::class,
+        \Ulams\Reports\Metrics\CoursesMoneySpentMetric::class,
+        \Ulams\Reports\Metrics\CoursesPopularityMetric::class,
+        \Ulams\Reports\Metrics\CoursesSecondsSpentMetric::class,
+        \Ulams\Reports\Metrics\TutorsPopularityMetric::class,
+        \Ulams\Reports\Metrics\CoursesBestRatedMetric::class,
+        \Ulams\Reports\Metrics\CoursesTopSellingMetric::class,
+        \Ulams\Reports\Metrics\CoursesAuthoredPopularityMetric::class,
+        \Ulams\Reports\Metrics\CoursesAuthoredMoneySpentMetric::class,
+        \Ulams\Reports\Metrics\CoursesAuthoredSecondsSpentMetric::class,
     ],
     /**
      * For each Metric class you can specify settings:
@@ -22,47 +22,47 @@ return [
      * @param string cron  - cron expression determining how often this metric will be measured and saved in DB (default: midnight every day)
      */
     'metric_configuration' => [
-        \EscolaLms\Reports\Metrics\CoursesMoneySpentMetric::class => [
+        \Ulams\Reports\Metrics\CoursesMoneySpentMetric::class => [
             'limit' => 10,
             'history' => false,
             'cron' => '0 0 * * *',
         ],
-        \EscolaLms\Reports\Metrics\CoursesPopularityMetric::class => [
+        \Ulams\Reports\Metrics\CoursesPopularityMetric::class => [
             'limit' => 10,
             'history' => false,
             'cron' => '0 0 * * *',
         ],
-        \EscolaLms\Reports\Metrics\CoursesSecondsSpentMetric::class => [
+        \Ulams\Reports\Metrics\CoursesSecondsSpentMetric::class => [
             'limit' => 10,
             'history' => false,
             'cron' => '0 0 * * *',
         ],
-        \EscolaLms\Reports\Metrics\TutorsPopularityMetric::class => [
+        \Ulams\Reports\Metrics\TutorsPopularityMetric::class => [
             'limit' => 10,
             'history' => false,
             'cron' => '0 0 * * *',
         ],
-        \EscolaLms\Reports\Metrics\CoursesTopSellingMetric::class => [
+        \Ulams\Reports\Metrics\CoursesTopSellingMetric::class => [
             'limit' => 10,
             'history' => false,
             'cron' => '0 0 * * *',
         ],
-        \EscolaLms\Reports\Metrics\CoursesBestRatedMetric::class => [
+        \Ulams\Reports\Metrics\CoursesBestRatedMetric::class => [
             'limit' => 10,
             'history' => false,
             'cron' => '0 0 * * *',
         ],
-        \EscolaLms\Reports\Metrics\CoursesAuthoredPopularityMetric::class => [
+        \Ulams\Reports\Metrics\CoursesAuthoredPopularityMetric::class => [
             'limit' => 10,
             'history' => false,
             'cron' => '0 0 * * *',
         ],
-        \EscolaLms\Reports\Metrics\CoursesAuthoredMoneySpentMetric::class => [
+        \Ulams\Reports\Metrics\CoursesAuthoredMoneySpentMetric::class => [
             'limit' => 10,
             'history' => false,
             'cron' => '0 0 * * *',
         ],
-        \EscolaLms\Reports\Metrics\CoursesAuthoredSecondsSpentMetric::class => [
+        \Ulams\Reports\Metrics\CoursesAuthoredSecondsSpentMetric::class => [
             'limit' => 10,
             'history' => false,
             'cron' => '0 0 * * *',
@@ -72,31 +72,31 @@ return [
      * By modyfing this associative array, you can add or remove available Stats which can be returned for single objects of given class
      */
     'stats' => [
-        \EscolaLms\Courses\Models\Course::class => [
-            \EscolaLms\Reports\Stats\Course\AverageTime::class,
-            \EscolaLms\Reports\Stats\Course\AverageTimePerTopic::class,
-            \EscolaLms\Reports\Stats\Course\MoneyEarned::class,
-            \EscolaLms\Reports\Stats\Course\PeopleBought::class,
-            \EscolaLms\Reports\Stats\Course\PeopleFinished::class,
-            \EscolaLms\Reports\Stats\Course\PeopleStarted::class,
-            \EscolaLms\Reports\Stats\Course\FinishedTopics::class,
-            \EscolaLms\Reports\Stats\Course\FinishedCourse::class,
-            \EscolaLms\Reports\Stats\Course\AttendanceList::class,
+        \Ulams\Courses\Models\Course::class => [
+            \Ulams\Reports\Stats\Course\AverageTime::class,
+            \Ulams\Reports\Stats\Course\AverageTimePerTopic::class,
+            \Ulams\Reports\Stats\Course\MoneyEarned::class,
+            \Ulams\Reports\Stats\Course\PeopleBought::class,
+            \Ulams\Reports\Stats\Course\PeopleFinished::class,
+            \Ulams\Reports\Stats\Course\PeopleStarted::class,
+            \Ulams\Reports\Stats\Course\FinishedTopics::class,
+            \Ulams\Reports\Stats\Course\FinishedCourse::class,
+            \Ulams\Reports\Stats\Course\AttendanceList::class,
         ],
-        \EscolaLms\Courses\Models\Topic::class => [
-            \EscolaLms\Reports\Stats\Topic\AverageTime::class,
-            \EscolaLms\Reports\Stats\Topic\QuizSummaryForTopicTypeGIFT::class,
+        \Ulams\Courses\Models\Topic::class => [
+            \Ulams\Reports\Stats\Topic\AverageTime::class,
+            \Ulams\Reports\Stats\Topic\QuizSummaryForTopicTypeGIFT::class,
         ],
-        \EscolaLms\Cart\Models\Cart::class => [
-            \EscolaLms\Reports\Stats\Cart\NewCustomers::class,
-            \EscolaLms\Reports\Stats\Cart\SpendPerCustomer::class,
-            \EscolaLms\Reports\Stats\Cart\ReturningCustomers::class,
+        \Ulams\Cart\Models\Cart::class => [
+            \Ulams\Reports\Stats\Cart\NewCustomers::class,
+            \Ulams\Reports\Stats\Cart\SpendPerCustomer::class,
+            \Ulams\Reports\Stats\Cart\ReturningCustomers::class,
         ],
-        \EscolaLms\Reports\ValueObject\DateRange::class => [
-            \EscolaLms\Reports\Stats\User\NewUsers::class,
-            \EscolaLms\Reports\Stats\User\ActiveUsers::class,
-            \EscolaLms\Reports\Stats\Course\Started::class,
-            \EscolaLms\Reports\Stats\Course\Finished::class,
+        \Ulams\Reports\ValueObject\DateRange::class => [
+            \Ulams\Reports\Stats\User\NewUsers::class,
+            \Ulams\Reports\Stats\User\ActiveUsers::class,
+            \Ulams\Reports\Stats\Course\Started::class,
+            \Ulams\Reports\Stats\Course\Finished::class,
         ]
     ]
 ];

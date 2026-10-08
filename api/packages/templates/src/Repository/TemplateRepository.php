@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Templates\Repository;
+namespace Ulams\Templates\Repository;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Templates\Helpers\Models;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Models\TemplateSection;
-use EscolaLms\Templates\Repository\Contracts\TemplateRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Templates\Helpers\Models;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Models\TemplateSection;
+use Ulams\Templates\Repository\Contracts\TemplateRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;

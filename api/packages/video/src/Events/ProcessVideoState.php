@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Video\Events;
+namespace Ulams\Video\Events;
 
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Courses\Models\Topic;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class ProcessVideoState extends ProcessVideoEvent

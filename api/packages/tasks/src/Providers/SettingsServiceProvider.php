@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Tasks\Providers;
+namespace Ulams\Tasks\Providers;
 
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Settings\Facades\AdministrableConfig;
-use EscolaLms\Tasks\EscolaLmsTasksServiceProvider;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Settings\Facades\AdministrableConfig;
+use Ulams\Tasks\UlamsTasksServiceProvider;
 use Illuminate\Support\ServiceProvider;
 
 class SettingsServiceProvider extends ServiceProvider
@@ -12,12 +12,12 @@ class SettingsServiceProvider extends ServiceProvider
 
     public function register()
     {
-        if (class_exists(EscolaLmsSettingsServiceProvider::class)) {
-            if (!$this->app->getProviders(EscolaLmsSettingsServiceProvider::class)) {
-                $this->app->register(EscolaLmsSettingsServiceProvider::class);
+        if (class_exists(UlamsSettingsServiceProvider::class)) {
+            if (!$this->app->getProviders(UlamsSettingsServiceProvider::class)) {
+                $this->app->register(UlamsSettingsServiceProvider::class);
             }
 
-            AdministrableConfig::registerConfig(EscolaLmsTasksServiceProvider::CONFIG_KEY . '.notifications.overdue_period', ['integer'], false, false);
+            AdministrableConfig::registerConfig(UlamsTasksServiceProvider::CONFIG_KEY . '.notifications.overdue_period', ['integer'], false, false);
         }
     }
 }

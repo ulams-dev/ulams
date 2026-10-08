@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Webinar;
+namespace Ulams\TemplatesEmail\Webinar;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\TemplatesEmail\Core\EmailVariables;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\TemplatesEmail\Core\EmailVariables;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Support\Carbon;
 
 abstract class CommonWebinarVariables extends EmailVariables

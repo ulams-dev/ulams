@@ -3,12 +3,12 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { toast } from "@/utils/toast";
 import routeRoutes from "@/components/Routes/routes";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 
 const useDeleteAccountModal = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const { deleteAccount, logout } = useContext(EscolaLMSContext);
+  const { deleteAccount, logout } = useContext(UlamsContext);
   const history = useHistory();
   const { t } = useTranslation();
 

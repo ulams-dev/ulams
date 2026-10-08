@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Invoices\Tests;
+namespace Ulams\Invoices\Tests;
 
 use Barryvdh\DomPDF\ServiceProvider;
-use EscolaLms\Cart\EscolaLmsCartServiceProvider;
-use EscolaLms\Cart\Tests\Mocks\ExampleProductableMigration;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Invoices\EscolaLmsInvoicesServiceProvider;
+use Ulams\Cart\UlamsCartServiceProvider;
+use Ulams\Cart\Tests\Mocks\ExampleProductableMigration;
+use Ulams\Core\Models\User;
+use Ulams\Invoices\UlamsInvoicesServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\PassportServiceProvider;
 use LaravelDaily\Invoices\InvoiceServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     use DatabaseTransactions;
 
@@ -22,8 +22,8 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             ...parent::getPackageProviders($app),
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
-            EscolaLmsInvoicesServiceProvider::class,
-            EscolaLmsCartServiceProvider::class,
+            UlamsInvoicesServiceProvider::class,
+            UlamsCartServiceProvider::class,
             InvoiceServiceProvider::class,
             ServiceProvider::class,
         ];

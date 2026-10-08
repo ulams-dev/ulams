@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Tests\Models;
+namespace Ulams\HeadlessH5P\Tests\Models;
 
-use EscolaLms\Courses\Models\User as CoursesUser;
+use Ulams\Courses\Models\User as CoursesUser;
 
 class User extends CoursesUser
 {

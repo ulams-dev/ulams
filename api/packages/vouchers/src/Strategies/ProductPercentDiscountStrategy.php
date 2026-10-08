@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Vouchers\Strategies;
+namespace Ulams\Vouchers\Strategies;
 
-use EscolaLms\Vouchers\Models\Cart;
-use EscolaLms\Vouchers\Models\CartItem;
-use EscolaLms\Vouchers\Services\Contracts\CouponServiceContract;
-use EscolaLms\Vouchers\Strategies\Abstracts\DiscountStrategy;
-use EscolaLms\Vouchers\Strategies\Contracts\DiscountStrategyContract;
+use Ulams\Vouchers\Models\Cart;
+use Ulams\Vouchers\Models\CartItem;
+use Ulams\Vouchers\Services\Contracts\CouponServiceContract;
+use Ulams\Vouchers\Strategies\Abstracts\DiscountStrategy;
+use Ulams\Vouchers\Strategies\Contracts\DiscountStrategyContract;
 
 class ProductPercentDiscountStrategy extends DiscountStrategy implements DiscountStrategyContract
 {

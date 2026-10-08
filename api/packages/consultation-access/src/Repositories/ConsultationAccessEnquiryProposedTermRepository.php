@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Repositories;
+namespace Ulams\ConsultationAccess\Repositories;
 
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
-use EscolaLms\ConsultationAccess\Repositories\Contracts\ConsultationAccessEnquiryProposedTermRepositoryContract;
-use EscolaLms\Core\Repositories\BaseRepository;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
+use Ulams\ConsultationAccess\Repositories\Contracts\ConsultationAccessEnquiryProposedTermRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
 
 class ConsultationAccessEnquiryProposedTermRepository extends BaseRepository implements ConsultationAccessEnquiryProposedTermRepositoryContract
 {

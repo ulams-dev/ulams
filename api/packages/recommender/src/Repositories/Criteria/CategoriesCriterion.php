@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Recommender\Repositories\Criteria;
+namespace Ulams\Recommender\Repositories\Criteria;
 
-use EscolaLms\Core\Repositories\Criteria\Criterion;
+use Ulams\Core\Repositories\Criteria\Criterion;
 use Illuminate\Database\Eloquent\Builder;
 
 class CategoriesCriterion extends Criterion

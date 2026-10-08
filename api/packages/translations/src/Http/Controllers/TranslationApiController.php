@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Translations\Http\Controllers;
+namespace Ulams\Translations\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Translations\Http\Controllers\Swagger\TranslationApiSwagger;
-use EscolaLms\Translations\Http\Requests\PublicListLanguageLineRequest;
-use EscolaLms\Translations\Http\Resources\LanguageLineResource;
-use EscolaLms\Translations\Services\LanguageLineService;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Translations\Http\Controllers\Swagger\TranslationApiSwagger;
+use Ulams\Translations\Http\Requests\PublicListLanguageLineRequest;
+use Ulams\Translations\Http\Resources\LanguageLineResource;
+use Ulams\Translations\Services\LanguageLineService;
 use Illuminate\Http\JsonResponse;
 
-class TranslationApiController extends EscolaLmsBaseController implements TranslationApiSwagger
+class TranslationApiController extends UlamsBaseController implements TranslationApiSwagger
 {
     private LanguageLineService $languageLineService;
 

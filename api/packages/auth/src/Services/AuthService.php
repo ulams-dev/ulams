@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Auth\Services;
+namespace Ulams\Auth\Services;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Events\ForgotPassword;
-use EscolaLms\Auth\Events\ResetPassword;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Repositories\Contracts\UserRepositoryContract;
-use EscolaLms\Auth\Services\Contracts\AuthServiceContract;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Events\ForgotPassword;
+use Ulams\Auth\Events\ResetPassword;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Repositories\Contracts\UserRepositoryContract;
+use Ulams\Auth\Services\Contracts\AuthServiceContract;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -59,7 +59,7 @@ class AuthService implements AuthServiceContract
         Passport::personalAccessTokensExpireIn(
             $rememberMe
                 ? now()->addMonth()
-                : now()->addMinutes(Config::get(EscolaLmsAuthServiceProvider::CONFIG_KEY . '.token_expiration_minutes'))
+                : now()->addMinutes(Config::get(UlamsAuthServiceProvider::CONFIG_KEY . '.token_expiration_minutes'))
         );
 
         return $user->createToken(config('passport.personal_access_client.secret'));
@@ -68,7 +68,7 @@ class AuthService implements AuthServiceContract
     public function refreshToken(User $user): PersonalAccessTokenResult
     {
         $token = $user->token();
-        $rememberMe = $token->expires_at->diffInMinutes($token->created_at) > Config::get(EscolaLmsAuthServiceProvider::CONFIG_KEY . '.token_expiration_minutes');
+        $rememberMe = $token->expires_at->diffInMinutes($token->created_at) > Config::get(UlamsAuthServiceProvider::CONFIG_KEY . '.token_expiration_minutes');
 
         return $this->createTokenForUser($user, $rememberMe);
     }

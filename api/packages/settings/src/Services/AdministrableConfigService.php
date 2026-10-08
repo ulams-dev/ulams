@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Settings\Services;
+namespace Ulams\Settings\Services;
 
-use EscolaLms\Settings\Models\Config as ModelsConfig;
-use EscolaLms\Settings\Services\Contracts\AdministrableConfigServiceContract;
+use Ulams\Settings\Models\Config as ModelsConfig;
+use Ulams\Settings\Services\Contracts\AdministrableConfigServiceContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -16,7 +16,7 @@ use Illuminate\Validation\ValidationException;
 
 class AdministrableConfigService implements AdministrableConfigServiceContract
 {
-    const CACHE_KEY = 'escolalms_config_cache';
+    const CACHE_KEY = 'ulams_config_cache';
 
     private array $administrableConfig = [];
 
@@ -36,7 +36,7 @@ class AdministrableConfigService implements AdministrableConfigServiceContract
     {
         $this->storeConfigInCache();
 
-        if (Config::get('escola_settings.use_database')) {
+        if (Config::get('ulams_settings.use_database')) {
             return $this->saveConfigToDatabase();
         }
 
@@ -81,7 +81,7 @@ class AdministrableConfigService implements AdministrableConfigServiceContract
 
     public function loadConfigFromCache(bool $forced = false): bool
     {
-        if (Config::get('escola_settings.use_database', false) || $forced) {
+        if (Config::get('ulams_settings.use_database', false) || $forced) {
             $cache = $this->getConfigFromCache();
             if (!empty($cache)) {
                 Config::set($cache);
@@ -98,7 +98,7 @@ class AdministrableConfigService implements AdministrableConfigServiceContract
         } catch (\Exception $e) {
             return false;
         }
-        if ((Config::get('escola_settings.use_database', false) || $forced) && Schema::hasTable('config')) {
+        if ((Config::get('ulams_settings.use_database', false) || $forced) && Schema::hasTable('config')) {
             $configModel = ModelsConfig::query()->find(1);
             if (!is_null($configModel)) {
                 $config = $configModel->value;

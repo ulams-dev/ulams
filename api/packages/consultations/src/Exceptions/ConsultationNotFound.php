@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Consultations\Exceptions;
+namespace Ulams\Consultations\Exceptions;
 
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Throwable;

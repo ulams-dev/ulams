@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Commands;
+namespace Ulams\TopicTypes\Commands;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Command\Command as ConsoleCommand;
 
 class FillTopicTypeMetadataCommand extends Command
 {
-    protected $signature = 'escolalms:fill-topic-types-metadata {model}';
+    protected $signature = 'ulams:fill-topic-types-metadata {model}';
 
     protected $description = 'Fill the metadata for the specific model';
 
     public function handle(): int
     {
         $modelClass = $this->argument('model');
-        $model = 'EscolaLms\TopicTypes\Models\TopicContent\\' . ucfirst($modelClass);
+        $model = 'Ulams\TopicTypes\Models\TopicContent\\' . ucfirst($modelClass);
 
         if (!class_exists($model)) {
             $this->error('Model ' . ucfirst($modelClass) . ' does not exist');

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Commands;
+namespace Ulams\TopicTypes\Commands;
 
-use EscolaLms\TopicTypes\Services\Contracts\TopicTypeServiceContract;
+use Ulams\TopicTypes\Services\Contracts\TopicTypeServiceContract;
 use Illuminate\Console\Command;
 
 class FixTopicTypeColumnName extends Command
@@ -12,7 +12,7 @@ class FixTopicTypeColumnName extends Command
      *
      * @var string
      */
-    protected $signature = 'escolalms:fix-type-column-name';
+    protected $signature = 'ulams:fix-type-column-name';
 
     /**
      * The console command description.
@@ -20,7 +20,7 @@ class FixTopicTypeColumnName extends Command
      * @var string
      */
     protected $description = 'Fixes Topicable DBs column name from old
-    `EscolaLms\Courses\Models\TopicContent\XXX` to `EscolaLms\TopicTypes\Models\TopicContent\XXX`';
+    `Ulams\Courses\Models\TopicContent\XXX` to `Ulams\TopicTypes\Models\TopicContent\XXX`';
 
     /**
      * Execute the console command.

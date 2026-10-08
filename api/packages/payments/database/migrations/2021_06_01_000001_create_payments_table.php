@@ -1,12 +1,12 @@
 <?php
 
-use EscolaLms\Core\Migrations\EscolaMigration;
-use EscolaLms\Payments\Enums\Currency;
-use EscolaLms\Payments\Enums\PaymentStatus;
+use Ulams\Core\Migrations\UlamsMigration;
+use Ulams\Payments\Enums\Currency;
+use Ulams\Payments\Enums\PaymentStatus;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePaymentsTable extends EscolaMigration
+class CreatePaymentsTable extends UlamsMigration
 {
     public function up(): void
     {

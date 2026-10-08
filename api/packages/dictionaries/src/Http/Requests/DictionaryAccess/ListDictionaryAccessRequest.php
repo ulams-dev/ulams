@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Http\Requests\DictionaryAccess;
+namespace Ulams\Dictionaries\Http\Requests\DictionaryAccess;
 
-use EscolaLms\Dictionaries\Models\Dictionary;
+use Ulams\Dictionaries\Models\Dictionary;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 
 const TextIcon: React.FC = () => (
   <svg

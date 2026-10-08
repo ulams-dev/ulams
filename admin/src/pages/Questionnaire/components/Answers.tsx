@@ -4,7 +4,7 @@ import { DATETIME_FORMAT } from '@/consts/dates';
 import {
   changeQuestionareVisibility,
   getQuestionAnswers,
-} from '@/services/escola-lms/questionnaire';
+} from '@/services/ulams/questionnaire';
 import ProForm, { ProFormSwitch } from '@ant-design/pro-form';
 import type { ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';

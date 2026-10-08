@@ -6,12 +6,12 @@ import { Input } from "../../atoms/Input/Input";
 import { TextArea } from "../../atoms/TextArea/TextArea";
 import Button from "../../atoms/Button/Button";
 import Link from "../../atoms/Link/Link";
-import type { DefaultResponseError } from "@lms/sdk/types";
+import type { DefaultResponseError } from "@ulams/sdk/types";
 import type { ResponseError } from "umi-request";
 import { Formik } from "formik";
 import { t } from "i18next";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 const ColorPicker = styled.div`
   display: flex;
@@ -132,7 +132,7 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({
     { color: "#56CCF2" },
   ];
   return (
-    <StyledPopup className={`wellms-component ${className}`}>
+    <StyledPopup className={`ulams-component ${className}`}>
       <Formik
         initialValues={initialValues}
         validate={(values) => {

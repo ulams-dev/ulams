@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Core\Tests;
+namespace Ulams\Core\Tests;
 
 use Illuminate\Http\Request;
 

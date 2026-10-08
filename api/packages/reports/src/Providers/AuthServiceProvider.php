@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Reports\Providers;
+namespace Ulams\Reports\Providers;
 
-use EscolaLms\Reports\Models\Report;
-use EscolaLms\Reports\Policies\ReportPolicy;
+use Ulams\Reports\Models\Report;
+use Ulams\Reports\Policies\ReportPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

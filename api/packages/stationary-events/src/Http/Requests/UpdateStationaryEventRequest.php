@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Http\Requests;
+namespace Ulams\StationaryEvents\Http\Requests;
 
-use EscolaLms\Files\Rules\FileOrStringRule;
-use EscolaLms\StationaryEvents\Enum\ConstantEnum;
-use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
-use EscolaLms\StationaryEvents\Rules\ValidAuthor;
+use Ulams\Files\Rules\FileOrStringRule;
+use Ulams\StationaryEvents\Enum\ConstantEnum;
+use Ulams\StationaryEvents\Enum\StationaryEventStatusEnum;
+use Ulams\StationaryEvents\Models\StationaryEvent;
+use Ulams\StationaryEvents\Rules\ValidAuthor;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

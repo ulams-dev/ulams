@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Services;
+namespace Ulams\HeadlessH5P\Services;
 
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
+use Ulams\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
 use H5PContentValidator;
 use H5PCore;
 

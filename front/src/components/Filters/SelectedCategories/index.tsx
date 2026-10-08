@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Core;
+namespace Ulams\TemplatesSms\Core;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Contracts\TemplateVariableContract;
-use EscolaLms\Templates\Core\AbstractTemplateVariableClass;
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Contracts\TemplateVariableContract;
+use Ulams\Templates\Core\AbstractTemplateVariableClass;
+use Ulams\Templates\Events\EventWrapper;
 
 abstract class SmsVariables extends AbstractTemplateVariableClass implements TemplateVariableContract
 {

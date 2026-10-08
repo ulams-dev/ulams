@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Payments\Providers;
+namespace Ulams\Payments\Providers;
 
-use EscolaLms\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
-use EscolaLms\Payments\Gateway\GatewayManager;
-use EscolaLms\Payments\Repositories\Contracts\PaymentsRepositoryContract;
-use EscolaLms\Payments\Repositories\PaymentsRepository;
-use EscolaLms\Payments\Services\Contracts\PaymentsServiceContract;
-use EscolaLms\Payments\Services\PaymentsService;
+use Ulams\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
+use Ulams\Payments\Gateway\GatewayManager;
+use Ulams\Payments\Repositories\Contracts\PaymentsRepositoryContract;
+use Ulams\Payments\Repositories\PaymentsRepository;
+use Ulams\Payments\Services\Contracts\PaymentsServiceContract;
+use Ulams\Payments\Services\PaymentsService;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -34,7 +34,7 @@ class PaymentsServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config.php', 'escolalms_payments');
+        $this->mergeConfigFrom(__DIR__ . '/../config.php', 'ulams_payments');
 
         $this->app->singleton('payments', function ($app) {
             return app(PaymentsServiceContract::class);
@@ -73,12 +73,12 @@ class PaymentsServiceProvider extends ServiceProvider
     {
         // Publishing the configuration file.
         $this->publishes([
-            __DIR__ . '/../config.php' => config_path('escolalms_payments.php'),
-        ], 'escolalms_payments.config');
+            __DIR__ . '/../config.php' => config_path('ulams_payments.php'),
+        ], 'ulams_payments.config');
 
         // Publishing the database migrations.
         $this->publishes([
             __DIR__ . '/../../database/migrations' => $this->app->databasePath('migrations'),
-        ], 'escolalms_payments.migrations');
+        ], 'ulams_payments.migrations');
     }
 }

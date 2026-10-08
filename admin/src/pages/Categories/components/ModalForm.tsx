@@ -1,7 +1,7 @@
 import CategoryTree from '@/components/CategoryTree';
 import ProFormImageUpload from '@/components/ProFormImageUpload';
-import { category } from '@/services/escola-lms/category';
-import { slugify } from '@/services/escola-lms/slug';
+import { category } from '@/services/ulams/category';
+import { slugify } from '@/services/ulams/slug';
 import ProForm, {
   ModalForm,
   ProFormDigit,

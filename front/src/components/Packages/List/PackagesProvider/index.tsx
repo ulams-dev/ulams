@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { useLocation, useHistory } from "react-router-dom";
 import qs from "query-string";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import { PackagesParams } from "@/types/params";
 import { PackagesContext } from "../PackagesContext";
 
@@ -14,7 +14,7 @@ const PackagesProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const { fetchProducts, products, fetchCategories, fetchTags } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
   const location = useLocation();
   const { push } = useHistory();
 

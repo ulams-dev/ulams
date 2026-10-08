@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Models\Contracts;
+namespace Ulams\TopicTypes\Models\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 

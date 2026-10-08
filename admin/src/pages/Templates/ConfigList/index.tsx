@@ -1,5 +1,5 @@
 import { DATETIME_FORMAT } from '@/consts/dates';
-import { deleteTemplate, templates } from '@/services/escola-lms/templates';
+import { deleteTemplate, templates } from '@/services/ulams/templates';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Reports\Providers;
+namespace Ulams\Reports\Providers;
 
-use EscolaLms\Reports\Metrics\Contracts\MetricContract;
+use Ulams\Reports\Metrics\Contracts\MetricContract;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
 use RuntimeException;

@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { Modal } from "@lms/components/components/atoms/Modal/Modal";
-import { JitsyData } from "@lms/sdk/types";
+import { UlamsContext } from "@ulams/sdk/react";
+import { Modal } from "@ulams/components/components/atoms/Modal/Modal";
+import { JitsyData } from "@ulams/sdk/types";
 import ContentLoader from "@/components/_App/ContentLoader";
 import { WebinarMeetModalStyles } from "./WebinarMeetModalStyles";
 import { useTranslation } from "react-i18next";
@@ -11,7 +11,7 @@ import JitsyMeeting from "@/components/Consultations/ConsultationCard/JitsyMeeti
 import MeetingAnalyticsOverlay from "@/components/MeetingAnalyticsOverlay/MeetingAnalyticsOverlay";
 import { EndMeetingQuestionnairesModal } from "@/components/Consultations/ConsultationCard/EndMeetingQuestionnaires";
 import { QuestionnaireModelType } from "@/types/questionnaire";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 
 interface Props {
   onClose: () => void;
@@ -36,7 +36,7 @@ const WebinarMeetModal = ({ onClose, visible, webinarId, webinar }: Props) => {
   const [recordingUrl, setRecordingUrl] = useState<string | null>(null);
   const [participantCount, setParticipantCount] = useState<number>(0);
   const onCloseRef = useRef(onClose);
-  const { generateWebinarJitsy } = useContext(EscolaLMSContext);
+  const { generateWebinarJitsy } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   useEffect(() => {

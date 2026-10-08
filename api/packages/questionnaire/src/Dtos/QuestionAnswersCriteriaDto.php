@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Dtos;
+namespace Ulams\Questionnaire\Dtos;
 
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\HasCriterion;
-use EscolaLms\Courses\Repositories\Criteria\Primitives\OrderCriterion;
-use EscolaLms\Questionnaire\Repository\Criteria\AnswerQuestionReviewCriterion;
-use EscolaLms\Questionnaire\Repository\Criteria\QuestionAnswersCriterion;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Repositories\Criteria\Primitives\HasCriterion;
+use Ulams\Courses\Repositories\Criteria\Primitives\OrderCriterion;
+use Ulams\Questionnaire\Repository\Criteria\AnswerQuestionReviewCriterion;
+use Ulams\Questionnaire\Repository\Criteria\QuestionAnswersCriterion;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;

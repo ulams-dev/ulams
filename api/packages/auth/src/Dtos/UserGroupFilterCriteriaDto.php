@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Auth\Dtos;
+namespace Ulams\Auth\Dtos;
 
-use EscolaLms\Auth\Enums\AuthPermissionsEnum;
-use EscolaLms\Auth\Repositories\Criteria\UserGroupRootCriterion;
-use EscolaLms\Auth\Repositories\Criteria\UserGroupSearchCriterion;
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\HasCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
+use Ulams\Auth\Enums\AuthPermissionsEnum;
+use Ulams\Auth\Repositories\Criteria\UserGroupRootCriterion;
+use Ulams\Auth\Repositories\Criteria\UserGroupSearchCriterion;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\HasCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\InCriterion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 

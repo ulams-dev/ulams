@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cart\Rules;
+namespace Ulams\Cart\Rules;
 
-use EscolaLms\Cart\Facades\Shop;
+use Ulams\Cart\Facades\Shop;
 use Illuminate\Contracts\Validation\Rule;
 
 class ProductableRegisteredRule implements Rule

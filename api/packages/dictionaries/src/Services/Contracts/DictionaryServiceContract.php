@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Services\Contracts;
+namespace Ulams\Dictionaries\Services\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Dictionaries\Dtos\DictionaryCriteriaDto;
-use EscolaLms\Dictionaries\Dtos\DictionaryDto;
-use EscolaLms\Dictionaries\Dtos\PageDto;
-use EscolaLms\Dictionaries\Models\Dictionary;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Dictionaries\Dtos\DictionaryCriteriaDto;
+use Ulams\Dictionaries\Dtos\DictionaryDto;
+use Ulams\Dictionaries\Dtos\PageDto;
+use Ulams\Dictionaries\Models\Dictionary;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface DictionaryServiceContract

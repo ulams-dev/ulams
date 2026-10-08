@@ -5,8 +5,8 @@ import { FormattedMessage } from 'umi';
 
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';
 import { DATETIME_FORMAT } from '@/consts/dates';
-import { getTopicStats } from '@/services/escola-lms/course';
-import { TopicStatsKey } from '@/services/escola-lms/enums';
+import { getTopicStats } from '@/services/ulams/course';
+import { TopicStatsKey } from '@/services/ulams/enums';
 import { ExportTopicStatsButton } from './ExportTopicStatsButton';
 
 interface TableParams {

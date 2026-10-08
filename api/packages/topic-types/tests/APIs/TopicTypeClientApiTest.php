@@ -2,19 +2,19 @@
 
 namespace Tests\APIs;
 
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypes\Models\TopicContent\Audio;
-use EscolaLms\TopicTypes\Models\TopicContent\H5P;
-use EscolaLms\TopicTypes\Models\TopicContent\Image;
-use EscolaLms\TopicTypes\Models\TopicContent\OEmbed;
-use EscolaLms\TopicTypes\Models\TopicContent\PDF;
-use EscolaLms\TopicTypes\Models\TopicContent\RichText;
-use EscolaLms\TopicTypes\Models\TopicContent\ScormSco;
-use EscolaLms\TopicTypes\Models\TopicContent\Video;
-use EscolaLms\TopicTypes\Tests\TestCase;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypes\Models\TopicContent\Audio;
+use Ulams\TopicTypes\Models\TopicContent\H5P;
+use Ulams\TopicTypes\Models\TopicContent\Image;
+use Ulams\TopicTypes\Models\TopicContent\OEmbed;
+use Ulams\TopicTypes\Models\TopicContent\PDF;
+use Ulams\TopicTypes\Models\TopicContent\RichText;
+use Ulams\TopicTypes\Models\TopicContent\ScormSco;
+use Ulams\TopicTypes\Models\TopicContent\Video;
+use Ulams\TopicTypes\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class TopicTypeClientApiTest extends TestCase
@@ -46,8 +46,8 @@ class TopicTypeClientApiTest extends TestCase
             [ScormSco::class],
             [Video::class],
         ];
-        if (class_exists(\EscolaLms\Cmi5\EscolaLmsCmi5ServiceProvider::class)) {
-            $types[] = [\EscolaLms\TopicTypes\Models\TopicContent\Cmi5Au::class];
+        if (class_exists(\Ulams\Cmi5\UlamsCmi5ServiceProvider::class)) {
+            $types[] = [\Ulams\TopicTypes\Models\TopicContent\Cmi5Au::class];
         }
         return $types;
     }

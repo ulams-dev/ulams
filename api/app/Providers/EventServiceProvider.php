@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Listeners\UpdateReportTermListener;
-use EscolaLms\Consultations\Events\ReportTerm;
+use Ulams\Consultations\Events\ReportTerm;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider

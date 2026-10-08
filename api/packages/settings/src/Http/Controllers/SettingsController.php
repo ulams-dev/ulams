@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Settings\Http\Controllers;
+namespace Ulams\Settings\Http\Controllers;
 
-use EscolaLms\Settings\Http\Controllers\Swagger\SettingsControllerContract;
-use EscolaLms\Settings\Services\Contracts\SettingsServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Settings\Http\Controllers\Swagger\SettingsControllerContract;
+use Ulams\Settings\Services\Contracts\SettingsServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use EscolaLms\Settings\Http\Resources\SettingResource;
-use EscolaLms\Settings\Http\Resources\SettingsCollection;
+use Ulams\Settings\Http\Resources\SettingResource;
+use Ulams\Settings\Http\Resources\SettingsCollection;
 
-class SettingsController extends EscolaLmsBaseController implements SettingsControllerContract
+class SettingsController extends UlamsBaseController implements SettingsControllerContract
 {
     private SettingsServiceContract $service;
 

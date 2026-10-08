@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Youtube\Events;
+namespace Ulams\Youtube\Events;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

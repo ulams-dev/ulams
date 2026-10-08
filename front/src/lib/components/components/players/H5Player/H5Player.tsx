@@ -2,12 +2,12 @@ import React, { useContext, useEffect, useMemo } from "react";
 import styled, { withTheme, ThemeContext } from "styled-components";
 import { XAPIEvent, ContextlessPlayer as Player } from "@escolalms/h5p-react";
 
-import * as API from "@lms/sdk/types";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import * as API from "@ulams/sdk/types";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import { getFontFromTheme } from "../../../theme/provider";
 import { Spin } from "../../atoms/Spin/Spin";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 const StyledH5P = styled("div")`
   border-radius: ${(props) => props.theme.buttonRadius || 0}px;
@@ -35,7 +35,7 @@ export const H5Player: React.FC<H5PProps> = ({
   className = "",
   hideActionButtons,
 }) => {
-  const { fetchH5P, h5p } = useContext(EscolaLMSContext);
+  const { fetchH5P, h5p } = useContext(UlamsContext);
 
   useEffect(() => {
     if (uuid) {
@@ -540,7 +540,7 @@ export const H5Player: React.FC<H5PProps> = ({
   }, [themeContext, hideActionButtons]);
 
   return (
-    <StyledH5P className={`wellms-component ${className}`}>
+    <StyledH5P className={`ulams-component ${className}`}>
       {((h5p && h5p.loading) || loading) && (
         <div className="h5p-loading">
           <Spin />

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Http\Controllers\Admin\Swagger;
+namespace Ulams\ConsultationAccess\Http\Controllers\Admin\Swagger;
 
-use EscolaLms\ConsultationAccess\Http\Requests\Admin\AdminApproveConsultationAccessEnquiryRequest;
-use EscolaLms\ConsultationAccess\Http\Requests\Admin\AdminDisapproveConsultationAccessEnquiryRequest;
-use EscolaLms\ConsultationAccess\Http\Requests\Admin\AdminListConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Requests\Admin\AdminApproveConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Requests\Admin\AdminDisapproveConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Requests\Admin\AdminListConsultationAccessEnquiryRequest;
 use Illuminate\Http\JsonResponse;
 
 interface ConsultationAccessEnquiryAdminApiSwagger

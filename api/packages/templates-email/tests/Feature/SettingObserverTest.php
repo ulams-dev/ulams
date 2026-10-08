@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests\Feature;
+namespace Ulams\TemplatesEmail\Tests\Feature;
 
-use EscolaLms\Settings\Models\Setting;
-use EscolaLms\Templates\Core\SettingsVariables;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Models\TemplateSection;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
-use EscolaLms\TemplatesEmail\Core\EmailVariables;
-use EscolaLms\TemplatesEmail\Tests\Mocks\TestEvent;
-use EscolaLms\TemplatesEmail\Tests\TestCase;
+use Ulams\Settings\Models\Setting;
+use Ulams\Templates\Core\SettingsVariables;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Models\TemplateSection;
+use Ulams\TemplatesEmail\Core\EmailChannel;
+use Ulams\TemplatesEmail\Core\EmailVariables;
+use Ulams\TemplatesEmail\Tests\Mocks\TestEvent;
+use Ulams\TemplatesEmail\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 
@@ -20,7 +20,7 @@ class SettingObserverTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        if (!class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
+        if (!class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
             $this->markTestSkipped('Settings package not installed');
         }
     }

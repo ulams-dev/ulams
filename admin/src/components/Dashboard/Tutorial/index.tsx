@@ -41,7 +41,7 @@ export const DashboardComponent: React.FC = () => {
                 <div style={{ marginTop: '0.5em' }}>
                   <Button
                     type="primary"
-                    href={'https://docs.wellms.io/app-guide/'}
+                    href={'https://docs.ulams.app/app-guide/'}
                     target={'_blank'}
                   >
                     <FormattedMessage id="learn_more" />

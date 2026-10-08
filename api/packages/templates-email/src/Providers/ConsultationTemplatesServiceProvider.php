@@ -1,26 +1,26 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Providers;
+namespace Ulams\TemplatesEmail\Providers;
 
-use EscolaLms\Consultations\Events\ApprovedTerm;
-use EscolaLms\Consultations\Events\ApprovedTermWithTrainer;
-use EscolaLms\Consultations\Events\ChangeTerm;
-use EscolaLms\Consultations\Events\RejectTerm;
-use EscolaLms\Consultations\Events\RejectTermWithTrainer;
-use EscolaLms\Consultations\Events\ReminderAboutTerm;
-use EscolaLms\Consultations\Events\ReminderTrainerAboutTerm;
-use EscolaLms\Consultations\Events\ReportTerm;
-use EscolaLms\TemplatesEmail\Consultations\ApprovedTermVariables;
-use EscolaLms\TemplatesEmail\Consultations\ApprovedTermWithTrainerVariables;
-use EscolaLms\TemplatesEmail\Consultations\ChangeTermVariables;
-use EscolaLms\TemplatesEmail\Consultations\RejectTermVariables;
-use EscolaLms\TemplatesEmail\Consultations\RejectTermWithTrainerVariables;
-use EscolaLms\TemplatesEmail\Consultations\ReminderAboutTermVariables;
-use EscolaLms\TemplatesEmail\Consultations\ReminderTrainerAboutTermVariables;
-use EscolaLms\TemplatesEmail\Consultations\ReportTermVariables;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
+use Ulams\Consultations\Events\ApprovedTerm;
+use Ulams\Consultations\Events\ApprovedTermWithTrainer;
+use Ulams\Consultations\Events\ChangeTerm;
+use Ulams\Consultations\Events\RejectTerm;
+use Ulams\Consultations\Events\RejectTermWithTrainer;
+use Ulams\Consultations\Events\ReminderAboutTerm;
+use Ulams\Consultations\Events\ReminderTrainerAboutTerm;
+use Ulams\Consultations\Events\ReportTerm;
+use Ulams\TemplatesEmail\Consultations\ApprovedTermVariables;
+use Ulams\TemplatesEmail\Consultations\ApprovedTermWithTrainerVariables;
+use Ulams\TemplatesEmail\Consultations\ChangeTermVariables;
+use Ulams\TemplatesEmail\Consultations\RejectTermVariables;
+use Ulams\TemplatesEmail\Consultations\RejectTermWithTrainerVariables;
+use Ulams\TemplatesEmail\Consultations\ReminderAboutTermVariables;
+use Ulams\TemplatesEmail\Consultations\ReminderTrainerAboutTermVariables;
+use Ulams\TemplatesEmail\Consultations\ReportTermVariables;
+use Ulams\TemplatesEmail\Core\EmailChannel;
 use Illuminate\Support\ServiceProvider;
-use EscolaLms\Templates\Facades\Template;
+use Ulams\Templates\Facades\Template;
 
 class ConsultationTemplatesServiceProvider extends ServiceProvider
 {

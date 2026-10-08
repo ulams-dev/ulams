@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Models\TopicContent;
+namespace Ulams\TopicTypes\Models\TopicContent;
 
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\Cmi5AuFactory;
+use Ulams\TopicTypes\Database\Factories\TopicContent\Cmi5AuFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**

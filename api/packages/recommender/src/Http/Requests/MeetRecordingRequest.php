@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Recommender\Http\Requests;
+namespace Ulams\Recommender\Http\Requests;
 
 use BenSampo\Enum\Rules\Enum;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Recommender\Enum\MeetRecordingEnum;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Recommender\Enum\MeetRecordingEnum;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

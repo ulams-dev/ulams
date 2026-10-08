@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Http\Requests;
+namespace Ulams\BulkNotifications\Http\Requests;
 
-use EscolaLms\BulkNotifications\Dtos\OrderDto;
-use EscolaLms\BulkNotifications\Dtos\PageDto;
-use EscolaLms\BulkNotifications\Models\BulkNotification;
-use EscolaLms\BulkNotifications\Dtos\CriteriaBulkNotificationDto;
+use Ulams\BulkNotifications\Dtos\OrderDto;
+use Ulams\BulkNotifications\Dtos\PageDto;
+use Ulams\BulkNotifications\Models\BulkNotification;
+use Ulams\BulkNotifications\Dtos\CriteriaBulkNotificationDto;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

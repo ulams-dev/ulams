@@ -3,10 +3,10 @@
 namespace App\Services;
 
 use App\Services\Contracts\ConsultationServiceContract;
-use EscolaLms\Cart\Enums\ProductType;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
+use Ulams\Cart\Enums\ProductType;
+use Ulams\Cart\Models\Product;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Models\ConsultationUserPivot;
 
 class ConsultationService implements ConsultationServiceContract
 {

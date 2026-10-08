@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Video\Repositories;
+namespace Ulams\Video\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Video\Models\Video;
-use EscolaLms\Video\Repositories\Contracts\VideoRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Video\Models\Video;
+use Ulams\Video\Repositories\Contracts\VideoRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;

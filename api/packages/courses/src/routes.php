@@ -1,11 +1,11 @@
 <?php
 
-use EscolaLms\Courses\Http\Controllers\CourseAPIController;
-use EscolaLms\Courses\Http\Controllers\CourseAuthorsAPIController;
-use EscolaLms\Courses\Http\Controllers\CourseProgressAPIController;
-use EscolaLms\Courses\Http\Controllers\LessonAPIController;
-use EscolaLms\Courses\Http\Controllers\TopicAPIController;
-use EscolaLms\Courses\Http\Controllers\TopicResourcesAPIController;
+use Ulams\Courses\Http\Controllers\CourseAPIController;
+use Ulams\Courses\Http\Controllers\CourseAuthorsAPIController;
+use Ulams\Courses\Http\Controllers\CourseProgressAPIController;
+use Ulams\Courses\Http\Controllers\LessonAPIController;
+use Ulams\Courses\Http\Controllers\TopicAPIController;
+use Ulams\Courses\Http\Controllers\TopicResourcesAPIController;
 use Illuminate\Support\Facades\Route;
 
 // admin endpoints

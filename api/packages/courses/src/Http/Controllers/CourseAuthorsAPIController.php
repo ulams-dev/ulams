@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Controllers;
+namespace Ulams\Courses\Http\Controllers;
 
-use EscolaLms\Auth\Dtos\Admin\UserAssignableDto;
-use EscolaLms\Auth\Http\Resources\UserFullResource;
-use EscolaLms\Auth\Services\Contracts\UserServiceContract;
-use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
-use EscolaLms\Courses\Http\Controllers\Swagger\CourseAuthorsAPISwagger;
-use EscolaLms\Courses\Http\Requests\AssignAuthorApiRequest;
-use EscolaLms\Courses\Http\Requests\CourseAssignableUserListRequest;
-use EscolaLms\Courses\Http\Resources\TutorResource;
-use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
+use Ulams\Auth\Dtos\Admin\UserAssignableDto;
+use Ulams\Auth\Http\Resources\UserFullResource;
+use Ulams\Auth\Services\Contracts\UserServiceContract;
+use Ulams\Courses\Enum\CoursesPermissionsEnum;
+use Ulams\Courses\Http\Controllers\Swagger\CourseAuthorsAPISwagger;
+use Ulams\Courses\Http\Requests\AssignAuthorApiRequest;
+use Ulams\Courses\Http\Requests\CourseAssignableUserListRequest;
+use Ulams\Courses\Http\Resources\TutorResource;
+use Ulams\Courses\Repositories\Contracts\CourseRepositoryContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

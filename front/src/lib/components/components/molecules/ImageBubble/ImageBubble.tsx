@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import styled, { withTheme } from "styled-components";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { RatioBox } from "../../../index";
 
 interface ImageBubbleImgProps {
@@ -40,7 +40,7 @@ const StyledDiv = styled("div")<ImageBubbleProps>`
 export const ImageBubble: React.FC<ImageBubbleProps> = ({ ...props }) => {
   const { children, image, ratio = 1, header, className = "" } = props;
   return (
-    <StyledDiv {...props} className={`wellms-component ${className}`}>
+    <StyledDiv {...props} className={`ulams-component ${className}`}>
       <RatioBox ratio={ratio}>
         {React.isValidElement(image) ? (
           <React.Fragment>{image}</React.Fragment>

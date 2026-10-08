@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests\Api;
+namespace Ulams\TemplatesEmail\Tests\Api;
 
-use EscolaLms\Auth\Database\Seeders\AuthPermissionSeeder;
-use EscolaLms\Auth\Enums\SettingStatusEnum;
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Events\AccountDeletionRequested;
-use EscolaLms\Auth\Events\AccountMustBeEnableByAdmin;
-use EscolaLms\Auth\Events\AccountRegistered;
-use EscolaLms\Auth\Events\ForgotPassword;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Templates\Listeners\TemplateEventListener;
-use EscolaLms\TemplatesEmail\Core\EmailMailable;
-use EscolaLms\TemplatesEmail\Tests\TestCase;
+use Ulams\Auth\Database\Seeders\AuthPermissionSeeder;
+use Ulams\Auth\Enums\SettingStatusEnum;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Events\AccountDeletionRequested;
+use Ulams\Auth\Events\AccountMustBeEnableByAdmin;
+use Ulams\Auth\Events\AccountRegistered;
+use Ulams\Auth\Events\ForgotPassword;
+use Ulams\Core\Models\User;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Templates\Listeners\TemplateEventListener;
+use Ulams\TemplatesEmail\Core\EmailMailable;
+use Ulams\TemplatesEmail\Tests\TestCase;
 use Illuminate\Auth\Notifications\ResetPassword as LaravelResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -31,7 +31,7 @@ class AuthTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        if (!class_exists(\EscolaLms\Auth\EscolaLmsAuthServiceProvider::class)) {
+        if (!class_exists(\Ulams\Auth\UlamsAuthServiceProvider::class)) {
             $this->markTestSkipped('Auth package not installed');
         }
     }
@@ -48,7 +48,7 @@ class AuthTest extends TestCase
             'last_name' => 'tester',
             'password' => 'testtest',
             'password_confirmation' => 'testtest',
-            'return_url' => 'https://escolalms.com/email/verify',
+            'return_url' => 'https://ulams.app/email/verify',
         ]);
 
         $this->assertApiSuccess();
@@ -64,7 +64,7 @@ class AuthTest extends TestCase
         Notification::assertNotSentTo($user, VerifyEmail::class);
 
         $listener = app(TemplateEventListener::class);
-        $listener->handle(new AccountRegistered($user, 'https://escolalms.com/email/verify'));
+        $listener->handle(new AccountRegistered($user, 'https://ulams.app/email/verify'));
 
         Mail::assertSent(EmailMailable::class, function (EmailMailable $mailable) use ($user) {
             $this->assertEquals('Verify Email Address', $mailable->subject);
@@ -112,7 +112,7 @@ class AuthTest extends TestCase
         Mail::fake();
         Event::fake([AccountMustBeEnableByAdmin::class]);
         Notification::fake();
-        Config::set(EscolaLmsAuthServiceProvider::CONFIG_KEY  . '.account_must_be_enabled_by_admin', SettingStatusEnum::ENABLED);
+        Config::set(UlamsAuthServiceProvider::CONFIG_KEY  . '.account_must_be_enabled_by_admin', SettingStatusEnum::ENABLED);
 
         $admin = config('auth.providers.users.model')::factory()->create();
         $admin->guard_name = 'api';
@@ -124,7 +124,7 @@ class AuthTest extends TestCase
             'last_name' => 'tester',
             'password' => 'testtest',
             'password_confirmation' => 'testtest',
-            'return_url' => 'https://escolalms.com/email/verify',
+            'return_url' => 'https://ulams.app/email/verify',
         ]);
 
         $this->assertApiSuccess();
@@ -163,14 +163,14 @@ class AuthTest extends TestCase
 
         $this
             ->actingAs($user, 'api')
-            ->postJson('/api/profile/delete/init', ['return_url' => 'https://escolalms.com/delete-account'])
+            ->postJson('/api/profile/delete/init', ['return_url' => 'https://ulams.app/delete-account'])
             ->assertOk();
 
         Event::assertDispatched(AccountDeletionRequested::class);
         Notification::assertNotSentTo($user, VerifyEmail::class);
 
         $listener = app(TemplateEventListener::class);
-        $listener->handle(new AccountDeletionRequested($user, 'https://escolalms.com/delete-account'));
+        $listener->handle(new AccountDeletionRequested($user, 'https://ulams.app/delete-account'));
 
         Mail::assertSent(EmailMailable::class, function (EmailMailable $mailable) use ($user) {
             $this->assertEquals('Confirmation of account deletion', $mailable->subject);

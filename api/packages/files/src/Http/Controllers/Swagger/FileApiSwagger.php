@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Files\Http\Controllers\Swagger;
+namespace Ulams\Files\Http\Controllers\Swagger;
 
-use EscolaLms\Files\Http\Requests\FileDeleteRequest;
-use EscolaLms\Files\Http\Requests\FileFindByNameRequest;
-use EscolaLms\Files\Http\Requests\FileListingRequest;
-use EscolaLms\Files\Http\Requests\FileMoveRequest;
-use EscolaLms\Files\Http\Requests\FileUploadRequest;
+use Ulams\Files\Http\Requests\FileDeleteRequest;
+use Ulams\Files\Http\Requests\FileFindByNameRequest;
+use Ulams\Files\Http\Requests\FileListingRequest;
+use Ulams\Files\Http\Requests\FileMoveRequest;
+use Ulams\Files\Http\Requests\FileUploadRequest;
 use Illuminate\Http\JsonResponse;
 
 if (file_exists(__DIR__.'/../../oa_version.php')) {

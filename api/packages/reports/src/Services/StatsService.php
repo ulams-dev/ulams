@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Reports\Services;
+namespace Ulams\Reports\Services;
 
-use EscolaLms\Reports\Exceptions\ExportNotExistsException;
-use EscolaLms\Reports\Imports\Stats\Course\FinishedTopicsImport;
-use EscolaLms\Reports\Services\Contracts\StatsServiceContract;
-use EscolaLms\Reports\Stats\StatsContract;
+use Ulams\Reports\Exceptions\ExportNotExistsException;
+use Ulams\Reports\Imports\Stats\Course\FinishedTopicsImport;
+use Ulams\Reports\Services\Contracts\StatsServiceContract;
+use Ulams\Reports\Stats\StatsContract;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
@@ -55,7 +55,7 @@ class StatsService implements StatsServiceContract
     public function export($model, string $stat): BinaryFileResponse
     {
         $available = $this->getAvailableStats($model);
-        $exportClass = 'EscolaLms\Reports\Exports\Stats\\' . Str::after($stat, 'Stats\\') . 'Export';
+        $exportClass = 'Ulams\Reports\Exports\Stats\\' . Str::after($stat, 'Stats\\') . 'Export';
 
         if (!in_array($stat, $available) || !class_exists($exportClass)) {
             throw new ExportNotExistsException();

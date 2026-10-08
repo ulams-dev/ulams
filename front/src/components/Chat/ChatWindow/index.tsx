@@ -3,8 +3,8 @@ import { StyledChatWindow } from "@/components/Chat/ChatWindow/style";
 import ContentLoader from "@/components/_App/ContentLoader";
 import useChatLogic from "@/hooks/chat/useChatLogic";
 import { BackArrow } from "@/icons/index";
-import { Text } from "@lms/components";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { Text } from "@ulams/components";
+import { UlamsContext } from "@ulams/sdk/react";
 import { useCallback, useContext, useId } from "react";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
@@ -16,7 +16,7 @@ type Props = {
 };
 
 const ChatWindow: React.FC<Props> = ({ isOpen, lessonID, onClose }) => {
-  const { token } = useContext(EscolaLMSContext);
+  const { token } = useContext(UlamsContext);
   const { chatState, handleSendMessage, handleInputChange, handleKeyDown } =
     useChatLogic(lessonID, token);
 

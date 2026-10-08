@@ -1,8 +1,8 @@
 <?php
 
-use EscolaLms\Scorm\Services\Contracts\ScormServiceContract;
-use EscolaLms\Scorm\Tests\ScormTestTrait;
-use EscolaLms\Scorm\Tests\TestCase;
+use Ulams\Scorm\Services\Contracts\ScormServiceContract;
+use Ulams\Scorm\Tests\ScormTestTrait;
+use Ulams\Scorm\Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
 
 class ScormServiceTest extends TestCase

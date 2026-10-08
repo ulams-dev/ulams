@@ -1,8 +1,8 @@
 <?php
-namespace EscolaLms\Webinar\Http\Controllers\Swagger;
+namespace Ulams\Webinar\Http\Controllers\Swagger;
 
-use EscolaLms\Webinar\Http\Requests\GenerateSignedScreenUrlsRequest;
-use EscolaLms\Webinar\Http\Requests\ListWebinarsRequest;
+use Ulams\Webinar\Http\Requests\GenerateSignedScreenUrlsRequest;
+use Ulams\Webinar\Http\Requests\ListWebinarsRequest;
 use Illuminate\Http\JsonResponse;
 
 interface WebinarAPISwagger

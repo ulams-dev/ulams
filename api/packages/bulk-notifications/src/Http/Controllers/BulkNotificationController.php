@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Http\Controllers;
+namespace Ulams\BulkNotifications\Http\Controllers;
 
-use EscolaLms\BulkNotifications\Http\Controllers\Swagger\BulkNotificationControllerSwagger;
-use EscolaLms\BulkNotifications\Http\Requests\ListBulkNotificationRequest;
-use EscolaLms\BulkNotifications\Http\Requests\SendUserBulkNotificationRequest;
-use EscolaLms\BulkNotifications\Http\Requests\SendMulticastBulkNotificationRequest;
-use EscolaLms\BulkNotifications\Http\Resources\BulkNotificationResource;
-use EscolaLms\BulkNotifications\Services\Contracts\BulkNotificationServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\BulkNotifications\Http\Controllers\Swagger\BulkNotificationControllerSwagger;
+use Ulams\BulkNotifications\Http\Requests\ListBulkNotificationRequest;
+use Ulams\BulkNotifications\Http\Requests\SendUserBulkNotificationRequest;
+use Ulams\BulkNotifications\Http\Requests\SendMulticastBulkNotificationRequest;
+use Ulams\BulkNotifications\Http\Resources\BulkNotificationResource;
+use Ulams\BulkNotifications\Services\Contracts\BulkNotificationServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\JsonResponse;
 
-class BulkNotificationController extends EscolaLmsBaseController implements BulkNotificationControllerSwagger
+class BulkNotificationController extends UlamsBaseController implements BulkNotificationControllerSwagger
 {
 
     public function __construct(private BulkNotificationServiceContract $bulkNotificationService)

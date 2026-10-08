@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Cart;
+namespace Ulams\TemplatesEmail\Cart;
 
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Cart\Models\Order;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
 
 class OrderCreatedVariables extends CartVariables
 {

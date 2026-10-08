@@ -3,7 +3,7 @@ import { PropsWithChildren } from "react";
 
 import styled from "styled-components";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 export interface CardProps extends ExtendableStyledComponent {
   // size of wings for a card
@@ -125,7 +125,7 @@ export const Card: React.FC<PropsWithChildren<CardProps>> = ({
       wings={wings}
       style={style}
       inline={inline}
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
     >
       <div className="content">{children}</div>
     </StyledCard>

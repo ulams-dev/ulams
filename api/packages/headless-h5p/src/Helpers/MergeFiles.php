@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Helpers;
+namespace Ulams\HeadlessH5P\Helpers;
 
 use Exception;
 use Illuminate\Http\File;

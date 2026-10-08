@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Services;
+namespace Ulams\CourseAccess\Services;
 
-use EscolaLms\Auth\Models\Group;
-use EscolaLms\Auth\Models\GroupUser;
-use EscolaLms\Core\Models\User;
-use EscolaLms\CourseAccess\Services\Contracts\CourseAccessServiceContract;
-use EscolaLms\Courses\Events\CourseAccessStarted;
-use EscolaLms\Courses\Events\CourseAssigned;
-use EscolaLms\Courses\Events\CourseFinished;
-use EscolaLms\Courses\Events\CourseUnassigned;
-use EscolaLms\CourseAccess\Models\Course;
-use EscolaLms\Courses\Models\CourseGroupPivot;
-use EscolaLms\Courses\Models\CourseUserPivot;
+use Ulams\Auth\Models\Group;
+use Ulams\Auth\Models\GroupUser;
+use Ulams\Core\Models\User;
+use Ulams\CourseAccess\Services\Contracts\CourseAccessServiceContract;
+use Ulams\Courses\Events\CourseAccessStarted;
+use Ulams\Courses\Events\CourseAssigned;
+use Ulams\Courses\Events\CourseFinished;
+use Ulams\Courses\Events\CourseUnassigned;
+use Ulams\CourseAccess\Models\Course;
+use Ulams\Courses\Models\CourseGroupPivot;
+use Ulams\Courses\Models\CourseUserPivot;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;

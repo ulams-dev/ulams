@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Payments\Enums;
+namespace Ulams\Payments\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 use Maatwebsite\Excel\Excel;
 
 class ExportFormatEnum extends BasicEnum

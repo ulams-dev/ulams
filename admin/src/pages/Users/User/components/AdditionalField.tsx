@@ -1,5 +1,5 @@
 import JsonEditor from '@/components/JsonEditor';
-import { FieldType } from '@/services/escola-lms/enums';
+import { FieldType } from '@/services/ulams/enums';
 import ProForm, {
   ProFormCheckbox,
   ProFormDigit,

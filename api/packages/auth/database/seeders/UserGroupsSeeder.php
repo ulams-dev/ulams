@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Database\Seeders;
+namespace Ulams\Auth\Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use EscolaLms\Auth\Models\Group;
+use Ulams\Auth\Models\Group;
 
 class UserGroupsSeeder extends Seeder
 {

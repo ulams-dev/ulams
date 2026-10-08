@@ -1,7 +1,7 @@
 import React from "react";
 import { Col, Row } from "react-grid-system";
-import { API } from "@lms/sdk";
-import { MarkdownRenderer } from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { API } from "@ulams/sdk";
+import { MarkdownRenderer } from "@ulams/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
 
 import CourseProgramContent from "@/components/Courses/Course/CourseProgramContent";
 import CourseDownloads from "../CourseDownloads";

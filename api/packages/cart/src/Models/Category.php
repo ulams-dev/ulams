@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Cart\Models;
+namespace Ulams\Cart\Models;
 
-use EscolaLms\Categories\Models\Category as BaseCategory;
+use Ulams\Categories\Models\Category as BaseCategory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * EscolaLms\Cart\Models\Category
+ * Ulams\Cart\Models\Category
  *
  * @property int $id
  * @property string $name
@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property-read int|null $children_count
  * @property-read string $name_with_breadcrumbs
  * @property-read BaseCategory|null $parent
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Cart\Models\Product[] $products
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Cart\Models\Product[] $products
  * @property-read int|null $products_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Illuminate\Foundation\Auth\User[] $users
  * @property-read int|null $users_count

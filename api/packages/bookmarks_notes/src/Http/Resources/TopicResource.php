@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Http\Resources;
+namespace Ulams\Bookmarks\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

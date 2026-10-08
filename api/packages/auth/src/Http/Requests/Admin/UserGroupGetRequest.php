@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests\Admin;
+namespace Ulams\Auth\Http\Requests\Admin;
 
 class UserGroupGetRequest extends AbstractGroupIdInRouteRequest
 {

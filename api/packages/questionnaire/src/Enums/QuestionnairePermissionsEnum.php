@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Enums;
+namespace Ulams\Questionnaire\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class QuestionnairePermissionsEnum extends BasicEnum
 {

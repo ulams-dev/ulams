@@ -1,28 +1,28 @@
 <?php
 
-namespace EscolaLms\Webinar\Services;
+namespace Ulams\Webinar\Services;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Files\Helpers\FileHelper;
-use EscolaLms\Jitsi\Helpers\StringHelper;
-use EscolaLms\Jitsi\Services\Contracts\JitsiServiceContract;
-use EscolaLms\Webinar\Dto\FilterListDto;
-use EscolaLms\Webinar\Dto\GenerateSignedScreenUrlsDto;
-use EscolaLms\Webinar\Dto\WebinarDto;
-use EscolaLms\Webinar\Enum\ConstantEnum;
-use EscolaLms\Webinar\Events\ReminderAboutTerm;
-use EscolaLms\Webinar\Helpers\StrategyHelper;
-use EscolaLms\Webinar\Http\Resources\WebinarSimpleResource;
-use EscolaLms\Webinar\Models\Webinar;
-use EscolaLms\Webinar\Repositories\Contracts\WebinarRepositoryContract;
-use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
-use EscolaLms\Youtube\Dto\Contracts\YTLiveDtoContract;
-use EscolaLms\Youtube\Dto\YTBroadcastDto;
-use EscolaLms\Youtube\Enum\YTStatusesEnum;
-use EscolaLms\Youtube\Exceptions\YtAuthenticateException;
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Models\User;
+use Ulams\Files\Helpers\FileHelper;
+use Ulams\Jitsi\Helpers\StringHelper;
+use Ulams\Jitsi\Services\Contracts\JitsiServiceContract;
+use Ulams\Webinar\Dto\FilterListDto;
+use Ulams\Webinar\Dto\GenerateSignedScreenUrlsDto;
+use Ulams\Webinar\Dto\WebinarDto;
+use Ulams\Webinar\Enum\ConstantEnum;
+use Ulams\Webinar\Events\ReminderAboutTerm;
+use Ulams\Webinar\Helpers\StrategyHelper;
+use Ulams\Webinar\Http\Resources\WebinarSimpleResource;
+use Ulams\Webinar\Models\Webinar;
+use Ulams\Webinar\Repositories\Contracts\WebinarRepositoryContract;
+use Ulams\Webinar\Services\Contracts\WebinarServiceContract;
+use Ulams\Youtube\Dto\Contracts\YTLiveDtoContract;
+use Ulams\Youtube\Dto\YTBroadcastDto;
+use Ulams\Youtube\Enum\YTStatusesEnum;
+use Ulams\Youtube\Exceptions\YtAuthenticateException;
+use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
@@ -238,8 +238,8 @@ class WebinarService implements WebinarServiceContract
     public function reminderAboutWebinar(string $reminderStatus): void
     {
         $now = now();
-        $reminderDate = now()->modify(config('escolalms_webinar.modifier_date.' . $reminderStatus, '+1 hour'));
-        $exclusionStatuses = config('escolalms_webinar.exclusion_reminder_status.' . $reminderStatus, []);
+        $reminderDate = now()->modify(config('ulams_webinar.modifier_date.' . $reminderStatus, '+1 hour'));
+        $exclusionStatuses = config('ulams_webinar.exclusion_reminder_status.' . $reminderStatus, []);
         $data = [
             'date_time_to' => $reminderDate,
             'date_time_to_lower_than' => now(),

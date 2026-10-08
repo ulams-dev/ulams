@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Requests;
+namespace Ulams\TopicTypeGift\Http\Requests;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\TopicTypeGift\Dtos\Criteria\PageDto;
-use EscolaLms\TopicTypeGift\Dtos\Criteria\QuizAttemptCriteriaDto;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\TopicTypeGift\Dtos\Criteria\PageDto;
+use Ulams\TopicTypeGift\Dtos\Criteria\QuizAttemptCriteriaDto;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

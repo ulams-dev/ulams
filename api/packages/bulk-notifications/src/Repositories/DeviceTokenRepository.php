@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Repositories;
+namespace Ulams\BulkNotifications\Repositories;
 
-use EscolaLms\BulkNotifications\Models\DeviceToken;
-use EscolaLms\BulkNotifications\Repositories\Contracts\DeviceTokenRepositoryContract;
-use EscolaLms\Core\Repositories\BaseRepository;
+use Ulams\BulkNotifications\Models\DeviceToken;
+use Ulams\BulkNotifications\Repositories\Contracts\DeviceTokenRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
 use Illuminate\Support\Collection;
 
 class DeviceTokenRepository extends BaseRepository implements DeviceTokenRepositoryContract

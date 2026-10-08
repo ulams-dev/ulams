@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Http\Controllers;
+namespace Ulams\ConsultationAccess\Http\Controllers;
 
-use EscolaLms\ConsultationAccess\Http\Controllers\Swagger\ConsultationAccessEnquiryApiSwagger;
-use EscolaLms\ConsultationAccess\Http\Requests\DeleteConsultationAccessEnquiryRequest;
-use EscolaLms\ConsultationAccess\Http\Requests\ListConsultationAccessEnquiryRequest;
-use EscolaLms\ConsultationAccess\Http\Requests\ReadConsultationAccessEnquiryRequest;
-use EscolaLms\ConsultationAccess\Http\Requests\UpdateConsultationAccessEnquiryRequest;
-use EscolaLms\ConsultationAccess\Http\Resources\ConsultationAccessEnquiryResource;
-use EscolaLms\ConsultationAccess\Http\Requests\CreateConsultationAccessEnquiryRequest;
-use EscolaLms\ConsultationAccess\Http\Resources\JoinConsultationAccessResource;
-use EscolaLms\ConsultationAccess\Services\Contracts\ConsultationAccessEnquiryServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\ConsultationAccess\Http\Controllers\Swagger\ConsultationAccessEnquiryApiSwagger;
+use Ulams\ConsultationAccess\Http\Requests\DeleteConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Requests\ListConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Requests\ReadConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Requests\UpdateConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Resources\ConsultationAccessEnquiryResource;
+use Ulams\ConsultationAccess\Http\Requests\CreateConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Resources\JoinConsultationAccessResource;
+use Ulams\ConsultationAccess\Services\Contracts\ConsultationAccessEnquiryServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\JsonResponse;
 
-class ConsultationAccessEnquiryApiController extends EscolaLmsBaseController implements ConsultationAccessEnquiryApiSwagger
+class ConsultationAccessEnquiryApiController extends UlamsBaseController implements ConsultationAccessEnquiryApiSwagger
 {
     private ConsultationAccessEnquiryServiceContract $service;
 

@@ -2,8 +2,8 @@ import UserSelect from '@/components/UserSelect';
 import {
   sendBulkNotification,
   sendBulkNotificationForAll,
-} from '@/services/escola-lms/bulk-notifications';
-import { BulkNotificationChannelsEnum } from '@/services/escola-lms/enums';
+} from '@/services/ulams/bulk-notifications';
+import { BulkNotificationChannelsEnum } from '@/services/ulams/enums';
 import ProCard from '@ant-design/pro-card';
 import { PageContainer } from '@ant-design/pro-components';
 import ProForm, { ProFormText, ProFormTextArea } from '@ant-design/pro-form';

@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\Tracker\Http\Controllers\TrackerController;
-use EscolaLms\Video\Http\Controllers\VideoController;
+use Ulams\Tracker\Http\Controllers\TrackerController;
+use Ulams\Video\Http\Controllers\VideoController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api/admin/video', 'middleware' => ['auth:api']], function () {

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Core\Services;
+namespace Ulams\Core\Services;
 
-use EscolaLms\Core\Services\Contracts\HealthCheckServiceContract;
+use Ulams\Core\Services\Contracts\HealthCheckServiceContract;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 

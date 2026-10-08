@@ -1,4 +1,4 @@
-import { reports } from '@/services/escola-lms/reports';
+import { reports } from '@/services/ulams/reports';
 import { TrophyOutlined } from '@ant-design/icons';
 import { Alert, Spin, Statistic } from 'antd';
 import React, { useEffect, useState } from 'react';

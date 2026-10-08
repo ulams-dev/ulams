@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Requests;
+namespace Ulams\Tasks\Http\Requests;
 
-use EscolaLms\Tasks\Dtos\UpdateTaskNoteDto;
+use Ulams\Tasks\Dtos\UpdateTaskNoteDto;
 use Illuminate\Support\Facades\Gate;
 
 class UpdateTaskNoteRequest extends CreateTaskNoteRequest

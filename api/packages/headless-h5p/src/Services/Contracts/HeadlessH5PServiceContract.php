@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Services\Contracts;
+namespace Ulams\HeadlessH5P\Services\Contracts;
 
-use EscolaLms\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
+use Ulams\HeadlessH5P\Repositories\Contracts\H5PFrameworkInterface;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 

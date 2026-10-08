@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Webinar\Policies;
+namespace Ulams\Webinar\Policies;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Webinar\Enum\WebinarPermissionsEnum;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Auth\Models\User;
+use Ulams\Webinar\Enum\WebinarPermissionsEnum;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class WebinarPolicy

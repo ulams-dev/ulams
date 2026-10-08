@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Vouchers\Strategies\Contracts;
+namespace Ulams\Vouchers\Strategies\Contracts;
 
-use EscolaLms\Vouchers\Models\Cart;
-use EscolaLms\Vouchers\Models\CartItem;
+use Ulams\Vouchers\Models\Cart;
+use Ulams\Vouchers\Models\CartItem;
 
 interface DiscountStrategyContract
 {

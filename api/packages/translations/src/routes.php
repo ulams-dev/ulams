@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\Translations\Http\Controllers\TranslationAdminApiController;
-use EscolaLms\Translations\Http\Controllers\TranslationApiController;
+use Ulams\Translations\Http\Controllers\TranslationAdminApiController;
+use Ulams\Translations\Http\Controllers\TranslationApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/admin/translations'], function () {

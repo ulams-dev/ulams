@@ -5,7 +5,7 @@ import {
   useCallback,
   useContext,
 } from "react";
-import { EscolaLMSContextConfig, EscolaLMSContextReadConfig } from "./types";
+import { UlamsContextConfig, UlamsContextReadConfig } from "./types";
 import { defaultConfig } from "./defaults";
 import {
   getQuestionnaire,
@@ -20,7 +20,7 @@ import { API } from "../..";
 
 export const QuestionnairesContext: React.Context<
   Pick<
-    EscolaLMSContextConfig,
+    UlamsContextConfig,
     | "fetchQuestionnaires"
     | "fetchQuestionnaire"
     | "fetchQuestionnairesAnswers"
@@ -100,7 +100,7 @@ export const QuestionnairesContextProvider: FunctionComponent<
       model: string,
       modelID: number,
       id: number,
-      body: Partial<EscolaLms.Questionnaire.Models.QuestionAnswer>
+      body: Partial<Ulams.Questionnaire.Models.QuestionAnswer>
     ) => {
       return token
         ? questionnaireAnswer.bind(null, apiUrl)(

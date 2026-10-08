@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Reports\Http\Controllers\Admin\Swagger;
+namespace Ulams\Reports\Http\Controllers\Admin\Swagger;
 
-use EscolaLms\Reports\Actions\FindReport;
-use EscolaLms\Reports\Http\Requests\Admin\ReportRequest;
+use Ulams\Reports\Actions\FindReport;
+use Ulams\Reports\Http\Requests\Admin\ReportRequest;
 use Illuminate\Http\JsonResponse;
 
 interface ReportsSwagger

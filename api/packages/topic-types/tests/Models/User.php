@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Tests\Models;
+namespace Ulams\TopicTypes\Tests\Models;
 
-use EscolaLms\Courses\Models\User as CoursesUser;
+use Ulams\Courses\Models\User as CoursesUser;
 
 class User extends CoursesUser
 {

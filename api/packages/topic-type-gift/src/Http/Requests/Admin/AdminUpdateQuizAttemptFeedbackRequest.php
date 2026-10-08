@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Requests\Admin;
+namespace Ulams\TopicTypeGift\Http\Requests\Admin;
 
-use EscolaLms\TopicTypeGift\Http\Requests\ReadQuizAttemptRequest;
+use Ulams\TopicTypeGift\Http\Requests\ReadQuizAttemptRequest;
 use Illuminate\Support\Facades\Gate;
 
 /**

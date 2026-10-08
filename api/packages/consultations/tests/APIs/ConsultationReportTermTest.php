@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\Consultations\Tests\APIs;
+namespace Ulams\Consultations\Tests\APIs;
 
-use EscolaLms\Consultations\Events\ApprovedTermWithTrainer;
-use EscolaLms\Consultations\Events\RejectTermWithTrainer;
-use EscolaLms\Consultations\Events\ReportTerm;
-use EscolaLms\Consultations\Models\ConsultationProposedTerm;
-use EscolaLms\Consultations\Models\ConsultationUserTerm;
-use EscolaLms\Consultations\Tests\Models\User;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Events\ApprovedTerm;
-use EscolaLms\Consultations\Events\RejectTerm;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Tests\TestCase;
+use Ulams\Consultations\Events\ApprovedTermWithTrainer;
+use Ulams\Consultations\Events\RejectTermWithTrainer;
+use Ulams\Consultations\Events\ReportTerm;
+use Ulams\Consultations\Models\ConsultationProposedTerm;
+use Ulams\Consultations\Models\ConsultationUserTerm;
+use Ulams\Consultations\Tests\Models\User;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Events\ApprovedTerm;
+use Ulams\Consultations\Events\RejectTerm;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;

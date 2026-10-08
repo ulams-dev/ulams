@@ -1,11 +1,11 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { API } from "@lms/sdk";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { API } from "@ulams/sdk";
+import { UlamsContext } from "@ulams/sdk/react";
 import {
   getFlatLessons,
   getFlatTopics,
-} from "@lms/components/utils/course";
+} from "@ulams/components/utils/course";
 
 export function useLessonProgram(
   program: API.CourseProgram,
@@ -17,7 +17,7 @@ export function useLessonProgram(
     progress,
     courseProgressDetails,
     fetchProgress,
-  } = useContext(EscolaLMSContext);
+  } = useContext(UlamsContext);
   const [isNextTopicButtonDisabled, disableNextTopicButton] = useState(false);
   const { lessonID, topicID } = useParams<{
     lessonID: string;

@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\ModelFields\Http\Requests;
+namespace Ulams\ModelFields\Http\Requests;
 
-use EscolaLms\ModelFields\Models\Metadata;
-use EscolaLms\Templates\Facades\Template as FacadesTemplate;
-use EscolaLms\Templates\Models\Template;
+use Ulams\ModelFields\Models\Metadata;
+use Ulams\Templates\Facades\Template as FacadesTemplate;
+use Ulams\Templates\Models\Template;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use BenSampo\Enum\Rules\EnumValue;
-use EscolaLms\ModelFields\Enum\MetaFieldTypeEnum;
+use Ulams\ModelFields\Enum\MetaFieldTypeEnum;
 
 class MetadataCreateOrUpdateRequest extends FormRequest
 {

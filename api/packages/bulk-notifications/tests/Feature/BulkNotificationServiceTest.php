@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Tests\Feature;
+namespace Ulams\BulkNotifications\Tests\Feature;
 
-use EscolaLms\BulkNotifications\Channels\PushNotificationChannel;
-use EscolaLms\BulkNotifications\Database\Seeders\BulkNotificationPermissionSeeder;
-use EscolaLms\BulkNotifications\Dtos\SendMulticastBulkNotificationDto;
-use EscolaLms\BulkNotifications\Dtos\SendUserBulkNotificationDto;
-use EscolaLms\BulkNotifications\Events\NotificationSent;
-use EscolaLms\BulkNotifications\Exceptions\UnsupportedNotification;
-use EscolaLms\BulkNotifications\Services\Contracts\BulkNotificationServiceContract;
-use EscolaLms\BulkNotifications\Tests\BulkNotificationTesting;
-use EscolaLms\BulkNotifications\Tests\FakeNotificationChannel;
-use EscolaLms\BulkNotifications\Tests\TestCase;
-use EscolaLms\Core\Models\User;
+use Ulams\BulkNotifications\Channels\PushNotificationChannel;
+use Ulams\BulkNotifications\Database\Seeders\BulkNotificationPermissionSeeder;
+use Ulams\BulkNotifications\Dtos\SendMulticastBulkNotificationDto;
+use Ulams\BulkNotifications\Dtos\SendUserBulkNotificationDto;
+use Ulams\BulkNotifications\Events\NotificationSent;
+use Ulams\BulkNotifications\Exceptions\UnsupportedNotification;
+use Ulams\BulkNotifications\Services\Contracts\BulkNotificationServiceContract;
+use Ulams\BulkNotifications\Tests\BulkNotificationTesting;
+use Ulams\BulkNotifications\Tests\FakeNotificationChannel;
+use Ulams\BulkNotifications\Tests\TestCase;
+use Ulams\Core\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Event;
 use Mockery\MockInterface;

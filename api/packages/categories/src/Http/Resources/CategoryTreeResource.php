@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Categories\Http\Resources;
+namespace Ulams\Categories\Http\Resources;
 
-use EscolaLms\Categories\Models\Category;
+use Ulams\Categories\Models\Category;
 
 class CategoryTreeResource extends CategoryResource
 {

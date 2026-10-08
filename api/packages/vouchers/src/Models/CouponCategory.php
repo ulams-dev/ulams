@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Vouchers\Models;
+namespace Ulams\Vouchers\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * EscolaLms\Vouchers\Models\CouponCategory
+ * Ulams\Vouchers\Models\CouponCategory
  *
  * @property int $id
  * @property int $coupon_id
@@ -15,8 +15,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property bool $excluded
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \EscolaLms\Vouchers\Models\Category|null $category
- * @property-read \EscolaLms\Vouchers\Models\Coupon|null $coupon
+ * @property-read \Ulams\Vouchers\Models\Category|null $category
+ * @property-read \Ulams\Vouchers\Models\Coupon|null $coupon
  * @method static \Illuminate\Database\Eloquent\Builder|CouponCategory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CouponCategory newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CouponCategory query()

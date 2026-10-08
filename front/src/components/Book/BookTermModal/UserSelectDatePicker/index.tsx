@@ -1,9 +1,9 @@
 import { useCallback, useContext, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import DatePicker from "@/components/Common/DatePicker";
-import Button from "@lms/components/components/atoms/Button/Button";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import Button from "@ulams/components/components/atoms/Button/Button";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import ModalTitle from "@/components/Common/StyledTitle/ModalTitle";
 import SelectedTermContent from "../SelectedTermContent";
 import { ProfileConsultationsContext } from "@/components/Profile/ProfileConsultations/ProfileConsultationsProvider";
@@ -59,10 +59,10 @@ const UserSelectDatePicker = ({ consultation, onClose }: Props) => {
   const [selectedDate, setSelectedDay] = useState<Date | null>(startDate);
 
   const { bookConsultationTerm, changeConsultationTerm } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
-  const { fetchUserConsultations, user } = useContext(EscolaLMSContext);
+  const { fetchUserConsultations, user } = useContext(UlamsContext);
   const { setShowBookTermSuccess } = useContext(ProfileConsultationsContext);
   const { t } = useTranslation();
 

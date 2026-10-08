@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Payments\Http\Controllers;
+namespace Ulams\Payments\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Payments\Facades\Payments;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Payments\Facades\Payments;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class GatewayController extends EscolaLmsBaseController
+class GatewayController extends UlamsBaseController
 {
     public function index(Request $request): JsonResponse
     {

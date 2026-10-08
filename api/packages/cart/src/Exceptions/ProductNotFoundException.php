@@ -1,5 +1,5 @@
 <?php
-namespace EscolaLms\Cart\Exceptions;
+namespace Ulams\Cart\Exceptions;
 
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Throwable;

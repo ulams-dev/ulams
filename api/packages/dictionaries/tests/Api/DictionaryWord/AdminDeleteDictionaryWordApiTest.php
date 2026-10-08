@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Tests\Api\DictionaryWord;
+namespace Ulams\Dictionaries\Tests\Api\DictionaryWord;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Dictionaries\Database\Seeders\DictionariesPermissionSeeder;
-use EscolaLms\Dictionaries\Models\DictionaryWord;
-use EscolaLms\Dictionaries\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Dictionaries\Database\Seeders\DictionariesPermissionSeeder;
+use Ulams\Dictionaries\Models\DictionaryWord;
+use Ulams\Dictionaries\Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 
 class AdminDeleteDictionaryWordApiTest extends TestCase

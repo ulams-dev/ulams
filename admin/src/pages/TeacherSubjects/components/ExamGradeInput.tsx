@@ -3,8 +3,8 @@ import { debounce } from 'lodash';
 import React, { useCallback } from 'react';
 
 import { gradesOptions, passOptions } from '@/pages/TeacherSubjects/components/consts';
-import { ExamGradeType } from '@/services/escola-lms/enums';
-import { createExamResult } from '@/services/escola-lms/exams';
+import { ExamGradeType } from '@/services/ulams/enums';
+import { createExamResult } from '@/services/ulams/exams';
 import { FormattedMessage, useIntl } from 'umi';
 
 interface Props {

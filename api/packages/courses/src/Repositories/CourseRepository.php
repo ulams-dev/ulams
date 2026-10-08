@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Courses\Repositories;
+namespace Ulams\Courses\Repositories;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Courses\Enum\CoursesPermissionsEnum;
-use EscolaLms\Courses\Events\CoursedPublished;
-use EscolaLms\Courses\Events\CourseTutorAssigned;
-use EscolaLms\Courses\Events\CourseTutorUnassigned;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\User;
-use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
-use EscolaLms\Courses\Repositories\Contracts\LessonRepositoryContract;
-use EscolaLms\Files\Helpers\FileHelper;
+use Ulams\Categories\Models\Category;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Courses\Enum\CoursesPermissionsEnum;
+use Ulams\Courses\Events\CoursedPublished;
+use Ulams\Courses\Events\CourseTutorAssigned;
+use Ulams\Courses\Events\CourseTutorUnassigned;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\User;
+use Ulams\Courses\Repositories\Contracts\CourseRepositoryContract;
+use Ulams\Courses\Repositories\Contracts\LessonRepositoryContract;
+use Ulams\Files\Helpers\FileHelper;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +27,7 @@ use Illuminate\Support\Str;
 
 /**
  * Class CourseRepository
- * @package EscolaLms\Courses\Repositories
+ * @package Ulams\Courses\Repositories
  * @version April 27, 2021, 11:19 am UTC
  */
 class CourseRepository extends BaseRepository implements CourseRepositoryContract

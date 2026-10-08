@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Invoices\Tests\Models;
+namespace Ulams\Invoices\Tests\Models;
 
-use EscolaLms\Invoices\Tests\Models\Factory\CourseFactory as CartCourseFactory;
-use EscolaLms\Courses\Database\Factories\CourseFactory;
+use Ulams\Invoices\Tests\Models\Factory\CourseFactory as CartCourseFactory;
+use Ulams\Courses\Database\Factories\CourseFactory;
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\Model;
 use Treestoneit\ShoppingCart\Buyable;
 
 /**
- * EscolaLms\Cart\Models\Course
+ * Ulams\Cart\Models\Course
  *
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -27,23 +27,23 @@ use Treestoneit\ShoppingCart\Buyable;
  * @property string|null $description
  * @property string|null $level
  * @property int|null $scorm_id
- * @property-read \EscolaLms\Core\Models\User|null $author
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Categories\Models\Category[] $categories
+ * @property-read \Ulams\Core\Models\User|null $author
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Categories\Models\Category[] $categories
  * @property-read int|null $categories_count
  * @property-read string|null $image_url
  * @property-read string|null $video_url
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Group[] $groups
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Courses\Models\Group[] $groups
  * @property-read int|null $groups_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Lesson[] $lessons
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Courses\Models\Lesson[] $lessons
  * @property-read int|null $lessons_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\CourseProgress[] $progress
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Courses\Models\CourseProgress[] $progress
  * @property-read int|null $progress_count
  * @property-read \Peopleaps\Scorm\Model\ScormModel|null $scorm
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Tags\Models\Tag[] $tags
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Tags\Models\Tag[] $tags
  * @property-read int|null $tags_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Courses\Models\Topic[] $topic
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Courses\Models\Topic[] $topic
  * @property-read int|null $topic_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\EscolaLms\Core\Models\User[] $users
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ulams\Core\Models\User[] $users
  * @property-read int|null $users_count
  * @method static Builder|Course active()
  * @method static \Illuminate\Database\Eloquent\Builder|Course newModelQuery()
@@ -67,7 +67,7 @@ use Treestoneit\ShoppingCart\Buyable;
  * @method static \Illuminate\Database\Eloquent\Builder|Course whereVideoPath($value)
  * @mixin \Eloquent
  */
-class Course extends \EscolaLms\Courses\Models\Course implements Buyable
+class Course extends \Ulams\Courses\Models\Course implements Buyable
 {
     use HasRelationships;
 

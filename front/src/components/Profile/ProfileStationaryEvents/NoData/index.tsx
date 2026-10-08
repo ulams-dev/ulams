@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { NoDataStyles } from "./NoDataStyles";
 import { useHistory } from "react-router-dom";
 import routeRoutes from "@/components/Routes/routes";

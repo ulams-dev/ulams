@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Payments\Concerns;
+namespace Ulams\Payments\Concerns;
 
-use EscolaLms\Payments\Enums\Currency;
-use EscolaLms\Payments\Facades\Payments;
-use EscolaLms\Payments\Models\Payment;
-use EscolaLms\Payments\Entities\PaymentProcessor;
+use Ulams\Payments\Enums\Currency;
+use Ulams\Payments\Facades\Payments;
+use Ulams\Payments\Models\Payment;
+use Ulams\Payments\Entities\PaymentProcessor;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Payable

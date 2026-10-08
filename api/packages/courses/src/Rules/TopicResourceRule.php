@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Rules;
+namespace Ulams\Courses\Rules;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Files\Rules\FileOrStringRule;
+use Ulams\Courses\Models\Topic;
+use Ulams\Files\Rules\FileOrStringRule;
 
 class TopicResourceRule extends FileOrStringRule
 {

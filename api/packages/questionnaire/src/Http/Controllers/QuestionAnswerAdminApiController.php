@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Http\Controllers;
+namespace Ulams\Questionnaire\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Questionnaire\Dtos\QuestionAnswerFilterCriteriaDto;
-use EscolaLms\Questionnaire\Http\Controllers\Contracts\QuestionAnswerAdminApiContract;
-use EscolaLms\Questionnaire\Http\Requests\QuestionAnswerListingRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionAnswerVisibilityRequest;
-use EscolaLms\Questionnaire\Http\Resources\QuestionAnswerResource;
-use EscolaLms\Questionnaire\Repository\Contracts\QuestionAnswerRepositoryContract;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionnaireAnswerServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Questionnaire\Dtos\QuestionAnswerFilterCriteriaDto;
+use Ulams\Questionnaire\Http\Controllers\Contracts\QuestionAnswerAdminApiContract;
+use Ulams\Questionnaire\Http\Requests\QuestionAnswerListingRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionAnswerVisibilityRequest;
+use Ulams\Questionnaire\Http\Resources\QuestionAnswerResource;
+use Ulams\Questionnaire\Repository\Contracts\QuestionAnswerRepositoryContract;
+use Ulams\Questionnaire\Services\Contracts\QuestionnaireAnswerServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class QuestionAnswerAdminApiController extends EscolaLmsBaseController implements QuestionAnswerAdminApiContract
+class QuestionAnswerAdminApiController extends UlamsBaseController implements QuestionAnswerAdminApiContract
 {
     private QuestionnaireAnswerServiceContract $questionnaireAnswerService;
     private QuestionAnswerRepositoryContract $questionAnswerRepository;

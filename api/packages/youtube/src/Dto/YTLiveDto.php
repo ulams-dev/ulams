@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Youtube\Dto;
+namespace Ulams\Youtube\Dto;
 
-use EscolaLms\Youtube\Dto\Contracts\YTLiveDtoContract;
-use EscolaLms\Youtube\Dto\Contracts\YTStreamDtoContract;
+use Ulams\Youtube\Dto\Contracts\YTLiveDtoContract;
+use Ulams\Youtube\Dto\Contracts\YTStreamDtoContract;
 use Google\Service\YouTube\LiveBroadcast;
 
 class YTLiveDto implements YTLiveDtoContract

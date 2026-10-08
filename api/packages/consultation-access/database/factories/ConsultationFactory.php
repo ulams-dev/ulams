@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Database\Factories;
+namespace Ulams\ConsultationAccess\Database\Factories;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\ConsultationAccess\Models\Consultation;
-use EscolaLms\Consultations\Database\Factories\ConsultationFactory as BaseFactory;
-use EscolaLms\Core\Enums\UserRole;
+use Ulams\Auth\Models\User;
+use Ulams\ConsultationAccess\Models\Consultation;
+use Ulams\Consultations\Database\Factories\ConsultationFactory as BaseFactory;
+use Ulams\Core\Enums\UserRole;
 
 class ConsultationFactory extends BaseFactory
 {

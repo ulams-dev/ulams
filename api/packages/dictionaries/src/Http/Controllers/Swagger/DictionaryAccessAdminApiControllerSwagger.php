@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Http\Controllers\Swagger;
+namespace Ulams\Dictionaries\Http\Controllers\Swagger;
 
-use EscolaLms\Dictionaries\Http\Requests\DictionaryAccess\ListDictionaryAccessRequest;
-use EscolaLms\Dictionaries\Http\Requests\DictionaryAccess\SetDictionaryAccessRequest;
+use Ulams\Dictionaries\Http\Requests\DictionaryAccess\ListDictionaryAccessRequest;
+use Ulams\Dictionaries\Http\Requests\DictionaryAccess\SetDictionaryAccessRequest;
 use Illuminate\Http\JsonResponse;
 
 interface DictionaryAccessAdminApiControllerSwagger

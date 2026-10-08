@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Permissions\Tests\Api;
+namespace Ulams\Permissions\Tests\Api;
 
-use EscolaLms\Permissions\Events\PermissionRoleRemoved;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Repository\TemplateRepository;
-use EscolaLms\Permissions\Tests\TestCase;
+use Ulams\Permissions\Events\PermissionRoleRemoved;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Repository\TemplateRepository;
+use Ulams\Permissions\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Spatie\Permission\Models\Role;

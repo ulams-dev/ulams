@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Recommender\Http\Requests;
+namespace Ulams\Recommender\Http\Requests;
 
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Recommender\Dto\PageDto;
-use EscolaLms\Recommender\Dto\TermAnalyticsFilterListDto;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Recommender\Dto\PageDto;
+use Ulams\Recommender\Dto\TermAnalyticsFilterListDto;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

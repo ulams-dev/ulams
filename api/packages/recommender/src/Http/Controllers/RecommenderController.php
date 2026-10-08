@@ -1,26 +1,26 @@
 <?php
 
-namespace EscolaLms\Recommender\Http\Controllers;
+namespace Ulams\Recommender\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Recommender\Dto\MeetRecordingDto;
-use EscolaLms\Recommender\Dto\MeetRecordingScreenDto;
-use EscolaLms\Recommender\Http\Controllers\Swagger\RecommenderControllerSwagger;
-use EscolaLms\Recommender\Http\Requests\AggregatedFrameRequest;
-use EscolaLms\Recommender\Http\Requests\CourseRecommendationRequest;
-use EscolaLms\Recommender\Http\Requests\MeetRecordingRequest;
-use EscolaLms\Recommender\Http\Requests\MeetRecordingScreen;
-use EscolaLms\Recommender\Http\Requests\TopicRecommendationRequest;
-use EscolaLms\Recommender\Http\Resources\CourseRecommendationResource;
-use EscolaLms\Recommender\Http\Resources\MeetRecordingResource;
-use EscolaLms\Recommender\Http\Resources\TopicRecommendationResource;
-use EscolaLms\Recommender\Services\Contracts\RecommenderServiceContract;
-use EscolaLms\Recommender\Dto\AggregatedFrameDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Recommender\Dto\MeetRecordingDto;
+use Ulams\Recommender\Dto\MeetRecordingScreenDto;
+use Ulams\Recommender\Http\Controllers\Swagger\RecommenderControllerSwagger;
+use Ulams\Recommender\Http\Requests\AggregatedFrameRequest;
+use Ulams\Recommender\Http\Requests\CourseRecommendationRequest;
+use Ulams\Recommender\Http\Requests\MeetRecordingRequest;
+use Ulams\Recommender\Http\Requests\MeetRecordingScreen;
+use Ulams\Recommender\Http\Requests\TopicRecommendationRequest;
+use Ulams\Recommender\Http\Resources\CourseRecommendationResource;
+use Ulams\Recommender\Http\Resources\MeetRecordingResource;
+use Ulams\Recommender\Http\Resources\TopicRecommendationResource;
+use Ulams\Recommender\Services\Contracts\RecommenderServiceContract;
+use Ulams\Recommender\Dto\AggregatedFrameDto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 
-class RecommenderController extends EscolaLmsBaseController implements RecommenderControllerSwagger
+class RecommenderController extends UlamsBaseController implements RecommenderControllerSwagger
 {
     private RecommenderServiceContract $recommenderService;
 

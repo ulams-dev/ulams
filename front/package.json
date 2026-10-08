@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "license": "MIT",
   "author": {
-    "email": "hi@wellms.io",
-    "name": "Wellms Worlds First Headless LMS",
-    "url": "httsp://wellms.io"
+    "email": "hi@ulams.app",
+    "name": "Ulams Worlds First Headless LMS",
+    "url": "httsp://ulams.app"
   },
   "dependencies": {
     "@capacitor-firebase/messaging": "^5.4.1",

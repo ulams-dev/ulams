@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Courses;
+namespace Ulams\TemplatesPdf\Courses;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\TemplatesPdf\Core\PdfVariables;
-use EscolaLms\TemplatesPdf\Models\FabricPDF;
+use Ulams\Core\Models\User;
+use Ulams\Courses\Models\Course;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\TemplatesPdf\Core\PdfVariables;
+use Ulams\TemplatesPdf\Models\FabricPDF;
 use Illuminate\Support\Carbon;
 
 abstract class CommonUserAndCourseVariables extends PdfVariables

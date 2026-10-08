@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests;
+namespace Ulams\Auth\Http\Requests;
 
 class UploadAvatarRequest extends ExtendableRequest
 {

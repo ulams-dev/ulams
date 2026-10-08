@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Reports\Imports\Stats\Course\Sheets;
+namespace Ulams\Reports\Imports\Stats\Course\Sheets;
 
-use EscolaLms\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\CourseProgress;
 
 class FinishedTopicsSecondsSheet extends FinishedTopicsSheet
 {

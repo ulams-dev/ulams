@@ -2,23 +2,23 @@
 
 namespace Tests\APIs;
 
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\Components\Cmi5AuHelper;
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\Components\H5PHelper;
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\Components\ScormScoHelper;
-use EscolaLms\TopicTypes\Models\TopicContent\Audio;
-use EscolaLms\TopicTypes\Models\TopicContent\Cmi5Au;
-use EscolaLms\TopicTypes\Models\TopicContent\H5P;
-use EscolaLms\TopicTypes\Models\TopicContent\OEmbed;
-use EscolaLms\TopicTypes\Models\TopicContent\RichText;
-use EscolaLms\TopicTypes\Models\TopicContent\ScormSco;
-use EscolaLms\TopicTypes\Models\TopicContent\Video;
-use EscolaLms\TopicTypes\Tests\TestCase;
-use EscolaLms\TopicTypes\Events\TopicTypeChanged;
-use EscolaLms\TopicTypes\Models\TopicContent\Image;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypes\Database\Factories\TopicContent\Components\Cmi5AuHelper;
+use Ulams\TopicTypes\Database\Factories\TopicContent\Components\H5PHelper;
+use Ulams\TopicTypes\Database\Factories\TopicContent\Components\ScormScoHelper;
+use Ulams\TopicTypes\Models\TopicContent\Audio;
+use Ulams\TopicTypes\Models\TopicContent\Cmi5Au;
+use Ulams\TopicTypes\Models\TopicContent\H5P;
+use Ulams\TopicTypes\Models\TopicContent\OEmbed;
+use Ulams\TopicTypes\Models\TopicContent\RichText;
+use Ulams\TopicTypes\Models\TopicContent\ScormSco;
+use Ulams\TopicTypes\Models\TopicContent\Video;
+use Ulams\TopicTypes\Tests\TestCase;
+use Ulams\TopicTypes\Events\TopicTypeChanged;
+use Ulams\TopicTypes\Models\TopicContent\Image;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
@@ -95,7 +95,7 @@ class TopicTypesTutorUpdateApiTest extends TestCase
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
-                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\Audio',
+                'topicable_type' => 'Ulams\TopicTypes\Models\TopicContent\Audio',
                 'value' => $file,
             ]
         );
@@ -131,7 +131,7 @@ class TopicTypesTutorUpdateApiTest extends TestCase
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
-                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\Audio',
+                'topicable_type' => 'Ulams\TopicTypes\Models\TopicContent\Audio',
                 'value' => $file,
             ]
         );
@@ -160,7 +160,7 @@ class TopicTypesTutorUpdateApiTest extends TestCase
         ])->actingAs($this->user, 'api')->post(
             '/api/admin/topics/'.$this->topic->id,
             [
-                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\Audio',
+                'topicable_type' => 'Ulams\TopicTypes\Models\TopicContent\Audio',
                 'value' => $file2,
             ]
         );
@@ -187,7 +187,7 @@ class TopicTypesTutorUpdateApiTest extends TestCase
         ])->actingAs($this->user, 'api')->post(
             '/api/admin/topics/'.$this->topic->id,
             [
-                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\Audio',
+                'topicable_type' => 'Ulams\TopicTypes\Models\TopicContent\Audio',
                 'value' => $path,
             ]
         );
@@ -225,7 +225,7 @@ class TopicTypesTutorUpdateApiTest extends TestCase
             ->post('/api/admin/topics/' . $this->topic->id, [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
-                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\Video',
+                'topicable_type' => 'Ulams\TopicTypes\Models\TopicContent\Video',
                 'value' => $file
             ])
             ->assertJsonStructure([
@@ -271,7 +271,7 @@ class TopicTypesTutorUpdateApiTest extends TestCase
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
-                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\RichText',
+                'topicable_type' => 'Ulams\TopicTypes\Models\TopicContent\RichText',
                 'value' => 'lorem ipsum',
             ]
         );
@@ -305,7 +305,7 @@ class TopicTypesTutorUpdateApiTest extends TestCase
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
-                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\PDF',
+                'topicable_type' => 'Ulams\TopicTypes\Models\TopicContent\PDF',
                 'value' => $file,
             ]
         );
@@ -337,7 +337,7 @@ class TopicTypesTutorUpdateApiTest extends TestCase
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
-                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\RichTextAAAAAA',
+                'topicable_type' => 'Ulams\TopicTypes\Models\TopicContent\RichTextAAAAAA',
                 'value' => 'lorem ipsum',
             ]
         );
@@ -356,7 +356,7 @@ class TopicTypesTutorUpdateApiTest extends TestCase
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->topic->lesson_id,
-                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\RichText',
+                'topicable_type' => 'Ulams\TopicTypes\Models\TopicContent\RichText',
                 'value' => 'lorem ipsum',
                 'introduction' => 'asdf1',
                 'summary' => 'asdf2',
@@ -627,7 +627,7 @@ class TopicTypesTutorUpdateApiTest extends TestCase
 
     public function testUpdateTopicCmi5Au(): void
     {
-        if (!class_exists(\EscolaLms\Cmi5\EscolaLmsCmi5ServiceProvider::class)) {
+        if (!class_exists(\Ulams\Cmi5\UlamsCmi5ServiceProvider::class)) {
             $this->markTestSkipped('Require cmi5 package');
         }
         Storage::fake('local');

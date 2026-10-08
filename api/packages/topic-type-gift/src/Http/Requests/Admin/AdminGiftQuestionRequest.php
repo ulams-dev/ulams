@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Requests\Admin;
+namespace Ulams\TopicTypeGift\Http\Requests\Admin;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypeGift\Dtos\GiftQuestionDto;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypeGift\Dtos\GiftQuestionDto;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**

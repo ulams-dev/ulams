@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EscolaLms\Core\Dtos\Contracts;
+namespace Ulams\Core\Dtos\Contracts;
 
 use Illuminate\Http\Request;
 

@@ -6,7 +6,7 @@ import {
   assigned as fetchGetAssigned,
   assign as postAssign,
   unassign as postUnassign,
-} from '@/services/escola-lms/certificate';
+} from '@/services/ulams/certificate';
 import { message } from 'antd';
 import { useCallback } from 'react';
 import { FormattedMessage } from 'umi';

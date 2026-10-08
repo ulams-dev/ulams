@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Helpers;
+namespace Ulams\TopicTypes\Helpers;
 
 class Path
 {

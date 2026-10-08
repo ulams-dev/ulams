@@ -8,8 +8,8 @@ import {
   useContext,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextPaginatedMetaState,
   ContextStateValue,
 } from "./types";
@@ -28,7 +28,7 @@ import { UserContext } from "./user";
 
 export const ChallengesContext: React.Context<
   Pick<
-    EscolaLMSContextConfig,
+    UlamsContextConfig,
     "challenges" | "fetchChallenges" | "challenge" | "fetchChallenge"
   >
 > = createContext({
@@ -40,7 +40,7 @@ export const ChallengesContext: React.Context<
 
 export interface ChallengesContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "challenges">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "challenges">>;
   ssrHydration?: boolean;
 }
 

@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Courses\Database\Seeders;
+namespace Ulams\Courses\Database\Seeders;
 
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Courses\Enum\ProgressStatus;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\User;
-use EscolaLms\Courses\Repositories\CourseProgressRepository;
-use EscolaLms\Courses\Services\ProgressService;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Courses\Enum\ProgressStatus;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Models\User;
+use Ulams\Courses\Repositories\CourseProgressRepository;
+use Ulams\Courses\Services\ProgressService;
+use Ulams\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 

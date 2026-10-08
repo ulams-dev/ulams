@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Http\Requests;
+namespace Ulams\BulkNotifications\Http\Requests;
 
-use EscolaLms\BulkNotifications\Channels\PushNotificationChannel;
-use EscolaLms\BulkNotifications\Dtos\SendUserBulkNotificationDto;
-use EscolaLms\BulkNotifications\Models\BulkNotification;
-use EscolaLms\BulkNotifications\Rules\RequiredSection;
+use Ulams\BulkNotifications\Channels\PushNotificationChannel;
+use Ulams\BulkNotifications\Dtos\SendUserBulkNotificationDto;
+use Ulams\BulkNotifications\Models\BulkNotification;
+use Ulams\BulkNotifications\Rules\RequiredSection;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

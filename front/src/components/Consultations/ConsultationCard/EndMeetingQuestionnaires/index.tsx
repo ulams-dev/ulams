@@ -3,7 +3,7 @@ import RateCourse from "@/components/Courses/RateCourse";
 import { QuestionnaireModelType } from "@/types/questionnaire";
 
 import { useQuestionnaires } from "@/hooks/questionnaires";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { useRoles } from "@/hooks/useRoles";
 
 interface Props {

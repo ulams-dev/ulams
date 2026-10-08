@@ -1,23 +1,23 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\Notifications;
+namespace Ulams\Courses\Tests\Notifications;
 
-use EscolaLms\Core\Models\User as ModelsUser;
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Events\CourseAccessStarted;
-use EscolaLms\Courses\Events\CourseAssigned;
-use EscolaLms\Courses\Events\CourseAccessFinished;
-use EscolaLms\Courses\Events\CourseUnassigned;
-use EscolaLms\Courses\Events\CourseDeadlineSoon;
-use EscolaLms\Courses\Jobs\CheckForDeadlines;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\User;
-use EscolaLms\Courses\Tests\ProgressConfigurable;
-use EscolaLms\Courses\Tests\TestCase;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
+use Ulams\Core\Models\User as ModelsUser;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Events\CourseAccessStarted;
+use Ulams\Courses\Events\CourseAssigned;
+use Ulams\Courses\Events\CourseAccessFinished;
+use Ulams\Courses\Events\CourseUnassigned;
+use Ulams\Courses\Events\CourseDeadlineSoon;
+use Ulams\Courses\Jobs\CheckForDeadlines;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Models\User;
+use Ulams\Courses\Tests\ProgressConfigurable;
+use Ulams\Courses\Tests\TestCase;
+use Ulams\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
@@ -44,7 +44,7 @@ class NotificationsTest extends TestCase
         Event::fake();
 
         $user = User::factory()->create();
-        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'active_to' => Carbon::now()->addDays(config('escolalms_courses.reminder_of_deadline_count_days'))]);
+        $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED, 'active_to' => Carbon::now()->addDays(config('ulams_courses.reminder_of_deadline_count_days'))]);
         $lesson = Lesson::factory()->create([
             'course_id' => $course->getKey()
         ]);

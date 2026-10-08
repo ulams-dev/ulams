@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Tests\Services;
+namespace Ulams\TopicTypeGift\Tests\Services;
 
-use EscolaLms\TopicTypeGift\Dtos\AdminUpdateAttemptAnswerDto;
-use EscolaLms\TopicTypeGift\Events\QuizAttemptJournalGradeReadyEvent;
-use EscolaLms\TopicTypeGift\Models\AttemptAnswer;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
-use EscolaLms\TopicTypeGift\Services\Contracts\AttemptAnswerServiceContract;
-use EscolaLms\TopicTypeGift\Tests\TestCase;
+use Ulams\TopicTypeGift\Dtos\AdminUpdateAttemptAnswerDto;
+use Ulams\TopicTypeGift\Events\QuizAttemptJournalGradeReadyEvent;
+use Ulams\TopicTypeGift\Models\AttemptAnswer;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
+use Ulams\TopicTypeGift\Services\Contracts\AttemptAnswerServiceContract;
+use Ulams\TopicTypeGift\Tests\TestCase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 

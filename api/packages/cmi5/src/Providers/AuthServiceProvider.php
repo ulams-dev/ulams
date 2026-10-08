@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cmi5\Providers;
+namespace Ulams\Cmi5\Providers;
 
-use EscolaLms\Cmi5\Models\Cmi5;
-use EscolaLms\Cmi5\Policies\Cmi5Policy;
+use Ulams\Cmi5\Models\Cmi5;
+use Ulams\Cmi5\Policies\Cmi5Policy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Database\Factories;
+namespace Ulams\TemplatesPdf\Database\Factories;
 
-use EscolaLms\TemplatesPdf\Models\FabricPDF;
-use EscolaLms\Templates\Models\Template;
+use Ulams\TemplatesPdf\Models\FabricPDF;
+use Ulams\Templates\Models\Template;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use EscolaLms\Auth\Models\User;
+use Ulams\Auth\Models\User;
 
 class FabricPdfFactory extends Factory
 {

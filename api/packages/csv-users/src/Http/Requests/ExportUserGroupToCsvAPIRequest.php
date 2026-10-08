@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Http\Requests;
+namespace Ulams\CsvUsers\Http\Requests;
 
-use EscolaLms\CsvUsers\Enums\ExportFormatEnum;
-use EscolaLms\CsvUsers\Models\Group;
+use Ulams\CsvUsers\Enums\ExportFormatEnum;
+use Ulams\CsvUsers\Models\Group;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

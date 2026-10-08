@@ -1,49 +1,49 @@
 <?php
 
-namespace EscolaLms\Consultations\Services;
+namespace Ulams\Consultations\Services;
 
 use Auth;
 use Carbon\Carbon;
 use DateTime;
-use EscolaLms\Consultations\Dto\ChangeTermConsultationDto;
-use EscolaLms\Consultations\Dto\ConsultationUserTermDto;
-use EscolaLms\Consultations\Dto\ConsultationDto;
-use EscolaLms\Consultations\Dto\ConsultationSaveScreenDto;
-use EscolaLms\Consultations\Dto\FilterConsultationTermsListDto;
-use EscolaLms\Consultations\Dto\FilterListDto;
-use EscolaLms\Consultations\Dto\FilterScheduleForTutorDto;
-use EscolaLms\Consultations\Dto\FinishTermDto;
-use EscolaLms\Consultations\Dto\GenerateSignedScreenUrlsDto;
-use EscolaLms\Consultations\Enum\ConstantEnum;
-use EscolaLms\Consultations\Enum\ConsultationStatusEnum;
-use EscolaLms\Consultations\Enum\ConsultationTermStatusEnum;
-use EscolaLms\Consultations\Events\ApprovedTerm;
-use EscolaLms\Consultations\Events\ApprovedTermWithTrainer;
-use EscolaLms\Consultations\Events\ChangeTerm;
-use EscolaLms\Consultations\Events\RejectTerm;
-use EscolaLms\Consultations\Events\RejectTermWithTrainer;
-use EscolaLms\Consultations\Events\ReminderAboutTerm;
-use EscolaLms\Consultations\Events\ReminderTrainerAboutTerm;
-use EscolaLms\Consultations\Events\ReportTerm;
-use EscolaLms\Consultations\Exceptions\ChangeTermException;
-use EscolaLms\Consultations\Exceptions\ConsultationNotFound;
-use EscolaLms\Consultations\Helpers\StrategyHelper;
-use EscolaLms\Consultations\Http\Requests\ListConsultationsRequest;
-use EscolaLms\Consultations\Http\Resources\ConsultationSimpleResource;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Models\ConsultationProposedTerm;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Models\ConsultationUserTerm;
-use EscolaLms\Consultations\Models\User;
-use EscolaLms\Consultations\Repositories\Contracts\ConsultationRepositoryContract;
-use EscolaLms\Consultations\Repositories\Contracts\ConsultationUserRepositoryContract;
-use EscolaLms\Consultations\Repositories\Contracts\ConsultationUserTermRepositoryContract;
-use EscolaLms\Consultations\Services\Contracts\ConsultationServiceContract;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Files\Helpers\FileHelper;
-use EscolaLms\Jitsi\Helpers\StringHelper;
-use EscolaLms\Jitsi\Services\Contracts\JitsiServiceContract;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Consultations\Dto\ChangeTermConsultationDto;
+use Ulams\Consultations\Dto\ConsultationUserTermDto;
+use Ulams\Consultations\Dto\ConsultationDto;
+use Ulams\Consultations\Dto\ConsultationSaveScreenDto;
+use Ulams\Consultations\Dto\FilterConsultationTermsListDto;
+use Ulams\Consultations\Dto\FilterListDto;
+use Ulams\Consultations\Dto\FilterScheduleForTutorDto;
+use Ulams\Consultations\Dto\FinishTermDto;
+use Ulams\Consultations\Dto\GenerateSignedScreenUrlsDto;
+use Ulams\Consultations\Enum\ConstantEnum;
+use Ulams\Consultations\Enum\ConsultationStatusEnum;
+use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
+use Ulams\Consultations\Events\ApprovedTerm;
+use Ulams\Consultations\Events\ApprovedTermWithTrainer;
+use Ulams\Consultations\Events\ChangeTerm;
+use Ulams\Consultations\Events\RejectTerm;
+use Ulams\Consultations\Events\RejectTermWithTrainer;
+use Ulams\Consultations\Events\ReminderAboutTerm;
+use Ulams\Consultations\Events\ReminderTrainerAboutTerm;
+use Ulams\Consultations\Events\ReportTerm;
+use Ulams\Consultations\Exceptions\ChangeTermException;
+use Ulams\Consultations\Exceptions\ConsultationNotFound;
+use Ulams\Consultations\Helpers\StrategyHelper;
+use Ulams\Consultations\Http\Requests\ListConsultationsRequest;
+use Ulams\Consultations\Http\Resources\ConsultationSimpleResource;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\ConsultationProposedTerm;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Models\ConsultationUserTerm;
+use Ulams\Consultations\Models\User;
+use Ulams\Consultations\Repositories\Contracts\ConsultationRepositoryContract;
+use Ulams\Consultations\Repositories\Contracts\ConsultationUserRepositoryContract;
+use Ulams\Consultations\Repositories\Contracts\ConsultationUserTermRepositoryContract;
+use Ulams\Consultations\Services\Contracts\ConsultationServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Files\Helpers\FileHelper;
+use Ulams\Jitsi\Helpers\StringHelper;
+use Ulams\Jitsi\Services\Contracts\JitsiServiceContract;
+use Ulams\ModelFields\Facades\ModelFields;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\FormRequest;
@@ -395,7 +395,7 @@ class ConsultationService implements ConsultationServiceContract
         if ($listConsultationsRequest->input('paginate', false)) {
             $consultationsCollection = ConsultationSimpleResource::collection($consultations->paginate(
                 $listConsultationsRequest->get('per_page') ??
-                config('escolalms_consultations.perPage', ConstantEnum::PER_PAGE)
+                config('ulams_consultations.perPage', ConstantEnum::PER_PAGE)
             ));
         } else {
             $consultationsCollection = ConsultationSimpleResource::collection($consultations->get());
@@ -578,12 +578,12 @@ class ConsultationService implements ConsultationServiceContract
     private function getReminderData(string $reminderStatus): Collection
     {
         $dateTimeFrom = now()
-            ->modify(config('escolalms_consultations.modifier_date.' . $reminderStatus, '+1 hour'))
+            ->modify(config('ulams_consultations.modifier_date.' . $reminderStatus, '+1 hour'))
             ->subMinutes(30);
         $dateTimeTo = now()
-            ->modify(config('escolalms_consultations.modifier_date.' . $reminderStatus, '+1 hour'))
+            ->modify(config('ulams_consultations.modifier_date.' . $reminderStatus, '+1 hour'))
             ->addMinutes(30);
-        $exclusionStatuses = config('escolalms_consultations.exclusion_reminder_status.' . $reminderStatus, []);
+        $exclusionStatuses = config('ulams_consultations.exclusion_reminder_status.' . $reminderStatus, []);
         $data = [
             'date_time_to' => $dateTimeTo,
             'date_time_from' => $dateTimeFrom,

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Scorm\Strategies;
+namespace Ulams\Scorm\Strategies;
 
 use Carbon\Carbon;
-use EscolaLms\Scorm\Strategies\Contract\ScormFieldStrategyContract;
+use Ulams\Scorm\Strategies\Contract\ScormFieldStrategyContract;
 use Peopleaps\Scorm\Entity\Scorm;
 use Peopleaps\Scorm\Entity\ScoTracking;
 

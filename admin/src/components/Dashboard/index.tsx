@@ -43,7 +43,7 @@ const components: DashboardData = {
     h: 4,
     maxH: 4,
     props: {
-      metric: 'EscolaLms\\Reports\\Metrics\\CoursesMoneySpentMetric',
+      metric: 'Ulams\\Reports\\Metrics\\CoursesMoneySpentMetric',
     },
   }),
   customers: wrap({ component: Customers, w: 1, h: 1, maxH: 1 }),
@@ -54,8 +54,8 @@ const components: DashboardData = {
     maxH: 3,
     props: {
       metric: {
-        bestSelling: 'EscolaLms\\Reports\\Metrics\\CoursesTopSellingMetric',
-        bestRated: 'EscolaLms\\Reports\\Metrics\\CoursesBestRatedMetric',
+        bestSelling: 'Ulams\\Reports\\Metrics\\CoursesTopSellingMetric',
+        bestRated: 'Ulams\\Reports\\Metrics\\CoursesBestRatedMetric',
       },
     },
   }),
@@ -69,7 +69,7 @@ const components: DashboardData = {
     maxH: 4,
     component: PieChart,
     props: {
-      metric: 'EscolaLms\\Reports\\Metrics\\CoursesMoneySpentMetric',
+      metric: 'Ulams\\Reports\\Metrics\\CoursesMoneySpentMetric',
       asDonut: true,
       customLabelTitle: (text: string) => text.slice(0, 8) + (text.length > 8 ? '...' : ''),
       customLabelContent: (item: API.ReportItem) => {
@@ -83,7 +83,7 @@ const components: DashboardData = {
     maxH: 4,
     component: PieChart,
     props: {
-      metric: 'EscolaLms\\Reports\\Metrics\\CoursesPopularityMetric',
+      metric: 'Ulams\\Reports\\Metrics\\CoursesPopularityMetric',
     },
   }),
   'pie-chart-CoursesSecondsSpentMetric': wrap({
@@ -92,7 +92,7 @@ const components: DashboardData = {
     maxH: 4,
     component: PieChart,
     props: {
-      metric: 'EscolaLms\\Reports\\Metrics\\CoursesSecondsSpentMetric',
+      metric: 'Ulams\\Reports\\Metrics\\CoursesSecondsSpentMetric',
       asDonut: true,
     },
   }),
@@ -101,7 +101,7 @@ const components: DashboardData = {
     h: 4,
     maxH: 4,
     component: PieChart,
-    props: { metric: 'EscolaLms\\Reports\\Metrics\\TutorsPopularityMetric' },
+    props: { metric: 'Ulams\\Reports\\Metrics\\TutorsPopularityMetric' },
   }),
   add: wrap({
     w: 1,

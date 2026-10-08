@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Categories\Http\Resources;
+namespace Ulams\Categories\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * @mixin \EscolaLms\Categories\Models\Category
+ * @mixin \Ulams\Categories\Models\Category
  */
 class CategoryResource extends JsonResource
 {

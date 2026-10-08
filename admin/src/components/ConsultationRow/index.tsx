@@ -1,4 +1,4 @@
-import { getConsultation } from '@/services/escola-lms/consultations';
+import { getConsultation } from '@/services/ulams/consultations';
 import { Button, message } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';

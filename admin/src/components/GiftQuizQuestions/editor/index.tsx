@@ -7,7 +7,7 @@ import {
   CompetencyChallengeCategoryTree,
   type CompetencyChallengeCategoryTreeProps,
 } from '@/pages/CompetencyChallenges/components/CompetencyChallengeCategoryTree';
-import { QuestionType } from '@/services/escola-lms/enums';
+import { QuestionType } from '@/services/ulams/enums';
 import { GiftQuizQuestion } from './question';
 import type { GiftQuizFormData, QuizQuestionSubmitData } from './types';
 import { parseToFormData, parseToGIFT } from './utils';

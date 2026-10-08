@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Pages\Http\Controllers\Contracts;
+namespace Ulams\Pages\Http\Controllers\Contracts;
 
-use EscolaLms\Pages\Http\Requests\PageDeleteRequest;
-use EscolaLms\Pages\Http\Requests\PageCreateRequest;
-use EscolaLms\Pages\Http\Requests\PageListingRequest;
-use EscolaLms\Pages\Http\Requests\PageUpdateRequest;
-use EscolaLms\Pages\Http\Requests\PageReadRequest;
+use Ulams\Pages\Http\Requests\PageDeleteRequest;
+use Ulams\Pages\Http\Requests\PageCreateRequest;
+use Ulams\Pages\Http\Requests\PageListingRequest;
+use Ulams\Pages\Http\Requests\PageUpdateRequest;
+use Ulams\Pages\Http\Requests\PageReadRequest;
 use Illuminate\Http\JsonResponse;
 
 interface PagesAdminApiContract

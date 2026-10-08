@@ -1,4 +1,4 @@
-import { order as fetchOrder } from '@/services/escola-lms/orders';
+import { order as fetchOrder } from '@/services/ulams/orders';
 import { Button, message } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Youtube\Dto\Contracts;
+namespace Ulams\Youtube\Dto\Contracts;
 
-use EscolaLms\Youtube\Dto\YTStreamDto;
+use Ulams\Youtube\Dto\YTStreamDto;
 
 interface YTLiveDtoContract
 {

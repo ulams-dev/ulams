@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Video\Tests\Feature;
+namespace Ulams\Video\Tests\Feature;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypes\Events\TopicTypeChanged;
-use EscolaLms\Video\Events\ProcessVideoFailed;
-use EscolaLms\Video\Events\ProcessVideoStarted;
-use EscolaLms\Video\Jobs\ProcessVideo;
-use EscolaLms\Video\Models\Video;
-use EscolaLms\Video\Tests\TestCase;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypes\Events\TopicTypeChanged;
+use Ulams\Video\Events\ProcessVideoFailed;
+use Ulams\Video\Events\ProcessVideoStarted;
+use Ulams\Video\Jobs\ProcessVideo;
+use Ulams\Video\Models\Video;
+use Ulams\Video\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Support\Carbon;

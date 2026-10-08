@@ -1,11 +1,11 @@
 <?php
 
-use EscolaLms\TopicTypeGift\Http\Controllers\AttemptAnswerApiAdminController;
-use EscolaLms\TopicTypeGift\Http\Controllers\AttemptAnswerApiController;
-use EscolaLms\TopicTypeGift\Http\Controllers\GiftQuestionApiAdminController;
-use EscolaLms\TopicTypeGift\Http\Controllers\GiftQuizApiAdminController;
-use EscolaLms\TopicTypeGift\Http\Controllers\QuizAttemptApiAdminController;
-use EscolaLms\TopicTypeGift\Http\Controllers\QuizAttemptApiController;
+use Ulams\TopicTypeGift\Http\Controllers\AttemptAnswerApiAdminController;
+use Ulams\TopicTypeGift\Http\Controllers\AttemptAnswerApiController;
+use Ulams\TopicTypeGift\Http\Controllers\GiftQuestionApiAdminController;
+use Ulams\TopicTypeGift\Http\Controllers\GiftQuizApiAdminController;
+use Ulams\TopicTypeGift\Http\Controllers\QuizAttemptApiAdminController;
+use Ulams\TopicTypeGift\Http\Controllers\QuizAttemptApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')->middleware(['auth:api'])->group(function () {

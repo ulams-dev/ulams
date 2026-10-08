@@ -6,15 +6,15 @@ use App\Http\Controllers\Swagger\EventAPISwagger;
 use App\Http\Requests\ListEventRequest;
 use App\Http\Resources\EventResource;
 use App\Services\Contracts\SearchableEventServiceContract;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\StationaryEvents\Enum\ConstantEnum;
-use EscolaLms\StationaryEvents\Http\Resources\StationaryEventResource;
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
-use EscolaLms\Webinar\Http\Resources\WebinarSimpleResource;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\StationaryEvents\Enum\ConstantEnum;
+use Ulams\StationaryEvents\Http\Resources\StationaryEventResource;
+use Ulams\StationaryEvents\Models\StationaryEvent;
+use Ulams\Webinar\Http\Resources\WebinarSimpleResource;
 use Illuminate\Http\JsonResponse;
 
-class EventAPIController extends EscolaLmsBaseController implements EventAPISwagger
+class EventAPIController extends UlamsBaseController implements EventAPISwagger
 {
     private SearchableEventServiceContract $eventService;
 

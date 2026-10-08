@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Settings\Http\Controllers\Admin\Swagger;
+namespace Ulams\Settings\Http\Controllers\Admin\Swagger;
 
-use EscolaLms\Settings\Http\Requests\Admin\ConfigListRequest;
-use EscolaLms\Settings\Http\Requests\Admin\ConfigUpdateRequest;
+use Ulams\Settings\Http\Requests\Admin\ConfigListRequest;
+use Ulams\Settings\Http\Requests\Admin\ConfigUpdateRequest;
 use Illuminate\Http\JsonResponse;
 
 interface ConfigControllerContract

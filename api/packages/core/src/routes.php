@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\Core\Http\Controllers\CoreController;
-use EscolaLms\Core\Http\Controllers\HealthCheckController;
+use Ulams\Core\Http\Controllers\CoreController;
+use Ulams\Core\Http\Controllers\HealthCheckController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/core'], function () {

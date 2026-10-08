@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\ConsultationAccess\Http\Controllers\Admin\ConsultationAccessEnquiryAdminApiController;
-use EscolaLms\ConsultationAccess\Http\Controllers\ConsultationAccessEnquiryApiController;
+use Ulams\ConsultationAccess\Http\Controllers\Admin\ConsultationAccessEnquiryAdminApiController;
+use Ulams\ConsultationAccess\Http\Controllers\ConsultationAccessEnquiryApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')->middleware(['auth:api'])->group(function () {

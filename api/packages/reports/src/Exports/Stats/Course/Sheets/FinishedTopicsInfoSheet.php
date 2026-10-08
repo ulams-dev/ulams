@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Reports\Exports\Stats\Course\Sheets;
+namespace Ulams\Reports\Exports\Stats\Course\Sheets;
 
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Courses\Models\Topic;
 use Illuminate\Support\Collection;
 
 class FinishedTopicsInfoSheet extends FinishedTopicsSheet

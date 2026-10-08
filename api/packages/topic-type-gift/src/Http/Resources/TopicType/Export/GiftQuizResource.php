@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Resources\TopicType\Export;
+namespace Ulams\TopicTypeGift\Http\Resources\TopicType\Export;
 
-use EscolaLms\TopicTypeGift\Http\Resources\AdminGiftQuestionResource;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
+use Ulams\TopicTypeGift\Http\Resources\AdminGiftQuestionResource;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

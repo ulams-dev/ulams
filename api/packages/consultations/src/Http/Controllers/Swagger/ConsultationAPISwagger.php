@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Consultations\Http\Controllers\Swagger;
+namespace Ulams\Consultations\Http\Controllers\Swagger;
 
-use EscolaLms\Consultations\Http\Requests\ConsultationUserTermRequest;
-use EscolaLms\Consultations\Http\Requests\ConsultationScreenSaveRequest;
-use EscolaLms\Consultations\Http\Requests\FinishTermRequest;
-use EscolaLms\Consultations\Http\Requests\GenerateSignedScreenUrlsRequest;
-use EscolaLms\Consultations\Http\Requests\ListAPIConsultationsRequest;
-use EscolaLms\Consultations\Http\Requests\ListConsultationsRequest;
-use EscolaLms\Consultations\Http\Requests\ReportTermConsultationRequest;
-use EscolaLms\Consultations\Http\Requests\ScheduleConsultationAPIRequest;
-use EscolaLms\Consultations\Http\Requests\ShowAPIConsultationRequest;
+use Ulams\Consultations\Http\Requests\ConsultationUserTermRequest;
+use Ulams\Consultations\Http\Requests\ConsultationScreenSaveRequest;
+use Ulams\Consultations\Http\Requests\FinishTermRequest;
+use Ulams\Consultations\Http\Requests\GenerateSignedScreenUrlsRequest;
+use Ulams\Consultations\Http\Requests\ListAPIConsultationsRequest;
+use Ulams\Consultations\Http\Requests\ListConsultationsRequest;
+use Ulams\Consultations\Http\Requests\ReportTermConsultationRequest;
+use Ulams\Consultations\Http\Requests\ScheduleConsultationAPIRequest;
+use Ulams\Consultations\Http\Requests\ShowAPIConsultationRequest;
 use Illuminate\Http\JsonResponse;
 
 interface ConsultationAPISwagger

@@ -1,9 +1,9 @@
 <?php
 
-namespace Database\Factories\EscolaLms\Categories\Models;
+namespace Database\Factories\Ulams\Categories\Models;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Categories\Services\Contracts\CategoryServiceContracts;
+use Ulams\Categories\Models\Category;
+use Ulams\Categories\Services\Contracts\CategoryServiceContracts;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Storage;
 

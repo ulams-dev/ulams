@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Strategies;
+namespace Ulams\AssignWithoutAccount\Strategies;
 
-use EscolaLms\AssignWithoutAccount\Strategies\Contracts\AssignStrategy;
-use EscolaLms\Core\Models\User;
+use Ulams\AssignWithoutAccount\Strategies\Contracts\AssignStrategy;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 

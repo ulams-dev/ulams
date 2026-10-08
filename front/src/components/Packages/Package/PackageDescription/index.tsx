@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { UlamsContext } from "@ulams/sdk/react/context";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 const PackageDescription = () => {
-  const { product } = useContext(EscolaLMSContext);
+  const { product } = useContext(UlamsContext);
   const { t } = useTranslation();
   const description = product.value?.description;
 

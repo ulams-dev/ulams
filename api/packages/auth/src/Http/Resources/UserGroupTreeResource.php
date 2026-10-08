@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Resources;
+namespace Ulams\Auth\Http\Resources;
 
-use EscolaLms\Auth\Enums\AuthPermissionsEnum;
-use EscolaLms\Auth\Traits\ResourceExtandable;
+use Ulams\Auth\Enums\AuthPermissionsEnum;
+use Ulams\Auth\Traits\ResourceExtandable;
 
 class UserGroupTreeResource extends UserGroupResource
 {

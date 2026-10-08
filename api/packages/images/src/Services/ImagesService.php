@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Images\Services;
+namespace Ulams\Images\Services;
 
-use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
-use EscolaLms\Images\Enum\ConstantEnum;
-use EscolaLms\Images\Enum\SupportedFormatsEnum;
-use EscolaLms\Images\Events\FileStored;
-use EscolaLms\Images\Repositories\Contracts\ImageCacheRepositoryContract;
-use EscolaLms\Images\Services\Contracts\ImagesServiceContract;
+use Ulams\Core\Repositories\Criteria\Primitives\LikeCriterion;
+use Ulams\Images\Enum\ConstantEnum;
+use Ulams\Images\Enum\SupportedFormatsEnum;
+use Ulams\Images\Events\FileStored;
+use Ulams\Images\Repositories\Contracts\ImageCacheRepositoryContract;
+use Ulams\Images\Services\Contracts\ImagesServiceContract;
 use Exception;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;

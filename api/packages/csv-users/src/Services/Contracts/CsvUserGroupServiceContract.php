@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Services\Contracts;
+namespace Ulams\CsvUsers\Services\Contracts;
 
-use EscolaLms\Auth\Dtos\UserFilterCriteriaDto;
+use Ulams\Auth\Dtos\UserFilterCriteriaDto;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 

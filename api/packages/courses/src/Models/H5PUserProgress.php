@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Models;
+namespace Ulams\Courses\Models;
 
-use EscolaLms\Courses\Tests\Models\User;
+use Ulams\Courses\Tests\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 /**

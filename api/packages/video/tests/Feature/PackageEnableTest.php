@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Video\Tests\Feature;
+namespace Ulams\Video\Tests\Feature;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\TopicTypes\Events\TopicTypeChanged;
-use EscolaLms\Video\Database\Seeders\VideoPermissionSeeder;
-use EscolaLms\Video\Tests\TestCase;
-use EscolaLms\Video\Tests\VideoTesting;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\TopicTypes\Events\TopicTypeChanged;
+use Ulams\Video\Database\Seeders\VideoPermissionSeeder;
+use Ulams\Video\Tests\TestCase;
+use Ulams\Video\Tests\VideoTesting;
 use Illuminate\Events\CallQueuedListener;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Queue;

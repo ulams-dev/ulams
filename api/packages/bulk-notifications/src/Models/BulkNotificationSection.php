@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Models;
+namespace Ulams\BulkNotifications\Models;
 
-use EscolaLms\BulkNotifications\Database\Factories\BulkNotificationSectionFactory;
+use Ulams\BulkNotifications\Database\Factories\BulkNotificationSectionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -11,7 +11,7 @@ use Illuminate\Support\Carbon;
  *
  * Class BulkNotificationSection
  *
- * @package EscolaLms\BulkNotifications\Models
+ * @package Ulams\BulkNotifications\Models
  *
  * @property int $id
  * @property string $key

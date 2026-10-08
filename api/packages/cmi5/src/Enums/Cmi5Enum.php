@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cmi5\Enums;
+namespace Ulams\Cmi5\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class Cmi5Enum extends BasicEnum
 {

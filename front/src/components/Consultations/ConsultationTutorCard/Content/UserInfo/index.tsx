@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { API } from "@lms/sdk";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { API } from "@ulams/sdk";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { IconCircleError, IconSuccess } from "@/icons/index";
-import IconText from "@lms/components/components/atoms/IconText/IconText";
+import IconText from "@ulams/components/components/atoms/IconText/IconText";
 import { useContext } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { useTranslation } from "react-i18next";
 import Status, { StatusTypes } from "@/components/Common/Status";
 
@@ -57,7 +57,7 @@ type StatusKey = keyof typeof statuses;
 
 const ConsultationTutorCardContentUserInfo = ({ consultation }: Props) => {
   const { approveConsultationTerm, rejectConsultationTerm } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
   const { t } = useTranslation();
 
   const renderStatus = (status: StatusKey) => {

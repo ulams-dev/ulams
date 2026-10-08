@@ -1,9 +1,9 @@
 <?php
 
-namespace Database\Factories\EscolaLms\Core\Models;
+namespace Database\Factories\Ulams\Core\Models;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;

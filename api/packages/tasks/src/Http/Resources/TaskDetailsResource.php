@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Resources;
+namespace Ulams\Tasks\Http\Resources;
 
-use EscolaLms\Tasks\Models\Task;
-use EscolaLms\Tasks\Models\TaskNote;
+use Ulams\Tasks\Models\Task;
+use Ulams\Tasks\Models\TaskNote;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -73,7 +73,7 @@ class TaskDetailsResource extends JsonResource
 {
     public function toArray($request): array
     {
-        $resourceClass = ('\EscolaLms\Tasks\Http\Resources\\' . class_basename($this->related_type) . 'Resource');
+        $resourceClass = ('\Ulams\Tasks\Http\Resources\\' . class_basename($this->related_type) . 'Resource');
 
         return [
             'id' => $this->id,

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Requests\Admin;
+namespace Ulams\TopicTypeGift\Http\Requests\Admin;
 
-use EscolaLms\TopicTypeGift\Dtos\AdminUpdateAttemptAnswerDto;
-use EscolaLms\TopicTypeGift\Models\AttemptAnswer;
+use Ulams\TopicTypeGift\Dtos\AdminUpdateAttemptAnswerDto;
+use Ulams\TopicTypeGift\Models\AttemptAnswer;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

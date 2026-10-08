@@ -1,6 +1,6 @@
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 

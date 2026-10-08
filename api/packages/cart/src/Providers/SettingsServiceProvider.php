@@ -1,21 +1,21 @@
 <?php
 
-namespace EscolaLms\Cart\Providers;
+namespace Ulams\Cart\Providers;
 
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
-use EscolaLms\Settings\Facades\AdministrableConfig;
+use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Settings\Facades\AdministrableConfig;
 use Illuminate\Support\ServiceProvider;
 
 class SettingsServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        if (class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
-            if (!$this->app->getProviders(EscolaLmsSettingsServiceProvider::class)) {
-                $this->app->register(EscolaLmsSettingsServiceProvider::class);
+        if (class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
+            if (!$this->app->getProviders(UlamsSettingsServiceProvider::class)) {
+                $this->app->register(UlamsSettingsServiceProvider::class);
             }
 
-            AdministrableConfig::registerConfig('escolalms_cart.min_product_price', ['required', 'numeric', 'min:0']);
+            AdministrableConfig::registerConfig('ulams_cart.min_product_price', ['required', 'numeric', 'min:0']);
         }
     }
 }

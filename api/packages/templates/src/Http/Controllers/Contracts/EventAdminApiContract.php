@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Templates\Http\Controllers\Contracts;
+namespace Ulams\Templates\Http\Controllers\Contracts;
 
-use EscolaLms\Templates\Http\Requests\EventTriggerRequest;
+use Ulams\Templates\Http\Requests\EventTriggerRequest;
 use Illuminate\Http\JsonResponse;
 
 interface EventAdminApiContract

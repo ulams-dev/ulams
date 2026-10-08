@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Payments\Facades;
+namespace Ulams\Payments\Facades;
 
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Payments\Contracts\Payable;
-use EscolaLms\Payments\Entities\PaymentProcessor;
-use EscolaLms\Payments\Entities\PaymentsConfig;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Payments\Contracts\Payable;
+use Ulams\Payments\Entities\PaymentProcessor;
+use Ulams\Payments\Entities\PaymentsConfig;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
 
@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static Payment findPayment(int $id)
  * @method static Collection searchPaymentsForExport(CriteriaDto $criteriaDto, OrderDto $orderDto)
  *
- * @see \EscolaLms\Payments\Services\PaymentsService
+ * @see \Ulams\Payments\Services\PaymentsService
  */
 class Payments extends Facade
 {

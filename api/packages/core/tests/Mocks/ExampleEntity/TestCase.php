@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Mocks\ExampleEntity;
+namespace Ulams\Core\Tests\Mocks\ExampleEntity;
 
-use EscolaLms\Core\EscolaLmsServiceProvider;
+use Ulams\Core\UlamsServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     protected function getPackageProviders($app)
     {

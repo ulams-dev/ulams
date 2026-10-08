@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\CoursesImportExport\Enums\CoursesImportExportPermissionsEnum;
+use Ulams\CoursesImportExport\Enums\CoursesImportExportPermissionsEnum;
 
 return [
     CoursesImportExportPermissionsEnum::COURSES_IMPORT => 'Importuj kurs',

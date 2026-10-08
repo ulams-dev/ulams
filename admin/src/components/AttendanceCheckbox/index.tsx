@@ -1,4 +1,4 @@
-import { changeStudentAttendance } from '@/services/escola-lms/attendances';
+import { changeStudentAttendance } from '@/services/ulams/attendances';
 import { Checkbox, Space, Tooltip } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import React, { useCallback, useEffect, useRef, useState } from 'react';

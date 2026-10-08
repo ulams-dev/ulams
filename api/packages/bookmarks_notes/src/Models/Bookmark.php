@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Models;
+namespace Ulams\Bookmarks\Models;
 
-use EscolaLms\Bookmarks\Database\Factories\BookmarkFactory;
+use Ulams\Bookmarks\Database\Factories\BookmarkFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +14,7 @@ use Illuminate\Support\Carbon;
  *
  * Class Bookmark
  *
- * @package EscolaLms\Bookmarks\Models
+ * @package Ulams\Bookmarks\Models
  *
  * @property int $id
  * @property ?string $value

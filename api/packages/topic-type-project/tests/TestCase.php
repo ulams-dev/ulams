@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Tests;
+namespace Ulams\TopicTypeProject\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
-use EscolaLms\TopicTypeProject\EscolaLmsTopicTypeProjectServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
+use Ulams\TopicTypeProject\UlamsTopicTypeProjectServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Passport\Passport;
-use EscolaLms\Auth\Tests\Models\Client;
+use Ulams\Auth\Tests\Models\Client;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
@@ -29,8 +29,8 @@ class TestCase extends CoreTestCase
             ...parent::getPackageProviders($app),
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
-            EscolaLmsAuthServiceProvider::class,
-            EscolaLmsTopicTypeProjectServiceProvider::class,
+            UlamsAuthServiceProvider::class,
+            UlamsTopicTypeProjectServiceProvider::class,
         ];
     }
 

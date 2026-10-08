@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { TextArea } from "../../../../";
 import { getUniqueId } from "../../../../utils/utils";
 import DefaultQuestionLayout from "../DefaultQuestionLayout";

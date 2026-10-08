@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Models\TopicContent;
+namespace Ulams\TopicTypes\Models\TopicContent;
 
-use EscolaLms\TopicTypes\Events\TopicTypeChanged;
-use EscolaLms\TopicTypes\Models\Contracts\TopicContentContract;
+use Ulams\TopicTypes\Events\TopicTypeChanged;
+use Ulams\TopicTypes\Models\Contracts\TopicContentContract;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use EscolaLms\Courses\Models\TopicContent\AbstractTopicContent as AbstractTopicContentExtend;
+use Ulams\Courses\Models\TopicContent\AbstractTopicContent as AbstractTopicContentExtend;
 
 /**
  * @property mixed $value

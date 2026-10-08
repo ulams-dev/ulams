@@ -1,7 +1,7 @@
 <?php
-namespace EscolaLms\Invoices\Services\Contracts;
+namespace Ulams\Invoices\Services\Contracts;
 
-use EscolaLms\Cart\Models\Order;
+use Ulams\Cart\Models\Order;
 use LaravelDaily\Invoices\Invoice;
 
 interface InvoicesServiceContract

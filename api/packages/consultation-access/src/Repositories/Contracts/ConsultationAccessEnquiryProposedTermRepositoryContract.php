@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Repositories\Contracts;
+namespace Ulams\ConsultationAccess\Repositories\Contracts;
 
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiryProposedTerm;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 
 interface ConsultationAccessEnquiryProposedTermRepositoryContract extends BaseRepositoryContract
 {

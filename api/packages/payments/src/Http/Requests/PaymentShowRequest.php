@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Payments\Http\Requests;
+namespace Ulams\Payments\Http\Requests;
 
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PaymentShowRequest extends FormRequest

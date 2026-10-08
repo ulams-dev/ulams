@@ -2,7 +2,7 @@ import { Descriptions } from 'antd';
 import React from 'react';
 import { FormattedMessage } from 'umi';
 
-import { QuestionType } from '@/services/escola-lms/enums';
+import { QuestionType } from '@/services/ulams/enums';
 
 interface Props {
   question: API.AttemptGiftQuestion;

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Templates\Events;
+namespace Ulams\Templates\Events;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\ForwardsCalls;

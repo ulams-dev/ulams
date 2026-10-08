@@ -1,10 +1,10 @@
 <?php
 
 
-namespace EscolaLms\Courses\Services\Contracts;
+namespace Ulams\Courses\Services\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Courses\Models\Course;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Courses\Models\Course;
 use Illuminate\Database\Eloquent\Builder;
 
 interface CourseServiceContract

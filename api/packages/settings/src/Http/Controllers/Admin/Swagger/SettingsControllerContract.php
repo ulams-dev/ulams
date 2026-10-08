@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Settings\Http\Controllers\Admin\Swagger;
+namespace Ulams\Settings\Http\Controllers\Admin\Swagger;
 
-use EscolaLms\Settings\Http\Requests\Admin\SettingsCreateRequest;
-use EscolaLms\Settings\Http\Requests\Admin\SettingsDeleteRequest;
-use EscolaLms\Settings\Http\Requests\Admin\SettingsListRequest;
-use EscolaLms\Settings\Http\Requests\Admin\SettingsReadRequest;
-use EscolaLms\Settings\Http\Requests\Admin\SettingsUpdateRequest;
+use Ulams\Settings\Http\Requests\Admin\SettingsCreateRequest;
+use Ulams\Settings\Http\Requests\Admin\SettingsDeleteRequest;
+use Ulams\Settings\Http\Requests\Admin\SettingsListRequest;
+use Ulams\Settings\Http\Requests\Admin\SettingsReadRequest;
+use Ulams\Settings\Http\Requests\Admin\SettingsUpdateRequest;
 use Illuminate\Http\JsonResponse;
 
 interface SettingsControllerContract

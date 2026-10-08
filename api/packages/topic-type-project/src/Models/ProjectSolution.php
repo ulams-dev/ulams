@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Models;
+namespace Ulams\TopicTypeProject\Models;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\TopicTypeProject\Database\Factories\ProjectSolutionFactory;
+use Ulams\Auth\Models\User;
+use Ulams\Courses\Models\Topic;
+use Ulams\TopicTypeProject\Database\Factories\ProjectSolutionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * EscolaLms\TopicTypeProject\Models\ProjectSolution
+ * Ulams\TopicTypeProject\Models\ProjectSolution
  *
  * @property int $id
  * @property string $path

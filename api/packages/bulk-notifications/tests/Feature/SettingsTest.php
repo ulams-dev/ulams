@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Tests\Feature;
+namespace Ulams\BulkNotifications\Tests\Feature;
 
-use EscolaLms\Auth\Database\Seeders\AuthPermissionSeeder;
-use EscolaLms\BulkNotifications\EscolaLmsBulkNotificationsServiceProvider;
-use EscolaLms\BulkNotifications\Tests\TestCase;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
+use Ulams\Auth\Database\Seeders\AuthPermissionSeeder;
+use Ulams\BulkNotifications\UlamsBulkNotificationsServiceProvider;
+use Ulams\BulkNotifications\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\Settings\UlamsSettingsServiceProvider;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Config;
 
@@ -19,20 +19,20 @@ class SettingsTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(EscolaLmsSettingsServiceProvider::class)) {
+        if (!class_exists(UlamsSettingsServiceProvider::class)) {
             $this->markTestSkipped('Settings package not installed');
         }
 
         $this->seed(PermissionTableSeeder::class);
         $this->seed(AuthPermissionSeeder::class);
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
     }
 
     public function testAdministrableConfigApi(): void
     {
         $user = $this->makeAdmin();
 
-        $configKey = EscolaLmsBulkNotificationsServiceProvider::CONFIG_KEY;
+        $configKey = UlamsBulkNotificationsServiceProvider::CONFIG_KEY;
 
         $pushServiceAccount = json_encode([
             "type" => "service_account",

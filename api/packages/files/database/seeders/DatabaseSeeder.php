@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Files\Database\Seeders;
+namespace Ulams\Files\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Webinar\Dto;
+namespace Ulams\Webinar\Dto;
 
 use Carbon\Carbon;
-use EscolaLms\Webinar\Dto\Contracts\ModelDtoContract;
-use EscolaLms\Webinar\Enum\ConstantEnum;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Webinar\Dto\Contracts\ModelDtoContract;
+use Ulams\Webinar\Enum\ConstantEnum;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Support\Str;
 
 class WebinarDto extends BaseDto implements ModelDtoContract

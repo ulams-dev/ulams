@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Repositories\Contracts;
+namespace Ulams\PencilSpaces\Repositories\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\PencilSpaces\Models\User;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\PencilSpaces\Models\User;
 
 interface UserRepositoryContract extends BaseRepositoryContract
 {

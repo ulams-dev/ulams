@@ -1,13 +1,10 @@
 # Image processing module
 
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Images/)
-[![codecov](https://codecov.io/gh/EscolaLMS/Images/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Images)
+[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/Images/)
+[![codecov](https://codecov.io/gh/Ulams/Images/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Images)
 [![phpunit](https://github.com/EscolaLMS/Images/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Courses/actions/workflows/test.yml)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/images)](https://packagist.org/packages/escolalms/images)
-[![downloads](https://img.shields.io/packagist/v/escolalms/images)](https://packagist.org/packages/escolalms/images)
-[![downloads](https://img.shields.io/packagist/l/escolalms/images)](https://packagist.org/packages/escolalms/images)
-[![Maintainability](https://api.codeclimate.com/v1/badges/7dfeae0462e3599797bf/maintainability)](https://codeclimate.com/github/EscolaLMS/Images/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/7dfeae0462e3599797bf/test_coverage)](https://codeclimate.com/github/EscolaLMS/Images/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/7dfeae0462e3599797bf/maintainability)](https://codeclimate.com/github/Ulams/Images/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/7dfeae0462e3599797bf/test_coverage)](https://codeclimate.com/github/Ulams/Images/test_coverage)
 
 ## What does it do
 
@@ -19,11 +16,11 @@ The initial resize is done by [Intervention/image](https://github.com/Interventi
 
 After inital resized all the images are optimized with [image-optimizer](https://packagist.org/packages/spatie/image-optimizer).
 
-For best results binaries must [be installed](https://github.com/spatie/image-optimizer#optimization-tools). EscolaLMS prepared [Docker Images](https://hub.docker.com/r/escolalms/php) are available for development (tag `work`) and production (tag `prod`).
+For best results binaries must [be installed](https://github.com/spatie/image-optimizer#optimization-tools). Ulams prepared [Docker Images](https://hub.docker.com/r/escolalms/php) are available for development (tag `work`) and production (tag `prod`).
 
 ## Installation
 
-- `composer require escolalms/images`
+- `composer require ulams/images`
 - `php artisan migrate`
 
 ## Database
@@ -121,14 +118,14 @@ $output_file = $url_prefix.$hash.$extension;
 
 ## Endpoint 
 
-There is API endpoints documentation [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Images/)
+There is API endpoints documentation [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/Images/)
 
 ## Tests
 
 Run `./vendor/bin/phpunit` to run tests.
 
 Test details
-[![codecov](https://codecov.io/gh/EscolaLMS/Images/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Images)
+[![codecov](https://codecov.io/gh/Ulams/Images/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Images)
 [![phpunit](https://github.com/EscolaLMS/Images/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Courses/actions/workflows/test.yml)
 
 ## Events

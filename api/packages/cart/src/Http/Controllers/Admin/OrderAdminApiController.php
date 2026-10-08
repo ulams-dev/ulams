@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Controllers\Admin;
+namespace Ulams\Cart\Http\Controllers\Admin;
 
-use EscolaLms\Cart\Enums\ExportFormatEnum;
-use EscolaLms\Cart\Exports\OrdersExport;
-use EscolaLms\Cart\Http\Requests\Admin\OrderExportRequest;
-use EscolaLms\Cart\Http\Requests\Admin\OrderSearchRequest;
-use EscolaLms\Cart\Http\Requests\OrderViewRequest;
-use EscolaLms\Cart\Http\Resources\OrderResource;
-use EscolaLms\Cart\Http\Swagger\Admin\OrderAdminSwagger;
-use EscolaLms\Cart\Services\Contracts\OrderServiceContract;
-use EscolaLms\Core\Dtos\OrderDto as SortDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Cart\Enums\ExportFormatEnum;
+use Ulams\Cart\Exports\OrdersExport;
+use Ulams\Cart\Http\Requests\Admin\OrderExportRequest;
+use Ulams\Cart\Http\Requests\Admin\OrderSearchRequest;
+use Ulams\Cart\Http\Requests\OrderViewRequest;
+use Ulams\Cart\Http\Resources\OrderResource;
+use Ulams\Cart\Http\Swagger\Admin\OrderAdminSwagger;
+use Ulams\Cart\Services\Contracts\OrderServiceContract;
+use Ulams\Core\Dtos\OrderDto as SortDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\JsonResponse;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class OrderAdminApiController extends EscolaLmsBaseController implements OrderAdminSwagger
+class OrderAdminApiController extends UlamsBaseController implements OrderAdminSwagger
 {
     protected OrderServiceContract $orderService;
 

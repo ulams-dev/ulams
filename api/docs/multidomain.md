@@ -1,6 +1,6 @@
-# Wellms Single or Multi Domain API Mode.
+# Ulams Single or Multi Domain API Mode.
 
-Wellms API is working in two modes, either
+Ulams API is working in two modes, either
 
 - single domain or catch all domains to one service
 - multiple domains to each service (different database, buckets, settings etc)
@@ -24,7 +24,7 @@ There is no better documentation than example, aka "specification by example".
 
 ### Single domain API.
 
-Launch Wellms api as usual with, eg `docker compose up -d` with `docker-compose.yml` package from [this repository](https://github.com/EscolaLMS/API) - now single domain wellms is working, as you can check under http://api.localhost
+Launch Ulams api as usual with, eg `docker compose up -d` with `docker-compose.yml` package from [this repository](https://github.com/EscolaLMS/API) - now single domain ulams is working, as you can check under http://api.localhost
 
 This tutorial assumes that all `*.localhost`, `*.admin.localhost` and `*.app.localhost` addressed are forwarded to `127.0.0.1`, if this doesn't work on your machine you need to manually add each record for each domain in your `/etc/hosts` file.
 
@@ -35,7 +35,7 @@ Launch application with default setting by cloning [API repository](https://gith
 First install dependencies
 
 ```bash
-docker compose run escola_lms_app composer install --ignore-platform-reqs --no-scripts
+docker compose run ulams_app composer install --ignore-platform-reqs --no-scripts
 ```
 
 then run the application
@@ -51,18 +51,18 @@ docker compose stop
 docker compose up -d
 ```
 
-Url [http://api.localhost/api/name](http://api.localhost/api/name) should return "Application Name: Wellms" and URL [http://api.localhost/api/courses](http://api.localhost/api/courses) JSON with courses, yet empty list by default.
+Url [http://api.localhost/api/name](http://api.localhost/api/name) should return "Application Name: Ulams" and URL [http://api.localhost/api/courses](http://api.localhost/api/courses) JSON with courses, yet empty list by default.
 
 Lets test it with Admin panel
 
-Go to url [http://api.admin.localhost/](http://api.admin.localhost/) use credentials `admin@escolasoft.com` and password `secret` (this refers to env variables `INITIAL_USER_EMAIL` and `INITIAL_USER_PASSWORD`)
+Go to url [http://api.admin.localhost/](http://api.admin.localhost/) use credentials `admin@ulams.app` and password `secret` (this refers to env variables `INITIAL_USER_EMAIL` and `INITIAL_USER_PASSWORD`)
 
 Go to URL [http://api.app.localhost/#/](http://api.app.localhost/#/) to see demo of your data.
 
 There isn't much content but if you want to generate some run command
 
 ```bash
-docker compose run escola_lms_app php artisan db:seed --class=FullDatabaseSeeder
+docker compose run ulams_app php artisan db:seed --class=FullDatabaseSeeder
 ```
 
 This command generate lots of testing content but it takes few minutes to finish.
@@ -153,7 +153,7 @@ New lets add those values into docker yaml setup, create a file `docker-compose.
 
 ```yaml
 services:
-  escola_lms_app:
+  ulams_app:
     command: "./init.sh"
     environment:
       - API17005_LOCALHOST_AWS_ACCESS_KEY_ID=api17005localhost
@@ -197,7 +197,7 @@ docker compose -f docker-compose.yml -f docker-compose.saas.yml up -d
 
 It takes few second for first run to use those variable effectively.
 
-Each of the links for generated domain should work now and return same response "Application Name: Wellms"
+Each of the links for generated domain should work now and return same response "Application Name: Ulams"
 
 - http://api17005.localhost/api/name
 - http://api16576.localhost/api/name
@@ -252,7 +252,7 @@ Passing REACT_APP_API_URL=http://api17005.localhost to admin panel at domain htt
 add this code to `docker-compose.saas.yml`
 
 ```yaml
-escola_lms_admin:
+ulams_admin:
   environment:
     - MULTI_DOMAINS=api17005.admin.localhost,api16576.admin.localhost,api22800.admin.localhost
     - API16576_ADMIN_LOCALHOST_REACT_APP_API_URL=http://api16576.localhost
@@ -262,18 +262,18 @@ escola_lms_admin:
 
 run `docker compose -f docker-compose.yml -f docker-compose.saas.yml up -d` again and wait until server is responding.
 
-Open [http://api17005.admin.localhost/#/user/login](http://api17005.admin.localhost/#/user/login) use credentials `admin@escolasoft.com` and password set in env `API17005_LOCALHOST_INITIAL_USER_PASSWORD`
+Open [http://api17005.admin.localhost/#/user/login](http://api17005.admin.localhost/#/user/login) use credentials `admin@ulams.app` and password set in env `API17005_LOCALHOST_INITIAL_USER_PASSWORD`
 
 Thats it - you can now add as many domains as you want, each have a separate configuration settings, bucket and database.
 
 ### Frontend
 
-Most of advantages od headless comes with attaching API to your front. We have created a [React demo](https://github.com/EscolaLMS/Front) to showcase Wellms possibilities. It's deployed to docker images as well, using it it's very similar to Admin panel.
+Most of advantages od headless comes with attaching API to your front. We have created a [React demo](https://github.com/EscolaLMS/Front) to showcase Ulams possibilities. It's deployed to docker images as well, using it it's very similar to Admin panel.
 
 Add this code to `docker-compose.saas.yml`
 
 ```yaml
-escola_lms_front:
+ulams_front:
   environment:
     - MULTI_DOMAINS=api17005.app.localhost,api16576.app.localhost,api22800.app.localhost
     - API16576_APP_LOCALHOST_VITE_APP_API_URL=http://api16576.localhost

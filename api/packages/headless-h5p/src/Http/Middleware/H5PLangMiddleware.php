@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Http\Middleware;
+namespace Ulams\HeadlessH5P\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Video\Providers;
+namespace Ulams\Video\Providers;
 
-use EscolaLms\Video\Jobs\DetectStuckVideo;
+use Ulams\Video\Jobs\DetectStuckVideo;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
 

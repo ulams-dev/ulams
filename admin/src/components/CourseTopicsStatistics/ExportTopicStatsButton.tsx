@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage } from 'umi';
 
-import { exportStatForTopic } from '@/services/escola-lms/reports';
+import { exportStatForTopic } from '@/services/ulams/reports';
 
 interface Props {
   topic_id: number | undefined;

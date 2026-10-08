@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Cart\Models;
+namespace Ulams\Cart\Models;
 
-use EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder;
-use EscolaLms\Cart\Support\OrderItemCollection;
+use Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder;
+use Ulams\Cart\Support\OrderItemCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
- * EscolaLms\Cart\Models\OrderItem
+ * Ulams\Cart\Models\OrderItem
  *
  * @property int $id
  * @property int $order_id
@@ -29,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property-read int $tax
  * @property-read int $total
  * @property-read int $total_with_tax
- * @property-read \EscolaLms\Cart\Models\Order $order
+ * @property-read \Ulams\Cart\Models\Order $order
  * @method static OrderItemCollection|static[] all($columns = ['*'])
  * @method static OrderItemCollection|static[] get($columns = ['*'])
  * @method static OrderItemModelQueryBuilder|OrderItem newModelQuery()

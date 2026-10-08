@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Notifications\Database\Seeders;
+namespace Ulams\Notifications\Database\Seeders;
 
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Notifications\Enums\NotificationsPermissionsEnum;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Notifications\Enums\NotificationsPermissionsEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

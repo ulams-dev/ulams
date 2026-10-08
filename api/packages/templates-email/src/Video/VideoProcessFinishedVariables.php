@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Video;
+namespace Ulams\TemplatesEmail\Video;
 
 class VideoProcessFinishedVariables extends CommonVideoVariables
 {

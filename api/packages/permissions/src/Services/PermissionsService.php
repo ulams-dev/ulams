@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Permissions\Services;
+namespace Ulams\Permissions\Services;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\Criteria\Criterion;
-use EscolaLms\Permissions\Dtos\RoleFilterCriteriaDto;
-use EscolaLms\Permissions\Events\PermissionRoleChanged;
-use EscolaLms\Permissions\Events\PermissionRoleRemoved;
-use EscolaLms\Permissions\Services\Contracts\PermissionsServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\Criteria\Criterion;
+use Ulams\Permissions\Dtos\RoleFilterCriteriaDto;
+use Ulams\Permissions\Events\PermissionRoleChanged;
+use Ulams\Permissions\Events\PermissionRoleRemoved;
+use Ulams\Permissions\Services\Contracts\PermissionsServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Str;
-use EscolaLms\Permissions\Exceptions\AdminRoleException;
+use Ulams\Permissions\Exceptions\AdminRoleException;
 
 class PermissionsService implements PermissionsServiceContract
 {

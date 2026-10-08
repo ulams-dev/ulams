@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Repositories;
+namespace Ulams\TopicTypeGift\Repositories;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
-use EscolaLms\TopicTypeGift\Repositories\Contracts\QuizAttemptRepositoryContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
+use Ulams\TopicTypeGift\Repositories\Contracts\QuizAttemptRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 

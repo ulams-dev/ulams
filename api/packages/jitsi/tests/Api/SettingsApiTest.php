@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Jitsi\Tests\Api;
+namespace Ulams\Jitsi\Tests\Api;
 
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Jitsi\Enum\PackageStatusEnum;
-use EscolaLms\Jitsi\Providers\SettingsServiceProvider;
-use EscolaLms\Jitsi\Tests\TestCase;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Jitsi\Enum\PackageStatusEnum;
+use Ulams\Jitsi\Providers\SettingsServiceProvider;
+use Ulams\Jitsi\Tests\TestCase;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Config;
@@ -20,12 +20,12 @@ class SettingsApiTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
+        if (!class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
             $this->markTestSkipped('Settings package not installed');
         }
 
         $this->seed(PermissionTableSeeder::class);
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
 
         $this->user = config('auth.providers.users.model')::factory()->create();
         $this->user->guard_name = 'api';

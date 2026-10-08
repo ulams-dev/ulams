@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Testing;
+namespace Ulams\TemplatesSms\Testing;
 
 use Closure;
 use Illuminate\Support\Collection;

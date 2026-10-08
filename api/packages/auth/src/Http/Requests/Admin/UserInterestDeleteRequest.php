@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests\Admin;
+namespace Ulams\Auth\Http\Requests\Admin;
 
-use EscolaLms\Categories\Models\Category;
+use Ulams\Categories\Models\Category;
 
 class UserInterestDeleteRequest extends AbstractUserIdInRouteRequest
 {

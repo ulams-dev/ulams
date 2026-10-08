@@ -2,12 +2,6 @@
 
 Configuration management package
 
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/settings/)
-[![codecov](https://codecov.io/gh/EscolaLMS/settings/branch/main/graph/badge.svg?token=gBzpyNK8DQ)](https://codecov.io/gh/EscolaLMS/settings)
-[![phpunit](https://github.com/EscolaLMS/settings/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/settings/actions/workflows/test.yml)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/settings)](https://packagist.org/packages/escolalms/settings)
-[![downloads](https://img.shields.io/packagist/v/escolalms/settings)](https://packagist.org/packages/escolalms/settings)
-[![downloads](https://img.shields.io/packagist/l/escolalms/settings)](https://packagist.org/packages/escolalms/settings)
 
 ## Purpose
 
@@ -15,10 +9,10 @@ This package can be used to register application config keys which can be then m
 
 ## Installation
 
-- `composer require escolalms/settings`
+- `composer require ulams/settings`
 - `php artisan migrate`
-- `php artisan db:seed --class="EscolaLms\Settings\Database\Seeders\PermissionTableSeeder"`
-- optional: `php artisan vendor:publish --tag=escola_settings.config` to publish config file
+- `php artisan db:seed --class="Ulams\Settings\Database\Seeders\PermissionTableSeeder"`
+- optional: `php artisan vendor:publish --tag=ulams_settings.config` to publish config file
 
 ## Dependencies
 
@@ -33,7 +27,7 @@ Config file contains `use_database` option, which determines if Config should be
 Every package can register config keys by calling `registerConfig` static method from `AdministrableConfig` Facade in its own Package Service Provider `register` method.
 
 ```php
-use EscolaLms\Settings\Facades\AdministrableConfig;
+use Ulams\Settings\Facades\AdministrableConfig;
 
 public function register(){
 
@@ -57,7 +51,7 @@ Config will be automatically loaded from database (if `use_database` config opti
 
 ### Changing config
 
-`EscolaLms\Settings\Facades\AdministrableConfig` facade can also be used to modify and retrieve values for registered config keys.
+`Ulams\Settings\Facades\AdministrableConfig` facade can also be used to modify and retrieve values for registered config keys.
 
 ```php
 AdministrableConfig::setConfig(array $config); // sets config values for any registered config key in $config array, running validation rules
@@ -69,15 +63,15 @@ These methods are utilised by web API of this package.
 
 ### Config Repository Extension & Config Rewriter
 
-This package extends basic `config` Facade of Laravel Framework wrapping it in `EscolaLms\Settings\ConfigRewriter\ConfigRepositoryExtension` decorator. This extended Config repository has a `write` method that can be called to store all in-memory changes to configuration values straight into config files. Writing operation tries to preserve structure of original config files (order of keys, comments, etc.) but it's not always possible (parses this package uses is WIP) and sometimes everything other than keys and values can be removed from config file. Using Database to store modified config values is a safer (non-destructive) option.
+This package extends basic `config` Facade of Laravel Framework wrapping it in `Ulams\Settings\ConfigRewriter\ConfigRepositoryExtension` decorator. This extended Config repository has a `write` method that can be called to store all in-memory changes to configuration values straight into config files. Writing operation tries to preserve structure of original config files (order of keys, comments, etc.) but it's not always possible (parses this package uses is WIP) and sometimes everything other than keys and values can be removed from config file. Using Database to store modified config values is a safer (non-destructive) option.
 
 ## Endpoints
 
-All the endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/settings/).
+All the endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/settings/).
 
 ## Events
 
-- `EscolaLms\Settings\Events\SettingPackageConfigUpdated` emitted when settings are changed using web API.
+- `Ulams\Settings\Events\SettingPackageConfigUpdated` emitted when settings are changed using web API.
 
 ## Listeners
 
@@ -91,7 +85,7 @@ No Listeners are defined in this package.
 
 ![Admin panel menu](docs/menu.png "Admin panel menu")
 
-#### **List of registered Settings for single package (EscolaLms\Auth package used in screenshot)**
+#### **List of registered Settings for single package (Ulams\Auth package used in screenshot)**
 
 ![List of registered settings for single package](docs/list.png "List of registered settings for single package")
 
@@ -101,11 +95,9 @@ No Listeners are defined in this package.
 
 ## Tests
 
-Run `./vendor/bin/phpunit --filter 'EscolaLms\\Settings\\Tests'` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
+Run `./vendor/bin/phpunit --filter 'Ulams\\Settings\\Tests'` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
 
 Test details:
-[![codecov](https://codecov.io/gh/EscolaLMS/settings/branch/main/graph/badge.svg?token=gBzpyNK8DQ)](https://codecov.io/gh/EscolaLMS/settings)
-[![phpunit](https://github.com/EscolaLMS/settings/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/settings/actions/workflows/test.yml)
 
 ## Permissions
 

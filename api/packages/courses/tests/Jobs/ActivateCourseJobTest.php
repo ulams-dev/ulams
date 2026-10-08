@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\Jobs;
+namespace Ulams\Courses\Tests\Jobs;
 
 use Carbon\Carbon;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Events\CourseStatusChanged;
-use EscolaLms\Courses\Jobs\ActivateCourseJob;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Tests\TestCase;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Events\CourseStatusChanged;
+use Ulams\Courses\Jobs\ActivateCourseJob;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Database\Factories\TopicContent;
+namespace Ulams\TopicTypes\Database\Factories\TopicContent;
 
-use EscolaLms\HeadlessH5P\Models\H5PContent;
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\Components\H5PHelper;
-use EscolaLms\TopicTypes\Models\TopicContent\H5P;
+use Ulams\HeadlessH5P\Models\H5PContent;
+use Ulams\TopicTypes\Database\Factories\TopicContent\Components\H5PHelper;
+use Ulams\TopicTypes\Models\TopicContent\H5P;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class H5PFactory extends Factory
@@ -23,7 +23,7 @@ class H5PFactory extends Factory
      */
     public function definition()
     {
-        if (!class_exists('EscolaLms\HeadlessH5P\Models\H5PContent')) {
+        if (!class_exists('Ulams\HeadlessH5P\Models\H5PContent')) {
             return [];
         }
 

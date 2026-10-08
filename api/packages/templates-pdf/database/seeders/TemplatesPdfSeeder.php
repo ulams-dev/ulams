@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Database\Seeders;
+namespace Ulams\TemplatesPdf\Database\Seeders;
 
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\TemplatesPdf\Core\PdfChannel;
+use Ulams\Templates\Facades\Template;
+use Ulams\TemplatesPdf\Core\PdfChannel;
 use Illuminate\Database\Seeder;
 
 class TemplatesPdfSeeder extends Seeder

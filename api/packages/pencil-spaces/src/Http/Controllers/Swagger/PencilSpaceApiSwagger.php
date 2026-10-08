@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Http\Controllers\Swagger;
+namespace Ulams\PencilSpaces\Http\Controllers\Swagger;
 
 /**
  * @OA\Post(

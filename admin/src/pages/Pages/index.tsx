@@ -7,7 +7,7 @@ import React, { useRef } from 'react';
 import { FormattedMessage, Link, useIntl } from 'umi';
 
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';
-import { deletePage, pages } from '@/services/escola-lms/pages';
+import { deletePage, pages } from '@/services/ulams/pages';
 import { createTableOrderObject } from '@/utils/utils';
 
 const handleRemove = async (id: number) => {
@@ -51,7 +51,7 @@ const TableList: React.FC = () => {
       render: (_, record) => (
         <TypeButtonDrawer
           key={'user'}
-          type="EscolaLms\Core\Models\User"
+          type="Ulams\Core\Models\User"
           type_id={record.author_id}
         />
       ),

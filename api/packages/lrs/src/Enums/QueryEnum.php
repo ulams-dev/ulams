@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Lrs\Enums;
+namespace Ulams\Lrs\Enums;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class QueryEnum extends BasicEnum
 {

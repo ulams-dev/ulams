@@ -14,10 +14,10 @@ return [
      * This is the model used by the Db Translation loader. You can put any model here
      * that extends Spatie\TranslationLoader\LanguageLine.
      */
-    'model' => EscolaLms\Translations\Models\LanguageLine::class,
+    'model' => Ulams\Translations\Models\LanguageLine::class,
 
     /*
      * This is the translation manager which overrides the default Laravel `translation.loader`
      */
-    'translation_manager' => EscolaLms\Translations\Translations\TranslationLoaderManager::class,
+    'translation_manager' => Ulams\Translations\Translations\TranslationLoaderManager::class,
 ];

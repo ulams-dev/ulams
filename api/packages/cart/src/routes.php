@@ -1,13 +1,13 @@
 <?php
 
-use EscolaLms\Cart\Http\Controllers\Admin\OrderAdminApiController;
-use EscolaLms\Cart\Http\Controllers\Admin\ProductableAdminApiController;
-use EscolaLms\Cart\Http\Controllers\Admin\ProductAdminApiController;
-use EscolaLms\Cart\Http\Controllers\CartApiController;
-use EscolaLms\Cart\Http\Controllers\OrderApiController;
-use EscolaLms\Cart\Http\Controllers\PaymentApiController;
-use EscolaLms\Cart\Http\Controllers\ProductablesApiController;
-use EscolaLms\Cart\Http\Controllers\ProductApiController;
+use Ulams\Cart\Http\Controllers\Admin\OrderAdminApiController;
+use Ulams\Cart\Http\Controllers\Admin\ProductableAdminApiController;
+use Ulams\Cart\Http\Controllers\Admin\ProductAdminApiController;
+use Ulams\Cart\Http\Controllers\CartApiController;
+use Ulams\Cart\Http\Controllers\OrderApiController;
+use Ulams\Cart\Http\Controllers\PaymentApiController;
+use Ulams\Cart\Http\Controllers\ProductablesApiController;
+use Ulams\Cart\Http\Controllers\ProductApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api/admin', 'middleware' => ['auth:api']], function () {

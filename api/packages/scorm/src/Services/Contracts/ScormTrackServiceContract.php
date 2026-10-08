@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EscolaLms\Scorm\Services\Contracts;
+namespace Ulams\Scorm\Services\Contracts;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\UploadedFile;

@@ -2,7 +2,7 @@
 
 return [
     'except_events' => [
-        'EscolaLms\Auth\Events\Login',
-        'EscolaLms\Auth\Events\Logout',
+        'Ulams\Auth\Events\Login',
+        'Ulams\Auth\Events\Logout',
     ]
 ];

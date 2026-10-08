@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\CoursesImportExport\Http\Controllers\CourseExportImportAPIController;
+use Ulams\CoursesImportExport\Http\Controllers\CourseExportImportAPIController;
 use Illuminate\Support\Facades\Route;
 
 // admin endpoints

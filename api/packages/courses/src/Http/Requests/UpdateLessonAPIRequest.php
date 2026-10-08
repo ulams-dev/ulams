@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Requests;
+namespace Ulams\Courses\Http\Requests;
 
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Rules\ValidParentLesson;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Rules\ValidParentLesson;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateLessonAPIRequest extends FormRequest

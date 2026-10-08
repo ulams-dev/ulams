@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Http\Resources;
+namespace Ulams\Dictionaries\Http\Resources;
 
-use EscolaLms\Auth\Traits\ResourceExtandable;
-use EscolaLms\Dictionaries\Models\Dictionary;
+use Ulams\Auth\Traits\ResourceExtandable;
+use Ulams\Dictionaries\Models\Dictionary;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

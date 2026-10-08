@@ -1,15 +1,15 @@
 import { Link, useParams } from "react-router-dom";
 import React, { useContext, useEffect } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import Preloader from "@/components/_App/Preloader";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import Breadcrumbs from "@/components/Common/Breadcrumbs";
 import { Col, Row } from "react-grid-system";
 import { useTranslation } from "react-i18next";
 import ConsultationHero from "@/components/Consultations/Consultation/ConsultationHero";
 import ConsultationSidebar from "@/components/Consultations/Consultation/ConsultationSidebar";
-import { MarkdownRenderer } from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
-import { fixContentForMarkdown } from "@lms/components/utils/components/markdown";
+import { MarkdownRenderer } from "@ulams/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { fixContentForMarkdown } from "@ulams/components/utils/components/markdown";
 import {
   StyledDescription,
   StyledRelatedConsultations,
@@ -22,16 +22,16 @@ import SidebarSkeleton from "@/components/Skeletons/CoursePage/sidebar";
 import { StyledCoursePage } from "@/pages/courses/course/styles";
 import ConsultationPageContentSkeleton from "@/components/Skeletons/Consultation";
 import { CourseAuthor } from "@/pages/courses/course/Components";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 
 const Consultation = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { consultation, fetchConsultation, consultations } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
 
   const consultationCategories = consultation.value?.categories?.map(
-    (category: EscolaLms.Categories.Models.Category) => category.name
+    (category: Ulams.Categories.Models.Category) => category.name
   );
 
   useEffect(() => {

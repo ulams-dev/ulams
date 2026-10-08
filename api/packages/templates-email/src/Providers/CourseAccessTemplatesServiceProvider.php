@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Providers;
+namespace Ulams\TemplatesEmail\Providers;
 
-use EscolaLms\CourseAccess\Events\CourseAccessEnquiryAdminCreatedEvent;
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
-use EscolaLms\TemplatesEmail\CourseAccess\CourseAccessEnquiryAdminCreatedVariables;
+use Ulams\CourseAccess\Events\CourseAccessEnquiryAdminCreatedEvent;
+use Ulams\Templates\Facades\Template;
+use Ulams\TemplatesEmail\Core\EmailChannel;
+use Ulams\TemplatesEmail\CourseAccess\CourseAccessEnquiryAdminCreatedVariables;
 use Illuminate\Support\ServiceProvider;
 
 class CourseAccessTemplatesServiceProvider extends ServiceProvider

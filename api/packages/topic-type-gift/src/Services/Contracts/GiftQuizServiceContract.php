@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Services\Contracts;
+namespace Ulams\TopicTypeGift\Services\Contracts;
 
-use EscolaLms\TopicTypeGift\Dtos\QuizDto;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Dtos\QuizDto;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
 use Illuminate\Database\Eloquent\Collection;
 
 interface GiftQuizServiceContract

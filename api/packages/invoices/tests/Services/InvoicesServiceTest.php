@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Invoices\Tests\Services;
+namespace Ulams\Invoices\Tests\Services;
 
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Models\OrderItem;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductProductable;
-use EscolaLms\Cart\Tests\Mocks\ExampleProductable;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Invoices\Services\Contracts\InvoicesServiceContract;
-use EscolaLms\Invoices\Tests\TestCase;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Models\OrderItem;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductProductable;
+use Ulams\Cart\Tests\Mocks\ExampleProductable;
+use Ulams\Core\Models\User;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Invoices\Services\Contracts\InvoicesServiceContract;
+use Ulams\Invoices\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class InvoicesServiceTest extends TestCase

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Services\Contracts;
+namespace Ulams\Dictionaries\Services\Contracts;
 
-use EscolaLms\Dictionaries\Dtos\DictionaryAccessDto;
-use EscolaLms\Dictionaries\Models\Dictionary;
+use Ulams\Dictionaries\Dtos\DictionaryAccessDto;
+use Ulams\Dictionaries\Models\Dictionary;
 use Illuminate\Support\Collection;
 
 interface DictionaryAccessServiceContract

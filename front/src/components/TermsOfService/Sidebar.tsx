@@ -1,13 +1,13 @@
 import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
-import Image from "@lms/sdk/react/components/Image";
-import { API } from "@lms/sdk";
+import { UlamsContext } from "@ulams/sdk/react/context";
+import Image from "@ulams/sdk/react/components/Image";
+import { API } from "@ulams/sdk";
 
 const Sidebar = () => {
   const { t } = useTranslation();
-  const { settings, courses, fetchCourses } = useContext(EscolaLMSContext);
+  const { settings, courses, fetchCourses } = useContext(UlamsContext);
 
   useEffect(() => {
     fetchCourses({ per_page: 3 });

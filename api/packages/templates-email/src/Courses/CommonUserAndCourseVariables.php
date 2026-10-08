@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Courses;
+namespace Ulams\TemplatesEmail\Courses;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\TemplatesEmail\Core\EmailVariables;
+use Ulams\Core\Models\User;
+use Ulams\Courses\Models\Course;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\TemplatesEmail\Core\EmailVariables;
 
 abstract class CommonUserAndCourseVariables extends EmailVariables
 {

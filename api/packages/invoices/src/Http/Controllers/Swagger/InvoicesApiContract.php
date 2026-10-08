@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Invoices\Http\Controllers\Swagger;
+namespace Ulams\Invoices\Http\Controllers\Swagger;
 
-use EscolaLms\Invoices\Http\Requests\InvoicesReadRequest;
+use Ulams\Invoices\Http\Requests\InvoicesReadRequest;
 use Illuminate\Http\Response;
 
 interface InvoicesApiContract

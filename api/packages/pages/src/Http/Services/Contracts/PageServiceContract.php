@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Pages\Http\Services\Contracts;
+namespace Ulams\Pages\Http\Services\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Pages\Models\Page;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Pages\Models\Page;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
  * Interface PageServiceContract
- * @package EscolaLms\Pages\Http\Services\Contracts
+ * @package Ulams\Pages\Http\Services\Contracts
  */
 interface PageServiceContract
 {
@@ -21,7 +21,7 @@ interface PageServiceContract
     public function getById(int $id): Page;
 
     /**
-     * @throws EscolaLms\Pages\Http\Exception\PageAlreadyExistsException
+     * @throws Ulams\Pages\Http\Exception\PageAlreadyExistsException
      */
     public function insert(string $slug, string $title, string $content, int $userId, bool $active): Page;
 

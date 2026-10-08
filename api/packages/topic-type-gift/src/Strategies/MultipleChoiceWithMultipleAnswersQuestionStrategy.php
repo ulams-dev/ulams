@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Strategies;
+namespace Ulams\TopicTypeGift\Strategies;
 
-use EscolaLms\TopicTypeGift\Dtos\CheckAnswerDto;
-use EscolaLms\TopicTypeGift\Enum\AnswerKeyEnum;
+use Ulams\TopicTypeGift\Dtos\CheckAnswerDto;
+use Ulams\TopicTypeGift\Enum\AnswerKeyEnum;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 

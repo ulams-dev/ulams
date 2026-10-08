@@ -1,9 +1,9 @@
 <?php
 
-use EscolaLms\Settings\Http\Controllers\Admin\ConfigController as AdminConfigController;
-use EscolaLms\Settings\Http\Controllers\Admin\SettingsController as AdminSettingsController;
-use EscolaLms\Settings\Http\Controllers\ConfigController;
-use EscolaLms\Settings\Http\Controllers\SettingsController;
+use Ulams\Settings\Http\Controllers\Admin\ConfigController as AdminConfigController;
+use Ulams\Settings\Http\Controllers\Admin\SettingsController as AdminSettingsController;
+use Ulams\Settings\Http\Controllers\ConfigController;
+use Ulams\Settings\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api/settings'], function () {

@@ -1,25 +1,25 @@
 <?php
 
-namespace EscolaLms\Cart\Services;
+namespace Ulams\Cart\Services;
 
-use EscolaLms\Cart\Dtos\ClientDetailsDto;
-use EscolaLms\Cart\Dtos\OrdersSearchDto;
-use EscolaLms\Cart\Enums\OrderStatus;
-use EscolaLms\Cart\Enums\ProductType;
-use EscolaLms\Cart\Events\OrderCancelled;
-use EscolaLms\Cart\Events\OrderCreated;
-use EscolaLms\Cart\Events\OrderPaid;
-use EscolaLms\Cart\Events\ProductBought;
-use EscolaLms\Cart\Models\Cart;
-use EscolaLms\Cart\Models\CartItem;
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Models\OrderItem;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\User;
-use EscolaLms\Cart\QueryBuilders\OrderModelQueryBuilder;
-use EscolaLms\Cart\Services\Contracts\OrderServiceContract;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
-use EscolaLms\Core\Dtos\OrderDto;
+use Ulams\Cart\Dtos\ClientDetailsDto;
+use Ulams\Cart\Dtos\OrdersSearchDto;
+use Ulams\Cart\Enums\OrderStatus;
+use Ulams\Cart\Enums\ProductType;
+use Ulams\Cart\Events\OrderCancelled;
+use Ulams\Cart\Events\OrderCreated;
+use Ulams\Cart\Events\OrderPaid;
+use Ulams\Cart\Events\ProductBought;
+use Ulams\Cart\Models\Cart;
+use Ulams\Cart\Models\CartItem;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Models\OrderItem;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\User;
+use Ulams\Cart\QueryBuilders\OrderModelQueryBuilder;
+use Ulams\Cart\Services\Contracts\OrderServiceContract;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Core\Dtos\OrderDto;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;

@@ -2,24 +2,16 @@
 
 Courses and content package
 
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Courses/)
-[![codecov](https://codecov.io/gh/EscolaLMS/Courses/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Courses)
-[![phpunit](https://github.com/EscolaLMS/Courses/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Courses/actions/workflows/test.yml)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/courses)](https://packagist.org/packages/escolalms/courses)
-[![downloads](https://img.shields.io/packagist/v/escolalms/courses)](https://packagist.org/packages/escolalms/courses)
-[![downloads](https://img.shields.io/packagist/l/escolalms/courses)](https://packagist.org/packages/escolalms/courses)
-[![Maintainability](https://api.codeclimate.com/v1/badges/0c9e2593fb30e2048f95/maintainability)](https://codeclimate.com/github/EscolaLMS/Courses/maintainability)
-[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FEscolaLMS%2FCourses%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/EscolaLMS/Courses/main)
 
 ## What does it do
 
-This package is used for creating Course for EscolaLms.
+This package is used for creating Course for Ulams.
 
 ## Installing
 
-- `composer require escolalms/courses`
+- `composer require ulams/courses`
 - `php artisan migrate`
-- `php artisan db:seed --class="EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder"`
+- `php artisan db:seed --class="Ulams\Courses\Database\Seeders\CoursesPermissionSeeder"`
 
 ## Schedule
 
@@ -29,26 +21,26 @@ This package is used for creating Course for EscolaLms.
 
 ## Endpoints
 
-All the endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Courses/)
+All the endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/Courses/)
 
 ## Tests
 
-Run `./vendor/bin/phpunit  --filter 'EscolaLms\\Courses\\Tests'` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
+Run `./vendor/bin/phpunit  --filter 'Ulams\\Courses\\Tests'` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
 
 ## Events
 
-- `EscolaLms\Courses\Events\CourseAccessFinished` => Event is dispatched when users lost access to course.
-- `EscolaLms\Courses\Events\CourseAccessStarted` => Event is dispatched when users received access to course.
-- `EscolaLms\Courses\Events\CourseAssigned` => Event is dispatched when admin assigned access user.
-- `EscolaLms\Courses\Events\CourseDeadlineSoon` => Event is dispatched when course deadline is coming out.
-- `EscolaLms\Courses\Events\CoursedPublished` => Event is dispatched when course is published.
-- `EscolaLms\Courses\Events\CourseFinished` => Event is dispatched when course is ended.
-- `EscolaLms\Courses\Events\CourseStarted` => Event is dispatched when course is started.
-- `EscolaLms\Courses\Events\CourseStatusChanged` => Event is dispatched when course has a status change.
-- `EscolaLms\Courses\Events\CourseTutorAssigned` => Event is dispatched when tutor is assigned to course.
-- `EscolaLms\Courses\Events\CourseTutorUnassigned` => Event is dispatched when tutor is unassigned to course.
-- `EscolaLms\Courses\Events\CourseUnassigned` => Event is dispatched when user is unassigned to course.
-- `EscolaLms\Courses\Events\TopicFinished` => Event is dispatched when course topic is finished.
+- `Ulams\Courses\Events\CourseAccessFinished` => Event is dispatched when users lost access to course.
+- `Ulams\Courses\Events\CourseAccessStarted` => Event is dispatched when users received access to course.
+- `Ulams\Courses\Events\CourseAssigned` => Event is dispatched when admin assigned access user.
+- `Ulams\Courses\Events\CourseDeadlineSoon` => Event is dispatched when course deadline is coming out.
+- `Ulams\Courses\Events\CoursedPublished` => Event is dispatched when course is published.
+- `Ulams\Courses\Events\CourseFinished` => Event is dispatched when course is ended.
+- `Ulams\Courses\Events\CourseStarted` => Event is dispatched when course is started.
+- `Ulams\Courses\Events\CourseStatusChanged` => Event is dispatched when course has a status change.
+- `Ulams\Courses\Events\CourseTutorAssigned` => Event is dispatched when tutor is assigned to course.
+- `Ulams\Courses\Events\CourseTutorUnassigned` => Event is dispatched when tutor is unassigned to course.
+- `Ulams\Courses\Events\CourseUnassigned` => Event is dispatched when user is unassigned to course.
+- `Ulams\Courses\Events\TopicFinished` => Event is dispatched when course topic is finished.
 
 
 
@@ -62,7 +54,7 @@ Permissions are defined in [seeder](database/seeders/CoursesPermissionSeeder.php
 The model user must be extended with the class HasCourses :
 
 ```
-class User extends EscolaLms\Core\Models\User
+class User extends Ulams\Core\Models\User
 {
     use HasCourses;
 ```
@@ -99,7 +91,7 @@ In the ServiceProvider register your class like
 
 ```php
 use Illuminate\Support\ServiceProvider;
-use EscolaLms\Courses\Facades\Topic;
+use Ulams\Courses\Facades\Topic;
 
 
 class CustomServiceProvider extends ServiceProvider
@@ -124,12 +116,12 @@ class CustomServiceProvider extends ServiceProvider
 }
 ```
 
-see [EscolaLmsCourseServiceProvider.php](src/EscolaLmsCourseServiceProvider.php) as reference as well as [Models/TopicContent](package2/src/Models/TopicContent)
+see [UlamsCourseServiceProvider.php](src/UlamsCourseServiceProvider.php) as reference as well as [Models/TopicContent](package2/src/Models/TopicContent)
 
 ### Content
 
 Package comes with seeder that create course with lessons and topics
 
 ```php
-php artisan db:seed --class="\EscolaLms\Courses\Database\Seeders\CoursesSeeder"
+php artisan db:seed --class="\Ulams\Courses\Database\Seeders\CoursesSeeder"
 ```

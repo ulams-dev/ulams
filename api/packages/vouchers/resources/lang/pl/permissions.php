@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Vouchers\Enums\VoucherPermissionsEnum;
+use Ulams\Vouchers\Enums\VoucherPermissionsEnum;
 
 return [
     VoucherPermissionsEnum::COUPON_LIST => 'Lista voucherów',

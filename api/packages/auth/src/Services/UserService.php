@@ -1,27 +1,27 @@
 <?php
 
-namespace EscolaLms\Auth\Services;
+namespace Ulams\Auth\Services;
 
-use EscolaLms\Auth\Dtos\Admin\UserAssignableDto;
-use EscolaLms\Auth\Dtos\Admin\UserUpdateDto as AdminUserUpdateDto;
-use EscolaLms\Auth\Dtos\Admin\UserUpdateKeysDto as AdminUserUpdateKeysDto;
-use EscolaLms\Auth\Dtos\UserSaveDto;
-use EscolaLms\Auth\Dtos\UserUpdateDto;
-use EscolaLms\Auth\Dtos\UserUpdateKeysDto;
-use EscolaLms\Auth\Dtos\UserUpdateSettingsDto;
-use EscolaLms\Auth\Events\AccountConfirmed;
-use EscolaLms\Auth\Events\AccountDeletionRequested;
-use EscolaLms\Auth\Events\Impersonate;
-use EscolaLms\Auth\Events\Login;
-use EscolaLms\Auth\Exceptions\DeletionTokenExpiredException;
-use EscolaLms\Auth\Models\User as AuthUser;
-use EscolaLms\Auth\Repositories\Contracts\UserRepositoryContract;
-use EscolaLms\Auth\Services\Contracts\UserServiceContract;
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Dtos\PaginationDto;
-use EscolaLms\Files\Helpers\FileHelper;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Auth\Dtos\Admin\UserAssignableDto;
+use Ulams\Auth\Dtos\Admin\UserUpdateDto as AdminUserUpdateDto;
+use Ulams\Auth\Dtos\Admin\UserUpdateKeysDto as AdminUserUpdateKeysDto;
+use Ulams\Auth\Dtos\UserSaveDto;
+use Ulams\Auth\Dtos\UserUpdateDto;
+use Ulams\Auth\Dtos\UserUpdateKeysDto;
+use Ulams\Auth\Dtos\UserUpdateSettingsDto;
+use Ulams\Auth\Events\AccountConfirmed;
+use Ulams\Auth\Events\AccountDeletionRequested;
+use Ulams\Auth\Events\Impersonate;
+use Ulams\Auth\Events\Login;
+use Ulams\Auth\Exceptions\DeletionTokenExpiredException;
+use Ulams\Auth\Models\User as AuthUser;
+use Ulams\Auth\Repositories\Contracts\UserRepositoryContract;
+use Ulams\Auth\Services\Contracts\UserServiceContract;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Dtos\PaginationDto;
+use Ulams\Files\Helpers\FileHelper;
+use Ulams\ModelFields\Facades\ModelFields;
 use Exception;
 use Illuminate\Contracts\Auth\Authenticatable as User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -50,7 +50,7 @@ class UserService implements UserServiceContract
     public function create(UserSaveDto $userSaveDto): User
     {
         $attributes['remember_token'] = Str::random(10);
-        /** @var \EscolaLms\Auth\Models\User $user */
+        /** @var \Ulams\Auth\Models\User $user */
         $user = $this->userRepository->create($userSaveDto->getUserAttributes());
         if ($user instanceof MustVerifyEmail && $userSaveDto->getVerified()) {
             $user->markEmailAsVerified();
@@ -169,7 +169,7 @@ class UserService implements UserServiceContract
 
     private function checkIfSuperadmin(string $email): bool
     {
-        $superadmins = array_filter(config('escola_auth.superadmins', []), fn ($item) => !empty($item));
+        $superadmins = array_filter(config('ulams_auth.superadmins', []), fn ($item) => !empty($item));
         return in_array($email, $superadmins);
     }
 

@@ -9,7 +9,7 @@ import { User, UserItem } from "./user";
 import { API } from "..";
 import { Product } from "./cart";
 
-export type Consultation = EscolaLms.Consultations.Models.Consultation & {
+export type Consultation = Ulams.Consultations.Models.Consultation & {
   product?: Product;
   executed_status?: null | "reported" | "not_reported" | "reject" | "approved";
   executed_at?: string;
@@ -56,7 +56,7 @@ export type AppointmentTerm = {
 };
 
 export type ConsultationsAccessEnquiry =
-  EscolaLms.ConsultationAccess.Models.ConsultationAccessEnquiry;
+  Ulams.ConsultationAccess.Models.ConsultationAccessEnquiry;
 
 export type ConsultationAccessEnquiryUrl = {
   id: number;
@@ -65,7 +65,7 @@ export type ConsultationAccessEnquiryUrl = {
 };
 
 export type ConsultationsAccessEnquiryTerm =
-  EscolaLms.ConsultationAccess.Models.ConsultationAccessEnquiryProposedTerm;
+  Ulams.ConsultationAccess.Models.ConsultationAccessEnquiryProposedTerm;
 
 export type ConsultationsAccessEnquiryParams = PaginationParams & {
   consultation_id?: number;
@@ -80,12 +80,12 @@ export type ConsultationsAccessEnquiryList =
   DefaultMetaResponse<ConsultationsAccessEnquiry>;
 
 export type ConsultationsAccessEnquiryCreateRequest =
-  EscolaLms.ConsultationAccess.Http.Requests.CreateConsultationAccessEnquiryRequest & {
+  Ulams.ConsultationAccess.Http.Requests.CreateConsultationAccessEnquiryRequest & {
     description?: string;
   };
 
 export type ConsultationsAccessEnquiryUpdateRequest = Omit<
-  EscolaLms.ConsultationAccess.Http.Requests.CreateConsultationAccessEnquiryRequest,
+  Ulams.ConsultationAccess.Http.Requests.CreateConsultationAccessEnquiryRequest,
   "consultation_id"
 > & {
   description?: string;

@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Http\Controllers;
+namespace Ulams\Dictionaries\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Dictionaries\Http\Controllers\Swagger\DictionaryAccessApiControllerSwagger;
-use EscolaLms\Dictionaries\Http\Resources\DictionaryAccessResource;
-use EscolaLms\Dictionaries\Services\Contracts\DictionaryAccessServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Dictionaries\Http\Controllers\Swagger\DictionaryAccessApiControllerSwagger;
+use Ulams\Dictionaries\Http\Resources\DictionaryAccessResource;
+use Ulams\Dictionaries\Services\Contracts\DictionaryAccessServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class DictionaryAccessApiController extends EscolaLmsBaseController implements DictionaryAccessApiControllerSwagger
+class DictionaryAccessApiController extends UlamsBaseController implements DictionaryAccessApiControllerSwagger
 {
     public function __construct(private readonly DictionaryAccessServiceContract $dictionaryAccessService)
     {

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Payments;
+namespace Ulams\TemplatesEmail\Payments;
 
-use EscolaLms\TemplatesEmail\Core\EmailVariables;
+use Ulams\TemplatesEmail\Core\EmailVariables;
 
 abstract class PaymentsVariables extends EmailVariables
 {

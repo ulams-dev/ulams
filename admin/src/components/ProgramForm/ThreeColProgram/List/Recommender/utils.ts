@@ -1,4 +1,4 @@
-import { getCourseRecommender, getExerciseRecommender } from '@/services/escola-lms/recommender';
+import { getCourseRecommender, getExerciseRecommender } from '@/services/ulams/recommender';
 import { useEffect, useState } from 'react';
 
 export type RecommenderSimpleTopicType = 'OEmbed' | 'PDF' | 'Video' | 'RichText' | 'Image' | 'H5P';

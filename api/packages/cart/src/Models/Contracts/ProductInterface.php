@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Models\Contracts;
+namespace Ulams\Cart\Models\Contracts;
 
-use EscolaLms\Cart\Models\Contracts\Base\Buyable;
-use EscolaLms\Cart\Models\Contracts\Base\Taxable;
+use Ulams\Cart\Models\Contracts\Base\Buyable;
+use Ulams\Cart\Models\Contracts\Base\Taxable;
 
 interface ProductInterface extends Buyable, Taxable
 {

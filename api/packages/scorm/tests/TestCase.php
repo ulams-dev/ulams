@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Scorm\Tests;
+namespace Ulams\Scorm\Tests;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Scorm\AuthServiceProvider;
-use EscolaLms\Scorm\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
-use EscolaLms\Scorm\Tests\Models\Client;
+use Ulams\Auth\Models\User;
+use Ulams\Scorm\AuthServiceProvider;
+use Ulams\Scorm\Database\Seeders\PermissionTableSeeder;
+use Ulams\Scorm\UlamsScormServiceProvider;
+use Ulams\Scorm\Tests\Models\Client;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     use DatabaseTransactions;
 
@@ -30,7 +30,7 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsScormServiceProvider::class,
+            UlamsScormServiceProvider::class,
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
             AuthServiceProvider::class

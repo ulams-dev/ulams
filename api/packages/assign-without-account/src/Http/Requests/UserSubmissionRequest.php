@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Http\Requests;
+namespace Ulams\AssignWithoutAccount\Http\Requests;
 
-use EscolaLms\AssignWithoutAccount\Models\UserSubmission;
+use Ulams\AssignWithoutAccount\Models\UserSubmission;
 use Illuminate\Foundation\Http\FormRequest;
 
 abstract class UserSubmissionRequest extends FormRequest

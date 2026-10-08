@@ -1,6 +1,6 @@
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { NoDataStyles } from "./styles";
 import { Link } from "react-router-dom";
 

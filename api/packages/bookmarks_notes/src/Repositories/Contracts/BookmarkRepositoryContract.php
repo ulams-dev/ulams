@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Repositories\Contracts;
+namespace Ulams\Bookmarks\Repositories\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface BookmarkRepositoryContract extends BaseRepositoryContract

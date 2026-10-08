@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\ModelFields\Models;
+namespace Ulams\ModelFields\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;

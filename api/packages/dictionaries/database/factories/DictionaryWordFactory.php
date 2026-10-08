@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Database\Factories;
+namespace Ulams\Dictionaries\Database\Factories;
 
-use EscolaLms\Dictionaries\Models\Dictionary;
-use EscolaLms\Dictionaries\Models\DictionaryWord;
+use Ulams\Dictionaries\Models\Dictionary;
+use Ulams\Dictionaries\Models\DictionaryWord;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class DictionaryWordFactory extends Factory

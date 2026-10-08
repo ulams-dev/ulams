@@ -1,13 +1,13 @@
 import React, { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { API } from "@lms/sdk";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { UlamsContext } from "@ulams/sdk/react";
+import { API } from "@ulams/sdk";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import styled from "styled-components";
 import { PdfIcon } from "../../../icons";
 import { useCertificateDownload } from "@/hooks/useDownloadCertificate";
-import { CertificateCard } from "@lms/components";
+import { CertificateCard } from "@ulams/components";
 import { Col, Row } from "react-grid-system";
 import ContentLoader from "@/components/_App/ContentLoader";
 
@@ -43,7 +43,7 @@ const CertificatesList = styled.section`
 `;
 
 const ProfileCertificates: React.FC = () => {
-  const { certificates, fetchCertificates } = useContext(EscolaLMSContext);
+  const { certificates, fetchCertificates } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   const { downloadCertificate, loadingId } = useCertificateDownload();

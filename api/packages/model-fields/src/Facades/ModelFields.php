@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\ModelFields\Facades;
+namespace Ulams\ModelFields\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use EscolaLms\ModelFields\Services\Contracts\ModelFieldsServiceContract;
+use Ulams\ModelFields\Services\Contracts\ModelFieldsServiceContract;
 
 class ModelFields extends Facade
 {

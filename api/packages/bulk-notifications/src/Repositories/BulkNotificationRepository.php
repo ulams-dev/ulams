@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Repositories;
+namespace Ulams\BulkNotifications\Repositories;
 
-use EscolaLms\BulkNotifications\Models\BulkNotification;
-use EscolaLms\BulkNotifications\Repositories\Contracts\BulkNotificationRepositoryContract;
-use EscolaLms\Core\Repositories\BaseRepository;
+use Ulams\BulkNotifications\Models\BulkNotification;
+use Ulams\BulkNotifications\Repositories\Contracts\BulkNotificationRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class BulkNotificationRepository extends BaseRepository implements BulkNotificationRepositoryContract

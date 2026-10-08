@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Scorm\Tests\ScormTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Scorm\Tests\ScormTestTrait;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
-use EscolaLms\Scorm\Tests\TestCase;
+use Ulams\Scorm\Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
 use Peopleaps\Scorm\Entity\Scorm;
 use Peopleaps\Scorm\Model\ScormModel;

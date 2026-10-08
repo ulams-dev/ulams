@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Questionnaire\Enums\QuestionnairePermissionsEnum;
+use Ulams\Questionnaire\Enums\QuestionnairePermissionsEnum;
 
 return [
     QuestionnairePermissionsEnum::QUESTIONNAIRE_LIST => 'Questionnaire list',

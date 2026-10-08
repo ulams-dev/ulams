@@ -1,8 +1,8 @@
 import React, { useContext, useState, useCallback, useRef } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { useTranslation } from "react-i18next";
 import { Button, Row, Spin, TextArea } from "../../../";
-import { TaskNote } from "@lms/sdk/types";
+import { TaskNote } from "@ulams/sdk/types";
 import { AddNoteWrapper } from "../TaskDetailsModal/content/common";
 import useAutosizeTextArea from "../../../hooks/useAutosizeTextArea";
 
@@ -10,7 +10,7 @@ export const AddTaskNote: React.FC<{
   taskId: number;
   onSuccess: () => void;
 }> = ({ taskId, onSuccess }) => {
-  const { createTaskNote } = useContext(EscolaLMSContext);
+  const { createTaskNote } = useContext(UlamsContext);
   const { t } = useTranslation();
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -53,7 +53,7 @@ export const EditTaskNote: React.FC<{
   onDelete: () => void;
 }> = ({ note, onEdit, onDelete }) => {
   const { t } = useTranslation();
-  const { updateTaskNote, deleteTaskNote } = useContext(EscolaLMSContext);
+  const { updateTaskNote, deleteTaskNote } = useContext(UlamsContext);
   const [value, setValue] = useState(note.note);
   const [loading, setLoading] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);

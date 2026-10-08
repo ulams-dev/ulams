@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Tests\Api\DictionaryWord;
+namespace Ulams\Dictionaries\Tests\Api\DictionaryWord;
 
-use EscolaLms\Dictionaries\Models\Category;
-use EscolaLms\Dictionaries\Models\Dictionary;
-use EscolaLms\Dictionaries\Models\DictionaryWord;
-use EscolaLms\Dictionaries\Tests\TestCase;
+use Ulams\Dictionaries\Models\Category;
+use Ulams\Dictionaries\Models\Dictionary;
+use Ulams\Dictionaries\Models\DictionaryWord;
+use Ulams\Dictionaries\Tests\TestCase;
 
 class ListDictionaryWordCategoryApiTest extends TestCase
 {

@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   userGroup as fetchUserGroup,
   userGroups as fetchUserGroups,
-} from '@/services/escola-lms/user_groups';
+} from '@/services/ulams/user_groups';
 
 import { useCallback } from 'react';
 import { FormattedMessage } from 'umi';

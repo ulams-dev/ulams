@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Templates\Services\Contracts;
+namespace Ulams\Templates\Services\Contracts;
 
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\Templates\Models\Template;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\Templates\Models\Template;
 use Illuminate\Database\Eloquent\Collection;
 
 interface TemplateEventServiceContract

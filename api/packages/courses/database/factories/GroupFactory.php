@@ -1,10 +1,10 @@
 <?php
 
 
-namespace EscolaLms\Courses\Database\Factories;
+namespace Ulams\Courses\Database\Factories;
 
-use Database\Factories\EscolaLms\Auth\Models\GroupFactory as AuthGroupFactory;
-use EscolaLms\Courses\Models\Group;
+use Database\Factories\Ulams\Auth\Models\GroupFactory as AuthGroupFactory;
+use Ulams\Courses\Models\Group;
 
 class GroupFactory extends AuthGroupFactory
 {

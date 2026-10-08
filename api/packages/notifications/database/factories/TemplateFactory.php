@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Notifications\Database\Factories;
+namespace Ulams\Notifications\Database\Factories;
 
-use EscolaLms\Notifications\Models\Template;
-use EscolaLms\Templates\Database\Factories\TemplateFactory as BaseTemplateFactory;
+use Ulams\Notifications\Models\Template;
+use Ulams\Templates\Database\Factories\TemplateFactory as BaseTemplateFactory;
 
 class TemplateFactory extends BaseTemplateFactory
 {

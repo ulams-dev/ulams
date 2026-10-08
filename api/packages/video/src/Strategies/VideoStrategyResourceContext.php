@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Video\Strategies;
+namespace Ulams\Video\Strategies;
 
 class VideoStrategyResourceContext
 {
@@ -15,10 +15,10 @@ class VideoStrategyResourceContext
     {
         $this->strategy = new VideoResourceStrategy();
 
-        if (config('escolalms_video.enable')) {
+        if (config('ulams_video.enable')) {
             $this->strategy = new VideoEnableProcessingStrategy();
         }
-        if (config('escolalms_video.enable') && config('escolalms_video.non_strict_value')) {
+        if (config('ulams_video.enable') && config('ulams_video.non_strict_value')) {
             $this->strategy = new VideoNonStrictValueResourceStrategy();
         }
     }

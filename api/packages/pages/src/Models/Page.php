@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Pages\Models;
+namespace Ulams\Pages\Models;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

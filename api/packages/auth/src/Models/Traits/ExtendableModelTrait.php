@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Auth\Models\Traits;
+namespace Ulams\Auth\Models\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 

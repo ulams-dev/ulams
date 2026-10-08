@@ -1,5 +1,5 @@
-import { course } from '@/services/escola-lms/course';
-import { questionnaireStars } from '@/services/escola-lms/questionnaire';
+import { course } from '@/services/ulams/course';
+import { questionnaireStars } from '@/services/ulams/questionnaire';
 import { roundPercentageList } from '@/utils/utils';
 import ProForm, { ProFormSelect } from '@ant-design/pro-form';
 import { useModel } from '@umijs/max';

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Translations\Database\Factories;
+namespace Ulams\Translations\Database\Factories;
 
-use EscolaLms\Translations\Models\LanguageLine;
+use Ulams\Translations\Models\LanguageLine;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class LanguageLineFactory extends Factory

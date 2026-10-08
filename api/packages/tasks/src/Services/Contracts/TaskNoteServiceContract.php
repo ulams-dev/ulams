@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Tasks\Services\Contracts;
+namespace Ulams\Tasks\Services\Contracts;
 
-use EscolaLms\Tasks\Dtos\CreateTaskNoteDto;
-use EscolaLms\Tasks\Dtos\UpdateTaskNoteDto;
-use EscolaLms\Tasks\Models\TaskNote;
+use Ulams\Tasks\Dtos\CreateTaskNoteDto;
+use Ulams\Tasks\Dtos\UpdateTaskNoteDto;
+use Ulams\Tasks\Models\TaskNote;
 
 interface TaskNoteServiceContract
 {

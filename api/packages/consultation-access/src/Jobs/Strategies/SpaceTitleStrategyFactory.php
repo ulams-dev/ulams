@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Jobs\Strategies;
+namespace Ulams\ConsultationAccess\Jobs\Strategies;
 
-use EscolaLms\ConsultationAccess\Models\ConsultationAccessEnquiry;
+use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
 
 final class SpaceTitleStrategyFactory
 {
@@ -13,11 +13,11 @@ final class SpaceTitleStrategyFactory
         }
 
         switch ($enquiry->related_type){
-            case \EscolaLms\Courses\Models\Topic::class:
+            case \Ulams\Courses\Models\Topic::class:
                 return new SpaceTitleRelatedToTopicStrategy($enquiry);
-            case \EscolaLms\Courses\Models\Lesson::class:
+            case \Ulams\Courses\Models\Lesson::class:
                 return new SpaceTitleRelatedToLessonStrategy($enquiry);
-            case \EscolaLms\Courses\Models\Course::class:
+            case \Ulams\Courses\Models\Course::class:
                 return new SpaceTitleRelatedToCourseStrategy($enquiry);
             default:
                 return new DefaultSpaceTitleStrategy($enquiry);

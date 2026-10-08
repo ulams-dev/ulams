@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Consultations\Models;
+namespace Ulams\Consultations\Models;
 
-use EscolaLms\Consultations\Database\Factories\ConsultationProposedTermFactory;
+use Ulams\Consultations\Database\Factories\ConsultationProposedTermFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

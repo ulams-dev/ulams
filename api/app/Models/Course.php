@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Cart\Contracts\ProductableTrait;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Events\CourseAccessStarted;
-use EscolaLms\Courses\Events\CourseAssigned;
-use EscolaLms\Courses\Events\CourseFinished;
-use EscolaLms\Courses\Events\CourseUnassigned;
-use EscolaLms\ModelFields\Traits\ModelFields;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Cart\Contracts\ProductableTrait;
+use Ulams\Cart\Models\Product;
+use Ulams\Core\Models\User;
+use Ulams\Courses\Events\CourseAccessStarted;
+use Ulams\Courses\Events\CourseAssigned;
+use Ulams\Courses\Events\CourseFinished;
+use Ulams\Courses\Events\CourseUnassigned;
+use Ulams\ModelFields\Traits\ModelFields;
 
 
-class Course extends \EscolaLms\Courses\Models\Course implements Productable
+class Course extends \Ulams\Courses\Models\Course implements Productable
 {
     use ProductableTrait;
 

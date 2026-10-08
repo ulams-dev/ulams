@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Services\Contracts;
+namespace Ulams\Questionnaire\Services\Contracts;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Questionnaire\Models\QuestionAnswer;
-use EscolaLms\Questionnaire\Models\QuestionnaireModel;
+use Ulams\Core\Models\User;
+use Ulams\Questionnaire\Models\QuestionAnswer;
+use Ulams\Questionnaire\Models\QuestionnaireModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 /**
  * Interface QuestionnaireAnswerServiceContract
- * @package EscolaLms\Questionnaire\Http\Services\Contracts
+ * @package Ulams\Questionnaire\Http\Services\Contracts
  */
 interface QuestionnaireAnswerServiceContract
 {

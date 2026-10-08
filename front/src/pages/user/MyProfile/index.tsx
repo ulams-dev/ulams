@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Tabs } from "@lms/components/components/atoms/Tabs/Tabs";
+import { Tabs } from "@ulams/components/components/atoms/Tabs/Tabs";
 import ProfileCourses from "@/components/Profile/ProfileCourses";
 import { useTranslation } from "react-i18next";
 import { useRoles } from "@/hooks/useRoles";

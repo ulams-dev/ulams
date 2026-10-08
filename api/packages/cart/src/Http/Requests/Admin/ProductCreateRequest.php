@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests\Admin;
+namespace Ulams\Cart\Http\Requests\Admin;
 
-use EscolaLms\Cart\Enums\ProductType;
-use EscolaLms\Cart\Models\Category;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Rules\MinPrice;
-use EscolaLms\Cart\Rules\ProductableRegisteredRule;
-use EscolaLms\Cart\Rules\ProductProductablesRule;
+use Ulams\Cart\Enums\ProductType;
+use Ulams\Cart\Models\Category;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Rules\MinPrice;
+use Ulams\Cart\Rules\ProductableRegisteredRule;
+use Ulams\Cart\Rules\ProductProductablesRule;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

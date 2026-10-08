@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Consultations\Http\Requests;
+namespace Ulams\Consultations\Http\Requests;
 
-use EscolaLms\Consultations\Enum\ConsultationStatusEnum;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Consultations\Enum\ConsultationStatusEnum;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Models;
+namespace Ulams\HeadlessH5P\Models;
 
-use EscolaLms\Core\Models\Traits\QueryCacheable;
-use EscolaLms\HeadlessH5P\Database\Factories\H5PLibraryFactory;
+use Ulams\Core\Models\Traits\QueryCacheable;
+use Ulams\HeadlessH5P\Database\Factories\H5PLibraryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

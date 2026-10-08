@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Templates\Enums\TemplatesPermissionsEnum;
+use Ulams\Templates\Enums\TemplatesPermissionsEnum;
 
 return [
     TemplatesPermissionsEnum::TEMPLATES_CREATE => 'Utwórz szablon',

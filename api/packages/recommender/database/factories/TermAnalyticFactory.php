@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Recommender\Database\Factories;
+namespace Ulams\Recommender\Database\Factories;
 
-use EscolaLms\Recommender\Models\TermAnalytic;
+use Ulams\Recommender\Models\TermAnalytic;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TermAnalyticFactory extends Factory

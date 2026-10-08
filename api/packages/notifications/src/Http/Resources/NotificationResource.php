@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Notifications\Http\Resources;
+namespace Ulams\Notifications\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

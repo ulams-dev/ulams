@@ -20,7 +20,7 @@ import {
   createStationaryEvent,
   getStationaryEvent,
   updateStationaryEvent,
-} from '@/services/escola-lms/stationary_events';
+} from '@/services/ulams/stationary_events';
 
 import ProFormImageUpload from '@/components/ProFormImageUpload';
 
@@ -34,7 +34,7 @@ import { createRequiredFieldValidator } from '@/utils/validate';
 import './index.css';
 
 export type StationaryEventType = Omit<
-  EscolaLms.StationaryEvents.Models.StationaryEvent,
+  Ulams.StationaryEvents.Models.StationaryEvent,
   'categories' | 'agenda' | 'image_url'
 > & {
   image_url?: string;
@@ -64,8 +64,8 @@ const StationaryEventForm = () => {
   const [lastDataUpdateDate, setLastDataUpdateDate] = useState(new Date());
   const requiredValidator = createRequiredFieldValidator(intl);
 
-  //  Promise<API.DefaultResponse<EscolaLms.StationaryEvents.Models.StationaryEvent>>
-  //  Promise<API.DefaultResponse<EscolaLms.StationaryEvents.Models.StationaryEvent>>
+  //  Promise<API.DefaultResponse<Ulams.StationaryEvents.Models.StationaryEvent>>
+  //  Promise<API.DefaultResponse<Ulams.StationaryEvents.Models.StationaryEvent>>
 
   const fetchData = useCallback(async () => {
     const response = await getStationaryEvent(Number(id));
@@ -92,7 +92,7 @@ const StationaryEventForm = () => {
     () => ({
       onFinish: async (
         values: Partial<
-          EscolaLms.StationaryEvents.Models.StationaryEvent & {
+          Ulams.StationaryEvents.Models.StationaryEvent & {
             image_url: string;
             agenda: AgendaType;
           }
@@ -106,7 +106,7 @@ const StationaryEventForm = () => {
           image_url: data && data.image_url,
           image_path: data && data.image_path && splitImagePath(data.image_path),
         };
-        let response: API.DefaultResponse<EscolaLms.StationaryEvents.Models.StationaryEvent>;
+        let response: API.DefaultResponse<Ulams.StationaryEvents.Models.StationaryEvent>;
         if (isNew) {
           response = await createStationaryEvent(postData);
           if (response.success) {

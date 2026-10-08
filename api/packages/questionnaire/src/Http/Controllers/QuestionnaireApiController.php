@@ -1,30 +1,30 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Http\Controllers;
+namespace Ulams\Questionnaire\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Questionnaire\Dtos\QuestionAnswersCriteriaDto;
-use EscolaLms\Questionnaire\Dtos\QuestionnaireFrontFilterCriteriaDto;
-use EscolaLms\Questionnaire\Http\Controllers\Contracts\QuestionnaireApiContract;
-use EscolaLms\Questionnaire\Http\Requests\QuestionAnswersFrontReadRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionAnswersFrontStarsRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireFrontAnswerRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireFrontListingRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireFrontReadRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionnaireStarsFrontRequest;
-use EscolaLms\Questionnaire\Http\Resources\ModelStarsResponse;
-use EscolaLms\Questionnaire\Http\Resources\QuestionAnswerFrontResource;
-use EscolaLms\Questionnaire\Http\Resources\QuestionnaireFrontResource;
-use EscolaLms\Questionnaire\Http\Resources\QuestionnaireResource;
-use EscolaLms\Questionnaire\Http\Resources\QuestionnaireStarsResource;
-use EscolaLms\Questionnaire\Models\Question;
-use EscolaLms\Questionnaire\Models\QuestionnaireModel;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionnaireAnswerServiceContract;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionnaireServiceContract;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Questionnaire\Dtos\QuestionAnswersCriteriaDto;
+use Ulams\Questionnaire\Dtos\QuestionnaireFrontFilterCriteriaDto;
+use Ulams\Questionnaire\Http\Controllers\Contracts\QuestionnaireApiContract;
+use Ulams\Questionnaire\Http\Requests\QuestionAnswersFrontReadRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionAnswersFrontStarsRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireFrontAnswerRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireFrontListingRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireFrontReadRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionnaireStarsFrontRequest;
+use Ulams\Questionnaire\Http\Resources\ModelStarsResponse;
+use Ulams\Questionnaire\Http\Resources\QuestionAnswerFrontResource;
+use Ulams\Questionnaire\Http\Resources\QuestionnaireFrontResource;
+use Ulams\Questionnaire\Http\Resources\QuestionnaireResource;
+use Ulams\Questionnaire\Http\Resources\QuestionnaireStarsResource;
+use Ulams\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Models\QuestionnaireModel;
+use Ulams\Questionnaire\Services\Contracts\QuestionnaireAnswerServiceContract;
+use Ulams\Questionnaire\Services\Contracts\QuestionnaireServiceContract;
+use Ulams\Questionnaire\Services\Contracts\QuestionServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class QuestionnaireApiController extends EscolaLmsBaseController implements QuestionnaireApiContract
+class QuestionnaireApiController extends UlamsBaseController implements QuestionnaireApiContract
 {
     private QuestionnaireServiceContract $questionnaireService;
     private QuestionnaireAnswerServiceContract $questionnaireAnswerService;

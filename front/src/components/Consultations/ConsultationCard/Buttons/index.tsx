@@ -1,7 +1,7 @@
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { API } from "@lms/sdk";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { API } from "@ulams/sdk";
 import ConsultationCardJoinButton from "./JoinButton";
 import ConsultationCardBookButton from "./BookButton";
 import ConsultationCardChangeButton from "./ChangeButton";

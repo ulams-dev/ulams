@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Templates\Services;
+namespace Ulams\Templates\Services;
 
-use EscolaLms\Templates\Contracts\TemplateChannelContract;
-use EscolaLms\Templates\Contracts\TemplateVariableContract;
-use EscolaLms\Templates\Core\TemplateSectionSchema;
-use EscolaLms\Templates\Services\Contracts\TemplateChannelServiceContract;
-use EscolaLms\Templates\Services\Contracts\TemplateVariablesServiceContract;
+use Ulams\Templates\Contracts\TemplateChannelContract;
+use Ulams\Templates\Contracts\TemplateVariableContract;
+use Ulams\Templates\Core\TemplateSectionSchema;
+use Ulams\Templates\Services\Contracts\TemplateChannelServiceContract;
+use Ulams\Templates\Services\Contracts\TemplateVariablesServiceContract;
 use Exception;
 use Illuminate\Support\Str;
 use InvalidArgumentException;

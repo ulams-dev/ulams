@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Payments\Enums\PaymentsPermissionsEnum;
+use Ulams\Payments\Enums\PaymentsPermissionsEnum;
 
 return [
     PaymentsPermissionsEnum::PAYMENTS_LIST => 'Lista płatności',

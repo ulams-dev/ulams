@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers\Admin;
+namespace Ulams\Auth\Http\Controllers\Admin;
 
-use EscolaLms\Auth\Dtos\UserUpdateSettingsDto;
-use EscolaLms\Auth\Http\Controllers\Admin\Swagger\UserSettingsSwagger;
-use EscolaLms\Auth\Http\Requests\Admin\UserSettingsListRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserSettingsUpdateRequest;
-use EscolaLms\Auth\Http\Resources\UserSettingCollection;
-use EscolaLms\Auth\Models\User;
+use Ulams\Auth\Dtos\UserUpdateSettingsDto;
+use Ulams\Auth\Http\Controllers\Admin\Swagger\UserSettingsSwagger;
+use Ulams\Auth\Http\Requests\Admin\UserSettingsListRequest;
+use Ulams\Auth\Http\Requests\Admin\UserSettingsUpdateRequest;
+use Ulams\Auth\Http\Resources\UserSettingCollection;
+use Ulams\Auth\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

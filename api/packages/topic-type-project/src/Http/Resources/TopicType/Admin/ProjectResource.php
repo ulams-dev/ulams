@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Http\Resources\TopicType\Admin;
+namespace Ulams\TopicTypeProject\Http\Resources\TopicType\Admin;
 
-use EscolaLms\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
-use EscolaLms\TopicTypeProject\Models\Project;
+use Ulams\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
+use Ulams\TopicTypeProject\Models\Project;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

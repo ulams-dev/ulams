@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Requests;
+namespace Ulams\Courses\Http\Requests;
 
-use EscolaLms\Courses\Models\Lesson;
+use Ulams\Courses\Models\Lesson;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CloneLessonAPIRequest extends FormRequest

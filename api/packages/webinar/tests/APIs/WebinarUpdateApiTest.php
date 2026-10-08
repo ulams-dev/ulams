@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Webinar\Tests\APIs;
+namespace Ulams\Webinar\Tests\APIs;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Tags\Models\Tag;
-use EscolaLms\Webinar\Enum\ConstantEnum;
-use EscolaLms\Webinar\Tests\Mocks\YTLiveDtoMock;
-use EscolaLms\Webinar\Events\WebinarTrainerAssigned;
-use EscolaLms\Webinar\Events\WebinarTrainerUnassigned;
-use EscolaLms\Webinar\Tests\TestCase;
-use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
-use EscolaLms\Webinar\Models\Webinar;
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Tags\Models\Tag;
+use Ulams\Webinar\Enum\ConstantEnum;
+use Ulams\Webinar\Tests\Mocks\YTLiveDtoMock;
+use Ulams\Webinar\Events\WebinarTrainerAssigned;
+use Ulams\Webinar\Events\WebinarTrainerUnassigned;
+use Ulams\Webinar\Tests\TestCase;
+use Ulams\Webinar\Database\Seeders\WebinarsPermissionSeeder;
+use Ulams\Webinar\Models\Webinar;
+use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;

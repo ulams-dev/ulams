@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import type { API } from "@lms/sdk";
+import type { API } from "@ulams/sdk";
 
 import { Button, Text } from "../../../../index";
 

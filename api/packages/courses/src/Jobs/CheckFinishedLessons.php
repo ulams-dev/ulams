@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Courses\Jobs;
+namespace Ulams\Courses\Jobs;
 
-use EscolaLms\Auth\Repositories\Contracts\UserRepositoryContract;
-use EscolaLms\Courses\Enum\ProgressStatus;
-use EscolaLms\Courses\Events\LessonFinished;
-use EscolaLms\Courses\Models\CourseProgress;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\User;
-use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
+use Ulams\Auth\Repositories\Contracts\UserRepositoryContract;
+use Ulams\Courses\Enum\ProgressStatus;
+use Ulams\Courses\Events\LessonFinished;
+use Ulams\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Models\User;
+use Ulams\Courses\Repositories\Contracts\TopicRepositoryContract;
+use Ulams\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Core;
+namespace Ulams\TemplatesSms\Core;
 
-use EscolaLms\Templates\Contracts\TemplateChannelContract;
-use EscolaLms\Templates\Core\AbstractTemplateChannelClass;
-use EscolaLms\Templates\Core\TemplateSectionSchema;
-use EscolaLms\Templates\Enums\TemplateSectionTypeEnum;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\TemplatesSms\Facades\Sms;
+use Ulams\Templates\Contracts\TemplateChannelContract;
+use Ulams\Templates\Core\AbstractTemplateChannelClass;
+use Ulams\Templates\Core\TemplateSectionSchema;
+use Ulams\Templates\Enums\TemplateSectionTypeEnum;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\TemplatesSms\Facades\Sms;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 
 class SmsChannel extends AbstractTemplateChannelClass implements TemplateChannelContract
 {

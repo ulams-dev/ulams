@@ -1,11 +1,11 @@
 import React, { useContext, useState } from "react";
 
 import styled from "styled-components";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { useTranslation } from "react-i18next";
-import { MarkdownRenderer } from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
-import { Note } from "@lms/components/components/atoms/Note/Note";
-import { Button } from "@lms/components/components/atoms/Button/Button";
+import { MarkdownRenderer } from "@ulams/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { Note } from "@ulams/components/components/atoms/Note/Note";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
 import { metaDataKeys } from "@/utils/meta";
 
 const StyledAside = styled.aside`
@@ -30,7 +30,7 @@ const StyledAside = styled.aside`
 `;
 
 const Warning = () => {
-  const { settings } = useContext(EscolaLMSContext);
+  const { settings } = useContext(UlamsContext);
   const [showWarning, setShowWarning] = useState(true);
 
   const { t } = useTranslation();

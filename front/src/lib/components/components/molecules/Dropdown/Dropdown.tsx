@@ -5,7 +5,7 @@ import "react-dropdown/style.css";
 import { getFontFromTheme } from "../../../theme/provider";
 import chroma, { contrast } from "chroma-js";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 export interface DropdownProps
   extends ReactDropdownProps,
@@ -134,7 +134,7 @@ export const Dropdown: React.FC<DropdownProps> = (props) => {
     <StyledDropdown
       placement={placement}
       style={styles}
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
       lightContrast={cts}
       backgroundColor={backgroundColor}
     >

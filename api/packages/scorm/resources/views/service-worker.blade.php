@@ -1,7 +1,7 @@
 @php
 
 // package root (packages/scorm), independent of where the package is installed
-$scormRoot = dirname((new \ReflectionClass(\EscolaLms\Scorm\EscolaLmsScormServiceProvider::class))->getFileName(), 2);
+$scormRoot = dirname((new \ReflectionClass(\Ulams\Scorm\UlamsScormServiceProvider::class))->getFileName(), 2);
 
 // self.importScripts("modules/jszip.js");
 // self.importScripts("modules/mimetypes.js");

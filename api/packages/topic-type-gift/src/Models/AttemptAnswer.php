@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Models;
+namespace Ulams\TopicTypeGift\Models;
 
-use EscolaLms\TopicTypeGift\Database\Factories\AttemptAnswerFactory;
+use Ulams\TopicTypeGift\Database\Factories\AttemptAnswerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * EscolaLms\TopicTypeGift\Models\AttemptAnswer
+ * Ulams\TopicTypeGift\Models\AttemptAnswer
  *
  * @property int $id
  * @property int $topic_gift_quiz_attempt_id

@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Youtube\Services;
+namespace Ulams\Youtube\Services;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Youtube\Events\YtProblem;
-use EscolaLms\Youtube\Exceptions\YtAuthenticateException;
-use EscolaLms\Settings\Facades\AdministrableConfig;
-use EscolaLms\Youtube\Dto\Contracts\YTLiveDtoContract;
-use EscolaLms\Youtube\Dto\YTBroadcastDto;
-use EscolaLms\Youtube\Services\Contracts\AuthenticateServiceContract;
-use EscolaLms\Youtube\Services\Contracts\LiveStreamServiceContract;
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Youtube\Events\YtProblem;
+use Ulams\Youtube\Exceptions\YtAuthenticateException;
+use Ulams\Settings\Facades\AdministrableConfig;
+use Ulams\Youtube\Dto\Contracts\YTLiveDtoContract;
+use Ulams\Youtube\Dto\YTBroadcastDto;
+use Ulams\Youtube\Services\Contracts\AuthenticateServiceContract;
+use Ulams\Youtube\Services\Contracts\LiveStreamServiceContract;
+use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Support\Collection;
 
 class YoutubeService implements YoutubeServiceContract

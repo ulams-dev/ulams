@@ -8,8 +8,8 @@ import React, {
   useContext,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextListState,
   ContextStateValue,
 } from "./types";
@@ -23,7 +23,7 @@ import { attendances as getAttendances } from "./../../services/student/schedule
 import { UserContext } from "./user";
 
 export const AttendancesContext: React.Context<
-  Pick<EscolaLMSContextConfig, "attendances" | "fetchAttendances">
+  Pick<UlamsContextConfig, "attendances" | "fetchAttendances">
 > = createContext({
   attendances: defaultConfig.attendances,
   fetchAttendances: defaultConfig.fetchAttendances,
@@ -31,7 +31,7 @@ export const AttendancesContext: React.Context<
 
 export interface AttendancesContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "attendances">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "attendances">>;
   ssrHydration?: boolean;
 }
 

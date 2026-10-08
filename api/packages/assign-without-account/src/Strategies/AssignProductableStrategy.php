@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Strategies;
+namespace Ulams\AssignWithoutAccount\Strategies;
 
-use EscolaLms\AssignWithoutAccount\Events\AssignToProductable;
-use EscolaLms\AssignWithoutAccount\Strategies\Contracts\AssignStrategy;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
-use EscolaLms\Core\Models\User;
+use Ulams\AssignWithoutAccount\Events\AssignToProductable;
+use Ulams\AssignWithoutAccount\Strategies\Contracts\AssignStrategy;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 

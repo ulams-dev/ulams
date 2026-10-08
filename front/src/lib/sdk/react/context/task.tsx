@@ -8,8 +8,8 @@ import React, {
   useContext,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextListState,
   ContextStateValue,
 } from "./types";
@@ -34,7 +34,7 @@ import { UserContext } from "./user";
 
 export const TaskContext: React.Context<
   Pick<
-    EscolaLMSContextConfig,
+    UlamsContextConfig,
     | "task"
     | "fetchTask"
     | "updateTask"
@@ -55,7 +55,7 @@ export const TaskContext: React.Context<
 
 export interface TaskContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "task">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "task">>;
   ssrHydration?: boolean;
 }
 
@@ -97,7 +97,7 @@ export const TaskContextProvider: FunctionComponent<
   const updateTask = useCallback(
     // TODO: update task on list and byID once it fine
     // TODO: what about error ?
-    (id: number, data: EscolaLms.Tasks.Http.Requests.UpdateTaskRequest) => {
+    (id: number, data: Ulams.Tasks.Http.Requests.UpdateTaskRequest) => {
       return token
         ? postUpdateTask(apiUrl, token, id, data)
         : Promise.reject("noToken");

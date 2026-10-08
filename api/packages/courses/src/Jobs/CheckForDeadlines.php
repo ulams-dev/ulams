@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Jobs;
+namespace Ulams\Courses\Jobs;
 
-use EscolaLms\Courses\Events\CourseDeadlineSoon;
-use EscolaLms\Courses\Models\CourseUserPivot;
+use Ulams\Courses\Events\CourseDeadlineSoon;
+use Ulams\Courses\Models\CourseUserPivot;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -36,10 +36,10 @@ class CheckForDeadlines implements ShouldQueue, ShouldBeUnique
     public function handle()
     {
         $startDate = Carbon::now()
-            ->modify('+ ' . config('escolalms_courses.reminder_of_deadline_count_days') . ' days')
+            ->modify('+ ' . config('ulams_courses.reminder_of_deadline_count_days') . ' days')
             ->subMinutes(30);
         $endDate = Carbon::now()
-            ->modify('+ ' . config('escolalms_courses.reminder_of_deadline_count_days') . ' days')
+            ->modify('+ ' . config('ulams_courses.reminder_of_deadline_count_days') . ' days')
             ->addMinutes(30);
         /** @var Collection<int, CourseUserPivot> $futureDeadlines */
         $futureDeadlines = CourseUserPivot::where('deadline', '>=', $startDate)

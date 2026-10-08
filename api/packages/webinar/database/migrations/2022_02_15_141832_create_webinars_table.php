@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Webinar\Enum\WebinarStatusEnum;
+use Ulams\Webinar\Enum\WebinarStatusEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

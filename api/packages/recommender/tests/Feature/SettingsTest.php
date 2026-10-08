@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Recommender\Tests\Feature;
+namespace Ulams\Recommender\Tests\Feature;
 
-use EscolaLms\Auth\Database\Seeders\AuthPermissionSeeder;
-use EscolaLms\Recommender\EscolaLmsRecommenderServiceProvider;
-use EscolaLms\Recommender\Tests\TestCase;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
+use Ulams\Auth\Database\Seeders\AuthPermissionSeeder;
+use Ulams\Recommender\UlamsRecommenderServiceProvider;
+use Ulams\Recommender\Tests\TestCase;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\Settings\UlamsSettingsServiceProvider;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
@@ -19,13 +19,13 @@ class SettingsTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(EscolaLmsSettingsServiceProvider::class)) {
+        if (!class_exists(UlamsSettingsServiceProvider::class)) {
             $this->markTestSkipped('Settings package not installed');
         }
 
         $this->seed(PermissionTableSeeder::class);
         $this->seed(AuthPermissionSeeder::class);
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
     }
 
     public function testAdministrableConfigApi(): void
@@ -38,7 +38,7 @@ class SettingsTest extends TestCase
         $user->guard_name = 'api';
         $user->assignRole('admin');
 
-        $configKey = EscolaLmsRecommenderServiceProvider::CONFIG_KEY;
+        $configKey = UlamsRecommenderServiceProvider::CONFIG_KEY;
 
         $enabled = $this->faker->boolean;
         $apiUrl = $this->faker->url;

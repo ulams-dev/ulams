@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Providers;
+namespace Ulams\TopicTypeProject\Providers;
 
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

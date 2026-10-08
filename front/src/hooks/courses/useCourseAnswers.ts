@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { API } from "@lms/sdk";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { API } from "@ulams/sdk";
+import { UlamsContext } from "@ulams/sdk/react";
 import { QuestionnaireModelType } from "../../types/questionnaire";
 import { useTranslation } from "react-i18next";
 import { toast } from "@/utils/toast";
@@ -23,7 +23,7 @@ export const useCourseAnswers = ({ questionId, courseId }: Props) => {
   >(undefined);
   const [answersMeta, setAnswersMeta] = useState(initialState);
   const [loading, setLoading] = useState(true);
-  const { fetchQuestionnairesAnswers } = useContext(EscolaLMSContext);
+  const { fetchQuestionnairesAnswers } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   const handleFetchQuestionnairesAnswers = useCallback(

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Pages\Repository;
+namespace Ulams\Pages\Repository;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Pages\Models\Page;
-use EscolaLms\Pages\Repository\Contracts\PageRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Pages\Models\Page;
+use Ulams\Pages\Repository\Contracts\PageRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class PageRepository extends BaseRepository implements PageRepositoryContract

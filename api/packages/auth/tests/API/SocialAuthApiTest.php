@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Auth\Tests\API;
+namespace Ulams\Auth\Tests\API;
 
-use EscolaLms\Auth\Enums\SocialiteProvidersEnum;
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Events\AccountRegistered;
-use EscolaLms\Auth\Models\PreUser;
-use EscolaLms\Auth\Models\SocialAccount;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Tests\TestCase;
+use Ulams\Auth\Enums\SocialiteProvidersEnum;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Events\AccountRegistered;
+use Ulams\Auth\Models\PreUser;
+use Ulams\Auth\Models\SocialAccount;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\RedirectResponse;
@@ -36,7 +36,7 @@ class SocialAuthApiTest extends TestCase
         $this->socialite->shouldReceive('stateless', 'with')->andReturn($this->socialite);
         Socialite::shouldReceive('driver')->with($this->provider)->andReturn($this->socialite);
         $this->socialUser = Mockery::mock('Laravel\Socialite\Two\User');
-        Config::set(EscolaLmsAuthServiceProvider::CONFIG_KEY . '.socialite_remember_me', false);
+        Config::set(UlamsAuthServiceProvider::CONFIG_KEY . '.socialite_remember_me', false);
     }
 
     public function testShouldReturnValidationErrorIllegalProvider(): void
@@ -73,7 +73,7 @@ class SocialAuthApiTest extends TestCase
 
     public function testShouldFindSocialAccountAndRedirectWithUserRememberMeToken(): void
     {
-        Config::set(EscolaLmsAuthServiceProvider::CONFIG_KEY . '.socialite_remember_me', true);
+        Config::set(UlamsAuthServiceProvider::CONFIG_KEY . '.socialite_remember_me', true);
 
         $user = User::factory()->create();
         $socialAccount = SocialAccount::factory([

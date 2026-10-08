@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import ResponsiveImage from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import ResponsiveImage from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
+import { UlamsContext } from "@ulams/sdk/react";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { CompaniesSectionStyles } from "./CompaniesSectionStyles";
 
 interface CompaniesSectionProps {
@@ -9,7 +9,7 @@ interface CompaniesSectionProps {
 }
 
 const CompaniesSection = ({ title }: CompaniesSectionProps) => {
-  const { settings } = useContext(EscolaLMSContext);
+  const { settings } = useContext(UlamsContext);
 
   return (
     <CompaniesSectionStyles>

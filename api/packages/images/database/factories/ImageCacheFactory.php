@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Images\Database\Factories;
+namespace Ulams\Images\Database\Factories;
 
-use EscolaLms\Images\Models\ImageCache;
+use Ulams\Images\Models\ImageCache;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ImageCacheFactory extends Factory

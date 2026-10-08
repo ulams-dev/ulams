@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Templates\Tests\Mock;
+namespace Ulams\Templates\Tests\Mock;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 
 class TestEventWithToArray
 {

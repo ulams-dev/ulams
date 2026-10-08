@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Scorm\Tests;
+namespace Ulams\Scorm\Tests;
 
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;

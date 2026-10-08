@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests\Admin;
+namespace Ulams\Cart\Http\Requests\Admin;
 
-use EscolaLms\Cart\Enums\PeriodEnum;
-use EscolaLms\Cart\Enums\ProductType;
+use Ulams\Cart\Enums\PeriodEnum;
+use Ulams\Cart\Enums\ProductType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

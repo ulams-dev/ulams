@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Export;
+namespace Ulams\CsvUsers\Export;
 
-use EscolaLms\Auth\Http\Resources\UserFullResource;
-use EscolaLms\CsvUsers\Http\Resources\UserExportResource;
+use Ulams\Auth\Http\Resources\UserFullResource;
+use Ulams\CsvUsers\Http\Resources\UserExportResource;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;

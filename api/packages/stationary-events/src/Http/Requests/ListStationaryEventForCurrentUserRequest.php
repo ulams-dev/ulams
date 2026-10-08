@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Http\Requests;
+namespace Ulams\StationaryEvents\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

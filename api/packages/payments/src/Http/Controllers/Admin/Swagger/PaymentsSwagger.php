@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Payments\Http\Controllers\Admin\Swagger;
+namespace Ulams\Payments\Http\Controllers\Admin\Swagger;
 
-use EscolaLms\Payments\Http\Requests\Admin\PaymentExportRequest;
-use EscolaLms\Payments\Http\Requests\Admin\PaymentsSearchAdminRequest;
-use EscolaLms\Payments\Http\Requests\PaymentShowRequest;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Payments\Http\Requests\Admin\PaymentExportRequest;
+use Ulams\Payments\Http\Requests\Admin\PaymentsSearchAdminRequest;
+use Ulams\Payments\Http\Requests\PaymentShowRequest;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -88,7 +88,7 @@ interface PaymentsSwagger
      *      ),
      *      @OA\Parameter(
      *          name="payable_type",
-     *          description="Full classname of payable model (eg. EscolaLms\Cart\Models\Order)",
+     *          description="Full classname of payable model (eg. Ulams\Cart\Models\Order)",
      *          required=false,
      *          in="query",
      *          @OA\Schema(
@@ -252,7 +252,7 @@ interface PaymentsSwagger
      *      ),
      *      @OA\Parameter(
      *          name="payable_type",
-     *          description="Full classname of payable model (eg. EscolaLms\Cart\Models\Order)",
+     *          description="Full classname of payable model (eg. Ulams\Cart\Models\Order)",
      *          required=false,
      *          in="query",
      *          @OA\Schema(

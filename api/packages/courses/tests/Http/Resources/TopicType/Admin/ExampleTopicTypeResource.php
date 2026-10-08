@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\Http\Resources\TopicType\Admin;
+namespace Ulams\Courses\Tests\Http\Resources\TopicType\Admin;
 
-use EscolaLms\Courses\Http\Resources\TopicType\Contracts\TopicTypeResourceContract;
+use Ulams\Courses\Http\Resources\TopicType\Contracts\TopicTypeResourceContract;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ExampleTopicTypeResource extends JsonResource implements TopicTypeResourceContract

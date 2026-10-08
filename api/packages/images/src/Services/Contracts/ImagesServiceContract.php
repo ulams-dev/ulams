@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Images\Services\Contracts;
+namespace Ulams\Images\Services\Contracts;
 
 interface ImagesServiceContract
 {

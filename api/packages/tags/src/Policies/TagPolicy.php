@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Tags\Policies;
+namespace Ulams\Tags\Policies;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Tags\Enums\TagsPermissionsEnum;
-use EscolaLms\Tags\Models\Tag;
+use Ulams\Core\Models\User;
+use Ulams\Tags\Enums\TagsPermissionsEnum;
+use Ulams\Tags\Models\Tag;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class TagPolicy

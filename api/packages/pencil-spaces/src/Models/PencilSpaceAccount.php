@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\PencilSpaces\Models;
+namespace Ulams\PencilSpaces\Models;
 
-use EscolaLms\PencilSpaces\Database\Factories\PencilSpaceAccountFactory;
+use Ulams\PencilSpaces\Database\Factories\PencilSpaceAccountFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +11,7 @@ use Illuminate\Support\Carbon;
 /**
  * Class PencilSpaceAccount
  *
- * @package EscolaLms\PencilSpaces\Models
+ * @package Ulams\PencilSpaces\Models
  *
  * @property int $id
  * @property string $pencil_space_id

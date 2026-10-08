@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Vouchers\Services;
+namespace Ulams\Vouchers\Services;
 
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Vouchers\Dtos\CouponSearchDto;
-use EscolaLms\Vouchers\Enums\CouponTypeEnum;
-use EscolaLms\Vouchers\Models\Cart;
-use EscolaLms\Vouchers\Models\Coupon;
-use EscolaLms\Vouchers\Models\CouponCategory;
-use EscolaLms\Vouchers\Models\CouponProduct;
-use EscolaLms\Vouchers\Models\CouponUser;
-use EscolaLms\Vouchers\Services\Contracts\CouponServiceContract;
-use EscolaLms\Vouchers\Strategies\Contracts\DiscountStrategyContract;
-use EscolaLms\Vouchers\Strategies\NoneDiscountStrategy;
+use Ulams\Cart\Models\Product;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Models\User;
+use Ulams\Vouchers\Dtos\CouponSearchDto;
+use Ulams\Vouchers\Enums\CouponTypeEnum;
+use Ulams\Vouchers\Models\Cart;
+use Ulams\Vouchers\Models\Coupon;
+use Ulams\Vouchers\Models\CouponCategory;
+use Ulams\Vouchers\Models\CouponProduct;
+use Ulams\Vouchers\Models\CouponUser;
+use Ulams\Vouchers\Services\Contracts\CouponServiceContract;
+use Ulams\Vouchers\Strategies\Contracts\DiscountStrategyContract;
+use Ulams\Vouchers\Strategies\NoneDiscountStrategy;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -201,7 +201,7 @@ class CouponService implements CouponServiceContract
             return new NoneDiscountStrategy;
         }
 
-        $className = 'EscolaLms\\Vouchers\\Strategies\\' . Str::studly($coupon->type) . 'DiscountStrategy';
+        $className = 'Ulams\\Vouchers\\Strategies\\' . Str::studly($coupon->type) . 'DiscountStrategy';
 
         if (!class_exists($className)) {
             throw new \RuntimeException($className . ' strategy does not exist.');
@@ -247,11 +247,11 @@ class CouponService implements CouponServiceContract
     /**
      * @param Coupon $coupon
      * @param Cart $cart
-     * @return Collection<int, CartItem|\EscolaLms\Vouchers\Models\CartItem>
+     * @return Collection<int, CartItem|\Ulams\Vouchers\Models\CartItem>
      */
     public function cartItemsIncludedInCoupon(Coupon $coupon, Cart $cart): Collection
     {
-        /** @var Collection<int, CartItem|\EscolaLms\Vouchers\Models\CartItem> $items */
+        /** @var Collection<int, CartItem|\Ulams\Vouchers\Models\CartItem> $items */
         // @phpstan-ignore-next-line
         $items = $cart->items->filter(fn (CartItem $item) => $this->cartItemIsIncludedInCoupon($coupon, $item));
         return $items;
@@ -280,11 +280,11 @@ class CouponService implements CouponServiceContract
     /**
      * @param Coupon $coupon
      * @param Cart $cart
-     * @return Collection<int, CartItem|\EscolaLms\Vouchers\Models\CartItem>
+     * @return Collection<int, CartItem|\Ulams\Vouchers\Models\CartItem>
      */
     public function cartItemsWithoutExcludedFromCoupon(Coupon $coupon, Cart $cart): Collection
     {
-        /** @var Collection<int, CartItem|\EscolaLms\Vouchers\Models\CartItem> $result */
+        /** @var Collection<int, CartItem|\Ulams\Vouchers\Models\CartItem> $result */
         // @phpstan-ignore-next-line
         $result = $cart->items->filter(fn (CartItem $item) => !$this->cartItemIsExcludedFromCoupon($coupon, $item));
         return $result;

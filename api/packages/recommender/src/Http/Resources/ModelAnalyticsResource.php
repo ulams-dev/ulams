@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Recommender\Http\Resources;
+namespace Ulams\Recommender\Http\Resources;
 
-use EscolaLms\Recommender\Enum\EmotionsEnum;
+use Ulams\Recommender\Enum\EmotionsEnum;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

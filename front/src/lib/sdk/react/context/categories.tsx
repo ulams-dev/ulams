@@ -7,8 +7,8 @@ import React, {
   useEffect,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextListState,
 } from "./types";
 import { defaultConfig } from "./defaults";
@@ -20,7 +20,7 @@ import { getDefaultData } from "./index";
 import { categoryTree as getCategoryTree } from "./../../services/categories";
 
 export const CategoriesContext: React.Context<
-  Pick<EscolaLMSContextConfig, "categoryTree" | "fetchCategories">
+  Pick<UlamsContextConfig, "categoryTree" | "fetchCategories">
 > = createContext({
   categoryTree: defaultConfig.categoryTree,
   fetchCategories: defaultConfig.fetchCategories,
@@ -28,7 +28,7 @@ export const CategoriesContext: React.Context<
 
 export interface CategoriesContextProviderType {
   apiUrl: string;
-  defaults?: Partial<Pick<EscolaLMSContextReadConfig, "categoryTree">>;
+  defaults?: Partial<Pick<UlamsContextReadConfig, "categoryTree">>;
   ssrHydration?: boolean;
 }
 

@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\Recommender\Http\Controllers\RecommenderController;
-use EscolaLms\Recommender\Http\Controllers\TermAnalyticController;
+use Ulams\Recommender\Http\Controllers\RecommenderController;
+use Ulams\Recommender\Http\Controllers\TermAnalyticController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api/admin/recommender')

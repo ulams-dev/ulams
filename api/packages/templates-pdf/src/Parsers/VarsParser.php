@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Parsers;
+namespace Ulams\TemplatesPdf\Parsers;
 
 use Illuminate\Support\Str;
 

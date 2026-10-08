@@ -1,21 +1,21 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Http\Controllers;
+namespace Ulams\StationaryEvents\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\StationaryEvents\Enum\ConstantEnum;
-use EscolaLms\StationaryEvents\Http\Controllers\Swagger\StationaryEventAdminApiSwagger;
-use EscolaLms\StationaryEvents\Http\Requests\CreateStationaryEventRequest;
-use EscolaLms\StationaryEvents\Http\Requests\DeleteStationaryEventRequest;
-use EscolaLms\StationaryEvents\Http\Requests\ListStationaryEventRequest;
-use EscolaLms\StationaryEvents\Http\Requests\ReadStationaryEventRequest;
-use EscolaLms\StationaryEvents\Http\Requests\UpdateStationaryEventRequest;
-use EscolaLms\StationaryEvents\Http\Resources\StationaryEventAdminResource;
-use EscolaLms\StationaryEvents\Services\Contracts\StationaryEventServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\StationaryEvents\Enum\ConstantEnum;
+use Ulams\StationaryEvents\Http\Controllers\Swagger\StationaryEventAdminApiSwagger;
+use Ulams\StationaryEvents\Http\Requests\CreateStationaryEventRequest;
+use Ulams\StationaryEvents\Http\Requests\DeleteStationaryEventRequest;
+use Ulams\StationaryEvents\Http\Requests\ListStationaryEventRequest;
+use Ulams\StationaryEvents\Http\Requests\ReadStationaryEventRequest;
+use Ulams\StationaryEvents\Http\Requests\UpdateStationaryEventRequest;
+use Ulams\StationaryEvents\Http\Resources\StationaryEventAdminResource;
+use Ulams\StationaryEvents\Services\Contracts\StationaryEventServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class StationaryEventAdminApiController extends EscolaLmsBaseController implements StationaryEventAdminApiSwagger
+class StationaryEventAdminApiController extends UlamsBaseController implements StationaryEventAdminApiSwagger
 {
     private StationaryEventServiceContract $stationaryEventService;
 

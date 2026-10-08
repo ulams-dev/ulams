@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Tags\Http\Controllers\Swagger;
+namespace Ulams\Tags\Http\Controllers\Swagger;
 
-use EscolaLms\Tags\Http\Request\TagInsertRequest;
-use EscolaLms\Tags\Http\Request\TagRemoveRequest;
-use EscolaLms\Tags\Models\Tag;
+use Ulams\Tags\Http\Request\TagInsertRequest;
+use Ulams\Tags\Http\Request\TagRemoveRequest;
+use Ulams\Tags\Models\Tag;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

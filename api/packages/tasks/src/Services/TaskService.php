@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\Tasks\Services;
+namespace Ulams\Tasks\Services;
 
-use EscolaLms\Tasks\Events\TaskIncompleteEvent;
+use Ulams\Tasks\Events\TaskIncompleteEvent;
 use Illuminate\Support\Carbon;
-use EscolaLms\Tasks\Dtos\CreateTaskDto;
-use EscolaLms\Tasks\Dtos\PageDto;
-use EscolaLms\Tasks\Dtos\CriteriaDto;
-use EscolaLms\Tasks\Dtos\OrderDto;
-use EscolaLms\Tasks\Dtos\UpdateTaskDto;
-use EscolaLms\Tasks\Events\TaskAssignedEvent;
-use EscolaLms\Tasks\Events\TaskCompleteRequestEvent;
-use EscolaLms\Tasks\Events\TaskCompleteUserConfirmationEvent;
-use EscolaLms\Tasks\Events\TaskDeletedEvent;
-use EscolaLms\Tasks\Events\TaskUpdatedEvent;
-use EscolaLms\Tasks\Models\Task;
-use EscolaLms\Tasks\Repositories\Contracts\TaskRepositoryContract;
-use EscolaLms\Tasks\Services\Contracts\TaskServiceContract;
+use Ulams\Tasks\Dtos\CreateTaskDto;
+use Ulams\Tasks\Dtos\PageDto;
+use Ulams\Tasks\Dtos\CriteriaDto;
+use Ulams\Tasks\Dtos\OrderDto;
+use Ulams\Tasks\Dtos\UpdateTaskDto;
+use Ulams\Tasks\Events\TaskAssignedEvent;
+use Ulams\Tasks\Events\TaskCompleteRequestEvent;
+use Ulams\Tasks\Events\TaskCompleteUserConfirmationEvent;
+use Ulams\Tasks\Events\TaskDeletedEvent;
+use Ulams\Tasks\Events\TaskUpdatedEvent;
+use Ulams\Tasks\Models\Task;
+use Ulams\Tasks\Repositories\Contracts\TaskRepositoryContract;
+use Ulams\Tasks\Services\Contracts\TaskServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 

@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Services;
+namespace Ulams\Questionnaire\Services;
 
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Questionnaire\Dtos\QuestionnaireModelDto;
-use EscolaLms\Questionnaire\Models\QuestionAnswer;
-use EscolaLms\Questionnaire\Models\QuestionnaireModel;
-use EscolaLms\Questionnaire\Models\QuestionnaireModelType;
-use EscolaLms\Questionnaire\Repository\Contracts\QuestionAnswerRepositoryContract;
-use EscolaLms\Questionnaire\Repository\Contracts\QuestionnaireModelRepositoryContract;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionnaireModelServiceContract;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Questionnaire\Dtos\QuestionnaireModelDto;
+use Ulams\Questionnaire\Models\QuestionAnswer;
+use Ulams\Questionnaire\Models\QuestionnaireModel;
+use Ulams\Questionnaire\Models\QuestionnaireModelType;
+use Ulams\Questionnaire\Repository\Contracts\QuestionAnswerRepositoryContract;
+use Ulams\Questionnaire\Repository\Contracts\QuestionnaireModelRepositoryContract;
+use Ulams\Questionnaire\Services\Contracts\QuestionnaireModelServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Carbon;

@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Cart\Tests\Feature;
+namespace Ulams\Cart\Tests\Feature;
 
-use EscolaLms\Cart\Enums\SubscriptionStatus;
-use EscolaLms\Cart\Jobs\ExpireRecursiveProduct;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Tests\TestCase;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\Cart\Enums\SubscriptionStatus;
+use Ulams\Cart\Jobs\ExpireRecursiveProduct;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Tests\TestCase;
+use Ulams\Core\Models\User;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 

@@ -1,7 +1,7 @@
 import { Select, Spin } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { products as fetchProducts } from '@/services/escola-lms/products';
+import { products as fetchProducts } from '@/services/ulams/products';
 import { useCallback } from 'react';
 import { FormattedMessage } from 'umi';
 
@@ -10,11 +10,11 @@ export const ProductsSelect: React.FC<{
     type: number;
   };
   multiple?: boolean;
-  value?: string | string[] | number | number[] | EscolaLms.Cart.Models.Product[];
+  value?: string | string[] | number | number[] | Ulams.Cart.Models.Product[];
   onChange?: (value: string | string[] | number | number[]) => void;
   type?: string;
 }> = ({ value, onChange, multiple = false, type }) => {
-  const [products, setProducts] = useState<EscolaLms.Cart.Models.Product[]>([]);
+  const [products, setProducts] = useState<Ulams.Cart.Models.Product[]>([]);
   const [fetching, setFetching] = useState(false);
   const [currProducts, setCurrProducts] = useState<number[]>([]);
 
@@ -52,7 +52,7 @@ export const ProductsSelect: React.FC<{
       const val = Array.isArray(value) ? value : [value];
       const values: number[] = val.map((product) => {
         if (typeof product === 'object') {
-          return Number((product as EscolaLms.Cart.Models.Product).id);
+          return Number((product as Ulams.Cart.Models.Product).id);
         }
         return Number(product);
       });

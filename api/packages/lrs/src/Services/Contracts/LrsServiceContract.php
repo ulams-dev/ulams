@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Lrs\Services\Contracts;
+namespace Ulams\Lrs\Services\Contracts;
 
 interface LrsServiceContract
 {

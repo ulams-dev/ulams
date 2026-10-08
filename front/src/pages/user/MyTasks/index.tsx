@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import ProfileLayout from "@/components/Profile/ProfileLayout";
 import { useTranslation } from "react-i18next";
-import { TasksComponent } from "@lms/components/components/organisms/TasksComponent/index";
-import { IconText } from "@lms/components/components/atoms/IconText/IconText";
+import { TasksComponent } from "@ulams/components/components/organisms/TasksComponent/index";
+import { IconText } from "@ulams/components/components/atoms/IconText/IconText";
 import {
   IconChevronDoubleDown,
   IconChevronDoubleUp,
@@ -11,8 +11,8 @@ import {
   IconEyeOff,
   IconUser,
 } from "../../../icons";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { PageParams } from "@lms/sdk/types";
+import { UlamsContext } from "@ulams/sdk/react";
+import { PageParams } from "@ulams/sdk/types";
 
 const Tasks = () => {
   const { t } = useTranslation();
@@ -27,7 +27,7 @@ const Tasks = () => {
   }>({ sort: "Ascending", createdBy: "Personal", done: true });
 
   const { fetchTasks, fetchProgress, progress, fetchProgram, tasks } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
 
   const taskShowAction = [
     {

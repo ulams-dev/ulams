@@ -27,7 +27,7 @@ storage
 storage/**/*
 
 
-escolasoft/**/vendor
+ulams/**/vendor
 .DS_Store
 
 bootstrap/cache/**/*

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Notifications\Tests\Mocks;
+namespace Ulams\Notifications\Tests\Mocks;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;

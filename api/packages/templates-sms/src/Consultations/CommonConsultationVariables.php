@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\TemplatesSms\Consultations;
+namespace Ulams\TemplatesSms\Consultations;
 
 use Carbon\Carbon;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\TemplatesSms\Core\SmsVariables;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\TemplatesSms\Core\SmsVariables;
 
 abstract class CommonConsultationVariables extends SmsVariables
 {

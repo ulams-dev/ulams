@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Vouchers\Http\Controllers;
+namespace Ulams\Vouchers\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Vouchers\Http\Controllers\Swagger\VouchersAdminApiControllerSwagger;
-use EscolaLms\Vouchers\Http\Requests\CreateCouponRequest;
-use EscolaLms\Vouchers\Http\Requests\DeleteCouponRequest;
-use EscolaLms\Vouchers\Http\Requests\ListCouponsRequest;
-use EscolaLms\Vouchers\Http\Requests\ReadCouponRequest;
-use EscolaLms\Vouchers\Http\Requests\UpdateCouponRequest;
-use EscolaLms\Vouchers\Http\Resources\CouponResource;
-use EscolaLms\Vouchers\Services\Contracts\CouponServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Vouchers\Http\Controllers\Swagger\VouchersAdminApiControllerSwagger;
+use Ulams\Vouchers\Http\Requests\CreateCouponRequest;
+use Ulams\Vouchers\Http\Requests\DeleteCouponRequest;
+use Ulams\Vouchers\Http\Requests\ListCouponsRequest;
+use Ulams\Vouchers\Http\Requests\ReadCouponRequest;
+use Ulams\Vouchers\Http\Requests\UpdateCouponRequest;
+use Ulams\Vouchers\Http\Resources\CouponResource;
+use Ulams\Vouchers\Services\Contracts\CouponServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class VouchersAdminApiController extends EscolaLmsBaseController implements VouchersAdminApiControllerSwagger
+class VouchersAdminApiController extends UlamsBaseController implements VouchersAdminApiControllerSwagger
 {
     private CouponServiceContract $couponsService;
 

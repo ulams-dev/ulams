@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Jitsi\Services\Contracts;
+namespace Ulams\Jitsi\Services\Contracts;
 
-use EscolaLms\Auth\Models\User;
+use Ulams\Auth\Models\User;
 use Psr\Http\Message\ResponseInterface;
 use Illuminate\Support\Facades\Auth;
 

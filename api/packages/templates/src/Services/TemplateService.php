@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Templates\Services;
+namespace Ulams\Templates\Services;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Dtos\TemplateFilterCriteriaDto;
-use EscolaLms\Templates\Facades\Template as FacadesTemplate;
-use EscolaLms\Templates\Helpers\Models;
-use EscolaLms\Templates\Models\Templatable;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Models\TemplateSection;
-use EscolaLms\Templates\Repository\Contracts\TemplateRepositoryContract;
-use EscolaLms\Templates\Services\Contracts\TemplateServiceContract;
-use EscolaLms\Templates\Services\Contracts\TemplateVariablesServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Dtos\TemplateFilterCriteriaDto;
+use Ulams\Templates\Facades\Template as FacadesTemplate;
+use Ulams\Templates\Helpers\Models;
+use Ulams\Templates\Models\Templatable;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Models\TemplateSection;
+use Ulams\Templates\Repository\Contracts\TemplateRepositoryContract;
+use Ulams\Templates\Services\Contracts\TemplateServiceContract;
+use Ulams\Templates\Services\Contracts\TemplateVariablesServiceContract;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;

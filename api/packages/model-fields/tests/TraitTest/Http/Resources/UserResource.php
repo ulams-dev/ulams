@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\ModelFields\Trait\Tests\Http\Resources;
+namespace Ulams\ModelFields\Trait\Tests\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use EscolaLms\ModelFields\Tests\TraitTest\Models\User;
-use EscolaLms\ModelFields\Facades\ModelFields;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
+use Ulams\ModelFields\Tests\TraitTest\Models\User;
+use Ulams\ModelFields\Facades\ModelFields;
+use Ulams\ModelFields\Enum\MetaFieldVisibilityEnum;
 
 class UserResource extends JsonResource
 {

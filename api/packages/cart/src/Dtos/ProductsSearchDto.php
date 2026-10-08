@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cart\Dtos;
+namespace Ulams\Cart\Dtos;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\DtoContract;
 
 class ProductsSearchDto implements DtoContract
 {

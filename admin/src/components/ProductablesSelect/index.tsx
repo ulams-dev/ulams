@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useCallback } from 'react';
 import { FormattedMessage } from 'umi';
 
-import { productables as fetchProductables } from '@/services/escola-lms/products';
+import { productables as fetchProductables } from '@/services/ulams/products';
 
 const transformListItemToValueKey = (input: API.ProductableListItem): string =>
   `${input.productable_type}:${input.productable_id}:${input.name}`;

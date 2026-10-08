@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Jitsi\Helpers;
+namespace Ulams\Jitsi\Helpers;
 
-use EscolaLms\Jitsi\Enum\JitsiEnum;
+use Ulams\Jitsi\Enum\JitsiEnum;
 
 class StringHelper
 {

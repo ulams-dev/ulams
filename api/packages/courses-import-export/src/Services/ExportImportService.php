@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Services;
+namespace Ulams\CoursesImportExport\Services;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Categories\Repositories\Contracts\CategoriesRepositoryContract;
-use EscolaLms\Courses\Http\Requests\CreateTopicAPIRequest;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Repositories\Contracts\CourseRepositoryContract;
-use EscolaLms\Courses\Repositories\Contracts\LessonRepositoryContract;
-use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
-use EscolaLms\Courses\Repositories\Contracts\TopicResourceRepositoryContract;
-use EscolaLms\CoursesImportExport\Http\Resources\CourseExportResource;
-use EscolaLms\CoursesImportExport\Models\Course;
-use EscolaLms\CoursesImportExport\Services\Contracts\ExportImportServiceContract;
-use EscolaLms\CoursesImportExport\Strategies\Contract\TopicImportStrategy;
-use EscolaLms\CoursesImportExport\Strategies\RichTextTopicTypeStrategy;
-use EscolaLms\CoursesImportExport\Strategies\ScormScoTopicTypeStrategy;
+use Ulams\Categories\Models\Category;
+use Ulams\Categories\Repositories\Contracts\CategoriesRepositoryContract;
+use Ulams\Courses\Http\Requests\CreateTopicAPIRequest;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Repositories\Contracts\CourseRepositoryContract;
+use Ulams\Courses\Repositories\Contracts\LessonRepositoryContract;
+use Ulams\Courses\Repositories\Contracts\TopicRepositoryContract;
+use Ulams\Courses\Repositories\Contracts\TopicResourceRepositoryContract;
+use Ulams\CoursesImportExport\Http\Resources\CourseExportResource;
+use Ulams\CoursesImportExport\Models\Course;
+use Ulams\CoursesImportExport\Services\Contracts\ExportImportServiceContract;
+use Ulams\CoursesImportExport\Strategies\Contract\TopicImportStrategy;
+use Ulams\CoursesImportExport\Strategies\RichTextTopicTypeStrategy;
+use Ulams\CoursesImportExport\Strategies\ScormScoTopicTypeStrategy;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\File as HttpFile;
@@ -42,8 +42,8 @@ class ExportImportService implements ExportImportServiceContract
     private string $dirFullPath;
 
     private array $topicTypes = [
-        'EscolaLms\\TopicTypes\\Models\\TopicContent\\ScormSco',
-        'EscolaLms\\TopicTypes\\Models\\TopicContent\\H5P',
+        'Ulams\\TopicTypes\\Models\\TopicContent\\ScormSco',
+        'Ulams\\TopicTypes\\Models\\TopicContent\\H5P',
     ];
 
     public function __construct(
@@ -67,7 +67,7 @@ class ExportImportService implements ExportImportServiceContract
         $course->fixAssetPaths();
     }
 
-    private function createExportJson(\EscolaLms\Courses\Models\Course $course, $dirName): void
+    private function createExportJson(\Ulams\Courses\Models\Course $course, $dirName): void
     {
         $program = CourseExportResource::make($course);
 
@@ -157,7 +157,7 @@ class ExportImportService implements ExportImportServiceContract
         $this->fixAllPathsBeforeZipping($courseId);
         $dirName = $this->copyCourseFilesToExportFolder($courseId);
 
-        $course = \EscolaLms\Courses\Models\Course::with(['lessons.topics.topicable', 'scormSco', 'categories', 'tags'])
+        $course = \Ulams\Courses\Models\Course::with(['lessons.topics.topicable', 'scormSco', 'categories', 'tags'])
             ->findOrFail($courseId);
         $this->createExportJson($course, $dirName);
 
@@ -329,7 +329,7 @@ class ExportImportService implements ExportImportServiceContract
 
         $topic = $this->topicRepository->createFromRequest($request);
 
-        if ($topicData['topicable_type'] === 'EscolaLms\\TopicTypes\\Models\\TopicContent\\RichText'
+        if ($topicData['topicable_type'] === 'Ulams\\TopicTypes\\Models\\TopicContent\\RichText'
             && array_key_exists('asset_folder', $topicData)) {
             $this->handleRichTextTopicImport($topic, $dirFullPath, $topicData, $courseId);
         }
@@ -381,7 +381,7 @@ class ExportImportService implements ExportImportServiceContract
 
     private function getTopicTypeImportStrategy(string $topicType): TopicImportStrategy
     {
-        $strategy = 'EscolaLms\\CoursesImportExport\\Strategies\\' . substr(strrchr($topicType, "\\"), 1) . 'TopicTypeStrategy';
+        $strategy = 'Ulams\\CoursesImportExport\\Strategies\\' . substr(strrchr($topicType, "\\"), 1) . 'TopicTypeStrategy';
         return new $strategy();
     }
 

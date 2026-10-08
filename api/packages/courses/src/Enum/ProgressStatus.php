@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Enum;
+namespace Ulams\Courses\Enum;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class ProgressStatus extends BasicEnum
 {

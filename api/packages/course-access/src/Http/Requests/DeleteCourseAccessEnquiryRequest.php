@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Http\Requests;
+namespace Ulams\CourseAccess\Http\Requests;
 
-use EscolaLms\CourseAccess\Models\CourseAccessEnquiry;
+use Ulams\CourseAccess\Models\CourseAccessEnquiry;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

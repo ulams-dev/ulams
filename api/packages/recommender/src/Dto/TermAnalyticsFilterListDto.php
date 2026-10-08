@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Recommender\Dto;
+namespace Ulams\Recommender\Dto;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
-use EscolaLms\Core\Dtos\CriteriaDto as BaseCriteriaDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
-use EscolaLms\Recommender\Repositories\Criteria\CategoriesCriterion;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\CriteriaDto as BaseCriteriaDto;
+use Ulams\Core\Repositories\Criteria\Primitives\DateCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\InCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\LikeCriterion;
+use Ulams\Recommender\Repositories\Criteria\CategoriesCriterion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 

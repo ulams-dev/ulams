@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Http\Controllers;
+namespace Ulams\Bookmarks\Http\Controllers;
 
-use EscolaLms\Bookmarks\Http\Controllers\Swagger\AdminBookmarkControllerSwagger;
-use EscolaLms\Bookmarks\Http\Requests\AdminCreateBookmarkRequest;
-use EscolaLms\Bookmarks\Http\Requests\AdminDeleteBookmarkRequest;
-use EscolaLms\Bookmarks\Http\Requests\AdminListBookmarkRequest;
-use EscolaLms\Bookmarks\Http\Requests\AdminUpdateBookmarkRequest;
-use EscolaLms\Bookmarks\Http\Resources\BookmarkResource;
-use EscolaLms\Bookmarks\Services\Contracts\BookmarkServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Bookmarks\Http\Controllers\Swagger\AdminBookmarkControllerSwagger;
+use Ulams\Bookmarks\Http\Requests\AdminCreateBookmarkRequest;
+use Ulams\Bookmarks\Http\Requests\AdminDeleteBookmarkRequest;
+use Ulams\Bookmarks\Http\Requests\AdminListBookmarkRequest;
+use Ulams\Bookmarks\Http\Requests\AdminUpdateBookmarkRequest;
+use Ulams\Bookmarks\Http\Resources\BookmarkResource;
+use Ulams\Bookmarks\Services\Contracts\BookmarkServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\JsonResponse;
 
-class AdminBookmarkController extends EscolaLmsBaseController implements AdminBookmarkControllerSwagger
+class AdminBookmarkController extends UlamsBaseController implements AdminBookmarkControllerSwagger
 {
     private BookmarkServiceContract $bookmarkService;
 

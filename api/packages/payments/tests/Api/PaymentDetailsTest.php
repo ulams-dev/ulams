@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Payments\Tests\Api;
+namespace Ulams\Payments\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Payments\Models\Payment;
-use EscolaLms\Payments\Tests\Traits\CreatesBillable;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Payments\Models\Payment;
+use Ulams\Payments\Tests\Traits\CreatesBillable;
 
-class PaymentDetailsTest extends \EscolaLms\Payments\Tests\TestCase
+class PaymentDetailsTest extends \Ulams\Payments\Tests\TestCase
 {
 	use CreatesBillable;
 	use CreatesUsers;

@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Cart\Contracts\ProductableTrait;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Core\Models\User;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Cart\Contracts\ProductableTrait;
+use Ulams\Cart\Models\Product;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 
-class Consultation extends \EscolaLms\Consultations\Models\Consultation implements Productable
+class Consultation extends \Ulams\Consultations\Models\Consultation implements Productable
 {
     use ProductableTrait;
 

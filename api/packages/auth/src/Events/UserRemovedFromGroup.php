@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Auth\Events;
+namespace Ulams\Auth\Events;
 
 class UserRemovedFromGroup extends Auth
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Repository;
+namespace Ulams\Questionnaire\Repository;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Questionnaire\Dtos\QuestionFilterCriteriaDto;
-use EscolaLms\Questionnaire\Models\Question;
-use EscolaLms\Questionnaire\Repository\Contracts\QuestionRepositoryContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Questionnaire\Dtos\QuestionFilterCriteriaDto;
+use Ulams\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Repository\Contracts\QuestionRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 

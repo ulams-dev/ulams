@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Webinar\Tests\Database\Factories;
+namespace Ulams\Webinar\Tests\Database\Factories;
 
-use EscolaLms\Webinar\Tests\Models\User;
+use Ulams\Webinar\Tests\Models\User;
 
-class UserFactory extends \Database\Factories\EscolaLms\Core\Models\UserFactory
+class UserFactory extends \Database\Factories\Ulams\Core\Models\UserFactory
 {
     protected $model = User::class;
 }

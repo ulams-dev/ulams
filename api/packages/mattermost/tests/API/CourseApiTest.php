@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Mattermost\Tests\API;
+namespace Ulams\Mattermost\Tests\API;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Courses\Enum\CourseStatusEnum;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Mattermost\Enum\PackageStatusEnum;
-use EscolaLms\Mattermost\Services\Contracts\MattermostServiceContract;
-use EscolaLms\Mattermost\Tests\TestCase;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\Courses\Enum\CourseStatusEnum;
+use Ulams\Courses\Models\Course;
+use Ulams\Mattermost\Enum\PackageStatusEnum;
+use Ulams\Mattermost\Services\Contracts\MattermostServiceContract;
+use Ulams\Mattermost\Tests\TestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Config;
 use Mockery\MockInterface;
@@ -23,20 +23,20 @@ class CourseApiTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\Courses\EscolaLmsCourseServiceProvider::class)) {
+        if (!class_exists(\Ulams\Courses\UlamsCourseServiceProvider::class)) {
             $this->markTestSkipped('Courses package not installed');
         }
 
-        if (!class_exists(\EscolaLms\CourseAccess\EscolaLmsCourseAccessServiceProvider::class)) {
+        if (!class_exists(\Ulams\CourseAccess\UlamsCourseAccessServiceProvider::class)) {
             $this->markTestSkipped('Course-Access package not installed');
         }
 
-        if (!class_exists(\EscolaLms\Scorm\EscolaLmsScormServiceProvider::class)) {
+        if (!class_exists(\Ulams\Scorm\UlamsScormServiceProvider::class)) {
             $this->markTestSkipped('Scorm package not installed');
         }
 
         $this->seed(CoursesPermissionSeeder::class);
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
         $this->user = config('auth.providers.users.model')::factory()->create();
         $this->user->guard_name = 'api';
         $this->user->assignRole('admin');
@@ -45,7 +45,7 @@ class CourseApiTest extends TestCase
 
     protected function tearDown(): void
     {
-        \EscolaLms\Settings\Models\Config::truncate();
+        \Ulams\Settings\Models\Config::truncate();
         User::query()->delete();
         Course::query()->delete();
     }

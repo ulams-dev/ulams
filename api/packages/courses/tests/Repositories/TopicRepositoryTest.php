@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\Repositories;
+namespace Ulams\Courses\Tests\Repositories;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Repositories\Contracts\TopicRepositoryContract;
-use EscolaLms\Courses\Repositories\TopicRepository;
-use EscolaLms\Courses\Tests\Models\TopicContent\ExampleTopicType;
-use EscolaLms\Courses\Tests\Models\TopicContent\SecondExampleTopicType;
-use EscolaLms\Courses\Tests\Repositories\Mocks\CreateTopicApiRequestMock;
-use EscolaLms\Courses\Tests\Repositories\Mocks\UpdateTopicApiRequestMock;
-use EscolaLms\Courses\Tests\TestCase;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Repositories\Contracts\TopicRepositoryContract;
+use Ulams\Courses\Repositories\TopicRepository;
+use Ulams\Courses\Tests\Models\TopicContent\ExampleTopicType;
+use Ulams\Courses\Tests\Models\TopicContent\SecondExampleTopicType;
+use Ulams\Courses\Tests\Repositories\Mocks\CreateTopicApiRequestMock;
+use Ulams\Courses\Tests\Repositories\Mocks\UpdateTopicApiRequestMock;
+use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Routing\Redirector;
 

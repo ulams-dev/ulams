@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Tests;
+namespace Ulams\TopicTypes\Tests;
 
-use EscolaLms\Categories\Services\Contracts\CategoryServiceContracts;
-use EscolaLms\Core\Repositories\Contracts\ConfigRepositoryContract;
-use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
-use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
+use Ulams\Categories\Services\Contracts\CategoryServiceContracts;
+use Ulams\Core\Repositories\Contracts\ConfigRepositoryContract;
+use Ulams\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
+use Ulams\Courses\Services\Contracts\CourseServiceContract;
 
 trait MakeServices
 {

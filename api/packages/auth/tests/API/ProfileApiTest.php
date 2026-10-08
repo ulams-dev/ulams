@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Auth\Tests\API;
+namespace Ulams\Auth\Tests\API;
 
-use EscolaLms\Auth\Enums\GenderType;
-use EscolaLms\Auth\Events\AccountDeleted;
-use EscolaLms\Auth\Events\AccountDeletionRequested;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Auth\Tests\TestCase;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Auth\Enums\GenderType;
+use Ulams\Auth\Events\AccountDeleted;
+use Ulams\Auth\Events\AccountDeletionRequested;
+use Ulams\Auth\Models\User;
+use Ulams\Categories\Models\Category;
+use Ulams\Auth\Tests\TestCase;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\ModelFields\Enum\MetaFieldVisibilityEnum;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Crypt;
@@ -334,7 +334,7 @@ class ProfileApiTest extends TestCase
         $user = $this->makeStudent();
         $this
             ->actingAs($user, 'api')
-            ->postJson('/api/profile/delete/init', ['return_url' => 'https://escolalms.com/delete-account'])
+            ->postJson('/api/profile/delete/init', ['return_url' => 'https://ulams.app/delete-account'])
             ->assertOk();
 
         $user = User::find($user->getKey());
@@ -369,7 +369,7 @@ class ProfileApiTest extends TestCase
 
         $this
             ->actingAs($user, 'api')
-            ->postJson('/api/profile/delete/init', ['return_url' => 'https://escolalms.com/delete-account'])
+            ->postJson('/api/profile/delete/init', ['return_url' => 'https://ulams.app/delete-account'])
             ->assertForbidden();
 
         Event::assertNotDispatched(AccountDeletionRequested::class);
@@ -380,7 +380,7 @@ class ProfileApiTest extends TestCase
         Event::fake([AccountDeletionRequested::class]);
 
         $this
-            ->postJson('/api/profile/delete/init', ['return_url' => 'https://escolalms.com/delete-account'])
+            ->postJson('/api/profile/delete/init', ['return_url' => 'https://ulams.app/delete-account'])
             ->assertUnauthorized();
 
         Event::assertNotDispatched(AccountDeletionRequested::class);
@@ -393,7 +393,7 @@ class ProfileApiTest extends TestCase
         $user = $this->makeStudent();
         $this
             ->actingAs($user, 'api')
-            ->postJson('/api/profile/delete/init', ['return_url' => 'https://escolalms.com/delete-account'])
+            ->postJson('/api/profile/delete/init', ['return_url' => 'https://ulams.app/delete-account'])
             ->assertOk();
         $user->refresh();
 
@@ -423,7 +423,7 @@ class ProfileApiTest extends TestCase
         $user = $this->makeStudent();
         $this
             ->actingAs($user, 'api')
-            ->postJson('/api/profile/delete/init', ['return_url' => 'https://escolalms.com/delete-account'])
+            ->postJson('/api/profile/delete/init', ['return_url' => 'https://ulams.app/delete-account'])
             ->assertOk();
         $user->refresh();
 
@@ -444,7 +444,7 @@ class ProfileApiTest extends TestCase
         $user = $this->makeStudent();
         $this
             ->actingAs($user, 'api')
-            ->postJson('/api/profile/delete/init', ['return_url' => 'https://escolalms.com/delete-account'])
+            ->postJson('/api/profile/delete/init', ['return_url' => 'https://ulams.app/delete-account'])
             ->assertOk();
         $user->refresh();
 
@@ -465,7 +465,7 @@ class ProfileApiTest extends TestCase
         $user = $this->makeStudent();
         $this
             ->actingAs($user, 'api')
-            ->postJson('/api/profile/delete/init', ['return_url' => 'https://escolalms.com/delete-account'])
+            ->postJson('/api/profile/delete/init', ['return_url' => 'https://ulams.app/delete-account'])
             ->assertOk();
         $user->refresh();
 

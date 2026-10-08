@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Webinar\Database\Seeders;
+namespace Ulams\Webinar\Database\Seeders;
 
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Webinar\Enum\WebinarPermissionsEnum;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Webinar\Enum\WebinarPermissionsEnum;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 

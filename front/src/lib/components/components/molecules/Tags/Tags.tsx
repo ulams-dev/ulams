@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { Tag } from "@lms/sdk/types";
+import type { Tag } from "@ulams/sdk/types";
 import styled, {
   createGlobalStyle,
   ThemeContext,
@@ -13,7 +13,7 @@ import Drawer from "rc-drawer";
 import { useTranslation } from "react-i18next";
 import { getFontFromTheme } from "../../../theme/provider";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface StyledTagsProps {
   mobile?: boolean;
@@ -292,7 +292,7 @@ const TagsTreeOptions: React.FC<TagsProps> = (props) => {
 
   return (
     <StyledTagsTreeOptions
-      className={`wellms-component ${
+      className={`ulams-component ${
         mobile ? "tags-drawer-list" : "tags-dropdown-options"
       } ${className}`}
     >
@@ -354,7 +354,7 @@ const TagsDropdown: React.FC<TagsProps> = (props) => {
     <StyledTagsDropdown
       open={open}
       ref={ref}
-      className="wellms-component"
+      className="ulams-component"
       lightContrast={cts}
       backgroundColor={backgroundColor}
     >

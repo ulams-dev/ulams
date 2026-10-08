@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Webinar\Events;
+namespace Ulams\Webinar\Events;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Webinar\Models\Webinar as WebinarModel;
+use Ulams\Core\Models\User;
+use Ulams\Webinar\Models\Webinar as WebinarModel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

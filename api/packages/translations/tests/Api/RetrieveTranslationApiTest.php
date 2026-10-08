@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Translations\Tests\Api;
+namespace Ulams\Translations\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Translations\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Translations\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Testing\Fluent\AssertableJson;

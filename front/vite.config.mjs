@@ -38,15 +38,15 @@ export default defineConfig(({ mode }) => {
       process.env.SENTRY_AUTH_TOKEN
         ? sentryVitePlugin({
             authToken: process.env.SENTRY_AUTH_TOKEN,
-            org: "escolasoft",
-            project: "wellms-front",
-            url: "https://escolasoft.sentry.io",
+            org: "ulams",
+            project: "ulams-front",
+            url: "https://ulams.sentry.io",
           })
         : undefined,
       // set ANALYZE=1 to open the bundle report after build
       visualizer({ open: !!process.env.ANALYZE }),
     ],
-    // web workers (src/workers) are bundled separately and need the same @/… and @lms/… aliases
+    // web workers (src/workers) are bundled separately and need the same @/… and @ulams/… aliases
     worker: {
       plugins: () => [viteTsconfigPaths()],
     },

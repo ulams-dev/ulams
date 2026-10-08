@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Lrs\Tests;
+namespace Ulams\Lrs\Tests;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
-use EscolaLms\Lrs\EscolaLmsLrsServiceProvider;
-use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
-use EscolaLms\Lrs\Database\Seeders\LrsSeeder;
+use Ulams\Lrs\UlamsLrsServiceProvider;
+use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\Lrs\Database\Seeders\LrsSeeder;
 use Laravel\Passport\Passport;
-use EscolaLms\Lrs\Tests\Models\Client;
-use EscolaLms\Lrs\Tests\Models\User;
+use Ulams\Lrs\Tests\Models\Client;
+use Ulams\Lrs\Tests\Models\User;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     use DatabaseTransactions;
 
@@ -26,8 +26,8 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsLrsServiceProvider::class,
-            EscolaLmsCourseServiceProvider::class,
+            UlamsLrsServiceProvider::class,
+            UlamsCourseServiceProvider::class,
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
         ];

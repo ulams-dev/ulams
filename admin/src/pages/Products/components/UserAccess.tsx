@@ -3,7 +3,7 @@ import {
   getProduct,
   productAttachToUser,
   productDetachToUser,
-} from '@/services/escola-lms/products';
+} from '@/services/ulams/products';
 import ProForm from '@ant-design/pro-form';
 import { Button, Tooltip } from 'antd';
 import React, { Fragment, useCallback, useRef, useState } from 'react';

@@ -14,7 +14,7 @@
  * @link https://api.mattermost.com/
  */
 
-use EscolaLms\Mattermost\Enum\PackageStatusEnum;
+use Ulams\Mattermost\Enum\PackageStatusEnum;
 
 return [
 

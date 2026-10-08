@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Enum;
+namespace Ulams\StationaryEvents\Enum;
 
-use EscolaLms\Core\Enums\BasicEnum;
+use Ulams\Core\Enums\BasicEnum;
 
 class StationaryEventPermissionsEnum extends BasicEnum
 {

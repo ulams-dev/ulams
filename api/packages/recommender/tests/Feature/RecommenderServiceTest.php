@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Recommender\Tests\Feature;
+namespace Ulams\Recommender\Tests\Feature;
 
-use EscolaLms\Recommender\EscolaLmsRecommenderServiceProvider;
-use EscolaLms\Recommender\Exceptions\RecommenderDisabledException;
-use EscolaLms\Recommender\Services\Contracts\RecommenderServiceContract;
-use EscolaLms\Recommender\Tests\CreatesCourse;
-use EscolaLms\Recommender\Tests\TestCase;
-use EscolaLms\TopicTypes\Models\TopicContent\Image;
-use EscolaLms\TopicTypes\Models\TopicContent\OEmbed;
-use EscolaLms\TopicTypes\Models\TopicContent\PDF;
-use EscolaLms\TopicTypes\Models\TopicContent\RichText;
-use EscolaLms\TopicTypes\Models\TopicContent\Video;
+use Ulams\Recommender\UlamsRecommenderServiceProvider;
+use Ulams\Recommender\Exceptions\RecommenderDisabledException;
+use Ulams\Recommender\Services\Contracts\RecommenderServiceContract;
+use Ulams\Recommender\Tests\CreatesCourse;
+use Ulams\Recommender\Tests\TestCase;
+use Ulams\TopicTypes\Models\TopicContent\Image;
+use Ulams\TopicTypes\Models\TopicContent\OEmbed;
+use Ulams\TopicTypes\Models\TopicContent\PDF;
+use Ulams\TopicTypes\Models\TopicContent\RichText;
+use Ulams\TopicTypes\Models\TopicContent\Video;
 use Illuminate\Support\Facades\Config;
 
 class RecommenderServiceTest extends TestCase
@@ -26,9 +26,9 @@ class RecommenderServiceTest extends TestCase
 
         $this->recommenderService = app()->make(RecommenderServiceContract::class);
 
-        Config::set(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.course_model', '{"model": "course"}');
-        Config::set(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.exercise_model', '{"model": "exercise"}');
-        Config::set(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.enabled', true);
+        Config::set(UlamsRecommenderServiceProvider::CONFIG_KEY . '.course_model', '{"model": "course"}');
+        Config::set(UlamsRecommenderServiceProvider::CONFIG_KEY . '.exercise_model', '{"model": "exercise"}');
+        Config::set(UlamsRecommenderServiceProvider::CONFIG_KEY . '.enabled', true);
     }
 
     public function testCourseMakeData(): void
@@ -60,7 +60,7 @@ class RecommenderServiceTest extends TestCase
 
     public function testCourseMakeDataModelNotSet(): void
     {
-        Config::set(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.course_model');
+        Config::set(UlamsRecommenderServiceProvider::CONFIG_KEY . '.course_model');
 
         $course = $this->createCourseWithTopicTypes([
             PDF::class,
@@ -110,7 +110,7 @@ class RecommenderServiceTest extends TestCase
 
     public function testTopicMakeDataModelNotSet(): void
     {
-        Config::set(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.exercise_model');
+        Config::set(UlamsRecommenderServiceProvider::CONFIG_KEY . '.exercise_model');
 
         $course = $this->createCourse();
         $lesson1 = $this->createLessonWithTopics($course, [PDF::class, OEmbed::class, Video::class, RichText::class, Image::class, PDF::class, Video::class]);

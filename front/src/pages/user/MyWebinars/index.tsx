@@ -1,10 +1,10 @@
 import { useContext, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import ProfileLayout from "@/components/Profile/ProfileLayout";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
-import { Tabs } from "@lms/components/components/atoms/Tabs/Tabs";
+import { UlamsContext } from "@ulams/sdk/react/context";
+import { Tabs } from "@ulams/components/components/atoms/Tabs/Tabs";
 import ProfileWebinars from "@/components/Profile/ProfileWebinars";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 
 export enum WebinarStatus {
   UPCOMING = "in_coming",
@@ -13,7 +13,7 @@ export enum WebinarStatus {
 }
 
 const MyWebinarsPage = () => {
-  const { userWebinars, fetchUserWebinars } = useContext(EscolaLMSContext);
+  const { userWebinars, fetchUserWebinars } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   useEffect(() => {

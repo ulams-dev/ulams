@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Categories\Http\Controllers\Swagger;
+namespace Ulams\Categories\Http\Controllers\Swagger;
 
-use EscolaLms\Categories\Http\Requests\CategoryCreateRequest;
-use EscolaLms\Categories\Http\Requests\CategoryDeleteRequest;
-use EscolaLms\Categories\Http\Requests\CategoryListRequest;
-use EscolaLms\Categories\Http\Requests\CategoryReadRequest;
-use EscolaLms\Categories\Http\Requests\CategorySortRequest;
-use EscolaLms\Categories\Http\Requests\CategoryUpdateRequest;
-use EscolaLms\Categories\Models\Category;
+use Ulams\Categories\Http\Requests\CategoryCreateRequest;
+use Ulams\Categories\Http\Requests\CategoryDeleteRequest;
+use Ulams\Categories\Http\Requests\CategoryListRequest;
+use Ulams\Categories\Http\Requests\CategoryReadRequest;
+use Ulams\Categories\Http\Requests\CategorySortRequest;
+use Ulams\Categories\Http\Requests\CategoryUpdateRequest;
+use Ulams\Categories\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

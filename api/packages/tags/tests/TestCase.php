@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Tags\Tests;
+namespace Ulams\Tags\Tests;
 
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\Tags\AuthServiceProvider;
-use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
-use EscolaLms\Core\Models\User;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\Tags\AuthServiceProvider;
+use Ulams\Tags\UlamsTagsServiceProvider;
+use Ulams\Core\Models\User;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     protected function setUp(): void
     {
@@ -24,7 +24,7 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             ...parent::getPackageProviders($app),
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
-            EscolaLmsTagsServiceProvider::class,
+            UlamsTagsServiceProvider::class,
             AuthServiceProvider::class
         ];
     }

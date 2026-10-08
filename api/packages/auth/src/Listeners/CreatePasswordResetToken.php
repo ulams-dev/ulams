@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Listeners;
+namespace Ulams\Auth\Listeners;
 
-use EscolaLms\Auth\Events\ForgotPassword;
-use EscolaLms\Auth\Notifications\ResetPassword;
-use EscolaLms\Auth\Repositories\Contracts\UserRepositoryContract;
+use Ulams\Auth\Events\ForgotPassword;
+use Ulams\Auth\Notifications\ResetPassword;
+use Ulams\Auth\Repositories\Contracts\UserRepositoryContract;
 use Illuminate\Support\Str;
 
 class CreatePasswordResetToken

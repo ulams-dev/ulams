@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Http\Resources;
+namespace Ulams\Dictionaries\Http\Resources;
 
-use EscolaLms\Dictionaries\Models\DictionaryWord;
+use Ulams\Dictionaries\Models\DictionaryWord;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

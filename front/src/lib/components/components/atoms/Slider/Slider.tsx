@@ -3,7 +3,7 @@ import styled, { withTheme, css } from "styled-components";
 import SlickSlider, { Settings } from "react-slick";
 import { PropsWithChildren } from "react";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface StyledSliderProps {
   mobile?: boolean;
@@ -382,7 +382,7 @@ export const Slider: React.FC<PropsWithChildren<SliderProps>> = (props) => {
   return (
     <StyledDiv
       {...props}
-      className={`wellms-component ${props.className ?? ""}`}
+      className={`ulams-component ${props.className ?? ""}`}
     >
       <SlickSlider {...settings}>{children}</SlickSlider>
     </StyledDiv>

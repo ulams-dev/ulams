@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Categories\Dtos;
+namespace Ulams\Categories\Dtos;
 
-use EscolaLms\Core\Dtos\Contracts\InstantiateFromRequest;
-use EscolaLms\Core\Dtos\CriteriaDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
+use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
+use Ulams\Core\Dtos\CriteriaDto;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\LikeCriterion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 

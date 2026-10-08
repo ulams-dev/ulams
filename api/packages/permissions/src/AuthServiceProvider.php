@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Permissions;
+namespace Ulams\Permissions;
 
-use EscolaLms\Permissions\Models\UserAdmin;
-use EscolaLms\Permissions\Policies\PermissionsPolicy;
+use Ulams\Permissions\Models\UserAdmin;
+use Ulams\Permissions\Policies\PermissionsPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Passport;

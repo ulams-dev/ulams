@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests;
+namespace Ulams\Cart\Http\Requests;
 
-use EscolaLms\Cart\Http\Requests\Admin\ProductSearchRequest as AdminProductSearchRequest;
+use Ulams\Cart\Http\Requests\Admin\ProductSearchRequest as AdminProductSearchRequest;
 use Illuminate\Support\Arr;
 
 class ProductSearchRequest extends AdminProductSearchRequest

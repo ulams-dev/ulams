@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Events;
+namespace Ulams\ConsultationAccess\Events;
 
-use EscolaLms\Auth\Models\User;
+use Ulams\Auth\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

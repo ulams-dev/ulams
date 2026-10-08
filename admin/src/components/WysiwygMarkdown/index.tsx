@@ -1,5 +1,5 @@
-import { resizedImage, upload } from '@/services/escola-lms/files';
-import RichMarkdownEditor2 from '@lms/markdown-editor';
+import { resizedImage, upload } from '@/services/ulams/files';
+import RichMarkdownEditor2 from '@ulams/markdown-editor';
 import React from 'react';
 import { useIntl } from 'umi';
 import './index.css';

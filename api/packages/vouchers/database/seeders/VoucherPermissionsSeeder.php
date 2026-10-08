@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Vouchers\Database\Seeders;
+namespace Ulams\Vouchers\Database\Seeders;
 
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Vouchers\Enums\VoucherPermissionsEnum;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Vouchers\Enums\VoucherPermissionsEnum;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 

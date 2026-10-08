@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Tests;
+namespace Ulams\TemplatesPdf\Tests;
 
-use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
-use EscolaLms\Core\Models\User;
-use EscolaLms\TemplatesPdf\EscolaLmsTemplatesPdfServiceProvider;
-use EscolaLms\Templates\Database\Seeders\PermissionTableSeeder as TemplatesPermissionTableSeeder;
-use EscolaLms\TemplatesPdf\Database\Seeders\PermissionTableSeeder as TemplatesPdfPermissionTableSeeder;
+use Ulams\Categories\UlamsCategoriesServiceProvider;
+use Ulams\Core\Models\User;
+use Ulams\TemplatesPdf\UlamsTemplatesPdfServiceProvider;
+use Ulams\Templates\Database\Seeders\PermissionTableSeeder as TemplatesPermissionTableSeeder;
+use Ulams\TemplatesPdf\Database\Seeders\PermissionTableSeeder as TemplatesPdfPermissionTableSeeder;
 
-use EscolaLms\Templates\EscolaLmsTemplatesServiceProvider;
+use Ulams\Templates\UlamsTemplatesServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
-use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
+use Ulams\Courses\UlamsCourseServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     use DatabaseTransactions;
 
@@ -31,14 +31,14 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             ...parent::getPackageProviders($app),
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
-            EscolaLmsCourseServiceProvider::class,
-            EscolaLmsTemplatesServiceProvider::class,
-            EscolaLmsCategoriesServiceProvider::class,
-            EscolaLmsTemplatesPdfServiceProvider::class,
+            UlamsCourseServiceProvider::class,
+            UlamsTemplatesServiceProvider::class,
+            UlamsCategoriesServiceProvider::class,
+            UlamsTemplatesPdfServiceProvider::class,
         ];
 
-        if (class_exists(\EscolaLms\Auth\EscolaLmsAuthServiceProvider::class)) {
-            $providers[] = \EscolaLms\Auth\EscolaLmsAuthServiceProvider::class;
+        if (class_exists(\Ulams\Auth\UlamsAuthServiceProvider::class)) {
+            $providers[] = \Ulams\Auth\UlamsAuthServiceProvider::class;
         }
 
         return $providers;

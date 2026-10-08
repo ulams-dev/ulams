@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Mocks;
+namespace Ulams\Core\Tests\Mocks;
 
-use EscolaLms\Core\Dtos\Contracts\CompareDtoContract;
+use Ulams\Core\Dtos\Contracts\CompareDtoContract;
 
 class CompareDto extends UpdateDto implements CompareDtoContract
 {

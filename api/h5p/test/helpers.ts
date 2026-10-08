@@ -10,7 +10,7 @@ import { deleteObjects } from '../src/storage/s3';
 export const randomSuffix = (): string => randomBytes(4).toString('hex');
 
 /**
- * Integration tests run inside a container on the escola_lms network, so the
+ * Integration tests run inside a container on the ulams network, so the
  * defaults in loadConfig() (postgres, redis, minio) apply. Each test file uses
  * its own schema `h5p_test_<random>` and S3 prefix `h5p-test-<random>`.
  */

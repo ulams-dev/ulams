@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Imports;
+namespace Ulams\Dictionaries\Imports;
 
-use EscolaLms\Dictionaries\Models\Category;
-use EscolaLms\Dictionaries\Models\DictionaryWord;
+use Ulams\Dictionaries\Models\Category;
+use Ulams\Dictionaries\Models\DictionaryWord;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;

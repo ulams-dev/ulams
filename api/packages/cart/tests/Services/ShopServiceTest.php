@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\Cart\Tests\Services;
+namespace Ulams\Cart\Tests\Services;
 
 use Carbon\Carbon;
-use EscolaLms\Cart\Database\Seeders\CartPermissionSeeder;
-use EscolaLms\Cart\Facades\Shop;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductProductable;
-use EscolaLms\Cart\Services\ShopService;
-use EscolaLms\Cart\Tests\Mocks\ExampleProductable;
-use EscolaLms\Cart\Tests\TestCase;
-use EscolaLms\Cart\Tests\Traits\CreatesPaymentMethods;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Core\Models\User;
+use Ulams\Cart\Database\Seeders\CartPermissionSeeder;
+use Ulams\Cart\Facades\Shop;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductProductable;
+use Ulams\Cart\Services\ShopService;
+use Ulams\Cart\Tests\Mocks\ExampleProductable;
+use Ulams\Cart\Tests\TestCase;
+use Ulams\Cart\Tests\Traits\CreatesPaymentMethods;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Core\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Testing\TestResponse;
 

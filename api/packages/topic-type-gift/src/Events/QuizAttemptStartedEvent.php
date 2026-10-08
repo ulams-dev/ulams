@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Events;
+namespace Ulams\TopicTypeGift\Events;
 
 class QuizAttemptStartedEvent extends QuizAttemptEvent
 {

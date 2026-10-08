@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Recommender\Services;
+namespace Ulams\Recommender\Services;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Recommender\Dto\PageDto;
-use EscolaLms\Recommender\Dto\PredictSatisfactionDto;
-use EscolaLms\Recommender\Dto\SatisfactionDto;
-use EscolaLms\Recommender\Dto\TermAnalyticsFilterListDto;
-use EscolaLms\Recommender\Enum\EmotionsEnum;
-use EscolaLms\Recommender\Enum\SatisfactionStatusEnum;
-use EscolaLms\Recommender\EscolaLmsRecommenderServiceProvider;
-use EscolaLms\Recommender\Models\AggregatedFrame;
-use EscolaLms\Recommender\Models\MeetRecording;
-use EscolaLms\Recommender\Models\TermAnalytic;
-use EscolaLms\Recommender\Repositories\Contracts\TermAnalyticsRepositoryContract;
-use EscolaLms\Recommender\Services\Contracts\TermAnalyticServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Recommender\Dto\PageDto;
+use Ulams\Recommender\Dto\PredictSatisfactionDto;
+use Ulams\Recommender\Dto\SatisfactionDto;
+use Ulams\Recommender\Dto\TermAnalyticsFilterListDto;
+use Ulams\Recommender\Enum\EmotionsEnum;
+use Ulams\Recommender\Enum\SatisfactionStatusEnum;
+use Ulams\Recommender\UlamsRecommenderServiceProvider;
+use Ulams\Recommender\Models\AggregatedFrame;
+use Ulams\Recommender\Models\MeetRecording;
+use Ulams\Recommender\Models\TermAnalytic;
+use Ulams\Recommender\Repositories\Contracts\TermAnalyticsRepositoryContract;
+use Ulams\Recommender\Services\Contracts\TermAnalyticServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Carbon;
@@ -411,7 +411,7 @@ class TermAnalyticService implements TermAnalyticServiceContract
         // same way video.bitrates does. Selected models are the enabled ones. The whole downstream
         // path (frames, Makaruk, storage) works on a plain list of model IDs, so multi-model support
         // is already in place; enabling more models is just flipping "enabled" in this setting.
-        $satisfactionModelsConfig = config(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.satisfaction_models');
+        $satisfactionModelsConfig = config(UlamsRecommenderServiceProvider::CONFIG_KEY . '.satisfaction_models');
         $satisfactionModels = collect(is_array($satisfactionModelsConfig) ? $satisfactionModelsConfig : [])
             ->filter(fn ($entry) => is_array($entry) && ($entry['enabled'] ?? false))
             ->map(fn ($entry) => $entry['model'] ?? null)
@@ -429,7 +429,7 @@ class TermAnalyticService implements TermAnalyticServiceContract
             'term_analytic_id' => $termAnalytic->getKey(),
             'satisfaction_models' => $satisfactionModels,
         ]);
-        $response = Http::post(config(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.frames_microservice_url') . '/api/frames/satisfaction', $dto->toArray());
+        $response = Http::post(config(UlamsRecommenderServiceProvider::CONFIG_KEY . '.frames_microservice_url') . '/api/frames/satisfaction', $dto->toArray());
 
         if ($response->successful()) {
             $termAnalytic->update([

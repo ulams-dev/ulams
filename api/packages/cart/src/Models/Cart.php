@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Cart\Models;
+namespace Ulams\Cart\Models;
 
-use EscolaLms\Cart\Services\CartManager;
-use EscolaLms\Cart\Services\Contracts\ShopServiceContract;
+use Ulams\Cart\Services\CartManager;
+use Ulams\Cart\Services\Contracts\ShopServiceContract;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Treestoneit\ShoppingCart\Models\Cart as BaseCart;
 
 /**
- * EscolaLms\Cart\Models\Cart
+ * Ulams\Cart\Models\Cart
  *
  * @property int $id
  * @property int|null $user_id
@@ -20,9 +20,9 @@ use Treestoneit\ShoppingCart\Models\Cart as BaseCart;
  * @property-read int $tax
  * @property-read int $total
  * @property-read int $total_with_tax
- * @property-read \Treestoneit\ShoppingCart\Models\CartItemCollection|\EscolaLms\Cart\Models\CartItem[] $items
+ * @property-read \Treestoneit\ShoppingCart\Models\CartItemCollection|\Ulams\Cart\Models\CartItem[] $items
  * @property-read int|null $items_count
- * @property-read \EscolaLms\Cart\Models\User|null $user
+ * @property-read \Ulams\Cart\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|Cart newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Cart newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Cart query()

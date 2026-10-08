@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Repositories;
+namespace Ulams\BulkNotifications\Repositories;
 
-use EscolaLms\BulkNotifications\Models\User;
-use EscolaLms\BulkNotifications\Repositories\Contracts\UserRepositoryContract;
-use EscolaLms\Core\Repositories\BaseRepository;
+use Ulams\BulkNotifications\Models\User;
+use Ulams\BulkNotifications\Repositories\Contracts\UserRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
 use Illuminate\Support\Collection;
 
 class UserRepository extends BaseRepository implements UserRepositoryContract

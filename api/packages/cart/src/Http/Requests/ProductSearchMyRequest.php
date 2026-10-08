@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests;
+namespace Ulams\Cart\Http\Requests;
 
-use EscolaLms\Cart\Dtos\PageDto;
-use EscolaLms\Cart\Dtos\ProductSearchMyCriteriaDto;
-use EscolaLms\Cart\Enums\ProductType;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Core\Dtos\OrderDto;
+use Ulams\Cart\Dtos\PageDto;
+use Ulams\Cart\Dtos\ProductSearchMyCriteriaDto;
+use Ulams\Cart\Enums\ProductType;
+use Ulams\Cart\Models\Product;
+use Ulams\Core\Dtos\OrderDto;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

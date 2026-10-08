@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\Notifications\Http\Controllers;
+namespace Ulams\Notifications\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Notifications\Dtos\PageDto;
-use EscolaLms\Notifications\Http\Controllers\Swagger\NotificationsApiSwagger;
-use EscolaLms\Notifications\Http\Requests\NotificationEventsRequest;
-use EscolaLms\Notifications\Http\Requests\NotificationReadAllRequest;
-use EscolaLms\Notifications\Http\Requests\NotificationReadRequest;
-use EscolaLms\Notifications\Http\Requests\NotificationsRequest;
-use EscolaLms\Notifications\Http\Requests\NotificationsUserRequest;
-use EscolaLms\Notifications\Http\Resources\NotificationResource;
-use EscolaLms\Notifications\Services\Contracts\DatabaseNotificationsServiceContract;
-use EscolaLms\Notifications\Dtos\NotificationsFilterCriteriaDto;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Notifications\Dtos\PageDto;
+use Ulams\Notifications\Http\Controllers\Swagger\NotificationsApiSwagger;
+use Ulams\Notifications\Http\Requests\NotificationEventsRequest;
+use Ulams\Notifications\Http\Requests\NotificationReadAllRequest;
+use Ulams\Notifications\Http\Requests\NotificationReadRequest;
+use Ulams\Notifications\Http\Requests\NotificationsRequest;
+use Ulams\Notifications\Http\Requests\NotificationsUserRequest;
+use Ulams\Notifications\Http\Resources\NotificationResource;
+use Ulams\Notifications\Services\Contracts\DatabaseNotificationsServiceContract;
+use Ulams\Notifications\Dtos\NotificationsFilterCriteriaDto;
 use Illuminate\Http\JsonResponse;
 
-class NotificationsController extends EscolaLmsBaseController implements NotificationsApiSwagger
+class NotificationsController extends UlamsBaseController implements NotificationsApiSwagger
 {
     private DatabaseNotificationsServiceContract $service;
 

@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { EscolaLMSContextProvider } from "@lms/sdk/react/context";
+import { UlamsContextProvider } from "@ulams/sdk/react/context";
 import App from "./App";
 import WebFont from "webfontloader";
 import "./i18n";
 import "./sentry";
-import { GlobalThemeProvider } from "@lms/components/theme/provider";
+import { GlobalThemeProvider } from "@ulams/components/theme/provider";
 import { API_URL, VITE_APP_PUBLIC_IMG_URL } from "./config";
 
 declare global {
@@ -37,7 +37,7 @@ WebFont.load({
 ReactDOM.createRoot(document.getElementById("root") as Element).render(
   <React.StrictMode>
     {API_URL ? (
-      <EscolaLMSContextProvider
+      <UlamsContextProvider
         apiUrl={API_URL}
         initialFetch={false}
         imagePrefix={`${VITE_APP_PUBLIC_IMG_URL}/imgcache`}
@@ -45,7 +45,7 @@ ReactDOM.createRoot(document.getElementById("root") as Element).render(
         <GlobalThemeProvider>
           <App />
         </GlobalThemeProvider>
-      </EscolaLMSContextProvider>
+      </UlamsContextProvider>
     ) : (
       <pre>
         error `process.env.VITE_APP_PUBLIC_API_URL || window.VITE_APP_API_URL`

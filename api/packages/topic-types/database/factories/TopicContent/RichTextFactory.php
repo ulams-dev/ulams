@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Database\Factories\TopicContent;
+namespace Ulams\TopicTypes\Database\Factories\TopicContent;
 
 use DavidBadura\FakerMarkdownGenerator\FakerProvider;
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\Enums\TextHelperEnum;
-use EscolaLms\TopicTypes\Models\TopicContent\RichText;
+use Ulams\TopicTypes\Database\Factories\TopicContent\Enums\TextHelperEnum;
+use Ulams\TopicTypes\Models\TopicContent\RichText;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 if (!function_exists('getMDSink')) {

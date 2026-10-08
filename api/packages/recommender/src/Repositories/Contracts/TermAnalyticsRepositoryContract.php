@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Recommender\Repositories\Contracts;
+namespace Ulams\Recommender\Repositories\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Recommender\Dto\TermAnalyticsFilterListDto;
-use EscolaLms\Recommender\Models\TermAnalytic;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Recommender\Dto\TermAnalyticsFilterListDto;
+use Ulams\Recommender\Models\TermAnalytic;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface TermAnalyticsRepositoryContract

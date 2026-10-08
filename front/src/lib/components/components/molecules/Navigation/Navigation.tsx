@@ -8,7 +8,7 @@ import { Col, Row } from "react-grid-system";
 import { Text } from "../../../";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { t } from "i18next";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 const ArrowLeftIcon = () => {
   return (
@@ -352,7 +352,7 @@ export const Navigation: React.FC<NavigationProps> = (props) => {
   return (
     <>
       {mobile ? (
-        <StyledNavigation className={`wellms-component ${className}`}>
+        <StyledNavigation className={`ulams-component ${className}`}>
           <GlobalStyle $isMobileDevice={isMobileDevice || false} />
           <div className="header">
             {React.isValidElement(logo) ? (

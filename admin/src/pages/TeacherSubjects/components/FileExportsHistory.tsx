@@ -9,7 +9,7 @@ import { FormattedMessage } from 'umi';
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';
 import UserSelect from '@/components/UserSelect';
 import { DATETIME_FORMAT } from '@/consts/dates';
-import { getPCGExportsHistory } from '@/services/escola-lms/pcg-export';
+import { getPCGExportsHistory } from '@/services/ulams/pcg-export';
 import { useTeacherSubject } from '../context';
 import { TEACHER_SUBJECTS_PAGE_SIZE } from './consts';
 
@@ -57,7 +57,7 @@ const staticColumns: ProColumns<API.PCGFileExportsHistoryItem>[] = [
     render: (_n, record) => (
       <TypeButtonDrawer
         key={record.created_by.id}
-        type="EscolaLms\Core\Models\User"
+        type="Ulams\Core\Models\User"
         type_id={record.created_by.id}
         text={
           record?.created_by?.first_name && record?.created_by?.last_name
@@ -93,7 +93,7 @@ const staticColumns: ProColumns<API.PCGFileExportsHistoryItem>[] = [
     render: (_n, record) => (
       <TypeButtonDrawer
         key={record.exported_by.id}
-        type="EscolaLms\Core\Models\User"
+        type="Ulams\Core\Models\User"
         type_id={record.exported_by.id}
         text={
           record?.exported_by?.first_name && record?.exported_by?.last_name

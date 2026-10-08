@@ -7,7 +7,7 @@ import { Button } from "../../atoms/Button/Button";
 import { ReactNode } from "react";
 import { contrast } from "chroma-js";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface StyledQuizCtaCardProps {
   mobile?: boolean;
@@ -125,7 +125,7 @@ export const QuizCta: React.FC<QuizCtaCardProps> = (props) => {
 
   return (
     <StyledQuizCta
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
       mobile={mobile}
       lightContrast={cts}
     >

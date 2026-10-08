@@ -3,12 +3,12 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import routeRoutes from "@/components/Routes/routes";
 import { CenteredWrapper } from "@/components/Courses/Course/CoursePanelLayout/FinishPage/styles";
-import Button from "@lms/components/components/atoms/Button/Button";
-import Title from "@lms/components/components/atoms/Typography/Title";
-import Text from "@lms/components/components/atoms/Typography/Text";
+import Button from "@ulams/components/components/atoms/Button/Button";
+import Title from "@ulams/components/components/atoms/Typography/Title";
+import Text from "@ulams/components/components/atoms/Typography/Text";
 import { IconCertificateBig } from "@/icons/index";
 import { useCertificateDownload } from "@/hooks/useDownloadCertificate";
-import { Certificate } from "@lms/sdk/types";
+import { Certificate } from "@ulams/sdk/types";
 
 interface Props {
   certificates: Certificate[];

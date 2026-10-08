@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Topic;
+namespace Ulams\Reports\Stats\Topic;
 
-use EscolaLms\TopicTypeGift\Models\AttemptAnswer;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
+use Ulams\TopicTypeGift\Models\AttemptAnswer;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
 use Illuminate\Support\Collection;
 
 class QuizSummaryForTopicTypeGIFT extends AbstractTopicStat

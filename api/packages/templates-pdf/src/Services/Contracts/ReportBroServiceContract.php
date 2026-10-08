@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Services\Contracts;
+namespace Ulams\TemplatesPdf\Services\Contracts;
 
 use Illuminate\Http\Request;
 

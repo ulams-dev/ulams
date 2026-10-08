@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Tests\Database\Factories;
+namespace Ulams\Courses\Tests\Database\Factories;
 
-use EscolaLms\Courses\Tests\Models\TopicContent\SecondExampleTopicType;
+use Ulams\Courses\Tests\Models\TopicContent\SecondExampleTopicType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SecondExampleTopicTypeFactory extends Factory

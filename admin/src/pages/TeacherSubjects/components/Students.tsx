@@ -1,10 +1,10 @@
-import { getGroupFinalGrades as fetchGroupFinalGrades } from '@/services/escola-lms/grades';
+import { getGroupFinalGrades as fetchGroupFinalGrades } from '@/services/ulams/grades';
 import ProTable, { type ProColumns } from '@ant-design/pro-table';
 import type { DefaultOptionType } from 'antd/lib/select';
 import React, { useMemo } from 'react';
 import { FormattedMessage } from 'umi';
 
-import { allStudentsAndGroups as fetchAllStudentsAndGroups } from '@/services/escola-lms/student_user_groups';
+import { allStudentsAndGroups as fetchAllStudentsAndGroups } from '@/services/ulams/student_user_groups';
 import { useTeacherSubject } from '../context';
 import { CreateTeamsChatButton } from './CreateTeamsChatButton';
 import { TEACHER_SUBJECTS_PAGE_SIZE } from './consts';

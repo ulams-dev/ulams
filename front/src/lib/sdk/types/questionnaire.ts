@@ -44,7 +44,7 @@ export type QuestionnaireModel = {
 };
 
 export type Questionnaire = Pick<
-  EscolaLms.Questionnaire.Models.Questionnaire,
+  Ulams.Questionnaire.Models.Questionnaire,
   "active" | "id" | "title"
 > & {
   models: QuestionnaireModel[];

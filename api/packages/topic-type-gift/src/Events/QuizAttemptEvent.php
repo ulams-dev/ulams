@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Events;
+namespace Ulams\TopicTypeGift\Events;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
+use Ulams\Auth\Models\User;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

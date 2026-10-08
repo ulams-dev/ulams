@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Mattermost\Tests\API;
+namespace Ulams\Mattermost\Tests\API;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Mattermost\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Mattermost\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use GuzzleHttp\Psr7\Response;
-use EscolaLms\Mattermost\Services\Contracts\MattermostServiceContract;
-use EscolaLms\Core\Enums\UserRole;
+use Ulams\Mattermost\Services\Contracts\MattermostServiceContract;
+use Ulams\Core\Enums\UserRole;
 
 class MattermostApiTest extends TestCase
 {

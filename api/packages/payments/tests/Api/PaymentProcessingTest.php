@@ -1,21 +1,21 @@
 <?php
 
-namespace EscolaLms\Payments\Tests\Api;
+namespace Ulams\Payments\Tests\Api;
 
-use EscolaLms\Payments\Enums\Currency;
-use EscolaLms\Payments\Enums\PaymentStatus;
-use EscolaLms\Payments\Events\PaymentFailed;
-use EscolaLms\Payments\Events\PaymentRegistered;
-use EscolaLms\Payments\Exceptions\CardDeclined;
-use EscolaLms\Payments\Exceptions\ExpiredCard;
-use EscolaLms\Payments\Exceptions\IncorrectCvc;
-use EscolaLms\Payments\Exceptions\PaymentException;
-use EscolaLms\Payments\Exceptions\ProcessingError;
-use EscolaLms\Payments\Facades\PaymentGateway;
-use EscolaLms\Payments\Tests\Mocks\Payable;
-use EscolaLms\Payments\Tests\TestCase;
-use EscolaLms\Payments\Tests\Traits\CreatesBillable;
-use EscolaLms\Payments\Tests\Traits\CreatesPaymentMethods;
+use Ulams\Payments\Enums\Currency;
+use Ulams\Payments\Enums\PaymentStatus;
+use Ulams\Payments\Events\PaymentFailed;
+use Ulams\Payments\Events\PaymentRegistered;
+use Ulams\Payments\Exceptions\CardDeclined;
+use Ulams\Payments\Exceptions\ExpiredCard;
+use Ulams\Payments\Exceptions\IncorrectCvc;
+use Ulams\Payments\Exceptions\PaymentException;
+use Ulams\Payments\Exceptions\ProcessingError;
+use Ulams\Payments\Facades\PaymentGateway;
+use Ulams\Payments\Tests\Mocks\Payable;
+use Ulams\Payments\Tests\TestCase;
+use Ulams\Payments\Tests\Traits\CreatesBillable;
+use Ulams\Payments\Tests\Traits\CreatesPaymentMethods;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Tags\Http\Request;
+namespace Ulams\Tags\Http\Request;
 
-use EscolaLms\Tags\Models\Tag;
+use Ulams\Tags\Models\Tag;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TagRemoveRequest extends FormRequest

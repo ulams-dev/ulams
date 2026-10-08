@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Cmi5\Services;
+namespace Ulams\Cmi5\Services;
 
-use EscolaLms\Cmi5\Enums\Cmi5Enum;
-use EscolaLms\Cmi5\Models\Cmi5;
-use EscolaLms\Cmi5\Parsers\Cmi5AuParser;
-use EscolaLms\Cmi5\Parsers\Cmi5Parser;
-use EscolaLms\Cmi5\Repositories\Contracts\Cmi5RepositoryContract;
-use EscolaLms\Cmi5\Services\Contracts\Cmi5UploadServiceContract;
+use Ulams\Cmi5\Enums\Cmi5Enum;
+use Ulams\Cmi5\Models\Cmi5;
+use Ulams\Cmi5\Parsers\Cmi5AuParser;
+use Ulams\Cmi5\Parsers\Cmi5Parser;
+use Ulams\Cmi5\Repositories\Contracts\Cmi5RepositoryContract;
+use Ulams\Cmi5\Services\Contracts\Cmi5UploadServiceContract;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -51,7 +51,7 @@ class Cmi5UploadService implements Cmi5UploadServiceContract
     private function unzip(Cmi5 $cmi5, ZipArchive $zip): void
     {
         $rootDir = 'cmi5';
-        $disk = Storage::disk(config('escolalms_cmi5.disk'));
+        $disk = Storage::disk(config('ulams_cmi5.disk'));
         $destinationDir = $disk->path($rootDir . DIRECTORY_SEPARATOR . $cmi5->getKey());
 
         if (!$disk->exists($destinationDir)) {

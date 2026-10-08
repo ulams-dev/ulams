@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Models\TopicContent;
+namespace Ulams\TopicTypes\Models\TopicContent;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Config;
@@ -57,7 +57,7 @@ class Image extends AbstractTopicFileContent
 
     protected static function newFactory()
     {
-        return \EscolaLms\TopicTypes\Database\Factories\TopicContent\ImageFactory::new();
+        return \Ulams\TopicTypes\Database\Factories\TopicContent\ImageFactory::new();
     }
 
     public function getStoragePathFinalSegment(): string

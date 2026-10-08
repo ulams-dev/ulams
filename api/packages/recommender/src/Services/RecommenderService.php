@@ -1,27 +1,27 @@
 <?php
 
-namespace EscolaLms\Recommender\Services;
+namespace Ulams\Recommender\Services;
 
-use EscolaLms\Recommender\Dto\MeetRecordingDto;
-use EscolaLms\Recommender\Dto\MeetRecordingScreenDto;
-use EscolaLms\Recommender\Enum\EmotionsEnum;
-use EscolaLms\Recommender\Enum\MeetRecordingEnum;
-use EscolaLms\Recommender\EscolaLmsRecommenderServiceProvider;
-use EscolaLms\Recommender\Events\AggregatedFrameStored;
-use EscolaLms\Recommender\Exceptions\MeetRecordingActiveException;
-use EscolaLms\Recommender\Exceptions\RecommenderDisabledException;
-use EscolaLms\Recommender\Jobs\PredictSatisfactionJob;
-use EscolaLms\Recommender\Jobs\ProcessingMeetingFramesJob;
-use EscolaLms\Recommender\Jobs\UpdateTermAnalyticJob;
-use EscolaLms\Recommender\Models\AggregatedFrame;
-use EscolaLms\Recommender\Models\MeetRecording;
-use EscolaLms\Recommender\Models\MeetRecordingScreen;
-use EscolaLms\Recommender\Models\TermAnalytic;
-use EscolaLms\Recommender\Models\Topic;
-use EscolaLms\Recommender\Repositories\Contracts\TopicRepositoryContract;
-use EscolaLms\Recommender\Services\Contracts\RecommenderServiceContract;
-use EscolaLms\Recommender\Dto\AggregatedFrameDto;
-use EscolaLms\TopicTypes\Models\TopicContent\H5P;
+use Ulams\Recommender\Dto\MeetRecordingDto;
+use Ulams\Recommender\Dto\MeetRecordingScreenDto;
+use Ulams\Recommender\Enum\EmotionsEnum;
+use Ulams\Recommender\Enum\MeetRecordingEnum;
+use Ulams\Recommender\UlamsRecommenderServiceProvider;
+use Ulams\Recommender\Events\AggregatedFrameStored;
+use Ulams\Recommender\Exceptions\MeetRecordingActiveException;
+use Ulams\Recommender\Exceptions\RecommenderDisabledException;
+use Ulams\Recommender\Jobs\PredictSatisfactionJob;
+use Ulams\Recommender\Jobs\ProcessingMeetingFramesJob;
+use Ulams\Recommender\Jobs\UpdateTermAnalyticJob;
+use Ulams\Recommender\Models\AggregatedFrame;
+use Ulams\Recommender\Models\MeetRecording;
+use Ulams\Recommender\Models\MeetRecordingScreen;
+use Ulams\Recommender\Models\TermAnalytic;
+use Ulams\Recommender\Models\Topic;
+use Ulams\Recommender\Repositories\Contracts\TopicRepositoryContract;
+use Ulams\Recommender\Services\Contracts\RecommenderServiceContract;
+use Ulams\Recommender\Dto\AggregatedFrameDto;
+use Ulams\TopicTypes\Models\TopicContent\H5P;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Client\HttpClientException;
 use Illuminate\Http\UploadedFile;
@@ -123,7 +123,7 @@ class RecommenderService implements RecommenderServiceContract
 
     public function completionOfCourse(int $courseId): array
     {
-        if (!config(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.enabled')) {
+        if (!config(UlamsRecommenderServiceProvider::CONFIG_KEY . '.enabled')) {
             throw new RecommenderDisabledException('Recommender is disabled.');
         }
 
@@ -132,7 +132,7 @@ class RecommenderService implements RecommenderServiceContract
 
     public function matchTopicType(int $lessonId): array
     {
-        if (!config(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.enabled')) {
+        if (!config(UlamsRecommenderServiceProvider::CONFIG_KEY . '.enabled')) {
             throw new RecommenderDisabledException('Recommender is disabled.');
         }
 
@@ -141,7 +141,7 @@ class RecommenderService implements RecommenderServiceContract
 
     public function makeCourseData(int $courseId): array
     {
-        if (!config(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.course_model')) {
+        if (!config(UlamsRecommenderServiceProvider::CONFIG_KEY . '.course_model')) {
             throw new RecommenderDisabledException('Recommender course model is not set!');
         }
 
@@ -184,7 +184,7 @@ class RecommenderService implements RecommenderServiceContract
 
     public function makeTopicData(int $lessonId): array
     {
-        if (!config(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.exercise_model')) {
+        if (!config(UlamsRecommenderServiceProvider::CONFIG_KEY . '.exercise_model')) {
             throw new RecommenderDisabledException('Recommender exercise model is not set!');
         }
 
@@ -236,14 +236,14 @@ class RecommenderService implements RecommenderServiceContract
      */
     private function getResult(string $url, array $data): array
     {
-        if (!config(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.api_url')) {
+        if (!config(UlamsRecommenderServiceProvider::CONFIG_KEY . '.api_url')) {
             throw new RecommenderDisabledException('Recommender API URL is not set!');
         }
 
         $body = empty($data) ? (object) [] : $data;
 
         return Http::withBody(json_encode($body), 'application/json')
-            ->post(config(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.api_url') . $url)
+            ->post(config(UlamsRecommenderServiceProvider::CONFIG_KEY . '.api_url') . $url)
             ->throw()
             ->collect()
             ->get('data');

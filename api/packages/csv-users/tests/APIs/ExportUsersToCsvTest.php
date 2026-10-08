@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Tests\APIs;
+namespace Ulams\CsvUsers\Tests\APIs;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\CsvUsers\Export\UsersExport;
-use EscolaLms\CsvUsers\Tests\TestCase;
-use EscolaLms\ModelFields\Enum\MetaFieldVisibilityEnum;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\CsvUsers\Export\UsersExport;
+use Ulams\CsvUsers\Tests\TestCase;
+use Ulams\ModelFields\Enum\MetaFieldVisibilityEnum;
+use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Maatwebsite\Excel\Facades\Excel;

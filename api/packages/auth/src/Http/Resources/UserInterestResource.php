@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Resources;
+namespace Ulams\Auth\Http\Resources;
 
-use EscolaLms\Categories\Models\Category;
+use Ulams\Categories\Models\Category;
 use Illuminate\Http\Resources\Json\JsonResource;
-use EscolaLms\Auth\Traits\ResourceExtandable;
+use Ulams\Auth\Traits\ResourceExtandable;
 
 class UserInterestResource extends JsonResource
 {

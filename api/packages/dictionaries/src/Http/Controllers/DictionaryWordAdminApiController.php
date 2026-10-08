@@ -1,23 +1,23 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Http\Controllers;
+namespace Ulams\Dictionaries\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Dictionaries\Http\Controllers\Swagger\DictionaryWordAdminApiControllerSwagger;
-use EscolaLms\Dictionaries\Http\Requests\DictionaryWord\Admin\CreateDictionaryWordRequest;
-use EscolaLms\Dictionaries\Http\Requests\DictionaryWord\Admin\DeleteDictionaryWordRequest;
-use EscolaLms\Dictionaries\Http\Requests\DictionaryWord\Admin\ImportDictionaryWordRequest;
-use EscolaLms\Dictionaries\Http\Requests\DictionaryWord\Admin\ListDictionaryWordRequest;
-use EscolaLms\Dictionaries\Http\Requests\DictionaryWord\Admin\ReadDictionaryWordRequest;
-use EscolaLms\Dictionaries\Http\Requests\DictionaryWord\Admin\UpdateDictionaryWordRequest;
-use EscolaLms\Dictionaries\Http\Resources\DictionaryWordResource;
-use EscolaLms\Dictionaries\Http\Resources\DictionaryWordSimpleResource;
-use EscolaLms\Dictionaries\Imports\DictionaryWordsImport;
-use EscolaLms\Dictionaries\Services\Contracts\DictionaryWordServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Dictionaries\Http\Controllers\Swagger\DictionaryWordAdminApiControllerSwagger;
+use Ulams\Dictionaries\Http\Requests\DictionaryWord\Admin\CreateDictionaryWordRequest;
+use Ulams\Dictionaries\Http\Requests\DictionaryWord\Admin\DeleteDictionaryWordRequest;
+use Ulams\Dictionaries\Http\Requests\DictionaryWord\Admin\ImportDictionaryWordRequest;
+use Ulams\Dictionaries\Http\Requests\DictionaryWord\Admin\ListDictionaryWordRequest;
+use Ulams\Dictionaries\Http\Requests\DictionaryWord\Admin\ReadDictionaryWordRequest;
+use Ulams\Dictionaries\Http\Requests\DictionaryWord\Admin\UpdateDictionaryWordRequest;
+use Ulams\Dictionaries\Http\Resources\DictionaryWordResource;
+use Ulams\Dictionaries\Http\Resources\DictionaryWordSimpleResource;
+use Ulams\Dictionaries\Imports\DictionaryWordsImport;
+use Ulams\Dictionaries\Services\Contracts\DictionaryWordServiceContract;
 use Illuminate\Http\JsonResponse;
 use Maatwebsite\Excel\Facades\Excel;
 
-class DictionaryWordAdminApiController extends EscolaLmsBaseController implements DictionaryWordAdminApiControllerSwagger
+class DictionaryWordAdminApiController extends UlamsBaseController implements DictionaryWordAdminApiControllerSwagger
 {
 
     public function __construct(private readonly DictionaryWordServiceContract $dictionaryWordService)

@@ -10,7 +10,7 @@ import chroma from "chroma-js";
 import { MarkdownRenderer } from "../../molecules/MarkdownRenderer/MarkdownRenderer";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { getUniqueId } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 const ArrowOpenIcon: React.FC = () => {
   return (
@@ -210,7 +210,7 @@ export const CartCard: React.FC<CartCardProps> = (props) => {
   const uniqueId = getUniqueId("discount-code");
 
   return (
-    <StyledCardCard className={`wellms-component ${className}`} mobile={mobile}>
+    <StyledCardCard className={`ulams-component ${className}`} mobile={mobile}>
       <Text size="13" bold>
         Do zapłaty
       </Text>

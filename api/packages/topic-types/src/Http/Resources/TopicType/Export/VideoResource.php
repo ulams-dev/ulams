@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Http\Resources\TopicType\Export;
+namespace Ulams\TopicTypes\Http\Resources\TopicType\Export;
 
-use EscolaLms\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
-use EscolaLms\TopicTypes\Services\TopicTypeService;
+use Ulams\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
+use Ulams\TopicTypes\Services\TopicTypeService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class VideoResource extends JsonResource implements TopicTypeResourceContract

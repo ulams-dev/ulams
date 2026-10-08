@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Resources\TopicType\Contracts;
+namespace Ulams\Courses\Http\Resources\TopicType\Contracts;
 
 interface TopicTypeResourceContract
 {

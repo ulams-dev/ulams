@@ -4,7 +4,7 @@ import ProfileHeader from "@/components/Profile/ProfileHeader";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { ReactNode, useContext, useEffect, useMemo } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { Col, Row } from "react-grid-system";
 import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";
@@ -44,7 +44,7 @@ const ProfileLayout: React.FC<Props> = ({
   withTabs,
   actions,
 }) => {
-  const { user } = useContext(EscolaLMSContext);
+  const { user } = useContext(UlamsContext);
   const history = useHistory();
   const { t } = useTranslation();
 

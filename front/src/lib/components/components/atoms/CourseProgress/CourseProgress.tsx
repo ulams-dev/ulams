@@ -4,7 +4,7 @@ import styled, { withTheme } from "styled-components";
 import { getFontFromTheme } from "../../../theme/provider";
 import { PropsWithChildren } from "react";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 export interface TitleProps extends ExtendableStyledComponent {
   progress: number;
@@ -115,7 +115,7 @@ export const CourseProgress: React.FC<PropsWithChildren<TitleProps>> = (
   const { title, children, icon, progress, className = "" } = props;
 
   return (
-    <StyledDiv {...props} className={`wellms-component ${className}`}>
+    <StyledDiv {...props} className={`ulams-component ${className}`}>
       <div className="header">
         {icon}
         <span className="title">{title}</span>

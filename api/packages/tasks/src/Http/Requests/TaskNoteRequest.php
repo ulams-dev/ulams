@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Requests;
+namespace Ulams\Tasks\Http\Requests;
 
-use EscolaLms\Tasks\Models\Task;
-use EscolaLms\Tasks\Models\TaskNote;
+use Ulams\Tasks\Models\Task;
+use Ulams\Tasks\Models\TaskNote;
 use Illuminate\Foundation\Http\FormRequest;
 
 abstract class TaskNoteRequest extends TaskRequest

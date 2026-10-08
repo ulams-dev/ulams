@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Pages\Http\Requests;
+namespace Ulams\Pages\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

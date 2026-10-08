@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Services\Contracts;
+namespace Ulams\TopicTypeProject\Services\Contracts;
 
-use EscolaLms\TopicTypeProject\Dtos\CreateProjectSolutionDto;
-use EscolaLms\TopicTypeProject\Dtos\CriteriaDto;
-use EscolaLms\TopicTypeProject\Dtos\GradeProjectSolutionDto;
-use EscolaLms\TopicTypeProject\Dtos\PageDto;
-use EscolaLms\TopicTypeProject\Models\ProjectSolution;
+use Ulams\TopicTypeProject\Dtos\CreateProjectSolutionDto;
+use Ulams\TopicTypeProject\Dtos\CriteriaDto;
+use Ulams\TopicTypeProject\Dtos\GradeProjectSolutionDto;
+use Ulams\TopicTypeProject\Dtos\PageDto;
+use Ulams\TopicTypeProject\Models\ProjectSolution;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface ProjectSolutionServiceContract

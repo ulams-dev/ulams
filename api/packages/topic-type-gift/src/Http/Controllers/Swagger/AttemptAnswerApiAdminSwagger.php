@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Http\Controllers\Swagger;
+namespace Ulams\TopicTypeGift\Http\Controllers\Swagger;
 
-use EscolaLms\TopicTypeGift\Http\Requests\Admin\AdminUpdateAttemptAnswerRequest;
+use Ulams\TopicTypeGift\Http\Requests\Admin\AdminUpdateAttemptAnswerRequest;
 use Illuminate\Http\JsonResponse;
 
 interface AttemptAnswerApiAdminSwagger

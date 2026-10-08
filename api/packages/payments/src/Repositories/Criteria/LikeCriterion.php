@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Payments\Repositories\Criteria;
+namespace Ulams\Payments\Repositories\Criteria;
 
-use EscolaLms\Core\Repositories\Criteria\Criterion;
+use Ulams\Core\Repositories\Criteria\Criterion;
 use Illuminate\Database\Eloquent\Builder;
 
 class LikeCriterion extends Criterion

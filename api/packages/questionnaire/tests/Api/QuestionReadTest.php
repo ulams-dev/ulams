@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Tests\Api;
+namespace Ulams\Questionnaire\Tests\Api;
 
-use EscolaLms\Questionnaire\Database\Seeders\QuestionnairePermissionsSeeder;
-use EscolaLms\Questionnaire\Models\Question;
-use EscolaLms\Questionnaire\Tests\TestCase;
+use Ulams\Questionnaire\Database\Seeders\QuestionnairePermissionsSeeder;
+use Ulams\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class QuestionReadTest extends TestCase

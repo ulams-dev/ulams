@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Pages\Tests\Api;
+namespace Ulams\Pages\Tests\Api;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Pages\Models\Page;
-use EscolaLms\Pages\Tests\TestCase;
+use Ulams\Core\Models\User;
+use Ulams\Pages\Models\Page;
+use Ulams\Pages\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class PagesListTest extends TestCase

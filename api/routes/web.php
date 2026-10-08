@@ -12,7 +12,7 @@
 |
 */
 
-use EscolaLms\Payments\Facades\Payments;
+use Ulams\Payments\Facades\Payments;
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;

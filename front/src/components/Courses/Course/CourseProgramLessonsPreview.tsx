@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import CourseProgramContent from "@/components/Courses/Course/CourseProgramContent";
 import CourseSidebar from "@/components/Courses/Course/CourseSidebar";
 import { useLessonProgram } from "@/hooks/useLessonProgram";
 import { useTranslation } from "react-i18next";
-import { MarkdownRenderer } from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { MarkdownRenderer } from "@ulams/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
 import { Col, Row } from "react-grid-system";
 
 export const CourseProgramLessonsPreview: React.FC<{

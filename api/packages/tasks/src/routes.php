@@ -1,9 +1,9 @@
 <?php
 
-use EscolaLms\Tasks\Http\Controllers\AdminTaskController;
-use EscolaLms\Tasks\Http\Controllers\AdminTaskNoteController;
-use EscolaLms\Tasks\Http\Controllers\TaskController;
-use EscolaLms\Tasks\Http\Controllers\TaskNoteController;
+use Ulams\Tasks\Http\Controllers\AdminTaskController;
+use Ulams\Tasks\Http\Controllers\AdminTaskNoteController;
+use Ulams\Tasks\Http\Controllers\TaskController;
+use Ulams\Tasks\Http\Controllers\TaskNoteController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')

@@ -1,8 +1,8 @@
 import { useMemo, useContext } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 
 export const useRoles = () => {
-  const { user } = useContext(EscolaLMSContext);
+  const { user } = useContext(UlamsContext);
 
   const isTutor = useMemo(() => !!user.value?.roles?.includes("tutor"), [user]);
   const isStudent = useMemo(

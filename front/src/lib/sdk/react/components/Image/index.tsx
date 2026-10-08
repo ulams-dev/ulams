@@ -5,7 +5,7 @@ import React, {
   useState,
   forwardRef,
 } from "react";
-import { EscolaLMSContext } from "../../context";
+import { UlamsContext } from "../../context";
 
 import { getImageApiPath, getImageCachePath } from "./utils";
 
@@ -41,7 +41,7 @@ const Image = forwardRef<HTMLImageElement, ImageProps>(
   ) => {
     const [cached, setCached] = useState(false);
     const { apiUrl, getImagePrefix, getImageSvgPrefix } =
-      useContext(EscolaLMSContext);
+      useContext(UlamsContext);
 
     const imgSize = useMemo(
       () => (srcSizes?.[0] ? srcSizes[0] : size),
@@ -109,7 +109,7 @@ const Image = forwardRef<HTMLImageElement, ImageProps>(
 
     if (path.includes(".svg")) {
       return (
-        <div className="escolalms-image">
+        <div className="ulams-image">
           <img
             loading={"lazy"}
             ref={imgRef}
@@ -123,7 +123,7 @@ const Image = forwardRef<HTMLImageElement, ImageProps>(
     }
 
     return (
-      <div className="escolalms-image">
+      <div className="ulams-image">
         <img
           loading={"lazy"}
           ref={imgRef}

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Webinar\Models;
+namespace Ulams\Webinar\Models;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 

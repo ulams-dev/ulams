@@ -1,9 +1,9 @@
 <?php
 
-use EscolaLms\Questionnaire\Http\Controllers\QuestionAnswerAdminApiController;
-use EscolaLms\Questionnaire\Http\Controllers\QuestionAdminApiController;
-use EscolaLms\Questionnaire\Http\Controllers\QuestionnaireAdminApiController;
-use EscolaLms\Questionnaire\Http\Controllers\QuestionnaireApiController;
+use Ulams\Questionnaire\Http\Controllers\QuestionAnswerAdminApiController;
+use Ulams\Questionnaire\Http\Controllers\QuestionAdminApiController;
+use Ulams\Questionnaire\Http\Controllers\QuestionnaireAdminApiController;
+use Ulams\Questionnaire\Http\Controllers\QuestionnaireApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api/admin', 'middleware' => ['auth:api']], function () {

@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\Templates\Services;
+namespace Ulams\Templates\Services;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Core\SettingsVariables;
-use EscolaLms\Templates\Core\TemplatePreview;
-use EscolaLms\Templates\Core\TemplateSectionSchema;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\Templates\Facades\Template as FacadesTemplate;
-use EscolaLms\Templates\Helpers\Models;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Repository\Contracts\TemplateRepositoryContract;
-use EscolaLms\Templates\Services\Contracts\TemplateChannelServiceContract;
-use EscolaLms\Templates\Services\Contracts\TemplateEventServiceContract;
-use EscolaLms\Templates\Services\Contracts\TemplateVariablesServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Core\SettingsVariables;
+use Ulams\Templates\Core\TemplatePreview;
+use Ulams\Templates\Core\TemplateSectionSchema;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\Templates\Facades\Template as FacadesTemplate;
+use Ulams\Templates\Helpers\Models;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Repository\Contracts\TemplateRepositoryContract;
+use Ulams\Templates\Services\Contracts\TemplateChannelServiceContract;
+use Ulams\Templates\Services\Contracts\TemplateEventServiceContract;
+use Ulams\Templates\Services\Contracts\TemplateVariablesServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;

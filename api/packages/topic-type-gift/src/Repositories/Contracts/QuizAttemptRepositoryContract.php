@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Repositories\Contracts;
+namespace Ulams\TopicTypeGift\Repositories\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 

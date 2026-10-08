@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Services;
+namespace Ulams\TemplatesEmail\Services;
 
 use Qferrer\Mjml\ApiInterface;
 use Qferrer\Mjml\RendererInterface;

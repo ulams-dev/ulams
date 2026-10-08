@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests\Admin;
+namespace Ulams\Cart\Http\Requests\Admin;
 
-use EscolaLms\Cart\Enums\CartPermissionsEnum;
-use EscolaLms\Cart\Models\User;
-use EscolaLms\Cart\Rules\ProductableExistsRule;
-use EscolaLms\Cart\Rules\ProductableRegisteredRule;
+use Ulams\Cart\Enums\CartPermissionsEnum;
+use Ulams\Cart\Models\User;
+use Ulams\Cart\Rules\ProductableExistsRule;
+use Ulams\Cart\Rules\ProductableRegisteredRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

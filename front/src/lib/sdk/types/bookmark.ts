@@ -37,7 +37,7 @@ export type BookmarkTopic = BookmarkNoteBase & {
 };
 
 export type BookmarkNoteParams =
-  EscolaLms.Bookmarks.Http.Requests.ListBookmarkRequest &
+  Ulams.Bookmarks.Http.Requests.ListBookmarkRequest &
     PaginationParams & {
       order_by?: "created_at" | "id" | "value";
       order?: "ASC" | "DESC";

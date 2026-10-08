@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests;
+namespace Ulams\Cart\Http\Requests;
 
-use EscolaLms\Cart\Http\Requests\Admin\OrderSearchRequest as AdminOrderSearchRequest;
-use EscolaLms\Cart\Models\Order;
+use Ulams\Cart\Http\Requests\Admin\OrderSearchRequest as AdminOrderSearchRequest;
+use Ulams\Cart\Models\Order;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;

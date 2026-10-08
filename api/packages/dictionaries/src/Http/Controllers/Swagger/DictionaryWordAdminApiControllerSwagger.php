@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Http\Controllers\Swagger;
+namespace Ulams\Dictionaries\Http\Controllers\Swagger;
 
-use EscolaLms\Dictionaries\Http\Requests\DictionaryWord\Admin\CreateDictionaryWordRequest;
-use EscolaLms\Dictionaries\Http\Requests\DictionaryWord\Admin\DeleteDictionaryWordRequest;
-use EscolaLms\Dictionaries\Http\Requests\DictionaryWord\Admin\ImportDictionaryWordRequest;
-use EscolaLms\Dictionaries\Http\Requests\DictionaryWord\Admin\ListDictionaryWordRequest;
-use EscolaLms\Dictionaries\Http\Requests\DictionaryWord\Admin\ReadDictionaryWordRequest;
-use EscolaLms\Dictionaries\Http\Requests\DictionaryWord\Admin\UpdateDictionaryWordRequest;
+use Ulams\Dictionaries\Http\Requests\DictionaryWord\Admin\CreateDictionaryWordRequest;
+use Ulams\Dictionaries\Http\Requests\DictionaryWord\Admin\DeleteDictionaryWordRequest;
+use Ulams\Dictionaries\Http\Requests\DictionaryWord\Admin\ImportDictionaryWordRequest;
+use Ulams\Dictionaries\Http\Requests\DictionaryWord\Admin\ListDictionaryWordRequest;
+use Ulams\Dictionaries\Http\Requests\DictionaryWord\Admin\ReadDictionaryWordRequest;
+use Ulams\Dictionaries\Http\Requests\DictionaryWord\Admin\UpdateDictionaryWordRequest;
 use Illuminate\Http\JsonResponse;
 
 interface DictionaryWordAdminApiControllerSwagger

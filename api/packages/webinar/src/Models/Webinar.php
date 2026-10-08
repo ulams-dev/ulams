@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Webinar\Models;
+namespace Ulams\Webinar\Models;
 
-use EscolaLms\Tags\Models\Tag;
-use EscolaLms\Webinar\Database\Factories\WebinarFactory;
-use EscolaLms\Webinar\Enum\WebinarStatusEnum;
-use EscolaLms\Webinar\Services\Contracts\WebinarServiceContract;
+use Ulams\Tags\Models\Tag;
+use Ulams\Webinar\Database\Factories\WebinarFactory;
+use Ulams\Webinar\Enum\WebinarStatusEnum;
+use Ulams\Webinar\Services\Contracts\WebinarServiceContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

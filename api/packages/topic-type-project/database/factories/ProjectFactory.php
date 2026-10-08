@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Database\Factories;
+namespace Ulams\TopicTypeProject\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use EscolaLms\TopicTypeProject\Models\Project;
+use Ulams\TopicTypeProject\Models\Project;
 
 class ProjectFactory extends Factory
 {

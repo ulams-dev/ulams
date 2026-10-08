@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests\Api\Admin;
+namespace Ulams\TemplatesEmail\Tests\Api\Admin;
 
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\TemplatesEmail\EscolaLmsTemplatesEmailServiceProvider;
-use EscolaLms\TemplatesEmail\Tests\TestCase;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\TemplatesEmail\UlamsTemplatesEmailServiceProvider;
+use Ulams\TemplatesEmail\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Config;
@@ -18,10 +18,10 @@ class ConfigTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        if (!class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
+        if (!class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
             $this->markTestSkipped('Settings package not installed');
         }
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
         $this->seed(PermissionTableSeeder::class);
     }
 
@@ -36,8 +36,8 @@ class ConfigTest extends TestCase
         $response->assertOk();
 
         $json = $response->json();
-        $this->assertNotNull($json['data'][EscolaLmsTemplatesEmailServiceProvider::CONFIG_KEY]['mjml']['default_template']['value']);
-        $this->assertStringNotContainsString('MODIFIED TEMPLATE', $json['data'][EscolaLmsTemplatesEmailServiceProvider::CONFIG_KEY]['mjml']['default_template']['value']);
+        $this->assertNotNull($json['data'][UlamsTemplatesEmailServiceProvider::CONFIG_KEY]['mjml']['default_template']['value']);
+        $this->assertStringNotContainsString('MODIFIED TEMPLATE', $json['data'][UlamsTemplatesEmailServiceProvider::CONFIG_KEY]['mjml']['default_template']['value']);
 
         $response = $this->actingAs($admin, 'api')->json(
             'POST',
@@ -45,7 +45,7 @@ class ConfigTest extends TestCase
             [
                 'config' => [
                     [
-                        'key' => EscolaLmsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.default_template',
+                        'key' => UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.default_template',
                         'value' => <<<MJML_TEMPLATE
                                 <mjml>
                                 <mj-body>
@@ -78,7 +78,7 @@ class ConfigTest extends TestCase
         $response->assertOk();
 
         $json = $response->json();
-        $this->assertNotNull($json['data'][EscolaLmsTemplatesEmailServiceProvider::CONFIG_KEY]['mjml']['default_template']['value']);
-        $this->assertStringContainsString('MODIFIED TEMPLATE', $json['data'][EscolaLmsTemplatesEmailServiceProvider::CONFIG_KEY]['mjml']['default_template']['value']);
+        $this->assertNotNull($json['data'][UlamsTemplatesEmailServiceProvider::CONFIG_KEY]['mjml']['default_template']['value']);
+        $this->assertStringContainsString('MODIFIED TEMPLATE', $json['data'][UlamsTemplatesEmailServiceProvider::CONFIG_KEY]['mjml']['default_template']['value']);
     }
 }

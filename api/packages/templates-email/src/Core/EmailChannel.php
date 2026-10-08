@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Core;
+namespace Ulams\TemplatesEmail\Core;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Contracts\TemplateChannelContract;
-use EscolaLms\Templates\Core\AbstractTemplateChannelClass;
-use EscolaLms\Templates\Core\SettingsVariables;
-use EscolaLms\Templates\Core\TemplateSectionSchema;
-use EscolaLms\Templates\Enums\TemplateSectionTypeEnum;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Models\TemplateSection;
-use EscolaLms\TemplatesEmail\Services\Contracts\MjmlServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Contracts\TemplateChannelContract;
+use Ulams\Templates\Core\AbstractTemplateChannelClass;
+use Ulams\Templates\Core\SettingsVariables;
+use Ulams\Templates\Core\TemplateSectionSchema;
+use Ulams\Templates\Enums\TemplateSectionTypeEnum;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Models\TemplateSection;
+use Ulams\TemplatesEmail\Services\Contracts\MjmlServiceContract;
 use HTMLPurifier_Config;
 use HTMLPurifier;
 use Illuminate\Support\Arr;

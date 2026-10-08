@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Services;
+namespace Ulams\TopicTypeGift\Services;
 
-use EscolaLms\TopicTypeGift\Dtos\AdminSortQuestionDto;
-use EscolaLms\TopicTypeGift\Dtos\GiftQuestionDto;
-use EscolaLms\TopicTypeGift\Enum\QuestionTypeEnum;
-use EscolaLms\TopicTypeGift\Exceptions\UnknownGiftTypeException;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Repositories\Contracts\GiftQuestionRepositoryContract;
-use EscolaLms\TopicTypeGift\Services\Contracts\GiftQuestionServiceContract;
+use Ulams\TopicTypeGift\Dtos\AdminSortQuestionDto;
+use Ulams\TopicTypeGift\Dtos\GiftQuestionDto;
+use Ulams\TopicTypeGift\Enum\QuestionTypeEnum;
+use Ulams\TopicTypeGift\Exceptions\UnknownGiftTypeException;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Repositories\Contracts\GiftQuestionRepositoryContract;
+use Ulams\TopicTypeGift\Services\Contracts\GiftQuestionServiceContract;
 use Illuminate\Support\Str;
 
 class GiftQuestionService implements GiftQuestionServiceContract

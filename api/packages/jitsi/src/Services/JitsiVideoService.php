@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Jitsi\Services;
+namespace Ulams\Jitsi\Services;
 
-use EscolaLms\Jitsi\Dto\RecordedVideoDto;
-use EscolaLms\Jitsi\Exceptions\InvalidJitsiFqnException;
-use EscolaLms\Jitsi\Exceptions\RecordedVideoSaveException;
-use EscolaLms\Jitsi\Services\Contracts\JitsiVideoServiceContract;
+use Ulams\Jitsi\Dto\RecordedVideoDto;
+use Ulams\Jitsi\Exceptions\InvalidJitsiFqnException;
+use Ulams\Jitsi\Exceptions\RecordedVideoSaveException;
+use Ulams\Jitsi\Services\Contracts\JitsiVideoServiceContract;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Throwable;

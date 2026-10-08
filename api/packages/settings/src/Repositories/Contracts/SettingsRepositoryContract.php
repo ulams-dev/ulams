@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Settings\Repositories\Contracts;
+namespace Ulams\Settings\Repositories\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\Settings\Models\Setting;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Settings\Models\Setting;
 
 interface SettingsRepositoryContract extends BaseRepositoryContract
 {

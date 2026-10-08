@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Tasks\Jobs;
+namespace Ulams\Tasks\Jobs;
 
-use EscolaLms\Tasks\Events\TaskOverdueEvent;
-use EscolaLms\Tasks\Services\Contracts\TaskServiceContract;
+use Ulams\Tasks\Events\TaskOverdueEvent;
+use Ulams\Tasks\Services\Contracts\TaskServiceContract;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

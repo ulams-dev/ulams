@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Tests\Api;
+namespace Ulams\AssignWithoutAccount\Tests\Api;
 
-use EscolaLms\AssignWithoutAccount\Database\Seeders\AssignWithoutAccountPermissionSeeder;
-use EscolaLms\AssignWithoutAccount\Enums\UserSubmissionStatusEnum;
-use EscolaLms\AssignWithoutAccount\Events\AssignToProduct;
-use EscolaLms\AssignWithoutAccount\Events\AssignToProductable;
-use EscolaLms\AssignWithoutAccount\Events\UnassignProduct;
-use EscolaLms\AssignWithoutAccount\Events\UnassignProductable;
-use EscolaLms\AssignWithoutAccount\Models\UserSubmission;
-use EscolaLms\AssignWithoutAccount\Tests\TestCase;
-use EscolaLms\Cart\Facades\Shop;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Tests\Mocks\ExampleProductable;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\AssignWithoutAccount\Database\Seeders\AssignWithoutAccountPermissionSeeder;
+use Ulams\AssignWithoutAccount\Enums\UserSubmissionStatusEnum;
+use Ulams\AssignWithoutAccount\Events\AssignToProduct;
+use Ulams\AssignWithoutAccount\Events\AssignToProductable;
+use Ulams\AssignWithoutAccount\Events\UnassignProduct;
+use Ulams\AssignWithoutAccount\Events\UnassignProductable;
+use Ulams\AssignWithoutAccount\Models\UserSubmission;
+use Ulams\AssignWithoutAccount\Tests\TestCase;
+use Ulams\Cart\Facades\Shop;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Tests\Mocks\ExampleProductable;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
@@ -45,7 +45,7 @@ class UserSubmissionAdminTest extends TestCase
     public function testIndexFilterByMorphType(): void
     {
         $admin = $this->makeAdmin();
-        $morphableType = 'EscolaLms\\Test\\Models\\Test';
+        $morphableType = 'Ulams\\Test\\Models\\Test';
         UserSubmission::factory()->count(10)->create();
         UserSubmission::factory()->count(5)->create([
             'morphable_type' => $morphableType
@@ -64,7 +64,7 @@ class UserSubmissionAdminTest extends TestCase
         $admin = $this->makeAdmin();
 
         $morphableId = 1;
-        $morphableType = 'EscolaLms\\Test\\Models\\Test';
+        $morphableType = 'Ulams\\Test\\Models\\Test';
         UserSubmission::factory()->count(10)->create();
         UserSubmission::factory()->count(5)->create([
             'morphable_id' => $morphableId,

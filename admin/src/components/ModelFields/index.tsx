@@ -6,11 +6,11 @@ import ProTable from '@ant-design/pro-table';
 import { Button, Popconfirm, Tooltip, message } from 'antd';
 import { FormattedMessage, useIntl } from 'umi';
 
-import { deleteField, fields as fetchFields } from '@/services/escola-lms/fields';
+import { deleteField, fields as fetchFields } from '@/services/ulams/fields';
 
 import ModelFieldsModalForm from './ModalForm';
 
-export const TableColumns: ProColumns<EscolaLms.ModelFields.Models.Metadata>[] = [
+export const TableColumns: ProColumns<Ulams.ModelFields.Models.Metadata>[] = [
   {
     title: <FormattedMessage id="name" defaultMessage="name" />,
     dataIndex: 'name',
@@ -38,7 +38,7 @@ export const ModelFields: React.FC<{
   const [loading, setLoading] = useState(false);
   const intl = useIntl();
   const [modalVisible, setModalVisible] = useState<string | false>(false);
-  const [fields, setFields] = useState<EscolaLms.ModelFields.Models.Metadata[]>([]);
+  const [fields, setFields] = useState<Ulams.ModelFields.Models.Metadata[]>([]);
 
   const handleRemove = useCallback(
     async ({ class_type_to_remove, name }: { class_type_to_remove: string; name: string }) => {
@@ -79,7 +79,7 @@ export const ModelFields: React.FC<{
         onVisibleChange={(value) => value === false && setModalVisible(false)}
       />
 
-      <ProTable<EscolaLms.ModelFields.Models.Metadata>
+      <ProTable<Ulams.ModelFields.Models.Metadata>
         search={false}
         headerTitle={intl.formatMessage({
           id: 'ModelFields',

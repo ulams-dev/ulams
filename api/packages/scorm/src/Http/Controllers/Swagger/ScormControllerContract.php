@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Scorm\Http\Controllers\Swagger;
+namespace Ulams\Scorm\Http\Controllers\Swagger;
 
-use EscolaLms\Scorm\Http\Requests\ScormCreateRequest;
-use EscolaLms\Scorm\Http\Requests\ScormDeleteRequest;
-use EscolaLms\Scorm\Http\Requests\ScormListRequest;
-use EscolaLms\Scorm\Http\Requests\ScormReadRequest;
+use Ulams\Scorm\Http\Requests\ScormCreateRequest;
+use Ulams\Scorm\Http\Requests\ScormDeleteRequest;
+use Ulams\Scorm\Http\Requests\ScormListRequest;
+use Ulams\Scorm\Http\Requests\ScormReadRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -16,7 +16,7 @@ interface ScormControllerContract
     /**
      * @OA\Post(
      *     path="/api/admin/scorm/upload",
-     *     summary="Convert ZIP Scorm Package into Escola LMS Scorm storage",
+     *     summary="Convert ZIP Scorm Package into Ulams LMS Scorm storage",
      *     tags={"SCORM"},
      *     security={
      *         {"passport": {}},

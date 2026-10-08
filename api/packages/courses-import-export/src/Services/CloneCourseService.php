@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Services;
+namespace Ulams\CoursesImportExport\Services;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\CoursesImportExport\Jobs\CloneCourse;
-use EscolaLms\CoursesImportExport\Services\Contracts\CloneCourseServiceContract;
+use Ulams\Courses\Models\Course;
+use Ulams\CoursesImportExport\Jobs\CloneCourse;
+use Ulams\CoursesImportExport\Services\Contracts\CloneCourseServiceContract;
 use Exception;
 
 class CloneCourseService implements CloneCourseServiceContract

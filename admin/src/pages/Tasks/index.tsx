@@ -10,7 +10,7 @@ import React, { useRef } from 'react';
 import { FormattedMessage, Link, useIntl } from 'umi';
 
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';
-import { deleteTask, tasks } from '@/services/escola-lms/tasks';
+import { deleteTask, tasks } from '@/services/ulams/tasks';
 
 const handleRemove = async (id: number) => {
   return deleteTask(id).then((response) => {
@@ -66,7 +66,7 @@ const TableList: React.FC = () => {
         record.created_by?.id && (
           <TypeButtonDrawer
             key={'user'}
-            type="EscolaLms\Core\Models\User"
+            type="Ulams\Core\Models\User"
             type_id={record.created_by?.id}
           />
         ),
@@ -92,7 +92,7 @@ const TableList: React.FC = () => {
         record.user?.id && (
           <TypeButtonDrawer
             key={'user'}
-            type="EscolaLms\Core\Models\User"
+            type="Ulams\Core\Models\User"
             type_id={record.user?.id}
           />
         ),

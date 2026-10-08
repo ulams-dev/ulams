@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Lrs\Http\Controllers;
+namespace Ulams\Lrs\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use EscolaLms\Lrs\Services\Contracts\LrsServiceContract;
-use EscolaLms\Lrs\Http\Controllers\Swagger\LrsSwagger;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Lrs\Services\Contracts\LrsServiceContract;
+use Ulams\Lrs\Http\Controllers\Swagger\LrsSwagger;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 
-class LrsController extends EscolaLmsBaseController implements LrsSwagger
+class LrsController extends UlamsBaseController implements LrsSwagger
 {
     private LrsServiceContract $service;
 

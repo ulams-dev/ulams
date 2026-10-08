@@ -9,7 +9,7 @@ import { CollectionSelect } from '@/components/CollectionSelect';
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';
 import UserSelect from '@/components/UserSelect';
 import { DATETIME_FORMAT } from '@/consts/dates';
-import { consultationAccess } from '@/services/escola-lms/consultations_access';
+import { consultationAccess } from '@/services/ulams/consultations_access';
 import { ApproveForm } from './approveForm';
 import { DisapproveForm } from './disapproveForm';
 
@@ -19,7 +19,7 @@ const TableList: React.FC = () => {
 
   const [disapproveId, setDisapproveId] = useState<number>();
   const [approveTerm, setApproveTerm] =
-    useState<EscolaLms.ConsultationAccess.Models.ConsultationAccessEnquiryProposedTerm>();
+    useState<Ulams.ConsultationAccess.Models.ConsultationAccessEnquiryProposedTerm>();
 
   const columns: ProColumns[] = useMemo(
     () => [
@@ -58,7 +58,7 @@ const TableList: React.FC = () => {
           record.user?.id && (
             <TypeButtonDrawer
               key={'user'}
-              type="EscolaLms\Core\Models\User"
+              type="Ulams\Core\Models\User"
               type_id={record.user?.id}
             >
               <Tag>{record.user.email}</Tag>
@@ -90,7 +90,7 @@ const TableList: React.FC = () => {
           record.consultation?.id && (
             <TypeButtonDrawer
               key="consultation_id"
-              type="EscolaLms\Consultations\Models\Consultation"
+              type="Ulams\Consultations\Models\Consultation"
               type_id={record.consultation?.id}
             >
               <Tag>{record.consultation.name}</Tag>
@@ -112,7 +112,7 @@ const TableList: React.FC = () => {
             <Space direction="vertical">
               {record.proposed_terms.map(
                 (
-                  term: EscolaLms.ConsultationAccess.Models.ConsultationAccessEnquiryProposedTerm,
+                  term: Ulams.ConsultationAccess.Models.ConsultationAccessEnquiryProposedTerm,
                 ) => (
                   <Button
                     key={term.id}

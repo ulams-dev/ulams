@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Http\Requests;
+namespace Ulams\Bookmarks\Http\Requests;
 
 use Illuminate\Support\Facades\Gate;
 

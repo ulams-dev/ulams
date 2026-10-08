@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Categories\Services;
+namespace Ulams\Categories\Services;
 
-use EscolaLms\Categories\Dtos\CategoryDto;
-use EscolaLms\Categories\Dtos\CategorySortDto;
-use EscolaLms\Categories\Enums\ConstantEnum;
-use EscolaLms\Categories\Exceptions\CategoryIsUsed;
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Categories\Repositories\Contracts\CategoriesRepositoryContract;
-use EscolaLms\Categories\Services\Contracts\CategoryServiceContracts;
-use EscolaLms\Core\Dtos\PaginationDto;
-use EscolaLms\Core\Dtos\PeriodDto;
-use EscolaLms\Files\Helpers\FileHelper;
+use Ulams\Categories\Dtos\CategoryDto;
+use Ulams\Categories\Dtos\CategorySortDto;
+use Ulams\Categories\Enums\ConstantEnum;
+use Ulams\Categories\Exceptions\CategoryIsUsed;
+use Ulams\Categories\Models\Category;
+use Ulams\Categories\Repositories\Contracts\CategoriesRepositoryContract;
+use Ulams\Categories\Services\Contracts\CategoryServiceContracts;
+use Ulams\Core\Dtos\PaginationDto;
+use Ulams\Core\Dtos\PeriodDto;
+use Ulams\Files\Helpers\FileHelper;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -104,7 +104,7 @@ class CategoryService implements CategoryServiceContracts
             throw new CategoryIsUsed(__('The category has categories'));
         }
 
-        if (class_exists(\EscolaLms\Courses\Models\Course::class) && $category->courses()->count() > 0) {
+        if (class_exists(\Ulams\Courses\Models\Course::class) && $category->courses()->count() > 0) {
             throw new CategoryIsUsed(__('The category is used in courses'));
         }
 

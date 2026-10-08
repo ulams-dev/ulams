@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Reports\ValueObject;
+namespace Ulams\Reports\ValueObject;
 
 interface ValueObject
 {

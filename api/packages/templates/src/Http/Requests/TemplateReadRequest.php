@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Templates\Http\Requests;
+namespace Ulams\Templates\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use EscolaLms\Templates\Models\Template;
+use Ulams\Templates\Models\Template;
 use Illuminate\Support\Facades\Gate;
 
 class TemplateReadRequest extends FormRequest

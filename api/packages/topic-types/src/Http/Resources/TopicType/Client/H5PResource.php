@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Http\Resources\TopicType\Client;
+namespace Ulams\TopicTypes\Http\Resources\TopicType\Client;
 
-use EscolaLms\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
-use EscolaLms\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
+use Ulams\HeadlessH5P\Services\Contracts\HeadlessH5PServiceContract;
+use Ulams\TopicTypes\Http\Resources\TopicType\Contacts\TopicTypeResourceContract;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class H5PResource extends JsonResource implements TopicTypeResourceContract

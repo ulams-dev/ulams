@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Http\Requests;
+namespace Ulams\BulkNotifications\Http\Requests;
 
-use EscolaLms\BulkNotifications\Dtos\CreateDeviceTokenDto;
-use EscolaLms\BulkNotifications\Models\DeviceToken;
+use Ulams\BulkNotifications\Dtos\CreateDeviceTokenDto;
+use Ulams\BulkNotifications\Models\DeviceToken;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Files\Tests\Services;
+namespace Ulams\Files\Tests\Services;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Files\Http\Services\Contracts\FileServiceContract;
-use EscolaLms\Files\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Files\Http\Services\Contracts\FileServiceContract;
+use Ulams\Files\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\App;
 

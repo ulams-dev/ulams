@@ -1,7 +1,7 @@
 import { Context } from '@/components/ProgramForm/Context';
 import { getFormData } from '@/services/api';
-import { getTopic } from '@/services/escola-lms/course';
-import { TopicType } from '@/services/escola-lms/enums';
+import { getTopic } from '@/services/ulams/course';
+import { TopicType } from '@/services/ulams/enums';
 import { Affix, Alert, Col, Row, Space } from 'antd';
 import Button from 'antd/lib/button';
 import Divider from 'antd/lib/divider';

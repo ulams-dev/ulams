@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\Dictionaries\Models\Dictionary;
-use EscolaLms\Dictionaries\Models\User;
+use Ulams\Dictionaries\Models\Dictionary;
+use Ulams\Dictionaries\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

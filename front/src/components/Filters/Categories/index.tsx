@@ -2,9 +2,9 @@ import { FC, useContext } from "react";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import Categories from "@lms/components/components/molecules/Categories/Categories";
-import Title from "@lms/components/components/atoms/Typography/Title";
+import { UlamsContext } from "@ulams/sdk/react";
+import Categories from "@ulams/components/components/molecules/Categories/Categories";
+import Title from "@ulams/components/components/atoms/Typography/Title";
 
 interface CategoriesFilterProps {
   selectedCategories: number[];
@@ -15,7 +15,7 @@ const CategoriesFilter: FC<CategoriesFilterProps> = ({
   selectedCategories,
   handleChange,
 }) => {
-  const { categoryTree } = useContext(EscolaLMSContext);
+  const { categoryTree } = useContext(UlamsContext);
   const theme = useTheme();
   const { t } = useTranslation();
 

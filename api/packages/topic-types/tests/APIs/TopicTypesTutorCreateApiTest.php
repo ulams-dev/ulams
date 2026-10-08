@@ -2,22 +2,22 @@
 
 namespace Tests\APIs;
 
-use EscolaLms\Courses\Database\Seeders\CoursesPermissionSeeder;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\Components\Cmi5AuHelper;
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\Components\H5PHelper;
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\Components\ScormScoHelper;
-use EscolaLms\TopicTypes\Models\TopicContent\Cmi5Au;
-use EscolaLms\TopicTypes\Models\TopicContent\H5P;
-use EscolaLms\TopicTypes\Models\TopicContent\OEmbed;
-use EscolaLms\TopicTypes\Models\TopicContent\ScormSco;
-use EscolaLms\TopicTypes\Models\TopicContent\Video;
-use EscolaLms\TopicTypes\Tests\TestCase;
-use EscolaLms\TopicTypes\Events\TopicTypeChanged;
-use EscolaLms\TopicTypes\Models\TopicContent\Audio;
-use EscolaLms\TopicTypes\Models\TopicContent\Image;
-use EscolaLms\TopicTypes\Models\TopicContent\RichText;
+use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\TopicTypes\Database\Factories\TopicContent\Components\Cmi5AuHelper;
+use Ulams\TopicTypes\Database\Factories\TopicContent\Components\H5PHelper;
+use Ulams\TopicTypes\Database\Factories\TopicContent\Components\ScormScoHelper;
+use Ulams\TopicTypes\Models\TopicContent\Cmi5Au;
+use Ulams\TopicTypes\Models\TopicContent\H5P;
+use Ulams\TopicTypes\Models\TopicContent\OEmbed;
+use Ulams\TopicTypes\Models\TopicContent\ScormSco;
+use Ulams\TopicTypes\Models\TopicContent\Video;
+use Ulams\TopicTypes\Tests\TestCase;
+use Ulams\TopicTypes\Events\TopicTypeChanged;
+use Ulams\TopicTypes\Models\TopicContent\Audio;
+use Ulams\TopicTypes\Models\TopicContent\Image;
+use Ulams\TopicTypes\Models\TopicContent\RichText;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
@@ -114,7 +114,7 @@ class TopicTypesTutorCreateApiTest extends TestCase
             ->post('/api/admin/topics', [
                 'title' => 'Hello World',
                 'lesson_id' => $this->lesson->id,
-                'topicable_type' => 'EscolaLms\TopicTypes\Models\TopicContent\PDF',
+                'topicable_type' => 'Ulams\TopicTypes\Models\TopicContent\PDF',
                 'value' => $file,
             ])
             ->assertStatus(201);
@@ -250,7 +250,7 @@ class TopicTypesTutorCreateApiTest extends TestCase
 
     public function testCreateTopicCmi5Au(): void
     {
-        if (!class_exists(\EscolaLms\Cmi5\EscolaLmsCmi5ServiceProvider::class)) {
+        if (!class_exists(\Ulams\Cmi5\UlamsCmi5ServiceProvider::class)) {
             $this->markTestSkipped('Require cmi5 package');
         }
         Event::fake(TopicTypeChanged::class);
@@ -380,7 +380,7 @@ class TopicTypesTutorCreateApiTest extends TestCase
             [
                 'title' => 'Hello World',
                 'lesson_id' => $this->lesson->id,
-                'topicable_type' => 'EscolaLms\Courses\TopicTypes\TopicContent\RichTextAAAAAA',
+                'topicable_type' => 'Ulams\Courses\TopicTypes\TopicContent\RichTextAAAAAA',
                 'value' => 'lorem ipsum',
             ],
         );

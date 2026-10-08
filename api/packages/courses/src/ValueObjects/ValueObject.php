@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Courses\ValueObjects;
+namespace Ulams\Courses\ValueObjects;
 
 abstract class ValueObject
 {

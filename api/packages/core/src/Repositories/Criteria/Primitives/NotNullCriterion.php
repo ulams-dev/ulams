@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Core\Repositories\Criteria\Primitives;
+namespace Ulams\Core\Repositories\Criteria\Primitives;
 
-use EscolaLms\Core\Repositories\Criteria\Criterion;
+use Ulams\Core\Repositories\Criteria\Criterion;
 use Illuminate\Database\Eloquent\Builder;
 
 class NotNullCriterion extends Criterion

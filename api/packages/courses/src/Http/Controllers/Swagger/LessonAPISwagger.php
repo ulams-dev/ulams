@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Controllers\Swagger;
+namespace Ulams\Courses\Http\Controllers\Swagger;
 
-use EscolaLms\Courses\Http\Requests\CloneLessonAPIRequest;
-use EscolaLms\Courses\Http\Requests\CreateLessonAPIRequest;
-use EscolaLms\Courses\Http\Requests\DeleteLessonAPIRequest;
-use EscolaLms\Courses\Http\Requests\GetLessonAPIRequest;
-use EscolaLms\Courses\Http\Requests\UpdateLessonAPIRequest;
+use Ulams\Courses\Http\Requests\CloneLessonAPIRequest;
+use Ulams\Courses\Http\Requests\CreateLessonAPIRequest;
+use Ulams\Courses\Http\Requests\DeleteLessonAPIRequest;
+use Ulams\Courses\Http\Requests\GetLessonAPIRequest;
+use Ulams\Courses\Http\Requests\UpdateLessonAPIRequest;
 use Illuminate\Http\Request;
 
 interface LessonAPISwagger

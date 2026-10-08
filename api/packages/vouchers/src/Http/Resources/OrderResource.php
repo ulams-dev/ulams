@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Vouchers\Http\Resources;
+namespace Ulams\Vouchers\Http\Resources;
 
-use EscolaLms\Cart\Http\Resources\OrderResource as BaseOrderResource;
+use Ulams\Cart\Http\Resources\OrderResource as BaseOrderResource;
 
 class OrderResource extends BaseOrderResource
 {

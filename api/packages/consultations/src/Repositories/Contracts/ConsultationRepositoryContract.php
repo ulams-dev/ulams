@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Consultations\Repositories\Contracts;
+namespace Ulams\Consultations\Repositories\Contracts;
 
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 
 interface ConsultationRepositoryContract extends BaseRepositoryContract

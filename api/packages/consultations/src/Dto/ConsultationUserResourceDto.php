@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Consultations\Dto;
+namespace Ulams\Consultations\Dto;
 
 class ConsultationUserResourceDto extends BaseDto
 {

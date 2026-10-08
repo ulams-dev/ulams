@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Models;
+namespace Ulams\CourseAccess\Models;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\CourseAccess\Database\Factories\CourseAccessEnquiryFactory;
+use Ulams\Core\Models\User;
+use Ulams\CourseAccess\Database\Factories\CourseAccessEnquiryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * EscolaLms\CourseAccess\Models\CourseAccessEnquiry
+ * Ulams\CourseAccess\Models\CourseAccessEnquiry
  *
  * @property-read int $id
  * @property int $course_id

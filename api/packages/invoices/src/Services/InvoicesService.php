@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Invoices\Services;
+namespace Ulams\Invoices\Services;
 
-use EscolaLms\Cart\Models\Order;
-use EscolaLms\Cart\Models\OrderItem;
-use EscolaLms\Invoices\Services\Contracts\InvoicesServiceContract;
+use Ulams\Cart\Models\Order;
+use Ulams\Cart\Models\OrderItem;
+use Ulams\Invoices\Services\Contracts\InvoicesServiceContract;
 use Illuminate\Database\Eloquent\Collection;
 use LaravelDaily\Invoices\Facades\Invoice;
 use LaravelDaily\Invoices\Invoice as InvoiceModel;

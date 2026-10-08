@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Courses\Listeners;
+namespace Ulams\Courses\Listeners;
 
-use EscolaLms\Courses\Events\CourseAssigned;
-use EscolaLms\Courses\Models\CourseProgress;
-use EscolaLms\Courses\Models\CourseUserPivot;
-use EscolaLms\Courses\Services\Contracts\DeadlineCalculatorServiceContract;
+use Ulams\Courses\Events\CourseAssigned;
+use Ulams\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\CourseUserPivot;
+use Ulams\Courses\Services\Contracts\DeadlineCalculatorServiceContract;
 
 class SetNewDeadlineForReassignedUser
 {

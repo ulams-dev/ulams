@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Categories\Http\Resources;
+namespace Ulams\Categories\Http\Resources;
 
 class CategoryTreeAdminResource extends CategoryResource
 {

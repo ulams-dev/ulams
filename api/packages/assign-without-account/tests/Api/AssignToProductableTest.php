@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Tests\Api;
+namespace Ulams\AssignWithoutAccount\Tests\Api;
 
-use EscolaLms\AssignWithoutAccount\Database\Seeders\AssignWithoutAccountPermissionSeeder;
-use EscolaLms\AssignWithoutAccount\Events\AssignToProductable;
-use EscolaLms\AssignWithoutAccount\Tests\TestCase;
-use EscolaLms\Auth\Enums\SettingStatusEnum;
-use EscolaLms\Auth\Events\AccountRegistered;
-use EscolaLms\Auth\Models\User as AuthUser;
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Cart\Events\ProductableAttached;
-use EscolaLms\Cart\Facades\Shop;
-use EscolaLms\Cart\Tests\Mocks\ExampleProductable;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\AssignWithoutAccount\Database\Seeders\AssignWithoutAccountPermissionSeeder;
+use Ulams\AssignWithoutAccount\Events\AssignToProductable;
+use Ulams\AssignWithoutAccount\Tests\TestCase;
+use Ulams\Auth\Enums\SettingStatusEnum;
+use Ulams\Auth\Events\AccountRegistered;
+use Ulams\Auth\Models\User as AuthUser;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Cart\Events\ProductableAttached;
+use Ulams\Cart\Facades\Shop;
+use Ulams\Cart\Tests\Mocks\ExampleProductable;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;

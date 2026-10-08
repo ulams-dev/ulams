@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Images\Http\Controllers\ImagesController;
+use Ulams\Images\Http\Controllers\ImagesController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api/images'], function () {

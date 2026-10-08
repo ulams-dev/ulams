@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Core\Enums;
+namespace Ulams\Core\Enums;
 
 class StatusEnum extends BasicEnum
 {

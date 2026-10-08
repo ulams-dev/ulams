@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Models;
+namespace Ulams\ConsultationAccess\Models;
 
-use EscolaLms\ConsultationAccess\Database\Factories\ConsultationFactory;
-use EscolaLms\Consultations\Models\Consultation as BaseConsultation;
+use Ulams\ConsultationAccess\Database\Factories\ConsultationFactory;
+use Ulams\Consultations\Models\Consultation as BaseConsultation;
 
 class Consultation extends BaseConsultation
 {

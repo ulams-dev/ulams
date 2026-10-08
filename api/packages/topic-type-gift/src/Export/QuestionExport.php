@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Export;
+namespace Ulams\TopicTypeGift\Export;
 
-use EscolaLms\TopicTypeGift\Dtos\Criteria\ExportQuestionsCriteriaDto;
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Repositories\Contracts\GiftQuestionRepositoryContract;
+use Ulams\TopicTypeGift\Dtos\Criteria\ExportQuestionsCriteriaDto;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Repositories\Contracts\GiftQuestionRepositoryContract;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;

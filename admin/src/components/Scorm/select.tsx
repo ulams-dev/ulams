@@ -1,5 +1,5 @@
 import ScormPreview from '@/components/Scorm/preview';
-import { scorms as fetchScorms } from '@/services/escola-lms/scorm';
+import { scorms as fetchScorms } from '@/services/ulams/scorm';
 import { Button, Modal, Select, Space, Spin } from 'antd';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'umi';

@@ -3,7 +3,7 @@ import { DrawerForm, ProFormTextArea } from '@ant-design/pro-form';
 import { Form } from 'antd';
 import { FormattedMessage } from 'umi';
 
-import { disapproveConsultationAccess } from '@/services/escola-lms/consultations_access';
+import { disapproveConsultationAccess } from '@/services/ulams/consultations_access';
 
 export const DisapproveForm: React.FC<{
   id?: number;

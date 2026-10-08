@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Tests;
+namespace Ulams\Bookmarks\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Bookmarks\EscolaLmsBookmarksServiceProvider;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Models\User;
+use Ulams\Bookmarks\UlamsBookmarksServiceProvider;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
@@ -20,8 +20,8 @@ class TestCase extends CoreTestCase
             ...parent::getPackageProviders($app),
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
-            EscolaLmsAuthServiceProvider::class,
-            EscolaLmsBookmarksServiceProvider::class
+            UlamsAuthServiceProvider::class,
+            UlamsBookmarksServiceProvider::class
         ];
     }
 

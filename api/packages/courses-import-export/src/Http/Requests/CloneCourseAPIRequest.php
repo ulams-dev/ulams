@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Http\Requests;
+namespace Ulams\CoursesImportExport\Http\Requests;
 
-use EscolaLms\CoursesImportExport\Models\Course;
+use Ulams\CoursesImportExport\Models\Course;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Consultations\Repositories\Contracts;
+namespace Ulams\Consultations\Repositories\Contracts;
 
-use EscolaLms\Consultations\Dto\FilterConsultationTermsListDto;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Models\ConsultationUserTerm;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Consultations\Dto\FilterConsultationTermsListDto;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Models\ConsultationUserTerm;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 

@@ -2,7 +2,7 @@ import { API } from "..";
 import { Product } from "./cart";
 import { DefaultMetaResponse, PageParams, PaginationParams } from "./core";
 
-export type Webinar = Omit<EscolaLms.Webinar.Models.Webinar, "trainers"> & {
+export type Webinar = Omit<Ulams.Webinar.Models.Webinar, "trainers"> & {
   product?: Product;
   program?: string;
   trainers: Array<API.User> | null;
@@ -14,7 +14,7 @@ export type Webinar = Omit<EscolaLms.Webinar.Models.Webinar, "trainers"> & {
 };
 
 export type StationaryEvent =
-  EscolaLms.StationaryEvents.Models.StationaryEvent & {
+  Ulams.StationaryEvents.Models.StationaryEvent & {
     date?: string;
     title?: string;
     isScheduled?: boolean;
@@ -39,8 +39,8 @@ export type Event = {
   max_participants?: number | null;
   place?: string | null;
   program?: string | null;
-  categories?: EscolaLms.Categories.Models.Category[] | null;
-  authors?: EscolaLms.Auth.Models.User[] | null;
+  categories?: Ulams.Categories.Models.Category[] | null;
+  authors?: Ulams.Auth.Models.User[] | null;
   agenda?: string | null;
   duration?: string | null;
   image_path: string | null;
@@ -48,8 +48,8 @@ export type Event = {
   product?: Product | null;
   base_price?: string | null;
   status?: string;
-  trainers?: EscolaLms.Auth.Models.User[] | null;
-  tags?: EscolaLms.Tags.Models.Tag[] | null;
+  trainers?: Ulams.Auth.Models.User[] | null;
+  tags?: Ulams.Tags.Models.Tag[] | null;
   yt_url?: string | null;
   model?: string;
   in_coming?: boolean;

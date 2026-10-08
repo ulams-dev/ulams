@@ -1,6 +1,6 @@
 import * as React from "react";
 import styled, { withTheme } from "styled-components";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 export interface LogoProps
   extends React.ImgHTMLAttributes<HTMLImageElement>,
@@ -20,7 +20,7 @@ const StyledLogo = styled("img")<LogoProps>`
 export const Logo: React.FC<LogoProps> = (props) => (
   <StyledLogo
     {...props}
-    className={`wellms-component ${props.className ?? ""}`}
+    className={`ulams-component ${props.className ?? ""}`}
   />
 );
 

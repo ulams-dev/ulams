@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Settings\Services;
+namespace Ulams\Settings\Services;
 
-use EscolaLms\Settings\Http\Resources\SettingResource;
+use Ulams\Settings\Http\Resources\SettingResource;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
-use EscolaLms\Settings\Services\Contracts\SettingsServiceContract;
-use EscolaLms\Settings\Models\Setting;
+use Ulams\Settings\Services\Contracts\SettingsServiceContract;
+use Ulams\Settings\Models\Setting;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Pagination\LengthAwarePaginator;

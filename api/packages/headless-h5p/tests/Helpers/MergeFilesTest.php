@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Tests\Helpers;
+namespace Ulams\HeadlessH5P\Tests\Helpers;
 
-use EscolaLms\HeadlessH5P\Helpers\MergeFiles;
-use EscolaLms\HeadlessH5P\Tests\TestCase;
+use Ulams\HeadlessH5P\Helpers\MergeFiles;
+use Ulams\HeadlessH5P\Tests\TestCase;
 
 class MergeFilesTest extends TestCase
 {

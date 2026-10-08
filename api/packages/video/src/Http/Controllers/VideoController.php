@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Video\Http\Controllers;
+namespace Ulams\Video\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Video\Http\Controllers\Swagger\VideoControllerSwagger;
-use EscolaLms\Video\Http\Requests\VideoProcessStateRequest;
-use EscolaLms\Video\Http\Resources\VideoProcessStateResource;
-use EscolaLms\Video\Repositories\Contracts\VideoRepositoryContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Video\Http\Controllers\Swagger\VideoControllerSwagger;
+use Ulams\Video\Http\Requests\VideoProcessStateRequest;
+use Ulams\Video\Http\Resources\VideoProcessStateResource;
+use Ulams\Video\Repositories\Contracts\VideoRepositoryContract;
 use Illuminate\Http\JsonResponse;
 
-class VideoController extends EscolaLmsBaseController implements VideoControllerSwagger
+class VideoController extends UlamsBaseController implements VideoControllerSwagger
 {
     private VideoRepositoryContract $videoRepository;
 

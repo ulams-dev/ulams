@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Core\Repositories;
+namespace Ulams\Core\Repositories;
 
-use EscolaLms\Core\Dtos\Contracts\CompareDtoContract;
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Core\Dtos\PaginationDto;
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
-use EscolaLms\Core\Repositories\Contracts\UserableRepositoryContract;
-use EscolaLms\Core\Repositories\Criteria\Criterion;
+use Ulams\Core\Dtos\Contracts\CompareDtoContract;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\PaginationDto;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Core\Repositories\Contracts\UserableRepositoryContract;
+use Ulams\Core\Repositories\Criteria\Criterion;
 use Illuminate\Container\Container as Application;
 use Illuminate\Contracts\Auth\Authenticatable as User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;

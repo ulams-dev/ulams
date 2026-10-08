@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Translations\Http\Controllers\Swagger;
+namespace Ulams\Translations\Http\Controllers\Swagger;
 
-use EscolaLms\Translations\Http\Requests\PublicListLanguageLineRequest;
+use Ulams\Translations\Http\Requests\PublicListLanguageLineRequest;
 use Illuminate\Http\JsonResponse;
 
 interface TranslationApiSwagger

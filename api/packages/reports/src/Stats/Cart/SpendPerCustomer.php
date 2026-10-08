@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Cart;
+namespace Ulams\Reports\Stats\Cart;
 
-use EscolaLms\Cart\Enums\OrderStatus;
-use EscolaLms\Cart\Models\Order;
+use Ulams\Cart\Enums\OrderStatus;
+use Ulams\Cart\Models\Order;
 
 class SpendPerCustomer extends AbstractCartStat
 {

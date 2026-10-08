@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\Cart\Tests\Services;
+namespace Ulams\Cart\Tests\Services;
 
-use EscolaLms\Cart\Database\Seeders\CartPermissionSeeder;
-use EscolaLms\Cart\Enums\PeriodEnum;
-use EscolaLms\Cart\Events\ProductAttached;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductUser;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
-use EscolaLms\Cart\Tests\Mocks\ExampleProductable;
-use EscolaLms\Cart\Tests\TestCase;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\Cart\Database\Seeders\CartPermissionSeeder;
+use Ulams\Cart\Enums\PeriodEnum;
+use Ulams\Cart\Events\ProductAttached;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductUser;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Cart\Tests\Mocks\ExampleProductable;
+use Ulams\Cart\Tests\TestCase;
+use Ulams\Core\Models\User;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;

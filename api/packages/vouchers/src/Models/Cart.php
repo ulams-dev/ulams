@@ -1,22 +1,22 @@
 <?php
 
-namespace EscolaLms\Vouchers\Models;
+namespace Ulams\Vouchers\Models;
 
-use EscolaLms\Cart\Models\Cart as BaseCart;
-use EscolaLms\Vouchers\Services\CartManager;
-use EscolaLms\Vouchers\Services\Contracts\ShopServiceContract;
+use Ulams\Cart\Models\Cart as BaseCart;
+use Ulams\Vouchers\Services\CartManager;
+use Ulams\Vouchers\Services\Contracts\ShopServiceContract;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * EscolaLms\Vouchers\Models\Cart
+ * Ulams\Vouchers\Models\Cart
  *
  * @property int $id
  * @property int|null $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int|null $coupon_id
- * @property-read \EscolaLms\Vouchers\Models\Coupon|null $coupon
+ * @property-read \Ulams\Vouchers\Models\Coupon|null $coupon
  * @property-read int $additional_discount
  * @property-read CartManager $cart_manager
  * @property-read int $subtotal
@@ -25,9 +25,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read int $total_pre_discount
  * @property-read int $total_with_tax
  * @property-read int $cart_discount
- * @property-read \Treestoneit\ShoppingCart\Models\CartItemCollection|\EscolaLms\Vouchers\Models\CartItem[] $items
+ * @property-read \Treestoneit\ShoppingCart\Models\CartItemCollection|\Ulams\Vouchers\Models\CartItem[] $items
  * @property-read int|null $items_count
- * @property-read \EscolaLms\Cart\Models\User|null $user
+ * @property-read \Ulams\Cart\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|Cart newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Cart newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Cart query()

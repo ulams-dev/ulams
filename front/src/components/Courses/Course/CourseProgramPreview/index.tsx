@@ -1,20 +1,20 @@
 import React, { useContext, useMemo } from "react";
-import { API } from "@lms/sdk";
-import { TopicType } from "@lms/sdk/services/courses";
-import { OEmbedPlayer } from "@lms/components/components/players/OEmbedPlayer/OEmbedPlayer";
-import { AudioVideoPlayer } from "@lms/components/components/players/AudioVideoPlayer/AudioVideoPlayer";
-import { PdfPlayer } from "@lms/components/components/players/PdfPlayer/PdfPlayer";
-import { MarkdownPlayer } from "@lms/components/components/players/MarkdownPlayer/MarkdownPlayer";
-import { ImagePlayer } from "@lms/components/components/players/ImagePlayer/ImagePlayer";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { H5Player } from "@lms/components/components/players/H5Player/H5Player";
-import GiftQuizPlayer from "@lms/components/components/quizzes";
-import { ScormPreview } from "@lms/scorm-player";
+import { API } from "@ulams/sdk";
+import { TopicType } from "@ulams/sdk/services/courses";
+import { OEmbedPlayer } from "@ulams/components/components/players/OEmbedPlayer/OEmbedPlayer";
+import { AudioVideoPlayer } from "@ulams/components/components/players/AudioVideoPlayer/AudioVideoPlayer";
+import { PdfPlayer } from "@ulams/components/components/players/PdfPlayer/PdfPlayer";
+import { MarkdownPlayer } from "@ulams/components/components/players/MarkdownPlayer/MarkdownPlayer";
+import { ImagePlayer } from "@ulams/components/components/players/ImagePlayer/ImagePlayer";
+import { UlamsContext } from "@ulams/sdk/react";
+import { H5Player } from "@ulams/components/components/players/H5Player/H5Player";
+import GiftQuizPlayer from "@ulams/components/components/quizzes";
+import { ScormPreview } from "@ulams/scorm-player";
 
 export const CourseProgramPreview: React.FC<{
   topic: API.Topic;
 }> = ({ topic }) => {
-  const { apiUrl } = useContext(EscolaLMSContext);
+  const { apiUrl } = useContext(UlamsContext);
   const topicRender = useMemo(() => {
     if (topic && topic.topicable_type) {
       switch (topic.topicable_type) {

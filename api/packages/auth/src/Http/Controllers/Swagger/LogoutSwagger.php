@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers\Swagger;
+namespace Ulams\Auth\Http\Controllers\Swagger;
 
-use EscolaLms\Auth\Http\Requests\LogoutRequest;
+use Ulams\Auth\Http\Requests\LogoutRequest;
 use Illuminate\Http\JsonResponse;
 
 interface LogoutSwagger

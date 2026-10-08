@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Scorm\Services;
+namespace Ulams\Scorm\Services;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Scorm\Repositories\Contracts\ScormRepositoryContract;
-use EscolaLms\Scorm\Services\Contracts\ScormQueryServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Scorm\Repositories\Contracts\ScormRepositoryContract;
+use Ulams\Scorm\Services\Contracts\ScormQueryServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Peopleaps\Scorm\Model\ScormScoModel;

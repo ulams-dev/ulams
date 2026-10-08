@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Auth\Models;
+namespace Ulams\Auth\Models;
 
-use EscolaLms\Auth\Casts\UserSettingValueCast;
-use EscolaLms\Auth\Models\Traits\HasCompositePrimaryKeyTrait;
+use Ulams\Auth\Casts\UserSettingValueCast;
+use Ulams\Auth\Models\Traits\HasCompositePrimaryKeyTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

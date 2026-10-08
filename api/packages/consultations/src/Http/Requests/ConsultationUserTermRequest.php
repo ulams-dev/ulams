@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Consultations\Http\Requests;
+namespace Ulams\Consultations\Http\Requests;
 
-use EscolaLms\Consultations\Rules\UserTermExist;
+use Ulams\Consultations\Rules\UserTermExist;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ConsultationUserTermRequest extends FormRequest

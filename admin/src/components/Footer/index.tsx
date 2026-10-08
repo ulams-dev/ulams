@@ -24,9 +24,9 @@ export default () => {
   const links = useMemo(
     () => [
       {
-        key: companyInfo.name || 'Wellms',
-        title: companyInfo.name || 'Wellms',
-        href: companyInfo.url || 'https://www.wellms.io/',
+        key: companyInfo.name || 'Ulams',
+        title: companyInfo.name || 'Ulams',
+        href: companyInfo.url || 'https://www.ulams.app/',
         blankTarget: true,
       },
       {
@@ -64,7 +64,7 @@ export default () => {
           style={{
             background: 'none',
           }}
-          copyright={`${currentYear} ${companyInfo.name || 'Wellms'}`}
+          copyright={`${currentYear} ${companyInfo.name || 'Ulams'}`}
           links={links.map(({ key, href, title, blankTarget }) => ({
             key,
             href,

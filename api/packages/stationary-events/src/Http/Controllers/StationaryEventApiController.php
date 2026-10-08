@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Http\Controllers;
+namespace Ulams\StationaryEvents\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\StationaryEvents\Enum\ConstantEnum;
-use EscolaLms\StationaryEvents\Http\Controllers\Swagger\StationaryEventApiSwagger;
-use EscolaLms\StationaryEvents\Http\Requests\ListStationaryEventForCurrentUserRequest;
-use EscolaLms\StationaryEvents\Http\Requests\ReadStationaryEventPublicRequest;
-use EscolaLms\StationaryEvents\Http\Resources\StationaryEventResource;
-use EscolaLms\StationaryEvents\Services\Contracts\StationaryEventServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\StationaryEvents\Enum\ConstantEnum;
+use Ulams\StationaryEvents\Http\Controllers\Swagger\StationaryEventApiSwagger;
+use Ulams\StationaryEvents\Http\Requests\ListStationaryEventForCurrentUserRequest;
+use Ulams\StationaryEvents\Http\Requests\ReadStationaryEventPublicRequest;
+use Ulams\StationaryEvents\Http\Resources\StationaryEventResource;
+use Ulams\StationaryEvents\Services\Contracts\StationaryEventServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class StationaryEventApiController extends EscolaLmsBaseController implements StationaryEventApiSwagger
+class StationaryEventApiController extends UlamsBaseController implements StationaryEventApiSwagger
 {
     private StationaryEventServiceContract $stationaryEventService;
 

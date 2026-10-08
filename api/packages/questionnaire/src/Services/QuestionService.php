@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Services;
+namespace Ulams\Questionnaire\Services;
 
-use EscolaLms\Questionnaire\Models\Question;
-use EscolaLms\Questionnaire\Repository\Contracts\QuestionAnswerRepositoryContract;
-use EscolaLms\Questionnaire\Repository\Contracts\QuestionRepositoryContract;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionServiceContract;
+use Ulams\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Repository\Contracts\QuestionAnswerRepositoryContract;
+use Ulams\Questionnaire\Repository\Contracts\QuestionRepositoryContract;
+use Ulams\Questionnaire\Services\Contracts\QuestionServiceContract;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 

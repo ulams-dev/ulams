@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Models;
+namespace Ulams\Dictionaries\Models;
 
-use EscolaLms\Dictionaries\Database\Factories\DictionaryFactory;
+use Ulams\Dictionaries\Database\Factories\DictionaryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

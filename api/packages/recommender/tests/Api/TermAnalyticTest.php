@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\Recommender\Tests\Api;
+namespace Ulams\Recommender\Tests\Api;
 
-use EscolaLms\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Recommender\Jobs\RebuildTermAnalyticJob;
-use EscolaLms\Recommender\Models\AggregatedFrame;
-use EscolaLms\Recommender\Models\MeetRecording;
-use EscolaLms\Recommender\Models\TermAnalytic;
-use EscolaLms\Recommender\Services\Contracts\TermAnalyticServiceContract;
-use EscolaLms\Recommender\Tests\CreatesCourse;
-use EscolaLms\Recommender\Tests\TestCase;
-use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Recommender\Jobs\RebuildTermAnalyticJob;
+use Ulams\Recommender\Models\AggregatedFrame;
+use Ulams\Recommender\Models\MeetRecording;
+use Ulams\Recommender\Models\TermAnalytic;
+use Ulams\Recommender\Services\Contracts\TermAnalyticServiceContract;
+use Ulams\Recommender\Tests\CreatesCourse;
+use Ulams\Recommender\Tests\TestCase;
+use Ulams\Webinar\Database\Seeders\WebinarsPermissionSeeder;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
 

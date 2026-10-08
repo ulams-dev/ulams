@@ -1,5 +1,5 @@
-import { QuestionnaireQuestionType } from '@/services/escola-lms/enums';
-import { getQuestion } from '@/services/escola-lms/questionnaire';
+import { QuestionnaireQuestionType } from '@/services/ulams/enums';
+import { getQuestion } from '@/services/ulams/questionnaire';
 import {
   ModalForm,
   ProFormDigit,

@@ -2,7 +2,7 @@ import { Button, message } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
 
-import { category } from '@/services/escola-lms/category';
+import { category } from '@/services/ulams/category';
 
 interface Props {
   id: number;

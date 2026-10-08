@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Consultations\Exceptions;
+namespace Ulams\Consultations\Exceptions;
 
 use Exception;
 use Illuminate\Http\JsonResponse;

@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Models;
+namespace Ulams\Bookmarks\Models;
 
-use EscolaLms\Core\Models\User as CoreUser;
+use Ulams\Core\Models\User as CoreUser;
 
 
 /**
  * Class User
  *
- * @package EscolaLms\Bookmarks\Models
+ * @package Ulams\Bookmarks\Models
  *
  * @property int $id
  * @property string $first_name

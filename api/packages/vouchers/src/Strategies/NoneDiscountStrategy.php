@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Vouchers\Strategies;
+namespace Ulams\Vouchers\Strategies;
 
-use EscolaLms\Vouchers\Models\Cart;
-use EscolaLms\Vouchers\Models\CartItem;
-use EscolaLms\Vouchers\Strategies\Contracts\DiscountStrategyContract;
+use Ulams\Vouchers\Models\Cart;
+use Ulams\Vouchers\Models\CartItem;
+use Ulams\Vouchers\Strategies\Contracts\DiscountStrategyContract;
 
 class NoneDiscountStrategy implements DiscountStrategyContract
 {

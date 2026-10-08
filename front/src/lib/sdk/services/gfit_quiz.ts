@@ -6,7 +6,7 @@ import { currentTimezone } from "../utils";
 export async function quizAttempt(
   apiUrl: string,
   token: string,
-  body: EscolaLms.TopicTypeGift.Models.QuizAttempt,
+  body: Ulams.TopicTypeGift.Models.QuizAttempt,
   options?: RequestOptionsInit
 ) {
   return request<API.DefaultResponse<API.QuizAttempt>>(
@@ -28,7 +28,7 @@ export async function quizAttempt(
 export async function quizAnswer(
   apiUrl: string,
   token: string,
-  body: EscolaLms.TopicTypeGift.Http.Requests.SaveAttemptAnswerRequest,
+  body: Ulams.TopicTypeGift.Http.Requests.SaveAttemptAnswerRequest,
   options?: RequestOptionsInit
 ) {
   return request<API.DefaultResponse<API.QuizAttempt>>(

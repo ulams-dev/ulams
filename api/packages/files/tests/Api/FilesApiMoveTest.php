@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Files\Tests\Api;
+namespace Ulams\Files\Tests\Api;
 
-use EscolaLms\Files\Tests\TestCase;
+use Ulams\Files\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 
 class FilesApiMoveTest extends TestCase

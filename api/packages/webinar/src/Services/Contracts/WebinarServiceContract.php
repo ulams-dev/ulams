@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Webinar\Services\Contracts;
+namespace Ulams\Webinar\Services\Contracts;
 
 use Carbon\Carbon;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Webinar\Dto\GenerateSignedScreenUrlsDto;
-use EscolaLms\Webinar\Dto\WebinarDto;
-use EscolaLms\Webinar\Models\Webinar;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Webinar\Dto\GenerateSignedScreenUrlsDto;
+use Ulams\Webinar\Dto\WebinarDto;
+use Ulams\Webinar\Models\Webinar;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Collection;
@@ -33,12 +33,12 @@ interface WebinarServiceContract
      *      @OA\Property(
      *         property="domain",
      *         type="string",
-     *         example="meet-stage.escolalms.com",
+     *         example="meet-stage.ulams.app",
      *      ),
      *      @OA\Property(
      *         property="url",
      *         type="string",
-     *         example="https://meet-stage.escolalms.com/asdhuasd.?jwt=token",
+     *         example="https://meet-stage.ulams.app/asdhuasd.?jwt=token",
      *      ),
      *      @OA\Property(
      *         property="yt_url",

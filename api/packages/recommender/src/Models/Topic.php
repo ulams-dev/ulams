@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Recommender\Models;
+namespace Ulams\Recommender\Models;
 
-use EscolaLms\Courses\Models\Topic as CoreTopic;
+use Ulams\Courses\Models\Topic as CoreTopic;
 
 class Topic extends CoreTopic
 {

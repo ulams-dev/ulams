@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\MailerLite\Services\Contracts;
+namespace Ulams\MailerLite\Services\Contracts;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 
 interface MailerLiteServiceContract
 {

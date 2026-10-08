@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Pages\Policies;
+namespace Ulams\Pages\Policies;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Pages\Enums\PagesPermissionsEnum;
-use EscolaLms\Pages\Models\Page;
+use Ulams\Core\Models\User;
+use Ulams\Pages\Enums\PagesPermissionsEnum;
+use Ulams\Pages\Models\Page;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PagePolicy

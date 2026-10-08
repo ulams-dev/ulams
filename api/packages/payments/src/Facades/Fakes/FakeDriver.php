@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Payments\Facades\Fakes;
+namespace Ulams\Payments\Facades\Fakes;
 
-use EscolaLms\Payments\Entities\PaymentsConfig;
-use EscolaLms\Payments\Gateway\Drivers\AbstractDriver;
-use EscolaLms\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
-use EscolaLms\Payments\Gateway\Drivers\Przelewy24Driver;
-use EscolaLms\Payments\Gateway\Drivers\StripeDriver;
-use EscolaLms\Payments\Gateway\Responses\CallbackRefundResponse;
-use EscolaLms\Payments\Gateway\Responses\CallbackResponse;
-use EscolaLms\Payments\Gateway\Responses\NoneGatewayResponse;
-use EscolaLms\Payments\Models\Payment;
+use Ulams\Payments\Entities\PaymentsConfig;
+use Ulams\Payments\Gateway\Drivers\AbstractDriver;
+use Ulams\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
+use Ulams\Payments\Gateway\Drivers\Przelewy24Driver;
+use Ulams\Payments\Gateway\Drivers\StripeDriver;
+use Ulams\Payments\Gateway\Responses\CallbackRefundResponse;
+use Ulams\Payments\Gateway\Responses\CallbackResponse;
+use Ulams\Payments\Gateway\Responses\NoneGatewayResponse;
+use Ulams\Payments\Models\Payment;
 use Illuminate\Http\Request;
 use Omnipay\Common\Message\ResponseInterface;
 

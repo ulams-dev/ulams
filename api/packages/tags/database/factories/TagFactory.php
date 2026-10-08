@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Factories\EscolaLms\Tags\Models;
+namespace Database\Factories\Ulams\Tags\Models;
 
-use EscolaLms\Tags\Models\Tag;
+use Ulams\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TagFactory extends Factory

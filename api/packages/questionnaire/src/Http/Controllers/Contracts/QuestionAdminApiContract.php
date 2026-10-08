@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Http\Controllers\Contracts;
+namespace Ulams\Questionnaire\Http\Controllers\Contracts;
 
-use EscolaLms\Questionnaire\Http\Requests\QuestionCreateRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionDeleteRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionListingRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionReadRequest;
-use EscolaLms\Questionnaire\Http\Requests\QuestionUpdateRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionCreateRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionDeleteRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionListingRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionReadRequest;
+use Ulams\Questionnaire\Http\Requests\QuestionUpdateRequest;
 use Illuminate\Http\JsonResponse;
 
 interface QuestionAdminApiContract

@@ -2,7 +2,7 @@ import Title from "../../atoms/Typography/Title";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Button } from "../../atoms/Button/Button";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import chroma from "chroma-js";
 import { t } from "i18next";
 
@@ -92,7 +92,7 @@ const VideoEndscreen: React.FC<Props> = ({
 
   return (
     <StyledVideoEndscreen
-      className={`wellms-component video-endscreen ${className ?? ""}`}
+      className={`ulams-component video-endscreen ${className ?? ""}`}
     >
       <Title level={3} as={"h2"} className="video-endscreen__title">
         {topic}

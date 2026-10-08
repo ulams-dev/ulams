@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Settings\Services\Contracts;
+namespace Ulams\Settings\Services\Contracts;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;

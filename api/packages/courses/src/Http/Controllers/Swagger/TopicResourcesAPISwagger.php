@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Controllers\Swagger;
+namespace Ulams\Courses\Http\Controllers\Swagger;
 
-use EscolaLms\Courses\Http\Requests\DeleteTopicResourceAPIRequest;
-use EscolaLms\Courses\Http\Requests\ListTopicResourceAPIRequest;
-use EscolaLms\Courses\Http\Requests\RenameTopicResourceAPIRequest;
-use EscolaLms\Courses\Http\Requests\UploadTopicResourceAPIRequest;
+use Ulams\Courses\Http\Requests\DeleteTopicResourceAPIRequest;
+use Ulams\Courses\Http\Requests\ListTopicResourceAPIRequest;
+use Ulams\Courses\Http\Requests\RenameTopicResourceAPIRequest;
+use Ulams\Courses\Http\Requests\UploadTopicResourceAPIRequest;
 use Illuminate\Http\JsonResponse;
 
 interface TopicResourcesAPISwagger

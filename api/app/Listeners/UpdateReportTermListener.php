@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Services\Contracts\ConsultationServiceContract;
-use EscolaLms\Consultations\Events\ReportTerm;
+use Ulams\Consultations\Events\ReportTerm;
 
 class UpdateReportTermListener
 {

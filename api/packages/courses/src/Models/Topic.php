@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Courses\Models;
+namespace Ulams\Courses\Models;
 
-use EscolaLms\Core\Models\Traits\QueryCacheable;
-use EscolaLms\Courses\Database\Factories\TopicFactory;
-use EscolaLms\Courses\Facades\Topic as TopicFacade;
+use Ulams\Core\Models\Traits\QueryCacheable;
+use Ulams\Courses\Database\Factories\TopicFactory;
+use Ulams\Courses\Facades\Topic as TopicFacade;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -95,7 +95,7 @@ use Illuminate\Validation\Rule;
  * )
  *
  * @property bool                                  $active
- * @property \EscolaLms\Courses\Models\Lesson|null $lesson
+ * @property \Ulams\Courses\Models\Lesson|null $lesson
  * @property int $lesson_id
  * @property int $topic_id
  * @property int $order
@@ -167,12 +167,12 @@ class Topic extends Model
 
     public function lesson(): BelongsTo
     {
-        return $this->belongsTo(\EscolaLms\Courses\Models\Lesson::class, 'lesson_id');
+        return $this->belongsTo(\Ulams\Courses\Models\Lesson::class, 'lesson_id');
     }
 
     protected static function newFactory(): TopicFactory
     {
-        return \EscolaLms\Courses\Database\Factories\TopicFactory::new();
+        return \Ulams\Courses\Database\Factories\TopicFactory::new();
     }
 
     public function topicable(): MorphTo

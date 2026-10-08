@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests\Admin;
+namespace Ulams\Cart\Http\Requests\Admin;
 
-use EscolaLms\Cart\Enums\ExportFormatEnum;
-use EscolaLms\Cart\Models\Order;
+use Ulams\Cart\Enums\ExportFormatEnum;
+use Ulams\Cart\Models\Order;
 use Illuminate\Validation\Rule;
 
 class OrderExportRequest extends OrderSearchRequest

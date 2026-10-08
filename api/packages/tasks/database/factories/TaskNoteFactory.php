@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Tasks\Database\Factories;
+namespace Ulams\Tasks\Database\Factories;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Tasks\Models\Task;
-use EscolaLms\Tasks\Models\TaskNote;
+use Ulams\Core\Models\User;
+use Ulams\Tasks\Models\Task;
+use Ulams\Tasks\Models\TaskNote;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TaskNoteFactory extends Factory

@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Translations\Tests;
+namespace Ulams\Translations\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
-use EscolaLms\Translations\Database\Seeders\TranslationsPermissionSeeder;
-use EscolaLms\Translations\EscolaLmsTranslationsServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
+use Ulams\Translations\Database\Seeders\TranslationsPermissionSeeder;
+use Ulams\Translations\UlamsTranslationsServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Testing\TestResponse;
 use Laravel\Passport\Passport;
@@ -30,8 +30,8 @@ class TestCase extends CoreTestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsAuthServiceProvider::class,
-            EscolaLmsTranslationsServiceProvider::class,
+            UlamsAuthServiceProvider::class,
+            UlamsTranslationsServiceProvider::class,
             TranslationServiceProvider::class,
         ];
     }

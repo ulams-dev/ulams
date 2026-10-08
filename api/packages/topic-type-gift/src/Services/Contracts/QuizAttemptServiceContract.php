@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Services\Contracts;
+namespace Ulams\TopicTypeGift\Services\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\TopicTypeGift\Dtos\Criteria\PageDto;
-use EscolaLms\TopicTypeGift\Dtos\Criteria\QuizAttemptCriteriaDto;
-use EscolaLms\TopicTypeGift\Dtos\QuizAttemptDto;
-use EscolaLms\TopicTypeGift\Exceptions\TooManyAttemptsException;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\TopicTypeGift\Dtos\Criteria\PageDto;
+use Ulams\TopicTypeGift\Dtos\Criteria\QuizAttemptCriteriaDto;
+use Ulams\TopicTypeGift\Dtos\QuizAttemptDto;
+use Ulams\TopicTypeGift\Exceptions\TooManyAttemptsException;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface QuizAttemptServiceContract

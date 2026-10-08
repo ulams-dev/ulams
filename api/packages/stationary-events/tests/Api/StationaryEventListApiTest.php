@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Tests\Api;
+namespace Ulams\StationaryEvents\Tests\Api;
 
-use EscolaLms\Categories\Models\Category;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
-use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
-use EscolaLms\StationaryEvents\Http\Resources\UserResource;
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
-use EscolaLms\StationaryEvents\Tests\TestCase;
+use Ulams\Categories\Models\Category;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder;
+use Ulams\StationaryEvents\Enum\StationaryEventStatusEnum;
+use Ulams\StationaryEvents\Http\Resources\UserResource;
+use Ulams\StationaryEvents\Models\StationaryEvent;
+use Ulams\StationaryEvents\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Testing\Fluent\AssertableJson;
 

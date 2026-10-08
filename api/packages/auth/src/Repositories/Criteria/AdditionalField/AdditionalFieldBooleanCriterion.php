@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Repositories\Criteria\AdditionalField;
+namespace Ulams\Auth\Repositories\Criteria\AdditionalField;
 
-use EscolaLms\Core\Repositories\Criteria\Criterion;
+use Ulams\Core\Repositories\Criteria\Criterion;
 use Illuminate\Database\Eloquent\Builder;
 
 class AdditionalFieldBooleanCriterion extends Criterion

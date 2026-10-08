@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Images\Events;
+namespace Ulams\Images\Events;
 
 class FileStored extends File
 {

@@ -3,7 +3,7 @@ import styled, { createGlobalStyle, withTheme } from "styled-components";
 import Dialog, { DialogProps } from "rc-dialog";
 import chroma from "chroma-js";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 export interface ModalProps extends DialogProps, ExtendableStyledComponent {}
 
@@ -253,7 +253,7 @@ export const Modal: React.FC<ModalProps> = (props) => {
         <Dialog
           {...props}
           closeIcon={<CloseBtn />}
-          className={`wellms-component ${className}`}
+          className={`ulams-component ${className}`}
         >
           <StyledGlobal width={width} />
           {children}

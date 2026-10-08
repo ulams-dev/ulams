@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Models;
+namespace Ulams\CourseAccess\Models;
 
-use EscolaLms\CourseAccess\Database\Factories\CourseFactory;
-use EscolaLms\Courses\Models\Course as BaseCourse;
+use Ulams\CourseAccess\Database\Factories\CourseFactory;
+use Ulams\Courses\Models\Course as BaseCourse;
 
 class Course extends BaseCourse
 {

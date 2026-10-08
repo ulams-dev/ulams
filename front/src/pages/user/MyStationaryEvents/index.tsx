@@ -1,13 +1,13 @@
 import React, { useEffect, useContext } from "react";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
-import { Tabs } from "@lms/components/components/atoms/Tabs/Tabs";
+import { UlamsContext } from "@ulams/sdk/react/context";
+import { Tabs } from "@ulams/components/components/atoms/Tabs/Tabs";
 import ProfileStationaryEvents from "@/components/Profile/ProfileStationaryEvents";
 
 import ProfileLayout from "@/components/Profile/ProfileLayout";
 import { useTranslation } from "react-i18next";
 
 const MyStationaryEvents = () => {
-  const { fetchUserStationaryEvents } = useContext(EscolaLMSContext);
+  const { fetchUserStationaryEvents } = useContext(UlamsContext);
   const { t } = useTranslation();
   useEffect(() => {
     fetchUserStationaryEvents();

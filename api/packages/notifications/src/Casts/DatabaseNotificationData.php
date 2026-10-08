@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Notifications\Casts;
+namespace Ulams\Notifications\Casts;
 
-use EscolaLms\Notifications\Models\DatabaseNotification;
+use Ulams\Notifications\Models\DatabaseNotification;
 use Exception;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Contracts\Database\ModelIdentifier;

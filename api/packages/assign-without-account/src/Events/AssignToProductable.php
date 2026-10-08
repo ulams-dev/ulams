@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\AssignWithoutAccount\Events;
+namespace Ulams\AssignWithoutAccount\Events;
 
-use EscolaLms\Cart\Contracts\Productable;
-use EscolaLms\Core\Models\User;
+use Ulams\Cart\Contracts\Productable;
+use Ulams\Core\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

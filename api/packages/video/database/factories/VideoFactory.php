@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Video\Database\Factories;
+namespace Ulams\Video\Database\Factories;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Video\Models\Video;
+use Ulams\Courses\Models\Topic;
+use Ulams\Video\Models\Video;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class VideoFactory extends Factory

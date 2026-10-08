@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Notifications\Core;
+namespace Ulams\Notifications\Core;
 
-use EscolaLms\Notifications\Models\User;
+use Ulams\Notifications\Models\User;
 use Illuminate\Notifications\Channels\DatabaseChannel as IlluminateDatabaseChannel;
 use Illuminate\Notifications\Notification;
 

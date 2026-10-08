@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Http\Requests;
+namespace Ulams\Questionnaire\Http\Requests;
 
-use EscolaLms\Questionnaire\Dtos\QuestionnaireModelDto;
-use EscolaLms\Questionnaire\Enums\QuestionnaireTargetGroupEnum;
-use EscolaLms\Questionnaire\Models\Questionnaire;
-use EscolaLms\Questionnaire\Models\QuestionnaireModelType;
-use EscolaLms\Questionnaire\Rules\ClassExist;
-use EscolaLms\Questionnaire\Rules\ModelExist;
+use Ulams\Questionnaire\Dtos\QuestionnaireModelDto;
+use Ulams\Questionnaire\Enums\QuestionnaireTargetGroupEnum;
+use Ulams\Questionnaire\Models\Questionnaire;
+use Ulams\Questionnaire\Models\QuestionnaireModelType;
+use Ulams\Questionnaire\Rules\ClassExist;
+use Ulams\Questionnaire\Rules\ModelExist;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;

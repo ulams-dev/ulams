@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Policies;
+namespace Ulams\Bookmarks\Policies;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Bookmarks\Enums\BookmarkPermissionEnum;
-use EscolaLms\Bookmarks\Models\Bookmark;
+use Ulams\Auth\Models\User;
+use Ulams\Bookmarks\Enums\BookmarkPermissionEnum;
+use Ulams\Bookmarks\Models\Bookmark;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class BookmarkPolicy

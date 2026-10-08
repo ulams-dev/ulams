@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Consultations\Http\Requests;
+namespace Ulams\Consultations\Http\Requests;
 
-use EscolaLms\Consultations\Exceptions\ConsultationNotFound;
-use EscolaLms\Consultations\Models\Consultation;
+use Ulams\Consultations\Exceptions\ConsultationNotFound;
+use Ulams\Consultations\Models\Consultation;
 use Illuminate\Foundation\Http\FormRequest;
 
 abstract class ConsultationRequest extends FormRequest

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Events;
+namespace Ulams\StationaryEvents\Events;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\StationaryEvents\Models\StationaryEvent as StationaryEventModel;
+use Ulams\Auth\Models\User;
+use Ulams\StationaryEvents\Models\StationaryEvent as StationaryEventModel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

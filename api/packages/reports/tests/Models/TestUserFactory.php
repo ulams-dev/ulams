@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Reports\Tests\Models;
+namespace Ulams\Reports\Tests\Models;
 
-use EscolaLms\Cart\Database\Factories\UserFactory;
+use Ulams\Cart\Database\Factories\UserFactory;
 
 class TestUserFactory extends UserFactory
 {

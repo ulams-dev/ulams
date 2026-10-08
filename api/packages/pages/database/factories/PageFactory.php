@@ -1,9 +1,9 @@
 <?php
-namespace Database\Factories\EscolaLms\Pages\Models;
+namespace Database\Factories\Ulams\Pages\Models;
 
-use Database\Factories\EscolaLms\Core\Models\UserFactory;
+use Database\Factories\Ulams\Core\Models\UserFactory;
 use DavidBadura\FakerMarkdownGenerator\FakerProvider;
-use EscolaLms\Pages\Models\Page;
+use Ulams\Pages\Models\Page;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;

@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Cart\Contracts;
+namespace Ulams\Cart\Contracts;
 
-use EscolaLms\Cart\Http\Resources\ProductableGenericResource;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Models\ProductProductable;
-use EscolaLms\Cart\Support\ModelHelper;
-use EscolaLms\Core\Models\User;
+use Ulams\Cart\Http\Resources\ProductableGenericResource;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Models\ProductProductable;
+use Ulams\Cart\Support\ModelHelper;
+use Ulams\Core\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * @see \EscolaLms\Cart\Contracts\Productable
+ * @see \Ulams\Cart\Contracts\Productable
  */
 trait ProductableTrait
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Services\Contracts;
+namespace Ulams\TopicTypeGift\Services\Contracts;
 
-use EscolaLms\TopicTypeGift\Dtos\AdminUpdateAttemptAnswerDto;
-use EscolaLms\TopicTypeGift\Dtos\SaveAllAttemptAnswersDto;
-use EscolaLms\TopicTypeGift\Dtos\SaveAttemptAnswerDto;
-use EscolaLms\TopicTypeGift\Models\AttemptAnswer;
+use Ulams\TopicTypeGift\Dtos\AdminUpdateAttemptAnswerDto;
+use Ulams\TopicTypeGift\Dtos\SaveAllAttemptAnswersDto;
+use Ulams\TopicTypeGift\Dtos\SaveAttemptAnswerDto;
+use Ulams\TopicTypeGift\Models\AttemptAnswer;
 use Illuminate\Support\Collection;
 
 interface AttemptAnswerServiceContract

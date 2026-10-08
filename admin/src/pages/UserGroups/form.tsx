@@ -4,7 +4,7 @@ import {
   userGroup as fetchUserGroup,
   removeUserFromGroup,
   updateUserGroup,
-} from '@/services/escola-lms/user_groups';
+} from '@/services/ulams/user_groups';
 import ProCard from '@ant-design/pro-card';
 import ProForm, { ProFormSwitch, ProFormText } from '@ant-design/pro-form';
 import { PageContainer } from '@ant-design/pro-layout';

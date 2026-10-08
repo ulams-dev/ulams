@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Courses\Repositories;
+namespace Ulams\Courses\Repositories;
 
-use EscolaLms\Courses\Enum\ProgressStatus;
-use EscolaLms\Courses\Events\TopicFinished;
-use EscolaLms\Courses\Jobs\CheckFinishedLessons;
-use EscolaLms\Courses\Models\CourseProgress;
-use EscolaLms\Courses\Models\CourseUserAttendance;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\UserTopicTime;
-use EscolaLms\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
-use EscolaLms\Courses\ValueObjects\CourseProgressCollection;
+use Ulams\Courses\Enum\ProgressStatus;
+use Ulams\Courses\Events\TopicFinished;
+use Ulams\Courses\Jobs\CheckFinishedLessons;
+use Ulams\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\CourseUserAttendance;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Models\UserTopicTime;
+use Ulams\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
+use Ulams\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Carbon;
 

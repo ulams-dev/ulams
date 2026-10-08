@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Repositories;
+namespace Ulams\TopicTypeGift\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\TopicTypeGift\Models\AttemptAnswer;
-use EscolaLms\TopicTypeGift\Repositories\Contracts\AttemptAnswerRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\TopicTypeGift\Models\AttemptAnswer;
+use Ulams\TopicTypeGift\Repositories\Contracts\AttemptAnswerRepositoryContract;
 
 class AttemptAnswerRepository extends BaseRepository implements AttemptAnswerRepositoryContract
 {

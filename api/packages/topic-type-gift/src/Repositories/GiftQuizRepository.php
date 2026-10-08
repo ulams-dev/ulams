@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Repositories;
+namespace Ulams\TopicTypeGift\Repositories;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Repositories\Contracts\GiftQuizRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Repositories\Contracts\GiftQuizRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Core\Tests\Mocks\ExampleEntity;
+namespace Ulams\Core\Tests\Mocks\ExampleEntity;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Dtos\PaginationDto;
-use EscolaLms\Core\Repositories\BaseRepository as CoreBaseRepository;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Dtos\PaginationDto;
+use Ulams\Core\Repositories\BaseRepository as CoreBaseRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ExampleEntityRepository extends CoreBaseRepository

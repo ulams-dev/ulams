@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Permissions\Models;
+namespace Ulams\Permissions\Models;
 
-use EscolaLms\Auth\Models\User;
+use Ulams\Auth\Models\User;
 
 class UserAdmin extends User
 {

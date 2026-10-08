@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Core\Dtos;
+namespace Ulams\Core\Dtos;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\DtoContract;
 use Illuminate\Http\Request;
 
 class PeriodDto implements DtoContract

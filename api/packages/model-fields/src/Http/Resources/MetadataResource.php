@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\ModelFields\Http\Resources;
+namespace Ulams\ModelFields\Http\Resources;
 
-use EscolaLms\ModelFields\Models\Metadata;
+use Ulams\ModelFields\Models\Metadata;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class MetadataResource extends JsonResource

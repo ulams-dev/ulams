@@ -1,4 +1,4 @@
-import { deleteQuestionnaire, questionnaire } from '@/services/escola-lms/questionnaire';
+import { deleteQuestionnaire, questionnaire } from '@/services/ulams/questionnaire';
 import { createTableOrderObject } from '@/utils/utils';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';

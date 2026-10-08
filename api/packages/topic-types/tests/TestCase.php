@@ -1,25 +1,25 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Tests;
+namespace Ulams\TopicTypes\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\Categories\EscolaLmsCategoriesServiceProvider;
-use EscolaLms\Courses\AuthServiceProvider;
-use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
-use EscolaLms\Courses\Tests\Models\User as UserTest;
-use EscolaLms\HeadlessH5P\HeadlessH5PServiceProvider;
-use EscolaLms\ModelFields\ModelFieldsServiceProvider;
-use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
-use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
-use EscolaLms\TopicTypes\EscolaLmsTopicTypesServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\Categories\UlamsCategoriesServiceProvider;
+use Ulams\Courses\AuthServiceProvider;
+use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\Courses\Tests\Models\User as UserTest;
+use Ulams\HeadlessH5P\HeadlessH5PServiceProvider;
+use Ulams\ModelFields\ModelFieldsServiceProvider;
+use Ulams\Scorm\UlamsScormServiceProvider;
+use Ulams\Tags\UlamsTagsServiceProvider;
+use Ulams\TopicTypes\UlamsTopicTypesServiceProvider;
 use Illuminate\Testing\TestResponse;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 use ProtoneMedia\LaravelFFMpeg\Support\ServiceProvider as FFMpegServiceProvider;
 
-class TestCase extends \EscolaLms\Courses\Tests\TestCase
+class TestCase extends \Ulams\Courses\Tests\TestCase
 {
     protected ?TestResponse $response;
 
@@ -33,24 +33,24 @@ class TestCase extends \EscolaLms\Courses\Tests\TestCase
     {
         $providers = [
             ...parent::getPackageProviders($app),
-            EscolaLmsAuthServiceProvider::class,
+            UlamsAuthServiceProvider::class,
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
-            EscolaLmsCategoriesServiceProvider::class,
-            EscolaLmsCourseServiceProvider::class,
+            UlamsCategoriesServiceProvider::class,
+            UlamsCourseServiceProvider::class,
             AuthServiceProvider::class,
-            EscolaLmsScormServiceProvider::class,
-            EscolaLmsTagsServiceProvider::class,
+            UlamsScormServiceProvider::class,
+            UlamsTagsServiceProvider::class,
             HeadlessH5PServiceProvider::class,
-            EscolaLmsTopicTypesServiceProvider::class,
+            UlamsTopicTypesServiceProvider::class,
             ModelFieldsServiceProvider::class,
             FFMpegServiceProvider::class,
         ];
-        if (class_exists(\EscolaLms\CoursesImportExport\EscolaLmsCoursesImportExportServiceProvider::class)) {
-            $providers[] = \EscolaLms\CoursesImportExport\EscolaLmsCoursesImportExportServiceProvider::class;
+        if (class_exists(\Ulams\CoursesImportExport\UlamsCoursesImportExportServiceProvider::class)) {
+            $providers[] = \Ulams\CoursesImportExport\UlamsCoursesImportExportServiceProvider::class;
         }
-        if (class_exists(\EscolaLms\Cmi5\EscolaLmsCmi5ServiceProvider::class)) {
-            $providers[] = \EscolaLms\Cmi5\EscolaLmsCmi5ServiceProvider::class;
+        if (class_exists(\Ulams\Cmi5\UlamsCmi5ServiceProvider::class)) {
+            $providers[] = \Ulams\Cmi5\UlamsCmi5ServiceProvider::class;
         }
         return $providers;
     }
@@ -61,7 +61,7 @@ class TestCase extends \EscolaLms\Courses\Tests\TestCase
         $app['config']->set('passport.client_uuids', true);
         $app['config']->set('database.connections.mysql.strict', false);
         $app['config']->set('app.debug', (bool) env('APP_DEBUG', true));
-        $app['config']->set('escolalms.tags.ignore_migrations', false);
+        $app['config']->set('ulams.tags.ignore_migrations', false);
         $app['config']->set('hh5p.h5p_export', true);
 
         $app['config']->set('scorm', [

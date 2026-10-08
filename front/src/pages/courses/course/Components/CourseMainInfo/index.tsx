@@ -1,14 +1,14 @@
 import { FC, useCallback, useContext, useEffect, useState } from "react";
-import { ResponsiveImage } from "@lms/components/components/organisms/ResponsiveImage/ResponsiveImage";
+import { ResponsiveImage } from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import { isMobile } from "react-device-detect";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { API } from "@lms/sdk";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { API } from "@ulams/sdk";
 import { Col, Row } from "react-grid-system";
 import CategoriesBreadCrumbs from "@/components/Categories/CategoriesBreadCrumbs";
-import { Rating, Text } from "@lms/components";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { Rating, Text } from "@ulams/components";
+import { UlamsContext } from "@ulams/sdk/react";
 import { StateTypes } from "@/types/index";
-import { QuestionnaireStarsModel } from "@lms/sdk/types";
+import { QuestionnaireStarsModel } from "@ulams/sdk/types";
 import ContentLoader from "@/components/_App/ContentLoader";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
@@ -33,7 +33,7 @@ interface CourseMainInfoProps {
 }
 
 export const CourseMainInfo: FC<CourseMainInfoProps> = ({ courseData }) => {
-  const { fetchQuestionnaireStarsByModel } = useContext(EscolaLMSContext);
+  const { fetchQuestionnaireStarsByModel } = useContext(UlamsContext);
   const [state, setState] = useState<State>({ type: StateTypes.INIT });
   const history = useHistory();
 

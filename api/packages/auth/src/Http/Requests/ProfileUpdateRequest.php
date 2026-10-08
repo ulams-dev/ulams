@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests;
+namespace Ulams\Auth\Http\Requests;
 
-use EscolaLms\Auth\Enums\GenderType;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Rules\NoHtmlTags;
-use EscolaLms\ModelFields\Facades\ModelFields;
+use Ulams\Auth\Enums\GenderType;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Rules\NoHtmlTags;
+use Ulams\ModelFields\Facades\ModelFields;
 
 class ProfileUpdateRequest extends ExtendableRequest
 {

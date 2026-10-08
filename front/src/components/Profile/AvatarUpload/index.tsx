@@ -1,7 +1,7 @@
 import React, { useCallback, useContext } from "react";
-import { Avatar } from "@lms/components/components/atoms/Avatar/Avatar";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { Avatar } from "@ulams/components/components/atoms/Avatar/Avatar";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { UlamsContext } from "@ulams/sdk/react";
 import styled from "styled-components";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
@@ -25,7 +25,7 @@ const Container = styled.div`
 `;
 
 const AvatarUpload: React.FC<Props> = ({ size }) => {
-  const { updateAvatar, user } = useContext(EscolaLMSContext);
+  const { updateAvatar, user } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   const handleAvatarChange = useCallback(

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Cart\Facades;
+namespace Ulams\Cart\Facades;
 
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
 use Illuminate\Support\Facades\Facade;
 
 /**
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string canonicalProductableClass(string $productableClass)
  * @method static array listRegisteredProductableClasses()
  * 
- * @see \EscolaLms\Cart\Services\Contracts\ProductServiceContract
+ * @see \Ulams\Cart\Services\Contracts\ProductServiceContract
  */
 class Shop extends Facade
 {

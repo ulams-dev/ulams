@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Cart\Enums\CartPermissionsEnum;
+use Ulams\Cart\Enums\CartPermissionsEnum;
 
 return [
     CartPermissionsEnum::LIST_ALL_ORDERS => 'Order list',

@@ -1,8 +1,8 @@
 <?php
 
-use EscolaLms\Courses\Enum\CoursesConstant;
-use EscolaLms\Courses\Enum\CourseVisibilityEnum;
-use EscolaLms\Courses\Enum\PlatformVisibility;
+use Ulams\Courses\Enum\CoursesConstant;
+use Ulams\Courses\Enum\CourseVisibilityEnum;
+use Ulams\Courses\Enum\PlatformVisibility;
 
 return [
     'platform_visibility' => PlatformVisibility::VISIBILITY_PUBLIC,

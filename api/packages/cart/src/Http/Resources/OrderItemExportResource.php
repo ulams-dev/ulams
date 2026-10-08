@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Resources;
+namespace Ulams\Cart\Http\Resources;
 
-use EscolaLms\Cart\Models\OrderItem;
-use EscolaLms\Cart\Models\Product;
+use Ulams\Cart\Models\OrderItem;
+use Ulams\Cart\Models\Product;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderItemExportResource extends JsonResource

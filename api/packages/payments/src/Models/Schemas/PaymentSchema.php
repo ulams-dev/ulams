@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Payments\Models\Schemas;
+namespace Ulams\Payments\Models\Schemas;
 
 /**
  * @OA\Schema(

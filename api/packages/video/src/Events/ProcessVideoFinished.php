@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Video\Events;
+namespace Ulams\Video\Events;
 
 class ProcessVideoFinished extends ProcessVideoEvent
 {

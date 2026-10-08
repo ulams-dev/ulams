@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Permissions\Events;
+namespace Ulams\Permissions\Events;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Events\Dispatchable;

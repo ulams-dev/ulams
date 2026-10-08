@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Repository;
+namespace Ulams\Questionnaire\Repository;
 
-use EscolaLms\Core\Repositories\BaseRepository;
-use EscolaLms\Questionnaire\Models\Questionnaire;
-use EscolaLms\Questionnaire\Models\QuestionnaireModel;
-use EscolaLms\Questionnaire\Repository\Contracts\QuestionnaireModelRepositoryContract;
+use Ulams\Core\Repositories\BaseRepository;
+use Ulams\Questionnaire\Models\Questionnaire;
+use Ulams\Questionnaire\Models\QuestionnaireModel;
+use Ulams\Questionnaire\Repository\Contracts\QuestionnaireModelRepositoryContract;
 
 class QuestionnaireModelRepository extends BaseRepository implements QuestionnaireModelRepositoryContract
 {

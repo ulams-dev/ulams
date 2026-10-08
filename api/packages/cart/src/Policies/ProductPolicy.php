@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Cart\Policies;
+namespace Ulams\Cart\Policies;
 
-use EscolaLms\Cart\Enums\CartPermissionsEnum;
+use Ulams\Cart\Enums\CartPermissionsEnum;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Cart\Services\Contracts\ProductServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Cart\Models\Product;
+use Ulams\Cart\Services\Contracts\ProductServiceContract;
 
 class ProductPolicy
 {

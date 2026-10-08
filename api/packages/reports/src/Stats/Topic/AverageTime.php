@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Topic;
+namespace Ulams\Reports\Stats\Topic;
 
 class AverageTime extends AbstractTopicStat
 {

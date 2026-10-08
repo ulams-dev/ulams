@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Services\Contracts;
+namespace Ulams\Dictionaries\Services\Contracts;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Dictionaries\Dtos\DictionaryWordCriteriaDto;
-use EscolaLms\Dictionaries\Dtos\DictionaryWordDto;
-use EscolaLms\Dictionaries\Dtos\PageDto;
-use EscolaLms\Dictionaries\Models\DictionaryWord;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Dictionaries\Dtos\DictionaryWordCriteriaDto;
+use Ulams\Dictionaries\Dtos\DictionaryWordDto;
+use Ulams\Dictionaries\Dtos\PageDto;
+use Ulams\Dictionaries\Models\DictionaryWord;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;

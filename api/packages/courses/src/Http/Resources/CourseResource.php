@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Resources;
+namespace Ulams\Courses\Http\Resources;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\ValueObjects\CourseContent;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\ValueObjects\CourseContent;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseResource extends JsonResource

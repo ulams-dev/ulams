@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Resources;
+namespace Ulams\Cart\Http\Resources;
 
 class ProductResource extends BaseProductResource
 {

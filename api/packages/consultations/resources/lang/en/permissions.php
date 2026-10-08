@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Consultations\Enum\ConsultationsPermissionsEnum;
+use Ulams\Consultations\Enum\ConsultationsPermissionsEnum;
 
 return [
     ConsultationsPermissionsEnum::CONSULTATION_LIST => 'Consultation list',

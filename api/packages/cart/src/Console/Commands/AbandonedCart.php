@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Cart\Console\Commands;
+namespace Ulams\Cart\Console\Commands;
 
 use Carbon\Carbon;
-use EscolaLms\Cart\Events\AbandonedCartEvent;
-use EscolaLms\Cart\Models\Cart;
-use EscolaLms\Cart\Services\Contracts\ShopServiceContract;
+use Ulams\Cart\Events\AbandonedCartEvent;
+use Ulams\Cart\Models\Cart;
+use Ulams\Cart\Services\Contracts\ShopServiceContract;
 use Illuminate\Console\Command;
 
 class AbandonedCart extends Command

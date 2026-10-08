@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Models;
+namespace Ulams\CsvUsers\Models;
 
-use EscolaLms\Auth\Models\Group as AuthGroup;
+use Ulams\Auth\Models\Group as AuthGroup;
 
 class Group extends AuthGroup
 {

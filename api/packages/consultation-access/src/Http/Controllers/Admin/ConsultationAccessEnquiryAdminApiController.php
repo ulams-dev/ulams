@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\ConsultationAccess\Http\Controllers\Admin;
+namespace Ulams\ConsultationAccess\Http\Controllers\Admin;
 
-use EscolaLms\ConsultationAccess\Exceptions\ConsultationAccessException;
-use EscolaLms\ConsultationAccess\Http\Controllers\Admin\Swagger\ConsultationAccessEnquiryAdminApiSwagger;
-use EscolaLms\ConsultationAccess\Http\Requests\Admin\AdminApproveConsultationAccessEnquiryRequest;
-use EscolaLms\ConsultationAccess\Http\Requests\Admin\AdminDisapproveConsultationAccessEnquiryRequest;
-use EscolaLms\ConsultationAccess\Http\Requests\Admin\AdminListConsultationAccessEnquiryRequest;
-use EscolaLms\ConsultationAccess\Http\Resources\ConsultationAccessEnquiryResource;
-use EscolaLms\ConsultationAccess\Services\Contracts\ConsultationAccessEnquiryServiceContract;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\ConsultationAccess\Exceptions\ConsultationAccessException;
+use Ulams\ConsultationAccess\Http\Controllers\Admin\Swagger\ConsultationAccessEnquiryAdminApiSwagger;
+use Ulams\ConsultationAccess\Http\Requests\Admin\AdminApproveConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Requests\Admin\AdminDisapproveConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Requests\Admin\AdminListConsultationAccessEnquiryRequest;
+use Ulams\ConsultationAccess\Http\Resources\ConsultationAccessEnquiryResource;
+use Ulams\ConsultationAccess\Services\Contracts\ConsultationAccessEnquiryServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\JsonResponse;
 
-class ConsultationAccessEnquiryAdminApiController extends EscolaLmsBaseController implements ConsultationAccessEnquiryAdminApiSwagger
+class ConsultationAccessEnquiryAdminApiController extends UlamsBaseController implements ConsultationAccessEnquiryAdminApiSwagger
 {
     private ConsultationAccessEnquiryServiceContract $service;
 

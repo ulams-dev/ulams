@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Http\Controllers;
+namespace Ulams\CoursesImportExport\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Courses\Http\Resources\CourseSimpleResource;
-use EscolaLms\CoursesImportExport\Http\Controllers\Swagger\CourseExportImportAPISwagger;
-use EscolaLms\CoursesImportExport\Http\Requests\CloneCourseAPIRequest;
-use EscolaLms\CoursesImportExport\Http\Requests\CourseImportAPIRequest;
-use EscolaLms\CoursesImportExport\Http\Requests\GetCourseExportAPIRequest;
-use EscolaLms\CoursesImportExport\Services\Contracts\CloneCourseServiceContract;
-use EscolaLms\CoursesImportExport\Services\Contracts\ExportImportServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Courses\Http\Resources\CourseSimpleResource;
+use Ulams\CoursesImportExport\Http\Controllers\Swagger\CourseExportImportAPISwagger;
+use Ulams\CoursesImportExport\Http\Requests\CloneCourseAPIRequest;
+use Ulams\CoursesImportExport\Http\Requests\CourseImportAPIRequest;
+use Ulams\CoursesImportExport\Http\Requests\GetCourseExportAPIRequest;
+use Ulams\CoursesImportExport\Services\Contracts\CloneCourseServiceContract;
+use Ulams\CoursesImportExport\Services\Contracts\ExportImportServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
@@ -18,7 +18,7 @@ use Illuminate\Http\JsonResponse;
  * This class should be parent class for other API controllers
  * Class AppBaseController.
  */
-class CourseExportImportAPIController extends EscolaLmsBaseController implements CourseExportImportAPISwagger
+class CourseExportImportAPIController extends UlamsBaseController implements CourseExportImportAPISwagger
 {
     protected ExportImportServiceContract $exportImportService;
     protected CloneCourseServiceContract $cloneCourseService;

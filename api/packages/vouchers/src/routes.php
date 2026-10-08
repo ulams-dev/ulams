@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\Vouchers\Http\Controllers\VouchersAdminApiController;
-use EscolaLms\Vouchers\Http\Controllers\VouchersApiController;
+use Ulams\Vouchers\Http\Controllers\VouchersAdminApiController;
+use Ulams\Vouchers\Http\Controllers\VouchersApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api'], function () {

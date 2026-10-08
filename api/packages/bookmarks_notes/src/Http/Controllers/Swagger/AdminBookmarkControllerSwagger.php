@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Http\Controllers\Swagger;
+namespace Ulams\Bookmarks\Http\Controllers\Swagger;
 
-use EscolaLms\Bookmarks\Http\Requests\AdminCreateBookmarkRequest;
-use EscolaLms\Bookmarks\Http\Requests\AdminDeleteBookmarkRequest;
-use EscolaLms\Bookmarks\Http\Requests\AdminListBookmarkRequest;
-use EscolaLms\Bookmarks\Http\Requests\AdminUpdateBookmarkRequest;
+use Ulams\Bookmarks\Http\Requests\AdminCreateBookmarkRequest;
+use Ulams\Bookmarks\Http\Requests\AdminDeleteBookmarkRequest;
+use Ulams\Bookmarks\Http\Requests\AdminListBookmarkRequest;
+use Ulams\Bookmarks\Http\Requests\AdminUpdateBookmarkRequest;
 use Illuminate\Http\JsonResponse;
 
 interface AdminBookmarkControllerSwagger

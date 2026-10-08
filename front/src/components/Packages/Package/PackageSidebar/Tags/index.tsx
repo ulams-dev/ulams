@@ -1,7 +1,7 @@
 import { useContext, useMemo } from "react";
 import { Row } from "react-grid-system";
 import styled from "styled-components";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { groupProductablesByType, ProductableEnum } from "@/utils/productables";
 import { PackageSidebarTag } from "./Tag";
 
@@ -11,7 +11,7 @@ const RowStyled = styled(Row)`
 `;
 
 export const PackageSidebarTags = () => {
-  const { product } = useContext(EscolaLMSContext);
+  const { product } = useContext(UlamsContext);
   const grouped = useMemo(
     () => groupProductablesByType(product?.value?.productables || []),
     [product?.value?.productables]

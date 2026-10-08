@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Consultations\Strategies\Relations;
+namespace Ulams\Consultations\Strategies\Relations;
 
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Strategies\Contracts\RelationStrategyContract;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Strategies\Contracts\RelationStrategyContract;
 
 class ConsultationWithTeachersStrategy implements RelationStrategyContract
 {

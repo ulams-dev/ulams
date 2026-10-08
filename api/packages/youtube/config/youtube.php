@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Jitsi\Enum\PackageStatusEnum;
+use Ulams\Jitsi\Enum\PackageStatusEnum;
 
 return [
     'app_name'      => env('app_name'),

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Lrs\Database\Seeders;
+namespace Ulams\Lrs\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Trax\Auth\Stores\Clients\ClientRepository;
@@ -14,7 +14,7 @@ class LrsSeeder extends Seeder
 {
     public function run()
     {
-        $name = 'EscolaLMS';
+        $name = 'Ulams';
 
         $owner = Owner::firstOrCreate([
             'name' => $name

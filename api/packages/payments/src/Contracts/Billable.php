@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Payments\Contracts;
+namespace Ulams\Payments\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 

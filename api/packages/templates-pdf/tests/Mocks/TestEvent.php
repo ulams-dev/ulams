@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Tests\Mocks;
+namespace Ulams\TemplatesPdf\Tests\Mocks;
 
-use EscolaLms\Core\Models\User;
+use Ulams\Core\Models\User;
 
 class TestEvent
 {

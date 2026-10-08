@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Tests;
+namespace Ulams\CourseAccess\Tests;
 
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Core\Tests\TestCase as CoreTestCase;
-use EscolaLms\Auth\Tests\Models\Client;
-use EscolaLms\CourseAccess\EscolaLmsCourseAccessServiceProvider;
-use EscolaLms\Courses\EscolaLmsCourseServiceProvider;
-use EscolaLms\Courses\Tests\Models\User as UserTest;
-use EscolaLms\Scorm\EscolaLmsScormServiceProvider;
-use EscolaLms\Tags\EscolaLmsTagsServiceProvider;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Core\Tests\TestCase as CoreTestCase;
+use Ulams\Auth\Tests\Models\Client;
+use Ulams\CourseAccess\UlamsCourseAccessServiceProvider;
+use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\Courses\Tests\Models\User as UserTest;
+use Ulams\Scorm\UlamsScormServiceProvider;
+use Ulams\Tags\UlamsTagsServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\TestResponse;
@@ -33,13 +33,13 @@ class TestCase extends CoreTestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            EscolaLmsCourseAccessServiceProvider::class,
-            EscolaLmsAuthServiceProvider::class,
-            EscolaLmsCourseServiceProvider::class,
+            UlamsCourseAccessServiceProvider::class,
+            UlamsAuthServiceProvider::class,
+            UlamsCourseServiceProvider::class,
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
-            EscolaLmsScormServiceProvider::class,
-            EscolaLmsTagsServiceProvider::class,
+            UlamsScormServiceProvider::class,
+            UlamsTagsServiceProvider::class,
         ];
     }
 

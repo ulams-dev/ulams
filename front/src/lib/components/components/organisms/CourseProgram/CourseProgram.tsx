@@ -1,8 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled, { withTheme } from "styled-components";
-import type { API } from "@lms/sdk";
-import type { ExtendableStyledComponent } from "@lms/components/types/component";
+import type { API } from "@ulams/sdk";
+import type { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { Text } from "../../../index";
 import { RecursiveLessons } from "./_components/RecursiveLessons";
 import { StyledSection } from "./_components/styles";
@@ -21,7 +21,7 @@ export const CourseProgram: React.FC<Props> = ({
   const { t } = useTranslation();
 
   return (
-    <StyledSection $mobile={mobile} className={`wellms-component ${className}`}>
+    <StyledSection $mobile={mobile} className={`ulams-component ${className}`}>
       <Text>{t("Course.Agenda")}</Text>
       <ul className="lessons__list">
         <RecursiveLessons

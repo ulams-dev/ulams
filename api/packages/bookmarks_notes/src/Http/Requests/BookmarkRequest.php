@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Http\Requests;
+namespace Ulams\Bookmarks\Http\Requests;
 
-use EscolaLms\Bookmarks\Models\Bookmark;
+use Ulams\Bookmarks\Models\Bookmark;
 use Illuminate\Foundation\Http\FormRequest;
 
 abstract class BookmarkRequest extends FormRequest

@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Strategies;
+namespace Ulams\TopicTypeGift\Strategies;
 
-use EscolaLms\TopicTypeGift\Models\GiftQuestion;
-use EscolaLms\TopicTypeGift\Services\Contracts\GiftQuestionServiceContract;
-use EscolaLms\TopicTypeGift\Strategies\Contracts\QuestionStrategyContract;
+use Ulams\TopicTypeGift\Models\GiftQuestion;
+use Ulams\TopicTypeGift\Services\Contracts\GiftQuestionServiceContract;
+use Ulams\TopicTypeGift\Strategies\Contracts\QuestionStrategyContract;
 use Illuminate\Support\Str;
 
 abstract class QuestionStrategy implements QuestionStrategyContract

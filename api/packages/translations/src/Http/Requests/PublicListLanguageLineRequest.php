@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Translations\Http\Requests;
+namespace Ulams\Translations\Http\Requests;
 
-use EscolaLms\Translations\Dto\PublicTranslationListCriteriaDto;
-use EscolaLms\Translations\Enum\ConstantEnum;
+use Ulams\Translations\Dto\PublicTranslationListCriteriaDto;
+use Ulams\Translations\Enum\ConstantEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PublicListLanguageLineRequest extends FormRequest

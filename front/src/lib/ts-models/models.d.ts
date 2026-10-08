@@ -171,7 +171,7 @@ declare namespace Peopleaps.Scorm.Model {
 
 }
 
-declare namespace EscolaLms.AssignWithoutAccount.Models {
+declare namespace Ulams.AssignWithoutAccount.Models {
     export interface UserSubmission {
         id: number;
         email: string;
@@ -185,7 +185,7 @@ declare namespace EscolaLms.AssignWithoutAccount.Models {
 
 }
 
-declare namespace EscolaLms.Auth.Models {
+declare namespace Ulams.Auth.Models {
     export interface PreUser {
         id: number;
         first_name: string | null;
@@ -201,7 +201,7 @@ declare namespace EscolaLms.Auth.Models {
         user_id: number;
         key: string;
         value: string | null;
-        user?: EscolaLms.Auth.Models.User | null;
+        user?: Ulams.Auth.Models.User | null;
     }
 
     export interface GroupUser {
@@ -261,7 +261,7 @@ declare namespace EscolaLms.Auth.Models {
         provider_id: string;
         created_at: string | null;
         updated_at: string | null;
-        user?: EscolaLms.Auth.Models.User | null;
+        user?: Ulams.Auth.Models.User | null;
     }
 
     export interface Group {
@@ -271,9 +271,9 @@ declare namespace EscolaLms.Auth.Models {
         name: string;
         registerable: boolean;
         parent_id: number | null;
-        users?: Array<EscolaLms.Auth.Models.User> | null;
-        parent?: EscolaLms.Auth.Models.Group | null;
-        children?: Array<EscolaLms.Auth.Models.Group> | null;
+        users?: Array<Ulams.Auth.Models.User> | null;
+        parent?: Ulams.Auth.Models.Group | null;
+        children?: Array<Ulams.Auth.Models.Group> | null;
         users_count?: number | null;
         children_count?: number | null;
         readonly name_with_breadcrumbs?: string;
@@ -281,7 +281,7 @@ declare namespace EscolaLms.Auth.Models {
 
 }
 
-declare namespace EscolaLms.Cart.Models {
+declare namespace Ulams.Cart.Models {
     export interface Category {
         id: number;
         name: string;
@@ -292,11 +292,11 @@ declare namespace EscolaLms.Cart.Models {
         icon_class: string | null;
         created_at: string | null;
         updated_at: string | null;
-        products?: Array<EscolaLms.Cart.Models.Product> | null;
-        parent?: EscolaLms.Categories.Models.Category | null;
-        children?: Array<EscolaLms.Categories.Models.Category> | null;
+        products?: Array<Ulams.Cart.Models.Product> | null;
+        parent?: Ulams.Categories.Models.Category | null;
+        children?: Array<Ulams.Categories.Models.Category> | null;
         users?: Array<App.Models.User> | null;
-        courses?: Array<EscolaLms.Courses.Models.Course> | null;
+        courses?: Array<Ulams.Courses.Models.Course> | null;
         products_count?: number | null;
         children_count?: number | null;
         users_count?: number | null;
@@ -311,8 +311,8 @@ declare namespace EscolaLms.Cart.Models {
         created_at: string | null;
         updated_at: string | null;
         quantity: number;
-        product?: EscolaLms.Cart.Models.Product | null;
-        user?: EscolaLms.Cart.Models.User | null;
+        product?: Ulams.Cart.Models.Product | null;
+        user?: Ulams.Cart.Models.User | null;
     }
 
     export interface ProductProductable {
@@ -323,7 +323,7 @@ declare namespace EscolaLms.Cart.Models {
         created_at: string | null;
         updated_at: string | null;
         quantity: number;
-        product?: EscolaLms.Cart.Models.Product | null;
+        product?: Ulams.Cart.Models.Product | null;
         productable?: any | null;
         readonly canonical_productable?: any | null;
     }
@@ -381,7 +381,7 @@ declare namespace EscolaLms.Cart.Models {
         options: string | null;
         created_at: string | null;
         updated_at: string | null;
-        cart?: EscolaLms.Cart.Models.Cart | null;
+        cart?: Ulams.Cart.Models.Cart | null;
         buyable?: any | null;
         readonly subtotal?: any;
         readonly total?: any;
@@ -397,8 +397,8 @@ declare namespace EscolaLms.Cart.Models {
         created_at: string | null;
         updated_at: string | null;
         coupon_id: number | null;
-        user?: EscolaLms.Cart.Models.User | null;
-        items?: Array<EscolaLms.Cart.Models.CartItem> | null;
+        user?: Ulams.Cart.Models.User | null;
+        items?: Array<Ulams.Cart.Models.CartItem> | null;
         items_count?: number | null;
         readonly cart_manager?: any;
         readonly subtotal?: number;
@@ -419,7 +419,7 @@ declare namespace EscolaLms.Cart.Models {
         tax_rate: number;
         name: string | null;
         buyable?: any | null;
-        order?: EscolaLms.Cart.Models.Order | null;
+        order?: Ulams.Cart.Models.Order | null;
         readonly description?: string | null;
         readonly subtotal?: number;
         readonly total?: number;
@@ -447,8 +447,8 @@ declare namespace EscolaLms.Cart.Models {
         client_taxid: string | null;
         client_email: string | null;
         client_street_number: string | null;
-        items?: Array<EscolaLms.Cart.Models.OrderItem> | null;
-        user?: EscolaLms.Core.Models.User | null;
+        items?: Array<Ulams.Cart.Models.OrderItem> | null;
+        user?: Ulams.Core.Models.User | null;
         items_count?: number | null;
         readonly quantity?: number;
         readonly status_name?: string;
@@ -471,11 +471,11 @@ declare namespace EscolaLms.Cart.Models {
         limit_total: number | null;
         created_at: string | null;
         updated_at: string | null;
-        productables?: Array<EscolaLms.Cart.Models.ProductProductable> | null;
-        users?: Array<EscolaLms.Cart.Models.User> | null;
-        tags?: Array<EscolaLms.Tags.Models.Tag> | null;
-        categories?: Array<EscolaLms.Cart.Models.Category> | null;
-        related_products?: Array<EscolaLms.Cart.Models.Product> | null;
+        productables?: Array<Ulams.Cart.Models.ProductProductable> | null;
+        users?: Array<Ulams.Cart.Models.User> | null;
+        tags?: Array<Ulams.Tags.Models.Tag> | null;
+        categories?: Array<Ulams.Cart.Models.Category> | null;
+        related_products?: Array<Ulams.Cart.Models.Product> | null;
         productables_count?: number | null;
         users_count?: number | null;
         tags_count?: number | null;
@@ -489,7 +489,7 @@ declare namespace EscolaLms.Cart.Models {
 
 }
 
-declare namespace EscolaLms.Categories.Models {
+declare namespace Ulams.Categories.Models {
     export interface Category {
         id: number;
         name: string;
@@ -500,10 +500,10 @@ declare namespace EscolaLms.Categories.Models {
         icon_class: string | null;
         created_at: string | null;
         updated_at: string | null;
-        parent?: EscolaLms.Categories.Models.Category | null;
-        children?: Array<EscolaLms.Categories.Models.Category> | null;
+        parent?: Ulams.Categories.Models.Category | null;
+        children?: Array<Ulams.Categories.Models.Category> | null;
         users?: Array<App.Models.User> | null;
-        courses?: Array<EscolaLms.Courses.Models.Course> | null;
+        courses?: Array<Ulams.Courses.Models.Course> | null;
         children_count?: number | null;
         users_count?: number | null;
         courses_count?: number | null;
@@ -512,15 +512,15 @@ declare namespace EscolaLms.Categories.Models {
 
 }
 
-declare namespace EscolaLms.Webinar.Models {
+declare namespace Ulams.Webinar.Models {
     export interface WebinarUserPivot {
         id: number;
         user_id: number;
         webinar_id: number;
         created_at: string | null;
         updated_at: string | null;
-        user?: EscolaLms.Core.Models.User | null;
-        webinar?: EscolaLms.Webinar.Models.Webinar | null;
+        user?: Ulams.Core.Models.User | null;
+        webinar?: Ulams.Webinar.Models.Webinar | null;
     }
 
     export interface User {
@@ -555,10 +555,10 @@ declare namespace EscolaLms.Webinar.Models {
         permissions?: Array<Spatie.Permission.Models.Permission> | null;
         clients?: Array<Laravel.Passport.Client> | null;
         tokens?: Array<Laravel.Passport.Token> | null;
-        interests?: Array<EscolaLms.Categories.Models.Category> | null;
-        settings?: Array<EscolaLms.Auth.Models.UserSetting> | null;
-        groups?: Array<EscolaLms.Auth.Models.Group> | null;
-        fields?: Array<EscolaLms.ModelFields.Models.Field> | null;
+        interests?: Array<Ulams.Categories.Models.Category> | null;
+        settings?: Array<Ulams.Auth.Models.UserSetting> | null;
+        groups?: Array<Ulams.Auth.Models.Group> | null;
+        fields?: Array<Ulams.ModelFields.Models.Field> | null;
         notifications_count?: number | null;
         read_notifications_count?: number | null;
         unread_notifications_count?: number | null;
@@ -596,9 +596,9 @@ declare namespace EscolaLms.Webinar.Models {
         reminder_status: string | null;
         logotype_path: string | null;
         yt_autostart_status: boolean | null;
-        trainers?: Array<EscolaLms.Webinar.Models.User> | null;
-        tags?: Array<EscolaLms.Tags.Models.Tag> | null;
-        users?: Array<EscolaLms.Webinar.Models.User> | null;
+        trainers?: Array<Ulams.Webinar.Models.User> | null;
+        tags?: Array<Ulams.Tags.Models.Tag> | null;
+        users?: Array<Ulams.Webinar.Models.User> | null;
         trainers_count?: number | null;
         tags_count?: number | null;
         users_count?: number | null;
@@ -608,7 +608,7 @@ declare namespace EscolaLms.Webinar.Models {
 
 }
 
-declare namespace EscolaLms.Consultations.Models {
+declare namespace Ulams.Consultations.Models {
     export interface Consultation {
         id: number;
         author_id: number | null;
@@ -623,11 +623,11 @@ declare namespace EscolaLms.Consultations.Models {
         image_path: string | null;
         short_desc: string | null;
         logotype_path: string | null;
-        author?: EscolaLms.Consultations.Models.User | null;
-        users?: Array<EscolaLms.Consultations.Models.User> | null;
-        proposed_terms?: Array<EscolaLms.Consultations.Models.ConsultationProposedTerm> | null;
-        categories?: Array<EscolaLms.Categories.Models.Category> | null;
-        terms?: Array<EscolaLms.Consultations.Models.ConsultationUserPivot> | null;
+        author?: Ulams.Consultations.Models.User | null;
+        users?: Array<Ulams.Consultations.Models.User> | null;
+        proposed_terms?: Array<Ulams.Consultations.Models.ConsultationProposedTerm> | null;
+        categories?: Array<Ulams.Categories.Models.Category> | null;
+        terms?: Array<Ulams.Consultations.Models.ConsultationUserPivot> | null;
         users_count?: number | null;
         proposed_terms_count?: number | null;
         categories_count?: number | null;
@@ -642,7 +642,7 @@ declare namespace EscolaLms.Consultations.Models {
         proposed_at: string;
         created_at: string | null;
         updated_at: string | null;
-        consultation?: EscolaLms.Consultations.Models.Consultation | null;
+        consultation?: Ulams.Consultations.Models.Consultation | null;
     }
 
     export interface User {
@@ -670,7 +670,7 @@ declare namespace EscolaLms.Consultations.Models {
         access_to_directories: string | null;
         current_timezone: string | null;
         deleted_at: string | null;
-        categories?: Array<EscolaLms.Categories.Models.Category> | null;
+        categories?: Array<Ulams.Categories.Models.Category> | null;
         notifications?: Array<Illuminate.Notifications.DatabaseNotification> | null;
         read_notifications?: Array<Illuminate.Notifications.DatabaseNotification> | null;
         unread_notifications?: Array<Illuminate.Notifications.DatabaseNotification> | null;
@@ -678,10 +678,10 @@ declare namespace EscolaLms.Consultations.Models {
         permissions?: Array<Spatie.Permission.Models.Permission> | null;
         clients?: Array<Laravel.Passport.Client> | null;
         tokens?: Array<Laravel.Passport.Token> | null;
-        interests?: Array<EscolaLms.Categories.Models.Category> | null;
-        settings?: Array<EscolaLms.Auth.Models.UserSetting> | null;
-        groups?: Array<EscolaLms.Auth.Models.Group> | null;
-        fields?: Array<EscolaLms.ModelFields.Models.Field> | null;
+        interests?: Array<Ulams.Categories.Models.Category> | null;
+        settings?: Array<Ulams.Auth.Models.UserSetting> | null;
+        groups?: Array<Ulams.Auth.Models.Group> | null;
+        fields?: Array<Ulams.ModelFields.Models.Field> | null;
         categories_count?: number | null;
         notifications_count?: number | null;
         read_notifications_count?: number | null;
@@ -710,13 +710,13 @@ declare namespace EscolaLms.Consultations.Models {
         executed_status: string | null;
         reminder_status: string | null;
         product_id: number | null;
-        user?: EscolaLms.Consultations.Models.User | null;
-        consultation?: EscolaLms.Consultations.Models.Consultation | null;
+        user?: Ulams.Consultations.Models.User | null;
+        consultation?: Ulams.Consultations.Models.Consultation | null;
     }
 
 }
 
-declare namespace EscolaLms.ConsultationAccess.Models {
+declare namespace Ulams.ConsultationAccess.Models {
     export interface ConsultationAccessEnquiry {
         id: number;
         consultation_id: number;
@@ -730,10 +730,10 @@ declare namespace EscolaLms.ConsultationAccess.Models {
         related_type: string | null;
         related_id: number | null;
         title: string | null;
-        consultation?: EscolaLms.ConsultationAccess.Models.Consultation | null;
-        user?: EscolaLms.Auth.Models.User | null;
-        consultation_user?: EscolaLms.Consultations.Models.ConsultationUserPivot | null;
-        consultation_access_enquiry_proposed_terms?: Array<EscolaLms.ConsultationAccess.Models.ConsultationAccessEnquiryProposedTerm> | null;
+        consultation?: Ulams.ConsultationAccess.Models.Consultation | null;
+        user?: Ulams.Auth.Models.User | null;
+        consultation_user?: Ulams.Consultations.Models.ConsultationUserPivot | null;
+        consultation_access_enquiry_proposed_terms?: Array<Ulams.ConsultationAccess.Models.ConsultationAccessEnquiryProposedTerm> | null;
         related?: any | null;
         consultation_access_enquiry_proposed_terms_count?: number | null;
     }
@@ -752,11 +752,11 @@ declare namespace EscolaLms.ConsultationAccess.Models {
         image_path: string | null;
         short_desc: string | null;
         logotype_path: string | null;
-        author?: EscolaLms.Consultations.Models.User | null;
-        users?: Array<EscolaLms.Consultations.Models.User> | null;
-        proposed_terms?: Array<EscolaLms.Consultations.Models.ConsultationProposedTerm> | null;
-        categories?: Array<EscolaLms.Categories.Models.Category> | null;
-        terms?: Array<EscolaLms.Consultations.Models.ConsultationUserPivot> | null;
+        author?: Ulams.Consultations.Models.User | null;
+        users?: Array<Ulams.Consultations.Models.User> | null;
+        proposed_terms?: Array<Ulams.Consultations.Models.ConsultationProposedTerm> | null;
+        categories?: Array<Ulams.Categories.Models.Category> | null;
+        terms?: Array<Ulams.Consultations.Models.ConsultationUserPivot> | null;
         users_count?: number | null;
         proposed_terms_count?: number | null;
         categories_count?: number | null;
@@ -771,12 +771,12 @@ declare namespace EscolaLms.ConsultationAccess.Models {
         proposed_at: string;
         created_at: string | null;
         updated_at: string | null;
-        consultation_access_enquiry?: EscolaLms.ConsultationAccess.Models.ConsultationAccessEnquiry | null;
+        consultation_access_enquiry?: Ulams.ConsultationAccess.Models.ConsultationAccessEnquiry | null;
     }
 
 }
 
-declare namespace EscolaLms.Core.Models {
+declare namespace Ulams.Core.Models {
     export interface User {
         id: number;
         first_name: string;
@@ -809,7 +809,7 @@ declare namespace EscolaLms.Core.Models {
 
 }
 
-declare namespace EscolaLms.Courses.Models {
+declare namespace Ulams.Courses.Models {
     export interface TopicResource {
         id: number;
         created_at: string | null;
@@ -817,7 +817,7 @@ declare namespace EscolaLms.Courses.Models {
         topic_id: number;
         path: string;
         name: string;
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        topic?: Ulams.Courses.Models.Topic | null;
         readonly url?: any;
     }
 
@@ -840,10 +840,10 @@ declare namespace EscolaLms.Courses.Models {
         active: boolean;
         summary: string | null;
         parent_lesson_id: number | null;
-        course?: EscolaLms.Courses.Models.Course | null;
-        topics?: Array<EscolaLms.Courses.Models.Topic> | null;
-        parent_lesson?: EscolaLms.Courses.Models.Lesson | null;
-        lessons?: Array<EscolaLms.Courses.Models.Lesson> | null;
+        course?: Ulams.Courses.Models.Course | null;
+        topics?: Array<Ulams.Courses.Models.Topic> | null;
+        parent_lesson?: Ulams.Courses.Models.Lesson | null;
+        lessons?: Array<Ulams.Courses.Models.Lesson> | null;
         topics_count?: number | null;
         lessons_count?: number | null;
     }
@@ -871,13 +871,13 @@ declare namespace EscolaLms.Courses.Models {
         status: string;
         teaser_url: string | null;
         public: boolean;
-        authors?: Array<EscolaLms.Courses.Models.User> | null;
-        lessons?: Array<EscolaLms.Courses.Models.Lesson> | null;
-        categories?: Array<EscolaLms.Categories.Models.Category> | null;
-        tags?: Array<EscolaLms.Tags.Models.Tag> | null;
-        users?: Array<EscolaLms.Courses.Models.User> | null;
-        groups?: Array<EscolaLms.Courses.Models.Group> | null;
-        topics?: Array<EscolaLms.Courses.Models.Topic> | null;
+        authors?: Array<Ulams.Courses.Models.User> | null;
+        lessons?: Array<Ulams.Courses.Models.Lesson> | null;
+        categories?: Array<Ulams.Categories.Models.Category> | null;
+        tags?: Array<Ulams.Tags.Models.Tag> | null;
+        users?: Array<Ulams.Courses.Models.User> | null;
+        groups?: Array<Ulams.Courses.Models.Group> | null;
+        topics?: Array<Ulams.Courses.Models.Topic> | null;
         scorm_sco?: Peopleaps.Scorm.Model.ScormScoModel | null;
         authors_count?: number | null;
         lessons_count?: number | null;
@@ -912,10 +912,10 @@ declare namespace EscolaLms.Courses.Models {
         introduction: string | null;
         description: string | null;
         duration: string | null;
-        lesson?: EscolaLms.Courses.Models.Lesson | null;
+        lesson?: Ulams.Courses.Models.Lesson | null;
         topicable?: any | null;
-        progress?: Array<EscolaLms.Courses.Models.CourseProgress> | null;
-        resources?: Array<EscolaLms.Courses.Models.TopicResource> | null;
+        progress?: Array<Ulams.Courses.Models.CourseProgress> | null;
+        resources?: Array<Ulams.Courses.Models.TopicResource> | null;
         progress_count?: number | null;
         resources_count?: number | null;
         readonly storage_directory?: string;
@@ -933,8 +933,8 @@ declare namespace EscolaLms.Courses.Models {
         updated_at: string | null;
         seconds: number | null;
         started_at: string | null;
-        user?: EscolaLms.Courses.Models.User | null;
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        user?: Ulams.Courses.Models.User | null;
+        topic?: Ulams.Courses.Models.Topic | null;
     }
 
     export interface User {
@@ -962,7 +962,7 @@ declare namespace EscolaLms.Courses.Models {
         access_to_directories: string | null;
         current_timezone: string | null;
         deleted_at: string | null;
-        categories?: Array<EscolaLms.Categories.Models.Category> | null;
+        categories?: Array<Ulams.Categories.Models.Category> | null;
         notifications?: Array<Illuminate.Notifications.DatabaseNotification> | null;
         read_notifications?: Array<Illuminate.Notifications.DatabaseNotification> | null;
         unread_notifications?: Array<Illuminate.Notifications.DatabaseNotification> | null;
@@ -970,8 +970,8 @@ declare namespace EscolaLms.Courses.Models {
         permissions?: Array<Spatie.Permission.Models.Permission> | null;
         clients?: Array<Laravel.Passport.Client> | null;
         tokens?: Array<Laravel.Passport.Token> | null;
-        interests?: Array<EscolaLms.Categories.Models.Category> | null;
-        fields?: Array<EscolaLms.ModelFields.Models.Field> | null;
+        interests?: Array<Ulams.Categories.Models.Category> | null;
+        fields?: Array<Ulams.ModelFields.Models.Field> | null;
         categories_count?: number | null;
         notifications_count?: number | null;
         read_notifications_count?: number | null;
@@ -996,8 +996,8 @@ declare namespace EscolaLms.Courses.Models {
         updated_at: string | null;
         finished: boolean;
         deadline: string | null;
-        user?: EscolaLms.Core.Models.User | null;
-        course?: EscolaLms.Courses.Models.Course | null;
+        user?: Ulams.Core.Models.User | null;
+        course?: Ulams.Courses.Models.Course | null;
     }
 
     export interface H5PUserProgress {
@@ -1008,8 +1008,8 @@ declare namespace EscolaLms.Courses.Models {
         data: string;
         created_at: string | null;
         updated_at: string | null;
-        user?: EscolaLms.Courses.Tests.Models.User | null;
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        user?: Ulams.Courses.Tests.Models.User | null;
+        topic?: Ulams.Courses.Models.Topic | null;
     }
 
     export interface CourseAuthorPivot {
@@ -1018,8 +1018,8 @@ declare namespace EscolaLms.Courses.Models {
         course_id: number;
         created_at: string | null;
         updated_at: string | null;
-        author?: EscolaLms.Core.Models.User | null;
-        course?: EscolaLms.Courses.Models.Course | null;
+        author?: Ulams.Core.Models.User | null;
+        course?: Ulams.Courses.Models.Course | null;
     }
 
     export interface Group {
@@ -1029,10 +1029,10 @@ declare namespace EscolaLms.Courses.Models {
         name: string;
         registerable: boolean;
         parent_id: number | null;
-        courses?: Array<EscolaLms.Courses.Models.Course> | null;
-        users?: Array<EscolaLms.Auth.Models.User> | null;
-        parent?: EscolaLms.Auth.Models.Group | null;
-        children?: Array<EscolaLms.Auth.Models.Group> | null;
+        courses?: Array<Ulams.Courses.Models.Course> | null;
+        users?: Array<Ulams.Auth.Models.User> | null;
+        parent?: Ulams.Auth.Models.Group | null;
+        children?: Array<Ulams.Auth.Models.Group> | null;
         courses_count?: number | null;
         users_count?: number | null;
         children_count?: number | null;
@@ -1046,18 +1046,18 @@ declare namespace EscolaLms.Courses.Models {
 
 }
 
-declare namespace EscolaLms.Courses.Tests.Models.TopicContent {
+declare namespace Ulams.Courses.Tests.Models.TopicContent {
     export interface SecondExampleTopicType {
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        topic?: Ulams.Courses.Models.Topic | null;
     }
 
     export interface ExampleTopicType {
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        topic?: Ulams.Courses.Models.Topic | null;
     }
 
 }
 
-declare namespace EscolaLms.Courses.Tests.Models {
+declare namespace Ulams.Courses.Tests.Models {
     export interface User {
         id: number;
         first_name: string;
@@ -1083,7 +1083,7 @@ declare namespace EscolaLms.Courses.Tests.Models {
         access_to_directories: string | null;
         current_timezone: string | null;
         deleted_at: string | null;
-        categories?: Array<EscolaLms.Categories.Models.Category> | null;
+        categories?: Array<Ulams.Categories.Models.Category> | null;
         notifications?: Array<Illuminate.Notifications.DatabaseNotification> | null;
         read_notifications?: Array<Illuminate.Notifications.DatabaseNotification> | null;
         unread_notifications?: Array<Illuminate.Notifications.DatabaseNotification> | null;
@@ -1091,12 +1091,12 @@ declare namespace EscolaLms.Courses.Tests.Models {
         permissions?: Array<Spatie.Permission.Models.Permission> | null;
         clients?: Array<Laravel.Passport.Client> | null;
         tokens?: Array<Laravel.Passport.Token> | null;
-        interests?: Array<EscolaLms.Categories.Models.Category> | null;
-        settings?: Array<EscolaLms.Auth.Models.UserSetting> | null;
-        groups?: Array<EscolaLms.Auth.Models.Group> | null;
-        fields?: Array<EscolaLms.ModelFields.Models.Field> | null;
-        courses?: Array<EscolaLms.Courses.Models.Course> | null;
-        authored_courses?: Array<EscolaLms.Courses.Models.Course> | null;
+        interests?: Array<Ulams.Categories.Models.Category> | null;
+        settings?: Array<Ulams.Auth.Models.UserSetting> | null;
+        groups?: Array<Ulams.Auth.Models.Group> | null;
+        fields?: Array<Ulams.ModelFields.Models.Field> | null;
+        courses?: Array<Ulams.Courses.Models.Course> | null;
+        authored_courses?: Array<Ulams.Courses.Models.Course> | null;
         categories_count?: number | null;
         notifications_count?: number | null;
         read_notifications_count?: number | null;
@@ -1119,7 +1119,7 @@ declare namespace EscolaLms.Courses.Tests.Models {
 
 }
 
-declare namespace EscolaLms.CourseAccess.Models {
+declare namespace Ulams.CourseAccess.Models {
     export interface Course {
         id: number;
         created_at: string | null;
@@ -1143,13 +1143,13 @@ declare namespace EscolaLms.CourseAccess.Models {
         status: string;
         teaser_url: string | null;
         public: boolean;
-        authors?: Array<EscolaLms.Courses.Models.User> | null;
-        lessons?: Array<EscolaLms.Courses.Models.Lesson> | null;
-        categories?: Array<EscolaLms.Categories.Models.Category> | null;
-        tags?: Array<EscolaLms.Tags.Models.Tag> | null;
-        users?: Array<EscolaLms.Courses.Models.User> | null;
-        groups?: Array<EscolaLms.Courses.Models.Group> | null;
-        topics?: Array<EscolaLms.Courses.Models.Topic> | null;
+        authors?: Array<Ulams.Courses.Models.User> | null;
+        lessons?: Array<Ulams.Courses.Models.Lesson> | null;
+        categories?: Array<Ulams.Categories.Models.Category> | null;
+        tags?: Array<Ulams.Tags.Models.Tag> | null;
+        users?: Array<Ulams.Courses.Models.User> | null;
+        groups?: Array<Ulams.Courses.Models.Group> | null;
+        topics?: Array<Ulams.Courses.Models.Topic> | null;
         scorm_sco?: Peopleaps.Scorm.Model.ScormScoModel | null;
         authors_count?: number | null;
         lessons_count?: number | null;
@@ -1175,13 +1175,13 @@ declare namespace EscolaLms.CourseAccess.Models {
         data: string | null;
         created_at: string | null;
         updated_at: string | null;
-        course?: EscolaLms.CourseAccess.Models.Course | null;
-        user?: EscolaLms.Core.Models.User | null;
+        course?: Ulams.CourseAccess.Models.Course | null;
+        user?: Ulams.Core.Models.User | null;
     }
 
 }
 
-declare namespace EscolaLms.Bookmarks.Models {
+declare namespace Ulams.Bookmarks.Models {
     export interface User {
         id: number;
         first_name: string;
@@ -1234,13 +1234,13 @@ declare namespace EscolaLms.Bookmarks.Models {
         user_id: number;
         created_at: string | null;
         updated_at: string | null;
-        user?: EscolaLms.Bookmarks.Models.User | null;
+        user?: Ulams.Bookmarks.Models.User | null;
         bookmarkable?: any | null;
     }
 
 }
 
-declare namespace EscolaLms.CoursesImportExport.Models {
+declare namespace Ulams.CoursesImportExport.Models {
     export interface Course {
         id: number;
         created_at: string | null;
@@ -1264,13 +1264,13 @@ declare namespace EscolaLms.CoursesImportExport.Models {
         status: string;
         teaser_url: string | null;
         public: boolean;
-        authors?: Array<EscolaLms.Courses.Models.User> | null;
-        lessons?: Array<EscolaLms.Courses.Models.Lesson> | null;
-        categories?: Array<EscolaLms.Categories.Models.Category> | null;
-        tags?: Array<EscolaLms.Tags.Models.Tag> | null;
-        users?: Array<EscolaLms.Courses.Models.User> | null;
-        groups?: Array<EscolaLms.Courses.Models.Group> | null;
-        topics?: Array<EscolaLms.Courses.Models.Topic> | null;
+        authors?: Array<Ulams.Courses.Models.User> | null;
+        lessons?: Array<Ulams.Courses.Models.Lesson> | null;
+        categories?: Array<Ulams.Categories.Models.Category> | null;
+        tags?: Array<Ulams.Tags.Models.Tag> | null;
+        users?: Array<Ulams.Courses.Models.User> | null;
+        groups?: Array<Ulams.Courses.Models.Group> | null;
+        topics?: Array<Ulams.Courses.Models.Topic> | null;
         scorm_sco?: Peopleaps.Scorm.Model.ScormScoModel | null;
         authors_count?: number | null;
         lessons_count?: number | null;
@@ -1290,7 +1290,7 @@ declare namespace EscolaLms.CoursesImportExport.Models {
 
 }
 
-declare namespace EscolaLms.CsvUsers.Models {
+declare namespace Ulams.CsvUsers.Models {
     export interface User {
         id: number;
         first_name: string;
@@ -1323,10 +1323,10 @@ declare namespace EscolaLms.CsvUsers.Models {
         permissions?: Array<Spatie.Permission.Models.Permission> | null;
         clients?: Array<Laravel.Passport.Client> | null;
         tokens?: Array<Laravel.Passport.Token> | null;
-        interests?: Array<EscolaLms.Categories.Models.Category> | null;
-        settings?: Array<EscolaLms.Auth.Models.UserSetting> | null;
-        groups?: Array<EscolaLms.Auth.Models.Group> | null;
-        fields?: Array<EscolaLms.ModelFields.Models.Field> | null;
+        interests?: Array<Ulams.Categories.Models.Category> | null;
+        settings?: Array<Ulams.Auth.Models.UserSetting> | null;
+        groups?: Array<Ulams.Auth.Models.Group> | null;
+        fields?: Array<Ulams.ModelFields.Models.Field> | null;
         notifications_count?: number | null;
         read_notifications_count?: number | null;
         unread_notifications_count?: number | null;
@@ -1346,7 +1346,7 @@ declare namespace EscolaLms.CsvUsers.Models {
 
 }
 
-declare namespace EscolaLms.HeadlessH5P.Models {
+declare namespace Ulams.HeadlessH5P.Models {
     export interface H5PContentLibrary {
         content_id: number;
         library_id: number;
@@ -1354,8 +1354,8 @@ declare namespace EscolaLms.HeadlessH5P.Models {
         weight: number;
         drop_css: boolean;
         id: number;
-        library?: EscolaLms.HeadlessH5P.Models.H5PLibrary | null;
-        content?: EscolaLms.HeadlessH5P.Models.H5PContent | null;
+        library?: Ulams.HeadlessH5P.Models.H5PLibrary | null;
+        content?: Ulams.HeadlessH5P.Models.H5PContent | null;
     }
 
     export interface H5PLibraryLanguage {
@@ -1363,7 +1363,7 @@ declare namespace EscolaLms.HeadlessH5P.Models {
         language_code: string;
         translation: string;
         id: number;
-        library?: EscolaLms.HeadlessH5P.Models.H5PLibrary | null;
+        library?: Ulams.HeadlessH5P.Models.H5PLibrary | null;
     }
 
     export interface H5PContent {
@@ -1384,9 +1384,9 @@ declare namespace EscolaLms.HeadlessH5P.Models {
         keywords: string | null;
         description: string | null;
         uuid: string | null;
-        user?: EscolaLms.Core.Models.User | null;
-        library?: EscolaLms.HeadlessH5P.Models.H5PLibrary | null;
-        libraries?: Array<EscolaLms.HeadlessH5P.Models.H5PContentLibrary> | null;
+        user?: Ulams.Core.Models.User | null;
+        library?: Ulams.HeadlessH5P.Models.H5PLibrary | null;
+        libraries?: Array<Ulams.HeadlessH5P.Models.H5PContentLibrary> | null;
         libraries_count?: number | null;
         readonly title?: any;
         readonly params?: any;
@@ -1423,8 +1423,8 @@ declare namespace EscolaLms.HeadlessH5P.Models {
         required_library_id: number;
         dependency_type: string;
         id: number;
-        library?: EscolaLms.HeadlessH5P.Models.H5PLibrary | null;
-        required_library?: EscolaLms.HeadlessH5P.Models.H5PLibrary | null;
+        library?: Ulams.HeadlessH5P.Models.H5PLibrary | null;
+        required_library?: Ulams.HeadlessH5P.Models.H5PLibrary | null;
     }
 
     export interface H5PLibrary {
@@ -1447,10 +1447,10 @@ declare namespace EscolaLms.HeadlessH5P.Models {
         tutorial_url: string;
         has_icon: number;
         add_to: string | null;
-        dependencies?: Array<EscolaLms.HeadlessH5P.Models.H5PLibraryDependency> | null;
-        required_libraries?: Array<EscolaLms.HeadlessH5P.Models.H5PLibraryDependency> | null;
-        languages?: Array<EscolaLms.HeadlessH5P.Models.H5PLibraryLanguage> | null;
-        contents?: Array<EscolaLms.HeadlessH5P.Models.H5PContent> | null;
+        dependencies?: Array<Ulams.HeadlessH5P.Models.H5PLibraryDependency> | null;
+        required_libraries?: Array<Ulams.HeadlessH5P.Models.H5PLibraryDependency> | null;
+        languages?: Array<Ulams.HeadlessH5P.Models.H5PLibraryLanguage> | null;
+        contents?: Array<Ulams.HeadlessH5P.Models.H5PContent> | null;
         dependencies_count?: number | null;
         languages_count?: number | null;
         readonly library_id?: any;
@@ -1469,12 +1469,12 @@ declare namespace EscolaLms.HeadlessH5P.Models {
         nonce: string | null;
         created_at: string | null;
         updated_at: string | null;
-        content?: EscolaLms.HeadlessH5P.Models.H5PContent | null;
+        content?: Ulams.HeadlessH5P.Models.H5PContent | null;
     }
 
 }
 
-declare namespace EscolaLms.ModelFields.Models {
+declare namespace Ulams.ModelFields.Models {
     export interface Field {
         id: number;
         created_at: string | null;
@@ -1500,7 +1500,7 @@ declare namespace EscolaLms.ModelFields.Models {
 
 }
 
-declare namespace EscolaLms.Notifications.Models {
+declare namespace Ulams.Notifications.Models {
     export interface DatabaseNotification {
         id: string;
         type: string;
@@ -1554,7 +1554,7 @@ declare namespace EscolaLms.Notifications.Models {
 
 }
 
-declare namespace EscolaLms.Pages.Models {
+declare namespace Ulams.Pages.Models {
     export interface Page {
         id: number;
         slug: string;
@@ -1562,12 +1562,12 @@ declare namespace EscolaLms.Pages.Models {
         author_id: number;
         content: string;
         active: boolean;
-        author?: EscolaLms.Core.Models.User | null;
+        author?: Ulams.Core.Models.User | null;
     }
 
 }
 
-declare namespace EscolaLms.Payments.Models {
+declare namespace Ulams.Payments.Models {
     export interface User {
         id: number;
         first_name: string;
@@ -1629,12 +1629,12 @@ declare namespace EscolaLms.Payments.Models {
         gateway_order_id: string | null;
         redirect_url: string | null;
         payable?: any | null;
-        user?: EscolaLms.Payments.Models.User | null;
+        user?: Ulams.Payments.Models.User | null;
     }
 
 }
 
-declare namespace EscolaLms.Permissions.Models {
+declare namespace Ulams.Permissions.Models {
     export interface UserAdmin {
         notifications?: Array<Illuminate.Notifications.DatabaseNotification> | null;
         read_notifications?: Array<Illuminate.Notifications.DatabaseNotification> | null;
@@ -1643,10 +1643,10 @@ declare namespace EscolaLms.Permissions.Models {
         permissions?: Array<Spatie.Permission.Models.Permission> | null;
         clients?: Array<Laravel.Passport.Client> | null;
         tokens?: Array<Laravel.Passport.Token> | null;
-        interests?: Array<EscolaLms.Categories.Models.Category> | null;
-        settings?: Array<EscolaLms.Auth.Models.UserSetting> | null;
-        groups?: Array<EscolaLms.Auth.Models.Group> | null;
-        fields?: Array<EscolaLms.ModelFields.Models.Field> | null;
+        interests?: Array<Ulams.Categories.Models.Category> | null;
+        settings?: Array<Ulams.Auth.Models.UserSetting> | null;
+        groups?: Array<Ulams.Auth.Models.Group> | null;
+        fields?: Array<Ulams.ModelFields.Models.Field> | null;
         notifications_count?: number | null;
         read_notifications_count?: number | null;
         unread_notifications_count?: number | null;
@@ -1666,13 +1666,13 @@ declare namespace EscolaLms.Permissions.Models {
 
 }
 
-declare namespace EscolaLms.Reports.Models {
+declare namespace Ulams.Reports.Models {
     export interface Report {
         id: number;
         created_at: string | null;
         updated_at: string | null;
         metric: string;
-        measurements?: Array<EscolaLms.Reports.Models.Measurement> | null;
+        measurements?: Array<Ulams.Reports.Models.Measurement> | null;
         measurements_count?: number | null;
     }
 
@@ -1685,13 +1685,13 @@ declare namespace EscolaLms.Reports.Models {
         value: number;
         measurable_type: string;
         measurable_id: number;
-        report?: EscolaLms.Reports.Models.Report | null;
+        report?: Ulams.Reports.Models.Report | null;
         measurable?: any | null;
     }
 
 }
 
-declare namespace EscolaLms.Settings.Models {
+declare namespace Ulams.Settings.Models {
     export interface Setting {
         id: number;
         key: string;
@@ -1713,7 +1713,7 @@ declare namespace EscolaLms.Settings.Models {
 
 }
 
-declare namespace EscolaLms.StationaryEvents.Models {
+declare namespace Ulams.StationaryEvents.Models {
     export interface StationaryEvent {
         id: number;
         name: string;
@@ -1729,9 +1729,9 @@ declare namespace EscolaLms.StationaryEvents.Models {
         short_desc: string | null;
         status: string | null;
         agenda: string | null;
-        users?: Array<EscolaLms.Auth.Models.User> | null;
-        authors?: Array<EscolaLms.Auth.Models.User> | null;
-        categories?: Array<EscolaLms.Categories.Models.Category> | null;
+        users?: Array<Ulams.Auth.Models.User> | null;
+        authors?: Array<Ulams.Auth.Models.User> | null;
+        categories?: Array<Ulams.Categories.Models.Category> | null;
         users_count?: number | null;
         authors_count?: number | null;
         categories_count?: number | null;
@@ -1741,8 +1741,8 @@ declare namespace EscolaLms.StationaryEvents.Models {
     }
 
     export interface StationaryEventAuthorPivot {
-        author?: EscolaLms.Auth.Models.User | null;
-        stationary_event?: EscolaLms.StationaryEvents.Models.StationaryEvent | null;
+        author?: Ulams.Auth.Models.User | null;
+        stationary_event?: Ulams.StationaryEvents.Models.StationaryEvent | null;
     }
 
     export interface StationaryEventUserPivot {
@@ -1751,13 +1751,13 @@ declare namespace EscolaLms.StationaryEvents.Models {
         stationary_event_id: number;
         created_at: string | null;
         updated_at: string | null;
-        user?: EscolaLms.Auth.Models.User | null;
-        stationary_event?: EscolaLms.StationaryEvents.Models.StationaryEvent | null;
+        user?: Ulams.Auth.Models.User | null;
+        stationary_event?: Ulams.StationaryEvents.Models.StationaryEvent | null;
     }
 
 }
 
-declare namespace EscolaLms.Tags.Models {
+declare namespace Ulams.Tags.Models {
     export interface Tag {
         id: number;
         title: string | null;
@@ -1770,7 +1770,7 @@ declare namespace EscolaLms.Tags.Models {
 
 }
 
-declare namespace EscolaLms.Tasks.Models {
+declare namespace Ulams.Tasks.Models {
     export interface User {
         id: number;
         first_name: string;
@@ -1828,10 +1828,10 @@ declare namespace EscolaLms.Tasks.Models {
         updated_at: string | null;
         description: string | null;
         type: string | null;
-        user?: EscolaLms.Tasks.Models.User | null;
-        created_by?: EscolaLms.Tasks.Models.User | null;
+        user?: Ulams.Tasks.Models.User | null;
+        created_by?: Ulams.Tasks.Models.User | null;
         related?: any | null;
-        task_notes?: Array<EscolaLms.Tasks.Models.TaskNote> | null;
+        task_notes?: Array<Ulams.Tasks.Models.TaskNote> | null;
         task_notes_count?: number | null;
     }
 
@@ -1842,13 +1842,13 @@ declare namespace EscolaLms.Tasks.Models {
         note: string;
         created_at: string | null;
         updated_at: string | null;
-        user?: EscolaLms.Tasks.Models.User | null;
-        task?: EscolaLms.Tasks.Models.Task | null;
+        user?: Ulams.Tasks.Models.User | null;
+        task?: Ulams.Tasks.Models.Task | null;
     }
 
 }
 
-declare namespace EscolaLms.Templates.Models {
+declare namespace Ulams.Templates.Models {
     export interface Template {
         id: number;
         name: string;
@@ -1859,8 +1859,8 @@ declare namespace EscolaLms.Templates.Models {
         assignable_type: string | null;
         assignable_id: number | null;
         default: boolean;
-        sections?: Array<EscolaLms.Templates.Models.TemplateSection> | null;
-        templatables?: Array<EscolaLms.Templates.Models.Templatable> | null;
+        sections?: Array<Ulams.Templates.Models.TemplateSection> | null;
+        templatables?: Array<Ulams.Templates.Models.Templatable> | null;
         sections_count?: number | null;
         templatables_count?: number | null;
         readonly is_valid?: boolean;
@@ -1878,7 +1878,7 @@ declare namespace EscolaLms.Templates.Models {
         templatable_id: number;
         created_at: string | null;
         updated_at: string | null;
-        template?: EscolaLms.Templates.Models.Template | null;
+        template?: Ulams.Templates.Models.Template | null;
         templatable?: any | null;
     }
 
@@ -1889,12 +1889,12 @@ declare namespace EscolaLms.Templates.Models {
         template_id: number;
         created_at: string | null;
         updated_at: string | null;
-        template?: EscolaLms.Templates.Models.Template | null;
+        template?: Ulams.Templates.Models.Template | null;
     }
 
 }
 
-declare namespace EscolaLms.TemplatesPdf.Models {
+declare namespace Ulams.TemplatesPdf.Models {
     export interface FabricPDF {
         id: number;
         user_id: number;
@@ -1905,19 +1905,19 @@ declare namespace EscolaLms.TemplatesPdf.Models {
         updated_at: string | null;
         title: string | null;
         vars: string | null;
-        user?: EscolaLms.Core.Models.User | null;
-        template?: EscolaLms.Templates.Models.Template | null;
+        user?: Ulams.Core.Models.User | null;
+        template?: Ulams.Templates.Models.Template | null;
     }
 
 }
 
-declare namespace EscolaLms.TopicTypes.Models.TopicContent {
+declare namespace Ulams.TopicTypes.Models.TopicContent {
     export interface Cmi5Au {
         id: number;
         value: string;
         created_at: string | null;
         updated_at: string | null;
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        topic?: Ulams.Courses.Models.Topic | null;
     }
 
     export interface Image {
@@ -1927,7 +1927,7 @@ declare namespace EscolaLms.TopicTypes.Models.TopicContent {
         value: string;
         width: number | null;
         height: number | null;
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        topic?: Ulams.Courses.Models.Topic | null;
         readonly url?: string;
     }
 
@@ -1939,7 +1939,7 @@ declare namespace EscolaLms.TopicTypes.Models.TopicContent {
         poster: string | null;
         width: number | null;
         height: number | null;
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        topic?: Ulams.Courses.Models.Topic | null;
         readonly poster_url?: string | null;
         readonly url?: string;
     }
@@ -1949,7 +1949,7 @@ declare namespace EscolaLms.TopicTypes.Models.TopicContent {
         created_at: string | null;
         updated_at: string | null;
         value: string;
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        topic?: Ulams.Courses.Models.Topic | null;
     }
 
     export interface H5P {
@@ -1957,7 +1957,7 @@ declare namespace EscolaLms.TopicTypes.Models.TopicContent {
         created_at: string | null;
         updated_at: string | null;
         value: number;
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        topic?: Ulams.Courses.Models.Topic | null;
     }
 
     export interface Audio {
@@ -1966,7 +1966,7 @@ declare namespace EscolaLms.TopicTypes.Models.TopicContent {
         updated_at: string | null;
         value: string;
         length: number;
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        topic?: Ulams.Courses.Models.Topic | null;
         readonly url?: string;
     }
 
@@ -1975,7 +1975,7 @@ declare namespace EscolaLms.TopicTypes.Models.TopicContent {
         created_at: string | null;
         updated_at: string | null;
         value: string;
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        topic?: Ulams.Courses.Models.Topic | null;
     }
 
     export interface RichText {
@@ -1983,7 +1983,7 @@ declare namespace EscolaLms.TopicTypes.Models.TopicContent {
         created_at: string | null;
         updated_at: string | null;
         value: string;
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        topic?: Ulams.Courses.Models.Topic | null;
     }
 
     export interface PDF {
@@ -1991,13 +1991,13 @@ declare namespace EscolaLms.TopicTypes.Models.TopicContent {
         created_at: string | null;
         updated_at: string | null;
         value: string;
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        topic?: Ulams.Courses.Models.Topic | null;
         readonly url?: string;
     }
 
 }
 
-declare namespace EscolaLms.TopicTypeGift.Models {
+declare namespace Ulams.TopicTypeGift.Models {
     export interface QuizAttempt {
         id: number;
         started_at: string;
@@ -2006,9 +2006,9 @@ declare namespace EscolaLms.TopicTypeGift.Models {
         topic_gift_quiz_id: number;
         created_at: string | null;
         updated_at: string | null;
-        gift_quiz?: EscolaLms.TopicTypeGift.Models.GiftQuiz | null;
-        user?: EscolaLms.Auth.Models.User | null;
-        answers?: Array<EscolaLms.TopicTypeGift.Models.AttemptAnswer> | null;
+        gift_quiz?: Ulams.TopicTypeGift.Models.GiftQuiz | null;
+        user?: Ulams.Auth.Models.User | null;
+        answers?: Array<Ulams.TopicTypeGift.Models.AttemptAnswer> | null;
         answers_count?: number | null;
     }
 
@@ -2021,8 +2021,8 @@ declare namespace EscolaLms.TopicTypeGift.Models {
         score: number;
         created_at: string | null;
         updated_at: string | null;
-        question?: EscolaLms.TopicTypeGift.Models.GiftQuestion | null;
-        attempt?: EscolaLms.TopicTypeGift.Models.QuizAttempt | null;
+        question?: Ulams.TopicTypeGift.Models.GiftQuestion | null;
+        attempt?: Ulams.TopicTypeGift.Models.QuizAttempt | null;
     }
 
     export interface GiftQuestion {
@@ -2034,7 +2034,7 @@ declare namespace EscolaLms.TopicTypeGift.Models {
         type: string | null;
         score: number;
         order: number;
-        gift_quiz?: EscolaLms.TopicTypeGift.Models.GiftQuiz | null;
+        gift_quiz?: Ulams.TopicTypeGift.Models.GiftQuiz | null;
     }
 
     export interface GiftQuiz {
@@ -2044,21 +2044,21 @@ declare namespace EscolaLms.TopicTypeGift.Models {
         updated_at: string | null;
         max_attempts: number | null;
         max_execution_time: number | null;
-        questions?: Array<EscolaLms.TopicTypeGift.Models.GiftQuestion> | null;
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        questions?: Array<Ulams.TopicTypeGift.Models.GiftQuestion> | null;
+        topic?: Ulams.Courses.Models.Topic | null;
         questions_count?: number | null;
     }
 
 }
 
-declare namespace EscolaLms.TopicTypeProject.Models {
+declare namespace Ulams.TopicTypeProject.Models {
     export interface Project {
         id: number;
         created_at: string | null;
         updated_at: string | null;
         value: string;
         notify_users: string | null;
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        topic?: Ulams.Courses.Models.Topic | null;
     }
 
     export interface ProjectSolution {
@@ -2068,13 +2068,13 @@ declare namespace EscolaLms.TopicTypeProject.Models {
         path: string;
         created_at: string | null;
         updated_at: string | null;
-        topic?: EscolaLms.Courses.Models.Topic | null;
-        user?: EscolaLms.Auth.Models.User | null;
+        topic?: Ulams.Courses.Models.Topic | null;
+        user?: Ulams.Auth.Models.User | null;
     }
 
 }
 
-declare namespace EscolaLms.Questionnaire.Models {
+declare namespace Ulams.Questionnaire.Models {
     export interface QuestionnaireModelType {
         id: number;
         title: string;
@@ -2094,8 +2094,8 @@ declare namespace EscolaLms.Questionnaire.Models {
         updated_at: string | null;
         type: string;
         public_answers: boolean;
-        questionnaire?: EscolaLms.Questionnaire.Models.Questionnaire | null;
-        answers?: Array<EscolaLms.Questionnaire.Models.QuestionAnswer> | null;
+        questionnaire?: Ulams.Questionnaire.Models.Questionnaire | null;
+        answers?: Array<Ulams.Questionnaire.Models.QuestionAnswer> | null;
         answers_count?: number | null;
     }
 
@@ -2109,9 +2109,9 @@ declare namespace EscolaLms.Questionnaire.Models {
         updated_at: string | null;
         note: string | null;
         visible_on_front: boolean;
-        question?: EscolaLms.Questionnaire.Models.Question | null;
-        user?: EscolaLms.Core.Models.User | null;
-        questionnaire_model?: EscolaLms.Questionnaire.Models.QuestionnaireModel | null;
+        question?: Ulams.Questionnaire.Models.Question | null;
+        user?: Ulams.Core.Models.User | null;
+        questionnaire_model?: Ulams.Questionnaire.Models.QuestionnaireModel | null;
     }
 
     export interface QuestionnaireModel {
@@ -2121,8 +2121,8 @@ declare namespace EscolaLms.Questionnaire.Models {
         model_id: number;
         created_at: string | null;
         updated_at: string | null;
-        questionnaire?: EscolaLms.Questionnaire.Models.Questionnaire | null;
-        modelable_type?: EscolaLms.Questionnaire.Models.QuestionnaireModelType | null;
+        questionnaire?: Ulams.Questionnaire.Models.Questionnaire | null;
+        modelable_type?: Ulams.Questionnaire.Models.QuestionnaireModelType | null;
     }
 
     export interface Questionnaire {
@@ -2131,15 +2131,15 @@ declare namespace EscolaLms.Questionnaire.Models {
         active: boolean;
         created_at: string | null;
         updated_at: string | null;
-        questions?: Array<EscolaLms.Questionnaire.Models.Question> | null;
-        questionnaire_models?: Array<EscolaLms.Questionnaire.Models.QuestionnaireModel> | null;
+        questions?: Array<Ulams.Questionnaire.Models.Question> | null;
+        questionnaire_models?: Array<Ulams.Questionnaire.Models.QuestionnaireModel> | null;
         questions_count?: number | null;
         questionnaire_models_count?: number | null;
     }
 
 }
 
-declare namespace EscolaLms.Video.Models {
+declare namespace Ulams.Video.Models {
     export interface Video {
         id: number;
         created_at: string | null;
@@ -2148,14 +2148,14 @@ declare namespace EscolaLms.Video.Models {
         poster: string | null;
         width: number | null;
         height: number | null;
-        topic?: EscolaLms.Courses.Models.Topic | null;
+        topic?: Ulams.Courses.Models.Topic | null;
         readonly poster_url?: string | null;
         readonly url?: string;
     }
 
 }
 
-declare namespace EscolaLms.Vouchers.Models {
+declare namespace Ulams.Vouchers.Models {
     export interface CouponCategory {
         id: number;
         coupon_id: number;
@@ -2163,8 +2163,8 @@ declare namespace EscolaLms.Vouchers.Models {
         excluded: boolean;
         created_at: string | null;
         updated_at: string | null;
-        coupon?: EscolaLms.Vouchers.Models.Coupon | null;
-        category?: EscolaLms.Vouchers.Models.Category | null;
+        coupon?: Ulams.Vouchers.Models.Coupon | null;
+        category?: Ulams.Vouchers.Models.Category | null;
     }
 
     export interface Coupon {
@@ -2183,15 +2183,15 @@ declare namespace EscolaLms.Vouchers.Models {
         created_at: string | null;
         updated_at: string | null;
         exclude_promotions: boolean;
-        users?: Array<EscolaLms.Vouchers.Models.User> | null;
-        products?: Array<EscolaLms.Vouchers.Models.Product> | null;
-        included_products?: Array<EscolaLms.Vouchers.Models.Product> | null;
-        excluded_products?: Array<EscolaLms.Vouchers.Models.Product> | null;
-        categories?: Array<EscolaLms.Vouchers.Models.Category> | null;
-        included_categories?: Array<EscolaLms.Vouchers.Models.Category> | null;
-        excluded_categories?: Array<EscolaLms.Vouchers.Models.Category> | null;
-        carts?: Array<EscolaLms.Vouchers.Models.Cart> | null;
-        orders?: Array<EscolaLms.Vouchers.Models.Order> | null;
+        users?: Array<Ulams.Vouchers.Models.User> | null;
+        products?: Array<Ulams.Vouchers.Models.Product> | null;
+        included_products?: Array<Ulams.Vouchers.Models.Product> | null;
+        excluded_products?: Array<Ulams.Vouchers.Models.Product> | null;
+        categories?: Array<Ulams.Vouchers.Models.Category> | null;
+        included_categories?: Array<Ulams.Vouchers.Models.Category> | null;
+        excluded_categories?: Array<Ulams.Vouchers.Models.Category> | null;
+        carts?: Array<Ulams.Vouchers.Models.Cart> | null;
+        orders?: Array<Ulams.Vouchers.Models.Order> | null;
         users_count?: number | null;
         products_count?: number | null;
         included_products_count?: number | null;
@@ -2214,12 +2214,12 @@ declare namespace EscolaLms.Vouchers.Models {
         icon_class: string | null;
         created_at: string | null;
         updated_at: string | null;
-        coupons?: Array<EscolaLms.Vouchers.Models.Coupon> | null;
-        products?: Array<EscolaLms.Cart.Models.Product> | null;
-        parent?: EscolaLms.Categories.Models.Category | null;
-        children?: Array<EscolaLms.Categories.Models.Category> | null;
+        coupons?: Array<Ulams.Vouchers.Models.Coupon> | null;
+        products?: Array<Ulams.Cart.Models.Product> | null;
+        parent?: Ulams.Categories.Models.Category | null;
+        children?: Array<Ulams.Categories.Models.Category> | null;
         users?: Array<App.Models.User> | null;
-        courses?: Array<EscolaLms.Courses.Models.Course> | null;
+        courses?: Array<Ulams.Courses.Models.Course> | null;
         coupons_count?: number | null;
         products_count?: number | null;
         children_count?: number | null;
@@ -2235,8 +2235,8 @@ declare namespace EscolaLms.Vouchers.Models {
         created_at: string | null;
         updated_at: string | null;
         product_id: number;
-        coupon?: EscolaLms.Vouchers.Models.Coupon | null;
-        product?: EscolaLms.Cart.Models.Product | null;
+        coupon?: Ulams.Vouchers.Models.Coupon | null;
+        product?: Ulams.Cart.Models.Product | null;
     }
 
     export interface User {
@@ -2264,10 +2264,10 @@ declare namespace EscolaLms.Vouchers.Models {
         access_to_directories: string | null;
         current_timezone: string | null;
         deleted_at: string | null;
-        orders?: Array<EscolaLms.Vouchers.Models.Order> | null;
-        cart?: EscolaLms.Vouchers.Models.Cart | null;
-        products?: Array<EscolaLms.Vouchers.Models.Product> | null;
-        coupons?: Array<EscolaLms.Vouchers.Models.Coupon> | null;
+        orders?: Array<Ulams.Vouchers.Models.Order> | null;
+        cart?: Ulams.Vouchers.Models.Cart | null;
+        products?: Array<Ulams.Vouchers.Models.Product> | null;
+        coupons?: Array<Ulams.Vouchers.Models.Coupon> | null;
         notifications?: Array<Illuminate.Notifications.DatabaseNotification> | null;
         read_notifications?: Array<Illuminate.Notifications.DatabaseNotification> | null;
         unread_notifications?: Array<Illuminate.Notifications.DatabaseNotification> | null;
@@ -2275,7 +2275,7 @@ declare namespace EscolaLms.Vouchers.Models {
         permissions?: Array<Spatie.Permission.Models.Permission> | null;
         clients?: Array<Laravel.Passport.Client> | null;
         tokens?: Array<Laravel.Passport.Token> | null;
-        payments?: Array<EscolaLms.Payments.Models.Payment> | null;
+        payments?: Array<Ulams.Payments.Models.Payment> | null;
         orders_count?: number | null;
         products_count?: number | null;
         coupons_count?: number | null;
@@ -2301,7 +2301,7 @@ declare namespace EscolaLms.Vouchers.Models {
         options: string | null;
         created_at: string | null;
         updated_at: string | null;
-        cart?: EscolaLms.Vouchers.Models.Cart | null;
+        cart?: Ulams.Vouchers.Models.Cart | null;
         buyable?: any | null;
         readonly subtotal?: any;
         readonly price?: any;
@@ -2320,9 +2320,9 @@ declare namespace EscolaLms.Vouchers.Models {
         created_at: string | null;
         updated_at: string | null;
         coupon_id: number | null;
-        coupon?: EscolaLms.Vouchers.Models.Coupon | null;
-        items?: Array<EscolaLms.Vouchers.Models.CartItem> | null;
-        user?: EscolaLms.Cart.Models.User | null;
+        coupon?: Ulams.Vouchers.Models.Coupon | null;
+        items?: Array<Ulams.Vouchers.Models.CartItem> | null;
+        user?: Ulams.Cart.Models.User | null;
         items_count?: number | null;
         readonly cart_manager?: any;
         readonly additional_discount?: number;
@@ -2344,7 +2344,7 @@ declare namespace EscolaLms.Vouchers.Models {
         extra_fees: number;
         tax_rate: number;
         name: string | null;
-        order?: EscolaLms.Vouchers.Models.Order | null;
+        order?: Ulams.Vouchers.Models.Order | null;
         buyable?: any | null;
         readonly description?: string | null;
         readonly subtotal?: number;
@@ -2373,10 +2373,10 @@ declare namespace EscolaLms.Vouchers.Models {
         client_taxid: string | null;
         client_email: string | null;
         client_street_number: string | null;
-        coupon?: EscolaLms.Vouchers.Models.Coupon | null;
-        items?: Array<EscolaLms.Cart.Models.OrderItem> | null;
-        user?: EscolaLms.Core.Models.User | null;
-        payments?: Array<EscolaLms.Payments.Models.Payment> | null;
+        coupon?: Ulams.Vouchers.Models.Coupon | null;
+        items?: Array<Ulams.Cart.Models.OrderItem> | null;
+        user?: Ulams.Core.Models.User | null;
+        payments?: Array<Ulams.Payments.Models.Payment> | null;
         items_count?: number | null;
         payments_count?: number | null;
         readonly quantity?: number;
@@ -2389,8 +2389,8 @@ declare namespace EscolaLms.Vouchers.Models {
         user_id: number;
         created_at: string | null;
         updated_at: string | null;
-        coupon?: EscolaLms.Vouchers.Models.Coupon | null;
-        user?: EscolaLms.Vouchers.Models.User | null;
+        coupon?: Ulams.Vouchers.Models.Coupon | null;
+        user?: Ulams.Vouchers.Models.User | null;
     }
 
     export interface Product {
@@ -2410,12 +2410,12 @@ declare namespace EscolaLms.Vouchers.Models {
         limit_total: number | null;
         created_at: string | null;
         updated_at: string | null;
-        coupons?: Array<EscolaLms.Vouchers.Models.Coupon> | null;
-        productables?: Array<EscolaLms.Cart.Models.ProductProductable> | null;
-        users?: Array<EscolaLms.Cart.Models.User> | null;
-        tags?: Array<EscolaLms.Tags.Models.Tag> | null;
-        categories?: Array<EscolaLms.Cart.Models.Category> | null;
-        related_products?: Array<EscolaLms.Cart.Models.Product> | null;
+        coupons?: Array<Ulams.Vouchers.Models.Coupon> | null;
+        productables?: Array<Ulams.Cart.Models.ProductProductable> | null;
+        users?: Array<Ulams.Cart.Models.User> | null;
+        tags?: Array<Ulams.Tags.Models.Tag> | null;
+        categories?: Array<Ulams.Cart.Models.Category> | null;
+        related_products?: Array<Ulams.Cart.Models.Product> | null;
         coupons_count?: number | null;
         productables_count?: number | null;
         users_count?: number | null;
@@ -2430,7 +2430,7 @@ declare namespace EscolaLms.Vouchers.Models {
 
 }
 
-declare namespace EscolaLms.Tracker.Models {
+declare namespace Ulams.Tracker.Models {
     export interface User {
         id: number;
         first_name: string;
@@ -2484,12 +2484,12 @@ declare namespace EscolaLms.Tracker.Models {
         extra: string | null;
         created_at: string | null;
         updated_at: string | null;
-        user?: EscolaLms.Core.Models.User | null;
+        user?: Ulams.Core.Models.User | null;
     }
 
 }
 
-declare namespace EscolaLms.Auth.Http.Requests {
+declare namespace Ulams.Auth.Http.Requests {
     export interface ResetPasswordRequest {
         email: string;
         token: string;
@@ -2570,7 +2570,7 @@ declare namespace EscolaLms.Auth.Http.Requests {
 
 }
 
-declare namespace EscolaLms.Auth.Http.Requests.Admin {
+declare namespace Ulams.Auth.Http.Requests.Admin {
     export interface UserInterestDeleteRequest {}
 
     export interface UserSettingsUpdateRequest {
@@ -2739,7 +2739,7 @@ declare namespace EscolaLms.Auth.Http.Requests.Admin {
 
 }
 
-declare namespace EscolaLms.Cart.Http.Requests {
+declare namespace Ulams.Cart.Http.Requests {
     export interface ProductSearchRequest {
         productable_id?: number;
         productable_type?: string;
@@ -2804,7 +2804,7 @@ declare namespace EscolaLms.Cart.Http.Requests {
 
 }
 
-declare namespace EscolaLms.Cart.Http.Requests.Admin {
+declare namespace Ulams.Cart.Http.Requests.Admin {
     export interface ProductSearchRequest {
         productable_id?: number;
         productable_type?: string;
@@ -3021,7 +3021,7 @@ declare namespace EscolaLms.Cart.Http.Requests.Admin {
 
 }
 
-declare namespace EscolaLms.Categories.Http.Requests {
+declare namespace Ulams.Categories.Http.Requests {
     export interface CategoryCreateRequest {
         name: string;
         icon?: Blob | File | null;
@@ -3045,7 +3045,7 @@ declare namespace EscolaLms.Categories.Http.Requests {
 
 }
 
-declare namespace EscolaLms.Webinar.Http.Requests {
+declare namespace Ulams.Webinar.Http.Requests {
     export interface WebinarAssignableUserListRequest {}
 
     export interface UpdateWebinarRequest {
@@ -3083,7 +3083,7 @@ declare namespace EscolaLms.Webinar.Http.Requests {
 
 }
 
-declare namespace EscolaLms.Consultations.Http.Requests {
+declare namespace Ulams.Consultations.Http.Requests {
     export interface UpdateConsultationRequest {
         name?: string;
         status?: string;
@@ -3147,7 +3147,7 @@ declare namespace EscolaLms.Consultations.Http.Requests {
 
 }
 
-declare namespace EscolaLms.ConsultationAccess.Http.Requests {
+declare namespace Ulams.ConsultationAccess.Http.Requests {
     export interface DeleteConsultationAccessEnquiryRequest {}
 
     export interface ReadConsultationAccessEnquiryRequest {}
@@ -3173,7 +3173,7 @@ declare namespace EscolaLms.ConsultationAccess.Http.Requests {
 
 }
 
-declare namespace EscolaLms.ConsultationAccess.Http.Requests.Admin {
+declare namespace Ulams.ConsultationAccess.Http.Requests.Admin {
     export interface AdminApproveConsultationAccessEnquiryRequest {
         proposed_term_id: number;
         meeting_link?: string;
@@ -3187,7 +3187,7 @@ declare namespace EscolaLms.ConsultationAccess.Http.Requests.Admin {
 
 }
 
-declare namespace EscolaLms.Courses.Http.Requests {
+declare namespace Ulams.Courses.Http.Requests {
     export interface ListTopicResourceAPIRequest {}
 
     export interface DeleteTopicAPIRequest {}
@@ -3338,7 +3338,7 @@ declare namespace EscolaLms.Courses.Http.Requests {
 
 }
 
-declare namespace EscolaLms.CourseAccess.Http.Requests {
+declare namespace Ulams.CourseAccess.Http.Requests {
     export interface ListCourseAccessEnquiryRequest {}
 
     export interface DeleteCourseAccessEnquiryRequest {}
@@ -3350,7 +3350,7 @@ declare namespace EscolaLms.CourseAccess.Http.Requests {
 
 }
 
-declare namespace EscolaLms.CourseAccess.Http.Requests.Admin {
+declare namespace Ulams.CourseAccess.Http.Requests.Admin {
     export interface AddAccessAPIRequest {
         groups?: Array<number>;
         users?: Array<number>;
@@ -3376,7 +3376,7 @@ declare namespace EscolaLms.CourseAccess.Http.Requests.Admin {
 
 }
 
-declare namespace EscolaLms.Bookmarks.Http.Requests {
+declare namespace Ulams.Bookmarks.Http.Requests {
     export interface AdminListBookmarkRequest {}
 
     export interface CreateBookmarkRequest {
@@ -3397,7 +3397,7 @@ declare namespace EscolaLms.Bookmarks.Http.Requests {
 
 }
 
-declare namespace EscolaLms.CoursesImportExport.Http.Requests {
+declare namespace Ulams.CoursesImportExport.Http.Requests {
     export interface CloneCourseAPIRequest {}
 
     export interface CourseImportAPIRequest {
@@ -3408,7 +3408,7 @@ declare namespace EscolaLms.CoursesImportExport.Http.Requests {
 
 }
 
-declare namespace EscolaLms.CsvUsers.Http.Requests {
+declare namespace Ulams.CsvUsers.Http.Requests {
     export interface ExportUsersToCsvAPIRequest {
         from?: string | null;
         to?: string | null;
@@ -3422,7 +3422,7 @@ declare namespace EscolaLms.CsvUsers.Http.Requests {
 
 }
 
-declare namespace EscolaLms.Files.Http.Requests {
+declare namespace Ulams.Files.Http.Requests {
     export interface FileUploadRequest {
         file: Array<Blob | File>;
     }
@@ -3448,7 +3448,7 @@ declare namespace EscolaLms.Files.Http.Requests {
 
 }
 
-declare namespace EscolaLms.HeadlessH5P.Http.Requests {
+declare namespace Ulams.HeadlessH5P.Http.Requests {
     export interface ContentDeleteRequest {}
 
     export interface LibraryUploadRequest {}
@@ -3493,7 +3493,7 @@ declare namespace EscolaLms.HeadlessH5P.Http.Requests {
 
 }
 
-declare namespace EscolaLms.ModelFields.Http.Requests {
+declare namespace Ulams.ModelFields.Http.Requests {
     export interface MetadataListRequest {}
 
     export interface MetadataDeleteRequest {
@@ -3511,7 +3511,7 @@ declare namespace EscolaLms.ModelFields.Http.Requests {
 
 }
 
-declare namespace EscolaLms.Notifications.Http.Requests {
+declare namespace Ulams.Notifications.Http.Requests {
     export interface NotificationEventsRequest {}
 
     export interface NotificationsRequest {
@@ -3541,7 +3541,7 @@ declare namespace EscolaLms.Notifications.Http.Requests {
 
 }
 
-declare namespace EscolaLms.Pages.Http.Requests {
+declare namespace Ulams.Pages.Http.Requests {
     export interface PageFrontListingRequest {}
 
     export interface PageFrontReadRequest {
@@ -3579,7 +3579,7 @@ declare namespace EscolaLms.Pages.Http.Requests {
 
 }
 
-declare namespace EscolaLms.Payments.Http.Requests.Admin {
+declare namespace Ulams.Payments.Http.Requests.Admin {
     export interface PaymentsSearchAdminRequest {
         payable_id?: number;
         payable_type?: string;
@@ -3602,7 +3602,7 @@ declare namespace EscolaLms.Payments.Http.Requests.Admin {
 
 }
 
-declare namespace EscolaLms.Payments.Http.Requests {
+declare namespace Ulams.Payments.Http.Requests {
     export interface PaymentsSearchRequest {
         payable_id?: number;
         payable_type?: string;
@@ -3616,7 +3616,7 @@ declare namespace EscolaLms.Payments.Http.Requests {
 
 }
 
-declare namespace EscolaLms.Permissions.Http.Requests {
+declare namespace Ulams.Permissions.Http.Requests {
     export interface RoleReadRequest {}
 
     export interface RoleListingRequest {
@@ -3637,7 +3637,7 @@ declare namespace EscolaLms.Permissions.Http.Requests {
 
 }
 
-declare namespace EscolaLms.Questionnaire.Http.Requests {
+declare namespace Ulams.Questionnaire.Http.Requests {
     export interface QuestionUpdateRequest {
         id: number;
         title?: string;
@@ -3763,7 +3763,7 @@ declare namespace EscolaLms.Questionnaire.Http.Requests {
 
 }
 
-declare namespace EscolaLms.Reports.Http.Requests.Admin {
+declare namespace Ulams.Reports.Http.Requests.Admin {
     export interface CourseStatsRequest {
         course_id: number;
         stats?: Array<string>;
@@ -3806,7 +3806,7 @@ declare namespace EscolaLms.Reports.Http.Requests.Admin {
 
 }
 
-declare namespace EscolaLms.Scorm.Http.Requests {
+declare namespace Ulams.Scorm.Http.Requests {
     export interface ScormDeleteRequest {}
 
     export interface GetScormTrackRequest {}
@@ -3821,7 +3821,7 @@ declare namespace EscolaLms.Scorm.Http.Requests {
 
 }
 
-declare namespace EscolaLms.Settings.Http.Requests.Admin {
+declare namespace Ulams.Settings.Http.Requests.Admin {
     export interface SettingsUpdateRequest {
         key?: string;
         group?: string;
@@ -3855,7 +3855,7 @@ declare namespace EscolaLms.Settings.Http.Requests.Admin {
 
 }
 
-declare namespace EscolaLms.StationaryEvents.Http.Requests {
+declare namespace Ulams.StationaryEvents.Http.Requests {
     export interface DeleteStationaryEventRequest {}
 
     export interface ReadStationaryEventRequest {}
@@ -3905,7 +3905,7 @@ declare namespace EscolaLms.StationaryEvents.Http.Requests {
 
 }
 
-declare namespace EscolaLms.Tags.Http.Request {
+declare namespace Ulams.Tags.Http.Request {
     export interface TagInsertRequest {
         model_type: string;
         model_id: number;
@@ -3918,7 +3918,7 @@ declare namespace EscolaLms.Tags.Http.Request {
 
 }
 
-declare namespace EscolaLms.Tasks.Http.Requests {
+declare namespace Ulams.Tasks.Http.Requests {
     export interface DeleteTaskNoteRequest {}
 
     export interface DetailsTaskRequest {}
@@ -3961,7 +3961,7 @@ declare namespace EscolaLms.Tasks.Http.Requests {
 
 }
 
-declare namespace EscolaLms.Tasks.Http.Requests.Admin {
+declare namespace Ulams.Tasks.Http.Requests.Admin {
     export interface AdminUpdateTaskRequest {
         title: string;
         description?: string | null;
@@ -4006,7 +4006,7 @@ declare namespace EscolaLms.Tasks.Http.Requests.Admin {
 
 }
 
-declare namespace EscolaLms.Templates.Http.Requests {
+declare namespace Ulams.Templates.Http.Requests {
     export interface TemplateAssignedRequest {
         assignable_class: string;
     }
@@ -4057,7 +4057,7 @@ declare namespace EscolaLms.Templates.Http.Requests {
 
 }
 
-declare namespace EscolaLms.TemplatesPdf.Http.Requests {
+declare namespace Ulams.TemplatesPdf.Http.Requests {
     export interface PdfListingRequest {}
 
     export interface PdfListingAdminRequest {
@@ -4069,7 +4069,7 @@ declare namespace EscolaLms.TemplatesPdf.Http.Requests {
 
 }
 
-declare namespace EscolaLms.TopicTypeGift.Http.Requests {
+declare namespace Ulams.TopicTypeGift.Http.Requests {
     export interface ReadQuizAttemptRequest {}
 
     export interface SaveAllAttemptAnswersRequest {
@@ -4110,7 +4110,7 @@ declare namespace EscolaLms.TopicTypeGift.Http.Requests {
 
 }
 
-declare namespace EscolaLms.TopicTypeGift.Http.Requests.Admin {
+declare namespace Ulams.TopicTypeGift.Http.Requests.Admin {
     export interface AdminReadQuizAttemptRequest {}
 
     export interface AdminGiftQuestionRequest {
@@ -4155,7 +4155,7 @@ declare namespace EscolaLms.TopicTypeGift.Http.Requests.Admin {
 
 }
 
-declare namespace EscolaLms.TopicTypeProject.Http.Requests {
+declare namespace Ulams.TopicTypeProject.Http.Requests {
     export interface DeleteProjectSolutionRequest {}
 
     export interface ListProjectSolutionRequest {}
@@ -4167,14 +4167,14 @@ declare namespace EscolaLms.TopicTypeProject.Http.Requests {
 
 }
 
-declare namespace EscolaLms.TopicTypeProject.Http.Requests.Admin {
+declare namespace Ulams.TopicTypeProject.Http.Requests.Admin {
     export interface AdminListProjectSolutionRequest {}
 
     export interface AdminDeleteProjectSolutionRequest {}
 
 }
 
-declare namespace EscolaLms.Vouchers.Http.Requests {
+declare namespace Ulams.Vouchers.Http.Requests {
     export interface UpdateCouponRequest {
         name?: string | null;
         code?: string;
@@ -4235,7 +4235,7 @@ declare namespace EscolaLms.Vouchers.Http.Requests {
 
 }
 
-declare namespace EscolaLms.Translations.Http.Requests {
+declare namespace Ulams.Translations.Http.Requests {
     export interface DeleteLanguageLineRequest {}
 
     export interface ListLanguageLineRequest {}

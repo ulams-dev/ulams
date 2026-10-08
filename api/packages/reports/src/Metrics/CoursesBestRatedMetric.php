@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Reports\Metrics;
+namespace Ulams\Reports\Metrics;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Questionnaire\Models\Question;
-use EscolaLms\Questionnaire\Models\QuestionAnswer;
-use EscolaLms\Questionnaire\Models\Questionnaire;
-use EscolaLms\Questionnaire\Models\QuestionnaireModel;
-use EscolaLms\Questionnaire\Models\QuestionnaireModelType;
+use Ulams\Courses\Models\Course;
+use Ulams\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Models\QuestionAnswer;
+use Ulams\Questionnaire\Models\Questionnaire;
+use Ulams\Questionnaire\Models\QuestionnaireModel;
+use Ulams\Questionnaire\Models\QuestionnaireModelType;
 use Illuminate\Support\Collection;
 
 class CoursesBestRatedMetric extends AbstractCoursesMetric
@@ -34,7 +34,7 @@ class CoursesBestRatedMetric extends AbstractCoursesMetric
 
     public function requiredPackage(): string
     {
-        return 'escolalms/courses & escolalms/questionnaire';
+        return 'ulams/courses & ulams/questionnaire';
     }
 
     public static function requiredPackageInstalled(): bool

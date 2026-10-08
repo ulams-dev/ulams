@@ -2,8 +2,8 @@
 
 namespace Api;
 
-use EscolaLms\Images\Events\FileStored;
-use EscolaLms\Images\Tests\TestCase;
+use Ulams\Images\Events\FileStored;
+use Ulams\Images\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;

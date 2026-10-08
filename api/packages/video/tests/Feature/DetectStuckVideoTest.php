@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Video\Tests\Feature;
+namespace Ulams\Video\Tests\Feature;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Video\Enums\VideoProcessState;
-use EscolaLms\Video\Events\ProcessVideoFailed;
-use EscolaLms\Video\Jobs\DetectStuckVideo;
-use EscolaLms\Video\Models\Video;
-use EscolaLms\Video\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Topic;
+use Ulams\Video\Enums\VideoProcessState;
+use Ulams\Video\Events\ProcessVideoFailed;
+use Ulams\Video\Jobs\DetectStuckVideo;
+use Ulams\Video\Models\Video;
+use Ulams\Video\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
@@ -77,7 +77,7 @@ class DetectStuckVideoTest extends TestCase
                 'json' => [
                     'ffmpeg' => ['state' => VideoProcessState::CODING, 'date_time' => Carbon::now()->subHours(8)]
                 ],
-                'topicable_type' => \EscolaLms\TopicTypes\Models\TopicContent\Video::class,
+                'topicable_type' => \Ulams\TopicTypes\Models\TopicContent\Video::class,
                 'topicable_id' => Video::factory()->create()->getKey()
             ])
             ->create();
@@ -103,7 +103,7 @@ class DetectStuckVideoTest extends TestCase
                 'json' => [
                     'ffmpeg' => [...$state]
                 ],
-                'topicable_type' => \EscolaLms\TopicTypes\Models\TopicContent\Video::class,
+                'topicable_type' => \Ulams\TopicTypes\Models\TopicContent\Video::class,
                 'topicable_id' => Video::factory()->create()->getKey()
             ])
             ->create();

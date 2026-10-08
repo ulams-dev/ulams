@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Models\TopicContent;
+namespace Ulams\TopicTypes\Models\TopicContent;
 
-use EscolaLms\Courses\Models\Contracts\TopicFileContentContract;
-use EscolaLms\Files\Helpers\FileHelper;
+use Ulams\Courses\Models\Contracts\TopicFileContentContract;
+use Ulams\Files\Helpers\FileHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;

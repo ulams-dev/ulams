@@ -4,7 +4,7 @@ import { getFontFromTheme } from "../../../theme/provider";
 import { useMemo, useCallback } from "react";
 import { mix } from "chroma-js";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
-import { ExtendableStyledComponent } from "@lms/components/types/component";
+import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type">,
@@ -307,7 +307,7 @@ export const Input: React.FC<InputProps> = (props) => {
       disabled={props.disabled}
       required={required}
       label={label}
-      className={`wellms-component lsm-input ${helper ? "has-helper" : ""} ${
+      className={`ulams-component lsm-input ${helper ? "has-helper" : ""} ${
         error ? "has-error" : ""
       } ${container?.className ? container.className : ""} ${className}`}
       type={props.type}

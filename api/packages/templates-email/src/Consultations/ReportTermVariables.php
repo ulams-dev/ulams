@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Consultations;
+namespace Ulams\TemplatesEmail\Consultations;
 
 use Carbon\Carbon;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Events\EventWrapper;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
 
 class ReportTermVariables extends CommonConsultationVariables
 {

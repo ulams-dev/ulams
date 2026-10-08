@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Database\Factories\TopicContent;
+namespace Ulams\TopicTypes\Database\Factories\TopicContent;
 
-use EscolaLms\TopicTypes\Database\Factories\TopicContent\Components\FileHelper;
-use EscolaLms\TopicTypes\Models\TopicContent\Audio;
+use Ulams\TopicTypes\Database\Factories\TopicContent\Components\FileHelper;
+use Ulams\TopicTypes\Models\TopicContent\Audio;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AudioFactory extends Factory

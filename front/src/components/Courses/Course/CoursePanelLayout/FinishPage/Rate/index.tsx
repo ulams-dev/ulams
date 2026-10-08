@@ -1,9 +1,9 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import RateCourse from "@/components/Courses/RateCourse";
 import { QuestionnaireModelType } from "@/types/questionnaire";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import { useQuestionnaires } from "@/hooks/questionnaires";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { useRoles } from "@/hooks/useRoles";
 import { metaDataKeys } from "@/utils/meta";
 
@@ -30,7 +30,7 @@ export const QuestionnairesModal = ({
     entityId: entityId || 0,
     entityModel: entityModel,
   });
-  const { settings } = useContext(EscolaLMSContext);
+  const { settings } = useContext(UlamsContext);
   const questionnaireFirstime =
     settings?.value?.config?.[metaDataKeys?.questionnaireFirstTimeMetaKey];
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Payments\Providers;
+namespace Ulams\Payments\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
-use EscolaLms\Payments\Models\Payment;
-use EscolaLms\Payments\Policies\PaymentPolicy;
+use Ulams\Payments\Models\Payment;
+use Ulams\Payments\Policies\PaymentPolicy;
 use Illuminate\Support\Facades\Route;
 
 class AuthServiceProvider extends ServiceProvider

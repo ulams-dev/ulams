@@ -2,25 +2,18 @@
 
 Jitsi integration
 
-[![codecov](https://codecov.io/gh/EscolaLMS/Jitsi/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Jitsi)
-[![phpunit](https://github.com/EscolaLMS/Jitsi/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Jitsi/actions/workflows/test.yml)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/jitsi)](https://packagist.org/packages/escolalms/jitsi)
-[![downloads](https://img.shields.io/packagist/v/escolalms/jitsi)](https://packagist.org/packages/escolalms/jitsi)
-[![downloads](https://img.shields.io/packagist/l/escolalms/jitsi)](https://packagist.org/packages/escolalms/jitsi)
-[![Maintainability](https://api.codeclimate.com/v1/badges/0fe584397e06ef32618f/maintainability)](https://codeclimate.com/github/EscolaLMS/Jitsi/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/0fe584397e06ef32618f/test_coverage)](https://codeclimate.com/github/EscolaLMS/Jitsi/test_coverage)
 
 
 ## What does it do
 This package introduce just a facade that you can use to generate parameters for jitsi player
 
 ## Installing
-- `composer require escolalms/jitsi`
+- `composer require ulams/jitsi`
 - Setup environmental config to point to Jitsi service - use either `env` file or [Settings package](https://github.com/EscolaLMS/Settings) (settings should be visible in the settings endpoint)
 
 ```php
 return [
-    'host' => env('JITSI_HOST', 'meet-stage.escolalms.com'),
+    'host' => env('JITSI_HOST', 'meet-stage.ulams.app'),
     'app_id' => env('JITSI_APP_ID', 'meet-id'),
     'secret' => env('JITSI_APP_SECRET', 'secret'),
     'package_status' => 'enabled',
@@ -32,7 +25,7 @@ If `app_id` or `secret` service will skip `JWT` token generation.
 Once you provide the above you can generate parameters, example from tinker
 
 ```php
-\EscolaLms\Jitsi\Facades\Jitsi::getChannelData(App\Models\User::find(1), "czesc ziomku", true, ['logoImageUrl'=>'https://escola.pl/_next/image?url=%2Fimages%2Flogo-escola.svg&w=3840&q=75'])
+\Ulams\Jitsi\Facades\Jitsi::getChannelData(App\Models\User::find(1), "czesc ziomku", true, ['logoImageUrl'=>'https://ulams.pl/_next/image?url=%2Fimages%2Flogo-ulams.svg&w=3840&q=75'])
 ```
 
 would generate some thing like
@@ -40,10 +33,10 @@ would generate some thing like
 ```php
 [
      "data" => [
-       "domain" => "meet-stage.escolalms.com",
+       "domain" => "meet-stage.ulams.app",
        "roomName" => "czescZiomku",
        "configOverwrite" => [
-         "logoImageUrl" => "https://escola.pl/_next/image?url=%2Fimages%2Flogo-escola.svg&w=3840&q=75",
+         "logoImageUrl" => "https://ulams.pl/_next/image?url=%2Fimages%2Flogo-ulams.svg&w=3840&q=75",
        ],
        "interfaceConfigOverwrite" => [
        ],
@@ -51,13 +44,13 @@ would generate some thing like
          "id" => 1,
          "name" => "Osman Kanu",
          "displayName" => "Osman Kanu",
-         "email" => "student@escola-lms.com",
+         "email" => "student@ulams.com",
          "moderator" => true,
        ],
        "jwt" => "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJtZWV0LWlkIiwiYXVkIjoibWVldC1pZCIsInN1YiI6Im1lZXQtc3RhZ2UuZXNjb2xhbG1zLmNvbSIsImV4cCI6MTY0MzY1OTM1NCwicm9vbSI6ImN6ZXNjWmlvbWt1IiwidXNlciI6eyJpZCI6MSwibmFtZSI6Ik9zbWFuIEthbnUiLCJkaXNwbGF5TmFtZSI6Ik9zbWFuIEthbnUiLCJlbWFpbCI6InN0dWRlbnRAZXNjb2xhLWxtcy5jb20iLCJtb2RlcmF0b3IiOmZhbHNlfX0.xnFV-Kk63c3YRADzkSQLz6FP71yfEUO7Q53isFGkv_U",
      ],
-     "host" => "meet-stage.escolalms.com",
-     "url" => "https://meet-stage.escolalms.com/czescZiomku?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJtZWV0LWlkIiwiYXVkIjoibWVldC1pZCIsInN1YiI6Im1lZXQtc3RhZ2UuZXNjb2xhbG1zLmNvbSIsImV4cCI6MTY0MzY1OTM1NCwicm9vbSI6ImN6ZXNjWmlvbWt1IiwidXNlciI6eyJpZCI6MSwibmFtZSI6Ik9zbWFuIEthbnUiLCJkaXNwbGF5TmFtZSI6Ik9zbWFuIEthbnUiLCJlbWFpbCI6InN0dWRlbnRAZXNjb2xhLWxtcy5jb20iLCJtb2RlcmF0b3IiOmZhbHNlfX0.xnFV-Kk63c3YRADzkSQLz6FP71yfEUO7Q53isFGkv_U",
+     "host" => "meet-stage.ulams.app",
+     "url" => "https://meet-stage.ulams.app/czescZiomku?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJtZWV0LWlkIiwiYXVkIjoibWVldC1pZCIsInN1YiI6Im1lZXQtc3RhZ2UuZXNjb2xhbG1zLmNvbSIsImV4cCI6MTY0MzY1OTM1NCwicm9vbSI6ImN6ZXNjWmlvbWt1IiwidXNlciI6eyJpZCI6MSwibmFtZSI6Ik9zbWFuIEthbnUiLCJkaXNwbGF5TmFtZSI6Ik9zbWFuIEthbnUiLCJlbWFpbCI6InN0dWRlbnRAZXNjb2xhLWxtcy5jb20iLCJtb2RlcmF0b3IiOmZhbHNlfX0.xnFV-Kk63c3YRADzkSQLz6FP71yfEUO7Q53isFGkv_U",
    ]
 ```
 
@@ -74,13 +67,13 @@ import type {
 } from "@jitsi/web-sdk/lib/types";
 
 const dataFromEndpoint = {
-  domain: "meet-stage.escolalms.com",
+  domain: "meet-stage.ulams.app",
   roomName: "czescZiomku",
   configOverwrite: {},
   interfaceConfigOverwrite: {},
   userInfo: {
     displayName: "Osman Kanu",
-    email: "student@escola-lms.com",
+    email: "student@ulams.com",
   },
   jwt: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJtZWV0LWlkIiwiYXVkIjoibWVldC1pZCIsInN1YiI6Im1lZXQtc3RhZ2UuZXNjb2xhbG1zLmNvbSIsImV4cCI6MTY0MzY1OTM1NCwicm9vbSI6ImN6ZXNjWmlvbWt1IiwidXNlciI6eyJpZCI6MSwibmFtZSI6Ik9zbWFuIEthbnUiLCJkaXNwbGF5TmFtZSI6Ik9zbWFuIEthbnUiLCJlbWFpbCI6InN0dWRlbnRAZXNjb2xhLWxtcy5jb20iLCJtb2RlcmF0b3IiOmZhbHNlfX0.xnFV-Kk63c3YRADzkSQLz6FP71yfEUO7Q53isFGkv_U",
 };
@@ -103,5 +96,5 @@ export default App;
 
 ## Tests
 
-Run `./vendor/bin/phpunit --filter 'EscolaLms\\Jitsi\\Tests'` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
+Run `./vendor/bin/phpunit --filter 'Ulams\\Jitsi\\Tests'` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
 

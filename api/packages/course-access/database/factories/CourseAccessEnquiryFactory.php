@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Database\Factories;
+namespace Ulams\CourseAccess\Database\Factories;
 
-use EscolaLms\CourseAccess\Enum\EnquiryStatusEnum;
-use EscolaLms\CourseAccess\Models\Course;
-use EscolaLms\CourseAccess\Models\CourseAccessEnquiry;
-use EscolaLms\Courses\Tests\Models\User;
+use Ulams\CourseAccess\Enum\EnquiryStatusEnum;
+use Ulams\CourseAccess\Models\Course;
+use Ulams\CourseAccess\Models\CourseAccessEnquiry;
+use Ulams\Courses\Tests\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CourseAccessEnquiryFactory extends Factory

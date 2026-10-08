@@ -1,21 +1,21 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Tests;
+namespace Ulams\HeadlessH5P\Tests;
 
-use EscolaLms\Core\EscolaLmsServiceProvider;
-use EscolaLms\Core\Models\User;
-use EscolaLms\HeadlessH5P\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\HeadlessH5P\Tests\Models\Client;
-use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
+use Ulams\Core\UlamsServiceProvider;
+use Ulams\Core\Models\User;
+use Ulams\HeadlessH5P\Database\Seeders\PermissionTableSeeder;
+use Ulams\HeadlessH5P\Tests\Models\Client;
+use Ulams\Settings\UlamsSettingsServiceProvider;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
-use EscolaLms\HeadlessH5P\HeadlessH5PServiceProvider;
+use Ulams\HeadlessH5P\HeadlessH5PServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
-class TestCase extends \EscolaLms\Core\Tests\TestCase
+class TestCase extends \Ulams\Core\Tests\TestCase
 {
     public $user;
 
@@ -37,8 +37,8 @@ class TestCase extends \EscolaLms\Core\Tests\TestCase
             HeadlessH5PServiceProvider::class,
             PermissionServiceProvider::class,
             PassportServiceProvider::class,
-            EscolaLmsServiceProvider::class,
-            EscolaLmsSettingsServiceProvider::class,
+            UlamsServiceProvider::class,
+            UlamsSettingsServiceProvider::class,
         ];
     }
 

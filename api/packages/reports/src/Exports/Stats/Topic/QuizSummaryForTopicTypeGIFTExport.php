@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Reports\Exports\Stats\Topic;
+namespace Ulams\Reports\Exports\Stats\Topic;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Reports\Stats\Topic\QuizSummaryForTopicTypeGIFT;
+use Ulams\Courses\Models\Topic;
+use Ulams\Reports\Stats\Topic\QuizSummaryForTopicTypeGIFT;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;

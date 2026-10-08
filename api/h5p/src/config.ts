@@ -168,7 +168,7 @@ export function loadConfig(): AppConfig {
             region: env('S3_REGION', 'us-east-1') as string,
             accessKeyId: required('S3_KEY', env('AWS_ACCESS_KEY_ID', 'admin')),
             secretAccessKey: required('S3_SECRET', env('AWS_SECRET_ACCESS_KEY', 'minio_secretpassword')),
-            bucket: required('S3_BUCKET', 'wellms'),
+            bucket: required('S3_BUCKET', 'ulams'),
             prefix: (env('S3_PREFIX', 'h5p') as string).replace(/^\/+|\/+$/g, ''),
             forcePathStyle: bool('S3_FORCE_PATH_STYLE', true),
             maxKeyLength: int('S3_MAX_KEY_LENGTH', 1024)

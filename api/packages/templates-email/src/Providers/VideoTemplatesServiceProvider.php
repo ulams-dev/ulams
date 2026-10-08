@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Providers;
+namespace Ulams\TemplatesEmail\Providers;
 
-use EscolaLms\Templates\Facades\Template;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
-use EscolaLms\TemplatesEmail\Video\VideoProcessFailedVariables;
-use EscolaLms\TemplatesEmail\Video\VideoProcessFinishedVariables;
-use EscolaLms\TemplatesEmail\Video\VideoProcessStartedVariables;
-use EscolaLms\TemplatesEmail\Video\VideoProcessStateVariables;
-use EscolaLms\Video\Events\ProcessVideoFailed;
-use EscolaLms\Video\Events\ProcessVideoFinished;
-use EscolaLms\Video\Events\ProcessVideoStarted;
-use EscolaLms\Video\Events\ProcessVideoState;
+use Ulams\Templates\Facades\Template;
+use Ulams\TemplatesEmail\Core\EmailChannel;
+use Ulams\TemplatesEmail\Video\VideoProcessFailedVariables;
+use Ulams\TemplatesEmail\Video\VideoProcessFinishedVariables;
+use Ulams\TemplatesEmail\Video\VideoProcessStartedVariables;
+use Ulams\TemplatesEmail\Video\VideoProcessStateVariables;
+use Ulams\Video\Events\ProcessVideoFailed;
+use Ulams\Video\Events\ProcessVideoFinished;
+use Ulams\Video\Events\ProcessVideoStarted;
+use Ulams\Video\Events\ProcessVideoState;
 use Illuminate\Support\ServiceProvider;
 
 class VideoTemplatesServiceProvider extends ServiceProvider

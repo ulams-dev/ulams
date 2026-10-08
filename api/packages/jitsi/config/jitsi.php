@@ -1,10 +1,10 @@
 <?php
 
-use EscolaLms\Jitsi\Enum\PackageStatusEnum;
+use Ulams\Jitsi\Enum\PackageStatusEnum;
 
 return [
 
-    'jitsi_host' => env('JITSI_HOST', 'meet-stage.escolalms.com'),
+    'jitsi_host' => env('JITSI_HOST', 'meet-stage.ulams.app'),
     'app_id' => env('JITSI_APP_ID', 'meet-id'),
     'secret' => env('JITSI_APP_SECRET', 'Test'),
 

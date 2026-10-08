@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Core\Http\Resources;
+namespace Ulams\Core\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

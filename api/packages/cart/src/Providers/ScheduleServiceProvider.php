@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cart\Providers;
+namespace Ulams\Cart\Providers;
 
-use EscolaLms\Cart\Console\Commands\AbandonedCart;
-use EscolaLms\Cart\Jobs\ExpireRecursiveProduct;
-use EscolaLms\Cart\Jobs\RenewRecursiveProduct;
+use Ulams\Cart\Console\Commands\AbandonedCart;
+use Ulams\Cart\Jobs\ExpireRecursiveProduct;
+use Ulams\Cart\Jobs\RenewRecursiveProduct;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Webinar\Http\Requests;
+namespace Ulams\Webinar\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

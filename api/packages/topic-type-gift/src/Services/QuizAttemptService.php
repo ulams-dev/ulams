@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\TopicTypeGift\Services;
+namespace Ulams\TopicTypeGift\Services;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\TopicTypeGift\Dtos\Criteria\PageDto;
-use EscolaLms\TopicTypeGift\Dtos\Criteria\QuizAttemptCriteriaDto;
-use EscolaLms\TopicTypeGift\Dtos\QuizAttemptDto;
-use EscolaLms\TopicTypeGift\Events\QuizAttemptStartedEvent;
-use EscolaLms\TopicTypeGift\Exceptions\TooManyAttemptsException;
-use EscolaLms\TopicTypeGift\Jobs\MarkAttemptAsEnded;
-use EscolaLms\TopicTypeGift\Models\GiftQuiz;
-use EscolaLms\TopicTypeGift\Models\QuizAttempt;
-use EscolaLms\TopicTypeGift\Providers\SettingsServiceProvider;
-use EscolaLms\TopicTypeGift\Repositories\Contracts\QuizAttemptRepositoryContract;
-use EscolaLms\TopicTypeGift\Services\Contracts\QuizAttemptServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\TopicTypeGift\Dtos\Criteria\PageDto;
+use Ulams\TopicTypeGift\Dtos\Criteria\QuizAttemptCriteriaDto;
+use Ulams\TopicTypeGift\Dtos\QuizAttemptDto;
+use Ulams\TopicTypeGift\Events\QuizAttemptStartedEvent;
+use Ulams\TopicTypeGift\Exceptions\TooManyAttemptsException;
+use Ulams\TopicTypeGift\Jobs\MarkAttemptAsEnded;
+use Ulams\TopicTypeGift\Models\GiftQuiz;
+use Ulams\TopicTypeGift\Models\QuizAttempt;
+use Ulams\TopicTypeGift\Providers\SettingsServiceProvider;
+use Ulams\TopicTypeGift\Repositories\Contracts\QuizAttemptRepositoryContract;
+use Ulams\TopicTypeGift\Services\Contracts\QuizAttemptServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;

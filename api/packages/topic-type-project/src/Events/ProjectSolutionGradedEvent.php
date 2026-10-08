@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TopicTypeProject\Events;
+namespace Ulams\TopicTypeProject\Events;
 
 /**
  * Emitted when a solution of a project flagged counts_to_grade is graded by a lecturer.

@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import styled, { withTheme } from "styled-components";
 import { ResponseError } from "umi-request";
-import { API } from "@lms/sdk";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { DefaultResponseError } from "@lms/sdk/types";
+import { API } from "@ulams/sdk";
+import { UlamsContext } from "@ulams/sdk/react";
+import { DefaultResponseError } from "@ulams/sdk/types";
 
 import { Button } from "../../atoms/Button/Button";
 import { Input } from "../../atoms/Input/Input";
@@ -74,11 +74,11 @@ export const ModalCourseAccess: React.FC<Props> = ({
   onError,
 }) => {
   const { t } = useTranslation();
-  const { addCourseAccess } = useContext(EscolaLMSContext);
+  const { addCourseAccess } = useContext(UlamsContext);
 
   return (
     <Container
-      className={`wellms-component ${className}`}
+      className={`ulams-component ${className}`}
       data-testid="modal-course-access"
     >
       <header>

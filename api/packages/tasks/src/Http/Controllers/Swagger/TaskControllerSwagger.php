@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Tasks\Http\Controllers\Swagger;
+namespace Ulams\Tasks\Http\Controllers\Swagger;
 
-use EscolaLms\Tasks\Http\Requests\CompleteTaskRequest;
-use EscolaLms\Tasks\Http\Requests\CreateTaskRequest;
-use EscolaLms\Tasks\Http\Requests\DeleteTaskRequest;
-use EscolaLms\Tasks\Http\Requests\DetailsTaskRequest;
-use EscolaLms\Tasks\Http\Requests\IncompleteTaskRequest;
-use EscolaLms\Tasks\Http\Requests\ListTaskRequest;
-use EscolaLms\Tasks\Http\Requests\UpdateTaskRequest;
+use Ulams\Tasks\Http\Requests\CompleteTaskRequest;
+use Ulams\Tasks\Http\Requests\CreateTaskRequest;
+use Ulams\Tasks\Http\Requests\DeleteTaskRequest;
+use Ulams\Tasks\Http\Requests\DetailsTaskRequest;
+use Ulams\Tasks\Http\Requests\IncompleteTaskRequest;
+use Ulams\Tasks\Http\Requests\ListTaskRequest;
+use Ulams\Tasks\Http\Requests\UpdateTaskRequest;
 use Illuminate\Http\JsonResponse;
 
 interface TaskControllerSwagger

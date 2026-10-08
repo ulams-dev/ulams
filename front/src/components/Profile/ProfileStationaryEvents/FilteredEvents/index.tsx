@@ -1,5 +1,5 @@
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { API } from "@lms/sdk";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { API } from "@ulams/sdk";
 import { FC, useCallback } from "react";
 import { isMobile } from "react-device-detect";
 import { Row, Col } from "react-grid-system";

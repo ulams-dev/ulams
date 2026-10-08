@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Templates\Models;
+namespace Ulams\Templates\Models;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Templates\Database\Factories\TemplateFactory;
-use EscolaLms\Templates\Facades\Template as FacadesTemplate;
-use EscolaLms\Templates\Services\Contracts\TemplateServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Templates\Database\Factories\TemplateFactory;
+use Ulams\Templates\Facades\Template as FacadesTemplate;
+use Ulams\Templates\Services\Contracts\TemplateServiceContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

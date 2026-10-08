@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\TemplatesEmail\Tests\Api;
+namespace Ulams\TemplatesEmail\Tests\Api;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Templates\Database\Seeders\PermissionTableSeeder;
-use EscolaLms\Templates\Listeners\TemplateEventListener;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\TemplatesEmail\Core\EmailChannel;
-use EscolaLms\TemplatesEmail\Core\EmailMailable;
-use EscolaLms\TemplatesEmail\Tests\TestCase;
-use EscolaLms\Youtube\Dto\YTBroadcastDto;
-use EscolaLms\Youtube\EscolaLmsYoutubeServiceProvider;
-use EscolaLms\Youtube\Events\YtProblem;
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Templates\Database\Seeders\PermissionTableSeeder;
+use Ulams\Templates\Listeners\TemplateEventListener;
+use Ulams\Templates\Models\Template;
+use Ulams\TemplatesEmail\Core\EmailChannel;
+use Ulams\TemplatesEmail\Core\EmailMailable;
+use Ulams\TemplatesEmail\Tests\TestCase;
+use Ulams\Youtube\Dto\YTBroadcastDto;
+use Ulams\Youtube\UlamsYoutubeServiceProvider;
+use Ulams\Youtube\Events\YtProblem;
+use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Config;
@@ -28,7 +28,7 @@ class YoutubeTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        if (!class_exists(EscolaLmsYoutubeServiceProvider::class)) {
+        if (!class_exists(UlamsYoutubeServiceProvider::class)) {
             $this->markTestSkipped('Youtube package not installed');
         }
 

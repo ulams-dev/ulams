@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Models\ConsultationUserPivot;
 use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration

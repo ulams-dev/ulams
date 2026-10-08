@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Policies;
+namespace Ulams\CsvUsers\Policies;
 
 use Illuminate\Foundation\Auth\User;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\CsvUsers\Enums\CsvUserPermissionsEnum;
+use Ulams\Core\Enums\UserRole;
+use Ulams\CsvUsers\Enums\CsvUserPermissionsEnum;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class CsvUsersPolicy

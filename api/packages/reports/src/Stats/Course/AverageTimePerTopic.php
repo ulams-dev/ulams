@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\Course;
+namespace Ulams\Reports\Stats\Course;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Reports\Stats\Topic\AverageTime as TopicAverageTime;
+use Ulams\Courses\Models\Topic;
+use Ulams\Reports\Stats\Topic\AverageTime as TopicAverageTime;
 use Illuminate\Support\Collection;
 
 class AverageTimePerTopic extends AbstractCourseStat

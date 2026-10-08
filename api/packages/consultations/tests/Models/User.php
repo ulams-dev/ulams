@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Consultations\Tests\Models;
+namespace Ulams\Consultations\Tests\Models;
 
-use EscolaLms\Consultations\Models\User as ConsultationUser;
-use EscolaLms\Consultations\Tests\Database\Factories\UserFactory;
+use Ulams\Consultations\Models\User as ConsultationUser;
+use Ulams\Consultations\Tests\Database\Factories\UserFactory;
 
 class User extends ConsultationUser
 {

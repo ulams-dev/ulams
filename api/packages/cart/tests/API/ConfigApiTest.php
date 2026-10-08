@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Cart\Tests\API;
+namespace Ulams\Cart\Tests\API;
 
-use EscolaLms\Cart\EscolaLmsCartServiceProvider;
-use EscolaLms\Cart\Tests\TestCase;
-use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
+use Ulams\Cart\UlamsCartServiceProvider;
+use Ulams\Cart\Tests\TestCase;
+use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 
@@ -16,13 +16,13 @@ class ConfigApiTest extends TestCase
     {
         parent::setUp();
 
-        if (!class_exists(\EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class)) {
+        if (!class_exists(\Ulams\Settings\UlamsSettingsServiceProvider::class)) {
             $this->markTestSkipped();
         }
 
         $this->seed(PermissionTableSeeder::class);
 
-        Config::set('escola_settings.use_database', true);
+        Config::set('ulams_settings.use_database', true);
 
         $this->user = config('auth.providers.users.model')::factory()->create();
         $this->user->guard_name = 'api';
@@ -31,7 +31,7 @@ class ConfigApiTest extends TestCase
 
     public function testAdministrableConfigApi()
     {
-        Config::set(EscolaLmsCartServiceProvider::CONFIG_KEY . '.min_product_price', 0);
+        Config::set(UlamsCartServiceProvider::CONFIG_KEY . '.min_product_price', 0);
         $this->response = $this->actingAs($this->user, 'api')->json(
             'GET',
             '/api/admin/config'
@@ -40,7 +40,7 @@ class ConfigApiTest extends TestCase
         $this->response->assertOk();
         $this->response->assertJsonFragment([
             'min_product_price' => [
-                'full_key' => 'escolalms_cart.min_product_price',
+                'full_key' => 'ulams_cart.min_product_price',
                 'key' => 'min_product_price',
                 'rules' => [
                     'required',
@@ -59,7 +59,7 @@ class ConfigApiTest extends TestCase
             [
                 'config' => [
                     [
-                        'key' => 'escolalms_cart.min_product_price',
+                        'key' => 'ulams_cart.min_product_price',
                         'value' => 10,
                     ],
                 ]
@@ -73,7 +73,7 @@ class ConfigApiTest extends TestCase
         );
         $this->response->assertOk();
         $this->response->assertJsonFragment([
-            'escolalms_cart' => [
+            'ulams_cart' => [
                 'min_product_price' => 10,
             ]
         ]);

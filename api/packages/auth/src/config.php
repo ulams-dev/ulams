@@ -1,7 +1,7 @@
 <?php
 
-use EscolaLms\Auth\Enums\SettingStatusEnum;
-use EscolaLms\Auth\Enums\TokenExpirationEnum;
+use Ulams\Auth\Enums\SettingStatusEnum;
+use Ulams\Auth\Enums\TokenExpirationEnum;
 
 return [
     'superadmins' => [

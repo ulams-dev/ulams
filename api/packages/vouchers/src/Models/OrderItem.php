@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Vouchers\Models;
+namespace Ulams\Vouchers\Models;
 
-use EscolaLms\Cart\Models\OrderItem as BaseOrderItem;
+use Ulams\Cart\Models\OrderItem as BaseOrderItem;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * EscolaLms\Vouchers\Models\OrderItem
+ * Ulams\Vouchers\Models\OrderItem
  *
  * @property int $id
  * @property int $order_id
@@ -26,28 +26,28 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read int $tax
  * @property-read int $total
  * @property-read int $total_with_tax
- * @property-read \EscolaLms\Vouchers\Models\Order $order
- * @method static \EscolaLms\Cart\Support\OrderItemCollection|static[] all($columns = ['*'])
- * @method static \EscolaLms\Cart\Support\OrderItemCollection|static[] get($columns = ['*'])
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem newModelQuery()
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem newQuery()
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem query()
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereBuyableClassAndId(string $buyable_type, int $buyable_id)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereBuyableId($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereBuyableType($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereCreatedAt($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereExtraFees($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereHasProductable(\Illuminate\Database\Eloquent\Model $productable)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereHasProductableClassAndId(string $productable_type, int $productable_id)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereId($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereName($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereOptions($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereOrderId($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem wherePrice($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereProductId(int $product_id)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereQuantity($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereTaxRate($value)
- * @method static \EscolaLms\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereUpdatedAt($value)
+ * @property-read \Ulams\Vouchers\Models\Order $order
+ * @method static \Ulams\Cart\Support\OrderItemCollection|static[] all($columns = ['*'])
+ * @method static \Ulams\Cart\Support\OrderItemCollection|static[] get($columns = ['*'])
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem newModelQuery()
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem newQuery()
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem query()
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereBuyableClassAndId(string $buyable_type, int $buyable_id)
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereBuyableId($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereBuyableType($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereCreatedAt($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereExtraFees($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereHasProductable(\Illuminate\Database\Eloquent\Model $productable)
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereHasProductableClassAndId(string $productable_type, int $productable_id)
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereId($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereName($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereOptions($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereOrderId($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem wherePrice($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereProductId(int $product_id)
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereQuantity($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereTaxRate($value)
+ * @method static \Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder|OrderItem whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class OrderItem extends BaseOrderItem

@@ -7,8 +7,8 @@ import { FormattedMessage, useIntl } from 'umi';
 
 import AttendanceCheckbox from '@/components/AttendanceCheckbox';
 import { DAY_FORMAT } from '@/consts/dates';
-import { groupAttendanceSchedule as fetchGroupAttendanceSchedule } from '@/services/escola-lms/attendances';
-import { studentUserGroup as fetchStudentUserGroup } from '@/services/escola-lms/student_user_groups';
+import { groupAttendanceSchedule as fetchGroupAttendanceSchedule } from '@/services/ulams/attendances';
+import { studentUserGroup as fetchStudentUserGroup } from '@/services/ulams/student_user_groups';
 import { useTeacherSubject } from '../context';
 import { TEACHER_SUBJECTS_PAGE_SIZE } from './consts';
 

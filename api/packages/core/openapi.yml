@@ -9,7 +9,7 @@ paths:
         - Attachments
       summary: 'Store a attachment as file in storage'
       description: 'Store Image'
-      operationId: 'EscolaLms\Core\Http\Controllers\Swagger\AttachmentAPISwaggerInterface::store'
+      operationId: 'Ulams\Core\Http\Controllers\Swagger\AttachmentAPISwaggerInterface::store'
       requestBody:
         required: true
         content:

@@ -1,5 +1,5 @@
 import { FC, memo } from "react";
-import { API } from "@lms/sdk";
+import { API } from "@ulams/sdk";
 import { CourseRatingsReviews } from "./Reviews";
 import { CourseRatingProvider } from "./Provider";
 

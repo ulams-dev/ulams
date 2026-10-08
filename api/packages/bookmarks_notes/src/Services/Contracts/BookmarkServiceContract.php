@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Bookmarks\Services\Contracts;
+namespace Ulams\Bookmarks\Services\Contracts;
 
-use EscolaLms\Bookmarks\Dtos\CreateBookmarkDto;
-use EscolaLms\Bookmarks\Dtos\CriteriaDto;
-use EscolaLms\Bookmarks\Dtos\OrderDto;
-use EscolaLms\Bookmarks\Dtos\PageDto;
-use EscolaLms\Bookmarks\Dtos\UpdateBookmarkDto;
-use EscolaLms\Bookmarks\Models\Bookmark;
+use Ulams\Bookmarks\Dtos\CreateBookmarkDto;
+use Ulams\Bookmarks\Dtos\CriteriaDto;
+use Ulams\Bookmarks\Dtos\OrderDto;
+use Ulams\Bookmarks\Dtos\PageDto;
+use Ulams\Bookmarks\Dtos\UpdateBookmarkDto;
+use Ulams\Bookmarks\Models\Bookmark;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface BookmarkServiceContract

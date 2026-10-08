@@ -1,7 +1,7 @@
 # api-h5p
 
-H5P service for the Wellms LMS. It replaces the PHP H5P package
-(`escolalms/headless-h5p`) with a Node service built on Lumi's
+H5P service for the Ulams LMS. It replaces the PHP H5P package
+(`ulams/headless-h5p`) with a Node service built on Lumi's
 [h5p-nodejs-library](https://github.com/Lumieducation/H5P-Nodejs-library)
 (`@lumieducation/h5p-server` 10.0.4, `@lumieducation/h5p-express` 10.0.5).
 
@@ -21,7 +21,7 @@ h5p service
   │        (roles + permissions, cached in Redis)   | X-Internal-Token → system user
   ├─ TenantResolver ─► Tenant { pg pool, S3 client, JWT key, H5PEditor, H5PPlayer }
   ├─ Postgres  schema "h5p": contents, content_user_data, finished_data, schema_migrations
-  ├─ S3/MinIO  bucket "wellms": h5p/content/{id}/…, h5p/temp/…
+  ├─ S3/MinIO  bucket "ulams": h5p/content/{id}/…, h5p/temp/…
   ├─ Redis     library cache, content-type cache, profile cache, locks
   └─ volume    /data/libraries  (installed H5P libraries, shared)
 ```
@@ -69,7 +69,7 @@ to 4.7.1.
 | `S3_ENDPOINT` | `http://minio:9000` | empty for AWS |
 | `S3_REGION` | `us-east-1` | |
 | `S3_KEY` / `S3_SECRET` | `admin` / `minio_secretpassword` | also read from `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` |
-| `S3_BUCKET` | `wellms` | |
+| `S3_BUCKET` | `ulams` | |
 | `S3_PREFIX` | `h5p` | key prefix inside the bucket |
 | `S3_FORCE_PATH_STYLE` | `true` | needed for MinIO |
 | `S3_MAX_KEY_LENGTH` | `1024` | lower it (e.g. 255) for MinIO on Windows |
@@ -204,10 +204,10 @@ serialised with an advisory lock, recorded in `h5p.schema_migrations`).
   (Redis lock, one replica at a time). Lumi's
   `setBucketLifecycleConfiguration` is **not** used: it replaces every
   lifecycle rule of the bucket with an expire-everything rule, which would
-  delete the LMS's files in the shared `wellms` bucket.
+  delete the LMS's files in the shared `ulams` bucket.
 
-`wellms` is public-read, so content files can also be read directly from
-`http://storage.localhost/wellms/h5p/content/...` (the PHP package behaved the
+`ulams` is public-read, so content files can also be read directly from
+`http://storage.localhost/ulams/h5p/content/...` (the PHP package behaved the
 same way). The service streams them itself (with HTTP ranges) under
 `/h5p/content/{id}/...`.
 
@@ -331,13 +331,13 @@ npm run lint && npm run build
 ```
 
 Tests (vitest) include integration tests against the real Postgres, Redis and
-MinIO. Run them in a container on the `escola_lms` network. Each run uses a
+MinIO. Run them in a container on the `ulams` network. Each run uses a
 throwaway schema `h5p_test_<random>` and S3 prefix `h5p-test-<random>`, and
 removes both afterwards:
 
 ```
-docker run --rm --network escola_lms -v "$PWD":/app -v api_h5p_test_nm:/app/node_modules \
-  -w /app -e REDIS_PASSWORD=escola_lms node:22-alpine sh -c "npm ci && npm test"
+docker run --rm --network ulams -v "$PWD":/app -v api_h5p_test_nm:/app/node_modules \
+  -w /app -e REDIS_PASSWORD=ulams node:22-alpine sh -c "npm ci && npm test"
 ```
 
 (The separate `node_modules` volume keeps Linux binaries apart from a host
@@ -346,7 +346,7 @@ install.)
 Docker:
 
 ```
-docker build -t wellms/h5p:dev .
+docker build -t ulams/h5p:dev .
 docker compose -f docker-compose.yml -f h5p/compose.h5p.yml up -d h5p
 ```
 

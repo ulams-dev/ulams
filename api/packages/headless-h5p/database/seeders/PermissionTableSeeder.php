@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Database\Seeders;
+namespace Ulams\HeadlessH5P\Database\Seeders;
 
-use EscolaLms\HeadlessH5P\Enums\H5PPermissionsEnum;
+use Ulams\HeadlessH5P\Enums\H5PPermissionsEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

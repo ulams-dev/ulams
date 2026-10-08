@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Consultations\Enum;
+namespace Ulams\Consultations\Enum;
 
 use BenSampo\Enum\Enum;
 

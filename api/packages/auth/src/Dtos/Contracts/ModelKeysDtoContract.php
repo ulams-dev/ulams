@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Auth\Dtos\Contracts;
+namespace Ulams\Auth\Dtos\Contracts;
 
 interface ModelKeysDtoContract {
     public function keyList(): array;

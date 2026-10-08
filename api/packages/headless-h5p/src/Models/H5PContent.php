@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Models;
+namespace Ulams\HeadlessH5P\Models;
 
-use EscolaLms\Core\Models\Traits\QueryCacheable;
-use EscolaLms\Core\Models\User;
-use EscolaLms\HeadlessH5P\Database\Factories\H5PContentFactory;
+use Ulams\Core\Models\Traits\QueryCacheable;
+use Ulams\Core\Models\User;
+use Ulams\HeadlessH5P\Database\Factories\H5PContentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

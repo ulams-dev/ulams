@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Tests\Api;
+namespace Ulams\Questionnaire\Tests\Api;
 
-use EscolaLms\Questionnaire\Database\Seeders\QuestionnairePermissionsSeeder;
-use EscolaLms\Questionnaire\Enums\QuestionTypeEnum;
-use EscolaLms\Questionnaire\Models\Question;
-use EscolaLms\Questionnaire\Models\Questionnaire;
-use EscolaLms\Questionnaire\Tests\TestCase;
+use Ulams\Questionnaire\Database\Seeders\QuestionnairePermissionsSeeder;
+use Ulams\Questionnaire\Enums\QuestionTypeEnum;
+use Ulams\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Models\Questionnaire;
+use Ulams\Questionnaire\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class QuestionCreateTest extends TestCase

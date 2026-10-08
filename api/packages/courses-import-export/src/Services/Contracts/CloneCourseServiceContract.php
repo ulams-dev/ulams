@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Services\Contracts;
+namespace Ulams\CoursesImportExport\Services\Contracts;
 
-use EscolaLms\Courses\Models\Course;
+use Ulams\Courses\Models\Course;
 
 interface CloneCourseServiceContract
 {

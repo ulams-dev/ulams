@@ -1,12 +1,12 @@
 <?php
 
-namespace EscolaLms\ModelFields\Services;
+namespace Ulams\ModelFields\Services;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\ModelFields\Enum\MetaFieldTypeEnum;
-use EscolaLms\ModelFields\Models\Field;
-use EscolaLms\ModelFields\Models\Metadata;
-use EscolaLms\ModelFields\Services\Contracts\ModelFieldsServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\ModelFields\Enum\MetaFieldTypeEnum;
+use Ulams\ModelFields\Models\Field;
+use Ulams\ModelFields\Models\Metadata;
+use Ulams\ModelFields\Services\Contracts\ModelFieldsServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;

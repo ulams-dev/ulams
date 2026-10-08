@@ -29,8 +29,8 @@ import {
   createConsultation,
   getConsultation,
   updateConsultation,
-} from '@/services/escola-lms/consultations';
-import { settings } from '@/services/escola-lms/settings';
+} from '@/services/ulams/consultations';
+import { settings } from '@/services/ulams/settings';
 import { categoriesArrToIds, splitImagePath } from '@/utils/utils';
 import { createRequiredFieldValidator } from '@/utils/validate';
 import { useCallback } from 'react';
@@ -57,7 +57,7 @@ const ConsultationForm = () => {
   const [data, setData] = useState<Partial<API.Consultation>>();
   const { manageCourseEdit, setManageCourseEdit, validateCourseEdit } = useValidateFormEdit();
   const [form] = ProForm.useForm();
-  const additionalFields = useModelFields('EscolaLms\\Consultations\\Models\\Consultation');
+  const additionalFields = useModelFields('Ulams\\Consultations\\Models\\Consultation');
   const requiredValidator = createRequiredFieldValidator(intl);
   const [showScreenSaves, setShowScreenSaves] = useState<boolean>(false);
   const { showNotification } = useShowNotification();

@@ -4,13 +4,13 @@ import {
   relativeTimeFormatter,
 } from "@/utils/index";
 
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { Modal } from "@lms/components/components/atoms/Modal/Modal";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
-import { API } from "@lms/sdk";
-import { EscolaLMSContext } from "@lms/sdk/react";
-import { CourseProgressItem } from "@lms/sdk/types";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { Modal } from "@ulams/components/components/atoms/Modal/Modal";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import { API } from "@ulams/sdk";
+import { UlamsContext } from "@ulams/sdk/react";
+import { CourseProgressItem } from "@ulams/sdk/types";
 import {
   FC,
   useCallback,
@@ -57,7 +57,7 @@ export const CourseCardActions: FC<Props> = ({
   const [courseId, setCourseId] = useState<number | undefined>(undefined);
   const [showResetProgressModal, setShowResetProgressModal] = useState(false);
   const { fetchQuestionnaires, fetchQuestionnaire } =
-    useContext(EscolaLMSContext);
+    useContext(UlamsContext);
   const [state, setState] = useState({
     show: false,
     step: 0,

@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Core\Repositories\Traits;
+namespace Ulams\Core\Repositories\Traits;
 
 use Illuminate\Support\Collection;
 

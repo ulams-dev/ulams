@@ -1,11 +1,11 @@
 <?php
 
-namespace EscolaLms\Video\Tests\Api;
+namespace Ulams\Video\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Video\Tests\TestCase;
-use EscolaLms\Video\Tests\VideoTesting;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Courses\Models\Course;
+use Ulams\Video\Tests\TestCase;
+use Ulams\Video\Tests\VideoTesting;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +18,7 @@ class VideoSettingsApiTest extends TestCase
 
     public function testVideoPackageEnableExtendableResource(): void
     {
-        Config::set('escolalms_video.enable', true);
+        Config::set('ulams_video.enable', true);
 
         $course = $this->createCourse();
 
@@ -33,7 +33,7 @@ class VideoSettingsApiTest extends TestCase
 
     public function testVideoPackageDisableExtendableResource(): void
     {
-        Config::set('escolalms_video.enable', false);
+        Config::set('ulams_video.enable', false);
 
         $course = $this->createCourse();
 
@@ -48,7 +48,7 @@ class VideoSettingsApiTest extends TestCase
 
     public function testVideoPackageNonStrictValueExtendableResource(): void
     {
-        Config::set('escolalms_video.non_strict_value', true);
+        Config::set('ulams_video.non_strict_value', true);
 
         $student = $this->makeStudent();
 
@@ -72,7 +72,7 @@ class VideoSettingsApiTest extends TestCase
 
     public function testVideoPackageNonStrictValueFalseExtendableResource(): void
     {
-        Config::set('escolalms_video.non_strict_value', false);
+        Config::set('ulams_video.non_strict_value', false);
 
         $student = $this->makeStudent();
 

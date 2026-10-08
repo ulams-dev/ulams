@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Notifications\Listeners;
+namespace Ulams\Notifications\Listeners;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Notifications\Core\EventNotification;
+use Ulams\Core\Models\User;
+use Ulams\Notifications\Core\EventNotification;
 use ReflectionClass;
 
 class NotifiableEventListener

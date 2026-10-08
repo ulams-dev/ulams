@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Auth\Tests\API\Admin;
+namespace Ulams\Auth\Tests\API\Admin;
 
-use EscolaLms\Auth\Events\UserAddedToGroup;
-use EscolaLms\Auth\Events\UserRemovedFromGroup;
-use EscolaLms\Auth\Models\Group;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Tests\TestCase;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\Auth\Events\UserAddedToGroup;
+use Ulams\Auth\Events\UserRemovedFromGroup;
+use Ulams\Auth\Models\Group;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Tests\TestCase;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Event;

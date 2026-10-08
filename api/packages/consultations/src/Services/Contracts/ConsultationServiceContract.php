@@ -1,20 +1,20 @@
 <?php
 
-namespace EscolaLms\Consultations\Services\Contracts;
+namespace Ulams\Consultations\Services\Contracts;
 
 use Carbon\Carbon;
-use EscolaLms\Consultations\Dto\ChangeTermConsultationDto;
-use EscolaLms\Consultations\Dto\ConsultationUserTermDto;
-use EscolaLms\Consultations\Dto\ConsultationDto;
-use EscolaLms\Consultations\Dto\ConsultationSaveScreenDto;
-use EscolaLms\Consultations\Dto\FilterScheduleForTutorDto;
-use EscolaLms\Consultations\Dto\FinishTermDto;
-use EscolaLms\Consultations\Dto\GenerateSignedScreenUrlsDto;
-use EscolaLms\Consultations\Http\Requests\ListConsultationsRequest;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Models\ConsultationUserPivot;
-use EscolaLms\Consultations\Models\ConsultationUserTerm;
-use EscolaLms\Core\Dtos\OrderDto;
+use Ulams\Consultations\Dto\ChangeTermConsultationDto;
+use Ulams\Consultations\Dto\ConsultationUserTermDto;
+use Ulams\Consultations\Dto\ConsultationDto;
+use Ulams\Consultations\Dto\ConsultationSaveScreenDto;
+use Ulams\Consultations\Dto\FilterScheduleForTutorDto;
+use Ulams\Consultations\Dto\FinishTermDto;
+use Ulams\Consultations\Dto\GenerateSignedScreenUrlsDto;
+use Ulams\Consultations\Http\Requests\ListConsultationsRequest;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Models\ConsultationUserPivot;
+use Ulams\Consultations\Models\ConsultationUserTerm;
+use Ulams\Core\Dtos\OrderDto;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;

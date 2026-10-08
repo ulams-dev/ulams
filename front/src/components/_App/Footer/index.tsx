@@ -1,18 +1,18 @@
 import React, { useContext, useEffect, useMemo } from "react";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import styled from "styled-components";
-import { EscolaLMSContext } from "@lms/sdk/react";
+import { UlamsContext } from "@ulams/sdk/react";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
-import { PageListItem, PaginatedMetaList } from "@lms/sdk/types";
-import { Link as LmsLink } from "@lms/components/components/atoms/Link/Link";
+import { PageListItem, PaginatedMetaList } from "@ulams/sdk/types";
+import { Link as LmsLink } from "@ulams/components/components/atoms/Link/Link";
 import { Link } from "react-router-dom";
 import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";
-import { WellmsLogo } from "@/icons/index";
+import { UlamsLogo } from "@/icons/index";
 import GoTop from "@/components/_App/GoTop";
-import { getStylesBasedOnTheme } from "@lms/components/utils/utils";
-import { MarkdownRenderer } from "@lms/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
+import { getStylesBasedOnTheme } from "@ulams/components/utils/utils";
+import { MarkdownRenderer } from "@ulams/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
 import { EU_BANNER_LINK } from "@/utils/constants";
 import EuBanner from "../../../images/eu-banner.png";
 
@@ -154,7 +154,7 @@ type LinkObject = {
 };
 
 const Footer = () => {
-  const { settings, fetchPages, pages, user } = useContext(EscolaLMSContext);
+  const { settings, fetchPages, pages, user } = useContext(UlamsContext);
   const { t, i18n } = useTranslation();
   useEffect(() => {
     fetchPages();
@@ -295,8 +295,8 @@ const Footer = () => {
 
         <div className="copyrights">
           <Text size="14">{t<string>("Footer.PoweredBy")}</Text>
-          <LmsLink href="https://www.wellms.io">
-            <WellmsLogo />
+          <LmsLink href="https://www.ulams.app">
+            <UlamsLogo />
           </LmsLink>
         </div>
       </Container>

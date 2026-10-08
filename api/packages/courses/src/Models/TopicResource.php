@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Models;
+namespace Ulams\Courses\Models;
 
-use EscolaLms\Core\Models\Traits\QueryCacheable;
+use Ulams\Core\Models\Traits\QueryCacheable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\Storage;
  *      )
  * )
  *
- * @property \EscolaLms\Courses\Models\Topic|null $topic
+ * @property \Ulams\Courses\Models\Topic|null $topic
  * @property string $path
  * @property string $name
  * @property int $topic_id
@@ -59,12 +59,12 @@ class TopicResource extends Model
 
     public function topic(): BelongsTo
     {
-        return $this->belongsTo(\EscolaLms\Courses\Models\Topic::class, 'topic_id');
+        return $this->belongsTo(\Ulams\Courses\Models\Topic::class, 'topic_id');
     }
 
     protected static function newFactory()
     {
-        return \EscolaLms\Courses\Database\Factories\TopicResourceFactory::new();
+        return \Ulams\Courses\Database\Factories\TopicResourceFactory::new();
     }
 
     protected static function booted()

@@ -21,7 +21,7 @@ import Tags from '@/components/Tags';
 import UserSelect from '@/components/UserSelect';
 import PERMISSIONS from '@/consts/permissions';
 import { usePermissions } from '@/hooks/usePermissions';
-import { cloneCourse, course, exportCourse, removeCourse } from '@/services/escola-lms/course';
+import { cloneCourse, course, exportCourse, removeCourse } from '@/services/ulams/course';
 import { createTableOrderObject, roundTo } from '@/utils/utils';
 import './style.less';
 
@@ -352,7 +352,7 @@ const TableList: React.FC = () => {
           }}
         >
           <a
-            href={'https://docs.wellms.io/app-guide/'}
+            href={'https://docs.ulams.app/app-guide/'}
             target="_blank"
             rel="noopener noreferrer"
             style={{

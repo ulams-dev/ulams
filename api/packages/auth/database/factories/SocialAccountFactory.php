@@ -1,10 +1,10 @@
 <?php
 
-namespace Database\Factories\EscolaLms\Auth\Models;
+namespace Database\Factories\Ulams\Auth\Models;
 
-use EscolaLms\Auth\Enums\SocialiteProvidersEnum;
-use EscolaLms\Auth\Models\SocialAccount;
-use EscolaLms\Auth\Models\User;
+use Ulams\Auth\Enums\SocialiteProvidersEnum;
+use Ulams\Auth\Models\SocialAccount;
+use Ulams\Auth\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SocialAccountFactory extends Factory

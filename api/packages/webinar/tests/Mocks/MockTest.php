@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Webinar\Tests\Mocks;
+namespace Ulams\Webinar\Tests\Mocks;
 
 use Illuminate\Foundation\Testing\WithFaker;
 

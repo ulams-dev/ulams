@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Webinar\Tests\APIs;
+namespace Ulams\Webinar\Tests\APIs;
 
-use EscolaLms\Webinar\Database\Seeders\WebinarsPermissionSeeder;
-use EscolaLms\Webinar\Enum\WebinarTermReminderStatusEnum;
-use EscolaLms\Webinar\Events\ReminderAboutTerm;
-use EscolaLms\Webinar\Jobs\ReminderAboutWebinarJob;
-use EscolaLms\Webinar\Models\Webinar;
-use EscolaLms\Webinar\Tests\Models\User;
-use EscolaLms\Webinar\Tests\TestCase;
+use Ulams\Webinar\Database\Seeders\WebinarsPermissionSeeder;
+use Ulams\Webinar\Enum\WebinarTermReminderStatusEnum;
+use Ulams\Webinar\Events\ReminderAboutTerm;
+use Ulams\Webinar\Jobs\ReminderAboutWebinarJob;
+use Ulams\Webinar\Models\Webinar;
+use Ulams\Webinar\Tests\Models\User;
+use Ulams\Webinar\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;

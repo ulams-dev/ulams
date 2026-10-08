@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Video\Strategies;
+namespace Ulams\Video\Strategies;
 
 class VideoResourceStrategy
 {

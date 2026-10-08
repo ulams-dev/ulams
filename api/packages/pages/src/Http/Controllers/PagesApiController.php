@@ -1,16 +1,16 @@
 <?php
 
-namespace EscolaLms\Pages\Http\Controllers;
+namespace Ulams\Pages\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Pages\Http\Controllers\Contracts\PagesApiContract;
-use EscolaLms\Pages\Http\Requests\PageFrontListingRequest;
-use EscolaLms\Pages\Http\Requests\PageFrontReadRequest;
-use EscolaLms\Pages\Http\Resources\PageResource;
-use EscolaLms\Pages\Http\Services\Contracts\PageServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Pages\Http\Controllers\Contracts\PagesApiContract;
+use Ulams\Pages\Http\Requests\PageFrontListingRequest;
+use Ulams\Pages\Http\Requests\PageFrontReadRequest;
+use Ulams\Pages\Http\Resources\PageResource;
+use Ulams\Pages\Http\Services\Contracts\PageServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class PagesApiController extends EscolaLmsBaseController implements PagesApiContract
+class PagesApiController extends UlamsBaseController implements PagesApiContract
 {
     private PageServiceContract $pageService;
 

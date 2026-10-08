@@ -1,6 +1,6 @@
 import AuthenticatedLinkButton from '@/components/AuthenticatedLinkButton';
 import UploadH5P from '@/components/H5P/upload';
-import { h5p, removeH5P } from '@/services/escola-lms/h5p';
+import { h5p, removeH5P } from '@/services/ulams/h5p';
 import { createTableOrderObject } from '@/utils/utils';
 import {
   BookOutlined,

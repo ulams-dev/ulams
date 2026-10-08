@@ -1,9 +1,9 @@
 <?php
 
-namespace Database\Factories\EscolaLms\Auth\Models;
+namespace Database\Factories\Ulams\Auth\Models;
 
-use EscolaLms\Auth\Enums\SocialiteProvidersEnum;
-use EscolaLms\Auth\Models\PreUser;
+use Ulams\Auth\Enums\SocialiteProvidersEnum;
+use Ulams\Auth\Models\PreUser;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

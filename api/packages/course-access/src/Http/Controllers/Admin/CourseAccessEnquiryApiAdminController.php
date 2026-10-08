@@ -1,17 +1,17 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Http\Controllers\Admin;
+namespace Ulams\CourseAccess\Http\Controllers\Admin;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\CourseAccess\Http\Controllers\Admin\Swagger\CourseAccessEnquiryApiAdminSwagger;
-use EscolaLms\CourseAccess\Http\Requests\Admin\AdminApproveCourseAccessEnquiry;
-use EscolaLms\CourseAccess\Http\Requests\Admin\AdminDeleteCourseAccessEnquiryRequest;
-use EscolaLms\CourseAccess\Http\Requests\Admin\AdminListCourseAccessEnquiryRequest;
-use EscolaLms\CourseAccess\Http\Resources\CourseAccessEnquiryResource;
-use EscolaLms\CourseAccess\Services\Contracts\CourseAccessEnquiryServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\CourseAccess\Http\Controllers\Admin\Swagger\CourseAccessEnquiryApiAdminSwagger;
+use Ulams\CourseAccess\Http\Requests\Admin\AdminApproveCourseAccessEnquiry;
+use Ulams\CourseAccess\Http\Requests\Admin\AdminDeleteCourseAccessEnquiryRequest;
+use Ulams\CourseAccess\Http\Requests\Admin\AdminListCourseAccessEnquiryRequest;
+use Ulams\CourseAccess\Http\Resources\CourseAccessEnquiryResource;
+use Ulams\CourseAccess\Services\Contracts\CourseAccessEnquiryServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class CourseAccessEnquiryApiAdminController extends EscolaLmsBaseController implements CourseAccessEnquiryApiAdminSwagger
+class CourseAccessEnquiryApiAdminController extends UlamsBaseController implements CourseAccessEnquiryApiAdminSwagger
 {
     private CourseAccessEnquiryServiceContract $service;
 

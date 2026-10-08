@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Notifications\Services;
+namespace Ulams\Notifications\Services;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Repositories\Criteria\Criterion;
-use EscolaLms\Notifications\Dtos\NotificationsFilterCriteriaDto;
-use EscolaLms\Notifications\Dtos\PageDto;
-use EscolaLms\Notifications\Models\DatabaseNotification;
-use EscolaLms\Notifications\Models\User as NotificationsUser;
-use EscolaLms\Notifications\Services\Contracts\DatabaseNotificationsServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Models\User;
+use Ulams\Core\Repositories\Criteria\Criterion;
+use Ulams\Notifications\Dtos\NotificationsFilterCriteriaDto;
+use Ulams\Notifications\Dtos\PageDto;
+use Ulams\Notifications\Models\DatabaseNotification;
+use Ulams\Notifications\Models\User as NotificationsUser;
+use Ulams\Notifications\Services\Contracts\DatabaseNotificationsServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -25,7 +25,7 @@ class DatabaseNotificationsService implements DatabaseNotificationsServiceContra
         $user = $user instanceof NotificationsUser ? $user : NotificationsUser::find($user->getKey());
 
         $query = $user->notifications()
-            ->whereNotIn('event', config('escolalms_notifications.except_events'))->getQuery();
+            ->whereNotIn('event', config('ulams_notifications.except_events'))->getQuery();
         $query = $this->applyCriteria($query, $notificationsFilterDto->toArray());
         if ($orderDto->getOrderBy()) {
             $query

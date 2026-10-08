@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\HeadlessH5P\Exceptions;
+namespace Ulams\HeadlessH5P\Exceptions;
 
 use Exception;
 

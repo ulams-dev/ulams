@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\BulkNotifications\Database\Factories;
+namespace Ulams\BulkNotifications\Database\Factories;
 
-use EscolaLms\BulkNotifications\Models\BulkNotification;
+use Ulams\BulkNotifications\Models\BulkNotification;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -13,7 +13,7 @@ class BulkNotificationFactory extends Factory
     public function definition(): array
     {
         return [
-            'channel' => 'EscolaLms\\BulkNotifications\\Channels\\' . Str::ucfirst($this->faker->word),
+            'channel' => 'Ulams\\BulkNotifications\\Channels\\' . Str::ucfirst($this->faker->word),
         ];
     }
 }

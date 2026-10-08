@@ -3,14 +3,14 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import isPast from "date-fns/isPast";
-import { API } from "@lms/sdk";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
-import { Button } from "@lms/components/components/atoms/Button/Button";
-import { Text } from "@lms/components/components/atoms/Typography/Text";
-import { IconText } from "@lms/components/components/atoms/IconText/IconText";
-import { PricingCard } from "@lms/components/components/atoms/PricingCard/PricingCard";
+import { API } from "@ulams/sdk";
+import { UlamsContext } from "@ulams/sdk/react/context";
+import { Button } from "@ulams/components/components/atoms/Button/Button";
+import { Text } from "@ulams/components/components/atoms/Typography/Text";
+import { IconText } from "@ulams/components/components/atoms/IconText/IconText";
+import { PricingCard } from "@ulams/components/components/atoms/PricingCard/PricingCard";
 import { IconSquares, IconCamera, IconLocation } from "@/icons/index";
-import { Title } from "@lms/components/components/atoms/Typography/Title";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { formatPrice } from "@/utils/index";
 import ProductPrices from "@/components/ProductPrices";
 import routeRoutes from "@/components/Routes/routes";
@@ -22,7 +22,7 @@ const EventDetailsSidebar: React.FC<{ event: API.StationaryEvent }> = ({
   const [buttonStatus, setButtonStatus] = useState<ButtonStatus>(
     ButtonStatus.DEFAULT
   );
-  const { cart, addToCart, user } = useContext(EscolaLMSContext);
+  const { cart, addToCart, user } = useContext(UlamsContext);
   const { t } = useTranslation();
   const { push } = useHistory();
 

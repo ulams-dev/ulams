@@ -1,6 +1,6 @@
 <?php
 
-use EscolaLms\Pages\Enums\PagesPermissionsEnum;
+use Ulams\Pages\Enums\PagesPermissionsEnum;
 
 return [
     PagesPermissionsEnum::PAGE_LIST => 'Lista stron',

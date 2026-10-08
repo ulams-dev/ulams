@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\MailerLite\Tests\Services;
+namespace Ulams\MailerLite\Tests\Services;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\MailerLite\Services\MailerLiteService;
-use EscolaLms\MailerLite\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\MailerLite\Services\MailerLiteService;
+use Ulams\MailerLite\Tests\TestCase;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;

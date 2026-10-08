@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Route, Redirect, RouteProps } from "react-router-dom";
-import { EscolaLMSContext } from "@lms/sdk/react/context";
+import { UlamsContext } from "@ulams/sdk/react/context";
 import routes from "./routes";
 
 const ConfigRoute: React.FC<RouteProps> = ({
@@ -9,14 +9,14 @@ const ConfigRoute: React.FC<RouteProps> = ({
 }: // eslint-disable-next-line
 any) => {
   const { login } = routes;
-  const { user, fetchConfig, config } = useContext(EscolaLMSContext);
+  const { user, fetchConfig, config } = useContext(UlamsContext);
 
   React.useEffect(() => {
     fetchConfig();
   }, [fetchConfig]);
 
   const platformVisibility =
-    config?.value?.escolalms_courses?.platform_visibility === "public" || false;
+    config?.value?.ulams_courses?.platform_visibility === "public" || false;
 
   return (
     <Route

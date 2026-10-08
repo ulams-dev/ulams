@@ -1,19 +1,19 @@
 <?php
 
-namespace EscolaLms\TemplatesPdf\Services;
+namespace Ulams\TemplatesPdf\Services;
 
-use EscolaLms\TemplatesPdf\Services\Contracts\ReportBroServiceContract;
+use Ulams\TemplatesPdf\Services\Contracts\ReportBroServiceContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use EscolaLms\TemplatesPdf\Models\FabricPDF;
-use EscolaLms\TemplatesPdf\EscolaLmsTemplatesPdfServiceProvider;
+use Ulams\TemplatesPdf\Models\FabricPDF;
+use Ulams\TemplatesPdf\UlamsTemplatesPdfServiceProvider;
 
 class ReportBroService implements ReportBroServiceContract
 {
     public function getKeyFromPayload(string $payload): string
     {
 
-        $reportBroUrl = config(EscolaLmsTemplatesPdfServiceProvider::CONFIG_KEY . '.reportbro_url');
+        $reportBroUrl = config(UlamsTemplatesPdfServiceProvider::CONFIG_KEY . '.reportbro_url');
 
         $response = Http::withBody($payload, 'application/json')
             ->send('PUT', $reportBroUrl);
@@ -25,7 +25,7 @@ class ReportBroService implements ReportBroServiceContract
 
     public function getFilepathFromKey(string $key): string
     {
-        $reportBroUrl = config(EscolaLmsTemplatesPdfServiceProvider::CONFIG_KEY . '.reportbro_url');
+        $reportBroUrl = config(UlamsTemplatesPdfServiceProvider::CONFIG_KEY . '.reportbro_url');
         $tempName = tempnam(sys_get_temp_dir(), 'response') . '.pdf';
 
         Http::sink($tempName)->get($reportBroUrl, ['key' => $key, 'outputFormat' => 'pdf']);

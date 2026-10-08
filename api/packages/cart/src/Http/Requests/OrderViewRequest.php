@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Http\Requests;
+namespace Ulams\Cart\Http\Requests;
 
-use EscolaLms\Cart\Exceptions\OrderNotFoundException;
-use EscolaLms\Cart\Models\Order;
+use Ulams\Cart\Exceptions\OrderNotFoundException;
+use Ulams\Cart\Models\Order;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;

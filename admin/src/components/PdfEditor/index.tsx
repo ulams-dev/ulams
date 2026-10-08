@@ -16,7 +16,7 @@ const getMockedValueForVariable = (varname: string) => {
     case 'varcoursetitle':
       return 'How to be an LMS Expert';
     case 'varappname':
-      return 'Wellms Headless LMS';
+      return 'Ulams Headless LMS';
     default:
       return 'Lorem Ipsum';
   }

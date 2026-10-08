@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Services\Contracts;
+namespace Ulams\TopicTypes\Services\Contracts;
 
 interface TopicTypeServiceContract
 {

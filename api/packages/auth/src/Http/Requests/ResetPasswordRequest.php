@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Requests;
+namespace Ulams\Auth\Http\Requests;
 
-use EscolaLms\Auth\Models\User;
+use Ulams\Auth\Models\User;
 
 class ResetPasswordRequest extends ExtendableRequest
 {

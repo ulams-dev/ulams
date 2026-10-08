@@ -1,26 +1,26 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Services;
+namespace Ulams\StationaryEvents\Services;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Categories\Repositories\Criteria\InCategoriesOrChildrenCriterion;
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Repositories\Criteria\Primitives\DateCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\EqualCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\InCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\LikeCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\WhereCriterion;
-use EscolaLms\Courses\Repositories\Criteria\Primitives\OrderCriterion;
-use EscolaLms\Files\Helpers\FileHelper;
-use EscolaLms\StationaryEvents\Enum\ConstantEnum;
-use EscolaLms\StationaryEvents\Enum\StationaryEventStatusEnum;
-use EscolaLms\StationaryEvents\Events\StationaryEventAssigned;
-use EscolaLms\StationaryEvents\Events\StationaryEventAuthorAssigned;
-use EscolaLms\StationaryEvents\Events\StationaryEventAuthorUnassigned;
-use EscolaLms\StationaryEvents\Events\StationaryEventUnassigned;
-use EscolaLms\StationaryEvents\Models\StationaryEvent;
-use EscolaLms\StationaryEvents\Repositories\Contracts\StationaryEventRepositoryContract;
-use EscolaLms\StationaryEvents\Services\Contracts\StationaryEventServiceContract;
+use Ulams\Auth\Models\User;
+use Ulams\Categories\Repositories\Criteria\InCategoriesOrChildrenCriterion;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Repositories\Criteria\Primitives\DateCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\EqualCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\InCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\LikeCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\WhereCriterion;
+use Ulams\Courses\Repositories\Criteria\Primitives\OrderCriterion;
+use Ulams\Files\Helpers\FileHelper;
+use Ulams\StationaryEvents\Enum\ConstantEnum;
+use Ulams\StationaryEvents\Enum\StationaryEventStatusEnum;
+use Ulams\StationaryEvents\Events\StationaryEventAssigned;
+use Ulams\StationaryEvents\Events\StationaryEventAuthorAssigned;
+use Ulams\StationaryEvents\Events\StationaryEventAuthorUnassigned;
+use Ulams\StationaryEvents\Events\StationaryEventUnassigned;
+use Ulams\StationaryEvents\Models\StationaryEvent;
+use Ulams\StationaryEvents\Repositories\Contracts\StationaryEventRepositoryContract;
+use Ulams\StationaryEvents\Services\Contracts\StationaryEventServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;

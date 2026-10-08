@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Courses\Database\Factories;
+namespace Ulams\Courses\Database\Factories;
 
-use EscolaLms\Courses\Models\CourseUserAttendance;
+use Ulams\Courses\Models\CourseUserAttendance;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CourseUserAttendanceFactory extends Factory

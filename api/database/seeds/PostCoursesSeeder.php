@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\HeadlessH5P\Models\H5PContent;
-use EscolaLms\TopicTypes\Models\TopicContent\H5P;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Topic;
+use Ulams\HeadlessH5P\Models\H5PContent;
+use Ulams\TopicTypes\Models\TopicContent\H5P;
 use Peopleaps\Scorm\Model\ScormScoModel;
 
 class PostCoursesSeeder extends Seeder

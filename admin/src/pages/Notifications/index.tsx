@@ -1,7 +1,7 @@
 import TypeButtonDrawer from '@/components/TypeButtonDrawer';
 import UserSelect from '@/components/UserSelect';
 import { DATETIME_FORMAT } from '@/consts/dates';
-import { getEventTypes, getNotifications } from '@/services/escola-lms/notifications';
+import { getEventTypes, getNotifications } from '@/services/ulams/notifications';
 import { createTableOrderObject } from '@/utils/utils';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';

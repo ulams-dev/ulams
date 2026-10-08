@@ -1,4 +1,4 @@
-import { allContent } from '@/services/escola-lms/h5p';
+import { allContent } from '@/services/ulams/h5p';
 import { searchSubstring } from '@/utils/utils';
 import { Select } from 'antd';
 import React, { useEffect, useState } from 'react';

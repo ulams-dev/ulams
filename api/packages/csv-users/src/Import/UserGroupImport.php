@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Import;
+namespace Ulams\CsvUsers\Import;
 
-use EscolaLms\CsvUsers\Services\Contracts\CsvUserServiceContract;
-use EscolaLms\CsvUsers\Services\CsvUserGroupService;
+use Ulams\CsvUsers\Services\Contracts\CsvUserServiceContract;
+use Ulams\CsvUsers\Services\CsvUserGroupService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToCollection;

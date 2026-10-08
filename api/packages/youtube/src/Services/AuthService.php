@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Youtube\Services;
+namespace Ulams\Youtube\Services;
 
 use Config;
-use EscolaLms\Youtube\Services\Contracts\AuthServiceContract;
+use Ulams\Youtube\Services\Contracts\AuthServiceContract;
 use Exception;
 use Google_Client;
 

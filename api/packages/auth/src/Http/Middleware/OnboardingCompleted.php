@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Middleware;
+namespace Ulams\Auth\Http\Middleware;
 
-use EscolaLms\Auth\Exceptions\OnboardingNotCompleted;
+use Ulams\Auth\Exceptions\OnboardingNotCompleted;
 use Closure;
 use Illuminate\Http\Request;
 

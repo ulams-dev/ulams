@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\StationaryEvents\Http\Resources;
+namespace Ulams\StationaryEvents\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

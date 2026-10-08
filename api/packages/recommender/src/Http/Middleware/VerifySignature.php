@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Recommender\Http\Middleware;
+namespace Ulams\Recommender\Http\Middleware;
 
 use Closure;
-use EscolaLms\Recommender\EscolaLmsRecommenderServiceProvider;
+use Ulams\Recommender\UlamsRecommenderServiceProvider;
 use Illuminate\Http\Request;
 
 class VerifySignature
@@ -14,7 +14,7 @@ class VerifySignature
         $timestamp = $request->header('X-Timestamp');
         $signature = $request->header('X-Signature');
 
-        $secret = config(EscolaLmsRecommenderServiceProvider::CONFIG_KEY . '.signature_secret');
+        $secret = config(UlamsRecommenderServiceProvider::CONFIG_KEY . '.signature_secret');
 
         if (!$timestamp || !$signature) {
             return response()->json(['message' => 'Missing signature headers'], 401);

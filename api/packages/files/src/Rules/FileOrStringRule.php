@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Files\Rules;
+namespace Ulams\Files\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\UploadedFile;

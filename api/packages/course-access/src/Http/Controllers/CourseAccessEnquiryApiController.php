@@ -1,18 +1,18 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Http\Controllers;
+namespace Ulams\CourseAccess\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\CourseAccess\Exceptions\EnquiryAlreadyExistsException;
-use EscolaLms\CourseAccess\Http\Controllers\Swagger\CourseAccessEnquiryApiSwagger;
-use EscolaLms\CourseAccess\Http\Requests\CreateCourseAccessEnquiryApiRequest;
-use EscolaLms\CourseAccess\Http\Requests\DeleteCourseAccessEnquiryRequest;
-use EscolaLms\CourseAccess\Http\Requests\ListCourseAccessEnquiryRequest;
-use EscolaLms\CourseAccess\Http\Resources\CourseAccessEnquiryResource;
-use EscolaLms\CourseAccess\Services\Contracts\CourseAccessEnquiryServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\CourseAccess\Exceptions\EnquiryAlreadyExistsException;
+use Ulams\CourseAccess\Http\Controllers\Swagger\CourseAccessEnquiryApiSwagger;
+use Ulams\CourseAccess\Http\Requests\CreateCourseAccessEnquiryApiRequest;
+use Ulams\CourseAccess\Http\Requests\DeleteCourseAccessEnquiryRequest;
+use Ulams\CourseAccess\Http\Requests\ListCourseAccessEnquiryRequest;
+use Ulams\CourseAccess\Http\Resources\CourseAccessEnquiryResource;
+use Ulams\CourseAccess\Services\Contracts\CourseAccessEnquiryServiceContract;
 use Illuminate\Http\JsonResponse;
 
-class CourseAccessEnquiryApiController extends EscolaLmsBaseController implements CourseAccessEnquiryApiSwagger
+class CourseAccessEnquiryApiController extends UlamsBaseController implements CourseAccessEnquiryApiSwagger
 {
     private CourseAccessEnquiryServiceContract $service;
 

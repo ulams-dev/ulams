@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Reports\Stats\User;
+namespace Ulams\Reports\Stats\User;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Reports\Stats\AbstractDateRangeStats;
-use EscolaLms\Reports\ValueObject\DateRange;
+use Ulams\Core\Models\User;
+use Ulams\Reports\Stats\AbstractDateRangeStats;
+use Ulams\Reports\ValueObject\DateRange;
 
 abstract class AbstractUsersStats extends AbstractDateRangeStats
 {

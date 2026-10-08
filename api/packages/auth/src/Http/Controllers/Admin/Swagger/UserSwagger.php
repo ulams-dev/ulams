@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers\Admin\Swagger;
+namespace Ulams\Auth\Http\Controllers\Admin\Swagger;
 
-use EscolaLms\Auth\Http\Requests\Admin\UserAvatarDeleteRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserAvatarUploadRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserCreateRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserGetRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UsersListRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserDeleteRequest;
-use EscolaLms\Auth\Http\Requests\Admin\UserUpdateRequest;
+use Ulams\Auth\Http\Requests\Admin\UserAvatarDeleteRequest;
+use Ulams\Auth\Http\Requests\Admin\UserAvatarUploadRequest;
+use Ulams\Auth\Http\Requests\Admin\UserCreateRequest;
+use Ulams\Auth\Http\Requests\Admin\UserGetRequest;
+use Ulams\Auth\Http\Requests\Admin\UsersListRequest;
+use Ulams\Auth\Http\Requests\Admin\UserDeleteRequest;
+use Ulams\Auth\Http\Requests\Admin\UserUpdateRequest;
 use Illuminate\Http\JsonResponse;
 
 /**

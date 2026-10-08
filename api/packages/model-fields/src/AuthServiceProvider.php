@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\ModelFields;
+namespace Ulams\ModelFields;
 
-use EscolaLms\ModelFields\Models\Metadata;
-use EscolaLms\ModelFields\Policies\MetadataPolicy;
+use Ulams\ModelFields\Models\Metadata;
+use Ulams\ModelFields\Policies\MetadataPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 

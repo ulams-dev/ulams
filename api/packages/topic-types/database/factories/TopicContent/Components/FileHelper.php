@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\TopicTypes\Database\Factories\TopicContent\Components;
+namespace Ulams\TopicTypes\Database\Factories\TopicContent\Components;
 
-use EscolaLms\Courses\Models\Topic;
+use Ulams\Courses\Models\Topic;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
 use Illuminate\Http\File;

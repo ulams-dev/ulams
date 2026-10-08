@@ -1,10 +1,10 @@
 <?php
 
 
-namespace EscolaLms\Cart\Http\Swagger;
+namespace Ulams\Cart\Http\Swagger;
 
-use EscolaLms\Cart\Http\Requests\PaymentCartRequest;
-use EscolaLms\Cart\Http\Requests\PaymentProductRequest;
+use Ulams\Cart\Http\Requests\PaymentCartRequest;
+use Ulams\Cart\Http\Requests\PaymentProductRequest;
 use Illuminate\Http\JsonResponse;
 
 interface PaymentSwagger

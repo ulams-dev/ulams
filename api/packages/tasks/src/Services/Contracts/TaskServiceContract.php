@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Tasks\Services\Contracts;
+namespace Ulams\Tasks\Services\Contracts;
 
-use EscolaLms\Tasks\Dtos\CreateTaskDto;
-use EscolaLms\Tasks\Dtos\CriteriaDto;
-use EscolaLms\Tasks\Dtos\OrderDto;
-use EscolaLms\Tasks\Dtos\PageDto;
-use EscolaLms\Tasks\Dtos\UpdateTaskDto;
-use EscolaLms\Tasks\Models\Task;
+use Ulams\Tasks\Dtos\CreateTaskDto;
+use Ulams\Tasks\Dtos\CriteriaDto;
+use Ulams\Tasks\Dtos\OrderDto;
+use Ulams\Tasks\Dtos\PageDto;
+use Ulams\Tasks\Dtos\UpdateTaskDto;
+use Ulams\Tasks\Models\Task;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 

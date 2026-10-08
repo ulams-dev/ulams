@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Dtos\CourseAccessEnquiry;
+namespace Ulams\CourseAccess\Dtos\CourseAccessEnquiry;
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
+use Ulams\Core\Dtos\Contracts\DtoContract;
 
 class CourseAccessEnquiryDto implements DtoContract
 {

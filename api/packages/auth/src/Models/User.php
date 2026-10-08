@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Auth\Models;
+namespace Ulams\Auth\Models;
 
-use Database\Factories\EscolaLms\Auth\Models\UserFactory;
-use EscolaLms\Auth\Events\AccountBlocked;
-use EscolaLms\Auth\Events\AccountDeleted;
-use EscolaLms\Auth\Models\Traits\HasGroups;
-use EscolaLms\Auth\Models\Traits\HasOnboardingStatus;
-use EscolaLms\Auth\Models\Traits\UserHasSettings;
-use EscolaLms\Categories\Models\Traits\HasInterests;
-use EscolaLms\ModelFields\Traits\ModelFields;
+use Database\Factories\Ulams\Auth\Models\UserFactory;
+use Ulams\Auth\Events\AccountBlocked;
+use Ulams\Auth\Events\AccountDeleted;
+use Ulams\Auth\Models\Traits\HasGroups;
+use Ulams\Auth\Models\Traits\HasOnboardingStatus;
+use Ulams\Auth\Models\Traits\UserHasSettings;
+use Ulams\Categories\Models\Traits\HasInterests;
+use Ulams\ModelFields\Traits\ModelFields;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -38,7 +38,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?string $password_reset_token
  * @property string $password
  */
-class User extends \EscolaLms\Core\Models\User
+class User extends \Ulams\Core\Models\User
 {
     use HasInterests, HasOnboardingStatus, UserHasSettings, HasGroups, ModelFields, SoftDeletes;
 

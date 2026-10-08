@@ -1,21 +1,21 @@
 <?php
 
-namespace EscolaLms\Questionnaire\Services;
+namespace Ulams\Questionnaire\Services;
 
-use EscolaLms\Core\Models\User;
-use EscolaLms\Core\Repositories\Criteria\Primitives\NotNullCriterion;
-use EscolaLms\Core\Repositories\Criteria\Primitives\WhereCriterion;
-use EscolaLms\Questionnaire\Enums\QuestionnaireRateMap;
-use EscolaLms\Questionnaire\Enums\QuestionTypeEnum;
-use EscolaLms\Questionnaire\EscolaLmsQuestionnaireServiceProvider;
-use EscolaLms\Questionnaire\Models\Question;
-use EscolaLms\Questionnaire\Models\QuestionAnswer;
-use EscolaLms\Questionnaire\Models\QuestionnaireModel;
-use EscolaLms\Questionnaire\Repository\Contracts\QuestionAnswerRepositoryContract;
-use EscolaLms\Questionnaire\Repository\Contracts\QuestionRepositoryContract;
-use EscolaLms\Questionnaire\Repository\Criteria\AnswerQuestionReviewCriterion;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionnaireAnswerServiceContract;
-use EscolaLms\Questionnaire\Services\Contracts\QuestionnaireServiceContract;
+use Ulams\Core\Models\User;
+use Ulams\Core\Repositories\Criteria\Primitives\NotNullCriterion;
+use Ulams\Core\Repositories\Criteria\Primitives\WhereCriterion;
+use Ulams\Questionnaire\Enums\QuestionnaireRateMap;
+use Ulams\Questionnaire\Enums\QuestionTypeEnum;
+use Ulams\Questionnaire\UlamsQuestionnaireServiceProvider;
+use Ulams\Questionnaire\Models\Question;
+use Ulams\Questionnaire\Models\QuestionAnswer;
+use Ulams\Questionnaire\Models\QuestionnaireModel;
+use Ulams\Questionnaire\Repository\Contracts\QuestionAnswerRepositoryContract;
+use Ulams\Questionnaire\Repository\Contracts\QuestionRepositoryContract;
+use Ulams\Questionnaire\Repository\Criteria\AnswerQuestionReviewCriterion;
+use Ulams\Questionnaire\Services\Contracts\QuestionnaireAnswerServiceContract;
+use Ulams\Questionnaire\Services\Contracts\QuestionnaireServiceContract;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
@@ -81,7 +81,7 @@ class QuestionnaireAnswerService implements QuestionnaireAnswerServiceContract
         if ($questionnaireModel->display_frequency_minutes || !$answer) {
             $public = $question && !$question->public_answers
                 ? false
-                : Config::get(EscolaLmsQuestionnaireServiceProvider::CONFIG_KEY . '.new_answers_visible_by_default', false);
+                : Config::get(UlamsQuestionnaireServiceProvider::CONFIG_KEY . '.new_answers_visible_by_default', false);
 
             $this
                 ->questionAnswerRepository

@@ -1,13 +1,13 @@
 <?php
 
-namespace EscolaLms\Consultations\Tests\APIs;
+namespace Ulams\Consultations\Tests\APIs;
 
-use EscolaLms\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
-use EscolaLms\Consultations\Models\Consultation;
-use EscolaLms\Consultations\Tests\TestCase;
-use EscolaLms\Core\Tests\CreatesUsers;
+use Ulams\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
+use Ulams\Consultations\Models\Consultation;
+use Ulams\Consultations\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use EscolaLms\Consultations\Tests\Models\User;
+use Ulams\Consultations\Tests\Models\User;
 
 class ConsultationDestroyApiTest extends TestCase
 {

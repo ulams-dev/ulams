@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Courses\Http\Requests;
+namespace Ulams\Courses\Http\Requests;
 
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Models\Lesson;
-use EscolaLms\Courses\Models\Course;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Models\Lesson;
+use Ulams\Courses\Models\Course;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Http\FormRequest;
 

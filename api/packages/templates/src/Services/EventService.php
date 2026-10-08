@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Templates\Services;
+namespace Ulams\Templates\Services;
 
-use EscolaLms\Cart\Models\Product;
-use EscolaLms\Core\Models\User;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Templates\Events\EventWrapper;
-use EscolaLms\Templates\Events\ManuallyTriggeredEvent;
-use EscolaLms\Templates\Models\Template;
-use EscolaLms\Templates\Services\Contracts\EventServiceContract;
+use Ulams\Cart\Models\Product;
+use Ulams\Core\Models\User;
+use Ulams\Courses\Models\Course;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\Templates\Events\ManuallyTriggeredEvent;
+use Ulams\Templates\Models\Template;
+use Ulams\Templates\Services\Contracts\EventServiceContract;
 
 class EventService implements EventServiceContract
 {

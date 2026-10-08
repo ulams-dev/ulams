@@ -1,25 +1,25 @@
 <?php
 
-namespace EscolaLms\Translations\Http\Controllers;
+namespace Ulams\Translations\Http\Controllers;
 
-use EscolaLms\Core\Dtos\OrderDto;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Translations\Enum\ConstantEnum;
-use EscolaLms\Translations\Http\Controllers\Swagger\TranslationAdminApiSwagger;
-use EscolaLms\Translations\Http\Requests\CreateLanguageLineRequest;
-use EscolaLms\Translations\Http\Requests\DeleteLanguageLineRequest;
-use EscolaLms\Translations\Http\Requests\ListLanguageLineRequest;
-use EscolaLms\Translations\Http\Requests\ReadLanguageLineRequest;
-use EscolaLms\Translations\Http\Requests\RetrieveTranslationRequest;
-use EscolaLms\Translations\Http\Requests\UpdateLanguageLineRequest;
-use EscolaLms\Translations\Http\Resources\LanguageLineAdminResource;
-use EscolaLms\Translations\Http\Resources\RetrieveTranslationResource;
-use EscolaLms\Translations\Services\Contracts\LanguageLineServiceContract;
-use EscolaLms\Translations\Services\Contracts\TranslationServiceContract;
+use Ulams\Core\Dtos\OrderDto;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Translations\Enum\ConstantEnum;
+use Ulams\Translations\Http\Controllers\Swagger\TranslationAdminApiSwagger;
+use Ulams\Translations\Http\Requests\CreateLanguageLineRequest;
+use Ulams\Translations\Http\Requests\DeleteLanguageLineRequest;
+use Ulams\Translations\Http\Requests\ListLanguageLineRequest;
+use Ulams\Translations\Http\Requests\ReadLanguageLineRequest;
+use Ulams\Translations\Http\Requests\RetrieveTranslationRequest;
+use Ulams\Translations\Http\Requests\UpdateLanguageLineRequest;
+use Ulams\Translations\Http\Resources\LanguageLineAdminResource;
+use Ulams\Translations\Http\Resources\RetrieveTranslationResource;
+use Ulams\Translations\Services\Contracts\LanguageLineServiceContract;
+use Ulams\Translations\Services\Contracts\TranslationServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Lang;
 
-class TranslationAdminApiController extends EscolaLmsBaseController implements TranslationAdminApiSwagger
+class TranslationAdminApiController extends UlamsBaseController implements TranslationAdminApiSwagger
 {
     private LanguageLineServiceContract $languageLineService;
     private TranslationServiceContract $translationService;

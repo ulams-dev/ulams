@@ -1,10 +1,10 @@
 <?php
 
-namespace EscolaLms\Translations\Policies;
+namespace Ulams\Translations\Policies;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Translations\Enum\TranslationsPermissionsEnum;
-use EscolaLms\Translations\Models\LanguageLine;
+use Ulams\Auth\Models\User;
+use Ulams\Translations\Enum\TranslationsPermissionsEnum;
+use Ulams\Translations\Models\LanguageLine;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class LanguageLinePolicy

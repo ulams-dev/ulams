@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Cart\Database\Factories;
+namespace Ulams\Cart\Database\Factories;
 
-use Database\Factories\EscolaLms\Core\Models\UserFactory as CoreUserFactory;
-use EscolaLms\Cart\Models\User;
+use Database\Factories\Ulams\Core\Models\UserFactory as CoreUserFactory;
+use Ulams\Cart\Models\User;
 
 class UserFactory extends CoreUserFactory
 {

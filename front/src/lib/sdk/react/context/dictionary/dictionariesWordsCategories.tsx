@@ -7,8 +7,8 @@ import React, {
   useEffect,
 } from "react";
 import {
-  EscolaLMSContextConfig,
-  EscolaLMSContextReadConfig,
+  UlamsContextConfig,
+  UlamsContextReadConfig,
   ContextListState,
 } from "../types";
 import { defaultConfig } from "../defaults";
@@ -21,7 +21,7 @@ import { dictionariesWordsCategories as getDictionariesWordsCategories } from ".
 
 export const DictionariesWordsCategoriesContext: React.Context<
   Pick<
-    EscolaLMSContextConfig,
+    UlamsContextConfig,
     "dictionariesWordsCategories" | "fetchDictionariesWordsCategories"
   >
 > = createContext({
@@ -33,7 +33,7 @@ export const DictionariesWordsCategoriesContext: React.Context<
 export interface DictionariesWordsCategoriesContextProviderType {
   apiUrl: string;
   defaults?: Partial<
-    Pick<EscolaLMSContextReadConfig, "dictionariesWordsCategories">
+    Pick<UlamsContextReadConfig, "dictionariesWordsCategories">
   >;
   ssrHydration?: boolean;
 }

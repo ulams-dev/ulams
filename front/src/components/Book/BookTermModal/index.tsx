@@ -1,5 +1,5 @@
-import Modal from "@lms/components/components/atoms/Modal/Modal";
-import { API } from "@lms/sdk";
+import Modal from "@ulams/components/components/atoms/Modal/Modal";
+import { API } from "@ulams/sdk";
 import ProposedTermsContent from "./ProposedTermsContent";
 import UserSelectDatePicker from "./UserSelectDatePicker";
 

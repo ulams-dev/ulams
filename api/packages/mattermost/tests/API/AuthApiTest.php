@@ -1,15 +1,15 @@
 <?php
 
-namespace EscolaLms\Mattermost\Tests\API;
+namespace Ulams\Mattermost\Tests\API;
 
-use EscolaLms\Auth\Database\Seeders\AuthPermissionSeeder;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Core\Tests\ApiTestTrait;
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Mattermost\Enum\PackageStatusEnum;
-use EscolaLms\Mattermost\Services\Contracts\MattermostServiceContract;
-use EscolaLms\Mattermost\Tests\TestCase;
-use EscolaLms\Settings\Models\Config;
+use Ulams\Auth\Database\Seeders\AuthPermissionSeeder;
+use Ulams\Auth\Models\User;
+use Ulams\Core\Tests\ApiTestTrait;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Mattermost\Enum\PackageStatusEnum;
+use Ulams\Mattermost\Services\Contracts\MattermostServiceContract;
+use Ulams\Mattermost\Tests\TestCase;
+use Ulams\Settings\Models\Config;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Mockery\MockInterface;
 
@@ -30,7 +30,7 @@ class AuthApiTest extends TestCase
 
     protected function tearDown(): void
     {
-        \EscolaLms\Settings\Models\Config::truncate();
+        \Ulams\Settings\Models\Config::truncate();
         User::query()->delete();
     }
 

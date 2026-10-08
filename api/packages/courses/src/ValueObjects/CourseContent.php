@@ -1,14 +1,14 @@
 <?php
 
 
-namespace EscolaLms\Courses\ValueObjects;
+namespace Ulams\Courses\ValueObjects;
 
 
-use EscolaLms\Core\Dtos\Contracts\DtoContract;
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Courses\Models\Topic;
-use EscolaLms\Courses\Services\Contracts\CourseServiceContract;
-use EscolaLms\Courses\ValueObjects\Contracts\ValueObjectContract;
+use Ulams\Core\Dtos\Contracts\DtoContract;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Services\Contracts\CourseServiceContract;
+use Ulams\Courses\ValueObjects\Contracts\ValueObjectContract;
 use Illuminate\Support\Collection;
 
 class CourseContent extends ValueObject implements DtoContract, ValueObjectContract

@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\Dictionaries\Repositories\Contracts;
+namespace Ulams\Dictionaries\Repositories\Contracts;
 
-use EscolaLms\Core\Repositories\Contracts\BaseRepositoryContract;
+use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface DictionaryRepositoryContract extends BaseRepositoryContract

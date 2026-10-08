@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Youtube\Http\Controllers;
+namespace Ulams\Youtube\Http\Controllers;
 
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
-use EscolaLms\Youtube\Http\Requests\GoogleGenerateUrlRequest;
-use EscolaLms\Youtube\Services\Contracts\YoutubeServiceContract;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\Youtube\Http\Requests\GoogleGenerateUrlRequest;
+use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class GoogleController extends EscolaLmsBaseController
+class GoogleController extends UlamsBaseController
 {
     private YoutubeServiceContract $youtubeServiceContract;
 

@@ -1,26 +1,26 @@
 <?php
 
-namespace EscolaLms\Auth\Http\Controllers;
+namespace Ulams\Auth\Http\Controllers;
 
-use EscolaLms\Auth\Dtos\UserSaveDto;
-use EscolaLms\Auth\Dtos\UserUpdateSettingsDto;
-use EscolaLms\Auth\Enums\AuthPermissionsEnum;
-use EscolaLms\Auth\Enums\SettingStatusEnum;
-use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
-use EscolaLms\Auth\Events\AccountConfirmed;
-use EscolaLms\Auth\Events\AccountMustBeEnableByAdmin;
-use EscolaLms\Auth\Events\AccountRegistered;
-use EscolaLms\Auth\Http\Controllers\Swagger\RegisterSwagger;
-use EscolaLms\Auth\Http\Requests\RegisterRequest;
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Auth\Services\Contracts\UserGroupServiceContract;
-use EscolaLms\Auth\Services\Contracts\UserServiceContract;
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
+use Ulams\Auth\Dtos\UserSaveDto;
+use Ulams\Auth\Dtos\UserUpdateSettingsDto;
+use Ulams\Auth\Enums\AuthPermissionsEnum;
+use Ulams\Auth\Enums\SettingStatusEnum;
+use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Auth\Events\AccountConfirmed;
+use Ulams\Auth\Events\AccountMustBeEnableByAdmin;
+use Ulams\Auth\Events\AccountRegistered;
+use Ulams\Auth\Http\Controllers\Swagger\RegisterSwagger;
+use Ulams\Auth\Http\Requests\RegisterRequest;
+use Ulams\Auth\Models\User;
+use Ulams\Auth\Services\Contracts\UserGroupServiceContract;
+use Ulams\Auth\Services\Contracts\UserServiceContract;
+use Ulams\Core\Enums\UserRole;
+use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Config;
 
-class RegisterApiController extends EscolaLmsBaseController implements RegisterSwagger
+class RegisterApiController extends UlamsBaseController implements RegisterSwagger
 {
     private UserServiceContract $userService;
     private UserGroupServiceContract $userGroupService;
@@ -34,11 +34,11 @@ class RegisterApiController extends EscolaLmsBaseController implements RegisterS
     public function register(RegisterRequest $request): JsonResponse
     {
         $mustBeEnabledByAdmin = Config::get(
-            EscolaLmsAuthServiceProvider::CONFIG_KEY . '.account_must_be_enabled_by_admin', SettingStatusEnum::DISABLED
+            UlamsAuthServiceProvider::CONFIG_KEY . '.account_must_be_enabled_by_admin', SettingStatusEnum::DISABLED
         );
 
         $autoVerifiedEmail = Config::get(
-            EscolaLmsAuthServiceProvider::CONFIG_KEY . '.auto_verified_email', SettingStatusEnum::DISABLED
+            UlamsAuthServiceProvider::CONFIG_KEY . '.auto_verified_email', SettingStatusEnum::DISABLED
         );
 
         $userSaveDto = UserSaveDto::instantiateFromRequest($request)->setRoles([UserRole::STUDENT]);

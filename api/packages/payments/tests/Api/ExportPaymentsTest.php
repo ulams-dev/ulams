@@ -1,14 +1,14 @@
 <?php
 
-namespace EscolaLms\Payments\Tests\Api;
+namespace Ulams\Payments\Tests\Api;
 
-use EscolaLms\Core\Tests\CreatesUsers;
-use EscolaLms\Payments\Database\Seeders\PaymentsPermissionsSeeder;
-use EscolaLms\Payments\Enums\ExportFormatEnum;
-use EscolaLms\Payments\Enums\PaymentStatus;
-use EscolaLms\Payments\Exports\PaymentsExport;
-use EscolaLms\Payments\Models\Payment;
-use EscolaLms\Payments\Tests\TestCase;
+use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Payments\Database\Seeders\PaymentsPermissionsSeeder;
+use Ulams\Payments\Enums\ExportFormatEnum;
+use Ulams\Payments\Enums\PaymentStatus;
+use Ulams\Payments\Exports\PaymentsExport;
+use Ulams\Payments\Models\Payment;
+use Ulams\Payments\Tests\TestCase;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ExportPaymentsTest extends TestCase

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\CsvUsers\Database\Seeders;
+namespace Ulams\CsvUsers\Database\Seeders;
 
-use EscolaLms\Core\Enums\UserRole;
-use EscolaLms\CsvUsers\Enums\CsvUserPermissionsEnum;
+use Ulams\Core\Enums\UserRole;
+use Ulams\CsvUsers\Enums\CsvUserPermissionsEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

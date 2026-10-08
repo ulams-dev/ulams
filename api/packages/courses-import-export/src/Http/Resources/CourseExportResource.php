@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\CoursesImportExport\Http\Resources;
+namespace Ulams\CoursesImportExport\Http\Resources;
 
-use EscolaLms\Auth\Traits\ResourceExtandable;
-use EscolaLms\Courses\Models\Course;
+use Ulams\Auth\Traits\ResourceExtandable;
+use Ulams\Courses\Models\Course;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseExportResource extends JsonResource

@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Scorm\Policies;
+namespace Ulams\Scorm\Policies;
 
-use EscolaLms\Auth\Models\User;
-use EscolaLms\Scorm\Enums\ScormPermissionsEnum;
+use Ulams\Auth\Models\User;
+use Ulams\Scorm\Enums\ScormPermissionsEnum;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Peopleaps\Scorm\Model\ScormModel;
 

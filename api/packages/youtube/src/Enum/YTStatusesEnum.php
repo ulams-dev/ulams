@@ -1,6 +1,6 @@
 <?php
 
-namespace EscolaLms\Youtube\Enum;
+namespace Ulams\Youtube\Enum;
 
 use BenSampo\Enum\Enum;
 

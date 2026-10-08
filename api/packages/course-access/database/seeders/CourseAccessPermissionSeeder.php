@@ -1,8 +1,8 @@
 <?php
 
-namespace EscolaLms\CourseAccess\Database\Seeders;
+namespace Ulams\CourseAccess\Database\Seeders;
 
-use EscolaLms\CourseAccess\Enum\CourseAccessPermissionEnum;
+use Ulams\CourseAccess\Enum\CourseAccessPermissionEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

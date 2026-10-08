@@ -1,12 +1,5 @@
 # Stationary Events
 
-[![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Stationary-Events/)
-[![codecov](https://codecov.io/gh/EscolaLMS/Stationary-Events/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Stationary-Events)
-[![phpunit](https://github.com/EscolaLMS/Stationary-Events/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Stationary-Events/actions/workflows/test.yml)
-[![downloads](https://img.shields.io/packagist/dt/escolalms/stationary-events)](https://packagist.org/packages/escolalms/stationary-events)
-[![downloads](https://img.shields.io/packagist/v/escolalms/stationary-events)](https://packagist.org/packages/escolalms/stationary-events)
-[![downloads](https://img.shields.io/packagist/l/escolalms/stationary-events)](https://packagist.org/packages/escolalms/stationary-events)
-[![Maintainability](https://api.codeclimate.com/v1/badges/0c9e2593fb30e2048f95/maintainability)](https://codeclimate.com/github/EscolaLMS/Stationary-Events/maintainability)
 
 ## What does it do
 
@@ -14,9 +7,9 @@ This package is used to manage stationary events.
 
 ## Installing
 
-- `composer require escolalms/stationary-events`
+- `composer require ulams/stationary-events`
 - `php artisan migrate`
-- `php artisan db:seed --class="EscolaLms\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder"`
+- `php artisan db:seed --class="Ulams\StationaryEvents\Database\Seeders\StationaryEventPermissionSeeder"`
 
 ## Database
 
@@ -40,13 +33,13 @@ StationaryEvent n -> n Category (using pivot table CategoryStationaryEvent)
 
 ## Endpoints
 
-All the endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://escolalms.github.io/Stationary-Events/)
+All the endpoints are defined in [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/Stationary-Events/)
 
 ## Tests
 
 Run `./vendor/bin/phpunit` to run tests.
 
-Test details [![codecov](https://codecov.io/gh/EscolaLMS/Stationary-Events/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/EscolaLMS/Stationary-Events)
+Test details [![codecov](https://codecov.io/gh/Ulams/Stationary-Events/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Stationary-Events)
 
 ## Events
 

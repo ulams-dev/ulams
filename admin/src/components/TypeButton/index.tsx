@@ -16,17 +16,17 @@ type PossibleType =
   | 'App\\Models\\User'
   | 'App\\Models\\Course'
   | 'App\\Models\\Consultation'
-  | 'EscolaLms\\Consultations\\Models\\Consultation'
+  | 'Ulams\\Consultations\\Models\\Consultation'
   | 'App\\Models\\Webinar'
-  | 'EscolaLms\\Webinars\\Models\\Webinar'
+  | 'Ulams\\Webinars\\Models\\Webinar'
   | 'App\\Models\\StationaryEvent'
-  | 'EscolaLms\\StationaryEvents\\Models\\StationaryEvent'
-  | 'EscolaLms\\Core\\Models\\User'
-  | 'EscolaLms\\Cart\\Models\\Order'
-  | 'EscolaLms\\Cart\\Models\\Course'
-  | 'EscolaLms\\Auth\\Models\\UserGroup'
-  | 'EscolaLms\\TopicTypeGift\\Models\\GiftQuiz'
-  | 'EscolaLms\\Vouchers\\Models\\Order'
+  | 'Ulams\\StationaryEvents\\Models\\StationaryEvent'
+  | 'Ulams\\Core\\Models\\User'
+  | 'Ulams\\Cart\\Models\\Order'
+  | 'Ulams\\Cart\\Models\\Course'
+  | 'Ulams\\Auth\\Models\\UserGroup'
+  | 'Ulams\\TopicTypeGift\\Models\\GiftQuiz'
+  | 'Ulams\\Vouchers\\Models\\Order'
   | 'Questionnaire'
   | 'Product'
   | 'Students'
@@ -42,16 +42,16 @@ export const TypeButton: React.FC<{
 }> = ({ type, type_id, onData, text }) => {
   switch (type) {
     case 'App\\Models\\StationaryEvent':
-    case 'EscolaLms\\StationaryEvents\\Models\\StationaryEvent':
+    case 'Ulams\\StationaryEvents\\Models\\StationaryEvent':
       return (
         <StationaryEventRow id={type_id} onLoaded={(event) => onData({ type, value: event })} />
       );
 
     case 'App\\Models\\Webinar':
-    case 'EscolaLms\\Webinars\\Models\\Webinar':
+    case 'Ulams\\Webinars\\Models\\Webinar':
       return <WebinarRow id={type_id} onLoaded={(webinar) => onData({ type, value: webinar })} />;
     case 'App\\Models\\Consultation':
-    case 'EscolaLms\\Consultations\\Models\\Consultation':
+    case 'Ulams\\Consultations\\Models\\Consultation':
       return (
         <ConsultationRow
           id={type_id}
@@ -59,24 +59,24 @@ export const TypeButton: React.FC<{
         />
       );
     case 'App\\Models\\User':
-    case 'EscolaLms\\Core\\Models\\User':
+    case 'Ulams\\Core\\Models\\User':
       return (
         <UserRow id={type_id} onLoaded={(user) => onData({ type, value: user })} text={text} />
       );
-    case 'EscolaLms\\Cart\\Models\\Order':
+    case 'Ulams\\Cart\\Models\\Order':
       return <OrderRow id={type_id} onLoaded={(order) => onData({ type, value: order })} />;
-    case 'EscolaLms\\Vouchers\\Models\\Order':
+    case 'Ulams\\Vouchers\\Models\\Order':
       return <OrderRow id={type_id} onLoaded={(order) => onData({ type, value: order })} />;
-    case 'EscolaLms\\Cart\\Models\\Course':
+    case 'Ulams\\Cart\\Models\\Course':
     case 'App\\Models\\Course':
       return (
         <CourseRow
           id={type_id}
-          onLoaded={(course) => onData({ type: 'EscolaLms\\Cart\\Models\\Course', value: course })}
+          onLoaded={(course) => onData({ type: 'Ulams\\Cart\\Models\\Course', value: course })}
           text={text}
         />
       );
-    case 'EscolaLms\\Auth\\Models\\UserGroup':
+    case 'Ulams\\Auth\\Models\\UserGroup':
       return (
         <UserGroupRow id={type_id} onLoaded={(userGroup) => onData({ type, value: userGroup })} />
       );
@@ -89,7 +89,7 @@ export const TypeButton: React.FC<{
         />
       );
     // TODO #1022 add onLoaded
-    case 'EscolaLms\\TopicTypeGift\\Models\\GiftQuiz':
+    case 'Ulams\\TopicTypeGift\\Models\\GiftQuiz':
       return (
         <GiftQuizRow id={type_id} onLoaded={(giftQuiz) => onData({ type, value: giftQuiz })} />
       );

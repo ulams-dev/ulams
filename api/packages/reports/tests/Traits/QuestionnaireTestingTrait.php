@@ -1,9 +1,9 @@
 <?php
 
-namespace EscolaLms\Reports\Tests\Traits;
+namespace Ulams\Reports\Tests\Traits;
 
-use EscolaLms\Courses\Models\Course;
-use EscolaLms\Questionnaire\Models\QuestionnaireModelType;
+use Ulams\Courses\Models\Course;
+use Ulams\Questionnaire\Models\QuestionnaireModelType;
 
 trait QuestionnaireTestingTrait
 {
