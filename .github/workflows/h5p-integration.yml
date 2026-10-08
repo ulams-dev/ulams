@@ -1,0 +1,92 @@
+name: H5P integration tests
+
+# api-h5p suites that need real Postgres, Valkey and MinIO (test/http.test.ts, test/pg-storage.test.ts).
+# Manual for now; the unit suites run in ci.yml on every change.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  h5p-integration:
+    name: api-h5p integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_DB: default
+          POSTGRES_USER: default
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U default -d default"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      valkey:
+        image: valkey/valkey:8-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "valkey-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      minio:
+        # Same image as api/docker-compose.yml; it creates the bucket from MINIO_DEFAULT_BUCKETS.
+        image: bitnamilegacy/minio:latest
+        env:
+          MINIO_ROOT_USER: admin
+          MINIO_ROOT_PASSWORD: minio_secretpassword
+          MINIO_DEFAULT_BUCKETS: ulams
+        ports:
+          - 9000:9000
+    env:
+      HUSKY: "0"
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+      TURBO_TELEMETRY_DISABLED: "1"
+      # Defaults in api/h5p/src/config.ts point at compose service names; services are on localhost here.
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5432"
+      DB_DATABASE: default
+      DB_USERNAME: default
+      DB_PASSWORD: secret
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: "6379"
+      S3_ENDPOINT: http://127.0.0.1:9000
+      S3_KEY: admin
+      S3_SECRET: minio_secretpassword
+      S3_BUCKET: ulams
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: corepack yarn install --frozen-lockfile
+
+      - name: Download H5P core and editor files
+        run: corepack yarn workspace api-h5p download:core
+
+      - name: Wait for MinIO
+        run: |
+          for _ in $(seq 1 60); do
+            curl -fsS http://127.0.0.1:9000/minio/health/ready && exit 0
+            sleep 2
+          done
+          echo "::error::MinIO did not become ready"
+          exit 1
+
+      - name: Integration tests
+        run: corepack yarn test:h5p:integration
