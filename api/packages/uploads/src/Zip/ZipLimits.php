@@ -9,6 +9,9 @@ final class ZipLimits
         public readonly int $maxUncompressed = 2 * 1024 * 1024 * 1024,
         public readonly int $maxEntrySize = 1024 * 1024 * 1024,
         public readonly int $maxRatio = 200,
+        // Treat "/a/b" as "a/b" instead of rejecting it. Only for course exports made before the
+        // exporter was fixed (it wrote every entry with a leading slash).
+        public readonly bool $stripLeadingSlash = false,
     ) {
     }
 
@@ -21,6 +24,7 @@ final class ZipLimits
             (int) ($config['max_uncompressed'] ?? 2 * 1024 * 1024 * 1024),
             (int) ($config['max_entry_size'] ?? 1024 * 1024 * 1024),
             (int) ($config['max_ratio'] ?? 200),
+            (bool) ($config['strip_leading_slash'] ?? false),
         );
     }
 }

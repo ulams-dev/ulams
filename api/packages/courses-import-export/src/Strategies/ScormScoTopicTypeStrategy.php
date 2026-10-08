@@ -5,7 +5,7 @@ namespace Ulams\CoursesImportExport\Strategies;
 use Ulams\CoursesImportExport\Strategies\Contract\TopicImportStrategy;
 use Ulams\Scorm\Services\Contracts\ScormServiceContract;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\File;
+use Ulams\CoursesImportExport\Support\ImportPath;
 
 class ScormScoTopicTypeStrategy implements TopicImportStrategy
 {
@@ -22,8 +22,8 @@ class ScormScoTopicTypeStrategy implements TopicImportStrategy
             return null;
         }
 
-        $filePath = $path . DIRECTORY_SEPARATOR . $data['scorm_file'];
-        if (!File::exists($filePath)) {
+        $filePath = ImportPath::resolve($path, $data['scorm_file']);
+        if ($filePath === null) {
             return null;
         }
 

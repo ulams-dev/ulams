@@ -64,7 +64,7 @@ class ZipInspector
                 throw new UploadRejected('symlink', sprintf('The archive contains a symbolic link (%s).', $this->printable($name)));
             }
 
-            $path = self::normalise($name);
+            $path = self::normalise($limits->stripLeadingSlash ? ltrim($name, '/') : $name);
             if ($path === '') {
                 continue;
             }

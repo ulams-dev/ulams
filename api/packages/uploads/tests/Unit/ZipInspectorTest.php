@@ -43,6 +43,20 @@ class ZipInspectorTest extends TestCase
         $this->assertRejected($reason, fn () => (new ZipInspector())->inspect($zip, new ZipLimits()));
     }
 
+    public function testLegacyCourseExportsMayHaveALeadingSlash(): void
+    {
+        $zip = $this->makeZip(['/content.json' => '{}', '/categories/icon.svg' => '<svg/>']);
+
+        $entries = (new ZipInspector())->inspect($zip, ZipLimits::fromConfig('course-import'));
+
+        $this->assertSame(['content.json', 'categories/icon.svg'], array_map(fn ($e) => $e->path, $entries));
+        $this->assertRejected('absolute_path', fn () => (new ZipInspector())->inspect($zip, ZipLimits::fromConfig('package')));
+        $this->assertRejected('zip_slip', fn () => (new ZipInspector())->inspect(
+            $this->makeZip(['/../escape' => 'x']),
+            ZipLimits::fromConfig('course-import')
+        ));
+    }
+
     public function testRejectsSymlinks(): void
     {
         $zip = $this->makeZip(['imsmanifest.xml' => '<manifest/>'], ['link' => '/etc/passwd']);

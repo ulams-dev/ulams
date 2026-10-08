@@ -44,6 +44,8 @@ return [
         ],
         'course-import' => [
             'max_entries' => (int) env('UPLOADS_COURSE_IMPORT_MAX_ENTRIES', 10000),
+            // exports made before 2026-10 have a leading "/" on every entry
+            'strip_leading_slash' => true,
             'max_uncompressed' => $mb('UPLOADS_COURSE_IMPORT_MAX_UNCOMPRESSED_MB', 4096),
             'max_entry_size' => $mb('UPLOADS_ZIP_MAX_ENTRY_MB', 1024),
             'max_ratio' => (int) env('UPLOADS_ZIP_MAX_RATIO', 200),
