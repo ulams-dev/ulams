@@ -1,0 +1,34 @@
+version: '3'
+
+volumes:
+  frontend-node-modules: ~
+
+services:
+  build:
+    environment:
+      - PORT=5017
+    image: node:14-alpine
+    ports:
+      - 5017:5017
+    volumes:
+      - ./:/srv
+      - frontend-node-modules:/srv/node_modules/
+    working_dir: /srv/app
+    command: "sh -c 'PORT=$PORT yarn && yarn start'"
+
+  php:
+    image: php:apache
+    volumes:
+      - ./dist:/var/www/html
+    ports:
+      - 80:80
+
+  dist_test:
+    build:
+      context: .
+    environment:
+      - API_URL=https://api.escolalms.com
+    ports:
+      - 88:80
+    volumes:
+      - ./config/php/env_config.php:/var/www/html/env_config.php

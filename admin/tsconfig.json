@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "baseUrl": "./",
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+
+    "paths": {
+      "@/*": ["./src/*"],
+      "@@/*": ["./src/.umi/*"],
+      "@@test/*": ["./src/.umi-test/*"]
+    },
+
+    "inlineSources": true,
+
+    // Set `sourceRoot` to  "/" to strip the build path prefix
+    // from generated source code references.
+    // This improves issue grouping in Sentry.
+    "sourceRoot": "/"
+  },
+  "include": [
+    "./**/*.d.ts",
+    "./**/*.ts",
+    "./**/*.tsx",
+    "./src/services/escola-lms/typings.d.ts",
+    "./node_modules/@escolalms/ts-models/models.d.ts"
+  ]
+}

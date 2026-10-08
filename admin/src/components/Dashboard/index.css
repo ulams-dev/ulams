@@ -1,0 +1,52 @@
+.dashboard-draggable {
+  overflow-x: hidden;
+}
+
+.dashboard-draggable__remove_btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.dashboard-draggable__remove_btn:hover {
+  color: #333;
+}
+
+.dashboard-draggable__component {
+  display: block;
+  height: 100%;
+}
+
+.dashboard-draggable__component h3 {
+  margin: 0 0 25px 0;
+  /* Gray 3 */
+
+  color: #828282;
+  font-weight: 400;
+  font-size: 16px;
+  font-style: normal;
+  line-height: 24px;
+  /* identical to box height */
+
+  text-transform: uppercase;
+}
+
+.dashboard-draggable__component article {
+  display: block;
+  /* Calculate height for scrollbar and subtract 48px + some space for resize button */
+  height: calc(100% - 64px);
+  padding: 24px;
+  /* Show scrollbar when height of main box is smaller than content inside */
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 10px;
+}
+
+article.dashboard-draggable__add {
+  height: calc(100% - 12px);
+}
+
+.dashboard-draggable .react-grid-item {
+  /* Hide content inside react-grid-item when box is smaller than content inside  */
+  overflow: hidden;
+}

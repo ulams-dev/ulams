@@ -1,0 +1,74 @@
+import ProCard from '@ant-design/pro-card';
+import { PageContainer } from '@ant-design/pro-layout';
+import React from 'react';
+import { FormattedMessage, history, useAccess, useParams } from 'umi';
+
+import { useCheckRoles } from '@/hooks/useCheckRoles';
+import ConfigList from './ConfigList/index';
+
+export enum channelType {
+  email = 'EscolaLms\\TemplatesEmail\\Core\\EmailChannel',
+  pdf = 'EscolaLms\\TemplatesPdf\\Core\\PdfChannel',
+  sms = 'EscolaLms\\TemplatesSms\\Core\\SmsChannel',
+}
+
+const Templates: React.FC = () => {
+  const params = useParams<{ template?: string }>();
+  const { template } = params;
+  const access = useAccess();
+  const { checkRoles } = useCheckRoles();
+
+  const hideSMSTab = checkRoles('hideTemplateTab-sms');
+  const hideEmailTab = checkRoles('hideTemplateTab-email');
+
+  return (
+    <PageContainer>
+      <ProCard
+        tabs={{
+          type: 'card',
+          activeKey: template,
+          onChange: (key) => history.push(`/configuration/templates/${key}`),
+        }}
+      >
+        {/** TODO #1040 check here if all essential access is given */}
+        {!hideEmailTab && (
+          <ProCard.TabPane key="email" tab={<FormattedMessage id="email" />}>
+            <ConfigList templateType={'email'} channel={channelType.email} />
+          </ProCard.TabPane>
+        )}
+
+        {access.certificatesPermission && (
+          <ProCard.TabPane key={'pdf'} tab={<FormattedMessage id="PDF" />}>
+            <ConfigList templateType={'pdf'} channel={channelType.pdf} />
+          </ProCard.TabPane>
+        )}
+        {/* This was disabled so remove comment when functionality will be ready */}
+        {/* <ProCard.TabPane
+          disabled
+          key={'Push'}
+          tab={
+            <span>
+              <FormattedMessage id="Push" />
+            </span>
+          }
+        >
+          Push
+        </ProCard.TabPane> */}
+        {!hideSMSTab && (
+          <ProCard.TabPane
+            key={'sms'}
+            tab={
+              <span>
+                <FormattedMessage id="SMS" />
+              </span>
+            }
+          >
+            <ConfigList templateType={'sms'} channel={channelType.sms} />
+          </ProCard.TabPane>
+        )}
+      </ProCard>
+    </PageContainer>
+  );
+};
+
+export default Templates;

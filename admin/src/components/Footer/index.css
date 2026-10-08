@@ -1,0 +1,34 @@
+div.ant-pro-global-footer {
+  margin: 48px 0 0;
+  padding: 0;
+}
+
+.ant-pro-global-footer > div {
+  padding-inline: 16px;
+}
+
+.ant-pro-global-footer > div:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+.ant-pro-global-footer > div:last-child {
+  padding-bottom: 24px;
+}
+
+.ant-pro-global-footer-footer-logo-wrapper {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+
+  background-color: #fff;
+}
+
+.ant-pro-global-footer-footer-logo {
+  display: block;
+  width: 100%;
+  max-width: 650px;
+}
+
+.ant-pro-global-footer-footer-logo-image {
+  width: 100%;
+}
