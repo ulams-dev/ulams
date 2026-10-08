@@ -120,6 +120,17 @@ export type TopicQuiz = TopicBase & {
   };
 };
 
+export type TopicLti = TopicBase & {
+  topicable_type: TopicType.Lti;
+  topicable: TopicableBase & {
+    lti_tool_id: number;
+    tool_name?: string | null;
+    url?: string | null;
+    presentation: "iframe" | "window";
+    score_maximum?: number;
+  };
+};
+
 export type TopicUnselected = TopicBase & {
   topicable_type?: TopicType.Unselected;
   topicable?: never;
@@ -136,7 +147,8 @@ export type Topic =
   | TopicPdf
   | TopicScorm
   | TopicProject
-  | TopicQuiz;
+  | TopicQuiz
+  | TopicLti;
 
 export type TopicNotEmpty =
   | TopicRichText

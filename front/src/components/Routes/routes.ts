@@ -38,6 +38,7 @@ const routeRoutes = {
   packageProduct: "/package/:id",
   onboarding: "/onboarding",
   subscriptions: "/subscriptions",
+  ltiLaunch: "/lti/launch",
 };
 
 export default routeRoutes;

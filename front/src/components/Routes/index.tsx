@@ -42,6 +42,7 @@ const WebinarPage = lazy(() => import("../../pages/webinar"));
 // const PackagesPage = lazy(() => import("../../pages/packages"));
 const PackagePage = lazy(() => import("../../pages/package"));
 const SubscriptionsPage = lazy(() => import("../../pages/subscriptions"));
+const LtiLaunchPage = lazy(() => import("../../pages/lti-launch"));
 const MySubscriptions = lazy(() => import("../../pages/user/my-subscriptions"));
 
 // const RegisterPage = lazy(() => import("../../pages/register"));
@@ -127,6 +128,7 @@ const Routes: React.FC = (): ReactElement => {
     onboarding,
     subscriptions,
     mySubscriptions,
+    ltiLaunch,
   } = routes;
 
   return (
@@ -144,6 +146,7 @@ const Routes: React.FC = (): ReactElement => {
             <Route exact path={reset} component={ResetPage} />
             <Route exact path={emailVerify} component={VerifyEmail} />
             <Route exact path={subscriptions} component={SubscriptionsPage} />
+            <Route exact path={ltiLaunch} component={LtiLaunchPage} />
             {/* <Route exact path={authentication} component={AuthPage} /> */}
             {/* platform visibility pages*/}
             {/* <ConfigRoute exact path={tutors} component={TutorsPage} /> */}

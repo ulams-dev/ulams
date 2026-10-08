@@ -135,6 +135,7 @@ const ICON_MAP: Record<API.TopicType, React.FC> = {
   [API.TopicType.Scorm]: DefaultIcon,
   [API.TopicType.Project]: DefaultIcon,
   [API.TopicType.GiftQuiz]: DefaultIcon,
+  [API.TopicType.Lti]: OEmbedIcon,
 };
 
 interface Props {

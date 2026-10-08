@@ -10,6 +10,7 @@ export enum TopicType {
   Scorm = "Ulams\\TopicTypes\\Models\\TopicContent\\ScormSco",
   Project = "Ulams\\TopicTypeProject\\Models\\Project",
   GiftQuiz = "Ulams\\TopicTypeGift\\Models\\GiftQuiz",
+  Lti = "Ulams\\Lti\\Models\\LtiLink",
 }
 
 export enum BookmarkableType {
