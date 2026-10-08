@@ -92,18 +92,19 @@ stale content.
 - [ ] (new) Remaining legacy references: replace the `escolalms/php` and `escolalms/reportbro-server`
       images, decide on upstream provenance links, reword ADR prose, retarget Docker Hub publishing
       workflows, replace the `ulams.app` placeholder domain, recreate SQL views in pre-rename databases
-- [ ] (new) Fix `php artisan route:list` (Mattermost client connects in its constructor)
+- [x] (new) Fix `php artisan route:list` (Mattermost client connects in its constructor)
 - [ ] (new) CI: move workflows to the root `.github/` with path filters; drop MySQL services; run Jest
       in admin/front; Dockerfiles build from the repo root
-- [ ] (new) Remove the non-existent `packages/tracker/src` path from Swagger; consider Git LFS for
+- [ ] (new) Remove the non-existent `packages/tracker/src` path from Swagger (done); consider Git LFS for
       large test fixtures; revisit exact pins (`faker-markdown-generator`, `tzsk/sms`)
 
 ### 0.1c Security and audit follow-ups (new)
+- [x] (new) Replace the GPL PHP libraries `trax2/framework` (lrs) and `laraveldaily/laravel-invoices` with first-party code
 - [ ] (new) Payment callbacks must verify the payment with the provider (Stripe signature/status, P24
       verification); RevenueCat off by default and server-verified
 - [ ] (new) Remove the consultation webcam capture and its unauthenticated upload endpoints (recommender leftover)
 - [ ] (new) Authenticate the Jitsi recording webhook and restrict the downloaded URL (SSRF)
-- [ ] (new) Verify JWT signatures in the LRS guard
+- [x] (new) Verify JWT signatures in the LRS guard
 - [ ] (new) Fix the ungrouped `orWhere` in `CourseAccessService::getUserCourseIds` and similar queries
 - [ ] (new) Remove the tracker Logs screen in admin and other tracker leftovers
 - [ ] (new) Fix the tenant video processing queue (jobs dispatched to a queue no tenant worker consumes)
