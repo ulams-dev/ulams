@@ -503,7 +503,7 @@ class CoffeeAtlasExperience extends DemoExperience
         $this->product('Taste Makers', [
             'type' => ProductType::BUNDLE,
             'price' => 10900,
-            'price_old' => 12800,
+            'price_old' => 12900,
             'description' => 'The Coffee Atlas course plus the live cupping masterclass with Inés Duarte.',
             'productables' => [$this->courseProductable(), ['id' => $webinar->getKey(), 'class' => Webinar::class, 'quantity' => 1]],
             'limit_per_user' => 1,

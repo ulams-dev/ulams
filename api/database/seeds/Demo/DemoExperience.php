@@ -491,20 +491,54 @@ abstract class DemoExperience
 
     // --------------------------------------------------------------- commerce
 
+    /** VAT of the demo products (Poland, standard rate). */
+    public const TAX_RATE = 23;
+
     /**
      * Creates or updates a product by name through the cart ProductService.
+     *
+     * `price` and `price_old` are the gross amounts a buyer sees (the prices in
+     * front/docs/design/experiences.md, e.g. 8900 = €89). The cart stores the net
+     * price and adds `tax_rate` on top (Product::getGrossPrice(), the front's
+     * formatPrice()), so they are converted with {@see netPrice()}.
      *
      * @param array<string, mixed> $data
      */
     protected function product(string $name, array $data): Product
     {
         $service = app(ProductServiceContract::class);
-        $data = array_merge(['name' => $name, 'purchasable' => true, 'tax_rate' => 23], $data);
+        $data = array_merge(['name' => $name, 'purchasable' => true, 'tax_rate' => self::TAX_RATE], $data);
+        foreach (['price', 'price_old'] as $field) {
+            if (isset($data[$field])) {
+                $data[$field] = self::netPrice((int) $data[$field], (float) $data['tax_rate']);
+            }
+        }
         $existing = Product::query()->where('name', $name)->first();
         $product = $existing ? $service->update($existing, $data) : $service->create($data);
-        $this->report['extras']['products'][] = sprintf('%s (%s, %s %s)', $name, $product->type, number_format($product->price / 100, 2), 'EUR');
+        $this->report['extras']['products'][] = sprintf('%s (%s, %s EUR gross, %s net + %s %% VAT)', $name, $product->type, number_format($product->getGrossPrice() / 100, 2), number_format($product->price / 100, 2), $product->tax_rate);
 
         return $product;
+    }
+
+    /**
+     * Net price (minor units) whose gross, as the cart computes it
+     * (net + round(net * rate / 100)), is exactly $gross: 8900 at 23 % → 7236
+     * (tax 1664). Falls back to the nearest net when no net hits $gross exactly.
+     */
+    public static function netPrice(int $gross, float $taxRate): int
+    {
+        if ($gross <= 0 || $taxRate <= 0) {
+            return $gross;
+        }
+        $estimate = (int) round($gross / (1 + $taxRate / 100));
+        foreach ([0, -1, 1, -2, 2] as $delta) {
+            $net = $estimate + $delta;
+            if ($net + (int) round($net * $taxRate / 100) === $gross) {
+                return $net;
+            }
+        }
+
+        return $estimate;
     }
 
     protected function courseProductable(int $quantity = 1): array
