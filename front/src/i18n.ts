@@ -1500,20 +1500,6 @@ const resources = {
           "Błąd: nieprawidłowa oferta promocyjna",
         OFFLINE_CONNECTION_ERROR: "Błąd: połączenie offline",
       },
-      MeetingAnalyticsOverlay: {
-        Chart: {
-          Now: "Teraz",
-          Emotions: {
-            happy: "Rozbawiony",
-            neutral: "Neutralny",
-            angry: "Zły",
-            surprised: "Zaskoczony",
-            disgusted: "Zniesmaczony",
-            fearful: "Przestraszony",
-            sad: "Smutny",
-          },
-        },
-      },
     },
   },
 };

@@ -14,6 +14,25 @@ import templates from './fr-FR/templates';
 import vouchers from './fr-FR/vouchers';
 
 export default {
+  // H5P (api/h5p service)
+  'menu.Courses.H5PLibraries': 'Bibliothèques H5P',
+  H5P_libraries: 'Bibliothèques',
+  H5P_library_upload: 'Téléverser un paquet de bibliothèques (.h5p)',
+  H5P_library_uploaded: 'Bibliothèques installées : {installed}, mises à jour : {updated}',
+  H5P_library_machine_name: 'Nom machine',
+  H5P_library_version: 'Version',
+  H5P_library_runnable: 'Type de contenu',
+  H5P_library_addon: 'Module complémentaire',
+  H5P_library_restricted: 'Restreinte',
+  H5P_library_instances: 'Utilisée par des contenus',
+  H5P_library_dependents: 'Bibliothèques dépendantes',
+  H5P_library_delete_question: 'Supprimer cette bibliothèque ?',
+  H5P_update_content_type_cache: 'Mettre à jour les types de contenu (H5P Hub)',
+  H5P_content_type_cache_last_update: 'Types de contenu mis à jour',
+  H5P_content_type_cache_never: 'jamais',
+  H5P_remove_unused: 'Supprimer les inutilisés',
+  H5P_remove_unused_question: 'Supprimer tous les contenus H5P qu’aucun sujet n’utilise ?',
+  h5p_edited: 'Élément H5P enregistré',
   parent: 'Parent',
   parent_lesson: 'Leçon parente',
   courseAccessEnquiries: "Demandes d'accès au cours",

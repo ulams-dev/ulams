@@ -9,13 +9,31 @@ import menu from './pl-PL/menu';
 import notifications from './pl-PL/notifications';
 import pages from './pl-PL/pages';
 import pwa from './pl-PL/pwa';
-import recommender from './pl-PL/recommender';
 import settingDrawer from './pl-PL/settingDrawer';
 import settings from './pl-PL/settings';
 import templates from './pl-PL/templates';
 import vouchers from './pl-PL/vouchers';
 
 export default {
+  // H5P (api/h5p service)
+  'menu.Courses.H5PLibraries': 'Biblioteki H5P',
+  H5P_libraries: 'Biblioteki',
+  H5P_library_upload: 'Wgraj paczkę bibliotek (.h5p)',
+  H5P_library_uploaded: 'Zainstalowane biblioteki: {installed}, zaktualizowane: {updated}',
+  H5P_library_machine_name: 'Nazwa maszynowa',
+  H5P_library_version: 'Wersja',
+  H5P_library_runnable: 'Typ treści',
+  H5P_library_addon: 'Dodatek',
+  H5P_library_restricted: 'Ograniczona',
+  H5P_library_instances: 'Użyta w treściach',
+  H5P_library_dependents: 'Zależne biblioteki',
+  H5P_library_delete_question: 'Usunąć tę bibliotekę?',
+  H5P_update_content_type_cache: 'Odśwież listę typów treści (H5P Hub)',
+  H5P_content_type_cache_last_update: 'Lista typów treści odświeżona',
+  H5P_content_type_cache_never: 'nigdy',
+  H5P_remove_unused: 'Usuń nieużywane',
+  H5P_remove_unused_question: 'Usunąć wszystkie treści H5P, których nie używa żaden temat?',
+  h5p_edited: 'Element H5P zapisany',
   courseAccessEnquiries: 'Zapytania od dostęp do kursu',
   parent: 'Nadrzedny',
   parent_lesson: 'Nadrzedna Lekcja',
@@ -90,7 +108,6 @@ export default {
   ...vouchers,
   ...courses,
   ...events,
-  ...recommender,
   ...bulkNotifications,
   branding: 'Branding',
   product_details: 'Ustawienia produktu',

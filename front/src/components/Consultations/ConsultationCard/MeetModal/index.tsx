@@ -9,7 +9,6 @@ import { QuestionnaireModelType } from "@/types/questionnaire";
 import { QuestionnairesModal } from "@/components/Courses/Course/CoursePanelLayout/FinishPage/Rate";
 import { ConsultationModalContext } from "@/components/Consultations/ConsultationCard/Buttons/context";
 import { EndMeetingQuestionnairesModal } from "@/components/Consultations/ConsultationCard/EndMeetingQuestionnaires";
-import MeetingAnalyticsOverlay from "@/components/MeetingAnalyticsOverlay/MeetingAnalyticsOverlay";
 import styled from "styled-components";
 
 interface Props {
@@ -29,7 +28,6 @@ const ConsultationMeetModal = ({ onClose }: Props) => {
   const [loading, setLoading] = useState(false);
   const { generateConsultationJitsy } = useContext(UlamsContext);
   const consultationModalContext = useContext(ConsultationModalContext);
-  const [recordingUrl, setRecordingUrl] = useState<string | null>(null);
   const [participantCount, setParticipantCount] = useState<number>(0);
 
   useEffect(() => {
@@ -88,11 +86,6 @@ const ConsultationMeetModal = ({ onClose }: Props) => {
         <ConsultationMeetModalStyles>
           {loading && <ContentLoader />}
           <JitsiContainer>
-            <MeetingAnalyticsOverlay
-              onClose={handleOnClose}
-              recordingUrl={recordingUrl}
-              participantCount={participantCount}
-            />
             {!loading && meetData && (
               <JitsyMeeting
                 key={consultationModalContext?.consultationData?.consultationId}
@@ -108,7 +101,6 @@ const ConsultationMeetModal = ({ onClose }: Props) => {
                 }
                 term={consultationModalContext?.consultationData?.term ?? ""}
                 close={handleOnClose}
-                onRecordingAvailable={setRecordingUrl}
                 participantCount={participantCount}
                 onParticipantCountChange={setParticipantCount}
               />

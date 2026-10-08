@@ -11,11 +11,29 @@ import courses from './en-US/courses';
 import events from './en-US/events';
 import fabric from './en-US/fabric';
 import notifications from './en-US/notifications';
-import recommender from './en-US/recommender';
 import templates from './en-US/templates';
 import vouchers from './en-US/vouchers';
 
 export default {
+  // H5P (api/h5p service)
+  'menu.Courses.H5PLibraries': 'H5P Libraries',
+  H5P_libraries: 'Libraries',
+  H5P_library_upload: 'Upload library package (.h5p)',
+  H5P_library_uploaded: 'Libraries installed: {installed}, updated: {updated}',
+  H5P_library_machine_name: 'Machine name',
+  H5P_library_version: 'Version',
+  H5P_library_runnable: 'Content type',
+  H5P_library_addon: 'Add-on',
+  H5P_library_restricted: 'Restricted',
+  H5P_library_instances: 'Used by contents',
+  H5P_library_dependents: 'Dependent libraries',
+  H5P_library_delete_question: 'Delete this library?',
+  H5P_update_content_type_cache: 'Update content type cache (H5P Hub)',
+  H5P_content_type_cache_last_update: 'Content type cache updated',
+  H5P_content_type_cache_never: 'never',
+  H5P_remove_unused: 'Remove unused',
+  H5P_remove_unused_question: 'Delete every H5P content that no topic uses?',
+  h5p_edited: 'H5P Element edited and saved successfully',
   customers: 'Customers',
   sales: 'Sales',
   'navBar.lang': 'Languages',
@@ -139,7 +157,6 @@ export default {
   ...vouchers,
   ...courses,
   ...events,
-  ...recommender,
   branding: 'Branding',
   product_details: 'Product details',
   title: 'Title',

@@ -11,7 +11,6 @@ import { UlamsContext } from "@ulams/sdk/react/context";
 import { API_URL } from "@/config/index";
 import useCamera, { cameraPermissions } from "@/hooks/meeting/useCamera";
 import { API } from "@ulams/sdk";
-import { IMeetRecording } from "@/components/Consultations/ConsultationCard/JitsyMeeting/types";
 import { JITSY_ANALYTICS_INTERVAL } from "@/utils/constants";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { Button } from "@ulams/components/components/atoms/Button/Button";
@@ -79,16 +78,9 @@ const JitsyMeeting: React.FC<JitsyMeetingProps> = ({
   const userConsentedRef = useRef(false);
   const isCameraMutedRef = useRef(false);
 
-  const recordingIdRef = useRef<number | null>(null);
-  const recordingUrlRef = useRef<string | null>(null);
-  const recordingExpiryRef = useRef<number | null>(null);
-
   const analyticsIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const recommenderIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const workerRef = useRef<Worker | null>(null);
   const apiRef = useRef<IJitsiMeetExternalApi | null>(null);
-  const recordingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const hasSentEndEventRef = useRef(false);
 
   const { shouldRunAnalytics } = useJitsyAnalyticsControl({
     modelType,
@@ -96,35 +88,6 @@ const JitsyMeeting: React.FC<JitsyMeetingProps> = ({
     consultationData: consultation.value,
     webinarData: webinar,
   });
-
-  const preparePayload = useCallback(
-    (action: "start-recording" | "end-recording") => {
-      const now = new Date().toISOString();
-      const payload: IMeetRecording = {
-        id: recordingIdRef.current || 0,
-        model_type: modelType,
-        model_id: Number(modelId),
-        action,
-        term: term || now,
-      };
-
-      if (action === "start-recording") {
-        payload.start_at = now;
-      } else {
-        payload.end_at = now;
-        if (recordingUrlRef.current) {
-          payload.url = recordingUrlRef.current;
-        }
-
-        if (recordingExpiryRef.current) {
-          payload.url_expiration_time_millis = recordingExpiryRef.current;
-        }
-      }
-
-      return payload;
-    },
-    [modelId, modelType, term]
-  );
 
   const updateParticipantCount = useCallback(() => {
     if (
@@ -136,61 +99,10 @@ const JitsyMeeting: React.FC<JitsyMeetingProps> = ({
     }
   }, [onParticipantCountChange]);
 
-  const sendRecordingEvent = useCallback(
-    async (action: "start-recording" | "end-recording") => {
-      if (isStudent) return;
-
-      if (
-        action === "end-recording" &&
-        (hasSentEndEventRef.current || !recordingIdRef.current)
-      ) {
-        return;
-      }
-      try {
-        const payload = preparePayload(action);
-
-        const response = await fetch(
-          `${API_URL}/api/recommender/meet-recordings`,
-          {
-            method: "POST",
-            keepalive: true,
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(payload),
-          }
-        );
-
-        if (action === "end-recording") {
-          recordingIdRef.current = null;
-        }
-
-        const result = await response.json();
-
-        if (action === "start-recording" && result?.data?.id) {
-          recordingIdRef.current = result.data.id;
-        }
-      } catch (e) {
-        console.error("Recording API error", e);
-      }
-    },
-    [isStudent, token, preparePayload]
-  );
-
   const stopAllIntervals = useCallback(() => {
     if (analyticsIntervalRef.current) {
       clearInterval(analyticsIntervalRef.current);
       analyticsIntervalRef.current = null;
-    }
-    if (recommenderIntervalRef.current) {
-      clearInterval(recommenderIntervalRef.current);
-      recommenderIntervalRef.current = null;
-    }
-
-    if (recordingTimeoutRef.current) {
-      clearTimeout(recordingTimeoutRef.current);
-      recordingTimeoutRef.current = null;
     }
   }, []);
 
@@ -254,12 +166,8 @@ const JitsyMeeting: React.FC<JitsyMeetingProps> = ({
       api.on(
         "recordingLinkAvailable",
         (event: { link: string; ttl: number }) => {
-          recordingUrlRef.current = event.link;
           if (onRecordingAvailable) {
             onRecordingAvailable(event.link);
-          }
-          if (event.ttl) {
-            recordingExpiryRef.current = event.ttl * 1000;
           }
         }
       );
@@ -268,23 +176,9 @@ const JitsyMeeting: React.FC<JitsyMeetingProps> = ({
         setIsRecordingActive(status.on);
 
         if (status.on) {
-          recordingUrlRef.current = null;
-          recordingExpiryRef.current = null;
           startScreenshotFlows();
-          await sendRecordingEvent("start-recording");
         } else {
           stopAllIntervals();
-          if (recordingTimeoutRef.current)
-            clearTimeout(recordingTimeoutRef.current);
-
-          recordingTimeoutRef.current = setTimeout(async () => {
-            if (recordingIdRef.current) {
-              await sendRecordingEvent("end-recording");
-              recordingIdRef.current = null;
-              recordingUrlRef.current = null;
-            }
-            recordingTimeoutRef.current = null;
-          }, 500);
         }
       });
 
@@ -296,16 +190,11 @@ const JitsyMeeting: React.FC<JitsyMeetingProps> = ({
         stopAllIntervals();
         onParticipantCountChange(0);
         setIsRecordingActive(false);
-        if (!isStudent && recordingIdRef.current) {
-          sendRecordingEvent("end-recording");
-        }
       });
     },
     [
       camera,
-      isStudent,
       onRecordingAvailable,
-      sendRecordingEvent,
       startScreenshotFlows,
       stopAllIntervals,
       updateParticipantCount,
@@ -315,11 +204,11 @@ const JitsyMeeting: React.FC<JitsyMeetingProps> = ({
 
   useEffect(() => {
     if (shouldRunAnalytics && isRecordingActive) {
-      if (!analyticsIntervalRef.current && !recommenderIntervalRef.current) {
+      if (!analyticsIntervalRef.current) {
         startScreenshotFlows();
       }
     } else {
-      if (analyticsIntervalRef.current || recommenderIntervalRef.current) {
+      if (analyticsIntervalRef.current) {
         stopAllIntervals();
       }
     }
@@ -334,10 +223,6 @@ const JitsyMeeting: React.FC<JitsyMeetingProps> = ({
     return () => {
       stopAllIntervals();
 
-      if (!isStudent && recordingIdRef.current) {
-        sendRecordingEvent("end-recording");
-      }
-
       if (workerRef.current) {
         workerRef.current.terminate();
         workerRef.current = null;
@@ -348,28 +233,7 @@ const JitsyMeeting: React.FC<JitsyMeetingProps> = ({
         apiRef.current = null;
       }
     };
-  }, [stopAllIntervals, isStudent, sendRecordingEvent]);
-
-  useEffect(() => {
-    const handleUnload = () => {
-      if (!isStudent && recordingIdRef.current && token) {
-        const payload = preparePayload("end-recording");
-
-        fetch(`${API_URL}/api/recommender/meet-recordings`, {
-          method: "POST",
-          keepalive: true,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        });
-      }
-    };
-
-    window.addEventListener("beforeunload", handleUnload);
-    return () => window.removeEventListener("beforeunload", handleUnload);
-  }, [isStudent, preparePayload, token]);
+  }, [stopAllIntervals]);
 
   useEffect(() => {
     const init = async () => {
@@ -416,9 +280,6 @@ const JitsyMeeting: React.FC<JitsyMeetingProps> = ({
           onReadyToClose={async () => {
             stopAllIntervals();
             stopCamera();
-            if (!isStudent && recordingIdRef.current) {
-              await sendRecordingEvent("end-recording");
-            }
             close?.();
           }}
           interfaceConfigOverwrite={{

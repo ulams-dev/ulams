@@ -22,7 +22,6 @@ import { Button, Popconfirm, Select, Tag, Tooltip, Typography, message } from 'a
 import { format } from 'date-fns';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, Link, getLocale, history, useIntl } from 'umi';
-import EffectivenessAnalysis from './components/EffectivenessAnalysis';
 
 export const TableColumns: ProColumns<API.Consultation>[] = [
   {
@@ -356,12 +355,6 @@ const Consultations: React.FC = () => {
         </ProCard.TabPane>
         <ProCard.TabPane key={'fields'} tab={<FormattedMessage id="ModelFields" />}>
           <ModelFields class_type="Ulams\Consultations\Models\Consultation" />
-        </ProCard.TabPane>
-        <ProCard.TabPane
-          key={'effectiveness-analysis'}
-          tab={<FormattedMessage id="effectiveness_analysis" />}
-        >
-          <EffectivenessAnalysis />
         </ProCard.TabPane>
       </ProCard>
     </PageContainer>

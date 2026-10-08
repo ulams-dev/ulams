@@ -18,7 +18,6 @@ export interface SaveImagesMessage {
   userEmail?: string;
   apiUrl?: string;
   token?: string;
-  action?: "recommender-screens";
 }
 
 let API_URL: string;

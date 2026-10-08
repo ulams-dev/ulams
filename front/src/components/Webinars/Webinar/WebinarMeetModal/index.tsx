@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import { toast } from "@/utils/toast";
 import styled from "styled-components";
 import JitsyMeeting from "@/components/Consultations/ConsultationCard/JitsyMeeting";
-import MeetingAnalyticsOverlay from "@/components/MeetingAnalyticsOverlay/MeetingAnalyticsOverlay";
 import { EndMeetingQuestionnairesModal } from "@/components/Consultations/ConsultationCard/EndMeetingQuestionnaires";
 import { QuestionnaireModelType } from "@/types/questionnaire";
 import { API } from "@ulams/sdk";
@@ -33,7 +32,6 @@ const WebinarMeetModal = ({ onClose, visible, webinarId, webinar }: Props) => {
   );
   const [loading, setLoading] = useState(false);
   const [isEnded, setIsEnded] = useState(false);
-  const [recordingUrl, setRecordingUrl] = useState<string | null>(null);
   const [participantCount, setParticipantCount] = useState<number>(0);
   const onCloseRef = useRef(onClose);
   const { generateWebinarJitsy } = useContext(UlamsContext);
@@ -105,13 +103,6 @@ const WebinarMeetModal = ({ onClose, visible, webinarId, webinar }: Props) => {
         <WebinarMeetModalStyles>
           {loading && <ContentLoader />}
           <JitsiContainer>
-            <MeetingAnalyticsOverlay
-              onClose={handleOnClose}
-              recordingUrl={recordingUrl}
-              modelType="webinar"
-              webinar={webinar}
-              participantCount={participantCount}
-            />
             {visible && !loading && webinarMeetData && (
               <JitsyMeeting
                 key={webinarId}
@@ -119,7 +110,6 @@ const WebinarMeetModal = ({ onClose, visible, webinarId, webinar }: Props) => {
                 modelId={webinarId}
                 modelType="webinar"
                 close={handleOnClose}
-                onRecordingAvailable={setRecordingUrl}
                 term={webinar?.active_to ?? ""}
                 participantCount={participantCount}
                 onParticipantCountChange={setParticipantCount}
