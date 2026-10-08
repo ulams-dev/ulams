@@ -10,13 +10,11 @@ import styled from "styled-components";
 import JitsyMeeting from "@/components/Consultations/ConsultationCard/JitsyMeeting";
 import { EndMeetingQuestionnairesModal } from "@/components/Consultations/ConsultationCard/EndMeetingQuestionnaires";
 import { QuestionnaireModelType } from "@/types/questionnaire";
-import { API } from "@ulams/sdk";
 
 interface Props {
   onClose: () => void;
   visible: boolean;
   webinarId: number;
-  webinar?: API.Webinar;
 }
 
 const JitsiContainer = styled.div`
@@ -26,13 +24,12 @@ const JitsiContainer = styled.div`
   overflow: hidden;
 `;
 
-const WebinarMeetModal = ({ onClose, visible, webinarId, webinar }: Props) => {
+const WebinarMeetModal = ({ onClose, visible, webinarId }: Props) => {
   const [webinarMeetData, setWebinarMeetData] = useState<JitsyData | null>(
     null
   );
   const [loading, setLoading] = useState(false);
   const [isEnded, setIsEnded] = useState(false);
-  const [participantCount, setParticipantCount] = useState<number>(0);
   const onCloseRef = useRef(onClose);
   const { generateWebinarJitsy } = useContext(UlamsContext);
   const { t } = useTranslation();
@@ -107,13 +104,7 @@ const WebinarMeetModal = ({ onClose, visible, webinarId, webinar }: Props) => {
               <JitsyMeeting
                 key={webinarId}
                 jitsyData={webinarMeetData}
-                modelId={webinarId}
-                modelType="webinar"
                 close={handleOnClose}
-                term={webinar?.active_to ?? ""}
-                participantCount={participantCount}
-                onParticipantCountChange={setParticipantCount}
-                webinar={webinar}
               />
             )}
           </JitsiContainer>

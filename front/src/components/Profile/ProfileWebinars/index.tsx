@@ -30,9 +30,6 @@ ProfileWebinarsProps) => {
   const [webinarJoinId, setWebinarJoinId] = useState<number | undefined>(
     undefined
   );
-  const [webinarData, setWebinarData] = useState<API.Webinar | undefined>(
-    undefined
-  );
 
   const webinarsContext = useContext(WebinarsContext);
   const { t } = useTranslation();
@@ -65,7 +62,6 @@ ProfileWebinarsProps) => {
               <ProfileWebinarItemActions
                 webinar={webinar}
                 onJoin={() => {
-                  setWebinarData(webinar);
                   setWebinarJoinId(webinar.id);
                   webinarsContext?.setModalOpen?.(true);
                 }}
@@ -80,7 +76,6 @@ ProfileWebinarsProps) => {
           visible={!!webinarJoinId}
           onClose={handleOnCloseModal}
           webinarId={webinarJoinId}
-          webinar={webinarData}
         />
       )}
     </RowStyled>

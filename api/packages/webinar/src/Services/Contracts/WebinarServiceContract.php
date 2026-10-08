@@ -5,7 +5,6 @@ namespace Ulams\Webinar\Services\Contracts;
 use Carbon\Carbon;
 use Ulams\Auth\Models\User;
 use Ulams\Core\Dtos\OrderDto;
-use Ulams\Webinar\Dto\GenerateSignedScreenUrlsDto;
 use Ulams\Webinar\Dto\WebinarDto;
 use Ulams\Webinar\Models\Webinar;
 use Illuminate\Database\Eloquent\Builder;
@@ -68,5 +67,4 @@ interface WebinarServiceContract
     public function getWebinarEndDate(Webinar $webinar): ?Carbon;
     public function setStatusInLiveStreamInYt(int $webinarId, string $broadcastStatus): void;
     public function setReminderStatus(Webinar $webinar, string $status): void;
-    public function generateSignedScreenUrls(GenerateSignedScreenUrlsDto $dto): array;
 }

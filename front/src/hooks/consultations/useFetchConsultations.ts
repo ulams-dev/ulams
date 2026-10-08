@@ -8,7 +8,7 @@ import {
 
 const useFetchConsultations = (params?: CourseParams, noAutoFech?: boolean) => {
   const [consultations, setConsultations] =
-    useState<PaginatedMetaList<Consultation & { analyze_enabled?: boolean }>>();
+    useState<PaginatedMetaList<Consultation>>();
   const [loading, setLoading] = useState(true);
   const { fetchConsultations } = useContext(UlamsContext);
 
@@ -19,9 +19,7 @@ const useFetchConsultations = (params?: CourseParams, noAutoFech?: boolean) => {
 
       if (request) {
         setConsultations(
-          request as PaginatedMetaList<
-            Consultation & { analyze_enabled?: boolean }
-          >
+          request as PaginatedMetaList<Consultation>
         );
       }
     } catch (e) {

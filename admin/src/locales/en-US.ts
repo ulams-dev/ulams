@@ -178,8 +178,6 @@ export default {
   answers: 'Answers',
   answer: 'Answer',
   webinars: 'Webinars',
-  screensaves: 'Screen saves',
-  'webinars.screenSaves': 'Screen saves',
   'menu.Webinars': 'Webinars',
   'menu.NewWebinar': 'New webinar',
   'menu.Courses': 'Courses',

@@ -189,8 +189,6 @@ export default {
   'menu.My Profile': 'Mój profil',
   'menu.My Profile.My Profile': 'Mój profil',
   Webinars: 'Webinary',
-  'webinars.screenSaves': 'Zapis Ekranu',
-  screensaves: 'Zapis Ekranu',
   stationary_event: 'Wydarzenie stacjonarne',
   'menu.reset': 'reset',
   finished_at: 'Data zakończenia',

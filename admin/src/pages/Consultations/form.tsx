@@ -23,14 +23,12 @@ import UserSubmissions from '@/components/UsersSubmissions';
 import { useShowNotification } from '@/hooks/useMessage';
 import useModelFields from '@/hooks/useModelFields';
 import useValidateFormEdit from '@/hooks/useValidateFormEdit';
-import ScreenSaves from '@/pages/Consultations/components/ScreenSaves';
 import AdditionalField from '@/pages/Users/User/components/AdditionalField';
 import {
   createConsultation,
   getConsultation,
   updateConsultation,
 } from '@/services/ulams/consultations';
-import { settings } from '@/services/ulams/settings';
 import { categoriesArrToIds, splitImagePath } from '@/utils/utils';
 import { createRequiredFieldValidator } from '@/utils/validate';
 import { useCallback } from 'react';
@@ -46,7 +44,6 @@ export enum TabNames {
   BRANDING = 'branding',
   USER_SUBMISSION = 'user_submission',
   CALENDAR = 'calendar',
-  SCREENSAVES = 'screensaves',
 }
 
 const ConsultationForm = () => {
@@ -59,14 +56,8 @@ const ConsultationForm = () => {
   const [form] = ProForm.useForm();
   const additionalFields = useModelFields('Ulams\\Consultations\\Models\\Consultation');
   const requiredValidator = createRequiredFieldValidator(intl);
-  const [showScreenSaves, setShowScreenSaves] = useState<boolean>(false);
   const { showNotification } = useShowNotification();
   const fetchData = useCallback(async () => {
-    const config = await settings({ per_page: -1 });
-
-    if ('data' in config) {
-      setShowScreenSaves(config.data.find((c) => c.key === 'show_screen_saves')?.value === '1');
-    }
     const response = await getConsultation(Number(consultation));
     if (response.success) {
       if (tab === 'attributes') {
@@ -512,14 +503,6 @@ const ConsultationForm = () => {
             tab={<FormattedMessage id="consultations.calendar" />}
           >
             <ConsultationCalendar consultation={Number(consultation)} />
-          </ProCard.TabPane>
-        )}
-        {!isNew && showScreenSaves && (
-          <ProCard.TabPane
-            key={TabNames.SCREENSAVES}
-            tab={<FormattedMessage id="consultations.screenSaves" />}
-          >
-            <ScreenSaves consultation={Number(consultation)} />
           </ProCard.TabPane>
         )}
       </ProCard>

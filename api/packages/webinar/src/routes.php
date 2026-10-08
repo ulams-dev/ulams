@@ -24,5 +24,4 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/webinars'], functio
 Route::group(['prefix' => 'api/webinars'], function () {
     Route::get('/', [WebinarAPIController::class, 'index']);
     Route::get('/{id}', [WebinarAPIController::class, 'show']);
-    Route::post('/signed-screen-urls', [WebinarAPIController::class, 'generateSignedScreenUrls']);
 });

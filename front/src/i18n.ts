@@ -242,19 +242,8 @@ const resources = {
         Understand: "Understand",
         successTermInfo:
           "The given consultation date has been sent to the trainer. You will receive a separate notification after the trainer accepts the date or the trainer will contact you to arrange a different date if the date you proposed does not suit him.",
-        Yes: "Yes",
-        No: "No",
-        AdditionalRecording:
-          "During this meeting, we use an AI system to analyze participants' emotions and attention. The system analyzes parameters of your face and gaze. The data is processed solely for the purpose of generating anonymous, aggregate engagement statistics for the meeting host. The system does not identify your identity.",
-        AdditionalRecordingDescription:
-          "I consent to the processing of my biometric data for the purpose of analyzing my emotions and attention by the AI system. Providing the data is voluntary, and refusal does not affect the ability to participate in the event. I may withdraw my consent at any time (e.g., by turning off my camera).",
-        EmotionConsent: "Information on the use of AI",
         Teacher: "Trainer",
         DownloadRecording: "Download recording",
-        BlockedAccess: "You have blocked camera & microphone access.",
-        BlockedAccessEnable:
-          "Please enable them in your browser settings and refresh the page.",
-        ReloadPage: "Reload page",
       },
       Warning: "Warning",
       "I'm aware": "I'm aware",
@@ -1021,20 +1010,8 @@ const resources = {
         Understand: "Rozumiem",
         successTermInfo:
           "Podana data konsultacji została przesłana do trenera. Dostaniesz osobne powiadomienie po zaakceptowaniu terminu przez trenera lub trener skontaktuje się z Tobą w celu ustalenia innego terminu, jeśli zaproponowany przez Ciebie termin nie będzie mu odpowiadał.",
-        Yes: "Tak",
-        No: "Nie",
-        AdditionalRecording:
-          "Podczas tego spotkania używamy systemu AI do analizy emocji oraz atencji uczestników. System analizuje parametry Twojej twarzy i wzroku. Dane są przetwarzane wyłącznie w celu generowania anonimowych, zbiorczych statystyk zaangażowania dla prowadzącego spotkanie. System nie identyfikuje Twojej tożsamości.",
-        AdditionalRecordingDescription:
-          "Wyrażam zgodę na przetwarzanie moich danych biometrycznych w celu analizy moich emocji i atencji przez system AI. Podanie danych jest dobrowolne, a odmowa nie wpływa na możliwość udziału w wydarzeniu. Mogę wycofać zgodę w dowolnym momencie (np. wyłączając kamerę).",
-        EmotionConsent: "Informacja o wykorzystaniu AI",
         Teacher: "Trener",
         DownloadRecording: "Pobierz nagranie",
-        BlockedAccess: "Dostęp do kamery i mikrofonu został zablokowany.",
-
-        BlockedAccessEnable:
-          " Włącz je w ustawieniach przeglądarki i odśwież stronę.",
-        ReloadPage: "Odśwież stronę",
       },
       TutorPage: {
         Courses: "Kursy instruktorów",

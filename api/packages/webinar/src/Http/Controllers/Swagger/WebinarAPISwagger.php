@@ -1,7 +1,6 @@
 <?php
 namespace Ulams\Webinar\Http\Controllers\Swagger;
 
-use Ulams\Webinar\Http\Requests\GenerateSignedScreenUrlsRequest;
 use Ulams\Webinar\Http\Requests\ListWebinarsRequest;
 use Illuminate\Http\JsonResponse;
 
@@ -337,75 +336,4 @@ interface WebinarAPISwagger
      */
     public function startLiveStream(int $id): void;
 
-    /**
-     * @OA\Post(
-     *      path="/api/webinars/signed-screen-urls",
-     *      security={
-     *          {"passport": {}},
-     *      },
-     *      summary="Generate signed url to save screens from jitsi meeting",
-     *      tags={"Webinars"},
-     *      @OA\RequestBody(
-     *          required=true,
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *              @OA\Schema(
-     *                  @OA\Property(
-     *                      property="webinar_id",
-     *                      type="int"
-     *                  ),
-     *                  @OA\Property(
-     *                      property="user_id",
-     *                      type="integer"
-     *                  ),
-     *                  @OA\Property(
-     *                      property="executed_at",
-     *                      type="string",
-     *                      example="2024-10-04 12:02:12"
-     *                  ),
-     *                  @OA\Property(
-     *                      property="files",
-     *                      type="array",
-     *                      @OA\Items(
-     *                          @OA\Property(
-     *                              property="filename",
-     *                              type="string",
-     *                          ),
-     *                       )
-     *                 )
-     *              )
-     *          )
-     *      ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
-     *          @OA\Schema(
-     *              type="object",
-     *              @OA\Property(
-     *                  property="success",
-     *                  type="boolean"
-     *              ),
-     *              @OA\Property(
-     *                  property="data",
-     *                  type="string"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string"
-     *              )
-     *          )
-     *      ),
-     *      @OA\Response(
-     *          response=404,
-     *          description="Bad request",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          )
-     *      )
-     * )
-     */
-    public function generateSignedScreenUrls(GenerateSignedScreenUrlsRequest $request): JsonResponse;
 }

@@ -28,7 +28,6 @@ const ConsultationMeetModal = ({ onClose }: Props) => {
   const [loading, setLoading] = useState(false);
   const { generateConsultationJitsy } = useContext(UlamsContext);
   const consultationModalContext = useContext(ConsultationModalContext);
-  const [participantCount, setParticipantCount] = useState<number>(0);
 
   useEffect(() => {
     const getMeetUrl = async () => {
@@ -90,19 +89,7 @@ const ConsultationMeetModal = ({ onClose }: Props) => {
               <JitsyMeeting
                 key={consultationModalContext?.consultationData?.consultationId}
                 jitsyData={meetData}
-                modelId={
-                  consultationModalContext?.consultationData?.consultationId ??
-                  0
-                }
-                modelType="consultation"
-                consultationTermId={
-                  consultationModalContext?.consultationData
-                    ?.consultationTermId ?? 0
-                }
-                term={consultationModalContext?.consultationData?.term ?? ""}
                 close={handleOnClose}
-                participantCount={participantCount}
-                onParticipantCountChange={setParticipantCount}
               />
             )}
           </JitsiContainer>

@@ -4,10 +4,8 @@ namespace Ulams\Webinar\Http\Controllers;
 
 use Ulams\Core\Dtos\OrderDto;
 use Ulams\Core\Http\Controllers\UlamsBaseController;
-use Ulams\Webinar\Dto\GenerateSignedScreenUrlsDto;
 use Ulams\Webinar\Enum\ConstantEnum;
 use Ulams\Webinar\Http\Controllers\Swagger\WebinarAPISwagger;
-use Ulams\Webinar\Http\Requests\GenerateSignedScreenUrlsRequest;
 use Ulams\Webinar\Http\Requests\ListWebinarsRequest;
 use Ulams\Webinar\Http\Resources\WebinarSimpleResource;
 use Ulams\Webinar\Services\Contracts\WebinarServiceContract;
@@ -95,12 +93,5 @@ class WebinarAPIController extends UlamsBaseController implements WebinarAPISwag
          * @param string second param "testing" | "live" | "complete"
          */
         $this->webinarServiceContract->setStatusInLiveStreamInYt($id, 'complete');
-    }
-
-    public function generateSignedScreenUrls(GenerateSignedScreenUrlsRequest $request): JsonResponse
-    {
-        $data = $this->webinarServiceContract->generateSignedScreenUrls(new GenerateSignedScreenUrlsDto($request->validated()));
-
-        return $this->sendResponse($data, __('Urls generated successfully'));
     }
 }

@@ -9,7 +9,6 @@ use Ulams\Files\Helpers\FileHelper;
 use Ulams\Jitsi\Helpers\StringHelper;
 use Ulams\Jitsi\Services\Contracts\JitsiServiceContract;
 use Ulams\Webinar\Dto\FilterListDto;
-use Ulams\Webinar\Dto\GenerateSignedScreenUrlsDto;
 use Ulams\Webinar\Dto\WebinarDto;
 use Ulams\Webinar\Enum\ConstantEnum;
 use Ulams\Webinar\Events\ReminderAboutTerm;
@@ -25,8 +24,6 @@ use Ulams\Youtube\Exceptions\YtAuthenticateException;
 use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class WebinarService implements WebinarServiceContract
@@ -372,37 +369,5 @@ class WebinarService implements WebinarServiceContract
         }
 
         return $webinar->active_to ? Carbon::make($webinar->active_to) : null;
-    }
-
-    public function generateSignedScreenUrls(GenerateSignedScreenUrlsDto $dto): array
-    {
-        if (config('filesystems.default') !== 's3') {
-            abort(400, 'The file driver does not support this method.');
-        }
-
-        $term = Carbon::make($dto->getExecutedAt());
-        $directory = sprintf(
-            '%s/%s/%s/%s/',
-            ConstantEnum::DIRECTORY,
-            $dto->getWebinarId(),
-            $term->getTimestamp(),
-            $dto->getUserId()
-        );
-
-        return array_map(function ($file) use ($directory) {
-            $filename = $file['filename'];
-
-            if (config('cache.default') === 'redis') {
-                $key = 'signed_urls:' . md5($directory . $filename);
-                Redis::command('SETEX', [$key, ConstantEnum::REDIS_IMAGES_TTL, $directory . $filename]);
-                Redis::command('HSET', [ConstantEnum::REDIS_IMAGES_KEY, $key, 1]);
-                Redis::command('EXPIRE', [ConstantEnum::REDIS_IMAGES_KEY, ConstantEnum::REDIS_IMAGES_TTL]);
-            }
-
-            return array_merge(
-                ['filename' => $filename],
-                Storage::temporaryUploadUrl($directory . $filename, now()->addMinutes(5))
-            );
-        }, $dto->getFiles());
     }
 }
