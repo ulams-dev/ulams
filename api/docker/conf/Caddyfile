@@ -100,9 +100,7 @@ http://*.localhost {
         }
         reverse_proxy h5p:8080 {
             header_up X-Forwarded-Host {host}
-            # CORS headers are set below for the whole site
-            header_down -Access-Control-Allow-Origin
-            header_down -Access-Control-Allow-Credentials
+            # CORS comes from the service itself (per-tenant allow-list), not from this site block
             # large uploads / package exports
             transport http {
                 read_timeout 10m
@@ -120,23 +118,18 @@ http://*.localhost {
                 env SCRIPT_FILENAME /var/www/html/index.php
             }
         }
+
+        # CORS for the Laravel API only (the H5P service sets its own per-tenant CORS)
+        @origin header Origin {http.request.header.Origin}
+        header @origin Access-Control-Allow-Origin {http.request.header.Origin}
+
+        @excluded {
+            not header Origin {http.request.header.Origin}
+        }
+        header @excluded Access-Control-Allow-Origin *
+
+        header Access-Control-Allow-Credentials true
     }
-
-    # Cors logic 
-    @origin header Origin {http.request.header.Origin}
-    header @origin Access-Control-Allow-Origin {http.request.header.Origin}
-
-    #@referer header Referer {http.request.header.Referer}
-    #header @referer Access-Control-Allow-Origin {http.request.header.Referer}
-
-    @excluded { 
-        not header Origin {http.request.header.Origin}
-        #not header Referer {http.request.header.Referer}
-    }
-    header @excluded Access-Control-Allow-Origin *
-
-    header Access-Control-Allow-Credentials true
-
 }
 
 

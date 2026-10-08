@@ -89,6 +89,11 @@ class H5PServiceClient implements H5PServiceClientContract
         if ($token) {
             $request = $request->withHeaders(['X-Internal-Token' => $token]);
         }
+        // The H5P service is multi-tenant and picks the tenant (database, bucket) from the forwarded host.
+        $host = parse_url((string) config('app.url'), PHP_URL_HOST);
+        if ($host) {
+            $request = $request->withHeaders(['X-Forwarded-Host' => $host]);
+        }
 
         return $request;
     }

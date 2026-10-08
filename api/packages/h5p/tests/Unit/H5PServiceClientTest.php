@@ -53,6 +53,7 @@ class H5PServiceClientTest extends TestCase
 
             return $request->method() === 'POST'
                 && $request->hasHeader('X-Internal-Token', 'test-internal-token')
+                && $request->hasHeader('X-Forwarded-Host', parse_url((string) config('app.url'), PHP_URL_HOST))
                 && $request->isMultipart()
                 && $part['filename'] === basename($path);
         });
