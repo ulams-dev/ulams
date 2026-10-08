@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "049085853c28cd812fa6e4cbb100e637",
+    "content-hash": "1bd9eb0fc5884896054f6d93aa5bbd94",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -5548,72 +5548,6 @@
                 "source": "https://github.com/laravel/tinker/tree/v2.11.1"
             },
             "time": "2026-02-06T14:12:35+00:00"
-        },
-        {
-            "name": "laraveldaily/laravel-invoices",
-            "version": "3.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/LaravelDaily/laravel-invoices.git",
-                "reference": "c36b1cb20721a6b291e3a9562aa99c34aff1007b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/LaravelDaily/laravel-invoices/zipball/c36b1cb20721a6b291e3a9562aa99c34aff1007b",
-                "reference": "c36b1cb20721a6b291e3a9562aa99c34aff1007b",
-                "shasum": ""
-            },
-            "require": {
-                "barryvdh/laravel-dompdf": "^v2.0",
-                "illuminate/http": "^9|^10",
-                "illuminate/support": "^9|^10",
-                "php": "^8.0",
-                "symfony/http-foundation": "^6.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^10.1"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "Invoice": "LaravelDaily\\Invoices\\Facades\\Invoice"
-                    },
-                    "providers": [
-                        "LaravelDaily\\Invoices\\InvoiceServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "LaravelDaily\\Invoices\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0-only"
-            ],
-            "authors": [
-                {
-                    "name": "David Lun",
-                    "email": "mysticcode@gmail.com",
-                    "homepage": "https://davidlun.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Missing invoices for Laravel",
-            "homepage": "https://github.com/LaravelDaily/laravel-invoices",
-            "keywords": [
-                "invoice",
-                "invoices",
-                "laravel",
-                "pdf"
-            ],
-            "support": {
-                "issues": "https://github.com/LaravelDaily/laravel-invoices/issues",
-                "source": "https://github.com/LaravelDaily/laravel-invoices/tree/3.3.1"
-            },
-            "time": "2024-01-07T17:00:05+00:00"
         },
         {
             "name": "lcobucci/clock",
@@ -14646,54 +14580,6 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.4.0"
             },
             "time": "2025-12-02T11:56:42+00:00"
-        },
-        {
-            "name": "trax2/framework",
-            "version": "2.0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/trax-project/trax2-framework.git",
-                "reference": "0f099d4411ba8e32d373e1e2142f0036afee1414"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/trax-project/trax2-framework/zipball/0f099d4411ba8e32d373e1e2142f0036afee1414",
-                "reference": "0f099d4411ba8e32d373e1e2142f0036afee1414",
-                "shasum": ""
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Trax\\Auth\\": "auth/src/",
-                    "Trax\\Core\\": "core/src/",
-                    "Trax\\Repo\\": "repo/src/",
-                    "Trax\\XapiStore\\": "xapi-store/src/",
-                    "Trax\\XapiValidation\\": "xapi-validation/src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Sébastien Fraysse",
-                    "email": "sebastien@fraysse.eu",
-                    "homepage": "http://fraysse.eu"
-                }
-            ],
-            "description": "A framework for TRAX LRS",
-            "homepage": "http://traxlrs.com",
-            "keywords": [
-                "lrs",
-                "trax",
-                "xAPI"
-            ],
-            "support": {
-                "issues": "https://github.com/trax-project/trax2-framework/issues",
-                "source": "https://github.com/trax-project/trax2-framework/tree/2.0.4"
-            },
-            "time": "2023-04-25T11:10:04+00:00"
         },
         {
             "name": "treestoneit/shopping-cart",

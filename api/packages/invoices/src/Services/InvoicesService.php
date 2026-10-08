@@ -5,11 +5,10 @@ namespace Ulams\Invoices\Services;
 use Ulams\Cart\Models\Order;
 use Ulams\Cart\Models\OrderItem;
 use Ulams\Invoices\Services\Contracts\InvoicesServiceContract;
+use Ulams\Invoices\Invoice\Invoice;
+use Ulams\Invoices\Invoice\InvoiceItem;
+use Ulams\Invoices\Invoice\InvoiceParty;
 use Illuminate\Database\Eloquent\Collection;
-use LaravelDaily\Invoices\Facades\Invoice;
-use LaravelDaily\Invoices\Invoice as InvoiceModel;
-use LaravelDaily\Invoices\Classes\Party;
-use LaravelDaily\Invoices\Classes\InvoiceItem;
 
 class InvoicesService implements InvoicesServiceContract
 {
@@ -18,10 +17,10 @@ class InvoicesService implements InvoicesServiceContract
         $invoice = $this->createInvoice($order);
         $invoice->save('public');
 
-        return $invoice->filename;
+        return $invoice->getFilename();
     }
 
-    public function createInvoice(Order $order): InvoiceModel
+    public function createInvoice(Order $order): Invoice
     {
         $customer = $this->prepareCustomer($order);
         $items = $this->prepareProducts($order->items);
@@ -36,11 +35,10 @@ class InvoicesService implements InvoicesServiceContract
             ->date($order->created_at)
             ->addItems($items)
             ->notes($notes)
-            ->template('invoice')
             ->filename($name);
     }
 
-    private function prepareCustomer(Order $order): Party
+    private function prepareCustomer(Order $order): InvoiceParty
     {
         if ($order->client_taxid) {
             $name = $order->client_company ?? $order->client_name ?? ($order->user->first_name . " " . $order->last_name) ?? '';
@@ -48,7 +46,7 @@ class InvoicesService implements InvoicesServiceContract
             $name = $order->client_name ?? $order->client_company ?? ($order->user->first_name . " " . $order->last_name) ?? '';
         }
 
-        return new Party([
+        return InvoiceParty::fromArray([
             'name' => $name,
             'vat' => $order->client_taxid ?? '',
             'address' => $order->client_street . ' ' . $order->client_postal . ' ' . $order->client_city,
@@ -64,13 +62,14 @@ class InvoicesService implements InvoicesServiceContract
         $products = [];
         /** @var OrderItem $item */
         foreach ($items as $item) {
-            $products[] = (new InvoiceItem())
-                ->title($item->name ?? $item->title ?? $item->buyable->name ?? $item->buyable->title)
-                ->description($item->description ?? '')
-                ->pricePerUnit($item->price/100)
-                ->taxByPercent($item->tax_rate)
-                ->quantity($item->quantity)
-                ->discount($item->discount ?? 0);
+            $products[] = new InvoiceItem(
+                title: (string) ($item->name ?? $item->title ?? $item->buyable->name ?? $item->buyable->title),
+                pricePerUnit: $item->price / 100,
+                quantity: (float) $item->quantity,
+                discount: (float) ($item->discount ?? 0),
+                taxPercentage: (float) $item->tax_rate,
+                description: $item->description ?: null,
+            );
         }
 
         return $products;

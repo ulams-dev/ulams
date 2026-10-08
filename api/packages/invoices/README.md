@@ -5,7 +5,14 @@ Package for generate pdf invoice from order
 
 ## What does it do
 
-This package is adapter for Ulams to create pdf invoice by [laraveldaily/laravel-invoices](https://github.com/LaravelDaily/laravel-invoices)
+Renders a PDF invoice for a cart order (`GET /api/order-invoices/{id}`). The invoice model
+(`Ulams\Invoices\Invoice\Invoice`, with `InvoiceParty` and `InvoiceItem`) is part of this package;
+the Blade view `invoices::templates.invoice` is rendered to PDF with
+[barryvdh/laravel-dompdf](https://github.com/barryvdh/laravel-dompdf).
+
+Line totals: price × quantity, minus the line discount (an amount), plus tax (a percentage of the
+discounted amount), each rounded to `currency.decimals`. The invoice shows per-line discount and tax
+columns only when some line has them, and the total discount, total taxes and total amount.
 
 ## Installing
 
@@ -79,20 +86,12 @@ return [
 
     'disk' => 'local',
 
-    'logo' => 'vendor/invoices/sample-logo.png',
+    /*
+     * Logo: an absolute path or a path relative to public/. Empty or missing file: no logo.
+     */
+    'logo' => env('INVOICES_LOGO'),
 
     'seller' => [
-        /*
-         * Class used in templates via $invoice->seller
-         *
-         * Must implement LaravelDaily\Invoices\Contracts\PartyContract
-         *      or extend LaravelDaily\Invoices\Classes\Party
-         */
-        'class' => \LaravelDaily\Invoices\Classes\Seller::class,
-
-        /*
-         * Default attributes for Seller::class
-         */
         'attributes' => [
             'name'          => 'Ulams',
             'address'       => 'Chłodna 22A, 00-891 Warszawa',
@@ -101,10 +100,7 @@ return [
             'phone'         => '123456789',
             'custom_fields' => [
                 /*
-                 * Custom attributes for Seller::class
-                 *
-                 * Used to display additional info on Seller section in invoice
-                 * attribute => value
+                 * Extra lines in the seller section: label => value
                  */
                 'SWIFT' => 'BANK101',
             ],

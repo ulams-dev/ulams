@@ -9,7 +9,6 @@ use Ulams\Core\Models\User;
 use Ulams\Invoices\UlamsInvoicesServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\PassportServiceProvider;
-use LaravelDaily\Invoices\InvoiceServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
 class TestCase extends \Ulams\Core\Tests\TestCase
@@ -24,7 +23,6 @@ class TestCase extends \Ulams\Core\Tests\TestCase
             PermissionServiceProvider::class,
             UlamsInvoicesServiceProvider::class,
             UlamsCartServiceProvider::class,
-            InvoiceServiceProvider::class,
             ServiceProvider::class,
         ];
     }
