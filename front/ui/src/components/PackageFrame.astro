@@ -5,18 +5,24 @@ interface Props {
   src: string;
   title: string;
   height?: number;
+  /** Player on the tenant content origin: sandboxed, and the URL (with its token) is not shown. */
+  isolated?: boolean;
 }
-const { src, title, height = 640 } = Astro.props;
+const { src, title, height = 640, isolated = false } = Astro.props;
 ---
 
 <div class="u-package">
   <div class="u-package__bar">
     <span><Icon name="scorm" /> {title}</span>
-    <a class="u-btn u-btn--ghost u-btn--sm" href={src} target="_blank" rel="noopener"><Icon name="external" /> Full screen</a>
+    {!isolated && <a class="u-btn u-btn--ghost u-btn--sm" href={src} target="_blank" rel="noopener"><Icon name="external" /> Full screen</a>}
   </div>
   <div class="u-package__stage" style={`--h:${height}px`}>
     <div class="u-package__loading u-skeleton" aria-hidden="true"></div>
-    <iframe src={src} title={title} loading="lazy" allow="fullscreen"></iframe>
+    {isolated ? (
+      <iframe src={src} title={title} allow="fullscreen; autoplay" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"></iframe>
+    ) : (
+      <iframe src={src} title={title} loading="lazy" allow="fullscreen"></iframe>
+    )}
   </div>
 </div>
 

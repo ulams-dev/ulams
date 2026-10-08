@@ -67,6 +67,21 @@ describe("lesson documents", () => {
     }
   });
 
+  it("plays SCORM from the tenant content origin in a sandboxed frame when the API returns a launch URL", () => {
+    const topic = {
+      ...flattenTopics(COFFEE_PROGRAM)[0]!,
+      topicable_type: "Ulams\\TopicTypes\\Models\\TopicContent\\ScormSco",
+      topicable: { id: 1, value: 7, uuid: "abc" },
+    };
+    const src = "http://coffee.content.localhost/scorm/_player/player.html#api=http%3A%2F%2Fcoffee.localhost&sco=abc&token=t";
+    const doc = topicDoc({ tenant, theme: "coffee", course: COFFEE_PROGRAM, lesson: undefined, topic, access: true, nextHref: "/", contentOriginSrc: src });
+    expect(validateDocument(doc)).toEqual([]);
+    expect(doc.children?.[0]).toMatchObject({ component: "PackageFrame", props: { src, isolated: true } });
+
+    const legacy = topicDoc({ tenant, theme: "coffee", course: COFFEE_PROGRAM, lesson: undefined, topic, access: true, nextHref: "/" });
+    expect(legacy.children?.[0]).toMatchObject({ component: "PackageFrame", props: { src: "http://coffee.localhost/api/scorm/play/abc" } });
+  });
+
   it("shows a locked card for topics without content", () => {
     const topic = { ...flattenTopics(COFFEE_PROGRAM)[3]!, topicable: undefined };
     const doc = topicDoc({ tenant, theme: "coffee", course: COFFEE_PROGRAM, lesson: undefined, topic, access: false, nextHref: "/" });

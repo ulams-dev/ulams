@@ -97,13 +97,15 @@ export interface TopicDocInput {
   nextHref: string;
   /** For SCORM topics: whether the package files load (see scormAvailable). */
   packageAvailable?: boolean;
+  /** For SCORM topics: player on the tenant content origin (see scormLaunch), preferred when set. */
+  contentOriginSrc?: string | null;
 }
 
 const str = (v: unknown): string | undefined => (typeof v === "string" && v.trim() !== "" ? v : undefined);
 const num = (v: unknown): number | undefined => (typeof v === "number" && Number.isFinite(v) ? v : typeof v === "string" && v !== "" && !Number.isNaN(Number(v)) ? Number(v) : undefined);
 
 /** Body of the lesson player for one topic. */
-export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true }: TopicDocInput): UiNode {
+export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null }: TopicDocInput): UiNode {
   const kind = topicKind(topic.topicable_type);
   const t = (topic.topicable ?? {}) as Record<string, unknown>;
   const children: UiNode[] = [];
@@ -178,7 +180,9 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
     case "scorm": {
       const src = `${tenant.apiUrl}/api/scorm/play/${encodeURIComponent(str(t.uuid) ?? "")}`;
       children.push(
-        packageAvailable
+        contentOriginSrc
+          ? { component: "PackageFrame", props: { src: contentOriginSrc, title: topic.title, height: 640, isolated: true } }
+          : packageAvailable
           ? { component: "PackageFrame", props: { src, title: topic.title, height: 640 } }
           : {
               component: "ActivityCard",

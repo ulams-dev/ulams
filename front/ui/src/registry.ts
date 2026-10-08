@@ -816,7 +816,15 @@ export const registry = {
     category: "learning",
     interactive: false,
     children: false,
-    props: obj({ src: href("Player URL"), title: text("Title", { maxLength: 160 }), height: int("Frame height px", { default: 640 }) }, ["src", "title"]),
+    props: obj(
+      {
+        src: href("Player URL"),
+        title: text("Title", { maxLength: 160 }),
+        height: int("Frame height px", { default: 640 }),
+        isolated: bool("Third-party package on the tenant content origin: sandboxed frame, no full-screen link (the URL carries a one-off token)", false),
+      },
+      ["src", "title"]
+    ),
     fallback: (p) => `${String(p.title ?? "")}: ${String(p.src ?? "")}`,
   },
   ActivityCard: {

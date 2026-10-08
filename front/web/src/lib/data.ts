@@ -109,6 +109,27 @@ export function invalidateProgress(tenant: Tenant): void {
 }
 
 /**
+ * Starts a SCO on the tenant content origin (api/docs/content-origin.md): the API returns a player
+ * URL on <slug>.content.<base> carrying a SCO-scoped tracking token in its fragment. Null when the
+ * tenant has no content origin (the legacy API player is used then). Never cached: every call
+ * issues a new token for this learner.
+ */
+export async function scormLaunch(tenant: Tenant, token: string, uuid: string): Promise<string | null> {
+  try {
+    const response = await fetch(`${tenant.apiUrl}/api/scorm/launch/${encodeURIComponent(uuid)}`, {
+      method: "POST",
+      headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(4000),
+    });
+    if (!response.ok) return null;
+    const body = (await response.json()) as { data?: { url?: string | null } };
+    return typeof body.data?.url === "string" ? body.data.url : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Whether a SCORM package's entry file can be loaded. The API serves packages from
  * /storage/scorm/…, which 404s for tenants whose public storage is not linked; then the
  * player shows an explanation instead of a frame with a 404 page inside.
