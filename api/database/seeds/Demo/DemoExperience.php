@@ -18,6 +18,7 @@ use Ulams\Auth\Dtos\UserSaveDto;
 use Ulams\Auth\Models\User;
 use Ulams\Auth\Services\Contracts\UserServiceContract;
 use Ulams\Cart\Models\Product;
+use Ulams\TemplatesPdf\Pdfme\CertificateTemplates;
 use Ulams\Cart\Services\Contracts\ProductServiceContract;
 use Ulams\Categories\Dtos\CategoryDto;
 use Ulams\Categories\Models\Category;
@@ -597,24 +598,22 @@ abstract class DemoExperience
     {
         $service = app(TemplateServiceContract::class);
         $name = $this->certificateName();
+        // The title section must reference the course title variable to be valid.
+        $sections = [
+            ['key' => 'title', 'content' => UserFinishedCourseVariables::defaultSectionsContent()['title']],
+            ['key' => 'content', 'content' => CertificateTemplates::content($this->key())],
+        ];
         $template = Template::query()->where('name', $name)->first();
-        if (!$template) {
-            $defaults = UserFinishedCourseVariables::defaultSectionsContent();
-            $tutors = implode('  ·  ', array_map(fn (User $u) => $u->first_name . ' ' . $u->last_name, array_filter($this->users, fn (User $u) => $u->hasRole('tutor'))));
-            $content = str_replace(
-                ['"content":"CERTIFICATE"', '"content":"Ulams"', '"content":"John Doe\\nWellm CEO"'],
-                ['"content":' . json_encode(mb_strtoupper($name)), '"content":"ULAMS"', '"content":' . json_encode($tutors . "\nTutors")],
-                $defaults['content']
-            );
+        if ($template) {
+            // refresh the layout so re-runs pick up the themed pdfme template
+            $template = $service->update($template->getKey(), ['sections' => $sections]);
+        } else {
             $template = $service->insert([
                 'name' => $name,
                 'event' => CourseFinished::class,
                 'channel' => PdfChannel::class,
                 'default' => false,
-                'sections' => [
-                    ['key' => 'title', 'content' => $name],
-                    ['key' => 'content', 'content' => $content],
-                ],
+                'sections' => $sections,
             ]);
         }
         $service->assignTemplateToModel($template, $this->course->getKey());
