@@ -25,7 +25,7 @@ http://*.admin.localhost {
     file_server
 
     # Enable PHP-FPM
-    reverse_proxy admin:80
+    reverse_proxy host.docker.internal:8000
 
     # Cors logic 
     @origin header Origin {http.request.header.Origin}
@@ -53,7 +53,7 @@ http://*.app.localhost {
     file_server
 
     # Enable PHP-FPM
-    reverse_proxy front:80
+    reverse_proxy host.docker.internal:3000
 
     # Cors logic 
     @origin header Origin {http.request.header.Origin}

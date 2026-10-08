@@ -15,6 +15,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    # admin (:8000) and front (:3000) run from source on the host (`yarn dev`)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   api:
     # image: escolalms/php:8.4-alpine ## or escolalms/php:8-work for debugginh
     # command: sleep infinity
@@ -107,22 +110,6 @@ services:
   #     - ./:/var/www/html
   #   networks:
   #     - escola_lms
-
-  admin:
-    platform: linux/amd64
-    networks:
-      - escola_lms
-    image: escolalms/admin
-    environment:
-      - API_URL=http://api.localhost
-
-  front:
-    platform: linux/amd64
-    networks:
-      - escola_lms
-    image: escolalms/demo
-    environment:
-      - API_URL=http://api.localhost
 
   postgres:
     image: postgres:12
