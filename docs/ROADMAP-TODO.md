@@ -60,19 +60,19 @@ stale content.
 ## Phase 0: Foundation and audit
 
 ### 0.1 Explore and report (no code)
-- [ ] Map repo, packages, versions; course → lesson → topic model and topic types
-- [ ] Report on `headless-h5p`, `scorm`, `cmi5`, `lrs`, `tracker`, `reports`, `payments`,
-      `cart`, `vouchers`, `translations`, `settings`, `templates`, `notifications`
-- [ ] Can `recommender` be safely disabled or removed? What depends on it? (partial: decided to remove, removal in progress)
-- [ ] Multitenancy via `gecche/laravel-multidomain`: current setup, dynamic subdomains possible? (partial: explored; isolation gaps found: shared Redis queue/cache keys, unknown hosts fall back to the default tenant, workers learn tenants only at boot)
-- [ ] Inventory of learner activity data (tracker, xAPI/cmi5, SCORM CMI, H5P, quizzes, progress,
-      logins): storage, granularity, retention, gaps
-- [ ] How content updates preserve learner progress today
+- [x] Map repo, packages, versions; course → lesson → topic model and topic types (see docs/reports/phase-0-audit.md)
+- [x] Report on `headless-h5p`, `scorm`, `cmi5`, `lrs`, `tracker`, `reports`, `payments`,
+      `cart`, `vouchers`, `translations`, `settings`, `templates`, `notifications` (see docs/reports/phase-0-audit.md)
+- [x] Can `recommender` be safely disabled or removed? What depends on it? (removed from API, admin and front; nothing else depended on it; ADR 0006; webcam-capture leftover tracked in 0.1c)
+- [ ] Multitenancy via `gecche/laravel-multidomain`: current setup, dynamic subdomains possible? (partial: dynamic subdomains work via the tenancy package (`ulams:tenant:create`); fixed shared Redis keys, unknown-host fallback and boot-time worker lists; remaining: tenant video queue, per-tenant storage credentials, production DNS/TLS)
+- [x] Inventory of learner activity data (tracker, xAPI/cmi5, SCORM CMI, H5P, quizzes, progress,
+      logins): storage, granularity, retention, gaps (see docs/reports/phase-0-audit.md)
+- [x] How content updates preserve learner progress today (see docs/reports/phase-0-audit.md)
 - [ ] Tests, CI, code style, queues (Horizon), storage, existing AI code (partial: explored; no AI code exists; baseline failures: core 6, auth 3)
-- [ ] Licence audit of all `escolalms/*` and key dependencies for open core (partial: audit running; H5P already isolated per ADR 0003)
-- [ ] Runtime dependency inventory (input for Phase 8)
-- [ ] Commerce audit: what Wellms commerce does, dependent flows, Sylius 2.x API coverage,
-      Stripe / Przelewy24 gateways, Sylius MCP admin tool, B2B options
+- [x] Licence audit of all `escolalms/*` and key dependencies for open core (LICENSING.md and docs/reports/phase-0-audit.md; remediation items below)
+- [x] Runtime dependency inventory (input for Phase 8) (see docs/reports/phase-0-audit.md)
+- [x] Commerce audit: what Wellms commerce does, dependent flows, Sylius 2.x API coverage,
+      Stripe / Przelewy24 gateways, Sylius MCP admin tool, B2B options (see docs/reports/phase-0-audit.md)
 
 ### 0.1b Monorepo foundation (new)
 - [x] (new) Monorepo with the full history of the three repositories under `api/`, `admin/`, `front/`
@@ -84,7 +84,7 @@ stale content.
 - [x] (new) Remove the PHP H5P server completely and replace it with the Node.js service: no
       `h5p/h5p-core`, `h5p/h5p-editor` or `headless-h5p` left in `composer.json`/`composer.lock` or the
       code; Laravel keeps only the read-only `api/packages/h5p` index and HTTP client (ADR 0003)
-- [ ] (new) Remove `recommender` and its admin/front screens (partial: API removal in progress)
+- [x] (new) Remove `recommender` and its admin/front screens
 - [ ] (new) Replace styled-components with CSS custom properties everywhere (partial: theme contract
       and presets done; component conversion pending)
 - [ ] (new) Demo content seeder for the three experience courses (`front/docs/design/experiences.md`)
@@ -98,9 +98,23 @@ stale content.
 - [ ] (new) Remove the non-existent `packages/tracker/src` path from Swagger; consider Git LFS for
       large test fixtures; revisit exact pins (`faker-markdown-generator`, `tzsk/sms`)
 
+### 0.1c Security and audit follow-ups (new)
+- [ ] (new) Payment callbacks must verify the payment with the provider (Stripe signature/status, P24
+      verification); RevenueCat off by default and server-verified
+- [ ] (new) Remove the consultation webcam capture and its unauthenticated upload endpoints (recommender leftover)
+- [ ] (new) Authenticate the Jitsi recording webhook and restrict the downloaded URL (SSRF)
+- [ ] (new) Verify JWT signatures in the LRS guard
+- [ ] (new) Fix the ungrouped `orWhere` in `CourseAccessService::getUserCourseIds` and similar queries
+- [ ] (new) Remove the tracker Logs screen in admin and other tracker leftovers
+- [ ] (new) Fix the tenant video processing queue (jobs dispatched to a queue no tenant worker consumes)
+- [ ] (new) `Relation::enforceMorphMap` for topic types so class renames never orphan data
+- [x] (new) ADR for the tenancy package (docs/decisions/0007)
+- [ ] (new) Upgrade PostgreSQL 12 (EOL) to 16/17 with a tested dump/restore path
+- [ ] (new) Drop Soketi until realtime is needed (broadcast driver is `log`); Laravel Reverb after 0.2
+
 ### 0.2 Framework upgrade
-- [ ] Upgrade plan from Laravel 9 (EOL) to supported Laravel/PHP: order, breaking changes,
-      forks/patches needed, risks
+- [x] Upgrade plan from Laravel 9 (EOL) to supported Laravel/PHP: order, breaking changes,
+      forks/patches needed, risks (docs/plans/phase-0.md: 9 → 10 → 11 → 12 → 13 on PHP 8.4)
 - [ ] Implement after approval with test suite green at every step
 
 ---

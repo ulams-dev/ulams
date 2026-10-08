@@ -16,3 +16,4 @@ replacement.
 | [0004](0004-css-custom-properties-theming.md) | Theming with CSS custom properties, no styled-components | Proposed |
 | [0005](0005-turborepo-and-yarn-workspaces.md) | Turborepo and Yarn workspaces | Proposed |
 | [0006](0006-remove-recommender.md) | Remove the recommender package | Proposed |
+| [0007](0007-tenancy-package.md) | Tenancy: database per tenant, provisioned by the tenancy package | Proposed |
