@@ -27,6 +27,7 @@ class TenantProvisioner
         'passport_keys',
         'passport_client',
         'permissions',
+        'lti_keys',
         'demo',
     ];
 
@@ -128,6 +129,8 @@ class TenantProvisioner
                 '--name=' . $tenant->name . ' Personal Access Client',
             ]),
             'permissions' => $this->runner->run($host, ['db:seed', '--class=PermissionsSeeder', '--force']),
+            // per-tenant LTI signing keys (ADR 0012), rotated monthly by the scheduler
+            'lti_keys' => $this->runner->run($host, ['ulams:lti:rotate-keys', '--init']),
             'demo' => $this->runner->run($host, array_values(array_filter([
                 'ulams:tenant:seed-demo',
                 '--users=' . max(0, $users),

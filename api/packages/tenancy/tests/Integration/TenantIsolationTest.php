@@ -100,6 +100,34 @@ class TenantIsolationTest extends TestCase
         $this->assertNotSame(200, $wrong->getStatusCode());
     }
 
+    public function testLtiKeySetsAndRegistrationsDoNotCrossTenants(): void
+    {
+        $kids = fn (string $slug) => array_column(json_decode((string) $this->request($slug, 'GET', '/api/lti/jwks')->getBody(), true)['keys'] ?? [], 'kid');
+        $a = $kids(self::A);
+        $b = $kids(self::B);
+        $this->assertNotEmpty($a);
+        $this->assertNotEmpty($b);
+        $this->assertSame([], array_intersect($a, $b), 'every tenant signs LTI messages with its own keys');
+
+        $tokenA = $this->login(self::A);
+        $tool = $this->request(self::A, 'POST', '/api/admin/lti/tools', $tokenA, [
+            'name' => 'Isolation tool',
+            'oidc_login_url' => 'https://tool.example.test/login',
+            'launch_url' => 'https://tool.example.test/launch',
+            'jwks_url' => 'https://tool.example.test/jwks',
+        ]);
+        $this->assertSame(201, $tool->getStatusCode(), (string) $tool->getBody());
+        $clientId = json_decode((string) $tool->getBody(), true)['data']['client_id'];
+
+        // tenant B does not know tenant A's tool, and A's admin token is useless on B
+        $authorize = $this->request(self::B, 'GET', '/api/lti/platform/authorize?' . http_build_query([
+            'scope' => 'openid', 'response_type' => 'id_token', 'client_id' => $clientId,
+            'redirect_uri' => 'https://tool.example.test/launch', 'login_hint' => 'x', 'nonce' => 'n',
+        ]));
+        $this->assertSame(401, $authorize->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'GET', '/api/admin/lti/tools', $tokenA)->getStatusCode());
+    }
+
     private function login(string $slug): string
     {
         $response = $this->request($slug, 'POST', '/api/auth/login', null, [
