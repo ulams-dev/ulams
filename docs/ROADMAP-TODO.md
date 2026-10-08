@@ -125,7 +125,10 @@ stale content.
 ### 1.4 Shared
 - [ ] Upload hardening (zip-slip, MIME, size limits, virus-scan hook)
 - [ ] Isolated origin / strict CSP for third-party JS
-- [ ] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket)
+- [ ] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket) (partial: env-file resolver live for the demo tenants; remaining: a distinct `H5P_INTERNAL_TOKEN`
+      per tenant written at provisioning, library administration limited to the platform because
+      libraries are shared, production mounts limited to env files and key directories, idle-tenant
+      eviction)
 - [ ] (new) H5P: refresh the player model when the 5-minute Passport token rotates; redact `_token`
       in all proxies' access logs
 - [ ] Policies, OpenAPI annotations, fixtures and tests (LiaScript, Adapt A+B, LTI round-trip)
