@@ -2,6 +2,8 @@
 
 namespace Ulams\Scorm\Services;
 
+use Ulams\Scorm\Events\ScormScoCompleted;
+
 use Carbon\Carbon;
 use Ulams\Scorm\Services\Contracts\ScormTrackServiceContract;
 use Ulams\Scorm\Strategies\Scorm12FieldStrategy;
@@ -170,6 +172,7 @@ class ScormTrackService implements ScormTrackServiceContract
         $updateResult = ScormScoTrackingModel::where('user_id', $tracking->getUserId())
             ->where('sco_id', $sco['id'])
             ->firstOrFail();
+        $wasDone = $this->isDone($updateResult->lesson_status, $updateResult->completion_status);
 
         $statusPriority = [
             'unknown' => 0,
@@ -339,7 +342,17 @@ class ScormTrackService implements ScormTrackServiceContract
 
         $updateResult->save();
 
+        // ulams: lets topic types complete the topics that use this SCO
+        if (!$wasDone && $this->isDone($updateResult->lesson_status, $updateResult->completion_status)) {
+            event(new ScormScoCompleted((int) $userId, (int) $sco['id']));
+        }
+
         return $updateResult;
+    }
+
+    private function isDone(?string $lessonStatus, ?string $completionStatus): bool
+    {
+        return in_array($lessonStatus, ['completed', 'passed'], true) || in_array($completionStatus, ['completed', 'passed'], true);
     }
 
 

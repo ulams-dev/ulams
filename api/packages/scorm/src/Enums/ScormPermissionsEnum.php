@@ -30,6 +30,17 @@ class ScormPermissionsEnum extends BasicEnum
         ];
     }
 
+    /**
+     * Learners record their own progress (decision #12, docs/plans/phase-1.md).
+     */
+    public static function studentPermissions(): array
+    {
+        return [
+            ScormPermissionsEnum::SCORM_SET_TRACK,
+            ScormPermissionsEnum::SCORM_GET_TRACK,
+        ];
+    }
+
     public static function tutorPermissions(): array
     {
         return [
