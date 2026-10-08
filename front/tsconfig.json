@@ -14,6 +14,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    /* lets dependency-free modules import "./x.ts" so node --test can run them (tests/) */
+    "allowImportingTsExtensions": true,
 
     "jsx": "react-jsx",
 
@@ -37,6 +39,7 @@
       "@ulams/sdk": ["src/lib/sdk/index.ts"],
       "@ulams/sdk/*": ["src/lib/sdk/*"],
       "@ulams/scorm-player": ["src/lib/scorm-player/index.ts"],
+      "@ulams/tenant": ["src/lib/tenant/resolveApiUrl.ts"],
       "@ulams/scorm-player/*": ["src/lib/scorm-player/*"]
     }
   },

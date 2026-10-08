@@ -12,6 +12,7 @@ const {
   REACT_APP_SENTRYDSN,
   BASE_PATH,
   REACT_APP_SENTRY_RELEASE,
+  REACT_APP_TENANT_API_HOST_PATTERN,
 } = process.env;
 export default defineConfig({
   /**
@@ -158,6 +159,11 @@ export default defineConfig({
     REACT_APP_YBUG: typeof REACT_APP_YBUG !== 'undefined' ? REACT_APP_YBUG : '',
     REACT_APP_SENTRY_RELEASE:
       typeof REACT_APP_SENTRY_RELEASE !== 'undefined' ? REACT_APP_SENTRY_RELEASE : '',
+    // "<admin host pattern>=><API URL template>", e.g. {slug}.admin.localhost=>http://{slug}.localhost
+    REACT_APP_TENANT_API_HOST_PATTERN:
+      typeof REACT_APP_TENANT_API_HOST_PATTERN !== 'undefined'
+        ? REACT_APP_TENANT_API_HOST_PATTERN
+        : '',
   },
   devtool: 'source-map',
   /**
@@ -169,6 +175,7 @@ export default defineConfig({
     '@ulams/gift-pegjs': path.resolve(__dirname, '../src/lib/gift-pegjs'),
     '@ulams/markdown-editor': path.resolve(__dirname, '../src/lib/markdown-editor'),
     '@ulams/scorm-player': path.resolve(__dirname, '../../front/src/lib/scorm-player'),
+    '@ulams/tenant': path.resolve(__dirname, '../../front/src/lib/tenant/resolveApiUrl.ts'),
   },
   plugins: [require.resolve('./plugin-scorm.ts')],
 });

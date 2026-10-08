@@ -1,3 +1,5 @@
+// Must stay first: sets window.REACT_APP_API_URL for the tenant host before anything reads it.
+import './tenant';
 import Footer from '@/components/Footer';
 import RightContent from '@/components/RightContent';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';

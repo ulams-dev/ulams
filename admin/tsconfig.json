@@ -21,7 +21,8 @@
       "@@test/*": ["./src/.umi-test/*"],
       "@ulams/gift-pegjs": ["./src/lib/gift-pegjs"],
       "@ulams/markdown-editor": ["./src/lib/markdown-editor"],
-      "@ulams/scorm-player": ["../front/src/lib/scorm-player"]
+      "@ulams/scorm-player": ["../front/src/lib/scorm-player"],
+      "@ulams/tenant": ["../front/src/lib/tenant/resolveApiUrl"]
     },
 
     "inlineSources": true,

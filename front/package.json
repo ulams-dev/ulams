@@ -91,14 +91,15 @@
     "start": "vite --port 3000",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "jest --no-cache",
+    "test": "node --experimental-strip-types --no-warnings --test \"tests/**/*.test.ts\"",
     "tsc": "tsc --project tsconfig.json --noEmit",
     "analyze": "source-map-explorer 'dist/static/js/*.js'",
     "proxy": "node proxy.js",
     "lint": "eslint . --ext ts,tsx && yarn lint:gpl",
     "dev": "vite --port 3000",
     "typecheck": "tsc --project tsconfig.json --noEmit",
-    "lint:gpl": "node scripts/check-no-gpl-imports.cjs"
+    "lint:gpl": "node scripts/check-no-gpl-imports.cjs",
+    "test:unit": "node --experimental-strip-types --no-warnings --test \"tests/**/*.test.ts\""
   },
   "browserslist": [
     ">0.2%",

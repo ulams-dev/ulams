@@ -1,17 +1,52 @@
-export const getAPIURL = () => {
-  if (typeof window !== "undefined" && window.VITE_APP_API_URL) {
-    return window.VITE_APP_API_URL;
-  } else {
-    return import.meta.env.VITE_APP_PUBLIC_API_URL;
+import {
+  DEFAULT_FRONT_TENANT_PATTERN,
+  resolveApiUrl,
+  tenantFromHost,
+} from "@ulams/tenant";
+
+declare global {
+  interface Window {
+    VITE_APP_TENANT_API_HOST_PATTERN?: string;
   }
-};
+}
 
-// Usage
-export const API_URL =
-  window.VITE_APP_API_URL || import.meta.env.VITE_APP_PUBLIC_API_URL || null;
+const hostname = () =>
+  typeof window !== "undefined" ? window.location.hostname : undefined;
 
+/**
+ * Host pattern that maps a tenant front host to its API, e.g.
+ * `{slug}.app.localhost=>http://{slug}.localhost` (default) or, in production,
+ * `{slug}.ulams.app=>https://{slug}.api.ulams.app`. See src/lib/tenant/resolveApiUrl.ts.
+ */
+export const TENANT_API_HOST_PATTERN =
+  (typeof window !== "undefined" && window.VITE_APP_TENANT_API_HOST_PATTERN) ||
+  import.meta.env.VITE_APP_TENANT_API_HOST_PATTERN ||
+  DEFAULT_FRONT_TENANT_PATTERN;
+
+/** The tenant recognised from the current host, or null on the platform host. */
+export const TENANT = tenantFromHost(hostname(), TENANT_API_HOST_PATTERN);
+
+/**
+ * API base URL: runtime-injected `window.VITE_APP_API_URL` → tenant API derived
+ * from the host → build-time `VITE_APP_PUBLIC_API_URL` (the platform API).
+ */
+export const getAPIURL = (): string | null =>
+  resolveApiUrl({
+    runtime: typeof window !== "undefined" ? window.VITE_APP_API_URL : null,
+    hostname: hostname(),
+    pattern: TENANT_API_HOST_PATTERN,
+    buildTime: import.meta.env.VITE_APP_PUBLIC_API_URL,
+  });
+
+// Empty when nothing is configured; index.tsx then renders a configuration error.
+export const API_URL: string = getAPIURL() ?? "";
+
+/** Public URL of this front (return URLs for payments, e-mail links): the tenant host when on one. */
 export const APP_URL =
-  window.VITE_APP_URL || import.meta.env.VITE_APP_URL || null;
+  window.VITE_APP_URL ||
+  (TENANT ? window.location.origin : null) ||
+  import.meta.env.VITE_APP_URL ||
+  window.location.origin;
 
 export const VITE_APP_FIREBASE_VAPID_KEY =
   window.VITE_APP_FIREBASE_VAPID_KEY ||
