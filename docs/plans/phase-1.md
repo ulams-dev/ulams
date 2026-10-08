@@ -459,6 +459,36 @@ Taken during implementation (M1.1):
 20. **cmi5 stays on the API origin for now**: its AU files live on the local disk (see the 0.1c item);
     moving them to the bucket and the content origin is a follow-up.
 
+Taken during implementation (M1.2–M1.4, LTI):
+
+21. **One commit for the LTI package** instead of the eight in section 13: the platform and tool sides
+    share keys, nonces, claims and the provider, and were tested together (45 tests). ADR, tenancy step
+    and front are separate commits.
+22. **Login hints and deep-linking data are HS256 tokens** keyed from the tenant `APP_KEY` (not stored),
+    2 minutes for hints; single use is enforced by recording their `jti`.
+23. **AGS access tokens are RS256 JWTs signed with the tenant LTI key** (stateless, 1 h), not stored
+    tokens. Scores are append-only; `Completed` or `FullyGraded` completes the topic, creating an
+    in-progress row first so that `TopicFinished` and the lesson/course checks fire.
+24. **A tool may only use AGS in courses that contain one of its links**, and only post scores for
+    learners it was launched for in that course.
+25. **AGS bearer header moved aside before Passport** (`IsolateLtiBearer`, prepended global middleware):
+    Passport 13 blanks and reports any non-Passport bearer token.
+26. **Tool side: OIDC state stored server-side**, single use, instead of the library's cookie (works in
+    LMS iframes); the nonce bound to it still ties the `id_token` to the login.
+27. **Tool side user mapping by `(platform, sub)` only**; a platform's e-mail is used for a new account
+    only when no local account has it, otherwise a pseudonymous `lti-<platform>-<hash>@lti.invalid`.
+    Instructor, ContentDeveloper and TeachingAssistant become tutor; nobody becomes admin.
+28. **Course selection on the tool side**: custom parameter `course_id` (set by our deep-linking
+    response), else `?course=` on the target link URI, else the platform's `default_course_id`.
+29. **Session hand-over**: a 60-second one-time code in the landing URL, exchanged by the front for a
+    Passport personal access token (`POST /api/lti/tool/exchange`, throttled).
+30. **Grade passback sends course progress** (percentage of finished active topics), `Completed`/
+    `FullyGraded` at 100 %, on every `TopicFinished`; 5 tries with backoff, last error on the target.
+31. **Outgoing LTI HTTP only to public https addresses**, no redirects, DNS pinned;
+    `LTI_ALLOW_INSECURE_URLS=true` for local Moodle/docker setups.
+32. **No admin UI yet**: registrations are API-only (`/api/admin/lti/*`, permission `lti_manage`, seeded
+    for admin) until the Stitch screens for Integrations → LTI are exported.
+
 ---
 
 ## 15. Progress
@@ -466,3 +496,6 @@ Taken during implementation (M1.1):
 | Milestone | State | Notes |
 |---|---|---|
 | M1.1 | done (cmi5 content origin pending) | `packages/uploads`; SCORM/cmi5/import/files hardened; content origin in Caddy; SCORM player on the content origin; `api/docs/content-origin.md` |
+| M1.2 | done (admin screens pending) | `packages/lti` platform side: keys/JWKS/rotation, `LtiLink` topic type, OIDC launch, AGS (token, line items, scores, results), front `LtiPlayer`; ADR 0012 |
+| M1.3 | done (admin "pick content" button pending) | Deep-linking request and response; topics created through `TopicRepository` |
+| M1.4 | done (admin screens and Moodle profile pending) | Tool side on packbackbooks/lti-1p3-tool: login, launch, user/role mapping, course access, one-time code + front `/lti/launch`, course picker, queued grade passback |

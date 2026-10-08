@@ -182,9 +182,20 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`.
 - [ ] Path B (feature flag): JSON source, schema-validated, isolated build worker
 
 ### 1.3 LTI 1.3 (high priority)
-- [ ] LTI Platform: launch external tools, AGS grade passback, deep linking
-- [ ] LTI Tool: expose our courses to Moodle, Canvas etc.
-- [ ] Key rotation, nonce/state validation, per-tenant registrations
+- [ ] LTI Platform: launch external tools, AGS grade passback, deep linking (partial: API, front player and
+      tests done in `packages/lti` (ADR 0012); admin screens (Integrations → LTI, topic form, "pick content
+      from tool") and the saLTIre round trip pending)
+- [ ] LTI Tool: expose our courses to Moodle, Canvas etc. (partial: launch, user/role mapping, course access,
+      deep-linking course picker, grade passback and the front landing page done; admin platform screens and
+      the Moodle `lti-e2e` round trip pending)
+- [x] Key rotation, nonce/state validation, per-tenant registrations (`ulams:lti:rotate-keys` monthly,
+      provisioning step `lti_keys`, single-use hints/state/nonce/jti in `lti_nonces`, registrations in the
+      tenant database, isolation tests)
+- [ ] (new) Admin UI for LTI: tools and platforms screens, external-tool topic form with "pick content from
+      tool" (API ready: `/api/admin/lti/*`)
+- [ ] (new) LTI: Client-Side OIDC (platform storage via `postMessage`) on the tool side, NRPS on the platform
+      side, per-tool `frame-src` in the CSP
+- [ ] (new) Run `ulams:lti:rotate-keys --init` for existing tenants (new tenants get it at provisioning)
 
 ### 1.4 Shared
 - [x] Upload hardening (zip-slip, MIME, size limits, virus-scan hook) (`packages/uploads`: SCORM, cmi5,
