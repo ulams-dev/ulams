@@ -13,12 +13,15 @@ use Ulams\Payments\Facades\Payments;
 use Ulams\Payments\Gateway\Drivers\Contracts\GatewayDriverContract;
 use Ulams\Payments\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Omnipay\Common\Message\RedirectResponseInterface;
 use Ramsey\Uuid\Nonstandard\Uuid;
 
 class PaymentProcessor
 {
     private Payment $payment;
+    private bool $callbackRejected = false;
 
     public function __construct(Payment $payment)
     {
@@ -130,47 +133,71 @@ class PaymentProcessor
         return $this;
     }
 
+    /**
+     * Handles a gateway callback. Callback routes are public, so:
+     * - only a response the driver verified with the provider can change the payment ("rejected" ones are logged
+     *   and ignored);
+     * - a payment that is already settled is left as it is, so repeated notifications do not fire events twice.
+     */
     public function callback(Request $request): self
     {
-        $callbackResponse = $this->getPaymentDriver()->callback($request);
+        $this->callbackRejected = false;
 
-        $this->clearRedirect();
-        $this->setGatewayOrderId($callbackResponse->getGatewayOrderId());
+        DB::transaction(function () use ($request) {
+            $this->lockPayment();
 
-        if ($callbackResponse->getSuccess()) {
-            if ($this->payment->refund) {
-                $refundParameters = [
-                    'gateway_request_id' => Uuid::uuid4()->toString(),
-                    'gateway_refunds_uuid' => Uuid::uuid4()->toString()
-                ];
-
-                $this->updatePayment($refundParameters);
-
-                $refundResponse = $this->getPaymentDriver()->refund($request, $this->payment, $refundParameters);
-
-                if (!$refundResponse->isSuccessful()) {
-                    $this->setError($refundResponse->getMessage());
-                }
-
-                event(new PaymentSuccess($this->payment->user, $this->payment));
-            } else {
-                $this->setSuccessful();
+            if ($this->isSettled()) {
+                return;
             }
-        } else {
-            $this->setError($callbackResponse->getError());
-        }
+
+            $callbackResponse = $this->getPaymentDriver()->callback($request, ['payment' => $this->payment]);
+
+            if ($callbackResponse->isRejected()) {
+                $this->rejectCallback($callbackResponse->getError());
+                return;
+            }
+
+            $this->clearRedirect();
+            $this->setGatewayOrderId($callbackResponse->getGatewayOrderId());
+
+            if ($callbackResponse->getSuccess()) {
+                if ($this->payment->refund) {
+                    $refundParameters = [
+                        'gateway_request_id' => Uuid::uuid4()->toString(),
+                        'gateway_refunds_uuid' => Uuid::uuid4()->toString()
+                    ];
+
+                    $this->updatePayment($refundParameters);
+
+                    $refundResponse = $this->getPaymentDriver()->refund($request, $this->payment, $refundParameters);
+
+                    if (!$refundResponse->isSuccessful()) {
+                        $this->setError($refundResponse->getMessage());
+                    }
+
+                    event(new PaymentSuccess($this->payment->user, $this->payment));
+                } else {
+                    $this->setSuccessful();
+                }
+            } else {
+                $this->setError($callbackResponse->getError() ?? 'Payment failed');
+            }
+        });
 
         return $this;
     }
 
     public function callbackRefund(Request $request): self
     {
+        $this->callbackRejected = false;
+
         if (
             !$request->has('requestId') || !$request->has('refundsUuid')
+            || is_null($this->payment->gateway_request_id)
             || $request->get('requestId') !== $this->payment->gateway_request_id
             || $request->get('refundsUuid') !== $this->payment->gateway_refunds_uuid
         ) {
-            $this->setError('Invalid callback refund parameters.');
+            $this->rejectCallback('Invalid callback refund parameters.');
             return $this;
         }
 
@@ -179,10 +206,57 @@ class PaymentProcessor
         if ($callbackResponse->getSuccess()) {
             $this->setRefunded();
         } else {
-            $this->setError($callbackResponse->getError());
+            $this->rejectCallback($callbackResponse->getError());
         }
 
         return $this;
+    }
+
+    public function isCallbackRejected(): bool
+    {
+        return $this->callbackRejected;
+    }
+
+    private function lockPayment(): void
+    {
+        if (!$this->payment->exists) {
+            return;
+        }
+
+        $locked = Payment::query()->whereKey($this->payment->getKey())->lockForUpdate()->first();
+
+        if ($locked) {
+            $this->payment->setRawAttributes($locked->getAttributes(), true);
+        }
+    }
+
+    /**
+     * Paid, refunded or cancelled. A trial payment (refund flag) is settled once its refund was started.
+     */
+    private function isSettled(): bool
+    {
+        $status = $this->payment->status;
+
+        if ($status instanceof PaymentStatus && $status->in([PaymentStatus::REFUNDED, PaymentStatus::CANCELLED])) {
+            return true;
+        }
+
+        if ($this->payment->refund) {
+            return !is_null($this->payment->gateway_request_id);
+        }
+
+        return $status instanceof PaymentStatus && $status->is(PaymentStatus::PAID);
+    }
+
+    private function rejectCallback(?string $reason): void
+    {
+        $this->callbackRejected = true;
+
+        Log::warning('Payment callback rejected', [
+            'payment_id' => $this->payment->getKey(),
+            'driver' => $this->payment->driver,
+            'reason' => $reason,
+        ]);
     }
 
     private function setSuccessful(): void

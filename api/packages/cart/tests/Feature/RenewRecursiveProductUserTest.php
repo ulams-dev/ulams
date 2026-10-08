@@ -67,7 +67,8 @@ class RenewRecursiveProductUserTest extends TestCase
         Config::set('ulams_payments.default_gateway', 'free');
 
         $user1 = $this->makeStudent();
-        $product = Product::factory()->subscriptionWithoutTrial()->state(['subscription_period' => PeriodEnum::DAILY, 'subscription_duration' => 3, 'extra_fees' => 0])->create();
+        // The free gateway only settles zero-amount payments.
+        $product = Product::factory()->subscriptionWithoutTrial()->state(['subscription_period' => PeriodEnum::DAILY, 'subscription_duration' => 3, 'extra_fees' => 0, 'price' => 0])->create();
         $this->makeOrder($product, $user1);
 
         $product->users()->sync([

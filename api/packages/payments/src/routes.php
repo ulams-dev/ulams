@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'api'], function () {
     Route::get('/payments-gateways', [GatewayController::class, 'index']);
     Route::any('/payments-gateways/callback/{payment}', [GatewayController::class, 'callback'])->name('payments-gateway-callback');
+    Route::post('/payments-gateways/webhook/stripe', [GatewayController::class, 'stripeWebhook'])->name('payments-gateway-stripe-webhook');
     Route::any('/payments-gateways/callback/refund/{payment}', [GatewayController::class, 'callbackRefund'])->name('payments-gateway-refund-callback');
 
     Route::group(['prefix' => 'admin/payments', 'middleware' => ['auth:api']], function () {

@@ -30,9 +30,12 @@ class FakeDriver extends AbstractDriver implements GatewayDriverContract
         return new NoneGatewayResponse();
     }
 
+    /**
+     * The fake stands in for a gateway that already verified the payment with its provider.
+     */
     public function callback(Request $request, array $parameters = []): CallbackResponse
     {
-        return new CallbackResponse();
+        return CallbackResponse::success();
     }
 
     public static function requiredParameters(): array
@@ -59,7 +62,7 @@ class FakeDriver extends AbstractDriver implements GatewayDriverContract
 
     public function callbackRefund(Request $request, array $parameters = []): CallbackRefundResponse
     {
-        return new CallbackRefundResponse();
+        return new CallbackRefundResponse(true);
     }
 
     public function refund(Request $request, Payment $payment, array $parameters = []): ResponseInterface

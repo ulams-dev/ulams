@@ -60,7 +60,7 @@ class PaymentAdministrableConfigTest extends TestCase
                         'enabled' => true,
                     ],
                     'revenuecat' => [
-                        'enabled' => true,
+                        'enabled' => false,
                     ],
                 ],
                 'default_gateway' => 'Stripe',
