@@ -174,7 +174,8 @@ services:
     #   - 8080:80
 
   minio:
-    image: bitnami/minio
+    # bitnami/* images were removed from Docker Hub; the same image lives under bitnamilegacy/*
+    image: bitnamilegacy/minio:latest
     networks:
       - escola_lms
     # ports:

@@ -2,7 +2,10 @@ FROM escolalms/php:8.3-alpine
 WORKDIR /var/www/html
 EXPOSE 9000
 COPY / /var/www/html
-RUN pecl install excimer
+# pecl.php.net is unreliable (504) - build excimer from GitHub source instead
+RUN cd /tmp && curl -fsSL -o excimer.tgz https://codeload.github.com/wikimedia/mediawiki-php-excimer/tar.gz/refs/tags/1.2.7 \
+  && tar xzf excimer.tgz && cd php-excimer-1.2.7 && phpize && ./configure && make && make install \
+  && cd /tmp && rm -rf excimer.tgz php-excimer-1.2.7
 RUN \
   cp docker/conf/supervisor/supervisord.conf /etc/supervisord.conf \
   && cp docker/conf/php/escolalms-custom-php.ini /usr/local/etc/php/conf.d/escolalms-custom-php.ini \  
