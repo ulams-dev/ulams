@@ -1,5 +1,58 @@
+# Content origin (docs/content-origin.md): serves the package paths of one bucket read-only,
+# with a CSP of its own and nothing else (no API, no cookies). Third-party SCORM/cmi5/Adapt/
+# LiaScript JavaScript runs here, never on the API, front or admin origins.
+# Arguments: <bucket> <API origin> <frame ancestors>
+(content_origin) {
+	header {
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'"
+		>X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+		-Set-Cookie
+		-Server
+	}
+
+	@package {
+		method GET HEAD
+		path /scorm/* /cmi5/* /adapt/* /liascript/*
+	}
+	handle @package {
+		request_header -Cookie
+		request_header -Authorization
+		rewrite * /{args[0]}{uri}
+		reverse_proxy minio:9000 {
+			header_down -Set-Cookie
+			header_down -X-Amz-*
+		}
+	}
+
+	handle {
+		respond "Not found" 404
+	}
+}
+
+# Report-only CSP for the front and admin; enforce after a week of clean reports. frame-src lists
+# the content origins and the H5P service; LTI tool origins are added per tenant in production.
+(app_csp_report_only) {
+	header Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: http://storage.localhost http://*.localhost; media-src 'self' blob: http://storage.localhost http://*.localhost; connect-src 'self' http://*.localhost ws://*.localhost; frame-src 'self' http://*.content.localhost http://content.localhost http://*.localhost; frame-ancestors 'self'; object-src 'none'; base-uri 'self'"
+}
+
 http://storage.localhost {
+    # Uploaded files must not run as active content on the bucket origin: no MIME sniffing, and
+    # an SVG opened directly runs no script (the API also stores SVG/HTML as attachments).
+    header >X-Content-Type-Options nosniff
+    @svg path *.svg *.svgz
+    header @svg Content-Security-Policy "script-src 'none'; sandbox"
     reverse_proxy minio:9000
+}
+
+# Tenant content origins: <slug>.content.localhost -> bucket ulams-<slug>
+http://*.content.localhost {
+    import content_origin ulams-{labels.2} http://{labels.2}.localhost "http://{labels.2}.app.localhost http://{labels.2}.admin.localhost http://localhost:3000 http://localhost:8000"
+}
+
+# Platform content origin -> bucket ulams
+http://content.localhost {
+    import content_origin ulams http://api.localhost "http://app.localhost http://admin.localhost http://localhost:3000 http://localhost:8000"
 }
 
 http://minio.localhost {
@@ -15,6 +68,8 @@ http://metrics.localhost {
 }
 
 http://*.admin.localhost {
+    import app_csp_report_only
+
     # Resolve the root directory for the app
     root * /var/www/html/public
 
@@ -43,8 +98,11 @@ http://*.admin.localhost {
 }
 
 http://*.app.localhost {
+    import app_csp_report_only
+
     # Learner front (front/web, Astro dev server on the host: `yarn workspace web dev`, port 4321).
     # The old React front (front/) stays reachable directly at http://localhost:3000.
+
     encode zstd gzip
 
     reverse_proxy host.docker.internal:4321
@@ -99,8 +157,30 @@ http://*.localhost {
         }
     }
 
+    # Package and course uploads (UPLOADS_*_MAX_MB, up to 1 GB) plus multipart overhead
+    @large_uploads path /api/admin/scorm/upload /api/admin/scorm/parse /api/admin/cmi5 /api/admin/courses/zip/import
+    handle @large_uploads {
+        request_body {
+            max_size 1100MB
+        }
+        reverse_proxy api:9000 {
+            header_up -Access-Control-Allow-Origin
+            header_down -Access-Control-Allow-Origin
+            transport fastcgi {
+                env SCRIPT_FILENAME /var/www/html/index.php
+            }
+        }
+        @origin_upload header Origin {http.request.header.Origin}
+        header @origin_upload Access-Control-Allow-Origin {http.request.header.Origin}
+        header Access-Control-Allow-Credentials true
+    }
+
     # Enable PHP-FPM
     handle {
+        # everything else: file manager uploads (FILES_MAX_SIZE_MB, 512) plus overhead
+        request_body {
+            max_size 600MB
+        }
         reverse_proxy api:9000 {
             header_up -Access-Control-Allow-Origin
             header_down -Access-Control-Allow-Origin

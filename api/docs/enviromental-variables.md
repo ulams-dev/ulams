@@ -112,6 +112,7 @@ Read on the platform by `ulams:tenant:*`, see [multidomain.md](multidomain.md).
 | `TENANCY_API_HOST`           | Tenant API host                                                                               | `{slug}.localhost`                           |
 | `TENANCY_FRONT_HOST`         | Tenant front host (`global.frontURL`, `FRONTEND_URL`)                                        | `{slug}.app.localhost`                       |
 | `TENANCY_ADMIN_HOST`         | Tenant admin panel host                                                                       | `{slug}.admin.localhost`                     |
+| `TENANCY_CONTENT_HOST`       | Tenant content origin host, written as `CONTENT_ORIGIN` (see [content-origin.md](content-origin.md)) | `{slug}.content.localhost`                   |
 | `TENANCY_EMAIL_DOMAIN`       | Domain of demo user e-mails and `MAIL_FROM_ADDRESS`                                          | `{slug}.ulams.app`                           |
 | `TENANCY_DATABASE`           | Tenant database and role name                                                                | `ulams_{slug}`                               |
 | `TENANCY_BUCKET`             | Tenant bucket                                                                                 | `ulams-{slug}`                               |
@@ -131,7 +132,7 @@ Read on the platform by `ulams:tenant:*`, see [multidomain.md](multidomain.md).
 | `QUEUE_IDLE_SLEEP`           | Seconds `queue.sh`/`broadcast.sh` sleep after a pass over all domains                         | `3`                                          |
 
 Set per tenant in `.env.<host>` (do not set them on the platform): `TENANT_SLUG`,
-`REDIS_PREFIX`, `CACHE_PREFIX`, `HORIZON_PREFIX`, `INITIAL_USER_EMAIL`,
+`REDIS_PREFIX`, `CACHE_PREFIX`, `HORIZON_PREFIX`, `CONTENT_ORIGIN`, `INITIAL_USER_EMAIL`,
 `INITIAL_USER_PASSWORD`, `FRONTEND_URL`, `ADMIN_URL`, `DEMO_MODE`.
 
 ## Demo mode (`packages/demo`)

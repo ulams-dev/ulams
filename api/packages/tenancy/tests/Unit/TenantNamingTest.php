@@ -45,6 +45,7 @@ class TenantNamingTest extends TestCase
         $this->assertSame('ulams_coffee_horizon:', $values['HORIZON_PREFIX']);
         $this->assertSame('http://storage.localhost/ulams-coffee', $values['AWS_URL']);
         $this->assertSame('http://coffee.app.localhost', $values['FRONTEND_URL']);
+        $this->assertSame('http://coffee.content.localhost', $values['CONTENT_ORIGIN']);
         $this->assertSame('admin@coffee.ulams.app', $values['INITIAL_USER_EMAIL']);
         $this->assertSame('no-reply@coffee.ulams.app', $values['MAIL_FROM_ADDRESS']);
     }
