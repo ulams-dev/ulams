@@ -15,7 +15,8 @@ import ScrollToTop from "../Common/ScrollToTop";
 import { Loader } from "./../_App/Loader/Loader";
 import routeRoutes from "./routes";
 
-const HomePage = lazy(() => import("../../pages/index"));
+// Tenant experience landing or the default home (see pages/landing/selectLanding.ts)
+const HomePage = lazy(() => import("../../pages/landing/index"));
 
 const RegisterPage = lazy(() => import("../../pages/register/index"));
 const LoginPage = lazy(() => import("../../pages/login/index"));

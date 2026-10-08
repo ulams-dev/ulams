@@ -1,4 +1,4 @@
-import React, { lazy, useContext, useEffect } from "react";
+import React, { lazy, useContext, useEffect, useMemo } from "react";
 
 import Routes from "./components/Routes";
 
@@ -7,7 +7,8 @@ import { isMobile } from "react-device-detect";
 import * as Sentry from "@sentry/react";
 import { UlamsContext } from "@ulams/sdk/react";
 import TechnicalMaintenanceScreen from "./components/_App/TechnicalMaintenanceScreen";
-import themes from "@ulams/components/theme";
+import { getTenantTheme } from "@ulams/components/theme";
+import { useIsBareLayout } from "@/components/_App/bareLayout";
 import routeRoutes from "@/components/Routes/routes";
 import { useFirebase } from "@/hooks/useFirebase";
 import { StatusBar } from "@capacitor/status-bar";
@@ -27,8 +28,12 @@ const GlobalStyle = createGlobalStyle`
     -webkit-font-smoothing: antialiased;
   }
   #root {
-    height: 100%;  
-    background-color: ${({ theme }) => theme.gray4};
+    height: 100%;
+    /* inherited text colour, so unstyled text stays readable in dark presets */
+    color: ${({ theme }) =>
+      theme.mode === "dark" ? theme.dm__textColor : theme.textColor};
+    background-color: ${({ theme }) =>
+    theme.mode === "dark" ? theme.dm__background : theme.gray4};
 
   }
   #__ybug-launcher {
@@ -63,15 +68,21 @@ const StyledMain = styled.main<{ noPadding?: boolean }>`
     noPadding ? "0px" : isMobile ? "92px" : "57px"};
 `;
 
-const mapStringToTheme = (theme: string) => {
-  return themes[theme];
-};
-
 const App = () => {
   const { fetchSettings, settings, fetchNotifications, fetchConfig } =
     useContext(UlamsContext);
 
   usePerformanceMetrics();
+  const isBareLayout = useIsBareLayout();
+  // A tenant theme named in settings (e.g. "coffee" / "coffeeTheme") is applied to both the
+  // styled-components theme and the --ulams-* CSS variables, and hides the theme customizer.
+  // `theme.accent` replaces the preset's primary colour (adjusted to keep AA contrast).
+  const themeKey = settings.value?.theme?.theme;
+  const themeAccent = settings.value?.theme?.accent;
+  const tenantTheme = useMemo(
+    () => getTenantTheme(themeKey, themeAccent),
+    [themeKey, themeAccent]
+  );
 
   useEffect(() => {
     if (isMobilePlatform) {
@@ -94,11 +105,12 @@ const App = () => {
       <GlobalStyle />
       <StyledMain
         noPadding={
+          isBareLayout ||
           settings?.value?.global?.technicalMaintenance ||
           location.href.includes(routeRoutes.onboarding)
         }
       >
-        <Customizer theme={mapStringToTheme(settings.value?.theme?.theme)} />
+        <Customizer theme={tenantTheme} />
         {settings?.value?.global?.technicalMaintenance ? (
           <TechnicalMaintenanceScreen
             text={settings?.value?.global?.technicalMaintenanceText}
