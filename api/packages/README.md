@@ -105,7 +105,6 @@ commits listed below.
 | `permissions` | `escolalms/permissions` | https://github.com/EscolaLMS/Permissions | 0.1.11 | `e64a528c83c111f7508393124566919ea53d942d` |
 | `przelewy24-php` | `escolalms/przelewy24-php` | https://github.com/EscolaLMS/przelewy24-php | 0.1.0 | `c7c09b9a5c9aa009f30edc473c3fec7786a54cf1` |
 | `questionnaire` | `escolalms/questionnaire` | https://github.com/EscolaLMS/Questionnaire | 0.2.26 | `05942c2fe089f51a582ee1a14d2a027d6ef56327` |
-| `recommender` | `escolalms/recommender` | https://github.com/EscolaLMS/Recommender | 0.0.33 | `b61aa2ff80d12e9f4ee80ae1b935a80face5f581` |
 | `reports` | `escolalms/reports` | https://github.com/EscolaLMS/Reports | 0.1.49 | `a33e7028289a0497fe991ae3740654f416ca705e` |
 | `scorm` | `escolalms/scorm` | https://github.com/EscolaLMS/Scorm | 0.3.1 | `13a15e7dc1547b8c60f5c45f6fa066532e77fe5f` |
 | `settings` | `escolalms/settings` | https://github.com/EscolaLMS/settings | 0.2.6 | `55ed94f4d15fb37a91ce51b05877f5ea494193bc` |

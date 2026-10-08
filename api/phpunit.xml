@@ -23,7 +23,6 @@
       <directory suffix=".php">./packages/pages/</directory>
       <directory suffix=".php">./packages/payments/</directory>
       <directory suffix=".php">./packages/permissions/</directory>
-      <directory suffix=".php">./packages/recommender/</directory>
       <directory suffix=".php">./packages/reports/</directory>
       <directory suffix=".php">./packages/scorm/</directory>
       <directory suffix=".php">./packages/settings/</directory>
@@ -117,9 +116,6 @@
     </testsuite>
     <testsuite name="permissions">
       <directory suffix="Test.php">./packages/permissions/tests</directory>
-    </testsuite>
-    <testsuite name="recommender">
-      <directory suffix="Test.php">./packages/recommender/tests</directory>
     </testsuite>
     <testsuite name="reports">
       <directory suffix="Test.php">./packages/reports/tests</directory>

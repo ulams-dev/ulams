@@ -4,7 +4,6 @@ namespace App\Console;
 
 use Ulams\Consultations\Enum\ConsultationTermReminderStatusEnum;
 use Ulams\Consultations\Jobs\ReminderAboutConsultationJob;
-use Ulams\Recommender\Jobs\RebuildTermAnalyticJob;
 use Ulams\Webinar\Enum\WebinarTermReminderStatusEnum;
 use Ulams\Webinar\Jobs\ReminderAboutWebinarJob;
 use Illuminate\Console\Scheduling\Schedule;
@@ -42,10 +41,6 @@ class Kernel extends ConsoleKernel
         $schedule->job(
             new ReminderAboutConsultationJob(ConsultationTermReminderStatusEnum::REMINDED_DAY_BEFORE)
         )->hourly();
-
-        $schedule->job(new RebuildTermAnalyticJob())
-            ->everyFifteenMinutes()
-            ->withoutOverlapping();
     }
 
     /**

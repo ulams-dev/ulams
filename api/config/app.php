@@ -202,7 +202,6 @@ return [
         Ulams\PencilSpaces\UlamsPencilSpacesServiceProvider::class,
         Ulams\Permissions\UlamsPermissionsServiceProvider::class,
         Ulams\Questionnaire\UlamsQuestionnaireServiceProvider::class,
-        Ulams\Recommender\UlamsRecommenderServiceProvider::class,
         Ulams\Reports\UlamsReportsServiceProvider::class,
         Ulams\Scorm\UlamsScormServiceProvider::class,
         Ulams\Settings\UlamsSettingsServiceProvider::class,

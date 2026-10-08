@@ -54,7 +54,6 @@ return [
                     base_path('packages/scorm/src'),
                     base_path('packages/settings/src'),
                     base_path('packages/stationary-events/src'),
-                    base_path('packages/recommender/src'),
                     base_path('packages/reports/src'),
                     base_path('packages/templates/src'),
                     base_path('packages/templates-pdf/src'),
