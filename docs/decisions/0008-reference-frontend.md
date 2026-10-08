@@ -44,6 +44,15 @@ Public data (settings, courses, course detail, tutors, events, products) is cach
 tenant, stale-while-revalidate (fresh 45 s, served stale up to 30 min while refreshing), and warmed
 when the server starts, so first paint never waits on PHP.
 
+**Platform host.** Hosts in `ULAMS_PLATFORM_HOSTS` (`app.localhost`, `localhost`) are not tenants:
+they serve the ulams product landing (a catalogue document in the neutral `platform` theme) with the
+demo academies. Tenant fronts and admins are linked by host rules, so the same build serves the
+platform and every tenant.
+
+**Tenant look.** The theme preset and the accent colour come from the tenant's API settings
+(`theme.theme`, `theme.accent`) and are rendered as CSS variables on the server; the accent is
+darkened or lightened as needed to keep WCAG AA contrast for text.
+
 **Auth.** The session token lives in an httpOnly, SameSite=Lax cookie set by the server. Browser
 islands call the API through a small backend-for-frontend (`/bff/api/…`) with an allow-list of
 learner calls and an Origin check on writes; scripts never see the token. Demo mode: the server calls
@@ -84,8 +93,12 @@ types the SDK uses are hand-written (marked TODO until the spec is complete, 7.3
 | `@astrojs/check` 0.9, `@emnapi/runtime` (dev) | MIT | `astro check`; the runtime is a missing peer of its WASM parser | dev only |
 | `vitest` 3.2, `@playwright/test` 1.48, `eslint`, `typescript-eslint`, `typescript` 5.9 (dev) | MIT / Apache-2.0 | tests, lint, typecheck; versions already in the lockfile where possible | dev only |
 
-Fonts are fetched from Google once at build time by Astro's font API and self-hosted with
-metric-matched fallbacks (no request to Google at runtime). Astro 7 exists; we stay on the 5.x line as
+Fonts are fetched from Google once at build time by Astro's font API and self-hosted (no request to
+Google at runtime), with `font-display: swap`. The fallback faces (`size-adjust`, ascent and descent
+overrides on Arial, Times New Roman and Courier New) are measured from the font files and kept in
+`front/ui/src/styles/fallbacks.css`: Astro's generated fallbacks were wrong for these fonts (for
+example 170 % `size-adjust` for Space Grotesk), which caused visible reflow. `@axe-core/playwright`
+4.10 (MPL-2.0, dev only, same axe-core 4.10 line already in the lockfile) runs the WCAG scan in e2e. Astro 7 exists; we stay on the 5.x line as
 decided and upgrade in a separate step.
 
 ## Consequences

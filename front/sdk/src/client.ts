@@ -13,6 +13,9 @@ import type {
   QuizAnswerValue,
   QuizAttempt,
   StationaryEvent,
+  StationaryEventDetail,
+  Consultation,
+  WebinarDetail,
   Topic,
   TopicProgress,
   ProgressStatus,
@@ -232,6 +235,13 @@ export function createClient(options: ClientOptions) {
       webinars: (query: { per_page?: number } = {}) => request<Webinar[]>("GET", "/api/webinars", { query }),
       stationary: (query: { per_page?: number } = {}) =>
         request<StationaryEvent[]>("GET", "/api/stationary-events", { query }),
+      webinar: (id: number) => request<WebinarDetail>("GET", "/api/webinars/{id}", { params: { id } }),
+      stationaryEvent: (id: number) => request<StationaryEventDetail>("GET", "/api/stationary-events/{id}", { params: { id } }),
+    },
+
+    consultations: {
+      list: (query: { per_page?: number } = {}) => request<Consultation[]>("GET", "/api/consultations", { query }),
+      get: (id: number) => request<Consultation>("GET", "/api/consultations/{id}", { params: { id } }),
     },
 
     products: {

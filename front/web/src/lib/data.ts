@@ -87,6 +87,22 @@ export async function getProgram(tenant: Tenant, token: string, courseId: number
   return { ...program, progress: program.access ? progress : [] };
 }
 
+/** The learner's profile, cached per session for 10 minutes. */
+export function getProfile(tenant: Tenant, token: string) {
+  return publicData(tenant, `profile:${tokenKey(token)}`, () => apiFor(tenant, token).auth.me(), 10 * 60_000);
+}
+
+/** Progress in every course of the learner (account page), cached briefly and refreshed in the background. */
+export function getAllProgress(tenant: Tenant, token: string) {
+  return publicData(tenant, `progress:all:${tokenKey(token)}`, () => apiFor(tenant, token).progress.all(), 20_000);
+}
+
+/** Starts the slow per-learner requests so the account page is ready when it is opened. */
+export function warmLearner(tenant: Tenant, token: string): void {
+  void getProfile(tenant, token).catch(() => undefined);
+  void getAllProgress(tenant, token).catch(() => undefined);
+}
+
 /** Drops cached progress after a write through the BFF. */
 export function invalidateProgress(tenant: Tenant): void {
   cache.delete(key(tenant, "progress:"));

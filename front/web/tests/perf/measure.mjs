@@ -9,6 +9,7 @@ import { chromium } from "@playwright/test";
 
 const port = process.env.WEB_BASE_PORT ?? "4321";
 const pages = [
+  ["platform landing", `http://app.localhost:${port}/`],
   ["coffee landing", `http://coffee.app.localhost:${port}/`],
   ["coffee course", `http://coffee.app.localhost:${port}/courses/1`],
   ["coffee lesson", `http://coffee.app.localhost:${port}/learn/1/11`],
@@ -18,6 +19,8 @@ const pages = [
   ["nightsky landing", `http://nightsky.app.localhost:${port}/`],
   ["nightsky course", `http://nightsky.app.localhost:${port}/courses/2`],
   ["nightsky lesson", `http://nightsky.app.localhost:${port}/learn/2/16`],
+  ["coffee account", `http://coffee.app.localhost:${port}/account`],
+  ["oncall events", `http://oncall.app.localhost:${port}/events`],
 ];
 
 const browser = await chromium.launch();

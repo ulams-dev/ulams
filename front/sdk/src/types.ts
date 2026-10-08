@@ -273,6 +273,35 @@ export interface StationaryEvent {
   is_ended?: boolean;
 }
 
+export interface WebinarDetail extends Webinar {
+  agenda?: string | null;
+  yt_url?: string | null;
+  is_started?: boolean;
+  in_coming?: boolean;
+}
+
+export interface StationaryEventDetail extends StationaryEvent {
+  program?: string | null;
+  agenda?: string | null;
+  authors?: UserSummary[];
+}
+
+export interface Consultation {
+  id: number;
+  name: string;
+  description?: string | null;
+  short_desc?: string | null;
+  duration?: string | null;
+  active_from?: string | null;
+  active_to?: string | null;
+  image_url?: string | null;
+  /** ISO start times offered for booking. */
+  proposed_terms?: string[];
+  busy_terms?: string[];
+  author?: UserSummary | null;
+  teachers?: UserSummary[];
+}
+
 export type QuestionType =
   | "multiple_choice"
   | "multiple_choice_with_multiple_right_answers"

@@ -2,7 +2,7 @@
 import Render from "@ulams/ui/Render.astro";
 import Base from "../../layouts/Base.astro";
 import { getCourse, getProgram, getSiteModel, getSettings } from "../../lib/data.ts";
-import { chromeFor } from "../../lib/docs.ts";
+import { chromeFor, withSessionLink } from "../../lib/docs.ts";
 import { courseHeaderDoc, descriptionDoc, purchaseDoc, syllabusDoc } from "../../lib/page-docs.ts";
 import { themeFor } from "../../lib/theme.ts";
 import { completionPercent, resumeTopic } from "@ulams/sdk";
@@ -43,8 +43,8 @@ if (token) {
 const description = descriptionDoc(theme, course!);
 ---
 
-<Base theme={theme} title={`${course!.title} — ${site.tenant.name}`} description={course!.summary?.slice(0, 160)} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
-  {chrome.header && <Render doc={chrome.header} data={site} />}
+<Base theme={theme} accent={settings?.theme?.accent} title={`${course!.title} — ${site.tenant.name}`} description={course!.summary?.slice(0, 160)} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  {chrome.header && <Render doc={withSessionLink(chrome.header, Boolean(token))} data={site} />}
   <main id="main" tabindex="-1">
     <Render doc={courseHeaderDoc(theme, course!, progress, resumeHref)} data={site} />
     <Render doc={syllabusDoc(theme, course!)} data={site} />

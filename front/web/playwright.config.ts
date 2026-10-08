@@ -7,6 +7,8 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "tests/e2e",
   timeout: 60_000,
+  // the first request to a cold page waits for the PHP API
+  expect: { timeout: 15_000 },
   retries: process.env.CI ? 1 : 0,
   reporter: [["list"]],
   use: { ...devices["Desktop Chrome"], trace: "retain-on-failure" },

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { SwrCache } from "../../src/lib/cache.ts";
-import { hostForTenant, tenantForHost } from "../../src/lib/tenant.ts";
+import { hostForTenant, isPlatformHost, tenantForHost, tenantFrontUrl } from "../../src/lib/tenant.ts";
 import { isSameOrigin, matchBffRule } from "../../src/lib/bff.ts";
 
 const cfg = { tenantHosts: "{slug}.app.localhost=>http://{slug}.localhost", adminUrl: "http://{slug}.admin.localhost", defaultTenant: "coffee" };
@@ -20,6 +20,20 @@ describe("tenantForHost", () => {
   it("builds sibling tenant hosts for the demo switcher", () => {
     expect(hostForTenant("coffee.app.localhost:4321", "coffee", "nightsky")).toBe("nightsky.app.localhost:4321");
     expect(hostForTenant("localhost:4321", "coffee", "nightsky")).toBeNull();
+  });
+});
+
+describe("platform host", () => {
+  const platform = ["app.localhost", "localhost", "127.0.0.1"];
+  it("recognises the platform hosts with or without a port", () => {
+    expect(isPlatformHost("app.localhost", platform)).toBe(true);
+    expect(isPlatformHost("localhost:4321", platform)).toBe(true);
+    expect(isPlatformHost("coffee.app.localhost:4321", platform)).toBe(false);
+    expect(isPlatformHost(undefined, platform)).toBe(false);
+  });
+  it("builds tenant front URLs on the current protocol and port", () => {
+    expect(tenantFrontUrl("oncall", cfg.tenantHosts, new URL("http://localhost:4321/"))).toBe("http://oncall.app.localhost:4321");
+    expect(tenantFrontUrl("oncall", cfg.tenantHosts, new URL("http://app.localhost/"))).toBe("http://oncall.app.localhost");
   });
 });
 

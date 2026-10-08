@@ -29,3 +29,21 @@ export function hostForTenant(currentHost: string, currentSlug: string, slug: st
   if (!name || !name.startsWith(`${currentSlug}.`)) return null;
   return `${slug}${name.slice(currentSlug.length)}${port ? `:${port}` : ""}`;
 }
+
+/** True when the host (port ignored) is one of the platform hosts, e.g. app.localhost or localhost. */
+export function isPlatformHost(host: string | null | undefined, platformHosts: string[]): boolean {
+  if (!host) return false;
+  const name = host.trim().toLowerCase().replace(/\.$/, "").replace(/:\d+$/, "");
+  return platformHosts.includes(name);
+}
+
+/**
+ * Front URL of a tenant as seen from the platform host: the first host rule with the slug,
+ * on the same protocol and port as the current request (`coffee.app.localhost:4321`).
+ */
+export function tenantFrontUrl(slug: string, tenantHosts: string, current: URL): string | null {
+  const rule = tenantHosts.split(/[,\n]+/)[0]?.split("=>")[0]?.trim();
+  if (!rule || !rule.includes("{slug}")) return null;
+  const host = rule.replace("{slug}", slug);
+  return `${current.protocol}//${host}${current.port ? `:${current.port}` : ""}`;
+}

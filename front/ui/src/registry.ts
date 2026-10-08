@@ -34,7 +34,7 @@ export const FORMATS = [
 ] as const;
 export type Format = (typeof FORMATS)[number];
 
-export const THEMES = ["coffee", "oncall", "nightsky"] as const;
+export const THEMES = ["coffee", "oncall", "nightsky", "platform"] as const;
 export type ThemeName = (typeof THEMES)[number];
 
 export const ICONS = [
@@ -59,6 +59,13 @@ export const ICONS = [
   "chart",
   "print",
   "lock",
+  "sync",
+  "quote",
+  "layers",
+  "server",
+  "puzzle",
+  "cart",
+  "code",
 ] as const;
 export type IconName = (typeof ICONS)[number];
 
@@ -222,7 +229,7 @@ export const registry = {
       {
         brand: text("Brand name", { maxLength: 60 }),
         tagline: text("Small line under the brand", { maxLength: 60 }),
-        mark: oneOf(["wordmark", "terminal", "rocket"], "Brand mark style", "wordmark"),
+        mark: oneOf(["wordmark", "terminal", "rocket", "logo"], "Brand mark style; logo = the ulams mark", "wordmark"),
         links: list(LINK, "Navigation links", { maxItems: 6 }),
         cta: LINK,
         signIn: LINK,
@@ -254,7 +261,7 @@ export const registry = {
     children: false,
     props: obj(
       {
-        variant: oneOf(["editorial", "console", "adventure"], "Layout", "editorial"),
+        variant: oneOf(["editorial", "console", "adventure", "product"], "Layout", "editorial"),
         eyebrow: EYEBROW,
         title: text("Headline (the LCP element: keep it short)", { maxLength: 90 }),
         titleAccent: text("Part of the headline to emphasise; must appear in the title", { maxLength: 60 }),
@@ -286,6 +293,22 @@ export const registry = {
           },
           ["lines"],
           "Log-style panel for the console variant"
+        ),
+        diff: obj(
+          {
+            title: text("Card title, e.g. the lesson being updated", { maxLength: 80 }),
+            source: text("Source the change comes from, e.g. docs/slo.md", { maxLength: 80 }),
+            note: text("Small note under the card", { maxLength: 160 }),
+            lines: list(
+              obj({ op: oneOf(["add", "del", "ctx"], "Diff line kind", "ctx"), text: text("Line", { maxLength: 160 }) }, ["text"]),
+              "Diff lines",
+              { maxItems: 8 }
+            ),
+            citations: list(text("Citation chip, e.g. docs/slo.md §2", { maxLength: 40 }), "Citations", { maxItems: 4 }),
+            action: text("Label of the approve button", { maxLength: 30 }),
+          },
+          ["lines"],
+          "Update-proposal card for the product variant"
         ),
       },
       ["title"]
@@ -413,7 +436,7 @@ export const registry = {
         items: list(
           obj(
             {
-              kind: oneOf(["webinar", "in-person"], "Kind of event", "webinar"),
+              kind: oneOf(["webinar", "in-person", "consultation"], "Kind of event", "webinar"),
               title: text("Event title", { maxLength: 120 }),
               date: text("ISO 8601 start", { format: "date-time", maxLength: 40 }),
               place: text("Place (in-person)", { maxLength: 120 }),
@@ -471,12 +494,20 @@ export const registry = {
     children: false,
     props: obj(
       {
-        variant: oneOf(["tiles", "checks"], "tiles = icon cards; checks = compact checklist", "tiles"),
+        variant: oneOf(["tiles", "checks", "grid"], "tiles = icon cards; checks = compact checklist; grid = 3-column feature grid with glow", "tiles"),
         eyebrow: EYEBROW,
         title: TITLE,
         intro: INTRO,
         items: list(
-          obj({ icon: ICON, title: text("Title", { maxLength: 80 }), text: text("Sentence", { maxLength: 240 }) }, ["title"]),
+          obj(
+            {
+              icon: ICON,
+              title: text("Title", { maxLength: 80 }),
+              text: text("Sentence", { maxLength: 240 }),
+              status: oneOf(["available", "coming"], "Shipped today or on the roadmap (say so honestly)", "available"),
+            },
+            ["title"]
+          ),
           "Items",
           { maxItems: 8 }
         ),
@@ -530,16 +561,98 @@ export const registry = {
     children: false,
     props: obj(
       {
-        variant: oneOf(["banner", "newsletter"], "Style", "banner"),
+        variant: oneOf(["banner", "newsletter", "terminal"], "Style; terminal shows `code` lines in a terminal window", "banner"),
         eyebrow: EYEBROW,
         title: TITLE,
         text: INTRO,
+        code: list(text("Command or output line", { maxLength: 120 }), "Terminal lines (terminal variant); lines starting with $ are commands", { maxItems: 10 }),
         cta: LINK,
         secondary: LINK,
       },
       ["title", "cta"]
     ),
     fallback: (p) => join(p.title, p.text),
+  },
+  Steps: {
+    description: "A numbered process in 3–5 steps with a connector line (how something works).",
+    category: "section",
+    interactive: false,
+    children: false,
+    props: obj(
+      {
+        eyebrow: EYEBROW,
+        title: TITLE,
+        intro: INTRO,
+        status: oneOf(["available", "coming"], "Whether the whole process ships today", "available"),
+        items: list(obj({ icon: ICON, title: text("Step", { maxLength: 80 }), text: text("Sentence", { maxLength: 260 }) }, ["title"]), "Steps", {
+          minItems: 2,
+          maxItems: 5,
+        }),
+      },
+      ["items"]
+    ),
+    fallback: (p) => join(p.title, ...titles(p.items)),
+  },
+  Showcase: {
+    description: "Cards that each open something live (demo sites), with a colour swatch, facts and two buttons.",
+    category: "section",
+    interactive: false,
+    children: false,
+    props: obj(
+      {
+        eyebrow: EYEBROW,
+        title: TITLE,
+        intro: INTRO,
+        note: text("Small note under the cards", { maxLength: 200 }),
+        items: list(
+          obj(
+            {
+              title: text("Card title", { maxLength: 80 }),
+              text: text("Sentence", { maxLength: 300 }),
+              theme: oneOf(THEMES, "Colour swatch of the card"),
+              facts: list(obj({ label: text("Label", { maxLength: 30 }), value: text("Value", { maxLength: 40 }) }, ["label", "value"]), "Facts", {
+                maxItems: 4,
+              }),
+              image: IMAGE,
+              primary: LINK,
+              secondary: LINK,
+            },
+            ["title", "primary"]
+          ),
+          "Cards",
+          { minItems: 1, maxItems: 6 }
+        ),
+      },
+      ["items"]
+    ),
+    fallback: (p) => join(p.title, ...titles(p.items)),
+  },
+  Chips: {
+    description: "A strip of short labels (standards, integrations); each marked available or coming.",
+    category: "section",
+    interactive: false,
+    children: false,
+    props: obj(
+      {
+        eyebrow: EYEBROW,
+        title: TITLE,
+        intro: INTRO,
+        items: list(
+          obj(
+            {
+              label: text("Label", { maxLength: 40 }),
+              note: text("Small note", { maxLength: 60 }),
+              status: oneOf(["available", "coming"], "Shipped today or on the roadmap", "available"),
+            },
+            ["label"]
+          ),
+          "Chips",
+          { minItems: 1, maxItems: 16 }
+        ),
+      },
+      ["items"]
+    ),
+    fallback: (p) => join(p.title, ...titles(p.items, "label")),
   },
   SiteFooter: {
     description: "Page footer with brand, a sentence, links and small print.",

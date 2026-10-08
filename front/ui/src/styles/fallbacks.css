@@ -1,0 +1,71 @@
+/*
+ * Metric-matched fallback faces for the self-hosted fonts (generated from the font files:
+ * size-adjust from the letter-frequency-weighted average width, ascent/descent overrides from
+ * hhea). While a web font loads, text set in the fallback takes the same space, so the swap
+ * does not move the layout (CLS). Astro's automatic fallbacks are off: they mis-measured
+ * these fonts (size-adjust 170 % for Space Grotesk).
+*/
+@font-face {
+  font-family: "Playfair Display fallback";
+  src: local("Times New Roman"), local("Times"), local("Liberation Serif");
+  size-adjust: 112.30%;
+  ascent-override: 96.35%;
+  descent-override: 22.35%;
+  line-gap-override: 0.00%;
+}
+@font-face {
+  font-family: "Plus Jakarta Sans fallback";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica"), local("Liberation Sans");
+  size-adjust: 105.01%;
+  ascent-override: 98.85%;
+  descent-override: 21.14%;
+  line-gap-override: 0.00%;
+}
+@font-face {
+  font-family: "Space Grotesk fallback";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica"), local("Liberation Sans");
+  size-adjust: 110.87%;
+  ascent-override: 88.75%;
+  descent-override: 26.34%;
+  line-gap-override: 0.00%;
+}
+@font-face {
+  font-family: "Inter fallback";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica"), local("Liberation Sans");
+  size-adjust: 107.27%;
+  ascent-override: 90.31%;
+  descent-override: 22.49%;
+  line-gap-override: 0.00%;
+}
+@font-face {
+  font-family: "JetBrains Mono fallback";
+  src: local("Courier New"), local("Courier"), local("Liberation Mono");
+  size-adjust: 99.98%;
+  ascent-override: 102.02%;
+  descent-override: 30.00%;
+  line-gap-override: 0.00%;
+}
+@font-face {
+  font-family: "Comfortaa fallback";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica"), local("Liberation Sans");
+  size-adjust: 118.64%;
+  ascent-override: 74.26%;
+  descent-override: 19.72%;
+  line-gap-override: 0.00%;
+}
+@font-face {
+  font-family: "Quicksand fallback";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica"), local("Liberation Sans");
+  size-adjust: 103.40%;
+  ascent-override: 96.71%;
+  descent-override: 24.18%;
+  line-gap-override: 0.00%;
+}
+@font-face {
+  font-family: "Inter Tight fallback";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica"), local("Liberation Sans");
+  size-adjust: 96.62%;
+  ascent-override: 100.27%;
+  descent-override: 24.97%;
+  line-gap-override: 0.00%;
+}

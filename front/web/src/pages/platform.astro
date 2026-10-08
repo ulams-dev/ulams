@@ -1,0 +1,16 @@
+---
+/** Platform product landing (app.localhost / localhost): ulams sold as a product, with the live demos. */
+import Render from "@ulams/ui/Render.astro";
+import Base from "../layouts/Base.astro";
+import { landingDocs, pageMeta } from "../lib/docs.ts";
+import { platformModel } from "../lib/platform.ts";
+
+if (!Astro.locals.platform) return Astro.rewrite("/404");
+const doc = landingDocs.platform!;
+const data = await platformModel(Astro.url);
+const meta = pageMeta(doc, data);
+---
+
+<Base theme="platform" title={meta.title} description={meta.description} lang={meta.lang}>
+  <Render doc={doc} data={data} />
+</Base>

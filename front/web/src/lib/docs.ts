@@ -54,3 +54,15 @@ export function chromeFor(theme: ThemeName): { header: UiNode | null; footer: Ui
     footer: footer ? { ...footer, props: absolutise(footer.props) as Record<string, unknown> } : null,
   };
 }
+
+/** The header's sign-in link becomes "My learning" for a visitor with a session. */
+export function withSessionLink(doc: UiNode, loggedIn: boolean): UiNode {
+  if (!loggedIn) return doc;
+  const visit = (node: UiNode): UiNode => {
+    if (node.component === "SiteHeader") {
+      return { ...node, props: { ...(node.props ?? {}), signIn: { label: "My learning", href: "/account" } } };
+    }
+    return node.children ? { ...node, children: node.children.map(visit) } : node;
+  };
+  return visit(doc);
+}

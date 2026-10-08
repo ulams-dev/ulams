@@ -95,9 +95,7 @@ const { variant = "ribbon", items } = Astro.props;
   }
   @media (max-width: 640px) {
     .u-statusbar ul {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      scrollbar-width: none;
+      gap: 4px 16px;
     }
     .u-statusbar--ribbon li:last-child {
       margin-left: 0;

@@ -132,3 +132,61 @@ In `api/docker/conf/Caddyfile`, the `http://*.app.localhost` block: replace
   mode (issue 2)?
 - Next slices: cart/checkout through Sylius, account area ("my courses", certificates), webinars and
   events pages, a catalogue playground (2.7 quality bar), axe in CI.
+
+## Batch 2 (2026-10-09): platform landing, tenant look, account, accessibility, fonts, events
+
+Status: implemented, not committed.
+
+1. **Platform product landing** on `app.localhost` and `localhost` (`ULAMS_PLATFORM_HOSTS`): the tenant
+   resolver already rejected these hosts (`app` is a reserved slug, plain `localhost` matches no rule);
+   the middleware now marks them as platform requests instead of falling back to a tenant.
+   `src/docs/platform.json` in a new neutral `platform` theme: product hero with an update-proposal
+   diff card (labelled as an illustration), six advantages (Living Course and commerce marked
+   "Coming"), the Living Course flow ("On the roadmap"), three live demo cards with "Open as learner"
+   (tenant `/learn/:course`, auto-login) and "Open as admin" (tenant admin, auto-login in demo mode)
+   plus "Demos reset every hour", standards chips (LTI 1.3 and webhooks "coming"), a self-host terminal
+   band. No metrics, no logos. New catalogue components: `Steps`, `Showcase`, `Chips`; new options:
+   Hero `product` + `diff`, FeatureList `grid` + item `status`, CtaBand `terminal` + `code`,
+   SiteHeader `logo`, Events kind `consultation`.
+   Stitch: the generation call for this screen timed out and no screen appeared in the project after
+   polling, so the page follows the same written brief (premium, neutral, one violet accent).
+2. **Tenant theme and accent from API settings**, rendered server-side as `--ulams-*` variables
+   (`src/lib/accent.ts`): text use of the accent is adjusted to 5:1 on the background (AA holds on
+   cards), large type to 3:1, on-accent text black or white. Unit-tested for the three tenants and
+   extreme accents.
+3. **Account** `/account`: profile (name, e-mail, roles), my courses with progress bars and
+   continue/start links, logout. Profile and progress are cached per session and warmed at the demo
+   login, so the page renders in about 50 ms after the first visit (the API takes 0.7–1.7 s).
+   Headers show "My learning" instead of "Sign in" when there is a session.
+4. **Accessibility**: `@axe-core/playwright` scans 29 page types (platform, 3 landings, 3 course pages,
+   every topic type, quiz question screen, finish, account, events, login, 404) on desktop and a 360 px
+   phone with the WCAG 2.0/2.1/2.2 A and AA rules. Fixed: lesson-tree labels under the API accent
+   (contrast), icon-only prev/next links on phones (names), scrollable regions without keyboard access
+   (status strip now wraps; terminal, formulas and code blocks focusable), plus an own CSRF origin check
+   (Astro's `checkOrigin` compared against the listen address and refused same-site form posts in
+   production, which also broke `/login` and `/logout`).
+5. **Fonts**: kept `font-display: swap`; replaced Astro's generated fallbacks (wrong `size-adjust`) by
+   measured fallback faces in `front/ui/src/styles/fallbacks.css`. CLS is now 0 on every measured page.
+6. **Events**: `/events` lists webinars, in-person events and consultations; detail pages show date,
+   time, place or duration, sanitised description and agenda (`@ulams/ui/html`), tutors and open
+   consultation slots. Booking is out of scope (shop). Landing event cards link to the details.
+
+### Performance after batch 2 (production build, Chromium, local API)
+
+| Page | LCP cold | LCP warm | CLS | JS (gzip) |
+|---|---|---|---|---|
+| platform landing | 98 ms | 88 ms | 0 | 2.8 KB |
+| coffee / oncall / nightsky landing | 108 / 118 / 96 ms | 88 / 90 / 122 ms | 0 | 2.8 KB |
+| coffee / oncall / nightsky course | 78 / 111 / 77 ms | 81 / 78 / 80 ms | 0 | 2.8 KB |
+| lessons | 88–126 ms | 74–94 ms | 0 | 10–12.7 KB |
+| account | 59 ms | 55 ms | 0 | 2.8 KB |
+| events | 62 ms | 70 ms | 0 | 2.8 KB |
+
+Tests: SDK 21, UI 37, web 36 unit tests; Playwright 96 (smoke + axe, desktop and phone).
+
+### New API issues found
+
+- `GET /api/consultations` returns the author's full user record (e-mail, phone, address fields,
+  directory access list) to anonymous visitors. The front shows only names.
+- The demo data was reseeded during the work (student names changed, progress reset); nothing in
+  the front depends on it, but long e2e runs can hit the quiz attempt limit (3 per hour).

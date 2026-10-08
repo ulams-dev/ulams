@@ -1,18 +1,18 @@
 import type { APIRoute } from "astro";
-import { isSameOrigin, matchBffRule } from "../../lib/bff.ts";
+import { matchBffRule } from "../../lib/bff.ts";
 import { invalidateProgress } from "../../lib/data.ts";
 import { renewSession } from "../../lib/session.ts";
 
 /**
  * Backend-for-frontend: the browser calls /bff/api/…; the server adds the session token
- * (httpOnly cookie, never readable by scripts) and forwards to the tenant API.
+ * (httpOnly cookie, never readable by scripts) and forwards to the tenant API. Cross-site
+ * writes are refused by the middleware.
  */
 export const ALL: APIRoute = async ({ params, request, locals, cookies, url }) => {
   const tenant = locals.tenant;
   const path = `/${params.path ?? ""}`;
   const rule = matchBffRule(request.method, path);
   if (!tenant || !rule) return json(404, { message: "Not found" });
-  if (!isSameOrigin(request, url.origin)) return json(403, { message: "Cross-site request refused" });
   if (!locals.token) return json(401, { message: "No session" });
 
   const body = request.method === "GET" ? undefined : await request.text();

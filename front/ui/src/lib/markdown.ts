@@ -31,7 +31,8 @@ const marked = new Marked({
         if (match) return { type: "blockMath", raw: match[0], text: match[1]!.trim() };
         return undefined;
       },
-      renderer: (token) => `<div class="u-math">${math((token as unknown as { text: string }).text, true)}</div>\n`,
+      // focusable so a formula wider than a phone screen can be scrolled with the keyboard
+      renderer: (token) => `<div class="u-math" tabindex="0" role="group" aria-label="Formula">${math((token as unknown as { text: string }).text, true)}</div>\n`,
     },
     {
       name: "inlineMath",
@@ -57,6 +58,9 @@ const marked = new Marked({
     image(token: Tokens.Image) {
       if (!isSafeHref(token.href)) return escapeHtml(token.text);
       return `<img src="${escapeHtml(token.href)}" alt="${escapeHtml(token.text)}" loading="lazy" decoding="async">`;
+    },
+    code(token: Tokens.Code) {
+      return `<pre tabindex="0"><code>${escapeHtml(token.text)}</code></pre>\n`;
     },
     table(token: Tokens.Table) {
       const head = token.header.map((cell) => `<th scope="col"${cell.align ? ` style="text-align:${cell.align}"` : ""}>${this.parser.parseInline(cell.tokens)}</th>`).join("");

@@ -302,6 +302,29 @@ select {
   color: var(--ulams-color-text);
 }
 
+/* "available" / "coming" badge: roadmap items are labelled honestly */
+.u-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: var(--ulams-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.u-status--coming {
+  border: 1px dashed currentColor;
+  color: var(--ulams-color-muted);
+}
+.u-status--available {
+  background: color-mix(in srgb, var(--ulams-color-positive) 14%, transparent);
+  color: var(--ulams-color-positive);
+}
+
 /* Cards: lift on hover */
 .u-card {
   background: var(--ulams-color-card-bg);

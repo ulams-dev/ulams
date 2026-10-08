@@ -15,8 +15,10 @@ yarn install
 yarn dev:web                               # astro dev on :4321
 ```
 
-Open a tenant by host name (`*.localhost` resolves to 127.0.0.1, no Caddy change needed):
+Open the platform product page or a tenant by host name (`*.localhost` resolves to 127.0.0.1, no
+Caddy change needed):
 
+- http://app.localhost:4321/ (or http://localhost:4321/): the ulams product landing with the demos
 - http://coffee.app.localhost:4321/
 - http://oncall.app.localhost:4321/
 - http://nightsky.app.localhost:4321/
@@ -31,7 +33,7 @@ yarn workspace @ulams/web start            # node dist/server/entry.mjs on :4321
 | Command | What it does |
 |---|---|
 | `yarn workspace @ulams/web test` | unit tests (vitest): view model, documents vs catalogue, cache, tenant, BFF rules |
-| `yarn workspace @ulams/web test:e2e` | Playwright smoke test of every tenant (landing, course, lessons, quiz, BFF) against the server on :4321 |
+| `yarn workspace @ulams/web test:e2e` | Playwright against the server on :4321: smoke tests of every tenant and the platform page, plus an axe WCAG 2.2 AA scan of every page type, desktop and 360 px phone (`WEB_BASE_PORT` for another port) |
 | `yarn workspace @ulams/web perf` | LCP, CLS, JS and transfer per page from a running production build |
 | `yarn workspace @ulams/web typecheck` | `astro check` + `tsc` |
 | `yarn workspace @ulams/web lint` | eslint |
@@ -45,7 +47,9 @@ the client build.
 |---|---|---|
 | `ULAMS_TENANT_HOSTS` | `{slug}.app.localhost=>http://{slug}.localhost` | host rules, same syntax as the old front |
 | `ULAMS_ADMIN_URL` | `http://{slug}.admin.localhost` | tenant admin (demo badge link) |
-| `ULAMS_DEFAULT_TENANT` | `coffee` | tenant for hosts without a rule (plain `localhost`); empty shows a picker |
+| `ULAMS_PLATFORM_HOSTS` | `app.localhost,localhost,127.0.0.1` | hosts (port ignored) that serve the platform product landing |
+| `ULAMS_DEMO_TENANTS` | `coffee,oncall,nightsky` | demo academies shown on the platform landing |
+| `ULAMS_DEFAULT_TENANT` | `coffee` | tenant for other hosts without a rule (e.g. a LAN IP); empty shows a picker |
 | `ULAMS_CACHE_TTL` | `45` | seconds public API data is fresh; it is served stale for 30 min while refreshing |
 | `ULAMS_WARM_TENANTS` | `coffee,oncall,nightsky` | tenants fetched when the server starts |
 | `DEMO_STUDENT_EMAIL` | `student1@{slug}.ulams.app` | fallback demo account when the tenant has no demo mode |
@@ -68,8 +72,17 @@ browser ── HTML (SSR) ──────────────── Astro
   uses API data; no invented numbers.
 - `src/docs/<theme>.json`: the landing page of each tenant as a catalogue document.
 - `src/lib/page-docs.ts`: documents for the course page and each topic type in the lesson player.
-- `src/pages`: `/` (landing), `/courses/:id`, `/learn/:course` (resume), `/learn/:course/:topic`,
-  `/learn/:course/finish`, `/login`, `/bff/*`, `/h5p/*`, `/healthz`.
+- `src/pages`: `/` (tenant landing, or the platform landing on a platform host), `/courses/:id`,
+  `/learn/:course` (resume), `/learn/:course/:topic`, `/learn/:course/finish`, `/account` (profile,
+  my courses with progress, logout), `/events` and `/events/:kind/:id` (webinars, in-person events,
+  consultations), `/login`, `/bff/*`, `/h5p/*`, `/healthz`.
+- Platform mode: on a platform host (`ULAMS_PLATFORM_HOSTS`) there is no tenant; `/` renders
+  `src/docs/platform.json` with the demo cards built in `src/lib/platform.ts` from each demo tenant's
+  API (learner link → `/learn/:course` on the tenant front, auto-login; admin link → the tenant admin,
+  which logs in by itself in demo mode).
+- Tenant look: the theme preset comes from `theme.theme` in the API settings, the accent from
+  `theme.accent`; `src/lib/accent.ts` turns the accent into `--ulams-*` variables on the server,
+  adjusted to keep AA contrast.
 
 Packages:
 

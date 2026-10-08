@@ -75,3 +75,47 @@ test("the BFF refuses calls outside its allow-list and cross-site writes", async
   });
   expect(cross.status()).toBe(403);
 });
+
+test("platform landing sells the product and links every demo", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto(`http://app.localhost:${port}/`);
+  await expect(page.locator("h1")).toContainText("true to their sources");
+  const cards = page.locator("#demos li");
+  await expect(cards).toHaveCount(3);
+  for (const slug of ["coffee", "oncall", "nightsky"]) {
+    await expect(page.locator(`#demos a[href^="http://${slug}.app.localhost"]`)).toHaveCount(1);
+    await expect(page.locator(`#demos a[href^="http://${slug}.admin.localhost"]`)).toHaveCount(1);
+  }
+  await expect(page.locator("#demos")).toContainText("reset every hour");
+  expect(await page.locator(".u-status--coming").count()).toBeGreaterThan(2);
+  await noHorizontalScroll(page);
+  expect(errors).toEqual([]);
+});
+
+test("account lists my courses with progress and logs out", async ({ page }) => {
+  await page.goto(`${base("coffee")}/account`);
+  await expect(page.locator("h1")).toBeVisible();
+  await expect(page.locator(".u-account__course").first()).toBeVisible();
+  await expect(page.locator(".u-account__progress").first()).toHaveAttribute("aria-valuenow", /\d+/);
+  await page.click("text=Log out");
+  await expect(page).toHaveURL(`${base("coffee")}/`);
+  expect((await page.context().cookies()).find((c) => c.name === "ulams_session")).toBeUndefined();
+});
+
+test("events listing and details", async ({ page }) => {
+  await page.goto(`${base("oncall")}/events`);
+  await expect(page.locator("h1")).toHaveText("Live sessions and events");
+  for (const kind of ["webinar", "in-person", "consultation"]) {
+    const link = page.locator(`a[href^="/events/${kind}/"]`).first();
+    await expect(link).toBeVisible();
+  }
+  await page.locator('a[href^="/events/consultation/"]').first().click();
+  await expect(page.locator("h1")).toBeVisible();
+  await expect(page.locator("text=Open slots")).toBeVisible();
+});
+
+test("tenant accent from API settings is applied server-side", async ({ request }) => {
+  const html = await (await request.get(base("coffee"))).text();
+  expect(html).toMatch(/\[data-theme="coffee"\]\{--ulams-color-accent:#[0-9a-f]{6}/);
+});

@@ -32,7 +32,7 @@ if (Astro.request.method === "POST") {
 }
 ---
 
-<Base theme={theme} title="Sign in" demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+<Base theme={theme} accent={settings?.theme?.accent} title="Sign in" demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
   <main id="main" class="u-container u-login">
     <a class="u-login__back" href="/">← {settings?.global?.companyName ?? "Home"}</a>
     <h1>Sign in</h1>

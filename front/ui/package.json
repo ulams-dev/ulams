@@ -14,7 +14,8 @@
     "./format": "./src/lib/format.ts",
     "./components/*": "./src/components/*",
     "./elements/*": "./src/elements/*",
-    "./styles/*": "./src/styles/*"
+    "./styles/*": "./src/styles/*",
+    "./html": "./src/lib/html.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

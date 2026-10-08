@@ -14,6 +14,7 @@ import {
   type PublicSettings,
   type StationaryEvent,
   type Topic,
+  type Consultation,
   type TopicKind,
   type TopicProgress,
   type UserSummary,
@@ -82,8 +83,9 @@ export interface PlanModel {
 }
 
 export interface EventModel {
-  kind: "webinar" | "in-person";
+  kind: "webinar" | "in-person" | "consultation";
   title: string;
+  cta?: { label: string; href: string };
   date?: string;
   place?: string;
   text?: string;
@@ -344,6 +346,7 @@ export function eventModels(webinars: Webinar[], events: StationaryEvent[], now 
     .map<EventModel>((x) => ({
       kind: "webinar",
       title: x.name,
+      cta: { label: "Details", href: `/events/webinar/${x.id}` },
       date: x.active_from ?? undefined,
       text: clean(x.short_desc) ?? plainText(x.description),
     }));
@@ -352,12 +355,28 @@ export function eventModels(webinars: Webinar[], events: StationaryEvent[], now 
     .map<EventModel>((x) => ({
       kind: "in-person",
       title: x.name,
+      cta: { label: "Details", href: `/events/in-person/${x.id}` },
       // naive wall-clock time from the API: kept as UTC and shown without a zone
       date: x.started_at ? `${x.started_at.replace(" ", "T")}Z` : undefined,
       place: clean(x.place),
       text: clean(x.short_desc) ?? plainText(x.description),
     }));
   return [...w, ...e].sort((a, b) => (a.date ?? "").localeCompare(b.date ?? ""));
+}
+
+export function consultationModels(consultations: Consultation[], now = Date.now()): EventModel[] {
+  return consultations
+    .filter((c) => !c.active_to || Date.parse(c.active_to) >= now)
+    .map((c) => {
+      const next = (c.proposed_terms ?? []).map((t) => Date.parse(t)).filter((t) => t >= now).sort((a, b) => a - b)[0];
+      return {
+        kind: "consultation" as const,
+        title: c.name,
+        date: next ? new Date(next).toISOString() : undefined,
+        text: clean(c.short_desc) ?? plainText(c.description),
+        cta: { label: "Details", href: `/events/consultation/${c.id}` },
+      };
+    });
 }
 
 export interface RawSiteData {

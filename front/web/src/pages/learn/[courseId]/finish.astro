@@ -32,7 +32,7 @@ const headline = finished
   : { coffee: "The last page, almost.", oncall: "Almost there: a few items left.", nightsky: "So close to the stars!" }[theme];
 ---
 
-<Base theme={theme} title={`Finish — ${course.title}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+<Base theme={theme} accent={settings?.theme?.accent} title={`Finish — ${course.title}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
   <main id="main" class="u-container u-finish">
     <div class="u-finish__confetti" aria-hidden="true">
       {Array.from({ length: 24 }, (_, i) => <i style={`--x:${(i * 37) % 100}%;--d:${(i % 7) * 0.15}s;--r:${(i * 47) % 360}deg`} />)}

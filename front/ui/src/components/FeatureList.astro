@@ -2,11 +2,11 @@
 import Icon from "./Icon.astro";
 
 interface Props {
-  variant?: "tiles" | "checks";
+  variant?: "tiles" | "checks" | "grid";
   eyebrow?: string;
   title?: string;
   intro?: string;
-  items: Array<{ icon?: string; title: string; text?: string }>;
+  items: Array<{ icon?: string; title: string; text?: string; status?: "available" | "coming" }>;
   cta?: { label: string; href: string };
   id?: string;
 }
@@ -34,12 +34,15 @@ const anchor = id ?? (title ? title.toLowerCase().replace(/[^a-z0-9]+/g, "-").re
     <ul class="u-features__list" role="list">
       {
         items.map((item, i) => (
-          <li class={variant === "tiles" ? "u-card u-card--hover" : ""} data-reveal style={`--reveal-i:${i % 4}`}>
+          <li class={variant === "checks" ? "" : "u-card u-card--hover"} data-reveal style={`--reveal-i:${i % 4}`}>
             <span class="u-features__icon">
               <Icon name={item.icon ?? "check"} />
             </span>
             <div>
-              <h3>{item.title}</h3>
+              <h3>
+                {item.title}
+                {item.status === "coming" && <span class="u-status u-status--coming">Coming</span>}
+              </h3>
               {item.text && <p>{item.text}</p>}
             </div>
           </li>
@@ -66,6 +69,40 @@ const anchor = id ?? (title ? title.toLowerCase().replace(/[^a-z0-9]+/g, "-").re
   }
   .u-features--tiles li {
     padding: 22px;
+  }
+  .u-features__list h3 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  /* grid: 3 columns, icon on top, glowing border on hover */
+  .u-features--grid .u-features__list {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 18px;
+  }
+  .u-features--grid li {
+    position: relative;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 26px;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .u-features--grid li::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(400px 200px at var(--mx, 20%) -20%, color-mix(in srgb, var(--ulams-color-primary) 16%, transparent), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.5s var(--ulams-ease);
+  }
+  .u-features--grid li:hover::before {
+    opacity: 1;
+  }
+  .u-features--grid h3 {
+    font-size: 1.2rem;
   }
   .u-features__icon {
     display: grid;

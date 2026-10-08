@@ -8,7 +8,7 @@ interface Link {
   href: string;
 }
 interface Props {
-  variant?: "editorial" | "console" | "adventure";
+  variant?: "editorial" | "console" | "adventure" | "product";
   eyebrow?: string;
   title: string;
   titleAccent?: string;
@@ -24,6 +24,14 @@ interface Props {
     title?: string;
     note?: string;
     lines: Array<{ time?: string; tag?: string; text: string; tone?: string }>;
+  };
+  diff?: {
+    title?: string;
+    source?: string;
+    note?: string;
+    lines: Array<{ op?: "add" | "del" | "ctx"; text: string }>;
+    citations?: string[];
+    action?: string;
   };
 }
 
@@ -41,6 +49,7 @@ const {
   illustration = "none",
   facts = [],
   panel,
+  diff,
 } = Astro.props;
 
 const at = titleAccent ? title.indexOf(titleAccent) : -1;
@@ -122,6 +131,54 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
           </p>
           {panel.note && <p class="u-panel__note">{panel.note}</p>}
         </div>
+      )
+    }
+
+    {
+      variant === "product" && diff && (
+        <figure class="u-hero__product u-hero__in" style="--i:2" aria-label="Example: an update proposal waiting for the author">
+          <div class="u-prod__glow" aria-hidden="true" />
+          <div class="u-prod__card">
+            <div class="u-prod__head">
+              <span class="u-prod__badge">Update proposal</span>
+              {diff.title && <span class="u-prod__title">{diff.title}</span>}
+            </div>
+            {diff.source && (
+              <p class="u-prod__source">
+                <Icon name="sync" /> source changed: <code>{diff.source}</code>
+              </p>
+            )}
+            <ol class="u-prod__diff">
+              {diff.lines.map((line, i) => (
+                <li data-op={line.op ?? "ctx"} style={`--i:${i}`}>
+                  <span aria-hidden="true">{line.op === "add" ? "+" : line.op === "del" ? "−" : " "}</span>
+                  <span class="u-visually-hidden">{line.op === "add" ? "added:" : line.op === "del" ? "removed:" : ""}</span>
+                  {line.text}
+                </li>
+              ))}
+            </ol>
+            <div class="u-prod__foot">
+              <ul class="u-prod__cites" aria-label="Citations">
+                {(diff.citations ?? []).map((c) => (
+                  <li>
+                    <Icon name="quote" /> {c}
+                  </li>
+                ))}
+              </ul>
+              {diff.action && (
+                <span class="u-prod__approve" aria-hidden="true">
+                  <Icon name="check" /> {diff.action}
+                </span>
+              )}
+            </div>
+          </div>
+          <div class="u-prod__peek" aria-hidden="true">
+            <span class="u-prod__peek-dot" />
+            <span>Lesson 2 · SLOs and error budgets</span>
+            <span class="u-prod__peek-bar"><i /></span>
+          </div>
+          {diff.note && <figcaption class="u-prod__note">{diff.note}</figcaption>}
+        </figure>
       )
     }
 
@@ -515,7 +572,217 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
     animation: u-fade-up 0.8s 0.6s var(--ulams-ease-bounce) both;
   }
 
+  /* product (platform) */
+  .u-hero--product {
+    overflow: clip;
+  }
+  .u-hero--product .u-hero__title {
+    font-size: clamp(2.6rem, 1.2rem + 5vw, 5rem);
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+  .u-hero--product .u-hero__accent {
+    background: linear-gradient(100deg, var(--ulams-color-primary), var(--ulams-color-accent, var(--ulams-color-primary)) 60%, #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .u-hero--product .u-hero__subtitle {
+    color: var(--ulams-color-muted);
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.3rem);
+    max-width: 46ch;
+  }
+  .u-hero__product {
+    position: relative;
+    margin: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .u-prod__glow {
+    position: absolute;
+    inset: -20% -10% -10% -10%;
+    z-index: -1;
+    background:
+      radial-gradient(40% 50% at 30% 30%, color-mix(in srgb, var(--ulams-color-primary) 30%, transparent), transparent 70%),
+      radial-gradient(40% 50% at 80% 70%, rgb(236 72 153 / 0.18), transparent 70%);
+    filter: blur(30px);
+    animation: u-glow 10s ease-in-out infinite alternate;
+  }
+  @keyframes u-glow {
+    to {
+      transform: translate(4%, -3%) scale(1.06);
+    }
+  }
+  .u-prod__card {
+    position: relative;
+    border-radius: 16px;
+    border: 1px solid var(--ulams-color-border);
+    background: color-mix(in srgb, var(--ulams-color-bg) 82%, transparent);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 40px 80px -40px rgb(14 14 16 / 0.35), 0 0 0 1px rgb(255 255 255 / 0.6) inset;
+    overflow: hidden;
+    transform: perspective(1200px) rotateY(-4deg) rotateX(2deg);
+    transition: transform 0.8s var(--ulams-ease);
+  }
+  .u-hero__product:hover .u-prod__card {
+    transform: perspective(1200px) rotateY(0) rotateX(0);
+  }
+  .u-prod__head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .u-prod__badge {
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ulams-color-primary) 12%, transparent);
+    color: var(--ulams-color-primary-on-light);
+    font-family: var(--ulams-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+  }
+  .u-prod__title {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .u-prod__source {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px 0;
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-prod__source code {
+    font-family: var(--ulams-font-mono);
+    color: var(--ulams-color-text);
+  }
+  .u-prod__diff {
+    list-style: none;
+    margin: 12px 16px;
+    padding: 8px 0;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 10px;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.78rem;
+    line-height: 1.55;
+  }
+  .u-prod__diff li {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    padding: 2px 12px 2px 0;
+    animation: u-fade-up 0.5s var(--ulams-ease) both;
+    animation-delay: calc(0.5s + var(--i) * 0.12s);
+  }
+  .u-prod__diff li > span:first-child {
+    text-align: center;
+    color: var(--ulams-color-muted);
+  }
+  .u-prod__diff [data-op="add"] {
+    background: rgb(22 163 74 / 0.1);
+    color: #166534;
+  }
+  .u-prod__diff [data-op="del"] {
+    background: rgb(220 38 38 / 0.08);
+    color: #991b1b;
+    text-decoration: line-through;
+    text-decoration-color: rgb(153 27 27 / 0.4);
+  }
+  .u-prod__foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px 16px;
+  }
+  .u-prod__cites {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .u-prod__cites li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--ulams-color-border);
+    font-family: var(--ulams-font-mono);
+    font-size: 0.7rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-prod__approve {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 9px;
+    background: var(--ulams-color-text);
+    color: var(--ulams-color-bg);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    animation: u-approve 3.2s 1.8s var(--ulams-ease) infinite;
+  }
+  @keyframes u-approve {
+    0%,
+    70%,
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--ulams-color-primary) 50%, transparent);
+    }
+    85% {
+      box-shadow: 0 0 0 8px transparent;
+    }
+  }
+  .u-prod__peek {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 78%;
+    margin-left: auto;
+    padding: 12px 14px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 12px;
+    background: var(--ulams-color-bg);
+    font-size: 0.8125rem;
+    box-shadow: 0 20px 40px -24px rgb(14 14 16 / 0.3);
+    transform: translateY(-4px);
+    animation: u-float 7s ease-in-out infinite;
+  }
+  .u-prod__peek-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ulams-color-positive);
+  }
+  .u-prod__peek-bar {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--ulams-color-border);
+    overflow: hidden;
+  }
+  .u-prod__peek-bar i {
+    display: block;
+    width: 64%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--ulams-color-primary), var(--ulams-color-accent, var(--ulams-color-primary)));
+  }
+  .u-prod__note {
+    font-size: 0.75rem;
+    color: var(--ulams-color-muted);
+    text-align: right;
+  }
+
   @media (max-width: 960px) {
+    .u-prod__card {
+      transform: none;
+    }
     .u-hero__grid {
       grid-template-columns: 1fr;
     }

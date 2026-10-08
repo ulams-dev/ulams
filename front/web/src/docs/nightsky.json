@@ -12,14 +12,41 @@
         "brand": "Night Sky Explorers",
         "mark": "rocket",
         "links": [
-          { "label": "Missions", "href": "#syllabus" },
-          { "label": "Badges", "href": "#badges" },
-          { "label": "For parents", "href": "#for-parents" },
-          { "label": "For teachers", "href": "#for-teachers" },
-          { "label": "Events", "href": "#events" }
+          {
+            "label": "Missions",
+            "href": "#syllabus"
+          },
+          {
+            "label": "Badges",
+            "href": "#badges"
+          },
+          {
+            "label": "For parents",
+            "href": "#for-parents"
+          },
+          {
+            "label": "For teachers",
+            "href": "#for-teachers"
+          },
+          {
+            "label": "Events",
+            "href": "/events"
+          }
         ],
-        "signIn": { "label": "Log in", "href": "/login" },
-        "cta": { "label": { "$data": "/course/landing/cta", "$default": "Start mission 1 — free" }, "href": { "$data": "/course/previewHref", "$default": "/" } }
+        "signIn": {
+          "label": "Log in",
+          "href": "/login"
+        },
+        "cta": {
+          "label": {
+            "$data": "/course/landing/cta",
+            "$default": "Start mission 1 — free"
+          },
+          "href": {
+            "$data": "/course/previewHref",
+            "$default": "/"
+          }
+        }
       }
     },
     {
@@ -30,14 +57,33 @@
           "props": {
             "variant": "adventure",
             "eyebrow": "7 missions · free first mission",
-            "title": { "$data": "/course/landing/headline", "$default": "Your adventure to the stars starts tonight" },
+            "title": {
+              "$data": "/course/landing/headline",
+              "$default": "Your adventure to the stars starts tonight"
+            },
             "titleAccent": "starts tonight",
-            "body": { "$data": "/course/summary" },
-            "primaryCta": { "label": { "$data": "/course/landing/cta", "$default": "Start mission 1 — free" }, "href": { "$data": "/course/previewHref", "$default": "/" } },
-            "secondaryCta": { "label": "See the mission map", "href": "#syllabus" },
+            "body": {
+              "$data": "/course/summary"
+            },
+            "primaryCta": {
+              "label": {
+                "$data": "/course/landing/cta",
+                "$default": "Start mission 1 — free"
+              },
+              "href": {
+                "$data": "/course/previewHref",
+                "$default": "/"
+              }
+            },
+            "secondaryCta": {
+              "label": "See the mission map",
+              "href": "#syllabus"
+            },
             "illustration": "orbi",
             "caption": "Hi, I'm Orbi! Ready for lift-off?",
-            "facts": { "$data": "/course/facts" }
+            "facts": {
+              "$data": "/course/facts"
+            }
           }
         },
         {
@@ -47,8 +93,12 @@
             "eyebrow": "Mission map",
             "title": "Seven missions to your own star map",
             "intro": "Short missions you can finish before bedtime: watch, play, listen and build.",
-            "lessons": { "$data": "/course/lessons" },
-            "totalLabel": { "$data": "/course/lessonsLabel" }
+            "lessons": {
+              "$data": "/course/lessons"
+            },
+            "totalLabel": {
+              "$data": "/course/lessonsLabel"
+            }
           }
         },
         {
@@ -57,7 +107,9 @@
             "eyebrow": "Rewards",
             "title": "Earn your astronomer badges",
             "intro": "Finish missions to collect badges on your way to Junior Astronomer.",
-            "items": { "$data": "/course/badges" }
+            "items": {
+              "$data": "/course/badges"
+            }
           }
         },
         {
@@ -66,12 +118,42 @@
             "eyebrow": "Ways to explore",
             "title": "Every mission is different",
             "items": [
-              { "format": "video", "tag": "Watch", "name": "Meet Orbi", "text": "Short animated films with read-along captions." },
-              { "format": "interactive", "tag": "Play", "name": "Why does the Moon change?", "text": "Drag the Moon around Earth and watch the phases change." },
-              { "format": "audio", "tag": "Listen", "name": "Sounds of space", "text": "Hear Saturn's rings turned into sound, with narration." },
-              { "format": "scorm", "tag": "Game", "name": "Connect the stars", "text": "Draw constellations by joining the stars." },
-              { "format": "tracked", "tag": "Challenge", "name": "Sky safari", "text": "A backyard challenge: check in what you saw tonight." },
-              { "format": "project", "tag": "Make", "name": "Build your star map", "text": "Draw or photograph your own map and get a sticker back." }
+              {
+                "format": "video",
+                "tag": "Watch",
+                "name": "Meet Orbi",
+                "text": "Short animated films with read-along captions."
+              },
+              {
+                "format": "interactive",
+                "tag": "Play",
+                "name": "Why does the Moon change?",
+                "text": "Drag the Moon around Earth and watch the phases change."
+              },
+              {
+                "format": "audio",
+                "tag": "Listen",
+                "name": "Sounds of space",
+                "text": "Hear Saturn's rings turned into sound, with narration."
+              },
+              {
+                "format": "scorm",
+                "tag": "Game",
+                "name": "Connect the stars",
+                "text": "Draw constellations by joining the stars."
+              },
+              {
+                "format": "tracked",
+                "tag": "Challenge",
+                "name": "Sky safari",
+                "text": "A backyard challenge: check in what you saw tonight."
+              },
+              {
+                "format": "project",
+                "tag": "Make",
+                "name": "Build your star map",
+                "text": "Draw or photograph your own map and get a sticker back."
+              }
             ]
           }
         },
@@ -82,7 +164,9 @@
             "variant": "checks",
             "eyebrow": "For parents",
             "title": "Made for curious kids, trusted by parents",
-            "items": { "$data": "/course/lists/for_parents" }
+            "items": {
+              "$data": "/course/lists/for_parents"
+            }
           }
         },
         {
@@ -92,7 +176,9 @@
             "variant": "tiles",
             "eyebrow": "For teachers",
             "title": "Bring the cosmos to your classroom",
-            "items": { "$data": "/course/lists/for_teachers" }
+            "items": {
+              "$data": "/course/lists/for_teachers"
+            }
           }
         },
         {
@@ -101,7 +187,9 @@
             "variant": "bubbles",
             "eyebrow": "Voices from the observation deck",
             "title": "What explorers say",
-            "items": { "$data": "/course/testimonials" }
+            "items": {
+              "$data": "/course/testimonials"
+            }
           }
         },
         {
@@ -110,7 +198,9 @@
             "variant": "cards",
             "eyebrow": "Events",
             "title": "Star parties and live sessions",
-            "items": { "$data": "/events" }
+            "items": {
+              "$data": "/events"
+            }
           }
         },
         {
@@ -119,7 +209,9 @@
             "eyebrow": "Plans",
             "title": "For families and classrooms",
             "intro": "The first mission is free. In this demo every mission is open.",
-            "plans": { "$data": "/plans" }
+            "plans": {
+              "$data": "/plans"
+            }
           }
         },
         {
@@ -130,10 +222,22 @@
             "items": {
               "$data": "/course/faq",
               "$default": [
-                { "q": "Do we need a telescope?", "a": "No. Every mission works with your eyes, a window or a balcony, and the screen." },
-                { "q": "How long is a mission?", "a": "About ten to fifteen minutes, so one fits into an evening." },
-                { "q": "Is the first mission free?", "a": "Yes. Mission 1, Lift-off, opens without paying." },
-                { "q": "Is there Polish audio?", "a": "Yes, the course has English and Polish audio." }
+                {
+                  "q": "Do we need a telescope?",
+                  "a": "No. Every mission works with your eyes, a window or a balcony, and the screen."
+                },
+                {
+                  "q": "How long is a mission?",
+                  "a": "About ten to fifteen minutes, so one fits into an evening."
+                },
+                {
+                  "q": "Is the first mission free?",
+                  "a": "Yes. Mission 1, Lift-off, opens without paying."
+                },
+                {
+                  "q": "Is there Polish audio?",
+                  "a": "Yes, the course has English and Polish audio."
+                }
               ]
             }
           }
@@ -145,7 +249,16 @@
             "eyebrow": "Ready?",
             "title": "Ready for lift-off?",
             "text": "Start mission 1 now. Orbi is waiting.",
-            "cta": { "label": { "$data": "/course/landing/cta", "$default": "Start mission 1 — free" }, "href": { "$data": "/course/previewHref", "$default": "/" } }
+            "cta": {
+              "label": {
+                "$data": "/course/landing/cta",
+                "$default": "Start mission 1 — free"
+              },
+              "href": {
+                "$data": "/course/previewHref",
+                "$default": "/"
+              }
+            }
           }
         }
       ]
@@ -156,11 +269,26 @@
         "brand": "Night Sky Explorers",
         "text": "Exploring the cosmos one mission at a time.",
         "links": [
-          { "label": "Missions", "href": "#syllabus" },
-          { "label": "Badges", "href": "#badges" },
-          { "label": "For parents", "href": "#for-parents" },
-          { "label": "For teachers", "href": "#for-teachers" },
-          { "label": "Events", "href": "#events" }
+          {
+            "label": "Missions",
+            "href": "#syllabus"
+          },
+          {
+            "label": "Badges",
+            "href": "#badges"
+          },
+          {
+            "label": "For parents",
+            "href": "#for-parents"
+          },
+          {
+            "label": "For teachers",
+            "href": "#for-teachers"
+          },
+          {
+            "label": "Events",
+            "href": "#events"
+          }
         ]
       }
     }

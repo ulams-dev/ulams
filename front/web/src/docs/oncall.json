@@ -12,14 +12,42 @@
         "brand": "On-Call",
         "mark": "terminal",
         "links": [
-          { "label": "Curriculum", "href": "#syllabus" },
-          { "label": "Game day", "href": "#game-day" },
-          { "label": "Instructors", "href": "#people" },
-          { "label": "Pricing", "href": "#pricing" },
-          { "label": "FAQ", "href": "#faq" }
+          {
+            "label": "Curriculum",
+            "href": "#syllabus"
+          },
+          {
+            "label": "Game day",
+            "href": "#game-day"
+          },
+          {
+            "label": "Instructors",
+            "href": "#people"
+          },
+          {
+            "label": "Pricing",
+            "href": "#pricing"
+          },
+          {
+            "label": "Events",
+            "href": "/events"
+          },
+          {
+            "label": "FAQ",
+            "href": "#faq"
+          }
         ],
-        "signIn": { "label": "Sign in", "href": "/login" },
-        "cta": { "label": "Start the briefing", "href": { "$data": "/course/previewHref", "$default": "/" } }
+        "signIn": {
+          "label": "Sign in",
+          "href": "/login"
+        },
+        "cta": {
+          "label": "Start the briefing",
+          "href": {
+            "$data": "/course/previewHref",
+            "$default": "/"
+          }
+        }
       }
     },
     {
@@ -27,9 +55,24 @@
       "props": {
         "variant": "status",
         "items": [
-          { "label": { "$data": "/course/statusStrip", "$default": "Next cohort: enrolment open" }, "tone": "ok" },
-          { "label": "4-week cohort + live game day", "tone": "info" },
-          { "label": { "$data": "/course/level", "$default": "Advanced" }, "tone": "warn" }
+          {
+            "label": {
+              "$data": "/course/statusStrip",
+              "$default": "Next cohort: enrolment open"
+            },
+            "tone": "ok"
+          },
+          {
+            "label": "4-week cohort + live game day",
+            "tone": "info"
+          },
+          {
+            "label": {
+              "$data": "/course/level",
+              "$default": "Advanced"
+            },
+            "tone": "warn"
+          }
         ]
       }
     },
@@ -41,22 +84,66 @@
           "props": {
             "variant": "console",
             "eyebrow": "incident command academy · sre / platform",
-            "title": { "$data": "/course/landing/headline", "$default": "Stay calm at 3 a.m." },
+            "title": {
+              "$data": "/course/landing/headline",
+              "$default": "Stay calm at 3 a.m."
+            },
             "titleAccent": "3 a.m.",
-            "subtitle": { "$data": "/course/landing/subheadline", "$default": "A 4-week cohort for engineers who carry the pager." },
-            "body": { "$data": "/course/summary" },
-            "primaryCta": { "label": "start the briefing", "href": { "$data": "/course/previewHref", "$default": "/" } },
-            "secondaryCta": { "label": "view curriculum", "href": "#syllabus" },
-            "facts": { "$data": "/course/facts" },
+            "subtitle": {
+              "$data": "/course/landing/subheadline",
+              "$default": "A 4-week cohort for engineers who carry the pager."
+            },
+            "body": {
+              "$data": "/course/summary"
+            },
+            "primaryCta": {
+              "label": "start the briefing",
+              "href": {
+                "$data": "/course/previewHref",
+                "$default": "/"
+              }
+            },
+            "secondaryCta": {
+              "label": "view curriculum",
+              "href": "#syllabus"
+            },
+            "facts": {
+              "$data": "/course/facts"
+            },
             "panel": {
               "title": "drill-replay :: sev-1 :: prod-payments",
               "note": "Illustrative replay of a game-day drill. Timings are an example, not a promise.",
               "lines": [
-                { "time": "03:12", "tag": "ALERT", "tone": "alert", "text": "p99 latency over threshold, primary on-call paged" },
-                { "time": "03:14", "tag": "COMMAND", "tone": "info", "text": "IC declares SEV-1, assigns comms, ops and scribe" },
-                { "time": "03:18", "tag": "ACTION", "tone": "warn", "text": "ops sheds non-critical traffic, isolates a bad replica" },
-                { "time": "03:26", "tag": "COMMS", "tone": "info", "text": "first status update: impact, current action, next update" },
-                { "time": "03:41", "tag": "MITIGATED", "tone": "ok", "text": "fix deployed, SEV-1 downgraded, postmortem scheduled" }
+                {
+                  "time": "03:12",
+                  "tag": "ALERT",
+                  "tone": "alert",
+                  "text": "p99 latency over threshold, primary on-call paged"
+                },
+                {
+                  "time": "03:14",
+                  "tag": "COMMAND",
+                  "tone": "info",
+                  "text": "IC declares SEV-1, assigns comms, ops and scribe"
+                },
+                {
+                  "time": "03:18",
+                  "tag": "ACTION",
+                  "tone": "warn",
+                  "text": "ops sheds non-critical traffic, isolates a bad replica"
+                },
+                {
+                  "time": "03:26",
+                  "tag": "COMMS",
+                  "tone": "info",
+                  "text": "first status update: impact, current action, next update"
+                },
+                {
+                  "time": "03:41",
+                  "tag": "MITIGATED",
+                  "tone": "ok",
+                  "text": "fix deployed, SEV-1 downgraded, postmortem scheduled"
+                }
               ]
             }
           }
@@ -68,9 +155,19 @@
             "eyebrow": "4-week blueprint",
             "title": "Curriculum as a production pipeline",
             "intro": "Five modules with real artefacts: runbooks, a branching scenario, an outage simulator, a live drill and a reviewed postmortem.",
-            "lessons": { "$data": "/course/lessons" },
-            "totalLabel": { "$data": "/course/lessonsLabel" },
-            "cta": { "label": "open the course", "href": { "$data": "/course/href", "$default": "/" } }
+            "lessons": {
+              "$data": "/course/lessons"
+            },
+            "totalLabel": {
+              "$data": "/course/lessonsLabel"
+            },
+            "cta": {
+              "label": "open the course",
+              "href": {
+                "$data": "/course/href",
+                "$default": "/"
+              }
+            }
           }
         },
         {
@@ -82,12 +179,34 @@
             "title": "Game day: you run the bridge",
             "intro": "You do not learn command by watching slides. In week 3 you take command of a simulated cascading failure, then run a tracked drill in a sandbox cluster.",
             "items": [
-              { "icon": "terminal", "title": "Outage simulator", "text": "A packaged simulation with a timeline and a chat pane. Decide, delegate, communicate." },
-              { "icon": "pager", "title": "Live drill", "text": "A tracked activity in the sandbox cluster; your actions are recorded for the debrief." },
-              { "icon": "chart", "title": "Comms check", "text": "A quiz with every question type, from severity matching to error-budget maths." },
-              { "icon": "book", "title": "Postmortem assignment", "text": "Write the postmortem for the game-day outage, reviewed by a tutor and a peer." }
+              {
+                "icon": "terminal",
+                "title": "Outage simulator",
+                "text": "A packaged simulation with a timeline and a chat pane. Decide, delegate, communicate."
+              },
+              {
+                "icon": "pager",
+                "title": "Live drill",
+                "text": "A tracked activity in the sandbox cluster; your actions are recorded for the debrief."
+              },
+              {
+                "icon": "chart",
+                "title": "Comms check",
+                "text": "A quiz with every question type, from severity matching to error-budget maths."
+              },
+              {
+                "icon": "book",
+                "title": "Postmortem assignment",
+                "text": "Write the postmortem for the game-day outage, reviewed by a tutor and a peer."
+              }
             ],
-            "cta": { "label": "try the briefing", "href": { "$data": "/course/previewHref", "$default": "/" } }
+            "cta": {
+              "label": "try the briefing",
+              "href": {
+                "$data": "/course/previewHref",
+                "$default": "/"
+              }
+            }
           }
         },
         {
@@ -100,13 +219,23 @@
                 "name": "Priya Raman",
                 "role": "Staff SRE",
                 "bio": "Leads incident response for payment infrastructure and designs the course's drills.",
-                "image": { "src": "/landing/oncall/priya-raman.webp", "alt": "Portrait of Priya Raman in a dimly lit operations room", "width": 768, "height": 1376 }
+                "image": {
+                  "src": "/landing/oncall/priya-raman.webp",
+                  "alt": "Portrait of Priya Raman in a dimly lit operations room",
+                  "width": 768,
+                  "height": 1376
+                }
               },
               {
                 "name": "Marek Lis",
                 "role": "Incident commander, fintech",
                 "bio": "Runs the bridge on major incidents and reviews every postmortem in the course.",
-                "image": { "src": "/landing/oncall/marek-lis.webp", "alt": "Portrait of Marek Lis in front of monitoring screens", "width": 1376, "height": 768 }
+                "image": {
+                  "src": "/landing/oncall/marek-lis.webp",
+                  "alt": "Portrait of Marek Lis in front of monitoring screens",
+                  "width": 1376,
+                  "height": 768
+                }
               }
             ]
           }
@@ -117,7 +246,9 @@
             "variant": "log",
             "eyebrow": "retrospective log",
             "title": "From engineering leads",
-            "items": { "$data": "/course/testimonials" }
+            "items": {
+              "$data": "/course/testimonials"
+            }
           }
         },
         {
@@ -126,7 +257,9 @@
             "variant": "cards",
             "eyebrow": "live sessions",
             "title": "Teardowns and game days",
-            "items": { "$data": "/events" }
+            "items": {
+              "$data": "/events"
+            }
           }
         },
         {
@@ -135,7 +268,9 @@
             "eyebrow": "enrolment plans",
             "title": "Seats, teams and reviews",
             "intro": "Prices from the academy's catalogue. In this demo every module is open.",
-            "plans": { "$data": "/plans" }
+            "plans": {
+              "$data": "/plans"
+            }
           }
         },
         {
@@ -146,10 +281,22 @@
             "items": {
               "$data": "/course/faq",
               "$default": [
-                { "q": "How long is the cohort?", "a": "Four weeks: briefing and signals, command, the live game day, and the postmortem." },
-                { "q": "Do I need my own cluster?", "a": "No. The simulator runs in the browser and the drill runs in a sandbox cluster provided by the course." },
-                { "q": "Is there a certificate?", "a": "Yes: Incident Commander — Level 1, after the comms check and the reviewed postmortem." },
-                { "q": "Can my company pay?", "a": "Yes. There is a team subscription and companies can use voucher codes." }
+                {
+                  "q": "How long is the cohort?",
+                  "a": "Four weeks: briefing and signals, command, the live game day, and the postmortem."
+                },
+                {
+                  "q": "Do I need my own cluster?",
+                  "a": "No. The simulator runs in the browser and the drill runs in a sandbox cluster provided by the course."
+                },
+                {
+                  "q": "Is there a certificate?",
+                  "a": "Yes: Incident Commander — Level 1, after the comms check and the reviewed postmortem."
+                },
+                {
+                  "q": "Can my company pay?",
+                  "a": "Yes. There is a team subscription and companies can use voucher codes."
+                }
               ]
             }
           }
@@ -161,8 +308,17 @@
             "eyebrow": "roster open",
             "title": "Ready to take command?",
             "text": "Open the briefing now. You are logged in as a demo student, no sign-up needed.",
-            "cta": { "label": "start the briefing", "href": { "$data": "/course/previewHref", "$default": "/" } },
-            "secondary": { "label": "view curriculum", "href": "#syllabus" }
+            "cta": {
+              "label": "start the briefing",
+              "href": {
+                "$data": "/course/previewHref",
+                "$default": "/"
+              }
+            },
+            "secondary": {
+              "label": "view curriculum",
+              "href": "#syllabus"
+            }
           }
         }
       ]
@@ -173,12 +329,33 @@
         "brand": "On-Call",
         "text": "Incident command training for platform engineers.",
         "links": [
-          { "label": "Curriculum", "href": "#syllabus" },
-          { "label": "Game day", "href": "#game-day" },
-          { "label": "Instructors", "href": "#people" },
-          { "label": "Pricing", "href": "#pricing" },
-          { "label": "FAQ", "href": "#faq" },
-          { "label": "Open the course", "href": { "$data": "/course/href", "$default": "/" } }
+          {
+            "label": "Curriculum",
+            "href": "#syllabus"
+          },
+          {
+            "label": "Game day",
+            "href": "#game-day"
+          },
+          {
+            "label": "Instructors",
+            "href": "#people"
+          },
+          {
+            "label": "Pricing",
+            "href": "#pricing"
+          },
+          {
+            "label": "FAQ",
+            "href": "#faq"
+          },
+          {
+            "label": "Open the course",
+            "href": {
+              "$data": "/course/href",
+              "$default": "/"
+            }
+          }
         ]
       }
     }

@@ -5,12 +5,15 @@
  */
 import { Font } from "astro:assets";
 import baseCss from "@ulams/ui/styles/base.css?inline";
+import fallbackCss from "@ulams/ui/styles/fallbacks.css?inline";
 import coffeeCss from "@ulams/ui/styles/themes/coffee.css?inline";
 import oncallCss from "@ulams/ui/styles/themes/oncall.css?inline";
 import nightskyCss from "@ulams/ui/styles/themes/nightsky.css?inline";
+import platformCss from "@ulams/ui/styles/themes/platform.css?inline";
 import type { ThemeName } from "@ulams/ui/registry";
 import DemoBadge from "../components/DemoBadge.astro";
 import { THEME_COLOR } from "../lib/theme.ts";
+import { accentCss } from "../lib/accent.ts";
 
 interface Props {
   theme: ThemeName;
@@ -21,10 +24,13 @@ interface Props {
   demo?: { adminUrl: string; slug: string } | null;
   /** Extra class on <body>. */
   bodyClass?: string;
+  /** Tenant accent colour from API settings (`theme.accent`); applied as CSS variables. */
+  accent?: string | null;
 }
 
-const { theme, title, description, lang = "en", demo, bodyClass } = Astro.props;
-const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss }[theme];
+const { theme, title, description, lang = "en", demo, bodyClass, accent } = Astro.props;
+const tenantCss = accentCss(theme, accent);
+const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, platform: platformCss }[theme];
 ---
 
 <!doctype html>
@@ -54,6 +60,15 @@ const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss }
       )
     }
     {
+      theme === "platform" && (
+        <>
+          <Font cssVariable="--font-inter-tight" preload={[{ weight: "600" }]} />
+          <Font cssVariable="--font-inter" preload={[{ weight: "400" }]} />
+          <Font cssVariable="--font-jetbrains" />
+        </>
+      )
+    }
+    {
       theme === "nightsky" && (
         <>
           <Font cssVariable="--font-comfortaa" preload={[{ weight: "700" }]} />
@@ -61,7 +76,7 @@ const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss }
         </>
       )
     }
-    <style is:inline set:html={baseCss + themeCss}></style>
+    <style is:inline set:html={fallbackCss + baseCss + themeCss + tenantCss}></style>
     <slot name="head" />
   </head>
   <body class={bodyClass}>

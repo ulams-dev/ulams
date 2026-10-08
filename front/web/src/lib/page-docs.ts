@@ -13,15 +13,17 @@ export const SYLLABUS_VARIANT: Record<ThemeName, "folio" | "timeline" | "mission
   coffee: "folio",
   oncall: "timeline",
   nightsky: "missions",
+  platform: "folio",
 };
 
-export const HERO_VARIANT: Record<ThemeName, "editorial" | "console" | "adventure"> = {
+export const HERO_VARIANT: Record<ThemeName, "editorial" | "console" | "adventure" | "product"> = {
   coffee: "editorial",
   oncall: "console",
   nightsky: "adventure",
+  platform: "product",
 };
 
-const LESSON_NOUN: Record<ThemeName, string> = { coffee: "Chapter", oncall: "Module", nightsky: "Mission" };
+const LESSON_NOUN: Record<ThemeName, string> = { coffee: "Chapter", oncall: "Module", nightsky: "Mission", platform: "Lesson" };
 
 export function courseHeaderDoc(theme: ThemeName, course: CourseModel, progress: number | undefined, resumeHref: string): UiNode {
   return {

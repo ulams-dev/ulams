@@ -1,0 +1,121 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  status?: "available" | "coming";
+  items: Array<{ icon?: string; title: string; text?: string }>;
+  id?: string;
+}
+const { eyebrow, title, intro, status = "available", items, id = "how" } = Astro.props;
+---
+
+<section class="u-section u-steps" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <div class="u-container">
+    <div class="u-section-head u-section-head--center" data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+      {intro && <p class="u-lead">{intro}</p>}
+      {status === "coming" && <p class="u-status u-status--coming">On the roadmap</p>}
+    </div>
+    <ol class="u-steps__list" role="list" style={`--n:${items.length}`}>
+      {
+        items.map((step, i) => (
+          <li class="u-step" data-reveal style={`--reveal-i:${i}`}>
+            <span class="u-step__num" aria-hidden="true">
+              <Icon name={step.icon ?? "check"} />
+            </span>
+            <p class="u-step__index">Step {i + 1}</p>
+            <h3>{step.title}</h3>
+            {step.text && <p class="u-step__text">{step.text}</p>}
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .u-steps__list {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    gap: 24px;
+  }
+  .u-steps__list::before {
+    content: "";
+    position: absolute;
+    top: 28px;
+    left: calc(100% / var(--n) / 2);
+    right: calc(100% / var(--n) / 2);
+    height: 2px;
+    background: linear-gradient(90deg, var(--ulams-color-primary), var(--ulams-color-accent, var(--ulams-color-primary)));
+    opacity: 0.35;
+  }
+  .u-step {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: 10px;
+    padding: 0 8px;
+  }
+  .u-step__num {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: var(--ulams-color-bg);
+    border: 1px solid var(--ulams-color-border);
+    color: var(--ulams-color-primary);
+    box-shadow: 0 8px 24px -12px color-mix(in srgb, var(--ulams-color-primary) 60%, transparent);
+    transition: transform 0.5s var(--ulams-ease-bounce), background-color 0.3s, color 0.3s;
+  }
+  .u-step:hover .u-step__num {
+    transform: translateY(-4px) rotate(-6deg);
+    background: var(--ulams-color-primary);
+    color: var(--ulams-color-on-primary);
+  }
+  .u-step__index {
+    font-family: var(--ulams-font-mono);
+    font-size: 0.75rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-step h3 {
+    font-size: 1.25rem;
+  }
+  .u-step__text {
+    color: var(--ulams-color-muted);
+    font-size: 0.95rem;
+    max-width: 34ch;
+  }
+  @media (max-width: 760px) {
+    .u-steps__list {
+      grid-template-columns: 1fr;
+    }
+    .u-steps__list::before {
+      top: 28px;
+      bottom: 28px;
+      left: 27px;
+      right: auto;
+      width: 2px;
+      height: auto;
+    }
+    .u-step {
+      grid-template-columns: 56px 1fr;
+      justify-items: start;
+      text-align: left;
+      column-gap: 16px;
+      padding: 0;
+    }
+    .u-step__num {
+      grid-row: span 3;
+    }
+  }
+</style>

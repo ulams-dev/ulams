@@ -68,7 +68,7 @@ const locked = (t: { preview?: boolean }) => !access && !t.preview;
 const resources = topic.resources ?? [];
 ---
 
-<Base theme={theme} title={`${topic.title} — ${course.title}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }} bodyClass="u-player-body">
+<Base theme={theme} accent={settings?.theme?.accent} title={`${topic.title} — ${course.title}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }} bodyClass="u-player-body">
   <div class="u-player">
     <header class="u-player__top">
       <a class="u-player__back" href={`/courses/${courseId}`}>
@@ -180,7 +180,7 @@ const resources = topic.resources ?? [];
     <ulams-progress class="u-player__bar" course-id={courseId} topic-id={topicId} complete={completionMode(topic)} status={done ? "1" : "0"}>
       {
         prevHref ? (
-          <a class="u-btn u-btn--ghost u-btn--sm" href={prevHref} rel="prev" data-key-prev aria-keyshortcuts="k">
+          <a class="u-btn u-btn--ghost u-btn--sm" href={prevHref} rel="prev" data-key-prev aria-keyshortcuts="k" aria-label="Previous topic">
             <Icon name="back" /> <span class="u-player__label">Previous</span>
           </a>
         ) : (
@@ -196,7 +196,7 @@ const resources = topic.resources ?? [];
           <span />
         )
       }
-      <a class="u-btn u-btn--sm" href={nextHref} rel="next" data-key-next aria-keyshortcuts="j">
+      <a class="u-btn u-btn--sm" href={nextHref} rel="next" data-key-next aria-keyshortcuts="j" aria-label={nav.next ? "Next topic" : "Finish the course"}>
         <span class="u-player__label">{nav.next ? "Next" : "Finish"}</span> <Icon name="arrow" />
       </a>
       <p class="u-visually-hidden" aria-live="polite" data-live></p>

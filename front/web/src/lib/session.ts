@@ -1,7 +1,7 @@
 import type { AstroCookies } from "astro";
 import { ApiError, demoStudentSession, type Tenant } from "@ulams/sdk";
 import { config } from "./config.ts";
-import { apiFor } from "./data.ts";
+import { apiFor, warmLearner } from "./data.ts";
 
 export const SESSION_COOKIE = "ulams_session";
 
@@ -77,6 +77,7 @@ export async function ensureSession(
   try {
     const demo = await demoToken(tenant);
     setSessionCookie(cookies, demo.token, demo.expiresAt, secure);
+    warmLearner(tenant, demo.token);
     return { token: demo.token, via: demo.via };
   } catch (error) {
     if (error instanceof ApiError) return null;

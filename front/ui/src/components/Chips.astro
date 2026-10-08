@@ -1,0 +1,68 @@
+---
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  items: Array<{ label: string; note?: string; status?: "available" | "coming" }>;
+  id?: string;
+}
+const { eyebrow, title, intro, items, id = "standards" } = Astro.props;
+---
+
+<section class="u-section u-chips" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <div class="u-container">
+    <div class="u-section-head u-section-head--center" data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+      {intro && <p class="u-lead">{intro}</p>}
+    </div>
+    <ul class="u-chips__list" role="list" data-reveal>
+      {
+        items.map((chip) => (
+          <li class="u-chip" data-status={chip.status ?? "available"}>
+            <span class="u-chip__label">{chip.label}</span>
+            {chip.note && <span class="u-chip__note">{chip.note}</span>}
+            {chip.status === "coming" && <span class="u-status u-status--coming">coming</span>}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .u-chips__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .u-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 8px 16px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 999px;
+    background: var(--ulams-color-card-bg);
+    font-family: var(--ulams-font-mono);
+    font-size: 0.875rem;
+    transition: transform 0.3s var(--ulams-ease), border-color 0.3s, box-shadow 0.3s;
+  }
+  .u-chip:hover {
+    transform: translateY(-2px);
+    border-color: var(--ulams-color-primary);
+    box-shadow: var(--ulams-shadow-hover);
+  }
+  .u-chip[data-status="coming"] {
+    border-style: dashed;
+  }
+  .u-chip__note {
+    color: var(--ulams-color-muted);
+    font-size: 0.75rem;
+  }
+</style>
