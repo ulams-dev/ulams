@@ -280,6 +280,10 @@ Quality
 
 ### 6.1 Certificates and compliance
 - [ ] Extend existing Wellms certificates (don't duplicate)
+- [ ] (new) Replace ReportBro (AGPL-3.0 designer bundled in admin, AGPL server image, default
+      REPORTBRO_URL sends data to reportbro.com) with pdfme (MIT): `@pdfme/ui` designer in admin,
+      JSON templates per course (blueprint/course-as-code friendly), QR schema for verification URLs,
+      rendering in a small MIT Node worker `api/pdf`; convert or re-create existing templates
 - [ ] Verification URL/QR, expiry, recertification, reminders
 - [ ] Mandatory training with due dates and manager escalation
 - [ ] Compliance reports and audit export (linked to Phase 3 audit trail)
