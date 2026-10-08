@@ -10,13 +10,15 @@ const GlobalDrawer = createGlobalStyle`
       display: none;
     }
     .drawer-content {
-      background-color: ${({ theme }) => theme.gray4};
+      background-color: ${({ theme }) =>
+      theme.mode === "dark" ? theme.dm__cardBackgroundColor : theme.gray4};
       
     }
   .notifications-drawer {     
 
   &__content {
-    background-color: ${({ theme }) => theme.gray4} !important;
+    background-color: ${({ theme }) =>
+      theme.mode === "dark" ? theme.dm__cardBackgroundColor : theme.gray4} !important;
  
 
     &__header {

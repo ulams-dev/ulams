@@ -10,7 +10,8 @@ import styled from "styled-components";
 import usePayment from "@/hooks/usePayment";
 
 const StyledWrapper = styled.div`
-  background-color: ${({ theme }) => theme.gray4};
+  background-color: ${({ theme }) =>
+    theme.mode === "dark" ? theme.dm__background : theme.gray4};
   padding-top: 57px;
   min-height: calc(100vh - 452px);
 

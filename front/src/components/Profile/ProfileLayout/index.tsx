@@ -19,7 +19,8 @@ type Props = {
 };
 
 const StyledProfile = styled.section`
-  background-color: ${({ theme }) => theme.gray4};
+  background-color: ${({ theme }) =>
+    theme.mode === "dark" ? theme.dm__background : theme.gray4};
   padding-top: 100px;
   padding-bottom: 100px;
   min-height: 70vh;

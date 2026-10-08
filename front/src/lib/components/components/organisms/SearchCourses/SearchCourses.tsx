@@ -11,7 +11,8 @@ const SearchWrapper = styled.div`
 
   input {
     border-radius: 21px !important;
-    background-color: ${({ theme }) => theme.gray4} !important;
+    background-color: ${({ theme }) =>
+      theme.mode === "dark" ? theme.dm__inputBg ?? theme.gray1 : theme.gray4} !important;
   }
   .fieldset {
     border-radius: 21px !important;
@@ -24,7 +25,8 @@ const ItemButton = styled(Button)`
   border: none;
   border-radius: ${({ theme }) => theme.buttonRadius}px;
   &:hover {
-    background-color: ${({ theme }) => theme.gray4} !important;
+    background-color: ${({ theme }) =>
+      theme.mode === "dark" ? theme.dm__inputBg ?? theme.gray1 : theme.gray4} !important;
     color: ${({ theme }) => theme.textColor};
     border-radius: ${({ theme }) => theme.buttonRadius}px;
   }

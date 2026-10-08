@@ -48,8 +48,8 @@ ReactDOM.createRoot(document.getElementById("root") as Element).render(
       </UlamsContextProvider>
     ) : (
       <pre>
-        error `process.env.VITE_APP_PUBLIC_API_URL || window.VITE_APP_API_URL`
-        not set
+        API URL not set: define window.VITE_APP_API_URL, VITE_APP_PUBLIC_API_URL
+        or a tenant host pattern (VITE_APP_TENANT_API_HOST_PATTERN)
       </pre>
     )}
   </React.StrictMode>

@@ -7,7 +7,8 @@ const Wrapper = styled.section`
 `;
 
 const StyledHeader = styled.div`
-  background: ${({ theme }) => theme.gray4};
+  background: ${({ theme }) =>
+    theme.mode === "dark" ? theme.dm__background : theme.gray4};
   padding: 25px 0px 10px;
   position: relative;
   margin-bottom: 16px;

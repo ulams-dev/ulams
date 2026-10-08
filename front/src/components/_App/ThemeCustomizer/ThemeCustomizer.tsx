@@ -52,17 +52,22 @@ const StyledDiv = styled.div`
   }
 `;
 
-export const ThemeCustomizer = (theme: Record<string, DefaultTheme>) => {
+/**
+ * `theme` is the tenant preset from settings. When it is set, the preset is
+ * stored as the active theme and the customizer button is not rendered.
+ */
+export const ThemeCustomizer = (theme: { theme?: DefaultTheme }) => {
   const [, setTheme] = useLocalTheme({
     ...defaultTheme,
     theme: "contrastTheme",
   });
 
+  const tenantTheme = theme.theme;
   useEffect(() => {
-    if (theme.theme) {
-      setTheme(theme.theme);
+    if (tenantTheme) {
+      setTheme(tenantTheme);
     }
-  }, [theme, setTheme]);
+  }, [tenantTheme, setTheme]);
 
   const { t } = useTranslation();
 

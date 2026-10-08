@@ -295,6 +295,9 @@ const StyledButton = styled("button")<ButtonProps>`
 
   &.dropdown {
     all: unset;
+    color: ${({ theme }) =>
+      theme.mode === "dark" ? theme.dm__textColor : theme.textColor};
+    cursor: pointer;
     font-family: ${(props) => getFontFromTheme(props.theme).fontFamily};
     transition: background 0.2s ease-in, color 0.2s ease-in;
     border-radius: 5px;
@@ -309,7 +312,12 @@ const StyledButton = styled("button")<ButtonProps>`
       height: 30px;
     }
     &:hover {
-      background-color: #f8f8f8;
+      background-color: ${({ theme }) =>
+        theme.mode === "dark" ? theme.dm__cardBackgroundColor : "#f8f8f8"};
+    }
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
     }
   }
 

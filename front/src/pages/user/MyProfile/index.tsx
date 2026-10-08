@@ -16,7 +16,8 @@ export enum CourseStatus {
 }
 
 export const Content = styled.section`
-  background-color: ${({ theme }) => theme.gray4};
+  background-color: ${({ theme }) =>
+    theme.mode === "dark" ? theme.dm__background : theme.gray4};
   .courses-wrapper {
     padding-top: 100px;
 

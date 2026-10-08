@@ -36,7 +36,7 @@ const StyledHeader = styled.header`
   left: 0;
   z-index: 1000;
   background: ${({ theme }) =>
-    theme.mode === "dark" ? " rgba(35, 34, 37, 0.95)" : theme.white};
+    theme.mode === "dark" ? theme.dm__background : theme.white};
   backdrop-filter: blur(10px);
   padding: ${isMobile ? "11px 0" : "22px 0"};
 
@@ -169,7 +169,8 @@ const StyledHeader = styled.header`
           min-height: 20px;
           border-radius: 50%;
           background: ${({ theme }) => theme.secondaryColor};
-          color: ${({ theme }) => theme.textColor};
+          color: ${({ theme }) =>
+    theme.mode === "dark" ? theme.dm__textColor : theme.textColor};
           font-size: 13px;
 
           display: flex;
@@ -204,7 +205,8 @@ const LastMobileMenuItem = styled.div`
   span {
     font-size: 13px;
     font-family: ${({ theme }) => theme.font};
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) =>
+    theme.mode === "dark" ? theme.dm__textColor : theme.textColor};
     margin-top: 15px;
     text-align: center;
     display: block;
@@ -233,7 +235,8 @@ const StyledMobileDrawerNavigation = styled.div`
       }
       a,
       button {
-        color: ${({ theme }) => theme.textColor};
+        color: ${({ theme }) =>
+    theme.mode === "dark" ? theme.dm__textColor : theme.textColor};
         font-family: ${({ theme }) => theme.font};
         font-size: 16px;
         font-weight: 700;

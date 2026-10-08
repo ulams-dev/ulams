@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled, { css, withTheme } from "styled-components";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
-import { getFontFromTheme } from "../../../theme/provider";
+import { getDisplayFontFromTheme } from "../../../theme/provider";
 import { HeaderLevelInt, HeaderLevelStr } from "../../../types/titleTypes";
 import { setFontSizeByHeaderLevel } from "../../../utils/components/primitives/titleUtils";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
@@ -23,7 +23,7 @@ const SharedHeaderStyles = css<StyledHeader>`
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: ${(props) => getFontFromTheme(props.theme).fontFamily};
+  font-family: ${(props) => getDisplayFontFromTheme(props.theme).fontFamily};
   font-weight: bold;
   font-size: ${(props) => setFontSizeByHeaderLevel(props.level, props.mobile)};
   line-height: 125%;

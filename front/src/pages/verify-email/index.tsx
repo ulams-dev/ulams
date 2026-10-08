@@ -12,7 +12,8 @@ import { getStylesBasedOnTheme } from "@ulams/components/utils/utils";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
 
 const StyledEmailConfirmation = styled.div`
-  background-color: ${({ theme }) => theme.gray4};
+  background-color: ${({ theme }) =>
+    theme.mode === "dark" ? theme.dm__background : theme.gray4};
 
   height: 550px;
   display: flex;

@@ -42,7 +42,7 @@ export const coffeeTheme: ThemeTokens = {
   gray5: "#FDFCFA",
   gray4: "#EDE5D8",
   gray3: "#D9CFC2",
-  gray2: "#8A726A",
+  gray2: "#6B5750",
   gray1: "#57423B",
   labelListValueColor: "#C2552D",
   breadcrumbsColor: "#7A8B6F",

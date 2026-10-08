@@ -2,7 +2,7 @@ import * as React from "react";
 import styled, { withTheme } from "styled-components";
 import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
-import { getFontFromTheme } from "../../../theme/provider";
+import { getDisplayFontFromTheme } from "../../../theme/provider";
 import { HeaderLevelInt, HeaderLevelStr } from "../../../types/titleTypes";
 import { setFontSizeByHeaderLevel } from "../../../utils/components/primitives/titleUtils";
 
@@ -36,7 +36,7 @@ const StyledHeader = styled.h3<StyledHeader>`
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     margin: 0 0 20px 0;
-    font-family: ${(props) => getFontFromTheme(props.theme).fontFamily};
+    font-family: ${(props) => getDisplayFontFromTheme(props.theme).fontFamily};
     display: flex;
     flex-wrap: nowrap;
     color: ${({ theme }) =>

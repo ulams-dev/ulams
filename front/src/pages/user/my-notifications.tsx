@@ -4,7 +4,8 @@ import Container from "@/components/Common/Container";
 import Notifications from "@/components/Notifications";
 
 const Wrapper = styled.div`
-  background-color: ${({ theme }) => theme.gray4};
+  background-color: ${({ theme }) =>
+    theme.mode === "dark" ? theme.dm__background : theme.gray4};
 `;
 
 const NotificationsContainer = styled.div`

@@ -17,7 +17,8 @@ import ProfileAside from "@/components/Profile/ProfileAside";
 import StaticPageSkeleton from "@/components/Skeletons/StaticPage";
 
 const StyledStaticPage = styled.section`
-  background-color: ${({ theme }) => theme.gray4};
+  background-color: ${({ theme }) =>
+    theme.mode === "dark" ? theme.dm__background : theme.gray4};
   min-height: calc(100vh - 400px);
   padding-top: ${isMobile ? "0px" : "57px"};
   .user-main-sidebar {

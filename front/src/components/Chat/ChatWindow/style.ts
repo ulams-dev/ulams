@@ -57,7 +57,8 @@ export const StyledChatWindow = styled.div<{
       border: 1px solid ${({ theme }) => theme.gray3};
       padding: 10px 13px;
       border-radius: 21px;
-      background: ${({ theme }) => theme.gray4} 0% 0% no-repeat padding-box;
+      background: ${({ theme }) =>
+      theme.mode === "dark" ? theme.dm__cardBackgroundColor : theme.gray4} 0% 0% no-repeat padding-box;
       display: flex;
       position: relative;
 

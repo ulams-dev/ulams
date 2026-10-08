@@ -6,6 +6,7 @@ export const LayoutWrapper = styled.div`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: ${({ theme }) => theme.gray4};
+  background: ${({ theme }) =>
+    theme.mode === "dark" ? theme.dm__background : theme.gray4};
   z-index: 1000;
 `;

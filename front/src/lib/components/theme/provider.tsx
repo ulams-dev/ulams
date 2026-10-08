@@ -1,8 +1,11 @@
 import { DefaultTheme, ThemeProvider } from "styled-components";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 import { useLocalTheme } from "../styleguide/useLocalTheme";
+import { applyTheme } from "./applyTheme";
+import { FONTS } from "./cssVars";
+import type { ThemeFont, ThemeTokens } from "./types";
 
 export interface SharedDefaultTheme {
   theme?: string;
@@ -37,7 +40,9 @@ declare module "styled-components" {
     extends SharedDefaultTheme,
       Record<string, unknown> {
     mode?: "light" | "dark";
-    font: "Inter" | "Mulish" | "Titillium" | "Lato";
+    font: ThemeFont;
+    /** Body font when it differs from the display font (experience presets). */
+    bodyFont?: ThemeFont;
     radius?: number;
     textColor: string;
     dm__textColor: string;
@@ -69,61 +74,55 @@ declare module "styled-components" {
   }
 }
 
+/** Font registry shared with the CSS-variable theming (cssVars.ts FONTS). */
 export const Fonts: Record<
   DefaultTheme["font"],
   { links: string[]; fontFamily: string }
-> = {
-  Inter: {
-    links: [
-      "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap",
-    ],
-    fontFamily: "'Inter', sans-serif;",
-  },
-  Mulish: {
-    links: [
-      "https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;700&display=swap",
-    ],
-    fontFamily: "'Mulish', sans-serif;",
-  },
-  Titillium: {
-    links: [
-      "https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap",
-    ],
-    fontFamily: "'Titillium Web', sans-serif;",
-  },
-  Lato: {
-    links: [
-      "https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap",
-    ],
-    fontFamily: "'Lato', sans-serif;",
-  },
-};
+> = FONTS;
 
+const NO_FONT = { fontFamily: "sans-serif", links: [] as string[] };
+
+/** Font for UI and body text: `bodyFont` when the theme has one, else `font`. */
 export const getFontFromTheme = (
   theme?: DefaultTheme
 ): { links: string[]; fontFamily: string } => {
-  if (theme && theme.font && Fonts[theme.font]) {
-    return Fonts[theme.font];
-  }
-  return {
-    fontFamily: "sans-serif",
-    links: [],
-  };
+  const key = theme?.bodyFont ?? theme?.font;
+  return (key && Fonts[key]) || NO_FONT;
 };
+
+/** Display font for headings (`font`), e.g. Playfair Display in the coffee preset. */
+export const getDisplayFontFromTheme = (
+  theme?: DefaultTheme
+): { links: string[]; fontFamily: string } =>
+  (theme?.font && Fonts[theme.font]) || NO_FONT;
 
 export const GlobalThemeProvider: React.FC<{
   defaultTheme?: DefaultTheme;
   children?: React.ReactNode;
 }> = ({ defaultTheme, children }) => {
-  const [theme] = useLocalTheme();
-  const font = Fonts[theme.font];
+  const [localTheme] = useLocalTheme();
+  const theme = defaultTheme ?? localTheme;
+  const links = Array.from(
+    new Set([
+      ...getDisplayFontFromTheme(theme).links,
+      ...getFontFromTheme(theme).links,
+    ])
+  );
+
+  // Keep the CSS-variable theme (--ulams-*, data-theme, data-mode on <html>) in sync
+  // with the styled-components theme, so CSS Modules and styled components agree.
+  useEffect(() => {
+    applyTheme(theme as unknown as ThemeTokens, {
+      mode: theme.mode ?? "light",
+      name: typeof theme.theme === "string" ? theme.theme : undefined,
+    });
+  }, [theme]);
 
   return (
-    <ThemeProvider theme={defaultTheme ?? theme}>
-      {font &&
-        font.links.map((link) => (
-          <link key={link} rel="stylesheet" href={link} />
-        ))}
+    <ThemeProvider theme={theme}>
+      {links.map((link) => (
+        <link key={link} rel="stylesheet" href={link} />
+      ))}
       {children}
     </ThemeProvider>
   );

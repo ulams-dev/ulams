@@ -30,7 +30,8 @@ const StyledRegisterPage = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.gray4};
+  background-color: ${({ theme }) =>
+    theme.mode === "dark" ? theme.dm__background : theme.gray4};
 
   @media (max-width: 991px) {
     padding-top: 100px;
@@ -50,7 +51,8 @@ const StyledLink = styled(Link)`
 `;
 
 const StyledContent = styled.div`
-  background-color: ${({ theme }) => theme.gray4};
+  background-color: ${({ theme }) =>
+    theme.mode === "dark" ? theme.dm__background : theme.gray4};
   padding-top: 100px;
   /* height: calc(100vh - 452px); */
   @media (max-width: 991px) {

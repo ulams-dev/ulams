@@ -14,7 +14,8 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 const StyledWrapper = styled.div`
-  background-color: ${({ theme }) => theme.gray4};
+  background-color: ${({ theme }) =>
+    theme.mode === "dark" ? theme.dm__background : theme.gray4};
   padding-top: 57px;
   min-height: calc(100vh - 452px);
   padding-bottom: 50px;
