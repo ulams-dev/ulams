@@ -1,0 +1,56 @@
+# Snippet for api/docker-compose.yml (or use with
+# `docker compose -f docker-compose.yml -f h5p/compose.h5p.yml up -d h5p`).
+# The service joins the existing escola_lms network; Caddy routes
+# http://api.localhost/h5p/* to it (see Caddyfile.snippet).
+services:
+  h5p:
+    build:
+      context: ./h5p
+    image: wellms/h5p:dev
+    restart: unless-stopped
+    networks:
+      - escola_lms
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    environment:
+      PORT: 8080
+      LOG_LEVEL: info
+      PUBLIC_URL: http://api.localhost
+      # H5P_ABSOLUTE_URLS: "true"   # emit http://api.localhost/h5p/... in models
+      CORS_ORIGINS: http://localhost:3000,http://localhost:8000,http://api.localhost
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: default
+      DB_USERNAME: default
+      DB_PASSWORD: secret
+      DB_SCHEMA: h5p
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: escola_lms
+      REDIS_DB: 0
+      REDIS_KEY_PREFIX: "h5p:"
+      S3_ENDPOINT: http://minio:9000
+      S3_REGION: us-east-1
+      S3_KEY: admin
+      S3_SECRET: minio_secretpassword
+      S3_BUCKET: wellms
+      S3_PREFIX: h5p
+      S3_FORCE_PATH_STYLE: "true"
+      JWT_PUBLIC_KEY_PATH: /keys/oauth-public.key
+      LARAVEL_API_URL: http://caddy
+      LARAVEL_API_HOST: api.localhost
+      H5P_INTERNAL_TOKEN: change-me-internal-token
+      H5P_MAX_FILE_SIZE_MB: 64
+      H5P_MAX_TOTAL_SIZE_MB: 256
+    volumes:
+      - h5p_libraries:/data/libraries
+      - ./storage/oauth-public.key:/keys/oauth-public.key:ro
+
+volumes:
+  h5p_libraries:
+
+networks:
+  escola_lms:
+    external: true

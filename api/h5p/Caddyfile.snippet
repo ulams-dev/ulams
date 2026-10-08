@@ -1,0 +1,38 @@
+# Inside the existing `http://*.localhost { ... }` site block of
+# api/Caddyfile, BEFORE the php_fastcgi / Laravel handling. Only requests for
+# the api.localhost host and the /h5p/* path go to the Node service.
+
+@h5p {
+	host api.localhost
+	path /h5p /h5p/*
+}
+handle @h5p {
+	# .h5p uploads are up to 256 MB (H5P_MAX_TOTAL_SIZE_MB) plus multipart overhead
+	request_body {
+		max_size 300MB
+	}
+	reverse_proxy h5p:8080 {
+		header_up X-Forwarded-Host {host}
+		# Large uploads / package exports
+		transport http {
+			read_timeout 10m
+			write_timeout 10m
+		}
+	}
+}
+
+# Optional but recommended: H5P core sends the access token as ?_token= on its
+# AJAX calls (it cannot set headers). Keep it out of Caddy's access log:
+#
+# log {
+# 	format filter {
+# 		wrap json
+# 		fields {
+# 			request>uri query {
+# 				replace _token REDACTED
+# 			}
+# 			request>headers>Authorization delete
+# 			request>headers>X-Internal-Token delete
+# 		}
+# 	}
+# }
