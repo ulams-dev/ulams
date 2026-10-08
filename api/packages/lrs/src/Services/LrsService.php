@@ -6,7 +6,7 @@ use Ulams\Courses\Models\Topic;
 use Ulams\Lrs\Enums\XApiEnum;
 use Ulams\Lrs\Services\Contracts\LrsServiceContract;
 use Illuminate\Http\Request;
-use Trax\Auth\Stores\Accesses\Access;
+use Ulams\Lrs\Models\Access;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -27,7 +27,7 @@ class LrsService implements LrsServiceContract
         $fetch = route("cmi5.fetch") . "?token=" . $token;
 
         $result = [
-            'endpoint' => $access->getXapiEndpointAttribute($courseId),
+            'endpoint' => $access->xapi_endpoint,
             'fetch' => $fetch,
             'actor' => [
                 'objectType' => 'Agent',

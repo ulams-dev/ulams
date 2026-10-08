@@ -3,52 +3,43 @@
 namespace Ulams\Lrs\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Trax\Auth\Stores\Clients\ClientRepository;
-use Trax\Auth\Stores\Owners\Owner;
-use Trax\Auth\Stores\Accesses\AccessService;
-use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Ulams\Lrs\Models\Access;
+use Ulams\Lrs\Models\BasicHttpCredentials;
+use Ulams\Lrs\Models\Client;
+use Ulams\Lrs\Models\Owner;
 
-
+/**
+ * Creates the store's owner, client and xAPI access (the endpoint cmi5 content reports to).
+ */
 class LrsSeeder extends Seeder
 {
     public function run()
     {
         $name = 'Ulams';
 
-        $owner = Owner::firstOrCreate([
-            'name' => $name
-        ], [
-            'uuid' => (string) Str::uuid(),
-            'meta' => []
-        ]);
+        $owner = Owner::firstOrCreate(['name' => $name], ['meta' => []]);
 
-        $data = [
-            "id" => null,
-            "name" => $name,
+        $client = Client::create([
+            'name' => $name,
             'permissions' => ['xapi-scope.all'],
             'owner_id' => $owner->id,
-            "access" => [
-                "id" => null,
-                "credentials" => [
-                    "username" => $name,
-                    "password" => $name,
-                ]
-            ],
-            "endpoint" => null
-        ];
+        ]);
 
-        $client_repo = App::make(ClientRepository::class);
-        $client = $client_repo->create($data);
+        // Learners authenticate with their Passport token; these Basic credentials are for
+        // other xAPI clients and get a random password.
+        $credentials = BasicHttpCredentials::create([
+            'username' => $name,
+            'password' => Hash::make(Str::random(40)),
+        ]);
 
-        $access_service = App::make(AccessService::class);
-
-        $data = $data['access'];
-        $data['client_id'] = $client->id;
-        $data['type'] = 'basic_http';
-        $data['name'] = $client->name;
-        $data['cors'] = '*';
-
-        $access_service->create($data);
+        Access::create([
+            'name' => $client->name,
+            'cors' => '*',
+            'client_id' => $client->id,
+            'credentials_id' => $credentials->id,
+            'credentials_type' => Access::TYPE_BASIC_HTTP,
+        ]);
     }
 }

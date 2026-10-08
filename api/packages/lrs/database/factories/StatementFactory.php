@@ -5,8 +5,8 @@ namespace Ulams\Lrs\Database\Factories;
 use Ulams\Lrs\Models\Statement;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use Trax\Auth\Stores\Accesses\Access;
-use Trax\Auth\Stores\Owners\Owner;
+use Ulams\Lrs\Models\Access;
+use Ulams\Lrs\Models\Owner;
 
 class StatementFactory extends Factory
 {
