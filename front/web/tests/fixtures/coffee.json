@@ -1,0 +1,906 @@
+{
+ "settings": {
+  "global": {
+   "companyName": "The Coffee Atlas",
+   "frontURL": "http://coffee.app.localhost"
+  },
+  "theme": {
+   "theme": "coffee",
+   "accent": "#C2552D"
+  }
+ },
+ "course": {
+  "id": 1,
+  "created_at": "2026-10-08T14:48:21.000000Z",
+  "updated_at": "2026-10-08T14:48:31.000000Z",
+  "title": "The Coffee Atlas — From Seed to Cup",
+  "summary": "Follow one coffee cherry from a hillside in Huila to your cup. Learn origin, processing, roasting, brewing and tasting — and leave with your own signature recipe.",
+  "image_path": "course/1/images/RASDSSPF7zfzymnRB1Ii05Na7uc6fkqscZbL8Y4u.png",
+  "video_path": "course/1/videos/X8IAtZ8kKcn5BmKRnAzahm2oVlNdROSukX2jYLMM.mp4",
+  "duration": "~9 h · 6 lessons",
+  "author_id": 2,
+  "author": {
+   "id": 2,
+   "first_name": "Inés",
+   "last_name": "Duarte",
+   "email": "tutor@coffee.ulams.app",
+   "path_avatar": "avatars/2/avatar-ines.png",
+   "url_avatar": "http://storage.localhost/ulams-coffee/avatars/2/avatar-ines.png",
+   "interests": [],
+   "categories": []
+  },
+  "authors": [
+   {
+    "id": 2,
+    "first_name": "Inés",
+    "last_name": "Duarte",
+    "email": "tutor@coffee.ulams.app",
+    "path_avatar": "avatars/2/avatar-ines.png",
+    "url_avatar": "http://storage.localhost/ulams-coffee/avatars/2/avatar-ines.png",
+    "interests": [],
+    "categories": []
+   },
+   {
+    "id": 8,
+    "first_name": "Tomasz",
+    "last_name": "Wierzba",
+    "email": "tomasz.wierzba@demo.ulams.app",
+    "path_avatar": "avatars/8/avatar-tomasz.png",
+    "url_avatar": "http://storage.localhost/ulams-coffee/avatars/8/avatar-tomasz.png",
+    "interests": [],
+    "categories": []
+   }
+  ],
+  "status": "published",
+  "subtitle": "A field guide to specialty coffee for curious home baristas",
+  "language": "en",
+  "description": "**At five in the morning** on a hillside in Huila, Colombia, 1,750 metres above the sea, a picker reaches for a cherry the colour of a ripe plum. Six weeks and nine thousand kilometres later, its seed ends up in your grinder. This course follows that one cherry all the way, and teaches you what happens at every step and why it changes what you taste.\n\n*The Coffee Atlas* is a slow course. There are no streaks, no leaderboards and no timers you have to beat. There are six chapters you read, watch and listen to at your own pace, a roast simulator, a guided cupping session, and at the end a recipe that is yours.\n\n## What you will learn\n\n- Where coffee grows and why altitude, variety and species shape the cup\n- How washed, natural, honey and anaerobic processing work, and how to recognise them by taste\n- How to read a roast curve: turning point, first crack, development time\n- The maths of brewing: ratios, TDS and extraction yield, and how to fix a sour or bitter cup\n- How to cup like a Q-grader and describe coffee with the SCA flavour wheel\n- How to design, test and write down your own signature recipe\n\n## How it works\n\n| Chapter | You will |\n|---|---|\n| I. Origins | watch the harvest, explore the coffee belt, compare Arabica and Robusta |\n| II. The farm | hear from a producer, dissect a cherry, learn the processing methods |\n| III. Roasting | read a roast curve, roast a virtual batch, start your roaster's logbook |\n| IV. Brewing | master ratios and extraction, follow a pour-over masterclass |\n| V. Tasting | learn the flavour wheel, cup at home, take the tasting check |\n| VI. Your signature cup | brew three variations and send your recipe card to the tutors |\n\n## What you need\n\nA scale that reads 0.1 g, a burr grinder (or a roaster who grinds to order), a kettle, a pour-over dripper such as a V60, and two bags of freshly roasted coffee. About nine hours spread over a few weeks.\n\n## Your tutors\n\n**Inés Duarte** is a licensed Q-grader who grew up on a coffee farm near Pitalito in Huila. She has judged national cupping competitions in Colombia, Peru and Rwanda.\n\n**Tomasz Wierzba** has roasted specialty coffee in Kraków for twelve years. He teaches the roasting chapter and reviews every recipe card himself.\n\nFinish all six chapters and the final project to receive the certificate **Certified Home Barista — The Coffee Atlas**.\n",
+  "categories": [
+   {
+    "id": 2,
+    "name": "Coffee",
+    "slug": "coffee",
+    "is_active": true,
+    "parent_id": 1,
+    "icon": null,
+    "icon_class": null,
+    "created_at": "2026-10-08T14:48:21.000000Z",
+    "updated_at": "2026-10-08T14:48:21.000000Z",
+    "description": null,
+    "order": 1,
+    "pivot": {
+     "course_id": 1,
+     "category_id": 2
+    }
+   },
+   {
+    "id": 3,
+    "name": "Home barista",
+    "slug": "home-barista",
+    "is_active": true,
+    "parent_id": 1,
+    "icon": null,
+    "icon_class": null,
+    "created_at": "2026-10-08T14:48:21.000000Z",
+    "updated_at": "2026-10-08T14:48:21.000000Z",
+    "description": null,
+    "order": 2,
+    "pivot": {
+     "course_id": 1,
+     "category_id": 3
+    }
+   }
+  ],
+  "tags": [
+   {
+    "id": 21,
+    "title": "specialty coffee",
+    "morphable_type": "Ulams\\Courses\\Models\\Course",
+    "morphable_id": 1,
+    "created_at": "2026-10-08T15:49:17.000000Z",
+    "updated_at": "2026-10-08T15:49:17.000000Z"
+   },
+   {
+    "id": 22,
+    "title": "brewing",
+    "morphable_type": "Ulams\\Courses\\Models\\Course",
+    "morphable_id": 1,
+    "created_at": "2026-10-08T15:49:17.000000Z",
+    "updated_at": "2026-10-08T15:49:17.000000Z"
+   },
+   {
+    "id": 23,
+    "title": "roasting",
+    "morphable_type": "Ulams\\Courses\\Models\\Course",
+    "morphable_id": 1,
+    "created_at": "2026-10-08T15:49:17.000000Z",
+    "updated_at": "2026-10-08T15:49:17.000000Z"
+   },
+   {
+    "id": 24,
+    "title": "cupping",
+    "morphable_type": "Ulams\\Courses\\Models\\Course",
+    "morphable_id": 1,
+    "created_at": "2026-10-08T15:49:17.000000Z",
+    "updated_at": "2026-10-08T15:49:17.000000Z"
+   },
+   {
+    "id": 25,
+    "title": "self-paced",
+    "morphable_type": "Ulams\\Courses\\Models\\Course",
+    "morphable_id": 1,
+    "created_at": "2026-10-08T15:49:17.000000Z",
+    "updated_at": "2026-10-08T15:49:17.000000Z"
+   }
+  ],
+  "level": "Beginner → Intermediate",
+  "lessons": [
+   {
+    "id": 1,
+    "title": "I. Origins",
+    "summary": "Where coffee grows, which plants it comes from, and why the mountain matters.",
+    "duration": "1 h 20 min",
+    "active": true,
+    "order": 1,
+    "course_id": 1,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 1,
+      "title": "Welcome to the Atlas",
+      "lesson_id": 1,
+      "active": true,
+      "preview": true,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Video",
+      "summary": "Meet your tutors and the cherry you will follow for six chapters.",
+      "introduction": "A short film from a dawn harvest in Huila. Inés and Tomasz introduce the journey.",
+      "description": "**Transcript**\n\nINÉS: It is five in the morning in Huila, and the pickers are already on the slope. Only the deep red cherries go into the basket: a green one would make your cup taste like grass.\n\nTOMASZ: Six weeks from now, the seeds of these cherries will be in my roaster in Kraków. In this course we follow one of them all the way, and you will learn what happens at every step.\n\nINÉS: Six chapters: origins, the farm, roasting, brewing, tasting, and your own signature cup. Take your time. Coffee is slow.",
+      "order": 1,
+      "json": {
+       "ffmpeg": {
+        "state": "finished",
+        "path": "course/1/topic/1/video/hls.m3u8"
+       },
+       "progress_notification": true
+      },
+      "can_skip": false,
+      "duration": "4 min"
+     },
+     {
+      "id": 2,
+      "title": "The coffee belt",
+      "lesson_id": 1,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Image",
+      "summary": "Coffee grows between roughly 25° N and 30° S. Arabica likes the mountains (1,000–2,400 m), Robusta the hot lowlands.",
+      "introduction": "An illustrated map of where coffee grows, with the altitude bands of fifteen classic origins.",
+      "description": null,
+      "order": 2,
+      "json": null,
+      "can_skip": false,
+      "duration": "10 min"
+     },
+     {
+      "id": 3,
+      "title": "Arabica vs Robusta",
+      "lesson_id": 1,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+      "summary": "Arabica: high altitude, more sugar and aroma. Robusta: lowlands, more caffeine, heavier body.",
+      "introduction": "A long read on the two species behind almost every cup.",
+      "description": null,
+      "order": 3,
+      "json": null,
+      "can_skip": false,
+      "duration": "25 min"
+     }
+    ]
+   },
+   {
+    "id": 2,
+    "title": "II. The farm",
+    "summary": "A producer's voice, the anatomy of a cherry and the processing methods that shape flavour.",
+    "duration": "1 h 30 min",
+    "active": true,
+    "order": 2,
+    "course_id": 1,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 4,
+      "title": "Voices from the farm",
+      "lesson_id": 2,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Audio",
+      "summary": "Don Álvaro on picking, weather, prices and why he still washes most of his coffee.",
+      "introduction": "A podcast recorded at dawn on a family farm in Huila, with birdsong in the background.",
+      "description": "**Episode notes**\n\n- 00:00 Dawn on the farm: the sound of the slope\n- 01:30 How pickers judge ripeness\n- 04:10 Afternoon rain and the risk of natural drying\n- 07:45 Selling to exporters vs. direct trade\n- 10:20 What he wants home baristas to know\n\n*The ambience track is a soundscape; the interview is summarised in the notes above.*",
+      "order": 1,
+      "json": null,
+      "can_skip": false,
+      "duration": "12 min"
+     },
+     {
+      "id": 5,
+      "title": "Anatomy of a cherry",
+      "lesson_id": 2,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\H5P",
+      "summary": null,
+      "introduction": "Tap the layers of a ripe cherry: skin, pulp, mucilage, parchment, silver skin and bean.",
+      "description": null,
+      "order": 2,
+      "json": null,
+      "can_skip": false,
+      "duration": "10 min"
+     },
+     {
+      "id": 6,
+      "title": "Processing methods",
+      "lesson_id": 2,
+      "active": true,
+      "preview": false,
+      "topicable_id": 2,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+      "summary": "Washed coffees are clean and bright, naturals fruity and heavy, honeys sweet and round, anaerobics loud and experimental.",
+      "introduction": "Washed, natural, honey and anaerobic: what each one does to the cup.",
+      "description": null,
+      "order": 3,
+      "json": null,
+      "can_skip": false,
+      "duration": "30 min"
+     },
+     {
+      "id": 7,
+      "title": "Visit the cooperative",
+      "lesson_id": 2,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\OEmbed",
+      "summary": "Notice the shade trees, the slope and the drying area next to the wet mill.",
+      "introduction": "A 360° walk through a Colombian coffee farm. Drag the video to look around.",
+      "description": null,
+      "order": 4,
+      "json": null,
+      "can_skip": false,
+      "duration": "8 min"
+     }
+    ]
+   },
+   {
+    "id": 3,
+    "title": "III. Roasting",
+    "summary": "Read a roast curve, keep a logbook and roast your first virtual batch.",
+    "duration": "1 h 40 min",
+    "active": true,
+    "order": 3,
+    "course_id": 1,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 8,
+      "title": "The roast curve",
+      "lesson_id": 3,
+      "active": true,
+      "preview": false,
+      "topicable_id": 2,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Image",
+      "summary": "Charge, turning point, dry end, first crack and drop. Development time is the share of the roast after first crack: 21 % here.",
+      "introduction": "An annotated roast curve of a washed Caturra from Huila.",
+      "description": null,
+      "order": 1,
+      "json": null,
+      "can_skip": false,
+      "duration": "15 min"
+     },
+     {
+      "id": 9,
+      "title": "Roaster's logbook",
+      "lesson_id": 3,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\PDF",
+      "summary": "Print it double-sided and log every batch from now on.",
+      "introduction": "An 8-page printable roast log: lot record, batch sheets, cupping scores and notes.",
+      "description": null,
+      "order": 2,
+      "json": null,
+      "can_skip": false,
+      "duration": "10 min"
+     },
+     {
+      "id": 10,
+      "title": "Roast simulator",
+      "lesson_id": 3,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\ScormSco",
+      "summary": "Aim for a drop at 205–212 °C with 16–25 % development. Your score is saved to your progress.",
+      "introduction": "Pick a charge temperature and a heat setting, watch the beans change colour and drop the batch at the right moment.",
+      "description": null,
+      "order": 3,
+      "json": null,
+      "can_skip": false,
+      "duration": "30 min"
+     }
+    ]
+   },
+   {
+    "id": 4,
+    "title": "IV. Brewing",
+    "summary": "The maths of a good cup and the technique to pour it.",
+    "duration": "1 h 50 min",
+    "active": true,
+    "order": 4,
+    "course_id": 1,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 11,
+      "title": "Ratios & extraction",
+      "lesson_id": 4,
+      "active": true,
+      "preview": false,
+      "topicable_id": 3,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+      "summary": "Balanced cups extract 18–22 % of the dose. Start at 1:16 and adjust the grind, not the ratio, to fix extraction.",
+      "introduction": "Why a cup tastes sour or bitter, and how to fix it with numbers.",
+      "description": null,
+      "order": 1,
+      "json": null,
+      "can_skip": false,
+      "duration": "30 min"
+     },
+     {
+      "id": 12,
+      "title": "Pour-over masterclass",
+      "lesson_id": 4,
+      "active": true,
+      "preview": false,
+      "topicable_id": 2,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Video",
+      "summary": "Rinse, grind, bloom, pour, drawdown, taste and adjust.",
+      "introduction": "Tomasz brews a V60 step by step. Use the chapter markers to jump between steps.",
+      "description": "**Chapters**\n\n1. Rinse and preheat\n2. Grind 15 g, medium-fine\n3. Bloom: 45 g for 45 s\n4. Main pours to 250 g\n5. Drawdown at 3:00–3:30\n6. Taste and adjust\n\n**Recipe:** 15 g coffee, 250 g water at 93 °C, total time 3:00–3:30.",
+      "order": 2,
+      "json": {
+       "chapters": [
+        {
+         "time": 5,
+         "title": "Rinse and preheat"
+        },
+        {
+         "time": 10,
+         "title": "Grind 15 g, medium-fine"
+        },
+        {
+         "time": 15,
+         "title": "Bloom: 45 g for 45 s"
+        },
+        {
+         "time": 20,
+         "title": "Main pours to 250 g"
+        },
+        {
+         "time": 25,
+         "title": "Drawdown at 3:00–3:30"
+        },
+        {
+         "time": 30,
+         "title": "Taste and adjust"
+        }
+       ],
+       "ffmpeg": {
+        "state": "finished",
+        "path": "course/1/topic/12/video/hls.m3u8"
+       },
+       "progress_notification": true
+      },
+      "can_skip": false,
+      "duration": "14 min"
+     },
+     {
+      "id": 13,
+      "title": "Grind size matching",
+      "lesson_id": 4,
+      "active": true,
+      "preview": false,
+      "topicable_id": 2,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\H5P",
+      "summary": null,
+      "introduction": "Drag each grind size to the brewer it suits.",
+      "description": null,
+      "order": 3,
+      "json": null,
+      "can_skip": false,
+      "duration": "10 min"
+     }
+    ]
+   },
+   {
+    "id": 5,
+    "title": "V. Tasting",
+    "summary": "Describe what you taste, cup like a professional and check what you learned.",
+    "duration": "1 h 50 min",
+    "active": true,
+    "order": 5,
+    "course_id": 1,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 14,
+      "title": "The flavour wheel",
+      "lesson_id": 5,
+      "active": true,
+      "preview": false,
+      "topicable_id": 3,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\H5P",
+      "summary": null,
+      "introduction": "Flip the cards to learn the families of the SCA Coffee Taster's Flavor Wheel.",
+      "description": null,
+      "order": 1,
+      "json": null,
+      "can_skip": false,
+      "duration": "15 min"
+     },
+     {
+      "id": 15,
+      "title": "Cupping at home",
+      "lesson_id": 5,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Cmi5Au",
+      "summary": "Opens the guided cupping session. You need two coffees, four cups and a spoon.",
+      "introduction": "A guided cupping session with timers and a scoring form. Your scores are recorded in your learning record.",
+      "description": null,
+      "order": 2,
+      "json": null,
+      "can_skip": false,
+      "duration": "45 min"
+     },
+     {
+      "id": 16,
+      "title": "Tasting check",
+      "lesson_id": 5,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypeGift\\Models\\GiftQuiz",
+      "summary": null,
+      "introduction": "Eight questions, one of each kind. You have three attempts and 20 minutes.",
+      "description": null,
+      "order": 3,
+      "json": null,
+      "can_skip": false,
+      "duration": "15 min"
+     }
+    ]
+   },
+   {
+    "id": 6,
+    "title": "VI. Your signature cup",
+    "summary": "Design, test and write down a recipe that is yours.",
+    "duration": "1 h 30 min",
+    "active": true,
+    "order": 6,
+    "course_id": 1,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 17,
+      "title": "Design your recipe",
+      "lesson_id": 6,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypeProject\\Models\\Project",
+      "summary": null,
+      "introduction": "Brew three variations, photograph them and submit your recipe card. Your tutor replies with feedback.",
+      "description": null,
+      "order": 1,
+      "json": null,
+      "can_skip": false,
+      "duration": "75 min"
+     },
+     {
+      "id": 18,
+      "title": "Final reflections",
+      "lesson_id": 6,
+      "active": true,
+      "preview": false,
+      "topicable_id": 4,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+      "summary": null,
+      "introduction": "A reading list and a coffee glossary to keep.",
+      "description": null,
+      "order": 2,
+      "json": null,
+      "can_skip": true,
+      "duration": "15 min"
+     }
+    ]
+   }
+  ],
+  "poster_path": "course/1/posters/R94OXLyD9pPA9AdqiOE2lozvtrF7Sprc6HctARf0.png",
+  "active_from": null,
+  "active_to": null,
+  "hours_to_complete": 9,
+  "findable": true,
+  "scorm_sco_id": null,
+  "target_group": "Home brewers, café staff in their first year, food writers",
+  "users_count": 2,
+  "image_url": "http://storage.localhost/ulams-coffee/course/1/images/RASDSSPF7zfzymnRB1Ii05Na7uc6fkqscZbL8Y4u.png",
+  "video_url": "http://storage.localhost/ulams-coffee/course/1/videos/X8IAtZ8kKcn5BmKRnAzahm2oVlNdROSukX2jYLMM.mp4",
+  "poster_url": "http://storage.localhost/ulams-coffee/course/1/posters/R94OXLyD9pPA9AdqiOE2lozvtrF7Sprc6HctARf0.png",
+  "teaser_url": null,
+  "public": false,
+  "fields": {
+   "experience": "coffee",
+   "landing": {
+    "headline": "Learn coffee the slow way.",
+    "subheadline": "Six chapters. One cherry. Your best cup.",
+    "cta": "Start the free chapter",
+    "testimonials": [
+     {
+      "quote": "I finally understand why my V60 tastes sour.",
+      "author": "Maja, Gdańsk"
+     },
+     {
+      "quote": "It reads like a magazine and works like a course. I roasted my first batch after Chapter III.",
+      "author": "Daniel, Wrocław"
+     },
+     {
+      "quote": "The cupping session alone changed how our café trains new baristas.",
+      "author": "Aga, café owner, Poznań"
+     }
+    ],
+    "faq": [
+     {
+      "q": "Do I need an espresso machine?",
+      "a": "No. Everything in the course works with a pour-over dripper, a scale and a grinder."
+     },
+     {
+      "q": "How long do I have access?",
+      "a": "For life, including future updates of the chapters."
+     },
+     {
+      "q": "Is the first chapter really free?",
+      "a": "Yes: the welcome film and Chapter I open without an account."
+     }
+    ],
+    "newsletter": "Field notes"
+   }
+  },
+  "product": {
+   "id": 1,
+   "type": "single",
+   "name": "The Coffee Atlas — From Seed to Cup",
+   "description": "Six chapters, a roast simulator, a guided cupping session and a reviewed final project. Lifetime access.",
+   "price": 8900,
+   "price_old": null,
+   "tax_rate": 23,
+   "extra_fees": 0,
+   "purchasable": true,
+   "duration": null,
+   "calculated_duration": 0,
+   "limit_per_user": 1,
+   "limit_total": null,
+   "productables": [
+    {
+     "id": 1,
+     "morph_class": "Ulams\\Courses\\Models\\Course",
+     "productable_id": 1,
+     "productable_type": "App\\Models\\Course",
+     "quantity": 1,
+     "name": "The Coffee Atlas — From Seed to Cup",
+     "description": "**At five in the morning** on a hillside in Huila, Colombia, 1,750 metres above the sea, a picker reaches for a cherry the colour of a ripe plum. Six weeks and nine thousand kilometres later, its seed ends up in your grinder. This course follows that one cherry all the way, and teaches you what happens at every step and why it changes what you taste.\n\n*The Coffee Atlas* is a slow course. There are no streaks, no leaderboards and no timers you have to beat. There are six chapters you read, watch and listen to at your own pace, a roast simulator, a guided cupping session, and at the end a recipe that is yours.\n\n## What you will learn\n\n- Where coffee grows and why altitude, variety and species shape the cup\n- How washed, natural, honey and anaerobic processing work, and how to recognise them by taste\n- How to read a roast curve: turning point, first crack, development time\n- The maths of brewing: ratios, TDS and extraction yield, and how to fix a sour or bitter cup\n- How to cup like a Q-grader and describe coffee with the SCA flavour wheel\n- How to design, test and write down your own signature recipe\n\n## How it works\n\n| Chapter | You will |\n|---|---|\n| I. Origins | watch the harvest, explore the coffee belt, compare Arabica and Robusta |\n| II. The farm | hear from a producer, dissect a cherry, learn the processing methods |\n| III. Roasting | read a roast curve, roast a virtual batch, start your roaster's logbook |\n| IV. Brewing | master ratios and extraction, follow a pour-over masterclass |\n| V. Tasting | learn the flavour wheel, cup at home, take the tasting check |\n| VI. Your signature cup | brew three variations and send your recipe card to the tutors |\n\n## What you need\n\nA scale that reads 0.1 g, a burr grinder (or a roaster who grinds to order), a kettle, a pour-over dripper such as a V60, and two bags of freshly roasted coffee. About nine hours spread over a few weeks.\n\n## Your tutors\n\n**Inés Duarte** is a licensed Q-grader who grew up on a coffee farm near Pitalito in Huila. She has judged national cupping competitions in Colombia, Peru and Rwanda.\n\n**Tomasz Wierzba** has roasted specialty coffee in Kraków for twelve years. He teaches the roasting chapter and reviews every recipe card himself.\n\nFinish all six chapters and the final project to receive the certificate **Certified Home Barista — The Coffee Atlas**.\n",
+     "position": 1
+    }
+   ],
+   "teaser_url": null,
+   "poster_path": "http://storage.localhost/ulams-coffee/course/1/posters/R94OXLyD9pPA9AdqiOE2lozvtrF7Sprc6HctARf0.png",
+   "poster_url": "http://storage.localhost/ulams-coffee/course/1/posters/R94OXLyD9pPA9AdqiOE2lozvtrF7Sprc6HctARf0.png",
+   "buyable": false,
+   "owned": false,
+   "owned_quantity": 0,
+   "categories": [],
+   "tags": [
+    "coffee"
+   ],
+   "updated_at": "2026-10-08T15:49:17.000000Z",
+   "authors": [
+    {
+     "id": 2,
+     "first_name": "Inés",
+     "last_name": "Duarte",
+     "path_avatar": "avatars/2/avatar-ines.png",
+     "url_avatar": "http://storage.localhost/ulams-coffee/avatars/2/avatar-ines.png",
+     "categories": []
+    },
+    {
+     "id": 8,
+     "first_name": "Tomasz",
+     "last_name": "Wierzba",
+     "path_avatar": "avatars/8/avatar-tomasz.png",
+     "url_avatar": "http://storage.localhost/ulams-coffee/avatars/8/avatar-tomasz.png",
+     "categories": []
+    }
+   ],
+   "available_quantity": null,
+   "sold_quantity": 1,
+   "gross_price": 10947,
+   "subscription_period": null,
+   "subscription_duration": null,
+   "recursive": false,
+   "has_trial": null,
+   "trial_period": null,
+   "trial_duration": null,
+   "fields": null,
+   "language": null,
+   "related_products": []
+  },
+  "related_product": null
+ },
+ "products": [
+  {
+   "id": 1,
+   "type": "single",
+   "name": "The Coffee Atlas — From Seed to Cup",
+   "description": "Six chapters, a roast simulator, a guided cupping session and a reviewed final project. Lifetime access.",
+   "price": 8900,
+   "price_old": null,
+   "tax_rate": 23,
+   "extra_fees": 0,
+   "purchasable": true,
+   "duration": null,
+   "calculated_duration": 0,
+   "limit_per_user": 1,
+   "limit_total": null,
+   "productables": [
+    {
+     "id": 1,
+     "morph_class": "Ulams\\Courses\\Models\\Course",
+     "productable_id": 1,
+     "productable_type": "App\\Models\\Course",
+     "quantity": 1,
+     "name": "The Coffee Atlas — From Seed to Cup",
+     "position": 1
+    }
+   ],
+   "teaser_url": null,
+   "poster_path": "http://storage.localhost/ulams-coffee/course/1/posters/R94OXLyD9pPA9AdqiOE2lozvtrF7Sprc6HctARf0.png",
+   "poster_url": "http://storage.localhost/ulams-coffee/course/1/posters/R94OXLyD9pPA9AdqiOE2lozvtrF7Sprc6HctARf0.png",
+   "buyable": false,
+   "owned": false,
+   "owned_quantity": 0,
+   "categories": [],
+   "tags": [
+    "coffee"
+   ],
+   "updated_at": "2026-10-08T15:49:17.000000Z",
+   "authors": [
+    {
+     "id": 2,
+     "first_name": "Inés",
+     "last_name": "Duarte",
+     "path_avatar": "avatars/2/avatar-ines.png",
+     "url_avatar": "http://storage.localhost/ulams-coffee/avatars/2/avatar-ines.png",
+     "categories": []
+    },
+    {
+     "id": 8,
+     "first_name": "Tomasz",
+     "last_name": "Wierzba",
+     "path_avatar": "avatars/8/avatar-tomasz.png",
+     "url_avatar": "http://storage.localhost/ulams-coffee/avatars/8/avatar-tomasz.png",
+     "categories": []
+    }
+   ],
+   "available_quantity": null,
+   "sold_quantity": 1,
+   "gross_price": 10947,
+   "subscription_period": null,
+   "subscription_duration": null,
+   "recursive": false,
+   "has_trial": null,
+   "trial_period": null,
+   "trial_duration": null,
+   "fields": null,
+   "language": null,
+   "related_products": []
+  },
+  {
+   "id": 2,
+   "type": "bundle",
+   "name": "Taste Makers",
+   "description": "The Coffee Atlas course plus the live cupping masterclass with Inés Duarte.",
+   "price": 10900,
+   "price_old": 12800,
+   "tax_rate": 23,
+   "extra_fees": 0,
+   "purchasable": true,
+   "duration": null,
+   "calculated_duration": 1,
+   "limit_per_user": 1,
+   "limit_total": null,
+   "productables": [
+    {
+     "id": 1,
+     "morph_class": "App\\Models\\Webinar",
+     "productable_id": 1,
+     "productable_type": "App\\Models\\Webinar",
+     "quantity": 1,
+     "name": "Live cupping with Inés",
+     "position": 2
+    }
+   ],
+   "teaser_url": null,
+   "poster_path": null,
+   "poster_url": null,
+   "buyable": false,
+   "owned": false,
+   "owned_quantity": 0,
+   "categories": [],
+   "tags": [],
+   "updated_at": "2026-10-08T15:49:17.000000Z",
+   "authors": [
+    {
+     "id": 2,
+     "first_name": "Inés",
+     "last_name": "Duarte",
+     "path_avatar": "avatars/2/avatar-ines.png",
+     "url_avatar": "http://storage.localhost/ulams-coffee/avatars/2/avatar-ines.png",
+     "categories": null
+    }
+   ],
+   "available_quantity": null,
+   "sold_quantity": 0,
+   "gross_price": 13407,
+   "subscription_period": null,
+   "subscription_duration": null,
+   "recursive": false,
+   "has_trial": null,
+   "trial_period": null,
+   "trial_duration": null,
+   "fields": null,
+   "language": null,
+   "related_products": []
+  }
+ ],
+ "webinars": [
+  {
+   "id": 1,
+   "created_at": "2026-10-08T14:48:31.000000Z",
+   "updated_at": "2026-10-08T14:48:31.000000Z",
+   "active_from": "2026-11-14T17:00:00.000000Z",
+   "active_to": "2026-11-14T18:30:00.000000Z",
+   "name": "Live cupping with Inés",
+   "status": "published",
+   "description": "<p>Cup four Colombian lots live with Inés Duarte: two washed, one honey, one anaerobic. Order the tasting kit at least a week before, or follow along with any two coffees you have at home.</p>",
+   "short_desc": "Live cupping session with Q-grader Inés Duarte.",
+   "agenda": "<ol><li>18:00 Setting up the table</li><li>18:15 Dry fragrance and wet aroma</li><li>18:35 Tasting and scoring</li><li>19:15 Q&amp;A</li></ol>",
+   "duration": "1.5",
+   "trainers": [
+    {
+     "id": 2,
+     "first_name": "Inés",
+     "last_name": "Duarte",
+     "email": "tutor@coffee.ulams.app",
+     "path_avatar": "avatars/2/avatar-ines.png",
+     "url_avatar": "http://storage.localhost/ulams-coffee/avatars/2/avatar-ines.png",
+     "interests": [],
+     "categories": null
+    }
+   ],
+   "image_path": "webinar/1/images/webinar-cupping.png",
+   "image_url": "http://storage.localhost/ulams-coffee/webinar/1/images/webinar-cupping.png",
+   "logotype_path": null,
+   "logotype_url": "",
+   "yt_url": null,
+   "tags": [
+    {
+     "id": 7,
+     "title": "coffee",
+     "morphable_type": "Ulams\\Webinar\\Models\\Webinar",
+     "morphable_id": 1,
+     "created_at": "2026-10-08T14:48:31.000000Z",
+     "updated_at": "2026-10-08T14:48:31.000000Z"
+    },
+    {
+     "id": 8,
+     "title": "cupping",
+     "morphable_type": "Ulams\\Webinar\\Models\\Webinar",
+     "morphable_id": 1,
+     "created_at": "2026-10-08T14:48:31.000000Z",
+     "updated_at": "2026-10-08T14:48:31.000000Z"
+    }
+   ],
+   "deadline": "2026-11-14T19:30:00.000000Z",
+   "analyze_enabled": false,
+   "product": null,
+   "in_coming": true,
+   "is_ended": false,
+   "is_started": false
+  }
+ ],
+ "events": [
+  {
+   "id": 1,
+   "created_at": "2026-10-08T14:48:31.000000Z",
+   "updated_at": "2026-10-08T14:48:31.000000Z",
+   "name": "Home cupping table at the roastery",
+   "description": "<p>Join Tomasz at the roastery in Kraków for a Saturday morning cupping: six coffees from three continents, roasted the week before, and a tour of the 15 kg drum roaster.</p>",
+   "short_desc": "Saturday cupping and roastery tour with Tomasz Wierzba.",
+   "started_at": "2026-11-28 10:00:00",
+   "finished_at": "2026-11-28 13:00:00",
+   "max_participants": 12,
+   "place": "Wierzba Roasters, ul. Józefa 12, Kraków",
+   "program": "Cupping, roastery tour, Q&A",
+   "categories": [],
+   "status": "published",
+   "authors": [
+    {
+     "id": 8,
+     "first_name": "Tomasz",
+     "last_name": "Wierzba",
+     "path_avatar": "avatars/8/avatar-tomasz.png"
+    }
+   ],
+   "image_path": "stationary-events/1/images/event-roastery.png",
+   "image_url": "http://storage.localhost/ulams-coffee/stationary-events/1/images/event-roastery.png",
+   "in_coming": true,
+   "is_ended": false,
+   "is_started": false,
+   "agenda": null,
+   "product": null,
+   "related_product": null
+  }
+ ],
+ "tutors": [
+  {
+   "id": 2,
+   "first_name": "Inés",
+   "last_name": "Duarte",
+   "email": "tutor@coffee.ulams.app",
+   "path_avatar": "avatars/2/avatar-ines.png",
+   "url_avatar": "http://storage.localhost/ulams-coffee/avatars/2/avatar-ines.png",
+   "interests": [],
+   "categories": []
+  },
+  {
+   "id": 8,
+   "first_name": "Tomasz",
+   "last_name": "Wierzba",
+   "email": "tomasz.wierzba@demo.ulams.app",
+   "path_avatar": "avatars/8/avatar-tomasz.png",
+   "url_avatar": "http://storage.localhost/ulams-coffee/avatars/8/avatar-tomasz.png",
+   "interests": [],
+   "categories": []
+  }
+ ]
+}

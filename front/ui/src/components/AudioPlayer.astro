@@ -1,0 +1,73 @@
+---
+interface Props {
+  src: string;
+  title: string;
+  seconds?: number;
+}
+const { src, title, seconds } = Astro.props;
+const bars = Array.from({ length: 48 }, (_, i) => 20 + Math.round(70 * Math.abs(Math.sin(i * 1.7) * Math.cos(i * 0.6))));
+const length = seconds ? `${Math.floor(seconds / 60)}:${String(Math.round(seconds % 60)).padStart(2, "0")}` : null;
+---
+
+<div class="u-audio">
+  <div class="u-audio__wave" aria-hidden="true">
+    {bars.map((h, i) => <i style={`--h:${h}%;--d:${i * 40}ms`} />)}
+  </div>
+  <p class="u-audio__title">
+    {title}
+    {length && <span>{length}</span>}
+  </p>
+  <audio controls preload="metadata" src={src}>
+    <a href={src}>Download the recording</a>
+  </audio>
+</div>
+
+<style>
+  .u-audio {
+    display: grid;
+    gap: 14px;
+    padding: 22px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-card-bg);
+  }
+  .u-audio__wave {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 72px;
+  }
+  .u-audio__wave i {
+    flex: 1;
+    height: var(--h);
+    border-radius: 2px;
+    background: var(--ulams-color-primary);
+    opacity: 0.55;
+    animation: u-wave 1.6s ease-in-out infinite alternate;
+    animation-delay: var(--d);
+    transform-origin: center;
+  }
+  .u-audio:has(audio:not([paused])) .u-audio__wave i {
+    animation-play-state: running;
+  }
+  @keyframes u-wave {
+    to {
+      transform: scaleY(0.45);
+      opacity: 0.9;
+    }
+  }
+  .u-audio__title {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-weight: 600;
+  }
+  .u-audio__title span {
+    font-family: var(--ulams-font-mono);
+    color: var(--ulams-color-muted);
+    font-weight: 400;
+  }
+  .u-audio audio {
+    width: 100%;
+  }
+</style>

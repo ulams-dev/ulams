@@ -1,0 +1,92 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  items: Array<{ q: string; a: string }>;
+}
+const { id = "faq", eyebrow, title, items } = Astro.props;
+---
+
+<section class="u-section u-faq" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <div class="u-container u-faq__wrap">
+    <div class="u-section-head u-section-head--center" data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+    </div>
+    <div class="u-faq__list">
+      {
+        items.map((item, i) => (
+          <details class="u-faq__item" data-reveal style={`--reveal-i:${i % 4}`} name={`${id}-group`}>
+            <summary>
+              <span>{item.q}</span>
+              <Icon name="chevron" class="u-faq__chev" />
+            </summary>
+            <div class="u-faq__answer">
+              <p>{item.a}</p>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .u-faq__wrap {
+    max-width: 860px;
+  }
+  .u-faq__list {
+    display: grid;
+    gap: 10px;
+  }
+  .u-faq__item {
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-card-bg);
+    transition: border-color 0.3s;
+    interpolate-size: allow-keywords;
+  }
+  .u-faq__item:hover,
+  .u-faq__item[open] {
+    border-color: color-mix(in srgb, var(--ulams-color-primary) 55%, var(--ulams-color-border));
+  }
+  .u-faq__item summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    min-height: 56px;
+    padding: 16px 20px;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+  }
+  .u-faq__item summary::-webkit-details-marker {
+    display: none;
+  }
+  .u-faq__item :global(.u-faq__chev) {
+    transform: rotate(90deg);
+    transition: transform 0.35s var(--ulams-ease);
+    color: var(--ulams-color-primary);
+  }
+  .u-faq__item[open] :global(.u-faq__chev) {
+    transform: rotate(-90deg);
+  }
+  .u-faq__item::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition:
+      block-size 0.4s var(--ulams-ease),
+      content-visibility 0.4s allow-discrete;
+  }
+  .u-faq__item[open]::details-content {
+    block-size: auto;
+  }
+  .u-faq__answer {
+    padding: 0 20px 20px;
+    color: var(--ulams-color-muted);
+  }
+</style>

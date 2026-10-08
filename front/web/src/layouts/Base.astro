@@ -1,0 +1,78 @@
+---
+/**
+ * Page shell: tenant theme (CSS custom properties inlined, no extra request), self-hosted
+ * fonts with metric-matched fallbacks, skip link, demo badge and the scroll-reveal script.
+ */
+import { Font } from "astro:assets";
+import baseCss from "@ulams/ui/styles/base.css?inline";
+import coffeeCss from "@ulams/ui/styles/themes/coffee.css?inline";
+import oncallCss from "@ulams/ui/styles/themes/oncall.css?inline";
+import nightskyCss from "@ulams/ui/styles/themes/nightsky.css?inline";
+import type { ThemeName } from "@ulams/ui/registry";
+import DemoBadge from "../components/DemoBadge.astro";
+import { THEME_COLOR } from "../lib/theme.ts";
+
+interface Props {
+  theme: ThemeName;
+  title: string;
+  description?: string;
+  lang?: string;
+  /** Show the demo badge (tenant admin link, other demos). */
+  demo?: { adminUrl: string; slug: string } | null;
+  /** Extra class on <body>. */
+  bodyClass?: string;
+}
+
+const { theme, title, description, lang = "en", demo, bodyClass } = Astro.props;
+const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss }[theme];
+---
+
+<!doctype html>
+<html lang={lang} data-theme={theme}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <meta name="theme-color" content={THEME_COLOR[theme]} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {
+      theme === "coffee" && (
+        <>
+          <Font cssVariable="--font-playfair" preload={[{ weight: "400", style: "normal" }]} />
+          <Font cssVariable="--font-jakarta" preload={[{ weight: "400" }]} />
+        </>
+      )
+    }
+    {
+      theme === "oncall" && (
+        <>
+          <Font cssVariable="--font-space-grotesk" preload={[{ weight: "600" }]} />
+          <Font cssVariable="--font-inter" preload={[{ weight: "400" }]} />
+          <Font cssVariable="--font-jetbrains" preload={[{ weight: "400" }]} />
+        </>
+      )
+    }
+    {
+      theme === "nightsky" && (
+        <>
+          <Font cssVariable="--font-comfortaa" preload={[{ weight: "700" }]} />
+          <Font cssVariable="--font-quicksand" preload={[{ weight: "500" }]} />
+        </>
+      )
+    }
+    <style is:inline set:html={baseCss + themeCss}></style>
+    <slot name="head" />
+  </head>
+  <body class={bodyClass}>
+    <a class="u-skip" href="#main">Skip to content</a>
+    <slot />
+    {demo && <DemoBadge adminUrl={demo.adminUrl} slug={demo.slug} />}
+    <script>
+      import { initReveal } from "@ulams/ui/elements/reveal.ts";
+      import { initNavigationProgress } from "@ulams/ui/elements/navigation.ts";
+      initReveal();
+      initNavigationProgress();
+    </script>
+  </body>
+</html>

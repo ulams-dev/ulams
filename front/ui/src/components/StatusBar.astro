@@ -1,0 +1,106 @@
+---
+interface Item {
+  label: string;
+  tone?: "neutral" | "ok" | "warn" | "alert" | "info";
+}
+interface Props {
+  variant?: "ribbon" | "status";
+  items: Item[];
+}
+const { variant = "ribbon", items } = Astro.props;
+---
+
+<div class={`u-statusbar u-statusbar--${variant}`}>
+  <ul class="u-container" role="list">
+    {
+      items.map((item) => (
+        <li data-tone={item.tone ?? "neutral"}>
+          {variant === "status" && <span class="u-dot" aria-hidden="true" />}
+          {item.label}
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .u-statusbar ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 28px;
+    margin: 0 auto;
+    padding-block: 9px;
+    list-style: none;
+  }
+  .u-statusbar li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .u-statusbar--ribbon {
+    border-block: 1px solid var(--ulams-color-border);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ulams-color-muted);
+  }
+  .u-statusbar--ribbon li + li::before {
+    content: "·";
+    margin-right: 20px;
+    color: var(--ulams-color-primary);
+  }
+  .u-statusbar--ribbon li:last-child {
+    margin-left: auto;
+  }
+  .u-statusbar--ribbon li:last-child::before {
+    content: none;
+  }
+  .u-statusbar--status {
+    border-bottom: 1px solid var(--ulams-color-border);
+    background: var(--ulams-color-surface);
+    font-family: var(--ulams-font-mono);
+    font-size: 0.75rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ulams-color-muted);
+  }
+  [data-tone="ok"] .u-dot {
+    background: var(--ulams-color-positive);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--ulams-color-positive) 60%, transparent);
+    animation: u-pulse 2s infinite;
+  }
+  [data-tone="warn"] .u-dot {
+    background: var(--ulams-color-warn);
+  }
+  [data-tone="alert"] .u-dot {
+    background: var(--ulams-color-error);
+  }
+  [data-tone="info"] .u-dot {
+    background: var(--ulams-color-info);
+  }
+  @keyframes u-pulse {
+    70% {
+      box-shadow: 0 0 0 6px transparent;
+    }
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
+  }
+  @media (max-width: 640px) {
+    .u-statusbar ul {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .u-statusbar--ribbon li:last-child {
+      margin-left: 0;
+    }
+  }
+</style>

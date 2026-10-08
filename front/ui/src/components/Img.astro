@@ -1,0 +1,41 @@
+---
+/**
+ * Image through Astro's image service: WebP, responsive widths, explicit size (no CLS).
+ * Works for public files ("/landing/…") and the tenant storage (remote, allow-listed).
+ */
+import { Image } from "astro:assets";
+
+interface Props {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  /** Rendered width in CSS, for `sizes` (default 100vw). */
+  sizes?: string;
+  /** LCP image: eager + high priority. */
+  priority?: boolean;
+  class?: string;
+  /** Crop to this aspect (width/height) using object-fit in CSS. */
+  fit?: "cover" | "contain";
+}
+
+const { src, alt, width, height, sizes = "100vw", priority = false, class: className, fit = "cover" } = Astro.props;
+const widths = [360, 640, 960, 1280, 1600].filter((w) => w <= width * 1.01);
+if (widths.length === 0 || widths[widths.length - 1]! < width) widths.push(width);
+---
+
+<Image
+  src={src}
+  alt={alt}
+  width={width}
+  height={height}
+  widths={widths}
+  sizes={sizes}
+  format="webp"
+  quality={78}
+  loading={priority ? "eager" : "lazy"}
+  fetchpriority={priority ? "high" : "auto"}
+  decoding={priority ? "sync" : "async"}
+  class={className}
+  style={`object-fit:${fit}`}
+/>

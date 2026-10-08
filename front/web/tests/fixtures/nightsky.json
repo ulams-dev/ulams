@@ -1,0 +1,811 @@
+{
+ "settings": {
+  "global": {
+   "companyName": "Night Sky Explorers",
+   "frontURL": "http://nightsky.app.localhost"
+  },
+  "theme": {
+   "theme": "nightsky",
+   "accent": "#FFD23F"
+  }
+ },
+ "course": {
+  "id": 2,
+  "created_at": "2026-10-08T15:00:48.000000Z",
+  "updated_at": "2026-10-08T15:00:55.000000Z",
+  "title": "Night Sky Explorers",
+  "summary": "Build your own star map mission by mission. Spot constellations, explore planets, and earn your Junior Astronomer badge.",
+  "image_path": "course/2/images/ZxeoOLJ7U5xhWjooXHIG17ypnYoahTYYjx8Ulnpw.png",
+  "video_path": "course/2/videos/SrjlAB7PqgzBVkJV2V0Zeqx8WIlcBfEdwqgMvLxp.mp4",
+  "duration": "7 missions · 10–15 min each",
+  "author_id": 2,
+  "author": {
+   "id": 2,
+   "first_name": "Ada",
+   "last_name": "Kowalczyk",
+   "email": "tutor@nightsky.ulams.app",
+   "path_avatar": "avatars/2/avatar-ada.png",
+   "url_avatar": "http://storage.localhost/ulams-nightsky/avatars/2/avatar-ada.png",
+   "interests": [],
+   "categories": []
+  },
+  "authors": [
+   {
+    "id": 2,
+    "first_name": "Ada",
+    "last_name": "Kowalczyk",
+    "email": "tutor@nightsky.ulams.app",
+    "path_avatar": "avatars/2/avatar-ada.png",
+    "url_avatar": "http://storage.localhost/ulams-nightsky/avatars/2/avatar-ada.png",
+    "interests": [],
+    "categories": []
+   },
+   {
+    "id": 8,
+    "first_name": "Orbi",
+    "last_name": "the Robot",
+    "email": "orbi@demo.ulams.app",
+    "path_avatar": "avatars/8/avatar-orbi.png",
+    "url_avatar": "http://storage.localhost/ulams-nightsky/avatars/8/avatar-orbi.png",
+    "interests": [],
+    "categories": []
+   }
+  ],
+  "status": "published",
+  "subtitle": "A 7-mission journey through planets, stars and galaxies",
+  "language": "en",
+  "description": "**Your adventure to the stars starts tonight!** Night Sky Explorers is a seven-mission journey for curious kids aged 10–14. With astrophysicist Dr. Ada Kowalczyk and Orbi the robot guide you will watch the Moon change, fly to Mars, see how stars are born and, at the end, build your very own star map.\n\n## The missions\n\n| Mission | What you do |\n|---|---|\n| 1. Lift-off | meet Orbi, find tonight's sky on a star chart |\n| 2. Our Moon | move the Moon around Earth, start a 30-day Moon diary |\n| 3. Planets | meet all eight planets, listen to Saturn, fly to Mars in 360° |\n| 4. Stars | watch a star being born, flip through the life of a star |\n| 5. Constellations | connect the stars in a game, go on a backyard sky safari |\n| 6. Galaxies | find out how big space really is, take the mission quiz |\n| 7. Your star map | draw or photograph your own constellation map |\n\nEach mission takes **10–15 minutes**. Earn stars, keep a streak and unlock badges: Moon Watcher, Planet Hopper, Star Finder and Junior Astronomer.\n\n## For parents\n\n- **Safe and ad-free.** No chat with strangers, no ads, no in-app purchases for kids.\n- **Progress emails.** A short weekly note on what your child explored, with an idea for a family night outside.\n- **Offline too.** Most activities happen under the real sky, with a printable Moon diary and star map.\n- Mission 1 is **free**. The whole course is included in the family subscription (€6/month).\n\n## For teachers\n\nThe classroom package gives you up to 30 pupil accounts, printable worksheets and a teacher's guide for an astronomy club. Polish narration is available for every video.\n\nFinish all seven missions to earn the **Junior Astronomer** badge and a printable diploma.\n",
+  "categories": [
+   {
+    "id": 2,
+    "name": "Astronomy",
+    "slug": "astronomy",
+    "is_active": true,
+    "parent_id": 1,
+    "icon": null,
+    "icon_class": null,
+    "created_at": "2026-10-08T14:49:00.000000Z",
+    "updated_at": "2026-10-08T14:49:00.000000Z",
+    "description": null,
+    "order": 1,
+    "pivot": {
+     "course_id": 2,
+     "category_id": 2
+    }
+   },
+   {
+    "id": 4,
+    "name": "Space",
+    "slug": "space",
+    "is_active": true,
+    "parent_id": 3,
+    "icon": null,
+    "icon_class": null,
+    "created_at": "2026-10-08T14:49:00.000000Z",
+    "updated_at": "2026-10-08T14:49:00.000000Z",
+    "description": null,
+    "order": 1,
+    "pivot": {
+     "course_id": 2,
+     "category_id": 4
+    }
+   }
+  ],
+  "tags": [
+   {
+    "id": 24,
+    "title": "astronomy",
+    "morphable_type": "Ulams\\Courses\\Models\\Course",
+    "morphable_id": 2,
+    "created_at": "2026-10-08T15:49:27.000000Z",
+    "updated_at": "2026-10-08T15:49:27.000000Z"
+   },
+   {
+    "id": 25,
+    "title": "kids",
+    "morphable_type": "Ulams\\Courses\\Models\\Course",
+    "morphable_id": 2,
+    "created_at": "2026-10-08T15:49:27.000000Z",
+    "updated_at": "2026-10-08T15:49:27.000000Z"
+   },
+   {
+    "id": 26,
+    "title": "planets",
+    "morphable_type": "Ulams\\Courses\\Models\\Course",
+    "morphable_id": 2,
+    "created_at": "2026-10-08T15:49:27.000000Z",
+    "updated_at": "2026-10-08T15:49:27.000000Z"
+   },
+   {
+    "id": 27,
+    "title": "constellations",
+    "morphable_type": "Ulams\\Courses\\Models\\Course",
+    "morphable_id": 2,
+    "created_at": "2026-10-08T15:49:27.000000Z",
+    "updated_at": "2026-10-08T15:49:27.000000Z"
+   },
+   {
+    "id": 28,
+    "title": "family",
+    "morphable_type": "Ulams\\Courses\\Models\\Course",
+    "morphable_id": 2,
+    "created_at": "2026-10-08T15:49:27.000000Z",
+    "updated_at": "2026-10-08T15:49:27.000000Z"
+   }
+  ],
+  "level": "Beginner (ages 10–14)",
+  "lessons": [
+   {
+    "id": 8,
+    "title": "Mission 1 · Lift-off",
+    "summary": "Meet Orbi and find tonight's sky. This mission is free.",
+    "duration": "10 min",
+    "active": true,
+    "order": 1,
+    "course_id": 2,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 16,
+      "title": "Meet Orbi",
+      "lesson_id": 8,
+      "active": true,
+      "preview": true,
+      "topicable_id": 3,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Video",
+      "summary": "Seven missions, one star map, lots of stars to collect.",
+      "introduction": "Orbi the robot guide says hello and explains your mission.",
+      "description": "**Read along**\n\nORBI: Hi, I'm Orbi! I'm a robot guide, and I love the night sky.\n\nORBI: Your mission is to build your very own star map. Seven missions, about ten minutes each.\n\nORBI: My friend Dr. Ada studies how stars are born. She will look at your star map at the end!\n\nORBI: Ready? Three… two… one… lift-off!\n\n*Polish narration: switch the audio language to PL in the player.*",
+      "order": 1,
+      "json": {
+       "ffmpeg": {
+        "state": "finished",
+        "path": "course/2/topic/16/video/hls.m3u8"
+       },
+       "progress_notification": true
+      },
+      "can_skip": false,
+      "duration": "2 min"
+     },
+     {
+      "id": 17,
+      "title": "Your sky tonight",
+      "lesson_id": 8,
+      "active": true,
+      "preview": true,
+      "topicable_id": 2,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Image",
+      "summary": "Find the Big Dipper low in the north, Cassiopeia high above you and the Moon in the south-east.",
+      "introduction": "A star chart of tonight's sky. Hold it above your head with N pointing north.",
+      "description": null,
+      "order": 2,
+      "json": null,
+      "can_skip": false,
+      "duration": "8 min"
+     }
+    ]
+   },
+   {
+    "id": 9,
+    "title": "Mission 2 · Our Moon",
+    "summary": "Why the Moon changes shape, and a diary to watch it for 30 days.",
+    "duration": "15 min",
+    "active": true,
+    "order": 2,
+    "course_id": 2,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 18,
+      "title": "Why does the Moon change?",
+      "lesson_id": 9,
+      "active": true,
+      "preview": false,
+      "topicable_id": 3,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\H5P",
+      "summary": null,
+      "introduction": "Drag each Moon phase to the right place on the Moon's path around Earth.",
+      "description": null,
+      "order": 1,
+      "json": null,
+      "can_skip": false,
+      "duration": "8 min"
+     },
+     {
+      "id": 19,
+      "title": "Moon diary",
+      "lesson_id": 9,
+      "active": true,
+      "preview": false,
+      "topicable_id": 2,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\PDF",
+      "summary": "Draw the Moon every evening for 30 days. How long from one full Moon to the next?",
+      "introduction": "A printable 30-day Moon observation sheet.",
+      "description": null,
+      "order": 2,
+      "json": null,
+      "can_skip": false,
+      "duration": "5 min"
+     }
+    ]
+   },
+   {
+    "id": 10,
+    "title": "Mission 3 · Planets",
+    "summary": "Meet all eight planets, listen to Saturn and fly to Mars.",
+    "duration": "15 min",
+    "active": true,
+    "order": 3,
+    "course_id": 2,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 20,
+      "title": "Planet parade",
+      "lesson_id": 10,
+      "active": true,
+      "preview": false,
+      "topicable_id": 4,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+      "summary": "My Very Excellent Mother Just Served Us Noodles: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune.",
+      "introduction": "Short facts and big pictures of all eight planets.",
+      "description": null,
+      "order": 1,
+      "json": null,
+      "can_skip": false,
+      "duration": "6 min"
+     },
+     {
+      "id": 21,
+      "title": "Sounds of space",
+      "lesson_id": 10,
+      "active": true,
+      "preview": false,
+      "topicable_id": 2,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Audio",
+      "summary": "Sonification turns measurements (like radio waves or brightness) into notes you can hear.",
+      "introduction": "Space is silent, but scientists turn data into sound. Listen to Saturn's rings as music!",
+      "description": "**Read-aloud script**\n\nORBI: Space is silent. There is no air to carry sound.\n\nDR. ADA: But spacecraft like Cassini measured radio waves around Saturn. Scientists turned those measurements into sound. This is called **sonification**.\n\nORBI: The low hum is Saturn's radio waves. The rising whistles are particles zooming past the rings.\n\nDR. ADA: Close your eyes. You are flying between the rings of Saturn, 1.4 billion km from home.\n\n*This track is a sonification-style soundscape made for the course. Polish narration is available on request for classroom packages.*",
+      "order": 2,
+      "json": null,
+      "can_skip": false,
+      "duration": "4 min"
+     },
+     {
+      "id": 22,
+      "title": "Fly to Mars",
+      "lesson_id": 10,
+      "active": true,
+      "preview": false,
+      "topicable_id": 2,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\OEmbed",
+      "summary": "Look for the rover's wheels, rocks and the edge of Jezero Crater on the horizon.",
+      "introduction": "A 360° panorama of Mars from images taken by NASA's Perseverance rover. Drag to look around!",
+      "description": null,
+      "order": 3,
+      "json": null,
+      "can_skip": false,
+      "duration": "5 min"
+     }
+    ]
+   },
+   {
+    "id": 11,
+    "title": "Mission 4 · Stars",
+    "summary": "How stars are born, live and end.",
+    "duration": "12 min",
+    "active": true,
+    "order": 4,
+    "course_id": 2,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 23,
+      "title": "How stars are born",
+      "lesson_id": 11,
+      "active": true,
+      "preview": false,
+      "topicable_id": 4,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Video",
+      "summary": "Nebula → gravity squeezes a clump → the centre gets hot enough → the star switches on → leftovers make planets.",
+      "introduction": "An animated explainer: from a cloud of gas to a shining star.",
+      "description": null,
+      "order": 1,
+      "json": {
+       "chapters": [
+        {
+         "time": 5,
+         "title": "A giant cloud"
+        },
+        {
+         "time": 10,
+         "title": "Gravity pulls it together"
+        },
+        {
+         "time": 15,
+         "title": "The star switches on"
+        },
+        {
+         "time": 20,
+         "title": "Leftovers make planets"
+        }
+       ],
+       "ffmpeg": {
+        "state": "finished",
+        "path": "course/2/topic/23/video/hls.m3u8"
+       },
+       "progress_notification": true
+      },
+      "can_skip": false,
+      "duration": "4 min"
+     },
+     {
+      "id": 24,
+      "title": "Star life cycle",
+      "lesson_id": 11,
+      "active": true,
+      "preview": false,
+      "topicable_id": 4,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\H5P",
+      "summary": null,
+      "introduction": "Flip the cards: nebula → main sequence → red giant → white dwarf.",
+      "description": null,
+      "order": 2,
+      "json": null,
+      "can_skip": false,
+      "duration": "8 min"
+     }
+    ]
+   },
+   {
+    "id": 12,
+    "title": "Mission 5 · Constellations",
+    "summary": "Draw constellations, then find them in the real sky.",
+    "duration": "15 min",
+    "active": true,
+    "order": 5,
+    "course_id": 2,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 25,
+      "title": "Connect the stars",
+      "lesson_id": 12,
+      "active": true,
+      "preview": false,
+      "topicable_id": 2,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\ScormSco",
+      "summary": "Draw all three to earn 120 stars. Hints cost 5 points.",
+      "introduction": "A game: draw the Big Dipper, Cassiopeia and Orion by connecting the stars.",
+      "description": null,
+      "order": 1,
+      "json": null,
+      "can_skip": false,
+      "duration": "8 min"
+     },
+     {
+      "id": 26,
+      "title": "Sky safari",
+      "lesson_id": 12,
+      "active": true,
+      "preview": false,
+      "topicable_id": 2,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Cmi5Au",
+      "summary": "Spot four things to unlock the Star Finder badge.",
+      "introduction": "A backyard observation challenge. Go outside with a grown-up and check in what you saw.",
+      "description": null,
+      "order": 2,
+      "json": null,
+      "can_skip": false,
+      "duration": "15 min"
+     }
+    ]
+   },
+   {
+    "id": 13,
+    "title": "Mission 6 · Galaxies",
+    "summary": "How big space is, and a quiz to check your explorer skills.",
+    "duration": "15 min",
+    "active": true,
+    "order": 6,
+    "course_id": 2,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 27,
+      "title": "How big is space?",
+      "lesson_id": 13,
+      "active": true,
+      "preview": false,
+      "topicable_id": 5,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+      "summary": "Moonlight takes 1.3 seconds to reach us, sunlight 8 minutes, starlight from Andromeda 2.5 million years.",
+      "introduction": "Scale comparisons and simple space maths: light travels 300,000 km every second.",
+      "description": null,
+      "order": 1,
+      "json": null,
+      "can_skip": false,
+      "duration": "7 min"
+     },
+     {
+      "id": 28,
+      "title": "Mission quiz",
+      "lesson_id": 13,
+      "active": true,
+      "preview": false,
+      "topicable_id": 2,
+      "topicable_type": "Ulams\\TopicTypeGift\\Models\\GiftQuiz",
+      "summary": null,
+      "introduction": "Eight questions, one of each kind. You have 3 hearts (attempts). Good luck, explorer!",
+      "description": null,
+      "order": 2,
+      "json": null,
+      "can_skip": false,
+      "duration": "8 min"
+     }
+    ]
+   },
+   {
+    "id": 14,
+    "title": "Mission 7 · Your star map",
+    "summary": "Make your own star map and get a sticker from Dr. Ada.",
+    "duration": "20 min",
+    "active": true,
+    "order": 7,
+    "course_id": 2,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 29,
+      "title": "Build your star map",
+      "lesson_id": 14,
+      "active": true,
+      "preview": false,
+      "topicable_id": 2,
+      "topicable_type": "Ulams\\TopicTypeProject\\Models\\Project",
+      "summary": null,
+      "introduction": "Draw or photograph your own constellation map and upload it. Dr. Ada sends you a sticker.",
+      "description": null,
+      "order": 1,
+      "json": null,
+      "can_skip": false,
+      "duration": "20 min"
+     },
+     {
+      "id": 30,
+      "title": "Bonus: space jokes",
+      "lesson_id": 14,
+      "active": true,
+      "preview": false,
+      "topicable_id": 6,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+      "summary": null,
+      "introduction": "Just for fun!",
+      "description": null,
+      "order": 2,
+      "json": null,
+      "can_skip": true,
+      "duration": "3 min"
+     }
+    ]
+   }
+  ],
+  "poster_path": "course/2/posters/FmYSX3KJnuPrcQp61wcxtECnOn8of2lNqg7O3so0.png",
+  "active_from": null,
+  "active_to": null,
+  "hours_to_complete": 3,
+  "findable": true,
+  "scorm_sco_id": null,
+  "target_group": "Curious kids, homeschool families, teachers running a club",
+  "users_count": 0,
+  "image_url": "http://storage.localhost/ulams-nightsky/course/2/images/ZxeoOLJ7U5xhWjooXHIG17ypnYoahTYYjx8Ulnpw.png",
+  "video_url": "http://storage.localhost/ulams-nightsky/course/2/videos/SrjlAB7PqgzBVkJV2V0Zeqx8WIlcBfEdwqgMvLxp.mp4",
+  "poster_url": "http://storage.localhost/ulams-nightsky/course/2/posters/FmYSX3KJnuPrcQp61wcxtECnOn8of2lNqg7O3so0.png",
+  "teaser_url": null,
+  "public": false,
+  "fields": {
+   "experience": "nightsky",
+   "audio_languages": [
+    "en",
+    "pl"
+   ],
+   "badges": [
+    "Moon Watcher",
+    "Planet Hopper",
+    "Star Finder",
+    "Junior Astronomer"
+   ],
+   "landing": {
+    "headline": "Your adventure to the stars starts tonight",
+    "cta": "Start mission 1 — free",
+    "for_parents": [
+     "progress emails",
+     "safe and ad-free",
+     "10–15 minute missions",
+     "family subscription €6/month"
+    ],
+    "for_teachers": [
+     "classroom package",
+     "printable worksheets",
+     "teacher's guide"
+    ],
+    "testimonials": [
+     {
+      "quote": "I found Cassiopeia from my balcony!",
+      "author": "Zosia, 11"
+     },
+     {
+      "quote": "The Moon game finally made phases click for him.",
+      "author": "Marta, mum of Kuba (12)"
+     },
+     {
+      "quote": "Our astronomy club does one mission every Friday.",
+      "author": "Mr Nowak, teacher, Lublin"
+     }
+    ]
+   }
+  },
+  "product": null,
+  "related_product": null
+ },
+ "products": [
+  {
+   "id": 1,
+   "type": "subscription",
+   "name": "Night Sky Explorers — family subscription",
+   "description": "All seven missions for the whole family, progress emails for parents. Cancel any time.",
+   "price": 600,
+   "price_old": null,
+   "tax_rate": 23,
+   "extra_fees": 0,
+   "purchasable": true,
+   "duration": null,
+   "calculated_duration": 0,
+   "limit_per_user": 1,
+   "limit_total": null,
+   "productables": [
+    {
+     "id": 2,
+     "morph_class": "Ulams\\Courses\\Models\\Course",
+     "productable_id": 2,
+     "productable_type": "App\\Models\\Course",
+     "quantity": 1,
+     "name": "Night Sky Explorers",
+     "position": 1
+    }
+   ],
+   "teaser_url": null,
+   "poster_path": null,
+   "poster_url": null,
+   "buyable": false,
+   "owned": false,
+   "owned_quantity": 0,
+   "categories": [],
+   "tags": [
+    "kids",
+    "family"
+   ],
+   "updated_at": "2026-10-08T15:49:27.000000Z",
+   "authors": [
+    {
+     "id": 2,
+     "first_name": "Ada",
+     "last_name": "Kowalczyk",
+     "path_avatar": "avatars/2/avatar-ada.png",
+     "url_avatar": "http://storage.localhost/ulams-nightsky/avatars/2/avatar-ada.png",
+     "categories": []
+    },
+    {
+     "id": 8,
+     "first_name": "Orbi",
+     "last_name": "the Robot",
+     "path_avatar": "avatars/8/avatar-orbi.png",
+     "url_avatar": "http://storage.localhost/ulams-nightsky/avatars/8/avatar-orbi.png",
+     "categories": []
+    }
+   ],
+   "available_quantity": null,
+   "sold_quantity": 1,
+   "gross_price": 738,
+   "subscription_period": "monthly",
+   "subscription_duration": 1,
+   "recursive": true,
+   "has_trial": true,
+   "trial_period": "daily",
+   "trial_duration": 7,
+   "fields": null,
+   "language": null,
+   "related_products": []
+  },
+  {
+   "id": 2,
+   "type": "bundle",
+   "name": "Night Sky Explorers — classroom package",
+   "description": "Up to 30 pupil seats for one school year, printable worksheets and a teacher's guide.",
+   "price": 14900,
+   "price_old": null,
+   "tax_rate": 23,
+   "extra_fees": 0,
+   "purchasable": true,
+   "duration": null,
+   "calculated_duration": 0,
+   "limit_per_user": 5,
+   "limit_total": null,
+   "productables": [
+    {
+     "id": 2,
+     "morph_class": "Ulams\\Courses\\Models\\Course",
+     "productable_id": 2,
+     "productable_type": "App\\Models\\Course",
+     "quantity": 30,
+     "name": "Night Sky Explorers",
+     "position": 1
+    }
+   ],
+   "teaser_url": null,
+   "poster_path": null,
+   "poster_url": null,
+   "buyable": false,
+   "owned": false,
+   "owned_quantity": 0,
+   "categories": [],
+   "tags": [],
+   "updated_at": "2026-10-08T15:49:27.000000Z",
+   "authors": [
+    {
+     "id": 2,
+     "first_name": "Ada",
+     "last_name": "Kowalczyk",
+     "path_avatar": "avatars/2/avatar-ada.png",
+     "url_avatar": "http://storage.localhost/ulams-nightsky/avatars/2/avatar-ada.png",
+     "categories": []
+    },
+    {
+     "id": 8,
+     "first_name": "Orbi",
+     "last_name": "the Robot",
+     "path_avatar": "avatars/8/avatar-orbi.png",
+     "url_avatar": "http://storage.localhost/ulams-nightsky/avatars/8/avatar-orbi.png",
+     "categories": []
+    }
+   ],
+   "available_quantity": null,
+   "sold_quantity": 0,
+   "gross_price": 18327,
+   "subscription_period": null,
+   "subscription_duration": null,
+   "recursive": false,
+   "has_trial": null,
+   "trial_period": null,
+   "trial_duration": null,
+   "fields": null,
+   "language": null,
+   "related_products": []
+  }
+ ],
+ "webinars": [
+  {
+   "id": 1,
+   "created_at": "2026-10-08T14:49:13.000000Z",
+   "updated_at": "2026-10-08T14:49:13.000000Z",
+   "active_from": "2026-11-21T16:00:00.000000Z",
+   "active_to": "2026-11-21T17:00:00.000000Z",
+   "name": "Ask an astronomer — live",
+   "status": "published",
+   "description": "<p>Kids ask, Dr. Ada answers! Bring your questions about black holes, aliens, the Moon or anything else. Parents welcome.</p>",
+   "short_desc": "Live Q&A for kids with astrophysicist Dr. Ada Kowalczyk.",
+   "agenda": "<ol><li>What I saw through the telescope this week</li><li>Your questions</li><li>Sky challenge for the weekend</li></ol>",
+   "duration": "1",
+   "trainers": [
+    {
+     "id": 2,
+     "first_name": "Ada",
+     "last_name": "Kowalczyk",
+     "email": "tutor@nightsky.ulams.app",
+     "path_avatar": "avatars/2/avatar-ada.png",
+     "url_avatar": "http://storage.localhost/ulams-nightsky/avatars/2/avatar-ada.png",
+     "interests": [],
+     "categories": null
+    }
+   ],
+   "image_path": "webinar/1/images/webinar-astronomer.png",
+   "image_url": "http://storage.localhost/ulams-nightsky/webinar/1/images/webinar-astronomer.png",
+   "logotype_path": null,
+   "logotype_url": "",
+   "yt_url": null,
+   "tags": [
+    {
+     "id": 8,
+     "title": "astronomy",
+     "morphable_type": "Ulams\\Webinar\\Models\\Webinar",
+     "morphable_id": 1,
+     "created_at": "2026-10-08T14:49:13.000000Z",
+     "updated_at": "2026-10-08T14:49:13.000000Z"
+    },
+    {
+     "id": 9,
+     "title": "kids",
+     "morphable_type": "Ulams\\Webinar\\Models\\Webinar",
+     "morphable_id": 1,
+     "created_at": "2026-10-08T14:49:13.000000Z",
+     "updated_at": "2026-10-08T14:49:13.000000Z"
+    }
+   ],
+   "deadline": "2026-11-21T18:00:00.000000Z",
+   "analyze_enabled": false,
+   "product": null,
+   "in_coming": true,
+   "is_ended": false,
+   "is_started": false
+  }
+ ],
+ "events": [
+  {
+   "id": 1,
+   "created_at": "2026-10-08T14:49:13.000000Z",
+   "updated_at": "2026-10-08T14:49:13.000000Z",
+   "name": "Star party in Kraków",
+   "description": "<p>Look through real telescopes with Dr. Ada and the Night Sky Explorers team. If the sky is cloudy, we move inside for a planetarium show. Hot chocolate included!</p>",
+   "short_desc": "An evening of telescopes for kids and parents.",
+   "started_at": "2026-11-22 17:30:00",
+   "finished_at": "2026-11-22 20:30:00",
+   "max_participants": 60,
+   "place": "Park Jordana, Kraków (meeting point at the main gate)",
+   "program": "Telescopes, Moon and Saturn viewing, constellation walk",
+   "categories": [],
+   "status": "published",
+   "authors": [
+    {
+     "id": 2,
+     "first_name": "Ada",
+     "last_name": "Kowalczyk",
+     "path_avatar": "avatars/2/avatar-ada.png"
+    }
+   ],
+   "image_path": "stationary-events/1/images/event-star-party.png",
+   "image_url": "http://storage.localhost/ulams-nightsky/stationary-events/1/images/event-star-party.png",
+   "in_coming": true,
+   "is_ended": false,
+   "is_started": false,
+   "agenda": null,
+   "product": null,
+   "related_product": null
+  }
+ ],
+ "tutors": [
+  {
+   "id": 2,
+   "first_name": "Ada",
+   "last_name": "Kowalczyk",
+   "email": "tutor@nightsky.ulams.app",
+   "path_avatar": "avatars/2/avatar-ada.png",
+   "url_avatar": "http://storage.localhost/ulams-nightsky/avatars/2/avatar-ada.png",
+   "interests": [],
+   "categories": []
+  },
+  {
+   "id": 8,
+   "first_name": "Orbi",
+   "last_name": "the Robot",
+   "email": "orbi@demo.ulams.app",
+   "path_avatar": "avatars/8/avatar-orbi.png",
+   "url_avatar": "http://storage.localhost/ulams-nightsky/avatars/8/avatar-orbi.png",
+   "interests": [],
+   "categories": []
+  }
+ ]
+}

@@ -1,7 +1,7 @@
 {
   "name": "ulams",
   "private": true,
-  "description": "Ulams LMS monorepo: api (Laravel), admin (umi/max) and front (Vite).",
+  "description": "Ulams LMS monorepo: api (Laravel), admin (umi/max), front (Vite) and front/web (Astro reference frontend).",
   "packageManager": "yarn@1.22.22",
   "engines": {
     "node": ">=22.12"
@@ -10,6 +10,9 @@
     "packages": [
       "admin",
       "front",
+      "front/sdk",
+      "front/ui",
+      "front/web",
       "api",
       "api/h5p",
       "api/pdf"
@@ -25,14 +28,17 @@
     "dev": "turbo run dev --filter=admin --filter=front",
     "dev:admin": "turbo run dev --filter=admin",
     "dev:front": "turbo run dev --filter=front",
+    "dev:web": "turbo run dev --filter=@ulams/web",
     "dev:api": "docker compose -f api/docker-compose.yml up -d",
     "build": "turbo run build",
+    "build:web": "turbo run build --filter=@ulams/web",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test --filter=admin --filter=front --filter=api-h5p --filter=api-pdf",
+    "test": "turbo run test --filter=admin --filter=front --filter=api-h5p --filter=api-pdf --filter=@ulams/sdk --filter=@ulams/ui --filter=@ulams/web",
     "test:api": "yarn workspace api test",
     "prepare": "husky",
-    "test:h5p:integration": "turbo run test:integration --filter=api-h5p"
+    "test:h5p:integration": "turbo run test:integration --filter=api-h5p",
+    "test:web:e2e": "yarn workspace @ulams/web test:e2e"
   },
   "devDependencies": {
     "husky": "^9.1.7",

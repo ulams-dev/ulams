@@ -1,0 +1,96 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  price?: string;
+  priceNote?: string;
+  title?: string;
+  items?: string[];
+  cta: { label: string; href: string };
+  note?: string;
+}
+const { price, priceNote, title, items = [], cta, note } = Astro.props;
+---
+
+<aside class="u-buy u-card" aria-label={title ?? "Enrol"}>
+  {title && <p class="u-buy__title">{title}</p>}
+  {
+    price && (
+      <p class="u-buy__price">
+        {price}
+        {priceNote && <small>{priceNote}</small>}
+      </p>
+    )
+  }
+  <a class="u-btn u-buy__cta" href={cta.href}>
+    {cta.label}
+    <Icon name="arrow" />
+  </a>
+  {
+    items.length > 0 && (
+      <ul role="list">
+        {items.map((item) => (
+          <li>
+            <Icon name="check" />
+            {item}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+  {note && <p class="u-buy__note">{note}</p>}
+</aside>
+
+<style>
+  .u-buy {
+    display: grid;
+    gap: 16px;
+    padding: 24px;
+    position: sticky;
+    top: 92px;
+  }
+  .u-buy__title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ulams-color-muted);
+  }
+  .u-buy__price {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-family: var(--ulams-font-family);
+    font-size: 2.6rem;
+    line-height: 1;
+    color: var(--ulams-color-header);
+  }
+  .u-buy__price small {
+    font-family: var(--ulams-font-family-body);
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-buy__cta {
+    width: 100%;
+  }
+  .u-buy ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+    font-size: 0.9rem;
+  }
+  .u-buy li {
+    display: flex;
+    gap: 10px;
+  }
+  .u-buy li :global(.u-icon) {
+    margin-top: 3px;
+    color: var(--ulams-color-positive);
+  }
+  .u-buy__note {
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+</style>

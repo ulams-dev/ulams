@@ -1,0 +1,251 @@
+---
+/** Course finish: completion, certificate preview and what next. */
+import Icon from "@ulams/ui/components/Icon.astro";
+import { completionPercent, flattenTopics } from "@ulams/sdk";
+import Base from "../../../layouts/Base.astro";
+import { apiFor, getProgram, getSettings } from "../../../lib/data.ts";
+import { themeFor } from "../../../lib/theme.ts";
+import { topicHref } from "../../../lib/view-model.ts";
+
+const tenant = Astro.locals.tenant;
+const courseId = Number(Astro.params.courseId);
+if (!tenant || !Number.isInteger(courseId)) return Astro.redirect("/");
+const token = Astro.locals.token;
+if (!token) return Astro.redirect(`/login?next=${encodeURIComponent(Astro.url.pathname)}`);
+
+const [program, settings, me] = await Promise.all([
+  getProgram(tenant, token, courseId),
+  getSettings(tenant).catch(() => null),
+  apiFor(tenant, token).auth.me().catch(() => null),
+]);
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const { course, progress } = program;
+const percent = completionPercent(course, progress);
+const topics = flattenTopics(course);
+const remaining = topics.filter((t) => !progress.some((p) => p.topic_id === t.id && p.status === 1));
+const name = me ? [me.first_name, me.last_name].filter(Boolean).join(" ") : "Demo student";
+const finished = remaining.length === 0;
+const today = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" }).format(new Date());
+const company = settings?.global?.companyName ?? course.title;
+const headline = finished
+  ? { coffee: "Your signature cup is ready.", oncall: "Incident closed. Well commanded.", nightsky: "Mission complete, explorer!" }[theme]
+  : { coffee: "The last page, almost.", oncall: "Almost there: a few items left.", nightsky: "So close to the stars!" }[theme];
+---
+
+<Base theme={theme} title={`Finish — ${course.title}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  <main id="main" class="u-container u-finish">
+    <div class="u-finish__confetti" aria-hidden="true">
+      {Array.from({ length: 24 }, (_, i) => <i style={`--x:${(i * 37) % 100}%;--d:${(i % 7) * 0.15}s;--r:${(i * 47) % 360}deg`} />)}
+    </div>
+    <p class="u-eyebrow">{course.title}</p>
+    <h1 class="u-finish__title">{headline}</h1>
+    <div class="u-finish__ring" style={`--p:${percent}`} role="img" aria-label={`${percent}% of the course completed`}>
+      <strong>{percent}%</strong>
+      <span>complete</span>
+    </div>
+
+    <figure class="u-cert" aria-label="Certificate preview">
+      <p class="u-cert__org">{company}</p>
+      <p class="u-cert__label">Certificate of completion</p>
+      <p class="u-cert__name">{name}</p>
+      <p class="u-cert__course">{course.title}</p>
+      <p class="u-cert__meta">
+        <span>{today}</span>
+        <span>{finished ? "Issued" : "Preview: finish every topic to receive it"}</span>
+      </p>
+      <span class="u-cert__seal" aria-hidden="true"><Icon name="medal" /></span>
+    </figure>
+
+    {
+      !finished && (
+        <section class="u-finish__left" aria-labelledby="left-title">
+          <h2 id="left-title">Still open ({remaining.length})</h2>
+          <ul role="list">
+            {remaining.slice(0, 6).map((t) => (
+              <li>
+                <a href={topicHref(courseId, t.id)}>
+                  {t.title} <Icon name="arrow" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+    <p class="u-actions u-finish__actions">
+      <a class="u-btn" href={`/courses/${courseId}`}>Back to the course</a>
+      <a class="u-btn u-btn--ghost" href="/">Home</a>
+    </p>
+  </main>
+</Base>
+
+<style>
+  .u-finish {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 28px;
+    padding-block: 72px 120px;
+    text-align: center;
+    max-width: 860px;
+  }
+  .u-finish__title {
+    font-size: clamp(2.2rem, 1.4rem + 3vw, 3.6rem);
+  }
+  .u-finish__confetti {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 420px;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .u-finish__confetti i {
+    position: absolute;
+    top: -20px;
+    left: var(--x);
+    width: 8px;
+    height: 14px;
+    border-radius: 2px;
+    background: var(--ulams-color-primary);
+    transform: rotate(var(--r));
+    animation: u-confetti 2.6s var(--d) cubic-bezier(0.2, 0.6, 0.4, 1) both;
+  }
+  .u-finish__confetti i:nth-child(3n) {
+    background: var(--ulams-color-secondary);
+  }
+  .u-finish__confetti i:nth-child(4n) {
+    background: var(--ulams-color-positive);
+  }
+  @keyframes u-confetti {
+    to {
+      transform: translateY(420px) rotate(calc(var(--r) + 540deg));
+      opacity: 0;
+    }
+  }
+  .u-finish__ring {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    background:
+      radial-gradient(closest-side, var(--ulams-color-bg) 80%, transparent 82%),
+      conic-gradient(var(--ulams-color-positive) calc(var(--p) * 1%), var(--ulams-color-border) 0);
+    animation: u-finish-ring 1.4s var(--ulams-ease) both;
+  }
+  @property --p {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+  }
+  @keyframes u-finish-ring {
+    from {
+      --p: 0;
+    }
+  }
+  .u-finish__ring strong {
+    font-family: var(--ulams-font-family);
+    font-size: 2.4rem;
+    line-height: 1;
+  }
+  .u-finish__ring span {
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-cert {
+    position: relative;
+    margin: 0;
+    width: 100%;
+    display: grid;
+    gap: 10px;
+    padding: clamp(28px, 5vw, 56px);
+    border: 1px solid var(--ulams-color-border);
+    outline: 6px double var(--ulams-color-border);
+    outline-offset: -16px;
+    background: var(--ulams-color-card-bg);
+    border-radius: var(--ulams-radius-card);
+    animation: u-cert-in 0.9s 0.3s var(--ulams-ease) both;
+  }
+  @keyframes u-cert-in {
+    from {
+      opacity: 0;
+      transform: translateY(24px) rotate(-1deg);
+    }
+  }
+  .u-cert__org,
+  .u-cert__label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ulams-color-muted);
+  }
+  .u-cert__name {
+    font-family: var(--ulams-font-family);
+    font-size: clamp(2rem, 1.4rem + 2vw, 3rem);
+    color: var(--ulams-color-header);
+  }
+  .u-cert__course {
+    font-family: var(--ulams-font-family);
+    font-style: italic;
+    font-size: 1.2rem;
+  }
+  .u-cert__meta {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-cert__seal {
+    position: absolute;
+    right: 28px;
+    bottom: 24px;
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--ulams-color-primary);
+    color: var(--ulams-color-on-primary);
+    transform: rotate(-12deg);
+  }
+  .u-finish__left {
+    width: 100%;
+    text-align: left;
+  }
+  .u-finish__left h2 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+  .u-finish__left ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .u-finish__left a {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius);
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.25s var(--ulams-ease);
+  }
+  .u-finish__left a:hover {
+    border-color: var(--ulams-color-primary);
+    transform: translateX(4px);
+  }
+  .u-finish__actions {
+    justify-content: center;
+  }
+  @media (max-width: 560px) {
+    .u-cert__seal {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,65 @@
+/*
+ * "The Coffee Atlas": tactile editorial (front/docs/design/stitch/DESIGN.md).
+ * Terracotta #C2552D is used for large type and fills; text-size uses #A84521 (AA on paper).
+ */
+[data-theme="coffee"] {
+  --ulams-color-primary: #a84521;
+  --ulams-color-primary-on-light: #a84521;
+  --ulams-color-accent: #c2552d;
+  --ulams-color-on-primary: #fdfaf5;
+  --ulams-color-secondary: #536349;
+  --ulams-color-sage: #7a8b6f;
+  --ulams-color-header: #2b1d14;
+  --ulams-color-text: #2b1d14;
+  --ulams-color-muted: #5e4a40;
+  --ulams-color-bg: #f6f1e9;
+  --ulams-color-surface: #efe7da;
+  --ulams-color-card-bg: #ede5d8;
+  --ulams-color-border: #d9cfc2;
+  --ulams-color-accent-bg: #c2552d;
+  --ulams-color-input-bg: #fdfcfa;
+  --ulams-color-positive: #536349;
+  --ulams-gray-1: #57423b;
+  --ulams-gray-2: #6b5750;
+  --ulams-gray-3: #d9cfc2;
+  --ulams-gray-4: #ede5d8;
+  --ulams-gray-5: #fdfcfa;
+  --ulams-radius: 4px;
+  --ulams-radius-button: 4px;
+  --ulams-radius-input: 4px;
+  --ulams-radius-card: 4px;
+  --ulams-radius-modal: 4px;
+  --ulams-font-family: var(--font-playfair), "Playfair Display", Georgia, serif;
+  --ulams-font-family-body: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
+  --ulams-shadow-hover: 0 10px 28px -6px rgb(43 29 20 / 0.14);
+  --ulams-container: 1220px;
+}
+
+[data-theme="coffee"] body {
+  /* subtle paper grain, 1 KB of SVG noise */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .17 0 0 0 0 .11 0 0 0 0 .08 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+[data-theme="coffee"] h1,
+[data-theme="coffee"] h2,
+[data-theme="coffee"] h3 {
+  font-weight: 400;
+}
+
+[data-theme="coffee"] .u-eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+}
+
+[data-theme="coffee"] .u-btn {
+  letter-spacing: 0.01em;
+}
+[data-theme="coffee"] .u-btn:not(.u-btn--ghost):not(.u-btn--link):hover {
+  --_bg: #8e3818;
+}
+[data-theme="coffee"] .u-btn--link {
+  font-family: var(--ulams-font-family);
+  font-style: italic;
+  font-size: 1.1rem;
+  font-weight: 400;
+}

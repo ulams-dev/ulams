@@ -1,0 +1,16 @@
+---
+/** /learn/:course → the topic to resume (first not completed). */
+import { resumeTopic } from "@ulams/sdk";
+import { getProgram } from "../../../lib/data.ts";
+
+const tenant = Astro.locals.tenant;
+const courseId = Number(Astro.params.courseId);
+if (!tenant || !Number.isInteger(courseId)) return Astro.redirect("/");
+if (!Astro.locals.token) return Astro.redirect(`/login?next=${encodeURIComponent(Astro.url.pathname)}`);
+const program = await getProgram(tenant, Astro.locals.token, courseId).catch(() => null);
+if (!program) return Astro.redirect(`/courses/${courseId}`);
+const topics = program.course.lessons ?? [];
+const preferPreview = !program.access ? topics.flatMap((l) => l.topics ?? []).find((t) => t.preview) : null;
+const target = preferPreview ?? resumeTopic(program.course, program.progress);
+return Astro.redirect(target ? `/learn/${courseId}/${target.id}` : `/courses/${courseId}`);
+---

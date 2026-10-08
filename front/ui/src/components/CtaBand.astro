@@ -1,0 +1,70 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  variant?: "banner" | "newsletter";
+  eyebrow?: string;
+  title: string;
+  text?: string;
+  cta: { label: string; href: string };
+  secondary?: { label: string; href: string };
+  id?: string;
+}
+const { variant = "banner", eyebrow, title, text, cta, secondary, id = "join" } = Astro.props;
+---
+
+<section class={`u-section u-cta u-cta--${variant}`} id={id} aria-labelledby={`${id}-title`}>
+  <div class="u-container">
+    <div class="u-cta__box" data-reveal>
+      <div class="u-cta__copy">
+        {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+        <h2 class="u-h2" id={`${id}-title`}>{title}</h2>
+        {text && <p class="u-lead">{text}</p>}
+      </div>
+      <div class="u-actions">
+        <a class="u-btn" href={cta.href}>
+          {cta.label}
+          <Icon name="arrow" />
+        </a>
+        {
+          secondary && (
+            <a class="u-btn u-btn--ghost" href={secondary.href}>
+              {secondary.label}
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .u-cta__box {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) auto;
+    gap: 28px;
+    align-items: center;
+    padding: clamp(28px, 5vw, 64px);
+    border-radius: var(--ulams-radius-card);
+    border: 1px solid var(--ulams-color-border);
+    background:
+      radial-gradient(600px 240px at 100% 0%, color-mix(in srgb, var(--ulams-color-primary) 18%, transparent), transparent 70%),
+      var(--ulams-color-surface);
+    overflow: hidden;
+  }
+  .u-cta__copy {
+    display: grid;
+    gap: 12px;
+  }
+  .u-cta--newsletter .u-cta__box {
+    background: transparent;
+    border-width: 1px 0;
+    border-radius: 0;
+  }
+  @media (max-width: 760px) {
+    .u-cta__box {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,90 @@
+---
+/** "Orbi" the robot guide (Night Sky mascot), inline SVG, decorative. */
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 300, class: className = "" } = Astro.props;
+---
+
+<svg class={`u-orbi ${className}`} width={size} height={size} viewBox="0 0 300 300" aria-hidden="true" focusable="false">
+  <g class="u-orbi__body">
+    <line x1="150" y1="58" x2="150" y2="30" stroke="#b3a8ff" stroke-width="6" stroke-linecap="round"></line>
+    <circle class="u-orbi__beacon" cx="150" cy="24" r="12" fill="#ffd23f"></circle>
+    <rect x="78" y="58" width="144" height="112" rx="44" fill="#e9e6ff" stroke="#13153a" stroke-width="6"></rect>
+    <rect x="98" y="80" width="104" height="66" rx="30" fill="#13153a"></rect>
+    <g class="u-orbi__eyes">
+      <ellipse cx="128" cy="110" rx="10" ry="13" fill="#3ddc97"></ellipse>
+      <ellipse cx="172" cy="110" rx="10" ry="13" fill="#3ddc97"></ellipse>
+    </g>
+    <path d="M132 132 Q150 144 168 132" fill="none" stroke="#3ddc97" stroke-width="5" stroke-linecap="round"></path>
+    <rect x="102" y="176" width="96" height="78" rx="30" fill="#9b8cff" stroke="#13153a" stroke-width="6"></rect>
+    <circle cx="150" cy="212" r="15" fill="#ffd23f" stroke="#13153a" stroke-width="5"></circle>
+    <path d="M150 203 l3 6 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z" fill="#13153a"></path>
+    <path class="u-orbi__arm" d="M198 196 Q236 186 244 150" fill="none" stroke="#13153a" stroke-width="16" stroke-linecap="round"></path>
+    <path class="u-orbi__arm" d="M198 196 Q236 186 244 150" fill="none" stroke="#e9e6ff" stroke-width="8" stroke-linecap="round"></path>
+    <path d="M102 196 Q70 210 66 236" fill="none" stroke="#13153a" stroke-width="16" stroke-linecap="round"></path>
+    <path d="M102 196 Q70 210 66 236" fill="none" stroke="#e9e6ff" stroke-width="8" stroke-linecap="round"></path>
+    <path d="M120 254 l-8 26 h28 l-6 -26z M180 254 l8 26 h-28 l6 -26z" fill="#ff6b6b" stroke="#13153a" stroke-width="5" stroke-linejoin="round"></path>
+  </g>
+</svg>
+
+<style>
+  .u-orbi {
+    position: relative;
+    width: 62%;
+    height: auto;
+    filter: drop-shadow(0 24px 40px rgb(0 0 0 / 0.45));
+  }
+  .u-orbi__body {
+    animation: u-orbi-hover 4s ease-in-out infinite;
+    transform-origin: 150px 160px;
+  }
+  .u-orbi__arm {
+    transform-origin: 198px 196px;
+    animation: u-orbi-wave 2.4s ease-in-out infinite;
+  }
+  .u-orbi__eyes {
+    transform-origin: 150px 110px;
+    animation: u-orbi-blink 5s infinite;
+  }
+  .u-orbi__beacon {
+    animation: u-orbi-beacon 1.6s ease-in-out infinite;
+  }
+  @keyframes u-orbi-hover {
+    50% {
+      transform: translateY(-10px) rotate(-2deg);
+    }
+  }
+  @keyframes u-orbi-wave {
+    0%,
+    60%,
+    100% {
+      transform: rotate(0);
+    }
+    70% {
+      transform: rotate(-14deg);
+    }
+    80% {
+      transform: rotate(8deg);
+    }
+    90% {
+      transform: rotate(-10deg);
+    }
+  }
+  @keyframes u-orbi-blink {
+    0%,
+    94%,
+    100% {
+      transform: scaleY(1);
+    }
+    97% {
+      transform: scaleY(0.1);
+    }
+  }
+  @keyframes u-orbi-beacon {
+    50% {
+      fill: #ff6b6b;
+    }
+  }
+</style>

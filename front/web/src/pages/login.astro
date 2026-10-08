@@ -1,0 +1,89 @@
+---
+import Base from "../layouts/Base.astro";
+import { ApiError } from "@ulams/sdk";
+import { apiFor, getSettings } from "../lib/data.ts";
+import { demoToken, setSessionCookie } from "../lib/session.ts";
+import { themeFor } from "../lib/theme.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/tenants");
+const settings = await getSettings(tenant).catch(() => null);
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const next = Astro.url.searchParams.get("next");
+const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
+const secure = Astro.url.protocol === "https:";
+
+let error: string | null = null;
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+  try {
+    if (form.get("demo") === "1") {
+      const demo = await demoToken(tenant);
+      setSessionCookie(Astro.cookies, demo.token, demo.expiresAt, secure);
+    } else {
+      const result = await apiFor(tenant).auth.login(String(form.get("email") ?? ""), String(form.get("password") ?? ""));
+      const expires = result.expires_at ? Date.parse(result.expires_at) : Date.now() + 86_400_000;
+      setSessionCookie(Astro.cookies, result.token, expires, secure);
+    }
+    return Astro.redirect(safeNext, 303);
+  } catch (e) {
+    error = e instanceof ApiError && e.status === 422 ? "Wrong e-mail or password." : "Login failed. Try again.";
+  }
+}
+---
+
+<Base theme={theme} title="Sign in" demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  <main id="main" class="u-container u-login">
+    <a class="u-login__back" href="/">← {settings?.global?.companyName ?? "Home"}</a>
+    <h1>Sign in</h1>
+    <form method="post" class="u-card">
+      {error && <p class="u-login__error" role="alert">{error}</p>}
+      <label for="email">E-mail</label>
+      <input id="email" name="email" type="email" autocomplete="username" required />
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required />
+      <button class="u-btn" type="submit">Sign in</button>
+    </form>
+    <form method="post">
+      <input type="hidden" name="demo" value="1" />
+      <button class="u-btn u-btn--ghost u-login__demo" type="submit">Continue as the demo student</button>
+    </form>
+  </main>
+</Base>
+
+<style>
+  .u-login {
+    max-width: 460px;
+    display: grid;
+    gap: 20px;
+    padding-block: 72px;
+  }
+  .u-login form.u-card {
+    display: grid;
+    gap: 10px;
+    padding: 24px;
+  }
+  .u-login label {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+  .u-login input {
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-input);
+    background: var(--ulams-color-input-bg, var(--ulams-color-bg));
+    margin-bottom: 8px;
+  }
+  .u-login__error {
+    color: var(--ulams-color-error);
+    font-weight: 600;
+  }
+  .u-login__back {
+    text-decoration: none;
+    font-size: 0.875rem;
+  }
+  .u-login__demo {
+    width: 100%;
+  }
+</style>

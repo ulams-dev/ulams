@@ -1,0 +1,24 @@
+---
+/** Plain-text rendering of a node whose component is unknown or whose props are invalid. */
+interface Props {
+  text: string;
+  component: string;
+}
+const { text, component } = Astro.props;
+---
+
+{
+  text.trim() !== "" && (
+    <div class="u-container u-fallback" data-fallback={component}>
+      {text.split("\n").map((line) => <p>{line}</p>)}
+    </div>
+  )
+}
+
+<style>
+  .u-fallback {
+    padding-block: 24px;
+    display: grid;
+    gap: 8px;
+  }
+</style>

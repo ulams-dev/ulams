@@ -1,0 +1,46 @@
+---
+import Base from "../layouts/Base.astro";
+import { themeFor } from "../lib/theme.ts";
+
+interface Props {
+  code: 404 | 500;
+}
+const { code } = Astro.props;
+const tenant = Astro.locals.tenant ?? null;
+const theme = themeFor(null, tenant?.slug ?? "coffee");
+const copy =
+  code === 404
+    ? { title: "This page is not here", text: "The course or lesson may have moved. The demo data is also rebuilt every hour." }
+    : { title: "Something went wrong", text: "The academy's API did not answer as expected. Try again in a moment." };
+---
+
+<Base theme={theme} title={copy.title} demo={tenant ? { adminUrl: tenant.adminUrl, slug: tenant.slug } : null}>
+  <main id="main" class="u-container u-error">
+    <p class="u-error__code" aria-hidden="true">{code}</p>
+    <h1>{copy.title}</h1>
+    <p>{copy.text}</p>
+    <p class="u-actions">
+      <a class="u-btn" href="/">Back to the academy</a>
+      <a class="u-btn u-btn--ghost" href={Astro.url.pathname}>Try again</a>
+    </p>
+  </main>
+</Base>
+
+<style>
+  .u-error {
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+    padding-block: 18vh;
+    max-width: 720px;
+  }
+  .u-error__code {
+    font-family: var(--ulams-font-family);
+    font-size: clamp(4rem, 3rem + 6vw, 8rem);
+    line-height: 1;
+    color: var(--ulams-color-accent, var(--ulams-color-primary));
+  }
+  .u-error h1 {
+    font-size: clamp(2rem, 1.4rem + 2vw, 3rem);
+  }
+</style>

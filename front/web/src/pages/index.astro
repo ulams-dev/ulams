@@ -1,0 +1,21 @@
+---
+import Render from "@ulams/ui/Render.astro";
+import Base from "../layouts/Base.astro";
+import TenantPicker from "../components/TenantPicker.astro";
+import { getSiteModel } from "../lib/data.ts";
+import { landingDocs, pageMeta } from "../lib/docs.ts";
+import { themeFor } from "../lib/theme.ts";
+import { getSettings } from "../lib/data.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.rewrite("/tenants");
+
+const [site, settings] = await Promise.all([getSiteModel(tenant), getSettings(tenant).catch(() => null)]);
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const doc = landingDocs[theme];
+const meta = doc ? pageMeta(doc, site) : { title: site.tenant.name, lang: "en", description: undefined };
+---
+
+<Base theme={theme} title={meta.title} description={meta.description} lang={meta.lang} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  {doc ? <Render doc={doc} data={site} /> : <TenantPicker />}
+</Base>

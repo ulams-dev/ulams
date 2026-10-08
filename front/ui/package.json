@@ -1,0 +1,41 @@
+{
+  "name": "@ulams/ui",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "ulams UI catalogue: Astro components and web components described by JSON schemas, rendered from A2UI-shaped documents.",
+  "type": "module",
+  "exports": {
+    "./Render.astro": "./src/Render.astro",
+    "./registry": "./src/registry.ts",
+    "./render-core": "./src/render-core.ts",
+    "./schema": "./src/schema.ts",
+    "./markdown": "./src/lib/markdown.ts",
+    "./format": "./src/lib/format.ts",
+    "./components/*": "./src/components/*",
+    "./elements/*": "./src/elements/*",
+    "./styles/*": "./src/styles/*"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src tests",
+    "test": "vitest run",
+    "catalogue": "node --experimental-strip-types --no-warnings scripts/catalogue.mjs"
+  },
+  "dependencies": {
+    "@ulams/sdk": "0.1.0",
+    "hls.js": "1.7.3",
+    "katex": "0.16.22",
+    "marked": "18.0.14"
+  },
+  "peerDependencies": {
+    "astro": "^5.18.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "eslint": "9.39.5",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.1",
+    "vitest": "3.2.4"
+  }
+}

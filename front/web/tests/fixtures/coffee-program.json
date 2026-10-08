@@ -1,0 +1,657 @@
+{
+ "id": 1,
+ "title": "The Coffee Atlas — From Seed to Cup",
+ "summary": "Follow one coffee cherry from a hillside in Huila to your cup. Learn origin, processing, roasting, brewing and tasting — and leave with your own signature recipe.",
+ "image_path": "course/1/images/RASDSSPF7zfzymnRB1Ii05Na7uc6fkqscZbL8Y4u.png",
+ "image_url": "http://storage.localhost/ulams-coffee/course/1/images/RASDSSPF7zfzymnRB1Ii05Na7uc6fkqscZbL8Y4u.png",
+ "video_path": "course/1/videos/X8IAtZ8kKcn5BmKRnAzahm2oVlNdROSukX2jYLMM.mp4",
+ "video_url": "http://storage.localhost/ulams-coffee/course/1/videos/X8IAtZ8kKcn5BmKRnAzahm2oVlNdROSukX2jYLMM.mp4",
+ "duration": "~9 h · 6 lessons",
+ "author_id": 2,
+ "authors": [
+  {
+   "id": 2,
+   "first_name": "Inés",
+   "last_name": "Duarte",
+   "email": "tutor@coffee.ulams.app",
+   "path_avatar": "avatars/2/avatar-ines.png",
+   "url_avatar": "http://storage.localhost/ulams-coffee/avatars/2/avatar-ines.png",
+   "interests": [],
+   "categories": []
+  },
+  {
+   "id": 8,
+   "first_name": "Tomasz",
+   "last_name": "Wierzba",
+   "email": "tomasz.wierzba@demo.ulams.app",
+   "path_avatar": "avatars/8/avatar-tomasz.png",
+   "url_avatar": "http://storage.localhost/ulams-coffee/avatars/8/avatar-tomasz.png",
+   "interests": [],
+   "categories": []
+  }
+ ],
+ "scorm_sco_id": null,
+ "scorm_sco": {},
+ "status": "published",
+ "subtitle": "A field guide to specialty coffee for curious home baristas",
+ "language": "en",
+ "description": "**At five in the morning** on a hillside in Huila, Colombia, 1,750 metres above the sea, a picker reaches for a cherry the colour of a ripe plum. Six weeks and nine thousand kilometres later, its seed ends up in your grinder. This course follows that one cherry all the way, and teaches you what happens at every step and why it changes what you taste.\n\n*The Coffee Atlas* is a slow course. There are no streaks, no leaderboards and no timers you have to beat. There are six chapters you read, watch and listen to at your own pace, a roast simulator, a guided cupping session, and at the end a recipe that is yours.\n\n## What you will learn\n\n- Where coffee grows and why altitude, variety and species shape the cup\n- How washed, natural, honey and anaerobic processing work, and how to recognise them by taste\n- How to read a roast curve: turning point, first crack, development time\n- The maths of brewing: ratios, TDS and extraction yield, and how to fix a sour or bitter cup\n- How to cup like a Q-grader and describe coffee with the SCA flavour wheel\n- How to design, test and write down your own signature recipe\n\n## How it works\n\n| Chapter | You will |\n|---|---|\n| I. Origins | watch the harvest, explore the coffee belt, compare Arabica and Robusta |\n| II. The farm | hear from a producer, dissect a cherry, learn the processing methods |\n| III. Roasting | read a roast curve, roast a virtual batch, start your roaster's logbook |\n| IV. Brewing | master ratios and extraction, follow a pour-over masterclass |\n| V. Tasting | learn the flavour wheel, cup at home, take the tasting check |\n| VI. Your signature cup | brew three variations and send your recipe card to the tutors |\n\n## What you need\n\nA scale that reads 0.1 g, a burr grinder (or a roaster who grinds to order), a kettle, a pour-over dripper such as a V60, and two bags of freshly roasted coffee. About nine hours spread over a few weeks.\n\n## Your tutors\n\n**Inés Duarte** is a licensed Q-grader who grew up on a coffee farm near Pitalito in Huila. She has judged national cupping competitions in Colombia, Peru and Rwanda.\n\n**Tomasz Wierzba** has roasted specialty coffee in Kraków for twelve years. He teaches the roasting chapter and reviews every recipe card himself.\n\nFinish all six chapters and the final project to receive the certificate **Certified Home Barista — The Coffee Atlas**.\n",
+ "level": "Beginner → Intermediate",
+ "lessons": [
+  {
+   "id": 1,
+   "title": "I. Origins",
+   "summary": "Where coffee grows, which plants it comes from, and why the mountain matters.",
+   "duration": "1 h 20 min",
+   "active": true,
+   "topics": [
+    {
+     "id": 1,
+     "title": "Welcome to the Atlas",
+     "lesson_id": 1,
+     "active": true,
+     "preview": true,
+     "topicable_id": 1,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Video",
+     "topicable": {
+      "id": 1,
+      "value": "course/1/topic/1/video/hls.m3u8",
+      "url": "http://storage.localhost/ulams-coffee/course/1/topic/1/video/hls.m3u8",
+      "poster": "course/1/topic/1/video/7MG7d3Tlf8iPxbzvAR3cK5fwBIiUb9FwAZcCdNMc.png",
+      "poster_url": "http://storage.localhost/ulams-coffee/course/1/topic/1/video/7MG7d3Tlf8iPxbzvAR3cK5fwBIiUb9FwAZcCdNMc.png",
+      "width": 960,
+      "height": 540,
+      "length": 31000
+     },
+     "summary": "Meet your tutors and the cherry you will follow for six chapters.",
+     "introduction": "A short film from a dawn harvest in Huila. Inés and Tomasz introduce the journey.",
+     "description": "**Transcript**\n\nINÉS: It is five in the morning in Huila, and the pickers are already on the slope. Only the deep red cherries go into the basket: a green one would make your cup taste like grass.\n\nTOMASZ: Six weeks from now, the seeds of these cherries will be in my roaster in Kraków. In this course we follow one of them all the way, and you will learn what happens at every step.\n\nINÉS: Six chapters: origins, the farm, roasting, brewing, tasting, and your own signature cup. Take your time. Coffee is slow.",
+     "resources": [],
+     "order": 1,
+     "json": {
+      "ffmpeg": {
+       "state": "finished",
+       "path": "course/1/topic/1/video/hls.m3u8"
+      },
+      "progress_notification": true
+     },
+     "can_skip": false,
+     "duration": "4 min"
+    },
+    {
+     "id": 2,
+     "title": "The coffee belt",
+     "lesson_id": 1,
+     "active": true,
+     "preview": false,
+     "topicable_id": 1,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Image",
+     "topicable": {
+      "id": 1,
+      "value": "course/1/topic/2/image/pQ8sMPLgrIoChMsqsvNIC8uTwgAl741iHs9ENVZL.png",
+      "url": "http://storage.localhost/ulams-coffee/course/1/topic/2/image/pQ8sMPLgrIoChMsqsvNIC8uTwgAl741iHs9ENVZL.png",
+      "width": 1600,
+      "height": 900
+     },
+     "summary": "Coffee grows between roughly 25° N and 30° S. Arabica likes the mountains (1,000–2,400 m), Robusta the hot lowlands.",
+     "introduction": "An illustrated map of where coffee grows, with the altitude bands of fifteen classic origins.",
+     "description": null,
+     "resources": [],
+     "order": 2,
+     "json": null,
+     "can_skip": false,
+     "duration": "10 min"
+    },
+    {
+     "id": 3,
+     "title": "Arabica vs Robusta",
+     "lesson_id": 1,
+     "active": true,
+     "preview": false,
+     "topicable_id": 1,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+     "topicable": {
+      "id": 1,
+      "value": "# Arabica vs Robusta\n\n*Two species, one drink, and a long argument about which of them deserves your morning.*\n\nAlmost every cup of coffee you have ever drunk came from one of two plants: **_Coffea arabica_** or **_Coffea canephora_**, the species the trade calls **Robusta**. They look alike on the branch. Their red cherries are the same size, their white flowers smell of jasmine for the same two or three days a year. But put them side by side in a cupping bowl and they could hardly be more different.\n\n> \"Arabica is the coffee you taste. Robusta is the coffee you feel.\"\n> — Inés Duarte\n\n## A plant from the Ethiopian forest\n\nArabica evolved in the cloud forests of south-western Ethiopia and the Boma Plateau of South Sudan, as a natural cross between two older species, *C. canephora* and *C. eugenioides*. That accident gave it four sets of chromosomes instead of two, so Arabica pollinates itself. It is great for farmers, who get a plant that breeds true. It is bad for resilience: most Arabica in the world descends from a few seeds carried out of Yemen in the 17th and 18th centuries, so the crop has very little genetic diversity.\n\nRobusta grows wild across the lowland forests of West and Central Africa, from Guinea to Uganda. It needs cross-pollination, so every tree is genetically different. That diversity is why Robusta resists coffee leaf rust and heat far better than Arabica.\n\n## Side by side\n\n| | Arabica | Robusta |\n|---|---|---|\n| Share of world production | ~56 % | ~44 % |\n| Typical altitude | 1,000–2,400 m | 0–900 m |\n| Ideal temperature | 15–24 °C | 24–30 °C |\n| Caffeine (dry weight) | 1.2–1.5 % | 2.2–2.7 % |\n| Sugars (sucrose) | 6–9 % | 3–7 % |\n| Lipids | 15–17 % | 10–11.5 % |\n| Chlorogenic acids | 5.5–8 % | 7–10 % |\n| Bean shape | Oval, curved centre cut | Rounder, straight centre cut |\n| Cup | Sweet, aromatic, bright acidity | Heavy body, woody, bitter-chocolate |\n| Main producers | Brazil, Colombia, Ethiopia, Honduras | Vietnam, Brazil (conilon), Indonesia, Uganda |\n\nThe extra caffeine and chlorogenic acids in Robusta are not an accident: both are bitter, and both deter insects. A plant growing in the hot lowlands, where pests thrive, needs more chemical protection. Arabica, safe in cool mountain air, spends that energy on sugars and aromatic oils instead.\n\n> **Why altitude matters**\n>\n> Every 100 m of altitude lowers the average temperature by about 0.6 °C. On a farm at 1,750 m in Huila, nights drop to 12–14 °C. The cooler the night, the slower the cherry ripens. A slow-ripening cherry has more time to build sugars and organic acids in the seed, and a denser bean. Dense beans roast more evenly and taste more complex: more citric and malic acidity, more sweetness, more aroma. The same Caturra plant grown at 900 m will give a flatter, heavier cup. This is why coffee labels print the altitude: it is the closest thing to a quality promise that fits on a bag.\n\n## Is Robusta \"bad\" coffee?\n\nFor most of the 20th century, Robusta was the cheap filler of instant coffee and supermarket blends, often harvested unripe and dried carelessly. The species got the blame for the processing. Today a growing group of producers in Uganda, India and Vietnam pick only ripe cherries and process them with the same care as specialty Arabica. These **fine Robustas** can taste of dark chocolate, roasted nuts and tobacco, with a syrupy body. Italian espresso blends have always used 10–30 % Robusta for its thick crema and its kick.\n\nClimate change is also making the question practical. Studies of Arabica's suitable land expect it to shrink sharply by 2050 as mountains warm. Hybrids such as Catimor and Sarchimor already carry Robusta genes for rust resistance, and wild species such as *C. stenophylla*, which tolerates heat yet tastes like Arabica, are being planted again.\n\n## The varieties you will meet in this course\n\n- **Typica**: the original Yemen line, elegant and clean, low yield.\n- **Bourbon**: a mutation from Réunion island, sweeter, red or yellow cherries.\n- **Caturra**: a dwarf Bourbon from Brazil, the backbone of Colombian farms like the one we follow.\n- **Castillo**: Colombia's rust-resistant hybrid, bred by Cenicafé.\n- **Gesha (Geisha)**: from the Gori Gesha forest in Ethiopia, floral and tea-like, famous since a Panama auction in 2004.\n- **SL28 and SL34**: Kenyan selections with blackcurrant acidity.\n\n## Try this at home\n\nBuy 100 g of a washed Colombian Arabica and 100 g of a fine Robusta from the same roaster. Brew both the same way (we will cover the recipe in Chapter IV) and taste them side by side as they cool. Write down three words for each. Keep the note: you will need it in the final project.\n",
+      "length": 4718
+     },
+     "summary": "Arabica: high altitude, more sugar and aroma. Robusta: lowlands, more caffeine, heavier body.",
+     "introduction": "A long read on the two species behind almost every cup.",
+     "description": null,
+     "resources": [],
+     "order": 3,
+     "json": null,
+     "can_skip": false,
+     "duration": "25 min"
+    }
+   ],
+   "order": 1,
+   "active_from": null,
+   "active_to": null,
+   "lessons": []
+  },
+  {
+   "id": 2,
+   "title": "II. The farm",
+   "summary": "A producer's voice, the anatomy of a cherry and the processing methods that shape flavour.",
+   "duration": "1 h 30 min",
+   "active": true,
+   "topics": [
+    {
+     "id": 4,
+     "title": "Voices from the farm",
+     "lesson_id": 2,
+     "active": true,
+     "preview": false,
+     "topicable_id": 1,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Audio",
+     "topicable": {
+      "id": 1,
+      "value": "course/1/topic/4/audio/OWmP3QCFqPSGb0pUZRJ8YyhrQQVg5YAbyt1R6r7M.mp3",
+      "url": "http://storage.localhost/ulams-coffee/course/1/topic/4/audio/OWmP3QCFqPSGb0pUZRJ8YyhrQQVg5YAbyt1R6r7M.mp3",
+      "length": 75233
+     },
+     "summary": "Don Álvaro on picking, weather, prices and why he still washes most of his coffee.",
+     "introduction": "A podcast recorded at dawn on a family farm in Huila, with birdsong in the background.",
+     "description": "**Episode notes**\n\n- 00:00 Dawn on the farm: the sound of the slope\n- 01:30 How pickers judge ripeness\n- 04:10 Afternoon rain and the risk of natural drying\n- 07:45 Selling to exporters vs. direct trade\n- 10:20 What he wants home baristas to know\n\n*The ambience track is a soundscape; the interview is summarised in the notes above.*",
+     "resources": [],
+     "order": 1,
+     "json": null,
+     "can_skip": false,
+     "duration": "12 min"
+    },
+    {
+     "id": 5,
+     "title": "Anatomy of a cherry",
+     "lesson_id": 2,
+     "active": true,
+     "preview": false,
+     "topicable_id": 1,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\H5P",
+     "topicable": {
+      "id": 1,
+      "value": 2,
+      "content": {
+       "id": 2,
+       "title": "Anatomy of a coffee cherry",
+       "library": "H5P.ImageHotspots 1.10",
+       "main_library": "H5P.ImageHotspots"
+      }
+     },
+     "summary": null,
+     "introduction": "Tap the layers of a ripe cherry: skin, pulp, mucilage, parchment, silver skin and bean.",
+     "description": null,
+     "resources": [],
+     "order": 2,
+     "json": null,
+     "can_skip": false,
+     "duration": "10 min"
+    },
+    {
+     "id": 6,
+     "title": "Processing methods",
+     "lesson_id": 2,
+     "active": true,
+     "preview": false,
+     "topicable_id": 2,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+     "topicable": {
+      "id": 2,
+      "value": "# Processing methods\n\n*What happens between the branch and the sack decides half of what you taste.*\n\nA coffee cherry is fruit. Before its seeds can travel the world, the fruit has to be removed and the seeds dried from about 60 % moisture down to 10–12 %. Every way of doing that leaves its mark on the cup. Producers choose a method by tradition, by climate and by water supply, and more and more often by flavour.\n\n## Washed\n\n![Fermentation tank of a washed process](http://storage.localhost/ulams-coffee/course/1/assets/processing-washed.png)\n\nThe cherries are pulped on the day of picking: a machine squeezes the seeds out of the skin and most of the fruit. The seeds, still covered in sticky mucilage, sit in tanks for 12–36 hours while yeasts and bacteria break the mucilage down. Then they are washed in channels of clean water and dried on patios or raised beds for 7–14 days.\n\n- **Cup:** clean, transparent, bright acidity; you taste the variety and the terroir.\n- **Needs:** a lot of water (traditionally 10–20 litres per kilo of green coffee, much less with modern eco-pulpers) and a steady harvest.\n- **Where:** Colombia, Kenya, Central America, much of Ethiopia.\n\n## Natural (dry)\n\n![Raised beds with drying cherries](http://storage.localhost/ulams-coffee/course/1/assets/processing-natural.png)\n\nThe oldest method: whole cherries are spread on patios or raised beds and dried in the sun for three to five weeks, turned several times a day so they do not mould. The fruit shrivels into a dark husk around the seed, which is then hulled off.\n\n- **Cup:** fruity, winey, heavy body; blueberry and strawberry notes in Ethiopian naturals.\n- **Risk:** uneven drying gives ferment and \"barnyard\" defects, so careful turning matters.\n- **Where:** Ethiopia, Yemen, Brazil, and anywhere water is scarce.\n\n## Honey (pulped natural)\n\n![Pulped beans drying with mucilage](http://storage.localhost/ulams-coffee/course/1/assets/processing-honey.png)\n\nA middle way, perfected in Costa Rica: the cherries are pulped, but some or all of the mucilage is left on the seeds while they dry. Producers name honeys by colour: **white and yellow** honeys keep little mucilage and dry fast; **red and black** honeys keep most of it and are dried slowly in the shade.\n\n- **Cup:** rounded sweetness of a natural with some of the clarity of a washed coffee.\n- **Needs:** almost no water, but constant attention because sticky beans attract mould.\n\n## Anaerobic and other experiments\n\n![Sealed fermentation tank](http://storage.localhost/ulams-coffee/course/1/assets/processing-anaerobic.png)\n\nSince about 2015, producers have borrowed from winemaking: cherries or pulped seeds go into sealed stainless-steel tanks with no oxygen, sometimes for 48–120 hours, sometimes with added yeast cultures (**inoculated** fermentation) or with CO₂ pumped in (**carbonic maceration**).\n\n- **Cup:** loud and unusual: cinnamon, tropical fruit, liqueur, sometimes yoghurt.\n- **Debate:** fans call it innovation; critics say it hides the origin. Taste and decide.\n\n## At a glance\n\n| Method | Fruit removed | Drying time | Water use | Typical cup |\n|---|---|---|---|---|\n| Washed | Before drying | 7–14 days | High | Clean, bright, delicate |\n| Natural | After drying | 3–5 weeks | Very low | Fruity, winey, full |\n| Honey | Partly, before drying | 10–20 days | Low | Sweet, round |\n| Anaerobic | Varies | Varies | Low | Intense, experimental |\n\n> **On the farm in Huila**\n>\n> Our producer, Don Álvaro, washes most of his Caturra: Huila gets rain almost every afternoon, which makes long natural drying risky. For his top lot he dries a red honey under a parabolic greenhouse, a plastic tunnel that keeps the rain off and the air moving. You will taste both in the cupping session in Chapter V.\n",
+      "length": 3781
+     },
+     "summary": "Washed coffees are clean and bright, naturals fruity and heavy, honeys sweet and round, anaerobics loud and experimental.",
+     "introduction": "Washed, natural, honey and anaerobic: what each one does to the cup.",
+     "description": null,
+     "resources": [],
+     "order": 3,
+     "json": null,
+     "can_skip": false,
+     "duration": "30 min"
+    },
+    {
+     "id": 7,
+     "title": "Visit the cooperative",
+     "lesson_id": 2,
+     "active": true,
+     "preview": false,
+     "topicable_id": 1,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\OEmbed",
+     "topicable": {
+      "id": 1,
+      "value": "https://www.youtube.com/watch?v=aSdVF_Xfi0w"
+     },
+     "summary": "Notice the shade trees, the slope and the drying area next to the wet mill.",
+     "introduction": "A 360° walk through a Colombian coffee farm. Drag the video to look around.",
+     "description": null,
+     "resources": [],
+     "order": 4,
+     "json": null,
+     "can_skip": false,
+     "duration": "8 min"
+    }
+   ],
+   "order": 2,
+   "active_from": null,
+   "active_to": null,
+   "lessons": []
+  },
+  {
+   "id": 3,
+   "title": "III. Roasting",
+   "summary": "Read a roast curve, keep a logbook and roast your first virtual batch.",
+   "duration": "1 h 40 min",
+   "active": true,
+   "topics": [
+    {
+     "id": 8,
+     "title": "The roast curve",
+     "lesson_id": 3,
+     "active": true,
+     "preview": false,
+     "topicable_id": 2,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Image",
+     "topicable": {
+      "id": 2,
+      "value": "course/1/topic/8/image/TdyDh6R2hbfzBZp6NfW1Ad6B5RgQJTjguHn8NXNF.png",
+      "url": "http://storage.localhost/ulams-coffee/course/1/topic/8/image/TdyDh6R2hbfzBZp6NfW1Ad6B5RgQJTjguHn8NXNF.png",
+      "width": 1600,
+      "height": 900
+     },
+     "summary": "Charge, turning point, dry end, first crack and drop. Development time is the share of the roast after first crack: 21 % here.",
+     "introduction": "An annotated roast curve of a washed Caturra from Huila.",
+     "description": null,
+     "resources": [],
+     "order": 1,
+     "json": null,
+     "can_skip": false,
+     "duration": "15 min"
+    },
+    {
+     "id": 9,
+     "title": "Roaster's logbook",
+     "lesson_id": 3,
+     "active": true,
+     "preview": false,
+     "topicable_id": 1,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\PDF",
+     "topicable": {
+      "id": 1,
+      "value": "course/1/topic/9/pdf/TzFHxKkfqBhgdWqXD1rF7B693WEp9Q2yh2MFFDRG.pdf",
+      "length": null,
+      "page_count": null,
+      "url": "http://storage.localhost/ulams-coffee/course/1/topic/9/pdf/TzFHxKkfqBhgdWqXD1rF7B693WEp9Q2yh2MFFDRG.pdf"
+     },
+     "summary": "Print it double-sided and log every batch from now on.",
+     "introduction": "An 8-page printable roast log: lot record, batch sheets, cupping scores and notes.",
+     "description": null,
+     "resources": [
+      {
+       "id": 1,
+       "path": "course/1/topic/9/resources/roasters-logbook.pdf",
+       "name": "roasters-logbook.pdf",
+       "url": "http://storage.localhost/ulams-coffee/course/1/topic/9/resources/roasters-logbook.pdf",
+       "topic_id": 9
+      }
+     ],
+     "order": 2,
+     "json": null,
+     "can_skip": false,
+     "duration": "10 min"
+    },
+    {
+     "id": 10,
+     "title": "Roast simulator",
+     "lesson_id": 3,
+     "active": true,
+     "preview": false,
+     "topicable_id": 1,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\ScormSco",
+     "topicable": {
+      "id": 1,
+      "value": 1,
+      "uuid": "6ff2891e-735f-4156-9883-96aab25c2500"
+     },
+     "summary": "Aim for a drop at 205–212 °C with 16–25 % development. Your score is saved to your progress.",
+     "introduction": "Pick a charge temperature and a heat setting, watch the beans change colour and drop the batch at the right moment.",
+     "description": null,
+     "resources": [],
+     "order": 3,
+     "json": null,
+     "can_skip": false,
+     "duration": "30 min"
+    }
+   ],
+   "order": 3,
+   "active_from": null,
+   "active_to": null,
+   "lessons": []
+  },
+  {
+   "id": 4,
+   "title": "IV. Brewing",
+   "summary": "The maths of a good cup and the technique to pour it.",
+   "duration": "1 h 50 min",
+   "active": true,
+   "topics": [
+    {
+     "id": 11,
+     "title": "Ratios & extraction",
+     "lesson_id": 4,
+     "active": true,
+     "preview": false,
+     "topicable_id": 3,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+     "topicable": {
+      "id": 3,
+      "value": "# Ratios & extraction\n\n*A sour cup and a bitter cup are both maths problems. Here is the maths.*\n\nWhen hot water meets ground coffee it dissolves part of it: acids first, then sugars and browning compounds, and last the heavier, bitter ones. A roasted bean is about 70 % insoluble plant fibre; at most about 30 % of its mass can be dissolved. The art of brewing is to dissolve the **right share** of that 30 %, and to dilute it to the **right strength**.\n\n> \"I finally understand why my V60 tastes sour.\"\n> — Maja, Gdańsk, a student from the first edition\n\n## Two numbers that describe every cup\n\n**Strength** is how concentrated the coffee is. We measure it as **total dissolved solids (TDS)**, the percentage of the beverage that is dissolved coffee. A good filter coffee has a TDS of 1.15–1.45 %; espresso sits at 8–12 %.\n\n**Extraction yield (EY)** is how much of the dry coffee you dissolved:\n\n$$\nEY\\% = \\frac{TDS \\times \\text{beverage mass}}{\\text{dose}}\n$$\n\n**Worked example.** You brew 18 g of coffee with 300 g of water. The grounds hold back about twice their weight in water, so about 264 g of coffee ends up in the cup. A refractometer reads a TDS of 1.35 %:\n\n$$\nEY = \\frac{1.35\\% \\times 264\\ \\text{g}}{18\\ \\text{g}} = \\frac{3.56\\ \\text{g}}{18\\ \\text{g}} \\approx 19.8\\%\n$$\n\nThat is right in the middle of the target.\n\n## The brewing control chart\n\n| Extraction yield | What you taste | What to change |\n|---|---|---|\n| below 18 % | **Under-extracted**: sour, salty, thin, short finish | grind finer, hotter water, longer contact |\n| 18–22 % | **Balanced**: sweet, clear acidity, long finish | keep it and adjust strength to taste |\n| above 22 % | **Over-extracted**: bitter, dry, astringent, hollow | grind coarser, cooler water, shorter contact |\n\nStrength is mostly about the **ratio**, and extraction mostly about **grind, time and temperature**. Change one variable at a time.\n\n## Ratios\n\nThe brew ratio is coffee to water by weight. Weigh, do not measure with spoons: a \"scoop\" of a light roast weighs up to 20 % more than the same scoop of a dark roast.\n\n$$\n\\text{water} = \\text{dose} \\times R \\qquad \\text{e.g. } 18\\ \\text{g} \\times 16 = 288\\ \\text{g}\n$$\n\n| Method | Typical ratio | Example |\n|---|---|---|\n| Espresso | 1:2 | 18 g in, 36 g out in 25–30 s |\n| AeroPress | 1:12–1:15 | 15 g, 200 g water |\n| V60 / pour-over | 1:15–1:17 | 15 g, 250 g water |\n| French press | 1:14–1:16 | 30 g, 450 g water |\n| Cold brew concentrate | 1:5–1:8 | 100 g, 700 g cold water, 16 h |\n\n## Water matters more than you think\n\nA cup of coffee is 98.6 % water. The SCA recommends about 150 mg/l total hardness and a pH near 7. Very soft water extracts slowly and tastes flat; very hard water mutes acidity and scales your kettle. If your tap water is hard, try a jug filter or a bottled water with 50–150 mg/l of minerals.\n\n> **Rule of thumb for the next chapter**\n>\n> Start at **1:16**, **93 °C**, a grind like coarse sand, and a total brew time of **3:00–3:30**. Taste. Too sour: grind finer. Too bitter: grind coarser. Too weak or too strong: change the ratio, not the grind.\n\n## Check yourself\n\n1. You use 20 g of coffee at 1:15. How much water? *(300 g)*\n2. Your cup has a TDS of 1.20 % and weighs 280 g, from a 17 g dose. Is it under- or over-extracted? *(EY ≈ 19.8 %: balanced)*\n3. Your V60 tastes sour and thin. Name two changes that raise extraction. *(finer grind, hotter water, longer pours)*\n",
+      "length": 3431
+     },
+     "summary": "Balanced cups extract 18–22 % of the dose. Start at 1:16 and adjust the grind, not the ratio, to fix extraction.",
+     "introduction": "Why a cup tastes sour or bitter, and how to fix it with numbers.",
+     "description": null,
+     "resources": [],
+     "order": 1,
+     "json": null,
+     "can_skip": false,
+     "duration": "30 min"
+    },
+    {
+     "id": 12,
+     "title": "Pour-over masterclass",
+     "lesson_id": 4,
+     "active": true,
+     "preview": false,
+     "topicable_id": 2,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Video",
+     "topicable": {
+      "id": 2,
+      "value": "course/1/topic/12/video/hls.m3u8",
+      "url": "http://storage.localhost/ulams-coffee/course/1/topic/12/video/hls.m3u8",
+      "poster": "course/1/topic/12/video/cNiee1LfPeO13Co1XRkVkxBYlSpDlvLRpD241nZA.png",
+      "poster_url": "http://storage.localhost/ulams-coffee/course/1/topic/12/video/cNiee1LfPeO13Co1XRkVkxBYlSpDlvLRpD241nZA.png",
+      "width": 960,
+      "height": 540,
+      "length": 36000
+     },
+     "summary": "Rinse, grind, bloom, pour, drawdown, taste and adjust.",
+     "introduction": "Tomasz brews a V60 step by step. Use the chapter markers to jump between steps.",
+     "description": "**Chapters**\n\n1. Rinse and preheat\n2. Grind 15 g, medium-fine\n3. Bloom: 45 g for 45 s\n4. Main pours to 250 g\n5. Drawdown at 3:00–3:30\n6. Taste and adjust\n\n**Recipe:** 15 g coffee, 250 g water at 93 °C, total time 3:00–3:30.",
+     "resources": [],
+     "order": 2,
+     "json": {
+      "chapters": [
+       {
+        "time": 5,
+        "title": "Rinse and preheat"
+       },
+       {
+        "time": 10,
+        "title": "Grind 15 g, medium-fine"
+       },
+       {
+        "time": 15,
+        "title": "Bloom: 45 g for 45 s"
+       },
+       {
+        "time": 20,
+        "title": "Main pours to 250 g"
+       },
+       {
+        "time": 25,
+        "title": "Drawdown at 3:00–3:30"
+       },
+       {
+        "time": 30,
+        "title": "Taste and adjust"
+       }
+      ],
+      "ffmpeg": {
+       "state": "finished",
+       "path": "course/1/topic/12/video/hls.m3u8"
+      },
+      "progress_notification": true
+     },
+     "can_skip": false,
+     "duration": "14 min"
+    },
+    {
+     "id": 13,
+     "title": "Grind size matching",
+     "lesson_id": 4,
+     "active": true,
+     "preview": false,
+     "topicable_id": 2,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\H5P",
+     "topicable": {
+      "id": 2,
+      "value": 3,
+      "content": {
+       "id": 3,
+       "title": "Grind size matching",
+       "library": "H5P.DragQuestion 1.14",
+       "main_library": "H5P.DragQuestion"
+      }
+     },
+     "summary": null,
+     "introduction": "Drag each grind size to the brewer it suits.",
+     "description": null,
+     "resources": [],
+     "order": 3,
+     "json": null,
+     "can_skip": false,
+     "duration": "10 min"
+    }
+   ],
+   "order": 4,
+   "active_from": null,
+   "active_to": null,
+   "lessons": []
+  },
+  {
+   "id": 5,
+   "title": "V. Tasting",
+   "summary": "Describe what you taste, cup like a professional and check what you learned.",
+   "duration": "1 h 50 min",
+   "active": true,
+   "topics": [
+    {
+     "id": 14,
+     "title": "The flavour wheel",
+     "lesson_id": 5,
+     "active": true,
+     "preview": false,
+     "topicable_id": 3,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\H5P",
+     "topicable": {
+      "id": 3,
+      "value": 4,
+      "content": {
+       "id": 4,
+       "title": "The flavour wheel",
+       "library": "H5P.Dialogcards 1.9",
+       "main_library": "H5P.Dialogcards"
+      }
+     },
+     "summary": null,
+     "introduction": "Flip the cards to learn the families of the SCA Coffee Taster's Flavor Wheel.",
+     "description": null,
+     "resources": [],
+     "order": 1,
+     "json": null,
+     "can_skip": false,
+     "duration": "15 min"
+    },
+    {
+     "id": 15,
+     "title": "Cupping at home",
+     "lesson_id": 5,
+     "active": true,
+     "preview": false,
+     "topicable_id": 1,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Cmi5Au",
+     "topicable": {
+      "id": 1,
+      "value": 1
+     },
+     "summary": "Opens the guided cupping session. You need two coffees, four cups and a spoon.",
+     "introduction": "A guided cupping session with timers and a scoring form. Your scores are recorded in your learning record.",
+     "description": null,
+     "resources": [],
+     "order": 2,
+     "json": null,
+     "can_skip": false,
+     "duration": "45 min"
+    },
+    {
+     "id": 16,
+     "title": "Tasting check",
+     "lesson_id": 5,
+     "active": true,
+     "preview": false,
+     "topicable_id": 1,
+     "topicable_type": "Ulams\\TopicTypeGift\\Models\\GiftQuiz",
+     "topicable": {
+      "id": 1,
+      "value": "Check what you learned about processing, roasting, brewing and tasting. One question of each type; the essay is reviewed by your tutor.",
+      "max_attempts": 3,
+      "max_execution_time": 20,
+      "min_pass_score": 5,
+      "counts_to_grade": true,
+      "weight": 30,
+      "randomize_order": false
+     },
+     "summary": null,
+     "introduction": "Eight questions, one of each kind. You have three attempts and 20 minutes.",
+     "description": null,
+     "resources": [],
+     "order": 3,
+     "json": null,
+     "can_skip": false,
+     "duration": "15 min"
+    }
+   ],
+   "order": 5,
+   "active_from": null,
+   "active_to": null,
+   "lessons": []
+  },
+  {
+   "id": 6,
+   "title": "VI. Your signature cup",
+   "summary": "Design, test and write down a recipe that is yours.",
+   "duration": "1 h 30 min",
+   "active": true,
+   "topics": [
+    {
+     "id": 17,
+     "title": "Design your recipe",
+     "lesson_id": 6,
+     "active": true,
+     "preview": false,
+     "topicable_id": 1,
+     "topicable_type": "Ulams\\TopicTypeProject\\Models\\Project",
+     "topicable": {
+      "id": 1,
+      "value": "# Design your recipe\n\nYour final project is a recipe that is yours: tested, written down and explained.\n\n## The brief\n\n1. **Choose one coffee** you like and know its origin, process and roast date.\n2. **Brew three variations** of the same recipe and change **one variable** each time: grind, ratio, water temperature or pour schedule.\n3. **Photograph** each variation: the brewer, the cup, and the spent coffee bed (it tells us a lot about your pouring).\n4. **Taste and score** each cup out of 10 with at least three descriptors from the flavour wheel.\n5. **Fill in the recipe card** (PDF in the resources of this topic) for your favourite variation and explain in 3–5 sentences why it won.\n\n## What to submit\n\n- the completed recipe card as **PDF or image** (JPG/PNG),\n- the three photos (one file or a collage is fine).\n\n## How we review it\n\n| Criterion | What we look for | Points |\n|---|---|---|\n| Method | one variable changed at a time, numbers written down | 4 |\n| Tasting | specific descriptors, honest scores | 3 |\n| Reasoning | the choice follows from what you tasted | 2 |\n| Presentation | readable card, clear photos | 1 |\n\nTomasz or Inés will reply within five working days with feedback and one suggestion for your next experiment. You may resubmit as many times as you like.\n",
+      "notify_users": [
+       2,
+       8
+      ],
+      "counts_to_grade": true,
+      "weight": 70,
+      "max_score": 10
+     },
+     "summary": null,
+     "introduction": "Brew three variations, photograph them and submit your recipe card. Your tutor replies with feedback.",
+     "description": null,
+     "resources": [
+      {
+       "id": 2,
+       "path": "course/1/topic/17/resources/signature-recipe-card.pdf",
+       "name": "signature-recipe-card.pdf",
+       "url": "http://storage.localhost/ulams-coffee/course/1/topic/17/resources/signature-recipe-card.pdf",
+       "topic_id": 17
+      }
+     ],
+     "order": 1,
+     "json": null,
+     "can_skip": false,
+     "duration": "75 min"
+    },
+    {
+     "id": 18,
+     "title": "Final reflections",
+     "lesson_id": 6,
+     "active": true,
+     "preview": false,
+     "topicable_id": 4,
+     "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+     "topicable": {
+      "id": 4,
+      "value": "# Final reflections\n\nYou followed one cherry from a hillside in Huila to your own cup. Before you go, here is a short reading list and a glossary to keep next to the grinder.\n\n## Keep reading\n\n| Book | Author | Why |\n|---|---|---|\n| *The World Atlas of Coffee* (2nd ed.) | James Hoffmann | Origins country by country, beautifully photographed |\n| *The Professional Barista's Handbook* | Scott Rao | Extraction and espresso, precise and practical |\n| *The Coffee Roaster's Companion* | Scott Rao | The roast curve explained by a roaster |\n| *Uncommon Grounds* | Mark Pendergrast | How coffee changed the world, and the other way round |\n| *Craft Coffee: A Manual* | Jessica Easto | Home brewing without jargon |\n| *Water for Coffee* | Christopher Hendon, Maxwell Colonna-Dashwood | The chemistry of the 98.6 % |\n\nFree resources: the SCA **Coffee Taster's Flavor Wheel** (PDF), World Coffee Research's **Arabica Coffee Varieties** catalogue, and the **Cenicafé** reports on Colombian processing.\n\n## Glossary\n\n**Bloom** — the first small pour that wets the grounds and releases CO₂; the bed swells and bubbles.\n**Body** — the weight and texture of coffee on the tongue, from tea-like to syrupy.\n**Charge** — the moment green beans drop into the hot roaster; also the drum temperature at that moment.\n**Cupping** — the standard way to taste coffee: fixed ratio, coarse grind, no filter, slurped from a spoon.\n**Development time** — the part of the roast after first crack.\n**Extraction yield (EY)** — the share of the dry coffee dose dissolved into the beverage.\n**First crack** — the audible popping at ~196 °C when steam and CO₂ split the bean.\n**Green coffee** — the dried, hulled, unroasted seed; the form coffee is traded in.\n**Mucilage** — the sticky, sugary layer between pulp and parchment.\n**Parchment** — the papery hull around the seed, removed before export.\n**Peaberry** — a single round seed in a cherry instead of the usual two flat ones.\n**Q-grader** — a taster certified by the Coffee Quality Institute to score coffee to SCA standards.\n**Rate of rise (RoR)** — how fast the bean temperature climbs, in °C per minute.\n**Specialty coffee** — coffee scoring 80 points or more on the SCA cupping form.\n**TDS** — total dissolved solids: the strength of the brew.\n**Terroir** — everything about a place (soil, altitude, climate) that shows up in the cup.\n\nThank you for brewing with us. Send your recipe card to the tutors even after the course: we read every one.\n\n*— Inés & Tomasz*\n",
+      "length": 2535
+     },
+     "summary": null,
+     "introduction": "A reading list and a coffee glossary to keep.",
+     "description": null,
+     "resources": [],
+     "order": 2,
+     "json": null,
+     "can_skip": true,
+     "duration": "15 min"
+    }
+   ],
+   "order": 6,
+   "active_from": null,
+   "active_to": null,
+   "lessons": []
+  }
+ ],
+ "poster_path": "course/1/posters/R94OXLyD9pPA9AdqiOE2lozvtrF7Sprc6HctARf0.png",
+ "poster_url": "http://storage.localhost/ulams-coffee/course/1/posters/R94OXLyD9pPA9AdqiOE2lozvtrF7Sprc6HctARf0.png",
+ "active_from": null,
+ "active_to": null,
+ "hours_to_complete": 9,
+ "findable": true,
+ "target_group": "Home brewers, café staff in their first year, food writers",
+ "teaser_url": null,
+ "public": false,
+ "fields": {
+  "experience": "coffee",
+  "landing": {
+   "headline": "Learn coffee the slow way.",
+   "subheadline": "Six chapters. One cherry. Your best cup.",
+   "cta": "Start the free chapter",
+   "testimonials": [
+    {
+     "quote": "I finally understand why my V60 tastes sour.",
+     "author": "Maja, Gdańsk"
+    },
+    {
+     "quote": "It reads like a magazine and works like a course. I roasted my first batch after Chapter III.",
+     "author": "Daniel, Wrocław"
+    },
+    {
+     "quote": "The cupping session alone changed how our café trains new baristas.",
+     "author": "Aga, café owner, Poznań"
+    }
+   ],
+   "faq": [
+    {
+     "q": "Do I need an espresso machine?",
+     "a": "No. Everything in the course works with a pour-over dripper, a scale and a grinder."
+    },
+    {
+     "q": "How long do I have access?",
+     "a": "For life, including future updates of the chapters."
+    },
+    {
+     "q": "Is the first chapter really free?",
+     "a": "Yes: the welcome film and Chapter I open without an account."
+    }
+   ],
+   "newsletter": "Field notes"
+  }
+ }
+}

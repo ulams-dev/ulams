@@ -1,0 +1,160 @@
+---
+import Icon from "./Icon.astro";
+
+interface Plan {
+  name: string;
+  label?: string;
+  price?: string;
+  period?: string;
+  description?: string;
+  items?: string[];
+  cta?: { label: string; href: string };
+  highlighted?: boolean;
+}
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  plans: Plan[];
+  note?: string;
+}
+const { id = "pricing", eyebrow, title, intro, plans, note } = Astro.props;
+---
+
+<section class="u-section u-pricing" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <div class="u-container">
+    <div class="u-section-head u-section-head--center" data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+      {intro && <p class="u-lead">{intro}</p>}
+    </div>
+    <ul class="u-pricing__grid" role="list" style={`--cols:${Math.min(plans.length, 3)}`}>
+      {
+        plans.map((plan, i) => (
+          <li class={`u-plan u-card u-card--hover ${plan.highlighted ? "is-highlighted" : ""}`} data-reveal style={`--reveal-i:${i}`}>
+            {plan.highlighted && <span class="u-plan__ribbon">Recommended</span>}
+            {plan.label && <p class="u-plan__label">{plan.label}</p>}
+            <h3>{plan.name}</h3>
+            {plan.price && (
+              <p class="u-plan__price">
+                <span>{plan.price}</span>
+                {plan.period && <small>{plan.period}</small>}
+              </p>
+            )}
+            {plan.description && <p class="u-plan__desc">{plan.description}</p>}
+            {(plan.items ?? []).length > 0 && (
+              <ul class="u-plan__items" role="list">
+                {(plan.items ?? []).map((item) => (
+                  <li>
+                    <Icon name="check" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {plan.cta && (
+              <a class={`u-btn ${plan.highlighted ? "" : "u-btn--ghost"} u-plan__cta`} href={plan.cta.href}>
+                {plan.cta.label}
+              </a>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+    {note && <p class="u-pricing__note">{note}</p>}
+  </div>
+</section>
+
+<style>
+  .u-pricing__grid {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: calc(var(--cols) * 400px);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 20px;
+    align-items: stretch;
+  }
+  .u-plan {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 14px;
+    padding: 30px 26px;
+  }
+  .u-plan.is-highlighted {
+    border-color: var(--ulams-color-primary);
+    box-shadow: 0 0 0 1px var(--ulams-color-primary);
+  }
+  .u-plan__ribbon {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    padding: 4px 10px;
+    border-radius: var(--ulams-radius);
+    background: var(--ulams-color-primary);
+    color: var(--ulams-color-on-primary);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .u-plan__label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ulams-color-muted);
+  }
+  .u-plan h3 {
+    font-size: 1.5rem;
+  }
+  .u-plan__price {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .u-plan__price span {
+    font-family: var(--ulams-font-family);
+    font-size: clamp(2.4rem, 2rem + 1.5vw, 3.2rem);
+    line-height: 1;
+    color: var(--ulams-color-header);
+  }
+  .u-plan__price small {
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-plan__desc {
+    font-size: 0.9375rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-plan__items {
+    list-style: none;
+    margin: 4px 0 8px;
+    padding: 14px 0 0;
+    border-top: 1px solid var(--ulams-color-border);
+    display: grid;
+    gap: 10px;
+    font-size: 0.9375rem;
+  }
+  .u-plan__items li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .u-plan__items :global(.u-icon) {
+    margin-top: 3px;
+    color: var(--ulams-color-positive);
+  }
+  .u-plan__cta {
+    margin-top: auto;
+  }
+  .u-pricing__note {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+</style>

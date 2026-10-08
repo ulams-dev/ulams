@@ -1,0 +1,445 @@
+/*
+ * Base layer of the ulams UI catalogue. Every value comes from a --ulams-* custom property
+ * (ADR 0004); the theme files in ./themes set them per tenant. Names shared with the old
+ * front (front/src/lib/components/theme/cssVars.ts) keep their meaning; the extensions are
+ * listed at the top of each theme file.
+ */
+
+:root {
+  --ulams-color-primary: #a84521;
+  --ulams-color-primary-on-light: #a84521;
+  --ulams-color-on-primary: #ffffff;
+  --ulams-color-secondary: #536349;
+  --ulams-color-header: #1b1b1b;
+  --ulams-color-text: #1b1b1b;
+  --ulams-color-muted: #5a5a5a;
+  --ulams-color-bg: #ffffff;
+  --ulams-color-surface: #f6f6f6;
+  --ulams-color-card-bg: #f6f6f6;
+  --ulams-color-border: #dddddd;
+  --ulams-color-accent-bg: #a84521;
+  --ulams-color-positive: #2f7d4a;
+  --ulams-color-warn: #9a6700;
+  --ulams-color-error: #b42318;
+  --ulams-color-info: #0b5cad;
+  --ulams-radius: 4px;
+  --ulams-radius-button: 4px;
+  --ulams-radius-input: 4px;
+  --ulams-radius-card: 6px;
+  --ulams-radius-modal: 8px;
+  --ulams-font-family: Georgia, serif;
+  --ulams-font-family-body: system-ui, sans-serif;
+  --ulams-font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ulams-shadow-hover: 0 12px 28px -8px rgb(0 0 0 / 0.18);
+  --ulams-container: 1200px;
+  --ulams-gutter: clamp(16px, 4vw, 56px);
+  --ulams-section-space: clamp(64px, 9vw, 128px);
+  --ulams-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ulams-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ulams-duration: 0.45s;
+  --ulams-focus: 0 0 0 3px var(--ulams-color-bg), 0 0 0 5px var(--ulams-color-primary);
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--ulams-color-bg);
+  color: var(--ulams-color-text);
+  font-family: var(--ulams-font-family-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+img,
+svg,
+video,
+iframe {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--ulams-font-family);
+  color: var(--ulams-color-header);
+  line-height: 1.12;
+  margin: 0;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ulams-color-primary);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--ulams-color-primary) 28%, transparent);
+}
+
+/* Skip link: first focusable element on every page. */
+.u-skip {
+  position: absolute;
+  left: 16px;
+  top: -100px;
+  z-index: 100;
+  padding: 12px 18px;
+  background: var(--ulams-color-primary);
+  color: var(--ulams-color-on-primary);
+  border-radius: var(--ulams-radius-button);
+  font-weight: 600;
+  text-decoration: none;
+}
+.u-skip:focus {
+  top: 12px;
+}
+
+.u-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.u-container {
+  width: 100%;
+  max-width: calc(var(--ulams-container) + 2 * var(--ulams-gutter));
+  margin-inline: auto;
+  padding-inline: var(--ulams-gutter);
+}
+
+.u-section {
+  padding-block: var(--ulams-section-space);
+}
+
+.u-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--ulams-font-family-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ulams-color-primary-on-light);
+}
+
+.u-h2 {
+  font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3rem);
+  letter-spacing: -0.015em;
+}
+
+.u-lead {
+  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.125rem);
+  color: var(--ulams-color-muted);
+  max-width: 62ch;
+}
+
+.u-section-head {
+  display: grid;
+  gap: 14px;
+  margin-bottom: clamp(32px, 5vw, 56px);
+  max-width: 760px;
+}
+.u-section-head--center {
+  text-align: center;
+  margin-inline: auto;
+  justify-items: center;
+}
+
+/* Buttons */
+.u-btn {
+  --_bg: var(--ulams-color-primary);
+  --_fg: var(--ulams-color-on-primary);
+  --_bd: var(--_bg);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 22px;
+  border: 1px solid var(--_bd);
+  border-radius: var(--ulams-radius-button);
+  background: var(--_bg);
+  color: var(--_fg);
+  font-family: var(--ulams-font-family-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    transform 0.25s var(--ulams-ease),
+    box-shadow 0.25s var(--ulams-ease),
+    background-color 0.25s var(--ulams-ease),
+    color 0.25s var(--ulams-ease);
+}
+.u-btn::after {
+  /* sheen sweep on hover */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.28) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.7s var(--ulams-ease);
+}
+.u-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ulams-shadow-hover);
+}
+.u-btn:hover::after {
+  transform: translateX(120%);
+}
+.u-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+.u-btn .u-icon {
+  transition: transform 0.3s var(--ulams-ease);
+}
+.u-btn:hover .u-icon--arrow {
+  transform: translateX(4px);
+}
+.u-btn--ghost {
+  --_bg: transparent;
+  --_fg: var(--ulams-color-text);
+  --_bd: currentColor;
+}
+.u-btn--ghost:hover {
+  --_bg: color-mix(in srgb, var(--ulams-color-text) 8%, transparent);
+}
+.u-btn--link {
+  --_bg: transparent;
+  --_bd: transparent;
+  --_fg: var(--ulams-color-primary-on-light);
+  padding-inline: 4px;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 1px;
+}
+.u-btn--link:hover {
+  box-shadow: none;
+}
+.u-btn--sm {
+  min-height: 40px;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+}
+
+.u-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+.u-icon {
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
+}
+
+/* Format / media tags */
+.u-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 1px solid var(--ulams-color-border);
+  border-radius: calc(var(--ulams-radius) / 2);
+  background: var(--ulams-color-card-bg);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ulams-color-text);
+}
+
+/* Cards: lift on hover */
+.u-card {
+  background: var(--ulams-color-card-bg);
+  border: 1px solid var(--ulams-color-border);
+  border-radius: var(--ulams-radius-card);
+  transition:
+    transform 0.35s var(--ulams-ease),
+    box-shadow 0.35s var(--ulams-ease),
+    border-color 0.35s var(--ulams-ease);
+}
+.u-card--hover:hover,
+.u-card--hover:focus-within {
+  transform: translateY(-4px);
+  box-shadow: var(--ulams-shadow-hover);
+  border-color: color-mix(in srgb, var(--ulams-color-primary) 45%, var(--ulams-color-border));
+}
+
+/* Scroll reveal (progressive: only hidden once the reveal script has run). */
+.js-reveal [data-reveal] {
+  /* `translate` (not `transform`) so hover transforms on the same element keep working */
+  opacity: 0;
+  translate: 0 24px;
+  transition:
+    opacity 0.8s var(--ulams-ease) calc(var(--reveal-i, 0) * 70ms),
+    translate 0.8s var(--ulams-ease) calc(var(--reveal-i, 0) * 70ms),
+    transform 0.35s var(--ulams-ease),
+    box-shadow 0.35s var(--ulams-ease),
+    border-color 0.35s var(--ulams-ease),
+    background-color 0.4s var(--ulams-ease);
+}
+.js-reveal [data-reveal].is-revealed {
+  opacity: 1;
+  translate: none;
+}
+
+/* Navigation progress (elements/navigation.ts): only for navigations that take a while */
+html::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 200;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--ulams-color-primary) 30%, var(--ulams-color-accent, var(--ulams-color-primary)) 70%, transparent);
+  background-size: 200% 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  pointer-events: none;
+}
+html.is-navigating::before {
+  opacity: 1;
+  animation:
+    u-nav-grow 4s cubic-bezier(0.1, 0.7, 0.2, 1) forwards,
+    u-nav-flow 1.2s linear infinite;
+}
+@keyframes u-nav-grow {
+  from {
+    transform: scaleX(0.05);
+  }
+  to {
+    transform: scaleX(0.92);
+  }
+}
+@keyframes u-nav-flow {
+  to {
+    background-position: -200% 0;
+  }
+}
+html.is-navigating body {
+  cursor: progress;
+}
+
+/* Skeleton shimmer for islands that load data */
+.u-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--ulams-color-text) 7%, transparent);
+  border-radius: var(--ulams-radius);
+}
+.u-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--ulams-color-bg) 60%, transparent), transparent);
+  animation: u-shimmer 1.4s infinite;
+}
+@keyframes u-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Native cross-document view transitions (Chromium, Safari 18.2+); others navigate instantly. */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.32s;
+  animation-timing-function: var(--ulams-ease);
+}
+::view-transition-old(root) {
+  animation-name: u-vt-out;
+}
+::view-transition-new(root) {
+  animation-name: u-vt-in;
+}
+@keyframes u-vt-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+@keyframes u-vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+  .js-reveal [data-reveal] {
+    opacity: 1;
+    translate: none;
+  }
+  @view-transition {
+    navigation: none;
+  }
+}

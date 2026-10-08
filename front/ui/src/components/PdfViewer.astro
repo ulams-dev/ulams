@@ -1,0 +1,50 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  src: string;
+  title: string;
+}
+const { src, title } = Astro.props;
+---
+
+<div class="u-pdf">
+  <div class="u-pdf__bar">
+    <span><Icon name="pdf" /> {title}</span>
+    <span class="u-actions">
+      <a class="u-btn u-btn--ghost u-btn--sm" href={src} target="_blank" rel="noopener"><Icon name="external" /> Open</a>
+      <a class="u-btn u-btn--sm" href={src} download><Icon name="download" /> Download</a>
+    </span>
+  </div>
+  <iframe src={`${src}#view=FitH`} title={title} loading="lazy"></iframe>
+</div>
+
+<style>
+  .u-pdf {
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    overflow: hidden;
+    background: var(--ulams-color-card-bg);
+  }
+  .u-pdf__bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .u-pdf__bar > span:first-child {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    font-weight: 600;
+  }
+  .u-pdf iframe {
+    width: 100%;
+    height: min(78vh, 900px);
+    border: 0;
+    background: #fff;
+  }
+</style>

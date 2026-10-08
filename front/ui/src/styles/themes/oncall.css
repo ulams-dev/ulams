@@ -1,0 +1,84 @@
+/* "On-Call": dense dark pro tool, semantic signal colours (experiences.md §3). */
+[data-theme="oncall"] {
+  color-scheme: dark;
+  --ulams-color-primary: #58a6ff;
+  --ulams-color-primary-on-light: #58a6ff;
+  --ulams-color-accent: #58a6ff;
+  --ulams-color-on-primary: #0b0f14;
+  --ulams-color-secondary: #3fb950;
+  --ulams-color-header: #e6edf3;
+  --ulams-color-text: #e6edf3;
+  --ulams-color-muted: #9aa7b4;
+  --ulams-color-bg: #0b0f14;
+  --ulams-color-surface: #0f141b;
+  --ulams-color-card-bg: #121821;
+  --ulams-color-border: #1e2733;
+  --ulams-color-accent-bg: #121821;
+  --ulams-color-input-bg: #0b0f14;
+  --ulams-color-positive: #3fb950;
+  --ulams-color-warn: #d29922;
+  --ulams-color-error: #f85149;
+  --ulams-color-info: #58a6ff;
+  --ulams-gray-1: #121821;
+  --ulams-gray-2: #1e2733;
+  --ulams-gray-3: #8b98a5;
+  --ulams-gray-4: #e6edf3;
+  --ulams-gray-5: #f6f8fa;
+  --ulams-radius: 4px;
+  --ulams-radius-button: 4px;
+  --ulams-radius-input: 4px;
+  --ulams-radius-card: 6px;
+  --ulams-radius-modal: 6px;
+  --ulams-font-family: var(--font-space-grotesk), "Space Grotesk", system-ui, sans-serif;
+  --ulams-font-family-body: var(--font-inter), Inter, system-ui, sans-serif;
+  --ulams-font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, monospace;
+  --ulams-shadow-hover: 0 0 0 1px rgb(88 166 255 / 0.35), 0 16px 32px -12px rgb(0 0 0 / 0.6);
+  --ulams-section-space: clamp(56px, 7vw, 104px);
+  --ulams-focus: 0 0 0 2px #0b0f14, 0 0 0 4px #58a6ff;
+}
+
+[data-theme="oncall"] body {
+  background-image:
+    radial-gradient(1200px 500px at 80% -10%, rgb(88 166 255 / 0.07), transparent 60%),
+    linear-gradient(rgb(255 255 255 / 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.018) 1px, transparent 1px);
+  background-size: auto, 32px 32px, 32px 32px;
+  font-size: 0.9375rem;
+}
+
+[data-theme="oncall"] h1,
+[data-theme="oncall"] h2,
+[data-theme="oncall"] h3 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+[data-theme="oncall"] .u-eyebrow {
+  font-family: var(--ulams-font-mono);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--ulams-color-muted);
+}
+[data-theme="oncall"] .u-eyebrow::before {
+  content: "//";
+  color: var(--ulams-color-primary);
+}
+
+[data-theme="oncall"] .u-btn {
+  font-family: var(--ulams-font-mono);
+  font-weight: 500;
+  font-size: 0.875rem;
+  min-height: 44px;
+}
+[data-theme="oncall"] .u-btn--ghost {
+  --_bd: var(--ulams-color-border);
+}
+[data-theme="oncall"] .u-tag {
+  font-family: var(--ulams-font-mono);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  background: transparent;
+  color: var(--ulams-color-muted);
+}

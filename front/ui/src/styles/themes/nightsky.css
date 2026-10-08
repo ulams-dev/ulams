@@ -1,0 +1,110 @@
+/* "Night Sky Explorers": playful night-blue adventure for kids 10–14 (experiences.md §4). */
+[data-theme="nightsky"] {
+  color-scheme: dark;
+  --ulams-color-primary: #ffd23f;
+  --ulams-color-primary-on-light: #ffd23f;
+  --ulams-color-accent: #ffd23f;
+  --ulams-color-on-primary: #13153a;
+  --ulams-color-secondary: #ff6b6b;
+  --ulams-color-mint: #3ddc97;
+  --ulams-color-lilac: #b3a8ff;
+  --ulams-color-header: #ffffff;
+  --ulams-color-text: #f2f0ff;
+  --ulams-color-muted: #c4bff0;
+  --ulams-color-bg: #13153a;
+  --ulams-color-surface: #181b47;
+  --ulams-color-card-bg: #1f2257;
+  --ulams-color-border: #343a8a;
+  --ulams-color-accent-bg: #2a2e73;
+  --ulams-color-input-bg: #1f2257;
+  --ulams-color-positive: #3ddc97;
+  --ulams-color-warn: #ffd23f;
+  --ulams-color-error: #ff8a8a;
+  --ulams-gray-1: #2a2e73;
+  --ulams-gray-2: #6a66a3;
+  --ulams-gray-3: #b7b0e8;
+  --ulams-gray-4: #e3dfff;
+  --ulams-gray-5: #f2f0ff;
+  --ulams-radius: 16px;
+  --ulams-radius-button: 999px;
+  --ulams-radius-input: 16px;
+  --ulams-radius-card: 24px;
+  --ulams-radius-modal: 24px;
+  --ulams-font-family: var(--font-comfortaa), Comfortaa, system-ui, sans-serif;
+  --ulams-font-family-body: var(--font-quicksand), Quicksand, system-ui, sans-serif;
+  --ulams-shadow-hover: 0 18px 40px -12px rgb(0 0 0 / 0.55), 0 0 0 3px rgb(255 210 63 / 0.35);
+  --ulams-focus: 0 0 0 3px #13153a, 0 0 0 6px #ffd23f;
+}
+
+[data-theme="nightsky"] body {
+  font-size: 1.0625rem;
+  font-weight: 500;
+  background-color: #13153a;
+  background-image:
+    radial-gradient(1.5px 1.5px at 10% 20%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 30% 70%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 55% 15%, #fff8 50%, transparent 51%),
+    radial-gradient(1px 1px at 75% 45%, #fff 50%, transparent 51%),
+    radial-gradient(2px 2px at 90% 80%, #ffd23f 50%, transparent 51%),
+    radial-gradient(1px 1px at 45% 90%, #fffa 50%, transparent 51%),
+    radial-gradient(900px 600px at 85% 0%, rgb(155 140 255 / 0.18), transparent 70%),
+    radial-gradient(700px 500px at 0% 40%, rgb(255 107 107 / 0.08), transparent 70%);
+  background-size:
+    340px 340px,
+    260px 260px,
+    420px 420px,
+    300px 300px,
+    520px 520px,
+    380px 380px,
+    auto,
+    auto;
+  background-attachment: fixed;
+}
+
+[data-theme="nightsky"] h1,
+[data-theme="nightsky"] h2,
+[data-theme="nightsky"] h3 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+[data-theme="nightsky"] .u-eyebrow {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgb(255 210 63 / 0.12);
+  border: 2px solid rgb(255 210 63 / 0.35);
+  color: #ffd23f;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+}
+[data-theme="nightsky"] .u-btn {
+  min-height: 52px;
+  padding-inline: 26px;
+  border-width: 3px;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: 0 5px 0 0 rgb(0 0 0 / 0.35);
+}
+[data-theme="nightsky"] .u-btn:hover {
+  transform: translateY(-3px) rotate(-1deg);
+  box-shadow: 0 8px 0 0 rgb(0 0 0 / 0.35);
+  transition-timing-function: var(--ulams-ease-bounce);
+}
+[data-theme="nightsky"] .u-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 0 rgb(0 0 0 / 0.35);
+}
+[data-theme="nightsky"] .u-btn--ghost {
+  --_bd: rgb(255 255 255 / 0.35);
+  --_fg: #fff;
+}
+[data-theme="nightsky"] .u-card {
+  border-width: 3px;
+}
+[data-theme="nightsky"] .u-tag {
+  border-radius: 999px;
+  border-width: 2px;
+  background: rgb(255 255 255 / 0.06);
+  color: var(--ulams-color-text);
+  letter-spacing: 0.04em;
+}

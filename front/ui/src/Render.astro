@@ -1,0 +1,25 @@
+---
+/**
+ * Renders a page document: `<Render doc={doc} data={dataModel} />`.
+ * Validation, bindings and fallbacks happen in render-core.ts; this file only maps
+ * prepared nodes to Astro components.
+ */
+import { prepare, type UiNode } from "./render-core.ts";
+import Node from "./Node.astro";
+
+interface Props {
+  doc: UiNode;
+  /** Data model for `{"$data": "/pointer"}` bindings. */
+  data?: unknown;
+}
+
+const { doc, data } = Astro.props;
+const prepared = prepare(doc, {
+  data,
+  onIssue: (component, issues) => {
+    if (import.meta.env.DEV) console.warn(`[ulams/ui] ${component}: ${issues.map((i) => `${i.path} ${i.message}`).join("; ")}`);
+  },
+});
+---
+
+<Node node={prepared} />

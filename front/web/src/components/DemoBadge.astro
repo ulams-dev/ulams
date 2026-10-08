@@ -1,0 +1,127 @@
+---
+/** "Demo – resets hourly" pill: tenant admin link and the other demo tenants. */
+import { hostForTenant } from "../lib/tenant.ts";
+import { DEMO_TENANTS } from "../lib/theme.ts";
+
+interface Props {
+  adminUrl: string;
+  slug: string;
+}
+const { adminUrl, slug } = Astro.props;
+const host = Astro.request.headers.get("host") ?? Astro.url.host;
+const others = DEMO_TENANTS.filter((t) => t.slug !== slug)
+  .map((t) => ({ ...t, host: hostForTenant(host, slug, t.slug) }))
+  .filter((t) => t.host);
+---
+
+<details class="u-demo">
+  <summary>
+    <span class="u-demo__dot" aria-hidden="true"></span>
+    Demo <span class="u-demo__sep" aria-hidden="true">–</span> resets hourly
+  </summary>
+  <div class="u-demo__panel">
+    <p>You are logged in as a demo student. Everything you do is wiped every hour.</p>
+    <a href={adminUrl} target="_blank" rel="noopener">Open the admin panel ↗</a>
+    {
+      others.length > 0 && (
+        <>
+          <p class="u-demo__label">Other demos</p>
+          <ul role="list">
+            {others.map((t) => (
+              <li>
+                <a href={`${Astro.url.protocol}//${t.host}/`}>{t.name}</a>
+              </li>
+            ))}
+          </ul>
+        </>
+      )
+    }
+  </div>
+</details>
+
+<style>
+  .u-demo {
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    z-index: 60;
+    max-width: calc(100vw - 32px);
+    font-family: system-ui, sans-serif;
+    font-size: 0.8125rem;
+    color: #fff;
+  }
+  :global(.u-player-body) .u-demo {
+    left: auto;
+    right: 16px;
+    bottom: 76px;
+  }
+  :global(.u-player-body) .u-demo__panel {
+    left: auto;
+    right: 0;
+  }
+  .u-demo summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgb(17 17 17 / 0.88);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 24px -8px rgb(0 0 0 / 0.5);
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .u-demo summary:hover {
+    transform: translateY(-2px);
+  }
+  .u-demo summary::-webkit-details-marker {
+    display: none;
+  }
+  .u-demo__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #3fb950;
+    box-shadow: 0 0 0 3px rgb(63 185 80 / 0.3);
+  }
+  .u-demo__panel {
+    margin-bottom: 10px;
+    padding: 14px 16px;
+    width: 280px;
+    max-width: 100%;
+    border-radius: 14px;
+    background: rgb(17 17 17 / 0.94);
+    display: grid;
+    gap: 8px;
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    animation: u-demo-pop 0.25s ease-out;
+  }
+  @keyframes u-demo-pop {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  .u-demo__panel a {
+    color: #9ecbff;
+  }
+  .u-demo__label {
+    margin-top: 6px;
+    color: #bbb;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .u-demo ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 4px;
+  }
+</style>

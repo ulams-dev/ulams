@@ -1,0 +1,236 @@
+---
+interface Props {
+  variant?: "pull" | "log" | "bubbles";
+  eyebrow?: string;
+  title?: string;
+  items: Array<{ quote: string; author: string }>;
+  id?: string;
+}
+const { variant = "pull", eyebrow, title, items, id = "voices" } = Astro.props;
+const [first, ...rest] = items;
+---
+
+<section class={`u-section u-quotes u-quotes--${variant}`} id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <div class="u-container">
+    {
+      (eyebrow || title) && (
+        <div class={`u-section-head ${variant !== "log" ? "u-section-head--center" : ""}`} data-reveal>
+          {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+          {title && (
+            <h2 class="u-h2" id={`${id}-title`}>
+              {title}
+            </h2>
+          )}
+        </div>
+      )
+    }
+
+    {
+      variant === "pull" && first && (
+        <>
+          <figure class="u-pull" data-reveal>
+            <span class="u-pull__mark" aria-hidden="true">
+              “
+            </span>
+            <blockquote>{first.quote}</blockquote>
+            <figcaption>{first.author}</figcaption>
+          </figure>
+          {rest.length > 0 && (
+            <ul class="u-pull__more" role="list">
+              {rest.map((q, i) => (
+                <li class="u-card u-card--hover" data-reveal style={`--reveal-i:${i}`}>
+                  <figure>
+                    <blockquote>“{q.quote}”</blockquote>
+                    <figcaption>{q.author}</figcaption>
+                  </figure>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )
+    }
+
+    {
+      variant === "log" && (
+        <ol class="u-log" role="list">
+          {items.map((q, i) => (
+            <li data-reveal style={`--reveal-i:${i}`}>
+              <span class="u-log__tag">[review]</span>
+              <blockquote>"{q.quote}"</blockquote>
+              <span class="u-log__who">— {q.author}</span>
+            </li>
+          ))}
+        </ol>
+      )
+    }
+
+    {
+      variant === "bubbles" && (
+        <ul class="u-bubbles" role="list">
+          {items.map((q, i) => (
+            <li class="u-card u-card--hover" data-reveal style={`--reveal-i:${i}`}>
+              <figure>
+                <blockquote>“{q.quote}”</blockquote>
+                <figcaption>
+                  <span class="u-bubbles__avatar" aria-hidden="true">
+                    {q.author.trim().charAt(0)}
+                  </span>
+                  {q.author}
+                </figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  figure {
+    margin: 0;
+  }
+  blockquote {
+    margin: 0;
+  }
+  .u-pull {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    display: grid;
+    gap: 22px;
+    justify-items: center;
+  }
+  .u-pull__mark {
+    font-family: var(--ulams-font-family);
+    font-size: 6rem;
+    line-height: 0.6;
+    height: 0.5em;
+    color: var(--ulams-color-accent, var(--ulams-color-primary));
+  }
+  .u-pull blockquote {
+    font-family: var(--ulams-font-family);
+    font-style: italic;
+    font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.35rem);
+    line-height: 1.35;
+    color: var(--ulams-color-header);
+  }
+  .u-pull figcaption {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ulams-color-muted);
+  }
+  .u-pull figcaption::before,
+  .u-pull figcaption::after {
+    content: "";
+    display: inline-block;
+    width: 40px;
+    height: 1px;
+    margin: 0 14px;
+    vertical-align: middle;
+    background: var(--ulams-color-border);
+  }
+  .u-pull__more,
+  .u-bubbles {
+    list-style: none;
+    margin: 48px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 18px;
+  }
+  .u-pull__more li,
+  .u-bubbles li {
+    padding: 24px;
+  }
+  .u-pull__more blockquote {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  .u-pull__more figcaption,
+  .u-bubbles figcaption {
+    margin-top: 14px;
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-log {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.8125rem;
+  }
+  .u-log li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: baseline;
+    padding: 14px 16px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius);
+    background: var(--ulams-color-card-bg);
+    transition: border-color 0.3s, transform 0.3s var(--ulams-ease);
+  }
+  .u-log li:hover {
+    border-color: var(--ulams-color-positive);
+    transform: translateX(4px);
+  }
+  .u-log__tag {
+    color: var(--ulams-color-positive);
+  }
+  .u-log__who {
+    color: var(--ulams-color-muted);
+    text-align: right;
+  }
+  @media (max-width: 760px) {
+    .u-log li {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .u-log__who {
+      text-align: left;
+    }
+  }
+  .u-bubbles li {
+    border-radius: 28px 28px 28px 8px;
+  }
+  .u-bubbles li:nth-child(2) {
+    rotate: 1deg;
+  }
+  .u-bubbles li:nth-child(3) {
+    rotate: -1deg;
+  }
+  .u-bubbles blockquote {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .u-bubbles figcaption {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+  }
+  .u-bubbles__avatar {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--ulams-color-secondary);
+    color: #13153a;
+    font-weight: 800;
+  }
+  .u-bubbles li:nth-child(2) .u-bubbles__avatar {
+    background: var(--ulams-color-mint, var(--ulams-color-positive));
+  }
+  .u-bubbles li:nth-child(3) .u-bubbles__avatar {
+    background: var(--ulams-color-lilac, var(--ulams-color-primary));
+  }
+</style>

@@ -1,0 +1,358 @@
+{
+  "component": "Page",
+  "props": {
+    "theme": "coffee",
+    "title": "The Coffee Atlas — Learn coffee the slow way",
+    "description": "A field guide to specialty coffee for curious home baristas: six chapters from seed to cup, ending with a recipe of your own."
+  },
+  "children": [
+    {
+      "component": "SiteHeader",
+      "props": {
+        "brand": "The Coffee Atlas",
+        "tagline": "Field guide & academy",
+        "mark": "wordmark",
+        "links": [
+          {
+            "label": "Chapters",
+            "href": "#syllabus"
+          },
+          {
+            "label": "Tutors",
+            "href": "#letter"
+          },
+          {
+            "label": "Live sessions",
+            "href": "#events"
+          },
+          {
+            "label": "Tuition",
+            "href": "#pricing"
+          },
+          {
+            "label": "FAQ",
+            "href": "#faq"
+          }
+        ],
+        "signIn": {
+          "label": "Sign in",
+          "href": "/login"
+        },
+        "cta": {
+          "label": "Start the free chapter",
+          "href": {
+            "$data": "/course/previewHref",
+            "$default": "/"
+          }
+        }
+      }
+    },
+    {
+      "component": "StatusBar",
+      "props": {
+        "variant": "ribbon",
+        "items": [
+          {
+            "label": "Self-paced"
+          },
+          {
+            "label": "Long-form"
+          },
+          {
+            "label": {
+              "$data": "/course/level",
+              "$default": "Beginner"
+            }
+          },
+          {
+            "label": "Huila · Kraków"
+          }
+        ]
+      }
+    },
+    {
+      "component": "Main",
+      "children": [
+        {
+          "component": "Hero",
+          "props": {
+            "variant": "editorial",
+            "eyebrow": "A field guide from seed to cup",
+            "title": {
+              "$data": "/course/landing/headline",
+              "$default": "Learn coffee the slow way."
+            },
+            "titleAccent": "slow way.",
+            "subtitle": {
+              "$data": "/course/landing/subheadline",
+              "$default": "Six chapters. One cherry. Your best cup."
+            },
+            "body": {
+              "$data": "/course/summary"
+            },
+            "primaryCta": {
+              "label": {
+                "$data": "/course/landing/cta",
+                "$default": "Start the free chapter"
+              },
+              "href": {
+                "$data": "/course/previewHref",
+                "$default": "/"
+              }
+            },
+            "secondaryCta": {
+              "label": "See the syllabus →",
+              "href": "#syllabus"
+            },
+            "image": {
+              "src": "/landing/coffee/hero-cherries.webp",
+              "alt": "Weathered hands cupping freshly picked red coffee cherries in front of coffee shrubs on a misty hillside",
+              "width": 1408,
+              "height": 768
+            },
+            "caption": "Ripe cherries at first light, Huila, Colombia.",
+            "facts": {
+              "$data": "/course/facts"
+            }
+          }
+        },
+        {
+          "component": "Syllabus",
+          "props": {
+            "variant": "folio",
+            "eyebrow": "Course syllabus",
+            "title": "The folio & index",
+            "intro": "Six chapters, in the order a coffee travels from the farm to your cup. Read at your own pace.",
+            "lessons": {
+              "$data": "/course/lessons"
+            },
+            "totalLabel": {
+              "$data": "/course/lessonsLabel"
+            },
+            "cta": {
+              "label": "Open the course",
+              "href": {
+                "$data": "/course/href",
+                "$default": "/"
+              }
+            }
+          }
+        },
+        {
+          "component": "Letter",
+          "props": {
+            "eyebrow": "A letter from your tutors",
+            "title": "Why coffee asks for our undivided patience.",
+            "paragraphs": [
+              "We met over a cupping table in Bogotá, arguing about whether a washed Caturra could taste of hibiscus. It could, and we have been comparing notes ever since.",
+              "This course is the long version of that afternoon. We follow a single cherry from the hillside to your kitchen, and we stop wherever something interesting happens: at the drying beds, at first crack, at the moment your pour-over turns from sour to sweet."
+            ],
+            "quote": "Take your time. Read with a cup beside you. By the last chapter you will have a recipe that is entirely your own.",
+            "people": [
+              {
+                "name": "Inés Duarte",
+                "role": "Q-grader",
+                "place": "Huila, Colombia",
+                "image": {
+                  "src": "/landing/coffee/ines-duarte.webp",
+                  "alt": "Inés Duarte holding a ceramic cup on a coffee farm with drying beds behind her",
+                  "width": 1408,
+                  "height": 768
+                }
+              },
+              {
+                "name": "Tomasz Wierzba",
+                "role": "Roaster",
+                "place": "Kraków, Poland",
+                "image": {
+                  "src": "/landing/coffee/tomasz-wierzba.webp",
+                  "alt": "Tomasz Wierzba scooping green coffee from a jute sack in his roastery",
+                  "width": 1408,
+                  "height": 768
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "FormatGrid",
+          "props": {
+            "eyebrow": "Between the covers",
+            "title": "What's inside",
+            "intro": "Every chapter mixes formats, so each idea arrives the way it is best learned: watched, heard, handled or tried.",
+            "items": [
+              {
+                "format": "video",
+                "tag": "Film",
+                "name": "Pour-over masterclass",
+                "text": "V60 technique step by step, with chapter markers and a transcript.",
+                "foot": "Video"
+              },
+              {
+                "format": "audio",
+                "tag": "Podcast",
+                "name": "Voices from the farm",
+                "text": "A conversation with a producer, recorded among the drying beds.",
+                "foot": "Audio"
+              },
+              {
+                "format": "interactive",
+                "tag": "Interactive",
+                "name": "Anatomy of a cherry",
+                "text": "Hotspot diagram: skin, pulp, mucilage, parchment, silver skin and bean.",
+                "foot": "H5P"
+              },
+              {
+                "format": "pdf",
+                "tag": "Printable",
+                "name": "The roaster's logbook",
+                "text": "A printable log for charge temperature, first crack and development time.",
+                "foot": "Download and print"
+              },
+              {
+                "format": "scorm",
+                "tag": "Simulator",
+                "name": "Roast simulator",
+                "text": "Pick a charge temperature and watch the colour change through first crack.",
+                "foot": "SCORM package"
+              },
+              {
+                "format": "tracked",
+                "tag": "Tracked",
+                "name": "Cupping at home",
+                "text": "A guided session with a timer and a scoring form, saved to your progress.",
+                "foot": "cmi5 activity"
+              },
+              {
+                "format": "quiz",
+                "tag": "Quiz",
+                "name": "Tasting check",
+                "text": "One question of each type, from the flavour wheel to brew ratios.",
+                "foot": "Instant feedback"
+              },
+              {
+                "format": "project",
+                "tag": "Project",
+                "name": "Your signature recipe",
+                "text": "Brew three variations and send a recipe card for feedback.",
+                "foot": "Reviewed by your tutors"
+              }
+            ]
+          }
+        },
+        {
+          "component": "Quotes",
+          "props": {
+            "variant": "pull",
+            "items": {
+              "$data": "/course/testimonials"
+            }
+          }
+        },
+        {
+          "component": "Events",
+          "props": {
+            "variant": "feature",
+            "eyebrow": "Live session",
+            "items": {
+              "$data": "/events"
+            },
+            "image": {
+              "src": "/landing/coffee/cupping-table.webp",
+              "alt": "A cupping table seen from above: brass tasting bowls of coffee, spoons, linen napkins and a scoring card",
+              "width": 1408,
+              "height": 768
+            },
+            "caption": "Cupping protocol: tasting bowls, spoons and a scoring card."
+          }
+        },
+        {
+          "component": "Pricing",
+          "props": {
+            "eyebrow": "Tuition",
+            "title": "Simple pricing",
+            "intro": "One payment, no subscription. This demo opens every chapter for free.",
+            "plans": {
+              "$data": "/plans"
+            }
+          }
+        },
+        {
+          "component": "Faq",
+          "props": {
+            "eyebrow": "Questions",
+            "title": "Before you begin",
+            "items": {
+              "$data": "/course/faq",
+              "$default": [
+                {
+                  "q": "Do I need special equipment?",
+                  "a": "A kettle, a scale and any pour-over dripper are enough."
+                },
+                {
+                  "q": "Can I try it before paying?",
+                  "a": "Yes. The first chapter opens with a free film."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "component": "CtaBand",
+          "props": {
+            "variant": "newsletter",
+            "eyebrow": "Monthly dispatch",
+            "title": {
+              "$data": "/course/landing/newsletter",
+              "$default": "Field notes"
+            },
+            "text": "One letter a month: a coffee we are drinking, a technique worth trying and a note from the farm.",
+            "cta": {
+              "label": "Start the free chapter",
+              "href": {
+                "$data": "/course/previewHref",
+                "$default": "/"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "component": "SiteFooter",
+      "props": {
+        "brand": "The Coffee Atlas",
+        "text": "Printed in spirit on paper, honouring the slow chemistry of harvest and roastery.",
+        "links": [
+          {
+            "label": "Chapters",
+            "href": "#syllabus"
+          },
+          {
+            "label": "Tutors",
+            "href": "#letter"
+          },
+          {
+            "label": "Live sessions",
+            "href": "#events"
+          },
+          {
+            "label": "Tuition",
+            "href": "#pricing"
+          },
+          {
+            "label": "Questions",
+            "href": "#faq"
+          },
+          {
+            "label": "Open the course",
+            "href": {
+              "$data": "/course/href",
+              "$default": "/"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
