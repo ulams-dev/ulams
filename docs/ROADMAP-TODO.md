@@ -87,7 +87,7 @@ stale content.
 - [x] (new) Remove `recommender` and its admin/front screens
 - [ ] (new) Replace styled-components with CSS custom properties everywhere (partial: theme contract
       and presets done; component conversion pending)
-- [ ] (new) Demo content seeder for the three experience courses (`front/docs/design/experiences.md`)
+- [x] (new) Demo content seeder for the three experience courses (`front/docs/design/experiences.md`)
 - [ ] (new) Root README, AGENTS.md and per-package READMEs for the monorepo
 - [ ] (new) Remaining legacy references: replace the `escolalms/php` and `escolalms/reportbro-server`
       images, decide on upstream provenance links, reword ADR prose, retarget Docker Hub publishing
@@ -107,11 +107,18 @@ stale content.
 - [x] (new) Verify JWT signatures in the LRS guard
 - [ ] (new) Fix the ungrouped `orWhere` in `CourseAccessService::getUserCourseIds` and similar queries
 - [ ] (new) Remove the tracker Logs screen in admin and other tracker leftovers
-- [ ] (new) Fix the tenant video processing queue (jobs dispatched to a queue no tenant worker consumes)
+- [x] (new) Fix the tenant video processing queue (jobs dispatched to a queue no tenant worker consumes)
 - [ ] (new) `Relation::enforceMorphMap` for topic types so class renames never orphan data
 - [x] (new) ADR for the tenancy package (docs/decisions/0007)
 - [ ] (new) Upgrade PostgreSQL 12 (EOL) to 16/17 with a tested dump/restore path
 - [ ] (new) Drop Soketi until realtime is needed (broadcast driver is `log`); Laravel Reverb after 0.2
+
+- [ ] (new) cmi5 for learners: give students the cmi5 launch permission and serve AU files from
+      object storage (they sit on the local disk that Caddy does not serve) — found by the demo seeders
+- [ ] (new) Containers cannot reach `storage.localhost` (it resolves to the container itself); use the
+      internal MinIO endpoint for server-side fetches (e.g. Image topic creation)
+- [x] (new) Platform bucket publicly readable by default (`MINIO_DEFAULT_BUCKETS=ulams:download`)
+- [x] (new) Demo course seeders for the three experiences (`make demo-seed`, `demo-seed-tenants`)
 
 ### 0.2 Framework upgrade
 - [x] Upgrade plan from Laravel 9 (EOL) to supported Laravel/PHP: order, breaking changes,

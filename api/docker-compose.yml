@@ -242,7 +242,8 @@ services:
       - ./docker/minio_storage:/bitnami/minio/data
       - ./docker/conf/minio:/docker-entrypoint-initdb.d
     environment:
-      MINIO_DEFAULT_BUCKETS: "${MINIO_DEFAULT_BUCKETS:-ulams}"
+      # "<bucket>:download" makes the platform bucket publicly readable (files are served by URL)
+      MINIO_DEFAULT_BUCKETS: "${MINIO_DEFAULT_BUCKETS:-ulams:download}"
       MINIO_ROOT_USER: "${MINIO_ROOT_USER:-admin}"
       MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD:-minio_secretpassword}"
       # AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}:admin
