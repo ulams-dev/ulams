@@ -80,4 +80,16 @@ return [
      */
     'attachment_extensions' => ['svg', 'svgz', 'html', 'htm', 'xhtml', 'xht', 'xml', 'xsl'],
     'package_prefixes' => ['scorm/', 'cmi5/', 'adapt/', 'liascript/', 'h5p/'],
+
+    /*
+     * Tenant content origin (e.g. http://coffee.content.localhost), written to every tenant env file.
+     * Package files are served to it by GET /api/content/<prefix>/<path> from the disk configured
+     * under the config key named here (empty: the default disk). See api/docs/content-origin.md.
+     */
+    'content_origin' => env('CONTENT_ORIGIN'),
+    'content_disks' => [
+        'scorm' => 'scorm.disk',
+        'cmi5' => 'ulams_cmi5.disk',
+        'liascript' => 'ulams_liascript.disk',
+    ],
 ];

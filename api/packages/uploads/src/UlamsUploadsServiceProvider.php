@@ -43,6 +43,8 @@ class UlamsUploadsServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+
         $attachment = (array) config(self::CONFIG_KEY . '.attachment_extensions', []);
         $prefixes = (array) config(self::CONFIG_KEY . '.package_prefixes', []);
 

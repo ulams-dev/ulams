@@ -47,4 +47,12 @@ class ScormFileApiTest extends TestCase
         $this->get('/storage/scorm/%2e%2e/outside.txt')->assertNotFound();
         $this->get('/storage/scorm/scorm_12/..%2f..%2foutside.txt')->assertNotFound();
     }
+
+    public function test_files_are_not_served_on_the_api_origin_when_a_content_origin_exists(): void
+    {
+        config(['scorm.content_origin' => 'http://coffee.content.localhost']);
+
+        $this->get('/storage/' . self::DIR . '/index.html')->assertNotFound();
+        $this->withHeaders(['X-Ulams-Content-Origin' => '1'])->get('/api/content/' . self::DIR . '/index.html')->assertOk();
+    }
 }

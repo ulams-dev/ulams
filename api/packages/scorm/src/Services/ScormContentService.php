@@ -32,7 +32,7 @@ class ScormContentService implements ScormContentServiceContract
 
     public function contentOrigin(): ?string
     {
-        $origin = trim((string) config('scorm.content_origin', ''));
+        $origin = trim((string) (config('scorm.content_origin') ?: config('ulams_uploads.content_origin')));
 
         return $origin === '' ? null : rtrim($origin, '/');
     }

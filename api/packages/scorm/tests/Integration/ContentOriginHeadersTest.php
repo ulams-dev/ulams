@@ -33,7 +33,7 @@ class ContentOriginHeadersTest extends TestCase
         $csp = $response->getHeaderLine('Content-Security-Policy');
         $this->assertStringContainsString("default-src 'self'", $csp);
         $this->assertStringContainsString('connect-src \'self\' http://coffee.localhost', $csp);
-        $this->assertStringContainsString("frame-ancestors 'self' http://coffee.app.localhost http://coffee.admin.localhost", $csp);
+        $this->assertStringContainsString("frame-ancestors 'self' http://coffee.app.localhost http://coffee.app.localhost:4321 http://coffee.admin.localhost", $csp);
         $this->assertStringContainsString("form-action 'none'", $csp);
         $this->assertSame('nosniff', $response->getHeaderLine('X-Content-Type-Options'));
         $this->assertSame('no-referrer', $response->getHeaderLine('Referrer-Policy'));
@@ -44,17 +44,19 @@ class ContentOriginHeadersTest extends TestCase
     {
         $this->assertSame(404, $this->get('coffee.content.localhost', '/api/profile/me')->getStatusCode());
         $this->assertSame(404, $this->get('coffee.content.localhost', '/avatars/x.png')->getStatusCode());
+        $this->assertSame(404, $this->get('coffee.content.localhost', '/api/content/scorm/x')->getStatusCode());
         $this->assertSame(404, $this->http->request('PUT', '/scorm/x', ['headers' => ['Host' => 'coffee.content.localhost']])->getStatusCode());
     }
 
-    public function testEachTenantOriginMapsToItsOwnBucketOnly(): void
+    public function testPackageFilesComeFromTheTenantApiWithoutTraversal(): void
     {
-        $this->assertStringContainsString('<BucketName>ulams-coffee</BucketName>', (string) $this->get('coffee.content.localhost', '/scorm/missing')->getBody());
-        $this->assertStringContainsString('<BucketName>ulams-tea</BucketName>', (string) $this->get('tea.content.localhost', '/scorm/missing')->getBody());
+        // proxied to the tenant API (GET /api/content/...): unknown files are a 404 from Laravel
+        $missing = $this->get('coffee.content.localhost', '/scorm/missing.html');
+        $this->assertSame(404, $missing->getStatusCode());
+        $this->assertSame('', $missing->getHeaderLine('Set-Cookie'));
 
-        foreach (['/scorm/../../ulams-tea/scorm/x', '/scorm/%2e%2e/%2e%2e/ulams-tea/scorm/x', '/scorm/a/%2e%2e%2f%2e%2e%2f%2e%2e%2fulams-tea/x'] as $path) {
-            $body = (string) $this->get('coffee.content.localhost', $path)->getBody();
-            $this->assertStringNotContainsString('ulams-tea', $body, $path);
+        foreach (['/scorm/../../avatars/x.png', '/scorm/%2e%2e/%2e%2e/avatars/x.png', '/scorm/a/%2e%2e%2f%2e%2e%2favatars/x.png'] as $path) {
+            $this->assertSame(404, $this->get('coffee.content.localhost', $path)->getStatusCode(), $path);
         }
     }
 

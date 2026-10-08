@@ -1,7 +1,8 @@
-# Content origin (docs/content-origin.md): serves the package paths of one bucket read-only,
-# with a CSP of its own and nothing else (no API, no cookies). Third-party SCORM/cmi5/Adapt/
-# LiaScript JavaScript runs here, never on the API, front or admin origins.
-# Arguments: <bucket> <API origin> <frame ancestors>
+# Content origin (docs/content-origin.md): serves package files read-only, with a CSP of its own and
+# nothing else (no API, no cookies). Third-party SCORM/cmi5/Adapt/LiaScript JavaScript runs here,
+# never on the API, front or admin origins. Files come from the tenant API (GET /api/content/...),
+# which reads them from the package's disk (local or bucket) and only answers this proxy.
+# Arguments: <API host> <API origin> <frame ancestors>
 (content_origin) {
 	header {
 		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'"
@@ -18,10 +19,21 @@
 	handle @package {
 		request_header -Cookie
 		request_header -Authorization
-		rewrite * /{args[0]}{uri}
-		reverse_proxy minio:9000 {
+		rewrite * /api/content{uri}
+		reverse_proxy api:9000 {
+			header_up Host {args[0]}
+			header_up X-Forwarded-Host {args[0]}
+			header_up X-Ulams-Content-Origin 1
 			header_down -Set-Cookie
-			header_down -X-Amz-*
+			header_down -Access-Control-Allow-Origin
+			transport fastcgi {
+				env SCRIPT_FILENAME /var/www/html/index.php
+				# the tenant is chosen by host (laravel-multidomain)
+				env HTTP_HOST {args[0]}
+				env SERVER_NAME {args[0]}
+				# fastcgi passes the original URI by default; Laravel routes on REQUEST_URI
+				env REQUEST_URI {http.request.uri}
+			}
 		}
 	}
 
@@ -45,14 +57,14 @@ http://storage.localhost {
     reverse_proxy minio:9000
 }
 
-# Tenant content origins: <slug>.content.localhost -> bucket ulams-<slug>
+# Tenant content origins: <slug>.content.localhost -> tenant API <slug>.localhost
 http://*.content.localhost {
-    import content_origin ulams-{labels.2} http://{labels.2}.localhost "http://{labels.2}.app.localhost http://{labels.2}.admin.localhost http://localhost:3000 http://localhost:8000"
+    import content_origin {labels.2}.localhost http://{labels.2}.localhost "http://{labels.2}.app.localhost http://{labels.2}.app.localhost:4321 http://{labels.2}.admin.localhost http://localhost:3000 http://localhost:8000"
 }
 
-# Platform content origin -> bucket ulams
+# Platform content origin -> platform API
 http://content.localhost {
-    import content_origin ulams http://api.localhost "http://app.localhost http://admin.localhost http://localhost:3000 http://localhost:8000"
+    import content_origin api.localhost http://api.localhost "http://app.localhost http://app.localhost:4321 http://admin.localhost http://localhost:3000 http://localhost:4321 http://localhost:8000"
 }
 
 http://minio.localhost {
@@ -174,6 +186,9 @@ http://*.localhost {
         header @origin_upload Access-Control-Allow-Origin {http.request.header.Origin}
         header Access-Control-Allow-Credentials true
     }
+
+    # Only the content origin's proxy may set this (ContentFileController)
+    request_header -X-Ulams-Content-Origin
 
     # Enable PHP-FPM
     handle {
