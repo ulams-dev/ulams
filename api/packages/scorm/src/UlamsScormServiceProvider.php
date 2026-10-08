@@ -7,6 +7,9 @@ use Ulams\Scorm\Repositories\ScormRepository;
 use Ulams\Scorm\Services\Contracts\ScormQueryServiceContract;
 use Ulams\Scorm\Services\Contracts\ScormServiceContract;
 use Ulams\Scorm\Services\Contracts\ScormTrackServiceContract;
+use Ulams\Scorm\Commands\PublishContentPlayerCommand;
+use Ulams\Scorm\Services\Contracts\ScormContentServiceContract;
+use Ulams\Scorm\Services\ScormContentService;
 use Ulams\Scorm\Services\ScormQueryService;
 use Ulams\Scorm\Services\ScormService;
 use Ulams\Scorm\Services\ScormTrackService;
@@ -23,6 +26,7 @@ class UlamsScormServiceProvider extends ServiceProvider
         ScormQueryServiceContract::class => ScormQueryService::class,
         ScormTrackServiceContract::class => ScormTrackService::class,
         ScormRepositoryContract::class => ScormRepository::class,
+        ScormContentServiceContract::class => ScormContentService::class,
     ];
 
     public function boot()
@@ -34,6 +38,10 @@ class UlamsScormServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'scorm');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([PublishContentPlayerCommand::class]);
+        }
     }
 
     public function register(): void
