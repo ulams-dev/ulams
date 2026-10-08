@@ -13,7 +13,9 @@ export type ThemeFont =
   | "Lato"
   | "Fraunces"
   | "Space Grotesk"
-  | "Baloo 2";
+  | "Baloo 2"
+  | "Playfair Display"
+  | "Plus Jakarta Sans";
 
 export type ThemeMode = "light" | "dark";
 

@@ -94,6 +94,14 @@ export const FONTS: Record<ThemeFont, { links: string[]; fontFamily: string }> =
     links: ["https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap"],
     fontFamily: "'Space Grotesk', system-ui, sans-serif",
   },
+  "Playfair Display": {
+    links: ["https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&display=swap"],
+    fontFamily: "'Playfair Display', Georgia, serif",
+  },
+  "Plus Jakarta Sans": {
+    links: ["https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"],
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+  },
   "Baloo 2": {
     links: ["https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&display=swap"],
     fontFamily: "'Baloo 2', system-ui, sans-serif",
