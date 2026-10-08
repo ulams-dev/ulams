@@ -335,8 +335,8 @@ class CartApiTest extends TestCase
             ->json('POST', '/api/cart/products', ['id' => $product->getKey(), 'quantity' => 2]);
         $this->response->assertUnprocessable();
         $this->response->assertJson(
-            fn(AssertableJson $json) => $json->where('message', 'The quantity must not be greater than 1.')
-                ->where('errors.quantity', ['The quantity must not be greater than 1.'])
+            fn(AssertableJson $json) => $json->where('message', 'The quantity field must not be greater than 1.')
+                ->where('errors.quantity', ['The quantity field must not be greater than 1.'])
                 ->etc()
         );
 

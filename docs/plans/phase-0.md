@@ -1,6 +1,7 @@
 # Phase 0 plan: foundation and framework upgrade
 
-Status: **draft, waiting for approval**. Nothing in section B is implemented yet.
+Status: section B **approved**; implementation in progress. Upgrade step 1 of 4 (Laravel 10) is done, see
+[B.11](#b11-progress).
 Audit findings that feed this plan: [`docs/reports/phase-0-audit.md`](../reports/phase-0-audit.md).
 Spec: [`docs/ROADMAP-PROMPT.md`](../ROADMAP-PROMPT.md) Phase 0. Tracker: [`docs/ROADMAP-TODO.md`](../ROADMAP-TODO.md).
 
@@ -91,7 +92,7 @@ the cost is in the 9→11 jump and in third-party packages.
 
 ### B.3 Code changes per Laravel step (scan of `api/{app,packages,config,database,routes,tests}`)
 
-**9 → 10**
+**9 → 10** (done, see B.11)
 - `protected $dates` removed: `api/packages/courses/src/Models/CourseProgress.php:41`,
   `api/packages/courses/src/Models/CourseUserAttendance.php:16` → `$casts`.
 - `Bus::dispatchNow`, `Redirect::home`, `MocksApplicationServices` (`expectsEvents` …), `(string) DB::raw`: **0 hits**.
@@ -251,3 +252,94 @@ makes dynamic tenants awkward (see audit §multitenancy).
 3. Keep LRS on `trax2/framework` (GPL) through the upgrade, or replace it first?
 4. Use Laravel Shift for steps 2–4 (paid), or do it by hand?
 5. Is the password grant used by any client (admin, front, mobile, integrations)?
+
+### B.11 Progress
+
+Steps are counted as the four framework jumps (L10, L11, L12, L13); PHP 8.4 comes with the L12/L13 steps.
+
+#### Step 1/4: Laravel 9 → 10 (done, 2026-10-08, uncommitted on `phase-0/foundation`)
+
+Result: `laravel/framework` v9.52.21 → **v10.50.3** on PHP 8.3; full PHPUnit run shows no new failures (table below).
+
+Composer (`api/composer.json`, lock updated only for these packages and their dependencies, 74 lock entries changed):
+
+| Package | From | To | Note |
+|---|---|---|---|
+| `laravel/framework` | ^9 (9.52.21) | ^10.48 (10.50.3) | pulls `monolog/monolog` 2.11 → 3.12, `league/commonmark` 2.10, Symfony 6.4 patch releases |
+| `gecche/laravel-multidomain` | ^5.0 | ^10.2 (10.2) | same integration points (Application, both Kernels, queue provider); no code change |
+| `orchestra/testbench` | ^7 (7.32) | ^8.0 (8.39, core 8.44) | `canvas` 8, `workbench` 8 follow |
+| `spatie/laravel-ignition` | ^1.0 (1.7.2) | ^2.0 (2.9.1) | |
+| `staudenmeir/laravel-migration-views` | ^1.0 (1.6.3) | ^1.7 (1.8) | kept for now (removal is still planned) |
+| `tzsk/sms` | 6.0.0 (exact) | ^7.0 (7.0.1) | no API change for our two drivers |
+| `phpunit/phpunit` | ^9.0 (9.6.35) | ^9.6 (9.6.38) | **stays on PHPUnit 9**: Testbench 8 supports 9.6 and 10; staying avoids the `phpunit.xml` schema change and static data providers in the same step. PHPUnit 10/11 moves to step 2 (L11, Testbench 9 needs ≥10.5) |
+| `minimum-stability` | dev | stable | upgrade guide recommendation (`prefer-stable` was already on) |
+| `nunomaduro/collision` | ^7 | unchanged | 7.x already supports L10 |
+| Not touched | | | Passport 11.10 (supports L10), Horizon 5.50, Tinker 2.11, Socialite 5, l5-swagger 8.6, maatwebsite/excel 3.1.70, spatie/* (permission 6.25, responsecache 7.7, health 1.34, translation-loader 2.8), `devianl2/laravel-scorm` 4.0.1, `treestoneit/shopping-cart` 1.6.1, `rennokki/laravel-eloquent-query-cache` 3.6, `gnello/laravel-mattermost-driver` 1.3.3, `intervention/imagecache` 2.6, `pbmedia/laravel-ffmpeg`, `zanysoft/laravel-zip` 2, `kreait/laravel-firebase` 5 — all accept L10 |
+| Dropped from the lock | | | `spatie/laravel-ray`, `spatie/ray`, `php-di/*`, `zbateson/*` (transitive dev dependencies of the Testbench 7 line; no references in our code) |
+
+No forks or patches of third-party packages were needed for L10.
+
+**Composer 2.10 security blocking.** Every Laravel 9, 10 and 11 release has unfixed advisories
+(e.g. PKSA-mdq4-51ck-6kdq "CRLF injection in default email rule", fixed only in 12.60+/13.10+), so Composer 2.10
+refuses to *resolve* `laravel/framework` 10. `policy.advisories.ignore`/`ignore-id` in `composer.json` did not lift
+the block for the root requirement in our test, so the update ran with `COMPOSER_NO_BLOCKING=1`. `composer install`
+from the lock is not affected. Until step 3/4 (L12.69+), run updates as
+`COMPOSER_NO_BLOCKING=1 composer update …`. `firebase/php-jwt` 6.x (CVE-2025-45769) is pinned by Passport 11 and
+goes away with Passport 12/13. The L9 lock had the same advisories plus the file validation bypass (CVE-2025-27515), which has no 9.x fix and is
+fixed in 10.48.29+.
+
+Code changes:
+
+| Category | Files | Change |
+|---|---|---|
+| `$dates` removed in L10 | `packages/courses/src/Models/CourseProgress.php`, `CourseUserAttendance.php` | moved to `$casts` (`deleted_at`, `finished_at`, `attendance_date` as `datetime`) |
+| `DB::raw` no longer stringable | `app/Library/UlamsHelpers.php` | `DB::select(DB::raw(...))` → plain SQL with a bound `LIKE` parameter (helper is currently unused) |
+| `ResourceCollection::toArray(Request $request)` is typed in L10 | `packages/cart/src/Http/Resources/BaseProductResource.php`; test `packages/vouchers/tests/Api/AdminVoucherTest.php` | pass `$request ?? request()` to nested collections; tests pass `request()` instead of `null` to collections |
+| L10 default validation messages ("The :attribute **field** must …") | `packages/cart/tests/API/AdminProductApiTest.php`, `CartApiTest.php` | expected strings updated (Testbench uses the framework's own language lines; the app keeps its `resources/lang/en/validation.php`, so API messages for clients are unchanged) |
+| Skeleton | `app/Http/Kernel.php` | `$routeMiddleware` → `$middlewareAliases` (L10 name; old name still works until L11) |
+
+Checked and not needed: `Bus::dispatchNow`, `Redirect::home`, `MocksApplicationServices`, `(string) DB::raw`, `reduceWithKeys`/`reduceMany`,
+`assertDeleted`, `QueryException` constructor, custom Monolog handlers (only class names in `config/logging.php`),
+`CastsAttributes` implementations (untyped parameters stay compatible), `Rule` implementations (contract still exists).
+
+Verification:
+
+- Tests: full `./vendor/bin/phpunit` per suite on PostgreSQL, CI-style prepared DB (`migrate:fresh`, permissions seeder,
+  personal access client, courses test migration). Baseline (L9) vs L10 on the final code, both on freshly prepared databases:
+
+  | Suite | L9 baseline (tests / failing) | L10 final |
+  |---|---|---|
+  | Integrations (`api/tests`) | 4 / 2 | 4 / 2 (same tests: `EventApiTest` list/order) |
+  | auth | 124 / 3 | 124 / 3 (same: `UserApiTest` list/search) |
+  | bulk-notifications | 44 / 3 | 44 / 3 (same multicast tests) |
+  | core | 62 / 6 | 62 / 6 (same paginate/count tests) |
+  | reports | 51 / 2 | 51 / 0 (`ExportStatsTest::testFinishedTopicsSheets` data sets fail at random on both versions) |
+  | consultations | 82 / 1 | 82 / 0 (`ConsultationChangeTermTest::testChangeTermForOneUser`, timing-flaky) |
+  | other 40 suites | 1 857 / 0 | 1 857 / 0 |
+  | **Total** | **2 224 / 17** | **2 224 / 14**, no new failures |
+
+  Before the code fixes, L10 had 17 new failures (cart 14, vouchers 3): the typed
+  `ResourceCollection::toArray()` and the new validation wording.
+
+- `php artisan about`: Laravel 10.50.3; `route:list`: 527 routes, identical method/URI list before and after;
+  `schedule:list` unchanged; `l5-swagger:generate`: OK (311 paths); Horizon restarted on the new code and running;
+  `queue:work --once` OK; platform `migrate` and `ulams:tenant:sync-env --migrate` (coffee, nightsky, oncall): nothing
+  pending, tenant DBs resolve (`ulams_coffee`); `migrate:fresh` on an empty DB runs clean on L10 (incl. the
+  migration-views migrations).
+- HTTP smoke: `GET /api/name` 200; login `admin@ulams.app` → token, `GET /api/profile/me` 200; `GET /api/courses` 200
+  on `api.localhost`, `coffee.localhost`, `oncall.localhost` (tenant courses returned); H5P service via
+  `H5PServiceClient::show()`/`download()` OK; `GET /api/admin/templates/{id}/preview` 200 and
+  `POST /api/admin/pdfs/preview` returns a PDF (pdfme service).
+
+Risks for step 2 (L11), beyond B.3/B.8:
+
+- Composer blocking (above) stays until L12.69+; CI's `composer update --no-scripts` (in `api/.github`, not running yet)
+  needs `COMPOSER_NO_BLOCKING=1` or should switch to `composer install`.
+- PHPUnit 10 + Testbench 9 + Collision 8 land together with L11 (deferred from this step).
+- Validation-message assertions: tests compare framework wording verbatim; expect more of these on each step.
+- `ResourceCollection::toArray(null)` pattern: only cart/vouchers hit it; other packages call `->toArray(null)` on single
+  resources (stationary-events, course-access, cart tests), which still works but would break if those resources nest
+  collections.
+- The known "core 6 / auth 3 / bulk-notifications 3" failures are DB-state dependent: they expect 10 users and see 11 on a freshly
+  prepared DB, and passed in a run on a DB reused after a full run (inference: a row left by the prep). Compare runs only
+  on freshly prepared databases.

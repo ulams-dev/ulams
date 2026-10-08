@@ -29,7 +29,7 @@ class UlamsHelpers
     {
         $slug = str_slug($name, '-');
         if ($table) {
-            $results = DB::select(DB::raw("SELECT count(*) as total from $table where $column LIKE '$slug%'"));
+            $results = DB::select("SELECT count(*) as total from $table where $column LIKE ?", [$slug . '%']);
             $slug = ($results['0']->total > 0) ? "{$slug}-{$results['0']->total}" : $slug;
         }
         return $slug;

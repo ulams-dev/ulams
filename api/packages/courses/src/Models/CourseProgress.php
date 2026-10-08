@@ -38,8 +38,6 @@ class CourseProgress extends Model
 {
     use HasFactory;
 
-    protected $dates = ['deleted_at', 'finished_at'];
-
     protected $fillable = [
         'id',
         'user_id',
@@ -60,6 +58,7 @@ class CourseProgress extends Model
         'id' => 'integer',
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

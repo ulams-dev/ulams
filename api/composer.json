@@ -45,14 +45,14 @@
     "ezyang/htmlpurifier": "^4.13",
     "fakerphp/faker": "^1.9.1",
     "firebase/php-jwt": "^6",
-    "gecche/laravel-multidomain": "^5.0",
+    "gecche/laravel-multidomain": "^10.2",
     "gnello/laravel-mattermost-driver": "^1",
     "google/apiclient": "^2.0",
     "guzzlehttp/guzzle": "^7.6",
     "intervention/image": "^2",
     "intervention/imagecache": "^2",
     "kreait/laravel-firebase": "^5",
-    "laravel/framework": "^9",
+    "laravel/framework": "^10.48",
     "laravel/helpers": "^1.7",
     "laravel/horizon": "^5",
     "laravel/passport": "^11",
@@ -77,20 +77,20 @@
     "spatie/laravel-permission": "^6.3",
     "spatie/laravel-responsecache": "^7.4",
     "spatie/laravel-translation-loader": "^2.7",
-    "staudenmeir/laravel-migration-views": "^1.0",
+    "staudenmeir/laravel-migration-views": "^1.7",
     "treestoneit/shopping-cart": "^1.4",
     "twilio/sdk": "^6.42",
-    "tzsk/sms": "6.0.0",
+    "tzsk/sms": "^7.0",
     "zanysoft/laravel-zip": "^2"
   },
   "require-dev": {
     "filp/whoops": "^2.0",
     "mockery/mockery": "^1.0",
     "nunomaduro/collision": "^7",
-    "orchestra/testbench": "^7",
+    "orchestra/testbench": "^8.0",
     "php-mock/php-mock-phpunit": "^2.6",
-    "phpunit/phpunit": "^9.0",
-    "spatie/laravel-ignition": "^1.0"
+    "phpunit/phpunit": "^9.6",
+    "spatie/laravel-ignition": "^2.0"
   },
   "replace": {
     "symfony/polyfill-php54": "*",
@@ -357,7 +357,7 @@
       "Ulams\\Youtube\\Tests\\": "packages/youtube/tests"
     }
   },
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "prefer-stable": true,
   "scripts": {
     "post-autoload-dump": [
