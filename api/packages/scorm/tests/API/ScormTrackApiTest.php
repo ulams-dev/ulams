@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Peopleaps\Scorm\Entity\Scorm;
 use Peopleaps\Scorm\Model\ScormModel;
 use Peopleaps\Scorm\Model\ScormScoModel;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ScormTrackApiTest extends TestCase
 {
@@ -40,9 +41,7 @@ class ScormTrackApiTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider scormDataProvider
-     */
+    #[DataProvider('scormDataProvider')]
     public function test_set_track_scorm($fileName, $payload)
     {
         $this->authenticateAsAdmin();
@@ -100,9 +99,7 @@ class ScormTrackApiTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider scormGetTrackDataProvider
-     */
+    #[DataProvider('scormGetTrackDataProvider')]
     public function test_get_track_scorm($version, $param)
     {
         $scorm = new ScormModel;

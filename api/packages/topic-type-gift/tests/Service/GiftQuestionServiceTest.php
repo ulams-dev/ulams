@@ -6,6 +6,7 @@ use Ulams\TopicTypeGift\Exceptions\UnknownGiftTypeException;
 use Ulams\TopicTypeGift\Services\Contracts\GiftQuestionServiceContract;
 use Ulams\TopicTypeGift\Tests\GiftQuestionTesting;
 use Ulams\TopicTypeGift\Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class GiftQuestionServiceTest extends TestCase
 {
@@ -21,10 +22,10 @@ class GiftQuestionServiceTest extends TestCase
     }
 
     /**
-     * @dataProvider questionDataProvider
      * @throws UnknownGiftTypeException
      */
-    public function testReturnCorrectQuestionType(string $question, string $type): void
+    #[DataProvider('questionDataProvider')]
+    public function testReturnCorrectQuestionType(string $question, string $type, string $title, string $questionForStudent, array $options): void
     {
         $this->assertEquals($this->service->getType($question), $type);
     }

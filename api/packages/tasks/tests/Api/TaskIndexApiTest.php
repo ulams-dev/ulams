@@ -13,6 +13,7 @@ use Ulams\Tasks\Tests\TaskTesting;
 use Ulams\Tasks\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class TaskIndexApiTest extends TestCase
 {
@@ -24,9 +25,7 @@ class TaskIndexApiTest extends TestCase
         $this->seed(TaskPermissionSeeder::class);
     }
 
-    /**
-     * @dataProvider userFilterDataProvider
-     */
+    #[DataProvider('userFilterDataProvider')]
     public function testUserTaskIndexFiltering(array $filters, callable $generator, int $filterCount): void
     {
         $user = $this->makeStudent();
@@ -63,10 +62,10 @@ class TaskIndexApiTest extends TestCase
     {
         return [
             [
-                'filter' => [
+                'filters' => [
                     'title' => 'Test',
                 ],
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['user_id' => $userId]));
@@ -80,10 +79,10 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 3
             ],
             [
-                'filter' => [
+                'filters' => [
                     'related_type' => 'Ulams\\Courses\\Models\\Topic',
                 ],
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'user_id' => $userId]));
@@ -95,11 +94,11 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 2
             ],
             [
-                'filter' => [
+                'filters' => [
                     'related_type' => 'Ulams\\Courses\\Models\\Topic',
                     'related_id' => 123,
                 ],
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 123, 'user_id' => $userId]));
@@ -111,11 +110,11 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 1
             ],
             [
-                'filter' => [
+                'filters' => [
                     'related_type' => 'Ulams\\Courses\\Models\\Topic',
                     'related_ids' => [123, 456, 789],
                 ],
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 123, 'user_id' => $userId]));
@@ -130,7 +129,7 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 3
             ],
             [
-                'filter' => [
+                'filters' => [
                     'related_typed_ids' => [
                         'Ulams\\Courses\\Models\\Course' => [
                             123
@@ -140,7 +139,7 @@ class TaskIndexApiTest extends TestCase
                         ]
                     ],
                 ],
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Course', 'related_id' => 123, 'user_id' => $userId]));
@@ -154,11 +153,11 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 3
             ],
             [
-                'filter' => [
+                'filters' => [
                     'due_date_from' => Carbon::now()->startOfDay()->toString(),
                     'due_date_to' => Carbon::now()->endOfDay()->toString(),
                 ],
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['due_date' => Carbon::now(), 'user_id' => $userId]));
@@ -174,10 +173,10 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 3
             ],
             [
-                'filter' => [
+                'filters' => [
                     'due_date_from' => Carbon::now()->addDays(3)->startOfDay()->toString(),
                 ],
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['due_date' => Carbon::now(), 'user_id' => $userId]));
@@ -193,10 +192,10 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 2
             ],
             [
-                'filter' => [
+                'filters' => [
                     'due_date_from' => Carbon::now()->startOfDay()->toString(),
                 ],
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['due_date' => Carbon::now(), 'user_id' => $userId]));
@@ -210,10 +209,10 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 3
             ],
             [
-                'filter' => [
+                'filters' => [
                     'due_date_to' => Carbon::now()->subDays(3)->startOfDay()->toString(),
                 ],
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['due_date' => Carbon::now(), 'user_id' => $userId]));
@@ -230,10 +229,10 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 3
             ],
             [
-                'filter' => [
+                'filters' => [
                     'due_date_to' => Carbon::now()->endOfDay()->toString(),
                 ],
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['due_date' => Carbon::now(), 'user_id' => $userId]));
@@ -249,10 +248,10 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 4
             ],
             [
-                'filter' => [
+                'filters' => [
                     'type' => 'self-study',
                 ],
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['type' => 'self-study', 'user_id' => $userId]));
@@ -268,9 +267,7 @@ class TaskIndexApiTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider adminFilterDataProvider
-     */
+    #[DataProvider('adminFilterDataProvider')]
     public function testAdminTaskIndexFiltering(callable $filters, callable $generator, int $filterCount): void
     {
         $user = $this->makeUser();
@@ -308,12 +305,12 @@ class TaskIndexApiTest extends TestCase
     {
         return [
             [
-                'filter' => (function($params) {
+                'filters' => (function($params) {
                     return [
                         'title' => 'Test',
                     ];
                 }),
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['user_id' => $userId]));
@@ -327,12 +324,12 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 4
             ],
             [
-                'filter' => (function($params) {
+                'filters' => (function($params) {
                     return [
                         'related_type' => 'Ulams\\Courses\\Models\\Topic',
                     ];
                 }),
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic']));
@@ -344,13 +341,13 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 2
             ],
             [
-                'filter' => (function($params) {
+                'filters' => (function($params) {
                     return [
                         'related_type' => 'Ulams\\Courses\\Models\\Topic',
                         'related_id' => 123,
                     ];
                 }),
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 123]));
@@ -363,13 +360,13 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 2
             ],
             [
-                'filter' => (function($params) {
+                'filters' => (function($params) {
                     return [
                         'related_type' => 'Ulams\\Courses\\Models\\Topic',
                         'related_ids' => [123, 456, 789],
                     ];
                 }),
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 123]));
@@ -384,7 +381,7 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 3
             ],
             [
-                'filter' => (function($params) {
+                'filters' => (function($params) {
                     return [
                         'related_typed_ids' => [
                             'Ulams\\Courses\\Models\\Course' => [
@@ -396,7 +393,7 @@ class TaskIndexApiTest extends TestCase
                         ],
                     ];
                 }),
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['related_type' => 'Ulams\\Courses\\Models\\Course', 'related_id' => 123]));
@@ -410,12 +407,12 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 3
             ],
             [
-                'filter' => (function($params) {
+                'filters' => (function($params) {
                     return [
                         'user_id' => $params
                     ];
                 }),
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $data = collect();
 
                     $data->push(Task::factory());
@@ -429,12 +426,12 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 3
             ],
             [
-                'filter' => (function($params) {
+                'filters' => (function($params) {
                     return [
                         'created_by_id' => $params
                     ];
                 }),
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory());
@@ -446,13 +443,13 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 2
             ],
             [
-                'filter' =>  (function($params) {
+                'filters' =>  (function($params) {
                     return [
                         'due_date_from' => Carbon::now()->startOfDay()->toString(),
                         'due_date_to' => Carbon::now()->endOfDay()->toString(),
                     ];
                 }),
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory()->state(['due_date' => Carbon::now()]));
                     $tasks->push(Task::factory()->state(['due_date' => Carbon::now(), 'user_id' => $userId]));
@@ -468,12 +465,12 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 4
             ],
             [
-                'filter' =>  (function($params) {
+                'filters' =>  (function($params) {
                     return [
                         'due_date_from' => Carbon::now()->addDays(3)->startOfDay()->toString(),
                     ];
                 }),
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory()->state(['due_date' => Carbon::now()]));
                     $tasks->push(Task::factory()->state(['due_date' => Carbon::now(), 'user_id' => $userId]));
@@ -489,12 +486,12 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 2
             ],
             [
-                'filter' => (function($params) {
+                'filters' => (function($params) {
                     return [
                         'due_date_from' => Carbon::now()->startOfDay()->toString(),
                     ];
                 }),
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory()->state(['due_date' => Carbon::now()]));
                     $tasks->push(Task::factory()->state(['due_date' => Carbon::now(), 'user_id' => $userId]));
@@ -508,12 +505,12 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 4
             ],
             [
-                'filter' => (function($params) {
+                'filters' => (function($params) {
                     return [
                         'due_date_to' => Carbon::now()->subDays(3)->startOfDay()->toString(),
                     ];
                 }),
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory());
                     $tasks->push(Task::factory()->state(['due_date' => Carbon::now(), 'user_id' => $userId]));
@@ -530,12 +527,12 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 3
             ],
             [
-                'filter' => (function($params) {
+                'filters' => (function($params) {
                     return [
                         'due_date_to' => Carbon::now()->endOfDay()->toString(),
                     ];
                 }),
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory()->state(['due_date' => Carbon::now()]));
                     $tasks->push(Task::factory()->state(['due_date' => Carbon::now(), 'user_id' => $userId]));
@@ -551,12 +548,12 @@ class TaskIndexApiTest extends TestCase
                 'filterCount' => 5
             ],
             [
-                'filter' => (function($params) {
+                'filters' => (function($params) {
                     return [
                         'type' => 'self-study',
                     ];
                 }),
-                'data' => (function(int $userId) {
+                'generator' => (function(int $userId) {
                     $tasks = collect();
                     $tasks->push(Task::factory()->state(['type' => 'self-study']));
                     $tasks->push(Task::factory()->state(['type' => 'self-study']));
@@ -1312,9 +1309,7 @@ class TaskIndexApiTest extends TestCase
             ->assertUnauthorized();
     }
 
-    /**
-     * @dataProvider orderDataProvider
-     */
+    #[DataProvider('orderDataProvider')]
     public function testUserIndexOrderBy(array $order, callable $generator, callable $assertion): void
     {
         $user = $this->makeStudent();
@@ -1330,9 +1325,7 @@ class TaskIndexApiTest extends TestCase
         $assertion($response, $firstCondition, $lastCondition);
     }
 
-    /**
-     * @dataProvider orderDataProvider
-     */
+    #[DataProvider('orderDataProvider')]
     public function testAdminIndexOrderBy(array $order, callable $generator, callable $assertion): void
     {
         $user = $this->makeAdmin();
@@ -1348,7 +1341,7 @@ class TaskIndexApiTest extends TestCase
         $assertion($response, $firstCondition, $lastCondition);
     }
 
-    public function orderDataProvider(): array
+    public static function orderDataProvider(): array
     {
         return [
             [
@@ -1356,7 +1349,7 @@ class TaskIndexApiTest extends TestCase
                     'order_by' => 'due_date',
                     'order' => 'asc',
                 ],
-                'data' => (function(int $userId, string $firstOderParam, string $lastOrderParam) {
+                'generator' => (function(int $userId, string $firstOderParam, string $lastOrderParam) {
                     $tasks = collect();
                     $tasks->push(Task::factory()->state(['user_id' => $userId, 'due_date' => $firstOderParam]));
                     $tasks->push(Task::factory()->state(['user_id' => $userId, 'due_date' => $lastOrderParam]));
@@ -1366,9 +1359,9 @@ class TaskIndexApiTest extends TestCase
 
                     return $tasks;
                 }),
-                'assert' => (function($data, $firstCondition, string $lastCondition) {
-                    $this->assertEquals(Carbon::parse(Arr::first($data->getData()->data)->due_date), $firstCondition);
-                    $this->assertEquals(Carbon::parse(Arr::last($data->getData()->data)->due_date), $lastCondition);
+                'assertion' => (function($data, $firstCondition, string $lastCondition) {
+                    self::assertEquals(Carbon::parse(Arr::first($data->getData()->data)->due_date), $firstCondition);
+                    self::assertEquals(Carbon::parse(Arr::last($data->getData()->data)->due_date), $lastCondition);
                 })
             ],
             [
@@ -1376,7 +1369,7 @@ class TaskIndexApiTest extends TestCase
                     'order_by' => 'due_date',
                     'order' => 'desc',
                 ],
-                'data' => (function(int $userId, string $firstOderParam, string $lastOrderParam) {
+                'generator' => (function(int $userId, string $firstOderParam, string $lastOrderParam) {
                     $tasks = collect();
                     $tasks->push(Task::factory()->state(['user_id' => $userId, 'due_date' => $firstOderParam]));
                     $tasks->push(Task::factory()->state(['user_id' => $userId, 'due_date' => $lastOrderParam]));
@@ -1386,9 +1379,9 @@ class TaskIndexApiTest extends TestCase
 
                     return $tasks;
                 }),
-                'assert' => (function($data, $firstCondition, string $lastCondition) {
-                    $this->assertEquals(Carbon::parse(Arr::last($data->getData()->data)->due_date), $firstCondition);
-                    $this->assertEquals(Carbon::parse(Arr::first($data->getData()->data)->due_date), $lastCondition);
+                'assertion' => (function($data, $firstCondition, string $lastCondition) {
+                    self::assertEquals(Carbon::parse(Arr::last($data->getData()->data)->due_date), $firstCondition);
+                    self::assertEquals(Carbon::parse(Arr::first($data->getData()->data)->due_date), $lastCondition);
                 })
             ],
             [
@@ -1396,7 +1389,7 @@ class TaskIndexApiTest extends TestCase
                     'order_by' => 'completed_at',
                     'order' => 'asc',
                 ],
-                'data' => (function(int $userId, string $firstOderParam, string $lastOrderParam) {
+                'generator' => (function(int $userId, string $firstOderParam, string $lastOrderParam) {
                     $tasks = collect();
                     $tasks->push(Task::factory()->state(['user_id' => $userId, 'completed_at' => $firstOderParam]));
                     $tasks->push(Task::factory()->state(['user_id' => $userId, 'completed_at' => $lastOrderParam]));
@@ -1406,9 +1399,9 @@ class TaskIndexApiTest extends TestCase
 
                     return $tasks;
                 }),
-                'assert' => (function($data, $firstCondition, string $lastCondition) {
-                    $this->assertEquals(Carbon::parse(Arr::first($data->getData()->data)->completed_at), $firstCondition);
-                    $this->assertEquals(Carbon::parse(Arr::last($data->getData()->data)->completed_at), $lastCondition);
+                'assertion' => (function($data, $firstCondition, string $lastCondition) {
+                    self::assertEquals(Carbon::parse(Arr::first($data->getData()->data)->completed_at), $firstCondition);
+                    self::assertEquals(Carbon::parse(Arr::last($data->getData()->data)->completed_at), $lastCondition);
                 })
             ],
             [
@@ -1416,7 +1409,7 @@ class TaskIndexApiTest extends TestCase
                     'order_by' => 'completed_at',
                     'order' => 'desc',
                 ],
-                'data' => (function(int $userId, string $firstOderParam, string $lastOrderParam) {
+                'generator' => (function(int $userId, string $firstOderParam, string $lastOrderParam) {
                     $tasks = collect();
                     $tasks->push(Task::factory()->state(['user_id' => $userId, 'completed_at' => $firstOderParam]));
                     $tasks->push(Task::factory()->state(['user_id' => $userId, 'completed_at' => $lastOrderParam]));
@@ -1426,9 +1419,9 @@ class TaskIndexApiTest extends TestCase
 
                     return $tasks;
                 }),
-                'assert' => (function($data, $firstCondition, string $lastCondition) {
-                    $this->assertEquals(Carbon::parse(Arr::last($data->getData()->data)->completed_at), $firstCondition);
-                    $this->assertEquals(Carbon::parse(Arr::first($data->getData()->data)->completed_at), $lastCondition);
+                'assertion' => (function($data, $firstCondition, string $lastCondition) {
+                    self::assertEquals(Carbon::parse(Arr::last($data->getData()->data)->completed_at), $firstCondition);
+                    self::assertEquals(Carbon::parse(Arr::first($data->getData()->data)->completed_at), $lastCondition);
                 })
             ],
         ];

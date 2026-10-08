@@ -25,7 +25,7 @@ class CategoryUpdateRequest extends FormRequest
             'name' => ['sometimes', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'is_active' => ['sometimes', 'bool'],
-            'icon' => [new FileOrStringRule(['image'], $prefixPath)],
+            'icon' => [new FileOrStringRule(['image:allow_svg'], $prefixPath)],
             'icon_class' => ['nullable', 'string', 'max:255'],
             'parent_id' => ['nullable', 'exists:categories,id'],
             'order' => ['nullable', 'integer', 'min:1'],

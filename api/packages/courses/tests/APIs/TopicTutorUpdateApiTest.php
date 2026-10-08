@@ -9,6 +9,7 @@ use Ulams\Courses\Models\Topic;
 use Ulams\Courses\Tests\Models\TopicContent\ExampleTopicType;
 use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 
 class TopicTutorUpdateApiTest extends TestCase
 {
@@ -32,9 +33,7 @@ class TopicTutorUpdateApiTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testUpdateTopicRichtext()
     {
         $this->response = $this->withHeaders([

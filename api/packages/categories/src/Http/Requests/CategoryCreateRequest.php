@@ -20,7 +20,7 @@ class CategoryCreateRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'is_active' => ['required', 'bool'],
-            'icon' => ['nullable', 'file', 'image'],
+            'icon' => ['nullable', 'file', 'image:allow_svg'],
             'icon_class' => ['nullable', 'string', 'max:255'],
             'parent_id' => ['nullable', 'exists:categories,id'],
             'order' => ['nullable', 'integer', 'min:1'],

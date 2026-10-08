@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ImportUsersFromCsvTest extends TestCase
 {
@@ -78,9 +79,7 @@ class ImportUsersFromCsvTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider fileFormatProvider
-     */
+    #[DataProvider('fileFormatProvider')]
     public function testUsersImport(string $value): void
     {
         $importData = $this->prepareImportData();

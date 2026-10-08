@@ -7,12 +7,11 @@ use Ulams\Jitsi\Services\FileService;
 use Ulams\Jitsi\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class FileServiceTest extends TestCase
 {
-    /**
-     * @dataProvider blockedUrls
-     */
+    #[DataProvider('blockedUrls')]
     public function testDoesNotConnectToPrivateOrNonHttpsAddresses(string $url): void
     {
         Http::fake();

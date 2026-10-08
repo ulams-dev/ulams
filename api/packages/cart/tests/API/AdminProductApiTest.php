@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
 use Illuminate\Testing\Fluent\AssertableJson;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AdminProductApiTest extends TestCase
 {
@@ -338,9 +339,7 @@ class AdminProductApiTest extends TestCase
     }
 
 
-    /**
-     * @dataProvider invalidSubscriptionDataProvider
-     */
+    #[DataProvider('invalidSubscriptionDataProvider')]
     public function test_create_product_subscription_type_validation(array $data, array $errorKey): void
     {
         /** @var ExampleProductable $productable */
@@ -522,10 +521,14 @@ class AdminProductApiTest extends TestCase
 
         $productData = Product::factory()
             ->subscription()
-            ->make(['productables' => [[
-                'class' => ExampleProductable::class,
-                'id' => $productable->getKey()
-            ]]])
+            ->make([
+                // random factory values can equal the stored ones, and an unchanged field may be sent
+                'subscription_duration' => $product->subscription_duration + 1,
+                'productables' => [[
+                    'class' => ExampleProductable::class,
+                    'id' => $productable->getKey()
+                ]],
+            ])
             ->toArray();
 
         $this->actingAs($this->user, 'api')
@@ -563,9 +566,7 @@ class AdminProductApiTest extends TestCase
             ]);
     }
 
-    /**
-     * @dataProvider invalidSubscriptionDataProvider
-     */
+    #[DataProvider('invalidSubscriptionDataProvider')]
     public function test_update_product_subscription_type_validation(array $data, array $errorKey): void
     {
         /** @var ExampleProductable $productable */
@@ -987,21 +988,21 @@ class AdminProductApiTest extends TestCase
         Storage::assertExists($data->poster_path);
     }
 
-    private static function invalidSubscriptionDataProvider(): array
+    public static function invalidSubscriptionDataProvider(): array
     {
         return [
-            ['data' => ['subscription_period' => null], 'errors' => ['subscription_period' => 'The subscription period field is required when type is subscription.']],
-            ['data' => ['subscription_period' => 'invalid_period'], 'errors' => ['subscription_period' => 'The selected subscription period is invalid.']],
-            ['data' => ['subscription_duration' => -1], 'errors' => ['subscription_duration' => 'The subscription duration field must be greater than 0.']],
-            ['data' => ['subscription_duration' => 0], 'errors' => ['subscription_duration' => 'The subscription duration field must be greater than 0.']],
-            ['data' => ['subscription_duration' => null], 'errors' => ['subscription_duration' => 'The subscription duration field is required when type is subscription.']],
-            ['data' => ['recursive' => null], 'errors' => ['recursive' => 'The recursive field is required when type is subscription.']],
-            ['data' => ['has_trial' => null], 'errors' => ['has_trial' => 'The has trial field is required when type is subscription.']],
-            ['data' => ['trial_period' => null], 'errors' => ['trial_period' => 'The trial period field is required when has trial is true.']],
-            ['data' => ['trial_period' => 'invalid_period'], 'errors' => ['trial_period' => 'The selected trial period is invalid.']],
-            ['data' => ['trial_duration' => null], 'errors' => ['trial_duration' => 'The trial duration field is required when has trial is true.']],
-            ['data' => ['trial_duration' => -1], 'errors' => ['trial_duration' => 'The trial duration field must be greater than 0.']],
-            ['data' => ['trial_duration' => 0], 'errors' => ['trial_duration' => 'The trial duration field must be greater than 0.']],
+            ['data' => ['subscription_period' => null], 'errorKey' => ['subscription_period' => 'The subscription period field is required when type is subscription.']],
+            ['data' => ['subscription_period' => 'invalid_period'], 'errorKey' => ['subscription_period' => 'The selected subscription period is invalid.']],
+            ['data' => ['subscription_duration' => -1], 'errorKey' => ['subscription_duration' => 'The subscription duration field must be greater than 0.']],
+            ['data' => ['subscription_duration' => 0], 'errorKey' => ['subscription_duration' => 'The subscription duration field must be greater than 0.']],
+            ['data' => ['subscription_duration' => null], 'errorKey' => ['subscription_duration' => 'The subscription duration field is required when type is subscription.']],
+            ['data' => ['recursive' => null], 'errorKey' => ['recursive' => 'The recursive field is required when type is subscription.']],
+            ['data' => ['has_trial' => null], 'errorKey' => ['has_trial' => 'The has trial field is required when type is subscription.']],
+            ['data' => ['trial_period' => null], 'errorKey' => ['trial_period' => 'The trial period field is required when has trial is true.']],
+            ['data' => ['trial_period' => 'invalid_period'], 'errorKey' => ['trial_period' => 'The selected trial period is invalid.']],
+            ['data' => ['trial_duration' => null], 'errorKey' => ['trial_duration' => 'The trial duration field is required when has trial is true.']],
+            ['data' => ['trial_duration' => -1], 'errorKey' => ['trial_duration' => 'The trial duration field must be greater than 0.']],
+            ['data' => ['trial_duration' => 0], 'errorKey' => ['trial_duration' => 'The trial duration field must be greater than 0.']],
         ];
     }
 }

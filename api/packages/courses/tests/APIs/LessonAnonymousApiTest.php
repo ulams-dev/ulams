@@ -6,6 +6,7 @@ use Ulams\Courses\Models\Course;
 use Ulams\Courses\Models\Lesson;
 use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 
 class LessonAnonymousApiTest extends TestCase
 {
@@ -17,9 +18,7 @@ class LessonAnonymousApiTest extends TestCase
         Course::factory()->create(); // Lesson factory requires at least one Course existing in DB
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_create_lesson()
     {
         $lesson = Lesson::factory()->make()->toArray();
@@ -33,9 +32,7 @@ class LessonAnonymousApiTest extends TestCase
         $this->response->assertStatus(401);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_read_lesson()
     {
         $lesson = Lesson::factory()->create();
@@ -48,9 +45,7 @@ class LessonAnonymousApiTest extends TestCase
         $this->response->assertStatus(401);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_update_lesson()
     {
         $lesson = Lesson::factory()->create();
@@ -65,9 +60,7 @@ class LessonAnonymousApiTest extends TestCase
         $this->response->assertStatus(401);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_delete_lesson()
     {
         $lesson = Lesson::factory()->create();

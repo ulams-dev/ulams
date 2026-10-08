@@ -5,6 +5,7 @@ namespace Ulams\Files\Tests\Api;
 use Ulams\Files\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class FilesApiUploadTest extends TestCase
 {
@@ -133,9 +134,7 @@ class FilesApiUploadTest extends TestCase
         return array_map(fn ($item) => [$item], explode(',', $config['mimes']));
     }
 
-    /**
-     * @dataProvider allowedFileExtensionProvider
-     */
+    #[DataProvider('allowedFileExtensionProvider')]
     public function testAllowedFileExtensions(string $ext)
     {
         $file = UploadedFile::fake()->create('file.' . $ext);
@@ -150,9 +149,7 @@ class FilesApiUploadTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /**
-     * @dataProvider excludedFileExtensionProvider
-     */
+    #[DataProvider('excludedFileExtensionProvider')]
     public function testExcludedFileExtensions(string $ext)
     {
         $file = UploadedFile::fake()->create('file.' . $ext);

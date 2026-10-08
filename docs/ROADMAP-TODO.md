@@ -149,8 +149,9 @@ stale content.
 - [x] Upgrade plan from Laravel 9 (EOL) to supported Laravel/PHP: order, breaking changes,
       forks/patches needed, risks (docs/plans/phase-0.md: 9 → 10 → 11 → 12 → 13 on PHP 8.4)
 - [ ] Implement after approval with test suite green at every step
-      (partial: steps 1–2/4 done — Laravel 11.57.0 on PHP 8.3 (Passport 12, Testbench 9, PHPUnit 10), no new test
-      failures; see docs/plans/phase-0.md B.11–B.12)
+      (partial: steps 1–3/4 done — Laravel 12.69.3 on PHP 8.3 (Carbon 3, Passport 12, Testbench 10, PHPUnit 11,
+      `devianl2/laravel-scorm` vendored as `api/packages/laravel-scorm`), no new test failures; see
+      docs/plans/phase-0.md B.11–B.13)
 
 ---
 

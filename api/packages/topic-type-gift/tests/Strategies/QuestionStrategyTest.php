@@ -11,6 +11,7 @@ use Ulams\TopicTypeGift\Models\GiftQuiz;
 use Ulams\TopicTypeGift\Strategies\GiftQuestionStrategyFactory;
 use Ulams\TopicTypeGift\Tests\GiftQuestionTesting;
 use Ulams\TopicTypeGift\Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class QuestionStrategyTest extends TestCase
 {
@@ -32,9 +33,9 @@ class QuestionStrategyTest extends TestCase
     }
 
     /**
-     * @dataProvider questionDataProvider
      * @throws UnknownGiftTypeException
      */
+    #[DataProvider('questionDataProvider')]
     public function testShouldReturnCorrectDataForStudent(string $question, string $type, string $title, string $questionForStudent, array $options): void
     {
         /** @var GiftQuestion $question */

@@ -13,15 +13,14 @@ use Ulams\Courses\Tests\TestCase;
 use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Test;
 
 class CourseTutorApiTest extends TestCase
 {
     use CreatesUsers;
     use DatabaseTransactions;
 
-    /**
-     * @test
-     */
+    #[Test]
 
     protected function setUp(): void
     {
@@ -80,9 +79,7 @@ class CourseTutorApiTest extends TestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_read_course(): void
     {
         $course = Course::factory()->create([
@@ -112,9 +109,7 @@ class CourseTutorApiTest extends TestCase
         $this->assertApiResponse($course->toArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_update_course(): void
     {
         $course = Course::factory()->create([
@@ -132,9 +127,7 @@ class CourseTutorApiTest extends TestCase
         $this->assertApiResponse($editedCourse);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_delete_course(): void
     {
         $course = Course::factory()->create([
@@ -233,9 +226,7 @@ class CourseTutorApiTest extends TestCase
         )->assertUnprocessable();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_read_course_program(): void
     {
         $course = Course::factory()->create([

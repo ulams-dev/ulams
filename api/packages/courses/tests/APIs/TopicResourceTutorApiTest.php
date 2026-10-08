@@ -12,6 +12,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class TopicResourceTutorApiTest extends TestCase
 {
@@ -79,9 +80,7 @@ class TopicResourceTutorApiTest extends TestCase
         return array_map(fn ($item) => [$item], explode(',', $config['topic_resource_mimes']));
     }
 
-    /**
-     * @dataProvider allowedFileExtensionProvider
-     */
+    #[DataProvider('allowedFileExtensionProvider')]
     public function testCreateResourceAllowedFileExtensions(string $ext)
     {
         Storage::fake('local');
@@ -107,9 +106,7 @@ class TopicResourceTutorApiTest extends TestCase
         ]);
     }
 
-    /**
-     * @dataProvider excludedFileExtensionProvider
-     */
+    #[DataProvider('excludedFileExtensionProvider')]
     public function testCreateResourceExcludedFileExtensions(string $ext): void
     {
         $this->response = $this->actingAs($this->user, 'api')->postJson(

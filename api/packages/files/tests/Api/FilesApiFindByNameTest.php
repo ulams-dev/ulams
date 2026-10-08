@@ -7,15 +7,14 @@ use Ulams\Files\Enums\FilePermissionsEnum;
 use Ulams\Files\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 
 
 class FilesApiFindByNameTest extends TestCase
 {
     private string $url = '/api/admin/file/find';
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testFindFilesByNameEquals()
     {
         $file = UploadedFile::fake()->create('test-name-equals.txt', 3, 'text/plain');
@@ -58,9 +57,7 @@ class FilesApiFindByNameTest extends TestCase
         ]]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testFindFilesByNameContains()
     {
         $filename = 'test-name-contains.txt';

@@ -8,6 +8,7 @@ use Ulams\Settings\Enums\SettingTypes;
 use Ulams\Settings\Models\Setting;
 use Ulams\Settings\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 
 class SettingsAdminTest extends TestCase
 {
@@ -25,9 +26,7 @@ class SettingsAdminTest extends TestCase
         $this->user->assignRole('admin');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_admin_fetch()
     {
 

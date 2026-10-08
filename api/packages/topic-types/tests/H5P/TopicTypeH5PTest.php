@@ -12,15 +12,14 @@ use Ulams\TopicTypes\Http\Resources\TopicType\Client\H5PResource as ClientH5PRes
 use Ulams\TopicTypes\Http\Resources\TopicType\Export\H5PResource as ExportH5PResource;
 use Ulams\TopicTypes\Models\TopicContent\H5P;
 use Ulams\TopicTypes\Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class TopicTypeH5PTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /**
-     * @dataProvider h5pProvider
-     */
-    public function testH5PLength(string $filename, int $length): void
+    #[DataProvider('h5pProvider')]
+    public function testH5PLength(string $filename, int $length, string $libraryName): void
     {
         $content = H5PContentFactory::fromPackage(realpath(__DIR__ . '/../mocks/' . $filename));
 
@@ -29,9 +28,7 @@ class TopicTypeH5PTest extends TestCase
         $this->assertEquals($length, $h5p->length);
     }
 
-    /**
-     * @dataProvider h5pProvider
-     */
+    #[DataProvider('h5pProvider')]
     public function testH5PLibraryName(string $filename, int $length, string $libraryName): void
     {
         $content = H5PContentFactory::fromPackage(realpath(__DIR__ . '/../mocks/' . $filename));

@@ -172,6 +172,8 @@ return [
         // Registered explicitly because packages/ are not composer packages and are
         // therefore not picked up by package auto-discovery. Order mirrors the former
         // bootstrap/cache/packages.php manifest.
+        // Vendored third-party fork (packages/laravel-scorm, formerly devianl2/laravel-scorm).
+        Peopleaps\Scorm\ScormServiceProvider::class,
         Ulams\AssignWithoutAccount\UlamsAssignWithoutAccountServiceProvider::class,
         Ulams\Auth\UlamsAuthServiceProvider::class,
         Ulams\Bookmarks\UlamsBookmarksServiceProvider::class,
@@ -299,6 +301,8 @@ return [
         // Vendored Ulams payments facades (formerly auto-discovered)
         'PaymentGateway' => Ulams\Payments\Facades\PaymentGateway::class,
         'Payments' => Ulams\Payments\Facades\Payments::class,
+        // Vendored devianl2/laravel-scorm facade (formerly auto-discovered)
+        'ScormManager' => Peopleaps\Scorm\Facade\ScormManager::class,
     ],
 
 ];

@@ -12,6 +12,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class JitsiApiTest extends TestCase
 {
@@ -154,9 +155,7 @@ class JitsiApiTest extends TestCase
         Storage::assertExists('consultations/11/1728385200/1728387309767.mp4');
     }
 
-    /**
-     * @dataProvider disallowedRecordingUrls
-     */
+    #[DataProvider('disallowedRecordingUrls')]
     public function testRecordedVideoIsNotDownloadedFromDisallowedUrl(string $url): void
     {
         Config::set('jitsi.app_id', 'test-app-id');

@@ -4,6 +4,8 @@ namespace Przelewy24\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Przelewy24\Przelewy24;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class RefundNotificationTest extends TestCase
 {
@@ -19,10 +21,8 @@ class RefundNotificationTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @dataProvider validNotifications
-     */
+    #[Test]
+    #[DataProvider('validNotifications')]
     public function itChecksIfSignatureValid(array $request): void
     {
         $refundNotification = $this->przelewy24->handleRefundWebhook($request);

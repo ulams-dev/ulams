@@ -18,6 +18,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\TestResponse;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class UserSubmissionAdminTest extends TestCase
 {
@@ -308,9 +309,7 @@ class UserSubmissionAdminTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider updateUserSubmissionDataProvider
-     */
+    #[DataProvider('updateUserSubmissionDataProvider')]
     public function testUpdateUserSubmission($data): void
     {
         Event::fake();
@@ -341,9 +340,7 @@ class UserSubmissionAdminTest extends TestCase
         Event::assertNotDispatched($event);
     }
 
-    /**
-     * @dataProvider updateUserSubmissionDataProvider
-     */
+    #[DataProvider('updateUserSubmissionDataProvider')]
     public function testUpdateNotExistingUserSubmission($data): void
     {
         Event::fake();
@@ -364,9 +361,7 @@ class UserSubmissionAdminTest extends TestCase
         Event::assertNotDispatched($event);
     }
 
-    /**
-     * @dataProvider updateUserSubmissionDataProvider
-     */
+    #[DataProvider('updateUserSubmissionDataProvider')]
     public function testUpdateUserSubmissionInvalidData($data): void
     {
         Event::fake();

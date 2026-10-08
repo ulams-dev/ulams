@@ -25,14 +25,13 @@ use Ulams\TopicTypes\Models\TopicContent\Audio;
 use Ulams\TopicTypes\Models\TopicContent\H5P;
 use Ulams\TopicTypes\Models\TopicContent\PDF;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ExportStatsTest extends TestCase
 {
     use DatabaseTransactions, CreatesUsers;
 
-    /**
-     * @dataProvider finishedTopicsResult
-     */
+    #[DataProvider('finishedTopicsResult')]
     public function testFinishedTopicsSheets(string $sheet, string $title, array $result): void
     {
         $user1 = User::factory()->state(['email' => 'abc@example.com'])->create();
@@ -81,7 +80,7 @@ class ExportStatsTest extends TestCase
             [
                 'sheet' => FinishedTopicsAttemptsSheet::class,
                 'title' => 'Attempts',
-                [
+                'result' => [
                     collect(['abc@example.com', 1, 3, 1]),
                     collect(['def@example.com', 2, 1, 1]),
                     collect(['ghi@example.com', 1, 1, 1]),
@@ -90,7 +89,7 @@ class ExportStatsTest extends TestCase
             [
                 'sheet' => FinishedTopicsSecondsSheet::class,
                 'title' => 'Seconds',
-                [
+                'result' => [
                     collect(['abc@example.com', 100, 0, 0]),
                     collect(['def@example.com', 150, 0, 0]),
                     collect(['ghi@example.com', 0, 0, 0]),
@@ -99,7 +98,7 @@ class ExportStatsTest extends TestCase
             [
                 'sheet' => FinishedTopicsStatusesSheet::class,
                 'title' => 'Statuses',
-                [
+                'result' => [
                     collect(['abc@example.com', 2, 1, 0]),
                     collect(['def@example.com', 0, 0, 0]),
                     collect(['ghi@example.com', 0, 0, 0]),
@@ -108,7 +107,7 @@ class ExportStatsTest extends TestCase
             [
                 'sheet' => FinishedTopicsInfoSheet::class,
                 'title' => 'Topic info',
-                [
+                'result' => [
                     collect(['Length', 100, 321, null]),
                     collect(['Page count', 3, null, null]),
                     collect(['Can skip', true, false, false]),

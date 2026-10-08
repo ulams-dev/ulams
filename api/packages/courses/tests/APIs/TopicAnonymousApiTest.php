@@ -7,6 +7,7 @@ use Ulams\Courses\Models\Lesson;
 use Ulams\Courses\Models\Topic;
 use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 
 class TopicAnonymousApiTest extends TestCase
 {
@@ -25,9 +26,7 @@ class TopicAnonymousApiTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testReadTopic()
     {
         $this->response = $this->json(

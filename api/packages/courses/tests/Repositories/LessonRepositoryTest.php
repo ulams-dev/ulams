@@ -7,6 +7,7 @@ use Ulams\Courses\Models\Lesson;
 use Ulams\Courses\Repositories\LessonRepository;
 use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 
 class LessonRepositoryTest extends TestCase
 {
@@ -24,9 +25,7 @@ class LessonRepositoryTest extends TestCase
         Course::factory()->create(); // Lesson factory requires at least one Course existing in DB
     }
 
-    /**
-     * @test create
-     */
+    #[Test]
     public function test_create_lesson()
     {
         $lesson = Lesson::factory()->make()->toArray();
@@ -40,9 +39,7 @@ class LessonRepositoryTest extends TestCase
         $this->assertModelData($lesson, $createdLesson);
     }
 
-    /**
-     * @test read
-     */
+    #[Test]
     public function test_read_lesson()
     {
         $lesson = Lesson::factory()->create();
@@ -53,9 +50,7 @@ class LessonRepositoryTest extends TestCase
         $this->assertModelData($lesson->toArray(), $dbLesson);
     }
 
-    /**
-     * @test update
-     */
+    #[Test]
     public function test_update_lesson()
     {
         $lesson = Lesson::factory()->create();
@@ -68,9 +63,7 @@ class LessonRepositoryTest extends TestCase
         $this->assertModelData($fakeLesson, $dbLesson->toArray());
     }
 
-    /**
-     * @test delete
-     */
+    #[Test]
     public function test_delete_lesson()
     {
         $lesson = Lesson::factory()->create();

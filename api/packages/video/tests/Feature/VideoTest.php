@@ -17,6 +17,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 
 class VideoTest extends TestCase
 {
@@ -38,10 +40,8 @@ class VideoTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider diskDataProvider
-     * @group expensive
-     */
+    #[DataProvider('diskDataProvider')]
+    #[Group('expensive')]
     public function testSuccessProcessVideo(string $disk)
     {
         Storage::fake($disk);
@@ -94,9 +94,7 @@ class VideoTest extends TestCase
         Event::assertNotDispatched(ProcessVideoFailed::class);
     }
 
-    /**
-     * @dataProvider diskDataProvider
-     */
+    #[DataProvider('diskDataProvider')]
     public function testFailProcessVideo(string $disk)
     {
         Storage::fake($disk);
@@ -142,9 +140,7 @@ class VideoTest extends TestCase
                 $event->getUser()->getKey() === $this->user->getKey() && $event->getTopic()->getKey() === $topic->getKey());
     }
 
-    /**
-     * @dataProvider diskDataProvider
-     */
+    #[DataProvider('diskDataProvider')]
     public function testStateUpdatedFailProcessVideo(string $disk)
     {
         Storage::fake($disk);

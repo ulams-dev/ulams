@@ -67,6 +67,19 @@ Edit the code here directly. A new module needs three things:
   the service with `H5PServiceClientContract` (`X-Internal-Token`). Its migration creates
   `h5p.contents` with the service's DDL if it is missing (PostgreSQL only).
 
+## Third-party forks
+
+- `laravel-scorm` (`Peopleaps\Scorm\`): the SCORM manifest parser, entities and Eloquent
+  models (`scorm`, `scorm_sco`, `scorm_sco_tracking`) used by the `scorm` package and by
+  `app/Library/ScormHelper.php`. Vendored from `devianl2/laravel-scorm` 4.0.1 (MIT,
+  https://github.com/devianl2/laravel-scorm, commit `d87753ffbbbc5eb75e20f8aa0cb39faed8f34863`)
+  because no release accepts Carbon 3, which Laravel 12 requires. The upstream namespace is
+  kept so its callers did not change; `LICENSE` and `README.md` are upstream's. Changes from
+  upstream: none for Carbon 3 (the code only calls `Carbon::now()`/`Carbon::parse()`);
+  implicitly nullable parameters made explicit (`?Sco`, `?Scorm`, `?Carbon`; deprecated in
+  PHP 8.4). Its provider and the `ScormManager` alias are registered in `config/app.php`,
+  as composer discovery did before.
+
 ## Provenance
 
 These were imported from the exact versions pinned in `api/composer.lock` at the time of

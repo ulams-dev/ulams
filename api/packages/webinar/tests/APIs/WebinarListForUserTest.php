@@ -13,6 +13,7 @@ use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Collection;
 use Illuminate\Testing\Fluent\AssertableJson;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class WebinarListForUserTest extends TestCase
 {
@@ -99,9 +100,7 @@ class WebinarListForUserTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider durationProvider
-     */
+    #[DataProvider('durationProvider')]
     public function testWebinarListOnlyIncoming(string $duration): void
     {
         $student = User::factory()->create();

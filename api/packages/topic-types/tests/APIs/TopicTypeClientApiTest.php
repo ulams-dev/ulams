@@ -16,6 +16,7 @@ use Ulams\TopicTypes\Models\TopicContent\ScormSco;
 use Ulams\TopicTypes\Models\TopicContent\Video;
 use Ulams\TopicTypes\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class TopicTypeClientApiTest extends TestCase
 {
@@ -52,9 +53,7 @@ class TopicTypeClientApiTest extends TestCase
         return $types;
     }
 
-    /**
-     * @dataProvider topicTypeDataProvider
-     */
+    #[DataProvider('topicTypeDataProvider')]
     public function testGetTopic($class): void
     {
         $model = $class::factory()->create();

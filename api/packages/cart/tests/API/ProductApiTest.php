@@ -25,6 +25,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\TestResponse;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ProductApiTest extends TestCase
 {
@@ -238,9 +239,7 @@ class ProductApiTest extends TestCase
             ->assertUnauthorized();
     }
 
-    /**
-     * @dataProvider myProductsFilterDataProvider
-     */
+    #[DataProvider('myProductsFilterDataProvider')]
     public function test_search_my_products(array $filters, callable $generator, int $filterCount): void
     {
         $user = $this->makeStudent();
@@ -327,8 +326,8 @@ class ProductApiTest extends TestCase
     {
         return [
             [
-                'filter' => [],
-                'data' => (function (User $user) {
+                'filters' => [],
+                'generator' => (function (User $user) {
                     $tasks = collect();
                     $tasks->push(Product::factory()->count(5)->hasAttached(User::factory()->count(2)));
                     $tasks->push(Product::factory()->count(3)->hasAttached($user));
@@ -338,10 +337,10 @@ class ProductApiTest extends TestCase
                 'filterCount' => 3,
             ],
             [
-                'filter' => [
+                'filters' => [
                     'type' => 'subscription',
                 ],
-                'data' => (function (User $user) {
+                'generator' => (function (User $user) {
                     $tasks = collect();
                     $tasks->push(Product::factory()->count(5)->hasAttached(User::factory()->count(2)));
                     $tasks->push(Product::factory()->count(2)->hasAttached($user));
@@ -352,10 +351,10 @@ class ProductApiTest extends TestCase
                 'filterCount' => 1,
             ],
             [
-                'filter' => [
+                'filters' => [
                     'active' => false,
                 ],
-                'data' => (function (User $user) {
+                'generator' => (function (User $user) {
                     $tasks = collect();
                     $tasks->push(Product::factory()->count(5)->hasAttached(User::factory()->count(2)));
                     $tasks->push(Product::factory()->count(3)->hasAttached($user, ['end_date' => Carbon::now()->addMonth()]));
@@ -367,10 +366,10 @@ class ProductApiTest extends TestCase
                 'filterCount' => 2,
             ],
             [
-                'filter' => [
+                'filters' => [
                     'active' => true,
                 ],
-                'data' => (function (User $user) {
+                'generator' => (function (User $user) {
                     $tasks = collect();
                     $tasks->push(Product::factory()->count(5)->hasAttached(User::factory()->count(2)));
                     $tasks->push(Product::factory()->count(3)->hasAttached($user, ['end_date' => Carbon::now()->addMonth()]));

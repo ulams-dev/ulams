@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use Ulams\Tenancy\Models\Tenant;
 use Ulams\Tenancy\Support\TenantNaming;
 use Ulams\Tenancy\Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class TenantNamingTest extends TestCase
 {
@@ -48,9 +49,7 @@ class TenantNamingTest extends TestCase
         $this->assertSame('no-reply@coffee.ulams.app', $values['MAIL_FROM_ADDRESS']);
     }
 
-    /**
-     * @dataProvider invalidSlugs
-     */
+    #[DataProvider('invalidSlugs')]
     public function testRejectsInvalidSlugs(string $slug): void
     {
         $this->expectException(InvalidArgumentException::class);

@@ -22,6 +22,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 
 class TopicTypesTutorCreateApiTest extends TestCase
 {
@@ -41,9 +42,7 @@ class TopicTypesTutorCreateApiTest extends TestCase
         $this->lesson = Lesson::factory(['course_id' => $this->course->id])->create();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testCreateTopicImage(): void
     {
         Storage::fake('local');

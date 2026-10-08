@@ -16,6 +16,7 @@ use Ulams\Core\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Event;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class BulkNotificationServiceTest extends TestCase
 {
@@ -33,9 +34,7 @@ class BulkNotificationServiceTest extends TestCase
         Event::fake([NotificationSent::class]);
     }
 
-    /**
-     * @dataProvider channelDataProvider
-     */
+    #[DataProvider('channelDataProvider')]
     public function testSendUserNotificationViaChannel(string $channel): void
     {
         $dto = $this->makeSendUserBulkNotificationDto($channel);
@@ -57,9 +56,7 @@ class BulkNotificationServiceTest extends TestCase
         });
     }
 
-    /**
-     * @dataProvider channelDataProvider
-     */
+    #[DataProvider('channelDataProvider')]
     public function testSendMulticastNotificationViaChannel(string $channel): void
     {
         $dto = $this->makeSendMulticastUserBulkNotificationDto($channel);
@@ -82,9 +79,7 @@ class BulkNotificationServiceTest extends TestCase
         });
     }
 
-    /**
-     * @dataProvider channelDataProvider
-     */
+    #[DataProvider('channelDataProvider')]
     public function testSendUserNotificationViaChannelFilterSections(string $channel): void
     {
         $dto = $this->makeSendUserBulkNotificationDto($channel, ['invalid_section_key_1' => 'value', 'invalid_section_key_2' => 'value']);
@@ -112,9 +107,7 @@ class BulkNotificationServiceTest extends TestCase
         Event::assertDispatchedTimes(NotificationSent::class, $amount);
     }
 
-    /**
-     * @dataProvider channelDataProvider
-     */
+    #[DataProvider('channelDataProvider')]
     public function testSendMulticastNotificationViaChannelFilterSections(string $channel): void
     {
         $dto = $this->makeSendMulticastUserBulkNotificationDto($channel, ['invalid_section_key_1' => 'value', 'invalid_section_key_2' => 'value']);

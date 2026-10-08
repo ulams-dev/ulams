@@ -18,15 +18,14 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 
 class CourseAdminApiTest extends TestCase
 {
     use CreatesUsers;
     use DatabaseTransactions;
 
-    /**
-     * @test
-     */
+    #[Test]
     protected function setUp(): void
     {
         parent::setUp();
@@ -133,9 +132,7 @@ class CourseAdminApiTest extends TestCase
         $this->assertFalse($dbCourse->is_active);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_read_course(): void
     {
         $course = Course::factory()->create([
@@ -151,9 +148,7 @@ class CourseAdminApiTest extends TestCase
         $this->assertApiResponse($course->toArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_update_course(): void
     {
         $course = Course::factory()->create();
@@ -168,9 +163,7 @@ class CourseAdminApiTest extends TestCase
         $this->assertApiResponse($editedCourse);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_update_course_fields(): void
     {
         $course = Course::factory()->create();
@@ -209,9 +202,7 @@ class CourseAdminApiTest extends TestCase
         Event::assertDispatched(CoursedPublished::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_update_course_with_correct_author(): void
     {
         $course = Course::factory()->create();
@@ -230,9 +221,7 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertValid('author_id');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_update_course_with_wrong_author(): void
     {
         $course = Course::factory()->create();
@@ -274,9 +263,7 @@ class CourseAdminApiTest extends TestCase
         $this->assertEquals([], $course->authors->toArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_delete_course(): void
     {
         $course = Course::factory()->create();
@@ -508,9 +495,7 @@ class CourseAdminApiTest extends TestCase
         $this->assertTrue(in_array($course3->id,  $coursesIds));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_read_course_program(): void
     {
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
@@ -532,9 +517,7 @@ class CourseAdminApiTest extends TestCase
         )->assertStatus(200);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_read_course_program_topics_count(): void
     {
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
@@ -553,9 +536,7 @@ class CourseAdminApiTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_read_course_program_scorm(): void
     {
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
@@ -638,9 +619,7 @@ class CourseAdminApiTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_create_admin_course_poster(): void
     {
         Storage::fake('local');
@@ -698,9 +677,7 @@ class CourseAdminApiTest extends TestCase
         Storage::disk('local')->assertMissing('/' . $path);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_update_admin_course_poster(): void
     {
         Storage::fake('local');

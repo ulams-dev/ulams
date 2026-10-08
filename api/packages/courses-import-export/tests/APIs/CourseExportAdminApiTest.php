@@ -19,15 +19,14 @@ use Ulams\TopicTypes\Models\TopicContent\Video;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 
 class CourseExportAdminApiTest extends TestCase
 {
     use CreatesUsers;
     use DatabaseTransactions;
 
-    /**
-     * @test
-     */
+    #[Test]
     protected function setUp(): void
     {
         parent::setUp();
@@ -92,9 +91,7 @@ class CourseExportAdminApiTest extends TestCase
         $this->course = $course;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testExportCreated()
     {
         $id = $this->course->id;

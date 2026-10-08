@@ -11,6 +11,7 @@ use Ulams\Courses\Models\Course;
 use Ulams\Courses\Models\Lesson;
 use Ulams\Courses\Models\Topic;
 use Illuminate\Support\Arr;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class BookmarkIndexApiTest extends TestCase
 {
@@ -22,9 +23,7 @@ class BookmarkIndexApiTest extends TestCase
         $this->seed(BookmarkPermissionSeeder::class);
     }
 
-    /**
-     * @dataProvider filterDataProvider
-     */
+    #[DataProvider('filterDataProvider')]
     public function testIndexBookmarkFilters(array $filters, callable $generator, int $filterCount): void
     {
         $user = $this->makeStudent();
@@ -140,9 +139,7 @@ class BookmarkIndexApiTest extends TestCase
             ]);
     }
 
-    /**
-     * @dataProvider orderDataProvider
-     */
+    #[DataProvider('orderDataProvider')]
     public function testIndexBookmarkOrder(array $order, callable $generator, callable $assertion): void
     {
         $user = $this->makeStudent();
@@ -159,10 +156,10 @@ class BookmarkIndexApiTest extends TestCase
     {
         return [
             [
-                'filter' => [
+                'filters' => [
                     'has_value' => 0
                 ],
-                'data' => (function (int $userId) {
+                'generator' => (function (int $userId) {
                     $items = collect();
                     $items->push(Bookmark::factory());
                     $items->push(Bookmark::factory()->state(['value' => null, 'user_id' => $userId]));
@@ -176,10 +173,10 @@ class BookmarkIndexApiTest extends TestCase
                 'filterCount' => 3
             ],
             [
-                'filter' => [
+                'filters' => [
                     'has_value' => 1
                 ],
-                'data' => (function (int $userId) {
+                'generator' => (function (int $userId) {
                     $items = collect();
                     $items->push(Bookmark::factory());
                     $items->push(Bookmark::factory()->state(['value' => null, 'user_id' => $userId]));
@@ -191,9 +188,9 @@ class BookmarkIndexApiTest extends TestCase
                 'filterCount' => 2
             ],
             [
-                'filter' => [
+                'filters' => [
                 ],
-                'data' => (function (int $userId) {
+                'generator' => (function (int $userId) {
                     $items = collect();
                     $items->push(Bookmark::factory());
                     $items->push(Bookmark::factory()->state(['user_id' => $userId]));
@@ -204,10 +201,10 @@ class BookmarkIndexApiTest extends TestCase
                 'filterCount' => 2
             ],
             [
-                'filter' => [
+                'filters' => [
                     'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic',
                 ],
-                'data' => (function (int $userId) {
+                'generator' => (function (int $userId) {
                     $items = collect();
                     $items->push(Bookmark::factory());
                     $items->push(Bookmark::factory()->state(['user_id' => $userId]));
@@ -222,11 +219,11 @@ class BookmarkIndexApiTest extends TestCase
                 'filterCount' => 3
             ],
             [
-                'filter' => [
+                'filters' => [
                     'bookmarkable_id' => 123,
                     'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic',
                 ],
-                'data' => (function (int $userId) {
+                'generator' => (function (int $userId) {
                     $items = collect();
                     $items->push(Bookmark::factory());
                     $items->push(Bookmark::factory()->state(['user_id' => $userId]));
@@ -240,11 +237,11 @@ class BookmarkIndexApiTest extends TestCase
                 'filterCount' => 1
             ],
             [
-                'filter' => [
+                'filters' => [
                     'bookmarkable_ids' => [123, 456],
                     'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic',
                 ],
-                'data' => (function (int $userId) {
+                'generator' => (function (int $userId) {
                     $items = collect();
                     $items->push(Bookmark::factory());
                     $items->push(Bookmark::factory()->state(['user_id' => $userId]));
@@ -260,7 +257,7 @@ class BookmarkIndexApiTest extends TestCase
         ];
     }
 
-    public function orderDataProvider(): array
+    public static function orderDataProvider(): array
     {
         return [
             [
@@ -268,7 +265,7 @@ class BookmarkIndexApiTest extends TestCase
                     'order_by' => 'id',
                     'order' => 'asc',
                 ],
-                'data' => (function (int $userId) {
+                'generator' => (function (int $userId) {
                     $items = collect();
                     $items->push(Bookmark::factory()->state(['id' => 1, 'user_id' => $userId]));
                     $items->push(Bookmark::factory()->state(['id' => 2, 'user_id' => $userId]));
@@ -276,9 +273,9 @@ class BookmarkIndexApiTest extends TestCase
 
                     return $items;
                 }),
-                'assert' => (function ($data) {
-                    $this->assertEquals(1, Arr::first($data->getData()->data)->id);
-                    $this->assertEquals(3, Arr::last($data->getData()->data)->id);
+                'assertion' => (function ($data) {
+                    self::assertEquals(1, Arr::first($data->getData()->data)->id);
+                    self::assertEquals(3, Arr::last($data->getData()->data)->id);
                 })
             ],
             [
@@ -286,7 +283,7 @@ class BookmarkIndexApiTest extends TestCase
                     'order_by' => 'id',
                     'order' => 'desc',
                 ],
-                'data' => (function (int $userId) {
+                'generator' => (function (int $userId) {
                     $items = collect();
                     $items->push(Bookmark::factory()->state(['id' => 1, 'user_id' => $userId]));
                     $items->push(Bookmark::factory()->state(['id' => 2, 'user_id' => $userId]));
@@ -294,9 +291,9 @@ class BookmarkIndexApiTest extends TestCase
 
                     return $items;
                 }),
-                'assert' => (function ($data) {
-                    $this->assertEquals(1, Arr::last($data->getData()->data)->id);
-                    $this->assertEquals(3, Arr::first($data->getData()->data)->id);
+                'assertion' => (function ($data) {
+                    self::assertEquals(1, Arr::last($data->getData()->data)->id);
+                    self::assertEquals(3, Arr::first($data->getData()->data)->id);
                 })
             ],
             [
@@ -304,7 +301,7 @@ class BookmarkIndexApiTest extends TestCase
                     'order_by' => 'value',
                     'order' => 'asc',
                 ],
-                'data' => (function (int $userId) {
+                'generator' => (function (int $userId) {
                     $items = collect();
                     $items->push(Bookmark::factory()->state(['user_id' => $userId, 'value' => 'aaa']));
                     $items->push(Bookmark::factory()->state(['user_id' => $userId, 'value' => 'bbb']));
@@ -312,9 +309,9 @@ class BookmarkIndexApiTest extends TestCase
 
                     return $items;
                 }),
-                'assert' => (function ($data) {
-                    $this->assertEquals('aaa', Arr::first($data->getData()->data)->value);
-                    $this->assertEquals('ccc', Arr::last($data->getData()->data)->value);
+                'assertion' => (function ($data) {
+                    self::assertEquals('aaa', Arr::first($data->getData()->data)->value);
+                    self::assertEquals('ccc', Arr::last($data->getData()->data)->value);
                 })
             ],
             [
@@ -322,7 +319,7 @@ class BookmarkIndexApiTest extends TestCase
                     'order_by' => 'value',
                     'order' => 'desc',
                 ],
-                'data' => (function (int $userId) {
+                'generator' => (function (int $userId) {
                     $items = collect();
                     $items->push(Bookmark::factory()->state(['user_id' => $userId, 'value' => 'aaa']));
                     $items->push(Bookmark::factory()->state(['user_id' => $userId, 'value' => 'bbb']));
@@ -330,9 +327,9 @@ class BookmarkIndexApiTest extends TestCase
 
                     return $items;
                 }),
-                'assert' => (function ($data) {
-                    $this->assertEquals('aaa', Arr::last($data->getData()->data)->value);
-                    $this->assertEquals('ccc', Arr::first($data->getData()->data)->value);
+                'assertion' => (function ($data) {
+                    self::assertEquals('aaa', Arr::last($data->getData()->data)->value);
+                    self::assertEquals('ccc', Arr::first($data->getData()->data)->value);
                 })
             ],
         ];

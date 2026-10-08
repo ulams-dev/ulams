@@ -12,6 +12,7 @@ use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 
 class TopicTutorApiTest extends TestCase
 {
@@ -51,9 +52,7 @@ class TopicTutorApiTest extends TestCase
         $this->response->assertJsonPath('data.json.bar', 'foo');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testDeleteTopic()
     {
         $course = Course::factory()->create([

@@ -85,6 +85,7 @@ class FinishedTopics extends AbstractCourseStat
                 ->on($this->courseProgressTable . '.user_id', '=', $this->userTable . '.id')
                 ->on($this->courseProgressTable . '.topic_id', '=', $this->topicTable . '.id')
             )
+            ->tap(fn (Builder $query) => $this->orderRows($query))
             ->get();
     }
 
@@ -99,7 +100,17 @@ class FinishedTopics extends AbstractCourseStat
                 ->on($this->courseProgressTable . '.user_id', '=', $this->userTable . '.id')
                 ->on($this->courseProgressTable . '.topic_id', '=', $this->topicTable . '.id')
             )
+            ->tap(fn (Builder $query) => $this->orderRows($query))
             ->get();
+    }
+
+    /**
+     * Without an explicit order PostgreSQL returns rows in plan order, so the user rows and topic columns of the
+     * export changed between runs (the formerly quarantined ExportStatsTest::testFinishedTopicsSheets).
+     */
+    private function orderRows(Builder $query): void
+    {
+        $query->orderBy($this->userTable . '.id')->orderBy($this->topicTable . '.id');
     }
 
     private function formatResult(Collection $result): array

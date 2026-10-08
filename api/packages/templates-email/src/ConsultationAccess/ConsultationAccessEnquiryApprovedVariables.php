@@ -45,7 +45,7 @@ class ConsultationAccessEnquiryApprovedVariables extends CommonConsultationAcces
         if (!$executedAt instanceof Carbon) {
             $executedAt = Carbon::make($executedAt);
         }
-        $executedAt = $executedAt->setTimezone($event->getUser()->current_timezone)->format('Y-m-d H:i');
+        $executedAt = $executedAt->setTimezone($event->getUser()->current_timezone ?? config('app.timezone'))->format('Y-m-d H:i');
 
         return array_merge(parent::variablesFromEvent($event), [
             self::VAR_APPROVED_TERM => $executedAt,

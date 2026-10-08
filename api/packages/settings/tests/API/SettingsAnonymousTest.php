@@ -5,6 +5,7 @@ namespace Tests\APIs;
 use Ulams\Settings\Models\Setting;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Ulams\Settings\Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class SettingsAnonymousTest extends TestCase
 {
@@ -59,9 +60,7 @@ class SettingsAnonymousTest extends TestCase
             'type' => 'config'
         ]);
     }
-    /**
-     * @test
-     */
+    #[Test]
     public function test_anonymous_fetch()
     {
 

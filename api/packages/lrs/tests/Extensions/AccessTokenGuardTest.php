@@ -14,6 +14,7 @@ use Ulams\Lrs\Extensions\AccessTokenGuard;
 use Ulams\Lrs\Models\BasicHttpCredentials;
 use Ulams\Lrs\Tests\TestCase;
 use Ulams\Lrs\Tests\Traits\XapiTesting;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AccessTokenGuardTest extends TestCase
 {
@@ -36,23 +37,21 @@ class AccessTokenGuardTest extends TestCase
         parent::tearDown();
     }
 
-    public function tokenDataProvider(): array
+    public static function tokenDataProvider(): array
     {
         return [
             [
-                'expire' => fn() => Passport::personalAccessTokensExpireIn(now()->addDay()),
-                'assert' => fn($result) => $this->assertTrue($result)
+                'expireIn' => fn() => Passport::personalAccessTokensExpireIn(now()->addDay()),
+                'assert' => fn($result) => self::assertTrue($result)
             ],
             [
-                'expire' => fn() => Passport::personalAccessTokensExpireIn(now()->subDay()),
-                'assert' => fn($result) => $this->assertFalse($result)
+                'expireIn' => fn() => Passport::personalAccessTokensExpireIn(now()->subDay()),
+                'assert' => fn($result) => self::assertFalse($result)
             ],
         ];
     }
 
-    /**
-     * @dataProvider tokenDataProvider
-     */
+    #[DataProvider('tokenDataProvider')]
     public function testGuard($expireIn, $assert)
     {
         $expireIn();

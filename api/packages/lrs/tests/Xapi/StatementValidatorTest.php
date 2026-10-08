@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Ulams\Lrs\Xapi\Agent;
 use Ulams\Lrs\Xapi\StatementValidator;
 use Ulams\Lrs\Xapi\XapiException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class StatementValidatorTest extends TestCase
 {
@@ -78,9 +79,7 @@ class StatementValidatorTest extends TestCase
         return array_map(fn ($case) => [$case], $cases);
     }
 
-    /**
-     * @dataProvider invalidStatements
-     */
+    #[DataProvider('invalidStatements')]
     public function testInvalidStatementsFail(callable $mutate): void
     {
         $this->assertNotSame([], StatementValidator::errors($mutate($this->valid())));

@@ -14,6 +14,7 @@ use Ulams\Questionnaire\Models\QuestionnaireModelType;
 use Ulams\Questionnaire\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class QuestionAnswerTest extends TestCase
 {
@@ -371,9 +372,7 @@ class QuestionAnswerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider publicAnswersProvider
-     */
+    #[DataProvider('publicAnswersProvider')]
     public function testAddQuestionAnswersDefaultFalse(bool $public): void
     {
         $this->question->public_answers = $public;
@@ -404,9 +403,7 @@ class QuestionAnswerTest extends TestCase
         ]);
     }
 
-    /**
-     * @dataProvider publicAnswersProvider
-     */
+    #[DataProvider('publicAnswersProvider')]
     public function testAddQuestionAnswersDefaultTrue(bool $public): void
     {
         $this->question->public_answers = $public;

@@ -14,6 +14,7 @@ use Ulams\Courses\Tests\Repositories\Mocks\UpdateTopicApiRequestMock;
 use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Routing\Redirector;
+use PHPUnit\Framework\Attributes\Test;
 
 class TopicRepositoryTest extends TestCase
 {
@@ -30,9 +31,7 @@ class TopicRepositoryTest extends TestCase
         $this->topicRepo = \App::make(TopicRepositoryContract::class);
     }
 
-    /**
-     * @test create
-     */
+    #[Test]
     public function testCreateTopic()
     {
         $course = Course::factory()->create();
@@ -70,9 +69,7 @@ class TopicRepositoryTest extends TestCase
         $this->assertEquals('lorem ipsum', $createdTopic->topicable->value);
     }
 
-    /**
-     * @test read
-     */
+    #[Test]
     public function testReadTopic()
     {
         $course = Course::factory()->create();
@@ -85,9 +82,7 @@ class TopicRepositoryTest extends TestCase
         $this->assertModelData($topic->toArray(), $dbTopic);
     }
 
-    /**
-     * @test update
-     */
+    #[Test]
     public function testUpdateTopic()
     {
         $course = Course::factory()->create();
@@ -169,9 +164,7 @@ class TopicRepositoryTest extends TestCase
         $this->assertEquals('https://embed.test/embed', $updatedTopic2->topicable->value);
     }
 
-    /**
-     * @test delete
-     */
+    #[Test]
     public function testDeleteTopic()
     {
         $course = Course::factory()->create();

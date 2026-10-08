@@ -9,6 +9,7 @@ use Ulams\Tasks\Tests\CreatesUsers;
 use Ulams\Tasks\Tests\TaskTesting;
 use Ulams\Tasks\Tests\TestCase;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class TaskCreateApiTest extends TestCase
 {
@@ -113,9 +114,7 @@ class TaskCreateApiTest extends TestCase
         Event::assertNotDispatched(TaskAssignedEvent::class);
     }
 
-    /**
-     * @dataProvider userInvalidDataProvider
-     */
+    #[DataProvider('userInvalidDataProvider')]
     public function testUserCreateTaskInvalidData(string $key, array $data): void
     {
         $this->actingAs($this->makeStudent(), 'api')
@@ -197,9 +196,7 @@ class TaskCreateApiTest extends TestCase
         Event::assertNotDispatched(TaskAssignedEvent::class);
     }
 
-    /**
-     * @dataProvider adminInvalidDataProvider
-     */
+    #[DataProvider('adminInvalidDataProvider')]
     public function testAdminCreateTaskInvalidData(string $key, array $data): void
     {
         $this->actingAs($this->makeAdmin(), 'api')
@@ -226,10 +223,10 @@ class TaskCreateApiTest extends TestCase
     public static function userInvalidDataProvider(): array
     {
         return [
-            ['field' => 'title', 'data' => ['title' => null]],
-            ['field' => 'due_date', 'data' => ['due_date' => Carbon::now()->subDay()]],
-            ['field' => 'related_type', 'data' => ['related_type' => 123]],
-            ['field' => 'related_id', 'data' => ['related_id' => 'String']],
+            ['key' => 'title', 'data' => ['title' => null]],
+            ['key' => 'due_date', 'data' => ['due_date' => Carbon::now()->subDay()]],
+            ['key' => 'related_type', 'data' => ['related_type' => 123]],
+            ['key' => 'related_id', 'data' => ['related_id' => 'String']],
         ];
     }
 
@@ -237,12 +234,12 @@ class TaskCreateApiTest extends TestCase
     public static function adminInvalidDataProvider(): array
     {
         return [
-            ['field' => 'title', 'data' => ['title' => null]],
-            ['field' => 'due_date', 'data' => ['due_date' => Carbon::now()->subDay()]],
-            ['field' => 'user_id', 'data' => ['user_id' => -123]],
-            ['field' => 'user_id', 'data' => ['user_id' => null]],
-            ['field' => 'related_type', 'data' => ['related_type' => 123]],
-            ['field' => 'related_id', 'data' => ['related_id' => 'String']],
+            ['key' => 'title', 'data' => ['title' => null]],
+            ['key' => 'due_date', 'data' => ['due_date' => Carbon::now()->subDay()]],
+            ['key' => 'user_id', 'data' => ['user_id' => -123]],
+            ['key' => 'user_id', 'data' => ['user_id' => null]],
+            ['key' => 'related_type', 'data' => ['related_type' => 123]],
+            ['key' => 'related_id', 'data' => ['related_id' => 'String']],
         ];
     }
 }

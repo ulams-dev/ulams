@@ -9,6 +9,7 @@ use Ulams\ConsultationAccess\Models\ConsultationAccessEnquiry;
 use Ulams\ConsultationAccess\Tests\TestCase;
 use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Database\Eloquent\Factories\Sequence;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ConsultationAccessEnquiryAdminListApiTest extends TestCase
 {
@@ -45,9 +46,7 @@ class ConsultationAccessEnquiryAdminListApiTest extends TestCase
             ->assertUnauthorized();
     }
 
-    /**
-     * @dataProvider adminFilterDataProvider
-     */
+    #[DataProvider('adminFilterDataProvider')]
     public function testConsultationAccessEnquiryAdminList(callable $filter, int $count): void
     {
         $queryParams = $filter($this->student2->getKey(), $this->consultation2->getKey());

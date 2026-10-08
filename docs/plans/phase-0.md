@@ -460,3 +460,122 @@ Risks and follow-ups for step 3 (L12) and later:
   `REDIS_PREFIX` and the store prefix explicit.
 - The cart subscription test is flaky by design (random factory data); worth pinning its values when that package is
   touched.
+
+### B.13 Step 3/4: Laravel 11 → 12
+
+Done 2026-10-08, uncommitted on `phase-0/foundation`. Result: `laravel/framework` v11.57.0 → **v12.69.3** (latest
+12.x) on PHP 8.3, Carbon 2.73 → **3.14**. The full PHPUnit run shows no new failures (table below). The non-slim
+skeleton stays.
+
+**Composer blocking is gone.** `composer update` resolved without `COMPOSER_NO_BLOCKING`, and `composer audit` reports
+no advisories: 12.69 fixes the framework advisories, `firebase/php-jwt` 7 fixes CVE-2025-45769, and dompdf 3.1.6 fixes
+the dompdf advisories, so the `policy.advisories.ignore: [dompdf/dompdf]` block was removed from `api/composer.json`.
+
+Composer (`api/composer.json`; the lock changed only for the packages listed and their dependencies, 59 lock entries;
+update run as `composer update -W <packages>`):
+
+| Package | From | To | Note |
+|---|---|---|---|
+| `laravel/framework` | ^11.0 (11.57.0) | ^12.69 (12.69.3) | pulls `symfony/translation` 7.4, `symfony/clock` |
+| `nesbot/carbon` | 2.73 (transitive) | ^3.8 (3.14.2), now a direct requirement | the vendored scorm code and many packages use it directly |
+| `gecche/laravel-multidomain` | ^11.0 | ^12.0 (12.2) | same integration points; no code change |
+| `devianl2/laravel-scorm` | ^4 (4.0.1) | **removed, vendored** | see below; `doctrine/common` and 3 `doctrine/*` deps it pulled are gone (unused) |
+| `firebase/php-jwt` | ^6 (6.11.1) | ^7.0 (7.2.1) | 6.x is blocked by CVE-2025-45769; Passport 12.4, Socialite, google/apiclient and kreait accept 7. 7.x rejects HS256 keys shorter than 32 bytes (see Jitsi below) |
+| `barryvdh/laravel-dompdf` | ^2.2 | ^3.1 (3.1.2, dompdf 3.1.6) | 2.x capped at L11; invoices suite green |
+| `kreait/laravel-firebase` | ^5 (5.10) | ^6.0 (6.2.0) | `kreait/firebase-php` stays on 7.x; no API change for `PushNotificationChannel` |
+| `tzsk/sms` | ^8.0 | ^9.0 (9.0.0) | templates-sms suite green |
+| `orchestra/testbench` | ^9.0 (9.18) | ^10.12 (10.12, core 10.15) | canvas 10, workbench 10 |
+| `phpunit/phpunit` | ^10.5 (10.5.66) | ^11.5 (11.5.57) | see "PHPUnit 11" below |
+| `nunomaduro/collision` | ^8.1 (8.5) | ^8.6 (8.9.5) | 8.5 conflicts with L12 |
+| `ext-zip`, `ext-dom` | — | `*` | taken over from the scorm package |
+| Not touched (accept L12) | | | Passport 12.4.3, Horizon 5, Socialite 5, Tinker 2, l5-swagger 8.6, Sentry 4, spatie/* (permission 6, responsecache 7.7, health 1.40, translation-loader 2.8, image-optimizer 1.8), maatwebsite/excel 3.1.70, bensampo/laravel-enum 6, pbmedia/laravel-ffmpeg 8.9, zanysoft/laravel-zip 3.1, `rennokki/laravel-eloquent-query-cache` 3.6.1, `treestoneit/shopping-cart` 1.6.1, `gnello/laravel-mattermost-driver` 1.3.3 |
+
+**PHPUnit 11 instead of 10.5.** `orchestra/testbench` 10 requires PHPUnit ^11.5.3 (only `testbench-core` alone would
+allow 10.5.35), and `nunomaduro/collision` 8.6+ (the first line that accepts L12) conflicts with PHPUnit < 11.5. So the
+step moved to PHPUnit 11 and fixed what that needs; the test run now shows **0 PHPUnit deprecations** (154 on L11).
+
+`devianl2/laravel-scorm` → `api/packages/laravel-scorm` (MIT, upstream `LICENSE` and `README.md` kept, provenance in
+`api/packages/README.md` "Third-party forks"). The upstream namespace `Peopleaps\Scorm\` is kept and autoloaded via
+PSR-4, so its 35 callers did not change; a separate directory keeps third-party code apart from our `scorm` module
+(`Ulams\Scorm\`). Its provider and the `ScormManager` facade alias are registered in `config/app.php` (composer
+discovery did that before). Carbon 3 needed no code change (it only calls `Carbon::now()`/`Carbon::parse()`); the four
+implicitly nullable parameters were made explicit (`?Sco`, `?Scorm`, `?Carbon`), which PHP 8.4 (step 4) deprecates.
+
+Code changes:
+
+| Category | Files | Change |
+|---|---|---|
+| Carbon 3: `setTimezone(null)` throws `TypeError` (Carbon 2 fell back to the default timezone) | `templates-email/src/{Webinar/CommonWebinarVariables,Courses/DeadlineIncomingVariables,Consultations/CommonConsultationVariables,ConsultationAccess/ConsultationAccessEnquiry{AdminCreated,Approved}Variables}.php`, `templates-sms/src/Consultations/CommonConsultationVariables.php` | `$user->current_timezone ?? config('app.timezone')`. `users.current_timezone` is nullable, so e-mails/SMS for users without a stored timezone would have failed (caught by 2 `templates-email` tests) |
+| L12 `ResourceCollection::toArray()` resolves every item and casts it to an array: a resource whose `toArray()` returns a scalar became a one-element list (`"proposed_terms": [["2026-…"]]`) | `consultations/src/Http/Resources/Consultation{Term,ProposedTerm}Resource.php` | `resolve()` returns the serialised date, so `proposed_terms` and `busy_terms` keep the L11 shape (flat list of ISO dates). Caught by 3 `consultations` tests; these are the only resources returning a scalar |
+| `image` rule rejects SVG by default | `categories/src/Http/Requests/Category{Create,Update}Request.php`; new test `CategoriesApiTest::testUpdateCategoryIconAcceptsSvg` | category icons are SVG (the factory and seed icons in `database/multimedia/categories` are `.svg`), so `icon` uses `image:allow_svg`. The 14 other `image` rules (course image/poster, product poster, consultation/stationary event/webinar image and logotype, topic image, video poster) **now reject SVG**: safer (SVG can carry scripts) and none of our seeds or tests upload SVG there. Avatars use `mimes:…,svg` and are unchanged |
+| `firebase/php-jwt` 7: HS256 key ≥ 32 bytes | `jitsi/config/jitsi.php` (comment), `webinar/tests/TestCase.php` | self-hosted Jitsi tokens fail with "Provided key is too short" when `JITSI_APP_SECRET` is shorter (the default `Test` is). Tests set a 32-byte secret. JaaS (RS256) is unaffected |
+| PHPUnit 11: doc-comment metadata deprecated | 62 test files | `@test` (67), `@dataProvider` (63), `@depends` (1), `@group` (1) → attributes (`#[Test]`, `#[DataProvider]`, …); this is also the PHPUnit 12 work planned for step 4 |
+| PHPUnit 11: string data-set keys are passed as named arguments (unknown name = error; PHPUnit 10 ignored the keys) | `bookmarks_notes` (6 tests), `cart` `ProductApiTest`/`AdminProductApiTest`, `cmi5` `Cmi5ApiUploadTest`, `tasks` `TaskCreateApiTest`/`TaskIndexApiTest`, `reports` `ExportStatsTest`, `topic-type-gift` `GiftQuestionServiceTest`, `topic-types` `TopicTypeH5PTest` | keys renamed to the parameter names (or the missing parameter added). Together with the provider fixes below, the 48 data sets that were not collected at all in the first L12 run are back (cart 24, tasks 8, bookmarks 8, bulk-notifications 6, lrs 2) |
+| PHPUnit 11: data providers must be `public static` and must not use `$this` | `cart` `invalidSubscriptionDataProvider` (private), `bulk-notifications/tests/TestCase.php` `channelDataProvider` (protected), `lrs` `tokenDataProvider`, `tasks`/`bookmarks_notes` `orderDataProvider` | made `public static`; closures use `self::assert…` |
+| Testbench 10 checks error/exception handlers after each test | `mailerlite/tests/Api/SettingsTest.php` | `tearDown()` now calls `parent::tearDown()` (5 risky tests) |
+| Flaky test (B.12) | `cart` `test_update_product_subscription_type_cannot_update_subscription_fields` | the update now always changes `subscription_duration` (random factory data could equal the stored values); 8/8 reruns pass, so no CI quarantine entry |
+| Undefined row order in the "finished topics" export (pre-existing, flaky on every version, fails more often now) | `reports/src/Stats/Course/FinishedTopics.php` | rows ordered by user id, then topic id: export columns follow topic creation order and users their id, as the test expects; removed from the CI quarantine |
+| PHPUnit config | `phpunit.xml`, `docker/envs/phpunit.xml.{postgres,mysql,cc}` | schema URL 10.5 → 11.5 (`--migrate-configuration` reports nothing else to migrate) |
+
+Checked and not needed: `HasUuids` (no model uses it; `Str::uuid()` stays v4), `Schema::getTables/getViews/getTypes`
+and schema-qualified `hasTable` (none; `h5p.contents` is reached through the model table name), `mergeIfMissing`,
+`Str::is`, `Concurrency`, `DatabaseTokenRepository`, `new Blueprint`/`Grammar` constructors (none),
+`local` disk root (`config/filesystems.php` defines `local` explicitly; Testbench's default was already
+`app/private` on L11), Carbon 3 `diffIn*` (the same 5 call sites as B.12, all `(int) abs(…)`), week start
+(`startOfWeek`/`endOfWeek` unused), container defaults for nullable class parameters (L12 now injects the default `null`:
+`CurlApi`, `DateRange`, `AbstractUsersStats`, `TemplateValidContentRule` all handle `null`).
+
+Verification:
+
+- **Schema**: `migrate:fresh` (+ courses test migration) on an empty DB on L11 and L12, `pg_dump --schema-only`
+  (`api/storage/l12up/schema_l11.sql`, `schema_l12.sql`, `schema.diff`): **identical**; row counts after the
+  migration-time seeds identical in all 128 tables (`rows_l11.txt`, `rows_l12.txt`; script `schema.sh`).
+- **Tests**: full `./vendor/bin/phpunit` per suite on a freshly prepared PostgreSQL DB (`test_l12`, scripts in
+  `api/storage/l12up/`), compared with the L11 run of B.12.
+
+  | Suite | L11 (tests / failing) | L12 final |
+  |---|---|---|
+  | Integrations | 4 / 2 | 4 / 2 (same `EventApiTest` list/order) |
+  | auth | 124 / 3 | 124 / 3 (same `UserApiTest`) |
+  | bulk-notifications | 44 / 3 | 44 / 3 (same multicast tests) |
+  | core | 62 / 6 | 62 / 6 (same paginate/count tests) |
+  | cart | 113 / 1 | 113 / 0 (subscription test made deterministic) |
+  | categories | 26 / 0 | 27 / 0 (new SVG icon test) |
+  | other 40 suites | 1 851 / 0 | 1 851 / 0 |
+  | **Total** | **2 224 / 15** | **2 225 / 14**, no new failures, 0 PHPUnit deprecations |
+
+  The first L12 run had 122 failing tests and 48 data sets not collected: data-set keys and provider visibility
+  (PHPUnit 11), 3 `consultations` (scalar resources), 2 `templates-email` (`setTimezone(null)`), 1 `webinar` (Jitsi key
+  length). `reports` `ExportStatsTest::testFinishedTopicsSheets` failed in 2 of 2 full L12 runs: the
+  `FinishedTopics` query had no `ORDER BY`, so user rows and topic columns came in plan order. It now orders by user
+  id and topic id (`reports/src/Stats/Course/FinishedTopics.php`); 7/7 suite reruns pass and the test is removed from
+  the CI quarantine in `.github/workflows/ci.yml`.
+
+- `php artisan about`: Laravel 12.69.3, PHP 8.3.35; `route:list`: **526** routes, method/URI list identical to L11;
+  `schedule:list`: 11 entries; `l5-swagger:generate`: OK (311 paths); `composer validate`: valid (only the old warning on
+  the exact `davidbadura/faker-markdown-generator` pin); `composer audit`: no advisories.
+- Platform `migrate`: nothing to migrate. `ulams:tenant:sync-env --migrate`: coffee, nightsky, oncall synced, 0 pending.
+- Horizon restarted on the new code (`horizon:status` running), php-fpm reloaded; `queue:work --once` (platform and
+  `--domain=coffee.localhost`) OK.
+- HTTP smoke: `GET /api/name` 200 and `GET /api/courses` 200 on `api.localhost` (5), `coffee.localhost` (1),
+  `oncall.localhost` (1); login `admin@ulams.app` → `/api/profile/me` 200; tenant login `admin@coffee.ulams.app` 200,
+  `/api/profile/me` 200, the coffee token is rejected on `api.localhost` (401); H5P service `show(3)`/`download(3)` OK;
+  `GET /api/admin/templates/4/preview` 200; `POST /api/admin/pdfs/preview` with the CourseFinished pdfme template returns
+  a PDF; SCORM: `GET /api/scorm/play/{uuid}` 200 (player HTML), `GET /api/scorm/show/{uuid}` 200,
+  `POST /api/scorm/track/{uuid}` 200 and `GET /api/scorm/track/1/cmi.core.lesson_location` returns the stored value
+  (vendored `Peopleaps\Scorm` models and Carbon 3 `latest_date` written).
+
+Risks and follow-ups for step 4 (PHP 8.4 + L13):
+
+- **Jitsi secret length** (deploy): set `JITSI_APP_SECRET` to ≥ 32 bytes on every self-hosted Jitsi tenant (and in the
+  Jitsi/Prosody config), otherwise `generate-jitsi` returns 500. No tenant env sets it today (default `Test`).
+- **SVG in `image` rules**: only category icons accept SVG now. If editors upload SVG course posters or webinar logos,
+  add `allow_svg` per field (cheap) or sanitise SVG on upload.
+- **L13 blockers unchanged**: `rennokki/laravel-eloquent-query-cache` 3.6, `treestoneit/shopping-cart` 1.6.1 and
+  `gnello/laravel-mattermost-driver` 1.3.3 all stop at L12 (B.2); Passport 13 data migration (B.4).
+- **PHPUnit 12**: doc-comment metadata is gone already; remaining runner warnings are the two helper classes named
+  `*Test` (`topic-types/tests/Helpers/MarkdownTest.php`, `webinar/tests/Mocks/MockTest.php`), which make those two
+  suites exit 1 as on L11.
+- **Scalar resources**: any new `JsonResource` whose `toArray()` returns a scalar needs the same `resolve()` override
+  (or should not be a resource).
+- The vendored scorm package is now our code: upstream has no Carbon 3 release, so no further syncing is expected.

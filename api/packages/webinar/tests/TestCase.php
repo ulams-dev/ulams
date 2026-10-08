@@ -28,6 +28,8 @@ class TestCase extends \Ulams\Core\Tests\TestCase
             'services.youtube.api_key' => 'test_api_key',
             'services.youtube.refresh_token' => 'test_refresh_token',
             'services.youtube.redirect_url' => 'redirect_url',
+            // firebase/php-jwt 7 rejects HS256 keys shorter than 256 bits (CVE-2025-45769)
+            'jitsi.secret' => str_repeat('s', 32),
         ]);
 
         Passport::useClientModel(Client::class);
