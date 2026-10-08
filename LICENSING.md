@@ -37,8 +37,9 @@ that has no closer licence file. This page is an engineering summary, not legal 
   uses `reportbro-lib` (AGPL-3.0). To be replaced or licensed commercially.
 - `trax2/framework` (GPL-3.0-or-later, used by the `lrs` package) and `laraveldaily/laravel-invoices`
   (GPL-3.0-only, `invoices` package) are linked into the API. To be replaced.
-- Infrastructure defaults with copyleft or source-available licences: Redis 8 (RSALv2/SSPLv1/AGPLv3),
-  MinIO (AGPL-3.0, upstream archived), Soketi (AGPL-3.0). Fine unmodified as separate processes;
-  to be replaced by permissive defaults (Valkey, SeaweedFS or RustFS, Laravel Reverb).
+- Infrastructure defaults with copyleft licences: MinIO (AGPL-3.0, upstream archived) and Soketi
+  (AGPL-3.0). Fine unmodified as separate processes; to be replaced by permissive defaults
+  (SeaweedFS or RustFS, Laravel Reverb after the framework upgrade). Redis was replaced by Valkey
+  (BSD-3-Clause).
 - Binaries in the PHP image (ffmpeg built with GPL codecs, pngquant, gifsicle, jpegoptim) run as
   separate processes; distributing the image requires offering their source.

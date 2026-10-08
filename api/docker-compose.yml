@@ -212,11 +212,12 @@ services:
       #- 1025:1025 # smtp server
       - 8025:8025 # web ui
 
+  # Valkey (BSD-3-Clause) is a drop-in, Redis-protocol compatible server; Redis 8 is RSALv2/SSPLv1/AGPLv3.
   redis:
     networks:
       - ulams
-    image: "redis"
-    command: "redis-server --requirepass ${REDIS_PASSWORD:-ulams}"
+    image: "valkey/valkey:8-alpine"
+    command: "valkey-server --requirepass ${REDIS_PASSWORD:-ulams}"
 
   reportbro:
     networks:
