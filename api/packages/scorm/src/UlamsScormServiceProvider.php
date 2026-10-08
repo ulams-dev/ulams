@@ -11,6 +11,7 @@ use Ulams\Scorm\Services\ScormQueryService;
 use Ulams\Scorm\Services\ScormService;
 use Ulams\Scorm\Services\ScormTrackService;
 use Illuminate\Support\ServiceProvider;
+use Ulams\Uploads\UlamsUploadsServiceProvider;
 
 /**
  * SWAGGER_VERSION
@@ -37,7 +38,7 @@ class UlamsScormServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-
+        $this->app->register(UlamsUploadsServiceProvider::class);
         $this->app->register(AuthServiceProvider::class);
     }
 }

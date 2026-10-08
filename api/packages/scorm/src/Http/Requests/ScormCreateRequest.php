@@ -5,6 +5,7 @@ namespace Ulams\Scorm\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Peopleaps\Scorm\Model\ScormModel;
+use Ulams\Uploads\Rules\SafeUpload;
 
 class ScormCreateRequest extends FormRequest
 {
@@ -16,7 +17,7 @@ class ScormCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'zip' => ['file', 'required', 'mimes:zip'],
+            'zip' => ['file', 'required', 'mimes:zip', new SafeUpload('scorm')],
         ];
     }
 }

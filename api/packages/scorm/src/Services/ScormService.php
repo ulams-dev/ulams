@@ -22,7 +22,9 @@ use Peopleaps\Scorm\Model\ScormScoTrackingModel;
 use Ramsey\Uuid\Uuid;
 use ZipArchive;
 use Ulams\Scorm\Services\Contracts\ScormServiceContract;
-use Illuminate\Http\File;
+use Ulams\Uploads\UploadGuard;
+use Ulams\Uploads\Zip\SafeExtractor;
+use Ulams\Uploads\Zip\ZipInspector;
 
 
 class ScormService implements ScormServiceContract
@@ -56,6 +58,9 @@ class ScormService implements ScormServiceContract
         if (!$isScormArchive) {
             throw new InvalidScormArchiveException('invalid_scorm_archive_message');
         }
+
+        // Imports call this without the request validation: inspect before parsing.
+        app(ZipInspector::class)->inspect((string) $file->getRealPath(), app(UploadGuard::class)->limitsFor('scorm'));
 
         $scormData = $this->generateScorm($file);
 
@@ -222,29 +227,18 @@ class ScormService implements ScormServiceContract
      */
     private function unzipScormArchive(UploadedFile $file, string $hashName): void
     {
-        $zip = new \ZipArchive();
-        $zip->open($file);
-
         if (!config()->has('filesystems.disks.' . config('scorm.disk') . '.root')) {
             throw new StorageNotFoundException();
         }
 
-        if (!Storage::disk(config('scorm.disk'))->exists($hashName)) {
-            Storage::disk(config('scorm.disk'))->makeDirectory($hashName);
-        }
-
-        $zip->extractTo(sys_get_temp_dir() . '/' .  $hashName);
-
-        for ($i = 0; $i < $zip->numFiles; $i++) {
-
-            $fileName = $zip->getNameIndex($i);
-            $f = sys_get_temp_dir() . '/' .  $hashName . '/' . $fileName;
-            if (is_file($f) && !is_dir($f)) {
-                Storage::disk(config('scorm.disk'))->putFileAs($hashName, new File($f), $fileName);
-            }
-            Storage::delete($f);
-        }
-        $zip->close();
+        // Entry by entry under normalised paths: rejects zip-slip, absolute paths, symlinks
+        // and zip bombs (packages/uploads). Never ZipArchive::extractTo.
+        app(SafeExtractor::class)->extractToDisk(
+            (string) $file->getRealPath(),
+            Storage::disk(config('scorm.disk')),
+            $hashName,
+            app(UploadGuard::class)->limitsFor('scorm'),
+        );
     }
 
     /**
