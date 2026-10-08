@@ -1,4 +1,5 @@
-import React, { ReactNode, useContext } from "react";
+import React, { ReactNode, useContext, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import StripeContent from "@/components/Cart/CartContent/stripe";
@@ -21,11 +22,15 @@ type Props = {
 
 const CartPage: React.FC<Props> = () => {
   const { config } = useContext(UlamsContext);
-  const stripePromise = (publishable_key: string) =>
-    loadStripe(publishable_key);
+  const { t } = useTranslation();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const stripeConfigs: any = config?.value?.ulams_payments?.drivers;
-  const stripeKey = stripeConfigs?.stripe?.publishable_key;
+  const stripeKey: string | undefined = stripeConfigs?.stripe?.publishable_key;
+  // Load Stripe.js once per key; without a key Stripe() throws and the whole cart crashes.
+  const stripePromise = useMemo(
+    () => (stripeKey ? loadStripe(stripeKey) : null),
+    [stripeKey]
+  );
   // Stripe Elements loads the body font itself, so it needs the raw font links.
   const theme = useThemeTokens();
   const fontKey = theme?.bodyFont ?? theme?.font;
@@ -41,11 +46,24 @@ const CartPage: React.FC<Props> = () => {
     );
   }
 
-  if (defaultGateway === PaymentGateway.Stripe) {
+  if (defaultGateway === PaymentGateway.Stripe && !stripeKey) {
+    return (
+      <div className={styles.wrapper}>
+        <p role="status" className={styles.notConfigured}>
+          {t(
+            "Cart.PaymentsNotConfigured",
+            "Online payments are not configured for this site yet. Please contact the site administrator."
+          )}
+        </p>
+      </div>
+    );
+  }
+
+  if (defaultGateway === PaymentGateway.Stripe && stripeKey) {
     return (
       <div className={styles.wrapper}>
         <Elements
-          stripe={stripePromise(stripeKey)}
+          stripe={stripePromise}
           options={{
             fonts: [
               {

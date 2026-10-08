@@ -182,6 +182,8 @@ const resources = {
         IWantInvoice: "I want to receive a VAT invoice with a VAT number",
         UseTestCard: "Use test cards for Stripe",
         LearnMore: "Learn more",
+        PaymentsNotConfigured:
+          "Online payments are not configured for this site yet. Please contact the site administrator.",
         Cart: "Cart",
         PayWithStripe: "Pay with stripe",
         ChoosePaymentMethod: "Choose payment method",
@@ -931,6 +933,8 @@ const resources = {
         SuccessfullyPurchased: "Kurs został zakupiony",
       },
       Cart: {
+        PaymentsNotConfigured:
+          "Płatności online nie są jeszcze skonfigurowane dla tej strony. Skontaktuj się z administratorem.",
         IWantInvoice: "Chcę otrzymać fakturę VAT z numerem NIP",
         UseTestCard: "Użyj testowej karty Stripe",
         LearnMore: "Sprawdź karty",
