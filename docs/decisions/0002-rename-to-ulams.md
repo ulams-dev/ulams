@@ -1,6 +1,6 @@
 # 0002. Rename EscolaLMS / Wellms to ulams
 
-- Status: Proposed
+- Status: Accepted (2026-10-08)
 - Date: 2026-10-08
 
 ## Context and problem statement

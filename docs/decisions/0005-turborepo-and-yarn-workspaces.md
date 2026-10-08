@@ -1,6 +1,6 @@
 # 0005. Turborepo and Yarn workspaces
 
-- Status: Proposed
+- Status: Accepted (2026-10-08)
 - Date: 2026-10-08
 
 ## Context and problem statement

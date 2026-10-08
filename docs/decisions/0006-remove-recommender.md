@@ -1,6 +1,6 @@
 # 0006. Remove the recommender package
 
-- Status: Proposed (removal requested by the product owner on 2026-10-08)
+- Status: Accepted (2026-10-08)
 - Date: 2026-10-08
 
 ## Context and problem statement

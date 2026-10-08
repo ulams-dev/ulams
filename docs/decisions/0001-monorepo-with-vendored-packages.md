@@ -1,6 +1,6 @@
 # 0001. Monorepo with vendored packages
 
-- Status: Proposed
+- Status: Accepted (2026-10-08)
 - Date: 2026-10-08
 
 ## Context and problem statement

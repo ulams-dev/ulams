@@ -1,6 +1,6 @@
 # 0003. H5P as an isolated GPL service (Lumi)
 
-- Status: Proposed
+- Status: Accepted (2026-10-08)
 - Date: 2026-10-08
 
 ## Context and problem statement

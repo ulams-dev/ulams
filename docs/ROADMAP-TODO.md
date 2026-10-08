@@ -38,6 +38,7 @@ small commits → tests → summary.
         `ulamslabs`, `ulams-ai`) (note: `ulams-dev/ulams` created and pushed 2026-10-08)
   - [ ] Check domains (ulams.ai, ulams.dev) and trademarks
   - [ ] Check legal aspects of using the Ulam name
+  - [x] (new) Copyright of the original EscolaLMS/Wellms code and `scorm-player`: owned by the product owner; admin and scorm-player licensed MIT
 - [ ] Move MCP server (7.5) right after Phase 2? Cheap to build, strong demo
 - [ ] Move certificates (6.1) earlier if compliance is the priority segment
 - [ ] Multitenancy for the POC: one deployment, tenant per subdomain with own theme?
@@ -136,7 +137,7 @@ stale content.
 
 - [ ] (new) mjml: the `mjml` compose service is not on the `ulams` network and `MJML_API_URL` is not set
       (templates fall back silently); wire it or drop the service
-- [ ] (new) Publish the base image as `ulams/php:8.3` with source offers for its GPL programs (see
+- [ ] (new) Publish images to GHCR (`ghcr.io/ulams-dev/*`, decided 2026-10-08); publish the base image as `ulams/php:8.3` with source offers for its GPL programs (see
       `api/docker/php/NOTICE`)
 
 - [ ] (new) Delete `front/src/style/` (two unused styled-components helpers; excluded from tsconfig,

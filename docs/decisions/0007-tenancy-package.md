@@ -1,6 +1,6 @@
 # 0007. Tenancy: database per tenant, provisioned by the tenancy package
 
-- Status: Proposed
+- Status: Accepted (2026-10-08)
 - Date: 2026-10-08
 
 ## Context and problem statement

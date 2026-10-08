@@ -1,6 +1,6 @@
 # 0004. Theming with CSS custom properties, no styled-components
 
-- Status: Proposed
+- Status: Accepted (2026-10-08)
 - Date: 2026-10-08
 
 ## Context and problem statement

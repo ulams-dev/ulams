@@ -1,5 +1,6 @@
 {
   "name": "admin",
+  "license": "MIT",
   "version": "6.0.0",
   "private": true,
   "description": "An out-of-box UI solution for enterprise applications",

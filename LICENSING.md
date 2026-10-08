@@ -15,8 +15,8 @@ that has no closer licence file. This page is an engineering summary, not legal 
 | `api/h5p` | **GPL-3.0-or-later** | Separate program (Lumi `h5p-nodejs-library`, H5P core and editor). See below |
 | `api/pdf` | MIT | PDF renderer service (pdfme, MIT); bundled fonts under SIL OFL 1.1, see `api/pdf/fonts/README.md` |
 | `front/` | MIT | `front/package.json` |
-| `front/src/lib/*` | MIT, except `scorm-player` (no licence upstream, see open items) | Imported libraries, see each README |
-| `admin/` | not declared upstream (see open items) | |
+| `front/src/lib/*` | MIT | Imported libraries, see each README; `scorm-player` relicensed MIT by its owner |
+| `admin/` | MIT | The copyright holder of the original admin confirmed MIT for the monorepo |
 | `admin/src/lib/markdown-editor` | BSD-3-Clause, © General Outline, Inc. | The notice must be reproduced in distributed builds |
 | `admin/src/lib/gift-pegjs` | MIT, © Christopher P. Fuhrman | |
 
