@@ -143,13 +143,15 @@ function originOf(url: string | undefined): string | undefined {
 /**
  * CORS / frame-ancestors origins of a tenant: the static CORS_ORIGINS, the
  * TENANT_FRONT_ORIGIN_PATTERNS with {slug} replaced (tenants only) and the
- * origin of FRONTEND_URL from the tenant's env file.
+ * origins of FRONTEND_URL and ADMIN_URL from the tenant's env file, each with
+ * its port as configured. Only exact origins: no wildcard hosts or ports.
  */
 export function deriveCorsOrigins(input: {
     staticOrigins: string[];
     patterns: string[];
     slug?: string;
     frontendUrl?: string;
+    adminUrl?: string;
 }): string[] {
     const out = new Set(input.staticOrigins);
     if (input.slug && SLUG_RE.test(input.slug)) {
@@ -160,9 +162,11 @@ export function deriveCorsOrigins(input: {
             }
         }
     }
-    const front = originOf(input.frontendUrl);
-    if (front) {
-        out.add(front);
+    for (const url of [input.frontendUrl, input.adminUrl]) {
+        const origin = originOf(url);
+        if (origin) {
+            out.add(origin);
+        }
     }
     return [...out];
 }
@@ -219,7 +223,8 @@ export function settingsFromEnvFile(
             staticOrigins: app.corsOrigins,
             patterns: app.tenancy.frontOriginPatterns,
             slug,
-            frontendUrl: vars.FRONTEND_URL
+            frontendUrl: vars.FRONTEND_URL,
+            adminUrl: vars.ADMIN_URL
         }),
         db: {
             connectionString: undefined,

@@ -148,8 +148,18 @@ function list(name: string, fallback: string): string[] {
         .filter(Boolean);
 }
 
-export const DEFAULT_FRONT_ORIGIN_PATTERNS =
-    'http://{slug}.app.localhost,https://{slug}.app.localhost,http://{slug}.admin.localhost,https://{slug}.admin.localhost';
+/**
+ * Exact origins, ports included: Caddy on :80/:443 and the local dev servers that browsers
+ * also open directly (front/web Astro on :4321, admin on :8000).
+ */
+export const DEFAULT_FRONT_ORIGIN_PATTERNS = [
+    'http://{slug}.app.localhost',
+    'https://{slug}.app.localhost',
+    'http://{slug}.app.localhost:4321',
+    'http://{slug}.admin.localhost',
+    'https://{slug}.admin.localhost',
+    'http://{slug}.admin.localhost:8000'
+].join(',');
 
 function tenancyConfig(): AppConfig['tenancy'] {
     const envDir = env('ENV_DIR');

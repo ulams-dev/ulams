@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppConfig, DEFAULT_FRONT_ORIGIN_PATTERNS, loadConfig } from '../src/config';
 import { createApp } from '../src/app';
 import { parseDotenv } from '../src/tenancy/dotenv';
+import { frameAncestors } from '../src/routes/embed';
 import {
     deriveCorsOrigins,
     EnvFileTenantResolver,
@@ -166,9 +167,25 @@ describe('deriveCorsOrigins', () => {
             'http://localhost:3000',
             'http://coffee.app.localhost',
             'https://coffee.app.localhost',
+            'http://coffee.app.localhost:4321',
             'http://coffee.admin.localhost',
-            'https://coffee.admin.localhost'
+            'https://coffee.admin.localhost',
+            'http://coffee.admin.localhost:8000'
         ]);
+    });
+
+    it('adds FRONTEND_URL and ADMIN_URL with their ports, and nothing broader', () => {
+        const origins = deriveCorsOrigins({
+            staticOrigins: [],
+            patterns: [],
+            slug: 'coffee',
+            frontendUrl: 'http://coffee.app.localhost:4400/',
+            adminUrl: 'https://admin.coffee.example:8443/panel'
+        });
+        expect(origins).toEqual(['http://coffee.app.localhost:4400', 'https://admin.coffee.example:8443']);
+        expect(frameAncestors(origins)).toBe("'self' http://coffee.app.localhost:4400 https://admin.coffee.example:8443");
+        // the same host on another port is a different origin
+        expect(origins).not.toContain('http://coffee.app.localhost');
     });
 
     it('keeps ports, adds FRONTEND_URL and ignores bad slugs/patterns', () => {
