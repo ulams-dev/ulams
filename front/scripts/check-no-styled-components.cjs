@@ -11,7 +11,7 @@ const pattern =
 const root = path.resolve(__dirname, "..", "..");
 const dirs = [path.join(root, "front", "src"), path.join(root, "admin", "src")];
 // Legacy helpers nothing imports any more; delete the folder and this entry together.
-const skip = new Set([path.join(root, "front", "src", "style")]);
+const skip = new Set();
 
 const hits = [];
 const walk = (dir) => {

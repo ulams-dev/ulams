@@ -7,8 +7,7 @@ module.exports = {
     "plugin:react-hooks/recommended",
     "plugin:jsx-a11y/recommended",
   ],
-  // src/style: legacy styled-components helpers, unused; delete the folder and this entry together
-  ignorePatterns: ["dist", ".eslintrc.cjs", "src/lib", "src/style"],
+  ignorePatterns: ["dist", ".eslintrc.cjs", "src/lib"],
   parser: "@typescript-eslint/parser",
   plugins: ["react-refresh", "jsx-a11y"],
   rules: {

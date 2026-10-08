@@ -44,8 +44,6 @@
     }
   },
   "include": ["src"],
-  /* src/style: legacy styled-components helpers, unused; delete the folder and this entry together */
-  "exclude": ["src/style"],
 
   "references": [{ "path": "./tsconfig.node.json" }]
 }
