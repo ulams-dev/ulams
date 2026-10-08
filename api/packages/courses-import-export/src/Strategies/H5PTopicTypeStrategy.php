@@ -2,36 +2,34 @@
 
 namespace Ulams\CoursesImportExport\Strategies;
 
-use Ulams\CoursesImportExport\Strategies\Contract\TopicImportStrategy;
-use Ulams\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
+use Ulams\CoursesImportExport\Strategies\Contract\TopicImportStrategy;
+use Ulams\H5P\Services\Contracts\H5PServiceClientContract;
 
 class H5PTopicTypeStrategy implements TopicImportStrategy
 {
-    private H5PContentRepositoryContract $h5PContentRepository;
+    private H5PServiceClientContract $h5pServiceClient;
 
     public function __construct()
     {
-        $this->h5PContentRepository = app(H5PContentRepositoryContract::class);
+        $this->h5pServiceClient = app(H5PServiceClientContract::class);
     }
 
+    /**
+     * Imports the exported .h5p package through the H5P service.
+     *
+     * @return int|null new h5p.contents id
+     */
     public function make(string $path, array $data): ?int
     {
+        if (empty($data['h5p_file'])) {
+            return null;
+        }
         $filePath = $path . DIRECTORY_SEPARATOR . $data['h5p_file'];
         if (!File::exists($filePath)) {
             return null;
         }
 
-        $file = new UploadedFile(
-            $filePath,
-            'export.h5p',
-            null,
-            null,
-            true
-        );
-
-        $h5p = $this->h5PContentRepository->upload($file);
-        return $h5p ? $h5p->getKey() : null;
+        return $this->h5pServiceClient->upload($filePath);
     }
 }

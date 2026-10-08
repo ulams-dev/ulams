@@ -20,8 +20,6 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         //
-        'admin/h5p/ajax',
-        'admin/h5p/ajax/*'
     ];
 
     public function handle($request, \Closure $next)

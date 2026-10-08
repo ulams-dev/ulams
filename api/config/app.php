@@ -188,7 +188,7 @@ return [
         Ulams\CsvUsers\UlamsCsvUsersServiceProvider::class,
         Ulams\Dictionaries\UlamsDictionariesServiceProvider::class,
         Ulams\Files\UlamsFilesServiceProvider::class,
-        Ulams\HeadlessH5P\HeadlessH5PServiceProvider::class,
+        Ulams\H5P\UlamsH5PServiceProvider::class,
         Ulams\Images\UlamsImagesServiceProvider::class,
         Ulams\Invoices\UlamsInvoicesServiceProvider::class,
         Ulams\Jitsi\UlamsJitsiServiceProvider::class,

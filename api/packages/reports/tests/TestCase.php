@@ -8,7 +8,7 @@ use Ulams\Cart\Facades\Shop;
 use Ulams\Categories\UlamsCategoriesServiceProvider;
 use Ulams\Core\Tests\TestCase as CoreTestCase;
 use Ulams\Courses\UlamsCourseServiceProvider;
-use Ulams\HeadlessH5P\HeadlessH5PServiceProvider;
+use Ulams\H5P\UlamsH5PServiceProvider;
 use Ulams\Payments\Providers\PaymentsServiceProvider;
 use Ulams\Questionnaire\UlamsQuestionnaireServiceProvider;
 use Ulams\Reports\Database\Seeders\ReportsPermissionSeeder;
@@ -45,7 +45,7 @@ class TestCase extends CoreTestCase
             UlamsReportsServiceProvider::class,
             UlamsCourseServiceProvider::class,
             UlamsTopicTypesServiceProvider::class,
-            HeadlessH5PServiceProvider::class,
+            UlamsH5PServiceProvider::class,
             PaymentsServiceProvider::class,
             UlamsCartServiceProvider::class,
             UlamsScormServiceProvider::class,

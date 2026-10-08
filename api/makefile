@@ -41,10 +41,9 @@ update-composer-to-git:
 swagger-generate:
 	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan l5-swagger:generate"
 
+# H5P content types and demo content, imported by the H5P service (api/h5p, src/cli/seed.ts)
 h5p-seed:
-	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan db:seed --class=H5PLibrarySeeder"
-	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan db:seed --class=H5PContentSeeder"
-	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan db:seed --class=H5PContentCoursesSeeder"
+	- docker compose exec h5p node dist/cli/seed.js --samples
 
 node-packages:
 # install globally at /usr/bin/mjml

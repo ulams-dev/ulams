@@ -147,12 +147,6 @@ if [ -n "$MULTI_DOMAINS" ]; then
         php artisan db:seed --domain=$domain --class=PermissionsSeeder --force --no-interaction
     fi
 
-    if [ "$DISABLE_H5P_STORAGE_LINK" == 'true' ]
-    then
-        echo "Disable h5p:storage-link"
-    else
-        php artisan h5p:storage-link --overwrite --domain=$domain
-    fi
     
 
   done

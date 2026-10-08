@@ -8,7 +8,8 @@ use Ulams\Categories\UlamsCategoriesServiceProvider;
 use Ulams\Courses\AuthServiceProvider;
 use Ulams\Courses\UlamsCourseServiceProvider;
 use Ulams\Courses\Tests\Models\User as UserTest;
-use Ulams\HeadlessH5P\HeadlessH5PServiceProvider;
+use Ulams\H5P\Testing\H5PServiceFake;
+use Ulams\H5P\UlamsH5PServiceProvider;
 use Ulams\ModelFields\ModelFieldsServiceProvider;
 use Ulams\Scorm\UlamsScormServiceProvider;
 use Ulams\Tags\UlamsTagsServiceProvider;
@@ -27,6 +28,7 @@ class TestCase extends \Ulams\Courses\Tests\TestCase
     {
         parent::setUp();
         Passport::useClientModel(Client::class);
+        H5PServiceFake::fake();
     }
 
     protected function getPackageProviders($app)
@@ -41,7 +43,7 @@ class TestCase extends \Ulams\Courses\Tests\TestCase
             AuthServiceProvider::class,
             UlamsScormServiceProvider::class,
             UlamsTagsServiceProvider::class,
-            HeadlessH5PServiceProvider::class,
+            UlamsH5PServiceProvider::class,
             UlamsTopicTypesServiceProvider::class,
             ModelFieldsServiceProvider::class,
             FFMpegServiceProvider::class,
@@ -62,7 +64,7 @@ class TestCase extends \Ulams\Courses\Tests\TestCase
         $app['config']->set('database.connections.mysql.strict', false);
         $app['config']->set('app.debug', (bool) env('APP_DEBUG', true));
         $app['config']->set('ulams.tags.ignore_migrations', false);
-        $app['config']->set('hh5p.h5p_export', true);
+        $app['config']->set('h5p.service_url', 'http://h5p.test:8080');
 
         $app['config']->set('scorm', [
             'table_names' => [

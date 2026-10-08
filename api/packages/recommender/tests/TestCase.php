@@ -5,7 +5,7 @@ namespace Ulams\Recommender\Tests;
 use Ulams\Auth\UlamsAuthServiceProvider;
 use Ulams\Auth\Models\User;
 use Ulams\Courses\UlamsCourseServiceProvider;
-use Ulams\HeadlessH5P\HeadlessH5PServiceProvider;
+use Ulams\H5P\UlamsH5PServiceProvider;
 use Ulams\Recommender\UlamsRecommenderServiceProvider;
 use Ulams\Core\Tests\TestCase as CoreTestCase;
 use Ulams\TopicTypes\UlamsTopicTypesServiceProvider;
@@ -26,7 +26,7 @@ class TestCase extends CoreTestCase
             UlamsAuthServiceProvider::class,
             UlamsCourseServiceProvider::class,
             UlamsTopicTypesServiceProvider::class,
-            HeadlessH5PServiceProvider::class,
+            UlamsH5PServiceProvider::class,
             UlamsRecommenderServiceProvider::class,
         ];
     }

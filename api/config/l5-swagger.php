@@ -42,7 +42,7 @@ return [
                     base_path('packages/core/src'),
                     base_path('packages/csv-users/src'),
                     base_path('packages/files/src'),
-                    base_path('packages/headless-h5p/src'),
+                    base_path('packages/h5p/src'),
                     base_path('packages/lrs/src'),
                     base_path('packages/notifications/src'),
                     base_path('packages/mattermost/src'),

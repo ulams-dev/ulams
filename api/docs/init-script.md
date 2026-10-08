@@ -172,15 +172,7 @@ You can skip migration on some services, but at least one should not have this s
 
 Also Permission Seeder creates a new Admin if user database is empty, env var `INITIAL_USER_PASSWORD` is used
 
-### 13. Create H5P Storage Symlink
-
-Runs php artisan h5p:storage-link to create necessary h5p js/css assets into publicly available storage
-
-```bash
-php artisan h5p:storage-link
-```
-
-### 14. Mark Initialization as Complete
+### 13. Mark Initialization as Complete
 
 Creates the inited file to mark that initialization has been completed:
 
@@ -188,7 +180,7 @@ Creates the inited file to mark that initialization has been completed:
 touch inited
 ```
 
-### 15. (Deprecated) Change Ownership of the storage Directory
+### 14. (Deprecated) Change Ownership of the storage Directory
 
 Changes the owner of the storage directory to `devilbox`:
 
@@ -196,7 +188,7 @@ Changes the owner of the storage directory to `devilbox`:
 chown -R devilbox:devilbox /var/www/html/storage
 ```
 
-### 16. Start Supervisor Process Manager
+### 15. Start Supervisor Process Manager
 
 Starts the Supervisor daemon to manage the processes:
 
@@ -404,15 +396,7 @@ fi
 If `DISABLE_DB_SEED` is set to 'true', the seeding process is skipped.
 Otherwise, it seeds the database for the domain using the PermissionsSeeder class.
 
-17. Create H5P Storage Link Per Domain
-
-```bash
-php artisan h5p:storage-link --domain=$domain
-```
-
-This command sets up storage with h5p default js/css for the specific domain.
-
-18. Handle Case When `MULTI_DOMAINS` is Empty
+17. Handle Case When `MULTI_DOMAINS` is Empty
 
 ```bash
 else
@@ -422,7 +406,7 @@ fi
 
 If the `MULTI_DOMAINS` variable is empty, it logs that no domains were provided.
 
-### 19. Mark Initialization as Complete
+### 18. Mark Initialization as Complete
 
 ```bash
 touch inited
@@ -430,7 +414,7 @@ touch inited
 
 Creates the inited file to indicate that the initialization process has completed.
 
-### 20. (Deprecated) Change Ownership of the Storage Directory
+### 19. (Deprecated) Change Ownership of the Storage Directory
 
 ```bash
 chown -R devilbox:devilbox /var/www/html/storage
@@ -438,7 +422,7 @@ chown -R devilbox:devilbox /var/www/html/storage
 
 Ensures that the storage directory and its contents are owned by the appropriate user (devilbox).
 
-### 21. Start Supervisor Process Manager
+### 20. Start Supervisor Process Manager
 
 ```bash
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf

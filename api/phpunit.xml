@@ -14,7 +14,7 @@
       <directory suffix=".php">./packages/csv-users/</directory>
       <directory suffix=".php">./packages/dictionaries/</directory>
       <directory suffix=".php">./packages/files/</directory>
-      <directory suffix=".php">./packages/headless-h5p/</directory>
+      <directory suffix=".php">./packages/h5p/</directory>
       <directory suffix=".php">./packages/images/</directory>
       <directory suffix=".php">./packages/lrs/</directory>
       <directory suffix=".php">./packages/mailerlite/</directory>
@@ -88,8 +88,8 @@
     <testsuite name="files">
       <directory suffix="Test.php">./packages/files/tests</directory>
     </testsuite>
-    <testsuite name="headless-h5p">
-      <directory suffix="Test.php">./packages/headless-h5p/tests</directory>
+    <testsuite name="h5p">
+      <directory suffix="Test.php">./packages/h5p/tests</directory>
     </testsuite>
     <testsuite name="images">
       <directory suffix="Test.php">./packages/images/tests</directory>

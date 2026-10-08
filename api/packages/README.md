@@ -58,6 +58,15 @@ Edit the code here directly. A new module needs three things:
 2. Its provider in `config/app.php`.
 3. A test suite in `phpunit.xml`.
 
+## Packages written here
+
+- `h5p` (`ulams/h5p`, `Ulams\H5P\`): Laravel side of the H5P service in `api/h5p`
+  (Lumi h5p-nodejs-library). It replaced the vendored `headless-h5p` package
+  (`escolalms/headless-h5p` 0.5.8). It reads the service's `h5p.contents` table read-only,
+  exposes `GET /api/admin/h5p/contents` and `DELETE /api/admin/h5p/unused`, and talks to
+  the service with `H5PServiceClientContract` (`X-Internal-Token`). Its migration creates
+  `h5p.contents` with the service's DDL if it is missing (PostgreSQL only).
+
 ## Provenance
 
 These were imported from the exact versions pinned in `api/composer.lock` at the time of
@@ -82,7 +91,6 @@ commits listed below.
 | `csv-users` | `escolalms/csv-users` | https://github.com/EscolaLMS/CSV-Users | 0.1.16 | `2c52b8bb7a9dac8435f1df8c4a353b2584366c6e` |
 | `dictionaries` | `escolalms/dictionaries` | https://github.com/EscolaLMS/Dictionaries | 0.0.5 | `1961960fe3a1d7c3f6b6556d9df03d184e480cea` |
 | `files` | `escolalms/files` | https://github.com/EscolaLMS/Files | 0.1.29 | `56adbd7217a4103652b0583e398e9ba2eec1581d` |
-| `headless-h5p` | `escolalms/headless-h5p` | https://github.com/EscolaLMS/H5P | 0.5.8 | `a58b5dde283e4d444f5f4ee8e9316be0255b8615` |
 | `images` | `escolalms/images` | https://github.com/EscolaLMS/Images | 0.1.24 | `7919b7bd28f5403377922d673339711117d03e27` |
 | `invoices` | `escolalms/invoices` | https://github.com/EscolaLMS/Invoices | 0.1.9 | `861e38a36ba403139b220dd987204e94d3426a20` |
 | `jitsi` | `escolalms/jitsi` | https://github.com/EscolaLMS/Jitsi | 0.1.2 | `9a60bb6a02ee21b2dc00126b2220b88a50e43c06` |

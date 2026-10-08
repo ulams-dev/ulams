@@ -8,7 +8,7 @@ use Ulams\Core\Tests\CreatesUsers;
 use Ulams\Courses\Models\CourseProgress;
 use Ulams\Courses\Models\Lesson;
 use Ulams\Courses\Models\Topic;
-use Ulams\HeadlessH5P\Models\H5PContent;
+use Ulams\H5P\Models\H5PContent;
 use Ulams\Reports\Exports\Stats\Course\Sheets\FinishedTopicsAttemptsSheet;
 use Ulams\Reports\Exports\Stats\Course\Sheets\FinishedTopicsInfoSheet;
 use Ulams\Reports\Exports\Stats\Course\Sheets\FinishedTopicsSecondsSheet;
@@ -69,7 +69,7 @@ class ExportStatsTest extends TestCase
             $export->firstHeader,
             'PDF # ' . $topic1->title,
             'Audio # ' . $topic2->title,
-            H5PContent::find($topicable_h5p->value)->library->uberName . ' # ' . $topic3->title
+            H5PContent::query()->find($topicable_h5p->value)->library . ' # ' . $topic3->title
         ], $export->headings());
 
         $this->assertEquals(collect($result), $export->collection());

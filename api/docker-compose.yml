@@ -2,6 +2,8 @@ networks:
   ulams:
     name: ulams
     driver: bridge
+volumes:
+  h5p_libraries:
 services:
   caddy:
     image: caddy
@@ -62,10 +64,63 @@ services:
       - LARAVEL_AWS_URL="http://storage.localhost/ulams"
       - LARAVEL_AWS_USE_PATH_STYLE_ENDPOINT=true
       - LARAVEL_INITIAL_USER_PASSWORD=secret
+      # H5P service (api/h5p), server-to-server; same token as H5P_INTERNAL_TOKEN of the h5p service
+      - LARAVEL_H5P_SERVICE_URL=http://h5p:8080
+      - LARAVEL_H5P_INTERNAL_TOKEN=ulams-h5p-internal-dev-token
     volumes:
       - ./:/var/www/html
     networks:
       - ulams
+
+  # H5P player/editor/content API (Lumi h5p-nodejs-library), see h5p/README.md.
+  # Browsers reach it same-origin at http://api.localhost/h5p/* through Caddy.
+  # The image is built from the repository root (yarn workspace).
+  h5p:
+    build:
+      context: ..
+      dockerfile: api/h5p/Dockerfile
+    image: ulams/h5p:dev
+    restart: unless-stopped
+    networks:
+      - ulams
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    environment:
+      PORT: 8080
+      LOG_LEVEL: info
+      PUBLIC_URL: http://api.localhost
+      # admin (:8000) and front (:3000) run on the host. Exact origins only: the service has no
+      # wildcard support, so *.app.localhost / *.admin.localhost hosts must be listed one by one.
+      CORS_ORIGINS: http://localhost:3000,http://localhost:8000,http://api.localhost
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: default
+      DB_USERNAME: default
+      DB_PASSWORD: secret
+      DB_SCHEMA: h5p
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ulams
+      REDIS_DB: 0
+      REDIS_KEY_PREFIX: "h5p:"
+      S3_ENDPOINT: http://minio:9000
+      S3_REGION: us-east-1
+      S3_KEY: admin
+      S3_SECRET: minio_secretpassword
+      S3_BUCKET: ulams
+      S3_PREFIX: h5p
+      S3_FORCE_PATH_STYLE: "true"
+      JWT_PUBLIC_KEY_PATH: /keys/oauth-public.key
+      LARAVEL_API_URL: http://caddy
+      LARAVEL_API_HOST: api.localhost
+      H5P_INTERNAL_TOKEN: ulams-h5p-internal-dev-token
+      H5P_MAX_FILE_SIZE_MB: 64
+      H5P_MAX_TOTAL_SIZE_MB: 256
+    volumes:
+      - h5p_libraries:/data/libraries
+      - ./storage/oauth-public.key:/keys/oauth-public.key:ro
 
   # ulams_queue_cron:
   #   command: "./init.sh"
