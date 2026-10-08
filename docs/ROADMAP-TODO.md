@@ -85,8 +85,8 @@ stale content.
       `h5p/h5p-core`, `h5p/h5p-editor` or `headless-h5p` left in `composer.json`/`composer.lock` or the
       code; Laravel keeps only the read-only `api/packages/h5p` index and HTTP client (ADR 0003)
 - [x] (new) Remove `recommender` and its admin/front screens
-- [ ] (new) Replace styled-components with CSS custom properties everywhere (partial: theme contract
-      and presets done; component conversion pending)
+- [x] (new) Replace styled-components with CSS custom properties everywhere (front, its component
+      library and the admin markdown editor; blocked by lint; verified with the visual regression harness)
 - [x] (new) Demo content seeder for the three experience courses (`front/docs/design/experiences.md`)
 - [ ] (new) Root README, AGENTS.md and per-package READMEs for the monorepo
 - [ ] (new) Remaining legacy references (partial: `escolalms/php` replaced by a base built in-repo, ReportBro removed and replaced by pdfme): replace the `escolalms/php` and `escolalms/reportbro-server`
@@ -138,6 +138,12 @@ stale content.
       (templates fall back silently); wire it or drop the service
 - [ ] (new) Publish the base image as `ulams/php:8.3` with source offers for its GPL programs (see
       `api/docker/php/NOTICE`)
+
+- [ ] (new) Delete `front/src/style/` (two unused styled-components helpers; excluded from tsconfig,
+      eslint and the guard until removed)
+- [ ] (new) Cart on tenants crashes without a Stripe publishable key (`stripe.tsx` calls
+      `stripeKey.includes` on null); show a configuration message instead
+- [ ] (new) Yarn install on Node 23 needs `--ignore-engines` (vitest engines); CI pins Node 22
 
 ### 0.2 Framework upgrade
 - [x] Upgrade plan from Laravel 9 (EOL) to supported Laravel/PHP: order, breaking changes,
