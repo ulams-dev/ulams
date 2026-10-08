@@ -69,7 +69,7 @@ class ImportUsersFromCsvTest extends TestCase
         Excel::assertImported('users.csv');
     }
 
-    public function fileFormatProvider(): array
+    public static function fileFormatProvider(): array
     {
         return [
             'csv' => ['users.csv'],

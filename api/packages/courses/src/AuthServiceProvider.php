@@ -5,7 +5,6 @@ namespace Ulams\Courses;
 use Ulams\Courses\Models\Lesson;
 use Ulams\Courses\Models\Topic;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Laravel\Passport\Passport;
 use Ulams\Courses\Models\Course;
 use Ulams\Courses\Policies\CoursesPolicy;
 use Ulams\Courses\Policies\LessonPolicy;
@@ -32,9 +31,5 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-        if (!$this->app->routesAreCached() && method_exists(Passport::class, 'routes')) {
-            Passport::routes();
-        }
     }
 }

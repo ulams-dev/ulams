@@ -363,7 +363,7 @@ class QuestionAnswerTest extends TestCase
             ]);
     }
 
-    public function publicAnswersProvider(): array
+    public static function publicAnswersProvider(): array
     {
         return [
             'notPublic' => [false],

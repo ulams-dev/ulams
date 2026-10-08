@@ -64,7 +64,7 @@ class QuizSummaryForTopicTypeGIFT extends AbstractTopicStat
                     'name' => $attempt->user->name,
                     'attempt' => $user_attempt_count[$attempt->user_id],
                     'attempt_date' => $attempt->started_at,
-                    'attempt_time' => $attempt->end_at->diffInSeconds($attempt->started_at),
+                    'attempt_time' => (int) abs($attempt->end_at->diffInSeconds($attempt->started_at)),
                 ],
                 $questions_subarray,
                 [

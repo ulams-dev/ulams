@@ -34,7 +34,7 @@ class TopicTypeClientApiTest extends TestCase
         $this->topic = Topic::factory(['lesson_id' => $this->lesson->id])->create();
     }
 
-    public function topicTypeDataProvider(): array
+    public static function topicTypeDataProvider(): array
     {
         $types = [
             [Audio::class],

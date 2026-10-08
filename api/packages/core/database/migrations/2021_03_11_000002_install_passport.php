@@ -17,7 +17,19 @@ class InstallPassport extends UlamsMigration
      */
     public function up()
     {
-        Artisan::call('passport:install');
+        // What `passport:install` did up to Passport 11. From Passport 12 the command also
+        // publishes Passport's migrations (with new timestamps) and runs `migrate`, which would
+        // duplicate the oauth tables that database/migrations already creates.
+        Artisan::call('passport:keys');
+        Artisan::call('passport:client', [
+            '--personal' => true,
+            '--name' => config('app.name') . ' Personal Access Client',
+        ]);
+        Artisan::call('passport:client', [
+            '--password' => true,
+            '--name' => config('app.name') . ' Password Grant Client',
+            '--provider' => array_key_exists('users', config('auth.providers', [])) ? 'users' : null,
+        ]);
     }
 
     /**

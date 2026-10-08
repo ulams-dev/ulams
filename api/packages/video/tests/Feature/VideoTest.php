@@ -30,7 +30,7 @@ class VideoTest extends TestCase
         Event::fake([TopicTypeChanged::class, ProcessVideoStarted::class, ProcessVideoFailed::class]);
     }
 
-    public function diskDataProvider(): array
+    public static function diskDataProvider(): array
     {
         return [
             ['s3'],

@@ -158,6 +158,6 @@ class QuizAttemptGetActiveApiTest extends GiftQuestionTestCase
             ])->assertCreated();
 
         $attempt = QuizAttempt::query()->where('user_id', $student->getKey())->first();
-        $this->assertEquals(122, $attempt->end_at->diffInMinutes($attempt->start_at));
+        $this->assertEquals(122, (int) abs($attempt->end_at->diffInMinutes($attempt->start_at)));
     }
 }

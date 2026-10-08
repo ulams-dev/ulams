@@ -112,7 +112,7 @@ class AdminBookmarkIndexApiTest extends TestCase
         $assertion($response);
     }
 
-    public function filterDataProvider(): array
+    public static function filterDataProvider(): array
     {
         return [
             [

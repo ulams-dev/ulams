@@ -14,7 +14,7 @@ class ScormTrackApiTest extends TestCase
 {
     use DatabaseTransactions, ScormTestTrait, WithFaker;
 
-    public function scormDataProvider(): array
+    public static function scormDataProvider(): array
     {
         return [
             'SCORM_12' => [
@@ -66,7 +66,7 @@ class ScormTrackApiTest extends TestCase
         ]);
     }
 
-    public function scormGetTrackDataProvider(): array
+    public static function scormGetTrackDataProvider(): array
     {
         return [
             'SCORM_12' => [

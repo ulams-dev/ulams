@@ -14,7 +14,7 @@ class ProductDescriptionToText extends Migration
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->text('description')->change();
+            $table->text('description')->nullable()->change();
         });
 
     }
@@ -22,7 +22,7 @@ class ProductDescriptionToText extends Migration
     public function down()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->string('description')->change();
+            $table->string('description')->nullable()->change();
         });
     }
 }

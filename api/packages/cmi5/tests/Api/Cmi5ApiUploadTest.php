@@ -20,7 +20,7 @@ class Cmi5ApiUploadTest extends TestCase
         $this->seed(Cmi5PermissionSeeder::class);
     }
 
-    public function cmiFileProvider(): array
+    public static function cmiFileProvider(): array
     {
         return [
             [

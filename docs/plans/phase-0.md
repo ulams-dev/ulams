@@ -1,7 +1,7 @@
 # Phase 0 plan: foundation and framework upgrade
 
-Status: section B **approved**; implementation in progress. Upgrade step 1 of 4 (Laravel 10) is done, see
-[B.11](#b11-progress).
+Status: section B **approved**; implementation in progress. Upgrade steps 1 and 2 of 4 (Laravel 10, Laravel 11) are
+done, see [B.11](#b11-progress) and [B.12](#b12-step-24-laravel-10--11).
 Audit findings that feed this plan: [`docs/reports/phase-0-audit.md`](../reports/phase-0-audit.md).
 Spec: [`docs/ROADMAP-PROMPT.md`](../ROADMAP-PROMPT.md) Phase 0. Tracker: [`docs/ROADMAP-TODO.md`](../ROADMAP-TODO.md).
 
@@ -343,3 +343,120 @@ Risks for step 2 (L11), beyond B.3/B.8:
 - The known "core 6 / auth 3 / bulk-notifications 3" failures are DB-state dependent: they expect 10 users and see 11 on a freshly
   prepared DB, and passed in a run on a DB reused after a full run (inference: a row left by the prep). Compare runs only
   on freshly prepared databases.
+
+### B.12 Step 2/4: Laravel 10 → 11
+
+Done 2026-10-08, uncommitted on `phase-0/foundation`. Result: `laravel/framework` v10.50.3 → **v11.57.0** (latest 11.x)
+on PHP 8.3 (8.4 stays with step 4). The full PHPUnit run shows no new failures (table below). The non-slim skeleton is
+kept: `config/app.php` provider list, both Kernels, gecche's `Application` in `bootstrap/app.php`.
+
+Composer (`api/composer.json`; the lock changed only for the packages listed and their dependencies, 71 lock entries).
+Run updates as `COMPOSER_NO_BLOCKING=1 composer update -W <packages>`: Composer 2.10 still refuses to resolve
+`laravel/framework` 11 (same advisories as in B.11; the CRLF email-rule fix exists only in 12.60+/13.10+).
+
+| Package | From | To | Note |
+|---|---|---|---|
+| `php` (constraint) | >=8.1 | >=8.2 | Laravel 11 floor |
+| `laravel/framework` | ^10.48 (10.50.3) | ^11.0 (11.57.0) | pulls Symfony 7.4 (console, http-kernel, mailer, routing…), `laravel/prompts` 0.3, `serializable-closure` 2, `symfony/polyfill-php85` |
+| `gecche/laravel-multidomain` | ^10.2 | ^11.0 (11.2) | same integration points; no code change |
+| `laravel/passport` | ^11 (11.10.6) | ^12.0 (12.4.3) | `league/oauth2-server` 8.5 and `firebase/php-jwt` 6.11 unchanged |
+| `orchestra/testbench` | ^8.0 (8.39) | ^9.0 (9.18, core 9.23) | canvas 9, workbench 9 |
+| `phpunit/phpunit` | ^9.6 | ^10.5 (10.5.66) | |
+| `nunomaduro/collision` | ^7 | ^8.1 (8.5) | |
+| `spatie/laravel-ignition` | ^2.0 | ^2.4 (2.12) | |
+| `php-mock/php-mock-phpunit` | ^2.6 | ^2.10 (2.16) | PHPUnit 10 support |
+| `rennokki/laravel-eloquent-query-cache` | ^3 (3.4) | ^3.6 (3.6.1) | 3.4 capped at L10; 3.6 is the last line (L11/L12) |
+| `spatie/laravel-responsecache` | ^7.4 | ^7.7 (7.7.2) | 7.4 capped at L10 |
+| `pbmedia/laravel-ffmpeg` | ^8 (8.3) | ^8.9 (8.9.0) | |
+| `tzsk/sms` | ^7.0 | ^8.0 (8.0.0) | no API change for our two drivers (templates-sms suite green) |
+| `zanysoft/laravel-zip` | ^2 | ^3.1 (3.1.0) | 2.x capped at L10; facade and provider names unchanged |
+| `spatie/laravel-health` | ^1.30 (1.34) | unchanged constraint (1.40.2) | |
+| `maatwebsite/excel` | 3.1.69 | 3.1.70 | CVE-2026-84374 (export path escape) |
+| `composer/composer` | 2.10.2 | 2.10.3 | CVE-2026-59944, CVE-2026-84361 |
+| `doctrine/dbal` | ^2\|^3 (3.10) | **removed** | only needed for `->change()` before L11; no direct use |
+| `intervention/imagecache` | ^2 (2.6) | **removed** | abandoned, capped at L10; it only registered the unused `GET images/{template}/{filename}` route (no caller in admin/front/api); `config/imagecache.php` deleted. The `images` package has its own cache |
+| `staudenmeir/laravel-migration-views` | ^1.7 | **removed** | the 3 `searchable_events` view migrations now use `DB::statement('CREATE VIEW …')` (same SQL) |
+| `laravel/helpers` | ^1.7 | **removed** | `symfony/polyfill-php85` (via Symfony 7.4) now defines 1-argument `array_first()`/`array_last()`, which silently shadow the helpers' callback versions. The only helper call (`str_slug` in `app/Library/UlamsHelpers.php`) → `Str::slug` |
+| Not touched (accept L11) | | | Horizon 5.48, Socialite 5, Tinker 2.11, l5-swagger 8.6, Sentry 4, kreait/laravel-firebase 5.10, spatie/permission 6, image-optimizer 1.8, translation-loader 2.8, bensampo/laravel-enum 6, `devianl2/laravel-scorm` 4.0.1, `treestoneit/shopping-cart` 1.6.1, `gnello/laravel-mattermost-driver` 1.3.3, barryvdh/dompdf 2 |
+
+`nesbot/carbon` stays on **2.73**: Laravel 11 accepts Carbon 2 or 3 and `devianl2/laravel-scorm` requires `^2.42`.
+Carbon 3 arrives with step 3 (L12 requires it), after the scorm package is vendored.
+
+`composer audit` after the step: 5 advisories in 2 packages, all known and not fixable on L11: `laravel/framework`
+(CRLF email rule, signed URL path confusion, debug page XSS: fixed only in 12.6x/13.x) and `firebase/php-jwt` 6
+(CVE-2025-45769, needs 7.x; Passport 12 pins 6). dompdf advisories are ignored in `composer.json` as before.
+
+Code changes:
+
+| Category | Files | Change |
+|---|---|---|
+| `->change()` drops unstated modifiers (L11 changes columns natively) | `auth/…/2022_01_26_130000_change_user_settings_value_field_type_.php`, `cart/…/2023_04_24_000000_product_description_to_text.php` | restate `->nullable()` (up and down); without it fresh databases got `NOT NULL` on `user_settings.value` and `products.description` |
+| L11 emits the column comment of a `change()` after the whole blueprint | `templates/…/2021_12_09_000001_modify_templates_table.php` | the `vars_set` change runs in its own `Schema::table` before the rename (fresh migrate failed with `column "vars_set" does not exist`) |
+| Other `->change()` migrations (`tasks`, `assign-without-account`, `bookmarks_notes`, `cart` tax rate, `templates` content, `dictionaries`, `questionnaire`) | — | checked by schema diff: same result, no change needed |
+| Passport 12 `passport:install` now publishes Passport's migrations with new timestamps and asks to run `migrate` | `core/…/2021_03_11_000002_install_passport.php` | calls what Passport 11's `install` did: `passport:keys`, a personal access client and a password grant client (fresh DBs keep the same two `oauth_clients` rows; the password grant itself stays **disabled**, the Passport 12 default; no client uses it, Swagger's password flow is commented out) |
+| `Passport::routes()` no longer exists (already a no-op on Passport 11) | 28 package `AuthServiceProvider`s | dead `method_exists` guards removed (incl. the unreachable `Passport::loadKeysFrom` in `lrs`) |
+| Redis cache prefix: L11 stopped appending `:` | `config/cache.php` (`stores.redis.prefix`) | `CACHE_PREFIX` + `:` so keys keep the L10 layout per tenant (`ulams_coffee_` + `ulams_coffee_cache:` + key); tenant env files unchanged. Verified on a live key |
+| `Collection::shuffle($seed)` lost its seed in L11 (now random) — quiz order "stable per attempt" broke silently | new `topic-type-gift/src/Support/SeededShuffle.php`; `QuizAttemptResource`, `MatchingQuestionStrategy`, `MultipleChoice*QuestionStrategy`; test `QuizAttemptReadApiTest` | seeded shuffle with the L10 algorithm (`mt_srand` + `shuffle`), so orders of open attempts are identical to L10 (caught by 4 `QuizAttemptReadApiTest` failures) |
+| Carbon 3 `diffIn*` (signed floats) | `auth/AuthService.php:71` (remember-me), `reports/QuizSummaryForTopicTypeGIFT.php:67`, `questionnaire/QuestionnaireModelService.php:236`, `courses/CourseProgressCollection.php:111`, test `QuizAttemptGetActiveApiTest.php:161` | `(int) abs(…)`: same result as Carbon 2 today, correct on Carbon 3. These are all `diffIn*` calls in `app`/`packages` |
+| PHPUnit 10 configuration | `phpunit.xml`, `docker/envs/phpunit.xml.{postgres,mysql,cc}`, `.gitignore` | `--migrate-configuration` (10.5 schema, `<coverage>` → `<source>`, `.phpunit.cache`) |
+| PHPUnit 10 data providers | 32 test files | providers made `static`; two that booted the app (`createApplication()` + `config()`) read the package config file instead (`courses` `TopicResourceTutorApiTest`, `files` `FilesApiUploadTest`; PHPUnit 10 runs providers before any app exists) |
+| PHPUnit 10 requires class name = file name | `topic-types/tests/Commands/FixAssetCommandTest.php`, `FixColumnNameCommandTest.php` | classes renamed (`FixAssetCommand` → `FixAssetCommandTest`, …); their 4 tests were silently skipped on PHPUnit 10 |
+
+Checked and not needed: `Model::casts()` conflicts (none), `withConsecutive`/removed PHPUnit assertions (none),
+`getDoctrine*`/`registerDoctrineType`/`Schema::getAllTables` (none), `double()`/`float()` (6 `double()` calls, same DDL),
+`unsigned*` decimal types (none), rate limiting `decayMinutes`/`GlobalLimit` (none), custom `UserProvider`/`Authenticatable`
+(none; password rehash on login uses the default `password` column), `@test` annotations (still work in PHPUnit 10, kept).
+`config/*.php` stays as is; L11 merges the framework's default stores/connections into it (adds unused entries only).
+
+Verification:
+
+- **Schema**: `migrate:fresh` (+ courses test migration) on an empty DB on L10 and on L11, `pg_dump --schema-only` diff
+  (`api/storage/l11up/schema_l10.sql`, `schema_l11.sql`, `schema.diff`): identical except the text of two equal defaults
+  (`order_items.tax_rate`, `products.tax_rate`: `DEFAULT 0` vs `DEFAULT '0'::numeric`, same value). Row counts after the
+  migration-time seeds are identical in all 128 tables (incl. the two `oauth_clients`).
+- **Tests**: full `./vendor/bin/phpunit` per suite on a freshly prepared PostgreSQL DB (`test_l11`, scripts in
+  `api/storage/l11up/`; prep now also copies the Passport keys into Testbench's skeleton storage, as CI does, because
+  the composer update replaced that directory).
+
+  | Suite | L10 (tests / failing) | L11 final |
+  |---|---|---|
+  | Integrations | 4 / 2 | 4 / 2 (same `EventApiTest` list/order) |
+  | auth | 124 / 3 | 124 / 3 (same `UserApiTest`) |
+  | bulk-notifications | 44 / 3 | 44 / 3 (same multicast tests) |
+  | core | 62 / 6 | 62 / 6 (same paginate/count tests) |
+  | cart | 113 / 0 | 113 / 1 (`test_update_product_subscription_type_cannot_update_subscription_fields`: random factory data can equal the stored subscription fields, then the update is allowed; passed in the first L11 run and in 3 reruns) |
+  | other 41 suites | 1 877 / 0 | 1 877 / 0 |
+  | **Total** | **2 224 / 14** | **2 224 / 15**, no new deterministic failures |
+
+  Before the fixes the first L11 run had 2 PHPUnit errors (app-booting data providers), 4 `topic-type-gift` failures
+  (seeded shuffle) and 4 `topic-types` tests not run (class names).
+- `php artisan about`: Laravel 11.57.0; `route:list`: **526** routes = the 527 of L10 minus `GET images/{template}/{filename}`
+  (imagecache), otherwise identical; `schedule:list`: 11 entries; `l5-swagger:generate`: OK (311 paths, as on L10);
+  `composer validate`: valid (only the old warning on the exact `davidbadura/faker-markdown-generator` pin).
+- Platform `migrate`: nothing to migrate. `ulams:tenant:sync-env --migrate`: coffee, nightsky, oncall synced, 0 pending,
+  tenant DBs resolve (`ulams_coffee`, …).
+- Horizon restarted on the new code (`horizon:status` running), php-fpm reloaded; `queue:work --once` (platform and
+  `--domain=coffee.localhost`) OK.
+- HTTP smoke: `GET /api/name` 200; login `admin@ulams.app` → token, `GET /api/profile/me` 200; `GET /api/courses` 200 on
+  `api.localhost` (5), `coffee.localhost` (1), `oncall.localhost` (1); tenant login `admin@coffee.ulams.app` 200 and
+  `/api/profile/me` 200, the coffee token is rejected on `api.localhost` (401); H5P service `show(3)`/`download(3)` OK;
+  `GET /api/admin/templates/{id}/preview` 200; `POST /api/admin/pdfs/preview` returns a PDF.
+
+Risks and follow-ups for step 3 (L12) and later:
+
+- **Carbon 3** is mandatory on L12: vendor `devianl2/laravel-scorm` first. The 5 `diffIn*` call sites are already safe;
+  watch other Carbon 3 changes (`createFromTimestamp` UTC default, stricter `create*` parsing) in the scorm code.
+- **PHPUnit 11** (with Testbench 10): 154 PHPUnit deprecations remain in 8 suites — data sets whose string keys do not
+  match parameter names (named arguments in PHPUnit 11; e.g. `cart` `$errors`, `$filter`) and 6 providers that still use
+  `$this` (`lrs` `tokenDataProvider`, `tasks`/`bookmarks_notes` order providers with `$this->assert…` closures). Two
+  helper classes named `*Test` (`topic-types/tests/Helpers/MarkdownTest.php`, `webinar/tests/Mocks/MockTest.php`)
+  produce runner warnings.
+- **Silent API changes**: the shuffle seed removal passed `composer`, boot and static checks and was found only by
+  tests. Expect more of this kind in L12 (e.g. `HasUuids` v7, `image` rule without SVG).
+- **Composer blocking** stays until L12.69+ (`COMPOSER_NO_BLOCKING=1`).
+- **Password grant**: disabled by default from Passport 12. If a client ever needs it, call `Passport::enablePasswordGrant()`;
+  Passport 13 (step 4) removes the personal-access-client table and changes `oauth_clients` (B.4).
+- **Cache**: the explicit `:` keeps key layout; L12/L13 change more prefix defaults (B.3) — keep `CACHE_PREFIX`,
+  `REDIS_PREFIX` and the store prefix explicit.
+- The cart subscription test is flaky by design (random factory data); worth pinning its values when that package is
+  touched.

@@ -89,7 +89,7 @@ class SendUserBulkNotificationApiTest extends TestCase
             ->assertUnauthorized();
     }
 
-    public function invalidDataProvider(): array
+    public static function invalidDataProvider(): array
     {
         return [
             ['channel' => PushNotificationChannel::class, 'data' => ['sections' => ['title' => null, 'body' => 'Content']], 'errors' => ['sections.title']],

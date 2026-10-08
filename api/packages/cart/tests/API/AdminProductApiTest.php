@@ -987,7 +987,7 @@ class AdminProductApiTest extends TestCase
         Storage::assertExists($data->poster_path);
     }
 
-    private function invalidSubscriptionDataProvider(): array
+    private static function invalidSubscriptionDataProvider(): array
     {
         return [
             ['data' => ['subscription_period' => null], 'errors' => ['subscription_period' => 'The subscription period field is required when type is subscription.']],

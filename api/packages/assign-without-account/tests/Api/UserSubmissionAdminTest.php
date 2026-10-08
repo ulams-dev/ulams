@@ -297,7 +297,7 @@ class UserSubmissionAdminTest extends TestCase
             ->assertUnauthorized();
     }
 
-    public function updateUserSubmissionDataProvider(): array
+    public static function updateUserSubmissionDataProvider(): array
     {
         return [
             [fn() => [Product::class, AssignToProduct::class]],

@@ -155,7 +155,7 @@ class BookmarkIndexApiTest extends TestCase
         $assertion($response);
     }
 
-    public function filterDataProvider(): array
+    public static function filterDataProvider(): array
     {
         return [
             [

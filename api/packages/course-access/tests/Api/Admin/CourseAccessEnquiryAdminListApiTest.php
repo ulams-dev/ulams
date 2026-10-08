@@ -191,7 +191,7 @@ class CourseAccessEnquiryAdminListApiTest extends TestCase
         $this->assertTrue($response->json('data.0.id') === $enquiry1->getKey());
     }
 
-    public function adminFilterDataProvider(): array
+    public static function adminFilterDataProvider(): array
     {
         return [
             [

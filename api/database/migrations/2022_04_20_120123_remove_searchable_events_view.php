@@ -5,13 +5,12 @@ use Ulams\Webinar\Models\Webinar;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\MySqlConnection;
 use Illuminate\Support\Facades\DB;
-use Staudenmeir\LaravelMigrationViews\Facades\Schema;
 
 class RemoveSearchableEventsView extends Migration
 {
     public function up()
     {
-        Schema::dropViewIfExists('searchable_events');
+        DB::statement('DROP VIEW IF EXISTS searchable_events');
     }
 
     public function down()
@@ -41,6 +40,6 @@ class RemoveSearchableEventsView extends Migration
                 FROM stationary_events
                 ORDER BY created_at desc";
 
-        Schema::createOrReplaceView('searchable_events', $query);
+        DB::statement('CREATE OR REPLACE VIEW searchable_events AS ' . $query);
     }
 }

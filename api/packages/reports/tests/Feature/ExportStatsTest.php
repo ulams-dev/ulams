@@ -75,7 +75,7 @@ class ExportStatsTest extends TestCase
         $this->assertEquals(collect($result), $export->collection());
     }
 
-    public function finishedTopicsResult(): array
+    public static function finishedTopicsResult(): array
     {
         return [
             [

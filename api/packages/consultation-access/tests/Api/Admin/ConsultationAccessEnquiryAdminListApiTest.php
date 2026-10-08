@@ -79,7 +79,7 @@ class ConsultationAccessEnquiryAdminListApiTest extends TestCase
             ]);
     }
 
-    public function adminFilterDataProvider(): array
+    public static function adminFilterDataProvider(): array
     {
         return [
             [

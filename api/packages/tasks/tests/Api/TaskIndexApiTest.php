@@ -59,7 +59,7 @@ class TaskIndexApiTest extends TestCase
             ]]]);
     }
 
-    public function userFilterDataProvider(): array
+    public static function userFilterDataProvider(): array
     {
         return [
             [
@@ -304,7 +304,7 @@ class TaskIndexApiTest extends TestCase
             ]]]);
     }
 
-    public function adminFilterDataProvider(): array
+    public static function adminFilterDataProvider(): array
     {
         return [
             [

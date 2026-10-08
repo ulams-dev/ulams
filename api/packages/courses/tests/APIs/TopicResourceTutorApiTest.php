@@ -57,7 +57,7 @@ class TopicResourceTutorApiTest extends TestCase
         ]);
     }
 
-    public function excludedFileExtensionProvider(): array
+    public static function excludedFileExtensionProvider(): array
     {
         return [
             ['html'],
@@ -71,10 +71,12 @@ class TopicResourceTutorApiTest extends TestCase
         ];
     }
 
-    public function allowedFileExtensionProvider(): array
+    public static function allowedFileExtensionProvider(): array
     {
-        $this->createApplication();
-        return array_map(fn ($item) => [$item], explode(',', config('ulams_courses.topic_resource_mimes')));
+        // Data providers run before the application boots (PHPUnit 10), so read the package config file.
+        $config = require __DIR__ . '/../../src/config.php';
+
+        return array_map(fn ($item) => [$item], explode(',', $config['topic_resource_mimes']));
     }
 
     /**

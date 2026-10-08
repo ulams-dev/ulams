@@ -68,7 +68,7 @@ class AttemptAnswerSaveApiTest extends TestCase
         ]);
     }
 
-    public function questionDataProvider(): array
+    public static function questionDataProvider(): array
     {
         return [
             [

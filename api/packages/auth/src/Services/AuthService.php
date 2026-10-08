@@ -68,7 +68,7 @@ class AuthService implements AuthServiceContract
     public function refreshToken(User $user): PersonalAccessTokenResult
     {
         $token = $user->token();
-        $rememberMe = $token->expires_at->diffInMinutes($token->created_at) > Config::get(UlamsAuthServiceProvider::CONFIG_KEY . '.token_expiration_minutes');
+        $rememberMe = (int) abs($token->expires_at->diffInMinutes($token->created_at)) > Config::get(UlamsAuthServiceProvider::CONFIG_KEY . '.token_expiration_minutes');
 
         return $this->createTokenForUser($user, $rememberMe);
     }

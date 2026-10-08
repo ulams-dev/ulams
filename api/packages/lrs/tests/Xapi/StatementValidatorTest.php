@@ -49,7 +49,7 @@ class StatementValidatorTest extends TestCase
         $this->assertSame([], StatementValidator::errors($group));
     }
 
-    public function invalidStatements(): array
+    public static function invalidStatements(): array
     {
         $cases = [
             'not an object' => fn () => 'string',

@@ -12,6 +12,7 @@ use Ulams\TopicTypeGift\Models\QuizAttempt;
 use Ulams\TopicTypeGift\Strategies\GiftQuestionStrategyFactory;
 use Ulams\TopicTypeGift\Tests\TestCase;
 use Illuminate\Support\Carbon;
+use Ulams\TopicTypeGift\Support\SeededShuffle;
 
 class QuizAttemptReadApiTest extends TestCase
 {
@@ -218,10 +219,7 @@ class QuizAttemptReadApiTest extends TestCase
                 ->json('data.questions.*.id');
 
             // The order is exactly the questions shuffled with the attempt id as seed.
-            $expected = $quiz->questions()->get()
-                ->sortBy('id')
-                ->values()
-                ->shuffle($attempt->getKey())
+            $expected = SeededShuffle::shuffle($quiz->questions()->get()->sortBy('id')->values(), $attempt->getKey())
                 ->pluck('id')
                 ->all();
 

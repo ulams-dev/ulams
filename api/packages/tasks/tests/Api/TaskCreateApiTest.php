@@ -223,7 +223,7 @@ class TaskCreateApiTest extends TestCase
             ->assertForbidden();
     }
 
-    public function userInvalidDataProvider(): array
+    public static function userInvalidDataProvider(): array
     {
         return [
             ['field' => 'title', 'data' => ['title' => null]],
@@ -234,7 +234,7 @@ class TaskCreateApiTest extends TestCase
     }
 
 
-    public function adminInvalidDataProvider(): array
+    public static function adminInvalidDataProvider(): array
     {
         return [
             ['field' => 'title', 'data' => ['title' => null]],

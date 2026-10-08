@@ -112,7 +112,7 @@ class FilesApiUploadTest extends TestCase
         $this->disk->assertMissing($file->getClientOriginalName());
     }
 
-    public function excludedFileExtensionProvider(): array
+    public static function excludedFileExtensionProvider(): array
     {
         return [
             ['html'],
@@ -125,10 +125,12 @@ class FilesApiUploadTest extends TestCase
         ];
     }
 
-    public function allowedFileExtensionProvider(): array
+    public static function allowedFileExtensionProvider(): array
     {
-        $this->createApplication();
-        return array_map(fn ($item) => [$item], explode(',', config('files.mimes')));
+        // Data providers run before the application boots (PHPUnit 10), so read the package config file.
+        $config = require __DIR__ . '/../../src/config/files.php';
+
+        return array_map(fn ($item) => [$item], explode(',', $config['mimes']));
     }
 
     /**

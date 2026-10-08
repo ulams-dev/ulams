@@ -5,7 +5,6 @@ namespace Ulams\Cmi5\Providers;
 use Ulams\Cmi5\Models\Cmi5;
 use Ulams\Cmi5\Policies\Cmi5Policy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -16,9 +15,5 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-        if (!$this->app->routesAreCached() && method_exists(Passport::class, 'routes')) {
-            Passport::routes();
-        }
     }
 }

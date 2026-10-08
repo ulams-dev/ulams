@@ -100,7 +100,7 @@ class TopicTypeH5PTest extends TestCase
         $this->assertArrayNotHasKey('h5p_content', $h5p->toArray());
     }
 
-    public function h5pProvider(): array
+    public static function h5pProvider(): array
     {
         return [
             [

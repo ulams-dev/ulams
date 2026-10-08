@@ -233,7 +233,7 @@ class QuestionnaireModelService implements QuestionnaireModelServiceContract
                 $value->{$consultationStartTimestamp . ' - timestamp #' . $lastAnswerIndex . ' - ' . $value->question_title} = $answerTime->timestamp;
 
                 // @phpstan-ignore-next-line
-                $value->{$consultationStartTimestamp . ' - seconds after start #' . $lastAnswerIndex . ' - ' . $value->question_title} = $answerTime->diffInSeconds(Carbon::make($value->consultation_start));
+                $value->{$consultationStartTimestamp . ' - seconds after start #' . $lastAnswerIndex . ' - ' . $value->question_title} = (int) abs($answerTime->diffInSeconds(Carbon::make($value->consultation_start)));
                 // @phpstan-ignore-next-line
                 $value->{$consultationStartTimestamp . ' - answered after consultation #' . $lastAnswerIndex . ' - ' . $value->question_title} = $answerTime->isAfter(Carbon::make($value->consultation_end)) ? 'Tak' : 'Nie' ;
                 $lastAnswerIndex++;

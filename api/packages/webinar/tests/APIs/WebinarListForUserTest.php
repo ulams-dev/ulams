@@ -79,7 +79,7 @@ class WebinarListForUserTest extends TestCase
         $this->response->assertOk();
     }
 
-    public function durationProvider(): array
+    public static function durationProvider(): array
     {
         return [
             'default' => ['1'],

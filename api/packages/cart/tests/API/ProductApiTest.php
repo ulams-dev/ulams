@@ -323,7 +323,7 @@ class ProductApiTest extends TestCase
             ->assertUnauthorized();
     }
 
-    public function myProductsFilterDataProvider(): array
+    public static function myProductsFilterDataProvider(): array
     {
         return [
             [

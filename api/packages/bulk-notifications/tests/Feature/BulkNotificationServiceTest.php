@@ -167,7 +167,7 @@ class BulkNotificationServiceTest extends TestCase
         Event::assertNotDispatched(NotificationSent::class);
     }
 
-    public function channelDataProvider(): array
+    public static function channelDataProvider(): array
     {
         return [
             ['channel' => PushNotificationChannel::class]

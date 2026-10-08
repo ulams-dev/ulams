@@ -97,7 +97,7 @@ class BookmarkCreateApiTest extends TestCase
             ->assertUnauthorized();
     }
 
-    public function invalidDataProvider(): array
+    public static function invalidDataProvider(): array
     {
         return [
             ['field' => 'bookmarkable_id', 'data' => ['bookmarkable_id' => 'String']],

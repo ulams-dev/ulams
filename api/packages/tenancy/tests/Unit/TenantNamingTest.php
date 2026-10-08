@@ -57,7 +57,7 @@ class TenantNamingTest extends TestCase
         TenantNaming::assertValidSlug($slug);
     }
 
-    public function invalidSlugs(): array
+    public static function invalidSlugs(): array
     {
         return [['a'], ['Coffee'], ['1abc'], ['with-dash'], ['under_score'], ['a.b'], [str_repeat('a', 31)], ['admin'], ['api']];
     }

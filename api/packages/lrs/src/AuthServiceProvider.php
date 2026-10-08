@@ -7,7 +7,6 @@ use Ulams\Lrs\Models\Statement;
 use Ulams\Lrs\Policies\StatementPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
-use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -28,10 +27,6 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-        if (!$this->app->routesAreCached() && method_exists(Passport::class, 'routes')) {
-            Passport::routes();
-            Passport::loadKeysFrom(storage_path());
-        }
 
         Auth::extend('access_token', function () {
             $request = app('request');
