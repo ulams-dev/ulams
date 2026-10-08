@@ -32,6 +32,17 @@ else
 fi
 
 
+# queue workers for provisioned tenants (the platform queue is served by Horizon);
+# queue.sh re-reads the tenant list on every pass
+if [ "$DISABLE_QUEUE" == 'true' ]
+then
+    rm -f /etc/supervisor/custom.d/multidomain_queue.conf
+    echo multidomain_queue.conf disabled
+else
+    cp docker/conf/supervisor/services/multidomain_queue.conf /etc/supervisor/custom.d/multidomain_queue.conf
+    echo multidomain_queue.conf enabled
+fi
+
 if [ "$DISABLE_SCHEDULER" == 'true' ]
 then
     rm -f /etc/supervisor/custom.d/scheduler.conf
@@ -81,6 +92,18 @@ then
     echo "Disable db migrate"
 else 
     php artisan migrate --force
+fi
+
+# rebuild .env.<host> files, domain registrations and Passport keys of provisioned tenants
+# (ulams:tenant:create) from the tenants table; they are not part of the image
+if [ "$DISABLE_TENANT_SYNC" == 'true' ]
+then
+    echo "Disable tenant sync"
+elif [ "$DISABLE_DB_MIGRATE" == 'true' ]
+then
+    php artisan ulams:tenant:sync-env
+else
+    php artisan ulams:tenant:sync-env --migrate
 fi
 
 # generate passport keys only if storage/oauth-private.key is not set
