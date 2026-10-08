@@ -12,6 +12,7 @@ use Ulams\Cmi5\Services\Cmi5UploadService;
 use Ulams\Cmi5\Services\Contracts\Cmi5ServiceContract;
 use Ulams\Cmi5\Services\Contracts\Cmi5UploadServiceContract;
 use Illuminate\Support\ServiceProvider;
+use Ulams\Uploads\UlamsUploadsServiceProvider;
 
 /**
  * SWAGGER_VERSION
@@ -36,6 +37,7 @@ class UlamsCmi5ServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/config.php', self::CONFIG_KEY);
 
+        $this->app->register(UlamsUploadsServiceProvider::class);
         $this->app->register(AuthServiceProvider::class);
     }
 

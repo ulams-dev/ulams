@@ -77,6 +77,65 @@ class Cmi5ApiUploadTest extends TestCase
         $response->assertJsonValidationErrors(['file' => 'Invalid cmi5 file.']);
     }
 
+    public static function hostileEntries(): array
+    {
+        return [
+            'zip-slip' => ['../../../public/evil.php', false, 'leaves its folder'],
+            'absolute path' => ['/var/www/html/public/evil.php', false, 'absolute path'],
+            'symlink' => ['leak.txt', true, 'symbolic link'],
+        ];
+    }
+
+    #[DataProvider('hostileEntries')]
+    public function testHostilePackageIsRejectedAndNothingIsStored(string $name, bool $symlink, string $message): void
+    {
+        Storage::fake(config('ulams_cmi5.disk'));
+        $path = $this->copyMockWith($name, $symlink);
+
+        $response = $this->actingAs($this->makeAdmin(), 'api')->json('POST', '/api/admin/cmi5', [
+            'file' => new UploadedFile($path, 'cmi5.zip', null, null, true),
+        ]);
+        @unlink($path);
+
+        $response->assertUnprocessable();
+        $response->assertJsonValidationErrors(['file' => $message]);
+        $this->assertSame([], Storage::disk(config('ulams_cmi5.disk'))->allFiles());
+        $this->assertDatabaseCount('cmi5s', 0);
+    }
+
+    public function testServiceRejectsZipSlipWithoutRequestValidation(): void
+    {
+        Storage::fake(config('ulams_cmi5.disk'));
+        $path = $this->copyMockWith('../escape.html', false);
+
+        try {
+            app(\Ulams\Cmi5\Services\Contracts\Cmi5UploadServiceContract::class)
+                ->upload(new UploadedFile($path, 'cmi5.zip', null, null, true));
+            $this->fail('Expected the package to be rejected.');
+        } catch (\Ulams\Uploads\Exceptions\UploadRejected $e) {
+            $this->assertSame('zip_slip', $e->reason);
+        } finally {
+            @unlink($path);
+        }
+        $this->assertDatabaseCount('cmi5s', 0);
+        $this->assertSame([], Storage::disk(config('ulams_cmi5.disk'))->allFiles());
+    }
+
+    private function copyMockWith(string $name, bool $symlink): string
+    {
+        $path = tempnam(sys_get_temp_dir(), 'ulams-cmi5-');
+        copy(__DIR__ . '/../mocks/cmi5.zip', $path);
+        $zip = new \ZipArchive();
+        $zip->open($path);
+        $zip->addFromString($name, $symlink ? '/var/www/html/.env' : '<?php echo 1;');
+        if ($symlink) {
+            $zip->setExternalAttributesName($name, \ZipArchive::OPSYS_UNIX, 0120777 << 16);
+        }
+        $zip->close();
+
+        return $path;
+    }
+
     public function testUploadCmi5Unauthorized(): void
     {
         $response = $this->json('POST','/api/admin/cmi5');

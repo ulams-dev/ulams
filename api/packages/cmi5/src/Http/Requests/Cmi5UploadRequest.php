@@ -4,6 +4,7 @@ namespace Ulams\Cmi5\Http\Requests;
 
 use Ulams\Cmi5\Models\Cmi5;
 use Ulams\Cmi5\Rules\Cmi5Rule;
+use Ulams\Uploads\Rules\SafeUpload;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
@@ -17,7 +18,7 @@ class Cmi5UploadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => ['required', 'file', 'mimes:zip', new Cmi5Rule()]
+            'file' => ['bail', 'required', 'file', 'mimes:zip', new Cmi5Rule(), new SafeUpload('cmi5')]
         ];
     }
 }
