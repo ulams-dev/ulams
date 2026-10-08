@@ -241,6 +241,7 @@
       "Ulams\\TopicTypes\\Database\\Factories\\": "packages/topic-types/database/factories",
       "Ulams\\TopicTypes\\Database\\Seeders\\": "packages/topic-types/database/seeders",
       "Ulams\\Translations\\": "packages/translations/src",
+      "Ulams\\Uploads\\": "packages/uploads/src",
       "Ulams\\Translations\\Database\\Seeders\\": "packages/translations/database/seeders",
       "Ulams\\Translations\\Database\\Factories\\": "packages/translations/database/factories",
       "Ulams\\Video\\": "packages/video/src",
@@ -346,6 +347,7 @@
       "Ulams\\TopicTypeProject\\Tests\\": "packages/topic-type-project/tests",
       "Ulams\\TopicTypes\\Tests\\": "packages/topic-types/tests",
       "Ulams\\Translations\\Tests\\": "packages/translations/tests",
+      "Ulams\\Uploads\\Tests\\": "packages/uploads/tests",
       "Ulams\\Video\\Tests\\": "packages/video/tests",
       "Ulams\\Vouchers\\Tests\\": "packages/vouchers/tests",
       "Ulams\\Youtube\\Tests\\": "packages/youtube/tests"

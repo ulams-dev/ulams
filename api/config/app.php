@@ -219,6 +219,7 @@ return [
         Ulams\TopicTypeGift\UlamsTopicTypeGiftServiceProvider::class,
         Ulams\TopicTypeProject\UlamsTopicTypeProjectServiceProvider::class,
         Ulams\TopicTypes\UlamsTopicTypesServiceProvider::class,
+        Ulams\Uploads\UlamsUploadsServiceProvider::class,
         Ulams\Translations\UlamsTranslationsServiceProvider::class,
         Ulams\Video\UlamsVideoServiceProvider::class,
         Ulams\Vouchers\UlamsVouchersServiceProvider::class,

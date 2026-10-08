@@ -275,6 +275,14 @@ services:
       # AWS_BUCKET: ${AWS_BUCKET}:ulams"
       # AWS_ENDPOINT: ${AWS_ENDPOINT}
 
+  # Optional virus scanning of uploads (packages/uploads, UPLOADS_SCANNER=clamd).
+  # ClamAV is GPL-2.0 and runs as a separate process. Start with: docker compose --profile av up -d clamav
+  clamav:
+    image: clamav/clamav:1.4
+    profiles: ["av"]
+    networks:
+      - ulams
+
   soketi:
     image: quay.io/soketi/soketi:latest
     networks:

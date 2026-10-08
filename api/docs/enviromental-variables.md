@@ -151,3 +151,24 @@ the others are optional overrides. See [packages/demo/README.md](../packages/dem
 | `DEMO_RESET_STUDENTS`   | Demo students when no baseline was captured                                         | `5`                              |
 | `DEMO_CONTENT_SEEDER`   | Seeder of the demo courses                                                           | `Database\Seeders\DemoCoursesSeeder` |
 | `ULAMS_DEMO_EXPERIENCE` | Demo course(s) to seed                                                               | `TENANT_SLUG`                    |
+
+## Uploads (`packages/uploads`)
+
+Upload guard for packages and imports (zip-slip, symlinks, zip bombs, sniffed MIME type, size,
+virus-scan hook), see [packages/uploads/README.md](../packages/uploads/README.md).
+
+| Variable name                               | Description                                                     | Default           |
+| ------------------------------------------- | --------------------------------------------------------------- | ----------------- |
+| `UPLOADS_SCORM_MAX_MB`                      | Largest SCORM package upload                                    | `512`             |
+| `UPLOADS_CMI5_MAX_MB`                       | Largest cmi5 package upload                                     | `512`             |
+| `UPLOADS_COURSE_IMPORT_MAX_MB`              | Largest course export zip accepted by the import                | `1024`            |
+| `UPLOADS_ZIP_MAX_ENTRIES`                   | Most entries in a SCORM/cmi5 package                            | `5000`            |
+| `UPLOADS_ZIP_MAX_UNCOMPRESSED_MB`           | Largest total uncompressed size of a package                    | `2048`            |
+| `UPLOADS_ZIP_MAX_ENTRY_MB`                  | Largest single file inside an archive                           | `1024`            |
+| `UPLOADS_ZIP_MAX_RATIO`                     | Largest compression ratio of an entry over 1 MB (zip bombs)     | `200`             |
+| `UPLOADS_COURSE_IMPORT_MAX_ENTRIES`         | Most entries in a course import                                 | `10000`           |
+| `UPLOADS_COURSE_IMPORT_MAX_UNCOMPRESSED_MB` | Largest total uncompressed size of a course import              | `4096`            |
+| `UPLOADS_SCANNER`                           | `null` (no scan) or `clamd` (compose profile `av`)              | `null`            |
+| `UPLOADS_CLAMD_HOST` / `UPLOADS_CLAMD_PORT` | clamd address                                                   | `clamav` / `3310` |
+| `UPLOADS_CLAMD_TIMEOUT`                     | Seconds to wait for clamd                                       | `60`              |
+| `UPLOADS_CLAMD_FAIL_CLOSED`                 | Reject uploads when clamd cannot be reached                     | `true`            |
