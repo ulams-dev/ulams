@@ -43,28 +43,18 @@ http://*.admin.localhost {
 }
 
 http://*.app.localhost {
-    # Resolve the root directory for the app
-    root * /var/www/html/public
-
-    # Provide Zstd and Gzip compression
+    # Learner front (front/web, Astro dev server on the host: `yarn workspace web dev`, port 4321).
+    # The old React front (front/) stays reachable directly at http://localhost:3000.
     encode zstd gzip
 
-    # Allow caddy to serve static files
-    file_server
+    reverse_proxy host.docker.internal:4321
 
-    # Enable PHP-FPM
-    reverse_proxy host.docker.internal:3000
-
-    # Cors logic 
+    # Cors logic
     @origin header Origin {http.request.header.Origin}
     header @origin Access-Control-Allow-Origin {http.request.header.Origin}
 
-    #@referer header Referer {http.request.header.Referer}
-    #header @referer Access-Control-Allow-Origin {http.request.header.Referer}
-
-    @excluded { 
+    @excluded {
         not header Origin {http.request.header.Origin}
-        #not header Referer {http.request.header.Referer}
     }
     header @excluded Access-Control-Allow-Origin *
     header Access-Control-Allow-Credentials true
