@@ -9,6 +9,7 @@ use Ulams\Webinar\Services\Contracts\WebinarServiceContract;
 use Ulams\Webinar\Tests\Mocks\YTLiveDtoMock;
 use Ulams\Youtube\Services\Contracts\YoutubeServiceContract;
 use GuzzleHttp\Psr7\Response;
+use Ulams\Mattermost\Http\Controllers\MattermostController;
 use Ulams\Mattermost\Services\Contracts\MattermostServiceContract;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Mockery\MockInterface;
@@ -163,5 +164,25 @@ class ServiceTest extends TestCase
         $this->mock->append(new Response(200, ['Token' => 'Token'], json_encode(["status" => 'ok'])));
 
         $this->assertTrue($this->service->removeUserFromChannel($this->user, 'Channel name'));
+    }
+
+    public function testBuildingTheServiceDoesNoHttp(): void
+    {
+        // A fresh application has no Mattermost connection yet.
+        $this->refreshApplication();
+        $this->container = [];
+
+        $service = $this->app->make(MattermostServiceContract::class);
+        $this->app->make(MattermostController::class);
+
+        $this->assertCount(0, $this->container, 'Building the service must not call Mattermost.');
+
+        $this->mock->reset();
+        $this->mock->append(new Response(200, ['Token' => 'Token'], json_encode(['id' => 'admin'])));
+        $this->mock->append(new Response(200, ['Token' => 'Token'], json_encode(['id' => 123])));
+
+        $this->assertTrue($service->addUser($this->user));
+        $this->assertCount(2, $this->container);
+        $this->assertStringEndsWith('/users/login', $this->container[0]['request']->getUri()->getPath());
     }
 }

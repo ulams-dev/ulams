@@ -58,7 +58,6 @@ return [
                     base_path('packages/templates/src'),
                     base_path('packages/templates-pdf/src'),
                     base_path('packages/assign-without-account/src'),
-                    // base_path('packages/tracker/src'),
                     base_path('packages/translations/src'),
                     base_path('packages/questionnaire/src'),
                     base_path('packages/consultations/src'),

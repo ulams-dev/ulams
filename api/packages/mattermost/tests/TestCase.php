@@ -13,6 +13,7 @@ use Ulams\Webinar\UlamsWebinarServiceProvider;
 use GuzzleHttp\Middleware;
 use Ulams\Mattermost\UlamsMattermostServiceProvider;
 use Ulams\Settings\UlamsSettingsServiceProvider;
+use Gnello\Mattermost\Laravel\Facades\Mattermost;
 use Gnello\Mattermost\Laravel\MattermostServiceProvider;
 use Illuminate\Support\Facades\Config;
 use Laravel\Passport\Passport;
@@ -33,6 +34,16 @@ class TestCase extends CoreTestCase
     {
         parent::setUp();
         Passport::useClientModel(Client::class);
+        $this->logInToMattermost();
+    }
+
+    /**
+     * The service logs in lazily, on first use. Log in up front so the login request takes
+     * the default mocked response and the tests' queued responses go to the calls under test.
+     */
+    protected function logInToMattermost(): void
+    {
+        Mattermost::server('default');
     }
 
     protected function getPackageProviders($app): array
@@ -70,5 +81,6 @@ class TestCase extends CoreTestCase
         Config::set('ulams_settings.use_database', true);
         AdministrableConfig::storeConfig();
         $this->refreshApplication();
+        $this->logInToMattermost();
     }
 }
