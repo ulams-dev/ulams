@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"tertiary-fixed-dim":"#d8baff","inverse-surface":"#e0e2ea","surface-dim":"#101419","on-primary":"#00315c","on-error-container":"#ffdad6","on-tertiary-container":"#4d198b","on-secondary-fixed":"#002105","on-secondary":"#00390d","primary":"#a2c9ff","surface-container-lowest":"#0a0e13","tertiary-fixed":"#eddcff","tertiary":"#d8baff","on-surface-variant":"#c0c7d4","secondary-fixed":"#83fc89","on-primary-fixed":"#001c38","surface-container-high":"#262a30","on-background":"#e0e2ea","surface-variant":"#31353b","surface-tint":"#a2c9ff","surface-bright":"#36393f","secondary-fixed-dim":"#67df70","surface":"#101419","outline":"#8b919d","outline-variant":"#414752","on-secondary-fixed-variant":"#005317","on-secondary-container":"#00320a","secondary":"#67df70","on-primary-container":"#003a6b","background":"#101419","tertiary-container":"#bc8cff","error":"#ffb4ab","inverse-primary":"#0060aa","surface-container-low":"#181c21","on-error":"#690005","primary-fixed-dim":"#a2c9ff","error-container":"#93000a","surface-container-highest":"#31353b","secondary-container":"#27a640","surface-container":"#1c2025","on-tertiary-fixed-variant":"#5b2b9a","on-primary-fixed-variant":"#004882","inverse-on-surface":"#2d3136","on-surface":"#e0e2ea","on-tertiary":"#430882","primary-container":"#58a6ff","primary-fixed":"#d3e4ff","on-tertiary-fixed":"#290055"},borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},spacing:{"margin":"0.75rem","space-lg":"1rem","gutter":"0.5rem","space-xs":"0.25rem","margin-desktop":"1.5rem","space-md":"0.75rem","space-xl":"1.5rem","gutter-desktop":"1rem","space-sm":"0.5rem"},fontFamily:{"label-sm":["JetBrains Mono"],"body-sm":["Inter"],"body-md":["Inter"],"body-lg":["Inter"],"label-md":["JetBrains Mono"],"headline-md":["Space Grotesk"],"headline-xl":["Space Grotesk"],"label-lg":["JetBrains Mono"],"code-inline":["JetBrains Mono"],"headline-xl-mobile":["Space Grotesk"],"headline-lg":["Space Grotesk"]},fontSize:{"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.03em","fontWeight":"400"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}],"body-md":["13px",{"lineHeight":"18px","fontWeight":"400"}],"body-lg":["15px",{"lineHeight":"22px","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.01em","fontWeight":"500"}],"headline-md":["18px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-xl":["32px",{"lineHeight":"38px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-lg":["13px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"code-inline":["12px",{"lineHeight":"16px","fontWeight":"400"}],"headline-xl-mobile":["24px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"700"}],"headline-lg":["24px",{"lineHeight":"30px","letterSpacing":"-0.015em","fontWeight":"600"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-low/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.35)]"><div class="h-14 w-full px-gutter-desktop flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-lg shrink-0"><div class="flex items-center gap-space-sm"><img alt="On-Call Wordmark &amp; Incident Telemetry Icon" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XIFrpU149a7H4FkpH0crFLo96MDmwi6qr95cSjyLlQPab1dLJIbL-FiPyRJo-nmW-MNSZ_EVJdKjlF81P-hmmNNhbqAwAZ_HulbctdsjB_qdYWVG61ojBL_8MZketxkgvIImdG_F8XbdR0N0AVyqyB24hN-OhNWsGJW3BXHQ4VkNEuwEJ2YdycZ2zwp6RniQTVYcfJvbefXOw5kCqJuwC11IyEUNgYxJKluXA9GiAt"/><span class="font-headline-md text-headline-md text-on-surface tracking-tight hidden sm:inline">ON-CALL</span></div><div class="hidden xl:flex items-center gap-space-xs px-space-sm py-0.5 rounded bg-surface-container-lowest"><span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span><span class="font-label-sm text-label-sm text-secondary uppercase">SYSTEMS OPERATIONAL · LATENCY 14ms</span></div></div><nav class="hidden lg:flex items-center gap-space-lg" data-active-classes="text-primary font-body-md"><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="curriculum" href="#">Curriculum</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="cohorts" href="#">Cohorts</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="live-drills" href="#">Live Drills</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="simulator" href="#">Simulator</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="pricing-and-teams" href="#">Pricing &amp; Teams</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="docs" href="#">Docs</a></nav><div class="flex items-center gap-space-md ml-auto"><div class="hidden md:flex items-center justify-between px-space-sm py-1 rounded bg-surface-container-lowest min-w-[190px]"><span class="font-body-sm text-body-sm text-on-surface-variant">Search docs &amp; drills</span><span class="font-label-sm text-label-sm text-on-surface-variant px-1 rounded bg-surface-container-high">⌘K Search</span></div><div class="flex items-center gap-space-sm"><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface px-space-sm py-1 transition-colors" data-path="sign-in" href="#">Sign in</a><a class="font-label-md text-label-md bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary px-space-md py-1.5 rounded font-semibold transition-colors flex items-center gap-space-xs" data-path="apply-for-cohort" href="#"><span>Apply for Cohort</span><span class="font-label-sm text-label-sm opacity-80 hidden sm:inline">⌘↵</span></a></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-14 bg-background min-h-screen"><div class="flex flex-col w-full">
+<!-- Top Command HUD / Telemetry Breadcrumb Bar -->
+<section class="w-full bg-surface-container-lowest px-gutter-desktop py-space-sm flex flex-col gap-space-xs shadow-md">
+<div class="flex flex-wrap items-center justify-between gap-space-sm text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center gap-space-xs tracking-wider">
+<span class="text-primary font-semibold">ON-CALL</span>
+<span class="text-outline">/</span>
+<span>COHORT_04</span>
+<span class="text-outline">/</span>
+<span>CAPSTONE_EVAL</span>
+<span class="text-outline">/</span>
+<span class="text-secondary uppercase">CONFERRAL_FINAL</span>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-xs text-secondary bg-surface-container-high px-space-sm py-0.5 rounded">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-sm text-label-sm uppercase font-semibold">AUDIT PASSED · REQS: 100%</span>
+</div>
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="text-outline">LEDGER:</span>
+<span class="text-primary font-code-inline">0x8f2a...982c</span>
+</div>
+</div>
+</div>
+<!-- Candidate ID & Aggregate Score Ribbon -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-sm items-center bg-surface-container-low p-space-sm rounded">
+<div class="lg:col-span-4 flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[20px]">shield_person</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-md text-headline-md text-on-surface truncate">Sarah M.</span>
+<span class="font-label-sm text-label-sm text-primary bg-primary/10 px-1 rounded">@sarah.m</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Platform Engineer · Monzo Alumni Track</span>
+</div>
+</div>
+<div class="lg:col-span-8 flex flex-wrap items-center justify-start lg:justify-end gap-space-md font-label-md text-label-md">
+<div class="flex flex-col bg-surface-container-lowest px-space-md py-1 rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant">COURSE SCORE</span>
+<span class="text-secondary font-headline-md text-headline-md">96.4%</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest px-space-md py-1 rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant">DRILL MTTR AVG</span>
+<span class="text-primary font-headline-md text-headline-md">14.2m</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest px-space-md py-1 rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant">CHAOS SEV-1 DRILLS</span>
+<span class="text-tertiary font-headline-md text-headline-md">12 / 12</span>
+</div>
+<div class="flex items-center gap-space-xs bg-secondary-container text-on-secondary-container px-space-md py-2 rounded self-center shadow-sm">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span class="font-label-lg text-label-lg tracking-wide uppercase font-bold">CERTIFIED INCIDENT COMMANDER</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Terminal Anchor Navigation Bar -->
+<div class="w-full bg-surface-container-lowest px-gutter-desktop py-space-xs sticky top-14 z-30 shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-space-xs" id="evalTabs">
+<button class="tab-trigger flex items-center gap-space-xs px-space-md py-1.5 rounded font-label-md text-label-md bg-surface-container-high text-primary transition-all" id="tabBtn-phase1" onclick="switchTab('phase1')">
+<span class="font-label-sm text-label-sm opacity-60">01</span>
+<span>COMMS CHECK ALPHA</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+</button>
+<button class="tab-trigger flex items-center gap-space-xs px-space-md py-1.5 rounded font-label-md text-label-md bg-surface-container-low text-on-surface-variant hover:text-on-surface transition-all" id="tabBtn-phase2" onclick="switchTab('phase2')">
+<span class="font-label-sm text-label-sm opacity-60">02</span>
+<span>POSTMORTEM DEFENSE</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+</button>
+<button class="tab-trigger flex items-center gap-space-xs px-space-md py-1.5 rounded font-label-md text-label-md bg-surface-container-low text-on-surface-variant hover:text-on-surface transition-all" id="tabBtn-phase3" onclick="switchTab('phase3')">
+<span class="font-label-sm text-label-sm opacity-60">03</span>
+<span>CREDENTIAL &amp; CONFERRAL</span>
+<span class="material-symbols-outlined text-[14px] text-tertiary">workspace_premium</span>
+</button>
+</div>
+<div class="hidden md:flex items-center gap-space-sm font-label-sm text-label-sm text-on-surface-variant">
+<span>AUTOSYNC: <span class="text-secondary">ACTIVE</span></span>
+<span class="text-outline">|</span>
+<span>SIGNATURE: <span class="text-primary font-code-inline">0x7B9...ED41</span></span>
+</div>
+</div>
+<!-- Primary Assessment Container -->
+<div class="w-full px-gutter-desktop py-space-md flex flex-col gap-space-xl">
+<!-- ==================== PHASE 1: COMMS CHECK ALPHA ==================== -->
+<section class="tab-panel flex flex-col gap-space-md" id="phase1">
+<!-- Section Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm bg-surface-container-low p-space-md rounded">
+<div>
+<div class="flex items-center gap-space-xs text-primary font-label-sm text-label-sm mb-0.5">
+<span>PHASE 01</span>
+<span>//</span>
+<span>DIAGNOSTIC TRIAGE DRILL</span>
+<span>//</span>
+<span class="text-secondary uppercase font-semibold">STATUS: PASSED 10/10 (100%)</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Comms Check Alpha: Diagnostic Exam &amp; Radio Protocol</h2>
+</div>
+<div class="flex items-center gap-space-sm self-start md:self-auto font-label-sm text-label-sm">
+<div class="bg-surface-container px-space-sm py-1 rounded text-on-surface-variant">
+<span>EXECUTED: </span><span class="text-on-surface">14 Nov 2024 · 09:41 UTC</span>
+</div>
+<div class="bg-secondary/15 text-secondary px-space-sm py-1 rounded flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+<span>VERIFIED ON IMMUTABLE LEDGER</span>
+</div>
+</div>
+</div>
+<!-- Question Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-space-md">
+<!-- Question 1: GIFT Multiple Choice Blast Radius -->
+<div class="bg-surface-container-low p-space-md rounded flex flex-col justify-between gap-space-md shadow-sm">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span class="text-primary font-semibold">Q1: BLAST RADIUS DISCRIMINATION (GIFT MCQ)</span>
+<span class="text-secondary bg-surface-container px-space-xs py-0.5 rounded">1.0 / 1.0 PT</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">
+              A primary Redis replica reports synchronization desync under 48,000 req/s ingress. Payment settlement returns <span class="font-code-inline text-code-inline text-error bg-surface-container px-1 py-0.5 rounded">HTTP 504</span> on 3.8% of requests. User session tokens are completely unaffected in the auxiliary cache. Under the On-Call Sev-Grid, what severity level must the Incident Commander declare, and what is the immediate paging blast-action?
+            </p>
+<div class="flex flex-col gap-space-xs pt-space-xs font-body-sm text-body-sm">
+<div class="p-space-sm rounded bg-surface-container-lowest text-on-surface-variant opacity-60 flex items-start gap-space-sm">
+<span class="font-label-sm text-label-sm text-outline mt-0.5">A.</span>
+<span>SEV-3: Non-blocking latency escalation. Escalate to DB-Oncall ticket queue via Jira.</span>
+</div>
+<div class="p-space-sm rounded bg-surface-container-lowest text-on-surface-variant opacity-60 flex items-start gap-space-sm">
+<span class="font-label-sm text-label-sm text-outline mt-0.5">B.</span>
+<span>SEV-2: Degraded payment flow without total disruption. Page primary Cache owner only.</span>
+</div>
+<div class="p-space-sm rounded bg-surface-container-high text-on-surface flex items-start gap-space-sm shadow-sm">
+<span class="material-symbols-outlined text-secondary text-[16px] mt-0.5 shrink-0">check_circle</span>
+<div class="flex flex-col gap-0.5">
+<span class="font-semibold text-secondary">C. SEV-1: Critical customer transaction loss (&gt;2% direct revenue impairment). Instantly spin War Room, page SRE Secondary &amp; Core Payments Lead, initiate blast-containment telemetry shedding.</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-code-inline bg-surface-container-low p-space-xs rounded mt-1">
+                    PromQL Trigger: sum(rate(http_requests_total{status=~"5.."}[2m])) / sum(rate(http_requests_total[2m])) &gt; 0.02
+                  </span>
+</div>
+</div>
+<div class="p-space-sm rounded bg-surface-container-lowest text-on-surface-variant opacity-60 flex items-start gap-space-sm">
+<span class="font-label-sm text-label-sm text-outline mt-0.5">D.</span>
+<span>SEV-0: Total infrastructure collapse. Execute global region evacuation via DNS weighted failover.</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded font-label-sm text-label-sm text-secondary flex items-center justify-between">
+<span>EVALUATION: CORRECT RESPONSE</span>
+<span class="text-on-surface-variant font-code-inline">PROMPT_ID: GIFT-MCQ-BR-09</span>
+</div>
+</div>
+<!-- Question 2: GIFT Multiple True/False Radio Protocol -->
+<div class="bg-surface-container-low p-space-md rounded flex flex-col justify-between gap-space-md shadow-sm">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span class="text-primary font-semibold">Q2: IC RADIO DISCIPLINE &amp; CLOSED-LOOP PROTOCOL</span>
+<span class="text-secondary bg-surface-container px-space-xs py-0.5 rounded">1.0 / 1.0 PT</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">
+              Evaluate the following operational statements regarding radio discipline and role execution during an active SEV-1 incident triage stream:
+            </p>
+<div class="flex flex-col gap-space-xs pt-space-xs font-body-sm text-body-sm">
+<div class="p-space-sm rounded bg-surface-container-high flex items-center justify-between">
+<div class="flex flex-col pr-space-sm">
+<span class="font-semibold text-on-surface">Statement 1: Closed-Loop Triad ("Transmit, Verify, Acknowledge")</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Commands issued by the IC require affirmative paraphrased readback before execution begins.</span>
+</div>
+<span class="font-label-sm text-label-sm px-space-sm py-0.5 bg-secondary/15 text-secondary font-bold rounded">TRUE [PASS]</span>
+</div>
+<div class="p-space-sm rounded bg-surface-container-high flex items-center justify-between">
+<div class="flex flex-col pr-space-sm">
+<span class="font-semibold text-on-surface">Statement 2: Ban on Silent Debugging</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Engineers on the voice bridge may mute and investigate independently without IC timebox limits.</span>
+</div>
+<span class="font-label-sm text-label-sm px-space-sm py-0.5 bg-error/15 text-error font-bold rounded">FALSE [PASS]</span>
+</div>
+<div class="p-space-sm rounded bg-surface-container-high flex items-center justify-between">
+<div class="flex flex-col pr-space-sm">
+<span class="font-semibold text-on-surface">Statement 3: Scribe / Comms Lead Separation</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">The IC must never simultaneously serve as internal timeline scribe or external status page publisher.</span>
+</div>
+<span class="font-label-sm text-label-sm px-space-sm py-0.5 bg-secondary/15 text-secondary font-bold rounded">TRUE [PASS]</span>
+</div>
+<div class="p-space-sm rounded bg-surface-container-high flex items-center justify-between">
+<div class="flex flex-col pr-space-sm">
+<span class="font-semibold text-on-surface">Statement 4: Direct Intervention Authority</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">IC directly executes hotfixes to speed up MTTR if the domain subject matter expert is slow to reply.</span>
+</div>
+<span class="font-label-sm text-label-sm px-space-sm py-0.5 bg-error/15 text-error font-bold rounded">FALSE [PASS]</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded font-label-sm text-label-sm text-secondary flex items-center justify-between">
+<span>EVALUATION: 4/4 ASSERTIONS ACCURATE</span>
+<span class="text-on-surface-variant font-code-inline">PROMPT_ID: GIFT-MTF-COMMS-21</span>
+</div>
+</div>
+</div>
+<!-- Terminal STDOUT Diagnostic Log Box -->
+<div class="bg-surface-container-lowest p-space-md rounded font-code-inline text-code-inline flex flex-col gap-space-xs text-on-surface-variant shadow-inner">
+<div class="flex items-center justify-between text-outline font-label-sm text-label-sm pb-1">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-surface-container-high"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-surface-container-high"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-surface-container-high"></span>
+<span class="text-on-surface font-label-md text-label-md ml-1">TERMINAL: automated-grading-agent://stdout</span>
+</div>
+<span class="text-secondary font-bold">EXIT CODE: 0</span>
+</div>
+<p class="text-primary">$ oncall-eval --suite gift-alpha-triage --candidate sarah.m --run-all-assertions</p>
+<p>[INIT] Loading GIFT rubric matrix v4.2.1 ... OK</p>
+<p>[EVAL] Assertion 1/10: Sev-1 Blast Radius Identification ....................... [PASS 14ms]</p>
+<p>[EVAL] Assertion 2/10: Radio Loop Triad Protocols ............................... [PASS 08ms]</p>
+<p>[EVAL] Assertion 3/10: PagerDuty Escalation Routing Tree ......................... [PASS 12ms]</p>
+<p>[EVAL] Assertion 4/10: Chaos Engineering Rollback Triggers ....................... [PASS 09ms]</p>
+<p>[EVAL] Assertion 5/10: Latency SLI / Error Budget Depletion Math ................. [PASS 18ms]</p>
+<p>[EVAL] Assertion 6/10: Split-Brain Quorum Calculation ............................ [PASS 11ms]</p>
+<p>[EVAL] Assertion 7/10: Stakeholder Comms Broadcast Cadence ....................... [PASS 15ms]</p>
+<p>[EVAL] Assertion 8/10: Postmortem Blameless Phrasing Guardrails .................. [PASS 22ms]</p>
+<p>[EVAL] Assertion 9/10: Cascading Failover Throttling ............................. [PASS 16ms]</p>
+<p>[EVAL] Assertion 10/10: Ephemeral Scribe Log Immutability ......................... [PASS 17ms]</p>
+<div class="pt-space-xs text-secondary font-bold flex flex-wrap items-center justify-between">
+<span>[PASS] Test run complete. 10/10 assertions passed. Execution time: 142ms.</span>
+<span class="text-tertiary font-normal">GIFT hash: 0x8f2a991bce47d022 verified on chain.</span>
+</div>
+</div>
+</section>
+<!-- ==================== PHASE 2: POSTMORTEM DEFENSE ==================== -->
+<section class="tab-panel flex flex-col gap-space-md" id="phase2">
+<!-- Section Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm bg-surface-container-low p-space-md rounded">
+<div>
+<div class="flex items-center gap-space-xs text-primary font-label-sm text-label-sm mb-0.5">
+<span>PHASE 02</span>
+<span>//</span>
+<span>CAPSTONE PROJECT SUBMISSION</span>
+<span>//</span>
+<span class="text-secondary uppercase font-semibold">SCORE: 98 / 100 · DEFENSE APPROVED</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Production Incident Postmortem Defense &amp; Blameless Peer Review</h2>
+</div>
+<div class="flex flex-wrap items-center gap-space-xs">
+<button class="bg-surface-container-high hover:bg-surface-bright text-on-surface px-space-sm py-1.5 rounded font-label-sm text-label-sm flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px] text-primary">download</span>
+<span>Export .md</span>
+</button>
+<button class="bg-surface-container-high hover:bg-surface-bright text-on-surface px-space-sm py-1.5 rounded font-label-sm text-label-sm flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px] text-error">picture_as_pdf</span>
+<span>Export PDF</span>
+</button>
+<button class="bg-primary hover:bg-primary-container text-on-primary font-semibold px-space-md py-1.5 rounded font-label-sm text-label-sm flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">terminal</span>
+<span>Push to GHE Runbooks</span>
+</button>
+</div>
+</div>
+<!-- Main Postmortem Workspace: Split View Artifact & Staff Review -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md">
+<!-- Markdown Artifact Viewer (7 cols) -->
+<div class="lg:col-span-7 bg-surface-container-low rounded flex flex-col shadow-sm">
+<!-- File Tab Header -->
+<div class="bg-surface-container-lowest px-space-md py-space-sm flex items-center justify-between rounded-t">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">description</span>
+<span class="font-code-inline text-code-inline text-on-surface font-semibold">postmortem-sev1-redis-failover-2024-11.md</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary bg-secondary/15 px-space-xs py-0.5 rounded font-semibold">BLAMELESS VALIDATED</span>
+</div>
+<!-- Document Content Body -->
+<div class="p-space-md flex flex-col gap-space-md font-body-sm text-body-sm text-on-surface-variant overflow-y-auto max-h-[700px]">
+<!-- Overview Box -->
+<div class="bg-surface-container-lowest p-space-md rounded flex flex-col gap-space-xs">
+<span class="font-headline-md text-headline-md text-on-surface font-bold">SEV-1 Postmortem Defense: Redis Cluster Split-Brain &amp; Cascading Ingress Mitigation</span>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-space-sm pt-space-xs font-label-sm text-label-sm">
+<div>
+<span class="text-outline block">INCIDENT DURATION</span>
+<span class="text-on-surface font-bold">34 minutes</span>
+</div>
+<div>
+<span class="text-outline block">CANDIDATE MTTR</span>
+<span class="text-secondary font-bold">14.2 minutes</span>
+</div>
+<div>
+<span class="text-outline block">IMPACTED TRAFFIC</span>
+<span class="text-error font-bold">48k req/s ingress</span>
+</div>
+<div>
+<span class="text-outline block">DATA LOSS</span>
+<span class="text-secondary font-bold">0 records (Zero)</span>
+</div>
+</div>
+</div>
+<!-- Incident Summary -->
+<div class="flex flex-col gap-space-xs">
+<h3 class="font-headline-md text-headline-md text-on-surface">1. Executive Summary &amp; Blast Radius</h3>
+<p class="leading-relaxed">
+                At 14:18 UTC, an automated network partition drill in AWS eu-west-1 triggered an unhandled quorum race condition within the primary Redis sentinel ring. The failure mode forced concurrent split-brain master elections across subnets B and C, escalating auth latency beyond 2,400ms. Sarah M. assumed role as Incident Commander (IC) at T+4m, declared SEV-1, and instituted an emergency telemetry shed at T+6m, preserving Core Payment Authorization paths with zero transaction drop.
+              </p>
+</div>
+<!-- 5-Whys Timeline Root Cause Analysis -->
+<div class="flex flex-col gap-space-xs">
+<h3 class="font-headline-md text-headline-md text-on-surface">2. Root Cause Analysis (5-Whys Breakdown)</h3>
+<div class="flex flex-col gap-space-xs font-code-inline text-code-inline bg-surface-container-lowest p-space-sm rounded">
+<div class="flex items-start gap-space-sm text-on-surface">
+<span class="text-primary font-bold">Why 1:</span>
+<span>Payment ingress returned HTTP 504 gateway timeouts on auxiliary auth checks.</span>
+</div>
+<div class="flex items-start gap-space-sm text-on-surface">
+<span class="text-primary font-bold">Why 2:</span>
+<span>Redis cluster client sockets hung indefinitely awaiting master node write-locks.</span>
+</div>
+<div class="flex items-start gap-space-sm text-on-surface">
+<span class="text-primary font-bold">Why 3:</span>
+<span>Two separate sentinel nodes claimed leadership during an intermittent AWS cross-AZ route flap.</span>
+</div>
+<div class="flex items-start gap-space-sm text-on-surface">
+<span class="text-primary font-bold">Why 4:</span>
+<span>Cluster quorum configuration was defined as N/2 instead of strict (N/2)+1 across odd AZ nodes.</span>
+</div>
+<div class="flex items-start gap-space-sm text-on-surface">
+<span class="text-primary font-bold">Why 5:</span>
+<span>Terraform sentinel module defaulted to even-numbered distribution during previous cluster expansion.</span>
+</div>
+</div>
+</div>
+<!-- Action Items Table -->
+<div class="flex flex-col gap-space-xs">
+<h3 class="font-headline-md text-headline-md text-on-surface">3. Preventive Action Items &amp; Ownership</h3>
+<div class="overflow-x-auto">
+<table class="w-full text-left font-body-sm text-body-sm">
+<thead class="bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm uppercase">
+<tr>
+<th class="p-space-sm">PRIORITY</th>
+<th class="p-space-sm">ACTION ITEM DESCRIPTION</th>
+<th class="p-space-sm">OWNER</th>
+<th class="p-space-sm">DEADLINE</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<tr class="bg-surface-container-high/40">
+<td class="p-space-sm font-label-sm text-label-sm text-error font-bold">P0</td>
+<td class="p-space-sm text-on-surface">Enforce odd-node sentinel placement + quorum hard-lock in Terraform provider</td>
+<td class="p-space-sm font-code-inline text-primary">@sarah.m</td>
+<td class="p-space-sm font-label-sm text-label-sm">T+48h [DONE]</td>
+</tr>
+<tr class="bg-surface-container-high/20">
+<td class="p-space-sm font-label-sm text-label-sm text-tertiary font-bold">P1</td>
+<td class="p-space-sm text-on-surface">Implement circuit-breaker bypass on secondary session store during cluster desync</td>
+<td class="p-space-sm font-code-inline text-on-surface-variant">@payments-sre</td>
+<td class="p-space-sm font-label-sm text-label-sm">Sprint 42</td>
+</tr>
+<tr class="bg-surface-container-high/10">
+<td class="p-space-sm font-label-sm text-label-sm text-outline font-bold">P2</td>
+<td class="p-space-sm text-on-surface">Publish automated chaos experiment for multi-AZ sentinel isolation in staging</td>
+<td class="p-space-sm font-code-inline text-on-surface-variant">@chaos-guild</td>
+<td class="p-space-sm font-label-sm text-label-sm">Sprint 43</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<!-- Instructor & Staff SRE Peer Review Drawer (5 cols) -->
+<div class="lg:col-span-5 flex flex-col gap-space-md">
+<!-- Staff IC Evaluation Card -->
+<div class="bg-surface-container-low p-space-md rounded flex flex-col gap-space-md shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container text-[18px]">verified</span>
+</div>
+<div>
+<span class="font-headline-md text-headline-md text-on-surface font-semibold block leading-tight">Staff IC Sign-Off</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Peer Review &amp; Defense Board</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-headline-lg text-headline-lg text-secondary font-bold">98/100</span>
+<span class="font-label-sm text-label-sm text-outline block">FINAL GRADE</span>
+</div>
+</div>
+<!-- Rubric Breakdown Bars -->
+<div class="flex flex-col gap-space-xs font-label-sm text-label-sm">
+<div class="flex items-center justify-between">
+<span class="text-on-surface">Blast Radius Containment</span>
+<span class="text-secondary font-bold">25 / 25</span>
+</div>
+<div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden">
+<div class="bg-secondary h-full w-full"></div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="text-on-surface">Radio Protocol &amp; IC Demeanor</span>
+<span class="text-secondary font-bold">24 / 25</span>
+</div>
+<div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden">
+<div class="bg-secondary h-full w-[96%]"></div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="text-on-surface">Actionable Prevention Depth</span>
+<span class="text-secondary font-bold">25 / 25</span>
+</div>
+<div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden">
+<div class="bg-secondary h-full w-full"></div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="text-on-surface">Blameless Postmortem Tone</span>
+<span class="text-secondary font-bold">24 / 25</span>
+</div>
+<div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden">
+<div class="bg-secondary h-full w-[96%]"></div>
+</div>
+</div>
+<!-- Reviewer Notes & Terminal Comments -->
+<div class="flex flex-col gap-space-xs pt-space-xs">
+<span class="font-label-sm text-label-sm text-outline uppercase font-semibold">STAFF COMMENTS &amp; AUDIT TRAIL</span>
+<div class="bg-surface-container-lowest p-space-sm rounded flex flex-col gap-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-primary font-bold">Priya Raman · Staff SRE</span>
+<span class="text-outline">T+18h defense session</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface">
+                  "Exemplary blast-radius containment under pressure. The explicit decision to shed non-critical telemetry at T+6m protected payment auth buffers from catastrophic memory exhaustion. Postmortem tone is uncompromisingly blameless and systemic."
+                </p>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded flex flex-col gap-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-tertiary font-bold">Marek Lis · Head of Incident Response</span>
+<span class="text-outline">T+21h peer audit</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface">
+                  "P0 action item was already committed with tests before the oral defense began. Sarah demonstrated complete radio control throughout the simulation chaos injects."
+                </p>
+</div>
+</div>
+<!-- Immutable Signature Stamp -->
+<div class="bg-surface-container p-space-sm rounded flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>DEFENSE VERIFIED BY BOARD:</span>
+<span class="text-secondary font-code-inline font-bold">SIGNED // DUAL-PEER</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== PHASE 3: CREDENTIAL & CONFERRAL ==================== -->
+<section class="tab-panel flex flex-col gap-space-lg" id="phase3">
+<!-- Section Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm bg-surface-container-low p-space-md rounded">
+<div>
+<div class="flex items-center gap-space-xs text-secondary font-label-sm text-label-sm mb-0.5">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+<span>PHASE 03</span>
+<span>//</span>
+<span>ACADEMIC BOARD CONFERRAL</span>
+<span>//</span>
+<span class="uppercase font-semibold">CREDENTIAL ISSUED &amp; ACTIVE</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Certified Incident Commander (CIC-SRE) Credential</h2>
+</div>
+<div class="flex items-center gap-space-xs font-label-sm text-label-sm bg-surface-container px-space-sm py-1 rounded text-on-surface-variant">
+<span>REGISTRY: </span>
+<span class="text-primary font-code-inline">ledger.oncall.academy/cic/sarah-m</span>
+</div>
+</div>
+<!-- High-End Terminal-Grade Certificate Document -->
+<div class="w-full bg-surface-container-lowest p-space-lg sm:p-space-xl rounded relative overflow-hidden shadow-2xl flex flex-col justify-between gap-space-xl">
+<!-- Cryptographic Geometric Background Watermark & Grid Accent -->
+<div class="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-primary/5 pointer-events-none blur-3xl"></div>
+<div class="absolute -left-16 -bottom-16 w-80 h-80 rounded-full bg-secondary/5 pointer-events-none blur-3xl"></div>
+<!-- Certificate Header -->
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-space-md relative z-10">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[28px]">terminal</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface tracking-wider font-bold">ON-CALL ACADEMY</span>
+<span class="font-label-sm text-label-sm text-outline tracking-widest uppercase">SITE RELIABILITY &amp; INCIDENT COMMAND FACULTY</span>
+</div>
+</div>
+<div class="flex flex-col items-start sm:items-end font-label-sm text-label-sm">
+<div class="flex items-center gap-space-xs text-secondary bg-surface-container-high px-space-sm py-1 rounded font-semibold">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>VERIFIED PRODUCTION CREDENTIAL</span>
+</div>
+<span class="text-outline mt-1 font-code-inline">REG: CIC-2024-C04-0982-SM</span>
+</div>
+</div>
+<!-- Certificate Core Text Body -->
+<div class="flex flex-col items-center text-center py-space-xl px-space-sm relative z-10 gap-space-md">
+<div class="flex items-center gap-space-sm font-label-sm text-label-sm text-primary uppercase tracking-widest bg-surface-container px-space-md py-1 rounded">
+<span>+---+ TAMPER-PROOF PRODUCTION CERTIFICATION +---+</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface font-extrabold tracking-tight max-w-3xl">
+            CERTIFIED INCIDENT COMMANDER
+          </h1>
+<span class="font-label-lg text-label-lg text-secondary tracking-widest font-semibold uppercase">
+            [ CIC - SRE LEVEL II ]
+          </span>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed pt-space-sm">
+            Conferred by the Academic Council upon <span class="text-on-surface font-bold underline decoration-primary underline-offset-4">SARAH M.</span> for demonstrated tactical mastery of live production chaos, high-frequency blast radius mitigation, closed-loop radio protocol, and blameless distributed disaster recovery.
+          </p>
+</div>
+<!-- Certificate Signatures and Ledger Proof Footer -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md pt-space-lg bg-surface-container-low/40 p-space-md rounded relative z-10 items-end">
+<!-- Signature 1 -->
+<div class="flex flex-col gap-1">
+<span class="font-code-inline text-code-inline text-primary italic">/s/ Priya Raman</span>
+<div class="w-full h-0.5 bg-surface-container-high my-1"></div>
+<span class="font-label-md text-label-md text-on-surface font-bold">Priya Raman</span>
+<span class="font-label-sm text-label-sm text-outline">Staff SRE (ex-Google / Stripe)</span>
+<span class="font-label-sm text-label-sm text-outline">Lead Evaluator, Cohort 04</span>
+</div>
+<!-- Middle Cryptographic Stamp -->
+<div class="flex flex-col items-center text-center gap-1 font-label-sm text-label-sm">
+<div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center mb-1">
+<span class="material-symbols-outlined text-secondary text-[26px]">gavel</span>
+</div>
+<span class="text-on-surface font-bold uppercase tracking-wider">CONFERRED 14 NOV 2024</span>
+<span class="text-outline font-code-inline text-[10px]">sha256:7b91ee4a72d1f909ed41</span>
+</div>
+<!-- Signature 2 -->
+<div class="flex flex-col sm:items-end text-left sm:text-right gap-1">
+<span class="font-code-inline text-code-inline text-tertiary italic">/s/ Marek Lis</span>
+<div class="w-full h-0.5 bg-surface-container-high my-1"></div>
+<span class="font-label-md text-label-md text-on-surface font-bold">Marek Lis</span>
+<span class="font-label-sm text-label-sm text-outline">Head of Incident Response</span>
+<span class="font-label-sm text-label-sm text-outline">Chair of Academic Board</span>
+</div>
+</div>
+</div>
+<!-- Interactive Credential Action Deck -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-space-sm">
+<button class="bg-surface-container-low hover:bg-surface-container text-on-surface p-space-md rounded flex items-center gap-space-sm transition-all shadow-sm" onclick="alert('Querying Ethereum Attestation Service Ledger: Signature 0x7b91e...ed41 confirmed on-chain at block 21,184,902.')">
+<span class="material-symbols-outlined text-primary text-[22px]">link</span>
+<div class="flex flex-col text-left">
+<span class="font-label-md text-label-md font-semibold">Verify on Ledger</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Immutable EAS attestation</span>
+</div>
+</button>
+<a class="bg-surface-container-low hover:bg-surface-container text-on-surface p-space-md rounded flex items-center gap-space-sm transition-all shadow-sm" href="https://linkedin.com" target="_blank">
+<span class="material-symbols-outlined text-tertiary text-[22px]">share</span>
+<div class="flex flex-col text-left">
+<span class="font-label-md text-label-md font-semibold">Add to LinkedIn</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Instant badge sync (1-click)</span>
+</div>
+</a>
+<button class="bg-surface-container-low hover:bg-surface-container text-on-surface p-space-md rounded flex items-center gap-space-sm transition-all shadow-sm" onclick="alert('Generating high-resolution vector PDF certificate with embedded cryptographic signature...')">
+<span class="material-symbols-outlined text-error text-[22px]">print</span>
+<div class="flex flex-col text-left">
+<span class="font-label-md text-label-md font-semibold">Download Print PDF</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">300 DPI vector artwork</span>
+</div>
+</button>
+<button class="bg-surface-container-low hover:bg-surface-container text-on-surface p-space-md rounded flex items-center gap-space-sm transition-all shadow-sm" onclick="copyBadgeSnippet()">
+<span class="material-symbols-outlined text-secondary text-[22px]">code</span>
+<div class="flex flex-col text-left">
+<span class="font-label-md text-label-md font-semibold">Embed SVG Badge</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant" id="badgeCopyNotice">Copy Markdown snippet</span>
+</div>
+</button>
+</div>
+<!-- Raw Markdown Badge Embed Terminal Box -->
+<div class="bg-surface-container-lowest p-space-md rounded flex flex-col gap-space-xs font-code-inline text-code-inline shadow-inner">
+<div class="flex items-center justify-between text-outline font-label-sm text-label-sm">
+<span>GITHUB README / REPO PROFILE BADGE CODE</span>
+<button class="text-primary hover:underline font-label-sm text-label-sm" onclick="copyBadgeSnippet()">Copy Snippet</button>
+</div>
+<div class="bg-surface-container-high/40 p-space-sm rounded text-primary select-all overflow-x-auto">
+<code>[![Certified Incident Commander](https://img.shields.io/badge/ONCALL-CIC--SRE--CERTIFIED-00c853?style=flat-square&amp;logo=terminal)](https://oncall.academy/verify/CIC-2024-C04-0982-SM)</code>
+</div>
+</div>
+</section>
+<!-- ==================== ALUMNI DIRECTORY & NEXT STEPS ==================== -->
+<section class="bg-surface-container-low p-space-md sm:p-space-lg rounded flex flex-col gap-space-md shadow-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div>
+<div class="flex items-center gap-space-xs text-primary font-label-sm text-label-sm mb-0.5">
+<span>ALUMNI NETWORK</span>
+<span>//</span>
+<span>POST-GRADUATION CADENCE</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Cohort 04 Alumni Roster &amp; Continuous Readiness</h3>
+</div>
+<div class="flex items-center gap-space-xs bg-surface-container px-space-sm py-1 rounded font-label-sm text-label-sm text-secondary">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+<span>48 SRE GRADUATES LIVE</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Next Step 1 -->
+<div class="bg-surface-container-lowest p-space-md rounded flex flex-col justify-between gap-space-sm shadow-sm">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">forum</span>
+<span class="font-bold">#alumni-incident-commanders</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface">Private War Room Discord</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Access the vetted back-channel where active platform leads share real-time incident war stories, zero-day mitigation scripts, and SRE compensation benchmarks.
+            </p>
+</div>
+<a class="inline-flex items-center gap-1 text-primary hover:underline font-label-md text-label-md pt-space-xs" href="#">
+<span>Join Discord Bridge</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+<!-- Next Step 2 -->
+<div class="bg-surface-container-lowest p-space-md rounded flex flex-col justify-between gap-space-sm shadow-sm">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-tertiary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+<span class="font-bold">BI-MONTHLY DRILL</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface">Live Chaos Injection Schedule</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Next alumni live drill: <span class="text-on-surface font-semibold">05 Dec 2024 (18:00 UTC)</span>. Scenario: Multi-region DNS hijacking &amp; TLS certificate pinning emergency swap.
+            </p>
+</div>
+<a class="inline-flex items-center gap-1 text-primary hover:underline font-label-md text-label-md pt-space-xs" href="#">
+<span>Add to Google Calendar</span>
+<span class="material-symbols-outlined text-[14px]">event</span>
+</a>
+</div>
+<!-- Next Step 3 -->
+<div class="bg-surface-container-lowest p-space-md rounded flex flex-col justify-between gap-space-sm shadow-sm">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">psychology</span>
+<span class="font-bold">MAINTENANCE</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface">Refresher Recertification</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Your CIC-SRE credential remains active for 24 months. Complete 4 community chaos drills annually to automatically maintain tamper-proof ledger standing.
+            </p>
+</div>
+<span class="font-label-sm text-label-sm text-outline pt-space-xs font-code-inline">EXPIRY: 14 NOV 2026</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Interactive Tab Switching Script -->
+<script>
+    function switchTab(targetId) {
+      const tabs = ['phase1', 'phase2', 'phase3'];
+      tabs.forEach(id => {
+        const panel = document.getElementById(id);
+        const btn = document.getElementById('tabBtn-' + id);
+        if (id === targetId) {
+          panel.classList.remove('hidden');
+          btn.className = 'tab-trigger flex items-center gap-space-xs px-space-md py-1.5 rounded font-label-md text-label-md bg-surface-container-high text-primary transition-all';
+        } else {
+          // Keep accessible in page flow or toggle
+          btn.className = 'tab-trigger flex items-center gap-space-xs px-space-md py-1.5 rounded font-label-md text-label-md bg-surface-container-low text-on-surface-variant hover:text-on-surface transition-all';
+        }
+      });
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function copyBadgeSnippet() {
+      const snippet = '[![Certified Incident Commander](https://img.shields.io/badge/ONCALL-CIC--SRE--CERTIFIED-00c853?style=flat-square&logo=terminal)](https://oncall.academy/verify/CIC-2024-C04-0982-SM)';
+      navigator.clipboard.writeText(snippet).then(() => {
+        const notice = document.getElementById('badgeCopyNotice');
+        if (notice) {
+          notice.textContent = 'Copied to Clipboard!';
+          notice.classList.add('text-secondary');
+          setTimeout(() => {
+            notice.textContent = 'Copy Markdown snippet';
+            notice.classList.remove('text-secondary');
+          }, 2500);
+        }
+      });
+    }
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest shadow-[0_-1px_8px_rgba(0,0,0,0.4)]"><div class="w-full px-gutter-desktop py-space-xl flex flex-col gap-space-lg"><div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md"><div class="flex flex-wrap items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container"><span class="w-2 h-2 rounded-full bg-secondary"></span><span class="font-label-sm text-label-sm text-on-surface uppercase">INCIDENT MESH: DEGRADED 0 / HEALTHY 284</span></div><div class="flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container"><span class="material-symbols-outlined text-primary text-[14px]">verified_user</span><span class="font-label-sm text-label-sm text-on-surface-variant">SLA 99.99% GUARANTEE</span></div></div><div class="flex items-center gap-space-sm font-code-inline text-code-inline text-primary bg-surface-container-low px-space-md py-1.5 rounded"><span class="text-on-surface-variant select-none">$</span><span>curl -s https://oncall.academy/curriculum.json | jq .</span></div></div><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md pt-space-md"><div class="font-label-sm text-label-sm text-on-surface-variant">© 2025 ON-CALL ACADEMY INC. ALL RIGHTS RESERVED. PRODUCTION SITE RELIABILITY INFRASTRUCTURE.</div><div class="flex items-center gap-space-lg font-body-sm text-body-sm"><a class="text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1" data-path="community" href="#"><span class="font-label-sm text-label-sm text-secondary-fixed">#slack-community</span></a><a class="text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1" data-path="discord" href="#"><span class="font-label-sm text-label-sm text-tertiary">#discord-war-room</span></a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="privacy-security" href="#">Privacy &amp; Security</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="incident-status" href="#">System Status</a></div></div></div></footer></body></html>

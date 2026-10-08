@@ -10,11 +10,21 @@ import routeRoutes from "@/components/Routes/routes";
 import { durationToMinutes, formatMoney } from "./format";
 import { FormatKey, formatFromTopicType } from "./formats";
 
+export interface LandingTopic {
+  id: number;
+  title: string;
+  format: FormatKey | null;
+  minutes: number;
+  /** Free preview (open without enrolment). */
+  preview: boolean;
+}
+
 export interface LandingLesson {
   id: number;
   title: string;
   summary?: string | null;
   formats: FormatKey[];
+  topics: LandingTopic[];
   topicCount: number;
   minutes: number;
 }
@@ -71,6 +81,13 @@ const lessonsFromCourse = (course?: API.Course): LandingLesson[] =>
       title: lesson.title,
       summary: lesson.summary,
       formats,
+      topics: topics.map((topic) => ({
+        id: topic.id,
+        title: topic.title,
+        format: formatFromTopicType((topic as { topicable_type?: string }).topicable_type),
+        minutes: durationToMinutes(topic.duration),
+        preview: Boolean((topic as { preview?: boolean }).preview),
+      })),
       topicCount: topics.length,
       minutes,
     };

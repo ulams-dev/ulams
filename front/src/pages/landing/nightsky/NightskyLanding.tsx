@@ -1,125 +1,91 @@
-import React from "react";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import routeRoutes from "@/components/Routes/routes";
 import { useBareLayout } from "@/components/_App/bareLayout";
 import { InPageLink, SkipLink } from "../shared/InPageLink";
 import { useMenu } from "../shared/useMenu";
-import { FormatIcon } from "../shared/FormatIcon";
-import type { FormatKey } from "../shared/formats";
-import { formatDayMonth, formatMoney } from "../shared/format";
+import { formatDayMonth, formatMinutes, formatMoney } from "../shared/format";
 import { useLandingData, webinarHref } from "../shared/useLandingData";
-import { MissionActivity, NIGHTSKY } from "./content";
+import { FORMAT_KID, NIGHTSKY } from "./content";
 import styles from "./NightskyLanding.module.css";
 
-const NUNITO =
-  "https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap";
+const FONTS =
+  "https://fonts.googleapis.com/css2?family=Comfortaa:wght@600;700&family=Quicksand:wght@500;600;700&display=swap";
 
-const ACTIVITY_FORMAT: Record<MissionActivity, FormatKey> = {
-  watch: "video",
-  look: "image",
-  play: "interactive",
-  print: "pdf",
-  read: "reading",
-  listen: "audio",
-  explore: "embed",
-  game: "scorm",
-  challenge: "tracked",
-  quiz: "quiz",
-  make: "project",
-};
-
-const FORMAT_ACTIVITY: Record<FormatKey, MissionActivity> = {
-  video: "watch",
-  image: "look",
-  interactive: "play",
-  pdf: "print",
-  reading: "read",
-  audio: "listen",
-  embed: "explore",
-  scorm: "game",
-  tracked: "challenge",
-  quiz: "quiz",
-  project: "make",
-};
-
-const COLORS = ["yellow", "lilac", "coral", "yellow", "mint", "lilac", "coral"] as const;
-
-/** Orbi, the robot guide, waving from a rocket. */
-const OrbiRocket: React.FC = () => (
-  <svg className={styles.orbi} viewBox="0 0 320 360" role="img" aria-labelledby="orbi-title">
-    <title id="orbi-title">Orbi the robot waving from the window of a small rocket</title>
-    <g className={styles.flame}>
-      <path d="M135 300 C140 335 160 352 160 352 C160 352 180 335 185 300 Z" fill="#FF6B6B" />
-      <path d="M147 300 C150 322 160 334 160 334 C160 334 170 322 173 300 Z" fill="#FFD23F" />
-    </g>
-    <g stroke="#13153A" strokeWidth="5" strokeLinejoin="round">
-      <path d="M160 20 C215 60 230 140 222 260 L98 260 C90 140 105 60 160 20 Z" fill="#F2F0FF" />
-      <path d="M98 205 L58 262 L62 300 L100 268 Z" fill="#FF6B6B" />
-      <path d="M222 205 L262 262 L258 300 L220 268 Z" fill="#FF6B6B" />
-      <path d="M118 258 L202 258 L192 300 L128 300 Z" fill="#9B8CFF" />
-      <circle cx="160" cy="140" r="48" fill="#2A2E73" />
-    </g>
-    {/* Orbi */}
-    <g stroke="#13153A" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="160" y1="104" x2="160" y2="116" />
-      <circle cx="160" cy="100" r="6" fill="#FFD23F" />
-      <rect x="132" y="116" width="56" height="44" rx="14" fill="#3DDC97" />
-      <circle cx="148" cy="136" r="6" fill="#13153A" />
-      <circle cx="172" cy="136" r="6" fill="#13153A" />
-      <path d="M150 150 Q160 157 170 150" fill="none" />
-      <path className={styles.wave} d="M188 150 L214 118" fill="none" />
-      <circle className={styles.waveHand} cx="216" cy="114" r="8" fill="#3DDC97" />
-    </g>
-    <circle cx="174" cy="132" r="2" fill="#fff" />
-    <circle cx="150" cy="132" r="2" fill="#fff" />
-  </svg>
+/** Decorative emoji: hidden from assistive technology, the text next to it carries the meaning. */
+const Emoji: React.FC<{ children: string; className?: string }> = ({ children, className }) => (
+  <span className={className ?? styles.emoji} aria-hidden="true">
+    {children}
+  </span>
 );
 
-const BadgeShape: React.FC<{ shape: "moon" | "planet" | "star" | "rocket" }> = ({ shape }) => (
-  <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false" className={styles.badgeIcon}>
-    <g fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
-      {shape === "moon" && <path d="M40 12a22 22 0 1 0 12 30A18 18 0 0 1 40 12z" />}
-      {shape === "planet" && (
-        <>
-          <circle cx="32" cy="32" r="14" />
-          <path d="M8 40c6 6 42-6 48-18" />
-        </>
-      )}
-      {shape === "star" && <path d="M32 8l7 15 16 2-12 11 3 16-14-8-14 8 3-16L9 25l16-2z" />}
-      {shape === "rocket" && (
-        <>
-          <path d="M32 6c10 8 13 20 11 36H21C19 26 22 14 32 6z" />
-          <circle cx="32" cy="24" r="5" />
-          <path d="M21 34l-8 10v6l9-6M43 34l8 10v6l-9-6M27 46l5 10 5-10" />
-        </>
-      )}
+/** Orbi, the robot guide, riding a small rocket. */
+const OrbiRocket: React.FC = () => (
+  <svg className={styles.orbi} viewBox="0 0 240 300" role="img" aria-labelledby="orbi-title">
+    <title id="orbi-title">Orbi the robot smiling from the top of a small purple rocket</title>
+    <g className={styles.flame}>
+      <path d="M100 250 C104 280 120 296 120 296 C120 296 136 280 140 250 Z" fill="#FF6B6B" />
+      <path d="M109 250 C111 268 120 280 120 280 C120 280 129 268 131 250 Z" fill="#FFD23F" />
+    </g>
+    {/* rocket */}
+    <path d="M120 70 C150 100 160 160 152 240 L88 240 C80 160 90 100 120 70 Z" fill="#2F3157" />
+    <path d="M88 180 L50 240 L92 236 Z" fill="#4533A3" />
+    <path d="M152 180 L190 240 L148 236 Z" fill="#4533A3" />
+    <path d="M96 236 L144 236 L136 256 L104 256 Z" fill="#9B8CFF" />
+    {/* antenna */}
+    <line x1="120" y1="38" x2="120" y2="64" stroke="#FFD23F" strokeWidth="5" strokeLinecap="round" />
+    <circle cx="120" cy="34" r="9" fill="#FFD23F" />
+    {/* head */}
+    <rect x="72" y="62" width="96" height="78" rx="36" fill="#C8BFFF" />
+    <rect x="84" y="78" width="72" height="44" rx="22" fill="#13153A" />
+    <path d="M96 102 q8 -10 16 0" fill="none" stroke="#58F1AA" strokeWidth="5" strokeLinecap="round" />
+    <path d="M128 102 q8 -10 16 0" fill="none" stroke="#58F1AA" strokeWidth="5" strokeLinecap="round" />
+    <circle cx="66" cy="102" r="10" fill="#FFD23F" />
+    <circle cx="174" cy="102" r="10" fill="#FFD23F" />
+    {/* body + scarf */}
+    <rect x="86" y="140" width="68" height="44" rx="20" fill="#C8BFFF" />
+    <path d="M84 146 Q120 162 156 146 L156 156 Q120 172 84 156 Z" fill="#FFD23F" />
+    <g className={styles.wave}>
+      <path d="M154 160 L182 128" stroke="#C8BFFF" strokeWidth="12" strokeLinecap="round" />
+      <circle cx="184" cy="124" r="9" fill="#FFD23F" />
     </g>
   </svg>
 );
 
 const NightskyLanding: React.FC = () => {
   useBareLayout();
+  const history = useHistory();
   const data = useLandingData(NIGHTSKY.courseTitleHint);
   const menu = useMenu();
+  const [email, setEmail] = useState("");
   const brand = data.companyName || NIGHTSKY.brand;
 
-  const missions = data.lessons.length
-    ? data.lessons.map((lesson, i) => ({
-        title: lesson.title.replace(/^mission\s*\d+[:.\s—-]*/i, ""),
-        blurb: lesson.summary || NIGHTSKY.missions[i]?.blurb || "",
-        activities: lesson.formats.length
-          ? Array.from(new Set(lesson.formats.map((f) => FORMAT_ACTIVITY[f])))
-          : NIGHTSKY.missions[i]?.activities ?? [],
-        color: COLORS[i % COLORS.length],
-      }))
-    : NIGHTSKY.missions;
+  const missions = NIGHTSKY.missions.map((copy, i) => {
+    const lesson = data.lessons[i];
+    if (!lesson) return copy;
+    const topics = lesson.topics.length
+      ? lesson.topics
+          .filter((topic) => topic.format)
+          .slice(0, 3)
+          .map((topic) => ({ title: topic.title, format: topic.format! }))
+      : copy.topics;
+    return {
+      ...copy,
+      title: lesson.title.replace(/^mission\s*\d+\s*[:.·—–-]?\s*/i, "") || copy.title,
+      blurb: lesson.summary || copy.blurb,
+      minutes: lesson.minutes ? formatMinutes(lesson.minutes) : copy.minutes,
+      topics,
+    };
+  });
+  const regular = missions.slice(0, 6);
+  const capstone = missions[6];
+
+  const topicTotal = data.lessons.reduce((sum, lesson) => sum + lesson.topicCount, 0);
 
   const family = data.products.find((p) => /family|subscription/i.test(p.name ?? ""));
   const familyPrice = family ? formatMoney(family.gross_price ?? family.price, data.currency) : null;
-  const parents = NIGHTSKY.parents.map((item, i) =>
-    i === 3 && familyPrice ? { ...item, title: `${familyPrice} a month` } : item
-  );
+  const familyLabel = `${familyPrice ?? "€6"}/month`;
 
   const event = data.events[0];
   const eventStart = (event as { started_at?: string } | undefined)?.started_at;
@@ -130,8 +96,6 @@ const NightskyLanding: React.FC = () => {
         date: formatDayMonth(eventStart) ?? NIGHTSKY.events.party.date,
       }
     : NIGHTSKY.events.party;
-  // The events pages are not routed in this front; sign-up is the way in.
-  const partyHref = routeRoutes.register;
 
   const webinar = data.webinars[0];
   const webinarStart = (webinar as { active_from?: string } | undefined)?.active_from;
@@ -143,252 +107,582 @@ const NightskyLanding: React.FC = () => {
       }
     : NIGHTSKY.events.webinar;
 
+  const stats = [
+    { value: "7", label: "missions on the adventure map", tone: "mint" },
+    { value: topicTotal ? String(topicTotal) : "21", label: "hands-on topics to explore", tone: "yellow" },
+    { value: "10–15", label: "minutes per mission", tone: "lilac" },
+    { value: familyLabel, label: "family plan, Mission 1 free", tone: "coral" },
+  ];
+
+  const onSignup = (event: React.FormEvent) => {
+    event.preventDefault();
+    history.push({ pathname: routeRoutes.register, state: { email } });
+  };
+
+  const navLinks = [
+    { to: "missions", label: "Missions" },
+    { to: "parents", label: "For parents" },
+    { to: "teachers", label: "For teachers" },
+    { to: "events", label: "Events & star parties" },
+    { to: "badges", label: "Badges" },
+  ];
+
   return (
     <div className={styles.page}>
       <Helmet>
         <html lang="en" />
-        <title>{`${brand} — ${NIGHTSKY.hero.title}`}</title>
+        <title>{`${brand} — ${NIGHTSKY.hero.titleStart} ${NIGHTSKY.hero.titleHighlight}`}</title>
         <meta name="description" content={NIGHTSKY.hero.sub} />
-        <meta name="theme-color" content="#13153A" />
-        <link rel="stylesheet" href={NUNITO} />
+        <meta name="theme-color" content="#0D0F34" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link rel="stylesheet" href={FONTS} />
       </Helmet>
       <div className={styles.sky} aria-hidden="true" />
       <SkipLink className={styles.skip} />
 
       <header className={styles.header}>
-        <Link to={routeRoutes.home} className={styles.logo}>
-          <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false">
-            <path
-              d="M16 3l3.5 8 8.5.8-6.4 5.6 1.9 8.4L16 21.5 8.5 25.8l1.9-8.4L4 11.8l8.5-.8z"
-              fill="#FFD23F"
-              stroke="#13153A"
-              strokeWidth="2"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <span>{brand}</span>
-        </Link>
-        <nav aria-label="Main" className={styles.nav}>
-          <button className={styles.menuButton} {...menu.buttonProps}>
-            <span className={styles.burger} aria-hidden="true" />
-            Menu
-          </button>
-          <ul className={styles.navList} {...menu.menuProps}>
-            <li>
-              <InPageLink to="missions" onClick={menu.close}>
-                Missions
-              </InPageLink>
-            </li>
-            <li>
-              <InPageLink to="parents" onClick={menu.close}>
-                For parents
-              </InPageLink>
-            </li>
-            <li>
-              <InPageLink to="teachers" onClick={menu.close}>
-                For teachers
-              </InPageLink>
-            </li>
-            <li>
-              <Link to={routeRoutes.login}>Log in</Link>
-            </li>
-          </ul>
-        </nav>
-        <Link to={data.courseHref} className={`${styles.buttonYellow} ${styles.headerCta}`}>
-          {NIGHTSKY.hero.cta}
-        </Link>
+        <div className={styles.headerInner}>
+          <Link to={routeRoutes.home} className={styles.logo}>
+            <span className={styles.logoMark} aria-hidden="true">
+              <svg viewBox="0 0 32 32" width="22" height="22" focusable="false">
+                <path
+                  d="M16 3l3.5 8 8.5.8-6.4 5.6 1.9 8.4L16 21.5 8.5 25.8l1.9-8.4L4 11.8l8.5-.8z"
+                  fill="#FFD23F"
+                />
+              </svg>
+            </span>
+            <span>{brand}</span>
+          </Link>
+          <nav aria-label="Main" className={styles.nav}>
+            <button className={styles.menuButton} {...menu.buttonProps}>
+              <span className={styles.burger} aria-hidden="true" />
+              Menu
+            </button>
+            <ul className={styles.navList} {...menu.menuProps}>
+              {navLinks.map((item) => (
+                <li key={item.to}>
+                  <InPageLink to={item.to} onClick={menu.close}>
+                    {item.label}
+                  </InPageLink>
+                </li>
+              ))}
+              <li className={styles.navLogin}>
+                <Link to={routeRoutes.login}>Log in</Link>
+              </li>
+            </ul>
+          </nav>
+          <div className={styles.headerActions}>
+            <Link to={routeRoutes.login} className={styles.loginLink}>
+              Log in
+            </Link>
+            <Link to={data.courseHref} className={`${styles.btnYellow} ${styles.btnSmall}`}>
+              {NIGHTSKY.hero.cta} <Emoji>🚀</Emoji>
+            </Link>
+          </div>
+        </div>
       </header>
 
       <main id="landing-main" className={styles.main}>
+        {/* Hero */}
         <section className={styles.hero} aria-labelledby="ns-hero-title">
           <div className={styles.heroText}>
-            <p className={styles.kicker}>7 missions · 10–15 min each</p>
+            <p className={styles.heroBadge}>
+              <span className={styles.pulse} aria-hidden="true" />
+              {NIGHTSKY.hero.badge} <Emoji>✨</Emoji>
+            </p>
             <h1 id="ns-hero-title" className={styles.heroTitle}>
-              Your adventure to the stars <span className={styles.highlight}>starts tonight.</span>
+              {NIGHTSKY.hero.titleStart}{" "}
+              <span className={styles.highlight}>{NIGHTSKY.hero.titleHighlight}</span>.
             </h1>
             <p className={styles.heroSub}>{NIGHTSKY.hero.sub}</p>
-            <div className={styles.actions}>
-              <Link to={data.courseHref} className={styles.buttonYellow}>
-                {NIGHTSKY.hero.cta}
+            <div className={styles.heroActions}>
+              <Link to={data.courseHref} className={`${styles.btnYellow} ${styles.btnBig}`}>
+                {NIGHTSKY.hero.cta} <Emoji>🚀</Emoji>
               </Link>
-              <InPageLink to="missions" className={styles.buttonOutline}>
-                See the mission map
+              <InPageLink to="missions" className={`${styles.btnDark} ${styles.btnBig}`}>
+                {NIGHTSKY.hero.secondary} <Emoji>🗺️</Emoji>
               </InPageLink>
             </div>
+            <ul className={styles.chips} aria-label="At a glance">
+              {NIGHTSKY.hero.chips.map((chip) => (
+                <li key={chip.text} className={styles.chip}>
+                  <Emoji>{chip.emoji}</Emoji>
+                  {topicTotal ? chip.text.replace(/^21 /, `${topicTotal} `) : chip.text}
+                </li>
+              ))}
+            </ul>
           </div>
           <div className={styles.heroArt}>
-            <span className={styles.planetA} aria-hidden="true" />
-            <span className={styles.planetB} aria-hidden="true" />
-            <OrbiRocket />
+            <div className={styles.orbitOuter} aria-hidden="true" />
+            <div className={styles.orbitInner} aria-hidden="true" />
+            <div className={styles.orbitCore} aria-hidden="true" />
+            <span className={`${styles.floatChip} ${styles.floatSaturn}`} aria-hidden="true">
+              <span>🪐</span> Saturn rings
+            </span>
+            <span className={`${styles.floatChip} ${styles.floatPoints}`} aria-hidden="true">
+              <span>⭐</span> +50 star pts
+            </span>
+            <span className={`${styles.floatChip} ${styles.floatMoon}`} aria-hidden="true">
+              <span>🌙</span>
+            </span>
+            <div className={styles.orbiWrap}>
+              <p className={styles.bubble}>
+                &ldquo;{NIGHTSKY.hero.bubble}&rdquo; <Emoji>🚀</Emoji>
+              </p>
+              <OrbiRocket />
+            </div>
           </div>
         </section>
 
+        {/* Stats band */}
+        <section className={styles.stats} aria-label="Night Sky Explorers in numbers">
+          <ul className={styles.statsList}>
+            {stats.map((stat) => (
+              <li key={stat.label} className={styles.stat}>
+                <span className={styles.statDot} data-tone={stat.tone} aria-hidden="true" />
+                <strong>{stat.value}</strong> {stat.label}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* Mission map */}
         <section id="missions" className={styles.section} aria-labelledby="ns-missions-title">
-          <h2 id="ns-missions-title" className={styles.h2}>
-            The mission map
-          </h2>
-          <p className={styles.lead}>Follow the path, one mission a night. Mission 1 is free.</p>
-          <ol className={styles.path}>
-            {missions.map((mission, i) => (
-              <li key={mission.title} className={styles.stop} data-side={i % 2 ? "right" : "left"}>
-                <span className={styles.planet} data-color={mission.color} aria-hidden="true">
-                  {i + 1}
-                </span>
-                <div className={styles.missionCard}>
-                  <p className={styles.missionNo}>
-                    Mission {i + 1}
-                    {i === 0 && <span className={styles.free}>Free</span>}
-                  </p>
-                  <h3 className={styles.h3}>{mission.title}</h3>
-                  <p className={styles.missionBlurb}>{mission.blurb}</p>
-                  <ul className={styles.activities} aria-label="What you will do">
-                    {mission.activities.map((activity) => (
-                      <li key={activity}>
-                        <FormatIcon format={ACTIVITY_FORMAT[activity]} size={18} strokeWidth={2} />
-                        {NIGHTSKY.activityLabels[activity]}
+          <header className={styles.sectionHead}>
+            <p className={styles.pill} data-tone="lilac">
+              <Emoji>🧭</Emoji> Cosmic quest pathway
+            </p>
+            <h2 id="ns-missions-title" className={styles.h2}>
+              The 7-Mission Adventure Map
+            </h2>
+            <p className={styles.lead}>
+              Travel through the solar system step by step. Each mission unlocks new cosmic secrets,
+              games and collector badges!
+            </p>
+          </header>
+          <ol className={styles.missionGrid}>
+            {regular.map((mission, i) => (
+              <li key={mission.title} className={styles.missionCard}>
+                <div className={styles.missionTop}>
+                  <span className={styles.tag} data-tone={i === 0 ? "yellow" : "dim"}>
+                    {mission.label}
+                  </span>
+                  <span className={styles.minutes}>
+                    <Emoji>⏱️</Emoji>
+                    {mission.minutes}
+                  </span>
+                </div>
+                <div className={styles.missionHead}>
+                  <span className={styles.missionIcon} data-index={i} aria-hidden="true">
+                    {mission.emoji}
+                  </span>
+                  <div>
+                    <p className={styles.missionNo}>Mission {String(i + 1).padStart(2, "0")}</p>
+                    <h3 className={styles.missionTitle}>{mission.title}</h3>
+                  </div>
+                </div>
+                <p className={styles.missionBlurb}>{mission.blurb}</p>
+                <ul className={styles.topicList} aria-label={`Inside mission ${i + 1}`}>
+                  {mission.topics.map((topic) => (
+                    <li key={topic.title} className={styles.topic}>
+                      <Emoji>{FORMAT_KID[topic.format].emoji}</Emoji>
+                      <span className={styles.topicTitle}>{topic.title}</span>
+                      <span className={styles.topicTag} data-format={topic.format}>
+                        {FORMAT_KID[topic.format].label}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                {i === 0 ? (
+                  <Link to={data.courseHref} className={`${styles.btnYellow} ${styles.btnBlock}`}>
+                    Launch Mission 1 <Emoji>🚀</Emoji>
+                  </Link>
+                ) : (
+                  <Link to={data.courseHref} className={`${styles.btnLocked} ${styles.btnBlock}`}>
+                    <Emoji>🔒</Emoji> Unlock Mission {i + 1}
+                  </Link>
+                )}
+              </li>
+            ))}
+            {capstone && (
+              <li className={styles.capstone}>
+                <div className={styles.capstoneText}>
+                  <div className={styles.missionTop}>
+                    <span className={styles.tag} data-tone="yellow">
+                      {capstone.label}
+                    </span>
+                    <span className={styles.capstoneNote}>
+                      <Emoji>⭐</Emoji> Junior Astronomer badge unlock
+                    </span>
+                  </div>
+                  <h3 className={styles.capstoneTitle}>
+                    <span className={styles.visuallyHidden}>Mission 7: </span>
+                    {capstone.title}
+                  </h3>
+                  <p className={styles.missionBlurb}>{capstone.blurb}</p>
+                  <ul className={styles.capstoneTopics} aria-label="Inside mission 7">
+                    {capstone.topics.map((topic) => (
+                      <li key={topic.title}>
+                        <Emoji>{FORMAT_KID[topic.format].emoji}</Emoji> {topic.title}
                       </li>
                     ))}
                   </ul>
                 </div>
+                <div className={styles.capstoneSide}>
+                  <span className={styles.capstoneIcon} aria-hidden="true">
+                    {capstone.emoji}
+                  </span>
+                  <p className={styles.capstoneLock}>
+                    <Emoji>🔒</Emoji> Complete missions 1–6 first
+                  </p>
+                </div>
               </li>
-            ))}
+            )}
           </ol>
-          <div className={styles.center}>
-            <Link to={data.courseHref} className={styles.buttonYellow}>
-              {NIGHTSKY.hero.cta}
-            </Link>
-          </div>
         </section>
 
-        <section className={styles.section} aria-labelledby="ns-badges-title">
-          <h2 id="ns-badges-title" className={styles.h2}>
-            Badges to collect
-          </h2>
-          <ul className={styles.badges}>
-            {NIGHTSKY.badges.map((badge) => (
-              <li key={badge.name} className={styles.badge} data-color={badge.color}>
-                <span className={styles.badgeMedal}>
-                  <BadgeShape shape={badge.shape} />
-                </span>
-                <h3 className={styles.badgeName}>{badge.name}</h3>
-                <p className={styles.badgeHow}>{badge.how}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section id="parents" className={styles.section} aria-labelledby="ns-parents-title">
-          <div className={styles.panel}>
-            <h2 id="ns-parents-title" className={styles.h2}>
-              For parents
-            </h2>
-            <ul className={styles.tiles}>
-              {parents.map((item) => (
-                <li key={item.title} className={styles.tile}>
-                  <h3 className={styles.h3}>{item.title}</h3>
-                  <p>{item.text}</p>
+        {/* Badges */}
+        <section id="badges" className={styles.band} aria-labelledby="ns-badges-title">
+          <div className={styles.bandInner}>
+            <header className={styles.sectionHead}>
+              <p className={styles.pill} data-tone="yellow">
+                Badges to collect
+              </p>
+              <h2 id="ns-badges-title" className={styles.h2}>
+                Earn your Junior Astronomer badges
+              </h2>
+              <p className={styles.lead}>
+                Complete observations to collect star points (★), level up from Stargazer to Cosmic
+                Explorer, and print your own diploma!
+              </p>
+            </header>
+            <ul className={styles.badgeGrid}>
+              {NIGHTSKY.badges.map((badge) => (
+                <li key={badge.name} className={styles.badgeCard}>
+                  <span className={styles.medal} data-tone={badge.tone} aria-hidden="true">
+                    {badge.emoji}
+                  </span>
+                  <p className={styles.tier} data-tone={badge.tone}>
+                    {badge.tier}
+                  </p>
+                  <h3 className={styles.badgeName}>{badge.name}</h3>
+                  <p className={styles.small}>{badge.how}</p>
+                  <p className={styles.points} data-tone={badge.tone}>
+                    <Emoji>{badge.tone === "capstone" ? "🏅" : "☆"}</Emoji>
+                    {badge.points}
+                  </p>
                 </li>
               ))}
             </ul>
-            <Link to={routeRoutes.register} className={styles.buttonYellow}>
-              Create a family account
-            </Link>
+            <div className={styles.pointsCard}>
+              <span className={styles.pointsIcon} aria-hidden="true">
+                ⭐
+              </span>
+              <div className={styles.pointsText}>
+                <h3 className={styles.h3}>How star points work</h3>
+                <p className={styles.small}>
+                  Earn points with every finished mini-challenge, then trade them for telescope filters
+                  and real stickers!
+                </p>
+              </div>
+              <div className={styles.rank}>
+                <p className={styles.rankRow}>
+                  <span>Example rank: Cadet Stargazer</span>
+                  <span className={styles.rankValue}>650 / 1000 ★</span>
+                </p>
+                <span
+                  className={styles.rankBar}
+                  role="img"
+                  aria-label="Progress bar: 650 of 1000 star points"
+                >
+                  <span />
+                </span>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section id="teachers" className={styles.section} aria-labelledby="ns-teachers-title">
-          <div className={`${styles.panel} ${styles.panelLilac}`}>
-            <h2 id="ns-teachers-title" className={styles.h2}>
-              For teachers: {NIGHTSKY.teachers.title.toLowerCase()}
+        {/* Formats */}
+        <section className={styles.section} aria-labelledby="ns-formats-title">
+          <header className={styles.sectionHead}>
+            <p className={styles.pill} data-tone="lilac">
+              No boring textbooks here
+            </p>
+            <h2 id="ns-formats-title" className={styles.h2}>
+              Formats you explore with
             </h2>
-            <p className={styles.lead}>{NIGHTSKY.teachers.text}</p>
-            <ul className={styles.ticks}>
-              {NIGHTSKY.teachers.points.map((point) => (
-                <li key={point}>{point}</li>
-              ))}
-            </ul>
-            <Link to={routeRoutes.register} className={styles.buttonOutline}>
-              Set up a classroom
-            </Link>
-          </div>
-        </section>
-
-        <section className={styles.section} aria-labelledby="ns-events-title">
-          <h2 id="ns-events-title" className={styles.h2}>
-            Look up together
-          </h2>
-          <ul className={styles.events}>
-            {[
-              { ...party, href: partyHref, cta: "Join the star party" },
-              { ...live, href: webinarHref(webinar), cta: "Send a question" },
-            ].map((item) => (
-              <li key={item.title} className={styles.event}>
-                <span className={styles.eventDate}>{item.date}</span>
+            <p className={styles.lead}>
+              Eleven kinds of activities, so every brain finds its favourite way to learn about the
+              deep cosmos.
+            </p>
+          </header>
+          <ul className={styles.formatGrid}>
+            {NIGHTSKY.formats.map((item, i) => (
+              <li key={item.title} className={styles.formatCard}>
+                <span className={styles.formatIcon} data-index={i % 3} aria-hidden="true">
+                  {item.emoji}
+                </span>
                 <div>
-                  <p className={styles.eventKind}>{item.kind}</p>
                   <h3 className={styles.h3}>{item.title}</h3>
-                  <p>{item.text}</p>
-                  <Link to={item.href} className={styles.textLink}>
-                    {item.cta}
-                    <span className={styles.visuallyHidden}>: {item.title}</span>
-                  </Link>
+                  <p className={styles.small}>{item.text}</p>
                 </div>
               </li>
             ))}
           </ul>
         </section>
 
+        {/* Parents */}
+        <section id="parents" className={styles.band} aria-labelledby="ns-parents-title">
+          <div className={styles.bandInner}>
+            <div className={styles.parentsTop}>
+              <div>
+                <p className={styles.pill} data-tone="mint">
+                  {NIGHTSKY.parents.label}
+                </p>
+                <h2 id="ns-parents-title" className={`${styles.h2} ${styles.left}`}>
+                  {NIGHTSKY.parents.title}
+                </h2>
+                <p className={`${styles.lead} ${styles.left}`}>{NIGHTSKY.parents.text}</p>
+              </div>
+              <figure className={styles.parentQuote}>
+                <p className={styles.stars} aria-label="Rated 5 out of 5">
+                  ★★★★★
+                </p>
+                <blockquote>
+                  <p>&ldquo;{NIGHTSKY.parents.quote.text}&rdquo;</p>
+                </blockquote>
+                <figcaption className={styles.person}>
+                  <span className={styles.avatar} data-tone="lilac" aria-hidden="true">
+                    {NIGHTSKY.parents.quote.who[0]}
+                  </span>
+                  <span>
+                    <span className={styles.personName}>{NIGHTSKY.parents.quote.who}</span>
+                    <span className={styles.personNote}>{NIGHTSKY.parents.quote.role}</span>
+                  </span>
+                </figcaption>
+              </figure>
+            </div>
+            <ul className={styles.featureGrid}>
+              {NIGHTSKY.parents.items.map((item, i) => (
+                <li key={item.title} className={styles.featureCard}>
+                  <span className={styles.featureIcon} data-tone={item.tone} aria-hidden="true">
+                    {item.emoji}
+                  </span>
+                  <h3 className={styles.h3}>{i === 3 ? `${item.title} (${familyLabel})` : item.title}</h3>
+                  <p className={styles.small}>{item.text}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* Teachers */}
+        <section id="teachers" className={styles.section} aria-labelledby="ns-teachers-title">
+          <div className={styles.classroom}>
+            <div className={styles.classroomText}>
+              <p className={styles.pill} data-tone="lilac">
+                <Emoji>🎓</Emoji> {NIGHTSKY.teachers.label}
+              </p>
+              <h2 id="ns-teachers-title" className={`${styles.h2} ${styles.left}`}>
+                {NIGHTSKY.teachers.title}
+              </h2>
+              <p className={`${styles.lead} ${styles.left}`}>{NIGHTSKY.teachers.text}</p>
+              <ul className={styles.ticks}>
+                {NIGHTSKY.teachers.points.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+              <div className={styles.classroomCta}>
+                <Link to={routeRoutes.register} className={styles.btnLilac}>
+                  {NIGHTSKY.teachers.cta}
+                </Link>
+                <span className={styles.small}>{NIGHTSKY.teachers.note}</span>
+              </div>
+            </div>
+            <figure className={styles.teacherCard}>
+              <span className={styles.teacherIcon} aria-hidden="true">
+                🔭
+              </span>
+              <blockquote>
+                <p>&ldquo;{NIGHTSKY.teachers.quote.text}&rdquo;</p>
+              </blockquote>
+              <figcaption>
+                <span className={styles.personName}>{NIGHTSKY.teachers.quote.who}</span>
+                <span className={styles.personNote}>{NIGHTSKY.teachers.quote.role}</span>
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+
+        {/* Events */}
+        <section id="events" className={styles.band} aria-labelledby="ns-events-title">
+          <div className={styles.bandInner}>
+            <header className={styles.eventsHead}>
+              <div>
+                <p className={styles.pill} data-tone="yellow">
+                  Meet real scientists
+                </p>
+                <h2 id="ns-events-title" className={`${styles.h2} ${styles.left}`}>
+                  Events &amp; star parties
+                </h2>
+              </div>
+              <Link to={routeRoutes.webinars} className={styles.textLink}>
+                See all events <span aria-hidden="true">→</span>
+              </Link>
+            </header>
+            <ul className={styles.eventGrid}>
+              {[
+                { ...party, tone: "mint", href: routeRoutes.register, primary: true, a: "📍", b: "👥" },
+                { ...live, tone: "lilac", href: webinarHref(webinar), primary: false, a: "🎥", b: "💬" },
+              ].map((item) => (
+                <li key={item.title} className={styles.eventCard}>
+                  <div className={styles.missionTop}>
+                    <span className={styles.tag} data-tone={item.tone}>
+                      {item.kind}
+                    </span>
+                    <span className={styles.eventDate}>{item.date}</span>
+                  </div>
+                  <h3 className={styles.eventTitle}>{item.title}</h3>
+                  <p className={styles.body}>{item.text}</p>
+                  <ul className={styles.eventFacts}>
+                    <li>
+                      <Emoji>{item.a}</Emoji> {item.place}
+                    </li>
+                    <li>
+                      <Emoji>{item.b}</Emoji> {item.extra}
+                    </li>
+                  </ul>
+                  <Link
+                    to={item.href}
+                    className={`${item.primary ? styles.btnYellow : styles.btnDark} ${styles.btnBlock}`}
+                  >
+                    {item.cta}
+                    <span className={styles.visuallyHidden}>: {item.title}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* Testimonials */}
         <section className={styles.section} aria-labelledby="ns-quotes-title">
-          <h2 id="ns-quotes-title" className={styles.h2}>
-            Explorers say
-          </h2>
-          <ul className={styles.bubbles}>
+          <header className={styles.sectionHead}>
+            <p className={styles.pill} data-tone="mint">
+              Voices from the observation deck
+            </p>
+            <h2 id="ns-quotes-title" className={styles.h2}>
+              Hear from fellow stargazers
+            </h2>
+            <p className={styles.lead}>
+              What kids and parents discover once they switch off the lights and join the quest.
+            </p>
+          </header>
+          <ul className={styles.quoteGrid}>
             {NIGHTSKY.testimonials.map((quote) => (
               <li key={quote.who}>
-                <figure className={styles.bubble} data-kind={quote.kind}>
+                <figure className={styles.quoteCard}>
+                  <span className={styles.quoteMark} data-tone={quote.tone} aria-hidden="true">
+                    &ldquo;
+                  </span>
                   <blockquote>
-                    <p>&ldquo;{quote.text}&rdquo;</p>
+                    <p>{quote.text}</p>
                   </blockquote>
-                  <figcaption>{quote.who}</figcaption>
+                  <figcaption className={styles.person}>
+                    <span className={styles.avatar} data-tone={quote.tone} aria-hidden="true">
+                      {quote.who[0]}
+                    </span>
+                    <span>
+                      <span className={styles.personName}>{quote.who}</span>
+                      <span className={styles.personNote} data-tone={quote.tone}>
+                        {quote.note}
+                      </span>
+                    </span>
+                  </figcaption>
                 </figure>
               </li>
             ))}
           </ul>
         </section>
 
-        <section className={styles.section} aria-labelledby="ns-faq-title">
-          <h2 id="ns-faq-title" className={styles.h2}>
-            Questions from grown-ups
-          </h2>
-          <div className={styles.faq}>
-            {NIGHTSKY.faq.map((item) => (
-              <details key={item.q} className={styles.faqItem}>
-                <summary>{item.q}</summary>
-                <p>{item.a}</p>
-              </details>
-            ))}
+        {/* FAQ + signup */}
+        <section className={styles.band} aria-labelledby="ns-faq-title">
+          <div className={styles.faqWrap}>
+            <header className={styles.sectionHead}>
+              <h2 id="ns-faq-title" className={styles.h2}>
+                Frequently asked questions
+              </h2>
+              <p className={styles.lead}>
+                Everything parents and curious stargazers want to know before liftoff.
+              </p>
+            </header>
+            <div className={styles.faq}>
+              {NIGHTSKY.faq.map((item) => (
+                <details key={item.q} className={styles.faqItem}>
+                  <summary>{item.q}</summary>
+                  <p>{item.a}</p>
+                </details>
+              ))}
+            </div>
+            <div className={styles.signup}>
+              <span className={styles.signupIcon} aria-hidden="true">
+                🌟
+              </span>
+              <h2 id="ns-signup-title" className={styles.h2}>
+                {NIGHTSKY.signup.title}
+              </h2>
+              <p className={styles.lead}>{NIGHTSKY.signup.text}</p>
+              <form className={styles.form} onSubmit={onSignup} aria-labelledby="ns-signup-title">
+                <label htmlFor="ns-email" className={styles.visuallyHidden}>
+                  Grown-up’s email address
+                </label>
+                <input
+                  id="ns-email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  placeholder="Grown-up’s email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <button type="submit" className={styles.btnYellow}>
+                  {NIGHTSKY.signup.cta} <Emoji>🚀</Emoji>
+                </button>
+              </form>
+              <p className={styles.fine}>{NIGHTSKY.signup.note}</p>
+            </div>
           </div>
         </section>
       </main>
 
       <footer className={styles.footer}>
-        <p className={styles.footerBrand}>{brand}</p>
-        <nav aria-label="Footer">
-          <ul className={styles.footerLinks}>
-            <li>
-              <Link to={routeRoutes.courses}>All missions</Link>
-            </li>
-            <li>
-              <Link to={routeRoutes.register}>Create account</Link>
-            </li>
-            <li>
-              <Link to={routeRoutes.login}>Log in</Link>
-            </li>
-            <li>
-              <Link to={routeRoutes.privacyPolicy}>Privacy</Link>
-            </li>
-          </ul>
-        </nav>
+        <div className={styles.footerTop}>
+          <div>
+            <p className={styles.footerBrand}>
+              <Emoji>🚀</Emoji> {brand}
+            </p>
+            <p className={styles.footerTag}>Exploring the cosmos one mission at a time</p>
+          </div>
+          <nav aria-label="Footer">
+            <ul className={styles.footerLinks}>
+              <li>
+                <Link to={routeRoutes.courses}>All missions</Link>
+              </li>
+              <li>
+                <Link to={routeRoutes.register}>Create account</Link>
+              </li>
+              <li>
+                <Link to={routeRoutes.login}>Log in</Link>
+              </li>
+              <li>
+                <Link to={routeRoutes.privacyPolicy}>Safety &amp; privacy</Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <p className={styles.copyright}>
+          © {new Date().getFullYear()} {brand}. Built for cosmic discoverers everywhere.
+        </p>
       </footer>
     </div>
   );

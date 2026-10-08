@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"tertiary-fixed-dim":"#d8baff","inverse-surface":"#e0e2ea","surface-dim":"#101419","on-primary":"#00315c","on-error-container":"#ffdad6","on-tertiary-container":"#4d198b","on-secondary-fixed":"#002105","on-secondary":"#00390d","primary":"#a2c9ff","surface-container-lowest":"#0a0e13","tertiary-fixed":"#eddcff","tertiary":"#d8baff","on-surface-variant":"#c0c7d4","secondary-fixed":"#83fc89","on-primary-fixed":"#001c38","surface-container-high":"#262a30","on-background":"#e0e2ea","surface-variant":"#31353b","surface-tint":"#a2c9ff","surface-bright":"#36393f","secondary-fixed-dim":"#67df70","surface":"#101419","outline":"#8b919d","outline-variant":"#414752","on-secondary-fixed-variant":"#005317","on-secondary-container":"#00320a","secondary":"#67df70","on-primary-container":"#003a6b","background":"#101419","tertiary-container":"#bc8cff","error":"#ffb4ab","inverse-primary":"#0060aa","surface-container-low":"#181c21","on-error":"#690005","primary-fixed-dim":"#a2c9ff","error-container":"#93000a","surface-container-highest":"#31353b","secondary-container":"#27a640","surface-container":"#1c2025","on-tertiary-fixed-variant":"#5b2b9a","on-primary-fixed-variant":"#004882","inverse-on-surface":"#2d3136","on-surface":"#e0e2ea","on-tertiary":"#430882","primary-container":"#58a6ff","primary-fixed":"#d3e4ff","on-tertiary-fixed":"#290055"},borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},spacing:{"margin":"0.75rem","space-lg":"1rem","gutter":"0.5rem","space-xs":"0.25rem","margin-desktop":"1.5rem","space-md":"0.75rem","space-xl":"1.5rem","gutter-desktop":"1rem","space-sm":"0.5rem"},fontFamily:{"label-sm":["JetBrains Mono"],"body-sm":["Inter"],"body-md":["Inter"],"body-lg":["Inter"],"label-md":["JetBrains Mono"],"headline-md":["Space Grotesk"],"headline-xl":["Space Grotesk"],"label-lg":["JetBrains Mono"],"code-inline":["JetBrains Mono"],"headline-xl-mobile":["Space Grotesk"],"headline-lg":["Space Grotesk"]},fontSize:{"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.03em","fontWeight":"400"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}],"body-md":["13px",{"lineHeight":"18px","fontWeight":"400"}],"body-lg":["15px",{"lineHeight":"22px","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.01em","fontWeight":"500"}],"headline-md":["18px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-xl":["32px",{"lineHeight":"38px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-lg":["13px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"code-inline":["12px",{"lineHeight":"16px","fontWeight":"400"}],"headline-xl-mobile":["24px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"700"}],"headline-lg":["24px",{"lineHeight":"30px","letterSpacing":"-0.015em","fontWeight":"600"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-low/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.35)]"><div class="h-14 w-full px-gutter-desktop flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-lg shrink-0"><div class="flex items-center gap-space-sm"><img alt="On-Call Wordmark &amp; Incident Telemetry Icon" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XIFrpU149a7H4FkpH0crFLo96MDmwi6qr95cSjyLlQPab1dLJIbL-FiPyRJo-nmW-MNSZ_EVJdKjlF81P-hmmNNhbqAwAZ_HulbctdsjB_qdYWVG61ojBL_8MZketxkgvIImdG_F8XbdR0N0AVyqyB24hN-OhNWsGJW3BXHQ4VkNEuwEJ2YdycZ2zwp6RniQTVYcfJvbefXOw5kCqJuwC11IyEUNgYxJKluXA9GiAt"/><span class="font-headline-md text-headline-md text-on-surface tracking-tight hidden sm:inline">ON-CALL</span></div><div class="hidden xl:flex items-center gap-space-xs px-space-sm py-0.5 rounded bg-surface-container-lowest"><span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span><span class="font-label-sm text-label-sm text-secondary uppercase">SYSTEMS OPERATIONAL · LATENCY 14ms</span></div></div><nav class="hidden lg:flex items-center gap-space-lg" data-active-classes="text-primary font-body-md"><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="curriculum" href="#">Curriculum</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="cohorts" href="#">Cohorts</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="live-drills" href="#">Live Drills</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="simulator" href="#">Simulator</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="pricing-and-teams" href="#">Pricing &amp; Teams</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="docs" href="#">Docs</a></nav><div class="flex items-center gap-space-md ml-auto"><div class="hidden md:flex items-center justify-between px-space-sm py-1 rounded bg-surface-container-lowest min-w-[190px]"><span class="font-body-sm text-body-sm text-on-surface-variant">Search docs &amp; drills</span><span class="font-label-sm text-label-sm text-on-surface-variant px-1 rounded bg-surface-container-high">⌘K Search</span></div><div class="flex items-center gap-space-sm"><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface px-space-sm py-1 transition-colors" data-path="sign-in" href="#">Sign in</a><a class="font-label-md text-label-md bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary px-space-md py-1.5 rounded font-semibold transition-colors flex items-center gap-space-xs" data-path="apply-for-cohort" href="#"><span>Apply for Cohort</span><span class="font-label-sm text-label-sm opacity-80 hidden sm:inline">⌘↵</span></a></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-14 bg-background min-h-screen"><div class="flex flex-col w-full">
+<!-- Command Telemetry Ticker (Sub-header) -->
+<div class="w-full bg-surface-container-lowest px-gutter-desktop py-space-xs flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center gap-space-md overflow-x-auto no-scrollbar">
+<div class="flex items-center gap-space-xs shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+<span class="text-on-surface uppercase font-semibold">CLUSTER: SRE-LAB-PROD-US-EAST</span>
+</div>
+<span class="text-outline shrink-0 font-code-inline">/</span>
+<div class="flex items-center gap-space-xs shrink-0">
+<span class="text-on-surface-variant">NODE TELEMETRY:</span>
+<span class="text-secondary font-code-inline">SYNCED (EPOCH 1731589320)</span>
+</div>
+<span class="text-outline shrink-0 font-code-inline">/</span>
+<div class="flex items-center gap-space-xs shrink-0">
+<span class="text-on-surface-variant">CURRENT DRILL ROLE:</span>
+<span class="text-primary font-semibold">PRIMARY INCIDENT COMMANDER (IC)</span>
+</div>
+</div>
+<div class="hidden lg:flex items-center gap-space-md shrink-0">
+<span class="flex items-center gap-space-xs text-on-surface-variant">
+<kbd class="px-1 py-0.5 rounded bg-surface-container-high text-primary font-code-inline text-[10px]">J/K</kbd> NAVIGATE
+      </span>
+<span class="flex items-center gap-space-xs text-on-surface-variant">
+<kbd class="px-1 py-0.5 rounded bg-surface-container-high text-primary font-code-inline text-[10px]">↵</kbd> SELECT TOPIC
+      </span>
+<span class="flex items-center gap-space-xs text-on-surface-variant">
+<kbd class="px-1 py-0.5 rounded bg-surface-container-high text-primary font-code-inline text-[10px]">D</kbd> DRILL SIM
+      </span>
+</div>
+</div>
+<div class="w-full px-gutter-desktop py-space-lg flex flex-col gap-space-lg">
+<!-- Top Cohort Command HUD & Live Drill Alert Banner -->
+<div class="w-full grid grid-cols-1 xl:grid-cols-12 gap-space-md">
+<!-- Cohort Metadata & Countdown Hero Card -->
+<div class="xl:col-span-8 bg-surface-container-low rounded-xl p-space-lg relative overflow-hidden shadow-xl flex flex-col justify-between gap-space-lg">
+<!-- Subtle tactical background pattern/gradient -->
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 pointer-events-none"></div>
+<div class="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-primary/5 blur-3xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col gap-space-md">
+<div class="flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="px-space-sm py-0.5 rounded bg-surface-container font-label-md text-label-md text-primary font-semibold tracking-wide uppercase">
+                COHORT 04 · NOV 2024
+              </span>
+<span class="px-space-sm py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-label-sm uppercase flex items-center gap-1 font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-ping"></span>
+                ACTIVE · WEEK 2 OF 4
+              </span>
+</div>
+<div class="flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[15px] text-outline">terminal</span>
+<span>SLO TARGET: <strong class="text-on-surface font-code-inline">99.95%</strong></span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">PRIMARY MODULE FOCUS</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Taking Incident Command &amp; Radio Protocol</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+              Transition from individual tactical troubleshooter to synchronized incident commander. Orchestrate blast-radius containment, cross-functional status synthesis, and disciplined radio cadence during split-second escalations.
+            </p>
+</div>
+</div>
+<!-- Chaos Drill Alarm Strip inside HUD -->
+<div class="relative z-10 p-space-md rounded-lg bg-surface-container-lowest flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded bg-error-container/30 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-error text-[22px] animate-pulse">crisis_alert</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm text-error uppercase font-semibold">SCHEDULED GAME-DAY IMMERSION</span>
+<span class="font-label-sm text-label-sm text-outline">· DRILL #02</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-surface tracking-tight">
+                Split-Brain Redis Failover &amp; Cascading Quorum Collapse
+              </div>
+<div class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-space-xs mt-0.5">
+<span class="material-symbols-outlined text-[13px] text-tertiary">schedule</span>
+<span>COUNTDOWN:</span>
+<span class="font-code-inline text-tertiary font-semibold" id="drill-countdown">02d 14h 21m 48s</span>
+<span class="text-outline">·</span>
+<span class="text-on-surface">14 Nov @ 18:00 UTC</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm w-full md:w-auto shrink-0 justify-end">
+<button class="px-space-md py-1.5 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[16px]">calendar_add_on</span>
+<span>.ICS Invites</span>
+</button>
+<button class="px-space-md py-1.5 rounded bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-semibold transition-colors flex items-center gap-space-xs shadow-md">
+<span class="material-symbols-outlined text-[16px]">sensors</span>
+<span>Enter Waiting Room</span>
+<span class="px-1 py-0.2 rounded bg-on-primary-container text-primary font-code-inline text-[10px] hidden sm:inline">[D]</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Cohort Standing & Telemetry Vitals -->
+<div class="xl:col-span-4 bg-surface-container-low rounded-xl p-space-lg shadow-xl flex flex-col justify-between gap-space-md">
+<div class="flex items-center justify-between pb-space-sm">
+<div class="font-headline-md text-headline-md text-on-surface flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px]">monitor_heart</span>
+<span>Personal Reliability Vitals</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-code-inline">ID: @sarah.m</span>
+</div>
+<!-- Circular metric & stats grid -->
+<div class="grid grid-cols-2 gap-space-sm">
+<!-- Progress Metric -->
+<div class="p-space-md rounded-lg bg-surface-container-lowest flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">CURRICULUM PASS</span>
+<div class="flex items-baseline gap-space-xs my-space-xs">
+<span class="font-headline-xl text-headline-xl text-secondary font-bold">65%</span>
+<span class="font-label-sm text-label-sm text-outline">/ 100%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 65%;"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-space-xs">13 of 20 Topics Mastered</span>
+</div>
+<!-- MTTR Score -->
+<div class="p-space-md rounded-lg bg-surface-container-lowest flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">PERSONAL MTTR</span>
+<div class="flex items-baseline gap-space-xs my-space-xs">
+<span class="font-headline-xl text-headline-xl text-primary font-bold">18.4</span>
+<span class="font-label-sm text-label-sm text-outline">min</span>
+</div>
+<div class="flex items-center gap-1 font-label-sm text-label-sm text-secondary">
+<span class="material-symbols-outlined text-[14px]">trending_down</span>
+<span>-4.2 min vs Drill #01</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-space-xs">Target SLO: &lt; 15.0 min</span>
+</div>
+<!-- Cohort Standing -->
+<div class="p-space-md rounded-lg bg-surface-container-lowest flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">COHORT RANK</span>
+<div class="flex items-baseline gap-space-xs my-space-xs">
+<span class="font-headline-xl text-headline-xl text-tertiary font-bold">#4</span>
+<span class="font-label-sm text-label-sm text-outline">/ 24</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-code-inline">TOP 16.6% PERCENTILE</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-space-xs">88 Triage Points</span>
+</div>
+<!-- Error Budget Burn -->
+<div class="p-space-md rounded-lg bg-surface-container-lowest flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">SIMULATOR SLA</span>
+<div class="flex items-baseline gap-space-xs my-space-xs">
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold">99.92</span>
+<span class="font-label-sm text-label-sm text-outline">%</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary flex items-center gap-1 font-code-inline">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> BUDGET SAFE
+            </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-space-xs">0.08% Burned in Drills</span>
+</div>
+</div>
+<!-- Resume Active Step CTA Mini-card -->
+<div class="p-space-md rounded-lg bg-primary/10 flex items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping shrink-0"></span>
+<div class="truncate">
+<div class="font-label-sm text-label-sm text-primary font-semibold uppercase truncate">Next Unfinished Mission</div>
+<div class="font-body-sm text-body-sm text-on-surface font-medium truncate">Branching Scenario: Decision 4</div>
+</div>
+</div>
+<button class="px-space-md py-1 rounded bg-primary text-on-primary font-label-md text-label-md font-semibold shrink-0 hover:bg-primary-fixed transition-colors">
+            Resume ↵
+          </button>
+</div>
+</div>
+</div>
+<!-- Rapid Incident Links & War Room Operational Bridge -->
+<div class="w-full grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Slack Live Bridge -->
+<a class="p-space-md rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors flex items-center justify-between group shadow-sm" href="#">
+<div class="flex items-center gap-space-md">
+<div class="w-9 h-9 rounded bg-surface-container-highest flex items-center justify-center shrink-0">
+<span class="font-code-inline font-bold text-secondary text-[16px]">#</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold group-hover:text-primary transition-colors">#cohort-04-war-room</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Live incident dispatch &amp; IC escalations</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs font-label-sm text-label-sm text-secondary">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>18 Online</span>
+</div>
+</a>
+<!-- 1:1 Advisory Sync Card -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-9 h-9 rounded bg-tertiary/20 flex items-center justify-center shrink-0 text-tertiary">
+<span class="material-symbols-outlined text-[20px]">psychology</span>
+</div>
+<div class="flex flex-col truncate">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-md text-label-md text-on-surface font-semibold truncate">1:1 IC Advisory Session</span>
+<span class="px-1 rounded bg-surface-container-high text-tertiary font-code-inline text-[10px]">BOOKED</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Priya Raman (Staff SRE) · Thu 16:30 UTC</span>
+</div>
+</div>
+<a class="p-space-xs rounded hover:bg-surface-container-highest text-primary transition-colors shrink-0" href="#" title="Join Video Bridge">
+<span class="material-symbols-outlined text-[20px]">video_camera_front</span>
+</a>
+</div>
+<!-- Outage Simulator SCORM Engine status -->
+<a class="p-space-md rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors flex items-center justify-between group shadow-sm" href="#">
+<div class="flex items-center gap-space-md">
+<div class="w-9 h-9 rounded bg-surface-container-highest flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[20px]">developer_board</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold group-hover:text-primary transition-colors">Chaos Mesh Simulator</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Interactive cluster sandbox (Ephemeral v1.28)</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors text-[20px]">arrow_forward</span>
+</a>
+</div>
+<!-- Main Workspace: Curriculum Matrix (Left 8 cols) & Cohort Telemetry / Leaderboard (Right 4 cols) -->
+<div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- Curriculum Modules (8 Cols) -->
+<div class="lg:col-span-8 flex flex-col gap-space-md">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-sm">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Curriculum Flight Plan</h2>
+<span class="font-label-sm text-label-sm px-space-sm py-0.5 rounded bg-surface-container font-code-inline text-on-surface-variant">4 MODULES · 20 MISSIONS</span>
+</div>
+<div class="flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface-variant">
+<span>FILTER:</span>
+<button class="px-space-sm py-0.5 rounded bg-surface-container text-on-surface font-semibold">ALL</button>
+<button class="px-space-sm py-0.5 rounded hover:bg-surface-container text-on-surface-variant">ACTIVE</button>
+<button class="px-space-sm py-0.5 rounded hover:bg-surface-container text-on-surface-variant">COMPLETED</button>
+</div>
+</div>
+<!-- MODULE 00 -->
+<div class="rounded-xl bg-surface-container-low overflow-hidden shadow-sm">
+<!-- Module Accordion Header -->
+<div class="p-space-md bg-surface-container flex items-center justify-between cursor-pointer select-none">
+<div class="flex items-center gap-space-md">
+<span class="w-6 h-6 rounded-full bg-secondary/20 text-secondary flex items-center justify-center font-code-inline text-label-sm font-bold">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-outline font-code-inline">MODULE 00</span>
+<span class="font-headline-md text-headline-md text-on-surface">Briefing &amp; Rules of Engagement</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Foundational operational protocols, paging severity taxonomies, and psychological safety.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md shrink-0">
+<span class="px-space-sm py-0.5 rounded bg-surface-container-highest text-secondary font-label-sm text-label-sm font-semibold">100% COMPLETE (3/3)</span>
+<span class="material-symbols-outlined text-outline text-[18px]">expand_less</span>
+</div>
+</div>
+<!-- Topics Table -->
+<div class="divide-y divide-surface-container-highest/50">
+<!-- Topic 1 -->
+<div class="p-space-md flex items-center justify-between bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-body-md text-body-md text-on-surface font-medium">Kickoff War-room Briefing &amp; Simulation Setup</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-outline font-label-sm text-label-sm">Video · 24 min</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Instructor briefing by Staff SREs on high-frequency chaos drills and grading criteria.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="font-label-sm text-label-sm text-secondary font-code-inline">COMPLETED</span>
+<button class="px-space-sm py-1 rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm hover:bg-surface-bright transition-colors">Rewatch</button>
+</div>
+</div>
+<!-- Topic 2 -->
+<div class="p-space-md flex items-center justify-between bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-body-md text-body-md text-on-surface font-medium">Severity Matrix SEV1 through SEV4 Taxonomies</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-outline font-label-sm text-label-sm">Interactive Text · 15 min</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Standardized criteria for declaring incidents and initiating executive escalations.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="font-label-sm text-label-sm text-secondary font-code-inline">MASTERED</span>
+<button class="px-space-sm py-1 rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm hover:bg-surface-bright transition-colors">Review</button>
+</div>
+</div>
+<!-- Topic 3 -->
+<div class="p-space-md flex items-center justify-between bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-body-md text-body-md text-on-surface font-medium">Rules of Pager Engagement &amp; Cognitive Load Shielding</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-outline font-label-sm text-label-sm">PDF Artifact · 10 min</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Guidelines for secondary responders, scribe rotations, and war room noise gates.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="font-label-sm text-label-sm text-secondary font-code-inline">DOWNLOADED</span>
+<button class="px-space-sm py-1 rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm hover:bg-surface-bright transition-colors">PDF (4.2 MB)</button>
+</div>
+</div>
+</div>
+</div>
+<!-- MODULE 01 -->
+<div class="rounded-xl bg-surface-container-low overflow-hidden shadow-sm">
+<!-- Module Header -->
+<div class="p-space-md bg-surface-container flex items-center justify-between cursor-pointer select-none">
+<div class="flex items-center gap-space-md">
+<span class="w-6 h-6 rounded-full bg-secondary/20 text-secondary flex items-center justify-center font-code-inline text-label-sm font-bold">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-outline font-code-inline">MODULE 01</span>
+<span class="font-headline-md text-headline-md text-on-surface">Signals, SLOs &amp; Error Budget Math</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Distinguishing symptoms from root causes, multi-window burn rate alerts, and noise cancellation.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md shrink-0">
+<span class="px-space-sm py-0.5 rounded bg-surface-container-highest text-secondary font-label-sm text-label-sm font-semibold">100% COMPLETE (4/4)</span>
+<span class="material-symbols-outlined text-outline text-[18px]">expand_less</span>
+</div>
+</div>
+<!-- Module 01 Topics -->
+<div class="divide-y divide-surface-container-highest/50">
+<div class="p-space-md flex items-center justify-between bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-body-md text-body-md text-on-surface font-medium">Anatomy of an Actionable Alert</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-outline font-label-sm text-label-sm">Audio Dispatch · 16 min</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Why 80% of alerts should be deleted; constructing runbook-linked telemetry alerts.</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-code-inline">COMPLETED</span>
+</div>
+<div class="p-space-md flex items-center justify-between bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-body-md text-body-md text-on-surface font-medium">SLO Math &amp; Multi-Window Burn Rate Formulations</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-outline font-label-sm text-label-sm">KaTeX Mathematical Lab · 35 min</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Calculating 1h (14.4x) and 6h (6x) burn triggers to eliminate false paging cascades.</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-code-inline">MASTERED</span>
+</div>
+<div class="p-space-md flex items-center justify-between bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-body-md text-body-md text-on-surface font-medium">Alert Fatigue Is A Bug: Engineering Calm Systems</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-outline font-label-sm text-label-sm">Case Study Embed · 28 min</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Real production postmortem analysis of an unhandled alert storm that dropped payments.</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-code-inline">WATCHED</span>
+</div>
+<div class="p-space-md flex items-center justify-between bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-body-md text-body-md text-on-surface font-medium">Comms Check Alpha: Diagnostics Assessment</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-outline font-label-sm text-label-sm">GIFT Exam · 10 Questions</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Validated understanding of Burn Rates, SLI thresholds, and triage routing.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-secondary font-code-inline font-bold">SCORE: 100%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- MODULE 02 (ACTIVE - CURRENT WEEK 2) -->
+<div class="rounded-xl bg-surface-container-low overflow-hidden shadow-md">
+<!-- Active Header with Indicator -->
+<div class="p-space-md bg-surface-container-high flex items-center justify-between select-none">
+<div class="flex items-center gap-space-md">
+<span class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center font-code-inline text-label-sm font-bold">
+                02
+              </span>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-primary font-code-inline font-bold">MODULE 02 · CURRENT FOCUS</span>
+<span class="px-1.5 py-0.5 rounded bg-primary/20 text-primary font-label-sm text-label-sm uppercase font-semibold">WEEK 2</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface">Taking Incident Command</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Leading live crisis bridges, delegating tactical investigations, radio cadence and holding the line.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md shrink-0">
+<div class="flex flex-col items-end">
+<span class="font-label-md text-label-md text-primary font-semibold">50% COMPLETE</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-code-inline">2 OF 4 TOPICS</span>
+</div>
+<span class="material-symbols-outlined text-primary text-[20px]">radio_button_checked</span>
+</div>
+</div>
+<!-- Module 02 Topics List -->
+<div class="divide-y divide-surface-container-highest/60">
+<!-- Topic 1 Completed -->
+<div class="p-space-md flex items-center justify-between bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-body-md text-body-md text-on-surface font-medium">Taking Command Role-play Masterclass</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-outline font-label-sm text-label-sm">Video Masterclass · 18 min</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Live recreation of a massive payment failure. How the IC establishes authority and silences panic.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="font-label-sm text-label-sm text-secondary font-code-inline">COMPLETED</span>
+<button class="px-space-sm py-1 rounded bg-surface-container text-on-surface font-label-sm text-label-sm hover:bg-surface-bright transition-colors">Notes</button>
+</div>
+</div>
+<!-- Topic 2 Completed -->
+<div class="p-space-md flex items-center justify-between bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-body-md text-body-md text-on-surface font-medium">Radio Discipline Audio Bridge: The Three-Way Handshake</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-outline font-label-sm text-label-sm">Audio Scenario · 12 min</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Closed-loop comms training: Transmit, Verify, Acknowledge under severe time pressure.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="font-label-sm text-label-sm text-secondary font-code-inline">COMPLETED</span>
+<button class="px-space-sm py-1 rounded bg-surface-container text-on-surface font-label-sm text-label-sm hover:bg-surface-bright transition-colors">Replay</button>
+</div>
+</div>
+<!-- Topic 3: IN PROGRESS / ACTIVE MISSION -->
+<div class="p-space-md flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md bg-surface-container">
+<div class="flex items-start gap-space-md">
+<div class="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center font-code-inline text-label-sm font-bold shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px] animate-spin">sync</span>
+</div>
+<div class="flex flex-col">
+<div class="flex flex-wrap items-center gap-space-sm">
+<span class="font-body-md text-body-md text-on-surface font-bold text-primary">Who Does What? Branching Incident Scenario</span>
+<span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary-container font-label-sm text-label-sm font-semibold">Interactive H5P Tree</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-lowest text-secondary font-code-inline text-label-sm">STEP 4 OF 8</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface mt-0.5">
+                    Live simulation: Database replica falls behind by 840,000 txns. Engineering VP proposes manual restart. Scribe asks for severity change.
+                  </span>
+<div class="flex items-center gap-space-md mt-space-xs font-label-sm text-label-sm text-on-surface-variant">
+<span class="text-tertiary flex items-center gap-1 font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+                      Resume state saved at Decision Node 4
+                    </span>
+<span>· Est. 14 min remaining</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm shrink-0 self-end md:self-center">
+<button class="px-space-md py-1.5 rounded bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-semibold transition-colors flex items-center gap-space-xs shadow-md">
+<span>Resume Simulation</span>
+<kbd class="px-1 py-0.2 rounded bg-on-primary-container text-primary font-code-inline text-[10px]">↵</kbd>
+</button>
+</div>
+</div>
+<!-- Topic 4: PENDING -->
+<div class="p-space-md flex items-center justify-between bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="material-symbols-outlined text-outline text-[20px]">radio_button_unchecked</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-body-md text-body-md text-on-surface font-medium">Production Runbook Standardization &amp; Automation Triggers</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-outline font-label-sm text-label-sm">Markdown + Runbook Spec · 25 min</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">How to craft runbooks that junior on-call responders can execute safely at 03:00 AM.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="font-label-sm text-label-sm text-outline font-code-inline">UPCOMING</span>
+<button class="px-space-sm py-1 rounded bg-surface-container text-on-surface font-label-sm text-label-sm hover:bg-surface-bright transition-colors">Start</button>
+</div>
+</div>
+</div>
+</div>
+<!-- MODULE 03 (LOCKED - UPCOMING WEEK 3) -->
+<div class="rounded-xl bg-surface-container-low overflow-hidden opacity-75 shadow-sm">
+<div class="p-space-md bg-surface-container flex items-center justify-between">
+<div class="flex items-center gap-space-md">
+<span class="w-6 h-6 rounded-full bg-surface-container-highest text-outline flex items-center justify-center font-code-inline text-label-sm font-bold">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-outline font-code-inline">MODULE 03 · UPCOMING WEEK 3</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">UNLOCKS IN 3 DAYS</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface">Live Game-Day Drills &amp; High-Frequency Chaos</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Live unannounced fire drills inside ephemeral clusters. Multi-region failures, cmi5 telemetry metrics.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md shrink-0">
+<span class="font-label-sm text-label-sm text-outline font-code-inline">0 OF 4 COMPLETED</span>
+<span class="material-symbols-outlined text-outline text-[18px]">lock</span>
+</div>
+</div>
+<!-- Sample locked item summary -->
+<div class="p-space-md bg-surface-container-low text-on-surface-variant font-body-sm text-body-sm flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">dns</span>
+<span>Topics: Outage Simulator SCORM Engine, Live Tracked Drill #02, Comms Rapid Fire, Multi-Region DNS Partition War Room.</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline font-code-inline">ACCESS OPENS 17 NOV</span>
+</div>
+</div>
+<!-- MODULE 04 (LOCKED - UPCOMING WEEK 4) -->
+<div class="rounded-xl bg-surface-container-low overflow-hidden opacity-60 shadow-sm">
+<div class="p-space-md bg-surface-container flex items-center justify-between">
+<div class="flex items-center gap-space-md">
+<span class="w-6 h-6 rounded-full bg-surface-container-highest text-outline flex items-center justify-center font-code-inline text-label-sm font-bold">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-outline font-code-inline">MODULE 04 · FINAL WEEK</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">CAPSTONE + CREDENTIAL</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface">Aftermath &amp; Blameless Culture Defense</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Postmortem authorship, defending root-cause retrospectives to executives, credential conferral.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md shrink-0">
+<span class="font-label-sm text-label-sm text-outline font-code-inline">0 OF 4 COMPLETED</span>
+<span class="material-symbols-outlined text-outline text-[18px]">lock</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Cohort Telemetry, Leaderboard & Mentors (Right 4 Cols) -->
+<div class="lg:col-span-4 flex flex-col gap-space-lg">
+<!-- Cohort Drill Leaderboard -->
+<div class="bg-surface-container-low rounded-xl p-space-lg shadow-md flex flex-col gap-space-md">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px]">military_tech</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Cohort 04 Leaderboard</h3>
+</div>
+<span class="px-1.5 py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant font-code-inline">DRILL #01 AUDIT</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant -mt-space-xs">
+            Ranked by Mean Time to Mitigate (MTTR) and communication protocol compliance.
+          </p>
+<!-- Leaderboard Table -->
+<div class="flex flex-col gap-1.5">
+<!-- Rank 1 -->
+<div class="p-space-sm rounded-lg bg-surface-container-lowest flex items-center justify-between hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="w-5 font-code-inline font-bold text-secondary text-label-md">#1</span>
+<div class="w-6 h-6 rounded-full bg-secondary/20 text-secondary flex items-center justify-center font-label-sm text-label-sm font-semibold">A</div>
+<span class="font-code-inline text-label-md text-on-surface truncate">@alex.lead</span>
+</div>
+<div class="flex items-center gap-space-md shrink-0">
+<span class="font-code-inline text-label-sm text-secondary font-semibold">11.2m MTTR</span>
+<span class="font-label-sm text-label-sm text-outline">98 pts</span>
+</div>
+</div>
+<!-- Rank 2 -->
+<div class="p-space-sm rounded-lg bg-surface-container-lowest flex items-center justify-between hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="w-5 font-code-inline font-bold text-on-surface-variant text-label-md">#2</span>
+<div class="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center font-label-sm text-label-sm font-semibold">M</div>
+<span class="font-code-inline text-label-md text-on-surface truncate">@maria.ops</span>
+</div>
+<div class="flex items-center gap-space-md shrink-0">
+<span class="font-code-inline text-label-sm text-secondary font-semibold">13.5m MTTR</span>
+<span class="font-label-sm text-label-sm text-outline">95 pts</span>
+</div>
+</div>
+<!-- Rank 3 -->
+<div class="p-space-sm rounded-lg bg-surface-container-lowest flex items-center justify-between hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="w-5 font-code-inline font-bold text-on-surface-variant text-label-md">#3</span>
+<div class="w-6 h-6 rounded-full bg-tertiary/20 text-tertiary flex items-center justify-center font-label-sm text-label-sm font-semibold">C</div>
+<span class="font-code-inline text-label-md text-on-surface truncate">@chen.infra</span>
+</div>
+<div class="flex items-center gap-space-md shrink-0">
+<span class="font-code-inline text-label-sm text-secondary font-semibold">16.1m MTTR</span>
+<span class="font-label-sm text-label-sm text-outline">92 pts</span>
+</div>
+</div>
+<!-- Rank 4: YOU (Highlighted) -->
+<div class="p-space-sm rounded-lg bg-primary/15 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="w-5 font-code-inline font-bold text-primary text-label-md">#4</span>
+<div class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center font-label-sm text-label-sm font-bold">YOU</div>
+<div class="flex flex-col truncate">
+<span class="font-code-inline text-label-md text-primary font-bold truncate">@sarah.m</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider">Primary IC</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md shrink-0">
+<span class="font-code-inline text-label-sm text-primary font-bold">18.4m MTTR</span>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">88 pts</span>
+</div>
+</div>
+<!-- Rank 5 -->
+<div class="p-space-sm rounded-lg bg-surface-container-lowest flex items-center justify-between hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="w-5 font-code-inline font-bold text-on-surface-variant text-label-md">#5</span>
+<div class="w-6 h-6 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-label-sm text-label-sm font-semibold">D</div>
+<span class="font-code-inline text-label-md text-on-surface truncate">@devon.k</span>
+</div>
+<div class="flex items-center gap-space-md shrink-0">
+<span class="font-code-inline text-label-sm text-secondary font-semibold">19.0m MTTR</span>
+<span class="font-label-sm text-label-sm text-outline">86 pts</span>
+</div>
+</div>
+</div>
+<div class="p-space-sm rounded bg-surface-container flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>COHORT AGGREGATE MTTR:</span>
+<span class="font-code-inline text-on-surface font-semibold">21.2 min (48 Mitigations)</span>
+</div>
+</div>
+<!-- SRE Mentors & Live Support -->
+<div class="bg-surface-container-low rounded-xl p-space-lg shadow-md flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">support_agent</span>
+<span>Staff Mentors on Duty</span>
+</h3>
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse" title="Mentors Active"></span>
+</div>
+<div class="flex flex-col gap-space-sm">
+<!-- Mentor 1: Priya Raman -->
+<div class="p-space-md rounded-lg bg-surface-container-lowest flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center text-primary font-bold font-headline-md">
+                    PR
+                  </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-semibold">Priya Raman</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Staff SRE · Distributed Datastores</span>
+</div>
+</div>
+<span class="px-1.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-label-sm">ACTIVE</span>
+</div>
+<div class="p-space-sm rounded bg-surface-container text-on-surface font-body-sm text-body-sm flex items-center justify-between">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-tertiary">event_available</span>
+<span>1:1 Scheduled: Thu 16:30 UTC</span>
+</span>
+<a class="text-primary font-label-sm text-label-sm hover:underline" href="#">Meet Link ↗</a>
+</div>
+</div>
+<!-- Mentor 2: Marek Lis -->
+<div class="p-space-md rounded-lg bg-surface-container-lowest flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center text-secondary font-bold font-headline-md">
+                    ML
+                  </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-semibold">Marek Lis</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Principal Infra · Chaos Lead</span>
+</div>
+</div>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-outline font-label-sm text-label-sm">OFFLINE</span>
+</div>
+<div class="p-space-sm rounded bg-surface-container text-on-surface-variant font-body-sm text-body-sm flex items-center justify-between">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">group</span>
+<span>Office Hours: Fri 18:00 UTC</span>
+</span>
+<span class="font-label-sm text-label-sm text-outline">Discord Bridge</span>
+</div>
+</div>
+</div>
+<button class="w-full py-1.5 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors flex items-center justify-center gap-space-xs">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+<span>Book Additional Incident Review</span>
+</button>
+</div>
+<!-- Production Reference & Runbook Downloads -->
+<div class="bg-surface-container-low rounded-xl p-space-lg shadow-md flex flex-col gap-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">FIELD ARTIFACTS &amp; TOOLING</span>
+<div class="flex flex-col gap-1">
+<a class="p-space-sm rounded hover:bg-surface-container-lowest transition-colors flex items-center justify-between text-on-surface font-body-sm text-body-sm" href="#">
+<span class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[18px] text-primary">description</span>
+<span>SEV-1 Critical Incident Runbook (v4.2.pdf)</span>
+</span>
+<span class="font-code-inline text-label-sm text-outline">1.4 MB</span>
+</a>
+<a class="p-space-sm rounded hover:bg-surface-container-lowest transition-colors flex items-center justify-between text-on-surface font-body-sm text-body-sm" href="#">
+<span class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[18px] text-tertiary">code</span>
+<span>PromQL Alerting Rules Template (.yaml)</span>
+</span>
+<span class="font-code-inline text-label-sm text-outline">28 KB</span>
+</a>
+<a class="p-space-sm rounded hover:bg-surface-container-lowest transition-colors flex items-center justify-between text-on-surface font-body-sm text-body-sm" href="#">
+<span class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[18px] text-secondary">mic</span>
+<span>IC Radio Discipline Cheat Sheet (.png)</span>
+</span>
+<span class="font-code-inline text-label-sm text-outline">410 KB</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Client-side Interactive Clock Script for live terminal feel -->
+<script>
+    (function initDashboardClock() {
+      // Countdown simulation
+      const countdownEl = document.getElementById('drill-countdown');
+      if (!countdownEl) return;
+      
+      let secondsRemaining = (2 * 24 * 3600) + (14 * 3600) + (21 * 60) + 48;
+      
+      setInterval(() => {
+        if (secondsRemaining <= 0) return;
+        secondsRemaining--;
+        const days = Math.floor(secondsRemaining / 86400);
+        const hours = Math.floor((secondsRemaining % 86400) / 3600);
+        const mins = Math.floor((secondsRemaining % 3600) / 60);
+        const secs = secondsRemaining % 60;
+        countdownEl.textContent = 
+          String(days).padStart(2, '0') + 'd ' +
+          String(hours).padStart(2, '0') + 'h ' +
+          String(mins).padStart(2, '0') + 'm ' +
+          String(secs).padStart(2, '0') + 's';
+      }, 1000);
+
+      // Keyboard listener micro-interaction
+      window.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        if (e.key === 'd' || e.key === 'D') {
+          console.log('[On-Call Telemetry] Navigating to Drill Waiting Room');
+        } else if (e.key === 'Enter') {
+          console.log('[On-Call Telemetry] Resuming Active Mission: Decision 4');
+        }
+      });
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest shadow-[0_-1px_8px_rgba(0,0,0,0.4)]"><div class="w-full px-gutter-desktop py-space-xl flex flex-col gap-space-lg"><div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md"><div class="flex flex-wrap items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container"><span class="w-2 h-2 rounded-full bg-secondary"></span><span class="font-label-sm text-label-sm text-on-surface uppercase">INCIDENT MESH: DEGRADED 0 / HEALTHY 284</span></div><div class="flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container"><span class="material-symbols-outlined text-primary text-[14px]">verified_user</span><span class="font-label-sm text-label-sm text-on-surface-variant">SLA 99.99% GUARANTEE</span></div></div><div class="flex items-center gap-space-sm font-code-inline text-code-inline text-primary bg-surface-container-low px-space-md py-1.5 rounded"><span class="text-on-surface-variant select-none">$</span><span>curl -s https://oncall.academy/curriculum.json | jq .</span></div></div><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md pt-space-md"><div class="font-label-sm text-label-sm text-on-surface-variant">© 2025 ON-CALL ACADEMY INC. ALL RIGHTS RESERVED. PRODUCTION SITE RELIABILITY INFRASTRUCTURE.</div><div class="flex items-center gap-space-lg font-body-sm text-body-sm"><a class="text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1" data-path="community" href="#"><span class="font-label-sm text-label-sm text-secondary-fixed">#slack-community</span></a><a class="text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1" data-path="discord" href="#"><span class="font-label-sm text-label-sm text-tertiary">#discord-war-room</span></a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="privacy-security" href="#">Privacy &amp; Security</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="incident-status" href="#">System Status</a></div></div></div></footer></body></html>
