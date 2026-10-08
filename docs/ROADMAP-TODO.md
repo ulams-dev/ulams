@@ -89,7 +89,7 @@ stale content.
       and presets done; component conversion pending)
 - [x] (new) Demo content seeder for the three experience courses (`front/docs/design/experiences.md`)
 - [ ] (new) Root README, AGENTS.md and per-package READMEs for the monorepo
-- [ ] (new) Remaining legacy references: replace the `escolalms/php` and `escolalms/reportbro-server`
+- [ ] (new) Remaining legacy references (partial: `escolalms/php` replaced by a base built in-repo, ReportBro being removed): replace the `escolalms/php` and `escolalms/reportbro-server`
       images, decide on upstream provenance links, reword ADR prose, retarget Docker Hub publishing
       workflows, replace the `ulams.app` placeholder domain, recreate SQL views in pre-rename databases
 - [x] (new) Fix `php artisan route:list` (Mattermost client connects in its constructor)
@@ -133,6 +133,11 @@ stale content.
 - [ ] (new) Remove the Stripe test key committed in `api/docker/envs/*.example`
 - [ ] (new) Responsible disclosure: the payment-callback, LRS-token, webcam-upload and course-access issues
       exist in the upstream EscolaLMS packages; notify upstream users
+
+- [ ] (new) mjml: the `mjml` compose service is not on the `ulams` network and `MJML_API_URL` is not set
+      (templates fall back silently); wire it or drop the service
+- [ ] (new) Publish the base image as `ulams/php:8.3` with source offers for its GPL programs (see
+      `api/docker/php/NOTICE`)
 
 ### 0.2 Framework upgrade
 - [x] Upgrade plan from Laravel 9 (EOL) to supported Laravel/PHP: order, breaking changes,
