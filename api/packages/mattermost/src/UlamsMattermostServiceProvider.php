@@ -7,6 +7,7 @@ use Ulams\Mattermost\Providers\SettingsServiceProvider;
 use Illuminate\Support\ServiceProvider;
 use Ulams\Mattermost\Services\Contracts\MattermostServiceContract;
 use Ulams\Mattermost\Services\MattermostService;
+use Ulams\Mattermost\Support\MattermostManager;
 
 /**
  * SWAGGER_VERSION
@@ -17,6 +18,7 @@ class UlamsMattermostServiceProvider extends ServiceProvider
     /** @var array<class-string, class-string> */
     public array $singletons = [
         MattermostServiceContract::class => MattermostService::class,
+        MattermostManager::class => MattermostManager::class,
     ];
 
     /**

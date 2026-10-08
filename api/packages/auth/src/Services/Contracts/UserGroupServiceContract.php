@@ -18,7 +18,7 @@ interface UserGroupServiceContract
 
     public function delete(Group $group): ?bool;
 
-    public function searchAndPaginate(CriteriaDto $criteriaDto, array $appends = [], int $perPage = null, int $page = null, ?OrderDto $orderDto = null): LengthAwarePaginator;
+    public function searchAndPaginate(CriteriaDto $criteriaDto, array $appends = [], ?int $perPage = null, ?int $page = null, ?OrderDto $orderDto = null): LengthAwarePaginator;
 
     public function getRegisterableGroups(): Collection;
 

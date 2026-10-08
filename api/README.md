@@ -33,6 +33,30 @@ See [docs/multidomain.md][docs/multidomain.md] for more details how to quick sta
 1. Clone this repo
 2. `docker compose up -d`
 
+## Stack
+
+| Part | Version |
+|---|---|
+| PHP | 8.4 (image built from [docker/php](docker/php/README.md) on `php:8.4-fpm-alpine`) |
+| Laravel | 13.x, non-slim skeleton (`app/Http/Kernel.php`, `config/app.php` provider list) |
+| Multitenancy | `gecche/laravel-multidomain` 13 (one `.env.<host>` per tenant) |
+| Auth | Laravel Passport 13: personal access tokens (RS256), UUID client ids |
+| Tests | PHPUnit 12, Orchestra Testbench 11 (package suites), PostgreSQL |
+| Uploads | `image` rules use `image:allow_svg` (Laravel 12+ rejects SVG otherwise) |
+| API docs | `darkaonline/l5-swagger` 11 / `zircote/swagger-php` 6 reading `@OA\` docblocks |
+
+Useful commands (in the `api` container):
+
+```sh
+php artisan about                          # versions and drivers
+php artisan migrate --force                # platform database
+php artisan ulams:tenant:sync-env --migrate  # every tenant database
+php artisan passport:keys --force          # writes 600/660; Passport 13 rejects world-readable key files
+php artisan passport:client --personal --provider=users --no-interaction
+php artisan l5-swagger:generate
+./vendor/bin/phpunit --testsuite courses   # one package suite
+```
+
 ## Demo
 
 [https://api-stage.ulams.app/api/documentation](https://api-stage.ulams.app/api/documentation)

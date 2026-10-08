@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UserTermConsultationCriterion extends Criterion
 {
-    public function __construct(int $value = null)
+    public function __construct(?int $value = null)
     {
         parent::__construct(null, $value);
     }

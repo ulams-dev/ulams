@@ -9,12 +9,16 @@ use RecursiveIteratorIterator;
 /**
  * Tenant commands usually run as root (`docker compose exec`), while php-fpm runs as the
  * owner of the storage directory and must read the tenant's Passport keys and write its
- * logs. Hands a tenant storage directory over to that owner.
+ * logs. Hands a tenant storage directory over to that owner and fixes the Passport key modes
+ * (PassportKeyPermissions), which Passport 13 validates.
  */
 class StorageOwnership
 {
     public static function handOver(string $directory): void
     {
+        if (is_dir($directory)) {
+            PassportKeyPermissions::apply($directory);
+        }
         if (!function_exists('posix_geteuid') || posix_geteuid() !== 0 || !is_dir($directory)) {
             return;
         }

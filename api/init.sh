@@ -125,6 +125,11 @@ else
     php artisan db:seed --class=PermissionsSeeder --force --no-interaction
 fi
 
+# Passport 13 rejects key files whose mode is not 400/440/600/640/660 (the chmod -R above
+# made them 0775). The public key stays group-readable for the H5P service.
+find storage -maxdepth 2 -name oauth-private.key -exec chmod 600 {} +
+find storage -maxdepth 2 -name oauth-public.key -exec chmod 640 {} +
+
 touch inited
 
 # TODO: Fixme

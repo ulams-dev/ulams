@@ -69,6 +69,33 @@ class TopicTypesTutorCreateApiTest extends TestCase
         ]);
     }
 
+    #[Test]
+    public function testCreateTopicImageAcceptsSvg(): void
+    {
+        Storage::fake('local');
+
+        // Laravel 12+ `image` rule rejects SVG unless `allow_svg` is given (product decision: SVG uploads are allowed).
+        $file = UploadedFile::fake()->createWithContent(
+            'diagram.svg',
+            '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10"/></svg>'
+        );
+
+        $this->response = $this->actingAs($this->user, 'api')
+            ->withHeaders(['Accept' => 'application/json',])
+            ->post('/api/admin/topics', [
+                'title' => 'Hello World',
+                'lesson_id' => $this->lesson->id,
+                'topicable_type' => Image::class,
+                'value' => $file,
+            ]);
+
+        $this->response->assertStatus(201);
+
+        $path = $this->response->getData()->data->topicable->value;
+        $this->assertStringEndsWith('.svg', $path);
+        Storage::disk('local')->assertExists('/' . $path);
+    }
+
     public function testCreateTopicAudio(): void
     {
         Storage::fake('local');

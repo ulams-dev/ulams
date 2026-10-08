@@ -64,7 +64,7 @@ class Video extends AbstractTopicFileContent
     {
         return [
             'value' => ['required', 'mimes:mp4,ogg,webm,mov'],
-            'poster' => ['file', 'image'],
+            'poster' => ['file', 'image:allow_svg'],
         ];
     }
 

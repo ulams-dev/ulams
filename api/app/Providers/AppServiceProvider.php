@@ -36,6 +36,17 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(\L5Swagger\L5SwaggerServiceProvider::class);
+
+        // swagger-php 6 (l5-swagger 11) reads only PHP attributes by default. The API is
+        // documented with `@OA\` docblock annotations (223 files), which need the DocBlock
+        // factory (and doctrine/annotations). Set here because objects in config files cannot
+        // be cached by `config:cache`.
+        if (config('l5-swagger.defaults.scanOptions.analyser') === null) {
+            config(['l5-swagger.defaults.scanOptions.analyser' => new \OpenApi\Analysers\ReflectionAnalyser([
+                new \OpenApi\Analysers\DocBlockAnnotationFactory(),
+                new \OpenApi\Analysers\AttributeAnnotationFactory(),
+            ])]);
+        }
     }
 
     /**

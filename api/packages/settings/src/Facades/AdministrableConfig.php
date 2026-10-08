@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool  loadConfigFromCache()
  * @method static bool  loadConfigFromDatabase()
  * @method static array getPublicConfig()
- * @method static array getConfig(string $key = null)
+ * @method static array getConfig(?string $key = null)
  * @method static void  setConfig(array $config)
  *
  * @see \Ulams\Settings\Services\AdministrableConfigService

@@ -10,6 +10,7 @@ use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
 use Ulams\Tenancy\Services\Contracts\TenantCommandRunnerContract;
+use Ulams\Tenancy\Support\PassportKeyPermissions;
 use Ulams\Tenancy\Support\TenantNaming;
 
 /**
@@ -152,6 +153,7 @@ class TenantProvisioner
         $this->runner->run($tenant->api_host, ['passport:keys', '--force']);
 
         $directory = $this->domains->storagePath($tenant->api_host);
+        PassportKeyPermissions::apply($directory);
         $tenant->passport_private_key = $this->files->get($directory . '/' . self::PRIVATE_KEY);
         $tenant->passport_public_key = $this->files->get($directory . '/' . self::PUBLIC_KEY);
         $tenant->save();
@@ -170,8 +172,8 @@ class TenantProvisioner
             if (!$this->files->exists($path) || $this->files->get($path) !== $contents) {
                 $this->files->put($path, $contents);
             }
-            @chmod($path, $file === self::PRIVATE_KEY ? 0600 : 0644);
         }
+        PassportKeyPermissions::apply($directory);
 
         return true;
     }

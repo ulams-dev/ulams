@@ -69,7 +69,7 @@ class ConsultationService implements ConsultationServiceContract
         $this->consultationUserTermRepository = $consultationUserTermRepository;
     }
 
-    public function getConsultationsList(array $search = [], bool $onlyActive = false, OrderDto $orderDto = null): Builder
+    public function getConsultationsList(array $search = [], bool $onlyActive = false, ?OrderDto $orderDto = null): Builder
     {
         if ($onlyActive) {
             $now = now()->format('Y-m-d');

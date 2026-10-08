@@ -6,7 +6,7 @@ use Ulams\Courses\Events\CourseAssigned;
 use Ulams\Courses\Listeners\SetNewDeadlineForReassignedUser;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Spatie\ResponseCache\Events\ClearedResponseCache;
+use Spatie\ResponseCache\Events\ClearedResponseCacheEvent;
 use Spatie\ResponseCache\Facades\ResponseCache;
 
 class EventServiceProvider extends ServiceProvider
@@ -25,7 +25,7 @@ class EventServiceProvider extends ServiceProvider
             'eloquent.deleted: Ulams*',
         ], function() {
             ResponseCache::clear();
-            event(ClearedResponseCache::class);
+            event(new ClearedResponseCacheEvent());
         });
     }
 }

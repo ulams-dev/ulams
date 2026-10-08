@@ -9,7 +9,7 @@ use Throwable;
 
 class YtAuthenticateException extends Exception
 {
-    public function __construct($message = "", $code = 0, Throwable $previous = null)
+    public function __construct($message = "", $code = 0, ?Throwable $previous = null)
     {
         $message = $message ?: __('Youtube stream if not exists or is not authorize, log in.');
         $code = $code ?: 400;

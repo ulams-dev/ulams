@@ -49,7 +49,7 @@ class Image extends AbstractTopicFileContent
     public static function rules(): array
     {
         return [
-            'value' => ['required', 'image'],
+            'value' => ['required', 'image:allow_svg'],
             'width' => ['sometimes', 'integer'],
             'height' => ['sometimes', 'integer'],
         ];

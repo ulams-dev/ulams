@@ -31,7 +31,7 @@ class PencilSpacesService implements PencilSpacesServiceContract
     /**
      * @throws RequestException
      */
-    public function getDirectLoginUrl(int $userId, string $redirectUrl = null): string
+    public function getDirectLoginUrl(int $userId, ?string $redirectUrl = null): string
     {
         $pencilSpaceAccount = $this->getPencilSpaceAccount($userId);
 

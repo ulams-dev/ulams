@@ -113,7 +113,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         return $this->resourceClasses;
     }
 
-    public function getResourceClass(string $topicTypeClass = null, string $type = 'client'): string
+    public function getResourceClass(?string $topicTypeClass = null, string $type = 'client'): string
     {
         if (isset($this->resourceClasses[$type][$topicTypeClass])) {
             return $this->resourceClasses[$type][$topicTypeClass];

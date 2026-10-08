@@ -79,6 +79,18 @@ Edit the code here directly. A new module needs three things:
   implicitly nullable parameters made explicit (`?Sco`, `?Scorm`, `?Carbon`; deprecated in
   PHP 8.4). Its provider and the `ScormManager` alias are registered in `config/app.php`,
   as composer discovery did before.
+- `shopping-cart` (`Treestoneit\ShoppingCart\`): the cart models, `CartManager` and the
+  `carts`/`cart_items` migrations used by the `cart` and `vouchers` packages. Vendored from
+  `treestoneit/shopping-cart` 1.6.1 (MIT, https://github.com/treeStoneIT/shopping-cart, commit
+  `74e606554cc1f1c5c28ba7201067cefe94f4b28e`) because no release accepts Laravel 13. The
+  upstream namespace is kept; `LICENSE.md` and `README.md` are upstream's; no code changes. Its
+  provider is registered by `UlamsCartServiceProvider`, as before. The cart is to be replaced by
+  Sylius, so no upstream syncing is planned.
+
+`gnello/laravel-mattermost-driver` (the Laravel wrapper, no Laravel 13 release) was replaced by
+our own `Ulams\Mattermost\Support\MattermostManager` and `Ulams\Mattermost\Facades\Mattermost`
+in the `mattermost` package; the HTTP client `gnello/php-mattermost-driver` (MIT, no Laravel
+dependency) stays a composer dependency.
 
 ## Provenance
 

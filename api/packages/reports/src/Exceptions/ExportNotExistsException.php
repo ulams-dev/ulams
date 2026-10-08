@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ExportNotExistsException extends Exception
 {
-    public function __construct(string $message = null) {
+    public function __construct(?string $message = null) {
         parent::__construct($message ?? __('The export for the statistics does not exist.'));
     }
 

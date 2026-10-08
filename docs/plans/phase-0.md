@@ -579,3 +579,154 @@ Risks and follow-ups for step 4 (PHP 8.4 + L13):
 - **Scalar resources**: any new `JsonResource` whose `toArray()` returns a scalar needs the same `resolve()` override
   (or should not be a resource).
 - The vendored scorm package is now our code: upstream has no Carbon 3 release, so no further syncing is expected.
+
+### B.14 Step 4/4: Laravel 12 → 13 on PHP 8.4
+
+Done 2026-10-08, uncommitted on `phase-0/foundation`. Result: `laravel/framework` v12.69.3 → **v13.35.0** on
+**PHP 8.4.26** (`php:8.4-fpm-alpine3.24`; `api/Dockerfile`, `api/Dockerfile.develop`, `api/docker/php/*`),
+Passport 12.4 → **13.9**, PHPUnit 11.5 → **12.5**, Testbench 10 → **11**. The full PHPUnit run shows no new
+failures (table below). The non-slim skeleton stays.
+
+Composer (`api/composer.json`, `php: ^8.4`; 86 lock entries changed):
+
+| Package | From | To | Note |
+|---|---|---|---|
+| `laravel/framework` | ^12.69 (12.69.3) | ^13.35 (13.35.0) | pulls Symfony 8 components, `psr/http-message` 2 |
+| `laravel/passport` | ^12.0 (12.4.3) | ^13.9 (13.9.0) | `league/oauth2-server` 8.5 → 9.4; data migration below |
+| `gecche/laravel-multidomain` | ^12.0 | ^13.0 (13.0) | no code change |
+| `orchestra/testbench` | ^10.12 | ^11.3 (core 11.5) | |
+| `phpunit/phpunit` | ^11.5 | ^12.5 (12.5.38) | doc-comment metadata was already converted in step 3 |
+| `laravel/tinker` | ^2.9 | ^3.0 | |
+| `darkaonline/l5-swagger` | ^8 (8.6.5) | ^11.1 (11.1.0) | `zircote/swagger-php` 4 → 6, see below |
+| `doctrine/annotations` | transitive | ^2.0 (direct) | swagger-php 6 needs it to read `@OA\` docblocks; **abandoned upstream** (`composer audit` lists it) |
+| `spatie/laravel-responsecache` | ^7.7 | ^8.4 (8.4.5) | grouped config keys, JSON serializer, `ClearedResponseCacheEvent` |
+| `tzsk/sms` | ^9.0 | ^10.0 | templates-sms suite green |
+| `kreait/laravel-firebase` | ^6.0 | ^7.2 (`kreait/firebase-php` 7 → 8) | no API change for `PushNotificationChannel` |
+| `laravel/horizon`, `laravel/socialite`, `sentry/sentry-laravel`, `spatie/laravel-health`, `maatwebsite/excel` | | 5.50, 5.31, 4.29, 1.40, 3.1.70 | constraint floors raised to L13-capable lines |
+| `rennokki/laravel-eloquent-query-cache` | ^3.6 | **removed** | blocker, see below |
+| `treestoneit/shopping-cart` | ^1.4 (1.6.1) | **removed, vendored** as `api/packages/shopping-cart` | blocker, see below |
+| `gnello/laravel-mattermost-driver` | ^1 (1.3.3) | **removed**; `gnello/php-mattermost-driver` ^2.19 direct | blocker, see below |
+
+Blockers (B.2):
+
+- **Query cache** (`rennokki/laravel-eloquent-query-cache`, no L13 release): dropped, not replaced. The trait
+  `Ulams\Core\Models\Traits\QueryCacheable` is deleted and `Course`, `Lesson`, `Topic`, `AbstractTopicContent`,
+  `TopicResource` no longer cache queries; `dontCache()`/`flushQueryCache()` calls became plain queries (reports
+  metrics, `ProgressService`, `TopicObserver`). It cached every read for an hour and invalidated only on Eloquent
+  events, so query-builder writes were served stale; new test `courses/tests/Models/NoQueryCacheTest.php`. HTTP-level
+  caching (responsecache on the public course endpoints) is unchanged.
+- **Shopping cart** (`treestoneit/shopping-cart`, no L13 release): vendored unchanged from 1.6.1 (MIT, upstream commit
+  `74e60655`; `LICENSE.md`, `README.md` kept; provenance in `api/packages/README.md`), namespace
+  `Treestoneit\ShoppingCart\` autoloaded from `packages/shopping-cart/src`. Verified byte-identical to the 1.6.1 dist
+  archive. Retired with the Sylius move.
+- **Mattermost** (`gnello/laravel-mattermost-driver`, no L13 release): replaced by our own
+  `Ulams\Mattermost\Support\MattermostManager` + `Ulams\Mattermost\Facades\Mattermost` (same `mattermost.servers`
+  config, one client per server, now created **lazily** on first use, so `route:list` no longer tries to log in to
+  Mattermost). The MIT HTTP client `gnello/php-mattermost-driver` stays a dependency.
+
+Passport 13 ([UPGRADE.md](https://github.com/laravel/passport/blob/13.x/UPGRADE.md)):
+
+- Data migration `api/database/migrations/2026_10_08_140000_upgrade_oauth_clients_to_passport_13.php`:
+  `oauth_clients.user_id` → `owner_type`/`owner_id`, `redirect` → `redirect_uris` (JSON), `personal_access_client`/
+  `password_client` → `grant_types` (JSON, derived exactly as Passport 13 derives them for legacy rows, so every
+  client keeps its grants), plain secrets hashed (`secret` widened to 255), `oauth_personal_access_clients` dropped.
+  Client UUIDs, token rows and keys are untouched, so issued tokens stay valid (no logout). Idempotent; `down()`
+  restores the Passport 12 columns (secrets stay hashed). Ran on the platform DB and, via
+  `ulams:tenant:sync-env --migrate`, on coffee, nightsky and oncall (3 clients each, all with `grant_types`); down/up
+  round trip tested on a scratch DB.
+- `config/passport.php` rewritten to the Passport 13 shape (`personal_access_client`, `client_uuids`,
+  `storage.database` removed; `connection`). `AuthService` names tokens `AuthService::TOKEN_NAME` instead of the removed
+  `passport.personal_access_client.secret`; `PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET` removed from the CI envs.
+  `User` implements `OAuthenticatable`. `token()` now returns `Laravel\Passport\AccessToken` (logout `revoke()` and
+  refresh `expires_at` work through its forwarding). `install_passport` passes `--provider` and `--no-interaction`.
+- Routes: Passport 13 drops its JSON client/token management API (10 routes: `oauth/clients*`, `oauth/tokens*`,
+  `oauth/scopes`, `oauth/personal-access-tokens*`; unused by admin/front) and adds the device-code flow (5
+  `oauth/device*` routes), so `route:list` is **521** (526 on L12); the rest of the list is identical (the `any`
+  routes also accept the new `QUERY` method).
+- **Key file permissions**: league/oauth2-server 9 rejects key files that are not 400/440/600/640/660, and every
+  tenant request returned 500 with the old 644/775 keys. `Ulams\Tenancy\Support\PassportKeyPermissions` sets 600
+  (private) / 640 (public) and is applied by provisioning (`passport_keys` step and key restore), by
+  `ulams:tenant:sync-env` (`StorageOwnership::handOver`, which also fixes existing tenants on every container start)
+  and, for the platform keys, by `init.sh`/`init_multidomains.sh` after their `chmod -R 0775 storage`. The H5P service
+  reads the public keys through the read-only `/laravel` mount, so its container gets the storage group
+  (`group_add: "82"` in `docker-compose.yml`). Unit test `tenancy/tests/Unit/PassportKeyPermissionsTest.php`.
+
+Other code changes:
+
+| Category | Files | Change |
+|---|---|---|
+| L13 CSRF rename | `app/Http/Middleware/PreventRequestForgery.php` (was `VerifyCsrfToken.php`), `app/Http/Kernel.php` | same behaviour |
+| swagger-php 6 reads only attributes by default | `app/Providers/AppServiceProvider.php`; 8 `*Swagger.php` files | analyser with the DocBlock + attribute factories (set at runtime so `config:cache` still works); invalid nested `@OA\Schema` blocks that v6 rejects removed. `l5-swagger:generate`: 311 paths, as on L12 |
+| responsecache 8 | `courses/config/responsecache.php`, `courses/src/Providers/EventServiceProvider.php`, 2 tests | config is a full copy of the v8 defaults: the courses provider merges it before it registers the package provider and `mergeConfigFrom` is shallow, so a partial `debug` array wiped the header names (`ResponseHeaderBag::remove(null)`, 49 failing tests in courses, course-access, topic-types, courses-import-export). Response cache cleared on the platform and every tenant (serializer changed) |
+| SVG uploads (product decision 2026-10-08: "SVG uploads are fine") | `cart` (product poster create + `PosterRule`), `consultations` (image), `courses` (`Course` rules, `UpdateCourseAPIRequest` image/poster), `stationary-events` (image), `topic-types` (`Image` value, `Video` poster), `webinar` (image, logotype) | `image` → `image:allow_svg` on every rule that accepted SVG before L12 (category icons already had it; avatars use `mimes:…,svg`). `AbstractTopicFileContent::getFileKeyNames()` (courses, topic-types) now also recognises `image:<params>`, otherwise topic image uploads would no longer be stored. Tests `CourseAdminApiTest::test_create_admin_course_svg_image_and_poster`, `TopicTypesTutorCreateApiTest::testCreateTopicImageAcceptsSvg` |
+| PHP 8.4: implicitly nullable parameters deprecated | 43 files in 17 packages | `Type $x = null` → `?Type $x = null`; a lint of every PHP file under `api/{app,config,database,routes,packages}` now reports no 8.4 deprecations |
+| PHP 8.4: `${var}` string interpolation deprecated | `images/src/Services/ImagesService.php` | `{$message}` |
+| L13 `Request::all()`: input now wins over an uploaded file with the same key | `courses-import-export/src/Services/ExportImportService.php` | course import (and course clone, which imports) put the exported path in the request input and the extracted file under the same key, so validation saw the string ("File not exist"); the path is now removed from the input when the file is attached. Caught by 4 `courses-import-export` tests. No other code builds requests this way; real multipart uploads send a key either as a file or as a string |
+| Passport 13 resolves a token's provider from the model class (`getProviderName()`) | `lrs/tests/Models/User.php` | the lrs test model inherited the courses test factory and built the parent class, so `createToken()` threw "Unable to determine authentication provider" (31 lrs tests); it now has its own factory. Production users are the configured model |
+| Timing-flaky ping tests | `courses/tests/APIs/CourseProgressApiTest.php` | `sleep(5)` → frozen clock, see Tests below |
+| Testbench 11 / Passport 13 in tests | `auth/tests/API/AuthApiTest.php`, `mattermost/tests/TestCase.php`, `cmi5/tests/Traits/Cmi5Testing.php` | `AccessToken` instead of the token model, our Mattermost facade |
+| PHPUnit config | `phpunit.xml`, `docker/envs/phpunit.xml.{postgres,mysql,cc}` | schema 11.5 → 12.5 |
+| CI | `.github/workflows/ci.yml` | PHP 8.4; Passport prep unchanged (`passport:keys --force` writes 600/660, `passport:client --personal --no-interaction` works on 13); quarantine unchanged |
+
+SVG and XSS: an SVG can carry `<script>` and event handlers. Uploads are served from the bucket origin
+(`storage.localhost` / S3), not from the API or the frontends, and the frontends render them with `<img>`, where scripts
+do not run. A user who opens the file URL directly runs it on the bucket origin, which holds no ulams cookies or
+tokens. Remaining risk: a bucket on the same site as the app, or a frontend that inlines SVG markup. Follow-up
+(1.4 upload hardening): serve SVG with `Content-Security-Policy: script-src 'none'` /
+`Content-Disposition: attachment`, or sanitise on upload.
+
+Verification:
+
+- **Schema**: `migrate:fresh` on an empty DB (`schema.sh l13`): the only differences to `schema_l12.sql` are
+  `oauth_clients` (Passport 13 columns, `owner` index, `secret` 255) and the dropped `oauth_personal_access_clients`;
+  row counts identical except `migrations` (+1) and the dropped table (`schema_l12_l13.diff`, `rows_l13.txt`). The
+  migrated platform and tenant `oauth_clients` match the fresh schema column for column.
+- **Tests**: full `./vendor/bin/phpunit` per suite on a freshly prepared PostgreSQL DB (`test_l13`), compared with
+  B.13.
+
+  | Suite | L12 (tests / failing) | L13 final |
+  |---|---|---|
+  | Integrations | 4 / 2 | 4 / 2 (same `EventApiTest` list/order) |
+  | auth | 124 / 3 | 124 / 3 (same `UserApiTest`) |
+  | bulk-notifications | 44 / 3 | 44 / 3 (same multicast tests) |
+  | core | 62 / 6 | 62 / 6 (same paginate/count tests) |
+  | courses | 205 / 0 | 209 / 0 (`NoQueryCacheTest` 3, SVG test 1) |
+  | topic-types | 78 / 0 | 79 / 0 (SVG test) |
+  | tenancy | 47 / 0 | 49 / 0 (`PassportKeyPermissionsTest`) |
+  | other 39 suites | 1 661 / 0 | 1 661 / 0 |
+  | **Total** | **2 225 / 14** | **2 232 / 14**, no new failures, same 14 as the CI quarantine |
+
+  The first full L13 run on the final dependency set had 98 failing tests: 49 from the partial responsecache config,
+  31 `lrs` (Passport provider lookup on the test model), 4 `courses-import-export` (L13 `Request::all()`), all fixed
+  above. The last full run then had one more, `CourseProgressApiTest::test_ping_complete_topic` (expected 15 tracked
+  seconds, got 16): the three ping tests used a real `sleep(5)` and a `timestamp(0)` column that Postgres rounds, so
+  the result depended on request time under load (2 of 8 reruns failed). They now freeze the clock
+  (`freezeSecond()` + `travel(5)->seconds()`); 10/10 reruns and the whole `courses` suite pass, and the suite is
+  15 s faster.
+- `composer validate`: valid (only the old exact-pin warning); `composer audit`: no advisories, 1 abandoned package
+  (`doctrine/annotations`). `php artisan about`: Laravel 13.35.0, PHP 8.4.26; `route:list`: 521 (see Passport);
+  `schedule:list`: 11; `l5-swagger:generate`: OK, 311 paths.
+- Platform `migrate`: nothing to migrate; `ulams:tenant:sync-env --migrate`: coffee, nightsky, oncall synced, 0 pending;
+  a tenant key set to 644 is back to 600/640 after `sync-env`.
+- `docker compose build --no-cache --pull api` from scratch: OK (PHP 8.4.26 with apcu, excimer, gd, intl, redis, zip
+  …); the `api` container was recreated on that image (about 50 s of 502s while `init.sh` migrates and syncs tenants).
+  Horizon running, php-fpm up; `queue:work --once` on the platform and `--domain=coffee.localhost` OK.
+- HTTP smoke (`api/storage/l12up/smoke.sh`): `/api/name` and `/api/courses` 200 on api, coffee, oncall, nightsky;
+  `admin@ulams.app` login → `/api/profile/me` 200; coffee admin login (demo password) → `/api/profile/me` 200; the
+  coffee token gets 401 on api and oncall; H5P service `GET http://coffee.localhost/h5p/contents` with the coffee
+  token 200 (401 without), platform 200; H5P client `show(3)` OK, `download(3)` a 1.6 MB `.h5p` zip;
+  `GET /api/admin/templates/4/preview` 200; `POST /api/admin/pdfs/preview` returns a PDF; SCORM `play`/`show` 200.
+  Response cache: MISS then HIT on coffee, MISS on oncall and api (per-tenant store).
+
+Open after step 4:
+
+- `doctrine/annotations` is abandoned; moving the 223 `@OA\` docblock files to PHP attributes removes it (Rector has a
+  rule set). Not urgent: no advisory.
+- Passport's device-code routes (`oauth/device*`) are now exposed and migrated clients carry the device grant. Nothing
+  uses them; disable with `Passport::$deviceCodeGrantEnabled = false` / `Passport::ignoreRoutes()` if unwanted
+  (needs a decision).
+- `api/config/domain.php` lists the three demo tenant hosts in the working tree: that is runtime state written by
+  tenant provisioning, not part of the upgrade, and should not be committed.
+- Pre-existing, not touched: `topic-types/database/factories/TopicResourceFactory.php` does not parse (unused);
+  `CategoriesRepositoryContract::listAll()` has optional parameters before a required one (PHP 8.0 deprecation).
+- Jitsi secret length (B.13) still applies on deploy. PostgreSQL 12 → 16/17 and Reverb remain step-7 follow-ups.

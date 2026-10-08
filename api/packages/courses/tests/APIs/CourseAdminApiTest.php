@@ -644,6 +644,38 @@ class CourseAdminApiTest extends TestCase
         ]);
     }
 
+    #[Test]
+    public function test_create_admin_course_svg_image_and_poster(): void
+    {
+        Storage::fake('local');
+        // Laravel 12+ `image` rule rejects SVG unless `allow_svg` is given (product decision: SVG uploads are allowed).
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10"/></svg>';
+
+        $this->response = $this->actingAs($this->user, 'api')->post(
+            '/api/admin/courses',
+            [
+                'title' => 'Test create course with SVG images',
+                'image' => UploadedFile::fake()->createWithContent('image.svg', $svg),
+                'poster' => UploadedFile::fake()->createWithContent('poster.svg', $svg),
+            ]
+        );
+
+        $this->response->assertStatus(201);
+
+        $data = $this->response->json('data');
+        $this->assertStringEndsWith('.svg', $data['image_path']);
+        $this->assertStringEndsWith('.svg', $data['poster_path']);
+        Storage::disk('local')->assertExists('/' . $data['image_path']);
+        Storage::disk('local')->assertExists('/' . $data['poster_path']);
+
+        $this->response = $this->actingAs($this->user, 'api')->post(
+            '/api/admin/courses/' . $data['id'],
+            ['poster' => UploadedFile::fake()->createWithContent('poster2.svg', $svg)]
+        );
+        $this->response->assertOk();
+        $this->assertStringEndsWith('.svg', $this->response->json('data.poster_path'));
+    }
+
     public function test_delete_admin_course_poster(): void
     {
         Storage::fake('local');

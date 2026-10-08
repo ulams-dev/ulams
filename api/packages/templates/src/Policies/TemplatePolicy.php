@@ -26,12 +26,12 @@ class TemplatePolicy
         return !is_null($user) && $user->can(TemplatesPermissionsEnum::TEMPLATES_CREATE);
     }
 
-    public function delete(?User $user, Template $template = null): bool
+    public function delete(?User $user, ?Template $template = null): bool
     {
         return !is_null($user) && $user->can(TemplatesPermissionsEnum::TEMPLATES_DELETE);
     }
 
-    public function update(?User $user, Template $template = null): bool
+    public function update(?User $user, ?Template $template = null): bool
     {
         return !is_null($user) && $user->can(TemplatesPermissionsEnum::TEMPLATES_UPDATE);
     }

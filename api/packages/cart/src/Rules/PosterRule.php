@@ -11,6 +11,6 @@ class PosterRule extends FileOrStringRule
     {
         $prefixPath = ConstantEnum::DIRECTORY . '/' . $productId;
 
-        parent::__construct(['image'], $prefixPath);
+        parent::__construct(['image:allow_svg'], $prefixPath);
     }
 }

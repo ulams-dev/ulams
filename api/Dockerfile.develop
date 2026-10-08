@@ -2,9 +2,9 @@
 # The PHP runtime is built from docker/php in this repository (see docker/php/README.md).
 # The php-base stage below does exactly what docker/php/Dockerfile does, so
 # `docker compose up --build` needs no prebuilt image. To build on a published base instead,
-# pass --build-arg BASE_IMAGE=ulams/php:8.3 and the php-base stage is skipped.
+# pass --build-arg BASE_IMAGE=ulams/php:8.4 and the php-base stage is skipped.
 ARG BASE_IMAGE=php-base
-ARG PHP_IMAGE=php:8.3-fpm-alpine3.24
+ARG PHP_IMAGE=php:8.4-fpm-alpine3.24
 
 FROM ${PHP_IMAGE} AS php-base
 COPY --from=mlocati/php-extension-installer:2.12.0 /usr/bin/install-php-extensions /usr/local/bin/

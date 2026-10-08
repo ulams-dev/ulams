@@ -18,7 +18,7 @@ abstract class AbstractCoursesSecondsSpentMetric extends AbstractCoursesMetric
         $topicTable = (new Topic())->getTable();
         $courseProgressTable = (new CourseProgress())->getTable();
 
-        $query = Course::dontCache()->selectRaw($courseTable . '.id, ' . $courseTable . '.title as label, SUM(' . $courseProgressTable . '.seconds) as value')
+        $query = Course::query()->selectRaw($courseTable . '.id, ' . $courseTable . '.title as label, SUM(' . $courseProgressTable . '.seconds) as value')
             ->join($lessonTable, $courseTable . '.id', '=', $lessonTable . '.course_id')
             ->join($topicTable, $lessonTable . '.id', '=', $topicTable . '.lesson_id')
             ->join($courseProgressTable, $topicTable . '.id', '=', $courseProgressTable . '.topic_id')

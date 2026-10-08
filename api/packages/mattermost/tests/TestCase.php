@@ -13,8 +13,7 @@ use Ulams\Webinar\UlamsWebinarServiceProvider;
 use GuzzleHttp\Middleware;
 use Ulams\Mattermost\UlamsMattermostServiceProvider;
 use Ulams\Settings\UlamsSettingsServiceProvider;
-use Gnello\Mattermost\Laravel\Facades\Mattermost;
-use Gnello\Mattermost\Laravel\MattermostServiceProvider;
+use Ulams\Mattermost\Facades\Mattermost;
 use Illuminate\Support\Facades\Config;
 use Laravel\Passport\Passport;
 use Ulams\Lrs\Tests\Models\Client;
@@ -51,7 +50,6 @@ class TestCase extends CoreTestCase
         return [
             ...parent::getPackageProviders($app),
             UlamsMattermostServiceProvider::class,
-            MattermostServiceProvider::class,
             UlamsAuthServiceProvider::class,
             UlamsCourseServiceProvider::class,
             UlamsScormServiceProvider::class,

@@ -21,7 +21,7 @@ class MetadataPolicy
         return !is_null($user) && $user->can(MetaFieldPermissionsEnum::METADATA_CREATE_UPDATE);
     }
 
-    public function delete(?User $user, Metadata $template = null): bool
+    public function delete(?User $user, ?Metadata $template = null): bool
     {
         return !is_null($user) && $user->can(MetaFieldPermissionsEnum::METADATA_DELETE);
     }

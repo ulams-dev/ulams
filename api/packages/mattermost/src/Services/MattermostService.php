@@ -7,7 +7,7 @@ use Ulams\Mattermost\Enum\MattermostRoleEnum;
 use Ulams\Mattermost\Enum\TeamNameEnum;
 use Ulams\Mattermost\Services\Contracts\MattermostServiceContract;
 use Gnello\Mattermost\Driver;
-use Gnello\Mattermost\Laravel\Facades\Mattermost;
+use Ulams\Mattermost\Facades\Mattermost;
 use Illuminate\Support\Str;
 use Psr\Http\Message\ResponseInterface;
 

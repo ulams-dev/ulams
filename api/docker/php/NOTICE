@@ -1,12 +1,12 @@
 ulams PHP runtime image - third-party software notice
 
-This image is built from the official Docker "php" image (php:8.3-fpm-alpine) and installs
+This image is built from the official Docker "php" image (php:8.4-fpm-alpine) and installs
 the packages below from the Alpine Linux repositories. They are unmodified distribution
 packages. Their source code is available from the Alpine aports repository
 (https://gitlab.alpinelinux.org/alpine/aports) and from the upstream projects.
 
 PHP and extensions (linked into the PHP process)
-  PHP 8.3                         PHP-3.01
+  PHP 8.4                         PHP-3.01
   apcu, redis (PECL)              PHP-3.01
   bundled extensions (gd, intl,   PHP-3.01 (libraries: see Alpine package metadata;
   zip, pdo_pgsql, ...)            libgd, ICU, libzip, libpq and others are permissive)

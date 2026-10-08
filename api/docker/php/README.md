@@ -1,7 +1,7 @@
 # ulams PHP runtime image
 
 The PHP runtime of the ulams API, built from this repository on top of the official
-[`php:8.3-fpm-alpine`](https://hub.docker.com/_/php) image. It replaces the external
+[`php:8.4-fpm-alpine`](https://hub.docker.com/_/php) image. It replaces the external
 `escolalms/php:8.3-alpine` image, so the API no longer depends on a third-party base image
 that we do not control.
 
@@ -9,7 +9,7 @@ that we do not control.
 
 | Part | Contents |
 |---|---|
-| Base | `php:8.3-fpm-alpine3.24` (official Docker image, PHP 8.3, php-fpm on port 9000) |
+| Base | `php:8.4-fpm-alpine3.24` (official Docker image, PHP 8.4, php-fpm on port 9000) |
 | PHP extensions added | apcu, bcmath, exif, gd (freetype, jpeg, png, webp, avif, xpm), intl, pcntl, pdo_mysql, pdo_pgsql, redis, zip |
 | PHP extensions from the base | ctype, curl, dom, fileinfo, iconv, mbstring, opcache, openssl, pdo_sqlite, posix, readline, sodium, tokenizer, xml, xmlreader, xmlwriter, zlib and the rest of the core set |
 | Tools | composer 2.10, supervisor, bash, ffmpeg/ffprobe, jpegoptim, optipng, pngquant, gifsicle, unzip, curl |
@@ -54,16 +54,16 @@ Dockerfiles.
 ## Building and publishing the base on its own
 
 ```sh
-docker build -t ulams/php:8.3 api/docker/php
+docker build -t ulams/php:8.4 api/docker/php
 # multi-arch, for a registry
 docker buildx build --platform linux/amd64,linux/arm64 \
-  -t ghcr.io/ulams-dev/php:8.3 --push api/docker/php
+  -t ghcr.io/ulams-dev/php:8.4 --push api/docker/php
 ```
 
 To build the API on a published base instead of the inline stage:
 
 ```sh
-docker build --build-arg BASE_IMAGE=ghcr.io/ulams-dev/php:8.3 -t ulams-api api
+docker build --build-arg BASE_IMAGE=ghcr.io/ulams-dev/php:8.4 -t ulams-api api
 ```
 
 BuildKit then skips the `php-base` stage entirely.

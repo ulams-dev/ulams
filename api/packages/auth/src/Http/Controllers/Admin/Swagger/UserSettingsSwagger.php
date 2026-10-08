@@ -30,12 +30,10 @@ interface UserSettingsSwagger
      *          response=200,
      *          description="successful operation, returns list of user settings",
      *          @OA\JsonContent(
-     *              @OA\Schema(
      *                  type="array",
      *                  @OA\Items(
-     *                      ref="#/components/schemas/UserSetting"
+     *                      type="object"
      *                  )
-     *              )
      *          )
      *     ),
      * )

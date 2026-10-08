@@ -78,15 +78,11 @@ interface TagsApiSwagger
      *                  property="tags",
      *                  type="array",
      *                  @OA\Items(
+     *                      type="object",
      *                      @OA\Property(
-     *                         type="array",
-     *                         @OA\Items(
-     *                             @OA\Property(
-     *                                property="title",
-     *                                type="string",
-     *                                example="Nowości"
-     *                             ),
-     *                         ),
+     *                          property="title",
+     *                          type="string",
+     *                          example="Nowości"
      *                      ),
      *                  ),
      *              ),
@@ -126,10 +122,8 @@ interface TagsApiSwagger
      *                 property="tags",
      *                 type="array",
      *                 @OA\Items(
-     *                     @OA\Property(
-     *                        type="integer",
-     *                        example="1"
-     *                     ),
+     *                     type="integer",
+     *                     example="1"
      *                 ),
      *             ),
      *         )

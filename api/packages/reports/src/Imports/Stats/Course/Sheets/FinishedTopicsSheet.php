@@ -50,7 +50,7 @@ abstract class FinishedTopicsSheet implements OnEachRow, WithHeadingRow
         return $coursesProgress;
     }
 
-    protected abstract function prepareUpdateData($value, CourseProgress $courseProgress = null): array;
+    protected abstract function prepareUpdateData($value, ?CourseProgress $courseProgress = null): array;
 
     protected function prepareTopics()
     {

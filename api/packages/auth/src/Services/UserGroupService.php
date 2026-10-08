@@ -91,7 +91,7 @@ class UserGroupService implements UserGroupServiceContract
         return $group->refresh()->users;
     }
 
-    public function searchAndPaginate(CriteriaDto $criteriaDto, array $appends = [], int $perPage = null, int $page = null, ?OrderDto $orderDto = null): LengthAwarePaginator
+    public function searchAndPaginate(CriteriaDto $criteriaDto, array $appends = [], ?int $perPage = null, ?int $page = null, ?OrderDto $orderDto = null): LengthAwarePaginator
     {
         $query = $this->userGroupRepository->queryWithAppliedCriteria($criteriaDto->toArray())->with('children');
 

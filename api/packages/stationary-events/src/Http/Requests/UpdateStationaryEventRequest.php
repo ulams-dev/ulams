@@ -119,7 +119,7 @@ class UpdateStationaryEventRequest extends FormRequest
             'authors.*' => ['integer', new ValidAuthor()],
             'categories' => ['array'],
             'categories.*' => ['integer', 'exists:categories,id'],
-            'image' => [new FileOrStringRule(['image'], $prefixPath)],
+            'image' => [new FileOrStringRule(['image:allow_svg'], $prefixPath)],
             'image_path' => ['nullable', 'string', 'max:255'],
             'agenda' => ['nullable', 'json'],
         ];

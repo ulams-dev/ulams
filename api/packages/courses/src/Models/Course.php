@@ -3,7 +3,6 @@
 namespace Ulams\Courses\Models;
 
 use Ulams\Categories\Models\Category;
-use Ulams\Core\Models\Traits\QueryCacheable;
 use Ulams\Core\Models\User as CoreUser;
 use Ulams\Courses\Database\Factories\CourseFactory;
 use Ulams\Courses\Enum\CourseStatusEnum;
@@ -193,7 +192,6 @@ use Peopleaps\Scorm\Model\ScormScoModel;
 class Course extends Model
 {
     use HasFactory;
-    use QueryCacheable;
 
     public $table = 'courses';
 
@@ -268,7 +266,7 @@ class Course extends Model
             'duration' => 'nullable|string|max:255',
             'authors' => ['nullable', 'array'],
             'authors.*' => ['integer'],
-            'image' => 'file|image',
+            'image' => 'file|image:allow_svg',
             'video' => 'file|mimes:mp4,ogg,webm',
             'status' => ['string', Rule::in(CourseStatusEnum::getValues())],
             'subtitle' => 'nullable|string|max:255',
@@ -277,7 +275,7 @@ class Course extends Model
             'level' => 'nullable|string|max:100',
             'scorm_sco_id' => 'nullable|exists:scorm_sco,id',
             'poster_path' => 'nullable|string|max:255',
-            'poster' => 'file|image',
+            'poster' => 'file|image:allow_svg',
             'active_from' => 'date|nullable',
             'active_to' => 'date|nullable',
             'hours_to_complete' => 'integer|nullable',

@@ -2,9 +2,13 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery as Middleware;
 
-class VerifyCsrfToken extends Middleware
+/**
+ * CSRF protection (Laravel 13 renamed `VerifyCsrfToken` to `PreventRequestForgery`; it also accepts
+ * requests whose `Sec-Fetch-Site` is `same-origin` without a token).
+ */
+class PreventRequestForgery extends Middleware
 {
     /**
      * Indicates whether the XSRF-TOKEN cookie should be set on the response.

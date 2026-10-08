@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UserTermUserExistsCriterion extends Criterion
 {
-    public function __construct(array $value = null)
+    public function __construct(?array $value = null)
     {
         parent::__construct(null, $value);
     }

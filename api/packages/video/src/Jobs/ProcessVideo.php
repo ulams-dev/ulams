@@ -36,7 +36,7 @@ class ProcessVideo implements ShouldQueue
     protected Topic $topic;
     protected ?Authenticatable $user;
     protected string $disk;
-    public function __construct(Video $video, ?Authenticatable $user, string $disk = null)
+    public function __construct(Video $video, ?Authenticatable $user, ?string $disk = null)
     {
         $this->video = $video;
         $this->topic = $video->topic;

@@ -34,7 +34,7 @@ class FinishedTopicsAttemptsSheet extends FinishedTopicsSheet
         return $courseProgress;
     }
 
-    protected function prepareUpdateData($value, CourseProgress $courseProgress = null): array
+    protected function prepareUpdateData($value, ?CourseProgress $courseProgress = null): array
     {
         return [
             'attempts' => $value,

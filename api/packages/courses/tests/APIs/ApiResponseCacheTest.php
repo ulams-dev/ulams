@@ -15,8 +15,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
-use Spatie\ResponseCache\Events\CacheMissed;
-use Spatie\ResponseCache\Events\ResponseCacheHit;
+use Spatie\ResponseCache\Events\CacheMissedEvent;
+use Spatie\ResponseCache\Events\ResponseCacheHitEvent;
 
 class ApiResponseCacheTest extends TestCase
 {
@@ -51,93 +51,93 @@ class ApiResponseCacheTest extends TestCase
 
     public function testCacheCourseResponse(): void
     {
-        Event::fake([CacheMissed::class, ResponseCacheHit::class]);
+        Event::fake([CacheMissedEvent::class, ResponseCacheHitEvent::class]);
 
         $this->actingAs($this->student, 'api')->getJson('/api/courses/' . $this->course->getKey())
             ->assertStatus(200);
 
-        Event::assertDispatched(CacheMissed::class);
-        Event::assertNotDispatched(ResponseCacheHit::class);
+        Event::assertDispatched(CacheMissedEvent::class);
+        Event::assertNotDispatched(ResponseCacheHitEvent::class);
 
         $this->actingAs($this->student, 'api')->getJson('/api/courses/' . $this->course->getKey())
             ->assertStatus(200);
 
-        Event::assertDispatched(ResponseCacheHit::class);
-        Event::assertDispatchedTimes(CacheMissed::class);
+        Event::assertDispatched(ResponseCacheHitEvent::class);
+        Event::assertDispatchedTimes(CacheMissedEvent::class);
     }
 
     public function testCacheCoursesList(): void
     {
-        Event::fake([CacheMissed::class, ResponseCacheHit::class]);
+        Event::fake([CacheMissedEvent::class, ResponseCacheHitEvent::class]);
         Course::factory(2)->create(['status' => CourseStatusEnum::PUBLISHED]);
 
         $this->getJson('/api/courses')
             ->assertStatus(200);
 
-        Event::assertDispatched(CacheMissed::class);
-        Event::assertNotDispatched(ResponseCacheHit::class);
+        Event::assertDispatched(CacheMissedEvent::class);
+        Event::assertNotDispatched(ResponseCacheHitEvent::class);
 
         $this->getJson('/api/courses')
             ->assertStatus(200);
 
-        Event::assertDispatched(ResponseCacheHit::class);
-        Event::assertDispatchedTimes(CacheMissed::class);
+        Event::assertDispatched(ResponseCacheHitEvent::class);
+        Event::assertDispatchedTimes(CacheMissedEvent::class);
     }
 
     public function testCacheCourseProgram(): void
     {
-        Event::fake([CacheMissed::class, ResponseCacheHit::class]);
+        Event::fake([CacheMissedEvent::class, ResponseCacheHitEvent::class]);
 
         $this->actingAs($this->student, 'api')->getJson('/api/courses/' . $this->course->getKey() . '/program')
             ->assertStatus(200);
 
-        Event::assertDispatched(CacheMissed::class);
-        Event::assertNotDispatched(ResponseCacheHit::class);
+        Event::assertDispatched(CacheMissedEvent::class);
+        Event::assertNotDispatched(ResponseCacheHitEvent::class);
 
         $this->actingAs($this->student, 'api')->getJson('/api/courses/' . $this->course->getKey() . '/program')
             ->assertStatus(200);
 
-        Event::assertDispatched(ResponseCacheHit::class);
-        Event::assertDispatchedTimes(CacheMissed::class);
+        Event::assertDispatched(ResponseCacheHitEvent::class);
+        Event::assertDispatchedTimes(CacheMissedEvent::class);
     }
 
     public function testCacheCourseProgress(): void
     {
-        Event::fake([CacheMissed::class, ResponseCacheHit::class]);
+        Event::fake([CacheMissedEvent::class, ResponseCacheHitEvent::class]);
 
         $this->actingAs($this->student, 'api')->getJson('/api/courses/progress')
             ->assertStatus(200);
 
-        Event::assertDispatched(CacheMissed::class);
-        Event::assertNotDispatched(ResponseCacheHit::class);
+        Event::assertDispatched(CacheMissedEvent::class);
+        Event::assertNotDispatched(ResponseCacheHitEvent::class);
 
         $this->actingAs($this->student, 'api')->getJson('/api/courses/progress')
             ->assertStatus(200);
 
-        Event::assertDispatched(ResponseCacheHit::class);
-        Event::assertDispatchedTimes(CacheMissed::class);
+        Event::assertDispatched(ResponseCacheHitEvent::class);
+        Event::assertDispatchedTimes(CacheMissedEvent::class);
     }
 
     public function testCacheAdminCourseProgram(): void
     {
-        Event::fake([CacheMissed::class, ResponseCacheHit::class]);
+        Event::fake([CacheMissedEvent::class, ResponseCacheHitEvent::class]);
 
         $this->actingAs($this->user, 'api')->getJson('/api/admin/courses/' . $this->course->getKey() . '/program')
             ->assertStatus(200);
 
-        Event::assertDispatched(CacheMissed::class);
-        Event::assertNotDispatched(ResponseCacheHit::class);
+        Event::assertDispatched(CacheMissedEvent::class);
+        Event::assertNotDispatched(ResponseCacheHitEvent::class);
 
         $this->actingAs($this->user, 'api')->getJson('/api/admin/courses/' . $this->course->getKey() . '/program')
             ->assertStatus(200);
 
-        Event::assertDispatched(ResponseCacheHit::class);
-        Event::assertDispatchedTimes(CacheMissed::class);
+        Event::assertDispatched(ResponseCacheHitEvent::class);
+        Event::assertDispatchedTimes(CacheMissedEvent::class);
     }
 
     public function testCacheAdminTopicResources(): void
     {
-        Event::fake([CacheMissed::class, ResponseCacheHit::class]);
+        Event::fake([CacheMissedEvent::class, ResponseCacheHitEvent::class]);
         Storage::fake('local');
 
         $file = UploadedFile::fake()->create('test.pdf');
@@ -153,13 +153,13 @@ class ApiResponseCacheTest extends TestCase
         $this->actingAs($this->user, 'api')->getJson('/api/admin/topics/' . $topic->getKey() . '/resources')
             ->assertStatus(200);
 
-        Event::assertDispatched(CacheMissed::class);
-        Event::assertNotDispatched(ResponseCacheHit::class);
+        Event::assertDispatched(CacheMissedEvent::class);
+        Event::assertNotDispatched(ResponseCacheHitEvent::class);
 
         $this->actingAs($this->user, 'api')->getJson('/api/admin/topics/' . $topic->getKey() . '/resources')
             ->assertStatus(200);
 
-        Event::assertDispatched(ResponseCacheHit::class);
-        Event::assertDispatchedTimes(CacheMissed::class);
+        Event::assertDispatched(ResponseCacheHitEvent::class);
+        Event::assertDispatchedTimes(CacheMissedEvent::class);
     }
 }

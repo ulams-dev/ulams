@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1
-# ulams PHP runtime: official php:8.3-fpm-alpine plus the extensions and tools the API needs.
-# Build:  docker build -t ulams/php:8.3 api/docker/php
+# ulams PHP runtime: official php:8.4-fpm-alpine plus the extensions and tools the API needs.
+# Build:  docker build -t ulams/php:8.4 api/docker/php
 # The api/Dockerfile and api/Dockerfile.develop build the same thing inline in their
 # php-base stage, so this file is only needed to publish the base image. See README.md.
-ARG PHP_IMAGE=php:8.3-fpm-alpine3.24
+ARG PHP_IMAGE=php:8.4-fpm-alpine3.24
 
 FROM ${PHP_IMAGE}
 COPY --from=mlocati/php-extension-installer:2.12.0 /usr/bin/install-php-extensions /usr/local/bin/

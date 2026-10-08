@@ -7,7 +7,7 @@ use Ulams\Files\Rules\FileOrStringRule;
 
 class TopicResourceRule extends FileOrStringRule
 {
-    public function __construct(?array $fileRules = [], int $topicId = null)
+    public function __construct(?array $fileRules = [], ?int $topicId = null)
     {
         if (is_null($topicId)) {
             return false;

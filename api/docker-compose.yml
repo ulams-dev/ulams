@@ -88,6 +88,10 @@ services:
       dockerfile: api/h5p/Dockerfile
     image: ulams/h5p:dev
     restart: unless-stopped
+    # Group of the storage files (www-data, gid 82 in the php image): the Passport public keys are
+    # 0640 because Passport 13 rejects world-readable key files.
+    group_add:
+      - "82"
     networks:
       - ulams
     depends_on:

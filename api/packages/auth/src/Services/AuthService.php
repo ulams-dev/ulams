@@ -18,6 +18,12 @@ use Laravel\Passport\PersonalAccessTokenResult;
 
 class AuthService implements AuthServiceContract
 {
+    /**
+     * Name stored on issued personal access tokens. Passport 12 used the
+     * `passport.personal_access_client.secret` config value here, which Passport 13 removed.
+     */
+    public const TOKEN_NAME = 'Personal Access Token';
+
     private UserRepositoryContract $userRepository;
 
     public function __construct(UserRepositoryContract $userRepository)
@@ -62,7 +68,7 @@ class AuthService implements AuthServiceContract
                 : now()->addMinutes(Config::get(UlamsAuthServiceProvider::CONFIG_KEY . '.token_expiration_minutes'))
         );
 
-        return $user->createToken(config('passport.personal_access_client.secret'));
+        return $user->createToken(self::TOKEN_NAME);
     }
 
     public function refreshToken(User $user): PersonalAccessTokenResult

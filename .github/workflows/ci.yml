@@ -30,7 +30,7 @@ env:
     commerce=cart,vouchers,payments,invoices,consultations,consultation-access,webinar,assign-without-account
     platform=Integrations,auth,core,permissions,settings,tenancy,translations,model-fields,csv-users,tracker
     content=templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
-  # Known failures on a CI-style prepared database, identical on Laravel 9 to 12
+  # Known failures on a CI-style prepared database, identical on Laravel 9 to 13
   # (docs/plans/phase-0.md, B.11): excluded from the blocking run, re-run non-blocking.
   # Remove an entry once the test is fixed.
   #   Integrations (2), auth (3), bulk-notifications (3), core (6): depend on rows left by other tests
@@ -199,7 +199,7 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.3"
+          php-version: "8.4"
           # Same set as api/docker/php/install.sh (pdo_mysql left out: CI is Postgres-only).
           extensions: apcu, bcmath, exif, gd, intl, pcntl, pdo_pgsql, redis, zip
           ini-values: memory_limit=2G

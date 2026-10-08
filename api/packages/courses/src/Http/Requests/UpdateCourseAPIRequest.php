@@ -33,9 +33,9 @@ class UpdateCourseAPIRequest extends FormRequest
         return array_merge(Course::rules(),
             [
                 'authors.*' => ['numeric', new ValidAuthor()],
-                'image' => [new FileOrStringRule(['image'], $prefixPath)],
+                'image' => [new FileOrStringRule(['image:allow_svg'], $prefixPath)],
                 'video' => [new FileOrStringRule(['mimes:mp4,ogg,webm'], $prefixPath)],
-                'poster' => [new FileOrStringRule(['image'], $prefixPath)],
+                'poster' => [new FileOrStringRule(['image:allow_svg'], $prefixPath)],
             ]);
     }
 }

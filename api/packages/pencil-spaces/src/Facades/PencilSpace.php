@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Http;
 
 /**
- * @method static string getDirectLoginUrl(int $userId, string $redirectUrl = null)
+ * @method static string getDirectLoginUrl(int $userId, ?string $redirectUrl = null)
  * @method static array createSpace(CreatePencilSpaceResource $createSpaceResource)
  *
 * @see \Ulams\PencilSpaces\Services\PencilSpacesService

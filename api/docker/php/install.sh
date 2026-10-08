@@ -1,5 +1,5 @@
 #!/bin/sh
-# Builds the ulams PHP runtime on top of the official php:8.3-fpm-alpine image.
+# Builds the ulams PHP runtime on top of the official php:8.4-fpm-alpine image.
 # Run by docker/php/Dockerfile and by the php-base stage of api/Dockerfile and
 # api/Dockerfile.develop, so the package list lives in one place.
 # Expects install-php-extensions and composer to be copied in beforehand.

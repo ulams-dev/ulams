@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CategoryIsUsed extends Exception
 {
-    public function __construct(string $message = null) {
+    public function __construct(?string $message = null) {
         parent::__construct($message ?? __('Category is used'));
     }
 

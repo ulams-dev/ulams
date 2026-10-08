@@ -315,6 +315,10 @@ class ExportImportService implements ExportImportServiceContract
 
         foreach (['value', 'poster'] as $key) {
             if (isset($topicData[$key]) && File::exists($dirFullPath . DIRECTORY_SEPARATOR . $topicData[$key])) {
+                // Laravel 13: in Request::all() input wins over a file with the same key, so the
+                // exported path must be removed for the uploaded file to be seen.
+                $request->query->remove($key);
+                $request->request->remove($key);
                 $request->files->add([
                     $key => new UploadedFile(
                         $dirFullPath . DIRECTORY_SEPARATOR . $topicData[$key],
