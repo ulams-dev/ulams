@@ -67,6 +67,9 @@ services:
       # H5P service (api/h5p), server-to-server; same token as H5P_INTERNAL_TOKEN of the h5p service
       - LARAVEL_H5P_SERVICE_URL=http://h5p:8080
       - LARAVEL_H5P_INTERNAL_TOKEN=ulams-h5p-internal-dev-token
+      # PDF renderer (api/pdf), server-to-server; same token as PDF_INTERNAL_TOKEN of the pdf service
+      - LARAVEL_PDF_SERVICE_URL=http://pdf:3000
+      - LARAVEL_PDF_INTERNAL_TOKEN=ulams-pdf-internal-dev-token
     volumes:
       - ./:/var/www/html
     networks:
@@ -135,6 +138,28 @@ services:
       - h5p_libraries:/data/libraries
       # Laravel env files (.env, .env.<host>) and storage/**/oauth-public.key, read-only.
       - ./:/laravel:ro
+
+  # PDF renderer (pdfme, MIT) for certificates and PDF templates, see pdf/README.md.
+  # Internal only: Laravel calls POST /render with X-Internal-Token; browsers never
+  # reach it (the admin designer loads fonts through /api/pdfs/fonts).
+  # The image is built from the repository root (yarn workspace).
+  pdf:
+    build:
+      context: ..
+      dockerfile: api/pdf/Dockerfile
+    image: ulams/pdf:dev
+    restart: unless-stopped
+    networks:
+      - ulams
+    environment:
+      PORT: 3000
+      LOG_LEVEL: info
+      PDF_INTERNAL_TOKEN: ulams-pdf-internal-dev-token
+      PDF_MAX_BODY_SIZE: 5mb
+      PDF_MAX_INPUTS: 100
+      PDF_RENDER_TIMEOUT_MS: 20000
+      PDF_MAX_CONCURRENCY: 2
+      PDF_MAX_QUEUE: 16
 
   # ulams_queue_cron:
   #   command: "./init.sh"
@@ -218,11 +243,6 @@ services:
       - ulams
     image: "valkey/valkey:8-alpine"
     command: "valkey-server --requirepass ${REDIS_PASSWORD:-ulams}"
-
-  reportbro:
-    networks:
-      - ulams
-    image: escolalms/reportbro-server:latest
 
   mjml:
     image: danihodovic/mjml-server

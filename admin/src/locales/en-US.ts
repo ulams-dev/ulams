@@ -650,6 +650,15 @@ export default {
   user_logs: 'User logs',
   http_method: 'HTTP method',
   path: 'Path',
+  'pdf_editor.legacy': 'This template was made with ReportBro, which is no longer supported.',
+  'pdf_editor.legacy_description':
+    'Start over from the default template of this event (the old layout is not kept), or ask an administrator to run templates-pdf:migrate-reportbro, which converts simple text fields.',
+  'pdf_editor.start_over': 'Start from the default template',
+  'pdf_editor.variables_help':
+    'Click a variable to add a field for it; it is filled in when the PDF is issued. Variables can also be typed into read-only text, e.g. “Issued by @VarAppName”.',
+  'pdf_editor.variable_used': 'Used in the template',
+  'pdf_editor.variable_add': 'Add a field',
+  'pdf_editor.preview_failed': 'Preview failed',
   generated_pdfs: 'Generated PDFs',
   download_all: 'Download all',
   download_pdf: 'Download PDF',

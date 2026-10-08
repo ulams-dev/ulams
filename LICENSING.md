@@ -13,6 +13,7 @@ that has no closer licence file. This page is an engineering summary, not legal 
 | `api/packages/*` | MIT (one package: see its `LICENSE`) | Imported from EscolaLMS / Wellms; original copyright notices are kept, ulams contributors are added |
 | `api/packages/h5p` | MIT | Read-only index and HTTP client; contains no H5P code |
 | `api/h5p` | **GPL-3.0-or-later** | Separate program (Lumi `h5p-nodejs-library`, H5P core and editor). See below |
+| `api/pdf` | MIT | PDF renderer service (pdfme, MIT); bundled fonts under SIL OFL 1.1, see `api/pdf/fonts/README.md` |
 | `front/` | MIT | `front/package.json` |
 | `front/src/lib/*` | MIT, except `scorm-player` (no licence upstream, see open items) | Imported libraries, see each README |
 | `admin/` | not declared upstream (see open items) | |
@@ -31,10 +32,15 @@ that has no closer licence file. This page is an engineering summary, not legal 
 4. New dependencies are checked for their licence before they are added (see `CLAUDE.md`).
 5. Imported code keeps its original copyright notices.
 
+## PDF templates and certificates
+
+PDF templates are designed in admin with the pdfme designer (`@pdfme/ui`, MIT) and rendered by
+`api/pdf` (`@pdfme/generator` and `@pdfme/schemas`, MIT). Fonts embedded in PDFs are SIL OFL 1.1
+(Noto Sans, Plus Jakarta Sans, Playfair Display, Space Grotesk, JetBrains Mono, Baloo 2, Nunito);
+their licence texts ship with the service. ReportBro (AGPL-3.0) was removed.
+
 ## Known issues (tracked in `docs/ROADMAP-TODO.md`)
 
-- `reportbro-designer` (AGPL-3.0) is bundled into admin (PDF certificate designer); its server image
-  uses `reportbro-lib` (AGPL-3.0). To be replaced or licensed commercially.
 - Infrastructure defaults with copyleft licences: MinIO (AGPL-3.0, upstream archived) and Soketi
   (AGPL-3.0). Fine unmodified as separate processes; to be replaced by permissive defaults
   (SeaweedFS or RustFS, Laravel Reverb after the framework upgrade). Redis was replaced by Valkey

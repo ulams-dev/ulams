@@ -89,7 +89,7 @@ stale content.
       and presets done; component conversion pending)
 - [x] (new) Demo content seeder for the three experience courses (`front/docs/design/experiences.md`)
 - [ ] (new) Root README, AGENTS.md and per-package READMEs for the monorepo
-- [ ] (new) Remaining legacy references (partial: `escolalms/php` replaced by a base built in-repo, ReportBro being removed): replace the `escolalms/php` and `escolalms/reportbro-server`
+- [ ] (new) Remaining legacy references (partial: `escolalms/php` replaced by a base built in-repo, ReportBro removed and replaced by pdfme): replace the `escolalms/php` and `escolalms/reportbro-server`
       images, decide on upstream provenance links, reword ADR prose, retarget Docker Hub publishing
       workflows, replace the `ulams.app` placeholder domain, recreate SQL views in pre-rename databases
 - [x] (new) Fix `php artisan route:list` (Mattermost client connects in its constructor)
@@ -333,17 +333,27 @@ Quality
       runs `reportbro-lib` (AGPL-3.0), and the default `REPORTBRO_URL` sends certificate data to
       reportbro.com. Removal checklist:
   - [ ] Admin: replace `components/PdfEditor` and `components/TemplateFields` with the `@pdfme/ui`
-        designer; drop `reportbro-designer` from `admin/package.json`
+        designer; drop `reportbro-designer` from `admin/package.json` (partial: designer with variables
+        panel, API preview and save done, typecheck/build pass; not yet exercised in a browser; admin
+        Jest is broken at baseline, so the new helper tests in `PdfEditor/template.test.ts` do not run)
   - [ ] API `templates-pdf`: replace `ReportBroService`/contract, the `reportbro/report/run` routes and
         `FabricPdfController` with a pdfme renderer client; keep the existing variables and
-        `CourseFinished` flow; store templates as pdfme JSON
+        `CourseFinished` flow; store templates as pdfme JSON (partial: done and tested —
+        `PdfRendererContract`, `POST /api/admin/pdfs/preview`, fonts proxy, certificates rendered once
+        and stored; uncommitted)
   - [ ] Renderer: small MIT Node worker `api/pdf` (pdfme generator; the API image has no Node), reached
-        over HTTP like `api/h5p`; QR schema for certificate verification URLs (6.1)
+        over HTTP like `api/h5p`; QR schema for certificate verification URLs (6.1) (partial: service,
+        tests and Docker image done; the QR points to `{APP_URL}/certificates/verify/{id}`, the
+        verification page does not exist yet)
   - [ ] Remove the `reportbro` service from `api/docker-compose.yml`, `REPORTBRO_URL` from config and
-        `.env.example`, and its mentions in docs and `LICENSING.md`
+        `.env.example`, and its mentions in docs and `LICENSING.md` (partial: done; historical mentions
+        remain in `docs/reports/phase-0-audit.md`, `docs/plans/phase-0.md` and ADR 0002)
   - [ ] Migrate existing templates (one-off converter or re-create); pdfme templates for the demo
-        certificates; tests for template CRUD, rendering and the CourseFinished certificate
+        certificates; tests for template CRUD, rendering and the CourseFinished certificate (partial:
+        converter migration + `templates-pdf:migrate-reportbro` done; themed JSON for coffee/oncall/nightsky
+        in `templates-pdf/resources/pdfme`, not yet assigned by the demo seeding)
   - [ ] Until then: set `REPORTBRO_URL` to the local server so no data leaves the installation
+        (obsolete once the pdfme change is merged: ReportBro and `REPORTBRO_URL` are gone)
 - [ ] Verification URL/QR, expiry, recertification, reminders
 - [ ] Mandatory training with due dates and manager escalation
 - [ ] Compliance reports and audit export (linked to Phase 3 audit trail)

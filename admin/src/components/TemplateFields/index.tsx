@@ -99,29 +99,43 @@ export const TemplateFields: React.FC<FormWysiwygProps> = ({ name, field, variab
           </React.Fragment>
         );
       case 'fabric.js':
+        // PDF templates: pdfme designer; the section stores the pdfme template JSON
         return (
           <React.Fragment>
             <ProForm.Item shouldUpdate>
               {(form) => {
+                const event = form.getFieldValue('event');
                 return (
                   <PdfEditor
-                    reportBroTemplate={
-                      form.getFieldValue(name) && JSON.parse(form.getFieldValue(name))
-                    }
+                    key={event}
+                    value={form.getFieldValue(name)}
                     variables={variables}
-                    field={field}
-                    onTemplateSaved={(tpl) => {
-                      form.setFieldsValue({ [name]: JSON.stringify(tpl) });
-                      form.submit();
-                    }}
-                    onTemplateUpdated={(tpl) => {
-                      form.setFieldsValue({ [name]: JSON.stringify(tpl) });
-                    }}
+                    requiredVariables={field.required_variables}
+                    defaultContent={field.default_content}
+                    event={event}
+                    onChange={(json) => form.setFieldsValue({ [name]: json })}
+                    onSave={() => form.submit()}
                   />
                 );
               }}
             </ProForm.Item>
-            <ProFormTextArea name={name} shouldUpdate width="lg" hidden />
+            <ProFormTextArea
+              name={name}
+              shouldUpdate
+              width="lg"
+              hidden
+              rules={[
+                {
+                  required: field.required,
+                  message: <FormattedMessage id="templates.this_required" />,
+                },
+                {
+                  validator: async (_, value) => {
+                    return fieldValidator(value, field.required_variables);
+                  },
+                },
+              ]}
+            />
           </React.Fragment>
         );
       case 'html':

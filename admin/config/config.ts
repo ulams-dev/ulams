@@ -167,6 +167,19 @@ export default defineConfig({
   },
   devtool: 'source-map',
   /**
+   * clawpdf (via @pdfme/converter, used by the PDF template designer) lazy-loads
+   * Node built-ins only when it runs under Node; in the browser bundle they are empty.
+   */
+  chainWebpack(config: any, { webpack }: any) {
+    const stub = path.resolve(__dirname, 'node-builtin-stub.js');
+    config.plugin('node-builtin-stub').use(webpack.NormalModuleReplacementPlugin, [
+      /^node:(fs\/promises|module|url|zlib)$/,
+      (resource: { request: string }) => {
+        resource.request = stub;
+      },
+    ]);
+  },
+  /**
    * Vendored libraries (provenance: README.md in each src/lib/<name> folder).
    * scorm-player and ts-models live once in front/src/lib and are shared with admin.
    * Keep in sync with "paths" in tsconfig.json.

@@ -1,0 +1,387 @@
+{
+  "basePdf": {
+    "width": 297,
+    "height": 210,
+    "padding": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "schemas": [
+    [
+      {
+        "name": "frame",
+        "type": "rectangle",
+        "position": {
+          "x": 10,
+          "y": 10
+        },
+        "width": 277,
+        "height": 190,
+        "rotate": 0,
+        "opacity": 1,
+        "borderWidth": 0.8,
+        "borderColor": "#2F5D8A",
+        "color": "",
+        "radius": 0,
+        "readOnly": true
+      },
+      {
+        "name": "frameInner",
+        "type": "rectangle",
+        "position": {
+          "x": 13,
+          "y": 13
+        },
+        "width": 271,
+        "height": 184,
+        "rotate": 0,
+        "opacity": 1,
+        "borderWidth": 0.3,
+        "borderColor": "#CBD5E1",
+        "color": "",
+        "radius": 0,
+        "readOnly": true
+      },
+      {
+        "name": "accentBar",
+        "type": "line",
+        "position": {
+          "x": 128.5,
+          "y": 49
+        },
+        "width": 40,
+        "height": 1.2,
+        "rotate": 0,
+        "opacity": 1,
+        "color": "#2F5D8A",
+        "readOnly": true
+      },
+      {
+        "name": "title",
+        "type": "text",
+        "content": "CERTIFICATE OF COMPLETION",
+        "position": {
+          "x": 30,
+          "y": 26
+        },
+        "width": 237,
+        "height": 18,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 30,
+        "lineHeight": 1,
+        "characterSpacing": 1.5,
+        "fontColor": "#1F2937",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true,
+        "fontName": "PlusJakartaSans-Bold"
+      },
+      {
+        "name": "intro",
+        "type": "text",
+        "content": "This certifies that",
+        "position": {
+          "x": 40,
+          "y": 58
+        },
+        "width": 217,
+        "height": 9,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 13,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#6B7280",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true,
+        "fontName": "NotoSans-Regular"
+      },
+      {
+        "name": "@VarUserName",
+        "type": "text",
+        "content": "Małgorzata Wiśniewska",
+        "position": {
+          "x": 30,
+          "y": 69
+        },
+        "width": 237,
+        "height": 18,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 32,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#1F2937",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "fontName": "PlusJakartaSans-Bold",
+        "dynamicFontSize": {
+          "min": 18,
+          "max": 32,
+          "fit": "horizontal"
+        }
+      },
+      {
+        "name": "completed",
+        "type": "text",
+        "content": "has successfully completed the course",
+        "position": {
+          "x": 40,
+          "y": 92
+        },
+        "width": 217,
+        "height": 9,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 13,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#6B7280",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true,
+        "fontName": "NotoSans-Regular"
+      },
+      {
+        "name": "@VarCourseTitle",
+        "type": "text",
+        "content": "Bezpieczeństwo pracy — szkolenie okresowe",
+        "position": {
+          "x": 35,
+          "y": 103
+        },
+        "width": 227,
+        "height": 22,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 22,
+        "lineHeight": 1.1,
+        "characterSpacing": 0,
+        "fontColor": "#1F2937",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "fontName": "PlusJakartaSans-Bold",
+        "dynamicFontSize": {
+          "min": 12,
+          "max": 22,
+          "fit": "vertical"
+        }
+      },
+      {
+        "name": "dateLabel",
+        "type": "text",
+        "content": "Date of completion",
+        "position": {
+          "x": 30,
+          "y": 150
+        },
+        "width": 75,
+        "height": 6,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "fontSize": 9,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#6B7280",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true,
+        "fontName": "NotoSans-Regular"
+      },
+      {
+        "name": "@VarToday",
+        "type": "text",
+        "content": "08.10.2026",
+        "position": {
+          "x": 30,
+          "y": 157
+        },
+        "width": 75,
+        "height": 8,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "fontSize": 14,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#1F2937",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "fontName": "NotoSans-Regular"
+      },
+      {
+        "name": "idLabel",
+        "type": "text",
+        "content": "Certificate ID",
+        "position": {
+          "x": 30,
+          "y": 170
+        },
+        "width": 120,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "fontSize": 8,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#6B7280",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true,
+        "fontName": "NotoSans-Regular"
+      },
+      {
+        "name": "@VarCertificateId",
+        "type": "text",
+        "content": "0b7f6f0e-3c1a-4d2e-9f51-6a2b8c7d9e10",
+        "position": {
+          "x": 30,
+          "y": 175.5
+        },
+        "width": 120,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "fontSize": 8,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#1F2937",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "fontName": "NotoSans-Regular"
+      },
+      {
+        "name": "signatureLine",
+        "type": "line",
+        "position": {
+          "x": 113.5,
+          "y": 163
+        },
+        "width": 70,
+        "height": 0.3,
+        "rotate": 0,
+        "opacity": 1,
+        "color": "#1F2937",
+        "readOnly": true
+      },
+      {
+        "name": "signatureLabel",
+        "type": "text",
+        "content": "Signature",
+        "position": {
+          "x": 113.5,
+          "y": 165
+        },
+        "width": 70,
+        "height": 6,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 9,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#6B7280",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true,
+        "fontName": "NotoSans-Regular"
+      },
+      {
+        "name": "@VarAppName",
+        "type": "text",
+        "content": "Ulams",
+        "position": {
+          "x": 113.5,
+          "y": 171
+        },
+        "width": 70,
+        "height": 7,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 11,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#1F2937",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "fontName": "NotoSans-Regular"
+      },
+      {
+        "name": "@VarCertificateVerifyUrl",
+        "type": "qrcode",
+        "content": "https://example.com/certificates/verify/0b7f6f0e-sample",
+        "position": {
+          "x": 239,
+          "y": 146
+        },
+        "width": 28,
+        "height": 28,
+        "rotate": 0,
+        "opacity": 1,
+        "barColor": "#1F2937",
+        "backgroundColor": "#FFFFFF"
+      },
+      {
+        "name": "verifyLabel",
+        "type": "text",
+        "content": "Scan to verify",
+        "position": {
+          "x": 227,
+          "y": 175.5
+        },
+        "width": 52,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "right",
+        "verticalAlignment": "middle",
+        "fontSize": 7,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#6B7280",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true,
+        "fontName": "NotoSans-Regular"
+      }
+    ]
+  ],
+  "pdfmeVersion": "6.2.4"
+}

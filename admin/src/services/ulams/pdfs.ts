@@ -6,16 +6,13 @@ export async function pdfs(
   params: Ulams.TemplatesPdf.Http.Requests.PdfListingAdminRequest,
   options?: AxiosRequestConfig,
 ) {
-  return request<API.DefaultMetaResponse<Ulams.TemplatesPdf.Models.FabricPDF>>(
-    '/api/admin/pdfs',
-    {
-      params: {
-        ...params,
-      },
-      method: 'GET',
-      ...(options || {}),
+  return request<API.DefaultMetaResponse<Ulams.TemplatesPdf.Models.FabricPDF>>('/api/admin/pdfs', {
+    params: {
+      ...params,
     },
-  );
+    method: 'GET',
+    ...(options || {}),
+  });
 }
 
 /**  GET /api/pdf/{id} */
@@ -32,6 +29,29 @@ export async function pdf(id: number, options?: AxiosRequestConfig) {
 export async function generatedPdf(id: number, options?: AxiosRequestConfig) {
   return request<Response>(`/api/pdfs/generate/${id}`, {
     method: 'GET',
+    ...(options || {}),
+  });
+}
+
+export type PdfFont = { name: string; file: string; fallback: boolean };
+
+/**  GET /api/pdfs/fonts — fonts bundled with the PDF renderer */
+export async function pdfFonts(options?: AxiosRequestConfig) {
+  return request<API.DefaultResponse<PdfFont[]>>('/api/pdfs/fonts', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
+/**  POST /api/admin/pdfs/preview — renders a pdfme template with sample data */
+export async function previewPdf(
+  data: { event: string; content: unknown },
+  options?: AxiosRequestConfig,
+) {
+  return request<Blob>('/api/admin/pdfs/preview', {
+    method: 'POST',
+    data,
+    responseType: 'blob',
     ...(options || {}),
   });
 }

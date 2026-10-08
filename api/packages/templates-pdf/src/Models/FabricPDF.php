@@ -27,7 +27,7 @@ use Ulams\TemplatesPdf\Events\PdfCreated;
  *      ),
  *      @OA\Property(
  *          property="content",
- *          description="fabric.js serialized content",
+ *          description="pdfme template (JSON) the PDF is rendered from",
  *          type="object",
  *      ),
  *      @OA\Property(

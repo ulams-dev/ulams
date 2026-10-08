@@ -14,8 +14,10 @@ use Ulams\Templates\Models\TemplateSection;
 use Ulams\TemplatesPdf\Models\FabricPDF;
 use Illuminate\Support\Collection;
 use Ulams\Templates\Facades\Template as TemplateFacade;
-use ReflectionClass;
-use ReflectionProperty;
+use Illuminate\Support\Facades\Log;
+use Throwable;
+use Ulams\TemplatesPdf\Services\Contracts\PdfGeneratorContract;
+use Ulams\TemplatesPdf\UlamsTemplatesPdfServiceProvider;
 
 class PdfChannel extends AbstractTemplateChannelClass implements TemplateChannelContract
 {
@@ -24,15 +26,31 @@ class PdfChannel extends AbstractTemplateChannelClass implements TemplateChannel
         $varsService = TemplateFacade::getVariableClassName($event->eventClass(), PdfChannel::class);
         $vars = array_merge(SettingsVariables::getSettingsValues(), $varsService::variablesFromEvent($event));
 
-        FabricPDF::create([
+        // Store the template as designed (not the variable-substituted copy):
+        // the renderer fills the fields from `vars`, so values never have to be
+        // spliced into the JSON.
+        $template = Template::with('sections')->find($sections['template_id']);
+        $content = optional($template?->sections->firstWhere('key', 'content'))->content ?? $sections['content'];
+
+        $pdf = FabricPDF::create([
             'user_id' => $event->user()->id,
             'template_id' => $sections['template_id'],
             'title' => $sections['title'],
-            'content' => $sections['content'],
+            'content' => $content,
             'vars' => $vars,
+            'certificate_id' => $vars[PdfVariables::VAR_CERTIFICATE_ID] ?? null,
             'assignable_type' => $varsService::assignableClass(),
             'assignable_id' => $varsService::assignableClass() ? $event->extractIdForPropertyOfClass($varsService::assignableClass()) : null,
         ]);
+
+        if (config(UlamsTemplatesPdfServiceProvider::CONFIG_KEY . '.storage.render_on_create', true)) {
+            try {
+                app(PdfGeneratorContract::class)->store($pdf);
+            } catch (Throwable $e) {
+                // The record exists either way; the PDF is rendered on download.
+                Log::warning('PDF could not be rendered when it was issued', ['pdf_id' => $pdf->getKey(), 'error' => $e->getMessage()]);
+            }
+        }
 
         return true;
     }

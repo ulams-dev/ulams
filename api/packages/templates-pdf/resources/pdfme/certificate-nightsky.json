@@ -1,0 +1,404 @@
+{
+  "basePdf": {
+    "width": 297,
+    "height": 210,
+    "padding": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "schemas": [
+    [
+      {
+        "name": "background",
+        "type": "rectangle",
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "width": 297,
+        "height": 210,
+        "rotate": 0,
+        "opacity": 1,
+        "borderWidth": 0,
+        "borderColor": "#000000",
+        "color": "#13153A",
+        "radius": 0,
+        "readOnly": true
+      },
+      {
+        "name": "frame",
+        "type": "rectangle",
+        "position": {
+          "x": 10,
+          "y": 10
+        },
+        "width": 277,
+        "height": 190,
+        "rotate": 0,
+        "opacity": 1,
+        "borderWidth": 0.8,
+        "borderColor": "#FFD23F",
+        "color": "",
+        "radius": 0,
+        "readOnly": true
+      },
+      {
+        "name": "frameInner",
+        "type": "rectangle",
+        "position": {
+          "x": 13,
+          "y": 13
+        },
+        "width": 271,
+        "height": 184,
+        "rotate": 0,
+        "opacity": 1,
+        "borderWidth": 0.3,
+        "borderColor": "#9B8CFF",
+        "color": "",
+        "radius": 0,
+        "readOnly": true
+      },
+      {
+        "name": "accentBar",
+        "type": "line",
+        "position": {
+          "x": 128.5,
+          "y": 49
+        },
+        "width": 40,
+        "height": 1.2,
+        "rotate": 0,
+        "opacity": 1,
+        "color": "#FFD23F",
+        "readOnly": true
+      },
+      {
+        "name": "title",
+        "type": "text",
+        "content": "Mission Complete!",
+        "position": {
+          "x": 30,
+          "y": 26
+        },
+        "width": 237,
+        "height": 18,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 34,
+        "lineHeight": 1,
+        "characterSpacing": 1.5,
+        "fontColor": "#FFFFFF",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true,
+        "fontName": "Baloo2-Bold"
+      },
+      {
+        "name": "intro",
+        "type": "text",
+        "content": "This Junior Astronomer badge goes to",
+        "position": {
+          "x": 40,
+          "y": 58
+        },
+        "width": 217,
+        "height": 9,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 13,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#3DDC97",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true,
+        "fontName": "Nunito-Regular"
+      },
+      {
+        "name": "@VarUserName",
+        "type": "text",
+        "content": "Małgorzata Wiśniewska",
+        "position": {
+          "x": 30,
+          "y": 69
+        },
+        "width": 237,
+        "height": 18,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 32,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#FFD23F",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "fontName": "Baloo2-Bold",
+        "dynamicFontSize": {
+          "min": 18,
+          "max": 32,
+          "fit": "horizontal"
+        }
+      },
+      {
+        "name": "completed",
+        "type": "text",
+        "content": "for finishing every mission of",
+        "position": {
+          "x": 40,
+          "y": 92
+        },
+        "width": 217,
+        "height": 9,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 13,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#3DDC97",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true,
+        "fontName": "Nunito-Regular"
+      },
+      {
+        "name": "@VarCourseTitle",
+        "type": "text",
+        "content": "Bezpieczeństwo pracy — szkolenie okresowe",
+        "position": {
+          "x": 35,
+          "y": 103
+        },
+        "width": 227,
+        "height": 22,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 22,
+        "lineHeight": 1.1,
+        "characterSpacing": 0,
+        "fontColor": "#FFFFFF",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "fontName": "Baloo2-Bold",
+        "dynamicFontSize": {
+          "min": 12,
+          "max": 22,
+          "fit": "vertical"
+        }
+      },
+      {
+        "name": "dateLabel",
+        "type": "text",
+        "content": "Mission date",
+        "position": {
+          "x": 30,
+          "y": 150
+        },
+        "width": 75,
+        "height": 6,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "fontSize": 9,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#3DDC97",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true,
+        "fontName": "Nunito-Regular"
+      },
+      {
+        "name": "@VarToday",
+        "type": "text",
+        "content": "08.10.2026",
+        "position": {
+          "x": 30,
+          "y": 157
+        },
+        "width": 75,
+        "height": 8,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "fontSize": 14,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#FFFFFF",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "fontName": "Nunito-Regular"
+      },
+      {
+        "name": "idLabel",
+        "type": "text",
+        "content": "Badge number",
+        "position": {
+          "x": 30,
+          "y": 170
+        },
+        "width": 120,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "fontSize": 8,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#3DDC97",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true,
+        "fontName": "Nunito-Regular"
+      },
+      {
+        "name": "@VarCertificateId",
+        "type": "text",
+        "content": "0b7f6f0e-3c1a-4d2e-9f51-6a2b8c7d9e10",
+        "position": {
+          "x": 30,
+          "y": 175.5
+        },
+        "width": 120,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "fontSize": 8,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#FFFFFF",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "fontName": "Nunito-Regular"
+      },
+      {
+        "name": "signatureLine",
+        "type": "line",
+        "position": {
+          "x": 113.5,
+          "y": 163
+        },
+        "width": 70,
+        "height": 0.3,
+        "rotate": 0,
+        "opacity": 1,
+        "color": "#FFFFFF",
+        "readOnly": true
+      },
+      {
+        "name": "signatureLabel",
+        "type": "text",
+        "content": "Mission control",
+        "position": {
+          "x": 113.5,
+          "y": 165
+        },
+        "width": 70,
+        "height": 6,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 9,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#3DDC97",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true,
+        "fontName": "Nunito-Regular"
+      },
+      {
+        "name": "@VarAppName",
+        "type": "text",
+        "content": "Ulams",
+        "position": {
+          "x": 113.5,
+          "y": 171
+        },
+        "width": 70,
+        "height": 7,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 11,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#FFFFFF",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "fontName": "Nunito-Regular"
+      },
+      {
+        "name": "@VarCertificateVerifyUrl",
+        "type": "qrcode",
+        "content": "https://example.com/certificates/verify/0b7f6f0e-sample",
+        "position": {
+          "x": 239,
+          "y": 146
+        },
+        "width": 28,
+        "height": 28,
+        "rotate": 0,
+        "opacity": 1,
+        "barColor": "#13153A",
+        "backgroundColor": "#FFFFFF"
+      },
+      {
+        "name": "verifyLabel",
+        "type": "text",
+        "content": "Scan to check the badge",
+        "position": {
+          "x": 227,
+          "y": 175.5
+        },
+        "width": 52,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "right",
+        "verticalAlignment": "middle",
+        "fontSize": 7,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#3DDC97",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true,
+        "fontName": "Nunito-Regular"
+      }
+    ]
+  ],
+  "pdfmeVersion": "6.2.4"
+}

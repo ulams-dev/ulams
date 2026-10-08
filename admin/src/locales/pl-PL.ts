@@ -627,6 +627,15 @@ export default {
   user_logs: 'Logi użytkownika',
   http_method: 'Metoda HTTP',
   path: 'Ścieżka',
+  'pdf_editor.legacy': 'Ten szablon powstał w ReportBro, który nie jest już obsługiwany.',
+  'pdf_editor.legacy_description':
+    'Zacznij od domyślnego szablonu tego zdarzenia (stary układ nie zostanie zachowany) albo poproś administratora o uruchomienie templates-pdf:migrate-reportbro, które przenosi proste pola tekstowe.',
+  'pdf_editor.start_over': 'Zacznij od domyślnego szablonu',
+  'pdf_editor.variables_help':
+    'Kliknij zmienną, aby dodać dla niej pole; zostanie wypełnione przy wystawianiu PDF. Zmienne można też wpisać w tekst tylko do odczytu, np. „Wystawione przez @VarAppName”.',
+  'pdf_editor.variable_used': 'Użyta w szablonie',
+  'pdf_editor.variable_add': 'Dodaj pole',
+  'pdf_editor.preview_failed': 'Nie udało się wygenerować podglądu',
   generated_pdfs: 'Wygenerowane PDFy',
   download_all: 'Pobierz wszystkie',
   download_pdf: 'Pobierz PDF',
