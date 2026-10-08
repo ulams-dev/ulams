@@ -141,7 +141,7 @@ stale content.
 
 - [ ] (new) Delete `front/src/style/` (two unused styled-components helpers; excluded from tsconfig,
       eslint and the guard until removed)
-- [ ] (new) Cart on tenants crashes without a Stripe publishable key (`stripe.tsx` calls
+- [x] (new) Cart on tenants crashes without a Stripe publishable key (`stripe.tsx` calls
       `stripeKey.includes` on null); show a configuration message instead
 - [ ] (new) Yarn install on Node 23 needs `--ignore-engines` (vitest engines); CI pins Node 22
 
