@@ -43,11 +43,9 @@ jobs:
   #         php artisan passport:client --personal --no-interaction
   #         cp storage/oauth-private.key vendor/orchestra/testbench-core/laravel/storage/oauth-private.key
   #         cp storage/oauth-public.key vendor/orchestra/testbench-core/laravel/storage/oauth-public.key
-  #         mkdir vendor/escolalms/lrs/src/../../storage/
-  #         cp storage/*.key vendor/escolalms/lrs/src/../../storage/
 
   #     - name: Special Migrations for Tests
-  #       run: php artisan migrate --path=vendor/escolalms/courses/tests/Database/Migrations
+  #       run: php artisan migrate --path=packages/courses/tests/Database/Migrations
 
   #     - name: Run Testsuite
   #       run: vendor/bin/phpunit
@@ -94,11 +92,9 @@ jobs:
   #         php artisan passport:client --personal --no-interaction
   #         cp storage/oauth-private.key vendor/orchestra/testbench-core/laravel/storage/oauth-private.key
   #         cp storage/oauth-public.key vendor/orchestra/testbench-core/laravel/storage/oauth-public.key
-  #         mkdir vendor/escolalms/lrs/src/../../storage/
-  #         cp storage/*.key vendor/escolalms/lrs/src/../../storage/
 
   #     - name: Special Migrations for Tests
-  #       run: php artisan migrate --path=vendor/escolalms/courses/tests/Database/Migrations
+  #       run: php artisan migrate --path=packages/courses/tests/Database/Migrations
 
   #     - name: Run Testsuite
   #       run: vendor/bin/phpunit
@@ -144,11 +140,9 @@ jobs:
           php artisan passport:client --personal --no-interaction
           cp storage/oauth-private.key vendor/orchestra/testbench-core/laravel/storage/oauth-private.key
           cp storage/oauth-public.key vendor/orchestra/testbench-core/laravel/storage/oauth-public.key
-          mkdir vendor/escolalms/lrs/src/../../storage/
-          cp storage/*.key vendor/escolalms/lrs/src/../../storage/
 
       - name: Special Migrations for Tests
-        run: php artisan migrate --path=vendor/escolalms/courses/tests/Database/Migrations
+        run: php artisan migrate --path=packages/courses/tests/Database/Migrations
 
       - name: Run Testsuite
         run: vendor/bin/phpunit
@@ -194,11 +188,9 @@ jobs:
           php artisan passport:client --personal --no-interaction
           cp storage/oauth-private.key vendor/orchestra/testbench-core/laravel/storage/oauth-private.key
           cp storage/oauth-public.key vendor/orchestra/testbench-core/laravel/storage/oauth-public.key
-          mkdir vendor/escolalms/lrs/src/../../storage/
-          cp storage/*.key vendor/escolalms/lrs/src/../../storage/
 
       - name: Special Migrations for Tests
-        run: php artisan migrate --path=vendor/escolalms/courses/tests/Database/Migrations
+        run: php artisan migrate --path=packages/courses/tests/Database/Migrations
 
       - name: Run Testsuite
         run: vendor/bin/phpunit
@@ -244,11 +236,9 @@ jobs:
           php artisan passport:client --personal --no-interaction
           cp storage/oauth-private.key vendor/orchestra/testbench-core/laravel/storage/oauth-private.key
           cp storage/oauth-public.key vendor/orchestra/testbench-core/laravel/storage/oauth-public.key
-          mkdir vendor/escolalms/lrs/src/../../storage/
-          cp storage/*.key vendor/escolalms/lrs/src/../../storage/
 
       - name: Special Migrations for Tests
-        run: php artisan migrate --path=vendor/escolalms/courses/tests/Database/Migrations
+        run: php artisan migrate --path=packages/courses/tests/Database/Migrations
 
       - name: Run Testsuite
         run: vendor/bin/phpunit

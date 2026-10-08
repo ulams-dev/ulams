@@ -1,0 +1,370 @@
+{
+    "openapi": "3.0.0",
+    "paths": {
+        "/api/admin/config": {
+            "get": {
+                "tags": [
+                    "Admin Settings"
+                ],
+                "summary": "Get admin config",
+                "description": "Get a listing of registered config keys",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Admin Settings"
+                ],
+                "summary": "Set config for registered config keys",
+                "operationId": "e4b582c031121b9188d65e35da218c7a",
+                "requestBody": {},
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/settings": {
+            "get": {
+                "tags": [
+                    "Admin Settings"
+                ],
+                "description": "Get Settings paginated",
+                "operationId": "6f0b2a1153a6feccc10053127b272b18",
+                "parameters": [
+                    {
+                        "name": "group",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Pagination Page Number",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Pagination Per Page",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "422": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin Settings"
+                ],
+                "summary": "Settings create",
+                "description": "Create single setting",
+                "operationId": "051f96e67ccbcb2ea4f9e74f945a9988",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "422": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/settings/{id}": {
+            "get": {
+                "tags": [
+                    "Admin Settings"
+                ],
+                "description": "Get single settings",
+                "operationId": "c745b6bd9a9e0afb1c40d355d254d60a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "422": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin Settings"
+                ],
+                "summary": "Update setting",
+                "description": "Update single setting",
+                "operationId": "69f83d57a47d5122b198ffc4b1148230",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "422": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin Settings"
+                ],
+                "summary": "Destroy setting",
+                "description": "Destroy the specified setting",
+                "operationId": "e5c3fa54a4d9d826ea45a5e2295d5714",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "422": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/settings/groups": {
+            "get": {
+                "tags": [
+                    "Admin Settings"
+                ],
+                "description": "Get Settings unique groups",
+                "operationId": "979511ea3a7548b329a684a5e304b0bd",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "422": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/config": {
+            "get": {
+                "tags": [
+                    "Settings"
+                ],
+                "summary": "Get a listing of public config values.",
+                "description": "Get public config values",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/settings": {
+            "get": {
+                "tags": [
+                    "Settings"
+                ],
+                "summary": "Get a listing of the public and enuerable settings.",
+                "description": "Get settings",
+                "operationId": "304a6c4c57f2a00529fa6a29cd7aa385",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/settings/{group}/{key}": {
+            "get": {
+                "tags": [
+                    "Settings"
+                ],
+                "summary": "Display the specified public setting",
+                "description": "Get Course",
+                "operationId": "13c48e51211e7e16517dee7248fa9d04",
+                "parameters": [
+                    {
+                        "name": "group",
+                        "in": "path",
+                        "description": "group of setting",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "description": "key of setting",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Setting": {
+                "required": [
+                    "title"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "id",
+                        "type": "integer"
+                    },
+                    "key": {
+                        "description": "key",
+                        "type": "string"
+                    },
+                    "group": {
+                        "description": "group",
+                        "type": "string"
+                    },
+                    "value": {
+                        "description": "value",
+                        "type": "string"
+                    },
+                    "type": {
+                        "description": "type",
+                        "type": "string"
+                    },
+                    "public": {
+                        "description": "public",
+                        "type": "boolean"
+                    },
+                    "enumerable": {
+                        "description": "enumerable",
+                        "type": "boolean"
+                    },
+                    "sort": {
+                        "description": "sort",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }
+}

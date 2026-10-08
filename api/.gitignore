@@ -39,7 +39,6 @@ escolasoft/**/vendor
 .DS_Store
 
 bootstrap/cache/**/*
-/packages
 
 result.md
 
@@ -54,7 +53,6 @@ storage/api-docs/api-docs.json
 yarn.lock
 
 
-packages
 
 *.pem
 

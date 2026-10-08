@@ -1,0 +1,57 @@
+<?php
+
+namespace EscolaLms\Recommender\Dto\Traits;
+
+use Illuminate\Support\Str;
+
+trait DtoHelper
+{
+    protected array $relations = [];
+    protected array $files = [];
+
+    protected function setterByData(array $data): void
+    {
+        foreach ($data as $k => $v) {
+            $key = Str::studly($k);
+            if (method_exists($this, 'set' . $key)) {
+                $this->{'set' . $key}($v);
+            } else {
+                $key = lcfirst($key);
+                $this->$key = $v;
+            }
+        }
+    }
+
+    protected function getterByAttribute(string $attribute)
+    {
+        $key = Str::studly($attribute);
+        if (method_exists($this, 'get' . $key)) {
+            return $this->{'get' . $key}();
+        }
+        return $this->{lcfirst($key)} ?? null;
+    }
+
+    protected function fillInArray(array $fillables): array
+    {
+        $result = [];
+        foreach ($fillables as $fill) {
+            $value = $this->getterByAttribute($fill);
+            if ($value === null) {
+                continue;
+            }
+            $result[$fill] = $value;
+        }
+        return $result;
+    }
+
+    public function getRelations(): array
+    {
+        return $this->relations;
+    }
+
+    public function getFiles(): array
+    {
+        return $this->files;
+    }
+
+}

@@ -168,6 +168,59 @@ return [
         /*
          * Package Service Providers...
          */
+        // Vendored EscolaLMS modules (api/packages/*, see packages/README.md).
+        // Registered explicitly because packages/ are not composer packages and are
+        // therefore not picked up by package auto-discovery. Order mirrors the former
+        // bootstrap/cache/packages.php manifest.
+        EscolaLms\AssignWithoutAccount\EscolaLmsAssignWithoutAccountServiceProvider::class,
+        EscolaLms\Auth\EscolaLmsAuthServiceProvider::class,
+        EscolaLms\Bookmarks\EscolaLmsBookmarksServiceProvider::class,
+        EscolaLms\BulkNotifications\EscolaLmsBulkNotificationsServiceProvider::class,
+        EscolaLms\Cart\EscolaLmsCartServiceProvider::class,
+        EscolaLms\Categories\EscolaLmsCategoriesServiceProvider::class,
+        EscolaLms\Cmi5\EscolaLmsCmi5ServiceProvider::class,
+        EscolaLms\ConsultationAccess\EscolaLmsConsultationAccessServiceProvider::class,
+        EscolaLms\Consultations\EscolaLmsConsultationsServiceProvider::class,
+        EscolaLms\Core\EscolaLmsServiceProvider::class,
+        EscolaLms\CourseAccess\EscolaLmsCourseAccessServiceProvider::class,
+        EscolaLms\Courses\EscolaLmsCourseServiceProvider::class,
+        EscolaLms\CoursesImportExport\EscolaLmsCoursesImportExportServiceProvider::class,
+        EscolaLms\CsvUsers\EscolaLmsCsvUsersServiceProvider::class,
+        EscolaLms\Dictionaries\EscolaLmsDictionariesServiceProvider::class,
+        EscolaLms\Files\EscolaLmsFilesServiceProvider::class,
+        EscolaLms\HeadlessH5P\HeadlessH5PServiceProvider::class,
+        EscolaLms\Images\EscolaLmsImagesServiceProvider::class,
+        EscolaLms\Invoices\EscolaLmsInvoicesServiceProvider::class,
+        EscolaLms\Jitsi\EscolaLmsJitsiServiceProvider::class,
+        EscolaLms\Lrs\EscolaLmsLrsServiceProvider::class,
+        EscolaLms\MailerLite\EscolaLmsMailerLiteServiceProvider::class,
+        EscolaLms\Mattermost\EscolaLmsMattermostServiceProvider::class,
+        EscolaLms\ModelFields\ModelFieldsServiceProvider::class,
+        EscolaLms\Notifications\EscolaLmsNotificationsServiceProvider::class,
+        EscolaLms\Pages\EscolaLmsPagesServiceProvider::class,
+        EscolaLms\Payments\Providers\PaymentsServiceProvider::class,
+        EscolaLms\PencilSpaces\EscolaLmsPencilSpacesServiceProvider::class,
+        EscolaLms\Permissions\EscolaLmsPermissionsServiceProvider::class,
+        EscolaLms\Questionnaire\EscolaLmsQuestionnaireServiceProvider::class,
+        EscolaLms\Recommender\EscolaLmsRecommenderServiceProvider::class,
+        EscolaLms\Reports\EscolaLmsReportsServiceProvider::class,
+        EscolaLms\Scorm\EscolaLmsScormServiceProvider::class,
+        EscolaLms\Settings\EscolaLmsSettingsServiceProvider::class,
+        EscolaLms\StationaryEvents\EscolaLmsStationaryEventsServiceProvider::class,
+        EscolaLms\Tags\EscolaLmsTagsServiceProvider::class,
+        EscolaLms\Tasks\EscolaLmsTasksServiceProvider::class,
+        EscolaLms\Templates\EscolaLmsTemplatesServiceProvider::class,
+        EscolaLms\TemplatesEmail\EscolaLmsTemplatesEmailServiceProvider::class,
+        EscolaLms\TemplatesPdf\EscolaLmsTemplatesPdfServiceProvider::class,
+        EscolaLms\TemplatesSms\EscolaLmsTemplatesSmsServiceProvider::class,
+        EscolaLms\TopicTypeGift\EscolaLmsTopicTypeGiftServiceProvider::class,
+        EscolaLms\TopicTypeProject\EscolaLmsTopicTypeProjectServiceProvider::class,
+        EscolaLms\TopicTypes\EscolaLmsTopicTypesServiceProvider::class,
+        EscolaLms\Translations\EscolaLmsTranslationsServiceProvider::class,
+        EscolaLms\Video\EscolaLmsVideoServiceProvider::class,
+        EscolaLms\Vouchers\EscolaLmsVouchersServiceProvider::class,
+        EscolaLms\Webinar\EscolaLmsWebinarServiceProvider::class,
+        EscolaLms\Youtube\EscolaLmsYoutubeServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -243,6 +296,9 @@ return [
         'Html'      => Collective\Html\HtmlFacade::class,
         'Flash'     => Laracasts\Flash\Flash::class,
 
+        // Vendored EscolaLMS payments facades (formerly auto-discovered)
+        'PaymentGateway' => EscolaLms\Payments\Facades\PaymentGateway::class,
+        'Payments' => EscolaLms\Payments\Facades\Payments::class,
     ],
 
 ];

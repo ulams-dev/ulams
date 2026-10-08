@@ -1,12 +1,12 @@
 <?php
 
 
-$paths = glob("./vendor/escolalms/*");
+$paths = glob("./packages/*");
 
 $a = [
     'deptrac' => [
         'paths' => [
-            './vendor/escolalms'
+            './packages'
         ],
         'layers' => []
     ]

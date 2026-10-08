@@ -1,6 +1,6 @@
 deptrac:
   paths:
-    - ./vendor/escolalms
+    - ./packages
   exclude_files:
     - '#.*test.*#'
   layers:

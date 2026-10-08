@@ -1,0 +1,26 @@
+<?php
+
+use EscolaLms\Dictionaries\Models\Dictionary;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('dictionary_words', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(Dictionary::class)->constrained()->cascadeOnDelete();
+            $table->string('word');
+            $table->text('description');
+            $table->json('data');
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('dictionary_words');
+    }
+};

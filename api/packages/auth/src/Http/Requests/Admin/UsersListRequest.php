@@ -1,0 +1,31 @@
+<?php
+
+namespace EscolaLms\Auth\Http\Requests\Admin;
+
+use EscolaLms\Auth\Enums\OnboardingStatus;
+use EscolaLms\Core\Enums\StatusEnum;
+use EscolaLms\Core\Enums\UserRole;
+use BenSampo\Enum\Rules\EnumValue;
+use EscolaLms\Auth\Models\User;
+use Illuminate\Foundation\Http\FormRequest;
+
+class UsersListRequest extends FormRequest
+{
+    public function authorize()
+    {
+        return $this->user()->can('viewAny', User::class);
+    }
+
+    public function rules()
+    {
+        return [
+            'search' => ['nullable'],
+            'role' => ['nullable', 'exists:roles,name'],
+            'status' => ['nullable', new EnumValue(StatusEnum::class, false)],
+            'onboarding' => ['nullable', new EnumValue(OnboardingStatus::class, false)],
+            'from' => ['date', 'nullable'],
+            'to' => ['date', 'nullable'],
+            'order_by' => ['sometimes', 'in:id,created_at,first_name,last_name,email,is_active,email_verified_at'],
+        ];
+    }
+}

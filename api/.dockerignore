@@ -31,7 +31,6 @@ escolasoft/**/vendor
 .DS_Store
 
 bootstrap/cache/**/*
-/packages
 
 
 /public/h5p
@@ -44,7 +43,6 @@ bootstrap/cache/**/*
 yarn.lock
 
 
-packages
 
 *.pem
 
