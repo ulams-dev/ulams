@@ -19,8 +19,11 @@ import { Request, Response, Router } from 'express';
 export interface EmbedRouterOptions {
     /** service mount path, e.g. "/h5p" */
     base: string;
-    /** origins allowed to frame the pages and to talk to them (CORS_ORIGINS) */
-    allowedOrigins: string[];
+    /**
+     * Origins allowed to frame the pages and to talk to them: a fixed list or
+     * one per request (the request's tenant).
+     */
+    allowedOrigins: string[] | ((req: Request) => string[]);
     /** directory with the bundled player.js / editor.js (dist/embed) */
     assetsDir?: string;
 }
@@ -89,11 +92,11 @@ body { overflow-x: hidden; overflow-y: ${script === 'player' ? 'hidden' : 'auto'
 </html>`;
 }
 
-function sendPage(res: Response, opts: EmbedRouterOptions, html: string): void {
+function sendPage(res: Response, origins: string[], html: string): void {
     res.status(200);
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 'no-store');
-    res.setHeader('Content-Security-Policy', `frame-ancestors ${frameAncestors(opts.allowedOrigins)}`);
+    res.setHeader('Content-Security-Policy', `frame-ancestors ${frameAncestors(origins)}`);
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'no-referrer');
     res.send(html);
@@ -101,6 +104,8 @@ function sendPage(res: Response, opts: EmbedRouterOptions, html: string): void {
 
 export function embedRouter(opts: EmbedRouterOptions): Router {
     const router = Router();
+    const originsFor = (req: Request): string[] =>
+        typeof opts.allowedOrigins === 'function' ? opts.allowedOrigins(req) : opts.allowedOrigins;
     const assetsDir = opts.assetsDir ?? defaultEmbedAssetsDir();
     const language = (req: Request) => {
         const l = queryString(req, 'language');
@@ -114,14 +119,15 @@ export function embedRouter(opts: EmbedRouterOptions): Router {
             return;
         }
         const contextId = queryString(req, 'contextId');
+        const origins = originsFor(req);
         sendPage(
             res,
-            opts,
+            origins,
             page(opts, 'player', {
                 mode: 'play',
                 contentId: id,
                 base: opts.base,
-                allowedOrigins: opts.allowedOrigins,
+                allowedOrigins: origins,
                 language: language(req),
                 contextId: contextId && CONTEXT_ID.test(contextId) ? contextId : undefined,
                 readOnlyState: truthy(queryString(req, 'readOnlyState')),
@@ -136,14 +142,15 @@ export function embedRouter(opts: EmbedRouterOptions): Router {
             res.status(404).json({ success: false, message: 'Content not found.' });
             return;
         }
+        const origins = originsFor(req);
         sendPage(
             res,
-            opts,
+            origins,
             page(opts, 'editor', {
                 mode: 'edit',
                 contentId: id,
                 base: opts.base,
-                allowedOrigins: opts.allowedOrigins,
+                allowedOrigins: origins,
                 language: language(req)
             })
         );

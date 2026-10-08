@@ -98,7 +98,7 @@ describe('HTTP smoke test (integration)', () => {
     it('GET /h5p/health reports all dependencies', async () => {
         const res = await request(app).get('/h5p/health');
         expect(res.status).toBe(200);
-        expect(res.body).toEqual({ ok: true, db: true, redis: true, s3: true });
+        expect(res.body).toEqual({ ok: true, tenant: 'default', db: true, redis: true, s3: true });
     });
 
     it('GET /h5p/contents: anonymous 401, learner 403, admin 200', async () => {

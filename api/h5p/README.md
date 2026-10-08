@@ -7,12 +7,13 @@ H5P service for the Ulams LMS. It replaces the PHP H5P package
 
 It serves the H5P player and editor, the H5P AJAX endpoints, library
 administration and a small REST API. The LMS frontends reach it same-origin
-at `http://api.localhost/h5p/*` through Caddy.
+at `http://<tenant>.localhost/h5p/*` (platform: `http://api.localhost/h5p/*`)
+through Caddy. It is multi-tenant: see [Multi-tenancy](#multi-tenancy).
 
 ## Architecture
 
 ```
-browser / admin / front ──► Caddy (api.localhost)
+browser / admin / front ──► Caddy (<tenant>.localhost, api.localhost)
                               ├─ /h5p/*  ─► h5p:8080  (this service, Express 5)
                               └─ else    ─► Laravel php-fpm
 
@@ -20,8 +21,9 @@ h5p service
   ├─ auth: Passport RS256 JWT (Bearer or ?_token=) → GET {Laravel}/api/profile/me
   │        (roles + permissions, cached in Redis)   | X-Internal-Token → system user
   ├─ TenantResolver ─► Tenant { pg pool, S3 client, JWT key, H5PEditor, H5PPlayer }
-  ├─ Postgres  schema "h5p": contents, content_user_data, finished_data, schema_migrations
-  ├─ S3/MinIO  bucket "ulams": h5p/content/{id}/…, h5p/temp/…
+  │        (host → Laravel env file .env.<host>; platform → .env)
+  ├─ Postgres  schema "h5p" in each tenant DB: contents, content_user_data, finished_data, schema_migrations
+  ├─ S3/MinIO  tenant bucket (ulams-<slug>): h5p/content/{id}/…, h5p/temp/…
   ├─ Redis     library cache, content-type cache, profile cache, locks
   └─ volume    /data/libraries  (installed H5P libraries, shared)
 ```
@@ -31,7 +33,7 @@ h5p service
 | `src/index.ts` | HTTP server, background jobs (Hub cache refresh, temp file sweep), shutdown |
 | `src/app.ts` | Express app: CORS, logging, uploads, tenant resolution, auth, routers |
 | `src/runtime.ts` | Redis, i18n, shared library storage, tenant resolver |
-| `src/tenancy/*` | `TenantResolver` interface, `SingleTenantResolver` (env), `buildTenant` |
+| `src/tenancy/*` | `TenantResolver` interface, `EnvFileTenantResolver` (Laravel env files), `SingleTenantResolver` (env), `buildTenant`, `.env` parser |
 | `src/h5p/createH5P.ts` | `H5PConfig`, `UrlGenerator` (`?_token=`), `H5PEditor`, `H5PPlayer` |
 | `src/h5p/RedisCache.ts` | cache-manager v4 style cache on Redis (see below) |
 | `src/storage/PgContentStorage.ts` | `IContentStorage`: Postgres + S3 (port of `MongoS3ContentStorage`) |
@@ -87,6 +89,13 @@ to 4.7.1.
 | `H5P_HUB_ENABLED` | `true` | H5P Hub content-type list and installs |
 | `H5P_STATE_SAVE_INTERVAL_MS` | `5000` | how often the player saves user state |
 | `H5P_TEMP_FILE_LIFETIME_MIN` | `120` | editor uploads not saved into content are deleted after this |
+| `TENANCY_MODE` | `env-files` if `ENV_DIR` is set, else `single` | `single`: one tenant from the variables above; `env-files`: see [Multi-tenancy](#multi-tenancy) |
+| `ENV_DIR` | – | directory with Laravel's `.env` and `.env.<host>` files (compose: `/laravel`, a read-only mount of `api/`) |
+| `KEYS_DIR` | `$ENV_DIR/storage` | Laravel storage dir with `oauth-public.key` and `<host_with_underscores>/oauth-public.key` |
+| `PLATFORM_HOSTS` | `api.localhost` | comma list of hosts served by the platform tenant (`.env`) |
+| `TENANT_FRONT_ORIGIN_PATTERNS` | `http://{slug}.app.localhost,https://{slug}.app.localhost,http://{slug}.admin.localhost,https://{slug}.admin.localhost` | per-tenant CORS / frame-ancestors origins added to `CORS_ORIGINS` |
+| `TENANT_RELOAD_CHECK_MS` | `2000` | how often env/key files and host lookups are re-checked |
+| `TENANT_DB_POOL_MAX` | `5` | Postgres pool size per tenant (env-files mode) |
 | `H5P_ROOT` | `./h5p` | base for the next three paths in development |
 | `H5P_CORE_PATH` / `H5P_EDITOR_PATH` | `$H5P_ROOT/core` / `$H5P_ROOT/editor` | image: `/app/h5p/core`, `/app/h5p/editor` |
 | `H5P_LIBRARIES_PATH` | `$H5P_ROOT/libraries` | image: `/data/libraries` (volume) |
@@ -329,54 +338,92 @@ the H5P Hub content-type package instead, which bundles demo content:
 
 ## Laravel integration
 
-- **Routing**: Caddy sends `api.localhost/h5p/*` to `h5p:8080`
-  (`Caddyfile.snippet`, placed before the php_fastcgi handling, with
+- **Routing**: Caddy sends `<host>.localhost/h5p/*` (tenants and
+  `api.localhost`) to `h5p:8080` (`Caddyfile.snippet`, placed before the
+  php_fastcgi handling, with
   `request_body max_size 300MB` for that path). Frontends call
   `/h5p/contents/:id/play` with their normal Bearer token.
 - **Server-to-server**: Laravel calls the service with
   `X-Internal-Token: $H5P_INTERNAL_TOKEN` (system user), e.g. to delete content
-  or run imports.
-- **Reading content**: Laravel may read `h5p.contents` directly, **read-only**
+  or run imports, plus `X-Forwarded-Host: <tenant host>` to select the tenant.
+- **Reading content**: Laravel may read `h5p.contents` (in its own tenant database) directly, **read-only**
   (for search indexing, or to check that a lesson's `contentId` exists, its
   title and main library). It must not write to the `h5p` schema; migrations
   belong to this service. Ids are `bigint` (strings in the API).
 - **Results**: `h5p.finished_data` has per-user scores (`user_id` = LMS user
   id as text) that Laravel can read for progress reports.
 
-## Multi-tenancy (designed, not built)
+## Multi-tenancy
 
-Everything that differs per tenant sits behind `TenantResolver`
-(`src/tenancy/types.ts`):
+The Laravel API is multi-tenant through gecche/laravel-multidomain: tenant
+`<slug>` is served at `<slug>.localhost` with its own env file
+`api/.env.<slug>.localhost` and Passport keys in
+`api/storage/<slug>_localhost/`. The platform is `api.localhost` with `api/.env`
+and `api/storage/oauth-public.key`. With `TENANCY_MODE=env-files` the service
+follows the same files (`src/tenancy/EnvFileTenantResolver.ts`):
 
-```ts
-interface TenantResolver {
-  resolve(req): Promise<Tenant | undefined>; // by X-Forwarded-Host, then Host
-  get(id): Promise<Tenant>;                   // CLI / jobs
-  active(): Tenant[];                         // background jobs
-  close(): Promise<void>;
-}
-```
+| Request host (X-Forwarded-Host, else Host) | Env file | Passport key | Tenant id |
+| --- | --- | --- | --- |
+| in `PLATFORM_HOSTS` (`api.localhost`) | `$ENV_DIR/.env` | `$KEYS_DIR/oauth-public.key` | `default` |
+| `coffee.localhost` | `$ENV_DIR/.env.coffee.localhost` | `$KEYS_DIR/coffee_localhost/oauth-public.key` | `coffee_localhost` |
+| `x.coffee.localhost` (no own file) | leftmost labels are stripped while a tenant file exists further down → `.env.coffee.localhost` | same | `coffee_localhost` |
+| anything else (`evil.localhost`, `h5p:8080`, subdomains of the platform host) | – | – | **404** `{"success":false,"message":"Unknown tenant."}` |
 
-A `Tenant` holds its own Postgres pool (schema `h5p` inside **that tenant's
-database**), S3 client and bucket, Passport public key / JWT verifier, Laravel
-profile endpoint and host, internal token, and its own `H5PEditor`/`H5PPlayer`.
-The library volume, library cache, Redis lock provider and i18n are shared
-(`SharedH5P`). Per-tenant Redis keys are namespaced `h5p:t:<tenantId>:…`.
-The Express app resolves the tenant per request, and auth uses the tenant's
-key. Lumi's routers are built once per tenant and cached.
+Unlike gecche there is no final fallback to `.env`: an unknown host never
+reaches the platform's data.
 
-Today `SingleTenantResolver` builds one tenant from the environment and serves
-it for every host. A `MultiTenantResolver` only has to:
+From the tenant's env file the service takes:
 
-1. map the request host (`requestHost()`) to `TenantSettings` (from a registry
-   table, a JSON file or a Laravel endpoint);
-2. call `buildTenant(app, shared, settings, logger)` on first use (this runs
-   migrations in the tenant's `h5p` schema) and cache the result, ideally with
-   an LRU that `close()`s idle tenants' pools;
-3. return `undefined` for unknown hosts (the app answers 404).
+- **Postgres**: `DB_HOST`, `DB_PORT`, `DB_DATABASE` (required), `DB_USERNAME`,
+  `DB_PASSWORD`. The service's tables live in schema `h5p` (`DB_SCHEMA`) of
+  that database; migrations run on the tenant's first request. Pool size
+  `TENANT_DB_POOL_MAX`. `DATABASE_URL` of the service is never used.
+- **S3**: `AWS_BUCKET` (required), `AWS_ENDPOINT`, `AWS_DEFAULT_REGION`,
+  `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_USE_PATH_STYLE_ENDPOINT`
+  (the service's `S3_*` values fill in what is missing, except the bucket).
+  Objects go under `S3_PREFIX` (`h5p/`) inside the tenant bucket.
+- **Auth**: the Passport public key file above (or `PASSPORT_PUBLIC_KEY` in the
+  env file); profile calls go to `LARAVEL_API_URL` (`http://caddy`) with
+  `Host: <tenant host>` (platform: the host of `APP_URL`);
+  `H5P_INTERNAL_TOKEN` from the file, else the service's own.
+- **Origins**: `CORS_ORIGINS` + `TENANT_FRONT_ORIGIN_PATTERNS` with `{slug}`
+  = `TENANT_SLUG` (else the first host label) + the origin of `FRONTEND_URL`.
+  They drive CORS and the embed pages' `frame-ancestors` / postMessage
+  allow-list, so `coffee.app.localhost` can frame `coffee.localhost/h5p/embed/*`
+  but not `oncall.localhost/h5p/embed/*`.
 
-Then pass it to `createRuntime(config, logger, (shared) => MultiTenantResolver.create(...))`.
-Caddy must forward the original host (`header_up X-Forwarded-Host {host}`).
+Tenants are built lazily and cached. Every `TENANT_RELOAD_CHECK_MS` the
+resolver re-checks the files (mtime + size, which works on Docker bind
+mounts where `fs.watch` does not): a new `.env.<host>` works without a
+restart; a change that alters the tenant's settings rebuilds the tenant (the
+old pools close after 60 s); an invalid change is logged and the previous
+configuration kept; a deleted env file evicts the tenant. A failed first
+build (e.g. database down) is retried on the next request.
+
+Shared by all tenants: the library volume (installing or deleting a library
+affects every tenant), the library cache, the Redis lock provider and i18n.
+Per-tenant Redis keys are namespaced `h5p:t:<tenantId>:…` (content type
+cache, Hub uuid, profile cache).
+
+`/h5p/health` answers for the request's tenant
+(`{ok, tenant, db, redis, s3}`), 404 for unknown hosts and a liveness answer
+(`{ok, tenant: null, redis}`) for loopback hosts, which the image's
+`HEALTHCHECK` uses.
+
+**Server-to-server calls** (Laravel → `http://h5p:8080`) must name the
+tenant: send `X-Forwarded-Host: <tenant host>` (e.g. the host of `APP_URL`)
+together with `X-Internal-Token`. Without it the host is `h5p` and the call
+gets 404.
+
+Caddy must forward the original host (`header_up X-Forwarded-Host {host}`);
+the `http://*.localhost` site of `api/docker/conf/Caddyfile` sends `/h5p/*` of
+every tenant host to the service. In compose, `api/` is mounted read-only at
+`/laravel` (`ENV_DIR=/laravel`, `KEYS_DIR=/laravel/storage`).
+
+`TENANCY_MODE=single` keeps the old behaviour: one tenant (`default`) from the
+`DB_*` / `S3_*` / `JWT_*` variables, served for every host. A different
+registry (a table, a Laravel endpoint) only needs another `TenantResolver`
+that maps `requestHost()` to `TenantSettings` and calls `buildTenant()`.
 
 ## Development
 

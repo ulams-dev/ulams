@@ -9,6 +9,7 @@ export function settingsFromEnv(app: AppConfig): TenantSettings {
     return {
         id: 'default',
         hosts: [],
+        corsOrigins: app.corsOrigins,
         db: app.db,
         s3: app.s3,
         auth: { ...app.auth }
@@ -16,9 +17,8 @@ export function settingsFromEnv(app: AppConfig): TenantSettings {
 }
 
 /**
- * Today's deployment: one tenant from environment variables, served for every
- * Host. The multi-tenant resolver will implement the same interface (see
- * README "Multi-tenancy").
+ * One tenant from environment variables, served for every Host
+ * (TENANCY_MODE=single). See EnvFileTenantResolver for multi-tenancy.
  */
 export class SingleTenantResolver implements TenantResolver {
     private constructor(private readonly tenant: Tenant) {}

@@ -8,9 +8,9 @@ import type { ProfileClient } from '../auth/profile';
 import type { H5PServices } from '../h5p/createH5P';
 
 /**
- * Everything that differs per LMS tenant. Today there is exactly one tenant
- * built from environment variables (SingleTenantResolver). The multi-tenant
- * deployment will map the request host to one of these:
+ * Everything that differs per LMS tenant. SingleTenantResolver builds one
+ * tenant from environment variables; EnvFileTenantResolver maps the request
+ * host to a Laravel (gecche/laravel-multidomain) env file. Each tenant has:
  *  - its own Postgres database (the service's tables live in schema `h5p`
  *    inside that tenant's database),
  *  - its own S3 bucket,
@@ -21,6 +21,11 @@ export interface TenantSettings {
     id: string;
     /** Hostnames (lowercase, no port) that select this tenant. */
     hosts: string[];
+    /**
+     * Origins allowed for CORS and as frame-ancestors of the embed pages
+     * (exact origins; '*' allows any).
+     */
+    corsOrigins: string[];
     db: AppConfig['db'];
     s3: AppConfig['s3'];
     auth: {

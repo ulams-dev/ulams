@@ -1,11 +1,9 @@
 # Inside the existing `http://*.localhost { ... }` site block of
-# api/Caddyfile, BEFORE the php_fastcgi / Laravel handling. Only requests for
-# the api.localhost host and the /h5p/* path go to the Node service.
+# api/Caddyfile, BEFORE the php_fastcgi / Laravel handling. /h5p/* of every
+# API host (platform api.localhost and tenants <slug>.localhost) goes to the
+# Node service, which picks the tenant from X-Forwarded-Host.
 
-@h5p {
-	host api.localhost
-	path /h5p /h5p/*
-}
+@h5p path /h5p /h5p/*
 handle @h5p {
 	# .h5p uploads are up to 256 MB (H5P_MAX_TOTAL_SIZE_MB) plus multipart overhead
 	request_body {

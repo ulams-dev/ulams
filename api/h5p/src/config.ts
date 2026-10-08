@@ -55,6 +55,22 @@ export interface AppConfig {
         profileCacheTtlSec: number;
         internalToken?: string;
     };
+    tenancy: {
+        /** 'single': one tenant from this environment; 'env-files': per host from Laravel env files. */
+        mode: 'single' | 'env-files';
+        /** Directory with Laravel's .env and .env.<host> files (the api/ directory). */
+        envDir?: string;
+        /** Laravel storage directory (Passport keys: oauth-public.key, <host_with_underscores>/oauth-public.key). */
+        keysDir?: string;
+        /** Hosts served by the platform tenant (`.env`). */
+        platformHosts: string[];
+        /** Origin patterns with {slug} added to every tenant's CORS / frame-ancestors list. */
+        frontOriginPatterns: string[];
+        /** How often (ms) a tenant's env/key files are re-checked for changes. */
+        reloadCheckMs: number;
+        /** Postgres pool size per tenant. */
+        dbPoolMax: number;
+    };
     paths: {
         libraries: string;
         core: string;
@@ -125,6 +141,36 @@ export function loadPublicKey(): string | undefined {
     }
 }
 
+function list(name: string, fallback: string): string[] {
+    return (env(name, fallback) as string)
+        .split(',')
+        .map((v) => v.trim())
+        .filter(Boolean);
+}
+
+export const DEFAULT_FRONT_ORIGIN_PATTERNS =
+    'http://{slug}.app.localhost,https://{slug}.app.localhost,http://{slug}.admin.localhost,https://{slug}.admin.localhost';
+
+function tenancyConfig(): AppConfig['tenancy'] {
+    const envDir = env('ENV_DIR');
+    const mode = (env('TENANCY_MODE', envDir ? 'env-files' : 'single') as string).toLowerCase();
+    if (mode !== 'single' && mode !== 'env-files') {
+        throw new Error('TENANCY_MODE must be "single" or "env-files"');
+    }
+    if (mode === 'env-files' && !envDir) {
+        throw new Error('TENANCY_MODE=env-files needs ENV_DIR (the directory with the Laravel .env files)');
+    }
+    return {
+        mode,
+        envDir,
+        keysDir: env('KEYS_DIR', envDir ? path.join(envDir, 'storage') : undefined),
+        platformHosts: list('PLATFORM_HOSTS', 'api.localhost').map((h) => h.toLowerCase()),
+        frontOriginPatterns: list('TENANT_FRONT_ORIGIN_PATTERNS', DEFAULT_FRONT_ORIGIN_PATTERNS),
+        reloadCheckMs: int('TENANT_RELOAD_CHECK_MS', 2000),
+        dbPoolMax: int('TENANT_DB_POOL_MAX', 5)
+    };
+}
+
 export function loadConfig(): AppConfig {
     const publicUrl = (env('PUBLIC_URL', 'http://api.localhost') as string).replace(/\/+$/, '');
     const mountPath = '/h5p';
@@ -184,6 +230,7 @@ export function loadConfig(): AppConfig {
             profileCacheTtlSec: int('PROFILE_CACHE_TTL', 60),
             internalToken: env('H5P_INTERNAL_TOKEN')
         },
+        tenancy: tenancyConfig(),
         paths: {
             libraries: env('H5P_LIBRARIES_PATH', path.join(h5pRoot, 'libraries')) as string,
             core: env('H5P_CORE_PATH', path.join(h5pRoot, 'core')) as string,
