@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live drill — On-Call</title>
+<script src="cmi5-lite.js"></script>
+<style>
+  :root { --bg:#0B0F14; --panel:#121821; --border:#1E2733; --text:#E6EDF3; --muted:#8B98A5; --green:#3FB950; --amber:#D29922; --red:#F85149; --blue:#58A6FF; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:14px/1.5 "JetBrains Mono", ui-monospace, monospace; }
+  main { max-width:880px; margin:0 auto; padding:20px; }
+  h1 { font:600 22px "Space Grotesk", system-ui, sans-serif; margin:0; }
+  .muted { color:var(--muted); }
+  .pill { border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:12px; display:inline-block; }
+  .pill.green { color:var(--green); border-color:var(--green); } .pill.amber { color:var(--amber); border-color:var(--amber); }
+  .panel { background:var(--panel); border:1px solid var(--border); border-radius:4px; padding:14px; margin-top:14px; }
+  .bar { height:8px; background:var(--border); border-radius:4px; overflow:hidden; margin-top:8px; }
+  .bar i { display:block; height:100%; width:0; background:var(--blue); transition:width .3s; }
+  table { width:100%; border-collapse:collapse; }
+  td { border-bottom:1px solid var(--border); padding:8px 6px; vertical-align:top; }
+  td:first-child { width:36px; }
+  input[type=checkbox] { width:18px; height:18px; accent-color:var(--green); }
+  .at { color:var(--muted); white-space:nowrap; }
+  textarea { width:100%; min-height:90px; background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:4px; font:inherit; padding:8px; }
+  button { font:inherit; padding:8px 14px; border-radius:4px; border:1px solid var(--blue); background:var(--blue); color:var(--bg); cursor:pointer; margin-top:10px; }
+  button.ghost { background:transparent; color:var(--text); border-color:var(--border); }
+  code { color:var(--blue); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Live drill · game day</h1>
+  <p class="muted">Sandbox cluster <code>drill-eu-1</code> · your team gets paged at a random time in the next hour · <span class="pill" id="status">connecting…</span></p>
+
+  <div class="panel">
+    <strong>Rules of the drill</strong>
+    <ul>
+      <li>The facilitator injects a failure into <code>drill-eu-1</code> (you will not know which one).</li>
+      <li>Run the incident exactly as you would in production: roles, channel, updates, mitigation.</li>
+      <li>Tick each checkpoint when it happens. Every tick is recorded with its timestamp in your learning record.</li>
+      <li>Grading: time to declare, time to first update, time to mitigate, quality of the handover note.</li>
+    </ul>
+    <div class="muted">Progress <span id="pct">0</span> %</div>
+    <div class="bar"><i id="bar"></i></div>
+  </div>
+
+  <div class="panel">
+    <table id="checkpoints"></table>
+  </div>
+
+  <div class="panel">
+    <label for="handover"><strong>Handover note</strong> <span class="muted">(what happened, current state, open risks, owner of each follow-up)</span></label>
+    <textarea id="handover" placeholder="03:41 mitigated by rolling back payments-api to v5.12. Error rate back to baseline. Open risk: ..."></textarea>
+    <button id="submit">Finish the drill</button>
+    <button class="ghost" id="exit">Back to the course</button>
+    <p id="result"></p>
+  </div>
+</main>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var checkpoints = [
+    ['Joined the bridge and acknowledged the page', 'ack'],
+    ['Declared severity and assigned IC, comms, ops lead and scribe', 'declare'],
+    ['Opened the incident channel and pinned the dashboard', 'channel'],
+    ['Posted the first stakeholder update (target ≤ 10 min after declaring)', 'update'],
+    ['Formed a hypothesis and confirmed it with data', 'hypothesis'],
+    ['Applied a mitigation and watched it hold for 5 minutes', 'mitigate'],
+    ['Posted the all-clear with the next steps', 'allclear']
+  ];
+  var start = Date.now(), ticked = {};
+  checkpoints.forEach(function (c, i) {
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td><input type="checkbox" id="c' + i + '" aria-label="' + c[0] + '"></td><td>' + c[0] + '</td><td class="at" id="t' + i + '">–</td>';
+    $('checkpoints').appendChild(tr);
+    tr.querySelector('input').addEventListener('change', function (e) {
+      if (!e.target.checked) { delete ticked[i]; $('t' + i).textContent = '–'; update(); return; }
+      var mins = Math.round((Date.now() - start) / 60000);
+      ticked[i] = mins; $('t' + i).textContent = 'T+' + mins + ' min';
+      var pct = update();
+      Cmi5.progress(pct, c[1]);
+    });
+  });
+  function update() {
+    var pct = Math.round(Object.keys(ticked).length / checkpoints.length * 100);
+    $('pct').textContent = pct; $('bar').style.width = pct + '%';
+    return pct;
+  }
+  $('submit').onclick = function () {
+    var done = Object.keys(ticked).length, note = $('handover').value.trim();
+    var score = done / checkpoints.length * 0.8 + (note.split(/\s+/).length >= 25 ? 0.2 : note ? 0.1 : 0);
+    $('result').innerHTML = '<span class="pill ' + (score >= 0.7 ? 'green' : 'amber') + '">' + Math.round(score * 100) + ' / 100</span> ' +
+      done + ' of ' + checkpoints.length + ' checkpoints. Your facilitator will add feedback in the course.';
+    Cmi5.complete().then(function () { return Cmi5.pass(score); });
+  };
+  $('exit').onclick = function () { Cmi5.exit(); };
+  Cmi5.start().then(function (ok) { $('status').textContent = ok ? 'xAPI: attempted' : 'offline'; $('status').className = 'pill ' + (ok ? 'green' : 'amber'); });
+})();
+</script>
+</body>
+</html>

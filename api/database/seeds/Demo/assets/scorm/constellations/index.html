@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect the stars — Night Sky Explorers</title>
+<script src="scorm12.js"></script>
+<style>
+  :root { --night:#13153A; --yellow:#FFD23F; --coral:#FF6B6B; --mint:#3DDC97; --lilac:#9B8CFF; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--night); color:#fff; font:18px/1.4 "Nunito", system-ui, sans-serif; }
+  header { padding:14px 18px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  header h1 { font:800 24px/1.1 "Baloo 2", "Fredoka", system-ui, sans-serif; margin:0; }
+  .stars { margin-left:auto; background:rgba(255,255,255,.1); border:3px solid var(--yellow); border-radius:24px; padding:4px 14px; font-weight:800; }
+  .tabs { display:flex; gap:8px; padding:0 18px; flex-wrap:wrap; }
+  .tabs button { min-height:48px; padding:0 18px; border-radius:24px; border:3px solid var(--lilac); background:transparent; color:#fff; font:700 16px system-ui; cursor:pointer; }
+  .tabs button[aria-pressed="true"] { background:var(--lilac); color:var(--night); }
+  .tabs button.done::after { content:" ✓"; }
+  main { padding:12px 18px 24px; max-width:900px; margin:0 auto; }
+  .bubble { background:#fff; color:var(--night); border-radius:20px; padding:12px 16px; border:3px solid var(--yellow); margin:8px 0 12px; }
+  canvas { width:100%; height:auto; border-radius:20px; border:3px solid rgba(255,255,255,.2); touch-action:manipulation; cursor:pointer; background:#0d0f2b; }
+  .row { display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+  .btn { min-height:48px; padding:0 20px; border-radius:24px; border:0; font:800 16px system-ui; cursor:pointer; background:var(--yellow); color:var(--night); }
+  .btn.ghost { background:transparent; color:#fff; border:3px solid rgba(255,255,255,.4); }
+  .final { text-align:center; padding:24px; }
+  .final .big { font:800 40px "Baloo 2", system-ui; color:var(--yellow); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Connect the stars</h1>
+  <span class="stars" id="points" aria-live="polite">★ 0</span>
+</header>
+<div class="tabs" id="tabs" role="toolbar" aria-label="Constellations"></div>
+<main>
+  <div class="bubble" id="bubble">Hi, I'm Orbi! Tap the stars in the right order to draw each constellation. Start with the bright ones.</div>
+  <canvas id="sky" width="640" height="420" aria-label="Star field"></canvas>
+  <div class="row">
+    <button class="btn ghost" id="undo">Undo line</button>
+    <button class="btn ghost" id="hint">Show me a hint</button>
+    <button class="btn" id="finish">I'm done!</button>
+  </div>
+  <div id="final"></div>
+</main>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var skies = [
+    { name: 'Big Dipper', fact: 'The Big Dipper (the Plough) is part of the Great Bear. Follow the two end stars of the bowl up to find the North Star!',
+      stars: { Dubhe:[150,110], Merak:[160,200], Phecda:[270,215], Megrez:[275,140], Alioth:[365,125], Mizar:[445,135], Alkaid:[535,190] },
+      edges: [['Dubhe','Merak'],['Merak','Phecda'],['Phecda','Megrez'],['Megrez','Dubhe'],['Megrez','Alioth'],['Alioth','Mizar'],['Mizar','Alkaid']] },
+    { name: 'Cassiopeia', fact: 'Cassiopeia looks like a big W (or M). In autumn it sits high in the sky, opposite the Big Dipper.',
+      stars: { Caph:[120,150], Schedar:[215,250], Navi:[310,165], Ruchbah:[405,255], Segin:[505,170] },
+      edges: [['Caph','Schedar'],['Schedar','Navi'],['Navi','Ruchbah'],['Ruchbah','Segin']] },
+    { name: 'Orion', fact: 'Orion the hunter rises on autumn nights. His belt is three stars in a row — red Betelgeuse is a giant star near the end of its life.',
+      stars: { Meissa:[320,55], Betelgeuse:[230,110], Bellatrix:[410,125], Alnitak:[290,235], Alnilam:[320,225], Mintaka:[350,215], Saiph:[255,365], Rigel:[430,350] },
+      edges: [['Meissa','Betelgeuse'],['Meissa','Bellatrix'],['Betelgeuse','Alnitak'],['Bellatrix','Mintaka'],['Alnitak','Alnilam'],['Alnilam','Mintaka'],['Alnitak','Saiph'],['Mintaka','Rigel']] }
+  ];
+  var current = 0, selected = null, drawn = skies.map(function () { return []; }), hints = 0, points = 0;
+  var c = $('sky').getContext('2d');
+  var faint = []; for (var i = 0; i < 90; i++) faint.push([Math.random() * 640, Math.random() * 420, Math.random() * 1.4 + .3]);
+
+  function key(a, b) { return [a, b].sort().join('-'); }
+  function isEdge(sky, a, b) { return sky.edges.some(function (e) { return key(e[0], e[1]) === key(a, b); }); }
+  function complete(i) { return drawn[i].length === skies[i].edges.length; }
+
+  function tabs() {
+    $('tabs').innerHTML = '';
+    skies.forEach(function (s, i) {
+      var b = document.createElement('button'); b.textContent = s.name;
+      b.setAttribute('aria-pressed', i === current); if (complete(i)) b.className = 'done';
+      b.onclick = function () { current = i; selected = null; draw(); tabs(); $('bubble').textContent = 'Find ' + s.name + '! ' + s.edges.length + ' lines to draw.'; };
+      $('tabs').appendChild(b);
+    });
+  }
+
+  function draw() {
+    var sky = skies[current];
+    c.fillStyle = '#0d0f2b'; c.fillRect(0, 0, 640, 420);
+    faint.forEach(function (f) { c.fillStyle = 'rgba(255,255,255,.5)'; c.beginPath(); c.arc(f[0], f[1], f[2], 0, 7); c.fill(); });
+    c.strokeStyle = '#3DDC97'; c.lineWidth = 4; c.lineCap = 'round';
+    drawn[current].forEach(function (e) { var a = sky.stars[e[0]], b = sky.stars[e[1]]; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke(); });
+    Object.keys(sky.stars).forEach(function (n) {
+      var p = sky.stars[n];
+      c.fillStyle = n === selected ? '#FFD23F' : '#fff';
+      c.beginPath(); c.arc(p[0], p[1], n === selected ? 10 : 7, 0, 7); c.fill();
+      if (complete(current)) { c.fillStyle = '#9B8CFF'; c.font = '14px system-ui'; c.fillText(n, p[0] + 12, p[1] - 8); }
+    });
+    if (complete(current)) { c.fillStyle = '#FFD23F'; c.font = '800 26px system-ui'; c.fillText(sky.name + '!', 20, 400); }
+  }
+
+  $('sky').addEventListener('click', function (ev) {
+    var r = $('sky').getBoundingClientRect(), x = (ev.clientX - r.left) * 640 / r.width, y = (ev.clientY - r.top) * 420 / r.height;
+    var sky = skies[current], hit = null;
+    Object.keys(sky.stars).forEach(function (n) { var p = sky.stars[n]; if (Math.hypot(p[0] - x, p[1] - y) < 22) hit = n; });
+    if (!hit) return;
+    if (selected && selected !== hit) {
+      if (isEdge(sky, selected, hit) && !drawn[current].some(function (e) { return key(e[0], e[1]) === key(selected, hit); })) {
+        drawn[current].push([selected, hit]); points += 10; $('points').textContent = '★ ' + points;
+        if (complete(current)) { points += 30; $('points').textContent = '★ ' + points; $('bubble').textContent = 'You drew ' + sky.name + '! ' + sky.fact; tabs(); }
+        else $('bubble').textContent = 'Nice line! ' + (sky.edges.length - drawn[current].length) + ' to go.';
+      } else {
+        $('bubble').textContent = 'Hmm, those two stars are not neighbours in ' + sky.name + '. Try another one!';
+      }
+      Scorm.set('cmi.suspend_data', JSON.stringify(drawn)); Scorm.commit();
+    }
+    selected = hit; draw();
+  });
+  $('undo').onclick = function () { drawn[current].pop(); selected = null; draw(); tabs(); };
+  $('hint').onclick = function () {
+    var sky = skies[current], missing = sky.edges.filter(function (e) { return !drawn[current].some(function (d) { return key(d[0], d[1]) === key(e[0], e[1]); }); });
+    if (!missing.length) return;
+    hints++; selected = missing[0][0]; draw();
+    $('bubble').textContent = 'Start at the yellow star (' + missing[0][0] + ') and connect it to ' + missing[0][1] + '.';
+  };
+  $('finish').onclick = function () {
+    var done = skies.filter(function (s, i) { return complete(i); }).length;
+    var score = Math.max(0, Math.round(done / skies.length * 100) - hints * 5);
+    $('final').innerHTML = '<div class="final"><div class="big">' + done + ' of 3 constellations</div><p>' +
+      (done === 3 ? 'Amazing, explorer! Now find them in the real sky tonight.' : 'Great start! Come back and finish the others any time.') + '</p></div>';
+    Scorm.complete(score, score >= 60);
+  };
+  tabs(); draw();
+})();
+</script>
+</body>
+</html>

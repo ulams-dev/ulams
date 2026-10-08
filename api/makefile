@@ -90,3 +90,24 @@ init: docker-up switch-to-postgres composer-update migrate-fresh-quick
 
 wait:
 	- docker compose exec api bash -c "./wait.sh"
+
+# Demo courses from front/docs/design/experiences.md (database/seeds/DemoCoursesSeeder.php).
+# Re-running keeps existing demo courses; DEMO_REFRESH=1 rebuilds them.
+DEMO_REFRESH ?= 0
+EXPERIENCE ?= $(firstword $(subst ., ,$(DOMAIN)))
+
+# platform tenant (api.localhost): all three courses
+demo-seed:
+	- docker compose exec -e DEMO_EXPERIENCE=all -e DEMO_REFRESH=$(DEMO_REFRESH) api bash -c "XDEBUG_MODE=off php artisan db:seed --class=DemoCoursesSeeder --force"
+
+# one tenant with its own course: make demo-seed-tenant DOMAIN=coffee.localhost EXPERIENCE=coffee
+demo-seed-tenant:
+	- docker compose exec -e DEMO_EXPERIENCE=$(EXPERIENCE) -e DEMO_REFRESH=$(DEMO_REFRESH) api bash -c "XDEBUG_MODE=off php artisan db:seed --class=DemoCoursesSeeder --domain=$(DOMAIN) --force"
+# tenant queue workers (queue.sh) do not serve the video long-job queue yet: process it once
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan queue:work redis-long-job --queue=queue-long-job --stop-when-empty --timeout=600 --domain=$(DOMAIN)"
+
+# the three demo tenants
+demo-seed-tenants:
+	- $(MAKE) demo-seed-tenant DOMAIN=coffee.localhost EXPERIENCE=coffee
+	- $(MAKE) demo-seed-tenant DOMAIN=oncall.localhost EXPERIENCE=oncall
+	- $(MAKE) demo-seed-tenant DOMAIN=nightsky.localhost EXPERIENCE=nightsky

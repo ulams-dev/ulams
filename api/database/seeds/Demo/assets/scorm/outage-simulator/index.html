@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outage simulator — On-Call</title>
+<script src="scorm12.js"></script>
+<style>
+  :root { --bg:#0B0F14; --panel:#121821; --border:#1E2733; --text:#E6EDF3; --muted:#8B98A5;
+          --green:#3FB950; --amber:#D29922; --red:#F85149; --blue:#58A6FF; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:14px/1.45 "JetBrains Mono", ui-monospace, Menlo, monospace; }
+  header { display:flex; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+  header h1 { font:600 16px/1 system-ui, sans-serif; margin:0; }
+  .pill { border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:12px; }
+  .pill.red { color:var(--red); border-color:var(--red); } .pill.amber { color:var(--amber); border-color:var(--amber); }
+  .pill.green { color:var(--green); border-color:var(--green); }
+  #clock { margin-left:auto; color:var(--muted); }
+  .layout { display:grid; grid-template-columns: 1fr 340px; gap:1px; background:var(--border); min-height:calc(100vh - 46px); }
+  @media (max-width: 820px) { .layout { grid-template-columns:1fr; } }
+  .pane { background:var(--bg); padding:14px 16px; }
+  h2 { font:600 12px/1 system-ui, sans-serif; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:0 0 10px; }
+  .metrics { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-bottom:14px; }
+  .metric { background:var(--panel); border:1px solid var(--border); border-radius:4px; padding:8px 10px; }
+  .metric b { display:block; font-size:22px; }
+  .metric small { color:var(--muted); }
+  canvas { width:100%; height:120px; background:var(--panel); border:1px solid var(--border); border-radius:4px; }
+  .actions { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:8px; margin:14px 0; }
+  .actions button { text-align:left; background:var(--panel); color:var(--text); border:1px solid var(--border); border-radius:4px; padding:8px 10px; cursor:pointer; font:inherit; }
+  .actions button:hover:not(:disabled) { border-color:var(--blue); }
+  .actions button:disabled { opacity:.35; cursor:not-allowed; }
+  .actions small { display:block; color:var(--muted); }
+  .timeline { list-style:none; margin:0; padding:0; border-left:2px solid var(--border); }
+  .timeline li { padding:2px 0 6px 12px; position:relative; }
+  .timeline li::before { content:""; position:absolute; left:-6px; top:8px; width:10px; height:10px; border-radius:50%; background:var(--muted); }
+  .timeline li.bad::before { background:var(--red); } .timeline li.good::before { background:var(--green); } .timeline li.info::before { background:var(--blue); }
+  .chat { display:flex; flex-direction:column; gap:8px; max-height:60vh; overflow:auto; }
+  .msg { background:var(--panel); border:1px solid var(--border); border-radius:4px; padding:6px 8px; }
+  .msg .who { color:var(--blue); } .msg .at { color:var(--muted); float:right; }
+  .result { border:1px solid var(--border); background:var(--panel); padding:14px; border-radius:4px; margin-top:12px; }
+  kbd { border:1px solid var(--border); border-radius:3px; padding:0 4px; color:var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Outage simulator · checkout-api</h1>
+  <span class="pill red" id="sev">SEV? undeclared</span>
+  <span class="pill" id="tracking">offline</span>
+  <span id="clock">03:12 UTC</span>
+</header>
+<div class="layout">
+  <section class="pane">
+    <h2>Signals</h2>
+    <div class="metrics">
+      <div class="metric"><small>5xx rate</small><b id="m-err">–</b></div>
+      <div class="metric"><small>p99 latency</small><b id="m-lat">–</b></div>
+      <div class="metric"><small>DB pool</small><b id="m-db">–</b></div>
+      <div class="metric"><small>Error budget left</small><b id="m-budget">–</b></div>
+    </div>
+    <canvas id="spark" width="900" height="120" aria-label="5xx rate over time"></canvas>
+    <h2 style="margin-top:16px">Your move <kbd>1</kbd>–<kbd>9</kbd></h2>
+    <div class="actions" id="actions"></div>
+    <h2>Incident timeline</h2>
+    <ul class="timeline" id="timeline"></ul>
+    <div id="result"></div>
+  </section>
+  <aside class="pane">
+    <h2>#inc-checkout-0412</h2>
+    <div class="chat" id="chat" aria-live="polite"></div>
+  </aside>
+</div>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var minute = 0; // minutes after 03:12
+  var s = { err: 18.4, lat: 2400, db: 100, budget: 100, load: 1, declared: false, cause: false, deploy: false,
+            rolledBack: false, lastUpdate: null, updates: 0, penalties: [], firstAction: null, over: false, history: [] };
+
+  var actions = [
+    { id:'declare', label:'Declare SEV1 and assign roles', hint:'IC, comms, ops lead, scribe · 2 min', cost:2 },
+    { id:'deploys', label:'Check recent deploys', hint:'deploy log + diff · 2 min', cost:2 },
+    { id:'pagedb', label:'Page the database on-call', hint:'Dana joins the bridge · 3 min', cost:3 },
+    { id:'update', label:'Post a stakeholder update', hint:'impact · action · next update · 2 min', cost:2 },
+    { id:'rollback', label:'Roll back checkout-api to v2.30', hint:'canary then full · 6 min', cost:6 },
+    { id:'shed', label:'Shed load on /recommendations', hint:'feature flag · 2 min', cost:2 },
+    { id:'restart', label:'Restart all checkout pods', hint:'rolling restart · 4 min', cost:4 },
+    { id:'scaledb', label:'Double DB max_connections', hint:'config push + restart · 5 min', cost:5 },
+    { id:'mitigated', label:'Declare mitigated, start handover', hint:'ends the drill', cost:1 }
+  ];
+
+  function clock() { var t = 12 + minute; var h = 3 + Math.floor(t / 60); return ('0' + h).slice(-2) + ':' + ('0' + t % 60).slice(-2); }
+  function say(who, text) {
+    var d = document.createElement('div'); d.className = 'msg';
+    d.innerHTML = '<span class="at">' + clock() + '</span><span class="who">' + who + '</span><br>' + text;
+    $('chat').appendChild(d); $('chat').scrollTop = 1e6;
+  }
+  function event(text, cls) { var li = document.createElement('li'); li.className = cls || ''; li.textContent = clock() + '  ' + text; $('timeline').appendChild(li); }
+
+  function render() {
+    $('clock').textContent = clock() + ' UTC';
+    $('m-err').textContent = s.err.toFixed(1) + ' %'; $('m-err').style.color = s.err > 5 ? 'var(--red)' : s.err > 1 ? 'var(--amber)' : 'var(--green)';
+    $('m-lat').textContent = Math.round(s.lat) + ' ms'; $('m-lat').style.color = s.lat > 1000 ? 'var(--red)' : s.lat > 400 ? 'var(--amber)' : 'var(--green)';
+    $('m-db').textContent = Math.round(s.db) + '/100'; $('m-db').style.color = s.db >= 95 ? 'var(--red)' : s.db > 75 ? 'var(--amber)' : 'var(--green)';
+    $('m-budget').textContent = Math.max(0, s.budget).toFixed(0) + ' %';
+    var c = $('spark').getContext('2d'); c.clearRect(0, 0, 900, 120);
+    c.strokeStyle = '#1E2733'; c.beginPath(); c.moveTo(0, 120 - 5 * 4); c.lineTo(900, 120 - 5 * 4); c.stroke();
+    c.strokeStyle = '#F85149'; c.lineWidth = 2; c.beginPath();
+    s.history.forEach(function (p, i) { var x = i * 900 / 60, y = 118 - Math.min(110, p * 4); i ? c.lineTo(x, y) : c.moveTo(x, y); });
+    c.stroke();
+    var box = $('actions'); box.innerHTML = '';
+    actions.forEach(function (a, i) {
+      var b = document.createElement('button');
+      b.innerHTML = '<kbd>' + (i + 1) + '</kbd> ' + a.label + '<small>' + a.hint + '</small>';
+      b.disabled = s.over || (a.id === 'declare' && s.declared) || (a.id === 'rollback' && s.rolledBack);
+      b.onclick = function () { act(a); };
+      box.appendChild(b);
+    });
+  }
+
+  function advance(mins) {
+    for (var i = 0; i < mins; i++) {
+      minute++;
+      s.budget -= s.err / 100 / 43.2 * 100; // 99.9 % SLO over 30 days = 43.2 bad minutes
+      s.history.push(s.err);
+      if (minute === 14 && s.updates === 0) say('Ravi (VP Eng)', 'Customers are tweeting about failed payments. Any ETA? Who is running this?');
+      if (minute === 25 && !s.rolledBack) { s.err = Math.min(40, s.err + 6); event('Retry storm: payment-gateway starts timing out', 'bad'); say('Aiko (ops)', 'payment-gateway is timing out too, retries from checkout are piling up'); }
+    }
+  }
+
+  function act(a) {
+    if (s.over) return;
+    if (!s.firstAction) s.firstAction = a.id;
+    advance(a.cost);
+    switch (a.id) {
+      case 'declare':
+        s.declared = true; $('sev').textContent = 'SEV1 · IC: you'; $('sev').className = 'pill red';
+        event('SEV1 declared, roles assigned', 'good');
+        say('Ben (comms)', 'On it — I own the status page and stakeholder updates. Tell me what to say.');
+        say('Chen (scribe)', 'Timeline doc open. Logging from 03:12.');
+        break;
+      case 'deploys':
+        s.deploy = true; event('Found deploy checkout-api v2.31 at 03:05 (7 min before the alert)', 'info');
+        say('Aiko (ops)', 'v2.31 shipped at 03:05 — "load cart items lazily". Error rate climbs from 03:07.');
+        break;
+      case 'pagedb':
+        s.cause = true; event('DB on-call: pool saturated, N+1 query from v2.31', 'info');
+        say('Dana (DB on-call)', 'Pool is pinned at 100/100. Top query is SELECT * FROM cart_items WHERE cart_id = ? — 40× per request since 03:05.');
+        break;
+      case 'update':
+        s.updates++; s.lastUpdate = minute;
+        event('Stakeholder update #' + s.updates + ' posted', 'good');
+        say('Ben (comms)', 'Posted: "Checkout failing for ~18 % of customers. Rolling back the 03:05 release. Next update ' + (function () { minute += 20; var c = clock(); minute -= 20; return c; })() + '."');
+        break;
+      case 'rollback':
+        s.rolledBack = true;
+        if (s.deploy || s.cause) {
+          s.err = 0.4; s.lat = 280; s.db = 41;
+          event('Rolled back to v2.30 — 5xx back to baseline', 'good');
+          say('Aiko (ops)', 'Rollback done. Pool draining, 5xx at 0.4 %. Looks mitigated.');
+        } else {
+          s.err = Math.max(2.5, s.err / 3); s.lat = 700; s.db = 70;
+          s.penalties.push(['Rolled back without evidence — it worked, but you could not tell the team why', 10]);
+          event('Rolled back blind — partial recovery, cause unconfirmed', 'info');
+          say('Aiko (ops)', 'Better, but still 2–3 % errors. Retries are still hammering the DB.');
+        }
+        break;
+      case 'shed':
+        s.err = Math.max(s.rolledBack ? 0.2 : 4, s.err * 0.8); s.db = Math.max(30, s.db - 10);
+        event('Load shedding enabled on /recommendations', 'info');
+        if (s.rolledBack && s.err < 1.5) { s.err = 0.3; }
+        break;
+      case 'restart':
+        s.err = s.err + 4; s.db = 100;
+        s.penalties.push(['Restarted every pod: cold caches and a reconnect storm made things worse', 15]);
+        event('Rolling restart — reconnect storm, errors up', 'bad');
+        say('Dana (DB on-call)', 'Please stop restarting — every pod reconnects with a full pool.');
+        break;
+      case 'scaledb':
+        s.err = s.err + 6; s.lat = s.lat * 1.4; s.db = 100;
+        s.penalties.push(['Raised max_connections on a saturated DB: CPU hit 100 %, payments degraded too', 20]);
+        event('DB max_connections doubled — CPU 100 %, cascading to payments', 'bad');
+        say('Dana (DB on-call)', 'CPU is at 100 % now. More connections just means more of the same slow query.');
+        break;
+      case 'mitigated':
+        if (s.err > 1) {
+          event('Tried to close the incident while errors are still ' + s.err.toFixed(1) + ' %', 'bad');
+          say('Aiko (ops)', 'We are not there yet — dashboards are still red.');
+          s.penalties.push(['Declared mitigation too early', 5]);
+          break;
+        }
+        finish();
+        return;
+    }
+    render();
+  }
+
+  function finish() {
+    s.over = true;
+    event('Mitigated. Handover to the day shift, postmortem scheduled', 'good');
+    var score = 100, notes = [];
+    if (s.firstAction !== 'declare') { score -= 15; notes.push('First move was not declaring the incident: for a few minutes nobody knew who was in charge.'); }
+    if (s.updates === 0) { score -= 20; notes.push('No stakeholder update before mitigation.'); }
+    var ttm = minute;
+    if (ttm > 25) { score -= Math.min(30, (ttm - 25)); notes.push('Time to mitigate ' + ttm + ' min (target ≤ 25 min).'); }
+    else notes.push('Time to mitigate ' + ttm + ' min — inside the 25-minute target.');
+    s.penalties.forEach(function (p) { score -= p[1]; notes.push(p[0] + '.'); });
+    score = Math.max(0, score);
+    $('result').innerHTML = '<div class="result"><h2>Drill result</h2><p><span class="pill ' + (score >= 70 ? 'green' : 'amber') + '">score ' + score + '/100</span> ' +
+      '<span class="pill">TTM ' + ttm + ' min</span> <span class="pill">budget left ' + Math.max(0, s.budget).toFixed(0) + ' %</span></p><ul><li>' +
+      notes.join('</li><li>') + '</li></ul><p>Keep this timeline: you will write the postmortem for this outage in module 4.</p></div>';
+    Scorm.set('cmi.suspend_data', JSON.stringify({ ttm: ttm, score: score, updates: s.updates }));
+    Scorm.complete(score, score >= 70);
+    render();
+  }
+
+  document.addEventListener('keydown', function (e) { var n = Number(e.key); if (n >= 1 && n <= actions.length) act(actions[n - 1]); });
+  window.addEventListener('load', function () { $('tracking').textContent = Scorm.connected ? 'tracked' : 'offline'; $('tracking').className = 'pill ' + (Scorm.connected ? 'green' : ''); });
+
+  event('PagerDuty: checkout-api 5xx > 5 % for 5 min', 'bad');
+  say('PagerDuty', 'TRIGGERED checkout-api-5xx-rate (18.4 %) — you are the primary on-call.');
+  say('Aiko (ops)', 'I am online. Seeing a wall of 500s on /checkout. What do you need?');
+  s.history.push(2, 6, 11, 18.4);
+  render();
+})();
+</script>
+</body>
+</html>

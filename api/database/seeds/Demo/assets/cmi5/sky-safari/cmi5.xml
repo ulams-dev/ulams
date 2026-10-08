@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<courseStructure xmlns="https://w3id.org/xapi/profiles/cmi5/v1/CourseStructure.xsd">
+  <course id="https://ulams.app/demo/cmi5/sky-safari">
+    <title><langstring lang="en-US">Sky safari</langstring></title>
+    <description><langstring lang="en-US">A backyard observation challenge: check in what you saw tonight.</langstring></description>
+  </course>
+  <au id="https://ulams.app/demo/cmi5/sky-safari/au" moveOn="CompletedOrPassed" masteryScore="0.5" launchMethod="AnyWindow">
+    <title><langstring lang="en-US">Sky safari</langstring></title>
+    <description><langstring lang="en-US">A backyard observation challenge: check in what you saw tonight.</langstring></description>
+    <url>index.html</url>
+  </au>
+</courseStructure>

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cupping at home — The Coffee Atlas</title>
+<script src="cmi5-lite.js"></script>
+<style>
+  :root { --paper:#F6F1E9; --ink:#2B1D14; --accent:#C2552D; --sage:#7A8B6F; --rule:#D9CFC2; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font:17px/1.55 Georgia, serif; }
+  main { max-width:760px; margin:0 auto; padding:24px 20px 48px; }
+  h1 { font-size:32px; margin:0 0 4px; } .sub { font-family:system-ui, sans-serif; color:var(--sage); font-size:14px; }
+  .status { font-family:system-ui, sans-serif; font-size:13px; border:1px solid var(--rule); padding:2px 8px; display:inline-block; margin-top:6px; }
+  ol.steps { list-style:none; padding:0; counter-reset:s; }
+  ol.steps li { counter-increment:s; border-top:1px solid var(--rule); padding:14px 0 14px 52px; position:relative; }
+  ol.steps li::before { content:counter(s, upper-roman); position:absolute; left:0; top:12px; font-size:24px; color:var(--accent); }
+  ol.steps li.done { opacity:.55; }
+  .timer { font:28px ui-monospace, monospace; }
+  button { font:600 15px system-ui, sans-serif; padding:10px 16px; border:0; background:var(--accent); color:#fff; cursor:pointer; margin:6px 6px 0 0; }
+  button.ghost { background:transparent; color:var(--ink); border:1px solid var(--ink); }
+  table { width:100%; border-collapse:collapse; font-family:system-ui, sans-serif; font-size:15px; margin-top:10px; }
+  td, th { border-bottom:1px solid var(--rule); padding:8px 4px; text-align:left; }
+  input[type=range] { width:100%; accent-color:var(--accent); }
+  textarea { width:100%; min-height:80px; font:inherit; border:1px solid var(--rule); background:#fff; padding:8px; }
+  .total { font:700 40px Georgia, serif; color:var(--accent); }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Cupping at home</h1>
+  <div class="sub">The Coffee Atlas · Chapter V · guided session, about 30 minutes</div>
+  <div class="status" id="status">connecting…</div>
+
+  <p>You need: two coffees, a scale, a grinder, 4 cups or glasses, a spoon per coffee, water just off the boil (93–96 °C) and a cup of clean water to rinse.
+     Use <strong>8.25 g of coffee per 150 ml of water</strong> (the SCA cupping ratio), ground medium-coarse.</p>
+
+  <ol class="steps" id="steps">
+    <li data-seconds="240"><strong>Dry fragrance.</strong> Grind each coffee straight into its cup. Smell the grounds; note sweet, fruity, nutty or roasty notes.
+      <div><span class="timer" data-timer>4:00</span> <button data-start>Start timer</button><button class="ghost" data-skip>Done</button></div></li>
+    <li data-seconds="240"><strong>Pour and steep.</strong> Fill each cup to the brim in one pour, start the timer and leave the crust alone for four minutes.
+      <div><span class="timer" data-timer>4:00</span> <button data-start>Start timer</button><button class="ghost" data-skip>Done</button></div></li>
+    <li data-seconds="60"><strong>Break the crust.</strong> Push the crust back three times with the spoon, nose close to the cup: this is the strongest aroma you will get. Skim off the foam.
+      <div><span class="timer" data-timer>1:00</span> <button data-start>Start timer</button><button class="ghost" data-skip>Done</button></div></li>
+    <li data-seconds="600"><strong>Taste as it cools.</strong> Slurp loudly from the spoon at about 70 °C, again at 60 °C and at room temperature. Sweetness and acidity open up as the cup cools.
+      <div><span class="timer" data-timer>10:00</span> <button data-start>Start timer</button><button class="ghost" data-skip>Done</button></div></li>
+    <li><strong>Score your best cup.</strong> Use the form below. Score each attribute from 6 (good) to 10 (exceptional).</li>
+  </ol>
+
+  <section id="form">
+    <table>
+      <thead><tr><th>Attribute</th><th style="width:55%">Score</th><th></th></tr></thead>
+      <tbody id="attributes"></tbody>
+    </table>
+    <p><label for="notes">Tasting notes (three descriptors from the flavour wheel)</label>
+      <textarea id="notes" placeholder="e.g. red apple, panela, black tea"></textarea></p>
+    <p>Total: <span class="total" id="total">0</span> / 100</p>
+    <button id="submit">Submit my cupping</button>
+  </section>
+
+  <section id="done" hidden>
+    <h2>Saved to your learning record.</h2>
+    <p id="summary"></p>
+    <button id="exit">Back to the course</button>
+  </section>
+</main>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var attributes = ['Fragrance / aroma', 'Flavour', 'Aftertaste', 'Acidity', 'Body', 'Balance', 'Sweetness', 'Clean cup', 'Uniformity', 'Overall'];
+  attributes.forEach(function (a, i) {
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + a + '</td><td><input type="range" min="6" max="10" step="0.25" value="7.5" id="a' + i + '" aria-label="' + a + '"></td><td id="v' + i + '">7.50</td>';
+    $('attributes').appendChild(tr);
+    tr.querySelector('input').addEventListener('input', total);
+  });
+  function total() {
+    var sum = 0;
+    attributes.forEach(function (a, i) { var v = Number($('a' + i).value); $('v' + i).textContent = v.toFixed(2); sum += v; });
+    $('total').textContent = sum.toFixed(2);
+    return sum;
+  }
+  total();
+
+  var steps = Array.prototype.slice.call(document.querySelectorAll('#steps li'));
+  var finished = 0;
+  function markDone(li) {
+    if (li.classList.contains('done')) return;
+    li.classList.add('done'); finished++;
+    Cmi5.progress(finished / steps.length * 80, li.querySelector('strong').textContent);
+  }
+  steps.forEach(function (li) {
+    var start = li.querySelector('[data-start]'), skip = li.querySelector('[data-skip]'), out = li.querySelector('[data-timer]');
+    if (!start) return;
+    var handle = null;
+    start.onclick = function () {
+      var left = Number(li.dataset.seconds);
+      clearInterval(handle);
+      handle = setInterval(function () {
+        left--; out.textContent = Math.floor(left / 60) + ':' + ('0' + left % 60).slice(-2);
+        if (left <= 0) { clearInterval(handle); out.textContent = 'Time!'; markDone(li); }
+      }, 1000);
+    };
+    skip.onclick = function () { clearInterval(handle); markDone(li); };
+  });
+
+  $('submit').onclick = function () {
+    var score = total();
+    markDone(steps[steps.length - 1]);
+    var label = score >= 85 ? 'outstanding' : score >= 80 ? 'specialty grade' : 'below specialty grade';
+    $('summary').textContent = 'Your best cup scored ' + score.toFixed(2) + ' (' + label + '). Notes: ' + ($('notes').value || '—') + '.';
+    $('form').hidden = true; $('done').hidden = false;
+    Cmi5.complete().then(function () { return Cmi5.pass(Math.min(1, (score - 60) / 40)); });
+  };
+  $('exit').onclick = function () { Cmi5.exit(); };
+
+  Cmi5.start().then(function (ok) { $('status').textContent = ok ? 'tracked · xAPI connected' : 'offline · not tracked'; });
+})();
+</script>
+</body>
+</html>
