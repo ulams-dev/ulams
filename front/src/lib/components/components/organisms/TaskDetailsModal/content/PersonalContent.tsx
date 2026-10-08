@@ -1,6 +1,5 @@
 import { UlamsContext } from "@ulams/sdk/react";
 import React, { useContext, useEffect, useState } from "react";
-import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { format, isAfter } from "date-fns";
 import { Formik, FormikErrors } from "formik";
@@ -21,13 +20,7 @@ import {
   RelatedTreeSelect,
   RelatedValue,
 } from "../../../molecules/RelatedTreeSelect";
-import {
-  LeftCol,
-  RightCol,
-  SectionHeader,
-  Note,
-  NotesContainer,
-} from "./common";
+import styles from "../TaskDetailsModal.module.css";
 
 interface UpdateTaskFormValues {
   title: string;
@@ -45,15 +38,6 @@ interface Props {
   onSuccess?: () => void;
   onError?: () => void;
 }
-
-const Form = styled.form`
-  display: flex;
-  height: calc(100% - 50px);
-`;
-
-const ButtonsContainer = styled(Row)`
-  width: 100%;
-`;
 
 export const PersonalContent: React.FC<Props> = ({
   taskForAction,
@@ -153,8 +137,8 @@ export const PersonalContent: React.FC<Props> = ({
         handleSubmit,
         setFieldValue,
       }) => (
-        <Form onSubmit={handleSubmit}>
-          <LeftCol>
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <div className={styles.leftCol}>
             <Row $gap={16}>
               <Checkbox
                 disabled={isStatusUpdating}
@@ -171,7 +155,7 @@ export const PersonalContent: React.FC<Props> = ({
                     .catch(() => setIsStatusUpdating(false));
                 }}
               />
-              <SectionHeader>
+              <div className={styles.sectionHeader}>
                 <Input
                   label={t<string>("Tasks.Title")}
                   error={
@@ -208,7 +192,7 @@ export const PersonalContent: React.FC<Props> = ({
                   onChange={(v) => setFieldValue("related", v)}
                   onBlur={handleBlur}
                 />
-                <NotesContainer>
+                <div className={styles.notesContainer}>
                   <Row $alignItems="center" $gap={4}>
                     <Icon name="note" />
                     <Title level={5}>{t<string>("Tasks.Notes")}</Title>
@@ -216,35 +200,37 @@ export const PersonalContent: React.FC<Props> = ({
                   <div>
                     {task.value?.notes && task.value.notes.length > 0 ? (
                       task.value.notes.map((note: TaskNote) => (
-                        <Note key={note.id}>
+                        <div className={styles.note} key={note.id}>
                           <EditTaskNote
                             note={note}
                             onEdit={() => fetchTask(taskForAction.id)}
                             onDelete={() => fetchTask(taskForAction.id)}
                           />
-                        </Note>
+                        </div>
                       ))
                     ) : (
                       <Text>{t<string>("Tasks.NoNotes")}</Text>
                     )}
                   </div>
-                </NotesContainer>
+                </div>
                 <AddTaskNote
                   taskId={taskForAction.id}
                   onSuccess={() => fetchTask(taskForAction.id)}
                 />
-              </SectionHeader>
+              </div>
             </Row>
-            <ButtonsContainer $justifyContent="flex-end" $gap={12}>
+            <Row
+              className={styles.buttonsContainer}
+              $justifyContent="flex-end" $gap={12}>
               <Button mode="secondary" type="button" onClick={closeModal}>
                 {t<string>("Tasks.Cancel")}
               </Button>
               <Button mode="secondary" type="submit">
                 {t<string>("Tasks.Save")}
               </Button>
-            </ButtonsContainer>
-          </LeftCol>
-          <RightCol>
+            </Row>
+          </div>
+          <div className={styles.rightCol}>
             <Input
               type="date"
               error={
@@ -263,8 +249,8 @@ export const PersonalContent: React.FC<Props> = ({
                 "yyyy-MM-dd"
               )}
             />
-          </RightCol>
-        </Form>
+          </div>
+        </form>
       )}
     </Formik>
   );

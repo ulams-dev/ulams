@@ -5,7 +5,8 @@ import { Lesson } from "@ulams/sdk/types";
 import { useCourseAgendaContext } from "../context";
 import CourseAgendaTopic from "../CourseAgendaTopic";
 import { Header } from "./Header";
-import { StyledLessonItem } from "./styles";
+import { useThemeTokens } from "../../../../../theme/applyTheme";
+import styles from "./CourseAgendaLesson.module.css";
 import { getFlatTopics } from "../../../../../utils/course";
 import { isAfter } from "date-fns";
 
@@ -33,6 +34,8 @@ export const CourseAgendaLesson: React.FC<CourseAgendaLessonProps> = ({
     currentLessonParentLessonsIds,
     isMobile,
   } = useCourseAgendaContext();
+
+  const theme = useThemeTokens();
 
   const [open, setOpen] = useState(defaultOpen);
   const openMenu = useCallback(() => setOpen(true), []);
@@ -79,8 +82,13 @@ export const CourseAgendaLesson: React.FC<CourseAgendaLessonProps> = ({
   );
 
   return (
-    <StyledLessonItem
-      className={`lesson__item ${open ? "open" : "closed"} ${
+    <li
+      data-numerations={
+        !!(theme?.dm__numerationsColor || theme?.numerationsColor)
+      }
+      data-input-bg-light={!!theme?.inputBg}
+      data-input-bg-dark={!!theme?.dm__inputBg}
+      className={`${styles.item} lesson__item ${open ? "open" : "closed"} ${
         isAncestor && !isRootAncestor && open ? "full-border" : ""
       } ${!isSubLesson ? "bottom-border" : ""} ${isMobile ? "mobile" : ""}`}
       aria-label={`${t<string>("Course.Lesson")} ${index + 1}`}
@@ -113,7 +121,7 @@ export const CourseAgendaLesson: React.FC<CourseAgendaLessonProps> = ({
       {!!lesson.lessons?.length && (
         <ul className="lesson__lessons">{children}</ul>
       )}
-    </StyledLessonItem>
+    </li>
   );
 };
 

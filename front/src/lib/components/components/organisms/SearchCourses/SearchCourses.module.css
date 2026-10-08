@@ -1,0 +1,34 @@
+.wrapper {
+  min-width: 300px;
+}
+
+.wrapper input {
+  border-radius: 21px !important;
+  background-color: var(--ulams-gray-4) !important;
+}
+
+:global([data-mode="dark"]) .wrapper input {
+  background-color: var(--ulams-opt-color-input-bg, var(--ulams-gray-1)) !important;
+}
+
+.wrapper :global(.fieldset) {
+  border-radius: 21px !important;
+}
+
+/* Doubled class: must beat the Button's own styles regardless of stylesheet order. */
+.itemButton.itemButton {
+  padding: 10px !important;
+  justify-content: flex-start;
+  border: none;
+  border-radius: var(--ulams-radius-button);
+}
+
+.itemButton.itemButton:hover {
+  background-color: var(--ulams-gray-4) !important;
+  color: var(--ulams-color-text);
+  border-radius: var(--ulams-radius-button);
+}
+
+:global([data-mode="dark"]) .itemButton.itemButton:hover {
+  background-color: var(--ulams-opt-color-input-bg, var(--ulams-gray-1)) !important;
+}

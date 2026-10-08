@@ -1,9 +1,8 @@
 import Title from "../../atoms/Typography/Title";
 import React, { useEffect, useRef } from "react";
-import styled from "styled-components";
 import { Button } from "../../atoms/Button/Button";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
-import chroma from "chroma-js";
+import styles from "./LessonEndscreen.module.css";
 import { t } from "i18next";
 
 interface Props extends ExtendableStyledComponent {
@@ -13,40 +12,6 @@ interface Props extends ExtendableStyledComponent {
   onCancel: () => void;
   countdownValue: number;
 }
-
-const StyledVideoEndscreen = styled.div`
-  z-index: 2;
-  background: rgba(0, 0, 0, 0.4);
-  width: 100%;
-  height: 100%;
-  display: grid;
-  justify-content: center;
-  align-content: center;
-
-  .video-endscreen {
-    &__title,
-    &__subtitle {
-      color: #fff;
-      text-align: center;
-    }
-
-    &__title,
-    &__subtitle,
-    &__play {
-      margin-top: 16px;
-    }
-
-    &__cancel {
-      color: #fff;
-      border: 0;
-
-      &:hover {
-        background: transparent;
-        color: ${(props) => chroma(props.theme.white).alpha(0.75).hex()};
-      }
-    }
-  }
-`;
 
 const VideoEndscreen: React.FC<Props> = ({
   topic,
@@ -91,8 +56,8 @@ const VideoEndscreen: React.FC<Props> = ({
   }, [timer]);
 
   return (
-    <StyledVideoEndscreen
-      className={`ulams-component video-endscreen ${className ?? ""}`}
+    <div
+      className={`${styles.root} ulams-component video-endscreen ${className ?? ""}`}
     >
       <Title level={3} as={"h2"} className="video-endscreen__title">
         {topic}
@@ -111,7 +76,7 @@ const VideoEndscreen: React.FC<Props> = ({
       >
         {t<string>("VideoPlayer.Cancel")}
       </Button>
-    </StyledVideoEndscreen>
+    </div>
   );
 };
 

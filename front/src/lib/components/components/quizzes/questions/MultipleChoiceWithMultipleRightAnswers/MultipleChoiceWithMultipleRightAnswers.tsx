@@ -3,7 +3,6 @@ import { API } from "@ulams/sdk";
 import { Checkbox } from "../../../../";
 import { getUniqueId } from "../../../../utils/utils";
 import DefaultQuestionLayout from "../DefaultQuestionLayout";
-import styled, { withTheme } from "styled-components";
 
 interface Props
   extends API.QuizQuestion_MultipleChoiceWithMultipleRightAnswers {
@@ -53,4 +52,4 @@ const MultipleChoiceWithMultipleRightAnswers: React.FC<Props> = ({
   );
 };
 
-export default withTheme(styled(MultipleChoiceWithMultipleRightAnswers)``);
+export default MultipleChoiceWithMultipleRightAnswers;

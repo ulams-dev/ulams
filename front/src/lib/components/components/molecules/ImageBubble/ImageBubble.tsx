@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import styled, { withTheme } from "styled-components";
+import styles from "./ImageBubble.module.css";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { RatioBox } from "../../../index";
 
@@ -16,31 +16,10 @@ export interface ImageBubbleProps extends ExtendableStyledComponent {
   image: ImageBubbleImgProps | React.ReactNode;
 }
 
-const StyledDiv = styled("div")<ImageBubbleProps>`
-  border-radius: ${(props) => props.theme?.cardRadius || 0}px;
-  overflow: hidden;
-  position: relative;
-  .children-list {
-    padding: 0;
-    margin: 0;
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    width: calc(100% - 20px);
-    height: calc(100% - 20px);
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: stretch;
-    align-content: flex-end;
-  }
-`;
-
 export const ImageBubble: React.FC<ImageBubbleProps> = ({ ...props }) => {
   const { children, image, ratio = 1, header, className = "" } = props;
   return (
-    <StyledDiv {...props} className={`ulams-component ${className}`}>
+    <div className={`ulams-component ${styles.root} ${className}`}>
       <RatioBox ratio={ratio}>
         {React.isValidElement(image) ? (
           <React.Fragment>{image}</React.Fragment>
@@ -56,9 +35,8 @@ export const ImageBubble: React.FC<ImageBubbleProps> = ({ ...props }) => {
         <div className="children-list__header">{header || " "}</div>
         <div className="children-list__items">{children}</div>
       </div>
-    </StyledDiv>
+    </div>
   );
 };
 
-// Main button with styles
-export default withTheme(styled(ImageBubble)<ImageBubbleProps>``);
+export default ImageBubble;

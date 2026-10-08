@@ -1,0 +1,60 @@
+.root {
+  cursor: pointer;
+  position: relative;
+  background-color: var(--ulams-color-white);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: var(--ulams-radius-card);
+  padding: 7px 12px;
+  justify-content: flex-start;
+}
+
+:global([data-mode="dark"]) .root {
+  background-color: var(--ulams-color-card-bg);
+}
+
+.root p {
+  margin: 0;
+}
+
+.root .header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.root .header button {
+  all: unset;
+  cursor: pointer;
+}
+
+.root .header button svg {
+  width: 10px;
+  height: 10px;
+}
+
+.root .header button svg path {
+  fill: var(--ulams-color-text);
+}
+
+.root .header p {
+  margin: 0;
+}
+
+.root .date {
+  display: inline-block;
+  opacity: 0.8;
+  min-width: 60px;
+  text-align: left;
+  margin-left: auto;
+}
+
+.root.modularView .date {
+  margin-left: 38px;
+}
+
+.root .content * {
+  word-break: break-word;
+}

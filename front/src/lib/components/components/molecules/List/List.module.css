@@ -1,0 +1,57 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  padding: 0px;
+}
+
+/* Text colour: outline-button colour when the theme defines one, primary otherwise (former getStylesBasedOnTheme fallback). */
+.list {
+  --list-item-color: var(--ulams-color-primary);
+}
+
+.list.hasOutlineColor {
+  --list-item-color: var(--ulams-color-outline-button);
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px;
+  gap: 10px;
+  transition: 0.3s;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.item:hover {
+  transform: scale(1.05);
+}
+
+.item.active {
+  /* chroma(primary).darken(): Lab lightness -18 */
+  background-color: color-mix(in lab, var(--ulams-color-primary), black 30%);
+  background-color: lab(from var(--ulams-color-primary) calc(l - 18) a b);
+  --list-item-color: var(--ulams-color-white);
+}
+
+.item .text {
+  font-size: 14px;
+  font-weight: normal;
+  color: var(--list-item-color);
+}
+
+.item .iconText * {
+  font-weight: normal;
+  color: var(--list-item-color);
+}
+
+.item.active .text,
+.item.active .iconText * {
+  font-weight: bold;
+}
+
+.item .iconText svg {
+  fill: var(--list-item-color) !important;
+}

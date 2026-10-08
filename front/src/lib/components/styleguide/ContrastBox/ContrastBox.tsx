@@ -1,46 +1,36 @@
 import * as React from "react";
 
-import styled, { withTheme, ThemeContext } from "styled-components";
-
 import { contrast } from "chroma-js";
 
-import { getFontFromTheme } from "../../theme/provider";
-import { getStylesBasedOnTheme } from "../../utils/utils";
+import { useThemeTokens } from "../../theme/applyTheme";
+import orangeTheme from "../../theme/orange";
+import { cx } from "../../utils/cx";
+import styles from "./ContrastBox.module.css";
 
 export interface TitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
   children?: React.ReactNode;
   lightContrast?: boolean;
 }
 
-const StyledDiv = styled.div<TitleProps>`
-  margin: 0;
-  padding: 50px;
-  color: ${(props) => (props.lightContrast ? "#fff" : "#000")};
-  font-family: ${(props) => getFontFromTheme(props.theme).fontFamily};
-  background: ${({ theme }) =>
-    getStylesBasedOnTheme(
-      theme.mode,
-      theme.dm__primaryColor,
-      theme.primaryColor,
-      theme.primaryColor
-    )};
-  text-transform: uppercase;
-`;
-
 export const ContrastBox: React.FC<{
   children?: React.ReactNode;
 }> = ({ children }) => {
-  const theme = React.useContext(ThemeContext);
+  const tokens = useThemeTokens();
+  const primary = tokens?.primaryColor ?? orangeTheme.primaryColor;
 
   const cts = React.useMemo(() => {
-    return contrast("#fff", theme.primaryColor) >= 5;
-  }, [theme.primaryColor]);
+    try {
+      return contrast("#fff", primary) >= 5;
+    } catch {
+      return false;
+    }
+  }, [primary]);
 
-  return <StyledDiv lightContrast={cts}>{children}</StyledDiv>;
+  return (
+    <div className={cx(styles.contrastBox, cts && styles.lightContrast)}>
+      {children}
+    </div>
+  );
 };
 
-// https://styled-components.com/docs/api#using-custom-props
-const NewComponent = styled(ContrastBox)<{ lightContrast: boolean }>``;
-
-// Main button with styles
-export default withTheme(NewComponent);
+export default ContrastBox;

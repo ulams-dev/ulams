@@ -1,0 +1,146 @@
+.container {
+  margin: 30px 0px;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  background: var(--ulams-color-card-bg);
+  overflow: auto;
+}
+
+.container::-webkit-scrollbar {
+  width: 2px;
+  border-radius: 2px;
+  height: 2px;
+  background-color: var(--ulams-color-accent-bg);
+}
+
+.container::-webkit-scrollbar-thumb {
+  background-color: var(--ulams-color-bg);
+  border-radius: 4px;
+}
+
+.body {
+  display: flex;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--ulams-color-primary);
+}
+
+.contentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.menu {
+  border-right: 1px solid var(--ulams-color-primary);
+  min-width: fit-content;
+  padding: 12px 12px 12px 0px;
+}
+
+.content {
+  width: 100%;
+  padding: 24px 24px 24px 12px;
+}
+
+.taskItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.taskItem label {
+  display: flex;
+  gap: 16px;
+}
+
+.taskItem label h2 {
+  align-self: center;
+}
+
+.dropdownOptions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dropdownOptions span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.taskDateWrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 25%;
+}
+
+.title.title {
+  text-decoration: none;
+}
+
+.title.titleCompleted {
+  text-decoration: line-through;
+}
+
+.programmeText.programmeText {
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.programmeText :global(.rc-tree-select-arrow) {
+  display: none;
+}
+
+.programmeText :global(.rc-tree-select-selection-item) {
+  display: block;
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.programmeText :global(.rc-tree-select),
+.programmeText :global(.rc-tree-select-selector) {
+  padding: 0px !important;
+}
+
+.page {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 24px;
+  border-top: 1px solid var(--ulams-color-primary);
+}
+
+.page h1 {
+  align-self: center;
+}
+
+.taskDate {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+}
+
+.taskDate p,
+.taskDate picture {
+  color: var(--ulams-color-positive);
+}
+
+.taskDate[data-date="Today"] p,
+.taskDate[data-date="Today"] picture,
+.taskDate[data-date="Overdue"] p,
+.taskDate[data-date="Overdue"] picture {
+  color: var(--ulams-color-error);
+}

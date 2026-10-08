@@ -1,8 +1,8 @@
-import { DefaultTheme } from "styled-components";
+import type { ThemeTokens } from "./types";
 import { blend } from "chroma-js";
 import { sharedTheme } from "./shared";
 
-export const velvetTheme: DefaultTheme = {
+export const velvetTheme: ThemeTokens = {
   ...sharedTheme,
   font: "Mulish",
   primaryColor: "#600CAE",

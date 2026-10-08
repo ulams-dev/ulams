@@ -1,13 +1,13 @@
 import * as React from "react";
-import styled, { ThemeContext, withTheme } from "styled-components";
 import { Col, Row } from "react-grid-system";
 import { Title } from "../../atoms/Typography/Title";
 import { Link } from "../../atoms/Link/Link";
 import { Button } from "../../atoms/Button/Button";
 import { ReactNode } from "react";
 import { contrast } from "chroma-js";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
+import { useThemeTokens } from "../../../theme/applyTheme";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import styles from "./QuizCta.module.css";
 
 interface StyledQuizCtaCardProps {
   mobile?: boolean;
@@ -24,69 +24,6 @@ export interface QuizCtaCardProps
   secondaryButtonText?: ReactNode;
   onSecondaryButtonClick?: () => void;
 }
-
-const StyledQuizCta = styled("div")<StyledQuizCtaCardProps>`
-  padding: ${(props) => (props.mobile ? "22px" : "55px 45px")};
-  background-color: ${({ theme }) =>
-    getStylesBasedOnTheme(
-      theme.mode,
-      theme.dm__colorBackground,
-      theme.colorBackground,
-      getStylesBasedOnTheme(
-        theme.mode,
-        theme.dm__primaryColor,
-        theme.primaryColor,
-        theme.primaryColor
-      )
-    )};
-  border-radius: ${(props) => props.theme.cardRadius}px;
-
-  *:not(button) {
-    color: ${(props) =>
-      props.lightContrast ? props.theme.white : props.theme.gray1};
-  }
-
-  .quiz-cta-icon {
-    margin-right: ${(props) => (props.mobile ? "12px" : "23px")};
-
-    svg {
-      width: ${(props) => (props.mobile ? "31px" : "48px")};
-      height: ${(props) => (props.mobile ? "31px" : "48px")};
-
-      path {
-        fill: currentColor;
-      }
-    }
-  }
-
-  .quiz-cta-btn-group {
-    margin: ${(props) => (props.mobile ? "21px -8px 0;" : "0 -8px;")};
-    width: calc(100% + 16px);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-
-    > * {
-      margin: 8px;
-    }
-
-    a {
-      margin-left: auto;
-      margin-right: auto;
-
-      &:after {
-        background-color: currentColor;
-      }
-    }
-  }
-
-  .quiz-cta-children {
-    p:not(:last-child) {
-      margin-bottom: ${(props) => (props.mobile ? "5px" : "14px")};
-    }
-  }
-`;
 
 const CloudIcon = () => {
   return (
@@ -117,17 +54,25 @@ export const QuizCta: React.FC<QuizCtaCardProps> = (props) => {
     className = "",
   } = props;
 
-  const theme = React.useContext(ThemeContext);
+  const theme = useThemeTokens();
+  const primaryColor = theme?.primaryColor;
 
   const cts = React.useMemo(() => {
-    return contrast("#fff", theme.primaryColor) >= 1.85;
-  }, [theme.primaryColor]);
+    if (!primaryColor) return false;
+    return contrast("#fff", primaryColor) >= 1.85;
+  }, [primaryColor]);
 
   return (
-    <StyledQuizCta
-      className={`ulams-component ${className}`}
-      mobile={mobile}
-      lightContrast={cts}
+    <div
+      className={[
+        "ulams-component",
+        styles.root,
+        mobile ? styles.mobile : "",
+        cts ? styles.lightContrast : "",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       <Row align={"center"}>
         <Col
@@ -180,10 +125,8 @@ export const QuizCta: React.FC<QuizCtaCardProps> = (props) => {
           </div>
         </Col>
       </Row>
-    </StyledQuizCta>
+    </div>
   );
 };
 
-const NewQuizCta = styled(QuizCta)<QuizCtaCardProps>``;
-
-export default withTheme(NewQuizCta);
+export default QuizCta;

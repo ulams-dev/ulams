@@ -1,5 +1,4 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import styled, { withTheme, ThemeContext } from "styled-components";
 import { useTranslation } from "react-i18next";
 
 import * as API from "@ulams/sdk/types";
@@ -11,27 +10,9 @@ import {
 } from "@ulams/sdk/services/h5p";
 import { Spin } from "../../atoms/Spin/Spin";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import { useThemeTokens } from "../../../theme/applyTheme";
 import { buildH5PThemeCss } from "./h5pThemeCss";
-
-const StyledH5P = styled("div")`
-  border-radius: ${(props) => props.theme.buttonRadius || 0}px;
-  position: relative;
-  width: 100%;
-
-  iframe {
-    display: block;
-    width: 100%;
-    border: 0;
-  }
-
-  .h5p-loading {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-`;
+import styles from "./H5Player.module.css";
 
 export interface H5PProps extends ExtendableStyledComponent {
   /** H5P content id in the H5P service (`topic.topicable.value`) */
@@ -77,7 +58,7 @@ export const H5Player: React.FC<H5PProps> = ({
   initialHeight = 200,
 }) => {
   const { apiUrl, token } = useContext(UlamsContext);
-  const themeContext = useContext(ThemeContext);
+  const themeContext = useThemeTokens();
   const { i18n } = useTranslation();
   const lang = (language ?? i18n?.language ?? "en").split("-")[0];
 
@@ -202,9 +183,9 @@ export const H5Player: React.FC<H5PProps> = ({
   }, [style, connected, send]);
 
   return (
-    <StyledH5P className={`ulams-component ${className}`}>
+    <div className={`${styles.root} ulams-component ${className}`}>
       {(initializing || loading) && !error && (
-        <div className="h5p-loading">
+        <div className={`${styles.loading} h5p-loading`}>
           <Spin />
         </div>
       )}
@@ -221,11 +202,11 @@ export const H5Player: React.FC<H5PProps> = ({
           referrerPolicy="no-referrer"
         />
       )}
-    </StyledH5P>
+    </div>
   );
 };
 
 /** Alias that names what the component is: an iframe onto the H5P service. */
 export const H5PFrame = H5Player;
 
-export default withTheme(styled(H5Player)<H5PProps>``);
+export default H5Player;

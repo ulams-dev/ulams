@@ -1,0 +1,8 @@
+.addNoteWrapper {
+  width: 100%;
+}
+
+.addNoteWrapper button {
+  margin: 12px 0px;
+  width: max-content;
+}

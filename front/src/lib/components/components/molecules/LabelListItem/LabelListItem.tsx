@@ -1,12 +1,11 @@
 import * as React from "react";
 import type { PropsWithChildren } from "react";
-import styled, { withTheme, ThemeContext } from "styled-components";
 
 import { Title } from "../../atoms/Typography/Title";
 import { Text } from "../../atoms/Typography/Text";
 import { IconTitle } from "../../atoms/IconTitle/IconTitle";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import styles from "./LabelListItem.module.css";
 
 export interface TitleProps
   extends Omit<React.HTMLProps<HTMLDivElement>, "title">,
@@ -16,14 +15,6 @@ export interface TitleProps
   mobile?: boolean;
   title?: React.ReactNode;
 }
-
-const StyledLabelListItem = styled("div")<TitleProps>`
-  margin-bottom: 20px;
-
-  .lms-icon-title {
-    margin-bottom: 5px;
-  }
-`;
 
 export const LabelListItem: React.FC<PropsWithChildren<TitleProps>> = (
   props
@@ -36,10 +27,9 @@ export const LabelListItem: React.FC<PropsWithChildren<TitleProps>> = (
     mobile = false,
     className = "",
   } = props;
-  const theme = React.useContext(ThemeContext);
 
   return (
-    <StyledLabelListItem className={`ulams-component ${className}`}>
+    <div className={`ulams-component ${styles.root} ${className}`}>
       {variant === "header" ? (
         <React.Fragment>
           {title &&
@@ -78,12 +68,7 @@ export const LabelListItem: React.FC<PropsWithChildren<TitleProps>> = (
             level={5}
             style={{
               marginBottom: "0",
-              color: getStylesBasedOnTheme(
-                theme.mode,
-                theme.dm__primaryColor,
-                theme.primaryColor,
-                theme.primaryColor
-              ),
+              color: "var(--ulams-color-primary)",
             }}
             as={"h1"}
           >
@@ -91,12 +76,8 @@ export const LabelListItem: React.FC<PropsWithChildren<TitleProps>> = (
           </Title>
         </React.Fragment>
       )}
-    </StyledLabelListItem>
+    </div>
   );
 };
 
-// https://styled-components.com/docs/api#using-custom-props
-const NewComponent = styled(LabelListItem)<TitleProps>``;
-
-// Main button with styles
-export default withTheme(NewComponent);
+export default LabelListItem;

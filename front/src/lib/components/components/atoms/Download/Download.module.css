@@ -1,0 +1,45 @@
+.download {
+  --download-color: var(--ulams-color-black);
+  --download-hover-bg: var(--ulams-gray-3);
+  font-size: 1.1em;
+  width: 100%;
+  margin-bottom: 20px;
+  font-family: var(--ulams-font-family-body);
+}
+
+:global([data-mode="dark"]) .download {
+  --download-color: var(--ulams-color-white);
+  --download-hover-bg: var(--ulams-gray-2);
+}
+
+.download :global(.download-btn) {
+  background: var(--ulams-color-card-bg);
+  color: var(--download-color);
+  text-decoration: none;
+  border-radius: var(--ulams-radius-button);
+  padding: 16px 10px 16px 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  line-height: 21px;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.download :global(.download-btn):hover {
+  background: var(--download-hover-bg);
+  font-weight: 700;
+}
+
+.download :global(.download-btn) :global(.icon) {
+  margin-left: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.download :global(.download-btn) :global(.icon) svg {
+  fill: var(--download-color);
+}

@@ -1,5 +1,4 @@
 import * as React from "react";
-import styled, { withTheme } from "styled-components";
 import { Title } from "../../atoms/Typography/Title";
 import { Text } from "../../atoms/Typography/Text";
 import { Link } from "../../atoms/Link/Link";
@@ -7,7 +6,7 @@ import { Row, Col } from "react-grid-system";
 import { RatioBox } from "../../atoms/RatioBox/RatioBox";
 import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
+import styles from "./Certificate.module.css";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface StyledCertificateProps {
@@ -28,62 +27,6 @@ export interface CertificateProps
   handleDownload: () => void;
   handleShare: () => void;
 }
-
-const StyledCertificate = styled("div")<StyledCertificateProps>`
-  .certificate-badge {
-    width: 116px;
-    flex-shrink: 0;
-  }
-
-  .certificate-left-col {
-    margin-left: 20px;
-  }
-
-  .certificate-right-col {
-    ${(props) =>
-      props.mobile
-        ? `
-      margin-top: 23px;
-      `
-        : `
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border-left: 1px solid ${getStylesBasedOnTheme(
-        props.theme.mode,
-        props.theme.white,
-        props.theme.gray3
-      )};
-    `}
-  }
-
-  .certificate-right-col-inner {
-    ${(props) =>
-      props.mobile &&
-      `
-        padding-left: 34px;
-      `}
-  }
-
-  .certificate-link {
-    display: flex;
-    align-items: center;
-
-    &:not(:last-child) {
-      margin-bottom: 24px;
-    }
-
-    svg path {
-      fill: ${(props) =>
-        getStylesBasedOnTheme(
-          props.theme.mode,
-          props.theme.white,
-          props.theme.gray2
-        )};
-    }
-  }
-`;
 
 const Icon1 = () => {
   return (
@@ -133,9 +76,10 @@ export const Certificate: React.FC<CertificateProps> = (props) => {
   const { t } = useTranslation();
 
   return (
-    <StyledCertificate
-      className={`ulams-component ${className}`}
-      mobile={mobile}
+    <div
+      className={`ulams-component ${styles.root} ${
+        mobile ? styles.mobile : ""
+      } ${className}`}
     >
       <Title level={4} as={"h4"} style={{ marginBottom: "20px" }}>
         {t("Certificate.Title")}
@@ -201,10 +145,8 @@ export const Certificate: React.FC<CertificateProps> = (props) => {
           </div>
         </Col>
       </Row>
-    </StyledCertificate>
+    </div>
   );
 };
 
-const NewCertificate = styled(Certificate)<CertificateProps>``;
-
-export default withTheme(NewCertificate);
+export default Certificate;

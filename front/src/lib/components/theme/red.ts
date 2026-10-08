@@ -1,4 +1,4 @@
-import { DefaultTheme } from "styled-components";
+import type { ThemeTokens } from "./types";
 // import { blend } from "chroma-js";
 import { sharedTheme } from "./shared";
 
@@ -7,7 +7,7 @@ const colors = {
   disabled: "#EAEAEA",
 };
 
-export const redTheme: DefaultTheme = {
+export const redTheme: ThemeTokens = {
   ...sharedTheme,
   buttonRadius: 5,
   inputRadius: 5,

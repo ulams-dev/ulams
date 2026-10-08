@@ -1,12 +1,10 @@
 import * as React from "react";
-import styled, { withTheme } from "styled-components";
 import { ReactNode, useRef } from "react";
 import { Input, Spin } from "../../../";
-import chroma from "chroma-js";
 import { Text } from "../../../";
 import { useOnClickOutside } from "../../../hooks/useOnClickOutside";
 import { useTranslation } from "react-i18next";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
+import styles from "./Search.module.css";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
 interface StyledSearchProps {
@@ -25,117 +23,6 @@ export interface SearchProps
   children?: ReactNode;
   icon?: ReactNode;
 }
-
-const StyledSearch = styled("div")<StyledSearchProps>`
-  position: relative;
-  width: 100%;
-
-  .lsm-input .input-and-fieldset input {
-    &:focus {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-
-      ~ .fieldset {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-      }
-    }
-
-    &:not(:focus) ~ .fieldset {
-      border-color: transparent;
-    }
-  }
-
-  input::placeholder {
-    color: currentColor;
-    opacity: 0.5;
-  }
-
-  .search-input-wrapper {
-    position: relative;
-  }
-
-  .search-input-button {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    transition: opacity 0.2s ease-in-out;
-    appearance: none;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    color: ${({ theme }) =>
-      getStylesBasedOnTheme(theme.mode, theme.white, theme.gray1)};
-
-    &:hover {
-      opacity: 0.75;
-    }
-
-    svg {
-      width: 20px;
-      height: 20px;
-
-      path {
-        fill: ${({ loading }) => !loading && "currentColor"};
-      }
-    }
-  }
-
-  .search-input-options {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    height: ${({ isFocused }) => (isFocused ? "auto" : "0")};
-    max-height: ${({ isFocused }) => (isFocused ? "250px" : "0")};
-    overflow-y: auto;
-    display: ${({ isFocused }) => (isFocused ? "block" : "none")};
-    background-color: ${({ theme }) => theme.white};
-    border-width: 0.5px;
-    border-style: solid;
-    border-color: ${({ theme }) =>
-      getStylesBasedOnTheme(
-        theme.mode,
-        chroma(theme.white).alpha(0.6).css(),
-        chroma(theme.gray3).alpha(0.5).css()
-      )};
-    border-top: none;
-    box-sizing: border-box;
-    border-radius: ${({ theme }) => theme.buttonRadius}px;
-    padding: 0px 6px;
-    z-index: 1;
-    box-shadow: 0px 10px 15px #00000019;
-
-    > * {
-      font-weight: 400;
-      padding: 15px;
-      cursor: pointer;
-      transition: background-color 0.2s ease-in-out;
-
-      &:last-child {
-        border-bottom-left-radius: ${({ theme }) => theme.inputRadius}px;
-        border-bottom-right-radius: ${({ theme }) => theme.inputRadius}px;
-      }
-
-      &:hover {
-        background-color: ${({ theme }) =>
-          getStylesBasedOnTheme(
-            theme.mode,
-            chroma(theme.gray1).brighten(0.2).css(),
-            chroma(theme.gray5).darken(0.2).css()
-          )};
-      }
-    }
-
-    ::-webkit-scrollbar {
-      width: 1px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background-color: ${({ theme }) => theme.primaryColor};
-    }
-  }
-`;
 
 const IconSearch = () => {
   return (
@@ -213,11 +100,11 @@ export const Search: React.FC<SearchProps> = (props) => {
   };
 
   return (
-    <StyledSearch
-      className={`ulams-component ${className}`}
+    <div
+      className={`ulams-component ${styles.root} ${className}`}
       ref={ref}
-      isFocused={isFocused}
-      loading={loading}
+      data-focused={isFocused ? "true" : "false"}
+      data-loading={loading ? "true" : "false"}
     >
       <div className="search-input-wrapper">
         <Input
@@ -252,8 +139,8 @@ export const Search: React.FC<SearchProps> = (props) => {
           <Text size={"12"}>{t<string>("Search.NoResults")}</Text>
         )}
       </div>
-    </StyledSearch>
+    </div>
   );
 };
 
-export default withTheme(styled(Search)<SearchProps>``);
+export default Search;

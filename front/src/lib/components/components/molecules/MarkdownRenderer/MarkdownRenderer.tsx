@@ -1,5 +1,4 @@
 import React, { useEffect, useId, useState } from "react";
-import styled, { createGlobalStyle, withTheme } from "styled-components";
 import ReactMarkdown from "react-markdown";
 import { ReactMarkdownOptions } from "react-markdown/lib/react-markdown";
 // import rehypeRaw from "rehype-raw";
@@ -8,16 +7,11 @@ import { ReactMarkdownOptions } from "react-markdown/lib/react-markdown";
 // import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 import { Gallery, Item } from "react-photoswipe-gallery";
-import chroma from "chroma-js";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
-import { getFontFromTheme } from "../../../theme/provider";
-import { setFontSizeByHeaderLevel } from "../../../utils/components/primitives/titleUtils";
 import { fixContentForMarkdown } from "../../../utils/components/markdown";
-import {
-  getStylesBasedOnTheme,
-  SharedLightboxStyle,
-} from "../../../utils/utils";
+import "../../../utils/photoswipe.css";
 import { Link } from "../../../";
+import styles from "./MarkdownRenderer.module.css";
 
 interface StyledMarkdownRendererProps {
   mobile?: boolean;
@@ -34,173 +28,6 @@ const pxToEm = (px: string) => {
   const emNumber = pxNumber / 14;
   return emNumber.toFixed(2);
 };
-
-const StyledMarkdownRenderer = styled("div")<StyledMarkdownRendererProps>`
-  color: ${({ theme }) =>
-    getStylesBasedOnTheme(theme.mode, theme.white, "#111")};
-  font-family: ${(props) => getFontFromTheme(props.theme).fontFamily};
-  font-size: ${(props) => props.fontSize && `${pxToEm(props.fontSize)}em`};
-  line-height: 1.55em;
-
-  h1 {
-    font-size: ${(props) =>
-      `${pxToEm(setFontSizeByHeaderLevel(1, props.mobile))}em`};
-  }
-
-  h2 {
-    font-size: ${(props) =>
-      `${pxToEm(setFontSizeByHeaderLevel(2, props.mobile))}em`};
-  }
-
-  h3 {
-    font-size: ${(props) =>
-      `${pxToEm(setFontSizeByHeaderLevel(3, props.mobile))}em`};
-  }
-
-  h4 {
-    font-size: ${pxToEm(setFontSizeByHeaderLevel(4))}em;
-  }
-
-  h5 {
-    font-size: ${pxToEm(setFontSizeByHeaderLevel(5))}em;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    margin-bottom: 0;
-    font-weight: bold;
-    line-height: 125%;
-    color: ${({ theme }) =>
-      getStylesBasedOnTheme(theme.mode, theme.white, theme.gray1)};
-
-    &:first-child {
-      margin-top: 0;
-    }
-  }
-
-  strong,
-  b {
-    font-weight: bold;
-  }
-
-  code {
-    border-radius: 4px;
-    border: 1px solid rgb(232, 235, 237);
-    padding: 3px 4px;
-    font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, Courier,
-      monospace;
-    font-size: 85%;
-  }
-
-  mark {
-    border-radius: 1px;
-    background: rgb(171, 255, 50);
-    padding: 0.2em;
-  }
-
-  blockquote {
-    border-left: 3px solid rgb(218, 225, 233);
-    margin: 1em 0;
-    padding-left: 10px;
-    font-style: italic;
-  }
-
-  .table-responsive {
-    td,
-    tr,
-    th {
-      border: 1px solid
-        ${({ theme }) =>
-          getStylesBasedOnTheme(
-            theme.mode,
-            chroma(theme.white).alpha(0.2).css(),
-            theme.gray3
-          )};
-      padding: 5px 10px;
-    }
-    table {
-      width: 100%;
-      border: 1px solid
-        ${({ theme }) =>
-          getStylesBasedOnTheme(
-            theme.mode,
-            chroma(theme.white).alpha(0.2).css(),
-            theme.gray3
-          )};
-      border-collapse: collapse;
-    }
-  }
-
-  ul,
-  ol {
-    margin: 1em 0.1em;
-    padding: 0px 0px 0px 1em;
-  }
-
-  ul.contains-task-list {
-    list-style: none;
-    padding: 0px;
-    margin: 1em 0;
-  }
-  ul.contains-task-list li {
-    display: flex;
-  }
-  ul.contains-task-list li input {
-    pointer-events: initial;
-    opacity: 1;
-    margin: 3px 0.5em 0px 0px;
-    width: 14px;
-    height: 14px;
-  }
-  ul.contains-task-list li:has(input[checked]) {
-    color: rgb(78, 92, 110);
-    text-decoration: line-through;
-  }
-
-  .image {
-    text-align: center;
-    max-width: 100%;
-    clear: both;
-  }
-  .image-left-50 {
-    float: left;
-    width: 50%;
-    margin-right: 2em;
-    margin-bottom: 1em;
-    clear: initial;
-  }
-
-  .image-right-50 {
-    float: right;
-    width: 50%;
-    margin-left: 2em;
-    margin-bottom: 1em;
-    clear: initial;
-  }
-
-  .image span {
-    line-height: 0;
-    display: inline-block;
-  }
-
-  .image img {
-    display: inline-block;
-    max-width: 100%;
-    max-height: 75vh;
-  }
-  a {
-    color: ${({ theme }) => theme.primaryColor};
-    word-break: break-word;
-  }
-`;
-
-const LightBoxOverwrite = createGlobalStyle`
-${SharedLightboxStyle}
-`;
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = (props) => {
   const { mobile = false, fontSize = "16", children, className } = props;
@@ -225,10 +52,17 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = (props) => {
   }, []);
 
   return (
-    <StyledMarkdownRenderer
-      className={`ulams-component ${className}`}
-      mobile={mobile}
-      fontSize={fontSize}
+    <div
+      className={`${styles.root} ${
+        mobile ? styles.mobile : ""
+      } ulams-component ${className}`}
+      style={
+        fontSize
+          ? ({
+              "--ulams-md-font-size": `${pxToEm(fontSize)}em`,
+            } as React.CSSProperties)
+          : undefined
+      }
     >
       <ReactMarkdown
         linkTarget="_blank"
@@ -252,7 +86,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = (props) => {
       >
         {fixContentForMarkdown(children)}
       </ReactMarkdown>
-    </StyledMarkdownRenderer>
+    </div>
   );
 };
 
@@ -280,7 +114,6 @@ export const MarkdownImage: React.FC<
 
   return (
     <>
-      <LightBoxOverwrite />
       <Gallery
         options={{
           arrowPrev: false,
@@ -334,4 +167,4 @@ export const MarkdownTable: React.ComponentType<
   );
 };
 
-export default withTheme(styled(MarkdownRenderer)<MarkdownRendererProps>``);
+export default MarkdownRenderer;

@@ -12,92 +12,13 @@ import type { ResponseError } from "umi-request";
 //import "@ulams/ts-models";
 //import "@ulams/sdk/types";
 
-import styled, { withTheme } from "styled-components";
-
 import { Input, Button, Title, Link, Text, Checkbox } from "../../../";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { API } from "@ulams/sdk";
 import useAdditionalFieldTranslations from "../../../hooks/useAdditionalFieldsTranslations";
 import MarkdownRenderer from "../../molecules/MarkdownRenderer/MarkdownRenderer";
 
-const StyledDiv = styled.div<{ mobile: boolean }>`
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  max-width: 470px;
-  .lms-checkbox {
-    margin: 10px 0;
-    font-size: 13px;
-  }
-  .lsm-input {
-    margin: 30px 0;
-    &.has-error,
-    &.has-helper {
-      margin-bottom: -15px;
-    }
-  }
-  button {
-    margin-top: 10px;
-  }
-  p {
-    margin: 15px 0;
-  }
-  p,
-  label p {
-    margin: 0;
-  }
-  a {
-    color: ${({ theme }) =>
-      getStylesBasedOnTheme(
-        theme.mode,
-        theme.dm__primaryColor,
-        theme.primaryColor,
-        theme.primaryColor
-      )};
-  }
-  h2,
-  h3,
-  h4 {
-    font-size: ${(props) => (props.mobile ? "18px" : "28px")};
-  }
-  form {
-    width: 100%;
-    min-width: ${({ mobile }) => (mobile ? "100%" : "440px")};
-    margin-bottom: 15px;
-  }
-`;
-
-const GotAccount = styled.div`
-  margin-top: 70px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  a {
-    margin-top: 11px;
-    font-weight: 700;
-  }
-`;
-
-const Clause = styled.div`
-  margin-top: 20px;
-  * {
-    font-size: 12px;
-  }
-`;
-
-const ProccesingWrapper = styled.div`
-  * {
-    font-size: 13px;
-  }
-`;
+import styles from "./RegisterForm.module.css";
 
 type FormValues = {
   first_name: string;
@@ -186,7 +107,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   );
 
   return (
-    <StyledDiv className={`ulams-component ${className}`} mobile={mobile}>
+    <div
+      className={`ulams-component ${styles.root} ${mobile ? styles.mobile : ""} ${className}`}
+    >
       <Title level={3} style={{ maxWidth: "480px", textAlign: "center" }}>
         {submitText ? submitText : t<string>("RegisterForm.Header")}
       </Title>
@@ -391,7 +314,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
               ))}
 
             {settings.value.register?.processing && (
-              <ProccesingWrapper>
+              <div className={styles.processingWrapper}>
                 <MarkdownRenderer>
                   {settings.value.register?.processing}
                 </MarkdownRenderer>
@@ -413,22 +336,22 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                       error={errors[field.name]}
                     />
                   ))}
-              </ProccesingWrapper>
+              </div>
             )}
             {settings.value.register?.clause1 && (
-              <Clause>
+              <div className={styles.clause}>
                 <MarkdownRenderer>
                   {settings.value.register.clause1}
                 </MarkdownRenderer>
-              </Clause>
+              </div>
             )}
 
             {settings.value.register?.clause2 && (
-              <Clause>
+              <div className={styles.clause}>
                 <MarkdownRenderer>
                   {settings.value.register?.clause2}
                 </MarkdownRenderer>
-              </Clause>
+              </div>
             )}
 
             {/* {settings.value.regiser} */}
@@ -438,16 +361,16 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           </form>
         )}
       </Formik>
-      <GotAccount>
+      <div className={styles.gotAccount}>
         <Text size="14">
           {t<string>("RegisterForm.Already have an account")}{" "}
         </Text>{" "}
         <Link onClick={() => onLoginLink && onLoginLink()}>
           {t<string>("Login.Signin")}
         </Link>
-      </GotAccount>
-    </StyledDiv>
+      </div>
+    </div>
   );
 };
 
-export default withTheme(styled(RegisterForm)<{ mobile: boolean }>``);
+export default RegisterForm;

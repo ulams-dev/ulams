@@ -1,23 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
 import { Row, Text } from "../../../";
+import styles from "./Countdown.module.css";
 
 interface Props {
   targetDate: string | Date;
   onCountdownEnd?: () => void;
 }
-
-const Wrapper = styled(Row)`
-  width: 115px;
-  padding: 12px;
-  border-radius: 12px;
-
-  border: 1px solid ${({ theme }) => theme.primaryColor};
-
-  picture {
-    color: ${({ theme }) => theme.primaryColor};
-  }
-`;
 
 const formatNumber = (num: number): string => {
   if (Number.isNaN(num) || num <= 0) {
@@ -69,14 +57,15 @@ export const Countdown: React.FC<Props> = ({ targetDate, onCountdownEnd }) => {
   const [hours, minutes, seconds] = useCountdown(targetDate, onCountdownEnd);
 
   return (
-    <Wrapper
+    <Row
+      className={styles.wrapper}
       data-testid={`countdown-${targetDate}`}
       $alignItems="center"
       $justifyContent="space-between"
     >
-      <Text family="secondary" size="sm">
+      <Text style={{ fontSize: "inherit" }}>
         {hours}:{minutes}:{seconds}
       </Text>
-    </Wrapper>
+    </Row>
   );
 };

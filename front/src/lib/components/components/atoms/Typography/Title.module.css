@@ -1,0 +1,20 @@
+.title {
+  --title-color: var(--ulams-color-text);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--ulams-font-family);
+  font-weight: bold;
+  font-size: var(--title-size);
+  line-height: 125%;
+}
+
+:global([data-mode="dark"]) .title {
+  --title-color: var(--ulams-color-white);
+}
+
+.title,
+.title > * {
+  color: var(--title-color);
+}

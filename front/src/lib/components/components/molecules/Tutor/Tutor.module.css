@@ -1,0 +1,50 @@
+.root:global(.lms-tutor) {
+  max-width: 640px;
+}
+
+.root:global(.lms-tutor) :global(.title) {
+  margin-bottom: 20px;
+}
+
+.root:global(.lms-tutor) :global(.avatar-row) {
+  display: inline-flex;
+  align-items: flex-start;
+}
+
+.root:global(.lms-tutor) :global(.avatar-info) {
+  margin-left: 20px;
+}
+
+.root:global(.lms-tutor) :global(.ranking-row) {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  margin: 10px 0;
+}
+
+.root:global(.lms-tutor) :global(.course-info) {
+  color: var(--ulams-color-primary);
+  margin: 0 0 0 25px;
+  font-weight: 700;
+}
+
+.root:global(.lms-tutor) :global(.description) {
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 17px;
+  margin-top: 10px;
+}
+
+/* mobile */
+.root.mobile:global(.lms-tutor) :global(.avatar-row) {
+  align-items: center;
+}
+
+.root.mobile:global(.lms-tutor) :global(.ranking-row) {
+  align-items: normal;
+  flex-direction: column;
+}
+
+.root.mobile:global(.lms-tutor) :global(.course-info) {
+  margin: 0;
+}

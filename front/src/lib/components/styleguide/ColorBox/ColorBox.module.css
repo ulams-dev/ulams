@@ -1,0 +1,22 @@
+.colorBox {
+  background: black;
+  /* former `radius || 0` */
+  border-radius: var(--ulams-radius);
+  font-family: var(--ulams-font-family-body);
+  width: 200px;
+  height: 200px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  align-content: stretch;
+}
+
+.primary {
+  background: var(--ulams-color-primary);
+}
+
+.secondary {
+  background: var(--ulams-color-secondary);
+}

@@ -1,11 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
 import { API } from "@ulams/sdk";
 import { Title } from "../../../";
 
 import { PersonalContent } from "./content/PersonalContent";
 import { IncomingContent } from "./content/IncomingContent";
+import styles from "./TaskDetailsModal.module.css";
 
 interface Props {
   task: API.Task & { has_notes: boolean };
@@ -14,12 +14,6 @@ interface Props {
   onTaskUpdateSuccess?: () => void;
   onTaskUpdateError?: () => void;
 }
-
-const Wrapper = styled.aside`
-  max-width: 100%;
-  max-height: calc(100vh - 60px);
-  overflow: auto;
-`;
 
 export const TaskDetailsModal: React.FC<Props> = ({
   task,
@@ -31,7 +25,7 @@ export const TaskDetailsModal: React.FC<Props> = ({
   const { t } = useTranslation();
   const isPersonal = task.created_by?.id === task.user?.id;
   return (
-    <Wrapper>
+    <aside className={styles.wrapper}>
       <Title level={4}>{t<string>("Tasks.DetailTask")}</Title>
       {isPersonal ? (
         <PersonalContent
@@ -47,6 +41,6 @@ export const TaskDetailsModal: React.FC<Props> = ({
           onTaskStatusUpdateSuccess={onTaskStatusUpdateSuccess}
         />
       )}
-    </Wrapper>
+    </aside>
   );
 };

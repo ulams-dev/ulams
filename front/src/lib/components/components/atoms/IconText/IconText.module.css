@@ -1,0 +1,38 @@
+.iconText {
+  --icon-text-color: var(--ulams-gray-1);
+  --icon-text-icon: var(--ulams-color-black);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0 0 20px 0;
+  font-family: var(--ulams-font-family-body);
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: var(--icon-text-color);
+}
+
+:global([data-mode="dark"]) .iconText {
+  --icon-text-color: var(--ulams-color-white);
+  --icon-text-icon: var(--ulams-color-white);
+}
+
+.noMargin {
+  margin: 0;
+}
+
+.iconText :global(.icon) {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  margin-right: 9px;
+}
+
+.iconText :global(.icon) svg {
+  flex-shrink: 0;
+  fill: var(--icon-text-icon);
+}
+
+.iconText :global(.text) {
+  width: 100%;
+}

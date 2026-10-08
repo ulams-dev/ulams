@@ -1,0 +1,111 @@
+.root {
+  padding: 14px 13px;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: var(--ulams-radius-card);
+  background-color: var(--ulams-color-white);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+:global([data-mode="dark"]) .root {
+  background-color: var(--ulams-color-card-bg);
+}
+
+.root.mobile {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.root:not(:last-child) {
+  margin-bottom: 20px;
+}
+
+.root :global(.image-title) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 0px;
+}
+
+.root.mobile :global(.image-title) {
+  gap: 24px;
+  margin-bottom: 10px;
+}
+
+.root :global(.image-title) h4 {
+  margin-bottom: 0px !important;
+}
+
+.root :global(.action-price-wrapper) {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-left: 0;
+  width: calc(100% - 110px);
+}
+
+/* the original mobile value `align-items: space-between` is invalid and was dropped */
+.root.mobile :global(.action-price-wrapper) {
+  align-items: normal;
+  justify-content: space-between;
+  margin-left: 110px;
+}
+
+.root :global(.action-price-wrapper) :global(.price) {
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  gap: 10px;
+}
+
+.root :global(.action-price-wrapper) :global(.price) :global(.checkout-card-discount) {
+  color: var(--ulams-color-primary);
+  text-decoration: line-through;
+}
+
+.root svg path {
+  fill: currentColor;
+}
+
+.root svg:global(.icon-primary) path {
+  fill: var(--ulams-gray-4);
+}
+
+:global([data-mode="dark"]) .root svg:global(.icon-primary) path {
+  fill: var(--ulams-color-primary);
+}
+
+.root svg:global(.icon-stroke) path {
+  stroke: currentColor;
+  fill: none;
+}
+
+.root :global(.checkout-card-img) {
+  width: 50px;
+  height: 50px;
+  position: relative;
+}
+
+.root.mobile :global(.checkout-card-img) {
+  width: 84px;
+  height: 84px;
+}
+
+.root :global(.checkout-card-img) svg {
+  fill: var(--ulams-gray-4);
+}
+
+:global([data-mode="dark"]) .root :global(.checkout-card-img) svg {
+  fill: var(--ulams-color-white);
+}
+
+.root :global(.checkout-card-img) img {
+  border-radius: var(--ulams-radius-card);
+  width: 100%;
+  height: 100%;
+}

@@ -1,10 +1,10 @@
 import * as React from "react";
-import styled, { withTheme } from "styled-components";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
-import { getDisplayFontFromTheme } from "../../../theme/provider";
+import { cx } from "../../../utils/cx";
+import cssStyles from "./IconTitle.module.css";
 import { HeaderLevelInt, HeaderLevelStr } from "../../../types/titleTypes";
 import { setFontSizeByHeaderLevel } from "../../../utils/components/primitives/titleUtils";
+import { legacyDefault } from "../../../utils/legacy";
 
 interface Styles {
   icon?: React.CSSProperties;
@@ -29,41 +29,6 @@ export interface IconTitleProps
   styles?: Styles;
 }
 
-const StyledHeader = styled.h3<StyledHeader>`
-  &.lms-icon-title {
-    font-size: ${(props) =>
-      setFontSizeByHeaderLevel(props.level, props.mobile)};
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    margin: 0 0 20px 0;
-    font-family: ${(props) => getDisplayFontFromTheme(props.theme).fontFamily};
-    display: flex;
-    flex-wrap: nowrap;
-    color: ${({ theme }) =>
-      getStylesBasedOnTheme(theme.mode, theme.white, theme.gray1)};
-    .icon {
-      width: 0.9em;
-      display: flex;
-      align-items: center;
-      margin-right: 0.6em;
-      svg {
-        fill: ${({ theme }) =>
-          getStylesBasedOnTheme(theme.mode, theme.white, theme.black)};
-        max-width: 100%;
-        height: auto;
-        flex-shrink: 0;
-      }
-    }
-    .title {
-      font-weight: 700;
-      margin-right: 0.4em;
-    }
-    .subtitle {
-      font-size: 0.65em;
-    }
-  }
-`;
-
 export const IconTitle: React.FC<IconTitleProps> = (props) => {
   const {
     title,
@@ -74,13 +39,23 @@ export const IconTitle: React.FC<IconTitleProps> = (props) => {
     as,
     className = "",
   } = props;
-  const tagName: HeaderLevelStr = (as as HeaderLevelStr) ?? `h${level}`;
+  const Tag = ((as as HeaderLevelStr) ??
+    `h${level}`) as React.ElementType;
   return (
-    <StyledHeader
-      as={tagName}
-      level={level}
-      className={`lms-icon-title ulams-component ${className}`}
-      style={styles?.container}
+    <Tag
+      className={cx(
+        cssStyles.iconTitle,
+        "lms-icon-title",
+        "ulams-component",
+        className
+      )}
+      style={
+        {
+          // the former styled header never received `mobile`
+          "--icon-title-size": setFontSizeByHeaderLevel(level),
+          ...styles?.container,
+        } as React.CSSProperties
+      }
     >
       <span
         className="icon"
@@ -100,10 +75,8 @@ export const IconTitle: React.FC<IconTitleProps> = (props) => {
           </span>
         )}
       </span>
-    </StyledHeader>
+    </Tag>
   );
 };
 
-const NewComponent = styled(IconTitle)<StyledHeader>``;
-
-export default withTheme(NewComponent);
+export default legacyDefault(IconTitle);

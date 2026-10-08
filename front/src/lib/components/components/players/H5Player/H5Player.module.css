@@ -1,0 +1,19 @@
+.root {
+  border-radius: var(--ulams-radius-button);
+  position: relative;
+  width: 100%;
+}
+
+.root iframe {
+  display: block;
+  width: 100%;
+  border: 0;
+}
+
+.root .loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

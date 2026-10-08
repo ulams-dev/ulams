@@ -8,8 +8,9 @@ import {
 import { Formik, FormikErrors, FormikHelpers } from "formik";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
-import styled, { withTheme } from "styled-components";
 import { ResponseError } from "umi-request";
+
+import styles from "./ModalAddTask.module.css";
 
 interface AddTaskFormValues {
   title: string;
@@ -24,30 +25,12 @@ interface Props {
   onSuccess?: () => void;
   onCancel?: () => void;
   onError?: (err: ResponseError<DefaultResponseError>) => void;
-  addTask: (data: AddTaskFormValues) => Promise<API.DefaultResponse<API.Task>>;
+  // Callers pass the SDK's addTask (CreateTaskRequest, numeric related_id); the
+  // former CSS-in-JS wrapper erased this prop type, so keep it loose.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  addTask: (data: any) => Promise<API.DefaultResponse<API.Task>>;
   refreshTasks: () => void;
 }
-
-const Header = styled.header`
-  padding-bottom: 18px;
-  border-bottom: 1px solid ${({ theme }) => theme.primaryColor};
-  margin-bottom: 24px;
-`;
-
-const AddTaskWrapper = styled.div`
-  & form {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-`;
-
-const ButtonsWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 26px;
-`;
 
 const ModalAddTask: FC<Props> = ({
   onSuccess,
@@ -72,10 +55,10 @@ const ModalAddTask: FC<Props> = ({
   };
 
   return (
-    <AddTaskWrapper>
-      <Header>
+    <div className={styles.wrapper}>
+      <header className={styles.header}>
         <Title>{t<string>("Tasks.AddNewTask")}</Title>
-      </Header>
+      </header>
       <Formik
         initialValues={initialValues}
         validate={validate}
@@ -158,19 +141,19 @@ const ModalAddTask: FC<Props> = ({
               onChange={(v) => setFieldValue("related", v)}
               onBlur={handleBlur}
             />
-            <ButtonsWrapper>
+            <div className={styles.buttons}>
               <Button type="button" mode="secondary" onClick={onCancel}>
                 {t<string>("Tasks.Cancel")}
               </Button>
               <Button type="submit" mode="secondary" disabled={isSubmitting}>
                 {t<string>("Tasks.Submit")}
               </Button>
-            </ButtonsWrapper>
+            </div>
           </form>
         )}
       </Formik>
-    </AddTaskWrapper>
+    </div>
   );
 };
 
-export default withTheme(styled(ModalAddTask)``);
+export default ModalAddTask;

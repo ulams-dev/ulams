@@ -1,0 +1,214 @@
+/* Desktop dropdown */
+.dropdown {
+  position: relative;
+  min-width: 150px;
+  color: var(--ulams-gray-2);
+  border: 1px solid transparent;
+  background-color: var(--categories-bg);
+  border-radius: var(--ulams-radius-input);
+}
+
+.dropdown.lightContrast {
+  color: var(--ulams-gray-4);
+}
+
+.dropdown.open {
+  border-color: currentColor;
+  border-radius: var(--ulams-radius-input) var(--ulams-radius-input) 0 0;
+}
+
+.dropdown :global(.categories-collapse) {
+  color: currentColor;
+}
+
+.dropdown :global(.categories-dropdown-button) {
+  position: relative;
+  justify-content: space-between;
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  appearance: none;
+  background-color: transparent;
+  border: none;
+  font-weight: normal;
+  cursor: pointer;
+  color: currentColor;
+  font-size: 16px;
+  font-family: var(--ulams-font-family-body);
+}
+
+.dropdown :global(.categories-dropdown-button) svg {
+  margin-left: 10px;
+  transform: none;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.dropdown.open :global(.categories-dropdown-button) svg {
+  transform: rotate(180deg);
+}
+
+.dropdown :global(.categories-dropdown-button) svg path {
+  stroke: currentColor;
+}
+
+.dropdown :global(.categories-dropdown-button):hover svg {
+  opacity: 0.6;
+}
+
+.dropdown :global(.categories-dropdown-button)::after {
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  display: none;
+  background-color: currentColor;
+  content: "";
+}
+
+.dropdown.open :global(.categories-dropdown-button)::after {
+  display: block;
+}
+
+.dropdown > :global(.categories-dropdown-options) {
+  padding: 7px 10px;
+  position: absolute;
+  top: 100%;
+  left: -1px;
+  width: calc(100% + 2px);
+  max-height: auto;
+  height: 0;
+  overflow-y: hidden;
+  display: none;
+  box-sizing: border-box;
+  background-color: var(--categories-bg);
+  border: 1px solid currentColor;
+  border-top: none;
+  z-index: 0;
+  border-radius: 0 0 var(--ulams-radius-input) var(--ulams-radius-input);
+}
+
+.dropdown.open > :global(.categories-dropdown-options) {
+  max-height: 200px;
+  height: auto;
+  overflow-y: auto;
+  display: block;
+  z-index: 1;
+}
+
+.dropdown > :global(.categories-dropdown-options) div {
+  position: relative;
+}
+
+.dropdown > :global(.categories-dropdown-options) input {
+  color: currentColor;
+}
+
+.dropdown > :global(.categories-dropdown-options) span {
+  word-break: break-word;
+  color: var(--ulams-gray-2);
+}
+
+.dropdown.lightContrast > :global(.categories-dropdown-options) span {
+  color: var(--ulams-gray-4);
+}
+
+.dropdown :global(.categories-dropdown-options) :global(.categories-dropdown-options) {
+  margin-left: 20px;
+}
+
+/* Tree options (shared by dropdown and drawer) */
+.treeOptions :global(.categories-collapse) {
+  position: absolute;
+  right: 0;
+  top: 0;
+  appearance: none;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.treeOptions :global(.categories-collapse):hover {
+  opacity: 0.8;
+}
+
+.treeOptions :global(.categories-collapse.active) svg {
+  transform: rotate(180deg);
+}
+
+/*
+ * Mobile drawer. These were global styles injected while the drawer component was
+ * mounted; `drawerMounted` is a hidden marker rendered with it, so they still apply
+ * only while it is on the page.
+ */
+:global(html):has(.drawerMounted) :global(*) {
+  box-sizing: border-box;
+}
+
+:global(html):has(.drawerMounted) :global(.drawer-content-wrapper) {
+  left: 0;
+  width: 100%;
+}
+
+:global(html):has(.drawerMounted) :global(.categories-drawer-list) > div {
+  position: relative;
+  margin-bottom: 4px;
+}
+
+:global(html):has(.drawerMounted) :global(.categories-drawer-list) :global(.categories-drawer-list) {
+  margin-left: 20px;
+}
+
+:global(html):has(.drawerMounted) :global(.drawer-content) {
+  display: flex;
+  flex-direction: column;
+}
+
+:global(html):has(.drawerMounted) :global(.drawer-content-header) {
+  position: relative;
+  padding: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px -2px 15px 0px #0000001a;
+}
+
+:global(html):has(.drawerMounted) :global(.drawer-content-btn) {
+  position: absolute;
+  left: 22px;
+  appearance: none;
+  background-color: transparent;
+  border: none;
+}
+
+:global(html):has(.drawerMounted) :global(.drawer-content-btn) svg path {
+  stroke: var(--ulams-gray-1);
+}
+
+:global(html):has(.drawerMounted) :global(.drawer-content-inner) {
+  padding: 0 16px 32px 16px;
+  flex: 1;
+  overflow: auto;
+}
+
+:global(html):has(.drawerMounted) :global(.drawer-content-footer) {
+  padding: 16px;
+  box-shadow: 0px -2px 15px 0px #0000001a;
+}
+
+:global(html):has(.drawerMounted) :global(.categories-collapse),
+:global(html):has(.drawerMounted) label {
+  color: var(--ulams-gray-1);
+}
+
+:global(html[data-mode="dark"]):has(.drawerMounted) :global(.drawer-content-btn) svg path {
+  stroke: var(--ulams-color-white);
+}
+
+:global(html[data-mode="dark"]):has(.drawerMounted) :global(.categories-collapse),
+:global(html[data-mode="dark"]):has(.drawerMounted) label {
+  color: var(--ulams-color-white);
+}

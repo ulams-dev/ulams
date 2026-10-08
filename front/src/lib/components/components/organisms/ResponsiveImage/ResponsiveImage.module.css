@@ -1,0 +1,12 @@
+.root,
+.root > :global(.ulams-image),
+.root > :global(.ulams-image) img {
+  width: 100%;
+  max-width: 100%;
+}
+
+.root:hover,
+.root > :global(.ulams-image):hover,
+.root > :global(.ulams-image) img:hover {
+  transform: none !important;
+}

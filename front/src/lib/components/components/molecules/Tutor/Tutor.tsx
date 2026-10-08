@@ -1,12 +1,11 @@
 import * as React from "react";
-import styled from "styled-components";
 import { Title } from "../../atoms/Typography/Title";
 import { Avatar, AvatarProps } from "../../atoms/Avatar/Avatar";
 import { RatingProps, Rating } from "../../atoms/Rating/Rating";
 import { ReactNode } from "react";
 import { Text } from "../../atoms/Typography/Text";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import styles from "./Tutor.module.css";
 
 interface StyledTourProps {
   mobile?: boolean;
@@ -19,49 +18,6 @@ export interface TutorProps extends StyledTourProps, ExtendableStyledComponent {
   description?: ReactNode | string;
   coursesInfo?: ReactNode | string;
 }
-
-const StyledTutor = styled.div<StyledTourProps>`
-  &.lms-tutor {
-    max-width: 640px;
-    .title {
-      margin-bottom: 20px;
-    }
-    .avatar-row {
-      display: inline-flex;
-      align-items: ${(props) => (props.mobile ? "center" : "flex-start")};
-    }
-    .avatar-info {
-      margin-left: 20px;
-    }
-    .ranking-row {
-      display: flex;
-      ${(props) => {
-        if (!props.mobile) {
-          return "align-items: center;";
-        }
-      }}
-      flex-direction: ${(props) => (props.mobile ? "column" : "row")};
-      margin: 10px 0;
-    }
-    .course-info {
-      color: ${({ theme }) =>
-        getStylesBasedOnTheme(
-          theme.mode,
-          theme.dm__primaryColor,
-          theme.primaryColor,
-          "red"
-        )};
-      margin: ${(props) => (props.mobile ? "0" : "0 0 0 25px")};
-      font-weight: 700;
-    }
-    .description {
-      margin-bottom: 16px;
-      font-size: 14px;
-      line-height: 17px;
-      margin-top: 10px;
-    }
-  }
-`;
 
 export const Tutor: React.FC<TutorProps> = (props) => {
   const {
@@ -76,9 +32,10 @@ export const Tutor: React.FC<TutorProps> = (props) => {
   } = props;
 
   return (
-    <StyledTutor
-      className={`ulams-component lms-tutor ${className}`}
-      mobile={mobile}
+    <div
+      className={`ulams-component lms-tutor ${styles.root} ${
+        mobile ? styles.mobile : ""
+      } ${className}`}
     >
       {React.isValidElement(title) ? (
         title
@@ -101,6 +58,6 @@ export const Tutor: React.FC<TutorProps> = (props) => {
         </div>
       </div>
       {mobile && <Text className="description">{description}</Text>}
-    </StyledTutor>
+    </div>
   );
 };

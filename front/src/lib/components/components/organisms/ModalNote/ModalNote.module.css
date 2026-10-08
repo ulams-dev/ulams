@@ -1,0 +1,18 @@
+.header {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--ulams-color-primary);
+  margin-bottom: 24px;
+}
+
+.wrapper form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 26px;
+}

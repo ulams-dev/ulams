@@ -1,0 +1,109 @@
+.root {
+  --dropdown-fg: var(--ulams-gray-2);
+  font-family: var(--ulams-font-family-body);
+  font-size: 16px;
+  min-width: 150px;
+}
+
+.root.lightContrast {
+  --dropdown-fg: var(--ulams-gray-4);
+}
+
+.root :global(.control) {
+  cursor: pointer;
+  transition: none;
+  border-color: transparent;
+  color: var(--dropdown-fg);
+  padding: 7px 39px 7px 10px;
+  background-color: var(--dropdown-bg);
+}
+
+.root :global(.control)::after {
+  position: absolute;
+  content: "";
+  bottom: 96%;
+  left: 10px;
+  width: calc(100% - 20px);
+  background: var(--dropdown-bg);
+}
+
+.root.bottom :global(.control)::after {
+  bottom: 0;
+}
+
+.root :global(.is-open) :global(.control) {
+  border-color: currentColor;
+}
+
+.root.bottom :global(.is-open) :global(.control) {
+  border-bottom: none;
+  border-radius: var(--ulams-radius-input) var(--ulams-radius-input) 0 0;
+}
+
+.root.top :global(.is-open) :global(.control) {
+  border-top: none;
+  border-radius: 0 0 var(--ulams-radius-input) var(--ulams-radius-input);
+}
+
+.root :global(.is-open) :global(.control)::after {
+  height: 1px;
+}
+
+.root :global(.Dropdown-arrow-wrapper) {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: opacity 0.2s ease-in-out;
+}
+
+.root:hover :global(.arrows) {
+  opacity: 0.6;
+}
+
+.root :global(.Dropdown-control) {
+  border-radius: var(--ulams-radius-input);
+}
+
+.root :global(.Dropdown-control):hover {
+  box-shadow: none;
+}
+
+.root :global(.Dropdown-menu) {
+  top: 100%;
+  bottom: auto;
+  border-color: var(--dropdown-fg);
+  box-shadow: none;
+  background-color: var(--dropdown-bg);
+  font-size: 14px;
+}
+
+.root.top :global(.Dropdown-menu) {
+  top: auto;
+  bottom: 100%;
+  border-bottom: none;
+  border-radius: var(--ulams-radius-input) var(--ulams-radius-input) 0 0;
+}
+
+.root.bottom :global(.Dropdown-menu) {
+  border-top: none;
+  border-radius: 0 0 var(--ulams-radius-input) var(--ulams-radius-input);
+}
+
+.root :global(.Dropdown-option) {
+  padding: 7px 10px;
+  color: var(--dropdown-fg);
+}
+
+.root :global(.Dropdown-option):hover {
+  background: color-mix(in srgb, var(--ulams-color-black) 20%, transparent);
+}
+
+.root :global(.Dropdown-option.is-selected) {
+  background: color-mix(in srgb, var(--ulams-color-black) 30%, transparent);
+}
+
+.root.lightContrast :global(.Dropdown-option):hover,
+.root.lightContrast :global(.Dropdown-option.is-selected) {
+  background: color-mix(in srgb, var(--ulams-color-white) 30%, transparent);
+}

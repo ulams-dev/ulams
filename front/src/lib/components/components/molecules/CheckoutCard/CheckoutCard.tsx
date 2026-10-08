@@ -1,10 +1,9 @@
 import * as React from "react";
-import styled, { withTheme } from "styled-components";
 import { Title } from "../../atoms/Typography/Title";
 import { ReactNode } from "react";
 
 import { Button } from "../../atoms/Button/Button";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
+import styles from "./CheckoutCard.module.css";
 import { t } from "i18next";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
@@ -47,103 +46,6 @@ export interface CheckoutCardProps
   handleDelete: () => void;
 }
 
-const StyledCheckoutCard = styled("div")<StyledCheckoutCardProps>`
-  padding: 14px 13px;
-  width: 100%;
-  box-sizing: border-box;
-  border-radius: ${({ theme }) => theme.cardRadius}px;
-  background-color: ${({ theme }) =>
-    getStylesBasedOnTheme(
-      theme.mode,
-      theme.dm__cardBackgroundColor,
-      theme.white
-    )};
-  display: flex;
-  flex-direction: ${({ mobile }) => (mobile ? "column" : "row")};
-  align-items: ${({ mobile }) => (mobile ? "flex-start" : "center")};
-  justify-content: space-between;
-
-  &:not(:last-child) {
-    margin-bottom: 20px;
-  }
-
-  .image-title {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: ${({ mobile }) => (mobile ? "24px" : "15px")};
-    margin-bottom: ${({ mobile }) => (mobile ? "10px" : "0px")};
-    h4 {
-      margin-bottom: 0px !important;
-    }
-  }
-
-  .action-price-wrapper {
-    display: flex;
-    align-items: ${({ mobile }) => (mobile ? "space-between" : "center")};
-    justify-content: ${({ mobile }) => (mobile ? "space-between" : "flex-end")};
-    gap: 10px;
-    margin-left: ${({ mobile }) => (mobile ? "110px" : "0")};
-    width: calc(100% - 110px);
-    .price {
-      display: flex;
-      align-items: center;
-      flex-direction: row-reverse;
-      gap: 10px;
-      .checkout-card-discount {
-        color: ${({ theme }) =>
-          getStylesBasedOnTheme(
-            theme.mode,
-            theme.dm__primaryColor,
-            theme.primaryColor,
-            theme.primaryColor
-          )};
-        text-decoration: line-through;
-      }
-    }
-  }
-
-  svg {
-    path {
-      fill: currentColor;
-    }
-
-    &.icon-primary {
-      path {
-        fill: ${({ theme }) =>
-          getStylesBasedOnTheme(
-            theme.mode,
-            theme.dm__primaryColor,
-            theme.gray4,
-            theme.primaryColor
-          )};
-      }
-    }
-
-    &.icon-stroke {
-      path {
-        stroke: currentColor;
-        fill: none;
-      }
-    }
-  }
-
-  .checkout-card-img {
-    width: ${({ mobile }) => (mobile ? "84px" : "50px")};
-    height: ${({ mobile }) => (mobile ? "84px" : "50px")};
-    position: relative;
-    svg {
-      fill: ${({ theme }) =>
-        getStylesBasedOnTheme(theme.mode, theme.white, theme.gray4)};
-    }
-    img {
-      border-radius: ${({ theme }) => theme.cardRadius}px;
-      width: 100%;
-      height: 100%;
-    }
-  }
-`;
-
 export const CheckoutCard: React.FC<CheckoutCardProps> = (props) => {
   const {
     title,
@@ -168,7 +70,9 @@ export const CheckoutCard: React.FC<CheckoutCardProps> = (props) => {
   };
 
   return (
-    <StyledCheckoutCard className="ulams-component" mobile={mobile}>
+    <div
+      className={`ulams-component ${styles.root} ${mobile ? styles.mobile : ""}`}
+    >
       <div className="image-title">
         {thumbnail()}
         <div>
@@ -210,10 +114,8 @@ export const CheckoutCard: React.FC<CheckoutCardProps> = (props) => {
           </Button>
         </div>
       </div>
-    </StyledCheckoutCard>
+    </div>
   );
 };
 
-const NewCheckoutCard = styled(CheckoutCard)<CheckoutCardProps>``;
-
-export default withTheme(NewCheckoutCard);
+export default CheckoutCard;

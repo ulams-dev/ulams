@@ -1,8 +1,7 @@
 import * as React from "react";
-import styled from "styled-components";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
-import { getFontFromTheme } from "../../../theme/provider";
+import { cx } from "../../../utils/cx";
+import styles from "./Rating.module.css";
 
 interface IconProps {
   onClick?: (rate: number) => void;
@@ -73,38 +72,6 @@ export interface RatingProps extends StyledRating, ExtendableStyledComponent {
   onIconLeave?: (rate: number) => void;
 }
 
-const StyledRating = styled.span<RatingProps>`
-  &.lms-rating {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-family: ${(props) => getFontFromTheme(props.theme).fontFamily};
-    display: inline-flex;
-    align-items: center;
-
-    .filled-star-icon {
-      color: ${({ theme }) =>
-        getStylesBasedOnTheme(
-          theme.mode,
-          theme.dm__primaryColor,
-          theme.primaryColor,
-          theme.primaryColor
-        )};
-    }
-    svg {
-      width: ${(props) => (props.size ? props.size : "15px")};
-      height: ${(props) => (props.size ? props.size : "15px")};
-      padding-right: 2px;
-      color: ${({ theme }) =>
-        getStylesBasedOnTheme(theme.mode, theme.white, theme.gray2)};
-    }
-    .label {
-      margin: 0px 5px;
-      font-size: 13px;
-      font-weight: 700;
-    }
-  }
-`;
-
 export const Rating: React.FC<RatingProps> = (props) => {
   const {
     count = 5,
@@ -117,10 +84,16 @@ export const Rating: React.FC<RatingProps> = (props) => {
   } = props;
   const startToRender = Array.from(Array(count).keys());
   return (
-    <StyledRating
-      size={props.count}
-      ratingValue={ratingValue}
-      className={`ulams-component lms-rating ${className}`}
+    <span
+      className={cx(
+        styles.rating,
+        // The former styled span received `size={props.count}`: a unitless count made
+        // the 15px icon size invalid, so icons keep their intrinsic size when `count` is set.
+        !props.count && styles.defaultSize,
+        "ulams-component",
+        "lms-rating",
+        className
+      )}
     >
       {startToRender.map((index) => {
         return index + 1 <= Math.round(ratingValue) ? (
@@ -154,6 +127,6 @@ export const Rating: React.FC<RatingProps> = (props) => {
         );
       })}
       {/* {label && <span className="label">{label}</span>} */}
-    </StyledRating>
+    </span>
   );
 };

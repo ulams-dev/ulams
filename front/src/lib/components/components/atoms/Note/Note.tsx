@@ -1,9 +1,9 @@
 import * as React from "react";
 import { ReactNode } from "react";
-import styled from "styled-components";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { Text } from "../Typography/Text";
+import { cx } from "../../../utils/cx";
+import styles from "./Note.module.css";
 
 interface StyledNoteProps extends ExtendableStyledComponent {
   color?: string;
@@ -14,38 +14,15 @@ export interface NoteProps extends StyledNoteProps {
   time?: ReactNode;
 }
 
-const StyledNote = styled("div")<StyledNoteProps>`
-  border-left: 3px solid ${(props) => (props.color ? props.color : "#F2C94C")};
-  padding: 20px;
-  display: flex;
-  position: relative;
-  width: 100%;
-  box-sizing: border-box;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  border-radius: ${(props) => props.theme.cardRadius}px;
-  background: ${({ theme }) =>
-    getStylesBasedOnTheme(
-      theme.mode,
-      theme.dm__cardBackgroundColor,
-      theme.cardBackgroundColor
-    )};
-  .description {
-    margin: 0;
-    font-size: 14px;
-  }
-  .time {
-    margin: 0 0 0 20px;
-    font-size: 14px;
-  }
-`;
-
 export const Note: React.FC<NoteProps> = (props) => {
   const { description, time, color, className = "" } = props;
   return (
-    <StyledNote className={`ulams-component ${className}`} color={color}>
+    <div
+      className={cx(styles.note, "ulams-component", className)}
+      style={{ "--note-color": color || undefined } as React.CSSProperties}
+    >
       <Text className="description">{description}</Text>
       <Text className="time">{time}</Text>
-    </StyledNote>
+    </div>
   );
 };

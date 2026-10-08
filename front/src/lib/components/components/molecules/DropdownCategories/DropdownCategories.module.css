@@ -1,0 +1,96 @@
+.wrapper {
+  position: relative;
+  width: max-content;
+  cursor: pointer;
+}
+
+.wrapper.forMobile {
+  width: 100%;
+}
+
+.menu {
+  top: 30px;
+  position: absolute;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  box-shadow: 0px 10px 15px #00000019;
+  min-width: 175px;
+  padding: 0px;
+  padding-bottom: 19px;
+  border: 1px solid var(--ulams-gray-3);
+  background: var(--ulams-color-white);
+  border-radius: var(--ulams-radius-button);
+  min-width: 300px;
+  margin-top: 0px;
+}
+
+.menu.forMobile {
+  position: static;
+  width: 100%;
+  box-shadow: none;
+  padding-bottom: 0px;
+  border: none;
+}
+
+.menu:global(.fade-enter) {
+  opacity: 0;
+}
+
+.menu:global(.fade-enter-active) {
+  opacity: 1;
+  transition: 0.3s;
+}
+
+.menu:global(.fade-enter-done) {
+  opacity: 1;
+}
+
+.menu:global(.fade-exit-active) {
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.item {
+  display: flex;
+  padding: 0px 14px;
+  flex-direction: column;
+}
+
+.item:not(.item:last-child) {
+  margin-bottom: 20px;
+}
+
+.item > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.item > div label {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.item :global(.subcategories) {
+  margin-top: 15px;
+  margin-left: 20px;
+}
+
+.clearItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eaeaea;
+  padding: 13px 14px;
+}
+
+.clearItem p {
+  margin: 0;
+}
+
+.clearItem button {
+  all: unset;
+  opacity: 0.55;
+}

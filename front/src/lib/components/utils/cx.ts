@@ -1,0 +1,3 @@
+/** Joins truthy class names: `cx("a", cond && "b", undefined)` → `"a b"`. */
+export const cx = (...names: Array<string | false | null | undefined>): string =>
+  names.filter(Boolean).join(" ");

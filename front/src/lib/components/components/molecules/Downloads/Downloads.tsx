@@ -1,5 +1,4 @@
 import * as React from "react";
-import styled, { withTheme } from "styled-components";
 import { Row, Col } from "react-grid-system";
 import { IconTitle } from "../../atoms/IconTitle/IconTitle";
 import { Download } from "../../atoms/Download/Download";
@@ -48,6 +47,4 @@ export const Downloads: React.FC<DownloadsProps> = (props) => {
   );
 };
 
-const NewDownloads = styled(Downloads)<DownloadsProps>``;
-
-export default withTheme(NewDownloads);
+export default Downloads;

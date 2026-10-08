@@ -1,8 +1,8 @@
 import React, { forwardRef } from "react";
 
-import styled, { withTheme } from "styled-components";
-
 import Image from "@ulams/sdk/react/components/Image";
+
+import styles from "./ResponsiveImage.module.css";
 
 interface ImageProps
   extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "onError"> {
@@ -11,26 +11,14 @@ interface ImageProps
   srcSizes?: number[];
 }
 
-const StyledDiv = styled("div")`
-  &,
-  & > .ulams-image,
-  & > .ulams-image img {
-    width: 100%;
-    max-width: 100%;
-    &:hover {
-      transform: none !important;
-    }
-  }
-`;
-
 export const ResponsiveImage = forwardRef<HTMLImageElement, ImageProps>(
   (props, ref) => {
     return (
-      <StyledDiv className={`ulams-component ${props.className ?? ""}`}>
+      <div className={`ulams-component ${styles.root} ${props.className ?? ""}`}>
         <Image {...props} ref={ref} />
-      </StyledDiv>
+      </div>
     );
   }
 );
 
-export default withTheme(styled(ResponsiveImage)``);
+export default ResponsiveImage;

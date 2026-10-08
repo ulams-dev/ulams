@@ -1,10 +1,9 @@
 import * as React from "react";
 
-import styled, { withTheme } from "styled-components";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
-
-import { getFontFromTheme } from "../../../theme/provider";
+import { cx } from "../../../utils/cx";
+import styles from "./Text.module.css";
+import { legacyDefault } from "../../../utils/legacy";
 
 const textSizes = ["24", "18", "16", "14", "13", "12", "11"] as const;
 export type TextSize = typeof textSizes[number];
@@ -19,59 +18,32 @@ export interface TextProps
   className?: string;
 }
 
-const StyledP = styled.p<TextProps>`
-  margin: ${(props) => (props.noMargin ? "0" : "0 0 1.55em 0")};
-  padding: 0;
-  color: ${(props) => {
-    switch (props.type) {
-      case "danger":
-        return "#EB5757";
-      case "primary":
-      default:
-        return getStylesBasedOnTheme(
-          props.theme.mode,
-          props.theme.white,
-          props.theme.textColor
-        );
-    }
-  }};
-  font-family: ${(props) => getFontFromTheme(props.theme).fontFamily};
-  font-weight: ${(props) => (props.bold ? "bold" : "normal")};
-  font-size: ${(props) => props.size}px;
-  line-height: 1.55em;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-`;
-
-export const Text: React.FC<TextProps> = (props) => {
-  const {
-    children,
-    noMargin,
-    style,
-    bold,
-    size = "16",
-    type = "primary",
-    className = "",
-  } = props;
+export const Text: React.FC<TextProps> = ({
+  children,
+  noMargin,
+  style,
+  bold,
+  size = "16",
+  type = "primary",
+  className = "",
+  ...props
+}) => {
   return (
-    <StyledP
-      style={style}
-      noMargin={noMargin}
-      bold={bold}
-      size={size}
-      type={type}
+    <p
       {...props}
-      className={`ulams-component ${className}`}
+      style={{ "--text-size": `${size}px`, ...style } as React.CSSProperties}
+      className={cx(
+        styles.text,
+        noMargin && styles.noMargin,
+        bold && styles.bold,
+        type === "danger" && styles.danger,
+        "ulams-component",
+        className
+      )}
     >
       {children}
-    </StyledP>
+    </p>
   );
 };
 
-// https://styled-components.com/docs/api#using-custom-props
-const NewText = styled(Text)``;
-
-// Main button with styles
-export default withTheme(NewText);
+export default legacyDefault(Text);

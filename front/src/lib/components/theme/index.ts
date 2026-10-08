@@ -6,14 +6,13 @@ import contrastTheme from "./contrast";
 import { coffeeTheme, nightskyTheme, oncallTheme } from "./experiences";
 import { experienceFromThemeKey } from "./experienceKey";
 import { withAccent } from "./accent";
-import { DefaultTheme } from "styled-components";
+import type { ThemeTokens } from "./types";
 
 /**
  * Presets selectable through the tenant's `theme.theme` setting. The experience
- * presets are ThemeTokens (CSS-variable theming); their keys match DefaultTheme,
- * so the styled-components ThemeProvider can use them as well.
+ * presets live in experiences.ts.
  */
-const themes: Record<string, DefaultTheme> = {
+const themes: Record<string, ThemeTokens> = {
   blueTheme,
   orangeTheme,
   redTheme,
@@ -33,7 +32,7 @@ export const resolveThemeKey = (key: unknown): string | undefined => {
 };
 
 /** Preset for a setting value, or undefined when the value names no preset. */
-export const getThemeByKey = (key: unknown): DefaultTheme | undefined => {
+export const getThemeByKey = (key: unknown): ThemeTokens | undefined => {
   const resolved = resolveThemeKey(key);
   return resolved ? themes[resolved] : undefined;
 };
@@ -42,7 +41,7 @@ export const getThemeByKey = (key: unknown): DefaultTheme | undefined => {
 export const getTenantTheme = (
   key: unknown,
   accent?: unknown
-): DefaultTheme | undefined => {
+): ThemeTokens | undefined => {
   const preset = getThemeByKey(key);
   return preset ? withAccent(preset, accent) : undefined;
 };

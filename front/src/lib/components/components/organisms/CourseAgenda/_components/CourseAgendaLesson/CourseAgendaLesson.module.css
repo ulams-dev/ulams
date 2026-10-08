@@ -1,0 +1,233 @@
+.item {
+  background: var(--ulams-color-bg);
+  padding: 5px 7px;
+  overflow: hidden;
+  border-radius: 3px;
+}
+
+.item:global(.full-border) {
+  border: 1px solid var(--ulams-color-primary);
+}
+
+.item:global(.bottom-border) {
+  border-bottom: 1px solid var(--ulams-gray-3);
+}
+
+.item:global(.bottom-border.mobile) {
+  padding: 5px 25px;
+}
+
+.item :global(.duration) {
+  margin: 1px 0;
+}
+
+.item > header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.item > header button svg {
+  transition: transform 0.2s ease-in;
+  transform: rotate(180deg);
+}
+
+.item > header > :global(.lesson__header) {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  width: calc(100% - 25px);
+}
+
+.item > header :global(.lesson__details) {
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.item > header :global(.lesson__details) > p:first-child {
+  margin-bottom: 2px;
+  margin-top: 3px;
+  text-transform: uppercase;
+  color: var(--ulams-color-primary);
+}
+
+.item > header :global(.lesson__details--finished) > p:first-child {
+  color: var(--ulams-color-positive);
+}
+
+.item > header :global(.lesson__title) {
+  color: var(--ulams-gray-1);
+  margin: 0;
+  font-weight: bold;
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-wrap: nowrap;
+}
+
+.item > header :global(.lesson__title) small {
+  font-size: 12px;
+  font-weight: 300;
+  margin-right: 12px;
+}
+
+.item > header :global(.lesson__title) small :global(.lesson__index) {
+  text-transform: uppercase;
+  color: var(--ulams-color-primary);
+  white-space: nowrap;
+}
+
+.item > header :global(.lesson__title) small :global(.lesson__duration) {
+  color: var(--ulams-gray-2);
+}
+
+.item > header :global(.lesson__locked) {
+  color: var(--ulams-color-primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.item:global(.open) > header button svg {
+  transform: rotate(0);
+}
+
+.item:global(.closed) {
+  cursor: pointer;
+}
+
+.item :global(.lesson__lessons) {
+  padding-left: 0;
+  list-style: none;
+  padding: 3px 0;
+}
+
+.item :global(.lesson__topics) {
+  display: grid;
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  transition: all 0.5s;
+  gap: 3px;
+}
+
+.item :global(.lesson__topics) li:not(:global(.lesson__overlay)) {
+  background: transparent;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.item :global(.lesson__topics) li:not(:global(.lesson__overlay)):first-child {
+  margin-top: 10px;
+}
+
+.item :global(.lesson__topics) li:not(:global(.lesson__overlay)):last-child:not(:global(.lesson__topic--current)) {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.item :global(.lesson__topics) li:not(:global(.lesson__overlay)):hover p:last-child {
+  text-decoration: underline;
+}
+
+.item :global(.lesson__topics) li:not(:global(.lesson__overlay)) :global(.lesson__description) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--ulams-gray-3);
+  border-radius: 3px;
+  padding: 10px 15px;
+}
+
+.item :global(.lesson__topics) li:not(:global(.lesson__overlay)) :global(.lesson__description) svg {
+  margin-right: 7px;
+  width: 17px;
+  flex-shrink: 0;
+}
+
+.item :global(.lesson__topics) li:not(:global(.lesson__overlay)) :global(.lesson__description) svg:global(.current-icon) path {
+  fill: var(--ulams-color-primary);
+}
+
+.item :global(.lesson__topics) li:not(:global(.lesson__overlay)) :global(.lesson__description) :global(.lesson__index) {
+  opacity: 0.5;
+  margin-right: 4px;
+}
+
+.item[data-numerations="true"] :global(.lesson__topics) li:not(:global(.lesson__overlay)) :global(.lesson__description) :global(.lesson__index) {
+  opacity: 1;
+}
+
+/*
+ * Current topic background: the former rule resolved to `inputBg` (light) / `dm__inputBg` (dark)
+ * only when the theme defines those keys, otherwise to gray1. The data attributes carry
+ * whether the keys exist, since --ulams-color-input-bg itself always has a value.
+ */
+.item :global(.lesson__topics) li:not(:global(.lesson__overlay)):global(.lesson__topic--current) {
+  background: var(--ulams-gray-1);
+  cursor: default;
+}
+
+.item[data-input-bg-light="true"] :global(.lesson__topics) li:not(:global(.lesson__overlay)):global(.lesson__topic--current) {
+  background: var(--ulams-color-input-bg);
+}
+
+:global([data-mode="dark"]) .item :global(.lesson__topics) li:not(:global(.lesson__overlay)):global(.lesson__topic--current) {
+  background: var(--ulams-gray-1);
+}
+
+:global([data-mode="dark"]) .item[data-input-bg-dark="true"] :global(.lesson__topics) li:not(:global(.lesson__overlay)):global(.lesson__topic--current) {
+  background: var(--ulams-color-input-bg);
+}
+
+.item :global(.lesson__topics) li:not(:global(.lesson__overlay)):global(.lesson__topic--current) button {
+  margin-top: 10px;
+  border-width: 1px;
+  font-weight: normal;
+}
+
+.item :global(.lesson__topics) li:not(:global(.lesson__overlay)):global(.lesson__topic--current):not(:global(.lesson__overlay)):hover,
+.item :global(.lesson__topics) li:not(:global(.lesson__overlay)):global(.lesson__topic--current) :global(.lesson__description) p:last-child {
+  text-decoration: none;
+}
+
+.item :global(.lesson__topics) li:not(:global(.lesson__overlay)):global(.lesson__topic--current) :global(.lesson__description) {
+  border-color: var(--ulams-color-primary);
+}
+
+.item :global(.lesson__topics) li:not(:global(.lesson__overlay)):global(.lesson__topic--current) svg {
+  margin-top: 2px;
+}
+
+.item :global(.lesson__topics) li:not(:global(.lesson__overlay)):global(.lesson__topic--locked) {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.item:global(.open) > :global(.lesson__topics) {
+  transition: all 0.35s ease-in;
+}
+
+.item:global(.open) > :global(.lesson__topics--locked) {
+  min-height: 64px;
+}
+
+.item:global(.closed) > :global(.lesson__topics),
+.item:global(.closed) > :global(.lesson__lessons) {
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.35s ease-out;
+}
+
+.item :global(.lesson__header) {
+  flex-grow: 1;
+  display: flex;
+}
+
+.item :global(.lesson__header--inactive) {
+  opacity: 0.55;
+}

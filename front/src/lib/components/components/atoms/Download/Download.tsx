@@ -1,56 +1,13 @@
 import * as React from "react";
-import styled, { withTheme } from "styled-components";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
-import { getFontFromTheme } from "../../../theme/provider";
+import { cx } from "../../../utils/cx";
+import styles from "./Download.module.css";
+import { legacyDefault } from "../../../utils/legacy";
 
 export interface ComponentProps extends ExtendableStyledComponent {
   href: string;
   fileName?: string | React.ReactNode;
 }
-
-const StyledDiv = styled.div<ComponentProps>`
-  font-size: 1.1em;
-  width: 100%;
-  margin-bottom: 20px;
-  font-family: ${(props) => getFontFromTheme(props.theme).fontFamily};
-  .download-btn {
-    background: ${({ theme }) =>
-      getStylesBasedOnTheme(
-        theme.mode,
-        theme.dm__cardBackgroundColor,
-        theme.cardBackgroundColor
-      )};
-    color: ${({ theme }) =>
-      getStylesBasedOnTheme(theme.mode, theme.white, theme.black)};
-    text-decoration: none;
-    border-radius: ${(props) => props.theme?.buttonRadius || 0}px;
-    padding: 16px 10px 16px 20px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    display: flex;
-    line-height: 21px;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    transition: all 0.3s;
-    &:hover {
-      background: ${({ theme }) =>
-        getStylesBasedOnTheme(theme.mode, theme.gray2, theme.gray3)};
-      font-weight: 700;
-    }
-    .icon {
-      margin-left: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      svg {
-        fill: ${({ theme }) =>
-          getStylesBasedOnTheme(theme.mode, theme.white, theme.black)};
-      }
-    }
-  }
-`;
 
 export const Download: React.FC<ComponentProps> = (props) => {
   const { href, fileName, className = "" } = props;
@@ -60,7 +17,7 @@ export const Download: React.FC<ComponentProps> = (props) => {
   }, [href, fileName]);
 
   return (
-    <StyledDiv {...props} className={`ulams-component ${className}`}>
+    <div className={cx(styles.download, "ulams-component", className)}>
       <a className="download-btn" download href={href} target="_blank">
         <span className="name">{name}</span>
         <span className="icon" role="button" aria-label={name as string}>
@@ -74,10 +31,8 @@ export const Download: React.FC<ComponentProps> = (props) => {
           </svg>
         </span>
       </a>
-    </StyledDiv>
+    </div>
   );
 };
 
-const NewComponent = styled(Download)<ComponentProps>``;
-
-export default withTheme(NewComponent);
+export default legacyDefault(Download);

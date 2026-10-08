@@ -1,9 +1,7 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
 import { Button, Modal, ModalNote, Icon } from "../../../";
-import chroma from "chroma-js";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
+import styles from "./CourseTopNav.module.css";
 import { getUniqueId } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { useState } from "react";
@@ -45,58 +43,6 @@ export interface CourseTopNavProps
   isLast?: boolean;
   onCourseFinished?: () => void;
 }
-
-const StyledAside = styled.aside<StyledAsideProps>`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: ${({ mobile }) => (mobile ? "10px" : "15px")};
-  background: ${({ theme }) =>
-    getStylesBasedOnTheme(theme.mode, theme.dm__background, theme.white)};
-  box-shadow: 0px -3px 10px ${({ theme }) => (theme.mode === "light" ? chroma(theme.black).alpha(0.1).hex() : chroma(theme.white).alpha(0.1).hex())};
-  row-gap: 10px;
-
-  .course-nav-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-  }
-
-  .course-nav-middle-btns {
-    display: flex;
-    gap: 10px;
-  }
-
-  .icon-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    picture {
-      display: flex;
-      align-items: center;
-    }
-  }
-
-  .prev-btn {
-    gap: 20px;
-  }
-
-  .next-btn {
-    gap: 86px;
-  }
-
-  .mark-btn {
-    border-color: ${({ theme }) => theme.positive};
-    opacity: 0.65;
-
-    &:hover {
-      opacity: 1;
-    }
-  }
-`;
 
 export const CourseTopNav: React.FC<CourseTopNavProps> = (props) => {
   const {
@@ -202,10 +148,11 @@ export const CourseTopNav: React.FC<CourseTopNavProps> = (props) => {
 
   return (
     <>
-      <StyledAside
+      <aside
         aria-label={getUniqueId("aside")}
-        mobile={mobile}
-        className={`ulams-component ${className}`}
+        className={`ulams-component ${styles.root} ${
+          mobile ? styles.mobile : ""
+        } ${className}`}
       >
         {mobile && (
           <div className="course-nav-middle-btns">
@@ -234,7 +181,7 @@ export const CourseTopNav: React.FC<CourseTopNavProps> = (props) => {
 
           {renderFinishButton()}
         </div>
-      </StyledAside>
+      </aside>
       <Modal
         visible={showNoteModal}
         onClose={() => setShowNoteModal(false)}

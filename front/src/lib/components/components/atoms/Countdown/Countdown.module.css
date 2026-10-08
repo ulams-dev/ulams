@@ -1,0 +1,10 @@
+.wrapper {
+  width: 115px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--ulams-color-primary);
+}
+
+.wrapper picture {
+  color: var(--ulams-color-primary);
+}

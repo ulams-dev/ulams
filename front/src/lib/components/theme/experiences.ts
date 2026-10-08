@@ -90,6 +90,9 @@ export const oncallTheme: ThemeTokens = {
   dm__inputBg: "#0B0F14",
   outlineButtonColor: "#0B0F14",
   dm__outlineButtonColor: "#E6EDF3",
+  // Disabled buttons in dark mode (e.g. "Back" on the first lesson). Before the
+  // CSS-variable migration this value leaked in from the orange preset's defaults.
+  dm__primaryButtonDisabled: "#6D6D6D",
 };
 
 /** "Night Sky Explorers": playful, rounded, night blue with bright accents. */
@@ -131,4 +134,6 @@ export const nightskyTheme: ThemeTokens = {
   gray1: "#2A2E73",
   outlineButtonColor: "#13153A",
   dm__outlineButtonColor: "#FFD23F",
+  // See oncallTheme: formerly leaked in from the orange preset's defaults.
+  dm__primaryButtonDisabled: "#6D6D6D",
 };

@@ -1,11 +1,8 @@
 import * as React from "react";
 import { ReactNode, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
-import {
-  getStylesBasedOnTheme,
-  roundPercentageList,
-} from "../../../utils/utils";
+import { roundPercentageList } from "../../../utils/utils";
+import styles from "./Ratings.module.css";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { Interval } from "../../atoms/Interval/Interval";
 import { Rating } from "../../atoms/Rating/Rating";
@@ -33,61 +30,13 @@ interface RatingsViewProps extends RatingsProps, ExtendableStyledComponent {
   renderRateWithInterval: () => JSX.Element[];
 }
 
-const StyledRatingsDesktop = styled.div`
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  .ratings-container {
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
-  }
-  .header {
-    margin-bottom: 20px;
-  }
-  .title {
-    color: ${({ theme }) =>
-      getStylesBasedOnTheme(
-        theme.mode,
-        theme.dm__primaryColor,
-        theme.primaryColor,
-        theme.primaryColor
-      )};
-  }
-  .average-rate-container {
-    background: ${({ theme }) =>
-      getStylesBasedOnTheme(
-        theme.mode,
-        theme.dm__cardBackgroundColor,
-        theme.cardBackgroundColor
-      )};
-    padding: 24px 34px;
-    text-align: center;
-    border-radius: ${({ theme }) => theme.cardRadius}px;
-  }
-  .average-rate-label {
-    font-size: 14px;
-    margin: 3px 0 0;
-  }
-  .rate-with-interval-container {
-    flex: 1;
-    padding-left: 27px;
-  }
-  .rate-row {
-    display: flex;
-    align-items: center;
-  }
-  .interval {
-    flex: 1;
-    padding-right: 20px;
-  }
-`;
 
 const RatingsDesktop: React.FC<RatingsViewProps> = (props) => {
   const { avgRate, header, renderRateWithInterval, className = "" } = props;
 
   const { t } = useTranslation();
   return (
-    <StyledRatingsDesktop className={`ulams-component ${className}`}>
+    <div className={`ulams-component ${styles.desktop} ${className}`}>
       {header && (
         <Title className="header" level={4} as="h1">
           {header}
@@ -107,52 +56,10 @@ const RatingsDesktop: React.FC<RatingsViewProps> = (props) => {
           {renderRateWithInterval()}
         </div>
       </div>
-    </StyledRatingsDesktop>
+    </div>
   );
 };
 
-const StyledRatingsMobile = styled.div`
-  .header {
-    margin-bottom: 14px;
-  }
-  .title {
-    color: ${({ theme }) =>
-      getStylesBasedOnTheme(
-        theme.mode,
-        theme.dm__primaryColor,
-        theme.primaryColor,
-        theme.primaryColor
-      )};
-  }
-  .rate-row {
-    display: flex;
-    align-items: center;
-    padding-right: 20px;
-  }
-  .interval {
-    flex: 1;
-    padding-right: 20px;
-  }
-  .average-rate-container {
-    display: flex;
-    align-items: center;
-    background: ${({ theme }) =>
-      getStylesBasedOnTheme(
-        theme.mode,
-        theme.dm__cardBackgroundColor,
-        theme.cardBackgroundColor
-      )};
-    padding: 15px 20px;
-    border-radius: ${({ theme }) => theme.cardRadius}px;
-    > div {
-      padding-left: 20px;
-    }
-  }
-  .average-rate-label {
-    margin-bottom: 0;
-    font-size: 14px;
-  }
-`;
 
 const RatingsMobile: React.FC<RatingsViewProps> = (props) => {
   const { avgRate, header, renderRateWithInterval } = props;
@@ -160,7 +67,7 @@ const RatingsMobile: React.FC<RatingsViewProps> = (props) => {
   const { t } = useTranslation();
 
   return (
-    <StyledRatingsMobile className="ulams-component">
+    <div className={`ulams-component ${styles.mobile}`}>
       {header && (
         <Title className="header" level={4} as="h2">
           {header}
@@ -180,7 +87,7 @@ const RatingsMobile: React.FC<RatingsViewProps> = (props) => {
       <div className="rate-with-interval-container">
         {renderRateWithInterval()}
       </div>
-    </StyledRatingsMobile>
+    </div>
   );
 };
 

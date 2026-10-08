@@ -3,19 +3,7 @@ import { UlamsContext } from "@ulams/sdk/react";
 import { FC, ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import { API } from "@ulams/sdk";
 import { t } from "i18next";
-import {
-  BookmarkNotesContainer,
-  BookmarkNotesHeader,
-  BookmarkNotesBody,
-  BookmarkNotesMenu,
-  BookmarkNotesContent,
-  BookmarkNotesList,
-  BookmarkNotesItem,
-  NoteText,
-  StyledTitle,
-  BookmarksPage,
-} from "./styles";
-import styled, { withTheme } from "styled-components";
+import styles from "./BookmarkNotes.module.css";
 
 export interface Dropdown {
   id: number;
@@ -102,20 +90,20 @@ export const BookmarkNotes: FC<BookmarkNotesComponentProps> = ({
   }, [fetchBookmarkNotes, currentPage]);
 
   return (
-    <BookmarkNotesContainer>
-      <BookmarkNotesHeader>
+    <div className={styles.container}>
+      <div className={styles.header}>
         <Title level={4}>{t<string>("Bookmarks.Title")}</Title>
-      </BookmarkNotesHeader>
-      <BookmarkNotesBody>
-        <BookmarkNotesMenu>
+      </div>
+      <div className={styles.body}>
+        <div className={styles.menu}>
           <List
             listItems={listItems}
             selectedListItem={selectedListItem}
             setSelectedListItem={setSelectedListItem}
           />
-        </BookmarkNotesMenu>
-        <BookmarkNotesContent>
-          <BookmarkNotesList>
+        </div>
+        <div className={styles.content}>
+          <ul className={styles.list}>
             {getArrayToMap()?.map((item: API.BookmarkNote) => {
               const { id, bookmarkable_type, value } = item;
               const bookmarkInfo = bookmarkable_type.split(":");
@@ -123,9 +111,10 @@ export const BookmarkNotes: FC<BookmarkNotesComponentProps> = ({
                 .split("/")
                 .map((num) => parseInt(num));
               return (
-                <BookmarkNotesItem key={id}>
+                <li className={styles.item} key={id}>
                   <Stack>
-                    <StyledTitle
+                    <Title
+                      className={styles.title}
                       size="lg"
                       weight="medium"
                       onClick={() =>
@@ -133,22 +122,22 @@ export const BookmarkNotes: FC<BookmarkNotesComponentProps> = ({
                       }
                     >
                       {`${bookmarkInfo[1]} : ${bookmarkInfo[2]}`}
-                    </StyledTitle>
-                    {value && <NoteText>{value}</NoteText>}
+                    </Title>
+                    {value && <Text className={styles.noteText}>{value}</Text>}
                   </Stack>
                   <Button mode="outline" onClick={() => handleBookmark(id)}>
                     {t<string>("Bookmarks.Delete")}
                   </Button>
-                </BookmarkNotesItem>
+                </li>
               );
             })}
-          </BookmarkNotesList>
+          </ul>
           {bookmarkNotes.list?.data.length === 0 && (
             <Text weight="light">{t<string>("Bookmarks.NoBookmarks")}</Text>
           )}
-        </BookmarkNotesContent>
-      </BookmarkNotesBody>
-      <BookmarksPage>
+        </div>
+      </div>
+      <div className={styles.page}>
         <Button
           type="button"
           mode="outline"
@@ -169,9 +158,9 @@ export const BookmarkNotes: FC<BookmarkNotesComponentProps> = ({
         >
           {t<string>("Bookmarks.Next")}
         </Button>
-      </BookmarksPage>
-    </BookmarkNotesContainer>
+      </div>
+    </div>
   );
 };
 
-export default withTheme(styled(BookmarkNotes)``);
+export default BookmarkNotes;

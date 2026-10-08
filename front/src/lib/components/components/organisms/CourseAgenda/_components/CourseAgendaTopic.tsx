@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { API } from "@ulams/sdk";
-import { ThemeContext } from "styled-components";
 
 import { Icon } from "../../../atoms/Icon/Icon";
 import Text from "../../../atoms/Typography/Text";
@@ -20,10 +19,9 @@ enum StateTypes {
 }
 
 const TopicIcon: React.FC<{ state: StateTypes }> = ({ state }) => {
-  const theme = React.useContext(ThemeContext);
   switch (state) {
     case StateTypes.CURRENT:
-      return <Icon name="current" color={theme.primaryColor} />;
+      return <Icon name="current" />;
     case StateTypes.FINISHED:
       return <Icon name="finished" />;
     case StateTypes.AVAILABLE:

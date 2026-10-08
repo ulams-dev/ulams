@@ -126,12 +126,30 @@ function darkValue(theme: ThemeTokens, key: ColorKey, fallback?: ColorKey): stri
   return fallback ? darkValue(theme, fallback) : undefined;
 }
 
+/**
+ * Name of the "optional" twin of a colour variable: `--ulams-color-input-bg` →
+ * `--ulams-opt-color-input-bg`. The optional variable carries the theme key's
+ * *own* value for the current mode (light: `key`, dark: `dm__key`) and is
+ * `initial` (guaranteed-invalid) when the theme leaves that key undefined, so a
+ * stylesheet can pick its own per-use fallback:
+ * `var(--ulams-opt-color-input-bg, var(--ulams-gray-5))`. Use it only when that
+ * fallback differs from the one already baked into `--ulams-<name>`.
+ */
+export const optionalVarName = (cssVar: string): string =>
+  `--ulams-opt-${cssVar.replace(/^--ulams-/, "")}`;
+
+const ownValue = (theme: ThemeTokens, key: string): string => {
+  const v = (theme as unknown as Record<string, unknown>)[key];
+  return typeof v === "string" && v !== "" ? v : "initial";
+};
+
 /** Light-mode custom properties for a theme. */
 export function themeToVars(theme: ThemeTokens): Record<string, string> {
   const vars: Record<string, string> = {};
   for (const { key, cssVar, fallback } of COLOR_VARS) {
     const v = lightValue(theme, key, fallback);
     if (v !== undefined) vars[cssVar] = v;
+    vars[optionalVarName(cssVar)] = ownValue(theme, key);
   }
   vars[PRIMARY_ON_LIGHT_VAR] = theme.primaryColor;
   for (const { key, cssVar } of RADIUS_VARS) {
@@ -150,6 +168,9 @@ export function themeToDarkVars(theme: ThemeTokens): Record<string, string> {
   for (const { key, cssVar, fallback } of COLOR_VARS) {
     const v = darkValue(theme, key, fallback);
     if (v !== undefined && v !== light[cssVar]) vars[cssVar] = v;
+    const opt = optionalVarName(cssVar);
+    const dm = ownValue(theme, `dm__${key}`);
+    if (dm !== light[opt]) vars[opt] = dm;
   }
   const onLight = theme.dm__primaryColorOnLight ?? theme.dm__primaryColor ?? theme.primaryColor;
   if (onLight !== light[PRIMARY_ON_LIGHT_VAR]) vars[PRIMARY_ON_LIGHT_VAR] = onLight;

@@ -1,0 +1,33 @@
+/* Dark-mode differences only change local variables, so a consumer's single-class
+   override (former `styled(Text)`) still wins in both modes. */
+.text {
+  --text-color: var(--ulams-color-text);
+  margin: 0 0 1.55em 0;
+  padding: 0;
+  color: var(--text-color);
+  font-family: var(--ulams-font-family-body);
+  font-weight: normal;
+  font-size: var(--text-size);
+  line-height: 1.55em;
+}
+
+:global([data-mode="dark"]) .text {
+  --text-color: var(--ulams-color-white);
+}
+
+.text.danger,
+:global([data-mode="dark"]) .text.danger {
+  --text-color: var(--ulams-color-error);
+}
+
+.noMargin {
+  margin: 0;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.text:last-child {
+  margin-bottom: 0;
+}

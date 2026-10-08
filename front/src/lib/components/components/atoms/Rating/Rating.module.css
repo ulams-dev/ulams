@@ -1,0 +1,32 @@
+.rating:global(.lms-rating) {
+  --rating-empty: var(--ulams-gray-2);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--ulams-font-family-body);
+  display: inline-flex;
+  align-items: center;
+}
+
+:global([data-mode="dark"]) .rating {
+  --rating-empty: var(--ulams-color-white);
+}
+
+.rating:global(.lms-rating) svg {
+  padding-right: 2px;
+  color: var(--rating-empty);
+}
+
+.defaultSize:global(.lms-rating) svg {
+  width: 15px;
+  height: 15px;
+}
+
+.rating:global(.lms-rating) :global(.filled-star-icon) {
+  color: var(--ulams-color-primary);
+}
+
+.rating:global(.lms-rating) :global(.label) {
+  margin: 0px 5px;
+  font-size: 13px;
+  font-weight: 700;
+}

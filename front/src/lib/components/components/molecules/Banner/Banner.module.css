@@ -1,0 +1,15 @@
+.root {
+  background: var(--banner-background);
+}
+
+.root :global(.banner-btn) {
+  margin-top: 52px;
+}
+
+.root.mobile :global(.banner-btn) {
+  margin-top: 22px;
+}
+
+.root :global(.banner-text) h1 {
+  font-weight: normal;
+}

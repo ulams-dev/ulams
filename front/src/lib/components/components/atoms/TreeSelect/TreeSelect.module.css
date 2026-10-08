@@ -1,0 +1,130 @@
+.wrapper {
+  --ts-color: var(--ulams-gray-1);
+  --ts-border: var(--ulams-gray-4);
+  --ts-dropdown-bg: var(--ulams-color-white);
+  position: relative;
+}
+
+:global([data-mode="dark"]) .wrapper {
+  --ts-color: var(--ulams-color-white);
+  --ts-border: var(--ulams-gray-5);
+  --ts-dropdown-bg: var(--ulams-color-bg);
+}
+
+.wrapper :global(.rc-tree-select) {
+  width: 100%;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.wrapper :global(.rc-tree-select .rc-tree-select-selector) {
+  position: relative;
+  cursor: pointer;
+  font-family: var(--ulams-font-family-body);
+  font-size: 14px;
+  padding: 12px;
+  color: var(--ts-color);
+}
+
+.wrapper :global(.rc-tree-select .rc-tree-select-selector .rc-tree-select-selection-placeholder),
+.wrapper :global(.rc-tree-select .rc-tree-select-selector .rc-tree-select-selection-item) {
+  transition: 0.3s;
+}
+
+.wrapper :global(.rc-tree-select .rc-tree-select-selector.rc-tree-select-open .rc-tree-select-arrow) {
+  transform: rotateX(180deg);
+}
+
+.wrapper :global(.rc-tree-select .rc-tree-select-selector.rc-tree-select-disabled .rc-tree-select-selector) {
+  cursor: default;
+}
+
+.wrapper :global(.rc-tree-select .rc-tree-select-selector.rc-tree-select-disabled .rc-tree-select-arrow) {
+  display: none;
+}
+
+.wrapper :global(.rc-tree-select .rc-tree-select-selector .rc-tree-select-selection-search) {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.wrapper :global(.rc-tree-select .rc-tree-select-selector .rc-tree-select-selection-search) input {
+  width: 0;
+  pointer-events: none;
+  border: none;
+  outline: none;
+}
+
+.wrapper :global(.rc-tree-select-dropdown) {
+  position: absolute;
+  padding-block: 12px;
+  border: 1px solid var(--ts-border);
+  border-radius: 12px;
+  background: var(--ts-dropdown-bg);
+  z-index: 99999;
+}
+
+.wrapper :global(.rc-tree-select-dropdown.rc-tree-select-dropdown-hidden) {
+  display: none;
+}
+
+.wrapper :global(.rc-tree-select-dropdown.rc-tree-select-dropdown-empty) {
+  padding: 12px;
+  text-align: center;
+  font-style: italic;
+}
+
+.wrapper :global(.rc-tree-select-dropdown .rc-tree-select-tree-treenode) {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-block: 2px;
+}
+
+.wrapper :global(.rc-tree-select-dropdown .rc-tree-select-tree-treenode):first-child {
+  padding-top: 0;
+}
+
+.wrapper :global(.rc-tree-select-dropdown .rc-tree-select-tree-treenode .rc-tree-select-tree-indent) {
+  display: flex;
+}
+
+.wrapper :global(.rc-tree-select-dropdown .rc-tree-select-tree-treenode .rc-tree-select-tree-indent .rc-tree-select-tree-indent-unit) {
+  display: block;
+  width: 16px;
+}
+
+.wrapper :global(.rc-tree-select-dropdown .rc-tree-select-tree-treenode .rc-tree-select-tree-switcher) {
+  cursor: pointer;
+  border-radius: 4px;
+  transition: 0.3s;
+}
+
+.wrapper :global(.rc-tree-select-dropdown .rc-tree-select-tree-treenode .rc-tree-select-tree-switcher):hover {
+  background-color: var(--ulams-color-primary-on-light);
+}
+
+.wrapper :global(.rc-tree-select-dropdown .rc-tree-select-tree-treenode .rc-tree-select-tree-switcher.rc-tree-select-tree-switcher_open) {
+  transform: rotate(90deg);
+}
+
+.wrapper :global(.rc-tree-select-dropdown .rc-tree-select-tree-treenode .rc-tree-select-tree-switcher.rc-tree-select-tree-switcher-noop) {
+  opacity: 0;
+  pointer-events: none;
+  cursor: default;
+}
+
+.wrapper :global(.rc-tree-select-dropdown .rc-tree-select-tree-treenode .rc-tree-select-tree-node-content-wrapper) {
+  display: block;
+  padding: 4px;
+  border-radius: 4px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.wrapper :global(.rc-tree-select-dropdown .rc-tree-select-tree-treenode .rc-tree-select-tree-node-content-wrapper):hover,
+.wrapper :global(.rc-tree-select-dropdown .rc-tree-select-tree-treenode .rc-tree-select-tree-node-content-wrapper.rc-tree-select-tree-node-selected) {
+  background-color: var(--ulams-color-primary-on-light);
+}

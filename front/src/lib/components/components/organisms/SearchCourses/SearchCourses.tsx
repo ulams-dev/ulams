@@ -4,33 +4,8 @@ import { course as fetchCourses } from "@ulams/sdk/services/courses";
 import { API } from "@ulams/sdk";
 import { UlamsContext } from "@ulams/sdk/react";
 import { Button, Search as InputSearch } from "../../..";
-import styled from "styled-components";
 
-const SearchWrapper = styled.div`
-  min-width: 300px;
-
-  input {
-    border-radius: 21px !important;
-    background-color: ${({ theme }) =>
-      theme.mode === "dark" ? theme.dm__inputBg ?? theme.gray1 : theme.gray4} !important;
-  }
-  .fieldset {
-    border-radius: 21px !important;
-  }
-`;
-
-const ItemButton = styled(Button)`
-  padding: 10px !important;
-  justify-content: flex-start;
-  border: none;
-  border-radius: ${({ theme }) => theme.buttonRadius}px;
-  &:hover {
-    background-color: ${({ theme }) =>
-      theme.mode === "dark" ? theme.dm__inputBg ?? theme.gray1 : theme.gray4} !important;
-    color: ${({ theme }) => theme.textColor};
-    border-radius: ${({ theme }) => theme.buttonRadius}px;
-  }
-`;
+import styles from "./SearchCourses.module.css";
 
 export const SearchCourses: React.FC<{
   onItemSelected: (item: API.Course) => void;
@@ -81,7 +56,7 @@ export const SearchCourses: React.FC<{
   const onSubmit = useCallback((val: string) => onInputSubmitted(val), []);
   const { t } = useTranslation();
   return (
-    <SearchWrapper>
+    <div className={styles.wrapper}>
       <InputSearch
         loading={fetching}
         onSearch={onSearch}
@@ -89,7 +64,8 @@ export const SearchCourses: React.FC<{
         placeholder={t<string>("Search.Placeholder")}
       >
         {foundCourses.map((course) => (
-          <ItemButton
+          <Button
+            className={styles.itemButton}
             block
             mode="white"
             key={course.id}
@@ -98,10 +74,10 @@ export const SearchCourses: React.FC<{
             }}
           >
             {course.title}
-          </ItemButton>
+          </Button>
         ))}
       </InputSearch>
-    </SearchWrapper>
+    </div>
   );
 };
 

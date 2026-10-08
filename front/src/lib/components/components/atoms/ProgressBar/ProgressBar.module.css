@@ -1,0 +1,80 @@
+.progressBar {
+  --pb-color: var(--ulams-gray-1);
+  margin: 0;
+  padding: 0;
+  color: var(--pb-color);
+  font-family: var(--ulams-font-family-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:global([data-mode="dark"]) .progressBar {
+  --pb-color: var(--ulams-color-white);
+}
+
+.progressBar :global(.label-container) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-bottom: 4px;
+}
+
+.progressBar :global(.label-container) :global(.label-value) {
+  width: 95%;
+  font-size: 13px;
+}
+
+.progressBar :global(.label-container) :global(.percentage-value) {
+  font-size: 13px;
+  margin-left: auto;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-weight: normal;
+  width: 5%;
+}
+
+.square :global(.label-container) :global(.percentage-value) {
+  font-weight: bold;
+}
+
+.progressBar :global(.progress-container) {
+  display: flex;
+  align-items: center;
+}
+
+.progressBar :global(.progress-container):not(:last-child) {
+  margin-bottom: 6px;
+}
+
+.progressBar :global(.progress-container) :global(.progress-bars) {
+  flex: 1;
+  height: 6px;
+  position: relative;
+}
+
+.square :global(.progress-container) :global(.progress-bars) {
+  height: 3px;
+}
+
+.progressBar :global(.progress-bars) :global(.empty) {
+  display: block;
+  background: var(--ulams-color-positive-2);
+  height: 100%;
+}
+
+.progressBar :global(.progress-bars) :global(.filled) {
+  position: absolute;
+  top: 0;
+  background: var(--ulams-color-positive);
+  display: block;
+  height: 100%;
+  transition: 0.2s width ease-in-out;
+}
+
+.rounded :global(.progress-bars) :global(.empty),
+.rounded :global(.progress-bars) :global(.filled) {
+  border-radius: 5px;
+}

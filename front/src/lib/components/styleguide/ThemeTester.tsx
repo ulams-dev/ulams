@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import styled, { ThemeProvider, ThemeContext } from "styled-components";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GlobalThemeProvider } from "../theme/provider";
 import { default as chroma } from "chroma-js";
 import { useLocalTheme } from "./useLocalTheme";
@@ -7,7 +6,9 @@ import themes from "../theme";
 import axeCore from "axe-core";
 import Spin from "../components/atoms/Spin/Spin";
 import Badge from "../components/atoms/Badge/Badge";
-import { getStylesBasedOnTheme } from "../utils/utils";
+import { themeToDarkVars, themeToVars } from "../theme/cssVars";
+import type { ThemeTokens } from "../theme/types";
+import styles from "./ThemeTester.module.css";
 
 type Mode = ("light" | "dark")[];
 
@@ -15,6 +16,8 @@ const modes: Mode = ["light", "dark"];
 
 export interface ThemeTesterWrapperProps {
   name: string;
+  /** Theme rendered by this wrapper; its CSS variables are scoped to the wrapper. */
+  theme: ThemeTokens;
   mode?: "light" | "dark";
   childrenListStyle?: React.CSSProperties;
   children?: React.ReactNode;
@@ -22,150 +25,9 @@ export interface ThemeTesterWrapperProps {
   alignItems?: React.CSSProperties["alignItems"];
 }
 
-const StyledDiv = styled.div<{
-  mode?: "light" | "dark";
-  flexDirection?: React.CSSProperties["flexDirection"];
-  alignItems?: React.CSSProperties["alignItems"];
-}>`
-  background: ${(props) =>
-    getStylesBasedOnTheme(
-      props.mode,
-      props.theme.dm__background,
-      props.theme.background
-    )};
-  color: ${(props) =>
-    getStylesBasedOnTheme(
-      props.mode,
-      props.theme.dm__textColor,
-      props.theme.textColor
-    )};
-  font-family: "Inter", sans-serif;
-  margin: 10px 0;
-  font-size: 12px;
-  position: relative;
-  padding: 0 0 0 0;
-  border-radius: 6px;
-
-  .children-list {
-    padding: 10px 25px 10px;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: ${(props) => props.flexDirection || "row"};
-    align-items: ${(props) => props.alignItems || "center"};
-    gap: 20px;
-    margin-bottom: 10px;
-  }
-  .children-list-title {
-    background: ${(props) =>
-      getStylesBasedOnTheme(
-        props.mode,
-        chroma(props.theme.dm__background).brighten(0.5).hex(),
-        chroma(props.theme.background).darken(0.5).hex()
-      )};
-    padding: 10px 15px;
-    border-radius: 6px 6px 0 0;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    strong {
-      text-transform: uppercase;
-    }
-  }
-  .axe-a11y {
-    position: relative;
-    background: ${(props) =>
-      getStylesBasedOnTheme(
-        props.mode,
-        chroma(props.theme.dm__background).brighten(0.5).hex(),
-        chroma(props.theme.background).darken(0.5).hex()
-      )};
-
-    border-radius: 0 0 6px 6px;
-    padding: 10px 15px;
-
-    .loading {
-      display: flex;
-      justify-content: center;
-      padding: 40px;
-    }
-
-    .button {
-      display: flex;
-      justify-content: flex-end;
-      button {
-        appearance: none;
-        padding: 4px;
-        border: none;
-        cursor: pointer;
-        background: none;
-        color: ${(props) =>
-          getStylesBasedOnTheme(
-            props.mode,
-            props.theme.dm__textColor,
-            props.theme.textColor
-          )};
-      }
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      border: 0px solid purple;
-      &,
-      a {
-        color: ${(props) =>
-          getStylesBasedOnTheme(
-            props.mode,
-            props.theme.dm__textColor,
-            props.theme.textColor
-          )};
-      }
-
-      td,
-      th {
-        padding: 3px;
-        text-align: left;
-        div.ulams-component {
-          padding: 0 2px;
-        }
-        > ul {
-          margin: 0;
-          padding: 0;
-        }
-      }
-      tr {
-        border-top: solid 1px
-          ${(props) =>
-            getStylesBasedOnTheme(
-              props.mode,
-              props.theme.dm__background,
-              props.theme.background
-            )};
-      }
-      td.id,
-      td.impact,
-      td.tags {
-        width: 10%;
-      }
-      td.help {
-        width: 30%;
-      }
-      td.description {
-        width: 40%;
-      }
-      td.impact {
-        .critical > div {
-          background: red;
-        }
-      }
-    }
-  }
-`;
-
 const ThemeTesterWrapper: React.FC<ThemeTesterWrapperProps> = (props) => {
-  const theme = React.useContext(ThemeContext);
   const {
+    theme,
     children,
     name,
     childrenListStyle,
@@ -201,12 +63,31 @@ const ThemeTesterWrapper: React.FC<ThemeTesterWrapperProps> = (props) => {
     // a11yTest();
   }, [ref]);
 
+  // Scope the theme to this wrapper (several themes are shown side by side).
+  const scopedStyle = useMemo(() => {
+    const vars: Record<string, string> = {
+      ...themeToVars(theme),
+      ...(mode === "dark" ? themeToDarkVars(theme) : {}),
+    };
+    let titleBg: string | undefined;
+    try {
+      titleBg =
+        mode === "dark"
+          ? chroma(theme.dm__background).brighten(0.5).hex()
+          : chroma(theme.background).darken(0.5).hex();
+    } catch {
+      titleBg = undefined;
+    }
+    return {
+      ...vars,
+      ...(titleBg ? { "--tt-title-bg": titleBg } : {}),
+      ...(flexDirection ? { "--tt-flex-direction": flexDirection } : {}),
+      ...(alignItems ? { "--tt-align-items": alignItems } : {}),
+    } as React.CSSProperties;
+  }, [theme, mode, flexDirection, alignItems]);
+
   return (
-    <StyledDiv
-      mode={mode}
-      flexDirection={flexDirection}
-      alignItems={alignItems}
-    >
+    <div className={styles.wrapper} data-mode={mode} style={scopedStyle}>
       <p className="children-list-title">
         <span>
           Theme <strong>{name}</strong>
@@ -274,7 +155,7 @@ const ThemeTesterWrapper: React.FC<ThemeTesterWrapperProps> = (props) => {
           </table>
         )}
       </div>
-    </StyledDiv>
+    </div>
   );
 };
 
@@ -294,11 +175,9 @@ export const ThemeTester: React.FC<ThemeTesterProps> = (props) => {
       {localTheme.theme === "all" &&
         Object.entries(themes).map((theme) =>
           modes.map((mode) => (
-            <ThemeProvider
-              theme={{ ...theme[1], mode }}
-              key={`${theme[0]}${mode}`}
-            >
+            <React.Fragment key={`${theme[0]}${mode}`}>
               <ThemeTesterWrapper
+                theme={theme[1] as unknown as ThemeTokens}
                 flexDirection={flexDirection}
                 alignItems={alignItems}
                 name={theme[0].split("Theme").join("")}
@@ -307,12 +186,13 @@ export const ThemeTester: React.FC<ThemeTesterProps> = (props) => {
               >
                 {children}
               </ThemeTesterWrapper>
-            </ThemeProvider>
+            </React.Fragment>
           ))
         )}
       {localTheme.theme !== "all" && localTheme.theme !== "custom" && (
-        <ThemeProvider theme={{ ...localTheme }}>
+        <>
           <ThemeTesterWrapper
+            theme={localTheme}
             flexDirection={flexDirection}
             alignItems={alignItems}
             name={localTheme.theme?.split("Theme").join("") || ""}
@@ -321,11 +201,13 @@ export const ThemeTester: React.FC<ThemeTesterProps> = (props) => {
           >
             {children}
           </ThemeTesterWrapper>
-        </ThemeProvider>
+        </>
       )}
       {localTheme.theme === "custom" && (
         <GlobalThemeProvider>
           <ThemeTesterWrapper
+            theme={localTheme}
+            mode={localTheme.mode}
             name={"Custom"}
             alignItems={alignItems}
             childrenListStyle={childrenListStyle}

@@ -1,0 +1,73 @@
+.pricingCard {
+  --pc-discount-color: var(--ulams-color-primary);
+  --pc-footer-border: var(--ulams-gray-4);
+  padding: 20px 13px;
+  box-shadow: none;
+  border-radius: var(--ulams-radius-card);
+  background-color: var(--ulams-color-card-bg);
+  text-align: center;
+}
+
+:global([data-mode="dark"]) .pricingCard {
+  /* guaranteed-invalid: the discount keeps its inherited colour in dark mode */
+  --pc-discount-color: initial;
+  --pc-footer-border: var(--pc-dark-footer-border);
+}
+
+.mobile {
+  padding: 10px 16px;
+  box-shadow: 0px -2px 15px 0px rgba(0, 0, 0, 0.1);
+}
+
+.pricingCard :global(.pricing-card-price) {
+  margin-top: 10px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.pricingCard :global(.pricing-card-discount) {
+  margin-left: 15px;
+  text-decoration: line-through;
+}
+
+.mobile :global(.pricing-card-discount) {
+  margin-left: 0;
+}
+
+.free :global(.pricing-card-discount) {
+  text-decoration: none;
+}
+
+.pricingCard :global(.pricing-card-discount),
+.pricingCard :global(.pricing-card-discount) > * {
+  color: var(--pc-discount-color);
+}
+
+:global([data-mode="dark"]) .pricingCard svg path {
+  fill: var(--ulams-color-white);
+}
+
+.pricingCard button ~ p {
+  margin-top: 20px;
+}
+
+.pricingCard :global(.pricing-card-features) {
+  margin-top: 20px;
+}
+
+.pricingCard :global(.pricing-card-footer) {
+  margin-top: 7px;
+  display: flex;
+  padding-top: 10px;
+  border-top: 1px solid var(--pc-footer-border);
+}
+
+.pricingCard :global(.pricing-card-footer) > div:first-child {
+  width: 30%;
+  flex-shrink: 0;
+}
+
+.pricingCard :global(.pricing-card-footer) > div:last-child {
+  flex: 1;
+}

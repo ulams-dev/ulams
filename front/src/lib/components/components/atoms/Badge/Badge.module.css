@@ -1,0 +1,25 @@
+.badge {
+  --badge-bg: var(--ulams-color-primary);
+  background: var(--badge-bg);
+  color: #000;
+  font-family: var(--ulams-font-family-body);
+  font-weight: bold;
+  font-size: 10px;
+  line-height: 1.3em;
+  border: none;
+  padding: 6px 12px;
+  /* former `buttonRadius || 2` */
+  border-radius: max(var(--ulams-radius-button), 2px);
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+  display: inline-flex;
+  text-transform: uppercase;
+}
+
+:global([data-mode="dark"]) .badge {
+  --badge-bg: var(--ulams-opt-color-accent-bg, var(--ulams-color-primary));
+}
+
+.lightContrast {
+  color: #fff;
+}

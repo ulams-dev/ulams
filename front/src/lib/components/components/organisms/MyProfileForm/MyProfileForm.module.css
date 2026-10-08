@@ -1,0 +1,73 @@
+.formHeader h2,
+.formHeader h3,
+.formHeader h4 {
+  font-size: 28px;
+  text-align: left;
+}
+
+.formHeader p {
+  margin: 15px 0;
+  text-align: left;
+}
+
+.formHeader :global(.upload) {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 250px;
+}
+
+.formHeader :global(.upload) :global(.wrapper) {
+  margin-right: 20px;
+  width: 40%;
+}
+
+.root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: center;
+}
+
+.root :global(.lms-checkbox) {
+  margin: 20px 0;
+}
+
+.root :global(.lsm-input) {
+  margin: 30px 0;
+}
+
+.root :global(.lsm-input.has-error),
+.root :global(.lsm-input.has-helper) {
+  margin-bottom: -15px;
+}
+
+.root button {
+  margin-top: 10px;
+}
+
+.root p {
+  margin: 15px 0;
+}
+
+.root h2,
+.root h3,
+.root h4 {
+  font-size: 28px;
+}
+
+.root form {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.mobile h2,
+.mobile h3,
+.mobile h4 {
+  font-size: 18px;
+}

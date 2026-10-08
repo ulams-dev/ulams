@@ -1,16 +1,14 @@
 import * as React from "react";
 import { ReactNode, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
 import { Button } from "../../atoms/Button/Button";
 import { Input } from "../../atoms/Input/Input";
 import { Text } from "../../atoms/Typography/Text";
 import { Title } from "../../../";
-import chroma from "chroma-js";
 import { MarkdownRenderer } from "../../molecules/MarkdownRenderer/MarkdownRenderer";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { getUniqueId } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import styles from "./CartCard.module.css";
 
 const ArrowOpenIcon: React.FC = () => {
   return (
@@ -87,93 +85,6 @@ interface CartCardProps extends StyledCartCardProps, ExtendableStyledComponent {
   loading?: boolean;
 }
 
-const StyledCardCard = styled.div<StyledCartCardProps>`
-  border-radius: ${(props) => props.theme.cardRadius}px;
-  box-shadow: ${({ mobile }) => mobile && "0px -2px 15px 0px #0000001A;"};
-  background: ${({ theme, mobile }) =>
-    mobile
-      ? getStylesBasedOnTheme(theme.mode, theme.dm__background, theme.white)
-      : getStylesBasedOnTheme(
-          theme.mode,
-          theme.dm__cardBackgroundColor,
-          theme.white
-        )};
-  padding: ${(props) => (props.mobile ? "15px" : "19px 16px 12px 16px")};
-  border-radius: ${({ theme }) => theme.cardRadius}px;
-  p {
-    margin-bottom: 0;
-  }
-  .title {
-    font-size: ${(props) => (props.mobile ? "16px" : "24px")};
-    margin-bottom: ${(props) => (props.mobile ? "10px" : "20px")};
-    font-weight: 700;
-  }
-
-  .buy-button {
-    /* margin-bottom: ${(props) => (props.mobile ? "8px" : "23px")}; */
-  }
-
-  .separator {
-    height: 1px;
-    width: 100%;
-    background: ${({ theme }) =>
-      getStylesBasedOnTheme(theme.mode, theme.white, theme.gray4)};
-    margin: 20px 0 14px 0;
-  }
-  .open-discount-state-container {
-    margin-left: 24px;
-    color: ${({ theme }) =>
-      getStylesBasedOnTheme(theme.mode, theme.white, theme.black)};
-  }
-  .discount-form-container {
-    margin-top: 17px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .discount-toggle {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    justify-content: space-between;
-  }
-
-  .disclamer {
-    margin-bottom: 15px;
-  }
-  .discount-granted-info {
-    margin-bottom: 23px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    white-space: pre-wrap;
-  }
-  .discount-remove {
-    display: flex;
-    margin-left: 12px;
-    cursor: pointer;
-  }
-  .granted-info {
-    margin-left: 12px;
-    color: #27ae60;
-    font-size: 12px;
-  }
-
-  .cart-card-subtitle {
-    margin-bottom: ${(props) => (props.mobile ? "10px" : "20px")};
-    padding-bottom: ${(props) => (props.mobile ? "6px" : "0")};
-    border-bottom: ${({ theme, mobile }) =>
-      `2px solid ${
-        mobile
-          ? theme.mode === "light"
-            ? chroma(theme.background).darken(0.2).hex()
-            : theme.gray2
-          : "transparent"
-      }`};
-  }
-`;
-
 export const CartCard: React.FC<CartCardProps> = (props) => {
   const {
     id,
@@ -210,7 +121,11 @@ export const CartCard: React.FC<CartCardProps> = (props) => {
   const uniqueId = getUniqueId("discount-code");
 
   return (
-    <StyledCardCard className={`ulams-component ${className}`} mobile={mobile}>
+    <div
+      className={`${styles.root} ${
+        mobile ? styles.mobile : ""
+      } ulams-component ${className}`}
+    >
       <Text size="13" bold>
         Do zapłaty
       </Text>
@@ -326,6 +241,6 @@ export const CartCard: React.FC<CartCardProps> = (props) => {
       >
         {t<string>("CartCard.buyButton")}
       </Button>
-    </StyledCardCard>
+    </div>
   );
 };

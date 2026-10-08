@@ -7,75 +7,12 @@ import type { ResponseError } from "umi-request";
 
 import { API } from "@ulams/sdk";
 import { Upload } from "../../molecules/Upload/Upload";
-import styled, { withTheme } from "styled-components";
 
 import { Input, Button, Text, Checkbox, TextArea } from "../../../";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import useAdditionalFieldTranslations from "../../../hooks/useAdditionalFieldsTranslations";
 
-const StyledFormHeader = styled.div<{ mobile: boolean }>`
-  h2,
-  h3,
-  h4 {
-    font-size: ${(props) => (props.mobile ? "18px" : "28px")};
-    text-align: left;
-  }
-  p {
-    margin: 15px 0;
-    text-align: left;
-  }
-  .upload {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-
-    min-width: 250px;
-    .wrapper {
-      margin-right: 20px;
-      width: 40%;
-    }
-  }
-`;
-
-const StyledDiv = styled.div<{ mobile: boolean }>`
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
-  align-content: center;
-  .lms-checkbox {
-    margin: 20px 0;
-  }
-  .lsm-input {
-    margin: 30px 0;
-    &.has-error,
-    &.has-helper {
-      margin-bottom: -15px;
-    }
-  }
-  button {
-    margin-top: 10px;
-  }
-  p {
-    margin: 15px 0;
-  }
-  p,
-  a {
-  }
-  h2,
-  h3,
-  h4 {
-    font-size: ${(props) => (props.mobile ? "18px" : "28px")};
-  }
-  form {
-    width: 100%;
-    margin-bottom: 15px;
-  }
-`;
+import styles from "./MyProfileForm.module.css";
 
 type FormValues = {
   first_name?: string;
@@ -177,8 +114,12 @@ export const MyProfileForm: React.FC<Props> = ({
 
   return (
     <>
-      <StyledDiv className="ulams-component" mobile={mobile}>
-        <StyledFormHeader className="ulams-component" mobile={mobile}>
+      <div
+      className={`ulams-component ${styles.root} ${mobile ? styles.mobile : ""}`}
+    >
+        <div
+        className={`ulams-component ${styles.formHeader} ${mobile ? styles.mobile : ""}`}
+      >
           <Text size="18">{t("MyProfileForm.Avatar")}</Text>
           <Upload
             path={initialValues.path_avatar}
@@ -186,7 +127,7 @@ export const MyProfileForm: React.FC<Props> = ({
             accept="image/*"
             onChange={onAvatarChange}
           />
-        </StyledFormHeader>
+        </div>
         <Formik
           enableReinitialize
           initialValues={initialValues}
@@ -378,9 +319,9 @@ export const MyProfileForm: React.FC<Props> = ({
             </form>
           )}
         </Formik>{" "}
-      </StyledDiv>
+      </div>
     </>
   );
 };
 
-export default withTheme(styled(MyProfileForm)<{ mobile: boolean }>``);
+export default MyProfileForm;

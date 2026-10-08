@@ -1,0 +1,127 @@
+/*
+ * Selectors mirror the former styled component (`.sc textarea`, …); state
+ * (error/disabled) and dark mode only change local variables on the root.
+ */
+.textArea {
+  --ta-msg-color: var(--ulams-color-error);
+  --ta-bg: var(--ulams-opt-color-input-bg, var(--ulams-gray-5));
+  --ta-color: var(--ulams-gray-1);
+  --ta-border: var(--ulams-gray-4);
+  --ta-filled-border: var(--ulams-gray-3);
+  --lbl-color: var(--ulams-gray-1);
+  --lbl-filled-color: var(--lbl-color);
+  --lbl-bg: var(--ulams-color-white);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--ulams-font-family-body);
+  font-size: 14px;
+  position: relative;
+  width: 100%;
+}
+
+:global([data-mode="dark"]) .textArea {
+  --ta-msg-color: var(--ulams-opt-color-error, var(--ulams-color-primary));
+  --ta-bg: var(--ulams-opt-color-input-bg, var(--ulams-gray-1));
+  --ta-color: var(--ulams-color-white);
+  --ta-border: var(--ulams-gray-5);
+  --lbl-color: var(--ulams-color-white);
+  --lbl-bg: var(--ulams-color-black);
+}
+
+.textArea.disabled {
+  --ta-bg: var(
+    --ulams-opt-color-input-disabled-bg,
+    color-mix(in srgb-linear, var(--ulams-gray-1), #fff)
+  );
+  --ta-color: var(--ulams-gray-3);
+  --ta-filled-border: transparent;
+  --lbl-color: var(--ulams-gray-3);
+  --lbl-filled-color: var(--ulams-color-black);
+}
+
+:global([data-mode="dark"]) .textArea.disabled {
+  --lbl-filled-color: var(--ulams-color-white);
+}
+
+.textArea.error {
+  --ta-color: var(--ulams-color-error);
+  --ta-border: var(--ulams-color-error);
+  --ta-filled-border: var(--ulams-color-error);
+  --lbl-color: var(--ulams-color-error);
+}
+
+:global([data-mode="dark"]) .textArea.error {
+  --ta-color: var(--ulams-opt-color-error, var(--ulams-color-white));
+  --ta-border: var(--ulams-color-card-bg);
+  --ta-filled-border: var(--ulams-opt-color-error, var(--ulams-color-card-bg));
+  --lbl-color: var(--ulams-opt-color-error, var(--ulams-color-card-bg));
+}
+
+.textArea * {
+  outline: none;
+  box-sizing: content-box;
+}
+
+.textArea :global(.error) {
+  color: var(--ta-msg-color);
+  padding-left: 12px;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.textArea :global(.required) {
+  color: var(--ta-msg-color);
+}
+
+.textArea textarea {
+  box-sizing: border-box;
+  resize: none;
+  font-family: var(--ulams-font-family-body);
+  font-size: 14px;
+  display: block;
+  width: 100%;
+  padding: 11px 12px 13px;
+  caret-color: #e60037;
+  border-radius: var(--ulams-radius-input);
+  background: var(--ta-bg);
+  color: var(--ta-color);
+  border: 1px solid var(--ta-border);
+}
+
+.textArea textarea:disabled {
+  cursor: not-allowed;
+}
+
+.textArea label {
+  pointer-events: none;
+  transform-origin: left top;
+  max-width: calc(100% - 24px);
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  transform: translate(12px, 12px) scale(1);
+  z-index: 1;
+  transition: 0.2s all;
+  color: var(--lbl-color);
+}
+
+.textArea :global(.textarea-container) {
+  display: inline-flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+}
+
+.textArea :global(.textarea-container.filled) label,
+.textArea :global(.textarea-container):focus-within label {
+  transform: translate(12px, -7px) scale(0.75);
+  color: var(--lbl-filled-color);
+  background: var(--lbl-bg);
+  box-shadow: -5px 0px 0px 0px var(--lbl-bg), 5px 0px 0px 0px var(--lbl-bg);
+}
+
+.textArea :global(.textarea-container.filled) textarea,
+.textArea :global(.textarea-container):focus-within textarea {
+  border-color: var(--ta-filled-border);
+}

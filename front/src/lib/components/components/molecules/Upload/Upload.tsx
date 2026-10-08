@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import styled, { withTheme } from "styled-components";
 import { Spin, Link } from "../../..";
 import { useTranslation } from "react-i18next";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
+import styles from "./Upload.module.css";
 import { getUniqueId } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
@@ -14,93 +13,6 @@ export interface InputProps
   loading?: boolean;
   buttonTitle?: string;
 }
-
-const zIndexTop = 999;
-
-const StyledDiv = styled("div")<InputProps>`
-  width: 100%;
-  text-align: center;
-  position: relative;
-  > a {
-    margin-top: 0.5em;
-  }
-  > input {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: ${zIndexTop};
-    opacity: 0.001;
-  }
-
-  .wrapper {
-    width: 100%;
-    position: relative;
-    cursor: pointer;
-    :after {
-      content: "";
-      padding-top: 100%;
-      display: block;
-    }
-
-    .border,
-    img,
-    input {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-    }
-    img {
-      display: block;
-      object-fit: cover;
-      z-index: ${zIndexTop - 1};
-    }
-    img,
-    svg {
-      transition: transform 0.5s ease-out;
-    }
-    .border {
-      overflow: hidden;
-      border-width: 1px;
-      opacity: 1;
-      border: ${({ theme }) =>
-        `1px solid ${getStylesBasedOnTheme(
-          theme.mode,
-          theme.gray1,
-          theme.gray3
-        )}`};
-      border-radius: 50%;
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      justify-content: center;
-      align-items: center;
-      align-content: center;
-
-      > svg {
-        position: relative;
-        z-index: ${zIndexTop - 2};
-      }
-    }
-  }
-
-  &:hover {
-    .wrapper .border > svg {
-      transform: scale(1.5);
-      z-index: ${zIndexTop - 1};
-    }
-    img {
-      transform: scale(1.1);
-    }
-    a:after {
-      transform: scaleX(0);
-      transform-origin: bottom left;
-    }
-  }
-`;
 
 const UploadIcon = () => (
   <svg
@@ -154,7 +66,7 @@ export const Upload: React.FC<InputProps> = (props) => {
   const id = buttonTitle ? getUniqueId("upload") : null;
 
   return (
-    <StyledDiv className={`ulams-component upload ${className}`}>
+    <div className={`ulams-component upload ${styles.root} ${className}`}>
       <input
         type="file"
         {...rest}
@@ -175,8 +87,8 @@ export const Upload: React.FC<InputProps> = (props) => {
           {buttonTitle}
         </Link>
       )}
-    </StyledDiv>
+    </div>
   );
 };
 
-export default withTheme(styled(Upload)<InputProps>``);
+export default Upload;

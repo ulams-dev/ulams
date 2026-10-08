@@ -1,0 +1,112 @@
+.wrapper {
+  --tt-text: var(--ulams-color-text);
+  background: var(--ulams-color-bg);
+  color: var(--tt-text);
+  font-family: "Inter", sans-serif;
+  margin: 10px 0;
+  font-size: 12px;
+  position: relative;
+  padding: 0 0 0 0;
+  border-radius: 6px;
+}
+
+.wrapper :global(.children-list) {
+  padding: 10px 25px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: var(--tt-flex-direction, row);
+  align-items: var(--tt-align-items, center);
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+.wrapper :global(.children-list-title) {
+  background: var(--tt-title-bg);
+  padding: 10px 15px;
+  border-radius: 6px 6px 0 0;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.wrapper :global(.children-list-title) strong {
+  text-transform: uppercase;
+}
+
+.wrapper :global(.axe-a11y) {
+  position: relative;
+  background: var(--tt-title-bg);
+  border-radius: 0 0 6px 6px;
+  padding: 10px 15px;
+}
+
+.wrapper :global(.axe-a11y) :global(.loading) {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.wrapper :global(.axe-a11y) :global(.button) {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.wrapper :global(.axe-a11y) :global(.button) button {
+  appearance: none;
+  padding: 4px;
+  border: none;
+  cursor: pointer;
+  background: none;
+  color: var(--tt-text);
+}
+
+.wrapper :global(.axe-a11y) table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 0px solid purple;
+}
+
+.wrapper :global(.axe-a11y) table,
+.wrapper :global(.axe-a11y) table a {
+  color: var(--tt-text);
+}
+
+.wrapper :global(.axe-a11y) table td,
+.wrapper :global(.axe-a11y) table th {
+  padding: 3px;
+  text-align: left;
+}
+
+.wrapper :global(.axe-a11y) table td div:global(.ulams-component),
+.wrapper :global(.axe-a11y) table th div:global(.ulams-component) {
+  padding: 0 2px;
+}
+
+.wrapper :global(.axe-a11y) table td > ul,
+.wrapper :global(.axe-a11y) table th > ul {
+  margin: 0;
+  padding: 0;
+}
+
+.wrapper :global(.axe-a11y) table tr {
+  border-top: solid 1px var(--ulams-color-bg);
+}
+
+.wrapper :global(.axe-a11y) table td:global(.id),
+.wrapper :global(.axe-a11y) table td:global(.impact),
+.wrapper :global(.axe-a11y) table td:global(.tags) {
+  width: 10%;
+}
+
+.wrapper :global(.axe-a11y) table td:global(.help) {
+  width: 30%;
+}
+
+.wrapper :global(.axe-a11y) table td:global(.description) {
+  width: 40%;
+}
+
+.wrapper :global(.axe-a11y) table td:global(.impact) :global(.critical) > div {
+  background: red;
+}

@@ -1,0 +1,61 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  background: var(--ulams-color-white);
+  box-shadow: 0px -3px 10px color-mix(in srgb, var(--ulams-color-black) 10%, transparent);
+  row-gap: 10px;
+}
+
+.root.mobile {
+  padding: 10px;
+}
+
+:global([data-mode="dark"]) .root {
+  background: var(--ulams-color-bg);
+  box-shadow: 0px -3px 10px color-mix(in srgb, var(--ulams-color-white) 10%, transparent);
+}
+
+.root :global(.course-nav-container) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.root :global(.course-nav-middle-btns) {
+  display: flex;
+  gap: 10px;
+}
+
+.root :global(.icon-btn) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.root :global(.icon-btn) picture {
+  display: flex;
+  align-items: center;
+}
+
+.root :global(.prev-btn) {
+  gap: 20px;
+}
+
+.root :global(.next-btn) {
+  gap: 86px;
+}
+
+/* Also beats the Button's own `.outline:disabled` border, as the former styled component did. */
+.root :global(.mark-btn),
+.root.root :global(.icon-btn.mark-btn):disabled {
+  border-color: var(--ulams-color-positive);
+  opacity: 0.65;
+}
+
+.root :global(.mark-btn):hover {
+  opacity: 1;
+}

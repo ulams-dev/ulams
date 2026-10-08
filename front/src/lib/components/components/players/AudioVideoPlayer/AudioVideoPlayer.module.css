@@ -1,0 +1,202 @@
+.root {
+  position: relative;
+}
+
+.video:hover :global(.video-player-controls) {
+  opacity: 1;
+}
+
+.root :global(.react-player__preview)::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  content: "";
+}
+
+.root :global(.react-player__preview) > svg {
+  position: relative;
+}
+
+/* Overlay rendered by consumers (children) inside the player. */
+.root :global(.video-player-overlay) {
+  position: absolute;
+  padding: 20px;
+  bottom: 20px;
+  display: flex;
+  align-items: flex-end;
+  left: 0;
+  background-color: transparent;
+  transition: none;
+  opacity: 1;
+}
+
+.root[data-controls="true"] :global(.video-player-overlay) {
+  bottom: 120px;
+  right: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.root[data-ready="true"] :global(.video-player-overlay) {
+  transition: opacity 0.3s;
+}
+
+.root[data-playing="true"]:not([data-audio="true"]) :global(.video-player-overlay) {
+  opacity: 0;
+}
+
+.root :global(.video-player-overlay) * {
+  color: var(--ulams-color-white);
+}
+
+.root :global(.video-player-overlay) h3 {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.root :global(.video-player-header) {
+  display: flex;
+  align-items: center;
+}
+
+.root :global(.video-player-header .video-player-badge) {
+  margin-right: 10px;
+}
+
+.root :global(.video-player-footer) {
+  display: flex;
+}
+
+.root :global(.video-player-footer) > p:first-child {
+  margin-right: 35px;
+}
+
+.root :global(.video-player-breadcrumbs) {
+  display: inline-flex;
+}
+
+.root :global(.video-player-breadcrumbs) a {
+  position: relative;
+  margin-right: 36px;
+}
+
+.root :global(.video-player-breadcrumbs) a:not(:last-child)::before {
+  position: absolute;
+  right: -24px;
+  content: ">";
+}
+
+.root :global(.video-player-error) {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Controls bar */
+.controls {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 120px;
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  opacity: 1;
+  justify-content: end;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.controls[data-hidden="true"] {
+  opacity: 0;
+}
+
+.controls input[type="range"] {
+  appearance: none;
+  height: 3px;
+  background: grey;
+  border-radius: 3px;
+  background-image: linear-gradient(var(--ulams-color-primary), var(--ulams-color-primary));
+  background-repeat: no-repeat;
+}
+
+.controls input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: var(--ulams-color-white);
+  cursor: pointer;
+  box-shadow: 0 0 2px 0 #555;
+}
+
+.controls input[type="range"]::-webkit-slider-runnable-track {
+  appearance: none;
+  box-shadow: none;
+  border: none;
+  background: transparent;
+}
+
+.controls input[type="range"]:global(.input-seek) {
+  width: 100%;
+}
+
+.controls input[type="range"]:global(.input-volume) {
+  margin-right: 10px;
+  width: 105px;
+}
+
+.controls button {
+  appearance: none;
+  background-color: transparent;
+  border: none;
+  transition: opacity 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.controls button:hover {
+  opacity: 0.8;
+}
+
+.controls :global(.controls-group) {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.controls :global(.controls-group .controls-left),
+.controls :global(.controls-group .controls-right) {
+  display: flex;
+  align-items: center;
+}
+
+.controls :global(.controls-group .control-button) button {
+  display: flex;
+  align-items: center;
+}
+
+.controls :global(.controls-group .control-button-volume) {
+  margin-left: 70px;
+  display: flex;
+  align-items: center;
+}
+
+.controls :global(.control-duration) {
+  color: var(--ulams-color-white);
+}
+
+.controls :global(.dropdown-playback-rate:not(.is-open)) {
+  color: var(--ulams-color-white);
+}
+
+.controls :global(.dropdown-playback-rate:not(.is-open)) * {
+  background: transparent;
+  color: var(--ulams-color-white);
+}

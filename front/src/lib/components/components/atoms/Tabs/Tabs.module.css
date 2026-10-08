@@ -1,0 +1,62 @@
+.tabs {
+  --tabs-menu-bg: var(--ulams-color-white);
+  --tabs-btn-color: var(--ulams-gray-1);
+}
+
+:global([data-mode="dark"]) .tabs {
+  --tabs-menu-bg: var(--ulams-color-black);
+  --tabs-btn-color: var(--ulams-color-white);
+}
+
+.tabs :global(.tabs-menu) {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  background-color: var(--tabs-menu-bg);
+  border-radius: var(--ulams-radius-card);
+  padding: 8px;
+}
+
+.tabs :global(.tabs-menu-inner) {
+  display: flex;
+}
+
+.tabs :global(.tab-menu-btn) {
+  position: relative;
+  padding: 6px 24px;
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  white-space: nowrap;
+  font-family: var(--ulams-font-family-body);
+  color: var(--tabs-btn-color);
+  border-radius: var(--ulams-radius-button);
+  background-color: #f8f8f8;
+}
+
+.tabs :global(.tab-menu-btn):first-of-type {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.tabs :global(.tab-menu-btn):nth-of-type(2) {
+  border-radius: 0;
+}
+
+.tabs :global(.tab-menu-btn):last-of-type {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.tabs :global(.tab-menu-btn.active) {
+  font-weight: bold;
+  background-color: var(--ulams-color-primary-on-light);
+  color: var(--ulams-color-white);
+  border-radius: var(--ulams-radius-button);
+}
+
+.tabs :global(.tabs-panel) {
+  padding: 25px 0;
+}

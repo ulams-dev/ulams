@@ -7,7 +7,6 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import styled, { withTheme } from "styled-components";
 import { Formik } from "formik";
 import { API } from "@ulams/sdk";
 import { UlamsContext } from "@ulams/sdk/react";
@@ -33,6 +32,7 @@ import NumericalQuestion from "./questions/NumericalQuestion/NumericalQuestion";
 import Essay from "./questions/Essay/Essay";
 import Description from "./questions/Description/Description";
 import GiftQuizScore from "./GiftQuizScore";
+import styles from "./GiftQuizPlayerContent.module.css";
 
 interface Props {
   attempt: API.QuizAttempt & {
@@ -45,26 +45,6 @@ interface Props {
     answer: Answer
   ) => void;
 }
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
-
-const AttemptsTooltipWrapper = styled(Row)`
-  padding: 16px;
-  border-radius: 4px;
-  background-color: ${({ theme }) => theme.primaryColor};
-`;
-
-const AttemptsTooltipCloseButton = styled(Button)`
-  color: ${({ theme }) => theme.primaryColor};
-
-  &:hover {
-    background-color: ${({ theme }) => theme.secondaryColor};
-  }
-`;
 
 function isTextAnswer(
   answer?: GiftQuizAnswer | string
@@ -234,10 +214,10 @@ export const GiftQuizPlayerContent: React.FC<Props> = ({
         resetForm,
         setFieldValue,
       }) => (
-        <Form
+        <form
           onSubmit={handleSubmit}
           data-testid="gift-quiz-player-content"
-          className="quiz__questions-form"
+          className={`${styles.form} quiz__questions-form`}
         >
           <Stack $gap={8}>
             <Row $justifyContent="space-between">
@@ -277,15 +257,16 @@ export const GiftQuizPlayerContent: React.FC<Props> = ({
               </Row>
             </Row>
             {attempts.tooltipOpen && (
-              <AttemptsTooltipWrapper
+              <Row
+                className={styles.attemptsTooltip}
                 $alignItems="center"
                 $justifyContent="space-between"
               >
                 {t<string>("Quiz.YouHaveMade")}
                 {` ${attempts.count} `}
                 {t<string>("Quiz.Attempts")}
-                <AttemptsTooltipCloseButton onClick={closeTooltip} />
-              </AttemptsTooltipWrapper>
+                <Button className={styles.closeButton} onClick={closeTooltip} />
+              </Row>
             )}
           </Stack>
           {attempt.questions.map((question: API.QuizQuestion) => {
@@ -407,7 +388,7 @@ export const GiftQuizPlayerContent: React.FC<Props> = ({
                   <Essay
                     {...question}
                     key={question.type + question.id}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
                       handleChange(e);
                       sendAnswer(question.id, {
                         text: e.target.value,
@@ -430,10 +411,10 @@ export const GiftQuizPlayerContent: React.FC<Props> = ({
                 return <React.Fragment />;
             }
           })}
-        </Form>
+        </form>
       )}
     </Formik>
   );
 };
 
-export default withTheme(styled(GiftQuizPlayerContent)``);
+export default GiftQuizPlayerContent;

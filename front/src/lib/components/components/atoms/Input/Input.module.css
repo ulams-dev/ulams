@@ -1,0 +1,183 @@
+/*
+ * Selectors mirror the former styled component (`.sc.lsm-input …`) so their
+ * specificity is unchanged; state (error/disabled) and dark mode only change
+ * local variables on the root.
+ */
+.input {
+  --in-bg: var(--ulams-opt-color-input-bg, var(--ulams-gray-5));
+  --in-filled-bg: var(--in-bg);
+  --in-color: var(--ulams-gray-1);
+  --in-filled-color: var(--in-color);
+  --fs-border: var(--ulams-gray-4);
+  --fs-filled-border: var(--ulams-gray-3);
+  --fs-inset: 0 0 0;
+  --lbl-color: initial;
+  --lbl-filled-color: var(--lbl-color);
+  --lbl-bg: var(--ulams-color-white);
+}
+
+:global([data-mode="dark"]) .input {
+  --in-bg: var(--ulams-opt-color-input-bg, var(--ulams-gray-1));
+  --in-color: var(--ulams-color-white);
+  --fs-border: var(--ulams-gray-5);
+  --lbl-bg: var(--ulams-color-black);
+}
+
+.withLabel {
+  --fs-inset: -5px 0 0;
+}
+
+.input.disabled {
+  --in-bg: var(
+    --ulams-opt-color-input-disabled-bg,
+    color-mix(in srgb-linear, var(--ulams-gray-1), #fff)
+  );
+  --in-filled-bg: var(--ulams-opt-color-input-disabled-bg, var(--ulams-gray-5));
+  --in-color: var(--ulams-gray-3);
+  --in-filled-color: var(--ulams-gray-3);
+  --fs-filled-border: transparent;
+  --lbl-color: var(--ulams-gray-3);
+  --lbl-filled-color: var(--ulams-color-black);
+}
+
+:global([data-mode="dark"]) .input.disabled {
+  --in-filled-bg: var(--ulams-opt-color-input-disabled-bg, var(--ulams-gray-1));
+  --in-color: var(--ulams-color-white);
+  --lbl-filled-color: var(--ulams-color-white);
+}
+
+.input.error {
+  --in-color: var(--ulams-color-error);
+  --fs-border: var(--ulams-color-error);
+  --fs-filled-border: var(--ulams-color-error);
+  --lbl-color: var(--ulams-color-error);
+}
+
+:global([data-mode="dark"]) .input.error {
+  --in-color: var(--ulams-opt-color-error, var(--ulams-color-white));
+  --fs-border: var(--ulams-opt-color-error, var(--ulams-color-card-bg));
+}
+
+.input:global(.lsm-input) {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--ulams-font-family-body);
+  color: var(--ulams-color-text);
+}
+
+.input:global(.lsm-input) * {
+  outline: none;
+}
+
+.input:global(.lsm-input) :global(.error) {
+  color: var(--ulams-color-error);
+  padding-left: 12px;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.input:global(.lsm-input) :global(.required) {
+  color: var(--ulams-color-error);
+}
+
+.input:global(.lsm-input) :global(.helper) {
+  font-size: 11px;
+  width: 100%;
+  display: block;
+  text-align: center;
+  margin-top: 1px;
+  opacity: 0.55;
+}
+
+.input:global(.lsm-input) :global(.input-and-fieldset) {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+.input:global(.lsm-input) :global(.input-and-fieldset) input {
+  font-family: var(--ulams-font-family-body);
+  border: 0px;
+  font-size: 13px;
+  box-sizing: content-box;
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  caret-color: #e60037;
+  border-radius: var(--ulams-radius-input);
+  background: var(--in-bg);
+  color: var(--in-color);
+}
+
+.input:global(.lsm-input) :global(.input-and-fieldset) input:disabled {
+  cursor: not-allowed;
+}
+
+.input:global(.lsm-input) :global(.input-and-fieldset) :global(.fieldset) {
+  position: absolute;
+  inset: var(--fs-inset);
+  margin: 0px;
+  padding: 0px 8px;
+  border: 1px solid var(--fs-border);
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: var(--ulams-radius-input);
+}
+
+.input:global(.lsm-input) :global(.input-and-fieldset) :global(.fieldset) legend {
+  overflow: hidden;
+  display: block;
+  width: 0;
+  height: 11px;
+  font-size: 0.75em;
+  visibility: hidden;
+  padding: 0;
+}
+
+.input:global(.lsm-input) :global(.input-container) {
+  display: inline-flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+}
+
+.input:global(.lsm-input) :global(.input-container) label {
+  pointer-events: none;
+  transform-origin: left top;
+  max-width: calc(100% - 24px);
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  transform: translate(18px, 14px) scale(1);
+  font-size: 13px;
+  z-index: 1;
+  transition: 0.2s all;
+  color: var(--lbl-color);
+}
+
+.input:global(.lsm-input) :global(.input-container.filled) legend,
+.input:global(.lsm-input) :global(.input-container):focus-within legend {
+  width: auto;
+  margin-left: -2px;
+  padding-right: 10px;
+}
+
+.input:global(.lsm-input) :global(.input-container.filled) label,
+.input:global(.lsm-input) :global(.input-container):focus-within label {
+  transform: translate(12px, -7px) scale(0.75);
+  color: var(--lbl-filled-color);
+  background: var(--lbl-bg);
+  box-shadow: -5px 0px 0px 0px var(--lbl-bg), 5px 0px 0px 0px var(--lbl-bg);
+}
+
+.input:global(.lsm-input) :global(.input-container.filled) input,
+.input:global(.lsm-input) :global(.input-container):focus-within input {
+  background: var(--in-filled-bg);
+  color: var(--in-filled-color);
+}
+
+.input:global(.lsm-input) :global(.input-container.filled) :global(.fieldset),
+.input:global(.lsm-input) :global(.input-container):focus-within :global(.fieldset) {
+  border-color: var(--fs-filled-border);
+}

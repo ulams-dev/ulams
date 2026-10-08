@@ -1,0 +1,34 @@
+.root {
+  width: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.root > header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-content: flex-start;
+  margin-bottom: 20px;
+}
+
+.root > header :global(.lms-icon-title) {
+  margin: 0;
+  flex-wrap: nowrap;
+}
+
+.root > header > div {
+  display: inline-flex;
+  align-items: center;
+}
+
+.root > header > div p {
+  margin-right: 6px;
+}
+
+.root > :global(.lessons__list) {
+  padding-left: 0;
+  list-style: none;
+}

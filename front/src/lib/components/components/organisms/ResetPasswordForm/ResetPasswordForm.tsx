@@ -5,45 +5,10 @@ import { UlamsContext } from "@ulams/sdk/react";
 import type { DefaultResponseError } from "@ulams/sdk/types";
 import type { ResponseError } from "umi-request";
 
-import styled, { withTheme } from "styled-components";
-
 import { Input, Button, Title, Link, Text } from "../../../";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 
-const StyledDiv = styled.div<{ mobile: boolean }>`
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  .lsm-input {
-    margin: 30px 0;
-  }
-  button {
-    margin-top: 10px;
-  }
-  p {
-    margin: 15px 0;
-  }
-  p,
-  a {
-    font-size: 14px;
-  }
-  h2,
-  h3,
-  h4 {
-    font-size: ${(props) => (props.mobile ? "18px" : "28px")};
-  }
-  form {
-    width: 100%;
-    min-width: ${({ mobile }) => (mobile ? "100%" : "440px")};
-    margin-bottom: 15px;
-  }
-`;
+import styles from "./ResetPasswordForm.module.css";
 
 interface MyFormValues {
   email: string;
@@ -127,7 +92,9 @@ export const ResetPasswordForm: React.FC<Props> = ({
   );
 
   return (
-    <StyledDiv className={`ulams-component ${className}`} mobile={mobile}>
+    <div
+      className={`ulams-component ${styles.root} ${mobile ? styles.mobile : ""} ${className}`}
+    >
       <Title level={3}>{t<string>("ResetForm.ResetPassword")}</Title>{" "}
       <Formik
         initialValues={initialValues}
@@ -198,11 +165,10 @@ export const ResetPasswordForm: React.FC<Props> = ({
           </Link>
         </>
       )}
-    </StyledDiv>
+    </div>
   );
 };
 
-// https://styled-components.com/docs/api#using-custom-props
 
 // Main button with styles
-export default withTheme(styled(ResetPasswordForm)<{ mobile: boolean }>``);
+export default ResetPasswordForm;

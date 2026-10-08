@@ -1,10 +1,9 @@
 import * as React from "react";
-
-import styled, { withTheme } from "styled-components";
-import { getFontFromTheme } from "../../../theme/provider";
 import { PropsWithChildren } from "react";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import { cx } from "../../../utils/cx";
+import styles from "./Link.module.css";
+import { legacyDefault } from "../../../utils/legacy";
 
 export interface LinkProps
   extends React.AnchorHTMLAttributes<HTMLAnchorElement>,
@@ -12,71 +11,19 @@ export interface LinkProps
   underline?: boolean;
 }
 
-// Main button with styles
-const StyledAnchor = styled("a")<LinkProps>`
-  color: ${({ theme }) =>
-    getStylesBasedOnTheme(theme.mode, theme.gray5, theme.gray1, "black")};
-  font-family: ${(props) =>
-    props.theme ? getFontFromTheme(props.theme).fontFamily : "sans-serif"};
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 1.55em;
-  cursor: pointer;
-  -webkit-font-smoothing: antialiased;
-  text-decoration: none;
-  display: inline-block;
-  position: relative;
-
-  & > * {
-    vertical-align: middle;
-    transition: color 0.3s ease-out;
-  }
-  & > svg {
-    margin: 0 0.5em;
-  }
-
-  &:after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    /* transform: ${(props) =>
-      props.underline ? "scaleX(1)" : "scaleX(0)"}; */
-    height: 1px;
-    bottom: 0;
-    left: 0;
-    /* background-color: ${({ theme }) =>
-      getStylesBasedOnTheme(theme.mode, theme.gray5, theme.gray1, "black")}; */
-    /* transform-origin: ${(props) =>
-      props.underline ? "bottom left" : "bottom right"};
-    transition: transform 0.25s ease-out; */
-  }
-
-  &:hover,
-  &:active {
-    * {
-      color: ${({ theme }) => theme.primaryColor};
-    }
-
-    &:after {
-      /* transform: ${(props) => (props.underline ? "scaleX(0)" : "scaleX(1)")};
-      transform-origin: bottom left; */
-    }
-  }
-`;
-
+// `underline` is accepted for API compatibility; its animation was disabled in the former styles.
 export const Link: React.FC<PropsWithChildren<LinkProps>> = ({
-  underline = false,
+  underline: _underline = false,
   ...props
 }) => {
   return (
-    <StyledAnchor
-      underline={underline}
+    <a
       {...props}
-      className={`ulams-component ${props.className ?? ""}`}
+      className={cx(styles.link, "ulams-component", props.className ?? "")}
     >
       {props.children}
-    </StyledAnchor>
+    </a>
   );
 };
 
-export default withTheme(styled(Link)``);
+export default legacyDefault(Link);

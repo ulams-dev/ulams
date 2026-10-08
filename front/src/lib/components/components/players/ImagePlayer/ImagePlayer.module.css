@@ -1,0 +1,12 @@
+.root > div {
+  cursor: pointer;
+}
+
+.root > div img {
+  width: 100%;
+  transition: transform 0.5s ease-out;
+}
+
+.root > div:hover img {
+  transform: scale(1.02);
+}

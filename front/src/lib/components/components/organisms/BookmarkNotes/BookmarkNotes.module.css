@@ -1,0 +1,102 @@
+.container {
+  margin: 30px 0px;
+  display: flex;
+  min-width: 100%;
+  flex-direction: column;
+  background: var(--ulams-color-card-bg);
+  overflow: auto;
+}
+
+.container::-webkit-scrollbar {
+  width: 2px;
+  border-radius: 2px;
+  height: 2px;
+  background-color: var(--ulams-color-accent-bg);
+}
+
+.container::-webkit-scrollbar-thumb {
+  background-color: var(--ulams-color-bg);
+  border-radius: 4px;
+}
+
+.body {
+  display: flex;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--ulams-color-primary);
+}
+
+.page {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 24px;
+  border-top: 1px solid var(--ulams-color-primary);
+}
+
+.page h1 {
+  align-self: center;
+}
+
+.iconWrapper {
+  border-radius: 50%;
+  border: 1px solid var(--ulams-color-primary);
+  padding: 4px;
+}
+
+.menu {
+  border-right: 1px solid var(--ulams-color-primary);
+  width: 25%;
+  padding: 12px 12px 12px 0px;
+}
+
+.content {
+  width: 100%;
+  padding: 24px 24px 24px 12px;
+}
+
+.list {
+  margin: 0px;
+  padding: 0px;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style: disc;
+  margin-bottom: 12px;
+}
+
+.item label {
+  display: flex;
+  gap: 16px;
+}
+
+.item label h2 {
+  align-self: center;
+}
+
+.item > div {
+  transition: 0.3s;
+}
+
+.item:hover > div {
+  transform: scale(1.02);
+}
+
+.noteText.noteText {
+  text-transform: uppercase;
+  margin: 0px;
+  padding-top: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.title.title {
+  cursor: pointer;
+}

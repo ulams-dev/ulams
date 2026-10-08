@@ -1,8 +1,8 @@
 import * as React from "react";
 import Embed, { type EmbedProps } from "react-tiny-oembed";
-import styled, { withTheme } from "styled-components";
 import type { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { RatioBox } from "../../../";
+import styles from "./OEmbedPlayer.module.css";
 
 const PROVIDERS = [
   {
@@ -121,35 +121,16 @@ export interface OEmbedPlayerProps
   ratio?: number;
 }
 
-const StyledOEmbedPlayer = styled("div")`
-  width: 100%;
-
-  iframe {
-    width: 100%;
-    height: 100%;
-  }
-
-  .__embed {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .__embed_column {
-    display: block;
-    height: 100%;
-  }
-`;
-
 export const OEmbedPlayer: React.FC<OEmbedPlayerProps> = (props) => {
   const { ratio = 9 / 16, className = "" } = props;
 
   return (
-    <StyledOEmbedPlayer className={`ulams-component ${className}`}>
+    <div className={`${styles.root} ulams-component ${className}`}>
       <RatioBox ratio={ratio}>
         <Embed {...props} providers={PROVIDERS} />
       </RatioBox>
-    </StyledOEmbedPlayer>
+    </div>
   );
 };
 
-export default withTheme(styled(OEmbedPlayer)<OEmbedPlayerProps>``);
+export default OEmbedPlayer;
