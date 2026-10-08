@@ -172,10 +172,14 @@ upload hardening and content origin → M1.2–M1.4 LTI 1.3 → M1.5 LiaScript �
 items → M1.9 conformance. Work branch: `phase-1/content-formats`.
 
 ### 1.1 LiaScript
-- [ ] Versioned Markdown + assets as course source
-- [ ] CRUD API (create from Markdown, upload `.md`/zip, update, delete, fetch source)
+- [x] Versioned Markdown + assets as course source (`packages/liascript`)
+- [x] CRUD API (create from Markdown, upload `.md`/zip, update, delete, fetch source) (plus versions list and
+      restore; admin editor UI pending)
 - [ ] Rendering decision: self-hosted LiaScript vs export to SCORM/xAPI; no dependency on
-      liascript.github.io
+      liascript.github.io (partial: spike done, option (b′) feasible, see `docs/plans/phase-1.md` 5.5; open
+      question on completion tracking without the exporter's quiz/task counts; packager, player and topic
+      type pending)
+- [ ] (new) LiaScript topic type (learners), admin editor with preview and version diff, export/import strategy
 
 ### 1.2 Adapt Learning
 - [ ] Path A: import built SCORM zip (`adapt-contrib-spoor`)

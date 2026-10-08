@@ -246,6 +246,26 @@ Admin topic form "LiaScript": Markdown editor (the existing admin markdown edito
 (the packaged player in an iframe, rebuilt on save), version list with restore and diff. Front:
 plays as a SCORM SCO through the existing player; no new learner component.
 
+### 5.5 Spike result (2026-10-09)
+
+`@liascript/exporter` 3.4.2--2.1.0 (npm, ISC; the package's LICENSE file is BSD-3-Clause) ships
+prebuilt players in `dist/assets/scorm1.2` and `dist/assets/scorm2004` (about 12 MB and 318 files
+each) plus `dist/assets/common`. Its SCORM export:
+
+1. copies the SCORM build and `common` into a folder,
+2. writes `config.js` with `window.config_ = {task, quiz, survey}`, the counts of tasks, quizzes and
+   surveys found by parsing the course (the exporter runs LiaScript's own parser in Node for that),
+   and adds `<script src="config.js">` to `index.html`,
+3. copies the course folder (Markdown and assets) next to it,
+4. writes `imsmanifest.xml` with `index.html?<README.md>` as the launch URL (or embeds the Markdown as
+   `window["liascript_course"]` in `course.js`).
+
+So (b′) is feasible without Node at runtime: steps 1, 3 and 4 are a small PHP packager, the build can
+be vendored (or fetched at image build time, 12 MB). The one open point is step 2: without the
+parser's counts, `config_` would be empty, and whether LiaScript then still reports completion and
+score to SCORM needs a browser check. Fallbacks: count quizzes/tasks/surveys with our own Markdown
+scan, or run the exporter once per version in a short-lived build container (option b).
+
 ### 5.4 Tests
 
 Minimal LiaScript fixture course (headings, quiz, code block, an image asset); packaging produces a
@@ -489,6 +509,18 @@ Taken during implementation (M1.2–M1.4, LTI):
 32. **No admin UI yet**: registrations are API-only (`/api/admin/lti/*`, permission `lti_manage`, seeded
     for admin) until the Stitch screens for Integrations → LTI are exported.
 
+Taken during implementation (M1.5, LiaScript, partial):
+
+33. **LiaScript documents are standalone**, like SCORM packages: the future topic type will reference a
+    document (`value` = document id), so sources can be edited and versioned outside a course.
+34. **Assets are carried over by text-only versions**: the asset manifest of a version maps paths in the
+    Markdown to stored files, so a text edit or a restore needs no copies; a `.zip` upload adds its
+    files under the new version's folder.
+35. **`liascript_manage` for admins and tutors** (not course-scoped yet; documents are not tied to a
+    course until the topic type exists).
+36. **Rendering not started**: the spike (section 5.5) leaves one browser check open before the packager
+    is written; no LiaScript topic type is registered until learners can play it.
+
 ---
 
 ## 15. Progress
@@ -499,3 +531,11 @@ Taken during implementation (M1.2–M1.4, LTI):
 | M1.2 | done (admin screens pending) | `packages/lti` platform side: keys/JWKS/rotation, `LtiLink` topic type, OIDC launch, AGS (token, line items, scores, results), front `LtiPlayer`; ADR 0012 |
 | M1.3 | done (admin "pick content" button pending) | Deep-linking request and response; topics created through `TopicRepository` |
 | M1.4 | done (admin screens and Moodle profile pending) | Tool side on packbackbooks/lti-1p3-tool: login, launch, user/role mapping, course access, one-time code + front `/lti/launch`, course picker, queued grade passback |
+| M1.5 | partial | Versioned sources and CRUD API (`packages/liascript`); spike done (5.5); packager, player, topic type and admin editor pending |
+
+Full suite on the branch head (2026-10-09, throwaway container, fresh database): 2,347 tests, 1 failure
+(`UserApiTest::testSearchUsersGetSpecificFieldsWithRelations`, in the CI quarantine) and 5 errors in
+`webinar` (`Class "Ulams\Webinar\Tests\Mocks\MockTest" not found`: the class lives in
+`MockTestHelper.php`, which PSR-4 cannot autoload; untouched by Phase 1). New suites: `uploads` 33,
+`lti` 45, `liascript` 8; `scorm` 41, `cmi5` 19, `courses-import-export` 15, `files` 60, `tenancy` 50 green.
+
