@@ -1,6 +1,8 @@
 # Phase 1 plan: content formats and integrations
 
-Status: **approved by the product owner (2026-10-09)**.
+Status: **approved by the product owner (2026-10-09)**. Implementation on branch
+`phase-1/content-formats`; decisions taken during implementation are collected in section 14 (to confirm),
+progress in section 15.
 
 Phase 1 follows Phase 0 (the Laravel 13 / PHP 8.4 upgrade must be merged first) and precedes
 Phase 2 (AI Course Builder, `docs/plans/phase-2.md`). It covers every Phase 1 item in
@@ -426,3 +428,41 @@ round-trips` · `docs(roadmap): Phase 1 status`.
 8. **Learner players in the current `front`** for Phase 1 (iframe wrappers), ported to `front/web` with
    ADR 0008.
 9. **ADRs to propose**: 0012 (LTI package and libraries) with M1.2, 0013 (Adapt build worker) with M1.7.
+
+Taken during implementation (M1.1):
+
+10. **scorm-again 2.6.4 vendored, not 3.x**: the version the front and admin already use from npm,
+    API-compatible with the 2.2.0 the CDN served. Upgrading to 3.x is a separate change.
+11. **Tracking token**: stateless, HMAC-SHA256 with a key derived from the tenant `APP_KEY`, bound to
+    user and SCO, 4 h TTL (`SCORM_TRACKING_TOKEN_TTL`); passed to the player in the URL fragment and
+    sent in `X-Ulams-Tracking-Token`, because Passport 13 blanks any `Authorization: Bearer` header
+    that is not one of its tokens (and reports an exception for it).
+12. **Learners are tracked without `scorm_track-update`**: any signed-in user who launches a SCO can
+    write their own tracking for it through the token. Students do not hold that permission today,
+    so the legacy endpoint rejects them (unchanged); the legacy front player never sent tracking.
+13. **Content origin is configured, not stored**: `CONTENT_ORIGIN` in the tenant env file
+    (`TENANCY_CONTENT_HOST`, default `{slug}.content.localhost`), no database column. Unset means
+    the legacy player (the per-tenant feature flag of section 12). In dev the content origin is
+    same-site with the app; production should use a separate registrable domain.
+14. **SVG and other active content**: no sanitiser. The `s3` driver stores SVG, HTML, XML and files
+    of unknown type outside package prefixes with `Content-Disposition: attachment` and an
+    extension-based `Content-Type`; Caddy adds `script-src 'none'; sandbox` for SVG on the storage
+    origin. `<img>` rendering is unaffected.
+15. **Absolute paths**: rejected in every archive, except that course imports strip a leading `/`,
+    because our own exporter wrote every entry that way (fixed); old exports keep importing.
+16. **Nested archives are not rejected**: SCORM packages and course exports legitimately contain zips;
+    the inner archives go through the guard when they are imported themselves.
+17. **CSP report-only without a collector**: reports go to the browser console only, so no new
+    unauthenticated endpoint now; add a collector before enforcing.
+18. **clamd fails closed** when enabled and unreachable (`UPLOADS_CLAMD_FAIL_CLOSED=true`).
+19. **Removed `app/Library/ScormHelper.php`**: unused third copy of the vulnerable extraction.
+20. **cmi5 stays on the API origin for now**: its AU files live on the local disk (see the 0.1c item);
+    moving them to the bucket and the content origin is a follow-up.
+
+---
+
+## 15. Progress
+
+| Milestone | State | Notes |
+|---|---|---|
+| M1.1 | done (cmi5 content origin pending) | `packages/uploads`; SCORM/cmi5/import/files hardened; content origin in Caddy; SCORM player on the content origin; `api/docs/content-origin.md` |

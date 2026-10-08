@@ -167,8 +167,9 @@ stale content.
 
 ## Phase 1: Content formats and integrations
 
-Plan (new): `docs/plans/phase-1.md` (approved 2026-10-09): M1.1 upload hardening and content
-origin → M1.2–M1.4 LTI 1.3 → M1.5 LiaScript → M1.6–M1.7 Adapt → M1.8 H5P items → M1.9 conformance.
+Plan (new): `docs/plans/phase-1.md` (approved 2026-10-09; decisions to confirm in its section 14): M1.1
+upload hardening and content origin → M1.2–M1.4 LTI 1.3 → M1.5 LiaScript → M1.6–M1.7 Adapt → M1.8 H5P
+items → M1.9 conformance. Work branch: `phase-1/content-formats`.
 
 ### 1.1 LiaScript
 - [ ] Versioned Markdown + assets as course source
@@ -186,13 +187,28 @@ origin → M1.2–M1.4 LTI 1.3 → M1.5 LiaScript → M1.6–M1.7 Adapt → M1.8
 - [ ] Key rotation, nonce/state validation, per-tenant registrations
 
 ### 1.4 Shared
-- [ ] Upload hardening (zip-slip, MIME, size limits, virus-scan hook)
-- [ ] Isolated origin / strict CSP for third-party JS
-- [ ] (new) Zip-slip: SCORM (`ScormService::unzipScormArchive`) and cmi5 (`Cmi5UploadService`) extract
+- [x] Upload hardening (zip-slip, MIME, size limits, virus-scan hook) (`packages/uploads`: SCORM, cmi5,
+      course import, file manager; clamd hook tested with a fake clamd, compose profile `av` not run in CI)
+- [ ] Isolated origin / strict CSP for third-party JS (partial: SCORM plays from the per-tenant content
+      origin with a strict CSP behind `CONTENT_ORIGIN`; cmi5 still plays from the API origin; front/admin
+      CSP is report-only)
+- [x] (new) Zip-slip: SCORM (`ScormService::unzipScormArchive`) and cmi5 (`Cmi5UploadService`) extract
       archives with `ZipArchive::extractTo` and no entry-path checks; replace with a safe extractor (M1.1)
-- [ ] (new) The SCORM player loads `scorm-again` from the jsDelivr CDN; vendor it (air-gapped installs)
+- [x] (new) The SCORM player loads `scorm-again` from the jsDelivr CDN; vendor it (air-gapped installs)
 - [ ] (new) SCORM/cmi5 content of all tenants is served from the shared `storage.localhost` origin; move
-      packages and players to a per-tenant content origin (M1.1)
+      packages and players to a per-tenant content origin (M1.1) (partial: SCORM done, `<slug>.content.localhost`,
+      `api/docs/content-origin.md`; cmi5 player and AU files pending; run `ulams:tenant:sync-env` so existing
+      tenants get `CONTENT_ORIGIN`)
+- [x] (new) Course import read files outside the extracted archive through paths in `content.json`
+      (e.g. `../../../.env` as a category icon, published to the bucket); paths now resolved inside it
+- [x] (new) SVG/HTML uploads served from the bucket: stored with `Content-Disposition: attachment` and an
+      extension-based `Content-Type`; storage origin sends `script-src 'none'` for SVG (follow-up of 0.2)
+- [ ] (new) Students have no `scorm_track-update` permission, so the legacy `/api/scorm/track` rejects
+      them and the front's legacy SCORM player never tracked; the content-origin player tracks any signed-in
+      learner through its SCO-scoped token. Decide whether to seed the permission for students
+- [ ] (new) Production: serve content origins from a separate registrable domain (not same-site with the
+      app), and add registered LTI tool origins to the front/admin `frame-src`
+- [ ] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector
 - [ ] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket) (partial: env-file resolver live for the demo tenants; remaining: a distinct `H5P_INTERNAL_TOKEN`
       per tenant written at provisioning, library administration limited to the platform because
       libraries are shared, production mounts limited to env files and key directories, idle-tenant
