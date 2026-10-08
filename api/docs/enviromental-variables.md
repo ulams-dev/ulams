@@ -174,3 +174,20 @@ virus-scan hook), see [packages/uploads/README.md](../packages/uploads/README.md
 | `UPLOADS_CLAMD_TIMEOUT`                     | Seconds to wait for clamd                                       | `60`              |
 | `UPLOADS_CLAMD_FAIL_CLOSED`                 | Reject uploads when clamd cannot be reached                     | `true`            |
 | `FILES_MAX_SIZE_MB`                         | Largest single file in the admin file manager (`packages/files`) | `512`             |
+
+## LTI 1.3 (`packages/lti`)
+
+| Variable name                 | Description                                                                 | Default   |
+| ----------------------------- | --------------------------------------------------------------------------- | --------- |
+| `LTI_ISSUER`                  | Our issuer and base URL of the LTI endpoints                                | `APP_URL` |
+| `LTI_RETIRED_KEY_GRACE_DAYS`  | Days a retired key stays in the JWKS                                        | `30`      |
+| `LTI_KEY_BITS`                | RSA key size (php-jwt requires at least 2048)                               | `2048`    |
+| `LTI_LOGIN_HINT_TTL`          | Seconds a launch's login hint is valid                                      | `120`     |
+| `LTI_ID_TOKEN_TTL`            | Lifetime of the id_token we sign, seconds                                   | `300`     |
+| `LTI_ACCESS_TOKEN_TTL`        | Lifetime of AGS access tokens we issue, seconds                             | `3600`    |
+| `LTI_STATE_TTL`               | Lifetime of the tool-side OIDC state and nonce, seconds                     | `600`     |
+| `LTI_CODE_TTL`                | Lifetime of the tool-side one-time sign-in code, seconds                    | `60`      |
+| `LTI_ALLOW_INSECURE_URLS`     | Allow http and private addresses for tool/platform URLs. **Development only** | `false` |
+| `LTI_HTTP_TIMEOUT`            | Timeout of outgoing LTI requests, seconds                                   | `10`      |
+| `LTI_JWKS_CACHE_TTL`          | Cache lifetime of fetched key sets, seconds                                 | `600`     |
+| `LTI_TOOL_LANDING_URL`        | Where a tool-side launch lands (`{front}`, `{code}`, `{course}`)            | `{front}/lti/launch?code={code}&course={course}` |

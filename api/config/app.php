@@ -220,6 +220,7 @@ return [
         Ulams\TopicTypeProject\UlamsTopicTypeProjectServiceProvider::class,
         Ulams\TopicTypes\UlamsTopicTypesServiceProvider::class,
         Ulams\Uploads\UlamsUploadsServiceProvider::class,
+        Ulams\Lti\UlamsLtiServiceProvider::class,
         Ulams\Translations\UlamsTranslationsServiceProvider::class,
         Ulams\Video\UlamsVideoServiceProvider::class,
         Ulams\Vouchers\UlamsVouchersServiceProvider::class,
