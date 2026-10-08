@@ -172,3 +172,4 @@ virus-scan hook), see [packages/uploads/README.md](../packages/uploads/README.md
 | `UPLOADS_CLAMD_HOST` / `UPLOADS_CLAMD_PORT` | clamd address                                                   | `clamav` / `3310` |
 | `UPLOADS_CLAMD_TIMEOUT`                     | Seconds to wait for clamd                                       | `60`              |
 | `UPLOADS_CLAMD_FAIL_CLOSED`                 | Reject uploads when clamd cannot be reached                     | `true`            |
+| `FILES_MAX_SIZE_MB`                         | Largest single file in the admin file manager (`packages/files`) | `512`             |
