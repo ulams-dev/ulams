@@ -36,6 +36,7 @@
       <directory suffix=".php">./packages/templates-email/</directory>
       <directory suffix=".php">./packages/templates-sms/</directory>
       <directory suffix=".php">./packages/templates-pdf/</directory>
+      <directory suffix=".php">./packages/tenancy/</directory>
       <directory suffix=".php">./packages/assign-without-account/</directory>
       <!-- <directory suffix=".php">./packages/tracker/</directory> -->
       <directory suffix=".php">./packages/translations/</directory>
@@ -143,6 +144,9 @@
     </testsuite>
     <testsuite name="topic-type-project">
       <directory suffix="Test.php">./packages/topic-type-project</directory>
+    </testsuite>
+    <testsuite name="tenancy">
+      <directory suffix="Test.php">./packages/tenancy/tests</directory>
     </testsuite>
     <testsuite name="templates">
       <directory suffix="Test.php">./packages/templates</directory>

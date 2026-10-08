@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Str;
+
 if (isset($_ENV['DATABASE_URL']) || isset($_SERVER['DATABASE_URL'])) {
     $url = $_ENV['DATABASE_URL'] ?? $_SERVER['DATABASE_URL'];
     $herokuDb = parse_url($url);
@@ -90,6 +92,22 @@ return [
             'sslmode' => isset($pgsql) ? $pgsql['sslmode'] : env('DB_SSL_MODE', 'prefer'),
         ],
 
+        // Superuser connection used only by the tenancy package (ulams:tenant:*) to create and
+        // drop tenant roles and databases. Never used to serve requests.
+        'pgsql_admin' => [
+            'driver' => 'pgsql',
+            'host' => env('DB_ADMIN_HOST', env('DB_HOST', '127.0.0.1')),
+            'port' => env('DB_ADMIN_PORT', env('DB_PORT', '5432')),
+            'database' => env('DB_ADMIN_DATABASE', env('DB_DATABASE', 'postgres')),
+            'username' => env('DB_ADMIN_USERNAME', env('DB_USERNAME', 'default')),
+            'password' => env('DB_ADMIN_PASSWORD', env('DB_PASSWORD', 'secret')),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'schema' => 'public',
+            'sslmode' => env('DB_SSL_MODE', 'prefer'),
+        ],
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'host' => env('DB_HOST', 'localhost'),
@@ -134,6 +152,8 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'predis'),
+            // Every tenant shares one Redis: the prefix keeps queues, cache and locks apart.
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
         ],
 
         'default' => [
