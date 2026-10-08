@@ -57,3 +57,6 @@ caddy
 
 .git
 docs
+# Node services with their own images (api/h5p is GPL and must not ship in the API image)
+h5p
+pdf

@@ -1,7 +1,8 @@
 # Build from the repository root (one root yarn.lock, Yarn workspaces):
 #   docker build -f front/Dockerfile -t foo . && docker run -p 8080:80 -it foo
 ARG NODE_VERSION=22.12.0
-FROM node:${NODE_VERSION}-bookworm AS base
+# The static build is the same for every platform: run it natively, only the server stage is per-arch.
+FROM --platform=$BUILDPLATFORM node:${NODE_VERSION}-bookworm AS base
 ARG APP_VERSION="xxx"
 ENV HUSKY=0
 WORKDIR /home/node/app

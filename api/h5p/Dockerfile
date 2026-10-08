@@ -54,6 +54,13 @@ RUN sh /download-core.sh "$H5P_CORE_REF" "$H5P_EDITOR_REF" /out
 
 # ---- runtime -----------------------------------------------------------------
 FROM ${NODE_IMAGE} AS runtime
+ARG H5P_CORE_REF
+ARG H5P_EDITOR_REF
+# GPL-3.0-or-later: the image carries the licence text, and its labels name the pinned H5P core
+# and editor commits that are part of the corresponding source (see LICENSING.md).
+LABEL org.opencontainers.image.licenses="GPL-3.0-or-later" \
+      dev.ulams.h5p.core-ref="https://github.com/h5p/h5p-php-library/tree/${H5P_CORE_REF}" \
+      dev.ulams.h5p.editor-ref="https://github.com/h5p/h5p-editor-php-library/tree/${H5P_EDITOR_REF}"
 ENV NODE_ENV=production \
     PORT=8080 \
     H5P_CORE_PATH=/app/h5p/core \
@@ -67,7 +74,7 @@ COPY --from=prod-deps --chown=node:node /repo/api/h5p/node_modules ./node_module
 COPY --from=build --chown=node:node /repo/api/h5p/dist ./dist
 COPY --from=core --chown=node:node /out/core /app/h5p/core
 COPY --from=core --chown=node:node /out/editor /app/h5p/editor
-COPY --chown=node:node api/h5p/package.json ./
+COPY --chown=node:node api/h5p/package.json api/h5p/LICENSE ./
 RUN mkdir -p /data/libraries /tmp/h5p && chown -R node:node /data /tmp/h5p
 USER node
 VOLUME ["/data/libraries"]

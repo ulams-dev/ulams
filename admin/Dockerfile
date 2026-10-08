@@ -1,7 +1,8 @@
 # Build from the repository root (one root yarn.lock; admin also compiles front/src/lib):
-#   docker build -f admin/Dockerfile -t abc . && docker run -p 80:80 --env API_URL="https://api-stage.ulams.app" abc
+#   docker build -f admin/Dockerfile -t abc . && docker run -p 80:80 --env REACT_APP_TENANT_API_HOST_PATTERN="{slug}.admin.ulams.app=>https://{slug}.api.ulams.app" abc
 ARG NODE_VERSION=22.12.0
-FROM node:${NODE_VERSION}-bookworm AS base
+# The static build is the same for every platform: run it natively, only the server stage is per-arch.
+FROM --platform=$BUILDPLATFORM node:${NODE_VERSION}-bookworm AS base
 ENV HUSKY=0
 WORKDIR /home/node/app
 # workspace manifests first (all of them, so the frozen root lockfile matches) for layer caching
@@ -16,7 +17,9 @@ COPY admin/ admin/
 RUN cd admin && yarn build && cp dist/index.html dist/tpl.html
 
 FROM php:apache AS httpd
-ENV API_URL="http://localhost:1000"
+# Empty by default: the admin then derives the tenant API from its host (REACT_APP_TENANT_API_HOST_PATTERN).
+# Set REACT_APP_API_URL (or the legacy API_URL) only for a single-tenant deployment.
+ENV API_URL=""
 ENV SENTRYDSN=""
 ENV YBUG=""
 ARG ADMIN_VERSION="dev-main"

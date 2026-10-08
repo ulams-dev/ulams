@@ -80,6 +80,26 @@ node front/tests/visual/visual.mjs --help   # visual regression harness (front +
 
 PHPUnit suites (one per package) need a database; see [`api/README.md`](api/README.md).
 
+## Container images
+
+[`.github/workflows/publish.yml`](.github/workflows/publish.yml) builds the images below for
+`linux/amd64` and `linux/arm64` and pushes them to GitHub Container Registry on every push to
+`main`, on `v*` tags and on manual runs. Tags: `sha-<short>`, the branch name, `<version>` and
+`<major>.<minor>` for release tags, `latest` for `main`. Every image has provenance and an SBOM.
+
+| Image | Dockerfile | Licence |
+|---|---|---|
+| `ghcr.io/ulams-dev/php` | `api/docker/php/Dockerfile` (PHP runtime, also tagged `8.4`) | Apache-2.0, GPL tools listed in its `NOTICE` |
+| `ghcr.io/ulams-dev/api` | `api/Dockerfile`, built on the `php` image above | Apache-2.0 |
+| `ghcr.io/ulams-dev/h5p` | `api/h5p/Dockerfile` | **GPL-3.0-or-later**, see [`LICENSING.md`](LICENSING.md) |
+| `ghcr.io/ulams-dev/pdf` | `api/pdf/Dockerfile` | MIT |
+| `ghcr.io/ulams-dev/admin` | `admin/Dockerfile` (`REACT_APP_*` env injected at runtime) | MIT |
+| `ghcr.io/ulams-dev/front` | `front/Dockerfile` (`VITE_APP_*` env injected at runtime) | MIT |
+| `ghcr.io/ulams-dev/web` | `front/web/Dockerfile` (Astro SSR on Node, `ULAMS_*` env, port 4321) | MIT |
+
+All Dockerfiles except `api/` and `api/docker/php/` build from the repository root, e.g.
+`docker build -f front/web/Dockerfile -t ulams/web:dev .`.
+
 ## Architecture in one paragraph
 
 The Laravel API is the system of record (courses, learners, progress, entitlements). It is

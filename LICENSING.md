@@ -29,6 +29,15 @@ that has no closer licence file. This page is an engineering summary, not legal 
    same protocol or interface from scratch is fine.
 3. Distributing `api/h5p` (Docker image, Helm chart) means conveying GPL software: ship the licence
    text and offer the corresponding source, including the pinned H5P core and editor.
+   The published image `ghcr.io/ulams-dev/h5p` (`.github/workflows/publish.yml`) is such a
+   distribution. It ships `LICENSE` at `/app/api/h5p/LICENSE`; its labels name the licence, the
+   source repository and revision (`org.opencontainers.image.source`, `.revision`) and the pinned
+   H5P core and editor commits (`dev.ulams.h5p.core-ref`, `dev.ulams.h5p.editor-ref`). That is the
+   corresponding source. Offering the image from a registry relies on GPL-3.0 section 6(d): the
+   source is offered from a network server (this GitHub repository and the H5P repositories)
+   and must stay available for as long as the image is offered. Keep the repository public and
+   never delete or rewrite a revision a published image points to; if the repository goes
+   private, publish the h5p source elsewhere first.
 4. New dependencies are checked for their licence before they are added (see `CLAUDE.md`).
 5. Imported code keeps its original copyright notices.
 

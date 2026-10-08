@@ -4,6 +4,7 @@
 !package.json
 !yarn.lock
 !api/h5p/package.json
+!api/h5p/LICENSE
 !api/h5p/tsconfig.json
 !api/h5p/tsconfig.build.json
 !api/h5p/src
