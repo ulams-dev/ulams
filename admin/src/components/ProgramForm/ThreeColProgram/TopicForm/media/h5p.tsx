@@ -1,5 +1,5 @@
 import H5PContentSelect from '@/components/H5PContentSelect';
-import { Button, Col, Divider, Row, Typography } from 'antd';
+import { Button, Col, Divider, Row, Typography, message } from 'antd';
 import React, { useState } from 'react';
 
 import UploadH5P from '@/components/H5P/upload';
@@ -12,8 +12,8 @@ export const H5PForm: React.FC<{
   onChange: (value: string) => void;
 }> = ({ id, onChange }) => {
   const intl = useIntl();
-  const [editId, setEditId] = useState<number | 'new'>(
-    id === 'new' || id === undefined ? 'new' : Number(id),
+  const [editId, setEditId] = useState<string>(
+    id === 'new' || id === undefined || id === null || id === '' ? 'new' : String(id),
   );
 
   return (
@@ -40,8 +40,7 @@ export const H5PForm: React.FC<{
             value={id}
             onChange={(value) => {
               onChange(value);
-
-              setEditId(id === 'new' ? 'new' : Number(id));
+              setEditId(value ? String(value) : 'new');
             }}
           />
         </Col>
@@ -53,7 +52,14 @@ export const H5PForm: React.FC<{
         }}
       >
         <Col span={24}>
-          <H5PCard key={editId} id={editId} onSubmit={(h5pId) => onChange(String(h5pId))} />
+          <H5PCard
+            key={editId}
+            id={editId}
+            onSubmit={(h5pId) => {
+              onChange(String(h5pId));
+              setEditId(String(h5pId));
+            }}
+          />
         </Col>
       </Row>
 
@@ -63,16 +69,18 @@ export const H5PForm: React.FC<{
         <Col span={24}>
           <Row>
             <UploadH5P
-              onSuccess={(data) => {
-                if (data.data.id) {
-                  onChange(String(data.data.id));
+              onSuccess={(response) => {
+                if (response.success && response.data.contentId) {
+                  onChange(String(response.data.contentId));
+                  setEditId(String(response.data.contentId));
                 }
               }}
-              onError={() =>
-                console.log(
-                  intl.formatMessage({
-                    id: 'error',
-                  }),
+              onError={(errorMessage) =>
+                message.error(
+                  errorMessage ||
+                    intl.formatMessage({
+                      id: 'error',
+                    }),
                 )
               }
             />

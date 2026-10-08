@@ -13,5 +13,14 @@ export default tseslint.config(
                 { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }
             ]
         }
+    },
+    {
+        // browser code of the embed pages; TypeScript (DOM lib) checks globals
+        files: ['embed-client/**/*.ts'],
+        rules: { 'no-undef': 'off' }
+    },
+    {
+        files: ['scripts/**/*.mjs'],
+        languageOptions: { globals: { console: 'readonly', process: 'readonly' } }
     }
 );

@@ -1,6 +1,0 @@
-node_modules
-dist
-h5p
-coverage
-.env
-*.log

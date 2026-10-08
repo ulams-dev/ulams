@@ -105,12 +105,6 @@ export enum QuestionnaireQuestionType {
   Review = 'review',
 }
 
-export enum RecommenderType {
-  Exercise = 'exercise',
-  Course = 'course',
-  Info = 'info',
-}
-
 export enum BookmarkableType {
   Group = 'Ulams\\PcgIntegration\\Models\\Group',
 }

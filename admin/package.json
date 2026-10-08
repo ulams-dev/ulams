@@ -50,7 +50,6 @@
     "@atlaskit/tree": "^8.8.7",
     "@benrbray/prosemirror-math": "0.2.2",
     "@cfaester/enzyme-adapter-react-18": "^0.8.0",
-    "@escolalms/h5p-react": "^0.2.18",
     "@sentry/cli": "^2.40.0",
     "@sentry/esbuild-plugin": "^2.22.7",
     "@sentry/react": "^8",

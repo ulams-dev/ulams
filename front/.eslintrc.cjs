@@ -26,5 +26,18 @@ module.exports = {
     "prefer-spread": "off",
     "@typescript-eslint/no-var-requires": "off",
     "no-extra-boolean-cast": "off",
+    // H5P/Lumi is GPL: it runs only in the separate api/h5p service, framed via iframe
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: [
+          {
+            group: ["@lumieducation/*", "h5p-*", "@escolalms/h5p-react"],
+            message:
+              "GPL H5P code must stay in api/h5p; use the H5PFrame iframe wrapper instead.",
+          },
+        ],
+      },
+    ],
   },
 };

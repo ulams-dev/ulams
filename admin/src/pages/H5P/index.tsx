@@ -1,9 +1,11 @@
 import AuthenticatedLinkButton from '@/components/AuthenticatedLinkButton';
 import UploadH5P from '@/components/H5P/upload';
-import { h5p, removeH5P } from '@/services/ulams/h5p';
+import { h5p, h5pDownloadUrl, removeH5P, removeUnusedH5P } from '@/services/ulams/h5p';
 import { createTableOrderObject } from '@/utils/utils';
 import {
+  AppstoreOutlined,
   BookOutlined,
+  ClearOutlined,
   DeleteOutlined,
   EditOutlined,
   ExportOutlined,
@@ -12,37 +14,58 @@ import {
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import { Button, Popconfirm, Tooltip, message } from 'antd';
+import { Button, Popconfirm, Tag, Tooltip, message } from 'antd';
 import React, { useCallback, useRef, useState } from 'react';
-import { FormattedMessage, Link, useIntl } from 'umi';
+import { FormattedMessage, Link, useAccess, useIntl } from 'umi';
+
+const slug = (text: string) =>
+  text
+    .split(' ')
+    .join('-')
+    .replace(/[^a-zA-Z0-9-_]/g, '')
+    .toLocaleLowerCase() || 'h5p';
 
 const TableList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
-
   const actionRef = useRef<ActionType>();
-
   const intl = useIntl();
+  const access = useAccess();
 
   const handleRemove = useCallback(
-    async (id: number) => {
+    async (id: number | string) => {
       setLoading(true);
       const hide = message.loading(<FormattedMessage id="loading" defaultMessage="loading" />);
       try {
         await removeH5P(id);
         hide();
         message.success(<FormattedMessage id="success" defaultMessage="success" />);
-        setLoading(false);
         actionRef.current?.reload();
         return true;
       } catch (error) {
         hide();
         message.error(<FormattedMessage id="error" defaultMessage="error" />);
-        setLoading(false);
         return false;
+      } finally {
+        setLoading(false);
       }
     },
     [actionRef],
   );
+
+  const handleRemoveUnused = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await removeUnusedH5P();
+      if (response.success) {
+        message.success(response.message || intl.formatMessage({ id: 'success' }));
+      }
+      actionRef.current?.reload();
+    } catch (error) {
+      message.error(<FormattedMessage id="error" defaultMessage="error" />);
+    } finally {
+      setLoading(false);
+    }
+  }, [actionRef, intl]);
 
   const columns: ProColumns<API.H5PContentListItem>[] = [
     {
@@ -57,56 +80,45 @@ const TableList: React.FC = () => {
       dataIndex: 'upload',
       hideInSearch: false,
       hideInTable: true,
-
       renderFormItem: () => [
         <UploadH5P
           key={'upload'}
           hideLabel
           onSuccess={() => {
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
+            actionRef.current?.reload();
             message.success(
               <FormattedMessage id="H5P_uploaded" defaultMessage="new H5P uploaded successfully" />,
             );
           }}
-          onError={() => message.error(<FormattedMessage id="error" defaultMessage="error" />)}
+          onError={(errorMessage) =>
+            message.error(errorMessage || <FormattedMessage id="error" defaultMessage="error" />)
+          }
         />,
       ],
     },
     {
       title: <FormattedMessage id="title" defaultMessage="title" />,
       dataIndex: 'title',
-      sorter: (a, b) => a.title.length - b.title.length,
-      render: (dom, entity) => {
-        return entity.title;
-      },
+      sorter: true,
     },
     {
       title: <FormattedMessage id="library" defaultMessage="library" />,
       dataIndex: 'library',
-      sorter: (a, b) => a.library.title.length - b.library.title.length,
+      sorter: true,
       search: false,
-      render: (dom, entity) => {
-        return entity.library.title;
-      },
-    },
-    {
-      title: <FormattedMessage id="library_id" defaultMessage="library_id" />,
-      dataIndex: 'library_id',
-      sorter: (a, b) => a.library.id - b.library.id,
-      render: (dom, entity) => {
-        return entity.library.id;
-      },
+      render: (_, entity) => <Tag>{entity.library || entity.main_library}</Tag>,
     },
     {
       title: <FormattedMessage id="count_h5p" defaultMessage="count_h5p" />,
       dataIndex: 'count_h5p',
-      sorter: (a, b) => a.count_h5p - b.count_h5p,
       search: false,
-      render: (dom, entity) => {
-        return entity.count_h5p;
-      },
+    },
+    {
+      title: <FormattedMessage id="updated_at" defaultMessage="updated_at" />,
+      dataIndex: 'updated_at',
+      valueType: 'dateTime',
+      sorter: true,
+      search: false,
     },
     {
       title: <FormattedMessage id="options" defaultMessage="options" />,
@@ -148,8 +160,8 @@ const TableList: React.FC = () => {
         </Link>,
         <Tooltip title={<FormattedMessage id="export" defaultMessage="export" />} key={'export'}>
           <AuthenticatedLinkButton
-            url={`/api/admin/hh5p/content/${record.id}/export`}
-            filename={`${record.title.split(' ').join('-').toLocaleLowerCase()}.h5p`}
+            url={h5pDownloadUrl(record.id)}
+            filename={`${slug(record.title)}-${record.id}.h5p`}
             icon={<ExportOutlined />}
           />
         </Tooltip>,
@@ -171,32 +183,55 @@ const TableList: React.FC = () => {
           layout: 'vertical',
         }}
         toolBarRender={() => [
+          access.h5pLibraryListPermission && (
+            <Link to="/courses/h5ps/libraries" key={'libraries'}>
+              <Button icon={<AppstoreOutlined />}>
+                <FormattedMessage id="H5P_libraries" defaultMessage="Libraries" />
+              </Button>
+            </Link>
+          ),
+          <Popconfirm
+            key={'unused'}
+            title={
+              <FormattedMessage
+                id="H5P_remove_unused_question"
+                defaultMessage="Delete every H5P content that no topic uses?"
+              />
+            }
+            onConfirm={handleRemoveUnused}
+            okText={<FormattedMessage id="yes" defaultMessage="Yes" />}
+            cancelText={<FormattedMessage id="no" defaultMessage="No" />}
+          >
+            <Button danger icon={<ClearOutlined />}>
+              <FormattedMessage id="H5P_remove_unused" defaultMessage="Remove unused" />
+            </Button>
+          </Popconfirm>,
           <Link to="/courses/h5ps/new" key={'new'}>
             <Button type="primary" key="primary">
               <PlusOutlined /> <FormattedMessage id="new" defaultMessage="new" />
             </Button>
           </Link>,
         ]}
-        request={({ pageSize, current, title, library_id }, sort) => {
+        request={({ pageSize, current, title }, sort) => {
           setLoading(true);
 
           return h5p({
             title,
-            library_id,
             per_page: pageSize,
             page: current,
             ...createTableOrderObject(sort),
-          }).then((response) => {
-            setLoading(false);
-            if (response.success) {
-              return {
-                data: response.data,
-                total: response.meta.total,
-                success: true,
-              };
-            }
-            return [];
-          });
+          })
+            .then((response) => {
+              if (response.success) {
+                return {
+                  data: response.data,
+                  total: response.meta.total,
+                  success: true,
+                };
+              }
+              return { data: [], total: 0, success: false };
+            })
+            .finally(() => setLoading(false));
         }}
         columns={columns}
       />

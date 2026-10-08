@@ -190,10 +190,6 @@ export const defaultReadConfig: UlamsContextConfig = {
   fetchNotifications: (params?: API.PaginationParams) => Promise.reject(),
   readAllNotifications: () => Promise.reject(),
   readNotify: (id: string) => Promise.reject(),
-  h5p: {
-    loading: false,
-  },
-  fetchH5P: (id: string) => Promise.reject(),
   getRefreshedToken: () => Promise.reject(),
   fetchConsultations: () => Promise.reject(),
   fetchConsultation: (id: number) => Promise.reject(),
@@ -610,10 +606,6 @@ export const defaultApiConfig: UlamsContextConfig = {
   fetchNotifications: (params?: API.PaginationParams) => Promise.reject(),
   readNotify: (id: string) => Promise.reject(),
   readAllNotifications: () => Promise.reject(),
-  h5p: {
-    loading: false,
-  },
-  fetchH5P: (uuid: string) => Promise.reject(),
   fetchConsultations: () => Promise.reject(),
   fetchConsultation: (id: number) => Promise.reject(),
   fetchUserConsultations: () => Promise.reject(),

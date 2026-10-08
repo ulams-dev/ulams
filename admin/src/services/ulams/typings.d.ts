@@ -366,7 +366,6 @@ declare namespace API {
   type H5PListParams = PageParams &
     PaginationParams & {
       title?: string;
-      library_id?: number;
     };
 
   type LoginRequest = {
@@ -646,8 +645,9 @@ declare namespace API {
 
   type TopicH5P = TopicBase & {
     topicable_type: TopicType.H5P;
+    /** `value` is the content id in the H5P service (api/h5p) */
     topicable: TopicableBase & {
-      content: H5PObject;
+      content?: H5PContent | null;
     };
   };
 
@@ -690,51 +690,26 @@ declare namespace API {
     lessons: Lesson[];
   };
 
-  type H5PLibrary = {
-    id: number;
-    created_at: string;
-    updated_at: string;
-    name: string;
+  /** H5P content summary embedded in topics (`topic.topicable.content`) */
+  type H5PContent = {
+    id: number | string;
     title: string;
-    runnable: number;
-    restricted: number;
-    fullscreen: number;
-    embed_types: string;
-    semantics: object;
-    machineName: string;
-    uberName: string;
-    majorVersion: string;
-    minorVersion: string;
-    patchVersion: string;
-    preloadedJs: string;
-    preloadedCss: string;
-    dropLibraryCss: string;
-    tutorialUrl: string;
-    hasIcon: string;
-    libraryId: number;
+    /** e.g. "H5P.MultiChoice 1.16" */
+    library: string;
+    /** e.g. "H5P.MultiChoice" */
+    main_library: string;
   };
 
-  type H5PContent = {
-    id: number;
+  /** GET /api/admin/h5p/contents item */
+  type H5PContentListItem = H5PContent & {
+    user_id: number | string | null;
     created_at: string;
     updated_at: string;
-    user_id: string | number;
-    title: string;
-    library_id: string;
-    parameters: string;
-    filtered: string;
-    slug: string;
-    embed_type: string;
-    params: object;
-    metadata: object;
-    library: H5PLibrary;
-    nonce: string;
+    /** number of topics using the content */
     count_h5p: number;
   };
 
-  type H5PContentList = PaginatedList<H5PContent>;
-
-  type H5PContentListItem = H5PContent;
+  type H5PContentList = PaginatedList<H5PContentListItem>;
 
   type H5PContentParams = PageParams & PaginationParams;
 
@@ -760,10 +735,7 @@ declare namespace API {
     id: number;
     order_id: string;
     payable_id: number;
-    payable_type:
-      | 'Ulams\\Cart\\Models\\Order'
-      | 'App\\Models\\User'
-      | 'Ulams\\Core\\Models\\User';
+    payable_type: 'Ulams\\Cart\\Models\\Order' | 'App\\Models\\User' | 'Ulams\\Core\\Models\\User';
     status: PaymentStatus;
     updated_at: string;
     user_id: number;
@@ -864,61 +836,6 @@ declare namespace API {
     | TemplateChannelValue.email
     | TemplateChannelValue.pdf
     | TemplateChannelValue.sms;
-
-  type RecommenderTopicType =
-    | OEmbed
-    | PDF
-    | Video
-    | RichText
-    | Image
-    | H5P.Summary
-    | H5P.FindTheWords
-    | H5P.ImageHotspotQuestion
-    | H5P.DragText
-    | H5P.Blanks
-    | H5P.TrueFalse
-    | H5P.QuestionSet
-    | H5P.Crossword
-    | H5P.ImageJuxtaposition
-    | H5P.Accordion
-    | H5P.CoursePresentation
-    | H5P.MultiMediaChoice
-    | H5P.DragQuestion
-    | H5P.SingleChoiceSet
-    | H5P.MultiChoice
-    | H5P.Column
-    | H5P.GuessTheAnswer
-    | H5P.MemoryGame
-    | H5P.Flashcards
-    | H5P.Chart
-    | H5P.Cornell
-    | H5P.InteractiveBook
-    | H5P.Dialogcards
-    | H5P.Agamotto
-    | H5P.Collage
-    | H5P.ImageSequencing
-    | H5P.SortParagraphs
-    | H5P.InteractiveVideo
-    | H5P.Audio
-    | H5P.ImageHotspots
-    | H5P.Timeline
-    | H5P.BranchingScenario
-    | H5P.InfoWall
-    | H5P.Essay
-    | H5P.MarkTheWords
-    | H5P.PersonalityQuiz
-    | H5P.ImageSlider
-    | H5P.KewArCode
-    | H5P.ImagePair;
-
-  type Recommender = {
-    probability: number;
-  };
-
-  type RecommenderExercise = {
-    topic_type: RecommenderTopicType;
-    probability: number;
-  };
 
   type SCORM = {
     id: number;
@@ -1091,10 +1008,7 @@ declare namespace API {
     target_group: 'user' | 'author' | null;
   };
 
-  type Questionnaire = Pick<
-    Ulams.Questionnaire.Models.Questionnaire,
-    'active' | 'id' | 'title'
-  > & {
+  type Questionnaire = Pick<Ulams.Questionnaire.Models.Questionnaire, 'active' | 'id' | 'title'> & {
     models: QuestionnaireQuestionModel[];
     questions: QuestionnaireQuestion[];
   };
@@ -1187,9 +1101,7 @@ declare namespace API {
         value: API.UserGroup;
       }
     | {
-        type:
-          | 'App\\Models\\StationaryEvent'
-          | 'Ulams\\StationaryEvents\\Models\\StationaryEvent';
+        type: 'App\\Models\\StationaryEvent' | 'Ulams\\StationaryEvents\\Models\\StationaryEvent';
         value: Ulams.StationaryEvents.Models.StationaryEvent;
       }
     | {
@@ -1292,65 +1204,35 @@ declare namespace API {
 
   export type TopicNewOrNotEmpty = TopicNotEmpty | TopicNew;
 
-  type Dict = {
-    [key: string]: string | Dict;
+  type H5PSaveContentResult = {
+    contentId: string;
+    metadata: { title?: string } & Record<string, unknown>;
   };
 
-  export type H5PObject = {
-    id?: string | number;
-    baseUrl: string;
-    url: string;
-    postUserStatistics: boolean;
-    ajax: { setFinished: string; contentUserData: string };
-    saveFreq: boolean;
-    siteUrl: string;
-    l10n: Dict;
-    hubIsEnabled: boolean;
-    loadedJs: string[];
-    loadedCss: string[];
-    core: {
-      styles: string[];
-      scripts: string[];
-    };
-    editor?: {
-      filesPath: string;
-      fileIcon: { path: string; width: number; height: number };
-      ajaxPath: string;
-      libraryUrl: string;
-      copyrightSemantics: Dict;
-      metadataSemantics: Dict[];
+  type H5PUploadResult = H5PSaveContentResult & {
+    installedLibraries?: unknown[];
+  };
 
-      assets: {
-        css: string[];
-        js: string[];
-      };
-      deleteMessage: string;
-      apiVersion: { majorVersion: number; minorVersion: number };
-    };
-    nonce: string;
-    token?: string;
-    contents?: Record<
-      string,
-      {
-        library: string;
-        jsonContent: string;
-        fullScreen: boolean;
-        title: string;
-        content: {
-          id: number;
-          library: {
-            id: number;
-            embedTypes: string;
-            name: string;
-          };
-        };
-        contentUserData: [
-          {
-            state: object;
-          },
-        ];
-      }
-    >;
+  /** Lumi ILibraryAdministrationOverviewItem: GET /h5p/libraries */
+  type H5PLibraryAdministrationItem = {
+    canBeDeleted: boolean;
+    canBeUpdated: boolean;
+    dependentsCount: number;
+    instancesAsDependencyCount: number;
+    instancesCount: number;
+    isAddon: boolean;
+    machineName: string;
+    majorVersion: number;
+    minorVersion: number;
+    patchVersion: number;
+    restricted: boolean;
+    runnable: boolean;
+    title: string;
+  };
+
+  type H5PXAPIEvent = {
+    statement: Record<string, any>;
+    context?: { contentId: string };
   };
 
   export type Webinar = {
@@ -1435,8 +1317,7 @@ declare namespace API {
 
   type ConsultationAccessEnquiryListItem = ConsultationAccessEnquiry;
 
-  type CourseAccessEnquiryList =
-    DefaultMetaResponse<Ulams.CourseAccess.Models.CourseAccessEnquiry>;
+  type CourseAccessEnquiryList = DefaultMetaResponse<Ulams.CourseAccess.Models.CourseAccessEnquiry>;
 
   type CourseAccessEnquiryListItem = Ulams.CourseAccess.Models.CourseAccessEnquiry;
 

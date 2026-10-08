@@ -1,0 +1,12 @@
+# Context filter for `docker build -f api/h5p/Dockerfile .` run from the repo root.
+# Allow-list: only what the api-h5p image needs.
+*
+!package.json
+!yarn.lock
+!api/h5p/package.json
+!api/h5p/tsconfig.json
+!api/h5p/tsconfig.build.json
+!api/h5p/src
+!api/h5p/scripts/download-core.sh
+!api/h5p/scripts/build-embed.mjs
+!api/h5p/embed-client

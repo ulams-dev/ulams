@@ -1,72 +1,71 @@
-import { contentSettings } from '@/services/ulams/h5p';
-import type { EditorSettings, XAPIEvent } from '@escolalms/h5p-react';
-import { ContextlessPlayer } from '@escolalms/h5p-react';
-import { Alert, Col, Divider, Row, Spin, Typography } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { Alert, Divider, Spin, Typography } from 'antd';
+import React, { useMemo, useState } from 'react';
 import ReactJson from 'react-json-view';
-import { useIntl } from 'umi';
+
+import { useH5PFrame } from './useH5PFrame';
+import { h5pEmbedUrl, h5pLanguage } from './utils';
+
 const { Title } = Typography;
 
+export type H5PLoadedInfo = { title?: string; library?: string };
+
+/**
+ * H5PFrame: the H5P service's player page in an iframe. Without `onXAPI` the
+ * xAPI statements are listed below the content (admin preview).
+ */
 export const Player: React.FC<{
-  id: 'new' | number;
-  onXAPI?: (event: XAPIEvent) => void;
-  onLoaded?: (settings: API.H5PObject) => void;
+  id: string | number;
+  onXAPI?: (event: API.H5PXAPIEvent) => void;
+  onLoaded?: (info: H5PLoadedInfo) => void;
 }> = ({ id, onXAPI, onLoaded }) => {
-  const [settings, setEditorSettings] = useState<EditorSettings>();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [XAPIEvents, setXAPIEvents] = useState<XAPIEvent[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>();
+  const [XAPIEvents, setXAPIEvents] = useState<API.H5PXAPIEvent['statement'][]>([]);
+  const lang = h5pLanguage();
 
-  const intl = useIntl();
-  const lang = intl.locale.split('-')[0];
+  const src = useMemo(
+    () => (id && id !== 'new' ? h5pEmbedUrl('play', id, { language: lang }) : undefined),
+    [id, lang],
+  );
 
-  useEffect(() => {
-    if (id) {
-      setLoading(true);
-      contentSettings(id, lang)
-        .then((data) => {
-          if (data.success) {
-            if (onLoaded) {
-              onLoaded(data.data);
-            }
-            setEditorSettings(data.data);
-          } else {
-            setError(data.message);
-          }
-        })
-        .catch((err: any) => err && setError(err.toString()))
-        .finally(() => setLoading(false));
+  const { iframeRef, height } = useH5PFrame(src, (message) => {
+    switch (message.type) {
+      case 'ulams-h5p:loaded':
+        setLoading(false);
+        onLoaded?.({ title: message.title, library: message.library });
+        break;
+      case 'ulams-h5p:xapi':
+        if (onXAPI) {
+          onXAPI({ statement: message.statement, context: { contentId: message.contentId } });
+        } else {
+          setXAPIEvents((prev) => [...prev, message.statement]);
+        }
+        break;
+      case 'ulams-h5p:error':
+        setLoading(false);
+        setError(message.message);
+        break;
+      default:
+        break;
     }
-  }, [id]);
-
-  if (!settings) {
-    return (
-      <Col>
-        <Row justify="center" align="middle">
-          {error && <Alert message={error} type="error" />}
-          <Spin />
-        </Row>
-      </Col>
-    );
-  }
+  });
 
   return (
     <React.Fragment>
       {error && <Alert message={error} type="error" />}
-      <ContextlessPlayer
-        contentId={id}
-        onError={(err: unknown) => console.error(err)}
-        state={settings}
-        allowSameOrigin
-        loading={loading}
-        onXAPI={(event: XAPIEvent) => {
-          if (onXAPI) {
-            onXAPI(event);
-          } else {
-            setXAPIEvents((prevState) => [...prevState, event]);
-          }
-        }}
-      />
+      {loading && !error && <Spin />}
+      {src && (
+        <iframe
+          key={src}
+          ref={iframeRef}
+          src={src}
+          title="H5P"
+          style={{ width: '100%', height, border: 0, display: 'block' }}
+          allow="fullscreen; autoplay; encrypted-media"
+          allowFullScreen
+          referrerPolicy="no-referrer"
+        />
+      )}
 
       {!onXAPI && (
         <React.Fragment>
@@ -80,5 +79,7 @@ export const Player: React.FC<{
     </React.Fragment>
   );
 };
+
+export const H5PFrame = Player;
 
 export default Player;

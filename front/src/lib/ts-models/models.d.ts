@@ -1346,134 +1346,6 @@ declare namespace Ulams.CsvUsers.Models {
 
 }
 
-declare namespace Ulams.HeadlessH5P.Models {
-    export interface H5PContentLibrary {
-        content_id: number;
-        library_id: number;
-        dependency_type: string;
-        weight: number;
-        drop_css: boolean;
-        id: number;
-        library?: Ulams.HeadlessH5P.Models.H5PLibrary | null;
-        content?: Ulams.HeadlessH5P.Models.H5PContent | null;
-    }
-
-    export interface H5PLibraryLanguage {
-        library_id: number;
-        language_code: string;
-        translation: string;
-        id: number;
-        library?: Ulams.HeadlessH5P.Models.H5PLibrary | null;
-    }
-
-    export interface H5PContent {
-        id: number;
-        created_at: string | null;
-        updated_at: string | null;
-        user_id: number | null;
-        library_id: number;
-        parameters: Array<any> | any;
-        nonce: string;
-        filtered: string | null;
-        slug: string | null;
-        embed_type: string | null;
-        disable: number;
-        content_type: string | null;
-        author: string | null;
-        license: string | null;
-        keywords: string | null;
-        description: string | null;
-        uuid: string | null;
-        user?: Ulams.Core.Models.User | null;
-        library?: Ulams.HeadlessH5P.Models.H5PLibrary | null;
-        libraries?: Array<Ulams.HeadlessH5P.Models.H5PContentLibrary> | null;
-        libraries_count?: number | null;
-        readonly title?: any;
-        readonly params?: any;
-        readonly metadata?: any;
-    }
-
-    export interface H5pLibrariesHubCache {
-        id: number;
-        machine_name: string;
-        major_version: number;
-        minor_version: number;
-        patch_version: number;
-        h5p_major_version: number | null;
-        h5p_minor_version: number | null;
-        title: string;
-        summary: string;
-        description: string;
-        icon: string;
-        created_at: number;
-        updated_at: number;
-        is_recommended: number;
-        popularity: number;
-        screenshots: string | null;
-        license: string | null;
-        example: string;
-        tutorial: string | null;
-        keywords: string | null;
-        categories: string | null;
-        owner: string | null;
-    }
-
-    export interface H5PLibraryDependency {
-        library_id: number;
-        required_library_id: number;
-        dependency_type: string;
-        id: number;
-        library?: Ulams.HeadlessH5P.Models.H5PLibrary | null;
-        required_library?: Ulams.HeadlessH5P.Models.H5PLibrary | null;
-    }
-
-    export interface H5PLibrary {
-        id: number;
-        created_at: string | null;
-        updated_at: string | null;
-        name: string;
-        title: string;
-        major_version: number;
-        minor_version: number;
-        patch_version: number;
-        runnable: number;
-        restricted: number;
-        fullscreen: number;
-        embed_types: string;
-        preloaded_js: string | null;
-        preloaded_css: string | null;
-        drop_library_css: string | null;
-        semantics: string;
-        tutorial_url: string;
-        has_icon: number;
-        add_to: string | null;
-        dependencies?: Array<Ulams.HeadlessH5P.Models.H5PLibraryDependency> | null;
-        required_libraries?: Array<Ulams.HeadlessH5P.Models.H5PLibraryDependency> | null;
-        languages?: Array<Ulams.HeadlessH5P.Models.H5PLibraryLanguage> | null;
-        contents?: Array<Ulams.HeadlessH5P.Models.H5PContent> | null;
-        dependencies_count?: number | null;
-        languages_count?: number | null;
-        readonly library_id?: any;
-        readonly machine_name?: string;
-        readonly directory_name?: string;
-        readonly main_version?: string;
-        readonly version?: string;
-        readonly uber_name?: string;
-        readonly contents_count?: number;
-        readonly required_libraries_count?: number;
-    }
-
-    export interface H5PTempFile {
-        id: number;
-        path: string;
-        nonce: string | null;
-        created_at: string | null;
-        updated_at: string | null;
-        content?: Ulams.HeadlessH5P.Models.H5PContent | null;
-    }
-
-}
-
 declare namespace Ulams.ModelFields.Models {
     export interface Field {
         id: number;
@@ -1956,8 +1828,20 @@ declare namespace Ulams.TopicTypes.Models.TopicContent {
         id: number;
         created_at: string | null;
         updated_at: string | null;
+        /** content id in the H5P service (api/h5p, schema h5p.contents) */
         value: number;
+        /** summary appended to topic / program responses */
+        content?: Ulams.TopicTypes.Models.TopicContent.H5PContentSummary | null;
         topic?: Ulams.Courses.Models.Topic | null;
+    }
+
+    export interface H5PContentSummary {
+        id: number | string;
+        title: string;
+        /** e.g. "H5P.MultiChoice 1.16" */
+        library: string;
+        /** e.g. "H5P.MultiChoice" */
+        main_library: string;
     }
 
     export interface Audio {
@@ -3445,51 +3329,6 @@ declare namespace Ulams.Files.Http.Requests {
         page?: number | null;
         perPage?: number | null;
     }
-
-}
-
-declare namespace Ulams.HeadlessH5P.Http.Requests {
-    export interface ContentDeleteRequest {}
-
-    export interface LibraryUploadRequest {}
-
-    export interface ContentReadRequest {}
-
-    export interface FilesStoreRequest {
-        field: string;
-        contentId: string;
-    }
-
-    export interface AdminContentReadRequest {}
-
-    export interface LibraryInstallRequest {}
-
-    export interface ContentCreateRequest {
-        library: string;
-        params: string;
-        nonce: string;
-    }
-
-    export interface ContentUpdateRequest {
-        library: string;
-        params: string;
-        nonce: string;
-    }
-
-    export interface LibraryDeleteRequest {}
-
-    export interface LibraryFilterRequest {}
-
-    export interface ContentListRequest {
-        title?: string | null;
-        library_id?: number | null;
-        order_by?: string | null;
-        order?: string | null;
-    }
-
-    export interface LibraryListRequest {}
-
-    export interface LibraryStoreRequest {}
 
 }
 

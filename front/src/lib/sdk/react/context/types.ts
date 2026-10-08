@@ -63,7 +63,6 @@ export interface UlamsContextReadConfig {
   pages: ContextPaginatedMetaState<API.PageListItem>;
   page: ContextStateValue<API.Page>;
   notifications: ContextPaginatedMetaState<API.Notification>;
-  h5p: ContextStateValue<API.H5PObject>;
   tokenExpireDate?: string | null;
   consultations: ContextPaginatedMetaState<API.Consultation>;
   consultation: ContextStateValue<API.Consultation>;
@@ -276,7 +275,6 @@ export interface UlamsContextAPIConfig {
   ) => Promise<API.DefaultMetaResponse<API.Notification>>;
   readNotify: (id: string) => Promise<void>;
   readAllNotifications: () => Promise<void>;
-  fetchH5P: (uuid: string) => void;
   getRefreshedToken: () => Promise<void>;
   fetchConsultations: (
     filter: API.ConsultationParams

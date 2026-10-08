@@ -16,6 +16,7 @@ import { I18nSetup } from './h5p/i18n';
 import { authMiddleware } from './auth/middleware';
 import { contentsRouter } from './routes/contents';
 import { healthRouter } from './routes/health';
+import { embedRouter } from './routes/embed';
 import { jsonErrorHandler, requireAny } from './http/respond';
 import { Tenant, TenantResolver } from './tenancy/types';
 
@@ -148,6 +149,10 @@ export function createApp(deps: AppDeps): Express {
 
     // Health is unauthenticated and does not need body parsing.
     app.use(`${base}/health`, healthRouter(tenants, deps.redis));
+
+    // Embed pages (HTML + bundled JS): no tenant, no auth; the token arrives
+    // later via postMessage and is used for same-origin API calls.
+    app.use(`${base}/embed`, embedRouter({ base, allowedOrigins: config.corsOrigins }));
 
     // Tenant from X-Forwarded-Host / Host.
     app.use(async (req, res, next) => {

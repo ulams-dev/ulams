@@ -125,6 +125,61 @@ Lumi's library administration and content-type-cache routers do no
 permission checks of their own; the service puts guards in front of them.
 Library *files* stay public, because anonymous learners need them.
 
+| Method & path | Who | Description |
+| --- | --- | --- |
+| `GET /h5p/embed/play/:id` | anyone | player page for iframes; `?language=`, `?contextId=`, `?readOnlyState=yes`, `?hideActions=1` |
+| `GET /h5p/embed/edit/:id` | anyone (its API calls need `h5p_create` / edit rights) | editor page; `:id` may be `new`; `?language=` |
+| `GET /h5p/embed/assets/{player,editor}.js` | anyone | the pages' scripts (Lumi web components + glue, bundled by `scripts/build-embed.mjs` from `embed-client/`) |
+
+## Embedding (iframe + postMessage)
+
+The LMS frontends (admin, front) never load H5P or Lumi code. They frame the
+embed pages and talk to them with `window.postMessage`:
+
+```
+admin/front (MIT)                                  H5P service page (GPL), in the iframe
+ <iframe src="{API}/h5p/embed/play/12?language=pl">
+                                  <── ulams-h5p:ready {mode, contentId}   (repeated until answered)
+ ulams-h5p:style {css?, urls?} ──>                                       (optional, before the token)
+ ulams-h5p:token {token|null}  ──>                                       page fetches /h5p/contents/12/play
+                                  <── ulams-h5p:loaded {contentId, title, library}
+                                  <── ulams-h5p:resize {height}
+                                  <── ulams-h5p:xapi {statement, contentId}
+ ulams-h5p:token {newToken}    ──>                                       after every token refresh
+ ulams-h5p:save                ──>                                       editor only
+                                  <── ulams-h5p:saved {contentId, metadata}  (editor)
+                                  <── ulams-h5p:error {message, code?}       (load | save | validation)
+```
+
+| Message | Direction | Payload |
+| --- | --- | --- |
+| `ulams-h5p:ready` | page → parent | `{mode: 'play' or 'edit', contentId}`; no secrets; posted to each allowed origin every 500 ms (max 20×) until the parent answers |
+| `ulams-h5p:token` | parent → page | `{token: string or null}`; the first one starts loading (null = anonymous play), later ones refresh the token. A player that gets no token within 5 s plays anonymously |
+| `ulams-h5p:style` | parent → page | `{css?: string, urls?: string[]}`; applied to the page and, for the iframe embed type, inside the content iframe. URLs must be on the page origin or an allowed origin |
+| `ulams-h5p:loaded` | page → parent | `{contentId, title?, library?}` |
+| `ulams-h5p:resize` | page → parent | `{height}`: document height in px |
+| `ulams-h5p:xapi` | page → parent | `{statement, contentId}`: every xAPI statement of the content and its sub-content |
+| `ulams-h5p:save` | parent → editor | `{}` |
+| `ulams-h5p:saved` | editor → parent | `{contentId, metadata}`; new content gets its id here |
+| `ulams-h5p:error` | page → parent | `{message, code?: 'load', 'save' or 'validation'}` |
+
+Security rules:
+
+- **Origins.** The page accepts messages only from `window.parent` and an
+  origin in `CORS_ORIGINS` (`*` disables the check). After the first accepted
+  message it talks only to that origin and posts to it by name, never to `*`.
+  The parent accepts messages only from the iframe's `contentWindow` with the
+  API origin and posts only to that origin.
+- **Framing.** Embed pages send `Content-Security-Policy: frame-ancestors 'self'
+  <CORS_ORIGINS>` and `Referrer-Policy: no-referrer`.
+- **Tokens** travel only in postMessage and in the `Authorization` header of
+  the page's same-origin API calls (plus H5P core's `?_token=`, see above).
+  They are never part of an embed URL and the page never logs them.
+
+The page code lives in `embed-client/` (`protocol.ts` has the message types).
+The frontends keep their own MIT copies of the types in
+`front/src/lib/sdk/types/h5p.ts` and `admin/src/components/H5P/utils.ts`.
+
 ## Authentication model
 
 1. `X-Internal-Token: $H5P_INTERNAL_TOKEN` → **system user** (every
@@ -149,11 +204,13 @@ therefore adds `?_token=<caller's token>` to the AJAX, contentUserData and
 finishedData URLs inside the player/editor model. Two consequences:
 
 - **Token expiry.** Passport tokens live about 5 minutes. After the token in
-  the model expires, state saves arrive anonymous and fail with 403. **The
-  front end re-fetches `GET /h5p/contents/:id/play` whenever it refreshes its
-  access token** and re-initialises the player with the new model. The call is
-  cheap (one row read plus cached library metadata) and is sent with
-  `Cache-Control: no-store`.
+  the model expires, state saves arrive anonymous and fail with 403. The LMS
+  frontends therefore send every refreshed token to the embed page
+  (`ulams-h5p:token`, see "Embedding"); the player page re-fetches
+  `GET /h5p/contents/:id/play` with it and swaps the AJAX URLs in place (the
+  running content is not reloaded), the editor page swaps the token inside its
+  model's `ajaxPath`. `/play` is cheap (one row read plus cached library
+  metadata) and is sent with `Cache-Control: no-store`.
 - **Logs.** The service redacts `_token` in its own logs, but Caddy's access log
   records full URIs. Add the `log { format filter … }` block from
   `Caddyfile.snippet`, which replaces `_token` and drops `Authorization` /
@@ -323,31 +380,30 @@ Caddy must forward the original host (`header_up X-Forwarded-Host {host}`).
 
 ## Development
 
-```
-npm ci
-npm run download:core           # H5P core + editor into ./h5p
-npm run dev                     # tsx watch; needs postgres/redis/minio reachable
-npm run lint && npm run build
-```
-
-Tests (vitest) include integration tests against the real Postgres, Redis and
-MinIO. Run them in a container on the `ulams` network. Each run uses a
-throwaway schema `h5p_test_<random>` and S3 prefix `h5p-test-<random>`, and
-removes both afterwards:
+`api-h5p` is a Yarn workspace of the monorepo (root `yarn.lock`, no
+package-lock). From the repository root:
 
 ```
-docker run --rm --network ulams -v "$PWD":/app -v api_h5p_test_nm:/app/node_modules \
-  -w /app -e REDIS_PASSWORD=ulams node:22-alpine sh -c "npm ci && npm test"
+corepack yarn install
+corepack yarn workspace api-h5p download:core   # H5P core + editor into api/h5p/h5p
+corepack yarn workspace api-h5p dev             # tsx watch; needs postgres/redis/minio reachable
+corepack yarn turbo run build typecheck lint test --filter=api-h5p
 ```
 
-(The separate `node_modules` volume keeps Linux binaries apart from a host
-install.)
+`build` runs `tsc` and then `scripts/build-embed.mjs` (esbuild bundles
+`embed-client/*.ts` with `@lumieducation/h5p-webcomponents` into
+`dist/embed/`). `test` runs the unit suites only. The integration suites
+(`test/http.test.ts`, `test/pg-storage.test.ts`) need the real Postgres, Redis
+and MinIO, so run `test:integration` in a container on the `ulams` network.
+Each run uses a throwaway schema `h5p_test_<random>` and S3 prefix
+`h5p-test-<random>` and removes both.
 
-Docker:
+Docker (build context = repository root; `api/h5p/Dockerfile.dockerignore` is
+an allow-list):
 
 ```
-docker build -t ulams/h5p:dev .
-docker compose -f docker-compose.yml -f h5p/compose.h5p.yml up -d h5p
+docker build -f api/h5p/Dockerfile -t ulams/h5p:dev .
+# compose (from api/): build: { context: .., dockerfile: api/h5p/Dockerfile }
 ```
 
 ## License
@@ -358,3 +414,18 @@ This service builds on Lumi's h5p-nodejs-library, licensed
 core and editor client files (h5p-php-library, h5p-editor-php-library) are
 **GPL-3.0**, as was the PHP H5P package this service replaces. The service is
 therefore distributed as GPL-3.0-or-later (`package.json` `license`).
+
+### Licensing boundary
+
+- api-h5p is a **separate program** under GPL-3.0-or-later. Everything GPL
+  (`@lumieducation/*`, the H5P core/editor JS, the bundled embed scripts) is
+  installed, bundled and served only by this service.
+- The MIT/proprietary parts (admin, front, the Laravel API) talk to it only
+  over HTTP and `postMessage` (iframes, see "Embedding"); they do not link,
+  import or bundle any of its code. admin and front enforce this with an
+  ESLint `no-restricted-imports` rule on `@lumieducation/*` (front also runs
+  `yarn lint:gpl`, which covers `src/lib`). Do not import this workspace or
+  its dependencies from other workspaces.
+- The service ships its own source: this directory (including
+  `embed-client/` and the build scripts) is the complete corresponding source
+  of the image and of the scripts it serves; the bundles carry source maps.

@@ -15,7 +15,6 @@
     "@capacitor/ios": "^5.7.3",
     "@capacitor/local-notifications": "^5.0.7",
     "@capacitor/status-bar": "^5.0.7",
-    "@escolalms/h5p-react": "^0.2.19",
     "@jitsi/react-sdk": "^1.4.0",
     "@revenuecat/purchases-capacitor": "^7.5.9",
     "@sentry/react": "^8",
@@ -46,12 +45,10 @@
     "i18next": "^21.4.0",
     "jssha": "^3.2.0",
     "katex": "^0.16.0",
-    "laravel-echo": "^2.3.1",
     "leva": "^0.9.34",
     "lodash.debounce": "^4.0.8",
     "lodash.flow": "^3.5.0",
     "photoswipe": "^5.3.7",
-    "pusher-js": "^8.4.0",
     "rc-dialog": "^8.8.1",
     "rc-drawer": "^7.1.0",
     "rc-tree-select": "^5.8.0",
@@ -98,9 +95,10 @@
     "tsc": "tsc --project tsconfig.json --noEmit",
     "analyze": "source-map-explorer 'dist/static/js/*.js'",
     "proxy": "node proxy.js",
-    "lint": "eslint . --ext ts,tsx",
+    "lint": "eslint . --ext ts,tsx && yarn lint:gpl",
     "dev": "vite --port 3000",
-    "typecheck": "tsc --project tsconfig.json --noEmit"
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "lint:gpl": "node scripts/check-no-gpl-imports.cjs"
   },
   "browserslist": [
     ">0.2%",

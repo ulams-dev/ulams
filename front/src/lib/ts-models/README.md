@@ -8,4 +8,6 @@ Global `App.Models.*` TypeScript declarations generated from the Laravel models.
 - Not imported: it is an ambient declaration file picked up by `include` in `front/tsconfig.json`
   (`src`) and `admin/tsconfig.json` (`../front/src/lib/ts-models/models.d.ts`). Single copy shared by both apps.
 - Regenerate upstream with `php artisan typescript:generate`.
+- Local changes: `Ulams.HeadlessH5P.*` removed (the PHP H5P package was replaced by the api/h5p
+  service); `TopicContent.H5P.content` (`H5PContentSummary`) added.
 - License: see `LICENSE`.

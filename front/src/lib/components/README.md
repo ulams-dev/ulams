@@ -10,5 +10,10 @@ UI component library (styled-components, React 18) used by the front app.
   imports (upstream `baseUrl: src`) → `@lms/components/...`.
 - Runtime deps now live in `front/package.json` (chroma-js, formik, rc-*, react-markdown 8, rehype/remark,
   react-pdf, react-player, photoswipe, screenfull, katex, …). It now shares front's `react-i18next` 11
-  (the npm package had its own 12.x copy). `@escolalms/h5p-react` stays an npm dependency for now.
+  (the npm package had its own 12.x copy).
+- H5P: `players/H5Player` (alias `H5PFrame`) frames the H5P service's player page
+  (`${apiUrl}/h5p/embed/play/:id`) and talks to it over postMessage (token, theme CSS +
+  `/h5p_overwrite.css`, xAPI, resize). The H5P/Lumi code (GPL) runs only in that separate
+  service; importing `@lumieducation/*` here is forbidden (eslint `no-restricted-imports`,
+  `yarn lint:gpl`). Replaces `@escolalms/h5p-react`.
 - License: MIT (`LICENSE`).

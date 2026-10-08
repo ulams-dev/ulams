@@ -5,7 +5,8 @@
 services:
   h5p:
     build:
-      context: ./h5p
+      context: ../..
+      dockerfile: api/h5p/Dockerfile
     image: ulams/h5p:dev
     restart: unless-stopped
     networks:

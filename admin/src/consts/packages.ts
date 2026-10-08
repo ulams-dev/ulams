@@ -16,7 +16,7 @@ enum PACKAGES {
   CoursesImportExport = 'ulams/courses-import-export',
   CsvUsers = 'ulams/csv-users',
   Files = 'ulams/files',
-  HeadlessH5p = 'ulams/headless-h5p',
+  H5P = 'ulams/h5p',
   Images = 'ulams/images',
   Invoices = 'ulams/invoices',
   Jitsi = 'ulams/jitsi',
@@ -52,7 +52,6 @@ enum PACKAGES {
   Vouchers = 'ulams/vouchers',
   Webinar = 'ulams/webinar',
   Youtube = 'ulams/youtube',
-  Recommender = 'ulams/recommender',
   Dictionary = 'ulams/dictionaries',
   RevenuecatIntegration = 'ulams/revenuecat-integration',
 }

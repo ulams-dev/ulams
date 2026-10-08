@@ -17,11 +17,7 @@ export default () => {
     <PageContainer
       title={
         <>
-          {title ? (
-            <FormattedMessage id="H5P_edit_content_title" />
-          ) : (
-            <FormattedMessage id="H5P_new_content_title" />
-          )}
+          <FormattedMessage id="H5P_preview_title" />
 
           {` ${title}`}
         </>
@@ -49,14 +45,13 @@ export default () => {
         <Row>
           <Col span={24}>
             <H5Player
-              onLoaded={(data) => {
-                const contents = data.contents && data.contents[`cid-${h5p}`];
-                if (contents && contents.title) {
-                  setTitle(contents.title);
+              onLoaded={(info) => {
+                if (info.title) {
+                  setTitle(info.title);
                 }
               }}
-              id={Number(h5p)}
-            />{' '}
+              id={String(h5p)}
+            />
           </Col>
         </Row>
       </ProCard>

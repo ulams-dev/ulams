@@ -86,7 +86,7 @@ enum PERMISSIONS {
   H5PRead = 'h5p_read',
   H5PCreate = 'h5p_create',
   H5PDelete = 'h5p_delete',
-  H5PUpdate = 'h5p-update',
+  H5PUpdate = 'h5p_update',
 
   H5PAuthorList = 'h5p_author_list',
   H5PAuthorUpdate = 'h5p_author_update',
