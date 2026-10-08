@@ -313,9 +313,10 @@ run in PHPUnit; Adapt Path B and the LTI round-trips run in a nightly workflow w
 
 ## 9. Designs (Stitch)
 
-Phase 1 adds admin and integration screens; generated in the Stitch project "ulams Course Builder"
+Phase 1 adds admin and integration screens, requested in the Stitch project "ulams Course Builder"
 (same platform design language) and indexed in `front/docs/design/stitch/course-builder/README.md`
-under "Phase 1":
+under "Phase 1". Only the LiaScript editor was exported (screen `48ede9329c8947f59ba2447d4d9633ef`);
+the other three timed out in the Stitch API and need to be exported or regenerated:
 
 - Admin "Integrations → LTI": tool and platform registrations with the add-tool drawer.
 - Admin LiaScript topic editor: Markdown, live preview, versions.

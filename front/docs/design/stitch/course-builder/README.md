@@ -36,7 +36,17 @@ from the first prompt:
 
 ## Phase 1 (`docs/plans/phase-1.md`)
 
-PHASE1_TABLE
+| Folder | Stitch title | Screen ID | Plan milestone |
+|---|---|---|---|
+| `p1-liascript-editor` | ulams Admin — LiaScript Topic Editor | `48ede9329c8947f59ba2447d4d9633ef` | M1.5: Markdown editor, live preview on the content origin, versions with diff and restore |
+
+Requested but not exported: **Admin "Integrations → LTI 1.3"** (tool registrations and the add-tool
+drawer, M1.2), **LTI deep-linking course picker** (our page inside Moodle/Canvas, M1.4) and **Import
+content package with safety report** (upload guard results, M1.1). Each prompt was sent twice on
+2026-10-08; the Stitch API timed out without returning screen IDs and its screen listing did not show
+them (it also lagged behind for the LiaScript screen, which was confirmed). If they appear in the
+project, export them into `p1-lti-registrations`, `p1-lti-deep-linking-picker` and
+`p1-package-import`; otherwise regenerate them from the prompts in `docs/plans/phase-1.md` section 9.
 
 ## Notes for implementation
 
