@@ -35,6 +35,32 @@ class QuizAttemptGetActiveApiTest extends GiftQuestionTestCase
             ->assertForbidden();
     }
 
+    public function testDoesNotReturnAnotherUsersActiveAttempt(): void
+    {
+        Event::fake([QuizAttemptStartedEvent::class]);
+        Queue::fake();
+
+        $student = $this->makeStudent();
+        $otherStudent = $this->makeStudent();
+        $this->topic->course->users()->sync([$student->getKey(), $otherStudent->getKey()]);
+
+        $othersAttempt = QuizAttempt::factory()->create([
+            'user_id' => $otherStudent->getKey(),
+            'topic_gift_quiz_id' => $this->quiz->getKey(),
+            'started_at' => Carbon::now(),
+            'end_at' => Carbon::now()->addHour(),
+        ]);
+
+        $response = $this->actingAs($student, 'api')
+            ->postJson('api/quiz-attempts', [
+                'topic_gift_quiz_id' => $this->quiz->getKey(),
+            ])
+            ->assertSuccessful();
+
+        $this->assertNotEquals($othersAttempt->getKey(), $response->json('data.id'));
+        $this->assertEquals($student->getKey(), QuizAttempt::find($response->json('data.id'))->user_id);
+    }
+
     public function testCreateNewQuizAttempt(): void
     {
         Event::fake([QuizAttemptStartedEvent::class]);

@@ -572,6 +572,26 @@ class TaskIndexApiTest extends TestCase
         ];
     }
 
+    public function testUserTaskIndexRelatedTypedIdsFilterDoesNotReturnOtherUsersTasks(): void
+    {
+        $user = $this->makeStudent();
+        $otherUser = $this->makeStudent();
+        $own = Task::factory()->create(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 456, 'user_id' => $user->getKey()]);
+        Task::factory()->create(['related_type' => 'Ulams\\Courses\\Models\\Course', 'related_id' => 123, 'user_id' => $otherUser->getKey()]);
+        Task::factory()->create(['related_type' => 'Ulams\\Courses\\Models\\Topic', 'related_id' => 456, 'user_id' => $otherUser->getKey()]);
+
+        $response = $this->actingAs($user, 'api')
+            ->getJson($this->prepareUri('api/tasks', [
+                'related_typed_ids' => [
+                    'Ulams\\Courses\\Models\\Course' => [123],
+                    'Ulams\\Courses\\Models\\Topic' => [456],
+                ],
+            ]))
+            ->assertOk();
+
+        $this->assertEquals([$own->getKey()], collect($response->json('data'))->pluck('id')->all());
+    }
+
     public function testUserTaskIndexPagination(): void
     {
         $user = $this->makeStudent();

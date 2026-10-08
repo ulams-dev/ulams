@@ -14,15 +14,16 @@ class RelatedIdsCriterion extends Criterion
 
     public function apply(Builder $query): Builder
     {
-        collect($this->value)
-            ->each(fn($item, $key) => $query
-                ->orWhere(fn(Builder $q) => $q
-                    ->where('related_type', $key)
-                    ->whereIn('related_id', $item)
-                )
-            );
-
-        return $query;
+        // The alternatives are grouped so the OR cannot escape other conditions (such as the user_id filter).
+        return $query->where(function (Builder $query) {
+            collect($this->value)
+                ->each(fn($item, $key) => $query
+                    ->orWhere(fn(Builder $q) => $q
+                        ->where('related_type', $key)
+                        ->whereIn('related_id', $item)
+                    )
+                );
+        });
     }
 }
 

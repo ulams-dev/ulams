@@ -68,10 +68,11 @@ class CourseAccessService implements CourseAccessServiceContract
 
         $courseUserIds = CourseUserPivot::query()
             ->where('user_id', $userId)
-            ->when($active, fn(Builder $query) => $query
+            // The date conditions are grouped so the OR cannot escape the user_id filter.
+            ->when($active, fn(Builder $query) => $query->where(fn(Builder $query) => $query
                 ->whereNull('end_date')
                 ->orWhereDate('end_date', '>=', Carbon::now())
-            )
+            ))
             ->pluck('course_id');
 
         $courseGroupIds = CourseGroupPivot::whereIn('group_id', $userGroupIds->concat($childGroupIds))->pluck('course_id');

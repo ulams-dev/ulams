@@ -85,7 +85,8 @@ class QuizAttempt extends Model
 
     public function scopeActive(Builder $query): void
     {
-        $query->whereNull('end_at')->orWhere('end_at', '>=', Carbon::now());
+        // Grouped so the OR cannot escape the user_id / quiz filters of the calling query.
+        $query->where(fn (Builder $query) => $query->whereNull('end_at')->orWhere('end_at', '>=', Carbon::now()));
     }
 
     /**
