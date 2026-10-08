@@ -1,0 +1,45 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
+        env:
+          CI: false
+          VITE_APP_YBUG_ID: 01m1nn5zqystt1qq5n11
+          VITE_APP_PUBLIC_API_URL: https://demo-stage.api.s.wellms.io
+          VITE_APP_SENTRYDSN: https://aed3a4ba903c57afa26b9dd4a49919a8@o4508812125929472.ingest.de.sentry.io/${{ secrets.SENTRY_AUTH_TOKEN }}
+          VITE_APP_ROUTING_TYPE: HashRouter
+          # VITE_APP_PUBLIC_MOBILE_DEVICE: false
+          VITE_APP_PUBLIC_URL: https://demo-stage.app.s.wellms.io
+          VITE_APP_PUBLIC_IMG_URL: https://wellms-multidomain-demo-stage.s3.pl-waw.scw.cloud
+          VITE_APP_PUBLIC_IMG_BUCKET_FOLDER: ""
+        run: |
+          npm i --legacy-peer-deps
+          npm run build
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: dist # The folder the action should deploy.
+
+      # - name: Create the Mattermost Message
+      #   run: |
+      #     echo "{\"text\":\"There is a updated [demo-stage.escolalms.com](https://demo-stage.escolalms.com/) available\"}" > mattermost.json
+      - uses: mattermost/action-mattermost-notify@master
+        with:
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
+          PAYLOAD: |-
+            {
+              "text": "There is a updated [demo-stage.escolalms.com](https://demo-stage.escolalms.com/) available"
+            }
