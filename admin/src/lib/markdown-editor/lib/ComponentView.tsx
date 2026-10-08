@@ -1,10 +1,10 @@
 import * as React from "react";
 import ReactDOM from "react-dom";
-import { ThemeProvider } from "styled-components";
 import { EditorView, Decoration } from "prosemirror-view";
 import Extension from "../lib/Extension";
 import Node from "../nodes/Node";
 import { light as lightTheme, dark as darkTheme } from "../theme";
+import { EditorThemeContext } from "../themeContext";
 import Editor from "../";
 
 type Component = (options: {
@@ -59,7 +59,11 @@ export default class ComponentView {
     });
 
     ReactDOM.render(
-      <ThemeProvider theme={theme}>{children}</ThemeProvider>,
+      <EditorThemeContext.Provider
+        value={{ theme, dark, overrides: this.editor.props.theme }}
+      >
+        {children}
+      </EditorThemeContext.Provider>,
       this.dom
     );
   }

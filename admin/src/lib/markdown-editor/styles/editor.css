@@ -1,0 +1,884 @@
+/*
+ * Content styles of the editor (formerly the StyledEditor styled-component). Every rule is
+ * scoped under .ulams-md-editor; ProseMirror, prism and node class names inside it are global.
+ * Props become modifier classes on the same element:
+ *   --readonly                   readOnly
+ *   --readonly-write-checkboxes  readOnlyWriteCheckboxes
+ *   --answer-placeholder         templatePlaceholderAsQuestion
+ *   --ios                        iOS device (block menu trigger offset)
+ */
+
+.ulams-md-editor {
+  width: 100%;
+  line-height: 1.7em;
+  background: var(--md-background);
+}
+
+.ulams-md-editor .ProseMirror {
+  position: relative;
+  white-space: pre-wrap;
+  white-space: break-spaces;
+  word-wrap: break-word;
+  outline: none;
+  -webkit-font-variant-ligatures: none;
+  font-variant-ligatures: none;
+  font-feature-settings: 'liga' 0; /* the above doesn't seem to work in Edge */
+}
+
+.ulams-md-editor pre {
+  white-space: pre-wrap;
+}
+
+.ulams-md-editor li {
+  position: relative;
+}
+
+.ulams-md-editor img {
+  max-width: 100%;
+}
+
+.ulams-md-editor .image {
+  clear: both;
+  max-width: 100%;
+  text-align: center;
+}
+
+.ulams-md-editor .image img {
+  display: inline-block;
+  max-width: 100%;
+  max-height: 75vh;
+}
+
+.ulams-md-editor .image.placeholder {
+  position: relative;
+  background: var(--md-background);
+}
+
+.ulams-md-editor .image.placeholder img {
+  opacity: 0.5;
+}
+
+.ulams-md-editor .image-center,
+.ulams-md-editor .image-right,
+.ulams-md-editor .image-left {
+  clear: initial;
+  width: 50%;
+  margin-bottom: 1em;
+}
+
+.ulams-md-editor .image-center,
+.ulams-md-editor .image-center-small,
+.ulams-md-editor .image-center-medium,
+.ulams-md-editor .image-center-large {
+  margin: auto;
+}
+
+.ulams-md-editor .image-right,
+.ulams-md-editor .image-right-small,
+.ulams-md-editor .image-right-medium,
+.ulams-md-editor .image-right-large {
+  float: right;
+  margin-left: 2em;
+}
+
+.ulams-md-editor .image-left,
+.ulams-md-editor .image-left-small,
+.ulams-md-editor .image-left-medium,
+.ulams-md-editor .image-left-large {
+  float: left;
+  margin-right: 2em;
+}
+
+.ulams-md-editor .image-small,
+.ulams-md-editor .image-center-small,
+.ulams-md-editor .image-right-small,
+.ulams-md-editor .image-left-small {
+  width: 200px;
+}
+.ulams-md-editor .image-medium,
+.ulams-md-editor .image-center-medium,
+.ulams-md-editor .image-right-medium,
+.ulams-md-editor .image-left-medium {
+  width: 400px;
+}
+.ulams-md-editor .image-large,
+.ulams-md-editor .image-center-large,
+.ulams-md-editor .image-right-large,
+.ulams-md-editor .image-left-large {
+  width: 600px;
+}
+
+.ulams-md-editor .text-center {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.ulams-md-editor .text-right {
+  display: block;
+  width: 100%;
+  text-align: right;
+}
+
+.ulams-md-editor .text-left {
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+
+.ulams-md-editor .ProseMirror-hideselection *::selection {
+  background: transparent;
+}
+.ulams-md-editor .ProseMirror-hideselection *::-moz-selection {
+  background: transparent;
+}
+.ulams-md-editor .ProseMirror-hideselection {
+  caret-color: transparent;
+}
+
+.ulams-md-editor .ProseMirror-selectednode {
+  outline: 2px solid var(--md-selected);
+}
+.ulams-md-editor--readonly .ProseMirror-selectednode {
+  outline: 2px solid transparent;
+}
+
+/* Make sure li selections wrap around markers */
+
+.ulams-md-editor li.ProseMirror-selectednode {
+  outline: none;
+}
+
+.ulams-md-editor li.ProseMirror-selectednode:after {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  bottom: -2px;
+  left: -32px;
+  border: 2px solid var(--md-selected);
+  content: '';
+  pointer-events: none;
+}
+
+.ulams-md-editor h1,
+.ulams-md-editor h2,
+.ulams-md-editor h3,
+.ulams-md-editor h4,
+.ulams-md-editor h5,
+.ulams-md-editor h6 {
+  margin: 1em 0 0.5em;
+  font-weight: 500;
+}
+
+.ulams-md-editor h1:not(.placeholder):before,
+.ulams-md-editor h2:not(.placeholder):before,
+.ulams-md-editor h3:not(.placeholder):before,
+.ulams-md-editor h4:not(.placeholder):before,
+.ulams-md-editor h5:not(.placeholder):before,
+.ulams-md-editor h6:not(.placeholder):before {
+  position: absolute;
+  left: -24px;
+  display: block;
+  color: var(--md-text-secondary);
+  font-size: 13px;
+  font-family: var(--md-font-family-mono);
+}
+.ulams-md-editor--readonly h1:not(.placeholder):before,
+.ulams-md-editor--readonly h2:not(.placeholder):before,
+.ulams-md-editor--readonly h3:not(.placeholder):before,
+.ulams-md-editor--readonly h4:not(.placeholder):before,
+.ulams-md-editor--readonly h5:not(.placeholder):before,
+.ulams-md-editor--readonly h6:not(.placeholder):before {
+  display: none;
+}
+
+.ulams-md-editor a:first-child h1,
+.ulams-md-editor a:first-child h2,
+.ulams-md-editor a:first-child h3,
+.ulams-md-editor a:first-child h4,
+.ulams-md-editor a:first-child h5,
+.ulams-md-editor a:first-child h6 {
+  margin-top: 0;
+}
+
+.ulams-md-editor .heading-name {
+  color: var(--md-text);
+}
+
+.ulams-md-editor .heading-name:hover {
+  text-decoration: none;
+}
+
+.ulams-md-editor .heading-name:hover .heading-anchor {
+  opacity: 1;
+}
+
+.ulams-md-editor .with-emoji {
+  margin-left: -1em;
+}
+
+.ulams-md-editor .heading-anchor {
+  position: absolute;
+  left: -1.3em;
+  display: none;
+  margin: 0;
+  padding: 2px 12px 2px 4px;
+  color: var(--md-text-secondary);
+  font-size: 22px;
+  font-family: var(--md-font-family-mono);
+  background: none;
+  border: 0;
+  outline: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 100ms ease-in-out;
+}
+.ulams-md-editor--readonly .heading-anchor {
+  display: block;
+}
+
+.ulams-md-editor .heading-anchor:focus,
+.ulams-md-editor .heading-anchor:hover {
+  color: var(--md-text);
+}
+
+.ulams-md-editor .placeholder:before {
+  display: block;
+  height: 0;
+  color: var(--md-placeholder);
+  content: attr(data-empty-text);
+  pointer-events: none;
+}
+.ulams-md-editor--readonly:not(.ulams-md-editor--readonly-write-checkboxes) .placeholder:before {
+  content: none;
+}
+
+@media print {
+  .ulams-md-editor .placeholder {
+    display: none;
+  }
+}
+
+.ulams-md-editor .notice-block {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+  padding: 8px 16px;
+  color: var(--md-notice-info-text);
+  background: var(--md-notice-info-background);
+  border-radius: 4px;
+}
+
+.ulams-md-editor .notice-block a {
+  color: var(--md-notice-info-text);
+}
+
+.ulams-md-editor .notice-block a:not(.heading-name) {
+  text-decoration: underline;
+}
+
+.ulams-md-editor .notice-block .icon {
+  position: relative;
+  top: 1px;
+  align-self: flex-start;
+  width: 24px;
+  height: 24px;
+  margin-right: 4px;
+}
+
+.ulams-md-editor .notice-block.tip {
+  color: var(--md-notice-tip-text);
+  background: var(--md-notice-tip-background);
+}
+
+.ulams-md-editor .notice-block.tip a {
+  color: var(--md-notice-tip-text);
+}
+
+.ulams-md-editor .notice-block.warning {
+  color: var(--md-notice-warning-text);
+  background: var(--md-notice-warning-background);
+}
+
+.ulams-md-editor .notice-block.warning a {
+  color: var(--md-notice-warning-text);
+}
+
+.ulams-md-editor blockquote {
+  margin: 5px;
+  padding-left: 10px;
+  font-style: italic;
+  border-left: 3px solid var(--md-quote);
+}
+
+.ulams-md-editor b,
+.ulams-md-editor strong {
+  font-weight: 600;
+}
+
+.ulams-md-editor .template-placeholder {
+  color: var(--md-template-placeholder);
+  background: initial;
+  border-bottom: 1px dotted var(--md-template-placeholder);
+  border-radius: 5px;
+  cursor: text;
+}
+.ulams-md-editor--answer-placeholder .template-placeholder {
+  color: var(--md-answer-placeholder);
+  background: var(--md-answer-placeholder);
+  border-bottom: 1px dotted var(--md-answer-placeholder);
+}
+
+.ulams-md-editor .template-placeholder:hover {
+  color: black;
+  border-bottom: 1px dotted var(--md-text-secondary);
+}
+.ulams-md-editor--answer-placeholder .template-placeholder:hover {
+  border-bottom: 1px dotted var(--md-answer-placeholder);
+}
+
+.ulams-md-editor p {
+  position: relative;
+  margin: 0;
+}
+
+.ulams-md-editor a {
+  color: var(--md-link-external);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ulams-md-editor a[href^='/'] {
+  padding: 2px;
+  padding-left: 2px;
+  color: #2c2424;
+  text-decoration: none;
+  background: #e2f3ff;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: text;
+}
+
+.ulams-md-editor a:hover {
+  text-decoration: underline;
+}
+
+.ulams-md-editor a[href^='/']:hover {
+  text-decoration: none;
+  background: #b5defc;
+}
+
+.ulams-md-editor ul,
+.ulams-md-editor ol {
+  margin: 0 0.1em;
+  padding: 0 0 0 1em;
+}
+
+.ulams-md-editor ul ul,
+.ulams-md-editor ul ol,
+.ulams-md-editor ol ul,
+.ulams-md-editor ol ol {
+  margin: 0;
+}
+
+.ulams-md-editor ol ol {
+  list-style: lower-alpha;
+}
+
+.ulams-md-editor ol ol ol {
+  list-style: lower-roman;
+}
+
+.ulams-md-editor ul.checkbox_list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ulams-md-editor ul.checkbox_list li {
+  display: flex;
+}
+
+.ulams-md-editor ul.checkbox_list li.checked > div > p {
+  color: var(--md-text-secondary);
+  text-decoration: line-through;
+}
+
+.ulams-md-editor ul.checkbox_list li input {
+  width: 14px;
+  height: 14px;
+  margin: 0 0.5em 0 0;
+  opacity: 1;
+  pointer-events: initial;
+}
+.ulams-md-editor--readonly:not(.ulams-md-editor--readonly-write-checkboxes)
+  ul.checkbox_list
+  li
+  input {
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.ulams-md-editor li p:first-child {
+  margin: 0;
+}
+
+.ulams-md-editor hr {
+  height: 0;
+  border: 0;
+  border-top: 1px solid var(--md-horizontal-rule);
+}
+
+.ulams-md-editor code {
+  padding: 3px 4px;
+  font-size: 85%;
+  font-family: var(--md-font-family-mono);
+  border: 1px solid var(--md-code-border);
+  border-radius: 4px;
+}
+
+.ulams-md-editor mark {
+  color: var(--md-black);
+  background: var(--md-text-highlight);
+  border-radius: 1px;
+}
+
+.ulams-md-editor .code-block,
+.ulams-md-editor .notice-block {
+  position: relative;
+}
+
+.ulams-md-editor .code-block select,
+.ulams-md-editor .code-block button,
+.ulams-md-editor .notice-block select,
+.ulams-md-editor .notice-block button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 1;
+  display: none;
+  padding: 2px;
+  color: var(--md-block-toolbar-item);
+  font-size: 13px;
+  background: var(--md-block-toolbar-background);
+  border-width: 1px;
+  border-radius: 4px;
+}
+
+.ulams-md-editor .code-block button,
+.ulams-md-editor .notice-block button {
+  padding: 2px 4px;
+}
+
+.ulams-md-editor .code-block:hover select,
+.ulams-md-editor .notice-block:hover select {
+  display: inline;
+}
+
+.ulams-md-editor .code-block:hover button,
+.ulams-md-editor .notice-block:hover button {
+  display: none;
+}
+
+.ulams-md-editor--readonly .code-block:hover select,
+.ulams-md-editor--readonly .notice-block:hover select {
+  display: none;
+}
+
+.ulams-md-editor--readonly .code-block:hover button,
+.ulams-md-editor--readonly .notice-block:hover button {
+  display: inline;
+}
+
+.ulams-md-editor .code-block select:focus,
+.ulams-md-editor .code-block select:active,
+.ulams-md-editor .notice-block select:focus,
+.ulams-md-editor .notice-block select:active {
+  display: inline;
+}
+
+.ulams-md-editor pre {
+  position: relative;
+  display: block;
+  margin: 0;
+  padding: 0.75em 1em;
+  overflow-x: auto;
+  color: var(--md-code);
+  font-size: 13px;
+  font-family: var(--md-font-family-mono);
+  line-height: 1.4em;
+  direction: ltr;
+  white-space: pre;
+  text-align: left;
+  word-break: normal;
+  word-spacing: normal;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+  background: var(--md-code-background);
+  border: 1px solid var(--md-code-border);
+  border-radius: 4px;
+
+  -webkit-font-smoothing: initial;
+}
+
+.ulams-md-editor pre code {
+  padding: 0;
+  font-size: 13px;
+  background: none;
+  border: 0;
+}
+
+.ulams-md-editor .token.comment,
+.ulams-md-editor .token.prolog,
+.ulams-md-editor .token.doctype,
+.ulams-md-editor .token.cdata {
+  color: var(--md-code-comment);
+}
+
+.ulams-md-editor .token.punctuation {
+  color: var(--md-code-punctuation);
+}
+
+.ulams-md-editor .token.namespace {
+  opacity: 0.7;
+}
+
+.ulams-md-editor .token.operator,
+.ulams-md-editor .token.boolean,
+.ulams-md-editor .token.number {
+  color: var(--md-code-number);
+}
+
+.ulams-md-editor .token.property {
+  color: var(--md-code-property);
+}
+
+.ulams-md-editor .token.tag {
+  color: var(--md-code-tag);
+}
+
+.ulams-md-editor .token.string {
+  color: var(--md-code-string);
+}
+
+.ulams-md-editor .token.selector {
+  color: var(--md-code-selector);
+}
+
+.ulams-md-editor .token.attr-name {
+  color: var(--md-code-attr);
+}
+
+.ulams-md-editor .token.entity,
+.ulams-md-editor .token.url,
+.ulams-md-editor .language-css .token.string,
+.ulams-md-editor .style .token.string {
+  color: var(--md-code-entity);
+}
+
+.ulams-md-editor .token.attr-value,
+.ulams-md-editor .token.keyword,
+.ulams-md-editor .token.control,
+.ulams-md-editor .token.directive,
+.ulams-md-editor .token.unit {
+  color: var(--md-code-keyword);
+}
+
+.ulams-md-editor .token.function {
+  color: var(--md-code-function);
+}
+
+.ulams-md-editor .token.statement,
+.ulams-md-editor .token.regex,
+.ulams-md-editor .token.atrule {
+  color: var(--md-code-statement);
+}
+
+.ulams-md-editor .token.placeholder,
+.ulams-md-editor .token.variable {
+  color: var(--md-code-placeholder);
+}
+
+.ulams-md-editor .token.deleted {
+  text-decoration: line-through;
+}
+
+.ulams-md-editor .token.inserted {
+  text-decoration: none;
+  border-bottom: 1px dotted var(--md-code-inserted);
+}
+
+.ulams-md-editor .token.italic {
+  font-style: italic;
+}
+
+.ulams-md-editor .token.important,
+.ulams-md-editor .token.bold {
+  font-weight: bold;
+}
+
+.ulams-md-editor .token.important {
+  color: var(--md-code-important);
+}
+
+.ulams-md-editor .token.entity {
+  cursor: help;
+}
+
+.ulams-md-editor table {
+  width: 100%;
+  margin-top: 1em;
+  border-radius: 4px;
+  border-collapse: collapse;
+}
+
+.ulams-md-editor table tr {
+  position: relative;
+  border-bottom: 1px solid var(--md-table-divider);
+}
+
+/* tableHeaderBackground is not a key of the bundled themes; only a `theme` prop override sets it */
+.ulams-md-editor table th {
+  background: var(--md-table-header-background);
+}
+
+.ulams-md-editor table td,
+.ulams-md-editor table th {
+  position: relative;
+  position: relative;
+  min-width: 100px;
+  padding: 4px 8px;
+  font-weight: normal;
+  text-align: left;
+  vertical-align: top;
+  border: 1px solid var(--md-table-divider);
+}
+
+.ulams-md-editor table .selectedCell {
+  background: var(--md-table-selected-background);
+  /* fixes Firefox background color painting over border:
+    * https://bugzilla.mozilla.org/show_bug.cgi?id=688556 */
+  background-clip: padding-box;
+}
+.ulams-md-editor--readonly table .selectedCell {
+  background: inherit;
+}
+
+/* usage of ::after for all of the table grips works around a bug in
+ * prosemirror-tables that causes Safari to hang when selecting a cell
+ * in an empty table:
+ * https://github.com/ProseMirror/prosemirror/issues/947 */
+.ulams-md-editor table .grip-column::after {
+  position: absolute;
+  top: -16px;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 12px;
+  background: var(--md-table-divider);
+  border-bottom: 3px solid var(--md-background);
+  cursor: pointer;
+  content: '';
+}
+
+.ulams-md-editor table .grip-column:hover::after {
+  background: var(--md-text);
+}
+.ulams-md-editor table .grip-column.first::after {
+  border-top-left-radius: 3px;
+}
+.ulams-md-editor table .grip-column.last::after {
+  border-top-right-radius: 3px;
+}
+.ulams-md-editor table .grip-column.selected::after {
+  background: var(--md-table-selected);
+}
+
+.ulams-md-editor table .grip-row::after {
+  position: absolute;
+  top: 0;
+  left: -16px;
+  display: block;
+  width: 12px;
+  height: 100%;
+  background: var(--md-table-divider);
+  border-right: 3px solid var(--md-background);
+  cursor: pointer;
+  content: '';
+}
+
+.ulams-md-editor table .grip-row:hover::after {
+  background: var(--md-text);
+}
+.ulams-md-editor table .grip-row.first::after {
+  border-top-left-radius: 3px;
+}
+.ulams-md-editor table .grip-row.last::after {
+  border-bottom-left-radius: 3px;
+}
+.ulams-md-editor table .grip-row.selected::after {
+  background: var(--md-table-selected);
+}
+
+.ulams-md-editor table .grip-table::after {
+  position: absolute;
+  top: -18px;
+  left: -18px;
+  display: block;
+  width: 13px;
+  height: 13px;
+  background: var(--md-table-divider);
+  border: 2px solid var(--md-background);
+  border-radius: 13px;
+  cursor: pointer;
+  content: '';
+}
+
+.ulams-md-editor table .grip-table:hover::after {
+  background: var(--md-text);
+}
+.ulams-md-editor table .grip-table.selected::after {
+  background: var(--md-table-selected);
+}
+
+.ulams-md-editor--readonly table .grip-column::after,
+.ulams-md-editor--readonly table .grip-row::after,
+.ulams-md-editor--readonly table .grip-table::after {
+  display: none;
+}
+
+.ulams-md-editor .scrollable-wrapper {
+  position: relative;
+  margin: 0.5em 0px;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.ulams-md-editor .scrollable-wrapper:hover {
+  scrollbar-color: var(--md-scrollbar-thumb) var(--md-scrollbar-background);
+}
+
+.ulams-md-editor .scrollable-wrapper ::-webkit-scrollbar {
+  height: 14px;
+  background-color: transparent;
+}
+
+.ulams-md-editor .scrollable-wrapper:hover ::-webkit-scrollbar {
+  background-color: var(--md-scrollbar-background);
+}
+
+.ulams-md-editor .scrollable-wrapper ::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border: 3px solid transparent;
+  border-radius: 7px;
+}
+
+.ulams-md-editor .scrollable-wrapper:hover ::-webkit-scrollbar-thumb {
+  background-color: var(--md-scrollbar-thumb);
+  border-color: var(--md-scrollbar-background);
+}
+
+.ulams-md-editor .scrollable {
+  margin-left: -1em;
+  padding-left: 1em;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-right: 1px solid transparent;
+  border-left: 1px solid transparent;
+  transition: border 250ms ease-in-out 0s;
+}
+
+.ulams-md-editor .scrollable-shadow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -1em;
+  width: 16px;
+  border: 0px solid transparent;
+  border-left-width: 1em;
+  transition: box-shadow 250ms ease-in-out;
+  pointer-events: none;
+}
+
+.ulams-md-editor .scrollable-shadow.left {
+  border-left: 1em solid var(--md-background);
+  box-shadow: 16px 0 16px -16px inset rgba(0, 0, 0, 0.25);
+}
+
+.ulams-md-editor .scrollable-shadow.right {
+  right: 0;
+  left: auto;
+  box-shadow: -16px 0 16px -16px inset rgba(0, 0, 0, 0.25);
+}
+
+.ulams-md-editor .block-menu-trigger {
+  position: absolute;
+  left: -24px;
+  display: block;
+  height: 26px;
+  color: var(--md-text-secondary);
+  font-size: 26px;
+  line-height: 1;
+  background: none;
+  border: 0;
+  border-radius: 10%;
+  outline: none;
+  transition: color 150ms cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    transform 150ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.ulams-md-editor--ios .block-menu-trigger {
+  left: -48px;
+}
+.ulams-md-editor--readonly .block-menu-trigger {
+  display: none;
+}
+.ulams-md-editor .block-menu-trigger:hover,
+.ulams-md-editor .block-menu-trigger:focus {
+  color: var(--md-text);
+  background: #f3f3f3;
+  cursor: pointer;
+}
+
+@media print {
+  .ulams-md-editor .block-menu-trigger {
+    display: none;
+  }
+}
+
+.ulams-md-editor .ProseMirror-gapcursor {
+  position: absolute;
+  display: none;
+  pointer-events: none;
+}
+
+.ulams-md-editor .ProseMirror-gapcursor:after {
+  position: absolute;
+  top: -2px;
+  display: block;
+  width: 20px;
+  border-top: 1px solid var(--md-cursor);
+  animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
+  content: '';
+}
+
+@keyframes ProseMirror-cursor-blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+.ulams-md-editor .ProseMirror-focused .ProseMirror-gapcursor {
+  display: block;
+}
+
+@media print {
+  .ulams-md-editor em,
+  .ulams-md-editor blockquote {
+    font-family: 'SF Pro Text', var(--md-font-family);
+  }
+}

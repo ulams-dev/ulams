@@ -1,0 +1,103 @@
+/*
+ * Theme of the markdown editor as CSS custom properties: one `--md-*` variable per key of the
+ * theme objects in ../theme.ts (camelCase key -> kebab-case name). Keep both files in sync.
+ *
+ * `.ulams-md-theme` is set on the editor root and on every element the editor portals out of
+ * it (floating toolbar, block menu), so the variables reach those too. `--dark` switches to the
+ * dark theme (the `dark` prop); the `theme` prop overrides variables inline on the same element.
+ */
+.ulams-md-theme {
+  --md-almost-black: #181a1b;
+  --md-light-black: #2f3336;
+  --md-almost-white: #e6e6e6;
+  --md-white: #fff;
+  --md-white10: rgba(255, 255, 255, 0.1);
+  --md-black: #000;
+  --md-black10: rgba(0, 0, 0, 0.1);
+  --md-primary: #1ea362;
+  --md-secondary: #01a9f1;
+  --md-grey-light: #f4f7fa;
+  --md-grey: #e8ebed;
+  --md-grey-mid: #c5ccd3;
+  --md-grey-dark: #dae1e9;
+  --md-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+    'Open Sans', 'Helvetica Neue', sans-serif;
+  --md-font-family-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  --md-font-weight: 400;
+  --md-z-index: 9999;
+  --md-link: #1ea362;
+  --md-link-external: #01a9f1;
+  --md-placeholder: #b1becc;
+  --md-template-placeholder: #f03;
+  --md-answer-placeholder: #fc5bff;
+  --md-text-secondary: #4e5c6e;
+  --md-text-light: #fff;
+  --md-text-highlight: #abff32;
+  --md-selected: #1ea362;
+  --md-code-comment: #6a737d;
+  --md-code-punctuation: #5e6687;
+  --md-code-number: #d73a49;
+  --md-code-property: #c08b30;
+  --md-code-tag: #3d8fd1;
+  --md-code-string: #032f62;
+  --md-code-selector: #6679cc;
+  --md-code-attr: #c76b29;
+  --md-code-entity: #22a2c9;
+  --md-code-keyword: #d73a49;
+  --md-code-function: #6f42c1;
+  --md-code-statement: #22a2c9;
+  --md-code-placeholder: #3d8fd1;
+  --md-code-inserted: #202746;
+  --md-code-important: #c94922;
+  --md-block-toolbar-background: #fff;
+  --md-block-toolbar-trigger: #c5ccd3;
+  --md-block-toolbar-trigger-icon: #fff;
+  --md-block-toolbar-item: #181a1b;
+  --md-block-toolbar-text: #181a1b;
+  --md-block-toolbar-hover-background: #f4f7fa;
+  --md-block-toolbar-divider: #c5ccd3;
+  --md-notice-info-background: #f5be31;
+  --md-notice-info-text: #181a1b;
+  --md-notice-tip-background: #9e5cf7;
+  --md-notice-tip-text: #fff;
+  --md-notice-warning-background: #ff5c80;
+  --md-notice-warning-text: #fff;
+  --md-background: #fff;
+  --md-text: #181a1b;
+  --md-code: #2f3336;
+  --md-cursor: #000;
+  --md-divider: #c5ccd3;
+  --md-toolbar-background: #f4f7fa;
+  --md-toolbar-hover-background: #c5ccd3;
+  --md-toolbar-input: rgba(0, 0, 0, 0.1);
+  --md-toolbar-item: #2f3336;
+  --md-table-divider: #c5ccd3;
+  --md-table-selected: #1ea362;
+  --md-table-selected-background: #e5f7ff;
+  --md-quote: #dae1e9;
+  --md-code-background: #f4f7fa;
+  --md-code-border: #e8ebed;
+  --md-horizontal-rule: #c5ccd3;
+  --md-image-error-background: #f4f7fa;
+  --md-scrollbar-background: #f4f7fa;
+  --md-scrollbar-thumb: #c5ccd3;
+}
+
+.ulams-md-theme.ulams-md-theme--dark {
+  --md-placeholder: #52657a;
+  --md-code-string: #3d8fd1;
+  --md-background: #181a1b;
+  --md-text: #e6e6e6;
+  --md-code: #e6e6e6;
+  --md-cursor: #fff;
+  --md-divider: #4e5c6e;
+  --md-toolbar-background: #fff;
+  --md-table-divider: #2f3336;
+  --md-table-selected-background: #002333;
+  --md-code-background: #000;
+  --md-code-border: #2f3336;
+  --md-horizontal-rule: #2f3336;
+  --md-image-error-background: rgba(0, 0, 0, 0.5);
+  --md-scrollbar-background: #000;
+  --md-scrollbar-thumb: #2f3336;
+}

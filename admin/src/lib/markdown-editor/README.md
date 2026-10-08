@@ -9,14 +9,18 @@ ProseMirror-based rich Markdown editor (fork of outline/rich-markdown-editor). U
 - Import as `@lms/markdown-editor`; alias in `admin/config/config.ts` + `admin/tsconfig.json`.
 - Runtime deps moved to `admin/package.json` (prosemirror-*, @benrbray/prosemirror-math, markdown-it*,
   katex 0.13, outline-icons, refractor, react-portal, …). Upstream pinned `prosemirror-transform@1.2.5`
-  but never imported it; the single hoisted prosemirror stack is used now. Runs on styled-components 6
-  (what admin already resolved), upstream targeted 5.
+  but never imported it; the single hoisted prosemirror stack is used now.
 - Typecheck: separate TS project (`tsconfig.json` here, upstream non-strict settings) referenced from
   `admin/tsconfig.json`; `yarn typecheck` in admin runs `tsc -b` on it first and admin consumes the
   emitted declarations (`admin/node_modules/.cache/lms-markdown-editor`).
 - Local changes vs b747a1d (type fixes for current deps, no behaviour change except where noted):
   `markdown-it/lib/token` is ESM-only in markdown-it 14 → type-only import + `state.Token` at runtime;
   prosemirror-view `Decoration` no longer generic; `DecorationSet.find(undefined, …)`; `ComponentView.dom`
-  is never nulled; Link handlers typed for mouse+touch; `withTheme` exports typed for styled-components 6;
-  `onSave` signature typo.
+  is never nulled; Link handlers typed for mouse+touch; `onSave` signature typo.
+- Styling (local change): the CSS-in-JS layer (upstream used a CSS-in-JS runtime) was replaced by plain CSS in `styles/`
+  (`theme.css`: one `--md-*` custom property per key of `theme.ts`, dark values under
+  `.ulams-md-theme--dark`; `editor.css`: content styles scoped under `.ulams-md-editor`;
+  `components.css`: toolbars, menus, image caption). `themeContext.tsx` replaces
+  `ThemeProvider`/`withTheme`; the `theme` prop is applied as inline `--md-*` variables. Props API
+  unchanged.
 - License: BSD-3-Clause (`LICENSE`).
