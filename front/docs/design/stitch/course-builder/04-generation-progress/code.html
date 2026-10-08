@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ulams Course Builder — Generation Progress</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-dim": "#dbdad5",
+            "outline-variant": "#c7c4d8",
+            "on-tertiary-fixed-variant": "#424656",
+            "error-container": "#ffdad6",
+            "tertiary": "#545869",
+            "surface-variant": "#e4e2dd",
+            "on-secondary": "#ffffff",
+            "on-tertiary-fixed": "#171b29",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-fixed-variant": "#2c25cc",
+            "inverse-surface": "#30312e",
+            "on-tertiary-container": "#f7f5ff",
+            "on-secondary-container": "#714800",
+            "inverse-on-surface": "#f2f1ec",
+            "surface-container": "#f0eee9",
+            "tertiary-fixed-dim": "#c3c5d9",
+            "inverse-primary": "#c1c1ff",
+            "secondary-fixed": "#ffddb6",
+            "tertiary-fixed": "#dfe1f6",
+            "surface-container-high": "#eae8e3",
+            "on-primary": "#ffffff",
+            "on-secondary-fixed": "#2a1800",
+            "on-background": "#1b1c19",
+            "surface-bright": "#fbf9f4",
+            "surface-tint": "#4746e4",
+            "surface": "#fbf9f4",
+            "secondary-container": "#ffb54d",
+            "on-primary-fixed": "#09006b",
+            "primary-fixed": "#e1dfff",
+            "on-error": "#ffffff",
+            "primary-container": "#5b5bf7",
+            "on-tertiary": "#ffffff",
+            "error": "#ba1a1a",
+            "on-surface-variant": "#464555",
+            "background": "#fbf9f4",
+            "on-primary-container": "#f8f5ff",
+            "on-error-container": "#93000a",
+            "primary": "#413ede",
+            "on-surface": "#1b1c19",
+            "surface-container-low": "#f5f3ee",
+            "secondary": "#845400",
+            "on-secondary-fixed-variant": "#643f00",
+            "secondary-fixed-dim": "#ffb959",
+            "primary-fixed-dim": "#c1c1ff",
+            "surface-container-highest": "#e4e2dd",
+            "tertiary-container": "#6d7082",
+            "outline": "#767587"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin": "1rem",
+            "space-md": "1rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "margin-desktop": "2rem",
+            "gutter": "1rem",
+            "space-xs": "0.25rem",
+            "gutter-desktop": "1.5rem",
+            "space-xl": "2.5rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Inter"],
+            "headline-sm": ["Inter"],
+            "headline-lg-mobile": ["Newsreader"],
+            "body-default": ["Inter"],
+            "headline-lg": ["Newsreader"],
+            "body-editorial": ["Newsreader"],
+            "caption": ["Inter"],
+            "display-editorial": ["Newsreader"],
+            "display-editorial-mobile": ["Newsreader"],
+            "code-body": ["JetBrains Mono"],
+            "body-strong": ["Inter"],
+            "label-citation": ["JetBrains Mono"]
+          },
+          "fontSize": {
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "body-default": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "headline-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.015em", "fontWeight": "400" }],
+            "body-editorial": ["19px", { "lineHeight": "32px", "fontWeight": "400" }],
+            "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "display-editorial": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "display-editorial-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "code-body": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-strong": ["14px", { "lineHeight": "22px", "fontWeight": "500" }],
+            "label-citation": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #e4e2dd;
+      border-radius: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #c7c4d8;
+    }
+    @keyframes irisPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(1.15); }
+    }
+    .iris-pulse {
+      animation: irisPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased h-full flex flex-col overflow-hidden selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- ========================================================================= -->
+<!-- SHARED COMPONENT 1: SideNavBar                                           -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-16 z-40 bg-inverse-surface border-r border-outline-variant/30 flex flex-col justify-between py-4 items-center select-none">
+<!-- Top Monogram Brand -->
+<div class="flex flex-col items-center gap-1">
+<div class="w-10 h-10 rounded-xl bg-inverse-on-surface/10 border border-inverse-on-surface/20 flex items-center justify-center text-inverse-on-surface font-headline-md text-headline-md font-bold tracking-tight shadow-sm hover:scale-95 duration-150 ease-out cursor-pointer transition-all" title="Ulams — Curriculum Architect">
+        U
+      </div>
+<div class="h-px w-6 bg-outline-variant/20 my-2"></div>
+</div>
+<!-- Navigation Tabs (Builder is Active based on context) -->
+<nav aria-label="Main Navigation" class="flex flex-col items-center gap-2.5 w-full px-2">
+<!-- 1. Builder (Active) -->
+<a class="flex flex-col items-center justify-center text-primary-fixed bg-surface-variant/20 rounded-lg p-2.5 transition-all duration-150 w-11 h-11 relative group" href="#" title="Builder">
+<span class="material-symbols-outlined text-primary-fixed">architecture</span>
+<span class="absolute -right-1 top-2.5 w-1.5 h-6 bg-primary-container rounded-l-full"></span>
+<span class="absolute left-16 bg-inverse-surface border border-outline-variant/20 text-inverse-on-surface text-caption font-caption px-2 py-1 rounded shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">Builder</span>
+</a>
+<!-- 2. Courses -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 rounded-lg p-2.5 transition-all duration-150 w-11 h-11 group" href="#" title="Courses">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="absolute left-16 bg-inverse-surface border border-outline-variant/20 text-inverse-on-surface text-caption font-caption px-2 py-1 rounded shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">Courses</span>
+</a>
+<!-- 3. Sources -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 rounded-lg p-2.5 transition-all duration-150 w-11 h-11 group" href="#" title="Sources">
+<span class="material-symbols-outlined">source</span>
+<span class="absolute left-16 bg-inverse-surface border border-outline-variant/20 text-inverse-on-surface text-caption font-caption px-2 py-1 rounded shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">Sources</span>
+</a>
+<!-- 4. Usage -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 rounded-lg p-2.5 transition-all duration-150 w-11 h-11 group" href="#" title="Usage">
+<span class="material-symbols-outlined">data_usage</span>
+<span class="absolute left-16 bg-inverse-surface border border-outline-variant/20 text-inverse-on-surface text-caption font-caption px-2 py-1 rounded shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">Usage</span>
+</a>
+<!-- 5. Settings -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 rounded-lg p-2.5 transition-all duration-150 w-11 h-11 group" href="#" title="Settings">
+<span class="material-symbols-outlined">settings</span>
+<span class="absolute left-16 bg-inverse-surface border border-outline-variant/20 text-inverse-on-surface text-caption font-caption px-2 py-1 rounded shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">Settings</span>
+</a>
+</nav>
+<!-- Footer Profile -->
+<div class="flex flex-col items-center gap-2 pt-2 border-t border-outline-variant/20 w-full px-2">
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 rounded-lg p-2 transition-all duration-150 w-11 h-11 group" href="#" title="Profile">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="absolute left-16 bg-inverse-surface border border-outline-variant/20 text-inverse-on-surface text-caption font-caption px-2 py-1 rounded shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">Profile</span>
+</a>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- SHARED COMPONENT 2: TopNavBar                                            -->
+<!-- ========================================================================= -->
+<header class="fixed top-0 left-0 right-0 h-14 z-30 flex items-center justify-between pl-20 pr-6 bg-surface-bright border-b border-surface-container-highest select-none">
+<!-- Breadcrumb & Brand Identity -->
+<div class="flex items-center gap-3">
+<div class="flex items-center text-caption font-caption text-on-surface-variant">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">Course Builder</span>
+<span class="mx-2 text-outline-variant">/</span>
+<span class="font-body-default text-body-default text-on-surface font-medium truncate max-w-[280px]">Coffee brewing fundamentals</span>
+</div>
+<!-- Live Generation Status Pill -->
+<div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-container border border-surface-container-highest">
+<span class="w-2 h-2 rounded-full bg-primary-container iris-pulse"></span>
+<span class="font-body-strong text-caption text-primary font-medium tracking-tight">Generating · 6 of 9 lessons</span>
+</div>
+</div>
+<!-- Trailing Actions & Live Telemetry -->
+<div class="flex items-center gap-4">
+<!-- Live Cost Meter Pill -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container-low border border-surface-container-highest font-code-body text-label-citation text-on-surface-variant">
+<span class="text-on-surface font-semibold">$0.71</span>
+<span class="text-outline-variant">·</span>
+<span>1.2M tokens</span>
+<span class="text-outline-variant">·</span>
+<span class="text-secondary font-medium">64% cached</span>
+</div>
+<!-- Icon Actions -->
+<div class="flex items-center gap-1 border-l border-surface-container-highest pl-3">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors duration-150" title="Help &amp; Documentation">
+<span class="material-symbols-outlined text-[18px]">help_outline</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors duration-150 relative" title="Notifications">
+<span class="material-symbols-outlined text-[18px]">notifications</span>
+<span class="absolute top-2 right-2 w-1.5 h-1.5 bg-primary-container rounded-full"></span>
+</button>
+</div>
+<!-- Profile Avatar -->
+<div class="w-7 h-7 rounded-full bg-surface-container-highest border border-surface-container-high overflow-hidden flex items-center justify-center ml-1">
+<span class="text-caption font-caption font-semibold text-on-surface-variant">AK</span>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE LAYOUT (Desktop 1440px target, left padded for rail)       -->
+<!-- ========================================================================= -->
+<main class="flex-1 pl-16 pt-14 flex overflow-hidden">
+<!-- CENTER CONTENT COLUMN (Fluid scrollable workspace) -->
+<section class="flex-1 flex flex-col h-full overflow-y-auto custom-scroll bg-surface">
+<!-- TOP: Horizontal Stage Timeline (7 steps) -->
+<div class="bg-surface-container-lowest border-b border-surface-container-highest px-8 py-4 sticky top-0 z-20 shadow-[0_1px_2px_rgba(14,18,32,0.02)]">
+<div class="flex items-center justify-between max-w-5xl mx-auto">
+<!-- Step 1: Source read (Completed) -->
+<div class="flex items-center gap-2 group cursor-default">
+<div class="w-6 h-6 rounded-full bg-[#1F9D6B]/15 text-[#1F9D6B] border border-[#1F9D6B]/30 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[14px] font-bold">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-strong text-caption text-on-surface font-medium leading-none">Source read</span>
+<span class="font-code-body text-label-citation text-outline text-[10px] mt-0.5">12s</span>
+</div>
+</div>
+<div class="flex-1 h-px bg-[#1F9D6B]/40 mx-3"></div>
+<!-- Step 2: Brief (Completed) -->
+<div class="flex items-center gap-2 group cursor-default">
+<div class="w-6 h-6 rounded-full bg-[#1F9D6B]/15 text-[#1F9D6B] border border-[#1F9D6B]/30 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[14px] font-bold">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-strong text-caption text-on-surface font-medium leading-none">Brief</span>
+<span class="font-code-body text-label-citation text-outline text-[10px] mt-0.5">45s</span>
+</div>
+</div>
+<div class="flex-1 h-px bg-[#1F9D6B]/40 mx-3"></div>
+<!-- Step 3: Outline approved (Completed) -->
+<div class="flex items-center gap-2 group cursor-default">
+<div class="w-6 h-6 rounded-full bg-[#1F9D6B]/15 text-[#1F9D6B] border border-[#1F9D6B]/30 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[14px] font-bold">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-strong text-caption text-on-surface font-medium leading-none">Outline approved</span>
+<span class="font-code-body text-label-citation text-outline text-[10px] mt-0.5">1m 10s</span>
+</div>
+</div>
+<div class="flex-1 h-px bg-primary-container/40 mx-3"></div>
+<!-- Step 4: Lessons (ACTIVE) -->
+<div class="flex items-center gap-2 group cursor-default">
+<div class="w-6 h-6 rounded-full bg-primary-container text-white flex items-center justify-center flex-shrink-0 shadow-[0_0_0_3px_rgba(91,91,247,0.2)]">
+<span class="font-code-body text-[10px] font-bold">6/9</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5 leading-none">
+<span class="font-body-strong text-caption text-primary font-semibold">Lessons</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container iris-pulse"></span>
+</div>
+<span class="font-code-body text-label-citation text-primary text-[10px] mt-0.5 font-medium">running...</span>
+</div>
+</div>
+<div class="flex-1 h-px bg-primary-container/30 mx-3"></div>
+<!-- Step 5: Quizzes (ACTIVE concurrent) -->
+<div class="flex items-center gap-2 group cursor-default">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest border border-primary-container/50 text-primary flex items-center justify-center flex-shrink-0">
+<span class="font-code-body text-[10px] font-bold">4/9</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5 leading-none">
+<span class="font-body-strong text-caption text-on-surface font-medium">Quizzes</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container/70 iris-pulse"></span>
+</div>
+<span class="font-code-body text-label-citation text-outline-variant text-[10px] mt-0.5">running...</span>
+</div>
+</div>
+<div class="flex-1 h-px bg-surface-container-highest mx-3"></div>
+<!-- Step 6: Grounding check (PENDING) -->
+<div class="flex items-center gap-2 opacity-50 group cursor-default">
+<div class="w-6 h-6 rounded-full border border-outline-variant/60 bg-surface-container-low flex items-center justify-center flex-shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-strong text-caption text-tertiary leading-none">Grounding check</span>
+<span class="font-code-body text-label-citation text-outline text-[10px] mt-0.5">Pending</span>
+</div>
+</div>
+<div class="flex-1 h-px bg-surface-container-highest mx-3"></div>
+<!-- Step 7: Metadata & landing (PENDING) -->
+<div class="flex items-center gap-2 opacity-50 group cursor-default">
+<div class="w-6 h-6 rounded-full border border-outline-variant/60 bg-surface-container-low flex items-center justify-center flex-shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-strong text-caption text-tertiary leading-none">Metadata &amp; landing</span>
+<span class="font-code-body text-label-citation text-outline text-[10px] mt-0.5">Pending</span>
+</div>
+</div>
+</div>
+</div>
+<!-- MAIN PROGRESS BODY (Centered reading/curriculum area) -->
+<div class="flex-1 px-8 py-8 max-w-4xl w-full mx-auto pb-28">
+<!-- Header Banner -->
+<div class="flex items-end justify-between mb-8 pb-4 border-b border-surface-container-highest">
+<div>
+<div class="flex items-center gap-2.5">
+<h1 class="font-headline-lg text-headline-lg text-on-surface font-normal tracking-tight">Lessons in progress</h1>
+<span class="px-2 py-0.5 rounded text-caption font-code-body bg-primary-fixed text-primary font-semibold">Live stream</span>
+</div>
+<p class="font-body-default text-body-default text-on-surface-variant mt-1.5">
+              Generating dense modular curriculum aligned to Specialty Coffee Association foundational standard.
+            </p>
+</div>
+<div class="text-right">
+<div class="font-headline-sm text-headline-sm text-on-surface font-semibold">6 of 9 ready</div>
+<div class="font-caption text-caption text-error font-medium flex items-center justify-end gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">error</span>
+              1 requires attention
+            </div>
+</div>
+</div>
+<!-- MODULES LIST -->
+<div class="space-y-8">
+<!-- ================= MODULE 1 ================= -->
+<div class="space-y-3">
+<div class="flex items-center justify-between text-caption font-caption text-outline font-semibold tracking-wider uppercase px-1">
+<span>Module 1: Fundamentals of Extraction</span>
+<span class="font-code-body text-[11px] font-normal normal-case text-on-surface-variant">2 of 2 completed · $0.14 spent</span>
+</div>
+<!-- Lesson 1.1 -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-4 flex items-center justify-between hover:border-surface-variant transition-colors shadow-[0_1px_3px_rgba(14,18,32,0.02)]">
+<div class="flex items-center gap-3.5">
+<div class="w-6 h-6 rounded-full bg-[#1F9D6B]/15 text-[#1F9D6B] flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[15px]">check</span>
+</div>
+<div>
+<h3 class="font-headline-lg text-[18px] text-on-surface leading-snug">1.1 What is extraction?</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="font-caption text-caption text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-outline">schedule</span>
+                      8 min
+                    </span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-[rgba(233,162,59,0.12)] text-[#975D0A] border border-[rgba(233,162,59,0.35)] font-label-citation text-label-citation">
+                      4 citations
+                    </span>
+<span class="font-caption text-caption text-outline">
+                      Quiz: 3 questions
+                    </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 font-code-body text-label-citation text-outline">
+<span>$0.06</span>
+<button class="p-1.5 hover:bg-surface-container rounded text-outline-variant hover:text-on-surface transition-colors" title="View module">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Lesson 1.2 -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-4 flex items-center justify-between hover:border-surface-variant transition-colors shadow-[0_1px_3px_rgba(14,18,32,0.02)]">
+<div class="flex items-center gap-3.5">
+<div class="w-6 h-6 rounded-full bg-[#1F9D6B]/15 text-[#1F9D6B] flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[15px]">check</span>
+</div>
+<div>
+<h3 class="font-headline-lg text-[18px] text-on-surface leading-snug">1.2 Variables in water chemistry</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="font-caption text-caption text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-outline">schedule</span>
+                      12 min
+                    </span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-[rgba(233,162,59,0.12)] text-[#975D0A] border border-[rgba(233,162,59,0.35)] font-label-citation text-label-citation">
+                      6 citations
+                    </span>
+<span class="font-caption text-caption text-outline">
+                      Quiz: 4 questions
+                    </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 font-code-body text-label-citation text-outline">
+<span>$0.08</span>
+<button class="p-1.5 hover:bg-surface-container rounded text-outline-variant hover:text-on-surface transition-colors" title="View module">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ================= MODULE 2 (EXPANDED PREVIEW) ================= -->
+<div class="space-y-3">
+<div class="flex items-center justify-between text-caption font-caption text-outline font-semibold tracking-wider uppercase px-1">
+<span>Module 2: Brewing Ratios &amp; Grind Distribution</span>
+<span class="font-code-body text-[11px] font-normal normal-case text-on-surface-variant">2 of 2 completed · preview open</span>
+</div>
+<!-- Lesson 2.1 (EXPANDED CARD) -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-[0_2px_8px_rgba(14,18,32,0.04)] ring-1 ring-primary/10">
+<!-- Top Row -->
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-3.5">
+<div class="w-6 h-6 rounded-full bg-[#1F9D6B]/15 text-[#1F9D6B] flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[15px]">check</span>
+</div>
+<div>
+<h3 class="font-headline-lg text-[20px] text-on-surface leading-snug">2.1 The Golden Cup Ratio</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="font-caption text-caption text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-outline">schedule</span>
+                        10 min
+                      </span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-[rgba(233,162,59,0.12)] text-[#975D0A] border border-[rgba(233,162,59,0.35)] font-label-citation text-label-citation">
+                        5 citations
+                      </span>
+<span class="font-caption text-caption text-outline font-code-body">
+                        Cost $0.09
+                      </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1 text-caption font-body-strong text-tertiary hover:text-on-surface hover:bg-surface-container rounded border border-surface-container-highest transition-colors">
+                    Collapse preview
+                  </button>
+<button class="px-2.5 py-1 text-caption font-body-strong text-primary bg-primary-fixed hover:bg-primary-fixed-dim rounded border border-primary/20 transition-colors flex items-center gap-1">
+<span>Open in reader</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</button>
+</div>
+</div>
+<!-- Expanded Preview Content Area -->
+<div class="mt-4 pt-4 border-t border-surface-container pl-9 pr-2 space-y-3.5">
+<p class="font-body-editorial text-[17px] leading-relaxed text-on-surface">
+                  A brew ratio defines the weight relation between dry coffee grounds and brew water. The Specialty Coffee Association benchmark lands between 1:15 and 1:18, yielding a balanced dissolved solids spectrum. 
+                  <span class="inline-flex items-center px-1.5 py-0.2 rounded bg-[rgba(233,162,59,0.12)] text-[#975D0A] border border-[rgba(233,162,59,0.35)] font-label-citation text-label-citation mx-1 cursor-pointer hover:bg-[rgba(233,162,59,0.2)]" title="Source: SCA Handbook, Section 2.3">[§2.3 p.42]</span>
+                  When calibrated against total dissolved solids (TDS), ratios regulate perceived mouthfeel and clarify terroir signatures.
+                  <span class="inline-flex items-center px-1.5 py-0.2 rounded bg-[rgba(233,162,59,0.12)] text-[#975D0A] border border-[rgba(233,162,59,0.35)] font-label-citation text-label-citation mx-1 cursor-pointer hover:bg-[rgba(233,162,59,0.2)]" title="Source: Rao, Water &amp; Extraction Standards">[§2.4 p.45]</span>
+</p>
+<!-- Callout block -->
+<div class="p-3.5 bg-surface-container-low rounded-lg border-l-2 border-primary border-y border-r border-surface-container-highest flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5 flex-shrink-0">lightbulb</span>
+<div class="font-body-default text-body-default text-on-surface">
+<strong class="font-body-strong text-on-surface">Key takeaway:</strong> Changing ratio affects strength (TDS) without necessarily changing extraction yield.
+                  </div>
+</div>
+</div>
+</div>
+<!-- Lesson 2.2 -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-4 flex items-center justify-between hover:border-surface-variant transition-colors shadow-[0_1px_3px_rgba(14,18,32,0.02)]">
+<div class="flex items-center gap-3.5">
+<div class="w-6 h-6 rounded-full bg-[#1F9D6B]/15 text-[#1F9D6B] flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[15px]">check</span>
+</div>
+<div>
+<h3 class="font-headline-lg text-[18px] text-on-surface leading-snug">2.2 Grind size and surface area</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="font-caption text-caption text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-outline">schedule</span>
+                      9 min
+                    </span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-[rgba(233,162,59,0.12)] text-[#975D0A] border border-[rgba(233,162,59,0.35)] font-label-citation text-label-citation">
+                      5 citations
+                    </span>
+<span class="font-caption text-caption text-outline">
+                      Quiz: 3 questions
+                    </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 font-code-body text-label-citation text-outline">
+<span>$0.07</span>
+<button class="p-1.5 hover:bg-surface-container rounded text-outline-variant hover:text-on-surface transition-colors" title="View module">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ================= MODULE 3 ================= -->
+<div class="space-y-3">
+<div class="flex items-center justify-between text-caption font-caption text-outline font-semibold tracking-wider uppercase px-1">
+<span>Module 3: Pour-Over &amp; Immersion Dynamics</span>
+<span class="font-code-body text-[11px] font-normal normal-case text-on-surface-variant">1 streaming · 1 attention · 1 queued</span>
+</div>
+<!-- 3.1 V60 & Flat-bottom dynamics (GENERATING ACTIVE STATE) -->
+<div class="bg-surface-container-lowest border border-primary/40 rounded-xl p-5 shadow-[0_0_0_1px_#5B5BF7,0_0_16px_-2px_rgba(91,91,247,0.18)] relative overflow-hidden">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-3.5">
+<div class="w-6 h-6 rounded-full bg-primary-container text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[15px] iris-pulse">auto_awesome</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-headline-lg text-[19px] text-on-surface leading-snug">3.1 V60 &amp; Flat-bottom dynamics</h3>
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-primary font-code-body text-label-citation font-semibold">Generating</span>
+</div>
+<div class="flex items-center gap-3 mt-1">
+<span class="font-caption text-caption text-primary font-medium flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-container iris-pulse"></span>
+                        Streaming · 340 words
+                      </span>
+<span class="font-code-body text-label-citation text-outline">
+                        Est. 8 min
+                      </span>
+</div>
+</div>
+</div>
+<div class="font-code-body text-label-citation text-primary font-medium">
+                  Generating quiz concurrently...
+                </div>
+</div>
+<!-- Shimmer streaming skeleton/text box -->
+<div class="mt-4 pt-3.5 border-t border-surface-container pl-9 pr-2">
+<p class="font-body-editorial text-[16px] text-on-surface-variant italic leading-relaxed">
+                  “A 1:16 ratio means 1 gram of coffee for every 16 grams of water. Pouring in concentric circles creates a dynamic agitation that balances bypassed liquid against core turbulence…”
+                  <span class="inline-block w-2 h-4 bg-primary-container align-middle ml-1 animate-pulse"></span>
+</p>
+<!-- Mini token pulse meter -->
+<div class="mt-3 flex items-center gap-2">
+<div class="h-1 flex-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-2/3 rounded-full animate-pulse"></div>
+</div>
+<span class="font-code-body text-[10px] text-outline">68% synthesized</span>
+</div>
+</div>
+</div>
+<!-- 3.2 Pour-over technique (FAILED VALIDATION STATE) -->
+<div class="bg-red-50/40 border border-error/50 rounded-xl p-4.5 shadow-sm">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-3.5">
+<div class="w-6 h-6 rounded-full bg-error-container text-error flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[15px]">priority_high</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-headline-lg text-[18px] text-on-surface leading-snug">3.2 Pour-over technique</h3>
+<span class="px-2 py-0.2 rounded bg-error-container text-error font-code-body text-label-citation font-bold">Failed validation</span>
+</div>
+<p class="font-body-default text-body-default text-error mt-1 text-[13px]">
+                      Output did not pass verification: 2 blocks had no verifiable source citation from loaded repositories.
+                    </p>
+</div>
+</div>
+<div class="flex items-center gap-2 flex-shrink-0 ml-4">
+<button class="px-3 py-1.5 text-caption font-body-strong text-white bg-error hover:bg-[#a61717] rounded-lg transition-colors flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[14px]">refresh</span>
+<span>Retry this lesson</span>
+</button>
+<button class="px-2.5 py-1.5 text-caption font-body-strong text-on-surface-variant hover:text-on-surface bg-surface-container-lowest border border-outline-variant/50 rounded-lg hover:bg-surface-container transition-colors">
+                    View details
+                  </button>
+</div>
+</div>
+</div>
+<!-- 3.3 Aeropress and inverted extraction (QUEUED STATE) -->
+<div class="bg-surface-container-lowest/70 border border-surface-container-highest rounded-xl p-4 flex items-center justify-between text-outline">
+<div class="flex items-center gap-3.5">
+<div class="w-6 h-6 rounded-full bg-surface-container-high text-outline flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[15px]">hourglass_empty</span>
+</div>
+<div>
+<h3 class="font-headline-lg text-[18px] text-tertiary leading-snug">3.3 Aeropress and inverted extraction</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="font-caption text-caption text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                      ~7 min estimated
+                    </span>
+<span class="font-caption text-caption text-outline">
+                      Waiting for previous steps
+                    </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 font-code-body text-label-citation text-outline">
+<span class="px-2 py-0.5 bg-surface-container rounded text-caption">Queued</span>
+<span>$0.00</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- BOTTOM ASSISTANT INTERACTION BAR (Docked/Sticky in centre view) -->
+<div class="sticky bottom-0 z-20 px-8 py-3 bg-surface-container-low/95 backdrop-blur-md border-t border-surface-container-highest">
+<div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 rounded-full bg-inverse-surface text-inverse-on-surface flex items-center justify-center font-headline-md text-caption font-bold flex-shrink-0 shadow-sm">
+              u
+            </div>
+<p class="font-body-default text-[13px] text-on-surface">
+<span class="font-semibold text-error">Lesson 3.2 failed citation check.</span> I can retry with relaxed threshold or continue and you can manually patch it.
+            </p>
+</div>
+<div class="flex items-center gap-2 flex-shrink-0">
+<a class="font-label-citation text-label-citation text-primary hover:underline mr-2" href="#">Examine 2 missing citations</a>
+<button class="px-3 py-1.5 text-caption font-body-strong text-white bg-primary-container hover:bg-primary rounded-lg transition-colors shadow-sm">
+              Retry now
+            </button>
+<button class="px-3 py-1.5 text-caption font-body-strong text-on-surface bg-surface-container-lowest border border-surface-container-highest hover:bg-surface-container rounded-lg transition-colors">
+              Continue
+            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- RIGHT INSPECTOR PANEL (340px sticky sidebar for Live Session Run & Telemetry) -->
+<aside class="w-[340px] flex-shrink-0 border-l border-surface-container-highest bg-surface-container-low/60 flex flex-col h-full overflow-y-auto custom-scroll p-5 select-none justify-between">
+<div class="space-y-6">
+<!-- Live Session Header -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-4 shadow-[0_1px_3px_rgba(14,18,32,0.02)]">
+<div class="flex items-center justify-between pb-3 border-b border-surface-container">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container iris-pulse"></span>
+<span class="font-body-strong text-headline-sm text-[15px] text-on-surface font-semibold">Session Run #1042</span>
+</div>
+<span class="font-code-body text-label-citation px-2 py-0.5 rounded bg-surface-container text-tertiary">Live</span>
+</div>
+<!-- Budget Bar -->
+<div class="mt-3.5">
+<div class="flex items-center justify-between text-caption font-caption mb-1.5">
+<span class="text-on-surface font-medium">$0.71 of $5.00 session budget</span>
+<span class="font-code-body text-outline font-semibold">14.2%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 14.2%"></div>
+</div>
+</div>
+<!-- Running Cost Velocity Sparkline simulation -->
+<div class="mt-4 pt-3 border-t border-surface-container flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[11px] font-caption text-outline">Generation velocity</span>
+<span class="font-code-body text-label-citation text-on-surface font-semibold">~42 tokens/sec</span>
+</div>
+<!-- Sparkline visualization bars -->
+<div class="flex items-end gap-1 h-5">
+<div class="w-1 bg-primary-fixed h-2 rounded-t"></div>
+<div class="w-1 bg-primary-fixed h-3 rounded-t"></div>
+<div class="w-1 bg-primary-fixed h-2.5 rounded-t"></div>
+<div class="w-1 bg-primary-fixed h-4 rounded-t"></div>
+<div class="w-1 bg-primary-container h-5 rounded-t"></div>
+<div class="w-1 bg-primary-container h-3.5 rounded-t"></div>
+</div>
+</div>
+</div>
+<!-- Telemetry Breakdown -->
+<div class="space-y-3">
+<div class="flex items-center justify-between px-1">
+<span class="text-caption font-caption text-outline font-semibold tracking-wider uppercase">Telemetry &amp; Cost</span>
+<span class="material-symbols-outlined text-outline text-[16px]">query_stats</span>
+</div>
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-3.5 font-code-body text-[12px] space-y-2.5">
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant">Input tokens</span>
+<span class="text-on-surface font-semibold">420,190</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant">Output tokens</span>
+<span class="text-on-surface font-semibold">38,410</span>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-surface-container">
+<span class="text-secondary font-medium">Cached prompt tokens</span>
+<span class="text-secondary font-semibold">64.2% <span class="text-[11px] font-normal text-outline">(-$0.48)</span></span>
+</div>
+<div class="flex items-center justify-between pt-1 text-[11px]">
+<span class="text-outline">Estimated completion</span>
+<span class="text-outline font-medium">~1m 40s remaining</span>
+</div>
+</div>
+</div>
+<!-- Assigned AI Models -->
+<div class="space-y-3">
+<div class="flex items-center justify-between px-1">
+<span class="text-caption font-caption text-outline font-semibold tracking-wider uppercase">Active Pipeline Agents</span>
+<span class="material-symbols-outlined text-outline text-[16px]">psychology</span>
+</div>
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-3.5 space-y-3 text-caption font-caption">
+<div class="flex items-start gap-2.5">
+<div class="w-2 h-2 rounded-full bg-primary-container mt-1.5 flex-shrink-0"></div>
+<div>
+<div class="font-semibold text-on-surface">Claude 3.7 Sonnet</div>
+<div class="text-outline text-[11px] font-code-body">Curriculum structuring &amp; lesson prose</div>
+</div>
+</div>
+<div class="flex items-start gap-2.5 pt-2.5 border-t border-surface-container">
+<div class="w-2 h-2 rounded-full bg-[#1F9D6B] mt-1.5 flex-shrink-0"></div>
+<div>
+<div class="font-semibold text-on-surface">Claude 3.5 Haiku</div>
+<div class="text-outline text-[11px] font-code-body">Citation grounding &amp; fact verification</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Background Execution Persistence Note -->
+<div class="p-3 bg-surface-container-highest/60 rounded-xl border border-surface-container-highest flex items-start gap-2.5">
+<span class="material-symbols-outlined text-outline text-[18px] mt-0.5 flex-shrink-0">mark_email_read</span>
+<p class="font-body-default text-[12px] leading-relaxed text-on-surface-variant">
+            You can safely close this tab — generation will proceed uninterrupted in the background. We’ll notify you when ready.
+          </p>
+</div>
+</div>
+<!-- Panel Footer Action: Cancel Run -->
+<div class="pt-4 border-t border-surface-container-highest">
+<button class="w-full py-2 px-3 text-caption font-body-strong text-error/80 hover:text-error hover:bg-error-container/40 rounded-lg border border-transparent hover:border-error/20 transition-all duration-150 flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">cancel</span>
+<span>Cancel run</span>
+</button>
+</div>
+</aside>
+</main>
+</body></html>

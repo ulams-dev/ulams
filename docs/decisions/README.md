@@ -17,3 +17,6 @@ replacement.
 | [0005](0005-turborepo-and-yarn-workspaces.md) | Turborepo and Yarn workspaces | Accepted |
 | [0006](0006-remove-recommender.md) | Remove the recommender package | Accepted |
 | [0007](0007-tenancy-package.md) | Tenancy: database per tenant, provisioned by the tenancy package | Accepted |
+| [0009](0009-llm-layer.md) | LLM layer: an `ai` package on the official Anthropic SDK | Proposed |
+| [0010](0010-course-blueprint-and-builder.md) | Course Builder: a versioned Course Blueprint applied through domain services | Proposed |
+| [0011](0011-ag-ui-over-sse-from-laravel.md) | Builder streaming: AG-UI events over SSE from Laravel, carrying A2UI surfaces | Proposed |

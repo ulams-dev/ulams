@@ -44,6 +44,8 @@ small commits → tests → summary.
 - [ ] Multitenancy for the POC: one deployment, tenant per subdomain with own theme?
 - [ ] Prototype the Sylius order → entitlement flow early (highest-risk commerce piece)
 - [x] Add the spec file to the repo as `docs/ROADMAP-PROMPT.md`
+- [ ] (new) Approve the Phase 1 and Phase 2 plans (`docs/plans/phase-1.md`, `docs/plans/phase-2.md`)
+      and ADRs 0009–0011 (LLM layer, Course Blueprint, AG-UI over SSE), all Proposed
 
 ## Product principles (tie-breakers)
 
@@ -150,13 +152,20 @@ stale content.
 - [x] Upgrade plan from Laravel 9 (EOL) to supported Laravel/PHP: order, breaking changes,
       forks/patches needed, risks (docs/plans/phase-0.md: 9 → 10 → 11 → 12 → 13 on PHP 8.4)
 - [ ] Implement after approval with test suite green at every step
-      (partial: steps 1–3/4 done — Laravel 12.69.3 on PHP 8.3 (Carbon 3, Passport 12, Testbench 10, PHPUnit 11,
-      `devianl2/laravel-scorm` vendored as `api/packages/laravel-scorm`), no new test failures; see
-      docs/plans/phase-0.md B.11–B.13)
+      (steps 1–4 done, step 4 uncommitted — Laravel 13.35 on PHP 8.4 (Passport 13 with data migration for the
+      platform and every tenant, Testbench 11, PHPUnit 12; query cache dropped, `treestoneit/shopping-cart` vendored
+      as `api/packages/shopping-cart`, Mattermost Laravel wrapper replaced), no new test failures; see
+      docs/plans/phase-0.md B.11–B.14. Tick after the step-4 commit is merged)
+- [ ] (new) Decide on Passport 13's device-code routes (`oauth/device*`, exposed by default, unused): keep or disable
+- [ ] (new) Move the `@OA\` docblock annotations (223 files) to PHP attributes and drop the abandoned
+      `doctrine/annotations`
 
 ---
 
 ## Phase 1: Content formats and integrations
+
+Plan (new): `docs/plans/phase-1.md` (draft, waiting for approval): M1.1 upload hardening and content
+origin → M1.2–M1.4 LTI 1.3 → M1.5 LiaScript → M1.6–M1.7 Adapt → M1.8 H5P items → M1.9 conformance.
 
 ### 1.1 LiaScript
 - [ ] Versioned Markdown + assets as course source
@@ -176,6 +185,11 @@ stale content.
 ### 1.4 Shared
 - [ ] Upload hardening (zip-slip, MIME, size limits, virus-scan hook)
 - [ ] Isolated origin / strict CSP for third-party JS
+- [ ] (new) Zip-slip: SCORM (`ScormService::unzipScormArchive`) and cmi5 (`Cmi5UploadService`) extract
+      archives with `ZipArchive::extractTo` and no entry-path checks; replace with a safe extractor (M1.1)
+- [ ] (new) The SCORM player loads `scorm-again` from the jsDelivr CDN; vendor it (air-gapped installs)
+- [ ] (new) SCORM/cmi5 content of all tenants is served from the shared `storage.localhost` origin; move
+      packages and players to a per-tenant content origin (M1.1)
 - [ ] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket) (partial: env-file resolver live for the demo tenants; remaining: a distinct `H5P_INTERNAL_TOKEN`
       per tenant written at provisioning, library administration limited to the platform because
       libraries are shared, production mounts limited to env files and key directories, idle-tenant
@@ -191,6 +205,16 @@ stale content.
 Note (new): a first Course Builder plan was drafted on 2026-10-08 (LLM layer in `api/packages/ai`,
 tenancy package, Course Blueprint, LiaScript and Adapt topic types, admin module). It predates this
 roadmap; Phase 2 is re-planned from this spec after Phases 0–1.
+
+Plan (new): `docs/plans/phase-2.md` (draft, waiting for approval; follows Phase 1). First milestone
+M2.1 "chat course building": upload → interview → outline diff → approved generation with citations →
+approved apply through domain services → element chat edits. Designs:
+`front/docs/design/stitch/course-builder/`.
+
+- [ ] (new) Course Builder author area in the reference web app (`front/web`, `/studio`); the admin only
+      links to it
+- [ ] (new) AG-UI event log and SSE stream from Laravel, carrying A2UI surfaces (ADR 0011)
+- [ ] (new) Builder components in `@ulams/ui` and the course landing document in the catalogue format
 
 ### 2.1 LLM layer
 - [ ] Provider abstraction, model per task via config (Sonnet default, Haiku for light steps)

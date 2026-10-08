@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ulams Course Builder — Outline Proposal Review</title>
+<!-- Google Fonts: Newsreader (Editorial Serif), Inter (UI Sans), JetBrains Mono (Code/Metadata) -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined (Exact tag requirement) -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration verbatim from Design System -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-fixed": "#09006b",
+            "on-primary-container": "#f8f5ff",
+            "on-background": "#1b1c19",
+            "on-error-container": "#93000a",
+            "outline-variant": "#c7c4d8",
+            "background": "#fbf9f4",
+            "primary-fixed-dim": "#c1c1ff",
+            "on-secondary-container": "#714800",
+            "tertiary": "#545869",
+            "secondary": "#845400",
+            "on-surface": "#1b1c19",
+            "on-secondary-fixed": "#2a1800",
+            "tertiary-fixed": "#dfe1f6",
+            "tertiary-container": "#6d7082",
+            "on-primary-fixed-variant": "#2c25cc",
+            "on-surface-variant": "#464555",
+            "on-error": "#ffffff",
+            "inverse-surface": "#30312e",
+            "surface-dim": "#dbdad5",
+            "inverse-primary": "#c1c1ff",
+            "surface-container-high": "#eae8e3",
+            "secondary-fixed-dim": "#ffb959",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "error": "#ba1a1a",
+            "surface-bright": "#fbf9f4",
+            "error-container": "#ffdad6",
+            "surface-tint": "#4746e4",
+            "primary-container": "#5b5bf7",
+            "primary": "#413ede",
+            "inverse-on-surface": "#f2f1ec",
+            "secondary-fixed": "#ffddb6",
+            "surface-variant": "#e4e2dd",
+            "surface-container-low": "#f5f3ee",
+            "on-tertiary-fixed": "#171b29",
+            "tertiary-fixed-dim": "#c3c5d9",
+            "on-tertiary-fixed-variant": "#424656",
+            "on-primary": "#ffffff",
+            "surface-container-highest": "#e4e2dd",
+            "outline": "#767587",
+            "secondary-container": "#ffb54d",
+            "primary-fixed": "#e1dfff",
+            "on-secondary-fixed-variant": "#643f00",
+            "surface-container": "#f0eee9",
+            "on-tertiary-container": "#f7f5ff",
+            "on-secondary": "#ffffff",
+            "surface": "#fbf9f4"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-md": "1rem",
+            "space-xl": "2.5rem",
+            "space-xs": "0.25rem",
+            "margin": "1rem",
+            "gutter-desktop": "1.5rem",
+            "space-sm": "0.5rem",
+            "margin-desktop": "2rem",
+            "space-lg": "1.5rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "body-strong": ["Inter"],
+            "headline-md": ["Inter"],
+            "headline-lg": ["Newsreader"],
+            "code-body": ["JetBrains Mono"],
+            "body-default": ["Inter"],
+            "headline-sm": ["Inter"],
+            "headline-lg-mobile": ["Newsreader"],
+            "caption": ["Inter"],
+            "display-editorial-mobile": ["Newsreader"],
+            "display-editorial": ["Newsreader"],
+            "body-editorial": ["Newsreader"],
+            "label-citation": ["JetBrains Mono"]
+          },
+          "fontSize": {
+            "body-strong": ["14px", { "lineHeight": "22px", "fontWeight": "500" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.015em", "fontWeight": "400" }],
+            "code-body": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-default": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "display-editorial-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "display-editorial": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "body-editorial": ["19px", { "lineHeight": "32px", "fontWeight": "400" }],
+            "label-citation": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .popover-shadow {
+      box-shadow: 0 16px 36px -8px rgba(14, 18, 32, 0.12), 0 4px 12px -2px rgba(14, 18, 32, 0.05);
+    }
+  </style>
+</head>
+<body class="bg-[#F7F5F0] text-on-surface antialiased min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- ========================================================================= -->
+<!-- 1. LEFT NAVIGATION RAIL (Shared Component: SideNavBar)                      -->
+<!-- ========================================================================= -->
+<aside aria-label="Application Rail" class="fixed top-0 left-0 h-screen w-16 z-40 bg-[#141416] border-r border-[#27272A] flex flex-col justify-between py-4 items-center select-none">
+<!-- Brand Monogram -->
+<div class="flex flex-col items-center gap-1">
+<div class="w-10 h-10 rounded-xl bg-[#222226] border border-white/10 flex items-center justify-center relative group cursor-pointer shadow-sm">
+<span class="font-headline-lg text-headline-md italic text-white leading-none tracking-tight">u</span>
+<span class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+</div>
+</div>
+<!-- Primary Navigation Items -->
+<nav class="flex flex-col items-center gap-3 w-full px-2">
+<!-- Item 1: Builder (ACTIVE) -->
+<a class="w-11 h-11 flex flex-col items-center justify-center text-primary-fixed bg-surface-variant/20 rounded-lg p-2.5 transition-all duration-150 relative group" href="#builder" title="Builder">
+<span class="material-symbols-outlined text-primary-fixed text-[22px]">architecture</span>
+<span class="sr-only">Builder</span>
+<span class="absolute left-16 bg-[#1f2024] text-white text-[11px] font-caption px-2 py-1 rounded shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">Builder</span>
+</a>
+<!-- Item 2: Courses -->
+<a class="w-11 h-11 flex flex-col items-center justify-center text-stone-400 hover:text-white hover:bg-white/5 rounded-lg p-2.5 transition-all duration-150 group relative" href="#courses" title="Courses">
+<span class="material-symbols-outlined text-[22px]">menu_book</span>
+<span class="sr-only">Courses</span>
+<span class="absolute left-16 bg-[#1f2024] text-white text-[11px] font-caption px-2 py-1 rounded shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">Courses</span>
+</a>
+<!-- Item 3: Sources -->
+<a class="w-11 h-11 flex flex-col items-center justify-center text-stone-400 hover:text-white hover:bg-white/5 rounded-lg p-2.5 transition-all duration-150 group relative" href="#sources" title="Sources">
+<span class="material-symbols-outlined text-[22px]">source</span>
+<span class="sr-only">Sources</span>
+<span class="absolute left-16 bg-[#1f2024] text-white text-[11px] font-caption px-2 py-1 rounded shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">Sources</span>
+</a>
+<!-- Item 4: Usage -->
+<a class="w-11 h-11 flex flex-col items-center justify-center text-stone-400 hover:text-white hover:bg-white/5 rounded-lg p-2.5 transition-all duration-150 group relative" href="#usage" title="Usage">
+<span class="material-symbols-outlined text-[22px]">data_usage</span>
+<span class="sr-only">Usage</span>
+<span class="absolute left-16 bg-[#1f2024] text-white text-[11px] font-caption px-2 py-1 rounded shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">Usage</span>
+</a>
+<!-- Item 5: Settings -->
+<a class="w-11 h-11 flex flex-col items-center justify-center text-stone-400 hover:text-white hover:bg-white/5 rounded-lg p-2.5 transition-all duration-150 group relative" href="#settings" title="Settings">
+<span class="material-symbols-outlined text-[22px]">settings</span>
+<span class="sr-only">Settings</span>
+<span class="absolute left-16 bg-[#1f2024] text-white text-[11px] font-caption px-2 py-1 rounded shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">Settings</span>
+</a>
+</nav>
+<!-- Rail Footer: User Profile -->
+<div class="flex flex-col items-center gap-3">
+<div class="relative cursor-pointer group" title="Profile">
+<img class="w-9 h-9 rounded-full object-cover ring-1 ring-white/20" data-alt="Editorial close-up portrait of an academic curriculum architect with focused expression, shot in soft natural directional light inside a modern library studio, film aesthetic, muted earth tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJdkxSgxcsa8UoYu1gERnVwP6G4Tem6_eQowxW9MDXJfR-_D3dKIa2cmkAPWujlpZlvT6i7ZkiDQXCLGaWZU4wPBngJjG94a0smv55D7gqK7oeuEhq7OFnA56QJelPNvlHKKfDKnfoKq-Y4drrZK-BgSNWzvqDLPGhyOD__14ohwBrVI2PAKsN3alSxtPDOtxyT1mVy0cj6BqhZpElO3N-ZJhcqAqbDW-2QT_xyAhOtfIkNZ96mZxWVTnlWvt_VVx5Z7dTh5ivqR8"/>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#1F9D6B] ring-2 ring-[#141416]"></span>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- 2. TOP NAV BAR (Shared Component: TopNavBar)                               -->
+<!-- ========================================================================= -->
+<header class="fixed top-0 left-16 right-0 h-14 bg-[#FBF9F4] border-b border-[#EAE7DF] flex items-center justify-between px-6 z-30 select-none">
+<!-- Breadcrumb & Status Cluster -->
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 font-body-strong text-body-strong">
+<span class="text-on-surface-variant font-medium">Course Builder</span>
+<span class="text-stone-300">/</span>
+<span class="text-on-surface font-semibold tracking-tight">Coffee brewing fundamentals</span>
+</div>
+<!-- Outline Proposed Diff Status Pill -->
+<div class="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-900 border border-amber-200/80 shadow-xs">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+</span>
+<span>Outline proposed · waiting for your approval</span>
+</div>
+</div>
+<!-- Right Controls: Cost Meter, Tokens, Help, Notifications -->
+<div class="flex items-center gap-5">
+<!-- Token & Cost Telemetry Pill -->
+<div class="flex items-center gap-2 bg-[#F0EEE9] border border-[#E4E2DD] px-2.5 py-1 rounded-md text-stone-600 font-label-citation text-label-citation">
+<span class="material-symbols-outlined text-[16px] text-stone-500">toll</span>
+<span>$0.18 · 112k tokens</span>
+</div>
+<div class="h-4 w-px bg-stone-300"></div>
+<!-- Action Icons -->
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="p-1.5 hover:text-on-surface hover:bg-stone-200/50 rounded-lg transition-colors" title="Documentation &amp; Help">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+<button class="p-1.5 hover:text-on-surface hover:bg-stone-200/50 rounded-lg transition-colors relative" title="Notifications">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1 right-1 w-1.5 h-1.5 bg-primary-container rounded-full"></span>
+</button>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- 3. MAIN WORKSPACE CANVAS                                                  -->
+<!-- ========================================================================= -->
+<main class="pl-20 pr-6 pt-20 pb-32 max-w-[1440px] mx-auto grid grid-cols-12 gap-8 items-start">
+<!-- ----------------------------------------------------------------------- -->
+<!-- LEFT COLUMN (Span 8): REVIEWABLE DIFF OUTLINE TREE                     -->
+<!-- ----------------------------------------------------------------------- -->
+<div class="col-span-12 lg:col-span-8 space-y-6">
+<!-- Primary Outline Container Card -->
+<section class="bg-white border border-[#EAE7DF] rounded-2xl p-7 shadow-[0_1px_3px_rgba(14,18,32,0.03)] relative">
+<!-- Outline Card Header with Diff Legend -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#EAE7DF]">
+<div>
+<div class="flex items-center gap-2.5">
+<h1 class="font-headline-lg text-2xl font-normal text-stone-900 tracking-tight">Proposed outline</h1>
+<span class="font-label-citation text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-stone-100 text-stone-600 border border-stone-200">v1.2 AI-Synthesized</span>
+</div>
+<p class="font-body-default text-stone-500 text-sm mt-1">
+              3 modules · 9 lessons · 62 min · 14 learning objectives · derived from 2 source manuscripts
+            </p>
+</div>
+<!-- Diff Legend Badges -->
+<div class="flex items-center gap-2 font-label-citation text-[11px] self-start sm:self-auto bg-[#F7F5F0] p-1.5 rounded-xl border border-[#EAE7DF]">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#EBF7F0] text-[#1F9D6B] font-medium border border-[#A7F3D0]/60">
+<span class="font-code-body font-bold">+</span> added
+            </span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-primary-container/10 text-primary-container font-medium border border-primary-container/20">
+<span class="font-code-body font-bold">~</span> changed
+            </span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#FEF2F2] text-[#DC2626] font-medium border border-red-200 line-through">
+<span class="font-code-body font-bold">−</span> removed
+            </span>
+</div>
+</div>
+<!-- Tree Structure Body -->
+<div class="mt-8 space-y-8">
+<!-- ================= MODULE 1 (ADDED) ================= -->
+<div class="relative">
+<!-- Module Top Bar -->
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="mt-1 w-6 h-6 rounded-md bg-[#EBF7F0] text-[#1F9D6B] flex items-center justify-center font-code-body text-xs font-bold shrink-0">
+                  +
+                </div>
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<span class="font-label-citation text-xs uppercase tracking-wide text-stone-400">Module 01</span>
+<h2 class="font-headline-lg text-xl font-medium text-stone-900">Beans and grind</h2>
+<span class="px-2 py-0.2 rounded-full text-[10px] font-label-citation uppercase bg-[#EBF7F0] text-[#1F9D6B] border border-[#1F9D6B]/30 font-semibold">+ added</span>
+</div>
+<p class="font-body-default text-stone-600 text-xs mt-1 max-w-xl">
+                    Understand bean origin characteristics, degassing kinetics, and particle grind distribution mechanics.
+                  </p>
+</div>
+</div>
+<span class="font-label-citation text-xs text-stone-400 shrink-0">2 lessons · 15 min</span>
+</div>
+<!-- Module 1 Tree Children Connector -->
+<div class="border-l-2 border-[#EAE7DF] ml-3 pl-7 mt-5 space-y-7 relative">
+<!-- LESSON 1.1 -->
+<div class="relative group bg-[#FBF9F4]/70 hover:bg-[#FBF9F4] p-4 rounded-xl border border-[#EAE7DF] transition-colors">
+<div class="flex items-start justify-between gap-3">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#1F9D6B]"></span>
+<h3 class="font-headline-lg text-lg text-stone-900 font-medium">Lesson 1.1: Why freshness matters</h3>
+<span class="text-stone-300">·</span>
+<span class="font-label-citation text-xs text-stone-500">7 min</span>
+</div>
+<!-- Learning Objectives with Bullseye Icons -->
+<div class="mt-2 pl-3 space-y-1.5">
+<div class="flex items-center gap-2 text-stone-700 text-xs font-body-default group/item">
+<span class="material-symbols-outlined text-[15px] text-stone-400 shrink-0">adjust</span>
+<span>Explain how CO₂ release affects extraction dynamics and bubble agitation</span>
+<button class="opacity-0 group-hover/item:opacity-100 text-stone-400 hover:text-stone-700 transition-opacity p-0.5" title="Edit Objective">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+</button>
+</div>
+<div class="flex items-center gap-2 text-stone-700 text-xs font-body-default group/item">
+<span class="material-symbols-outlined text-[15px] text-stone-400 shrink-0">adjust</span>
+<span>Identify volatile organic loss curve over a 30-day post-roast window</span>
+<button class="opacity-0 group-hover/item:opacity-100 text-stone-400 hover:text-stone-700 transition-opacity p-0.5" title="Edit Objective">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+</button>
+</div>
+</div>
+<!-- Amber Citation Chips Cluster -->
+<div class="pt-3 flex items-center gap-2 flex-wrap">
+<span class="font-label-citation text-[10px] text-stone-400 uppercase tracking-wider">Citations:</span>
+<!-- Passive Citation Chip -->
+<a class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FFF8EE] text-[#B45309] border border-[#FDE68A] font-label-citation text-[11px] hover:border-amber-400 transition-colors" href="#cite-roasting">
+<span class="material-symbols-outlined text-[13px]">book_2</span>
+<span>§1.2 Roasting dates</span>
+</a>
+<!-- ACTIVE HOVERED CITATION CHIP WITH RICH FLOATING POPOVER -->
+<div class="relative inline-block">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#FFF8EE] text-[#975D0A] border border-amber-400 shadow-sm font-label-citation text-[11px] ring-2 ring-amber-200/60 cursor-pointer">
+<span class="material-symbols-outlined text-[13px] text-amber-600">verified</span>
+<span class="font-bold">§1.3 Degassing</span>
+</div>
+<!-- FLOATING POPOVER ANCHORED -->
+<div class="absolute left-0 sm:left-4 top-8 w-80 sm:w-96 bg-white border border-[#EAE7DF] rounded-xl p-4 popover-shadow z-50 text-left transition-all animate-in fade-in zoom-in-95 duration-150">
+<div class="flex items-center justify-between pb-2 border-b border-stone-100">
+<span class="font-label-citation text-[10px] font-bold tracking-widest uppercase text-stone-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-amber-600">article</span>
+                              Provenance Excerpt
+                            </span>
+<span class="font-label-citation text-[10px] bg-amber-50 text-amber-800 px-1.5 py-0.5 rounded border border-amber-200">Confidence 98.4%</span>
+</div>
+<!-- Newsreader Italic Quote -->
+<blockquote class="my-3 font-headline-lg italic text-[14px] leading-relaxed text-stone-800 bg-[#FBF9F4] p-3 rounded-lg border-l-2 border-amber-500">
+                            “Freshly roasted beans retain elevated carbon dioxide levels that impede uniform wetting during bloom, requiring resting periods of 7 to 14 days.”
+                          </blockquote>
+<!-- Provenance Metadata & Link -->
+<div class="flex items-center justify-between pt-1">
+<span class="font-code-body text-[11px] text-stone-500 truncate max-w-[210px]">
+                              coffee-brewing-handbook.pdf · p. 14 · <span class="text-stone-400">frg_3m9t</span>
+</span>
+<a class="inline-flex items-center gap-0.5 text-xs font-body-strong text-primary hover:underline" href="#open-source">
+<span>Open in source</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- LESSON 1.2 -->
+<div class="relative group bg-[#FBF9F4]/70 hover:bg-[#FBF9F4] p-4 rounded-xl border border-[#EAE7DF] transition-colors">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#1F9D6B]"></span>
+<h3 class="font-headline-lg text-lg text-stone-900 font-medium">Lesson 1.2: Choosing a grind size</h3>
+<span class="text-stone-300">·</span>
+<span class="font-label-citation text-xs text-stone-500">8 min</span>
+</div>
+<!-- Learning Objectives -->
+<div class="mt-2 pl-3 space-y-1.5">
+<div class="flex items-center gap-2 text-stone-700 text-xs font-body-default group/item">
+<span class="material-symbols-outlined text-[15px] text-stone-400 shrink-0">adjust</span>
+<span>Calibrate burr spacing for immersion vs percolation brew methods</span>
+<button class="opacity-0 group-hover/item:opacity-100 text-stone-400 hover:text-stone-700 transition-opacity p-0.5" title="Edit Objective">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+</button>
+</div>
+</div>
+<!-- Citations -->
+<div class="pt-3 flex items-center gap-2">
+<span class="font-label-citation text-[10px] text-stone-400 uppercase tracking-wider">Citations:</span>
+<a class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FFF8EE] text-[#B45309] border border-[#FDE68A] font-label-citation text-[11px] hover:border-amber-400 transition-colors" href="#cite-grind">
+<span class="material-symbols-outlined text-[13px]">book_2</span>
+<span>§2.1 Grind sizes</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= MODULE 2 (CHANGED / INLINE DIFF) ================= -->
+<div class="relative pt-2">
+<!-- Module Top Bar -->
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="mt-1 w-6 h-6 rounded-md bg-primary-container/10 text-primary-container flex items-center justify-center font-code-body text-xs font-bold shrink-0">
+                  ~
+                </div>
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<span class="font-label-citation text-xs uppercase tracking-wide text-stone-400">Module 02</span>
+<h2 class="font-headline-lg text-xl font-medium text-stone-900">Brewing ratios &amp; thermodynamics</h2>
+<span class="px-2 py-0.2 rounded-full text-[10px] font-label-citation uppercase bg-primary-container/10 text-primary-container border border-primary-container/30 font-semibold">~ changed</span>
+</div>
+<p class="font-body-default text-stone-600 text-xs mt-1">
+                    Thermal mass transfer, water solubility constants, and ratio adjustment frameworks.
+                  </p>
+</div>
+</div>
+<span class="font-label-citation text-xs text-stone-400 shrink-0">3 lessons · 19 min</span>
+</div>
+<!-- Module 2 Tree Connector -->
+<div class="border-l-2 border-[#EAE7DF] ml-3 pl-7 mt-5 space-y-6 relative">
+<!-- LESSON 2.1 INLINE BEFORE/AFTER DIFF CARD -->
+<div class="p-4 rounded-xl border border-primary-container/30 bg-[#FBF9F4] relative shadow-xs">
+<!-- Diff Banner / Annotation Pill -->
+<div class="mb-3 flex items-center justify-between flex-wrap gap-2">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary-container/10 text-[#5B5BF7] border border-primary-container/20 text-xs font-body-strong">
+<span class="material-symbols-outlined text-[14px]">chat_bubble_outline</span>
+<span>Changed after your comment: "make it more practical"</span>
+</div>
+<span class="font-label-citation text-xs text-stone-500">Lesson 2.1 · 9 min</span>
+</div>
+<!-- Before & After Diff Title Display -->
+<div class="flex items-center gap-3 py-1 flex-wrap">
+<span class="font-headline-lg text-lg text-stone-400 line-through decoration-[#DC2626] decoration-1.5">
+                    Ratios
+                  </span>
+<span class="material-symbols-outlined text-primary-container text-[18px]">arrow_forward</span>
+<span class="font-headline-lg text-lg text-stone-950 font-semibold">
+                    The 1:16 golden ratio, and when to break it
+                  </span>
+</div>
+<!-- Objectives Diff -->
+<div class="mt-3 space-y-1.5 pl-2 border-l border-primary-container/30 text-xs font-body-default">
+<div class="flex items-center gap-2 text-stone-500 line-through">
+<span class="text-red-500 font-code-body">−</span>
+<span>Theoretical mathematical yield calculations</span>
+</div>
+<div class="flex items-center gap-2 text-stone-800 font-medium">
+<span class="text-emerald-600 font-code-body font-bold">+</span>
+<span>Taste-driven adjustments for dark vs light roasts on bench scales</span>
+</div>
+</div>
+<!-- Citations -->
+<div class="pt-3 mt-2 border-t border-stone-200/60 flex items-center gap-2 flex-wrap">
+<span class="font-label-citation text-[10px] text-stone-400 uppercase tracking-wider">Citations:</span>
+<a class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FFF8EE] text-[#B45309] border border-[#FDE68A] font-label-citation text-[11px] hover:border-amber-400 transition-colors" href="#cite-ratios">
+<span class="material-symbols-outlined text-[13px]">book_2</span>
+<span>§2.3 Brewing ratios &amp; Water temp</span>
+</a>
+<a class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FFF8EE] text-[#B45309] border border-[#FDE68A] font-label-citation text-[11px] hover:border-amber-400 transition-colors" href="#cite-solubles">
+<span class="material-symbols-outlined text-[13px]">book_2</span>
+<span>§3.1 Total dissolved solids (TDS)</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= MODULE 3 (COLLAPSED) ================= -->
+<div class="border border-[#EAE7DF] rounded-xl p-4 bg-[#FBF9F4]/50 flex items-center justify-between hover:bg-[#FBF9F4] transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-stone-400 group-hover:text-stone-700 transition-colors">chevron_right</span>
+<span class="font-label-citation text-xs uppercase tracking-wide text-stone-400">Module 03</span>
+<h3 class="font-headline-lg text-lg text-stone-800 font-medium">Brewing methods &amp; device mechanics</h3>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-label-citation text-xs text-stone-500">4 lessons · 28 min</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-label-citation bg-stone-200/60 text-stone-600">Unchanged</span>
+</div>
+</div>
+<!-- ================= REMOVED DIFF ROW ================= -->
+<div class="p-3.5 rounded-xl border border-dashed border-red-200 bg-[#FEF2F2]/60 flex items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<span class="w-5 h-5 rounded-md bg-[#FEF2F2] text-[#DC2626] border border-red-200 flex items-center justify-center font-code-body text-xs font-bold shrink-0">
+                −
+              </span>
+<div class="flex items-center gap-2">
+<span class="font-headline-lg text-base text-stone-400 line-through">History of espresso</span>
+<span class="text-stone-300">·</span>
+<span class="font-label-citation text-xs text-stone-400 line-through">10 min</span>
+</div>
+</div>
+<!-- Rejection rationale badge -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white text-stone-600 border border-red-200 font-label-citation text-[11px] shadow-xs shrink-0">
+<span class="material-symbols-outlined text-[14px] text-red-500">error_outline</span>
+<span>Not covered by your source manuscripts</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom Hint Note for Diff Review -->
+<div class="flex items-center justify-between text-xs text-stone-500 px-2 font-body-default">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-stone-400">info</span>
+<span>Click any lesson title or objective to edit inline before approving the syllabus generation.</span>
+</div>
+<span class="font-code-body text-stone-400 text-[11px]">Sync hash: e4b8-912a</span>
+</div>
+</div>
+<!-- ----------------------------------------------------------------------- -->
+<!-- RIGHT COLUMN (Span 4): STICKY REVIEW INSPECTOR PANEL                   -->
+<!-- ----------------------------------------------------------------------- -->
+<aside class="col-span-12 lg:col-span-4 sticky top-20 space-y-4">
+<div class="bg-white border border-[#EAE7DF] rounded-2xl p-6 shadow-sm">
+<!-- Header -->
+<div class="pb-4 border-b border-stone-100">
+<h2 class="font-headline-lg text-xl font-normal text-stone-900 tracking-tight">Review before generating</h2>
+<p class="font-body-default text-stone-500 text-xs mt-1">
+            Verify pedagogical constraints and source manuscript alignment.
+          </p>
+</div>
+<!-- Validation Checklist -->
+<div class="py-4 space-y-3 border-b border-stone-100">
+<span class="font-label-citation text-[10px] uppercase font-bold text-stone-400 tracking-wider">Quality Gates</span>
+<!-- Gate 1: Source citations -->
+<div class="flex items-center justify-between text-xs font-body-default">
+<div class="flex items-center gap-2.5 text-stone-700">
+<span class="w-5 h-5 rounded-full bg-[#EBF7F0] text-[#1F9D6B] flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</span>
+<span>All lessons cite approved sources</span>
+</div>
+<span class="font-label-citation text-[11px] text-[#1F9D6B] font-bold">100%</span>
+</div>
+<!-- Gate 2: Duration check -->
+<div class="flex items-center justify-between text-xs font-body-default">
+<div class="flex items-center gap-2.5 text-stone-700">
+<span class="w-5 h-5 rounded-full bg-[#EBF7F0] text-[#1F9D6B] flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</span>
+<span>Target duration window</span>
+</div>
+<span class="font-code-body text-[11px] text-stone-600 bg-stone-100 px-1.5 py-0.5 rounded">62 / 60 min</span>
+</div>
+<!-- Gate 3: User modifications -->
+<div class="flex items-center justify-between text-xs font-body-default">
+<div class="flex items-center gap-2.5 text-stone-700">
+<span class="w-5 h-5 rounded-full bg-primary-container/10 text-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[14px]">edit_note</span>
+</span>
+<span>Curriculum architect edits</span>
+</div>
+<span class="font-label-citation text-[11px] text-primary-container font-semibold">1 objective edited</span>
+</div>
+</div>
+<!-- Feedback / Revision Comment Box -->
+<div class="pt-4 space-y-2">
+<label class="block font-body-strong text-xs text-stone-700" for="revision-comment">
+            Comment for a revision <span class="font-normal text-stone-400">(optional)</span>
+</label>
+<textarea class="w-full text-xs font-body-default p-3 rounded-xl border border-[#EAE7DF] bg-[#FBF9F4] focus:bg-white focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all placeholder:text-stone-400 resize-none" id="revision-comment" placeholder="e.g., Shorten Lesson 1.2 or expand pour-over tips to cover Chemex bypass..." rows="3"></textarea>
+</div>
+<!-- Call to Action Buttons Cluster -->
+<div class="pt-5 space-y-2.5">
+<!-- Primary CTA Button -->
+<button class="w-full py-3 px-4 rounded-xl bg-primary-container hover:bg-[#4949E3] active:scale-[0.99] text-white font-body-strong text-sm flex items-center justify-center gap-2 shadow-sm transition-all">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+<span>Approve outline &amp; generate</span>
+</button>
+<!-- Secondary CTA -->
+<button class="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-stone-50 border border-stone-300 active:scale-[0.99] text-stone-800 font-body-strong text-sm flex items-center justify-center gap-2 transition-all">
+<span class="material-symbols-outlined text-[18px]">replay</span>
+<span>Request changes</span>
+</button>
+<!-- Ghost Reject Action -->
+<button class="w-full py-1 text-center font-caption text-stone-400 hover:text-red-600 transition-colors">
+            Reject outline &amp; restart prompt
+          </button>
+</div>
+<!-- Safe State LMS Assurance Note -->
+<div class="mt-5 pt-4 border-t border-stone-100 flex items-start gap-2 text-stone-400">
+<span class="material-symbols-outlined text-[16px] text-stone-400 shrink-0 mt-0.5">lock</span>
+<p class="font-caption text-[11px] leading-tight">
+            Nothing is written to your production LMS until you review and confirm the generated course content.
+          </p>
+</div>
+</div>
+<!-- Compact Source Manuscript Stack -->
+<div class="bg-white/80 border border-[#EAE7DF] rounded-xl p-4 space-y-3">
+<div class="flex items-center justify-between text-xs">
+<span class="font-label-citation text-[10px] uppercase font-bold text-stone-400">Active Grounding Sources</span>
+<span class="font-code-body text-[11px] text-stone-500">2 files loaded</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2 text-xs font-body-default text-stone-700 p-2 rounded-lg bg-[#FBF9F4] border border-stone-200/50">
+<span class="material-symbols-outlined text-[16px] text-amber-600">picture_as_pdf</span>
+<span class="truncate font-code-body text-[11px]">coffee-brewing-handbook.pdf</span>
+<span class="ml-auto text-stone-400 text-[10px] font-label-citation">42 pgs</span>
+</div>
+<div class="flex items-center gap-2 text-xs font-body-default text-stone-700 p-2 rounded-lg bg-[#FBF9F4] border border-stone-200/50">
+<span class="material-symbols-outlined text-[16px] text-amber-600">picture_as_pdf</span>
+<span class="truncate font-code-body text-[11px]">sca-sensory-standards-2023.pdf</span>
+<span class="ml-auto text-stone-400 text-[10px] font-label-citation">18 pgs</span>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<!-- ========================================================================= -->
+<!-- 4. BOTTOM FIXED CHAT COMPOSER                                            -->
+<!-- ========================================================================= -->
+<footer class="fixed bottom-0 left-16 right-0 py-3.5 px-6 bg-[#F7F5F0]/90 backdrop-blur-md border-t border-[#EAE7DF] z-30 flex justify-center">
+<div class="max-w-4xl w-full bg-white border border-[#E0DDD5] rounded-2xl shadow-lg p-2 pl-3 flex items-center gap-3">
+<!-- Attachment Clip -->
+<button class="p-1.5 text-stone-400 hover:text-stone-700 hover:bg-stone-100 rounded-lg transition-colors" title="Attach document fragment or reference notes">
+<span class="material-symbols-outlined text-[20px]">attach_file</span>
+</button>
+<!-- Input Surface -->
+<input class="w-full text-xs sm:text-sm font-body-default text-stone-900 placeholder:text-stone-400 border-none bg-transparent focus:ring-0 focus:outline-none p-0" placeholder="Ask for changes to the outline… (e.g. 'Add a section on water hardness' or 'Merge lessons 2 &amp; 3')" type="text"/>
+<!-- Right Metadata Indicators & Send Button -->
+<div class="flex items-center gap-2.5 shrink-0 pr-1">
+<span class="hidden md:inline-flex items-center gap-1.5 font-label-citation text-[10px] text-stone-400 bg-stone-50 px-2 py-1 rounded-md border border-stone-200">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span>Claude 3.7 Sonnet · costs tracked per course</span>
+</span>
+<!-- Iris Send Action Button -->
+<button class="w-8 h-8 rounded-full bg-primary-container hover:bg-[#4949E3] active:scale-95 text-white flex items-center justify-center transition-all shadow-sm" title="Submit refinement instruction">
+<span class="material-symbols-outlined text-[18px]">arrow_upward</span>
+</button>
+</div>
+</div>
+</footer>
+</body></html>
