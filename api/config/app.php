@@ -221,6 +221,7 @@ return [
         Ulams\TopicTypes\UlamsTopicTypesServiceProvider::class,
         Ulams\Uploads\UlamsUploadsServiceProvider::class,
         Ulams\Lti\UlamsLtiServiceProvider::class,
+        Ulams\LiaScript\UlamsLiaScriptServiceProvider::class,
         Ulams\Translations\UlamsTranslationsServiceProvider::class,
         Ulams\Video\UlamsVideoServiceProvider::class,
         Ulams\Vouchers\UlamsVouchersServiceProvider::class,

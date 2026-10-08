@@ -21,6 +21,7 @@ use Ulams\Files\Database\Seeders\PermissionTableSeeder as FilePermissionTableSee
 use Ulams\H5P\Database\Seeders\H5PPermissionSeeder;
 use Ulams\Lrs\Database\Seeders\LrsPermissionSeeder;
 use Ulams\ModelFields\Database\Seeders\PermissionTableSeeder as ModelFieldsPermissionTableSeeder;
+use Ulams\LiaScript\Database\Seeders\LiaScriptPermissionSeeder;
 use Ulams\Lti\Database\Seeders\LtiPermissionSeeder;
 use Ulams\Notifications\Database\Seeders\NotificationsPermissionsSeeder;
 use Ulams\Pages\Database\Seeders\PermissionTableSeeder as PagesPermissionTableSeeder;
@@ -100,6 +101,7 @@ class PermissionsSeeder extends Seeder
         $this->call(BulkNotificationPermissionSeeder::class);
         $this->call(DictionariesPermissionSeeder::class);
         $this->call(LtiPermissionSeeder::class);
+        $this->call(LiaScriptPermissionSeeder::class);
 
         // if there are no users, we need to create first admin 
 

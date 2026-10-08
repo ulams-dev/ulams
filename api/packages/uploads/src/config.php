@@ -9,6 +9,7 @@ return [
      * Upload policies per kind. `max_size` is the size of the uploaded file in bytes. Archives are
      * also checked by the zip inspector with the `zip` limits before anything is extracted.
      * `mimes` are compared with the type sniffed from the content (finfo), never the client header.
+     * The zip inspector runs for `.zip` uploads of policies with a `zip` profile.
      */
     'policies' => [
         'scorm' => [
@@ -21,6 +22,13 @@ return [
             'extensions' => ['zip'],
             'mimes' => $zipMimes,
             'max_size' => $mb('UPLOADS_CMI5_MAX_MB', 512),
+            'zip' => 'package',
+        ],
+        // Markdown, or a zip with Markdown and assets (packages/liascript)
+        'liascript' => [
+            'extensions' => ['md', 'markdown', 'zip'],
+            'mimes' => [...$zipMimes, 'text/plain', 'text/markdown', 'text/x-markdown', 'text/x-c', 'text/x-c++', 'text/html', 'text/x-java'],
+            'max_size' => $mb('UPLOADS_LIASCRIPT_MAX_MB', 128),
             'zip' => 'package',
         ],
         'course-import' => [

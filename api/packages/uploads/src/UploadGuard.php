@@ -71,7 +71,7 @@ class UploadGuard
 
         $this->scanner->scan($path);
 
-        if (!empty($policy['zip'])) {
+        if (!empty($policy['zip']) && $extension === 'zip') {
             $this->inspector->inspect($path, ZipLimits::fromConfig((string) $policy['zip']));
         }
     }

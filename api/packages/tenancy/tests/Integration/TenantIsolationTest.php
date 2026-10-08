@@ -128,6 +128,21 @@ class TenantIsolationTest extends TestCase
         $this->assertSame(401, $this->request(self::B, 'GET', '/api/admin/lti/tools', $tokenA)->getStatusCode());
     }
 
+    public function testLiaScriptSourcesDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $tokenB = $this->login(self::B);
+        $created = $this->request(self::A, 'POST', '/api/admin/liascript', $tokenA, ['markdown' => "# Isolation probe\n\nOnly on A."]);
+        $this->assertSame(201, $created->getStatusCode(), (string) $created->getBody());
+        $id = json_decode((string) $created->getBody(), true)['data']['id'];
+
+        $this->assertSame(200, $this->request(self::A, 'GET', "/api/admin/liascript/{$id}/source", $tokenA)->getStatusCode());
+        $onB = $this->request(self::B, 'GET', "/api/admin/liascript/{$id}/source", $tokenB);
+        $this->assertNotSame(200, $onB->getStatusCode());
+        $this->assertStringNotContainsString('Only on A', (string) $onB->getBody());
+        $this->assertSame(401, $this->request(self::B, 'GET', "/api/admin/liascript/{$id}/source", $tokenA)->getStatusCode());
+    }
+
     private function login(string $slug): string
     {
         $response = $this->request($slug, 'POST', '/api/auth/login', null, [

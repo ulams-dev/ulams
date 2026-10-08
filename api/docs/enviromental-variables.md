@@ -174,6 +174,9 @@ virus-scan hook), see [packages/uploads/README.md](../packages/uploads/README.md
 | `UPLOADS_CLAMD_TIMEOUT`                     | Seconds to wait for clamd                                       | `60`              |
 | `UPLOADS_CLAMD_FAIL_CLOSED`                 | Reject uploads when clamd cannot be reached                     | `true`            |
 | `FILES_MAX_SIZE_MB`                         | Largest single file in the admin file manager (`packages/files`) | `512`             |
+| `UPLOADS_LIASCRIPT_MAX_MB`                  | Largest LiaScript `.md` or `.zip` upload                        | `128`             |
+| `LIASCRIPT_MAX_MARKDOWN_KB`                 | Largest LiaScript Markdown source (`packages/liascript`)        | `2048`            |
+| `LIASCRIPT_DISK`                            | Disk for LiaScript assets                                       | `FILESYSTEM_DRIVER` |
 
 ## LTI 1.3 (`packages/lti`)
 
