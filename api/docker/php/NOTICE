@@ -1,0 +1,36 @@
+ulams PHP runtime image - third-party software notice
+
+This image is built from the official Docker "php" image (php:8.3-fpm-alpine) and installs
+the packages below from the Alpine Linux repositories. They are unmodified distribution
+packages. Their source code is available from the Alpine aports repository
+(https://gitlab.alpinelinux.org/alpine/aports) and from the upstream projects.
+
+PHP and extensions (linked into the PHP process)
+  PHP 8.3                         PHP-3.01
+  apcu, redis (PECL)              PHP-3.01
+  bundled extensions (gd, intl,   PHP-3.01 (libraries: see Alpine package metadata;
+  zip, pdo_pgsql, ...)            libgd, ICU, libzip, libpq and others are permissive)
+
+Tools copied into the image
+  Composer 2.10                   MIT (https://getcomposer.org)
+
+Command-line programs run as separate processes (GPL; not linked into ulams code)
+  ffmpeg / ffprobe                GPL-2.0-or-later AND LGPL-2.1-or-later; Alpine builds it
+                                  with --enable-gpl --enable-version3 (libx264, libx265),
+                                  so the binaries are distributed under GPL-3.0-or-later
+  x264, x265 libraries            GPL-2.0-or-later (used by ffmpeg)
+  jpegoptim                       GPL-2.0-or-later
+  pngquant, libimagequant         GPL-3.0-or-later
+  gifsicle                        GPL-2.0-only
+  bash                            GPL-3.0-or-later
+  optipng                         Zlib
+  supervisor                      BSD-style (Repoze; Alpine metadata: BSD-4-Clause AND BSD-3-Clause-Clear)
+  unzip                           Info-ZIP licence
+
+The ulams application calls the GPL programs through exec/process boundaries only
+(php-ffmpeg, spatie/image-optimizer, supervisord), the "mere aggregation" case of the GPL.
+Anyone redistributing this image must still offer the corresponding source of these
+packages, which the Alpine aports repository and the package versions recorded in the
+image (`apk info -v`) make possible.
+
+Not included: install-php-extensions (MIT) is used during the build and removed afterwards.
