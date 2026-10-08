@@ -22,19 +22,27 @@ small commits → tests → summary.
       interface; Wellms `payments`/`cart`/`vouchers` retired after migration
 - [x] Business model: open core (free self-hosted core; paid cloud, enterprise, support)
 - [x] Niche: developer education / customer education for dev tools
+- [x] (new) One monorepo `admin/` + `api/` + `front/` (+ `docs/`), all `escolalms/*` packages vendored
+      as source, Turborepo + Yarn workspaces (ADR 0001, 0005)
+- [x] (new) Rename EscolaLMS / Wellms to ulams in code, config and infrastructure (ADR 0002)
+- [x] (new) H5P only in the separate GPL service `api/h5p` (Lumi), embedded via iframe; no GPL code in
+      the API or frontend bundles (ADR 0003)
+- [x] (new) styled-components replaced by CSS custom properties (`--ulams-*`) (ADR 0004)
+- [x] (new) Remove `recommender` from the API composition, not just stop using it (ADR 0006)
+- [x] (new) Repository: public `github.com/ulams-dev/ulams`, no AI attribution in history
 
 ## Open decisions
 
 - [ ] Final name (favourite **ULAMS**; alternatives Wellam, Monte, Spiral, Automata, UlamOS)
-  - [ ] GitHub organisation: `ulams` is taken; register `ulams-dev` (fallbacks: `ulams-hq`,
-        `ulamslabs`, `ulams-ai`)
+  - [x] GitHub organisation: `ulams` is taken; register `ulams-dev` (fallbacks: `ulams-hq`,
+        `ulamslabs`, `ulams-ai`) (note: `ulams-dev/ulams` created and pushed 2026-10-08)
   - [ ] Check domains (ulams.ai, ulams.dev) and trademarks
   - [ ] Check legal aspects of using the Ulam name
 - [ ] Move MCP server (7.5) right after Phase 2? Cheap to build, strong demo
 - [ ] Move certificates (6.1) earlier if compliance is the priority segment
 - [ ] Multitenancy for the POC: one deployment, tenant per subdomain with own theme?
 - [ ] Prototype the Sylius order → entitlement flow early (highest-risk commerce piece)
-- [ ] Add the spec file to the repo as `docs/ROADMAP-PROMPT.md`
+- [x] Add the spec file to the repo as `docs/ROADMAP-PROMPT.md`
 
 ## Product principles (tie-breakers)
 
@@ -55,16 +63,37 @@ stale content.
 - [ ] Map repo, packages, versions; course → lesson → topic model and topic types
 - [ ] Report on `headless-h5p`, `scorm`, `cmi5`, `lrs`, `tracker`, `reports`, `payments`,
       `cart`, `vouchers`, `translations`, `settings`, `templates`, `notifications`
-- [ ] Can `recommender` be safely disabled or removed? What depends on it?
-- [ ] Multitenancy via `gecche/laravel-multidomain`: current setup, dynamic subdomains possible?
+- [ ] Can `recommender` be safely disabled or removed? What depends on it? (partial: decided to remove, removal in progress)
+- [ ] Multitenancy via `gecche/laravel-multidomain`: current setup, dynamic subdomains possible? (partial: explored; isolation gaps found: shared Redis queue/cache keys, unknown hosts fall back to the default tenant, workers learn tenants only at boot)
 - [ ] Inventory of learner activity data (tracker, xAPI/cmi5, SCORM CMI, H5P, quizzes, progress,
       logins): storage, granularity, retention, gaps
 - [ ] How content updates preserve learner progress today
-- [ ] Tests, CI, code style, queues (Horizon), storage, existing AI code
-- [ ] Licence audit of all `escolalms/*` and key dependencies for open core
+- [ ] Tests, CI, code style, queues (Horizon), storage, existing AI code (partial: explored; no AI code exists; baseline failures: core 6, auth 3)
+- [ ] Licence audit of all `escolalms/*` and key dependencies for open core (partial: audit running; H5P already isolated per ADR 0003)
 - [ ] Runtime dependency inventory (input for Phase 8)
 - [ ] Commerce audit: what Wellms commerce does, dependent flows, Sylius 2.x API coverage,
       Stripe / Przelewy24 gateways, Sylius MCP admin tool, B2B options
+
+### 0.1b Monorepo foundation (new)
+- [x] (new) Monorepo with the full history of the three repositories under `api/`, `admin/`, `front/`
+- [x] (new) Vendor the 50 PHP packages into `api/packages`; no `escolalms/*` in `composer.json`
+- [x] (new) Vendor the JS libraries into `front/src/lib` and `admin/src/lib`; Yarn workspaces + Turborepo
+- [x] (new) Rename to ulams, with data migration for existing databases
+- [ ] (new) H5P as the isolated Lumi service `api/h5p` (partial: service, Laravel index package, Caddy
+      routing done; admin/front iframe embedding in progress)
+- [ ] (new) Remove `recommender` and its admin/front screens (partial: API removal in progress)
+- [ ] (new) Replace styled-components with CSS custom properties everywhere (partial: theme contract
+      and presets done; component conversion pending)
+- [ ] (new) Demo content seeder for the three experience courses (`front/docs/design/experiences.md`)
+- [ ] (new) Root README, AGENTS.md and per-package READMEs for the monorepo
+- [ ] (new) Remaining legacy references: replace the `escolalms/php` and `escolalms/reportbro-server`
+      images, decide on upstream provenance links, reword ADR prose, retarget Docker Hub publishing
+      workflows, replace the `ulams.app` placeholder domain, recreate SQL views in pre-rename databases
+- [ ] (new) Fix `php artisan route:list` (Mattermost client connects in its constructor)
+- [ ] (new) CI: move workflows to the root `.github/` with path filters; drop MySQL services; run Jest
+      in admin/front; Dockerfiles build from the repo root
+- [ ] (new) Remove the non-existent `packages/tracker/src` path from Swagger; consider Git LFS for
+      large test fixtures; revisit exact pins (`faker-markdown-generator`, `tzsk/sms`)
 
 ### 0.2 Framework upgrade
 - [ ] Upgrade plan from Laravel 9 (EOL) to supported Laravel/PHP: order, breaking changes,
@@ -93,11 +122,18 @@ stale content.
 ### 1.4 Shared
 - [ ] Upload hardening (zip-slip, MIME, size limits, virus-scan hook)
 - [ ] Isolated origin / strict CSP for third-party JS
+- [ ] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket)
+- [ ] (new) H5P: refresh the player model when the 5-minute Passport token rotates; redact `_token`
+      in all proxies' access logs
 - [ ] Policies, OpenAPI annotations, fixtures and tests (LiaScript, Adapt A+B, LTI round-trip)
 
 ---
 
 ## Phase 2: AI Course Builder
+
+Note (new): a first Course Builder plan was drafted on 2026-10-08 (LLM layer in `api/packages/ai`,
+tenancy package, Course Blueprint, LiaScript and Adapt topic types, admin module). It predates this
+roadmap; Phase 2 is re-planned from this spec after Phases 0–1.
 
 ### 2.1 LLM layer
 - [ ] Provider abstraction, model per task via config (Sonnet default, Haiku for light steps)
@@ -315,6 +351,8 @@ Quality
 - [ ] Agent safety: scoped tokens, dry-run, idempotency keys, human approval, rate limits,
       agent audit log
 - [ ] Tool description evals with typical agent tasks
+- [ ] (new) First version on Cloudflare Workers (TypeScript, Agents SDK, OAuth) against the current REST
+      API: hand-written course/topic/quiz tools + tools generated from the OpenAPI spec
 
 ### 7.6 Machine-readable content
 - [ ] `llms.txt`, Markdown version of every page, public schemas, `AGENTS.md`
@@ -323,6 +361,10 @@ Quality
 ---
 
 ## Phase 8: Self-hosting
+
+- [ ] (new) R&D: Cloudflare deployment (TypeScript + Hono gateway Worker, Laravel as Cloudflare
+      Container, R2, Hyperdrive, Queues, Durable Objects) with a one-command `wrangler deploy` for a
+      dev environment; strangler migration of the API to Hono only if the spike succeeds
 
 - [ ] One app image + PostgreSQL + optional Redis (DB fallback)
 - [ ] Commerce as optional profile: + one Sylius image, shared PostgreSQL server (separate DB)
