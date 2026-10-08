@@ -36,6 +36,29 @@ The project rename to **ulams** keeps these on purpose for now, because changing
 - [ ] **Unknown hosts.** Return 404 for unknown hosts instead of falling back to the default `.env`.
 - [ ] **Front/Admin API host.** Derive the API host from the browser's host, and fix the per-host injector, where global env vars override per-host values.
 
+## Cloudflare re-architecture (R&D): TypeScript + Hono
+
+Goal: run ulams on Cloudflare and deploy an R&D environment with one command (`yarn deploy:dev`, which runs `wrangler deploy --env dev` for every Worker through Turbo). Approach: an incremental strangler migration, not a big-bang rewrite.
+
+- [ ] **Spike: run the existing Laravel image as a Cloudflare Container** behind a Hono gateway Worker, with Postgres reached through Hyperdrive and MinIO replaced by R2. If it works, one-command deploy is possible before any rewrite. Record the result as an ADR. *(about 1 week)*
+- [ ] **Gateway Worker (Hono):** routes `/api/*` to Laravel (container or origin) and serves Admin and Front as Workers static assets. *(days)*
+- [ ] **Storage:** move MinIO to R2. It is S3-compatible, so mostly configuration plus a data copy. *(days)*
+- [ ] **Multi-tenancy in Hono:** tenant resolved from the host in middleware, with per-tenant database and R2 settings, replacing gecche multidomain. *(part of the API rewrite)*
+- [ ] **Rewrite the API in Hono one domain at a time**, in this order: auth (JWT), then courses / lessons / topics, then progress, then the rest. Each route moves to TypeScript only when it passes the same API contract tests, and Laravel shrinks until it can be removed. *(the large part: roughly 6–12 engineer-months for the full 656-route surface)*
+- [ ] **Async and realtime:** Horizon becomes Cloudflare Queues, the scheduler becomes Cron Triggers, and Soketi becomes Durable Objects (WebSockets). *(weeks, in step with the API rewrite)*
+- [ ] **H5P (Lumi) and the Adapt builder** need Node filesystem APIs, so they likely run in Cloudflare Containers. Verify this in a spike. *(1–2 weeks each)*
+- [ ] **Database:** stay on Postgres via Hyperdrive. Evaluate D1 per tenant only after the rewrite. *(decision, as an ADR)*
+- [ ] **Decision needed:** build the AI Course Builder directly in TypeScript on Workers (Anthropic TS SDK, Queues for the pipeline, a Durable Object for progress, R2 for sources) instead of as a Laravel package, so it doesn't have to be ported later.
+
+## MCP server
+
+- [ ] **MCP server on Workers** (TypeScript, Cloudflare Agents SDK) with OAuth sign-in against the LMS. It talks to the current REST API first and moves to the Hono API as the rewrite progresses, without its tools changing. *(about 1–2 weeks for v1)*
+  - **Hand-written tools:** create, edit and delete courses, lessons, topics and quiz questions; "create course from outline"; publish and unpublish; enrolments and users.
+  - **Topic types:** list the types with their JSON schemas so clients can build valid content.
+  - **Statistics and analytics:** course progress, completion, quiz results and other report data.
+  - **Generated CRUD tools** built from the API's OpenAPI spec (338 paths), with types shared from `ts-models`.
+  - **Tests:** contract tests against a seeded tenant, plus a per-tenant permission check on every tool.
+
 ## AI Course Builder
 
 The plan is approved. Work starts after the monorepo steps land; the milestones are in the plan:
