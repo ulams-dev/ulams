@@ -93,7 +93,7 @@ stale content.
       images, decide on upstream provenance links, reword ADR prose, retarget Docker Hub publishing
       workflows, replace the `ulams.app` placeholder domain, recreate SQL views in pre-rename databases
 - [x] (new) Fix `php artisan route:list` (Mattermost client connects in its constructor)
-- [ ] (new) CI: move workflows to the root `.github/` with path filters; drop MySQL services; run Jest
+- [ ] (new) CI (partial: root `ci.yml` with path filters, PHP shards, licence guards and Dependabot committed; not yet run on GitHub — the branch is unpushed; publishing workflows intentionally dropped): move workflows to the root `.github/` with path filters; drop MySQL services; run Jest
       in admin/front; Dockerfiles build from the repo root
 - [ ] (new) Remove the non-existent `packages/tracker/src` path from Swagger (done); consider Git LFS for
       large test fixtures; revisit exact pins (`faker-markdown-generator`, `tzsk/sms`)
