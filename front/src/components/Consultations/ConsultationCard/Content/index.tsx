@@ -1,13 +1,7 @@
-import styled from "styled-components";
 import { API } from "@ulams/sdk";
 import { addTimeToDate, extractTimeUnits } from "@/utils/date";
 import DateInfo, { DateInfoTypes } from "@/components/Common/DateInfo";
-
-const ConsultationCardContentStyles = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
+import styles from "./styles.module.css";
 
 interface Props {
   consultation: API.Consultation;
@@ -20,7 +14,7 @@ const ConsultationCardContent = ({ consultation }: Props) => {
   const isNotReported = consultation.executed_status === "not_reported";
 
   return (
-    <ConsultationCardContentStyles>
+    <div className={styles.root}>
       {isEnded && consultation.executed_at && (
         <DateInfo
           type={DateInfoTypes.ENDED}
@@ -43,7 +37,7 @@ const ConsultationCardContent = ({ consultation }: Props) => {
         />
       )}
       {isNotReported && <DateInfo type={DateInfoTypes.DEFAULT} />}
-    </ConsultationCardContentStyles>
+    </div>
   );
 };
 

@@ -1,24 +1,14 @@
 import React, { ReactNode, useContext } from "react";
 import { Elements } from "@stripe/react-stripe-js";
-import { useTheme } from "styled-components";
 import { loadStripe } from "@stripe/stripe-js";
 import StripeContent from "@/components/Cart/CartContent/stripe";
 import { UlamsContext } from "@ulams/sdk/react";
-import { getFontFromTheme } from "@ulams/components/theme/provider";
+import { useThemeTokens } from "@ulams/components/theme/applyTheme";
+import { FONTS } from "@ulams/components/theme/cssVars";
 import Przelewy24Content from "@/components/Cart/CartContent/p24";
-import styled from "styled-components";
 import usePayment from "@/hooks/usePayment";
 
-const StyledWrapper = styled.div`
-  background-color: ${({ theme }) =>
-    theme.mode === "dark" ? theme.dm__background : theme.gray4};
-  padding-top: 57px;
-  min-height: calc(100vh - 452px);
-
-  h1 {
-    margin-bottom: 20px;
-  }
-`;
+import styles from "./cart.module.css";
 
 enum PaymentGateway {
   Stripe = "Stripe",
@@ -36,35 +26,37 @@ const CartPage: React.FC<Props> = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const stripeConfigs: any = config?.value?.ulams_payments?.drivers;
   const stripeKey = stripeConfigs?.stripe?.publishable_key;
-  const theme = useTheme();
-  const font = getFontFromTheme(theme);
+  // Stripe Elements loads the body font itself, so it needs the raw font links.
+  const theme = useThemeTokens();
+  const fontKey = theme?.bodyFont ?? theme?.font;
+  const fontLinks = (fontKey && FONTS[fontKey]?.links) || [];
 
   const { defaultGateway } = usePayment();
 
   if (defaultGateway === PaymentGateway.Przelewy24) {
     return (
-      <StyledWrapper>
+      <div className={styles.wrapper}>
         <Przelewy24Content />
-      </StyledWrapper>
+      </div>
     );
   }
 
   if (defaultGateway === PaymentGateway.Stripe) {
     return (
-      <StyledWrapper>
+      <div className={styles.wrapper}>
         <Elements
           stripe={stripePromise(stripeKey)}
           options={{
             fonts: [
               {
-                cssSrc: font.links[0],
+                cssSrc: fontLinks[0],
               },
             ],
           }}
         >
           <StripeContent stripeKey={stripeKey} />
         </Elements>
-      </StyledWrapper>
+      </div>
     );
   }
 };

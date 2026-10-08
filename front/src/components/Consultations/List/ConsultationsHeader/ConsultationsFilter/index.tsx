@@ -3,8 +3,8 @@ import CategoriesFilter from "@/components/Filters/Categories";
 import SearchFilter from "@/components/Filters/Search";
 import FiltersTags from "@/components/Filters/Tags";
 import { FiltersState } from "@/types/filters";
-import { ConsultationsFilterStyles } from "./ConsultationsFilterStyles";
 import { useSearchParams } from "../../../../../hooks/useSearchParams";
+import styles from "./styles.module.css";
 
 const ConsultationsHeaderFilters = () => {
   const {
@@ -24,7 +24,7 @@ const ConsultationsHeaderFilters = () => {
   );
 
   return (
-    <ConsultationsFilterStyles>
+    <div className={styles.root}>
       <div className="tags">
         <FiltersTags
           filters={filters}
@@ -33,15 +33,15 @@ const ConsultationsHeaderFilters = () => {
           }}
         />
       </div>
-      <div className="selects-row">
-        <div className="single-select single-select--search">
+      <div className={styles.selectsRow}>
+        <div className={`single-select ${styles.singleSelectSearch}`}>
           <SearchFilter
             onSubmit={(value) => {
               setQueryParam("name", value);
             }}
           />
         </div>
-        <div className="single-select single-select--category">
+        <div className={`single-select ${styles.singleSelectCategory}`}>
           <CategoriesFilter
             selectedCategories={getAllQueryValueByName("categories[]")?.map(
               (catNumber) => Number(catNumber)
@@ -52,7 +52,7 @@ const ConsultationsHeaderFilters = () => {
           />
         </div>
       </div>
-    </ConsultationsFilterStyles>
+    </div>
   );
 };
 

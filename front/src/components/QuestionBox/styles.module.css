@@ -1,0 +1,36 @@
+.wrapper :global(.question-box__title) {
+  font-size: 24px;
+  text-align: center;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 13px;
+}
+
+.wrapper :global(.question-box__content) {
+  padding: 30px 23px 0 23px;
+  text-align: center;
+}
+
+.wrapper :global(.question-box__content--title) {
+  font-size: 16px;
+}
+
+.wrapper :global(.question-box__content--description) {
+  font-size: 16px;
+  margin: 11px 0;
+}
+
+.wrapper :global(.question-box__content--textarea-title) {
+  font-size: 16px;
+  margin: 11px 0;
+  font-weight: bold;
+}
+
+.wrapper :global(.question-box__content--textarea) {
+  background: #f8f8f8;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+}
+
+.wrapper :global(.question-box__content--buttons) {
+  margin-top: 37px;
+}

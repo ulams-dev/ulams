@@ -6,7 +6,8 @@ import { Avatar } from "@ulams/components/components/atoms/Avatar/Avatar";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { SearchCourses } from "@ulams/components/components/organisms/SearchCourses/SearchCourses";
 import { Link, NavLink, useHistory } from "react-router-dom";
-import styled, { useTheme } from "styled-components";
+import { useThemeTokens } from "@ulams/components/theme/applyTheme";
+import styles from "./Navbar.module.css";
 import { isMobile } from "react-device-detect";
 import {
   HamburguerIcon,
@@ -29,227 +30,6 @@ import { isMobilePlatform } from "@/utils/index";
 import { metaDataKeys } from "@/utils/meta";
 import { VITE_APP_PUBLIC_IMG_BUCKET_FOLDER } from "@/config/index";
 
-const StyledHeader = styled.header`
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  background: ${({ theme }) =>
-    theme.mode === "dark" ? theme.dm__background : theme.white};
-  backdrop-filter: blur(10px);
-  padding: ${isMobile ? "11px 0" : "22px 0"};
-
-  .logo-container {
-    margin-right: 30px;
-
-    &,
-    & img {
-      width: 100%;
-      height: auto;
-      max-width: 150px;
-      max-height: 37px;
-    }
-
-    img {
-      width: 100%;
-      height: auto;
-      transition: opacity 0.25s;
-      &:hover {
-        opacity: 0.55;
-      }
-    }
-  }
-  .menu-container {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 20px;
-    .search-container {
-      min-width: 250px;
-      @media (max-width: 1200px) {
-        min-width: 180px;
-      }
-      @media (max-width: 991px) {
-        min-width: 200px;
-        margin-left: 15px;
-      }
-    }
-    .navigation {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-
-      gap: 10px;
-      .Dropdown-root {
-        min-width: 105px;
-      }
-      @media (max-width: 1366px) {
-        margin: 0 50px;
-      }
-      @media (max-width: 1200px) {
-        margin: 0 30px;
-        column-gap: 30px;
-      }
-      @media (max-width: 991px) {
-        margin: 0 30px;
-        column-gap: 30px;
-      }
-      .Dropdown-menu {
-        overflow-y: unset;
-        max-height: unset;
-      }
-    }
-  }
-  .logo {
-    width: auto;
-    height: 37px;
-  }
-  .user-container {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    .user-details {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      column-gap: 10px;
-      margin-right: 21px;
-      text-decoration: none;
-      &:hover {
-        p {
-          color: ${({ theme }) => theme.primaryColor};
-        }
-      }
-      .name {
-        min-width: 100px;
-        margin: 0;
-      }
-    }
-  }
-  .icons-container {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin: 0 5px;
-
-    button {
-      appearance: none;
-      outline: none;
-      border: none;
-      background: transparent;
-      padding: 0;
-      margin: 0;
-      cursor: pointer;
-
-      &.cart-icon {
-        position: relative;
-        &.cart {
-          svg {
-            width: 25px;
-          }
-        }
-        svg {
-          path {
-            transition: fill 0.25s;
-          }
-        }
-        &:hover {
-          svg {
-            path {
-              fill: ${({ theme }) => theme.primaryColor};
-            }
-          }
-        }
-        span {
-          position: absolute;
-          right: -5px;
-          top: -1px;
-          min-width: 20px;
-          min-height: 20px;
-          border-radius: 50%;
-          background: ${({ theme }) => theme.secondaryColor};
-          color: ${({ theme }) =>
-    theme.mode === "dark" ? theme.dm__textColor : theme.textColor};
-          font-size: 13px;
-
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-      }
-    }
-  }
-  .not-logged-container {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    column-gap: 6px;
-    margin-right: 20px;
-    button {
-      font-weight: 400;
-    }
-    a {
-      text-decoration: none;
-      p {
-        font-weight: 700;
-        &:hover {
-          color: ${({ theme }) => theme.primaryColor};
-        }
-      }
-    }
-  }
-`;
-
-const LastMobileMenuItem = styled.div`
-  span {
-    font-size: 13px;
-    font-family: ${({ theme }) => theme.font};
-    color: ${({ theme }) =>
-    theme.mode === "dark" ? theme.dm__textColor : theme.textColor};
-    margin-top: 15px;
-    text-align: center;
-    display: block;
-    margin-bottom: 8px;
-  }
-`;
-
-const SearchMobileWrapper = styled.div`
-  padding: 0px 25px;
-  margin-top: 18px;
-  > div {
-    width: auto;
-  }
-`;
-
-const StyledMobileDrawerNavigation = styled.div`
-  padding-top: 35px;
-  ul {
-    li {
-      list-style: none;
-      &:not(:last-of-type) {
-        margin-bottom: 30px;
-      }
-      button {
-        all: unset;
-      }
-      a,
-      button {
-        color: ${({ theme }) =>
-    theme.mode === "dark" ? theme.dm__textColor : theme.textColor};
-        font-family: ${({ theme }) => theme.font};
-        font-size: 16px;
-        font-weight: 700;
-      }
-      .delete-account {
-        color: ${({ theme }) => theme.errorColor};
-        font-size: 16px;
-        font-weight: 700;
-      }
-    }
-  }
-`;
-
 const Navbar = () => {
   const { t } = useTranslation();
   const {
@@ -269,7 +49,8 @@ const Navbar = () => {
   } = useContext(UlamsContext);
   const user = userObj?.value;
   const history = useHistory();
-  const theme = useTheme();
+  // Header icons pick their fill from the mode in JS.
+  const mode = useThemeTokens()?.mode ?? "light";
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMobileDrawer, setShowMobileDrawer] = useState(false);
@@ -392,7 +173,7 @@ const Navbar = () => {
 
     {
       title: user ? null : (
-        <LastMobileMenuItem>
+        <div className={styles.lastMobileMenuItem}>
           <Button
             mode={"primary"}
             block
@@ -408,7 +189,7 @@ const Navbar = () => {
           >
             {t<string>("Login.Signup")}
           </Button>
-        </LastMobileMenuItem>
+        </div>
       ),
       key: "menuItem3",
     },
@@ -416,7 +197,7 @@ const Navbar = () => {
 
   if (isMobile) {
     return (
-      <StyledHeader>
+      <header className={`${styles.header} ${styles.mobile}`}>
         <Navigation
           mobile
           logo={
@@ -439,7 +220,7 @@ const Navbar = () => {
                   data-tooltip={String(cart?.value?.items.length)}
                   aria-label={t("CoursePage.GoToCheckout")}
                 >
-                  <HeaderCard mode={theme.mode} />
+                  <HeaderCard mode={mode} />
 
                   {cart && (cart?.value?.items?.length ?? 0) > 0 ? (
                     <span>{displayCartItems}</span>
@@ -458,7 +239,7 @@ const Navbar = () => {
                   data-tooltip={String(notifications.list?.meta.total)}
                   aria-label={t("CoursePage.Notifications")}
                 >
-                  <HeaderNotification mode={theme.mode} />
+                  <HeaderNotification mode={mode} />
                   {notifications.list?.meta.total &&
                   notifications.list?.meta.total > 0 ? (
                     <span>{notifications.list?.meta.total}</span>
@@ -484,7 +265,7 @@ const Navbar = () => {
                       className="user-avatar"
                     />
                   ) : (
-                    <ProfileIcon mode={theme.mode} />
+                    <ProfileIcon mode={mode} />
                   )}
                 </button>
               </div>
@@ -492,20 +273,20 @@ const Navbar = () => {
           }
           menuItems={menuItems}
         />
-        <SearchMobileWrapper>
+        <div className={styles.searchMobileWrapper}>
           <SearchCourses
             onItemSelected={(item) => history.push(`/courses/${item.id}`)}
             onInputSubmitted={(input) =>
               history.push(`/courses/?title=${input}`)
             }
           />
-        </SearchMobileWrapper>
+        </div>
         <MobileDrawer
           isOpen={showMobileDrawer}
           onClose={() => setShowMobileDrawer(false)}
           height={"62vh"}
         >
-          <StyledMobileDrawerNavigation>
+          <div className={styles.mobileDrawerNavigation}>
             <ul>
               <li>
                 <NavLink to={routeRoutes.myProfile}>
@@ -575,7 +356,7 @@ const Navbar = () => {
                 </button>
               </li>
             </ul>
-          </StyledMobileDrawerNavigation>
+          </div>
         </MobileDrawer>
         <DeleteAccountModal
           closeModal={() => closeModal()}
@@ -588,12 +369,12 @@ const Navbar = () => {
           }}
           isLoading={loading}
         />
-      </StyledHeader>
+      </header>
     );
   }
 
   return (
-    <StyledHeader>
+    <header className={styles.header}>
       <Container
         style={{
           display: "flex",
@@ -707,7 +488,7 @@ const Navbar = () => {
               }
               child={
                 <Button mode="icon" className="dropdown">
-                  {t("Menu.Language")} <LanguageIcon mode={theme.mode} />
+                  {t("Menu.Language")} <LanguageIcon mode={mode} />
                 </Button>
               }
             /> */}
@@ -721,7 +502,7 @@ const Navbar = () => {
                   data-tooltip={String(cart?.value?.items.length ?? 0)}
                   aria-label={t("CoursePage.GoToCheckout")}
                 >
-                  <HeaderCard mode={theme.mode} />
+                  <HeaderCard mode={mode} />
 
                   {(cart?.value?.items?.length ?? 0) > 0 ? (
                     <span>{displayCartItems}</span>
@@ -739,7 +520,7 @@ const Navbar = () => {
                   data-tooltip={String(notifications.list?.meta.total)}
                   aria-label={t("CoursePage.GoToCheckout")}
                 >
-                  <HeaderNotification mode={theme.mode} />
+                  <HeaderNotification mode={mode} />
                   {notifications.list?.meta.total &&
                   notifications.list?.meta.total > 0 ? (
                     <span>{notifications.list?.meta.total}</span>
@@ -823,7 +604,7 @@ const Navbar = () => {
                         className="user-avatar"
                       />
                     ) : (
-                      <ProfileIcon mode={theme.mode} />
+                      <ProfileIcon mode={mode} />
                     )}
                   </Button>
                 }
@@ -854,7 +635,7 @@ const Navbar = () => {
         isOpen={showNotifications}
         onClose={() => setShowNotifications(false)}
       />
-    </StyledHeader>
+    </header>
   );
 };
 

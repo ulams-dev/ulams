@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { WebinarsContext } from "@/components/Webinars/List/WebinarsContext";
 import { Spin } from "@ulams/components/components/atoms/Spin/Spin";
-import { useTheme } from "styled-components";
+import { useThemeTokens } from "@ulams/components/theme/applyTheme";
 import { Col, Row } from "react-grid-system";
 import WebinarsContainerItem from "./Item";
 import Pagination from "@/components/Common/Pagination";
@@ -10,12 +10,12 @@ const WebinarsContainerItems = () => {
   const { params, setParams, webinars } = useContext(WebinarsContext);
   const loading = webinars?.loading;
   const meta = webinars?.list?.meta;
-  const theme = useTheme();
+  const theme = useThemeTokens();
 
   if (loading) {
     return (
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <Spin color={theme.primaryColor} />
+        <Spin color={theme?.primaryColor} />
       </div>
     );
   }

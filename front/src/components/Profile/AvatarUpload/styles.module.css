@@ -1,0 +1,17 @@
+.container {
+  margin-bottom: 21px;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+}
+
+.container.mobile {
+  margin-bottom: 0;
+}
+
+.container .uploadText {
+  margin: 0;
+  cursor: pointer;
+}

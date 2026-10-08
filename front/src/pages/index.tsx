@@ -3,7 +3,7 @@ import { UlamsContext } from "@ulams/sdk/react/context";
 import Layout from "@/components/_App/Layout";
 import { Banner } from "@ulams/components/components/molecules/Banner/Banner";
 import { ResponsiveImage } from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
-import styled from "styled-components";
+import styles from "./index.module.css";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
 import CategoriesSection from "@/components/Categories/CategoriesSection";
@@ -13,48 +13,6 @@ import Container from "@/components/Common/Container";
 import DisplayCourses from "@/components/Courses/DisplayCoursesSlider";
 import routeRoutes from "@/components/Routes/routes";
 import CoursesUserSlider from "@/components/Courses/CoursesUserSlider";
-
-const HomePageStyled = styled.div`
-  @media (max-width: 1200px) {
-    margin-top: 0;
-  }
-  @media (max-width: 575px) {
-    margin-top: -30px;
-  }
-  .home-hero {
-    margin-bottom: 45px;
-    padding-top: 42px;
-
-    h1 {
-      margin-top: 0 !important;
-    }
-    @media (max-width: 768px) {
-      margin-bottom: 40px;
-      padding-top: 100px;
-      h1 {
-        font-size: 26px;
-      }
-    }
-  }
-
-  .home-newest-courses {
-    margin-bottom: 30px;
-  }
-`;
-
-const Wrapper = styled(Container)`
-  .header-wrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 14px;
-    button {
-      @media (max-width: 1200px) {
-        display: none;
-      }
-    }
-  }
-`;
 
 const Index = () => {
   const { categoryTree, settings, fetchCategories, user } =
@@ -69,8 +27,8 @@ const Index = () => {
 
   return (
     <Layout metaTitle={t("Home")}>
-      <HomePageStyled>
-        <section className="home-hero">
+      <div className={styles.home}>
+        <section className={styles.hero}>
           {settings.value?.homepage &&
             settings.value.homepage?.heroBannerText &&
             settings.value.homepage?.heroBannerImg &&
@@ -100,15 +58,15 @@ const Index = () => {
             )}
         </section>
         {user.value?.id && (
-          <section className="home-newest-courses">
-            <Wrapper>
+          <section className={styles.newestCourses}>
+            <Container className={styles.wrapper}>
               <CoursesUserSlider titleText={t("Navbar.MyCourses")} />
-            </Wrapper>
+            </Container>
           </section>
         )}
 
-        <section className="home-newest-courses">
-          <Wrapper>
+        <section className={styles.newestCourses}>
+          <Container className={styles.wrapper}>
             <DisplayCourses
               titleText={t("Homepage.CoursesSlider2Title")}
               params={{
@@ -117,22 +75,22 @@ const Index = () => {
                 order: "DESC",
               }}
             />
-          </Wrapper>
+          </Container>
         </section>
 
         <section className="home-best-courses">
-          <Wrapper>
+          <Container className={styles.wrapper}>
             <DisplayCourses
               titleText={t("Homepage.CoursesSlider1Title")}
               params={{
                 per_page: 8,
               }}
             />
-          </Wrapper>
+          </Container>
         </section>
 
         <div className="promoted-courses-wrapper">
-          <Wrapper>
+          <Container className={styles.wrapper}>
             <DisplayCourses
               titleText={t<string>("Homepage.AwardedCoursesTitle")}
               params={{
@@ -141,7 +99,7 @@ const Index = () => {
               isSlider={false || isMobile ? true : false}
               ctaButton
             />
-          </Wrapper>
+          </Container>
         </div>
 
         {categoryTree && (
@@ -154,7 +112,7 @@ const Index = () => {
             />
           </div>
         )}
-      </HomePageStyled>
+      </div>
     </Layout>
   );
 };

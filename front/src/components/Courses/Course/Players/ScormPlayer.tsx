@@ -6,52 +6,10 @@ import React, {
 } from "react";
 import { Button } from "@ulams/components/components/atoms/Button/Button";
 import { UlamsContext } from "@ulams/sdk/react";
-import styled, { css } from "styled-components";
 import { useTranslation } from "react-i18next";
 import { ResizeIcon } from "../../../../icons";
 import { ScormPreview } from "@ulams/scorm-player";
-
-const StyledDiv = styled.div<{ fullview: boolean }>`
-  > button {
-    position: fixed;
-    right: 5px;
-    bottom: 5px;
-    z-index: 9999;
-    svg path {
-      fill: white;
-    }
-  }
-  iframe {
-    border: none;
-    display: block;
-    width: 100%;
-  }
-  ${(props) => {
-    if (props.fullview) {
-      return css`
-        iframe {
-          position: fixed;
-          top: 90px;
-          left: 0;
-          height: calc(100% - 90px - 80px);
-
-          z-index: 9999;
-        }
-      `;
-    } else {
-      return css`
-        display: flex;
-
-        min-height: 80vh;
-        max-height: 80vh;
-        height: 100vh;
-        iframe {
-          height: 100%;
-        }
-      `;
-    }
-  }}
-`;
+import styles from "./ScormPlayer.module.css";
 
 interface ScormPlayerProps {
   title: string;
@@ -67,7 +25,7 @@ const ScormPlayer: FunctionComponent<{
 
   return (
     <div className="scorm-wrapper">
-      <StyledDiv fullview={fullView}>
+      <div className={`${styles.root} ${fullView ? styles.fullView : ""}`}>
         <Button onClick={() => setFullView(!fullView)}>
           {" "}
           {t("Scorm.Resize")} <ResizeIcon />
@@ -81,7 +39,7 @@ const ScormPlayer: FunctionComponent<{
           title={value.title}
           src={`${apiUrl}/api/scorm/play/${value.uuid}`}
         /> */}
-      </StyledDiv>
+      </div>
     </div>
   );
 };

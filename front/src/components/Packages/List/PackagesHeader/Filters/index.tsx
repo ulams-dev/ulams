@@ -6,7 +6,7 @@ import CategoriesFilter from "@/components/Filters/Categories";
 import SearchFilter from "@/components/Filters/Search";
 import FiltersTags from "@/components/Filters/Tags";
 import { FiltersState } from "@/types/filters";
-import { PackagesFiltersStyles } from "./styles";
+import styles from "./styles.module.css";
 
 const PackagesHeaderFilters = () => {
   const { params, setParams } = useContext(PackagesContext);
@@ -25,7 +25,7 @@ const PackagesHeaderFilters = () => {
   );
 
   return (
-    <PackagesFiltersStyles>
+    <div className={styles.root}>
       <div className="tags">
         <FiltersTags
           filters={filters}
@@ -71,7 +71,7 @@ const PackagesHeaderFilters = () => {
           />
         </div>
       </div>
-    </PackagesFiltersStyles>
+    </div>
   );
 };
 

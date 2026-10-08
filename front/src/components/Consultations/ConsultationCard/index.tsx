@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import { NewCourseCard } from "@ulams/components";
 import { API } from "@ulams/sdk";
 import BookTermModal from "@/components/Book/BookTermModal";
@@ -11,18 +10,7 @@ import ConsultationCardImage from "./Image";
 import CategoriesBreadCrumbs from "@/components/Categories/CategoriesBreadCrumbs";
 import { useTranslation } from "react-i18next";
 import ProductPrices from "@/components/ProductPrices";
-
-const ConsultationCardStyles = styled.div`
-  .course-card-buttons-group {
-    margin: 0;
-    width: 100%;
-
-    button {
-      width: 100%;
-      margin: 0;
-    }
-  }
-`;
+import styles from "./styles.module.css";
 
 interface ConsultationCardProps {
   consultation: API.Consultation;
@@ -36,7 +24,7 @@ const ConsultationCard: React.FC<ConsultationCardProps> = (props) => {
   const { t } = useTranslation();
 
   return (
-    <ConsultationCardStyles>
+    <div className={styles.root}>
       <NewCourseCard
         id={consultation.id}
         categories={
@@ -86,7 +74,7 @@ const ConsultationCard: React.FC<ConsultationCardProps> = (props) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         consultation={consultation as any}
       />
-    </ConsultationCardStyles>
+    </div>
   );
 };
 

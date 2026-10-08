@@ -1,0 +1,21 @@
+.root {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid var(--ulams-color-primary);
+  align-items: center;
+  border-radius: var(--ulams-radius-card);
+}
+
+.root .iconContainer {
+  display: flex;
+  align-items: center;
+  padding: 0.6rem;
+  background-color: var(--ulams-color-primary-on-light);
+  border-top-left-radius: calc(var(--ulams-radius-card) - 2px);
+  border-bottom-left-radius: calc(var(--ulams-radius-card) - 2px);
+}
+
+.root .time {
+  padding: 0.5rem;
+  margin: 0 auto;
+}

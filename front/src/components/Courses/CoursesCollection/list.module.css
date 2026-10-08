@@ -1,0 +1,7 @@
+.coursesListWrapper {
+  margin-bottom: 75px;
+}
+
+.coursesListWrapper.mobile {
+  margin-bottom: 50px;
+}

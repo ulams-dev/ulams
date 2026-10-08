@@ -1,0 +1,23 @@
+.aside {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1001;
+}
+
+.aside > div {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.aside button {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.aside :global(.time) {
+  margin: 0;
+}

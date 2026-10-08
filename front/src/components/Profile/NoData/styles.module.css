@@ -1,0 +1,23 @@
+.noData {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: var(--ulams-gray-5);
+  padding: 192px 20px;
+  width: calc(100% - 30px);
+  margin: 0 auto;
+}
+
+:global([data-mode="dark"]) .noData {
+  background: var(--ulams-gray-1);
+}
+
+.noData.mobile {
+  padding: 80px 20px;
+}
+
+.noData .smallText {
+  font-size: 14px;
+  margin-top: 20px;
+}

@@ -1,11 +1,10 @@
 import { useContext } from "react";
-import { useTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
 import { UlamsContext } from "@ulams/sdk/react";
 import { Note } from "@ulams/components/components/atoms/Note/Note";
 import Title from "@ulams/components/components/atoms/Typography/Title";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
-import { EventAgendaStyles } from "./EventAgendaStyles";
+import styles from "./EventAgenda.module.css";
 
 type Agenda = {
   id: number;
@@ -22,18 +21,17 @@ const EventAgenda = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const agenda: Agenda[] = stationaryEvent.value?.agenda as any;
-  const theme = useTheme();
   const { t } = useTranslation();
   if (!agenda) {
     return null;
   }
   return (
     <section className="with-border">
-      <EventAgendaStyles>
+      <div className={styles.root}>
         <Title level={4}>{t("Agenda")}</Title>
         {agenda.map((agendaItem) => (
           <Note
-            color={theme.primaryColor}
+            color="var(--ulams-color-primary)"
             description={
               <>
                 <Title level={4}>{agendaItem.title}</Title>
@@ -44,7 +42,7 @@ const EventAgenda = () => {
             time={<>{agendaItem.hour}</>}
           />
         ))}
-      </EventAgendaStyles>
+      </div>
     </section>
   );
 };

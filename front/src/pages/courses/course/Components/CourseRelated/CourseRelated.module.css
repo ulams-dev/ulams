@@ -1,0 +1,16 @@
+.section {
+  position: relative;
+  margin-top: 100px;
+}
+@media (max-width: 991px) {
+  .section {
+    margin-top: 40px;
+  }
+}
+.section :global(.content-container h2) {
+  margin-bottom: 20px;
+}
+.section :global(.content-container .swiper) {
+  padding: 7px 10px;
+  margin: 0px -15px;
+}

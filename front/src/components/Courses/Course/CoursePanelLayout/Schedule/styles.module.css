@@ -1,0 +1,28 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  width: 100%;
+  box-shadow: -3px 0px 6px #0000000b;
+}
+
+.title h2 {
+  padding: 0 25px;
+}
+
+@media (min-width: 1024px) {
+  .title h2 {
+    padding: 0 12px;
+  }
+}
+
+.content {
+  width: 100%;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+}

@@ -3,17 +3,13 @@ import { Row } from "react-grid-system";
 
 import { isMobile } from "react-device-detect";
 
-import styled from "styled-components";
+import styles from "@/components/Skeletons/Skeletons.module.css";
 
 import { CourseCardSkeleton } from "@/components/Skeletons/CourseCard";
 
-const CoursesListWrapper = styled.section`
-  margin-bottom: ${isMobile ? "50px" : "75px"};
-`;
-
 const EntitySkeletonList = () => {
   return (
-    <CoursesListWrapper>
+    <section className={`${styles.list}${isMobile ? ` ${styles.mobile}` : ""}`}>
       <Row
         style={{
           gap: "30px 0",
@@ -30,7 +26,7 @@ const EntitySkeletonList = () => {
           />
         ))}
       </Row>
-    </CoursesListWrapper>
+    </section>
   );
 };
 

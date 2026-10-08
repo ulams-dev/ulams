@@ -1,0 +1,29 @@
+.profile {
+  background-color: var(--ulams-gray-4);
+  padding-top: 100px;
+  padding-bottom: 100px;
+  min-height: 70vh;
+}
+
+:global([data-mode="dark"]) .profile {
+  background-color: var(--ulams-color-bg);
+}
+
+.profile :global(.tabs-menu) {
+  background: #f8f8f8;
+}
+
+.profile :global(.certificates-container) {
+  margin-top: 70px;
+}
+
+.profile :global(.certificates-container) h2 {
+  margin-left: 40px;
+}
+
+@media (max-width: 767px) {
+  .profile {
+    padding-top: 80px;
+    min-height: auto;
+  }
+}

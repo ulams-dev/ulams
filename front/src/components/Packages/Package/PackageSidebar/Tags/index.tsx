@@ -1,14 +1,9 @@
 import { useContext, useMemo } from "react";
 import { Row } from "react-grid-system";
-import styled from "styled-components";
+import styles from "./Tags.module.css";
 import { UlamsContext } from "@ulams/sdk/react";
 import { groupProductablesByType, ProductableEnum } from "@/utils/productables";
 import { PackageSidebarTag } from "./Tag";
-
-const RowStyled = styled(Row)`
-  width: 100%;
-  margin: 0 auto !important;
-`;
 
 export const PackageSidebarTags = () => {
   const { product } = useContext(UlamsContext);
@@ -18,7 +13,7 @@ export const PackageSidebarTags = () => {
   );
 
   return (
-    <RowStyled>
+    <Row className={styles.row}>
       {grouped[ProductableEnum.Consultation] && (
         <PackageSidebarTag
           linkTo="/consultations"
@@ -43,6 +38,6 @@ export const PackageSidebarTags = () => {
           products={grouped[ProductableEnum.Course]}
         />
       )}
-    </RowStyled>
+    </Row>
   );
 };

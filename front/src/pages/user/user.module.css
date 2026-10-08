@@ -1,0 +1,62 @@
+.myDataWrapper {
+  margin-top: 20px;
+  max-width: 450px;
+}
+
+.certificatesWrapper {
+  margin-top: 20px;
+}
+
+.notificationsWrapper {
+  background-color: var(--ulams-gray-4);
+}
+:global([data-mode="dark"]) .notificationsWrapper {
+  background-color: var(--ulams-color-bg);
+}
+
+.notificationsContainer {
+  padding-top: 70px;
+  min-height: 50vh;
+  padding-bottom: 50px;
+}
+.notificationsContainer :global(.notifications-drawer__content__header) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.notificationsContainer :global(.notifications-drawer__content__header button) {
+  display: none;
+}
+.notificationsContainer :global(.notifications-drawer__content--clear-all) {
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+.notificationsContainer :global(.notifications-drawer__content--clear-all button) {
+  all: unset;
+  font-size: 13px;
+  font-family: var(--ulams-font-family);
+  color: var(--ulams-color-primary);
+  font-weight: 700;
+}
+.notificationsContainer :global(.notifications-drawer__content--list) {
+  padding-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ordersList {
+  margin-top: 20px;
+}
+@media (max-width: 991px) {
+  .ordersList {
+    margin-top: 0;
+  }
+}
+.ordersList :global(.name-container p) {
+  display: inline;
+  margin: 0;
+}
+.ordersList * {
+  box-sizing: border-box;
+}

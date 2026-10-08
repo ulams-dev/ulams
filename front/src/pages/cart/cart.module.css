@@ -1,0 +1,11 @@
+.wrapper {
+  background-color: var(--ulams-gray-4);
+  padding-top: 57px;
+  min-height: calc(100vh - 452px);
+}
+:global([data-mode="dark"]) .wrapper {
+  background-color: var(--ulams-color-bg);
+}
+.wrapper h1 {
+  margin-bottom: 20px;
+}

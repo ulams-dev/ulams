@@ -1,0 +1,47 @@
+/* Application-wide base styles (formerly App.tsx createGlobalStyle). Theme values come from --ulams-*. */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  height: 100%;
+  /* inherited text colour, so unstyled text stays readable in dark presets */
+  color: var(--ulams-color-text);
+  background-color: var(--ulams-gray-4);
+}
+
+:root[data-mode="dark"] #root {
+  background-color: var(--ulams-color-bg);
+}
+
+#__ybug-launcher {
+  right: 135px !important;
+}
+
+.table-responsive td,
+.table-responsive tr,
+.table-responsive th {
+  border: 1px solid var(--ulams-gray-3);
+  padding: 5px;
+}
+
+.table-responsive table {
+  border: 1px solid var(--ulams-gray-3);
+  border-collapse: collapse;
+}
+
+/* :where() keeps the specificity of the light rule, so component styles (MarkdownRenderer) still win. */
+:where(:root[data-mode="dark"]) .table-responsive td,
+:where(:root[data-mode="dark"]) .table-responsive tr,
+:where(:root[data-mode="dark"]) .table-responsive th,
+:where(:root[data-mode="dark"]) .table-responsive table {
+  border-color: var(--ulams-gray-1);
+}
+
+a {
+  text-decoration: none;
+}

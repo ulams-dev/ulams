@@ -1,16 +1,13 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { CoursePanelFinishPageCongrats } from "@/components/Courses/Course/CoursePanelLayout/FinishPage/Congrats";
-import { CongratsWrapper } from "@/components/Courses/Course/CoursePanelLayout/FinishPage/styles";
+import styles from "./styles.module.css";
 import { QuestionnairesModal } from "@/components/Courses/Course/CoursePanelLayout/FinishPage/Rate";
 import { CoursePanelFinishPageCertificate } from "@/components/Courses/Course/CoursePanelLayout/FinishPage/Certificate";
 import { UlamsContext } from "@ulams/sdk/react";
 import { useCoursePanel } from "@/components/Courses/Course/Context";
 import routeRoutes from "@/components/Routes/routes";
-import {
-  Certificate,
-  CertificateAssignableTypes,
-} from "@ulams/sdk/types";
+import { Certificate, CertificateAssignableTypes } from "@ulams/sdk/types";
 
 import { QuestionnaireModelType } from "@/types/questionnaire";
 
@@ -86,7 +83,7 @@ export const CoursePanelFinishPage = () => {
   );
 
   return (
-    <CongratsWrapper>
+    <div className={styles.congratsWrapper}>
       {!state.showCertificate && (
         <CoursePanelFinishPageCongrats onNextClick={onNextClick} />
       )}
@@ -99,6 +96,6 @@ export const CoursePanelFinishPage = () => {
         showModal={state.showModal}
         onSuccesGetQuestionnaires={onSuccesGetQuestionnaires}
       />
-    </CongratsWrapper>
+    </div>
   );
 };

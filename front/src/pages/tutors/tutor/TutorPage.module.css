@@ -1,0 +1,20 @@
+.tutorAvatar {
+  width: 100%;
+  max-width: 100%;
+}
+
+.tutorCourses {
+  margin-top: 120px;
+}
+
+@media (max-width: 991px) {
+  .tutorCourses {
+    margin-top: 60px;
+  }
+  .tutorCourses :global(.slick-dots) {
+    display: none !important;
+  }
+  .content {
+    margin-top: 50px;
+  }
+}

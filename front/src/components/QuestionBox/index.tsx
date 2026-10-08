@@ -8,7 +8,7 @@ import { Stack } from "@ulams/components/components/atoms/Stack/index";
 import { TextArea } from "@ulams/components/components/atoms/TextArea/TextArea";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
-import { QuestionBoxWrapper } from "@/components/QuestionBox/styles";
+import styles from "@/components/QuestionBox/styles.module.css";
 import { Row } from "@ulams/components/components/atoms/Row";
 import { QuestionnaireModelType } from "@/types/questionnaire";
 
@@ -41,7 +41,7 @@ export const QuestionBox: FC<QuestionBoxProps> = ({
   };
 
   return (
-    <QuestionBoxWrapper>
+    <form className={styles.wrapper}>
       <Title className="question-box__title">
         {t(
           entityModel === QuestionnaireModelType.COURSE
@@ -116,6 +116,6 @@ export const QuestionBox: FC<QuestionBoxProps> = ({
           </Stack>
         )}
       </div>
-    </QuestionBoxWrapper>
+    </form>
   );
 };

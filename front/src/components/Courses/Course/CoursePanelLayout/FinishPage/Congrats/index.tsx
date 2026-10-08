@@ -2,8 +2,8 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@ulams/components/components/atoms/Button/Button";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
-import { CenteredWrapper } from "@/components/Courses/Course/CoursePanelLayout/FinishPage/styles";
 import { IconCongrats } from "@/icons/index";
+import styles from "../styles.module.css";
 
 interface Props {
   onNextClick: () => void;
@@ -13,20 +13,20 @@ export const CoursePanelFinishPageCongrats = ({ onNextClick }: Props) => {
   const { t } = useTranslation();
 
   return (
-    <CenteredWrapper>
-      <div className="icon-container">
+    <div className={styles.centeredWrapper}>
+      <div className={styles.iconContainer}>
         <IconCongrats />
       </div>
-      <Title className="title" level={1}>
+      <Title className={styles.title} level={1}>
         {t("CoursePanel.FinishPage.Congrats")}
       </Title>
-      <Title className="subtitle" level={2}>
+      <Title className={styles.subtitle} level={2}>
         {t("CoursePanel.FinishPage.Subtitle")}
       </Title>
-      <Text className="text">{t("CoursePanel.FinishPage.Text")}</Text>
-      <Button className="button" onClick={onNextClick}>
+      <Text className={styles.text}>{t("CoursePanel.FinishPage.Text")}</Text>
+      <Button className={styles.button} onClick={onNextClick}>
         {t("Next")}
       </Button>
-    </CenteredWrapper>
+    </div>
   );
 };

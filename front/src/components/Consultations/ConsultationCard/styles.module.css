@@ -1,0 +1,9 @@
+.root :global(.course-card-buttons-group) {
+  margin: 0;
+  width: 100%;
+}
+
+.root :global(.course-card-buttons-group) button {
+  width: 100%;
+  margin: 0;
+}

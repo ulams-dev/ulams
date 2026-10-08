@@ -1,0 +1,100 @@
+.root {
+  --date-picker-border: var(--ulams-gray-3);
+  --date-picker-radius: max(var(--ulams-radius-button), 2px);
+}
+
+:global([data-mode="dark"]) .root {
+  --date-picker-border: var(--ulams-gray-1);
+}
+
+.root :global(.react-datepicker) {
+  font-family: var(--ulams-font-family);
+  color: var(--ulams-color-text);
+  border-color: var(--date-picker-border);
+  border-radius: var(--date-picker-radius);
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.root :global(.react-datepicker__day--selected) {
+  background-color: var(--ulams-color-primary-on-light);
+}
+
+.root :global(.react-datepicker__day--selected):hover {
+  background-color: var(--ulams-color-primary-on-light);
+  opacity: 0.3;
+}
+
+.root :global(.react-datepicker__current-month),
+.root :global(.react-datepicker-time__header),
+.root :global(.react-datepicker-year-header) {
+  font-size: 14px;
+}
+
+.root :global(.react-datepicker__day-name),
+.root :global(.react-datepicker__day),
+.root :global(.react-datepicker__time-name) {
+  line-height: 3em;
+}
+
+.root :global(.react-datepicker__day--keyboard-selected):hover,
+.root :global(.react-datepicker__month-text--keyboard-selected):hover,
+.root :global(.react-datepicker__quarter-text--keyboard-selected):hover,
+.root :global(.react-datepicker__year-text--keyboard-selected):hover {
+  background-color: var(--ulams-color-primary-on-light);
+  opacity: 0.3;
+  color: #ffffff;
+}
+
+.root :global(.react-datepicker__header) {
+  background-color: transparent;
+  border-color: var(--date-picker-border);
+  border-top-right-radius: var(--date-picker-radius);
+  border-top-left-radius: var(--date-picker-radius);
+}
+
+.root :global(.react-datepicker__input-time-container) {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.root
+  :global(.react-datepicker__input-time-container)
+  :global(.react-datepicker-time__caption) {
+  font-size: 14px;
+}
+
+.root
+  :global(.react-datepicker__input-time-container)
+  :global(.react-datepicker-time__input-container)
+  :global(.react-datepicker-time__input),
+.root :global(.react-datepicker__time-list-item) input {
+  font-size: 14px;
+  padding: 1em;
+  border-radius: var(--date-picker-radius);
+  border-color: var(--date-picker-border);
+  border-width: 1px;
+  border-style: solid;
+}
+
+.root :global(.react-datepicker__time-list-item) {
+  border-radius: var(--date-picker-radius);
+  height: fit-content !important;
+}
+
+.root
+  :global(.react-datepicker__time-container)
+  :global(.react-datepicker__time)
+  :global(.react-datepicker__time-box)
+  ul:global(.react-datepicker__time-list)
+  li:global(.react-datepicker__time-list-item--selected) {
+  background-color: red !important;
+}
+
+.root
+  :global(.react-datepicker__input-time-container)
+  :global(.react-datepicker-time__input-container)
+  :global(.react-datepicker-time__input)
+  input:focus {
+  outline: none;
+}

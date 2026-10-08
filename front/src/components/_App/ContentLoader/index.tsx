@@ -1,30 +1,25 @@
 import { Spin } from "@ulams/components/components/atoms/Spin/Spin";
-import styled, { useTheme } from "styled-components";
+import { useThemeTokens } from "@ulams/components/theme/applyTheme";
+import styles from "./ContentLoader.module.css";
 
 interface Props {
   width?: string;
   height?: string;
 }
 
-const SpinnerWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-`;
-
 const ContentLoader = ({ width, height }: Props) => {
-  const theme = useTheme();
+  // Spin paints SVG gradient stops, which need a raw colour value.
+  const theme = useThemeTokens();
   return (
-    <SpinnerWrapper
+    <div
+      className={styles.spinnerWrapper}
       style={{
         width: width || "100%",
         height: height || "100%",
       }}
     >
-      <Spin color={theme.primaryColor} />
-    </SpinnerWrapper>
+      <Spin color={theme?.primaryColor} />
+    </div>
   );
 };
 

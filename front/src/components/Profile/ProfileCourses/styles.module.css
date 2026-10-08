@@ -1,0 +1,37 @@
+.list {
+  overflow: hidden;
+}
+
+.list :global(.course-wrapper) {
+  margin-bottom: 24px;
+}
+
+.list :global(.course-wrapper) a {
+  text-decoration: none;
+}
+
+.emptyInfo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 192px 20px;
+  width: calc(100% - 30px);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.emptyInfo.mobile {
+  padding: 80px 20px;
+}
+
+.emptyInfo .smallText {
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+.paginationWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}

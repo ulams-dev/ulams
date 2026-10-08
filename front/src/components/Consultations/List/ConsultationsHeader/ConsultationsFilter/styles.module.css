@@ -1,0 +1,52 @@
+.root {
+  display: flex;
+  row-gap: 30px;
+  flex-wrap: wrap;
+}
+
+.selectsRow {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  column-gap: 35px;
+  margin-left: auto;
+}
+
+@media (max-width: 991px) {
+  .selectsRow {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 40px;
+  }
+}
+
+@media (max-width: 575px) {
+  .selectsRow {
+    row-gap: 15px;
+    margin-top: 20px;
+  }
+}
+
+.root .selectsRow .singleSelectSearch :global(.search-input-options) {
+  display: none !important;
+}
+
+.root .selectsRow .singleSelectSearch input {
+  background: transparent !important;
+  border-bottom: 1px solid #fff;
+  color: #fff;
+  border-radius: 0;
+}
+
+.root .selectsRow .singleSelectSearch :global(.fieldset) {
+  border-color: transparent !important;
+}
+
+.root .selectsRow .singleSelectSearch svg {
+  filter: brightness(0) invert(1);
+}
+
+.root .selectsRow .singleSelectCategory {
+  min-width: 200px;
+}

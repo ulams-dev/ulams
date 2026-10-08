@@ -1,0 +1,167 @@
+.coursePage {
+  padding-top: 40px;
+}
+.coursePage :global(section) {
+  margin-bottom: 40px;
+}
+@media (max-width: 991px) {
+  .coursePage :global(section) {
+    margin-bottom: 20px;
+  }
+}
+.coursePage :global(section.with-border) {
+  padding-bottom: 45px;
+  border-bottom: 1px solid var(--ulams-gray-5);
+}
+:global([data-mode="dark"]) .coursePage :global(section.with-border) {
+  border-bottom-color: var(--ulams-gray-1);
+}
+.coursePage :global(section.padding-right) {
+  padding-right: 150px;
+}
+@media (max-width: 991px) {
+  .coursePage :global(section.padding-right) {
+    padding-right: 70px;
+  }
+}
+@media (max-width: 768px) {
+  .coursePage :global(section.padding-right) {
+    padding-right: 0;
+  }
+}
+.coursePage :global(.sidebar-col) {
+  padding-bottom: 45px;
+}
+.coursePage :global(.course-main-info h1) {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+@media (max-width: 991px) {
+  .coursePage :global(.course-main-info h1) {
+    font-size: 30px;
+  }
+}
+.coursePage :global(.course-main-info .image-wrapper) {
+  margin-top: 13px;
+}
+.coursePage :global(.course-main-info .image-wrapper img) {
+  border-radius: var(--ulams-radius-card);
+}
+@media (max-width: 991px) {
+  .coursePage :global(.course-main-info .image-wrapper) {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  .coursePage :global(.course-main-info .image-wrapper img) {
+    display: block;
+    margin: 0 auto;
+  }
+}
+.coursePage :global(.course-main-info .labels-row) {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  column-gap: 20px;
+  margin: 35px 0;
+}
+@media (max-width: 991px) {
+  .coursePage :global(.course-main-info .labels-row) {
+    margin: 35px 0 0;
+  }
+}
+@media (max-width: 374px) {
+  .coursePage :global(.course-main-info .labels-row) {
+    flex-direction: column;
+    row-gap: 16px;
+  }
+}
+.coursePage :global(.course-main-info .labels-row--bottom) {
+  column-gap: 45px;
+  margin-top: 120px;
+  margin-bottom: 0;
+  flex-wrap: wrap;
+}
+@media (max-width: 991px) {
+  .coursePage :global(.course-main-info .labels-row--bottom) {
+    column-gap: 0;
+    margin-top: 55px;
+  }
+  .coursePage :global(.course-main-info .labels-row--bottom .single-label) {
+    flex: 0 0 50%;
+    max-width: 50%;
+    margin-bottom: 20px;
+  }
+}
+@media (max-width: 374px) {
+  .coursePage :global(.course-main-info .labels-row--bottom) {
+    flex-direction: row;
+  }
+}
+.coursePage :global(.course-tutor .ranking-row) {
+  display: none !important;
+}
+@media (max-width: 991px) {
+  .coursePage :global(.course-ratings) {
+    margin-top: 40px;
+  }
+}
+.coursePage :global(.course-description p),
+.coursePage :global(.course-description-short p) {
+  font-size: 16px;
+}
+.coursePage :global(.course-companies) {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+@media (max-width: 768px) {
+  .coursePage :global(.course-companies) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+.coursePage :global(.course-companies .companies-row) {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  column-gap: 70px;
+}
+.coursePage :global(.course-companies .companies-row .single-company) {
+  max-height: 85px;
+  max-width: 65px;
+}
+@media (max-width: 768px) {
+  .coursePage :global(.course-companies .companies-row) {
+    column-gap: 0;
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+.coursePage :global(.course-companies p) {
+  max-width: 220px;
+  margin-right: 50px;
+}
+.coursePage :global(.course-tutor a) {
+  text-decoration: none !important;
+}
+.coursePage :global(.single-content) {
+  box-sizing: border-box;
+}
+
+/* Raised above the navbar while a course modal is open (only mounted inside those modals). */
+:global(body:has(.ulams-course-modal-overlay-fix) .ReactModal__Overlay) {
+  z-index: 1500 !important;
+}
+
+.backButton {
+  all: unset;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  color: var(--ulams-color-black);
+}
+.backButton svg {
+  transform: rotate(180deg);
+  width: 10px;
+  height: 17px;
+}

@@ -1,5 +1,6 @@
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
-import { StyledHeader, StyledTabs } from "./styles";
+import { isMobile } from "react-device-detect";
+import styles from "./styles.module.css";
 import { ConsultationsContext } from "@/components/Consultations/List/ConsultationsContext";
 import { useContext } from "react";
 import ConsultationsSlider from "@/components/Consultations/ConsultationsSlider";
@@ -86,15 +87,15 @@ const ConsultationsCollection = () => {
 
   return (
     <>
-      <StyledHeader>
+      <div className={`${styles.header} ${isMobile ? styles.mobile : ""}`}>
         <Title level={1}>Ucz się od najlepszych</Title>
-      </StyledHeader>
-      <StyledTabs>
+      </div>
+      <div className={`${styles.tabs} ${isMobile ? styles.mobile : ""}`}>
         <Tabs
           tabs={consultationsTabs.tabs}
           defaultActiveKey={consultationsTabs.defaultActiveKey}
         />
-      </StyledTabs>
+      </div>
     </>
   );
 };

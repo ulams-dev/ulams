@@ -1,0 +1,11 @@
+.root {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.root button > svg {
+  width: 24px;
+  height: 25px;
+}

@@ -1,23 +1,11 @@
-import styled from "styled-components";
 import Placeholder from "../../../images/no-picture.png";
-
-const StyledPlaceholder = styled.div`
-  width: 100%;
-  height: 100%;
-  border: 1px solid
-    ${({ theme }) => (theme.mode === "light" ? theme.gray4 : theme.gray2)};
-  img {
-    &:hover {
-      transform: none !important;
-    }
-  }
-`;
+import styles from "./styles.module.css";
 
 const CourseImgPlaceholder = () => {
   return (
-    <StyledPlaceholder>
+    <div className={styles.placeholder}>
       <img src={Placeholder} alt="" />
-    </StyledPlaceholder>
+    </div>
   );
 };
 

@@ -7,7 +7,7 @@ import ResponsiveImage from "@ulams/components/components/organisms/ResponsiveIm
 import LabelListItem from "@ulams/components/components/molecules/LabelListItem/LabelListItem";
 import { UlamsContext } from "@ulams/sdk/react";
 import { Medal, StarOrange, ThumbUp } from "@/icons/index";
-import { PackageInfoStyles } from "./styles";
+import styles from "./styles.module.css";
 
 export const PackageInfo = () => {
   const { product } = useContext(UlamsContext);
@@ -17,7 +17,7 @@ export const PackageInfo = () => {
     return null;
   }
   return (
-    <PackageInfoStyles>
+    <div className={styles.root}>
       <section className="package-main-info with-border">
         <Row>
           <Col lg={7}>
@@ -86,6 +86,6 @@ export const PackageInfo = () => {
           )} */}
         </div>
       </section>
-    </PackageInfoStyles>
+    </div>
   );
 };

@@ -2,27 +2,13 @@ import React, { useCallback, useContext } from "react";
 import { Avatar } from "@ulams/components/components/atoms/Avatar/Avatar";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { UlamsContext } from "@ulams/sdk/react";
-import styled from "styled-components";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
+import styles from "./styles.module.css";
 
 type Props = {
   size?: "small" | "extraSmall";
 };
-
-const Container = styled.div`
-  margin-bottom: ${isMobile ? "0" : "21px"};
-  display: flex;
-  justify-content: flex-start;
-  flex-direction: row;
-  align-items: center;
-  gap: 15px;
-
-  .avatar-upload-text {
-    margin: 0;
-    cursor: pointer;
-  }
-`;
 
 const AvatarUpload: React.FC<Props> = ({ size }) => {
   const { updateAvatar, user } = useContext(UlamsContext);
@@ -39,10 +25,10 @@ const AvatarUpload: React.FC<Props> = ({ size }) => {
   );
 
   return (
-    <Container>
+    <div className={`${styles.container} ${isMobile ? styles.mobile : ""}`}>
       <Avatar size={size} src={user.value?.avatar} alt="" />
       <label htmlFor="fileInput">
-        <Text className="avatar-upload-text" size="12">
+        <Text className={styles.uploadText} size="12">
           {t("AddNewPhoto")}
         </Text>
         <input
@@ -53,7 +39,7 @@ const AvatarUpload: React.FC<Props> = ({ size }) => {
           onChange={handleAvatarChange}
         />
       </label>
-    </Container>
+    </div>
   );
 };
 

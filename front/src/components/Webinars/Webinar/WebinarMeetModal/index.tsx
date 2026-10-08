@@ -3,10 +3,9 @@ import { UlamsContext } from "@ulams/sdk/react";
 import { Modal } from "@ulams/components/components/atoms/Modal/Modal";
 import { JitsyData } from "@ulams/sdk/types";
 import ContentLoader from "@/components/_App/ContentLoader";
-import { WebinarMeetModalStyles } from "./WebinarMeetModalStyles";
+import styles from "./WebinarMeetModal.module.css";
 import { useTranslation } from "react-i18next";
 import { toast } from "@/utils/toast";
-import styled from "styled-components";
 import JitsyMeeting from "@/components/Consultations/ConsultationCard/JitsyMeeting";
 import { EndMeetingQuestionnairesModal } from "@/components/Consultations/ConsultationCard/EndMeetingQuestionnaires";
 import { QuestionnaireModelType } from "@/types/questionnaire";
@@ -16,13 +15,6 @@ interface Props {
   visible: boolean;
   webinarId: number;
 }
-
-const JitsiContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-`;
 
 const WebinarMeetModal = ({ onClose, visible, webinarId }: Props) => {
   const [webinarMeetData, setWebinarMeetData] = useState<JitsyData | null>(
@@ -97,9 +89,9 @@ const WebinarMeetModal = ({ onClose, visible, webinarId }: Props) => {
           background: "black",
         }}
       >
-        <WebinarMeetModalStyles>
+        <div className={styles.root}>
           {loading && <ContentLoader />}
-          <JitsiContainer>
+          <div className={styles.jitsiContainer}>
             {visible && !loading && webinarMeetData && (
               <JitsyMeeting
                 key={webinarId}
@@ -107,8 +99,8 @@ const WebinarMeetModal = ({ onClose, visible, webinarId }: Props) => {
                 close={handleOnClose}
               />
             )}
-          </JitsiContainer>
-        </WebinarMeetModalStyles>
+          </div>
+        </div>
       </Modal>
 
       {isEnded && (

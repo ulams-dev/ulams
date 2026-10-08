@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-import styled from "styled-components";
 import { Swiper } from "swiper/react";
 import { Navigation, A11y } from "swiper/modules";
 import { Swiper as SwiperType } from "swiper/types";
@@ -7,35 +6,7 @@ import { Swiper as SwiperType } from "swiper/types";
 import "swiper/css/bundle";
 import "swiper/css/navigation";
 import { ArrowRight } from "@/icons/index";
-
-const SwiperButtons = styled.div`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  display: flex;
-  @media (max-width: 768px) {
-    display: none;
-  }
-  button {
-    all: unset;
-    width: 24px;
-    height: 24px;
-    border-radius: 3px;
-    background-color: ${({ theme }) => theme.primaryColor};
-    margin-left: 3px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    :first-of-type {
-      background-color: ${({ theme }) => theme.gray3};
-      svg {
-        transform: rotate(180deg);
-      }
-    }
-  }
-`;
+import styles from "./swiper.module.css";
 
 type Props = {
   children?: React.ReactNode;
@@ -70,14 +41,14 @@ const SwiperSlider: React.FC<Props> = ({ children, slidesPerView }) => {
       >
         {children}
       </Swiper>
-      <SwiperButtons>
+      <div className={styles.swiperButtons}>
         <button onClick={() => swiperRef.current?.slidePrev()} title="pev">
           <ArrowRight />
         </button>
         <button onClick={() => swiperRef.current?.slideNext()} title="next">
           <ArrowRight />
         </button>
-      </SwiperButtons>
+      </div>
     </div>
   );
 };

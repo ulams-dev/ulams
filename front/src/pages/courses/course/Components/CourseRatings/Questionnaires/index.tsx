@@ -1,7 +1,8 @@
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
-import { StyledTitle } from "../styles";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import styles from "../styles.module.css";
 import { useCourseRatingContext } from "../Provider";
 import { CourseRatingsQuestionnairesContent } from "./Content";
 import { CourseRatingsQuestionnairesDropdowns } from "./Dropdowns";
@@ -12,7 +13,9 @@ export const CourseRatingsQuestionnaires = memo(() => {
 
   return (
     <>
-      <StyledTitle level={4}>{t("CoursePage.Questionnaires")}</StyledTitle>
+      <Title level={4} className={styles.title}>
+        {t("CoursePage.Questionnaires")}
+      </Title>
       {questionnaires.length > 0 ? (
         <>
           <CourseRatingsQuestionnairesDropdowns

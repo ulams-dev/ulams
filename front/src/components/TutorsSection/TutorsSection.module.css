@@ -1,0 +1,9 @@
+.root :global(.section-tutor .ranking-row) {
+  display: none !important;
+}
+.root :global(.section-tutor .title) {
+  margin-bottom: 20px;
+}
+.tutor {
+  margin-bottom: 20px;
+}

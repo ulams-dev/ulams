@@ -2,7 +2,6 @@ import { memo, useContext, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Col, Row } from "react-grid-system";
 import ContentLoader from "@/components/_App/ContentLoader";
-import styled from "styled-components";
 import ProfileNoData from "../NoData";
 import routes from "../../Routes/routes";
 import WebinarsContainerItem from "../../Webinars/List/WebinarsContainer/Items/Item";
@@ -11,10 +10,7 @@ import { ProfileWebinarItemFooter } from "./ItemFooter";
 import { ProfileWebinarItemActions } from "./ItemActions";
 import WebinarMeetModal from "@/components/Webinars/Webinar/WebinarMeetModal";
 import { WebinarsContext } from "@/components/Webinars/List/WebinarsContext";
-
-const RowStyled = styled(Row)`
-  gap: 30px 0;
-`;
+import styles from "./styles.module.css";
 
 interface ProfileWebinarsProps {
   webinars: API.Webinar[];
@@ -53,7 +49,7 @@ ProfileWebinarsProps) => {
     );
   }
   return (
-    <RowStyled>
+    <Row className={styles.row}>
       {webinars.map((webinar) => (
         <Col key={webinar.id} xs={12} md={6} lg={4}>
           <WebinarsContainerItem
@@ -78,7 +74,7 @@ ProfileWebinarsProps) => {
           webinarId={webinarJoinId}
         />
       )}
-    </RowStyled>
+    </Row>
   );
 };
 

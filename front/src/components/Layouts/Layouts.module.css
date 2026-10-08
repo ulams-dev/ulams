@@ -1,0 +1,14 @@
+.wrapper {
+  padding-top: 31px;
+}
+
+.header {
+  background: var(--ulams-gray-4);
+  padding: 25px 0px 10px;
+  position: relative;
+  margin-bottom: 16px;
+}
+
+:global([data-mode="dark"]) .header {
+  background: var(--ulams-color-bg);
+}

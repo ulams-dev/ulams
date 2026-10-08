@@ -16,7 +16,7 @@ import {
   sortDates,
   formatDate,
 } from "@/utils/date";
-import { StyledBookTermButtons } from "@/components/Book/BookTermModal/styles";
+import styles from "../styles.module.css";
 
 interface Props {
   consultation: API.Consultation & {
@@ -193,7 +193,7 @@ const UserSelectDatePicker = ({ consultation, onClose }: Props) => {
           consultation.proposed_terms?.length ? currentTimes : undefined
         }
       />
-      <StyledBookTermButtons>
+      <div className={styles.bookTermButtons}>
         {currentTimes.map((date) => (
           <Button
             mode={
@@ -206,7 +206,7 @@ const UserSelectDatePicker = ({ consultation, onClose }: Props) => {
             {formatDate(date, "HH:mm")}
           </Button>
         ))}
-      </StyledBookTermButtons>
+      </div>
       <Button
         mode="secondary"
         onClick={() => setStep(2)}

@@ -1,0 +1,18 @@
+.collapse {
+  background-color: var(--ulams-color-white);
+}
+
+:global([data-mode="dark"]) .collapse {
+  background-color: var(--ulams-gray-1);
+}
+
+.collapse .content {
+  padding-top: 22px;
+  margin-top: 16px;
+}
+
+@media (max-width: 991px) {
+  .collapse .content {
+    padding: 30px 0 0 0;
+  }
+}

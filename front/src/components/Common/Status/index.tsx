@@ -1,23 +1,5 @@
 import { useMemo } from "react";
-import styled, { useTheme } from "styled-components";
-
-const StatusStyles = styled.div`
-  display: flex;
-  align-items: center;
-  user-select: none;
-
-  .status {
-    display: block;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-  }
-
-  .name {
-    padding: 0.5rem;
-    font-family: ${({ theme }) => theme.font};
-  }
-`;
+import styles from "./styles.module.css";
 
 export enum StatusTypes {
   "ACCEPTED",
@@ -33,7 +15,6 @@ interface Props {
 }
 
 const Status = ({ status, name }: Props) => {
-  const theme = useTheme();
   const color = useMemo(() => {
     switch (status) {
       case StatusTypes.ACCEPTED:
@@ -44,20 +25,20 @@ const Status = ({ status, name }: Props) => {
       case StatusTypes.CANCELED:
         return "#D22B2B";
       default:
-        return theme.primaryColor;
+        return "var(--ulams-color-primary)";
     }
-  }, [theme.primaryColor, status]);
+  }, [status]);
 
   return (
-    <StatusStyles>
+    <div className={styles.root}>
       <div
-        className="status"
+        className={styles.status}
         style={{
           backgroundColor: color,
         }}
       />
-      <div className="name">{name}</div>
-    </StatusStyles>
+      <div className={styles.name}>{name}</div>
+    </div>
   );
 };
 

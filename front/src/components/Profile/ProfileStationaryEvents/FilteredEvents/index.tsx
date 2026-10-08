@@ -6,7 +6,7 @@ import { Row, Col } from "react-grid-system";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import EventsContainerItem from "../../../Events/List/EventsContainer/Items/Item";
-import { ProfileStationaryEventsMobileStyles } from "../MobileStyles";
+import styles from "../MobileStyles.module.css";
 
 interface FilteredEventsProps {
   filteredList: API.StationaryEvent[] | [];
@@ -32,11 +32,11 @@ const FilteredEvents: FC<FilteredEventsProps> = ({ filteredList }) => {
 
   if (isMobile) {
     return (
-      <ProfileStationaryEventsMobileStyles>
-        <div className="slider-wrapper">
+      <div className={styles.root}>
+        <div className={styles.sliderWrapper}>
           {filteredList &&
             filteredList.map((event) => (
-              <div key={event.id} className="single-slide">
+              <div key={event.id} className={styles.singleSlide}>
                 <EventsContainerItem
                   key={event.id}
                   event={event}
@@ -45,7 +45,7 @@ const FilteredEvents: FC<FilteredEventsProps> = ({ filteredList }) => {
               </div>
             ))}
         </div>
-      </ProfileStationaryEventsMobileStyles>
+      </div>
     );
   }
 

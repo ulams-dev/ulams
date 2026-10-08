@@ -3,14 +3,14 @@ import { useTranslation } from "react-i18next";
 import ResponsiveImage from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import { UlamsContext } from "@ulams/sdk/react";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
-import { EventCompaniesStyles } from "./EventCompaniesStyles";
+import styles from "./EventCompanies.module.css";
 
 const EventCompanies = () => {
   const { settings } = useContext(UlamsContext);
   const { t } = useTranslation();
 
   return (
-    <EventCompaniesStyles>
+    <div className={styles.root}>
       <section className="event-companies">
         <Text>
           <strong>{t("CoursePage.CompaniesTitle")}</strong>
@@ -28,7 +28,7 @@ const EventCompanies = () => {
             ))}
         </div>
       </section>
-    </EventCompaniesStyles>
+    </div>
   );
 };
 

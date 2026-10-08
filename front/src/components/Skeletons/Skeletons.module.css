@@ -1,0 +1,35 @@
+.list {
+  margin-bottom: 75px;
+}
+
+.list.mobile {
+  margin-bottom: 50px;
+}
+
+.relative {
+  position: relative;
+}
+
+.tutors {
+  display: flex;
+}
+
+.tutors > div {
+  margin-left: 10px;
+}
+
+.card {
+  max-width: 278px;
+  min-height: 414px;
+}
+
+@media (max-width: 768px) {
+  .card {
+    max-width: 100%;
+    min-height: auto;
+  }
+}
+
+.sidebar :global(.react-loading-skeleton) {
+  border-radius: 10px;
+}

@@ -4,7 +4,6 @@ import { API } from "@ulams/sdk";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { Button } from "@ulams/components/components/atoms/Button/Button";
-import styled from "styled-components";
 import { useHistory, useLocation } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
@@ -18,6 +17,7 @@ import routeRoutes from "@/components/Routes/routes";
 import SwiperSlider from "@/components/Courses/CoursesSlider/swiper";
 import { SwiperSlide } from "swiper/react";
 import { CourseCardSkeleton } from "@/components/Skeletons/CourseCard";
+import styles from "./styles.module.css";
 
 type CoursesState = Array<
   API.Course & { progress?: number; courseData?: API.CourseProgressItem }
@@ -28,40 +28,6 @@ enum TabName {
   PLANNED = "planned",
   FINISHED = "finished",
 }
-
-const StyledList = styled.div`
-  overflow: hidden;
-  .course-wrapper {
-    margin-bottom: 24px;
-
-    a {
-      text-decoration: none;
-    }
-  }
-`;
-
-const StyledEmptyInfo = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  /* background: ${({ theme }) =>
-    theme.mode === "dark" ? theme.gray1 : theme.gray5}; */
-  padding: ${isMobile ? "80px 20px" : "192px 20px"};
-  width: calc(100% - 30px);
-  margin: 0 auto;
-  text-align: center;
-  .small-text {
-    font-size: 14px;
-    margin-top: 20px;
-  }
-`;
-
-const PaginationWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 50px;
-`;
 
 const ProfileCourses = ({
   filter = CourseStatus.ALL,
@@ -174,15 +140,17 @@ const ProfileCourses = ({
   }, [filter, paginatedProgress, myAuthoredCourses, remapNormalCourses]);
 
   return (
-    <StyledList>
+    <div className={styles.list}>
       {coursesToMap.length === 0 &&
         !paginatedProgress.loading &&
         !myAuthoredCourses.loading && (
-          <StyledEmptyInfo>
+          <div
+            className={`${styles.emptyInfo} ${isMobile ? styles.mobile : ""}`}
+          >
             <Title level={3}>
               {t<string>("MyProfilePage.EmptyCoursesTitle")}
             </Title>
-            <Text className="small-text">
+            <Text className={styles.smallText}>
               {t<string>("MyProfilePage.EmptyCoursesText")}
             </Text>
             <Button
@@ -191,7 +159,7 @@ const ProfileCourses = ({
             >
               {t<string>("MyProfilePage.EmptyCoursesBtnText")}
             </Button>
-          </StyledEmptyInfo>
+          </div>
         )}
       {!isMobile ? (
         <>
@@ -208,7 +176,7 @@ const ProfileCourses = ({
                   </Col>
                 ))}
           </Row>
-          <PaginationWrapper>
+          <div className={styles.paginationWrapper}>
             <Pagination
               total={paginationMeta?.total || 0}
               perPage={Number(paginationMeta?.per_page || 0)}
@@ -218,7 +186,7 @@ const ProfileCourses = ({
                 window?.scrollTo(0, 0);
               }}
             />
-          </PaginationWrapper>
+          </div>
         </>
       ) : (
         <SwiperSlider>
@@ -241,7 +209,7 @@ const ProfileCourses = ({
             ))}
         </SwiperSlider>
       )}
-    </StyledList>
+    </div>
   );
 };
 

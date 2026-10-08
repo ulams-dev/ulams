@@ -3,7 +3,7 @@ import { Container, Row, Col } from "react-grid-system";
 import { useTranslation } from "react-i18next";
 import { UlamsContext } from "@ulams/sdk/react";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
-import { EventRelatedStyles } from "./EventRelatedEvents";
+import styles from "./EventRelatedEvents.module.css";
 import Slider from "@/components/Slider";
 import CourseCardWrapper from "@/components/Courses/CourseCardWrapper";
 import EventsContainerItem from "@/components/Events/List/EventsContainer/Items/Item";
@@ -14,7 +14,7 @@ const EventRelatedEvents = () => {
   const data = stationaryEvents.list?.data;
 
   return (
-    <EventRelatedStyles>
+    <div className={styles.root}>
       <section className="event-related-events">
         <Container>
           <div className="content-container">
@@ -77,7 +77,7 @@ const EventRelatedEvents = () => {
           </div>
         </Container>
       </section>
-    </EventRelatedStyles>
+    </div>
   );
 };
 

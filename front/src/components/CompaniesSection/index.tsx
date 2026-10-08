@@ -2,7 +2,7 @@ import { useContext } from "react";
 import ResponsiveImage from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import { UlamsContext } from "@ulams/sdk/react";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
-import { CompaniesSectionStyles } from "./CompaniesSectionStyles";
+import styles from "./CompaniesSection.module.css";
 
 interface CompaniesSectionProps {
   title: React.ReactElement | React.ReactElement[];
@@ -12,7 +12,7 @@ const CompaniesSection = ({ title }: CompaniesSectionProps) => {
   const { settings } = useContext(UlamsContext);
 
   return (
-    <CompaniesSectionStyles>
+    <div className={styles.root}>
       <section className="section-companies with-border">
         <Text>
           <strong>{title}</strong>
@@ -30,7 +30,7 @@ const CompaniesSection = ({ title }: CompaniesSectionProps) => {
             ))}
         </div>
       </section>
-    </CompaniesSectionStyles>
+    </div>
   );
 };
 

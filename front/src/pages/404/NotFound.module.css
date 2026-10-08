@@ -1,0 +1,18 @@
+.root {
+  height: calc(100vh - 452px);
+  padding-top: 122px;
+  background-color: var(--ulams-gray-4);
+}
+
+:global([data-mode="dark"]) .root {
+  background-color: var(--ulams-color-bg);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  row-gap: 30px;
+}

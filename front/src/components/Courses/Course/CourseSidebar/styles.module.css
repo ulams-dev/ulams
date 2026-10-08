@@ -1,0 +1,30 @@
+.sidebar {
+  padding-bottom: 100px;
+}
+
+.showAgendaBtn {
+  width: 100%;
+}
+
+.mobile .agendaWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  transform: translate(100%, 0);
+  transition: transform 0.25s;
+  overflow: scroll;
+  padding: 40px 0 55px;
+  z-index: 10;
+  background-color: var(--ulams-color-bg);
+}
+
+.mobile .agendaWrapperVisible {
+  transform: translate(0, 0);
+}
+
+.mobile .agendaWrapper .hideAgendaBtn {
+  display: block;
+  margin: 0 15px 0 auto;
+}

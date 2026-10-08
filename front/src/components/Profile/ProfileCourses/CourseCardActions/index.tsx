@@ -12,6 +12,7 @@ import { API } from "@ulams/sdk";
 import { UlamsContext } from "@ulams/sdk/react";
 import { CourseProgressItem } from "@ulams/sdk/types";
 import {
+  ButtonHTMLAttributes,
   FC,
   useCallback,
   useContext,
@@ -23,27 +24,18 @@ import { useTranslation } from "react-i18next";
 
 import { ResetProgressModal } from "../ResetProgressModal";
 import { QuestionnaireModelType } from "@/types/questionnaire";
-import { Wrapper } from "./styles";
+import styles from "./styles.module.css";
 import { getQuestionnaires } from "@/utils/questionnaires";
 import GetCertificate from "@/components/Profile/ProfileCourses/CourseCardActions/certificate";
-import styled from "styled-components";
 import { IconRate } from "@/icons/index";
 import ContentLoader from "@/components/_App/ContentLoader";
 
-export const StyledActionButton = styled.button`
-  all: unset;
-  text-decoration: underline;
-  font-size: 13px;
-  font-family: ${({ theme }) => theme.font};
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-`;
-
-const ResetCourseWrapper = styled.div`
-  margin-top: 5px;
-`;
+export const ActionButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({
+  className,
+  ...props
+}) => (
+  <button {...props} className={`${styles.actionButton} ${className ?? ""}`} />
+);
 
 interface Props {
   courseData: CourseProgressItem;
@@ -56,8 +48,7 @@ export const CourseCardActions: FC<Props> = ({
 }) => {
   const [courseId, setCourseId] = useState<number | undefined>(undefined);
   const [showResetProgressModal, setShowResetProgressModal] = useState(false);
-  const { fetchQuestionnaires, fetchQuestionnaire } =
-    useContext(UlamsContext);
+  const { fetchQuestionnaires, fetchQuestionnaire } = useContext(UlamsContext);
   const [state, setState] = useState({
     show: false,
     step: 0,
@@ -131,11 +122,11 @@ export const CourseCardActions: FC<Props> = ({
   }, [courseId]);
 
   return (
-    <Wrapper>
+    <div className={styles.wrapper}>
       {status.isDone && <GetCertificate courseId={courseData.course.id} />}
       {courseProgress === 100 && (
         <>
-          <StyledActionButton
+          <ActionButton
             onClick={() => {
               setCourseId(courseData.course.id);
               setState((prevState) => ({
@@ -147,8 +138,8 @@ export const CourseCardActions: FC<Props> = ({
           >
             <IconRate /> {t<string>("MyProfilePage.RateCourse")}{" "}
             {state.loading && <ContentLoader width="10px" height="10px" />}
-          </StyledActionButton>
-          <ResetCourseWrapper>
+          </ActionButton>
+          <div className={styles.resetCourseWrapper}>
             {!isDeadlineMissed && status.isDone && (
               <Button
                 mode="secondary"
@@ -157,7 +148,7 @@ export const CourseCardActions: FC<Props> = ({
                 {t<string>("MyProfilePage.ResetCourseProgress")}
               </Button>
             )}
-          </ResetCourseWrapper>
+          </div>
         </>
       )}
       {!!isDeadlineMissed && timeDifference !== null && timeDifference[0] < 0 && (
@@ -198,6 +189,6 @@ export const CourseCardActions: FC<Props> = ({
             </Title>
           </Modal>
         ))}
-    </Wrapper>
+    </div>
   );
 };

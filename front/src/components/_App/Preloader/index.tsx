@@ -1,23 +1,11 @@
 import { useEffect } from "react";
 import { Spin } from "@ulams/components/components/atoms/Spin/Spin";
-import styled, { useTheme } from "styled-components";
-
-const StyledLoader = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100%;
-  z-index: 999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${({ theme }) =>
-    theme.mode === "dark" ? theme.dm__background : theme.background};
-`;
+import { useThemeTokens } from "@ulams/components/theme/applyTheme";
+import styles from "./Preloader.module.css";
 
 const Preloader = () => {
-  const theme = useTheme();
+  // Spin paints SVG gradient stops, which need a raw colour value.
+  const theme = useThemeTokens();
   useEffect(() => {
     document.body.style.overflow = "hidden";
 
@@ -27,9 +15,9 @@ const Preloader = () => {
   }, []);
 
   return (
-    <StyledLoader>
-      <Spin color={theme.primaryColor} />
-    </StyledLoader>
+    <div className={styles.loader}>
+      <Spin color={theme?.primaryColor} />
+    </div>
   );
 };
 

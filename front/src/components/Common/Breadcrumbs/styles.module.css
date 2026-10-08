@@ -1,0 +1,17 @@
+.breadcrumbs {
+  margin-bottom: 36px;
+  --page-breadcrumbs-color: var(--ulams-gray-2);
+}
+
+:global([data-mode="dark"]) .breadcrumbs {
+  --page-breadcrumbs-color: var(--ulams-gray-5);
+}
+
+.breadcrumbs p {
+  color: var(--page-breadcrumbs-color) !important;
+}
+
+.breadcrumbs a {
+  text-decoration: none;
+  color: var(--page-breadcrumbs-color) !important;
+}

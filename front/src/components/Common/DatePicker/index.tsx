@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import ReactDatePicker, { registerLocale } from "react-datepicker";
-import { StyledDatePicker } from "./styles";
 import "react-datepicker/dist/react-datepicker.css";
+import styles from "./styles.module.css";
 import en from "date-fns/locale/en-GB";
 import pl from "date-fns/locale/pl";
 registerLocale("pl", pl);
@@ -35,7 +35,7 @@ const DatePicker = ({
   const { i18n } = useTranslation();
 
   return (
-    <StyledDatePicker>
+    <div className={styles.root}>
       <ReactDatePicker
         selected={selectedDate}
         onChange={onChange}
@@ -51,7 +51,7 @@ const DatePicker = ({
         showTimeSelect={showTimeInput}
         timeInputLabel={timeInputLabel}
       />
-    </StyledDatePicker>
+    </div>
   );
 };
 

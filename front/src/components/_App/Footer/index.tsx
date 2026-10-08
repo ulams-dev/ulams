@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useMemo } from "react";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
-import styled from "styled-components";
 import { UlamsContext } from "@ulams/sdk/react";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
@@ -11,142 +10,10 @@ import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";
 import { UlamsLogo } from "@/icons/index";
 import GoTop from "@/components/_App/GoTop";
-import { getStylesBasedOnTheme } from "@ulams/components/utils/utils";
 import { MarkdownRenderer } from "@ulams/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
 import { EU_BANNER_LINK } from "@/utils/constants";
 import EuBanner from "../../../images/eu-banner.png";
-
-const StyledFooter = styled.footer`
-  padding: ${isMobile ? "50px 0 18px" : "100px 0 50px 15px"};
-  z-index: 50;
-  position: relative;
-  background: ${({ theme }) =>
-    getStylesBasedOnTheme(theme.mode, theme.black, theme.white, theme.white)};
-  .divider {
-    width: 100%;
-    height: 1px;
-    background-color: ${({ theme }) => theme.gray3};
-  }
-  .links-row {
-    display: flex;
-    flex-direction: ${isMobile ? "column" : "row"};
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    flex-wrap: wrap;
-    column-gap: ${isMobile ? "0" : "58px"};
-    row-gap: ${isMobile ? "20px" : "0"};
-    a {
-      opacity: 0.65;
-    }
-    &:nth-of-type(1) {
-      margin-bottom: 16px;
-    }
-
-    &.pages {
-      display: block;
-      text-align: ${isMobile ? "center" : "left"};
-      /* border-top: 1px solid ${({ theme }) => theme.gray3}; */
-      padding: 1em 0;
-
-      a > p {
-        margin-bottom: 0.5em;
-      }
-      .chunk-pages {
-        display: flex;
-        flex-direction: ${isMobile ? "column" : "row"};
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: ${isMobile ? "22px" : "30px"};
-      }
-    }
-  }
-
-  .footer-logotypes-text {
-    margin-bottom: 20px;
-    text-align: center;
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      font-size: 16px !important;
-    }
-    * {
-      font-size: 13px !important;
-      opacity: 0.85;
-    }
-  }
-  .footer-logotypes {
-    display: flex;
-    gap: 30px;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .single-link {
-    text-decoration: none;
-    transition: all 0.25s;
-    opacity: 1;
-    &:hover {
-      opacity: 0.65;
-    }
-  }
-
-  .copyrights {
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 42px;
-    gap: 11px;
-
-    p {
-      opacity: 0.65;
-      margin: 0;
-    }
-  }
-  .go-top {
-    position: ${isMobile ? "block" : "absolute"};
-    margin: ${isMobile ? "20px auto" : "0"};
-    right: 18px;
-    bottom: 18px;
-  }
-
-  .eu-banner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin: -1rem 0;
-
-    &__img {
-      display: block;
-      width: 100%;
-      max-width: 70%;
-      margin: 0 auto;
-      height: auto;
-      object-fit: contain;
-      image-rendering: -webkit-optimize-contrast;
-
-      @media (max-width: 1024px) {
-        width: 100%;
-        max-width: 400px;
-      }
-
-      @media (max-width: 767px) {
-        width: 100%;
-        height: auto;
-        max-width: 100%;
-        object-fit: contain;
-        padding: 0 16px;
-        box-sizing: border-box;
-      }
-    }
-  }
-`;
+import styles from "./Footer.module.css";
 
 type LinkObject = {
   link: string | undefined;
@@ -211,9 +78,9 @@ const Footer = () => {
   }, [settings?.value?.footer_logotypes]);
 
   return (
-    <StyledFooter>
+    <footer className={`${styles.footer} ${isMobile ? styles.mobile : ""}`}>
       <Container>
-        <div className="links-row">
+        <div className={styles.linksRow}>
           {footerFromApi && footerFromApi.length > 0 ? (
             <>
               {footerFromApi.map((link: LinkObject) => {
@@ -221,7 +88,7 @@ const Footer = () => {
                   !!link.link && (
                     <LmsLink
                       key={link.link.toString()}
-                      className="single-link"
+                      className={styles.singleLink}
                       href={link.link}
                     >
                       {typeof link.label === "object" && (
@@ -234,44 +101,44 @@ const Footer = () => {
             </>
           ) : (
             <>
-              <Link className="single-link" to={routeRoutes.home}>
+              <Link className={styles.singleLink} to={routeRoutes.home}>
                 <Text size="16">{t<string>("Footer.HomePage")}</Text>
               </Link>
-              <Link className="single-link" to={routeRoutes.courses}>
+              <Link className={styles.singleLink} to={routeRoutes.courses}>
                 <Text size="16">{t<string>("Footer.Courses")}</Text>
               </Link>
               {user.value ? (
-                <Link className="single-link" to={routeRoutes.myProfile}>
+                <Link className={styles.singleLink} to={routeRoutes.myProfile}>
                   <Text size="16">{t<string>("Footer.UserProfile")}</Text>
                 </Link>
               ) : (
                 <>
-                  <Link className="single-link" to={routeRoutes.login}>
+                  <Link className={styles.singleLink} to={routeRoutes.login}>
                     <Text size="16">{t<string>("Header.Login")}</Text>
                   </Link>
-                  <Link className="single-link" to={routeRoutes.register}>
+                  <Link className={styles.singleLink} to={routeRoutes.register}>
                     <Text size="16">{t<string>("Header.Register")}</Text>
                   </Link>
                 </>
               )}
-              <Link className="single-link" to={routeRoutes.cart}>
+              <Link className={styles.singleLink} to={routeRoutes.cart}>
                 <Text size="16">{t<string>("Footer.Cart")}</Text>
               </Link>
             </>
           )}
         </div>
       </Container>
-      <div className="divider" />
+      <div className={styles.divider} />
       <Container>
-        <div className={"links-row pages"}>
+        <div className={`${styles.linksRow} ${styles.pages}`}>
           {chunkArray(pages.list, 4).map((chunk: PageListItem[]) => (
-            <div className="chunk-pages" key={chunk.toString()}>
+            <div className={styles.chunkPages} key={chunk.toString()}>
               {chunk
                 .filter((page: PageListItem) => !page.slug.includes("mobile"))
                 .map((page: PageListItem) => (
                   <LmsLink
                     key={page.id}
-                    className="single-link"
+                    className={styles.singleLink}
                     href={`/#/${page.slug}`}
                   >
                     <Text size="14">{page.title}</Text>
@@ -281,19 +148,19 @@ const Footer = () => {
           ))}
         </div>
         {getLogoTypesText && (
-          <div className="footer-logotypes-text">
+          <div className={styles.logotypesText}>
             <MarkdownRenderer>{getLogoTypesText}</MarkdownRenderer>
           </div>
         )}
-        {getLogotypes && <div className="footer-logotypes">{getLogotypes}</div>}
+        {getLogotypes && <div className={styles.logotypes}>{getLogotypes}</div>}
 
-        <div className="eu-banner">
+        <div className={styles.euBanner}>
           <a href={EU_BANNER_LINK} target="_blank" rel="noopener noreferrer">
-            <img className="eu-banner__img" src={EuBanner} alt="tutor_avatar" />
+            <img className={styles.euBannerImg} src={EuBanner} alt="tutor_avatar" />
           </a>
         </div>
 
-        <div className="copyrights">
+        <div className={styles.copyrights}>
           <Text size="14">{t<string>("Footer.PoweredBy")}</Text>
           <LmsLink href="https://www.ulams.app">
             <UlamsLogo />
@@ -301,7 +168,7 @@ const Footer = () => {
         </div>
       </Container>
       <GoTop />
-    </StyledFooter>
+    </footer>
   );
 };
 

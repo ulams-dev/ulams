@@ -1,0 +1,40 @@
+@media (max-width: 575px) {
+  .content {
+    margin-left: -59px;
+  }
+  .content :global(.slick-slider) {
+    width: calc(100% + 15px);
+  }
+}
+
+.content :global(.slick-dots) {
+  top: -65px;
+}
+
+@media (max-width: 575px) {
+  .content :global(.slick-dots) {
+    top: -30px !important;
+    right: unset !important;
+    left: 60px !important;
+  }
+}
+
+.content :global(.slick-track) {
+  display: flex;
+  gap: 0 20px;
+}
+
+@media (max-width: 991px) {
+  .content :global(.slick-track) {
+    padding-bottom: 20px;
+  }
+}
+
+.content :global(.slick-slide) {
+  height: inherit;
+}
+
+.content :global(.slick-slide) > div {
+  display: flex;
+  height: 100%;
+}

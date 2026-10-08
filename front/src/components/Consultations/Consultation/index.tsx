@@ -10,10 +10,6 @@ import ConsultationHero from "@/components/Consultations/Consultation/Consultati
 import ConsultationSidebar from "@/components/Consultations/Consultation/ConsultationSidebar";
 import { MarkdownRenderer } from "@ulams/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
 import { fixContentForMarkdown } from "@ulams/components/utils/components/markdown";
-import {
-  StyledDescription,
-  StyledRelatedConsultations,
-} from "@/components/Consultations/Consultation/style";
 import ConsultationsSlider from "@/components/Consultations/ConsultationsSlider";
 import Layout from "@/components/_App/Layout";
 import Container from "../../Common/Container";
@@ -23,6 +19,7 @@ import { StyledCoursePage } from "@/pages/courses/course/styles";
 import ConsultationPageContentSkeleton from "@/components/Skeletons/Consultation";
 import { CourseAuthor } from "@/pages/courses/course/Components";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import styles from "./styles.module.css";
 
 const Consultation = () => {
   const { t } = useTranslation();
@@ -91,11 +88,11 @@ const Consultation = () => {
                     {consultation?.value?.description &&
                       fixContentForMarkdown(consultation.value.description) !==
                         "" && (
-                        <StyledDescription>
+                        <div className={styles.description}>
                           <MarkdownRenderer>
                             {consultation.value.description}
                           </MarkdownRenderer>
-                        </StyledDescription>
+                        </div>
                       )}
                   </Col>
 
@@ -124,7 +121,7 @@ const Consultation = () => {
         </StyledCoursePage>
       )}
       {consultationCategories && consultationCategories.length > 0 && (
-        <StyledRelatedConsultations>
+        <section className={styles.relatedConsultations}>
           <Container>
             {consultationCategories.map((category) => (
               <ConsultationsSlider
@@ -139,7 +136,7 @@ const Consultation = () => {
               />
             ))}
           </Container>
-        </StyledRelatedConsultations>
+        </section>
       )}
     </Layout>
   );

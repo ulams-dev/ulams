@@ -5,7 +5,6 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import styled from "styled-components";
 import { UlamsContext } from "@ulams/sdk/react";
 import isPast from "date-fns/isPast";
 import { useTranslation } from "react-i18next";
@@ -32,17 +31,13 @@ import {
   useEntityBuyableType,
 } from "@/hooks/useEntityPrice";
 import usePayment, { PaymentGateway } from "@/hooks/usePayment";
+import styles from "./styles.module.css";
 
 interface CourseAccessButtonProps {
   course: API.Course;
   onRequestAccess: () => void;
   setModalVisible: (visible: boolean) => void;
 }
-
-const StyledButton = styled(Button)`
-  display: block;
-  margin-bottom: 10px;
-`;
 
 const CourseAccessButton: React.FC<CourseAccessButtonProps> = ({
   course,
@@ -174,9 +169,13 @@ const CourseAccessButton: React.FC<CourseAccessButtonProps> = ({
   if (!currentCourseAccess) {
     return (
       <>
-        <StyledButton mode="secondary" onClick={onRequestAccess}>
+        <Button
+          className={styles.button}
+          mode="secondary"
+          onClick={onRequestAccess}
+        >
           {t("CourseAccess.RequestAccess")}
-        </StyledButton>
+        </Button>
         {BuyButton}
       </>
     );
@@ -185,9 +184,9 @@ const CourseAccessButton: React.FC<CourseAccessButtonProps> = ({
   if (currentCourseAccess.status !== "approved") {
     return (
       <>
-        <StyledButton mode="secondary" disabled>
+        <Button className={styles.button} mode="secondary" disabled>
           {t("CourseAccess.Pending")}
-        </StyledButton>
+        </Button>
         {BuyButton}
       </>
     );

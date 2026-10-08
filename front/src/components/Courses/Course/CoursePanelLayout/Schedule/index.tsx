@@ -5,13 +5,10 @@ import { API } from "@ulams/sdk";
 import { isMobile } from "react-device-detect";
 import { UlamsContext } from "@ulams/sdk/react";
 import { CourseAgenda } from "@ulams/components/components/organisms/CourseAgenda/CourseAgenda";
-import {
-  CourseScheduleContent,
-  CourseScheduleTitle,
-  CourseScheduleWrapper,
-} from "@/components/Courses/Course/CoursePanelLayout/Schedule/styles";
-import { SubheaderTitle } from "@/components/Courses/Course/CoursePanelLayout/Subheader/styles";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { useCoursePanel } from "@/components/Courses/Course/Context";
+import subheaderStyles from "../Subheader/styles.module.css";
+import styles from "./styles.module.css";
 
 export const CourseSchedule = () => {
   const { t } = useTranslation();
@@ -26,13 +23,13 @@ export const CourseSchedule = () => {
   const history = useHistory();
 
   return (
-    <CourseScheduleWrapper>
-      <CourseScheduleTitle>
-        <SubheaderTitle level={2}>
+    <div className={styles.wrapper}>
+      <div className={styles.title}>
+        <Title className={subheaderStyles.title} level={2}>
           {t("CoursePanel.ScheduleTitle")}
-        </SubheaderTitle>
-      </CourseScheduleTitle>
-      <CourseScheduleContent>
+        </Title>
+      </div>
+      <div className={styles.content}>
         <CourseAgenda
           areAllTopicsUnlocked={
             !!currentCourseProgram?.authors.find(
@@ -50,7 +47,7 @@ export const CourseSchedule = () => {
           availableTopicsIds={availableTopicsIds ?? []}
           isMobile={isMobile}
         />
-      </CourseScheduleContent>
-    </CourseScheduleWrapper>
+      </div>
+    </div>
   );
 };

@@ -1,0 +1,13 @@
+.errorPage {
+  min-height: calc(100vh - 150px);
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.errorPage .buttonsBlock {
+  display: grid;
+  gap: 8px;
+}

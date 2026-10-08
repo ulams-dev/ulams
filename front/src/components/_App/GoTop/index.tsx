@@ -1,28 +1,6 @@
 import { ArrowUp } from "@/icons/index";
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-
-const StyledGoTop = styled.div`
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  background-color: ${({ theme }) => theme.gray3};
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.3s ease;
-  svg {
-    transition: transform 0.3s ease;
-  }
-  &:hover {
-    transform: translateY(-5px);
-    svg {
-      transform: translateY(-5px);
-    }
-  }
-`;
+import styles from "./GoTop.module.css";
 
 const GoTop = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -51,15 +29,15 @@ const GoTop = () => {
 
   const renderGoTopIcon = () => {
     return (
-      <StyledGoTop
-        className={`go-top ${isVisible ? "active" : ""}`}
+      <div
+        className={`${styles.goTop} go-top ${isVisible ? "active" : ""}`}
         onClick={scrollToTop}
         onKeyDown={scrollToTop}
         role="button"
         tabIndex={-1}
       >
         <ArrowUp />
-      </StyledGoTop>
+      </div>
     );
   };
 

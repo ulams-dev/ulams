@@ -1,0 +1,35 @@
+.infoBox {
+  border-radius: var(--ulams-radius-button);
+  background-color: var(--ulams-color-white);
+  padding: 22px;
+  margin-top: 10px;
+  margin-bottom: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+:global([data-mode="dark"]) .infoBox {
+  background-color: var(--ulams-color-black);
+}
+
+.infoBox > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.infoBox .cancelled {
+  color: var(--ulams-color-primary);
+}
+
+@media (max-width: 768px) {
+  .infoBox {
+    flex-direction: column;
+  }
+
+  .infoBox .cancelled {
+    padding-left: 20px;
+  }
+}

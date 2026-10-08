@@ -1,0 +1,13 @@
+.main {
+  height: fit-content;
+  background-color: var(--ulams-color-bg);
+  padding-top: 57px;
+}
+
+.mobile {
+  padding-top: 92px;
+}
+
+.noPadding {
+  padding-top: 0px;
+}

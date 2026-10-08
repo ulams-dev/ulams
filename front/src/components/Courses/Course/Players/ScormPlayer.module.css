@@ -1,0 +1,35 @@
+.root > button {
+  position: fixed;
+  right: 5px;
+  bottom: 5px;
+  z-index: 9999;
+}
+
+.root > button svg path {
+  fill: white;
+}
+
+.root iframe {
+  border: none;
+  display: block;
+  width: 100%;
+}
+
+.root.fullView iframe {
+  position: fixed;
+  top: 90px;
+  left: 0;
+  height: calc(100% - 90px - 80px);
+  z-index: 9999;
+}
+
+.root:not(.fullView) {
+  display: flex;
+  min-height: 80vh;
+  max-height: 80vh;
+  height: 100vh;
+}
+
+.root:not(.fullView) iframe {
+  height: 100%;
+}

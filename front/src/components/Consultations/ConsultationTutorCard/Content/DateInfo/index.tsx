@@ -1,17 +1,9 @@
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
 import { API } from "@ulams/sdk";
 import { addTimeToDate, extractTimeUnits, formatDate } from "@/utils/date";
 import DateInfo, { DateInfoTypes } from "@/components/Common/DateInfo";
 import ConsultationCardJoinButton from "@/components/Consultations/ConsultationCard/Buttons/JoinButton";
-
-const ConsultationTutorCardContentDateInfoButtonsStyles = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  width: 100%;
-  gap: 12px;
-`;
+import styles from "./styles.module.css";
 
 interface Props {
   consultation: API.AppointmentTerm;
@@ -59,14 +51,14 @@ const ConsultationTutorCardContentDateInfo = ({ consultation }: Props) => {
           date={consultation.date}
           info={
             isStarted && consultation?.consultation_term_id ? (
-              <ConsultationTutorCardContentDateInfoButtonsStyles>
+              <div className={styles.buttons}>
                 <ConsultationCardJoinButton
                   consultationTermId={consultation?.consultation_term_id}
                   // @ts-ignore
                   consultationId={consultation?.consultation_id}
                   term={consultation.date}
                 />
-              </ConsultationTutorCardContentDateInfoButtonsStyles>
+              </div>
             ) : (
               t("ConsultationStatus.AppointmentInfo", {
                 date: formatDate(

@@ -1,16 +1,11 @@
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import React from "react";
-import styled from "styled-components";
+import styles from "./styles.module.css";
 
 type BaseTextProps = React.ComponentProps<typeof Title>;
 
-const CourseCardTitle = styled(Title)<BaseTextProps>`
-  margin-bottom: 15px;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  height: 75px;
-`;
+const CourseCardTitle: React.FC<BaseTextProps> = ({ className, ...props }) => (
+  <Title {...props} className={`${styles.title} ${className ?? ""}`} />
+);
 
 export default CourseCardTitle;

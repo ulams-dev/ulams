@@ -7,7 +7,7 @@ import ResponsiveImage from "@ulams/components/components/organisms/ResponsiveIm
 import LabelListItem from "@ulams/components/components/molecules/LabelListItem/LabelListItem";
 import { formatDate } from "@/utils/date";
 import { UlamsContext } from "@ulams/sdk/react";
-import { WebinarInfoStyles } from "./WebinarInfoStyles";
+import styles from "./WebinarInfo.module.css";
 import { Medal, StarOrange, ThumbUp } from "../../../../icons";
 
 const WebinarInfo = () => {
@@ -18,7 +18,7 @@ const WebinarInfo = () => {
     return null;
   }
   return (
-    <WebinarInfoStyles>
+    <div className={styles.root}>
       <section className="webinar-main-info with-border">
         <Row>
           <Col lg={7}>
@@ -96,7 +96,7 @@ const WebinarInfo = () => {
           )}
         </div>
       </section>
-    </WebinarInfoStyles>
+    </div>
   );
 };
 

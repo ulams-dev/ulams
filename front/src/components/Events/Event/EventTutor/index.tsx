@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { Tutor } from "@ulams/components/components/molecules/Tutor/Tutor";
 import { UlamsContext } from "@ulams/sdk/react";
-import { EventTutorStyles } from "./EventTutorStyles";
+import styles from "./EventTutor.module.css";
 import { API_URL } from "@/config/index";
 
 const EventTutor = () => {
@@ -18,7 +18,7 @@ const EventTutor = () => {
     return null;
   }
   return (
-    <EventTutorStyles>
+    <div className={styles.root}>
       {/* TODO: change any type */}
       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       {authors.map((author: any) => (
@@ -48,7 +48,7 @@ const EventTutor = () => {
           </Link>
         </section>
       ))}
-    </EventTutorStyles>
+    </div>
   );
 };
 

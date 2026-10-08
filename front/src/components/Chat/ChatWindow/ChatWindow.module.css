@@ -1,0 +1,98 @@
+.chatWindow {
+  border-radius: 22px 21px 0px 0px;
+  min-width: 380px;
+  box-shadow: 0px 0px 15px #00000029;
+  height: 100%;
+}
+
+.chatWindow.mobile {
+  min-width: 100%;
+}
+
+.header {
+  background-color: var(--ulams-color-primary-on-light);
+  padding: 13px 25px;
+  border-radius: 22px 21px 0px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header p {
+  color: var(--ulams-color-white);
+  margin-bottom: 0;
+}
+
+.close {
+  all: unset;
+  color: var(--ulams-color-white);
+  cursor: pointer;
+  min-height: 20px;
+}
+
+.close span {
+  display: block;
+  width: 17px;
+  height: 2px;
+  background: var(--ulams-color-white);
+}
+
+.content {
+  padding: 12px;
+  min-height: 200px;
+  height: fit-content;
+  background-color: var(--ulams-color-white);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.messages {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.messagesEmpty {
+  text-align: center;
+}
+
+.input {
+  border: 1px solid var(--ulams-gray-3);
+  padding: 10px 13px;
+  border-radius: 21px;
+  background: var(--ulams-gray-4) 0% 0% no-repeat padding-box;
+  display: flex;
+  position: relative;
+}
+
+:global([data-mode="dark"]) .input {
+  background: var(--ulams-color-card-bg) 0% 0% no-repeat padding-box;
+}
+
+.input input {
+  all: unset;
+  font-family: var(--ulams-font-family);
+  font-size: 14px;
+  width: 100%;
+  padding-right: 34px;
+}
+
+.input button {
+  all: unset;
+  cursor: pointer;
+  background: var(--ulams-color-white);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  position: absolute;
+  top: 1px;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.error {
+  text-align: center;
+}

@@ -1,0 +1,38 @@
+.container {
+  font-family: var(--ulams-font-family);
+  background: var(--ulams-color-white);
+  border-radius: var(--ulams-radius-card);
+  padding: 98px 20px 180px;
+  display: flex;
+  place-content: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+:global([data-mode="dark"]) .container {
+  background: var(--ulams-color-black);
+}
+
+.container div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.mobile .container div {
+  flex-direction: column;
+}
+
+.container div a,
+.container div p {
+  margin: 0;
+}
+
+.container div a p {
+  color: var(--ulams-color-primary);
+}

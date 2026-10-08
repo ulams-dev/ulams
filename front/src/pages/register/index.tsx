@@ -9,7 +9,7 @@ import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { RegisterForm } from "@ulams/components/components/organisms/RegisterForm/RegisterForm";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
+import styles from "./RegisterPage.module.css";
 import { MarkdownRenderer } from "@ulams/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
 import { Modal } from "@ulams/components/components/atoms/Modal/Modal";
 import { Button } from "@ulams/components/components/atoms/Button/Button";
@@ -22,96 +22,6 @@ import { APP_URL } from "@/config/index";
 import { redirectPrefix } from "@/utils/router";
 import { isMobilePlatform } from "@/utils/index";
 import { metaDataKeys } from "@/utils/meta";
-
-const StyledRegisterPage = styled.div`
-  padding-top: 100px;
-  padding-bottom: 50px;
-  min-height: 900px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ theme }) =>
-    theme.mode === "dark" ? theme.dm__background : theme.gray4};
-
-  @media (max-width: 991px) {
-    padding-top: 100px;
-    height: 100%;
-    padding-bottom: 50px;
-    * {
-      p,
-      a {
-        text-align: center;
-      }
-    }
-  }
-`;
-
-const StyledLink = styled(Link)`
-  color: ${({ theme }) => theme.primaryColor}!important;
-`;
-
-const StyledContent = styled.div`
-  background-color: ${({ theme }) =>
-    theme.mode === "dark" ? theme.dm__background : theme.gray4};
-  padding-top: 100px;
-  /* height: calc(100vh - 452px); */
-  @media (max-width: 991px) {
-    height: 100%;
-    padding: 100px 0px;
-    text-align: center;
-  }
-  .image-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 50px;
-  }
-  .content-container {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    flex-direction: column;
-
-    .email-title {
-      text-align: center;
-    }
-
-    .email-main-text {
-      text-align: center;
-      margin: 25px 0 85px;
-      font-weight: 700;
-      span {
-        color: ${({ theme }) => theme.primaryColor};
-      }
-    }
-
-    .email-help-text {
-      margin: 0 auto 20px 0;
-      ul {
-        padding-left: 15px;
-        margin-left: 0;
-        li {
-          font-size: 12px;
-        }
-      }
-    }
-
-    .back-text {
-      text-align: center;
-      margin-top: 20px;
-    }
-  }
-  .back-to-login {
-    margin: 20px 0px;
-  }
-`;
-
-const StyledModal = styled(Modal)`
-  a {
-    font-size: 1.14em;
-  }
-`;
 
 const RegisterPage = () => {
   const { search } = useLocation();
@@ -132,17 +42,17 @@ const RegisterPage = () => {
     "AdditionalFields.Privacy Policy": (
       <Text size="14">
         {t("AcceptCheckbox")}{" "}
-        <StyledLink to={routeRoutes.privacyPolicy}>
+        <Link className={styles.link} to={routeRoutes.privacyPolicy}>
           {t("PrivacyPolicy")}
-        </StyledLink>
+        </Link>
       </Text>
     ),
     "AdditionalFields.Terms of Service": (
       <Text size="14">
         {t("AcceptCheckbox")}{" "}
-        <StyledLink to={routeRoutes.privacyPolicy}>
+        <Link className={styles.link} to={routeRoutes.privacyPolicy}>
           {t("TermsOfService")}
-        </StyledLink>
+        </Link>
       </Text>
     ),
   };
@@ -169,14 +79,14 @@ const RegisterPage = () => {
       "enabled";
 
     return (
-      <StyledContent>
+      <div className={styles.content}>
         <Container>
-          <div className="image-wrapper">
+          <div className={styles.imageWrapper}>
             <EmailActivationImg />
           </div>
 
-          <div className="content-container">
-            <Title className="email-title" level={3}>
+          <div className={styles.contentContainer}>
+            <Title className={styles.emailTitle} level={3}>
               {t(
                 `EmailActivation.${
                   accountActivationByAdmin ? "Title2" : "Title"
@@ -201,27 +111,28 @@ const RegisterPage = () => {
               )}
             </MarkdownRenderer>
             {!accountActivationByAdmin && (
-              <div className="back-text">
+              <div className={styles.backText}>
                 <LinkComponent onClick={() => setView("register")}>
                   {t("EmailActivation.RegisterAgain")}
                 </LinkComponent>
               </div>
             )}
-            <div className="back-to-login">
+            <div className={styles.backToLogin}>
               <Button onClick={() => history.push(routeRoutes.login)}>
                 {t("ResetForm.BackToLogin")}
               </Button>
             </div>
           </div>
         </Container>
-      </StyledContent>
+      </div>
     );
   };
 
   return (
     <Layout metaTitle={t("LoginAndRegister")}>
       {footerFromApi && (
-        <StyledModal
+        <Modal
+          className={styles.modal}
           onClose={() => setModalVisible(false)}
           visible={modalVisible}
           animation="zoom"
@@ -236,11 +147,11 @@ const RegisterPage = () => {
           <Button mode="outline" onClick={() => setModalVisible(false)}>
             {t("I'm aware")}
           </Button>
-        </StyledModal>
+        </Modal>
       )}
 
       {view !== "success" ? (
-        <StyledRegisterPage>
+        <div className={styles.registerPage}>
           <Container>
             <RegisterForm
               return_url={`${APP_URL}${redirectPrefix()}${
@@ -261,7 +172,7 @@ const RegisterPage = () => {
                 : {})}
             />
           </Container>
-        </StyledRegisterPage>
+        </div>
       ) : (
         <EmailActivation />
       )}

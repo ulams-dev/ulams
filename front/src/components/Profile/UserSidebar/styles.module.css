@@ -1,0 +1,9 @@
+.sidebar {
+  padding: 11px 6px;
+  background: var(--ulams-color-white);
+  border-radius: var(--ulams-radius-card);
+}
+
+:global([data-mode="dark"]) .sidebar {
+  background: var(--ulams-color-card-bg);
+}

@@ -1,0 +1,15 @@
+.span {
+  color: var(--ulams-color-primary);
+}
+
+.span:hover .tail {
+  display: none;
+}
+
+.child {
+  display: none;
+}
+
+.span:hover .child {
+  display: block;
+}

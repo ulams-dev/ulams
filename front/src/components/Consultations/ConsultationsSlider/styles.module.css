@@ -1,0 +1,12 @@
+.section {
+  padding: 40px 0;
+}
+
+.section :global(.slick-slide) {
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.section :global(.slick-dots) {
+  top: -65px;
+}

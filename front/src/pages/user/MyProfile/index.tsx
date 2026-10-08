@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import React from "react";
 import { Tabs } from "@ulams/components/components/atoms/Tabs/Tabs";
 import ProfileCourses from "@/components/Profile/ProfileCourses";
 import { useTranslation } from "react-i18next";
@@ -15,20 +15,18 @@ export enum CourseStatus {
   ALL = "all",
 }
 
-export const Content = styled.section`
-  background-color: ${({ theme }) =>
-    theme.mode === "dark" ? theme.dm__background : theme.gray4};
-  .courses-wrapper {
-    padding-top: 100px;
+import styles from "./MyProfile.module.css";
 
-    min-height: calc(100vh - 500px);
-    height: fit-content;
-    @media (max-width: 991px) {
-      margin-top: 0;
-      min-height: fit-content;
-    }
-  }
-`;
+/** Grey page section used by the profile pages (also my-consultations). */
+export const Content = ({
+  className,
+  ...rest
+}: React.HTMLAttributes<HTMLElement>) => (
+  <section
+    className={[styles.content, className].filter(Boolean).join(" ")}
+    {...rest}
+  />
+);
 
 const MyProfile = () => {
   const { t } = useTranslation();

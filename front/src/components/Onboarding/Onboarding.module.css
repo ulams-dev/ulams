@@ -1,0 +1,70 @@
+.onboarding {
+  background-color: var(--ulams-color-white);
+  padding: 60px 0;
+}
+
+@media (max-width: 991px) {
+  .onboarding {
+    padding: 20px;
+  }
+}
+
+.content {
+  width: 100%;
+  position: relative;
+}
+
+.lastStep .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.content :global(.swiper-pagination) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.content :global(.swiper-pagination .swiper-pagination-bullet) {
+  width: 8px;
+  height: 8px;
+}
+
+.content :global(.swiper-pagination .swiper-pagination-bullet.swiper-pagination-bullet-active) {
+  background-color: var(--ulams-color-primary-on-light) !important;
+}
+
+.content .nextStep {
+  margin: 0 auto;
+  margin-top: 0px;
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  max-width: 265px;
+  min-width: auto;
+  z-index: 10;
+}
+
+.lastStep .content .nextStep {
+  margin-top: 70px;
+  position: relative;
+  bottom: 0;
+  min-width: 265px;
+}
+
+.lastStepContent {
+  text-align: center;
+}
+
+.lastStepContent img {
+  max-height: 300px;
+  object-fit: contain;
+}
+
+.lastStepContent h2 {
+  margin: 22px 0px;
+}

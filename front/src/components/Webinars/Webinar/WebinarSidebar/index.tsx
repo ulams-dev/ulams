@@ -3,7 +3,7 @@ import { isMobile } from "react-device-detect";
 import { UlamsContext } from "@ulams/sdk/react";
 import { PricingCard } from "@ulams/components/components/atoms/PricingCard/PricingCard";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
-import { WebinarSidebarStyles } from "./WebinarSidebarStyles";
+import styles from "./WebinarSidebar.module.css";
 import { IconText } from "@ulams/components/components/atoms/IconText/IconText";
 import { IconCamera, IconSquares } from "../../../../icons";
 import { useTranslation } from "react-i18next";
@@ -17,7 +17,7 @@ const WebinarSidebar = () => {
   const { t } = useTranslation();
 
   return (
-    <WebinarSidebarStyles>
+    <div className={styles.root} data-mobile={isMobile}>
       <PricingCard mobile={isMobile}>
         <Title level={4} as="h2">
           {webinarObject?.name}
@@ -53,7 +53,7 @@ const WebinarSidebar = () => {
           )}
         </div>
       </PricingCard>
-    </WebinarSidebarStyles>
+    </div>
   );
 };
 

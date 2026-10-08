@@ -1,0 +1,60 @@
+.form :global(.input-wrapper) {
+  background-color: var(--ulams-color-card-bg);
+}
+
+:global([data-mode="dark"]) .form :global(.input-wrapper) {
+  background-color: #333;
+}
+
+@media (max-width: 991px) {
+  .form :global(.input-wrapper--custom) {
+    margin-bottom: 30px;
+  }
+}
+
+.form :global(.input-wrapper .StripeElement) {
+  color: var(--ulams-gray-1);
+  padding: 11px 12px 13px;
+  border: 1px solid var(--ulams-gray-4);
+}
+
+:global([data-mode="dark"]) .form :global(.input-wrapper .StripeElement) {
+  color: #c3c3c3;
+  border: 1px solid var(--ulams-gray-5);
+}
+
+.form :global(.input-wrapper .StripeElement--focus) {
+  border: 1px solid var(--ulams-gray-3);
+}
+
+:global([data-mode="dark"]) .form :global(.input-wrapper .StripeElement--focus) {
+  border: 1px solid var(--ulams-gray-5);
+}
+
+.form :global(.input-wrapper .StripeElement--empty + label) {
+  display: none;
+}
+
+.form :global(.input-wrapper .StripeElement--invalid + label),
+.form :global(.input-wrapper .StripeElement--focus + label),
+.form :global(.input-wrapper .StripeElement--complete + label) {
+  display: block;
+  top: -8px;
+  left: 24px;
+}
+
+.label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: var(--ulams-font-family);
+  color: var(--ulams-gray-1);
+  font-size: 10px;
+  padding: 0 2px;
+  background-color: var(--ulams-color-white);
+}
+
+:global([data-mode="dark"]) .label {
+  color: #c3c3c3;
+  background-color: #000;
+}

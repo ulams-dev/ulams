@@ -1,0 +1,29 @@
+.page {
+  background-color: var(--ulams-gray-4);
+  min-height: calc(100vh - 400px);
+  padding-top: 57px;
+}
+
+:global([data-mode="dark"]) .page {
+  background-color: var(--ulams-color-bg);
+}
+
+.page :global(.user-main-sidebar) {
+  margin-top: 0;
+}
+
+.content {
+  margin-top: 0;
+}
+
+.mobile {
+  padding-top: 0px;
+}
+
+.mobile :global(.user-main-sidebar) {
+  margin-top: 60px;
+}
+
+.mobile .content {
+  margin-top: 30px;
+}

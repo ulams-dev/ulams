@@ -1,0 +1,122 @@
+/* Cart page shell; descendants are plain class names set by p24/stripe and their child components. */
+.cartPage {
+  min-height: calc(100vh - 452px);
+}
+
+.cartPage :global(.module-wrapper) {
+  margin-bottom: 55px;
+}
+
+.cartPage :global(.module-wrapper.billing-info) h4 {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 991px) {
+  .cartPage :global(.module-wrapper) {
+    margin-bottom: 33px;
+  }
+
+  .cartPage :global(.module-wrapper) h4 {
+    text-align: center;
+  }
+}
+
+.cartPage :global(.products-container) {
+  row-gap: 20px;
+}
+
+.cartPage :global(.payments-form .collapse-wrapper:not(:last-child)) {
+  margin-bottom: 10px;
+}
+
+.cartPage :global(.payments-form .input-wrapper) {
+  margin-bottom: 30px;
+}
+
+.cartPage :global(.billing-form) {
+  padding: 16px 20px;
+  border-radius: var(--ulams-radius-card);
+  background: var(--ulams-color-white);
+}
+
+:global([data-mode="dark"]) .cartPage :global(.billing-form) {
+  background: var(--ulams-color-primary);
+}
+
+.cartPage :global(.billing-form__form) {
+  max-width: 500px;
+}
+
+.cartPage :global(.billing-form__form .lsm-input) {
+  margin-bottom: 20px;
+}
+
+.cartPage :global(.billing-form__form .lsm-input) input {
+  background-color: var(--ulams-gray-3);
+}
+
+.cartPage :global(.billing-form__mydata) {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.cartPage :global(.billing-form__mydata) p {
+  margin-bottom: 0;
+}
+
+.cartPage :global(.billing-form__mydata) p span {
+  font-weight: 700;
+}
+
+.cartPage :global(.slider-section) {
+  position: relative;
+  margin-top: 70px;
+}
+
+.cartPage :global(.summary-box-wrapper) {
+  position: sticky;
+  top: 100px;
+}
+
+.cartPage.mobile :global(.summary-box-wrapper) {
+  position: fixed;
+  top: unset;
+  bottom: 0;
+  width: 100%;
+  left: 0;
+  z-index: 100;
+}
+
+.cartPage :global(.empty-cart) {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 192px 20px;
+  text-align: center;
+  background-color: var(--ulams-color-white);
+  row-gap: 20px;
+  border-radius: var(--ulams-radius-card);
+}
+
+:global([data-mode="dark"]) .cartPage :global(.empty-cart) {
+  background-color: var(--ulams-gray-1);
+}
+
+.cartPage :global(.empty-cart) p {
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .cartPage :global(.empty-cart) {
+    padding: 80px 20px;
+  }
+}
+
+@media (max-width: 575px) {
+  .cartPage :global(.slider-section) h4 {
+    padding-right: 45%;
+  }
+}

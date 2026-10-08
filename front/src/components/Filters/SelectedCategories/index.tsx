@@ -1,43 +1,9 @@
 import React from "react";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { useTranslation } from "react-i18next";
-import styled, { useTheme } from "styled-components";
+import styles from "./SelectedCategories.module.css";
 
 import { CloseIcon } from "@/icons/index";
-
-const SelectedCategoriesWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 30px;
-  margin-top: 17px;
-  gap: 5px;
-  .clear-categories {
-    all: unset;
-    cursor: pointer;
-    margin-left: 14px;
-    p {
-      margin: 0;
-      color: ${({ theme }) => theme.gray2};
-    }
-  }
-`;
-
-const SelectedCategory = styled.button`
-  all: unset;
-  border-radius: 19px;
-  border: 1px solid #eaeaea;
-  padding: 8px 13px;
-  margin-right: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-
-  p {
-    margin: 0;
-    margin-right: 17px;
-  }
-`;
 
 type Props = {
   onClearCategories: () => void;
@@ -51,20 +17,19 @@ const SelectedCategories: React.FC<Props> = ({
   handleRemoveCategory,
 }) => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   return (
-    <SelectedCategoriesWrapper>
+    <div className={styles.root}>
       {prevCategories.map((category) => (
-        <SelectedCategory onClick={() => handleRemoveCategory(category.id)}>
+        <button className={styles.category} onClick={() => handleRemoveCategory(category.id)}>
           <Text size={"13"}>{category.name}</Text>
-          <CloseIcon color={theme.gray2} />
-        </SelectedCategory>
+          <CloseIcon />
+        </button>
       ))}
-      <button className="clear-categories" onClick={onClearCategories}>
+      <button className={styles.clearCategories} onClick={onClearCategories}>
         <Text size="13">{t("CoursesPage.clearAll")}</Text>
       </button>
-    </SelectedCategoriesWrapper>
+    </div>
   );
 };
 

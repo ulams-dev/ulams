@@ -5,7 +5,6 @@ import { Orders as OrdersList } from "@ulams/components/components/molecules/Ord
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { Button } from "@ulams/components/components/atoms/Button/Button";
 import { API } from "@ulams/sdk";
-import styled from "styled-components";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
 import { formatDate } from "@/utils/date";
@@ -14,23 +13,7 @@ import OrdersSkeleton from "@/components/Skeletons/Orders";
 import { formatPrice } from "@/utils/index";
 import { toast } from "@/utils/toast";
 
-const StyledOrdersList = styled.section`
-  margin-top: 20px;
-
-  @media (max-width: 991px) {
-    margin-top: 0;
-  }
-  .name-container {
-    p {
-      display: inline;
-      margin: 0;
-    }
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-`;
+import styles from "./user.module.css";
 
 const Orders = () => {
   const { orders, fetchOrders, fetchOrderInvoice } =
@@ -92,7 +75,7 @@ const Orders = () => {
 
   return (
     <ProfileLayout title={t("MyProfilePage.OrdersHistory")}>
-      <StyledOrdersList>
+      <section className={styles.ordersList}>
         {!orders.loading && orders.list?.data.length === 0 && (
           <Text>{t<string>("MyProfilePage.OrdersEmpty")}</Text>
         )}
@@ -146,7 +129,7 @@ const Orders = () => {
             onPage={handlePageChange}
           />
         )}
-      </StyledOrdersList>
+      </section>
     </ProfileLayout>
   );
 };

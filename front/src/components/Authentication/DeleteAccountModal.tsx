@@ -2,18 +2,7 @@ import { Modal } from "@ulams/components/components/atoms/Modal/Modal";
 import { Button } from "@ulams/components/components/atoms/Button/Button";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
-
-const StyledDeleteModalConfirmation = styled.div`
-  h3 {
-    margin-bottom: 50px;
-  }
-  .actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-`;
+import styles from "./DeleteAccountModal.module.css";
 
 type Props = {
   closeModal: () => void;
@@ -38,11 +27,11 @@ const DeleteAccountModal: React.FC<Props> = ({
       destroyOnClose={true}
       width={468}
     >
-      <StyledDeleteModalConfirmation>
+      <div className={styles.confirmation}>
         <Title level={3} style={{ textAlign: "center" }}>
           {t("MyProfilePage.DeleteAccountConfirmation")}
         </Title>
-        <div className="actions">
+        <div className={`actions ${styles.actions}`}>
           <Button mode="outline" onClick={() => closeModal()}>
             {t("ResetProgressModal.Cancel")}
           </Button>
@@ -50,7 +39,7 @@ const DeleteAccountModal: React.FC<Props> = ({
             {t("MyProfilePage.Delete")}
           </Button>
         </div>
-      </StyledDeleteModalConfirmation>
+      </div>
     </Modal>
   );
 };

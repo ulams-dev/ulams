@@ -1,0 +1,66 @@
+.asideWrapper h2 {
+  margin-bottom: 10px;
+}
+
+.aside {
+  background: var(--ulams-color-white);
+  border-radius: var(--ulams-radius-card);
+}
+
+:global([data-mode="dark"]) .aside {
+  background: var(--ulams-color-bg);
+}
+
+.aside .userMainSidebar {
+  margin-bottom: 5px;
+}
+
+.aside.mobile .userMainSidebar {
+  margin-bottom: 20px;
+}
+
+.aside .userMainSidebar .navigation {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  cursor: pointer;
+  position: relative;
+}
+
+.aside .userMainSidebar .navigation button {
+  all: unset;
+}
+
+.aside .userMainSidebar .navigation a,
+.aside .userMainSidebar .navigation button {
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  border-radius: var(--ulams-radius-card);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.aside .userMainSidebar .navigation a p,
+.aside .userMainSidebar .navigation button p {
+  padding: 8px 10px;
+}
+
+.aside .userMainSidebar .navigation a:hover,
+.aside .userMainSidebar .navigation button:hover {
+  background-color: var(--ulams-gray-3);
+}
+
+.aside .userMainSidebar .navigation a:global(.selected),
+.aside .userMainSidebar .navigation button:global(.selected) {
+  background-color: var(--ulams-color-primary-on-light);
+}
+
+.aside .userMainSidebar .navigation a:global(.selected) p,
+.aside .userMainSidebar .navigation button:global(.selected) p {
+  color: var(--ulams-color-white);
+}
+
+.aside .deleteAccount p {
+  color: var(--ulams-color-error);
+}

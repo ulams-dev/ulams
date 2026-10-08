@@ -16,47 +16,11 @@ import CourseDetailsSidebarButtons from "./Buttons";
 
 import ContentLoader from "@/components/_App/ContentLoader";
 import ProductPrices from "@/components/ProductPrices";
-import styled from "styled-components";
 import {
   EntityRedirectBuyType,
   useEntityBuyableType,
 } from "@/hooks/useEntityPrice";
-
-const CourseDetailsSidebarWrapper = styled.div`
-  width: 100%;
-  left: 0;
-  position: ${isMobile ? "static" : "sticky"};
-  top: ${isMobile ? "unset" : "130px"};
-  bottom: ${isMobile ? "0" : "unset"};
-  z-index: 100;
-  .course-sidebar-header {
-    p {
-      margin-bottom: 0;
-    }
-  }
-  .price-wrapper {
-    margin-bottom: 16px;
-    * {
-      font-weight: 700;
-    }
-  }
-  button {
-    width: 100%;
-  }
-`;
-
-const IconTextWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  span {
-    font-size: 13px;
-    font-weight: 700;
-    &:first-of-type {
-      font-weight: 400;
-    }
-  }
-`;
+import styles from "./styles.module.css";
 
 interface Props {
   course: API.Course;
@@ -100,11 +64,11 @@ const CoursesDetailsSidebar: React.FC<Props> = ({
   }, [currentCourse, user.value, userCourseAccess, userOwnThisCourse]);
 
   return (
-    <CourseDetailsSidebarWrapper>
+    <div className={`${styles.wrapper} ${isMobile ? styles.mobile : ""}`}>
       <PricingCard>
-        <div className="course-sidebar-header">
+        <div className={styles.courseSidebarHeader}>
           <Text size="13">{t("PricePerAccess")}</Text>
-          <div className="price-wrapper">
+          <div className={styles.priceWrapper}>
             <ProductPrices
               price={course.product?.price}
               taxRate={course.product?.tax_rate}
@@ -131,50 +95,50 @@ const CoursesDetailsSidebar: React.FC<Props> = ({
           {course.duration && (
             <IconText
               text={
-                <IconTextWrapper>
+                <div className={styles.iconTextWrapper}>
                   <span>{t("CoursePage.Duration")}</span>
                   <span>{course.duration}</span>
-                </IconTextWrapper>
+                </div>
               }
             />
           )}
           {course.lessons && (
             <IconText
               text={
-                <IconTextWrapper>
+                <div className={styles.iconTextWrapper}>
                   <span>{t("CoursePage.Lessons")}</span>
                   <span>{course.lessons.length}</span>
-                </IconTextWrapper>
+                </div>
               }
             />
           )}
           {course.language && (
             <IconText
               text={
-                <IconTextWrapper>
+                <div className={styles.iconTextWrapper}>
                   <span>{t("CoursePage.Language")}</span>
                   <span>{course.language}</span>
-                </IconTextWrapper>
+                </div>
               }
             />
           )}
           {course.level && (
             <IconText
               text={
-                <IconTextWrapper>
+                <div className={styles.iconTextWrapper}>
                   <span>{t("CoursePage.Level")}</span>
                   <span>{course.level}</span>
-                </IconTextWrapper>
+                </div>
               }
             />
           )}
           {/* {course.users_count ? (
             <IconText
               text={
-                <IconTextWrapper>
+                <div className={styles.iconTextWrapper}>
                   <span>{t("CoursePage.Students")}</span>
                   <span>{course.users_count}</span>
-                </IconTextWrapper>
+                </div>
               }
             />
           ) : (
@@ -225,7 +189,7 @@ const CoursesDetailsSidebar: React.FC<Props> = ({
           </CourseProgress>
         )}
       </PricingCard>
-    </CourseDetailsSidebarWrapper>
+    </div>
   );
 };
 

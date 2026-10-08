@@ -5,7 +5,8 @@ import { API } from "@ulams/sdk";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { useTranslation } from "react-i18next";
 
-import styled, { useTheme } from "styled-components";
+import { useThemeTokens } from "@ulams/components/theme/applyTheme";
+import styles from "./TutorsPage.module.css";
 import { Spin } from "@ulams/components/components/atoms/Spin/Spin";
 import { CourseCard } from "@ulams/components/components/molecules/CourseCard/CourseCard";
 import Image from "@ulams/sdk/react/components/Image";
@@ -17,15 +18,11 @@ import Container from "@/components/Common/Container";
 import { APP_CONFIG } from "@/config/app";
 import routeRoutes from "@/components/Routes/routes";
 
-const StyledTitleWrapper = styled.div`
-  margin-bottom: 10px;
-`;
-
 const TutorsPage = () => {
   const { tutors, fetchTutors } = useContext(UlamsContext);
 
   const { t } = useTranslation();
-  const theme = useTheme();
+  const theme = useThemeTokens();
 
   useEffect(() => {
     fetchTutors();
@@ -41,9 +38,9 @@ const TutorsPage = () => {
               <Text size="12">{t("Tutors")}</Text>,
             ]}
           />
-          <StyledTitleWrapper>
+          <div className={styles.titleWrapper}>
             <Title level={1}> {t("Tutors")}</Title>
-          </StyledTitleWrapper>
+          </div>
 
           <Row>
             {tutors.loading && (
@@ -58,7 +55,7 @@ const TutorsPage = () => {
                 }}
                 className="loader-wrapper"
               >
-                <Spin color={theme.primaryColor} />
+                <Spin color={theme?.primaryColor} />
               </div>
             )}
             {!tutors.loading &&

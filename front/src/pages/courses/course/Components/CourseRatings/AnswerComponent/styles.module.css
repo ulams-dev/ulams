@@ -1,0 +1,24 @@
+.answerWrapper :global(.date) {
+  color: var(--ulams-gray-2);
+  margin-bottom: 5px;
+}
+
+.container {
+  justify-content: space-between;
+  background: var(--ulams-color-white);
+}
+
+.randomAvatar {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.randomAvatar p {
+  color: white;
+  text-transform: uppercase;
+}

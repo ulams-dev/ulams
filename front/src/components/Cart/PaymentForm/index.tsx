@@ -5,10 +5,11 @@ import {
   CardExpiryElement,
   CardNumberElement,
 } from "@stripe/react-stripe-js";
-import styled, { useTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
 import { Col, Row } from "react-grid-system";
-import { getFontFromTheme } from "@ulams/components/theme/provider";
+import { FONTS } from "@ulams/components/theme/cssVars";
+import { useThemeTokens } from "@ulams/components/theme/applyTheme";
+import styles from "./PaymentForm.module.css";
 
 type Props = {
   billingDetails: {
@@ -17,59 +18,17 @@ type Props = {
   setBillingDetails: ({ name }: { name: string }) => void;
 };
 
-const StyledForm = styled.div`
-  .input-wrapper {
-    background-color: ${({ theme }) =>
-      theme.mode === "dark" ? "#333" : theme.cardBackgroundColor};
-    &--custom {
-      @media (max-width: 991px) {
-        margin-bottom: 30px;
-      }
-    }
-    .StripeElement {
-      color: ${({ theme }) =>
-        theme.mode === "dark" ? "#c3c3c3" : theme.gray1};
-      padding: 11px 12px 13px;
-      border: 1px solid
-        ${({ theme }) => (theme.mode === "dark" ? theme.gray5 : theme.gray4)};
-      &--focus {
-        border: 1px solid
-          ${({ theme }) => (theme.mode === "dark" ? theme.gray5 : theme.gray3)};
-      }
-      &--empty + label {
-        display: none;
-      }
-      &--invalid + label,
-      &--focus + label,
-      &--complete + label {
-        display: block;
-        top: -8px;
-        left: 24px;
-      }
-    }
-  }
-`;
-
-const StyledLabel = styled.label`
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-family: ${({ theme }) => theme.font};
-  color: ${({ theme }) => (theme.mode === "dark" ? "#c3c3c3" : theme.gray1)};
-  font-size: 10px;
-  padding: 0 2px;
-  background-color: ${({ theme }) =>
-    theme.mode === "dark" ? "#000" : theme.white};
-`;
-
 const PaymentForm: React.FC<Props> = ({
   billingDetails,
   setBillingDetails,
 }) => {
-  const theme = useTheme();
+  const theme = useThemeTokens();
   const { t } = useTranslation();
-  const font = getFontFromTheme(theme).fontFamily;
+  const font = (FONTS[theme?.font ?? "Inter"] ?? FONTS.Inter).fontFamily;
   const fontFamily = font.split(",")[0].replace(/['"]/g, "");
+  const isDark = theme?.mode === "dark";
+  const gray1 = theme?.gray1 ?? "#4A4A4A";
+  const white = theme?.white ?? "#FFFFFF";
 
   const options = useMemo(() => {
     return {
@@ -79,10 +38,10 @@ const PaymentForm: React.FC<Props> = ({
           backgroundColor: "transparent",
           padding: "11px 12px 13px",
           border: `1px solid red`,
-          color: theme.mode === "dark" ? theme.white : theme.gray1,
+          color: isDark ? white : gray1,
           fontSize: "12px",
           "::placeholder": {
-            color: theme.mode === "dark" ? "#c3c3c3" : theme.gray1,
+            color: isDark ? "#c3c3c3" : gray1,
           },
         },
         invalid: {
@@ -90,11 +49,10 @@ const PaymentForm: React.FC<Props> = ({
         },
       },
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fontFamily, isDark, gray1, white]);
 
   return (
-    <StyledForm>
+    <div className={styles.form}>
       <Row>
         <Col lg={6}>
           <div className="input-wrapper--custom">
@@ -114,9 +72,9 @@ const PaymentForm: React.FC<Props> = ({
         <Col lg={6}>
           <div className="input-wrapper">
             <CardNumberElement options={options} id="cardNumber" />
-            <StyledLabel htmlFor="cardNumber">
+            <label className={styles.label} htmlFor="cardNumber">
               {t<string>("Card number")}
-            </StyledLabel>
+            </label>
           </div>
         </Col>
       </Row>
@@ -124,19 +82,19 @@ const PaymentForm: React.FC<Props> = ({
         <Col lg={6}>
           <div className="input-wrapper">
             <CardExpiryElement options={options} id="cardExpiry" />
-            <StyledLabel htmlFor="cardExpiry">
+            <label className={styles.label} htmlFor="cardExpiry">
               {t<string>("Expiration date")}
-            </StyledLabel>
+            </label>
           </div>
         </Col>
         <Col lg={6}>
           <div className="input-wrapper">
             <CardCvcElement options={options} id="cardCVC" />
-            <StyledLabel htmlFor="cardCVC">CVC</StyledLabel>
+            <label className={styles.label} htmlFor="cardCVC">CVC</label>
           </div>
         </Col>
       </Row>
-    </StyledForm>
+    </div>
   );
 };
 

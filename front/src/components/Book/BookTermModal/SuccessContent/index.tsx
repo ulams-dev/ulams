@@ -1,16 +1,9 @@
-import styled, { useTheme } from "styled-components";
+import { useThemeTokens } from "@ulams/components/theme/applyTheme";
 import { useTranslation } from "react-i18next";
 import { Button } from "@ulams/components/components/atoms/Button/Button";
 import { IconSuccess } from "../../../../icons";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
-
-const SuccessContentStyles = styled.div`
-  text-align: center;
-
-  .text {
-    margin: 1.5rem 0 3rem 0;
-  }
-`;
+import styles from "./SuccessContent.module.css";
 
 interface SuccessContentProps {
   onClick: () => void;
@@ -18,16 +11,16 @@ interface SuccessContentProps {
 
 const SuccessContent = ({ onClick }: SuccessContentProps) => {
   const { t } = useTranslation();
-  const theme = useTheme();
+  const theme = useThemeTokens();
 
   return (
-    <SuccessContentStyles>
-      <IconSuccess width="50px" height="50px" color={theme.primaryColor} />
+    <div className={styles.root}>
+      <IconSuccess width="50px" height="50px" color={theme?.primaryColor} />
       <Text className="text">{t("ConsultationPage.successTermInfo")}</Text>
       <Button mode="secondary" onClick={onClick} block>
         {t("ConsultationPage.Understand")}
       </Button>
-    </SuccessContentStyles>
+    </div>
   );
 };
 

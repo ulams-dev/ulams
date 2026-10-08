@@ -13,7 +13,6 @@ import { Swiper as SwiperType } from "swiper/types";
 import Container from "@/components/Common/Container";
 import Step from "@/components/Onboarding/Step";
 import { Button, Text, Title } from "@ulams/components";
-import styled, { css } from "styled-components";
 import { Col } from "react-grid-system";
 import { useTranslation } from "react-i18next";
 import ResponsiveImage from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
@@ -21,63 +20,7 @@ import { useHistory } from "react-router-dom";
 import routeRoutes from "@/components/Routes/routes";
 import "swiper/css";
 import "swiper/css/pagination";
-
-const StyledOnboarding = styled.div<{ $lastStep: boolean }>`
-  background-color: ${({ theme }) => theme.white};
-  padding: 60px 0;
-
-  @media (max-width: 991px) {
-    padding: 20px;
-  }
-  .onboarding__content {
-    width: 100%;
-    position: relative;
-    ${({ $lastStep }) =>
-      $lastStep &&
-      css`
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      `}
-
-    .swiper-pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      .swiper-pagination-bullet {
-        width: 8px;
-        height: 8px;
-        &.swiper-pagination-bullet-active {
-          background-color: ${({ theme }) => theme.primaryColor} !important;
-        }
-      }
-    }
-    .next-step {
-      margin: 0 auto;
-      margin-top: ${({ $lastStep }) => ($lastStep ? "70px" : "0px")};
-      position: ${({ $lastStep }) => ($lastStep ? "relative" : "absolute")};
-      bottom: ${({ $lastStep }) => ($lastStep ? "0" : "60px")};
-      left: 0;
-      right: 0;
-      max-width: 265px;
-      min-width: ${({ $lastStep }) => ($lastStep ? "265px" : "auto")};
-      z-index: 10;
-    }
-  }
-`;
-
-const StyledLastStep = styled.div`
-  text-align: center;
-  img {
-    max-height: 300px;
-    object-fit: contain;
-  }
-  h2 {
-    margin: 22px 0px;
-  }
-`;
+import styles from "./Onboarding.module.css";
 
 export type Translations = {
   [lang: string]: string;
@@ -227,10 +170,14 @@ const Onboarding = () => {
   }, [state.currentStep, state.steps.length, handleSaveOnboarding, lastStep]);
 
   return (
-    <StyledOnboarding className="onboarding" $lastStep={state.isLastStep}>
+    <div
+      className={`onboarding ${styles.onboarding}${
+        state.isLastStep ? ` ${styles.lastStep}` : ""
+      }`}
+    >
       <Container>
         <Col offset={{ lg: 3 }} lg={6}>
-          <div className="onboarding__content">
+          <div className={`onboarding__content ${styles.content}`}>
             {!state.isLastStep ? (
               <Swiper
                 className="onboarding__swiper"
@@ -264,7 +211,7 @@ const Onboarding = () => {
               </Swiper>
             ) : null}
             {state.isLastStep && lastStep && (
-              <StyledLastStep>
+              <div className={styles.lastStepContent}>
                 {lastStep?.image && (
                   <ResponsiveImage
                     path={lastStep?.image}
@@ -274,10 +221,10 @@ const Onboarding = () => {
 
                 <Title level={2}>{lastStep?.title[i18n.language]}</Title>
                 <Text>{lastStep?.text[i18n.language]}</Text>
-              </StyledLastStep>
+              </div>
             )}
             <Button
-              className="next-step"
+              className={`next-step ${styles.nextStep}`}
               disabled={nextStepValidation}
               onClick={handleNextStep}
             >
@@ -286,7 +233,7 @@ const Onboarding = () => {
           </div>
         </Col>
       </Container>
-    </StyledOnboarding>
+    </div>
   );
 };
 

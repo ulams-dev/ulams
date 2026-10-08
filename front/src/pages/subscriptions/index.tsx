@@ -11,27 +11,8 @@ import { useContext } from "react";
 import { isMobile } from "react-device-detect";
 import { Col, Row } from "react-grid-system";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
 
-const StyledWrapper = styled.div`
-  background-color: ${({ theme }) =>
-    theme.mode === "dark" ? theme.dm__background : theme.gray4};
-  padding-top: 57px;
-  min-height: calc(100vh - 452px);
-  padding-bottom: 50px;
-
-  h1 {
-    margin-bottom: 20px;
-  }
-`;
-
-const SubscriptionsContainer = styled.div<{ $isMobile: boolean }>`
-  border-radius: ${({ theme }) => theme.cardRadius}px;
-  padding: ${({ $isMobile }) => ($isMobile ? "20px" : "50px 90px")};
-
-  background-color: ${({ theme }) => theme.white};
-  border: 1px solid #eaeaea;
-`;
+import styles from "./subscriptions.module.css";
 
 const SubscriptionsPage = () => {
   const { t } = useTranslation();
@@ -45,7 +26,7 @@ const SubscriptionsPage = () => {
 
   return (
     <Layout metaTitle={t("Subscriptions.Subs")}>
-      <StyledWrapper>
+      <div className={styles.wrapper}>
         <Container>
           <Title level={1}>{t("Subscriptions.Subs")}</Title>
           <Text size="16">{t("Subscriptions.Text")}</Text>
@@ -56,7 +37,10 @@ const SubscriptionsPage = () => {
             />
           )}
           {!getActiveSubscription?.id && (
-            <SubscriptionsContainer $isMobile={isMobile}>
+            <div
+              className={styles.subscriptionsContainer}
+              data-mobile={isMobile}
+            >
               {isLoading && <ContentLoader />}
               {!isLoading && (
                 <Row>
@@ -71,10 +55,10 @@ const SubscriptionsPage = () => {
                   )}
                 </Row>
               )}
-            </SubscriptionsContainer>
+            </div>
           )}
         </Container>
-      </StyledWrapper>
+      </div>
     </Layout>
   );
 };

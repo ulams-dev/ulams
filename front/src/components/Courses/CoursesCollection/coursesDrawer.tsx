@@ -6,17 +6,7 @@ import {
   MobileDrawerTypes,
   SortOrder,
 } from "@/components/Courses/CoursesCollection";
-import styled from "styled-components";
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-  button {
-    border: none;
-  }
-`;
+import styles from "./coursesDrawer.module.css";
 
 type Props = {
   showDrawer: boolean;
@@ -64,7 +54,7 @@ const MobileDrawerContent: React.FC<Props> = ({
       )}
 
       {showDrawer && type === MobileDrawerTypes.sort && (
-        <Wrapper>
+        <div className={styles.wrapper}>
           <Button
             mode={"secondary outline"}
             onClick={() => {
@@ -89,7 +79,7 @@ const MobileDrawerContent: React.FC<Props> = ({
           >
             {t("CoursesPage.oldOnes")}
           </Button>
-        </Wrapper>
+        </div>
       )}
     </>
   );

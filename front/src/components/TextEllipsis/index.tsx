@@ -2,8 +2,7 @@ import {
   Text,
   TextProps,
 } from "@ulams/components/components/atoms/Typography/Text";
-import { useTheme } from "styled-components";
-import { StyledSpan, StyledSpanTail, StyledSpanChild } from "./styles";
+import styles from "./styles.module.css";
 
 type Props = TextProps & {
   text: string;
@@ -17,21 +16,20 @@ export const TextEllipsis = ({
   tail = "...",
   ...props
 }: Props) => {
-  const theme = useTheme();
   const firstText = text.slice(0, length);
   const secondText = text.slice(length, text.length);
 
   return (
     <Text {...props}>
-      <StyledSpan color={theme.primaryColor}>
+      <span className={styles.span}>
         {firstText}
         {secondText && (
           <>
-            <StyledSpanTail>{tail}</StyledSpanTail>
-            <StyledSpanChild>{secondText}</StyledSpanChild>
+            <span className={styles.tail}>{tail}</span>
+            <span className={styles.child}>{secondText}</span>
           </>
         )}
-      </StyledSpan>
+      </span>
     </Text>
   );
 };

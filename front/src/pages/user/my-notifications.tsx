@@ -1,55 +1,19 @@
-import styled from "styled-components";
 import Layout from "@/components/_App/Layout";
 import Container from "@/components/Common/Container";
 import Notifications from "@/components/Notifications";
 
-const Wrapper = styled.div`
-  background-color: ${({ theme }) =>
-    theme.mode === "dark" ? theme.dm__background : theme.gray4};
-`;
-
-const NotificationsContainer = styled.div`
-  padding-top: 70px;
-  min-height: 50vh;
-  padding-bottom: 50px;
-  .notifications-drawer__content__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    button {
-      display: none;
-    }
-  }
-  .notifications-drawer__content--clear-all {
-    margin-bottom: 20px;
-    margin-top: 10px;
-    button {
-      all: unset;
-      font-size: 13px;
-      font-family: ${({ theme }) => theme.font};
-      color: ${({ theme }) => theme.primaryColor};
-      font-weight: 700;
-    }
-  }
-
-  .notifications-drawer__content--list {
-    padding-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-`;
+import styles from "./user.module.css";
 
 const MyNotificationsPage = () => {
   return (
     <Layout>
-      <Wrapper>
+      <div className={styles.notificationsWrapper}>
         <Container>
-          <NotificationsContainer>
+          <div className={styles.notificationsContainer}>
             <Notifications />
-          </NotificationsContainer>
+          </div>
         </Container>
-      </Wrapper>
+      </div>
     </Layout>
   );
 };

@@ -1,0 +1,49 @@
+.root > button {
+  appearance: none;
+  border: none;
+  padding: 0;
+  background: 0;
+  position: fixed;
+  top: 5px;
+  right: 5px;
+  z-index: 1049;
+  width: 24px;
+  height: 24px;
+  color: var(--ulams-gray-1);
+}
+
+.root > button > svg {
+  width: 100%;
+  height: auto;
+  transition: transform 0.5s ease-out;
+}
+
+.root > button > svg path,
+.root > button > svg circle {
+  stroke: var(--ulams-gray-1);
+}
+
+:global([data-mode="dark"]) .root > button {
+  color: var(--ulams-gray-5);
+}
+
+:global([data-mode="dark"]) .root > button > svg path,
+:global([data-mode="dark"]) .root > button > svg circle {
+  stroke: var(--ulams-gray-5);
+}
+
+.root > button:hover:after {
+  top: 5px;
+  position: absolute;
+  content: "customize";
+  right: 30px;
+  font-size: 12px;
+}
+
+.root > button:hover > svg {
+  transform: scale(1.1);
+}
+
+.root > div {
+  z-index: 9999;
+}

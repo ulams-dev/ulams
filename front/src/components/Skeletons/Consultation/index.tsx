@@ -1,20 +1,10 @@
 import { Col, Row } from "react-grid-system";
 import Skeleton from "react-loading-skeleton";
-import styled from "styled-components";
-
-const SkeletonWrapper = styled.div`
-  position: relative;
-  .tutors {
-    display: flex;
-    > div {
-      margin-left: 10px;
-    }
-  }
-`;
+import styles from "@/components/Skeletons/Skeletons.module.css";
 
 const ConsultationPageContentSkeleton = () => {
   return (
-    <SkeletonWrapper>
+    <div className={styles.relative}>
       <Skeleton width={"20px"} style={{ marginBottom: "5px" }} />
       <Row>
         <Col style={{ marginTop: "120px" }} md={7}>
@@ -32,14 +22,14 @@ const ConsultationPageContentSkeleton = () => {
           style={{ marginBottom: "5px" }}
         />
       </div>{" "}
-      <div className="tutors">
+      <div className={`tutors ${styles.tutors}`}>
         <Skeleton circle width={"112px"} height={"112px"} />
         <div>
           <Skeleton width={"140px"} style={{ marginBottom: "20px" }} />
           <Skeleton width={"140px"} count={2} />
         </div>
       </div>
-    </SkeletonWrapper>
+    </div>
   );
 };
 

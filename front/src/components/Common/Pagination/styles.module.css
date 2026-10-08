@@ -1,0 +1,39 @@
+.pagination {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.pagination a {
+  text-decoration: none !important;
+}
+
+.pagination .arrow {
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid;
+  border-bottom: 2px solid;
+  border-color: var(--ulams-color-primary);
+  margin: 0 10px;
+}
+
+.pagination .arrowLeft {
+  transform: rotate(45deg);
+}
+
+.pagination .arrowRight {
+  transform: rotate(-135deg);
+}
+
+.pagination .number {
+  margin: 0 8px;
+}
+
+.pagination .number p {
+  opacity: 0.5;
+}
+
+.pagination .number p.current {
+  color: var(--ulams-color-black) !important;
+  opacity: 1;
+}

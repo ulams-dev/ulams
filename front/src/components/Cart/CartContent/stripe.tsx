@@ -27,7 +27,7 @@ import Container from "@/components/Common/Container";
 import { formatPrice } from "@/utils/index";
 import CartSuccess from "@/components/Cart/CartSuccess";
 import routeRoutes from "@/components/Routes/routes";
-import { CartPageStyled } from "@/components/Cart/CartContent/styles";
+import styles from "@/components/Cart/CartContent/styles.module.css";
 import usePayment from "@/hooks/usePayment";
 import { toast } from "@/utils/toast";
 
@@ -100,7 +100,9 @@ const StripeContent = ({ stripeKey }: { stripeKey: string }) => {
   }
   return (
     <Layout metaTitle={t("Cart.Cart")}>
-      <CartPageStyled $isMobile={isMobile}>
+      <section
+        className={`${styles.cartPage}${isMobile ? ` ${styles.mobile}` : ""}`}
+      >
         <Container>
           {!(cart.value?.items.length === 0) ? (
             <Row>
@@ -236,7 +238,7 @@ const StripeContent = ({ stripeKey }: { stripeKey: string }) => {
           )}
         </Container>
         {(cart.loading || processing) && <Preloader />}
-      </CartPageStyled>
+      </section>
     </Layout>
   );
 };
