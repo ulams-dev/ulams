@@ -89,7 +89,7 @@ class WebhookTest extends TestCase
 
         $response->assertStatus(202)->assertJsonPath('data.queued', true);
         $this->assertSame(2, Revision::query()->where('source_id', $this->connection->source_id)->max('number'));
-        $this->assertSame('webhook', Revision::query()->where('number', 2)->firstOrFail()->trigger);
+        $this->assertSame('webhook', Revision::query()->where('source_id', $this->connection->source_id)->where('number', 2)->firstOrFail()->trigger);
         $row = DB::table('living_course_webhook_deliveries')->first();
         $this->assertSame(['d-1', 'push', 'queued'], [$row->delivery_id, $row->event, $row->outcome]);
         $this->assertSame(64, strlen($row->payload_sha256));
