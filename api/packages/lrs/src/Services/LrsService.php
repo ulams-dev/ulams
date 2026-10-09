@@ -70,13 +70,13 @@ class LrsService implements LrsServiceContract
     public function saveState(array $params): array
     {
         $scope = DocumentScope::state(Request::create('/', 'GET', $params['state']));
+        // `contextTemplate` is the context every AU statement starts from (cmi5 specification 9.6.2.1),
+        // not a statement wrapper
         $launchData = [
             'contextTemplate' => [
-                'context' => [
-                    'registration' => $params['registration'],
-                    'contextActivities' => ['grouping' => [['objectType' => 'Activity', 'id' => $params['activityId']]]],
-                    'extensions' => ['https://w3id.org/xapi/cmi5/context/extensions/sessionid' => (string) Str::uuid()],
-                ],
+                'registration' => $params['registration'],
+                'contextActivities' => ['grouping' => [['objectType' => 'Activity', 'id' => $params['activityId']]]],
+                'extensions' => ['https://w3id.org/xapi/cmi5/context/extensions/sessionid' => (string) Str::uuid()],
             ],
             'launchMode' => 'Normal',
             'moveOn' => 'CompletedOrPassed',
