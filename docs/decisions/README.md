@@ -41,3 +41,4 @@ replacement.
 | [0029](0029-sse-wake-without-pubsub.md) | The SSE endpoint wakes on a cache key, not Valkey pub/sub | Accepted |
 | [0030](0030-tenants-inherit-platform-ai-settings.md) | Tenants inherit the platform AI settings, with per-tenant overrides | Proposed |
 | [0031](0031-studio-applied-state-is-authoritative.md) | The studio reports "applied" only from authoritative state | Proposed |
+| [0032](0032-demo-login-supports-tutor.md) | Demo login supports the tutor role | Proposed |

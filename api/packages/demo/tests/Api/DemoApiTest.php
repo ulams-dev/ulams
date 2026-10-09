@@ -81,11 +81,32 @@ class DemoApiTest extends TestCase
         $this->assertSame(0, $draft->users()->whereKey($student->getKey())->count());
     }
 
-    public function testRejectsOtherRoles(): void
+    public function testTutorLoginIssuesATutorToken(): void
+    {
+        $this->seedDemoUsers();
+        $tutor = \Ulams\Auth\Models\User::factory()->create(['email' => 'tutor@demo-test.ulams.app', 'is_active' => true]);
+        $tutor->assignRole('tutor');
+
+        $token = $this->demoLogin('tutor');
+
+        $this->getJson('/api/profile/me', ['Authorization' => 'Bearer ' . $token])->assertOk()
+            ->assertJsonPath('data.email', 'tutor@demo-test.ulams.app')
+            ->assertJsonPath('data.roles', ['tutor']);
+        $this->getJson('/api/demo')->assertJsonFragment(['role' => 'tutor', 'email' => 'tutor@demo-test.ulams.app']);
+    }
+
+    public function testTutorLoginWithoutASeededTutorIsRejected(): void
     {
         $this->seedDemoUsers();
 
         $this->postJson('/api/demo/login', ['role' => 'tutor'])->assertStatus(422);
+    }
+
+    public function testRejectsOtherRoles(): void
+    {
+        $this->seedDemoUsers();
+
+        $this->postJson('/api/demo/login', ['role' => 'teacher'])->assertStatus(422);
         $this->postJson('/api/demo/login', [])->assertStatus(422);
     }
 
