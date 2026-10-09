@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Ulams\LivingCourse\Http\Controllers\AuditController;
 use Ulams\LivingCourse\Http\Controllers\ConnectionsController;
 use Ulams\LivingCourse\Http\Controllers\NoticesController;
 use Ulams\LivingCourse\Http\Controllers\ProposalsController;
@@ -18,6 +19,11 @@ Route::group([
     Route::post('sources/{source}/revisions', [SourcesController::class, 'upload']);
     Route::get('revisions/{revision}', [SourcesController::class, 'revision']);
     Route::get('sessions/{session}/staleness', [StalenessController::class, 'show']);
+    Route::get('sessions/{session}/audit', [AuditController::class, 'index']);
+    Route::get('sessions/{session}/audit/export', [AuditController::class, 'export']);
+    Route::get('sessions/{session}/audit/verify', [AuditController::class, 'verify']);
+    Route::get('audit/export', [AuditController::class, 'exportAll']);
+    Route::get('audit/verify', [AuditController::class, 'verifyAll']);
     Route::get('sessions/{session}/proposals', [ProposalsController::class, 'index']);
     Route::get('proposals/{proposal}', [ProposalsController::class, 'show']);
     Route::post('proposals/{proposal}/analyse', [ProposalsController::class, 'analyse']);
