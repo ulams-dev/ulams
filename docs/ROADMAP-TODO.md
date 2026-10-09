@@ -392,6 +392,9 @@ approved apply through domain services → element chat edits. Designs:
       is done as a separate action)
 - [x] **Course Blueprint**: versioned JSON, stable IDs, citations; entities created via domain
       services; persisted per stage; progress streamed (SSE/websockets) (ADR 0010, 0025)
+- [x] (new) Long jobs on dedicated queue connections: `<driver>-builder` (retry_after 2400) for Course
+      Builder, Living Course and Adapt builds, `<driver>-long-job` for video and course clone; workers
+      and Horizon with matching timeouts; config test `QueueRetryAfterConfigTest` (ADR 0083 amendment)
 
 ### 2.5 Element-level chat editing
 - [x] Select element → chat → structured patch → diff → apply (course, module, lesson, block, question)

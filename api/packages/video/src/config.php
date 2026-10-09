@@ -16,5 +16,5 @@ return [
         ]
     ],
     'queue' => env('VIDEO_QUEUE', 'queue-long-job'),
-    'queue_connection' =>  env('VIDEO_QUEUE_CONNECTION', 'redis-long-job'),
+    'queue_connection' => env('VIDEO_QUEUE_CONNECTION', env('QUEUE_CONNECTION') === 'database' ? 'database-long-job' : 'redis-long-job'),
 ];
