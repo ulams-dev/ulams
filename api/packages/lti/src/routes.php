@@ -5,6 +5,7 @@ use Ulams\Lti\Http\Controllers\Admin\LtiAdminController;
 use Ulams\Lti\Http\Controllers\FrameOriginsController;
 use Ulams\Lti\Http\Controllers\JwksController;
 use Ulams\Lti\Http\Controllers\Platform\AgsController;
+use Ulams\Lti\Http\Controllers\Platform\NrpsController;
 use Ulams\Lti\Http\Controllers\Platform\PlatformController;
 use Ulams\Lti\Http\Controllers\Tool\ToolController;
 
@@ -45,6 +46,9 @@ Route::group(['prefix' => 'api/lti/platform/ags/{course}/lineitems', 'where' => 
     Route::post('{lineItem}/scores', [AgsController::class, 'scores']);
     Route::get('{lineItem}/results', [AgsController::class, 'results']);
 });
+
+// Names and Role Provisioning Services 2.0: the member list of a course, for tools with NRPS enabled
+Route::get('api/lti/platform/nrps/{course}', [NrpsController::class, 'memberships'])->whereNumber('course');
 
 // Tool side: platforms launch us
 Route::match(['get', 'post'], 'api/lti/tool/login', [ToolController::class, 'login']);

@@ -1,5 +1,5 @@
 {
- "summary": "435/477 covered, 42 excluded, 0 missing, 82 routes missing from the spec",
+ "summary": "494/536 covered, 42 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -38,9 +38,15 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/adapt/{id}/versions",
+   "summary": "Version history (version, change note, author, date; no source)",
+   "command": "adapt.versions-list",
+   "status": "covered"
+  },
+  {
    "key": "POST /api/admin/adapt/{id}/versions",
    "summary": "Add a version",
-   "command": "adapt.versions",
+   "command": "adapt.versions-add",
    "status": "covered"
   },
   {
@@ -233,6 +239,156 @@
    "key": "DELETE /api/admin/course-access-enquiries/{id}",
    "summary": "Remove the specified Course Access Enquiry",
    "command": "access.enquiries-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/fragments/{fragment}",
+   "summary": "One source fragment (citation popover)",
+   "command": "builder.fragments.get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/runs/{run}",
+   "summary": "Status of one run (poll it for --wait)",
+   "command": "builder.runs.get",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/runs/{run}/cancel",
+   "summary": "Cancel a run",
+   "command": "builder.runs.cancel",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/runs/{run}/steps/{step}/retry",
+   "summary": "Retry one failed generation step",
+   "command": "builder.runs.retry-step",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions",
+   "summary": "My builder sessions",
+   "command": "builder.sessions.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions",
+   "summary": "Start a builder session",
+   "command": "builder.sessions.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions/{session}",
+   "summary": "A session's state snapshot",
+   "command": "builder.sessions.get",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/course-builder/sessions/{session}",
+   "summary": "Delete a session (an applied course is kept)",
+   "command": "builder.sessions.delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/apply",
+   "summary": "Approve the apply of the current version",
+   "command": "builder.apply",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions/{session}/brief",
+   "summary": "Course Brief",
+   "command": "builder.brief.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/course-builder/sessions/{session}/brief",
+   "summary": "Edit the Course Brief",
+   "command": "builder.brief.set",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions/{session}/events",
+   "summary": "AG-UI event stream (SSE)",
+   "command": "builder.events",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/publish",
+   "summary": "Publish the applied course",
+   "command": "builder.publish",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/redo",
+   "summary": "Redo",
+   "command": "builder.redo",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/runs",
+   "summary": "Start a run from a chat message or a UI action (AG-UI RunAgentInput)",
+   "command": "builder.chat",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/sources",
+   "summary": "Upload a source (MD, PDF, DOCX); ingestion and the interview start by themselves",
+   "command": "builder.sources.add",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions/{session}/sources/{source}",
+   "summary": "A source with its section tree",
+   "command": "builder.sources.get",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/undo",
+   "summary": "Undo the last content change",
+   "command": "builder.undo",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions/{session}/usage",
+   "summary": "AI calls of the session by task and model",
+   "command": "builder.usage",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions/{session}/versions",
+   "summary": "Blueprint version history",
+   "command": "builder.chat",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/versions/{version}",
+   "summary": "A blueprint version with fragment labels",
+   "command": "builder.elements.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/versions/{version}/approve",
+   "summary": "Approve a proposal (outline or patch)",
+   "command": "builder.outline.approve",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/versions/{version}/diff",
+   "summary": "Element-aware diff against another version (default: its parent)",
+   "command": "builder.chat",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/versions/{version}/reject",
+   "summary": "Reject a proposal",
+   "command": "builder.outline.request-changes",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/versions/{version}/restore",
+   "summary": "Restore an old version as a new one",
+   "command": "builder.versions.restore",
    "status": "covered"
   },
   {
@@ -614,6 +770,180 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/living-course/audit/export",
+   "summary": "Tenant-wide audit export (admins)",
+   "command": "living.audit.export-all",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/audit/verify",
+   "summary": "Tenant-wide chain verification (admins)",
+   "command": "living.audit.verify-all",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/living-course/connections/{connection}",
+   "summary": "Change a connection: schedule, automatic analysis, learner notice settings, paused",
+   "command": "living.connections.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/living-course/connections/{connection}",
+   "summary": "Disconnect a source (revisions and the audit trail are kept)",
+   "command": "living.connections.delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/connections/{connection}/check",
+   "summary": "Check the source now",
+   "command": "living.connections.check",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/connections/{connection}/webhook-secret",
+   "summary": "Rotate the webhook secret (returned once)",
+   "command": "living.connections.webhook-secret",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/connectors",
+   "summary": "The source connectors this installation offers, with their settings schema",
+   "command": "living.connectors.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/proposals/{proposal}",
+   "summary": "A proposal with its items grouped by lesson, citations and source changes",
+   "command": "living.proposals.get",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/accept-all",
+   "summary": "Accept every undecided update, no-change and removal item",
+   "command": "living.proposals.accept-all",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/analyse",
+   "summary": "Start or resume the AI analysis (confirmEstimate when above the automatic threshold)",
+   "command": "living.proposals.analyse",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/apply",
+   "summary": "Apply the accepted items as a new course version (409 with conflicting items or admin edits)",
+   "command": "living.proposals.apply",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/accept",
+   "summary": "Accept one item",
+   "command": "living.proposals.accept",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/regenerate",
+   "summary": "Ask for another version of one element ({comment}); one call, at most three per item",
+   "command": "living.proposals.regenerate",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/reject",
+   "summary": "Reject one item (keep the earlier version of the element)",
+   "command": "living.proposals.reject",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/reset",
+   "summary": "Back to undecided",
+   "command": "living.proposals.reset",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/living-course/proposals/{proposal}/learner-note",
+   "summary": "The text learners see for updated lessons (plain text, up to 500 characters)",
+   "command": "living.proposals.learner-note",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/reanalyse",
+   "summary": "Replace the proposal by a new one from the newest source revision",
+   "command": "living.proposals.reanalyse",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/reject",
+   "summary": "Reject the whole proposal and acknowledge the source revision",
+   "command": "living.proposals.reject-all",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/revisions/{revision}",
+   "summary": "One revision",
+   "command": "living.revisions.get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/revisions/{revision}/changes",
+   "summary": "Fragment changes of a revision against the synced revision it was compared with (or ?against=<revision id>)",
+   "command": "living.revisions.changes",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/sessions/{session}/audit",
+   "summary": "Audit entries of a session (filters: action, actorType, from, to, source)",
+   "command": "living.audit.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/sessions/{session}/audit/export",
+   "summary": "Export the audit entries of a session as CSV or JSON",
+   "command": "living.audit.export",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/sessions/{session}/audit/verify",
+   "summary": "Verify the hash chain of the audit trail",
+   "command": "living.audit.verify",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/sessions/{session}/proposals",
+   "summary": "Update proposals of a session, newest first",
+   "command": "living.proposals.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/sessions/{session}/sources",
+   "summary": "Sources of a session with connection, sync state and revisions",
+   "command": "living.sources.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/sessions/{session}/sources/connect",
+   "summary": "Add a source through a connector (Git repository, web pages, plugins); validates and fetches revision 1",
+   "command": "living.sources.connect",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/sessions/{session}/staleness",
+   "summary": "Per-element staleness and the course summary",
+   "command": "living.staleness",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/sources/{source}/revisions",
+   "summary": "Revisions of a source, newest first",
+   "command": "living.revisions.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/sources/{source}/revisions",
+   "summary": "Upload a new version of a source (MD, PDF or DOCX): creates a revision and its fragment diff",
+   "command": "living.revisions.upload",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/lti/endpoints",
    "summary": "Our LTI endpoints and issuer, to register us elsewhere",
    "command": "lti.endpoints",
@@ -804,12 +1134,6 @@
    "summary": "Preview a pdfme template with sample data",
    "command": "pdfs.preview",
    "status": "covered"
-  },
-  {
-   "key": "GET /api/admin/play/{cmi5AuId}",
-   "summary": "",
-   "command": "",
-   "status": "excluded: content-runtime"
   },
   {
    "key": "GET /api/admin/productables/",
@@ -1976,6 +2300,12 @@
    "status": "excluded: content-runtime"
   },
   {
+   "key": "GET /api/cmi5/player/{cmi5AuId}",
+   "summary": "Launch a cmi5 AU",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
    "key": "GET /api/config",
    "summary": "Get a listing of public config values.",
    "command": "public.config-list",
@@ -2244,6 +2574,30 @@
    "summary": "Progress reported by the content-origin player",
    "command": "",
    "status": "excluded: content-runtime"
+  },
+  {
+   "key": "GET /api/living-course/courses/{course}/freshness",
+   "summary": "Topics with an update under review (only when the course shows it)",
+   "command": "my.living-course-courses-freshness",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/living-course/courses/{course}/notices",
+   "summary": "The caller's open update notices for a course",
+   "command": "my.living-course-courses-notices",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/living-course/notices/{notice}/dismiss",
+   "summary": "Mark a notice as reviewed",
+   "command": "my.living-course-notices-dismiss",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/living-course/webhooks/{webhookId}",
+   "summary": "Receive a push webhook of a connected repository",
+   "command": "public.living-course-webhooks",
+   "status": "covered"
   },
   {
    "key": "GET /api/lti/jwks",
@@ -2866,202 +3220,6 @@
  ],
  "undocumented": [
   {
-   "endpoint": "POST /api/admin/course-builder/sessions/{session}/apply",
-   "command": "builder.apply"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions/{session}/brief",
-   "command": "builder.brief.get"
-  },
-  {
-   "endpoint": "PUT /api/admin/course-builder/sessions/{session}/brief",
-   "command": "builder.brief.set"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/sessions/{session}/runs",
-   "command": "builder.chat"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions/{session}/versions",
-   "command": "builder.chat"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/versions/{version}/diff",
-   "command": "builder.chat"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions/{session}/versions",
-   "command": "builder.elements.list"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/versions/{version}",
-   "command": "builder.elements.list"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions/{session}/events",
-   "command": "builder.events"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions/{session}/events",
-   "command": "builder.events.list"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/fragments/{fragment}",
-   "command": "builder.fragments.get"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/sessions/{session}/runs",
-   "command": "builder.interview.answer"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/sessions/{session}/runs",
-   "command": "builder.interview.decide"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions/{session}/events",
-   "command": "builder.interview.show"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/versions/{version}/approve",
-   "command": "builder.outline.approve"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions/{session}/versions",
-   "command": "builder.outline.approve"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/versions/{version}/reject",
-   "command": "builder.outline.request-changes"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions/{session}/versions",
-   "command": "builder.outline.request-changes"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions/{session}/versions",
-   "command": "builder.outline.show"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/versions/{version}",
-   "command": "builder.outline.show"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/versions/{version}/approve",
-   "command": "builder.patches.approve"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/versions/{version}/reject",
-   "command": "builder.patches.reject"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/sessions/{session}/publish",
-   "command": "builder.publish"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/sessions/{session}/redo",
-   "command": "builder.redo"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/sessions/{session}/runs",
-   "command": "builder.retry"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/runs/{run}/cancel",
-   "command": "builder.runs.cancel"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/runs/{run}",
-   "command": "builder.runs.get"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/runs/{run}/steps/{step}/retry",
-   "command": "builder.runs.retry-step"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/sessions",
-   "command": "builder.sessions.create"
-  },
-  {
-   "endpoint": "DELETE /api/admin/course-builder/sessions/{session}",
-   "command": "builder.sessions.delete"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions/{session}",
-   "command": "builder.sessions.get"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions",
-   "command": "builder.sessions.list"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions/{session}",
-   "command": "builder.sessions.wait"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/runs/{run}",
-   "command": "builder.sessions.wait"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/sessions/{session}/sources",
-   "command": "builder.sources.add"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions/{session}/sources/{source}",
-   "command": "builder.sources.get"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/sessions",
-   "command": "builder.start"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/sessions/{session}/sources",
-   "command": "builder.start"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions/{session}",
-   "command": "builder.start"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/sessions/{session}/runs",
-   "command": "builder.start"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/versions/{version}/approve",
-   "command": "builder.start"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/sessions/{session}/apply",
-   "command": "builder.start"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/sessions/{session}/publish",
-   "command": "builder.start"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/sessions/{session}/undo",
-   "command": "builder.undo"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions/{session}/usage",
-   "command": "builder.usage"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/versions/{version}/diff",
-   "command": "builder.versions.diff"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/versions/{version}",
-   "command": "builder.versions.get"
-  },
-  {
-   "endpoint": "GET /api/admin/course-builder/sessions/{session}/versions",
-   "command": "builder.versions.list"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/versions/{version}/restore",
-   "command": "builder.versions.restore"
-  },
-  {
    "endpoint": "GET /api/admin/courses/{course}",
    "command": "courses.get"
   },
@@ -3076,118 +3234,6 @@
   {
    "endpoint": "GET /api/admin/courses/{course}",
    "command": "courses.unpublish"
-  },
-  {
-   "endpoint": "GET /api/admin/living-course/sessions/{session}/audit/export",
-   "command": "living.audit.export"
-  },
-  {
-   "endpoint": "GET /api/admin/living-course/sessions/{session}/audit",
-   "command": "living.audit.list"
-  },
-  {
-   "endpoint": "GET /api/admin/living-course/sessions/{session}/audit/verify",
-   "command": "living.audit.verify"
-  },
-  {
-   "endpoint": "POST /api/admin/living-course/connections/{connection}/check",
-   "command": "living.connections.check"
-  },
-  {
-   "endpoint": "DELETE /api/admin/living-course/connections/{connection}",
-   "command": "living.connections.delete"
-  },
-  {
-   "endpoint": "PUT /api/admin/living-course/connections/{connection}",
-   "command": "living.connections.update"
-  },
-  {
-   "endpoint": "POST /api/admin/living-course/connections/{connection}/webhook-secret",
-   "command": "living.connections.webhook-secret"
-  },
-  {
-   "endpoint": "GET /api/admin/living-course/connectors",
-   "command": "living.connectors.list"
-  },
-  {
-   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/accept",
-   "command": "living.proposals.accept"
-  },
-  {
-   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/accept-all",
-   "command": "living.proposals.accept-all"
-  },
-  {
-   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/analyse",
-   "command": "living.proposals.analyse"
-  },
-  {
-   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/apply",
-   "command": "living.proposals.apply"
-  },
-  {
-   "endpoint": "GET /api/admin/living-course/proposals/{proposal}",
-   "command": "living.proposals.get"
-  },
-  {
-   "endpoint": "PUT /api/admin/living-course/proposals/{proposal}/learner-note",
-   "command": "living.proposals.learner-note"
-  },
-  {
-   "endpoint": "GET /api/admin/living-course/sessions/{session}/proposals",
-   "command": "living.proposals.list"
-  },
-  {
-   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/reanalyse",
-   "command": "living.proposals.reanalyse"
-  },
-  {
-   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/regenerate",
-   "command": "living.proposals.regenerate"
-  },
-  {
-   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/reject",
-   "command": "living.proposals.reject"
-  },
-  {
-   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/reject",
-   "command": "living.proposals.reject-all"
-  },
-  {
-   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/reset",
-   "command": "living.proposals.reset"
-  },
-  {
-   "endpoint": "GET /api/admin/living-course/revisions/{revision}/changes",
-   "command": "living.revisions.changes"
-  },
-  {
-   "endpoint": "GET /api/admin/living-course/revisions/{revision}",
-   "command": "living.revisions.get"
-  },
-  {
-   "endpoint": "GET /api/admin/living-course/sources/{source}/revisions",
-   "command": "living.revisions.list"
-  },
-  {
-   "endpoint": "POST /api/admin/living-course/sources/{source}/revisions",
-   "command": "living.revisions.upload"
-  },
-  {
-   "endpoint": "POST /api/admin/course-builder/sessions/{session}/sources",
-   "command": "living.sources.add"
-  },
-  {
-   "endpoint": "POST /api/admin/living-course/sessions/{session}/sources/connect",
-   "command": "living.sources.connect"
-  },
-  {
-   "endpoint": "GET /api/admin/living-course/sessions/{session}/sources",
-   "command": "living.sources.list"
-  },
-  {
-   "endpoint": "GET /api/admin/living-course/sessions/{session}/staleness",
-   "command": "living.staleness"
   },
   {
    "endpoint": "GET /api/auth/tokens/current",

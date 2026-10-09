@@ -273,7 +273,7 @@ http://*.localhost {
         header Origin *
         header Access-Control-Request-Method *
         not path /h5p /h5p/*
-        not header_regexp Origin ^(null|https?://([^/:]+\.)*content\.)"
+        not header_regexp Origin ^(null|https?://([^/:]+\.)*content\.)
     }
     handle @preflight {
         header {

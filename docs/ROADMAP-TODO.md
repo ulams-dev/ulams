@@ -260,7 +260,8 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       tool" (Integrations → LTI)
 - [ ] (new) LTI: Client-Side OIDC (platform storage via `postMessage`) on the tool side, NRPS on the platform
       side, per-tool `frame-src` in the CSP (partial: per-tool `frame-src` done, the front reads
-      `GET /api/lti/frame-origins`; Client-Side OIDC and NRPS pending)
+      `GET /api/lti/frame-origins`; NRPS done, `GET /api/lti/platform/nrps/{course}` per tool switch;
+      Client-Side OIDC pending)
 - [x] (new) Run `ulams:lti:rotate-keys --init` for existing tenants (new tenants get it at provisioning) (done by `ulams:upgrade`, step `lti_keys`, ADR 0081)
 
 ### 1.4 Shared
