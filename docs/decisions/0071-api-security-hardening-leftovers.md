@@ -1,4 +1,4 @@
-# 0063. API security hardening: auth on admin routes, allow-listed payment input, bounded group walks
+# 0071. API security hardening: auth on admin routes, allow-listed payment input, bounded group walks
 
 - Status: Proposed
 - Date: 2026-10-09
