@@ -26,6 +26,8 @@ final class SessionState
             'sources' => self::sources($session),
             'aiEnabled' => $client->enabled(),
             'profiles' => ['default' => $client->profileLabel('outline'), 'light' => $client->profileLabel('interview')],
+            'newSite' => $session->stateValue('newSite'),
+            'canCreateSite' => app(\Ulams\CourseBuilder\Site\NewSite::class)->available(request()->user('api')),
             'priceSuggestion' => $session->stateValue('priceSuggestion'),
             'applyNotes' => (array) $session->stateValue('applyNotes', []),
             'budgetReached' => (bool) $session->stateValue('budgetReached', false),

@@ -37,6 +37,8 @@
     "build": "turbo run build",
     "build:web": "turbo run build --filter=@ulams/web",
     "build:docs": "turbo run build --filter=@ulams/docs",
+    "adr:index": "node scripts/adr-index.mjs",
+    "adr:check": "node scripts/adr-index.mjs --check",
     "brand:build": "node front/docs/design/brand/build.mjs",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",

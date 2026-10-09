@@ -1,0 +1,56 @@
+---
+title: Rate limits
+description: Every throttle the API registers (device login, tokens, platform API, per-token limits, webhooks, public endpoints), the environment variables that tune them, and what a 429 looks like.
+sidebar:
+  order: 9
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Limits are Laravel rate limiters (fixed window of one minute, counters in the cache). A throttled
+request answers **429** with a `Retry-After` header (seconds). Counters are per tenant host: each
+tenant has its own cache prefix ([Tenancy](/developers/tenancy/)).
+
+| Where | Limit | Counted per | Tune with |
+|---|---|---|---|
+| `POST /api/auth/device/code` | 10 / min | IP | fixed |
+| `POST /api/auth/device/token` (CLI polling) | 60 / min | IP | fixed |
+| `GET|POST /api/auth/device/requests/{user_code}…` (show, approve, deny) | 5 / min | signed-in user | `AUTH_DEVICE_APPROVE_PER_MINUTE` |
+| `/api/auth/tokens*`, `/api/admin/tokens*`, `/api/admin/agent-audit` | 60 / min | user (IP if anonymous) | fixed |
+| `GET /api/meta` | 60 / min | user or IP | fixed |
+| `POST /api/auth/email/resend` | 6 / min | user | fixed |
+| `POST /api/demo/login` | 60 / min | user or IP | fixed |
+| `/api/platform/*` ([platform API](/operators/platform-api/)) | 60 / min | user | fixed |
+| Any request with a scoped token that has `rate_limit_per_minute` | 1 to 6000 / min, set when the token is created | token | `rate_limit_per_minute` on `POST /api/auth/tokens` |
+| `POST /api/living-course/webhooks/{id}` | 60 / min; also 48 automatic checks per connection and day | webhook id | `living_course.poll.checks_per_connection_per_day` |
+| `POST /api/jitsi/recorded-video` | 60 / min | IP | fixed |
+| `POST /api/lti/tool/exchange` | 30 / min | IP | fixed |
+| `POST /api/liascript/progress/{topic}` | 120 / min | user or IP | fixed |
+| `POST /api/liascript/{id}/preview`, `POST /api/cmi5/fetch`, `POST /api/csp-report` | 60 / min | IP | fixed |
+| Image renderer `GET|POST /api/img` | 10 000 / min overall and 1 000 / min per IP. `GET` only when the limiter is enabled, `POST` always | host, IP | settings `images.private.rate_limit_global`, `rate_limit_per_ip`, `rate_limiter_status` (admin settings) |
+| Routes in `api/routes/api.php` (`/api/events`, `/api/health`, `/api/healthcheck`, `/api/name`) | 60 / min | IP | fixed |
+
+The per-token limit answers differently from the others, in the API's own error shape:
+
+```json
+{ "success": false, "message": "This token exceeded its rate limit.", "error": "rate_limited" }
+```
+
+with status 429 and `Retry-After`. It is checked after the scope check, so a call refused with 403
+does not use it up. See [Scoped API tokens](/developers/scoped-tokens/).
+
+<Aside type="caution" title="Login is not throttled by the API">
+  `POST /api/auth/login`, `/api/auth/register`, `/api/auth/password/forgot` and `/api/auth/password/reset`
+  have no rate limiter in the application, and the package routes are not in the `api` middleware group
+  that carries the default `throttle:60,1`. Put a limit in front of them (reverse proxy, WAF) on a
+  public deployment; see [Security](/operators/security/).
+</Aside>
+
+Stripe's webhook route has no ulams throttle either; it is protected by its signature
+([Webhooks](/developers/webhooks/)).
+
+## Handling a 429
+
+Wait for `Retry-After` seconds and retry. For writes, send an `Idempotency-Key` so a retry cannot
+duplicate the change ([Scoped API tokens](/developers/scoped-tokens/#idempotency-key-and-x-request-id)).
+The CLI maps a 429 to the error `RATE_LIMITED` with `details.retryAfter` ([CLI](/developers/cli/)).

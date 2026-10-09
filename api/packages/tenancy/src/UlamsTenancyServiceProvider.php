@@ -17,12 +17,14 @@ use Ulams\Tenancy\Console\SetTenantEnvCommand;
 use Ulams\Tenancy\Console\RecreateViewsCommand;
 use Ulams\Tenancy\Console\SyncTenantEnvCommand;
 use Ulams\Tenancy\Console\UpgradeCommand;
+use Ulams\Tenancy\Console\WorkOnceCommand;
 use Ulams\Tenancy\Http\Middleware\RejectUnknownHost;
 use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
 use Ulams\Tenancy\Services\Contracts\TenantCommandRunnerContract;
 use Ulams\Tenancy\Services\H5PServiceConfigExporter;
+use Ulams\Tenancy\Services\ManualDatabaseProvisioner;
 use Ulams\Tenancy\Services\MultidomainRegistry;
 use Ulams\Tenancy\Services\PostgresDatabaseProvisioner;
 use Ulams\Tenancy\Services\ProcessTenantCommandRunner;
@@ -34,7 +36,6 @@ class UlamsTenancyServiceProvider extends ServiceProvider
     public const CONFIG_KEY = 'ulams_tenancy';
 
     public $singletons = [
-        DatabaseProvisionerContract::class => PostgresDatabaseProvisioner::class,
         DomainRegistryContract::class => MultidomainRegistry::class,
     ];
 
@@ -44,6 +45,9 @@ class UlamsTenancyServiceProvider extends ServiceProvider
         // in register(), so steps of other packages (registered when they boot) come after these
         DefaultUpgradeSteps::register();
 
+        $this->app->singleton(DatabaseProvisionerContract::class, fn ($app) => config(self::CONFIG_KEY . '.database_provisioner') === 'manual'
+            ? $app->make(ManualDatabaseProvisioner::class)
+            : $app->make(PostgresDatabaseProvisioner::class));
         $this->app->singleton(
             BucketProvisionerContract::class,
             fn () => S3BucketProvisioner::fromConfig(config(self::CONFIG_KEY . '.s3', []))
@@ -82,6 +86,7 @@ class UlamsTenancyServiceProvider extends ServiceProvider
                 SeedTenantDemoCommand::class,
                 ExportH5PServiceConfigCommand::class,
                 ScheduleLoopCommand::class,
+                WorkOnceCommand::class,
                 UpgradeCommand::class,
                 RecreateViewsCommand::class,
             ]);

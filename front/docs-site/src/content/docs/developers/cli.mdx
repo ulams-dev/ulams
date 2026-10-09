@@ -7,43 +7,73 @@ modules:
   - cli
 ---
 
-import { Aside } from "@astrojs/starlight/components";
+import { Aside, Steps } from "@astrojs/starlight/components";
 
 `ulams` is a command line tool for people and AI agents. It talks to the same REST API as the admin
 panel and the learner frontend, through [`@ulams/sdk`](/developers/openapi-and-sdk/). Every command is
 defined once in a registry, so the help, the JSON schema (`ulams schema`), the
 [CLI reference](/reference/cli/) and the [MCP server](/developers/agents/) cannot drift apart.
-Decision records: [ADR 0072](/decisions/0072-agent-first-cli-command-registry/) (registry) and
-[ADR 0073](/decisions/0073-cli-machine-contract/) (output contract).
+Decision records: [ADR 0072](/decisions/0072-agent-first-cli-command-registry/) (registry),
+[ADR 0073](/decisions/0073-cli-machine-contract/) (output contract) and
+[ADR 0077](/decisions/0077-cli-distribution/) (distribution).
+
+## Install
 
 <Aside type="note" title="Install from the repository for now">
-The package is not published to npm yet. From a checkout of the repository:
-
-```bash
-corepack yarn install --ignore-engines
-corepack yarn workspace ulams build
-node front/cli/dist/ulams.mjs --version      # or link the bin, see "Use ulams from Claude Code"
-```
+The npm package `ulams` and the `ghcr.io/ulams-dev/ulams-cli` image are planned
+([ADR 0077](/decisions/0077-cli-distribution/), pending owner decision #77) and are **not published yet**. Until then
+build the CLI from a checkout. You need Node 22.12 or newer.
 </Aside>
+
+<Steps>
+
+1. Build it:
+
+   ```bash
+   corepack yarn install --ignore-engines
+   corepack yarn workspace ulams build        # writes front/cli/dist/ulams.mjs
+   ```
+
+2. Put it on your `PATH` (the build marks the file executable):
+
+   ```bash
+   mkdir -p ~/.local/bin
+   ln -sf "$PWD/front/cli/dist/ulams.mjs" ~/.local/bin/ulams
+   ulams version        # {"ok":true,…,"data":{"version":"0.1.0","contract":1,"node":"v22…"}}
+   ```
+
+3. Optional shell completion (the top-level commands). The script is plain text with `--output text`:
+
+   ```bash
+   source <(ulams completion bash --output text)                       # bash
+   ulams completion zsh --output text > "${fpath[1]}/_ulams"           # zsh
+   ulams completion fish --output text > ~/.config/fish/completions/ulams.fish
+   ```
+
+</Steps>
 
 ## Log in
 
 Tokens are per instance (each tenant has its own signing keys), so a profile is one instance plus one
-token. Credentials are stored in `~/.config/ulams/credentials.json` (mode 0600; `$ULAMS_CONFIG_DIR`
-overrides the directory), and the CLI never prints a token.
+token. A profile name defaults to the first label of the host (`coffee.localhost` becomes `coffee`);
+`--profile <name>` on `login` chooses another. The files are `config.json` (profiles, default output) and
+`credentials.json` (tokens, mode 0600; the CLI refuses to read it with `INSECURE_CREDENTIALS` when other users can)
+in `~/.config/ulams/` (`$XDG_CONFIG_HOME/ulams`, `%APPDATA%\ulams` on Windows). `$ULAMS_CONFIG_DIR` overrides the
+directory. The CLI never prints a token.
+
+| Method | Command | Use it for |
+|---|---|---|
+| Demo user | `ulams login --url http://coffee.localhost --demo admin` (or `tutor`, `student`) | demo tenants (`DEMO_MODE=true`) |
+| Browser, scoped token | `ulams login --url https://school.example.com --device [--scopes …]` | people; the recommended way |
+| Token you have | `printf '%s' "$TOKEN" \| ulams login --url … --token-stdin` | tokens from [My tokens](/learners/account/#my-tokens) or `ulams tokens create` |
+| Password | `printf '%s' "$PASSWORD" \| ulams login --url … --email me@example.com --password-stdin` | scripts that must use a password; never a flag |
 
 ```bash
-# Demo tenants (DEMO_MODE=true): the seeded admin, tutor or student
-ulams login --url http://coffee.localhost --demo admin
-
-# A password (one line on stdin, never a flag)
-printf '%s' "$PASSWORD" | ulams login --url https://school.example.com --email me@example.com --password-stdin
-
-# A token you already have
-printf '%s' "$TOKEN" | ulams login --url https://school.example.com --token-stdin
-
-ulams whoami            # user, roles, instance, where the token came from
-ulams profiles list     # saved profiles; `ulams profiles use <name>` switches
+ulams whoami            # user, roles, instance, profile, and the token: source, id, scopes, expiry
+ulams profiles list     # saved profiles; the default is marked
+ulams profiles use <name>
+ulams profiles delete <name>
+ulams logout            # forgets the saved token of the default profile (--profile for another)
 ```
 
 Password logins use the API's one-month token, which has the full permissions of the user. Prefer
@@ -58,10 +88,10 @@ ulams login --url https://school.example.com --device --scopes courses:write,bui
 
 The CLI prints a link and a code (`BDWP-HQPK`) on stderr and opens the browser when it runs in a
 terminal. Open `/cli/authorize` in the web app (signed in as yourself), untick any scope you do not want
-to give, pick an expiry and approve; the CLI collects its token and saves the profile. Scopes are
-`<area>:read|write` or a preset (`@read-only`, `@author`, `@admin`, `@learner`, `@ci`); see
-[Scoped tokens](/developers/scoped-tokens/). Servers without device login answer "not available on this
-server" (check `features.deviceLogin` in `/api/meta`).
+to give, pick an expiry and approve; the CLI collects its token and saves the profile
+([sign-in page](/learners/cli-sign-in/); the endpoints are in [Scoped API tokens](/developers/scoped-tokens/#device-login)).
+Scopes are `<area>:read|write` or a preset (`@read-only`, `@author`, `@admin`, `@learner`, `@ci`). Servers without
+device login answer "not available on this server" (check `features.deviceLogin` in `/api/meta`).
 
 Manage tokens from the CLI (a token can only grant scopes it has itself):
 
@@ -69,71 +99,159 @@ Manage tokens from the CLI (a token can only grant scopes it has itself):
 ulams tokens create --name ci --scopes @ci --expires-in-days 30 --kind ci   # the secret is printed once
 ulams tokens list
 ulams tokens revoke <id> --yes
-ulams whoami            # shows the token id, scopes and expiry
-ulams logout --revoke   # revoke the saved token, then forget it
+ulams tokens current                    # the token of this request: scopes, kind, expiry
+ulams tokens list-all                   # every user's tokens (needs token_manage)
+ulams tokens agent-audit --token-id <id>   # what an agent token did
+ulams logout --revoke   # revoke the saved scoped token on the server, then forget it
 ```
+
+### Settings and environment
 
 For CI and agents no files are needed: set `ULAMS_URL` and `ULAMS_TOKEN`. Precedence is flag, then
 environment, then profile. A profile token is never sent to another `--url`.
 
+| Variable | Meaning |
+|---|---|
+| `ULAMS_URL`, `ULAMS_TOKEN` | instance origin and token (`--url`, `--token-stdin` on the command line) |
+| `ULAMS_PROFILE` | profile to use |
+| `ULAMS_CONFIG_DIR` | directory of `config.json` and `credentials.json` |
+| `ULAMS_OUTPUT` | default output mode (`json`, `ndjson`, `yaml`, `table`, `text`) |
+| `ULAMS_YES=1` | same as `--yes` |
+| `ULAMS_DEBUG=1` | same as `--debug`: a redacted request log on stderr |
+| `ULAMS_AGENT` | an agent name sent as `X-Ulams-Agent`; it appears in the [agent audit log](/developers/scoped-tokens/#agent-audit-log) |
+| `NO_COLOR` | disable colours |
+
+`ulams config get` shows the CLI settings and `ulams config set defaultOutput json` (or `color false`) changes them.
+Every request carries `X-Ulams-Client: cli`.
+
 ## Output contract
 
-When stdout is not a terminal (or with `--json`) every command prints one JSON document:
+When stdout is not a terminal (or with `--json`) every command prints one JSON document (contract version 1,
+JSON Schema in `ulams schema`, key `envelope`):
 
 ```json
-{ "ok": true, "contract": 1, "command": "api", "data": [], "meta": { "page": 1, "perPage": 25, "total": 0, "lastPage": 1, "nextPage": null } }
+{ "ok": true, "contract": 1, "command": "courses.list", "data": [], "meta": { "page": 1, "perPage": 25, "total": 0, "lastPage": 1, "nextPage": null }, "warnings": [] }
+{ "ok": false, "contract": 1, "command": "courses.get", "error": { "code": "NOT_FOUND", "message": "…", "hint": "…", "status": 404, "retryable": false, "requestId": "01J…", "details": {} } }
 ```
 
-Failures print `{ "ok": false, "error": { "code", "message", "hint", "status", "retryable", "requestId", "details" } }`
-and exit with a stable code: 0 ok, 2 usage or input, 3 not logged in, 4 forbidden, 5 not found, 6 conflict,
-7 API validation, 8 rate limited, 9 server or network, 10 wait timeout, 11 confirmation required, 12
-feature disabled, 13 diff found. The full table is in the [CLI reference](/reference/cli/).
+`--output ndjson` prints one JSON object per line instead: `{"type":"item","data":{…}}` for each list item and a last
+`{"type":"end","ok":true,"meta":{…}}`. Commands that stream (`builder events`) print `{"type":"event","id":"…","data":{…}}`
+lines. `--output yaml` and `--output table` are for people, `--output text` prints a string result as it is.
+The CLI never prompts unless you pass `--interactive` (or run `login` in a terminal). Every input has a flag, and
+`--input @file.json` (or `-` for stdin, or inline JSON) supplies a whole input object that explicit flags override;
+`--set path=value` sets one nested value.
 
-The CLI never prompts unless you pass `--interactive` (or run `login` in a terminal). Every input has a
-flag, and `--input @file.json` (or `-` for stdin) supplies a whole input object that explicit flags override.
+### Exit codes
+
+The exit code is stable (contract 1); `error.code` says which case it is. `retryable: true` means the same call may work
+later. The table is the registry's, also generated into the [CLI reference](/reference/cli/#exit-codes).
+
+| Exit | Error codes | Meaning and what to do |
+|---|---|---|
+| 0 | none | success (also a dry run, and `apply --dry-run` without `--exit-code`) |
+| 1 | `INTERNAL` | a bug in the CLI: re-run with `--debug` and report it |
+| 2 | `USAGE`, `INPUT_INVALID` | unknown command, missing or invalid flag or file: `ulams describe <command>` |
+| 3 | `AUTH_REQUIRED`, `AUTH_EXPIRED`, `INSECURE_CREDENTIALS` | not logged in, the token was rejected, or the credentials file is readable by others (`chmod 600`) |
+| 4 | `FORBIDDEN`, `SCOPE_MISSING` | the user lacks the permission, or the token lacks the scope: `ulams whoami` |
+| 5 | `NOT_FOUND` | no such resource: check the id with the matching `list` |
+| 6 | `CONFLICT`, `SYNC_CONFLICT`, `IDEMPOTENCY_MISMATCH` | the resource changed or already exists, or an idempotency key was reused with another body |
+| 7 | `VALIDATION_FAILED` | the API rejected the input: `error.details.fields` |
+| 8 | `RATE_LIMITED` | wait `error.details.retryAfter` seconds |
+| 9 | `SERVER_ERROR`, `NETWORK` | the server failed or is unreachable (retryable) |
+| 10 | `TIMEOUT` | a `--wait` ran out: resume with `ulams operations wait <handle>` |
+| 11 | `CONFIRMATION_REQUIRED` | destructive command: read `error.details.plan`, re-run with `--yes` |
+| 12 | `FEATURE_DISABLED`, `UNSUPPORTED_SERVER` | the instance does not have the feature (see `/api/meta`) or the command |
+| 13 | `DIFF_FOUND` | `apply --dry-run --exit-code` found changes (expected, not an error) |
+
+A shell script can branch on the code and an agent on `error.code`:
+
+```bash
+ulams courses get 999 --json > out.json; code=$?      # 5
+[ "$code" -eq 5 ] && jq -r '.error.hint' out.json     # Check the id with the matching `list` command.
+```
+
+### Global flags
+
+| Flag | Meaning |
+|---|---|
+| `--json`, `--output json\|ndjson\|yaml\|table\|text` | output mode; default `auto` is a table on a terminal and JSON when piped |
+| `--fields id,title,lessons.title` | keep only these (dotted) paths of the data, of each item for lists |
+| `--page`, `--per-page`, `--all`, `--limit <n>` | pagination; `--all` fetches every page, `--limit` stops after n items |
+| `--input <json\|@file\|->`, `--set path=value` | the whole input object, and single overrides |
+| `--dry-run` | print the plan (for updates a diff) and change nothing |
+| `--yes` | confirm destructive commands (`ULAMS_YES=1`) |
+| `--wait`, `--no-wait`, `--timeout <s>` | long operations: wait by default for 600 s; `--no-wait` prints a handle |
+| `--idempotency-key <key>` | sent as `Idempotency-Key` ([retries](/developers/scoped-tokens/#idempotency-key-and-x-request-id)) |
+| `--out <path>` | write a binary download (an export) to this path, `-` for stdout |
+| `--profile`, `--url`, `--token-stdin` | choose the instance and token for this call |
+| `--quiet`, `--no-color`, `--debug`, `--interactive` | stderr noise, colours, a redacted request log, prompts |
+
+```bash
+ulams courses list --per-page 2 --fields id,title,status --json
+# {"ok":true,…,"data":[{"id":1,"title":"…","status":"published"},…],"meta":{"page":1,"perPage":2,"total":3,"lastPage":2,"nextPage":2}}
+ulams courses list --all --fields id,title --output ndjson | jq -r '.data.title // empty'
+echo '{"title":"Draft","status":"draft"}' | ulams courses create --input - --fields id,title
+ulams courses create --input '{"title":"Draft"}' --set status=draft --dry-run
+```
+
+## Discover the commands
+
+```bash
+ulams schema --json                 # every command, input JSON Schema, kind, scopes, endpoints, exit codes, global flags
+ulams describe courses.create       # one command (the dotted id, or the quoted path `ulams describe "courses create"`)
+ulams courses create --help         # human help with flags and examples
+ulams --help
+```
+
+Run `ulams schema` once at the start of an agent session; it works without credentials. The kinds are `read`,
+`write`, `destructive`, `local` (no API call) and `stream`.
 
 ## Call any endpoint
+
+`ulams api` is the escape hatch over the whole API. The path is literal or a template from the bundled OpenAPI spec:
 
 ```bash
 ulams api --list --filter quiz                         # endpoints of the bundled API spec
 ulams api GET /api/admin/courses --query per_page=5 --json
 ulams api PUT /api/admin/courses/{id} --param id=12 --body '{"title":"New"}' --dry-run
+ulams api POST /api/admin/lessons --body @lesson.yaml  # @file.json, @file.yaml or - for stdin
 ulams api DELETE /api/admin/courses/12 --yes
 ```
 
 `GET` is a read, `DELETE` is destructive and needs `--yes` (exit 11 with the plan otherwise), other
-methods are writes and honour `--dry-run`.
-
-## Discover the commands
-
-```bash
-ulams schema --json                 # every command, input JSON Schema, kind, scopes, exit codes
-ulams describe api                  # one command
-ulams --help
-```
-
-Run `ulams schema` once at the start of an agent session; it works without credentials.
+methods are writes and honour `--dry-run`. `--raw` prints the whole response body instead of the envelope data.
 
 ## Commands for everything the admin panel does
 
 Noun commands are generated from the API's OpenAPI document by method and path (`courses list`,
-`lessons create`, `users get 12`, `quizzes update`, ...), with a curated override file for names and a few
-hand-written commands where the generic one is not enough. Every operation of the API is either covered
-or deliberately excluded; the [coverage matrix](/reference/cli/coverage/) is checked in CI.
+`lessons create`, `users get 12`, `quizzes update`, ...), with a curated override file
+(`front/cli/spec/overrides.yaml`) for names and a few hand-written commands where the generic one is not enough.
 
 ```bash
 ulams courses list --title Kube --per-page 5            # filters are flags
 ulams courses list --all --fields id,title,status        # every page; NDJSON with --output ndjson
 ulams courses get 12                                     # lessons and topics included
 ulams courses publish 12                                 # idempotent
-ulams access grant --course 12 --user 34 --group 5       # enrol (alias: ulams enrol)
-ulams settings set global companyName "Acme Academy"
-ulams theme set --accent '#C2552D'
-ulams courses export 12 --out course-12.zip
+ulams courses export 12 --out course-12.zip              # and: ulams courses import --file course-12.zip
+ulams lessons create --course-id 12 --title Install --order 1
+ulams users list --search student1 --fields id,email
 ```
 
 List commands take `--page`, `--per-page`, `--all` and `--limit`. Names that are not obvious: learner
 endpoints are under `my` (signed in) and `public`, tokens under `tokens`. `ulams schema` lists them all.
+
+### Enrolment, settings and theme
+
+```bash
+ulams access grant --course 12 --user 34 --group 5       # enrol users and groups (alias: ulams enrol)
+ulams access list --course 12
+ulams access revoke --course 12 --user 34
+ulams access set --course 12 --user 34 --user 35         # REPLACES the list: destructive, needs --yes
+ulams settings set global companyName "Acme Academy"     # created or updated, nothing when unchanged
+ulams settings get global companyName                    # also: settings list --group global, settings groups
+ulams theme get
+ulams theme set --accent '#C2552D'                       # also --theme <name>
+```
 
 ### Topics of every type
 
@@ -141,36 +259,125 @@ endpoints are under `my` (signed in) and `public`, tokens under `tokens`. `ulams
 |---|---|
 | `topics create-richtext --markdown @file.md` | rich text from Markdown (or `--html`) |
 | `topics create-oembed --url …`, `create-video --youtube-url …` | an embedded video or page |
-| `topics create-video --file v.mp4` | uploaded video; waits for processing (`--no-wait` prints `video:<id>`) |
-| `topics create-file --file doc.pdf` | PDF, image or audio, by extension |
-| `topics create-scorm --package pkg.zip [--sco id]` | SCORM package; several SCOs without `--sco` exit 2 with the choices |
-| `topics create-cmi5`, `create-h5p`, `create-liascript` | the same pattern for each package type |
-| `topics create-quiz --input @quiz.yaml` | a GIFT quiz with its questions |
-| `topics create --topicable <class> --value …` | any other registered type |
+| `topics create-video --file v.mp4` | uploaded video (mp4, ogg, webm, mov); waits for processing (`--no-wait` prints `video:<id>`) |
+| `topics create-file --file doc.pdf` | PDF, image (png, jpg, gif, webp, svg) or audio (mp3, ogg), by extension |
+| `topics create-scorm --package pkg.zip [--sco id]` | SCORM package; several SCOs without `--sco` exit 2 with the choices in `details.choices` |
+| `topics create-cmi5 --package au.zip [--au id]` | cmi5 package, the assignable unit by `--au` |
+| `topics create-h5p --package quiz.h5p` | H5P content, uploaded to the H5P service |
+| `topics create-liascript --markdown @course.md` (or `--file course.zip`) | LiaScript |
+| `topics create-quiz --input @quiz.yaml` | a quiz; the file lists `questions` with `prompt` and `options` (`text`, `correct`) or a raw `gift` string, plus `maxAttempts`, `minPassScore` |
+| `topics create --topicable <class> --value …` | any other registered type (`ulams topics types` lists the classes), such as a project or an LTI tool |
+
+All of them take `--lesson <id>` and `--title`, and optionally `--order`, `--summary`, `--duration`, `--preview`, `--active`
+and `--can-skip`. Adapt courses have their own commands (`ulams adapt create|build|versions-add`, [Adapt](/creators/adapt/)),
+and `ulams file upload` and `ulams courses import` take local files too.
 
 ### Dry run, confirmation and long operations
 
 `--dry-run` makes no change: for updates it fetches the current resource and prints a diff, for deletes
 it shows the resource. Destructive commands exit 11 with that plan until you pass `--yes`. Long
 operations wait by default (`--timeout 600`); `--no-wait` prints a handle such as `video:42` that you can
-give to `ulams operations get|wait`; a timeout exits 10 and names the handle.
+give to `ulams operations get|wait` (`ulams operations kinds` lists the handle kinds); a timeout exits 10 and names the handle.
+
+```bash
+ulams topics create-video --lesson 12 --title Intro --file ./intro.mp4 --no-wait --json   # data.handle: video:42
+ulams operations wait video:42 --timeout 300 --json
+```
+
+### Coverage: every endpoint is a command or an exclusion
+
+Every operation of the API's OpenAPI snapshot (`front/cli/spec/openapi.json`) is either covered by a command or listed in
+`front/cli/spec/exclusions.yaml` with a reason (`inbound-webhook`, `browser-only`, `content-runtime`, `internal`,
+`deprecated`, `not-for-cli`); `ulams api` does not count as coverage. `yarn workspace ulams coverage` writes the
+[coverage matrix](/reference/cli/coverage/) and exits 1 on a gap or a stale entry, and the CI job "CLI endpoint coverage"
+runs it, so a new endpoint cannot be merged without a command or a reason. After changing the API refresh the snapshot with
+`php artisan l5-swagger:generate`, `yarn workspace ulams sync-spec` and `yarn workspace ulams generate`
+([OpenAPI and SDK](/developers/openapi-and-sdk/)).
+
+## Declarative apply
+
+`ulams apply --file course.yaml` takes YAML or JSON documents (several per file, separated by `---`). Each has
+`apiVersion: ulams.dev/v1`, a `kind`, `metadata.key` (a name for the report; `metadata.id` pins an existing object) and a `spec`.
+Objects are found by title, email, name or group and key, only changed fields are written, every write carries a derived
+`Idempotency-Key`, and a second run performs no writes.
+
+| Kind | Key spec fields | Found by |
+|---|---|---|
+| `Course` | `title` (required), `subtitle`, `summary`, `description`, `status`, `language`, `level`, `public`, `lessons[]` | title, or `metadata.id` when titles repeat (exit 6 otherwise) |
+| lesson (inside a course) | `title`, `summary`, `duration`, `topics[]` | title within the course |
+| topic (inside a lesson) | `title`, `type` (`richtext` or `oembed`), `markdown` or `html` (`@file` allowed), `url` | title within the lesson |
+| `User` | `email` (required), `first_name`, `last_name`, `is_active`, `roles`, `password` (on create only) | email |
+| `Group` | `name` (required), `registerable`, `parent_id` | name |
+| `Page` | `title` (required), `markdown` or `content`, `active` | title |
+| `Setting` | `group`, `key`, `value` | group and key |
+| `Access` | `course` (title), `users[]` (emails), `groups[]` (names) | course |
+
+```yaml
+apiVersion: ulams.dev/v1
+kind: Course
+metadata:
+  key: kubernetes-101
+spec:
+  title: Kubernetes 101
+  status: draft
+  summary: A first course on running containers in production.
+  lessons:
+    - key: install
+      title: Install
+      topics:
+        - { key: intro, type: richtext, title: Install kubectl, markdown: "@install.md" }
+        - { key: demo, type: oembed, title: Demo video, url: "https://www.youtube.com/watch?v=example" }
+---
+apiVersion: ulams.dev/v1
+kind: Group
+metadata: { key: sales }
+spec: { name: Sales }
+---
+apiVersion: ulams.dev/v1
+kind: Access
+spec:
+  course: Kubernetes 101
+  groups: [Sales]
+```
+
+```bash
+ulams apply --file course.yaml --dry-run --exit-code   # exit 13 when the plan has changes, 0 when it has none
+ulams apply --file course.yaml                         # creates; the data lists each object as created, updated or unchanged
+ulams apply --file course.yaml                         # second run: everything "unchanged", no writes
+ulams get Course "Kubernetes 101" --output yaml > exported.yaml   # a live course as a manifest
+```
+
+`--prune` also deletes lessons, topics and access entries missing from the manifest (it needs `--yes`). Other topic types
+are created with `ulams topics create-<type>`; `apply` rejects them with the command to use. The files of this example are in
+[`front/docs-site/examples/cli`](https://github.com/ulams-dev/ulams/tree/main/front/docs-site/examples/cli), together with
+`create-course.sh`, the same flow in plain commands.
 
 ## Course builder and Living Course
 
 `ulams builder start --from ./guide.md --defaults --approve-outline --apply` builds a course from a source file, and
-`ulams living …` reviews source updates. See [Build courses from the command line](/developers/cli-builder/).
-
-## Declarative apply
-
-`ulams apply --file course.yaml` takes YAML or JSON documents (`apiVersion: ulams.dev/v1`; kinds `Course`
-with nested lessons and topics, `User`, `Group`, `Page`, `Setting`, `Access`). Objects are found by title,
-email, name or group and key, only changed fields are written, and a second run performs no writes.
-`--dry-run --exit-code` exits 13 when the plan has changes; `--prune` also deletes lessons, topics and
-access entries missing from the manifest (it needs `--yes`). `ulams get Course "Kubernetes 101" --output yaml`
-exports a live course as a manifest. A full example is in
-[`front/docs-site/examples/cli`](https://github.com/ulams-dev/ulams/tree/main/front/docs-site/examples/cli).
+`ulams living …` reviews source updates. Both emit NDJSON events and exit with the codes above. See
+[Build courses from the command line](/developers/cli-builder/).
 
 ## Tenants (platform)
 
 On a platform host (`TENANCY_PLATFORM_API=true`) `ulams tenants list|get|create|delete|set-env` manage tenants and
-wait for the queued operations: [Platform tenant API](/operators/platform-api/).
+wait for the queued operations (`ulams tenants operations get|list`); a normal tenant answers `FEATURE_DISABLED` (exit 12).
+Off by default: [Platform tenant API](/operators/platform-api/).
+
+```bash
+ulams login --url https://platform.example.com --token-stdin < platform-token.txt
+ulams tenants create acme --name "Acme Academy" --theme coffee --accent "#C2552D" --users 3 --demo
+ulams tenants set-env acme --override AI_DRIVER=fake --reset AI_TIMEOUT   # --reset: inherit the platform value again
+```
+
+## Troubleshooting
+
+| Symptom | Cause and fix |
+|---|---|
+| exit 3, `AUTH_REQUIRED: No instance configured` | no profile and no `ULAMS_URL`: `ulams login --url …` |
+| exit 3, `INSECURE_CREDENTIALS` | `chmod 600 ~/.config/ulams/credentials.json` |
+| exit 4, `SCOPE_MISSING` | the token lacks the scope named in `error.details.required`; create a token with it (`ulams whoami` shows the current scopes) |
+| exit 9, `NETWORK` | the instance is unreachable; check the URL (`http` for local stacks) and `curl <url>/api/meta` |
+| exit 12 on `builder`, `living`, `tenants` | the feature is off on this host: `curl <url>/api/meta` lists `features` |
+| exit 11 in a script | destructive command: add `--yes` after reading the plan |
+| output is a table, not JSON | stdout is a terminal: add `--json` or set `ULAMS_OUTPUT=json` |

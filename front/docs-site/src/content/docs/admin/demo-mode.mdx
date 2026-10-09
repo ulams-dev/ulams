@@ -48,8 +48,8 @@ When demo mode is off, none of it exists: the demo routes answer 404, `GET /api/
 
 | Endpoint | What it does |
 |---|---|
-| `GET /api/demo` | Returns `enabled`, the demo accounts (`role`, `email`, never a password), `front_url`, `admin_url` and `reset_cron`. |
-| `POST /api/demo/login` with `{"role": "student"}`, `{"role": "tutor"}` or `{"role": "admin"}` | Issues a regular Passport personal access token for that account. The response body is the same as `POST /api/auth/login`. Rate limited to 60 requests a minute. |
+| `GET /api/demo` | Returns `enabled`, `users` (the demo accounts: `role`, `email`, never a password; the tutor only when that account exists), `front_url`, `admin_url` and `reset_cron` (`null` when `DEMO_RESET_SCHEDULE` is off). |
+| `POST /api/demo/login` with `{"role": "student"}`, `{"role": "tutor"}` or `{"role": "admin"}` | Issues a regular Passport personal access token for that account. The response body is the same as `POST /api/auth/login`. Rate limited to 60 requests a minute. A role whose account cannot be found (for example a tenant without a seeded tutor) answers 422. Any other role value is rejected by validation. |
 | `GET /api/config` | Gains `ulams_demo: {enabled, front_url, admin_url}`. |
 
 Before logging in the student, the API gives the demo student access to every published
@@ -79,7 +79,8 @@ If the account does not exist, the first user with that role is used.
 The package schedules `ulams:demo:reset --force --domain=<host>` on every domain whose env has
 `DEMO_MODE=true`, by default at the start of every hour (`DEMO_RESET_CRON`, `0 * * * *`). The
 container scheduler already runs `schedule:run` for every tenant, so nothing else needs to be
-set up. The reset runs in the background and never overlaps with itself.
+set up. The reset runs in the background and never overlaps with itself (`withoutOverlapping`, with a 120-minute
+lock in the cache store).
 
 To reset a tenant now:
 
@@ -101,8 +102,9 @@ platform.
 
 <Steps>
 
-1. **H5P content.** Deletes the tenant's H5P contents in the H5P service: every content id the
-   tenant database knows, then the files of contents that no longer have a row. The service
+1. **H5P content.** Deletes the tenant's H5P contents in the H5P service (`DELETE /h5p/contents/{id}`
+   for every content id the tenant database knows, from `h5p.contents` and from H5P topics), then the
+   files of contents that no longer have a row (`POST /h5p/contents/orphans/delete`). The service
    stores H5P content outside the main tenant schema, so `migrate:fresh` alone would leave it
    behind. If the service cannot be reached, the reset continues with a warning and the next
    reset deletes them.
@@ -111,9 +113,11 @@ platform.
    by themselves.
 3. **Passport client.** Creates the personal access client again.
 4. **Roles and admin.** Seeds roles, permissions and the admin account.
-5. **Users and settings.** Creates the tutor and the students and stores the name, theme and
+5. **LTI keys.** `ulams:lti:rotate-keys --init` creates the tenant's LTI key set again (it lives in
+   the wiped database). Skipped when the LTI package is not installed.
+6. **Users and settings.** Creates the tutor and the students and stores the name, theme and
    accent from the baseline.
-6. **Demo content.** `ulams:demo:seed`: seeds the demo courses for the tenant's experience
+7. **Demo content.** `ulams:demo:seed`: seeds the demo courses for the tenant's experience
    (by default the tenant slug) and gives the demo student access to every published course.
 
 </Steps>

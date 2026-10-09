@@ -38,7 +38,7 @@ separate build service ([ADR 0013](/decisions/0013-adapt-build-worker/)). The bu
 through Path A, so there is still no separate Adapt topic type.
 
 It is a feature flag, **off by default**. An operator turns it on with `ADAPT_SOURCE_ENABLED=true`
-and starts the build service with the `adapt` compose profile. While it is off, **Courses → Adapt**
+and starts the build service (see [Configuration](#configuration)). While it is off, **Courses → Adapt**
 shows a notice that Adapt sources are not enabled. You need the `adapt_manage` permission (given to
 `admin`).
 
@@ -74,3 +74,23 @@ Deleting a source does not delete the SCORM package that was built from it.
 The version list comes from `GET /api/admin/adapt/{id}/versions`; the other endpoints are listed in
 [API endpoints](/reference/api-endpoints/).
 </Aside>
+
+## Configuration
+
+For operators. Path A needs none of this.
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `ADAPT_SOURCE_ENABLED` | `false` | Turns Path B on |
+| `ADAPT_BUILDER_URL` | `http://adapt-builder:8080` | Where the API reaches the build service |
+| `ADAPT_BUILDER_TOKEN` | none | Shared secret for calls to the build service; must match the service |
+| `ADAPT_BUILDER_TIMEOUT` | `300` | Seconds the API waits for one build call |
+| `ADAPT_MAX_SOURCE_KB` | `4096` | Largest source JSON accepted |
+| `ADAPT_QUEUE_CONNECTION`, `ADAPT_QUEUE` | `<driver>-builder`, `builder` | Where the build job runs |
+
+The build runs as a job on the builder queue (job timeout 900 s, `retry_after` above it), so a worker for
+that queue must be running: see [Queues and the scheduler](/operators/queues-and-scheduler/). The build
+service is a separate GPL-3.0 program in `api/adapt-builder` (about 30 to 90 seconds of CPU per build). In
+the development stack start it with `docker compose --profile adapt up -d adapt-builder` from `api/`. Its
+image is not among the images published to GHCR, so a production install builds it from
+`api/adapt-builder` (see its README) and runs it where only the API can reach it.

@@ -77,7 +77,15 @@ export function mountThread(root: HTMLElement): void {
     if (!state.aiEnabled) {
       dropError.textContent = "AI features are disabled on this installation. Ask your admin to configure them.";
     }
-    const brief = state.briefRows ?? [];
+    // an open brief editor survives the state events that stream in meanwhile (a re-render would drop
+    // what the author is typing and move focus); the panel catches up when the edit is saved or cancelled
+    if (panel.dataset.editing && panel.querySelector(".st-brief-edit")) {
+      renderNext(state);
+      return;
+    }
+    const brief = [...(state.briefRows ?? [])];
+    // operators can choose a new site even before the brief has a site row
+    if (state.canCreateSite && !brief.some((row) => row.key === "site")) brief.push({ key: "site", label: "Site", value: "This site" });
     const decided = (state.brief?.decidedBy ?? {}) as Record<string, string>;
     const editing = panel.dataset.editing ?? "";
     const stopEditing = () => {

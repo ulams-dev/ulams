@@ -17,6 +17,11 @@ return [
      * instead of silently falling back to the platform `.env`.
      */
     'enforce_known_hosts' => filter_var(env('TENANCY_ENFORCE_HOSTS', true), FILTER_VALIDATE_BOOLEAN),
+    // The host platform commands run under (`php artisan … --domain=<host>`): the platform env. A tenant's
+    // queue worker uses it to create a tenant for "new site" in the course builder.
+    'platform_command_host' => env('TENANCY_PLATFORM_HOST', 'api.localhost'),
+    // "New site" in the course builder (ADR 0048): off unless switched on; needs `platform_admin`.
+    'new_sites' => filter_var(env('TENANCY_NEW_SITES', false), FILTER_VALIDATE_BOOLEAN),
     'platform_hosts' => $list(env('TENANCY_PLATFORM_HOSTS', 'api.localhost,localhost,127.0.0.1,caddy,api')),
 
     /*
@@ -70,12 +75,22 @@ return [
         'key' => env('TENANCY_S3_KEY', env('AWS_ACCESS_KEY_ID')),
         'secret' => env('TENANCY_S3_SECRET', env('AWS_SECRET_ACCESS_KEY')),
         'use_path_style_endpoint' => filter_var(env('AWS_USE_PATH_STYLE_ENDPOINT', true), FILTER_VALIDATE_BOOLEAN),
+        // Attach a public-read bucket policy to every tenant bucket. Turn off for Cloudflare R2 (no
+        // PutBucketPolicy): make the buckets public through a custom domain instead (ADR 0091).
+        'public_read_policy' => filter_var(env('TENANCY_S3_PUBLIC_READ_POLICY', true), FILTER_VALIDATE_BOOLEAN),
     ],
 
     /*
      * Connection with CREATEROLE/CREATEDB rights (see `pgsql_admin` in config/database.php).
      */
     'admin_connection' => env('TENANCY_ADMIN_CONNECTION', 'pgsql_admin'),
+
+    /*
+     * `admin` (default): ulams creates each tenant's role and database through `admin_connection`.
+     * `manual`: the operator creates them (shared hosting, managed PostgreSQL without CREATEDB);
+     * the `database` step only checks that the tenant can log in. ADR 0091.
+     */
+    'database_provisioner' => env('TENANCY_DATABASE_PROVISIONER', 'admin'),
 
     /*
      * Several API replicas each run the scheduler loop; only the one that takes the per-minute

@@ -32,7 +32,9 @@ hostile input.
   with its own CSP. See [Content origin](/operators/content-origin/).
 - **H5P runs in its own service** (`api/h5p`): the front and admin frame its embed pages and talk
   to them with `postMessage`; the embed pages send `frame-ancestors` limited to the tenant's front
-  and admin origins, and CORS is per tenant.
+  and admin origins, and CORS is per tenant. The reference front keeps the learner's token in an
+  httpOnly cookie and adds it server-side, for the player's own calls only, in its `/h5p` proxy, so
+  H5P content scripts never see a token ([H5P in production](/operators/h5p/#the-state-proxy-of-the-reference-front)).
 
 ## SVG, HTML and other active files
 
@@ -55,6 +57,9 @@ hostile input.
 | Learner front (`web`) | `Content-Security-Policy` (enforced in development, report-only in the production image until `CSP_ENFORCE=true`) with `frame-src` for the tenant's registered tools, and `Reporting-Endpoints` | `front/web/src/middleware.ts` |
 | Admin | The same, with `frame-src 'self' <content origins> https:` | Caddy `app_csp_admin` snippet |
 | H5P embed pages | `frame-ancestors` per tenant, `Referrer-Policy: no-referrer` | `api/h5p` |
+
+Violation reports go to `POST /api/csp-report` and admins read them at `GET /api/admin/csp-reports`
+([Security headers](/operators/security-headers/#reports)).
 
 <Badge text="Recommended" variant="tip" /> Collect the CSP reports for about a week, then enforce the
 policy of the front and admin (see [Security headers](/operators/security-headers/)), and add

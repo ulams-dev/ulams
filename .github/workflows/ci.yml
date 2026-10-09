@@ -63,6 +63,9 @@ jobs:
             fi
           done < <(git diff --name-only --diff-filter=A "${{ github.event.pull_request.base.sha }}" HEAD)
           exit $too_big
+      # The table in docs/decisions/README.md is generated from the ADR files (scripts/adr-index.mjs).
+      - name: ADR index is up to date
+        run: node scripts/adr-index.mjs --check
       - name: Every API package has a README.md
         run: |
           missing=0

@@ -21,10 +21,17 @@ describe("workflows.json", () => {
       }
     }
   });
-  it("says the CLI and MCP interfaces are planned", () => {
-    expect(workflowsData.footnote).toMatch(/planned interface/i);
-    const planned = (workflowsData.tabs as Array<{ status?: string; note?: string }>).filter((t) => t.status === "coming");
-    for (const tab of planned) expect(tab.note).toMatch(/planned interface/i);
+  it("marks the shipped CLI and MCP tabs available, without planned-interface wording", () => {
+    const tabs = workflowsData.tabs as Array<{ key: string; status?: string; note?: string }>;
+    for (const key of ["claude-code", "claude-mcp", "cli"]) expect(tabs.find((t) => t.key === key)?.status, key).toBe("available");
+    expect(workflowsData.footnote).toBeUndefined();
+    expect(JSON.stringify(workflowsData)).not.toMatch(/planned interface|being built|Phase \d/i);
+  });
+  it("shows only things that work today: no learner analytics in the MCP example", () => {
+    const mcp = JSON.stringify(workflowsData.tabs.find((t) => t.key === "claude-mcp"));
+    expect(mcp).toContain("courses_list");
+    expect(mcp).toContain("courses_publish");
+    expect(mcp).not.toMatch(/analytics|at_risk|stuck|nudge/i);
   });
   it("names Claude Code and Claude as tools to use, without logos or endorsement claims", () => {
     const text = JSON.stringify(landingDocs.platform) + JSON.stringify(workflowsData);

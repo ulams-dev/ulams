@@ -6,6 +6,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
 use Tests\TestCase;
 use Ulams\Adapt\Jobs\BuildAdaptSource;
+use Ulams\CourseBuilder\Jobs\MoveToNewSiteJob;
 use Ulams\CourseBuilder\Jobs\RunJob;
 use Ulams\CourseBuilder\Jobs\StepJob;
 use Ulams\Tenancy\Jobs\DeleteTenantJob;
@@ -31,6 +32,7 @@ class QueueRetryAfterConfigTest extends TestCase
     private const ROUTES = [
         RunJob::class => ['packages/course-builder/config/course_builder.php', 'queue_connection', 'queue'],
         StepJob::class => ['packages/course-builder/config/course_builder.php', 'queue_connection', 'queue'],
+        MoveToNewSiteJob::class => ['packages/course-builder/config/course_builder.php', 'queue_connection', 'queue'],
         AnalyseGroupJob::class => ['packages/living-course/config/living_course.php', 'queue_connection', 'queue'],
         CheckSourceJob::class => ['packages/living-course/config/living_course.php', 'queue_connection', 'queue'],
         ProgressRulesJob::class => ['packages/living-course/config/living_course.php', 'queue_connection', 'queue'],
@@ -119,6 +121,18 @@ class QueueRetryAfterConfigTest extends TestCase
         ];
     }
 
+    /** workers.sh and config/queue.php read the same variable; the old LONG_JOB_CONNECTION still works in both */
+    public function testLongJobConnectionNameIsTheSameInTheWorkerScriptAndTheConfig(): void
+    {
+        $script = file_get_contents(base_path('workers.sh'));
+        $this->assertStringContainsString('${LONG_JOB_QUEUE_CONNECTION:-${LONG_JOB_CONNECTION:-', $script);
+
+        $base = ['QUEUE_CONNECTION' => 'redis'];
+        $this->assertSame('redis-long-job', $this->configWith('config/queue.php', $base)['long_job']['connection']);
+        $this->assertSame('old', $this->configWith('config/queue.php', $base + ['LONG_JOB_CONNECTION' => 'old'])['long_job']['connection']);
+        $this->assertSame('new', $this->configWith('config/queue.php', $base + ['LONG_JOB_CONNECTION' => 'old', 'LONG_JOB_QUEUE_CONNECTION' => 'new'])['long_job']['connection']);
+    }
+
     public function testHorizonSupervisorsMatchTheQueues(): void
     {
         foreach (['production', 'local', 'stage'] as $env) {
@@ -151,7 +165,7 @@ class QueueRetryAfterConfigTest extends TestCase
         $keys = array_unique(array_merge(array_keys($env), [
             'COURSE_BUILDER_QUEUE_CONNECTION', 'COURSE_BUILDER_QUEUE', 'LIVING_COURSE_QUEUE_CONNECTION',
             'LIVING_COURSE_QUEUE', 'ADAPT_QUEUE_CONNECTION', 'ADAPT_QUEUE', 'VIDEO_QUEUE_CONNECTION', 'VIDEO_QUEUE',
-            'LONG_JOB_QUEUE_CONNECTION', 'LONG_JOB_QUEUE',
+            'LONG_JOB_QUEUE_CONNECTION', 'LONG_JOB_CONNECTION', 'LONG_JOB_QUEUE',
         ]));
         $saved = [];
         foreach ($keys as $key) {

@@ -1,0 +1,88 @@
+---
+title: What's new
+description: What each phase of the ulams roadmap has delivered so far (Phases 0 to 3 and the CLI, MCP server and API work of Phase 7), with links to the page that documents each feature.
+sidebar:
+  order: 5
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+A factual summary of what has been built, by roadmap phase. The tracker ([roadmap](/roadmap/)) holds the status of every item
+and the [decisions](/decisions/) record why. Items that are only partly done are marked as such there; this page lists what works.
+
+<Aside type="note">
+Phases 4 (personalisation), 5 (UX), 6 (market modules) and 8 (self-hosting) have no finished items yet and are not
+listed here. Features that exist only in the plan are marked "Coming" on their pages.
+</Aside>
+
+## Phase 0: foundation
+
+- A monorepo (`api/`, `admin/`, `front/`) with the 50 PHP packages vendored under `api/packages` and no `escolalms/*`
+  dependency: [Monorepo](/developers/monorepo/), [API packages](/developers/api-packages/).
+- Laravel 13 on PHP 8.4 (with Passport 13 and a data migration for every tenant), and the `recommender` package removed.
+- Styling with CSS custom properties only; the shared component library `@ulams/ui` with a
+  [component playground](/catalogue/) in this site.
+- Multi-tenancy by host with one command to create, list and delete tenants: [Tenancy](/developers/tenancy/),
+  [Tenants](/admin/tenants/), [First tenant](/operators/first-tenant/).
+- H5P as a separate Node service, with the PHP H5P server removed: [H5P for operators](/operators/h5p/).
+- Security work: payment and Jitsi callbacks verified, LRS tokens verified, upload hardening, no committed secrets
+  ([Security](/operators/security/)); `ulams:upgrade`, one idempotent per-tenant upgrade command
+  ([Upgrades](/operators/upgrades/)); a scheduler that runs each minute once even on several nodes
+  ([ADR 0068](/decisions/0068-scheduler-minute-lock/), [Queues and scheduler](/operators/queues-and-scheduler/)).
+- Smaller admin and front images on unprivileged nginx ([Images](/operators/images/),
+  [Container images](/developers/container-images/)).
+- Demo mode with seeded admin, tutor and student users and an hourly reset: [Demo mode](/admin/demo-mode/).
+- This documentation site, the brand identity ([Brand](/contributing/brand/)) and the CI that checks them
+  ([CI](/developers/ci/)).
+
+## Phase 1: content formats and integrations
+
+- **LiaScript** topics with versions and a preview: [LiaScript](/creators/liascript/).
+- **Adapt Learning**: import a built package, and build from JSON source with an admin screen for sources, versions and
+  build status: [Adapt](/creators/adapt/).
+- **LTI 1.3**, both as a platform (launch external tools, grade passback, deep linking, Names and Role Provisioning
+  Services) and as a tool for Moodle or Canvas, with client-side OIDC through `postMessage` storage and monthly key
+  rotation: [LTI](/admin/lti/), [LTI tools](/extending/lti-tools/), [LTI launch](/learners/lti-launch/).
+- **cmi5** with one-time launch tokens and playback from the content origin: [cmi5](/creators/cmi5/).
+- **Upload hardening** and an isolated **content origin** for SCORM, Adapt, LiaScript and cmi5, with same-site cookie
+  hardening, exact-Origin checks, sandboxing and a CSP that reports first and then enforces:
+  [Content origin](/operators/content-origin/), [Security headers](/operators/security-headers/).
+- **H5P** multi-tenancy, learner state through a proxy, and cleanup of unused content: [H5P](/creators/h5p/),
+  [H5P for operators](/operators/h5p/).
+
+## Phase 2: AI Course Builder
+
+- An LLM layer with a model per task chosen in configuration, validated structured output, prompt caching, per-call
+  logging of model, tokens and cost, and hard limits: [LLM layer](/developers/llm-layer/).
+- Ingestion of PDF, Markdown and DOCX into source documents with stable fragment ids, treated as untrusted input.
+- An interview with defaults ("decide for me"), an editable course brief, then objectives, outline, lessons, quizzes and
+  metadata that the author approves, each element citing its source fragments: [Course builder](/creators/course-builder/),
+  [Administering the builder](/admin/course-builder/).
+- Element-level chat editing as reviewable patches, versions with diffs and undo, and live progress over an AG-UI event
+  stream: [Course builder API](/developers/course-builder-api/), [Generative UI](/developers/generative-ui/).
+- Long runs on dedicated queue connections with their own `retry_after`: [Performance](/developers/performance/).
+
+## Phase 3: Living Course
+
+- Sources that stay connected to a course: upload, URL and Git connectors, with change detection by webhook, poll or
+  manually and a fragment-level diff.
+- Impact analysis through citations, update proposals reviewed as one diff, progress rules that keep completion on a minor
+  edit, staleness signals, learner notices and an audit trail: [Living Course (admin)](/admin/living-course/),
+  [Living Course (developers)](/developers/living-course/).
+- Inbound webhooks and their signatures: [Webhooks](/developers/webhooks/).
+
+## Phase 7: CLI, MCP server and API
+
+- **`ulams` CLI** with one command registry for humans and agents: a stable JSON contract and exit codes, profiles, device
+  login, a command for every API endpoint (504 of 547 operations covered, the rest excluded with a reason), uploads for every
+  topic type, declarative `apply`, and `ulams tenants` for platform hosts: [The CLI](/developers/cli/),
+  [CLI reference](/reference/cli/), [Course-as-code examples](/developers/cli/#declarative-apply).
+- **Course builder and Living Course commands** with NDJSON events: [Build courses from the command line](/developers/cli-builder/).
+- **MCP server** `ulams mcp` over stdio and Streamable HTTP, with toolsets, read-only mode and confirmation tokens for
+  destructive tools: [ulams for AI agents](/developers/agents/), [Claude Code](/developers/claude-code/).
+- **Scoped API tokens** (`ulams_pat_`), the agent audit log, idempotency keys, request ids, device login in the RFC 8628
+  shape, and `GET /api/meta`: [Scoped tokens](/developers/scoped-tokens/), [Rate limits](/developers/rate-limits/),
+  [API tokens (admin)](/admin/api-tokens/), [My tokens](/learners/account/#my-tokens), [CLI sign-in](/learners/cli-sign-in/).
+- **Platform tenant API** for queued tenant provisioning, off by default: [Platform tenant API](/operators/platform-api/).
+- **OpenAPI and `@ulams/sdk`** regenerated from the API, including the builder and Living Course:
+  [OpenAPI and SDK](/developers/openapi-and-sdk/), [SDK usage](/developers/sdk/).

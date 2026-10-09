@@ -37,8 +37,25 @@ users, `access_grant`, `reports_metrics`, plus three meta tools that reach every
 | `commands_describe` | the input JSON Schema and examples of one command |
 | `commands_run` | run any exposed command by id, with the same confirmation rules |
 
-`--toolsets core,courses,users,settings` adds the generated tools of those nouns (`--toolsets all` exposes about 300; for
-clients that filter tools themselves). `--read-only` exposes read commands only; `--no-destructive` hides destructive ones.
+`--toolsets core,courses,users,settings` adds the generated tools of those nouns (a toolset is the first word of the command:
+`courses`, `lessons`, `topics`, `users`, `groups`, `settings`, `reports`, `builder`, `living`, ...; `ulams schema` shows the
+toolset of every command as `mcp.toolset`). `--toolsets all` exposes every command that is not local to the CLI. The
+meta tools search and run all commands the server's modes allow, whatever the toolsets, so a small server can still reach
+everything. `--read-only` exposes read commands only; `--no-destructive` hides destructive ones (deletes, replaces).
+
+| Server started with | Tools |
+|---|---|
+| `ulams mcp` | 23: the core set and the three meta tools |
+| `--read-only` | 14 |
+| `--toolsets core,courses,users` | 43 |
+| `--toolsets core,builder,living` | 88 |
+| `--toolsets all` | 535 (258 with `--read-only`, 476 with `--no-destructive`) |
+
+These counts are for CLI 0.1.0 and grow with the API. Clients that cap the number of tools work best with the default set.
+
+`login`, `logout`, `mcp`, `api`, `apply`, `schema`, `describe`, `completion`, `config` and `profiles` are never tools: they are
+local to the CLI or need a file system. Commands that read or write local files (`topics_create_scorm`, uploads, exports)
+work over stdio only.
 
 Every tool carries annotations from its kind: `readOnlyHint` for reads, `destructiveHint` for deletes and replaces,
 `idempotentHint`, `openWorldHint: false`. Results are the CLI envelope as `structuredContent` (and compact JSON text, at most
@@ -56,21 +73,116 @@ Every tool carries annotations from its kind: `readOnlyHint` for reads, `destruc
 
 - Every write tool accepts `dry_run: true`: the plan, and for updates a diff, with no change.
 - A destructive tool called without `confirm` makes no change. It returns an error result `CONFIRMATION_REQUIRED` whose
-  `details` hold the plan and a single-use `confirm` token (valid 5 minutes, bound to the exact input). The model shows the
-  plan to the user, then calls again with the token.
+  `details` hold the plan and a single-use `confirm` token (valid 5 minutes, bound to the exact input, kept in memory, an
+  HMAC with a key made at server start). The model shows the plan to the user, then calls again with the same input and
+  the token. A changed input, a second use or an expired token is refused with a new plan.
 - `--unsafe-yes` disables the confirmation; use it only in a throw-away sandbox.
 - The API enforces the user's permissions (and, with scoped tokens, the token's scopes), so an MCP client can never do more
   than the user behind the token. Prefer a read-only token or `--read-only` for exploration.
-- Each request carries `X-Ulams-Client: mcp` and the agent name, which the agent audit log records.
+- Each request carries `X-Ulams-Client: mcp` and the agent name (`ULAMS_AGENT`), which the
+  [agent audit log](/developers/scoped-tokens/#agent-audit-log) records for scoped tokens.
+
+### The confirmation flow
+
+A destructive tool, for example `courses_delete` (toolset `courses`) or any command through `commands_run`:
+
+```jsonc
+// tools/call commands_run
+{ "id": "courses.delete", "input": { "id": 111 } }
+// result, isError: true, structuredContent:
+{ "ok": false, "command": "courses.delete",
+  "error": { "code": "CONFIRMATION_REQUIRED", "message": "courses.delete is destructive.",
+    "details": { "plan": { "request": { "method": "DELETE", "path": "/api/admin/courses/111" },
+                           "current": { "id": 111, "title": "Tmp", "lessons": [] } },
+                 "confirm": "1791564602299.ebd4ddd4…" } } }
+// after the user agreed: the same call plus the token
+{ "id": "courses.delete", "input": { "id": 111 }, "confirm": "1791564602299.ebd4ddd4…" }
+```
+
+### Security notes
+
+- **Credentials.** stdio uses the profile token or `ULAMS_TOKEN`; it is held in the process and never written to stdout
+  or to a tool result (results are redacted). Give an agent its own scoped token, not your login:
+  `ulams tokens create --name claude --scopes @author --kind agent --agent-name claude-code --expires-in-days 30`
+  ([scoped tokens](/developers/scoped-tokens/)).
+- **HTTP binds loopback only.** `--host` with another address needs `--allow-remote` and prints a warning: anyone who
+  reaches the port with a valid ulams token can then use it, so put TLS and a firewall in front. The server stores no
+  session and no credential; the bearer token of each request is the credential of that call. File access is off.
+- **Prompt injection.** Course content, learner submissions and source documents are untrusted input and can contain text
+  that addresses the model. Keep `--read-only` for agents that read such content, and keep confirmation on for the rest.
+- **Scope the toolsets.** A small toolset lists fewer capabilities; the API still refuses what the token may not do.
+
+## Connect a client
+
+The server is the same `ulams mcp` process for every client; only the way the client starts it differs.
+
+| Client | Setup |
+|---|---|
+| Claude Code | `claude mcp add ulams -- ulams mcp --profile coffee` ([guide](/developers/claude-code/)) |
+| Claude Desktop | `claude_desktop_config.json`, [see the guide](/developers/claude-code/#claude-desktop) |
+| Any stdio client | command `ulams`, args `["mcp", "--profile", "coffee"]`, or env `ULAMS_URL` and `ULAMS_TOKEN` instead of a profile |
+| Any Streamable HTTP client | URL `http://127.0.0.1:8787/mcp` with the header `Authorization: Bearer <ulams token>` |
+
+A stdio client's JSON configuration (the exact key names differ a little between clients):
+
+```json
+{
+  "mcpServers": {
+    "ulams": {
+      "command": "ulams",
+      "args": ["mcp", "--toolsets", "core,courses", "--read-only"],
+      "env": { "ULAMS_URL": "https://school.example.com", "ULAMS_TOKEN": "ulams_pat_…" }
+    }
+  }
+}
+```
+
+Over HTTP, for Claude Code: `claude mcp add --transport http ulams http://127.0.0.1:8787/mcp --header "Authorization: Bearer $ULAMS_TOKEN"`.
+The same call by hand, to see what a client sees:
+
+```bash
+ulams mcp --http --port 8787 &
+curl -s http://127.0.0.1:8787/mcp -X POST \
+  -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' \
+  -H "Authorization: Bearer $ULAMS_TOKEN" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"whoami","arguments":{}}}'
+# event: message
+# data: {"result":{"content":[{"type":"text","text":"{\"ok\":true,…}"}],"structuredContent":{"ok":true,"command":"whoami",…}},"jsonrpc":"2.0","id":1}
+```
+
+Without the header the server answers `401` with `WWW-Authenticate: Bearer realm="ulams"`; any path other than `/mcp` is `404`.
 
 ## Rules that make agents reliable
 
-1. Call `whoami` first. 2. Use `--json` or `ulams schema` for discovery in the shell. 3. Pass whole inputs as JSON
-(`--input @file.json`). 4. List before you act (`courses_list`) instead of guessing ids. 5. Use `dry_run` before writes.
+1. Call `whoami` first. 2. Use `--json` or `ulams schema` for discovery in the shell, `commands_search` and `commands_describe` in MCP.
+3. Pass whole inputs as JSON (`--input @file.json`). 4. List before you act (`courses_list`) instead of guessing ids.
+5. Use `dry_run` before writes. 6. Pass `fields` to keep results short.
 
 ## Resources
 
 `ulams://courses/{id}` is the course outline as Markdown (title, status, lessons, topics) and
-`ulams://courses/{id}/program.json` the full object; `resources/list` returns the first 100 courses.
+`ulams://courses/{id}/program.json` the full object; `resources/list` returns the first 100 courses, and
+`resources/templates/list` the two templates. Resources are read with the same credentials and the same API permissions as tools.
 
-See also: [the CLI guide](/developers/cli/).
+## Troubleshooting
+
+| Symptom | Cause and fix |
+|---|---|
+| The client shows the server as failed or "Connection closed" | run `ulams mcp` in a terminal: `AUTH_REQUIRED` means no profile (`ulams login`) or no `ULAMS_URL`/`ULAMS_TOKEN`; the message is on stderr |
+| `command not found: ulams` in Claude Desktop | Desktop does not read your shell `PATH`: use absolute paths to `node` and `ulams.mjs` |
+| Garbage or parse errors on the protocol | something printed to stdout; the server prints only protocol on stdout, so check wrappers (shell profiles that echo) |
+| A tool is missing | it is in another toolset: add `--toolsets`, or use `commands_search` and `commands_run`; `--read-only` and `--no-destructive` hide writes and deletes |
+| `CONFIRMATION_REQUIRED` | by design for destructive tools: show the plan, then call again with `details.confirm` (5 minutes, single use) |
+| `FORBIDDEN` or `SCOPE_MISSING` | the user or the token may not do it: `whoami` shows the scopes; create a token with the scope |
+| `FEATURE_DISABLED` | the instance has the feature off (builder, Living Course, platform): `curl <url>/api/meta` |
+| `"status": "running"` with a handle | a long run outlived the 55 s wait: call `operations_wait` with the handle |
+| `TRUNCATED` warning | the result exceeded 25 kB: use `per_page`, `limit` or `fields` |
+| HTTP `401` | the request lacks `Authorization: Bearer <token>` |
+
+## Checking an agent against a real model
+
+`yarn workspace ulams eval` runs a real model against `ulams mcp` on a local tenant and checks the result through the API
+(it costs money, so it is not part of CI; the budget defaults to 1 USD and stops at 30 tool calls per task). Settings and
+reports: [`front/cli/evals`](https://github.com/ulams-dev/ulams/tree/main/front/cli/evals).
+
+See also: [the CLI guide](/developers/cli/), [Use ulams from Claude Code](/developers/claude-code/).

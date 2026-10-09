@@ -16,6 +16,8 @@ use Ulams\CourseBuilder\Ingestion\NoFragmentArchive;
 use Ulams\CourseBuilder\Blueprint\SchemaRegistry;
 use Ulams\CourseBuilder\Console\EvalCommand;
 use Ulams\CourseBuilder\Console\PruneEventsCommand;
+use Ulams\CourseBuilder\Console\SessionExportCommand;
+use Ulams\CourseBuilder\Console\SessionImportCommand;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Fake\SyntheticResponders;
 use Ulams\CourseBuilder\Ingestion\SourceIngestor;
@@ -28,6 +30,8 @@ use Ulams\CourseBuilder\Pipeline\PatchService;
 use Ulams\CourseBuilder\Pipeline\PriceService;
 use Ulams\CourseBuilder\Publish\LandingValidator;
 use Ulams\CourseBuilder\Publish\PublishCheck;
+use Ulams\CourseBuilder\Site\NewSite;
+use Ulams\CourseBuilder\Transfer\SessionArchive;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
 use Ulams\CourseBuilder\Services\RunService;
 use Ulams\CourseBuilder\Services\VersionService;
@@ -67,6 +71,8 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         CourseCommerce::class => CourseCommerce::class,
         PriceService::class => PriceService::class,
         PublishCheck::class => PublishCheck::class,
+        NewSite::class => NewSite::class,
+        SessionArchive::class => SessionArchive::class,
         LandingValidator::class => LandingValidator::class,
         RunService::class => RunService::class,
         RemovalPolicy::class => DeleteEverything::class,
@@ -99,7 +105,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         SyntheticResponders::register($this->app->make(FakeResponders::class));
 
         if ($this->app->runningInConsole()) {
-            $this->commands([EvalCommand::class, PruneEventsCommand::class]);
+            $this->commands([EvalCommand::class, PruneEventsCommand::class, SessionExportCommand::class, SessionImportCommand::class]);
         }
     }
 }
