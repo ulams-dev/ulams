@@ -77,6 +77,9 @@ export const ICONS = [
   "puzzle",
   "cart",
   "code",
+  "sparkle",
+  "eye",
+  "chat",
 ] as const;
 export type IconName = (typeof ICONS)[number];
 
@@ -318,6 +321,22 @@ export const registry = {
           ["lines"],
           "Log-style panel for the console variant"
         ),
+        capabilities: list(
+          obj(
+            {
+              icon: ICON,
+              label: text("Short label of the capability (2 to 4 words)", { maxLength: 32 }),
+              caption: text("One line shown under the orbit while this capability is highlighted", { maxLength: 90 }),
+              href: href("In-page anchor of the section that shows it, e.g. #living"),
+              ring: int("Orbit the card travels on, 1 = inner", { minimum: 1, maximum: 3, default: 1 }),
+              angle: int("Start angle on the orbit in degrees (0 = right, 90 = below); spreads the cards evenly when omitted", { maximum: 359 }),
+              status: oneOf(["available", "preview", "coming"], "Roadmap status; shown as a Coming marker only in the actual landing mode", "available"),
+            },
+            ["label", "caption"]
+          ),
+          "Capability orbit for the product variant: cards on up to three orbits around the logo, one highlighted at a time",
+          { maxItems: 12 }
+        ),
         diff: obj(
           {
             title: text("Card title, e.g. the lesson being updated", { maxLength: 80 }),
@@ -337,7 +356,7 @@ export const registry = {
       },
       ["title"]
     ),
-    fallback: (p) => join(p.eyebrow, p.title, p.subtitle, p.body),
+    fallback: (p) => join(p.eyebrow, p.title, p.subtitle, p.body, titles(p.capabilities, "label").join(" · ")),
   },
   Syllabus: {
     description:

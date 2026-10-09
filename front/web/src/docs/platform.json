@@ -66,7 +66,93 @@
               "label": "Self-host it (MIT)",
               "href": "#self-host"
             },
-            "body": "Courses built to keep up with your docs and repos, delivered as a white-label site per customer, on your own servers if you like."
+            "body": "Courses built to keep up with your docs and repos, delivered as a white-label site per customer, on your own servers if you like.",
+            "capabilities": [
+              {
+                "icon": "sync",
+                "label": "Living Course",
+                "caption": "Your course updates itself when sources change",
+                "href": "#living",
+                "ring": 1,
+                "status": "coming",
+                "angle": 173
+              },
+              {
+                "icon": "sparkle",
+                "label": "AI course builder",
+                "caption": "Turn a document into a cited course in minutes",
+                "href": "#builder",
+                "ring": 1,
+                "angle": 63
+              },
+              {
+                "icon": "eye",
+                "label": "Preview & discuss",
+                "caption": "Preview and discuss every element before it goes live",
+                "href": "#product",
+                "ring": 1,
+                "angle": 138
+              },
+              {
+                "icon": "chart",
+                "label": "Learner insights & AI tutor",
+                "caption": "See who is stuck, and give every learner an AI tutor",
+                "href": "#product",
+                "ring": 2,
+                "angle": 323
+              },
+              {
+                "icon": "terminal",
+                "label": "CLI · MCP · REST API",
+                "caption": "Run your academy from a terminal, an agent or the API",
+                "href": "#agents",
+                "ring": 2,
+                "status": "coming",
+                "angle": 196
+              },
+              {
+                "icon": "code",
+                "label": "Claude & Claude Code",
+                "caption": "Build and manage courses from Claude and Claude Code",
+                "href": "#agents",
+                "ring": 2,
+                "status": "coming",
+                "angle": 224
+              },
+              {
+                "icon": "layers",
+                "label": "Site per customer",
+                "caption": "A branded academy site for every customer",
+                "href": "#demos",
+                "ring": 3,
+                "angle": 245
+              },
+              {
+                "icon": "puzzle",
+                "label": "H5P · SCORM · LTI 1.3",
+                "caption": "H5P, SCORM, cmi5 and LTI 1.3: deliver anywhere",
+                "href": "#standards",
+                "ring": 3,
+                "angle": 131
+              },
+              {
+                "icon": "cart",
+                "label": "Commerce",
+                "caption": "Sell courses and subscriptions with built-in commerce",
+                "href": "#compare",
+                "ring": 3,
+                "status": "coming",
+                "angle": 15
+              },
+              {
+                "icon": "server",
+                "label": "Self-hosted, open source",
+                "caption": "MIT-licensed and self-hosted: your servers, your data",
+                "href": "#self-host",
+                "ring": 3,
+                "angle": 299
+              }
+            ]
           }
         },
         {
@@ -183,10 +269,7 @@
             "lesson": {
               "title": "Severity levels",
               "text": "Sev 1 means customers cannot check out. Page the on-call lead and open an incident channel straight away.",
-              "citations": [
-                "runbook p.3 · Severity",
-                "runbook p.4 · Paging"
-              ]
+              "citations": ["runbook p.3 · Severity", "runbook p.4 · Paging"]
             },
             "quiz": {
               "question": "Who declares a Sev 1?",

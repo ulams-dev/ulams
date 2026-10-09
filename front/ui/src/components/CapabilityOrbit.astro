@@ -1,0 +1,518 @@
+---
+/**
+ * Capability orbit for the landing hero: the Orbital Folio book in the middle, capability cards
+ * travelling on up to three elliptical orbits, one highlighted at a time with a one-line caption.
+ * Every card is a real link in a real list (text in the DOM), so the whole thing works without
+ * JS, with a keyboard and in reduced motion (static arrangement, all labels visible). Rotation is
+ * CSS only (transforms); the tiny <ulams-orbit> element (elements/orbit.ts) does the highlight
+ * cycling and the pause. Narrow containers (< 560px) switch to a tile grid, same list.
+ * Orange (ADR 0038) only for the highlight, the orbit dot and the logo dot, on the dark stage.
+ */
+import Icon from "./Icon.astro";
+import { SYMBOL } from "../brand/paths.ts";
+
+interface Capability {
+  icon?: string;
+  label: string;
+  caption: string;
+  href?: string;
+  ring?: number;
+  angle?: number;
+  status?: "available" | "preview" | "coming";
+}
+interface Props {
+  items: Capability[];
+  label?: string;
+}
+const { items, label = "What ulams covers" } = Astro.props;
+
+const RINGS = [
+  { name: "Course engine", t: "84s", dir: "normal", rx: 24, offset: 300 },
+  { name: "Interfaces", t: "112s", dir: "reverse", rx: 31, offset: 0 },
+  { name: "Platform", t: "140s", dir: "normal", rx: 37, offset: 50 },
+];
+const K = 0.86;
+const rings = RINGS.map((ring, r) => {
+  const members = items.map((item, index) => ({ item, index })).filter(({ item }) => Math.min(3, Math.max(1, item.ring ?? 1)) === r + 1);
+  return { ...ring, members, step: members.length ? 360 / members.length : 0 };
+}).filter((ring) => ring.members.length > 0);
+const roadmap = (s?: string) => s === "coming" || s === "preview";
+---
+
+<ulams-orbit class="u-orb">
+  <figure class="u-orb__stage" aria-label={label}>
+    <span class="u-orb__bg" aria-hidden="true"></span>
+    <div class="u-orb__core" aria-hidden="true">
+      <span class="u-orb__glow"></span>
+      <svg viewBox={SYMBOL.viewBox} focusable="false">
+        <defs>
+          <linearGradient id="u-orb-wing" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ffffff"></stop>
+            <stop offset="1" stop-color="#9DBFE3"></stop>
+          </linearGradient>
+        </defs>
+        {SYMBOL.wings.map((d) => <path d={d} fill="url(#u-orb-wing)" />)}
+        <circle cx={SYMBOL.dot.cx} cy={SYMBOL.dot.cy} r={SYMBOL.dot.r} fill="#FF7A2E"></circle>
+      </svg>
+    </div>
+
+    <div class="u-orb__rings">
+      {
+        rings.map((ring, r) => (
+          <div class="u-orb__plane" style={`--rx:${ring.rx};--k:${K};--ik:${1 / K};--t:${ring.t};--dir:${ring.dir}`}>
+            <span class="u-orb__path" aria-hidden="true" />
+            {r === 2 && (
+              <span class="u-orb__arm u-orb__arm--dot" style="--a:-35deg;--t:46s" aria-hidden="true">
+                <span class="u-orb__slot">
+                  <span class="u-orb__dot" />
+                </span>
+              </span>
+            )}
+            <ul class="u-orb__arm" role="list" aria-label={ring.name}>
+              {ring.members.map(({ item, index }, j) => (
+                <li class={`u-orb__slot${index === 0 ? " is-on" : ""}`} data-cap={index} style={`--a:${Math.round(item.angle ?? ring.offset + ring.step * j)}deg`}>
+                  <a class="u-orb__card" href={item.href ?? "#product"} aria-describedby={`u-orb-cap-${index}`}>
+                    <span class="u-orb__face">
+                      <span class="u-orb__icon">
+                        <Icon name={item.icon ?? "sparkle"} />
+                      </span>
+                      <span class="u-orb__label">{item.label}</span>
+                      {roadmap(item.status) && <span class="u-orb__soon">Coming</span>}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+
+    <figcaption class="u-orb__caption">
+      {
+        items.map((item, i) => (
+          <span class="u-orb__cap" id={`u-orb-cap-${i}`} data-cap-text={i} hidden={i !== 0}>
+            {item.caption}
+          </span>
+        ))
+      }
+    </figcaption>
+    <button type="button" class="u-orb__pause" data-pause aria-pressed="false" aria-label="Pause the orbit animation">
+      <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+        <path class="u-orb__ic-pause" d="M5 3.5v9m6-9v9" />
+        <path class="u-orb__ic-play" d="M5 3.2v9.6l7.5-4.8z" />
+      </svg>
+    </button>
+  </figure>
+</ulams-orbit>
+
+<script>
+  import "../elements/orbit.ts";
+</script>
+
+<style>
+  .u-orb {
+    display: block;
+    container-type: inline-size;
+    --sky: #8fb3d9;
+    --ink: #eaf2fa;
+  }
+  .u-orb__stage {
+    position: relative;
+    margin: 0;
+    aspect-ratio: 1 / 0.93;
+    border-radius: 24px;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+      radial-gradient(62% 56% at 50% 40%, #1a4672 0%, #0f2b46 58%, #0a1d31 100%);
+    box-shadow:
+      0 40px 80px -36px rgb(15 43 70 / 0.65),
+      0 0 0 1px rgb(143 179 217 / 0.22) inset;
+    color: var(--ink);
+  }
+  /* grid and stars: static, painted once */
+  .u-orb__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(1.4px 1.4px at 9% 16%, rgb(255 255 255 / 0.8), transparent),
+      radial-gradient(1px 1px at 22% 80%, rgb(255 255 255 / 0.6), transparent),
+      radial-gradient(1.2px 1.2px at 35% 9%, rgb(255 255 255 / 0.55), transparent),
+      radial-gradient(1px 1px at 61% 88%, rgb(255 255 255 / 0.5), transparent),
+      radial-gradient(1.5px 1.5px at 78% 12%, rgb(255 255 255 / 0.7), transparent),
+      radial-gradient(1px 1px at 91% 58%, rgb(255 255 255 / 0.6), transparent),
+      radial-gradient(1.2px 1.2px at 5% 52%, rgb(255 255 255 / 0.5), transparent),
+      radial-gradient(1px 1px at 47% 94%, rgb(255 255 255 / 0.45), transparent),
+      linear-gradient(rgb(143 179 217 / 0.07) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, rgb(143 179 217 / 0.07) 1px, transparent 1px) 0 0 / 40px 40px;
+    -webkit-mask-image: radial-gradient(75% 75% at 50% 45%, #000 40%, transparent 100%);
+    mask-image: radial-gradient(75% 75% at 50% 45%, #000 40%, transparent 100%);
+  }
+
+  /* the book */
+  .u-orb__core {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    width: 18cqw;
+    translate: -50% -50%;
+    z-index: 1;
+  }
+  .u-orb__core svg {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 0 14px rgb(157 191 227 / 0.55));
+  }
+  .u-orb__glow {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 340%;
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(143 179 217 / 0.42), rgb(143 179 217 / 0.12) 55%, transparent);
+    animation: u-orb-breathe 6s ease-in-out infinite;
+  }
+  @keyframes u-orb-breathe {
+    50% {
+      transform: scale(1.12);
+      opacity: 0.75;
+    }
+  }
+
+  /* orbits: a squashed plane (scaleY) holds a rotating arm; cards counter-rotate and un-squash */
+  .u-orb__rings {
+    position: absolute;
+    inset: 0;
+  }
+  .u-orb__plane {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    width: 0;
+    height: 0;
+    transform: scaleY(var(--k));
+  }
+  .u-orb__plane:has(.is-on) {
+    z-index: 4;
+  }
+  .u-orb__path {
+    position: absolute;
+    width: calc(var(--rx) * 2cqw);
+    aspect-ratio: 1;
+    left: calc(var(--rx) * -1cqw);
+    top: calc(var(--rx) * -1cqw);
+    border-radius: 50%;
+    border: 1.5px dashed rgb(143 179 217 / 0.42);
+  }
+  .u-orb__arm {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    animation: u-orb-spin var(--t) linear infinite;
+    animation-direction: var(--dir, normal);
+  }
+  .u-orb__slot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    transform: rotate(var(--a)) translateX(calc(var(--rx) * 1cqw));
+  }
+  .u-orb__slot.is-on {
+    z-index: 2;
+  }
+  @keyframes u-orb-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes u-orb-unspin {
+    from {
+      transform: rotate(calc(var(--a) * -1)) scaleY(var(--ik));
+    }
+    to {
+      transform: rotate(calc(var(--a) * -1 - 360deg)) scaleY(var(--ik));
+    }
+  }
+  .u-orb__card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    transform: rotate(calc(var(--a) * -1)) scaleY(var(--ik));
+    animation: u-orb-unspin var(--t) linear infinite;
+    animation-direction: var(--dir, normal);
+  }
+  .u-orb__face {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: max-content;
+    max-width: 12.5rem;
+    translate: -50% -50%;
+    padding: 5px 11px 5px 5px;
+    border-radius: 12px;
+    border: 1px solid rgb(143 179 217 / 0.3);
+    background:
+      linear-gradient(rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.03)),
+      #12304e;
+    box-shadow: 0 10px 24px -14px rgb(0 0 0 / 0.7);
+    font-family: var(--ulams-font-family);
+    font-size: clamp(11.5px, 2.05cqw, 13.5px);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.005em;
+    transition:
+      transform 0.6s var(--ulams-ease),
+      border-color 0.4s,
+      box-shadow 0.5s;
+  }
+  .u-orb__icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: rgb(143 179 217 / 0.15);
+    color: var(--sky);
+    transition:
+      background-color 0.4s,
+      color 0.4s;
+  }
+  .u-orb__icon :global(.u-icon) {
+    width: 15px;
+    height: 15px;
+  }
+  .u-orb__soon {
+    position: absolute;
+    top: -8px;
+    right: 8px;
+    background: #12304e;
+    padding: 0 6px;
+    border-radius: 999px;
+    border: 1px dashed rgb(143 179 217 / 0.7);
+    color: var(--sky);
+    font-family: var(--ulams-font-mono);
+    font-size: 8.5px;
+    line-height: 14px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .is-on .u-orb__face {
+    transform: scale(1.12);
+    border-color: rgb(255 122 46 / 0.85);
+    box-shadow:
+      0 0 0 3px rgb(255 122 46 / 0.14),
+      0 16px 40px -10px rgb(255 122 46 / 0.4);
+  }
+  .is-on .u-orb__icon {
+    background: rgb(255 122 46 / 0.18);
+    color: #ff9a5c;
+  }
+  .u-orb__card:focus-visible {
+    outline: none;
+  }
+  .u-orb__card:focus-visible .u-orb__face {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+
+  /* the orange orbit dot of the logo, travelling the outer orbit */
+  .u-orb__arm--dot {
+    animation-duration: var(--t);
+  }
+  .u-orb__dot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: #ff7a2e;
+    box-shadow:
+      0 0 0 4px rgb(255 122 46 / 0.18),
+      0 0 18px 4px rgb(255 122 46 / 0.55);
+    animation: u-orb-unspin 46s linear infinite;
+  }
+
+  /* pause while a card is hovered or focused, or after the Pause button */
+  :global(ulams-orbit[data-hold]) *,
+  :global(ulams-orbit[data-paused]) * {
+    animation-play-state: paused !important;
+  }
+
+  /* caption */
+  .u-orb__caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    place-items: center;
+    padding: 0 56px 18px;
+    min-height: 62px;
+    text-align: center;
+  }
+  .u-orb__cap {
+    max-width: 44ch;
+    font-family: var(--ulams-font-family);
+    font-size: clamp(0.95rem, 0.5rem + 1.5cqw, 1.1rem);
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--ink);
+    animation: u-orb-cap 0.5s var(--ulams-ease) both;
+  }
+  .u-orb__cap::before {
+    content: "";
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background: #ff7a2e;
+    vertical-align: 0.08em;
+  }
+  @keyframes u-orb-cap {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  .u-orb__pause {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid rgb(143 179 217 / 0.4);
+    background: rgb(15 43 70 / 0.8);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .u-orb__pause:hover {
+    border-color: var(--sky);
+  }
+  .u-orb__pause:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+  .u-orb__pause svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .u-orb__ic-play,
+  .u-orb__pause[aria-pressed="true"] .u-orb__ic-pause {
+    display: none;
+  }
+  .u-orb__pause[aria-pressed="true"] .u-orb__ic-play {
+    display: inline;
+    fill: currentColor;
+  }
+
+  /* reduced motion: a static arrangement, every label visible, nothing to pause */
+  @media (prefers-reduced-motion: reduce) {
+    .u-orb__arm,
+    .u-orb__card,
+    .u-orb__dot,
+    .u-orb__glow,
+    .u-orb__cap {
+      animation: none;
+    }
+    .u-orb__pause {
+      display: none;
+    }
+  }
+
+  /* narrow: the same list as a tile grid (container query: the hero column, not the viewport) */
+  @container (max-width: 559px) {
+    .u-orb__stage {
+      aspect-ratio: auto;
+      display: grid;
+      gap: 18px;
+      padding: 22px 14px 16px;
+    }
+    .u-orb__core {
+      position: relative;
+      left: auto;
+      top: auto;
+      translate: none;
+      width: 84px;
+      margin: 0 auto;
+    }
+    .u-orb__rings {
+      position: static;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .u-orb__plane,
+    .u-orb__arm {
+      display: contents;
+    }
+    .u-orb__path,
+    .u-orb__arm--dot {
+      display: none;
+    }
+    .u-orb__slot {
+      position: static;
+      display: block;
+      width: auto;
+      height: auto;
+      transform: none;
+    }
+    .u-orb__card {
+      position: static;
+      width: auto;
+      height: 100%;
+      transform: none;
+      animation: none;
+    }
+    .u-orb__face {
+      translate: none;
+      width: auto;
+      max-width: none;
+      height: 100%;
+      min-height: 46px;
+    }
+    .is-on .u-orb__face {
+      transform: none;
+    }
+    .u-orb__caption {
+      position: static;
+      place-items: start;
+      min-height: 2.7em;
+      padding: 4px 44px 0 4px;
+      text-align: left;
+    }
+  }
+</style>
