@@ -178,7 +178,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "madge": "6.0.0",
     "mockjs": "^1.1.0",
-    "prettier": "^2.8.8",
+    "prettier": "^3.9.9",
     "react-dev-inspector": "^1.9.0",
     "swagger-ui-dist": "^4.19.1",
     "ts-node": "^10.9.2",
