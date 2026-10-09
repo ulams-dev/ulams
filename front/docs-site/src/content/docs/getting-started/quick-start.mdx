@@ -119,10 +119,11 @@ Run the tenant commands inside the API container, on the platform (without `--do
    make -C api h5p-seed
    ```
 
-3. Seed the demo courses: all six on the platform, then one per tenant.
+3. Seed the demo courses: all six on the platform, then one per tenant. The gravity and poland courses play
+   interactive packages that are built on the host first.
 
    ```bash
-   make -C api demo-seed demo-seed-tenants
+   make -C api demo-packages demo-seed demo-seed-tenants
    ```
 
 4. Optional: turn on demo mode (password-less login and an hourly reset) for the six tenants.
@@ -155,6 +156,7 @@ container writes when it starts, so start the stack first.
 | `migrate-fresh` | `migrate-fresh-quick` followed by `h5p-seed` |
 | `migrate-fresh-quick` | `migrate:fresh --seed` on the platform database, new Passport keys and personal access client |
 | `h5p-seed` | Imports the curated H5P content types and samples into the H5P service |
+| `demo-packages` | Builds the gravity and poland interactive packages on the host into the seeder's cache (run it before seeding those two tenants; Chromium is needed for the gravity posters) |
 | `demo-seed` | Seeds all six demo courses on the platform tenant (`api.localhost`) |
 | `demo-seed-tenant DOMAIN=coffee.localhost` | Seeds one tenant with its own course (experience = first label of the domain), then processes its video queue once |
 | `demo-seed-tenants` | `demo-seed-tenant` for coffee, oncall, nightsky, gravity, poland and ulam |

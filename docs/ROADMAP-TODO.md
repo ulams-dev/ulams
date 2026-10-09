@@ -604,8 +604,9 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       `docs/plans/interactive-demos-ulam-facts.md` and `docs/plans/interactive-demos-ulam-outline.md`; owner review
       in #151; `demo-content/ulam/{facts,sources}.json` and `CREDITS.md` are written in M9b from the sheet;
       M7 done: the three tenants, presets, landings, certificates, demo users, hourly reset and placeholder free
-      courses (ADR 0093: public showcase endpoint behind the landing heroes); the course content arrives in M8
-      and M9)
+      courses (ADR 0093: public showcase endpoint behind the landing heroes); M8c done (ADR 0094): the gravity course (nine
+      modules, 56 questions, final test), fact-checked (`demo-content/gravity/FACTCHECK.md`), its hero playing the real
+      simulation; the poland courses (M8d) and the Ulam course content (M9) follow)
 - [ ] (new) Six demos on the platform landing with one-click learner and admin login; `make demo-seed-tenants`
       seeds all six; README and docs site updated (M10)
 - [ ] (new) `demo-content/`: content packages (ADR 0088, amended 2026-10-09) with a boundary lint (partial:

@@ -1,0 +1,350 @@
+{
+  "G-01": {
+    "title": "Earth Fact Sheet",
+    "publisher": "NASA GSFC NSSDC",
+    "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html",
+    "note": "Earth mass, radius, sidereal day 23.9345 h, obliquity 23.44 deg, escape velocity 11.186 km/s, mean orbital velocity 29.78 km/s, orbit period."
+  },
+  "G-02": {
+    "title": "Moon Fact Sheet",
+    "publisher": "NASA GSFC NSSDC",
+    "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html",
+    "note": "Moon mass ratio 0.0123, semimajor axis 384.4e3 km, sidereal period 27.3217 d, inclination 5.145 deg, mean orbital velocity 1.022 km/s."
+  },
+  "G-03": {
+    "title": "Sun Fact Sheet",
+    "publisher": "NASA GSFC NSSDC",
+    "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html",
+    "note": "Sun mass 1.9884e30 kg (332,900 Earth masses), mean radius 695,700 km, obliquity 7.25 deg, rotation 609.12 h at 16 deg latitude."
+  },
+  "G-04": {
+    "title": "Planetary Fact Sheet - Metric (comparison table)",
+    "publisher": "NASA GSFC NSSDC",
+    "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+    "note": "Rotation periods, orbital velocities, escape velocities, orbital periods, mean temperatures of all planets."
+  },
+  "G-05": {
+    "title": "Mercury Fact Sheet",
+    "publisher": "NASA GSFC NSSDC",
+    "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/mercuryfact.html",
+    "note": "Mercury mass, radius, rotation 1407.6 h, obliquity 0.034 deg."
+  },
+  "G-06": {
+    "title": "Venus Fact Sheet",
+    "publisher": "NASA GSFC NSSDC",
+    "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/venusfact.html",
+    "note": "Venus mass, radius, retrograde rotation -5832.6 h, obliquity 177.36 deg, orbit period 224.701 d, synodic period 583.92 d, 464 C."
+  },
+  "G-07": {
+    "title": "Mars Fact Sheet",
+    "publisher": "NASA GSFC NSSDC",
+    "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html",
+    "note": "Mars mass, radius, orbit period 686.980 d, semimajor axis 227.956e6 km, obliquity 25.19 deg."
+  },
+  "G-08": {
+    "title": "Jupiter Fact Sheet",
+    "publisher": "NASA GSFC NSSDC",
+    "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupiterfact.html",
+    "note": "Jupiter mass 1898.13e24 kg, radius 69,911 km, rotation 9.925 h, semimajor axis 5.2034 AU."
+  },
+  "G-09": {
+    "title": "Saturn Fact Sheet",
+    "publisher": "NASA GSFC NSSDC",
+    "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturnfact.html",
+    "note": "Saturn mass, radius, mean density 687 kg/m3 (less than water), rotation 10.656 h."
+  },
+  "G-10": {
+    "title": "Uranus Fact Sheet",
+    "publisher": "NASA GSFC NSSDC",
+    "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/uranusfact.html",
+    "note": "Uranus mass, radius, obliquity 97.77 deg, retrograde rotation."
+  },
+  "G-11": {
+    "title": "Neptune Fact Sheet",
+    "publisher": "NASA GSFC NSSDC",
+    "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/neptunefact.html",
+    "note": "Neptune mass, radius, obliquity 28.32 deg, wind speeds 0-580 m/s."
+  },
+  "G-12": {
+    "title": "Pluto Fact Sheet",
+    "publisher": "NASA GSFC NSSDC",
+    "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/plutofact.html",
+    "note": "Pluto mass 0.01303e24 kg, radius 1188 km, obliquity 119.51 deg, retrograde rotation."
+  },
+  "G-13": {
+    "title": "Approximate Positions of the Planets (Keplerian elements, Table 1, 1800-2050 AD)",
+    "publisher": "NASA JPL Solar System Dynamics",
+    "url": "https://ssd.jpl.nasa.gov/planets/approx_pos.html",
+    "note": "Standish and Williams J2000 mean elements (a, e, I, L, long. peri, long. node) used by the app for the eight planets."
+  },
+  "G-14": {
+    "title": "Astrodynamic Parameters",
+    "publisher": "NASA JPL Solar System Dynamics",
+    "url": "https://ssd.jpl.nasa.gov/astro_par.html",
+    "note": "AU = 149,597,870,700 m, GM_Sun = 1.32712440041e20 m3/s2, G, c, GM Earth, GM Moon (Earth/Moon mass ratio 81.30)."
+  },
+  "G-15": {
+    "title": "CODATA recommended value: Newtonian constant of gravitation",
+    "publisher": "NIST",
+    "url": "https://physics.nist.gov/cgi-bin/cuu/Value?bg",
+    "note": "G = 6.67430(15)e-11 m3 kg-1 s-2 (CODATA 2022)."
+  },
+  "G-16": {
+    "title": "IAU 2015 Resolution B3 on nominal conversion constants for selected solar and planetary properties (arXiv:1510.07674)",
+    "publisher": "IAU / arXiv",
+    "url": "https://arxiv.org/abs/1510.07674",
+    "note": "Defines nominal solar radius and nominal solar mass parameter as exact values; numerical values are quoted in G-03 (radius) and G-14 (GM)."
+  },
+  "G-17": {
+    "title": "Voyager 1",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/mission/voyager/voyager-1/",
+    "note": "Launch 5 Sep 1977, Jupiter 5 Mar 1979, Saturn 12 Nov 1980, exit of heliosphere 25 Aug 2012, climb out of the ecliptic after Saturn."
+  },
+  "G-18": {
+    "title": "Voyager 2",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/mission/voyager/voyager-2/",
+    "note": "Launch 20 Aug 1977, Jupiter 9 Jul 1979, Saturn 25 Aug 1981, Uranus 24 Jan 1986, Neptune 25 Aug 1989."
+  },
+  "G-19": {
+    "title": "Voyager mission overview",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/mission/voyager/",
+    "note": "Voyager 1 reached the interstellar boundary in 2012, Voyager 2 in 2018; both leave at more than 3 AU per year."
+  },
+  "G-20": {
+    "title": "The Grand Tour",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/image-detail/grand-tour/",
+    "note": "Voyager used a once-every-175-year alignment of the outer planets; gravity assists chain Jupiter to Neptune."
+  },
+  "G-21": {
+    "title": "Oort Cloud and Scale of the Solar System (infographic)",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/resource/oort-cloud-and-scale-of-the-solar-system-infographic/",
+    "note": "Voyager 2 termination shock at 84 AU (Aug 2007), Voyager 2 about 119 AU, Oort Cloud from about 1,000 AU to about 100,000 AU."
+  },
+  "G-22": {
+    "title": "Webb Orbit",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/mission/webb/orbit/",
+    "note": "Sun-Earth L1 and L2 about 1.5 million km from Earth; L1-L3 metastable, L4/L5 stable; SOHO, DSCOVR at L1; Webb orbits L2 in about 6 months; asteroids at L4/L5."
+  },
+  "G-23": {
+    "title": "WMAP overview (Sun-Earth Lagrange points diagram)",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/mission/wmap/wmap-overview/",
+    "note": "L2 is 1.5 million km from Earth; geometry of L1-L5; WMAP, Planck, Webb at L2."
+  },
+  "G-24": {
+    "title": "Euclid fact sheet",
+    "publisher": "ESA",
+    "url": "https://sci.esa.int/web/euclid/-/fact-sheet",
+    "note": "Euclid at Sun-Earth L2, 1.5 million km from Earth, large Lissajous/halo orbit of about 1 million km."
+  },
+  "G-25": {
+    "title": "Vigil mission overview",
+    "publisher": "ESA",
+    "url": "https://www.esa.int/Space_Safety/Vigil/Vigil_mission_overview",
+    "note": "Vigil to orbit Sun-Earth L5, launch planned 2031 on Ariane 6."
+  },
+  "G-26": {
+    "title": "Newly discovered asteroid just second of its kind (2020 XL5)",
+    "publisher": "ESA",
+    "url": "https://www.esa.int/Space_Safety/Planetary_Defence/Newly_discovered_asteroid_just_second_of_its_kind",
+    "note": "2020 XL5 confirmed as the second known Earth Trojan (after 2010 TK7); published Feb 2022."
+  },
+  "G-27": {
+    "title": "GW150914",
+    "publisher": "LIGO Scientific Collaboration",
+    "url": "https://www.ligo.org/detections/gw150914/",
+    "note": "Detection on 14 Sep 2015, source about 1.3 billion light-years away."
+  },
+  "G-28": {
+    "title": "Gravitational-wave science",
+    "publisher": "LIGO Scientific Collaboration",
+    "url": "http://www.ligo.org/gravitational-wave-science/",
+    "note": "GW150914 observed Sep 2015, reported Feb 2016; typical arm-length oscillations ten thousand times smaller than a proton."
+  },
+  "G-29": {
+    "title": "Astronomers reveal first image of the black hole at the heart of our galaxy (eso2208)",
+    "publisher": "ESO",
+    "url": "https://www.eso.org/public/news/eso2208/",
+    "note": "Sgr A* mass about 4 million solar masses, released 12 May 2022, EHT 2017 observations, Genzel and Ghez star-orbit work."
+  },
+  "G-30": {
+    "title": "Detection of the gravitational redshift in the orbit of the star S2 near the Galactic centre massive black hole (abstract)",
+    "publisher": "GRAVITY Collaboration / arXiv",
+    "url": "https://arxiv.org/abs/1807.09409",
+    "note": "S2 has a 16-year orbit and about 7650 km/s at pericentre."
+  },
+  "G-31": {
+    "title": "Perihelion Precessions of Inner Planets in Einstein's Theory and Predicted Values for the Cosmological Constant",
+    "publisher": "PubMed Central (peer-reviewed article)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9635960/",
+    "note": "GR contribution to Mercury perihelion precession 42.9815 arcsec per century; observed unexplained advance 42.980 +/- 0.002 arcsec per century."
+  },
+  "G-32": {
+    "title": "Sun's Gravity Bends Starlight (Cosmic Times, 1919)",
+    "publisher": "NASA Goddard Imagine the Universe",
+    "url": "https://imagine.gsfc.nasa.gov/educators/programs/cosmictimes/educators/guide/1919/starlight.html",
+    "note": "Eddington's 1919 eclipse expedition found the bending predicted by general relativity; caveat on sensitivity of the 1919 data."
+  },
+  "G-33": {
+    "title": "Sun: Facts",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/sun/facts/",
+    "note": "Galactic orbit about 230 million years at 720,000 km/h; Sun is 99.8% of system mass; formed about 4.6 billion years ago."
+  },
+  "G-34": {
+    "title": "Solar System: Facts",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/solar-system/solar-system-facts/",
+    "note": "Orbital speed around the galaxy about 828,000 km/h (230 km/s); galactic year about 230 million years; age 4.6 billion years."
+  },
+  "G-35": {
+    "title": "Magnetospheres (focus area)",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/heliophysics/focus-areas/magnetosphere-ionosphere/",
+    "note": "Dayside magnetosphere 6-10 Earth radii; magnetotail hundreds of Earth radii, past the Moon at 60; field from convecting molten iron."
+  },
+  "G-36": {
+    "title": "Ulysses Begins to Explore Sun's Northern Pole",
+    "publisher": "NASA JPL",
+    "url": "https://www.jpl.nasa.gov/news/ulysses-begins-to-explore-suns-northern-pole/",
+    "note": "Solar wind about 400 km/s near the equator and 800 km/s at high latitude; about 1 million tons per second lost."
+  },
+  "G-37": {
+    "title": "100 Years of General Relativity (Blueshift)",
+    "publisher": "NASA Goddard",
+    "url": "https://asd.gsfc.nasa.gov/blueshift/index.php/2015/11/25/100-years-of-general-relativity/",
+    "note": "GPS clocks: -7 microseconds/day (special relativity), +45 (general relativity), net +38 microseconds/day, about 10 km/day error if uncorrected."
+  },
+  "G-38": {
+    "title": "Geoid (GOCO06s model visualization)",
+    "publisher": "NASA Scientific Visualization Studio",
+    "url": "https://svs.gsfc.nasa.gov/5660/",
+    "note": "Geoid ranges from +85 m (Iceland) to -106 m (south of India); visualization exaggerates by 10,000."
+  },
+  "G-39": {
+    "title": "What Causes Tides?",
+    "publisher": "NOAA NESDIS",
+    "url": "https://www.nesdis.noaa.gov/about/k-12-education/oceans-coasts/what-causes-tides",
+    "note": "Tidal force from the difference in the Moon's pull; two bulges; most coasts have two highs and two lows per day."
+  },
+  "G-40": {
+    "title": "Planck 2018 results. VI. Cosmological parameters (abstract)",
+    "publisher": "Planck Collaboration / arXiv",
+    "url": "https://arxiv.org/abs/1807.06209",
+    "note": "Omega_c h2 = 0.120, Omega_b h2 = 0.0224 (dark matter about 5.4 times baryonic matter); H0 = 67.4. Age 13.80 Gyr is in the paper's parameter tables."
+  },
+  "G-41": {
+    "title": "Planck 2018 results. I. Overview (dipole, ar5iv HTML)",
+    "publisher": "Planck Collaboration / ar5iv",
+    "url": "https://ar5iv.labs.arxiv.org/html/1807.06205",
+    "note": "Solar-system velocity relative to the CMB 369.82 +/- 0.11 km/s."
+  },
+  "G-42": {
+    "title": "Dark Matter",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/dark-matter/",
+    "note": "Ordinary matter about 5% and dark matter about 27% of the universe (about 5.4 to 1); Rubin's outer-star speeds."
+  },
+  "G-43": {
+    "title": "There's More to the North Star Than Meets the Eye",
+    "publisher": "NASA Science (Hubble)",
+    "url": "https://science.nasa.gov/missions/hubble/theres-more-to-the-north-star-than-meets-the-eye/",
+    "note": "Polaris is about 430 light-years away."
+  },
+  "G-44": {
+    "title": "Why is Polaris the North Star? (StarChild)",
+    "publisher": "NASA GSFC",
+    "url": "https://starchild.gsfc.nasa.gov/docs/StarChild/questions/question64.html",
+    "note": "Axial precession period about 26,000 years; Vega will be the North Star in about 13,000 years."
+  },
+  "G-45": {
+    "title": "Orbits and Kepler's Laws",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/solar-system/orbits-and-keplers-laws/",
+    "note": "Statement of Kepler's three laws, p^2 = a^3; Mercury 88 d, Earth 365 d, Saturn 10,759 d."
+  },
+  "G-46": {
+    "title": "Kepler's 3rd Law - Lesson Plan #31 (first cosmic velocity)",
+    "publisher": "NASA GSFC Stargazer",
+    "url": "https://pwg.gsfc.nasa.gov/stargaze/Lkepl3rd.htm",
+    "note": "First cosmic velocity 7.9 km/s (circular orbit at 1 Earth radius); escape velocity 11.2 km/s = 7.9 x sqrt(2); no third cosmic velocity."
+  },
+  "G-47": {
+    "title": "What Is a Barycenter?",
+    "publisher": "NASA Space Place",
+    "url": "https://spaceplace.nasa.gov/barycenter/en/",
+    "note": "Sun-Jupiter barycenter lies just outside the Sun's surface."
+  },
+  "G-48": {
+    "title": "2025 Exoplanet Archive News",
+    "publisher": "NASA Exoplanet Archive",
+    "url": "https://exoplanetarchive.ipac.caltech.edu/docs/2025news.html",
+    "note": "Archive reached 6,000 confirmed planets on 17 Sep 2025."
+  },
+  "G-49": {
+    "title": "First Close-up of the Far Side of Moon (Luna 3)",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/resource/first-close-up-of-the-far-side-of-moon/",
+    "note": "Luna 3 took the first images of the lunar far side on 7 Oct 1959 (29 photographs, about 70% coverage)."
+  },
+  "G-50": {
+    "title": "Galaxies and the Expanding Universe",
+    "publisher": "ESA",
+    "url": "https://sci.esa.int/web/education/-/36827-galaxies-and-the-expanding-universe?fbodylongid=1732",
+    "note": "Sun about 28,000 light-years from the galactic centre, roughly two-thirds of the way out; about 400 billion stars."
+  },
+  "G-51": {
+    "title": "Galaxies",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/universe/galaxies/",
+    "note": "Solar system lies on a spiral arm about halfway from the galactic centre."
+  },
+  "G-52": {
+    "title": "Pluto: Facts",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/dwarf-planets/pluto/facts/",
+    "note": "Reclassified as a dwarf planet in 2006; axis tilted 57 degrees to its orbit plane (equivalent to a retrograde obliquity of about 123 degrees)."
+  },
+  "G-53": {
+    "title": "NASA's WISE Finds Earth's First Trojan Asteroid",
+    "publisher": "NASA JPL",
+    "url": "https://www.jpl.nasa.gov/news/nasas-wise-finds-earths-first-trojan-asteroid/",
+    "note": "2010 TK7 is the first Earth Trojan; Trojans share a planet's orbit near stable points ahead of or behind it."
+  },
+  "G-54": {
+    "title": "Europa: Facts",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/jupiter/jupiter-moons/europa/europa-facts/",
+    "note": "Ganymede 1 orbit : Europa 2 : Io 4 resonance."
+  },
+  "G-55": {
+    "title": "175 Years Ago: Astronomers Discover Neptune, the Eighth Planet",
+    "publisher": "NASA",
+    "url": "https://www.nasa.gov/history/175-years-ago-astronomers-discover-neptune-the-eighth-planet/",
+    "note": "Neptune found on 23-24 Sep 1846 from a mathematically predicted position."
+  },
+  "G-56": {
+    "title": "COBE science",
+    "publisher": "NASA Science",
+    "url": "https://science.nasa.gov/mission/cobe/science/",
+    "note": "CMB temperature varies by only 1 part in 100,000."
+  },
+  "G-57": {
+    "title": "Major Groups of Dinosaurs",
+    "publisher": "US National Park Service",
+    "url": "https://home.nps.gov/subjects/fossils/major-groups-of-dinosaurs.htm",
+    "note": "Earliest dinosaur fossils about 235 million years old (Late Triassic)."
+  },
+  "G-58": {
+    "title": "Then vs. Now: The Age of the Universe",
+    "publisher": "NASA Goddard Imagine the Universe",
+    "url": "https://imagine.gsfc.nasa.gov/science/featured_science/tenyear/age.html",
+    "note": "WMAP-era age 13.7 +/- 0.2 billion years (superseded by Planck 13.80 +/- 0.02)."
+  }
+}

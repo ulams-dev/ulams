@@ -28,6 +28,10 @@ material is named in each package's `NOTICE` and in `LICENSING.md`.
 | `yarn workspace @ulams/demo-content test` | unit tests of the tools |
 | `yarn workspace @ulams/demo-content test:e2e` | Playwright on throwaway servers: each package loads in the sandbox, steps advance, no external request, keyboard, axe (needs Chromium: `npx playwright install chromium`) |
 | `node demo-content/tests/try-lesson.mjs <tenant> <course> <topic> out.png` | opens a lesson on the running local stack, prints console problems and failed requests, saves a screenshot |
+| `node demo-content/tests/try-course.mjs <tenant> <out-dir>` | opens every lesson of a tenant as the demo student: console problems, failed requests, progress pings and axe per topic type, one screenshot per type |
+| `node demo-content/tests/try-quiz.mjs <tenant> <course> <topic>` | answers one quiz correctly in the learner front from the GIFT in the course text and prints the result |
+| `node demo-content/tests/try-certificate.mjs <tenant> <course>` | completes a course through the progress API and fetches the certificate PDF |
+| `node demo-content/tests/shoot-landing.mjs <tenant> <out-dir>` | screenshots of a landing page with the hero playing, desktop and phone |
 | `yarn workspace @ulams/demo-content sync-bridge` | copies the bridge bundle into every unbuilt package's `vendor/` |
 | `yarn workspace @ulams/demo-gravity package` | builds `gravity/release/gravity-ulams-<version>.zip` |
 
