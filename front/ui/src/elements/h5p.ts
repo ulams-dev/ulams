@@ -7,6 +7,10 @@ import { announceComplete, bff } from "./bff.ts";
  * Frames the H5P service's player (served through this site's /h5p proxy, so the frame is
  * same-origin), answers its handshake with the theme, resizes the frame, forwards xAPI
  * statements to progress and completes the topic on a completing statement.
+ *
+ * The frame gets `token: null` on purpose: the learner's API token never enters the browser. The
+ * `/h5p` proxy of the front adds the session token server-side for the player's own calls (play model,
+ * saved state, result), so state is restored without the content code holding a credential (ADR 0045).
  */
 class UlamsH5P extends HTMLElement {
   private iframe: HTMLIFrameElement | null = null;

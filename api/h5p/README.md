@@ -222,6 +222,11 @@ finishedData URLs inside the player/editor model. Two consequences:
   running content is not reloaded), the editor page swaps the token inside its
   model's `ajaxPath`. `/play` is cheap (one row read plus cached library
   metadata) and is sent with `Cache-Control: no-store`.
+- **Behind a session proxy.** The Astro front (`front/web`, route `/h5p`) keeps the learner's
+  token in an httpOnly cookie and adds `Authorization` server-side for the player's own calls (play
+  model, `contentUserData`, `finishedData`; ADR 0045). It marks those requests with
+  `X-Ulams-Session-Proxy: 1`; the service then leaves the token out of the model's URLs, so it never
+  reaches the content frame, and the same proxy adds it to the state calls.
 - **Logs.** The service redacts `_token` in its own logs, but Caddy's access log
   records full URIs. Add the `log { format filter … }` block from
   `Caddyfile.snippet`, which replaces `_token` and drops `Authorization` /

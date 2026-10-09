@@ -66,6 +66,20 @@ describe('auth middleware (JWT + profile + internal token)', () => {
         verifier = new JwtVerifier({ publicKeyPem: keys.publicPem, clockToleranceSec: 5 });
     });
 
+    it('keeps the token out of the user (and so out of the model URLs) behind a session proxy', async () => {
+        const token = await keys.sign({}, { sub: '1' });
+        const app = buildApp({ verifier, httpGet: okProfile });
+
+        const direct = await request(app).get('/whoami').set('Authorization', `Bearer ${token}`);
+        expect(direct.body.hasToken).toBe(true);
+
+        const proxied = await request(app).get('/whoami').set('Authorization', `Bearer ${token}`).set('X-Ulams-Session-Proxy', '1');
+        expect(proxied.status).toBe(200);
+        expect(proxied.body.user.id).toBe('1');
+        expect(proxied.body.user.isAnonymous).toBe(false);
+        expect(proxied.body.hasToken).toBe(false);
+    });
+
     it('accepts a valid Bearer token and loads permissions from the profile', async () => {
         const httpGet = vi.fn(okProfile);
         const app = buildApp({ verifier, httpGet });
