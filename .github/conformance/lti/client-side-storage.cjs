@@ -175,7 +175,6 @@ async function scenario(browser, mode) {
     }
     await new Promise((resolve) => server.listen(PLATFORM_PORT, '0.0.0.0', resolve));
     const browser = await chromium.launch({
-        executablePath: process.env.CHROMIUM_PATH || undefined,
         args: [`--host-resolver-rules=MAP ${PLATFORM_HOST} 127.0.0.1, MAP ulams.test 127.0.0.1, MAP ${FRONT_HOST} 127.0.0.1`]
     });
     const summary = {};
