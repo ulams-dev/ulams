@@ -35,3 +35,17 @@ Option 1:
 - Bad: two publish paths, and the session transfer must be kept in sync with schema changes (round
   trip test).
 - Default pending #53.
+
+## Implementation notes (L2-09)
+
+- **Platform API** (ADR 0078 shape): `POST /api/platform/tenants` queues `ProvisionTenantJob` and `GET
+  /api/platform/tenants/{slug}` reports the recorded steps. It is off unless `TENANCY_PLATFORM_API=true`, answers
+  404 on tenant hosts and needs `tenancy_manage`, which only the platform's admin role gets by seeder.
+- **Moving a session** is `course-builder:session:export` and `:import` (a tar with the brief, the current and applied
+  versions, the sources with raw and normalised files, and every fragment). Fragment ids and blueprint element ids are
+  kept; sessions, sources and versions get new ids; the source ids named inside the documents are rewritten.
+- **From a tenant**, `MoveToNewSiteJob` runs `ulams:tenant:create` under the platform host (`TENANCY_PLATFORM_HOST`),
+  exports, then runs the import in the new tenant through `TenantCommandRunnerContract`, which creates the author as an
+  admin and sends a password-reset invitation. It needs `TENANCY_NEW_SITES=true` and `tenancy_manage`; progress is in
+  the session state for the studio.
+- The session in the original site is kept; the transfer never copies LMS entities.

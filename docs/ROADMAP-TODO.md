@@ -385,9 +385,10 @@ approved apply through domain services → element chat edits. Designs:
       GIFT rendered by our code, support check against the cited text)
 - [x] Metadata (title, description, SEO, pricing) (a suggested price for a paid course, confirmed by
       the author; ADR 0049)
-- [ ] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (partial: theme,
-      the product (inactive at apply, active at publish), the publish check and the generated landing
-      on the current site done; a new site for platform admins is L2-09)
+- [x] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (theme, the product
+      (inactive at apply, active at publish), the publish check and the generated landing on the current
+      site; a new site for platform operators through the platform tenant API and a session transfer,
+      ADR 0048; the Sylius channel is Phase 6.4)
 - [x] **Course Blueprint**: versioned JSON, stable IDs, citations; entities created via domain
       services; persisted per stage; progress streamed (SSE/websockets) (ADR 0010, 0025)
 
@@ -662,7 +663,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [x] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit
       log, `Idempotency-Key`, `X-Request-Id`, `GET /api/meta`; admin "API tokens" page (ADR 0074)
 - [x] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075; pending #74)
-- [ ] (new) S3 platform tenant API with queued provisioning (ADR 0078; pending #79)
+- [ ] (new) S3 platform tenant API with queued provisioning (ADR 0078; pending #79) (partial: `POST /api/platform/tenants` and `GET /api/platform/tenants/{slug}` with queued provisioning and `tenancy_manage` are done; delete, scoped tokens and CLI nouns remain)
 - [x] (new) S4 course builder run-status endpoint `GET /api/admin/course-builder/runs/{run}`
 - [ ] (new) S5 OpenAPI response schemas for the top 60 operations the CLI uses, after L0-11; stable operationIds
 - [ ] `npx create-ulams` / `docker compose up` with seed data
