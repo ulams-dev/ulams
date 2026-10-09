@@ -25,6 +25,7 @@ material is named in each package's `NOTICE` and in `LICENSING.md`.
 | `yarn workspace @ulams/demo-content lint` | the boundary check, every `ulams-interactive.json` against the schema, vendored bridge copies equal a fresh build |
 | `yarn workspace @ulams/demo-content test` | unit tests of the tools |
 | `yarn workspace @ulams/demo-content test:e2e` | Playwright on throwaway servers: each package loads in the sandbox, steps advance, no external request, keyboard, axe (needs Chromium: `npx playwright install chromium`) |
+| `node demo-content/tests/try-lesson.mjs <tenant> <course> <topic> out.png` | opens a lesson on the running local stack, prints console problems and failed requests, saves a screenshot |
 | `yarn workspace @ulams/demo-content sync-bridge` | copies the bridge bundle into every unbuilt package's `vendor/` |
 | `yarn workspace @ulams/demo-gravity package` | builds `gravity/release/gravity-ulams-<version>.zip` |
 
