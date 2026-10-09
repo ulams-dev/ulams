@@ -468,6 +468,12 @@
   "tag": "Admin Courses"
  },
  {
+  "method": "GET",
+  "path": "/api/admin/csp-reports",
+  "summary": "List the aggregated CSP violation reports",
+  "tag": "Core Admin"
+ },
+ {
   "method": "POST",
   "path": "/api/admin/csv/groups",
   "summary": "",
@@ -2514,6 +2520,12 @@
   "tag": "Courses"
  },
  {
+  "method": "POST",
+  "path": "/api/csp-report",
+  "summary": "Collect a Content Security Policy violation report",
+  "tag": "Core"
+ },
+ {
   "method": "GET",
   "path": "/api/demo",
   "summary": "Demo mode status and the accounts used for the automatic login",
@@ -2599,6 +2611,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/lti/frame-origins",
+  "summary": "Origins of the enabled external tools of this tenant",
+  "tag": "LTI"
+ },
+ {
+  "method": "GET",
   "path": "/api/lti/jwks",
   "summary": "Public key set of this tenant (LTI platform and tool side)",
   "tag": "LTI"
@@ -2661,6 +2679,12 @@
   "method": "POST",
   "path": "/api/lti/platform/deep-links",
   "summary": "Deep-linking return URL (the tool posts the author's selection here)",
+  "tag": "LTI"
+ },
+ {
+  "method": "GET",
+  "path": "/api/lti/platform/nrps/{course}",
+  "summary": "NRPS: members of a course (membership container)",
   "tag": "LTI"
  },
  {
@@ -2806,6 +2830,48 @@
   "path": "/api/pdfs/generate/{id}",
   "summary": "Download a generated PDF (certificate)",
   "tag": "Template PDFs"
+ },
+ {
+  "method": "GET",
+  "path": "/api/platform/operations",
+  "summary": "The latest tenant operations",
+  "tag": "Platform"
+ },
+ {
+  "method": "GET",
+  "path": "/api/platform/operations/{id}",
+  "summary": "Status and steps of a tenant operation (poll it)",
+  "tag": "Platform"
+ },
+ {
+  "method": "GET",
+  "path": "/api/platform/tenants",
+  "summary": "List the tenants",
+  "tag": "Platform"
+ },
+ {
+  "method": "POST",
+  "path": "/api/platform/tenants",
+  "summary": "Create a tenant (queued; poll the operation)",
+  "tag": "Platform"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/platform/tenants/{slug}",
+  "summary": "Delete a tenant and all its data (queued; send the slug as confirm)",
+  "tag": "Platform"
+ },
+ {
+  "method": "GET",
+  "path": "/api/platform/tenants/{slug}",
+  "summary": "One tenant",
+  "tag": "Platform"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/platform/tenants/{slug}/env",
+  "summary": "Override or reset inheritable settings (AI driver, models) of a tenant",
+  "tag": "Platform"
  },
  {
   "method": "POST",

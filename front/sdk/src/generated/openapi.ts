@@ -2263,6 +2263,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/csp-report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Collect a Content Security Policy violation report
+         * @description Public, rate limited (60 per minute and IP), body up to 16 KB. Accepts `application/csp-report` (report-uri) and `application/reports+json` (Reporting API). Only the directive, the host of the blocked resource and the path of the page are kept, aggregated with a counter, and pruned after 30 days.
+         */
+        post: operations["85f7ae7cab7ab8ec520e63e6c427b339"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/csp-reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List the aggregated CSP violation reports
+         * @description Admins only. Newest first.
+         */
+        get: operations["1019392d092cea54f12c8fe80cccf2bf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/health-check": {
         parameters: {
             query?: never;
@@ -4767,6 +4807,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/lti/frame-origins": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Origins of the enabled external tools of this tenant
+         * @description For the front's Content Security Policy: the `frame-src` of a learner page must name the origins a tool launch loads (its OIDC login, launch and deep-linking URLs). Public and cached for 5 minutes; it reveals only the origins of tools the tenant registered for its learners.
+         */
+        get: operations["9501c319c6b2b356ec601963caad0176"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/lti/jwks": {
         parameters: {
             query?: never;
@@ -4854,6 +4914,26 @@ export interface paths {
         };
         /** AGS: latest result per learner */
         get: operations["ffbc8addccea9d6645cde339b6e5d5fe"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/platform/nrps/{course}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * NRPS: members of a course (membership container)
+         * @description Bearer token from /api/lti/platform/token with scope https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly. Names and e-mails only when the tool registration shares them. Paged by `limit` (max 100) and `page`; a Link header with rel=next points to the next page. `role` filters by LTI role.
+         */
+        get: operations["d7b8c3bdee515c8afd8f24fc61ec218c"];
         put?: never;
         post?: never;
         delete?: never;
@@ -6984,6 +7064,93 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/platform/operations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The latest tenant operations */
+        get: operations["fd8a8310786cb7d3b749da1945c41573"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/operations/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Status and steps of a tenant operation (poll it) */
+        get: operations["63486428fcc1835220898ec2e1775315"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/tenants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the tenants */
+        get: operations["4ee59d29162c33be46676ac192fea763"];
+        put?: never;
+        /** Create a tenant (queued; poll the operation) */
+        post: operations["135135c2c7a8b3f064f45fc65b42e3e2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/tenants/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One tenant */
+        get: operations["2008e0e13e05d2463e87c51103f3e725"];
+        put?: never;
+        post?: never;
+        /** Delete a tenant and all its data (queued; send the slug as confirm) */
+        delete: operations["7e5d0171cf58c83d4e39f68c56ab1f6d"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/tenants/{slug}/env": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Override or reset inheritable settings (AI driver, models) of a tenant */
+        patch: operations["fc7c9945e536e6e4e77fc034a89aeada"];
         trace?: never;
     };
     "/api/admin/quiz-answers/{id}": {
@@ -9174,6 +9341,56 @@ export interface components {
             channel?: string;
             /** @description this template is default template for given channel and event pair */
             default?: boolean;
+        };
+        PlatformTenant: {
+            /**
+             * @description The platform tenant API (ADR 0078): only on a platform host with TENANCY_PLATFORM_API=true (404
+             *     otherwise), for users with the `platform_admin` permission; scoped tokens need `platform:read|write`.
+             * @example coffee
+             */
+            slug?: string;
+            name?: string;
+            theme?: string | null;
+            accent?: string | null;
+            demo?: boolean;
+            /** @enum {string} */
+            status?: "provisioning" | "active" | "failed";
+            urls?: {
+                api?: string;
+                front?: string;
+                admin?: string;
+            };
+            /** @description Finished provisioning steps with their time */
+            steps?: Record<string, never>;
+            /** @description Names only, never values */
+            env_override_keys?: string[];
+            last_error?: string | null;
+            /** Format: date-time */
+            created_at?: string;
+            /** Format: date-time */
+            updated_at?: string;
+        };
+        PlatformOperation: {
+            /** @example 01j9z3k8m2x4q7r5t6v8w0y1ab */
+            id?: string;
+            /** @enum {string} */
+            kind?: "create" | "delete";
+            /** @enum {string} */
+            status?: "queued" | "running" | "succeeded" | "failed";
+            tenant?: string;
+            steps?: {
+                name?: string;
+                /** @enum {string} */
+                status?: "pending" | "running" | "succeeded" | "skipped" | "failed";
+                startedAt?: string | null;
+                finishedAt?: string | null;
+                error?: string | null;
+            }[];
+            error?: string | null;
+            requested_by?: number | null;
+            created_at?: string;
+            started_at?: string | null;
+            finished_at?: string | null;
         };
         AdminGiftQuestionRequest: {
             /** @description topic_gift_quiz_id */
@@ -14646,6 +14863,110 @@ export interface operations {
             };
         };
     };
+    "85f7ae7cab7ab8ec520e63e6c427b339": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/csp-report": Record<string, never>;
+                "application/reports+json": Record<string, never>[];
+            };
+        };
+        responses: {
+            /** @description Report accepted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The body is not a JSON report */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The body is larger than 16 KB */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unsupported content type */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many reports */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "1019392d092cea54f12c8fe80cccf2bf": {
+        parameters: {
+            query?: {
+                per_page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            id?: number;
+                            /** @example frame-src */
+                            directive?: string;
+                            /** @example tool.example.test */
+                            blocked_host?: string;
+                            /** @example /learn/1/2 */
+                            document_path?: string;
+                            count?: number;
+                            /** Format: date-time */
+                            first_seen_at?: string;
+                            /** Format: date-time */
+                            last_seen_at?: string;
+                        }[];
+                    };
+                };
+            };
+            /** @description Endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User is not an admin */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     "1125991bf9cc6c8f0c66c0899d22d579": {
         parameters: {
             query?: never;
@@ -19652,6 +19973,30 @@ export interface operations {
             };
         };
     };
+    "9501c319c6b2b356ec601963caad0176": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Sorted, unique origins (`scheme://host[:port]`) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: string[];
+                    };
+                };
+            };
+        };
+    };
     e21c466f7e6dac972c24fd1e77e9016c: {
         parameters: {
             query?: never;
@@ -19822,6 +20167,51 @@ export interface operations {
         responses: {
             /** @description result container */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    d7b8c3bdee515c8afd8f24fc61ec218c: {
+        parameters: {
+            query?: {
+                limit?: number;
+                page?: number;
+                role?: string;
+            };
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description application/vnd.ims.lti-nrps.v2.membershipcontainer+json */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description scope missing or NRPS not enabled for the tool */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description the course holds no link of this tool */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -25191,6 +25581,288 @@ export interface operations {
             };
             /** @description server-side error */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    fd8a8310786cb7d3b749da1945c41573: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Up to 50 operations, newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["PlatformOperation"][];
+                    };
+                };
+            };
+        };
+    };
+    "63486428fcc1835220898ec2e1775315": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["PlatformOperation"];
+                    };
+                };
+            };
+            /** @description Unknown operation */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "4ee59d29162c33be46676ac192fea763": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tenants */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["PlatformTenant"][];
+                    };
+                };
+            };
+            /** @description Not a platform administrator, or the token lacks platform:read */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The platform API is off, or this is a tenant host */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "135135c2c7a8b3f064f45fc65b42e3e2": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description 2-30 lowercase letters and digits, starting with a letter
+                     * @example acme
+                     */
+                    slug: string;
+                    name?: string;
+                    /** @example coffee */
+                    theme?: string;
+                    /** @example #C2552D */
+                    accent?: string;
+                    users?: number;
+                    demo?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            operation?: components["schemas"]["PlatformOperation"];
+                            tenant?: components["schemas"]["PlatformTenant"];
+                        };
+                    };
+                };
+            };
+            /** @description The tenant exists, or an operation for it is in progress */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid slug or option */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "2008e0e13e05d2463e87c51103f3e725": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The tenant */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["PlatformTenant"];
+                    };
+                };
+            };
+            /** @description Unknown tenant, or the platform API is off */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "7e5d0171cf58c83d4e39f68c56ab1f6d": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Must equal the slug */
+                    confirm: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            operation?: components["schemas"]["PlatformOperation"];
+                        };
+                    };
+                };
+            };
+            /** @description An operation for this tenant is in progress */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description confirm does not equal the slug */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    fc7c9945e536e6e4e77fc034a89aeada: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @example {
+                     *       "AI_DRIVER": "fake"
+                     *     }
+                     */
+                    set?: {
+                        [key: string]: string;
+                    };
+                    unset?: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description The tenant */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["PlatformTenant"];
+                    };
+                };
+            };
+            /** @description A key outside the allow-list */
+            422: {
                 headers: {
                     [name: string]: unknown;
                 };
