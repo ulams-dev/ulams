@@ -3,6 +3,8 @@
 namespace Tests\Integrations;
 
 use Database\Seeders\Demo\GravityExperience;
+use Database\Seeders\Demo\PolandExperience;
+use Database\Seeders\Demo\PolandPolishExperience;
 use Database\Seeders\Demo\Support\ModuleFile;
 use Database\Seeders\Demo\Support\Sources;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -13,7 +15,7 @@ use Ulams\TopicTypeGift\Services\Contracts\GiftQuestionServiceContract;
 use Ulams\TopicTypeLayout\Services\LayoutDocumentValidator;
 
 /**
- * The course text of the gravity academy (Demo/content/<key>/modules/*.md): every module
+ * The course text of the gravity and poland academies (Demo/content/<key>/modules/*.md): every module
  * parses, every layout validates against the learner catalogue (no fallback is ever shown), every GIFT
  * question parses as a real question type, and every `{{src:ID}}` resolves. The step ranges against the
  * packages are checked by demo-content/tests/unit/courses.test.mjs, the seeding itself by the demo reset.
@@ -24,6 +26,8 @@ class DemoInteractiveContentTest extends TestCase
     {
         return [
             'gravity' => [GravityExperience::class, 'en', 15],
+            'poland (English)' => [PolandExperience::class, 'en', 12],
+            'poland (Polish)' => [PolandPolishExperience::class, 'pl', 12],
         ];
     }
 

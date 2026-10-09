@@ -482,8 +482,8 @@
     }
    ],
    "caveat": {
-    "en": "Imports are calculated as exports minus the surplus; prices still follow world markets.",
-    "pl": "Import wyliczono jako eksport minus nadwyżka; ceny wciąż idą za rynkami światowymi."
+    "en": "Exports, imports and surplus are as published by KOWR (58.4 − 19.8 = 38.6); prices still follow world markets.",
+    "pl": "Eksport, import i nadwyżka według KOWR (58,4 − 19,8 = 38,6); ceny wciąż idą za rynkami światowymi."
    },
    "src": [
     "PL-123",
@@ -519,8 +519,8 @@
     "pl": "Tak zamożni jak Portugalia, coraz bliżej Hiszpanii"
    },
    "body": {
-    "en": "<p>GDP per person in purchasing-power terms reached <b>81% of the EU average</b> in 2025, level with Portugal and ahead of Hungary and Greece.</p><p>Actual individual consumption, which counts what households really get including public services, is at <b>88%</b>, up from 85% a year earlier.</p>",
-    "pl": "<p>PKB na osobę według parytetu siły nabywczej osiągnął w 2025 roku <b>81% średniej UE</b>, tyle co Portugalia i więcej niż Węgry czy Grecja.</p><p>Rzeczywista konsumpcja indywidualna, czyli to, co gospodarstwa faktycznie dostają, łącznie z usługami publicznymi, wynosi <b>88%</b>, wobec 85% rok wcześniej.</p>"
+    "en": "<p>GDP per person in purchasing-power terms reached <b>81% of the EU average</b> in 2025, level with Portugal and ahead of Hungary and Greece.</p>",
+    "pl": "<p>PKB na osobę według parytetu siły nabywczej osiągnął w 2025 roku <b>81% średniej UE</b>, tyle co Portugalia i więcej niż Węgry czy Grecja.</p>"
    },
    "charts": [
     {
@@ -594,8 +594,7 @@
     "pl": "PPS mierzy produkcję skorygowaną o poziom cen, a nie płace ani pełny ranking poziomu życia."
    },
    "src": [
-    "PL-002",
-    "PL-003"
+    "PL-002"
    ]
   },
   {
@@ -953,13 +952,13 @@
     "pl": "Dziewięć grup bojowych, od Finlandii po Bułgarię"
    },
    "body": {
-    "en": "<p>NATO now reports <b>nine multinational battlegroups</b> along its eastern flank.</p><p>In 2025 it added two standing operations: <b>Eastern Sentry</b>, guarding the airspace along the eastern border, and <b>Baltic Sentry</b>, watching the cables and pipelines on the Baltic seabed. The moving lights on the map trace both.</p>",
-    "pl": "<p>NATO ma dziś <b>dziewięć wielonarodowych grup bojowych</b> na wschodniej flance.</p><p>W 2025 roku doszły dwie stałe operacje: <b>Eastern Sentry</b>, która pilnuje przestrzeni powietrznej wzdłuż wschodniej granicy, i <b>Baltic Sentry</b>, która strzeże kabli i rurociągów na dnie Bałtyku. Ruchome światła na mapie pokazują obie.</p>"
+    "en": "<p>NATO now reports <b>nine multinational battlegroups</b> along its eastern flank.</p><p>In 2025 it launched two operations: <b>Eastern Sentry</b>, which keeps vigilance along the eastern flank, and <b>Baltic Sentry</b>, which protects critical undersea infrastructure in the Baltic. The moving lights on the map trace both.</p>",
+    "pl": "<p>NATO ma dziś <b>dziewięć wielonarodowych grup bojowych</b> na wschodniej flance.</p><p>W 2025 roku ruszyły dwie operacje: <b>Eastern Sentry</b>, która zwiększa czujność wzdłuż wschodniej flanki, i <b>Baltic Sentry</b>, która chroni krytyczną infrastrukturę podmorską na Bałtyku. Ruchome światła na mapie pokazują obie.</p>"
    },
    "charts": [
     {
      "type": "kpi",
-     "cols": 3,
+     "cols": 2,
      "items": [
       {
        "v": 9,
@@ -973,13 +972,6 @@
        "l": {
         "en": "new Sentry operations",
         "pl": "nowe operacje Sentry"
-       }
-      },
-      {
-       "v": 32,
-       "l": {
-        "en": "allies",
-        "pl": "sojuszników"
        }
       }
      ]
@@ -1318,8 +1310,8 @@
     "pl": "Europa odbiera paczki z polskiej skrzynki"
    },
    "body": {
-    "en": "<p><b>InPost</b> ended 2025 with <b>61,196 parcel machines</b>, more than half of them outside Poland, and handled about 1.4 billion parcels, up 25%. Just over half its revenue now comes from abroad.</p><p><b>Żabka</b> runs 12,339 stores, including 173 in Romania, and <b>BLIK</b> is piloting links with Spain’s Bizum and Portugal’s MB WAY.</p>",
-    "pl": "<p><b>InPost</b> zakończył 2025 rok z <b>61 196 paczkomatami</b>, z czego ponad połowa stoi poza Polską, i obsłużył około 1,4 mld paczek, o 25% więcej. Już nieco ponad połowa jego przychodów pochodzi z zagranicy.</p><p><b>Żabka</b> ma 12 339 sklepów, w tym 173 w Rumunii, a <b>BLIK</b> testuje połączenia z hiszpańskim Bizum i portugalskim MB WAY.</p>"
+    "en": "<p><b>InPost</b> ended 2025 with <b>61,196 parcel machines</b>, more than half of them outside Poland, and handled about 1.4 billion parcels, up 25%. Just over half its revenue now comes from abroad.</p><p><b>Żabka</b> runs 12,339 stores, including 173 in Romania, and <b>BLIK</b> has piloted links with Spain’s Bizum and Portugal’s MB WAY.</p>",
+    "pl": "<p><b>InPost</b> zakończył 2025 rok z <b>61 196 paczkomatami</b>, z czego ponad połowa stoi poza Polską, i obsłużył około 1,4 mld paczek, o 25% więcej. Już nieco ponad połowa jego przychodów pochodzi z zagranicy.</p><p><b>Żabka</b> ma 12 339 sklepów, w tym 173 w Rumunii, a <b>BLIK</b> przetestował połączenia z hiszpańskim Bizum i portugalskim MB WAY.</p>"
    },
    "charts": [
     {
@@ -1389,8 +1381,8 @@
     "pl": "Autobusy dla Vancouver, opowieści dla 85 milionów"
    },
    "body": {
-    "en": "<p><b>Solaris</b> delivered 1,631 vehicles to 15 countries in 2025, 86% of them low- or zero-emission, and won a firm order for <b>107 trolleybuses for Vancouver</b>.</p><p>The <b>Witcher</b> games have sold 85 million copies and Cyberpunk 2077 35 million.</p>",
-    "pl": "<p><b>Solaris</b> dostarczył w 2025 roku 1631 pojazdów do 15 krajów, w 86% nisko- lub zeroemisyjnych, i zdobył wiążące zamówienie na <b>107 trolejbusów dla Vancouver</b>.</p><p>Gry z serii <b>Wiedźmin</b> sprzedały się w 85 mln egzemplarzy, a Cyberpunk 2077 w 35 mln.</p>"
+    "en": "<p><b>Solaris</b> delivered 1,631 vehicles to 15 countries in 2025, 86% of them low- or zero-emission, and won an order for <b>107 trolleybuses for Vancouver</b>.</p><p>The <b>Witcher</b> games have sold 85 million copies and Cyberpunk 2077 35 million.</p>",
+    "pl": "<p><b>Solaris</b> dostarczył w 2025 roku 1631 pojazdów do 15 krajów, w 86% nisko- lub zeroemisyjnych, i zdobył zamówienie na <b>107 trolejbusów dla Vancouver</b>.</p><p>Gry z serii <b>Wiedźmin</b> sprzedały się w 85 mln egzemplarzy, a Cyberpunk 2077 w 35 mln.</p>"
    },
    "charts": [
     {
@@ -1447,13 +1439,13 @@
     "pl": "Polska nauka na orbicie"
    },
    "body": {
-    "en": "<p>In summer 2025 <b>Sławosz Uznański-Wiśniewski</b> launched on a Falcon 9 and Dragon to the International Space Station, the first Pole in space since 1978.</p><p>His 20-day mission, <b>Ignis</b>, carried <b>13 Polish-led experiments</b>. The dot on the map follows the station’s ground track.</p>",
-    "pl": "<p>Latem 2025 roku <b>Sławosz Uznański-Wiśniewski</b> poleciał Falconem 9 i Dragonem na Międzynarodową Stację Kosmiczną, jako pierwszy Polak w kosmosie od 1978 roku.</p><p>Jego 20-dniowa misja <b>Ignis</b> zabrała <b>13 eksperymentów prowadzonych przez Polaków</b>. Punkt na mapie podąża za śladem stacji nad Ziemią.</p>"
+    "en": "<p>In summer 2025 <b>Sławosz Uznański-Wiśniewski</b> flew to the International Space Station on the Ax-4 mission, Poland’s first government-sponsored human spaceflight to the station.</p><p>His 20-day mission, <b>Ignis</b>, carried <b>13 Polish-led experiments</b>. The dot on the map follows the station’s ground track.</p>",
+    "pl": "<p>Latem 2025 roku <b>Sławosz Uznański-Wiśniewski</b> poleciał na Międzynarodową Stację Kosmiczną w misji Ax-4, pierwszym państwowo sponsorowanym polskim lotem załogowym na stację.</p><p>Jego 20-dniowa misja <b>Ignis</b> zabrała <b>13 eksperymentów prowadzonych przez Polaków</b>. Punkt na mapie podąża za śladem stacji nad Ziemią.</p>"
    },
    "charts": [
     {
      "type": "kpi",
-     "cols": 3,
+     "cols": 2,
      "items": [
       {
        "v": 20,
@@ -1471,13 +1463,6 @@
        "l": {
         "en": "Polish experiments",
         "pl": "polskich eksperymentów"
-       }
-      },
-      {
-       "v": 2,
-       "l": {
-        "en": "Poles in space, ever",
-        "pl": "Polaków w kosmosie, w historii"
        }
       }
      ]
@@ -1871,8 +1856,8 @@
     "pl": "Najwięcej pasażerów kolei od 30 lat, rekord lotnisk"
    },
    "body": {
-    "en": "<p>Trains carried <b>438.97 million passengers</b> in 2025, the most in 30 years. Polish airports handled <b>66.1 million passenger movements</b>, Warsaw Chopin alone 24.1 million.</p><p>Gdańsk’s terminals moved a record <b>2.8 million containers</b> (TEU).</p>",
-    "pl": "<p>Pociągi przewiozły w 2025 roku <b>438,97 mln pasażerów</b>, najwięcej od 30 lat. Polskie lotniska obsłużyły <b>66,1 mln pasażerów</b>, samo Lotnisko Chopina 24,1 mln.</p><p>Terminale w Gdańsku przeładowały rekordowe <b>2,8 mln kontenerów</b> (TEU).</p>"
+    "en": "<p>Trains carried <b>438.97 million passengers</b> in 2025, the most in 30 years. Polish airports handled <b>66.1 million passenger movements</b>, Warsaw Chopin alone 24.1 million.</p><p>Gdańsk’s terminals moved nearly <b>2.8 million containers</b> (TEU), a record.</p>",
+    "pl": "<p>Pociągi przewiozły w 2025 roku <b>438,97 mln pasażerów</b>, najwięcej od 30 lat. Polskie lotniska obsłużyły <b>66,1 mln pasażerów</b>, samo Lotnisko Chopina 24,1 mln.</p><p>Terminale w Gdańsku przeładowały blisko <b>2,8 mln kontenerów</b> (TEU), czyli rekord.</p>"
    },
    "charts": [
     {
@@ -2111,8 +2096,8 @@
     "pl": "Kraków może oddychać"
    },
    "body": {
-    "en": "<p>Kraków has banned burning coal and wood in boilers and fireplaces since 2019. <b>All eight monitoring stations met the annual PM10 limit</b> in 2023 and 2024.</p><p>At Bujaka, days over the limit fell from <b>78 in 2016 to 23 in 2024</b>, and in 2024 every benzo[a]pyrene station met its legal limit for the first time.</p>",
-    "pl": "<p>Kraków zakazał palenia węglem i drewnem w kotłach i kominkach od 2019 roku. <b>Wszystkie osiem stacji pomiarowych spełniło roczną normę PM10</b> w 2023 i 2024 roku.</p><p>Na stacji Bujaka liczba dni z przekroczeniem spadła z <b>78 w 2016 do 23 w 2024</b>, a w 2024 wszystkie stacje mierzące benzo[a]piren po raz pierwszy zmieściły się w normie.</p>"
+    "en": "<p>In the last two years of the city’s July 2025 report, <b>all eight monitoring stations met the annual PM10 limit</b>.</p><p>At Bujaka, days over the limit fell from <b>78 in 2016 to 23 in 2024</b>, and in 2024 every benzo[a]pyrene station met its legal limit for the first time.</p>",
+    "pl": "<p>W ostatnich dwóch latach raportu miasta z lipca 2025 <b>wszystkie osiem stacji pomiarowych spełniło roczną normę PM10</b>.</p><p>Na stacji Bujaka liczba dni z przekroczeniem spadła z <b>78 w 2016 do 23 w 2024</b>, a w 2024 wszystkie stacje mierzące benzo[a]piren po raz pierwszy zmieściły się w normie.</p>"
    },
    "charts": [
     {

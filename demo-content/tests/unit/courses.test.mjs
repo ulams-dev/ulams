@@ -1,7 +1,7 @@
 // The course text of the gravity and poland demo academies (api/database/seeds/Demo/content/<key>/modules/*.md, read by the
 // PHP seeders) against the packages and the source lists in this folder: every step range exists and runs forward, every
-// cited source exists, the seed copy of each source list equals the package's, and every layout uses a component of the
-// learner catalogue.
+// cited source exists, the seed copy of each source list equals the package's, the English and Polish poland courses are
+// parallel, and every layout uses a component of the learner catalogue.
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -22,10 +22,13 @@ const modulesOf = (dir) =>
 
 const COURSES = {
   gravity: { dir: "gravity", sources: join(demo, "gravity", "sources.json"), seedSources: join(content, "gravity", "sources.json") },
+  "poland-en": { dir: "poland/en", sources: join(demo, "poland", "data", "sources.json"), seedSources: join(content, "poland", "sources.json") },
+  "poland-pl": { dir: "poland/pl", sources: join(demo, "poland", "data", "sources.json"), seedSources: join(content, "poland", "sources.json") },
 };
 
 const stepIds = {
   gravity: (await readSteps()).map((s) => s.id),
+  poland: JSON.parse(readFileSync(join(demo, "poland", "data", "steps.json"), "utf8")).steps.map((s) => s.id),
 };
 const packageOf = (name) => (name === "gravity" ? "gravity" : "poland");
 
@@ -101,3 +104,34 @@ for (const [name, course] of Object.entries(COURSES)) {
     assert.equal(layouts, 9);
   });
 }
+
+test("poland: the Polish course is parallel to the English one", () => {
+  const en = modulesOf("poland/en");
+  const pl = modulesOf("poland/pl");
+  assert.equal(en.length, pl.length);
+  en.forEach((m, i) => {
+    const p = pl[i];
+    assert.equal(m.file, p.file);
+    assert.equal(m.blocks.length, p.blocks.length, `${m.file}: number of blocks`);
+    m.blocks.forEach((b, j) => {
+      const q = p.blocks[j];
+      assert.equal(b.kind, q.kind, `${m.file} block ${j}`);
+      for (const key of ["start", "end", "sources", "duration", "pass", "attempts", "weight", "minutes", "preview"])
+        assert.equal(b.attrs[key], q.attrs[key], `${m.file} block ${j}: ${key}`);
+      const cites = (x) => [...x.body.matchAll(/\{\{src:([^}]+)\}\}/g)].map((c) => c[1]).sort().join("|");
+      assert.equal(cites(b), cites(q), `${m.file} block ${j}: citations`);
+      if (b.kind === "quiz") {
+        const a = giftQuestions(b.body).map(giftType);
+        const c = giftQuestions(q.body).map(giftType);
+        assert.deepEqual(a, c, `${m.file}: question types`);
+        // the numerical answers are the same numbers
+        const nums = (x) => giftQuestions(x.body).map((g) => (g.match(/\{#([\d.]+):([\d.]+)\}/) ?? []).slice(1).join(":"));
+        assert.deepEqual(nums(b), nums(q), `${m.file}: numerical answers`);
+      }
+      if (b.kind === "layout") {
+        const comps = (x) => JSON.parse(x.body).document.map((n) => n.component);
+        assert.deepEqual(comps(b), comps(q), `${m.file}: layout components`);
+      }
+    });
+  });
+});

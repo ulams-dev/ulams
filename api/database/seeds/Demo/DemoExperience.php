@@ -642,6 +642,12 @@ abstract class DemoExperience
         return $coupon;
     }
 
+    /** The pdfme template of the certificate: the theme of the experience, or a translated copy of it. */
+    protected function certificateContent(): string
+    {
+        return CertificateTemplates::content($this->key());
+    }
+
     private function certificate(): void
     {
         $service = app(TemplateServiceContract::class);
@@ -649,7 +655,7 @@ abstract class DemoExperience
         // The title section must reference the course title variable to be valid.
         $sections = [
             ['key' => 'title', 'content' => UserFinishedCourseVariables::defaultSectionsContent()['title']],
-            ['key' => 'content', 'content' => CertificateTemplates::content($this->key())],
+            ['key' => 'content', 'content' => $this->certificateContent()],
         ];
         $template = Template::query()->where('name', $name)->first();
         if ($template) {
