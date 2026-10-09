@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Ulams\Ai\Fake\FakeResponders;
 use Ulams\Ai\Prompts\PromptRegistry;
+use Ulams\CourseBuilder\Events\ElementPatched;
 use Ulams\CourseBuilder\Events\SourceIngested;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
@@ -17,6 +18,7 @@ use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
 use Ulams\LivingCourse\Console\BackfillCommand;
 use Ulams\LivingCourse\Fake\UpdateResponder;
 use Ulams\LivingCourse\Models\Proposal;
+use Ulams\LivingCourse\Models\ProposalItem;
 use Ulams\LivingCourse\Services\AnalysisService;
 use Ulams\LivingCourse\Services\AuditLog;
 use Ulams\LivingCourse\Services\RevisionService;
@@ -57,6 +59,13 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([BackfillCommand::class]);
         }
+
+        // an element edited in chat after the analysis: its pending item is out of date
+        Event::listen(ElementPatched::class, function (ElementPatched $e) {
+            ProposalItem::query()->where('element_id', $e->elementId)->where('status', '!=', 'stale')
+                ->whereIn('proposal_id', Proposal::query()->where('session_id', $e->session->id)->whereIn('status', Proposal::OPEN)->select('id'))
+                ->whereIn('kind', ['update', 'no_change', 'remove'])->update(['status' => 'stale']);
+        });
 
         // revision 1 of every source of a builder session
         Event::listen(SourceIngested::class, fn (SourceIngested $e) => $this->app->make(RevisionService::class)->ensureInitial($e->source));

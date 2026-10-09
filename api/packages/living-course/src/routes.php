@@ -19,5 +19,11 @@ Route::group([
     Route::get('sessions/{session}/proposals', [ProposalsController::class, 'index']);
     Route::get('proposals/{proposal}', [ProposalsController::class, 'show']);
     Route::post('proposals/{proposal}/analyse', [ProposalsController::class, 'analyse']);
+    Route::post('proposals/{proposal}/items/{item}/accept', [ProposalsController::class, 'accept']);
+    Route::post('proposals/{proposal}/items/{item}/reject', [ProposalsController::class, 'reject']);
+    Route::post('proposals/{proposal}/items/{item}/reset', [ProposalsController::class, 'reset']);
+    Route::post('proposals/{proposal}/items/{item}/regenerate', [ProposalsController::class, 'regenerate']);
+    Route::post('proposals/{proposal}/accept-all', [ProposalsController::class, 'acceptAll']);
+    Route::post('proposals/{proposal}/reject', [ProposalsController::class, 'rejectAll']);
     Route::get('revisions/{revision}/changes', [SourcesController::class, 'changes']);
 });

@@ -133,6 +133,7 @@ final class Presenter
             'resultVersionId' => $p->result_version_id,
             'estimatedCostMicroUsd' => $p->estimated_cost_micro_usd,
             'costMicroUsd' => $p->cost_micro_usd,
+            'decisions' => ProposalItem::query()->where('proposal_id', $p->id)->selectRaw('status, COUNT(*) AS n')->groupBy('status')->pluck('n', 'status')->map(fn ($n) => (int) $n)->all(),
             'learnerNote' => $p->learner_note,
             'error' => $p->error,
             'createdAt' => $p->created_at?->toIso8601String(),
