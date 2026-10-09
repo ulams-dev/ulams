@@ -1,0 +1,20 @@
+{
+  "props": {
+    "kind": "project",
+    "title": "Dial in your own coffee",
+    "text": "Brew the same coffee three ways and compare.",
+    "steps": [
+      "Weigh 15 g",
+      "Brew with three grinds",
+      "Write down what you taste"
+    ],
+    "cta": {
+      "label": "Open the project",
+      "href": "/projects/1"
+    }
+  },
+  "invalid": {
+    "kind": "game",
+    "title": "x"
+  }
+}

@@ -1,0 +1,23 @@
+---
+/**
+ * Build-time accessibility result for one catalogue component (ADR 0054): the example is
+ * server-rendered with the real component and checked with axe-core in jsdom. A violation fails
+ * the docs build, so a component cannot ship without a clean result.
+ */
+import type { ComponentName } from "@ulams/ui/registry";
+import { docOf, exampleOf, isStructure, renderExample, runAxe } from "../lib/playground.ts";
+
+interface Props {
+  name: ComponentName;
+}
+const { name } = Astro.props;
+const axe = await runAxe(await renderExample(docOf(name, exampleOf(name))), !isStructure(name));
+if (axe.violations.length > 0) {
+  throw new Error(`catalogue/${name}: axe found ${axe.violations.length} violation(s): ${axe.violations.map((v) => `${v.id} (${v.nodes[0] ?? ""})`).join("; ")}`);
+}
+---
+
+<p>
+  axe-core: <strong>{axe.passes} rules passed, {axe.violations.length} violations</strong>, {axe.incomplete} need manual review. Run at build time on the server-rendered
+  HTML in jsdom. Colour contrast and layout rules need a browser and are covered by the Playwright axe scans of the reference frontend.
+</p>

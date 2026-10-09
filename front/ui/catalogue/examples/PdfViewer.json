@@ -1,0 +1,10 @@
+{
+  "props": {
+    "src": "https://example.org/media/brew-chart.pdf",
+    "title": "Brew ratio chart"
+  },
+  "invalid": {
+    "src": "javascript:1",
+    "title": "x"
+  }
+}

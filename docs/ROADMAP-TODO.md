@@ -48,6 +48,9 @@ small commits → tests → summary.
 - [x] (new) styled-components replaced by CSS custom properties (`--ulams-*`) (ADR 0004)
 - [x] (new) Remove `recommender` from the API composition, not just stop using it (ADR 0006)
 - [x] (new) Repository: public `github.com/ulams-dev/ulams`, no AI attribution in history
+- [x] (2026-10-09) Build the agent-first `ulams` CLI core now (login and tokens, `ulams api`, main nouns,
+      `ulams mcp`); course-as-code after Phase 3. Plan `docs/plans/cli.md` (draft, waiting for approval),
+      ADRs 0072–0079 Proposed; open owner questions #74–#79
 
 ## Open decisions
 
@@ -57,7 +60,8 @@ small commits → tests → summary.
   - [ ] Check domains (ulams.ai, ulams.dev) and trademarks
   - [ ] Check legal aspects of using the Ulam name
   - [x] (new) Copyright of the original EscolaLMS/Wellms code and `scorm-player`: owned by the product owner; admin and scorm-player licensed MIT
-- [ ] Move MCP server (7.5) right after Phase 2? Cheap to build, strong demo
+- [x] Move MCP server (7.5) right after Phase 2? Cheap to build, strong demo (yes, 2026-10-09: the local
+      `ulams mcp` ships with the CLI core; `docs/plans/cli.md`, #73)
 - [ ] Move certificates (6.1) earlier if compliance is the priority segment
 - [ ] Multitenancy for the POC: one deployment, tenant per subdomain with own theme?
 - [ ] Prototype the Sylius order → entitlement flow early (highest-risk commerce piece)
@@ -145,10 +149,11 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] (new) Platform bucket publicly readable by default (`MINIO_DEFAULT_BUCKETS=ulams:download`)
 - [x] (new) Demo course seeders for the three experiences (`make demo-seed`, `demo-seed-tenants`)
 
-- [ ] (new) Security follow-ups (medium): require `auth:api` on admin tag routes; rate-limit/authorise
-      `POST api/images/img`; review `POST api/cmi5/fetch`; client-set `has_trial`, client currency override
-      and `payProduct` skipping `purchasable`; vouchers admin search OR grouping; `getChildGroups` depth;
-      keep `_ignition` off in production
+- [ ] (new) Security follow-ups (medium) (partial: done and merged: `auth:api` and `tags_list` on admin tag
+      routes, `POST api/images/img` limits and throttle, client payment parameters allow-listed with server
+      price/currency/trial values winning, `payProduct` purchasability, vouchers search grouping,
+      `GroupTree` depth limit and cycle safety, `_ignition` absent from demo and production images
+      (ADR 0071); pending: review `POST api/cmi5/fetch` (L0-09))
 - [ ] (new) Stripe: handle the 3-D Secure redirect in the front and document the webhook setup
       (`PAYMENTS_STRIPE_WEBHOOK_SECRET`, `/api/payments-gateways/webhook/stripe`); RevenueCat receipt verifier
 - [ ] (new) Jitsi: confirm the JaaS webhook signature format against the JaaS docs; configure
@@ -208,7 +213,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [x] (new) LiaScript topic type (learners), admin editor with preview and version diff, export/import strategy
       (topic type, Astro `LiaScriptLesson`, admin editor with versions, diff, restore and a live preview of
       unsaved text; course export carries the current text and assets, import creates a new document; ADR 0016)
-- [ ] (new) Run `sh packages/liascript/bin/fetch-player.sh` in the dev api container once (the image build does
+- [x] (new) Run `sh packages/liascript/bin/fetch-player.sh` in the dev api container once (the image build does
       it; the bind mount hides it)
 
 ### 1.2 Adapt Learning
@@ -309,8 +314,8 @@ approved apply through domain services → element chat edits. Designs:
 - [ ] (new) Studio: edit the Course Brief from the brief panel (partial: `PUT …/brief` with stale
       marking done; the panel is read-only)
 - [ ] (new) Detect admin edits made after an apply before re-applying (ADR 0010 drift check)
-- [ ] (new) Vendor the A2UI v0.9 JSON Schemas in `@ulams/ui` for dev-mode validation (plan 13.2); the
-      builder catalogue is validated, the A2UI envelope is not
+- [x] (new) Vendor the A2UI v0.9 JSON Schemas in `@ulams/ui` for dev-mode validation (plan 13.2; L2-02;
+      the studio validates `a2ui-surface` envelopes in dev, tests cover every surface kind)
 - [ ] (new) Operations for the builder: a separate PHP-FPM pool and Caddy route for
       `…/sessions/{id}/events`, a daily `course-builder:prune-events`, a Horizon queue for builder jobs
 - [ ] (new) Run the opt-in cross-tenant check `TenantIsolationTest::testCourseBuilderSessionsDoNotCrossTenants`
@@ -377,8 +382,9 @@ Architecture
 - [x] Verify current A2UI / AG-UI versions and choose renderer (CopilotKit vs own) (A2UI v0.9,
       `@ag-ui/core` 1.0.2, own renderer; ADR 0011, 0023)
 - [ ] UI component catalogue: name, props JSON Schema, model description, accessible
-      implementation, text fallback (partial: the 17 builder components; learner layout components
-      are M2.5)
+      implementation, text fallback (partial: the 17 builder components and the approved learner
+      layout set (Timeline, FlipCards, CodeBlock, PracticeActivity, Callout, Steps, ComparisonTable,
+      H5PFrame, LiaScriptLesson; L2-20); playground at `/catalogue/` in the docs site, L2-19)
 - [x] `render_ui` validated server-side; invalid/unknown → text fallback (structured output choice
       validated against the `@ulams/ui` manifest)
 - [x] Progressive streaming with skeletons; interactions sent back as structured events
@@ -393,10 +399,13 @@ Builder components (MVP)
 
 Learner layouts (feature flag)
 - [ ] AI-composed declarative lesson layouts from approved components, stored in blueprint
+      (partial: the approved components and their manifest are done (L2-20); the Layout topic type
+      and generation are L2-21)
 
 Pedagogical guardrails
 - [ ] Mandatory scaffolding: intro → toolbox → graded challenges → tiered hints →
-      explanatory feedback → worked solution after attempt
+      explanatory feedback → worked solution after attempt (partial: the `PracticeActivity` component
+      enforces the slots and hides the solution until an attempt (L2-20); generation is L2-21)
 - [ ] Four pillars check: objective alignment, agency, scaffolding, formative feedback
 
 Generate-then-refine loop
@@ -420,7 +429,8 @@ Impact measurement
 - [ ] Results visible to authors; opt-in per tenant, consent where required
 
 Quality
-- [ ] Component playground (Storybook) with model-facing descriptions
+- [x] Component playground with model-facing descriptions (in the docs site instead of Storybook, ADR 0054,
+      default pending #57; `/catalogue/`, L2-19)
 - [x] Schema, fallback, interaction round-trip and accessibility tests per component (builder
       catalogue: vitest + axe in jsdom; axe on every studio screen in the e2e)
 - [ ] Evals: right component choice, no raw markup outside `simulation`, simulation pass rate
@@ -598,6 +608,17 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Two-way Git sync with diff-based conflicts
 - [ ] GitHub Action + Docker image; preview deployment per PR
 - [ ] Git merge triggers Living Course update proposal
+- [ ] (new) CLI plan `docs/plans/cli.md`: agent-first `ulams` CLI and MCP server (draft, waiting for approval;
+      ADRs 0072–0079)
+- [ ] (new) M1 CLI core: `front/cli` workspace, command registry, output contract and exit codes, profiles,
+      `login` (token/password/demo), `whoami`, `ulams api`, `schema`, `describe`
+- [ ] (new) M2 noun commands generated from OpenAPI + overrides, topic uploads of every type, pagination,
+      `--dry-run`, `--wait`, `apply -f`, coverage matrix enforced in CI
+- [ ] (new) M4 course builder commands with AG-UI events as NDJSON; Living Course commands after the Phase 3 merge
+- [ ] (new) M5 course-as-code: Blueprint v2, Markdown + directives format, sync base and conflict diffs
+      (after Phase 3; citations for author blocks pending #78)
+- [ ] (new) M6 CLI release: npm `ulams` (pending #77), bun-compiled binaries (signing pending #76), Docker image
+- [ ] (new) Endpoints to import a blueprint as a builder version and export a course as a blueprint (for M5)
 
 ### 7.2 Code exercises
 - [ ] WebContainers/Sandpack (JS/TS), Pyodide (Python), optional server sandbox
@@ -608,6 +629,12 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Complete published OpenAPI; TS SDK first, PHP second
 - [ ] Stripe-style webhooks (signed, retries, replay, delivery log, test sends, versioned events)
 - [ ] Scoped API keys with rate limits and usage stats
+- [ ] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit
+      log, `Idempotency-Key`, `X-Request-Id`, `GET /api/meta`; admin "API tokens" page (ADR 0074)
+- [ ] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075; pending #74)
+- [ ] (new) S3 platform tenant API with queued provisioning (ADR 0078; pending #79)
+- [x] (new) S4 course builder run-status endpoint `GET /api/admin/course-builder/runs/{run}`
+- [ ] (new) S5 OpenAPI response schemas for the top 60 operations the CLI uses, after L0-11; stable operationIds
 - [ ] `npx create-ulams` / `docker compose up` with seed data
 - [ ] Docs site with runnable examples; free cloud sandbox tenant (partial: Starlight site in `front/docs-site` on branch `docs/starlight-site`; runnable examples and the sandbox tenant pending)
 
@@ -625,6 +652,10 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Tool description evals with typical agent tasks
 - [ ] (new) First version on Cloudflare Workers (TypeScript, Agents SDK, OAuth) against the current REST
       API: hand-written course/topic/quiz tools + tools generated from the OpenAPI spec
+      (note: the CLI plan proposes the local `ulams mcp` first and this as the later hosted variant from the
+      same registry; pending #75)
+- [ ] (new) M3 `ulams mcp` (stdio + Streamable HTTP) generated from the CLI registry: toolsets, annotations,
+      confirmation for destructive tools, resources, MCP client tests, agent eval (ADR 0076)
 
 ### 7.6 Machine-readable content
 - [ ] `llms.txt`, Markdown version of every page, public schemas, `AGENTS.md`

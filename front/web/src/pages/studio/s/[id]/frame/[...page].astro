@@ -1,0 +1,169 @@
+---
+/**
+ * The learner's view of a blueprint version, for the studio's interactive preview (ADR 0080). It is
+ * loaded in a same-origin frame by /studio/s/:id/preview and renders with the learner components:
+ * the course page, the lesson player (lessons, quizzes, final test) and the landing page. Every
+ * element carries its blueprint id; nothing is tracked. Only the session's author gets it.
+ */
+import Render from "@ulams/ui/Render.astro";
+import type { UiNode } from "@ulams/ui/render-core";
+import Base from "../../../../../layouts/Base.astro";
+import LessonPlayer from "../../../../../components/LessonPlayer.astro";
+import PreviewElement from "../../../../../components/PreviewElement.astro";
+import PreviewQuestion from "../../../../../components/PreviewQuestion.astro";
+import Prose from "@ulams/ui/components/Prose.astro";
+import { getRawSiteData } from "../../../../../lib/data.ts";
+import { courseHeaderDoc, descriptionDoc, purchaseDoc, syllabusDoc } from "../../../../../lib/page-docs.ts";
+import { LANDING_KEY, LANDING_LABEL, buildPreview, loadSessionPreview, previewBase, previewLinks } from "../../../../../lib/blueprint-preview.ts";
+import { builderFor } from "../../../../../lib/studio.ts";
+import { themeFor } from "../../../../../lib/theme.ts";
+import { siteModel, splitLessonTitle } from "../../../../../lib/view-model.ts";
+
+const sessionId = Astro.params.id ?? "";
+const page = Astro.params.page ?? "";
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/tenants");
+if (!/^[0-9a-z]{26}$/.test(sessionId)) return new Response("Not found", { status: 404 });
+
+const source = await loadSessionPreview(builderFor(tenant, Astro.locals.authorToken!), sessionId);
+if (!source) return new Response("Not found", { status: 404 });
+if (!source.version) return new Response("The lessons are not generated yet.", { status: 409 });
+
+const doc = source.version.document;
+const preview = buildPreview(doc, { level: source.state.brief?.level ?? null });
+const links = previewLinks(sessionId, preview);
+const raw = await getRawSiteData(tenant);
+const theme = themeFor(raw.settings?.theme?.theme, tenant.slug);
+const accent = raw.settings?.theme?.accent;
+const startHref = links.learn(preview.course.id);
+const framed = { sessionId, links, backHref: previewBase(sessionId), finishHref: previewBase(sessionId), banner: false, framed: true };
+const titleOf = (text: string) => splitLessonTitle(text).title;
+
+const current = preview.byKey.get(page);
+const view = page === "" ? "course" : page === LANDING_KEY ? "landing" : current ? "page" : null;
+if (!view) return new Response("Not found", { status: 404 });
+
+// course page
+const site = siteModel({ ...raw, course: preview.course, tutors: [] }, tenant, links);
+const model = site.course!;
+const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
+const description = descriptionDoc(theme, model);
+
+// landing page
+const landing = doc.pages.landing as UiNode | null;
+const landingData = { site: { theme, brand: raw.settings?.global?.companyName ?? doc.course.title }, course: { startHref } };
+const landingParts = landing?.children ?? [];
+const landingHeader = landingParts.find((n) => n.component === "SiteHeader");
+const landingFooter = landingParts.find((n) => n.component === "SiteFooter");
+const landingMain = landingParts.find((n) => n.component === "Main")?.children ?? [];
+---
+
+{
+  view === "course" && (
+    <Base theme={theme} accent={accent} title={`Preview: ${model.title}`} noindex baseTarget="_top" bodyClass="u-bp-body">
+      <main id="main" tabindex="-1">
+        <PreviewElement id={doc.course.id} label="Course title and summary" type="course" part="header">
+          <Render doc={courseHeaderDoc(theme, model, undefined, startHref)} data={site} />
+        </PreviewElement>
+        {model.lessons.map((lesson, i) => {
+          const module = doc.modules[i]!;
+          const base = syllabusDoc(theme, { ...model, lessons: [{ ...lesson, kicker: ROMAN[i] ?? String(i + 1) }] });
+          const node: UiNode = { ...base, props: { ...base.props, id: `module-${i + 1}`, eyebrow: `Module ${i + 1}`, title: titleOf(module.title), totalLabel: lesson.topics.length ? `${lesson.topics.length} topics` : undefined } };
+          return (
+            <PreviewElement id={module.id} label={`Module ${i + 1} · ${module.title}`} type="module">
+              <Render doc={node} data={site} />
+            </PreviewElement>
+          );
+        })}
+        <section class="u-container u-course-about" aria-label="About the course">
+          <div class="u-course-about__text">
+            {description && (
+              <PreviewElement id={doc.course.id} label="Course description" type="course" part="description">
+                <Render doc={description} data={site} />
+              </PreviewElement>
+            )}
+          </div>
+          <div class="u-course-about__side">
+            <Render doc={purchaseDoc(model, site, startHref)} data={site} />
+          </div>
+        </section>
+      </main>
+    </Base>
+  )
+}
+
+{
+  view === "landing" && (
+    <Base theme={theme} accent={accent} title={`Preview: ${doc.course.title}`} noindex baseTarget="_top">
+      <main id="main" tabindex="-1">
+        {!landing && <p class="u-container">The landing page is generated together with the lessons.</p>}
+        {landingHeader && <Render doc={landingHeader} data={landingData} />}
+        {landingMain.map((section) => (
+          <PreviewElement id={doc.course.id} label={LANDING_LABEL[section.component] ?? `Landing › ${section.component}`} type="course" part={section.component}>
+            <Render doc={section} data={landingData} />
+          </PreviewElement>
+        ))}
+        {landingFooter && <Render doc={landingFooter} data={landingData} />}
+      </main>
+    </Base>
+  )
+}
+
+{
+  view === "page" && current && (
+    <LessonPlayer tenant={tenant} settings={raw.settings} course={preview.course} access={true} progress={[]} topicId={current.topicId} preview={framed}>
+      <Fragment slot="content">
+        {current.kind === "lesson" && current.lesson && (
+          <>
+            <PreviewElement id={current.lesson.id} label={`${current.label} · title and summary`} type="lesson">
+              <p class="u-player__kicker">{current.label}</p>
+              <h1 class="u-player__title">{current.lesson.title}</h1>
+              {current.lesson.summary && <div class="u-player__intro"><Prose markdown={current.lesson.summary} size="lg" /></div>}
+              <p class="u-player__meta"><span>{current.lesson.minutes} min</span></p>
+            </PreviewElement>
+            {current.lesson.blocks.length === 0 && <p class="u-player__notice" role="note">This lesson has no content yet.</p>}
+            {current.lesson.blocks.map((block, i) => (
+              <PreviewElement id={block.id} label={`${current.label} › block ${i + 1}`} type="block">
+                <Prose markdown={block.markdown} dropCap={theme === "coffee" && i === 0} size={theme === "nightsky" ? "lg" : "md"} />
+              </PreviewElement>
+            ))}
+          </>
+        )}
+        {current.kind !== "lesson" && (
+          <>
+            <h1 class="u-player__title">{current.title}</h1>
+            <p class="u-player__intro">
+              {current.kind === "final" ? "Answer the questions to finish the course." : `Check what you learned in “${current.lesson?.title ?? ""}”.`} Learners answer these and see their score; the preview shows the answers and does not record anything.
+            </p>
+            {current.questions.map((question, i) => (
+              <PreviewElement id={question.id} label={`${current.label} › Q${i + 1}`} type="question">
+                <PreviewQuestion question={question} number={i + 1} />
+              </PreviewElement>
+            ))}
+          </>
+        )}
+        <div data-end-of-content aria-hidden="true"></div>
+      </Fragment>
+    </LessonPlayer>
+  )
+}
+
+<style is:global>
+  .u-bp-body main:focus {
+    outline: none;
+  }
+  .u-bp-body .u-course-about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: clamp(28px, 5vw, 72px);
+    align-items: start;
+  }
+  .u-bp-body main > .u-bp {
+    margin-block: 8px;
+  }
+  @media (max-width: 900px) {
+    .u-bp-body .u-course-about {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

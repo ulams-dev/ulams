@@ -2,6 +2,7 @@
 
 namespace Ulams\Courses\Models;
 
+use Ulams\Auth\Support\GroupTree;
 use Ulams\Categories\Models\Category;
 use Ulams\Core\Models\User as CoreUser;
 use Ulams\Courses\Database\Factories\CourseFactory;
@@ -439,7 +440,7 @@ class Course extends Model
     public function hasUser(CoreUser|User $user): bool
     {
         $groupIds = $this->groups->pluck('id')->toArray();
-        $childGroups = $this->getChildGroups($groupIds);
+        $childGroups = GroupTree::descendantsOfMany($groupIds);
         $allGroups = array_merge($groupIds, $childGroups);
 
         $inGroup = DB::table('group_user')
@@ -452,15 +453,6 @@ class Course extends Model
                 ->where(fn(Builder $query) => $query->whereNull('end_date')->orWhereDate('end_date', '>=', Carbon::now()))
                 ->exists()
             || $inGroup;
-    }
-
-    private function getChildGroups(array $groupIds): array
-    {
-        $childGroups = DB::table('groups')->whereIn('parent_id', $groupIds)->pluck('id')->toArray();
-        if (count($childGroups) > 0) {
-            $childGroups = array_merge($childGroups, $this->getChildGroups($childGroups));
-        }
-        return $childGroups;
     }
 
     protected static function booted()

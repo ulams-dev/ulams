@@ -74,6 +74,8 @@ class TagsAPIController extends UlamsBaseController
      */
     public function show(Tag $tag, Request $request): JsonResponse
     {
+        $this->authorize('list', Tag::class);
+
         return empty($tag) ?
             $this->sendError('Tag not found', 404) :
             $this->sendResponse($tag, 'Tag fetched successfully');
@@ -108,6 +110,8 @@ class TagsAPIController extends UlamsBaseController
 
     public function uniqueAdmin(Request $request): JsonResponse
     {
+        $this->authorize('list', Tag::class);
+
         $tags = $this->tagRepository->unique();
         return $tags ?
             $this->sendResponse($tags, 'Tags unique fetched successfully') :

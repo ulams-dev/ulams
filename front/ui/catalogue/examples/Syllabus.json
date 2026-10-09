@@ -1,0 +1,52 @@
+{
+  "props": {
+    "variant": "folio",
+    "id": "syllabus",
+    "title": "What you will learn",
+    "intro": "Four lessons, one skill at a time.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Extraction",
+        "kicker": "Week 1",
+        "summary": "What dissolves, and when.",
+        "minutes": 25,
+        "formats": [
+          "video",
+          "reading"
+        ],
+        "topics": [
+          {
+            "title": "Why coffee tastes sour",
+            "format": "video",
+            "minutes": 8,
+            "preview": true,
+            "status": "open"
+          },
+          {
+            "title": "Extraction quiz",
+            "format": "quiz",
+            "minutes": 5,
+            "status": "locked"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Grind",
+        "kicker": "Week 2",
+        "summary": "Particle size and flow.",
+        "minutes": 30,
+        "formats": [
+          "video"
+        ],
+        "topics": []
+      }
+    ],
+    "showTopics": true,
+    "totalLabel": "2 lessons, 55 min"
+  },
+  "invalid": {
+    "lessons": "all of them"
+  }
+}
