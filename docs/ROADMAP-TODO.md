@@ -15,7 +15,7 @@ small commits → tests → summary.
       with CSP (no sanitiser); LTI Instructor → tutor, never admin, no e-mail account linking; LiaScript player
       fetched at image build time; production content origin on a separate registrable domain
 - [x] (2026-10-09) GHCR images are public; the upstream EscolaLMS security reports stay as public issues
-- [x] (2026-10-09) Keep the illustrative incident log on the On-Call landing
+- [x] (2026-10-09) Replace the illustrative incident log on the On-Call landing with real course content
 - [x] (2026-10-09) Phase 1 and Phase 2 plans approved; ADRs 0008 (reference frontend: Astro SSR, plain TS SDK,
       agent UI catalogue), 0009 (LLM layer), 0010 (Course Blueprint), 0011 (AG-UI over SSE) and 0012 (LTI 1.3)
       accepted
