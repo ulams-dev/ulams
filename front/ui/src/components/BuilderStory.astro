@@ -1,0 +1,382 @@
+---
+/**
+ * "Build a course from a document in minutes": a looping story of the Course Builder in the studio.
+ * A document drops in, three interview answers appear, an outline grows with a source chip on every
+ * lesson, a lesson streams in with citations, a quiz question cites its source, a running cost ticks
+ * (example values) and Apply publishes the course. Played by the timeline player (elements/story.ts);
+ * the stage is decorative, `description` is the text alternative.
+ */
+import Icon from "./Icon.astro";
+import StoryStyles from "./StoryStyles.astro";
+
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  valueLine?: string;
+  description: string;
+  windowTitle?: string;
+  file: { name: string; label?: string };
+  interview: Array<{ question: string; answer: string }>;
+  outline: Array<{ title: string; lessons: Array<{ title: string; source: string }> }>;
+  lesson: { title: string; text: string; citations: string[] };
+  quiz: { question: string; source: string };
+  cost: { label: string; amount: number; note?: string };
+  apply: { label: string; publishedTitle: string; publishedMeta: string };
+}
+const {
+  id = "builder",
+  eyebrow,
+  title,
+  intro,
+  valueLine,
+  description,
+  windowTitle = "Studio · Course builder",
+  file,
+  interview,
+  outline,
+  lesson,
+  quiz,
+  cost,
+  apply,
+} = Astro.props;
+
+// schedule (ms)
+const nodes = outline.flatMap((m) => [{ kind: "module" as const, title: m.title, source: "" }, ...m.lessons.map((l) => ({ kind: "lesson" as const, title: l.title, source: l.source }))]);
+const outlineAt = 3000;
+const step = 330;
+const lessonAt = outlineAt + nodes.length * step + 200;
+const typeDur = 2000;
+const quizAt = lessonAt + typeDur + 900;
+const applyAt = quizAt + 1900;
+const total = applyAt + 2300;
+const costEnd = quizAt + 900;
+---
+
+<section class="u-section u-bs" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <StoryStyles />
+  <div class="u-container">
+    <div class="u-section-head u-section-head--center" data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+      {intro && <p class="u-lead">{intro}</p>}
+    </div>
+    <ulams-story class="u-stage u-bs__stage" data-total={total} data-hold="3500" loop>
+      <p class="u-visually-hidden">{description}</p>
+      <div class="u-win u-bs__win" aria-hidden="true">
+        <div class="u-win__bar"><span class="u-win__dots"><i></i><i></i><i></i></span><span>{windowTitle}</span></div>
+        <div class="u-bs__cols">
+          <div class="u-bs__col">
+            <p class="u-bs__cap">Source</p>
+            <div class="u-bs__file" data-at="200">
+              <Icon name="book" />
+              <span>{file.name}</span>
+              {file.label && <em>{file.label}</em>}
+            </div>
+            <p class="u-bs__cap">Interview</p>
+            <ul class="u-bs__qa">
+              {
+                interview.map((qa, i) => (
+                  <li data-at={1400 + i * 500}>
+                    <span>{qa.question}</span>
+                    <b>{qa.answer}</b>
+                  </li>
+                ))
+              }
+            </ul>
+            <div class="u-bs__cost" data-at="1000">
+              <span>{cost.label}</span>
+              <b data-at={outlineAt} data-count={`0,${cost.amount},${costEnd - outlineAt},2`} data-prefix="$">${cost.amount.toFixed(2)}</b>
+              {cost.note && <em>{cost.note}</em>}
+            </div>
+          </div>
+          <div class="u-bs__col">
+            <p class="u-bs__cap">Outline</p>
+            <ul class="u-bs__tree">
+              {
+                nodes.map((n, i) => (
+                  <li class={`u-bs__${n.kind}`} data-at={outlineAt + i * step}>
+                    <span>{n.title}</span>
+                    {n.source && <span class="u-chip2">{n.source}</span>}
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+          <div class="u-bs__col">
+            <p class="u-bs__cap">Lesson draft</p>
+            <div class="u-bs__lesson">
+              <p class="u-bs__lt" data-at={lessonAt - 200}>{lesson.title}</p>
+              <p class="u-bs__text" data-at={lessonAt} data-type={typeDur}>{lesson.text}</p>
+              <p class="u-bs__cites">
+                {lesson.citations.map((c, i) => <span class="u-chip2" data-at={lessonAt + typeDur + 100 + i * 250}>{c}</span>)}
+              </p>
+              <div class="u-bs__quiz" data-at={quizAt}>
+                <span class="u-bs__qlabel">Quiz</span>
+                <span data-at={quizAt} data-type="900">{quiz.question}</span>
+                <span class="u-chip2" data-at={quizAt + 1000}>{quiz.source}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="u-bs__foot">
+          <span class="u-bs__apply" data-at={applyAt} data-at2={applyAt + 700}>{apply.label}</span>
+          <div class="u-bs__pub" data-at={applyAt + 1000}>
+            <Icon name="check" />
+            <span><b>{apply.publishedTitle}</b> {apply.publishedMeta}</span>
+          </div>
+        </div>
+      </div>
+      <div class="u-stage__controls">
+        <button type="button" data-pause aria-pressed="false">Pause</button>
+        <button type="button" data-replay>Replay</button>
+      </div>
+    </ulams-story>
+    {valueLine && <p class="u-bs__value">{valueLine}</p>}
+  </div>
+</section>
+
+<style is:global>
+  .u-bs__win {
+    font-family: var(--ulams-font-family-body, system-ui, sans-serif);
+    font-size: 0.875rem;
+  }
+  .u-bs__win .u-win__bar {
+    font-family: var(--ulams-font-mono);
+  }
+  .u-bs__cols {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr) minmax(0, 1.2fr);
+    gap: 0;
+  }
+  .u-bs__col {
+    padding: 14px 16px;
+    min-width: 0;
+    display: grid;
+    align-content: start;
+    gap: 8px;
+  }
+  .u-bs__col + .u-bs__col {
+    border-left: 1px solid var(--st-line);
+  }
+  .u-bs__cap {
+    margin: 0;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--st-dim);
+  }
+  .u-bs__file {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1px dashed color-mix(in srgb, var(--ulams-brand-orange) 70%, transparent);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--ulams-brand-orange) 8%, transparent);
+    transform: translateY(-22px);
+    overflow-wrap: anywhere;
+  }
+  .u-bs__file.on {
+    transform: none;
+  }
+  .u-bs__file svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
+    color: var(--ulams-brand-orange);
+  }
+  .u-bs__file em {
+    margin-left: auto;
+    font-style: normal;
+    color: var(--st-dim);
+    font-size: 0.75rem;
+  }
+  .u-bs__qa {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .u-bs__qa li {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: color-mix(in srgb, #fff 6%, transparent);
+    transform: translateX(-12px);
+  }
+  .u-bs__qa li.on {
+    transform: none;
+  }
+  .u-bs__qa span {
+    color: var(--st-dim);
+  }
+  .u-bs__qa b {
+    color: var(--st-text);
+  }
+  .u-bs__cost {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    margin-top: 6px;
+    padding-top: 10px;
+    border-top: 1px solid var(--st-line);
+    color: var(--st-dim);
+  }
+  .u-bs__cost b {
+    font-family: var(--ulams-font-mono);
+    font-size: 1.25rem;
+    color: var(--st-text);
+    font-variant-numeric: tabular-nums;
+    min-width: 5ch;
+  }
+  .u-bs__cost em {
+    font-style: normal;
+    font-size: 0.75rem;
+    flex-basis: 100%;
+  }
+  .u-bs__tree {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .u-bs__tree li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    transform: translateY(8px);
+  }
+  .u-bs__tree li.on {
+    transform: none;
+  }
+  .u-bs__module {
+    margin-top: 6px;
+    font-weight: 700;
+    color: var(--st-text);
+  }
+  .u-bs__module::before {
+    content: "▸";
+    margin-right: 6px;
+    color: var(--ulams-brand-orange);
+    font-weight: 400;
+  }
+  .u-bs__lesson {
+    padding-left: 14px;
+    color: var(--st-dim);
+  }
+  .u-bs__tree .u-bs__lesson {
+    padding-left: 16px;
+  }
+  .u-bs__lt {
+    margin: 0 0 4px;
+    font-weight: 700;
+    color: var(--st-text);
+  }
+  .u-bs__col > .u-bs__lesson {
+    padding-left: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .u-bs__text {
+    margin: 0;
+    min-height: 6.4em;
+    color: var(--st-text);
+    line-height: 1.6;
+  }
+  .u-bs__cites {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 1.8em;
+  }
+  .u-bs__quiz {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border-left: 3px solid var(--ulams-brand-orange);
+    background: color-mix(in srgb, #fff 6%, transparent);
+    color: var(--st-text);
+    min-height: 4.2em;
+  }
+  .u-bs__qlabel {
+    font-family: var(--ulams-font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--st-dim);
+  }
+  .u-bs__foot {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--st-line);
+    background: color-mix(in srgb, #000 18%, transparent);
+    min-height: 62px;
+  }
+  .u-bs__apply {
+    padding: 7px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    background: #fff;
+    color: var(--ulams-brand-indigo);
+    transition:
+      transform 0.25s,
+      opacity 0.45s,
+      background-color 0.3s;
+  }
+  .u-bs__apply.on2 {
+    transform: scale(0.93);
+    background: var(--ulams-brand-orange);
+  }
+  .u-bs__pub {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--st-ok) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--st-ok) 45%, transparent);
+    color: var(--st-text);
+    transform: translateY(10px);
+  }
+  .u-bs__pub.on {
+    transform: none;
+  }
+  .u-bs__pub svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
+    color: var(--st-ok);
+  }
+  .u-bs__value {
+    margin: 22px auto 0;
+    max-width: 62ch;
+    text-align: center;
+    font-size: 1.125rem;
+    color: var(--ulams-color-muted);
+  }
+  @media (max-width: 900px) {
+    .u-bs__cols {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .u-bs__col + .u-bs__col {
+      border-left: 0;
+      border-top: 1px solid var(--st-line);
+    }
+  }
+</style>

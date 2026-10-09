@@ -4,9 +4,11 @@ import Render from "@ulams/ui/Render.astro";
 import Base from "../layouts/Base.astro";
 import { landingDocs, pageMeta } from "../lib/docs.ts";
 import { platformModel } from "../lib/platform.ts";
+import { applyLandingStatus } from "../lib/landing-status.ts";
+import { config } from "../lib/config.ts";
 
 if (!Astro.locals.platform) return Astro.rewrite("/404");
-const doc = landingDocs.platform!;
+const doc = applyLandingStatus(landingDocs.platform!, config.landingStatus);
 const data = await platformModel(Astro.url);
 const meta = pageMeta(doc, data);
 ---

@@ -151,6 +151,9 @@
     <testsuite name="consultation-access">
       <directory suffix="Test.php">./packages/consultation-access</directory>
     </testsuite>
+    <testsuite name="jitsi">
+      <directory suffix="Test.php">./packages/jitsi</directory>
+    </testsuite>
     <testsuite name="webinar">
       <directory suffix="Test.php">./packages/webinar</directory>
     </testsuite>
