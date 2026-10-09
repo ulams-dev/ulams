@@ -3,14 +3,29 @@
 namespace Database\Seeders\Demo;
 
 use Database\Seeders\Demo\Art\GravityArt;
+use Database\Seeders\Demo\Support\BuildsInteractiveCourse;
 
 /**
  * Demo academy "Gravity Lab": a free, interactive course on how gravity shapes the solar
- * system. This is the placeholder course the tenant and its landing page run on; the
- * modules, the 3D simulation topics and the quizzes arrive with the course content.
+ * system. Nine modules follow the walkthrough of the gravity package (demo-content/gravity),
+ * each with Interactive topics pinned to a step range, a short explanation, a Layout topic and
+ * a GIFT quiz, then a final test, the certificate and a "Sources and licence" lesson. The text
+ * is in Demo/content/gravity/modules/, CC BY 4.0.
  */
 class GravityExperience extends DemoExperience
 {
+    use BuildsInteractiveCourse;
+
+    protected function packageName(): string
+    {
+        return 'gravity';
+    }
+
+    protected function contentDir(): string
+    {
+        return 'gravity';
+    }
+
     public function key(): string
     {
         return 'gravity';
@@ -53,7 +68,7 @@ class GravityExperience extends DemoExperience
                         ['q' => 'Is it only a video?', 'a' => 'No. You move through the simulation yourself and each step is explained in text beside it.'],
                     ],
                     'lists' => [
-                        'sources' => ['Planet and moon data comes from public NASA and JPL tables', 'Every figure shown in the lessons names its source'],
+                        'sources' => ['Planet and moon data comes from public NASA and JPL tables', 'Every figure shown in the lessons names its source', 'Course text is licensed CC BY 4.0, and the last lesson lists every source'],
                         'features' => ['Explore the live simulation', 'Read the short explanation', 'Check yourself with a quiz'],
                     ],
                 ],
@@ -97,21 +112,7 @@ class GravityExperience extends DemoExperience
 
     protected function program(): array
     {
-        return [
-            [
-                'title' => 'Welcome',
-                'summary' => 'What the course is and how to use it.',
-                'duration' => '5 min',
-                'topics' => [
-                    [
-                        'type' => 'richtext', 'title' => 'Welcome to Gravity Lab', 'preview' => true, 'duration' => '5 min',
-                        'introduction' => 'How the course works and what comes next.',
-                        'summary' => 'Interactive lessons with a text version of every step.',
-                        'make' => fn () => ['fields' => ['value' => $this->markdown('welcome')], 'files' => []],
-                    ],
-                ],
-            ],
-        ];
+        return $this->modulesProgram();
     }
 
     /** Free: no products, events or vouchers. */
