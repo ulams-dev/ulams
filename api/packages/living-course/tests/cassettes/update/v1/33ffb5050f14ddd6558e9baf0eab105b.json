@@ -1,0 +1,17 @@
+{
+    "task": "update",
+    "prompt_id": "living-course/update",
+    "prompt_version": 1,
+    "hash": "33ffb5050f14ddd6558e9baf0eab105b",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 1937,
+        "output_tokens": 1288,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "cache_read_tokens": 8144
+    },
+    "text": "{\"items\":[{\"elementId\":\"{{id_8}}\",\"decision\":\"no_change\",\"reason\":\"§2.2 changed only the example numbers (1:16 to 1:15); the objective is general and still accurate.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_17}}\",\"decision\":\"update\",\"reason\":\"§2.2 now uses 1:15: 20 g needs 300 g of water, and a 500 g pot needs about 33 g of coffee.\",\"severity\":\"major\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"not_a_question\",\"block\":{\"id\":\"{{id_17}}\",\"kind\":\"paragraph\",\"markdown\":\"To find the water for a dose, multiply the coffee weight by the ratio. For 20 g of coffee at 1:15 you need 300 g of water (20 × 15). To brew a 500 g pot at 1:15, divide instead: 500 ÷ 15 gives about 33 g of coffee.\",\"citations\":[\"{{frg_2}}\"],\"objectiveIds\":[\"{{id_8}}\"]},\"question\":null,\"objective\":null},{\"elementId\":\"{{id_18}}\",\"decision\":\"no_change\",\"reason\":\"§2.2 still says to multiply the coffee weight by the ratio; the takeaway has no changed numbers.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_19}}\",\"decision\":\"no_change\",\"reason\":\"§2.2 still states the multiply-by-ratio rule, so the correct answer is unchanged.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"unchanged\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_23}}\",\"decision\":\"update\",\"reason\":\"§2.2 example is now 20 g at 1:15 needing 300 g of water (20 × 15).\",\"severity\":\"major\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"changed\",\"block\":null,\"question\":{\"id\":\"{{id_23}}\",\"type\":\"single\",\"stem\":\"Which statement matches what the source says in §2.2 Calculating a dose?\",\"options\":[{\"id\":\"{{id_24}}\",\"text\":\"A short handbook for people who want to brew better coffee at home.\",\"correct\":false},{\"id\":\"{{id_25}}\",\"text\":\"For 20 g of coffee at 1:15 you need 300 g of water (20 × 15).\",\"correct\":true},{\"id\":\"{{id_26}}\",\"text\":\"It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.\",\"correct\":false}],\"explanation\":\"The source states: For 20 g of coffee at 1:15 you need 300 g of water (20 × 15).\",\"citations\":[\"{{frg_2}}\"],\"objectiveIds\":[\"{{id_8}}\"]},\"objective\":null}],\"reply\":\"Updated the dose example and Q2 to the new 1:15 numbers; the objective, takeaway and Q1 stay as they are.\"}"
+}

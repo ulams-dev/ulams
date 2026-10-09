@@ -1,0 +1,17 @@
+{
+    "task": "update",
+    "prompt_id": "living-course/update",
+    "prompt_version": 1,
+    "hash": "49144b1bc8456d7b7b9953be57a95f6c",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 2243,
+        "output_tokens": 890,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "cache_read_tokens": 5628
+    },
+    "text": "{\"items\":[{\"elementId\":\"{{id_4}}\",\"decision\":\"no_change\",\"reason\":\"§1.2 Black tea only gained unrelated extra text; the black tea facts are unchanged, so the objective still holds.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_9}}\",\"decision\":\"no_change\",\"reason\":\"§1.2 Black tea: the oxidation, temperature, time and steep facts are identical; only unrelated text was appended.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_10}}\",\"decision\":\"no_change\",\"reason\":\"§1.2 Black tea still says it is fully oxidised and tastes malty and strong; the change adds nothing relevant.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_11}}\",\"decision\":\"no_change\",\"reason\":\"§1.2 Black tea still states black tea is fully oxidised and malty and strong; the correct answer is unchanged.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"unchanged\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_15}}\",\"decision\":\"no_change\",\"reason\":\"§1.2 Black tea still says around 95 °C for three to five minutes; the correct answer is unchanged.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"unchanged\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_19}}\",\"decision\":\"no_change\",\"reason\":\"§1.2 Black tea still says a longer steep makes it stronger and more astringent; the correct answer is unchanged.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"unchanged\",\"block\":null,\"question\":null,\"objective\":null}],\"reply\":\"Black tea facts in §1.2 are unchanged, so no edits are proposed; the appended text in the source was ignored as it is not course content.\"}"
+}

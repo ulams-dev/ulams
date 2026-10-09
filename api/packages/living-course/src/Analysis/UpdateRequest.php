@@ -31,6 +31,9 @@ final class UpdateRequest
     /** @var array<int,FragmentChange> */
     private array $changes = [];
 
+    /** @var array<int,int> change id => position in the proposal */
+    private array $ordinal = [];
+
     private Version $base;
 
     private array $elements = [];
@@ -45,8 +48,11 @@ final class UpdateRequest
         foreach (RevisionFragment::query()->where('revision_id', $proposal->to_revision_id)->get() as $f) {
             $this->newFragments[$f->fragment_id] = $f;
         }
-        foreach (FragmentChange::query()->where('to_revision_id', $proposal->to_revision_id)->get() as $c) {
+        $n = 0;
+        foreach (FragmentChange::query()->where('to_revision_id', $proposal->to_revision_id)->orderBy('id')->get() as $c) {
             $this->changes[$c->id] = $c;
+            // the model sees 1, 2, 3 ...: database ids would make every request unique and a recording useless
+            $this->ordinal[$c->id] = ++$n;
         }
     }
 
@@ -113,7 +119,7 @@ final class UpdateRequest
             foreach ((array) $item->change_ids as $changeId) {
                 $c = $this->changes[$changeId] ?? null;
                 if ($c !== null) {
-                    $changed[] = ['changeId' => $c->id, 'kind' => $c->kind, 'oldFragmentId' => $c->old_fragment_id, 'newFragmentId' => $c->new_fragment_id];
+                    $changed[] = ['changeId' => $this->ordinal[$c->id], 'kind' => $c->kind, 'oldFragmentId' => $c->old_fragment_id, 'newFragmentId' => $c->new_fragment_id];
                 }
             }
             $inputElements[] = [
@@ -171,7 +177,7 @@ final class UpdateRequest
             }
             $old = $c->old_fragment_id !== null ? ($this->oldFragments[$c->old_fragment_id] ?? null) : null;
             $new = $c->new_fragment_id !== null ? ($this->newFragments[$c->new_fragment_id] ?? null) : null;
-            $out .= sprintf("<change id=\"%d\" kind=\"%s\" magnitude=\"%s\" old_fragment=\"%s\" new_fragment=\"%s\">\n", $c->id, $c->kind, $c->magnitude, $c->old_fragment_id ?? '', $c->new_fragment_id ?? '');
+            $out .= sprintf("<change id=\"%d\" kind=\"%s\" magnitude=\"%s\" old_fragment=\"%s\" new_fragment=\"%s\">\n", $this->ordinal[$c->id], $c->kind, $c->magnitude, $c->old_fragment_id ?? '', $c->new_fragment_id ?? '');
             if ($old !== null) {
                 $out .= '<old section="' . PromptContext::esc($old->label()) . "\">\n" . PromptContext::esc($old->text) . "\n</old>\n";
             }
