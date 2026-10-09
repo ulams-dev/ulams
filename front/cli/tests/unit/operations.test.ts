@@ -28,6 +28,6 @@ describe("operations", () => {
     expect((await runCli(["operations", "get", "nope", "--json"], { env })).code).toBe(2);
     expect((await runCli(["operations", "get", "x:1", "--json"], { env })).code).toBe(2);
     const kinds = await runCli(["operations", "kinds", "--json"], {});
-    expect(kinds.json()).toMatchObject({ data: [{ kind: "video" }] });
+    expect((kinds.json().data as Array<{ kind: string }>).map((k) => k.kind)).toEqual(expect.arrayContaining(["video", "builder-run"]));
   });
 });

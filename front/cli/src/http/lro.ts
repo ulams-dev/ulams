@@ -56,7 +56,8 @@ export async function waitOperation(
 ): Promise<OperationState & { handle: string }> {
   const { op, id } = kindFor(handle);
   const deadline = Date.now() + timeoutSeconds * 1000;
-  let delay = 500;
+  // ULAMS_POLL_MS shortens the first poll interval (tests); the cap stays 5 s.
+  let delay = Number(ctx.env.ULAMS_POLL_MS) || 500;
   for (;;) {
     const state = await op.get(ctx, id);
     if (state.status !== "running") {

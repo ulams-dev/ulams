@@ -5003,7 +5003,7 @@ export const generatedCommands: AnyCommand[] = [
     audience: ["learner"],
     endpoints: ["POST /api/auth/tokens"],
     mcp: { toolset: "my" },
-    examples: [{"title":"Create a scoped personal access token (shown once)","argv":"tokens create --name Example --scopes text --json"}],
+    examples: [{"title":"A CI token that can edit courses and run the builder, for 30 days","argv":"tokens create --name ci --scopes @ci --expires-in-days 30 --kind ci --json"},{"title":"A read-only token for an agent","argv":"tokens create --name reader --scopes @read-only --kind agent --agent-name claude-code --json"}],
     input: z.looseObject({ "agent_name": z.string().nullable().optional(), "expires_in_days": z.number().int().optional(), "kind": z.enum(["cli", "agent", "ci", "integration"]).optional(), "name": z.string(), "rate_limit_per_minute": z.number().int().nullable().optional(), "scopes": z.array(z.string()).describe("Scopes or @presets (read-only, author, admin, learner, ci)") }),
     request: {"method":"POST","path":"/api/auth/tokens","pathParams":[],"queryParams":[],"bodyMode":"json","bodyFields":["agent_name","expires_in_days","kind","name","rate_limit_per_minute","scopes"]},
   }),

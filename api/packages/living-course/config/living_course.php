@@ -4,9 +4,10 @@ return [
     // Source connectors enabled on this installation (ADR 0032). Plugins register more.
     'connectors' => array_values(array_filter(array_map('trim', explode(',', (string) env('LIVING_COURSE_CONNECTORS', 'upload,git,url'))))),
 
-    // Queue for source checks and analysis steps (defaults to the Course Builder queue)
-    'queue_connection' => env('LIVING_COURSE_QUEUE_CONNECTION', env('COURSE_BUILDER_QUEUE_CONNECTION')),
-    'queue' => env('LIVING_COURSE_QUEUE', env('COURSE_BUILDER_QUEUE')),
+    // Queue for source checks and analysis steps (defaults to the Course Builder queue: the
+    // `<driver>-builder` connection, queue `builder`, retry_after above the job timeout; ADR 0083)
+    'queue_connection' => env('LIVING_COURSE_QUEUE_CONNECTION', env('COURSE_BUILDER_QUEUE_CONNECTION', in_array(env('QUEUE_CONNECTION'), ['database', 'redis'], true) ? env('QUEUE_CONNECTION') . '-builder' : null)),
+    'queue' => env('LIVING_COURSE_QUEUE', env('COURSE_BUILDER_QUEUE', in_array(env('QUEUE_CONNECTION'), ['database', 'redis'], true) ? 'builder' : null)),
 
     // Deterministic change detection (ADR 0031)
     'diff' => [

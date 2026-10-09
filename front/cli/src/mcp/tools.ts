@@ -66,6 +66,11 @@ export const EXTRA_INPUT = {
   fields: z.array(z.string()).optional().describe("Return only these fields (dotted paths) of each result item."),
 };
 
+/** An MCP tool call should come back well inside a client's tool timeout: waits are capped and resumable. */
+export const MCP_WAIT_SECONDS = 55;
+
+export const waits = (cmd: AnyCommand): boolean => Boolean(cmd.longRunning) || cmd.id === "operations.wait";
+
 export function toolInput(cmd: AnyCommand): z.ZodObject {
   const extra: Record<string, z.ZodType> = { ...EXTRA_INPUT };
   if (cmd.paginated) {
@@ -73,6 +78,10 @@ export function toolInput(cmd: AnyCommand): z.ZodObject {
     extra.limit = z.number().int().optional().describe("With all: stop after this many items.");
   }
   if (cmd.kind === "read") delete extra.confirm;
+  if (waits(cmd)) {
+    extra.wait = z.boolean().optional().describe("Wait for the run to finish (default true). With false the tool returns at once with a handle for operations_wait.");
+    extra.timeout_seconds = z.number().int().min(1).max(3600).optional().describe(`How long to wait (default ${MCP_WAIT_SECONDS}). When it runs out the result says status running and gives the handle: call operations_wait with it.`);
+  }
   return cmd.input.extend(extra);
 }
 
@@ -136,15 +145,19 @@ export async function runTool(
 ): Promise<ToolResult> {
   const secrets = ctxBase.profile.token ? [ctxBase.profile.token] : [];
   try {
-    const { dry_run, confirm, fields, all, limit, ...input } = args as Record<string, unknown> & {
+    const { dry_run, confirm, fields, all, limit, wait, timeout_seconds, ...input } = args as Record<string, unknown> & {
       dry_run?: boolean;
       confirm?: string;
       fields?: string[];
       all?: boolean;
       limit?: number;
+      wait?: boolean;
+      timeout_seconds?: number;
     };
     const flags: GlobalFlags = {
       ...ctxBase.flags,
+      wait: wait ?? true,
+      timeout: timeout_seconds ?? MCP_WAIT_SECONDS,
       dryRun: Boolean(dry_run),
       yes: false,
       all: Boolean(all),
@@ -166,7 +179,18 @@ export async function runTool(
         });
       }
     }
-    const result = await execute(cmd, clean, ctx, { confirmed });
+    let result;
+    try {
+      result = await execute(cmd, clean, ctx, { confirmed });
+    } catch (error) {
+      // A wait that ran out is not a failure: hand the agent the handle to resume with.
+      const operation = error instanceof CliError && error.code === "TIMEOUT" && waits(cmd) ? (error.details as { operation?: string }).operation : undefined;
+      if (!(error instanceof CliError) || !operation) throw error;
+      result = {
+        data: { status: "running", operation, session: (error.details as { session?: unknown }).session ?? null },
+        warnings: [{ code: "STILL_RUNNING", message: error.message, hint: `Call operations_wait with handle "${operation}" to keep waiting.` }],
+      };
+    }
     const env = successEnvelope(cmd.id, { ...result, data: project(result.data, fields) });
     return pack(redactEnvelope(env, cmd, secrets), false);
   } catch (error) {

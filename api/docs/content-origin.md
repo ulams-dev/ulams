@@ -34,8 +34,10 @@ in `.env`. Without `CONTENT_ORIGIN` the legacy SCORM player is used (feature fla
   holds nothing else;
 - `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`.
 
-The front and admin send a **report-only** CSP (`app_csp_report_only`) whose `frame-src` lists the
-content origins and the H5P service. Enforce it after a week without reports. The storage origin
+The learner front builds its own CSP per request (`front/web/src/lib/csp.ts`), so `frame-src` also
+names the origins of the tenant's registered LTI tools; the admin gets `app_csp_admin` from the proxy.
+Both report violations to `POST /api/csp-report` (ADR 0044, `operators/security-headers`). They are
+enforced in development and report-only in the production image until `CSP_ENFORCE=true`. The storage origin
 sends `nosniff` and a `script-src 'none'; sandbox` CSP for SVG files; the API also stores SVG,
 HTML and XML uploads outside package paths with `Content-Disposition: attachment`
 (`packages/uploads`).

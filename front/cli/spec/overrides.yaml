@@ -40,12 +40,12 @@ operations:
 
   # --- tokens (scoped personal access tokens, ADR 0074)
   "GET /api/auth/tokens": { id: tokens.list }
-  "POST /api/auth/tokens": { id: tokens.create, summary: "Create a scoped personal access token (shown once)" }
-  "DELETE /api/auth/tokens/{id}": { id: tokens.revoke }
+  "POST /api/auth/tokens": { id: tokens.create, summary: "Create a scoped personal access token (shown once)", examples: [{ title: "A CI token that can edit courses and run the builder, for 30 days", argv: "tokens create --name ci --scopes @ci --expires-in-days 30 --kind ci --json" }, { title: "A read-only token for an agent", argv: "tokens create --name reader --scopes @read-only --kind agent --agent-name claude-code --json" }] }
+  "DELETE /api/auth/tokens/{id}": { id: tokens.revoke, positionals: [id] }
   "GET /api/auth/tokens/current": { id: tokens.current }
   "GET /api/admin/tokens": { id: tokens.list-all }
-  "DELETE /api/admin/tokens/{id}": { id: tokens.revoke-any }
-  "GET /api/admin/tokens/{id}/audit": { id: tokens.audit }
+  "DELETE /api/admin/tokens/{id}": { id: tokens.revoke-any, positionals: [id] }
+  "GET /api/admin/tokens/{id}/audit": { id: tokens.audit, positionals: [id] }
   "GET /api/admin/agent-audit": { id: tokens.agent-audit }
 
   # --- users
