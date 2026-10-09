@@ -1,0 +1,24 @@
+---
+title: Getting started
+description: Where to begin with ulams - what it is, the three demo academies, running the stack locally and the local hosts it uses.
+sidebar:
+  order: 0
+---
+
+import { LinkCard, CardGrid } from "@astrojs/starlight/components";
+
+ulams is an open, headless LMS: a multi-tenant Laravel REST API with separate frontends for
+learners and administrators. It started as a fork of Wellms (EscolaLMS) and lives in one
+monorepo at [github.com/ulams-dev/ulams](https://github.com/ulams-dev/ulams).
+
+Read these pages in order if you are new:
+
+<CardGrid>
+  <LinkCard title="What is ulams" description="The product idea, what is built today and what is on the roadmap." href="/getting-started/what-is-ulams/" />
+  <LinkCard title="Demo academies" description="Coffee, On-Call and Night Sky: three tenants that show the learner experience." href="/getting-started/demos/" />
+  <LinkCard title="Quick start" description="Clone, install and run the API, the admin, the learner frontends and these docs." href="/getting-started/quick-start/" />
+  <LinkCard title="Local hosts and ports" description="Every URL the local stack answers on, and what serves it." href="/getting-started/hosts/" />
+</CardGrid>
+
+After that, pick the guide for your role: [learners](/learners/), [content creators](/creators/),
+[administrators](/admin/), [developers](/developers/) or [operators](/operators/).

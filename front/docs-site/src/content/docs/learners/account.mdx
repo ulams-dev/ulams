@@ -1,0 +1,39 @@
+---
+title: Account
+description: The account page of the reference frontend - the learner's profile, their courses with progress and continue links, and logging out.
+sidebar:
+  order: 6
+learnerRoutes:
+  - /account
+---
+
+import Screenshot from "../../../components/Screenshot.astro";
+
+`/account` ("My learning") is the learner's own page. The site header links to it as "My
+learning" once the learner has a session. Like the player, it needs a session: without one the
+server signs the visitor in as the demo student, or redirects to `/login?next=/account`.
+
+<Screenshot name="learner-account" alt="The account page with the profile card and the list of courses with progress bars" />
+
+## Profile
+
+A card with the learner's initials, full name, e-mail and roles, and a "Log out" button (see
+[signing out](/learners/signing-in/#signing-out)). The profile is read-only here.
+
+## My courses
+
+The learner's courses as returned by `GET /api/courses/progress`, each with:
+
+- the course image, title (linking to the [course page](/learners/course-page/)) and summary;
+- a progress bar with the percentage and the number of completed topics, e.g. `40% · 6/15 topics`;
+- a button that opens the first topic not yet completed: "Start" at 0%, "Continue" in between
+  and "Review" at 100%.
+
+With no courses the page says "No courses yet." and links to the academy. If the API does not
+answer, it says the courses could not be loaded and offers to try again.
+
+## What is not here yet
+
+The reference frontend's account page has no profile editing, password change, certificates,
+orders, subscriptions, notifications, tasks, or notes and bookmarks. The
+[legacy React app](/learners/legacy-react-app/) has all of these under `/user/...`.

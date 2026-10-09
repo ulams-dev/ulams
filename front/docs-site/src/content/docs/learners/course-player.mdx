@@ -1,0 +1,135 @@
+---
+title: Course player
+description: The lesson player of the reference frontend - the program tree, how each topic type renders, progress and completion, quizzes and the finish page.
+sidebar:
+  order: 4
+learnerRoutes:
+  - /learn/[courseId]
+  - /learn/[courseId]/[topicId]
+  - /learn/[courseId]/finish
+needsReview: "Completion rules per topic type (audio has no automatic completion; SCORM completion is server-side through the SCO-scoped token) should be checked end to end in a browser."
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+The player lives under `/learn/<courseId>`. Every player page needs a session: without one the
+server signs the visitor in as the demo student (see [signing in](/learners/signing-in/)), and
+if that is not possible it redirects to `/login`.
+
+## Opening a course
+
+`/learn/<courseId>` does not render anything itself. It redirects to:
+
+- the first topic that is not completed, for a learner with access;
+- the first free-preview topic, for a learner without access;
+- the [course page](/learners/course-page/) if the program cannot be loaded or has no topics.
+
+"Start learning" and "Continue learning" on the course page, and the call to action on the
+landing page, link here or straight to a topic.
+
+## The topic page
+
+<Screenshot name="learner-learn-courseid-topicid" alt="The lesson player with the program tree, a rich-text topic and the bottom progress bar" />
+
+`/learn/<courseId>/<topicId>` has four parts:
+
+- **Top bar.** A link back to the course page with the course title, the course progress bar
+  (percentage of completed topics) and a home link.
+- **Program.** A collapsible tree of lessons and topics ("Program", with the topic's position,
+  e.g. `4 / 19`). Each topic shows its status (done, current, open or locked) and a format icon.
+  It is open by default on wide screens.
+- **Content.** The lesson name (chapter, module or mission, depending on the academy), the topic
+  title, its format and duration, "Free preview" and "Completed" tags, the introduction, the
+  topic itself, the description and a "Downloads" list of the topic's resources.
+- **Bottom bar.** "Previous", "Mark as complete" and "Next" (or "Finish" on the last topic).
+  The keys `j` or `]` go to the next topic, `k` or `[` to the previous one.
+
+Learners can open any topic from the tree; the player does not enforce an order.
+
+## How each topic type renders
+
+| Topic type | What the learner sees |
+|---|---|
+| Rich text | The article rendered from Markdown on the server, with tables, code and maths (KaTeX to MathML). The Coffee Atlas adds a drop cap; Night Sky uses larger type |
+| Video | A video player that loads nothing until play is pressed. HLS plays natively in Safari and through hls.js elsewhere. Chapter buttons, when the topic defines chapters |
+| Audio | A native audio player with the length |
+| Image | The image with the topic summary as caption and alt text |
+| PDF | An embedded PDF with a "Download" button |
+| Embed (OEmbed) | The embedded external media, e.g. a YouTube video |
+| H5P | The H5P content in a frame served by the H5P service through the frontend's same-origin `/h5p/` proxy, themed to match the academy |
+| SCORM | The package in an isolated frame on the tenant's content origin. Without a content-origin launch it falls back to the API's player, or, when the package files cannot be served, to a card with a link to open the player in a new tab |
+| LiaScript | The LiaScript course in a frame on the content origin, with its number of sections. It completes when the learner reaches the last section |
+| External tool (LTI 1.3) | The tool in a frame, or, for tools set to open in a window, a card with "Open the activity". Scores come back from the tool through LTI Assignment and Grade Services |
+| GIFT quiz | The quiz runner, see below |
+| Project | The assignment brief, and a card saying that file upload is not part of the reference frontend yet |
+| cmi5 | A card describing the tracked activity. Launching cmi5 activities is not implemented in the reference frontend yet |
+
+Any other topic type shows an "Unsupported topic type" notice. Adapt courses imported as SCORM
+packages play as SCORM. If the API returns a topic without its content, the player shows "This
+topic could not be loaded" with a link back to the course.
+
+How authors create each type is described in the [content creators guide](/creators/).
+
+## Quizzes
+
+GIFT quizzes run in the page through the quiz-attempts API:
+
+- Starting the quiz creates an attempt, or resumes an open one with its saved answers.
+- One question at a time, with a question navigator. All eight question types are supported:
+  multiple choice, multiple right answers, true/false, short answer, matching, numerical, essay
+  and description blocks.
+- Answers are saved as the learner goes. A timer counts down when the quiz has a time limit and
+  ends the attempt at zero.
+- At the end the learner sees the score, whether they passed, and per-question feedback. Essay
+  answers are marked as waiting for tutor review.
+- "New attempt" starts again while attempts remain. With no attempts left the quiz says
+  "No attempts left for this quiz."
+
+Passing the quiz completes the topic.
+
+## Progress and completion
+
+While a topic page is open and visible, the player pings the API every minute to record time on
+task. A topic is marked complete in one of these ways:
+
+| Topic type | Completed when |
+|---|---|
+| Rich text, image, PDF, embed | The learner scrolls to the end of the content and has been on the page for at least four seconds, or presses "Mark as complete" |
+| Video | The video plays to the end, or "Mark as complete" |
+| H5P | The content sends a completing xAPI statement (every H5P xAPI statement is also stored), or "Mark as complete" |
+| Quiz | The learner passes, or "Mark as complete" |
+| Audio, SCORM, LiaScript, LTI, cmi5, project | "Mark as complete". LiaScript and SCORM packages also report completion to the API themselves |
+
+Completing a topic updates the tree and the progress bar without reloading the page. Progress
+belongs to the signed-in user; on demo tenants that is the shared demo student, and it is wiped
+by the hourly reset.
+
+## Preview mode
+
+A signed-in learner without access to the course (the API answers 403 for the program) can
+still open the free-preview topics. The player then shows "Preview mode: this demo account has
+no access to the full course, so only free topics open.", marks the other topics as locked, and
+hides "Mark as complete". Opening a locked topic shows "Locked in this demo account".
+
+## Finish page
+
+<Screenshot name="learner-learn-courseid-finish" alt="The finish page with the completion ring and the certificate preview" />
+
+"Finish" on the last topic opens `/learn/<courseId>/finish`. It shows:
+
+- a headline in the academy's voice, different for finished and unfinished courses;
+- a ring with the completion percentage;
+- a certificate preview with the tenant name, "Certificate of completion", the learner's name,
+  the course title and today's date, marked "Issued" when every topic is done and "Preview:
+  finish every topic to receive it" otherwise;
+- up to six topics that are still open, with links;
+- "Back to the course" and "Home".
+
+<Aside type="note" title="Certificates">
+The certificate on the finish page is an HTML preview drawn by the frontend. The reference
+frontend does not download certificate PDFs. Certificates are rendered by the API and the PDF
+service when a course is finished, and learners can download them in the
+[legacy React app](/learners/legacy-react-app/) under "My certificates". A verification page for
+the QR code on certificates is on the [roadmap](/roadmap/).
+</Aside>

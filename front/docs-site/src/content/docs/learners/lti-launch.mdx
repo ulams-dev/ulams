@@ -1,0 +1,70 @@
+---
+title: Arriving from another LMS (LTI)
+description: What happens when a learner opens a ulams course from Moodle, Canvas or another LTI 1.3 platform, and lands in the reference frontend through /lti/launch.
+sidebar:
+  order: 9
+learnerRoutes:
+  - /lti/launch
+needsReview: "The full round trip against a real Moodle or Canvas is not yet verified (tracked in the roadmap); check the learner flow and grade passback end to end."
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+ulams can act as an LTI 1.3 tool: an external LMS (Moodle, Canvas and others) links to a ulams
+course, and its learners open it with one click, without a ulams account or password. This page
+describes the learner's side. Registering platforms is covered in [LTI in the admin](/admin/lti/).
+
+## What the learner experiences
+
+<Steps>
+
+1. In their LMS, the learner clicks the ulams activity.
+2. The LMS and the ulams API complete the LTI 1.3 launch (OIDC login, signed launch message).
+3. The browser lands on the tenant's learner site at `/lti/launch?code=...&course=...`.
+4. The learner is signed in and redirected to `/learn/<courseId>`, which opens the first topic
+   that is not completed in the [course player](/learners/course-player/).
+
+</Steps>
+
+From then on the learner uses the normal player. Their progress is saved to their ulams account.
+
+## What ulams does on the launch
+
+The API (`api/packages/lti`, tool side):
+
+- validates the launch (signature, state, nonce, deployment, claims);
+- finds the ulams user linked to the platform's user id (`sub`), or creates one with the name
+  from the launch and a random password. It never links to an existing account by e-mail: if the
+  e-mail is already taken, the new user gets a placeholder address instead;
+- assigns a role from the LTI roles (instructors become tutors);
+- grants the user access to the course named by the link (the `course_id` custom parameter, the
+  `course` query parameter of the target link, or the platform's default course);
+- remembers where to send the grade, so results can be passed back to the LMS gradebook;
+- redirects to the frontend with a one-time code that is valid for 60 seconds by default.
+
+The landing URL comes from `LTI_TOOL_LANDING_URL` (default
+`{front}/lti/launch?code={code}&course={course}`, where `{front}` is the API's frontend URL).
+
+`/lti/launch` in the reference frontend then exchanges the code on the server
+(`POST /api/lti/tool/exchange`) for an API token, stores it in the httpOnly session cookie for
+8 hours, and redirects to the course.
+
+## When something goes wrong
+
+| Situation | The learner sees |
+|---|---|
+| The URL has no code, or the host is not a tenant | "This link is incomplete. Open the activity in your LMS again." (HTTP 400) |
+| The code was already used or has expired | "This sign-in link has expired. Open the activity in your LMS again." (HTTP 401) |
+| The link does not point to an existing course | An error from the API asking the instructor to pick the course again |
+
+Opening the activity in the LMS again always starts a fresh launch.
+
+<Aside type="caution" title="Open ulams in a new window">
+When an LMS shows ulams inside an iframe, the browser may treat the session cookie as a
+third-party cookie and block it, so the learner would not stay signed in. Configure the LMS to
+open the ulams activity in a new window or tab.
+</Aside>
+
+Instructors who launch with a deep-linking request get a course picker instead, to add ulams
+courses to their LMS course; see [LTI in the admin](/admin/lti/). The legacy React app has its
+own `/lti/launch` page that does the same exchange.

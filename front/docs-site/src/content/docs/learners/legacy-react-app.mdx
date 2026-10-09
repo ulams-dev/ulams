@@ -1,0 +1,72 @@
+---
+title: Legacy React learner app
+description: The React learner app inherited from Wellms (front/src) - what it still does, how it differs from the reference frontend, and its status.
+sidebar:
+  order: 10
+modules:
+  - front
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+`front/src` (workspace `front`) is the learner app that came with Wellms: a React 18 single-page
+app built with Vite, styled with CSS Modules and the `--ulams-*` theme variables. It is still in
+the repository and still works, but it is no longer the default learner site.
+
+## Status
+
+[ADR 0008](/decisions/0008-reference-frontend/) replaced it with the server-rendered reference
+frontend (`front/web`) for the demo academies: the React app downloaded several hundred KB of
+JavaScript and waited for the API before painting anything. The ADR keeps both frontends "until
+the reference app reaches parity with `front/src` (cart and checkout, account area, webinars,
+consultations); the old front stays for those."
+
+In practice:
+
+- Caddy sends `*.app.localhost` to the reference frontend; the React app is reachable directly on
+  port 3000: http://localhost:3000 for the platform and `http://<slug>.app.localhost:3000` for a
+  tenant. Start it with `corepack yarn dev` or `corepack yarn dev:front`.
+- It is still built and published as the `ghcr.io/ulams-dev/front` image.
+- New learner features go into the reference frontend.
+
+## What it still does that the reference frontend does not
+
+| Area | Routes in the React app |
+|---|---|
+| Course catalogue and tutors | `/courses`, `/tutors`, `/tutors/:id` |
+| Registration, e-mail verification, password reset, onboarding | `/register`, `/email-verify`, `/reset-password`, `/onboarding` |
+| Cart and checkout (Stripe), packages and subscriptions | `/cart`, `/packages`, `/package/:id`, `/subscriptions` |
+| Webinars, in-person events, and consultations with slot booking | `/webinars`, `/webinar/:id`, `/events`, `/event/:id`, `/consultations`, `/consultations/:id` |
+| Profile and learner area | `/user/my-profile`, `/user/my-data`, `/user/my-certificates`, `/user/my-orders`, `/user/my-subscriptions`, `/user/my-notifications`, `/user/my-tasks`, `/user/my-bookmarks`, `/user/my-webinars`, `/user/my-stationary-events`, `/user/my-consultations` |
+| Certificate PDFs | Downloaded from "My certificates" and the course finish page (`GET /api/pdfs/generate/{id}`) |
+| Notes and bookmarks in the player | See [notes and bookmarks](/learners/notes-and-bookmarks/) |
+| Project uploads | Learners upload their solution file in project topics |
+| Static pages, contact, privacy policy | `/:slug`, `/contact`, `/privacy-policy` |
+
+It also contains the Capacitor (iOS and Android), Firebase push notification, RevenueCat, Jitsi
+and Sentry integrations inherited from Wellms.
+
+## Shared with the reference frontend
+
+- The course page (`/courses/:id`), the course player (`/course/:id/:lessonID?/:topicID?`) and
+  a preview player (`/courses/preview/:id/...`).
+- Per-tenant landing pages for the three demo academies (`src/pages/landing/{coffee,oncall,nightsky}`).
+- Tenant detection from the browser host with the same host rule
+  (`VITE_APP_TENANT_API_HOST_PATTERN`, default `{slug}.app.localhost=>http://{slug}.localhost`).
+- Demo mode: on a demo tenant it reads `ulams_demo` from `GET /api/config` and logs in as the
+  demo student by itself.
+- LTI tool launches: its own `/lti/launch` page exchanges the one-time code like the reference
+  frontend does (see [arriving from another LMS](/learners/lti-launch/)).
+
+## Topic types
+
+The React player renders H5P, embeds, rich text, video, image, audio, PDF, SCORM, LTI external
+tools, GIFT quizzes and projects. It has no player for cmi5 and LiaScript topics; for those it
+shows the topic's raw type name. Use the reference frontend for courses with those types.
+
+<Aside type="note">
+The React app's own documentation is in
+[`front/README.md`](https://github.com/ulams-dev/ulams/blob/main/front/README.md), and its
+history before the monorepo in [front decisions](/decisions/). Its environment variables are
+listed in `front/.env.example`.
+</Aside>

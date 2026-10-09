@@ -1,0 +1,99 @@
+---
+title: What is ulams
+description: ulams in brief - a headless, multi-tenant LMS forked from Wellms, its planned Living Course and cited AI, and its open-core licensing.
+sidebar:
+  order: 1
+---
+
+import { Aside, Badge } from "@astrojs/starlight/components";
+
+ulams is a headless learning management system. The API owns courses, learners, progress and
+access; any number of frontends consume it. The long-term goal is an AI-native LMS whose courses
+stay in sync with their sources and adapt to each learner, with every generated element citing
+the source it came from.
+
+This page separates what exists in the code today from what is planned. The full plan is on the
+[roadmap](/roadmap/).
+
+## Origin: Wellms and EscolaLMS
+
+ulams started from [Wellms](https://github.com/EscolaLMS) (EscolaLMS), a Laravel REST API built
+from many `escolalms/*` composer packages, with a React learner app and a React admin. In ulams:
+
+- all PHP packages are vendored as source under `api/packages` (namespace `Ulams\`), and no
+  `escolalms/*` package is installed from Packagist
+  ([ADR 0001](/decisions/0001-monorepo-with-vendored-packages/));
+- the code, configuration and infrastructure were renamed from EscolaLMS/Wellms to ulams
+  ([ADR 0002](/decisions/0002-rename-to-ulams/));
+- the API runs on Laravel 13 and PHP 8.4 (`api/composer.json`), upgraded from Laravel 9;
+- the `recommender` package was removed ([ADR 0006](/decisions/0006-remove-recommender/)).
+
+## Headless architecture in brief
+
+| Part | Folder | What it is |
+|---|---|---|
+| API | `api/` | Laravel REST API, the system of record; modules in `api/packages/*` |
+| H5P service | `api/h5p/` | Node service for the H5P player and editor, isolated because H5P is GPL ([ADR 0003](/decisions/0003-h5p-as-isolated-gpl-service/)) |
+| PDF service | `api/pdf/` | Node renderer for certificates and PDF templates (pdfme) |
+| Admin | `admin/` | Admin and author panel (React, umi/max, Ant Design) |
+| Reference frontend | `front/web/` | Server-rendered learner site (Astro) - the frontend the demos use ([ADR 0008](/decisions/0008-reference-frontend/)) |
+| SDK and UI catalogue | `front/sdk/`, `front/ui/` | Framework-free API client and the component catalogue used by `front/web` |
+| Legacy learner app | `front/src/` | The React learner app inherited from Wellms; still covers features `front/web` does not have yet |
+
+More detail: [architecture](/developers/architecture/).
+
+## Tenants: a site per customer
+
+One API deployment serves a platform plus any number of tenants. Each tenant gets its own
+database, storage bucket, Passport key pair and hosts, selected from the request host
+(`api/packages/tenancy`, [ADR 0007](/decisions/0007-tenancy-package/)). Locally a tenant `coffee`
+has its API at `coffee.localhost`, its learner site at `coffee.app.localhost` and its admin at
+`coffee.admin.localhost`. Each tenant has its own name, theme preset and accent colour. See
+[tenancy](/developers/tenancy/) and [managing tenants](/admin/tenants/).
+
+## What exists today
+
+- Courses made of lessons and topics, with many topic types: rich text, video, audio, image, PDF,
+  embeds, H5P, SCORM, cmi5, GIFT quizzes, projects, LiaScript and LTI external tools.
+- LTI 1.3 on both sides: ulams can launch external tools, and other LMSs can launch ulams courses
+  (round trips against real LMSs are still being verified).
+- Certificates and PDF templates rendered by the pdfme-based `api/pdf` service.
+- Webinars, in-person events, consultations, payments, cart and vouchers inherited from Wellms.
+- Demo mode for throwaway tenants: password-less login and an hourly reset
+  ([demo academies](/getting-started/demos/)).
+- The Astro reference frontend for learners, used by the three demo academies.
+
+## What is planned <Badge text="Coming" variant="caution" />
+
+None of the AI features are built yet; there is no LLM code in the repository.
+
+- **Living Course.** Courses connected to their sources (uploads, Git, later Drive or Notion).
+  When a source changes, ulams proposes an update as a diff, citing the changed fragments; the
+  author accepts or rejects it, and learner progress is preserved.
+- **AI Course Builder with citations.** Upload sources, answer a short interview, approve
+  learning objectives and an outline, and get a course where every generated element links to
+  the source fragment it is based on. AI proposes, the author approves every change. See
+  [Course Builder](/creators/course-builder/).
+- **Personalisation.** A new `learner-insights` module with explainable risk signals,
+  remediation and an AI tutor that answers only from course sources.
+- **Commerce through Sylius** as a separate headless service, with the LMS keeping control of
+  who has access.
+
+<Aside type="note">
+The order and status of these items are tracked in the [roadmap](/roadmap/). If a page in these
+docs describes a planned feature, it is marked "Coming".
+</Aside>
+
+## Open core and licensing
+
+The business model is open core: a free, self-hostable core, with paid cloud hosting, enterprise
+features and support planned on top. Licensing in the repository today
+([LICENSING.md](https://github.com/ulams-dev/ulams/blob/main/LICENSING.md) has the details):
+
+- MIT for the root, `front/`, `admin/`, `api/pdf` and almost all `api/packages/*`; the Laravel
+  application in `api/` is Apache-2.0.
+- `api/h5p` is GPL-3.0-or-later and runs as a separate program. No GPL or AGPL code is linked into
+  the API or bundled into the admin or the frontends; they reach it only over HTTP or an iframe.
+- Imported code keeps its original copyright notices.
+
+`LICENSING.md` is an engineering summary, not legal advice.

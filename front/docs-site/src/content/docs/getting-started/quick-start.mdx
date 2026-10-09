@@ -1,0 +1,208 @@
+---
+title: Quick start
+description: Run ulams locally - clone, install with Yarn through Corepack, start the Docker API stack, the admin, both learner frontends, the docs and the demo academies.
+sidebar:
+  order: 3
+modules:
+  - demo
+needsReview: "First run on a clean machine: whether the api container needs a manual `composer install` (vendor/ is hidden by the bind mount), whether an empty admin/.env is enough for `env-cmd`, and whether `make -C api h5p-seed` is required before the demo seeders."
+---
+
+import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
+
+This page gets the whole stack running on your machine: the API in Docker, the admin and the
+learner frontends from source, and the three [demo academies](/getting-started/demos/). For a
+deeper tour of the development setup see [local development](/developers/local-development/);
+for production see [self-hosting](/operators/self-hosting/).
+
+## Requirements
+
+- Docker with Compose v2 (`docker compose`).
+- Node.js 22.12 or newer. The repository pins `22` in `.nvmrc` and requires `>=22.12` in the root
+  `package.json` (`engines`).
+- Yarn 1 through Corepack. The root `package.json` sets `packageManager: yarn@1.22.22`.
+- Free ports 80 and 443 (Caddy), 3000, 4321, 4322 and 8000 (dev servers), 8025 and 8078 (MailHog
+  and Adminer).
+
+`*.localhost` host names resolve to `127.0.0.1` in current browsers, so no `/etc/hosts` entries
+are needed. All hosts are listed on [local hosts and ports](/getting-started/hosts/).
+
+## Install and run
+
+<Steps>
+
+1. Clone the repository and pick the Node version:
+
+   ```bash
+   git clone https://github.com/ulams-dev/ulams.git
+   cd ulams
+   nvm use            # reads .nvmrc (22); any Node >= 22.12 works
+   corepack enable
+   ```
+
+2. Install every JavaScript workspace (one `yarn.lock` for admin, front, front/web, front/sdk,
+   front/ui, front/docs-site, api/h5p and api/pdf):
+
+   ```bash
+   corepack yarn install
+   ```
+
+3. Start the API stack. This runs `docker compose -f api/docker-compose.yml up -d`: Caddy,
+   php-fpm, PostgreSQL, Valkey, MinIO, MailHog, Adminer, the H5P and PDF services, mjml and
+   Soketi. The first run builds the `api`, `h5p` and `pdf` images.
+
+   ```bash
+   corepack yarn dev:api
+   ```
+
+   On start the `api` container writes `api/.env` from its `LARAVEL_*` variables, runs the
+   platform migrations, syncs tenants, creates the Passport keys and seeds permissions
+   (`api/init.sh`). The repository is bind-mounted into the container; if `api/vendor` does not
+   exist yet, install the PHP dependencies once:
+
+   ```bash
+   docker compose -f api/docker-compose.yml exec api composer install
+   ```
+
+4. Start the apps you need, each in its own terminal:
+
+   ```bash
+   corepack yarn dev        # admin on :8000 and the legacy React front on :3000
+   corepack yarn dev:web    # reference frontend (front/web, Astro) on :4321
+   corepack yarn dev:docs   # this documentation site on :4322
+   ```
+
+   `yarn dev:admin` and `yarn dev:front` start only one of the two. The admin's `dev` script
+   loads `admin/.env` with `env-cmd`, so that file must exist (it is git-ignored). Leave
+   `REACT_APP_API_URL` out of it to keep per-tenant hosts working: when it is set, the admin
+   always talks to that one API.
+
+</Steps>
+
+Check it works:
+
+| URL | What |
+|---|---|
+| http://localhost:8000 | Admin (platform), `admin@ulams.app` / `secret` |
+| http://localhost:4321 | Reference frontend on the platform host: the ulams product landing |
+| http://localhost:3000 | Legacy React learner app (platform) |
+| http://localhost:4322 | These docs |
+| http://localhost:8025 | MailHog, catches outgoing e-mail |
+
+## Create the demo academies
+
+The three demo tenants are created with the tenancy package and seeded with their courses.
+Run the tenant commands inside the API container, on the platform (without `--domain`):
+
+<Steps>
+
+1. Create the tenants. Each command provisions a database, a bucket, an env file, migrations,
+   Passport keys and demo users; it is safe to re-run and skips finished steps.
+
+   ```bash
+   docker compose -f api/docker-compose.yml exec api bash
+   php artisan ulams:tenant:create coffee --name="The Coffee Atlas" --theme=coffee --accent="#C2552D"
+   php artisan ulams:tenant:create oncall --name="On-Call" --theme=oncall --accent="#58A6FF"
+   php artisan ulams:tenant:create nightsky --name="Night Sky Explorers" --theme=nightsky --accent="#FFD23F"
+   exit
+   ```
+
+2. Import the H5P content types into the H5P service. The demo seeders build H5P topics through
+   the service and skip them, with a warning, if it cannot be reached.
+
+   ```bash
+   make -C api h5p-seed
+   ```
+
+3. Seed the demo courses: all three on the platform, then one per tenant.
+
+   ```bash
+   make -C api demo-seed demo-seed-tenants
+   ```
+
+4. Optional: turn on demo mode (password-less login and an hourly reset) for the three tenants.
+
+   ```bash
+   make -C api demo-mode-on
+   ```
+
+</Steps>
+
+Open http://coffee.app.localhost, http://oncall.app.localhost or http://nightsky.app.localhost.
+Caddy sends `*.app.localhost` to the reference frontend on port 4321, so `yarn dev:web` must be
+running. The same tenants in the legacy React app are at `http://<slug>.app.localhost:3000`.
+
+<Aside type="tip" title="Demo login without demo mode">
+Without demo mode, the reference frontend signs visitors in with a password instead. Copy
+`front/web/.env.example` to `front/web/.env` and set `DEMO_STUDENT_PASSWORD` to the value of
+`TENANT_DEMO_PASSWORD` in `api/.env` (`secret` by default). See
+[demo academies](/getting-started/demos/#how-the-reference-frontend-logs-you-in).
+</Aside>
+
+## Make targets
+
+`api/makefile` wraps common `docker compose exec` calls. Run them from the repository root with
+`make -C api <target>`, or from `api/`. The makefile includes `api/.env`, which the `api`
+container writes when it starts, so start the stack first.
+
+| Target | What it does |
+|---|---|
+| `migrate-fresh` | `migrate-fresh-quick` followed by `h5p-seed` |
+| `migrate-fresh-quick` | `migrate:fresh --seed` on the platform database, new Passport keys and personal access client |
+| `h5p-seed` | Imports the curated H5P content types and samples into the H5P service |
+| `demo-seed` | Seeds all three demo courses on the platform tenant (`api.localhost`) |
+| `demo-seed-tenant DOMAIN=coffee.localhost` | Seeds one tenant with its own course (experience = first label of the domain), then processes its video queue once |
+| `demo-seed-tenants` | `demo-seed-tenant` for coffee, oncall and nightsky |
+| `demo-mode-on` | Writes `DEMO_MODE=true` for the three demo tenants (`ulams:tenant:create <slug> --demo=on`) |
+| `demo-reset DOMAIN=coffee.localhost` | Wipes and reseeds one demo tenant now (the scheduler does it hourly) |
+| `swagger-generate` | Regenerates the OpenAPI spec (`php artisan l5-swagger:generate`) |
+| `backup-postgres` | Dumps the platform database to `api/docker/postgres-backups/backup-<timestamp>.sql` and `backup-latest.sql` |
+| `import-postgres BACKUP_FILE=backup-latest.sql` | Restores a dump from that folder |
+| `test-phpunit` | Runs PHPUnit in the `api` container |
+| `bash` | Opens a shell in the `api` container |
+| `tinker` | Runs `php artisan tinker` in a loop |
+
+`DEMO_REFRESH=1` makes the demo seed targets rebuild existing demo courses instead of keeping
+them. Other targets in the makefile (`composer-update`, `refresh`, `init`, `restart_queue_cron`,
+`update-composer-to-git`) are inherited from Wellms and refer to a `ulams_queue_cron` service
+that is commented out in `api/docker-compose.yml`; avoid them.
+
+## Compose profiles
+
+`api/docker-compose.yml` has one optional profile:
+
+| Profile | Service | Start with |
+|---|---|---|
+| `av` | `clamav`, virus scanning of uploads (`UPLOADS_SCANNER=clamd`) | `docker compose -f api/docker-compose.yml --profile av up -d clamav` |
+
+Every other service starts with `yarn dev:api`.
+
+## Everyday commands
+
+<Tabs>
+  <TabItem label="JavaScript">
+
+```bash
+corepack yarn build        # build all workspaces (Turborepo, cached)
+corepack yarn typecheck
+corepack yarn lint
+corepack yarn test         # unit tests of admin, front, api/h5p, api/pdf, sdk, ui and web
+corepack yarn test:web:e2e # Playwright smoke and accessibility tests of front/web
+```
+
+  </TabItem>
+  <TabItem label="PHP">
+
+```bash
+corepack yarn test:api     # PHPUnit inside the api container
+docker compose -f api/docker-compose.yml exec api ./vendor/bin/phpunit --testsuite courses
+```
+
+  </TabItem>
+</Tabs>
+
+## Next steps
+
+- [Local hosts and ports](/getting-started/hosts/)
+- [What learners see](/learners/)
+- [Environment variables](/reference/environment-variables/)
