@@ -78,6 +78,7 @@ return [
                     base_path('packages/living-course/src'),
                     base_path('packages/tasks/src'),
                     base_path('packages/bookmarks_notes/src'),
+                    base_path('packages/topic-type-layout/src'),
                     base_path('packages/topic-type-project/src'),
                     base_path('packages/topic-type-gift/src'),
                     base_path('packages/bulk-notifications/src'),

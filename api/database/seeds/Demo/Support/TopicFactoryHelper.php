@@ -14,6 +14,8 @@ use Ulams\Courses\Repositories\Contracts\TopicResourceRepositoryContract;
 use Ulams\TopicTypeGift\Dtos\GiftQuestionDto;
 use Ulams\TopicTypeGift\Models\GiftQuiz;
 use Ulams\TopicTypeGift\Services\Contracts\GiftQuestionServiceContract;
+use Ulams\Interactive\Models\InteractiveTopic;
+use Ulams\TopicTypeLayout\Models\LayoutTopic;
 use Ulams\TopicTypeProject\Models\Project;
 use Ulams\TopicTypes\Models\TopicContent\Audio;
 use Ulams\TopicTypes\Models\TopicContent\Cmi5Au;
@@ -47,6 +49,8 @@ class TopicFactoryHelper
         'gift' => GiftQuiz::class,
         'project' => Project::class,
         'liascript' => LiaScriptTopic::class,
+        'interactive' => InteractiveTopic::class,
+        'layout' => LayoutTopic::class,
     ];
 
     private TopicRepositoryContract $topics;
