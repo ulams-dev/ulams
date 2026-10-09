@@ -6,15 +6,23 @@
   "description": "Interactive content packages for the demo academies (ADR 0088). Played only as sandboxed content; nothing outside this folder imports from it.",
   "type": "module",
   "scripts": {
-    "lint": "node scripts/check-demo-content-boundary.mjs && node scripts/check-manifests.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "node scripts/check-demo-content-boundary.mjs && node scripts/check-manifests.mjs && node poland/scripts/check.mjs",
     "test": "node --test tests/unit/*.test.mjs",
     "test:e2e": "playwright test --config tests/playwright.config.mjs",
     "sync-bridge": "node scripts/sync-bridge.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
+    "@fontsource/barlow": "5.3.0",
+    "@fontsource/barlow-semi-condensed": "5.3.0",
+    "@fontsource/jetbrains-mono": "5.3.0",
     "@playwright/test": "1.63.0",
     "sharp": "0.34.5",
-    "typescript": "5.9.3"
+    "topojson-client": "3.1.0",
+    "topojson-server": "3.0.1",
+    "topojson-simplify": "3.0.3",
+    "typescript": "5.9.3",
+    "world-atlas": "2.0.2"
   }
 }

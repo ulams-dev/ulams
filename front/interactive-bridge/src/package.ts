@@ -1,8 +1,13 @@
 import { PROTOCOL, parseMessage, withinSize, type Capabilities, type Envelope, type InitPayload, type PackageMessage, type ParentMessage } from "./protocol.ts";
 
 export interface ConnectOptions {
-  /** The step ids this package knows. */
-  steps?: string[];
+  /** The step ids this package knows (or a function that returns them when `ready` is sent). */
+  steps?: string[] | (() => string[]);
+  /**
+   * Hold `ready` until this settles, for a package that is still loading its data when `init` arrives.
+   * Calls made meanwhile are queued and flushed right after `ready`.
+   */
+  whenReady?: Promise<unknown>;
   capabilities?: Capabilities;
   onInit?: (init: InitPayload) => void;
   onGoToStep?: (step: string) => void;
@@ -48,6 +53,7 @@ export function connect(options: ConnectOptions = {}): Bridge {
   const parent = win.parent;
   let nonce: string | null = null;
   let initializing = false;
+  let holding = false;
   let queue: Outgoing[] = [];
 
   const post = (m: Outgoing) => {
@@ -59,7 +65,7 @@ export function connect(options: ConnectOptions = {}): Bridge {
   };
   const send = (m: Outgoing) => {
     // Before `init`, and inside `onInit`, calls wait: the host ignores everything that arrives before `ready`.
-    if (nonce === null || initializing) {
+    if (nonce === null || initializing || holding) {
       if (queue.length < 100) queue.push(m);
       return;
     }
@@ -80,10 +86,18 @@ export function connect(options: ConnectOptions = {}): Bridge {
         } finally {
           initializing = false;
         }
-        post({ type: "ready", protocol: PROTOCOL, steps: options.steps ?? [], capabilities: options.capabilities ?? {} });
-        const pending = queue;
-        queue = [];
-        pending.forEach(post);
+        const announce = () => {
+          holding = false;
+          const steps = typeof options.steps === "function" ? options.steps() : (options.steps ?? []);
+          post({ type: "ready", protocol: PROTOCOL, steps, capabilities: options.capabilities ?? {} });
+          const pending = queue;
+          queue = [];
+          pending.forEach(post);
+        };
+        if (options.whenReady) {
+          holding = true;
+          options.whenReady.then(announce, announce);
+        } else announce();
         return;
       }
       case "goToStep":

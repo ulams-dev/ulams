@@ -70,7 +70,19 @@ const host = createHost(iframe, { nonce: newNonce(), init, onMessage, onTimeout 
 host.goToStep("a");
 ```
 
-`connect()` queues calls made before `init` and is a no-op when `window.parent === window`. For packages
+`connect()` queues calls made before `init` (and calls made inside `onInit`: the page ignores everything that
+arrives before `ready`) and is a no-op when `window.parent === window`.
+
+A package that loads its data after start must still register `connect()` at the top, or it misses `init`
+(the page sends it on the frame's `load` event). Pass `whenReady: dataPromise` to hold `ready` back until the
+data is there, and `steps` as a function so the ids are read then; calls made meanwhile are queued:
+
+```js
+const data = fetch("data/steps.json").then((r) => r.json()).then((d) => (steps = d.steps));
+let steps = [];
+connect({ steps: () => steps.map((s) => s.id), whenReady: data, onInit, onGoToStep });
+```
+ For packages
 without a build step `npm run build` writes `dist/interactive-bridge.js` (one ESM file, MIT header, under
 3 KB min+gzip) that you can vendor until the package is on npm.
 

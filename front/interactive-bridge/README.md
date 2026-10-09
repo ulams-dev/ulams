@@ -22,7 +22,8 @@ bridge.score(8, 10);
 bridge.resize(document.documentElement.scrollHeight);
 ```
 
-Calls made before `init` are queued. When the page runs on its own (`window.parent === window`) every
+Calls made before `init`, or inside `onInit`, are queued. A package that loads data after start passes
+`whenReady: promise` (and `steps: () => ids`) to hold `ready` back until it knows its steps. When the page runs on its own (`window.parent === window`) every
 call is a no-op, so the package still works standalone.
 
 ## On the lesson page

@@ -22,6 +22,10 @@ checksum. That part is withdrawn:
   mp4 are not used. The map is regenerated from Natural Earth (via `world-atlas`, ISC), the reply framing is
   dropped, only figures with primary sources stay, and the package is EN and PL.
 - Licences: MIT for code, CC BY 4.0 for course text and data (#148).
+- Poland was built in M4: the story is neutral public statistics, every figure links to the institution that
+  published it, and a lint (`demo-content/poland/scripts/check.mjs`) fails on third-party framing, a weak
+  source, an unresolved source id or an oversized map. Figures whose only source was the article, a press
+  report or an encyclopedia were removed or replaced by the publisher's number.
 
 The rest of the decision stands: packages live in a separate tree, are played only in a sandboxed frame, and
 nothing outside the tree may import them.
