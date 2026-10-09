@@ -1,0 +1,96 @@
+/* "Poland, Measured": cartographic paper, graticule hairlines, legend-style badges (plan 8.2). */
+[data-theme="poland"] {
+  color-scheme: light;
+  --ulams-color-primary: #c8102e;
+  --ulams-color-primary-on-light: #c8102e;
+  --ulams-color-accent: #c8102e;
+  --ulams-color-on-primary: #ffffff;
+  --ulams-color-secondary: #3f6e6c;
+  --ulams-color-header: #1b2a3a;
+  --ulams-color-text: #1b2a3a;
+  --ulams-color-muted: #4f5d6b;
+  --ulams-color-bg: #f4efe6;
+  --ulams-color-surface: #fbf8f2;
+  --ulams-color-card-bg: #fbf8f2;
+  --ulams-color-border: #d8cfbf;
+  --ulams-color-accent-bg: #f1dcd7;
+  --ulams-color-input-bg: #fffdf9;
+  --ulams-color-positive: #2e7d5b;
+  --ulams-color-warn: #9a5b00;
+  --ulams-color-error: #b00020;
+  --ulams-color-info: #2b5d8a;
+  --ulams-gray-1: #ebe4d6;
+  --ulams-gray-2: #d8cfbf;
+  --ulams-gray-3: #6b7683;
+  --ulams-gray-4: #2b3b4c;
+  --ulams-gray-5: #1b2a3a;
+  --ulams-radius: 2px;
+  --ulams-radius-button: 2px;
+  --ulams-radius-input: 2px;
+  --ulams-radius-card: 3px;
+  --ulams-radius-modal: 4px;
+  --ulams-font-family: var(--font-source-serif), "Source Serif 4", Georgia, serif;
+  --ulams-font-family-body: var(--font-plex-sans), "IBM Plex Sans", system-ui, sans-serif;
+  --ulams-font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
+  --ulams-shadow-hover: 0 1px 0 rgb(27 42 58 / 0.12), 0 14px 28px -16px rgb(27 42 58 / 0.35);
+  --ulams-focus: 0 0 0 2px #f4efe6, 0 0 0 4px #1b2a3a;
+}
+
+[data-theme="poland"] body {
+  font-variant-numeric: tabular-nums;
+  background-color: #f4efe6;
+  /* graticule: a hairline every 96px, a fainter one every 24px */
+  background-image:
+    linear-gradient(rgb(27 42 58 / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(27 42 58 / 0.07) 1px, transparent 1px),
+    linear-gradient(rgb(27 42 58 / 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(27 42 58 / 0.025) 1px, transparent 1px);
+  background-size: 96px 96px, 96px 96px, 24px 24px, 24px 24px;
+}
+
+[data-theme="poland"] h1,
+[data-theme="poland"] h2,
+[data-theme="poland"] h3 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+[data-theme="poland"] .u-eyebrow {
+  display: inline-block;
+  padding: 3px 10px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  font-family: var(--ulams-font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--ulams-color-primary);
+}
+[data-theme="poland"] .u-btn {
+  min-height: 46px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+[data-theme="poland"] .u-btn--ghost {
+  --_bd: var(--ulams-color-text);
+  --_fg: var(--ulams-color-text);
+}
+[data-theme="poland"] .u-card {
+  border-color: var(--ulams-color-border);
+}
+/* legend-style badge: a square swatch then the label */
+[data-theme="poland"] .u-tag {
+  border-radius: 2px;
+  background: transparent;
+  border-color: var(--ulams-color-border);
+  color: var(--ulams-color-muted);
+  font-family: var(--ulams-font-mono);
+  letter-spacing: 0.02em;
+}
+[data-theme="poland"] .u-tag::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  background: var(--ulams-color-secondary);
+}

@@ -3,13 +3,15 @@ import Icon from "./Icon.astro";
 import Img from "./Img.astro";
 import Orbi from "./Orbi.astro";
 import CapabilityOrbit from "./CapabilityOrbit.astro";
+import InteractiveLesson from "./InteractiveLesson.astro";
+import type { StepInfo } from "../lib/interactive.ts";
 
 interface Link {
   label: string;
   href: string;
 }
 interface Props {
-  variant?: "editorial" | "console" | "adventure" | "product";
+  variant?: "editorial" | "console" | "adventure" | "product" | "cosmos" | "atlas" | "notebook";
   eyebrow?: string;
   title: string;
   titleAccent?: string;
@@ -38,6 +40,21 @@ interface Props {
     angle?: number;
     status?: "available" | "preview" | "coming";
   }>;
+  /** A live interactive package for the cosmos, atlas and notebook variants (props of InteractiveLesson). */
+  showcase?: {
+    src: string;
+    title: string;
+    steps: StepInfo[];
+    height?: number;
+    startStep?: string;
+    endStep?: string;
+    locale?: string;
+    requires?: string[];
+    reducedMotionSupported?: boolean;
+    licence?: string;
+    attribution?: string;
+    sourceUrl?: string;
+  };
   diff?: {
     title?: string;
     source?: string;
@@ -64,7 +81,40 @@ const {
   panel,
   capabilities = [],
   diff,
+  showcase,
 } = Astro.props;
+
+// Decorative stage of the cosmos, atlas and notebook variants (shown when there is no live showcase).
+const stage = variant === "cosmos" || variant === "atlas" || variant === "notebook";
+
+// Ulam spiral: the integers wound outward from the centre; primes are drawn as dots. Real arithmetic, so the
+// picture is the actual pattern the Ulam interactive explores.
+const SPIRAL_N = 23;
+const spiral = (() => {
+  if (variant !== "notebook") return [] as Array<[number, number]>;
+  const limit = SPIRAL_N * SPIRAL_N;
+  const composite = new Uint8Array(limit + 1);
+  for (let i = 2; i * i <= limit; i++) if (!composite[i]) for (let j = i * i; j <= limit; j += i) composite[j] = 1;
+  const dots: Array<[number, number]> = [];
+  let x = 0;
+  let y = 0;
+  let dx = 1;
+  let dy = 0;
+  let run = 1;
+  let leg = 0;
+  for (let n = 1; n <= limit; n++) {
+    if (n > 1 && !composite[n]) dots.push([x, y]);
+    x += dx;
+    y += dy;
+    if (++leg === run) {
+      leg = 0;
+      [dx, dy] = [-dy, dx];
+      if (dy === 0) run++;
+    }
+  }
+  return dots;
+})();
+const half = (SPIRAL_N - 1) / 2;
 
 // Sparkline from real values (e.g. minutes per module): points across the width, peak at the top.
 const values = panel?.values ?? [];
@@ -213,6 +263,57 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
           </div>
           {diff.note && <figcaption class="u-prod__note">{diff.note}</figcaption>}
         </figure>
+      )
+    }
+
+    {
+      stage && (
+        <div class="u-hero__stage u-hero__in" style="--i:2" data-live={showcase ? "" : undefined}>
+          {showcase ? (
+            <InteractiveLesson {...showcase} display="inline" height={showcase.height ?? 440} />
+          ) : variant === "cosmos" ? (
+            <svg class="u-stage u-stage--cosmos" viewBox="0 0 400 400" role="presentation" aria-hidden="true">
+              <g fill="none" stroke="currentColor" stroke-width="1">
+                <ellipse cx="200" cy="200" rx="60" ry="60" />
+                <ellipse cx="200" cy="200" rx="100" ry="100" />
+                <ellipse cx="200" cy="200" rx="145" ry="145" />
+                <ellipse cx="200" cy="200" rx="190" ry="190" stroke-dasharray="2 6" />
+              </g>
+              <circle class="u-stage__sun" cx="200" cy="200" r="22" />
+              <circle class="u-stage__p1" cx="260" cy="200" r="6" />
+              <circle class="u-stage__p2" cx="129" cy="129" r="9" />
+              <circle class="u-stage__p3" cx="292" cy="298" r="13" />
+              <circle class="u-stage__p4" cx="38" cy="262" r="7" />
+              <ellipse class="u-stage__ring" cx="292" cy="298" rx="22" ry="5" />
+            </svg>
+          ) : variant === "atlas" ? (
+            <svg class="u-stage u-stage--atlas" viewBox="0 0 400 400" role="presentation" aria-hidden="true">
+              <g fill="none" stroke="currentColor" stroke-width="0.75" opacity="0.5">
+                {[50, 100, 150, 200, 250, 300, 350].map((v) => (
+                  <>
+                    <line x1={v} y1="0" x2={v} y2="400" />
+                    <line x1="0" y1={v} x2="400" y2={v} />
+                  </>
+                ))}
+              </g>
+              <g class="u-stage__contours" fill="none" stroke-width="1.4">
+                <path d="M62 214c8-50 52-86 104-86s96 22 130 62 34 84-4 112-96 34-146 22-92-52-84-110z" />
+                <path d="M98 208c8-34 40-58 78-58s72 16 96 44 24 60-4 80-70 24-106 14-72-36-64-80z" />
+                <path d="M138 204c6-20 26-34 50-34s46 10 60 28 14 38-4 50-44 14-66 8-46-24-40-52z" />
+                <path d="M178 200c4-8 12-12 22-12s20 4 26 12 6 16-2 22-20 6-30 2-20-12-16-24z" />
+              </g>
+              <circle class="u-stage__pin" cx="214" cy="204" r="6" />
+              <text x="228" y="196" class="u-stage__label">52°N 19°E</text>
+            </svg>
+          ) : (
+            <svg class="u-stage u-stage--notebook" viewBox={`${-half - 1} ${-half - 1} ${SPIRAL_N + 1} ${SPIRAL_N + 1}`} role="presentation" aria-hidden="true">
+              {spiral.map(([x, y]) => (
+                <circle cx={x} cy={-y} r="0.32" />
+              ))}
+              <circle class="u-stage__one" cx="0" cy="0" r="0.5" />
+            </svg>
+          )}
+        </div>
       )
     }
 
@@ -830,6 +931,107 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
   @media (min-width: 961px) {
     .u-hero--product .u-hero__grid:has(.u-hero__orbit) {
       grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    }
+  }
+
+  /* cosmos, atlas and notebook: the stage on the right (a live package, or a drawing) */
+  .u-hero__stage {
+    min-width: 0;
+    animation: u-rise 1s var(--ulams-ease) both;
+  }
+  .u-hero__stage[data-live] {
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    overflow: hidden;
+    background: var(--ulams-color-card-bg);
+  }
+  .u-stage {
+    display: block;
+    width: 100%;
+    max-width: 520px;
+    margin-inline: auto;
+    height: auto;
+    aspect-ratio: 1;
+    color: var(--ulams-color-border);
+  }
+  .u-hero--cosmos .u-hero__title,
+  .u-hero--atlas .u-hero__title,
+  .u-hero--notebook .u-hero__title {
+    font-size: clamp(2.4rem, 1.3rem + 4.2vw, 4.2rem);
+    line-height: 1.06;
+  }
+  .u-hero--cosmos .u-hero__accent {
+    color: var(--ulams-color-primary);
+  }
+  .u-hero--atlas .u-hero__accent,
+  .u-hero--notebook .u-hero__accent {
+    color: var(--ulams-color-primary);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.12em;
+    text-decoration-color: var(--ulams-color-secondary);
+  }
+  .u-stage--cosmos {
+    color: color-mix(in srgb, var(--ulams-color-primary) 35%, transparent);
+  }
+  .u-stage__sun {
+    fill: var(--ulams-color-secondary);
+  }
+  .u-stage__p1 {
+    fill: var(--ulams-color-primary);
+  }
+  .u-stage__p2 {
+    fill: var(--ulams-color-text);
+  }
+  .u-stage__p3 {
+    fill: var(--ulams-color-secondary);
+  }
+  .u-stage__p4 {
+    fill: var(--ulams-color-primary);
+  }
+  .u-stage__ring {
+    fill: none;
+    stroke: var(--ulams-color-text);
+    stroke-width: 1.2;
+  }
+  .u-stage--atlas {
+    color: var(--ulams-color-border);
+  }
+  .u-stage__contours {
+    stroke: var(--ulams-color-secondary);
+  }
+  .u-stage__contours path:first-child {
+    stroke-width: 2;
+  }
+  .u-stage__pin {
+    fill: var(--ulams-color-primary);
+    stroke: var(--ulams-color-bg);
+    stroke-width: 2;
+  }
+  .u-stage__label {
+    font: 500 11px var(--ulams-font-mono);
+    fill: var(--ulams-color-text);
+  }
+  .u-stage--notebook {
+    background: color-mix(in srgb, var(--ulams-color-card-bg) 80%, transparent);
+    border: 1px solid var(--ulams-color-border);
+    padding: 12px;
+    box-sizing: border-box;
+  }
+  .u-stage--notebook circle {
+    fill: var(--ulams-color-primary);
+  }
+  .u-stage--notebook .u-stage__one {
+    fill: var(--ulams-color-secondary);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .u-stage--cosmos {
+      animation: u-stage-turn 90s linear infinite;
+    }
+  }
+  @keyframes u-stage-turn {
+    to {
+      transform: rotate(360deg);
     }
   }
 

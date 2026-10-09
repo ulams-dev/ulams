@@ -10,6 +10,9 @@ import fallbackCss from "@ulams/ui/styles/fallbacks.css?inline";
 import coffeeCss from "@ulams/ui/styles/themes/coffee.css?inline";
 import oncallCss from "@ulams/ui/styles/themes/oncall.css?inline";
 import nightskyCss from "@ulams/ui/styles/themes/nightsky.css?inline";
+import gravityCss from "@ulams/ui/styles/themes/gravity.css?inline";
+import polandCss from "@ulams/ui/styles/themes/poland.css?inline";
+import ulamCss from "@ulams/ui/styles/themes/ulam.css?inline";
 import platformCss from "@ulams/ui/styles/themes/platform.css?inline";
 import { docOf, exampleOf, isStructure, names } from "../../../lib/playground.ts";
 import type { ComponentName } from "@ulams/ui/registry";
@@ -20,7 +23,7 @@ export function getStaticPaths() {
 
 const name = Astro.params.component as ComponentName;
 const doc = docOf(name, exampleOf(name));
-const css = [baseCss, fallbackCss, platformCss, coffeeCss, oncallCss, nightskyCss].join("\n");
+const css = [baseCss, fallbackCss, platformCss, coffeeCss, oncallCss, nightskyCss, gravityCss, polandCss, ulamCss].join("\n");
 ---
 
 <!doctype html>
@@ -39,7 +42,7 @@ const css = [baseCss, fallbackCss, platformCss, coffeeCss, oncallCss, nightskyCs
     <script is:inline>
       // The theme comes from the query string, e.g. ?theme=coffee (docs page picks one for the iframe).
       var theme = new URLSearchParams(location.search).get("theme");
-      if (["platform", "coffee", "oncall", "nightsky"].indexOf(theme) !== -1) document.documentElement.dataset.theme = theme;
+      if (["platform", "coffee", "oncall", "nightsky", "gravity", "poland", "ulam"].indexOf(theme) !== -1) document.documentElement.dataset.theme = theme;
     </script>
   </head>
   <body>

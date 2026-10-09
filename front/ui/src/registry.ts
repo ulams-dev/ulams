@@ -44,7 +44,7 @@ export const FORMATS = [
 ] as const;
 export type Format = (typeof FORMATS)[number];
 
-export const THEMES = ["coffee", "oncall", "nightsky", "platform"] as const;
+export const THEMES = ["coffee", "oncall", "nightsky", "gravity", "poland", "ulam", "platform"] as const;
 export type ThemeName = (typeof THEMES)[number];
 export { THEME_PRESETS, TENANT_THEMES } from "./theme/presets.ts";
 
@@ -66,6 +66,8 @@ export const ICONS = [
   "medal",
   "book",
   "terminal",
+  "compass",
+  "sigma",
   "pager",
   "chart",
   "print",
@@ -136,6 +138,21 @@ export const IMAGE: JsonSchema = obj(
 export const WORKFLOW_KINDS = ["prompt", "cmd", "cont", "agent", "out", "spin", "tool", "add", "del", "ctx", "note", "user", "assistant", "card"] as const;
 const FORMAT = oneOf(FORMATS, "Learning format of a topic");
 const ICON = oneOf(ICONS, "Icon from the catalogue's icon set");
+/** Steps of an interactive package with their text alternatives (InteractiveLesson, the Hero showcase). */
+const IX_STEPS = list(
+  obj(
+    {
+      id: text("Step id", { maxLength: 64 }),
+      title: text("Step title", { maxLength: 255 }),
+      text: text("Text alternative of the step", { maxLength: 4000 }),
+      poster: href("Poster image of the step"),
+    },
+    ["id", "title", "text"]
+  ),
+  "Steps with their text alternatives and posters",
+  { minItems: 1, maxItems: 200 }
+);
+
 const TONE = oneOf(["neutral", "ok", "warn", "alert", "info"], "Semantic colour", "neutral");
 const EYEBROW = text("Small label above the title", { maxLength: 80 });
 const TITLE = text("Section title", { maxLength: 160 });
@@ -251,7 +268,7 @@ export const registry = {
       {
         brand: text("Brand name", { maxLength: 60 }),
         tagline: text("Small line under the brand", { maxLength: 60 }),
-        mark: oneOf(["wordmark", "terminal", "rocket", "logo"], "Brand mark style; logo = the ulams mark", "wordmark"),
+        mark: oneOf(["wordmark", "terminal", "rocket", "orbit", "compass", "sigma", "logo"], "Brand mark style; logo = the ulams mark", "wordmark"),
         links: list(LINK, "Navigation links", { maxItems: 6 }),
         cta: LINK,
         signIn: LINK,
@@ -277,13 +294,13 @@ export const registry = {
   },
   Hero: {
     description:
-      "First screen of a landing page. editorial = magazine cover with a photo; console = dark split with a log panel; adventure = playful with an illustration.",
+      "First screen of a landing page. editorial = magazine cover with a photo; console = dark split with a log panel; adventure = playful with an illustration; cosmos, atlas and notebook = copy on the left and a live interactive package (or a drawing of orbits, a map graticule or an Ulam spiral) on the right.",
     category: "section",
     interactive: false,
     children: false,
     props: obj(
       {
-        variant: oneOf(["editorial", "console", "adventure", "product"], "Layout", "editorial"),
+        variant: oneOf(["editorial", "console", "adventure", "product", "cosmos", "atlas", "notebook"], "Layout", "editorial"),
         eyebrow: EYEBROW,
         title: text("Headline (the LCP element: keep it short)", { maxLength: 90 }),
         titleAccent: text("Part of the headline to emphasise; must appear in the title", { maxLength: 60 }),
@@ -337,6 +354,24 @@ export const registry = {
           "Capability orbit for the product variant: cards on up to three orbits around the logo, one highlighted at a time",
           { maxItems: 12 }
         ),
+        showcase: obj(
+          {
+            src: href("Entry file of the interactive package on the content origin"),
+            title: text("Title of the frame", { maxLength: 160 }),
+            steps: IX_STEPS,
+            height: int("Frame height px", { default: 440, minimum: 240, maximum: 1000 }),
+            startStep: text("First step of the range", { maxLength: 64 }),
+            endStep: text("Last step of the range", { maxLength: 64 }),
+            locale: text("Language of the step texts", { maxLength: 16, default: "en" }),
+            requires: list(oneOf(["webgl"], "Browser capability the package needs"), "Capabilities the package needs", { maxItems: 5 }),
+            reducedMotionSupported: bool("The package handles reduced motion itself", false),
+            licence: text("SPDX licence id", { maxLength: 64 }),
+            attribution: text("Attribution line", { maxLength: 1000 }),
+            sourceUrl: href("Source code or origin of the package"),
+          },
+          ["src", "title", "steps"],
+          "A live interactive package for the cosmos, atlas and notebook variants; without it the variant draws its own picture. Nothing is tracked."
+        ),
         diff: obj(
           {
             title: text("Card title, e.g. the lesson being updated", { maxLength: 80 }),
@@ -360,13 +395,13 @@ export const registry = {
   },
   Syllabus: {
     description:
-      "Course program. folio = magazine table of contents with roman numerals; timeline = horizontal modules with week labels; missions = winding adventure path.",
+      "Course program. folio = magazine table of contents with roman numerals; timeline = horizontal modules with week labels; missions = winding adventure path; orbits = modules on concentric rings (a list on phones); atlas = atlas table of contents with chapter numbers.",
     category: "course",
     interactive: false,
     children: false,
     props: obj(
       {
-        variant: oneOf(["folio", "timeline", "missions"], "Layout", "folio"),
+        variant: oneOf(["folio", "timeline", "missions", "orbits", "atlas"], "Layout", "folio"),
         id: text("Anchor id for in-page links", { default: "syllabus", maxLength: 40 }),
         eyebrow: EYEBROW,
         title: TITLE,
@@ -1314,19 +1349,7 @@ export const registry = {
         height: int("Frame height px (inline only)", { default: 640, minimum: 240, maximum: 2000 }),
         startStep: text("First step of the range this topic plays", { maxLength: 64 }),
         endStep: text("Last step of the range this topic plays", { maxLength: 64 }),
-        steps: list(
-          obj(
-            {
-              id: text("Step id", { maxLength: 64 }),
-              title: text("Step title", { maxLength: 255 }),
-              text: text("Text alternative of the step", { maxLength: 4000 }),
-              poster: href("Poster image of the step"),
-            },
-            ["id", "title", "text"]
-          ),
-          "Steps with their text alternatives and posters",
-          { minItems: 1, maxItems: 200 }
-        ),
+        steps: IX_STEPS,
         text: text("The lesson's own explanation (Markdown)", { maxLength: 20000 }),
         requires: list(oneOf(["webgl"], "Browser capability the package needs"), "Capabilities the package needs", { maxItems: 5 }),
         reducedMotionSupported: bool("The package handles reduced motion itself", false),

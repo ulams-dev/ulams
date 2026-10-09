@@ -1,0 +1,92 @@
+/* "Gravity Lab": dark space, a calm starfield, thin orbit rules (interactive-demos plan 8.2). */
+[data-theme="gravity"] {
+  color-scheme: dark;
+  --ulams-color-primary: #3dd6f5;
+  --ulams-color-primary-on-light: #3dd6f5;
+  --ulams-color-accent: #3dd6f5;
+  --ulams-color-on-primary: #05070f;
+  --ulams-color-secondary: #ffb547;
+  --ulams-color-header: #e8ecf5;
+  --ulams-color-text: #e8ecf5;
+  --ulams-color-muted: #a9b4cc;
+  --ulams-color-bg: #05070f;
+  --ulams-color-surface: #0e1424;
+  --ulams-color-card-bg: #0e1424;
+  --ulams-color-border: #26324f;
+  --ulams-color-accent-bg: #12304a;
+  --ulams-color-input-bg: #0b1020;
+  --ulams-color-positive: #4ade80;
+  --ulams-color-warn: #ffb547;
+  --ulams-color-error: #ff8a8a;
+  --ulams-color-info: #3dd6f5;
+  --ulams-gray-1: #0e1424;
+  --ulams-gray-2: #26324f;
+  --ulams-gray-3: #8d9ab8;
+  --ulams-gray-4: #e8ecf5;
+  --ulams-gray-5: #f6f8fc;
+  --ulams-radius: 8px;
+  --ulams-radius-button: 999px;
+  --ulams-radius-input: 8px;
+  --ulams-radius-card: 14px;
+  --ulams-radius-modal: 14px;
+  --ulams-font-family: var(--font-space-grotesk), "Space Grotesk", system-ui, sans-serif;
+  --ulams-font-family-body: var(--font-inter), Inter, system-ui, sans-serif;
+  --ulams-font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, monospace;
+  --ulams-shadow-hover: 0 0 0 1px rgb(61 214 245 / 0.4), 0 18px 40px -14px rgb(0 0 0 / 0.7);
+  --ulams-focus: 0 0 0 2px #05070f, 0 0 0 4px #3dd6f5;
+}
+
+[data-theme="gravity"] body {
+  background-color: #05070f;
+  background-image:
+    radial-gradient(1px 1px at 12% 22%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 38% 68%, rgb(255 255 255 / 0.8) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 62% 14%, rgb(255 255 255 / 0.9) 50%, transparent 51%),
+    radial-gradient(1px 1px at 81% 52%, rgb(255 255 255 / 0.7) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 92% 86%, #ffb547 50%, transparent 51%),
+    radial-gradient(1000px 640px at 88% -8%, rgb(61 214 245 / 0.1), transparent 70%),
+    radial-gradient(800px 520px at -5% 45%, rgb(255 181 71 / 0.05), transparent 70%);
+  background-size: 360px 360px, 280px 280px, 460px 460px, 320px 320px, 560px 560px, auto, auto;
+  background-attachment: fixed;
+}
+
+[data-theme="gravity"] h1,
+[data-theme="gravity"] h2,
+[data-theme="gravity"] h3 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+[data-theme="gravity"] .u-eyebrow {
+  font-family: var(--ulams-font-mono);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--ulams-color-primary);
+}
+[data-theme="gravity"] .u-btn {
+  min-height: 46px;
+  font-weight: 600;
+}
+[data-theme="gravity"] .u-btn--ghost {
+  --_bd: rgb(232 236 245 / 0.28);
+  --_fg: var(--ulams-color-text);
+}
+[data-theme="gravity"] .u-card {
+  border-color: var(--ulams-color-border);
+  background-image: linear-gradient(180deg, rgb(61 214 245 / 0.04), transparent 60%);
+}
+[data-theme="gravity"] .u-tag {
+  font-family: var(--ulams-font-mono);
+  letter-spacing: 0.02em;
+  background: transparent;
+  color: var(--ulams-color-muted);
+}
+/* thin orbit rule under section headings */
+[data-theme="gravity"] h2::after {
+  content: "";
+  display: block;
+  width: 72px;
+  height: 1px;
+  margin-top: 14px;
+  background: linear-gradient(90deg, var(--ulams-color-primary), transparent);
+}

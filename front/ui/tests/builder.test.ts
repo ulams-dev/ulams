@@ -490,7 +490,7 @@ describe("brief v2 controls", () => {
   it("the theme picker previews every preset and shows an adjusted accent", () => {
     const c = ctx();
     const main = mount(single("ThemePicker"), c);
-    expect(main.querySelectorAll(".cb-theme-card")).toHaveLength(3);
+    expect(main.querySelectorAll(".cb-theme-card")).toHaveLength(6);
     (main.querySelector('input[value="coffee"]') as HTMLInputElement).click();
     const accent = main.querySelector(".cb-accent") as HTMLInputElement;
     accent.value = "#f5f0e6"; // nearly the paper colour: fails AA text contrast
