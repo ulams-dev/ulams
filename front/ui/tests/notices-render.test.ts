@@ -16,7 +16,7 @@ const { default: axe } = await import("axe-core");
 /** Renders a catalogue document to HTML with the Astro container and mounts it for axe. */
 async function mount(doc: UiNode): Promise<HTMLElement> {
   const container = await AstroContainer.create();
-  const html = await container.renderToString(Render, { props: { doc } });
+  const html = await container.renderToString(Render as never, { props: { doc } });
   document.body.innerHTML = `<main>${html}</main>`;
   return document.body.querySelector("main")!;
 }
