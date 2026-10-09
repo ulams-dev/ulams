@@ -1236,8 +1236,8 @@
         },
         "licence": {
           "value": "Proprietary",
-          "note": "Proprietary commercial software sold by SAP",
-          "source": "https://www.sap.com/products/hcm/corporate-lms/pricing.html",
+          "note": "Subscription right to use SAP cloud services under SAP general terms",
+          "source": "https://assets.cdn.sap.com/agreements/general-terms-and-conditions/cls/general-terms-and-conditions-for-cloud-services-united-kingdom-v4-2026.pdf",
           "checkedAt": "2026-10-09"
         },
         "multi_tenant": {
@@ -1344,8 +1344,8 @@
         },
         "data_residency": {
           "value": "Partial",
-          "note": "SAP lists SuccessFactors data centers; says customers can select the DC for only some SAP cloud services",
-          "source": "https://www.sap.com/docs/download/agreements/product-use-and-support-terms/cls/en/list-of-data-centers-for-sap-cloud-services-english-v.2-2021.pdf",
+          "note": "SAP says customers can select the data centre for only some cloud services",
+          "source": "https://www.sap.com/about/trust-center/data-center.html",
           "checkedAt": "2026-10-09"
         }
       }
@@ -1359,9 +1359,9 @@
       ],
       "cells": {
         "self_hosting": {
-          "value": "Not documented",
-          "note": "Terms describe a licensed Service; no on-premises install found",
-          "source": "https://www.absorbai.com/uploads/AbsorbServiceTermsandConditions-Masterv2.1.pdf",
+          "value": "No",
+          "note": "Cloud-hosted multi-tenant SaaS on AWS; no on-premises option",
+          "source": "https://support.absorblms.com/hc/en-us/articles/53677872546323-Data-Hosting-Locations-and-AWS-Regions",
           "checkedAt": "2026-10-09"
         },
         "licence": {
@@ -1425,9 +1425,9 @@
           "checkedAt": "2026-10-09"
         },
         "lti13": {
-          "value": "Not documented",
-          "note": "LTI 1.3 not found in the pages checked",
-          "source": "https://www.absorbai.com/features/integrations/apis",
+          "value": "Yes",
+          "note": "LTI 1.3 consumer mode with deep linking and grade services",
+          "source": "https://support.absorblms.com/hc/en-us/articles/34077061848211-LTI-1-3-Consumer-Mode-in-Absorb-LMS",
           "checkedAt": "2026-10-09"
         },
         "commerce": {
@@ -1456,7 +1456,7 @@
         },
         "scim": {
           "value": "Yes",
-          "note": "SCIM 2.0 API for users and groups; Azure and Okta guides",
+          "note": "SCIM 2.0 API for users and groups; Okta and Azure guides",
           "source": "https://docs.myabsorb.com/",
           "checkedAt": "2026-10-09"
         },
@@ -1473,9 +1473,9 @@
           "checkedAt": "2026-10-09"
         },
         "data_residency": {
-          "value": "Not documented",
-          "note": "Hosting region choice not stated on pages read",
-          "source": "https://www.absorbai.com/support/compliance",
+          "value": "Yes",
+          "note": "Choose one of five AWS regions at onboarding; data stays in that region",
+          "source": "https://support.absorblms.com/hc/en-us/articles/53677872546323-Data-Hosting-Locations-and-AWS-Regions",
           "checkedAt": "2026-10-09"
         }
       }
@@ -1556,8 +1556,8 @@
         },
         "lti13": {
           "value": "Not documented",
-          "note": "LTI content launch listed; version (1.3) not stated",
-          "source": "https://360learning.com/product/authoring-tool/",
+          "note": "LTI tools connect via login URL, redirect URLs and keyset URL; version (1.3) not stated",
+          "source": "https://support.360learning.com/hc/en-us/articles/37882851435410-Connect-an-LTI-tool-to-a-group",
           "checkedAt": "2026-10-09"
         },
         "commerce": {
@@ -1585,9 +1585,9 @@
           "checkedAt": "2026-10-09"
         },
         "scim": {
-          "value": "Not documented",
-          "note": "Help-centre SCIM pages were not readable; not on public product pages checked",
-          "source": "https://360learning.com/product/learning-management-system/",
+          "value": "Yes",
+          "note": "Needs the SCIM integration enabled through the account manager",
+          "source": "https://support.360learning.com/hc/en-us/articles/15226356498580-Configure-the-SCIM-integration",
           "checkedAt": "2026-10-09"
         },
         "authoring_tool": {
