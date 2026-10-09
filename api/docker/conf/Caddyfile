@@ -5,7 +5,8 @@
 # Arguments: <API host> <API origin> <frame ancestors>
 (content_origin) {
 	header {
-		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'"
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'; report-uri {args[1]}/api/csp-report; report-to csp-endpoint"
+		Reporting-Endpoints `csp-endpoint="{args[1]}/api/csp-report"`
 		>X-Content-Type-Options nosniff
 		# Third-party package code runs here. Own browsing-context group (no window.opener link
 		# to the app), and public package files that players in sandboxed frames (opaque origin,
@@ -48,10 +49,14 @@
 	}
 }
 
-# Report-only CSP for the front and admin; enforce after a week of clean reports. frame-src lists
-# the content origins and the H5P service; LTI tool origins are added per tenant in production.
-(app_csp_report_only) {
-	header Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: http://storage.localhost http://*.localhost; media-src 'self' blob: http://storage.localhost http://*.localhost; connect-src 'self' http://*.localhost ws://*.localhost; frame-src 'self' http://*.content.localhost http://content.localhost http://*.localhost; frame-ancestors 'self'; object-src 'none'; base-uri 'self'"
+# CSP of the admin (a static app behind this proxy). The learner front sets its own in
+# front/web/src/middleware.ts, so it can name the tenant's registered tool origins in frame-src
+# (ADR 0044). The admin is staff only and frames tools for deep linking, so its frame-src allows
+# https:. Enforced here by default; the production example is report-only until ULAMS_CSP_HEADER
+# is set. Arguments: <API origin the reports go to>
+(app_csp_admin) {
+	header {$ULAMS_CSP_HEADER:Content-Security-Policy} "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: http://storage.localhost http://*.localhost https:; media-src 'self' blob: http://storage.localhost http://*.localhost https:; connect-src 'self' http://*.localhost ws://*.localhost; frame-src 'self' http://*.content.localhost http://content.localhost http://*.localhost https:; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; report-uri {args[0]}/api/csp-report; report-to csp-endpoint"
+	header Reporting-Endpoints `csp-endpoint="{args[0]}/api/csp-report"`
 }
 
 http://storage.localhost {
@@ -86,7 +91,7 @@ http://metrics.localhost {
 }
 
 http://*.admin.localhost {
-    import app_csp_report_only
+    import app_csp_admin http://{labels.2}.localhost
 
     # Resolve the root directory for the app
     root * /var/www/html/public
@@ -120,7 +125,7 @@ http://*.admin.localhost {
 
 # app.localhost: the platform front (it would otherwise fall to the *.localhost API site)
 http://*.app.localhost, http://app.localhost {
-    import app_csp_report_only
+    # The CSP of the pages comes from the front itself (front/web/src/middleware.ts)
 
     # Learner front (front/web, Astro dev server on the host: `yarn workspace web dev`, port 4321).
     # The old React front (front/) stays reachable directly at http://localhost:3000.
@@ -215,6 +220,34 @@ http://*.localhost {
             header {
                 Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
                 Access-Control-Allow-Headers "Content-Type, Authorization, X-Experience-API-Version, If-Match, If-None-Match, Accept"
+                Access-Control-Max-Age 600
+            }
+            respond 204
+        }
+        handle {
+            reverse_proxy api:9000 {
+                header_up -Access-Control-Allow-Origin
+                header_down -Access-Control-Allow-Origin
+                header_down -Set-Cookie
+                transport fastcgi {
+                    env SCRIPT_FILENAME /var/www/html/index.php
+                }
+            }
+        }
+    }
+
+    # Browsers report CSP violations of any page, content origins included, without credentials
+    # (ADR 0044): any origin may POST, nothing else is opened here.
+    @csp_report path /api/csp-report
+    handle @csp_report {
+        request_header -Cookie
+        request_header -Authorization
+        header Access-Control-Allow-Origin *
+        @csp_report_preflight method OPTIONS
+        handle @csp_report_preflight {
+            header {
+                Access-Control-Allow-Methods "POST, OPTIONS"
+                Access-Control-Allow-Headers "Content-Type"
                 Access-Control-Max-Age 600
             }
             respond 204

@@ -48,6 +48,8 @@ services:
       ULAMS_DOMAIN: ${ULAMS_DOMAIN:?set ULAMS_DOMAIN}
       ULAMS_CONTENT_DOMAIN: ${ULAMS_CONTENT_DOMAIN:?set ULAMS_CONTENT_DOMAIN}
       ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL}
+      # admin CSP: report-only until the reports are clean (docs: operators/security-headers)
+      ULAMS_CSP_HEADER: ${ULAMS_CSP_HEADER:-Content-Security-Policy-Report-Only}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
@@ -248,6 +250,10 @@ services:
       ULAMS_DEMO_TENANTS: ""
       ULAMS_WARM_TENANTS: ""
       ULAMS_DEFAULT_TENANT: ""
+      # CSP of the pages: report-only until the reports are clean, then CSP_ENFORCE=true
+      CSP_ENFORCE: ${CSP_ENFORCE:-false}
+      ULAMS_CONTENT_ORIGIN: "https://{slug}.${ULAMS_CONTENT_DOMAIN}"
+      ULAMS_STORAGE_ORIGINS: https://storage.${ULAMS_CONTENT_DOMAIN}
 
   # Admin and author panel (static build on nginx-unprivileged, port 8080); the tenant API comes from the host
   admin:

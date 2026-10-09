@@ -26,6 +26,8 @@ final class SessionState
             'sources' => self::sources($session),
             'aiEnabled' => $client->enabled(),
             'profiles' => ['default' => $client->profileLabel('outline'), 'light' => $client->profileLabel('interview')],
+            'priceSuggestion' => $session->stateValue('priceSuggestion'),
+            'applyNotes' => (array) $session->stateValue('applyNotes', []),
             'budgetReached' => (bool) $session->stateValue('budgetReached', false),
             'activeRunId' => Run::query()->where('session_id', $session->id)->whereIn('status', ['queued', 'running'])->latest('created_at')->value('id'),
             'canUndo' => app(VersionService::class)->undoTarget($session) !== null,

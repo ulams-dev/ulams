@@ -9,7 +9,11 @@ return [
     'enabled' => filter_var(env('ADAPT_SOURCE_ENABLED', false), FILTER_VALIDATE_BOOLEAN),
     'builder_url' => env('ADAPT_BUILDER_URL', 'http://adapt-builder:8080'),
     'builder_token' => env('ADAPT_BUILDER_TOKEN'),
+    // Keep it well below the BuildAdaptSource job timeout (900 s)
     'builder_timeout' => (int) env('ADAPT_BUILDER_TIMEOUT', 300),
+    // The build runs on the builder connection (retry_after above the job timeout; ADR 0083)
+    'queue_connection' => env('ADAPT_QUEUE_CONNECTION', in_array(env('QUEUE_CONNECTION'), ['database', 'redis'], true) ? env('QUEUE_CONNECTION') . '-builder' : null),
+    'queue' => env('ADAPT_QUEUE', in_array(env('QUEUE_CONNECTION'), ['database', 'redis'], true) ? 'builder' : null),
     'max_source_bytes' => (int) env('ADAPT_MAX_SOURCE_KB', 4096) * 1024,
 
     /*

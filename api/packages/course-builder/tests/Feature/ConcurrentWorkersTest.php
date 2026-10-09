@@ -66,7 +66,9 @@ class ConcurrentWorkersTest extends TestCase
         $this->assertSame(Session::OUTLINE_REVIEW, $session->status);
 
         // from here on the generation steps go to the database queue
-        config(['queue.default' => 'database', 'course_builder.queue_connection' => 'database', 'course_builder.limits.lesson_concurrency' => 4]);
+        // the application's own dedicated builder connection (retry_after above the job timeout, ADR 0083)
+        config(['queue.connections.database-builder' => (require __DIR__ . '/../../../../config/queue.php')['connections']['database-builder']]);
+        config(['queue.default' => 'database', 'course_builder.queue_connection' => 'database-builder', 'course_builder.queue' => 'builder', 'course_builder.limits.lesson_concurrency' => 4]);
         $this->action($author, $session, 'approve_outline', "outline-{$outline}", ['versionId' => $outline])->assertStatus(202);
         $run = Run::query()->where('session_id', $session->id)->where('kind', 'generate')->firstOrFail();
 
@@ -104,7 +106,7 @@ class ConcurrentWorkersTest extends TestCase
                     if (in_array($status, ['finished', 'failed', 'cancelled', 'needs_attention'], true) && $left === 0) {
                         break;
                     }
-                    Artisan::call('queue:work', ['connection' => 'database', '--once' => true, '--sleep' => 0]);
+                    Artisan::call('queue:work', ['connection' => 'database-builder', '--queue' => 'builder', '--once' => true, '--sleep' => 0]);
                     usleep(random_int(5, 40) * 1000);
                 }
                 posix_kill(getmypid(), SIGKILL);

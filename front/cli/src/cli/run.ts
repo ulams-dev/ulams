@@ -194,7 +194,7 @@ export async function main(deps: Deps): Promise<number> {
       fs,
       io: { stderr: (line) => !flags?.quiet && deps.stderr(redactString(line, secrets)), isTTY: deps.stderrIsTTY, interactive },
       signal,
-      emit: (event) => deps.stdout(JSON.stringify({ type: "event", data: event })),
+      emit: (event, meta) => deps.stdout(JSON.stringify({ type: "event", ...(meta?.id ? { id: meta.id } : {}), data: event })),
       flags,
       env,
       readStdin: stdin,

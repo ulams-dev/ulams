@@ -44,6 +44,14 @@ Every tool carries annotations from its kind: `readOnlyHint` for reads, `destruc
 `idempotentHint`, `openWorldHint: false`. Results are the CLI envelope as `structuredContent` (and compact JSON text, at most
 25 kB; longer lists are truncated with a `TRUNCATED` warning, narrow them with `per_page` or `fields`).
 
+### The course builder and Living Course
+
+`--toolsets core,builder,living` adds the builder (`builder_start`, `builder_interview_answer`, `builder_outline_approve`,
+`builder_apply`, `builder_chat`, ...) and the Living Course tools (`living_proposals_list`, `living_proposals_accept`,
+`living_proposals_apply`, ...). A model can build a course from a Markdown file in a few calls, reviewing every stage:
+[Build courses from the command line](/developers/cli-builder/). Tools that start AI runs take `wait` and `timeout_seconds`
+(default wait capped at 55 s); a wait that runs out returns `status: "running"` with a handle for `operations_wait`.
+
 ## Safety
 
 - Every write tool accepts `dry_run: true`: the plan, and for updates a diff, with no change.

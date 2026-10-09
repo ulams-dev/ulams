@@ -81,26 +81,36 @@ Each tenant gets its own key prefix (`ulams_<slug>_`).
 
 ### Queues and long jobs
 
-Two Redis queue connections in `api/config/queue.php`:
+Queue connections in `api/config/queue.php`. A job that can run longer than `retry_after` is picked up
+by a second worker while it still runs, so every long job has a connection whose `retry_after` is above its
+`$timeout` plus a margin, in a `database` and a `redis` variant (the jobs follow `QUEUE_CONNECTION`).
+Each long queue has its own queue name, because the name is shared by all connections of a driver.
 
 | Connection | Queue | `retry_after` | Used for |
 |---|---|---|---|
-| `redis` | `default` (also `broadcast`, `video` for tenant workers) | 90 s | everything else |
-| `redis-long-job` | `queue-long-job` | 19000 s | video processing |
+| `redis`, `database` | `default` (also `broadcast`, `video` for tenant workers) | 90 s | everything else |
+| `redis-builder`, `database-builder` | `builder` | 2400 s (`BUILDER_QUEUE_RETRY_AFTER`) | Course Builder and Living Course steps (up to 1800 s), Adapt builds |
+| `redis-long-job`, `database-long-job` | `queue-long-job` | 19000 s | video processing, course clone (18000 s) |
+
+H5P and SCORM imports and PDF rendering are synchronous HTTP calls, not queued jobs.
+`tests/Integrations/QueueRetryAfterConfigTest.php` fails when a job's connection has a `retry_after`
+below its timeout, when a job with a long timeout is not routed, or when the worker timeouts differ.
 
 Workers:
 
 - **Platform**: Horizon (`api/config/horizon.php`). `supervisor-1` on `default` with 3 processes in
-  `local` and `stage` and 10 in `production`; `supervisor-long-job` on `queue-long-job` with 10
-  processes in `local` and `production` and 1 in `stage`.
-- **Tenants**: `api/queue.sh` loops over the tenant domains and runs
-  `queue:work --queue=default,broadcast,video --max-jobs=20 --stop-when-empty` and then the long-job
-  queue with `--max-jobs=5 --timeout=18000` for each, re-reading the tenant list on every pass.
+  `local` and `stage` and 10 in `production`; `supervisor-builder` on `builder` (timeout 1800, 3
+  processes); `supervisor-long-job` on `queue-long-job` (timeout 18000) with 10 processes in `local`
+  and `production` and 1 in `stage`.
+- **Tenants**: `api/queue.sh` starts `api/workers.sh queue`, which keeps three long-lived `queue:work`
+  processes per tenant domain: `default,broadcast,video`; the builder queue with `--timeout=1800`; the
+  long-job queue with `--timeout=18000`. The tenant list is re-read every `WORKERS_CHECK_INTERVAL`
+  seconds, and a worker timeout is always at least the job timeout and below `retry_after`.
 
 ### HLS video
 
 `packages/video` converts an uploaded video topic into HLS with `pbmedia/laravel-ffmpeg` (ffmpeg is
-in the PHP image). The `ProcessVideo` job runs on `redis-long-job` / `queue-long-job`
+in the PHP image). The `ProcessVideo` job runs on `<driver>-long-job` / `queue-long-job`
 (`VIDEO_QUEUE_CONNECTION`, `VIDEO_QUEUE`), with `$timeout = 18000` and 5 tries. Default renditions
 are 250, 500 and 1000 kbit/s (`bitrates` in `packages/video/src/config.php`);
 `VIDEO_PROCESSING_ENABLE=false` turns it off. `DetectStuckVideo` reports jobs that did not finish.

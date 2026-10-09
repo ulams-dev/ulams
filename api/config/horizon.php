@@ -183,9 +183,16 @@ return [
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
+            'supervisor-builder' => [
+                'connection' => 'redis-builder',
+                'queue' => ['builder'],
+                'timeout' => 1800,
+                'maxProcesses' => 3,
+            ],
             'supervisor-long-job' => [
                 'connection' => 'redis-long-job',
                 'queue' => ['queue-long-job'],
+                'timeout' => 18000,
                 'maxProcesses' => 10,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
@@ -196,9 +203,16 @@ return [
             'supervisor-1' => [
                 'maxProcesses' => 3,
             ],
+            'supervisor-builder' => [
+                'connection' => 'redis-builder',
+                'queue' => ['builder'],
+                'timeout' => 1800,
+                'maxProcesses' => 3,
+            ],
             'supervisor-long-job' => [
                 'connection' => 'redis-long-job',
                 'queue' => ['queue-long-job'],
+                'timeout' => 18000,
                 'maxProcesses' => 10,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
@@ -209,9 +223,16 @@ return [
             'supervisor-1' => [
                 'maxProcesses' => 3,
             ],
+            'supervisor-builder' => [
+                'connection' => 'redis-builder',
+                'queue' => ['builder'],
+                'timeout' => 1800,
+                'maxProcesses' => 3,
+            ],
             'supervisor-long-job' => [
                 'connection' => 'redis-long-job',
                 'queue' => ['queue-long-job'],
+                'timeout' => 18000,
                 'maxProcesses' => 1,
             ],
         ],

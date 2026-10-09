@@ -203,7 +203,7 @@ final class InterviewService
             $pricing = $brief['pricing'] ?? ['mode' => 'free'];
 
             return ['PriceInput', $base + [
-                'currency' => (string) ($pricing['currency'] ?? config('course_builder.currency', 'USD')),
+                'currency' => (string) ($pricing['currency'] ?? config('ulams_payments.default_currency', 'USD')),
                 'defaultValue' => $q['default'],
             ] + ($q['answered'] ? ['value' => $pricing] : [])];
         }

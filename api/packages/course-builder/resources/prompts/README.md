@@ -12,6 +12,7 @@ output limit in `packages/ai/config/ai.php`), the output `schema` and a one-line
 | `quiz` | default | `outputs/quiz.json` (per-lesson quiz and final test) | `Pipeline\GenerationService` |
 | `grounding` | light | `outputs/grounding.json` | `Pipeline\GenerationService` |
 | `metadata` | light | `outputs/metadata.json` | `Pipeline\GenerationService` |
+| `price` | light | `outputs/price.json` (only for a paid course without an amount) | `Pipeline\PriceService` |
 | `patch` | default | built per element type in `Pipeline\PatchSchemas` | `Pipeline\PatchService` |
 
 ## Rules

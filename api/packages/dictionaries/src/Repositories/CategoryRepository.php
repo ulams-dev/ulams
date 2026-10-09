@@ -30,6 +30,7 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryCon
             ->withCount([
                 'dictionaryWords' => fn(Builder $query) => $this->applyCriteria($query, $dictionaryWordCriteria)
             ])
+            ->orderBy($this->model->getQualifiedKeyName())
             ->get();
     }
 }

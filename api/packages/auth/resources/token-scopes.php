@@ -51,6 +51,7 @@ return [
     ['api/documentation', 'public'],
     ['api/oauth2-callback', 'public'],
     ['api/lti/jwks', 'public'],
+    ['api/csp-report', 'public'],
     ['api/jitsi/*', 'public'],
     ['api/payments-gateways/*', 'public'],
     ['api/demo/*', 'public'],
@@ -117,6 +118,7 @@ return [
     // ---- settings ------------------------------------------------------------------------------
     ['api/admin/settings*', 'settings'],
     ['api/admin/config*', 'settings'],
+['api/admin/csp-reports*', 'settings'],
     ['api/admin/pages*', 'settings'],
     ['api/admin/templates*', 'settings'],
     ['api/admin/translations*', 'settings'],

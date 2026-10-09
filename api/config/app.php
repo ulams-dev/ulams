@@ -177,6 +177,7 @@ return [
         Ulams\AssignWithoutAccount\UlamsAssignWithoutAccountServiceProvider::class,
         Ulams\Auth\UlamsAuthServiceProvider::class,
         Ulams\Bookmarks\UlamsBookmarksServiceProvider::class,
+        Ulams\Commerce\UlamsCommerceServiceProvider::class,
         Ulams\BulkNotifications\UlamsBulkNotificationsServiceProvider::class,
         Ulams\Cart\UlamsCartServiceProvider::class,
         Ulams\Categories\UlamsCategoriesServiceProvider::class,

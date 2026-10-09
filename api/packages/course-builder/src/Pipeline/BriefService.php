@@ -149,7 +149,7 @@ final class BriefService
                 throw new InvalidArgumentException('The price must be a positive amount.');
             }
             $pricing['amountMinor'] = (int) $amount;
-            $pricing['currency'] = strtoupper((string) ($value['currency'] ?? config('course_builder.currency', 'USD')));
+            $pricing['currency'] = strtoupper((string) ($value['currency'] ?? config('ulams_payments.default_currency', 'USD')));
         }
 
         return $pricing;

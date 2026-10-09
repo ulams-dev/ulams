@@ -124,6 +124,9 @@
     <testsuite name="ai">
       <directory suffix="Test.php">./packages/ai/tests</directory>
     </testsuite>
+    <testsuite name="commerce">
+      <directory suffix="Test.php">./packages/commerce/tests</directory>
+    </testsuite>
     <testsuite name="course-builder">
       <directory suffix="Test.php">./packages/course-builder/tests</directory>
     </testsuite>
@@ -223,7 +226,8 @@
       <directory suffix=".php">./packages/liascript/</directory>
       <directory suffix=".php">./packages/adapt/</directory>
       <directory suffix=".php">./packages/ai/</directory>
-      <directory suffix=".php">./packages/course-builder/</directory>
+      <directory suffix=".php">./packages/commerce/</directory>
+<directory suffix=".php">./packages/course-builder/</directory>
       <directory suffix=".php">./packages/living-course/</directory>
       <directory suffix=".php">./packages/vouchers/</directory>
       <directory suffix=".php">./packages/consultations/</directory>
