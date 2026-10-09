@@ -1,0 +1,109 @@
+---
+title: Scoped API tokens
+description: Scopes, token endpoints, the agent audit log, Idempotency-Key, X-Request-Id and GET /api/meta, the server side of the ulams CLI.
+sidebar:
+  order: 6
+modules:
+  - auth
+  - core
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+A scoped token is a Passport personal access token with a row in `api_token_meta` (kind, agent name,
+creation channel, rate limit, last use). Tokens without that row (login, LTI, demo) are unscoped and
+behave exactly as before. Design: ADR 0074; plan `docs/plans/cli.md`.
+
+The token string is `ulams_pat_<signed JWT>`. The prefix is removed by the `StripTokenPrefix`
+middleware before Passport sees the header, so `Authorization: Bearer ulams_pat_...` and the bare JWT
+both work. Only Passport's token id is stored, so a database leak does not leak usable tokens.
+Tokens are per tenant (each tenant has its own Passport keys).
+
+## Scopes
+
+A scope is `<area>:read`, `<area>:write` (includes read) or `*`. GET and HEAD need `:read`, every
+other method `:write`. Scopes only narrow the user's own permissions.
+
+| Area | Covers |
+|---|---|
+| `courses` | admin courses, lessons, topics, categories, tags, files, SCORM, cmi5, LiaScript, H5P, Adapt, quizzes, dictionaries, images, video |
+| `users` | admin users, groups, roles, CSV import |
+| `enrolments` | course access, access enquiries, tutor assignment |
+| `settings` | settings, config, pages, templates, translations, notifications, model fields |
+| `events` | webinars, stationary events, consultations |
+| `certificates` | `admin/pdfs` |
+| `commerce` | orders, products, vouchers, payments |
+| `reports` | reports, stats, questionnaires, tasks |
+| `lti` | `admin/lti` |
+| `builder` | `admin/course-builder` |
+| `living-course` | `admin/living-course` (when installed) |
+| `learner` | profile, my courses, progress, bookmarks, notifications, cart, own orders |
+| `tokens` | `auth/tokens`, `admin/tokens`, `admin/agent-audit` |
+| `platform` | platform API (platform hosts only; "Coming") |
+
+Presets: `@read-only` (all `:read`), `@author` (`courses`, `builder`, `living-course` write, `reports:read`),
+`@admin` (`*`), `@learner`, `@ci` (`courses`, `builder`, `living-course` write).
+
+The route-to-area map is `api/packages/auth/resources/token-scopes.php`; `php artisan
+ulams:tokens:export-scopes` writes the JSON copy used by the CLI generator. A route that is not in
+the map is **denied** for scoped tokens, and a test fails when a registered route is missing, so
+every new endpoint must be added to the map. `api/auth/refresh`, impersonation, password and account
+deletion endpoints are never available to a scoped token.
+
+A refused call answers 403 with the missing scope:
+
+```json
+{ "success": false, "message": "This token lacks the courses:write scope.", "error": "scope_missing", "required": ["courses:write"] }
+```
+
+`error` is `scope_missing`, `scope_forbidden` (never with a token), `scope_unmapped` or
+`rate_limited` (429, when the token has `rate_limit_per_minute`).
+
+## Endpoints
+
+| Call | Purpose |
+|---|---|
+| `GET /api/auth/tokens` | Own scoped tokens (`include_revoked=1`) |
+| `POST /api/auth/tokens` `{name, scopes[], expires_in_days, kind, agent_name, rate_limit_per_minute}` | Create; 201 with `data.token` (shown once). A token can only create tokens whose scopes it already has |
+| `DELETE /api/auth/tokens/{id}` | Revoke own token |
+| `GET /api/auth/tokens/current` | The token of this request: scopes, kind, expiry, user, host and host kind |
+| `GET /api/admin/tokens` | Every user's tokens (`token_manage`; filters `user_id`, `kind`) |
+| `DELETE /api/admin/tokens/{id}` | Revoke any token |
+| `GET /api/admin/tokens/{id}/audit` | Audit rows of one token (owner or `token_manage`) |
+| `GET /api/admin/agent-audit` | Audit log (`token_id`, `user_id`, `from`, `to`) |
+
+Lifetime: 1 to 365 days, 30 on a platform host; at most 50 active tokens per user
+(`AUTH_MAX_TOKENS_PER_USER`). The admin screen is described in [API tokens](/admin/api-tokens/).
+
+## Agent audit log
+
+The append-only table `agent_audit_log` gets one row per request made with a scoped token that is
+not a GET, and per GET in the `users` and `reports` areas: token, user, agent name, client
+(`X-Ulams-Client`), user agent, method, route name, path, route parameters, status, dry-run flag
+(`X-Ulams-Dry-Run`), idempotency key, request id, duration, IP. No bodies. `php artisan
+ulams:auth:prune-agent-audit` (scheduled daily) removes rows older than `AUTH_AGENT_AUDIT_DAYS`.
+
+## Idempotency-Key and X-Request-Id
+
+Send `Idempotency-Key: <1-255 chars>` on POST, PUT, PATCH or DELETE to make a retry safe. The key is
+scoped to host, user, method, route and key:
+
+- same key and same body: the stored response is replayed for 24 hours with `Idempotent-Replayed: true`;
+- same key, different body: 422 `idempotency_mismatch`;
+- the first request still running: 409 `idempotency_in_progress`.
+
+401, 403, 429 and 5xx answers are not stored, so the caller can retry them. Uploads are compared by
+file name, size and content hash. `X-Request-Id` (a ULID or UUID) is echoed in the response and added
+to the log context; anything else is replaced by a new ULID.
+
+## GET /api/meta
+
+No authentication. Returns `{ api, version, contract, host, kind: "tenant" | "platform", features }`
+with `features` = `ai`, `courseBuilder`, `livingCourse`, `deviceLogin`, `scopedTokens`, `idempotency`,
+`platformApi`, `demo`. The CLI reads it on login and exits with `FEATURE_DISABLED` instead of calling
+an endpoint the host does not have.
+
+<Aside type="note" title="Coming">
+  Browser sign-in for the CLI (device login), the platform tenant API and the "My tokens" section of
+  the web profile are separate steps of the plan.
+</Aside>

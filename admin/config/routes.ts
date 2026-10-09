@@ -319,6 +319,13 @@
         hideInMenu: true,
       },
       {
+        path: '/users/tokens',
+        name: 'API Tokens',
+        icon: 'key',
+        access: 'tokenManagePermission',
+        component: './Tokens',
+      },
+      {
         path: '/users/groups',
         name: 'User Groups',
         icon: 'team',

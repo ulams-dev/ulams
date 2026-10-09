@@ -33,7 +33,7 @@ limit recorded in `api/docs/multidomain.md`).
 |---|---|
 | `api` (platform) | `FILESYSTEM_DRIVER=s3`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`, `AWS_BUCKET`, `AWS_ENDPOINT`, `AWS_URL`, `AWS_USE_PATH_STYLE_ENDPOINT` |
 | `api` (bucket creation) | `TENANCY_S3_ENDPOINT`, `TENANCY_S3_KEY`, `TENANCY_S3_SECRET`, `TENANCY_S3_REGION` (default to the `AWS_*` values), `TENANCY_BUCKET`, `TENANCY_STORAGE_PUBLIC_URL` |
-| `api` (package disks) | `SCORM_DISK` (default `local`), `LIASCRIPT_DISK` (default `FILESYSTEM_DRIVER`) |
+| `api` (package disks) | `SCORM_DISK` (default `local`), `CMI5_DISK` (default: the value of `SCORM_DISK`), `LIASCRIPT_DISK` (default `FILESYSTEM_DRIVER`) |
 | `h5p` | `S3_ENDPOINT`, `S3_REGION`, `S3_KEY`, `S3_SECRET`, `S3_BUCKET`, `S3_PREFIX` (`h5p`), `S3_FORCE_PATH_STYLE`; per tenant, the `AWS_*` values of its env file win |
 
 `AWS_ENDPOINT` is the address the containers use; `AWS_URL` and `TENANCY_STORAGE_PUBLIC_URL` are

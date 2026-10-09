@@ -99,6 +99,8 @@ export interface TopicDocInput {
   packageAvailable?: boolean;
   /** For SCORM topics: player on the tenant content origin (see scormLaunch), preferred when set. */
   contentOriginSrc?: string | null;
+  /** For cmi5 topics: the AU launch URL on the tenant content origin (see cmi5Launch). */
+  cmi5Src?: string | null;
   /** For LiaScript topics: the launch result (see liascriptLaunch). */
   liascript?: { url: string; sections?: number } | { error: string } | null;
   /** For external-tool topics: the LTI launch (see ltiLaunch). */
@@ -111,7 +113,7 @@ const str = (v: unknown): string | undefined => (typeof v === "string" && v.trim
 const num = (v: unknown): number | undefined => (typeof v === "number" && Number.isFinite(v) ? v : typeof v === "string" && v !== "" && !Number.isNaN(Number(v)) ? Number(v) : undefined);
 
 /** Body of the lesson player for one topic. */
-export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null, liascript = null, lti = null, preview = false }: TopicDocInput): UiNode {
+export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null, cmi5Src = null, liascript = null, lti = null, preview = false }: TopicDocInput): UiNode {
   const kind = topicKind(topic.topicable_type);
   const t = (topic.topicable ?? {}) as Record<string, unknown>;
   const children: UiNode[] = [];
@@ -273,15 +275,19 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
       });
       break;
     case "cmi5":
-      children.push({
-        component: "ActivityCard",
-        props: {
-          kind: "tracked",
-          title: topic.title,
-          text: str(topic.introduction) ?? "A tracked activity that opens outside this page and reports your progress back.",
-          steps: description ? undefined : ["Open the activity", "Complete it in the new window", "Come back: your progress is saved"],
-        },
-      });
+      children.push(
+        cmi5Src
+          ? { component: "PackageFrame", props: { src: cmi5Src, title: topic.title, height: 640, isolated: true } }
+          : {
+              component: "ActivityCard",
+              props: {
+                kind: "tracked",
+                title: topic.title,
+                text: str(topic.introduction) ?? "A tracked activity that reports your progress back. It opens here once you are enrolled and the tenant has a content origin.",
+                steps: description ? undefined : ["Open the activity", "Complete it", "Your progress is saved"],
+              },
+            }
+      );
       if (description) children.push({ component: "Prose", props: { markdown: description } });
       break;
     default:

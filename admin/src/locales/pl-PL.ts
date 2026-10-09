@@ -139,6 +139,8 @@ export default {
   'menu.Users.List': 'Lista',
   'menu.Courses.List': 'Lista',
   'menu.Courses.Form': 'Formularz',
+  'menu.Users.API Tokens': 'Tokeny API',
+  apiTokens: 'Tokeny API',
   'menu.Users.Roles': 'Role',
   'menu.Sales': 'Sprzedaż',
   'menu.Users.User': 'Użytkownik',

@@ -1,0 +1,57 @@
+---
+title: API tokens
+description: Create, list and revoke scoped API tokens for the ulams CLI, agents and CI, and read what each token did in the agent audit log.
+sidebar:
+  order: 41
+modules:
+  - auth
+adminRoutes:
+  - /users/tokens
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+API tokens let the `ulams` CLI, AI agents, CI jobs and integrations call the API without a password.
+Each token belongs to one user, carries **scopes** that narrow what it may do, expires, and can be
+revoked at any time. A token never gives more than its owner's own roles allow: a student's token
+with the `*` scope is still a student's token.
+
+The **Users > API tokens** screen (`/users/tokens`, permission `token_manage`, given to the admin
+role) lists the tokens of every user of the tenant:
+
+| Column | Meaning |
+|---|---|
+| Name, user | What the owner called it, and whose it is |
+| Kind | `cli`, `agent`, `ci` or `integration`, plus the agent's name when it gave one |
+| Scopes | `<area>:read` or `<area>:write` (write includes read), or `*` |
+| Created via | `admin` (this screen or the API), `cli` or `device` (browser sign-in of the CLI) |
+| Last used | Updated at most once a minute, with the last IP in the audit view |
+| Status | active, expired or revoked |
+
+## Create a token
+
+Choose **New**, name it after where it will live ("ulams-cli on Anna's laptop", "GitHub Actions"),
+pick scopes (the presets `@author`, `@ci`, `@read-only`, `@learner`, `@admin` expand to a list) and
+an expiry (1 to 365 days; default 90). The token is created for **your own account** and shown
+once. Copy it into a secret manager: it starts with `ulams_pat_` so that secret scanners can
+recognise it, and it cannot be shown again, only revoked.
+
+<Aside type="caution">
+  Give agents the narrowest scopes that work. `@read-only` cannot change anything; `@author` can
+  edit courses and use the AI Course Builder but cannot touch users, settings, orders or tokens.
+</Aside>
+
+## Revoke a token
+
+**Revoke** stops the token immediately. Anyone can revoke their own tokens through the API
+(`DELETE /api/auth/tokens/{id}`); admins can revoke any token here.
+
+## Audit log
+
+**Audit** shows what a token did: every request that changed something, and every read of the
+users and reports areas (personal data), with time, method, path, status, client (`cli`, `mcp`),
+IP and idempotency key. Request and response bodies are never stored. The whole tenant's log is
+available at `GET /api/admin/agent-audit` (filters `token_id`, `user_id`, `from`, `to`). Rows are
+deleted after 365 days (`AUTH_AGENT_AUDIT_DAYS`).
+
+For the scope list, the API and the CLI flow see [Scoped API tokens](/developers/scoped-tokens/).

@@ -2,6 +2,7 @@
 
 namespace Ulams\Cmi5;
 
+use Ulams\Cmi5\Console\MoveToBucketCommand;
 use Ulams\Cmi5\Providers\AuthServiceProvider;
 use Ulams\Cmi5\Repositories\Cmi5AuRepository;
 use Ulams\Cmi5\Repositories\Cmi5Repository;
@@ -54,6 +55,8 @@ class UlamsCmi5ServiceProvider extends ServiceProvider
 
     public function bootForConsole()
     {
+        $this->commands([MoveToBucketCommand::class]);
+
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         $this->publishes([
