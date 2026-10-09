@@ -3,15 +3,63 @@
 namespace Database\Seeders\Demo;
 
 use Database\Seeders\Demo\Art\PolandArt;
+use Database\Seeders\Demo\Support\BuildsInteractiveCourse;
 
 /**
- * Demo academy "Poland, Measured": a free course on Poland in cited public data, read on a map
- * and in charts. This is the placeholder course the tenant and its landing page run on; the
- * English course with its chapters, and the Polish course "Polska w liczbach", arrive with the
- * course content.
+ * Demo academy "Poland, Measured": a free course on Poland in cited public data, read on a map and in
+ * charts. Two courses share the poland package (demo-content/poland): this one in English and
+ * {@see PolandPolishExperience} ("Polska w liczbach") in Polish. Each has a welcome lesson, nine
+ * chapters (energy, prosperity, security, made in Poland, daily life, mobility, health, people, the
+ * unfinished work; there is no education chapter because the package has no education data), a final
+ * test, the certificate and a "Sources and licence" lesson. The text is in Demo/content/poland/en/ and
+ * /pl/, CC BY 4.0.
  */
 class PolandExperience extends DemoExperience
 {
+    use BuildsInteractiveCourse;
+
+    protected function packageName(): string
+    {
+        return 'poland';
+    }
+
+    protected function contentDir(): string
+    {
+        return 'poland/en';
+    }
+
+    protected function sourcesDir(): string
+    {
+        return 'poland';
+    }
+
+    /** Seeds the English course, then the Polish one. @return array<string, mixed> */
+    public function run(bool $refresh): array
+    {
+        $report = parent::run($refresh);
+        if ($this->polishVariant()) {
+            return $report;
+        }
+        $polish = (new PolandPolishExperience($this->command))->run($refresh);
+        $report['extras']['polish course'] = sprintf('#%d with %d lessons, %d topics', $polish['course_id'], $polish['lessons'], array_sum($polish['topics']));
+        foreach (['topics', 'questions'] as $key) {
+            foreach ($polish[$key] as $type => $count) {
+                $report[$key][$type] = ($report[$key][$type] ?? 0) + $count;
+            }
+        }
+        $report['lessons'] += $polish['lessons'];
+        foreach ($polish['skipped'] as $skipped) {
+            $report['skipped'][] = 'pl: ' . $skipped;
+        }
+
+        return $report;
+    }
+
+    protected function polishVariant(): bool
+    {
+        return false;
+    }
+
     public function key(): string
     {
         return 'poland';
@@ -54,7 +102,7 @@ class PolandExperience extends DemoExperience
                         ['q' => 'Is there a Polish version?', 'a' => 'A Polish course, "Polska w liczbach", is planned as a separate course with its own lessons.'],
                     ],
                     'lists' => [
-                        'sources' => ['Official public statistics', 'Every chart and map layer names its source', 'Footnotes in the lesson text link to the data'],
+                        'sources' => ['Official public statistics', 'Every chart and map layer names its source', 'Footnotes in the lesson text link to the data', 'Course text is licensed CC BY 4.0, and the last lesson lists every source'],
                         'features' => ['Explore the map', 'Read the charts', 'Check yourself with a quiz'],
                     ],
                 ],
@@ -98,21 +146,7 @@ class PolandExperience extends DemoExperience
 
     protected function program(): array
     {
-        return [
-            [
-                'title' => 'Welcome',
-                'summary' => 'What the course is and how to read it.',
-                'duration' => '5 min',
-                'topics' => [
-                    [
-                        'type' => 'richtext', 'title' => 'Welcome to Poland, measured', 'preview' => true, 'duration' => '5 min',
-                        'introduction' => 'How the course works and what comes next.',
-                        'summary' => 'Maps and charts with a source for every number.',
-                        'make' => fn () => ['fields' => ['value' => $this->markdown('welcome')], 'files' => []],
-                    ],
-                ],
-            ],
-        ];
+        return $this->modulesProgram();
     }
 
     /** Free: no products, events or vouchers. */
