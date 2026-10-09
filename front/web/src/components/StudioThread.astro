@@ -12,12 +12,9 @@ const { sessionId } = Astro.props;
     <div class="st-thread" data-thread aria-label="Conversation">
       {
         !sessionId && (
-          <div class="st-msg st-msg-assistant">
+          <div class="st-msg st-msg-assistant" data-placeholder>
             <span class="cb-sr">Assistant: </span>
-            <p class="st-msg-text">
-              Let's build a course. Drop your source material and I'll read it first. Every lesson I write will cite the exact passage
-              it came from, and nothing reaches your academy until you approve it.
-            </p>
+            <p class="st-msg-text">{"Let's build a course. Drop your source material and I'll read it first. Every lesson I write will cite the exact passage it came from, and nothing reaches your academy until you approve it."}</p>
           </div>
         )
       }

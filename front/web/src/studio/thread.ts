@@ -113,6 +113,8 @@ export function mountThread(root: HTMLElement): void {
         const state = await cb.sessions.create();
         sessionId = state.session.id;
         root.dataset.session = sessionId;
+        // the server's own greeting replaces the placeholder
+        thread.querySelector("[data-placeholder]")?.remove();
         history.replaceState(null, "", `/studio/s/${sessionId}`);
         connect();
       }

@@ -128,7 +128,7 @@ export class Timeline {
       onCitation: this.options.onCitation,
       onSelect: this.options.onSelect,
     };
-    const wrapper = h("section", { class: `st-surface st-surface-${kind}`, tabindex: -1, "data-surface": surface.surfaceId, "aria-label": SURFACE_LABEL[kind] ?? "Assistant card" });
+    const wrapper = h("div", { class: `st-surface st-surface-${kind}`, tabindex: -1, "data-surface": surface.surfaceId, "data-label": SURFACE_LABEL[kind] ?? "Assistant card" });
     wrapper.append(renderSurface(surface.components, ctx));
     if (existing) {
       const hadFocus = existing.contains(document.activeElement);
@@ -150,7 +150,7 @@ export class Timeline {
     if (target.tagName === "H3") target.setAttribute("tabindex", "-1");
     target.focus({ preventScroll: false });
     target.scrollIntoView({ block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
-    announce(wrapper.getAttribute("aria-label") ?? "");
+    announce(wrapper.dataset.label ?? "");
   }
 }
 

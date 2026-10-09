@@ -245,7 +245,7 @@ const OutlineDiff: Renderer = (p, ctx, id) => {
   const header = h("header", { class: "cb-outline-head" },
     h("h3", { class: "cb-serif cb-h2" }, "Proposed outline", h("span", { class: "cb-version cb-mono" }, `v${p.number ?? ""}`)),
     h("p", { class: "cb-muted" }, `${summary.modules} modules · ${summary.lessons} lessons · ${summary.minutes} min${p.targetMinutes ? ` (brief: ${p.targetMinutes})` : ""} · ${summary.objectives} learning objectives`),
-    h("ul", { class: "cb-legend", "aria-label": "Legend" }, ["added", "changed", "removed"].map((k) => h("li", {}, changeBadge(k)))));
+    hasChanges(p) ? h("ul", { class: "cb-legend", "aria-label": "Legend" }, ["added", "changed", "removed"].map((k) => h("li", {}, changeBadge(k)))) : null);
   const course = h("section", { class: "cb-outline-course" },
     h("h4", { class: "cb-serif" }, String(p.course.title)),
     p.course.subtitle ? h("p", { class: "cb-muted" }, String(p.course.subtitle)) : null,
@@ -285,6 +285,13 @@ const OutlineDiff: Renderer = (p, ctx, id) => {
   }
   return h("section", { class: "cb-card cb-outline", "aria-label": "Proposed outline" }, header, p.comment ? h("p", { class: "cb-note" }, `Changed after your comment: “${p.comment}”`) : null, course, modules, removed, footer);
 };
+
+/** True when an outline proposal differs from a previous one (first proposals have no marks). */
+function hasChanges(p: Props): boolean {
+  if (p.removed?.length) return true;
+  const changed = (x: Props) => x.change && x.change !== "unchanged";
+  return (p.modules as Props[]).some((m) => changed(m) || (m.lessons as Props[]).some((l) => changed(l) || (l.objectives as Props[]).some(changed)));
+}
 
 /* ------------------------------------------------------------------ generation */
 
