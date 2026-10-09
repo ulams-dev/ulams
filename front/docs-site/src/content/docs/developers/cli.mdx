@@ -1,0 +1,93 @@
+---
+title: The ulams CLI
+description: Install the ulams command line tool, log in to an instance, understand its JSON output and exit codes, and call any API endpoint from scripts and agents.
+sidebar:
+  order: 80
+modules:
+  - cli
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+`ulams` is a command line tool for people and AI agents. It talks to the same REST API as the admin
+panel and the learner frontend, through [`@ulams/sdk`](/developers/openapi-and-sdk/). Every command is
+defined once in a registry, so the help, the JSON schema (`ulams schema`), the
+[CLI reference](/reference/cli/) and the MCP server cannot drift apart.
+Decision records: [ADR 0072](/decisions/0072-agent-first-cli-command-registry/) (registry) and
+[ADR 0073](/decisions/0073-cli-machine-contract/) (output contract).
+
+<Aside type="note" title="Install from the repository for now">
+The package is not published to npm yet. From a checkout of the repository:
+
+```bash
+corepack yarn install --ignore-engines
+corepack yarn workspace ulams build
+node front/cli/dist/ulams.mjs --version      # or link the bin, see "Use ulams from Claude Code"
+```
+</Aside>
+
+## Log in
+
+Tokens are per instance (each tenant has its own signing keys), so a profile is one instance plus one
+token. Credentials are stored in `~/.config/ulams/credentials.json` (mode 0600; `$ULAMS_CONFIG_DIR`
+overrides the directory), and the CLI never prints a token.
+
+```bash
+# Demo tenants (DEMO_MODE=true): the seeded admin, tutor or student
+ulams login --url http://coffee.localhost --demo admin
+
+# A password (one line on stdin, never a flag)
+printf '%s' "$PASSWORD" | ulams login --url https://school.example.com --email me@example.com --password-stdin
+
+# A token you already have
+printf '%s' "$TOKEN" | ulams login --url https://school.example.com --token-stdin
+
+ulams whoami            # user, roles, instance, where the token came from
+ulams profiles list     # saved profiles; `ulams profiles use <name>` switches
+```
+
+Password logins use the API's one-month token, which has the full permissions of the user. Scoped
+tokens and browser login (`ulams login --device`) arrive with the server work in
+[ADR 0074](/decisions/0074-scoped-personal-access-tokens/) and [ADR 0075](/decisions/0075-device-login/);
+until then `--device` answers "not available on this server".
+
+For CI and agents no files are needed: set `ULAMS_URL` and `ULAMS_TOKEN`. Precedence is flag, then
+environment, then profile. A profile token is never sent to another `--url`.
+
+## Output contract
+
+When stdout is not a terminal (or with `--json`) every command prints one JSON document:
+
+```json
+{ "ok": true, "contract": 1, "command": "api", "data": [], "meta": { "page": 1, "perPage": 25, "total": 0, "lastPage": 1, "nextPage": null } }
+```
+
+Failures print `{ "ok": false, "error": { "code", "message", "hint", "status", "retryable", "requestId", "details" } }`
+and exit with a stable code: 0 ok, 2 usage or input, 3 not logged in, 4 forbidden, 5 not found, 6 conflict,
+7 API validation, 8 rate limited, 9 server or network, 10 wait timeout, 11 confirmation required, 12
+feature disabled, 13 diff found. The full table is in the [CLI reference](/reference/cli/).
+
+The CLI never prompts unless you pass `--interactive` (or run `login` in a terminal). Every input has a
+flag, and `--input @file.json` (or `-` for stdin) supplies a whole input object that explicit flags override.
+
+## Call any endpoint
+
+```bash
+ulams api --list --filter quiz                         # endpoints of the bundled API spec
+ulams api GET /api/admin/courses --query per_page=5 --json
+ulams api PUT /api/admin/courses/{id} --param id=12 --body '{"title":"New"}' --dry-run
+ulams api DELETE /api/admin/courses/12 --yes
+```
+
+`GET` is a read, `DELETE` is destructive and needs `--yes` (exit 11 with the plan otherwise), other
+methods are writes and honour `--dry-run`.
+
+## Discover the commands
+
+```bash
+ulams schema --json                 # every command, input JSON Schema, kind, scopes, exit codes
+ulams describe api                  # one command
+ulams --help
+```
+
+Run `ulams schema` once at the start of an agent session; it works without credentials.

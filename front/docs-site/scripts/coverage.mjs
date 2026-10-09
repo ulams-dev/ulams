@@ -18,6 +18,7 @@ const APPS = {
   front: "front (React learner app, legacy)",
   web: "front/web (Astro reference frontend)",
   sdk: "front/sdk (@ulams/sdk)",
+  cli: "front/cli (ulams CLI and MCP server)",
   ui: "front/ui (@ulams/ui)",
   "api-h5p": "api/h5p (H5P service)",
   "api-pdf": "api/pdf (PDF service)",

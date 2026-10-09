@@ -158,6 +158,10 @@ jobs:
           --filter=@ulams/web --filter=@ulams/ui --filter=@ulams/sdk
           --concurrency=2
 
+      # The ulams CLI and MCP server (front/cli): typecheck, lint, build and unit tests.
+      - name: Typecheck, lint, build, test (ulams CLI)
+        run: corepack yarn turbo run typecheck lint build test --filter=ulams --concurrency=2
+
   php:
     name: PHPUnit (${{ matrix.shard }})
     needs: changes
