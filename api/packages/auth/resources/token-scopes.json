@@ -193,6 +193,10 @@
             "area": "public"
         },
         {
+            "pattern": "api/csp-report",
+            "area": "public"
+        },
+        {
             "pattern": "api/jitsi/*",
             "area": "public"
         },
@@ -405,6 +409,10 @@
         },
         {
             "pattern": "api/admin/config*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/admin/csp-reports*",
             "area": "settings"
         },
         {
