@@ -1,0 +1,59 @@
+---
+title: Contributing
+description: How to take part in ulams, from reporting a bug to merging a pull request, with the rules for decisions, documentation and security reports.
+sidebar:
+  order: 0
+  label: Overview
+---
+
+import { Aside, CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+ulams is developed in the open in [ulams-dev/ulams](https://github.com/ulams-dev/ulams). Bug
+reports, ideas, documentation fixes and code are all welcome. The rules on these pages apply to
+people and to coding agents alike.
+
+<CardGrid>
+  <LinkCard
+    title="Contributing guide"
+    href="/contributing/contributing-guide/"
+    description="Issues, branches, Conventional Commits, what every pull request needs, review and the licence of contributions."
+  />
+  <LinkCard
+    title="Decisions and documentation"
+    href="/contributing/decisions-and-documentation/"
+    description="When a change needs an ADR, the template used here, and why every significant change updates this site."
+  />
+  <LinkCard
+    title="Writing docs"
+    href="/contributing/writing-docs/"
+    description="How this site is built: adding a page, the coverage check, generated pages, screenshots and links."
+  />
+  <LinkCard
+    title="Code of conduct"
+    href="/contributing/code-of-conduct/"
+    description="The Contributor Covenant 2.1, which applies in every project space."
+  />
+  <LinkCard
+    title="Security policy"
+    href="/contributing/security-policy/"
+    description="How to report a vulnerability privately and how disclosure works."
+  />
+</CardGrid>
+
+## The short version
+
+1. Open or pick an issue, and for anything non-trivial agree the scope there first.
+2. Plan larger work in `docs/plans/phase-N.md`; the product owner approves the plan before
+   implementation starts.
+3. Branch as `phase-N/short-description`, commit with Conventional Commits, one concern per
+   commit, tests in the same commit.
+4. Record every decision as an ADR and update this site in the same branch.
+5. Open the pull request, fill in the checklist and wait for green CI and a review.
+
+<Aside type="caution" title="Security problems">
+Never report a vulnerability in a public issue. Follow the [security policy](/contributing/security-policy/).
+</Aside>
+
+The contributing guide, code of conduct and security policy pages are rendered from
+`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` and `SECURITY.md` at the repository root, so GitHub and
+this site always show the same text. Edit those files, not the pages.

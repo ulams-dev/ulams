@@ -1,0 +1,197 @@
+---
+title: Users
+description: Find, create, edit and delete user accounts in the admin panel, import and export them as CSV, and add extra fields to the user model.
+sidebar:
+  order: 1
+modules:
+  - auth
+  - csv-users
+  - model-fields
+  - assign-without-account
+adminRoutes:
+  - /users/list
+  - /users/list/new
+  - /users/:user/:tab
+  - /users/fields
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+**Users → List** manages the accounts of the current tenant. The screens call the admin user
+endpoints of the [auth](/reference/packages/auth/) package (`/api/admin/users`); the import
+and export buttons call the [csv-users](/reference/packages/csv-users/) package.
+
+| Screen | Route | Permission needed to see it |
+|---|---|---|
+| User list | `/users/list` | `user_list` |
+| New user | `/users/list/new` | `user_create` |
+| Edit user (tabs) | `/users/:user/:tab` | `user_read` |
+| User fields | `/users/fields` | `user_read` |
+
+Saving, deleting, importing and exporting are checked again by the API with `user_update`,
+`user_delete`, `csv-users_import` and `csv-users_export`. See
+[Roles and permissions](/admin/roles-and-permissions/).
+
+## The user list
+
+<Screenshot name="admin-users-list" alt="The user list with search filters, import and export buttons" />
+
+The table shows ID, creation date, first and last name, email, **Active** (the `is_active`
+flag), **Email verified** and roles. Boolean and short text fields added on the
+[User fields](#user-fields) tab appear as extra columns.
+
+Filters (click **Expand** to see all of them):
+
+- **Search**: a fragment of the first name, last name or email.
+- **Created after** / **Created before**: the account creation date.
+- **Role**: `student`, `tutor` or `admin`. Custom roles are not offered in this filter.
+- **Login last n days** (`>=` and `<=`): days since the last login.
+
+Columns can be sorted, hidden with the gear icon and paginated. Each row has **Edit** and
+**Delete**. Deleting asks for confirmation, removes the account and dispatches the
+`AccountDeleted` event; it cannot be undone.
+
+## Creating a user
+
+<Screenshot name="admin-users-list-new" alt="The new user form" />
+
+<Steps>
+
+1. Click **New** on the list.
+2. Fill in first name, last name and email. A password is required for a new user: at least 8
+   characters from letters, digits and `!@#$%^&*`, with at least one of those special
+   characters.
+3. Fill in any extra fields defined on the [User fields](#user-fields) tab.
+4. Set **Active** and choose the roles.
+5. Click **Submit**. The panel opens the new user's edit screen.
+
+</Steps>
+
+An account created here does not go through registration, so registration settings such as
+`ulams_auth.account_must_be_enabled_by_admin` do not apply to it. The new account's email is
+not verified: the API sends the verification email (event `AccountRegistered`) with the link
+from the `ulams_auth.return_url` package setting. The form does not send a return URL itself,
+so the API rejects new users until that setting is filled in on the **Package Auth** tab of
+[Settings](/admin/settings/#package-configuration-tabs).
+
+## Editing a user
+
+The edit screen has three tabs; the tab is part of the URL (`/users/:user/:tab`).
+
+<Screenshot name="admin-users-user-tab" alt="The edit user screen with its tabs" />
+
+### Edit user (`user_info`)
+
+The same fields as the creation form, plus:
+
+- **Password** may be left empty to keep the current one.
+- **Email verified**: a switch to verify the address without the activation email. It is
+  not shown for users with the `admin` role.
+- **Resend**: while the email is not verified, sends the verification email again
+  (`POST /api/auth/email/resend`) with a link to `{frontURL}email-verify`. If the
+  `global.frontURL` setting is empty the panel shows a link to the settings instead.
+- **Avatar**: upload an image, pick one from the [file library](/admin/files/) (folder
+  `avatars/{id}`) or delete it.
+- **Groups**: add or remove the user from [user groups](/admin/user-groups/). Each change is
+  saved immediately, not with **Submit**.
+
+Setting **Active** off blocks the account and dispatches `AccountBlocked`; integrations such as
+[MailerLite and Mattermost](/admin/other-integrations/) react to it.
+
+### Categories (`categories`)
+
+A category tree with checkboxes. The selection is stored as the user's interests
+(`PUT /api/admin/users/{id}/interests`). Frontends can show it, for example as a tutor's field
+of expertise. Categories are managed in [Categories and tags](/admin/categories-and-tags/).
+
+### User logs (`logs`)
+
+A table of the API requests recorded for this user (date, method, path), read from
+`/api/admin/tracks/routes`. That endpoint belongs to the `tracker` package, which is not in
+`api/packages`, so the tab stays empty. The same applies to Analytics → Logs; see
+[Reports and analytics](/admin/reports-and-analytics/).
+
+## Import users from CSV or Excel
+
+**Import users** uploads a `.csv` or `.xlsx` file to `POST /api/admin/csv/users`. The first
+row is the header. Rows are matched by email:
+
+- **Existing email**: the user is updated with the values in the row.
+- **New email**: the user is created as active with a verified email, and the
+  `UlamsImportedNewUserTemplateEvent` event is dispatched. Its email template contains a link
+  to set a password; the panel passes its own `/user/reset-password` page as the return URL.
+
+Columns:
+
+| Column | Required | Format |
+|---|---|---|
+| `email` | yes | |
+| `first_name`, `last_name` | yes | |
+| `password` | no | at least 6 characters, stored hashed |
+| `is_active` | no | an empty value is saved as inactive |
+| `roles` | no | JSON array of existing role names, for example `["tutor"]` |
+| `permissions` | no | JSON array of existing permission names |
+| `groups` | no | JSON array of group names; missing groups are created |
+| other user columns | no | for example `path_avatar`, kept only if the file exists in storage |
+
+<Aside type="caution">
+Roles and direct permissions are replaced by the values in the file: an empty `roles` cell
+removes all roles from an existing user. Groups are only added, never removed. Export the
+users first and edit that file to keep what you do not want to change.
+</Aside>
+
+## Export users
+
+**Export** downloads the users that match the current filters as `csv`, `xlsx` or `xls`
+(`GET /api/admin/csv/users?format=…`). The file has the columns of the full user resource
+(roles and permissions as JSON arrays), so it can be edited and imported back.
+
+The csv-users package can also export and import the members of a group
+(`/api/admin/csv/groups`); the panel has no button for it.
+
+## User fields
+
+<Screenshot name="admin-users-fields" alt="The user fields tab listing extra fields" />
+
+The **User fields** tab (`/users/fields`) adds extra fields to the user model without a
+database migration, through the [model-fields](/reference/packages/model-fields/) package.
+Each field has:
+
+- **Name**: the attribute name, for example `bio` or `newsletter`.
+- **Type**: `boolean`, `number`, `varchar`, `text` or `json`.
+- **Default** value.
+- **Rules**: a JSON array of
+  [Laravel validation rules](https://laravel.com/docs/validation#available-validation-rules),
+  for example `["required", "string", "max:255"]`, applied when a user is saved.
+- **Visibility**: a power of two that decides who receives the field in API responses:
+  `1` public, `2` authorised users, `4` administrators.
+- **Extra**: JSON with additional data. The panel reads translated labels from it, for example
+  `[{"en": "Bio"}, {"pl": "Biogram"}]`.
+
+The fields appear on the user form, on [My profile](/admin/my-profile/) and in the user API
+resources. The [MailerLite integration](/admin/other-integrations/) reads its newsletter
+consent from a user attribute, which can be such a field. Managing fields needs the `metadata_*` permissions (`metadata_create_update`,
+`metadata_delete`, `metadata_list`).
+
+## Invite people without an account
+
+The course, webinar, consultation, stationary event and product forms have a list of
+**users without an account** (package
+[assign-without-account](/reference/packages/assign-without-account/)). It is not a screen of
+the Users menu, but it creates access for people who are not users yet:
+
+1. Add an email address to the list. The submission is stored with status `sent` and the
+   `AssignToProduct` or `AssignToProductable` event is dispatched; its email template is the
+   invitation (see [Templates](/admin/templates/)).
+2. When someone registers with that email (`AccountRegistered`), every `sent` submission for
+   it is applied: the person is assigned to the item and the status changes to `accepted`.
+3. Deleting a submission dispatches an unassign event.
+
+## Related
+
+- [User groups](/admin/user-groups/), [Roles and permissions](/admin/roles-and-permissions/)
+- Registration and login settings (`ulams_auth.*`): [Settings](/admin/settings/) and
+  [Settings keys](/reference/settings/)
+- Account events (`AccountRegistered`, `AccountConfirmed`, `AccountBlocked`, …):
+  [Events and notifications](/reference/events-and-notifications/)

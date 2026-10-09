@@ -1,0 +1,111 @@
+---
+title: Lessons and topics
+description: Build a course program in the admin panel with nested lessons and topics, reorder them by drag and drop, and set the fields every topic shares.
+sidebar:
+  order: 2
+modules:
+  - courses
+  - topic-types
+adminRoutes:
+  - /courses/list/:course/:tab
+learnerRoutes:
+  - /learn/**
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+A course is a tree: **lessons** contain topics and, optionally, other lessons. A **topic** is one
+learning item with exactly one type (text, video, quiz and so on). Build the tree in the course editor's
+**Program** tab (`/courses/list/<id>/program`).
+
+<Screenshot name="admin-courses-list-course-program" alt="The Program tab: the lesson tree on the left, the topic editor in the middle and topic settings on the right" />
+
+## Add a lesson
+
+<Steps>
+
+1. Open the **Program** tab and click **Add new lesson**.
+2. Fill in **Title** (required), **Summary**, **Duration** and **Active?**. Optionally set
+   **Active from** and **Active to** to limit when the lesson is available, and a **Parent lesson** to
+   nest it.
+3. Click **Create**.
+
+</Steps>
+
+To add a lesson inside another lesson, hover the parent lesson, click the **+** button
+(**Add new topic**) and choose the lesson icon at the top of the list.
+
+## Add a topic
+
+<Steps>
+
+1. Hover the lesson and click **+** (**Add new topic**).
+2. Pick a type: Rich text, OEmbed, Audio, Video, H5P, Image, PDF, SCORM, LiaScript, External tool
+   (LTI), Project or Quiz.
+3. Fill in the type-specific content in the middle column and the common fields in the right column.
+4. Click **Save**.
+
+</Steps>
+
+Only the types that are installed and not switched off appear in the list. An administrator can switch
+off any type platform-wide in the settings (`disableTopicType-<type>`). Two content formats have no
+entry in this menu: [cmi5](/creators/cmi5/) (no admin form yet) and [Adapt](/creators/adapt/)
+(uploaded as a SCORM package).
+
+For file types (audio, video, image, PDF) the upload itself saves the topic. Quiz and project topics can
+be saved without content; questions are added after the first save.
+
+### Fields every topic has
+
+| Field | Effect |
+|---|---|
+| Title (required) | Shown in the program and in the player. |
+| Duration | Free text, for example "5 min"; the reference front converts it to minutes for the course outline. |
+| Parent lesson | Moves the topic to another lesson. |
+| Description → **Open editor** | Three Markdown fields: **Introduction**, **Description** and **Summary**. The reference front shows the description below the topic content. |
+| Active? | Inactive topics are not part of the course. A course is finished when every **active** topic is complete. |
+| Able to preview | A free preview: the topic opens on the course page for people without access to the course. |
+| Can be omitted (`can_skip`) | In the legacy learner app, lets the learner move to the next topic without completing types that otherwise block the **Next** button; moving on marks the topic complete. The reference front does not use it. New topics start with it switched on. |
+| JSON Metadata | Extra data for rendering. Video processing writes its status here, and the reference front reads video chapters from it (see [Video](/creators/video/#chapters)). Leave it alone unless a guide tells you otherwise. |
+
+Below the common fields of a saved topic is **File resources**: files attached to the topic that
+learners can download.
+
+The bottom bar has **Cancel**, **Clone** (copies a saved topic), **Save** and **Delete**.
+
+<Aside type="caution">
+Delete acts immediately. There is no undo for deleted topics or lessons.
+</Aside>
+
+## Reorder and nest
+
+Drag lessons and topics in the tree to change their order or move them to another lesson. The new
+order is saved straight away. A lesson that has not been created yet cannot be moved.
+
+Administrators can limit nesting with two settings: the maximum depth of nested lessons
+(`maxLessonsNestingInProgram`) and the minimum depth at which topics may sit
+(`minTopicNestingInProgram`). A move that breaks these limits is refused with a message.
+
+## Completion
+
+The platform records a status per topic and learner. When every active topic of the course is
+complete, the course is marked finished: this is what issues a [certificate](/creators/certificates/)
+and the "course finished" notifications.
+
+In the reference front a learner with access can always press **Mark as complete**. In addition:
+
+- text-like topics (rich text, image, PDF, embeds) complete when the reader scrolls to the end of the
+  content, after a few seconds on the page;
+- a video completes when it plays to the end, an H5P topic when the content reports completion, and a
+  quiz when the learner passes it;
+- SCORM, LiaScript and external-tool topics are completed by the platform when the content or the tool
+  reports completion (details on their pages).
+
+Each topic type page lists the specifics.
+
+## Preview your course
+
+There is no separate preview mode in the admin panel. To check what learners see, open the course in
+the learner front (`/courses/<id>`, then `/learn/<course id>/<topic id>`) with an account that has access
+to the course. See the [learner guide](/learners/).

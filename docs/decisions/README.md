@@ -24,3 +24,4 @@ replacement.
 | [0012](0012-lti-package-and-libraries.md) | LTI 1.3: one `lti` package, first-party platform side, packbackbooks tool side | Accepted |
 | [0013](0013-adapt-build-worker.md) | Adapt Path B: JSON sources in the API, builds in an isolated GPL-3.0 worker | Proposed |
 | [0020](0020-public-competitor-comparison.md) | Public comparison with other learning platforms: sourced data, neutral values | Proposed |
+| [0021](0021-ha-reference-architecture.md) | High-availability reference architecture | Proposed |

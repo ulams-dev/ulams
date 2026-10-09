@@ -1,0 +1,139 @@
+---
+title: Payment drivers
+description: How the payments package implements gateways (Free, Stripe, Przelewy24, RevenueCat), its settings and webhooks, and what adding another provider takes today.
+sidebar:
+  order: 5
+modules:
+  - payments
+  - cart
+needsReview: "Adding a driver with PaymentGateway::extend() is derived from Illuminate\\Support\\Manager and has no test or example in the repository. Check it end to end before relying on it."
+---
+
+import { Aside, Badge, Steps } from "@astrojs/starlight/components";
+
+The `payments` package (`Ulams\Payments\`) turns a payable, such as a cart order, into a
+`Payment` and runs it through a gateway driver. The `cart` package is its main user. For the
+admin side see [Sales](/admin/sales/).
+
+<Aside type="caution">
+The roadmap moves commerce to a separate Sylius 2.x service, with access granted only from
+verified, idempotent order events. <Badge text="Coming" variant="caution" /> Until then, the
+drivers on this page are the payment path.
+</Aside>
+
+## Drivers
+
+All drivers are in `payments/src/Gateway/Drivers/`, extend `AbstractDriver` and implement
+`GatewayDriverContract`:
+
+| Driver | Name | What it does | `requiredParameters()` |
+|---|---|---|---|
+| `FreeDriver` | `free` | settles zero-amount payments, refuses anything else | none |
+| `StripeDriver` | `stripe` | PaymentIntents; webhook verified with the `Stripe-Signature` HMAC | `return_url`, `payment_method` |
+| `Przelewy24Driver` | `przelewy24` | redirect flow; callback signature checked against the CRC, then verified with P24 | `return_url`, `email` |
+| `RevenueCatDriver` | `revenuecat` | in-app purchases checked by a `ReceiptVerifier` class from config | none |
+
+A payment with amount 0 always uses `free`.
+
+## The driver contract
+
+```php
+interface GatewayDriverContract
+{
+    public function purchase(Payment $payment, array $parameters = []): ResponseInterface;
+    public function callback(Request $request, array $parameters = []): CallbackResponse;
+    public function callbackRefund(Request $request, array $parameters = []): CallbackRefundResponse;
+    public function refund(Request $request, Payment $payment, array $parameters = []): ResponseInterface;
+    public static function requiredParameters(): array;
+    public function throwExceptionForResponse(ResponseInterface $response): void;
+    public function throwExceptionIfMissingParameters(array $parameters): void;
+    public function ableToRenew(): bool;
+}
+```
+
+- `ResponseInterface` is Omnipay's `Omnipay\Common\Message\ResponseInterface`. The package has
+  `NoneGatewayResponse` and `FailedGatewayResponse` for drivers without an Omnipay gateway.
+- `callback()` returns `CallbackResponse::success()`, `::failed()` or `::rejected()`. Verify the
+  provider's signature here: a callback is an unauthenticated request.
+- `AbstractDriver` takes `PaymentsConfig` in its constructor and implements the parameter checks.
+  `ableToRenew()` returns `false` there; `Przelewy24Driver` overrides it for recurring products.
+
+## Resolution and configuration
+
+`Ulams\Payments\Gateway\GatewayManager` extends `Illuminate\Support\Manager`. It is bound as
+`payment-gateway` (facade `PaymentGateway`), and its default driver is
+`ulams_payments.default_gateway`. Each built-in driver has a `create<Name>Driver()` factory
+that throws `GatewayConfigException` when the gateway is disabled or not configured. The
+`Payments` facade (`PaymentsService`) is the entry point for the rest of the app:
+`Payments::processPayable($order)->purchase($parameters)` and
+`Payments::processPayment($payment)->callback($request)`.
+
+Config (`payments/src/config.php`, key `ulams_payments`) and the settings an admin can change
+per tenant (`Providers/SettingsServiceProvider.php`):
+
+| Key | Admin setting | Public |
+|---|---|---|
+| `default_gateway` | yes, `in:Free,Stripe,Przelewy24` | yes |
+| `default_currency` | yes | yes |
+| `drivers.stripe.enabled`, `publishable_key` | yes | yes |
+| `drivers.stripe.secret_key`, `webhook_secret` | yes | no |
+| `drivers.przelewy24.enabled` | yes | yes |
+| `drivers.przelewy24.live`, `merchant_id`, `pos_id`, `api_key`, `crc` | yes | no |
+| `drivers.revenuecat.enabled` | yes | yes |
+| `drivers.revenuecat.receipt_verifier` | no (config or env only) | no |
+
+## Webhooks and callbacks
+
+Routes in `payments/src/routes.php`, under `api/`, without authentication:
+
+| Method | Path | Handler |
+|---|---|---|
+| `GET` | `/api/payments-gateways` | enabled gateways and their required parameters |
+| any | `/api/payments-gateways/callback/{payment}` | `Payments::processPayment($payment)->callback($request)`; 400 when rejected |
+| `POST` | `/api/payments-gateways/webhook/stripe` | `StripeDriver::verifiedEvent()`, then the payment from the PaymentIntent metadata |
+| any | `/api/payments-gateways/callback/refund/{payment}` | refund callback |
+
+`PaymentProcessor::callback()` runs in a transaction with `lockForUpdate`, so a callback that
+arrives twice does not settle a payment twice. The resulting events are in
+`payments/src/Events/`: `PaymentRegistered`, `PaymentSuccess`, `PaymentCancelled` and
+`PaymentFailed`. Each carries the user and the payment. The cart marks an order paid in
+`PaymentSuccessListener`, and templates can email on `PaymentSuccess`.
+
+## Adding a provider
+
+There is no plugin API for gateways. Two paths:
+
+### Inside the payments package (supported)
+
+<Steps>
+
+1. Write `Gateway/Drivers/<Name>Driver.php` extending `AbstractDriver`. Verify every callback's
+   signature, use `hash_equals` for comparisons, and make `callback()` safe to call twice.
+2. Add a `create<Name>Driver()` factory to `GatewayManager` that checks the gateway is enabled
+   and configured, plus getters on `Entities/PaymentsConfig`.
+3. Add the config keys to `config.php` and register them in `Providers/SettingsServiceProvider.php`:
+   secrets with `$public = false`, and the name in the `default_gateway` `in:` rule.
+4. Add the driver to `PaymentsService::listEnabledGateways()` and
+   `listGatewaysWithRequiredParameters()`, so `isDriverEnabled()` accepts it and
+   `GET /api/payments-gateways` lists it.
+5. Test the purchase, a valid and a forged callback, and a duplicate callback.
+
+</Steps>
+
+### From your own package (partial)
+
+`GatewayManager` inherits `extend()` from Laravel's `Manager`, so another package can add a
+driver without editing `payments`:
+
+```php
+use Ulams\Payments\Facades\PaymentGateway;
+
+PaymentGateway::extend('paypal', fn ($app) => new PayPalDriver($this->getPaymentsConfig()));
+```
+
+The driver then resolves by name: `PaymentGateway::driver('paypal')`, and the generic callback
+route works for payments created with it. But `PaymentsService::listEnabledGateways()` is
+hard-coded to `stripe`, `przelewy24` and `revenuecat`. A request's `gateway` parameter naming
+your driver is therefore ignored, `GET /api/payments-gateways` does not list it, and the
+admin setting rejects it as the default gateway. Custom names are also case-sensitive. Making
+custom drivers first-class needs a change in `PaymentsService`.

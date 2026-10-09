@@ -1,0 +1,82 @@
+---
+title: Certificates
+description: How a course issues a PDF certificate when a learner finishes it, how to pick the certificate template for a course, and where to download issued certificates.
+sidebar:
+  order: 30
+modules:
+  - templates-pdf
+  - api-pdf
+learnerRoutes:
+  - /learn/[courseId]/finish
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+ulams issues a PDF certificate automatically when a learner **finishes a course**, that is, when every
+active topic of the course is complete. The certificate is made from a PDF template designed in the
+admin panel and rendered by the platform's PDF service.
+
+## How a course gets its certificate
+
+When a learner finishes a course, ulams looks for a PDF template for the "course finished" event:
+
+1. the template **assigned to this course** in its **Certificates** tab, if there is one;
+2. otherwise the **default** template for that event, if one exists. New installations get a default
+   certificate (A4 landscape with a QR code).
+
+The certificate is stored together with the template as it was at that moment, so later changes to the
+template do not change certificates already issued.
+
+## Pick the template for a course
+
+<Steps>
+
+1. Make sure the template exists. Certificate templates are created and designed by someone with
+   template permissions in **Configuration → Templates** (see [Templates](/admin/templates/)): a PDF
+   template for the course-finished event, designed in the visual pdfme designer.
+2. Open the course editor's **Certificates** tab (`/courses/list/<id>/certificates`).
+3. Select one or more templates in the selector.
+
+</Steps>
+
+Below the selector, each selected template lists the **Generated PDFs**: one row per learner who
+received the certificate, with **Download** per certificate and **Download all PDFs** as a zip.
+
+<Screenshot name="admin-courses-list-course-certificates" alt="The Certificates tab with the template selector and generated PDFs" />
+
+<Aside>
+The Certificates tab is hidden when an administrator turns certificates off for the platform
+(setting `disable-Certificates`) or when your role lacks the permission.
+</Aside>
+
+## What a certificate can show
+
+In the designer, a field named after a variable is filled with its value, and variables typed into
+fixed text (`Issued by @VarAppName`) are replaced in place. The course-finished event provides,
+among others:
+
+| Variable | Value |
+|---|---|
+| `@VarUserName` | The learner's name |
+| `@VarCourseTitle`, `@VarCourseSubtitle`, `@VarCourseId` | The course |
+| `@VarCourseActiveFrom`, `@VarCourseActiveTo` | The course dates |
+| `@VarCourseCategories`, `@VarCourseCategoriesWithBreadcrumbs` | The course categories |
+| `@VarContinuousCertNumber`, `@VarAnnualCertNumber` | Running certificate numbers |
+| `@VarCertificateId`, `@VarCertificateVerifyUrl` | A unique ID and a verification address (encoded as a QR code in the default template) |
+| `@VarAppName`, `@VarToday` | The platform name and the date |
+
+The designer lists the full set for the event. A course-finished template must contain
+`@VarCourseTitle` in its title section to be valid.
+
+<Aside type="caution">
+The verification page that `@VarCertificateVerifyUrl` points to is not built yet, so the QR code
+leads nowhere for now.
+</Aside>
+
+## Learners
+
+In the legacy learner app, learners download the PDF from the course finish page and from their
+profile's course list. The reference front shows a certificate preview on the course finish page
+(`/learn/<course id>/finish`); a PDF download there is not built yet. See the
+[learner guide](/learners/).

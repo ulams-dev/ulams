@@ -1,21 +1,6 @@
-# Security Policy
+# Security policy
 
-## Supported Versions
-
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
-
-## Reporting a Vulnerability
-
-Use this section to tell people how to report a vulnerability.
-
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+The security policy for the whole ulams repository, including this API, is in the root
+[`SECURITY.md`](../SECURITY.md). Report vulnerabilities privately through GitHub's private
+vulnerability reporting on [ulams-dev/ulams](https://github.com/ulams-dev/ulams/security/advisories/new),
+never in public issues.

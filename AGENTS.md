@@ -60,5 +60,6 @@ practical map.
 - Tenants: `php artisan ulams:tenant:create|list|delete|sync-env`; artisan for one tenant:
   `php artisan <command> --domain=<slug>.localhost`.
 - JS: `corepack yarn turbo run typecheck build lint test --filter=<workspace>`
-  (workspaces: `admin`, `front`, `api`, `api-h5p`, `api-pdf`).
+  (workspaces: `admin`, `front`, `api`, `api-h5p`, `api-pdf`, `@ulams/docs`).
+- Docs: `corepack yarn dev:docs` (port 4322); `corepack yarn workspace @ulams/docs coverage` lists modules, admin routes, learner pages and topic types without a page.
 - Visual regression: `front/tests/visual/README.md`.

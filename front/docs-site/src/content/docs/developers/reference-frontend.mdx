@@ -1,0 +1,295 @@
+---
+title: Reference frontend
+description: How front/web works (Astro SSR, tenant resolution, BFF, H5P proxy, LTI landing) and how to use @ulams/sdk and @ulams/ui in your own frontend.
+sidebar:
+  order: 6
+modules:
+  - web
+  - sdk
+  - ui
+learnerRoutes:
+  - /bff/[...path]
+  - /h5p/[...path]
+  - /healthz
+  - /lti/launch
+---
+
+import { Aside, FileTree } from "@astrojs/starlight/components";
+
+The reference frontend is three workspaces under `front/`, decided in
+[ADR 0008](/decisions/0008-reference-frontend/) and planned in
+[`docs/plans/phase-5-reference-frontend.md`](https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-5-reference-frontend.md):
+
+| Workspace | Package | What it is |
+|---|---|---|
+| `front/web` | `@ulams/web` | Astro 5 app, server-rendered on every request (`output: "server"`, Node adapter), port 4321 |
+| `front/sdk` | `@ulams/sdk` | Framework-free TypeScript API client on `fetch`; runs on Node and in the browser |
+| `front/ui` | `@ulams/ui` | UI catalogue: Astro components and web components described by JSON Schemas, plus the renderer |
+
+Pages are HTML rendered on the server with zero client JavaScript by default. Interactivity comes
+from four small vanilla web components (`<ulams-quiz>`, `<ulams-h5p>`, `<ulams-video>`,
+`<ulams-progress>`), bundled only on pages that use them. There is no React and no CSS-in-JS.
+What learners see is described in [Learners](/learners/); this page covers the code.
+
+## front/web
+
+<FileTree>
+
+- front/web/src
+  - middleware.ts tenant, CSRF check, session, security headers
+  - pages/
+    - index.astro landing (tenant document) or platform landing
+    - courses/[id].astro
+    - learn/[courseId]/ lesson player and finish page
+    - events/, account/, login.astro, logout.ts, tenants.astro, platform.astro
+    - bff/[...path].ts backend-for-frontend
+    - h5p/[...path].ts same-origin H5P proxy
+    - lti/launch.ts LTI landing
+    - healthz.ts
+  - lib/ config, tenant, session, BFF rules, data cache, view models, page documents
+  - docs/ landing documents per theme (coffee, oncall, nightsky, platform)
+  - layouts/Base.astro
+
+</FileTree>
+
+### Configuration
+
+All settings are runtime environment variables read when the server starts (`astro:env/server`,
+never inlined into the build). Defaults are in `src/lib/config.ts` and `front/web/.env.example`:
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `ULAMS_TENANT_HOSTS` | `{slug}.app.localhost=>http://{slug}.localhost` | Host rules `<front host pattern>=><API URL template>`, comma separated, first match wins |
+| `ULAMS_ADMIN_URL` | `http://{slug}.admin.localhost` | Tenant admin URL (demo badge) |
+| `ULAMS_PLATFORM_HOSTS` | `app.localhost,localhost,127.0.0.1` | Hosts that serve the platform landing instead of a tenant |
+| `ULAMS_DEFAULT_TENANT` | `coffee` | Tenant for hosts without a rule (for example a LAN IP); empty shows the tenant picker |
+| `ULAMS_DEMO_TENANTS` | `coffee,oncall,nightsky` | Demo tenants listed on the platform landing |
+| `ULAMS_CACHE_TTL` | `45` | Seconds public API data stays fresh in the server cache (minimum 5) |
+| `ULAMS_WARM_TENANTS` | `coffee,oncall,nightsky` | Tenants whose public data is fetched at server start |
+| `DEMO_STUDENT_EMAIL`, `DEMO_STUDENT_PASSWORD` | `student1@{slug}.ulams.app`, empty | Fallback login when a tenant has no demo mode; never sent to the browser |
+
+All variables of every app are in [Environment variables](/reference/environment-variables/). The
+production image is described in [Container images](/developers/container-images/).
+
+### Tenant resolution
+
+`src/middleware.ts` runs on every request:
+
+1. Reads the host from `X-Forwarded-Host`, then `Host`.
+2. Refuses state-changing requests (`POST`, `PUT`, `PATCH`, `DELETE`) whose `Origin` (or
+   `Sec-Fetch-Site`) is not this site, with 403. Astro's own origin check is off because it compares
+   against the Node listen address behind the proxy.
+3. Sets `locals.platform` for platform hosts; otherwise resolves `locals.tenant` with
+   `tenantForHost()`, which uses `resolveTenant()` from `@ulams/sdk/tenant` and falls back to
+   `ULAMS_DEFAULT_TENANT`.
+4. On `/learn`, `/bff` and `/account` it ensures a session (below).
+5. Adds `X-Content-Type-Options: nosniff`, `Referrer-Policy` and `Cache-Control: private, no-cache`
+   on HTML.
+
+The server then calls `tenant.apiUrl` directly (through Caddy in development). Public data
+(settings, courses, course detail, tutors, events, products) is cached in memory per tenant,
+stale-while-revalidate: fresh for `ULAMS_CACHE_TTL`, served stale for up to 30 minutes while it
+refreshes, and warmed at start. Per-learner data (program, progress) is cached briefly per token and
+dropped after progress writes. Measuring and tuning this is covered in
+[Performance](/developers/performance/).
+
+### Session and BFF
+
+The API token lives only in the httpOnly, `SameSite=Lax` cookie `ulams_session`. How it gets there:
+
+- `/login` posts the form to itself; the server calls `api.auth.login()` (one-month token) or, for
+  "Continue as the demo student", the demo session, and sets the cookie.
+- On session routes without a cookie, the middleware calls `demoStudentSession()`: demo login, else
+  password login with the server-side fallback account. One demo token per tenant is cached and
+  shared, because every demo visitor is the same seeded student.
+- `/lti/launch` sets it after an LTI launch (below).
+
+`/bff/[...path]` is the only way browser code reaches the API. It forwards a request to
+`<tenant API><path>` with `Authorization: Bearer <cookie token>` only if it matches the allow-list in
+`src/lib/bff.ts`:
+
+```ts
+// front/web/src/lib/bff.ts
+export const BFF_RULES: BffRule[] = [
+  { method: "GET", pattern: /^\/api\/profile\/me$/ },
+  { method: "GET", pattern: /^\/api\/courses\/progress\/\d+$/ },
+  { method: "PUT", pattern: /^\/api\/courses\/progress\/\d+\/ping$/ },
+  { method: "PATCH", pattern: /^\/api\/courses\/progress\/\d+$/, writesProgress: true },
+  { method: "POST", pattern: /^\/api\/courses\/progress\/\d+\/h5p$/, writesProgress: true },
+  { method: "GET", pattern: /^\/api\/quiz-attempts$/ },
+  // … quiz attempts and answers
+];
+```
+
+Anything else gets 404, no cookie gets 401, an unreachable API 502. On a 401 from the API (tokens
+are wiped by the hourly demo reset) the BFF logs the demo student in again once and retries. Rules
+marked `writesProgress` drop the cached progress. Responses are `Cache-Control: no-store`.
+
+To let an island call a new endpoint, add a rule: the BFF is deliberately not an open proxy. The
+guide is [Adding a web page](/developers/adding-a-web-page/).
+
+### H5P proxy
+
+`/h5p/[...path]` proxies to `<tenant API>/h5p/<path>`, which Caddy sends to the H5P service. The
+service only allows framing from the hosts in its `frame-ancestors` list; served through the front's
+own origin the player page counts as `'self'`. The proxy passes bytes through unchanged, forwards
+`Authorization` and a small set of response headers, rewrites `Location` to the front origin, and on
+`embed/*` HTML pages narrows the embed's `allowedOrigins` to the front origin. No H5P code is bundled
+into the front ([ADR 0003](/decisions/0003-h5p-as-isolated-gpl-service/)).
+
+### LTI landing
+
+`/lti/launch?code=…&course=…` is the target of `LTI_TOOL_LANDING_URL` when another LMS launches a
+course. The server posts the one-time code to `POST /api/lti/tool/exchange`, stores the returned token
+in the session cookie for 8 hours and redirects to `/learn/<course>` (303). A missing code gives 400,
+an expired or invalid one 401 with a plain-text message. See
+[Authentication](/developers/authentication/#lti-launches).
+
+### Health check
+
+`GET /healthz` answers `ok` with `Cache-Control: no-store`. It does not call the API, so it reports
+that the Node server is up, not that the tenant API is reachable.
+
+## @ulams/sdk
+
+`front/sdk` exports `createClient` and helpers from `@ulams/sdk`, plus subpaths `@ulams/sdk/types`,
+`@ulams/sdk/h5p` and `@ulams/sdk/tenant`. It has no runtime dependencies.
+
+### Client
+
+Every method returns the unwrapped `data` of the API's `{success, message, data}` envelope and throws
+`ApiError` (with `status`, `path`, `body`; status 0 means the API was unreachable) otherwise.
+
+```ts
+import { ApiError, createClient } from "@ulams/sdk";
+
+const api = createClient({
+  baseUrl: "http://coffee.localhost", // or "/bff" in the browser behind the BFF
+  token: process.env.TOKEN,           // omit in the browser when a server adds it
+  timeoutMs: 15_000,                  // default
+});
+
+const { token, expires_at } = await api.auth.login("student1@coffee.ulams.app", "secret"); // remember_me on
+const learner = api.withToken(token);
+
+const courses = await api.courses.list({ per_page: 12 }); // { data, meta }
+const program = await learner.courses.program(1);         // 403 without access
+const progress = await learner.progress.course(1);
+
+try {
+  await learner.progress.ping(7);
+} catch (e) {
+  if (e instanceof ApiError && e.status === 401) {
+    // log in again
+  }
+}
+```
+
+The client groups are `auth`, `settings`, `courses`, `progress`, `quiz`, `events`, `consultations`
+and `products`; read `front/sdk/src/client.ts` for the methods. `raw()` returns the whole envelope (for pagination `meta`), `request()` any documented
+path.
+
+Request paths are typed as `ApiPath`, the keys of `paths` in `src/generated/openapi.ts`, generated
+by `openapi-typescript` from the l5-swagger spec. The spec documents almost no response bodies, so
+response types in `src/types.ts` are hand-written (marked TODO until the spec is complete). See
+[API reference](/developers/api-reference/) and [OpenAPI and SDK](/developers/openapi-and-sdk/).
+
+### Sessions
+
+```ts
+import { createClient, demoStudentSession } from "@ulams/sdk";
+
+const session = await demoStudentSession(createClient({ baseUrl: "http://coffee.localhost" }), {
+  fallback: { email: "student1@coffee.ulams.app", password: process.env.DEMO_STUDENT_PASSWORD! },
+});
+session.token;      // Passport token
+session.expires_at; // ISO date
+session.via;        // "demo" (POST /api/demo/login) or "password" (fallback)
+```
+
+### Tenant
+
+```ts
+import { resolveTenant } from "@ulams/sdk/tenant";
+
+resolveTenant("coffee.app.localhost:4321");
+// { slug: "coffee", apiUrl: "http://coffee.localhost", adminUrl: "http://coffee.admin.localhost" }
+
+resolveTenant("academy.example.com", {
+  pattern: "{slug}.example.com=>https://{slug}.api.example.com",
+  adminUrlTemplate: "https://{slug}.admin.example.com",
+});
+```
+
+The host rules are the same implementation the admin and the legacy front use
+(`front/src/lib/tenant/resolveApiUrl.ts`, re-exported until the legacy front is removed).
+
+### Topics
+
+```ts
+import { completionPercent, flattenTopics, resumeTopic, topicKind, topicNeighbours } from "@ulams/sdk";
+
+topicKind("Ulams\\TopicTypes\\Models\\TopicContent\\Video"); // "video"
+const next = resumeTopic(program, progress);                 // first unfinished topic
+const percent = completionPercent(program, progress);        // 0–100
+const { previous, next: following, index, total } = topicNeighbours(program, topicId);
+```
+
+`topicKind` maps topicable classes to `richtext`, `video`, `audio`, `image`, `pdf`, `oembed`, `h5p`,
+`scorm`, `liascript`, `lti`, `cmi5`, `quiz`, `project` or `unknown`.
+
+### H5P
+
+```ts
+import { h5pEmbedOrigin, h5pEmbedPlayUrl, isCompletingStatement, isH5PEmbedMessage } from "@ulams/sdk/h5p";
+
+const src = h5pEmbedPlayUrl(tenant.apiUrl, 42, { language: "en", hideActions: true });
+const origin = h5pEmbedOrigin(tenant.apiUrl);
+
+window.addEventListener("message", (event) => {
+  if (event.origin !== origin || !isH5PEmbedMessage(event.data)) return;
+  if (event.data.type === "ulams-h5p:xapi" && isCompletingStatement(event.data.statement)) {
+    // mark the topic complete
+  }
+});
+```
+
+The embed protocol (`ulams-h5p:ready`, `loaded`, `resize`, `xapi`, `saved`, `error` from the frame;
+`token`, `style`, `save` to it) is documented in
+[`api/h5p/README.md`](https://github.com/ulams-dev/ulams/blob/main/api/h5p/README.md).
+
+## @ulams/ui
+
+The catalogue is one registry, `front/ui/src/registry.ts`. Each entry has a description written for
+a model, a category, whether it is interactive, whether it takes children, a JSON Schema for its
+props (flat, explicit enums, defaults, safe-link format) and a plain-text fallback. The
+[UI catalogue reference](/reference/ui-catalogue/) is generated from it.
+
+| Export | What |
+|---|---|
+| `@ulams/ui/Render.astro` | `<Render doc={doc} data={dataModel} />` renders a page document |
+| `@ulams/ui/render-core` | `prepare()`, `validateDocument()`, `resolveBindings()`, `getPointer()`: framework-free |
+| `@ulams/ui/registry` | `registry`, `FORMATS`, `THEMES`, `ICONS` |
+| `@ulams/ui/schema` | `validate()` (a JSON Schema subset) and `isSafeHref()` |
+| `@ulams/ui/components/*`, `@ulams/ui/elements/*` | The Astro components and web components |
+| `@ulams/ui/styles/*` | Base styles, font fallbacks, theme presets (`coffee`, `oncall`, `nightsky`, `platform`) |
+
+```astro
+---
+import Render from "@ulams/ui/Render.astro";
+import doc from "../docs/coffee.json";
+import { getSiteModel } from "../lib/data.ts";
+const site = await getSiteModel(Astro.locals.tenant!); // data model for {"$data": "/pointer"} bindings
+---
+<Render doc={doc} data={site} />
+```
+
+Documents, bindings, validation and fallbacks are described in
+[Generative UI](/developers/generative-ui/). `yarn workspace @ulams/ui catalogue` prints the registry
+as JSON.
+
+<Aside type="note">
+  Running the app, tests (Vitest, Playwright with an axe scan) and adding pages are covered in
+  [Local development](/developers/local-development/), [Testing](/developers/testing/) and
+  [Adding a web page](/developers/adding-a-web-page/).
+</Aside>

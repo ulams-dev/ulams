@@ -1,0 +1,65 @@
+---
+title: Signing in and out
+description: How learners sign in to the reference frontend - e-mail and password, the demo student, automatic sign-in on demo tenants, and logging out.
+sidebar:
+  order: 3
+learnerRoutes:
+  - /login
+  - /logout
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+The reference frontend keeps the learner's API token in an httpOnly cookie (`ulams_session`,
+SameSite=Lax), set by the server. Scripts in the page never see the token. See
+[authentication](/developers/authentication/) for the API side.
+
+## Sign-in page
+
+<Screenshot name="learner-login" alt="The sign-in form with e-mail, password and the Continue as the demo student button" />
+
+`/login` has two forms:
+
+- **E-mail and password.** Calls the tenant's `POST /api/auth/login`. A wrong e-mail or password
+  shows "Wrong e-mail or password."; any other failure shows "Login failed. Try again."
+- **Continue as the demo student.** Signs in as the tenant's demo student, the same way
+  automatic sign-in does (below).
+
+After signing in the learner goes to the page in the `next` query parameter (only paths on the
+same site are accepted), or to `/`. Pages that need a session send the learner to
+`/login?next=<page>` when no session can be created.
+
+There is no registration or password-reset page in the reference frontend; those exist only in
+the [legacy React app](/learners/legacy-react-app/) (`/register`, `/reset-password`).
+
+## Automatic sign-in
+
+When a learner without a session opens a page under `/learn/` or `/account` (or a browser island
+calls the BFF), the server signs them in as the tenant's demo student:
+
+1. If the tenant has demo mode on, it calls `POST /api/demo/login` with `{"role": "student"}`.
+2. Otherwise it logs in with `DEMO_STUDENT_EMAIL` (default `student1@{slug}.ulams.app`) and
+   `DEMO_STUDENT_PASSWORD` from the frontend's server environment.
+3. If neither works, the page redirects to `/login`.
+
+The resulting token is cached on the server per tenant and shared by all visitors, so every
+visitor of a demo tenant is the same student and shares that student's progress. When the
+token stops working after the hourly demo reset, the next lesson request signs in again once.
+
+<Aside type="caution">
+Automatic sign-in is attempted on every tenant, not only on demo tenants: if
+`DEMO_STUDENT_PASSWORD` is set for the frontend and the account exists, visitors are signed in
+as that student. Leave `DEMO_STUDENT_PASSWORD` empty for tenants with real learners.
+</Aside>
+
+On demo tenants a "Demo - resets hourly" badge explains this: "You are logged in as a demo
+student. Everything you do is wiped every hour." See [demo academies](/getting-started/demos/).
+
+## Signing out
+
+`/logout` accepts only `POST`. It deletes the session cookie and redirects to `/`. The
+[account page](/learners/account/) has the "Log out" button. The API token itself is not
+revoked.
+
+On a demo tenant, opening a lesson again signs the visitor straight back in as the demo student.

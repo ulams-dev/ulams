@@ -1,0 +1,107 @@
+---
+title: First admin and first tenant
+description: How the first platform administrator is created, how to provision a tenant with ulams:tenant:create in production, and what its initial accounts are.
+sidebar:
+  order: 6
+modules:
+  - tenancy
+  - demo
+  - admin
+needsReview: "The platform admin panel recipe (MULTI_DOMAINS plus a per-host REACT_APP_API_URL in the admin container, admin/config/php/index.php) is read from the code and not tried with the published image."
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+## The platform administrator
+
+The platform is the API on `api.<domain>`: it holds the tenant registry and is itself a complete
+LMS. Its first administrator is created by `PermissionsSeeder`, which `init.sh` runs on every
+start (unless `DISABLE_DB_SEED=true`). The seeder creates the user only when **both** hold:
+
+- the platform `users` table is empty, and
+- `INITIAL_USER_PASSWORD` is set.
+
+| Variable (on `api`, as `LARAVEL_…`) | Default |
+|---|---|
+| `INITIAL_USER_EMAIL` | `admin@ulams.app` |
+| `INITIAL_USER_PASSWORD` | none: no admin is created |
+| `INITIAL_USER_FIRST_NAME` / `INITIAL_USER_LAST_NAME` | `Root` / `Admin` |
+
+The production example maps them from `PLATFORM_ADMIN_EMAIL` and `PLATFORM_ADMIN_PASSWORD`.
+After the first sign-in, change the password in the panel. Once a user exists the variables do
+nothing, so you can remove the password from `.env` afterwards.
+
+## Provisioning a tenant
+
+Tenants are managed from the command line on the platform (no `--domain`), inside the `api`
+container. What the steps do is described in [Tenants](/admin/tenants/) and
+[Tenancy](/developers/tenancy/).
+
+<Steps>
+
+1. Create the tenant:
+
+   ```bash
+   docker compose exec api php artisan ulams:tenant:create acme \
+     --name="Acme Academy" --theme=coffee --accent="#C2552D" --users=0
+   ```
+
+   The command creates the PostgreSQL role and database `ulams_acme`, the bucket `ulams-acme`
+   with public read, the env file `.env.acme.api.<domain>`, runs the migrations, generates the
+   tenant's Passport keys and LTI keys, seeds permissions and creates the initial accounts. It is
+   resumable: if a step fails, fix the cause and run the same command again.
+
+2. Wait about five seconds. The example's copy loop puts the new env file into the
+   `tenant_env` volume, which makes the H5P service serve the tenant and lets Caddy issue
+   certificates for its four host names.
+
+3. Open `https://acme.admin.<domain>` and sign in as `admin@acme.<domain>` (the address comes
+   from `TENANCY_EMAIL_DOMAIN`) with the password from `TENANT_DEMO_PASSWORD`. Change it right
+   away. The learner front is at `https://acme.app.<domain>`.
+
+</Steps>
+
+<Aside type="caution" title="Initial passwords">
+  Every tenant's admin, its `tutor@…` account and the `--users=N` demo students are created with
+  the same password, `TENANT_DEMO_PASSWORD` (it is written to the tenant env file as
+  `INITIAL_USER_PASSWORD`). The default is `secret`. In production set a strong value
+  (`TENANT_INITIAL_PASSWORD` in the example), pass `--users=0`, and change or deactivate the admin
+  and tutor passwords after provisioning.
+</Aside>
+
+Leave demo mode off for real tenants: it is off unless you pass `--demo=on`, and it allows
+password-less login and resets the tenant every hour (see [Demo mode](/admin/demo-mode/)).
+
+## Other tenant commands
+
+```bash
+docker compose exec api php artisan ulams:tenant:list            # slugs, hosts, status
+docker compose exec api php artisan ulams:tenant:list --hosts    # API hosts only
+docker compose exec api php artisan ulams:tenant:create acme --redo=migrate
+docker compose exec api php artisan ulams:tenant:sync-env --migrate
+docker compose exec api php artisan ulams:tenant:delete acme --force
+```
+
+`ulams:tenant:delete` drops the database and role, the bucket, the env file, the storage
+directory and the tenant's Redis keys. There is no undo: take a [backup](/operators/backups/)
+first.
+
+## The platform admin panel
+
+The admin image resolves the API from its own host name with
+`REACT_APP_TENANT_API_HOST_PATTERN`. The bare platform host `admin.<domain>` has no slug, so the
+panel falls back to `REACT_APP_API_URL` from the build, which is empty in the published image.
+Setting `REACT_APP_API_URL` on the container would point every host at the platform. The page
+script of the image (`admin/config/php/index.php`) can inject values for one host only:
+
+```yaml
+admin:
+  environment:
+    REACT_APP_TENANT_API_HOST_PATTERN: "{slug}.admin.lms.example.com=>https://{slug}.api.lms.example.com"
+    MULTI_DOMAINS: admin.lms.example.com
+    # host upper-cased, dots and dashes as underscores, then the variable name
+    ADMIN_LMS_EXAMPLE_COM_REACT_APP_API_URL: https://api.lms.example.com
+```
+
+Alternatively run a second admin container for the platform with `REACT_APP_API_URL` set and
+route `admin.<domain>` to it.

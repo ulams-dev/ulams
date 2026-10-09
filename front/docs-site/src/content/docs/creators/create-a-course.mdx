@@ -1,0 +1,98 @@
+---
+title: Create a course
+description: Create a course in the admin panel and work through the course editor tabs, from attributes and media to access, certificates and statistics.
+sidebar:
+  order: 1
+modules:
+  - courses
+  - images
+adminRoutes:
+  - /courses/list/**
+learnerRoutes:
+  - /courses/[id]
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+## The course list
+
+Open **Courses → List** (`/courses/list`). The table can be filtered by title, status, category, tag,
+author and active state, and each row has these actions:
+
+- **Edit** opens the course editor.
+- **Delete** removes the course after a confirmation.
+- **Export** downloads the course as a ZIP file (needs the export permission). See
+  [Import and export](/creators/import-export/).
+- **Clone** creates a copy of the course (needs the clone permission).
+
+Above the table are **Create new** and, with the import permission, **Import file** (a course ZIP).
+
+<Screenshot name="admin-courses-list" alt="The course list with filters, the Create new button and row actions" />
+
+## Create the course
+
+<Steps>
+
+1. Click **Create new**. The form opens at `/courses/list/new` with only the **Attributes** tab.
+2. Fill in at least **Title** and **Status** (both required) and save.
+3. A dialog offers **Create modules**, which takes you to the **Program** tab to add lessons, or
+   **Go to course page**, which stays on the attributes. All other tabs appear once the course
+   exists.
+
+</Steps>
+
+<Screenshot name="admin-courses-list-course" alt="The course editor with its tabs" />
+
+## Attributes tab
+
+| Field | What it does |
+|---|---|
+| Title (required), Subtitle | Shown in the catalogue and on the course page. |
+| Summary, Description | Rich text, stored as Markdown. Type `/` in the editor for blocks: upload an image, audio, video or PDF, link, checklist, bulleted and ordered lists, table, quote, code block, math (LaTeX), headings. |
+| Active from, Active to | Dates the course is active. **Active to** can only be set after **Active from**, and must be later. |
+| Duration | Free text such as "3 hours". |
+| Hours to complete | A number. |
+| Level, Language | Free-text level and the course language (from the platform's languages). |
+| Status (required) | Draft, Published, Archived or `published_unactivated`. See [Access, prices and publishing](/creators/access-and-publishing/#course-status). |
+| Target group | Free text, for example "Baristas". |
+| Author / Tutor | One or more users shown as the course authors. |
+| Is public | Only shown when an administrator enables it in the settings. A public, published course can be opened by anyone, without an account. |
+| Additional fields | A JSON editor for extra course fields defined by the platform. |
+
+<Screenshot name="admin-courses-list-course-attributes" alt="The Attributes tab of the course editor" />
+
+<Aside type="caution">
+When a course is Published and its **Active from** date has passed, the editor opens locked with the
+warning "This record is already in progress". Confirm the warning to unlock editing; changes then
+affect learners who are in the middle of the course.
+</Aside>
+
+## The other tabs
+
+Each tab has its own address, `/courses/list/<id>/<tab>`.
+
+| Tab (key) | Purpose |
+|---|---|
+| Product (`product`) | Turn the course into a product with a price. Shown only with the sales permission. See [Access, prices and publishing](/creators/access-and-publishing/#prices-and-products). |
+| Media (`media`) | Course image, promo video and poster. Upload a large enough original: the legacy learner app requests resized, cached variants from the image service (`/api/images/img`). |
+| Categories & Tags (`categories`) | Pick categories from the tree and type tags. |
+| Program (`program`) | Lessons and topics. See [Lessons and topics](/creators/lessons-and-topics/). |
+| SCORM (`scorm`) | Use one SCORM package as the whole course. See [SCORM](/creators/scorm/#a-whole-course-from-one-package). |
+| Access (`access`) | Users and groups with access. See [Access, prices and publishing](/creators/access-and-publishing/#give-access-to-users-and-groups). |
+| Certificates (`certificates`) | Certificate templates for this course and the certificates issued. See [Certificates](/creators/certificates/). |
+| Questionnaires (`questionnaires`) | Attach a questionnaire (survey) to the course. |
+| Statistics (`statistics`) | Progress and time per learner, completion dates, charts. |
+| Users Attached without Account (`user_submission`) | Invite people by e-mail before they have an account. See [Access, prices and publishing](/creators/access-and-publishing/#invite-people-without-an-account). |
+| User projects (`user_projects`) | Files learners handed in for [project topics](/creators/project/). |
+
+An administrator can hide the Statistics, Users Attached without Account and User projects tabs
+platform-wide in the settings.
+
+<Screenshot name="admin-courses-list-course-media" alt="The Media tab with image, video and poster uploads" />
+<Screenshot name="admin-courses-list-course-statistics" alt="The Statistics tab with per-learner progress" />
+
+## Where learners see it
+
+The course page in the learner front is `/courses/<id>` and lists the lessons and topics; topics
+marked as free preview open without access. See the [learner guide](/learners/).

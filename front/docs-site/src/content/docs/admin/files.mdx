@@ -1,0 +1,64 @@
+---
+title: Files
+description: Browse, search, upload and delete files in the tenant's storage from the admin panel, and how upload folders and tutor access are organised.
+sidebar:
+  order: 12
+modules:
+  - files
+adminRoutes:
+  - /configuration/files
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+**Configuration → Files** (`/configuration/files`, permission `file_list`) is a browser for
+the tenant's file storage, provided by the [files](/reference/packages/files/) package. Each
+tenant has its own storage bucket (`ulams-<slug>` on MinIO or S3; see
+[Tenants](/admin/tenants/)), so the library shows only that tenant's files.
+
+<Screenshot name="admin-configuration-files" alt="The file browser showing folders and files" />
+
+## Using the browser
+
+- **Folders**: click the folder button to open a folder and `..` to go up. The current path
+  is shown above the list.
+- **Search**: type part of a file name and click **Query** to search in the current folder;
+  **Reset** returns to the plain listing.
+- **Upload**: the upload control above and below the list uploads files into the current
+  folder (`POST /api/admin/file/upload`, permission `file_create`). The panel cannot create
+  empty folders; upload into the folder you need.
+- **Delete**: the red button removes a file (`file_delete`). Folders have no delete button.
+
+## Where uploads go
+
+The same browser opens from upload fields across the panel (**Browse files** next to an
+upload field), so a file can be uploaded once and reused. Forms upload to folders named after
+the item:
+
+| Folder | Content |
+|---|---|
+| `avatars/{user id}` | user avatars |
+| `course/{course id}` | course images, videos and topic files |
+| `webinar/{webinar id}` | webinar files |
+| `stationary-events/{id}` | stationary event files |
+| `categories/{category id}` | category icons |
+| `pages/{page id}/wysiwyg` | images inserted in static pages |
+
+<Aside type="caution">
+Deleting a file here does not update the courses, pages or settings that use it. Their links
+break, so check where a file is used before deleting it.
+</Aside>
+
+## Tutor access to folders
+
+Users with `file_list_self` instead of `file_list` see only the folders listed in their
+account's `access_to_directories`. The package fills that list from events:
+
+- account confirmed: `avatars/{user id}`;
+- assigned as a course tutor: `course/{course id}` (removed when unassigned);
+- assigned as a webinar trainer: `webinar/{webinar id}` (removed when unassigned);
+- assigned as a stationary event author: `stationary-events/{id}` (removed when unassigned).
+
+Large media files, such as videos and SCORM or H5P packages, are uploaded through the course
+editor; see [Content creators](/creators/).

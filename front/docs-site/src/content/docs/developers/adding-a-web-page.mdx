@@ -1,0 +1,185 @@
+---
+title: Adding a web page
+description: Add a learner page to the ulams reference frontend, with SDK data, catalogue components, a new component when needed, and accessibility tests.
+sidebar:
+  order: 100
+modules:
+  - web
+  - ui
+  - sdk
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+The reference frontend (`front/web`, package `@ulams/web`) is Astro with server rendering on every
+request. Pages read API data on the server through `@ulams/sdk`, describe their sections as a
+document of catalogue components from `@ulams/ui`, and render it with `<Render>`. No client
+JavaScript ships unless a component is interactive. Background:
+[Reference frontend](/developers/reference-frontend/) and [Generative UI](/developers/generative-ui/).
+
+The example is the events listing, `front/web/src/pages/events/index.astro`.
+
+## 1. The page
+
+A file in `front/web/src/pages` becomes a route (`events/index.astro` is `/events`,
+`events/[kind]/[id].astro` is `/events/webinar/1`). The middleware (`src/middleware.ts`) has
+already resolved the tenant from the `Host` header into `Astro.locals.tenant`; on `/learn`,
+`/account` and `/bff` it also ensures a session and puts the token in `Astro.locals.token`.
+
+```astro
+---
+import Render from "@ulams/ui/Render.astro";
+import type { UiNode } from "@ulams/ui/render-core";
+import Base from "../../layouts/Base.astro";
+import { apiFor, getSettings, getSiteModel, publicData } from "../../lib/data.ts";
+import { chromeFor, withSessionLink } from "../../lib/docs.ts";
+import { themeFor } from "../../lib/theme.ts";
+import { consultationModels } from "../../lib/view-model.ts";
+import { SESSION_COOKIE } from "../../lib/session.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/");
+const [site, settings, consultations] = await Promise.all([
+  getSiteModel(tenant),
+  getSettings(tenant).catch(() => null),
+  publicData(tenant, "consultations", () => apiFor(tenant).consultations.list({ per_page: 12 })).catch(() => []),
+]);
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const chrome = chromeFor(theme);
+// ...
+const doc: UiNode = {
+  component: "Stack",
+  props: { gap: "sm" },
+  children: [
+    ...section("webinars", "Live online", "Webinars", webinars),
+    ...section("in-person", "Meet in person", "Events", inPerson),
+    ...section("consultations", "One to one", "Consultations", oneToOne),
+  ],
+};
+---
+
+<Base theme={theme} accent={settings?.theme?.accent} title={`Live sessions and events — ${site.tenant.name}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  {chrome.header && <Render doc={withSessionLink(chrome.header, Astro.cookies.has(SESSION_COOKIE))} data={site} />}
+  <main id="main" tabindex="-1">
+    <header class="u-container u-events-head">
+      <h1>Live sessions and events</h1>
+    </header>
+    <Render doc={doc} data={site} />
+  </main>
+  {chrome.footer && <Render doc={chrome.footer} data={site} />}
+</Base>
+```
+
+Conventions this shows:
+
+- **Data on the server.** `apiFor(tenant, token?)` is a `createClient(...)` pointed at the tenant
+  API. Wrap public data in `publicData(tenant, name, fetcher)` so it goes through the
+  stale-while-revalidate cache. Learner data is cached per session under a key derived from the
+  token, with short lifetimes (`getProfile` 10 minutes, `getAllProgress` 20 seconds), and progress
+  is dropped after writes through the BFF. Catch failures of optional data so the page still renders.
+- **No invented facts.** Map API responses to the view model in `src/lib/view-model.ts` and bind
+  to it; do not hard-code numbers, ratings or quotes.
+- **Layout and landmarks.** `Base` sets the theme (`--ulams-*` variables, accent adjusted for AA
+  contrast), the skip link and the demo badge. Keep one `<main id="main">` and one `<h1>`.
+- **Styles.** Scoped `<style>` in the page or component, using `var(--ulams-*)` tokens only.
+
+## 2. SDK calls
+
+If the API call is not in the SDK yet, add it to `createClient` in `front/sdk/src/client.ts`. Paths
+are typed against the generated OpenAPI paths (`ApiPath`), so the endpoint must be documented and
+`openapi.ts` regenerated ([OpenAPI and the SDK](/developers/openapi-and-sdk/)):
+
+```ts
+consultations: {
+  list: (query: { per_page?: number } = {}) => request<Consultation[]>("GET", "/api/consultations", { query }),
+  get: (id: number) => request<Consultation>("GET", "/api/consultations/{id}", { params: { id } }),
+},
+```
+
+Response types are written by hand in `front/sdk/src/types.ts`. Add a Vitest case in
+`front/sdk/tests/client.test.ts`.
+
+If the browser has to call the API (an interactive component), it goes through the BFF at
+`/bff/api/...`, which adds the httpOnly session token. Only calls in `BFF_RULES`
+(`front/web/src/lib/bff.ts`) are forwarded; add a rule for the new call and a test in
+`tests/unit/server.test.ts`.
+
+## 3. A new catalogue component (when needed)
+
+Prefer existing components: the list with props is in the [UI catalogue](/reference/ui-catalogue/)
+(or `corepack yarn workspace @ulams/ui catalogue` for JSON). A new one needs three things in
+`front/ui`, and the registry test checks all of them:
+
+<Steps>
+
+1. **Registry entry** in `src/registry.ts`: a description written for the model, a category
+   (`structure`, `section`, `course`, `learning`), whether it is interactive (ships JS) and takes
+   children, a JSON Schema of flat, explicit props (enums with defaults), and a plain-text fallback.
+
+   ```ts
+   Callout: {
+     description: "Highlighted note inside a lesson: a tip, a warning or a key idea.",
+     category: "learning",
+     interactive: false,
+     children: false,
+     props: obj(
+       {
+         tone: oneOf(["tip", "warning", "key"], "Kind of note", "tip"),
+         title: text("Title", { maxLength: 120 }),
+         text: text("Text", { maxLength: 1000 }),
+       },
+       ["text"]
+     ),
+     fallback: (p) => join(p.title, p.text),
+   },
+   ```
+
+   Every non-structure component gets an optional `id` prop (section anchor) added by a loop at
+   the end of the registry; declare it yourself only to give it a default.
+
+2. **Astro component** `src/components/<Name>.astro` with matching `Props`, styled with
+   `var(--ulams-*)` tokens. Interactive behaviour goes in a web component in `src/elements/`.
+
+3. **Mapping** in `src/Node.astro`: `import <Name> from "./components/<Name>.astro"` and add it
+   to the `COMPONENTS` map.
+
+</Steps>
+
+`tests/registry.test.ts` fails if a registered component has no Astro file or no import in
+`Node.astro`, has a description of 20 characters or less, defaults that do not validate, or an
+enum default outside its enum. Add
+schema or rendering cases to `tests/render-core.test.ts` when the component has special props.
+More: [UI components](/extending/ui-components/).
+
+## 4. Tests
+
+<Steps>
+
+1. **Unit** (Vitest): view-model mappers in `front/web/tests/unit/view-model.test.ts`; documents
+   are checked against the catalogue in `docs.test.ts`.
+
+2. **Smoke** (Playwright): `front/web/tests/e2e/smoke.spec.ts` loads every tenant; add an
+   assertion for the new page if it has tenant-specific content.
+
+3. **Accessibility**: add the page to `PAGES` in `front/web/tests/e2e/a11y.spec.ts`. It runs axe
+   with the WCAG 2.2 AA tags on desktop and on a 360 px phone viewport. Learner-facing UI must
+   pass WCAG 2.2 AA.
+
+</Steps>
+
+```bash
+corepack yarn workspace @ulams/web test
+corepack yarn workspace @ulams/ui test
+corepack yarn dev:web &                  # or build + start for production numbers
+corepack yarn test:web:e2e
+corepack yarn turbo run typecheck lint --filter=@ulams/web --filter=@ulams/ui --filter=@ulams/sdk
+```
+
+<Aside type="caution">
+CI does not run the `@ulams/web`, `@ulams/ui` or `@ulams/sdk` tasks yet (see [CI](/developers/ci/)).
+Run them locally before you open a pull request.
+</Aside>
+
+For pages on the critical path (landing, course, lesson), check the budget with
+`corepack yarn workspace @ulams/web perf` ([Performance](/developers/performance/)). The docs
+coverage check expects every learner route to be listed in some page's `learnerRoutes`.

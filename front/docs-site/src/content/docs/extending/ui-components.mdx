@@ -1,0 +1,142 @@
+---
+title: A UI catalogue component
+description: Add a component to the @ulams/ui catalogue, with its JSON schema in the registry, the Astro component, a plain-text fallback and the tests that check them.
+sidebar:
+  order: 3
+modules:
+  - ui
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+`@ulams/ui` (`front/ui`) is the catalogue of components that a page document may use. A
+document is a tree of `{ "component": "<Name>", "props": { … }, "children": [ … ] }` nodes, the
+tree form of an A2UI v0.9 surface (ADR 0008). The reference frontend builds documents from API
+data, and agents generate them. `<Render doc={…} data={…} />` validates each node against the
+registry and renders the matching Astro component. Generated UI stays declarative: a model
+picks components and props from this catalogue and never writes markup.
+
+The current components are listed in the [UI catalogue reference](/reference/ui-catalogue/),
+generated from the same registry. See also [Generative UI](/developers/generative-ui/).
+
+## The pieces
+
+| File | Role |
+|---|---|
+| `front/ui/src/registry.ts` | one `ComponentSpec` per component: description, category, props schema, fallback |
+| `front/ui/src/components/<Name>.astro` | the implementation |
+| `front/ui/src/Node.astro` | maps each name to its component (`COMPONENTS`) |
+| `front/ui/src/elements/<name>.ts` | optional web component for client-side behaviour |
+| `front/ui/src/render-core.ts` | bindings, validation, defaults, fallbacks (framework-free) |
+| `front/ui/tests/` | Vitest tests, including `registry.test.ts` |
+
+## ComponentSpec
+
+```ts
+export interface ComponentSpec {
+  /** What the component is for, written for the model. */
+  description: string;
+  category: "structure" | "section" | "course" | "learning";
+  /** Whether it ships client-side JS (a web component). */
+  interactive: boolean;
+  /** Whether it renders `children`. */
+  children: boolean;
+  props: JsonSchema;
+  /** Plain-text rendering, used for invalid props, unknown clients and text-only channels. */
+  fallback: (props: Record<string, unknown>) => string;
+}
+```
+
+`props` is a JSON Schema subset (`front/ui/src/schema.ts`): `type`, `enum`, `const`, `default`,
+`properties`, `required`, `additionalProperties`, `items`, `minItems`/`maxItems`,
+`minLength`/`maxLength`, `minimum`/`maximum`, `format` (`href` or `date-time`) and `examples`.
+Use the helpers at the top of `registry.ts`: `text`, `href`, `int`, `bool`, `oneOf`, `list`, `obj`,
+and the shared `LINK` and `IMAGE` schemas. A real entry:
+
+```ts
+Callout: {
+  description: "Highlighted note inside a lesson: a tip, a warning or a key idea.",
+  category: "learning",
+  interactive: false,
+  children: false,
+  props: obj(
+    {
+      tone: oneOf(["tip", "warning", "key"], "Kind of note", "tip"),
+      title: text("Title", { maxLength: 120 }),
+      text: text("Text", { maxLength: 1000 }),
+    },
+    ["text"]
+  ),
+  fallback: (p) => join(p.title, p.text),
+},
+```
+
+Every component outside the `structure` category gets an optional `id` prop (an anchor for
+in-page links) added automatically after the registry is declared.
+
+## Rules for props
+
+These rules are in the registry's header comment, which is written for the model:
+
+- Props are flat and explicit, with no hidden context. Enum values come from a closed list.
+- Links and image sources are relative, `#anchor`, http(s), `mailto` or `tel` (`format: "href"`).
+- Text is plain text. Only `Prose.markdown` takes Markdown, and raw HTML in it is escaped.
+- Any prop may be a data binding `{ "$data": "/json/pointer", "$default": … }`, resolved against the
+  page's data model before validation.
+- Give every string a `maxLength` and every list a `maxItems`. A generated document cannot
+  then blow up the layout.
+
+## Fallbacks
+
+`prepare()` in `render-core.ts` never throws. An unknown component, a document deeper than 12
+levels or props that fail validation render `Fallback.astro`: the string from your
+`fallback(props)`, one paragraph per line. Containers (`children: true`) render no text of their
+own and keep rendering their children. Write the fallback so the content survives as text: titles,
+labels and the URL of an embed. The same function serves text-only channels.
+
+## Add a component
+
+<Steps>
+
+1. **Registry**: add the entry to `registry` in `front/ui/src/registry.ts`, in its category's
+   group. Write `description` for a model that has never seen the component: what it is for and
+   which children it takes.
+
+2. **Component**: create `front/ui/src/components/<Name>.astro`. Its `Props` match the schema.
+   Validated props arrive with defaults applied. Style it with `var(--ulams-*)` tokens only, so
+   the tenant themes (`src/styles/themes/*.css`) apply, and meet WCAG 2.2 AA (labels, visible focus,
+   contrast, target size).
+
+3. **Map it**: import it in `front/ui/src/Node.astro` and add it to `COMPONENTS`. The
+   `Record<ComponentName, …>` type fails the typecheck if a registry entry has no implementation.
+
+4. **Interactive behaviour**, if any: write a custom element in `front/ui/src/elements/<name>.ts`
+   (`class … extends HTMLElement`, guarded `customElements.define`), import it from a `<script>`
+   in the Astro component, and set `interactive: true`. Learning components that finish a topic
+   call `announceComplete(source)` from `elements/bff.ts`. Browser calls go through the `bff`
+   client to `/bff/...`, never straight to the API.
+
+5. **Tests**: `tests/registry.test.ts` checks every entry automatically. Each entry must have
+   a component file imported in `Node.astro` and a description over 20 characters. When no prop
+   is required, `{}` must validate. Enum defaults must be in the enum, and every non-structure
+   component must have an `id` prop. Add cases to `tests/render-core.test.ts` when the component
+   has bindings or fallbacks worth pinning.
+
+6. **Check and print**:
+
+   ```bash
+   corepack yarn workspace @ulams/ui test
+   corepack yarn workspace @ulams/ui typecheck
+   corepack yarn workspace @ulams/ui catalogue   # the registry as JSON, for prompts and tools
+   ```
+
+7. **Use it**: place it in a document, for example a `case` in `topicDoc`
+   (`front/web/src/lib/page-docs.ts`) for a [new topic type](/extending/new-topic-type/).
+
+</Steps>
+
+<Aside>
+The roadmap lists UI catalogue components as a plugin extension point (Phase 7.4). Today a new
+component is a change to `front/ui` itself. Model-written code is allowed only inside the
+sandboxed `simulation` component, which is not built yet.
+</Aside>

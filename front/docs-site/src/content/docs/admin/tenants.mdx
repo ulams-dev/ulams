@@ -1,0 +1,207 @@
+---
+title: Tenants
+description: Create, list, update and delete tenants with the ulams:tenant commands, each with its own database, bucket, keys and theme.
+modules:
+  - tenancy
+sidebar:
+  order: 40
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+One ulams API deployment serves the **platform** and any number of **tenants**. Each tenant
+has its own hosts, database, storage bucket, encryption and token keys, Redis prefix and
+theme. Tenants are managed from the command line on the platform; there is no admin screen
+for them.
+
+This page is for operators who create and maintain tenants. For how tenant resolution works
+inside the code, see [Tenancy](/developers/tenancy/) and
+[ADR 0007](/decisions/0007-tenancy-package/).
+
+## What a tenant gets
+
+For a tenant with the slug `coffee`, with the default naming:
+
+| Resource | Value |
+|---|---|
+| API | `http://coffee.localhost` |
+| Learner front | `http://coffee.app.localhost` |
+| Admin panel | `http://coffee.admin.localhost` |
+| Content origin | `http://coffee.content.localhost` (written as `CONTENT_ORIGIN`) |
+| PostgreSQL role and database | `ulams_coffee` |
+| MinIO/S3 bucket | `ulams-coffee`, public read |
+| Env file | `.env.coffee.localhost` on top of the platform `.env` |
+| Storage directory | `storage/coffee_localhost/` |
+| Passport keys | `storage/coffee_localhost/oauth-*.key` |
+| Redis prefix | `ulams_coffee_` (cache `ulams_coffee_cache`, Horizon `ulams_coffee_horizon:`) |
+| E-mail domain | `coffee.ulams.app` (sender `no-reply@coffee.ulams.app`) |
+
+Every tenant has its own `APP_KEY` and Passport key pair, so a token issued by one tenant is
+rejected by every other. The tenant also gets its own LTI signing keys and its own
+`H5P_INTERNAL_TOKEN` for calls between the API and the H5P service.
+
+The **content origin** is a separate host that serves only SCORM, cmi5 and similar packages
+and their players: no cookies and no API. Uploaded package code therefore never runs on the
+API or front origin.
+
+The registry is the `tenants` table in the platform database. Secrets in it (database
+password, `APP_KEY`, Passport keys) are encrypted with the platform `APP_KEY`. The env files,
+domain registrations and key files are derived from that table and can be rebuilt at any
+time (see [sync-env](#rebuild-env-files-ulamstenantsync-env)).
+
+<Aside type="caution">
+A request to a host that is neither a platform host (`TENANCY_PLATFORM_HOSTS`) nor a
+registered tenant gets a 404. Without this, the multi-domain library would serve the unknown
+host with the platform configuration. In Kubernetes, add the hosts used by health checks to
+`TENANCY_PLATFORM_HOSTS`.
+</Aside>
+
+## Commands
+
+All `ulams:tenant:*` commands run **on the platform**, without `--domain`. They refuse to run
+inside a tenant. In the Docker setup prefix them with `docker compose exec api`.
+
+### Create or update a tenant: `ulams:tenant:create`
+
+```bash
+php artisan ulams:tenant:create coffee \
+  --name="The Coffee Atlas" --theme=coffee --accent="#C2552D" --users=5
+```
+
+| Argument / option | Meaning |
+|---|---|
+| `slug` | Lowercase letters and digits. Used for the hosts, database and bucket names. |
+| `--name=` | Display name: `APP_NAME`, the mail sender name and the `global.companyName` setting. |
+| `--theme=` | Front theme preset key, stored as the `theme.theme` setting. The reference front knows `coffee`, `oncall` and `nightsky`. Letters, digits, `-` and `_`, up to 40 characters. |
+| `--accent=` | Accent colour as `#RRGGBB`, stored as the `theme.accent` setting. |
+| `--users=5` | Number of demo students to create (default 5). |
+| `--demo=on` / `--demo=off` | Turns [demo mode](/admin/demo-mode/) on or off (`DEMO_MODE` in the env file). |
+| `--redo=<step>` | Runs a step again even if it is recorded as done. Repeatable. |
+
+The command is **resumable**. Each finished step is recorded on the tenant row
+(`tenants.steps`). If a step fails, the tenant is marked `failed`, the error is printed, and
+running the same command again continues from the first unfinished step.
+
+Running it for an existing tenant updates it. Changing `--name`, `--theme` or `--accent`
+rewrites the env file and re-runs the `demo` step (which stores the settings). Changing only
+`--demo` rewrites only the env file.
+
+The steps, in order:
+
+| Step | What it does |
+|---|---|
+| `database` | Creates the PostgreSQL role and database through the `pgsql_admin` connection (needs `CREATEROLE`/`CREATEDB`). |
+| `bucket` | Creates the bucket and a public read policy. |
+| `env` | Registers the host and writes `.env.<host>`. |
+| `migrate` | `migrate --force` in the tenant database. |
+| `passport_keys` | Generates the Passport key pair; an encrypted copy is stored on the tenant row. |
+| `passport_client` | Creates the personal access client. |
+| `permissions` | Seeds roles and permissions and creates the admin user. |
+| `lti_keys` | Creates the tenant's LTI signing keys (`ulams:lti:rotate-keys --init`, see [LTI](/admin/lti/)). |
+| `demo` | Creates the tutor and the students and stores the name, front URL, theme and accent settings. |
+
+Every step from `migrate` on runs as a child process `php artisan … --domain=<host>`, so it
+uses the tenant configuration and not the platform one. Child processes time out after
+`TENANCY_PROCESS_TIMEOUT` seconds (default 900).
+
+When it finishes, the command prints the tenant URLs and the seeded accounts:
+
+- `admin@<slug>.ulams.app` (admin)
+- `tutor@<slug>.ulams.app` (tutor)
+- `student1@<slug>.ulams.app` … `studentN@<slug>.ulams.app`
+
+All of them get the password from `TENANT_DEMO_PASSWORD` (default `secret`). This is meant
+for development; change the passwords of any tenant that is not a throwaway demo.
+
+<Aside type="note">
+The help text of `--redo` lists every step except `lti_keys`, but the command accepts any
+step name from the table above.
+</Aside>
+
+### List tenants: `ulams:tenant:list`
+
+```bash
+php artisan ulams:tenant:list
+php artisan ulams:tenant:list --hosts
+```
+
+The table shows slug, name, theme, demo mode, status (`provisioning`, `active`, `failed`),
+the API, front and admin hosts, and the finished steps (for example `9/9`). With `--hosts`
+it prints only the API hosts of active tenants, one per line; the worker scripts use this.
+
+A tenant created before a step was added (for example `lti_keys`) shows fewer finished
+steps, such as `8/9`. Run `ulams:tenant:create <slug>` again to run the missing step.
+
+### Rebuild env files: `ulams:tenant:sync-env`
+
+```bash
+php artisan ulams:tenant:sync-env
+php artisan ulams:tenant:sync-env --migrate
+```
+
+Rebuilds the `.env.<host>` files, domain registrations and Passport key files of every
+tenant from the `tenants` table. `--migrate` also runs pending migrations in every tenant
+database. The container start script (`api/init.sh`) runs it with `--migrate` after the
+platform migrations, so a fresh container or pod gets all tenants back. It runs without
+`--migrate` when `DISABLE_DB_MIGRATE=true`, and not at all when `DISABLE_TENANT_SYNC=true`.
+
+Because the env files are generated, edit tenant values through `ulams:tenant:create`, not
+by hand: hand edits are overwritten on the next sync.
+
+### Delete a tenant: `ulams:tenant:delete`
+
+```bash
+php artisan ulams:tenant:delete coffee --force
+```
+
+Without `--force` the command refuses. With it, it drops the database and role, the bucket
+contents, the env file, the storage directory and the tenant's Redis keys. This cannot be
+undone.
+
+## Typical workflow
+
+<Steps>
+
+1. Create the tenant on the platform:
+   `docker compose exec api php artisan ulams:tenant:create acme --name="Acme Academy" --theme=coffee --accent="#1F6FEB"`
+2. Make the hosts resolve. Locally, `*.localhost` resolves to `127.0.0.1` on most systems;
+   otherwise add `acme.localhost`, `acme.app.localhost`, `acme.admin.localhost` and
+   `acme.content.localhost` to `/etc/hosts`.
+3. Open `http://acme.admin.localhost` and log in as `admin@acme.ulams.app`.
+4. Queue workers and the scheduler pick the new tenant up on their next pass; no restart is
+   needed.
+
+</Steps>
+
+## Configuration
+
+Platform environment variables of the tenancy package (defaults in
+[`api/packages/tenancy/src/config.php`](https://github.com/ulams-dev/ulams/blob/main/api/packages/tenancy/src/config.php)):
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `TENANCY_PLATFORM_HOSTS` | `api.localhost,localhost,127.0.0.1,caddy,api` | Hosts served with the platform `.env`. |
+| `TENANCY_ENFORCE_HOSTS` | `true` | Answer 404 to unknown hosts. |
+| `TENANCY_SCHEME` | `http` | Scheme of the generated URLs. |
+| `TENANCY_API_HOST`, `TENANCY_FRONT_HOST`, `TENANCY_ADMIN_HOST`, `TENANCY_CONTENT_HOST` | `{slug}.localhost`, `{slug}.app.localhost`, `{slug}.admin.localhost`, `{slug}.content.localhost` | Host patterns. |
+| `TENANCY_EMAIL_DOMAIN` | `{slug}.ulams.app` | Domain of the seeded accounts and the mail sender. |
+| `TENANCY_DATABASE`, `TENANCY_BUCKET`, `TENANCY_REDIS_PREFIX` | `ulams_{slug}`, `ulams-{slug}`, `ulams_{slug}_` | Resource names. |
+| `TENANCY_STORAGE_PUBLIC_URL` | `http://storage.localhost` | Public base URL of the object store; the bucket name is appended. |
+| `TENANCY_S3_ENDPOINT`, `TENANCY_S3_REGION`, `TENANCY_S3_KEY`, `TENANCY_S3_SECRET` | the `AWS_*` values | Object store used to create buckets. |
+| `TENANCY_ADMIN_CONNECTION` | `pgsql_admin` | Database connection with rights to create roles and databases. |
+| `TENANT_DEMO_PASSWORD` | `secret` | Password of the seeded accounts. Development only. |
+| `TENANCY_PROCESS_TIMEOUT` | `900` | Timeout of each child `artisan` process, in seconds. |
+
+See also [Environment variables](/reference/environment-variables/) and
+[Artisan commands](/reference/artisan-commands/).
+
+## Known limitations
+
+- All tenants use the same object store credentials; isolation is per bucket, not per key.
+- There is no admin UI or API for tenants; they are managed only through the CLI.
+- Theme presets are defined in the frontends. The reference front (`front/web`) uses the
+  `theme.theme` setting if it is a known preset, else the slug if that names a preset, else
+  `coffee`.
+- The older setup that declares domains through `MULTI_DOMAINS` environment variables still
+  works; see [api/docs/multidomain.md](https://github.com/ulams-dev/ulams/blob/main/api/docs/multidomain.md)
+  and the [tenancy package README](https://github.com/ulams-dev/ulams/blob/main/api/packages/tenancy/README.md).

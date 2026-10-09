@@ -1,0 +1,86 @@
+---
+title: API reference
+description: Where to find the ulams REST API reference (Swagger UI, the generated spec, SDK types, the endpoint index) and why the docs site does not embed the spec.
+sidebar:
+  order: 10
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+The API is documented with OpenAPI annotations (`darkaonline/l5-swagger`, swagger-php) on the
+controllers of the app and the packages. There are four ways to read it.
+
+| What | Where | Best for |
+|---|---|---|
+| Swagger UI | `/api/documentation` on any API host | Trying endpoints against a running tenant |
+| OpenAPI JSON | `storage/api-docs/api-docs.json` inside the API container | Tools, code generation |
+| TypeScript path types | `front/sdk/src/generated/openapi.ts` | Typed requests in `@ulams/sdk` |
+| Endpoint index | [API endpoints](/reference/api-endpoints/) on this site | Finding which package owns a route |
+
+## Swagger UI
+
+Every API host serves the UI at `/api/documentation` (`routes.api` in
+[`api/config/l5-swagger.php`](https://github.com/ulams-dev/ulams/blob/main/api/config/l5-swagger.php)):
+
+- platform: `http://api.localhost/api/documentation`
+- tenant: `http://coffee.localhost/api/documentation`
+
+Use **Authorize** with a token from `POST /api/auth/login` to call authenticated endpoints. The host
+decides the tenant, so requests made from the coffee host hit coffee's database
+([Tenancy](/developers/tenancy/)). Unknown hosts get 404 before Laravel routes the request.
+
+## Generating the spec
+
+The spec is built from annotations in `app/` and in the `src/` of every package listed under
+`annotations` in `api/config/l5-swagger.php`. A new package with documented endpoints must be added
+to that list.
+
+```bash
+make swagger-generate
+# runs: docker compose exec api bash -c "XDEBUG_MODE=off php artisan l5-swagger:generate"
+```
+
+The output is `api/storage/api-docs/api-docs.json`. It is listed in `api/.gitignore`, so it is not in
+the repository: every checkout and every container builds its own. `L5_SWAGGER_GENERATE_ALWAYS`
+(default `true` in the config) regenerates it when the documentation is requested.
+
+<Aside type="note">
+  Many annotations describe parameters but not response bodies. The spec is complete enough to type
+  request paths, not responses; completing it is roadmap item 7.3.
+</Aside>
+
+## SDK types
+
+`@ulams/sdk` generates path types from that file:
+
+```bash
+make swagger-generate                       # in the API container
+yarn workspace @ulams/sdk generate          # openapi-typescript ../../api/storage/api-docs/api-docs.json
+```
+
+The result, `front/sdk/src/generated/openapi.ts`, is committed. `ApiPath` (`keyof paths`) types every
+request the client makes; response shapes are hand-written in `front/sdk/src/types.ts` until the spec
+documents them. Regenerate after changing routes or annotations. The workflow is described in
+[OpenAPI and SDK](/developers/openapi-and-sdk/) and the client in
+[Reference frontend](/developers/reference-frontend/#ulamssdk).
+
+## Endpoint index on this site
+
+[API endpoints](/reference/api-endpoints/) lists every route by package, generated when the site is
+built from the packages' route files. It shows methods, paths and the owning package, not request
+and response schemas; follow it to Swagger UI for those.
+
+## Why the site does not embed the OpenAPI spec
+
+Starlight has OpenAPI plugins that render a spec as pages. We do not use one, because:
+
+- the spec is generated at runtime inside the API container (PHP, swagger-php, the full Laravel app)
+  and is not committed, so the docs build would need a running API, or a copy that drifts;
+- the docs site builds on its own (Node only, in CI and on GitHub Pages) and must not depend on the
+  API image;
+- the spec is incomplete for responses, so rendered pages would look authoritative while missing
+  most of the useful content.
+
+The endpoint index is therefore generated statically from the route files in `api/packages/*`, which
+are in the repository, and Swagger UI on a running API stays the full reference. When the spec is
+complete and published as a build artefact (roadmap 7.3), embedding it can be reconsidered.

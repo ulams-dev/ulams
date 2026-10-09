@@ -1,0 +1,88 @@
+---
+title: Notifications
+description: How ulams records in-app notifications for platform events, how to read them in the admin panel, and how to send bulk push messages to users.
+sidebar:
+  order: 9
+modules:
+  - notifications
+  - bulk-notifications
+adminRoutes:
+  - /users/notifications/**
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+ulams has three ways of telling people that something happened:
+
+| Kind | What it is | Where it is managed |
+|---|---|---|
+| Templated messages | Emails, SMS and PDFs generated from templates when an event fires | [Templates](/admin/templates/) |
+| In-app notifications | A record of each event, stored for the user it concerns | this page, and Analytics → Notifications |
+| Push messages | Messages an administrator writes and sends to mobile devices | Users → Notifications (this page) |
+
+## In-app notifications
+
+The [notifications](/reference/packages/notifications/) package listens to every event of the
+`Ulams\…` packages and stores it as a database notification for the user the event concerns
+(for example `CourseAssigned` for the learner who was assigned). Events listed in the
+package's configuration are not stored.
+
+- **Learners** read their own notifications through `GET /api/notifications` and mark them
+  as read (`POST /api/notifications/{id}/read`, `POST /api/notifications/read-all`).
+- **In the admin panel**, the bell in the top bar shows your own notifications, with a
+  **Read all** action.
+- **Analytics → Notifications** (`/analytics/notifications`) lists the notifications of all
+  users. It needs the
+  `dashboard-app_notification-list_access` permission and is described in
+  [Reports and analytics](/admin/reports-and-analytics/).
+
+The list of event names is available at `GET /api/admin/notifications/events`; the events
+themselves are listed in [Events and notifications](/reference/events-and-notifications/).
+
+## Push messages
+
+**Users → Notifications** sends push messages through Firebase Cloud Messaging with the
+[bulk-notifications](/reference/packages/bulk-notifications/) package. Only users whose
+device has registered a push token receive them: a mobile or web app registers the token with
+`POST /api/notifications/tokens` after the user signs in (permission `device-token_create`).
+
+| Screen | Route | Permission needed to see it |
+|---|---|---|
+| Sent push messages | `/users/notifications`, `/users/notifications/push` | `bulk-notification_list` |
+| New push message | `/users/notifications/push/new` | `bulk-notification_create` |
+
+<Screenshot name="admin-users-notifications" alt="The list of sent push messages" />
+
+The list shows each delivery: ID, the recipient's user ID, the title and the content.
+
+### Sending a push message
+
+<Screenshot name="admin-users-notifications-template-id" alt="The new push message form" />
+
+<Steps>
+
+1. Open **Users → Notifications** and click **New**.
+2. Enter the **Title** and the **Content**.
+3. Choose **Users**, or leave the field empty to send to every user with a registered device.
+4. Optionally add a **Redirect URL** (opened when the message is tapped) and an
+   **Image URL**.
+5. Click **Submit**. The message is sent immediately; it cannot be scheduled or recalled.
+
+</Steps>
+
+With users selected the panel calls `POST /api/admin/bulk-notifications/send`; without, it
+calls `POST /api/admin/bulk-notifications/send/multicast`.
+
+### Configuration
+
+Set these keys on the **Package Bulk Notifications** tab of [Settings](/admin/settings/):
+
+- `ulams_bulk_notifications.push.service_account`: the Firebase service account JSON of the
+  project your apps use.
+- `ulams_bulk_notifications.push.base_redirect_url`: the base URL for redirect links.
+
+<Aside>
+Push messages reach only devices whose app has registered a token. Check that your learner
+app calls the token endpoint before relying on this channel.
+</Aside>

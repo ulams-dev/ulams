@@ -1,0 +1,59 @@
+---
+title: Learners
+description: What learners see in ulams - the server-rendered reference frontend used by the demo academies, and the legacy React learner app.
+sidebar:
+  order: 0
+modules:
+  - web
+---
+
+import { Aside, LinkCard, CardGrid } from "@astrojs/starlight/components";
+
+Learners use a tenant's learner site, for example http://coffee.app.localhost. This section
+describes it page by page, as it is implemented.
+
+## Two learner frontends
+
+| | Reference frontend | Legacy React app |
+|---|---|---|
+| Folder | `front/web` (`@ulams/web`) | `front/src` (workspace `front`) |
+| Built with | Astro, server-rendered, almost no client JavaScript | React 18 single-page app, Vite |
+| Local URL | `http://<slug>.app.localhost` (Caddy) or port 4321 | port 3000 |
+| Status | Default learner site; used by the demo academies | Kept for features the reference frontend does not have yet |
+
+The reference frontend was introduced by [ADR 0008](/decisions/0008-reference-frontend/). It
+renders every page on the server, themes each tenant from its API settings, and keeps the
+learner's API token in an httpOnly cookie. It covers the landing page, the course page, the
+lesson player, quizzes, the finish page, events, the account page and sign-in. Cart and checkout,
+registration, password reset, certificates as files, notes and bookmarks, and booking are still
+only in the [legacy React app](/learners/legacy-react-app/).
+
+Developers: the technical side (BFF, H5P proxy, caching, SDK) is in
+[reference frontend](/developers/reference-frontend/).
+
+## Pages in this section
+
+<CardGrid>
+  <LinkCard title="Home and landing pages" description="The tenant landing, the platform product page and the demo picker." href="/learners/home/" />
+  <LinkCard title="Course page" description="Course facts, program, description, progress and the enrol card." href="/learners/course-page/" />
+  <LinkCard title="Signing in and out" description="Password sign-in, the demo student and logging out." href="/learners/signing-in/" />
+  <LinkCard title="Course player" description="How each topic type renders, progress, completion and the finish page." href="/learners/course-player/" />
+  <LinkCard title="Events" description="Webinars, in-person events and 1:1 consultations." href="/learners/events/" />
+  <LinkCard title="Account" description="Profile and my courses with progress." href="/learners/account/" />
+  <LinkCard title="Error pages" description="The branded 404 and 500 pages." href="/learners/error-pages/" />
+  <LinkCard title="Notes and bookmarks" description="Per-topic notes and bookmarks, and where they are available." href="/learners/notes-and-bookmarks/" />
+  <LinkCard title="Arriving from another LMS (LTI)" description="Launching a ulams course from Moodle, Canvas or another LTI 1.3 platform." href="/learners/lti-launch/" />
+  <LinkCard title="Legacy React app" description="What the old learner app still does and how it differs." href="/learners/legacy-react-app/" />
+</CardGrid>
+
+<Aside type="note">
+The demo academies log every visitor in as the same demo student and reset every hour. Pages
+in this section say where demo behaviour differs from a normal tenant. See
+[demo academies](/getting-started/demos/).
+</Aside>
+
+## Accessibility
+
+Learner-facing UI targets WCAG 2.2 AA. The reference frontend has a skip link, landmarks,
+visible focus, reduced motion support and a layout that works at 360 px. Its Playwright suite
+runs an axe scan of every page type on desktop and phone sizes; the scan is not yet part of CI.

@@ -1,0 +1,68 @@
+---
+title: Teacher and competency challenges
+description: Admin screens for teacher subjects and competency challenges that are still in the panel but have no backend in this repository.
+adminRoutes:
+  - /teacher/**
+  - /competency-challenges/**
+needsReview: "Backends missing: ulams/pcg-integration, pcg-grades, pcg-attendances and ulams/competency-challenges are not in api/packages; decide whether to remove these admin screens or bring the packages in."
+sidebar:
+  order: 34
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+<Aside type="caution" title="No backend in this repository">
+The **Teacher** and **Competency challenges** screens are left over from the admin panel that
+ULAMS forked. They call API packages that are not in `api/packages`: `ulams/pcg-integration`,
+`ulams/pcg-grades`, `ulams/pcg-attendances` and `ulams/competency-challenges`. None of their
+endpoints exist and none of their permissions are seeded, so the menu items stay hidden on
+every tenant. This page records what the screens are so they are not mistaken for working
+features.
+</Aside>
+
+## Why the menus are hidden
+
+The admin panel asks `GET /api/core/packages` which packages are installed. That endpoint lists
+the modules in `api/packages` (from `api/packages/versions.json`) plus any installed composer
+packages under `ulams/`. The access rules in `admin/src/access.ts` require the matching package
+for each screen:
+
+| Screen | Needs package | Needs one of these permissions |
+|---|---|---|
+| Teacher → Subjects (`/teacher/subjects`) | `ulams/pcg-integration` | `pcg-integration_semester-subject_list`, `pcg-integration_semester_list`, `pcg-integration_academic-year_list` |
+| Subject details (`/teacher/subjects/:subjectId[/:tab]`) | `ulams/pcg-integration`, `ulams/pcg-grades`, `ulams/pcg-attendances` | grade, exam and attendance permissions such as `exam_list` or `attendance_list-admin` |
+| Competency challenges (`/competency-challenges/list`, `/competency-challenges/:id/:tab`) | `ulams/competency-challenges` | `competency-challenges_list`, `_read`, `_create`, `_update`, `_delete`, `competency-challenge-scale_*` |
+
+None of those packages is reported, so the screens are hidden whatever the user's role.
+
+## Teacher → Subjects
+
+<Screenshot name="admin-teacher-subjects" alt="The teacher subject list" />
+
+Written for a university integration ("PCG"): a tutor sees the semester subjects they teach.
+The subject view has tabs for groups, students, exams with results, schedule, a class register
+with attendance, the grade scale, final grades and a history of exported grade files. The
+screens call endpoints such as `/api/admin/semester-subjects`, `/api/admin/exams`,
+`/api/admin/final-grades`, `/api/admin/grade-terms`, `/api/admin/schedules` and
+`/api/admin/pcg-export`. None of them exists in this API.
+
+## Competency challenges
+
+<Screenshot name="admin-competency-challenges-list" alt="The competency challenge list" />
+
+A competency challenge is a `simple` or `complex` assessment built from quiz question
+categories, with scales that map results to levels and a diagnostic-test tab. The screens call
+`/api/admin/competency-challenges` and `/api/admin/competency-challenges/scales`, which do not
+exist in this API.
+
+## What is planned instead
+
+A competency framework per tenant, with AI-suggested tags that the author confirms and learner
+skill profiles, is on the [roadmap](/roadmap/) (Phase 6.6). It is a new design, not a revival of
+these screens.
+
+## Related settings
+
+The menu items can also be hidden with the `hideInMenu-Teacher`, `hideInMenu-TeacherSubjects`
+and `hideInMenu-Competency-challengesList` settings; see [Settings](/admin/settings/).

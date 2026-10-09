@@ -1,0 +1,52 @@
+---
+title: Notes and bookmarks
+description: Per-topic notes and bookmarks for learners - the bookmarks_notes API, where the legacy React app exposes it, and its absence from the reference frontend.
+sidebar:
+  order: 8
+modules:
+  - bookmarks_notes
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Learners can keep private notes and bookmarks on the topics of a course. The data lives in the
+`bookmarks_notes` package (`api/packages/bookmarks_notes`).
+
+<Aside type="caution" title="Not in the reference frontend">
+The reference frontend (`front/web`) has no notes or bookmarks UI yet. Learners can use them
+only in the [legacy React app](/learners/legacy-react-app/), or through the API.
+</Aside>
+
+## In the legacy React app
+
+- In the course player, a toolbar at the bottom of the screen has a notepad and a bookmark
+  button.
+- The notepad holds one note per topic. "Update" overwrites the note; saving an empty notepad
+  clears it. Notes are visible only to the learner who wrote them.
+- The bookmark button adds the current topic to the learner's bookmarks, or removes it when it
+  is already bookmarked. A message confirms each change.
+- `/user/my-bookmarks` in the profile lists all notes and bookmarks with links to the course and
+  topic, and lets the learner delete them.
+
+The package's [ADMIN.md](https://github.com/ulams-dev/ulams/blob/main/api/packages/bookmarks_notes/ADMIN.md)
+walks through these screens with screenshots (taken from the original EscolaLMS app).
+
+## How it works in the API
+
+Bookmarks and notes are one model: a note is a bookmark with a `value`; a bookmark has
+`value: null`. Each entry points at a bookmarkable item through `bookmarkable_type` and
+`bookmarkable_id` (the legacy app bookmarks topics).
+
+| Endpoint | Who | What |
+|---|---|---|
+| `GET /api/bookmarks` | Signed-in learner | List own notes and bookmarks (filter by type and ids) |
+| `POST /api/bookmarks` | Signed-in learner | Create a note or bookmark |
+| `PATCH /api/bookmarks/{id}` | Signed-in learner | Update own entry |
+| `DELETE /api/bookmarks/{id}` | Signed-in learner | Delete own entry |
+| `GET`, `POST`, `PATCH`, `DELETE /api/admin/bookmarks` | Administrator | The same for every user's entries |
+
+All routes need an API token. Students get the `bookmark_*-own` permissions
+(`bookmark_create-own`, `bookmark_update-own`, `bookmark_delete-own`, `bookmark_list-own`);
+administrators get `bookmark_create`, `bookmark_update`, `bookmark_delete` and `bookmark_list`.
+See the [API endpoints reference](/reference/api-endpoints/) for the request and response
+fields.

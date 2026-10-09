@@ -1,0 +1,194 @@
+---
+title: A new topic type
+description: Add a kind of lesson content end to end, from the content model and resources in the API to the admin form and rendering in the reference frontend.
+sidebar:
+  order: 2
+modules:
+  - topic-types
+  - courses
+  - sdk
+  - web
+topicTypes:
+  - OEmbed
+---
+
+import { Aside, Code, Steps } from "@astrojs/starlight/components";
+import oembed from "../../../../../../api/packages/topic-types/src/Models/TopicContent/OEmbed.php?raw";
+import oembedResource from "../../../../../../api/packages/topic-types/src/Http/Resources/TopicType/Client/OEmbedResource.php?raw";
+import projectProvider from "../../../../../../api/packages/topic-type-project/src/UlamsTopicTypeProjectServiceProvider.php?raw";
+import adminOembed from "../../../../../../admin/src/components/ProgramForm/ThreeColProgram/TopicForm/media/oembed.tsx?raw";
+
+A topic is one step of a lesson. Every topic has a polymorphic `topicable`: a content model
+that holds the type-specific data (a video file, a URL, a quiz). A topic type touches four
+places:
+
+| Layer | Where | What you add |
+|---|---|---|
+| API | your package (or `topic-types`) | content model, table, rules, resources, registration |
+| Admin | `admin/src/components/ProgramForm/ThreeColProgram/` | enum entry, selector button, form fields, icon |
+| SDK | `front/sdk/src/topics.ts`, `types.ts` | the short name to `TopicKind` mapping |
+| Reference frontend | `front/web/src/lib/page-docs.ts` | the catalogue document for the player, completion mode |
+
+The worked example is `OEmbed`: one `value` column holding a media URL. A type with its own
+tables, endpoints and events is `topic-type-project` (`Project`).
+
+## API: the content model
+
+A content model extends `Ulams\TopicTypes\Models\TopicContent\AbstractTopicContent`. That class
+extends the courses package's `AbstractTopicContent` (an Eloquent model implementing
+`TopicContentContract`). The contract has two methods:
+
+```php
+interface TopicContentContract
+{
+    public static function rules(): array;
+    public function topic(): MorphOne;
+}
+```
+
+The base class provides `topic()` (a `morphOne` to `Topic` as `topicable`), a fillable `value`
+and a default `fixAssetPaths()`. The `topic-types` version also dispatches
+`Ulams\TopicTypes\Events\TopicTypeChanged` when the content is created or its `value` changes.
+
+<Code code={oembed} lang="php" title="api/packages/topic-types/src/Models/TopicContent/OEmbed.php" />
+
+Notes:
+
+- **`rules()`** validates the request fields of this type when a topic is created or updated.
+  `TopicRepository` runs `Validator::make($request->all(), $class::rules())`, fills the model
+  with the validated attributes, saves it and attaches the topic. Validation errors come back
+  as a `TopicException` (`CONTENT_VALIDATION`).
+- **`getMorphClass()`** returns the class name, which is stored in `topics.topicable_type`.
+  Clients identify the type by that string.
+- **Files**: types with uploads (Video, Audio, PDF, Image) implement `TopicFileContentContract`.
+  The repository then accepts an upload or a stored path for each `getFileKeyNames()` field
+  and stores it under the course directory.
+- **Table**: a migration in your package creates the table (`topic_oembeds` here: `id`,
+  `value`, timestamps).
+
+## API: resources and registration
+
+Each type has up to three JSON resources, selected by context:
+
+| Key | Used by | For |
+|---|---|---|
+| `client` | `Ulams\Courses\Http\Resources\TopicResource` | learners (course program) |
+| `admin` | `TopicAdminResource` | the admin program editor |
+| `export` | `courses-import-export` | course export packages |
+
+Without a registered resource, the model is serialised as-is.
+
+<Code code={oembedResource} lang="php" title="api/packages/topic-types/src/Http/Resources/TopicType/Client/OEmbedResource.php" />
+
+Register the model and the resources in your provider's `boot()` through the `Topic` facade
+(`Ulams\Courses\Facades\Topic`, backed by `TopicRepository`):
+
+<Code code={projectProvider} lang="php" title="api/packages/topic-type-project/src/UlamsTopicTypeProjectServiceProvider.php" />
+
+`registerContentClass` silently ignores a class that does not exist or does not implement
+`TopicContentContract`. `GET /api/admin/topics/types` lists the registered classes. Creating a
+topic of an unregistered `topicable_type` fails with "Type '…' is not allowed".
+
+Topics are created and updated by the courses package (`POST /api/admin/topics`, multipart, with
+`lesson_id`, `title`, `topicable_type` and your type's fields). Do not insert topic rows
+yourself: your package only provides the content model.
+
+## Progress and completion
+
+Progress is per topic and user in `course_progress`, with `status` from
+`Ulams\Courses\Enum\ProgressStatus`: `INCOMPLETE = 0`, `COMPLETE = 1`, `IN_PROGRESS = 2`.
+
+- **From the client**: `PUT /api/courses/progress/{topic_id}/ping` marks the topic in progress
+  and adds time. `PATCH /api/courses/progress/{course_id}` with
+  `{"progress": [{"topic_id": 12, "status": 1}]}` sets the status (`ProgressService::update`).
+- **From the server**: when completion is decided by your package (a tracked player, a grade,
+  an external tool), call `CourseProgressRepositoryContract::updateInTopic($topic, $user, ProgressStatus::COMPLETE)`.
+  `topic-types/src/Listeners/CompleteScormTopics.php` does this for SCORM, and the LTI and
+  LiaScript packages do the same. Check that the user may attend the course first
+  (`Gate::forUser($user)->allows('attend', $course)`).
+
+On the transition to complete, `updateInTopic` dispatches `Ulams\Courses\Events\TopicFinished`
+and queues the lesson check (`CheckFinishedLessons`). `ProgressService::update` marks the
+course finished and dispatches `CourseFinished` when every topic is done. `TopicFinished` only
+fires when a progress row already exists and is not complete, so create it as `IN_PROGRESS`
+first, as `CompleteScormTopics` does.
+
+## Admin: the topic form
+
+The admin program editor is in `admin/src/components/ProgramForm/ThreeColProgram/`:
+
+<Steps>
+
+1. Add the class name to the `TopicType` enum in `admin/src/services/ulams/enums.ts`
+   (for example `OEmbed = 'Ulams\\TopicTypes\\Models\\TopicContent\\OEmbed'`).
+2. Add a button to `List/TopicTypesSelector.tsx`. Each type is hidden when the public setting
+   `disableTopicType-<EnumKey>` is true (`topicTypeToSettingName` in `admin/src/pages/Settings/global.tsx`
+   creates one switch per enum key).
+3. Add the form fields in `TopicForm/media/<type>.tsx` and render them in `TopicForm/index.tsx`
+   for your `TopicType`. The fields are sent with the topic, so their names must match your
+   `rules()`.
+4. Add an icon in `getTypeIcon` (`TopicForm/index.tsx`), keyed by the short class name.
+5. Add the label (the enum key) to `admin/src/locales/en-US.ts` and `pl-PL.ts`.
+
+</Steps>
+
+<Code code={adminOembed} lang="tsx" title="admin/src/components/ProgramForm/ThreeColProgram/TopicForm/media/oembed.tsx" />
+
+## Learner rendering in the reference frontend
+
+The lesson player is `front/web/src/pages/learn/[courseId]/[topicId].astro`. It loads the course
+program, picks the topic and renders `topicDoc(...)`, a [UI catalogue](/reference/ui-catalogue/)
+document, with `<Render doc={doc} />`. There is no per-type Astro page.
+
+<Steps>
+
+1. **SDK**: `topicKind()` in `front/sdk/src/topics.ts` maps the last segment of
+   `topicable_type`, lowercased, to a `TopicKind` through `KIND_BY_CLASS` (`oembed: "oembed"`).
+   Add your class there and to the `TopicKind` union in `front/sdk/src/types.ts`. Unknown
+   classes become `"unknown"`.
+2. **Document**: add a `case` to the `switch (kind)` in `topicDoc` (`front/web/src/lib/page-docs.ts`).
+   It builds catalogue nodes from `topic.topicable`, which is the output of your `client`
+   resource:
+
+   ```ts
+   case "oembed":
+     children.push({ component: "Embed", props: { url: str(t.value) ?? "", title: topic.title } });
+     if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
+     break;
+   ```
+
+   The `default` case renders a warning callout with the class name. If no existing component
+   fits, [add one to the catalogue](/extending/ui-components/).
+3. **Format**: add the kind to `FORMAT_BY_KIND` in `front/web/src/lib/view-model.ts` (the
+   format icon and label on course pages; `oembed` is `"embed"`).
+4. **Completion**: `completionMode(topic)` in `page-docs.ts` tells the `<ulams-progress>` element
+   (`front/ui/src/elements/progress.ts`) how the topic completes:
+
+   | Mode | Behaviour |
+   |---|---|
+   | `view` (default) | completes when the end of the content is in view (after 4 seconds) |
+   | `manual` | only the "Mark as complete" button |
+   | `media` | the player dispatches `ulams:complete` when playback ends |
+   | `h5p`, `quiz` | the player dispatches `ulams:complete` on a completing xAPI statement or a passed attempt |
+
+   Interactive components call `announceComplete(source)` from `front/ui/src/elements/bff.ts`.
+   The progress element then sends `PATCH /api/courses/progress/{course_id}` with status 1.
+   If your package completes topics on the server, use `manual`, so the page does not mark the
+   topic complete on view.
+
+</Steps>
+
+<Aside>
+The legacy React learner app (`front/src`) has its own players in
+`front/src/components/Courses/Course/Players`. New types only need the reference frontend
+unless you still ship the legacy app.
+</Aside>
+
+## Checklist
+
+- Content model, migration, `rules()`, `getMorphClass()`, factory.
+- `client`, `admin` and `export` resources, registered in `boot()`.
+- Feature tests: create a topic through `POST /api/admin/topics` with your type, read it as a
+  learner, and test completion. Add a tenant isolation test if you add endpoints.
+- Admin enum, selector, form, icon, labels.
+- SDK kind, `topicDoc` case, format, completion mode.

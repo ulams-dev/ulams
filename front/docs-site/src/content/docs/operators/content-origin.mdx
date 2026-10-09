@@ -1,0 +1,69 @@
+---
+title: Content origin
+description: Why SCORM, cmi5, Adapt and LiaScript packages are served from a separate per-tenant domain, and how to configure it in production.
+sidebar:
+  order: 5
+modules:
+  - uploads
+  - scorm
+  - cmi5
+  - liascript
+  - adapt
+  - tenancy
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Uploaded packages (SCORM, cmi5, Adapt builds, LiaScript) run arbitrary third-party JavaScript.
+ulams serves them from a **content origin**: a host per tenant that holds nothing but package
+files. It has no API routes, accepts and sets no cookies, and sends its own Content Security
+Policy. The full design is in
+[`api/docs/content-origin.md`](https://github.com/ulams-dev/ulams/blob/main/api/docs/content-origin.md);
+this page covers what an operator sets up.
+
+## Use a separate registrable domain
+
+The content origin must not share a registrable domain with the application. With the app on
+`*.lms.example.com`, put content on something like `*.example-content.net`, not on
+`*.content.lms.example.com`: package code on a same-site host weakens `SameSite` cookie protection
+and can set cookies for the parent domain. The development setup uses `*.content.localhost` only
+because everything there is local. The repository document records the separate domain as the
+production default, pending product-owner confirmation.
+
+## Configure it
+
+| Where | Setting | Example |
+|---|---|---|
+| `api` | `TENANCY_CONTENT_HOST` (tenants; written as `CONTENT_ORIGIN` into each env file) | `{slug}.example-content.net` |
+| `api` | `CONTENT_ORIGIN` (platform) | `https://platform.example-content.net` |
+| DNS | Wildcard on the content domain | `*.example-content.net`, `platform.example-content.net` |
+| Caddy | One site per content host, using the `content_origin` snippet | see the [example Caddyfile](/operators/self-hosting/#the-files) |
+
+Existing tenants pick up a changed `TENANCY_CONTENT_HOST` on the next
+`php artisan ulams:tenant:sync-env` (it runs on every `api` start). A tenant without
+`CONTENT_ORIGIN` falls back to the legacy SCORM player on the API origin.
+
+## What the proxy must do
+
+The `content_origin` snippet, copied from the development Caddyfile with HTTPS hosts:
+
+- answers only `GET` and `HEAD` for `/scorm/*`, `/cmi5/*`, `/adapt/*` and `/liascript/*`, and 404
+  for everything else;
+- rewrites them to `GET /api/content/...` on the tenant API (php-fpm) with
+  `Host`/`X-Forwarded-Host` set to the tenant API host and `X-Ulams-Content-Origin: 1`;
+- drops `Cookie` and `Authorization` on the way in and `Set-Cookie` on the way out;
+- sends `Content-Security-Policy` (scripts allowed, `connect-src` limited to the tenant API,
+  `frame-ancestors` limited to the tenant front and admin, `form-action 'none'`),
+  `X-Content-Type-Options: nosniff` and `Referrer-Policy: no-referrer`.
+
+The API sites strip `X-Ulams-Content-Origin` from client requests, and the API answers 404 to
+`/api/content/...` without it, so package HTML never runs on the API origin.
+
+<Aside type="caution" title="Slug from the host name">
+  The example Caddyfile reads the tenant slug as `{labels.2}`, the third label from the right.
+  That works for a content domain with exactly two labels (`example-content.net`). For a domain
+  such as `example-content.co.uk` use `{labels.3}`.
+</Aside>
+
+Serving package files straight from the bucket through a CDN with the same headers also works;
+the API route is the simple default because it covers local and bucket disks alike.
