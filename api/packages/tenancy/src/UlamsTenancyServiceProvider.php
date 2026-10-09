@@ -61,6 +61,7 @@ class UlamsTenancyServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
 
         $kernel = $this->app->make(HttpKernel::class);
         if (method_exists($kernel, 'prependMiddleware')) {

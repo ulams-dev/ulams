@@ -238,6 +238,7 @@
       "Ulams\\TemplatesSms\\Database\\Seeders\\": "packages/templates-sms/database/seeders",
       "Ulams\\Templates\\": "packages/templates/src",
       "Ulams\\Tenancy\\": "packages/tenancy/src",
+      "Ulams\\Tenancy\\Database\\Seeders\\": "packages/tenancy/database/seeders",
       "Ulams\\Demo\\": "packages/demo/src",
       "Ulams\\ExamplePlugin\\": "packages/example-plugin/src",
       "Ulams\\ExamplePlugin\\Database\\Seeders\\": "packages/example-plugin/database/seeders",

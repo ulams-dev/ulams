@@ -17,6 +17,8 @@ return [
      * instead of silently falling back to the platform `.env`.
      */
     'enforce_known_hosts' => filter_var(env('TENANCY_ENFORCE_HOSTS', true), FILTER_VALIDATE_BOOLEAN),
+    // The host platform commands run under (`php artisan … --domain=<host>`): the platform env.
+    'platform_command_host' => env('TENANCY_PLATFORM_HOST', 'api.localhost'),
     'platform_hosts' => $list(env('TENANCY_PLATFORM_HOSTS', 'api.localhost,localhost,127.0.0.1,caddy,api')),
 
     /*
@@ -83,6 +85,14 @@ return [
      * a second scheduler on purpose.
      */
     'scheduler_lock' => filter_var(env('TENANCY_SCHEDULER_LOCK', true), FILTER_VALIDATE_BOOLEAN),
+
+    /*
+     * The platform HTTP API (`/api/platform/*`, ADR 0078): off unless switched on, platform hosts only.
+     * `new_sites` lets an author who holds `tenancy_manage` move a course builder session to a new
+     * site from a tenant (ADR 0048); the new site is provisioned on the platform.
+     */
+    'platform_api' => filter_var(env('TENANCY_PLATFORM_API', false), FILTER_VALIDATE_BOOLEAN),
+    'new_sites' => filter_var(env('TENANCY_NEW_SITES', false), FILTER_VALIDATE_BOOLEAN),
 
     'php_binary' => env('TENANCY_PHP_BINARY', PHP_BINARY ?: 'php'),
     'process_timeout' => (int) env('TENANCY_PROCESS_TIMEOUT', 900),

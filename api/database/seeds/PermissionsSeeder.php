@@ -24,6 +24,7 @@ use Ulams\ModelFields\Database\Seeders\PermissionTableSeeder as ModelFieldsPermi
 use Ulams\Adapt\Database\Seeders\AdaptPermissionSeeder;
 use Ulams\LiaScript\Database\Seeders\LiaScriptPermissionSeeder;
 use Ulams\CourseBuilder\Database\Seeders\CourseBuilderPermissionSeeder;
+use Ulams\Tenancy\Database\Seeders\TenancyPermissionSeeder;
 use Ulams\LivingCourse\Database\Seeders\LivingCoursePermissionSeeder;
 use Ulams\Lti\Database\Seeders\LtiPermissionSeeder;
 use Ulams\Notifications\Database\Seeders\NotificationsPermissionsSeeder;
@@ -102,6 +103,7 @@ class PermissionsSeeder extends Seeder
         $this->call(LtiPermissionSeeder::class);
         $this->call(LiaScriptPermissionSeeder::class);
         $this->call(CourseBuilderPermissionSeeder::class);
+$this->call(TenancyPermissionSeeder::class);
         $this->call(LivingCoursePermissionSeeder::class);
         $this->call(AdaptPermissionSeeder::class);
 
