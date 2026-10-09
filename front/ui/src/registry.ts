@@ -290,6 +290,11 @@ export const registry = {
               "Log lines",
               { maxItems: 8 }
             ),
+            prompt: text("Command shown at the bottom of the panel, without the $", { maxLength: 60 }),
+            values: list({ type: "number", minimum: 0, description: "Value" }, "Series drawn as the sparkline (e.g. minutes per module); omit for none", {
+              maxItems: 24,
+            }),
+            valuesLabel: text("What the sparkline shows, e.g. 'minutes per module'", { maxLength: 60 }),
           },
           ["lines"],
           "Log-style panel for the console variant"

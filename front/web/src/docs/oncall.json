@@ -111,40 +111,23 @@
               "$data": "/course/facts"
             },
             "panel": {
-              "title": "drill-replay :: sev-1 :: prod-payments",
-              "note": "Illustrative replay of a game-day drill. Timings are an example, not a promise.",
-              "lines": [
-                {
-                  "time": "03:12",
-                  "tag": "ALERT",
-                  "tone": "alert",
-                  "text": "p99 latency over threshold, primary on-call paged"
-                },
-                {
-                  "time": "03:14",
-                  "tag": "COMMAND",
-                  "tone": "info",
-                  "text": "IC declares SEV-1, assigns comms, ops and scribe"
-                },
-                {
-                  "time": "03:18",
-                  "tag": "ACTION",
-                  "tone": "warn",
-                  "text": "ops sheds non-critical traffic, isolates a bad replica"
-                },
-                {
-                  "time": "03:26",
-                  "tag": "COMMS",
-                  "tone": "info",
-                  "text": "first status update: impact, current action, next update"
-                },
-                {
-                  "time": "03:41",
-                  "tag": "MITIGATED",
-                  "tone": "ok",
-                  "text": "fix deployed, SEV-1 downgraded, postmortem scheduled"
-                }
-              ]
+              "title": "on-call :: syllabus.log",
+              "note": "From the course program: modules, their topics and length, then the next live session.",
+              "lines": {
+                "$data": "/consoleLog/lines",
+                "$default": [
+                  {
+                    "tag": "INFO",
+                    "text": "The course program loads from the academy API.",
+                    "tone": "info"
+                  }
+                ]
+              },
+              "values": {
+                "$data": "/consoleLog/values"
+              },
+              "valuesLabel": "minutes per module",
+              "prompt": "start --module 0"
             }
           }
         },

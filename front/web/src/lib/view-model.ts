@@ -21,6 +21,7 @@ import {
   type Webinar,
 } from "@ulams/sdk";
 import type { Format } from "@ulams/ui/registry";
+import { formatEventDate, formatMinutes } from "@ulams/ui/format";
 
 export const FORMAT_BY_KIND: Record<TopicKind, Format | undefined> = {
   richtext: "reading",
@@ -128,6 +129,33 @@ export interface CourseModel {
   fields: Record<string, unknown>;
 }
 
+/** Log-style lines for the console hero, built only from the course program and the events calendar. */
+export interface ConsoleLog {
+  lines: Array<{ time?: string; tag?: string; text: string; tone?: "neutral" | "ok" | "warn" | "alert" | "info" }>;
+  /** Minutes per lesson, for the sparkline. */
+  values: number[];
+}
+
+export function consoleLog(course: CourseModel | undefined, events: EventModel[], maxLessons = 5): ConsoleLog {
+  const lessons = course?.lessons.slice(0, maxLessons) ?? [];
+  const lines: ConsoleLog["lines"] = lessons.map((lesson, i) => {
+    const topics = lesson.topics.map((t) => t.title).join(", ");
+    const text = `${lesson.title}${topics ? ` — ${topics}` : ""}`;
+    return {
+      time: `mod ${lesson.kicker ?? i}`,
+      tag: lesson.minutes ? formatMinutes(lesson.minutes) : `${lesson.topics.length} topics`,
+      text: text.length > 200 ? `${text.slice(0, 197)}…` : text,
+      tone: i === lessons.length - 1 ? "ok" : "info",
+    };
+  });
+  const next = events.find((e) => e.kind === "webinar" && e.date) ?? events.find((e) => e.date);
+  const when = next ? formatEventDate(next.date, { timeZone: next.kind === "in-person" ? "UTC" : "Europe/Warsaw" }) : null;
+  if (next && when) {
+    lines.push({ time: when.day, tag: next.kind === "in-person" ? "IN PERSON" : "LIVE", text: next.title, tone: "warn" });
+  }
+  return { lines, values: lessons.map((l) => l.minutes) };
+}
+
 export interface SiteModel {
   tenant: { slug: string; name: string; adminUrl: string };
   currency: string;
@@ -137,6 +165,8 @@ export interface SiteModel {
   events: EventModel[];
   webinar?: EventModel;
   inPerson?: EventModel;
+  /** Console hero panel (On-Call): course modules and the next live session. */
+  consoleLog: ConsoleLog;
 }
 
 const clean = (value: string | null | undefined): string | undefined => {
@@ -412,5 +442,6 @@ export function siteModel(raw: RawSiteData, tenant: { slug: string; adminUrl: st
     events,
     webinar: events.find((e) => e.kind === "webinar"),
     inPerson: events.find((e) => e.kind === "in-person"),
+    consoleLog: consoleLog(course, events),
   };
 }
