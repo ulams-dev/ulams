@@ -261,3 +261,15 @@ describe("device login", () => {
     }
   });
 });
+
+describe("flags that start with no-", () => {
+  it("reads `mcp --no-destructive` as the flag, not as destructive=false", async () => {
+    const { parseInvocation } = await import("../../src/cli/parse.ts");
+    const { getRegistry } = await import("../../src/registry/index.ts");
+    const { nodeFs } = await import("../../src/cli/run.ts");
+    const cmd = getRegistry().find((c) => c.id === "mcp");
+    expect(cmd).toBeDefined();
+    const parsed = await parseInvocation(cmd!, ["--no-destructive", "--read-only"], {}, nodeFs, async () => "");
+    expect(parsed.input).toMatchObject({ noDestructive: true, readOnly: true });
+  });
+});
