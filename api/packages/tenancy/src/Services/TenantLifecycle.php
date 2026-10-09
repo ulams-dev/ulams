@@ -27,7 +27,7 @@ class TenantLifecycle
      * Creates the registry row (or finds the existing one) and applies the given changes,
      * forgetting the steps that must run again.
      *
-     * @param array{name?: ?string, theme?: ?string, accent?: ?string, demo?: ?string} $options `demo` is `on` or `off`
+     * @param array{name?: ?string, theme?: ?string, accent?: ?string, demo?: ?string, db_password?: ?string} $options `demo` is `on` or `off`; `db_password` is for an operator-created database and applies until the `database` step is done
      * @param list<string> $redo steps to run again
      *
      * @throws InvalidArgumentException on an invalid slug, option or step name
@@ -45,6 +45,14 @@ class TenantLifecycle
 
         $tenant = Tenant::query()->firstWhere('slug', $slug)
             ?? new Tenant(TenantNaming::newTenantAttributes($slug));
+
+        $dbPassword = (string) ($options['db_password'] ?? '');
+        if ($dbPassword !== '' && strlen($dbPassword) < 16) {
+            throw new InvalidArgumentException('--db-password must be at least 16 characters.');
+        }
+        if ($dbPassword !== '' && !$tenant->hasCompleted('database')) {
+            $tenant->db_password = $dbPassword;
+        }
 
         $changes = array_filter([
             'name' => $options['name'] ?? null,

@@ -712,6 +712,10 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       Container, R2, Hyperdrive, Queues, Durable Objects) with a one-command `wrangler deploy` for a
       dev environment; strangler migration of the API to Hono only if the spike succeeds
 
+- [ ] (new) Shared-hosting variant: the API on MyDevil.net with cron workers and Cloudflare in front
+      (`deploy/mydevil`, docs `operators/install-mydevil`, ADR 0091; partial: runbook, scripts and the
+      code changes (`ulams:tenant:work-once`, manual tenant database, R2 policy switch) done, not run on
+      a real account: needs SSH and `bin/check-host.sh`)
 - [ ] One app image + PostgreSQL + optional Redis (DB fallback)
 - [ ] Commerce as optional profile: + one Sylius image, shared PostgreSQL server (separate DB)
 - [ ] `docker compose up` and Helm chart with sane defaults
