@@ -112,6 +112,10 @@ properties generated from presets and tenant settings (ADR 0004).
 
 ## Documentation
 
+- The documentation site in [`front/docs-site`](front/docs-site) (Astro Starlight): guides for
+  course authors, administrators, developers and operators, plus reference pages generated from the
+  code. Run it with `corepack yarn dev:docs` (http://localhost:4322); `main` is published to GitHub
+  Pages by [`.github/workflows/docs.yml`](.github/workflows/docs.yml).
 - [`CLAUDE.md`](CLAUDE.md) and [`AGENTS.md`](AGENTS.md): how to work on this repo (people and agents)
 - [`docs/ROADMAP-PROMPT.md`](docs/ROADMAP-PROMPT.md): product spec; [`docs/ROADMAP-TODO.md`](docs/ROADMAP-TODO.md): progress
 - [`docs/decisions/`](docs/decisions): architecture decisions; `*/docs/adr`: history of each app before the monorepo
