@@ -42,6 +42,7 @@ jobs:
       pull-requests: read
     outputs:
       js: ${{ steps.filter.outputs.js }}
+      demo: ${{ steps.filter.outputs.demo }}
       deploy: ${{ steps.filter.outputs.deploy }}
       php: ${{ steps.api.outputs.php == 'true' || steps.filter.outputs.ci == 'true' }}
     steps:
@@ -81,12 +82,19 @@ jobs:
             js:
               - "admin/**"
               - "front/**"
+              - "demo-content/**"
               - "api/h5p/**"
               - "api/pdf/**"
               - "package.json"
               - "yarn.lock"
               - "turbo.json"
               - ".nvmrc"
+              - ".github/**"
+            demo:
+              - "demo-content/**"
+              - "front/interactive-bridge/**"
+              - "package.json"
+              - "yarn.lock"
               - ".github/**"
             ci:
               - ".github/**"
@@ -167,6 +175,12 @@ jobs:
           --filter=@ulams/web --filter=@ulams/ui --filter=@ulams/sdk --filter=@ulams/interactive-bridge
           --concurrency=2
 
+      # Interactive content packages (ADR 0088): the boundary lint, manifests, unit tests and the gravity build.
+      - name: Typecheck, lint, build, test (demo-content)
+        run: >-
+          corepack yarn turbo run typecheck lint build test
+          --filter=@ulams/demo-content --filter=@ulams/demo-gravity --concurrency=2
+
       # The ulams CLI and MCP server (front/cli): typecheck, lint, build and unit tests.
       - name: Typecheck, lint, build, test (ulams CLI)
         run: corepack yarn turbo run typecheck lint build test --filter=ulams --concurrency=2
@@ -174,6 +188,37 @@ jobs:
       # Every operation of the API's OpenAPI snapshot has a CLI command or a reasoned exclusion.
       - name: CLI endpoint coverage
         run: corepack yarn workspace ulams coverage
+
+  # The interactive content packages (demo-content) in a real browser, on throwaway servers: each package
+  # loads in the opaque sandbox, steps advance, no request leaves the origin, keyboard, WebGL fallback, axe.
+  demo-content:
+    name: Demo content packages (Playwright)
+    needs: changes
+    if: needs.changes.outputs.demo == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      HUSKY: "0"
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - run: corepack enable
+      - run: corepack yarn install --frozen-lockfile
+      - name: Install Chromium
+        run: corepack yarn playwright install --with-deps chromium
+      - name: Package tests
+        run: corepack yarn workspace @ulams/demo-content test:e2e
+      - name: Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: demo-content-playwright
+          path: demo-content/test-results
+          retention-days: 7
 
   php:
     name: PHPUnit (${{ matrix.shard }})
@@ -398,7 +443,7 @@ jobs:
 
   ci-ok:
     name: CI OK
-    needs: [changes, js, php, images, deploy]
+    needs: [changes, js, demo-content, php, images, deploy]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -406,6 +451,6 @@ jobs:
       - name: Fail if any job failed or was cancelled
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: |
-          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} php=${{ needs.php.result }} images=${{ needs.images.result }} deploy=${{ needs.deploy.result }}"
+          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} demo-content=${{ needs.demo-content.result }} php=${{ needs.php.result }} images=${{ needs.images.result }} deploy=${{ needs.deploy.result }}"
           exit 1
       - run: echo "All required jobs passed or were skipped by the path filters."

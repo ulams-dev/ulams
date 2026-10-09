@@ -177,6 +177,30 @@ ulams topics create-interactive --lesson 12 --title "Too slow" --file gravity.zi
 version, or `--follow-latest`). A manifest that lists `network` origins needs `--accept-network`, the
 command-line form of the confirmation box in the admin. The MCP tool `topics_create_interactive` does the same. See [CLI](/developers/cli/).
 
+## Example packages
+
+The repository ships ready-made packages in `demo-content/` (MIT for the code, CC BY 4.0 for course text),
+which the demo academies use. They are also the best templates for your own.
+
+| Package | What it shows | Steps |
+|---|---|---|
+| `gravity` | A Three.js solar system with a guided tour; built with Vite, so it bundles the bridge from source | 44, English and Polish; a poster per step |
+
+Build one and use it in a lesson (the posters are rendered with Chromium, so it needs
+`npx playwright install chromium` once):
+
+```bash
+yarn workspace @ulams/demo-gravity package
+ulams topics create-interactive --lesson 12 --title "Too slow" \
+  --file demo-content/gravity/release/gravity-ulams-1.0.0.zip \
+  --start-step too-slow --end-step too-slow --display background --json
+```
+
+What the gravity package teaches about writing your own: guard every storage call, load fonts and textures
+from the package (the CSP allows nothing else), keep the step ids stable, send `stepChanged` for every step and
+never `complete` when the topic plays only a range, and declare `reducedMotion: false` honestly so learners who
+ask for less motion get the poster.
+
 ## Licences
 
 Choose the SPDX id that matches your code. The licence travels with the package, is shown to learners

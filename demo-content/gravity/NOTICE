@@ -1,0 +1,29 @@
+Gravity: a guided solar system (demo content for ulams)
+=======================================================
+
+Copyright (c) 2026 Mateusz Wojczal. Licensed under the MIT License (see LICENSE).
+
+Origin
+------
+The simulator is the owner's own project, https://github.com/qunabu/Gravity (originally GPL-3.0),
+relicensed by its copyright holder under MIT for use inside ulams (2026-10-09, issue #147, ADR 0088).
+Imported from the working tree of that repository, after commit 28e912b, which also holds the
+unreleased "stopped-galaxy" step.
+
+Left out on purpose
+-------------------
+- Commits bc9d770 and 9db0edc by David Frankel (Docker files; ulams ships its own deployment).
+- Commit 4adaa1b by jin (the Chinese translation of the tour).
+- The background-music track and the Moon photograph (Moon-TomBrown.webp): neither has a stated
+  licence. The Moon uses a procedurally generated surface instead.
+
+Third-party material in the package
+-----------------------------------
+- Earth day map: Solar System Scope, https://www.solarsystemscope.com/textures/ , CC BY 4.0.
+- Three.js 0.184: MIT, https://threejs.org
+- Inter (variable): SIL Open Font License 1.1, via @fontsource-variable/inter.
+- Roboto Mono: SIL Open Font License 1.1, via @fontsource/roboto-mono.
+- @ulams/interactive-bridge: MIT, https://github.com/ulams-dev/ulams/tree/main/front/interactive-bridge
+
+Orbital elements in src/data/bodies.ts follow JPL, "Keplerian Elements for Approximate Positions of the
+Major Planets" (E. M. Standish).

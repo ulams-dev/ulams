@@ -1,7 +1,26 @@
 # Plan: the Interactive topic type and three new demo academies
 
-Status: **draft, waiting for the product owner's approval** (#146). Nothing in this plan is
-implemented.
+Status: **draft, waiting for the product owner's approval** (#146). M1 and M2 (the bridge, the Interactive
+topic type and its learner, admin, CLI and docs surfaces) are merged. M3 (gravity) is implemented under the
+amendment below.
+
+**Amended 2026-10-09 (product owner decisions in chat and on #147, #148, #149, #150).** These override the text
+below where they differ:
+
+- **Gravity is the owner's own code and is used under MIT inside this repository.** There is no GPL
+  separation, no release zip in `qunabu/Gravity` and no checksum download. The adapted source lives in
+  `demo-content/gravity/` (a yarn workspace, built with Vite) and is packaged by
+  `yarn workspace @ulams/demo-gravity package`. Three outside commits of the upstream history are left out:
+  bc9d770 and 9db0edc (David Frankel: Docker files, deletions) and 4adaa1b (jin: the Chinese tour
+  translation, so the package is English and Polish). The music track and the Moon photograph have no
+  clear licence and are not shipped (the Moon is procedural). The adapter PR in `qunabu/Gravity` is optional
+  and, if ever opened, is a pull request on that repository, never a push to its main.
+- **poland** is the owner's own code (MIT). The saved third-party article copy, the copied
+  `world.topo.json` and the mp4 are not used. The map is regenerated from Natural Earth through
+  `world-atlas` (ISC, public domain), the reply framing is dropped, only figures with primary sources stay,
+  and the package is produced in EN and PL.
+- **Licences:** MIT for code, CC BY 4.0 for course text (#148). The Interactive topic type is on for every
+  tenant, with network access off (#150).
 
 The product owner asked on 2026-10-09:
 
@@ -56,7 +75,7 @@ academies, so the platform shows six demos.
 3. **The Layout topic type** (ADR 0052, rendering only). It lets flip cards, timelines and practice
    activities be course items.
 4. **Three content packages.**
-   - gravity: GPL-3.0, built in `qunabu/Gravity`.
+   - gravity: the owner's simulator under MIT, adapted in `demo-content/gravity/` (amended 2026-10-09).
    - poland: the owner's code, cleaned of third-party material.
    - Five small MIT packages for the Ulam course.
 5. **Three demo tenants**, `gravity`, `poland` and `ulam`. Each gets a theme preset, a landing,
@@ -98,7 +117,7 @@ academies, so the platform shows six demos.
 | i18n | `front/web` has none. `<html lang>` comes from the landing document's `Page.props.lang`. A course has one `language` (2 characters) | `front/web/src/lib/docs.ts`, `api/packages/courses/src/Models/Course.php` |
 | Platform demos | `platformModel()` loops over `ULAMS_DEMO_TENANTS` (default `coffee,oncall,nightsky`) and uses a hard-coded `STYLE[slug]` and a theme check. The e2e test expects **3** `#demos li` | `front/web/src/lib/platform.ts`, `front/web/src/lib/config.ts`, `front/web/tests/e2e/smoke.spec.ts` |
 | Large files | CI rejects new files over 2 MB (#48) | `.github/workflows/ci.yml` |
-| Gravity | GPL-3.0. Authors: Mateusz Wojczal (38 commits), David Frankel (2), jin (1). `package.json` says ISC (a mistake). Three.js 0.184 (MIT), Vite 8. **44 steps** in the working tree, 43 at HEAD (`stopped-galaxy` is uncommitted). Steps are `STEPS_SOURCE` + `TOUR_ORDER` in `src/ui/tour.ts`, with deep links by `#<step-id>` and a live `hashchange` listener. There are no events. `localStorage` is used unguarded (lines 1011 and 1568), Google Fonts are loaded from the CDN, and `base` is `/Gravity/`. The music MP3 and the Moon texture have no stated licence; Earth is Solar System Scope CC BY 4.0. No reduced-motion handling. The build is about 0.8 MB of JS | `/Users/mateuszwojczal/Desktop/localhost/gravity` |
+| Gravity | Owner's own code (`qunabu/Gravity`, 38 of 41 commits by the owner; the three others are left out, see the amendment). Upstream `package.json` said ISC and the repo GPL-3.0; **relicensed MIT by the owner for ulams (2026-10-09, #147)**. Three.js 0.184 (MIT), Vite 8. **44 steps** in the owner's working tree (`stopped-galaxy` is uncommitted upstream, and is included). Steps are `STEPS_SOURCE` + `TOUR_ORDER` in `src/ui/tour.ts`, with deep links by `#<step-id>`. `localStorage` was used unguarded, Google Fonts were loaded from the CDN, and `base` was `/Gravity/`. The music MP3 and the Moon texture have no stated licence and are not shipped; Earth is Solar System Scope CC BY 4.0. No reduced-motion handling. The build is about 0.8 MB of JS | `/Users/mateuszwojczal/Desktop/localhost/gravity` |
 | poland | The owner's code, no LICENSE, public repo. Plain inline ES5 with no libraries: hand-written SVG charts and a canvas map with its own projection. Only Google Fonts load over the network. 49 steps in 10 chapters, `{en,pl}` strings, `?lang=`. **`src/world.topo.json` was copied from the third-party article page.** `sources.json` has 193 entries, 56 of them `reported_in_uploaded_document`, and some cite the essay, Hacker News or Wikipedia. The article copy, its `_files`, the mp4 and the research dumps are git-ignored and not used | `/Users/mateuszwojczal/Desktop/localhost/poland` |
 | ADR numbers | `main` has ADRs up to 0085 and 0090. 0086–0089 are free on every remote branch | `docs/decisions/README.md` |
 
@@ -118,11 +137,11 @@ assets, and **`ulams-interactive.json`**. The JSON Schema (draft 2020-12) lives 
   "$schema": "https://ulams.dev/schemas/ulams-interactive/v1.json",
   "id": "gravity",
   "title": { "en": "Gravity: a guided solar system", "pl": "Grawitacja: Układ Słoneczny z przewodnikiem" },
-  "version": "1.4.0",
+  "version": "1.0.0",
   "entry": "index.html",
-  "licence": "GPL-3.0-only",
-  "attribution": "© 2026 Mateusz Wojczal and contributors (David Frankel, jin). Earth texture: Solar System Scope, CC BY 4.0.",
-  "source": { "url": "https://github.com/qunabu/Gravity", "ref": "v1.4.0" },
+  "licence": "MIT",
+  "attribution": "© 2026 Mateusz Wojczal. Earth texture: Solar System Scope, CC BY 4.0. Three.js (MIT). Inter and Roboto Mono (SIL OFL 1.1).",
+  "source": { "url": "https://github.com/ulams-dev/ulams/tree/main/demo-content/gravity", "ref": "main" },
   "locales": ["en", "pl"],
   "defaultLocale": "en",
   "bridge": 1,
@@ -589,82 +608,51 @@ LMS half of ADR 0052 now. Generation stays in L2-21.
 
 ## 6. Adapting the two apps
 
-### 6.1 Gravity (GPL-3.0; ADR 0088; owner action #147)
+### 6.1 Gravity (MIT, the owner's own code; ADR 0088 as amended; #147)
 
-**Where the work happens.** As a PR to `github.com/qunabu/Gravity` (the owner's repo), branch
-`ulams-bridge`. An overlay applied at build time was rejected (ADR 0088). Contributors' code stays as
-it is and stays GPL.
+**Where the work happens.** In this repository, `demo-content/gravity/`, a yarn workspace
+(`@ulams/demo-gravity`, private). It is the owner's simulator adapted for the bridge. It is not linked into
+any other workspace (the boundary lint enforces that).
 
-**Commits in the gravity repo:**
+**What was imported.** The working tree of the owner's checkout after commit 28e912b (including the
+uncommitted `stopped-galaxy` step: 44 steps), minus: the Docker files and deletions (bc9d770, 9db0edc), the
+Chinese tour translation (4adaa1b), the music track, the Moon photograph and the upstream GitHub Pages
+workflow. `NOTICE` records the origin and what was left out.
 
-1. `fix: guard localStorage and correct the licence field`
-   - Wrap `localStorage` in `src/ui/tour.ts` (lines around 1011 and 1568) in try/catch.
-   - Change `package.json` `"license"` from `ISC` to `GPL-3.0-only` (default, pending #147).
-2. `feat: self-host the fonts`
-   - Add `@fontsource/inter` and `@fontsource/roboto-mono` (OFL-1.1 fonts, MIT package code).
-   - Remove the Google Fonts links from `index.html`.
-3. `feat: public step API`
-   - Make `Tour.go()` reachable through `tour.goTo(id: string)` and `tour.steps()` (ids and titles in
-     the current language).
-   - Dispatch `window.dispatchEvent(new CustomEvent("gravity:step", {detail: {id, index}}))` in
-     `go()`.
-   - Add `setLanguage(lang)`, which does not persist when storage is unavailable.
-4. `feat: embed mode for the ulams bridge`
-   - Vendor `src/vendor/interactive-bridge.js` (the MIT single file from `front/interactive-bridge/dist`,
-     header kept).
-   - Add `src/ulams/adapter.ts`. When `window.parent !== window`, it calls `connect()` and:
-     - maps `goToStep` to `tour.goTo` and `gravity:step` to `bridge.stepChanged`;
-     - on `init`, applies `locale`, applies `chrome` (`none` hides the tour panel, the progress bar,
-       the About and issue buttons and the music button, keeping only the canvas and the CSS2D labels;
-       `minimal` keeps the Back/Next buttons), and applies `startStep`;
-     - when `reducedMotion` is set, sets `daysPerSecond` to 0.1 and turns off auto-play;
-     - sends `error {code: "webgl-unavailable"}` when the renderer cannot be created (wrap `new
-       WebGLRenderer` in try/catch);
-     - sends `ready` with `steps: STEPS.map(s => s.id)` and `capabilities {steps: true, reducedMotion:
-       true, locales: ["en","pl","zh"], background: true}`.
-   - The About dialog stays reachable in `chrome: full`. In `none`, the ulams "About this interactive"
-     panel shows the licence and source instead. Either way the GPL notice reaches the learner.
-5. `build: ulams content package`
-   - `scripts/ulams-package.mjs`:
-     - runs `vite build --base=./`;
-     - drops `audio/` and `Moon-TomBrown.webp` (no stated licence; the Moon falls back to its
-       procedural texture through a `VITE_ULAMS=1` define);
-     - renders one poster per step with `puppeteer-core`, reusing `scripts/render-promo.mjs`'s
-       browser setup: `?ulams-poster=<id>`, 1280×720, WebP q70, into `posters/`;
-     - writes `ulams-interactive.json` (steps, titles and texts in EN and PL from `STEPS_SOURCE` and
-       `PL`, posters, licence, attribution, source with the tag) and copies `LICENSE`;
-     - writes `SOURCE.txt` ("Corresponding source: https://github.com/qunabu/Gravity/tree/<tag>");
-     - zips into `release/gravity-ulams-<version>.zip`.
-   - `.github/workflows/ulams-release.yml` runs it on a `v*` tag and attaches the zip to the release.
+**Changes, one commit each in M3:**
 
-**`stopped-galaxy`** (uncommitted in the owner's checkout). Default: the owner commits it before the
-adapter PR, and the course plans for 44 steps (pending #147). If it is dropped, module 8 has one topic
-fewer.
+1. `fix: guard browser storage`: every `localStorage` call goes through `src/ui/storage.ts` (try/catch), so
+   the opaque-origin frame does not throw.
+2. Self-hosted fonts: `@fontsource-variable/inter` and `@fontsource/roboto-mono` (OFL-1.1 fonts, MIT package
+   code), only the latin and latin-ext subsets; the Google Fonts links are gone.
+3. A public step API on the tour: `steps()`, `goTo(id)`, `setLanguage(lang, persist)`, `embed(range)` and a
+   `gravity:step` window event.
+4. The bridge adapter, `src/ulams/adapter.ts`, using `@ulams/interactive-bridge` from the workspace. When
+   `window.parent !== window` it:
+   - maps `goToStep` to `tour.goTo` and `gravity:step` to `stepChanged` (and `progress`);
+   - on `init` applies the locale, the chrome (`none` keeps only the scene and the controls a step needs:
+     time speed, the Lagrange shots, the stopped-galaxy buttons; `minimal` adds Back and Next inside the step
+     range), the first step and the range, and slows the whole clock under reduced motion;
+   - sends `error {code: "webgl-unavailable"}` when the renderer cannot be created;
+   - sends `ready` with the 44 step ids and `capabilities {steps, background, locales: ["en","pl"]}`.
+   It never sends `complete`: a topic completes on `on_range_end`, and `complete` would end a partial range
+   early. `reducedMotion` is declared **false**, so the lesson page shows the step poster to a reduced-motion
+   learner (with a "play anyway" button); the adapter slows the clock for the learner who plays it anyway.
+5. `scripts/ulams-package.mjs`: `vite build` (relative base), one 1280x720 WebP poster per step
+   (Chromium, SwiftShader), the manifest generated from `STEPS` and `PL` in `tour.ts` (so it cannot drift),
+   `LICENSE.txt`, `NOTICE.txt` and the font and Three.js licence texts, zipped without directory entries into
+   `release/gravity-ulams-<version>.zip` (git-ignored, about 1.6 MB).
 
-**In the ulams repo** (`demo-content/gravity/`):
+**`stopped-galaxy`.** Included (44 steps). If the owner drops it, module 8 has one topic fewer.
 
-- `LICENSE`: the full GPL-3.0 text.
-- `NOTICE`:
-  - copyright holders: Mateusz Wojczal, David Frankel, jin;
-  - the source repository and tag;
-  - "Earth texture: Solar System Scope, CC BY 4.0";
-  - "Three.js: MIT".
-- `source.json`: `{ "url": "https://github.com/qunabu/Gravity/releases/download/v<ver>/gravity-ulams-<ver>.zip", "sha256": "…", "tag": "v<ver>", "commit": "<sha>" }`.
-- `README.md`: how to rebuild locally (`git clone`, `npm ci`, `node scripts/ulams-package.mjs`) and
-  where the zip goes when offline (`api/database/seeds/Demo/assets/cache/gravity-ulams-<ver>.zip`).
+**Seeding (M8).** The seeder gets the zip by running the package script (or from the cache,
+`api/database/seeds/Demo/assets/cache/`); no download, no checksum. `Demo/Support/ContentPackages.php`
+(`fromFolder`, for the folder packages) is still planned for M8.
 
-**Seeder helper.** `api/database/seeds/Demo/Support/ContentPackages.php`:
-- `gravity(): string` downloads the zip with the SSRF-safe HTTP client (ADR 0032; allow-listed host
-  `github.com` / `objects.githubusercontent.com`), verifies the sha256 and caches it.
-- `fromFolder(string $dir): string` zips a `demo-content/*` folder with `ZipArchive` into the cache.
-
-Both return a local path. The seeder then calls `InteractivePackageServiceContract::create()`, the real
-upload path.
-
-**Boundary check.** `scripts/check-demo-content-boundary.mjs`, added to the root `lint` task, fails if
-any file outside `demo-content/` imports, requires or bundles a path inside it. PHP seeders may read
-files from it as data, so `file_get_contents`, `ZipArchive::addFile` and `glob` are allowed and
-`require`/`include` are not.
+**Boundary check.** `demo-content/scripts/check-demo-content-boundary.mjs` (part of the `demo-content`
+lint, so of the root `lint` task) fails if any file outside `demo-content/` imports or requires a path inside
+it, or depends on a `demo-content` workspace. PHP seeders may read files from it as data (`file_get_contents`,
+`ZipArchive::addFile`, `glob`); `require` and `include` are refused.
 
 ### 6.2 poland (owner's code; ADR 0088; licence pending #148; scope pending #149)
 
@@ -1065,7 +1053,7 @@ of these in M7.
   - `demo-seed` (platform tenant, `EXPERIENCE=all`) seeds six courses (seven with PL) into the
     platform tenant.
 - **README** (`### Demo tenants`): six rows, the create commands, the make targets, and a note that
-  gravity downloads its package once (URL and hash in `demo-content/gravity/source.json`).
+  gravity is built once (`yarn workspace @ulams/demo-gravity package`, needs Chromium for the posters).
 - **Docs site.**
   - `getting-started/demos.mdx`: six academies, one section each.
   - `getting-started/quick-start.mdx` and `developers/local-development.mdx`: the targets.
@@ -1137,20 +1125,21 @@ M5–M7. M10 needs M8 and M9.
     `operators/content-origin.mdx` and `LICENSING.md`.
   - Tests: CLI unit tests, docs coverage.
 
-### M3: Gravity package (1 PR in `qunabu/Gravity`, 1 PR here)
+### M3: Gravity package (1 PR here; amended 2026-10-09)
 
-- **M3a** (gravity repo, branch `ulams-bridge`): commits 1–5 of section 6.1.
-  - Test: `npm run build` plus `node scripts/ulams-package.mjs`, and a smoke test
-    `scripts/ulams-smoke.mjs` (Playwright or puppeteer-core) that loads the zip in a sandboxed iframe
-    host page and checks `ready`, `goToStep("lagrange")` → `stepChanged("lagrange")`, and that no
-    request leaves the origin.
-  - The owner merges and tags (#147).
-- **M3b** (here) `feat(demo-content): gravity content package`
-  - Files: `demo-content/gravity/{LICENSE,NOTICE,README.md,source.json,manifest notes}`,
-    `demo-content/README.md`, `scripts/check-demo-content-boundary.mjs`, the root lint wiring,
-    `Demo/Support/ContentPackages.php` (download, verify, cache) and the `LICENSING.md` row.
-  - Tests: a PHP unit test of the hash check (a wrong hash refuses), and the boundary check
-    (a fixture import outside fails).
+`feat(demo-content): gravity content package`, branch `feat/demo-packages`.
+
+- Files: `demo-content/gravity/**` (section 6.1), `demo-content/{README.md,package.json,scripts/**,tests/**}`,
+  the root workspace entries, the lint wiring, `LICENSING.md`, ADR 0088 (amended) and the docs page.
+- Tests:
+  - `demo-content` unit tests (the boundary lint with a violating fixture, the manifest rules) and gravity
+    unit tests (44 steps, English and Polish text, no network references, guarded storage, nothing left out
+    by the owner is present);
+  - Playwright on a throwaway host and content origin (`demo-content/tests/e2e/gravity.spec.mjs`): the zip
+    is valid; the package loads in the opaque sandbox and says `ready` with 44 steps; `goToStep` produces
+    `stepChanged` for every step; a range limits navigation; no request leaves the origin; keyboard-usable
+    controls; `webgl-unavailable`; axe (WCAG 2.2 AA) on the page and on the package alone.
+- The package is uploaded to the local coffee tenant with `ulams topics create-interactive` to try it.
 
 ### M4: poland package (1 PR)
 
@@ -1258,10 +1247,9 @@ Each line gives the default the plan uses and, where there is one, the issue tha
 4. **No tracking token for interactive packages.** Progress goes through the BFF with the learner's
    session (ADR 0086).
 5. **New topics pin the current package version.** Upgrading is the author's action.
-6. **Gravity:** the adapter is committed to `qunabu/Gravity` (not an overlay); the release zip is
-   pinned by sha256 and downloaded at seed time; no GPL files in this repo except `LICENSE` and
-   `NOTICE`; the music and Moon texture are dropped; `stopped-galaxy` is committed by the owner (ADR
-   0088; #147).
+6. **Gravity (amended 2026-10-09):** the owner's own code, MIT, adapted in `demo-content/gravity/` in this
+   repository; no download and no checksum; the music, the Moon photograph and the zh translation are
+   left out; `stopped-galaxy` is included (ADR 0088; #147).
 7. **poland:** a cleaned copy in `demo-content/poland/`; the map is regenerated from world-atlas /
    Natural Earth; the essay framing and weak sources are removed; two courses EN/PL; no education
    module (ADR 0088, 0089; #148, #149).
@@ -1304,11 +1292,13 @@ Each line gives the default the plan uses and, where there is one, the issue tha
 | `world-atlas@2.0.2` | ISC (data: Natural Earth, public domain) | dev only, `demo-content` | Regenerate the poland map | stable (2020), data only | none |
 | `topojson-client@3.1.0` | ISC | dev only, `demo-content` | Filter and re-quantise the topology | stable | none |
 | Fonts: Inter, Source Serif 4, IBM Plex Sans and Mono, EB Garamond | SIL OFL 1.1 | `front/web` via Astro `<Font>` (self-hosted) | The three presets | Google Fonts / upstream | about 40 KB per subset; no external requests |
-| `@fontsource/inter`, `@fontsource/roboto-mono` | MIT (code) + OFL (fonts) | **gravity repo only** | Self-hosted fonts in the package | very active | none here |
-| The gravity release zip | GPL-3.0-only | downloaded at seed time, never committed | The demo content | owner's repo | about 1.5 MB per tenant on the package disk |
+| `@fontsource-variable/inter`, `@fontsource/roboto-mono` | MIT (code) + SIL OFL 1.1 (fonts) | `demo-content/gravity` | Self-hosted fonts in the package | very active | none |
+| `three@0.184`, `vite@8`, `typescript@6`, `@types/three` | MIT / Apache-2.0 | `demo-content/gravity` (the simulator and its build) | The simulator is the owner's Three.js app | very active | none; dev and build only except Three.js, which ships inside the package |
+| `sharp` | Apache-2.0 | `demo-content` (posters to WebP, dev only) | Converts Chromium screenshots to WebP | very active; already in the lock file | none |
+| The gravity package zip | MIT (Earth texture CC BY 4.0) | built from `demo-content/gravity`, git-ignored | The demo content | ours | about 1.6 MB per tenant on the package disk |
 
 No PHP dependencies: `opis/json-schema` (already present) validates the manifest and the layout
-documents. No GPL or AGPL code is linked into the API or bundled into the admin or front.
+documents. No GPL or AGPL code is linked into the API or bundled into the admin or front (the gravity package is MIT since 2026-10-09).
 
 ---
 
@@ -1316,7 +1306,7 @@ documents. No GPL or AGPL code is linked into the API or bundled into the admin 
 
 | Risk | Mitigation |
 |---|---|
-| **GPL boundary.** Gravity code leaking into MIT code (copy-paste, an import, a bundled zip in `front/`) | ADR 0088 layout; the boundary lint; no GPL files except `LICENSE` and `NOTICE`; the bridge is MIT and only *copied into* gravity, never the other way round |
+| **Content packages leaking into the product** (an import of a `demo-content` file by a workspace, or a bundled copy) | ADR 0088 layout; the boundary lint; packages are played only as sandboxed content |
 | **Third-party content in poland** (the article, its map, the essay framing) | Map regenerated; `check.mjs` bans the strings; the essay links and the chapter titles removed; `reported_in_uploaded_document` sources removed |
 | **Image rights** (Ulam photos, Polish PD) | Per-file Commons check in M9a; Polish-law PD not used; drawn illustrations as the fallback; credits shown |
 | **Factual accuracy** (dates, quotes, statistics) | Fact sheets with citations, review by the owner (#151), ⚠ items taught as disputed, a seeder test that every `[n]` resolves, the reference period stated for every statistic |
@@ -1324,7 +1314,7 @@ documents. No GPL or AGPL code is linked into the API or bundled into the admin 
 | **WebGL unavailable** (old devices, some VMs, CI) | `requires: ["webgl"]`, the poster fallback, `error` from the adapter; Playwright runs with SwiftShader (Chromium default) |
 | **Opaque origin breaks apps** that assume storage | The adapter guards storage; the docs page lists the constraints; the admin preview shows errors from the frame |
 | **The same-site content origin** (ADR 0014 amendment) | Not relevant to this type: the opaque sandbox removes same-site cookie and storage access |
-| **Seeding needs network** for gravity | Cache, hash, a clear message, and the offline path documented |
+| **Seeding builds gravity** (needs Chromium for the posters) | The seeder uses the cached zip when present; the build script prints what is missing |
 | **The hourly reset re-uploads packages** (about 1.5 MB gravity, under 3 MB poland) | The seeder reuses the cached zip; uploads take seconds; storage is wiped with `--wipe-files` |
 | **Political sensitivity** (poland security chapter, Ulam and the H-bomb) | Figures only, primary sources, no commentary; the Teller–Ulam section is brief and factual (ADR 0089) |
 | **The stated step count drifts** (43 or 44) | The course uses step ids, never numbers; the manifest is generated from `STEPS` |
@@ -1337,7 +1327,7 @@ documents. No GPL or AGPL code is linked into the API or bundled into the admin 
 |---|---|---|
 | 0086 | Interactive topic type: author-uploaded JavaScript packages in an opaque sandbox on the content origin | M1, M2 |
 | 0087 | The `ulams-ix` bridge protocol and the `@ulams/interactive-bridge` library (MIT) | M1 |
-| 0088 | Separately licensed content packages under `demo-content/`; GPL apps stay GPL and are never linked into MIT code | M3, M4, M5 |
+| 0088 | Content packages under `demo-content/`, played only as sandboxed content; gravity relicensed MIT by its owner (amended 2026-10-09) | M3, M4, M5 |
 | 0089 | Six demo academies: three free interactive courses, one theme preset each, sourced content, EN/PL as two courses | M7–M9 |
 
 ADR 0052 (Layout topic type, Proposed) is implemented in part by M6 and gets no new record.

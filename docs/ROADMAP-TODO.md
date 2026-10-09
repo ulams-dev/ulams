@@ -59,6 +59,14 @@ small commits → tests → summary.
       #146 (approve), #147 (gravity repo), #148 (content licences), #149 (poland scope), #150 (on by default),
       #151 (Ulam fact review)
 
+- [x] (2026-10-09) Product owner, on the interactive demos (#147, #148, #149, #150): `qunabu/Gravity` and the
+      poland repository are his own code and are used under MIT inside ulams (no GPL separation, no checksum
+      download; ADR 0088 amended); three outside commits of gravity are left out (bc9d770, 9db0edc, 4adaa1b), and
+      so are its music track and Moon photograph; poland is rebuilt without the saved article copy, its map or
+      the mp4 (map regenerated from Natural Earth via world-atlas, reply framing dropped, primary sources only,
+      EN and PL); MIT for code and CC BY 4.0 for course text; the Interactive topic type is on for every tenant
+      with network off
+
 ## Open decisions
 
 - [ ] Final name (favourite **ULAMS**; alternatives Wellam, Monte, Spiral, Automata, UlamOS)
@@ -597,9 +605,11 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       in #151; `demo-content/ulam/{facts,sources}.json` and `CREDITS.md` are written in M9b from the sheet)
 - [ ] (new) Six demos on the platform landing with one-click learner and admin login; `make demo-seed-tenants`
       seeds all six; README and docs site updated (M10)
-- [ ] (new) `demo-content/`: separately licensed content packages (gravity GPL-3.0 from `qunabu/Gravity` by
-      checksum, never committed; poland and ulam under the owner's chosen licence, pending #148) with a boundary lint
-      (ADR 0088)
+- [ ] (new) `demo-content/`: content packages (ADR 0088, amended 2026-10-09) with a boundary lint (partial:
+      workspace, lint, harness and the gravity package done (M3); poland (M4) and the five Ulam interactives (M5)
+      follow)
+  - [x] (new) gravity package: the owner's simulator, MIT, 44 steps EN and PL, posters, bridge adapter, Playwright
+        and axe on a throwaway server (M3)
 
 ---
 

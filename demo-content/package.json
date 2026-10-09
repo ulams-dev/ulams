@@ -1,0 +1,20 @@
+{
+  "name": "@ulams/demo-content",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Interactive content packages for the demo academies (ADR 0088). Played only as sandboxed content; nothing outside this folder imports from it.",
+  "type": "module",
+  "scripts": {
+    "lint": "node scripts/check-demo-content-boundary.mjs && node scripts/check-manifests.mjs",
+    "test": "node --test tests/unit/*.test.mjs",
+    "test:e2e": "playwright test --config tests/playwright.config.mjs",
+    "sync-bridge": "node scripts/sync-bridge.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0",
+    "sharp": "0.34.5",
+    "typescript": "5.9.3"
+  }
+}

@@ -99,7 +99,7 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0085](0085-platform-tenant-api-implementation.md) | The platform tenant API: operations, permission and what stays off | Proposed |
 | [0086](0086-interactive-topic-type.md) | Interactive topic type: author-uploaded JavaScript packages in an opaque sandbox on the content origin | Proposed |
 | [0087](0087-interactive-bridge-protocol.md) | The `ulams-ix` bridge protocol and the `@ulams/interactive-bridge` library (MIT) | Proposed |
-| [0088](0088-separately-licensed-content-packages.md) | Separately licensed content packages under `demo-content/`; GPL apps stay GPL and are never linked into MIT code | Proposed |
+| [0088](0088-separately-licensed-content-packages.md) | Content packages under `demo-content/`, played only as sandboxed content | Proposed (amended 2026-10-09) |
 | [0089](0089-six-demo-academies-and-content-sourcing.md) | Six demo academies: three free interactive courses, one theme preset each, sourced content, EN/PL as two courses | Proposed |
 | [0090](0090-living-course-implementation-choices.md) | Living Course: choices made during implementation | Proposed |
 | [0091](0091-shared-hosting-cron-workers-and-manual-tenant-database.md) | Shared hosting: cron-driven workers and an operator-created tenant database | Proposed |
