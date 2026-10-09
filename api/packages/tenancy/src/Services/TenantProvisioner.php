@@ -40,6 +40,7 @@ class TenantProvisioner
         private DomainRegistryContract $domains,
         private TenantCommandRunnerContract $runner,
         private Filesystem $files,
+        private ?H5PServiceConfigExporter $h5pConfig = null,
     ) {
     }
 
@@ -76,6 +77,8 @@ class TenantProvisioner
             $report($step, 'done');
         }
 
+        $this->h5pConfig?->exportTenant($tenant->api_host, $this->domains->storagePath($tenant->api_host));
+
         $tenant->status = Tenant::STATUS_ACTIVE;
         $tenant->last_error = null;
         $tenant->save();
@@ -95,6 +98,7 @@ class TenantProvisioner
 
         $this->domains->add($tenant->api_host, TenantNaming::envValues($tenant));
         $this->restorePassportKeys($tenant);
+        $this->h5pConfig?->exportTenant($tenant->api_host, $this->domains->storagePath($tenant->api_host));
 
         if ($migrate && $tenant->hasCompleted('migrate')) {
             $this->runner->run($tenant->api_host, ['migrate', '--force']);
@@ -111,6 +115,7 @@ class TenantProvisioner
         $this->buckets->delete($tenant->bucket);
         $report('env', 'running');
         $this->domains->remove($tenant->api_host);
+        $this->h5pConfig?->remove($tenant->api_host);
     }
 
     private function runStep(Tenant $tenant, string $step, int $users): void
