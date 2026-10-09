@@ -1,0 +1,27 @@
+# ulams on MyDevil: install with `crontab deploy/mydevil/crontab` after replacing LOGIN (crontab -l to check).
+# Cron on MyDevil starts the minimum interval at one minute (the wiki example runs */2); to confirm that
+# `* * * * *` is accepted on the account. Output goes to files so a failure leaves a trace.
+SHELL=/bin/sh
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/home/LOGIN/bin
+ULAMS_HOME=/usr/home/LOGIN/ulams
+
+# 1. Every minute: the scheduler tick and the default, broadcast and video queues of the platform and
+#    every tenant. flock -n skips the minute when the previous run is still going.
+* * * * * /usr/local/bin/flock -n /usr/home/LOGIN/ulams/run/default.lock /bin/sh /usr/home/LOGIN/ulams/bin/cron-tick.sh default >> /usr/home/LOGIN/ulams/logs/cron-default.log 2>&1
+
+# 2. Every minute: the builder queue (Course Builder, Living Course; jobs up to 30 minutes). The lock holds
+#    while a job runs, so at most one builder worker exists; the next minute starts it again.
+* * * * * /usr/local/bin/flock -n /usr/home/LOGIN/ulams/run/builder.lock /bin/sh /usr/home/LOGIN/ulams/bin/cron-tick.sh builder >> /usr/home/LOGIN/ulams/logs/cron-builder.log 2>&1
+
+# 3. Every minute: video and course clone jobs (up to 5 hours). Needs ffmpeg and a host that lets a process run that long (to confirm).
+* * * * * /usr/local/bin/flock -n /usr/home/LOGIN/ulams/run/long.lock /bin/sh /usr/home/LOGIN/ulams/bin/cron-tick.sh long >> /usr/home/LOGIN/ulams/logs/cron-long.log 2>&1
+
+# 4. Daily: backup (database dumps and env files), keeps 7 days.
+17 3 * * * /bin/sh /usr/home/LOGIN/ulams/bin/backup.sh >> /usr/home/LOGIN/ulams/logs/backup.log 2>&1
+
+# 5. Weekly: rotate the cron logs.
+5 4 * * 0 /usr/bin/find /usr/home/LOGIN/ulams/logs -name 'cron-*.log' -size +20M -exec /usr/bin/truncate -s 0 {} \;
+
+# Optional, only with Redis (README, "Redis"): start it after a server reboot and every five minutes if it died.
+#@reboot /bin/sh /usr/home/LOGIN/ulams/bin/redis-start.sh >> /usr/home/LOGIN/ulams/logs/redis.log 2>&1
+#*/5 * * * * /bin/sh /usr/home/LOGIN/ulams/bin/redis-start.sh >> /usr/home/LOGIN/ulams/logs/redis.log 2>&1
