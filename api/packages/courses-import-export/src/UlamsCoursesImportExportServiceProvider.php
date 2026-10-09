@@ -7,6 +7,7 @@ use Ulams\CoursesImportExport\Services\Contracts\CloneCourseServiceContract;
 use Ulams\CoursesImportExport\Services\Contracts\ExportImportServiceContract;
 use Ulams\CoursesImportExport\Services\ExportImportService;
 use Illuminate\Support\ServiceProvider;
+use Ulams\Uploads\UlamsUploadsServiceProvider;
 use ZanySoft\Zip\ZipServiceProvider;
 
 class UlamsCoursesImportExportServiceProvider extends ServiceProvider
@@ -24,6 +25,7 @@ class UlamsCoursesImportExportServiceProvider extends ServiceProvider
 
     public function register()
     {
+        $this->app->register(UlamsUploadsServiceProvider::class);
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(ZipServiceProvider::class);
     }

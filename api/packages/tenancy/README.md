@@ -59,6 +59,7 @@ Steps of `ulams:tenant:create`, recorded in `tenants.steps`:
 | `passport_keys` | `passport:keys`, copy stored encrypted on the tenant row |
 | `passport_client` | `passport:client --personal` |
 | `permissions` | `db:seed --class=PermissionsSeeder` (creates the admin user) |
+| `lti_keys` | `ulams:lti:rotate-keys --init`: the tenant's LTI signing keys (ADR 0012) |
 | `demo` | `ulams:tenant:seed-demo`: tutor, students, settings |
 
 Every step from `migrate` on runs as `php artisan … --domain=<host>` in a child process.

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Ulams\Core\Tests\CreatesUsers;
 use Ulams\Scorm\Tests\ScormTestTrait;
+use Ulams\Uploads\Tests\ZipFixtures;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -15,7 +16,7 @@ use Peopleaps\Scorm\Model\ScormScoModel;
 
 class ScormAdminApiTest extends TestCase
 {
-    use DatabaseTransactions, ScormTestTrait, WithFaker, CreatesUsers;
+    use DatabaseTransactions, ScormTestTrait, WithFaker, CreatesUsers, ZipFixtures;
 
     public function test_content_upload(): void
     {
@@ -29,9 +30,21 @@ class ScormAdminApiTest extends TestCase
 
     public function test_content_upload_invalid_data(): void
     {
+        // a .zip that is not a zip: the upload guard sniffs the content (finfo)
         $response = $this->actingAs($this->user, 'api')
             ->json('POST', '/api/admin/scorm/upload', [
                 'zip' => UploadedFile::fake()->create('file.zip', 100, 'application/zip'),
+            ]);
+
+        $response->assertUnprocessable();
+        $response->assertJsonValidationErrors(['zip' => 'not allowed for scorm uploads']);
+    }
+
+    public function test_content_upload_zip_without_manifest(): void
+    {
+        $response = $this->actingAs($this->user, 'api')
+            ->json('POST', '/api/admin/scorm/upload', [
+                'zip' => new UploadedFile($this->makeZip(['index.html' => 'x']), 'file.zip', null, null, true),
             ]);
 
         $response->assertUnprocessable();
@@ -39,6 +52,74 @@ class ScormAdminApiTest extends TestCase
             'success' => false,
             'message' => 'invalid_scorm_archive_message'
         ]);
+    }
+
+    public static function hostilePackages(): array
+    {
+        return [
+            'zip-slip' => [['../../../../var/www/html/public/evil.php' => '<?php echo 1;'], [], 'leaves its folder'],
+            'absolute path' => [['/tmp/evil.html' => 'x'], [], 'absolute path'],
+            'symlink' => [[], ['leak.txt' => '/var/www/html/.env'], 'symbolic link'],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('hostilePackages')]
+    public function test_hostile_package_is_rejected_and_nothing_is_stored(array $extra, array $symlinks, string $message): void
+    {
+        Storage::fake(config('scorm.disk'));
+        $zip = $this->makeScormZip($extra, $symlinks);
+
+        $response = $this->actingAs($this->user, 'api')->json('POST', '/api/admin/scorm/upload', [
+            'zip' => new UploadedFile($zip, 'course.zip', null, null, true),
+        ]);
+
+        $response->assertUnprocessable();
+        $response->assertJsonValidationErrors(['zip' => $message]);
+        $this->assertSame([], Storage::disk(config('scorm.disk'))->allFiles());
+        $this->assertSame(0, ScormModel::query()->count());
+    }
+
+    public function test_zip_bomb_is_rejected(): void
+    {
+        config(['ulams_uploads.zip.package.max_ratio' => 100]);
+        $zip = $this->makeScormZip(['assets/zeros.bin' => str_repeat("\0", 8 * 1024 * 1024)]);
+
+        $response = $this->actingAs($this->user, 'api')->json('POST', '/api/admin/scorm/upload', [
+            'zip' => new UploadedFile($zip, 'course.zip', null, null, true),
+        ]);
+
+        $response->assertUnprocessable();
+        $response->assertJsonValidationErrors(['zip' => 'compression ratio']);
+    }
+
+    public function test_service_rejects_zip_slip_without_request_validation(): void
+    {
+        // course imports call the service directly
+        Storage::fake(config('scorm.disk'));
+        $zip = $this->makeScormZip(['../escape.html' => 'x']);
+
+        try {
+            app(\Ulams\Scorm\Services\Contracts\ScormServiceContract::class)
+                ->uploadScormArchive(new UploadedFile($zip, 'course.zip', null, null, true));
+            $this->fail('Expected the package to be rejected.');
+        } catch (\Ulams\Uploads\Exceptions\UploadRejected $e) {
+            $this->assertSame('zip_slip', $e->reason);
+        }
+        $this->assertSame([], Storage::disk(config('scorm.disk'))->allFiles());
+    }
+
+    public function test_valid_generated_package_is_extracted_under_its_folder(): void
+    {
+        Storage::fake(config('scorm.disk'));
+
+        $response = $this->actingAs($this->user, 'api')->json('POST', '/api/admin/scorm/upload', [
+            'zip' => new UploadedFile($this->makeScormZip(['js/./app.js' => 'run()']), 'course.zip', null, null, true),
+        ]);
+
+        $response->assertOk();
+        $hash = $response->json('data.scormData.hashName');
+        Storage::disk(config('scorm.disk'))->assertExists("scorm/scorm_12/{$hash}/index.html");
+        Storage::disk(config('scorm.disk'))->assertExists("scorm/scorm_12/{$hash}/js/app.js");
     }
 
     public function test_content_upload_invalid_data_format(): void
@@ -251,5 +332,31 @@ class ScormAdminApiTest extends TestCase
 
         $response = $this->actingAs($this->user, 'api')->get('/api/scorm/play/' . $data->data->scormData->scos[0]->uuid);
         $response->assertOk();
+    }
+
+    public function test_adapt_packages_are_detected_and_labelled(): void
+    {
+        Storage::fake(config('scorm.disk'));
+        // a minimal adapt-contrib-spoor export: SCORM manifest plus the Adapt runtime layout
+        $adapt = $this->makeScormZip([
+            'adapt/js/adapt.min.js' => 'window.Adapt = {};',
+            'course/config.json' => '{"_spoor":{"_isEnabled":true}}',
+            'course/en/course.json' => '{"title":"Adapt fixture"}',
+        ]);
+
+        $response = $this->actingAs($this->user, 'api')->postJson('/api/admin/scorm/upload', [
+            'zip' => new UploadedFile($adapt, 'adapt.zip', null, null, true),
+        ])->assertOk();
+
+        $this->assertSame('adapt', $response->json('data.model.source_format'));
+        $this->assertDatabaseHas('scorm', ['id' => $response->json('data.model.id'), 'source_format' => 'adapt']);
+        $this->actingAs($this->user, 'api')->getJson('/api/admin/scorm?per_page=100')
+            ->assertOk()
+            ->assertJsonFragment(['source_format' => 'adapt']);
+
+        $plain = $this->actingAs($this->user, 'api')->postJson('/api/admin/scorm/upload', [
+            'zip' => new UploadedFile($this->makeScormZip(), 'plain.zip', null, null, true),
+        ])->assertOk();
+        $this->assertNull($plain->json('data.model.source_format'));
     }
 }

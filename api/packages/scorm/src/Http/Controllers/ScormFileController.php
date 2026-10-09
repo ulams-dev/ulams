@@ -12,6 +12,8 @@ use Symfony\Component\Mime\MimeTypes;
  * disk. Each tenant has its own storage directory, and nothing else (no web server root, no
  * `public/storage` link) serves it, so without this route the player's iframe gets a 404.
  * With an S3 disk the files come straight from the bucket and this route is not registered.
+ * Legacy path: when the tenant has a content origin this route answers 404 and the content
+ * origin serves the files instead.
  */
 class ScormFileController extends Controller
 {
@@ -31,6 +33,10 @@ class ScormFileController extends Controller
 
     public function show(string $path): BinaryFileResponse
     {
+        // With a tenant content origin, package files (third-party JavaScript) are only served there
+        // (GET /api/content/scorm/..., api/docs/content-origin.md), never on the API origin.
+        abort_if(trim((string) (config('scorm.content_origin') ?: config('ulams_uploads.content_origin'))) !== '', 404);
+
         abort_if($path === '' || str_contains($path, "\0") || preg_match('#(^|[/\\\\])\.\.([/\\\\]|$)#', $path), 404);
 
         $disk = Storage::disk((string) config('scorm.disk'));

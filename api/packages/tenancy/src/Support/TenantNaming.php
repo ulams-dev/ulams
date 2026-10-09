@@ -87,6 +87,10 @@ class TenantNaming
             'ADMIN_URL' => $tenant->adminUrl(),
             // packages/demo: password-less login and an hourly reset of the tenant
             'DEMO_MODE' => $tenant->demo ? 'true' : 'false',
+            // the tenant's own token for API <-> H5P service calls (the service reads it from this
+            // env file); derived from the tenant APP_KEY, so it needs no extra secret storage
+            'H5P_INTERNAL_TOKEN' => hash_hmac('sha256', 'ulams-h5p-internal-token', (string) $tenant->app_key),
+            'CONTENT_ORIGIN' => config('ulams_tenancy.scheme', 'http') . '://' . self::pattern('content_host', $tenant->slug),
             'DB_DATABASE' => $tenant->db_name,
             'DB_USERNAME' => $tenant->db_user,
             'DB_PASSWORD' => $tenant->db_password,

@@ -28,7 +28,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use ZanySoft\Zip\Facades\Zip;
+use Ulams\CoursesImportExport\Support\ImportPath;
+use Ulams\Uploads\UploadGuard;
+use Ulams\Uploads\Zip\SafeExtractor;
 use ZipArchive;
 
 class ExportImportService implements ExportImportServiceContract
@@ -116,7 +118,8 @@ class ExportImportService implements ExportImportServiceContract
         $files = Storage::allFiles($dirName . '/content');
         foreach ($files as $file) {
             $content = Storage::get($file);
-            $dir = str_replace($dirName . '/content', '', $file);
+            // entry names are relative: a leading "/" is an absolute path to the upload guard
+            $dir = ltrim(str_replace($dirName . '/content', '', $file), '/');
 
             if (!$zip->addFromString($dir, $content)) {
                 throw new \Exception("File [`{$file}`] could not be added to the zip file: " . $zip->getStatusString());
@@ -193,9 +196,12 @@ class ExportImportService implements ExportImportServiceContract
         }
 
         $dirFullPath = Storage::disk('local')->path($dirPath);
-        $zip = Zip::open($zipFile);
-        $zip->extract($dirFullPath);
-        $zip->close();
+        // entry by entry, zip-slip/symlink/zip-bomb checked (packages/uploads)
+        app(SafeExtractor::class)->extractToDirectory(
+            (string) $zipFile->getRealPath(),
+            $dirFullPath,
+            app(UploadGuard::class)->limitsFor('course-import'),
+        );
 
         return $dirFullPath;
     }
@@ -218,8 +224,8 @@ class ExportImportService implements ExportImportServiceContract
             return $foundCategory;
         }
 
-        $filePath = $this->dirFullPath . DIRECTORY_SEPARATOR . $category['icon'];
-        if (File::exists($filePath)) {
+        $filePath = ImportPath::resolve($this->dirFullPath, $category['icon'] ?? null);
+        if ($filePath !== null) {
             $file = new HttpFile($filePath);
             $category['icon'] = Storage::putFile('categories', $file, 'public');
         }
@@ -314,14 +320,15 @@ class ExportImportService implements ExportImportServiceContract
         $request->setValidator(Validator::make($topicData, $request->rules()));
 
         foreach (['value', 'poster'] as $key) {
-            if (isset($topicData[$key]) && File::exists($dirFullPath . DIRECTORY_SEPARATOR . $topicData[$key])) {
+            $importedFile = isset($topicData[$key]) ? ImportPath::resolve($dirFullPath, $topicData[$key]) : null;
+            if ($importedFile !== null) {
                 // Laravel 13: in Request::all() input wins over a file with the same key, so the
                 // exported path must be removed for the uploaded file to be seen.
                 $request->query->remove($key);
                 $request->request->remove($key);
                 $request->files->add([
                     $key => new UploadedFile(
-                        $dirFullPath . DIRECTORY_SEPARATOR . $topicData[$key],
+                        $importedFile,
                         $topicData[$key],
                         null,
                         null,
@@ -347,13 +354,13 @@ class ExportImportService implements ExportImportServiceContract
     {
         $createdResources = [];
         foreach ($resources as $resource) {
-            if (isset($resource['path'])
-                && isset($resource['name'])
-                && File::exists($dirFullPath . DIRECTORY_SEPARATOR . $resource['path'])
-            ) {
+            $resourcePath = isset($resource['path'], $resource['name'])
+                ? ImportPath::resolve($dirFullPath, $resource['path'])
+                : null;
+            if ($resourcePath !== null) {
                 $createdResources[] = $this->topicResourceRepo->storeUploadedResourceForTopic(
                     $topic,
-                    new UploadedFile($dirFullPath . DIRECTORY_SEPARATOR . $resource['path'], $resource['name'])
+                    new UploadedFile($resourcePath, $resource['name'])
                 );
             }
         }
@@ -364,13 +371,11 @@ class ExportImportService implements ExportImportServiceContract
     private function addFilesToArrayBasedOnPath(array $data, string $dirFullPath): array
     {
         foreach ($data as $key => $value) {
-            if (Str::endsWith($key, '_path')
-                && File::exists($dirFullPath . DIRECTORY_SEPARATOR . $value)
-                && !File::isDirectory($dirFullPath . DIRECTORY_SEPARATOR . $value)
-            ) {
+            $importedFile = Str::endsWith($key, '_path') ? ImportPath::resolve($dirFullPath, $value) : null;
+            if ($importedFile !== null) {
                 $fileKey = Str::before($key, '_path');
                 $data[$fileKey] = new UploadedFile(
-                    $dirFullPath . DIRECTORY_SEPARATOR . $value,
+                    $importedFile,
                     $value,
                     null,
                     null,
@@ -399,15 +404,9 @@ class ExportImportService implements ExportImportServiceContract
 
     private function importRichTextTopicAssets(string $filesPath, string $destinationPath, string $assetFolder): void
     {
-        $topicAssetsPath =
-            $filesPath
-            . DIRECTORY_SEPARATOR
-            . 'topic'
-            . DIRECTORY_SEPARATOR
-            . $assetFolder
-            . DIRECTORY_SEPARATOR;
+        $topicAssetsPath = ImportPath::resolve($filesPath, 'topic' . DIRECTORY_SEPARATOR . $assetFolder, true);
 
-        if (!is_dir($topicAssetsPath)) {
+        if ($topicAssetsPath === null || !is_dir($topicAssetsPath)) {
             return;
         }
 

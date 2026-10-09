@@ -10,6 +10,7 @@ import { PdfPlayer } from "@ulams/components/components/players/PdfPlayer/PdfPla
 import { ProjectPlayer } from "@ulams/components/components/players/ProjectPlayer/ProjectPlayer";
 import { isMobile } from "react-device-detect";
 import ScormPlayer from "./Players/ScormPlayer";
+import LtiPlayer from "./Players/LtiPlayer";
 import GiftQuizPlayer from "@ulams/components/components/quizzes";
 import { useCoursePanel } from "@/components/Courses/Course/Context";
 
@@ -150,6 +151,9 @@ export const CourseProgramContent: React.FC<{
             }}
           />
         );
+
+      case API.TopicType.Lti:
+        return <LtiPlayer topicId={topic.id} title={topic.title} />;
 
       case API.TopicType.GiftQuiz:
         return <GiftQuizPlayer topic={topic} onTopicEnd={enableNextButton} />;

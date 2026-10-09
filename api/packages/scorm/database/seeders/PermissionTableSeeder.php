@@ -14,6 +14,7 @@ class PermissionTableSeeder extends Seeder
     {
         $admin = Role::findOrCreate('admin', 'api');
         $tutor = Role::findOrCreate('tutor', 'api');
+        $student = Role::findOrCreate('student', 'api');
 
         foreach (ScormPermissionsEnum::getValues() as $permission) {
             Permission::findOrCreate($permission, 'api');
@@ -21,5 +22,6 @@ class PermissionTableSeeder extends Seeder
 
         $admin->givePermissionTo(ScormPermissionsEnum::adminPermissions());
         $tutor->givePermissionTo(ScormPermissionsEnum::tutorPermissions());
+        $student->givePermissionTo(ScormPermissionsEnum::studentPermissions());
     }
 }

@@ -326,6 +326,9 @@ enum PERMISSIONS {
   DictionaryWordRead = 'dictionary-word_read',
   DictionaryWordUpdate = 'dictionary-word_update',
   DictionaryWordDelete = 'dictionary-word_delete',
+
+  LtiManage = 'lti_manage',
+  LiaScriptManage = 'liascript_manage',
 }
 
 export default PERMISSIONS;

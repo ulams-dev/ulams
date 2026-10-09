@@ -370,4 +370,49 @@ class CourseImportApiTest extends TestCase
         $this->assertEquals(1, count($data->lessons));
         $this->assertEquals(3, count($data->lessons[0]->topics));
     }
+
+    public function testZipSlipImportIsRejected(): void
+    {
+        $path = Storage::path($this->dirPath . 'course-import.zip');
+        $zip = new \ZipArchive();
+        $zip->open($path);
+        $zip->addFromString('../../../../escape.php', '<?php echo 1;');
+        $zip->close();
+
+        $response = $this->actingAs($this->makeAdmin(), 'api')->postJson('/api/admin/courses/zip/import', [
+            'file' => new UploadedFile($path, 'course-import.zip', null, null, true),
+        ]);
+
+        $response->assertUnprocessable();
+        $response->assertJsonValidationErrors(['file' => 'leaves its folder']);
+    }
+
+    public function testContentJsonCannotReadFilesOutsideTheArchive(): void
+    {
+        // a file the import must never publish
+        Storage::disk('local')->put('secret.txt', 'TOP SECRET');
+
+        $content = json_decode($this->content, true);
+        $content['categories'][0]['slug'] = 'traversal-' . $this->faker->numberBetween();
+        $content['categories'][0]['icon'] = '../../../secret.txt';
+        $content['image_path'] = '../../../secret.txt';
+        Storage::put($this->dirPath . 'content.json', json_encode($content));
+        Storage::delete($this->dirPath . 'course-import.zip');
+        Storage::makeDirectory('traversal');
+        $zip = Zip::create(Storage::path('traversal/course-import.zip'));
+        $zip->add(Storage::path($this->dirPath), true);
+        $zip->close();
+
+        $response = $this->actingAs($this->makeAdmin(), 'api')->postJson('/api/admin/courses/zip/import', [
+            'file' => new UploadedFile(Storage::path('traversal/course-import.zip'), 'course-import.zip', null, null, true),
+        ]);
+
+        $response->assertCreated();
+        foreach (Storage::allFiles() as $file) {
+            if (str_starts_with($file, 'imports/') || $file === 'secret.txt') {
+                continue;
+            }
+            $this->assertNotSame('TOP SECRET', Storage::get($file), "{$file} is a copy of a file outside the archive");
+        }
+    }
 }

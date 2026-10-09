@@ -109,6 +109,75 @@ export function invalidateProgress(tenant: Tenant): void {
 }
 
 /**
+ * Starts a SCO on the tenant content origin (api/docs/content-origin.md): the API returns a player
+ * URL on <slug>.content.<base> carrying a SCO-scoped tracking token in its fragment. Null when the
+ * tenant has no content origin (the legacy API player is used then). Never cached: every call
+ * issues a new token for this learner.
+ */
+export async function scormLaunch(tenant: Tenant, token: string, uuid: string): Promise<string | null> {
+  try {
+    const response = await fetch(`${tenant.apiUrl}/api/scorm/launch/${encodeURIComponent(uuid)}`, {
+      method: "POST",
+      headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(4000),
+    });
+    if (!response.ok) return null;
+    const body = (await response.json()) as { data?: { url?: string | null } };
+    return typeof body.data?.url === "string" ? body.data.url : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Starts an LTI 1.3 launch of an external-tool topic: the tool's OIDC login URL with a single-use,
+ * 2-minute hint (api/packages/lti). Never cached.
+ */
+export async function ltiLaunch(
+  tenant: Tenant,
+  token: string,
+  topicId: number
+): Promise<{ url: string; presentation: string; tool: string } | { error: string }> {
+  try {
+    const response = await fetch(`${tenant.apiUrl}/api/lti/launches/${topicId}`, {
+      method: "POST",
+      headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(8000),
+    });
+    const body = (await response.json().catch(() => null)) as { data?: { url?: string; presentation?: string; tool?: string }; message?: string } | null;
+    if (response.ok && typeof body?.data?.url === "string") {
+      return { url: body.data.url, presentation: body.data.presentation ?? "iframe", tool: body.data.tool ?? "" };
+    }
+    return { error: body?.message ?? "This activity cannot be opened right now." };
+  } catch {
+    return { error: "This activity cannot be opened right now." };
+  }
+}
+
+/**
+ * Starts a LiaScript topic on the tenant content origin. Returns the player URL and the number of
+ * sections, or the API's explanation when it cannot be played (no content origin or player build).
+ */
+export async function liascriptLaunch(
+  tenant: Tenant,
+  token: string,
+  topicId: number
+): Promise<{ url: string; sections?: number } | { error: string }> {
+  try {
+    const response = await fetch(`${tenant.apiUrl}/api/liascript/launches/${topicId}`, {
+      method: "POST",
+      headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(8000),
+    });
+    const body = (await response.json().catch(() => null)) as { data?: { url?: string; sections?: number }; message?: string } | null;
+    if (response.ok && typeof body?.data?.url === "string") return { url: body.data.url, sections: body.data.sections };
+    return { error: body?.message ?? "This course cannot be opened right now." };
+  } catch {
+    return { error: "This course cannot be opened right now." };
+  }
+}
+
+/**
  * Whether a SCORM package's entry file can be loaded. The API serves packages from
  * /storage/scorm/…, which 404s for tenants whose public storage is not linked; then the
  * player shows an explanation instead of a frame with a 404 page inside.
