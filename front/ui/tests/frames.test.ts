@@ -18,6 +18,7 @@ const UNSANDBOXED: Record<string, string> = {
   "admin/src/components/PdfEditor/index.tsx": "same: PDF preview of an uploaded file",
   "front/src/lib/sdk/react/context/index.tsx": "legacy SCORM player of tenants without a content origin (API origin, ADR 0014 consequences)",
   "front/src/lib/scorm-player/player.tsx": "legacy service-worker SCORM player (front origin), replaced by the content origin",
+  "front/web/src/pages/studio/s/[id]/preview/[...page].astro": "the author preview frames this app's own preview page (same origin, the studio script reads its DOM for 'Discuss'); third-party packages in it still sit in their own sandboxed frames",
 };
 
 function walk(dir: string, out: string[] = []): string[] {
