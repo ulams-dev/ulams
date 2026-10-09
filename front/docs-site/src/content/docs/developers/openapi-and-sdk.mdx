@@ -94,6 +94,8 @@ does not document is a type error. Paths that are not in the document yet are ca
    corepack yarn workspace ulams coverage    # fails on an operation without a command
    ```
 
+   CI fails (`CLI spec is current`, `sync-spec.mjs --check`) when this step was skipped.
+
    The course builder and Living Course are the exception: their commands are hand-written
    (`front/cli/src/commands/builder.ts`, `living.ts`) and list the endpoints they cover.
 
