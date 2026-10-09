@@ -1433,3 +1433,20 @@ export function learnerLayoutManifest(): {
     ),
   };
 }
+
+/**
+ * Every page-catalogue component as a manifest for the API (closed props JSON Schema, whether it takes
+ * children), written to catalogue/page-manifest.json by `yarn workspace @ulams/ui page-manifest`. The
+ * course builder validates generated landing documents against it before publishing.
+ */
+export function pageManifest(): {
+  catalogId: string;
+  components: Record<string, { description: string; children: boolean; props: JsonSchema }>;
+} {
+  return {
+    catalogId: "https://ulams.dev/catalogue/page/v1",
+    components: Object.fromEntries(
+      Object.entries(registry).map(([name, spec]) => [name, { description: spec.description, children: spec.children, props: closed(spec.props) }])
+    ),
+  };
+}

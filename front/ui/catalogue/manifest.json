@@ -1992,6 +1992,171 @@
         "additionalProperties": false
       }
     },
+    "PublishSummary": {
+      "description": "Everything the author should know before publishing an applied course: where it will live, its price and theme, the numbers, items that block publishing and warnings that must be acknowledged. The Publish button stays disabled while anything blocks, and until warnings are acknowledged.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Course title",
+            "maxLength": 200
+          },
+          "url": {
+            "type": "string",
+            "description": "Public address of the course page",
+            "maxLength": 500
+          },
+          "published": {
+            "type": "boolean",
+            "description": "The course is already published"
+          },
+          "price": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Price as shown to the author, e.g. Free or 49.00 USD",
+                "maxLength": 80
+              },
+              "suggested": {
+                "type": "boolean",
+                "description": "The amount is a suggestion the author has not confirmed"
+              }
+            },
+            "required": [
+              "label"
+            ],
+            "additionalProperties": false
+          },
+          "theme": {
+            "type": "object",
+            "properties": {
+              "preset": {
+                "type": "string",
+                "description": "Theme preset",
+                "maxLength": 32
+              },
+              "accent": {
+                "type": "string",
+                "description": "Accent chosen by the author",
+                "maxLength": 7
+              },
+              "adjustedAccent": {
+                "type": "string",
+                "description": "Accent as shown after the contrast adjustment",
+                "maxLength": 7
+              }
+            },
+            "required": [
+              "preset"
+            ],
+            "additionalProperties": false
+          },
+          "counts": {
+            "type": "object",
+            "properties": {
+              "modules": {
+                "type": "integer",
+                "description": "Modules",
+                "minimum": 0
+              },
+              "lessons": {
+                "type": "integer",
+                "description": "Lessons",
+                "minimum": 0
+              },
+              "minutes": {
+                "type": "integer",
+                "description": "Minutes",
+                "minimum": 0
+              },
+              "questions": {
+                "type": "integer",
+                "description": "Quiz questions",
+                "minimum": 0
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "blocking": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "description": "Machine code",
+                  "maxLength": 40
+                },
+                "message": {
+                  "type": "string",
+                  "description": "What to fix",
+                  "maxLength": 500
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Items that block publishing",
+            "maxItems": 40
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "description": "Machine code",
+                  "maxLength": 40
+                },
+                "message": {
+                  "type": "string",
+                  "description": "What to review",
+                  "maxLength": 500
+                },
+                "elementId": {
+                  "type": "string",
+                  "description": "Element the warning is about",
+                  "maxLength": 32
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Items to acknowledge",
+            "maxItems": 80
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Note from the last apply",
+              "maxLength": 500
+            },
+            "description": "Notes from the last apply",
+            "maxItems": 10
+          }
+        },
+        "required": [
+          "published",
+          "price",
+          "blocking",
+          "warnings"
+        ],
+        "additionalProperties": false
+      }
+    },
     "SourceConnectionCard": {
       "description": "A source of the course and how it stays in sync: file name and kind, connector (upload, Git, web page), a status pill (up to date, new version, processing, failed, paused), the revision the course reflects against the latest one, when it was last checked, the error if the last check failed, and the actions Check now and Upload a new version. Props come from the API, never from the model.",
       "modelSelectable": false,
