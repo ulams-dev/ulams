@@ -143,6 +143,33 @@ class TenantIsolationTest extends TestCase
         $this->assertSame(401, $this->request(self::B, 'GET', "/api/admin/liascript/{$id}/source", $tokenA)->getStatusCode());
     }
 
+    /**
+     * Course Builder sessions, versions and events stay in their tenant: tenant B with its own token
+     * cannot read tenant A's session, events or versions, and A's token is not valid on B. (Needs
+     * AI_DRIVER=fake or a key on both tenants; with AI disabled every builder endpoint answers 503.)
+     */
+    public function testCourseBuilderSessionsDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $tokenB = $this->login(self::B);
+        $created = $this->request(self::A, 'POST', '/api/admin/course-builder/sessions', $tokenA, ['title' => 'Isolation probe']);
+        if ($created->getStatusCode() === 503) {
+            $this->markTestSkipped('AI is disabled on the probe tenants');
+        }
+        $this->assertSame(201, $created->getStatusCode(), (string) $created->getBody());
+        $id = json_decode((string) $created->getBody(), true)['data']['session']['id'];
+
+        foreach (["/api/admin/course-builder/sessions/{$id}", "/api/admin/course-builder/sessions/{$id}/versions", "/api/admin/course-builder/sessions/{$id}/events", "/api/admin/course-builder/sessions/{$id}/brief"] as $uri) {
+            $this->assertSame(200, $this->request(self::A, 'GET', $uri, $tokenA)->getStatusCode(), $uri);
+            $onB = $this->request(self::B, 'GET', $uri, $tokenB);
+            $this->assertSame(404, $onB->getStatusCode(), $uri);
+            $this->assertStringNotContainsString('Isolation probe', (string) $onB->getBody());
+            $this->assertSame(401, $this->request(self::B, 'GET', $uri, $tokenA)->getStatusCode(), $uri);
+        }
+        $list = json_decode((string) $this->request(self::B, 'GET', '/api/admin/course-builder/sessions', $tokenB)->getBody(), true);
+        $this->assertNotContains($id, array_column($list['data'] ?? [], 'id'));
+    }
+
     private function login(string $slug): string
     {
         $response = $this->request($slug, 'POST', '/api/auth/login', null, [

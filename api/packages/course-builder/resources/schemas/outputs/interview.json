@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Interview questions",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "message",
+    "questions"
+  ],
+  "properties": {
+    "message": {
+      "type": "string",
+      "description": "Short message to the author, plain text",
+      "maxLength": 600,
+      "minLength": 1
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "label",
+          "why",
+          "component",
+          "options",
+          "defaultValue"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "enum": [
+              "audience",
+              "level",
+              "duration",
+              "tone",
+              "assessments",
+              "language"
+            ]
+          },
+          "label": {
+            "type": "string",
+            "description": "The question",
+            "maxLength": 200,
+            "minLength": 3
+          },
+          "why": {
+            "type": "string",
+            "description": "Why it matters for this source",
+            "maxLength": 300,
+            "minLength": 3
+          },
+          "component": {
+            "type": "string",
+            "enum": [
+              "ChoiceChips",
+              "SingleChoice",
+              "DurationSlider",
+              "LanguagePicker"
+            ]
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "label"
+              ],
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "description": "Value",
+                  "maxLength": 120,
+                  "minLength": 1
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Visible text",
+                  "maxLength": 120,
+                  "minLength": 1
+                }
+              }
+            },
+            "minItems": 2,
+            "maxItems": 6
+          },
+          "defaultValue": {
+            "type": "string",
+            "description": "Default answer, see the prompt for conventions",
+            "maxLength": 120,
+            "minLength": 1
+          }
+        }
+      },
+      "minItems": 6,
+      "maxItems": 6
+    }
+  }
+}

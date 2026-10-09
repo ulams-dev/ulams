@@ -1,0 +1,17 @@
+{
+    "task": "quiz",
+    "prompt_id": "course-builder/quiz",
+    "prompt_version": 1,
+    "hash": "75b668f4fed2a0c58bf9386e28fdca51",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 1093,
+        "output_tokens": 789,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "cache_read_tokens": 4818
+    },
+    "text": "{\"questions\":[{\"type\":\"single\",\"stem\":\"Why is weighing coffee with a scale more reliable than measuring it with spoons?\",\"options\":[{\"text\":\"A spoonful of light roast weighs more than a spoonful of dark roast, so scoops hold different amounts of coffee\",\"correct\":true},{\"text\":\"Spoons always hold exactly the same weight, but scales are easier to clean\",\"correct\":false},{\"text\":\"Scales make the water hotter, which gives a more even extraction\",\"correct\":false},{\"text\":\"Spoons cannot be used with ground coffee, only with whole beans\",\"correct\":false}],\"explanation\":\"Different roasts have different densities, so the same spoonful can contain different weights of coffee. A scale measures the actual weight and removes that guesswork.\",\"citations\":[\"{{frg_4}}\"],\"objectiveIds\":[\"{{id_6}}\"]},{\"type\":\"single\",\"stem\":\"You brewed at 1:16 and the cup was a bit too weak, but otherwise balanced. Which ratio should you try next for a stronger cup?\",\"options\":[{\"text\":\"1:15\",\"correct\":true},{\"text\":\"1:17\",\"correct\":false},{\"text\":\"1:18\",\"correct\":false},{\"text\":\"1:16 again with more water\",\"correct\":false}],\"explanation\":\"A lower second number means more coffee relative to water, so 1:15 gives a stronger cup. 1:17 would make the cup lighter, which is the opposite of what you want.\",\"citations\":[\"{{frg_4}}\"],\"objectiveIds\":[\"{{id_7}}\"]},{\"type\":\"single\",\"stem\":\"You want to brew a 500 g pot of coffee at a ratio of 1:16. About how much coffee do you need?\",\"options\":[{\"text\":\"About 31 g\",\"correct\":true},{\"text\":\"About 8,000 g\",\"correct\":false},{\"text\":\"About 20 g\",\"correct\":false},{\"text\":\"About 320 g\",\"correct\":false}],\"explanation\":\"To find the coffee for a known total water weight, divide the water by the ratio number: 500 ÷ 16 is about 31 g. Multiplying instead is the tempting mistake, and it would give an impossible amount.\",\"citations\":[\"{{frg_5}}\"],\"objectiveIds\":[\"{{id_8}}\"]}]}"
+}

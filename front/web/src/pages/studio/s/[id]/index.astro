@@ -1,0 +1,12 @@
+---
+import Studio from "../../../../layouts/Studio.astro";
+import StudioThread from "../../../../components/StudioThread.astro";
+
+const id = Astro.params.id ?? "";
+if (!Astro.locals.tenant) return Astro.redirect("/tenants");
+if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 });
+---
+
+<Studio title="Course Builder" crumb="Course" sessionId={id} active="builder">
+  <StudioThread sessionId={id} />
+</Studio>

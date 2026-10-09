@@ -1,0 +1,17 @@
+{
+    "task": "quiz",
+    "prompt_id": "course-builder/quiz",
+    "prompt_version": 1,
+    "hash": "c3d3d15d94ddc58b0ce4844157013d84",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 1286,
+        "output_tokens": 858,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "cache_read_tokens": 4818
+    },
+    "text": "{\"questions\":[{\"type\":\"single\",\"stem\":\"In which order do the compounds in ground coffee dissolve during brewing?\",\"options\":[{\"text\":\"Acids first, then sugars, then bitter and woody compounds\",\"correct\":true},{\"text\":\"Sugars first, then acids, then bitter and woody compounds\",\"correct\":false},{\"text\":\"Bitter compounds first, then sugars, then acids\",\"correct\":false},{\"text\":\"All compounds dissolve at the same rate\",\"correct\":false}],\"explanation\":\"Acids dissolve first, sugars come next, and the bitter, woody compounds come last. That is why stopping too early leaves a sour cup and going too far gives a bitter one.\",\"citations\":[\"{{frg_2}}\"],\"objectiveIds\":[\"{{id_2}}\"]},{\"type\":\"single\",\"stem\":\"A cup of filter coffee tastes bitter, hollow and drying. What is the most likely cause?\",\"options\":[{\"text\":\"Over-extraction, because too much has dissolved\",\"correct\":true},{\"text\":\"Under-extraction, because too little has dissolved\",\"correct\":false},{\"text\":\"A balanced extraction with a strong ratio\",\"correct\":false},{\"text\":\"Too few total dissolved solids in the cup\",\"correct\":false}],\"explanation\":\"Bitter, hollow and drying are the signs of over-extraction, when the bitter compounds that dissolve last take over. Under-extraction would taste sour, thin and salty instead.\",\"citations\":[\"{{frg_2}}\"],\"objectiveIds\":[\"{{id_3}}\"]},{\"type\":\"single\",\"stem\":\"Your coffee is very strong but tastes sour and thin. Which statement explains this?\",\"options\":[{\"text\":\"Strength and extraction are separate, so a strong cup can still be under-extracted\",\"correct\":true},{\"text\":\"A strong cup is always well extracted, so the taste must come from the water\",\"correct\":false},{\"text\":\"Strength is set by grind size, so the grind must have been too coarse\",\"correct\":false},{\"text\":\"Sourness only appears in weak cups with low TDS\",\"correct\":false}],\"explanation\":\"Strength is how concentrated the cup is (TDS), while extraction is how much of the coffee dissolved. Strength is mostly changed by the ratio, and extraction by grind size, temperature and contact time, so a strong cup can still be under-extracted.\",\"citations\":[\"{{frg_3}}\"],\"objectiveIds\":[\"{{id_4}}\"]}]}"
+}

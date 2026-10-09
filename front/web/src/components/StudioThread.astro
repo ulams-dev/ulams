@@ -1,0 +1,47 @@
+---
+/** The builder conversation: drop zone, thread of messages and surfaces, composer, brief panel. */
+interface Props {
+  sessionId: string | null;
+}
+const { sessionId } = Astro.props;
+---
+
+<div class="st-layout" data-studio-thread data-session={sessionId ?? ""}>
+  <main id="main" class="st-main" tabindex="-1">
+    <h1 class="cb-sr">Build a course</h1>
+    <div class="st-thread" data-thread aria-label="Conversation">
+      {
+        !sessionId && (
+          <div class="st-msg st-msg-assistant" data-placeholder>
+            <span class="cb-sr">Assistant: </span>
+            <p class="st-msg-text">{"Let's build a course. Drop your source material and I'll read it first. Every lesson I write will cite the exact passage it came from, and nothing reaches your academy until you approve it."}</p>
+          </div>
+        )
+      }
+    </div>
+    <section class="st-drop cb-card" data-drop aria-labelledby="st-drop-title">
+      <h2 id="st-drop-title" class="st-drop-title">Drop Markdown, PDF or DOCX — up to 20 MB, 300 pages</h2>
+      <p class="cb-muted">We split it into sections with stable ids that every generated element can cite.</p>
+      <p class="st-types"><span class="cb-tag">.MD</span><span class="cb-tag">.PDF</span><span class="cb-tag">.DOCX</span></p>
+      <label class="cb-btn cb-btn-primary st-file">
+        Browse files
+        <input type="file" data-file accept=".md,.markdown,.txt,.pdf,.docx,text/markdown,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+      </label>
+      <p class="cb-error" data-drop-error role="alert"></p>
+    </section>
+    <div class="st-next" data-next></div>
+    <form class="st-composer cb-card" data-composer>
+      <label class="cb-sr" for="st-message">Message</label>
+      <textarea id="st-message" rows="2" maxlength="4000" placeholder="Ask anything or describe the course you want…"></textarea>
+      <button class="cb-btn cb-btn-primary" type="submit">Send</button>
+      <p class="cb-muted cb-small st-hint">Enter to send · Shift + Enter for a new line</p>
+    </form>
+  </main>
+  <aside class="st-panel" data-panel aria-label="Course brief and sources">
+    <section class="cb-card"><p class="cb-muted">Your source appears here once it is read.</p></section>
+  </aside>
+</div>
+
+<script>
+  import "../studio/thread.ts";
+</script>

@@ -1,0 +1,57 @@
+---
+import Studio from "../../layouts/Studio.astro";
+import { ApiError, type SessionSummary } from "@ulams/sdk";
+import { builderFor } from "../../lib/studio.ts";
+import { STATUS_LABEL } from "../../studio/labels.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/tenants");
+let sessions: SessionSummary[] = [];
+let error: string | null = null;
+try {
+  sessions = await builderFor(tenant, Astro.locals.authorToken!).sessions.list();
+} catch (e) {
+  error = e instanceof ApiError && e.status === 403 ? "Your account cannot use the Course Builder. Ask an admin for the tutor or admin role." : e instanceof ApiError && e.status === 503 ? "AI features are disabled on this installation." : "The sessions could not be loaded.";
+}
+const fmt = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "short" });
+---
+
+<Studio title="My courses" active="sessions">
+  <main id="main" class="st-page">
+    <div class="st-toolbar">
+      <h1 class="cb-serif cb-h2" style="flex:1">Course Builder</h1>
+      <a class="cb-btn cb-btn-primary" href="/studio/new">Build a course from a document</a>
+    </div>
+    {error && <p class="cb-error" role="alert">{error}</p>}
+    {
+      !error && sessions.length === 0 && (
+        <section class="cb-card">
+          <h2 class="cb-h3">Build your first course from a document</h2>
+          <p class="cb-muted">
+            Upload a handbook, guide or notes (Markdown, PDF or DOCX). Answer a few questions, review the outline and the lessons, and
+            the course appears in your academy. Every lesson cites the passage it came from.
+          </p>
+          <a class="cb-btn cb-btn-primary" href="/studio/new">Start</a>
+        </section>
+      )
+    }
+    {
+      sessions.length > 0 && (
+        <ul class="st-sessions">
+          {sessions.map((s) => (
+            <li class="cb-card">
+              <h2 class="cb-h3">
+                <a href={s.status === "applied" ? `/studio/s/${s.id}/done` : `/studio/s/${s.id}`}>{s.title ?? "Untitled course"}</a>
+              </h2>
+              <p class="cb-muted">
+                {STATUS_LABEL[s.status] ?? s.status}
+                {s.updatedAt && ` · updated ${fmt.format(new Date(s.updatedAt))}`}
+                {s.costMicroUsd ? ` · $${(s.costMicroUsd / 1e6).toFixed(2)}` : ""}
+              </p>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </main>
+</Studio>

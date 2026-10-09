@@ -9,8 +9,8 @@ import { Aside, Badge } from "@astrojs/starlight/components";
 
 ulams renders pages from **declarative documents**: trees of catalogue components with props, never
 model-written HTML or code. Today these documents are written by hand or built in code from API
-data. The same format is what the AI Course Builder will generate, and the transport for streaming
-them from the server (AG-UI over SSE) is decided but not built.
+data. The same format is what the AI Course Builder generates, streamed from the server as AG-UI
+events over SSE (see [LLM layer and Course Builder](/developers/llm-layer/)).
 
 | | Status |
 |---|---|
@@ -122,12 +122,12 @@ const problems = validateDocument(doc, data);
 
 The catalogue JSON for prompts and tools: `yarn workspace @ulams/ui catalogue`.
 
-## Coming: streaming from the server
+## Streaming from the server
 
-<Aside type="caution" title="Not built yet">
-  Nothing below exists in the code. It is decided in
-  [ADR 0011](/decisions/0011-ag-ui-over-sse-from-laravel/) and tracked under Phase 2 and 2.7 of the
-  [roadmap](/roadmap/).
+<Aside type="note" title="Built in Phase 2, M2.1">
+  Decided in [ADR 0011](/decisions/0011-ag-ui-over-sse-from-laravel/) and
+  [ADR 0023](/decisions/0023-a2ui-surfaces-as-ag-ui-activity-snapshots/); implemented by the
+  `course-builder` package and the studio in the reference web app.
 </Aside>
 
 - Every Course Builder interaction is an **AG-UI run**. Queued jobs append events (`RUN_*`,

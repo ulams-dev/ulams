@@ -1,0 +1,17 @@
+{
+    "task": "lesson",
+    "prompt_id": "course-builder/lesson",
+    "prompt_version": 1,
+    "hash": "27260cffc920c0bc9de6b2e5c7a94349",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 352,
+        "output_tokens": 1405,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 4863,
+        "cache_read_tokens": 0
+    },
+    "text": "{\"blocks\":[{\"kind\":\"paragraph\",\"markdown\":\"You already know what a good cup of coffee tastes like, and what a bad one tastes like: sharp and sour, or harsh and bitter. In this lesson you will learn what is going on in the cup. It comes down to one idea, **extraction**, and one idea that is easy to confuse with it, **strength**.\",\"citations\":[\"{{frg_2}}\",\"{{frg_3}}\"],\"objectiveIds\":[\"{{id_2}}\",\"{{id_4}}\"]},{\"kind\":\"paragraph\",\"markdown\":\"### What extraction means\\n\\nBrewing coffee is extraction: hot water dissolves soluble compounds from ground coffee. Roughly 30% of the mass of a roasted bean can dissolve in water, but a pleasant cup extracts only about **18 to 22%** of the dry coffee.\\n\\nThe compounds do not dissolve all at once. They come out in a set order:\\n\\n1. **Acids** dissolve first.\\n2. **Sugars** come next.\\n3. **Bitter, woody compounds** come last.\",\"citations\":[\"{{frg_2}}\"],\"objectiveIds\":[\"{{id_2}}\"]},{\"kind\":\"table\",\"markdown\":\"| | What it means | How it tastes |\\n|---|---|---|\\n| **Under-extracted** | Too little dissolved | Sour, thin and salty |\\n| **Balanced** | Sugars cover the acidity, bitterness stays in the background | Sweet and balanced |\\n| **Over-extracted** | Too much dissolved | Bitter, hollow and drying |\",\"citations\":[\"{{frg_2}}\"],\"objectiveIds\":[\"{{id_3}}\",\"{{id_2}}\"]},{\"kind\":\"callout\",\"markdown\":\"**Tip:** Think about the order. If you stop too early, you mostly get the acids, so the cup is sour. If you go too far, the bitter compounds that dissolve last take over. The goal is the balanced middle.\",\"citations\":[\"{{frg_2}}\"],\"objectiveIds\":[\"{{id_3}}\",\"{{id_2}}\"]},{\"kind\":\"paragraph\",\"markdown\":\"### Strength is not extraction\\n\\n**Strength** describes how concentrated the drink is, meaning how much dissolved coffee ends up in the cup. It is measured as total dissolved solids (**TDS**). Filter coffee usually tastes best between 1.15% and 1.35% TDS.\\n\\nStrength and extraction are separate. A strong cup can still be under-extracted, and a weak cup can be over-extracted. So a strong cup is not automatically a well-extracted one.\",\"citations\":[\"{{frg_3}}\"],\"objectiveIds\":[\"{{id_4}}\"]},{\"kind\":\"table\",\"markdown\":\"| What you want to change | Main variables |\\n|---|---|\\n| Strength | Ratio of coffee to water |\\n| Extraction | Grind size, temperature and contact time |\",\"citations\":[\"{{frg_3}}\"],\"objectiveIds\":[\"{{id_4}}\"]},{\"kind\":\"example\",\"markdown\":\"**Quick check.** A cup tastes sour, thin and salty. Is it under- or over-extracted? *Under-extracted.* The sour taste is the sign that too little has dissolved.\\n\\nA cup tastes bitter and drying. *Over-extracted.* To fix extraction you would look at grind size, temperature or contact time, not only the ratio. The ratio mostly changes strength.\",\"citations\":[\"{{frg_2}}\",\"{{frg_3}}\"],\"objectiveIds\":[\"{{id_3}}\",\"{{id_4}}\"]}]}"
+}

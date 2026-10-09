@@ -9,13 +9,26 @@
     ".": "./src/index.ts",
     "./types": "./src/types.ts",
     "./h5p": "./src/h5p.ts",
-    "./tenant": "./src/tenant.ts"
+    "./tenant": "./src/tenant.ts",
+    "./ag-ui": "./src/ag-ui.ts",
+    "./course-builder": "./src/course-builder.ts"
   },
   "scripts": {
     "generate": "openapi-typescript ../../api/storage/api-docs/api-docs.json -o src/generated/openapi.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src tests",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "@ag-ui/core": "1.0.2"
+  },
+  "peerDependencies": {
+    "zod": "^3.25.18 || ^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "zod": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",

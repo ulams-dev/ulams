@@ -1,0 +1,35 @@
+---
+import Studio from "../../layouts/Studio.astro";
+import { ApiError } from "@ulams/sdk";
+import { loginAuthor } from "../../lib/studio.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/tenants");
+const next = Astro.url.searchParams.get("next");
+const safeNext = next && next.startsWith("/studio") && !next.startsWith("//") ? next : "/studio";
+let error: string | null = null;
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+  try {
+    await loginAuthor(tenant, Astro.cookies, String(form.get("email") ?? ""), String(form.get("password") ?? ""), Astro.url.protocol === "https:");
+    return Astro.redirect(safeNext, 303);
+  } catch (e) {
+    error = e instanceof ApiError && e.status === 422 ? "Wrong e-mail or password." : "Sign-in failed. Try again.";
+  }
+}
+---
+
+<Studio title="Sign in" active="sessions">
+  <main id="main" class="st-page" style="max-width:460px">
+    <h1 class="cb-serif cb-h2">Sign in to the Course Builder</h1>
+    <p class="cb-muted">Use your tutor or admin account of this academy.</p>
+    <form method="post" class="cb-card" style="display:grid;gap:8px">
+      {error && <p class="cb-error" role="alert">{error}</p>}
+      <label class="cb-label" for="email">E-mail</label>
+      <input class="cb-input" id="email" name="email" type="email" autocomplete="username" required />
+      <label class="cb-label" for="password">Password</label>
+      <input class="cb-input" id="password" name="password" type="password" autocomplete="current-password" required />
+      <button class="cb-btn cb-btn-primary" type="submit">Sign in</button>
+    </form>
+  </main>
+</Studio>

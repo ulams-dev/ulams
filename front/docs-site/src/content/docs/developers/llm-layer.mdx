@@ -1,91 +1,124 @@
 ---
 title: LLM layer and Course Builder
-description: What is decided for the LLM layer, the Course Blueprint and builder streaming, and what exists in the code today (nothing yet).
+description: How the ai and course-builder packages work, the AG-UI event stream, the builder UI catalogue, how to add a pipeline step and how to run the eval command.
 sidebar:
   order: 8
-coming: true
+modules:
+  - ai
+  - course-builder
 ---
 
-import { Aside } from "@astrojs/starlight/components";
+Records: [ADR 0009](/decisions/0009-llm-layer/) (LLM layer), [0010](/decisions/0010-course-blueprint-and-builder/) (Course Blueprint), [0011](/decisions/0011-ag-ui-over-sse-from-laravel/) (AG-UI over SSE), 0022 to 0029 in [Decisions](/decisions/). Package reference: [ai](/reference/packages/ai/) and [course-builder](/reference/packages/course-builder/).
+Plan: `docs/plans/phase-2.md`.
 
-<Aside type="caution" title="Decided, not built">
-  There is no `ai` or `course-builder` package in `api/packages`, no `config/ai.php` and no LLM
-  client in the API or the frontends. Every item of roadmap section 2.1 "LLM layer" is still open.
-  This page summarises the accepted decisions so contributors know the shape of what is coming;
-  the ADRs are the source of truth.
-</Aside>
+```
+front/web /studio (Astro SSR + vanilla islands)          api (Laravel, tenant host)
+  @ulams/ui builder catalogue + A2UI renderer  ── BFF ──▶  course-builder package
+  @ulams/sdk courseBuilder client + SSE reader  /studio/api   sessions, sources, runs, versions, SSE
+                                                               jobs: RunJob, StepJob
+                                                               applier ──▶ courses, topics, GIFT, pages services
+                                                             ai package
+                                                               LlmClient ─▶ anthropic | fake | disabled
+```
 
-The AI Course Builder (Phase 2) turns uploaded sources into a cited course through an interview,
-an approved outline and approved generation, then applies the result to the LMS through domain
-services. Three ADRs fix its architecture:
+## The `ai` package (`api/packages/ai`)
 
-| ADR | Decision |
+- `LlmClient::generate(LlmRequest)`: task → profile/effort/max tokens from `config/ai.php`, budget
+  check, driver call, JSON Schema validation (opis, 2020-12) plus the caller's semantic validator,
+  one repair attempt, an `ai_calls` row per attempt with cost. `refusal` and `max_tokens` are
+  failures, never partial content. Errors are `LlmException` with a machine `reason`.
+- `AnthropicDriver`: `anthropic-ai/sdk`, streamed (`beta.messages.createStream` + accumulator),
+  `output_config` with `effort` and the JSON Schema (unsupported keywords stripped by
+  `JsonSchemaValidator::forProvider`), cache breakpoints on the system prompt and every block marked
+  `cache: true` (max 4), server-side refusal fallback on profiles that enable it. It refuses to be
+  constructed in the `testing` environment.
+- `FakeDriver`: queued responses (unit tests), cassettes, synthetic responders (ADR 0024).
+- `PromptRegistry`: `<dir>/<task>/v<N>.md` with front matter; packages register their directory.
+- `CostCalculator`: config prices (USD per million tokens), cache write ×1.25/×2, long-context tier.
+- Guard: `ModelNamesGuardTest` fails on `claude-…` in any package `src/` or `resources/prompts/`.
+
+## The `course-builder` package (`api/packages/course-builder`)
+
+| Area | Where |
 |---|---|
-| [0009 LLM layer](/decisions/0009-llm-layer/) | An `ai` package on the official Anthropic SDK |
-| [0010 Course Blueprint and builder](/decisions/0010-course-blueprint-and-builder/) | A versioned Course Blueprint applied through domain services |
-| [0011 Builder streaming](/decisions/0011-ag-ui-over-sse-from-laravel/) | AG-UI events over SSE from Laravel, carrying A2UI surfaces |
+| Ingestion: MD, PDF, DOCX → fragments with ids from the heading position | `src/Ingestion` |
+| Course Brief and Blueprint schemas, LLM output schemas | `resources/schemas` |
+| Prompts (README explains versioning) | `resources/prompts` |
+| Blueprint helpers, element-aware diff, deterministic checks | `src/Blueprint` |
+| Interview, outline, generation (stages and steps), element patches | `src/Pipeline` |
+| Versions, runs and UI actions, state snapshot | `src/Services` |
+| AG-UI event log, A2UI surfaces, catalogue validation | `src/Events`, `src/Ui` |
+| Applier, GIFT renderer, lesson Markdown, landing document | `src/Apply` |
+| REST + SSE | `src/Http`, `src/routes.php` |
 
-The phase plan is [`docs/plans/phase-2.md`](https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-2.md);
-its first milestone, M2.1 "chat course building", is upload → interview → outline diff → approved
-generation with citations → approved apply → element chat edits.
+Rules enforced by tests: no direct writes to LMS tables (`GuardsTest`), every streamed component
+exists in the catalogue manifest, source text only inside `<source_document untrusted="true">` in the
+user turn (`PromptInjectionTest`), every endpoint 401/403/404-isolated (`IsolationTest`; cross-tenant
+HTTP checks in `packages/tenancy/tests/Integration/TenantIsolationTest`, opt-in).
 
-## LLM layer (ADR 0009)
+### Adding a pipeline step
 
-Planned as `api/packages/ai` (`Ulams\Ai`):
+1. Add a prompt `resources/prompts/<task>/v1.md` and an output schema `resources/schemas/outputs/<task>.json`
+   (closed objects, every property required: provider structured outputs need that).
+2. Add the task to `packages/ai/config/ai.php` (`tasks`) with a profile, effort and output limit.
+3. Call `Llm::generate($session, $run, '<task>', $blocks, $validator)` with blocks built by
+   `PromptContext` (source block first, then context, then the instruction).
+4. Register a synthetic responder in `src/Fake/SyntheticResponders.php` so demos and the e2e keep
+   working without a key, and record cassettes with the eval command.
 
-- **One entry point**: `LlmClient::generate(LlmRequest): LlmResult`, with drivers `anthropic`,
-  `fake` and `disabled`.
-- **Models only in config**: profiles in `config/ai.php` from environment variables (`default`,
-  `light`, opt-in `premium`). Each task maps to a profile, an effort level and an output limit;
-  prices live next to them. A CI guard will reject model names anywhere else, as the project rules
-  require.
-- **Structured outputs only**: every generation step requests a JSON Schema output and gets no
-  tools. Results are validated (`opis/json-schema` plus task-specific checks); one repair attempt with
-  the errors, then a failed step the author can retry. Refusals and `max_tokens` stops are failures,
-  never partial content.
-- **Prompt caching**: frozen system prompt, then the source block with a cache breakpoint, then
-  brief and outline, then the per-element instruction.
-- **Cost logging**: every call written to an `ai_calls` table in the tenant database (models
-  requested and served, input, output and cache tokens, cost, latency, stop reason, prompt id and
-  version, subject). Budgets per session and tenant are checked before each call.
-- **Prompts** are versioned Markdown files owned by the package that uses them.
-- **Tests** use the fake driver with recorded cassettes; resolving the real driver in the testing
-  environment throws. Real-model runs only through an `ai:eval` command.
+## AG-UI stream
 
-API key: `ANTHROPIC_API_KEY` (with a fallback to the legacy misspelled `ANTROPHIC_API_KEY`). Once the
-package exists, its variables will appear in [Environment variables](/reference/environment-variables/).
+`GET /api/admin/course-builder/sessions/{id}/events` (`text/event-stream`):
 
-## Course Blueprint and builder (ADR 0010)
+1. `retry: 1000`, then `data: {"type":"STATE_SNAPSHOT","snapshot":{…}}` (no id; sent on every
+   connect);
+2. every stored event after `Last-Event-ID` (or `?after=`), each `id: <row id>` + `data: <event>`;
+3. new events as they are appended, until 25 s; the client reconnects with the last id.
 
-Planned as `api/packages/course-builder` (`Ulams\CourseBuilder`), with its data in the tenant
-database:
+Events: `RUN_STARTED/FINISHED/ERROR`, `STEP_STARTED/FINISHED` (stage names), `TEXT_MESSAGE_*`
+(assistant and the author's own messages), `STATE_DELTA` (JSON Patch on `/cost`, `/brief`,
+`/session`, `/sources`, `/budgetReached`), `ACTIVITY_SNAPSHOT` with activity type `a2ui-surface`
+(ADR 0023), `CUSTOM` (`applied`, `published`).
 
-- **Source Document**: uploaded Markdown, PDF or DOCX normalised to Markdown and split into fragments
-  with stable ids (`frg_…`, derived from heading position) and a content hash for change detection.
-  Uploaded content is untrusted input (prompt injection).
-- **Course Brief**: the interview answers, schema-validated and editable, recording whether the
-  author or a default decided each field.
-- **Course Blueprint v1**: course, modules, lessons with blocks, quizzes, a final test, objectives and
-  page documents in the `@ulams/ui` catalogue format. Element ids are ULIDs assigned by our code,
-  never by the model. Every block and question cites at least one fragment and serves an approved
-  objective.
-- **Versions and gates**: every stage and chat edit creates a version with an origin, a status and an
-  element-aware diff. The outline is approved before content is generated; the apply is approved
-  before anything is written; publishing is separate.
-- **Applier**: a queued job, running as the author, writes through the course, lesson, topic, GIFT
-  and pages services (`CourseRepositoryContract`, `TopicRepositoryContract::createFromRequest`,
-  `GiftQuestionServiceContract` and others). A test fails if the package writes LMS tables directly.
-- **Element chat**: the model returns a replacement subtree for the selected element, validated
-  against its sub-schema with ids preserved; the server computes the diff shown to the author.
+UI actions: `POST /sessions/{id}/runs` with a `RunAgentInput`:
+`forwardedProps.action = {name, surfaceId, sourceComponentId, context}`. Actions:
+`answer {key, value}`, `decide_for_me {key?}`, `approve_outline {versionId, edits:[{objectiveId,text}]}`,
+`reject_outline {versionId, comment}`, `retry_step {stepId}`, `approve_apply {versionId}`,
+`approve_patch|reject_patch {versionId}`, `retry`. Typed text goes in `messages`, scoped by
+`forwardedProps.selection.elementId`.
 
-## Streaming (ADR 0011)
+In TypeScript: `createCourseBuilderClient()` and `connectEventStream()` from `@ulams/sdk`,
+`renderSurface()` from `@ulams/ui/builder/renderer.ts`.
 
-Builder progress and generated UI stream as AG-UI events over SSE from Laravel, carrying A2UI
-surfaces rendered by `@ulams/ui`. The parts that already exist (catalogue, renderer, documents) and
-the planned transport are described in [Generative UI](/developers/generative-ui/).
+## UI catalogue
 
-## Where the author works
+`front/ui/src/builder/catalogue.ts` is the source of truth for the builder components (schema,
+model-facing description, fallback). `yarn workspace @ulams/ui builder-manifest` writes
+`front/ui/catalogue/manifest.json` and the API copy
+`api/packages/course-builder/resources/catalogue/manifest.json`; `yarn workspace @ulams/ui test`
+fails when they drift.
 
-The roadmap places the builder in the reference frontend (`front/web`, a `/studio` area), with the
-admin only linking to it. Author-facing documentation is in
-[Course builder](/creators/course-builder/). Progress is tracked in the [roadmap](/roadmap/).
+## Eval command
+
+```bash
+# fake driver (free): checks the whole pipeline on the golden fixtures
+php artisan course-builder:eval --fixtures=all --author=<user id>
+# real model (costs money; capped by COURSE_BUILDER_EVAL_MONTHLY_USD)
+php artisan course-builder:eval --fixtures=coffee,injection --live --author=<user id>
+# record cassettes for the replay test
+php artisan course-builder:eval --fixtures=coffee --live --record --author=<user id>
+```
+
+Fixtures: `coffee` (Markdown), `injection` (Markdown with injected instructions), `git` (Markdown with
+code), `pdf` (generated handbook), `docx` (generated). Checks: blueprint schema, citation coverage,
+quiz support, duration within ±15 %, interview component choice, no raw markup, injected
+instructions not followed, cache reads after the first lesson call, the chat edit as a DiffView,
+cost. Reports go to `storage/app/evals/<date>-<fixture>.md` and `.json`.
+
+## Tests
+
+```bash
+vendor/bin/phpunit --testsuite ai,course-builder          # API, fake driver only
+yarn workspace @ulams/sdk test && yarn workspace @ulams/ui test && yarn workspace @ulams/web test
+STUDIO_E2E=1 yarn workspace @ulams/web test:e2e tests/e2e/studio.spec.ts   # see tests/e2e/README-studio.md
+```

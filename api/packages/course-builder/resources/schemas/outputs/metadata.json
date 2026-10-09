@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Course metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "title",
+    "subtitle",
+    "description",
+    "seoTitle",
+    "seoDescription",
+    "faq"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Course title",
+      "maxLength": 80,
+      "minLength": 3
+    },
+    "subtitle": {
+      "type": "string",
+      "description": "One line",
+      "maxLength": 300,
+      "minLength": 3
+    },
+    "description": {
+      "type": "string",
+      "description": "3-5 sentences",
+      "maxLength": 4000,
+      "minLength": 10
+    },
+    "seoTitle": {
+      "type": "string",
+      "description": "Search title",
+      "maxLength": 60,
+      "minLength": 3
+    },
+    "seoDescription": {
+      "type": "string",
+      "description": "Search description",
+      "maxLength": 155,
+      "minLength": 10
+    },
+    "faq": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question",
+          "answer",
+          "citations"
+        ],
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "Question",
+            "maxLength": 300,
+            "minLength": 3
+          },
+          "answer": {
+            "type": "string",
+            "description": "Answer",
+            "maxLength": 2000,
+            "minLength": 3
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$",
+              "description": "A fragment id from the source"
+            },
+            "maxItems": 4
+          }
+        }
+      },
+      "minItems": 1,
+      "maxItems": 5
+    }
+  }
+}

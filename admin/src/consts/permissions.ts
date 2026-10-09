@@ -329,6 +329,7 @@ enum PERMISSIONS {
 
   LtiManage = 'lti_manage',
   LiaScriptManage = 'liascript_manage',
+  CourseBuilderUse = 'course_builder_use',
 }
 
 export default PERMISSIONS;

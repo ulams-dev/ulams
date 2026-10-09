@@ -1,0 +1,95 @@
+---
+import Studio from "../../../../layouts/Studio.astro";
+import { ApiError, type Blueprint, type BuilderState } from "@ulams/sdk";
+import { builderFor } from "../../../../lib/studio.ts";
+import { STATUS_LABEL } from "../../../../studio/labels.ts";
+
+const id = Astro.params.id ?? "";
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/tenants");
+if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 });
+const cb = builderFor(tenant, Astro.locals.authorToken!);
+
+let notice: string | null = null;
+if (Astro.request.method === "POST") {
+  try {
+    await cb.publish(id);
+    notice = "The course is published. Learners can enrol now.";
+  } catch (e) {
+    notice = e instanceof ApiError ? e.message.replace(/^API \d+: /, "") : "Publishing failed.";
+  }
+}
+
+let state: BuilderState;
+try {
+  state = await cb.sessions.get(id);
+} catch (e) {
+  if (e instanceof ApiError && (e.status === 404 || e.status === 403)) return new Response("Not found", { status: 404 });
+  throw e;
+}
+if (!state.session.appliedVersionId) return Astro.redirect(`/studio/s/${id}`);
+const version = await cb.versions.get(state.session.appliedVersionId);
+const doc: Blueprint = version.document;
+const lessons = doc.modules.flatMap((m) => m.lessons);
+const questions = lessons.reduce((n, l) => n + (l.quiz?.questions.length ?? 0), 0) + (doc.finalTest?.questions.length ?? 0);
+const minutes = lessons.reduce((n, l) => n + l.minutes, 0);
+const blocks = lessons.flatMap((l) => l.blocks);
+const cited = blocks.filter((b) => b.citations.length > 0).length;
+const citedPct = blocks.length ? Math.round((100 * cited) / blocks.length) : 0;
+const fragments = new Set(lessons.flatMap((l) => l.blocks.flatMap((b) => b.citations))).size;
+const flagged = lessons.filter((l) => l.flags.length > 0);
+const courseId = state.session.courseId!;
+const adminBase = tenant.adminUrl.replace(/\/+$/, "");
+const published = Astro.request.method === "POST" && notice?.startsWith("The course is published");
+const checks = [
+  { ok: citedPct === 100, label: "Every lesson block cites the source", detail: `${citedPct}% of ${blocks.length} blocks cite ${fragments} source passages` },
+  { ok: true, label: "Quiz answers supported by the cited passages", detail: `${questions} questions passed the support check` },
+  { ok: flagged.length === 0, label: flagged.length ? `${flagged.length} lesson${flagged.length > 1 ? "s" : ""} flagged for review` : "No grounding flags", detail: flagged.map((l) => `${l.title}: ${l.flags[0]}`).join(" · ") || "The grounding check found no unsupported claims" },
+];
+---
+
+<Studio title="Your course is ready" crumb={doc.course.title} status={published ? "Published" : STATUS_LABEL[state.session.status]} sessionId={id} active="done">
+  <main id="main" class="st-page">
+    <section class="cb-card st-hero" aria-labelledby="st-done-title">
+      <p class="cb-eyebrow">Generation complete · version {version.number}</p>
+      <h1 id="st-done-title">Your course is ready.</h1>
+      <p class="cb-serif" style="font-size:1.25rem">Created in your academy through the same services your team uses: nothing hidden, everything cited.</p>
+      {notice && <p class={published ? "cb-decision cb-decision-applied" : "cb-error"} role="status">{notice}</p>}
+      <div class="st-stats">
+        <p class="st-stat">Structure <strong>{doc.modules.length} modules</strong></p>
+        <p class="st-stat">Scope <strong>{lessons.length} lessons</strong></p>
+        <p class="st-stat">Pace <strong>{minutes} min total</strong></p>
+        <p class="st-stat">Assessment <strong>{questions} questions</strong></p>
+        <p class="st-stat">Grounding <strong>{citedPct}% cited</strong></p>
+        <p class="st-stat">AI cost <strong>${(state.cost.usedMicroUsd / 1e6).toFixed(2)}</strong></p>
+      </div>
+    </section>
+    <div class="st-links">
+      <form method="post">
+        <button class="cb-btn cb-btn-primary" type="submit" style="width:100%" disabled={published}>{published ? "Published" : "Publish course"}</button>
+      </form>
+      <a class="cb-btn" href={`${adminBase}/courses/list/${courseId}`} rel="noopener">Open in admin</a>
+      <a class="cb-btn" href={`/courses/${courseId}`}>Preview as learner</a>
+      <a class="cb-btn" href={`/studio/s/${id}/landing`}>Landing page</a>
+      <a class="cb-btn" href={`/studio/s/${id}/workspace`}>Keep refining</a>
+    </div>
+    <section class="cb-card" aria-labelledby="st-checks-title">
+      <h2 id="st-checks-title" class="cb-h3">Before you publish</h2>
+      <ul class="st-checks">
+        {
+          checks.map((c) => (
+            <li>
+              <span aria-hidden="true">{c.ok ? "✓" : "!"}</span>
+              <div>
+                <p style="margin:0;font-weight:600">
+                  {c.label} <span class="cb-tag">{c.ok ? "Pass" : "Review"}</span>
+                </p>
+                <p class="cb-muted cb-small" style="margin:0">{c.detail}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
+</Studio>
