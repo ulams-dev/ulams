@@ -213,6 +213,9 @@ export async function main(deps: Deps): Promise<number> {
         const out = render(successEnvelope(cmd.id, result), mode, flags);
         if (out.stdout !== undefined) deps.stdout(out.stdout);
       }
+      // apply --dry-run --exit-code: exit 13 when the plan contains changes (ADR 0073).
+      const planned = (result.data as { dryRun?: boolean; changes?: unknown[] } | null)?.changes;
+      if (parsed.input.exitCode && flags.dryRun && Array.isArray(planned) && planned.length > 0) return 13;
       return 0;
     } finally {
       process.off("SIGINT", onSignal);

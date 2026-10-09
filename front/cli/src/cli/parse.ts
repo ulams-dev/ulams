@@ -87,6 +87,7 @@ export function commandOptions(cmd: AnyCommand): { options: ParseArgsOptionsConf
     byFlag.set(flag, name);
     const type = primaryType(prop);
     options[flag] = type === "boolean" ? { type: "boolean" } : type === "array" ? { type: "string", multiple: true } : { type: "string" };
+    if (flag === "file") (options[flag] as { short?: string }).short = "f";
   }
   return { options: options as ParseArgsOptionsConfig, schema, byFlag };
 }
@@ -217,7 +218,12 @@ export async function parseInvocation(
     });
   }
   const values = parsed.values as Values;
-  const flags = buildFlags(values, env);
+  // A flag the command defines itself (e.g. topics create-oembed --url) is never also a global flag.
+  const globalValues: Values = { ...values };
+  for (const owned of ["url", "profile", "output", "timeout", "idempotency-key", "yes", "wait", "json"]) {
+    if (byFlag.has(owned)) delete globalValues[owned];
+  }
+  const flags = buildFlags(globalValues, env);
 
   const input: Record<string, unknown> = {};
   if (typeof values.input === "string") {
@@ -248,7 +254,8 @@ export async function parseInvocation(
 
   for (const [flag, value] of Object.entries(values)) {
     const name = byFlag.get(flag);
-    if (!name || value === undefined) continue;
+    // --fields is always the output projection; an input field of that name goes through --input or --set.
+    if (!name || value === undefined || flag === "fields") continue;
     input[name] = await coerce(flag, value, schema.properties?.[name], fs, readStdin);
   }
   return { flags, tokenStdin: Boolean(values["token-stdin"]), input, rawValues: values, positionals };
