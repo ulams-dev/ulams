@@ -131,6 +131,10 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
 
         $topic = $this->topicRepositoryContract->getById($topic_id);
 
+        // enrolled in the course (directly or through a group), or allowed to edit it
+        if (!\Illuminate\Support\Facades\Gate::forUser($request->user())->allows('attend', $topic)) {
+            return $this->sendError(__('You do not have access to this course'), 403);
+        }
         if (!$topic->course->is_active) {
             return $this->sendError(__('Course is not active'), 403);
         }
