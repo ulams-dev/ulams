@@ -3,7 +3,8 @@
 Both directions of LTI 1.3 for every tenant (ADR 0012):
 
 - **Platform**: ulams launches external tools inside lessons (topic type `LtiLink`), receives grades
-  through AGS 2.0 and lets authors pick content in the tool (Deep Linking 2.0).
+  through AGS 2.0, shares the course member list through NRPS 2.0 (per tool, off by default) and lets
+  authors pick content in the tool (Deep Linking 2.0).
 - **Tool**: Moodle, Canvas and other LMSs launch ulams courses, with grade passback and a course
   picker for deep linking. Launch validation by `packbackbooks/lti-1p3-tool` (Apache-2.0).
 
@@ -19,6 +20,7 @@ Both directions of LTI 1.3 for every tenant (ADR 0012):
 | tool | `GET/POST /api/lti/platform/authorize` | OIDC auth: posts the signed `id_token` to the tool |
 | tool | `POST /api/lti/platform/token` | AGS access token (client credentials, JWT assertion) |
 | tool | `/api/lti/platform/ags/{course}/lineitems[/{id}[/scores\|/results]]` | AGS line items, scores, results |
+| tool | `GET /api/lti/platform/nrps/{course}` | NRPS 2.0 membership container (scope `contextmembership.readonly`, `nrps_enabled` on the tool; `limit`, `page`, `role`; `Link` rel=next) |
 | tool | `POST /api/lti/platform/deep-links` | Deep-linking response: creates `LtiLink` topics |
 | platform | `GET/POST /api/lti/tool/login`, `POST /api/lti/tool/launch` | OIDC login initiation and launch |
 | learner's browser | `POST /api/lti/tool/deep-link` | Returns the picked courses to the platform |

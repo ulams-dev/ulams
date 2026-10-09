@@ -26,6 +26,8 @@ final class Lti
     public const CLAIM_DL_MSG = 'https://purl.imsglobal.org/spec/lti-dl/claim/msg';
     public const CLAIM_DL_ERRORMSG = 'https://purl.imsglobal.org/spec/lti-dl/claim/errormsg';
 
+    public const CLAIM_NRPS = 'https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice';
+
     public const MSG_RESOURCE_LINK = 'LtiResourceLinkRequest';
     public const MSG_DEEP_LINKING_REQUEST = 'LtiDeepLinkingRequest';
     public const MSG_DEEP_LINKING_RESPONSE = 'LtiDeepLinkingResponse';
@@ -40,6 +42,8 @@ final class Lti
     public const SCOPE_LINEITEM_READONLY = 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly';
     public const SCOPE_RESULT_READONLY = 'https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly';
     public const SCOPE_SCORE = 'https://purl.imsglobal.org/spec/lti-ags/scope/score';
+
+    public const SCOPE_NRPS = 'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly';
 
     public const AGS_SCOPES = [self::SCOPE_LINEITEM, self::SCOPE_LINEITEM_READONLY, self::SCOPE_RESULT_READONLY, self::SCOPE_SCORE];
 
@@ -64,6 +68,7 @@ final class Lti
             'platform' => [
                 'oidc_auth_url' => self::url('api/lti/platform/authorize'),
                 'token_url' => self::url('api/lti/platform/token'),
+                'nrps_url' => self::url('api/lti/platform/nrps/{course}'),
                 'deep_linking_return_url' => self::url('api/lti/platform/deep-links'),
             ],
             'tool' => [

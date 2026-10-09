@@ -70,7 +70,9 @@ class AgsService
         }
 
         $requested = array_values(array_filter(explode(' ', (string) ($params['scope'] ?? ''))));
-        $scopes = array_values(array_intersect($requested, Lti::AGS_SCOPES));
+        // NRPS (member list) only when the registration allows it
+        $allowed = $tool->nrps_enabled ? [...Lti::AGS_SCOPES, Lti::SCOPE_NRPS] : Lti::AGS_SCOPES;
+        $scopes = array_values(array_intersect($requested, $allowed));
         if ($scopes === []) {
             throw new LtiRequestException('No supported scope requested.', 400, 'invalid_scope');
         }

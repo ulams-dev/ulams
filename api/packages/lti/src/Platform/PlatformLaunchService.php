@@ -206,7 +206,7 @@ class PlatformLaunchService
         );
         $lineItems = Lti::url('api/lti/platform/ags/' . $course->getKey() . '/lineitems');
 
-        return [[
+        $claims = [
             Lti::CLAIM_MESSAGE_TYPE => Lti::MSG_RESOURCE_LINK,
             Lti::CLAIM_TARGET_LINK_URI => $link->url ?: $tool->launch_url,
             Lti::CLAIM_RESOURCE_LINK => ['id' => 'topic-' . $topic->getKey(), 'title' => $topic->title],
@@ -221,7 +221,16 @@ class PlatformLaunchService
                 'lineitems' => $lineItems,
                 'lineitem' => $lineItems . '/' . $lineItem->getKey(),
             ],
-        ], $topic, $course];
+        ];
+        if ($tool->nrps_enabled) {
+            // Names and Role Provisioning Services 2.0: where the tool reads the course members
+            $claims[Lti::CLAIM_NRPS] = [
+                'context_memberships_url' => Lti::url('api/lti/platform/nrps/' . $course->getKey()),
+                'service_versions' => ['2.0'],
+            ];
+        }
+
+        return [$claims, $topic, $course];
     }
 
     /**
