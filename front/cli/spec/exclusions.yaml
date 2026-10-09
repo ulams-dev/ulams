@@ -22,6 +22,8 @@ content-runtime:
   - "* /api/cmi5/*"
   - "POST /api/liascript/launches/*"
   - "POST /api/liascript/progress/*"
+  - "POST /api/interactive/launches/*"
+  - "POST /api/interactive/topics/{topic}/events"
   - "POST /api/courses/progress/{topic_id}/h5p"
   - "* /api/pdfs/fonts*"
 internal:

@@ -39,6 +39,16 @@ describe("tools/list", () => {
     for (const c of [core, users, all]) await c.close();
   });
 
+  it("the topics toolset has topics_create_interactive, a write tool with the step range and display inputs", async () => {
+    const topics = await connect({}, { toolsets: ["core", "topics"] });
+    const tool = (await topics.client.listTools()).tools.find((t) => t.name === "topics_create_interactive");
+    expect(tool?.annotations).toMatchObject({ readOnlyHint: false, destructiveHint: false });
+    for (const field of ["lesson", "title", "file", "package", "startStep", "endStep", "completion", "display", "followLatest", "acceptNetwork", "dry_run"]) {
+      expect(tool?.inputSchema.properties, field).toHaveProperty(field);
+    }
+    await topics.close();
+  });
+
   it("--read-only exposes only read tools and --no-destructive hides destructive ones", async () => {
     const ro = await connect({}, { toolsets: "all", readOnly: true });
     const roTools = (await ro.client.listTools()).tools;
