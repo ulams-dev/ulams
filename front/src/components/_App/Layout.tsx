@@ -80,7 +80,7 @@ const Layout: React.FC<{
             content="width=device-width, initial-scale=1, shrink-to-fit=no"
           />
         )}
-        <link rel="shortcut icon" href="/app_icon.svg" />
+        <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml" />
         <meta name="description" content="Worlds first Headless LMS" />
         <meta
           name="og:title"

@@ -1,4 +1,6 @@
 ---
+import Logo from "../brand/Logo.astro";
+
 interface Props {
   brand: string;
   text?: string;
@@ -30,7 +32,9 @@ const { brand, text, links = [], note } = Astro.props;
   </div>
   <div class="u-container u-footer__base">
     <p>{note ?? `© ${new Date().getFullYear()} ${brand}`}</p>
-    <p>Built on <a href="https://github.com/ulams-dev">ulams</a>, the open headless LMS.</p>
+    <p class="u-footer__powered">
+      Built on <a href="https://github.com/ulams-dev"><Logo variant="symbol" mono />ulams</a>, the open headless LMS.
+    </p>
   </div>
 </footer>
 
@@ -84,6 +88,17 @@ const { brand, text, links = [], note } = Astro.props;
     border-top: 1px solid var(--ulams-color-border);
     color: var(--ulams-color-muted);
     font-size: 0.8125rem;
+  }
+  /* "powered by" mark: the symbol follows the footer's own text colour, so a tenant theme is not recoloured */
+  .u-footer__powered a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    color: inherit;
+    text-underline-offset: 3px;
+  }
+  .u-footer__powered :global(.u-logo) {
+    height: 0.95em;
   }
   @media (max-width: 700px) {
     .u-footer__grid {
