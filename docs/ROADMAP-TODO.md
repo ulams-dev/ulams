@@ -96,7 +96,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] Inventory of learner activity data (tracker, xAPI/cmi5, SCORM CMI, H5P, quizzes, progress,
       logins): storage, granularity, retention, gaps (see docs/reports/phase-0-audit.md)
 - [x] How content updates preserve learner progress today (see docs/reports/phase-0-audit.md)
-- [ ] Tests, CI, code style, queues (Horizon), storage, existing AI code (partial: explored; no AI code exists; baseline failures: core 6, auth 3)
+- [x] Tests, CI, code style, queues (Horizon), storage, existing AI code (explored; no AI code exists; the baseline failures (core 6, auth 3) no longer reproduce and the quarantine list `api/phpunit.quarantine.xml` is empty)
 - [x] Licence audit of all `escolalms/*` and key dependencies for open core (LICENSING.md and docs/reports/phase-0-audit.md; remediation items below)
 - [x] Runtime dependency inventory (input for Phase 8) (see docs/reports/phase-0-audit.md)
 - [x] Commerce audit: what Wellms commerce does, dependent flows, Sylius 2.x API coverage,
@@ -122,10 +122,14 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
       images, decide on upstream provenance links, reword ADR prose, retarget Docker Hub publishing
       workflows, replace the `ulams.app` placeholder domain, recreate SQL views in pre-rename databases
 - [x] (new) Fix `php artisan route:list` (Mattermost client connects in its constructor)
-- [ ] (new) CI (partial: root `ci.yml` with path filters, PHP shards, licence guards and Dependabot committed; not yet run on GitHub — the branch is unpushed; publishing workflows intentionally dropped): move workflows to the root `.github/` with path filters; drop MySQL services; run Jest
+- [x] (new) CI (partial: root `ci.yml` with path filters, PHP shards, licence guards and Dependabot committed; not yet run on GitHub — the branch is unpushed; publishing workflows intentionally dropped): move workflows to the root `.github/` with path filters; drop MySQL services; run Jest
       in admin/front; Dockerfiles build from the repo root
-- [ ] (new) Remove the non-existent `packages/tracker/src` path from Swagger (done); consider Git LFS for
-      large test fixtures; revisit exact pins (`faker-markdown-generator`, `tzsk/sms`)
+      (done: workflows are on `main` and run on GitHub; admin Jest (3 suites) and the front tests run in the `js` job;
+      yarn installs are frozen; the quarantine is empty)
+- [x] (new) Remove the non-existent `packages/tracker/src` path from Swagger (done); consider Git LFS for
+      large test fixtures; revisit exact pins (`faker-markdown-generator`, `tzsk/sms`) (no LFS: CI rejects new files over 2 MB
+      and the 24 MB and 6.8 MB SCORM mocks are generated minimal packages; `faker-markdown-generator` moved to
+      `require-dev`; `tzsk/sms` stays `^10.0`; owner confirmation of no LFS pending #48)
 
 ### 0.1c Security and audit follow-ups (new)
 - [x] (new) Replace the GPL PHP libraries `trax2/framework` (lrs) and `laraveldaily/laravel-invoices` with first-party code
@@ -328,7 +332,7 @@ approved apply through domain services → element chat edits. Designs:
       (written; needs `TENANCY_INTEGRATION=1` and two probe tenants)
 - [ ] (new) Regenerate the OpenAPI spec and SDK path types for the builder endpoints (the SDK uses
       hand-written types; the API carries the annotations)
-- [ ] (new) Normalise `yarn.lock` with a real `yarn install` (entries for `@ag-ui/core` 1.0.2 and
+- [x] (new) Normalise `yarn.lock` with a real `yarn install` (a fresh `yarn install` leaves it unchanged; `--frozen-lockfile` in CI is the check) (entries for `@ag-ui/core` 1.0.2 and
       `diff` 9.0.0 were added by hand while the disk was full)
 - [ ] (new) Delete the RichText/GIFT content row when a topic is deleted (topic repository leaves it;
       the applier deletes topics through the repository)

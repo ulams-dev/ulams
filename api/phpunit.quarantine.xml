@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Tests that are known to fail on CI. CI excludes them from the blocking run and re-runs them without
+  blocking (.github/workflows/ci.yml, "Load quarantine"). Every entry needs a reason and a GitHub issue;
+  remove it when the test is fixed. This file is meant to stay empty.
+
+  Entry format: a test element with the attributes name (Class::method), reason and issue.
+-->
+<quarantine>
+</quarantine>
