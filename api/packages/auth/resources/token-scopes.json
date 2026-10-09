@@ -320,6 +320,10 @@
             "area": "courses"
         },
         {
+            "pattern": "api/admin/interactive*",
+            "area": "courses"
+        },
+        {
             "pattern": "api/admin/h5p*",
             "area": "courses"
         },
@@ -695,6 +699,10 @@
         },
         {
             "pattern": "api/liascript/*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/interactive/*",
             "area": "learner"
         },
         {

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ulams.dev/schemas/ulams-interactive/v1.json",
+  "id": "steps",
+  "title": { "en": "A stepped interactive", "pl": "Interaktywny przewodnik" },
+  "version": "2.1.0",
+  "entry": "index.html",
+  "licence": "CC-BY-4.0",
+  "attribution": "Written for the tests.",
+  "source": { "url": "https://example.com/steps", "ref": "v2.1.0" },
+  "locales": ["en", "pl"],
+  "defaultLocale": "en",
+  "bridge": 1,
+  "capabilities": { "steps": true, "reducedMotion": false, "score": true, "background": true },
+  "requires": ["webgl"],
+  "network": ["https://tiles.example.com"],
+  "steps": [
+    { "id": "intro", "title": { "en": "Intro", "pl": "Wstep" }, "text": { "en": "Start here.", "pl": "Zacznij tutaj." }, "poster": "posters/intro.webp" },
+    { "id": "middle", "title": { "en": "Middle", "pl": "Srodek" }, "text": { "en": "Halfway.", "pl": "Polowa." } },
+    { "id": "last", "title": { "en": "Last", "pl": "Koniec" }, "text": { "en": "The end.", "pl": "Koniec." } }
+  ],
+  "a11y": { "keyboard": "Everything is a button.", "notes": "Each step has a text alternative." }
+}

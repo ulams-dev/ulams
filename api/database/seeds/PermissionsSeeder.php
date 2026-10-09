@@ -22,6 +22,7 @@ use Ulams\H5P\Database\Seeders\H5PPermissionSeeder;
 use Ulams\Lrs\Database\Seeders\LrsPermissionSeeder;
 use Ulams\ModelFields\Database\Seeders\PermissionTableSeeder as ModelFieldsPermissionTableSeeder;
 use Ulams\Adapt\Database\Seeders\AdaptPermissionSeeder;
+use Ulams\Interactive\Database\Seeders\InteractivePermissionSeeder;
 use Ulams\LiaScript\Database\Seeders\LiaScriptPermissionSeeder;
 use Ulams\CourseBuilder\Database\Seeders\CourseBuilderPermissionSeeder;
 use Ulams\LivingCourse\Database\Seeders\LivingCoursePermissionSeeder;
@@ -101,6 +102,7 @@ class PermissionsSeeder extends Seeder
         $this->call(DictionariesPermissionSeeder::class);
         $this->call(LtiPermissionSeeder::class);
         $this->call(LiaScriptPermissionSeeder::class);
+        $this->call(InteractivePermissionSeeder::class);
         $this->call(CourseBuilderPermissionSeeder::class);
         $this->call(LivingCoursePermissionSeeder::class);
         $this->call(AdaptPermissionSeeder::class);

@@ -223,6 +223,7 @@ return [
         Ulams\Uploads\UlamsUploadsServiceProvider::class,
         Ulams\Lti\UlamsLtiServiceProvider::class,
         Ulams\LiaScript\UlamsLiaScriptServiceProvider::class,
+        Ulams\Interactive\UlamsInteractiveServiceProvider::class,
         Ulams\Ai\UlamsAiServiceProvider::class,
         Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider::class,
         Ulams\LivingCourse\UlamsLivingCourseServiceProvider::class,

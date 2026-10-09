@@ -1,0 +1,14 @@
+{
+  "id": "minimal",
+  "title": { "en": "Minimal interactive" },
+  "version": "1.0.0",
+  "entry": "index.html",
+  "licence": "MIT",
+  "locales": ["en"],
+  "defaultLocale": "en",
+  "bridge": 1,
+  "capabilities": { "steps": true, "reducedMotion": true, "background": true },
+  "steps": [
+    { "id": "only-step", "title": { "en": "The only step" }, "text": { "en": "Nothing moves here." } }
+  ]
+}

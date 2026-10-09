@@ -24,7 +24,7 @@ env:
   # Every <testsuite> in api/phpunit.xml must appear exactly once (checked in each shard).
   # Grouped by package area and balanced on local run times (~100-130 s of tests per shard).
   PHPUNIT_SHARDS: |
-    learning=courses,course-access,courses-import-export,scorm,cmi5,h5p,lrs,bookmarks_notes,video,uploads,lti,liascript,adapt,course-builder
+    learning=courses,course-access,courses-import-export,scorm,cmi5,h5p,lrs,bookmarks_notes,video,uploads,lti,liascript,interactive,adapt,course-builder
     living=living-course
     tasks-topics=tasks,topic-types,topic-type-project,categories,tags,stationary-events
     gift-reports=topic-type-gift,reports,dictionaries
@@ -156,10 +156,10 @@ jobs:
 
       # The reference frontend and its libraries: typecheck, lint and unit tests. Playwright (e2e,
       # visual, a11y) needs the whole stack and stays out of CI.
-      - name: Typecheck, lint, test (web, ui, sdk)
+      - name: Typecheck, lint, test (web, ui, sdk, interactive-bridge)
         run: >-
           corepack yarn turbo run typecheck lint test
-          --filter=@ulams/web --filter=@ulams/ui --filter=@ulams/sdk
+          --filter=@ulams/web --filter=@ulams/ui --filter=@ulams/sdk --filter=@ulams/interactive-bridge
           --concurrency=2
 
       # The ulams CLI and MCP server (front/cli): typecheck, lint, build and unit tests.

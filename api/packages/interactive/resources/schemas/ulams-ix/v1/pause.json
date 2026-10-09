@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/ulams-ix/v1/pause.json",
+  "title": "pause",
+  "description": "Parent to package.",
+  "type": "object",
+  "required": [
+    "ulams-ix",
+    "type",
+    "nonce"
+  ],
+  "properties": {
+    "ulams-ix": {
+      "const": 1
+    },
+    "type": {
+      "const": "pause"
+    },
+    "nonce": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    }
+  },
+  "additionalProperties": false
+}

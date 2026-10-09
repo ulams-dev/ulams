@@ -1,0 +1,80 @@
+---
+title: The interactive bridge
+description: The ulams-ix v1 postMessage protocol between a lesson page and an interactive package, its JSON Schemas, the origin and nonce checks and the MIT library that implements both ends.
+sidebar:
+  order: 42
+modules:
+  - interactive
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+An [Interactive](/creators/interactive/) package runs in a sandboxed frame without `allow-same-origin`,
+so the only way to reach it is `postMessage`. **`ulams-ix` v1** is the small protocol both sides speak
+([ADR 0087](/decisions/0087-interactive-bridge-protocol/)). The library `@ulams/interactive-bridge`
+(`front/interactive-bridge`, MIT, no dependencies) implements both ends and ships the JSON Schemas.
+
+## Messages
+
+Every message is `{ "ulams-ix": 1, "type": string, "nonce": string, …payload }`. A message larger
+than 16 KB, with an unknown type, a wrong nonce or an invalid payload is dropped.
+
+**Page to package**
+
+| Type | Payload |
+|---|---|
+| `init` | `locale`, `theme` (CSS custom properties, `--name: value`), `reducedMotion`, `display` (`inline`, `background`, `fullscreen`), `chrome` (`full`, `minimal`, `none`), optional `startStep`, `range {from,to}`, `readOnly` |
+| `goToStep` | `step` |
+| `setTheme`, `setLocale`, `pause`, `resume` | `theme` / `locale` / none |
+
+**Package to page**
+
+| Type | Payload |
+|---|---|
+| `ready` | `protocol: 1`, `steps` (the step ids it knows), `capabilities` (`steps`, `reducedMotion`, `score`, `background`, `locales`) |
+| `resize` | `height` |
+| `stepChanged` | `step` |
+| `progress` | `value` from 0 to 1 |
+| `complete` | none |
+| `score` | `raw`, `max`, optional `passed` |
+| `event` | an xAPI-like `verb` IRI, an `object` id inside the package, an optional `result` |
+| `error` | `code` (for example `webgl-unavailable`), optional `message` |
+
+The schemas are in `front/interactive-bridge/schema/v1/*.json` (and copied to
+`api/packages/interactive/resources/schemas/ulams-ix/v1/`, where the events endpoint validates against
+them). A new optional field is a minor change; renaming or removing one means `"ulams-ix": 2`.
+
+## Handshake and trust
+
+1. The lesson page makes a random **nonce** per launch and sends `init` with target origin `"*"` (an
+   opaque frame has no origin to target; `init` holds nothing secret).
+2. The package stores the nonce and answers `ready`.
+3. The page accepts a message only when `event.source` is the frame's window, `event.origin` is the
+   string `"null"`, the nonce matches, the size is within 16 KB and the payload is valid. Nothing but
+   `ready` counts before `ready`. With no `ready` within 10 s the page shows the text alternative.
+4. Events go from the page to the front BFF with the learner's session, in batches every two seconds
+   (`POST /bff/interactive/{topic}/events` → `POST /api/interactive/topics/{topic}/events`). The frame
+   never holds a token.
+
+## Using the library
+
+```ts
+// package side
+import { connect } from "@ulams/interactive-bridge";
+const bridge = connect({ steps: ["a", "b"], onGoToStep: (id) => show(id) });
+bridge.stepChanged("b");
+
+// page side
+import { createHost, newNonce } from "@ulams/interactive-bridge";
+const host = createHost(iframe, { nonce: newNonce(), init, onMessage, onTimeout });
+host.goToStep("a");
+```
+
+`connect()` queues calls made before `init` and is a no-op when `window.parent === window`. For packages
+without a build step `npm run build` writes `dist/interactive-bridge.js` (one ESM file, MIT header, under
+3 KB min+gzip) that you can vendor until the package is on npm.
+
+<Aside>
+  Unit tests live in `front/interactive-bridge/tests`: schema validation, nonce, size and type
+  rejection, the queue before `init`, the standalone no-op and the bundle size.
+</Aside>
