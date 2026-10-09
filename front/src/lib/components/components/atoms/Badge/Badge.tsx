@@ -1,7 +1,7 @@
 import * as React from "react";
 import { PropsWithChildren } from "react";
 
-import { contrast } from "chroma-js";
+import chroma from "chroma-js";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { useThemeTokens } from "../../../theme/applyTheme";
 import orangeTheme from "../../../theme/orange";
@@ -30,7 +30,7 @@ export const Badge: React.FC<PropsWithChildren<BadgeProps>> = ({
 
   const cts = React.useMemo(() => {
     try {
-      return contrast("#fff", base) >= 2.5;
+      return chroma.contrast("#fff", base) >= 2.5;
     } catch {
       return false;
     }

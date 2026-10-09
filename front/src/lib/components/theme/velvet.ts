@@ -1,5 +1,5 @@
 import type { ThemeTokens } from "./types";
-import { blend } from "chroma-js";
+import chroma from "chroma-js";
 import { sharedTheme } from "./shared";
 
 export const velvetTheme: ThemeTokens = {
@@ -8,8 +8,8 @@ export const velvetTheme: ThemeTokens = {
   primaryColor: "#600CAE",
   dm__primaryColor: "#600CAE",
 
-  secondaryColor: blend("#600CAE", "#BDBDBD", "multiply").hex(),
-  dm__secondaryColor: blend("#600CAE", "#BDBDBD", "multiply").hex(),
+  secondaryColor: chroma.blend("#600CAE", "#BDBDBD", "multiply").hex(),
+  dm__secondaryColor: chroma.blend("#600CAE", "#BDBDBD", "multiply").hex(),
 
   headerColor: "#111111",
 
