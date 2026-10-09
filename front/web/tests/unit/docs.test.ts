@@ -7,6 +7,7 @@ import { completionMode, topicDoc } from "../../src/lib/page-docs.ts";
 import { flattenTopics } from "@ulams/sdk";
 import { COFFEE_PROGRAM, raw } from "./fixtures.ts";
 import { comparisonModel } from "../../src/lib/comparison.ts";
+import { workflowsModel } from "../../src/lib/workflows.ts";
 
 describe("platform landing", () => {
   const demo = (title: string, theme: string) => ({
@@ -21,12 +22,16 @@ describe("platform landing", () => {
     const data = {
       demos: [demo("The Coffee Atlas", "coffee"), demo("On-Call", "oncall"), demo("Night Sky Explorers", "nightsky")],
       comparison: comparisonModel(),
+      workflows: workflowsModel("actual"),
     };
     expect(validateDocument(landingDocs.platform!, data)).toEqual([]);
   });
   it("labels roadmap items as coming and invents no numbers", () => {
     // the hero's update-proposal card is an illustration of an SLO lesson (its numbers are lesson content)
-    const json = JSON.stringify(landingDocs.platform, (key, value) => (key === "diff" ? undefined : value));
+    // the animated stories are labelled example simulations with example numbers
+    const json = JSON.stringify(landingDocs.platform, (key, value) =>
+      key === "diff" || ["LivingCourseStory", "BuilderStory"].includes(value?.component) ? undefined : value
+    );
     expect(json).toContain('"status":"coming"');
     expect(json).not.toMatch(/\b\d{2,}[,.]?\d*\s*(%|\+|customers|learners|users)/i);
   });
