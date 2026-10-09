@@ -42,7 +42,7 @@ class NightSkyExperience extends DemoExperience
             'level' => 'Beginner (ages 10–14)',
             'language' => 'en',
             'duration' => '7 missions · 10–15 min each',
-            'hours_to_complete' => 3,
+            'hours_to_complete' => null, // lifetime access: a number is a per-learner deadline
             'target_group' => 'Curious kids, homeschool families, teachers running a club',
             'public' => false,
             'fields' => [

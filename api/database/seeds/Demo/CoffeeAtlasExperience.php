@@ -41,7 +41,7 @@ class CoffeeAtlasExperience extends DemoExperience
             'level' => 'Beginner → Intermediate',
             'language' => 'en',
             'duration' => '~9 h · 6 lessons',
-            'hours_to_complete' => 9,
+            'hours_to_complete' => null, // lifetime access: a number is a per-learner deadline
             'target_group' => 'Home brewers, café staff in their first year, food writers',
             'public' => false,
             'fields' => [
