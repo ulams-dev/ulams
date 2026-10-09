@@ -30,13 +30,6 @@ env:
     commerce=cart,vouchers,payments,invoices,consultations,consultation-access,webinar,assign-without-account
     platform=Integrations,auth,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,tracker,ai
     content=templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
-  # Known failures on a CI-style prepared database, identical on Laravel 9 to 13
-  # (docs/plans/phase-0.md, B.11): excluded from the blocking run, re-run non-blocking.
-  # Remove an entry once the test is fixed.
-  #   Integrations (2), auth (3), bulk-notifications (3), core (6): depend on rows left by other tests
-  #   consultations (1): timing-flaky on both framework versions
-  PHPUNIT_QUARANTINE: >-
-    EventApiTest::testEventsList\b|EventApiTest::testEventsListOrderBy\b|UserApiTest::testUsersList\b|UserApiTest::testSearchUsersGetSpecificFieldsWithRelations\b|UserApiTest::testSearchUsersGetSpecificFieldsWithAdditionalFields\b|SendMulticastBulkNotificationApiTest::testSendMulticastBulkNotification\b|BulkNotificationServiceTest::testSendMulticastNotificationViaChannel\b|BulkNotificationServiceTest::testSendMulticastNotificationViaChannelFilterSections\b|BaseControllerTest::testSendResponseForResourcePaginator\b|BaseRepositoryTest::testPaginate\b|BaseRepositoryTest::testAll\b|BaseRepositoryTest::testAllPaginated\b|BaseRepositoryTest::testSearchByRoles\b|BaseRepositoryTest::testCount\b|ConsultationChangeTermTest::testChangeTermForOneUser\b
 
 jobs:
   changes:
@@ -51,6 +44,24 @@ jobs:
       php: ${{ steps.api.outputs.php == 'true' || steps.filter.outputs.ci == 'true' }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      # New files over 2 MB bloat every clone (no Git LFS, owner decision #48): generate fixtures at test
+      # time instead (api/packages/uploads/tests/ZipFixtures.php). Allow a file by listing it in
+      # .github/large-files-allowed.txt with the reason in the PR.
+      - name: No new files over 2 MB
+        if: github.event_name == 'pull_request'
+        run: |
+          too_big=0
+          while IFS= read -r f; do
+            [ -f "$f" ] || continue
+            kb=$(du -k "$f" | cut -f1)
+            if [ "$kb" -gt 2048 ] && ! grep -qxF "$f" .github/large-files-allowed.txt 2>/dev/null; then
+              echo "::error file=$f::$f is ${kb} KB; new files over 2 MB are not allowed (generate it in the test or list it in .github/large-files-allowed.txt)"
+              too_big=1
+            fi
+          done < <(git diff --name-only --diff-filter=A "${{ github.event.pull_request.base.sha }}" HEAD)
+          exit $too_big
       - name: Every API package has a README.md
         run: |
           missing=0
@@ -266,18 +277,32 @@ jobs:
         if: matrix.shard == 'platform'
         run: php artisan l5-swagger:generate
 
+      # api/phpunit.quarantine.xml lists tests that are known to fail, each with a reason and an issue.
+      # They are excluded from the blocking run and re-run non-blocking below. Keep the file empty.
+      - name: Load quarantine
+        run: |
+          names=$(grep -o '<test name="[^"]*"' phpunit.quarantine.xml | sed 's/.*name="//;s/"$//;s/$/\\b/' | paste -sd'|' -)
+          echo "PHPUNIT_QUARANTINE=${names}" >> "$GITHUB_ENV"
+          echo "Quarantined: ${names:-none}"
+
       - name: PHPUnit
-        run: >-
-          ./vendor/bin/phpunit
-          --testsuite "${{ steps.shard.outputs.suites }}"
-          --filter "/^(?!.*(?:${PHPUNIT_QUARANTINE}))/"
-          --log-junit "junit-${{ matrix.shard }}.xml"
+        run: |
+          filter=()
+          if [ -n "${PHPUNIT_QUARANTINE}" ]; then filter=(--filter "/^(?!.*(?:${PHPUNIT_QUARANTINE}))/"); fi
+          ./vendor/bin/phpunit \
+            --testsuite "${{ steps.shard.outputs.suites }}" \
+            "${filter[@]}" \
+            --log-junit "junit-${{ matrix.shard }}.xml"
 
       # PHPUnit exits 1 on "No tests executed!": skip shards without quarantined tests.
       - name: Quarantined tests (non-blocking)
         if: success() || failure()
         continue-on-error: true
         run: |
+          if [ -z "${PHPUNIT_QUARANTINE}" ]; then
+            echo "Nothing is quarantined."
+            exit 0
+          fi
           if ! ./vendor/bin/phpunit --testsuite "${{ steps.shard.outputs.suites }}" \
               --filter "/(?:${PHPUNIT_QUARANTINE})/" --list-tests | grep -q '^ - '; then
             echo "No quarantined tests in this shard."
