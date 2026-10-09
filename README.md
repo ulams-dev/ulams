@@ -13,8 +13,8 @@ monorepo: no external `escolalms/*` packages, every module lives here as source.
 |---|---|---|
 | [`api/`](api) | REST API, multi-tenant | Laravel 13, PHP 8.4, PostgreSQL, Valkey (Redis protocol), MinIO/S3 |
 | [`api/packages/`](api/packages) | Domain modules (courses, topic types, quizzes, auth, payments, tenancy, …), autoloaded by the API | PHP, namespace `Ulams\` |
-| [`api/h5p/`](api/h5p) | H5P service (player, editor, content API), isolated because H5P is GPL | Node 22 or 24, Express 5, [Lumi](https://github.com/lumieducation/h5p-nodejs-library) |
-| [`api/pdf/`](api/pdf) | PDF renderer for certificates and templates | Node 22 or 24, Express 5, [pdfme](https://pdfme.com) |
+| [`api/h5p/`](api/h5p) | H5P service (player, editor, content API), isolated because H5P is GPL | Node 22, Express 5, [Lumi](https://github.com/lumieducation/h5p-nodejs-library) |
+| [`api/pdf/`](api/pdf) | PDF renderer for certificates and templates | Node 22, Express 5, [pdfme](https://pdfme.com) |
 | [`admin/`](admin) | Admin and author panel | React 18, umi/max, Ant Design |
 | [`front/`](front) | Learner front-end, themed per tenant | React 18, Vite, CSS Modules + `--ulams-*` variables |
 | [`docs/`](docs) | Roadmap, plans, decisions (ADRs), reports, design briefs | |
