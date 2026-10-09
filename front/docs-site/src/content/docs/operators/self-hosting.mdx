@@ -29,6 +29,12 @@ this page renders them from there, so the page and the files cannot drift apart.
   file is validated with `docker compose config`, but run it on a staging server first.
 </Aside>
 
+<Aside type="tip" title="Using Cloudflare?">
+  For one VPS behind Cloudflare (tunnel, wildcard DNS, R2 storage, cache rules, backups to R2, install and upgrade
+  scripts) follow [Install on a VPS with Cloudflare](/operators/vps-cloudflare/) instead. This page is the generic
+  version with Caddy terminating TLS itself.
+</Aside>
+
 ## Before you start
 
 - A server that meets the [requirements](/operators/requirements/), with Docker and Compose v2.

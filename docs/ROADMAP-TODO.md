@@ -715,6 +715,11 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Commerce as optional profile: + one Sylius image, shared PostgreSQL server (separate DB)
 - [ ] `docker compose up` and Helm chart with sane defaults
 - [ ] Setup wizard (admin, domain, mail, storage, AI provider or none, commerce link)
+- [x] (new) Production reference: one VPS behind Cloudflare (tunnel, flat tenant hosts, R2, cache rules, backups to R2,
+      install, upgrade, backup, restore and tenant scripts) in `deploy/vps-cloudflare/`, guide in Operators, ADR 0091.
+      Prepared and validated locally with the published images and MinIO; nothing is deployed
+- [ ] (new) First production deployment on the VPS and Cloudflare (owner publishes later, issue #24): staging
+      install, restore drill, R2 custom domains, tunnel, then the launch switches (landing `actual`, CSP enforce)
 - [ ] Any AI provider (OpenAI-compatible, Anthropic, Ollama/vLLM); full function without AI
 - [ ] Air-gapped: no telemetry by default, no external CDNs, offline licence, data residency
 - [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI
