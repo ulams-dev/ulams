@@ -9,6 +9,7 @@ import { DOCS_DIR, SITE_DIR } from "./lib.mjs";
 const GENERATED = [
   "decisions",
   "reference",
+  "catalogue",
   "roadmap.md",
   "contributing/code-of-conduct.md",
   "contributing/security-policy.md",

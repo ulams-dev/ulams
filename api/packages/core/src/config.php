@@ -29,6 +29,8 @@ return [
         'origin_exempt' => [
             'api/scorm/content/*/track',
             'api/liascript/progress/*',
+            // cmi5 AUs on the content origin, authenticated by the one-time token of the launch URL
+            'api/cmi5/fetch',
             'trax/api/*/xapi/std/*',
             'api/lti/jwks',
             'api/lti/platform/authorize',

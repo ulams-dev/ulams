@@ -122,6 +122,26 @@ const problems = validateDocument(doc, data);
 
 The catalogue JSON for prompts and tools: `yarn workspace @ulams/ui catalogue`.
 
+## Learner layout components
+
+A generated lesson layout may use only the approved set, exported as `LEARNER_LAYOUT_COMPONENTS`
+from `@ulams/ui/registry` and as a manifest for the API (`front/ui/catalogue/learner-layout-manifest.json`,
+`yarn workspace @ulams/ui learner-manifest`):
+
+| Component | JavaScript | What it is for |
+|---|---|---|
+| `Timeline` | none | ordered events or stages with optional done / current / upcoming state |
+| `FlipCards` | small web component | term or question on the front, answer revealed by a button |
+| `CodeBlock` | small web component | code listing with a copy button (no syntax colouring, no "Run" until Phase 7.2) |
+| `PracticeActivity` | small web component | scaffolding container: `intro`, `toolbox`, `challenges[]` of level 1-3 with tiered hints (`nudge`, `pointer`, `near_solution`), feedback per answer and a worked solution |
+| `Callout`, `Steps`, `ComparisonTable`, `H5PFrame`, `LiaScriptLesson` | as before | complete the set |
+
+`PracticeActivity` shows the worked solution only after an attempt (an answer checked, or "I have
+tried it" for open tasks), signalled by the bubbling event `ulams:practice-attempt`; until then the
+solution sits in an inert `<template>`. Its text fallback lists the tasks without hints or solutions.
+Tests render each component with the Astro container API and run axe on the result
+(`front/ui/tests/learner-layout.test.ts`).
+
 ## Streaming from the server
 
 <Aside type="note" title="Built in Phase 2, M2.1">

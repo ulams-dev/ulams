@@ -1,0 +1,95 @@
+---
+interface Props {
+  id?: string;
+  title?: string;
+  intro?: string;
+  items: Array<{ label: string; title: string; text?: string; status?: "done" | "current" | "upcoming" }>;
+}
+const { id = "timeline", title, intro, items } = Astro.props;
+const STATUS_TEXT = { done: "Done", current: "Current", upcoming: "Upcoming" } as const;
+---
+
+<section class="u-timeline" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+  {intro && <p class="u-lead">{intro}</p>}
+  <ol class="u-timeline__list">
+    {
+      items.map((item) => (
+        <li class:list={["u-timeline__item", item.status && `u-timeline__item--${item.status}`]} aria-current={item.status === "current" ? "step" : undefined}>
+          <p class="u-timeline__label">{item.label}</p>
+          <h3 class="u-timeline__title">{item.title}</h3>
+          {item.status && <p class="u-timeline__status">{STATUS_TEXT[item.status]}</p>}
+          {item.text && <p class="u-timeline__text">{item.text}</p>}
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .u-timeline {
+    display: grid;
+    gap: 12px;
+  }
+  .u-timeline__list {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0 0 0 28px;
+    position: relative;
+    display: grid;
+    gap: 20px;
+  }
+  .u-timeline__list::before {
+    content: "";
+    position: absolute;
+    inset-block: 6px;
+    inset-inline-start: 7px;
+    width: 2px;
+    background: var(--ulams-color-border);
+  }
+  .u-timeline__item {
+    position: relative;
+  }
+  .u-timeline__item::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: -28px;
+    top: 4px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--ulams-color-primary);
+    background: var(--ulams-color-bg);
+  }
+  .u-timeline__item--done::before {
+    background: var(--ulams-color-primary);
+  }
+  .u-timeline__item--current::before {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--ulams-color-primary) 25%, transparent);
+    background: var(--ulams-color-primary);
+  }
+  .u-timeline__item--upcoming::before {
+    border-color: var(--ulams-color-border);
+  }
+  .u-timeline__label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ulams-color-muted);
+  }
+  .u-timeline__title {
+    font-size: 1.0625rem;
+    margin: 2px 0 0;
+  }
+  .u-timeline__status {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ulams-color-primary-on-light, var(--ulams-color-primary));
+  }
+  .u-timeline__text {
+    margin-top: 4px;
+    color: var(--ulams-color-muted);
+    max-width: 65ch;
+  }
+</style>

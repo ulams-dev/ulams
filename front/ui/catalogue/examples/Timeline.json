@@ -1,0 +1,33 @@
+{
+  "props": {
+    "title": "How coffee reached Europe",
+    "intro": "Five moments that put coffee on the continent.",
+    "items": [
+      {
+        "label": "c. 1450",
+        "title": "Sufi monasteries in Yemen roast and brew coffee",
+        "text": "Brewing starts as a way to stay awake for night prayers.",
+        "status": "done"
+      },
+      {
+        "label": "1555",
+        "title": "The first coffeehouses open in Istanbul",
+        "status": "done"
+      },
+      {
+        "label": "1650",
+        "title": "Oxford opens the first English coffeehouse",
+        "text": "Customers pay a penny for a cup, which gives the shops the nickname penny universities.",
+        "status": "current"
+      },
+      {
+        "label": "1720",
+        "title": "Venice's Caffè Florian opens",
+        "status": "upcoming"
+      }
+    ]
+  },
+  "invalid": {
+    "items": "first, then second"
+  }
+}

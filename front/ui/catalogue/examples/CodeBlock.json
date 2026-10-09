@@ -1,0 +1,12 @@
+{
+  "props": {
+    "title": "extraction.sql",
+    "language": "sql",
+    "code": "SELECT brew_id, ROUND(tds * volume / dose, 1) AS yield_pct\nFROM brews\nWHERE method = 'pour-over'\nORDER BY yield_pct DESC;",
+    "caption": "Yield per brew: dissolved solids times volume, divided by the dose.",
+    "lineNumbers": true
+  },
+  "invalid": {
+    "language": "sql"
+  }
+}

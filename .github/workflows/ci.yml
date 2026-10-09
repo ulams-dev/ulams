@@ -27,7 +27,7 @@ env:
     learning=courses,course-access,courses-import-export,scorm,cmi5,h5p,lrs,bookmarks_notes,video,uploads,lti,liascript,adapt,course-builder
     tasks-topics=tasks,topic-types,topic-type-project,categories,tags,stationary-events
     gift-reports=topic-type-gift,reports,dictionaries
-    commerce=cart,vouchers,payments,invoices,consultations,consultation-access,webinar,assign-without-account
+    commerce=cart,vouchers,payments,invoices,consultations,consultation-access,webinar,jitsi,assign-without-account
     platform=Integrations,auth,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,tracker,ai
     content=templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
   # Known failures on a CI-style prepared database, identical on Laravel 9 to 13
@@ -51,6 +51,13 @@ jobs:
       php: ${{ steps.api.outputs.php == 'true' || steps.filter.outputs.ci == 'true' }}
     steps:
       - uses: actions/checkout@v7
+      - name: Every API package has a README.md
+        run: |
+          missing=0
+          for d in api/packages/*/; do
+            if [ ! -f "${d}README.md" ]; then echo "::error::${d} has no README.md"; missing=1; fi
+          done
+          exit $missing
       - uses: dorny/paths-filter@v4
         id: filter
         with:

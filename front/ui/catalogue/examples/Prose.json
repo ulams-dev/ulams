@@ -1,0 +1,10 @@
+{
+  "props": {
+    "markdown": "## Extraction\n\nWater dissolves **acids first**, then sugars, then bitter compounds.\n\n1. Grind\n2. Pour\n3. Taste",
+    "dropCap": false,
+    "size": "md"
+  },
+  "invalid": {
+    "markdown": 42
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "props": {
+    "title": "Brewing vocabulary",
+    "intro": "Say the definition out loud, then check it.",
+    "cards": [
+      {
+        "front": "Extraction",
+        "back": "Dissolving flavour compounds from the grounds into the water."
+      },
+      {
+        "front": "Bloom",
+        "back": "The first 30 seconds of a pour-over, when fresh grounds release carbon dioxide."
+      },
+      {
+        "front": "TDS",
+        "back": "Total dissolved solids: how much of the cup is coffee, as a percentage."
+      }
+    ]
+  },
+  "invalid": {
+    "cards": []
+  }
+}

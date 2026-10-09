@@ -3,7 +3,9 @@
 `studio.spec.ts` drives the whole M2.1 flow in Chromium on the **fake LLM driver** (synthetic
 answers, no API key, no network): sign in → upload `coffee-brewing.md` → interview with "Decide for
 me" → edit an objective and approve the outline → generation → approve the apply → the course exists
-in the API → chat edit of a quiz question → approve → undo. axe (WCAG 2.2 AA) runs on every studio
+in the API → author preview of the draft → chat edit of a quiz question → approve → undo. A second test
+opens **Preview and discuss**, selects a quiz question with the keyboard, asks for a change, approves,
+checks the element updated in the frame, undoes it and returns focus with Esc. axe (WCAG 2.2 AA) runs on every studio
 screen. It is skipped unless `STUDIO_E2E=1`.
 
 ## Run it
@@ -22,7 +24,8 @@ screen. It is skipped unless `STUDIO_E2E=1`.
    ```
 
    `PHP_CLI_SERVER_WORKERS` matters: the event stream holds one worker while it is open.
-   Create the author (a tutor) once:
+   For a fresh database run `php artisan migrate --force`, seed the roles and
+   `Ulams\CourseBuilder\Database\Seeders\CourseBuilderPermissionSeeder`. Create the author (a tutor) once:
 
    ```bash
    php artisan tinker --execute='$u = Ulams\Core\Models\User::firstOrCreate(["email" => "author@e2e.test"], ["first_name" => "Ada", "last_name" => "Author", "password" => bcrypt("e2e-secret"), "is_active" => true, "email_verified_at" => now()]); $u->syncRoles(["tutor"]);'

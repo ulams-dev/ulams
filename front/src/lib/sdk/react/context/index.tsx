@@ -1231,9 +1231,7 @@ const UlamsContextProviderInner: FunctionComponent<
       return token
         ? postPayWithStripe
             .bind(null, apiUrl)(payment_method, return_url, token)
-            .then((res) => {
-              console.log(res);
-            })
+            .then((res) => res)
         : Promise.reject("noToken");
     },
     [token]
