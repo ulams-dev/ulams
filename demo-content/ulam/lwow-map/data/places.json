@@ -1,0 +1,13 @@
+{
+  "placeholder": true,
+  "note": "Placeholder content: the places, their positions in the plan and their addresses are not facts. They are replaced when the fact sheet is cleared (plan section 7.3, M9a and M9b).",
+  "inset": {
+    "title": "Central Lwów (schematic)",
+    "caption": "A schematic plan, not to scale and with no basemap. Positions and addresses are placeholders.",
+    "points": [
+      { "id": "university", "label": "The university (placeholder)", "address": "Placeholder address", "x": 0.14, "y": 0.40 },
+      { "id": "polytechnic", "label": "The Polytechnic (placeholder)", "address": "Placeholder address", "x": 0.40, "y": 0.74 },
+      { "id": "cafe", "label": "The Scottish Café building (placeholder)", "address": "Placeholder address", "x": 0.52, "y": 0.18 }
+    ]
+  }
+}

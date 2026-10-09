@@ -1,0 +1,64 @@
+{
+  "$schema": "https://ulams.dev/schemas/ulams-interactive/v1.json",
+  "id": "ulam-lwow-map",
+  "title": { "en": "A journey on a map: from Lwów to Santa Fe" },
+  "version": "0.1.0",
+  "entry": "index.html",
+  "licence": "MIT",
+  "attribution": "© 2026 Mateusz Wojczal. Code: MIT. Text: CC BY 4.0. Map: Natural Earth (public domain) through world-atlas (ISC); coordinates from Wikidata (CC0). Placeholder content until the fact sheet is cleared.",
+  "source": { "url": "https://github.com/ulams-dev/ulams/tree/main/demo-content/ulam/lwow-map", "ref": "main" },
+  "locales": ["en"],
+  "defaultLocale": "en",
+  "bridge": 1,
+  "capabilities": { "steps": true, "reducedMotion": true, "score": false, "background": false },
+  "requires": [],
+  "network": [],
+  "steps": [
+    {
+      "id": "lwow",
+      "title": { "en": "Lwów" },
+      "text": { "en": "Placeholder text: the journey starts in Lwów, today Lviv in Ukraine. The map shows present-day country borders; no historical borders are drawn. The inset is a schematic plan of the centre, not to scale. The notes about this stop are filled in when the fact sheet has been cleared." },
+      "poster": "posters/lwow.webp"
+    },
+    {
+      "id": "princeton",
+      "title": { "en": "Princeton" },
+      "text": { "en": "Placeholder text: the second stop is Princeton, New Jersey. The line shows the straight-line route over the globe from the previous stop. The notes about this stop are filled in when the fact sheet has been cleared." },
+      "poster": "posters/princeton.webp"
+    },
+    {
+      "id": "harvard",
+      "title": { "en": "Cambridge, Massachusetts" },
+      "text": { "en": "Placeholder text: the third stop is Cambridge, Massachusetts, the home of Harvard. The notes about this stop are filled in when the fact sheet has been cleared." },
+      "poster": "posters/harvard.webp"
+    },
+    {
+      "id": "madison",
+      "title": { "en": "Madison" },
+      "text": { "en": "Placeholder text: the fourth stop is Madison, Wisconsin. The notes about this stop are filled in when the fact sheet has been cleared." },
+      "poster": "posters/madison.webp"
+    },
+    {
+      "id": "los-alamos",
+      "title": { "en": "Los Alamos" },
+      "text": { "en": "Placeholder text: the fifth stop is Los Alamos, New Mexico. The notes about this stop are filled in when the fact sheet has been cleared." },
+      "poster": "posters/los-alamos.webp"
+    },
+    {
+      "id": "boulder",
+      "title": { "en": "Boulder" },
+      "text": { "en": "Placeholder text: the sixth stop is Boulder, Colorado. The notes about this stop are filled in when the fact sheet has been cleared." },
+      "poster": "posters/boulder.webp"
+    },
+    {
+      "id": "santa-fe",
+      "title": { "en": "Santa Fe" },
+      "text": { "en": "Placeholder text: the last stop is Santa Fe, New Mexico. The notes about this stop are filled in when the fact sheet has been cleared." },
+      "poster": "posters/santa-fe.webp"
+    }
+  ],
+  "a11y": {
+    "keyboard": "The map is a picture; every stop is also a native button in the list under it, and the step card has Back and Next. Each leg is described in text (the two places and the distance).",
+    "notes": "With reduced motion the map jumps to each stop instead of flying. The map shows present-day borders only and says so."
+  }
+}
