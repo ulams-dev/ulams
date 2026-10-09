@@ -16,6 +16,7 @@ use Ulams\LivingCourse\Http\Controllers\Concerns\ResolvesLivingCourse;
 use Ulams\LivingCourse\Models\Proposal;
 use Ulams\LivingCourse\Exceptions\ProposalException;
 use Ulams\LivingCourse\Services\AnalysisService;
+use Ulams\LivingCourse\Services\ApplyService;
 use Ulams\LivingCourse\Services\DecisionService;
 use Ulams\LivingCourse\Models\ProposalItem;
 use Ulams\LivingCourse\Models\RevisionFragment;
@@ -52,12 +53,16 @@ use Ulams\LivingCourse\Support\Presenter;
  * @OA\Post(path="/api/admin/living-course/proposals/{proposal}/reject", summary="Reject the whole proposal and acknowledge the source revision", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="proposal", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\Response(response=200, description="the proposal"), @OA\Response(response=403, description="not allowed"), @OA\Response(response=409, description="already settled"))
+ * @OA\Post(path="/api/admin/living-course/proposals/{proposal}/apply", summary="Apply the accepted items as a new course version (409 with conflicting items or admin edits)", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="proposal", in="path", required=true, @OA\Schema(type="string")),
+ *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="overwrite", type="boolean"))),
+ *     @OA\Response(response=202, description="apply run"), @OA\Response(response=409, description="conflicts or admin edits"))
  */
 class ProposalsController extends Controller
 {
     use ResolvesLivingCourse;
 
-    public function __construct(private readonly AnalysisService $analysis, private readonly LlmClient $llm, private readonly DecisionService $decisions)
+    public function __construct(private readonly AnalysisService $analysis, private readonly LlmClient $llm, private readonly DecisionService $decisions, private readonly ApplyService $applying)
     {
     }
 
@@ -104,6 +109,30 @@ class ProposalsController extends Controller
         }
 
         return self::ok(['item' => Presenter::item($i), 'proposal' => Presenter::proposalSummary($p->refresh())]);
+    }
+
+    public function apply(Request $request, string $proposal): JsonResponse
+    {
+        [, $p] = $this->proposalFor($request, $proposal, 'act');
+        if ($p->status !== 'ready') {
+            return self::fail($p->status === 'applied' ? 'This proposal is already applied.' : 'This proposal is not ready to apply.', 409);
+        }
+        try {
+            $preview = $this->applying->preview($p);
+        } catch (ProposalException $e) {
+            return self::fail($e->getMessage(), $e->status);
+        }
+        if ($preview['conflicts'] !== []) {
+            return response()->json(['success' => false, 'code' => 'conflicts', 'message' => 'You edited some elements after the analysis. Ask for a new version of them, or reject them, then apply again.',
+                'data' => ['conflicts' => array_map(fn ($i) => Presenter::item($i), $preview['conflicts'])]], 409);
+        }
+        if ($preview['drift'] !== [] && !$request->boolean('overwrite')) {
+            return response()->json(['success' => false, 'code' => 'admin_edits', 'message' => 'These elements were edited in the admin after the last apply: ' . implode(', ', array_slice(array_values($preview['drift']), 0, 5)) . '. Applying overwrites those edits; confirm to continue.',
+                'data' => ['drift' => array_values($preview['drift'])]], 409);
+        }
+        $run = $this->applying->start($p, (int) $request->user()->getKey(), $request->boolean('overwrite'));
+
+        return self::ok(['runId' => $run->id, 'proposal' => Presenter::proposalSummary($p->refresh())], 202);
     }
 
     public function acceptAll(Request $request, string $proposal): JsonResponse

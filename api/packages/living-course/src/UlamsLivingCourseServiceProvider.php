@@ -20,6 +20,7 @@ use Ulams\LivingCourse\Fake\UpdateResponder;
 use Ulams\LivingCourse\Models\Proposal;
 use Ulams\LivingCourse\Models\ProposalItem;
 use Ulams\LivingCourse\Services\AnalysisService;
+use Ulams\LivingCourse\Services\ApplyService;
 use Ulams\LivingCourse\Services\AuditLog;
 use Ulams\LivingCourse\Services\RevisionService;
 use Ulams\LivingCourse\Services\StalenessService;
@@ -50,6 +51,7 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         RunService::extend(AnalysisService::HANDLER, fn (Run $run, Session $session) => $this->app->make(AnalysisService::class)->handleRun($run, $session));
+        RunService::extend(ApplyService::HANDLER, fn (Run $run, Session $session) => $this->app->make(ApplyService::class)->execute($run, $session));
         RunService::extendRetry(AnalysisService::HANDLER, fn (Step $step) => $this->app->make(AnalysisService::class)->retry($step));
         Llm::extendCost('living-course', fn (Session $session) => ['type' => Proposal::SUBJECT_TYPE, 'ids' => Proposal::query()->where('session_id', $session->id)->pluck('id')->all()]);
         $this->app->make(PromptRegistry::class)->addPath('living-course', __DIR__ . '/../resources/prompts');

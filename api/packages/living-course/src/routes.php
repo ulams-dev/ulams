@@ -23,6 +23,7 @@ Route::group([
     Route::post('proposals/{proposal}/items/{item}/reject', [ProposalsController::class, 'reject']);
     Route::post('proposals/{proposal}/items/{item}/reset', [ProposalsController::class, 'reset']);
     Route::post('proposals/{proposal}/items/{item}/regenerate', [ProposalsController::class, 'regenerate']);
+    Route::post('proposals/{proposal}/apply', [ProposalsController::class, 'apply']);
     Route::post('proposals/{proposal}/accept-all', [ProposalsController::class, 'acceptAll']);
     Route::post('proposals/{proposal}/reject', [ProposalsController::class, 'rejectAll']);
     Route::get('revisions/{revision}/changes', [SourcesController::class, 'changes']);
