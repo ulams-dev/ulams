@@ -31,7 +31,7 @@ export const ALL: APIRoute = async ({ params, request, locals, cookies, url }) =
 
   let response = await forward(locals.token).catch(() => null);
   if (response?.status === 401) {
-    const fresh = await renewSession(tenant, cookies, url.protocol === "https:", locals.token);
+    const fresh = await renewSession(tenant, cookies, locals.secure, locals.token);
     if (fresh) response = await forward(fresh).catch(() => null);
   }
   if (!response) return json(502, { message: "API unreachable" });

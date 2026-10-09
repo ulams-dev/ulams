@@ -11,7 +11,7 @@ let error: string | null = null;
 if (Astro.request.method === "POST") {
   const form = await Astro.request.formData();
   try {
-    await loginAuthor(tenant, Astro.cookies, String(form.get("email") ?? ""), String(form.get("password") ?? ""), Astro.url.protocol === "https:");
+    await loginAuthor(tenant, Astro.cookies, String(form.get("email") ?? ""), String(form.get("password") ?? ""), Astro.locals.secure);
     return Astro.redirect(safeNext, 303);
   } catch (e) {
     error = e instanceof ApiError && e.status === 422 ? "Wrong e-mail or password." : "Sign-in failed. Try again.";

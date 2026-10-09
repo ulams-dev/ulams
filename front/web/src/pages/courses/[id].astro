@@ -7,7 +7,7 @@ import { courseHeaderDoc, descriptionDoc, purchaseDoc, syllabusDoc } from "../..
 import { themeFor } from "../../lib/theme.ts";
 import { completionPercent, resumeTopic } from "@ulams/sdk";
 import { lessonModels, topicHref } from "../../lib/view-model.ts";
-import { SESSION_COOKIE } from "../../lib/session.ts";
+import { readSession } from "../../lib/session.ts";
 
 const tenant = Astro.locals.tenant;
 if (!tenant) return Astro.redirect("/tenants");
@@ -25,7 +25,7 @@ const theme = themeFor(settings?.theme?.theme, tenant.slug);
 const chrome = chromeFor(theme);
 
 // Returning learners (session cookie present) see their progress; others get the public page.
-const token = Astro.cookies.get(SESSION_COOKIE)?.value;
+const token = readSession(Astro.cookies, Astro.locals.secure);
 let progress: number | undefined;
 let resumeHref = course!.learnHref;
 if (token) {

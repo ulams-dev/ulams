@@ -24,6 +24,8 @@ export default defineConfig({
       ULAMS_DEMO_TENANTS: envField.string({ context: "server", access: "secret", optional: true }),
       ULAMS_CACHE_TTL: envField.number({ context: "server", access: "secret", optional: true }),
       ULAMS_WARM_TENANTS: envField.string({ context: "server", access: "secret", optional: true }),
+      ULAMS_COOKIE_SECURE: envField.string({ context: "server", access: "secret", optional: true }),
+      ULAMS_COOKIE_FALLBACK_PREFIX: envField.string({ context: "server", access: "secret", optional: true }),
       DEMO_STUDENT_EMAIL: envField.string({ context: "server", access: "secret", optional: true }),
       DEMO_STUDENT_PASSWORD: envField.string({ context: "server", access: "secret", optional: true }),
     },
