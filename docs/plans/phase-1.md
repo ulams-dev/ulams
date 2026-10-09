@@ -1,6 +1,6 @@
 # Phase 1 plan: content formats and integrations
 
-Status: **draft, waiting for approval**. Nothing in this plan is implemented yet.
+Status: **approved by the product owner (2026-10-09)**.
 
 Phase 1 follows Phase 0 (the Laravel 13 / PHP 8.4 upgrade must be merged first) and precedes
 Phase 2 (AI Course Builder, `docs/plans/phase-2.md`). It covers every Phase 1 item in

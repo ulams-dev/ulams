@@ -11,6 +11,9 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (2026-10-09) Phase 1 and Phase 2 plans approved; ADRs 0008 (reference frontend: Astro SSR, plain TS SDK,
+      agent UI catalogue), 0009 (LLM layer), 0010 (Course Blueprint), 0011 (AG-UI over SSE) and 0012 (LTI 1.3)
+      accepted
 - [x] Base: Wellms (Laravel, `escolalms/*` packages), headless
 - [x] Killer feature: **Living Course** (source sync with diff + citations, progress preserved)
 - [x] Second pillar: personalisation via new `learner-insights` package
@@ -44,8 +47,8 @@ small commits → tests → summary.
 - [ ] Multitenancy for the POC: one deployment, tenant per subdomain with own theme?
 - [ ] Prototype the Sylius order → entitlement flow early (highest-risk commerce piece)
 - [x] Add the spec file to the repo as `docs/ROADMAP-PROMPT.md`
-- [ ] (new) Approve the Phase 1 and Phase 2 plans (`docs/plans/phase-1.md`, `docs/plans/phase-2.md`)
-      and ADRs 0009–0011 (LLM layer, Course Blueprint, AG-UI over SSE), all Proposed
+- [x] (new) Approve the Phase 1 and Phase 2 plans (`docs/plans/phase-1.md`, `docs/plans/phase-2.md`)
+      and ADRs 0009–0011 (LLM layer, Course Blueprint, AG-UI over SSE) (approved 2026-10-09; ADR 0008 and 0012 too)
 
 ## Product principles (tie-breakers)
 
@@ -164,7 +167,7 @@ stale content.
 
 ## Phase 1: Content formats and integrations
 
-Plan (new): `docs/plans/phase-1.md` (draft, waiting for approval): M1.1 upload hardening and content
+Plan (new): `docs/plans/phase-1.md` (approved 2026-10-09): M1.1 upload hardening and content
 origin → M1.2–M1.4 LTI 1.3 → M1.5 LiaScript → M1.6–M1.7 Adapt → M1.8 H5P items → M1.9 conformance.
 
 ### 1.1 LiaScript
@@ -206,7 +209,7 @@ Note (new): a first Course Builder plan was drafted on 2026-10-08 (LLM layer in 
 tenancy package, Course Blueprint, LiaScript and Adapt topic types, admin module). It predates this
 roadmap; Phase 2 is re-planned from this spec after Phases 0–1.
 
-Plan (new): `docs/plans/phase-2.md` (draft, waiting for approval; follows Phase 1). First milestone
+Plan (new): `docs/plans/phase-2.md` (approved 2026-10-09; follows Phase 1). First milestone
 M2.1 "chat course building": upload → interview → outline diff → approved generation with citations →
 approved apply through domain services → element chat edits. Designs:
 `front/docs/design/stitch/course-builder/`.

@@ -1,6 +1,6 @@
 # Phase 2 plan: AI Course Builder
 
-Status: **draft, waiting for approval**. Nothing in this plan is implemented yet.
+Status: **approved by the product owner (2026-10-09)**.
 
 Phase order is unchanged: Phase 2 starts after Phase 1. This plan covers all of Phase 2 and
 describes its **first milestone (M2.1, "chat course building")** in detail. M2.1 is the

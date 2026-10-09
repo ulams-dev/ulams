@@ -1,6 +1,6 @@
 # 0009. LLM layer: an `ai` package on the official Anthropic SDK
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-08
 
 ## Context and problem statement
