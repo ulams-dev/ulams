@@ -1,0 +1,19 @@
+{
+  "props": {
+    "variant": "banner",
+    "eyebrow": "Ready?",
+    "title": "Start your first lesson today",
+    "text": "No account needed for the preview.",
+    "cta": {
+      "label": "Try a lesson",
+      "href": "/courses/1"
+    },
+    "secondary": {
+      "label": "Talk to us",
+      "href": "/contact"
+    }
+  },
+  "invalid": {
+    "title": "Missing the button"
+  }
+}

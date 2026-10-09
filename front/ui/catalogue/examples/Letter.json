@@ -1,0 +1,22 @@
+{
+  "props": {
+    "eyebrow": "A note from the roaster",
+    "title": "Why we teach brewing",
+    "paragraphs": [
+      "Most bad coffee is a process problem, not a bean problem.",
+      "In this course you learn to taste what is wrong and change one thing at a time."
+    ],
+    "quote": "Change one variable, then taste.",
+    "people": [
+      {
+        "name": "Ada Kowalska",
+        "role": "Head roaster",
+        "place": "Krakow",
+        "bio": "Fifteen years of roasting and teaching extraction."
+      }
+    ]
+  },
+  "invalid": {
+    "paragraphs": "text"
+  }
+}

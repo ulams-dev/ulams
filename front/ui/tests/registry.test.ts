@@ -1,4 +1,4 @@
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { catalogueJson, componentNames, registry } from "../src/registry.ts";
@@ -33,6 +33,19 @@ describe("registry", () => {
       }
       if (spec.category !== "structure") expect(spec.props.properties?.id, name).toBeDefined();
     }
+  });
+
+  it("has an example for every component: valid props, an invalid variant, and no stray files", () => {
+    const dir = `${root}../catalogue/examples/`;
+    for (const [name, spec] of Object.entries(registry)) {
+      const file = `${dir}${name}.json`;
+      expect(existsSync(file), `${name} needs catalogue/examples/${name}.json`).toBe(true);
+      const example = JSON.parse(readFileSync(file, "utf8")) as { props: Record<string, unknown>; invalid: Record<string, unknown> };
+      expect(validate(spec.props, example.props).issues, `${name} example`).toEqual([]);
+      expect(validate(spec.props, example.invalid).valid, `${name} invalid example must be invalid`).toBe(false);
+    }
+    const stray = readdirSync(dir).filter((f) => f.endsWith(".json") && !(f.slice(0, -5) in registry));
+    expect(stray).toEqual([]);
   });
 
   it("serialises to plain JSON for prompts", () => {
