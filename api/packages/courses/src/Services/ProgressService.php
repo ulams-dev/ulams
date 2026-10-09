@@ -149,14 +149,38 @@ class ProgressService implements ProgressServiceContract
         return $courseProgressCollection;
     }
 
-    public function h5p(User $user, Topic $topic, string $event, $json): ?H5PUserProgress
+    /**
+     * Stores an H5P xAPI event of the learner. The legacy clients send the verb IRI as `$event` and
+     * the statement as `$json`; the SDK sends the whole statement object as `$event`. Both end up as
+     * the verb IRI in `event` and the statement in `data`.
+     *
+     * @param string|array<string, mixed> $event
+     */
+    public function h5p(User $user, Topic $topic, string|array $event, $json): ?H5PUserProgress
     {
+        if (is_array($event)) {
+            $json ??= $event;
+            $event = $this->h5pEventName($event);
+        }
+        $json ??= []; // the column is not nullable
+
         $courseProgressCollection = CourseProgressCollection::make($user, $topic->course);
 
         if ($courseProgressCollection->topicCanBeProgressed($topic)) {
             return $this->courseH5PProgressContract->store($topic, $user, $event, $json);
         }
         return null;
+    }
+
+    /** The verb of an xAPI statement (its IRI, else its display text), `statement` when it has none. */
+    private function h5pEventName(array $statement): string
+    {
+        $verb = $statement['verb'] ?? [];
+        $name = is_array($verb)
+            ? ($verb['id'] ?? (is_array($verb['display'] ?? null) ? reset($verb['display']) : null))
+            : null;
+
+        return is_string($name) && $name !== '' ? mb_substr($name, 0, 255) : 'statement';
     }
 
     private function getBaseQuery(int $userId): Builder
