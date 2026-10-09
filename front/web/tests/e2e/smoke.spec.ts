@@ -1,5 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
+import { parseLandingStatus } from "../../src/lib/landing-status.ts";
 import { demoCourse } from "./demo-data.ts";
+
+const landingMode = parseLandingStatus(process.env.ULAMS_LANDING_STATUS);
 
 const port = process.env.WEB_BASE_PORT ?? "4321";
 const base = (slug: string) => `http://${slug}.app.localhost:${port}`;
@@ -95,7 +98,15 @@ test("platform landing sells the product and links every demo", async ({ page })
     await expect(page.locator(`#demos a[href^="http://${slug}.admin.localhost"]`)).toHaveCount(1);
   }
   await expect(page.locator("#demos")).toContainText("reset every hour");
-  expect(await page.locator(".u-status--coming").count()).toBeGreaterThan(2);
+  // The landing shows roadmap badges in `actual` mode only (src/lib/landing-status.ts). Run this test with the
+  // same ULAMS_LANDING_STATUS as the server (unset = final); both modes are asserted.
+  const coming = await page.locator(".u-status--coming").count();
+  if (landingMode === "actual") {
+    expect(coming, "actual mode shows the roadmap badges").toBeGreaterThan(2);
+  } else {
+    expect(coming, "final mode shows no Coming badge").toBe(0);
+    await expect(page.locator("main")).not.toContainText(/On the roadmap|planned interface/i);
+  }
   await noHorizontalScroll(page);
   expect(errors).toEqual([]);
 });

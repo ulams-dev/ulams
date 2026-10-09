@@ -80,14 +80,14 @@ describe("workflow tabs", () => {
     for (const tab of workflowsData.tabs) {
       if (tab.status !== "available") expect(["preview", "coming"], tab.key).toContain(tab.status);
     }
-    const planned = workflowsData.tabs.filter((t) => ["claude-code", "claude-mcp", "cli"].includes(t.key));
-    expect(planned).toHaveLength(3);
-    for (const tab of planned) expect(tab.status).toBe("coming");
+    const shipped = workflowsData.tabs.filter((t) => ["claude-code", "claude-mcp", "cli"].includes(t.key));
+    expect(shipped).toHaveLength(3);
+    for (const tab of shipped) expect(tab.status).toBe("available");
     for (const key of ["api", "studio"]) expect(workflowsData.tabs.find((t) => t.key === key)?.status).toBe("available");
   });
-  it("actual keeps badges, notes and the footnote; final removes them", () => {
+  it("actual keeps the badges; final removes them", () => {
     const actual = workflowsModel("actual");
-    expect(actual.footnote).toMatch(/planned interface/);
+    expect(actual.footnote).toBeUndefined();
     expect(actual.tabs.filter((t) => t.status).length).toBe(workflowsData.tabs.length);
     const final = applyWorkflowStatus(workflowsData, "final");
     expect(final.footnote).toBeUndefined();

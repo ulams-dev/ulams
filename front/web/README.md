@@ -198,6 +198,10 @@ tile grid. A capability's `status` shows a small "Coming" tag in `actual` mode o
   comparison cells that say Coming or Partial read Yes.
 - `actual`: the honest status. The data files always keep the true status, and competitor cells never change.
 
+The Playwright smoke test "platform landing sells the product" asserts the mode it runs in: start it with the same
+`ULAMS_LANDING_STATUS` as the server (unset means `final`), e.g. `ULAMS_LANDING_STATUS=actual yarn playwright test`
+against a server started in `actual` mode.
+
 **Before any public launch, run in `actual` mode or confirm that everything the landing shows has shipped.**
 Nodes of `platform.json` may carry `final: { …prop overrides… }` for text that only reads right in one mode.
 

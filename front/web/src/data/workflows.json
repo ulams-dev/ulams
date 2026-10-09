@@ -1,19 +1,17 @@
 {
   "description": "Five ways to run ulams: Claude Code, Claude with the ulams MCP server, the ulams command line, the REST API and SDK, and the studio.",
-  "footnote": "The ulams CLI and MCP server are being built. The commands and tool names shown for them are the planned interface and may change; the REST API and the studio work today.",
   "tabs": [
     {
       "key": "claude-code",
       "label": "Claude Code",
-      "status": "coming",
+      "status": "available",
       "window": "terminal",
-      "title": "claude · ~/oncall-academy",
+      "title": "claude · ~/academy",
       "caption": "Describe the course in plain language. Claude Code runs the ulams CLI, shows you the outline, and publishes only after you approve.",
-      "note": "Planned interface: the ulams CLI is being built (Phase 7). Commands are shown as designed and may change.",
       "lines": [
         {
           "kind": "prompt",
-          "text": "Build a 3-lesson course on incident response from ./runbook.md and publish it to oncall"
+          "text": "Build a 3-lesson course on incident response from ./runbook.md and publish it"
         },
         {
           "kind": "agent",
@@ -22,7 +20,7 @@
         {
           "kind": "tool",
           "text": "Bash",
-          "args": "ulams builder start --source runbook.md --tenant oncall --json"
+          "args": "ulams builder start --from runbook.md --defaults --json"
         },
         {
           "kind": "spin",
@@ -30,7 +28,7 @@
         },
         {
           "kind": "out",
-          "text": "{\"run\":\"b_7f3a\",\"status\":\"outline_ready\",\"lessons\":3,\"cited_sections\":12}"
+          "text": "{\"status\":\"outline_review\",\"session\":\"01J9Z3K8M2\"}"
         },
         {
           "kind": "agent",
@@ -43,86 +41,93 @@
         {
           "kind": "tool",
           "text": "Bash",
-          "args": "ulams builder approve-outline b_7f3a --json"
+          "args": "ulams builder outline approve 01J9Z3K8M2 --json"
         },
         {
           "kind": "out",
-          "text": "{\"run\":\"b_7f3a\",\"status\":\"drafted\",\"topics\":9,\"uncited\":0}"
+          "text": "{\"status\":\"apply_review\",\"session\":\"01J9Z3K8M2\"}"
         },
         {
           "kind": "tool",
           "text": "Bash",
-          "args": "ulams courses publish --run b_7f3a --tenant oncall --json"
+          "args": "ulams builder apply 01J9Z3K8M2 --json"
         },
         {
           "kind": "out",
-          "text": "{\"course\":17,\"status\":\"published\",\"tenant\":\"oncall\"}"
+          "text": "{\"status\":\"applied\",\"courseId\":17}"
+        },
+        {
+          "kind": "tool",
+          "text": "Bash",
+          "args": "ulams courses publish 17 --json"
+        },
+        {
+          "kind": "out",
+          "text": "{\"id\":17,\"status\":\"published\"}"
         },
         {
           "kind": "agent",
-          "text": "Done. Incident response is live on oncall: 3 lessons, 9 topics, every claim cited to runbook.md."
+          "text": "Done. Incident response is live as course 17: 3 lessons, every claim cited to runbook.md."
         }
       ]
     },
     {
       "key": "claude-mcp",
       "label": "Claude + MCP",
-      "status": "coming",
+      "status": "available",
       "window": "chat",
       "title": "Claude · ulams MCP server",
       "caption": "Ask Claude, or any MCP-compatible agent, about your academy. It uses the ulams MCP server and asks before it sends anything.",
-      "note": "Planned interface: the ulams MCP server is being built (Phase 7). The at-risk report depends on learner analytics (Phase 4), which is not built yet.",
       "lines": [
         {
           "kind": "user",
-          "text": "Which learners are stuck in On-Call this week? Nudge them."
+          "text": "Which courses are still drafts? Publish the coffee one."
         },
         {
           "kind": "tool",
-          "text": "ulams.analytics.at_risk",
-          "args": "tenant: oncall, days: 7",
-          "result": "4 learners"
+          "text": "courses_list",
+          "args": "status: draft",
+          "result": "2 courses"
         },
         {
           "kind": "assistant",
-          "text": "Four learners have not moved in 7 days, all on lesson 2, Triage and mitigate. I can send each a short reminder with a link back to the lesson. Send it?"
+          "text": "Two drafts: Learn coffee the slow way and Incident response. I'll publish Learn coffee the slow way. Go ahead?"
         },
         {
           "kind": "user",
-          "text": "Yes, send."
+          "text": "Yes, publish it."
         },
         {
           "kind": "tool",
-          "text": "ulams.notifications.send",
-          "args": "template: nudge, learners: 4",
-          "result": "4 sent"
+          "text": "courses_publish",
+          "args": "id: 3",
+          "result": "published"
         },
         {
           "kind": "assistant",
-          "text": "Done. Four reminders are on their way."
+          "text": "Done. Learn coffee the slow way is published. Incident response is still a draft."
         }
       ]
     },
     {
       "key": "cli",
       "label": "CLI",
-      "status": "coming",
+      "status": "available",
       "window": "terminal",
       "title": "zsh · ~/academy",
-      "caption": "Course as code: pull a course to Markdown, edit it in your editor, review the diff, push it back.",
-      "note": "Planned interface: the ulams CLI is being built (Phase 7). Commands are shown as designed and may change.",
+      "caption": "Course as code: export a course to YAML, edit it in your editor, review the plan, apply it back.",
       "lines": [
         {
           "kind": "cmd",
-          "text": "ulams login"
+          "text": "ulams login --url http://coffee.localhost --demo admin"
         },
         {
           "kind": "out",
-          "text": "Opened your browser. Signed in as you@example.com"
+          "text": "Signed in as admin@coffee.ulams.app"
         },
         {
           "kind": "cmd",
-          "text": "ulams courses list --tenant coffee --json | jq -r '.[] | \"\\(.id)  \\(.title)\"'"
+          "text": "ulams courses list --json | jq -r '.data[] | \"\\(.id)  \\(.title)\"'"
         },
         {
           "kind": "out",
@@ -130,43 +135,31 @@
         },
         {
           "kind": "cmd",
-          "text": "ulams courses pull 3 --dir course/"
-        },
-        {
-          "kind": "out",
-          "text": "wrote course/course.yaml and course/lessons/*.md"
+          "text": "ulams get Course \"Learn coffee the slow way\" --output yaml > course.yaml"
         },
         {
           "kind": "note",
-          "text": "# edit course/lessons/02-grind-size.md in your editor"
+          "text": "# edit the grind-size lesson in course.yaml"
         },
         {
           "kind": "cmd",
-          "text": "ulams courses push course/ --dry-run"
-        },
-        {
-          "kind": "ctx",
-          "text": "~ lesson 2 · Grind size"
-        },
-        {
-          "kind": "del",
-          "text": "Use a medium grind for every method."
-        },
-        {
-          "kind": "add",
-          "text": "Match the grind to the method: coarse for French press, fine for espresso."
+          "text": "ulams apply --file course.yaml --dry-run"
         },
         {
           "kind": "out",
-          "text": "1 changed, 0 added, 0 removed (dry run, nothing written)"
+          "text": "Course  Learn coffee the slow way  updated (dry run, nothing written)"
         },
         {
           "kind": "cmd",
-          "text": "ulams courses push course/ --apply"
+          "text": "ulams apply --file course.yaml"
         },
         {
           "kind": "spin",
-          "text": "Pushing 1 change"
+          "text": "Applying 1 change"
+        },
+        {
+          "kind": "out",
+          "text": "Course  Learn coffee the slow way  updated"
         }
       ]
     },
