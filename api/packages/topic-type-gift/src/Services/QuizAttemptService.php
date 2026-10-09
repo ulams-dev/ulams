@@ -84,7 +84,12 @@ class QuizAttemptService implements QuizAttemptServiceContract
         ]));
 
         event(new QuizAttemptStartedEvent($attempt->user, $attempt));
-        MarkAttemptAsEnded::dispatch($attempt->getKey())->delay($attempt->end_at);
+        // `end_at` is enforced server-side on read and submit (QuizAttempt::isEnded, the attempt
+        // policy), so the delayed job only finalises the attempt. Drivers that cannot delay
+        // (sync, null) would end it the moment it is created, so they get no job.
+        if (MarkAttemptAsEnded::queueCanDelay()) {
+            MarkAttemptAsEnded::dispatch($attempt->getKey(), true)->delay($attempt->end_at);
+        }
 
         return $attempt;
     }

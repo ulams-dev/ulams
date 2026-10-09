@@ -106,7 +106,7 @@ function pack(envelope: unknown, isError: boolean): ToolResult {
   if (text.length > MAX_TEXT && !isError) {
     const env = envelope as { data?: unknown; warnings?: unknown[] };
     const items = Array.isArray(env.data) ? env.data : null;
-    let data = env.data;
+    let data: unknown;
     if (items) {
       let keep = items.length;
       while (keep > 1 && JSON.stringify({ ...env, data: items.slice(0, keep) }).length > MAX_TEXT) keep = Math.floor(keep / 2);
