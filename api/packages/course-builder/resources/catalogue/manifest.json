@@ -2113,6 +2113,306 @@
         "additionalProperties": false
       }
     },
+    "UpdateItem": {
+      "description": "One proposed change to one element of the course after its source changed, for the author to decide on: the element, what kind of proposal it is (update, citation update, removal, no change needed, update by hand, new section in the source), why, the old and new text with word-level marks, citation chips, warnings (possibly unsupported claim, the answer may be wrong or changed), and the controls Accept, Reject, Reset and Ask for changes with a comment field. Conflict and edited-after-analysis states explain what to do. Props come from the update proposal, never from the model.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "description": "Proposal item id",
+            "maxLength": 32
+          },
+          "elementId": {
+            "type": "string",
+            "description": "Element in the course",
+            "maxLength": 32
+          },
+          "elementType": {
+            "type": "string",
+            "enum": [
+              "block",
+              "question",
+              "objective",
+              "lesson",
+              "course",
+              "section"
+            ],
+            "description": "What the element is"
+          },
+          "label": {
+            "type": "string",
+            "description": "Element shown to the author, e.g. Lesson 2.1 › Q2",
+            "maxLength": 200
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "update",
+              "citation_remap",
+              "remove",
+              "no_change",
+              "manual",
+              "uncovered"
+            ],
+            "description": "Kind of proposal"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "accepted",
+              "rejected",
+              "conflict",
+              "stale"
+            ],
+            "description": "Decision state"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why the element changes, plain text",
+            "maxLength": 500
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "minor",
+              "major"
+            ],
+            "description": "How much the meaning changes"
+          },
+          "sources": {
+            "type": "string",
+            "description": "Source sections behind the change, e.g. Based on §3.2",
+            "maxLength": 300
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Field path",
+                  "maxLength": 200
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Readable field name, e.g. Option B (correct)",
+                  "maxLength": 200
+                },
+                "before": {
+                  "type": "string",
+                  "description": "Text before",
+                  "maxLength": 20000
+                },
+                "after": {
+                  "type": "string",
+                  "description": "Text after",
+                  "maxLength": 20000
+                }
+              },
+              "required": [
+                "path",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Fields that change",
+            "maxItems": 60
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "fragmentId": {
+                  "type": "string",
+                  "description": "Fragment id (frg_…)",
+                  "maxLength": 16
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Section label shown on the chip, e.g. §2.3 Brewing ratios",
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "fragmentId",
+                "label"
+              ],
+              "additionalProperties": false,
+              "description": "A source citation"
+            },
+            "description": "Fragments the element cites after the change",
+            "maxItems": 20
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Warning from the grounding check, e.g. Possibly unsupported: …",
+              "maxLength": 300
+            },
+            "description": "Warnings about the proposed text",
+            "maxItems": 10
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "number, code, identifier, modality, large",
+              "maxLength": 32
+            },
+            "description": "Why the source change matters",
+            "maxItems": 8
+          },
+          "answerCheck": {
+            "type": "boolean",
+            "description": "The marked answer may now be wrong"
+          },
+          "answerChanged": {
+            "type": "boolean",
+            "description": "The correct answer is different after the change"
+          },
+          "regenerations": {
+            "type": "integer",
+            "description": "Times the author asked for changes",
+            "minimum": 0,
+            "maximum": 10
+          },
+          "maxRegenerations": {
+            "type": "integer",
+            "description": "Most times the author may ask for changes",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "canDecide": {
+            "type": "boolean",
+            "description": "Decisions are open (the analysis is finished and the proposal is not settled)"
+          },
+          "canRegenerate": {
+            "type": "boolean",
+            "description": "Ask for changes is available (AI is enabled)"
+          },
+          "href": {
+            "type": "string",
+            "description": "Link to the element in the workspace",
+            "maxLength": 400
+          }
+        },
+        "required": [
+          "itemId",
+          "elementId",
+          "elementType",
+          "label",
+          "kind",
+          "status"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ImpactSummary": {
+      "description": "What one update proposal touches: how many course elements need a look, how many quiz answers to check, how many new source sections no lesson covers, how many citations are updated automatically, how many lessons are affected, the cost estimate and the cost so far. An optional line on learner impact appears only when the API provides it. Props come from the update proposal, never from the model.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "elements": {
+            "type": "integer",
+            "description": "Elements that may need an update",
+            "minimum": 0
+          },
+          "answerChecks": {
+            "type": "integer",
+            "description": "Quiz answers to check",
+            "minimum": 0
+          },
+          "uncovered": {
+            "type": "integer",
+            "description": "New source sections no lesson covers",
+            "minimum": 0
+          },
+          "remaps": {
+            "type": "integer",
+            "description": "Citations updated automatically",
+            "minimum": 0
+          },
+          "major": {
+            "type": "integer",
+            "description": "Changes that alter the meaning",
+            "minimum": 0
+          },
+          "lessons": {
+            "type": "integer",
+            "description": "Lessons affected",
+            "minimum": 0
+          },
+          "estimatedCostMicroUsd": {
+            "type": "integer",
+            "description": "Estimated cost of the analysis",
+            "minimum": 0
+          },
+          "costMicroUsd": {
+            "type": "integer",
+            "description": "Cost so far",
+            "minimum": 0
+          },
+          "learnerImpact": {
+            "type": "string",
+            "description": "Plain-text line on what learners will see; only when provided",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "elements",
+          "answerChecks",
+          "uncovered"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "StalenessBadge": {
+      "description": "How far a course is behind its sources, as an icon and words: In sync, Stale with the number of days, or Updates dismissed. It can link to the update review.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "in_sync",
+              "stale",
+              "dismissed"
+            ],
+            "description": "Freshness of the course"
+          },
+          "days": {
+            "type": "integer",
+            "description": "Days since the source changed",
+            "minimum": 0
+          },
+          "pendingElements": {
+            "type": "integer",
+            "description": "Elements waiting for an update",
+            "minimum": 0
+          },
+          "href": {
+            "type": "string",
+            "description": "Link to the update review",
+            "maxLength": 400
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "additionalProperties": false
+      }
+    },
     "CostMeter": {
       "description": "Running AI cost of the session against its budget.",
       "modelSelectable": false,

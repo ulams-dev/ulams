@@ -577,6 +577,217 @@ const FragmentChange: Renderer = (p) => {
     p.kind === "moved" && body.length === 0 ? h("p", { class: "cb-muted" }, "The text is the same; it moved to a different place.") : null);
 };
 
+/* ------------------------------------------------------------------ update proposals */
+
+const ITEM_KIND: Record<string, { label: string; icon: "tilde" | "check" | "minus" | "alert" | "plus" | "dot" }> = {
+  update: { label: "Update", icon: "tilde" },
+  citation_remap: { label: "Citation update", icon: "dot" },
+  remove: { label: "Removal", icon: "minus" },
+  no_change: { label: "No change needed", icon: "check" },
+  manual: { label: "Update by hand", icon: "alert" },
+  uncovered: { label: "New in the source", icon: "plus" },
+};
+const ITEM_STATUS: Record<string, { label: string; icon: "check" | "minus" | "clock" | "alert" }> = {
+  pending: { label: "Not decided yet", icon: "clock" },
+  accepted: { label: "Accepted", icon: "check" },
+  rejected: { label: "Rejected", icon: "minus" },
+  conflict: { label: "Conflict", icon: "alert" },
+  stale: { label: "Edited after the analysis", icon: "alert" },
+};
+/** Button words per kind: what "accept" means differs when nothing is written to the course. */
+const ACCEPT_LABEL: Record<string, string> = { no_change: "Agree, no change", manual: "Mark as handled", uncovered: "Acknowledge" };
+const REJECT_LABEL: Record<string, string> = { no_change: "Disagree", manual: "Keep as it is", uncovered: "Skip", remove: "Keep the element", update: "Reject" };
+const KIND_NOTE: Record<string, string> = {
+  citation_remap: "Only the citations change: the source text this element relies on moved or was renumbered. The wording stays the same.",
+  remove: "The source no longer covers this. Accepting removes the element from the course.",
+  no_change: "AI found no change needed. Nothing is written to the course unless you ask for changes.",
+  manual: "This needs an update by hand: it has not been analysed. Open it in the workspace and edit it there.",
+  uncovered: "A new section in the source that no lesson covers yet. Add a lesson for it in the workspace.",
+};
+
+function fieldDiff(f: Props): HTMLElement {
+  const before = typeof f.before === "string" ? f.before : "";
+  const after = typeof f.after === "string" ? f.after : "";
+  let kind: "added" | "removed" | "changed" = "changed";
+  let body: HTMLElement;
+  if (f.before === undefined && f.after !== undefined) {
+    kind = "added";
+    body = h("ins", {}, sr("added: "), after);
+  } else if (f.after === undefined && f.before !== undefined) {
+    kind = "removed";
+    body = h("del", {}, sr("removed: "), before);
+  } else if (before === after) {
+    return h("li", { class: "cb-change cb-change-unchanged" }, h("p", { class: "cb-change-label" }, String(f.label)), h("p", { class: "cb-change-text" }, before));
+  } else {
+    body = wordDiff(before, after);
+  }
+  return h("li", { class: `cb-change cb-change-${kind}`, "data-field": f.path },
+    h("p", { class: "cb-change-label" }, changeBadge(kind), String(f.label)),
+    h("p", { class: "cb-change-text" }, body));
+}
+
+const UpdateItem: Renderer = (p, ctx, id) => {
+  const headingId = uid("upd");
+  const kind = String(p.kind);
+  const kindInfo = ITEM_KIND[kind] ?? ITEM_KIND.update!;
+  const max = Number(p.maxRegenerations ?? 3);
+  const used = Number(p.regenerations ?? 0);
+  const canDecide = p.canDecide !== false;
+  const canRegenerate = p.canRegenerate !== false && ["update", "no_change", "remove", "manual"].includes(kind);
+  let status = String(p.status);
+
+  const live = h("p", { class: "cb-sr", role: "status", "aria-live": "polite" });
+  const statusEl = h("p", { class: "cb-item-status" });
+  const accept = h("button", { type: "button", class: "cb-btn cb-btn-small", "data-decision": "accepted", "data-focus-target": "" }, icon("check"), ACCEPT_LABEL[kind] ?? "Accept");
+  const reject = h("button", { type: "button", class: "cb-btn cb-btn-small", "data-decision": "rejected" }, REJECT_LABEL[kind] ?? "Reject");
+  const reset = h("button", { type: "button", class: "cb-link", "data-decision": "pending" }, "Undo my decision");
+  const note = h("p", { class: "cb-item-note", role: "alert" });
+
+  function paint(): void {
+    const info = ITEM_STATUS[status] ?? ITEM_STATUS.pending!;
+    statusEl.replaceChildren(icon(info.icon), h("span", {}, sr("Decision: "), info.label));
+    statusEl.className = `cb-item-status cb-item-status-${status}`;
+    accept.setAttribute("aria-pressed", String(status === "accepted"));
+    reject.setAttribute("aria-pressed", String(status === "rejected"));
+    accept.disabled = status === "conflict" || status === "stale";
+    reset.hidden = status !== "accepted" && status !== "rejected";
+    root.dataset.status = status;
+    note.textContent = status === "conflict" ? "You edited this element after the analysis. Ask for a new version of it, or reject it."
+      : status === "stale" ? "You edited this element after the analysis. Ask for a new version that builds on your edit, or reject this one."
+      : "";
+    note.hidden = note.textContent === "";
+  }
+
+  /** Moves focus to the next undecided item so a keyboard user keeps going. */
+  function focusNext(): void {
+    const items = [...document.querySelectorAll<HTMLElement>("[data-update-item]")];
+    const index = items.indexOf(root);
+    const next = items.slice(index + 1).concat(items.slice(0, Math.max(index, 0))).find((el) => el.dataset.status === "pending");
+    const target = next?.querySelector<HTMLElement>("[data-focus-target]:not([disabled])");
+    if (target) target.focus();
+  }
+
+  const decide = (decision: "accepted" | "rejected" | "pending") => {
+    const was = status;
+    if (decision === "accepted" && (status === "conflict" || status === "stale")) return;
+    status = decision;
+    paint();
+    const words = { accepted: "Accepted", rejected: "Rejected", pending: "Decision removed" }[decision];
+    live.textContent = "";
+    window.setTimeout(() => (live.textContent = `${words}: ${String(p.label)}.`), 30);
+    act(ctx, id, "decide_item", { itemId: p.itemId, decision: { accepted: "accept", rejected: "reject", pending: "reset" }[decision], previous: was });
+    if (decision !== "pending") focusNext();
+  };
+  accept.addEventListener("click", () => decide(status === "accepted" ? "pending" : "accepted"));
+  reject.addEventListener("click", () => decide(status === "rejected" ? "pending" : "rejected"));
+  reset.addEventListener("click", () => {
+    decide("pending");
+    accept.focus();
+  });
+
+  const controls = h("div", { class: "cb-item-controls" });
+  if (canDecide) controls.append(h("div", { role: "group", "aria-label": `Decision for ${String(p.label)}`, class: "cb-item-decision" }, accept, reject, reset));
+  else controls.append(h("p", { class: "cb-muted cb-small" }, status === "pending" ? "Decisions open when the analysis is finished." : "This proposal is settled."));
+
+  if (canDecide && canRegenerate) {
+    const exhausted = used >= max;
+    const textId = uid("ask");
+    const toggle = h("button", { type: "button", class: "cb-btn cb-btn-small cb-btn-ghost", "aria-expanded": "false", "aria-controls": textId, disabled: exhausted },
+      status === "stale" || status === "conflict" ? "Regenerate against your edit" : "Ask for changes");
+    const area = h("textarea", { id: `${textId}-comment`, rows: 3, maxlength: 1000, placeholder: "e.g. Keep the second example" }) as HTMLTextAreaElement;
+    const send = h("button", { type: "submit", class: "cb-btn cb-btn-small cb-btn-primary" }, "Ask for a new version");
+    const form = h("form", { id: textId, class: "cb-item-ask", hidden: true },
+      h("label", { for: `${textId}-comment` }, "What should change?"), area,
+      h("div", { class: "cb-actions" }, send));
+    const open = (value: boolean) => {
+      form.hidden = !value;
+      toggle.setAttribute("aria-expanded", String(value));
+      if (value) area.focus();
+      else toggle.focus();
+    };
+    toggle.addEventListener("click", () => open(form.hidden));
+    area.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        event.stopPropagation();
+        open(false);
+      }
+    });
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      send.disabled = true;
+      root.setAttribute("aria-busy", "true");
+      live.textContent = "";
+      window.setTimeout(() => (live.textContent = `Asking for a new version of ${String(p.label)}…`), 30);
+      act(ctx, id, "regenerate_item", { itemId: p.itemId, comment: area.value.trim() });
+    });
+    controls.append(
+      toggle,
+      h("span", { class: "cb-muted cb-small cb-item-count" }, exhausted ? `You asked ${used} times. Edit it by hand in the workspace.` : used > 0 ? `Asked for changes ${used} of ${max} times` : ""),
+      form
+    );
+  }
+
+  const fields = (p.fields as Props[] | undefined) ?? [];
+  const body: Array<HTMLElement | null> = [];
+  if (KIND_NOTE[kind]) body.push(h("p", { class: "cb-item-kind-note" }, KIND_NOTE[kind]!));
+  if (p.answerChanged) body.push(h("p", { class: "cb-item-warn cb-item-warn-answer", role: "note" }, icon("alert"), h("strong", {}, "Answer changed. "), "The correct answer is different now. Learners' earlier scores stay on record."));
+  else if (p.answerCheck) body.push(h("p", { class: "cb-item-warn cb-item-warn-answer", role: "note" }, icon("alert"), h("strong", {}, "Answer may be wrong. "), "The source changed where this answer comes from. Check the marked answer."));
+  for (const flag of (p.flags as string[] | undefined) ?? []) {
+    body.push(h("p", { class: "cb-item-warn", role: "note" }, icon("alert"), h("strong", {}, flag.startsWith("Possibly unsupported") ? "Possibly unsupported. " : "Check. "), flag.replace(/^Possibly unsupported:\s*/, "")));
+  }
+  if (p.reason) body.push(h("p", { class: "cb-item-reason" }, h("strong", {}, "Why: "), String(p.reason)));
+  if (fields.length && kind !== "citation_remap") body.push(h("ul", { class: "cb-changes cb-item-fields" }, fields.map(fieldDiff)));
+  else if (kind === "update" && fields.length === 0) body.push(h("p", { class: "cb-muted" }, "No visible text change; only the sources of the element are updated."));
+  const signals = ((p.signals as string[] | undefined) ?? []).map((x) => SIGNAL_TEXT[x] ?? x);
+  if (signals.length) body.push(h("p", { class: "cb-muted cb-small" }, `Source change: ${signals.join(", ")}`));
+  if (p.sources) body.push(h("p", { class: "cb-muted cb-small" }, String(p.sources)));
+
+  const root = h("article", { class: `cb-card cb-item cb-item-${kind}`, "aria-labelledby": headingId, "data-update-item": p.itemId, "data-element": p.elementId },
+    h("header", { class: "cb-item-head" },
+      h("h4", { id: headingId, class: "cb-serif cb-h3" }, String(p.label)),
+      h("span", { class: `cb-badge cb-item-kind cb-item-kind-${kind}` }, icon(kindInfo.icon), kindInfo.label),
+      p.severity === "major" ? h("span", { class: "cb-tag" }, "Changes the meaning") : null),
+    statusEl, note, ...body,
+    citations(p.citations, ctx),
+    p.href && (kind === "manual" || kind === "uncovered" || used >= max) ? h("a", { class: "cb-link", href: String(p.href) }, "Open in the workspace") : null,
+    controls, live);
+  paint();
+  return root;
+};
+
+const COST_LINE = (label: string, micro: unknown): HTMLElement | null =>
+  micro === undefined ? null : h("div", {}, h("dt", {}, label), h("dd", {}, usd(micro)));
+
+const ImpactSummary: Renderer = (p) => {
+  const headingId = uid("imp");
+  const stat = (label: string, value: number, warn = false): HTMLElement =>
+    h("div", { class: warn && value > 0 ? "cb-impact-warn" : "" }, h("dt", {}, label), h("dd", {}, warn && value > 0 ? icon("alert") : null, String(value)));
+  const sentence = `${p.elements} ${p.elements === 1 ? "element" : "elements"} may need an update${p.lessons ? ` across ${p.lessons} ${p.lessons === 1 ? "lesson" : "lessons"}` : ""}${p.answerChecks > 0 ? `, and ${p.answerChecks} quiz ${p.answerChecks === 1 ? "answer" : "answers"} may now be wrong` : ""}.`;
+  return h("section", { class: "cb-card cb-impact", "aria-labelledby": headingId },
+    h("h3", { id: headingId, class: "cb-serif cb-h3" }, "Impact of this update"),
+    h("p", { class: "cb-impact-sentence" }, sentence),
+    h("dl", { class: "cb-facts" },
+      stat("Elements to review", p.elements),
+      stat("Answers to check", p.answerChecks, true),
+      stat("Uncovered source sections", p.uncovered),
+      p.remaps !== undefined ? stat("Citations updated automatically", p.remaps) : null,
+      p.major !== undefined ? stat("Changes to the meaning", p.major) : null,
+      COST_LINE("Estimated cost", p.estimatedCostMicroUsd),
+      COST_LINE("Cost so far", p.costMicroUsd)),
+    p.learnerImpact ? h("p", { class: "cb-impact-learners" }, h("strong", {}, "Learner impact: "), String(p.learnerImpact)) : null);
+};
+
+const StalenessBadge: Renderer = (p) => {
+  const state = String(p.state);
+  const days = p.days as number | undefined;
+  const text = state === "stale" ? (days === undefined ? "Stale" : days === 0 ? "Stale · today" : `Stale · ${days} ${days === 1 ? "day" : "days"}`) : state === "dismissed" ? "Updates dismissed" : "In sync";
+  const glyph = icon(state === "in_sync" ? "check" : state === "stale" ? "clock" : "minus");
+  const pending = p.pendingElements ? sr(` · ${p.pendingElements} ${p.pendingElements === 1 ? "element" : "elements"} waiting for an update`) : null;
+  return p.href
+    ? h("a", { class: `cb-fresh cb-fresh-${state}`, href: String(p.href) }, glyph, text, pending)
+    : h("span", { class: `cb-fresh cb-fresh-${state}` }, glyph, text, pending);
+};
+
 const Column: Renderer = (p, _ctx, _id, children) => h("div", { class: `cb-column cb-gap-${p.gap ?? "md"}` }, children);
 const Text: Renderer = (p) => h("p", { class: `cb-text cb-text-${p.variant ?? "body"}` }, String(p.text));
 
@@ -600,5 +811,8 @@ export const builderComponents: Record<string, Renderer> = {
   SourceConnectionCard,
   RevisionTimeline,
   FragmentChange,
+  UpdateItem,
+  ImpactSummary,
+  StalenessBadge,
   CostMeter,
 };

@@ -226,6 +226,143 @@ describe("interactions round-trip as A2UI actions", () => {
     expect(added.textContent).toContain("+ After: Keep beans sealed.");
   });
 
+  describe("update item", () => {
+    const item = (over: Record<string, unknown> = {}) => single("UpdateItem", { ...builderFixtures.UpdateItem!, ...over });
+    const find = (root: ParentNode, text: string) => [...root.querySelectorAll("button")].find((b) => b.textContent?.includes(text))!;
+
+    it("shows the word diff, reason, warnings, citations and counts without relying on colour", () => {
+      const main = mount(item());
+      expect(main.querySelector("article")?.getAttribute("aria-labelledby")).toBeTruthy();
+      expect(main.querySelector("del")?.textContent).toContain("removed:");
+      expect(main.querySelector("ins")?.textContent).toContain("added:");
+      expect(main.textContent).toContain("Why: Section 2.3 now recommends 1:16");
+      expect(main.textContent).toContain("Answer changed.");
+      expect(main.textContent).toContain("Possibly unsupported. the water must be filtered");
+      expect(main.textContent).toContain("a number changed");
+      expect(main.textContent).toContain("Based on §2.3 Brewing ratios");
+      expect(main.textContent).toContain("Asked for changes 1 of 3 times");
+      expect(main.querySelector(".cb-cite")?.textContent).toContain("§2 Section 2");
+      expect(main.querySelector('[data-update-item] [aria-live="polite"]')).not.toBeNull();
+    });
+
+    it("answer may be wrong is worded differently from answer changed", () => {
+      const main = mount(item({ answerChanged: false }));
+      expect(main.textContent).toContain("Answer may be wrong.");
+      expect(main.textContent).not.toContain("Answer changed.");
+    });
+
+    it("decisions are aria-pressed toggles that dispatch accept, reject and reset", () => {
+      const c = ctx();
+      const main = mount(item(), c);
+      const accept = find(main, "Accept");
+      const reject = find(main, "Reject");
+      expect(accept.getAttribute("aria-pressed")).toBe("false");
+      accept.click();
+      expect(accept.getAttribute("aria-pressed")).toBe("true");
+      expect(main.querySelector("[data-update-item]")?.getAttribute("data-status")).toBe("accepted");
+      reject.click();
+      expect(accept.getAttribute("aria-pressed")).toBe("false");
+      expect(reject.getAttribute("aria-pressed")).toBe("true");
+      find(main, "Undo my decision").click();
+      expect(c.actions.map((a) => a.context.decision)).toEqual(["accept", "reject", "reset"]);
+      expect(c.actions[0]!.name).toBe("decide_item");
+      expect(c.actions[0]!.context.itemId).toBe("01item1");
+      expect(main.querySelector("[data-update-item]")?.getAttribute("data-status")).toBe("pending");
+    });
+
+    it("announces the decision politely and moves focus to the next undecided item", () => {
+      vi.useFakeTimers();
+      try {
+        const c = ctx();
+        document.body.innerHTML = "";
+        const main = document.createElement("main");
+        for (const id of ["a", "b"]) main.append(renderSurface([{ id: "root", component: "UpdateItem", ...builderFixtures.UpdateItem!, itemId: id, label: `Item ${id}` } as FlatComponent], c));
+        document.body.append(main);
+        const [first, second] = [...main.querySelectorAll("[data-update-item]")] as HTMLElement[];
+        find(first!, "Accept").click();
+        vi.advanceTimersByTime(60);
+        expect(first!.querySelector("[aria-live]")?.textContent).toBe("Accepted: Item a.");
+        expect(document.activeElement).toBe(second!.querySelector("[data-focus-target]"));
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("ask for changes opens a labelled field, sends the comment and closes on Escape", () => {
+      const c = ctx();
+      const main = mount(item(), c);
+      const toggle = find(main, "Ask for changes");
+      expect(toggle.getAttribute("aria-expanded")).toBe("false");
+      toggle.click();
+      expect(toggle.getAttribute("aria-expanded")).toBe("true");
+      const area = main.querySelector("textarea") as HTMLTextAreaElement;
+      expect(main.querySelector(`label[for="${area.id}"]`)?.textContent).toBe("What should change?");
+      expect(document.activeElement).toBe(area);
+      area.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+      expect(toggle.getAttribute("aria-expanded")).toBe("false");
+      expect(document.activeElement).toBe(toggle);
+      toggle.click();
+      area.value = "  Keep the second example ";
+      main.querySelector("form")!.dispatchEvent(new Event("submit", { cancelable: true }));
+      expect(c.actions.at(-1)).toMatchObject({ name: "regenerate_item", context: { itemId: "01item1", comment: "Keep the second example" } });
+    });
+
+    it("stops asking after the limit and points to the workspace", () => {
+      const main = mount(item({ regenerations: 3 }));
+      expect((find(main, "Ask for changes") as HTMLButtonElement).disabled).toBe(true);
+      expect(main.textContent).toContain("You asked 3 times. Edit it by hand in the workspace.");
+      expect(main.querySelector('a[href="/studio/s/01s/workspace"]')?.textContent).toBe("Open in the workspace");
+    });
+
+    it("conflict and stale items explain what to do and cannot be accepted", () => {
+      const conflict = mount(item({ status: "conflict" }));
+      expect(conflict.querySelector('[role="alert"]')?.textContent).toContain("You edited this element after the analysis");
+      expect((find(conflict, "Accept") as HTMLButtonElement).disabled).toBe(true);
+      const stale = mount(item({ status: "stale" }));
+      expect(stale.textContent).toContain("Edited after the analysis");
+      expect(find(stale, "Regenerate against your edit")).toBeTruthy();
+    });
+
+    it.each([
+      ["citation_remap", "Only the citations change", "Citation update"],
+      ["no_change", "AI found no change needed", "No change needed"],
+      ["remove", "Accepting removes the element", "Removal"],
+      ["manual", "needs an update by hand", "Update by hand"],
+      ["uncovered", "no lesson covers yet", "New in the source"],
+    ])("presents a %s item", (kind, note, badge) => {
+      const main = mount(item({ kind, fields: [], answerCheck: false, answerChanged: false, flags: [], signals: [] }));
+      expect(main.textContent).toContain(note);
+      expect(main.querySelector(".cb-item-kind")?.textContent).toBe(badge);
+    });
+
+    it("read-only items show no decision controls", () => {
+      const main = mount(item({ canDecide: false }));
+      expect(main.querySelector("[aria-pressed]")).toBeNull();
+      expect(main.textContent).toContain("Decisions open when the analysis is finished.");
+    });
+  });
+
+  it("impact summary states counts and cost, and only shows learner impact when given", () => {
+    const main = mount(single("ImpactSummary"));
+    expect(main.textContent).toContain("6 elements may need an update across 3 lessons, and 2 quiz answers may now be wrong.");
+    expect(main.textContent).toContain("Answers to check");
+    expect(main.textContent).toContain("$0.42");
+    expect(main.textContent).toContain("$0.13");
+    expect(main.textContent).toContain("Learner impact: 12 learners completed lesson 2.");
+    const bare = mount(single("ImpactSummary", { elements: 1, answerChecks: 0, uncovered: 0 }));
+    expect(bare.textContent).toContain("1 element may need an update.");
+    expect(bare.textContent).not.toContain("Learner impact");
+    expect(bare.textContent).not.toContain("Estimated cost");
+  });
+
+  it("staleness badge puts the state in words", () => {
+    expect(mount(single("StalenessBadge")).textContent).toContain("Stale · 3 days");
+    expect(mount(single("StalenessBadge")).querySelector("a")?.getAttribute("href")).toBe("/studio/s/01s/updates");
+    expect(mount(single("StalenessBadge", { state: "in_sync" })).textContent).toBe("In sync");
+    expect(mount(single("StalenessBadge", { state: "dismissed" })).textContent).toBe("Updates dismissed");
+    expect(mount(single("StalenessBadge", { state: "stale", days: 1 })).textContent).toContain("Stale · 1 day");
+  });
+
   it("diff states carry text, not only colour", () => {
     const main = mount(single("DiffView"));
     expect(main.querySelector("del")?.textContent).toContain("removed:");

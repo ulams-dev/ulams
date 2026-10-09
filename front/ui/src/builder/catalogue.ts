@@ -509,6 +509,87 @@ export const builderCatalogue = {
     ),
     fallback: (p) => `${s(p.kind)} (${s(p.magnitude)}): ${s((p.new as Record<string, unknown> | undefined)?.label ?? (p.old as Record<string, unknown> | undefined)?.label)}`,
   },
+  UpdateItem: {
+    description:
+      "One proposed change to one element of the course after its source changed, for the author to decide on: the element, what kind of proposal it is (update, citation update, removal, no change needed, update by hand, new section in the source), why, the old and new text with word-level marks, citation chips, warnings (possibly unsupported claim, the answer may be wrong or changed), and the controls Accept, Reject, Reset and Ask for changes with a comment field. Conflict and edited-after-analysis states explain what to do. Props come from the update proposal, never from the model.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        itemId: str("Proposal item id", 32),
+        elementId: str("Element in the course", 32),
+        elementType: oneOf(["block", "question", "objective", "lesson", "course", "section"], "What the element is"),
+        label: str("Element shown to the author, e.g. Lesson 2.1 › Q2", 200),
+        kind: oneOf(["update", "citation_remap", "remove", "no_change", "manual", "uncovered"], "Kind of proposal"),
+        status: oneOf(["pending", "accepted", "rejected", "conflict", "stale"], "Decision state"),
+        reason: str("Why the element changes, plain text", 500),
+        severity: oneOf(["minor", "major"], "How much the meaning changes"),
+        sources: str("Source sections behind the change, e.g. Based on §3.2", 300),
+        fields: list(
+          obj(
+            {
+              path: str("Field path", 200),
+              label: str("Readable field name, e.g. Option B (correct)", 200),
+              before: str("Text before", 20000),
+              after: str("Text after", 20000),
+            },
+            ["path", "label"]
+          ),
+          "Fields that change",
+          60
+        ),
+        citations: list(CITATION, "Fragments the element cites after the change", 20),
+        flags: list(str("Warning from the grounding check, e.g. Possibly unsupported: …", 300), "Warnings about the proposed text", 10),
+        signals: list(str("number, code, identifier, modality, large", 32), "Why the source change matters", 8),
+        answerCheck: bool("The marked answer may now be wrong"),
+        answerChanged: bool("The correct answer is different after the change"),
+        regenerations: int("Times the author asked for changes", { maximum: 10 }),
+        maxRegenerations: int("Most times the author may ask for changes", { minimum: 1, maximum: 10 }),
+        canDecide: bool("Decisions are open (the analysis is finished and the proposal is not settled)"),
+        canRegenerate: bool("Ask for changes is available (AI is enabled)"),
+        href: str("Link to the element in the workspace", 400),
+      },
+      ["itemId", "elementId", "elementType", "label", "kind", "status"]
+    ),
+    fallback: (p) => `${s(p.label)}: ${s(p.kind).replace(/_/g, " ")} (${s(p.status)}).`,
+  },
+  ImpactSummary: {
+    description:
+      "What one update proposal touches: how many course elements need a look, how many quiz answers to check, how many new source sections no lesson covers, how many citations are updated automatically, how many lessons are affected, the cost estimate and the cost so far. An optional line on learner impact appears only when the API provides it. Props come from the update proposal, never from the model.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        elements: int("Elements that may need an update"),
+        answerChecks: int("Quiz answers to check"),
+        uncovered: int("New source sections no lesson covers"),
+        remaps: int("Citations updated automatically"),
+        major: int("Changes that alter the meaning"),
+        lessons: int("Lessons affected"),
+        estimatedCostMicroUsd: int("Estimated cost of the analysis"),
+        costMicroUsd: int("Cost so far"),
+        learnerImpact: str("Plain-text line on what learners will see; only when provided", 500),
+      },
+      ["elements", "answerChecks", "uncovered"]
+    ),
+    fallback: (p) => `${s(p.elements)} elements to review, ${s(p.answerChecks)} answers to check, ${s(p.uncovered)} uncovered sections.`,
+  },
+  StalenessBadge: {
+    description:
+      "How far a course is behind its sources, as an icon and words: In sync, Stale with the number of days, or Updates dismissed. It can link to the update review.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        state: oneOf(["in_sync", "stale", "dismissed"], "Freshness of the course"),
+        days: int("Days since the source changed"),
+        pendingElements: int("Elements waiting for an update"),
+        href: str("Link to the update review", 400),
+      },
+      ["state"]
+    ),
+    fallback: (p) => (p.state === "stale" ? `Stale${p.days !== undefined ? ` · ${s(p.days)} days` : ""}` : p.state === "dismissed" ? "Updates dismissed" : "In sync"),
+  },
   CostMeter: {
     description: "Running AI cost of the session against its budget.",
     modelSelectable: false,
