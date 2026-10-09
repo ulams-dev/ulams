@@ -29,4 +29,5 @@ return [
     AuthPermissionsEnum::USER_SETTING_UPDATE => 'Update setting',
     AuthPermissionsEnum::USER_SETTING_UPDATE_SELF => 'Update self setting',
     AuthPermissionsEnum::TOKEN_MANAGE => 'Manage API tokens and read the agent audit log',
+    AuthPermissionsEnum::PLATFORM_ADMIN => 'Manage tenants over the platform API',
 ];

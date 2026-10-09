@@ -47,6 +47,7 @@ class AuthPermissionSeeder extends Seeder
             AuthPermissionsEnum::USER_DELETE_SELF,
             AuthPermissionsEnum::USER_IMPERSONATE,
             AuthPermissionsEnum::TOKEN_MANAGE,
+            AuthPermissionsEnum::PLATFORM_ADMIN,
         ]);
         $tutor->givePermissionTo([
             AuthPermissionsEnum::USER_GROUP_LIST_SELF,
