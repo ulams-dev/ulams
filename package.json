@@ -35,6 +35,7 @@
     "build": "turbo run build",
     "build:web": "turbo run build --filter=@ulams/web",
     "build:docs": "turbo run build --filter=@ulams/docs",
+    "brand:build": "node front/docs/design/brand/build.mjs",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test --filter=admin --filter=front --filter=api-h5p --filter=api-pdf --filter=@ulams/sdk --filter=@ulams/ui --filter=@ulams/web",
