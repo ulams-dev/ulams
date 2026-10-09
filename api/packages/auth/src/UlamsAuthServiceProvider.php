@@ -104,6 +104,11 @@ class UlamsAuthServiceProvider extends ServiceProvider
             $schedule->command('ulams:auth:prune-agent-audit')->daily();
             $schedule->command('ulams:auth:prune-device-authorizations')->hourly();
         });
+        // device login: one bucket per endpoint. Unnamed `throttle:N,M` limiters on the same host and IP
+        // share one counter, so the CLI's 5 s polling would eat the `code` budget of every other login
+        // from the same address.
+        RateLimiter::for('ulams-device-code', fn (Request $r) => Limit::perMinute(10)->by('device-code:' . $r->ip()));
+        RateLimiter::for('ulams-device-token', fn (Request $r) => Limit::perMinute(60)->by('device-token:' . $r->ip()));
         // device approval: 5 requests per minute per signed-in user (lookups and answers share the bucket)
         RateLimiter::for('ulams-device-approve', fn (Request $r) => Limit::perMinute((int) config(self::CONFIG_KEY . '.device_approve_per_minute', 5))
             ->by('device-approve:' . ($r->user('api')?->getAuthIdentifier() ?? $r->ip())));

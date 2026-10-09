@@ -89,6 +89,17 @@ class DeviceLoginApiTest extends TestCase
         $this->postJson('/api/auth/device/code', ['client_name' => 'x', 'scopes' => ['courses:read']])->assertStatus(429);
     }
 
+    public function testPollingDoesNotUseUpTheCodeBudget(): void
+    {
+        $res = $this->start();
+        for ($i = 0; $i < 30; $i++) {
+            $this->poll($res['device_code'])->assertStatus(400);
+        }
+        for ($i = 0; $i < 8; $i++) {
+            $this->postJson('/api/auth/device/code', ['client_name' => 'x', 'scopes' => ['courses:read']])->assertOk();
+        }
+    }
+
     public function testPollingErrorsAreRfcErrorsWithHttp400(): void
     {
         $res = $this->start();
