@@ -88,7 +88,6 @@ export default function (initialState: {
     analyticsPermission: havePermissionsInDashboard(
       PERMISSIONS.NotificationListAll,
       PERMISSIONS.ReportList,
-      PERMISSIONS.TrackerList,
     ),
 
     configurationPermission: havePermissionsInDashboard(
@@ -214,7 +213,6 @@ export default function (initialState: {
     productsDetailsPermission: havePermissionsInDashboard(PERMISSIONS.ProductsList),
     productsListPermission: havePermissionsInDashboard(PERMISSIONS.ProductsManage),
 
-    trackerListPermission: havePermissionsInDashboard(PERMISSIONS.TrackerList),
 
     voucherListPermission: havePermissionsInDashboard(PERMISSIONS.VoucherList),
     voucherDetailPermission: havePermissionsInDashboard(PERMISSIONS.VoucherRead),

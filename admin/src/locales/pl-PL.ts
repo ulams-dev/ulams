@@ -187,7 +187,6 @@ export default {
   'menu.Other activities.Consultations': 'Konsultacje',
   'menu.Other activities.Form': 'Formularz',
   'menu.Configuration.Panel Translations': 'Tłumaczenia w panelu',
-  'menu.Analytics.Logs': 'Logi',
   'menu.Competency challenges': 'Wyzwania',
   'menu.Competency challenges.List': 'Lista',
   'menu.Competency challenges.Competency challenge': 'Wyzwanie',
@@ -640,7 +639,6 @@ export default {
   categories_and_tags: 'Kategorie i Tagi',
   course_edit_warning_message:
     'Ten rekord już trwa, jeśli chcesz edytować kliknij zatwierdź. Edytujesz na własną odpowiedzialność',
-  user_logs: 'Logi użytkownika',
   http_method: 'Metoda HTTP',
   path: 'Ścieżka',
   'pdf_editor.legacy': 'Ten szablon powstał w ReportBro, który nie jest już obsługiwany.',

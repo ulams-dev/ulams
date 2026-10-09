@@ -225,7 +225,6 @@ export default {
   'menu.Other activities': 'Other activities',
   'menu.Other activities.Consultations': 'Consultations',
   'menu.Other activities.StationaryEvents': 'Stationary events',
-  'menu.Analytics.Logs': 'Logs',
   'menu.Sales.Vouchers': 'Vouchers',
   'menu.Competency challenges': 'Competency challenges',
   'menu.Competency challenges.List': 'List',
@@ -658,7 +657,6 @@ export default {
   categories_and_tags: 'Categories & Tags',
   course_edit_warning_message:
     'This record is already in progress, if you wish to edit click confirm. You edit at your own risk',
-  user_logs: 'User logs',
   http_method: 'HTTP method',
   path: 'Path',
   'pdf_editor.legacy': 'This template was made with ReportBro, which is no longer supported.',

@@ -28,7 +28,7 @@ env:
     tasks-topics=tasks,topic-types,topic-type-project,categories,tags,stationary-events
     gift-reports=topic-type-gift,reports,dictionaries
     commerce=cart,vouchers,payments,invoices,consultations,consultation-access,webinar,assign-without-account
-    platform=Integrations,auth,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,tracker,ai
+    platform=Integrations,auth,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,ai
     content=templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
   # Known failures on a CI-style prepared database, identical on Laravel 9 to 13
   # (docs/plans/phase-0.md, B.11): excluded from the blocking run, re-run non-blocking.

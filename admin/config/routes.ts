@@ -476,13 +476,6 @@
         access: 'reportListPermission',
         component: './Reports',
       },
-      {
-        name: 'Logs',
-        icon: 'history',
-        path: '/analytics/logs',
-        access: 'trackerListPermission',
-        component: './Logs',
-      },
     ],
   },
   {
