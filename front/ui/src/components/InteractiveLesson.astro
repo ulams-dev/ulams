@@ -1,0 +1,303 @@
+---
+/**
+ * An Interactive topic (ADR 0086): an author-uploaded package in a sandboxed frame on the tenant content
+ * origin, played inline or as the page background (the text floats over it in a card). Every step has a
+ * text alternative; a poster and the text replace the frame under reduced motion, without WebGL, when the
+ * package does not answer or fails. Progress goes through the learner's session (bridge, then the BFF);
+ * the frame never receives a token. The behaviour is in elements/interactive.ts.
+ */
+import { SANDBOX_INTERACTIVE } from "@ulams/sdk/frames";
+import { renderMarkdown } from "../lib/markdown.ts";
+import { stepCounter, stepsInRange, type StepInfo } from "../lib/interactive.ts";
+
+interface Props {
+  src: string;
+  title: string;
+  topicId?: number;
+  courseId?: number;
+  display?: "inline" | "background";
+  height?: number;
+  startStep?: string;
+  endStep?: string;
+  steps: StepInfo[];
+  text?: string;
+  requires?: string[];
+  reducedMotionSupported?: boolean;
+  locale?: string;
+  licence?: string;
+  attribution?: string;
+  sourceUrl?: string;
+}
+const {
+  src,
+  title,
+  topicId,
+  display = "inline",
+  height = 640,
+  startStep,
+  endStep,
+  steps,
+  text,
+  requires = [],
+  reducedMotionSupported = false,
+  locale = "en",
+  licence,
+  attribution,
+  sourceUrl,
+} = Astro.props;
+const range = stepsInRange(steps, startStep, endStep);
+const first = range[0];
+const background = display === "background";
+const html = text ? renderMarkdown(text) : "";
+const hasAbout = Boolean(licence || attribution || sourceUrl);
+---
+
+<ulams-interactive
+  class:list={["u-ix", `u-ix--${display}`]}
+  display={display}
+  topic-id={topicId}
+  start-step={first?.id}
+  locale={locale}
+  requires={requires.join(" ")}
+  reduced-motion-supported={reducedMotionSupported ? "" : undefined}
+  style={`--ix-h:${height}px`}
+>
+  {!background && html && <div class="u-ix__lead u-prose" set:html={html} />}
+
+  <div class="u-ix__stage">
+    <iframe
+      data-src={src}
+      title={title}
+      sandbox={SANDBOX_INTERACTIVE}
+      referrerpolicy="no-referrer"
+      allow="fullscreen"
+      tabindex={background ? "-1" : undefined}
+    ></iframe>
+    <div class="u-ix__fallback" data-fallback>
+      <img data-poster alt="" hidden width="1280" height="720" />
+      <p class="u-ix__notice" data-notice role="status"></p>
+      <button class="u-btn u-btn--ghost u-btn--sm" type="button" data-play-anyway>Play the animation anyway</button>
+    </div>
+  </div>
+
+  <div class="u-ix__overlay" role="region" aria-label={`${title}: lesson text`}>
+    {background && html && <div class="u-ix__lead u-prose" set:html={html} />}
+    {
+      background && (
+        <div class="u-ix__current">
+          <p class="u-ix__counter" data-counter>{stepCounter(0, range.length)}</p>
+          <h2 class="u-ix__step-title" data-current-title>{first?.title}</h2>
+          <p data-current-text>{first?.text}</p>
+        </div>
+        <div class="u-ix__stepper">
+          <button class="u-btn u-btn--ghost u-btn--sm" type="button" data-prev>Previous step</button>
+          <button class="u-btn u-btn--sm" type="button" data-next>Next step</button>
+          <button class="u-btn u-btn--ghost u-btn--sm" type="button" data-explore>Explore freely</button>
+        </div>
+      )
+    }
+    <details class="u-ix__details">
+      <summary>Text version of this interactive</summary>
+      <ol class="u-ix__steps">
+        {
+          range.map((s) => (
+            <li data-step data-step-id={s.id} data-step-title={s.title} data-step-poster={s.poster}>
+              <h3>{s.title}</h3>
+              <p data-step-text>{s.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </details>
+    {
+      hasAbout && (
+        <details class="u-ix__details u-ix__about">
+          <summary>About this interactive</summary>
+          <dl>
+            {licence && <><dt>Licence</dt><dd>{licence}</dd></>}
+            {attribution && <><dt>Credits</dt><dd>{attribution}</dd></>}
+            {sourceUrl && <><dt>Source</dt><dd><a href={sourceUrl} rel="noopener noreferrer" target="_blank">{sourceUrl}</a></dd></>}
+          </dl>
+        </details>
+      )
+    }
+  </div>
+
+  {background && <button class="u-btn u-btn--sm u-ix__back" type="button" data-back>Back to the lesson</button>}
+  <p class="u-visually-hidden" aria-live="polite" data-live></p>
+</ulams-interactive>
+
+<script>
+  import "../elements/interactive.ts";
+</script>
+
+<style is:global>
+  ulams-interactive.u-ix {
+    display: block;
+    position: relative;
+  }
+  /* inline: text above, the frame in a bordered stage below */
+  .u-ix--inline .u-ix__stage {
+    position: relative;
+    height: min(var(--ix-h), 85vh);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    overflow: hidden;
+    background: var(--ulams-color-card-bg);
+  }
+  .u-ix__stage iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: transparent;
+  }
+  .u-ix__lead {
+    margin-bottom: 14px;
+  }
+  .u-ix--inline .u-ix__overlay {
+    margin-top: 14px;
+    display: grid;
+    gap: 10px;
+  }
+  /* background: the frame fills the viewport behind the page, the text is a card over it */
+  .u-ix--background .u-ix__stage {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+  }
+  .u-ix--background .u-ix__overlay {
+    position: relative;
+    z-index: 2;
+    max-width: 34rem;
+    display: grid;
+    gap: 14px;
+    padding: 18px 20px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: color-mix(in srgb, var(--ulams-color-surface) 88%, transparent);
+    backdrop-filter: blur(10px);
+    color: var(--ulams-color-text);
+  }
+  .u-ix__counter {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ulams-color-primary-on-light, var(--ulams-color-text));
+  }
+  .u-ix__step-title {
+    font-size: 1.25rem;
+    margin: 2px 0 6px;
+  }
+  .u-ix__stepper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .u-ix__stepper .u-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .u-ix__details summary {
+    cursor: pointer;
+    font-weight: 600;
+    min-height: 32px;
+  }
+  .u-ix__steps {
+    margin: 10px 0 0;
+    padding-left: 1.2em;
+    display: grid;
+    gap: 10px;
+  }
+  .u-ix__steps h3 {
+    font-size: 1rem;
+    margin: 0;
+  }
+  .u-ix__steps p {
+    margin: 2px 0 0;
+  }
+  .u-ix__about dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 14px;
+    margin: 10px 0 0;
+    font-size: 0.875rem;
+  }
+  .u-ix__about dt {
+    font-weight: 600;
+  }
+  .u-ix__about dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  /* fallback: poster and text instead of the live frame */
+  .u-ix__fallback {
+    display: none;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    place-content: center;
+    justify-items: center;
+    gap: 12px;
+    padding: 16px;
+    text-align: center;
+    background: var(--ulams-color-card-bg);
+    color: var(--ulams-color-text);
+    overflow: auto;
+  }
+  ulams-interactive[fallback] .u-ix__fallback {
+    display: grid;
+  }
+  .u-ix--background .u-ix__fallback {
+    background: var(--ulams-color-bg);
+  }
+  .u-ix__fallback img {
+    max-width: min(100%, 720px);
+    height: auto;
+    border-radius: var(--ulams-radius);
+  }
+  ulams-interactive[fallback="timeout"] [data-play-anyway],
+  ulams-interactive[fallback="error"] [data-play-anyway],
+  ulams-interactive[fallback="webgl"] [data-play-anyway] {
+    display: none;
+  }
+  .u-ix__notice {
+    max-width: 46ch;
+  }
+  /* the loading state of the frame */
+  ulams-interactive[state="loading"] .u-ix__stage {
+    background: var(--ulams-color-card-bg);
+  }
+  /* explore freely: the card and the heading go away, a button brings them back */
+  .u-ix__back {
+    display: none;
+    position: fixed;
+    top: 76px;
+    left: 16px;
+    z-index: 5;
+  }
+  ulams-interactive[explore="true"] .u-ix__back {
+    display: inline-flex;
+  }
+  ulams-interactive[explore="true"] .u-ix__overlay {
+    display: none;
+  }
+  :root[data-ix-explore] .u-player__lead,
+  :root[data-ix-explore] .u-player__notice {
+    display: none;
+  }
+  @media (max-width: 720px) {
+    /* phones: the card becomes a bottom sheet above the progress bar */
+    .u-ix--background .u-ix__overlay {
+      position: fixed;
+      left: 8px;
+      right: 8px;
+      bottom: 72px;
+      max-width: none;
+      max-height: 46vh;
+      overflow: auto;
+    }
+  }
+</style>

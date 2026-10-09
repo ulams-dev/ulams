@@ -13,6 +13,7 @@ import { completionPercent, flattenTopics, topicNeighbours, type Course, type Pu
 import Base from "../layouts/Base.astro";
 import PreviewBanner from "./PreviewBanner.astro";
 import { apiFor, cmi5Launch, getLearnerNotices, liascriptLaunch, ltiLaunch, scormAvailable, scormLaunch } from "../lib/data.ts";
+import { interactiveLaunch, interactivePreview, isImmersive } from "../lib/interactive.ts";
 import { completionMode, formatOf, topicDoc, topicMinutes } from "../lib/page-docs.ts";
 import { NO_NOTICES, topicNoticeDocs } from "../lib/notices.ts";
 import { PREVIEW_LINKS, isPublished, previewCourseHref, studioHref } from "../lib/preview.ts";
@@ -26,8 +27,10 @@ interface Props {
   access: boolean;
   progress: TopicProgress[];
   topicId: number;
-  /** Learner token for the launches that track progress (SCORM, LiaScript, LTI); unused in preview. */
+  /** Learner token for the launches that track progress (SCORM, LiaScript, Interactive, LTI); unused in preview. */
   token?: string | null;
+  /** Author token of the preview: lets an Interactive topic play its package through the admin preview endpoint. */
+  authorToken?: string | null;
   /**
    * Author preview: nothing is tracked, the banner links back to the studio. The studio's
    * interactive preview (blueprint content in a frame) passes its own links, no banner and fills
@@ -44,7 +47,7 @@ interface Props {
   } | null;
 }
 
-const { tenant, settings, course, access, progress, topicId, token = null, preview = null } = Astro.props;
+const { tenant, settings, course, access, progress, topicId, token = null, authorToken = null, preview = null } = Astro.props;
 const courseId = course.id;
 const links = preview ? (preview.links ?? PREVIEW_LINKS) : LEARNER_LINKS;
 const custom = Astro.slots.has("content");
@@ -80,9 +83,21 @@ const cmi5AuId = topic.topicable_type.endsWith("\\Cmi5Au") ? Number((topic.topic
 const cmi5Src = Number.isInteger(cmi5AuId) && access && tracked ? await cmi5Launch(tenant, token!, cmi5AuId, courseId, topic.id) : null;
 // LiaScript: player on the content origin; it reports progress and completes the topic itself.
 const liascript = topic.topicable_type.endsWith("\\LiaScriptTopic") && access && tracked ? await liascriptLaunch(tenant, token!, topic.id) : null;
+// Interactive: the package on the content origin plus its steps; the page reports progress through the BFF.
+const interactiveTopic = topic.topicable_type.endsWith("\\InteractiveTopic");
+const interactive = !interactiveTopic
+  ? null
+  : preview
+    ? authorToken
+      ? await interactivePreview(tenant, authorToken, topic.topicable as { value: number })
+      : null
+    : access && tracked
+      ? await interactiveLaunch(tenant, token!, topic.id)
+      : null;
+const immersive = isImmersive(interactive);
 // External tool (LTI 1.3): the tool's login URL with a single-use hint; scores come back through AGS.
 const lti = topic.topicable_type.endsWith("\\LtiLink") && access && tracked ? await ltiLaunch(tenant, token!, topic.id) : null;
-const doc = custom ? null : topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, cmi5Src, liascript, lti, preview: Boolean(preview) });
+const doc = custom ? null : topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, cmi5Src, liascript, interactive, lti, preview: Boolean(preview) });
 const format = formatOf(topic);
 const minutes = topicMinutes(topic);
 const lessonNoun = { coffee: "Chapter", oncall: "Module", nightsky: "Mission" }[theme];
@@ -96,7 +111,7 @@ const resources = topic.resources ?? [];
 
 <Base theme={theme} accent={settings?.theme?.accent} title={`${topic.title} — ${course.title}`} demo={preview ? null : { adminUrl: tenant.adminUrl, slug: tenant.slug }} bodyClass="u-player-body" noindex={Boolean(preview)} baseTarget={preview?.framed ? "_top" : undefined}>
   {preview && preview.banner !== false && <PreviewBanner published={isPublished(course)} studioHref={studioHref(preview.sessionId)} publicHref={`/courses/${courseId}`} />}
-  <div class="u-player">
+  <div class:list={["u-player", { "u-player--immersive": immersive }]}>
     <header class="u-player__top">
       <a class="u-player__back" href={backHref}>
         <Icon name="back" />
@@ -170,6 +185,7 @@ const resources = topic.resources ?? [];
             <slot name="content" />
           ) : (
             <>
+        <div class="u-player__lead">
         <p class="u-player__kicker">
           {lessonParts.kicker ? (/^([IVXLC]+|\d+)$/.test(lessonParts.kicker) ? `${lessonNoun} ${lessonParts.kicker}` : lessonParts.kicker) : lessonNoun} · {lessonParts.title}
         </p>
@@ -181,6 +197,7 @@ const resources = topic.resources ?? [];
           {done && <span class="u-player__done"><Icon name="check" /> Completed</span>}
         </p>
         {topic.introduction && <div class="u-player__intro"><Prose markdown={topic.introduction} size="lg" /></div>}
+        </div>
         {
           !access && (
             <p class="u-player__notice" role="note">
@@ -506,6 +523,66 @@ const resources = topic.resources ?? [];
     border: 1px solid var(--ulams-color-warn);
     background: color-mix(in srgb, var(--ulams-color-warn) 12%, transparent);
     font-weight: 600;
+  }
+  /* Interactive in background mode: the package fills the page, the heading and the text are cards */
+  .u-player--immersive {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "top"
+      "tree"
+      "main"
+      "bar";
+  }
+  .u-player--immersive .u-player__tree {
+    position: relative;
+    z-index: 25;
+    top: auto;
+    max-height: none;
+    border-right: 0;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .u-player--immersive .u-player__tree summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .u-player--immersive .u-player__tree summary span {
+    margin-left: auto;
+    font-weight: 500;
+    color: var(--ulams-color-muted);
+  }
+  .u-player--immersive .u-player__tree::details-content {
+    content-visibility: hidden;
+    display: none;
+  }
+  .u-player--immersive .u-player__tree[open]::details-content {
+    content-visibility: visible;
+    display: block;
+  }
+  .u-player--immersive .u-player__content {
+    max-width: none;
+    margin: 0;
+    padding: 16px clamp(12px, 3vw, 32px) 24px;
+    animation: none;
+  }
+  .u-player--immersive .u-player__main {
+    position: relative;
+    z-index: 2;
+  }
+  .u-player--immersive .u-player__lead {
+    max-width: 34rem;
+    padding: 14px 18px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: color-mix(in srgb, var(--ulams-color-surface) 88%, transparent);
+    backdrop-filter: blur(10px);
+  }
+  .u-player--immersive .u-player__title {
+    font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.2rem);
   }
   .u-player__resources h2 {
     font-size: 1.2rem;

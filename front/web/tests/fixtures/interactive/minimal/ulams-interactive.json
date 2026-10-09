@@ -1,0 +1,17 @@
+{
+  "id": "e2e-minimal",
+  "title": { "en": "E2E minimal interactive" },
+  "version": "1.0.0",
+  "entry": "index.html",
+  "licence": "MIT",
+  "attribution": "Written for the Playwright test.",
+  "locales": ["en"],
+  "defaultLocale": "en",
+  "bridge": 1,
+  "capabilities": { "steps": true, "reducedMotion": false, "background": true },
+  "steps": [
+    { "id": "step-a", "title": { "en": "Step A" }, "text": { "en": "Text of step A." }, "poster": "posters/a.png" },
+    { "id": "step-b", "title": { "en": "Step B" }, "text": { "en": "Text of step B." } },
+    { "id": "step-c", "title": { "en": "Step C" }, "text": { "en": "Text of step C." } }
+  ]
+}
