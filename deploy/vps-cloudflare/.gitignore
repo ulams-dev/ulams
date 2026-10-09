@@ -1,0 +1,6 @@
+# secrets and state of one install, never committed
+.env
+certs/
+cloudflared/credentials.json
+backups/
+.installed

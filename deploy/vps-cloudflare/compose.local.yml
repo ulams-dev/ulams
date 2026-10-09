@@ -1,0 +1,29 @@
+# Local trial on a laptop or in CI (scripts/install.sh --local): no Cloudflare, no real domain, plain
+# HTTP on 127.0.0.1, MinIO standing in for R2. Never use on a server.
+#
+#   docker compose -p ulams-local --env-file .env -f compose.yml -f compose.local.yml up -d
+#
+# Hosts end in .localhost and resolve to 127.0.0.1 in browsers and curl; the port is
+# ULAMS_PORT_SUFFIX (default :8480), for example http://api.ulams.localhost:8480/api/health.
+
+services:
+  caddy:
+    ports:
+      - "127.0.0.1:${LOCAL_HTTP_PORT:-8480}:80"
+  minio:
+    image: bitnamilegacy/minio:latest
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${S3_KEY}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET}
+      MINIO_DEFAULT_BUCKETS: ${S3_PLATFORM_BUCKET:-ulams}:download
+    ports:
+      - "127.0.0.1:${LOCAL_S3_PORT:-9190}:9000"
+    volumes:
+      - minio_data:/bitnami/minio/data
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+volumes:
+  minio_data:

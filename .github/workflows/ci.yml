@@ -42,6 +42,7 @@ jobs:
       pull-requests: read
     outputs:
       js: ${{ steps.filter.outputs.js }}
+      deploy: ${{ steps.filter.outputs.deploy }}
       php: ${{ steps.api.outputs.php == 'true' || steps.filter.outputs.ci == 'true' }}
     steps:
       - uses: actions/checkout@v7
@@ -85,6 +86,10 @@ jobs:
               - ".nvmrc"
               - ".github/**"
             ci:
+              - ".github/**"
+            deploy:
+              - "deploy/**"
+              - "front/docs-site/examples/**"
               - ".github/**"
       # Separate call: `every` is needed for the exclusions and applies to the whole call.
       - uses: dorny/paths-filter@v4
@@ -370,9 +375,21 @@ jobs:
         if: failure()
         run: docker logs smoke || true
 
+  # Offline checks of the production install files (deploy/vps-cloudflare): docker compose config in
+  # every mode, Caddy in both host layouts and both origin modes, cloudflared ingress and shellcheck.
+  deploy:
+    name: Deploy files
+    needs: changes
+    if: needs.changes.outputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - run: deploy/vps-cloudflare/scripts/validate.sh
+
   ci-ok:
     name: CI OK
-    needs: [changes, js, php, images]
+    needs: [changes, js, php, images, deploy]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -380,6 +397,6 @@ jobs:
       - name: Fail if any job failed or was cancelled
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: |
-          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} php=${{ needs.php.result }} images=${{ needs.images.result }}"
+          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} php=${{ needs.php.result }} images=${{ needs.images.result }} deploy=${{ needs.deploy.result }}"
           exit 1
       - run: echo "All required jobs passed or were skipped by the path filters."

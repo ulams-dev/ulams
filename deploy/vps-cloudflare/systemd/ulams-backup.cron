@@ -1,0 +1,2 @@
+# Without systemd: /etc/cron.d/ulams-backup (replace /opt/ulams if you installed elsewhere)
+15 3 * * * ulams cd /opt/ulams && /opt/ulams/scripts/backup.sh >> /var/log/ulams-backup.log 2>&1
