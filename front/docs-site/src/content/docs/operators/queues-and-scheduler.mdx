@@ -1,0 +1,112 @@
+---
+title: Queues and the scheduler
+description: The queue connections for long jobs (builder and long-job, with retry_after), how the queue workers and the scheduler loop run per tenant, the environment variables that control them and the per-minute scheduler lock.
+sidebar:
+  order: 11
+modules:
+  - api
+  - tenancy
+  - course-builder
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+Background work in ulams runs on three queue connections, each with its own `retry_after`, and
+scheduled work runs from a long-lived scheduler loop. Both start by themselves in the `api`
+container; this page explains what they do so you can size, split and replicate them. The design
+is in [ADR 0083](/decisions/0083-course-builder-stage-advance-under-the-run-lock/) (queues) and
+[ADR 0068](/decisions/0068-scheduler-minute-lock/) (scheduler lock).
+
+## Queue connections
+
+`retry_after` is the time after which the queue hands a job that has not finished to another
+worker. If it is shorter than the job's own timeout, a second worker runs the same job while the
+first is still working: a double model call, a double course clone. So every long job runs on a
+connection whose `retry_after` is above its timeout. The connections are defined in
+[`api/config/queue.php`](https://github.com/ulams-dev/ulams/blob/main/api/config/queue.php), each
+in a `database` and a `redis` variant that follows `QUEUE_CONNECTION`:
+
+| Connection | Queue | `retry_after` | Runs |
+|---|---|---|---|
+| `redis` or `database` (`QUEUE_CONNECTION`) | `default` (also `broadcast`, `video`) | 90 s | Ordinary jobs: e-mail, notifications, events |
+| `redis-builder` or `database-builder` | `builder` | `BUILDER_QUEUE_RETRY_AFTER`, default 2400 s | Course Builder runs and steps (1800 s timeout), Living Course source checks and analysis, the Adapt build |
+| `redis-long-job` or `database-long-job` | `queue-long-job` | 19000 s | Course clone and import, video processing (18000 s timeout), and tenant provisioning from the [platform API](/operators/platform-api/) |
+
+Other settings choose the connection and queue of one feature, for example
+`COURSE_BUILDER_QUEUE_CONNECTION` and `COURSE_BUILDER_QUEUE`, `LIVING_COURSE_QUEUE_CONNECTION` and
+`LIVING_COURSE_QUEUE`, `ADAPT_QUEUE_CONNECTION` and `ADAPT_QUEUE`, `VIDEO_QUEUE_CONNECTION` and
+`VIDEO_QUEUE`, `LONG_JOB_QUEUE_CONNECTION` and `LONG_JOB_QUEUE`. Leave them unset unless you
+deliberately route a feature elsewhere, and then keep the rule: **worker `--timeout` at least the
+job timeout, and below `retry_after`**. With `QUEUE_CONNECTION=sync` (tests) the jobs run inline and
+none of this applies. A test (`QueueRetryAfterConfigTest`) keeps the configuration consistent.
+
+## Workers
+
+`queue.sh` (supervisor program `laravel-multidomain-queue`, switched off with `DISABLE_QUEUE=true`)
+runs `workers.sh queue`. It keeps one long-lived `queue:work` process per kind and per tenant, reads
+the list of tenants again every `WORKERS_CHECK_INTERVAL` seconds (default 10), so a new tenant gets
+workers without a restart, and starts a process again when it exits:
+
+| Worker | Connection and queues | `--timeout` | Memory |
+|---|---|---|---|
+| default | the default connection, queues `default,broadcast,video` | 60 (Laravel default) | 256 MB |
+| builder | `<driver>-builder`, queue `builder` | 1800 | 512 MB |
+| long | `<driver>-long-job`, queue `queue-long-job` | 18000 | 512 MB |
+
+Every worker stops after `WORKERS_MAX_TIME` seconds (default 3600) and is started again with fresh
+code. The platform itself gets a long-job worker (tenant provisioning) from `workers.sh`; its other
+queues are served by Horizon (`DISABLE_HORIZON=true` turns Horizon off), whose `supervisor-builder`
+(timeout 1800) and `supervisor-long-job` (timeout 18000) match the table.
+
+The script reads these variables from the container's own environment, not from the Laravel `.env`
+that `LARAVEL_*` variables are written to:
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `QUEUE_CONNECTION` | `redis` | `database` or `redis`: which variant of the builder and long-job connections to use. Set it as a plain variable on the container if you run the `database` driver |
+| `COURSE_BUILDER_QUEUE_CONNECTION` | `<driver>-builder` | Connection of the builder worker |
+| `COURSE_BUILDER_QUEUE` | `builder` | Queue of the builder worker |
+| `LONG_JOB_CONNECTION` | `<driver>-long-job` | Connection of the long-job worker |
+| `LONG_JOB_QUEUE` | `queue-long-job` | Queue of the long-job worker |
+| `WORKERS_CHECK_INTERVAL` | `10` | Seconds between reads of the tenant list |
+| `WORKERS_MAX_TIME` | `3600` | Seconds a worker or scheduler loop lives before it is restarted |
+
+The `LARAVEL_`-prefixed settings, `BUILDER_QUEUE_RETRY_AFTER` among them, go to Laravel as usual
+(see [Environment](/operators/environment/)).
+
+<Steps>
+
+1. Run a worker pool on its own: start the `api` image with `DISABLE_PHP_FPM=true`,
+   `DISABLE_SCHEDULER=true` and `DISABLE_DB_MIGRATE=true` (the `worker` role in
+   [High availability](/operators/high-availability/#api-roles-from-one-image)). Add replicas for
+   more throughput; jobs are popped atomically, so several replicas are safe.
+2. After changing a queue setting, restart the workers on every tenant with
+   `php artisan queue:restart --domain=<host>` (or restart the container).
+3. Jobs queued before the connections existed sit on the `default` queue and finish there.
+
+</Steps>
+
+## The scheduler and its minute lock
+
+`scheduler.sh` (supervisor program `laravel-schedule`, `DISABLE_SCHEDULER=true` turns it off) runs
+`workers.sh scheduler`: one `ulams:tenant:schedule-loop` per tenant and one for the platform. Each
+loop boots Laravel once, wakes at the start of every minute and runs that domain's `schedule:run`
+in-process, then exits after `WORKERS_MAX_TIME` and is started again.
+
+Run more than one scheduler container for failover and each loop would run every task twice, so
+the loop first claims the minute with an atomic lock in the cache store:
+
+- The lock is named `ulams:schedule-tick:<tenant slug or platform>:<YmdHi>` and lasts 90 seconds.
+  The cache is Valkey with a prefix per tenant, so tenants do not share locks.
+- The replica that gets the lock runs the tick and does not release it, so a replica that is a few
+  seconds late skips the minute. The others skip it as well.
+- A cache store without lock support (`file`, `array`) runs every tick, so use a shared store.
+- If the replica holding a minute dies mid-tick, that minute's tasks are skipped; the next minute is
+  taken by whoever gets there first. Keep the clocks of the replicas in sync (NTP): a clock a minute
+  off can run a minute twice.
+- `TENANCY_SCHEDULER_LOCK=false` (default `true`) turns the lock off, for a deliberate second
+  scheduler. `php artisan ulams:tenant:schedule-loop --once --domain=<host>` is a manual tick and
+  never takes the lock.
+
+The hourly [demo reset](/admin/demo-mode/) and the daily pruning jobs run from this scheduler, so
+a tenant whose scheduler is stopped stops resetting and pruning.

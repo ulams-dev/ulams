@@ -39,9 +39,9 @@ other method `:write`. Scopes only narrow the user's own permissions.
 | `living-course` | `admin/living-course` (when installed) |
 | `learner` | profile, my courses, progress, bookmarks, notifications, cart, own orders |
 | `tokens` | `auth/tokens`, `admin/tokens`, `admin/agent-audit` |
-| `platform` | platform API (platform hosts only; "Coming") |
+| `platform` | [platform tenant API](/operators/platform-api/) (platform hosts only) |
 
-Presets: `@read-only` (all `:read`), `@author` (`courses`, `builder`, `living-course` write, `reports:read`),
+Presets: `@read-only` (every area's `:read` except `platform`), `@author` (`courses`, `builder`, `living-course` write, `reports:read`),
 `@admin` (`*`), `@learner`, `@ci` (`courses`, `builder`, `living-course` write).
 
 The route-to-area map is `api/packages/auth/resources/token-scopes.php`; `php artisan
@@ -57,7 +57,8 @@ A refused call answers 403 with the missing scope:
 ```
 
 `error` is `scope_missing`, `scope_forbidden` (never with a token), `scope_unmapped` or
-`rate_limited` (429, when the token has `rate_limit_per_minute`).
+`rate_limited` (429 with `Retry-After`, when the token has `rate_limit_per_minute`, 1 to 6000).
+All limits of the API are in [Rate limits](/developers/rate-limits/).
 
 ## Endpoints
 
@@ -84,7 +85,7 @@ device grant stays disabled. The two endpoints the CLI calls answer in flat RFC 
 | Call | Purpose |
 |---|---|
 | `POST /api/auth/device/code` `{client_name, scopes[], agent}` | No auth, 10 requests per minute per IP (its own bucket: polling the token endpoint does not use it up). Returns `device_code`, `user_code` (`XXXX-XXXX`, letters `BCDFGHJKLMNPQRSTVWXZ`), `verification_uri` (`<web url>/cli/authorize`), `verification_uri_complete`, `expires_in` (600), `interval` (5) |
-| `POST /api/auth/device/token` `{device_code}` | No auth, poll every `interval` seconds. 200 `{access_token, token_type: "Bearer", expires_at, scopes, token_id}` once; HTTP 400 `authorization_pending`, `slow_down` (polled faster than every 4 s), `access_denied`, `expired_token` (also unknown or already collected codes) |
+| `POST /api/auth/device/token` `{device_code}` | No auth, 60 requests per minute per IP, poll every `interval` seconds. 200 `{access_token, token_type: "Bearer", expires_at, scopes, token_id}` once; HTTP 400 `authorization_pending`, `slow_down` (polled faster than every 4 s), `access_denied`, `expired_token` (also unknown or already collected codes) |
 | `GET /api/auth/device/requests/{user_code}` | The approval page asks what is requested (client, IP, scopes, lifetime options). Needs the user's login token |
 | `POST /api/auth/device/requests/{user_code}/approve` `{scopes[], expires_in_days}` | Mints a scoped token for the approver with approved scopes that the client requested (the intersection) and 1 to 365 days (30 on a platform host) |
 | `POST /api/auth/device/requests/{user_code}/deny` | The next poll answers `access_denied` |
@@ -116,14 +117,17 @@ scoped to host, user, method, route and key:
 - same key and same body: the stored response is replayed for 24 hours with `Idempotent-Replayed: true`;
 - same key, different body: 422 `idempotency_mismatch`;
 - the first request still running: 409 `idempotency_in_progress`.
+- key empty or longer than 255 characters: 422 `idempotency_key_invalid`.
 
-401, 403, 429 and 5xx answers are not stored, so the caller can retry them. Uploads are compared by
+It works for any signed-in user (login tokens too), not only scoped tokens; anonymous requests ignore the key.
+
+401, 403, 429 and 5xx answers and responses over 1 MB are not stored, so the caller can retry them. Uploads are compared by
 file name, size and content hash. `X-Request-Id` (a ULID or UUID) is echoed in the response and added
 to the log context; anything else is replaced by a new ULID.
 
 ## GET /api/meta
 
-No authentication. Returns `{ api, version, contract, host, kind: "tenant" | "platform", features }`
+No authentication, 60 requests per minute. Returns `{ api, version, contract, host, kind: "tenant" | "platform", features }`
 with `features` = `ai`, `courseBuilder`, `livingCourse`, `deviceLogin`, `scopedTokens`, `idempotency`,
 `platformApi`, `demo`. The CLI reads it on login and exits with `FEATURE_DISABLED` instead of calling
 an endpoint the host does not have.
@@ -138,3 +142,17 @@ it. The page posts plain forms to `/account` and calls `GET|POST /api/auth/token
 
 The `platform` scopes are for the [platform tenant API](/operators/platform-api/), which exists on platform
 hosts only and only when `TENANCY_PLATFORM_API=true`.
+
+## Common errors
+
+| Status | `error` | Cause |
+|---|---|---|
+| 401 | none | Missing, expired or revoked token |
+| 403 | `scope_missing` | The token lacks `<area>:read` or `<area>:write`; the body lists it in `required` |
+| 403 | `scope_forbidden` | Endpoint never open to scoped tokens: refresh, impersonation, password and account deletion, device approval |
+| 403 | `scope_unmapped` | Route missing from `token-scopes.php` |
+| 429 | `rate_limited` | The token's `rate_limit_per_minute` is used up |
+| 409 | `idempotency_in_progress` | A request with the same `Idempotency-Key` still runs |
+| 422 | `idempotency_mismatch` | The same `Idempotency-Key` with a different body |
+| 422 | `idempotency_key_invalid` | The key is empty or over 255 characters |
+| 400 | `authorization_pending`, `slow_down`, `access_denied`, `expired_token` | Device flow polling (RFC 8628, flat JSON `{"error": ...}`) |

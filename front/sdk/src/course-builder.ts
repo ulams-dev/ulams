@@ -35,6 +35,22 @@ export interface CourseBrief {
   decidedBy: Record<string, "author" | "default"> | [];
 }
 
+export interface PublishCheck {
+  blocking: Array<{ code: string; message: string }>;
+  warnings: Array<{ code: string; message: string; elementId?: string }>;
+  facts: {
+    courseId: number | null;
+    title: string | null;
+    url: string | null;
+    published: boolean;
+    price: { mode: "free" | "paid"; amountMinor: number | null; currency: string | null; label: string; suggestion: { amountMinor: number; currency: string; rationale: string } | null };
+    theme: { preset: string; accent?: string; adjustedAccent: string | null } | null;
+    counts: { modules?: number; lessons?: number; minutes?: number; questions?: number };
+    applyNotes: string[];
+    landingValid: boolean;
+  };
+}
+
 export interface BuilderCost {
   usedMicroUsd: number;
   budgetMicroUsd: number;
@@ -103,6 +119,10 @@ export interface BuilderState {
   session: SessionSummary;
   brief: CourseBrief | null;
   briefRows: Array<{ key: string; label: string; value: string }>;
+  /** True when the author may create a new site for the course (platform operators). */
+  canCreateSite?: boolean;
+  /** Progress of "move this course to a new site". */
+  newSite?: { slug: string; status: "queued" | "provisioning" | "transferring" | "done" | "failed"; error?: string | null; studioUrl?: string; adminUrl?: string; invited?: boolean } | null;
   /** A model-suggested price for a paid course without an amount; the author confirms it in the brief. */
   priceSuggestion?: { amountMinor: number; currency: string; rationale: string; suggested: true } | null;
   /** Notes from the last apply (a skipped theme, a product that was not created). */
@@ -345,7 +365,12 @@ export function createCourseBuilderClient(options: ClientOptions & { prefix?: st
       redo: (sessionId: string) => call<{ currentVersionId: string; runId: string | null; state: BuilderState }>("POST", `/sessions/${id(sessionId)}/redo`),
     },
     apply: (sessionId: string) => call<{ runId: string }>("POST", `/sessions/${id(sessionId)}/apply`),
-    publish: (sessionId: string) => call<{ courseId: number; published: boolean }>("POST", `/sessions/${id(sessionId)}/publish`),
+    publish: (sessionId: string, acknowledgedWarnings = false) =>
+      call<{ courseId: number; published: boolean }>("POST", `/sessions/${id(sessionId)}/publish`, acknowledgedWarnings ? { acknowledgedWarnings: true } : {}),
+    /** Provisions a new site for the course and moves the session there (platform operators). */
+    newSite: (sessionId: string, slug?: string, name?: string) => call<NonNullable<BuilderState["newSite"]>>("POST", `/sessions/${id(sessionId)}/new-site`, { ...(slug ? { slug } : {}), ...(name ? { name } : {}) }),
+    /** Blocking items and warnings before publishing (the publish summary). */
+    publishCheck: (sessionId: string) => call<PublishCheck>("GET", `/sessions/${id(sessionId)}/publish-check`),
     usage: (sessionId: string) => call<{ total: BuilderCost; byTask: UsageRow[] }>("GET", `/sessions/${id(sessionId)}/usage`),
     /** AG-UI event stream with resume; resolves when `signal` aborts or access is refused. */
     events: (

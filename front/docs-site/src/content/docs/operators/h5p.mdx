@@ -95,8 +95,33 @@ other volumes ([Backups](/operators/backups/)).
 
 Access tokens live about 5 minutes. The admin and the React front refresh them in the background
 and hand every new token to the H5P frame, which keeps saving the learner's state without
-reloading the content. The Astro front plays H5P without a token: learners' answers count for
-progress, but the content does not restore where they left off.
+reloading the content.
+
+### The state proxy of the reference front
+
+The reference front (`web`) keeps the learner's token in an httpOnly session cookie, so it never
+hands a token to the H5P frame (the embed page is told `token: null`). H5P content is third-party
+script, and a token inside the frame could be read by it. Instead the front serves the H5P service
+on its own origin at `/h5p/*` (a same-origin proxy to `<tenant API>/h5p/*`) and **adds the session
+token on the server**, only for the learner's own player calls
+([ADR 0045](/decisions/0045-h5p-state-through-bff/)):
+
+| Method and path (after `/h5p/`) | Purpose |
+|---|---|
+| `GET embed/play/<id>` | The embed page |
+| `GET contents/<id>/play` | The play model |
+| `GET`, `POST contentUserData/<id>/<type>/<sub>` | Load and save the learner's state |
+| `POST finishedData` | Save the result |
+
+Every other route and method (libraries, editor, content management) is forwarded without the
+session, and a `_token` query parameter sent by the caller is dropped. The proxy marks its requests
+with `X-Ulams-Session-Proxy: 1` so the H5P service leaves the learner's token out of the URLs it puts
+in the play model; the frame's calls then come back through the proxy. Learners' answers count for
+progress and the content restores where they left off.
+
+For operators this changes nothing to configure: H5P traffic of logged-in learners passes through the
+`web` container, which must be able to reach the tenant API host (it already must for everything
+else), and the proxy adds a little latency.
 
 H5P runs on the application origin, not on the content origin (it calls its service with `fetch`),
 so a separate content domain does not change anything here; see

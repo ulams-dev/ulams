@@ -117,11 +117,14 @@ function answerLabel(p: Props): string {
   if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "totalMinutes" in p.value) {
     return `${p.value.totalMinutes} min · ${p.value.lessonMinutes}-min lessons`;
   }
-  if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "mode" in p.value) {
+  if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "mode" in p.value && (p.value.mode === "free" || p.value.mode === "paid")) {
     return p.value.mode === "paid" ? (p.value.amountMinor ? `${minorToMajor(Number(p.value.amountMinor))} ${p.value.currency ?? ""}`.trim() : "Paid (price to confirm)") : "Free";
   }
   if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "preset" in p.value) {
     return `${THEME_PRESETS[p.value.preset as keyof typeof THEME_PRESETS]?.label ?? p.value.preset}${p.value.accent ? ` · ${p.value.accent}` : ""}`;
+  }
+  if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "mode" in p.value && ("slug" in p.value || p.value.mode === "current" || p.value.mode === "new")) {
+    return p.value.mode === "new" ? `New site: ${p.value.slug ?? ""}`.trim() : "This site";
   }
   if (Array.isArray(p.value)) return p.value.map(label).join(", ") || "None";
   return p.value !== undefined ? label(p.value) : "";
@@ -185,6 +188,34 @@ const LanguagePicker: Renderer = (p, ctx, id) => {
   const select = h("select", { id: selectId, class: "cb-select" },
     (p.options as Props[]).map((o) => h("option", { value: o.value, selected: o.value === (p.value ?? p.defaultValue) }, String(o.label))));
   return questionShell(p, id, [h("label", { for: selectId, class: "cb-label" }, "Language"), select], ctx, () => select.value);
+};
+
+const SitePicker: Renderer = (p, ctx, id) => {
+  const current = (p.value ?? p.defaultValue ?? { mode: "current" }) as Props;
+  const modes = radioGroup(uid("site"), "Where to publish", [{ value: "current", label: "This site" }, { value: "new", label: "A new site" }], current.mode);
+  modes.classList.add("cb-radios-cards");
+  const slugId = uid("slug");
+  const slug = h("input", { id: slugId, class: "cb-input", type: "text", maxlength: 40, autocomplete: "off", spellcheck: "false", value: current.slug ?? "", "aria-describedby": `${slugId}-hint` });
+  const hint = h("p", { id: `${slugId}-hint`, class: "cb-muted cb-small" }, "Letters, digits and dashes, 3 to 40 characters. The site gets its own address, theme and learners.");
+  const error = h("p", { class: "cb-error", role: "alert", hidden: true });
+  const field = h("div", { class: "cb-price-field" }, h("label", { for: slugId, class: "cb-label" }, "Name of the new site"), slug, hint, error);
+  const selected = () => modes.querySelector<HTMLInputElement>("input:checked")?.value ?? "current";
+  const sync = () => {
+    field.hidden = selected() !== "new";
+  };
+  modes.addEventListener("change", sync);
+  sync();
+  return questionShell(p, id, [modes, field], ctx, () => {
+    if (selected() !== "new") return { mode: "current" };
+    const value = slug.value.trim().toLowerCase();
+    if (!/^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$/.test(value)) {
+      error.hidden = false;
+      error.textContent = "Use 3 to 40 letters, digits or dashes.";
+      slug.setAttribute("aria-invalid", "true");
+      return undefined;
+    }
+    return { mode: "new", slug: value };
+  });
 };
 
 const minorToMajor = (minor: number): string => (minor / 100).toFixed(2);
@@ -540,6 +571,46 @@ const SYNC_STATE: Record<string, { label: string; icon: "check" | "plus" | "cloc
   processing: { label: "Processing", icon: "clock" },
   failed: { label: "Check failed", icon: "alert" },
   paused: { label: "Paused", icon: "minus" },
+};
+
+const PublishSummary: Renderer = (p, ctx, id) => {
+  const blocking: Props[] = p.blocking ?? [];
+  const warnings: Props[] = p.warnings ?? [];
+  const headingId = uid("pub");
+  const counts = p.counts ?? {};
+  const facts: Array<[string, string]> = [
+    ["Address", p.url ? String(p.url) : "Available after you publish"],
+    ["Price", `${p.price.label}${p.price.suggested ? " (suggested, confirm it in the brief)" : ""}`],
+    ...(p.theme ? ([["Theme", `${p.theme.preset}${p.theme.adjustedAccent ? ` · accent shown as ${p.theme.adjustedAccent}` : p.theme.accent ? ` · ${p.theme.accent}` : ""}`]] as Array<[string, string]>) : []),
+    ...(counts.lessons ? ([["Course", `${counts.modules ?? 0} modules · ${counts.lessons} lessons · ${counts.minutes ?? 0} min · ${counts.questions ?? 0} questions`]] as Array<[string, string]>) : []),
+  ];
+  const list = (items: Props[], kind: "blocking" | "warning") =>
+    h("ul", { class: `cb-publish-list cb-publish-${kind}`, "aria-label": kind === "blocking" ? "Items that block publishing" : "Warnings" },
+      items.map((item) => h("li", {}, icon("alert"), h("span", { class: "cb-tag" }, kind === "blocking" ? "Blocking" : "Warning"), " ", String(item.message))));
+  const acknowledgeId = uid("ack");
+  const acknowledge = warnings.length && !blocking.length && !p.published
+    ? h("label", { class: "cb-check", for: acknowledgeId }, h("input", { type: "checkbox", id: acknowledgeId }), `I have read the ${warnings.length} warning${warnings.length > 1 ? "s" : ""} and want to publish anyway`)
+    : null;
+  const button = h("button", { type: "button", class: "cb-btn cb-btn-primary", disabled: true }, p.published ? "Published" : "Publish course");
+  const ack = acknowledge?.querySelector("input") as HTMLInputElement | null;
+  const sync = () => {
+    button.disabled = Boolean(p.published) || blocking.length > 0 || (warnings.length > 0 && !ack?.checked);
+  };
+  ack?.addEventListener("change", sync);
+  sync();
+  button.addEventListener("click", () => {
+    button.disabled = true;
+    act(ctx, id, "publish", { acknowledgedWarnings: Boolean(ack?.checked) });
+  });
+  return h("section", { class: "cb-card cb-publish", "aria-labelledby": headingId },
+    h("h2", { id: headingId, class: "cb-h3" }, p.published ? "Published" : "Before you publish"),
+    h("dl", { class: "cb-publish-facts" }, facts.flatMap(([k, v]) => [h("dt", {}, k), h("dd", {}, v)])),
+    blocking.length ? h("div", {}, h("h3", { class: "cb-h3" }, "Fix before publishing"), list(blocking, "blocking")) : null,
+    warnings.length ? h("div", {}, h("h3", { class: "cb-h3" }, "Review"), list(warnings, "warning")) : null,
+    !blocking.length && !warnings.length && !p.published ? h("p", { class: "cb-muted" }, icon("check"), " Nothing blocks publishing and nothing needs review.") : null,
+    ...((p.notes as string[] | undefined) ?? []).map((n) => h("p", { class: "cb-muted cb-small" }, n)),
+    acknowledge,
+    h("div", { class: "cb-actions" }, button));
 };
 
 const SourceConnectionCard: Renderer = (p, ctx, id) => {
@@ -966,6 +1037,7 @@ export const builderComponents: Record<string, Renderer> = {
   LanguagePicker,
   PriceInput,
   ThemePicker,
+  SitePicker,
   DecideForMe,
   SourceCard,
   CitationChip,
@@ -976,6 +1048,7 @@ export const builderComponents: Record<string, Renderer> = {
   DiffView,
   ApplySummary,
   VersionList,
+  PublishSummary,
   SourceConnectionCard,
   RevisionTimeline,
   FragmentChange,

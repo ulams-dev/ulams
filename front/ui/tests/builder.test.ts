@@ -509,3 +509,55 @@ describe("brief v2 controls", () => {
     expect(main.querySelector(".cb-accent")!.getAttribute("aria-invalid")).toBe("true");
   });
 });
+
+describe("PublishSummary", () => {
+  const publish = (over: Record<string, unknown>) => single("PublishSummary", { ...builderFixtures.PublishSummary!, ...over });
+  const button = (main: HTMLElement) => [...main.querySelectorAll("button")].find((b) => /Publish|Published/.test(b.textContent ?? ""))! as HTMLButtonElement;
+
+  it("stays disabled while anything blocks", () => {
+    const main = mount(publish({ blocking: [{ code: "drift", message: "“Intro” was edited in the admin." }], warnings: [] }));
+    expect(button(main).disabled).toBe(true);
+    expect(main.textContent).toContain("Fix before publishing");
+    expect(main.querySelector("input[type=checkbox]")).toBeNull();
+  });
+
+  it("needs the warnings acknowledged and sends the acknowledgement", () => {
+    const c = ctx();
+    const main = mount(publish({}), c);
+    expect(button(main).disabled).toBe(true);
+    const box = main.querySelector("input[type=checkbox]") as HTMLInputElement;
+    box.click();
+    expect(button(main).disabled).toBe(false);
+    button(main).click();
+    expect(c.actions[0]).toMatchObject({ name: "publish", context: { acknowledgedWarnings: true } });
+  });
+
+  it("publishes at once when there is nothing to review, and shows the published state", () => {
+    const c = ctx();
+    const main = mount(publish({ warnings: [] }), c);
+    expect(main.textContent).toContain("Nothing blocks publishing");
+    button(main).click();
+    expect(c.actions[0]!.context).toEqual({ acknowledgedWarnings: false });
+    const done = mount(publish({ warnings: [], published: true }));
+    expect(button(done).disabled).toBe(true);
+    expect(done.textContent).toContain("Published");
+  });
+});
+
+describe("SitePicker", () => {
+  it("sends the current site, or a new site with a valid name", () => {
+    const c = ctx();
+    const main = mount(single("SitePicker"), c);
+    main.querySelector("form")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    expect(c.actions.at(-1)!.context).toEqual({ key: "site", value: { mode: "current" } });
+    (main.querySelector('input[value="new"]') as HTMLInputElement).click();
+    const slug = main.querySelector('input[type="text"]') as HTMLInputElement;
+    slug.value = "Brew House!";
+    main.querySelector("form")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    expect(c.actions.at(-1)!.name).toBe("decide_for_me");
+    expect(main.querySelector('[role="alert"]')!.textContent).toMatch(/3 to 40/);
+    slug.value = "Brew-House";
+    main.querySelector("form")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    expect(c.actions.at(-1)!.context).toEqual({ key: "site", value: { mode: "new", slug: "brew-house" } });
+  });
+});

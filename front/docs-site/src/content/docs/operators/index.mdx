@@ -56,7 +56,7 @@ Redis-protocol server (Valkey) and S3-compatible object storage.
 | `h5p` | `ghcr.io/ulams-dev/h5p` | H5P player, editor and content API (GPL-3.0-or-later) | Installed libraries in `/data/libraries` |
 | `pdf` | `ghcr.io/ulams-dev/pdf` | PDF renderer for certificates | None |
 | `web` | `ghcr.io/ulams-dev/web` | Learner front (Astro SSR, port 4321) | None (in-memory cache) |
-| `admin` | `ghcr.io/ulams-dev/admin` | Admin and author panel (static build behind Apache, port 80) | None |
+| `admin` | `ghcr.io/ulams-dev/admin` | Admin and author panel (static build on unprivileged nginx, port 8080) | None |
 | `front` | `ghcr.io/ulams-dev/front` | The older React learner front, optional | None |
 | PostgreSQL | upstream | Platform database plus one database per tenant | Yes |
 | Valkey | upstream | Queues, cache, locks, H5P caches | Queues (persist it) |

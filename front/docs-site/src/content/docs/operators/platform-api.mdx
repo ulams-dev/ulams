@@ -32,7 +32,7 @@ The platform tenant API manages tenants without shell access to the API containe
   ulams tokens create --name platform-ci --scopes platform:write --expires-in-days 7 --json
   ```
 
-- Calls are throttled to 60 per minute per user and recorded in the agent audit log.
+- Calls are throttled to 60 per minute per user ([Rate limits](/developers/rate-limits/)) and, with a scoped token, recorded in the agent audit log.
 
 ## With the CLI
 
@@ -50,6 +50,24 @@ ulams tenants operations list
 A login on a platform host saves a `platform` profile. The commands exit 12 (`FEATURE_DISABLED`) with the
 variable to set when the host answers 404.
 
+## With curl
+
+Send requests to the **platform host** (`api.localhost` in the supplied stack) with a platform token:
+
+```bash
+TOKEN=ulams_pat_...   # platform:read or platform:write, see above
+H=(-H "Authorization: Bearer $TOKEN" -H 'Accept: application/json')
+
+curl -s "${H[@]}" http://api.localhost/api/platform/tenants
+
+curl -s "${H[@]}" -H 'Content-Type: application/json' -H 'Idempotency-Key: acme-create-1' \
+  -X POST http://api.localhost/api/platform/tenants \
+  -d '{"slug":"acme","name":"Acme Academy","theme":"coffee","accent":"#C2552D","users":3,"demo":true}'
+# 202 {"success":true,"message":"Tenant creation queued","data":{"operation":{"id":"01j9...","status":"queued",...},"tenant":{...}}}
+
+curl -s "${H[@]}" http://api.localhost/api/platform/operations/<operation id>   # poll until succeeded or failed
+```
+
 ## Endpoints
 
 | Request | Does |
@@ -64,6 +82,19 @@ Provisioning runs as a queued job on the platform queue worker (the supplied sta
 minute: `database`, `bucket`, `env`, `migrate`, `passport_keys`, `passport_client`, `permissions`, `lti_keys`,
 `demo`. A step that failed is kept on the operation; asking for the tenant again continues from it. Deletion has
 the steps `database`, `bucket`, `env`, `redis`.
+
+## Common errors
+
+| Status | Cause |
+|---|---|
+| 404 `Not found.` | `TENANCY_PLATFORM_API` is not `true`, or the host is a tenant host (checked before authentication) |
+| 401 | No or invalid token |
+| 403 | The user lacks `platform_admin`, or the scoped token lacks `platform:read` / `platform:write` (`scope_missing`) |
+| 404 `Tenant not found.` | Unknown slug on `GET`, `PATCH` or `DELETE` |
+| 409 `operation_in_progress` (body has `data.operation`) | An operation for this tenant is queued or running |
+| 409 | `POST` for a tenant that is already active |
+| 422 | Invalid slug, name, theme (`^[A-Za-z0-9_-]{1,40}$`), accent (`#RRGGBB`) or `users` (0 to 50, default 5); an env key that is not inheritable; `confirm` is not the slug |
+| 429 | More than 60 requests per minute |
 
 <Aside type="note" title="Not here">
   There is no UI and no tenant update beyond settings. The artisan commands keep working and share the same

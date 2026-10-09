@@ -69,6 +69,23 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
     ],
     defaultValue: { preset: "coffee" },
   },
+  PublishSummary: {
+    title: "Brewing basics",
+    url: "http://coffee.app.localhost/courses/12",
+    published: false,
+    price: { label: "49.00 USD", suggested: false },
+    theme: { preset: "coffee", accent: "#f4efe6", adjustedAccent: "#8a2f10" },
+    counts: { modules: 2, lessons: 4, minutes: 40, questions: 12 },
+    blocking: [],
+    warnings: [{ code: "accessibility", message: "“Grinding”: heading level jumps from h2 to h4." }],
+    notes: [],
+  },
+  SitePicker: {
+    questionKey: "site",
+    label: "Where should the course be published?",
+    status: "open",
+    defaultValue: { mode: "current" },
+  },
   DecideForMe: { label: "Decide the rest for me", open: 3 },
   SourceCard: {
     sourceId: "01src",

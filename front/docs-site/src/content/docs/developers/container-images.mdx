@@ -16,7 +16,10 @@ import { Aside } from "@astrojs/starlight/components";
 
 [`.github/workflows/publish.yml`](https://github.com/ulams-dev/ulams/blob/main/.github/workflows/publish.yml)
 builds seven images and pushes them to GitHub Container Registry as `ghcr.io/ulams-dev/<name>`.
-For running them in production, see [Self-hosting](/operators/self-hosting/).
+For running them in production, see [Self-hosting](/operators/self-hosting/). The build
+workflow runs on every push to `main`, on `v*` tags and manually. The Adapt build service
+(`api/adapt-builder`, GPL-3.0) is not among the published images; build it from its Dockerfile if you
+turn on [Adapt sources](/creators/adapt/#configuration).
 
 | Image | Dockerfile | Build context | Runs | Port | Licence label |
 |---|---|---|---|---|---|
@@ -30,8 +33,8 @@ For running them in production, see [Self-hosting](/operators/self-hosting/).
 
 ## Tags, platforms, attestations
 
-Every image is built with `docker/build-push-action@v6` for `linux/amd64` and `linux/arm64`
-(QEMU), with `provenance: mode=max` and `sbom: true`. Tags come from `docker/metadata-action@v5`:
+Every image is built with `docker/build-push-action@v7` for `linux/amd64` and `linux/arm64`
+(QEMU), with `provenance: mode=max` and `sbom: true`. Tags come from `docker/metadata-action@v6`:
 
 | Tag | When |
 |---|---|
@@ -125,7 +128,15 @@ Configuration is read when the container starts, not at build time:
 
 Leave `REACT_APP_API_URL` empty for a multi-tenant admin: it derives the tenant API from its host
 with `REACT_APP_TENANT_API_HOST_PATTERN`, for example
-`{slug}.admin.ulams.app=>https://{slug}.api.ulams.app`.
+`{slug}.admin.ulams.app=>https://{slug}.api.ulams.app`. To try an image on its own:
+
+```bash
+docker run --rm -p 8080:8080 \
+  -e REACT_APP_TENANT_API_HOST_PATTERN='{slug}.admin.localhost=>http://{slug}.localhost' \
+  ghcr.io/ulams-dev/admin:latest
+curl -s http://localhost:8080/healthz        # ok
+curl -s http://localhost:8080/runtime-config.json
+```
 
 ### web
 

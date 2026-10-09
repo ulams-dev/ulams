@@ -11,16 +11,6 @@ if (!tenant) return Astro.redirect("/tenants");
 if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 });
 const cb = builderFor(tenant, Astro.locals.authorToken!);
 
-let notice: string | null = null;
-if (Astro.request.method === "POST") {
-  try {
-    await cb.publish(id);
-    notice = "The course is published. Learners can enrol now.";
-  } catch (e) {
-    notice = e instanceof ApiError ? e.message.replace(/^API \d+: /, "") : "Publishing failed.";
-  }
-}
-
 let state: BuilderState;
 try {
   state = await cb.sessions.get(id);
@@ -51,7 +41,6 @@ const fragments = new Set(lessons.flatMap((l) => l.blocks.flatMap((b) => b.citat
 const flagged = lessons.filter((l) => l.flags.length > 0);
 const courseId = state.session.courseId!;
 const adminBase = tenant.adminUrl.replace(/\/+$/, "");
-const published = Astro.request.method === "POST" && notice?.startsWith("The course is published");
 const checks = [
   { ok: citedPct === 100, label: "Every lesson block cites the source", detail: `${citedPct}% of ${blocks.length} blocks cite ${fragments} source passages` },
   { ok: true, label: "Quiz answers supported by the cited passages", detail: `${questions} questions passed the support check` },
@@ -59,13 +48,12 @@ const checks = [
 ];
 ---
 
-<Studio title="Your course is ready" crumb={doc.course.title} status={published ? "Published" : STATUS_LABEL[state.session.status]} sessionId={id} active="done" hasCourse>
+<Studio title="Your course is ready" crumb={doc.course.title} status={STATUS_LABEL[state.session.status]} sessionId={id} active="done" hasCourse>
   <main id="main" class="st-page">
     <section class="cb-card st-hero" aria-labelledby="st-done-title">
       <p class="cb-eyebrow">Generation complete · version {version.number}</p>
       <h1 id="st-done-title">Your course is ready.</h1>
       <p class="cb-serif" style="font-size:1.25rem">Created in your academy through the same services your team uses: nothing hidden, everything cited.</p>
-      {notice && <p class={published ? "cb-decision cb-decision-applied" : "cb-error"} role="status">{notice}</p>}
       <div class="st-stats">
         <p class="st-stat">Structure <strong>{doc.modules.length} modules</strong></p>
         <p class="st-stat">Scope <strong>{lessons.length} lessons</strong></p>
@@ -76,20 +64,16 @@ const checks = [
       </div>
     </section>
     <div class="st-links">
-      <form method="post">
-        <button class="cb-btn cb-btn-primary" type="submit" style="width:100%" disabled={published}>{published ? "Published" : "Publish course"}</button>
-      </form>
       <a class="cb-btn cb-btn-primary" href={`/studio/s/${id}/preview`}>Preview and discuss</a>
       <a class="cb-btn" href={`${adminBase}/courses/list/${courseId}`} rel="noopener">Open in admin</a>
-      {
-        published ? (
-          <a class="cb-btn" href={`/courses/${courseId}`}>View as learner</a>
-        ) : (
-          <a class="cb-btn" href={previewCourseHref(courseId)}>Preview as learner</a>
-        )
-      }
+      <a class="cb-btn" href={previewCourseHref(courseId)}>Preview as learner</a>
       <a class="cb-btn" href={`/studio/s/${id}/landing`}>Landing page</a>
       <a class="cb-btn" href={`/studio/s/${id}/workspace`}>Keep refining</a>
+    </div>
+    <div data-new-site data-session={id} hidden></div>
+    <div data-publish data-session={id}>
+      <noscript><p class="cb-muted">Publishing needs JavaScript. Use the admin to publish the course without it.</p></noscript>
+      <p class="cb-muted">Checking what stands between you and publishing…</p>
     </div>
     <section class="cb-card" aria-labelledby="st-checks-title">
       <h2 id="st-checks-title" class="cb-h3">Before you publish</h2>
@@ -111,3 +95,7 @@ const checks = [
     </section>
   </main>
 </Studio>
+
+<script>
+  import "../../../../studio/done.ts";
+</script>
