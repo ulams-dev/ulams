@@ -35,6 +35,7 @@ export const login = defineCommand({
   kind: "local",
   idempotent: true,
   anonymous: true,
+  endpoints: ["POST /api/auth/login", "POST /api/demo/login", "POST /api/auth/device/code", "POST /api/auth/device/token"],
   mcp: { expose: false },
   input,
   output: z.object({ profile: z.string(), url: z.string(), user: z.string().nullable(), expiresAt: z.string().nullable() }),
