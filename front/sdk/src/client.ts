@@ -42,6 +42,8 @@ export interface RequestOptions {
   params?: Record<string, string | number>;
   query?: Record<string, string | number | boolean | undefined | null>;
   body?: unknown;
+  /** Multipart body (file uploads). Sent as-is; the browser or Node sets the boundary header. */
+  form?: FormData;
   signal?: AbortSignal;
 }
 
@@ -102,16 +104,19 @@ export function createClient(options: ClientOptions) {
   const timeoutMs = options.timeoutMs ?? 15_000;
   const timezone = options.timezone ?? defaultTimezone();
 
-  async function raw<T>(method: HttpMethod, path: ApiPath, opts: RequestOptions = {}): Promise<Envelope<T>> {
+  /** Sends a request and returns the successful Response; throws ApiError otherwise. */
+  async function send(method: HttpMethod, path: ApiPath, opts: RequestOptions, accept: string): Promise<Response> {
     const url = `${baseUrl}${buildPath(path, opts.params)}${buildQuery(opts.query)}`;
     const headers: Record<string, string> = {
-      Accept: "application/json",
+      Accept: accept,
       "Current-timezone": timezone,
       ...options.headers,
     };
     if (options.token) headers.Authorization = `Bearer ${options.token}`;
-    let body: string | undefined;
-    if (opts.body !== undefined) {
+    let body: string | FormData | undefined;
+    if (opts.form !== undefined) {
+      body = opts.form;
+    } else if (opts.body !== undefined) {
       headers["Content-Type"] = "application/json";
       body = JSON.stringify(opts.body);
     }
@@ -124,7 +129,24 @@ export function createClient(options: ClientOptions) {
     } catch (error) {
       throw new ApiError(0, path, null, `API unreachable on ${path}: ${(error as Error).message}`);
     }
+    if (!response.ok) {
+      const text = await response.text();
+      let json: unknown = null;
+      if (text) {
+        try {
+          json = JSON.parse(text);
+        } catch {
+          json = { message: text.slice(0, 200) };
+        }
+      }
+      const message = (json as { message?: string } | null)?.message;
+      throw new ApiError(response.status, path, json, message ? `API ${response.status}: ${message}` : undefined);
+    }
+    return response;
+  }
 
+  async function raw<T>(method: HttpMethod, path: ApiPath, opts: RequestOptions = {}): Promise<Envelope<T>> {
+    const response = await send(method, path, opts, "application/json");
     const text = await response.text();
     let json: unknown = null;
     if (text) {
@@ -134,11 +156,19 @@ export function createClient(options: ClientOptions) {
         json = { message: text.slice(0, 200) };
       }
     }
-    if (!response.ok) {
-      const message = (json as { message?: string } | null)?.message;
-      throw new ApiError(response.status, path, json, message ? `API ${response.status}: ${message}` : undefined);
-    }
     return json as Envelope<T>;
+  }
+
+  /** Binary download (exports, PDFs): the response body as bytes plus its content type and file name. */
+  async function download(method: HttpMethod, path: ApiPath, opts: RequestOptions = {}) {
+    const response = await send(method, path, opts, "*/*");
+    const disposition = response.headers.get("content-disposition") ?? "";
+    const filename = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)?.[1] ?? null;
+    return {
+      data: new Uint8Array(await response.arrayBuffer()),
+      contentType: response.headers.get("content-type"),
+      filename: filename ? decodeURIComponent(filename) : null,
+    };
   }
 
   async function request<T>(method: HttpMethod, path: ApiPath, opts?: RequestOptions): Promise<T> {
@@ -149,6 +179,7 @@ export function createClient(options: ClientOptions) {
     baseUrl,
     raw,
     request,
+    download,
     /** A copy of this client that sends `token`. */
     withToken: (token: string | null) => createClient({ ...options, token }),
 

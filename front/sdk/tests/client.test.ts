@@ -117,3 +117,35 @@ describe("demoStudentSession", () => {
     ).rejects.toMatchObject({ status: 500 });
   });
 });
+
+describe("multipart and downloads", () => {
+  it("sends a FormData body without a JSON content type", async () => {
+    const { fn, calls } = fakeFetch([{ body: { success: true, data: { id: 5 } } }]);
+    const api = createClient({ baseUrl: "http://t.test", token: "tok", fetch: fn });
+    const form = new FormData();
+    form.set("title", "A");
+    form.set("file", new Blob(["x"]), "a.txt");
+    const out = await api.request<{ id: number }>("POST", "/api/admin/file/upload", { form });
+    expect(out.id).toBe(5);
+    expect(calls[0]?.init.body).toBe(form);
+    expect((calls[0]?.init.headers as Record<string, string>)["Content-Type"]).toBeUndefined();
+  });
+
+  it("downloads bytes with content type and file name", async () => {
+    const fn = (async () =>
+      new Response(new Uint8Array([1, 2, 3]), {
+        headers: { "content-type": "application/zip", "content-disposition": 'attachment; filename="course-1.zip"' },
+      })) as unknown as typeof fetch;
+    const api = createClient({ baseUrl: "http://t.test", token: "tok", fetch: fn });
+    const file = await api.download("GET", "/api/admin/courses/{id}/export", { params: { id: 1 } });
+    expect(Array.from(file.data)).toEqual([1, 2, 3]);
+    expect(file.contentType).toBe("application/zip");
+    expect(file.filename).toBe("course-1.zip");
+  });
+
+  it("download throws ApiError on a failure", async () => {
+    const { fn } = fakeFetch([{ status: 403, body: { message: "nope" } }]);
+    const api = createClient({ baseUrl: "http://t.test", token: "tok", fetch: fn });
+    await expect(api.download("GET", "/api/admin/courses/{id}/export", { params: { id: 1 } })).rejects.toMatchObject({ status: 403 });
+  });
+});
