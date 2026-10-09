@@ -48,6 +48,24 @@ class CourseH5PProgressApiTest extends TestCase
         return $this->actingAs($this->user, 'api')->postJson('/api/courses/progress/' . $this->topic->getKey() . '/h5p', $body);
     }
 
+    public function test_a_user_without_access_to_the_course_cannot_store_events(): void
+    {
+        $stranger = User::factory()->create();
+
+        $this->actingAs($stranger, 'api')
+            ->postJson('/api/courses/progress/' . $this->topic->getKey() . '/h5p', ['event' => $this->statement()])
+            ->assertForbidden();
+
+        $this->assertSame(0, H5PUserProgress::query()->where('user_id', $stranger->getKey())->count());
+    }
+
+    public function test_guests_and_unknown_topics_are_refused(): void
+    {
+        $this->postJson('/api/courses/progress/' . $this->topic->getKey() . '/h5p', ['event' => $this->statement()])->assertUnauthorized();
+        // a topic of another tenant is not in this tenant's database
+        $this->actingAs($this->user, 'api')->postJson('/api/courses/progress/999999/h5p', ['event' => $this->statement()])->assertNotFound();
+    }
+
     public function test_a_statement_object_as_the_event_is_stored_as_json(): void
     {
         $statement = $this->statement();
