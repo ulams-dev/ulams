@@ -76,9 +76,9 @@ jobs:
         ports:
           - 6379:6379
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
 
@@ -158,14 +158,14 @@ jobs:
       CACHE_DRIVER: array
       CACHE_STORE: array
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Start Moodle 5.0 (first start installs it, a few minutes)
         run: |
           echo "127.0.0.1 moodle.test ulams.test front.test" | sudo tee -a /etc/hosts
           docker compose -f .github/conformance/compose.yml --profile lti up -d
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
 
@@ -251,9 +251,9 @@ jobs:
       QUEUE_CONNECTION: sync
       SALTIRE_PLATFORM: ${{ inputs.saltire_platform }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
 
