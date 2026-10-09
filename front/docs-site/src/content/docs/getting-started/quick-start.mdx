@@ -91,7 +91,7 @@ Check it works:
 
 ## Create the demo academies
 
-The three demo tenants are created with the tenancy package and seeded with their courses.
+The six demo tenants are created with the tenancy package and seeded with their courses.
 Run the tenant commands inside the API container, on the platform (without `--domain`):
 
 <Steps>
@@ -104,8 +104,13 @@ Run the tenant commands inside the API container, on the platform (without `--do
    php artisan ulams:tenant:create coffee --name="The Coffee Atlas" --theme=coffee --accent="#C2552D"
    php artisan ulams:tenant:create oncall --name="On-Call" --theme=oncall --accent="#58A6FF"
    php artisan ulams:tenant:create nightsky --name="Night Sky Explorers" --theme=nightsky --accent="#FFD23F"
+   php artisan ulams:tenant:create gravity --name="Gravity Lab" --theme=gravity --accent="#3DD6F5"
+   php artisan ulams:tenant:create poland --name="Poland, Measured" --theme=poland --accent="#C8102E"
+   php artisan ulams:tenant:create ulam --name="The Scottish Book" --theme=ulam --accent="#1D3B8F"
    exit
    ```
+
+   `make -C api demo-create-tenants` runs the same six commands.
 
 2. Import the H5P content types into the H5P service. The demo seeders build H5P topics through
    the service and skip them, with a warning, if it cannot be reached.
@@ -114,13 +119,13 @@ Run the tenant commands inside the API container, on the platform (without `--do
    make -C api h5p-seed
    ```
 
-3. Seed the demo courses: all three on the platform, then one per tenant.
+3. Seed the demo courses: all six on the platform, then one per tenant.
 
    ```bash
    make -C api demo-seed demo-seed-tenants
    ```
 
-4. Optional: turn on demo mode (password-less login and an hourly reset) for the three tenants.
+4. Optional: turn on demo mode (password-less login and an hourly reset) for the six tenants.
 
    ```bash
    make -C api demo-mode-on
@@ -128,7 +133,7 @@ Run the tenant commands inside the API container, on the platform (without `--do
 
 </Steps>
 
-Open http://coffee.app.localhost, http://oncall.app.localhost or http://nightsky.app.localhost.
+Open http://coffee.app.localhost, http://oncall.app.localhost, http://nightsky.app.localhost, http://gravity.app.localhost, http://poland.app.localhost or http://ulam.app.localhost.
 Caddy sends `*.app.localhost` to the reference frontend on port 4321, so `yarn dev:web` must be
 running. The same tenants in the legacy React app are at `http://<slug>.app.localhost:3000`.
 
@@ -150,10 +155,11 @@ container writes when it starts, so start the stack first.
 | `migrate-fresh` | `migrate-fresh-quick` followed by `h5p-seed` |
 | `migrate-fresh-quick` | `migrate:fresh --seed` on the platform database, new Passport keys and personal access client |
 | `h5p-seed` | Imports the curated H5P content types and samples into the H5P service |
-| `demo-seed` | Seeds all three demo courses on the platform tenant (`api.localhost`) |
+| `demo-seed` | Seeds all six demo courses on the platform tenant (`api.localhost`) |
 | `demo-seed-tenant DOMAIN=coffee.localhost` | Seeds one tenant with its own course (experience = first label of the domain), then processes its video queue once |
-| `demo-seed-tenants` | `demo-seed-tenant` for coffee, oncall and nightsky |
-| `demo-mode-on` | Writes `DEMO_MODE=true` for the three demo tenants (`ulams:tenant:create <slug> --demo=on`) |
+| `demo-seed-tenants` | `demo-seed-tenant` for coffee, oncall, nightsky, gravity, poland and ulam |
+| `demo-create-tenants` | `ulams:tenant:create` for the six demo tenants, with their names, themes and accents |
+| `demo-mode-on` | Writes `DEMO_MODE=true` for the six demo tenants (`ulams:tenant:create <slug> --demo=on`) |
 | `demo-reset DOMAIN=coffee.localhost` | Wipes and reseeds one demo tenant now (the scheduler does it hourly) |
 | `swagger-generate` | Regenerates the OpenAPI spec (`php artisan l5-swagger:generate`) |
 | `backup-postgres` | Dumps the platform database to `api/docker/postgres-backups/backup-<timestamp>.sql` and `backup-latest.sql` |

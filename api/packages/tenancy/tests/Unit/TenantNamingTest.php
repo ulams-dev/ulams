@@ -23,6 +23,15 @@ class TenantNamingTest extends TestCase
         $this->assertSame(Tenant::STATUS_PROVISIONING, $attributes['status']);
     }
 
+    public function testTheSixDemoSlugsFitTheMyDevilDatabaseNameLimit(): void
+    {
+        foreach (['coffee', 'oncall', 'nightsky', 'gravity', 'poland', 'ulam'] as $slug) {
+            TenantNaming::assertValidSlug($slug);
+            $this->assertLessThanOrEqual(10, strlen($slug), $slug);
+            $this->assertSame("{$slug}.app.localhost", TenantNaming::newTenantAttributes($slug)['front_host']);
+        }
+    }
+
     public function testEveryTenantGetsItsOwnSecrets(): void
     {
         $a = TenantNaming::newTenantAttributes('alpha');

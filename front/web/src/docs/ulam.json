@@ -1,0 +1,262 @@
+{
+  "component": "Page",
+  "props": {
+    "theme": "ulam",
+    "title": "The Scottish Book — Stanisław Ulam and the Lwów School of Mathematics",
+    "description": "A free course on Stanisław Ulam, the Lwów School of Mathematics and the Scottish Book, with five live interactives.",
+    "lang": "en"
+  },
+  "children": [
+    {
+      "component": "SiteHeader",
+      "props": {
+        "brand": "The Scottish Book",
+        "mark": "sigma",
+        "links": [
+          {
+            "label": "Notebooks",
+            "href": "#syllabus"
+          },
+          {
+            "label": "Interactives",
+            "href": "#interactives"
+          },
+          {
+            "label": "Sources",
+            "href": "#sources"
+          },
+          {
+            "label": "FAQ",
+            "href": "#faq"
+          }
+        ],
+        "signIn": {
+          "label": "Log in",
+          "href": "/login"
+        },
+        "cta": {
+          "label": {
+            "$data": "/course/landing/cta",
+            "$default": "Start the free course"
+          },
+          "href": {
+            "$data": "/course/previewHref",
+            "$default": "/"
+          }
+        }
+      }
+    },
+    {
+      "component": "Main",
+      "children": [
+        {
+          "component": "Hero",
+          "props": {
+            "variant": "notebook",
+            "eyebrow": "free course · five live interactives",
+            "title": {
+              "$data": "/course/landing/headline",
+              "$default": "Mathematics at the Scottish Café"
+            },
+            "titleAccent": "Scottish Café",
+            "subtitle": {
+              "$data": "/course/landing/subheadline",
+              "$default": "Ulam, the Lwów School and a notebook of open problems."
+            },
+            "body": {
+              "$data": "/course/summary",
+              "$default": "Follow Stanisław Ulam and the Lwów School of Mathematics through live interactives and the problems of the Scottish Book."
+            },
+            "primaryCta": {
+              "label": {
+                "$data": "/course/landing/cta",
+                "$default": "Start the free course"
+              },
+              "href": {
+                "$data": "/course/previewHref",
+                "$default": "/"
+              }
+            },
+            "secondaryCta": {
+              "label": "Open the notebooks",
+              "href": "#syllabus"
+            },
+            "facts": {
+              "$data": "/course/facts"
+            },
+            "showcase": {
+              "$data": "/showcase"
+            }
+          }
+        },
+        {
+          "component": "FormatGrid",
+          "props": {
+            "id": "interactives",
+            "eyebrow": "Five interactives",
+            "title": "Play with the mathematics",
+            "intro": "Each one runs in your browser and has a text version.",
+            "items": [
+              {
+                "format": "interactive",
+                "tag": "Explore",
+                "name": "The Ulam spiral",
+                "text": "Wind the integers into a square spiral and look at where the primes fall."
+              },
+              {
+                "format": "interactive",
+                "tag": "Simulate",
+                "name": "Monte Carlo",
+                "text": "Estimate pi by throwing random points and watch the estimate settle."
+              },
+              {
+                "format": "interactive",
+                "tag": "Experiment",
+                "name": "Cellular automata",
+                "text": "Change a rule and see what a grid of cells grows into."
+              },
+              {
+                "format": "interactive",
+                "tag": "Read",
+                "name": "The Scottish Book",
+                "text": "Browse problems from the notebook, with their statements and sources."
+              },
+              {
+                "format": "interactive",
+                "tag": "Travel",
+                "name": "The Lwów map",
+                "text": "Follow a route through the city where the problems were written."
+              }
+            ]
+          }
+        },
+        {
+          "component": "Syllabus",
+          "props": {
+            "variant": "timeline",
+            "eyebrow": "Notebooks",
+            "title": "The course, notebook by notebook",
+            "intro": "Short notebooks you can read in order or jump between.",
+            "lessons": {
+              "$data": "/course/lessons"
+            },
+            "totalLabel": {
+              "$data": "/course/lessonsLabel"
+            }
+          }
+        },
+        {
+          "component": "Badges",
+          "props": {
+            "eyebrow": "In the course",
+            "title": "Free, cited, certified",
+            "intro": "Open to everyone in this demo.",
+            "items": [
+              {
+                "name": "Free",
+                "text": "No payment and no card.",
+                "icon": "star"
+              },
+              {
+                "name": "Cited",
+                "text": "Every historical claim links to a source.",
+                "icon": "quote"
+              },
+              {
+                "name": "Certificate",
+                "text": "A certificate when you finish the course.",
+                "icon": "medal"
+              }
+            ]
+          }
+        },
+        {
+          "component": "FeatureList",
+          "props": {
+            "id": "sources",
+            "variant": "checks",
+            "eyebrow": "Sources",
+            "title": "Where the history comes from",
+            "items": {
+              "$data": "/course/lists/sources",
+              "$default": [
+                {
+                  "title": "Primary and published sources, linked next to every claim"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "component": "Faq",
+          "props": {
+            "eyebrow": "Questions",
+            "title": "Before you start",
+            "items": {
+              "$data": "/course/faq",
+              "$default": [
+                {
+                  "q": "Why is the product called ulams?",
+                  "a": "The product takes its name from Stanisław Ulam, a mathematician who contributed problems to the Scottish Book. This academy is a small tribute; it does not imply endorsement by his family or estate."
+                },
+                {
+                  "q": "Do I need to know advanced mathematics?",
+                  "a": "No. The interactives and texts start from school mathematics; the history is explained as it goes."
+                },
+                {
+                  "q": "Is it free?",
+                  "a": "Yes, the course and the certificate are free."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "component": "CtaBand",
+          "props": {
+            "variant": "banner",
+            "eyebrow": "Ready?",
+            "title": "Open the first notebook",
+            "text": "Start with the welcome notebook.",
+            "cta": {
+              "label": {
+                "$data": "/course/landing/cta",
+                "$default": "Start the free course"
+              },
+              "href": {
+                "$data": "/course/previewHref",
+                "$default": "/"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "component": "SiteFooter",
+      "props": {
+        "brand": "The Scottish Book",
+        "text": "A free demo academy on ulams.",
+        "links": [
+          {
+            "label": "Notebooks",
+            "href": "#syllabus"
+          },
+          {
+            "label": "Interactives",
+            "href": "#interactives"
+          },
+          {
+            "label": "Sources",
+            "href": "#sources"
+          },
+          {
+            "label": "FAQ",
+            "href": "#faq"
+          }
+        ],
+        "note": "Stanisław Ulam is named as history, not as an account or an endorsement. The interactives run in a sandbox."
+      }
+    }
+  ]
+}

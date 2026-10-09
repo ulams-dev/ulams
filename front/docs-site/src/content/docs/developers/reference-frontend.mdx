@@ -47,7 +47,7 @@ What learners see is described in [Learners](/learners/); this page covers the c
     - lti/launch.ts LTI landing
     - healthz.ts
   - lib/ config, tenant, session, BFF rules, data cache, view models, page documents
-  - docs/ landing documents per theme (coffee, oncall, nightsky, platform)
+  - docs/ landing documents per theme (coffee, oncall, nightsky, gravity, poland, ulam, platform)
   - layouts/Base.astro
 
 </FileTree>
@@ -63,10 +63,10 @@ never inlined into the build). Defaults are in `src/lib/config.ts` and `front/we
 | `ULAMS_ADMIN_URL` | `http://{slug}.admin.localhost` | Tenant admin URL (demo badge) |
 | `ULAMS_PLATFORM_HOSTS` | `app.localhost,localhost,127.0.0.1` | Hosts that serve the platform landing instead of a tenant |
 | `ULAMS_DEFAULT_TENANT` | `coffee` | Tenant for hosts without a rule (for example a LAN IP); empty shows the tenant picker |
-| `ULAMS_DEMO_TENANTS` | `coffee,oncall,nightsky` | Demo tenants listed on the platform landing |
+| `ULAMS_DEMO_TENANTS` | `coffee,oncall,nightsky,gravity,poland,ulam` | Demo tenants listed on the platform landing |
 | `ULAMS_LANDING_STATUS` | `final` | What the platform landing shows for roadmap items: `final` (also used for any other value) renders everything as delivered, `actual` keeps the honest Coming and Partial labels. Run `actual` (or confirm everything shipped) before a public launch; see [Environment](/operators/environment/#the-platform-landing-switch) |
 | `ULAMS_CACHE_TTL` | `45` | Seconds public API data stays fresh in the server cache (minimum 5) |
-| `ULAMS_WARM_TENANTS` | `coffee,oncall,nightsky` | Tenants whose public data is fetched at server start |
+| `ULAMS_WARM_TENANTS` | `coffee,oncall,nightsky,gravity,poland,ulam` | Tenants whose public data is fetched at server start |
 | `DEMO_STUDENT_EMAIL`, `DEMO_STUDENT_PASSWORD` | `student1@{slug}.ulams.app`, empty | Fallback login when a tenant has no demo mode; never sent to the browser |
 
 ### The platform landing's stories
@@ -287,7 +287,7 @@ props (flat, explicit enums, defaults, safe-link format) and a plain-text fallba
 | `@ulams/ui/registry` | `registry`, `FORMATS`, `THEMES`, `ICONS` |
 | `@ulams/ui/schema` | `validate()` (a JSON Schema subset) and `isSafeHref()` |
 | `@ulams/ui/components/*`, `@ulams/ui/elements/*` | The Astro components and web components |
-| `@ulams/ui/styles/*` | Base styles, font fallbacks, theme presets (`coffee`, `oncall`, `nightsky`, `platform`) |
+| `@ulams/ui/styles/*` | Base styles, font fallbacks, theme presets (`coffee`, `oncall`, `nightsky`, `gravity`, `poland`, `ulam`, `platform`) |
 
 ```astro
 ---

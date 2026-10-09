@@ -65,6 +65,11 @@ export default defineConfig({
       { provider: google, name: "Newsreader", cssVariable: "--font-newsreader", weights: [400, 500], styles: ["normal", "italic"], subsets: latin, fallbacks: ["Georgia", "serif"], optimizedFallbacks: false },
       { provider: google, name: "Comfortaa", cssVariable: "--font-comfortaa", weights: [500, 700], styles: ["normal"], subsets: latin, fallbacks: ["Comfortaa fallback", "sans-serif"], optimizedFallbacks: false },
       { provider: google, name: "Quicksand", cssVariable: "--font-quicksand", weights: [400, 500, 600, 700], styles: ["normal"], subsets: latin, fallbacks: ["Quicksand fallback", "sans-serif"], optimizedFallbacks: false },
+      // Poland and Ulam demos
+      { provider: google, name: "Source Serif 4", cssVariable: "--font-source-serif", weights: [400, 600, 700], styles: ["normal", "italic"], subsets: latin, fallbacks: ["Source Serif 4 fallback", "serif"], optimizedFallbacks: false },
+      { provider: google, name: "IBM Plex Sans", cssVariable: "--font-plex-sans", weights: [400, 500, 600], styles: ["normal"], subsets: latin, fallbacks: ["IBM Plex Sans fallback", "sans-serif"], optimizedFallbacks: false },
+      { provider: google, name: "IBM Plex Mono", cssVariable: "--font-plex-mono", weights: [400, 500], styles: ["normal"], subsets: latin, fallbacks: ["IBM Plex Mono fallback", "monospace"], optimizedFallbacks: false },
+      { provider: google, name: "EB Garamond", cssVariable: "--font-eb-garamond", weights: [400, 500, 600], styles: ["normal", "italic"], subsets: latin, fallbacks: ["EB Garamond fallback", "serif"], optimizedFallbacks: false },
     ],
   },
 });

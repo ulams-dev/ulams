@@ -28,8 +28,8 @@ const finished = remaining.length === 0;
 const today = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" }).format(new Date());
 const company = settings?.global?.companyName ?? course.title;
 const headline = finished
-  ? { coffee: "Your signature cup is ready.", oncall: "Incident closed. Well commanded.", nightsky: "Mission complete, explorer!" }[theme]
-  : { coffee: "The last page, almost.", oncall: "Almost there: a few items left.", nightsky: "So close to the stars!" }[theme];
+  ? { coffee: "Your signature cup is ready.", oncall: "Incident closed. Well commanded.", nightsky: "Mission complete, explorer!", gravity: "Escape velocity reached", poland: "Measured and done", ulam: "Problem solved — no goose required", platform: "Course complete" }[theme]
+  : { coffee: "The last page, almost.", oncall: "Almost there: a few items left.", nightsky: "So close to the stars!", gravity: "Almost in orbit", poland: "Nearly measured", ulam: "One more problem to go", platform: "Almost there" }[theme];
 ---
 
 <Base theme={theme} accent={settings?.theme?.accent} title={`Finish — ${course.title}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>

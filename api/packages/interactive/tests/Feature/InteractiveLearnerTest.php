@@ -122,6 +122,90 @@ class InteractiveLearnerTest extends TestCase
         $this->assertSame(ProgressStatus::COMPLETE, $this->progressStatus($topic, $student));
     }
 
+    /** A topic in an active lesson (the lesson factory picks `active` at random). */
+    private function liveTopic(array $content = []): Topic
+    {
+        $topic = $this->topic($content);
+        $topic->lesson->update(['active' => true]);
+
+        return $topic->refresh();
+    }
+
+    // ---- showcase (landing pages)
+
+    public function testTheShowcaseIsPublicNeedsNoLoginAndTracksNothing(): void
+    {
+        $this->course->update(['public' => true]);
+        $topic = $this->liveTopic(['start_step' => 'middle', 'end_step' => 'last']);
+
+        $data = $this->getJson('/api/interactive/showcase')->assertOk()->json('data');
+
+        $key = $this->package->storage_key;
+        $this->assertSame("http://coffee.content.localhost/interactive/{$key}/v1/index.html", $data['url']);
+        $this->assertSame(['intro', 'middle', 'last'], array_column($data['manifest']['steps'], 'id'));
+        $this->assertSame('middle', $data['topic']['start_step']);
+        $this->assertSame(array_keys($this->actingAs($this->student(), 'api')->postJson("/api/interactive/launches/{$topic->getKey()}")->json('data')), array_keys($data));
+        $this->assertStringNotContainsString('token', strtolower(json_encode($data)));
+    }
+
+    public function testTheShowcaseCreatesNoProgress(): void
+    {
+        $this->course->update(['public' => true]);
+        $this->liveTopic();
+
+        $this->getJson('/api/interactive/showcase')->assertOk();
+
+        $this->assertSame(0, InteractiveProgress::query()->count());
+        $this->assertSame(0, $this->course->lessons()->first()->topics()->first()->progress()->count());
+    }
+
+    public function testTheShowcaseSkipsCoursesThatAreNotPublicAndPublished(): void
+    {
+        $this->liveTopic();
+        $this->getJson('/api/interactive/showcase')->assertNotFound();
+
+        $this->course->update(['public' => true, 'status' => 'draft']);
+        $this->getJson('/api/interactive/showcase')->assertNotFound();
+
+        $this->course->update(['status' => 'archived']);
+        $this->getJson('/api/interactive/showcase')->assertNotFound();
+    }
+
+    public function testTheShowcaseSkipsInactiveTopicsAndTakesTheFirstInOrder(): void
+    {
+        $this->course->update(['public' => true]);
+        $hidden = $this->liveTopic();
+        $hidden->update(['active' => false]);
+        $this->getJson('/api/interactive/showcase')->assertNotFound();
+
+        $second = $this->liveTopic(['start_step' => 'last']);
+        $first = $this->liveTopic(['start_step' => 'middle']);
+        $hidden->lesson->update(['order' => 1]);
+        $second->lesson->update(['order' => 3]);
+        $first->lesson->update(['order' => 2]);
+        $this->getJson('/api/interactive/showcase')->assertOk()->assertJsonPath('data.topic.start_step', 'middle');
+    }
+
+    public function testTheShowcaseAnswers404WhenOffAndNoContentOriginAnswers503(): void
+    {
+        $this->course->update(['public' => true]);
+        $this->liveTopic();
+
+        config(['ulams_uploads.content_origin' => null, 'scorm.content_origin' => null]);
+        $this->getJson('/api/interactive/showcase')->assertStatus(503);
+
+        config(['ulams_interactive.enabled' => false]);
+        $this->getJson('/api/interactive/showcase')->assertNotFound();
+    }
+
+    public function testTheShowcaseRouteIsThrottled(): void
+    {
+        $route = app('router')->getRoutes()->match(\Illuminate\Http\Request::create('/api/interactive/showcase', 'GET'));
+
+        $this->assertContains('throttle:60,1', $route->gatherMiddleware());
+        $this->assertNotContains('auth:api', $route->gatherMiddleware());
+    }
+
     // ---- completion rules
 
     public function testRangeEndCompletesOnTheEndStepOrOnComplete(): void

@@ -1,0 +1,251 @@
+{
+  "component": "Page",
+  "props": {
+    "theme": "gravity",
+    "title": "Gravity Lab — learn how gravity shapes the solar system",
+    "description": "A free course inside a live, real-data solar system: explore the simulation, read a short explanation, check yourself with a quiz.",
+    "lang": "en"
+  },
+  "children": [
+    {
+      "component": "SiteHeader",
+      "props": {
+        "brand": "Gravity Lab",
+        "mark": "orbit",
+        "links": [
+          {
+            "label": "Flight plan",
+            "href": "#syllabus"
+          },
+          {
+            "label": "How it works",
+            "href": "#how"
+          },
+          {
+            "label": "Data",
+            "href": "#sources"
+          },
+          {
+            "label": "FAQ",
+            "href": "#faq"
+          }
+        ],
+        "signIn": {
+          "label": "Log in",
+          "href": "/login"
+        },
+        "cta": {
+          "label": {
+            "$data": "/course/landing/cta",
+            "$default": "Start the free course"
+          },
+          "href": {
+            "$data": "/course/previewHref",
+            "$default": "/"
+          }
+        }
+      }
+    },
+    {
+      "component": "Main",
+      "children": [
+        {
+          "component": "Hero",
+          "props": {
+            "variant": "cosmos",
+            "eyebrow": "free course · live simulation",
+            "title": {
+              "$data": "/course/landing/headline",
+              "$default": "Fall into the solar system"
+            },
+            "titleAccent": "solar system",
+            "subtitle": {
+              "$data": "/course/landing/subheadline",
+              "$default": "A real-data solar system you learn inside."
+            },
+            "body": {
+              "$data": "/course/summary",
+              "$default": "Learn how gravity builds orbits, tides and the shape of the solar system, one step at a time, inside a live simulation."
+            },
+            "primaryCta": {
+              "label": {
+                "$data": "/course/landing/cta",
+                "$default": "Start the free course"
+              },
+              "href": {
+                "$data": "/course/previewHref",
+                "$default": "/"
+              }
+            },
+            "secondaryCta": {
+              "label": "See the flight plan",
+              "href": "#syllabus"
+            },
+            "facts": {
+              "$data": "/course/facts"
+            },
+            "showcase": {
+              "$data": "/showcase"
+            }
+          }
+        },
+        {
+          "component": "FeatureList",
+          "props": {
+            "id": "how",
+            "variant": "tiles",
+            "eyebrow": "How it works",
+            "title": "Look, read, check",
+            "intro": "Every module pairs the simulation with a short text and a quiz.",
+            "items": [
+              {
+                "icon": "planet",
+                "title": "Explore the live simulation",
+                "text": "Move through the solar system and watch orbits form from a few simple rules."
+              },
+              {
+                "icon": "book",
+                "title": "Read the short explanation",
+                "text": "A few paragraphs per step, so you know what you are looking at and why."
+              },
+              {
+                "icon": "check",
+                "title": "Check yourself",
+                "text": "A short quiz after each module shows what stuck."
+              }
+            ]
+          }
+        },
+        {
+          "component": "Syllabus",
+          "props": {
+            "variant": "orbits",
+            "eyebrow": "Flight plan",
+            "title": "Modules on their orbits",
+            "intro": "Work from the inner orbits outward: each module builds on the one before it.",
+            "lessons": {
+              "$data": "/course/lessons"
+            },
+            "totalLabel": {
+              "$data": "/course/lessonsLabel"
+            }
+          }
+        },
+        {
+          "component": "Badges",
+          "props": {
+            "eyebrow": "In the course",
+            "title": "Free, certified, in your browser",
+            "intro": "Everything is open in this demo.",
+            "items": [
+              {
+                "name": "Free",
+                "text": "No payment and no card.",
+                "icon": "star"
+              },
+              {
+                "name": "Certificate",
+                "text": "A certificate when you finish the course.",
+                "icon": "medal"
+              },
+              {
+                "name": "Live simulation",
+                "text": "Runs in your browser; a keyboard-usable text version of every step is included.",
+                "icon": "planet"
+              }
+            ]
+          }
+        },
+        {
+          "component": "FeatureList",
+          "props": {
+            "id": "sources",
+            "variant": "checks",
+            "eyebrow": "Data you can trust",
+            "title": "Where the numbers come from",
+            "items": {
+              "$data": "/course/lists/sources",
+              "$default": [
+                {
+                  "title": "Orbital elements follow the JPL approximate positions of the major planets"
+                },
+                {
+                  "title": "Planet facts follow public NASA fact sheets"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "component": "Faq",
+          "props": {
+            "eyebrow": "Questions",
+            "title": "Before you start",
+            "items": {
+              "$data": "/course/faq",
+              "$default": [
+                {
+                  "q": "Do I need to install anything?",
+                  "a": "No. The simulation runs in a current browser. If your device cannot run 3D graphics, every step has a text version."
+                },
+                {
+                  "q": "Is it really free?",
+                  "a": "Yes. The course is free and open; the certificate is free too."
+                },
+                {
+                  "q": "Can I use it with a keyboard or screen reader?",
+                  "a": "Yes. The steps, controls and text versions are built for keyboard and assistive technology, and the animation respects reduced motion."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "component": "CtaBand",
+          "props": {
+            "variant": "banner",
+            "eyebrow": "Ready?",
+            "title": "Open the simulation",
+            "text": "Start with the first module. It takes a few minutes.",
+            "cta": {
+              "label": {
+                "$data": "/course/landing/cta",
+                "$default": "Start the free course"
+              },
+              "href": {
+                "$data": "/course/previewHref",
+                "$default": "/"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "component": "SiteFooter",
+      "props": {
+        "brand": "Gravity Lab",
+        "text": "A free demo academy on ulams.",
+        "links": [
+          {
+            "label": "Flight plan",
+            "href": "#syllabus"
+          },
+          {
+            "label": "Data",
+            "href": "#sources"
+          },
+          {
+            "label": "FAQ",
+            "href": "#faq"
+          },
+          {
+            "label": "Simulation source",
+            "href": "https://github.com/qunabu/Gravity"
+          }
+        ],
+        "note": "Simulation: MIT, by Mateusz Wojczal, source on GitHub (qunabu/Gravity). Orbital elements after JPL (E. M. Standish). Earth map: Solar System Scope, CC BY 4.0."
+      }
+    }
+  ]
+}

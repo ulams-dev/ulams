@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Course, Tenant, Topic } from "@ulams/sdk";
 import { matchBffRule } from "../../src/lib/bff.ts";
-import { interactiveLaunch, interactiveNode, interactivePreview, isImmersive, pickLocale, type InteractiveLaunch } from "../../src/lib/interactive.ts";
+import { fetchShowcase, interactiveLaunch, interactiveNode, showcaseProps, interactivePreview, isImmersive, pickLocale, type InteractiveLaunch } from "../../src/lib/interactive.ts";
 import { completionMode, topicDoc } from "../../src/lib/page-docs.ts";
 
 const tenant = { slug: "coffee", apiUrl: "http://coffee.localhost" } as Tenant;
@@ -152,5 +152,32 @@ describe("BFF", () => {
     expect(matchBffRule("GET", "/api/interactive/topics/42/events")).toBeNull();
     expect(matchBffRule("POST", "/api/interactive/topics/x/events")).toBeNull();
     expect(matchBffRule("POST", "/api/admin/interactive")).toBeNull();
+  });
+});
+
+describe("landing showcase", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("builds hero props with the localised text and no tracking ids", () => {
+    const props = showcaseProps(launch(), "pl");
+    expect(props).toMatchObject({ src: "https://content.test/interactive/k/v1/index.html", title: "Gravity", locale: "pl", licence: "MIT", requires: ["webgl"], reducedMotionSupported: true });
+    expect((props.steps as Array<{ title: string }>)[0]!.title).toBe("Wstęp");
+    expect(props).not.toHaveProperty("topicId");
+    expect(props).not.toHaveProperty("courseId");
+  });
+
+  it("fetches the public endpoint without credentials and treats any failure as none", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ data: launch() }) });
+    vi.stubGlobal("fetch", fetchMock);
+    expect((await fetchShowcase(tenant))?.url).toContain("content.test");
+    expect(fetchMock.mock.calls[0]![0]).toBe("http://coffee.localhost/api/interactive/showcase");
+    expect(JSON.stringify(fetchMock.mock.calls[0]![1])).not.toContain("Authorization");
+
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, json: async () => ({}) }));
+    expect(await fetchShowcase(tenant)).toBeNull();
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("down")));
+    expect(await fetchShowcase(tenant)).toBeNull();
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => ({ data: { url: 5 } }) }));
+    expect(await fetchShowcase(tenant)).toBeNull();
   });
 });

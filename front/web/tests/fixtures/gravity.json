@@ -1,0 +1,139 @@
+{
+  "settings": {
+    "global": {
+      "companyName": "Gravity Lab",
+      "frontURL": "http://gravity.app.localhost"
+    },
+    "theme": {
+      "theme": "gravity",
+      "accent": "#3DD6F5"
+    }
+  },
+  "course": {
+    "id": 2,
+    "created_at": "2026-10-08T15:00:48.000000Z",
+    "updated_at": "2026-10-08T15:00:55.000000Z",
+    "title": "How gravity shapes the solar system",
+    "summary": "Learn how gravity builds orbits, tides and the shape of the solar system inside a live, real-data simulation.",
+    "image_path": null,
+    "video_path": null,
+    "duration": "1 welcome lesson (placeholder)",
+    "author_id": 2,
+    "author": {
+      "id": 2,
+      "first_name": "Maya",
+      "last_name": "Okonkwo",
+      "email": "tutor@gravity.ulams.app",
+      "path_avatar": null,
+      "url_avatar": null,
+      "interests": [],
+      "categories": []
+    },
+    "authors": [
+      {
+        "id": 2,
+        "first_name": "Maya",
+        "last_name": "Okonkwo",
+        "email": "tutor@gravity.ulams.app",
+        "path_avatar": null,
+        "url_avatar": null,
+        "interests": [],
+        "categories": []
+      }
+    ],
+    "status": "published",
+    "subtitle": "A real-data solar system you learn inside.",
+    "language": "en",
+    "description": "**Fall into the solar system.** Learn how gravity builds orbits, tides and the shape of the solar system inside a live, real-data simulation.",
+    "categories": [],
+    "tags": [],
+    "level": "Beginner",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Welcome to Gravity Lab",
+        "summary": "A short welcome. The full course arrives soon.",
+        "duration": "5 min",
+        "active": true,
+        "order": 1,
+        "course_id": 2,
+        "active_from": null,
+        "active_to": null,
+        "lessons": [],
+        "topics": [
+          {
+            "id": 1,
+            "title": "Welcome",
+            "lesson_id": 1,
+            "active": true,
+            "preview": true,
+            "topicable_id": 1,
+            "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+            "summary": "What this course is about.",
+            "introduction": null,
+            "description": null,
+            "order": 1,
+            "json": null,
+            "can_skip": false,
+            "duration": "5 min"
+          }
+        ]
+      }
+    ],
+    "poster_path": null,
+    "active_from": null,
+    "active_to": null,
+    "hours_to_complete": 3,
+    "findable": true,
+    "scorm_sco_id": null,
+    "target_group": "Curious kids, homeschool families, teachers running a club",
+    "users_count": 0,
+    "image_url": null,
+    "video_url": null,
+    "poster_url": null,
+    "teaser_url": null,
+    "public": true,
+    "fields": {
+      "experience": "gravity",
+      "landing": {
+        "headline": "Fall into the solar system",
+        "subheadline": "A real-data solar system you learn inside.",
+        "cta": "Open the simulation",
+        "faq": [
+          {
+            "q": "Do I need to install anything?",
+            "a": "No. The simulation runs in your browser; a recent browser with WebGL is enough."
+          }
+        ],
+        "lists": {
+          "sources": [
+            "planet and moon orbits from NASA/JPL Horizons",
+            "masses and radii from NASA planetary fact sheets"
+          ],
+          "features": [
+            "a live 3D simulation of the solar system",
+            "short explanations next to every step",
+            "quizzes after each module"
+          ]
+        }
+      }
+    },
+    "product": null,
+    "related_product": null
+  },
+  "products": [],
+  "webinars": [],
+  "events": [],
+  "tutors": [
+    {
+      "id": 2,
+      "first_name": "Maya",
+      "last_name": "Okonkwo",
+      "email": "tutor@gravity.ulams.app",
+      "path_avatar": null,
+      "url_avatar": null,
+      "interests": [],
+      "categories": []
+    }
+  ]
+}

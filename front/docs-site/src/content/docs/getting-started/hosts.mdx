@@ -31,6 +31,10 @@ tenant slug such as `coffee`.
 | `http://ws.localhost` | `soketi` (6001) | WebSockets (the broadcast driver is `log` by default, so nothing uses it yet) |
 | `http://metrics.localhost` | `soketi` (9601) | Soketi metrics |
 
+The tenant blocks are wildcards (`*.localhost`, `*.app.localhost`, `*.admin.localhost`, `*.content.localhost`), so a new
+tenant needs no Caddy change. The six demo tenants use `coffee`, `oncall`, `nightsky`, `gravity`, `poland` and `ulam` as the slug
+(for example `http://gravity.localhost`, `http://gravity.app.localhost` and `http://gravity.admin.localhost`).
+
 The `*.app.localhost` and `*.admin.localhost` blocks proxy to `host.docker.internal`, so the
 reference frontend (`yarn dev:web`) and the admin (`yarn dev:admin` or `yarn dev`) must run on the
 host. Caddy also publishes port 443, but every site is configured for plain HTTP.

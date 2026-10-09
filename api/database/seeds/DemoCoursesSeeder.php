@@ -4,8 +4,11 @@ namespace Database\Seeders;
 
 use Database\Seeders\Demo\CoffeeAtlasExperience;
 use Database\Seeders\Demo\DemoExperience;
+use Database\Seeders\Demo\GravityExperience;
 use Database\Seeders\Demo\NightSkyExperience;
 use Database\Seeders\Demo\OnCallExperience;
+use Database\Seeders\Demo\PolandExperience;
+use Database\Seeders\Demo\UlamExperience;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Auth;
@@ -18,11 +21,12 @@ use Ulams\Lrs\Database\Seeders\LrsSeeder;
 use Ulams\Lrs\Models\Access;
 
 /**
- * Seeds the three demo courses described in front/docs/design/experiences.md
+ * Seeds the demo courses described in front/docs/design/experiences.md
  * (The Coffee Atlas, On-Call, Night Sky Explorers) with all their media,
- * quizzes, projects, products, events and certificates.
+ * quizzes, projects, products, events and certificates, and the three free
+ * interactive academies (Gravity Lab, Poland, Measured, The Scottish Book).
  *
- *   php artisan db:seed --class=DemoCoursesSeeder                      # all three
+ *   php artisan db:seed --class=DemoCoursesSeeder                      # all six
  *   DEMO_EXPERIENCE=coffee php artisan db:seed --class=DemoCoursesSeeder
  *   php artisan db:seed --class=DemoCoursesSeeder --domain=coffee.localhost
  *
@@ -38,6 +42,9 @@ class DemoCoursesSeeder extends Seeder
         'coffee' => CoffeeAtlasExperience::class,
         'oncall' => OnCallExperience::class,
         'nightsky' => NightSkyExperience::class,
+        'gravity' => GravityExperience::class,
+        'poland' => PolandExperience::class,
+        'ulam' => UlamExperience::class,
     ];
 
     public function run(): void
@@ -84,7 +91,7 @@ class DemoCoursesSeeder extends Seeder
         }
         $unknown = array_diff($keys, array_keys(self::EXPERIENCES));
         if ($unknown) {
-            throw new RuntimeException('Unknown DEMO_EXPERIENCE: ' . implode(', ', $unknown) . ' (use coffee, oncall, nightsky or all)');
+            throw new RuntimeException('Unknown DEMO_EXPERIENCE: ' . implode(', ', $unknown) . ' (use coffee, oncall, nightsky, gravity, poland, ulam or all)');
         }
 
         return array_values($keys);

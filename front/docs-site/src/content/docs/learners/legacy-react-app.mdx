@@ -50,7 +50,7 @@ and Sentry integrations inherited from Wellms.
 
 - The course page (`/courses/:id`), the course player (`/course/:id/:lessonID?/:topicID?`) and
   a preview player (`/courses/preview/:id/...`).
-- Per-tenant landing pages for the three demo academies (`src/pages/landing/{coffee,oncall,nightsky}`).
+- Per-tenant landing pages for the first three demo academies (`src/pages/landing/{coffee,oncall,nightsky}`); `gravity`, `poland` and `ulam` are reference-frontend only and fall back to the coffee design.
 - Tenant detection from the browser host with the same host rule
   (`VITE_APP_TENANT_API_HOST_PATTERN`, default `{slug}.app.localhost=>http://{slug}.localhost`).
 - Demo mode: on a demo tenant it reads `ulams_demo` from `GET /api/config` and logs in as the

@@ -20,7 +20,7 @@ interface Lesson {
   href?: string;
 }
 interface Props {
-  variant?: "folio" | "timeline" | "missions";
+  variant?: "folio" | "timeline" | "missions" | "orbits" | "atlas";
   id?: string;
   eyebrow?: string;
   title?: string;
@@ -34,6 +34,7 @@ const { variant = "folio", id = "syllabus", eyebrow, title, intro, lessons, show
 const numberOf = (lesson: Lesson, i: number) => {
   if (variant === "folio") return lesson.kicker && /^[IVXLC]+$/.test(lesson.kicker) ? lesson.kicker : toRoman(i + 1);
   if (variant === "timeline") return `MOD ${String(i).padStart(2, "0")}`;
+  if (variant === "atlas") return String(i + 1).padStart(2, "0");
   return `${i + 1}`;
 };
 const hasPreview = (lesson: Lesson) => (lesson.topics ?? []).some((t) => t.preview);
@@ -155,6 +156,75 @@ const hasPreview = (lesson: Lesson) => (lesson.topics ?? []).some((t) => t.previ
                   <Icon name="rocket" />
                 </a>
               )}
+            </li>
+          ))}
+        </ol>
+      )
+    }
+
+    {
+      variant === "atlas" && (
+        <ol class="u-atlas" role="list">
+          {lessons.map((lesson, i) => (
+            <li class="u-atlas__row" data-reveal style={`--reveal-i:${i % 4}`}>
+              <span class="u-atlas__num" aria-hidden="true">
+                {numberOf(lesson, i)}
+              </span>
+              <div class="u-atlas__main">
+                <p class="u-atlas__kicker">{lesson.kicker ?? `Chapter ${i + 1}`}</p>
+                <h3 class="u-atlas__title">{lesson.href ? <a href={lesson.href}>{lesson.title}</a> : lesson.title}</h3>
+                {lesson.summary && <p class="u-atlas__summary">{lesson.summary}</p>}
+                {showTopics && (lesson.topics ?? []).length > 0 && (
+                  <ul class="u-atlas__topics" role="list">
+                    {(lesson.topics ?? []).map((topic) => (
+                      <li>
+                        <a href={topic.href ?? lesson.href ?? "#"} data-status={topic.status ?? "open"}>
+                          {topic.format && <Icon name={topic.format} />}
+                          <span>{topic.title}</span>
+                          {topic.format && <span class="u-visually-hidden">({formatLabel(topic.format)})</span>}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <p class="u-atlas__meta">
+                {lesson.minutes ? <span>{formatMinutes(lesson.minutes)}</span> : null}
+                <span>{(lesson.topics ?? []).length} topics</span>
+              </p>
+            </li>
+          ))}
+        </ol>
+      )
+    }
+
+    {
+      variant === "orbits" && (
+        <ol class="u-orbits" role="list" style={`--n:${lessons.length}`}>
+          {lessons.map((lesson, i) => (
+            <li class="u-orbit" data-reveal style={`--i:${i};--reveal-i:${i % 3}`}>
+              <span class="u-orbit__ring" aria-hidden="true">
+                <span class="u-orbit__body">{numberOf(lesson, i)}</span>
+              </span>
+              <div class="u-orbit__card u-card">
+                <p class="u-orbit__label">
+                  {lesson.kicker ?? `Module ${i + 1}`}
+                  {lesson.minutes ? ` · ${formatMinutes(lesson.minutes)}` : ""}
+                  {hasPreview(lesson) && <span class="u-tag">Free</span>}
+                </p>
+                <h3>{lesson.href ? <a href={lesson.href}>{lesson.title}</a> : lesson.title}</h3>
+                {lesson.summary && <p class="u-orbit__summary">{lesson.summary}</p>}
+                {showTopics && (lesson.topics ?? []).length > 0 && (
+                  <ul class="u-orbit__topics" role="list">
+                    {(lesson.topics ?? []).map((topic) => (
+                      <li>
+                        {topic.format && <Icon name={topic.format} />}
+                        <span>{topic.title}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </li>
           ))}
         </ol>
@@ -508,6 +578,210 @@ const hasPreview = (lesson: Lesson) => (lesson.topics ?? []).some((t) => t.previ
     .u-mission:nth-child(3n + 2),
     .u-mission:nth-child(3n + 2):hover {
       transform: none;
+    }
+  }
+
+  /* atlas: an atlas table of contents with chapter numbers */
+  .u-atlas {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 2px solid var(--ulams-color-text);
+  }
+  .u-atlas__row {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr) 140px;
+    gap: 24px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .u-atlas__num {
+    font-family: var(--ulams-font-family);
+    font-size: clamp(2.4rem, 4vw, 3.4rem);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--ulams-color-primary);
+  }
+  .u-atlas__kicker {
+    font-family: var(--ulams-font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ulams-color-muted);
+  }
+  .u-atlas__title {
+    margin-top: 4px;
+    font-size: clamp(1.35rem, 1.1rem + 0.9vw, 1.8rem);
+  }
+  .u-atlas__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .u-atlas__title a:hover {
+    text-decoration: underline;
+  }
+  .u-atlas__summary {
+    margin-top: 8px;
+    max-width: 60ch;
+    color: var(--ulams-color-muted);
+  }
+  .u-atlas__topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+    font-size: 0.875rem;
+  }
+  .u-atlas__topics a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ulams-color-text);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--ulams-color-muted);
+  }
+  .u-atlas__topics a:hover {
+    border-bottom-style: solid;
+  }
+  .u-atlas__topics :global(svg) {
+    width: 14px;
+    height: 14px;
+    color: var(--ulams-color-secondary);
+  }
+  .u-atlas__meta {
+    display: grid;
+    align-content: start;
+    gap: 4px;
+    justify-items: end;
+    margin: 0;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+
+  /* orbits: modules on concentric rings; a plain list on phones */
+  .u-orbits {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 28px;
+  }
+  .u-orbit {
+    position: relative;
+    display: grid;
+    gap: 14px;
+  }
+  .u-orbit__ring {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 96px;
+    height: 96px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 50%;
+    /* the ring grows with the module: inner modules sit on small orbits */
+    box-shadow:
+      0 0 0 calc(4px + var(--i) * 2px) transparent,
+      0 0 0 calc(5px + var(--i) * 2px) color-mix(in srgb, var(--ulams-color-primary) 28%, transparent);
+  }
+  .u-orbit__body {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--ulams-color-primary);
+    color: var(--ulams-color-on-primary);
+    font-family: var(--ulams-font-mono);
+    font-weight: 600;
+  }
+  .u-orbit:nth-child(even) .u-orbit__body {
+    background: var(--ulams-color-secondary);
+    color: var(--ulams-color-bg);
+  }
+  .u-orbit__card {
+    display: grid;
+    gap: 8px;
+    padding: 20px;
+  }
+  .u-orbit__label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ulams-color-muted);
+  }
+  .u-orbit__card h3 a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .u-orbit__card h3 a:hover {
+    text-decoration: underline;
+  }
+  .u-orbit__summary {
+    color: var(--ulams-color-muted);
+    font-size: 0.9375rem;
+  }
+  .u-orbit__topics {
+    display: grid;
+    gap: 6px;
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    font-size: 0.875rem;
+  }
+  .u-orbit__topics li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .u-orbit__topics :global(svg) {
+    width: 14px;
+    height: 14px;
+    color: var(--ulams-color-primary);
+  }
+  @media (min-width: 761px) {
+    /* ring size steps up across the row, like planets further from the sun */
+    .u-orbit:nth-child(3n + 2) {
+      margin-top: 36px;
+    }
+    .u-orbit:nth-child(3n) {
+      margin-top: 72px;
+    }
+  }
+  @media (max-width: 760px) {
+    .u-atlas__row {
+      grid-template-columns: 56px minmax(0, 1fr);
+      gap: 14px;
+    }
+    .u-atlas__meta {
+      grid-column: 2;
+      grid-auto-flow: column;
+      justify-content: start;
+      gap: 14px;
+    }
+    /* the list fallback: rings give way to a row per module */
+    .u-orbit {
+      grid-template-columns: 48px minmax(0, 1fr);
+      align-items: start;
+    }
+    .u-orbit__ring {
+      width: 48px;
+      height: 48px;
+      box-shadow: none;
+    }
+    .u-orbit__body {
+      width: 32px;
+      height: 32px;
+      font-size: 0.8125rem;
     }
   }
 </style>

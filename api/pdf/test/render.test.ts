@@ -122,7 +122,7 @@ describe('POST /render', () => {
         expect(qrCodes).toBe(1);
     });
 
-    it.each(['coffee', 'oncall', 'nightsky'])('renders the %s themed certificate', async (theme) => {
+    it.each(['coffee', 'oncall', 'nightsky', 'gravity', 'poland', 'ulam'])('renders the %s themed certificate', async (theme) => {
         const res = await renderPdf({ template: certificate(theme), inputs: [inputs] });
         expect(res.status).toBe(200);
         const { text, qrCodes } = await inspect(res.body as Buffer);

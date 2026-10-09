@@ -209,6 +209,11 @@ class TenantIsolationTest extends TestCase
         foreach ([['POST', '/api/interactive/launches/1'], ['POST', '/api/interactive/topics/1/events']] as [$method, $uri]) {
             $this->assertSame(401, $this->request(self::B, $method, $uri, $tokenA, ['events' => [['type' => 'complete']]])->getStatusCode(), "{$method} {$uri} with A's token");
         }
+        // the public showcase never shows another tenant's package: whatever B answers, it is not A's probe
+        $showcaseOnB = $this->request(self::B, 'GET', '/api/interactive/showcase', null);
+        $this->assertContains($showcaseOnB->getStatusCode(), [200, 404, 503]);
+        $this->assertStringNotContainsString('Isolation probe', (string) $showcaseOnB->getBody());
+
         $this->assertSame(200, $this->request(self::A, 'GET', "/api/admin/interactive/{$id}", $tokenA)->getStatusCode());
         $this->assertSame(200, $this->request(self::A, 'DELETE', "/api/admin/interactive/{$id}", $tokenA)->getStatusCode());
     }

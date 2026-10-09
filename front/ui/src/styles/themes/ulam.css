@@ -1,0 +1,94 @@
+/* "The Scottish Book": an archival notebook on 5 mm squared paper, a ruled margin, paper corners (plan 8.2). */
+[data-theme="ulam"] {
+  color-scheme: light;
+  --ulams-color-primary: #1d3b8f;
+  --ulams-color-primary-on-light: #1d3b8f;
+  --ulams-color-accent: #1d3b8f;
+  --ulams-color-on-primary: #ffffff;
+  --ulams-color-secondary: #b23a2e;
+  --ulams-color-header: #1e2230;
+  --ulams-color-text: #1e2230;
+  --ulams-color-muted: #4a4f60;
+  --ulams-color-bg: #f7f3e8;
+  --ulams-color-surface: #fffdf7;
+  --ulams-color-card-bg: #fffdf7;
+  --ulams-color-border: #d9d1bb;
+  --ulams-color-accent-bg: #dfe5f5;
+  --ulams-color-input-bg: #fffdf7;
+  --ulams-color-positive: #2f7d4f;
+  --ulams-color-warn: #8a5a00;
+  --ulams-color-error: #a32a20;
+  --ulams-color-info: #1d3b8f;
+  --ulams-gray-1: #ece6d3;
+  --ulams-gray-2: #d9d1bb;
+  --ulams-gray-3: #6b6f80;
+  --ulams-gray-4: #2c3144;
+  --ulams-gray-5: #1e2230;
+  --ulams-radius: 2px;
+  --ulams-radius-button: 2px;
+  --ulams-radius-input: 2px;
+  --ulams-radius-card: 2px;
+  --ulams-radius-modal: 3px;
+  --ulams-font-family: var(--font-eb-garamond), "EB Garamond", Garamond, Georgia, serif;
+  --ulams-font-family-body: var(--font-plex-sans), "IBM Plex Sans", system-ui, sans-serif;
+  --ulams-font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
+  --ulams-shadow-hover: 0 1px 0 rgb(30 34 48 / 0.15), 0 12px 24px -14px rgb(30 34 48 / 0.4);
+  --ulams-focus: 0 0 0 2px #f7f3e8, 0 0 0 4px #1d3b8f;
+}
+
+/* 5 mm squared paper (about 19px at 96 dpi) with a ruled margin in marginal red */
+[data-theme="ulam"] body {
+  font-size: 1.0625rem;
+  background-color: #f7f3e8;
+  background-image:
+    linear-gradient(90deg, transparent 0, transparent 47px, rgb(178 58 46 / 0.35) 47px, rgb(178 58 46 / 0.35) 48px, transparent 48px),
+    linear-gradient(rgb(29 59 143 / 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(29 59 143 / 0.09) 1px, transparent 1px);
+  background-size: auto, 19px 19px, 19px 19px;
+}
+@media (max-width: 640px) {
+  [data-theme="ulam"] body {
+    background-image:
+      linear-gradient(rgb(29 59 143 / 0.09) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(29 59 143 / 0.09) 1px, transparent 1px);
+    background-size: 19px 19px, 19px 19px;
+  }
+}
+
+[data-theme="ulam"] h1,
+[data-theme="ulam"] h2,
+[data-theme="ulam"] h3 {
+  font-weight: 500;
+  letter-spacing: 0;
+}
+[data-theme="ulam"] h1 {
+  font-size: clamp(2.5rem, 5.5vw, 4.25rem);
+}
+
+[data-theme="ulam"] .u-eyebrow {
+  font-family: var(--ulams-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--ulams-color-secondary);
+}
+[data-theme="ulam"] .u-btn {
+  min-height: 46px;
+  font-weight: 600;
+}
+[data-theme="ulam"] .u-btn--ghost {
+  --_bd: var(--ulams-color-primary);
+  --_fg: var(--ulams-color-primary);
+}
+/* notebook frame: a second hairline inside the card, like a ruled box on the page */
+[data-theme="ulam"] .u-card {
+  border-color: var(--ulams-color-border);
+  box-shadow:
+    inset 0 0 0 4px var(--ulams-color-card-bg),
+    inset 0 0 0 5px var(--ulams-color-border);
+}
+[data-theme="ulam"] .u-tag {
+  background: transparent;
+  border-color: var(--ulams-color-border);
+  font-family: var(--ulams-font-mono);
+  color: var(--ulams-color-muted);
+}

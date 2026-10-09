@@ -24,9 +24,9 @@ What `/` shows depends on the host the learner opened:
 
 <Screenshot name="learner-home" alt="The Coffee Atlas landing page with the hero, chapter index and pricing" />
 
-The landing page sells the tenant's course. Its layout is one of three designs, chosen from the
-tenant's theme setting (`theme.theme`): `coffee` (editorial), `oncall` (dark, console-like) or
-`nightsky` (playful). A tenant without one of these themes gets the `coffee` design. The accent
+The landing page sells the tenant's course. Its layout is one of six designs, chosen from the
+tenant's theme setting (`theme.theme`): `coffee` (editorial), `oncall` (dark, console-like), `nightsky` (playful), `gravity` (dark space), `poland` (cartographic)
+or `ulam` (archival notebook). A tenant without one of these themes gets the `coffee` design. The accent
 colour comes from `theme.accent` and is adjusted on the server so text keeps AA contrast.
 
 All content comes from the tenant's API; nothing on the page is invented:
@@ -57,6 +57,9 @@ Each design arranges the same data differently:
 | `coffee` | Status bar, editorial hero, chapter index, letter from the tutors, formats, testimonials, live session, pricing, FAQ, newsletter band |
 | `oncall` | Status bar, console hero, curriculum, game-day features, instructors, testimonials, events, pricing, FAQ, call-to-action banner |
 | `nightsky` | Adventure hero, mission map, badges, formats, "For parents" and "For teachers", testimonials, events, pricing, FAQ, call-to-action banner |
+| `gravity` | Cosmos hero (the live simulation when the course has one), feature tiles, orbit syllabus, badges, sources, FAQ, call-to-action banner |
+| `poland` | Atlas hero (the live map when the course has one), feature tiles, atlas table of contents, badges, sources, FAQ, call-to-action banner |
+| `ulam` | Notebook hero (the live interactive when the course has one), the interactive formats, timeline, sources, badges, FAQ, call-to-action banner |
 
 Every page of a tenant also shows the demo badge in a corner, "Demo - resets hourly", with links
 to the tenant's admin and the other demo academies. It is shown on every tenant, whether or not
@@ -70,7 +73,7 @@ the same format the planned Course Builder will generate. See the
 
 ## Platform page
 
-<Screenshot name="learner-platform" alt="The ulams platform page with the product hero and the three demo cards" />
+<Screenshot name="learner-platform" alt="The ulams platform page with the product hero and the six demo cards" />
 
 `/platform` is the ulams product page, shown on platform hosts (it returns 404 on a tenant host).
 It uses its own neutral theme and contains:
@@ -90,6 +93,6 @@ Locally, open it at http://localhost:4321; see [local hosts](/getting-started/ho
 ## Demo picker
 
 `/tenants` is a plain page titled "ulams demos" with one button per demo academy (The Coffee
-Atlas, On-Call, Night Sky Explorers). Each button links to `http://<slug>.app.localhost` on the
+Atlas, On-Call, Night Sky Explorers, Gravity Lab, Poland, Measured, The Scottish Book). Each button links to `http://<slug>.app.localhost` on the
 current port. The root page shows it when the host matches no tenant and no default tenant is
 set.

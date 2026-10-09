@@ -16,7 +16,7 @@ use Ulams\Demo\UlamsDemoServiceProvider;
 class SeedDemoCommand extends Command
 {
     protected $signature = 'ulams:demo:seed
-        {--experience= : Demo experience to seed (coffee, oncall, nightsky or all); defaults to ULAMS_DEMO_EXPERIENCE, then the tenant slug}
+        {--experience= : Demo experience to seed (coffee, oncall, nightsky, gravity, poland, ulam or all); defaults to ULAMS_DEMO_EXPERIENCE, then the tenant slug}
         {--skip-content : Only grant the demo student access to the published courses}';
 
     protected $description = 'Seed the demo courses of this tenant and give the demo student access to every published course';

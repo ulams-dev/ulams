@@ -111,7 +111,7 @@ export const tenantCommands: AnyCommand[] = [
     input: z.object({
       slug: z.string().describe("Slug of the new tenant."),
       name: z.string().optional().describe("Display name."),
-      theme: z.string().optional().describe("Front theme preset, e.g. coffee, oncall, nightsky."),
+      theme: z.string().optional().describe("Front theme preset, coffee, oncall, nightsky, gravity, poland or ulam."),
       accent: z.string().optional().describe("Accent colour, e.g. #C2552D."),
       users: z.number().int().min(0).max(50).optional().describe("Number of demo students (default 5)."),
       demo: z.boolean().optional().describe("Demo mode: login without a password, hourly reset."),

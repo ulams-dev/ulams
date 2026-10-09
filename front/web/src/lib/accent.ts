@@ -15,6 +15,9 @@ export const THEME_BACKGROUND: Record<string, string> = {
   coffee: "#f6f1e9",
   oncall: "#0b0f14",
   nightsky: "#13153a",
+  gravity: "#05070f",
+  poland: "#f4efe6",
+  ulam: "#f7f3e8",
   platform: "#fafaf9",
 };
 

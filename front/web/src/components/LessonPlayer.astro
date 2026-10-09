@@ -100,7 +100,7 @@ const lti = topic.topicable_type.endsWith("\\LtiLink") && access && tracked ? aw
 const doc = custom ? null : topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, cmi5Src, liascript, interactive, lti, preview: Boolean(preview) });
 const format = formatOf(topic);
 const minutes = topicMinutes(topic);
-const lessonNoun = { coffee: "Chapter", oncall: "Module", nightsky: "Mission" }[theme];
+const lessonNoun = { coffee: "Chapter", oncall: "Module", nightsky: "Mission", gravity: "Module", poland: "Chapter", ulam: "Notebook", platform: "Lesson" }[theme];
 // Progress tracking (ping, mark complete) lives in <ulams-progress>; the preview uses a plain bar.
 const Bar = preview ? "div" : "ulams-progress";
 const barAttrs = preview ? {} : { "course-id": courseId, "topic-id": topicId, complete: completionMode(topic), status: done ? "1" : "0" };

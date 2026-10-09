@@ -18,7 +18,7 @@ final class BriefService
     /** Questions code adds after the model's: fixed options, no model call. */
     public const EXTRA_KEYS = ['pricing', 'theme'];
 
-    public const THEMES = ['coffee', 'oncall', 'nightsky'];
+    public const THEMES = ['coffee', 'oncall', 'nightsky', 'gravity', 'poland', 'ulam'];
 
     public function __construct(private readonly SchemaRegistry $schemas)
     {

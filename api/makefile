@@ -100,7 +100,7 @@ wait:
 DEMO_REFRESH ?= 0
 EXPERIENCE ?= $(firstword $(subst ., ,$(DOMAIN)))
 
-# platform tenant (api.localhost): all three courses
+# platform tenant (api.localhost): every demo course
 demo-seed:
 	- docker compose exec -e DEMO_EXPERIENCE=all -e DEMO_REFRESH=$(DEMO_REFRESH) api bash -c "XDEBUG_MODE=off php artisan db:seed --class=DemoCoursesSeeder --force"
 
@@ -110,18 +110,35 @@ demo-seed-tenant:
 # tenant queue workers (queue.sh) do not serve the video long-job queue yet: process it once
 	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan queue:work redis-long-job --queue=queue-long-job --stop-when-empty --timeout=600 --domain=$(DOMAIN)"
 
-# the three demo tenants
+# the six demo tenants
 demo-seed-tenants:
 	- $(MAKE) demo-seed-tenant DOMAIN=coffee.localhost EXPERIENCE=coffee
 	- $(MAKE) demo-seed-tenant DOMAIN=oncall.localhost EXPERIENCE=oncall
 	- $(MAKE) demo-seed-tenant DOMAIN=nightsky.localhost EXPERIENCE=nightsky
+	- $(MAKE) demo-seed-tenant DOMAIN=gravity.localhost EXPERIENCE=gravity
+	- $(MAKE) demo-seed-tenant DOMAIN=poland.localhost EXPERIENCE=poland
+	- $(MAKE) demo-seed-tenant DOMAIN=ulam.localhost EXPERIENCE=ulam
 
-# Demo mode (packages/demo): login without password and an hourly reset, on the three demo
+# Provision the six demo tenants with their names, themes and accents (database, bucket, env,
+# migrations, keys, demo users). Safe to re-run: finished steps are skipped. Slugs stay at most
+# 10 characters (MyDevil database name limit). Then: make demo-mode-on, make demo-seed-tenants.
+demo-create-tenants:
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create coffee --name='The Coffee Atlas' --theme=coffee --accent='#C2552D'"
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create oncall --name='On-Call' --theme=oncall --accent='#58A6FF'"
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create nightsky --name='Night Sky Explorers' --theme=nightsky --accent='#FFD23F'"
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create gravity --name='Gravity Lab' --theme=gravity --accent='#3DD6F5'"
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create poland --name='Poland, Measured' --theme=poland --accent='#C8102E'"
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create ulam --name='The Scottish Book' --theme=ulam --accent='#1D3B8F'"
+
+# Demo mode (packages/demo): login without password and an hourly reset, on the six demo
 # tenants only. Writes DEMO_MODE=true to their env files (kept by ulams:tenant:sync-env).
 demo-mode-on:
 	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create coffee --demo=on"
 	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create oncall --demo=on"
 	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create nightsky --demo=on"
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create gravity --demo=on"
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create poland --demo=on"
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create ulam --demo=on"
 
 # reset one demo tenant now (the scheduler does it hourly): make demo-reset DOMAIN=coffee.localhost
 demo-reset:

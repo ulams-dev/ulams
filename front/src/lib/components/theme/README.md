@@ -14,7 +14,7 @@ variables at runtime.
 | `applyTheme.ts` | `applyTheme(theme, {mode, name})`, `setThemeMode(mode)`, `useThemeTokens()`. |
 | `tokens.css` | Static defaults (orange preset) so the first paint is themed before JS runs. |
 | `blue.ts`, `orange.ts`, `red.ts`, `velvet.ts`, `contrast.ts` | Original presets. |
-| `experiences.ts` | `coffee`, `oncall`, `nightsky` presets (see `front/docs/design/experiences.md`). |
+| `experiences.ts` | `coffee`, `oncall`, `nightsky` presets (see `front/docs/design/experiences.md`). The `gravity`, `poland` and `ulam` demos exist in `front/web` only (`@ulams/ui` theme presets); this legacy front is not extended and `themeFor` falls back to coffee for them. |
 
 ## Variables
 

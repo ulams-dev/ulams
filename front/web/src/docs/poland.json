@@ -1,0 +1,269 @@
+{
+  "component": "Page",
+  "props": {
+    "theme": "poland",
+    "title": "Poland, Measured — public data, mapped and charted",
+    "description": "A free course on Poland in public statistics: an interactive map, charts and quizzes, every figure cited, in English and Polish.",
+    "lang": "en"
+  },
+  "children": [
+    {
+      "component": "SiteHeader",
+      "props": {
+        "brand": "Poland, Measured",
+        "mark": "compass",
+        "links": [
+          {
+            "label": "Contents",
+            "href": "#syllabus"
+          },
+          {
+            "label": "How it works",
+            "href": "#how"
+          },
+          {
+            "label": "Sources",
+            "href": "#sources"
+          },
+          {
+            "label": "FAQ",
+            "href": "#faq"
+          },
+          {
+            "label": "English",
+            "href": {
+              "$data": "/courses/0/href",
+              "$default": "/courses"
+            }
+          },
+          {
+            "label": "Polski",
+            "href": {
+              "$data": "/courses/1/href",
+              "$default": "/courses"
+            }
+          }
+        ],
+        "signIn": {
+          "label": "Log in",
+          "href": "/login"
+        },
+        "cta": {
+          "label": {
+            "$data": "/course/landing/cta",
+            "$default": "Start the free course"
+          },
+          "href": {
+            "$data": "/course/previewHref",
+            "$default": "/"
+          }
+        }
+      }
+    },
+    {
+      "component": "Main",
+      "children": [
+        {
+          "component": "Hero",
+          "props": {
+            "variant": "atlas",
+            "eyebrow": "free course · English and Polish",
+            "title": {
+              "$data": "/course/landing/headline",
+              "$default": "Poland in 35 years of public data"
+            },
+            "titleAccent": "public data",
+            "subtitle": {
+              "$data": "/course/landing/subheadline",
+              "$default": "A map and charts you can read for yourself."
+            },
+            "body": {
+              "$data": "/course/summary",
+              "$default": "Explore Poland through an interactive map and charts built from public statistics, with every figure linked to the institution that published it."
+            },
+            "primaryCta": {
+              "label": {
+                "$data": "/course/landing/cta",
+                "$default": "Start the free course"
+              },
+              "href": {
+                "$data": "/course/previewHref",
+                "$default": "/"
+              }
+            },
+            "secondaryCta": {
+              "label": "See the contents",
+              "href": "#syllabus"
+            },
+            "facts": {
+              "$data": "/course/facts"
+            },
+            "showcase": {
+              "$data": "/showcase"
+            }
+          }
+        },
+        {
+          "component": "FeatureList",
+          "props": {
+            "id": "how",
+            "variant": "tiles",
+            "eyebrow": "How it works",
+            "title": "Map, charts, quizzes",
+            "intro": "Read the story, then test it against the numbers.",
+            "items": [
+              {
+                "icon": "pin",
+                "title": "A map you can move around",
+                "text": "Pan across the country and switch between layers of data."
+              },
+              {
+                "icon": "chart",
+                "title": "Charts you can read",
+                "text": "Time series with their sources next to them and a text version of each."
+              },
+              {
+                "icon": "check",
+                "title": "Quizzes on the numbers",
+                "text": "Short questions after each chapter, with the answer explained."
+              }
+            ]
+          }
+        },
+        {
+          "component": "Syllabus",
+          "props": {
+            "variant": "atlas",
+            "eyebrow": "Contents",
+            "title": "An atlas of chapters",
+            "intro": "Each chapter has a map or chart, a short text and a quiz.",
+            "lessons": {
+              "$data": "/course/lessons"
+            },
+            "totalLabel": {
+              "$data": "/course/lessonsLabel"
+            }
+          }
+        },
+        {
+          "component": "Badges",
+          "props": {
+            "eyebrow": "In the course",
+            "title": "Free, bilingual, certified",
+            "intro": "Open to everyone in this demo.",
+            "items": [
+              {
+                "name": "Free",
+                "text": "No payment and no card.",
+                "icon": "star"
+              },
+              {
+                "name": "English and Polish",
+                "text": "Two courses, each written in its own language.",
+                "icon": "book"
+              },
+              {
+                "name": "Certificate",
+                "text": "A certificate when you finish a course.",
+                "icon": "medal"
+              }
+            ]
+          }
+        },
+        {
+          "component": "FeatureList",
+          "props": {
+            "id": "sources",
+            "variant": "checks",
+            "eyebrow": "Sources",
+            "title": "Every figure has a publisher",
+            "items": {
+              "$data": "/course/lists/sources",
+              "$default": [
+                {
+                  "title": "Public statistics from official publishers, linked next to each figure"
+                },
+                {
+                  "title": "Boundaries from Natural Earth (public domain)"
+                }
+              ]
+            },
+            "intro": "Footnote-style citations name the institution behind each number."
+          }
+        },
+        {
+          "component": "Faq",
+          "props": {
+            "eyebrow": "Questions",
+            "title": "Before you start",
+            "items": {
+              "$data": "/course/faq",
+              "$default": [
+                {
+                  "q": "Is there a Polish version?",
+                  "a": "Yes. Polska w liczbach is a separate Polish course; use the Polski link in the header."
+                },
+                {
+                  "q": "Where do the figures come from?",
+                  "a": "From public statistics published by official institutions. Each figure links to its publisher."
+                },
+                {
+                  "q": "Does the map work without a mouse?",
+                  "a": "Yes. The map and charts have keyboard controls and a text version of every step."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "component": "CtaBand",
+          "props": {
+            "variant": "banner",
+            "eyebrow": "Ready?",
+            "title": "Open the atlas",
+            "text": "Start with the first chapter.",
+            "cta": {
+              "label": {
+                "$data": "/course/landing/cta",
+                "$default": "Start the free course"
+              },
+              "href": {
+                "$data": "/course/previewHref",
+                "$default": "/"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "component": "SiteFooter",
+      "props": {
+        "brand": "Poland, Measured",
+        "text": "A free demo academy on ulams.",
+        "links": [
+          {
+            "label": "Contents",
+            "href": "#syllabus"
+          },
+          {
+            "label": "Sources",
+            "href": "#sources"
+          },
+          {
+            "label": "FAQ",
+            "href": "#faq"
+          },
+          {
+            "label": "Polski",
+            "href": {
+              "$data": "/courses/1/href",
+              "$default": "/courses"
+            }
+          }
+        ],
+        "note": "Map: Natural Earth (public domain) via world-atlas (ISC). Code MIT, text and data CC BY 4.0, by Mateusz Wojczal. Fonts: Barlow and JetBrains Mono (SIL OFL 1.1)."
+      }
+    }
+  ]
+}

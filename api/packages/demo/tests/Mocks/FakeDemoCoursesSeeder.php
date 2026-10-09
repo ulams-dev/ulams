@@ -9,7 +9,7 @@ use Illuminate\Database\Seeder;
  */
 class FakeDemoCoursesSeeder extends Seeder
 {
-    public const EXPERIENCES = ['coffee' => true, 'oncall' => true];
+    public const EXPERIENCES = ['coffee' => true, 'oncall' => true, 'gravity' => true, 'poland' => true, 'ulam' => true];
 
     public static ?string $experience = null;
 

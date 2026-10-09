@@ -17,7 +17,7 @@ async function ids(slug) {
   const reading = topics.find((t) => t.topicable_type.endsWith("RichText")) ?? topics[0];
   return { course, topic: reading.id };
 }
-const [coffee, oncall, nightsky] = await Promise.all(["coffee", "oncall", "nightsky"].map(ids));
+const [coffee, oncall, nightsky, gravity, poland, ulam] = await Promise.all(["coffee", "oncall", "nightsky", "gravity", "poland", "ulam"].map(ids));
 const pages = [
   ["platform landing", `http://app.localhost:${port}/`],
   ["coffee landing", `http://coffee.app.localhost:${port}/`],
@@ -29,6 +29,12 @@ const pages = [
   ["nightsky landing", `http://nightsky.app.localhost:${port}/`],
   ["nightsky course", `http://nightsky.app.localhost:${port}/courses/${nightsky.course}`],
   ["nightsky lesson", `http://nightsky.app.localhost:${port}/learn/${nightsky.course}/${nightsky.topic}`],
+  ["gravity landing", `http://gravity.app.localhost:${port}/`],
+  ["gravity lesson", `http://gravity.app.localhost:${port}/learn/${gravity.course}/${gravity.topic}`],
+  ["poland landing", `http://poland.app.localhost:${port}/`],
+  ["poland lesson", `http://poland.app.localhost:${port}/learn/${poland.course}/${poland.topic}`],
+  ["ulam landing", `http://ulam.app.localhost:${port}/`],
+  ["ulam lesson", `http://ulam.app.localhost:${port}/learn/${ulam.course}/${ulam.topic}`],
   ["coffee account", `http://coffee.app.localhost:${port}/account`],
   ["oncall events", `http://oncall.app.localhost:${port}/events`],
 ];

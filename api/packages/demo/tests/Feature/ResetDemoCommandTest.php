@@ -106,6 +106,22 @@ class ResetDemoCommandTest extends TestCase
         $this->assertContains('--theme=coffee', $this->runner->calls[3]['arguments']);
     }
 
+    public function testResetsAnInteractiveAcademyFromItsBaseline(): void
+    {
+        config(['ulams_tenancy.tenant_slug' => 'gravity', 'app.url' => 'http://gravity.localhost', 'app.name' => 'Gravity Lab', 'ulams_demo.admin_email' => 'admin@gravity.ulams.app']);
+        foreach ([['global', 'companyName', 'Gravity Lab'], ['theme', 'theme', 'gravity'], ['theme', 'accent', '#3DD6F5'], ['global', 'frontURL', 'http://gravity.app.localhost']] as [$group, $key, $value]) {
+            Setting::query()->updateOrCreate(['group' => $group, 'key' => $key], ['value' => $value, 'type' => 'text', 'public' => true, 'enumerable' => true, 'sort' => 0]);
+        }
+
+        $this->artisan('ulams:demo:reset', ['--force' => true])->assertExitCode(0);
+
+        $this->assertSame(['gravity.localhost'], array_values(array_unique(array_column($this->runner->calls, 'host'))));
+        $this->assertSame(['migrate:fresh', 'passport:client', 'db:seed', 'ulams:tenant:seed-demo', 'ulams:demo:seed'], $this->runner->commands());
+        $this->assertContains('--theme=gravity', $this->runner->calls[3]['arguments']);
+        $this->assertContains('--accent=#3DD6F5', $this->runner->calls[3]['arguments']);
+        $this->assertContains('--email-domain=gravity.ulams.app', $this->runner->calls[3]['arguments']);
+    }
+
     public function testDeletesTheTenantsH5PContentBeforeTheWipe(): void
     {
         config(['ulams_tenancy.tenant_slug' => 'coffee']);

@@ -18,7 +18,7 @@ class CreateTenantCommand extends Command
     protected $signature = 'ulams:tenant:create
         {slug : Lowercase letters and digits, used for hosts, database and bucket names}
         {--name= : Display name (APP_NAME and the global.companyName setting)}
-        {--theme= : Front theme preset key, e.g. coffee, oncall, nightsky}
+        {--theme= : Front theme preset key, coffee, oncall, nightsky, gravity, poland or ulam}
         {--accent= : Accent colour, e.g. #C2552D}
         {--users=5 : Number of demo students}
         {--demo= : Demo mode (DEMO_MODE: login without password, hourly reset): on or off}

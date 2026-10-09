@@ -79,7 +79,7 @@ abstract class DemoExperience
         $this->topics = app(TopicFactoryHelper::class);
     }
 
-    /** Short key used by DEMO_EXPERIENCE (coffee, oncall, nightsky). */
+    /** Short key used by DEMO_EXPERIENCE (coffee, oncall, nightsky, gravity, poland, ulam). */
     abstract public function key(): string;
 
     /** Course fields: title, subtitle, summary, description, level, language, ... */

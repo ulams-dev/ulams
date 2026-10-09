@@ -9,7 +9,7 @@ interface Link {
 interface Props {
   brand: string;
   tagline?: string;
-  mark?: "wordmark" | "terminal" | "rocket" | "logo";
+  mark?: "wordmark" | "terminal" | "rocket" | "orbit" | "compass" | "sigma" | "logo";
   links?: Link[];
   cta?: Link;
   signIn?: Link;
@@ -22,6 +22,9 @@ const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.pro
     <a class="u-brand" href="/" aria-label={`${brand}, home`}>
       {mark === "terminal" && <span class="u-brand__mark" aria-hidden="true"><Icon name="terminal" /></span>}
       {mark === "rocket" && <span class="u-brand__mark" aria-hidden="true"><Icon name="rocket" /></span>}
+      {mark === "orbit" && <span class="u-brand__mark" aria-hidden="true"><Icon name="planet" /></span>}
+      {mark === "compass" && <span class="u-brand__mark" aria-hidden="true"><Icon name="compass" /></span>}
+      {mark === "sigma" && <span class="u-brand__mark" aria-hidden="true"><Icon name="sigma" /></span>}
       {mark === "logo" && <Logo class="u-brand__logo" variant="horizontal" />}
       {
         mark !== "logo" && (
@@ -288,6 +291,17 @@ const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.pro
   .u-header--logo :global(.u-brand__logo) {
     height: 30px;
     width: auto;
+  }
+  /* orbit (gravity), compass (poland), sigma (ulam) */
+  .u-header--orbit .u-brand__name,
+  .u-header--compass .u-brand__name,
+  .u-header--sigma .u-brand__name {
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  .u-header--compass .u-brand__mark,
+  .u-header--sigma .u-brand__mark {
+    border-radius: 2px;
   }
   /* rocket (nightsky) */
   .u-header--rocket .u-brand__mark {

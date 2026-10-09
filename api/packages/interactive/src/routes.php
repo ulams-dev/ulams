@@ -19,3 +19,5 @@ Route::group(['prefix' => 'api/admin/interactive', 'middleware' => ['auth:api'],
 // with the learner's own session (no token in the frame)
 Route::post('api/interactive/launches/{topic}', [InteractiveLearnerController::class, 'launch'])->whereNumber('topic')->middleware('auth:api');
 Route::post('api/interactive/topics/{topic}/events', [InteractiveLearnerController::class, 'events'])->whereNumber('topic')->middleware(['auth:api', 'throttle:60,1']);
+// Landing pages: the first interactive of a public course, no login, nothing tracked
+Route::get('api/interactive/showcase', [InteractiveLearnerController::class, 'showcase'])->middleware('throttle:60,1');
