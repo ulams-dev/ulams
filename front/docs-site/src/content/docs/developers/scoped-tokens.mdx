@@ -75,6 +75,31 @@ A refused call answers 403 with the missing scope:
 Lifetime: 1 to 365 days, 30 on a platform host; at most 50 active tokens per user
 (`AUTH_MAX_TOKENS_PER_USER`). The admin screen is described in [API tokens](/admin/api-tokens/).
 
+## Device login
+
+`ulams login` (no password) uses our own flow with the RFC 8628 wire format (ADR 0075); Passport's
+device grant stays disabled. The two endpoints the CLI calls answer in flat RFC JSON, not in the
+`{success, message, data}` envelope, and errors are HTTP 400 `{ "error": ... }`.
+
+| Call | Purpose |
+|---|---|
+| `POST /api/auth/device/code` `{client_name, scopes[], agent}` | No auth, 10 requests per minute per IP. Returns `device_code`, `user_code` (`XXXX-XXXX`, letters `BCDFGHJKLMNPQRSTVWXZ`), `verification_uri` (`<web url>/cli/authorize`), `verification_uri_complete`, `expires_in` (600), `interval` (5) |
+| `POST /api/auth/device/token` `{device_code}` | No auth, poll every `interval` seconds. 200 `{access_token, token_type: "Bearer", expires_at, scopes, token_id}` once; HTTP 400 `authorization_pending`, `slow_down` (polled faster than every 4 s), `access_denied`, `expired_token` (also unknown or already collected codes) |
+| `GET /api/auth/device/requests/{user_code}` | The approval page asks what is requested (client, IP, scopes, lifetime options). Needs the user's login token |
+| `POST /api/auth/device/requests/{user_code}/approve` `{scopes[], expires_in_days}` | Mints a scoped token for the approver with approved scopes that the client requested (the intersection) and 1 to 365 days (30 on a platform host) |
+| `POST /api/auth/device/requests/{user_code}/deny` | The next poll answers `access_denied` |
+
+The three approval endpoints need a **login token** (a scoped token is refused with `scope_forbidden`,
+so a token cannot approve a wider one for itself) and are throttled to 5 requests per minute per user
+(`AUTH_DEVICE_APPROVE_PER_MINUTE`). Codes are stored as HMAC hashes keyed with the tenant's `APP_KEY`,
+so a code made on one tenant is unknown on every other; they live 10 minutes. The token minted on
+approval waits in the row, encrypted, until the first poll collects it and the column is cleared;
+`php artisan ulams:auth:prune-device-authorizations` (hourly) revokes tokens nobody collected and
+deletes rows expired for over a day. The approval page is
+[`/cli/authorize`](/learners/cli-sign-in/) in the web app; its POSTs pass the same exact-`Origin` check
+as every state-changing request of the front (ADR 0014, amended), the page is never framed and never
+cached, and the code is kept out of `Referer`.
+
 ## Agent audit log
 
 The append-only table `agent_audit_log` gets one row per request made with a scoped token that is
@@ -104,6 +129,5 @@ with `features` = `ai`, `courseBuilder`, `livingCourse`, `deviceLogin`, `scopedT
 an endpoint the host does not have.
 
 <Aside type="note" title="Coming">
-  Browser sign-in for the CLI (device login), the platform tenant API and the "My tokens" section of
-  the web profile are separate steps of the plan.
+  The platform tenant API and the "My tokens" section of the web profile are separate steps of the plan.
 </Aside>

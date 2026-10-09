@@ -9,6 +9,7 @@ import { refuseCrossSite } from "./lib/bff.ts";
 import { isSecureRequest } from "./lib/cookies.ts";
 import { authorCookieName, authorToken } from "./lib/studio.ts";
 import { PREVIEW_HEADERS, isPreviewPath } from "./lib/preview.ts";
+import { CLI_HEADERS, isCliPath } from "./lib/cli-authorize.ts";
 
 let warmed = false;
 function warmOnce(): void {
@@ -72,6 +73,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  if (isCliPath(url.pathname)) {
+    // device-login approval: never cached, never framed, the code never leaves through Referer
+    for (const [name, value] of Object.entries(CLI_HEADERS)) response.headers.set(name, value);
+  }
   if (!response.headers.has("Cache-Control") && (response.headers.get("content-type") ?? "").includes("text/html")) {
     response.headers.set("Cache-Control", "private, no-cache");
   }
