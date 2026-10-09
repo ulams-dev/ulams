@@ -140,3 +140,12 @@ The roadmap lists UI catalogue components as a plugin extension point (Phase 7.4
 component is a change to `front/ui` itself. Model-written code is allowed only inside the
 sandboxed `simulation` component, which is not built yet.
 </Aside>
+
+## Example for the playground
+
+Every component needs `front/ui/catalogue/examples/<Name>.json` with `props` (valid), `invalid` (props
+that fail the schema, to show the fallback) and, for containers, `children`. The docs site renders one
+[playground page](/catalogue/) per component from it: live render, props table, model description,
+text fallback, the invalid example and an axe result computed at build time (a violation fails the
+build, [ADR 0054](/decisions/0054-component-playground-in-docs-site/)). `yarn workspace @ulams/docs coverage`
+fails when a component has no example.

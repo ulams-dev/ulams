@@ -1,0 +1,14 @@
+{
+  "props": {},
+  "invalid": {
+    "unknown": 1
+  },
+  "children": [
+    {
+      "component": "Prose",
+      "props": {
+        "markdown": "Brewing is **extraction**: water dissolves flavour from the grounds.\n\n- Grind sets the surface area\n- Time and temperature set the speed"
+      }
+    }
+  ]
+}

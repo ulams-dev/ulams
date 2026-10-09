@@ -1,0 +1,25 @@
+{
+  "props": {
+    "theme": "platform",
+    "title": "Brewing basics",
+    "description": "A short course on extraction.",
+    "lang": "en"
+  },
+  "invalid": {
+    "theme": "purple"
+  },
+  "children": [
+    {
+      "component": "Main",
+      "props": {},
+      "children": [
+        {
+          "component": "Prose",
+          "props": {
+            "markdown": "Brewing is **extraction**: water dissolves flavour from the grounds.\n\n- Grind sets the surface area\n- Time and temperature set the speed"
+          }
+        }
+      ]
+    }
+  ]
+}

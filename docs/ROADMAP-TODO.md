@@ -384,7 +384,7 @@ Architecture
 - [ ] UI component catalogue: name, props JSON Schema, model description, accessible
       implementation, text fallback (partial: the 17 builder components and the approved learner
       layout set (Timeline, FlipCards, CodeBlock, PracticeActivity, Callout, Steps, ComparisonTable,
-      H5PFrame, LiaScriptLesson; L2-20); the playground is L2-19)
+      H5PFrame, LiaScriptLesson; L2-20); playground at `/catalogue/` in the docs site, L2-19)
 - [x] `render_ui` validated server-side; invalid/unknown → text fallback (structured output choice
       validated against the `@ulams/ui` manifest)
 - [x] Progressive streaming with skeletons; interactions sent back as structured events
@@ -429,7 +429,8 @@ Impact measurement
 - [ ] Results visible to authors; opt-in per tenant, consent where required
 
 Quality
-- [ ] Component playground (Storybook) with model-facing descriptions
+- [x] Component playground with model-facing descriptions (in the docs site instead of Storybook, ADR 0054,
+      default pending #57; `/catalogue/`, L2-19)
 - [x] Schema, fallback, interaction round-trip and accessibility tests per component (builder
       catalogue: vitest + axe in jsdom; axe on every studio screen in the e2e)
 - [ ] Evals: right component choice, no raw markup outside `simulation`, simulation pass rate

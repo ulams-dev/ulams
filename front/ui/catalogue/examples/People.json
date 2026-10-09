@@ -1,0 +1,23 @@
+{
+  "props": {
+    "eyebrow": "Teachers",
+    "title": "Who teaches you",
+    "intro": "Working roasters and baristas.",
+    "people": [
+      {
+        "name": "Ada Kowalska",
+        "role": "Head roaster",
+        "place": "Krakow",
+        "bio": "Fifteen years of roasting and teaching extraction."
+      },
+      {
+        "name": "Jan Nowak",
+        "role": "Barista trainer",
+        "place": "Gdansk"
+      }
+    ]
+  },
+  "invalid": {
+    "people": "nobody"
+  }
+}

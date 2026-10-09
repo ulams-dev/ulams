@@ -1,0 +1,43 @@
+{
+  "props": {
+    "eyebrow": "Demos",
+    "title": "See it live",
+    "items": [
+      {
+        "title": "The Coffee Atlas",
+        "text": "A tactile, editorial tenant.",
+        "theme": "coffee",
+        "facts": [
+          {
+            "label": "Lessons",
+            "value": "12"
+          },
+          {
+            "label": "Time",
+            "value": "3 h"
+          }
+        ],
+        "primary": {
+          "label": "Open the demo",
+          "href": "https://coffee.example.com"
+        }
+      },
+      {
+        "title": "On-call drills",
+        "text": "A dark, console-style tenant.",
+        "theme": "oncall",
+        "primary": {
+          "label": "Open the demo",
+          "href": "https://oncall.example.com"
+        },
+        "secondary": {
+          "label": "Read the story",
+          "href": "/stories/oncall"
+        }
+      }
+    ]
+  },
+  "invalid": {
+    "items": "demos"
+  }
+}

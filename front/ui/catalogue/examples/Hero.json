@@ -1,0 +1,37 @@
+{
+  "props": {
+    "variant": "editorial",
+    "eyebrow": "Course",
+    "title": "Brew a better cup",
+    "titleAccent": "better",
+    "subtitle": "Learn extraction by tasting.",
+    "primaryCta": {
+      "label": "Start the course",
+      "href": "/courses/1"
+    },
+    "secondaryCta": {
+      "label": "See the syllabus",
+      "href": "#syllabus"
+    },
+    "image": {
+      "src": "/og-image.png",
+      "alt": "A pour-over coffee brewing on a scale",
+      "width": 1200,
+      "height": 630
+    },
+    "caption": "A pour-over, 30 seconds in.",
+    "facts": [
+      {
+        "label": "Lessons",
+        "value": "12"
+      },
+      {
+        "label": "Time",
+        "value": "3 h"
+      }
+    ]
+  },
+  "invalid": {
+    "title": 123
+  }
+}

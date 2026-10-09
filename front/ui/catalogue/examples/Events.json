@@ -1,0 +1,30 @@
+{
+  "props": {
+    "variant": "cards",
+    "eyebrow": "Events",
+    "title": "Meet the teachers",
+    "items": [
+      {
+        "kind": "webinar",
+        "title": "Live dial-in session",
+        "date": "12 Nov 2026, 18:00",
+        "place": "Online",
+        "text": "Bring your grinder and your worst shot.",
+        "cta": {
+          "label": "Reserve a seat",
+          "href": "/events/1"
+        }
+      },
+      {
+        "kind": "in-person",
+        "title": "Cupping night",
+        "date": "20 Nov 2026",
+        "place": "Krakow",
+        "text": "Taste six origins side by side."
+      }
+    ]
+  },
+  "invalid": {
+    "items": "soon"
+  }
+}
