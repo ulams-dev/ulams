@@ -6,10 +6,11 @@ operator-facing summary is the docs page *Install on MyDevil (shared hosting)*
 (`front/docs-site/src/content/docs/operators/install-mydevil.mdx`); the decision is
 [ADR 0091](../../docs/decisions/0091-shared-hosting-cron-workers-and-manual-tenant-database.md).
 
-> **Status: surveyed, not installed.** The scripts were not run on the account. The facts in
-> "Verified on the owner's account" below come from a read-only SSH survey of server s51 (2026-10-09);
-> everything else is from MyDevil's published documentation and the ulams code and is marked
-> **(to confirm)**. `bin/check-host.sh` answers the rest in one run. Read section 11 before you start.
+> **Status: installed as a staging on the owner's account (2026-10-09).** See [`STAGING-NOTES.md`](STAGING-NOTES.md): the hosts, every object
+> created (MyDevil and Cloudflare), what was verified, the fixes that came out of it and how to remove it all. The facts below marked
+> **(to confirm)** are answered in its table "Unknowns". Corrections found while installing: database names are cut at 16 characters (including
+> the account prefix), `CACHE_DRIVER=file` (no `cache` table exists), flat host names work for every tenancy pattern, `/h5p/*` of the API hosts
+> needs a Cloudflare Worker route, and a reserved loopback port for Redis when the H5P service is used.
 
 ## Verified on the owner's account (read-only survey, 2026-10-09)
 

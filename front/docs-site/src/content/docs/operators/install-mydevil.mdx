@@ -56,7 +56,7 @@ Verified by a read-only survey of an MD2 account on 2026-10-09:
 |---|---|---|
 | Laravel 13 API on PHP 8.4 | Works | PHP 8.4 per vhost (`AddType application/x-httpd-php84 .php`) and as `php84` on the CLI; every extension ulams needs is present (verified) |
 | PostgreSQL | Works with limits | `devil pgsql db add`; 16.10 (verified); databases "unlimited" in the offer; extensions per database (`pg_trgm`, `unaccent`, `pgcrypto`, `vector`, ...). No CREATEDB for the app, so tenant databases are made by hand ([ADR 0091](/decisions/0091-shared-hosting-cron-workers-and-manual-tenant-database/)) |
-| Redis or Valkey | Works with limits | No managed service, not Valkey: you run the installed `redis-server` in `screen`, on a unix socket (no reserved port) with a password, restarted by cron after reboots; binexec is probably not needed (to confirm). Not needed for the API (database queue and cache); needed only by the H5P service |
+| Redis or Valkey | Works with limits | No managed service, not Valkey: you run the installed `redis-server` in `screen`, on a unix socket (no reserved port) or, for the H5P service, on a reserved loopback port (`ULAMS_REDIS_PORT`), with a password, restarted by cron after reboots; binexec is not needed (verified). Not needed for the API (database queue, file cache); needed only by the H5P service |
 | Queue workers | Works with limits | Cron every minute runs `ulams:tenant:work-once` per domain; up to a minute of latency. `screen` workers are possible but each holds a process slot (70 in total) and nothing restarts them, so cron is the default |
 | Builder and long-job queues (30 min, 5 h) | Works with limits, to confirm | A cron process under `flock` drains the queue and exits; whether the host kills a process that runs 30 minutes or 5 hours is not documented |
 | Scheduler | Works | The same cron line runs one tick per domain (`ulams:tenant:schedule-loop --once`, which now also works without ext-pcntl); per-tenant schedules and the minute lock behave as in Docker |
@@ -177,3 +177,14 @@ and the wiki pages [PHP](https://pomoc.mydevil.net/PHP/), [PostgreSQL](https://p
 [Redis](https://pomoc.mydevil.net/Redis/), [SSL](https://pomoc.mydevil.net/SSL/),
 [websites](https://pomoc.mydevil.net/Strona_WWW/), [Binexec](https://pomoc.mydevil.net/Binexec/),
 [ports](https://pomoc.mydevil.net/Rezerwacja_portow/).
+
+## A staging install, step by step lessons
+
+The runbook was run on a real account (2026-10-09; `deploy/mydevil/STAGING-NOTES.md` lists every object and how to remove it). What you need to know before you start:
+
+- Use flat host names (`{slug}-staging-api.example.com`): every host is its own `devil www` site and Cloudflare's free Universal SSL covers one level. The tenancy patterns, `ULAMS_TENANT_HOSTS` and `REACT_APP_TENANT_API_HOST_PATTERN` accept them as they are.
+- Database names are cut at 16 characters including the account prefix: use `TENANCY_DATABASE=<prefix>_u_{slug}`.
+- The cache is `CACHE_DRIVER=file` (there is no `cache` table).
+- The `/h5p/*` path of every API host is a Cloudflare Worker route to the H5P site (a MyDevil host is PHP or Node).
+- Sharp has no FreeBSD binary: build the Astro front with `ULAMS_IMAGE_SERVICE=noop` so `/_image` returns the original.
+- The tenant bucket is created by hand in R2 when the server token is limited to the staging buckets.
