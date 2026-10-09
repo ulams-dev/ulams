@@ -108,6 +108,28 @@ class H5PServiceConfigExporterTest extends TestCase
         $this->assertDirectoryDoesNotExist($this->export . '/keys/acme_localhost');
     }
 
+    public function testRootHandsTheFilesToTheStorageOwnerSoTheServiceCanReadThem(): void
+    {
+        if (!function_exists('posix_geteuid') || posix_geteuid() !== 0) {
+            $this->markTestSkipped('Needs root to chown.');
+        }
+        chown($this->storage, 4321);
+        chgrp($this->storage, 8765);
+
+        $this->exporter($this->export)->exportTenant('acme.localhost', $this->storage . '/acme_localhost');
+
+        foreach ([
+            $this->export,
+            $this->export . '/keys',
+            $this->export . '/keys/acme_localhost',
+            $this->export . '/keys/acme_localhost/oauth-public.key',
+            $this->export . '/.env.acme.localhost',
+        ] as $path) {
+            $this->assertSame(4321, fileowner($path), $path);
+            $this->assertSame(8765, filegroup($path), $path);
+        }
+    }
+
     public function testDisabledWithoutADirectory(): void
     {
         $exporter = $this->exporter(null);
