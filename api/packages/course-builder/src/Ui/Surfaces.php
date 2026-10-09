@@ -103,7 +103,7 @@ final class Surfaces
         foreach ($changes as $c) {
             $byId[$c['id']] = $c;
         }
-        $mark = fn (string $id) => $previous === null ? 'added' : (isset($byId[$id]) ? ($byId[$id]['kind'] === 'added' ? 'added' : 'changed') : 'unchanged');
+        $mark = fn (string $id) => $previous === null ? 'unchanged' : (isset($byId[$id]) ? ($byId[$id]['kind'] === 'added' ? 'added' : 'changed') : 'unchanged');
         $cite = fn (array $ids) => array_values(array_map(fn ($id) => ['fragmentId' => $id, 'label' => $fragments[$id] ?? $id], array_slice($ids, 0, 20)));
         $objective = function (array $o) use ($cite, $mark, $byId) {
             $out = ['id' => $o['id'], 'text' => $o['text'], 'change' => $mark($o['id']), 'citations' => $cite($o['citations'] ?? [])];

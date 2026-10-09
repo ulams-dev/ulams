@@ -107,7 +107,10 @@ final class InterviewService
         $questions[$index]['answered'] = true;
         $session->putState('interview.questions', $questions);
         $session->save();
-        $this->events->stateDelta($session, $run, [['op' => 'replace', 'path' => '/brief', 'value' => $session->brief]]);
+        $this->events->stateDelta($session, $run, [
+            ['op' => 'replace', 'path' => '/brief', 'value' => $session->brief],
+            ['op' => 'replace', 'path' => '/briefRows', 'value' => BriefService::rows($session->brief)],
+        ]);
 
         return $this->publish($session, $run) === 0;
     }
