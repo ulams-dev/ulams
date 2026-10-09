@@ -1,6 +1,6 @@
 # 0034. A tamper-evident audit trail for Living Course
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement

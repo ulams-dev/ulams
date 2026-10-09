@@ -1,6 +1,6 @@
 # 0030. Living Course: source revisions and update proposals on top of the Course Blueprint
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement

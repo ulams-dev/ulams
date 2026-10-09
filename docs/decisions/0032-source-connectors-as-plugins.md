@@ -1,6 +1,6 @@
 # 0032. Source connectors as plugins; Git through host APIs; one SSRF-safe HTTP client
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement
