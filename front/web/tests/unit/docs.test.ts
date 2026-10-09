@@ -99,6 +99,17 @@ describe("lesson documents", () => {
     expect(unavailable.children?.[0]).toMatchObject({ component: "Callout", props: { text: "No player" } });
   });
 
+  it("launches external tools (LTI) in a frame or a new window", () => {
+    const topic = { ...flattenTopics(COFFEE_PROGRAM)[0]!, topicable_type: "Ulams\\Lti\\Models\\LtiLink", topicable: { id: 1, value: 1 } };
+    const url = "https://tool.example.test/lti/login?login_hint=x";
+    const framed = topicDoc({ tenant, theme: "coffee", course: COFFEE_PROGRAM, lesson: undefined, topic, access: true, nextHref: "/", lti: { url, presentation: "iframe", tool: "GeoGebra" } });
+    expect(validateDocument(framed)).toEqual([]);
+    expect(framed.children?.[0]).toMatchObject({ component: "PackageFrame", props: { src: url } });
+    const windowed = topicDoc({ tenant, theme: "coffee", course: COFFEE_PROGRAM, lesson: undefined, topic, access: true, nextHref: "/", lti: { url, presentation: "window", tool: "GeoGebra" } });
+    expect(validateDocument(windowed)).toEqual([]);
+    expect(windowed.children?.[0]).toMatchObject({ component: "ActivityCard", props: { cta: { href: url } } });
+  });
+
   it("shows a locked card for topics without content", () => {
     const topic = { ...flattenTopics(COFFEE_PROGRAM)[3]!, topicable: undefined };
     const doc = topicDoc({ tenant, theme: "coffee", course: COFFEE_PROGRAM, lesson: undefined, topic, access: false, nextHref: "/" });

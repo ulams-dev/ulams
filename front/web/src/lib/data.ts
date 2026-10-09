@@ -130,6 +130,31 @@ export async function scormLaunch(tenant: Tenant, token: string, uuid: string): 
 }
 
 /**
+ * Starts an LTI 1.3 launch of an external-tool topic: the tool's OIDC login URL with a single-use,
+ * 2-minute hint (api/packages/lti). Never cached.
+ */
+export async function ltiLaunch(
+  tenant: Tenant,
+  token: string,
+  topicId: number
+): Promise<{ url: string; presentation: string; tool: string } | { error: string }> {
+  try {
+    const response = await fetch(`${tenant.apiUrl}/api/lti/launches/${topicId}`, {
+      method: "POST",
+      headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(8000),
+    });
+    const body = (await response.json().catch(() => null)) as { data?: { url?: string; presentation?: string; tool?: string }; message?: string } | null;
+    if (response.ok && typeof body?.data?.url === "string") {
+      return { url: body.data.url, presentation: body.data.presentation ?? "iframe", tool: body.data.tool ?? "" };
+    }
+    return { error: body?.message ?? "This activity cannot be opened right now." };
+  } catch {
+    return { error: "This activity cannot be opened right now." };
+  }
+}
+
+/**
  * Starts a LiaScript topic on the tenant content origin. Returns the player URL and the number of
  * sections, or the API's explanation when it cannot be played (no content origin or player build).
  */

@@ -101,13 +101,15 @@ export interface TopicDocInput {
   contentOriginSrc?: string | null;
   /** For LiaScript topics: the launch result (see liascriptLaunch). */
   liascript?: { url: string; sections?: number } | { error: string } | null;
+  /** For external-tool topics: the LTI launch (see ltiLaunch). */
+  lti?: { url: string; presentation: string; tool: string } | { error: string } | null;
 }
 
 const str = (v: unknown): string | undefined => (typeof v === "string" && v.trim() !== "" ? v : undefined);
 const num = (v: unknown): number | undefined => (typeof v === "number" && Number.isFinite(v) ? v : typeof v === "string" && v !== "" && !Number.isNaN(Number(v)) ? Number(v) : undefined);
 
 /** Body of the lesson player for one topic. */
-export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null, liascript = null }: TopicDocInput): UiNode {
+export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null, liascript = null, lti = null }: TopicDocInput): UiNode {
   const kind = topicKind(topic.topicable_type);
   const t = (topic.topicable ?? {}) as Record<string, unknown>;
   const children: UiNode[] = [];
@@ -199,6 +201,21 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
       if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
       break;
     }
+    case "lti":
+      if (lti && "url" in lti && lti.presentation !== "window") {
+        children.push({ component: "PackageFrame", props: { src: lti.url, title: topic.title, height: 720, isolated: true } });
+      } else {
+        children.push(
+          lti && "url" in lti
+            ? {
+                component: "ActivityCard",
+                props: { kind: "tracked", title: topic.title, text: `Opens in ${lti.tool || "the tool"} in a new window; your result comes back here.`, cta: { label: "Open the activity", href: lti.url } },
+              }
+            : { component: "Callout", props: { tone: "warning", title: topic.title, text: lti && "error" in lti ? lti.error : "This activity opens once you are enrolled." } }
+        );
+      }
+      if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
+      break;
     case "liascript":
       children.push(
         liascript && "url" in liascript
@@ -267,6 +284,7 @@ export function completionMode(topic: Topic): "view" | "manual" | "media" | "h5p
       return "quiz";
     case "scorm":
     case "liascript":
+    case "lti":
     case "cmi5":
     case "project":
       return "manual";
