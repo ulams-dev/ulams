@@ -616,7 +616,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
   - [x] (new) poland package: map and charts in EN and PL, 40 steps, regenerated Natural Earth map, primary
         sources only, shared map engine, posters, Playwright and axe (M4); figures not yet re-checked at their
         publishers are listed in `demo-content/poland/README.md` (M8b)
-  - [ ] (new) five Ulam interactives, MIT (M5: `spiral` done; `monte-carlo`, `automaton`, `scottish-book`, `lwow-map`
+  - [ ] (new) five Ulam interactives, MIT (M5: `spiral` and `monte-carlo` done; `automaton`, `scottish-book`, `lwow-map`
         follow, the last two with placeholder text until the fact sheet is cleared, M9a)
 
 ---

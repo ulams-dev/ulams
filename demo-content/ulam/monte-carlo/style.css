@@ -1,0 +1,12 @@
+.mc-layout { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .mc-layout { grid-template-columns: minmax(0, 1fr); } }
+.mc-buttons { margin-top: 10px; }
+.mc-right > :first-child { margin-top: 0; }
+.mc-chart { margin: 12px 0 0; }
+.mc-chart[hidden] { display: none; }
+.mc-table { margin-top: 8px; font-size: 0.875rem; }
+.mc-table summary { cursor: pointer; }
+.mc-table table { border-collapse: collapse; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.mc-table th, .mc-table td { border: 1px solid var(--ix-line); padding: 2px 8px; text-align: right; }
+.mc-table th { background: rgba(29, 59, 143, 0.08); }
+.mc-table-scroll { max-height: 180px; overflow: auto; }
