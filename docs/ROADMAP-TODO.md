@@ -48,6 +48,9 @@ small commits → tests → summary.
 - [x] (new) styled-components replaced by CSS custom properties (`--ulams-*`) (ADR 0004)
 - [x] (new) Remove `recommender` from the API composition, not just stop using it (ADR 0006)
 - [x] (new) Repository: public `github.com/ulams-dev/ulams`, no AI attribution in history
+- [x] (2026-10-09) Build the agent-first `ulams` CLI core now (login and tokens, `ulams api`, main nouns,
+      `ulams mcp`); course-as-code after Phase 3. Plan `docs/plans/cli.md` (draft, waiting for approval),
+      ADRs 0072–0079 Proposed; open owner questions #74–#79
 
 ## Open decisions
 
@@ -57,7 +60,8 @@ small commits → tests → summary.
   - [ ] Check domains (ulams.ai, ulams.dev) and trademarks
   - [ ] Check legal aspects of using the Ulam name
   - [x] (new) Copyright of the original EscolaLMS/Wellms code and `scorm-player`: owned by the product owner; admin and scorm-player licensed MIT
-- [ ] Move MCP server (7.5) right after Phase 2? Cheap to build, strong demo
+- [x] Move MCP server (7.5) right after Phase 2? Cheap to build, strong demo (yes, 2026-10-09: the local
+      `ulams mcp` ships with the CLI core; `docs/plans/cli.md`, #73)
 - [ ] Move certificates (6.1) earlier if compliance is the priority segment
 - [ ] Multitenancy for the POC: one deployment, tenant per subdomain with own theme?
 - [ ] Prototype the Sylius order → entitlement flow early (highest-risk commerce piece)
@@ -599,6 +603,17 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Two-way Git sync with diff-based conflicts
 - [ ] GitHub Action + Docker image; preview deployment per PR
 - [ ] Git merge triggers Living Course update proposal
+- [ ] (new) CLI plan `docs/plans/cli.md`: agent-first `ulams` CLI and MCP server (draft, waiting for approval;
+      ADRs 0072–0079)
+- [ ] (new) M1 CLI core: `front/cli` workspace, command registry, output contract and exit codes, profiles,
+      `login` (token/password/demo), `whoami`, `ulams api`, `schema`, `describe`
+- [ ] (new) M2 noun commands generated from OpenAPI + overrides, topic uploads of every type, pagination,
+      `--dry-run`, `--wait`, `apply -f`, coverage matrix enforced in CI
+- [ ] (new) M4 course builder commands with AG-UI events as NDJSON; Living Course commands after the Phase 3 merge
+- [ ] (new) M5 course-as-code: Blueprint v2, Markdown + directives format, sync base and conflict diffs
+      (after Phase 3; citations for author blocks pending #78)
+- [ ] (new) M6 CLI release: npm `ulams` (pending #77), bun-compiled binaries (signing pending #76), Docker image
+- [ ] (new) Endpoints to import a blueprint as a builder version and export a course as a blueprint (for M5)
 
 ### 7.2 Code exercises
 - [ ] WebContainers/Sandpack (JS/TS), Pyodide (Python), optional server sandbox
@@ -609,6 +624,12 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Complete published OpenAPI; TS SDK first, PHP second
 - [ ] Stripe-style webhooks (signed, retries, replay, delivery log, test sends, versioned events)
 - [ ] Scoped API keys with rate limits and usage stats
+- [ ] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit
+      log, `Idempotency-Key`, `X-Request-Id`, `GET /api/meta`; admin "API tokens" page (ADR 0074)
+- [ ] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075; pending #74)
+- [ ] (new) S3 platform tenant API with queued provisioning (ADR 0078; pending #79)
+- [ ] (new) S4 course builder run-status endpoint `GET /api/admin/course-builder/runs/{run}`
+- [ ] (new) S5 OpenAPI response schemas for the top 60 operations the CLI uses, after L0-11; stable operationIds
 - [ ] `npx create-ulams` / `docker compose up` with seed data
 - [ ] Docs site with runnable examples; free cloud sandbox tenant (partial: Starlight site in `front/docs-site` on branch `docs/starlight-site`; runnable examples and the sandbox tenant pending)
 
@@ -626,6 +647,10 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Tool description evals with typical agent tasks
 - [ ] (new) First version on Cloudflare Workers (TypeScript, Agents SDK, OAuth) against the current REST
       API: hand-written course/topic/quiz tools + tools generated from the OpenAPI spec
+      (note: the CLI plan proposes the local `ulams mcp` first and this as the later hosted variant from the
+      same registry; pending #75)
+- [ ] (new) M3 `ulams mcp` (stdio + Streamable HTTP) generated from the CLI registry: toolsets, annotations,
+      confirmation for destructive tools, resources, MCP client tests, agent eval (ADR 0076)
 
 ### 7.6 Machine-readable content
 - [ ] `llms.txt`, Markdown version of every page, public schemas, `AGENTS.md`
