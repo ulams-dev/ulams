@@ -44,6 +44,9 @@ php artisan ulams:tenant:list --hosts         # active API hosts, one per line
 # rebuild env files, registrations and Passport keys from the tenants table (init.sh)
 php artisan ulams:tenant:sync-env --migrate
 
+# AI settings (ANTHROPIC_API_KEY, AI_*) are inherited from the platform env; per-tenant override (ADR 0030)
+php artisan ulams:tenant:set-env acme --set=AI_DRIVER=disabled
+
 # drop database, role, bucket, env file, storage directory and Redis keys
 php artisan ulams:tenant:delete coffee --force
 ```

@@ -39,3 +39,4 @@ replacement.
 | [0027](0027-course-builder-access.md) | Course Builder access: one permission, author acts, admins look | Accepted |
 | [0028](0028-generation-stages-and-grounding.md) | Generation stages, grounding check and quiz support check | Accepted |
 | [0029](0029-sse-wake-without-pubsub.md) | The SSE endpoint wakes on a cache key, not Valkey pub/sub | Accepted |
+| [0030](0030-tenants-inherit-platform-ai-settings.md) | Tenants inherit the platform AI settings, with per-tenant overrides | Proposed |

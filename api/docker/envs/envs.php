@@ -38,16 +38,22 @@ function add_env(string $key, string $new_value, string $env_path)
 }
 
 
+// Never print secrets (API keys, passwords, tokens) to the container log.
+function printable(string $key, string $value): string
+{
+    return preg_match('/(KEY|SECRET|PASSWORD|TOKEN|DSN)/i', $key) ? '***' : $value;
+}
+
 foreach (getenv() as $env => $new_value) {
     if (strpos($env, "LARAVEL_") === 0) {
         $key =  substr($env, 8);
         $old_value = isset($_ENV[$key]) ? $_ENV[$key] : false;
 
         if ($old_value) { // only replace values that exist
-            echo "Replacing .env file $key from $old_value to $new_value\n";
+            echo "Replacing .env file $key from " . printable($key, (string) $old_value) . " to " . printable($key, $new_value) . "\n";
             set_env($key, $old_value, $new_value, $env_path);
         } else {
-            echo "Appending .env file $key to new value: $new_value\n";
+            echo "Appending .env file $key to new value: " . printable($key, $new_value) . "\n";
             add_env($key, $new_value, $env_path);
         }
     }
