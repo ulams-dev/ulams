@@ -111,6 +111,11 @@ should open ulams in a new window. Platform-side launches (ulams launching an ex
 lesson) start with `POST /api/lti/launches/{topic}`, which returns the tool's OIDC login URL with a
 two-minute, single-use login hint. Configuration is in [LTI](/admin/lti/).
 
+## Scoped API tokens for the CLI and agents
+
+Long-lived, scope-limited, revocable personal access tokens (`ulams_pat_...`) are described in
+[Scoped API tokens](/developers/scoped-tokens/).
+
 ## Other scoped tokens
 
 - **SCORM tracking token**: `POST /api/scorm/launch/{sco}` returns a player URL with a token bound to

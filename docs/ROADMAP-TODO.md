@@ -629,7 +629,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Complete published OpenAPI; TS SDK first, PHP second
 - [ ] Stripe-style webhooks (signed, retries, replay, delivery log, test sends, versioned events)
 - [ ] Scoped API keys with rate limits and usage stats
-- [ ] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit
+- [x] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit
       log, `Idempotency-Key`, `X-Request-Id`, `GET /api/meta`; admin "API tokens" page (ADR 0074)
 - [ ] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075; pending #74)
 - [ ] (new) S3 platform tenant API with queued provisioning (ADR 0078; pending #79)

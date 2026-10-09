@@ -570,6 +570,8 @@ export default {
   PDF: 'PDF',
   'menu.Analytics': 'Analytics',
   'menu.Analytics.Notifications': 'Notifications',
+  'menu.Users.API Tokens': 'API tokens',
+  apiTokens: 'API tokens',
   'menu.Users.Roles': 'Roles',
   'menu.Configuration.Templates': 'Templates',
   'menu.Users.Permissions': 'Permissions',

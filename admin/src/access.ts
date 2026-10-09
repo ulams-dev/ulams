@@ -186,8 +186,11 @@ export default function (initialState: {
       havePermissionsInDashboard(PERMISSIONS.ReportList) &&
       !haveSettingsInDashboard('hideInMenu-CoursesCategories', true),
 
+    tokenManagePermission: havePermissionsInDashboard(PERMISSIONS.TokenManage),
+
     usersPermission: havePermissionsInDashboard(
       PERMISSIONS.UserList,
+      PERMISSIONS.TokenManage,
       PERMISSIONS.PermisionRoleList,
       PERMISSIONS.UserGroupList,
     ),

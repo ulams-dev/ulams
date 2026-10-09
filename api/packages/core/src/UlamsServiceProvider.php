@@ -3,11 +3,14 @@
 namespace Ulams\Core;
 
 use Illuminate\Database\Events\MigrationsEnded;
+use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Database\Events\SchemaLoaded;
 use Illuminate\Support\Facades\Event;
 use Ulams\Core\Support\SchemaColumns;
 use Ulams\Core\Http\Middleware\EnforceTrustedOrigin;
+use Ulams\Core\Http\Middleware\Idempotency;
 use Ulams\Core\Http\Middleware\ProtectJsonResponses;
+use Ulams\Core\Http\Middleware\RequestId;
 use Ulams\Core\Http\Middleware\SetTimezoneForUserMiddleware;
 use Ulams\Core\Services\Contracts\HealthCheckServiceContract;
 use Ulams\Core\Services\HealthCheckService;
@@ -37,6 +40,9 @@ class UlamsServiceProvider extends ServiceProvider
         $kernel->pushMiddleware(SetTimezoneForUserMiddleware::class);
         $kernel->prependMiddleware(EnforceTrustedOrigin::class);
         $kernel->pushMiddleware(ProtectJsonResponses::class);
+        $kernel->prependMiddleware(RequestId::class);
+        // package routes are not in the `api` group, so the route-level middleware is attached on match
+        Event::listen(RouteMatched::class, fn (RouteMatched $e) => $e->route->middleware(Idempotency::class));
 
         $this->loadConfig();
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
