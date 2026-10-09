@@ -29,7 +29,7 @@ export const GET: APIRoute = async ({ url, locals, cookies, redirect }) => {
     });
   }
 
-  setSessionCookie(cookies, body.data.token, Date.now() + 8 * 3600_000, url.protocol === "https:");
+  setSessionCookie(cookies, body.data.token, Date.now() + 8 * 3600_000, locals.secure);
 
   return redirect(`/learn/${body.data.course_id}`, 303);
 };

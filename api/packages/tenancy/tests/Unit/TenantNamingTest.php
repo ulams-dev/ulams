@@ -50,6 +50,36 @@ class TenantNamingTest extends TestCase
         $this->assertSame('no-reply@coffee.ulams.app', $values['MAIL_FROM_ADDRESS']);
     }
 
+    public function testContentOriginSupportsASameSiteSubdomainOfTheApp(): void
+    {
+        config([
+            'ulams_tenancy.scheme' => 'https',
+            'ulams_tenancy.api_host' => '{slug}.api.ulams.app',
+            'ulams_tenancy.front_host' => '{slug}.app.ulams.app',
+            'ulams_tenancy.admin_host' => '{slug}.admin.ulams.app',
+            'ulams_tenancy.content_host' => '{slug}.content.ulams.app',
+        ]);
+
+        $values = TenantNaming::envValues(new Tenant(TenantNaming::newTenantAttributes('coffee')));
+
+        $this->assertSame('https://coffee.content.ulams.app', $values['CONTENT_ORIGIN']);
+        $this->assertSame('https://coffee.app.ulams.app', $values['FRONTEND_URL']);
+        $this->assertSame('https://coffee.admin.ulams.app', $values['ADMIN_URL']);
+        $this->assertSame('https://coffee.api.ulams.app', $values['APP_URL']);
+        // a different tenant gets a different content origin
+        $tea = TenantNaming::envValues(new Tenant(TenantNaming::newTenantAttributes('tea')));
+        $this->assertSame('https://tea.content.ulams.app', $tea['CONTENT_ORIGIN']);
+    }
+
+    public function testContentOriginSupportsASeparateDomain(): void
+    {
+        config(['ulams_tenancy.scheme' => 'https', 'ulams_tenancy.content_host' => '{slug}.ulams-content.net']);
+
+        $values = TenantNaming::envValues(new Tenant(TenantNaming::newTenantAttributes('coffee')));
+
+        $this->assertSame('https://coffee.ulams-content.net', $values['CONTENT_ORIGIN']);
+    }
+
     public function testEveryTenantGetsItsOwnH5PInternalToken(): void
     {
         $coffee = TenantNaming::envValues(new Tenant(TenantNaming::newTenantAttributes('coffee')));

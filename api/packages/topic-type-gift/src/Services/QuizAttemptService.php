@@ -77,7 +77,7 @@ class QuizAttemptService implements QuizAttemptServiceContract
         $attempt =  $this->attemptRepository->create(array_merge($dto->toArray(), [
             'end_at' => $quiz->max_execution_time
                 ? Carbon::now()->addMinutes($quiz->max_execution_time)
-                : Carbon::now()->addMinutes(Config::get(SettingsServiceProvider::KEY . 'max_quiz_time', 120)),
+                : Carbon::now()->addMinutes((int) Config::get(SettingsServiceProvider::KEY . '.max_quiz_time', 120)),
         ]));
 
         event(new QuizAttemptStartedEvent($attempt->user, $attempt));

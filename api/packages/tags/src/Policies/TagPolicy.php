@@ -22,7 +22,15 @@ class TagPolicy
 
     /**
      * @param User $user
-     * @param Tag $tag
+     * @return bool
+     */
+    public function list(User $user): bool
+    {
+        return $user->can(TagsPermissionsEnum::TAGS_LIST);
+    }
+
+    /**
+     * @param User $user
      * @return bool
      */
     public function delete(User $user): bool

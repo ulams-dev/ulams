@@ -285,7 +285,9 @@ const LiaScriptEditor: React.FC = () => {
                   })}
                   style={{ width: '100%', height: 640, border: '1px solid #d9d9d9' }}
                   allow="fullscreen; autoplay; clipboard-write"
-                  sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                  // allow-same-origin is required: the LiaScript build is a SCORM 1.2 SCO that finds window.API
+                  // in the player page and keeps state in localStorage/IndexedDB (SANDBOX_LIASCRIPT)
+                  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"
                 />
               ) : (
                 <Spin />

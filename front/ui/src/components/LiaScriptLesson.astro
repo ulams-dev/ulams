@@ -4,6 +4,7 @@
  * The frame is sandboxed; the URL carries a one-off progress token, so it is not shown as a link.
  * Progress is reported by the player itself: reaching the last section completes the lesson.
  */
+import { SANDBOX_LIASCRIPT } from "@ulams/sdk/frames";
 import Icon from "./Icon.astro";
 
 interface Props {
@@ -27,7 +28,7 @@ const { src, title, sections, height = 720 } = Astro.props;
       title={title}
       allow="fullscreen; autoplay; clipboard-write"
       referrerpolicy="no-referrer"
-      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"
+      sandbox={SANDBOX_LIASCRIPT}
     ></iframe>
   </div>
 </section>

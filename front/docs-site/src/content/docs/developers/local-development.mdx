@@ -21,7 +21,7 @@ browsers resolve to `127.0.0.1` without any `/etc/hosts` change.
 
 | Tool | Version | Where it is set |
 |---|---|---|
-| Node.js | 22 | [`.nvmrc`](https://github.com/ulams-dev/ulams/blob/main/.nvmrc) contains `22`; the root `package.json` declares `"node": ">=22.12"` |
+| Node.js | 22 or 24 | [`.nvmrc`](https://github.com/ulams-dev/ulams/blob/main/.nvmrc) contains `22`; the root `package.json` declares `"node": ">=22.12"` |
 | Yarn | 1.22.22 (classic), through Corepack | `packageManager` in the root `package.json` |
 | Docker | Docker Engine or Desktop with Compose v2 (`docker compose`) | [`api/docker-compose.yml`](https://github.com/ulams-dev/ulams/blob/main/api/docker-compose.yml) |
 | make | any | [`api/makefile`](https://github.com/ulams-dev/ulams/blob/main/api/makefile) |
@@ -30,7 +30,13 @@ browsers resolve to `127.0.0.1` without any `/etc/hosts` change.
 `.nvmrc` pins only the major version (22), while the root `engines` field needs at least
 22.12. `api/h5p` and `api/pdf` also declare `>=22.12.0`, and the admin declares `>=20.0.0`.
 Use a 22.12 or newer release. The admin, front and web Dockerfiles build on `node:22.12.0` or
-`node:22-alpine`.
+`node:22-alpine`, and CI runs Node 22.
+
+Node 24 works for installing and building everything, including the admin: umi/max loads a
+module (`http-deceiver`, through `spdy`) that reads `process.binding('http_parser')`, which Node 24
+removed. The admin's `max` scripts therefore run through `admin/scripts/max.cjs`, which loads a small
+shim (`admin/scripts/node-compat.cjs`) first (ADR 0070). Run `max` through `yarn` scripts, not
+directly, on Node 24.
 </Aside>
 
 You do not need PHP or Composer on the host: every PHP command runs inside the `api` container.

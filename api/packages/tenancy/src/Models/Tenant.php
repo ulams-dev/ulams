@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $bucket
  * @property string $redis_prefix
  * @property string $status
+ * @property ?array $env_overrides
  * @property ?array $steps
  * @property ?string $last_error
  */
@@ -53,6 +54,7 @@ class Tenant extends Model
         'passport_public_key',
         'bucket',
         'redis_prefix',
+        'env_overrides',
         'status',
         'steps',
         'last_error',
@@ -63,6 +65,7 @@ class Tenant extends Model
         'app_key' => 'encrypted',
         'passport_private_key' => 'encrypted',
         'passport_public_key' => 'encrypted',
+        'env_overrides' => 'encrypted:array',
         'steps' => 'array',
         'demo' => 'boolean',
     ];
@@ -72,6 +75,7 @@ class Tenant extends Model
         'app_key',
         'passport_private_key',
         'passport_public_key',
+        'env_overrides',
     ];
 
     public function hasCompleted(string $step): bool

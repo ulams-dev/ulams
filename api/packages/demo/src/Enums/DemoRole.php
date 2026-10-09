@@ -10,6 +10,7 @@ enum DemoRole: string
 {
     case STUDENT = 'student';
     case ADMIN = 'admin';
+    case TUTOR = 'tutor';
 
     /** @return list<string> */
     public static function values(): array

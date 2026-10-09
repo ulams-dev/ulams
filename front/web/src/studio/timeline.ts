@@ -4,7 +4,7 @@
  * New actionable surfaces (a question, an outline, an apply or a patch proposal) take the focus
  * and are announced, but only for live events, not when the history is replayed on load.
  */
-import { applyJsonPatch, EventType, surfaceFromEvent, type AgUiEvent, type BuilderState } from "@ulams/sdk";
+import { applyJsonPatch, EventType, isApplied, surfaceFromEvent, type AgUiEvent, type BuilderState } from "@ulams/sdk";
 import { renderSurface } from "@ulams/ui/builder/renderer.ts";
 import type { A2uiActionOut, BuilderContext } from "@ulams/ui/builder/components.ts";
 import { h } from "@ulams/ui/builder/dom.ts";
@@ -28,6 +28,9 @@ const ACTIONABLE = new Set(["interview", "outline", "apply", "patch"]);
 export class Timeline {
   state = {} as BuilderState;
   private surfaces = new Map<string, HTMLElement>();
+  /** Last event of every patch surface, to re-render it when the apply catches up. */
+  private patchEvents = new Map<string, AgUiEvent>();
+  private applying = false;
   private messages = new Map<string, HTMLElement>();
   private busy: HTMLElement;
   private started: boolean;
@@ -43,15 +46,30 @@ export class Timeline {
     return typeof event.timestamp === "number" ? event.timestamp > this.loadedAt - 1500 : false;
   }
 
+  /** Takes a state read from the session endpoint (authoritative) instead of waiting for the stream. */
+  adopt(state: BuilderState): void {
+    this.state = state;
+    this.stateChanged();
+  }
+
+  private stateChanged(): void {
+    this.options.onState?.(this.state);
+    // an approved patch is "applied" only once the applied version has caught up with the current one
+    const applying = Boolean(this.state.session?.currentVersionId) && !isApplied(this.state.session);
+    if (applying === this.applying) return;
+    this.applying = applying;
+    for (const event of this.patchEvents.values()) this.surface(event);
+  }
+
   handle(event: AgUiEvent): void {
     switch (event.type) {
       case EventType.STATE_SNAPSHOT:
         this.state = event.snapshot as BuilderState;
-        this.options.onState?.(this.state);
+        this.stateChanged();
         break;
       case EventType.STATE_DELTA:
         this.state = applyJsonPatch(this.state as unknown as Record<string, unknown>, event.delta as Array<{ op: string; path: string; value?: unknown }>) as unknown as BuilderState;
-        this.options.onState?.(this.state);
+        this.stateChanged();
         break;
       case EventType.TEXT_MESSAGE_START: {
         if (!this.started) break;
@@ -113,6 +131,7 @@ export class Timeline {
       });
     }
     const kind = surface.kind ?? "";
+    if (kind === "patch") this.patchEvents.set(surface.surfaceId, event);
     if (!this.started && kind === this.options.startAfterKind) this.started = true;
     if (this.options.kinds && !this.options.kinds.includes(kind)) return;
     if (!this.started) return;
@@ -134,6 +153,7 @@ export class Timeline {
       },
       onCitation: this.options.onCitation,
       onSelect: this.options.onSelect,
+      applying: this.applying,
     };
     const wrapper = h("div", { class: `st-surface st-surface-${kind}`, tabindex: -1, "data-surface": surface.surfaceId, "data-label": SURFACE_LABEL[kind] ?? "Assistant card" });
     wrapper.append(renderSurface(surface.components, ctx));

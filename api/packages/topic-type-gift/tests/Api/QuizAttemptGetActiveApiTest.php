@@ -142,10 +142,31 @@ class QuizAttemptGetActiveApiTest extends GiftQuestionTestCase
         $this->assertCount(1, $studentAttempts);
     }
 
+    public function testQuizTimeLimitSettingIsReadFromTheRegisteredConfigKey(): void
+    {
+        $this->assertSame('ulams_gift_quiz', SettingsServiceProvider::KEY);
+        Bus::fake();
+        Config::set('ulams_gift_quiz.max_quiz_time', 45);
+        // the misspelt key the service used to read must not matter
+        Config::set('ulams_gift_quizmax_quiz_time', 999);
+
+        $this->quiz = GiftQuiz::factory()->state(['max_execution_time' => null])->create();
+        $this->topic->topicable()->associate($this->quiz)->save();
+        $student = $this->makeStudent();
+        $this->topic->course->users()->sync($student);
+
+        $this->actingAs($student, 'api')
+            ->postJson('api/quiz-attempts', ['topic_gift_quiz_id' => $this->quiz->getKey()])->assertCreated();
+
+        $attempt = QuizAttempt::query()->where('user_id', $student->getKey())->first();
+        $this->assertEquals(44, (int) abs($attempt->end_at->diffInMinutes($attempt->start_at)));
+    }
+
     public function testShouldSetDefaultAttemptEndTimeWhenQuizHasNoTimeSet(): void
     {
         Bus::fake();
-        Config::set(SettingsServiceProvider::KEY . 'max_quiz_time', 123);
+        // the key the administrable setting is registered under (`ulams_gift_quiz.max_quiz_time`)
+        Config::set('ulams_gift_quiz.max_quiz_time', 123);
 
         $this->quiz = GiftQuiz::factory()->state(['max_execution_time' => null])->create();
         $this->topic->topicable()->associate($this->quiz)->save();

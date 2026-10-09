@@ -36,7 +36,9 @@ Other channels defined: `single`, `daily`, `slack` (`LOG_SLACK_WEBHOOK_URL`, lev
 `LARAVEL_LOG_CHANNEL=stderr`.
 
 The local compose stack sets `LARAVEL_APP_DEBUG=true` and `LARAVEL_APP_ENV=local`, so API errors
-come back with a stack trace. `spatie/laravel-ignition` is a dev dependency.
+come back with a stack trace; this is for development only. `spatie/laravel-ignition` is a dev dependency,
+and the demo profile (`make demo-up`) and the production image install `vendor/` without dev packages, so the
+`/_ignition/*` routes do not exist there.
 
 ### SQL queries
 

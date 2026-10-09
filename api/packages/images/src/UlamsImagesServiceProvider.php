@@ -54,7 +54,8 @@ class UlamsImagesServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('images.render', function (Request $request) {
-            if (Config::get('images.private.rate_limiter_status') === PackageStatusEnum::ENABLED) {
+            // POST renders a whole batch per request: its limit is always on, whatever the status says.
+            if ($request->isMethod('POST') || Config::get('images.private.rate_limiter_status') === PackageStatusEnum::ENABLED) {
                 return [
                     Limit::perMinute(Config::get('images.private.rate_limit_global', ConstantEnum::RATE_LIMIT_GLOBAL)),
                     Limit::perMinute(Config::get('images.private.rate_limit_per_ip', ConstantEnum::RATE_LIMIT_PER_IP))->by($request->ip()),

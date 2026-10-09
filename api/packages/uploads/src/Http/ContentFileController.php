@@ -59,6 +59,11 @@ class ContentFileController extends Controller
         $headers = [
             'Content-Type' => self::TYPES[$extension] ?? (MimeTypes::getDefault()->getMimeTypes($extension)[0] ?? 'application/octet-stream'),
             'X-Content-Type-Options' => 'nosniff',
+            // The content origin's proxy sets the same headers (docker/conf/Caddyfile). Package
+            // files are public and carry no credentials; players in sandboxed frames (opaque
+            // origin) load their sub-resources cross-origin, hence `cross-origin`.
+            'Cross-Origin-Opener-Policy' => 'same-origin',
+            'Cross-Origin-Resource-Policy' => 'cross-origin',
             'Cache-Control' => str_contains($normalised, '/_player/') ? 'no-cache' : 'public, max-age=3600',
         ];
 

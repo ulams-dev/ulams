@@ -38,7 +38,7 @@ export const ALL: APIRoute = async ({ params, request, locals, cookies, url }) =
   } catch {
     return json(502, { message: "The API is unreachable. Try again in a moment." });
   }
-  if (upstream.status === 401) clearAuthorCookie(cookies);
+  if (upstream.status === 401) clearAuthorCookie(cookies, locals.secure);
 
   if (isStream && upstream.ok && upstream.body) {
     return new Response(upstream.body, {

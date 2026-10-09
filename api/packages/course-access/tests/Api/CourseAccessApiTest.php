@@ -253,6 +253,44 @@ class CourseAccessApiTest extends TestCase
     }
 
 
+    public function testGetMyCourseIdsFollowsGroupsMoreThanOneLevelDown(): void
+    {
+        $courses = Course::factory()->count(5)->create();
+        $student = $this->makeStudent();
+
+        $root = Group::factory()->create();
+        $child = Group::factory()->state(['parent_id' => $root->getKey()])->create();
+        $grandChild = Group::factory()->state(['parent_id' => $child->getKey()])->create();
+        $greatGrandChild = Group::factory()->state(['parent_id' => $grandChild->getKey()])->create();
+        $root->users()->sync($student);
+
+        $courses->get(1)->groups()->sync($grandChild);
+        $courses->get(3)->groups()->sync($greatGrandChild);
+
+        $this->actingAs($student, 'api')->getJson('api/courses/my')
+            ->assertOk()
+            ->assertJsonFragment(['ids' => [
+                $courses->get(1)->getKey(),
+                $courses->get(3)->getKey(),
+            ]]);
+    }
+
+    public function testGetMyCourseIdsSurvivesAGroupCycle(): void
+    {
+        $courses = Course::factory()->count(2)->create();
+        $student = $this->makeStudent();
+
+        $a = Group::factory()->create();
+        $b = Group::factory()->state(['parent_id' => $a->getKey()])->create();
+        $a->update(['parent_id' => $b->getKey()]);
+        $a->users()->sync($student);
+        $courses->get(0)->groups()->sync($b);
+
+        $this->actingAs($student, 'api')->getJson('api/courses/my')
+            ->assertOk()
+            ->assertJsonFragment(['ids' => [$courses->get(0)->getKey()]]);
+    }
+
     public function testGetMyCourseIdsFiltered(): void
     {
         $courses = Course::factory()->count(10)->create();

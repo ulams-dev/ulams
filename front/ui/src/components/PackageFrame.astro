@@ -1,11 +1,15 @@
 ---
+import { SANDBOX_SCORM } from "@ulams/sdk/frames";
 import Icon from "./Icon.astro";
 
 interface Props {
   src: string;
   title: string;
   height?: number;
-  /** Player on the tenant content origin: sandboxed, and the URL (with its token) is not shown. */
+  /**
+   * Player on the tenant content origin: sandboxed, and the URL (with its token) is not shown.
+   * `allow-same-origin` stays: the SCO finds window.API by walking up to the player page (SANDBOX_SCORM).
+   */
   isolated?: boolean;
 }
 const { src, title, height = 640, isolated = false } = Astro.props;
@@ -19,9 +23,9 @@ const { src, title, height = 640, isolated = false } = Astro.props;
   <div class="u-package__stage" style={`--h:${height}px`}>
     <div class="u-package__loading u-skeleton" aria-hidden="true"></div>
     {isolated ? (
-      <iframe src={src} title={title} allow="fullscreen; autoplay" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"></iframe>
+      <iframe src={src} title={title} allow="fullscreen; autoplay" referrerpolicy="no-referrer" sandbox={SANDBOX_SCORM}></iframe>
     ) : (
-      <iframe src={src} title={title} loading="lazy" allow="fullscreen"></iframe>
+      <iframe src={src} title={title} loading="lazy" allow="fullscreen" sandbox={SANDBOX_SCORM}></iframe>
     )}
   </div>
 </div>

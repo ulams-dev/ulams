@@ -17,9 +17,13 @@ small commits → tests → summary.
       logo drawn as SVG, applied to platform and product surfaces, not to tenants; orange is an accent only
       (ADR 0038, Proposed; #25). A trademark check on the name and mark is still recommended before launch
 - [x] (2026-10-09) ADRs 0013–0034 accepted
+- [ ] (2026-10-09) Post-Phase 2 bug batch: ADRs 0063–0070 proposed, awaiting acceptance (tenant AI settings,
+      studio applied state, tutor demo login, APP_KEY, quiz time limit key, scheduler lock, CI scope, admin on Node 24)
 - [x] (2026-10-09) Phase 1 defaults confirmed: students get `scorm_track-update`; SVG served as attachment
       with CSP (no sanitiser); LTI Instructor → tutor, never admin, no e-mail account linking; LiaScript player
       fetched at image build time; production content origin on a separate registrable domain
+- [x] (2026-10-09) Production content origin is a same-site subdomain (`{slug}.content.ulams.app`), not a
+      separate domain (supersedes the earlier default); mitigations shipped, ADR 0014 amended
 - [x] (2026-10-09) GHCR images are public; the upstream EscolaLMS security reports stay as public issues
 - [x] (2026-10-09) Replace the illustrative incident log on the On-Call landing with real course content
 - [x] (2026-10-09) Phase 1 and Phase 2 plans approved; ADRs 0008 (reference frontend: Astro SSR, plain TS SDK,
@@ -141,10 +145,11 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] (new) Platform bucket publicly readable by default (`MINIO_DEFAULT_BUCKETS=ulams:download`)
 - [x] (new) Demo course seeders for the three experiences (`make demo-seed`, `demo-seed-tenants`)
 
-- [ ] (new) Security follow-ups (medium): require `auth:api` on admin tag routes; rate-limit/authorise
-      `POST api/images/img`; review `POST api/cmi5/fetch`; client-set `has_trial`, client currency override
-      and `payProduct` skipping `purchasable`; vouchers admin search OR grouping; `getChildGroups` depth;
-      keep `_ignition` off in production
+- [ ] (new) Security follow-ups (medium) (partial: done and merged: `auth:api` and `tags_list` on admin tag
+      routes, `POST api/images/img` limits and throttle, client payment parameters allow-listed with server
+      price/currency/trial values winning, `payProduct` purchasability, vouchers search grouping,
+      `GroupTree` depth limit and cycle safety, `_ignition` absent from demo and production images
+      (ADR 0071); pending: review `POST api/cmi5/fetch` (L0-09))
 - [ ] (new) Stripe: handle the 3-D Secure redirect in the front and document the webhook setup
       (`PAYMENTS_STRIPE_WEBHOOK_SECRET`, `/api/payments-gateways/webhook/stripe`); RevenueCat receipt verifier
 - [ ] (new) Jitsi: confirm the JaaS webhook signature format against the JaaS docs; configure
@@ -255,7 +260,10 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       `PermissionsSeeder` on existing tenants). SCORM completion now completes the SCORM topics using the SCO
 - [ ] (new) Production: serve content origins from a separate registrable domain (not same-site with the
       app), and add registered LTI tool origins to the front/admin `frame-src` (documented in
-      `api/docs/content-origin.md`; deployment pending)
+      `api/docs/content-origin.md`; deployment pending). Note 2026-10-09: the owner chose the same-site
+      `*.content.ulams.app` instead; the separate domain stays supported (ADR 0014, amended)
+- [x] (new) Same-site content subdomain hardening: `__Host-` cookies, exact-Origin checks on front and API,
+      sandboxed player frames, COOP/CORP headers, both modes documented
 - [ ] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector
 - [x] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket) (env-file
       resolver; per-tenant `H5P_INTERNAL_TOKEN`; library administration limited to the platform; production
