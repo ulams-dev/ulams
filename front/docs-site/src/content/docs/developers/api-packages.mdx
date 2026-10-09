@@ -119,6 +119,12 @@ routes under `/api/courses` (catalogue, program, preview topics, progress, ping)
 admins in the admin course editor (`/courses/list`) and by every learner frontend. Topic content
 classes are registered by the topic type packages below.
 
+Progress endpoints (`GET` and `PATCH /api/courses/progress/{course}`, `PUT .../{topic}/ping`,
+`POST .../{topic}/h5p`) apply the `attend` policy: a user who is not enrolled (directly or through a
+group, with an unexpired end date), not allowed to edit the course and not looking at a public course
+gets 403, a guest 401 and an unknown id 404. `PATCH` also refuses topics that belong to another
+course. The demo student is enrolled in every published demo course, so demo pings keep working.
+
 ### [courses-import-export](/reference/packages/courses-import-export/)
 
 Exports a course as a zip in the `.ulam` format (`content.json` plus assets), imports such a zip and

@@ -279,3 +279,27 @@ describe("builder events", () => {
     r.cleanup();
   });
 });
+
+describe("builder publish-check and new-site", () => {
+  const base = "/api/admin/course-builder/sessions/ses1";
+
+  it("publish-check reads the blocking items and warnings without publishing", async () => {
+    const check = { blocking: [{ message: "Add a cover image." }], warnings: [], facts: { lessons: 6 } };
+    const r = await runCli(["builder", "publish-check", "ses1", "--json"], { env, routes: { [`GET ${base}/publish-check`]: { body: { success: true, data: check } } } });
+    expect(r.code).toBe(0);
+    expect(data(r)).toEqual(check);
+    expect(r.requests.map((q) => `${q.method} ${q.path}`)).toEqual([`GET ${base}/publish-check`]);
+    r.cleanup();
+  });
+
+  it("new-site posts the slug and name; --dry-run sends nothing", async () => {
+    const routes = { [`POST ${base}/new-site`]: { status: 202, body: { success: true, data: { status: "queued" } } } };
+    const sent = await runCli(["builder", "new-site", "ses1", "--slug", "coffee-atlas", "--name", "Coffee Atlas", "--json"], { env, routes });
+    expect(sent.code).toBe(0);
+    expect(sent.requests.at(-1)).toMatchObject({ method: "POST", path: `${base}/new-site`, body: { slug: "coffee-atlas", name: "Coffee Atlas" } });
+    expect(data(sent)).toEqual({ status: "queued" });
+    const dry = await runCli(["builder", "new-site", "ses1", "--slug", "coffee-atlas", "--dry-run", "--json"], { env, routes });
+    expect(dry.requests).toHaveLength(0);
+    for (const r of [sent, dry]) r.cleanup();
+  });
+});

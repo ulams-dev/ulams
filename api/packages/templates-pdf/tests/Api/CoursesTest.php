@@ -78,6 +78,7 @@ class CoursesTest extends TestCase
         $courseProgress = CourseProgressCollection::make($student, $course);
         $this->assertFalse($courseProgress->isFinished());
 
+        $student->courses()->attach($course->getKey());
         $this->response = $this->actingAs($student, 'api')->json(
             'PATCH',
             '/api/courses/progress/' . $course->getKey(),
@@ -129,6 +130,7 @@ class CoursesTest extends TestCase
         $student = User::factory(['points' => 0, 'first_name' => 'Zażółć', 'last_name' => 'Gęślą'])->create();
 
         // CourseFinished is not faked: the templates listener issues the certificate
+        $student->courses()->attach($course->getKey());
         $this->actingAs($student, 'api')->json(
             'PATCH',
             '/api/courses/progress/' . $course->getKey(),

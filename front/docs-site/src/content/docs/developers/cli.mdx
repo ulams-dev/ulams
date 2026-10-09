@@ -294,6 +294,9 @@ Every operation of the API's OpenAPI snapshot (`front/cli/spec/openapi.json`) is
 runs it, so a new endpoint cannot be merged without a command or a reason. After changing the API refresh the snapshot with
 `php artisan l5-swagger:generate`, `yarn workspace ulams sync-spec` and `yarn workspace ulams generate`
 ([OpenAPI and SDK](/developers/openapi-and-sdk/)).
+The PHPUnit "platform" shard of CI runs `l5-swagger:generate` and then `node front/cli/scripts/sync-spec.mjs <api-docs.json> --check`,
+which fails when the committed `spec/openapi.json` or `src/generated/operations.json` is stale; run the three commands above (and
+`build` and `coverage`) and commit the result.
 
 ## Declarative apply
 

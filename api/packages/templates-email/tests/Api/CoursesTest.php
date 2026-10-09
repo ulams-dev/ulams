@@ -175,6 +175,7 @@ class CoursesTest extends TestCase
         $courseProgress = CourseProgressCollection::make($student, $course);
         $this->assertFalse($courseProgress->isFinished());
 
+        $student->courses()->attach($course->getKey());
         $this->response = $this->actingAs($student, 'api')->json(
             'PATCH',
             '/api/courses/progress/' . $course->getKey(),

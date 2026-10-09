@@ -592,7 +592,9 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] (new) Three new free demo academies, `gravity` (Gravity Lab, 3D simulation), `poland` (Poland, Measured /
       Polska w liczbach, map in the background, EN and PL) and `ulam` (The Scottish Book: Stanisław Ulam and the Lwów
       School, five MIT interactives), each with a preset, landing, certificate, demo users and the hourly reset
-      (ADR 0089; `docs/plans/interactive-demos.md` M3–M9)
+      (ADR 0089; `docs/plans/interactive-demos.md` M3–M9) (partial: M9a Ulam research done as docs,
+      `docs/plans/interactive-demos-ulam-facts.md` and `docs/plans/interactive-demos-ulam-outline.md`; owner review
+      in #151; `demo-content/ulam/{facts,sources}.json` and `CREDITS.md` are written in M9b from the sheet)
 - [ ] (new) Six demos on the platform landing with one-click learner and admin login; `make demo-seed-tenants`
       seeds all six; README and docs site updated (M10)
 - [ ] (new) `demo-content/`: separately licensed content packages (gravity GPL-3.0 from `qunabu/Gravity` by
