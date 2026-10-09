@@ -15,16 +15,19 @@
     "./components/*": "./src/components/*",
     "./elements/*": "./src/elements/*",
     "./styles/*": "./src/styles/*",
-    "./html": "./src/lib/html.ts"
+    "./html": "./src/lib/html.ts",
+    "./builder/*": "./src/builder/*"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "eslint src tests",
-    "test": "vitest run",
-    "catalogue": "node --experimental-strip-types --no-warnings scripts/catalogue.mjs"
+    "test": "node --experimental-strip-types --no-warnings scripts/builder-manifest.mjs --check && vitest run",
+    "catalogue": "node --experimental-strip-types --no-warnings scripts/catalogue.mjs",
+    "builder-manifest": "node --experimental-strip-types --no-warnings scripts/builder-manifest.mjs"
   },
   "dependencies": {
     "@ulams/sdk": "0.1.0",
+    "diff": "9.0.0",
     "hls.js": "1.7.3",
     "katex": "0.16.22",
     "marked": "18.0.14"
@@ -34,7 +37,9 @@
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",
+    "axe-core": "^4.10.0",
     "eslint": "9.39.5",
+    "jsdom": "^20.0.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.71.1",
     "vitest": "3.2.4"
