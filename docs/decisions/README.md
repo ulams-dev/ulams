@@ -39,3 +39,8 @@ replacement.
 | [0027](0027-course-builder-access.md) | Course Builder access: one permission, author acts, admins look | Accepted |
 | [0028](0028-generation-stages-and-grounding.md) | Generation stages, grounding check and quiz support check | Accepted |
 | [0029](0029-sse-wake-without-pubsub.md) | The SSE endpoint wakes on a cache key, not Valkey pub/sub | Accepted |
+| [0030](0030-living-course-revisions-and-update-proposals.md) | Living Course: source revisions and update proposals on top of the Course Blueprint | Accepted |
+| [0031](0031-deterministic-fragment-change-detection.md) | Fragment-level change detection is deterministic | Accepted |
+| [0032](0032-source-connectors-as-plugins.md) | Source connectors as plugins; Git through host APIs; one SSRF-safe HTTP client | Accepted |
+| [0033](0033-progress-preservation-rules.md) | Progress preservation rules for content updates | Accepted |
+| [0034](0034-tamper-evident-audit-trail.md) | A tamper-evident audit trail for Living Course | Accepted |
