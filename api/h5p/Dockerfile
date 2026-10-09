@@ -45,7 +45,7 @@ RUN yarn install --frozen-lockfile --production --ignore-scripts --non-interacti
     && mkdir -p api/h5p/node_modules
 
 # ---- core: H5P core + editor client files at pinned commits -----------------
-FROM alpine:3.22 AS core
+FROM alpine:3.24 AS core
 ARG H5P_CORE_REF
 ARG H5P_EDITOR_REF
 RUN apk add --no-cache curl unzip

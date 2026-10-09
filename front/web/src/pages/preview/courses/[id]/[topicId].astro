@@ -1,0 +1,24 @@
+---
+/**
+ * Author preview of the lesson player (same player as /learn/:course/:topic, nothing tracked).
+ * Access rules and caching: see lib/preview.ts and the course page next to this folder.
+ */
+import { flattenTopics } from "@ulams/sdk";
+import LessonPlayer from "../../../../components/LessonPlayer.astro";
+import { getSettings } from "../../../../lib/data.ts";
+import { previewFor, sessionForCourse } from "../../../../lib/preview.ts";
+import { builderFor } from "../../../../lib/studio.ts";
+
+const tenant = Astro.locals.tenant;
+const courseId = Number(Astro.params.id);
+const topicId = Number(Astro.params.topicId);
+if (!tenant || !Number.isInteger(courseId) || courseId <= 0 || !Number.isInteger(topicId)) return Astro.rewrite("/404");
+
+const access = await previewFor(tenant, Astro.locals.authorToken, courseId);
+if (!access || !flattenTopics(access.course).some((t) => t.id === topicId)) return Astro.rewrite("/404");
+
+const settings = await getSettings(tenant).catch(() => null);
+const sessionId = await sessionForCourse(() => builderFor(tenant, Astro.locals.authorToken!).sessions.list(), courseId);
+---
+
+<LessonPlayer tenant={tenant} settings={settings} course={access.course} access={true} progress={[]} topicId={topicId} preview={{ sessionId }} />

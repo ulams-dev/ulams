@@ -1,0 +1,74 @@
+---
+/**
+ * Author preview of the course page: the same page learners see, for a course that may still be a
+ * draft. Only a signed-in studio author who may edit the course gets it (everybody else: the
+ * ordinary 404). Fetched with the author's token and never cached; see lib/preview.ts.
+ */
+import Render from "@ulams/ui/Render.astro";
+import Base from "../../../layouts/Base.astro";
+import PreviewBanner from "../../../components/PreviewBanner.astro";
+import { getRawSiteData } from "../../../lib/data.ts";
+import { chromeFor, withSessionLink } from "../../../lib/docs.ts";
+import { courseHeaderDoc, descriptionDoc, purchaseDoc, syllabusDoc } from "../../../lib/page-docs.ts";
+import { PREVIEW_LINKS, isPublished, previewFor, sessionForCourse, studioHref } from "../../../lib/preview.ts";
+import { builderFor } from "../../../lib/studio.ts";
+import { themeFor } from "../../../lib/theme.ts";
+import { flattenTopics } from "@ulams/sdk";
+import { siteModel } from "../../../lib/view-model.ts";
+
+const tenant = Astro.locals.tenant;
+const id = Number(Astro.params.id);
+if (!tenant || !Number.isInteger(id) || id <= 0) return Astro.rewrite("/404");
+
+const access = await previewFor(tenant, Astro.locals.authorToken, id);
+if (!access) return Astro.rewrite("/404");
+
+const raw = await getRawSiteData(tenant);
+const site = siteModel({ ...raw, course: access.course }, tenant, PREVIEW_LINKS);
+const course = site.course!;
+const settings = raw.settings;
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const chrome = chromeFor(theme);
+const first = flattenTopics(access.course)[0];
+const startHref = first ? PREVIEW_LINKS.topic(id, first.id) : PREVIEW_LINKS.learn(id);
+const sessionId = await sessionForCourse(() => builderFor(tenant, Astro.locals.authorToken!).sessions.list(), id);
+const description = descriptionDoc(theme, course);
+---
+
+<Base theme={theme} accent={settings?.theme?.accent} title={`Preview: ${course.title} — ${site.tenant.name}`} description={course.summary?.slice(0, 160)} noindex>
+  <PreviewBanner published={isPublished(access.course)} studioHref={studioHref(sessionId)} publicHref={`/courses/${id}`} />
+  {chrome.header && <Render doc={withSessionLink(chrome.header, false)} data={site} />}
+  <main id="main" tabindex="-1">
+    <Render doc={courseHeaderDoc(theme, course, undefined, startHref)} data={site} />
+    <Render doc={syllabusDoc(theme, course)} data={site} />
+    <section class="u-container u-course-about" aria-label="About the course">
+      <div class="u-course-about__text">
+        {description && <Render doc={description} data={site} />}
+      </div>
+      <div class="u-course-about__side">
+        <Render doc={purchaseDoc(course, site, startHref)} data={site} />
+      </div>
+    </section>
+  </main>
+  {chrome.footer && <Render doc={chrome.footer} data={site} />}
+</Base>
+
+<style>
+  main:focus {
+    outline: none;
+  }
+  .u-course-about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: clamp(28px, 5vw, 72px);
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .u-course-about {
+      grid-template-columns: 1fr;
+    }
+    .u-course-about__side {
+      order: -1;
+    }
+  }
+</style>

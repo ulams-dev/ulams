@@ -6,7 +6,8 @@ import { ensureSession } from "./lib/session.ts";
 import { imageCache } from "./lib/image-cache.ts";
 import { resolveTenant } from "@ulams/sdk/tenant";
 import { isSameOrigin } from "./lib/bff.ts";
-import { authorToken } from "./lib/studio.ts";
+import { AUTHOR_COOKIE, authorToken } from "./lib/studio.ts";
+import { PREVIEW_HEADERS, isPreviewPath } from "./lib/preview.ts";
 
 let warmed = false;
 function warmOnce(): void {
@@ -61,7 +62,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
+  // Author preview: only the studio author's own cookie counts. Never the learner (demo student)
+  // session and never the demo-admin auto sign-in of the studio: without the cookie it is a 404.
+  if (locals.tenant && isPreviewPath(url.pathname)) {
+    locals.authorToken = cookies.get(AUTHOR_COOKIE)?.value ?? null;
+  }
+
   const response = await next();
+  if (isPreviewPath(url.pathname)) {
+    for (const [name, value] of Object.entries(PREVIEW_HEADERS)) response.headers.set(name, value);
+  }
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   if (!response.headers.has("Cache-Control") && (response.headers.get("content-type") ?? "").includes("text/html")) {

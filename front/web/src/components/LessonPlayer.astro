@@ -1,0 +1,556 @@
+---
+/**
+ * Lesson player: program tree, the topic rendered from a catalogue document, and a
+ * progress bar island (ping, mark complete, prev/next). Used by the learner route
+ * (/learn/:course/:topic, logged in as the demo student by the middleware) and by the author
+ * preview (/preview/courses/:course/:topic), where nothing is tracked.
+ */
+import Render from "@ulams/ui/Render.astro";
+import Icon from "@ulams/ui/components/Icon.astro";
+import Prose from "@ulams/ui/components/Prose.astro";
+import { formatLabel, formatMinutes } from "@ulams/ui/format";
+import { completionPercent, flattenTopics, topicNeighbours, type Course, type PublicSettings, type Tenant, type TopicProgress } from "@ulams/sdk";
+import Base from "../layouts/Base.astro";
+import PreviewBanner from "./PreviewBanner.astro";
+import { apiFor, liascriptLaunch, ltiLaunch, scormAvailable, scormLaunch } from "../lib/data.ts";
+import { completionMode, formatOf, topicDoc, topicMinutes } from "../lib/page-docs.ts";
+import { PREVIEW_LINKS, isPublished, previewCourseHref, studioHref } from "../lib/preview.ts";
+import { themeFor } from "../lib/theme.ts";
+import { LEARNER_LINKS, splitLessonTitle } from "../lib/view-model.ts";
+
+interface Props {
+  tenant: Tenant;
+  settings: PublicSettings | null;
+  course: Course;
+  access: boolean;
+  progress: TopicProgress[];
+  topicId: number;
+  /** Learner token for the launches that track progress (SCORM, LiaScript, LTI); unused in preview. */
+  token?: string | null;
+  /** Author preview: nothing is tracked, the banner links back to the studio. */
+  preview?: { sessionId?: string | null } | null;
+}
+
+const { tenant, settings, course, access, progress, topicId, token = null, preview = null } = Astro.props;
+const courseId = course.id;
+const links = preview ? PREVIEW_LINKS : LEARNER_LINKS;
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const lessons = [...(course.lessons ?? [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+const topics = flattenTopics(course);
+let topic = topics.find((t) => t.id === topicId);
+if (!topic) throw new Error(`Topic ${topicId} is not in course ${courseId}; the page checks this before rendering.`);
+
+// Without access, preview topics come from the public preview endpoint.
+if (!preview && !access && topic.preview && !topic.topicable) {
+  topic = await apiFor(tenant).courses.previewTopic(courseId, topicId).catch(() => topic!);
+}
+const lesson = lessons.find((l) => l.id === topic!.lesson_id);
+const lessonParts = lesson ? splitLessonTitle(lesson.title) : { title: "" };
+const nav = topicNeighbours(course, topicId);
+const percent = completionPercent(course, progress);
+const statusOf = (id: number): TopicProgress["status"] | undefined => progress.find((p) => p.topic_id === id)?.status;
+const done = statusOf(topicId) === 1;
+const nextHref = nav.next ? links.topic(courseId, nav.next.id) : preview ? previewCourseHref(courseId) : `/learn/${courseId}/finish`;
+const prevHref = nav.previous ? links.topic(courseId, nav.previous.id) : null;
+const backHref = preview ? previewCourseHref(courseId) : `/courses/${courseId}`;
+const scormUuid = (topic.topicable as { uuid?: string } | undefined)?.uuid;
+// Launches that report progress are skipped in preview (the topic then explains why).
+const tracked = Boolean(token) && !preview;
+// SCORM: the player on the tenant content origin (tracks through a SCO-scoped token), else the legacy API player.
+const contentOriginSrc = scormUuid && access && tracked ? await scormLaunch(tenant, token!, scormUuid) : null;
+const packageAvailable = scormUuid && !contentOriginSrc ? await scormAvailable(tenant, scormUuid) : true;
+// LiaScript: player on the content origin; it reports progress and completes the topic itself.
+const liascript = topic.topicable_type.endsWith("\\LiaScriptTopic") && access && tracked ? await liascriptLaunch(tenant, token!, topic.id) : null;
+// External tool (LTI 1.3): the tool's login URL with a single-use hint; scores come back through AGS.
+const lti = topic.topicable_type.endsWith("\\LtiLink") && access && tracked ? await ltiLaunch(tenant, token!, topic.id) : null;
+const doc = topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, liascript, lti, preview: Boolean(preview) });
+const format = formatOf(topic);
+const minutes = topicMinutes(topic);
+const lessonNoun = { coffee: "Chapter", oncall: "Module", nightsky: "Mission" }[theme];
+// Progress tracking (ping, mark complete) lives in <ulams-progress>; the preview uses a plain bar.
+const Bar = preview ? "div" : "ulams-progress";
+const barAttrs = preview ? {} : { "course-id": courseId, "topic-id": topicId, complete: completionMode(topic), status: done ? "1" : "0" };
+const locked = (t: { preview?: boolean }) => !access && !t.preview;
+const resources = topic.resources ?? [];
+---
+
+
+<Base theme={theme} accent={settings?.theme?.accent} title={`${topic.title} — ${course.title}`} demo={preview ? null : { adminUrl: tenant.adminUrl, slug: tenant.slug }} bodyClass="u-player-body" noindex={Boolean(preview)}>
+  {preview && <PreviewBanner published={isPublished(course)} studioHref={studioHref(preview.sessionId)} publicHref={`/courses/${courseId}`} />}
+  <div class="u-player">
+    <header class="u-player__top">
+      <a class="u-player__back" href={backHref}>
+        <Icon name="back" />
+        <span class="u-player__course">{course.title}</span>
+      </a>
+      <div
+        class="u-player__progress"
+        role="progressbar"
+        aria-label="Course progress"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow={percent}
+        style={`--progress:${percent}%`}
+        data-course-progress
+      >
+        <span class="u-player__track"></span>
+        <span data-progress-label>{percent}%</span>
+      </div>
+      <a class="u-player__home" href="/" aria-label="Home"><Icon name="book" /></a>
+    </header>
+
+    <details class="u-player__tree" data-tree>
+      <summary><Icon name="menu" /> Program <span>{nav.index + 1} / {nav.total}</span></summary>
+      <nav aria-label="Course program">
+        <ol class="u-tree" role="list">
+          {
+            lessons.map((l, li) => {
+              const parts = splitLessonTitle(l.title);
+              return (
+                <li class="u-tree__lesson" data-current={l.id === lesson?.id ? "true" : undefined}>
+                  <p class="u-tree__lesson-title">
+                    <span>{parts.kicker ?? `${lessonNoun} ${li + 1}`}</span>
+                    {parts.title}
+                  </p>
+                  <ol role="list">
+                    {[...(l.topics ?? [])]
+                      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+                      .map((t) => {
+                        const status = t.id === topicId ? "current" : locked(t) ? "locked" : statusOf(t.id) === 1 ? "done" : "open";
+                        const f = formatOf(t);
+                        return (
+                          <li>
+                            <a
+                              href={links.topic(courseId, t.id)}
+                              data-topic-id={t.id}
+                              data-status={statusOf(t.id) === 1 ? "done" : status}
+                              aria-current={t.id === topicId ? "page" : undefined}
+                            >
+                              <span class="u-tree__state" aria-hidden="true">
+                                {status === "locked" ? <Icon name="lock" /> : <Icon name="check" />}
+                              </span>
+                              <span class="u-tree__name">{t.title}</span>
+                              {f && <span class="u-tree__fmt"><Icon name={f} label={formatLabel(f)} /></span>}
+                            </a>
+                          </li>
+                        );
+                      })}
+                  </ol>
+                </li>
+              );
+            })
+          }
+        </ol>
+      </nav>
+    </details>
+
+    <main id="main" class="u-player__main" tabindex="-1">
+      <div class="u-player__content">
+        <p class="u-player__kicker">
+          {lessonParts.kicker ? (/^([IVXLC]+|\d+)$/.test(lessonParts.kicker) ? `${lessonNoun} ${lessonParts.kicker}` : lessonParts.kicker) : lessonNoun} · {lessonParts.title}
+        </p>
+        <h1 class="u-player__title">{topic.title}</h1>
+        <p class="u-player__meta">
+          {format && <span class="u-tag"><Icon name={format} /> {formatLabel(format)}</span>}
+          {minutes > 0 && <span><Icon name="clock" /> {formatMinutes(minutes)}</span>}
+          {topic.preview && <span class="u-tag">Free preview</span>}
+          {done && <span class="u-player__done"><Icon name="check" /> Completed</span>}
+        </p>
+        {topic.introduction && <div class="u-player__intro"><Prose markdown={topic.introduction} size="lg" /></div>}
+        {
+          !access && (
+            <p class="u-player__notice" role="note">
+              Preview mode: this demo account has no access to the full course, so only free topics open.
+            </p>
+          )
+        }
+        <Render doc={doc} />
+        {
+          resources.length > 0 && (
+            <section class="u-player__resources" aria-label="Downloads">
+              <h2>Downloads</h2>
+              <ul role="list">
+                {resources.map((r) => (
+                  <li>
+                    <a href={r.url} download>
+                      <Icon name="download" /> {r.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+        <div data-end-of-content aria-hidden="true"></div>
+      </div>
+    </main>
+
+    <Bar class="u-player__bar" {...barAttrs}>
+      {
+        prevHref ? (
+          <a class="u-btn u-btn--ghost u-btn--sm" href={prevHref} rel="prev" data-key-prev aria-keyshortcuts="k" aria-label="Previous topic">
+            <Icon name="back" /> <span class="u-player__label">Previous</span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+      {
+        access && !preview ? (
+          <button class="u-btn u-btn--sm u-player__complete" type="button" data-complete aria-pressed={done ? "true" : "false"} data-done-label="Completed" data-todo-label="Mark as complete">
+            <Icon name="check" /> <span data-label>{done ? "Completed" : "Mark as complete"}</span>
+          </button>
+        ) : (
+          <span />
+        )
+      }
+      <a class="u-btn u-btn--sm" href={nextHref} rel="next" data-key-next aria-keyshortcuts="j" aria-label={nav.next ? "Next topic" : "Finish the course"}>
+        <span class="u-player__label">{nav.next ? "Next" : "Finish"}</span> <Icon name="arrow" />
+      </a>
+      <p class="u-visually-hidden" aria-live="polite" data-live></p>
+    </Bar>
+  </div>
+</Base>
+
+<script>
+  import "@ulams/ui/elements/progress.ts";
+
+  // browsers without ::details-content: open the program on desktop
+  const tree = document.querySelector<HTMLDetailsElement>("[data-tree]");
+  if (tree && !CSS.supports("selector(::details-content)") && matchMedia("(min-width: 961px)").matches) tree.open = true;
+  // keep the current topic in view inside the program
+  document.querySelector(".u-tree [aria-current='page']")?.scrollIntoView({ block: "center", behavior: "instant" });
+
+  // j / k (or [ and ]) move between topics, like the tools engineers use every day
+  document.addEventListener("keydown", (event) => {
+    const target = event.target as HTMLElement | null;
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    if (target && (target.closest("input, textarea, select, [contenteditable], iframe") || target.isContentEditable)) return;
+    const key = event.key;
+    const link =
+      key === "j" || key === "]"
+        ? document.querySelector<HTMLAnchorElement>("[data-key-next]")
+        : key === "k" || key === "["
+          ? document.querySelector<HTMLAnchorElement>("[data-key-prev]")
+          : null;
+    if (link) {
+      event.preventDefault();
+      link.click();
+    }
+  });
+</script>
+
+<style>
+  :global(.u-player-body) {
+    background-attachment: scroll;
+  }
+  .u-player {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+      "top top"
+      "tree main"
+      "tree bar";
+    min-height: 100dvh;
+  }
+  .u-player__top {
+    grid-area: top;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 10px clamp(16px, 3vw, 28px);
+    background: color-mix(in srgb, var(--ulams-color-bg) 88%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .u-player__back,
+  .u-player__home {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    text-decoration: none;
+    font-weight: 600;
+    min-width: 0;
+  }
+  .u-player__course {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--ulams-font-family);
+    view-transition-name: course-title;
+  }
+  .u-player__back :global(.u-icon) {
+    transition: transform 0.3s var(--ulams-ease);
+  }
+  .u-player__back:hover :global(.u-icon) {
+    transform: translateX(-4px);
+  }
+  .u-player__progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    width: min(320px, 34vw);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .u-player__track {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--ulams-color-positive) var(--progress), var(--ulams-color-border) var(--progress));
+  }
+  .u-player__tree {
+    grid-area: tree;
+    position: sticky;
+    top: 65px;
+    align-self: start;
+    max-height: calc(100dvh - 65px);
+    overflow-y: auto;
+    border-right: 1px solid var(--ulams-color-border);
+    background: var(--ulams-color-surface);
+    scrollbar-width: thin;
+  }
+  .u-player__tree summary {
+    display: none;
+  }
+  /* desktop: the program is always visible (the disclosure is only for phones) */
+  @media (min-width: 961px) {
+    .u-player__tree::details-content {
+      content-visibility: visible;
+      display: block;
+    }
+  }
+  .u-tree {
+    list-style: none;
+    margin: 0;
+    padding: 16px 12px 40px;
+    display: grid;
+    gap: 18px;
+  }
+  .u-tree ol {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 2px;
+  }
+  .u-tree__lesson-title {
+    display: grid;
+    padding: 0 10px;
+    font-family: var(--ulams-font-family);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--ulams-color-header);
+  }
+  .u-tree__lesson-title span {
+    font-family: var(--ulams-font-family-body);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ulams-color-primary-on-light);
+  }
+  .u-tree a {
+    display: grid;
+    grid-template-columns: 22px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    min-height: 40px;
+    padding: 7px 10px;
+    border-radius: var(--ulams-radius);
+    text-decoration: none;
+    font-size: 0.875rem;
+    color: var(--ulams-color-text);
+    transition: background-color 0.2s, transform 0.25s var(--ulams-ease);
+  }
+  .u-tree a:hover {
+    background: color-mix(in srgb, var(--ulams-color-primary) 9%, transparent);
+    transform: translateX(3px);
+  }
+  .u-tree a[aria-current="page"] {
+    background: var(--ulams-color-card-bg);
+    box-shadow: inset 3px 0 0 var(--ulams-color-primary);
+    font-weight: 700;
+  }
+  .u-tree__state {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--ulams-color-border);
+    color: transparent;
+    transition: background-color 0.4s, color 0.4s, border-color 0.4s;
+  }
+  .u-tree__state :global(.u-icon) {
+    width: 14px;
+    height: 14px;
+  }
+  .u-tree a[data-status="done"] .u-tree__state {
+    background: var(--ulams-color-positive);
+    border-color: var(--ulams-color-positive);
+    color: var(--ulams-color-bg);
+    animation: u-pop-in 0.5s var(--ulams-ease-bounce);
+  }
+  .u-tree a[data-status="locked"] {
+    color: var(--ulams-color-muted);
+  }
+  .u-tree a[data-status="locked"] .u-tree__state {
+    color: var(--ulams-color-muted);
+    border-color: transparent;
+  }
+  .u-tree a[aria-current="page"] .u-tree__state {
+    border-color: var(--ulams-color-primary);
+  }
+  @keyframes u-pop-in {
+    from {
+      transform: scale(0.4);
+    }
+  }
+  .u-tree__fmt {
+    color: var(--ulams-color-muted);
+  }
+  .u-player__main {
+    grid-area: main;
+    min-width: 0;
+  }
+  .u-player__main:focus {
+    outline: none;
+  }
+  .u-player__content > :global(*) {
+    min-width: 0;
+  }
+  .u-player__content {
+    display: grid;
+    gap: 22px;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: clamp(24px, 4vw, 56px) clamp(16px, 4vw, 48px) 48px;
+    animation: u-content-in 0.5s var(--ulams-ease) both;
+  }
+  @keyframes u-content-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+  .u-player__kicker {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ulams-color-primary-on-light);
+  }
+  .u-player__title {
+    font-size: clamp(2rem, 1.4rem + 2.4vw, 3.2rem);
+    letter-spacing: -0.02em;
+  }
+  .u-player__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 18px;
+    font-size: 0.875rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-player__meta > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .u-player__done {
+    color: var(--ulams-color-positive);
+    font-weight: 700;
+  }
+  .u-player__intro {
+    color: var(--ulams-color-muted);
+  }
+  .u-player__notice {
+    padding: 12px 16px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-warn);
+    background: color-mix(in srgb, var(--ulams-color-warn) 12%, transparent);
+    font-weight: 600;
+  }
+  .u-player__resources h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  .u-player__resources ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .u-player__resources a {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    font-weight: 600;
+  }
+  .u-player__bar {
+    grid-area: bar;
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px clamp(16px, 4vw, 48px);
+    border-top: 1px solid var(--ulams-color-border);
+    background: color-mix(in srgb, var(--ulams-color-bg) 92%, transparent);
+    backdrop-filter: blur(12px);
+  }
+  .u-player__complete[aria-pressed="true"] {
+    --_bg: var(--ulams-color-positive);
+    --_bd: var(--ulams-color-positive);
+    --_fg: var(--ulams-color-bg);
+  }
+  @media (max-width: 960px) {
+    .u-player {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "top"
+        "tree"
+        "main"
+        "bar";
+    }
+    .u-player__tree {
+      position: static;
+      max-height: none;
+      border-right: 0;
+      border-bottom: 1px solid var(--ulams-color-border);
+    }
+    .u-player__tree summary {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .u-player__tree summary span {
+      margin-left: auto;
+      font-weight: 500;
+      color: var(--ulams-color-muted);
+    }
+  }
+  @media (max-width: 520px) {
+    .u-player__label {
+      display: none;
+    }
+    .u-player__course {
+      max-width: 40vw;
+    }
+  }
+</style>

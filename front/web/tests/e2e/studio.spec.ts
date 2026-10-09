@@ -105,6 +105,20 @@ test("build a course from a document, edit a question in chat, undo", async ({ p
   );
   const question = version.document.modules[0]!.lessons[0]!.quiz!.questions[0]!;
 
+  // author preview of the unpublished course: banner, lesson page, nothing tracked, not for others
+  await page.goto(`${base}/preview/courses/${courseId}`);
+  await expect(page.getByText("Preview: not published")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Back to the studio" })).toHaveAttribute("href", `/studio/s/${sessionId}/done`);
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+  await axe(page, "course preview");
+  const lessonHref = await page.locator('a[href^="/preview/courses/"]').first().getAttribute("href");
+  await page.goto(`${base}${lessonHref}`);
+  await expect(page.getByText("Preview: not published")).toBeVisible();
+  await expect(page.locator("ulams-progress")).toHaveCount(0);
+  const anonymous = await fetch(`${base}/preview/courses/${courseId}`);
+  expect(anonymous.status).toBe(404);
+  expect(anonymous.headers.get("cache-control")).toBe("private, no-store");
+
   // workspace: chat edit of a quiz question
   await page.goto(`${base}/studio/s/${sessionId}/workspace`);
   await page.locator(`[data-element="${question.id}"]`).click();
