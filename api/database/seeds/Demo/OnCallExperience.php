@@ -259,6 +259,39 @@ class OnCallExperience extends DemoExperience
                         'make' => fn () => $this->scorm('outage-simulator.zip', 'outage-simulator'),
                     ],
                     [
+                        'type' => 'liascript', 'title' => 'Severity levels', 'duration' => '10 min',
+                        'introduction' => 'An interactive LiaScript lesson on choosing the incident severity, with a quick check.',
+                        'summary' => 'SEV1 to SEV3: who gets paged, how fast you update, when you write a postmortem.',
+                        'make' => fn () => $this->liascript('Severity levels', <<<'MD'
+# Severity levels
+
+The severity decides who gets paged and how often the status page is updated. Pick it fast, change
+it when you learn more.
+
+## SEV1
+
+Customers cannot use the product, or data is at risk. Page the incident commander and the on-call
+engineers of every affected service. Status update every 30 minutes. Postmortem required.
+
+## SEV2 and SEV3
+
+- **SEV2**: a major feature is degraded for many customers. Page the owning team; update hourly.
+- **SEV3**: a minor feature is broken or a workaround exists. Handle in working hours.
+
+## Check yourself
+
+Checkout fails for 40 % of customers. Which severity?
+
+- [(X)] SEV1
+- [( )] SEV2
+- [( )] SEV3
+
+How often do you update the status page during a SEV1? (minutes)
+
+[[30]]
+MD),
+                    ],
+                    [
                         'type' => 'cmi5', 'title' => 'Live drill', 'duration' => '90 min',
                         'introduction' => 'The xAPI-tracked live drill in the sandbox cluster drill-eu-1. Thursday of week 3, 18:00 CET.',
                         'summary' => 'Tick each checkpoint as it happens; the timestamps go to your learning record and to your facilitator.',
