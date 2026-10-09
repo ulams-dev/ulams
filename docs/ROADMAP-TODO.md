@@ -11,6 +11,9 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (2026-10-09) Phase 1 and Phase 2 plans approved; ADRs 0008 (reference frontend: Astro SSR, plain TS SDK,
+      agent UI catalogue), 0009 (LLM layer), 0010 (Course Blueprint), 0011 (AG-UI over SSE) and 0012 (LTI 1.3)
+      accepted
 - [x] Base: Wellms (Laravel, `escolalms/*` packages), headless
 - [x] Killer feature: **Living Course** (source sync with diff + citations, progress preserved)
 - [x] Second pillar: personalisation via new `learner-insights` package
@@ -44,8 +47,8 @@ small commits → tests → summary.
 - [ ] Multitenancy for the POC: one deployment, tenant per subdomain with own theme?
 - [ ] Prototype the Sylius order → entitlement flow early (highest-risk commerce piece)
 - [x] Add the spec file to the repo as `docs/ROADMAP-PROMPT.md`
-- [ ] (new) Approve the Phase 1 and Phase 2 plans (`docs/plans/phase-1.md`, `docs/plans/phase-2.md`)
-      and ADRs 0009–0011 (LLM layer, Course Blueprint, AG-UI over SSE), all Proposed
+- [x] (new) Approve the Phase 1 and Phase 2 plans (`docs/plans/phase-1.md`, `docs/plans/phase-2.md`)
+      and ADRs 0009–0011 (LLM layer, Course Blueprint, AG-UI over SSE) (approved 2026-10-09; ADR 0008 and 0012 too)
 
 ## Product principles (tie-breakers)
 
@@ -164,39 +167,83 @@ stale content.
 
 ## Phase 1: Content formats and integrations
 
-Plan (new): `docs/plans/phase-1.md` (draft, waiting for approval): M1.1 upload hardening and content
-origin → M1.2–M1.4 LTI 1.3 → M1.5 LiaScript → M1.6–M1.7 Adapt → M1.8 H5P items → M1.9 conformance.
+Plan (new): `docs/plans/phase-1.md` (approved 2026-10-09; decisions to confirm in its section 14): M1.1
+upload hardening and content origin → M1.2–M1.4 LTI 1.3 → M1.5 LiaScript → M1.6–M1.7 Adapt → M1.8 H5P
+items → M1.9 conformance. Work branch: `phase-1/content-formats`.
 
 ### 1.1 LiaScript
-- [ ] Versioned Markdown + assets as course source
-- [ ] CRUD API (create from Markdown, upload `.md`/zip, update, delete, fetch source)
-- [ ] Rendering decision: self-hosted LiaScript vs export to SCORM/xAPI; no dependency on
-      liascript.github.io
+- [x] Versioned Markdown + assets as course source (`packages/liascript`)
+- [x] CRUD API (create from Markdown, upload `.md`/zip, update, delete, fetch source) (plus versions list and
+      restore)
+- [x] Rendering decision: self-hosted LiaScript vs export to SCORM/xAPI; no dependency on
+      liascript.github.io (the LiaScript SCORM 1.2 build, fetched at image build time with a pinned version
+      and SHA-256, runs on the tenant content origin with our SCORM API page; completion at the last section
+      or on completed/passed; `docs/plans/phase-1.md` 5.5)
+- [ ] (new) LiaScript topic type (learners), admin editor with preview and version diff, export/import strategy
+      (partial: topic type, Astro `LiaScriptLesson`, admin editor with versions, diff and restore done;
+      live preview of unsaved text and the course export/import strategy pending)
+- [ ] (new) Run `sh packages/liascript/bin/fetch-player.sh` in the dev api container once (the image build does
+      it; the bind mount hides it)
 
 ### 1.2 Adapt Learning
-- [ ] Path A: import built SCORM zip (`adapt-contrib-spoor`)
-- [ ] Path B (feature flag): JSON source, schema-validated, isolated build worker
+- [x] Path A: import built SCORM zip (`adapt-contrib-spoor`) (detected on upload, `scorm.source_format = adapt`,
+      admin tag; generated spoor-style fixture)
+- [ ] Path B (feature flag): JSON source, schema-validated, isolated build worker (partial: `packages/adapt`
+      behind `ADAPT_SOURCE_ENABLED` with versioned sources, structural validation, queued build and import
+      through Path A, worker contract in ADR 0013 (Proposed); the GPL worker image `api/adapt-builder` and an
+      admin screen pending)
 
 ### 1.3 LTI 1.3 (high priority)
-- [ ] LTI Platform: launch external tools, AGS grade passback, deep linking
-- [ ] LTI Tool: expose our courses to Moodle, Canvas etc.
-- [ ] Key rotation, nonce/state validation, per-tenant registrations
+- [ ] LTI Platform: launch external tools, AGS grade passback, deep linking (partial: API, admin screens and
+      topic form with "pick content from the tool", players in the old and the Astro front and tests done
+      (ADR 0012); the saLTIre round trip pending)
+- [ ] LTI Tool: expose our courses to Moodle, Canvas etc. (partial: launch, user/role mapping, course access,
+      deep-linking course picker, grade passback, admin platform screens and landing pages in both fronts done;
+      the Moodle `lti-e2e` round trip pending; inside an LMS iframe the front's session cookie can be blocked as
+      third-party, so platforms should open ulams in a new window)
+- [x] Key rotation, nonce/state validation, per-tenant registrations (`ulams:lti:rotate-keys` monthly,
+      provisioning step `lti_keys`, single-use hints/state/nonce/jti in `lti_nonces`, registrations in the
+      tenant database, isolation tests)
+- [x] (new) Admin UI for LTI: tools and platforms screens, external-tool topic form with "pick content from
+      tool" (Integrations → LTI)
+- [ ] (new) LTI: Client-Side OIDC (platform storage via `postMessage`) on the tool side, NRPS on the platform
+      side, per-tool `frame-src` in the CSP
+- [ ] (new) Run `ulams:lti:rotate-keys --init` for existing tenants (new tenants get it at provisioning)
 
 ### 1.4 Shared
-- [ ] Upload hardening (zip-slip, MIME, size limits, virus-scan hook)
-- [ ] Isolated origin / strict CSP for third-party JS
-- [ ] (new) Zip-slip: SCORM (`ScormService::unzipScormArchive`) and cmi5 (`Cmi5UploadService`) extract
+- [x] Upload hardening (zip-slip, MIME, size limits, virus-scan hook) (`packages/uploads`: SCORM, cmi5,
+      course import, file manager; clamd hook tested with a fake clamd, compose profile `av` not run in CI)
+- [ ] Isolated origin / strict CSP for third-party JS (partial: SCORM, Adapt and LiaScript play from the
+      per-tenant content origin with a strict CSP, files served by `/api/content` from local or bucket disks;
+      cmi5 still plays from the API origin; front/admin CSP is report-only)
+- [x] (new) Zip-slip: SCORM (`ScormService::unzipScormArchive`) and cmi5 (`Cmi5UploadService`) extract
       archives with `ZipArchive::extractTo` and no entry-path checks; replace with a safe extractor (M1.1)
-- [ ] (new) The SCORM player loads `scorm-again` from the jsDelivr CDN; vendor it (air-gapped installs)
+- [x] (new) The SCORM player loads `scorm-again` from the jsDelivr CDN; vendor it (air-gapped installs)
 - [ ] (new) SCORM/cmi5 content of all tenants is served from the shared `storage.localhost` origin; move
-      packages and players to a per-tenant content origin (M1.1)
-- [ ] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket) (partial: env-file resolver live for the demo tenants; remaining: a distinct `H5P_INTERNAL_TOKEN`
-      per tenant written at provisioning, library administration limited to the platform because
-      libraries are shared, production mounts limited to env files and key directories, idle-tenant
-      eviction)
+      packages and players to a per-tenant content origin (M1.1) (partial: SCORM done, `<slug>.content.localhost`,
+      `api/docs/content-origin.md`; cmi5 player and AU files pending; run `ulams:tenant:sync-env` so existing
+      tenants get `CONTENT_ORIGIN`)
+- [x] (new) Course import read files outside the extracted archive through paths in `content.json`
+      (e.g. `../../../.env` as a category icon, published to the bucket); paths now resolved inside it
+- [x] (new) SVG/HTML uploads served from the bucket: stored with `Content-Disposition: attachment` and an
+      extension-based `Content-Type`; storage origin sends `script-src 'none'` for SVG (follow-up of 0.2)
+- [x] (new) Students have no `scorm_track-update` permission, so the legacy `/api/scorm/track` rejects
+      them and the front's legacy SCORM player never tracked (seeded for students, confirmed 2026-10-09; re-run
+      `PermissionsSeeder` on existing tenants). SCORM completion now completes the SCORM topics using the SCO
+- [ ] (new) Production: serve content origins from a separate registrable domain (not same-site with the
+      app), and add registered LTI tool origins to the front/admin `frame-src` (documented in
+      `api/docs/content-origin.md`; deployment pending)
+- [ ] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector
+- [ ] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket) (partial: env-file
+      resolver live; per-tenant `H5P_INTERNAL_TOKEN` in the env file and library administration limited to the
+      platform done; production mounts limited to env files and key directories, and idle-tenant eviction pending)
 - [ ] (new) H5P: refresh the player model when the 5-minute Passport token rotates; redact `_token`
-      in all proxies' access logs
-- [ ] Policies, OpenAPI annotations, fixtures and tests (LiaScript, Adapt A+B, LTI round-trip)
+      in all proxies' access logs (partial: Caddy and the H5P service redact `_token`; the token refresh in the
+      players is pending)
+- [ ] Policies, OpenAPI annotations, fixtures and tests (LiaScript, Adapt A+B, LTI round-trip) (partial:
+      permissions `lti_manage`, `liascript_manage`, `adapt_manage`, OpenAPI for every new endpoint, generated
+      fixtures and tests for LiaScript, Adapt A+B and LTI against in-test fakes; the nightly saLTIre/Moodle and
+      Adapt-worker round trips pending)
 
 ---
 
@@ -206,7 +253,7 @@ Note (new): a first Course Builder plan was drafted on 2026-10-08 (LLM layer in 
 tenancy package, Course Blueprint, LiaScript and Adapt topic types, admin module). It predates this
 roadmap; Phase 2 is re-planned from this spec after Phases 0–1.
 
-Plan (new): `docs/plans/phase-2.md` (draft, waiting for approval; follows Phase 1). First milestone
+Plan (new): `docs/plans/phase-2.md` (approved 2026-10-09; follows Phase 1). First milestone
 M2.1 "chat course building": upload → interview → outline diff → approved generation with citations →
 approved apply through domain services → element chat edits. Designs:
 `front/docs/design/stitch/course-builder/`.
@@ -342,18 +389,34 @@ Quality
 
 ## Phase 5: UX and reference frontend
 
-- [ ] Audit Wellms frontends; evolve or build new reference app (justify; SSR/SEO)
-- [ ] Themeable from builder presets; per-tenant theme
+- [ ] Audit Wellms frontends; evolve or build new reference app (justify; SSR/SEO) (partial: new Astro
+      SSR app `front/web`, ADR 0008 Proposed; landing, course, lesson player, quiz, finish for the three
+      demo tenants; plan and numbers in `docs/plans/phase-5-reference-frontend.md`; uncommitted)
+- [ ] Themeable from builder presets; per-tenant theme (partial: `--ulams-*` theme files per demo
+      preset in `front/ui/src/styles/themes`, chosen from `theme.theme`; accent from `theme.accent`
+      applied server-side with AA contrast; builder presets not connected yet)
 - [ ] PWA offline mode with tested sync/conflict rules
 - [ ] Single frontend for LMS **and** Sylius commerce (catalogue, checkout, account)
-- [ ] Web components (my courses, continue, catalogue, quiz, tutor, certificate badge)
-- [ ] TypeScript SDK from OpenAPI; widget docs with live examples
+- [ ] Web components (my courses, continue, catalogue, quiz, tutor, certificate badge) (partial:
+      `<ulams-quiz>`, `<ulams-h5p>`, `<ulams-video>`, `<ulams-progress>` in `front/ui/src/elements`)
+- [ ] TypeScript SDK from OpenAPI; widget docs with live examples (partial: `@ulams/sdk` in `front/sdk`,
+      fetch-only; request paths typed from the generated spec, response types hand-written because the
+      spec has no response schemas; no widget docs yet)
 - [ ] Learner UX: "continue", "what's next", progress and time estimates, short lessons
 - [ ] Semantic search with cited AI answers
-- [ ] **WCAG 2.2 AA** + European Accessibility Act; axe in CI
+- [ ] **WCAG 2.2 AA** + European Accessibility Act; axe in CI (partial: reference frontend has landmarks,
+      skip link, focus-visible, reduced motion, 360 px layout and a theme contrast test; axe scan of
+      every page type in the Playwright e2e passes, not wired into CI yet)
 - [ ] Admin UX: templates, guided empty states, sample course, bulk operations, saved filters
 - [ ] AI transparency everywhere (diffs, citations, reasons one click away)
 - [ ] Metrics: time to first course, time to first enrolment, admin task times
+- [ ] (new) Reference frontend for the demos: UI catalogue `@ulams/ui` (JSON-schema registry, renderer
+      with fallbacks, landing pages as A2UI-shaped documents), BFF with httpOnly session, demo auto-login,
+      SWR cache of public API data (partial: implemented and tested, uncommitted; needs the Caddy switch
+      of `*.app.localhost` to :4321 and the API fixes listed in the plan)
+- [ ] (new) Platform product landing on the platform host (`app.localhost`) with the live demos;
+      account area; webinars/events/consultations pages (partial: implemented and tested, uncommitted;
+      see `docs/plans/phase-5-reference-frontend.md`, batch 2)
 
 ---
 

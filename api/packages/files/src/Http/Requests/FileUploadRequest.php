@@ -29,7 +29,7 @@ class FileUploadRequest extends FormRequest
         return [
             'target' => 'required',
             'file' => ['required', 'array'],
-            'file.*' => ['required', FileHelper::getMimesRule()],
+            'file.*' => array_filter(['required', 'file', FileHelper::getMimesRule(), 'max:' . (int) config('files.max_size_kb', 512 * 1024)]),
         ];
     }
 }

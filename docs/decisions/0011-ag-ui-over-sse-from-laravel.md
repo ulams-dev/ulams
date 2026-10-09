@@ -1,6 +1,6 @@
 # 0011. Builder streaming: AG-UI events over SSE from Laravel, carrying A2UI surfaces
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-08
 
 ## Context and problem statement

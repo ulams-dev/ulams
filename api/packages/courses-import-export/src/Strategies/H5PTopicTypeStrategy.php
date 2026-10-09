@@ -2,7 +2,7 @@
 
 namespace Ulams\CoursesImportExport\Strategies;
 
-use Illuminate\Support\Facades\File;
+use Ulams\CoursesImportExport\Support\ImportPath;
 use Ulams\CoursesImportExport\Strategies\Contract\TopicImportStrategy;
 use Ulams\H5P\Services\Contracts\H5PServiceClientContract;
 
@@ -25,8 +25,8 @@ class H5PTopicTypeStrategy implements TopicImportStrategy
         if (empty($data['h5p_file'])) {
             return null;
         }
-        $filePath = $path . DIRECTORY_SEPARATOR . $data['h5p_file'];
-        if (!File::exists($filePath)) {
+        $filePath = ImportPath::resolve($path, $data['h5p_file']);
+        if ($filePath === null) {
             return null;
         }
 

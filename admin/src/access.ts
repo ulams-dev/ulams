@@ -110,6 +110,7 @@ export default function (initialState: {
         PERMISSIONS.ScormListOwn,
         PERMISSIONS.CategoryList,
         PERMISSIONS.WebinarList,
+        PERMISSIONS.LiaScriptManage,
       ) && !haveSettingsInDashboard('hideInMenu-Courses', true),
 
     courseListPermission:
@@ -137,6 +138,9 @@ export default function (initialState: {
       PERMISSIONS.QuestionnaireList,
       PERMISSIONS.PageList,
     ),
+
+    liascriptListPermission: havePermissionsInDashboard(PERMISSIONS.LiaScriptManage),
+    ltiPermission: havePermissionsInDashboard(PERMISSIONS.LtiManage),
 
     scormListPermission:
       havePermissionsInDashboard(PERMISSIONS.ScormList, PERMISSIONS.ScormListOwn) &&

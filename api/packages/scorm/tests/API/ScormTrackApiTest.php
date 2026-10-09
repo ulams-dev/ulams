@@ -137,4 +137,18 @@ class ScormTrackApiTest extends TestCase
             ->assertStatus(200)
             ->assertJsonFragment([]);
     }
+
+    public function test_students_record_their_own_progress(): void
+    {
+        $sco = $this->uploadScorm('RuntimeBasicCalls_SCORM12.zip')->getData()->data->scormData->scos[0];
+        $student = config('auth.providers.users.model')::factory()->create();
+        $student->guard_name = 'api';
+        $student->assignRole('student');
+
+        $this->actingAs($student, 'api')
+            ->json('POST', '/api/scorm/track/' . $sco->uuid, ['cmi' => ['cmi.core.lesson_status' => 'passed']])
+            ->assertOk();
+
+        $this->assertDatabaseHas('scorm_sco_tracking', ['user_id' => $student->getKey(), 'lesson_status' => 'passed']);
+    }
 }

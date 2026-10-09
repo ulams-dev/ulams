@@ -1,6 +1,8 @@
 # Phase 1 plan: content formats and integrations
 
-Status: **draft, waiting for approval**. Nothing in this plan is implemented yet.
+Status: **approved by the product owner (2026-10-09)**. Implementation on branch
+`phase-1/content-formats`; decisions taken during implementation are collected in section 14 (to confirm),
+progress in section 15.
 
 Phase 1 follows Phase 0 (the Laravel 13 / PHP 8.4 upgrade must be merged first) and precedes
 Phase 2 (AI Course Builder, `docs/plans/phase-2.md`). It covers every Phase 1 item in
@@ -244,6 +246,36 @@ Admin topic form "LiaScript": Markdown editor (the existing admin markdown edito
 (the packaged player in an iframe, rebuilt on save), version list with restore and diff. Front:
 plays as a SCORM SCO through the existing player; no new learner component.
 
+### 5.5 Spike result (2026-10-09)
+
+`@liascript/exporter` 3.4.2--2.1.0 (npm, ISC; the package's LICENSE file is BSD-3-Clause) ships
+prebuilt players in `dist/assets/scorm1.2` and `dist/assets/scorm2004` (about 12 MB and 318 files
+each) plus `dist/assets/common`. Its SCORM export:
+
+1. copies the SCORM build and `common` into a folder,
+2. writes `config.js` with `window.config_ = {task, quiz, survey}`, the counts of tasks, quizzes and
+   surveys found by parsing the course (the exporter runs LiaScript's own parser in Node for that),
+   and adds `<script src="config.js">` to `index.html`,
+3. copies the course folder (Markdown and assets) next to it,
+4. writes `imsmanifest.xml` with `index.html?<README.md>` as the launch URL (or embeds the Markdown as
+   `window["liascript_course"]` in `course.js`).
+
+So (b′) is feasible without Node at runtime: steps 1, 3 and 4 are a small PHP packager, the build can
+be vendored (or fetched at image build time, 12 MB). The one open point is step 2: without the
+parser's counts, `config_` would be empty, and whether LiaScript then still reports completion and
+score to SCORM needs a browser check. Fallbacks: count quizzes/tasks/surveys with our own Markdown
+scan, or run the exporter once per version in a short-lived build container (option b).
+
+Browser check (headless Chromium, 2026-10-09): with an empty `config_` the SCORM 1.2 build loads the
+course from an absolute path (`build/index.html?/liascript/<doc>/v<n>/README.md`), calls
+`LMSInitialize` and sets `cmi.core.lesson_location` to the section index on every slide change;
+`lesson_status` stays `not attempted` when there are no counted quizzes. Implemented design: no SCORM
+package at all. Our page on the content origin provides `window.API` to the build in a same-origin
+iframe and forwards position and status to `POST /api/liascript/progress/{topic}`; the topic is
+complete at the last section (one per heading outside code blocks) or on `completed`/`passed`. The
+build is fetched at image build time (`packages/liascript/bin/fetch-player.sh`, pinned version and
+SHA-256), not kept in git.
+
 ### 5.4 Tests
 
 Minimal LiaScript fixture course (headings, quiz, code block, an image asset); packaging produces a
@@ -426,3 +458,135 @@ round-trips` · `docs(roadmap): Phase 1 status`.
 8. **Learner players in the current `front`** for Phase 1 (iframe wrappers), ported to `front/web` with
    ADR 0008.
 9. **ADRs to propose**: 0012 (LTI package and libraries) with M1.2, 0013 (Adapt build worker) with M1.7.
+
+Taken during implementation (M1.1):
+
+10. **scorm-again 2.6.4 vendored, not 3.x**: the version the front and admin already use from npm,
+    API-compatible with the 2.2.0 the CDN served. Upgrading to 3.x is a separate change.
+11. **Tracking token**: stateless, HMAC-SHA256 with a key derived from the tenant `APP_KEY`, bound to
+    user and SCO, 4 h TTL (`SCORM_TRACKING_TOKEN_TTL`); passed to the player in the URL fragment and
+    sent in `X-Ulams-Tracking-Token`, because Passport 13 blanks any `Authorization: Bearer` header
+    that is not one of its tokens (and reports an exception for it).
+12. **Learners are tracked without `scorm_track-update`**: any signed-in user who launches a SCO can
+    write their own tracking for it through the token. Students do not hold that permission today,
+    so the legacy endpoint rejects them (unchanged); the legacy front player never sent tracking.
+13. **Content origin is configured, not stored**: `CONTENT_ORIGIN` in the tenant env file
+    (`TENANCY_CONTENT_HOST`, default `{slug}.content.localhost`), no database column. Unset means
+    the legacy player (the per-tenant feature flag of section 12). In dev the content origin is
+    same-site with the app; production should use a separate registrable domain.
+14. **SVG and other active content**: no sanitiser. The `s3` driver stores SVG, HTML, XML and files
+    of unknown type outside package prefixes with `Content-Disposition: attachment` and an
+    extension-based `Content-Type`; Caddy adds `script-src 'none'; sandbox` for SVG on the storage
+    origin. `<img>` rendering is unaffected.
+15. **Absolute paths**: rejected in every archive, except that course imports strip a leading `/`,
+    because our own exporter wrote every entry that way (fixed); old exports keep importing.
+16. **Nested archives are not rejected**: SCORM packages and course exports legitimately contain zips;
+    the inner archives go through the guard when they are imported themselves.
+17. **CSP report-only without a collector**: reports go to the browser console only, so no new
+    unauthenticated endpoint now; add a collector before enforcing.
+18. **clamd fails closed** when enabled and unreachable (`UPLOADS_CLAMD_FAIL_CLOSED=true`).
+19. **Removed `app/Library/ScormHelper.php`**: unused third copy of the vulnerable extraction.
+20. **cmi5 stays on the API origin for now**: its AU files live on the local disk (see the 0.1c item);
+    moving them to the bucket and the content origin is a follow-up.
+
+Taken during implementation (M1.2–M1.4, LTI):
+
+21. **One commit for the LTI package** instead of the eight in section 13: the platform and tool sides
+    share keys, nonces, claims and the provider, and were tested together (45 tests). ADR, tenancy step
+    and front are separate commits.
+22. **Login hints and deep-linking data are HS256 tokens** keyed from the tenant `APP_KEY` (not stored),
+    2 minutes for hints; single use is enforced by recording their `jti`.
+23. **AGS access tokens are RS256 JWTs signed with the tenant LTI key** (stateless, 1 h), not stored
+    tokens. Scores are append-only; `Completed` or `FullyGraded` completes the topic, creating an
+    in-progress row first so that `TopicFinished` and the lesson/course checks fire.
+24. **A tool may only use AGS in courses that contain one of its links**, and only post scores for
+    learners it was launched for in that course.
+25. **AGS bearer header moved aside before Passport** (`IsolateLtiBearer`, prepended global middleware):
+    Passport 13 blanks and reports any non-Passport bearer token.
+26. **Tool side: OIDC state stored server-side**, single use, instead of the library's cookie (works in
+    LMS iframes); the nonce bound to it still ties the `id_token` to the login.
+27. **Tool side user mapping by `(platform, sub)` only**; a platform's e-mail is used for a new account
+    only when no local account has it, otherwise a pseudonymous `lti-<platform>-<hash>@lti.invalid`.
+    Instructor, ContentDeveloper and TeachingAssistant become tutor; nobody becomes admin.
+28. **Course selection on the tool side**: custom parameter `course_id` (set by our deep-linking
+    response), else `?course=` on the target link URI, else the platform's `default_course_id`.
+29. **Session hand-over**: a 60-second one-time code in the landing URL, exchanged by the front for a
+    Passport personal access token (`POST /api/lti/tool/exchange`, throttled).
+30. **Grade passback sends course progress** (percentage of finished active topics), `Completed`/
+    `FullyGraded` at 100 %, on every `TopicFinished`; 5 tries with backoff, last error on the target.
+31. **Outgoing LTI HTTP only to public https addresses**, no redirects, DNS pinned;
+    `LTI_ALLOW_INSECURE_URLS=true` for local Moodle/docker setups.
+32. **No admin UI yet**: registrations are API-only (`/api/admin/lti/*`, permission `lti_manage`, seeded
+    for admin) until the Stitch screens for Integrations → LTI are exported.
+
+Taken during implementation (M1.5, LiaScript, partial):
+
+33. **LiaScript documents are standalone**, like SCORM packages: the future topic type will reference a
+    document (`value` = document id), so sources can be edited and versioned outside a course.
+34. **Assets are carried over by text-only versions**: the asset manifest of a version maps paths in the
+    Markdown to stored files, so a text edit or a restore needs no copies; a `.zip` upload adds its
+    files under the new version's folder.
+35. **`liascript_manage` for admins and tutors** (not course-scoped yet; documents are not tied to a
+    course until the topic type exists).
+36. ~~Rendering not started~~ superseded by 37–40.
+
+Defaults taken after the first review, **confirmed by the product owner (2026-10-09)** and implemented:
+
+- #12 confirmed: students are seeded with `scorm_track-update` (and `scorm_track-read`); re-run `PermissionsSeeder` on existing tenants.
+- #27 confirmed: Instructor → tutor, nobody becomes admin, no linking by e-mail.
+- #14 confirmed: attachment + CSP for SVG/HTML, no sanitiser.
+- #21 fine: one commit for the LTI package.
+- Confirmed: production content origin on a separate registrable domain (documented in `api/docs/content-origin.md`, `TENANCY_CONTENT_HOST`).
+- Confirmed: LiaScript player fetched at image build time with a pinned version and SHA-256 (`packages/liascript/bin/fetch-player.sh`), not vendored in git.
+
+Taken during the second pass (rebase onto main, M1.5–M1.9), to confirm:
+
+37. **One content-origin design for every disk**: the content origin proxies package paths to the
+    tenant API's `GET /api/content/<path>`, which reads from the package type's disk (local or bucket)
+    and answers only the proxy (`X-Ulams-Content-Origin`, stripped from client requests on the API
+    site). The per-tenant SCORM file route on the API origin (from `phase-0`) answers 404 when the
+    tenant has a content origin. Costs one PHP request per file; production may serve the bucket from a
+    CDN with the same headers instead.
+38. **SCORM completion completes topics**: `ScormScoCompleted` (first `completed`/`passed`) marks every
+    SCORM topic using that SCO complete for learners with course access (checked on the course policy,
+    since the topic and lesson policies re-check with the current auth user, which token requests lack).
+39. **LiaScript plays without a SCORM package** (section 5.5): progress through our SCORM API page and a
+    topic-scoped token; completion at the last section. Documents are standalone; the topic type stores
+    the document id and always plays the current version. Documents used by topics cannot be deleted.
+40. **The Astro front launches packages server-side** (SCORM and LiaScript) with the learner's session
+    and shows them in sandboxed frames without a full-screen link (the URL carries a one-off token).
+41. **Adapt Path A labels the package, not the SCO** (`scorm.source_format`), since the authoring tool is
+    a property of the whole export.
+42. **Adapt Path B builds into a SCORM package used in a SCORM topic** (no separate topic type); the API
+    side and the worker contract are done, the GPL worker image is not (ADR 0013, Proposed). Structural
+    validation is our own (no `opis/json-schema` dependency needed for it).
+43. **H5P**: the per-tenant `H5P_INTERNAL_TOKEN` is derived from the tenant `APP_KEY` (no new column or
+    provisioning step); library writes are platform-only; hub installs from the editor stay open to
+    tenants (they also write shared libraries; to decide).
+
+---
+
+## 15. Progress
+
+| Milestone | State | Notes |
+|---|---|---|
+| M1.1 | done (cmi5 content origin pending) | `packages/uploads`; SCORM/cmi5/import/files hardened; content origin in Caddy; SCORM player on the content origin; `api/docs/content-origin.md` |
+| M1.2 | done (admin screens pending) | `packages/lti` platform side: keys/JWKS/rotation, `LtiLink` topic type, OIDC launch, AGS (token, line items, scores, results), front `LtiPlayer`; ADR 0012 |
+| M1.3 | done (admin "pick content" button pending) | Deep-linking request and response; topics created through `TopicRepository` |
+| M1.4 | done (admin screens and Moodle profile pending) | Tool side on packbackbooks/lti-1p3-tool: login, launch, user/role mapping, course access, one-time code + front `/lti/launch`, course picker, queued grade passback |
+| M1.5 | done (live preview and export/import strategy pending) | Sources, topic type, player on the content origin, Astro `LiaScriptLesson`, admin editor with versions, diff and restore |
+| M1.6 | done | Adapt exports detected and labelled; generated fixture |
+| M1.7 | partial | API side behind `ADAPT_SOURCE_ENABLED` (sources, validation, queued build, import); GPL worker image pending (ADR 0013) |
+| M1.8 | partial | Per-tenant H5P token, platform-only library writes, `_token` redaction (Caddy, service); player token refresh, mounts and idle eviction pending |
+| M1.9 | partial | Permissions, OpenAPI for every new endpoint, fixtures and tests with fakes; nightly saLTIre, Moodle and Adapt-worker round trips pending |
+
+Admin: Integrations → LTI (tools, platforms), Courses → LiaScript (editor), topic types LiaScript and
+External tool (LTI), Adapt tag in the SCORM list.
+
+Full suite after rebasing onto `phase-0/foundation` (fc9dea54): 2,399 tests, all green (the webinar
+errors were the helper rename on that branch). After the rebase onto `phase-0/foundation` aa87253b
+(main 963499a8 plus the approval docs): 2,419 tests; 2 failures caused by `CONTENT_ORIGIN` set in the
+test environment (fixed in the tests: they now clear both content-origin keys) and the quarantined,
+timing-flaky `ConsultationChangeTermTest::testChangeTermForOneUser`. Scorm, LiaScript and uploads suites
+pass with and without `CONTENT_ORIGIN`.
+

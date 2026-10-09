@@ -112,6 +112,7 @@ Read on the platform by `ulams:tenant:*`, see [multidomain.md](multidomain.md).
 | `TENANCY_API_HOST`           | Tenant API host                                                                               | `{slug}.localhost`                           |
 | `TENANCY_FRONT_HOST`         | Tenant front host (`global.frontURL`, `FRONTEND_URL`)                                        | `{slug}.app.localhost`                       |
 | `TENANCY_ADMIN_HOST`         | Tenant admin panel host                                                                       | `{slug}.admin.localhost`                     |
+| `TENANCY_CONTENT_HOST`       | Tenant content origin host, written as `CONTENT_ORIGIN` (see [content-origin.md](content-origin.md)) | `{slug}.content.localhost`                   |
 | `TENANCY_EMAIL_DOMAIN`       | Domain of demo user e-mails and `MAIL_FROM_ADDRESS`                                          | `{slug}.ulams.app`                           |
 | `TENANCY_DATABASE`           | Tenant database and role name                                                                | `ulams_{slug}`                               |
 | `TENANCY_BUCKET`             | Tenant bucket                                                                                 | `ulams-{slug}`                               |
@@ -131,7 +132,7 @@ Read on the platform by `ulams:tenant:*`, see [multidomain.md](multidomain.md).
 | `QUEUE_IDLE_SLEEP`           | Seconds `queue.sh`/`broadcast.sh` sleep after a pass over all domains                         | `3`                                          |
 
 Set per tenant in `.env.<host>` (do not set them on the platform): `TENANT_SLUG`,
-`REDIS_PREFIX`, `CACHE_PREFIX`, `HORIZON_PREFIX`, `INITIAL_USER_EMAIL`,
+`REDIS_PREFIX`, `CACHE_PREFIX`, `HORIZON_PREFIX`, `CONTENT_ORIGIN`, `INITIAL_USER_EMAIL`,
 `INITIAL_USER_PASSWORD`, `FRONTEND_URL`, `ADMIN_URL`, `DEMO_MODE`.
 
 ## Demo mode (`packages/demo`)
@@ -151,3 +152,58 @@ the others are optional overrides. See [packages/demo/README.md](../packages/dem
 | `DEMO_RESET_STUDENTS`   | Demo students when no baseline was captured                                         | `5`                              |
 | `DEMO_CONTENT_SEEDER`   | Seeder of the demo courses                                                           | `Database\Seeders\DemoCoursesSeeder` |
 | `ULAMS_DEMO_EXPERIENCE` | Demo course(s) to seed                                                               | `TENANT_SLUG`                    |
+
+## Uploads (`packages/uploads`)
+
+Upload guard for packages and imports (zip-slip, symlinks, zip bombs, sniffed MIME type, size,
+virus-scan hook), see [packages/uploads/README.md](../packages/uploads/README.md).
+
+| Variable name                               | Description                                                     | Default           |
+| ------------------------------------------- | --------------------------------------------------------------- | ----------------- |
+| `UPLOADS_SCORM_MAX_MB`                      | Largest SCORM package upload                                    | `512`             |
+| `UPLOADS_CMI5_MAX_MB`                       | Largest cmi5 package upload                                     | `512`             |
+| `UPLOADS_COURSE_IMPORT_MAX_MB`              | Largest course export zip accepted by the import                | `1024`            |
+| `UPLOADS_ZIP_MAX_ENTRIES`                   | Most entries in a SCORM/cmi5 package                            | `5000`            |
+| `UPLOADS_ZIP_MAX_UNCOMPRESSED_MB`           | Largest total uncompressed size of a package                    | `2048`            |
+| `UPLOADS_ZIP_MAX_ENTRY_MB`                  | Largest single file inside an archive                           | `1024`            |
+| `UPLOADS_ZIP_MAX_RATIO`                     | Largest compression ratio of an entry over 1 MB (zip bombs)     | `200`             |
+| `UPLOADS_COURSE_IMPORT_MAX_ENTRIES`         | Most entries in a course import                                 | `10000`           |
+| `UPLOADS_COURSE_IMPORT_MAX_UNCOMPRESSED_MB` | Largest total uncompressed size of a course import              | `4096`            |
+| `UPLOADS_SCANNER`                           | `null` (no scan) or `clamd` (compose profile `av`)              | `null`            |
+| `UPLOADS_CLAMD_HOST` / `UPLOADS_CLAMD_PORT` | clamd address                                                   | `clamav` / `3310` |
+| `UPLOADS_CLAMD_TIMEOUT`                     | Seconds to wait for clamd                                       | `60`              |
+| `UPLOADS_CLAMD_FAIL_CLOSED`                 | Reject uploads when clamd cannot be reached                     | `true`            |
+| `FILES_MAX_SIZE_MB`                         | Largest single file in the admin file manager (`packages/files`) | `512`             |
+| `UPLOADS_LIASCRIPT_MAX_MB`                  | Largest LiaScript `.md` or `.zip` upload                        | `128`             |
+| `LIASCRIPT_MAX_MARKDOWN_KB`                 | Largest LiaScript Markdown source (`packages/liascript`)        | `2048`            |
+| `LIASCRIPT_DISK`                            | Disk for LiaScript assets                                       | `FILESYSTEM_DRIVER` |
+| `LIASCRIPT_PROGRESS_TOKEN_TTL`              | Lifetime of the LiaScript player's progress token, seconds      | `14400`           |
+| `LIASCRIPT_PLAYER_BUILD_PATH`               | Folder of the fetched LiaScript build                           | `packages/liascript/resources/player/build` |
+
+## LTI 1.3 (`packages/lti`)
+
+| Variable name                 | Description                                                                 | Default   |
+| ----------------------------- | --------------------------------------------------------------------------- | --------- |
+| `LTI_ISSUER`                  | Our issuer and base URL of the LTI endpoints                                | `APP_URL` |
+| `LTI_RETIRED_KEY_GRACE_DAYS`  | Days a retired key stays in the JWKS                                        | `30`      |
+| `LTI_KEY_BITS`                | RSA key size (php-jwt requires at least 2048)                               | `2048`    |
+| `LTI_LOGIN_HINT_TTL`          | Seconds a launch's login hint is valid                                      | `120`     |
+| `LTI_ID_TOKEN_TTL`            | Lifetime of the id_token we sign, seconds                                   | `300`     |
+| `LTI_ACCESS_TOKEN_TTL`        | Lifetime of AGS access tokens we issue, seconds                             | `3600`    |
+| `LTI_STATE_TTL`               | Lifetime of the tool-side OIDC state and nonce, seconds                     | `600`     |
+| `LTI_CODE_TTL`                | Lifetime of the tool-side one-time sign-in code, seconds                    | `60`      |
+| `LTI_ALLOW_INSECURE_URLS`     | Allow http and private addresses for tool/platform URLs. **Development only** | `false` |
+| `LTI_HTTP_TIMEOUT`            | Timeout of outgoing LTI requests, seconds                                   | `10`      |
+| `LTI_JWKS_CACHE_TTL`          | Cache lifetime of fetched key sets, seconds                                 | `600`     |
+| `LTI_TOOL_LANDING_URL`        | Where a tool-side launch lands (`{front}`, `{code}`, `{course}`)            | `{front}/lti/launch?code={code}&course={course}` |
+
+## Adapt Path B (`packages/adapt`, ADR 0013)
+
+| Variable name           | Description                                                        | Default                     |
+| ----------------------- | ------------------------------------------------------------------ | --------------------------- |
+| `ADAPT_SOURCE_ENABLED`  | Adapt JSON sources and builds (off: the API answers 404)           | `false`                     |
+| `ADAPT_BUILDER_URL`     | Build worker (GPL-3.0 service, compose profile `adapt`)            | `http://adapt-builder:8080` |
+| `ADAPT_BUILDER_TOKEN`   | `X-Internal-Token` for the worker                                  | (empty)                     |
+| `ADAPT_BUILDER_TIMEOUT` | Seconds to wait for a build                                        | `300`                       |
+| `ADAPT_MAX_SOURCE_KB`   | Largest JSON source                                                | `4096`                      |
+

@@ -9,6 +9,8 @@ const KIND_BY_CLASS: Record<string, TopicKind> = {
   oembed: "oembed",
   h5p: "h5p",
   scormsco: "scorm",
+  liascripttopic: "liascript",
+  ltilink: "lti",
   cmi5au: "cmi5",
   giftquiz: "quiz",
   project: "project",

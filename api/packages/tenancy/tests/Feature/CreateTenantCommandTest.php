@@ -73,7 +73,7 @@ class CreateTenantCommandTest extends TestCase
         ])->assertExitCode(0);
 
         $this->assertSame(
-            ['migrate', 'passport:keys', 'passport:client', 'db:seed', 'ulams:tenant:seed-demo'],
+            ['migrate', 'passport:keys', 'passport:client', 'db:seed', 'ulams:lti:rotate-keys', 'ulams:tenant:seed-demo'],
             $this->runner->commands()
         );
         foreach ($this->runner->calls as $call) {
@@ -90,7 +90,7 @@ class CreateTenantCommandTest extends TestCase
         $this->assertSame('acme.app.localhost', $tenant->front_host);
         $this->assertSame('acme.admin.localhost', $tenant->admin_host);
         $this->assertSame(
-            ['database', 'bucket', 'env', 'migrate', 'passport_keys', 'passport_client', 'permissions', 'demo'],
+            ['database', 'bucket', 'env', 'migrate', 'passport_keys', 'passport_client', 'permissions', 'lti_keys', 'demo'],
             array_keys($tenant->steps)
         );
         $this->assertSame('PRIVATE-acme.localhost', $tenant->passport_private_key);
@@ -132,7 +132,7 @@ class CreateTenantCommandTest extends TestCase
         $this->artisan('ulams:tenant:create', ['slug' => 'acme'])->assertExitCode(0);
 
         $this->assertSame(
-            ['migrate', 'passport:keys', 'passport:client', 'db:seed', 'ulams:tenant:seed-demo'],
+            ['migrate', 'passport:keys', 'passport:client', 'db:seed', 'ulams:lti:rotate-keys', 'ulams:tenant:seed-demo'],
             $this->runner->commands()
         );
         $tenant->refresh();

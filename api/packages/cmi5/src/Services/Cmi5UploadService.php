@@ -11,6 +11,10 @@ use Ulams\Cmi5\Services\Contracts\Cmi5UploadServiceContract;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Ulams\Uploads\UploadGuard;
+use Ulams\Uploads\Zip\SafeExtractor;
+use Ulams\Uploads\Zip\ZipInspector;
+use Ulams\Uploads\Zip\ZipLimits;
 use ZipArchive;
 
 class Cmi5UploadService implements Cmi5UploadServiceContract
@@ -24,11 +28,26 @@ class Cmi5UploadService implements Cmi5UploadServiceContract
 
     public function upload(UploadedFile $file): Cmi5
     {
-        $zip = new ZipArchive();
-        $zip->open($file);
+        $path = (string) $file->getRealPath();
+        $limits = app(UploadGuard::class)->limitsFor('cmi5');
+        // reject zip-slip, symlinks and zip bombs before anything is parsed or saved
+        app(ZipInspector::class)->inspect($path, $limits);
 
-        $cmi5 = $this->parse($zip);
-        $this->unzip($cmi5, $zip);
+        $zip = new ZipArchive();
+        $zip->open($path);
+        try {
+            $cmi5 = $this->parse($zip);
+        } finally {
+            $zip->close();
+        }
+
+        try {
+            $this->unzip($cmi5, $path, $limits);
+        } catch (\Throwable $e) {
+            $cmi5->aus()->delete();
+            $cmi5->delete();
+            throw $e;
+        }
 
         return $cmi5;
     }
@@ -48,18 +67,17 @@ class Cmi5UploadService implements Cmi5UploadServiceContract
         return $this->cmi5Repository->save($cmi5, $cmi5Aus);
     }
 
-    private function unzip(Cmi5 $cmi5, ZipArchive $zip): void
+    /**
+     * Entry by entry under cmi5/<id> on the cmi5 disk (never ZipArchive::extractTo).
+     */
+    private function unzip(Cmi5 $cmi5, string $zipPath, ZipLimits $limits): void
     {
-        $rootDir = 'cmi5';
-        $disk = Storage::disk(config('ulams_cmi5.disk'));
-        $destinationDir = $disk->path($rootDir . DIRECTORY_SEPARATOR . $cmi5->getKey());
-
-        if (!$disk->exists($destinationDir)) {
-            $disk->makeDirectory($destinationDir);
-        }
-
-        $zip->extractTo($destinationDir);
-        $zip->close();
+        app(SafeExtractor::class)->extractToDisk(
+            $zipPath,
+            Storage::disk(config('ulams_cmi5.disk')),
+            'cmi5/' . $cmi5->getKey(),
+            $limits,
+        );
     }
 
     private function xmlToArray(string $xml): array

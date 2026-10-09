@@ -8,6 +8,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Peopleaps\Scorm\Exception\StorageNotFoundException;
+use Ulams\Uploads\Zip\SafeExtractor;
+use Ulams\Uploads\Zip\ZipLimits;
 
 class ScormDisk
 {
@@ -21,23 +23,16 @@ class ScormDisk
      */
     function unzipper($file, $target_dir)
     {
-        $target_dir = $this->cleanPath($target_dir);
-        $unzipper = resolve(\ZipArchive::class);
-        if ($unzipper->open($file)) {
-            /** @var FilesystemAdapter $disk */
-            $disk = $this->getDisk();
-            for ($i = 0; $i < $unzipper->numFiles; ++$i) {
-                $zipEntryName = $unzipper->getNameIndex($i);
-                $destination = $this->join($target_dir, $this->cleanPath($zipEntryName));
-                if ($this->isDirectory($zipEntryName)) {
-                    $disk->createDirectory($destination);
-                    continue;
-                }
-                $disk->writeStream($destination, $unzipper->getStream($zipEntryName));
-            }
-            return true;
+        $path = $file instanceof UploadedFile ? $file->getRealPath() : $file;
+        if (!is_string($path) || !is_file($path)) {
+            return false;
         }
-        return false;
+
+        // ulams: entry by entry through the upload guard's safe extractor (zip-slip,
+        // absolute paths, symlinks and zip bombs are rejected).
+        app(SafeExtractor::class)->extractToDisk($path, $this->getDisk(), (string) $target_dir, ZipLimits::fromConfig());
+
+        return true;
     }
 
     /**
@@ -105,26 +100,6 @@ class ScormDisk
         } catch (Exception $ex) {
             Log::error($ex->getMessage());
         }
-    }
-
-    /**
-     * 
-     * @param array $paths
-     * @return string joined path
-     */
-    private function join(...$paths)
-    {
-        return  implode(DIRECTORY_SEPARATOR, $paths);
-    }
-
-    private function isDirectory($zipEntryName)
-    {
-        return substr($zipEntryName, -1) ===  '/';
-    }
-
-    private function cleanPath($path)
-    {
-        return str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 
     /**

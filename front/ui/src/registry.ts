@@ -816,8 +816,32 @@ export const registry = {
     category: "learning",
     interactive: false,
     children: false,
-    props: obj({ src: href("Player URL"), title: text("Title", { maxLength: 160 }), height: int("Frame height px", { default: 640 }) }, ["src", "title"]),
+    props: obj(
+      {
+        src: href("Player URL"),
+        title: text("Title", { maxLength: 160 }),
+        height: int("Frame height px", { default: 640 }),
+        isolated: bool("Third-party package on the tenant content origin: sandboxed frame, no full-screen link (the URL carries a one-off token)", false),
+      },
+      ["src", "title"]
+    ),
     fallback: (p) => `${String(p.title ?? "")}: ${String(p.src ?? "")}`,
+  },
+  LiaScriptLesson: {
+    description: "A LiaScript course (Markdown with quizzes, code and slides) played in a sandboxed frame on the tenant content origin; it completes itself at the last section.",
+    category: "learning",
+    interactive: false,
+    children: false,
+    props: obj(
+      {
+        src: href("Player URL on the content origin (from POST /api/liascript/launches/{topic})"),
+        title: text("Title", { maxLength: 160 }),
+        sections: int("Number of sections", { minimum: 1 }),
+        height: int("Frame height px", { default: 720 }),
+      },
+      ["src", "title"]
+    ),
+    fallback: (p) => String(p.title ?? ""),
   },
   ActivityCard: {
     description: "Launch card for an activity that runs outside the page (cmi5 tracked activity, project hand-in).",

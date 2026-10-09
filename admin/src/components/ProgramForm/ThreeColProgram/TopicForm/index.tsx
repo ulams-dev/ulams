@@ -17,7 +17,9 @@ import Resources from './resources';
 
 import ScormSelector from '@/components/Scorm';
 import {
+  ApiOutlined,
   AudioOutlined,
+  BookOutlined,
   CarryOutOutlined,
   ExclamationCircleOutlined,
   FileImageOutlined,
@@ -30,6 +32,9 @@ import {
   YoutubeOutlined,
 } from '@ant-design/icons';
 import GiftQuiz from './media/giftquiz';
+import LiaScriptTopicForm from './media/liascript';
+import type { LtiTopicable } from './media/lti';
+import LtiTopicForm from './media/lti';
 import Project from './media/project';
 
 export const getTypeIcon = (type: string | undefined) => {
@@ -55,6 +60,10 @@ export const getTypeIcon = (type: string | undefined) => {
         return <CarryOutOutlined />;
       case 'GiftQuiz':
         return <PercentageOutlined />;
+      case 'LiaScriptTopic':
+        return <BookOutlined />;
+      case 'LtiLink':
+        return <ApiOutlined />;
     }
   }
   return <ExclamationCircleOutlined />;
@@ -296,6 +305,25 @@ export const Topic: React.FC = () => {
           )}
           {type && type === TopicType.H5P && (
             <H5PForm id={topics.value} onChange={(value) => updateValue('value', value)} />
+          )}
+          {type && type === TopicType.LiaScript && (
+            <LiaScriptTopicForm
+              value={topics.value}
+              onChange={(value) => updateValue('value', value)}
+            />
+          )}
+          {type && type === TopicType.Lti && (
+            <LtiTopicForm
+              topicable={topic?.topicable as LtiTopicable | undefined}
+              lessonId={topic?.lesson_id}
+              isNew={!!topic?.isNew}
+              onChange={(fields) =>
+                Object.entries(fields).forEach(([key, value]) =>
+                  updateValue(key as keyof API.Topic, value),
+                )
+              }
+              onDeepLinked={getLessons}
+            />
           )}
           {type && type === TopicType.SCORM && (
             <ScormSelector

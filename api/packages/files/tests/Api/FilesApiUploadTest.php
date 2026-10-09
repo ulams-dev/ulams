@@ -26,6 +26,21 @@ class FilesApiUploadTest extends TestCase
         $this->disk->assertExists($filename);
     }
 
+    public function testFileOverTheSizeLimitIsRejected()
+    {
+        config(['files.max_size_kb' => 10]);
+        $file = UploadedFile::fake()->create('big.pdf', 11, 'application/pdf');
+
+        $response = $this->actingAs(auth()->user(), 'api')->postJson('/api/admin/file/upload', [
+            'file' => [$file],
+            'target' => '/',
+        ]);
+
+        $response->assertUnprocessable();
+        $response->assertJsonValidationErrors(['file.0']);
+        $this->disk->assertMissing('big.pdf');
+    }
+
     public function testSingleFileUploadInvalidContentType()
     {
         $target = '/';

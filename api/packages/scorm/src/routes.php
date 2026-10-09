@@ -1,5 +1,6 @@
 <?php
 
+use Ulams\Scorm\Http\Controllers\ScormContentController;
 use Ulams\Scorm\Http\Controllers\ScormController;
 use Ulams\Scorm\Http\Controllers\ScormFileController;
 
@@ -16,6 +17,15 @@ Route::group(['prefix' => 'api/admin/scorm', 'middleware' => ['auth:api', Substi
 });
 
 Route::group(['prefix' => 'api/scorm'], function () {
+    // vendored scorm-again for the legacy player (was loaded from jsDelivr)
+    Route::get('/assets/scorm-again.min.js', [ScormContentController::class, 'scormAgain']);
+
+    // content-origin player: the learner token only issues a SCO-scoped tracking token,
+    // which is all the player on the content origin ever sees
+    Route::post('/launch/{uuid}', [ScormContentController::class, 'launch'])->middleware('auth:api');
+    Route::get('/content/{uuid}', [ScormContentController::class, 'show']);
+    Route::post('/content/{uuid}/track', [ScormContentController::class, 'track']);
+
     Route::get('/play/{uuid}', [ScormController::class, "showView"]);
     Route::get('/service-worker', [ScormController::class, "showViewServiceWorker"]);
     Route::get('/show/{uuid}', [ScormController::class, "showJson"]);

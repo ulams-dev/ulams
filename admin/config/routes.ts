@@ -102,6 +102,21 @@
         hideInMenu: true,
       },
       {
+        path: '/courses/liascript',
+        name: 'LiaScript',
+        icon: 'read',
+        access: 'liascriptListPermission',
+        component: './LiaScript',
+      },
+      {
+        path: '/courses/liascript/:id',
+        name: 'LiaScript',
+        icon: 'read',
+        access: 'liascriptListPermission',
+        component: './LiaScript/editor',
+        hideInMenu: true,
+      },
+      {
         path: '/courses/scorms',
         name: 'SCORMs',
         icon: 'experiment',
@@ -174,6 +189,26 @@
         icon: 'read',
         access: 'coursesQuizReportsListPermission',
         component: './QuizReports/details',
+      },
+    ],
+  },
+  {
+    path: '/integrations',
+    name: 'Integrations',
+    icon: 'api',
+    access: 'ltiPermission',
+    routes: [
+      {
+        path: '/integrations',
+        redirect: '/integrations/lti',
+        access: 'ltiPermission',
+      },
+      {
+        path: '/integrations/lti',
+        name: 'LTI',
+        icon: 'api',
+        access: 'ltiPermission',
+        component: './Lti',
       },
     ],
   },

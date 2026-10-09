@@ -1,6 +1,6 @@
 # 0010. Course Builder: a versioned Course Blueprint applied through domain services
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-08
 
 ## Context and problem statement

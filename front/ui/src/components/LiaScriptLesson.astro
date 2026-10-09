@@ -1,0 +1,77 @@
+---
+/**
+ * A LiaScript course (Markdown with quizzes, code and slides) played on the tenant content origin.
+ * The frame is sandboxed; the URL carries a one-off progress token, so it is not shown as a link.
+ * Progress is reported by the player itself: reaching the last section completes the lesson.
+ */
+import Icon from "./Icon.astro";
+
+interface Props {
+  src: string;
+  title: string;
+  sections?: number;
+  height?: number;
+}
+const { src, title, sections, height = 720 } = Astro.props;
+---
+
+<section class="u-lia" aria-label={title}>
+  <div class="u-lia__bar">
+    <span><Icon name="book" /> {title}</span>
+    {sections ? <span class="u-lia__meta">{sections} {sections === 1 ? "section" : "sections"} · completes at the last one</span> : null}
+  </div>
+  <div class="u-lia__stage" style={`--h:${height}px`}>
+    <div class="u-lia__loading u-skeleton" aria-hidden="true"></div>
+    <iframe
+      src={src}
+      title={title}
+      allow="fullscreen; autoplay; clipboard-write"
+      referrerpolicy="no-referrer"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"
+    ></iframe>
+  </div>
+</section>
+
+<style>
+  .u-lia {
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    overflow: hidden;
+    background: var(--ulams-color-card-bg);
+  }
+  .u-lia__bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px 12px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .u-lia__bar > span:first-child {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    font-weight: 600;
+  }
+  .u-lia__meta {
+    color: var(--ulams-color-muted);
+    font-size: 0.875rem;
+  }
+  .u-lia__stage {
+    position: relative;
+    height: min(var(--h), 85vh);
+    background: #fff;
+  }
+  .u-lia__loading {
+    position: absolute;
+    inset: 0;
+    border-radius: 0;
+  }
+  .u-lia iframe {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+</style>

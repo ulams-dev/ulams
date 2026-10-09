@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import { Button, Popconfirm, Tooltip, message } from 'antd';
+import { Button, Popconfirm, Tag, Tooltip, message } from 'antd';
 import React, { useRef } from 'react';
 import { FormattedMessage, Link, useIntl } from 'umi';
 
@@ -31,6 +31,17 @@ const TableList: React.FC = () => {
       dataIndex: 'version',
       hideInSearch: true,
       sorter: true,
+    },
+    {
+      title: <FormattedMessage id="source_format" defaultMessage="Authoring tool" />,
+      dataIndex: 'source_format',
+      hideInSearch: true,
+      render: (_, record) =>
+        (record as API.SCORM & { source_format?: string | null }).source_format === 'adapt' ? (
+          <Tag color="blue">Adapt</Tag>
+        ) : (
+          '–'
+        ),
     },
 
     {
