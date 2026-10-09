@@ -92,10 +92,16 @@ class QuizAttemptResource extends QuizAttemptSimpleResource
      */
     private function orderedQuestions(): Collection
     {
+        $questions = $this->giftQuiz->questions;
+        if ($this->isEnded()) {
+            // history keeps showing archived questions this attempt answered
+            $answered = $this->answers->pluck('topic_gift_question_id')->all();
+            $questions = $this->giftQuiz->allQuestions->filter(fn (GiftQuestion $q) => !$q->isArchived() || in_array($q->getKey(), $answered, true));
+        }
         if ($this->giftQuiz->randomize_order) {
-            return SeededShuffle::shuffle($this->giftQuiz->questions->sortBy('id')->values(), $this->id);
+            return SeededShuffle::shuffle($questions->sortBy('id')->values(), $this->id);
         }
 
-        return $this->giftQuiz->questions->sortBy('order')->values();
+        return $questions->sortBy('order')->values();
     }
 }
