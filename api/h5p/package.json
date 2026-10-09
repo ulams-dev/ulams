@@ -43,7 +43,7 @@
         "redis": "4.7.1"
     },
     "devDependencies": {
-        "@eslint/js": "9.39.5",
+        "@eslint/js": "10.0.1",
         "@lumieducation/h5p-webcomponents": "10.0.4",
         "@types/cors": "2.8.19",
         "@types/express": "5.0.6",
