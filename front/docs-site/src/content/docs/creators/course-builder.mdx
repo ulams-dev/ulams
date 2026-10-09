@@ -149,10 +149,23 @@ The landing page preview links its call to action to the same preview.
 
 ## 9. Publish
 
-The success page summarises the course (modules, lessons, minutes, questions, how much is cited,
-AI cost) and links to the course form in the admin, the learner preview and the landing preview.
-**Publish course** makes it available to learners. For a paid course it also makes the course's
-product purchasable; see [Pricing](/creators/pricing/).
+The success page opens with the **publish summary**: the address the course will have, its price and
+theme, its size, and two lists.
+
+- **Fix before publishing** (blocking): the course is not applied yet, the latest version has not been
+  applied, someone edited an element in the admin after the last apply and applying would overwrite it,
+  the generated landing page is not valid, or the course is paid but has no confirmed price. **Publish
+  course** stays disabled until these are gone.
+- **Review** (warnings): elements without a source citation, lessons flagged by the grounding check,
+  lessons much longer than your brief asked for, an accent colour that had to be adjusted to stay readable,
+  and accessibility problems in the generated text (a heading level that jumps, a link without text, an
+  image without alternative text, a table without a header row). Tick **I have read the warnings** to publish
+  anyway; the decision is yours.
+
+**Publish course** publishes the course, shows its generated landing page as the public course page, and
+for a paid course makes its product purchasable (see [Pricing](/creators/pricing/)). The page is built from
+the course's own content and replaces the standard course page; if it is ever not valid, learners see the
+standard page. The success page also links to the course form in the admin, the learner preview and the landing preview.
 
 ## 10. Keep the course in sync with its sources
 

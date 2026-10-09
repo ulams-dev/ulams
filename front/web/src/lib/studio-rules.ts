@@ -23,6 +23,7 @@ export const STUDIO_RULES: Array<{ method: string; pattern: RegExp }> = [
   { method: "POST", pattern: new RegExp(`^/versions/${ID}/(approve|reject|restore)$`) },
   { method: "POST", pattern: new RegExp(`^/sessions/${ID}/(undo|redo|apply|publish)$`) },
   { method: "GET", pattern: new RegExp(`^/sessions/${ID}/usage$`) },
+  { method: "GET", pattern: new RegExp(`^/sessions/${ID}/publish-check$`) },
 ];
 
 export function isStudioCall(method: string, path: string): boolean {

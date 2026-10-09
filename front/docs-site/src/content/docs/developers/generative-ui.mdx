@@ -122,6 +122,10 @@ const problems = validateDocument(doc, data);
 
 The catalogue JSON for prompts and tools: `yarn workspace @ulams/ui catalogue`.
 
+The course builder validates a generated landing document before publishing it against the whole page
+catalogue as a manifest with closed props schemas (`front/ui/catalogue/page-manifest.json`, copied to the
+API by `yarn workspace @ulams/ui page-manifest`; the UI tests fail when it is out of date).
+
 ## Learner layout components
 
 A generated lesson layout may use only the approved set, exported as `LEARNER_LAYOUT_COMPONENTS`
