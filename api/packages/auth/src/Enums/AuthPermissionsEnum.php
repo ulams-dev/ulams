@@ -37,4 +37,7 @@ class AuthPermissionsEnum extends BasicEnum
     const USER_SETTING_UPDATE_SELF = 'user-setting_update_self';
 
     const USER_IMPERSONATE = 'user_impersonate';
+
+    /** List and revoke every user's scoped API tokens and read the agent audit log (ADR 0074). */
+    const TOKEN_MANAGE = 'token_manage';
 }
