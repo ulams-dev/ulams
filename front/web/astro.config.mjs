@@ -52,6 +52,8 @@ export default defineConfig({
       { provider: google, name: "Space Grotesk", cssVariable: "--font-space-grotesk", weights: [500, 600, 700], styles: ["normal"], subsets: latin, fallbacks: ["Space Grotesk fallback", "sans-serif"], optimizedFallbacks: false },
       { provider: google, name: "Inter", cssVariable: "--font-inter", weights: [400, 500, 600], styles: ["normal"], subsets: latin, fallbacks: ["Inter fallback", "sans-serif"], optimizedFallbacks: false },
       { provider: google, name: "JetBrains Mono", cssVariable: "--font-jetbrains", weights: [400, 500, 700], styles: ["normal"], subsets: latin, fallbacks: ["JetBrains Mono fallback", "monospace"], optimizedFallbacks: false },
+      // Course Builder studio headings and course content (Editorial Intelligence design)
+      { provider: google, name: "Newsreader", cssVariable: "--font-newsreader", weights: [400, 500], styles: ["normal", "italic"], subsets: latin, fallbacks: ["Georgia", "serif"], optimizedFallbacks: false },
       { provider: google, name: "Comfortaa", cssVariable: "--font-comfortaa", weights: [500, 700], styles: ["normal"], subsets: latin, fallbacks: ["Comfortaa fallback", "sans-serif"], optimizedFallbacks: false },
       { provider: google, name: "Quicksand", cssVariable: "--font-quicksand", weights: [400, 500, 600, 700], styles: ["normal"], subsets: latin, fallbacks: ["Quicksand fallback", "sans-serif"], optimizedFallbacks: false },
     ],

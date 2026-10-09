@@ -6,6 +6,7 @@ import { ensureSession } from "./lib/session.ts";
 import { imageCache } from "./lib/image-cache.ts";
 import { resolveTenant } from "@ulams/sdk/tenant";
 import { isSameOrigin } from "./lib/bff.ts";
+import { authorToken } from "./lib/studio.ts";
 
 let warmed = false;
 function warmOnce(): void {
@@ -19,6 +20,7 @@ function warmOnce(): void {
 }
 
 const SESSION_ROUTES = /^\/(learn|bff|account)(\/|$)/;
+const STUDIO_ROUTES = /^\/studio(\/|$)/;
 
 export const onRequest = defineMiddleware(async (context, next) => {
   warmOnce();
@@ -42,12 +44,21 @@ export const onRequest = defineMiddleware(async (context, next) => {
   locals.tenant = locals.platform ? null : tenantForHost(host, config);
   locals.token = null;
   locals.sessionVia = null;
+  locals.authorToken = null;
 
   if (locals.tenant && SESSION_ROUTES.test(url.pathname)) {
     // Prefetch/prerender requests may log in too: the next navigation is then instant.
     const session = await ensureSession(locals.tenant, cookies, url.protocol === "https:");
     locals.token = session?.token ?? null;
     locals.sessionVia = session?.via ?? null;
+  }
+
+  // Course Builder studio: the author's session (tutor or admin), separate from the learner's
+  if (locals.tenant && STUDIO_ROUTES.test(url.pathname) && url.pathname !== "/studio/login") {
+    locals.authorToken = await authorToken(locals.tenant, cookies, url.protocol === "https:");
+    if (!locals.authorToken && !url.pathname.startsWith("/studio/api/")) {
+      return context.redirect(`/studio/login?next=${encodeURIComponent(url.pathname)}`, 303);
+    }
   }
 
   const response = await next();
