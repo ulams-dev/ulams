@@ -104,7 +104,10 @@
                     "server",
                     "puzzle",
                     "cart",
-                    "code"
+                    "code",
+                    "sparkle",
+                    "eye",
+                    "chat"
                   ],
                   "description": "Icon from the catalogue's icon set"
                 },

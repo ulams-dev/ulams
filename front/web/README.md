@@ -173,6 +173,15 @@ when visible, loops or auto-advances slowly, pauses on hover, focus and a Pause 
 screen readers get a description or a plain transcript. The workflow commands and each tab's true
 status are in `src/data/workflows.json` (`available`, `preview`, `coming`).
 
+The hero's right side is the capability orbit (`Hero` prop `capabilities`, component `CapabilityOrbit`
+in `front/ui`): the Orbital Folio book with ten capability cards on three elliptical orbits, one highlighted
+every few seconds with a one-line caption; hover or focus pauses it, a Pause button stops it for good, and
+each card links to the section that shows the capability. The rotation is CSS transforms only; the cycling
+is `<ulams-orbit>` (`front/ui/src/elements/orbit.ts`, about 0.5 KB gzip). Under `prefers-reduced-motion`
+it is a static arrangement with every label visible; in a container narrower than 560 px the same list is a
+tile grid. A capability's `status` shows a small "Coming" tag in `actual` mode only. Cards carry a start
+`angle` chosen so none overlap in the static arrangement.
+
 `ULAMS_LANDING_STATUS` (`src/lib/landing-status.ts`) decides what the platform landing displays:
 
 - `final` (default while the product is in review): every roadmap item is shown as delivered. No
