@@ -542,9 +542,13 @@ body.ulams-chrome-none .tour-lag,
 body.ulams-chrome-none .tour-sg { background: var(--panel); border: 1px solid var(--line); padding: 12px; margin-bottom: 8px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 body.ulams-poster .tour-panel { display: none !important; }
 
+/* The lesson page draws its own header (about 115 px) and footer (about 70 px) over the frame, so the
+   controls start below the header and stop above the footer. */
+body.ulams-embed:not(.ulams-poster) .tour-panel { top: 128px; right: 24px; max-height: calc(100vh - 212px); }
 @media (max-width: 760px) {
-  /* The lesson page's own card is a bottom sheet: keep the scene controls at the top. */
-  body.ulams-chrome-none .tour-panel { top: 10px; bottom: auto; max-height: 40vh; overflow-y: auto; }
+  /* The lesson page's own card is a bottom sheet: keep the scene controls at the top, below its header. */
+  body.ulams-embed.ulams-chrome-none .tour-panel { top: 124px; bottom: auto; right: 10px; left: 10px; width: auto; max-height: 40vh; overflow-y: auto; }
+  body.ulams-embed.ulams-chrome-minimal .tour-panel { bottom: 84px; top: auto; }
 }
 
 :focus-visible { outline: 2px solid var(--data); outline-offset: 2px; }
