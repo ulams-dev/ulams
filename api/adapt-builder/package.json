@@ -1,0 +1,15 @@
+{
+  "name": "adapt-builder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Builds Adapt Learning course JSON into SCORM 1.2 packages for ulams (ADR 0013). Separate GPL-3.0 program reached over HTTP.",
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "engines": {
+    "node": ">=22.2"
+  },
+  "scripts": {
+    "start": "node src/index.mjs",
+    "test": "node --test \"test/*.test.mjs\""
+  }
+}

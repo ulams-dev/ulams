@@ -564,6 +564,36 @@ Taken during the second pass (rebase onto main, M1.5–M1.9), to confirm:
     provisioning step); library writes are platform-only; hub installs from the editor stay open to
     tenants (they also write shared libraries; to decide).
 
+ADRs 0014–0019 (Proposed) record the architectural ones among 2–43 and the ones below.
+
+Taken while finishing Phase 1 (M1.7–M1.9), to confirm:
+
+44. **Adapt framework v5.56.2, not 5.19.x**: the latest release older than two weeks (2026-04-13);
+    plugins are the latest versions compatible with it, installed by `adapt-cli` 3.4.0 when the image is
+    built and recorded in the image. The worker uses Node built-ins only and is not a Yarn workspace (no
+    lockfile changes); its tests run in the nightly workflow, not in `ci.yml`.
+45. **Worker isolation in compose**: an internal network `adapt_build` shared with the API only (no
+    internet), read-only root, `/tmp` tmpfs, 1 CPU, 1.5 GB, 256 PIDs, one build at a time and four waiting.
+    The API container joins that network.
+46. **H5P production mounts through an exported directory**, not a selective mount of `api/`: env files
+    sit next to the code and the key directories next to the private keys, so only an export gives least
+    privilege (ADR 0015). Off unless `H5P_SERVICE_CONFIG_DIR` is set.
+47. **Idle-tenant eviction after 30 minutes**, including the platform tenant; background jobs do not
+    keep a tenant alive.
+48. **The old React front refreshes the Passport token** a minute before expiry (it never did, so H5P
+    and every API call failed after 5 minutes on a short-lived token). The Astro front's H5P stays
+    anonymous for now (new TODO item).
+49. **LiaScript live preview drafts** live next to the current version with a 128-bit random name, one
+    hour, newest four kept; no progress token. **Export/import** carries only the current version and
+    imports as a new document through the upload checks (ADR 0016).
+50. **Course import strategies can be registered by packages** (`ExportImportService::registerTopicStrategy`)
+    instead of the class-name convention, so `courses-import-export` does not depend on `liascript`.
+51. **`TopicFinished` after the progress is saved** (ADR 0018): a behaviour change for every listener,
+    which now sees the finished topic; found by the Moodle round trip.
+52. **Conformance** (ADR 0019): opt-in nightly workflow, Moodle 5.0 from the frozen `bitnamilegacy`
+    images, fixtures through Moodle's PHP APIs and ulams models; saLTIre is operator-driven behind a
+    Cloudflare quick tunnel because it has no API.
+
 ---
 
 ## 15. Progress
@@ -571,14 +601,14 @@ Taken during the second pass (rebase onto main, M1.5–M1.9), to confirm:
 | Milestone | State | Notes |
 |---|---|---|
 | M1.1 | done (cmi5 content origin pending) | `packages/uploads`; SCORM/cmi5/import/files hardened; content origin in Caddy; SCORM player on the content origin; `api/docs/content-origin.md` |
-| M1.2 | done (admin screens pending) | `packages/lti` platform side: keys/JWKS/rotation, `LtiLink` topic type, OIDC launch, AGS (token, line items, scores, results), front `LtiPlayer`; ADR 0012 |
-| M1.3 | done (admin "pick content" button pending) | Deep-linking request and response; topics created through `TopicRepository` |
-| M1.4 | done (admin screens and Moodle profile pending) | Tool side on packbackbooks/lti-1p3-tool: login, launch, user/role mapping, course access, one-time code + front `/lti/launch`, course picker, queued grade passback |
-| M1.5 | done (live preview and export/import strategy pending) | Sources, topic type, player on the content origin, Astro `LiaScriptLesson`, admin editor with versions, diff and restore |
+| M1.2 | done | `packages/lti` platform side: keys/JWKS/rotation, `LtiLink` topic type, OIDC launch, AGS (token, line items, scores, results), front `LtiPlayer`; ADR 0012 |
+| M1.3 | done | Deep-linking request and response; topics created through `TopicRepository` |
+| M1.4 | done | Tool side on packbackbooks/lti-1p3-tool: login, launch, user/role mapping, course access, one-time code + front `/lti/launch`, course picker, queued grade passback; Moodle 5.0 round trip in `nightly-conformance.yml` |
+| M1.5 | done | Sources, topic type, player on the content origin, Astro `LiaScriptLesson`, admin editor with versions, diff, restore and live preview; course export/import strategy |
 | M1.6 | done | Adapt exports detected and labelled; generated fixture |
-| M1.7 | partial | API side behind `ADAPT_SOURCE_ENABLED` (sources, validation, queued build, import); GPL worker image pending (ADR 0013) |
-| M1.8 | partial | Per-tenant H5P token, platform-only library writes, `_token` redaction (Caddy, service); player token refresh, mounts and idle eviction pending |
-| M1.9 | partial | Permissions, OpenAPI for every new endpoint, fixtures and tests with fakes; nightly saLTIre, Moodle and Adapt-worker round trips pending |
+| M1.7 | done (admin screen pending) | API side behind `ADAPT_SOURCE_ENABLED`; GPL worker `api/adapt-builder` (real build verified, compose profile `adapt`) (ADR 0013) |
+| M1.8 | done | Per-tenant H5P token, platform-only library writes, `_token` redaction, ordered token refresh in the embed pages and the old front, exported least-privilege mounts, idle-tenant eviction (ADR 0015) |
+| M1.9 | done (saLTIre needs an operator run) | Permissions, OpenAPI, fixtures and tests; `nightly-conformance.yml`: Adapt worker, Moodle 5.0 both directions (passed locally), saLTIre operator job (ADR 0019) |
 
 Admin: Integrations → LTI (tools, platforms), Courses → LiaScript (editor), topic types LiaScript and
 External tool (LTI), Adapt tag in the SCORM list.
@@ -590,3 +620,10 @@ test environment (fixed in the tests: they now clear both content-origin keys) a
 timing-flaky `ConsultationChangeTermTest::testChangeTermForOneUser`. Scorm, LiaScript and uploads suites
 pass with and without `CONTENT_ORIGIN`.
 
+
+Finishing pass (M1.7–M1.9): suites tenancy, liascript, courses-import-export, adapt (with a real
+build worker), lti and courses green (2026-10-09); `api/adapt-builder` 21 unit tests; H5P service unit
+tests (embed token, tenancy with idle eviction) and lint green; old front 36 node tests and typecheck;
+admin typecheck clean. Moodle 5.0 round trips in both directions passed locally with
+`.github/conformance/lti/run-moodle.sh`. The full API suite on the final state did not finish: the
+host disk filled up and Docker Desktop stopped; re-run it before merging.

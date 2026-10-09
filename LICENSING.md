@@ -13,6 +13,7 @@ that has no closer licence file. This page is an engineering summary, not legal 
 | `api/packages/*` | MIT (one package: see its `LICENSE`) | Imported from EscolaLMS / Wellms; original copyright notices are kept, ulams contributors are added |
 | `api/packages/h5p` | MIT | Read-only index and HTTP client; contains no H5P code |
 | `api/h5p` | **GPL-3.0-or-later** | Separate program (Lumi `h5p-nodejs-library`, H5P core and editor). See below |
+| `api/adapt-builder` | **GPL-3.0-or-later** | Separate program: builds Adapt course JSON with `adapt_framework` and its plugins (GPL-3.0), reached over HTTP (ADR 0013). The image carries the framework and plugin sources and their versions; rule 3 applies if it is distributed |
 | `api/pdf` | MIT | PDF renderer service (pdfme, MIT); bundled fonts under SIL OFL 1.1, see `api/pdf/fonts/README.md` |
 | `front/` | MIT | `front/package.json` |
 | `front/src/lib/*` | MIT | Imported libraries, see each README; `scorm-player` relicensed MIT by its owner |

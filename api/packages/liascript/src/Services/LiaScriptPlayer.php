@@ -96,6 +96,48 @@ class LiaScriptPlayer
     }
 
     /**
+     * Publishes unsaved Markdown for the editor's live preview: the current version is published
+     * first (its assets), then the text is written next to it as preview-<random>.md, so relative
+     * asset links resolve exactly as they will after saving. The random name keeps the draft
+     * unguessable on the public content origin; previews older than `preview_ttl` seconds, and all
+     * but the newest few, are deleted on every call.
+     *
+     * @return string path of the preview Markdown on the content origin
+     */
+    public function publishPreview(LiaScriptDocument $document, LiaScriptVersion $current, string $markdown): string
+    {
+        $this->publishVersion($document, $current);
+        $disk = $this->disk();
+        $folder = "liascript/{$document->getKey()}/v{$current->version}";
+        $this->prunePreviews($folder);
+
+        $path = $folder . '/preview-' . bin2hex(random_bytes(16)) . '.md';
+        $disk->put($path, $markdown);
+
+        return '/' . $path;
+    }
+
+    private function prunePreviews(string $folder): void
+    {
+        $disk = $this->disk();
+        $ttl = (int) config('ulams_liascript.preview_ttl', 3600);
+        $keep = max(0, (int) config('ulams_liascript.preview_keep', 4));
+        $previews = [];
+        foreach ($disk->files($folder) as $file) {
+            if (preg_match('#/preview-[0-9a-f]{32}\.md$#', $file)) {
+                $previews[$file] = (int) $disk->lastModified($file);
+            }
+        }
+        arsort($previews);
+        $index = 0;
+        foreach ($previews as $file => $modified) {
+            if ($index++ >= $keep || $modified < time() - $ttl) {
+                $disk->delete($file);
+            }
+        }
+    }
+
+    /**
      * Number of LiaScript sections (one per heading, outside code blocks and the header comment).
      */
     public static function sections(string $markdown): int

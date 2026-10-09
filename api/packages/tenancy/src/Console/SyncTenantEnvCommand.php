@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
 use Throwable;
 use Ulams\Tenancy\Models\Tenant;
+use Ulams\Tenancy\Services\H5PServiceConfigExporter;
 use Ulams\Tenancy\Services\TenantProvisioner;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
 use Ulams\Tenancy\Support\StorageOwnership;
@@ -17,7 +18,7 @@ class SyncTenantEnvCommand extends Command
 
     protected $description = 'Rebuild .env.<host> files, domain registrations and Passport keys of all tenants from the tenants table';
 
-    public function handle(TenantProvisioner $provisioner, DomainRegistryContract $domains): int
+    public function handle(TenantProvisioner $provisioner, DomainRegistryContract $domains, H5PServiceConfigExporter $h5pConfig): int
     {
         if (!TenantContext::isPlatform()) {
             $this->error('Run tenant commands on the platform, without --domain.');
@@ -32,6 +33,12 @@ class SyncTenantEnvCommand extends Command
         }
 
         $failed = false;
+        try {
+            $h5pConfig->exportPlatform();
+        } catch (Throwable $exception) {
+            $failed = true;
+            $this->error("  H5P service config: {$exception->getMessage()}");
+        }
         foreach (Tenant::query()->orderBy('slug')->get() as $tenant) {
             try {
                 $provisioner->syncRuntime($tenant, (bool) $this->option('migrate'));

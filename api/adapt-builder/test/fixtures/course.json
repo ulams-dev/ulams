@@ -1,0 +1,68 @@
+{
+  "id": "fixture-v1",
+  "source": {
+    "course": {
+      "_id": "course",
+      "title": "Adapt fixture",
+      "displayTitle": "Adapt fixture",
+      "description": "A one-page course used by the ulams build worker tests.",
+      "body": ""
+    },
+    "config": {
+      "_defaultLanguage": "en",
+      "_spoor": { "_isEnabled": true, "_tracking": { "_shouldSubmitScore": false } }
+    },
+    "contentObjects": [
+      {
+        "_id": "co-05",
+        "_parentId": "course",
+        "_type": "page",
+        "title": "Welcome",
+        "displayTitle": "Welcome",
+        "body": "",
+        "_classes": ""
+      }
+    ],
+    "articles": [
+      { "_id": "a-05", "_parentId": "co-05", "_type": "article", "title": "Article", "displayTitle": "", "body": "" }
+    ],
+    "blocks": [
+      { "_id": "b-05", "_parentId": "a-05", "_type": "block", "title": "Block", "displayTitle": "", "body": "" }
+    ],
+    "components": [
+      {
+        "_id": "c-05",
+        "_parentId": "b-05",
+        "_type": "component",
+        "_component": "text",
+        "_layout": "left",
+        "title": "Hello",
+        "displayTitle": "Hello",
+        "body": "Hello from the ulams Adapt build worker."
+      },
+      {
+        "_id": "c-10",
+        "_parentId": "b-05",
+        "_type": "component",
+        "_component": "mcq",
+        "_layout": "right",
+        "title": "Question",
+        "displayTitle": "Question",
+        "body": "Which one is right?",
+        "instruction": "Choose one option.",
+        "_attempts": 1,
+        "_isRandom": false,
+        "_selectable": 1,
+        "_items": [
+          { "text": "This one", "_shouldBeSelected": true },
+          { "text": "That one", "_shouldBeSelected": false }
+        ],
+        "_feedback": {
+          "title": "Feedback",
+          "correct": "Correct.",
+          "_incorrect": { "final": "Not quite." }
+        }
+      }
+    ]
+  }
+}

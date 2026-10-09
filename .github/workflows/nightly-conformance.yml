@@ -1,0 +1,334 @@
+name: Nightly conformance
+
+# Round trips against real third-party software, too slow or too heavy for every push
+# (docs/plans/phase-1.md, M1.9). Opt-in:
+#   - on schedule only when the repository variable NIGHTLY_CONFORMANCE is "true";
+#   - by hand (Actions -> Nightly conformance -> Run workflow), choosing the suites.
+# Fixtures, compose services and scripts: .github/conformance/. Nothing here publishes.
+
+on:
+  schedule:
+    - cron: "30 2 * * *"
+  workflow_dispatch:
+    inputs:
+      adapt:
+        description: Adapt Path B through the real build worker
+        type: boolean
+        default: true
+      moodle:
+        description: LTI 1.3 round trips with Moodle 5.0 (both directions)
+        type: boolean
+        default: true
+      saltire:
+        description: LTI 1.3 against saLTIre (needs an operator, see the job)
+        type: boolean
+        default: false
+      saltire_platform:
+        description: >-
+          saLTIre platform as JSON, from its Platform page: {"issuer", "client_id",
+          "deployment_id", "auth_login_url", "auth_token_url", "jwks_url"}
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-conformance
+  cancel-in-progress: false
+
+env:
+  # Same API test environment as ci.yml's PHPUnit job.
+  DB_CONNECTION: pgsql
+  DB_HOST: 127.0.0.1
+  DB_PORT: "5432"
+  DB_DATABASE: default
+  DB_USERNAME: default
+  DB_PASSWORD: secret
+  REDIS_HOST: 127.0.0.1
+  REDIS_PORT: "6379"
+  REDIS_PASSWORD: ""
+  XDEBUG_MODE: "off"
+  PLAYWRIGHT_VERSION: 1.48.2
+
+jobs:
+  adapt:
+    name: Adapt build worker round trip
+    if: >-
+      (github.event_name == 'schedule' && vars.NIGHTLY_CONFORMANCE == 'true') ||
+      (github.event_name == 'workflow_dispatch' && inputs.adapt)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_DB: default
+          POSTGRES_USER: default
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U default -d default"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      valkey:
+        image: valkey/valkey:8-alpine
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Worker unit tests
+        working-directory: api/adapt-builder
+        run: node --test "test/*.test.mjs"
+
+      - name: Build and start the worker (adapt_framework, needs network at build time only)
+        run: |
+          docker compose -f .github/conformance/compose.yml --profile adapt up -d --build --wait adapt-builder
+          curl -fsS http://127.0.0.1:18090/health
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: apcu, bcmath, exif, gd, intl, pcntl, pdo_pgsql, redis, zip
+          ini-values: memory_limit=2G
+          coverage: none
+          tools: composer:v2
+
+      - name: Prepare the API
+        working-directory: api
+        run: |
+          cp docker/envs/.env.ci.postgres .env
+          composer install --no-interaction --no-progress --prefer-dist
+          php artisan migrate:fresh --force
+          php artisan db:seed --force --class="Database\Seeders\PermissionsSeeder"
+          php artisan passport:keys --force
+          php artisan passport:client --personal --no-interaction
+          mkdir -p vendor/orchestra/testbench-core/laravel/storage
+          cp storage/oauth-private.key storage/oauth-public.key vendor/orchestra/testbench-core/laravel/storage/
+          php artisan migrate --force --path=packages/courses/tests/Database/Migrations
+
+      - name: Source -> real build -> SCORM import (Path A)
+        working-directory: api
+        env:
+          ADAPT_BUILDER_E2E_URL: http://127.0.0.1:18090
+          ADAPT_BUILDER_E2E_TOKEN: conformance-token
+        run: ./vendor/bin/phpunit packages/adapt/tests/Conformance --fail-on-skipped
+
+      - name: Worker logs
+        if: failure()
+        run: docker compose -f .github/conformance/compose.yml --profile adapt logs adapt-builder
+
+  moodle:
+    name: LTI 1.3 with Moodle
+    if: >-
+      (github.event_name == 'schedule' && vars.NIGHTLY_CONFORMANCE == 'true') ||
+      (github.event_name == 'workflow_dispatch' && inputs.moodle)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_DB: default
+          POSTGRES_USER: default
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U default -d default"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      valkey:
+        image: valkey/valkey:8-alpine
+        ports:
+          - 6379:6379
+    env:
+      # ulams serves http://ulams.test:18000 on the host; Moodle reaches it through host-gateway
+      APP_URL: http://ulams.test:18000
+      FRONTEND_URL: http://front.test:18001
+      TENANCY_PLATFORM_HOSTS: ulams.test,127.0.0.1,localhost
+      # development switch: Moodle runs on http and a private address
+      LTI_ALLOW_INSECURE_URLS: "true"
+      # grade passback during the request, so the test can check Moodle right after
+      QUEUE_CONNECTION: sync
+      CACHE_DRIVER: array
+      CACHE_STORE: array
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start Moodle 5.0 (first start installs it, a few minutes)
+        run: |
+          echo "127.0.0.1 moodle.test ulams.test front.test" | sudo tee -a /etc/hosts
+          docker compose -f .github/conformance/compose.yml --profile lti up -d
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Playwright (Chromium only, outside the workspace)
+        run: |
+          npm install --no-save --no-audit --no-fund --prefix /tmp/pw "playwright@${PLAYWRIGHT_VERSION}"
+          /tmp/pw/node_modules/.bin/playwright install --with-deps chromium
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: apcu, bcmath, exif, gd, intl, pcntl, pdo_pgsql, redis, zip
+          ini-values: memory_limit=1G
+          coverage: none
+          tools: composer:v2
+
+      - name: Prepare and start the API
+        working-directory: api
+        run: |
+          cp docker/envs/.env.ci.postgres .env
+          composer install --no-interaction --no-progress --prefer-dist
+          php artisan migrate:fresh --force
+          php artisan db:seed --force --class="Database\Seeders\PermissionsSeeder"
+          php artisan passport:keys --force
+          php artisan passport:client --personal --no-interaction
+          # the built-in server with workers: during a passback Moodle calls our JWKS back
+          PHP_CLI_SERVER_WORKERS=6 nohup php -S 0.0.0.0:18000 -t public \
+            vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php > /tmp/ulams.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS -o /dev/null http://ulams.test:18000/api/lti/jwks && break; sleep 1; done
+
+      - name: Wait for Moodle
+        run: |
+          for i in $(seq 1 90); do
+            if curl -fsS -o /dev/null http://moodle.test:18080/login/index.php; then exit 0; fi
+            sleep 5
+          done
+          docker compose -f .github/conformance/compose.yml --profile lti logs moodle | tail -100
+          exit 1
+
+      - name: Round trips (Moodle -> ulams, ulams -> Moodle)
+        env:
+          NODE_PATH: /tmp/pw/node_modules
+        run: sh .github/conformance/lti/run-moodle.sh
+
+      - name: Logs
+        if: failure()
+        run: |
+          tail -200 /tmp/ulams.log || true
+          tail -200 api/storage/logs/*.log || true
+          docker compose -f .github/conformance/compose.yml --profile lti logs moodle | tail -200
+
+  saltire:
+    # saLTIre (https://saltire.lti.app) is a hosted LTI test platform with no API: a person
+    # configures it in the browser. Operator steps:
+    #   1. On saLTIre's Platform page note the issuer, client ID, deployment ID and the
+    #      authentication, access token and public keyset URLs; run this workflow with them as
+    #      `saltire_platform`.
+    #   2. The job opens a Cloudflare quick tunnel to a throwaway ulams and writes the tool URLs to
+    #      the run summary; enter them in saLTIre's tool settings and launch.
+    #   3. The job waits up to 30 minutes for a successful launch in ulams' audit log
+    #      (lti_launches) and fails if none arrives or a launch was rejected.
+    name: LTI 1.3 with saLTIre (operator)
+    if: github.event_name == 'workflow_dispatch' && inputs.saltire
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_DB: default
+          POSTGRES_USER: default
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U default -d default"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      valkey:
+        image: valkey/valkey:8-alpine
+        ports:
+          - 6379:6379
+    env:
+      QUEUE_CONNECTION: sync
+      SALTIRE_PLATFORM: ${{ inputs.saltire_platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Check the saLTIre platform input
+        run: |
+          printf '%s' "$SALTIRE_PLATFORM" | node -e "const p=JSON.parse(require('fs').readFileSync(0,'utf8'));for(const k of ['issuer','client_id','deployment_id','auth_login_url','auth_token_url','jwks_url'])if(!p[k])throw new Error('saltire_platform: missing '+k)"
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: apcu, bcmath, exif, gd, intl, pcntl, pdo_pgsql, redis, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Tunnel (Cloudflare quick tunnel, no account)
+        run: |
+          curl -fsSL -o /tmp/cloudflared https://github.com/cloudflare/cloudflared/releases/download/2025.8.1/cloudflared-linux-amd64
+          chmod +x /tmp/cloudflared
+          nohup /tmp/cloudflared tunnel --no-autoupdate --url http://127.0.0.1:18000 > /tmp/tunnel.log 2>&1 &
+          url=""
+          for i in $(seq 1 60); do
+            url=$(grep -o 'https://[a-z0-9-]*\.trycloudflare\.com' /tmp/tunnel.log | head -1 || true)
+            [ -n "$url" ] && break
+            sleep 2
+          done
+          [ -n "$url" ] || { cat /tmp/tunnel.log; exit 1; }
+          echo "APP_URL=$url" >> "$GITHUB_ENV"
+          echo "TENANCY_PLATFORM_HOSTS=${url#https://},127.0.0.1" >> "$GITHUB_ENV"
+
+      - name: Prepare and start the API
+        working-directory: api
+        run: |
+          cp docker/envs/.env.ci.postgres .env
+          composer install --no-interaction --no-progress --prefer-dist
+          php artisan migrate:fresh --force
+          php artisan db:seed --force --class="Database\Seeders\PermissionsSeeder"
+          php artisan passport:keys --force
+          php artisan passport:client --personal --no-interaction
+          php ../.github/conformance/lti/ulams-setup.php seed | tee /tmp/seed.json
+          php ../.github/conformance/lti/ulams-setup.php platform "$SALTIRE_PLATFORM"
+          PHP_CLI_SERVER_WORKERS=6 nohup php -S 0.0.0.0:18000 -t public \
+            vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php > /tmp/ulams.log 2>&1 &
+
+      - name: Wait for launches from saLTIre
+        working-directory: api
+        run: |
+          course=$(node -e "console.log(require('/tmp/seed.json').course_id)")
+          {
+            echo "## Enter these tool settings in saLTIre, then launch"
+            echo ""
+            echo "| saLTIre field | value |"
+            echo "|---|---|"
+            echo "| Initiate login URL | $APP_URL/api/lti/tool/login |"
+            echo "| Redirection URI(s) / launch URL | $APP_URL/api/lti/tool/launch |"
+            echo "| Public keyset URL | $APP_URL/api/lti/jwks |"
+            echo "| Custom parameter | course_id=$course |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "Tool URLs are in the run summary. Waiting up to 30 minutes for a launch."
+          for i in $(seq 1 180); do
+            php ../.github/conformance/lti/ulams-setup.php launches > /tmp/launches.json
+            ok=$(node -e "console.log(require('/tmp/launches.json').ok)")
+            failed=$(node -e "console.log(require('/tmp/launches.json').failed.length)")
+            if [ "$failed" -gt 0 ]; then
+              cat /tmp/launches.json
+              exit 1
+            fi
+            if [ "$ok" -gt 0 ]; then
+              echo "saLTIre launched ulams ($ok launch(es))"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "No launch from saLTIre within 30 minutes"
+          exit 1
+
+      - name: Logs
+        if: failure()
+        run: tail -200 /tmp/ulams.log || true

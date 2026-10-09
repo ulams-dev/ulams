@@ -1,0 +1,68 @@
+# Services for the nightly conformance workflow (.github/workflows/nightly-conformance.yml).
+# Run from the repository root:
+#
+#   docker compose -f .github/conformance/compose.yml --profile lti up -d     # Moodle 5.0 + MariaDB
+#   docker compose -f .github/conformance/compose.yml --profile adapt up -d   # Adapt build worker
+#
+# The ulams API runs on the host (php artisan serve on :18000). Names used by every party:
+#   moodle.test:18080  Moodle (container port 18080, published on the host)
+#   ulams.test:18000   ulams API (host; containers reach it through host-gateway)
+# The browser maps both names to 127.0.0.1 (Chromium --host-resolver-rules); the host maps
+# moodle.test in /etc/hosts. Test fixtures only: nothing here is for production.
+name: ulams-conformance
+
+services:
+  mariadb:
+    image: bitnamilegacy/mariadb:11.4
+    profiles: ["lti"]
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+      MARIADB_USER: bn_moodle
+      MARIADB_DATABASE: bitnami_moodle
+      MARIADB_CHARACTER_SET: utf8mb4
+      MARIADB_COLLATE: utf8mb4_unicode_ci
+
+  moodle:
+    image: bitnamilegacy/moodle:5.0.2-debian-12-r2
+    profiles: ["lti"]
+    depends_on:
+      - mariadb
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+      MOODLE_DATABASE_TYPE: mariadb
+      MOODLE_DATABASE_HOST: mariadb
+      MOODLE_DATABASE_PORT_NUMBER: "3306"
+      MOODLE_DATABASE_USER: bn_moodle
+      MOODLE_DATABASE_NAME: bitnami_moodle
+      MOODLE_USERNAME: admin
+      MOODLE_PASSWORD: Admin-1234!
+      MOODLE_EMAIL: admin@example.com
+      MOODLE_SITE_NAME: ulams conformance
+      MOODLE_HOST: moodle.test:18080
+      APACHE_HTTP_PORT_NUMBER: "18080"
+    ports:
+      - "18080:18080"
+    extra_hosts:
+      - "ulams.test:host-gateway"
+    volumes:
+      - ./lti:/conformance:ro
+    healthcheck:
+      # no curl in the image
+      test: ["CMD", "/opt/bitnami/php/bin/php", "-r", "exit(@file_get_contents('http://127.0.0.1:18080/login/index.php') === false ? 1 : 0);"]
+      interval: 10s
+      timeout: 5s
+      retries: 60
+      start_period: 60s
+
+  adapt-builder:
+    build:
+      context: ../../api/adapt-builder
+    image: ulams/adapt-builder:conformance
+    profiles: ["adapt"]
+    environment:
+      ADAPT_BUILDER_TOKEN: conformance-token
+    ports:
+      - "18090:8080"
+    read_only: true
+    tmpfs:
+      - /tmp:exec,size=1g

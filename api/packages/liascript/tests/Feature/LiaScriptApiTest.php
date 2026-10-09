@@ -164,6 +164,7 @@ MD;
             ['GET', "/api/admin/liascript/{$document}/versions"],
             ['POST', "/api/admin/liascript/{$document}/versions"],
             ['POST', "/api/admin/liascript/{$document}/versions/1/restore"],
+            ['POST', "/api/admin/liascript/{$document}/preview"],
         ] as [$method, $uri]) {
             $this->actingAs($student, 'api')->json($method, $uri, ['markdown' => 'x', 'title' => 'x'])->assertForbidden();
         }

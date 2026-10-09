@@ -12,9 +12,9 @@ import {
     readConfig,
     reportHeight,
     requestJson,
-    showError,
-    swapToken
+    showError
 } from './common';
+import { normaliseToken, swapToken, tokenTransition } from './token';
 
 const config = readConfig();
 const root = document.getElementById('root') as HTMLElement;
@@ -98,21 +98,21 @@ function main(): void {
                 applyStyle(config, message);
                 break;
             case 'ulams-h5p:token': {
-                const next = typeof message.token === 'string' && message.token ? message.token : null;
+                const next = normaliseToken(message.token);
                 const previous = token;
                 token = next;
-                if (!started) {
+                const transition = tokenTransition(started, previous, next);
+                if (transition === 'mount' || (transition === 'remount' && next)) {
+                    // the editor needs a token; signing out keeps the open form
                     started = true;
                     mount(bridge);
-                } else if (previous && next && previous !== next) {
-                    swapToken((window as any).H5PIntegration, previous, next);
-                    swapToken(model, previous, next);
+                } else if (transition === 'refresh') {
+                    swapToken((window as any).H5PIntegration, previous as string, next as string);
+                    swapToken(model, previous as string, next as string);
                     const editorNs = (window as any).H5PEditor;
                     if (editorNs && typeof editorNs.ajaxPath === 'string') {
-                        swapToken(editorNs, previous, next);
+                        swapToken(editorNs, previous as string, next as string);
                     }
-                } else if (!previous && next) {
-                    mount(bridge);
                 }
                 break;
             }

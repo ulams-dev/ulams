@@ -1,0 +1,28 @@
+# Production mounts for the H5P service (override for api/docker-compose.yml):
+#
+#   docker compose -f docker-compose.yml -f h5p/compose.h5p.prod.yml up -d h5p
+#
+# Development mounts the whole api/ directory read-only, which also exposes the application
+# code, every secret in every env file and the Passport private keys. In production the API
+# writes a least-privilege copy instead (H5PServiceConfigExporter): only the env keys the
+# service reads and the Passport PUBLIC keys. Set on the API (platform .env):
+#
+#   H5P_SERVICE_CONFIG_DIR=/var/www/html/storage/h5p-service
+#
+# then run `php artisan ulams:h5p:export-config` once; `ulams:tenant:create`,
+# `ulams:tenant:sync-env` and `ulams:tenant:delete` keep it current. The service re-reads the
+# files (TENANT_RELOAD_CHECK_MS), so new tenants work without a restart.
+#
+# `!override` replaces the volume list (Docker Compose 2.24+).
+services:
+  h5p:
+    environment:
+      ENV_DIR: /config
+      KEYS_DIR: /config/keys
+      JWT_PUBLIC_KEY_PATH: /config/keys/oauth-public.key
+    volumes: !override
+      - h5p_libraries:/data/libraries
+      - ${H5P_SERVICE_CONFIG_HOST_DIR:-./storage/h5p-service}:/config:ro
+    read_only: true
+    tmpfs:
+      - /tmp

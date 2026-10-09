@@ -188,9 +188,9 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`.
       liascript.github.io (the LiaScript SCORM 1.2 build, fetched at image build time with a pinned version
       and SHA-256, runs on the tenant content origin with our SCORM API page; completion at the last section
       or on completed/passed; `docs/plans/phase-1.md` 5.5)
-- [ ] (new) LiaScript topic type (learners), admin editor with preview and version diff, export/import strategy
-      (partial: topic type, Astro `LiaScriptLesson`, admin editor with versions, diff and restore done;
-      live preview of unsaved text and the course export/import strategy pending)
+- [x] (new) LiaScript topic type (learners), admin editor with preview and version diff, export/import strategy
+      (topic type, Astro `LiaScriptLesson`, admin editor with versions, diff, restore and a live preview of
+      unsaved text; course export carries the current text and assets, import creates a new document; ADR 0016)
 - [ ] (new) Run `sh packages/liascript/bin/fetch-player.sh` in the dev api container once (the image build does
       it; the bind mount hides it)
 
@@ -199,17 +199,18 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`.
       admin tag; generated spoor-style fixture)
 - [ ] Path B (feature flag): JSON source, schema-validated, isolated build worker (partial: `packages/adapt`
       behind `ADAPT_SOURCE_ENABLED` with versioned sources, structural validation, queued build and import
-      through Path A, worker contract in ADR 0013 (Proposed); the GPL worker image `api/adapt-builder` and an
-      admin screen pending)
+      through Path A; GPL worker `api/adapt-builder` (adapt_framework v5.56.2, compose profile `adapt`,
+      real build round trip in the nightly conformance workflow); ADR 0013 (Proposed); an admin screen pending)
 
 ### 1.3 LTI 1.3 (high priority)
-- [ ] LTI Platform: launch external tools, AGS grade passback, deep linking (partial: API, admin screens and
-      topic form with "pick content from the tool", players in the old and the Astro front and tests done
-      (ADR 0012); the saLTIre round trip pending)
-- [ ] LTI Tool: expose our courses to Moodle, Canvas etc. (partial: launch, user/role mapping, course access,
-      deep-linking course picker, grade passback, admin platform screens and landing pages in both fronts done;
-      the Moodle `lti-e2e` round trip pending; inside an LMS iframe the front's session cookie can be blocked as
-      third-party, so platforms should open ulams in a new window)
+- [x] LTI Platform: launch external tools, AGS grade passback, deep linking (API, admin screens and topic
+      form with "pick content from the tool", players in both fronts, ADR 0012; launching a Moodle 5.0
+      course and receiving Moodle's grade verified in the nightly conformance workflow; the saLTIre job
+      needs an operator run)
+- [x] LTI Tool: expose our courses to Moodle, Canvas etc. (launch, user/role mapping, course access,
+      deep-linking course picker, grade passback, admin platform screens and landing pages in both fronts;
+      Moodle 5.0 launch and grade passback verified in the nightly conformance workflow; inside an LMS iframe
+      the front's session cookie can be blocked as third-party, so platforms should open ulams in a new window)
 - [x] Key rotation, nonce/state validation, per-tenant registrations (`ulams:lti:rotate-keys` monthly,
       provisioning step `lti_keys`, single-use hints/state/nonce/jti in `lti_nonces`, registrations in the
       tenant database, isolation tests)
@@ -243,16 +244,28 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`.
       app), and add registered LTI tool origins to the front/admin `frame-src` (documented in
       `api/docs/content-origin.md`; deployment pending)
 - [ ] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector
-- [ ] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket) (partial: env-file
-      resolver live; per-tenant `H5P_INTERNAL_TOKEN` in the env file and library administration limited to the
-      platform done; production mounts limited to env files and key directories, and idle-tenant eviction pending)
-- [ ] (new) H5P: refresh the player model when the 5-minute Passport token rotates; redact `_token`
-      in all proxies' access logs (partial: Caddy and the H5P service redact `_token`; the token refresh in the
-      players is pending)
-- [ ] Policies, OpenAPI annotations, fixtures and tests (LiaScript, Adapt A+B, LTI round-trip) (partial:
-      permissions `lti_manage`, `liascript_manage`, `adapt_manage`, OpenAPI for every new endpoint, generated
-      fixtures and tests for LiaScript, Adapt A+B and LTI against in-test fakes; the nightly saLTIre/Moodle and
-      Adapt-worker round trips pending)
+- [x] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket) (env-file
+      resolver; per-tenant `H5P_INTERNAL_TOKEN`; library administration limited to the platform; production
+      mounts limited to an exported least-privilege config (`ulams:h5p:export-config`, `compose.h5p.prod.yml`);
+      idle-tenant eviction (`TENANT_IDLE_EVICT_MS`); ADR 0015)
+- [x] (new) H5P: refresh the player model when the 5-minute Passport token rotates; redact `_token`
+      in all proxies' access logs (Caddy and the H5P service redact `_token`; embed pages swap refreshed
+      tokens in order, unit-tested; the old React front now refreshes the token before it expires)
+- [x] Policies, OpenAPI annotations, fixtures and tests (LiaScript, Adapt A+B, LTI round-trip) (permissions
+      `lti_manage`, `liascript_manage`, `adapt_manage`, OpenAPI for every new endpoint, fixtures and tests
+      against in-test fakes; `.github/workflows/nightly-conformance.yml` (opt-in) with the Adapt worker build,
+      Moodle 5.0 in both LTI directions (passed locally) and an operator-driven saLTIre job; ADR 0019)
+- [x] (new) `TopicFinished` fired before the learner's progress was saved, so listeners running at once
+      (sync queue) sent the previous LTI score; now dispatched after saving (found by the Moodle run, ADR 0018)
+- [ ] (new) Turn on the nightly conformance runs (`NIGHTLY_CONFORMANCE=true`) and run the saLTIre job once
+      with an operator
+- [ ] (new) Adapt Path B admin screen (sources, versions, build status)
+- [ ] (new) Astro front: H5P plays without a token, so learner state is not restored (decide: a short-lived
+      H5P token from the BFF, or state through the BFF)
+- [ ] (new) Production: set `H5P_SERVICE_CONFIG_DIR`, run `ulams:h5p:export-config` and start the H5P service
+      with `compose.h5p.prod.yml`
+- [ ] (new) `yarn install` on Node 24 fails in admin's postinstall (`max setup`: umi's esmi feature loads
+      `http-deceiver`, which needs the removed `http_parser` binding); CI and `.nvmrc` use Node 22
 
 ---
 

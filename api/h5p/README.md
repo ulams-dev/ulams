@@ -96,6 +96,7 @@ to 4.7.1.
 | `TENANT_FRONT_ORIGIN_PATTERNS` | `http://{slug}.app.localhost,https://{slug}.app.localhost,http://{slug}.app.localhost:4321,http://{slug}.admin.localhost,https://{slug}.admin.localhost,http://{slug}.admin.localhost:8000` | per-tenant CORS / frame-ancestors origins added to `CORS_ORIGINS` (exact origins; ports matter) |
 | `TENANT_RELOAD_CHECK_MS` | `2000` | how often env/key files and host lookups are re-checked |
 | `TENANT_DB_POOL_MAX` | `5` | Postgres pool size per tenant (env-files mode) |
+| `TENANT_IDLE_EVICT_MS` | `1800000` | a tenant without requests for this long releases its pool and S3 client (rebuilt on the next request); `0` = never |
 | `H5P_ROOT` | `./h5p` | base for the next three paths in development |
 | `H5P_CORE_PATH` / `H5P_EDITOR_PATH` | `$H5P_ROOT/core` / `$H5P_ROOT/editor` | image: `/app/h5p/core`, `/app/h5p/editor` |
 | `H5P_LIBRARIES_PATH` | `$H5P_ROOT/libraries` | image: `/data/libraries` (volume) |
@@ -400,7 +401,12 @@ mounts where `fs.watch` does not): a new `.env.<host>` works without a
 restart; a change that alters the tenant's settings rebuilds the tenant (the
 old pools close after 60 s); an invalid change is logged and the previous
 configuration kept; a deleted env file evicts the tenant. A failed first
-build (e.g. database down) is retried on the next request.
+build (e.g. database down) is retried on the next request. A tenant without
+requests for `TENANT_IDLE_EVICT_MS` (default 30 min, `0` = never) is evicted
+too: its Postgres pool and S3 client close (after the same grace period) and
+the next request rebuilds it, so open connections follow the active tenants,
+not all provisioned ones. Background jobs (temporary file sweep, Hub cache)
+iterate the active tenants only and do not keep a tenant alive.
 
 Shared by all tenants: the library volume (installing or deleting a library
 affects every tenant), the library cache, the Redis lock provider and i18n.
@@ -419,8 +425,19 @@ gets 404.
 
 Caddy must forward the original host (`header_up X-Forwarded-Host {host}`);
 the `http://*.localhost` site of `api/docker/conf/Caddyfile` sends `/h5p/*` of
-every tenant host to the service. In compose, `api/` is mounted read-only at
-`/laravel` (`ENV_DIR=/laravel`, `KEYS_DIR=/laravel/storage`).
+every tenant host to the service. In development compose, `api/` is mounted
+read-only at `/laravel` (`ENV_DIR=/laravel`, `KEYS_DIR=/laravel/storage`).
+
+**Production mounts.** That development mount also exposes the application
+code, every secret of every env file and the Passport private keys. In
+production the API writes a least-privilege copy (`H5PServiceConfigExporter`
+in `api/packages/tenancy`): only the env keys listed above and the Passport
+public keys. Set `H5P_SERVICE_CONFIG_DIR` on the API (e.g.
+`/var/www/html/storage/h5p-service`), run `php artisan ulams:h5p:export-config`
+once (tenant create, `ulams:tenant:sync-env` and delete keep it current) and
+start the service with `h5p/compose.h5p.prod.yml`, which mounts only that
+directory (`ENV_DIR=/config`, `KEYS_DIR=/config/keys`) and runs the container
+with a read-only root filesystem.
 
 `TENANCY_MODE=single` keeps the old behaviour: one tenant (`default`) from the
 `DB_*` / `S3_*` / `JWT_*` variables, served for every host. A different

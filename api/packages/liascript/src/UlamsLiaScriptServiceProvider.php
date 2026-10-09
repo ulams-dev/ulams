@@ -5,7 +5,10 @@ namespace Ulams\LiaScript;
 use Illuminate\Support\ServiceProvider;
 use Ulams\Courses\Facades\Topic;
 use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\CoursesImportExport\Services\ExportImportService;
+use Ulams\LiaScript\Http\Resources\LiaScriptTopicExportResource;
 use Ulams\LiaScript\Http\Resources\LiaScriptTopicResource;
+use Ulams\LiaScript\Import\LiaScriptTopicImportStrategy;
 use Ulams\LiaScript\Models\LiaScriptTopic;
 use Ulams\LiaScript\Services\LiaScriptPlayer;
 use Ulams\LiaScript\Services\LiaScriptService;
@@ -42,7 +45,11 @@ class UlamsLiaScriptServiceProvider extends ServiceProvider
         Topic::registerResourceClasses(LiaScriptTopic::class, [
             'client' => LiaScriptTopicResource::class,
             'admin' => LiaScriptTopicResource::class,
-            'export' => LiaScriptTopicResource::class,
+            'export' => LiaScriptTopicExportResource::class,
         ]);
+        // course export/import carries the course text (topic/<id>/liascript/ in the export)
+        if (class_exists(ExportImportService::class)) {
+            ExportImportService::registerTopicStrategy(LiaScriptTopic::class, LiaScriptTopicImportStrategy::class);
+        }
     }
 }

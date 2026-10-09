@@ -51,10 +51,9 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
         }
 
         $progress = $this->findProgress($topic, $user);
-        if ($status === ProgressStatus::COMPLETE && $progress && $progress->status !== ProgressStatus::COMPLETE) {
+        $finished = $status === ProgressStatus::COMPLETE && $progress && $progress->status !== ProgressStatus::COMPLETE;
+        if ($finished) {
             $update['finished_at'] = Carbon::now();
-            event(new TopicFinished($user, $topic));
-            CheckFinishedLessons::dispatch($topic->getKey(), $user->getKey());
         }
 
         $courseProgress = $topic->progress()->updateOrCreate([
@@ -80,6 +79,13 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
         ], [
             'seconds' => $courseProgress->seconds ?? 0,
         ]);
+
+        // after the progress is saved: listeners and jobs (lesson/course completion, LTI grade
+        // passback) read it, and with a sync queue they run right here
+        if ($finished) {
+            event(new TopicFinished($user, $topic));
+            CheckFinishedLessons::dispatch($topic->getKey(), $user->getKey());
+        }
     }
 
     public function getUserLastTimeInTopic(Authenticatable $user, Topic $topic, int $forgetAfter = CourseProgressCollection::FORGET_TRACKING_SESSION_AFTER_MINUTES): ?Carbon

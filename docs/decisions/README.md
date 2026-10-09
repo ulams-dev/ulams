@@ -23,5 +23,11 @@ replacement.
 | [0011](0011-ag-ui-over-sse-from-laravel.md) | Builder streaming: AG-UI events over SSE from Laravel, carrying A2UI surfaces | Accepted |
 | [0012](0012-lti-package-and-libraries.md) | LTI 1.3: one `lti` package, first-party platform side, packbackbooks tool side | Accepted |
 | [0013](0013-adapt-build-worker.md) | Adapt Path B: JSON sources in the API, builds in an isolated GPL-3.0 worker | Proposed |
+| [0014](0014-content-origin.md) | Third-party packages on a per-tenant content origin, files served through the API | Proposed |
+| [0015](0015-h5p-service-tenancy.md) | H5P service per tenant: derived internal token, platform-only libraries, least-privilege mounts | Proposed |
+| [0016](0016-liascript-without-scorm-package.md) | LiaScript: versioned Markdown documents played without a SCORM package | Proposed |
+| [0017](0017-upload-guard.md) | One upload guard and safe extractor for every upload path | Proposed |
+| [0018](0018-completion-events.md) | External content completes topics; completion events fire after progress is saved | Proposed |
+| [0019](0019-nightly-conformance.md) | Conformance against real LMSs and builders in an opt-in nightly workflow | Proposed |
 | [0020](0020-public-competitor-comparison.md) | Public comparison with other learning platforms: sourced data, neutral values | Proposed |
 | [0021](0021-ha-reference-architecture.md) | High-availability reference architecture | Proposed |

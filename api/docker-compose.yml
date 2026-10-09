@@ -2,6 +2,9 @@ networks:
   ulams:
     name: ulams
     driver: bridge
+  # Adapt build worker (profile adapt): reachable from the API only, no route to the internet.
+  adapt_build:
+    internal: true
 volumes:
   h5p_libraries:
 services:
@@ -72,10 +75,14 @@ services:
       # PDF renderer (api/pdf), server-to-server; same token as PDF_INTERNAL_TOKEN of the pdf service
       - LARAVEL_PDF_SERVICE_URL=http://pdf:3000
       - LARAVEL_PDF_INTERNAL_TOKEN=ulams-pdf-internal-dev-token
+      # Adapt Path B build worker (api/adapt-builder, profile adapt); off unless ADAPT_SOURCE_ENABLED=true
+      - LARAVEL_ADAPT_BUILDER_URL=http://adapt-builder:8080
+      - LARAVEL_ADAPT_BUILDER_TOKEN=ulams-adapt-builder-dev-token
     volumes:
       - ./:/var/www/html
     networks:
       - ulams
+      - adapt_build
 
   # H5P player/editor/content API (Lumi h5p-nodejs-library), see h5p/README.md.
   # Browsers reach it same-origin at http://<tenant>.localhost/h5p/* (and
@@ -284,6 +291,27 @@ services:
     profiles: ["av"]
     networks:
       - ulams
+
+  # Adapt Path B build worker (ADR 0013, api/adapt-builder/README.md). GPL-3.0, separate program.
+  # Off by default: docker compose --profile adapt up -d adapt-builder, and ADAPT_SOURCE_ENABLED=true
+  # in the API env. Internal network only (no internet), read-only root, one build at a time.
+  adapt-builder:
+    build:
+      context: ./adapt-builder
+    image: ulams/adapt-builder:dev
+    profiles: ["adapt"]
+    restart: unless-stopped
+    networks:
+      - adapt_build
+    environment:
+      ADAPT_BUILDER_TOKEN: ulams-adapt-builder-dev-token
+      ADAPT_BUILD_TIMEOUT_MS: 240000
+    read_only: true
+    tmpfs:
+      - /tmp:exec,size=1g
+    cpus: 1.0
+    mem_limit: 1536m
+    pids_limit: 256
 
   soketi:
     image: quay.io/soketi/soketi:latest

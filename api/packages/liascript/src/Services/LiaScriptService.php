@@ -194,6 +194,12 @@ class LiaScriptService
         return [$markdown, $assets];
     }
 
+    /** Validates unsaved text for the live preview (same rules as a saved version). */
+    public function previewMarkdown(string $markdown): string
+    {
+        return $this->validMarkdown($markdown);
+    }
+
     private function validMarkdown(string $markdown): string
     {
         $max = (int) config('ulams_liascript.max_markdown_bytes', 2 * 1024 * 1024);

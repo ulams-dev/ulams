@@ -24,6 +24,12 @@ import { requestHost, Tenant, TenantRequest, TenantResolver, TenantSettings } fr
  * key files are re-checked (mtime + size) at most every TENANT_RELOAD_CHECK_MS:
  * new tenant files work without a restart, changed files rebuild the tenant
  * (the old one is closed after a grace period), deleted files evict it.
+ *
+ * Idle tenants are evicted too: a tenant without requests for
+ * TENANT_IDLE_EVICT_MS (default 30 min) releases its Postgres pool and S3
+ * client and is rebuilt on its next request (the service migrations are
+ * already applied, so that costs one pool connect). With many tenants this
+ * keeps open connections proportional to the active ones.
  */
 
 /** Builds a tenant from settings (injected in tests). */
@@ -37,6 +43,12 @@ export interface EnvFileTenantResolverOptions {
     now?: () => number;
     /** Delay before a replaced/evicted tenant's connections are closed. */
     closeGraceMs?: number;
+    /**
+     * How often idle tenants are looked for (ms); defaults to a quarter of
+     * the idle timeout, at most a minute. 0 disables the timer (tests call
+     * evictIdle()).
+     */
+    idleSweepMs?: number;
 }
 
 /** A host's env file. */
@@ -270,6 +282,8 @@ interface Entry {
     tenant?: Tenant;
     pending?: Promise<Tenant>;
     checkedAt: number;
+    /** Last time a request or job asked for this tenant. */
+    usedAt: number;
     reloading?: boolean;
 }
 
@@ -281,6 +295,8 @@ export class EnvFileTenantResolver implements TenantResolver {
     private readonly keysDir: string;
     private readonly now: () => number;
     private readonly closeGraceMs: number;
+    private readonly idleEvictMs: number;
+    private readonly idleTimer?: NodeJS.Timeout;
 
     constructor(private readonly options: EnvFileTenantResolverOptions) {
         const { tenancy } = options.app;
@@ -291,6 +307,12 @@ export class EnvFileTenantResolver implements TenantResolver {
         this.keysDir = tenancy.keysDir ?? path.join(tenancy.envDir, 'storage');
         this.now = options.now ?? Date.now;
         this.closeGraceMs = options.closeGraceMs ?? 60_000;
+        this.idleEvictMs = Math.max(0, tenancy.idleEvictMs ?? 0);
+        const sweepMs = options.idleSweepMs ?? Math.min(60_000, Math.max(1_000, Math.floor(this.idleEvictMs / 4)));
+        if (this.idleEvictMs > 0 && sweepMs > 0) {
+            this.idleTimer = setInterval(() => this.evictIdle(), sweepMs);
+            this.idleTimer.unref();
+        }
     }
 
     static create(app: AppConfig, shared: SharedH5P, logger: Logger): EnvFileTenantResolver {
@@ -365,7 +387,35 @@ export class EnvFileTenantResolver implements TenantResolver {
         return [...this.entries.values()].map((e) => e.tenant).filter((t): t is Tenant => t !== undefined);
     }
 
+    /**
+     * Closes tenants that served no request for TENANT_IDLE_EVICT_MS (after
+     * the grace period, like a replaced tenant). Tenants being built or
+     * rebuilt are kept. Returns the evicted tenant ids.
+     */
+    evictIdle(): string[] {
+        if (this.idleEvictMs <= 0) {
+            return [];
+        }
+        const t = this.now();
+        const evicted: string[] = [];
+        for (const [id, entry] of this.entries) {
+            if (!entry.tenant || entry.pending || entry.reloading || t - entry.usedAt < this.idleEvictMs) {
+                continue;
+            }
+            this.entries.delete(id);
+            this.retire(entry.tenant);
+            evicted.push(id);
+        }
+        if (evicted.length > 0) {
+            this.options.logger.info({ tenants: evicted }, 'Idle tenants evicted');
+        }
+        return evicted;
+    }
+
     async close(): Promise<void> {
+        if (this.idleTimer) {
+            clearInterval(this.idleTimer);
+        }
         for (const timer of this.closing) {
             clearTimeout(timer);
         }
@@ -414,11 +464,16 @@ export class EnvFileTenantResolver implements TenantResolver {
         if (!entry) {
             return this.firstBuild(source);
         }
+        entry.usedAt = this.now();
         if (entry.pending && !entry.tenant) {
             return entry.pending;
         }
         this.maybeReload(entry);
-        return this.entries.get(source.id)?.tenant ?? (entry.pending ? entry.pending : undefined);
+        const current = this.entries.get(source.id);
+        if (current && current !== entry) {
+            current.usedAt = entry.usedAt;
+        }
+        return current?.tenant ?? (entry.pending ? entry.pending : undefined);
     }
 
     private firstBuild(source: TenantSource): Promise<Tenant> {
@@ -427,7 +482,8 @@ export class EnvFileTenantResolver implements TenantResolver {
             source,
             stamp: fileStamp,
             fingerprint: JSON.stringify(settings),
-            checkedAt: this.now()
+            checkedAt: this.now(),
+            usedAt: this.now()
         };
         entry.pending = this.options
             .build(settings)
@@ -493,7 +549,8 @@ export class EnvFileTenantResolver implements TenantResolver {
                     stamp: next.stamp,
                     fingerprint,
                     tenant,
-                    checkedAt: this.now()
+                    checkedAt: this.now(),
+                    usedAt: entry.usedAt
                 };
                 if (this.entries.get(source.id) === entry) {
                     this.entries.set(source.id, fresh);

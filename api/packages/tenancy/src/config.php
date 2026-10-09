@@ -59,4 +59,11 @@ return [
 
     'php_binary' => env('TENANCY_PHP_BINARY', PHP_BINARY ?: 'php'),
     'process_timeout' => (int) env('TENANCY_PROCESS_TIMEOUT', 900),
+
+    /*
+     * Production: directory with the least-privilege copy of the env files and Passport public
+     * keys that the H5P service mounts instead of the whole API directory
+     * (H5PServiceConfigExporter, `ulams:h5p:export-config`). Empty = not exported (development).
+     */
+    'h5p_service_config_dir' => env('H5P_SERVICE_CONFIG_DIR') ?: null,
 ];
