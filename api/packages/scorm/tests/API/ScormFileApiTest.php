@@ -16,6 +16,8 @@ class ScormFileApiTest extends TestCase
     {
         parent::setUp();
         Storage::fake('local');
+        // these tests are about tenants without a content origin, whatever the environment says
+        config(['scorm.content_origin' => null, 'ulams_uploads.content_origin' => null]);
         Storage::disk('local')->put(self::DIR . '/index.html', '<html><script src="js/app.js"></script></html>');
         Storage::disk('local')->put(self::DIR . '/js/app.js', 'window.ok = true;');
         Storage::disk('local')->put('outside.txt', 'secret');

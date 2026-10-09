@@ -46,7 +46,7 @@ class ScormContentOriginApiTest extends TestCase
 
     public function test_launch_without_a_content_origin_falls_back_to_the_legacy_player(): void
     {
-        config(['scorm.content_origin' => null]);
+        config(['scorm.content_origin' => null, 'ulams_uploads.content_origin' => null]);
 
         $this->actingAs($this->makeStudent(), 'api')
             ->postJson("/api/scorm/launch/{$this->scoUuid}")
@@ -146,7 +146,7 @@ class ScormContentOriginApiTest extends TestCase
             ->assertHeader('Content-Type', 'application/javascript; charset=utf-8')
             ->assertHeader('X-Content-Type-Options', 'nosniff');
 
-        config(['scorm.content_origin' => null]);
+        config(['scorm.content_origin' => null, 'ulams_uploads.content_origin' => null]);
         $this->actingAs($this->user, 'api')->get("/api/scorm/play/{$this->scoUuid}")
             ->assertOk()
             ->assertDontSee('cdn.jsdelivr.net')
