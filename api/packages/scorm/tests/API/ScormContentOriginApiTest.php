@@ -42,6 +42,10 @@ class ScormContentOriginApiTest extends TestCase
             Storage::disk(config('scorm.disk'))->assertExists("scorm/_player/{$file}");
         }
         $this->assertStringNotContainsString('cdn.jsdelivr.net', Storage::disk(config('scorm.disk'))->get('scorm/_player/player.html'));
+        // same-site hardening: the player frames the SCO only from its own origin and trusts an http(s) API only
+        $player = Storage::disk(config('scorm.disk'))->get('scorm/_player/player.js');
+        $this->assertStringContainsString('isSameOrigin(data.entry_url)', $player);
+        $this->assertStringContainsString('isHttpUrl(api)', $player);
     }
 
     public function test_launch_without_a_content_origin_falls_back_to_the_legacy_player(): void
