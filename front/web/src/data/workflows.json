@@ -1,0 +1,231 @@
+{
+  "description": "Five ways to run ulams: Claude Code, Claude with the ulams MCP server, the ulams command line, the REST API and SDK, and the studio.",
+  "footnote": "The ulams CLI and MCP server are being built. The commands and tool names shown for them are the planned interface and may change; the REST API and the studio work today.",
+  "tabs": [
+    {
+      "key": "claude-code",
+      "label": "Claude Code",
+      "status": "coming",
+      "window": "terminal",
+      "title": "claude · ~/oncall-academy",
+      "caption": "Describe the course in plain language. Claude Code runs the ulams CLI, shows you the outline, and publishes only after you approve.",
+      "note": "Planned interface: the ulams CLI is being built (Phase 7). Commands are shown as designed and may change.",
+      "lines": [
+        {
+          "kind": "prompt",
+          "text": "Build a 3-lesson course on incident response from ./runbook.md and publish it to oncall"
+        },
+        {
+          "kind": "agent",
+          "text": "I'll start a builder run on runbook.md and bring you the outline before anything goes live."
+        },
+        {
+          "kind": "tool",
+          "text": "Bash",
+          "args": "ulams builder start --source runbook.md --tenant oncall --json"
+        },
+        {
+          "kind": "spin",
+          "text": "Reading runbook.md, drafting the outline"
+        },
+        {
+          "kind": "out",
+          "text": "{\"run\":\"b_7f3a\",\"status\":\"outline_ready\",\"lessons\":3,\"cited_sections\":12}"
+        },
+        {
+          "kind": "agent",
+          "text": "Outline ready: 1. Detect and declare, 2. Triage and mitigate, 3. Write the postmortem. Every lesson cites runbook.md. Approve and publish?"
+        },
+        {
+          "kind": "prompt",
+          "text": "Yes, approve and publish."
+        },
+        {
+          "kind": "tool",
+          "text": "Bash",
+          "args": "ulams builder approve-outline b_7f3a --json"
+        },
+        {
+          "kind": "out",
+          "text": "{\"run\":\"b_7f3a\",\"status\":\"drafted\",\"topics\":9,\"uncited\":0}"
+        },
+        {
+          "kind": "tool",
+          "text": "Bash",
+          "args": "ulams courses publish --run b_7f3a --tenant oncall --json"
+        },
+        {
+          "kind": "out",
+          "text": "{\"course\":17,\"status\":\"published\",\"tenant\":\"oncall\"}"
+        },
+        {
+          "kind": "agent",
+          "text": "Done. Incident response is live on oncall: 3 lessons, 9 topics, every claim cited to runbook.md."
+        }
+      ]
+    },
+    {
+      "key": "claude-mcp",
+      "label": "Claude + MCP",
+      "status": "coming",
+      "window": "chat",
+      "title": "Claude · ulams MCP server",
+      "caption": "Ask Claude, or any MCP-compatible agent, about your academy. It uses the ulams MCP server and asks before it sends anything.",
+      "note": "Planned interface: the ulams MCP server is being built (Phase 7). The at-risk report depends on learner analytics (Phase 4), which is not built yet.",
+      "lines": [
+        {
+          "kind": "user",
+          "text": "Which learners are stuck in On-Call this week? Nudge them."
+        },
+        {
+          "kind": "tool",
+          "text": "ulams.analytics.at_risk",
+          "args": "tenant: oncall, days: 7",
+          "result": "4 learners"
+        },
+        {
+          "kind": "assistant",
+          "text": "Four learners have not moved in 7 days, all on lesson 2, Triage and mitigate. I can send each a short reminder with a link back to the lesson. Send it?"
+        },
+        {
+          "kind": "user",
+          "text": "Yes, send."
+        },
+        {
+          "kind": "tool",
+          "text": "ulams.notifications.send",
+          "args": "template: nudge, learners: 4",
+          "result": "4 sent"
+        },
+        {
+          "kind": "assistant",
+          "text": "Done. Four reminders are on their way."
+        }
+      ]
+    },
+    {
+      "key": "cli",
+      "label": "CLI",
+      "status": "coming",
+      "window": "terminal",
+      "title": "zsh · ~/academy",
+      "caption": "Course as code: pull a course to Markdown, edit it in your editor, review the diff, push it back.",
+      "note": "Planned interface: the ulams CLI is being built (Phase 7). Commands are shown as designed and may change.",
+      "lines": [
+        {
+          "kind": "cmd",
+          "text": "ulams login"
+        },
+        {
+          "kind": "out",
+          "text": "Opened your browser. Signed in as you@example.com"
+        },
+        {
+          "kind": "cmd",
+          "text": "ulams courses list --tenant coffee --json | jq -r '.[] | \"\\(.id)  \\(.title)\"'"
+        },
+        {
+          "kind": "out",
+          "text": "3  Learn coffee the slow way"
+        },
+        {
+          "kind": "cmd",
+          "text": "ulams courses pull 3 --dir course/"
+        },
+        {
+          "kind": "out",
+          "text": "wrote course/course.yaml and course/lessons/*.md"
+        },
+        {
+          "kind": "note",
+          "text": "# edit course/lessons/02-grind-size.md in your editor"
+        },
+        {
+          "kind": "cmd",
+          "text": "ulams courses push course/ --dry-run"
+        },
+        {
+          "kind": "ctx",
+          "text": "~ lesson 2 · Grind size"
+        },
+        {
+          "kind": "del",
+          "text": "Use a medium grind for every method."
+        },
+        {
+          "kind": "add",
+          "text": "Match the grind to the method: coarse for French press, fine for espresso."
+        },
+        {
+          "kind": "out",
+          "text": "1 changed, 0 added, 0 removed (dry run, nothing written)"
+        },
+        {
+          "kind": "cmd",
+          "text": "ulams courses push course/ --apply"
+        },
+        {
+          "kind": "spin",
+          "text": "Pushing 1 change"
+        }
+      ]
+    },
+    {
+      "key": "api",
+      "label": "REST & SDK",
+      "status": "available",
+      "window": "terminal",
+      "title": "zsh · api",
+      "caption": "Everything the studio does goes through the HTTP API. Plain curl works; so does @ulams/sdk for reading.",
+      "lines": [
+        {
+          "kind": "cmd",
+          "text": "curl -s -X POST https://oncall.example.com/api/admin/topics \\"
+        },
+        {
+          "kind": "cont",
+          "text": "  -H \"Authorization: Bearer $ULAMS_TOKEN\" -H \"Content-Type: application/json\" \\"
+        },
+        {
+          "kind": "cont",
+          "text": "  -d '{\"title\":\"Reading a page\",\"lesson_id\":12,\"topicable_type\":\"EscolaLms\\\\TopicTypes\\\\Models\\\\TopicContent\\\\RichText\",\"value\":\"What the alert means.\"}'"
+        },
+        {
+          "kind": "out",
+          "text": "{\"success\":true,\"data\":{\"id\":88,\"title\":\"Reading a page\",\"lesson_id\":12}}"
+        },
+        {
+          "kind": "cmd",
+          "text": "node -e \"import('@ulams/sdk').then(async ({createClient}) => { const ulams = createClient({baseUrl: 'https://oncall.example.com'}); console.log((await ulams.courses.list()).data.length) })\""
+        },
+        {
+          "kind": "out",
+          "text": "1"
+        }
+      ]
+    },
+    {
+      "key": "studio",
+      "label": "Studio",
+      "status": "available",
+      "window": "studio",
+      "title": "Studio · Course builder",
+      "caption": "The classic experience is still here: a chat-driven studio where every AI change is a diff you approve.",
+      "lines": [
+        {
+          "kind": "user",
+          "text": "Add a quiz after lesson 2 from the runbook."
+        },
+        {
+          "kind": "assistant",
+          "text": "I drafted 5 questions. Each one cites a section of runbook.md, and nothing changes until you approve."
+        },
+        {
+          "kind": "card",
+          "text": "Proposed change: new quiz after Triage and mitigate, 5 questions, all cited",
+          "args": "Approve | Reject"
+        }
+      ]
+    }
+  ]
+}
