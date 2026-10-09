@@ -1,0 +1,27 @@
+# ulams apply --file course.yaml --dry-run    (preview)
+# ulams apply --file course.yaml              (create or update; a second run changes nothing)
+apiVersion: ulams.dev/v1
+kind: Course
+metadata:
+  key: kubernetes-101
+spec:
+  title: Kubernetes 101
+  status: draft
+  summary: A first course on running containers in production.
+  lessons:
+    - key: install
+      title: Install
+      topics:
+        - { key: intro, type: richtext, title: Install kubectl, markdown: "@install.md" }
+        - { key: demo, type: oembed, title: Demo video, url: "https://www.youtube.com/watch?v=example" }
+---
+apiVersion: ulams.dev/v1
+kind: Group
+metadata: { key: sales }
+spec: { name: Sales }
+---
+apiVersion: ulams.dev/v1
+kind: Access
+spec:
+  course: Kubernetes 101
+  groups: [Sales]
