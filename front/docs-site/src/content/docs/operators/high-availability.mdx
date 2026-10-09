@@ -113,7 +113,7 @@ With `DISABLE_DB_MIGRATE=true`, `init.sh` still runs `ulams:tenant:sync-env` (wi
 
 - **Platform**: `APP_KEY`, `JWT_PRIVATE_KEY_BASE64` and `JWT_PUBLIC_KEY_BASE64` must be identical
   on every replica (a secret store or Kubernetes Secret). Without the key pair a fresh container
-  generates its own keys and a new `APP_KEY`, see
+  generates its own Passport keys (never a new `APP_KEY` while one is configured), see
   [Self-hosting](/operators/self-hosting/#what-happens-when-the-api-container-starts).
 - **Tenants**: each tenant's Passport keys, `APP_KEY` and database password are stored encrypted
   in the `tenants` table and written to `storage/<host>/` and `.env.<host>` by

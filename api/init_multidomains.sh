@@ -128,17 +128,8 @@ if [ -n "$MULTI_DOMAINS" ]; then
         php artisan migrate --force --domain=$domain
     fi
 
-    # generate passport keys only if storage/oauth-private.key is not set
-    # note that app:keys are generated here as well 
-    FILE=storage/${STORAGE_DIRECTORY}/oauth-private.key
-    if [ -f "$FILE" ]; then
-        echo "key file $FILE exists. Using one from file or env"     
-    else 
-        echo "$FILE does not exist. Generating app keys, passport keys and passport client"
-        php artisan key:generate --force --no-interaction --domain=$domain
-        php artisan passport:keys --force --no-interaction --domain=$domain
-        php artisan passport:client --personal --no-interaction --domain=$domain
-    fi
+    # APP_KEY of the domain only when empty, Passport keys only when missing (init-keys.sh)
+    ENV_FILE=".env.${domain}" PASSPORT_PRIVATE_KEY_FILE="storage/${STORAGE_DIRECTORY}/oauth-private.key" ./init-keys.sh --domain=$domain
 
     # db seed
     if [ "$DISABLE_DB_SEED" == 'true' ]
