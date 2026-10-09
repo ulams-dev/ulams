@@ -1,0 +1,38 @@
+.interval {
+  --interval-line: var(--ulams-gray-3);
+  position: relative;
+  margin: 15px 8px;
+  height: 1px;
+  background: var(--interval-line);
+}
+
+:global([data-mode="dark"]) .interval {
+  --interval-line: var(--ulams-gray-4);
+}
+
+.interval::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  height: 1px;
+  width: 8px;
+  background: var(--interval-line);
+}
+
+.interval::after {
+  content: "";
+  position: absolute;
+  right: -8px;
+  height: 1px;
+  width: 8px;
+  background: var(--interval-line);
+}
+
+.interval > div {
+  position: absolute;
+  top: -3px;
+  height: 7px;
+  background: var(--ulams-color-primary);
+  width: var(--interval-width);
+  border-radius: var(--ulams-radius-button);
+}

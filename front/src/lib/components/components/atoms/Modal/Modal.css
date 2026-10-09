@@ -1,0 +1,211 @@
+/* rc-dialog styles (global, formerly a createGlobalStyle rendered by Modal). */
+.rc-dialog {
+  --modal-surface: var(--ulams-color-white);
+  --modal-close-color: var(--ulams-color-black);
+  --modal-close-opacity: 0.2;
+  position: relative;
+  border-radius: var(--ulams-radius-button);
+}
+
+[data-mode="dark"] .rc-dialog {
+  --modal-surface: var(--ulams-color-black);
+  --modal-close-color: var(--ulams-color-white);
+  --modal-close-opacity: 0.4;
+}
+
+.rc-dialog-wrap {
+  position: fixed;
+  overflow: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rc-dialog-title {
+  margin: 0;
+  font-size: 14px;
+  line-height: 21px;
+  font-weight: bold;
+}
+
+.rc-dialog-section,
+.rc-dialog-content {
+  position: relative;
+  background-color: var(--modal-surface);
+  border: none;
+  border-radius: var(--ulams-radius-modal);
+  background-clip: padding-box;
+  width: 100%;
+  /* set on the dialog from the `width` prop */
+  max-width: var(--modal-max-width, 468px);
+  box-shadow: 0px 0px 24px 0px rgba(0, 0, 0, 0.1);
+}
+
+.rc-dialog-close {
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  font-size: 21px;
+  position: absolute;
+  right: 5px;
+  top: 10px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--modal-close-color);
+  text-shadow: 0 1px 0 #fff;
+  opacity: var(--modal-close-opacity);
+  text-decoration: none;
+}
+
+.rc-dialog-close svg path {
+  fill: currentColor;
+}
+
+.rc-dialog-close-x:after {
+  content: "×";
+}
+
+.rc-dialog-close:hover {
+  opacity: 1;
+  text-decoration: none;
+}
+
+.rc-dialog-header {
+  padding: 13px 20px 14px 20px;
+  border-radius: 5px 5px 0 0;
+  background: #fff;
+  color: #666;
+  border-bottom: 1px solid #e9e9e9;
+}
+
+.rc-dialog-body {
+  padding: 35px;
+}
+
+.rc-dialog-footer {
+  border-top: 1px solid #e9e9e9;
+  padding: 10px 20px;
+  text-align: right;
+  border-radius: 0 0 5px 5px;
+}
+
+.rc-dialog-zoom-enter,
+.rc-dialog-zoom-appear {
+  opacity: 0;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.08, 0.82, 0.17, 1);
+  animation-play-state: paused;
+}
+
+.rc-dialog-zoom-leave {
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.6, 0.04, 0.98, 0.34);
+  animation-play-state: paused;
+}
+
+.rc-dialog-zoom-enter.rc-dialog-zoom-enter-active,
+.rc-dialog-zoom-appear.rc-dialog-zoom-appear-active {
+  animation-name: rcDialogZoomIn;
+  animation-play-state: running;
+}
+
+.rc-dialog-zoom-leave.rc-dialog-zoom-leave-active {
+  animation-name: rcDialogZoomOut;
+  animation-play-state: running;
+}
+
+@keyframes rcDialogZoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1, 1);
+  }
+}
+
+@keyframes rcDialogZoomOut {
+  0% {
+    transform: scale(1, 1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0, 0);
+  }
+}
+
+.rc-dialog-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: rgb(0 0 0 / 55%);
+  height: 100%;
+  z-index: 1050;
+}
+
+.rc-dialog-mask-hidden {
+  display: none;
+}
+
+.rc-dialog-fade-enter,
+.rc-dialog-fade-appear {
+  opacity: 0;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.55, 0, 0.55, 0.2);
+  animation-play-state: paused;
+}
+
+.rc-dialog-fade-leave {
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.55, 0, 0.55, 0.2);
+  animation-play-state: paused;
+}
+
+.rc-dialog-fade-enter.rc-dialog-fade-enter-active,
+.rc-dialog-fade-appear.rc-dialog-fade-appear-active {
+  animation-name: rcDialogFadeIn;
+  animation-play-state: running;
+}
+
+.rc-dialog-fade-leave.rc-dialog-fade-leave-active {
+  animation-name: rcDialogFadeOut;
+  animation-play-state: running;
+}
+
+@keyframes rcDialogFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes rcDialogFadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.rc-dialog .modal-title {
+  margin-bottom: 30px;
+  text-align: center;
+  color: var(--ulams-color-primary);
+}

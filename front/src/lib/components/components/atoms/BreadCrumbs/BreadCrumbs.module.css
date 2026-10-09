@@ -1,0 +1,39 @@
+.nav {
+  --breadcrumbs-color: var(--ulams-gray-2);
+  font-family: var(--ulams-font-family-body);
+  color: var(--breadcrumbs-color);
+  font-size: 13px;
+  line-height: 1em;
+  font-weight: 400;
+}
+
+:global([data-mode="dark"]) .nav {
+  --breadcrumbs-color: var(--ulams-gray-3);
+}
+
+.nav i svg {
+  fill: var(--ulams-gray-2);
+}
+
+.nav ul,
+.nav ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+  gap: 2px;
+}
+
+.nav ul li,
+.nav ul li > a,
+.nav ul li > button,
+.nav ol li,
+.nav ol li > a,
+.nav ol li > button {
+  font-size: 13px;
+}

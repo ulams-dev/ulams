@@ -1,9 +1,8 @@
 import * as React from "react";
 
-import styled, { withTheme } from "styled-components";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { Radio } from "../../atoms/Option/Radio";
+import styles from "./Steps.module.css";
 
 export interface StepsOptionProps extends ExtendableStyledComponent {
   value: string;
@@ -19,91 +18,18 @@ export interface StepsProps
   checked: number;
 }
 
-const StyledSteps = styled("div")<StepsProps>`
-  position: relative;
-  display: flex;
-  width: 100%;
-
-  &:before {
-    width: 100%;
-    background-color: ${({ theme }) => theme.gray3};
-  }
-
-  &:before,
-  .progress-bar {
-    position: absolute;
-    left: 0;
-    bottom: 13px;
-    content: "";
-    display: block;
-    height: 1px;
-  }
-
-  .progress-bar {
-    transition: width 0.2s ease-in-out;
-    background-color: ${({ theme }) =>
-      getStylesBasedOnTheme(
-        theme.mode,
-        theme.dm__primaryColor,
-        theme.primaryColor,
-        theme.primaryColor
-      )};
-  }
-`;
-
-const StyledStepsOption = styled("div")`
-  position: relative;
-  padding-top: 30px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  flex: 1;
-
-  span {
-    top: -30px;
-    margin: 0;
-    position: absolute;
-    left: 10px;
-    transform: translateX(-50%);
-    color: ${({ theme }) =>
-      getStylesBasedOnTheme(theme.mode, theme.white, theme.gray1)};
-    font-weight: bold;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-  }
-  &:last-child {
-    span {
-      left: auto;
-      right: 0;
-      transform: translateX(0);
-    }
-  }
-  label {
-    position: relative;
-
-    &:hover span {
-      opacity: 1;
-    }
-  }
-
-  input:checked + span {
-    opacity: 1;
-  }
-`;
-
 const StepsOption: React.FC<StepsOptionProps> = (props) => {
   const { value, label, checked, className = "" } = props;
 
   return (
-    <StyledStepsOption className={`ulams-component ${className}`}>
+    <div className={`ulams-component ${styles.option} ${className}`}>
       <Radio
         value={value}
         checked={checked}
         label={label}
         onChange={() => props.onChange(value)}
       />
-    </StyledStepsOption>
+    </div>
   );
 };
 
@@ -116,11 +42,7 @@ export const Steps: React.FC<StepsProps> = (props) => {
   )}%`;
 
   return (
-    <StyledSteps
-      className={`ulams-component ${className}`}
-      options={options}
-      checked={checked}
-    >
+    <div className={`ulams-component ${styles.steps} ${className}`}>
       <div className={"progress-bar"} style={{ width: progressBarWidth }} />
       {options.map((option, index) => (
         <StepsOption
@@ -131,10 +53,8 @@ export const Steps: React.FC<StepsProps> = (props) => {
           onChange={() => setCheckedOption(index)}
         />
       ))}
-    </StyledSteps>
+    </div>
   );
 };
 
-const NewSteps = styled(Steps)<StepsProps>``;
-
-export default withTheme(NewSteps);
+export default Steps;

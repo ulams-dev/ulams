@@ -10,14 +10,13 @@ use Ulams\Courses\Models\Course;
 use Ulams\Courses\Models\Lesson;
 use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 
 class CourseTutorRestrictApiTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /**
-     * @test
-     */
+    #[Test]
 
     protected function setUp(): void
     {
@@ -46,9 +45,7 @@ class CourseTutorRestrictApiTest extends TestCase
         $this->assertApiResponse($course);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_read_course()
     {
         $course = Course::factory()->create([
@@ -63,9 +60,7 @@ class CourseTutorRestrictApiTest extends TestCase
         $this->assertApiResponse($course->toArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_update_course()
     {
         $otherAuthor = config('auth.providers.users.model')::factory()->create();
@@ -83,9 +78,7 @@ class CourseTutorRestrictApiTest extends TestCase
         $this->response->assertStatus(403);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_delete_course()
     {
         $otherAuthor = config('auth.providers.users.model')::factory()->create();
@@ -127,9 +120,7 @@ class CourseTutorRestrictApiTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_read_course_program()
     {
         $course = Course::factory()->create(['author_id' => $this->user->id]);

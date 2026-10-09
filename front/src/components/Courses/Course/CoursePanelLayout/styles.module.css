@@ -1,0 +1,13 @@
+.layoutWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--ulams-gray-4);
+  z-index: 1000;
+}
+
+:global([data-mode="dark"]) .layoutWrapper {
+  background: var(--ulams-color-bg);
+}

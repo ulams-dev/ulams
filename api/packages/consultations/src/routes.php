@@ -29,6 +29,4 @@ Route::group(['middleware' => ['auth:api'], 'prefix' => 'api/consultations'], fu
 Route::group(['prefix' => 'api/consultations'], function () {
     Route::get('/', [ConsultationAPIController::class, 'index']);
     Route::get('/{id}', [ConsultationAPIController::class, 'show']);
-    Route::post('/save-screen', [ConsultationAPIController::class, 'screenSave']);
-    Route::post('/signed-screen-urls', [ConsultationAPIController::class, 'generateSignedScreenUrls']);
 });

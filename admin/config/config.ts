@@ -12,6 +12,7 @@ const {
   REACT_APP_SENTRYDSN,
   BASE_PATH,
   REACT_APP_SENTRY_RELEASE,
+  REACT_APP_TENANT_API_HOST_PATTERN,
 } = process.env;
 export default defineConfig({
   /**
@@ -158,8 +159,26 @@ export default defineConfig({
     REACT_APP_YBUG: typeof REACT_APP_YBUG !== 'undefined' ? REACT_APP_YBUG : '',
     REACT_APP_SENTRY_RELEASE:
       typeof REACT_APP_SENTRY_RELEASE !== 'undefined' ? REACT_APP_SENTRY_RELEASE : '',
+    // "<admin host pattern>=><API URL template>", e.g. {slug}.admin.localhost=>http://{slug}.localhost
+    REACT_APP_TENANT_API_HOST_PATTERN:
+      typeof REACT_APP_TENANT_API_HOST_PATTERN !== 'undefined'
+        ? REACT_APP_TENANT_API_HOST_PATTERN
+        : '',
   },
   devtool: 'source-map',
+  /**
+   * clawpdf (via @pdfme/converter, used by the PDF template designer) lazy-loads
+   * Node built-ins only when it runs under Node; in the browser bundle they are empty.
+   */
+  chainWebpack(config: any, { webpack }: any) {
+    const stub = path.resolve(__dirname, 'node-builtin-stub.js');
+    config.plugin('node-builtin-stub').use(webpack.NormalModuleReplacementPlugin, [
+      /^node:(fs\/promises|module|url|zlib)$/,
+      (resource: { request: string }) => {
+        resource.request = stub;
+      },
+    ]);
+  },
   /**
    * Vendored libraries (provenance: README.md in each src/lib/<name> folder).
    * scorm-player and ts-models live once in front/src/lib and are shared with admin.
@@ -169,6 +188,8 @@ export default defineConfig({
     '@ulams/gift-pegjs': path.resolve(__dirname, '../src/lib/gift-pegjs'),
     '@ulams/markdown-editor': path.resolve(__dirname, '../src/lib/markdown-editor'),
     '@ulams/scorm-player': path.resolve(__dirname, '../../front/src/lib/scorm-player'),
+    '@ulams/tenant': path.resolve(__dirname, '../../front/src/lib/tenant/resolveApiUrl.ts'),
+    '@ulams/demo': path.resolve(__dirname, '../../front/src/lib/demo/demoMode.ts'),
   },
   plugins: [require.resolve('./plugin-scorm.ts')],
 });

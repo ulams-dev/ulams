@@ -1,15 +1,9 @@
 import { Link } from "react-router-dom";
-import styled from "styled-components";
 import { Col } from "react-grid-system";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { Tag } from "@ulams/components/components/atoms/Tag/Tag";
 import { API } from "@ulams/sdk";
-
-const ColStyled = styled(Col)`
-  border: 1px solid ${({ theme }) => theme.primaryColor};
-  margin: 4px auto;
-  padding: 4px;
-`;
+import styles from "./Tag.module.css";
 
 interface Props {
   products: API.ProductItems[];
@@ -17,7 +11,7 @@ interface Props {
 }
 
 export const PackageSidebarTag = ({ products, linkTo }: Props) => (
-  <ColStyled lg={12}>
+  <Col lg={12} className={styles.col}>
     {products.map((product) => (
       <Link to={`${linkTo}/${product.productable_id}`}>
         <Tag>
@@ -25,5 +19,5 @@ export const PackageSidebarTag = ({ products, linkTo }: Props) => (
         </Tag>
       </Link>
     ))}
-  </ColStyled>
+  </Col>
 );

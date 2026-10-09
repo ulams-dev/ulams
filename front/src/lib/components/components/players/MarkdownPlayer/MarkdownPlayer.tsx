@@ -3,7 +3,6 @@ import {
   MarkdownRenderer,
   MarkdownRendererProps,
 } from "../../molecules/MarkdownRenderer/MarkdownRenderer";
-import styled, { withTheme } from "styled-components";
 
 export interface MarkdownPlayerProps extends MarkdownRendererProps {
   onLoad?: () => void;
@@ -21,4 +20,4 @@ export const MarkdownPlayer: React.FC<MarkdownPlayerProps> = (props) => {
   );
 };
 
-export default withTheme(styled(MarkdownPlayer)<MarkdownPlayerProps>``);
+export default MarkdownPlayer;

@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roast simulator — The Coffee Atlas</title>
+<script src="scorm12.js"></script>
+<style>
+  :root { --paper:#F6F1E9; --ink:#2B1D14; --accent:#C2552D; --sage:#7A8B6F; --rule:#D9CFC2; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.5 Georgia, "Times New Roman", serif; }
+  header { padding:18px 24px; border-bottom:1px solid var(--rule); display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; }
+  header h1 { margin:0; font-size:24px; font-weight:700; }
+  header small { font-family: system-ui, sans-serif; color:var(--sage); }
+  nav { display:flex; gap:4px; padding:10px 24px; border-bottom:1px solid var(--rule); font-family:system-ui, sans-serif; font-size:14px; }
+  nav button { background:none; border:1px solid var(--rule); padding:6px 12px; cursor:pointer; color:var(--ink); }
+  nav button[aria-current="step"] { background:var(--ink); color:var(--paper); }
+  main { padding:20px 24px; max-width:1100px; margin:0 auto; }
+  .grid { display:grid; grid-template-columns: 300px 1fr; gap:24px; }
+  @media (max-width: 760px) { .grid { grid-template-columns:1fr; } }
+  label { display:block; font-family:system-ui, sans-serif; font-size:14px; margin:14px 0 4px; }
+  input[type=range] { width:100%; accent-color:var(--accent); }
+  .value { font-family:ui-monospace, monospace; }
+  .btn { font-family:system-ui, sans-serif; font-size:15px; padding:10px 16px; border:0; background:var(--accent); color:#fff; cursor:pointer; margin-top:16px; margin-right:6px; }
+  .btn.secondary { background:transparent; color:var(--ink); border:1px solid var(--ink); }
+  .btn:disabled { opacity:.4; cursor:not-allowed; }
+  .bean { width:120px; height:84px; border-radius:50%; margin:18px auto 6px; position:relative; transition: background-color .3s; box-shadow: inset -10px -8px 0 rgba(0,0,0,.12); }
+  .bean::after { content:""; position:absolute; left:50%; top:12%; bottom:12%; width:4px; margin-left:-2px; border-radius:4px; background:rgba(0,0,0,.25); transform:rotate(8deg); }
+  .readout { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; font-family:system-ui, sans-serif; font-size:13px; margin-top:12px; }
+  .readout div { border-top:2px solid var(--ink); padding-top:4px; }
+  .readout b { display:block; font:20px ui-monospace, monospace; }
+  canvas { width:100%; height:auto; background:#fff; border:1px solid var(--rule); }
+  .log { font-family:ui-monospace, monospace; font-size:13px; max-height:140px; overflow:auto; border-left:3px solid var(--accent); padding-left:10px; margin-top:12px; }
+  .result { border:1px solid var(--rule); background:#fff; padding:16px 20px; margin-top:16px; }
+  .result h2 { margin-top:0; }
+  .tag { display:inline-block; font-family:system-ui, sans-serif; font-size:12px; padding:2px 8px; border:1px solid var(--sage); color:var(--sage); margin-right:6px; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Roast simulator</h1>
+  <small>The Coffee Atlas · Chapter III · <span id="tracking">offline</span></small>
+</header>
+<nav aria-label="Simulator steps">
+  <button data-step="brief" aria-current="step">1. Brief</button>
+  <button data-step="roast">2. Roast</button>
+  <button data-step="review">3. Review</button>
+</nav>
+<main>
+  <section id="brief">
+    <p><strong>Your task:</strong> roast 1 kg of washed Colombian Caturra from Huila to a <em>medium</em> filter roast.
+      Pick a charge temperature and a heat setting, start the roast, and press <em>Drop</em> when you think the beans are done.</p>
+    <p>A good filter roast for this coffee drops between <span class="value">205–212 °C</span> with a development time ratio
+      (time after first crack ÷ total time) of <span class="value">16–25 %</span>. First crack starts around <span class="value">196 °C</span>.
+      Tip: roasters often lower the heat at first crack to stretch development without scorching the beans.</p>
+    <p>The simulation runs 20× faster than a real roaster: one second on screen is twenty seconds of roast.</p>
+    <button class="btn" data-goto="roast">Go to the roaster</button>
+  </section>
+
+  <section id="roast" hidden>
+    <div class="grid">
+      <div>
+        <label for="charge">Charge temperature <span class="value" id="chargeV">200 °C</span></label>
+        <input id="charge" type="range" min="170" max="230" value="200" step="1">
+        <label for="heat">Gas / heat setting <span class="value" id="heatV">65 %</span></label>
+        <input id="heat" type="range" min="30" max="100" value="65" step="5">
+        <div class="bean" id="bean" style="background:#8DA35A" role="img" aria-label="Bean colour"></div>
+        <p style="text-align:center;font-family:system-ui;font-size:13px;margin:0" id="stage">Green</p>
+        <button class="btn" id="start">Charge &amp; start</button>
+        <button class="btn secondary" id="drop" disabled>Drop</button>
+        <div class="readout">
+          <div>Time<b id="t">0:00</b></div>
+          <div>Bean °C<b id="bt">–</b></div>
+          <div>RoR °C/min<b id="ror">–</b></div>
+          <div>Dev. %<b id="dtr">–</b></div>
+        </div>
+      </div>
+      <div>
+        <canvas id="chart" width="760" height="420" aria-label="Roast curve"></canvas>
+        <div class="log" id="log" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="review" hidden>
+    <div class="result" id="result"><p>Finish a roast to see your review.</p></div>
+    <button class="btn secondary" data-goto="roast" id="again">Roast another batch</button>
+  </section>
+</main>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var steps = ['brief', 'roast', 'review'];
+  function go(step) {
+    steps.forEach(function (s) { $(s).hidden = s !== step; });
+    document.querySelectorAll('nav button').forEach(function (b) {
+      b.toggleAttribute('aria-current', b.dataset.step === step);
+      if (b.dataset.step === step) b.setAttribute('aria-current', 'step');
+    });
+  }
+  document.querySelectorAll('[data-step],[data-goto]').forEach(function (b) {
+    b.addEventListener('click', function () { go(b.dataset.step || b.dataset.goto); });
+  });
+  window.addEventListener('load', function () { $('tracking').textContent = Scorm.connected ? 'progress tracked' : 'offline'; });
+
+  ['charge', 'heat'].forEach(function (id) {
+    $(id).addEventListener('input', function () { $(id + 'V').textContent = $(id).value + (id === 'charge' ? ' °C' : ' %'); });
+  });
+
+  var colours = [[0, '#8DA35A', 'Green'], [140, '#C9B45B', 'Drying'], [155, '#D9B26A', 'Yellow'], [175, '#B9834A', 'Cinnamon'],
+                 [196, '#8A5A33', 'First crack'], [205, '#6B4226', 'Medium'], [212, '#52311D', 'Medium-dark'],
+                 [220, '#3A2213', 'Dark (second crack)'], [232, '#1E120A', 'Burnt']];
+  function colourFor(t) {
+    var c = colours[0];
+    colours.forEach(function (x) { if (t >= x[0]) c = x; });
+    return c;
+  }
+
+  var ctx = $('chart').getContext('2d');
+  var timer = null, sim = null;
+
+  function drawAxes() {
+    ctx.clearRect(0, 0, 760, 420);
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, 760, 420);
+    ctx.strokeStyle = '#D9CFC2'; ctx.fillStyle = '#7A8B6F'; ctx.font = '12px system-ui';
+    for (var m = 0; m <= 15; m++) { var x = 50 + m * 46; ctx.beginPath(); ctx.moveTo(x, 20); ctx.lineTo(x, 380); ctx.stroke(); ctx.fillText(m + "'", x - 6, 398); }
+    for (var tC = 50; tC <= 250; tC += 50) { var y = yFor(tC); ctx.beginPath(); ctx.moveTo(50, y); ctx.lineTo(740, y); ctx.stroke(); ctx.fillText(tC + '°', 14, y + 4); }
+    ctx.strokeStyle = '#C2552D'; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.moveTo(50, yFor(196)); ctx.lineTo(740, yFor(196)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = '#C2552D'; ctx.fillText('first crack ≈ 196 °C', 600, yFor(196) - 6);
+  }
+  function yFor(t) { return 380 - (t - 25) / (250 - 25) * 360; }
+  function xFor(s) { return 50 + s / 60 * 46; }
+
+  function log(msg) { var p = document.createElement('div'); p.textContent = fmt(sim.time) + '  ' + msg; $('log').prepend(p); }
+  function fmt(s) { s = Math.round(s); return Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }
+
+  $('start').addEventListener('click', function () {
+    drawAxes();
+    $('log').innerHTML = '';
+    sim = { time: 0, charge: Number($('charge').value), bt: Number($('charge').value), env: 0, heat: Number($('heat').value) / 100,
+            points: [], turning: null, dryEnd: null, fc: null, lowest: 999, last: null };
+    $('start').disabled = true; $('drop').disabled = false;
+    log('Charged 1 kg at ' + sim.bt + ' °C');
+    timer = setInterval(tick, 50);
+  });
+
+  function tick() {
+    var dt = 1; // one simulated second per tick (20× real time)
+    sim.time += dt;
+    sim.heat = Number($('heat').value) / 100;
+    sim.env = 190 + sim.heat * 95; // drum environment temperature
+    var tp = 0.4 * sim.charge + 10;  // turning point temperature
+    var exo = sim.bt > 196 && sim.bt < 204 ? 0.02 : 0; // first crack is exothermic
+    var prev = sim.bt;
+    if (sim.time <= 90) {
+      sim.bt = tp + (sim.charge - tp) * Math.exp(-sim.time / 18) + (sim.time > 60 ? (sim.time - 60) * 0.1 : 0);
+    } else {
+      sim.bt += (sim.env - sim.bt) * 0.00253 * dt + exo;
+    }
+    if (sim.turning === null && sim.time > 20 && sim.bt > prev) { sim.turning = sim.time; log('Turning point at ' + Math.round(prev) + ' °C'); }
+    if (sim.turning !== null && sim.dryEnd === null && sim.bt >= 150) { sim.dryEnd = sim.time; log('Dry end: beans turn yellow'); }
+    if (sim.turning !== null && sim.fc === null && sim.bt >= 196) { sim.fc = sim.time; log('First crack! Beans pop audibly'); }
+    if (sim.turning !== null && sim.bt >= 224 && !sim.second) { sim.second = true; log('Second crack — oils on the surface'); }
+    sim.points.push([sim.time, sim.bt]);
+    var ror = sim.points.length > 30 ? (sim.bt - sim.points[sim.points.length - 31][1]) * 2 : 0;
+    var c = colourFor(sim.bt);
+    $('bean').style.background = c[1]; $('stage').textContent = c[2];
+    $('t').textContent = fmt(sim.time); $('bt').textContent = sim.bt.toFixed(1);
+    $('ror').textContent = sim.time > 30 ? ror.toFixed(1) : '–';
+    $('dtr').textContent = sim.fc ? (100 * (sim.time - sim.fc) / sim.time).toFixed(1) : '–';
+    ctx.strokeStyle = '#2B1D14'; ctx.lineWidth = 2;
+    if (sim.points.length > 1) {
+      var a = sim.points[sim.points.length - 2];
+      ctx.beginPath(); ctx.moveTo(xFor(a[0]), yFor(a[1])); ctx.lineTo(xFor(sim.time), yFor(sim.bt)); ctx.stroke();
+    }
+    if (sim.bt >= 235 || sim.time >= 15 * 60) { log('The batch is burning — automatic drop'); drop(); }
+  }
+
+  $('drop').addEventListener('click', drop);
+
+  function drop() {
+    clearInterval(timer);
+    $('start').disabled = false; $('drop').disabled = true;
+    log('Dropped at ' + sim.bt.toFixed(1) + ' °C');
+    var dtr = sim.fc ? 100 * (sim.time - sim.fc) / sim.time : 0;
+    var score = 0, notes = [];
+    if (!sim.fc) { notes.push('You dropped before first crack: the coffee will taste grassy and sour (underdeveloped).'); }
+    else {
+      score += 30;
+      if (sim.bt >= 205 && sim.bt <= 212) { score += 35; notes.push('Drop temperature in the medium window.'); }
+      else if (sim.bt < 205) { score += 15; notes.push('Drop temperature on the light side: expect bright, sometimes sharp acidity.'); }
+      else { score += 10; notes.push('Drop temperature on the dark side: roast flavours start to mask origin.'); }
+      if (dtr >= 16 && dtr <= 25) { score += 35; notes.push('Development time ratio is in the sweet spot.'); }
+      else if (dtr < 16) { score += 15; notes.push('Short development: sweetness may not have caught up with acidity.'); }
+      else { score += 10; notes.push('Long development: the cup may taste flat or baked.'); }
+    }
+    var total = sim.time;
+    if (total < 8 * 60) notes.push('A roast under 8 minutes risks tipping and scorching — try a lower heat setting.');
+    if (total > 13 * 60) notes.push('A roast over 13 minutes tends to taste baked — try more heat early on.');
+    $('result').innerHTML = '<h2>' + (score >= 70 ? 'Well roasted.' : 'Not quite there yet.') + '</h2>' +
+      '<p><span class="tag">Score ' + score + '/100</span><span class="tag">Total ' + fmt(total) + '</span>' +
+      '<span class="tag">Drop ' + sim.bt.toFixed(1) + ' °C</span><span class="tag">Dev. ' + dtr.toFixed(1) + ' %</span></p>' +
+      '<ul><li>' + notes.join('</li><li>') + '</li></ul>' +
+      '<p>Log your batch in the Roaster\'s logbook (PDF in this chapter) and compare with your next roast.</p>';
+    Scorm.set('cmi.suspend_data', JSON.stringify({ drop: Math.round(sim.bt), dtr: Math.round(dtr), time: total }));
+    Scorm.complete(score, score >= 70);
+    go('review');
+  }
+
+  drawAxes();
+})();
+</script>
+</body>
+</html>

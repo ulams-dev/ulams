@@ -4,7 +4,6 @@ import { API } from "@ulams/sdk";
 import { Radio } from "../../../../";
 import { getUniqueId } from "../../../../utils/utils";
 import DefaultQuestionLayout from "../DefaultQuestionLayout";
-import styled, { withTheme } from "styled-components";
 
 interface Props extends API.QuizQuestion_MultipleChoice {
   onChange: React.ChangeEventHandler<HTMLInputElement>;
@@ -48,4 +47,4 @@ const MultipleChoice: React.FC<Props> = ({
   </DefaultQuestionLayout>
 );
 
-export default withTheme(styled(MultipleChoice)``);
+export default MultipleChoice;

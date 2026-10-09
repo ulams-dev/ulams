@@ -1,0 +1,54 @@
+/* rc-drawer renders in a portal with plain class names, so these rules are global
+   (scoped to the notifications drawer) like the former createGlobalStyle. */
+:global(.notifications-drawer .drawer-handle) {
+  display: none;
+}
+
+:global(.notifications-drawer .drawer-content) {
+  background-color: var(--ulams-gray-4);
+}
+
+:global(.notifications-drawer__content) {
+  background-color: var(--ulams-gray-4) !important;
+}
+
+:global([data-mode="dark"] .notifications-drawer .drawer-content),
+:global([data-mode="dark"] .notifications-drawer__content) {
+  background-color: var(--ulams-color-card-bg) !important;
+}
+
+:global(.notifications-drawer__content__header) {
+  background-color: white !important;
+  padding: 33px 27px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+:global(.notifications-drawer__content__header) button {
+  all: unset;
+  cursor: pointer;
+}
+
+:global(.notifications-drawer__content--clear-all) {
+  padding: 0px 20px;
+  margin-bottom: 20px;
+}
+
+:global(.notifications-drawer__content--clear-all) button {
+  all: unset;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--ulams-font-family);
+  color: var(--ulams-color-primary);
+  font-weight: 700;
+}
+
+:global(.notifications-drawer__content--list) {
+  padding: 0px 20px;
+  padding-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

@@ -2,18 +2,14 @@
 
 namespace Ulams\Consultations\Tests\APIs;
 
-use Carbon\Carbon;
 use Ulams\Auth\Dtos\Admin\UserAssignableDto;
 use Ulams\Auth\Services\Contracts\UserServiceContract;
 use Ulams\Categories\Models\Category;
 use Ulams\Consultations\Database\Seeders\ConsultationsPermissionSeeder;
-use Ulams\Consultations\Enum\ConstantEnum;
 use Ulams\Consultations\Enum\ConsultationsPermissionsEnum;
 use Ulams\Consultations\Enum\ConsultationStatusEnum;
-use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
 use Ulams\Consultations\Models\Consultation;
 use Ulams\Consultations\Models\ConsultationUserPivot;
-use Ulams\Consultations\Models\ConsultationUserTerm;
 use Ulams\Consultations\Tests\Models\User;
 use Ulams\Consultations\Tests\TestCase;
 use Ulams\Core\Tests\CreatesUsers;
@@ -210,130 +206,32 @@ class ConsultationApiTest extends TestCase
             ]);
     }
 
-    public function testConsultationSaveScreen(): void
+    /**
+     * The webcam frame capture endpoints were removed (ADR 0006); they accepted
+     * unauthenticated uploads and must stay gone.
+     */
+    public function testWebcamFrameEndpointsAreRemoved(): void
     {
-        $admin = $this->makeAdmin();
-        $student = $this->makeStudent();
-
-        /** @var Consultation $consultation */
-        $consultation = Consultation::factory()->create();
-        $consultation->author()->associate($this->user);
-
-        /** @var ConsultationUserPivot $consultationUser */
-        $consultationUser = ConsultationUserPivot::factory()
-            ->create([
-                'consultation_id' => $consultation->getKey(),
-                'user_id' => $student->getKey(),
-            ]);
-
-        $time = now();
-        /** @var ConsultationUserTerm $userTerm */
-        $userTerm = $consultationUser->userTerms()->create([
-            'executed_status' => ConsultationTermStatusEnum::APPROVED,
-            'executed_at' => $time,
-        ]);
-
-        $screenTime = now()->addMinutes(10);
         Storage::fake();
-        $this->response = $this->json('POST', '/api/consultations/save-screen', [
-            'consultation_id' => $consultation->getKey(),
-            'user_email' => $student->email,
-            'user_termin_id' => $consultationUser->getKey(),
-            'executed_at' => $userTerm->executed_at->format('Y-m-d H:i:s'),
-            'files' => [
-                [
-                    'file' => UploadedFile::fake()->image('image.jpg'),
-                    'timestamp' => $screenTime->format('Y-m-d H:i:s'),
-                ],
-            ],
-        ])
-            ->assertOk();
 
-        $term = Carbon::make($userTerm->executed_at);
-        // consultation_id/term_start_timestamp/user_id/timestamp.jpg
-        Storage::assertExists(ConstantEnum::DIRECTORY . "/{$consultation->getKey()}/{$term->getTimestamp()}/{$student->getKey()}/{$screenTime->getTimestamp()}.jpg");
-
-        $this->response = $this->json('POST', '/api/consultations/save-screen', [
-            'consultation_id' => $consultation->getKey(),
-            'user_email' => 'abc@example.com',
-            'user_termin_id' => $consultationUser->getKey(),
-            'executed_at' => $userTerm->executed_at->format('Y-m-d H:i:s'),
-            'files' => [
-                [
-                    'file' => UploadedFile::fake()->image('image.jpg'),
-                    'timestamp' => $time->format('Y-m-d H:i:s'),
-                ],
-            ],
-        ])
-            ->assertNotFound();
-
-        $this->response = $this->json('POST', '/api/consultations/save-screen', [
-            'consultation_id' => $consultation->getKey(),
-            'user_email' => $student->email,
-            'user_termin_id' => null,
-            'executed_at' => $userTerm->executed_at->format('Y-m-d H:i:s'),
-            'files' => [
-                [
-                    'file' => UploadedFile::fake()->image('image.jpg'),
-                    'timestamp' => $time->format('Y-m-d H:i:s'),
-                ],
-            ],
-        ])
-            ->assertUnprocessable()
-            ->assertJsonValidationErrors(['user_termin_id']);
-    }
-
-    public function testGenerateSignedUrls(): void
-    {
-        config(['filesystems.default' => 's3']);
-
-        Storage::shouldReceive('temporaryUploadUrl')
-            ->withArgs(function ($path, $expiration) {
-                return true;
-            })
-            ->andReturnUsing(function ($path, $expiration) {
-                return [
-                    'upload_url' => "https://example.com/{$path}",
-                ];
-            });
-
-        $this->response = $this->json('POST', '/api/consultations/signed-screen-urls', [
-            'consultation_id' => 1,
-            'user_id' => 1,
-            'user_termin_id' => 1,
-            'executed_at' => now()->format('Y-m-d H:i:s'),
-            'files' => [
-                [
-                    'filename' => now()->format('Y-m-d H:i:s'),
-                ],
-            ],
-        ])
-            ->assertOk()
-            ->assertJsonStructure([
-                'data' => [
+        foreach (['/api/consultations/save-screen', '/api/consultations/signed-screen-urls'] as $uri) {
+            $status = $this->json('POST', $uri, [
+                'consultation_id' => 1,
+                'user_id' => 1,
+                'user_termin_id' => 1,
+                'executed_at' => now()->format('Y-m-d H:i:s'),
+                'files' => [
                     [
-                        'filename',
-                        'upload_url',
-                    ]
-                ]
-            ]);
-    }
-
-    public function testGenerateSignedUrlsNotSupported(): void
-    {
-        config(['filesystems.default' => 'local']);
-
-        $this->response = $this->json('POST', '/api/consultations/signed-screen-urls', [
-            'consultation_id' => 1,
-            'user_id' => 1,
-            'user_termin_id' => 1,
-            'executed_at' => now()->format('Y-m-d H:i:s'),
-            'files' => [
-                [
-                    'filename' => now()->format('Y-m-d H:i:s'),
+                        'file' => UploadedFile::fake()->image('image.jpg'),
+                        'filename' => 'frame.webp',
+                        'timestamp' => now()->format('Y-m-d H:i:s'),
+                    ],
                 ],
-            ],
-        ])
-            ->assertStatus(400);
+            ])->getStatusCode();
+
+            $this->assertContains($status, [404, 405], "{$uri} must not be routable");
+        }
+
+        $this->assertEmpty(Storage::allFiles());
     }
 }

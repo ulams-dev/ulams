@@ -3,7 +3,6 @@
 namespace Ulams\Payments\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Laravel\Passport\Passport;
 use Ulams\Payments\Models\Payment;
 use Ulams\Payments\Policies\PaymentPolicy;
 use Illuminate\Support\Facades\Route;
@@ -27,9 +26,5 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-        if (!Route::has('passport.authorizations.authorize') && method_exists(Passport::class, 'routes')) {
-            Passport::routes();
-        }
     }
 }

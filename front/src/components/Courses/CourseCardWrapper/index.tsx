@@ -1,15 +1,8 @@
 import React, { PropsWithChildren } from "react";
-import styled from "styled-components";
-
-const CardWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  height: 100%;
-`;
+import styles from "./styles.module.css";
 
 const CourseCardWrapper: React.FC<PropsWithChildren> = ({ children }) => {
-  return <CardWrapper>{children}</CardWrapper>;
+  return <div className={styles.cardWrapper}>{children}</div>;
 };
 
 export default CourseCardWrapper;

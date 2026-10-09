@@ -1,10 +1,7 @@
 import { Select, Spin } from 'antd';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import {
-  getConsultation,
-  consultations as getConsultations,
-} from '@/services/ulams/consultations';
+import { getConsultation, consultations as getConsultations } from '@/services/ulams/consultations';
 import { getCourse, course as getCourses } from '@/services/ulams/course';
 import { getWebinar, webinars as getWebinars } from '@/services/ulams/webinars';
 import type { DefaultOptionType, LabeledValue } from 'antd/lib/select';

@@ -7,15 +7,14 @@ use Ulams\Courses\Database\Seeders\CoursesPermissionSeeder;
 use Ulams\Courses\Models\Course;
 use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 
 class CourseAuthoredApiTest extends TestCase
 {
     use CreatesUsers;
     use DatabaseTransactions;
 
-    /**
-     * @test
-     */
+    #[Test]
     protected function setUp(): void
     {
         parent::setUp();

@@ -1,9 +1,9 @@
 import * as React from "react";
-import styled, { withTheme } from "styled-components";
 import { Row, Col } from "react-grid-system";
 import { Button } from "../../atoms/Button/Button";
 import { ReactNode } from "react";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import styles from "./Banner.module.css";
 
 interface StyledBannerProps {
   mobile?: boolean;
@@ -20,18 +20,6 @@ export interface BannerProps
   handleBtn: () => void;
 }
 
-const StyledBanner = styled("div")<StyledBannerProps>`
-  background: ${(props) => props.background};
-
-  .banner-btn {
-    margin-top: ${(props) => (props.mobile ? "22px" : "52px")};
-  }
-
-  .banner-text h1 {
-    font-weight: normal;
-  }
-`;
-
 export const Banner: React.FC<BannerProps> = (props) => {
   const {
     title,
@@ -45,10 +33,13 @@ export const Banner: React.FC<BannerProps> = (props) => {
   } = props;
 
   return (
-    <StyledBanner
-      className={`ulams-component ${className}`}
-      mobile={mobile}
-      background={background}
+    <div
+      className={`ulams-component ${styles.root} ${
+        mobile ? styles.mobile : ""
+      } ${className}`}
+      style={
+        { "--banner-background": background } as React.CSSProperties
+      }
     >
       <Row
         align={"center"}
@@ -86,8 +77,8 @@ export const Banner: React.FC<BannerProps> = (props) => {
           )}
         </Col>
       </Row>
-    </StyledBanner>
+    </div>
   );
 };
 
-export default withTheme(styled(Banner)<BannerProps>``);
+export default Banner;

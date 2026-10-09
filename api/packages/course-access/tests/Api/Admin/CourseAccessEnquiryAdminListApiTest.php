@@ -9,6 +9,7 @@ use Ulams\CourseAccess\Models\Course;
 use Ulams\CourseAccess\Models\CourseAccessEnquiry;
 use Ulams\CourseAccess\Tests\TestCase;
 use Illuminate\Database\Eloquent\Factories\Sequence;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CourseAccessEnquiryAdminListApiTest extends TestCase
 {
@@ -45,9 +46,7 @@ class CourseAccessEnquiryAdminListApiTest extends TestCase
             ->assertUnauthorized();
     }
 
-    /**
-     * @dataProvider adminFilterDataProvider
-     */
+    #[DataProvider('adminFilterDataProvider')]
     public function testCourseAccessEnquiryAdminList(callable $filter, int $count): void
     {
         $queryParams = $filter($this->student2->getKey(), $this->course2->getKey());
@@ -191,7 +190,7 @@ class CourseAccessEnquiryAdminListApiTest extends TestCase
         $this->assertTrue($response->json('data.0.id') === $enquiry1->getKey());
     }
 
-    public function adminFilterDataProvider(): array
+    public static function adminFilterDataProvider(): array
     {
         return [
             [

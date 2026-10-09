@@ -8,6 +8,7 @@ use Ulams\Bookmarks\Tests\BookmarkTesting;
 use Ulams\Bookmarks\Tests\TestCase;
 use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Support\Arr;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AdminBookmarkIndexApiTest extends TestCase
 {
@@ -19,9 +20,7 @@ class AdminBookmarkIndexApiTest extends TestCase
         $this->seed(BookmarkPermissionSeeder::class);
     }
 
-    /**
-     * @dataProvider filterDataProvider
-     */
+    #[DataProvider('filterDataProvider')]
     public function testIndexBookmarkFilters(array $filters, callable $generator, int $filterCount): void
     {
         $user = $this->makeAdmin();
@@ -97,9 +96,7 @@ class AdminBookmarkIndexApiTest extends TestCase
             ]);
     }
 
-    /**
-     * @dataProvider orderDataProvider
-     */
+    #[DataProvider('orderDataProvider')]
     public function testIndexBookmarkOrder(array $order, callable $generator, callable $assertion): void
     {
         $user = $this->makeAdmin();
@@ -112,14 +109,14 @@ class AdminBookmarkIndexApiTest extends TestCase
         $assertion($response);
     }
 
-    public function filterDataProvider(): array
+    public static function filterDataProvider(): array
     {
         return [
             [
-                'filter' => [
+                'filters' => [
                     'has_value' => 0
                 ],
-                'data' => (function () {
+                'generator' => (function () {
                     $items = collect();
                     $items->push(Bookmark::factory());
                     $items->push(Bookmark::factory());
@@ -132,10 +129,10 @@ class AdminBookmarkIndexApiTest extends TestCase
                 'filterCount' => 3
             ],
             [
-                'filter' => [
+                'filters' => [
                     'has_value' => 1
                 ],
-                'data' => (function () {
+                'generator' => (function () {
                     $items = collect();
                     $items->push(Bookmark::factory());
                     $items->push(Bookmark::factory());
@@ -146,9 +143,9 @@ class AdminBookmarkIndexApiTest extends TestCase
                 'filterCount' => 2
             ],
             [
-                'filter' => [
+                'filters' => [
                 ],
-                'data' => (function () {
+                'generator' => (function () {
                     $items = collect();
                     $items->push(Bookmark::factory());
                     $items->push(Bookmark::factory());
@@ -159,10 +156,10 @@ class AdminBookmarkIndexApiTest extends TestCase
                 'filterCount' => 3
             ],
             [
-                'filter' => [
+                'filters' => [
                     'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic',
                 ],
-                'data' => (function () {
+                'generator' => (function () {
                     $items = collect();
                     $items->push(Bookmark::factory());
                     $items->push(Bookmark::factory()->state(['bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic']));
@@ -176,11 +173,11 @@ class AdminBookmarkIndexApiTest extends TestCase
                 'filterCount' => 3
             ],
             [
-                'filter' => [
+                'filters' => [
                     'bookmarkable_id' => 123,
                     'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic',
                 ],
-                'data' => (function () {
+                'generator' => (function () {
                     $items = collect();
                     $items->push(Bookmark::factory());
                     $items->push(Bookmark::factory()->state(['bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic', 'bookmarkable_id' => 123]));
@@ -193,11 +190,11 @@ class AdminBookmarkIndexApiTest extends TestCase
                 'filterCount' => 1
             ],
             [
-                'filter' => [
+                'filters' => [
                     'bookmarkable_ids' => [123, 456],
                     'bookmarkable_type' => 'Ulams\\Courses\\Models\\Topic',
                 ],
-                'data' => (function () {
+                'generator' => (function () {
                     $items = collect();
                     $items->push(Bookmark::factory());
                     $items->push(Bookmark::factory());
@@ -213,7 +210,7 @@ class AdminBookmarkIndexApiTest extends TestCase
         ];
     }
 
-    public function orderDataProvider(): array
+    public static function orderDataProvider(): array
     {
         return [
             [
@@ -221,7 +218,7 @@ class AdminBookmarkIndexApiTest extends TestCase
                     'order_by' => 'id',
                     'order' => 'asc',
                 ],
-                'data' => (function() {
+                'generator' => (function() {
                     $items = collect();
                     $items->push(Bookmark::factory()->state(['id' => 1]));
                     $items->push(Bookmark::factory()->state(['id' => 2]));
@@ -229,9 +226,9 @@ class AdminBookmarkIndexApiTest extends TestCase
 
                     return $items;
                 }),
-                'assert' => (function($data) {
-                    $this->assertEquals(1, Arr::first($data->getData()->data)->id);
-                    $this->assertEquals(3, Arr::last($data->getData()->data)->id);
+                'assertion' => (function($data) {
+                    self::assertEquals(1, Arr::first($data->getData()->data)->id);
+                    self::assertEquals(3, Arr::last($data->getData()->data)->id);
                 })
             ],
             [
@@ -239,7 +236,7 @@ class AdminBookmarkIndexApiTest extends TestCase
                     'order_by' => 'id',
                     'order' => 'desc',
                 ],
-                'data' => (function() {
+                'generator' => (function() {
                     $items = collect();
                     $items->push(Bookmark::factory()->state(['id' => 1]));
                     $items->push(Bookmark::factory()->state(['id' => 2]));
@@ -247,9 +244,9 @@ class AdminBookmarkIndexApiTest extends TestCase
 
                     return $items;
                 }),
-                'assert' => (function($data) {
-                    $this->assertEquals(1, Arr::last($data->getData()->data)->id);
-                    $this->assertEquals(3, Arr::first($data->getData()->data)->id);
+                'assertion' => (function($data) {
+                    self::assertEquals(1, Arr::last($data->getData()->data)->id);
+                    self::assertEquals(3, Arr::first($data->getData()->data)->id);
                 })
             ],
             [
@@ -257,7 +254,7 @@ class AdminBookmarkIndexApiTest extends TestCase
                     'order_by' => 'value',
                     'order' => 'asc',
                 ],
-                'data' => (function() {
+                'generator' => (function() {
                     $items = collect();
                     $items->push(Bookmark::factory()->state(['value' => 'aaa']));
                     $items->push(Bookmark::factory()->state(['value' => 'bbb']));
@@ -265,9 +262,9 @@ class AdminBookmarkIndexApiTest extends TestCase
 
                     return $items;
                 }),
-                'assert' => (function($data) {
-                    $this->assertEquals('aaa', Arr::first($data->getData()->data)->value);
-                    $this->assertEquals('ccc', Arr::last($data->getData()->data)->value);
+                'assertion' => (function($data) {
+                    self::assertEquals('aaa', Arr::first($data->getData()->data)->value);
+                    self::assertEquals('ccc', Arr::last($data->getData()->data)->value);
                 })
             ],
             [
@@ -275,7 +272,7 @@ class AdminBookmarkIndexApiTest extends TestCase
                     'order_by' => 'value',
                     'order' => 'desc',
                 ],
-                'data' => (function() {
+                'generator' => (function() {
                     $items = collect();
                     $items->push(Bookmark::factory()->state(['value' => 'aaa']));
                     $items->push(Bookmark::factory()->state(['value' => 'bbb']));
@@ -283,9 +280,9 @@ class AdminBookmarkIndexApiTest extends TestCase
 
                     return $items;
                 }),
-                'assert' => (function($data) {
-                    $this->assertEquals('aaa', Arr::last($data->getData()->data)->value);
-                    $this->assertEquals('ccc', Arr::first($data->getData()->data)->value);
+                'assertion' => (function($data) {
+                    self::assertEquals('aaa', Arr::last($data->getData()->data)->value);
+                    self::assertEquals('ccc', Arr::first($data->getData()->data)->value);
                 })
             ],
         ];

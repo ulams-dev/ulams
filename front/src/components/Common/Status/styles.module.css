@@ -1,0 +1,17 @@
+.root {
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+.root .status {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.root .name {
+  padding: 0.5rem;
+  font-family: var(--ulams-font-family);
+}

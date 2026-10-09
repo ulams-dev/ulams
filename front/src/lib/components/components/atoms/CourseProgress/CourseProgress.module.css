@@ -1,0 +1,90 @@
+.courseProgress {
+  --cp-color: var(--ulams-gray-1);
+  --cp-link-color: var(--ulams-color-primary);
+  --cp-track: var(--ulams-gray-3);
+  font-family: var(--ulams-font-family-body);
+  color: var(--cp-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:global([data-mode="dark"]) .courseProgress {
+  --cp-color: var(--ulams-color-white);
+  --cp-link-color: var(--ulams-color-white);
+  --cp-track: var(--ulams-color-white);
+}
+
+.courseProgress :global(.header) {
+  display: flex;
+  align-items: center;
+}
+
+.courseProgress :global(.header) svg {
+  fill: var(--cp-color);
+}
+
+.courseProgress :global(.title) {
+  font-size: 16px;
+  font-weight: 700;
+  margin-left: 0;
+}
+
+.withIcon :global(.title) {
+  margin-left: 11px;
+}
+
+.courseProgress :global(.description),
+.courseProgress :global(.description) > * {
+  font-size: 12px;
+}
+
+.courseProgress :global(.description) a {
+  color: var(--cp-link-color);
+}
+
+.courseProgress :global(.description) a::after {
+  background-color: currentColor;
+}
+
+.courseProgress > :global(.range) {
+  height: 15px;
+  position: relative;
+  margin: 22px 0 20px 0;
+}
+
+.courseProgress > :global(.range)::before {
+  content: "";
+  display: block;
+  background: var(--cp-track);
+  height: 1px;
+  width: 100%;
+  position: absolute;
+  left: 0px;
+  top: 8px;
+}
+
+.courseProgress > :global(.range)::after {
+  content: "";
+  position: absolute;
+  display: inline-block;
+  height: 3px;
+  left: 0;
+  top: 7px;
+  transition: width 0.2s;
+  background: var(--ulams-color-primary);
+  width: var(--cp-progress);
+}
+
+.courseProgress > :global(.range) :global(.knob-wrapper) {
+  width: calc(100% - 15px);
+  position: relative;
+}
+
+.courseProgress > :global(.range) :global(.knob) {
+  width: 15px;
+  height: 15px;
+  background: var(--ulams-color-primary);
+  position: absolute;
+  transition: left 0.2s;
+  border-radius: var(--ulams-radius-button);
+}

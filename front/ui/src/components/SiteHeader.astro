@@ -1,0 +1,306 @@
+---
+import Icon from "./Icon.astro";
+
+interface Link {
+  label: string;
+  href: string;
+}
+interface Props {
+  brand: string;
+  tagline?: string;
+  mark?: "wordmark" | "terminal" | "rocket" | "logo";
+  links?: Link[];
+  cta?: Link;
+  signIn?: Link;
+}
+const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.props;
+---
+
+<header class={`u-header u-header--${mark}`}>
+  <div class="u-container u-header__bar">
+    <a class="u-brand" href="/" aria-label={`${brand}, home`}>
+      {mark === "terminal" && <span class="u-brand__mark" aria-hidden="true"><Icon name="terminal" /></span>}
+      {mark === "rocket" && <span class="u-brand__mark" aria-hidden="true"><Icon name="rocket" /></span>}
+      {
+        mark === "logo" && (
+          <span class="u-brand__mark u-brand__logo" aria-hidden="true">
+            <svg viewBox="0 0 32 32" width="20" height="20"><path d="M9 8v9a7 7 0 0014 0V8" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" /></svg>
+          </span>
+        )
+      }
+      <span class="u-brand__text">
+        <span class="u-brand__name">{brand}</span>
+        {tagline && <span class="u-brand__tagline">{tagline}</span>}
+      </span>
+    </a>
+    {
+      links.length > 0 && (
+        <nav class="u-nav" aria-label="Main">
+          <ul>
+            {links.map((link) => (
+              <li>
+                <a href={link.href}>{link.label}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+    <div class="u-header__actions">
+      {signIn && <a class="u-header__signin" href={signIn.href}>{signIn.label}</a>}
+      {
+        cta && (
+          <a class="u-btn u-btn--sm" href={cta.href}>
+            {cta.label}
+          </a>
+        )
+      }
+      {
+        links.length > 0 && (
+          <details class="u-menu">
+            <summary aria-label="Menu">
+              <Icon name="menu" class="u-menu__open" />
+              <Icon name="close" class="u-menu__close" />
+            </summary>
+            <nav class="u-menu__panel" aria-label="Mobile">
+              <ul>
+                {links.map((link) => (
+                  <li>
+                    <a href={link.href}>{link.label}</a>
+                  </li>
+                ))}
+                {signIn && (
+                  <li>
+                    <a href={signIn.href}>{signIn.label}</a>
+                  </li>
+                )}
+              </ul>
+            </nav>
+          </details>
+        )
+      }
+    </div>
+  </div>
+</header>
+
+<style>
+  .u-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: color-mix(in srgb, var(--ulams-color-bg) 86%, transparent);
+    backdrop-filter: saturate(1.4) blur(14px);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid transparent;
+    animation: u-header-shadow linear both;
+    animation-timeline: scroll();
+    animation-range: 0 120px;
+  }
+  @keyframes u-header-shadow {
+    to {
+      border-bottom-color: var(--ulams-color-border);
+      box-shadow: 0 6px 24px -18px rgb(0 0 0 / 0.5);
+    }
+  }
+  .u-header__bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    min-height: 68px;
+  }
+  .u-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    margin-right: auto;
+    min-width: 0;
+  }
+  .u-brand__mark {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--ulams-radius);
+    background: var(--ulams-color-primary);
+    color: var(--ulams-color-on-primary);
+    transition: transform 0.4s var(--ulams-ease-bounce);
+  }
+  .u-brand:hover .u-brand__mark {
+    transform: rotate(-12deg) scale(1.08);
+  }
+  .u-brand__text {
+    display: grid;
+    line-height: 1.1;
+  }
+  .u-brand__name {
+    font-family: var(--ulams-font-family);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--ulams-color-header);
+    white-space: nowrap;
+  }
+  .u-brand__tagline {
+    font-size: 0.6875rem;
+    color: var(--ulams-color-muted);
+    font-style: italic;
+  }
+  .u-nav ul,
+  .u-menu__panel ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .u-nav ul {
+    display: flex;
+    gap: 4px;
+  }
+  .u-nav a {
+    position: relative;
+    display: inline-block;
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--ulams-color-text);
+  }
+  .u-nav a::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 4px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.35s var(--ulams-ease);
+  }
+  .u-nav a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  .u-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .u-header__signin {
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 8px 4px;
+  }
+  .u-header__signin:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .u-menu {
+    display: none;
+    position: relative;
+  }
+  .u-menu summary {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    list-style: none;
+    cursor: pointer;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-button);
+  }
+  .u-menu summary::-webkit-details-marker {
+    display: none;
+  }
+  .u-menu :global(.u-menu__close),
+  .u-menu[open] :global(.u-menu__open) {
+    display: none;
+  }
+  .u-menu[open] :global(.u-menu__close) {
+    display: block;
+  }
+  .u-menu__panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    min-width: 220px;
+    padding: 8px;
+    background: var(--ulams-color-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    box-shadow: var(--ulams-shadow-hover);
+    animation: u-pop 0.25s var(--ulams-ease);
+  }
+  @keyframes u-pop {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.98);
+    }
+  }
+  .u-menu__panel a {
+    display: block;
+    padding: 12px 14px;
+    text-decoration: none;
+    border-radius: var(--ulams-radius);
+  }
+  .u-menu__panel a:hover {
+    background: var(--ulams-color-card-bg);
+  }
+  @media (max-width: 900px) {
+    .u-nav,
+    .u-header__signin {
+      display: none;
+    }
+    .u-menu {
+      display: block;
+    }
+  }
+  @media (max-width: 560px) {
+    .u-brand__tagline,
+    .u-header__actions .u-btn {
+      display: none;
+    }
+    .u-brand__name {
+      white-space: normal;
+    }
+  }
+
+  /* terminal brand (oncall) */
+  .u-header--terminal .u-brand__name {
+    font-family: var(--ulams-font-mono);
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .u-header--terminal .u-nav a {
+    font-family: var(--ulams-font-mono);
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-header--terminal .u-nav a:hover {
+    color: var(--ulams-color-text);
+  }
+  /* wordmark (coffee) */
+  .u-header--wordmark .u-brand__name {
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  /* logo (platform) */
+  .u-header--logo .u-brand__logo {
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--ulams-color-primary), var(--ulams-color-accent, var(--ulams-color-primary)));
+  }
+  .u-header--logo .u-brand__name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  /* rocket (nightsky) */
+  .u-header--rocket .u-brand__mark {
+    border-radius: 12px;
+    transform: rotate(-8deg);
+  }
+  .u-header--rocket .u-brand__name {
+    font-weight: 700;
+  }
+</style>

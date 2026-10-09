@@ -1,0 +1,27 @@
+---
+interface Props {
+  gap?: "sm" | "md" | "lg";
+}
+const { gap = "md" } = Astro.props;
+---
+
+<div class={`u-stack u-stack--${gap}`}><slot /></div>
+
+<style>
+  .u-stack {
+    display: grid;
+    min-width: 0;
+  }
+  .u-stack > :global(*) {
+    min-width: 0;
+  }
+  .u-stack--sm {
+    gap: 12px;
+  }
+  .u-stack--md {
+    gap: 24px;
+  }
+  .u-stack--lg {
+    gap: clamp(28px, 4vw, 44px);
+  }
+</style>

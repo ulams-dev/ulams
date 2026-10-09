@@ -42,12 +42,15 @@ class StationaryEventRepository extends BaseRepository implements StationaryEven
         $userId = auth()->user()->getKey();
 
         return $this->allQueryBuilder($criteria)
-            ->whereHas('users', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })
-            ->orWhereHas('authors', function ($query) use ($userId) {
-                $query->where('author_id', $userId);
-            })
+            // Grouped so the OR does not bypass the criteria (filters) applied above.
+            ->where(fn ($query) => $query
+                ->whereHas('users', function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                })
+                ->orWhereHas('authors', function ($query) use ($userId) {
+                    $query->where('author_id', $userId);
+                })
+            )
             ->leftJoin(StationaryEventUserPivot::TABLE_NAME . ' as user_pivot', function ($join) use ($userId) {
                 $join->on('user_pivot.stationary_event_id', '=', StationaryEvent::TABLE_NAME . '.id')
                     ->where('user_pivot.user_id', $userId);

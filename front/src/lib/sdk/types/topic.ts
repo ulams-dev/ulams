@@ -85,8 +85,11 @@ export type TopicImage = TopicBase & {
 
 export type TopicH5P = TopicBase & {
   topicable_type: TopicType.H5P;
-  topicable: TopicableBase & {
-    content: H5PContent;
+  topicable: Omit<TopicableBase, "value"> & {
+    /** H5P content id in the H5P service (`/h5p/contents/:id/play`) */
+    value: number;
+    /** summary only; the player model is fetched from the H5P service */
+    content?: H5PContent | null;
   };
 };
 

@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ulams Course Builder — Workspace</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface": "#fbf9f4",
+            "outline-variant": "#c7c4d8",
+            "surface-dim": "#dbdad5",
+            "secondary-fixed": "#ffddb6",
+            "surface-container-highest": "#e4e2dd",
+            "tertiary-fixed": "#dfe1f6",
+            "on-error": "#ffffff",
+            "tertiary-fixed-dim": "#c3c5d9",
+            "on-secondary": "#ffffff",
+            "tertiary-container": "#6d7082",
+            "surface-variant": "#e4e2dd",
+            "on-primary-container": "#f8f5ff",
+            "inverse-primary": "#c1c1ff",
+            "on-secondary-container": "#714800",
+            "tertiary": "#545869",
+            "on-primary-fixed": "#09006b",
+            "secondary-fixed-dim": "#ffb959",
+            "background": "#fbf9f4",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-fixed": "#2a1800",
+            "inverse-surface": "#30312e",
+            "secondary": "#845400",
+            "primary-container": "#5b5bf7",
+            "on-tertiary-container": "#f7f5ff",
+            "on-error-container": "#93000a",
+            "error": "#ba1a1a",
+            "surface-container": "#f0eee9",
+            "surface-tint": "#4746e4",
+            "surface-container-high": "#eae8e3",
+            "error-container": "#ffdad6",
+            "on-tertiary-fixed-variant": "#424656",
+            "on-tertiary-fixed": "#171b29",
+            "inverse-on-surface": "#f2f1ec",
+            "on-primary": "#ffffff",
+            "surface-container-low": "#f5f3ee",
+            "primary-fixed": "#e1dfff",
+            "on-primary-fixed-variant": "#2c25cc",
+            "outline": "#767587",
+            "primary": "#413ede",
+            "on-background": "#1b1c19",
+            "secondary-container": "#ffb54d",
+            "on-tertiary": "#ffffff",
+            "primary-fixed-dim": "#c1c1ff",
+            "on-surface-variant": "#464555",
+            "on-surface": "#1b1c19",
+            "on-secondary-fixed-variant": "#643f00",
+            "surface-bright": "#fbf9f4"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-desktop": "2rem",
+            "space-xl": "2.5rem",
+            "gutter-desktop": "1.5rem",
+            "space-xs": "0.25rem",
+            "margin": "1rem",
+            "space-lg": "1.5rem",
+            "space-md": "1rem",
+            "space-sm": "0.5rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "headline-sm": ["Inter"],
+            "code-body": ["JetBrains Mono"],
+            "body-strong": ["Inter"],
+            "label-citation": ["JetBrains Mono"],
+            "body-editorial": ["Newsreader"],
+            "headline-lg": ["Newsreader"],
+            "headline-lg-mobile": ["Newsreader"],
+            "display-editorial": ["Newsreader"],
+            "caption": ["Inter"],
+            "headline-md": ["Inter"],
+            "display-editorial-mobile": ["Newsreader"],
+            "body-default": ["Inter"]
+          },
+          "fontSize": {
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "code-body": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-strong": ["14px", { "lineHeight": "22px", "fontWeight": "500" }],
+            "label-citation": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "body-editorial": ["19px", { "lineHeight": "32px", "fontWeight": "400" }],
+            "headline-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.015em", "fontWeight": "400" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "display-editorial": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "display-editorial-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "body-default": ["14px", { "lineHeight": "22px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #e4e2dd;
+      border-radius: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #c7c4d8;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface h-full flex overflow-hidden font-body-default antialiased select-none">
+<!-- ==================== SHARED COMPONENT 1: SideNavBar ==================== -->
+<aside aria-label="Main Navigation" class="fixed top-0 left-0 h-screen w-16 z-40 bg-inverse-surface border-r border-outline-variant/30 flex flex-col justify-between py-4 items-center select-none">
+<!-- Brand / Monogram Header -->
+<div class="flex flex-col items-center gap-1">
+<div class="w-10 h-10 rounded-xl bg-surface-container-highest/20 border border-outline-variant/20 flex items-center justify-center text-inverse-on-surface font-display-editorial text-2xl font-semibold tracking-tighter" title="Ulams — Curriculum Architect">
+        u
+      </div>
+<span class="text-[9px] font-label-citation text-outline-variant/70 tracking-widest uppercase mt-0.5">arch</span>
+</div>
+<!-- Center Navigation Tabs (Builder active) -->
+<nav aria-label="Global links" class="flex flex-col items-center gap-2 w-full px-2">
+<!-- 1. Builder (Active) -->
+<a class="flex flex-col items-center justify-center text-primary-fixed bg-surface-variant/20 rounded-lg p-2.5 transition-all duration-150 w-full group relative" href="#" title="Builder">
+<span class="material-symbols-outlined text-[22px]" data-icon="architecture">architecture</span>
+<span class="text-[9px] font-caption tracking-tight mt-1 text-primary-fixed">Builder</span>
+<span class="absolute -right-2 top-1/2 -translate-y-1/2 w-1 h-5 bg-primary-container rounded-l-full"></span>
+</a>
+<!-- 2. Courses -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 p-2.5 transition-all duration-150 rounded-lg w-full group" href="#" title="Courses">
+<span class="material-symbols-outlined text-[22px]" data-icon="menu_book">menu_book</span>
+<span class="text-[9px] font-caption tracking-tight mt-1 opacity-80 group-hover:opacity-100">Courses</span>
+</a>
+<!-- 3. Sources -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 p-2.5 transition-all duration-150 rounded-lg w-full group" href="#" title="Sources">
+<span class="material-symbols-outlined text-[22px]" data-icon="source">source</span>
+<span class="text-[9px] font-caption tracking-tight mt-1 opacity-80 group-hover:opacity-100">Sources</span>
+</a>
+<!-- 4. Usage -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 p-2.5 transition-all duration-150 rounded-lg w-full group" href="#" title="Usage">
+<span class="material-symbols-outlined text-[22px]" data-icon="data_usage">data_usage</span>
+<span class="text-[9px] font-caption tracking-tight mt-1 opacity-80 group-hover:opacity-100">Usage</span>
+</a>
+<!-- 5. Settings -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 p-2.5 transition-all duration-150 rounded-lg w-full group" href="#" title="Settings">
+<span class="material-symbols-outlined text-[22px]" data-icon="settings">settings</span>
+<span class="text-[9px] font-caption tracking-tight mt-1 opacity-80 group-hover:opacity-100">Settings</span>
+</a>
+</nav>
+<!-- Footer Profile -->
+<div class="flex flex-col items-center gap-2">
+<button class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 p-2 rounded-lg transition-all" title="User Profile">
+<span class="material-symbols-outlined text-[24px]" data-icon="account_circle">account_circle</span>
+<span class="text-[9px] font-caption mt-0.5 opacity-70">Profile</span>
+</button>
+</div>
+</aside>
+<!-- ==================== APP WORKSPACE LAYOUT ==================== -->
+<div class="pl-16 w-full h-full flex flex-col min-w-0 bg-background">
+<!-- ==================== SHARED COMPONENT 2: TopNavBar ==================== -->
+<header class="h-14 border-b border-surface-container-highest bg-surface-bright flex items-center justify-between px-6 z-30 select-none flex-shrink-0">
+<!-- Left: Breadcrumb Context + Subtabs -->
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-headline-sm font-headline-sm text-on-surface">
+<span class="text-tertiary hover:text-on-surface transition-colors cursor-pointer text-body-strong font-body-strong">Course Builder</span>
+<span class="text-outline-variant font-code-body text-xs">/</span>
+<span class="font-headline-sm text-on-surface text-[15px] tracking-tight">Coffee brewing fundamentals</span>
+</div>
+<!-- In-builder sub tabs -->
+<nav aria-label="Builder Sub Navigation" class="hidden lg:flex items-center gap-1 border-l border-surface-container-highest pl-6">
+<a class="px-3 py-1.5 rounded-lg text-body-strong font-body-strong text-xs text-primary bg-primary-fixed/30 border border-primary/20 flex items-center gap-1.5" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+            Workspace
+          </a>
+<a class="px-3 py-1.5 rounded-lg text-body-strong font-body-strong text-xs text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" href="#">
+            Sources
+          </a>
+<a class="px-3 py-1.5 rounded-lg text-body-strong font-body-strong text-xs text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" href="#">
+            History
+          </a>
+<a class="px-3 py-1.5 rounded-lg text-body-strong font-body-strong text-xs text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" href="#">
+            Usage
+          </a>
+</nav>
+</div>
+<!-- Center & Right: Version pill, Undo/Redo, Sync status, Action buttons -->
+<div class="flex items-center gap-3">
+<!-- Live Changes Indicator -->
+<div class="flex items-center gap-2 px-2.5 py-1 rounded-md bg-surface-container border border-surface-container-highest text-tertiary">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-container opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+<span class="text-caption font-caption text-xs font-medium">Unsaved changes pending</span>
+</div>
+<!-- Version Tag -->
+<span class="px-2 py-0.5 rounded font-code-body text-label-citation bg-surface-container text-tertiary border border-surface-container-highest" title="Current build milestone">
+          v7
+        </span>
+<!-- Undo / Redo Cluster -->
+<div class="flex items-center border border-surface-container-highest rounded-lg bg-surface-container-lowest overflow-hidden">
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Undo (Cmd+Z)">
+<span class="material-symbols-outlined text-[18px]" data-icon="undo">undo</span>
+</button>
+<div class="w-[1px] h-4 bg-surface-container-highest"></div>
+<button class="p-1.5 text-outline-variant cursor-not-allowed opacity-50" disabled="" title="Redo (Cmd+Shift+Z)">
+<span class="material-symbols-outlined text-[18px]" data-icon="redo">redo</span>
+</button>
+</div>
+<div class="h-4 w-[1px] bg-surface-container-highest mx-0.5"></div>
+<!-- Primary Action: Apply Changes (2) -->
+<button class="h-9 px-3.5 rounded-lg bg-primary-container hover:bg-primary text-white text-body-strong font-body-strong text-xs flex items-center gap-2 transition-all shadow-sm shadow-primary/20 active:scale-95">
+<span class="material-symbols-outlined text-[16px]" data-icon="auto_awesome">auto_awesome</span>
+<span>Apply changes (2)</span>
+</button>
+<!-- Secondary Icon actions from Shared Components -->
+<div class="flex items-center gap-1 border-l border-surface-container-highest pl-2">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Help &amp; documentation">
+<span class="material-symbols-outlined text-[20px]" data-icon="help_outline">help_outline</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors relative" title="Notifications">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+<span class="w-1.5 h-1.5 bg-secondary-container rounded-full absolute top-1.5 right-1.5"></span>
+</button>
+</div>
+</div>
+</header>
+<!-- ==================== THREE-PANE MAIN WORKSPACE CANVAS ==================== -->
+<main class="flex-1 flex min-h-0 relative overflow-hidden">
+<!-- ==================== 1. LEFT PANE (280px): Course Hierarchy ==================== -->
+<section aria-label="Curriculum Navigation" class="w-[280px] flex-shrink-0 border-r border-surface-container-highest bg-surface-container-low flex flex-col justify-between select-none">
+<!-- Hierarchy Header -->
+<div class="p-3.5 border-b border-surface-container-highest flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-tertiary" data-icon="account_tree">account_tree</span>
+<span class="text-caption font-body-strong uppercase tracking-wider text-xs text-on-surface">Curriculum Tree</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1 text-on-surface-variant hover:text-on-surface rounded hover:bg-surface-container" title="Collapse all">
+<span class="material-symbols-outlined text-[16px]" data-icon="unfold_less">unfold_less</span>
+</button>
+<button class="p-1 text-on-surface-variant hover:text-on-surface rounded hover:bg-surface-container" title="Filter nodes">
+<span class="material-symbols-outlined text-[16px]" data-icon="filter_list">filter_list</span>
+</button>
+</div>
+</div>
+<!-- Hierarchy Tree Scrollable Area -->
+<div class="flex-1 overflow-y-auto custom-scroll p-3 space-y-4">
+<!-- MODULE 1: Extraction Physics (Collapsed/Complete) -->
+<div class="space-y-1">
+<button class="w-full flex items-center justify-between text-left px-2 py-1.5 rounded-md hover:bg-surface-container text-xs text-tertiary font-body-strong group transition-colors">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="chevron_right">chevron_right</span>
+<span class="text-on-surface-variant">Module 1 · Extraction Physics</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+<span class="text-[10px] font-label-citation text-outline">3/3</span>
+</div>
+</button>
+</div>
+<!-- MODULE 2: Brewing Ratios & Variables (Expanded) -->
+<div class="space-y-1">
+<div class="flex items-center justify-between px-2 py-1.5 rounded-md bg-surface-container/70 text-xs font-body-strong text-on-surface">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="expand_more">expand_more</span>
+<span class="font-semibold">Module 2 · Ratios &amp; Variables</span>
+</div>
+<span class="text-[10px] font-label-citation text-primary bg-primary-fixed/40 px-1.5 py-0.5 rounded">Current</span>
+</div>
+<!-- Module 2 Sub-items list with vertical connecting line -->
+<div class="ml-3 pl-3 border-l border-surface-container-highest space-y-1 mt-1">
+<!-- LESSON 2.1 (Expanded) -->
+<div class="space-y-1">
+<div class="flex items-center gap-1.5 py-1 text-xs font-medium text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-primary-container" data-icon="menu_book">menu_book</span>
+<span>2.1 The 1:16 golden ratio</span>
+</div>
+<!-- Deep Tree inside Lesson 2.1 -->
+<div class="ml-2 pl-2.5 border-l border-surface-container-highest space-y-0.5">
+<!-- Intro -->
+<a class="flex items-center gap-2 py-1 px-2 rounded text-xs text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="font-body-default text-[12px]">Intro prose</span>
+</a>
+<!-- Worked example -->
+<a class="flex items-center gap-2 py-1 px-2 rounded text-xs text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="font-body-default text-[12px]">Worked calculation</span>
+</a>
+<!-- Quiz container node -->
+<div class="py-1">
+<div class="flex items-center gap-1.5 text-[11px] font-body-strong text-tertiary px-2">
+<span class="material-symbols-outlined text-[14px]" data-icon="quiz">quiz</span>
+<span>Quiz · 4 questions</span>
+</div>
+<!-- 4 Questions inside Quiz -->
+<div class="ml-2 pl-2 border-l border-surface-container-highest/60 space-y-1 mt-1">
+<a class="flex items-center gap-1.5 py-1 px-2 rounded text-[11px] text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="w-1 h-1 rounded-full bg-outline"></span>
+<span class="truncate">Q1 · Dose calculation</span>
+</a>
+<!-- SELECTED STATE: QUESTION 2 -->
+<a class="flex items-center justify-between py-1.5 px-2 rounded-lg bg-surface-container-lowest border border-primary-container shadow-sm shadow-primary/10 text-[11px] text-primary font-semibold relative group" href="#">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+<span class="truncate">Q2 · Ratio calculation</span>
+</div>
+<span class="text-[9px] font-code-body uppercase px-1 rounded bg-primary-fixed text-primary font-bold">Active</span>
+</a>
+<a class="flex items-center gap-1.5 py-1 px-2 rounded text-[11px] text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="w-1 h-1 rounded-full bg-outline"></span>
+<span class="truncate">Q3 · Water temperature</span>
+</a>
+<a class="flex items-center gap-1.5 py-1 px-2 rounded text-[11px] text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="w-1 h-1 rounded-full bg-outline"></span>
+<span class="truncate">Q4 · Extraction yield</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- LESSON 2.2 with warning tag -->
+<div class="flex items-center justify-between py-1.5 px-2 rounded text-xs text-on-surface-variant hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-1.5 truncate">
+<span class="material-symbols-outlined text-[14px] text-outline" data-icon="article">article</span>
+<span class="truncate">2.2 Grind calibration</span>
+</div>
+<span class="text-[9px] font-label-citation px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-300 font-medium whitespace-nowrap">
+                  1 uncited
+                </span>
+</div>
+<!-- LESSON 2.3 -->
+<div class="flex items-center gap-1.5 py-1.5 px-2 rounded text-xs text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[14px] text-outline" data-icon="article">article</span>
+<span class="truncate">2.3 Contact time &amp; flow</span>
+</div>
+</div>
+</div>
+<!-- MODULE 3: Sensory Analysis (Placeholder) -->
+<div class="space-y-1 pt-1 opacity-75">
+<button class="w-full flex items-center justify-between text-left px-2 py-1.5 rounded-md hover:bg-surface-container text-xs text-tertiary font-body-strong group transition-colors">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="chevron_right">chevron_right</span>
+<span class="text-on-surface-variant">Module 3 · Cup Tasting</span>
+</div>
+<span class="text-[10px] font-label-citation text-outline">0/4</span>
+</button>
+</div>
+</div>
+<!-- Hierarchy Footer Summary -->
+<div class="p-3 border-t border-surface-container-highest bg-surface-container flex items-center justify-between text-[11px] font-code-body text-tertiary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[14px] text-emerald-600" data-icon="verified">verified</span>
+<span>14 lessons · 4 quizzes</span>
+</div>
+<span class="text-amber-800 bg-amber-100/60 font-semibold px-1.5 py-0.5 rounded text-[10px]">98% cited</span>
+</div>
+</section>
+<!-- ==================== 2. CENTRE PANE (flex-1): Live Lesson Preview ==================== -->
+<section aria-label="Student Preview Canvas" class="flex-1 flex flex-col min-w-0 bg-background overflow-hidden border-r border-surface-container-highest">
+<!-- Live Preview Header Controls -->
+<div class="h-10 px-6 border-b border-surface-container-highest bg-surface-bright flex items-center justify-between flex-shrink-0 text-xs">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-container text-on-surface font-body-strong">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="visibility">visibility</span>
+<span>Learner View</span>
+</div>
+<span class="text-tertiary font-code-body text-[11px]">Lesson 2.1 — The 1:16 golden ratio</span>
+</div>
+<div class="flex items-center gap-3 text-tertiary">
+<div class="flex items-center gap-1 border border-surface-container-highest rounded px-1.5 py-0.5 text-[11px] font-code-body bg-surface-container-lowest">
+<span>Zoom</span>
+<span class="font-semibold text-on-surface">100%</span>
+</div>
+<button class="p-1 hover:text-on-surface" title="Expand view">
+<span class="material-symbols-outlined text-[16px]" data-icon="fullscreen">fullscreen</span>
+</button>
+</div>
+</div>
+<!-- Center Editorial Document Scroll Container -->
+<div class="flex-1 overflow-y-auto custom-scroll px-8 py-8 flex justify-center">
+<!-- Reading Column (720px max-width) -->
+<article class="w-full max-w-[720px] pb-24 space-y-7">
+<!-- Breadcrumb Header within Doc -->
+<div class="flex items-center gap-2 text-xs font-code-body text-tertiary">
+<span>MODULE 02</span>
+<span>›</span>
+<span>LESSON 01</span>
+<span>›</span>
+<span class="text-primary font-semibold">PRACTICE EVALUATION</span>
+</div>
+<!-- Lesson Headline in Newsreader Serif -->
+<div class="space-y-2 border-b border-surface-container-highest pb-4">
+<h1 class="text-headline-lg font-headline-lg text-on-surface font-display-editorial leading-tight">
+                The 1:16 Golden Ratio
+              </h1>
+<p class="text-xs font-code-body text-tertiary">
+                Target read time: 6 mins · SCAA Standards · Refined today by AI Architect
+              </p>
+</div>
+<!-- Paragraph 1 with hoverable "Chat about this" prompt trigger -->
+<div class="group relative rounded-lg p-2 -mx-2 transition-colors hover:bg-surface-container-low">
+<p class="font-body-editorial text-body-editorial text-on-surface leading-relaxed">
+                In specialty coffee brewing, the water-to-coffee ratio is the foundational dial controlling both total dissolution and thermodynamic efficiency. While modern extraction models accommodate variances from 1:14 up to 1:18, the benchmark standard accepted across empirical cupping is the classic 1:16 proportion.
+              </p>
+<!-- Hover trigger button -->
+<button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 px-2 py-1 rounded bg-surface-container-lowest border border-surface-container-highest shadow-sm text-xs text-primary font-body-strong">
+<span class="material-symbols-outlined text-[14px]" data-icon="chat_bubble">chat_bubble</span>
+<span>✦ Chat about this</span>
+</button>
+</div>
+<!-- Paragraph 2 with citation badge -->
+<div class="font-body-editorial text-body-editorial text-on-surface leading-relaxed space-y-3">
+<p>
+                By weight, every gram of roasted and ground dry mass demands sixteen grams of high-purity water heated to roughly 93.5°C. When calculated accurately, this delivers total dissolved solids (TDS) within the idealized 1.15% to 1.35% range without tipping into bitter polyphenolic astringency.
+                <!-- Amber Citation Badge -->
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-label-citation text-label-citation bg-amber-500/10 text-amber-900 border border-amber-500/30 font-semibold cursor-pointer hover:bg-amber-500/20 transition-colors ml-1 align-middle">
+<span class="material-symbols-outlined text-[12px]" data-icon="link">link</span>
+                  §3.1 Ratios
+                </span>
+</p>
+</div>
+<!-- ==================== THE SELECTED QUIZ CARD: Question 2 ==================== -->
+<div class="relative mt-8 rounded-xl bg-surface-container-lowest border-2 border-primary-container p-6 shadow-md shadow-primary/10 transition-all">
+<!-- Floating Active Selection Chip -->
+<div class="absolute -top-3 left-5 bg-primary-container text-white text-[11px] font-body-strong px-3 py-0.5 rounded-full flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[13px]" data-icon="edit_note">edit_note</span>
+<span>Selected for refinement in right panel</span>
+</div>
+<!-- Question Header -->
+<div class="flex items-center justify-between mb-4 pt-1">
+<span class="text-xs font-code-body font-semibold text-primary uppercase tracking-wide">
+                  Practice Assessment · Question 2 of 4
+                </span>
+<span class="text-caption font-caption text-tertiary">Multiple Choice · 1 Pt</span>
+</div>
+<!-- Question Prompt Text -->
+<h2 class="text-headline-sm font-headline-sm text-on-surface font-semibold mb-4 text-[17px]">
+                You use 20 g of coffee. How much water for a 1:16 ratio?
+              </h2>
+<!-- Options Grid/List -->
+<div class="space-y-2.5">
+<!-- Option A -->
+<div class="flex items-center justify-between p-3 rounded-lg border border-surface-container-highest bg-surface-bright text-xs text-on-surface hover:border-outline-variant transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="w-6 h-6 rounded-md bg-surface-container flex items-center justify-center font-code-body font-medium text-tertiary text-xs">A</span>
+<span>300 ml</span>
+</div>
+<span class="text-[11px] font-code-body text-outline">1:15 ratio</span>
+</div>
+<!-- Option B (Correct Answer) -->
+<div class="flex items-center justify-between p-3 rounded-lg border-2 border-emerald-600 bg-emerald-50/50 text-xs text-on-surface cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="w-6 h-6 rounded-md bg-emerald-600 text-white flex items-center justify-center font-code-body font-bold text-xs">B</span>
+<span class="font-semibold text-emerald-950">320 ml</span>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[11px] font-body-strong">
+<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>
+<span>Correct answer (20 × 16)</span>
+</div>
+</div>
+<!-- Option C (Target for Diff) -->
+<div class="flex items-center justify-between p-3 rounded-lg border border-surface-container-highest bg-surface-bright text-xs text-on-surface hover:border-outline-variant transition-colors cursor-pointer relative group">
+<div class="flex items-center gap-3">
+<span class="w-6 h-6 rounded-md bg-surface-container flex items-center justify-center font-code-body font-medium text-tertiary text-xs">C</span>
+<span>350 ml</span>
+</div>
+<span class="text-[10px] font-code-body text-primary opacity-0 group-hover:opacity-100 transition-opacity">Proposed to 310 ml ›</span>
+</div>
+<!-- Option D (Target for Diff) -->
+<div class="flex items-center justify-between p-3 rounded-lg border border-surface-container-highest bg-surface-bright text-xs text-on-surface hover:border-outline-variant transition-colors cursor-pointer relative group">
+<div class="flex items-center gap-3">
+<span class="w-6 h-6 rounded-md bg-surface-container flex items-center justify-center font-code-body font-medium text-tertiary text-xs">D</span>
+<span>400 ml</span>
+</div>
+<span class="text-[10px] font-code-body text-primary opacity-0 group-hover:opacity-100 transition-opacity">Proposed to 330 ml ›</span>
+</div>
+</div>
+<!-- Explanation Accordion / Callout with Amber Citation -->
+<div class="mt-4 pt-4 border-t border-surface-container-highest bg-surface-container-low/50 -mx-6 -mb-6 p-4 rounded-b-xl">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[18px] text-tertiary mt-0.5" data-icon="info">info</span>
+<div class="text-xs space-y-1 text-on-surface-variant flex-1">
+<p class="font-medium text-on-surface">Pedagogical Explanation</p>
+<p>
+                      Multiply ground coffee mass (20 grams) by the ratio factor (16) to reach exactly 320 milliliters of brew water.
+                    </p>
+<div class="pt-1 flex items-center gap-2">
+<span class="text-[11px] text-tertiary font-code-body">Anchored source:</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-label-citation text-label-citation bg-amber-500/10 text-amber-900 border border-amber-500/30 font-semibold cursor-pointer">
+<span class="material-symbols-outlined text-[11px]" data-icon="menu_book">menu_book</span>
+                        §3.1 Ratios
+                      </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- END SELECTED QUIZ CARD -->
+<!-- Next section preview / continuing editorial content -->
+<div class="pt-4 space-y-3 opacity-60">
+<h3 class="text-headline-md font-headline-md text-on-surface font-display-editorial">
+                Temperature &amp; Contact Kinetics
+              </h3>
+<p class="font-body-editorial text-body-editorial text-on-surface leading-relaxed">
+                Water below 90°C fails to yield optimal aromatics, leaving light roasts sour and under-developed. Conversely, scalding water (&gt;96°C) strips bitter pyrazines from the organic matrix...
+              </p>
+</div>
+</article>
+</div>
+</section>
+<!-- ==================== 3. RIGHT PANE (400px): Element Chat & AI Diff Review ==================== -->
+<section aria-label="Element Chat and Diff Panel" class="w-[400px] flex-shrink-0 bg-surface-container-lowest flex flex-col justify-between select-none relative">
+<!-- Scoped Chat Header -->
+<div class="p-3.5 border-b border-surface-container-highest bg-surface-bright flex items-center justify-between flex-shrink-0">
+<div class="flex items-center gap-2 min-w-0">
+<!-- Scope Pill Badge -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-fixed/40 border border-primary/20 text-xs text-primary font-medium truncate">
+<span class="material-symbols-outlined text-[14px]" data-icon="filter_center_focus">filter_center_focus</span>
+<span class="truncate">Lesson 2.1 › Q2</span>
+<button class="hover:text-error transition-colors ml-1" title="Clear scoped context">
+<span class="material-symbols-outlined text-[13px]" data-icon="close">close</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[11px] font-code-body text-tertiary">Claude 3.7 Sonnet</span>
+<button class="p-1 text-on-surface-variant hover:text-on-surface rounded" title="Panel options">
+<span class="material-symbols-outlined text-[18px]" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Conversation & Diff Stream -->
+<div class="flex-1 overflow-y-auto custom-scroll p-4 space-y-4 bg-surface">
+<!-- Turn 1: User Prompt Bubble -->
+<div class="flex justify-end">
+<div class="max-w-[88%] rounded-2xl rounded-tr-sm bg-inverse-surface text-inverse-on-surface px-4 py-2.5 text-xs shadow-sm">
+<p class="leading-relaxed">
+                Make the wrong answers less obvious and add one about bloom water.
+              </p>
+<div class="mt-1 flex justify-end items-center gap-1 text-[10px] text-outline-variant font-code-body">
+<span>10:42 AM</span>
+<span>·</span>
+<span>You</span>
+</div>
+</div>
+</div>
+<!-- Turn 2: Assistant Response Diff Card -->
+<div class="rounded-xl border border-surface-container-highest bg-surface-container-lowest shadow-sm overflow-hidden">
+<!-- Diff Card Header -->
+<div class="p-3 border-b border-surface-container-highest bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="difference">difference</span>
+<span class="text-xs font-headline-sm font-semibold text-on-surface">Proposed change to Question 2</span>
+</div>
+<span class="text-[10px] font-code-body font-semibold px-1.5 py-0.5 rounded bg-primary-fixed text-primary">
+                AI Diff Proposal
+              </span>
+</div>
+<!-- Diff Content View -->
+<div class="p-3.5 space-y-3 text-xs">
+<div class="text-[11px] font-code-body text-tertiary">
+                Tightening distractor intervals around 320 ml and updating explanation with bloom ratio:
+              </div>
+<!-- Distractor Diff Item 1 -->
+<div class="p-2 rounded bg-surface-container border border-surface-container-highest/60 space-y-1">
+<div class="flex items-center justify-between text-[11px] font-code-body text-tertiary">
+<span>Option C Distractor</span>
+<span class="text-[10px] text-emerald-700">Closer interval</span>
+</div>
+<div class="font-code-body text-xs flex items-center gap-2 pt-0.5">
+<del class="line-through text-red-600 bg-red-100/70 px-1 rounded">350 ml</del>
+<span class="material-symbols-outlined text-[12px] text-outline" data-icon="arrow_forward">arrow_forward</span>
+<ins class="text-emerald-700 bg-emerald-100/80 px-1 rounded font-semibold no-underline">310 ml</ins>
+</div>
+</div>
+<!-- Distractor Diff Item 2 -->
+<div class="p-2 rounded bg-surface-container border border-surface-container-highest/60 space-y-1">
+<div class="flex items-center justify-between text-[11px] font-code-body text-tertiary">
+<span>Option D Distractor</span>
+<span class="text-[10px] text-emerald-700">Closer interval</span>
+</div>
+<div class="font-code-body text-xs flex items-center gap-2 pt-0.5">
+<del class="line-through text-red-600 bg-red-100/70 px-1 rounded">400 ml</del>
+<span class="material-symbols-outlined text-[12px] text-outline" data-icon="arrow_forward">arrow_forward</span>
+<ins class="text-emerald-700 bg-emerald-100/80 px-1 rounded font-semibold no-underline">330 ml</ins>
+</div>
+</div>
+<!-- Explanation Diff Block -->
+<div class="p-2.5 rounded bg-emerald-50/60 border border-emerald-200/60 text-xs space-y-1.5">
+<div class="flex items-center gap-1.5 text-emerald-900 font-medium text-[11px]">
+<span class="material-symbols-outlined text-[14px]" data-icon="add_circle">add_circle</span>
+<span>Enhanced pedagogical explanation</span>
+</div>
+<p class="text-emerald-950 font-body-default text-[12px] leading-relaxed">
+                  "Total water remains 320 ml (20 g × 16). Note that the first 60 ml (a 1:3 initial bloom) is dedicated strictly to degassing prior to the continuous pour."
+                </p>
+</div>
+<!-- Provenance Citations in Diff -->
+<div class="pt-2 border-t border-surface-container-highest flex items-center justify-between">
+<span class="text-[10px] font-code-body text-tertiary">Verified Grounding:</span>
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded font-label-citation text-[10px] bg-amber-500/10 text-amber-900 border border-amber-500/30">
+                    §3.1 Ratios
+                  </span>
+<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded font-label-citation text-[10px] bg-amber-500/10 text-amber-900 border border-amber-500/30 font-bold">
+                    + §3.4 Bloom
+                  </span>
+</div>
+</div>
+<!-- Review Action Buttons -->
+<div class="pt-2 flex items-center gap-2">
+<button class="flex-1 py-1.5 px-3 rounded-lg bg-primary-container hover:bg-primary text-white text-xs font-body-strong flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>
+<span>Approve</span>
+</button>
+<button class="py-1.5 px-3 rounded-lg bg-surface-bright hover:bg-surface-container border border-surface-container-highest text-xs text-on-surface font-body-strong transition-colors">
+                  Reject
+                </button>
+<button class="p-1.5 rounded-lg text-tertiary hover:text-on-surface hover:bg-surface-container transition-colors" title="Edit before approving">
+<span class="material-symbols-outlined text-[16px]" data-icon="tune">tune</span>
+</button>
+</div>
+<!-- Metadata Token Cost Footer -->
+<div class="pt-1 text-[10px] font-code-body text-outline flex items-center justify-between">
+<span>Claude Sonnet · 2.1k tokens</span>
+<span>Cost: $0.01</span>
+</div>
+</div>
+</div>
+<!-- Diff Confirmation Toast / Timeline update preview -->
+<div class="flex items-center gap-2 p-2 rounded-lg bg-surface-container border border-surface-container-highest text-[11px] text-tertiary">
+<span class="material-symbols-outlined text-[15px] text-emerald-600" data-icon="check_circle">check_circle</span>
+<span>Diff ready to compile into Lesson 2.1 schema</span>
+</div>
+</div>
+<!-- Bottom Prompt Input Surface -->
+<div class="p-3 border-t border-surface-container-highest bg-surface-bright flex-shrink-0">
+<div class="relative rounded-xl border border-surface-container-highest bg-surface-container-lowest focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+<textarea class="w-full bg-transparent px-3 py-2 text-xs text-on-surface placeholder:text-outline focus:outline-none resize-none font-body-default" placeholder="Refine question prompt, distractors, or citation anchors..." rows="2"></textarea>
+<div class="flex items-center justify-between px-2.5 pb-2 pt-1 border-t border-surface-container/50">
+<div class="flex items-center gap-1 text-tertiary">
+<button class="p-1 hover:text-on-surface rounded hover:bg-surface-container transition-colors" title="Attach verified source chunk">
+<span class="material-symbols-outlined text-[16px]" data-icon="attach_file">attach_file</span>
+</button>
+<button class="p-1 hover:text-on-surface rounded hover:bg-surface-container transition-colors" title="Voice dictation prompt">
+<span class="material-symbols-outlined text-[16px]" data-icon="mic">mic</span>
+</button>
+<span class="text-[10px] font-code-body text-outline ml-1">⌘ + ⏎ to send</span>
+</div>
+<button class="w-7 h-7 rounded-lg bg-primary-container hover:bg-primary text-white flex items-center justify-center transition-colors shadow-sm active:scale-95" title="Send refinement request">
+<span class="material-symbols-outlined text-[15px]" data-icon="arrow_upward">arrow_upward</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- ==================== BOTTOM UTILITY DRAWER & VERSION HISTORY STRIP ==================== -->
+<footer class="h-12 border-t border-surface-container-highest bg-surface-bright flex items-center justify-between px-6 z-20 flex-shrink-0 select-none">
+<!-- Left: Version history timeline strip -->
+<div class="flex items-center gap-3 overflow-x-auto no-scrollbar">
+<div class="flex items-center gap-1 text-xs font-body-strong text-tertiary flex-shrink-0">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+<span>Timeline:</span>
+</div>
+<!-- Timeline Pills -->
+<div class="flex items-center gap-2 flex-shrink-0 text-xs">
+<!-- v7 (Active) -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container-lowest border border-primary/30 text-on-surface shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span class="font-code-body font-semibold text-primary text-[11px]">v7</span>
+<span class="text-caption truncate max-w-[190px]">You approved AI change to Q2</span>
+<span class="text-[10px] font-code-body text-outline">Just now</span>
+</div>
+<span class="text-outline-variant font-code-body text-xs">›</span>
+<!-- v6 -->
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-tertiary hover:bg-surface-container hover:text-on-surface transition-colors cursor-pointer group">
+<span class="font-code-body text-[11px]">v6</span>
+<span class="text-caption truncate max-w-[150px]">Edited Lesson 1.2 intro</span>
+<button class="opacity-0 group-hover:opacity-100 text-[10px] text-primary underline ml-1">Restore</button>
+</div>
+<span class="text-outline-variant font-code-body text-xs">›</span>
+<!-- v5 -->
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-tertiary hover:bg-surface-container hover:text-on-surface transition-colors cursor-pointer group">
+<span class="font-code-body text-[11px]">v5</span>
+<span class="text-caption">Applied to LMS</span>
+<button class="opacity-0 group-hover:opacity-100 text-[10px] text-primary underline ml-1">Restore</button>
+</div>
+<span class="text-outline-variant font-code-body text-xs">›</span>
+<!-- v4 -->
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-tertiary hover:bg-surface-container hover:text-on-surface transition-colors cursor-pointer group">
+<span class="font-code-body text-[11px]">v4</span>
+<span class="text-caption">Outline approved</span>
+<button class="opacity-0 group-hover:opacity-100 text-[10px] text-primary underline ml-1">Restore</button>
+</div>
+</div>
+</div>
+<!-- Right: Docked Sources Trigger Chip Popover -->
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container border border-surface-container-highest hover:border-amber-400 text-xs text-on-surface transition-colors shadow-xs" title="View citation corpus">
+<span class="w-2 h-2 rounded-full bg-amber-500"></span>
+<span class="font-code-body text-[11px] font-medium">Sources · 42 fragments</span>
+<span class="material-symbols-outlined text-[14px] text-tertiary" data-icon="unfold_more">unfold_more</span>
+</button>
+</div>
+</footer>
+</div>
+</body></html>

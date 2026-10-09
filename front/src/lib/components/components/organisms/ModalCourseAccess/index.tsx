@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
-import styled, { withTheme } from "styled-components";
 import { ResponseError } from "umi-request";
 import { API } from "@ulams/sdk";
 import { UlamsContext } from "@ulams/sdk/react";
@@ -12,6 +11,8 @@ import { Input } from "../../atoms/Input/Input";
 import { TextArea } from "../../atoms/TextArea/TextArea";
 import { Title } from "../../atoms/Typography/Title";
 import { Text } from "../../atoms/Typography/Text";
+
+import styles from "./ModalCourseAccess.module.css";
 
 export interface EnquiryFormValues {
   phone_number?: string;
@@ -28,43 +29,6 @@ interface Props {
   onCancel?: () => void;
 }
 
-const Container = styled.aside`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-
-  header {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  form {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 24px;
-
-    & > .form-content {
-      .error-msg {
-        color: ${({ theme }) => theme.errorColor};
-      }
-
-      .input-group {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-    }
-
-    & > .button-group {
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-    }
-  }
-`;
-
 export const ModalCourseAccess: React.FC<Props> = ({
   course,
   className,
@@ -77,8 +41,8 @@ export const ModalCourseAccess: React.FC<Props> = ({
   const { addCourseAccess } = useContext(UlamsContext);
 
   return (
-    <Container
-      className={`ulams-component ${className}`}
+    <aside
+      className={`ulams-component ${styles.root} ${className}`}
       data-testid="modal-course-access"
     >
       <header>
@@ -157,8 +121,8 @@ export const ModalCourseAccess: React.FC<Props> = ({
           </form>
         )}
       </Formik>
-    </Container>
+    </aside>
   );
 };
 
-export default withTheme(styled(ModalCourseAccess)<{ mobile: boolean }>``);
+export default ModalCourseAccess;

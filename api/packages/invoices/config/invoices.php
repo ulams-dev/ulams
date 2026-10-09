@@ -65,19 +65,15 @@ return [
 
     'disk' => 'local',
 
-    'logo' => 'vendor/invoices/sample-logo.png',
+    /*
+     * Logo printed at the top of the invoice: an absolute path or a path relative to the
+     * public directory. Leave empty for no logo; a missing file is skipped.
+     */
+    'logo' => env('INVOICES_LOGO'),
 
     'seller' => [
         /*
-         * Class used in templates via $invoice->seller
-         *
-         * Must implement LaravelDaily\Invoices\Contracts\PartyContract
-         *      or extend LaravelDaily\Invoices\Classes\Party
-         */
-        'class' => \LaravelDaily\Invoices\Classes\Seller::class,
-
-        /*
-         * Default attributes for Seller::class
+         * Seller printed on every invoice.
          */
         'attributes' => [
             'name'          => 'Ulams',
@@ -87,10 +83,7 @@ return [
             'phone'         => '760-355-3930',
             'custom_fields' => [
                 /*
-                 * Custom attributes for Seller::class
-                 *
-                 * Used to display additional info on Seller section in invoice
-                 * attribute => value
+                 * Extra lines in the seller section: label => value
                  */
                 'SWIFT' => 'BANK101',
             ],

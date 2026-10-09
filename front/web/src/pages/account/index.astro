@@ -1,0 +1,230 @@
+---
+/** Account: profile, my courses with progress, logout. */
+import Render from "@ulams/ui/Render.astro";
+import Icon from "@ulams/ui/components/Icon.astro";
+import Img from "@ulams/ui/components/Img.astro";
+import type { CourseProgressSummary } from "@ulams/sdk";
+import Base from "../../layouts/Base.astro";
+import { getAllProgress, getProfile, getSettings, getSiteModel } from "../../lib/data.ts";
+import { chromeFor, withSessionLink } from "../../lib/docs.ts";
+import { themeFor } from "../../lib/theme.ts";
+import { topicHref } from "../../lib/view-model.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/");
+const token = Astro.locals.token;
+if (!token) return Astro.redirect("/login?next=/account");
+
+const [me, progress, settings, site] = await Promise.all([
+  getProfile(tenant, token).catch(() => null),
+  getAllProgress(tenant, token).catch(() => null as CourseProgressSummary[] | null),
+  getSettings(tenant).catch(() => null),
+  getSiteModel(tenant).catch(() => null),
+]);
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const chrome = chromeFor(theme);
+const name = me ? [me.first_name, me.last_name].filter(Boolean).join(" ") : "Learner";
+const initials = name
+  .split(" ")
+  .map((p) => p.charAt(0))
+  .join("")
+  .slice(0, 2)
+  .toUpperCase();
+
+const courses = (progress ?? []).map((entry) => {
+  const course = entry.course;
+  const items = entry.progress ?? [];
+  const total = items.length;
+  const done = items.filter((p) => p.status === 1).length;
+  const percent = total ? Math.round((done / total) * 100) : 0;
+  const next = items.find((p) => p.status !== 1);
+  return {
+    id: course.id,
+    title: course.title,
+    summary: course.summary ?? undefined,
+    image: course.image_url ? { src: course.image_url, alt: "", width: 1600, height: 900 } : undefined,
+    percent,
+    done,
+    total,
+    href: next ? topicHref(course.id, next.topic_id) : `/learn/${course.id}`,
+  };
+});
+---
+
+<Base theme={theme} accent={settings?.theme?.accent} title={`My learning — ${site?.tenant.name ?? "ulams"}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  {chrome.header && site && <Render doc={withSessionLink(chrome.header, true)} data={site} />}
+  <main id="main" class="u-container u-account" tabindex="-1">
+    <section class="u-account__profile u-card" aria-labelledby="profile-title">
+      <span class="u-account__avatar" aria-hidden="true">{initials}</span>
+      <div class="u-account__who">
+        <h1 id="profile-title">{name}</h1>
+        {me?.email && <p>{me.email}</p>}
+        {me?.roles && me.roles.length > 0 && <p class="u-account__roles">{me.roles.join(" · ")}</p>}
+      </div>
+      <form method="post" action="/logout" class="u-account__logout">
+        <button class="u-btn u-btn--ghost u-btn--sm" type="submit">Log out</button>
+      </form>
+    </section>
+
+    <section aria-labelledby="courses-title" class="u-account__courses">
+      <h2 id="courses-title" class="u-h2">My courses</h2>
+      {
+        progress === null ? (
+          <p class="u-account__empty" role="alert">
+            Your courses could not be loaded right now. <a href="/account">Try again</a>.
+          </p>
+        ) : courses.length === 0 ? (
+          <p class="u-account__empty">
+            No courses yet. <a href="/">Browse the academy</a>.
+          </p>
+        ) : (
+          <ul role="list">
+            {courses.map((c, i) => (
+              <li class="u-account__course u-card u-card--hover" data-reveal style={`--reveal-i:${i}`}>
+                {c.image && (
+                  <div class="u-account__thumb">
+                    <Img {...c.image} sizes="220px" />
+                  </div>
+                )}
+                <div class="u-account__body">
+                  <h3>
+                    <a href={`/courses/${c.id}`}>{c.title}</a>
+                  </h3>
+                  {c.summary && <p class="u-account__summary">{c.summary}</p>}
+                  <div
+                    class="u-account__progress"
+                    role="progressbar"
+                    aria-label={`Progress in ${c.title}`}
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow={c.percent}
+                    style={`--progress:${c.percent}%`}
+                  >
+                    <span class="u-account__track" />
+                    <span>
+                      {c.percent}% · {c.done}/{c.total} topics
+                    </span>
+                  </div>
+                  <a class="u-btn u-btn--sm" href={c.href}>
+                    {c.percent === 0 ? "Start" : c.percent === 100 ? "Review" : "Continue"}
+                    <Icon name="arrow" />
+                  </a>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </section>
+  </main>
+  {chrome.footer && site && <Render doc={chrome.footer} data={site} />}
+</Base>
+
+<style>
+  main:focus {
+    outline: none;
+  }
+  .u-account {
+    display: grid;
+    gap: 40px;
+    padding-block: 48px 24px;
+  }
+  .u-account__profile {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 20px;
+    align-items: center;
+    padding: 24px;
+  }
+  .u-account__avatar {
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--ulams-color-primary);
+    color: var(--ulams-color-on-primary);
+    font-family: var(--ulams-font-family);
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+  .u-account__who h1 {
+    font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.2rem);
+  }
+  .u-account__who p {
+    color: var(--ulams-color-muted);
+  }
+  .u-account__roles {
+    font-size: 0.8125rem;
+    text-transform: capitalize;
+  }
+  .u-account__courses {
+    display: grid;
+    gap: 20px;
+  }
+  .u-account__courses ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+  }
+  .u-account__course {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    overflow: hidden;
+  }
+  .u-account__thumb {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+  .u-account__thumb :global(img) {
+    width: 100%;
+    height: 100%;
+  }
+  .u-account__body {
+    display: grid;
+    gap: 10px;
+    padding: 20px;
+    justify-items: start;
+  }
+  .u-account__body h3 {
+    font-size: 1.3rem;
+  }
+  .u-account__body h3 a {
+    text-decoration: none;
+  }
+  .u-account__body h3 a:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .u-account__summary {
+    color: var(--ulams-color-muted);
+    font-size: 0.925rem;
+  }
+  .u-account__progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: min(100%, 420px);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+  .u-account__track {
+    flex: 1;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--ulams-color-positive) var(--progress), var(--ulams-color-border) var(--progress));
+  }
+  @media (max-width: 640px) {
+    .u-account__profile {
+      grid-template-columns: auto 1fr;
+    }
+    .u-account__logout {
+      grid-column: 1 / -1;
+    }
+    .u-account__course {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

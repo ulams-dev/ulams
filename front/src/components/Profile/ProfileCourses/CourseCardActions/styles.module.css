@@ -1,0 +1,26 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  width: 100%;
+}
+
+.wrapper p {
+  margin: 0;
+}
+
+.actionButton {
+  all: unset;
+  text-decoration: underline;
+  font-size: 13px;
+  font-family: var(--ulams-font-family);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.resetCourseWrapper {
+  margin-top: 5px;
+}

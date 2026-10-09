@@ -1,0 +1,217 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  flex-shrink: 0;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  transition: transform 0.3s ease-in-out, border 0.3s ease-in-out,
+    box-shadow 0.3s ease-in-out;
+  padding: 6px 6px 16px 6px;
+}
+
+.root :global(.image-section) {
+  position: relative;
+  z-index: 0;
+  border-radius: var(--ulams-radius-card);
+  overflow: hidden;
+  transform: rotate(0);
+}
+
+.root :global(.image-section) a > div {
+  height: 100%;
+}
+
+.root :global(.image-section) img {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.root :global(.information-in-image) {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.root :global(.badges) {
+  align-self: end;
+  display: flex;
+  gap: 10px;
+  z-index: 200;
+  flex-wrap: wrap;
+}
+
+.root :global(.card) {
+  padding: 13px 10px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.root :global(.image) {
+  border-radius: var(--ulams-radius-card);
+}
+
+.root :global(.course-section) {
+  margin-top: 8px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.root.mobile :global(.course-section) {
+  margin-top: 15px;
+}
+
+.root:not(.hideImage) :global(.card-subtitle),
+.root:not(.hideImage) :global(.card-subtitle) > a {
+  color: var(--ulams-color-primary);
+}
+
+.root :global(.card-subtitle) > a {
+  text-decoration: none;
+}
+
+.root :global(.card-subtitle) > a:hover {
+  text-decoration: underline;
+}
+
+/* stylelint-disable */
+.root :global(.title) {
+  margin-bottom: 15px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 60px;
+}
+/* stylelint-enable */
+
+.root :global(.title) a {
+  text-decoration: none;
+}
+
+.root :global(.title) a:hover {
+  text-decoration: underline;
+}
+
+.root :global(.categories) {
+  min-height: 20px;
+  color: var(--ulams-color-text);
+  font-family: var(--ulams-font-family);
+  margin-bottom: 7px;
+  margin-top: 10px;
+  width: fit-content;
+  text-transform: uppercase;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.root :global(.categories) * {
+  font-size: 18px;
+  line-height: 17px;
+  color: var(--ulams-color-text);
+}
+
+/* Dark mode: the theme's dark breadcrumbs colour, else gray3 (gray2 without image). */
+:global([data-mode="dark"]) .root :global(.categories) * {
+  color: var(--ulams-gray-3);
+}
+
+:global([data-mode="dark"]) .root.hideImage :global(.categories) * {
+  color: var(--ulams-gray-2);
+}
+
+:global([data-mode="dark"]) .root.hasDarkBreadcrumbs :global(.categories) * {
+  color: var(--ulams-color-breadcrumbs);
+}
+
+.root :global(.categories) span {
+  padding: 2px 4px;
+  background-color: var(--ulams-color-secondary);
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.root :global(.footer),
+.root :global(.lesson-container) {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 30px;
+}
+
+.root.mobile :global(.footer),
+.root.mobile :global(.lesson-container) {
+  margin-bottom: 15px;
+  gap: 15px;
+}
+
+.root :global(.lessons-count) {
+  font-weight: 700;
+  margin: 0 0 0 10px;
+}
+
+.root :global(.category) {
+  cursor: pointer;
+}
+
+.root :global(.tag) {
+  cursor: pointer;
+}
+
+.root :global(.course-card-buttons-group) {
+  margin: -8px;
+  width: calc(100% + 16px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.root :global(.course-card-buttons-group) > * {
+  margin: 8px;
+}
+
+.root :global(.card-course-footer) {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.root :global(.ulams-image) {
+  height: 100%;
+}
+
+.root:hover {
+  border: 1px solid var(--ulams-gray-3);
+  box-shadow: 0px 5px 15px #00000012;
+}
+
+.root.mobile:hover {
+  border: none;
+  box-shadow: none;
+}
+
+.root:hover :global(.image-section) img {
+  transform: scale(1.1) !important;
+}
+
+.root:hover :global(.course-price) {
+  transform: translateY(0);
+}
+
+.imgWrapper img {
+  cursor: pointer;
+  transition: 0.3s transform ease;
+  border-radius: var(--ulams-radius-card);
+}
+
+.category {
+  transition: 0.3s color ease-in-out;
+}
+
+.category:hover {
+  color: var(--ulams-color-primary);
+}

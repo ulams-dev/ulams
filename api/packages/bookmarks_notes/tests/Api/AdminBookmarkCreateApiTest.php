@@ -7,6 +7,7 @@ use Ulams\Bookmarks\Models\Bookmark;
 use Ulams\Bookmarks\Tests\BookmarkTesting;
 use Ulams\Bookmarks\Tests\TestCase;
 use Ulams\Core\Tests\CreatesUsers;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AdminBookmarkCreateApiTest extends TestCase
 {
@@ -54,9 +55,7 @@ class AdminBookmarkCreateApiTest extends TestCase
         ]);
     }
 
-    /**
-     * @dataProvider invalidDataProvider
-     */
+    #[DataProvider('invalidDataProvider')]
     public function testCreateBookmarkInvalidData(string $key, array $data): void
     {
         $this->actingAs($this->makeAdmin(), 'api')
@@ -82,16 +81,16 @@ class AdminBookmarkCreateApiTest extends TestCase
             ->assertUnauthorized();
     }
 
-    public function invalidDataProvider(): array
+    public static function invalidDataProvider(): array
     {
         return [
-            ['field' => 'bookmarkable_id', 'data' => ['bookmarkable_id' => 'String']],
-            ['field' => 'bookmarkable_id', 'data' => ['bookmarkable_id' => null]],
-            ['field' => 'bookmarkable_type', 'data' => ['bookmarkable_type' => 123]],
-            ['field' => 'bookmarkable_type', 'data' => ['bookmarkable_type' => null]],
-            ['field' => 'user_id', 'data' => ['user_id' => null]],
-            ['field' => 'user_id', 'data' => ['user_id' => 'String']],
-            ['field' => 'user_id', 'data' => ['user_id' => 123]],
+            ['key' => 'bookmarkable_id', 'data' => ['bookmarkable_id' => 'String']],
+            ['key' => 'bookmarkable_id', 'data' => ['bookmarkable_id' => null]],
+            ['key' => 'bookmarkable_type', 'data' => ['bookmarkable_type' => 123]],
+            ['key' => 'bookmarkable_type', 'data' => ['bookmarkable_type' => null]],
+            ['key' => 'user_id', 'data' => ['user_id' => null]],
+            ['key' => 'user_id', 'data' => ['user_id' => 'String']],
+            ['key' => 'user_id', 'data' => ['user_id' => 123]],
         ];
     }
 }

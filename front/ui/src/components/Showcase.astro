@@ -1,0 +1,192 @@
+---
+import Icon from "./Icon.astro";
+import Img from "./Img.astro";
+
+interface Item {
+  title: string;
+  text?: string;
+  theme?: string;
+  facts?: Array<{ label: string; value: string }>;
+  image?: { src: string; alt: string; width: number; height: number };
+  primary: { label: string; href: string };
+  secondary?: { label: string; href: string };
+}
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  note?: string;
+  items: Item[];
+  id?: string;
+}
+const { eyebrow, title, intro, note, items, id = "demos" } = Astro.props;
+---
+
+<section class="u-section u-showcase" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <div class="u-container">
+    <div class="u-section-head u-section-head--center" data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+      {intro && <p class="u-lead">{intro}</p>}
+    </div>
+    <ul class="u-showcase__grid" role="list">
+      {
+        items.map((item, i) => (
+          <li class="u-demo-card" data-swatch={item.theme ?? "platform"} data-reveal style={`--reveal-i:${i}`}>
+            <div class="u-demo-card__visual" aria-hidden="true">
+              {item.image ? <Img {...item.image} sizes="(min-width: 960px) 380px, 100vw" /> : <span class="u-demo-card__blank" />}
+              <span class="u-demo-card__swatch" />
+            </div>
+            <div class="u-demo-card__body">
+              <h3>{item.title}</h3>
+              {item.text && <p class="u-demo-card__text">{item.text}</p>}
+              {(item.facts ?? []).length > 0 && (
+                <dl class="u-demo-card__facts">
+                  {(item.facts ?? []).map((f) => (
+                    <div>
+                      <dt>{f.label}</dt>
+                      <dd>{f.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+              <div class="u-demo-card__actions">
+                <a class="u-btn u-btn--sm" href={item.primary.href} aria-label={`${item.primary.label}: ${item.title}`}>
+                  {item.primary.label}
+                  <Icon name="arrow" />
+                </a>
+                {item.secondary && (
+                  <a class="u-btn u-btn--sm u-btn--ghost" href={item.secondary.href} aria-label={`${item.secondary.label}: ${item.title}`}>
+                    {item.secondary.label}
+                  </a>
+                )}
+              </div>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+    {note && <p class="u-showcase__note" data-reveal><span class="u-dot" aria-hidden="true"></span>{note}</p>}
+  </div>
+</section>
+
+<style>
+  .u-showcase__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 22px;
+  }
+  .u-demo-card {
+    --swatch: #5b5bf0;
+    --swatch-2: #a5a5ff;
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-card-bg);
+    transition:
+      transform 0.45s var(--ulams-ease),
+      box-shadow 0.45s var(--ulams-ease),
+      border-color 0.45s;
+  }
+  .u-demo-card[data-swatch="coffee"] {
+    --swatch: #c2552d;
+    --swatch-2: #7a8b6f;
+  }
+  .u-demo-card[data-swatch="oncall"] {
+    --swatch: #0b0f14;
+    --swatch-2: #58a6ff;
+  }
+  .u-demo-card[data-swatch="nightsky"] {
+    --swatch: #13153a;
+    --swatch-2: #ffd23f;
+  }
+  .u-demo-card:hover,
+  .u-demo-card:focus-within {
+    transform: translateY(-6px);
+    border-color: color-mix(in srgb, var(--swatch-2) 60%, var(--ulams-color-border));
+    box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--swatch) 70%, transparent);
+  }
+  .u-demo-card__visual {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--swatch), var(--swatch-2));
+  }
+  .u-demo-card__visual :global(img) {
+    width: 100%;
+    height: 100%;
+    transition: transform 1.2s var(--ulams-ease);
+  }
+  .u-demo-card:hover .u-demo-card__visual :global(img) {
+    transform: scale(1.06);
+  }
+  .u-demo-card__swatch {
+    position: absolute;
+    left: 16px;
+    bottom: -14px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: 3px solid var(--ulams-color-card-bg);
+    background: linear-gradient(135deg, var(--swatch) 50%, var(--swatch-2) 50%);
+  }
+  .u-demo-card__body {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    padding: 28px 20px 20px;
+  }
+  .u-demo-card h3 {
+    font-size: 1.35rem;
+  }
+  .u-demo-card__text {
+    font-size: 0.925rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-demo-card__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    margin: 0;
+    font-size: 0.8125rem;
+  }
+  .u-demo-card__facts div {
+    display: flex;
+    gap: 6px;
+  }
+  .u-demo-card__facts dt {
+    color: var(--ulams-color-muted);
+  }
+  .u-demo-card__facts dd {
+    margin: 0;
+    font-weight: 600;
+  }
+  .u-demo-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 6px;
+  }
+  .u-showcase__note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 28px;
+    font-size: 0.875rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ulams-color-positive);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--ulams-color-positive) 25%, transparent);
+  }
+</style>

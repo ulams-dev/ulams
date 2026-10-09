@@ -1,5 +1,6 @@
 {
   "name": "admin",
+  "license": "MIT",
   "version": "6.0.0",
   "private": true,
   "description": "An out-of-box UI solution for enterprise applications",
@@ -50,7 +51,9 @@
     "@atlaskit/tree": "^8.8.7",
     "@benrbray/prosemirror-math": "0.2.2",
     "@cfaester/enzyme-adapter-react-18": "^0.8.0",
-    "@escolalms/h5p-react": "^0.2.18",
+    "@pdfme/common": "6.2.4",
+    "@pdfme/schemas": "6.2.4",
+    "@pdfme/ui": "6.2.4",
     "@sentry/cli": "^2.40.0",
     "@sentry/esbuild-plugin": "^2.22.7",
     "@sentry/react": "^8",
@@ -113,12 +116,10 @@
     "react-tiny-oembed": "^1.1.0",
     "recharts": "^3.8.0",
     "refractor": "^3.3.1",
-    "reportbro-designer": "^3.6.0",
     "resize-observer-polyfill": "^1.5.1",
     "scorm-again": "^2.6.0",
     "slugify": "^1.4.0",
-    "smooth-scroll-into-view-if-needed": "^1.1.29",
-    "styled-components": "6.1.1"
+    "smooth-scroll-into-view-if-needed": "^1.1.29"
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^3.3.0",

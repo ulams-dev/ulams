@@ -1,0 +1,14 @@
+.root {
+  background: var(--ulams-color-primary-on-light);
+  padding: 140px 40px 30px;
+  margin-bottom: 40px;
+}
+.root[data-mobile="true"] {
+  padding: 60px 20px 20px 20px;
+  margin-bottom: 100px;
+}
+.root :global(h1) {
+  color: var(--ulams-color-white);
+  margin-bottom: var(--header-title-mb);
+  transition: margin-bottom 0.5s ease-out;
+}

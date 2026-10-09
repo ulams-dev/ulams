@@ -40,7 +40,7 @@ class ConsultationAccessEnquiryAdminCreatedVariables extends CommonConsultationA
     {
         $proposedTerms = $event->getConsultationAccessEnquiry()->consultationAccessEnquiryProposedTerms
             ->pluck('proposed_at')
-            ->map(fn($term) => $term->setTimezone($event->getUser()->current_timezone)->format('Y-m-d H:i'))
+            ->map(fn($term) => $term->setTimezone($event->getUser()->current_timezone ?? config('app.timezone'))->format('Y-m-d H:i'))
             ->join(', ');
 
         return array_merge(parent::variablesFromEvent($event), [

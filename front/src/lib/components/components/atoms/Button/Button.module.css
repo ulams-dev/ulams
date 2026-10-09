@@ -1,0 +1,225 @@
+/*
+ * Button variants only set --btn-* variables; the real properties live on .button
+ * so every rule keeps the specificity of the former styled component (0,1,0 plus
+ * pseudo-classes) and the `.dropdown` override below still wins.
+ */
+.button {
+  --btn-bg: var(--ulams-color-primary-on-light);
+  --btn-color: var(--ulams-color-white);
+  --btn-font-size: 16px;
+  --btn-line-height: 1.55em;
+  --btn-padding: 8px 16px;
+  --btn-border-color: transparent;
+  --btn-svg-margin: 0 9px;
+  --btn-svg-height: 18px;
+  --btn-svg-width: 18px;
+  --btn-focus-border: var(--ulams-color-white);
+  --btn-hover-color: color-mix(in srgb, var(--ulams-color-white) 85%, transparent);
+  --btn-hover-bg: color-mix(in srgb, var(--ulams-color-primary-on-light) 85%, transparent);
+
+  background: var(--btn-bg);
+  color: var(--btn-color);
+  font-family: var(--ulams-font-family-body);
+  font-weight: bold;
+  font-size: var(--btn-font-size);
+  line-height: var(--btn-line-height);
+  cursor: pointer;
+  padding: var(--btn-padding);
+  /* former `buttonRadius || 2` */
+  border-radius: max(var(--ulams-radius-button), 2px);
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+  border-style: solid;
+  border-width: 2px;
+  border-color: var(--btn-border-color);
+  transition: box-shadow 0.2s ease-in-out, border 0.2s ease-in,
+    background 0.2s ease-in, color 0.2s ease-in, opacity 0.2s ease-in;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+/* ---- variants (later blocks take precedence, as in the former if/else chain) ---- */
+
+.gray {
+  --btn-bg: var(--ulams-gray-2);
+  --btn-svg-height: 14px;
+  --btn-hover-bg: color-mix(in srgb, var(--ulams-gray-2) 85%, transparent);
+}
+
+.secondary {
+  --btn-padding: 4px 13px;
+}
+
+.icon {
+  --btn-bg: transparent;
+  --btn-color: var(--ulams-color-text);
+  --btn-line-height: 1.5;
+  --btn-svg-margin: 0;
+  --btn-svg-height: 14px;
+  --btn-svg-width: 14px;
+  --btn-focus-border: transparent;
+  --btn-hover-bg: var(--ulams-gray-3);
+  --btn-hover-color: var(--btn-color);
+}
+
+.white {
+  --btn-bg: var(--ulams-color-white);
+  --btn-color: var(--ulams-color-black);
+  --btn-font-size: 14px;
+  --btn-svg-height: 14px;
+  --btn-hover-bg: color-mix(in srgb, var(--ulams-color-white) 85%, transparent);
+  --btn-hover-color: var(--ulams-gray-1);
+}
+
+.invert {
+  --btn-bg: var(--ulams-color-invert);
+  --btn-hover-bg: color-mix(in srgb, var(--ulams-color-invert) 30%, transparent);
+  --btn-hover-color: var(--ulams-color-invert);
+}
+
+.outline {
+  --btn-bg: transparent;
+  --btn-color: var(--ulams-color-text);
+  --btn-border-color: var(
+    --ulams-opt-color-outline-button,
+    var(--ulams-color-primary)
+  );
+  --btn-hover-bg: transparent;
+  --btn-hover-color: var(--ulams-color-text);
+}
+
+:global([data-mode="dark"]) .outline {
+  --btn-hover-bg: var(--ulams-color-white);
+  --btn-hover-color: var(--ulams-color-black);
+}
+
+:global([data-mode="dark"]) .outline,
+:global([data-mode="dark"]) .icon {
+  --btn-color: var(--ulams-opt-color-outline-button, var(--ulams-color-text));
+}
+
+.outline.invert,
+.icon.invert {
+  --btn-color: var(
+    --ulams-opt-color-outline-button-invert,
+    var(--ulams-color-text)
+  );
+}
+
+.outline.invert {
+  --btn-border-color: var(
+    --ulams-opt-color-outline-button-invert,
+    var(--ulams-color-primary)
+  );
+  --btn-hover-bg: var(--ulams-color-white);
+  --btn-hover-color: var(--ulams-gray-1);
+}
+
+/* invert && mode !== "outline" */
+.focusGray {
+  --btn-focus-border: var(--ulams-gray-1);
+}
+
+.block {
+  width: 100%;
+}
+
+.loading {
+  pointer-events: none;
+}
+
+/* ---- children and states ---- */
+
+.button > svg {
+  margin: var(--btn-svg-margin);
+  height: var(--btn-svg-height);
+  width: var(--btn-svg-width);
+}
+
+.button:focus,
+.button:active {
+  border-style: solid;
+  border-width: 2px;
+  border-color: var(--btn-focus-border);
+}
+
+.button:hover {
+  color: var(--btn-hover-color);
+  background: var(--btn-hover-bg);
+}
+
+.outline:hover {
+  border: 2px solid color-mix(in srgb, var(--ulams-color-primary) 40%, transparent);
+}
+
+.invert:not(.outline):hover {
+  text-decoration: none;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  border-color: transparent;
+  background-color: var(
+    --ulams-opt-color-button-disabled,
+    color-mix(in srgb, var(--ulams-gray-1) 20%, transparent)
+  );
+}
+
+.invert:disabled {
+  color: var(--ulams-color-white);
+}
+
+.outline:not(.invert):disabled {
+  color: var(--ulams-color-text);
+  background: var(--ulams-color-white);
+}
+
+/* Only when the theme sets `primaryButtonDisabled` (light value in both modes, as before);
+   otherwise the 2px transparent border of `.button:disabled` stays. */
+.outline:not(.invert).disabledBorder:disabled {
+  border: 1px solid var(--btn-disabled-border);
+}
+
+/* The disabled outline button is white in both modes, so its text stays dark. */
+:global([data-mode="dark"]) .outline:not(.invert):disabled {
+  color: var(--ulams-color-black);
+}
+
+/* Global `dropdown` class (used by header menus) resets the button look. */
+.button:global(.dropdown) {
+  all: unset;
+  color: var(--ulams-color-text);
+  cursor: pointer;
+  font-family: var(--ulams-font-family-body);
+  transition: background 0.2s ease-in, color 0.2s ease-in;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 13px;
+  font-size: 13px;
+}
+
+.button:global(.dropdown) :global(.profileIcon) {
+  width: 30px;
+  height: 30px;
+}
+
+.button:global(.dropdown):hover {
+  background-color: #f8f8f8;
+}
+
+:global([data-mode="dark"]) .button:global(.dropdown):hover {
+  background-color: var(--ulams-color-card-bg);
+}
+
+.button:global(.dropdown):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}

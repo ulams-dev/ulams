@@ -1,9 +1,63 @@
 # Ulams Single or Multi Domain API Mode.
 
-Ulams API is working in two modes, either
+One API deployment serves the platform and any number of tenants, each on its own host with
+its own database, bucket, keys and Redis prefix. Domain selection is done by
+[gecche/laravel-multidomain](https://github.com/gecche/laravel-multidomain): for a request to
+`coffee.localhost` it loads `.env.coffee.localhost` and uses `storage/coffee_localhost/`.
 
-- single domain or catch all domains to one service
-- multiple domains to each service (different database, buckets, settings etc)
+## Tenants (`ulams:tenant:*`)
+
+Tenants are provisioned at runtime by the [tenancy package](../packages/tenancy/README.md);
+nothing has to be added to `docker-compose.yml`.
+
+```bash
+docker compose exec api php artisan ulams:tenant:create coffee \
+  --name="The Coffee Atlas" --theme=coffee --accent="#C2552D" --users=5
+docker compose exec api php artisan ulams:tenant:list
+docker compose exec api php artisan ulams:tenant:delete coffee --force
+```
+
+| Resource | Platform | Tenant `<slug>` |
+|---|---|---|
+| API | `http://api.localhost` | `http://<slug>.localhost` |
+| Front (`*.app.localhost` → host :3000) | `http://api.app.localhost` | `http://<slug>.app.localhost` |
+| Admin (`*.admin.localhost` → host :8000) | `http://api.admin.localhost` | `http://<slug>.admin.localhost` |
+| Database / role | `default` | `ulams_<slug>` |
+| Bucket | `ulams` | `ulams-<slug>` (public read), `AWS_URL=http://storage.localhost/ulams-<slug>` |
+| Redis prefix | `ulams_database_` | `ulams_<slug>_` (cache `ulams_<slug>_cache`, Horizon `ulams_<slug>_horizon:`) |
+| Env file | `.env` (from `LARAVEL_*`) | `.env.<slug>.localhost` |
+| Passport keys | `storage/oauth-*.key` | `storage/<slug>_localhost/oauth-*.key` |
+
+A front or admin served on `<slug>.app.localhost` / `<slug>.admin.localhost` talks to the API
+at `<slug>.localhost`. The tenant name and theme are public settings (`GET /api/settings`):
+`global.companyName`, `global.frontURL`, `theme.theme` (preset key) and `theme.accent`.
+
+Demo users: `admin@<slug>.ulams.app`, `tutor@<slug>.ulams.app`,
+`student1..N@<slug>.ulams.app`, password `TENANT_DEMO_PASSWORD` (default `secret`, dev only).
+
+How it fits together:
+
+- **Registry.** The `tenants` table in the platform database is the source of truth (secrets
+  encrypted). `.env.<host>` files, `config/domain.php` entries and Passport key files are
+  derived from it: `init.sh` runs `ulams:tenant:sync-env --migrate` after the platform
+  migrations, so a fresh container or k8s pod rebuilds them.
+- **Resumable.** `ulams:tenant:create` records each finished step; after a failure, fix the
+  cause and run the same command again. `--redo=<step>` repeats a step.
+- **Unknown hosts get 404.** Without its own env file, laravel-multidomain would serve a host
+  with the platform `.env`. A global middleware answers 404 unless the host is in
+  `TENANCY_PLATFORM_HOSTS` or a registered tenant. Console commands are not affected. In k8s,
+  add the service and ingress hosts used for health checks to `TENANCY_PLATFORM_HOSTS`.
+- **Workers.** `queue.sh`, `broadcast.sh` and `scheduler.sh` read the domain list
+  (`domains.sh`: `MULTI_DOMAINS` plus registered tenants) on every pass, so new tenants get
+  queue workers and scheduled jobs without a restart. The platform queue runs on Horizon.
+
+Known limits: all tenants use the same MinIO credentials (isolation is per bucket, not per
+key), and the H5P service (`api/h5p`) is still single-tenant.
+
+## Legacy: `MULTI_DOMAINS` set from environment variables
+
+The rest of this page describes the older setup, where every domain is declared through
+environment variables at container start. It still works and can be combined with tenants.
 
 Multi-domain is controlled by environmental variables and usage of [gecche/laravel-multidomain](https://github.com/gecche/laravel-multidomain)
 

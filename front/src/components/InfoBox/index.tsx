@@ -1,21 +1,5 @@
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
-import styled from "styled-components";
-
-const InfoBoxStyles = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 12px;
-
-  .title {
-    margin: 0.2em 0;
-  }
-
-  .content {
-    margin: 0.2em 0;
-    font-weight: 700;
-    color: ${({ theme: { primaryColor } }) => primaryColor};
-  }
-`;
+import styles from "./InfoBox.module.css";
 
 interface InfoBoxProps {
   title: string | React.ReactElement;
@@ -24,18 +8,18 @@ interface InfoBoxProps {
 
 const InfoBox = ({ title, content }: InfoBoxProps) => {
   return (
-    <InfoBoxStyles>
+    <div className={styles.infoBox}>
       {typeof title === "string" ? (
-        <Text className="title">{title}</Text>
+        <Text className={styles.title}>{title}</Text>
       ) : (
         title
       )}
       {typeof content === "string" ? (
-        <Text className="content">{content}</Text>
+        <Text className={styles.content}>{content}</Text>
       ) : (
         content
       )}
-    </InfoBoxStyles>
+    </div>
   );
 };
 

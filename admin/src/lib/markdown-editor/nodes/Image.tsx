@@ -3,7 +3,7 @@ import { NodeSelection, Plugin } from "prosemirror-state";
 import { setTextSelection } from "prosemirror-utils";
 import * as React from "react";
 import ImageZoom from "react-medium-image-zoom";
-import styled from "styled-components";
+import "../styles/components.css";
 import insertFiles from "../commands/insertFiles";
 import getDataTransferFiles from "../lib/getDataTransferFiles";
 import uploadPlaceholderPlugin from "../lib/uploadPlaceholder";
@@ -240,8 +240,12 @@ export default class Image extends Node {
             : undefined
         }
       >
-        <ImageWrapper
-          className={isSelected ? "ProseMirror-selectednode" : ""}
+        <span
+          className={
+            isSelected
+              ? "ulams-md-image-wrapper ProseMirror-selectednode"
+              : "ulams-md-image-wrapper"
+          }
           onClick={this.handleSelect(props)}
         >
           <div
@@ -266,18 +270,18 @@ export default class Image extends Node {
               shouldRespectMaxDimension
             />
           </div>
-        </ImageWrapper>
-        <Caption
+        </span>
+        <p
           onKeyDown={this.handleKeyDown(props)}
           onBlur={this.handleBlur(props)}
-          className="caption"
+          className="ulams-md-image-caption caption"
           tabIndex={-1}
           role={readOnly ? "" : "textbox"}
           contentEditable
           suppressContentEditableWarning
         >
           {alt}
-        </Caption>
+        </p>
       </div>
     );
   };
@@ -448,31 +452,3 @@ export default class Image extends Node {
     return [uploadPlaceholderPlugin, uploadPlugin(this.options)];
   }
 }
-
-const ImageWrapper = styled.span`
-  line-height: 0;
-  display: inline-block;
-`;
-
-const Caption = styled.p`
-  border: 0;
-  display: block;
-  font-size: 13px;
-  font-style: italic;
-  color: ${(props) => props.theme.textSecondary};
-  padding: 2px 0;
-  line-height: 16px;
-  text-align: center;
-  min-height: 1em;
-  outline: none;
-  background: none;
-  resize: none;
-  user-select: text;
-  cursor: text;
-
-  &:empty:before {
-    color: ${(props) => props.theme.placeholder};
-    content: "${(props) => (props.role ? "Write a caption" : "")}";
-    pointer-events: none;
-  }
-`;

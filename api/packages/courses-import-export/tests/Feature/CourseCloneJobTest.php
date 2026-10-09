@@ -14,8 +14,8 @@ use Ulams\CoursesImportExport\Events\CloneCourseStartedEvent;
 use Ulams\CoursesImportExport\Jobs\CloneCourse;
 use Ulams\CoursesImportExport\Services\Contracts\ExportImportServiceContract;
 use Ulams\CoursesImportExport\Tests\TestCase;
-use Ulams\HeadlessH5P\Models\H5PContent;
-use Ulams\HeadlessH5P\Repositories\Contracts\H5PContentRepositoryContract;
+use Ulams\H5P\Database\Factories\H5PContentFactory;
+use Ulams\H5P\Models\H5PContent;
 use Ulams\Scorm\Services\Contracts\ScormServiceContract;
 use Ulams\Tags\Models\Tag;
 use Ulams\TopicTypes\Models\TopicContent\Audio;
@@ -218,25 +218,8 @@ class CourseCloneJobTest extends TestCase
         return $scorm['model']->scos->first();
     }
 
-    private function createH5PContent(): ?H5PContent
+    private function createH5PContent(): H5PContent
     {
-        $h5Path = realpath(__DIR__ . '/../mocks/hp5.h5p');
-        $tmpPath = __DIR__ . '/../mocks/tmp.h5p';
-        copy($h5Path, $tmpPath);
-
-        $file = new UploadedFile($tmpPath, basename($h5Path), 'application/zip', null, true);
-
-        try {
-            $h5pContentRepository = app()->make(H5PContentRepositoryContract::class);
-            return $h5pContentRepository->upload($file);
-        } catch (\Exception $err) {
-            echo $err->getMessage();
-        } finally {
-            if (is_file($tmpPath)) {
-                unlink($tmpPath);
-            }
-        }
-
-        return null;
+        return H5PContentFactory::fromPackage(realpath(__DIR__ . '/../mocks/hp5.h5p'));
     }
 }

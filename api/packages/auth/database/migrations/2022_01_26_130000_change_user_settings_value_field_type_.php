@@ -9,14 +9,14 @@ class ChangeUserSettingsValueFieldType extends Migration
     public function up()
     {
         Schema::table('user_settings', function (Blueprint $table) {
-            $table->text('value')->change();
+            $table->text('value')->nullable()->change();
         });
     }
 
     public function down()
     {
         Schema::table('user_settings', function (Blueprint $table) {
-            $table->string('value')->change();
+            $table->string('value')->nullable()->change();
         });
     }
 }

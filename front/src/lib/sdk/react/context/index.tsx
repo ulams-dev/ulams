@@ -124,7 +124,6 @@ import { TagsContext, TagsContextProvider } from "./tags";
 import { TutorsContext, TutorsContextProvider } from "./tutors";
 import { WebinarsContext, WebinarsContextProvider } from "./webinars";
 import { WebinarContext, WebinarContextProvider } from "./webinar";
-import { H5pContext, H5pContextProvider } from "./h5p";
 import { PagesContext, PagesContextProvider } from "./pages";
 import { PageContext, PageContextProvider } from "./page";
 
@@ -304,7 +303,6 @@ const UlamsContextProviderInner: FunctionComponent<
   const { tutors, fetchTutors } = useContext(TutorsContext);
   const { webinars, fetchWebinars } = useContext(WebinarsContext);
   const { webinar, fetchWebinar } = useContext(WebinarContext);
-  const { h5p, fetchH5P } = useContext(H5pContext);
   const { consultations, fetchConsultations } =
     useContext(ConsultationsContext);
   const { pages, fetchPages } = useContext(PagesContext);
@@ -1595,7 +1593,7 @@ const UlamsContextProviderInner: FunctionComponent<
     [token]
   );
 
-  // Refactor h5pProgress. Move to h5p `src/react/context/h5p.tsx`
+  // Refactor h5pProgress. Move next to the H5P helpers in `services/h5p.ts`
   // https://github.com/EscolaLMS/sdk/issues/254
 
   const h5pProgress = useCallback(
@@ -1891,8 +1889,6 @@ const UlamsContextProviderInner: FunctionComponent<
         generateCertificate,
         mattermostChannels,
         fetchMattermostChannels,
-        h5p,
-        fetchH5P,
         emailVerify,
         getRefreshedToken,
         tokenExpireDate,
@@ -2045,7 +2041,6 @@ export const UlamsContextProvider: FunctionComponent<
     TutorsContextProvider,
     WebinarsContextProvider,
     WebinarContextProvider,
-    H5pContextProvider,
     ConsultationsContextProvider,
     PagesContextProvider,
     PageContextProvider,

@@ -31,7 +31,7 @@ class ProductCreateRequest extends ProductRequest
             'extra_fees' => ['sometimes', 'integer', 'min:0'],
             'purchasable' => ['sometimes', 'boolean'],
             'teaser_url' => ['sometimes', 'nullable', 'string'],
-            'poster' => ['sometimes', 'nullable', 'file', 'image'],
+            'poster' => ['sometimes', 'nullable', 'file', 'image:allow_svg'],
             'duration' => ['sometimes', 'nullable', 'string'],
             'limit_per_user' => ['sometimes', 'nullable', 'integer', 'min:1'],
             'limit_total' => ['sometimes', 'nullable', 'integer', 'min:1'],

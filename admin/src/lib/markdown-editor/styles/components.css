@@ -1,0 +1,304 @@
+/*
+ * Styles of the editor's toolbars, menus and node views (formerly CSS-in-JS).
+ * Colours come from the --md-* variables in theme.css. Rule order matters where one element
+ * carries two classes (e.g. input + block-menu link input): the later rule wins, as it did
+ * when one component extended another.
+ */
+
+/* Flex */
+.ulams-md-flex {
+  display: flex;
+  flex: initial;
+  flex-direction: row;
+}
+.ulams-md-flex--auto {
+  flex: 1 1 auto;
+}
+.ulams-md-flex--column {
+  flex-direction: column;
+}
+.ulams-md-flex--align-stretch {
+  align-items: stretch;
+}
+.ulams-md-flex--align-center {
+  align-items: center;
+}
+.ulams-md-flex--align-baseline {
+  align-items: baseline;
+}
+.ulams-md-flex--align-flex-start {
+  align-items: flex-start;
+}
+.ulams-md-flex--align-flex-end {
+  align-items: flex-end;
+}
+.ulams-md-flex--justify-center {
+  justify-content: center;
+}
+.ulams-md-flex--justify-space-around {
+  justify-content: space-around;
+}
+.ulams-md-flex--justify-space-between {
+  justify-content: space-between;
+}
+.ulams-md-flex--justify-flex-start {
+  justify-content: flex-start;
+}
+.ulams-md-flex--justify-flex-end {
+  justify-content: flex-end;
+}
+
+/* VisuallyHidden */
+.ulams-md-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+  clip: rect(1px, 1px, 1px, 1px);
+}
+
+/* Input */
+.ulams-md-input {
+  flex-grow: 1;
+  margin: 0;
+  padding: 3px 8px;
+  color: var(--md-toolbar-item);
+  font-size: 15px;
+  background: var(--md-toolbar-input);
+  border: 0;
+  border-radius: 2px;
+  outline: none;
+}
+
+/* ToolbarButton */
+.ulams-md-toolbar-button {
+  display: inline-block;
+  flex: 0;
+  width: 24px;
+  height: 24px;
+  margin-left: 10px;
+  padding: 0;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 100ms ease-in-out;
+}
+.ulams-md-toolbar-button--active {
+  opacity: 1;
+}
+.ulams-md-toolbar-button:first-child {
+  margin-left: 0;
+}
+.ulams-md-toolbar-button:hover {
+  opacity: 1;
+}
+.ulams-md-toolbar-button:disabled {
+  cursor: default;
+  opacity: 0.3;
+}
+
+/* ToolbarSeparator */
+.ulams-md-toolbar-separator {
+  display: inline-block;
+  width: 2px;
+  height: 24px;
+  margin-left: 10px;
+  background: var(--md-toolbar-item);
+  opacity: 0.3;
+}
+
+/* FloatingToolbar (portalled; carries .ulams-md-theme itself) */
+.ulams-md-floating-toolbar {
+  position: absolute;
+  z-index: calc(var(--md-z-index) + 100);
+  box-sizing: border-box;
+  height: 40px;
+  padding: 8px 16px;
+  line-height: 0;
+  white-space: nowrap;
+  background-color: var(--md-toolbar-background);
+  border-radius: 4px;
+  transform: scale(0.95);
+  opacity: 0;
+  transition: opacity 150ms cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    transform 150ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition-delay: 150ms;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+.ulams-md-floating-toolbar::before {
+  position: absolute;
+  bottom: -2px;
+  left: calc(50% - var(--md-toolbar-offset, 0px));
+  z-index: -1;
+  display: block;
+  width: 24px;
+  height: 24px;
+  background: var(--md-toolbar-background);
+  border-radius: 3px;
+  transform: translateX(-50%) rotate(45deg);
+  content: '';
+}
+.ulams-md-floating-toolbar * {
+  box-sizing: border-box;
+}
+.ulams-md-floating-toolbar--active {
+  transform: translateY(-6px) scale(1);
+  opacity: 1;
+  pointer-events: all;
+}
+@media print {
+  .ulams-md-floating-toolbar {
+    display: none;
+  }
+}
+
+/* LinkEditor */
+.ulams-md-link-editor {
+  min-width: 336px;
+  margin-right: -8px;
+  margin-left: -8px;
+}
+
+/* BlockMenuItem */
+.ulams-md-block-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 36px;
+  padding: 0 16px;
+  color: var(--md-block-toolbar-text);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  opacity: 1;
+}
+.ulams-md-block-menu-item--selected {
+  color: var(--md-black);
+  background: var(--md-block-toolbar-trigger);
+}
+.ulams-md-block-menu-item:hover,
+.ulams-md-block-menu-item:active {
+  color: var(--md-black);
+  background: var(--md-block-toolbar-hover-background);
+}
+.ulams-md-block-menu-item--selected:hover,
+.ulams-md-block-menu-item--selected:active {
+  background: var(--md-block-toolbar-trigger);
+}
+.ulams-md-block-menu-item__shortcut {
+  flex-grow: 1;
+  color: rgb(209 213 219);
+  text-align: right;
+}
+
+/* BlockMenu (portalled; carries .ulams-md-theme itself) */
+.ulams-md-block-menu__link-input-wrapper {
+  margin: 8px;
+}
+.ulams-md-block-menu__link-input {
+  width: 100%;
+  height: 36px;
+  color: var(--md-block-toolbar-text);
+}
+.ulams-md-block-menu__list {
+  height: 100%;
+  margin: 0;
+  padding: 8px 0;
+  text-align: left;
+  list-style: none;
+}
+.ulams-md-block-menu__list-item {
+  margin: 0;
+  padding: 0;
+}
+.ulams-md-block-menu__empty {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 16px;
+  color: var(--md-text-secondary);
+  font-weight: 500;
+  font-size: 14px;
+}
+.ulams-md-block-menu {
+  position: absolute;
+  z-index: calc(var(--md-z-index) + 100);
+  box-sizing: border-box;
+  width: 320px;
+  max-height: 224px;
+  overflow: hidden;
+  overflow-y: auto;
+  color: var(--md-text);
+  line-height: 0;
+  white-space: nowrap;
+  background-color: var(--md-block-toolbar-background);
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.08) 0px 4px 8px,
+    rgba(0, 0, 0, 0.08) 0px 2px 4px;
+  transform: scale(0.95);
+  opacity: 0;
+  transition: opacity 150ms cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    transform 150ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition-delay: 150ms;
+  pointer-events: none;
+}
+.ulams-md-block-menu * {
+  box-sizing: border-box;
+}
+.ulams-md-block-menu hr {
+  height: 0;
+  border: 0;
+  border-top: 1px solid var(--md-block-toolbar-divider);
+}
+.ulams-md-block-menu--active {
+  transform: translateY(-6px) scale(1);
+  opacity: 1;
+  pointer-events: all;
+}
+.ulams-md-block-menu--active.ulams-md-block-menu--above {
+  transform: translateY(6px) scale(1);
+}
+@media print {
+  .ulams-md-block-menu {
+    display: none;
+  }
+}
+
+/* Image node view (rendered inside the editor, inherits its variables) */
+.ulams-md-image-wrapper {
+  display: inline-block;
+  line-height: 0;
+}
+.ulams-md-image-caption {
+  display: block;
+  min-height: 1em;
+  padding: 2px 0;
+  color: var(--md-text-secondary);
+  font-size: 13px;
+  font-style: italic;
+  line-height: 16px;
+  text-align: center;
+  background: none;
+  border: 0;
+  outline: none;
+  cursor: text;
+  resize: none;
+  user-select: text;
+}
+.ulams-md-image-caption:empty:before {
+  color: var(--md-placeholder);
+  content: '';
+  pointer-events: none;
+}
+.ulams-md-image-caption[role='textbox']:empty:before {
+  content: 'Write a caption';
+}

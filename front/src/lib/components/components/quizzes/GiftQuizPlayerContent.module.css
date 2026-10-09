@@ -1,0 +1,20 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.attemptsTooltip {
+  padding: 16px;
+  border-radius: 4px;
+  background-color: var(--ulams-color-primary-on-light);
+}
+
+/* Scoped under the tooltip so the override wins over the Button module regardless of stylesheet order. */
+.attemptsTooltip .closeButton {
+  color: var(--ulams-color-primary);
+}
+
+.attemptsTooltip .closeButton:hover {
+  background-color: var(--ulams-color-secondary);
+}

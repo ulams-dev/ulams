@@ -6,7 +6,6 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import styled, { withTheme } from "styled-components";
 import { API } from "@ulams/sdk/index";
 import {
   quizAttempt as fetchQuizAttempt,
@@ -17,6 +16,7 @@ import { UlamsContext } from "@ulams/sdk/react";
 import { GiftQuizAnswer } from "@ulams/components/types/gift-quiz";
 import { Button, Spin } from "../../";
 import GiftQuizPlayerContent from "./GiftQuizPlayerContent";
+import styles from "./index.module.css";
 
 interface Props {
   topic: API.TopicQuiz;
@@ -31,19 +31,6 @@ interface QuizData {
   };
   error?: API.DefaultResponseError;
 }
-
-const Wrapper = styled.div`
-  & > .spinner__overlay {
-    min-height: 529px;
-  }
-`;
-
-const StartButtonWrapper = styled.div`
-  width: 100%;
-  min-height: 529px;
-  display: grid;
-  place-items: center;
-`;
 
 function useQuiz(quizId: number | undefined, onTopicEnd?: () => void) {
   const [data, setData] = useState<QuizData>({ loading: false });
@@ -128,13 +115,16 @@ const GiftQuizPlayer: React.FC<Props> = ({ topic, className, onTopicEnd }) => {
   );
 
   return (
-    <Wrapper data-testid="gift-quiz-player" className={className}>
+    <div
+      data-testid="gift-quiz-player"
+      className={className ? `${styles.wrapper} ${className}` : styles.wrapper}
+    >
       {!data.value && !data.loading && (
-        <StartButtonWrapper>
+        <div className={styles.startButtonWrapper}>
           <Button mode="secondary" type="button" onClick={startQuiz}>
             {t<string>("Quiz.Start")}
           </Button>
-        </StartButtonWrapper>
+        </div>
       )}
       {data.loading && !data.value && <Spin />}
       {data.value && (
@@ -145,8 +135,8 @@ const GiftQuizPlayer: React.FC<Props> = ({ topic, className, onTopicEnd }) => {
           endQuiz={endQuiz}
         />
       )}
-    </Wrapper>
+    </div>
   );
 };
 
-export default withTheme(styled(GiftQuizPlayer)``);
+export default GiftQuizPlayer;

@@ -1,0 +1,40 @@
+.tag {
+  color: var(--ulams-color-primary);
+  font-family: var(--ulams-font-family-body);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.55em;
+  cursor: inherit;
+  -webkit-font-smoothing: antialiased;
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+}
+
+.button {
+  cursor: pointer;
+}
+
+.tag::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--ulams-color-primary);
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.tag:hover::after,
+.tag:active::after {
+  transform: scaleX(0);
+  transform-origin: bottom left;
+}
+
+.button:hover::after,
+.button:active::after {
+  transform: scaleX(1);
+}

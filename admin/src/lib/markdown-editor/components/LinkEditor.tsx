@@ -2,9 +2,9 @@ import * as React from "react";
 import { setTextSelection } from "prosemirror-utils";
 import { EditorView } from "prosemirror-view";
 import { Mark } from "prosemirror-model";
-import styled, { withTheme } from "styled-components";
 import isUrl from "../lib/isUrl";
 import theme from "../theme";
+import { withEditorTheme } from "../themeContext";
 import Flex from "./Flex";
 import Input from "./Input";
 import baseDictionary from "../dictionary";
@@ -219,7 +219,7 @@ class LinkEditor extends React.Component<Props, State> {
     const { value } = this.state;
 
     return (
-      <Wrapper>
+      <Flex className="ulams-md-link-editor">
         <Input
           value={value}
           placeholder={"Paste a link"}
@@ -227,17 +227,11 @@ class LinkEditor extends React.Component<Props, State> {
           onChange={this.handleChange}
           autoFocus={this.href === ""}
         />
-      </Wrapper>
+      </Flex>
     );
   }
 }
 
-const Wrapper = styled(Flex)`
-  margin-left: -8px;
-  margin-right: -8px;
-  min-width: 336px;
-`;
-
-export default withTheme(LinkEditor) as unknown as React.ComponentType<
+export default withEditorTheme(LinkEditor) as unknown as React.ComponentType<
   Omit<Props, "theme">
 >;

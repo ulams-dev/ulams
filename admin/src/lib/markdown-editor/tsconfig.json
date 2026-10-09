@@ -20,7 +20,9 @@
     "target": "es2018",
     "lib": ["dom", "dom.iterable", "es2019"],
     "jsx": "react",
-    "types": ["react"]
+    // "node": lib/markdown/math_katex.ts uses require(); these types used to arrive transitively
+    // through the CSS-in-JS library typings that were removed.
+    "types": ["react", "node"]
   },
   "include": ["./**/*"]
 }

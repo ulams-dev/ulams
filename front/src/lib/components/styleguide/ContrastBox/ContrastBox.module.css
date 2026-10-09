@@ -1,0 +1,12 @@
+.contrastBox {
+  margin: 0;
+  padding: 50px;
+  color: #000;
+  font-family: var(--ulams-font-family-body);
+  background: var(--ulams-color-primary);
+  text-transform: uppercase;
+}
+
+.lightContrast {
+  color: #fff;
+}

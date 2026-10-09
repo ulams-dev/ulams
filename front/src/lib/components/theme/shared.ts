@@ -1,6 +1,6 @@
-import { SharedDefaultTheme } from "./provider";
+import type { SharedThemeTokens } from "./types";
 
-export const sharedTheme: SharedDefaultTheme = {
+export const sharedTheme: SharedThemeTokens = {
   buttonRadius: 0,
   checkboxRadius: 0,
   inputRadius: 0,

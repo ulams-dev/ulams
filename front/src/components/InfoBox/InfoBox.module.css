@@ -1,0 +1,15 @@
+.infoBox {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 12px;
+}
+
+.infoBox .title {
+  margin: 0.2em 0;
+}
+
+.infoBox .content {
+  margin: 0.2em 0;
+  font-weight: 700;
+  color: var(--ulams-color-primary);
+}

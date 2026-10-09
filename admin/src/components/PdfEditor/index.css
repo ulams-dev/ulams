@@ -1,3 +1,16 @@
 .pdf-editor {
-  min-height: calc(100vh - 320px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pdf-editor__designer {
+  height: calc(100vh - 260px);
+  min-height: 560px;
+  border: 1px solid #f0f0f0;
+}
+
+.pdf-editor__variables .ant-tag {
+  margin-bottom: 4px;
+  cursor: pointer;
 }

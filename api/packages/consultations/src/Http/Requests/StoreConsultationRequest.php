@@ -23,7 +23,7 @@ class StoreConsultationRequest extends FormRequest
             'status' => ['required', 'string', Rule::in(ConsultationStatusEnum::getValues())],
             'description' => ['required', 'string', 'min:3'],
             'duration' => ['nullable', 'string', 'max:80'],
-            'image' => ['nullable', 'file', 'image'],
+            'image' => ['nullable', 'file', 'image:allow_svg'],
             'author_id' => ['integer', 'exists:users,id'],
             'active_from' => ['date'],
             'active_to' => ['date', 'after_or_equal:active_from'],

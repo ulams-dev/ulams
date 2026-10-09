@@ -1,0 +1,162 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  variant?: "banner" | "newsletter" | "terminal";
+  eyebrow?: string;
+  title: string;
+  text?: string;
+  code?: string[];
+  cta: { label: string; href: string };
+  secondary?: { label: string; href: string };
+  id?: string;
+}
+const { variant = "banner", eyebrow, title, text, code = [], cta, secondary, id = "join" } = Astro.props;
+---
+
+<section class={`u-section u-cta u-cta--${variant}`} id={id} aria-labelledby={`${id}-title`}>
+  <div class="u-container">
+    <div class="u-cta__box" data-reveal>
+      <div class="u-cta__copy">
+        {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+        <h2 class="u-h2" id={`${id}-title`}>{title}</h2>
+        {text && <p class="u-lead">{text}</p>}
+      </div>
+      {
+        variant === "terminal" && code.length > 0 && (
+          <pre class="u-cta__term" aria-label="Terminal" tabindex="0">
+            <span class="u-cta__bar" aria-hidden="true"><i /><i /><i /></span>
+            {code.map((line, i) => (
+              <code style={`--i:${i}`} data-cmd={line.startsWith("$") ? "true" : undefined}>{line}</code>
+            ))}
+          </pre>
+        )
+      }
+      <div class="u-actions">
+        <a class="u-btn" href={cta.href}>
+          {cta.label}
+          <Icon name="arrow" />
+        </a>
+        {
+          secondary && (
+            <a class="u-btn u-btn--ghost" href={secondary.href}>
+              {secondary.label}
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .u-cta__box {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) auto;
+    gap: 28px;
+    align-items: center;
+    padding: clamp(28px, 5vw, 64px);
+    border-radius: var(--ulams-radius-card);
+    border: 1px solid var(--ulams-color-border);
+    background:
+      radial-gradient(600px 240px at 100% 0%, color-mix(in srgb, var(--ulams-color-primary) 18%, transparent), transparent 70%),
+      var(--ulams-color-surface);
+    overflow: hidden;
+  }
+  .u-cta__copy {
+    display: grid;
+    gap: 12px;
+  }
+  .u-cta--terminal .u-cta__box {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    grid-template-areas:
+      "copy term"
+      "actions term";
+    background:
+      radial-gradient(500px 260px at 0% 100%, color-mix(in srgb, var(--ulams-color-primary) 22%, transparent), transparent 70%),
+      #0e0e10;
+    color: #f5f5f4;
+    border-color: #27272a;
+  }
+  .u-cta--terminal .u-cta__copy {
+    grid-area: copy;
+  }
+  .u-cta--terminal .u-cta__copy :global(h2) {
+    color: #fff;
+  }
+  .u-cta--terminal .u-cta__copy :global(.u-lead) {
+    color: #c9c9cf;
+  }
+  .u-cta--terminal .u-cta__copy :global(.u-eyebrow) {
+    color: #c7c7ff;
+    background: transparent;
+    border-color: #3f3f46;
+  }
+  .u-cta--terminal .u-actions {
+    grid-area: actions;
+    align-self: start;
+  }
+  .u-cta--terminal .u-btn--ghost {
+    --_bg: transparent;
+    --_bd: #52525b;
+    --_fg: #fff;
+  }
+  .u-cta__term {
+    grid-area: term;
+    margin: 0;
+    display: grid;
+    gap: 6px;
+    padding: 16px 18px 20px;
+    border: 1px solid #27272a;
+    border-radius: 12px;
+    background: #050506;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .u-cta__bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .u-cta__bar i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #3f3f46;
+  }
+  .u-cta__term code {
+    color: #a1a1aa;
+    opacity: 0;
+    animation: u-term-line 0.4s var(--ulams-ease) forwards;
+    animation-delay: calc(0.3s + var(--i) * 0.25s);
+  }
+  .u-cta__term code[data-cmd] {
+    color: #e4e4e7;
+  }
+  @keyframes u-term-line {
+    from {
+      opacity: 0;
+      transform: translateX(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .u-cta--newsletter .u-cta__box {
+    background: transparent;
+    border-width: 1px 0;
+    border-radius: 0;
+  }
+  @media (max-width: 860px) {
+    .u-cta__box,
+    .u-cta--terminal .u-cta__box {
+      grid-template-columns: 1fr;
+      grid-template-areas: "copy" "term" "actions";
+    }
+  }
+</style>

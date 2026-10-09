@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><title>The Coffee Atlas · Editorial Academy</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "secondary-fixed-dim": "#baccad", "on-tertiary-fixed": "#1e1b13", "primary-fixed": "#ffdbcf", "secondary": "#536349", "error-container": "#ffdad6", "on-primary-container": "#ffffff", "on-tertiary-fixed-variant": "#4b463d", "inverse-on-surface": "#ffede4", "outline-variant": "#dec0b7", "tertiary-container": "#7b766b", "primary-container": "#c2552d", "on-tertiary": "#ffffff", "primary": "#a13d17", "on-tertiary-container": "#ffffff", "tertiary-fixed": "#e9e2d5", "on-secondary-fixed": "#111f0b", "surface-dim": "#efd5c6", "on-primary-fixed": "#390c00", "on-surface-variant": "#57423b", "tertiary-fixed-dim": "#cdc6b9", "surface-tint": "#a23e18", "on-error": "#ffffff", "primary-fixed-dim": "#ffb59c", "on-secondary-container": "#57674d", "error": "#ba1a1a", "tertiary": "#625d53", "background": "#fff8f5", "on-primary": "#ffffff", "on-secondary-fixed-variant": "#3c4b33", "secondary-container": "#d3e5c5", "on-error-container": "#93000a", "surface-bright": "#fff8f5", "surface-variant": "#f8ddcf", "surface": "#fff8f5", "inverse-surface": "#3d2d23", "on-secondary": "#ffffff", "outline": "#8a726a", "surface-container-highest": "#f8ddcf", "on-background": "#261910", "surface-container-low": "#fff1ea", "inverse-primary": "#ffb59c", "secondary-fixed": "#d6e8c8", "on-primary-fixed-variant": "#822701", "surface-container": "#ffeade", "surface-container-lowest": "#ffffff", "on-surface": "#261910", "surface-container-high": "#fee3d4" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "gutter": "2rem", "space-sm": "0.5rem", "margin": "3.5rem", "space-lg": "1.75rem", "space-xl": "3rem", "space-xs": "0.25rem", "margin-mobile": "1.25rem", "gutter-mobile": "1rem", "space-md": "1rem" }, "fontFamily": { "body-sm": [ "Plus Jakarta Sans" ], "label-chapter": [ "Playfair Display" ], "caption-editorial": [ "Playfair Display" ], "body-md": [ "Plus Jakarta Sans" ], "label-caps": [ "Plus Jakarta Sans" ], "display-hero": [ "Playfair Display" ], "body-lg": [ "Plus Jakarta Sans" ], "editorial-quote": [ "Playfair Display" ], "headline-sm": [ "Playfair Display" ], "headline-lg-mobile": [ "Playfair Display" ], "headline-lg": [ "Playfair Display" ], "display-hero-mobile": [ "Playfair Display" ], "headline-md": [ "Playfair Display" ] }, "fontSize": { "body-sm": [ "13px", { "lineHeight": "20px", "fontWeight": "400" } ], "label-chapter": [ "14px", { "lineHeight": "18px", "letterSpacing": "0.18em", "fontWeight": "600" } ], "caption-editorial": [ "13px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "400" } ], "body-md": [ "15px", { "lineHeight": "24px", "fontWeight": "400" } ], "label-caps": [ "11px", { "lineHeight": "16px", "letterSpacing": "0.12em", "fontWeight": "600" } ], "display-hero": [ "56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "400" } ], "body-lg": [ "18px", { "lineHeight": "30px", "letterSpacing": "-0.005em", "fontWeight": "400" } ], "editorial-quote": [ "26px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "400" } ], "headline-sm": [ "22px", { "lineHeight": "30px", "fontWeight": "500" } ], "headline-lg-mobile": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "400" } ], "headline-lg": [ "40px", { "lineHeight": "48px", "letterSpacing": "-0.015em", "fontWeight": "400" } ], "display-hero-mobile": [ "38px", { "lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "400" } ], "headline-md": [ "28px", { "lineHeight": "36px", "fontWeight": "400" } ] } } } };</script></head><body class="bg-background font-body-md text-body-md text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-md shadow-[0_1px_8px_rgba(38,25,16,0.06)]"><div class="bg-surface-container-low"><div class="max-w-7xl mx-auto px-margin-mobile lg:px-margin h-8 flex items-center justify-between font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider"><div class="flex items-center gap-space-xs"><span class="inline-block w-1.5 h-1.5 rounded-full bg-secondary"></span><span>Volume IV · Issue 12 · Field Guide &amp; Academy · Next Live Cupping: 14 Nov</span></div><div class="hidden sm:flex items-center gap-space-md font-body-sm text-body-sm"><span class="cursor-pointer hover:text-on-surface transition-colors">EUR (€)</span><span class="text-outline-variant">/</span><span class="cursor-pointer hover:text-on-surface transition-colors">EN</span></div></div></div><div class="h-20 max-w-7xl mx-auto px-margin-mobile lg:px-margin flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><a class="group flex items-center gap-space-sm" data-path="chapters" href="#"><span class="flex flex-col text-left"><span class="font-label-chapter text-label-chapter uppercase text-primary leading-none tracking-widest">The Coffee Atlas</span><span class="font-caption-editorial text-caption-editorial italic text-on-surface-variant leading-tight">Scholarly Journal &amp; Academy</span></span></a></div><nav class="hidden xl:flex items-center gap-space-lg" data-active-classes="text-primary font-bold decoration-primary"><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="chapters" href="#">Chapters</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="course-syllabus" href="#">Course Syllabus</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="tutors" href="#">Tutors</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="live-sessions" href="#">Live Sessions</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="journal" href="#">Journal</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="field-notes" href="#">Field Notes</a></nav><div class="flex items-center gap-space-md"><button aria-label="Search Archive" class="p-space-xs text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center" type="button"><span class="material-symbols-outlined text-[20px]">search</span></button><a class="hidden sm:inline-block font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors underline underline-offset-4 decoration-outline-variant" data-path="sign-in" href="#">Sign In</a><a class="hidden md:inline-flex items-center justify-center px-space-md py-space-sm bg-primary-container text-on-primary-container hover:bg-primary font-body-sm text-body-sm font-medium rounded-lg transition-colors shadow-sm" data-path="enrollment" href="#">Start Free Chapter</a><div class="flex items-center gap-space-xs pl-space-xs"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1V4T4WbfHc4VeEP-Z5MLNrYCSxoftSKtdx942cdgJl_NR_kekXHyYvireaX3xUJnjrYc7zGlgkasgT3m2UjT0TKPD6tR6gZXFdCx166KOW_DQOryJ-vZothL5eMFZIDfDbCiazRw1fkHdKy2r_e6S_nL8CzdXLyqzSM6xYin5VrWkfJhIVmpIbE3cw2563f3QJeQF-jacXzOtW-1eulTInvt_Z5VGyKJsXXaY5I3d-v"/></div></div></div></header><main class="w-full pt-28 bg-surface min-h-[calc(100vh-28rem)]"><div class="flex flex-col w-full">
+<!-- Top Learning Bar / Sub-header -->
+<aside aria-label="Course navigation and reading tools" class="w-full bg-surface-container-low shadow-sm">
+<div class="max-w-[1720px] mx-auto px-margin-mobile lg:px-margin py-space-sm flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
+<!-- Breadcrumbs & Chapter Tracker -->
+<div class="flex flex-wrap items-center gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
+<a class="hover:text-primary transition-colors" href="#">Course Catalog</a>
+<span class="text-outline-variant">/</span>
+<a class="hover:text-primary transition-colors" href="#">Agronomy &amp; Extraction</a>
+<span class="text-outline-variant">/</span>
+<span class="font-medium text-on-surface">Chapter IV: Brewing</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary font-medium">Topic 1: Ratios &amp; extraction</span>
+<span class="hidden xl:inline-block text-outline-variant">|</span>
+<span class="hidden xl:inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-label-caps uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+          Topic 1 of 3
+        </span>
+</div>
+<!-- Quick Action Tools & Overall Progress Ring -->
+<div class="flex items-center flex-wrap gap-space-md justify-between md:justify-end">
+<!-- Narration pill button -->
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface hover:bg-surface-container text-on-surface transition-all shadow-sm group" id="quick-listen-trigger">
+<span class="material-symbols-outlined text-[18px] text-primary group-hover:scale-110 transition-transform">headphones</span>
+<span class="font-body-sm text-body-sm font-medium">Listen to article</span>
+<span class="font-label-caps text-label-caps text-tertiary">08:20 min</span>
+</button>
+<!-- Typography scaler -->
+<div class="flex items-center bg-surface rounded-lg p-0.5 shadow-sm">
+<button aria-label="Decrease text size" class="px-2 py-1 hover:text-primary font-body-sm text-body-sm transition-colors text-on-surface-variant" id="font-decrease">A−</button>
+<span class="text-outline-variant text-xs">/</span>
+<button aria-label="Increase text size" class="px-2 py-1 hover:text-primary font-body-sm text-body-sm transition-colors text-on-surface-variant" id="font-increase">A+</button>
+</div>
+<!-- Focus reader mode toggle -->
+<button class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-surface text-on-surface-variant hover:text-on-surface transition-colors" id="reader-mode-toggle" title="Toggle Clean Focus Mode">
+<span class="material-symbols-outlined text-[18px]">auto_stories</span>
+<span class="hidden sm:inline font-body-sm text-body-sm">Focus Mode</span>
+</button>
+<!-- Linear / Radial progress metric -->
+<div class="flex items-center gap-space-xs pl-2">
+<div class="relative w-7 h-7 flex items-center justify-center">
+<svg class="w-7 h-7 -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-container-high" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="38, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<span class="absolute font-label-caps text-[9px] font-bold text-on-surface">38%</span>
+</div>
+<span class="hidden lg:inline font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">8 of 22 topics complete</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Three-Pane Architecture -->
+<section class="max-w-[1720px] mx-auto w-full px-margin-mobile lg:px-margin py-space-md">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- ================= LEFT COLUMN: Chapter Tree Sidebar ================= -->
+<nav aria-label="Course curriculum index" class="lg:col-span-3 bg-surface-container-low rounded-xl p-space-md shadow-sm transition-all duration-300" id="left-tree-pane">
+<!-- Sidebar Header -->
+<div class="flex items-start justify-between pb-space-sm mb-space-sm">
+<div>
+<span class="font-label-caps text-label-caps uppercase text-tertiary block tracking-widest">Academy Syllabus</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface leading-tight mt-0.5">The Coffee Atlas</h2>
+<p class="font-caption-editorial text-caption-editorial italic text-on-surface-variant">From Seed to Cup · Master Folio</p>
+</div>
+<span class="material-symbols-outlined text-tertiary text-[20px] pt-1">library_books</span>
+</div>
+<!-- Overall Linear Progress Bar -->
+<div class="bg-surface rounded-lg p-space-xs px-space-sm mb-space-md">
+<div class="flex justify-between items-center text-on-surface font-body-sm text-body-sm mb-1.5">
+<span class="font-medium">Curriculum Progress</span>
+<span class="font-semibold text-primary">38%</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full transition-all duration-500" style="width: 38%"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant block mt-1 tracking-wider">14 topics remaining</span>
+</div>
+<!-- Curriculum Chapter Tree -->
+<div class="space-y-space-sm font-body-sm text-body-sm" id="syllabus-accordion">
+<!-- Lesson I (Completed) -->
+<div class="bg-surface rounded-lg p-space-sm group">
+<div class="flex items-center justify-between cursor-pointer">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-secondary">check_circle</span>
+<span class="font-medium text-on-surface">I. Terroir &amp; Altitude</span>
+</div>
+<span class="font-label-caps text-[10px] text-secondary font-semibold uppercase">3/3</span>
+</div>
+</div>
+<!-- Lesson II (Completed) -->
+<div class="bg-surface rounded-lg p-space-sm group">
+<div class="flex items-center justify-between cursor-pointer">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-secondary">check_circle</span>
+<span class="font-medium text-on-surface">II. Anatomy &amp; Labour</span>
+</div>
+<span class="font-label-caps text-[10px] text-secondary font-semibold uppercase">4/4</span>
+</div>
+</div>
+<!-- Lesson III (Partially completed) -->
+<div class="bg-surface rounded-lg p-space-sm group">
+<div class="flex items-center justify-between cursor-pointer">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary">timelapse</span>
+<span class="font-medium text-on-surface">III. Roasting &amp; Curves</span>
+</div>
+<span class="font-label-caps text-[10px] text-on-surface-variant font-semibold uppercase">1/3</span>
+</div>
+</div>
+<!-- Lesson IV (CURRENT ACTIVE CHAPTER - EXPANDED) -->
+<div class="bg-surface-container rounded-lg p-space-sm shadow-sm space-y-space-xs">
+<div class="flex items-center justify-between text-on-surface pb-1">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-chapter text-label-chapter text-primary font-bold">IV.</span>
+<span class="font-medium text-on-surface font-headline-sm text-[16px]">Brewing &amp; Hydrodynamics</span>
+</div>
+<span class="px-1.5 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-caps text-[9px] uppercase tracking-wider font-bold">Active</span>
+</div>
+<!-- Active Sub-topics -->
+<div class="space-y-1.5 pl-3 pt-1">
+<!-- Topic 1 (Active) -->
+<a class="block p-2 rounded-lg bg-surface shadow-xs transition-all relative overflow-hidden group" href="#">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+<div class="flex items-start justify-between gap-2 pl-1">
+<div>
+<span class="font-label-caps text-label-caps text-primary uppercase block tracking-wider">Active Topic</span>
+<span class="font-medium text-on-surface group-hover:text-primary transition-colors block">1. Ratios &amp; extraction</span>
+<span class="font-caption-editorial text-caption-editorial italic text-on-surface-variant">RichText long-read · 18 min</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">article</span>
+</div>
+</a>
+<!-- Topic 2 -->
+<a class="block p-2 rounded-lg hover:bg-surface/70 transition-all group" href="#">
+<div class="flex items-start justify-between gap-2">
+<div>
+<span class="font-medium text-on-surface group-hover:text-primary transition-colors block">2. V60 Geometry &amp; Flow</span>
+<span class="font-caption-editorial text-caption-editorial italic text-on-surface-variant">Video Masterclass · 14 min</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-tertiary shrink-0 mt-0.5">play_circle</span>
+</div>
+</a>
+<!-- Topic 3 -->
+<a class="block p-2 rounded-lg hover:bg-surface/70 transition-all group" href="#">
+<div class="flex items-start justify-between gap-2">
+<div>
+<span class="font-medium text-on-surface group-hover:text-primary transition-colors block">3. Sieve Particle Analysis</span>
+<span class="font-caption-editorial text-caption-editorial italic text-on-surface-variant">H5P Drag-Drop · 12 min</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-tertiary shrink-0 mt-0.5">extension</span>
+</div>
+</a>
+</div>
+</div>
+<!-- Lesson V (Locked) -->
+<div class="bg-surface/50 rounded-lg p-space-sm opacity-70 flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-tertiary">lock</span>
+<span class="font-medium text-on-surface-variant">V. Tasting &amp; SCA Lexicon</span>
+</div>
+<span class="font-label-caps text-[10px] text-tertiary uppercase">Locked</span>
+</div>
+<!-- Lesson VI (Locked) -->
+<div class="bg-surface/50 rounded-lg p-space-sm opacity-70 flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-tertiary">lock</span>
+<span class="font-medium text-on-surface-variant">VI. Synthesis Capstone</span>
+</div>
+<span class="font-label-caps text-[10px] text-tertiary uppercase">Locked</span>
+</div>
+</div>
+<!-- Tutor Assistance Box -->
+<div class="mt-space-md p-space-sm bg-surface rounded-lg">
+<div class="flex items-center gap-space-xs mb-1">
+<span class="material-symbols-outlined text-secondary text-[18px]">forum</span>
+<span class="font-label-caps text-label-caps uppercase text-on-surface tracking-wider font-semibold">Tutor Desk</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2 leading-relaxed">
+            Stuck on extraction math? Ask Tomasz Wierzba or Inés Duarte in the forum.
+          </p>
+<a class="inline-flex items-center gap-1 font-body-sm text-body-sm text-primary font-medium hover:underline" href="#">
+            Open Chapter IV Discussion →
+          </a>
+</div>
+</nav>
+<!-- ================= CENTER COLUMN: Main Editorial Content Canvas ================= -->
+<article class="lg:col-span-6 bg-surface-container-lowest rounded-xl p-space-md lg:p-space-xl shadow-sm" id="editorial-main-reader">
+<!-- Header Monograph Meta -->
+<header class="mb-space-lg">
+<div class="flex items-center gap-2 mb-2">
+<span class="font-label-chapter text-label-chapter uppercase text-primary tracking-widest font-semibold">Chapter IV · Science of Solubles</span>
+<span class="text-outline-variant">·</span>
+<span class="font-label-caps text-label-caps text-tertiary uppercase">Folio Reference 04.1</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface leading-tight mb-space-sm font-normal" id="reader-headline">
+            Ratios &amp; extraction: The Mathematical Geometry of Solubles
+          </h1>
+<div class="flex flex-wrap items-center gap-y-2 gap-x-space-md font-body-sm text-body-sm text-on-surface-variant pt-space-xs">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">person_edit</span>
+              Tomasz Wierzba, Agronomist
+            </span>
+<span>·</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-tertiary">schedule</span>
+              18 min directed study
+            </span>
+<span>·</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-label-caps uppercase tracking-wider">
+              SCA Golden Cup Standard
+            </span>
+</div>
+</header>
+<!-- Inline Audio Narration Player Bar -->
+<div class="bg-surface-container-low rounded-xl p-space-sm mb-space-lg shadow-inner flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<button aria-label="Play Narration" class="w-10 h-10 rounded-full bg-primary-container hover:bg-primary text-on-primary-container flex items-center justify-center transition-colors shadow-sm" id="inline-play-btn">
+<span class="material-symbols-outlined text-[24px]">play_arrow</span>
+</button>
+<div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface block">Listen to narrated monograph</span>
+<span class="font-caption-editorial text-caption-editorial italic text-on-surface-variant">Voice: Tomasz Wierzba · Full master audio</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-28 sm:w-36 bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 24%"></div>
+</div>
+<span class="font-label-caps text-label-caps text-tertiary">02:01 / 08:24</span>
+</div>
+</div>
+<!-- Editorial RichText Body -->
+<div class="space-y-space-md text-on-surface font-body-lg text-body-lg leading-relaxed" id="content-typography-target">
+<!-- Dropcap Paragraph -->
+<p class="first-letter:float-left first-letter:text-[68px] first-letter:leading-[58px] first-letter:pr-3 first-letter:pt-1 first-letter:font-headline-lg first-letter:text-primary">
+            In specialty coffee agronomy and sensory science, water is not a passive carrier but a relentless solvent. When water meets roasted coffee cells, it selectively dissolves chemical compounds in a strictly ordered chronological sequence: fruit acids and mineral salts rush forth within the opening thirty seconds, followed by sweet aromatic lipids and cellulose sugars, and finally—if contact prolongs unchecked—the astringent phenols and heavy wood chlorogenic acids that ruin balance.
+          </p>
+<p>
+            Understanding the physics of infusion requires reconciling two fundamental metrics: <strong>Total Dissolved Solids (TDS)</strong>, which denotes beverage strength or concentration, and <strong>Extraction Yield (EY%)</strong>, which computes the precise proportion of dry bean mass surrendered to the cup. Without both coordinates, brewing remains an unpredictable gamble rather than a repeatable scientific ritual.
+          </p>
+<!-- Archival Formula Callout Block (KaTeX styled) -->
+<div class="my-space-lg p-space-md lg:p-space-lg bg-surface-container-low rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-chapter text-label-chapter uppercase text-primary tracking-widest font-semibold">The Extraction Yield Equation</span>
+<span class="font-label-caps text-label-caps text-tertiary uppercase">SCA Technical Monograph IV</span>
+</div>
+<!-- Mathematical Presentation -->
+<div class="py-space-md text-center bg-surface-container-lowest rounded-lg p-space-md my-space-xs shadow-inner">
+<div class="font-headline-md text-headline-md text-on-surface font-serif italic tracking-wide">
+                EY% = <span class="inline-block px-2 text-primary font-normal">TDS% × Beverage Mass (g)</span> <span class="text-outline-variant font-light">/</span> <span class="inline-block px-2 text-secondary font-normal">Dry Coffee Dose (g)</span>
+</div>
+</div>
+<!-- Annotation Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-sm pt-space-sm font-body-sm text-body-sm text-on-surface-variant">
+<div class="p-2 rounded bg-surface">
+<span class="font-semibold text-primary block">TDS%</span>
+<span>Refractometer optical index measured strictly at 20°C calibrated with distilled baseline.</span>
+</div>
+<div class="p-2 rounded bg-surface">
+<span class="font-semibold text-on-surface block">Beverage Mass</span>
+<span>Total liquid yield accumulated on precision scale (±0.1g) in the decanting carafe.</span>
+</div>
+<div class="p-2 rounded bg-surface">
+<span class="font-semibold text-secondary block">Dry Coffee Dose</span>
+<span>Initial dry ground grist weighed prior to pre-infusion bloom cycle (±0.05g).</span>
+</div>
+</div>
+<div class="mt-space-sm flex items-center justify-between pt-2">
+<span class="font-label-caps text-label-caps uppercase text-secondary font-semibold">Target Golden Cup Window: 18.0% – 22.0% EY</span>
+<span class="font-caption-editorial text-caption-editorial italic text-tertiary">Ideal TDS range: 1.25% – 1.45%</span>
+</div>
+</div>
+<!-- Editorial Pull Quote -->
+<figure class="my-space-xl py-space-sm text-center">
+<div class="w-12 h-0.5 bg-primary mx-auto mb-space-sm"></div>
+<blockquote class="font-editorial-quote text-editorial-quote italic text-on-surface max-w-xl mx-auto px-4">
+              “Extraction is not a binary switch between raw and cooked; it is a graded chromatographic journey of acids, aromatics, and cellulose sugars.”
+            </blockquote>
+<figcaption class="mt-space-xs font-label-caps text-label-caps uppercase tracking-widest text-tertiary">
+              — Tomasz Wierzba · Sensory Faculty Chair
+            </figcaption>
+<div class="w-12 h-0.5 bg-primary mx-auto mt-space-sm"></div>
+</figure>
+<p>
+            When we brew with high-elevation Geisha or washed Ethiopian Heirloom varietals grown at 2,100 meters, cellular density demands elevated thermal kinetic energy. The pore matrix of dense seeds releases its soluble content with reluctance. A brew that finishes at only 15.5% extraction yield leaves delicate malic acids unbalanced by sweetness, perceived by the palate as aggressive, salty lime peel.
+          </p>
+<!-- Rich Photographic Plate -->
+<div class="my-space-lg rounded-xl overflow-hidden bg-surface-container-low p-2 shadow-sm">
+<div class="bg-surface-container-lowest p-2 rounded-lg">
+<img alt="Digital refractometer and laboratory pour-over apparatus" class="w-full h-80 object-cover rounded shadow-xs" data-alt="High precision laboratory coffee refractometer beside an optical prism and clear glass V60 dripper resting on an archival wooden table with warm amber natural window light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo2FAYut-XjW9ZvnUzNRpH83jgAVXAylOTpT3iSCXkl8xdG5NmXP7cddqHcYdsVjEYP40iQ3_RXRIoQerWJjqWxR-C5YHIQN9CqIJCC1XS_dE_tY2e6yD9SgjZhOk1MQcWVxLq04Vff3DrMpjiiTJpJ_YbpCxGdwantOya4ct70Iqy9jFCJL-ZRAqGRI1f5uXfjD7OYJ-o5XUTGV1tb5fubiictmrgDedRxVohM8Y"/>
+<div class="mt-2.5 px-2 flex flex-col sm:flex-row sm:items-center justify-between font-caption-editorial text-caption-editorial italic text-on-surface-variant gap-1">
+<span>Plate IV.A: Optical Brix refractometer calibration against a 1:16.6 extraction matrix.</span>
+<span class="font-label-caps text-label-caps uppercase not-italic text-tertiary">Terroir Research Station, Boquete</span>
+</div>
+</div>
+</div>
+<!-- Extraction Yield vs Sensory Profile Table -->
+<div class="my-space-lg overflow-x-auto">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-space-sm">Extraction Yield vs. Sensory Profile</h3>
+<table class="w-full text-left font-body-sm text-body-sm bg-surface-container-low rounded-xl overflow-hidden shadow-xs">
+<thead class="bg-surface-container font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">
+<tr>
+<th class="p-space-sm">Yield Window</th>
+<th class="p-space-sm">Classification</th>
+<th class="p-space-sm">Tasting Profile</th>
+<th class="p-space-sm">Remedial Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<tr class="hover:bg-surface-container-high/40 transition-colors">
+<td class="p-space-sm font-semibold text-primary">14.0% – 17.5%</td>
+<td class="p-space-sm font-medium">Under-extracted</td>
+<td class="p-space-sm text-on-surface-variant">Sour, unbalanced sharpness, thin mouthfeel, pronounced vegetal saltiness.</td>
+<td class="p-space-sm">Finer grind, elevate brew temp to 94°C, extend contact time.</td>
+</tr>
+<tr class="bg-secondary-container/20 hover:bg-secondary-container/30 transition-colors font-medium">
+<td class="p-space-sm font-bold text-secondary">18.0% – 22.0%</td>
+<td class="p-space-sm font-bold text-secondary">Optimal (Golden Cup)</td>
+<td class="p-space-sm text-on-surface">Sweet panela finish, ripe stone fruit acidity, round body, lingering floral resonance.</td>
+<td class="p-space-sm text-secondary font-semibold">Maintain parameters; log grind micron size.</td>
+</tr>
+<tr class="hover:bg-surface-container-high/40 transition-colors">
+<td class="p-space-sm font-semibold text-on-surface-variant">22.5% – 28.0%</td>
+<td class="p-space-sm font-medium">Over-extracted</td>
+<td class="p-space-sm text-on-surface-variant">Astringent, mouth-drying bitterness, hollow center, persistent burnt woody tannin.</td>
+<td class="p-space-sm">Coarsen grind setting, reduce agitation pours, lower water to 90°C.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Downloadable Companion Card -->
+<div class="my-space-lg p-space-md bg-surface-container rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-space-md shadow-sm">
+<div class="flex items-start gap-space-sm">
+<div class="w-12 h-12 rounded-lg bg-surface flex items-center justify-center text-primary shrink-0 shadow-xs">
+<span class="material-symbols-outlined text-[28px]">download_for_offline</span>
+</div>
+<div>
+<span class="font-headline-sm text-[18px] text-on-surface block font-medium">Download Extraction Log Sheet &amp; Chart</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Archival printable V60 mathematical grid with temperature decay models (PDF · 2.4 MB)</p>
+</div>
+</div>
+<a class="px-space-md py-space-sm bg-primary text-on-primary hover:bg-primary-container rounded-lg font-body-sm text-body-sm font-medium transition-colors shadow-sm whitespace-nowrap text-center" href="#">
+              Download PDF
+            </a>
+</div>
+</div>
+</article>
+<!-- ================= RIGHT COLUMN: Collapsible Study Companion ================= -->
+<aside aria-label="Study tools and personal notes" class="lg:col-span-3 bg-surface-container-low rounded-xl p-space-md shadow-sm space-y-space-md" id="study-companion-pane">
+<!-- Companion Navigation Tabs -->
+<div class="flex items-center justify-between bg-surface rounded-lg p-1 shadow-xs">
+<button class="flex-1 py-1 px-2 rounded font-label-caps text-label-caps uppercase font-bold bg-primary text-on-primary transition-all text-center">
+            Notes (3)
+          </button>
+<button class="flex-1 py-1 px-2 rounded font-label-caps text-label-caps uppercase text-on-surface-variant hover:text-on-surface transition-all text-center">
+            Bookmarks
+          </button>
+<button class="flex-1 py-1 px-2 rounded font-label-caps text-label-caps uppercase text-on-surface-variant hover:text-on-surface transition-all text-center">
+            Files
+          </button>
+</div>
+<!-- Active View: My Notes -->
+<div class="space-y-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-tertiary tracking-wider font-semibold">Margin Annotations</span>
+<span class="font-caption-editorial text-caption-editorial italic text-on-surface-variant">Topic 1 Notes</span>
+</div>
+<!-- New Note Quick Box -->
+<div class="bg-surface rounded-lg p-space-sm shadow-xs space-y-2">
+<textarea class="w-full bg-surface-container-lowest p-2 rounded font-body-sm text-body-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-1 focus:ring-primary resize-none" id="quick-note-input" placeholder="Jot down a brew note or calculation..." rows="3"></textarea>
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-[10px] text-tertiary">Anchor to § Formula</span>
+<button class="px-3 py-1 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-body-sm text-body-sm font-medium rounded transition-colors" id="save-note-btn">
+                Save Note
+              </button>
+</div>
+</div>
+<!-- Saved Notes List -->
+<div class="space-y-2" id="saved-notes-list">
+<div class="bg-surface rounded-lg p-space-sm shadow-xs space-y-1">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-[10px] text-primary uppercase font-bold">Folio Note · § Ratios</span>
+<button aria-label="Delete note" class="text-tertiary hover:text-error text-xs"><span class="material-symbols-outlined text-[14px]">delete</span></button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface">
+                “Tomasz recommends 1:16.6 ratio for high-elevation Geisha to preserve floral jasmine terpenes.”
+              </p>
+<span class="font-caption-editorial text-[11px] italic text-tertiary block">Added 12 Nov, 10:45 AM</span>
+</div>
+<div class="bg-surface rounded-lg p-space-sm shadow-xs space-y-1">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-[10px] text-primary uppercase font-bold">Folio Note · § Metrology</span>
+<button aria-label="Delete note" class="text-tertiary hover:text-error text-xs"><span class="material-symbols-outlined text-[14px]">delete</span></button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface">
+                “Remember TDS reading must calibrate after sample cools below 25°C to avoid thermal optical refraction error.”
+              </p>
+<span class="font-caption-editorial text-[11px] italic text-tertiary block">Added Yesterday, 16:20</span>
+</div>
+</div>
+</div>
+<!-- Archival Downloads Subsection Preview -->
+<div class="pt-space-sm space-y-space-xs">
+<span class="font-label-caps text-label-caps uppercase text-tertiary tracking-wider font-semibold block">Chapter Resources</span>
+<div class="space-y-1.5 font-body-sm text-body-sm">
+<a class="p-2 rounded bg-surface hover:bg-surface-container flex items-center justify-between group transition-colors shadow-xs" href="#">
+<span class="flex items-center gap-2 text-on-surface group-hover:text-primary">
+<span class="material-symbols-outlined text-[18px] text-tertiary">picture_as_pdf</span>
+<span>Roaster's Logbook</span>
+</span>
+<span class="font-label-caps text-[10px] text-tertiary uppercase">8 pp</span>
+</a>
+<a class="p-2 rounded bg-surface hover:bg-surface-container flex items-center justify-between group transition-colors shadow-xs" href="#">
+<span class="flex items-center gap-2 text-on-surface group-hover:text-primary">
+<span class="material-symbols-outlined text-[18px] text-tertiary">picture_as_pdf</span>
+<span>SCA Cupping Form</span>
+</span>
+<span class="font-label-caps text-[10px] text-tertiary uppercase">Chart</span>
+</a>
+<a class="p-2 rounded bg-surface hover:bg-surface-container flex items-center justify-between group transition-colors shadow-xs" href="#">
+<span class="flex items-center gap-2 text-on-surface group-hover:text-primary">
+<span class="material-symbols-outlined text-[18px] text-tertiary">picture_as_pdf</span>
+<span>V60 Ratio Cheat Sheet</span>
+</span>
+<span class="font-label-caps text-[10px] text-tertiary uppercase">Print A4</span>
+</a>
+</div>
+</div>
+<!-- Faculty Office Hours Card -->
+<div class="p-space-sm bg-surface rounded-lg space-y-2">
+<div class="flex items-center gap-2">
+<img alt="Ines Duarte Tutor" class="w-8 h-8 rounded-full object-cover" data-alt="Portrait of Ines Duarte agronomy faculty member in a botanical laboratory holding a cupping spoon." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqODTYLq3_tpAjnRxQkuJWlHj3EWWccPLLlF8Ilb2FBZYaX8yLYr0uvWYY6zr3CTvF4T3yH7QSFwKVdXMNKRmYUIwMPQBKJIzvQgWLAQriP668Il6eoUEY0tdR2fXVUvKrEeRUvXLsQM0uMMcV5E3eVg5XkBz82J-pzZjwVgxAT5f_cr3lmypEq9LGVVhMq2gYdlvDA1JzW5o4C8ZbbPzKw9B4IjVg2-2sooVjyYQ"/>
+<div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface block leading-tight">Inés Duarte</span>
+<span class="font-caption-editorial text-[11px] italic text-secondary">Available for Chapter IV critique</span>
+</div>
+</div>
+<button class="w-full py-1.5 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-body-sm text-body-sm font-medium rounded transition-colors text-center block">
+            Book Cupping Consultation
+          </button>
+</div>
+</aside>
+</div>
+</section>
+<!-- ================= FORMAT VARIANT SHOWCASE STRIP / GALLERY ================= -->
+<section class="max-w-[1720px] mx-auto w-full px-margin-mobile lg:px-margin mt-space-lg mb-space-xl">
+<div class="bg-surface-container-low rounded-xl p-space-md lg:p-space-lg shadow-sm">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pb-space-sm mb-space-md">
+<div>
+<span class="font-label-chapter text-label-chapter uppercase text-primary tracking-widest font-semibold">Learning Engine Modalities</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface leading-tight mt-0.5">Topic Formats Supported in This Player</h2>
+<p class="font-caption-editorial text-caption-editorial italic text-on-surface-variant">Unified editorial canvas adapting seamlessly to multiple pedagogical media.</p>
+</div>
+<span class="px-2.5 py-1 rounded bg-surface font-label-caps text-label-caps uppercase text-secondary font-bold tracking-wider shrink-0 shadow-xs">
+          8 Engine Modalities Ready
+        </span>
+</div>
+<!-- Grid of Modality Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- 1. Video Topic Format -->
+<div class="bg-surface rounded-xl p-space-sm shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow group">
+<div class="space-y-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-primary font-bold">4K Video Player</span>
+<span class="material-symbols-outlined text-primary text-[18px]">play_circle</span>
+</div>
+<div class="h-28 rounded-lg bg-surface-container flex items-center justify-center relative overflow-hidden">
+<img alt="Video Player Preview" class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform" data-alt="Dark aesthetic video player preview showing boiling kettle pouring stream into ceramic V60 dripper with timestamp overlays." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0eaw--buGw3mzVoKhGYxjDIOL4Hy-TMgUBuzcbwBDHDQfrQ4nc0XI4LYf9bX4qp6hWlZBx4LF-tlJ58GaCAsoI3ortwH56RNJnhDyRd-mm1iYdRoWmltjF_1VF7VAPoi66UthUpxMfmzTYEwNqubVFs-YUOqjT52JBqWX39ljBSHIncu2GWAi9bchtHk28s937U8TzYeWY-uSLLuYiIGLbL9Ar8Lg0lRapF1A1oI"/>
+<div class="absolute inset-0 bg-inverse-surface/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-[32px]">play_arrow</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-[16px] text-on-surface font-medium leading-tight">Interactive Chapter Markers</h3>
+<p class="font-body-sm text-[12px] text-on-surface-variant leading-snug">Synced live transcripts, variable 0.5×–2× speed, and timestamped study anchors.</p>
+</div>
+<span class="font-label-caps text-[10px] text-tertiary uppercase mt-2 pt-2 block">Format: MP4 / HLS Adaptive</span>
+</div>
+<!-- 2. Audio Topic Format -->
+<div class="bg-surface rounded-xl p-space-sm shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow group">
+<div class="space-y-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-secondary font-bold">Audio Monograph</span>
+<span class="material-symbols-outlined text-secondary text-[18px]">graphic_eq</span>
+</div>
+<div class="h-28 rounded-lg bg-surface-container p-3 flex flex-col justify-center items-center gap-2">
+<div class="w-full flex items-center justify-between gap-1 h-8 px-2">
+<span class="w-1 bg-secondary h-4 rounded-full"></span>
+<span class="w-1 bg-secondary h-7 rounded-full"></span>
+<span class="w-1 bg-secondary h-3 rounded-full"></span>
+<span class="w-1 bg-secondary h-8 rounded-full"></span>
+<span class="w-1 bg-secondary h-6 rounded-full"></span>
+<span class="w-1 bg-secondary h-4 rounded-full"></span>
+<span class="w-1 bg-secondary h-7 rounded-full"></span>
+<span class="w-1 bg-secondary h-2 rounded-full"></span>
+</div>
+<span class="font-caption-editorial text-[11px] italic text-on-surface-variant">Ambient Farmstead Soundscapes</span>
+</div>
+<h3 class="font-headline-sm text-[16px] text-on-surface font-medium leading-tight">Waveform &amp; Field Sound</h3>
+<p class="font-body-sm text-[12px] text-on-surface-variant leading-snug">Binaural recordings from Ethiopian washing stations with read-along text.</p>
+</div>
+<span class="font-label-caps text-[10px] text-tertiary uppercase mt-2 pt-2 block">Format: Master Lossless Audio</span>
+</div>
+<!-- 3. Image Topic Format -->
+<div class="bg-surface rounded-xl p-space-sm shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow group">
+<div class="space-y-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-tertiary font-bold">Botanical Anatomy</span>
+<span class="material-symbols-outlined text-tertiary text-[18px]">zoom_in</span>
+</div>
+<div class="h-28 rounded-lg bg-surface-container relative overflow-hidden">
+<img alt="Botanical Anatomy Chart" class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform" data-alt="High resolution botanical cross-section illustration of Coffea Arabica cherry showing endosperm parchment silver skin and mucilage layers." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD38_XC6hD7ABzspdyG7zNQd5g4Y12_ng95SM2PEute3lPsOLrlJmdVbaODDVhnv0cg_XvDn-YXoARdz8TyjqUoomMx3tBeV4_mCazlgjR2Apugjm_7rmz--x90R7lFPKkbAOzDwuo7_eBpMUTh0EEAUe6mf8skL7WGQ750yVzMX2MxLlIgXugJDjPfIDu2VmC0vhUD4tVAKrMg1gmSbcFkcuBIcXrTVqas6fme_yU"/>
+<div class="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-surface/90 font-label-caps text-[9px] uppercase font-bold text-on-surface">100MP Zoom</div>
+</div>
+<h3 class="font-headline-sm text-[16px] text-on-surface font-medium leading-tight">Deep-Zoom Anatomy Chart</h3>
+<p class="font-body-sm text-[12px] text-on-surface-variant leading-snug">Interactive loupe magnification examining cellular cherry wall structures.</p>
+</div>
+<span class="font-label-caps text-[10px] text-tertiary uppercase mt-2 pt-2 block">Format: OpenSeadragon Tiled</span>
+</div>
+<!-- 4. PDF Topic Format -->
+<div class="bg-surface rounded-xl p-space-sm shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow group">
+<div class="space-y-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant font-bold">Archival PDF Reader</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">menu_book</span>
+</div>
+<div class="h-28 rounded-lg bg-surface-container flex flex-col items-center justify-center p-2 text-center">
+<span class="font-serif italic text-primary text-xl font-bold">Folio 1894</span>
+<span class="font-label-caps text-[10px] text-tertiary mt-1">Side-by-side Folio Pagination</span>
+</div>
+<h3 class="font-headline-sm text-[16px] text-on-surface font-medium leading-tight">Embedded Document Reader</h3>
+<p class="font-body-sm text-[12px] text-on-surface-variant leading-snug">Turn-of-the-century agricultural papers rendered in crisp vector typography.</p>
+</div>
+<span class="font-label-caps text-[10px] text-tertiary uppercase mt-2 pt-2 block">Format: PDF / Print Replica</span>
+</div>
+<!-- 5. Embed / OEmbed Topic Format -->
+<div class="bg-surface rounded-xl p-space-sm shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow group">
+<div class="space-y-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-secondary font-bold">360° Satellite / Embed</span>
+<span class="material-symbols-outlined text-secondary text-[18px]">explore</span>
+</div>
+<div class="h-28 rounded-lg bg-surface-container relative overflow-hidden" data-location="Boquete, Chiriqui, Panama" style="">
+<div class="absolute inset-0 bg-surface-container-high/60 flex items-center justify-center">
+<span class="px-2 py-1 rounded bg-surface/90 text-on-surface font-label-caps text-[10px] uppercase font-bold">Terroir Topography</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-[16px] text-on-surface font-medium leading-tight">Aerial Farmstead Tour</h3>
+<p class="font-body-sm text-[12px] text-on-surface-variant leading-snug">Direct geographic terrain inspection of shade canopies and volcanic hillsides.</p>
+</div>
+<span class="font-label-caps text-[10px] text-tertiary uppercase mt-2 pt-2 block">Format: Interactive WebGL Embed</span>
+</div>
+<!-- 6. Interactive H5P Topic Format -->
+<div class="bg-surface rounded-xl p-space-sm shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow group">
+<div class="space-y-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-primary font-bold">Interactive H5P</span>
+<span class="material-symbols-outlined text-primary text-[18px]">drag_indicator</span>
+</div>
+<div class="h-28 rounded-lg bg-surface-container p-2 flex flex-col justify-center gap-1.5">
+<div class="flex items-center justify-between px-2 py-1 bg-surface rounded text-[11px] text-on-surface">
+<span>Micron Sieve 400μm</span>
+<span class="text-secondary font-bold">✓ Matched</span>
+</div>
+<div class="flex items-center justify-between px-2 py-1 bg-surface rounded text-[11px] text-on-surface">
+<span>Fine Sediment 100μm</span>
+<span class="text-tertiary font-bold">Drop here</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-[16px] text-on-surface font-medium leading-tight">Drag-Drop Particle Lab</h3>
+<p class="font-body-sm text-[12px] text-on-surface-variant leading-snug">Hands-on calibration exercises with immediate scoring and feedback loops.</p>
+</div>
+<span class="font-label-caps text-[10px] text-tertiary uppercase mt-2 pt-2 block">Format: H5P Interactive Modality</span>
+</div>
+<!-- 7. SCORM Topic Format -->
+<div class="bg-surface rounded-xl p-space-sm shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow group">
+<div class="space-y-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-on-surface font-bold">SCORM Sandbox</span>
+<span class="material-symbols-outlined text-on-surface text-[18px]">tune</span>
+</div>
+<div class="h-28 rounded-lg bg-inverse-surface text-inverse-on-surface p-2.5 flex flex-col justify-between font-mono text-[10px]">
+<div class="flex justify-between">
+<span>DRUM_TEMP: 204°C</span>
+<span class="text-primary-fixed">ROR: 8.2°/m</span>
+</div>
+<div class="w-full bg-tertiary h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 72%"></div>
+</div>
+<div class="flex justify-between text-outline-variant">
+<span>FIRST CRACK: +01:14</span>
+<span>STATUS: ROASTING</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-[16px] text-on-surface font-medium leading-tight">Roaster HUD Simulator</h3>
+<p class="font-body-sm text-[12px] text-on-surface-variant leading-snug">State-machine packaging for thermodynamics simulations with SCORM 2004 state tracking.</p>
+</div>
+<span class="font-label-caps text-[10px] text-tertiary uppercase mt-2 pt-2 block">Format: SCORM 2004 4th Ed</span>
+</div>
+<!-- 8. Tracked cmi5 Activity Format -->
+<div class="bg-surface rounded-xl p-space-sm shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow group">
+<div class="space-y-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-secondary font-bold">Tracked cmi5</span>
+<span class="material-symbols-outlined text-secondary text-[18px]">sync_alt</span>
+</div>
+<div class="h-28 rounded-lg bg-surface-container p-2.5 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-[9px] uppercase bg-secondary-container text-on-secondary-container px-1.5 py-0.5 rounded font-bold">xAPI Connected</span>
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+</div>
+<div>
+<span class="font-body-sm text-[12px] font-semibold text-on-surface block">Cupping Protocol 101</span>
+<span class="font-label-caps text-[10px] text-tertiary">Telemetry Sync: 65% completed</span>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full overflow-hidden">
+<div class="bg-secondary h-full" style="width: 65%"></div>
+</div>
+</div>
+<h3 class="font-headline-sm text-[16px] text-on-surface font-medium leading-tight">Guided Protocol Launch</h3>
+<p class="font-body-sm text-[12px] text-on-surface-variant leading-snug">Real-time sensory assessment evaluation sending statements to Learning Record Store.</p>
+</div>
+<span class="font-label-caps text-[10px] text-tertiary uppercase mt-2 pt-2 block">Format: cmi5 / xAPI Protocol</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ================= BOTTOM PERSISTENT NAVIGATION COMMAND BAR ================= -->
+<footer aria-label="Lesson completion controls" class="sticky bottom-0 z-40 bg-surface/95 backdrop-blur-md shadow-[0_-4px_16px_rgba(38,25,16,0.06)]">
+<div class="max-w-[1720px] mx-auto px-margin-mobile lg:px-margin py-space-sm flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+<!-- Previous Action -->
+<a class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform">arrow_back</span>
+<span class="flex flex-col text-left">
+<span class="font-label-caps text-[10px] uppercase text-tertiary">Previous Lesson</span>
+<span class="font-medium text-on-surface group-hover:text-primary">Roast Simulator (SCORM)</span>
+</span>
+</a>
+<!-- Central Completion Stamp Trigger -->
+<div class="flex items-center gap-space-sm">
+<button class="flex items-center gap-2 px-space-lg py-2.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary-container font-body-md text-body-md font-semibold transition-all shadow-md hover:shadow-lg active:scale-95" id="mark-complete-btn">
+<span class="material-symbols-outlined text-[20px]" id="completion-icon">check</span>
+<span id="completion-text">Mark Topic as Complete &amp; Continue</span>
+</button>
+</div>
+<!-- Next Action & Shortcuts hint -->
+<div class="flex items-center gap-space-md">
+<div class="hidden xl:flex flex-col text-right font-label-caps text-[10px] text-tertiary">
+<span>Keyboard shortcuts</span>
+<span><kbd class="px-1 bg-surface-container rounded">⌘</kbd> + <kbd class="px-1 bg-surface-container rounded">Enter</kbd> to complete</span>
+</div>
+<a class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors group" href="#">
+<span class="flex flex-col text-right">
+<span class="font-label-caps text-[10px] uppercase text-tertiary">Next Topic</span>
+<span class="font-medium text-on-surface group-hover:text-primary">Pour-Over Masterclass (Video)</span>
+</span>
+<span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+</footer>
+<!-- Vanilla Client Interactivity Scripts -->
+<script>
+    (function initLessonPlayer() {
+      // Font Sizing Control
+      const contentTarget = document.getElementById('content-typography-target');
+      const fontIncBtn = document.getElementById('font-increase');
+      const fontDecBtn = document.getElementById('font-decrease');
+      let currentScale = 1;
+
+      if (fontIncBtn && fontDecBtn && contentTarget) {
+        fontIncBtn.addEventListener('click', () => {
+          if (currentScale < 1.25) {
+            currentScale += 0.08;
+            contentTarget.style.fontSize = (18 * currentScale) + 'px';
+            contentTarget.style.lineHeight = (30 * currentScale) + 'px';
+          }
+        });
+        fontDecBtn.addEventListener('click', () => {
+          if (currentScale > 0.85) {
+            currentScale -= 0.08;
+            contentTarget.style.fontSize = (18 * currentScale) + 'px';
+            contentTarget.style.lineHeight = (30 * currentScale) + 'px';
+          }
+        });
+      }
+
+      // Reader Mode (Focus Mode)
+      const readerModeToggle = document.getElementById('reader-mode-toggle');
+      const leftPane = document.getElementById('left-tree-pane');
+      const rightPane = document.getElementById('study-companion-pane');
+      const mainReader = document.getElementById('editorial-main-reader');
+
+      if (readerModeToggle && leftPane && rightPane && mainReader) {
+        let focusActive = false;
+        readerModeToggle.addEventListener('click', () => {
+          focusActive = !focusActive;
+          if (focusActive) {
+            leftPane.classList.add('lg:hidden');
+            rightPane.classList.add('lg:hidden');
+            mainReader.classList.remove('lg:col-span-6');
+            mainReader.classList.add('lg:col-span-10', 'lg:col-start-2', 'max-w-4xl', 'mx-auto');
+            readerModeToggle.classList.add('bg-primary-fixed', 'text-on-primary-fixed');
+          } else {
+            leftPane.classList.remove('lg:hidden');
+            rightPane.classList.remove('lg:hidden');
+            mainReader.classList.remove('lg:col-span-10', 'lg:col-start-2', 'max-w-4xl', 'mx-auto');
+            mainReader.classList.add('lg:col-span-6');
+            readerModeToggle.classList.remove('bg-primary-fixed', 'text-on-primary-fixed');
+          }
+        });
+      }
+
+      // Audio narration simulated toggle
+      const playBtn = document.getElementById('inline-play-btn');
+      const quickListen = document.getElementById('quick-listen-trigger');
+      let isPlaying = false;
+
+      function togglePlayAudio() {
+        isPlaying = !isPlaying;
+        if (playBtn) {
+          const icon = playBtn.querySelector('.material-symbols-outlined');
+          if (icon) icon.textContent = isPlaying ? 'pause' : 'play_arrow';
+        }
+      }
+
+      if (playBtn) playBtn.addEventListener('click', togglePlayAudio);
+      if (quickListen) quickListen.addEventListener('click', togglePlayAudio);
+
+      // Note Saving Interaction
+      const saveNoteBtn = document.getElementById('save-note-btn');
+      const noteInput = document.getElementById('quick-note-input');
+      const notesList = document.getElementById('saved-notes-list');
+
+      if (saveNoteBtn && noteInput && notesList) {
+        saveNoteBtn.addEventListener('click', () => {
+          const val = noteInput.value.trim();
+          if (!val) return;
+
+          const newNoteCard = document.createElement('div');
+          newNoteCard.className = 'bg-surface rounded-lg p-space-sm shadow-xs space-y-1';
+          newNoteCard.innerHTML = `
+            <div class="flex items-center justify-between text-on-surface-variant">
+              <span class="font-label-caps text-[10px] text-primary uppercase font-bold">Folio Note · Just now</span>
+              <button aria-label="Delete note" class="text-tertiary hover:text-error text-xs"><span class="material-symbols-outlined text-[14px]">delete</span></button>
+            </div>
+            <p class="font-body-sm text-body-sm text-on-surface">${val}</p>
+            <span class="font-caption-editorial text-[11px] italic text-tertiary block">Added to Chapter IV Folio</span>
+          `;
+          notesList.prepend(newNoteCard);
+          noteInput.value = '';
+        });
+      }
+
+      // Mark Complete Trigger
+      const markBtn = document.getElementById('mark-complete-btn');
+      const completionIcon = document.getElementById('completion-icon');
+      const completionText = document.getElementById('completion-text');
+      let isDone = false;
+
+      function toggleComplete() {
+        isDone = !isDone;
+        if (isDone) {
+          markBtn.classList.remove('bg-primary-container', 'hover:bg-primary');
+          markBtn.classList.add('bg-secondary', 'hover:bg-secondary/90');
+          completionIcon.textContent = 'verified';
+          completionText.textContent = 'Completed · Proceed to V60 Geometry';
+        } else {
+          markBtn.classList.add('bg-primary-container', 'hover:bg-primary');
+          markBtn.classList.remove('bg-secondary', 'hover:bg-secondary/90');
+          completionIcon.textContent = 'check';
+          completionText.textContent = 'Mark Topic as Complete & Continue';
+        }
+      }
+
+      if (markBtn) markBtn.addEventListener('click', toggleComplete);
+
+      // Global Keyboard Shortcut: Cmd/Ctrl + Enter
+      document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+          e.preventDefault();
+          toggleComplete();
+        }
+      });
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface-container-low text-on-surface"><div class="max-w-7xl mx-auto px-margin-mobile lg:px-margin pt-space-xl pb-space-lg"><div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-space-xl"><div class="md:col-span-5 flex flex-col justify-between pr-0 lg:pr-space-lg"><div class="space-y-space-sm"><span class="font-label-chapter text-label-chapter uppercase text-primary tracking-widest block">Colophon &amp; Manifesto</span><h3 class="font-headline-sm text-headline-sm text-on-surface">The Coffee Atlas</h3><p class="font-editorial-quote text-editorial-quote italic text-on-surface-variant max-w-md">“Printed in spirit on archival digital paper, honoring the slow chemistry of harvest and roastery.”</p></div><div class="pt-space-md"><span class="font-label-caps text-label-caps uppercase text-tertiary block mb-space-xs">Curated Academic Rigor</span><p class="font-body-sm text-body-sm text-on-surface-variant">Accredited curriculum aligned with Specialty Coffee Association (SCA) tasting standards, terroir agronomy studies, and botanical conservation monographs.</p></div></div><div class="md:col-span-3 space-y-space-sm"><span class="font-label-caps text-label-caps uppercase text-tertiary block tracking-wider">Curriculum Index</span><ul class="space-y-space-xs font-body-sm text-body-sm"><li class="flex items-center gap-space-xs"><span class="text-primary font-label-chapter text-label-chapter">I.</span><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="chapters" href="#">All Chapters &amp; Field Guides</a></li><li class="flex items-center gap-space-xs"><span class="text-primary font-label-chapter text-label-chapter">II.</span><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="course-syllabus" href="#">Sensory Syllabus &amp; Tasting Wheels</a></li><li class="flex items-center gap-space-xs"><span class="text-primary font-label-chapter text-label-chapter">III.</span><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="live-sessions" href="#">Live Cupping &amp; Masterclasses</a></li><li class="flex items-center gap-space-xs"><span class="text-primary font-label-chapter text-label-chapter">IV.</span><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="tutors" href="#">Agronomists &amp; Roaster Faculty</a></li><li class="flex items-center gap-space-xs"><span class="text-primary font-label-chapter text-label-chapter">V.</span><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="journal" href="#">Monographs &amp; Sensory Research</a></li></ul></div><div class="md:col-span-4 space-y-space-md"><span class="font-label-caps text-label-caps uppercase text-tertiary block tracking-wider">Field Notes Newsletter</span><p class="font-body-sm text-body-sm text-on-surface-variant">Receive fortnightly dispatch dispatches on varietal genetics, harvest elevations, and brew ratio journals directly from our editorial desk.</p><form class="flex flex-col sm:flex-row gap-space-xs" onsubmit="return false;"><input class="flex-1 bg-surface-container-lowest px-space-md py-space-sm rounded text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="roaster@domain.com" type="email"/><button class="px-space-md py-space-sm bg-inverse-surface text-inverse-on-surface hover:bg-on-background font-body-sm text-body-sm font-medium rounded transition-colors" type="button">Subscribe</button></form><div class="flex items-center gap-space-sm text-on-surface-variant font-caption-editorial text-caption-editorial italic"><span class="material-symbols-outlined text-[18px] text-secondary">eco</span><span>Archival quarterly edition dispatched to 14,200 apprentices worldwide.</span></div></div></div><div class="pt-space-md flex flex-col md:flex-row items-center justify-between gap-space-md font-body-sm text-body-sm text-on-surface-variant"><div class="flex flex-wrap items-center gap-space-md"><span class="font-label-caps text-label-caps text-tertiary">© MMXXIV The Coffee Atlas Academy. All rights reserved.</span><span class="hidden md:inline text-outline-variant">·</span><a class="hover:text-on-surface transition-colors" data-path="terms-and-privacy" href="#">Terms of Academics</a><a class="hover:text-on-surface transition-colors" data-path="terms-and-privacy" href="#">Colophon &amp; Privacy</a><a class="hover:text-on-surface transition-colors" data-path="terms-and-privacy" href="#">Certification Criteria</a></div><div class="flex items-center gap-space-xs font-label-caps text-label-caps uppercase text-secondary"><span class="w-2 h-2 rounded-full bg-secondary-container"></span><span>Volume IV · Folio 894</span></div></div></div></footer></body></html>

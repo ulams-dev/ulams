@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 
 class InvalidJitsiFqnException extends Exception
 {
-    public function __construct($message = "", $code = 0, Throwable $previous = null)
+    public function __construct($message = "", $code = 0, ?Throwable $previous = null)
     {
         $message = $message ?: __('Invalid fqn');
         $code = $code ?: 422;

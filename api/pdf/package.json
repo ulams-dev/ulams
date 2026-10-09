@@ -1,0 +1,42 @@
+{
+    "name": "api-pdf",
+    "version": "0.1.0",
+    "private": true,
+    "description": "PDF renderer service (pdfme) for Ulams certificates and PDF templates",
+    "license": "MIT",
+    "type": "module",
+    "main": "dist/index.js",
+    "engines": {
+        "node": ">=22.12.0"
+    },
+    "scripts": {
+        "dev": "tsx watch src/index.ts",
+        "build": "tsc -p tsconfig.build.json",
+        "start": "node dist/index.js",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "typecheck": "tsc -p tsconfig.json --noEmit",
+        "lint": "eslint src test && tsc -p tsconfig.json --noEmit"
+    },
+    "dependencies": {
+        "@pdfme/common": "6.2.4",
+        "@pdfme/generator": "6.2.4",
+        "@pdfme/schemas": "6.2.4",
+        "express": "5.2.1",
+        "pino": "10.4.0",
+        "pino-http": "11.0.0"
+    },
+    "devDependencies": {
+        "@eslint/js": "9.39.5",
+        "@types/express": "5.0.6",
+        "@types/node": "22.20.5",
+        "@types/supertest": "7.2.1",
+        "eslint": "9.39.5",
+        "pdfjs-dist": "5.7.284",
+        "supertest": "7.3.1",
+        "tsx": "4.23.15",
+        "typescript": "5.9.3",
+        "typescript-eslint": "8.71.1",
+        "vitest": "5.0.3"
+    }
+}

@@ -4,7 +4,6 @@ import { API } from "@ulams/sdk";
 import { Input } from "../../../..";
 import { getUniqueId } from "../../../../utils/utils";
 import DefaultQuestionLayout from "../DefaultQuestionLayout";
-import styled, { withTheme } from "styled-components";
 
 interface Props extends API.QuizQuestion_ShortAnswers {
   onChange: React.ChangeEventHandler<HTMLInputElement>;
@@ -47,4 +46,4 @@ const ShortAnswers: React.FC<Props> = ({
   );
 };
 
-export default withTheme(styled(ShortAnswers)``);
+export default ShortAnswers;

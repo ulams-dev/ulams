@@ -1,16 +1,11 @@
 #!/bin/bash
-if [ -n "$MULTI_DOMAINS" ]; then
-  IFS=',' read -ra domains <<< "$MULTI_DOMAINS"
-  while [ true ]
-  do
-    # randomise domains for better distribution
-    domains=( $(shuf -e "${domains[@]}") )
-    for domain in "${domains[@]}"; do
-      # supervisor is set for stdout so it just make fuzz
-      # echo "queue work for $domain"
-      php /var/www/html/artisan queue:work --queue=broadcast --max-jobs=20 --stop-when-empty --domain=$domain
-    done
+# Broadcast queue workers for every tenant domain (see domains.sh), re-reading the domain
+# list on every pass.
+DIR="$(cd "$(dirname "$0")" && pwd)"
+while true; do
+  mapfile -t domains < <("$DIR/domains.sh" | shuf)
+  for domain in "${domains[@]}"; do
+    php "$DIR/artisan" queue:work --queue=broadcast --max-jobs=20 --stop-when-empty --domain="$domain"
   done
-else
-  echo "Environment variable MULTI_DOMAINS is empty. Running Horizon likely"
-fi
+  sleep "${QUEUE_IDLE_SLEEP:-3}"
+done

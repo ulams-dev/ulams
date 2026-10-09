@@ -1,18 +1,9 @@
 import Skeleton from "react-loading-skeleton";
-import styled from "styled-components";
-
-const SkeletonWrapper = styled.div`
-  .tutors {
-    display: flex;
-    > div {
-      margin-left: 10px;
-    }
-  }
-`;
+import styles from "@/components/Skeletons/Skeletons.module.css";
 
 const CoursePageContentSkeleton = () => {
   return (
-    <SkeletonWrapper>
+    <div>
       <Skeleton width={"20px"} style={{ marginBottom: "5px" }} />
       <Skeleton width={"40%"} height={37} style={{ marginBottom: "10px" }} />
       <Skeleton width={"40%"} style={{ marginBottom: "10px" }} />{" "}
@@ -24,7 +15,7 @@ const CoursePageContentSkeleton = () => {
         <Skeleton width={"100%"} count={5} style={{ marginBottom: "5px" }} />
       </div>
       <Skeleton width={"80px"} style={{ marginBottom: "20px" }} />
-      <div className="tutors">
+      <div className={`tutors ${styles.tutors}`}>
         <Skeleton circle width={"112px"} height={"112px"} />
         <div>
           <Skeleton width={"140px"} style={{ marginBottom: "20px" }} />
@@ -39,7 +30,7 @@ const CoursePageContentSkeleton = () => {
           count={8}
         />
       </div>
-    </SkeletonWrapper>
+    </div>
   );
 };
 

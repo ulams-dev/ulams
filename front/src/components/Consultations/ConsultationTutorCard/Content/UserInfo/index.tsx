@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import { API } from "@ulams/sdk";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { IconCircleError, IconSuccess } from "@/icons/index";
@@ -7,33 +6,7 @@ import { useContext } from "react";
 import { UlamsContext } from "@ulams/sdk/react";
 import { useTranslation } from "react-i18next";
 import Status, { StatusTypes } from "@/components/Common/Status";
-
-const ConsultationTutorCardContentUserInfoStyles = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  min-height: 65px;
-  margin-bottom: 5px;
-  .text {
-    margin: 0;
-    font-size: 14px;
-  }
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin: 10px 0px;
-  > p {
-    padding: 2px;
-    border-radius: ${({ theme }) => theme.radius};
-    cursor: pointer;
-
-    &:hover {
-      font-weight: bold;
-    }
-  }
-`;
+import styles from "./styles.module.css";
 
 interface Props {
   consultation: API.AppointmentTerm;
@@ -87,19 +60,19 @@ const ConsultationTutorCardContentUserInfo = ({ consultation }: Props) => {
   };
 
   return (
-    <ConsultationTutorCardContentUserInfoStyles>
+    <div className={styles.root}>
       {consultation.users.map((user) => (
         <div key={user.id}>
-          <Text className="text">
+          <Text className={styles.text}>
             {user.first_name} {user.last_name}
           </Text>
-          <Text className="text">{user.email}</Text>
+          <Text className={styles.text}>{user.email}</Text>
           {consultation.users.length > 1 && (
             <>
               {statuses[user.executed_status as StatusKey] &&
                 renderStatus(user.executed_status as StatusKey)}
               {
-                <ButtonWrapper>
+                <div className={styles.buttonWrapper}>
                   <IconText
                     icon={<IconSuccess />}
                     text={t("Confirm")}
@@ -122,7 +95,7 @@ const ConsultationTutorCardContentUserInfo = ({ consultation }: Props) => {
                       )
                     }
                   />
-                </ButtonWrapper>
+                </div>
               }
             </>
           )}
@@ -130,7 +103,7 @@ const ConsultationTutorCardContentUserInfo = ({ consultation }: Props) => {
           <hr />
         </div>
       ))}
-    </ConsultationTutorCardContentUserInfoStyles>
+    </div>
   );
 };
 

@@ -4,7 +4,7 @@ import { UlamsContext } from "@ulams/sdk/react/context";
 import routes from "@/components/Routes/routes";
 import usePrevious from "../../hooks/usePrevious";
 import Layout from "@/components/_App/Layout";
-import styled from "styled-components";
+import styles from "./StaticPage.module.css";
 import { MarkdownRenderer } from "@ulams/components/components/molecules/MarkdownRenderer/MarkdownRenderer";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { isMobile } from "react-device-detect";
@@ -15,18 +15,6 @@ import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";
 import ProfileAside from "@/components/Profile/ProfileAside";
 import StaticPageSkeleton from "@/components/Skeletons/StaticPage";
-
-const StyledStaticPage = styled.section`
-  background-color: ${({ theme }) => theme.gray4};
-  min-height: calc(100vh - 400px);
-  padding-top: ${isMobile ? "0px" : "57px"};
-  .user-main-sidebar {
-    margin-top: ${isMobile ? "60px" : 0};
-  }
-  .content {
-    margin-top: ${isMobile ? "30px" : 0};
-  }
-`;
 
 const StaticPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -78,7 +66,9 @@ const StaticPage = () => {
 
   return (
     <Layout metaTitle={page.value?.title}>
-      <StyledStaticPage>
+      <section
+        className={`${styles.page} ${isMobile ? styles.mobile : ""}`}
+      >
         <Container>
           {!isMobile && (
             <Breadcrumbs
@@ -94,7 +84,7 @@ const StaticPage = () => {
               <ProfileAside tabs={mainTabs || []} isProfile={false} />
             </Col>
             <Col offset={{ xs: 0, sm: 0, lg: 1 }} sm={12} lg={8}>
-              <div className="content">
+              <div className={styles.content}>
                 {page.loading ||
                 (!page.value && !page.error) ||
                 (page.value && page.value?.slug !== slug) ||
@@ -109,7 +99,7 @@ const StaticPage = () => {
             </Col>
           </Row>
         </Container>
-      </StyledStaticPage>
+      </section>
     </Layout>
   );
 };

@@ -4,11 +4,7 @@ import UserGroupSelect from '@/components/UserGroupSelect';
 import useModelFields from '@/hooks/useModelFields';
 import { roles as getRoles } from '@/services/ulams/roles';
 import { createUser, deleteUserAvatar, resendEmail, updateUser } from '@/services/ulams/user';
-import {
-  addUserToGroup,
-  removeUserFromGroup,
-  userGroupsTree,
-} from '@/services/ulams/user_groups';
+import { addUserToGroup, removeUserFromGroup, userGroupsTree } from '@/services/ulams/user_groups';
 import ProForm, { ProFormCheckbox, ProFormSwitch, ProFormText } from '@ant-design/pro-form';
 import { Button, Divider, Form, Row, Space, Spin, Typography, message } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';

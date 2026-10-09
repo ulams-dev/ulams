@@ -5,7 +5,8 @@
 services:
   h5p:
     build:
-      context: ./h5p
+      context: ../..
+      dockerfile: api/h5p/Dockerfile
     image: ulams/h5p:dev
     restart: unless-stopped
     networks:
@@ -18,6 +19,11 @@ services:
       PORT: 8080
       LOG_LEVEL: info
       PUBLIC_URL: http://api.localhost
+      # Multi-tenant: tenants from the Laravel env files (see README "Multi-tenancy")
+      TENANCY_MODE: env-files
+      ENV_DIR: /laravel
+      KEYS_DIR: /laravel/storage
+      PLATFORM_HOSTS: api.localhost
       # H5P_ABSOLUTE_URLS: "true"   # emit http://api.localhost/h5p/... in models
       CORS_ORIGINS: http://localhost:3000,http://localhost:8000,http://api.localhost
       DB_HOST: postgres
@@ -38,7 +44,7 @@ services:
       S3_BUCKET: ulams
       S3_PREFIX: h5p
       S3_FORCE_PATH_STYLE: "true"
-      JWT_PUBLIC_KEY_PATH: /keys/oauth-public.key
+      JWT_PUBLIC_KEY_PATH: /laravel/storage/oauth-public.key
       LARAVEL_API_URL: http://caddy
       LARAVEL_API_HOST: api.localhost
       H5P_INTERNAL_TOKEN: change-me-internal-token
@@ -46,7 +52,7 @@ services:
       H5P_MAX_TOTAL_SIZE_MB: 256
     volumes:
       - h5p_libraries:/data/libraries
-      - ./storage/oauth-public.key:/keys/oauth-public.key:ro
+      - ./:/laravel:ro
 
 volumes:
   h5p_libraries:

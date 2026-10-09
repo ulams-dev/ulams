@@ -11,7 +11,7 @@ import EventTutor from "@/components/Events/Event/EventTutor";
 import EventCompanies from "@/components/Events/Event/EventCompanies";
 import EventDescription from "@/components/Events/Event/EventDescription";
 
-import { EventContainerStyles } from "./EventContainerStyles";
+import styles from "./EventContainer.module.css";
 import EventAgenda from "@/components/Events/Event/EventAgenda";
 
 const EventContainer = () => {
@@ -21,7 +21,7 @@ const EventContainer = () => {
     return <Loader />;
   }
   return (
-    <EventContainerStyles>
+    <div className={styles.root}>
       <Row>
         <Col md={12} lg={9}>
           <EventBreadcrumbs />
@@ -35,7 +35,7 @@ const EventContainer = () => {
           <EventSidebar />
         </Col>
       </Row>
-    </EventContainerStyles>
+    </div>
   );
 };
 export default EventContainer;

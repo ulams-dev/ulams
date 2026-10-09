@@ -1,0 +1,47 @@
+@media (max-width: 1200px) {
+  .home {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 575px) {
+  .home {
+    margin-top: -30px;
+  }
+}
+
+.hero {
+  margin-bottom: 45px;
+  padding-top: 42px;
+}
+
+.hero h1 {
+  margin-top: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    margin-bottom: 40px;
+    padding-top: 100px;
+  }
+  .hero h1 {
+    font-size: 26px;
+  }
+}
+
+.newestCourses {
+  margin-bottom: 30px;
+}
+
+.wrapper :global(.header-wrapper) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 1200px) {
+  .wrapper :global(.header-wrapper) button {
+    display: none;
+  }
+}

@@ -13,14 +13,13 @@ use Ulams\Courses\Tests\Models\User;
 use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Testing\Fluent\AssertableJson;
+use PHPUnit\Framework\Attributes\Test;
 
 class CourseAnonymousApiTest extends TestCase
 {
     use DatabaseTransactions, CreatesUsers;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_anonymous_create_course()
     {
         $course = Course::factory()->make()->toArray();
@@ -34,9 +33,7 @@ class CourseAnonymousApiTest extends TestCase
         $this->response->assertStatus(401);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_anonymous_read_published_course()
     {
         $publishedCourse = Course::factory()->create([
@@ -68,9 +65,7 @@ class CourseAnonymousApiTest extends TestCase
         $this->assertApiResponse($unactivatedCourse->toArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_anonymous_update_course()
     {
         $course = Course::factory()->create();
@@ -85,9 +80,7 @@ class CourseAnonymousApiTest extends TestCase
         $this->response->assertStatus(401);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_anonymous_delete_course()
     {
         $course = Course::factory()->create();
@@ -215,9 +208,7 @@ class CourseAnonymousApiTest extends TestCase
         )->assertUnprocessable();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_anonymous_read_course_program()
     {
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
@@ -474,9 +465,7 @@ class CourseAnonymousApiTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_search_courses_by_ids()
     {
         $firstCourse = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);

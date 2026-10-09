@@ -1,11 +1,11 @@
 import { Link } from "@ulams/components/components/atoms/Link/Link";
 import React from "react";
-import styled from "styled-components";
+import styles from "./styles.module.css";
 
 type BaseLinkProps = React.ComponentProps<typeof Link>;
 
-const NewLink = styled(Link)<BaseLinkProps>`
-  opacity: 1;
-`;
+const NewLink: React.FC<BaseLinkProps> = ({ className, ...props }) => (
+  <Link {...props} className={`${styles.link} ${className ?? ""}`} />
+);
 
 export default NewLink;

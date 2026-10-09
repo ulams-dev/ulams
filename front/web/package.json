@@ -1,0 +1,37 @@
+{
+  "name": "@ulams/web",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "ulams reference frontend: Astro SSR, zero JS by default, tenant-aware.",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "start": "HOST=0.0.0.0 PORT=4321 node --env-file-if-exists=.env ./dist/server/entry.mjs",
+    "preview": "astro preview",
+    "typecheck": "astro check && tsc --noEmit -p tsconfig.json",
+    "lint": "eslint src tests",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "perf": "node tests/perf/measure.mjs"
+  },
+  "dependencies": {
+    "@astrojs/node": "9.5.5",
+    "@ulams/sdk": "0.1.0",
+    "@ulams/ui": "0.1.0",
+    "astro": "5.18.2",
+    "sharp": "0.34.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@axe-core/playwright": "4.10.2",
+    "@emnapi/runtime": "1.11.3",
+    "@eslint/js": "9.39.5",
+    "@playwright/test": "1.48.2",
+    "eslint": "9.39.5",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.1",
+    "vitest": "3.2.4"
+  }
+}

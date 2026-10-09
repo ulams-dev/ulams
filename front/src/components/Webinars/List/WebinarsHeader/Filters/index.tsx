@@ -5,7 +5,7 @@ import { WebinarsContext } from "@/components/Webinars/List/WebinarsContext";
 import SearchFilter from "@/components/Filters/Search";
 import FiltersTags from "@/components/Filters/Tags";
 import { FiltersState } from "@/types/filters";
-import { WebinarsFiltersStyles } from "./WebinarsFiltersStyles";
+import styles from "./WebinarsFilters.module.css";
 import TagsSelectFilter from "@/components/Filters/TagsSelect";
 
 const WebinarsHeaderFilters = () => {
@@ -25,7 +25,7 @@ const WebinarsHeaderFilters = () => {
   );
 
   return (
-    <WebinarsFiltersStyles>
+    <div className={styles.root}>
       <div className="tags">
         <FiltersTags
           filters={filters}
@@ -69,7 +69,7 @@ const WebinarsHeaderFilters = () => {
           />
         </div>
       </div>
-    </WebinarsFiltersStyles>
+    </div>
   );
 };
 

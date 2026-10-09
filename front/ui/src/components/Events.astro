@@ -1,0 +1,273 @@
+---
+import Icon from "./Icon.astro";
+import Img from "./Img.astro";
+import { formatEventDate } from "../lib/format.ts";
+
+interface Item {
+  kind?: "webinar" | "in-person" | "consultation";
+  title: string;
+  date?: string;
+  place?: string;
+  text?: string;
+  cta?: { label: string; href: string };
+}
+interface Props {
+  variant?: "feature" | "cards";
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  image?: { src: string; alt: string; width: number; height: number };
+  caption?: string;
+  items: Item[];
+  id?: string;
+}
+const { variant = "cards", eyebrow, title, intro, image, caption, items, id = "events" } = Astro.props;
+const when = (item: Item) =>
+  formatEventDate(item.date, { timeZone: item.kind === "in-person" ? "UTC" : "Europe/Warsaw" });
+const [lead, ...others] = items;
+---
+
+<section class={`u-section u-events u-events--${variant}`} id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <div class="u-container">
+    {
+      variant === "feature" && lead ? (
+        <div class="u-events__feature" data-reveal>
+          <div class="u-events__copy">
+            {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+            <h2 class="u-h2" id={`${id}-title`}>
+              {lead.title}
+              {when(lead) && <span class="u-events__date"> — {when(lead)!.day}, {when(lead)!.time}</span>}
+            </h2>
+            {lead.text && <p class="u-lead">{lead.text}</p>}
+            {intro && <p class="u-events__intro">{intro}</p>}
+            <dl class="u-events__facts">
+              {when(lead) && (
+                <div>
+                  <dt>Date</dt>
+                  <dd>{when(lead)!.full}</dd>
+                </div>
+              )}
+              <div>
+                <dt>Format</dt>
+                <dd>{lead.kind === "in-person" ? "In person" : "Live online"}</dd>
+              </div>
+              {lead.place && (
+                <div>
+                  <dt>Place</dt>
+                  <dd>{lead.place}</dd>
+                </div>
+              )}
+            </dl>
+            {lead.cta && (
+              <a class="u-btn" href={lead.cta.href} aria-label={`${lead.cta.label}: ${lead.title}`}>
+                {lead.cta.label}
+                <Icon name="arrow" />
+              </a>
+            )}
+            {others.length > 0 && (
+              <ul class="u-events__also" role="list">
+                {others.map((o) => (
+                  <li>
+                    <Icon name={o.kind === "in-person" ? "pin" : "calendar"} />
+                    <span>
+                      <strong>{o.title}</strong>
+                      {when(o) && ` · ${when(o)!.day}`}
+                      {o.place && ` · ${o.place}`}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          {image && (
+            <figure class="u-events__media">
+              <Img {...image} sizes="(min-width: 960px) 40vw, 100vw" />
+              {caption && <figcaption>{caption}</figcaption>}
+            </figure>
+          )}
+        </div>
+      ) : (
+        <>
+          <div class="u-section-head" data-reveal>
+            {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+            {title && (
+              <h2 class="u-h2" id={`${id}-title`}>
+                {title}
+              </h2>
+            )}
+            {intro && <p class="u-lead">{intro}</p>}
+          </div>
+          <ul class="u-events__cards" role="list">
+            {items.map((item, i) => (
+              <li class="u-event u-card u-card--hover" data-reveal style={`--reveal-i:${i}`}>
+                <p class="u-event__kind" data-kind={item.kind ?? "webinar"}>
+                  <Icon name={item.kind === "in-person" ? "pin" : item.kind === "consultation" ? "users" : "play"} />
+                  {item.kind === "in-person" ? "In person" : item.kind === "consultation" ? "1:1 consultation" : "Live webinar"}
+                </p>
+                <h3>{item.cta ? <a href={item.cta.href}>{item.title}</a> : item.title}</h3>
+                {when(item) && (
+                  <p class="u-event__when">
+                    <time datetime={item.date}>{when(item)!.full}</time> · {when(item)!.time}
+                  </p>
+                )}
+                {item.place && <p class="u-event__place">{item.place}</p>}
+                {item.text && <p class="u-event__text">{item.text}</p>}
+                {item.cta && (
+                  <span class="u-btn u-btn--ghost u-btn--sm u-event__more" aria-hidden="true">
+                    {item.cta.label}
+                    <Icon name="arrow" />
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .u-events__feature {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(28px, 5vw, 64px);
+    align-items: center;
+    padding: clamp(24px, 4vw, 56px);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-surface);
+  }
+  .u-events__copy {
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+  }
+  .u-events__date {
+    color: var(--ulams-color-accent, var(--ulams-color-primary));
+  }
+  .u-events__intro {
+    font-size: 0.875rem;
+    font-style: italic;
+    color: var(--ulams-color-muted);
+  }
+  .u-events__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 32px;
+    margin: 0;
+  }
+  .u-events__facts dt {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ulams-color-muted);
+  }
+  .u-events__facts dd {
+    margin: 2px 0 0;
+    font-weight: 600;
+  }
+  .u-events__also {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 14px 0 0;
+    border-top: 1px solid var(--ulams-color-border);
+    display: grid;
+    gap: 8px;
+    font-size: 0.875rem;
+  }
+  .u-events__also li {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .u-events__media {
+    margin: 0;
+    display: grid;
+    gap: 10px;
+    overflow: hidden;
+  }
+  .u-events__media :global(img) {
+    border-radius: var(--ulams-radius);
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    transition: transform 1.2s var(--ulams-ease);
+  }
+  .u-events__media:hover :global(img) {
+    transform: scale(1.04);
+  }
+  .u-events__media figcaption {
+    font-size: 0.8125rem;
+    font-style: italic;
+    color: var(--ulams-color-muted);
+  }
+  .u-events__cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 18px;
+  }
+  .u-event {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 24px;
+  }
+  .u-event__kind {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ulams-color-secondary);
+  }
+  .u-event__kind[data-kind="in-person"] {
+    color: var(--ulams-color-primary-on-light);
+  }
+  .u-event {
+    position: relative;
+  }
+  .u-event h3 {
+    font-size: 1.4rem;
+  }
+  .u-event h3 a {
+    text-decoration: none;
+  }
+  /* the whole card is the link target; the button is a visual affordance */
+  .u-event h3 a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .u-event h3 a:focus-visible {
+    outline: none;
+  }
+  .u-event:has(h3 a:focus-visible) {
+    outline: 2px solid var(--ulams-color-primary);
+    outline-offset: 3px;
+  }
+  .u-event__when,
+  .u-event__place {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  .u-event__text {
+    color: var(--ulams-color-muted);
+    font-size: 0.9375rem;
+  }
+  .u-event .u-btn {
+    justify-self: start;
+    margin-top: 6px;
+  }
+  @media (max-width: 900px) {
+    .u-events__feature {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -6,6 +6,7 @@ use Ulams\Courses\Models\Course;
 use Ulams\Courses\Repositories\CourseRepository;
 use Ulams\Courses\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 
 class CourseRepositoryTest extends TestCase
 {
@@ -22,9 +23,7 @@ class CourseRepositoryTest extends TestCase
         $this->courseRepo = \App::make(CourseRepository::class);
     }
 
-    /**
-     * @test create
-     */
+    #[Test]
     public function test_create_course()
     {
         $course = Course::factory()->make()->toArray();
@@ -39,9 +38,7 @@ class CourseRepositoryTest extends TestCase
         $this->assertModelData($course, $createdCourse);
     }
 
-    /**
-     * @test read
-     */
+    #[Test]
     public function test_read_course()
     {
         $course = Course::factory()->create();
@@ -52,9 +49,7 @@ class CourseRepositoryTest extends TestCase
         $this->assertModelData($course->toArray(), $dbCourse);
     }
 
-    /**
-     * @test update
-     */
+    #[Test]
     public function test_update_course()
     {
         $course = Course::factory()->create();
@@ -67,9 +62,7 @@ class CourseRepositoryTest extends TestCase
         $this->assertModelData($fakeCourse, $dbCourse->toArray());
     }
 
-    /**
-     * @test delete
-     */
+    #[Test]
     public function test_delete_course()
     {
         $course = Course::factory()->create();

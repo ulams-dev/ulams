@@ -14,21 +14,15 @@ import { FormattedMessage, NavLink, history, useIntl, useModel } from 'umi';
 import { Context } from '@/components/ProgramForm/Context';
 import { getTypeIcon } from '@/components/ProgramForm/ThreeColProgram/TopicForm';
 import { getTypeName } from '@/components/ProgramForm/ThreeColProgram/TopicForm/media';
-import PACKAGES from '@/consts/packages';
 import { getFormData } from '@/services/api';
 import {
   updateLesson as apiUpdateLesson,
   updateTopic as apiUpdateTopic,
   sort,
 } from '@/services/ulams/course';
-import { RecommenderType, TopicType } from '@/services/ulams/enums';
-import { createHavePackageInstalled } from '@/utils/access';
+import { TopicType } from '@/services/ulams/enums';
 import { NewLessonListItem } from '../NewLessonListItem';
-import { Recommender } from '../Recommender';
-import { CourseRecommender } from '../Recommender/CourseRecommender';
-import { RecommenderTopicSelector } from '../Recommender/RecommenderTopicSelector';
 import { TopicTypesSelector } from '../TopicTypesSelector';
-import type { LessonDeeplyStringifyId } from './utils';
 import {
   MovedType,
   findChildrenIndexPosition,
@@ -68,14 +62,6 @@ export const LessonList: React.FC<LessonListProps> = ({ onNewLesson }) => {
   const { initialState } = useModel('@@initialState');
   const intl = useIntl();
   // const config = initialState;
-
-  const havePackageInstalled = useCallback(() => {
-    const isRecomendarePackageEnabled =
-      initialState?.packagesConfigs?.ulams_recommender?.enabled?.value;
-
-    const checkPackage = createHavePackageInstalled(initialState?.packages);
-    return isRecomendarePackageEnabled && checkPackage(PACKAGES.Recommender);
-  }, [initialState?.packages]);
 
   useEffect(() => {
     setTreeData((prevState) => {
@@ -137,14 +123,6 @@ export const LessonList: React.FC<LessonListProps> = ({ onNewLesson }) => {
     ({ item, depth, provided, onExpand, onCollapse }: RenderItemParams) => {
       const [type, strId] = item.id.toString().split('-');
       const id = Number(strId);
-
-      const checkLastTopic = (lessonId: number, currentTopicId: string) => {
-        const lessonTopics = flatLessonsAndTopics.find((lesson) =>
-          lesson.id.includes(String(lessonId)),
-        ) as LessonDeeplyStringifyId;
-        const lastTopic = lessonTopics?.topics?.[lessonTopics.topics.length - 1];
-        return lastTopic?.id === currentTopicId;
-      };
 
       if (type === 'new' && item.data.isNew) {
         return (
@@ -228,28 +206,6 @@ export const LessonList: React.FC<LessonListProps> = ({ onNewLesson }) => {
             </Tooltip>
             <span className="title">{item.data.title}</span>
           </NavLink>
-
-          {havePackageInstalled() &&
-            courseId &&
-            currentEditMode?.mode === 'topic' &&
-            currentEditMode?.value?.lesson_id &&
-            currentEditMode?.value?.lesson_id === item.data.lesson_id &&
-            checkLastTopic(currentEditMode.value.lesson_id, item.data.id) && (
-              <>
-                {flatLessonsAndTopics.length > 5 && <CourseRecommender courseId={courseId} />}
-                <Recommender
-                  courseId={courseId}
-                  lessonId={currentEditMode.value.lesson_id}
-                  recommenderType={
-                    currentEditMode.value.isNew ? RecommenderType.Info : RecommenderType.Exercise
-                  }
-                />
-                <RecommenderTopicSelector
-                  onSelected={(topic_type) => onTopicCreate(item.data.lesson_id, topic_type)}
-                  positionsToHide={getHiddenNewTopicOptions(depth + 1)}
-                />
-              </>
-            )}
         </>
       );
     },

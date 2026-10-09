@@ -43,14 +43,17 @@ export default () => {
       }}
     >
       <H5PCard
-        onLoaded={(data) => {
-          const contents = data.contents && data.contents[`cid-${h5p}`];
-          if (contents && contents.title) {
-            setTitle(contents.title);
+        onLoaded={(info) => {
+          if (info.title) {
+            setTitle(info.title);
           }
         }}
-        onSubmit={(id) => h5p === 'new' && history.push(`/courses/h5ps/${id}`)}
-        id={h5p === 'new' || !h5p ? 'new' : Number(h5p)}
+        onSubmit={(id) => {
+          if (String(id) !== String(h5p)) {
+            history.push(`/courses/h5ps/${id}`);
+          }
+        }}
+        id={h5p === 'new' || !h5p ? 'new' : h5p}
       />
     </PageContainer>
   );

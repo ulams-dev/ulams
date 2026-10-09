@@ -1,0 +1,4 @@
+.root :global(h4),
+.root :global(h5) {
+  margin-bottom: 15px;
+}

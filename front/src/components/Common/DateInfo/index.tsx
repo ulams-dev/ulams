@@ -1,46 +1,9 @@
 import { useMemo } from "react";
-import styled, { useTheme } from "styled-components";
 import { formatDate } from "@/utils/date";
 import { APP_CONFIG } from "@/config/app";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { IconCalendar } from "../../../icons";
-
-const DateInfoStyles = styled.div`
-  display: flex;
-  flex-direction: column;
-
-  .date-container {
-    display: flex;
-    flex-direction: row;
-    border: 1px solid;
-    border-radius: 2px;
-    align-items: center;
-    border-radius: ${({ theme }) => theme.cardRadius}px;
-    .icon-container {
-      display: flex;
-      align-items: center;
-      padding: 0.5rem;
-      border-top-left-radius: ${({ theme }) => (theme.cardRadius ?? 2) - 2}px;
-      border-bottom-left-radius: ${({ theme }) =>
-        (theme.cardRadius ?? 2) - 2}px;
-    }
-
-    .date {
-      padding: 0.5rem;
-      margin: 0 auto;
-    }
-  }
-
-  .info {
-    padding: 0.5rem;
-    border-left: 1px solid;
-    border-right: 1px solid;
-    border-bottom: 1px solid;
-    font-family: ${({ theme }) => theme.font};
-    font-size: 12px;
-    border-radius: ${({ theme }) => theme.cardRadius}px;
-  }
-`;
+import styles from "./styles.module.css";
 
 export enum DateInfoTypes {
   "ACCEPTED",
@@ -56,7 +19,6 @@ interface DateInfoProps {
 }
 
 const DateInfo = ({ type, date, info }: DateInfoProps) => {
-  const theme = useTheme();
   const color = useMemo(() => {
     switch (type) {
       case DateInfoTypes.ACCEPTED:
@@ -66,27 +28,27 @@ const DateInfo = ({ type, date, info }: DateInfoProps) => {
       case DateInfoTypes.ENDED:
         return "#D22B2B";
       default:
-        return theme.primaryColor;
+        return "var(--ulams-color-primary)";
     }
-  }, [theme.primaryColor, type]);
+  }, [type]);
 
   return (
-    <DateInfoStyles>
+    <div className={styles.root}>
       <div
-        className="date-container"
+        className={styles.dateContainer}
         style={{
           borderColor: color,
         }}
       >
         <div
-          className="icon-container"
+          className={styles.iconContainer}
           style={{
             backgroundColor: color,
           }}
         >
           <IconCalendar color="#ffffff" />
         </div>
-        <Text className="date">
+        <Text className={styles.date}>
           {date
             ? formatDate(new Date(date), APP_CONFIG.defaultDateTimeFormat)
             : "--"}
@@ -94,7 +56,7 @@ const DateInfo = ({ type, date, info }: DateInfoProps) => {
       </div>
       {info && (
         <div
-          className="info"
+          className={styles.info}
           style={{
             borderColor: color,
           }}
@@ -102,7 +64,7 @@ const DateInfo = ({ type, date, info }: DateInfoProps) => {
           {info}
         </div>
       )}
-    </DateInfoStyles>
+    </div>
   );
 };
 

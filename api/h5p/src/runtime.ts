@@ -6,6 +6,7 @@ import { Logger } from './logger';
 import { createSharedH5P, SharedH5P } from './h5p/createH5P';
 import { createI18n, I18nSetup } from './h5p/i18n';
 import { SingleTenantResolver } from './tenancy/SingleTenantResolver';
+import { EnvFileTenantResolver } from './tenancy/EnvFileTenantResolver';
 import { TenantResolver } from './tenancy/types';
 
 /** Process-wide services plus the tenant resolver. */
@@ -31,10 +32,11 @@ export async function createRuntime(
 
     const i18n = await createI18n();
     const shared = createSharedH5P(config, redis, i18n.translate);
-    // Swap this for the multi-tenant resolver later; nothing else changes.
     const tenants = makeResolver
         ? await makeResolver(shared)
-        : await SingleTenantResolver.create(config, shared, logger);
+        : config.tenancy.mode === 'env-files'
+          ? EnvFileTenantResolver.create(config, shared, logger)
+          : await SingleTenantResolver.create(config, shared, logger);
 
     return {
         config,

@@ -1,0 +1,72 @@
+.root :global(.labels-row) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0px 12px 0px;
+}
+
+.root :global(.labels-row) :global(.single-label):first-of-type {
+  flex: 0 0 25%;
+  max-width: 40%;
+}
+
+.root :global(.labels-row) :global(.single-label):nth-of-type(2),
+.root :global(.labels-row) :global(.single-label):nth-of-type(3) {
+  flex: 0 0 15%;
+  max-width: 15%;
+}
+
+.root :global(.labels-row) :global(.single-label):last-of-type {
+  flex: 0 0 20%;
+  max-width: 20%;
+}
+
+.card {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 12px 0px;
+  background: var(--ulams-color-card-bg);
+}
+
+.card :global(.single-content):not(:last-child) {
+  margin-bottom: 0;
+}
+
+.card :global(.single-content):first-of-type {
+  flex: 0 0 25%;
+  max-width: 40%;
+}
+
+.card :global(.single-content):nth-of-type(2),
+.card :global(.single-content):nth-of-type(3) {
+  flex: 0 0 15%;
+  max-width: 15%;
+}
+
+.card :global(.single-content):last-of-type {
+  flex: 0 0 20%;
+  max-width: 20%;
+}
+
+.card.mobile {
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 20px 0px;
+}
+
+.card.mobile :global(.single-content):not(:last-child) {
+  margin-bottom: 15px;
+}
+
+.card.mobile :global(.single-content):first-of-type,
+.card.mobile :global(.single-content):nth-of-type(2),
+.card.mobile :global(.single-content):nth-of-type(3),
+.card.mobile :global(.single-content):last-of-type {
+  flex: 0 0 100%;
+  max-width: 100%;
+}

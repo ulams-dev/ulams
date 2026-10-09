@@ -1,0 +1,59 @@
+.root {
+  text-align: center;
+  padding: 15px 28px 34px 38px;
+  border-radius: var(--ulams-radius-button);
+  background: #f7f7f7;
+  min-height: 229px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.root.mobile {
+  padding: 75px 8px 97px;
+}
+
+.root.solid {
+  padding: 78px 8px 72px;
+  background: var(--ulams-color-card-bg);
+}
+
+.root :global(.category-card-icon) {
+  margin-top: 15px;
+}
+
+.root :global(.category-card-icon) svg path {
+  fill: var(--ulams-gray-2);
+}
+
+:global([data-mode="dark"]) .root :global(.category-card-icon) svg path {
+  fill: var(--ulams-color-white);
+}
+
+.root :global(.category-content) h4 {
+  font-size: 20px;
+  margin-bottom: 22px;
+}
+
+.root button {
+  display: flex;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.root button * {
+  margin: 0px;
+  color: var(--ulams-color-white);
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.root button svg {
+  width: 11px;
+  height: 11px;
+}
+
+.root button svg path {
+  fill: var(--ulams-color-white);
+}

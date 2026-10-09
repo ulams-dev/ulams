@@ -18,15 +18,14 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 
 class CourseAdminApiTest extends TestCase
 {
     use CreatesUsers;
     use DatabaseTransactions;
 
-    /**
-     * @test
-     */
+    #[Test]
     protected function setUp(): void
     {
         parent::setUp();
@@ -133,9 +132,7 @@ class CourseAdminApiTest extends TestCase
         $this->assertFalse($dbCourse->is_active);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_read_course(): void
     {
         $course = Course::factory()->create([
@@ -151,9 +148,7 @@ class CourseAdminApiTest extends TestCase
         $this->assertApiResponse($course->toArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_update_course(): void
     {
         $course = Course::factory()->create();
@@ -168,9 +163,7 @@ class CourseAdminApiTest extends TestCase
         $this->assertApiResponse($editedCourse);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_update_course_fields(): void
     {
         $course = Course::factory()->create();
@@ -209,9 +202,7 @@ class CourseAdminApiTest extends TestCase
         Event::assertDispatched(CoursedPublished::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_update_course_with_correct_author(): void
     {
         $course = Course::factory()->create();
@@ -230,9 +221,7 @@ class CourseAdminApiTest extends TestCase
         $this->response->assertValid('author_id');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_update_course_with_wrong_author(): void
     {
         $course = Course::factory()->create();
@@ -274,9 +263,7 @@ class CourseAdminApiTest extends TestCase
         $this->assertEquals([], $course->authors->toArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_delete_course(): void
     {
         $course = Course::factory()->create();
@@ -508,9 +495,7 @@ class CourseAdminApiTest extends TestCase
         $this->assertTrue(in_array($course3->id,  $coursesIds));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_read_course_program(): void
     {
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
@@ -532,9 +517,7 @@ class CourseAdminApiTest extends TestCase
         )->assertStatus(200);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_read_course_program_topics_count(): void
     {
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
@@ -553,9 +536,7 @@ class CourseAdminApiTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_read_course_program_scorm(): void
     {
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
@@ -638,9 +619,7 @@ class CourseAdminApiTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_create_admin_course_poster(): void
     {
         Storage::fake('local');
@@ -663,6 +642,38 @@ class CourseAdminApiTest extends TestCase
         $this->assertDatabaseHas('courses', [
             'poster_path' => $path
         ]);
+    }
+
+    #[Test]
+    public function test_create_admin_course_svg_image_and_poster(): void
+    {
+        Storage::fake('local');
+        // Laravel 12+ `image` rule rejects SVG unless `allow_svg` is given (product decision: SVG uploads are allowed).
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10"/></svg>';
+
+        $this->response = $this->actingAs($this->user, 'api')->post(
+            '/api/admin/courses',
+            [
+                'title' => 'Test create course with SVG images',
+                'image' => UploadedFile::fake()->createWithContent('image.svg', $svg),
+                'poster' => UploadedFile::fake()->createWithContent('poster.svg', $svg),
+            ]
+        );
+
+        $this->response->assertStatus(201);
+
+        $data = $this->response->json('data');
+        $this->assertStringEndsWith('.svg', $data['image_path']);
+        $this->assertStringEndsWith('.svg', $data['poster_path']);
+        Storage::disk('local')->assertExists('/' . $data['image_path']);
+        Storage::disk('local')->assertExists('/' . $data['poster_path']);
+
+        $this->response = $this->actingAs($this->user, 'api')->post(
+            '/api/admin/courses/' . $data['id'],
+            ['poster' => UploadedFile::fake()->createWithContent('poster2.svg', $svg)]
+        );
+        $this->response->assertOk();
+        $this->assertStringEndsWith('.svg', $this->response->json('data.poster_path'));
     }
 
     public function test_delete_admin_course_poster(): void
@@ -698,9 +709,7 @@ class CourseAdminApiTest extends TestCase
         Storage::disk('local')->assertMissing('/' . $path);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function test_update_admin_course_poster(): void
     {
         Storage::fake('local');

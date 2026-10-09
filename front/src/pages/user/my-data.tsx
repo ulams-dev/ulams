@@ -1,20 +1,16 @@
 import ProfileLayout from "@/components/Profile/ProfileLayout";
 import { MyProfileForm } from "@ulams/components/components/organisms/MyProfileForm/MyProfileForm";
-import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 
-const StyledWrapper = styled.div`
-  margin-top: 20px;
-  max-width: 450px;
-`;
+import styles from "./user.module.css";
 
 const MyData = () => {
   const { t } = useTranslation();
   return (
     <ProfileLayout title={t("MyProfilePage.EditData")}>
-      <StyledWrapper>
+      <div className={styles.myDataWrapper}>
         <MyProfileForm />
-      </StyledWrapper>
+      </div>
     </ProfileLayout>
   );
 };

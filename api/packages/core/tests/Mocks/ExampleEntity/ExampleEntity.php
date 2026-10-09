@@ -2,13 +2,12 @@
 
 namespace Ulams\Core\Tests\Mocks\ExampleEntity;
 
-use Ulams\Core\Models\Traits\QueryCacheable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ExampleEntity extends Model
 {
-    use HasFactory, QueryCacheable;
+    use HasFactory;
 
     protected $table = 'example_entities';
 

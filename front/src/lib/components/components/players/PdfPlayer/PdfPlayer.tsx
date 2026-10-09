@@ -1,11 +1,11 @@
 import * as React from "react";
-import styled, { withTheme } from "styled-components";
 import { Document, Page, pdfjs } from "react-pdf";
 import { Button, Text } from "../../..";
 import { useTranslation } from "react-i18next";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import styles from "./PdfPlayer.module.css";
 
 interface PdfPlayerProps extends ExtendableStyledComponent {
   url: string;
@@ -14,22 +14,6 @@ interface PdfPlayerProps extends ExtendableStyledComponent {
   onLoad?: () => void;
   onTopicEnd?: () => void;
 }
-
-const StyledWrapper = styled("div")`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
-
-  .pagination-area {
-    margin-top: 5px;
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    align-items: center;
-  }
-`;
 
 export const PdfPlayer: React.FunctionComponent<PdfPlayerProps> = ({
   url,
@@ -77,7 +61,7 @@ export const PdfPlayer: React.FunctionComponent<PdfPlayerProps> = ({
   }
 
   return (
-    <StyledWrapper className={`ulams-component ${className}`}>
+    <div className={`${styles.root} ulams-component ${className}`}>
       {isMounted && url && (
         <Document
           loading={t<string>("Loading")}
@@ -94,7 +78,7 @@ export const PdfPlayer: React.FunctionComponent<PdfPlayerProps> = ({
       )}
 
       {allPages && allPages > 1 && (
-        <div className="pagination-area">
+        <div className={`${styles.paginationArea} pagination-area`}>
           <Text>
             <strong>{currentPage}</strong> {t<string>("PdfPlayer.of")}{" "}
             <strong>{allPages}</strong>
@@ -120,8 +104,8 @@ export const PdfPlayer: React.FunctionComponent<PdfPlayerProps> = ({
           </div>
         </div>
       )}
-    </StyledWrapper>
+    </div>
   );
 };
 
-export default withTheme(styled(PdfPlayer)<PdfPlayerProps>``);
+export default PdfPlayer;

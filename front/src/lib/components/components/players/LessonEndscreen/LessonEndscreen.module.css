@@ -1,0 +1,31 @@
+.root {
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.4);
+  width: 100%;
+  height: 100%;
+  display: grid;
+  justify-content: center;
+  align-content: center;
+}
+
+.root :global(.video-endscreen__title),
+.root :global(.video-endscreen__subtitle) {
+  color: var(--ulams-color-white);
+  text-align: center;
+}
+
+.root :global(.video-endscreen__title),
+.root :global(.video-endscreen__subtitle),
+.root :global(.video-endscreen__play) {
+  margin-top: 16px;
+}
+
+.root :global(.video-endscreen__cancel) {
+  color: var(--ulams-color-white);
+  border: 0;
+}
+
+.root :global(.video-endscreen__cancel):hover {
+  background: transparent;
+  color: color-mix(in srgb, var(--ulams-color-white) 75%, transparent);
+}

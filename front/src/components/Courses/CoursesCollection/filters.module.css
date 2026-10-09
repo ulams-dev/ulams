@@ -1,0 +1,46 @@
+.filtersHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.filtersHeader p {
+  margin: 0px;
+}
+
+@media (max-width: 335px) {
+  .filtersHeader {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.sortWrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sortWrapper p {
+  margin: unset;
+}
+
+.sortWrapper svg {
+  margin-left: 5px;
+  margin-top: -2px;
+}
+
+.dropdownCategoriesButton {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dropdownCategoriesButton :global(.icon-squares) {
+  width: 11px;
+  height: 11px;
+}
+
+.dropdownCategoriesButton :global(.icon-squares) path {
+  fill: var(--ulams-color-primary);
+}

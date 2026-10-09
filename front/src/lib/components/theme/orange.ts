@@ -1,8 +1,8 @@
-import { DefaultTheme } from "styled-components";
+import type { ThemeTokens } from "./types";
 import { blend } from "chroma-js";
 import { sharedTheme } from "./shared";
 
-export const orangeTheme: DefaultTheme = {
+export const orangeTheme: ThemeTokens = {
   ...sharedTheme,
   font: "Inter",
   primaryColor: "#F47820",

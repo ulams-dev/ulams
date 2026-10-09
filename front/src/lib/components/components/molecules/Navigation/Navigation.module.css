@@ -1,0 +1,151 @@
+/* Local styles */
+.root :global(.header) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 16px;
+}
+
+.root :global(.menu-button) {
+  cursor: pointer;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.root :global(.menu-button):hover {
+  opacity: 0.65;
+}
+
+.root :global(.menu-bar) {
+  width: 19px;
+  height: 2px;
+  margin: 2.4px 0;
+  border-radius: 3px;
+  background: var(--ulams-color-text);
+  cursor: pointer;
+}
+
+:global([data-mode="dark"]) .root :global(.menu-bar) {
+  background: var(--ulams-color-white);
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icons svg,
+.icons button {
+  width: 28px;
+  height: 28px;
+}
+
+/*
+ * Former createGlobalStyle: active only while a mobile Navigation is mounted
+ * (body[data-ulams-nav]). :where() keeps the original specificity.
+ */
+@media (max-width: 530px) {
+  :global(:where(body[data-ulams-nav]) .custom-drawer-wrapper) {
+    width: 90% !important;
+  }
+}
+
+:global(:where(body[data-ulams-nav="device"]) .custom-drawer-wrapper .drawer-header) {
+  padding-top: 100px;
+}
+
+:global(:where(body[data-ulams-nav]) svg) {
+  transition: opacity 0.2s ease-in-out;
+}
+
+:global(:where(body[data-ulams-nav]) svg:hover) {
+  opacity: 0.65;
+  cursor: pointer;
+}
+
+:global(:where(body[data-ulams-nav]) .drawer-search) {
+  padding: 24px 16px;
+}
+
+:global(:where(body[data-ulams-nav]) .drawer),
+:global(:where(body[data-ulams-nav]) .drawer-content-wrapper) {
+  box-sizing: border-box;
+}
+
+:global(:where(body[data-ulams-nav]) .drawer-content-wrapper) {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+:global(:where(body[data-ulams-nav]) .drawer-header) {
+  display: inline-flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 16px;
+  box-sizing: border-box;
+}
+
+:global(:where(body[data-ulams-nav]) .drawer-content) {
+  background: var(--ulams-color-bg);
+}
+
+:global(:where(body[data-ulams-nav]) .drawer-menu-list) {
+  margin: 0;
+  list-style-type: none;
+  padding: 0;
+}
+
+:global(:where(body[data-ulams-nav]) .drawer-menu-list li) {
+  padding: 10px 0px;
+}
+
+:global(:where(body[data-ulams-nav]) .drawer-menu-item) {
+  padding: 15px 16px;
+  box-sizing: border-box;
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+:global(:where(body[data-ulams-nav]) .drawer-menu-item a) {
+  text-decoration: none;
+}
+
+:global(:where(body[data-ulams-nav]) .drawer-nested-submenu-header-container) {
+  width: 100%;
+}
+
+:global(:where(body[data-ulams-nav]) .drawer-nested-submenu-header) {
+  text-align: center;
+}
+
+:global(:where(body[data-ulams-nav]) .drawer-menu-item__icon svg path),
+:global(:where(body[data-ulams-nav]) .menu-drawer-prev svg path) {
+  stroke: var(--ulams-gray-1);
+}
+
+:global(:where([data-mode="dark"] body[data-ulams-nav]) .drawer-menu-item__icon svg path),
+:global(:where([data-mode="dark"] body[data-ulams-nav]) .menu-drawer-prev svg path) {
+  stroke: var(--ulams-color-white);
+}
+
+:global(:where(body[data-ulams-nav]) .menu-drawer-close svg path) {
+  fill: var(--ulams-gray-1);
+}
+
+:global(:where([data-mode="dark"] body[data-ulams-nav]) .menu-drawer-close svg path) {
+  fill: var(--ulams-color-white);
+}
+
+:global(:where(body[data-ulams-nav]) .drawer-menu-item__wrapper) {
+  width: 100%;
+}

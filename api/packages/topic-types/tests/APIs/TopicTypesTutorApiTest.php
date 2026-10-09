@@ -8,6 +8,7 @@ use Ulams\Courses\Models\Lesson;
 use Ulams\Courses\Models\Topic;
 use Ulams\TopicTypes\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 
 class TopicTypesTutorApiTest extends TestCase
 {
@@ -23,9 +24,7 @@ class TopicTypesTutorApiTest extends TestCase
         $this->user->assignRole('tutor');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testReadTopic()
     {
         $course = Course::factory()->create([
@@ -50,9 +49,7 @@ class TopicTypesTutorApiTest extends TestCase
         $this->response->assertJsonPath('data.json.bar', 'foo');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testDeleteTopic()
     {
         $course = Course::factory()->create([

@@ -9,7 +9,7 @@ interface AdministrableConfigServiceContract
 {
     public function registerConfig(string $key, array $rules = [], bool $public = true, bool $readonly = false): bool;
 
-    public function getConfig(string $key = null): array;
+    public function getConfig(?string $key = null): array;
     public function getPublicConfig(): array;
 
     public function loadConfigFromCache(): bool;

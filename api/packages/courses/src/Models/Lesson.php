@@ -2,7 +2,6 @@
 
 namespace Ulams\Courses\Models;
 
-use Ulams\Core\Models\Traits\QueryCacheable;
 use Ulams\Courses\Database\Factories\LessonFactory;
 use Ulams\ModelFields\Traits\ModelFields;
 use Illuminate\Database\Eloquent\Builder;
@@ -81,7 +80,6 @@ use Illuminate\Support\Carbon;
 class Lesson extends Model
 {
     use HasFactory;
-    use QueryCacheable;
     use ModelFields;
 
     public $table = 'lessons';

@@ -8,7 +8,6 @@ use Ulams\Cart\Policies\OrderPolicy;
 use Ulams\Cart\Policies\ProductPolicy;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -30,9 +29,5 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
-
-        if (!$this->app->routesAreCached() && method_exists(Passport::class, 'routes')) {
-            Passport::routes();
-        }
     }
 }

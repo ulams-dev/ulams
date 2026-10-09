@@ -15,8 +15,7 @@ export default {
   // SETTINGS
   'Ulams\\Settings\\Events\\SettingPackageConfigUpdated': 'Setting package config updated',
   // CSV USER
-  'Ulams\\CsvUsers\\Events\\UlamsImportedNewUserTemplateEvent':
-    'Imported new user template event',
+  'Ulams\\CsvUsers\\Events\\UlamsImportedNewUserTemplateEvent': 'Imported new user template event',
   // TOPIC
   'Ulams\\TopicTypes\\Events\\TopicTypeChanged': 'Topic type changed',
   // CONSULTATIONS
@@ -25,8 +24,7 @@ export default {
     'Consultation approved term with trainer',
   'Ulams\\Consultations\\Events\\ChangeTerm': 'Consultation change term',
   'Ulams\\Consultations\\Events\\RejectTerm': 'Consultation reject term',
-  'Ulams\\Consultations\\Events\\RejectTermWithTrainer':
-    'Consultation reject term with trainer',
+  'Ulams\\Consultations\\Events\\RejectTermWithTrainer': 'Consultation reject term with trainer',
   'Ulams\\Consultations\\Events\\ReminderAboutTerm': 'Consultation reminder about term',
   'Ulams\\Consultations\\Events\\ReminderTrainerAboutTerm':
     'Consultation reminder trainer about term',
@@ -99,6 +97,5 @@ export default {
   'Ulams\\ConsultationAccess\\Events\\ConsultationAccessEnquiryApprovedEvent':
     'Consultation access enquiry approved event',
   // TOPIC TYPE PROJECT
-  'Ulams\\TopicTypeProject\\Events\\ProjectSolutionCreatedEvent':
-    'Project solution created event',
+  'Ulams\\TopicTypeProject\\Events\\ProjectSolutionCreatedEvent': 'Project solution created event',
 };

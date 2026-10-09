@@ -6,10 +6,8 @@ use Carbon\Carbon;
 use Ulams\Consultations\Dto\ChangeTermConsultationDto;
 use Ulams\Consultations\Dto\ConsultationUserTermDto;
 use Ulams\Consultations\Dto\ConsultationDto;
-use Ulams\Consultations\Dto\ConsultationSaveScreenDto;
 use Ulams\Consultations\Dto\FilterScheduleForTutorDto;
 use Ulams\Consultations\Dto\FinishTermDto;
-use Ulams\Consultations\Dto\GenerateSignedScreenUrlsDto;
 use Ulams\Consultations\Http\Requests\ListConsultationsRequest;
 use Ulams\Consultations\Models\Consultation;
 use Ulams\Consultations\Models\ConsultationUserPivot;
@@ -22,7 +20,7 @@ use Illuminate\Support\Collection;
 
 interface ConsultationServiceContract
 {
-    public function getConsultationsList(array $search = [], bool $onlyActive = false, OrderDto $orderDto = null): Builder;
+    public function getConsultationsList(array $search = [], bool $onlyActive = false, ?OrderDto $orderDto = null): Builder;
     public function store(ConsultationDto $consultationDto): Consultation;
     public function update(int $id, ConsultationDto $consultationDto): Consultation;
     public function show(int $id): Consultation;
@@ -106,7 +104,5 @@ interface ConsultationServiceContract
     public function termIsBusyForUser(int $consultationId, string $date, int $userId): bool;
     public function getBusyTermsFormatDate(int $consultationId): array;
     public function updateModelFieldsFromRequest(Consultation $consultation, FormRequest $request): void;
-    public function saveScreen(ConsultationSaveScreenDto $dto): void;
-    public function generateSignedScreenUrls(GenerateSignedScreenUrlsDto $dto): array;
     public function finishTerm(int $consultationTermId, FinishTermDto $dto): bool;
 }

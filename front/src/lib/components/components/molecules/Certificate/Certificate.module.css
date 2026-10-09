@@ -1,0 +1,45 @@
+.root :global(.certificate-badge) {
+  width: 116px;
+  flex-shrink: 0;
+}
+
+.root :global(.certificate-left-col) {
+  margin-left: 20px;
+}
+
+.root:not(.mobile) :global(.certificate-right-col) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid var(--ulams-gray-3);
+}
+
+:global([data-mode="dark"]) .root:not(.mobile) :global(.certificate-right-col) {
+  border-left-color: var(--ulams-color-white);
+}
+
+.root.mobile :global(.certificate-right-col) {
+  margin-top: 23px;
+}
+
+.root.mobile :global(.certificate-right-col-inner) {
+  padding-left: 34px;
+}
+
+.root :global(.certificate-link) {
+  display: flex;
+  align-items: center;
+}
+
+.root :global(.certificate-link):not(:last-child) {
+  margin-bottom: 24px;
+}
+
+.root :global(.certificate-link) svg path {
+  fill: var(--ulams-gray-2);
+}
+
+:global([data-mode="dark"]) .root :global(.certificate-link) svg path {
+  fill: var(--ulams-color-white);
+}

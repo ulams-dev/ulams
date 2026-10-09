@@ -1,0 +1,7 @@
+.modal :global(.rc-dialog-content) {
+  border-radius: 15px;
+}
+
+.modal :global(.rc-dialog-body) {
+  padding: 14px 0;
+}

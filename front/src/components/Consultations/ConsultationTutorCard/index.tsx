@@ -1,7 +1,7 @@
 import React from "react";
 import { CourseCard } from "@ulams/components/components/molecules/CourseCard/CourseCard";
 import { API } from "@ulams/sdk";
-import { ConsultationTutorCardStyles } from "./ConsultationTutorCardStyles";
+import styles from "./styles.module.css";
 import ConsultationTutorCardImage from "./Image";
 import ConsultationTutorCardContent from "./Content";
 import ConsultationTutorCardStatus from "./Status";
@@ -14,7 +14,7 @@ const ConsultationTutorCard: React.FC<ConsultationTutorCardProps> = (props) => {
   const { consultation } = props;
 
   return (
-    <ConsultationTutorCardStyles>
+    <div className={styles.root}>
       <CourseCard
         id={consultation?.consultation_term_id}
         image={<ConsultationTutorCardImage product={consultation} />}
@@ -22,7 +22,7 @@ const ConsultationTutorCard: React.FC<ConsultationTutorCardProps> = (props) => {
         subtitle={<p>{consultation?.related_product?.name}</p>}
         footer={<ConsultationTutorCardContent consultation={consultation} />}
       />
-    </ConsultationTutorCardStyles>
+    </div>
   );
 };
 

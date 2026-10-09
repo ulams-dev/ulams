@@ -1,44 +1,16 @@
-import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { getStylesBasedOnTheme } from "@ulams/components/utils/utils";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 
 import { formatDate } from "@/utils/date";
 import { StarIcon } from "@/icons/index";
 import { Button } from "@ulams/components/components/atoms/Button/Button";
 import { useCallback, useState } from "react";
+import styles from "./ActiveSubscription.module.css";
 
 enum SubscriptionStatus {
   ACTIVE = "active",
   CANCELED = "cancelled",
 }
-
-const StyledInfoBox = styled.div`
-  border-radius: ${({ theme }) => theme.buttonRadius}px;
-  background-color: ${({ theme }) =>
-    getStylesBasedOnTheme(theme.mode, theme.black, theme.white, "black")};
-  padding: 22px;
-  margin-top: 10px;
-  margin-bottom: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
-  > div {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .${SubscriptionStatus.CANCELED} {
-    color: ${({ theme }) => theme.primaryColor};
-    @media (max-width: 768px) {
-      padding-left: 20px;
-    }
-  }
-`;
 
 type Props = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -61,7 +33,7 @@ const ActiveSubscription: React.FC<Props> = ({
   }, [activeSubscription?.id, subscriptionCancel]);
 
   return (
-    <StyledInfoBox className="info-box">
+    <div className={`info-box ${styles.infoBox}`}>
       <div>
         {activeSubscription && <StarIcon />}
         <Text>
@@ -78,14 +50,14 @@ const ActiveSubscription: React.FC<Props> = ({
         </Text>
       </div>
       {subStatus === SubscriptionStatus.CANCELED && (
-        <Text className={SubscriptionStatus.CANCELED}>
+        <Text className={`${SubscriptionStatus.CANCELED} ${styles.cancelled}`}>
           {t("Subscriptions.Cancelled")}
         </Text>
       )}
       {activeSubscription && subStatus === SubscriptionStatus.ACTIVE && (
         <Button onClick={handleSubscriptionCancel}>Anuluj subskrypcję</Button>
       )}
-    </StyledInfoBox>
+    </div>
   );
 };
 

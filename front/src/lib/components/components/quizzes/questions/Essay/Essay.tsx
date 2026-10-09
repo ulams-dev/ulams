@@ -4,7 +4,6 @@ import { API } from "@ulams/sdk";
 import { TextArea } from "../../../../";
 import { getUniqueId } from "../../../../utils/utils";
 import DefaultQuestionLayout from "../DefaultQuestionLayout";
-import styled, { withTheme } from "styled-components";
 
 interface Props extends API.QuizQuestion_Essay {
   onChange: React.ChangeEventHandler<HTMLTextAreaElement>;
@@ -46,4 +45,4 @@ const Essay: React.FC<Props> = ({
   );
 };
 
-export default withTheme(styled(Essay)``);
+export default Essay;

@@ -1,0 +1,34 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.root header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.root form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.root form > :global(.form-content) :global(.error-msg) {
+  color: var(--ulams-color-error);
+}
+
+.root form > :global(.form-content) :global(.input-group) {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.root form > :global(.button-group) {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}

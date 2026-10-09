@@ -32,7 +32,7 @@ abstract class CommonWebinarVariables extends EmailVariables
                 $proposedTerm = Carbon::make($proposedTerm);
             }
             $proposedTerm = $proposedTerm
-                ->setTimezone($event->getUser()->current_timezone)
+                ->setTimezone($event->getUser()->current_timezone ?? config('app.timezone'))
                 ->format('Y-m-d H:i:s');
         }
 

@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import { Link, useHistory } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import { API } from "@ulams/sdk";
@@ -13,19 +12,13 @@ import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import ProductPrices from "@/components/ProductPrices";
 import { useTranslation } from "react-i18next";
 import SwiperSlider from "@/components/Courses/CoursesSlider/swiper";
+import styles from "./styles.module.css";
 
 type Props = {
   courses: API.Course[];
   isSlider?: boolean;
   slidesPerView?: number;
 };
-
-const Content = styled.div`
-  .swiper {
-    padding: 7px 10px;
-    margin: 0px -15px;
-  }
-`;
 
 const CoursesSlider: React.FC<Props> = ({
   courses,
@@ -36,7 +29,7 @@ const CoursesSlider: React.FC<Props> = ({
 
   const { t } = useTranslation();
   return (
-    <Content>
+    <div className={styles.content}>
       {((courses && courses?.length >= 5) || isMobile) && isSlider ? (
         <SwiperSlider slidesPerView={slidesPerView}>
           {courses &&
@@ -147,7 +140,7 @@ const CoursesSlider: React.FC<Props> = ({
           ))}
         </Row>
       )}
-    </Content>
+    </div>
   );
 };
 

@@ -1,8 +1,7 @@
 import { FC, HTMLAttributes, ReactNode } from "react";
-import styled, { css, withTheme } from "styled-components";
 import { IconText, Text } from "../../..";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
-import chroma from "chroma-js";
+import { useThemeTokens } from "../../../theme/applyTheme";
+import styles from "./List.module.css";
 export interface ListItemProps {
   id: number;
   text: string;
@@ -17,89 +16,52 @@ interface ListProps extends Omit<HTMLAttributes<HTMLUListElement>, "onClick"> {
   defaultSelectedId?: number;
   currentIndex?: number;
 }
-const basicColorStyle = css<{ $isActive?: boolean }>`
-  color: ${({ theme, $isActive }) =>
-    $isActive
-      ? theme.white
-      : getStylesBasedOnTheme(
-          theme.mode,
-          theme.dm__outlineButtonColor,
-          theme.outlineButtonColor,
-          theme.primaryColor
-        )};
-`;
 
-const ListComponent = styled.ul`
-  display: flex;
-  flex-direction: column;
-  list-style: none;
-  padding: 0px;
-`;
-
-const ListItem = styled.li<{ $isActive?: boolean }>`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 10px;
-  gap: 10px;
-  transition: 0.3s;
-  background-color: ${({ theme, $isActive }) =>
-    $isActive ? chroma(theme.primaryColor).darken().hex() : "transparent"};
-  cursor: pointer;
-  &:hover {
-    transform: scale(1.05);
-  }
-`;
-
-const StyledText = styled(Text)<{ $isActive?: boolean }>`
-  font-size: 14px;
-  font-weight: ${({ $isActive }) => ($isActive ? "bold" : "normal")};
-  ${basicColorStyle}
-`;
-
-const StyledIconText = styled(IconText)<{ $isActive?: boolean }>`
-  * {
-    font-weight: ${({ $isActive }) => ($isActive ? "bold" : "normal")};
-    ${basicColorStyle}
-  }
-  svg {
-    fill: ${({ theme, $isActive }) =>
-      $isActive
-        ? theme.white
-        : getStylesBasedOnTheme(
-            theme.mode,
-            theme.dm__outlineButtonColor,
-            theme.outlineButtonColor,
-            theme.primaryColor
-          )} !important;
-  }
-`;
 const List: FC<ListProps> = ({
   listItems,
   selectedListItem,
   setSelectedListItem,
+  className,
   ...props
-}) => (
-  <ListComponent data-testid="list" {...props}>
-    {listItems.map(({ id, icon, text, numberOfItems }) => (
-      <ListItem
-        key={id}
-        $isActive={selectedListItem === id}
-        data-testid={text}
-        onClick={() => setSelectedListItem(id)}
-      >
-        <StyledIconText
-          icon={icon}
-          text={text}
-          noMargin
-          $isActive={selectedListItem === id}
-        />
-        <StyledText $isActive={selectedListItem === id}>
-          {numberOfItems}
-        </StyledText>
-      </ListItem>
-    ))}
-  </ListComponent>
-);
+}) => {
+  const tokens = useThemeTokens();
+  const hasOutlineColor = Boolean(
+    tokens?.outlineButtonColor || tokens?.dm__outlineButtonColor
+  );
 
-export default withTheme(styled(List)``);
+  return (
+    <ul
+      data-testid="list"
+      className={[
+        styles.list,
+        hasOutlineColor ? styles.hasOutlineColor : "",
+        className ?? "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      {...props}
+    >
+      {listItems.map(({ id, icon, text, numberOfItems }) => {
+        const isActive = selectedListItem === id;
+        return (
+          <li
+            key={id}
+            className={`${styles.item} ${isActive ? styles.active : ""}`}
+            data-testid={text}
+            onClick={() => setSelectedListItem(id)}
+          >
+            <IconText
+              className={styles.iconText}
+              icon={icon}
+              text={text}
+              noMargin
+            />
+            <Text className={styles.text}>{numberOfItems}</Text>
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
+export default List;

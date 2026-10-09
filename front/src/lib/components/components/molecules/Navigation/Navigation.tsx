@@ -1,14 +1,13 @@
 import * as React from "react";
-import { useState, ReactNode } from "react";
-import styled, { createGlobalStyle } from "styled-components";
+import { useState, useEffect, ReactNode } from "react";
 import { Logo, LogoProps } from "../../atoms/Logo/Logo";
 import Drawer from "rc-drawer";
 import "rc-drawer/assets/index.css";
 import { Col, Row } from "react-grid-system";
 import { Text } from "../../../";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { t } from "i18next";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import styles from "./Navigation.module.css";
 
 const ArrowLeftIcon = () => {
   return (
@@ -103,149 +102,21 @@ export interface NavigationProps extends ExtendableStyledComponent {
   isMobileDevice?: boolean;
 }
 
-const GlobalStyle = createGlobalStyle<{ $isMobileDevice: boolean }>`
-
-.custom-drawer-wrapper {
-  @media (max-width: 530px) {
-    width: 90% !important;
-  }
-  .drawer-header {
-    padding-top: ${({ $isMobileDevice }) => $isMobileDevice && "100px"};
-  }
-}
-
-  svg {
-    transition: opacity 0.2s ease-in-out;
-  
-    &:hover {
-      opacity: 0.65;
-      cursor: pointer;
-    }
-  }
-  
-  .drawer-search {
-    padding: 24px 16px;
-  }
-
-  .drawer,
-  .drawer-content-wrapper {
-    box-sizing: border-box;
-  }
-
-  .drawer-content-wrapper {
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  .drawer-header {
-    display: inline-flex;
-    width: 100%;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 16px;
-    box-sizing: border-box;
-    /* box-shadow: 0px -2px 15px rgba(0, 0, 0, 0.1); */
-  }
-
-  .drawer-content {
-    background: ${({ theme }) =>
-      getStylesBasedOnTheme(
-        theme.mode,
-        theme.dm__background,
-        theme.background
-      )};
-  }
-  
-  .drawer-menu-list {
-    margin: 0;
-    list-style-type: none;
-    padding: 0;
-    li {
-      padding: 10px 0px;
-    }
-  }
-  
-  .drawer-menu-item {
-    padding: 15px 16px;
-    box-sizing: border-box;
-    display: flex;
-    cursor: pointer;      
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-   
-      
-    a {
-      text-decoration: none;
-    }
-  }
-  
-  .drawer-nested-submenu-header-container {
-    width: 100%;
-  }
-
-  .drawer-nested-submenu-header {
-    text-align: center;
-  }
-  
-  .drawer-menu-item__icon svg path,
-  .menu-drawer-prev svg path {
-    stroke: ${({ theme }) =>
-      getStylesBasedOnTheme(theme.mode, theme.white, theme.gray1)};
-  }
-  
-  .menu-drawer-close svg path {
-    fill: ${({ theme }) =>
-      getStylesBasedOnTheme(theme.mode, theme.white, theme.gray1)};
-  }
-  
-  .drawer-menu-item__wrapper {
-    width: 100%;
-  }
-`;
-
-const StyledNavigation = styled("div")`
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 0 16px;
-  }
-  .menu-button {
-    cursor: pointer;
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    transition: opacity 0.2s ease-in-out;
-
-    &:hover {
-      opacity: 0.65;
-    }
-  }
-  .menu-bar {
-    width: 19px;
-    height: 2px;
-    margin: 2.4px 0;
-    border-radius: 3px;
-    background: ${({ theme }) =>
-      getStylesBasedOnTheme(theme.mode, theme.white, theme.textColor)};
-    cursor: pointer;
-  }
-`;
-
-const IconsHeaderMobileWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  svg,
-  button {
-    width: 28px;
-    height: 28px;
-  }
-`;
+/**
+ * The drawer styles (and the page-wide svg hover) apply only while a mobile
+ * Navigation is mounted, as the former global style did: they are gated on
+ * `body[data-ulams-nav]` (`"device"` adds the mobile-device header padding).
+ */
+const useNavigationBodyFlag = (active: boolean, isMobileDevice: boolean) => {
+  useEffect(() => {
+    if (!active || typeof document === "undefined") return;
+    const body = document.body;
+    body.dataset.ulamsNav = isMobileDevice ? "device" : "true";
+    return () => {
+      delete body.dataset.ulamsNav;
+    };
+  }, [active, isMobileDevice]);
+};
 
 export const Navigation: React.FC<NavigationProps> = (props) => {
   const {
@@ -261,6 +132,7 @@ export const Navigation: React.FC<NavigationProps> = (props) => {
     useState<DrawerSubmenuHistory>({});
   const [currentMenuItems, setCurrentMenuItems] =
     useState<MenuItem[]>(menuItems);
+  useNavigationBodyFlag(!!mobile, isMobileDevice || false);
 
   const onCloseDrawer = () => {
     setMobileMenuOpen(false);
@@ -352,8 +224,7 @@ export const Navigation: React.FC<NavigationProps> = (props) => {
   return (
     <>
       {mobile ? (
-        <StyledNavigation className={`ulams-component ${className}`}>
-          <GlobalStyle $isMobileDevice={isMobileDevice || false} />
+        <div className={`${styles.root} ulams-component ${className}`}>
           <div className="header">
             {React.isValidElement(logo) ? (
               <React.Fragment>{logo}</React.Fragment>
@@ -361,12 +232,12 @@ export const Navigation: React.FC<NavigationProps> = (props) => {
               <Logo {...(logo as LogoProps)} />
             )}
 
-            <IconsHeaderMobileWrapper>
-              <IconsHeaderMobileWrapper>
+            <div className={styles.icons}>
+              <div className={styles.icons}>
                 {props.cart}
                 {props.notification}
                 {props.profile}
-              </IconsHeaderMobileWrapper>
+              </div>
 
               <span
                 className="menu-button"
@@ -380,7 +251,7 @@ export const Navigation: React.FC<NavigationProps> = (props) => {
                 <span className="menu-bar"></span>
                 <span className="menu-bar"></span>
               </span>
-            </IconsHeaderMobileWrapper>
+            </div>
           </div>
 
           <Drawer
@@ -443,7 +314,7 @@ export const Navigation: React.FC<NavigationProps> = (props) => {
             )}
             <div>{renderMobileMenu(currentMenuItems)}</div>
           </Drawer>
-        </StyledNavigation>
+        </div>
       ) : (
         <></>
       )}

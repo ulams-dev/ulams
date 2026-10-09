@@ -5,6 +5,7 @@ namespace Ulams\Files\Tests\Api;
 use Ulams\Files\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class FilesApiUploadTest extends TestCase
 {
@@ -112,7 +113,7 @@ class FilesApiUploadTest extends TestCase
         $this->disk->assertMissing($file->getClientOriginalName());
     }
 
-    public function excludedFileExtensionProvider(): array
+    public static function excludedFileExtensionProvider(): array
     {
         return [
             ['html'],
@@ -125,15 +126,15 @@ class FilesApiUploadTest extends TestCase
         ];
     }
 
-    public function allowedFileExtensionProvider(): array
+    public static function allowedFileExtensionProvider(): array
     {
-        $this->createApplication();
-        return array_map(fn ($item) => [$item], explode(',', config('files.mimes')));
+        // Data providers run before the application boots (PHPUnit 10), so read the package config file.
+        $config = require __DIR__ . '/../../src/config/files.php';
+
+        return array_map(fn ($item) => [$item], explode(',', $config['mimes']));
     }
 
-    /**
-     * @dataProvider allowedFileExtensionProvider
-     */
+    #[DataProvider('allowedFileExtensionProvider')]
     public function testAllowedFileExtensions(string $ext)
     {
         $file = UploadedFile::fake()->create('file.' . $ext);
@@ -148,9 +149,7 @@ class FilesApiUploadTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /**
-     * @dataProvider excludedFileExtensionProvider
-     */
+    #[DataProvider('excludedFileExtensionProvider')]
     public function testExcludedFileExtensions(string $ext)
     {
         $file = UploadedFile::fake()->create('file.' . $ext);

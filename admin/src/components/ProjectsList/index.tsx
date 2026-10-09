@@ -90,11 +90,7 @@ export const ProjectsList: React.FC<Props> = ({ courseId }) => {
         },
         render: (_, record) =>
           record.user_id && (
-            <TypeButtonDrawer
-              key={'user'}
-              type="Ulams\Core\Models\User"
-              type_id={record.user_id}
-            />
+            <TypeButtonDrawer key={'user'} type="Ulams\Core\Models\User" type_id={record.user_id} />
           ),
       },
       {

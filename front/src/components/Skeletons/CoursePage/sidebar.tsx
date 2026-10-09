@@ -1,17 +1,11 @@
 import Skeleton from "react-loading-skeleton";
-import styled from "styled-components";
-
-const SkeletonWrapper = styled.div`
-  .react-loading-skeleton {
-    border-radius: 10px;
-  }
-`;
+import styles from "@/components/Skeletons/Skeletons.module.css";
 
 const SidebarSkeleton = () => {
   return (
-    <SkeletonWrapper>
+    <div className={styles.sidebar}>
       <Skeleton width={"100%"} height={350} />
-    </SkeletonWrapper>
+    </div>
   );
 };
 

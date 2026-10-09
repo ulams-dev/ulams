@@ -57,13 +57,14 @@ export default function (initialState: {
 
   // H5P
   const canAccessH5P =
-    !haveSettingsInDashboard('hideInMenu-CoursesH5ps', true) &&
-    havePackageInstalled(PACKAGES.HeadlessH5p);
+    !haveSettingsInDashboard('hideInMenu-CoursesH5ps', true) && havePackageInstalled(PACKAGES.H5P);
   const canAccessH5PList = havePermissionsInDashboard(PERMISSIONS.H5PList) && canAccessH5P;
   const canAccessH5PAuthorList =
     havePermissionsInDashboard(PERMISSIONS.H5PAuthorList) && canAccessH5P;
 
   const canAccessH5PDetails = havePermissionsInDashboard(PERMISSIONS.H5PRead) && canAccessH5P;
+  const canAccessH5PLibraries =
+    havePermissionsInDashboard(PERMISSIONS.H5PLibraryList) && canAccessH5P;
 
   return {
     dashboardPermission,
@@ -118,6 +119,17 @@ export default function (initialState: {
 
     h5pListPermission: canAccessH5PList || canAccessH5PAuthorList,
     h5pDetailsPermission: canAccessH5PDetails,
+    h5pLibraryListPermission: canAccessH5PLibraries,
+    // upload packages, restrict, refresh the H5P Hub content type cache
+    h5pLibraryUpdatePermission:
+      canAccessH5PLibraries &&
+      havePermissionsInDashboard(
+        PERMISSIONS.H5PLibraryUpdate,
+        PERMISSIONS.H5PLibraryInstall,
+        PERMISSIONS.H5PLibraryUpload,
+      ),
+    h5pLibraryDeletePermission:
+      canAccessH5PLibraries && havePermissionsInDashboard(PERMISSIONS.H5PLibraryDelete),
 
     otherPermission: havePermissionsInDashboard(
       PERMISSIONS.ConsultationList,

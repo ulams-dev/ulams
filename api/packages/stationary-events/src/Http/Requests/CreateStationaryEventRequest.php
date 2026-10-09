@@ -111,7 +111,7 @@ class CreateStationaryEventRequest extends FormRequest
             'authors.*' => ['integer', new ValidAuthor()],
             'categories' => ['array'],
             'categories.*' => ['integer', 'exists:categories,id'],
-            'image' => ['nullable', 'file', 'image'],
+            'image' => ['nullable', 'file', 'image:allow_svg'],
             'agenda' => ['nullable', 'json'],
         ];
     }

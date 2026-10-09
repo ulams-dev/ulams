@@ -9,14 +9,13 @@ use Ulams\Courses\Tests\TestCase;
 use Ulams\Scorm\Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Peopleaps\Scorm\Model\ScormModel;
+use PHPUnit\Framework\Attributes\Test;
 
 class CourseScormApiTest extends TestCase
 {
     use DatabaseTransactions, CreatesUsers;
 
-    /**
-     * @test
-     */
+    #[Test]
 
     protected function setUp(): void
     {

@@ -1,0 +1,45 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  tone?: "tip" | "warning" | "key";
+  title?: string;
+  text: string;
+}
+const { tone = "tip", title, text } = Astro.props;
+const icon = tone === "warning" ? "shield" : tone === "key" ? "star" : "sparkle";
+---
+
+<aside class={`u-callout u-callout--${tone}`}>
+  <Icon name={icon} />
+  <div>
+    {title && <p class="u-callout__title">{title}</p>}
+    <p>{text}</p>
+  </div>
+</aside>
+
+<style>
+  .u-callout {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+    border-left: 4px solid var(--ulams-color-primary);
+    background: var(--ulams-color-card-bg);
+  }
+  .u-callout :global(.u-icon) {
+    color: var(--ulams-color-primary);
+    margin-top: 3px;
+  }
+  .u-callout--warning {
+    border-left-color: var(--ulams-color-warn);
+  }
+  .u-callout--key {
+    border-left-color: var(--ulams-color-secondary);
+  }
+  .u-callout__title {
+    font-weight: 700;
+  }
+</style>

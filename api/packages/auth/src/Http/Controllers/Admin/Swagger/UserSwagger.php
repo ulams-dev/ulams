@@ -126,12 +126,10 @@ interface UserSwagger
      *          response=200,
      *          description="successful operation, returns list of Users",
      *          @OA\JsonContent(
-     *              @OA\Schema(
      *                  type="array",
      *                  @OA\Items(
      *                      ref="#/components/schemas/User"
      *                  )
-     *              )
      *          )
      *     ),
      * )

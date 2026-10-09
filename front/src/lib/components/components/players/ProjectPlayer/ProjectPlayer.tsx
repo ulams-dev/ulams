@@ -1,5 +1,4 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import styled, { withTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { API } from "@ulams/sdk";
@@ -17,6 +16,7 @@ import { Spin } from "../../atoms/Spin/Spin";
 import { Text } from "../../atoms/Typography/Text";
 import { MarkdownRenderer } from "../../molecules/MarkdownRenderer/MarkdownRenderer";
 import { Upload } from "../../molecules/Upload/Upload";
+import styles from "./ProjectPlayer.module.css";
 
 export interface ProjectsData {
   data: API.ProjectFile[];
@@ -38,39 +38,6 @@ export interface ProjectPlayerProps {
   className?: string;
   onProjectsChange?: (projects: ProjectsData) => void;
 }
-
-const ProjectPlayerWrapper = styled.div`
-  .project-player__upload-input {
-    margin-bottom: 1em;
-    .wrapper {
-      .border img {
-        display: none;
-      }
-
-      &::after {
-        padding-top: 0;
-        aspect-ratio: 16 / 3;
-      }
-    }
-  }
-
-  .project-player__projects-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1em;
-
-    .project-card {
-      width: 100%;
-      max-width: 225px;
-
-      .content {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-      }
-    }
-  }
-`;
 
 const IconBin = () => {
   return (
@@ -207,8 +174,8 @@ export const ProjectPlayer: React.FC<ProjectPlayerProps> = ({
   );
 
   return (
-    <ProjectPlayerWrapper
-      className={"ulams-component" + ` ${className}`}
+    <div
+      className={`${styles.root} ulams-component ${className}`}
       data-testid="project-player"
     >
       {topic.description && (
@@ -227,8 +194,8 @@ export const ProjectPlayer: React.FC<ProjectPlayerProps> = ({
         projects={projects}
         onDeleteSuccess={refreshProjects}
       />
-    </ProjectPlayerWrapper>
+    </div>
   );
 };
 
-export default withTheme(styled(ProjectPlayer)<ProjectPlayerProps>``);
+export default ProjectPlayer;

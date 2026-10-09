@@ -6,7 +6,7 @@ use Ulams\TopicTypeGift\Enum\QuestionTypeEnum;
 
 trait GiftQuestionTesting
 {
-    public function questionDataProvider(): array
+    public static function questionDataProvider(): array
     {
         return [
             [

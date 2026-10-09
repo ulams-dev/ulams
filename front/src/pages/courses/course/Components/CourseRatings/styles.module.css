@@ -1,0 +1,12 @@
+.stack {
+  gap: 22px;
+  margin: 16px auto;
+}
+
+.title {
+  margin-bottom: 16px;
+}
+
+.paginationContainer {
+  margin: 0 auto;
+}

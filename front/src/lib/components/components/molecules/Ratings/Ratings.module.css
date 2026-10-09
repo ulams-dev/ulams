@@ -1,0 +1,74 @@
+.desktop {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.desktop :global(.ratings-container) {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.desktop :global(.header) {
+  margin-bottom: 20px;
+}
+
+.desktop :global(.title),
+.mobile :global(.title) {
+  color: var(--ulams-color-primary);
+}
+
+.desktop :global(.average-rate-container) {
+  background: var(--ulams-color-card-bg);
+  padding: 24px 34px;
+  text-align: center;
+  border-radius: var(--ulams-radius-card);
+}
+
+.desktop :global(.average-rate-label) {
+  font-size: 14px;
+  margin: 3px 0 0;
+}
+
+.desktop :global(.rate-with-interval-container) {
+  flex: 1;
+  padding-left: 27px;
+}
+
+.desktop :global(.rate-row) {
+  display: flex;
+  align-items: center;
+}
+
+.desktop :global(.interval),
+.mobile :global(.interval) {
+  flex: 1;
+  padding-right: 20px;
+}
+
+.mobile :global(.header) {
+  margin-bottom: 14px;
+}
+
+.mobile :global(.rate-row) {
+  display: flex;
+  align-items: center;
+  padding-right: 20px;
+}
+
+.mobile :global(.average-rate-container) {
+  display: flex;
+  align-items: center;
+  background: var(--ulams-color-card-bg);
+  padding: 15px 20px;
+  border-radius: var(--ulams-radius-card);
+}
+
+.mobile :global(.average-rate-container) > div {
+  padding-left: 20px;
+}
+
+.mobile :global(.average-rate-label) {
+  margin-bottom: 0;
+  font-size: 14px;
+}

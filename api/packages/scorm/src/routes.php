@@ -1,6 +1,7 @@
 <?php
 
 use Ulams\Scorm\Http\Controllers\ScormController;
+use Ulams\Scorm\Http\Controllers\ScormFileController;
 
 use Ulams\Scorm\Http\Controllers\ScormTrackController;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -25,3 +26,13 @@ Route::group(['prefix' => 'api/scorm'], function () {
         Route::get('/{scoId}/{key}', [ScormTrackController::class, 'get']);
     });
 });
+
+// Package files on a local SCORM disk (per tenant storage directory): <disk url>/scorm/{path}.
+// An S3 disk serves them from the bucket instead.
+$scormDisk = (array) config('filesystems.disks.' . config('scorm.disk'), []);
+if (($scormDisk['driver'] ?? null) === 'local') {
+    $scormUrlPath = trim((string) parse_url((string) ($scormDisk['url'] ?? '/storage'), PHP_URL_PATH), '/');
+    Route::get(($scormUrlPath === '' ? '' : $scormUrlPath . '/') . 'scorm/{path}', [ScormFileController::class, 'show'])
+        ->where('path', '.*')
+        ->name('scorm.files');
+}

@@ -16,12 +16,7 @@ type UserStatColumn = Record<string, number | string | API.FinishedTopicsUserSta
   id: number;
 };
 
-const findH5PType = (topic: API.TopicH5P) => {
-  if (topic.topicable.content.contents) {
-    return Object.values(topic.topicable.content.contents)[0].library;
-  }
-  return 'H5P';
-};
+const findH5PType = (topic: API.TopicH5P) => topic.topicable?.content?.main_library || 'H5P';
 
 export const UserProgress: React.FC<{
   course_id: number;

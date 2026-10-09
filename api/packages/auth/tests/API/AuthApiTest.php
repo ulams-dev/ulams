@@ -2,6 +2,9 @@
 
 namespace Ulams\Auth\Tests\API;
 
+use Laravel\Passport\AccessToken;
+use Ulams\Auth\Services\AuthService;
+
 use Ulams\Auth\Enums\AuthPermissionsEnum;
 use Ulams\Auth\Enums\SettingStatusEnum;
 use Ulams\Auth\Enums\TokenExpirationEnum;
@@ -391,9 +394,14 @@ class AuthApiTest extends TestCase
         /** @var User $user */
         $user = $this->makeStudent();
         Passport::actingAs($user);
-        $tokenConfig = config('passport.personal_access_client.secret');
-        $token = $user->createToken($tokenConfig)->token;
-        $user->withAccessToken($token);
+        $token = $user->createToken(AuthService::TOKEN_NAME)->token;
+        // Passport 13: the authenticated user carries an AccessToken (not the Token model).
+        $user->withAccessToken(new AccessToken([
+            'oauth_access_token_id' => $token->getKey(),
+            'oauth_client_id' => $token->client_id,
+            'oauth_user_id' => (string) $user->getKey(),
+            'oauth_scopes' => [],
+        ]));
         $this->response = $this->actingAs($user, 'api')->json('POST', '/api/auth/logout');
 
         $this->assertApiSuccess();
@@ -581,9 +589,14 @@ class AuthApiTest extends TestCase
     {
         $user = $this->makeStudent();
         Passport::actingAs($user);
-        $tokenConfig = config('passport.personal_access_client.secret');
-        $token = $user->createToken($tokenConfig)->token;
-        $user->withAccessToken($token);
+        $token = $user->createToken(AuthService::TOKEN_NAME)->token;
+        // Passport 13: the authenticated user carries an AccessToken (not the Token model).
+        $user->withAccessToken(new AccessToken([
+            'oauth_access_token_id' => $token->getKey(),
+            'oauth_client_id' => $token->client_id,
+            'oauth_user_id' => (string) $user->getKey(),
+            'oauth_scopes' => [],
+        ]));
         $this->response = $this->actingAs($user)->json('GET', '/api/auth/refresh');
         $this->assertApiSuccess();
 

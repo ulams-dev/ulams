@@ -1,0 +1,17 @@
+.mobileDrawer :global(.close) {
+  all: unset;
+  cursor: pointer;
+}
+
+/* rc-drawer renders in a portal, so these rules are global. */
+:global(.drawer-handle) {
+  display: none;
+}
+
+:global(.mobile-drawer-drawer-wrapper) {
+  height: var(--mobile-drawer-height, 55dvh);
+  min-height: 105px;
+  width: 100%;
+  bottom: 0;
+  border-radius: 10px 10px 0px 0px;
+}

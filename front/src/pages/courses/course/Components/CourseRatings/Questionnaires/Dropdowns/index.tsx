@@ -1,11 +1,12 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "styled-components";
+import { useThemeTokens } from "@ulams/components/theme/applyTheme";
 import { Dropdown } from "@ulams/components/components/molecules/Dropdown/Dropdown";
 import { useCourseRatingContext } from "../../Provider";
 import { API } from "@ulams/sdk";
 import { QuestionType } from "@/types/questionnaire";
-import { StyledStack } from "../../styles";
+import { Stack } from "@ulams/components/components/atoms/Stack/index";
+import styles from "../../styles.module.css";
 
 interface Props {
   questionnaires: API.Questionnaire[];
@@ -17,7 +18,8 @@ export const CourseRatingsQuestionnairesDropdowns = ({
   const { questionnaireId, setQuestionnaireId, questionId, setQuestionId } =
     useCourseRatingContext();
   const { t } = useTranslation();
-  const theme = useTheme();
+  // Dropdown computes text contrast from this value in JS, so it needs the raw colour.
+  const theme = useThemeTokens();
 
   const questionnairesFilter = useMemo(
     () =>
@@ -42,13 +44,13 @@ export const CourseRatingsQuestionnairesDropdowns = ({
   );
 
   return (
-    <StyledStack>
+    <Stack className={styles.stack}>
       {questionnairesFilter.length > 1 && (
         <Dropdown
           onChange={(e) => setQuestionnaireId(Number(e.value))}
           options={questionnairesFilter}
           placeholder={t("CoursePage.SelectQuestionnaire")}
-          backgroundColor={theme.white}
+          backgroundColor={theme?.white}
           value={questionnairesFilter?.find(
             ({ value }) => value === String(questionnaireId)
           )}
@@ -58,11 +60,11 @@ export const CourseRatingsQuestionnairesDropdowns = ({
         onChange={(e) => setQuestionId(Number(e.value))}
         options={questionnaireQuestionFilter}
         placeholder={t("CoursePage.SelectQuestion")}
-        backgroundColor={theme.white}
+        backgroundColor={theme?.white}
         value={questionnaireQuestionFilter?.find(
           ({ value }) => value === String(questionId)
         )}
       />
-    </StyledStack>
+    </Stack>
   );
 };

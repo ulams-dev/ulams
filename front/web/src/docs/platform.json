@@ -1,0 +1,277 @@
+{
+  "component": "Page",
+  "props": {
+    "theme": "platform",
+    "title": "ulams — the open, AI-native LMS",
+    "description": "Courses that stay true to their sources: an open-source, AI-native LMS with cited generation, a site per customer and standards built in."
+  },
+  "children": [
+    {
+      "component": "SiteHeader",
+      "props": {
+        "brand": "ulams",
+        "mark": "logo",
+        "links": [
+          {
+            "label": "Product",
+            "href": "#product"
+          },
+          {
+            "label": "Living Course",
+            "href": "#how"
+          },
+          {
+            "label": "Standards",
+            "href": "#standards"
+          },
+          {
+            "label": "Self-host",
+            "href": "#self-host"
+          },
+          {
+            "label": "Demos",
+            "href": "#demos"
+          }
+        ],
+        "signIn": {
+          "label": "GitHub",
+          "href": "https://github.com/ulams-dev"
+        },
+        "cta": {
+          "label": "Try the demos",
+          "href": "#demos"
+        }
+      }
+    },
+    {
+      "component": "Main",
+      "children": [
+        {
+          "component": "Hero",
+          "props": {
+            "variant": "product",
+            "eyebrow": "open source · AI-native · headless",
+            "title": "Courses that stay true to their sources.",
+            "titleAccent": "true to their sources.",
+            "subtitle": "The open LMS where AI drafts, the author decides, and every generated element cites its source.",
+            "primaryCta": {
+              "label": "Try the live demos",
+              "href": "#demos"
+            },
+            "secondaryCta": {
+              "label": "Self-host it (MIT)",
+              "href": "#self-host"
+            },
+            "diff": {
+              "title": "Lesson 2 · SLOs and error budgets",
+              "source": "docs/slo.md",
+              "lines": [
+                {
+                  "op": "ctx",
+                  "text": "Error budget = (1 − SLO) × window"
+                },
+                {
+                  "op": "del",
+                  "text": "Default SLO for checkout: 99.9 %"
+                },
+                {
+                  "op": "add",
+                  "text": "Default SLO for checkout: 99.95 %"
+                },
+                {
+                  "op": "add",
+                  "text": "Budget over 30 days: 21.6 minutes"
+                }
+              ],
+              "citations": [
+                "docs/slo.md §2",
+                "runbook.md §4"
+              ],
+              "action": "Approve",
+              "note": "Illustration of the Living Course flow (on the roadmap)."
+            },
+            "body": "Courses built to keep up with your docs and repos, delivered as a white-label site per customer, on your own servers if you like."
+          }
+        },
+        {
+          "component": "FeatureList",
+          "props": {
+            "id": "product",
+            "variant": "grid",
+            "eyebrow": "why ulams",
+            "title": "An LMS that earns trust",
+            "intro": "Built for developer and customer education: content that changes with every release, sold and delivered to many audiences.",
+            "items": [
+              {
+                "icon": "sync",
+                "title": "Living Course",
+                "text": "Courses stay in sync with the docs and repos they come from, and adapt to each learner.",
+                "status": "coming"
+              },
+              {
+                "icon": "quote",
+                "title": "Cited by design",
+                "text": "Every AI-generated element cites the source fragment it is based on. AI proposes, the author approves the diff."
+              },
+              {
+                "icon": "layers",
+                "title": "A site per customer",
+                "text": "Each tenant gets its own subdomain, theme and isolated database: white-label academies for customers and partners."
+              },
+              {
+                "icon": "server",
+                "title": "Self-hosted, open core",
+                "text": "MIT-licensed core you can run on your own servers. Your content and learner data stay yours; no lock-in."
+              },
+              {
+                "icon": "puzzle",
+                "title": "Standards first",
+                "text": "H5P, SCORM, cmi5 and xAPI work today; the same course can be delivered anywhere. LTI 1.3 is next."
+              },
+              {
+                "icon": "cart",
+                "title": "Commerce built in",
+                "text": "Catalogue, checkout and subscriptions through a headless Sylius shop; access granted only from verified orders.",
+                "status": "coming"
+              }
+            ]
+          }
+        },
+        {
+          "component": "Steps",
+          "props": {
+            "eyebrow": "living course",
+            "title": "How a course keeps up with its sources",
+            "intro": "The killer feature on our roadmap: when your docs change, the course proposes its own update, and you stay in control.",
+            "status": "coming",
+            "items": [
+              {
+                "icon": "code",
+                "title": "Connect sources",
+                "text": "Point ulams at docs, repos and release notes. They become the only ground truth for the course."
+              },
+              {
+                "icon": "quote",
+                "title": "Generate with citations",
+                "text": "Lessons, quizzes and interactives are drafted from approved objectives, each element linked to its source fragment."
+              },
+              {
+                "icon": "sync",
+                "title": "Review diffs when sources change",
+                "text": "A change upstream becomes an update proposal: a reviewable diff you approve, edit or reject."
+              }
+            ]
+          }
+        },
+        {
+          "component": "Showcase",
+          "props": {
+            "eyebrow": "live demos",
+            "title": "Three academies, one platform",
+            "intro": "Each demo is a separate tenant with its own theme, course and data, running on the same ulams install. Open it as a learner or step into its admin.",
+            "items": {
+              "$data": "/demos"
+            },
+            "note": "Demos reset every hour. No sign-up: you are logged in automatically."
+          }
+        },
+        {
+          "component": "Chips",
+          "props": {
+            "eyebrow": "standards",
+            "title": "Delivered anywhere",
+            "intro": "Standards over lock-in: bring existing packages, track learning anywhere, integrate through the API.",
+            "items": [
+              {
+                "label": "H5P",
+                "note": "interactive content"
+              },
+              {
+                "label": "SCORM 1.2 / 2004"
+              },
+              {
+                "label": "cmi5"
+              },
+              {
+                "label": "xAPI",
+                "note": "built-in LRS"
+              },
+              {
+                "label": "LTI 1.3",
+                "status": "coming"
+              },
+              {
+                "label": "OpenAPI",
+                "note": "REST API"
+              },
+              {
+                "label": "Webhooks",
+                "status": "coming"
+              }
+            ]
+          }
+        },
+        {
+          "component": "CtaBand",
+          "props": {
+            "id": "self-host",
+            "variant": "terminal",
+            "eyebrow": "self-host",
+            "title": "Your servers. Your data.",
+            "text": "The core is MIT-licensed and runs with Docker Compose: the API, the admin, this frontend and the H5P service. Paid cloud and enterprise features come on top, never instead.",
+            "code": [
+              "$ git clone https://github.com/ulams-dev/ulams",
+              "$ cd ulams && yarn install",
+              "$ yarn dev:api",
+              "✓ api, admin, h5p and storage are up",
+              "$ yarn dev:web",
+              "✓ http://coffee.app.localhost:4321"
+            ],
+            "cta": {
+              "label": "View on GitHub",
+              "href": "https://github.com/ulams-dev"
+            },
+            "secondary": {
+              "label": "Try the demos",
+              "href": "#demos"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "component": "SiteFooter",
+      "props": {
+        "brand": "ulams",
+        "text": "The open, AI-native LMS. Open core under MIT.",
+        "links": [
+          {
+            "label": "Product",
+            "href": "#product"
+          },
+          {
+            "label": "Living Course",
+            "href": "#how"
+          },
+          {
+            "label": "Demos",
+            "href": "#demos"
+          },
+          {
+            "label": "Standards",
+            "href": "#standards"
+          },
+          {
+            "label": "Self-host",
+            "href": "#self-host"
+          },
+          {
+            "label": "GitHub",
+            "href": "https://github.com/ulams-dev"
+          }
+        ],
+        "note": "Open core under MIT"
+      }
+    }
+  ]
+}

@@ -1,6 +1,4 @@
 import React from "react";
-import styled, { withTheme } from "styled-components";
-
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { RecursiveLessons } from "./_components/RecursiveLessons";
 import {
@@ -8,43 +6,10 @@ import {
   CourseAgendaContextProviderProps,
   useCourseAgendaContext,
 } from "./_components/context";
+import styles from "./CourseAgenda.module.css";
 
 type CourseAgendaProps = ExtendableStyledComponent &
   Omit<CourseAgendaContextProviderProps, "children">;
-
-const StyledSection = styled("section")`
-  width: 100%;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  & > header {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: flex-start;
-    align-content: flex-start;
-    margin-bottom: 20px;
-
-    .lms-icon-title {
-      margin: 0;
-      flex-wrap: nowrap;
-    }
-    & > div {
-      display: inline-flex;
-      align-items: center;
-
-      p {
-        margin-right: 6px;
-      }
-    }
-  }
-
-  & > .lessons__list {
-    padding-left: 0;
-    list-style: none;
-  }
-`;
 
 const CourseAgendaContent: React.FC<ExtendableStyledComponent> = ({
   className = "",
@@ -52,11 +17,11 @@ const CourseAgendaContent: React.FC<ExtendableStyledComponent> = ({
   const { lessons } = useCourseAgendaContext();
 
   return (
-    <StyledSection className={`ulams-component ${className}`}>
+    <section className={`${styles.root} ulams-component ${className}`}>
       <ul className="lessons__list">
         <RecursiveLessons lessons={lessons} />
       </ul>
-    </StyledSection>
+    </section>
   );
 };
 
@@ -69,6 +34,4 @@ export const CourseAgenda: React.FC<CourseAgendaProps> = ({
   </CourseAgendaContextProvider>
 );
 
-const NewComponent = styled(CourseAgenda)<CourseAgendaProps>``;
-
-export default withTheme(NewComponent);
+export default CourseAgenda;

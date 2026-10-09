@@ -1,0 +1,16 @@
+.label,
+.error {
+  font-family: var(--ulams-font-family-body);
+  font-size: 14px;
+  color: var(--ulams-gray-1);
+}
+
+:global([data-mode="dark"]) .label {
+  color: var(--ulams-color-white);
+}
+
+.error,
+:global([data-mode="dark"]) .error {
+  color: var(--ulams-color-error);
+  margin-bottom: 1em;
+}

@@ -16,7 +16,7 @@ class ManuallyTriggeredEvent
     private ?Course $course;
     private ?Product $product;
 
-    public function __construct(User $user, Course $course = null, Product $product = null)
+    public function __construct(User $user, ?Course $course = null, ?Product $product = null)
     {
         $this->user = $user;
         $this->course = $course;

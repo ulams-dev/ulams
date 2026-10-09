@@ -5,6 +5,7 @@ namespace Ulams\Templates\Services;
 use Ulams\Core\Dtos\OrderDto;
 use Ulams\Core\Models\User;
 use Ulams\Templates\Dtos\TemplateFilterCriteriaDto;
+use Ulams\Templates\Enums\TemplateSectionTypeEnum;
 use Ulams\Templates\Facades\Template as FacadesTemplate;
 use Ulams\Templates\Helpers\Models;
 use Ulams\Templates\Models\Templatable;
@@ -125,13 +126,21 @@ class TemplateService implements TemplateServiceContract
     {
 
 
+        $channelClass = $template->channel;
         $results = [];
         foreach ($template->sections as $section) {
             /** @var TemplateSection $section */
+            // JSON sections (pdfme PDF templates): escape values so quotes or
+            // newlines in a course title cannot break the JSON.
+            $isJson = is_string($channelClass) && method_exists($channelClass, 'section')
+                && $channelClass::section($section->key)?->getType()->value === TemplateSectionTypeEnum::SECTION_FABRIC;
             $allVariables = [];
             foreach ($variables as $key => $variable) {
+                $value = $isJson && (is_scalar($variable) || $variable === null)
+                    ? substr((string) json_encode((string) $variable, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 1, -1)
+                    : $variable;
                 foreach (TemplateVariablesService::convertVarNameToAllFormats($key) as $nKey) {
-                    $allVariables[$nKey] = $variable;
+                    $allVariables[$nKey] = $value;
                 }
             }
             $results[$section->key] = strtr($section->content, $allVariables);

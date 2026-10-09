@@ -1,0 +1,11 @@
+# Context filter for `docker build -f api/pdf/Dockerfile .` run from the repo root.
+# Allow-list: only what the api-pdf image needs.
+*
+!package.json
+!yarn.lock
+!api/pdf/package.json
+!api/pdf/LICENSE
+!api/pdf/tsconfig.json
+!api/pdf/tsconfig.build.json
+!api/pdf/src
+!api/pdf/fonts

@@ -10,6 +10,14 @@ class ModifyTemplatesTable extends Migration
 
     public function up()
     {
+        // Laravel 11 changes columns natively and emits the column comment after the whole
+        // blueprint, so the type change must run before the rename, in its own statement.
+        if (!Schema::hasColumn($this->table, 'channel') && Schema::hasColumn($this->table, 'vars_set')) {
+            Schema::table($this->table, function (Blueprint $table) {
+                $table->string('vars_set')->default(null)->change();
+            });
+        }
+
         Schema::table(
             $this->table,
             function (Blueprint $table) {
@@ -25,7 +33,6 @@ class ModifyTemplatesTable extends Migration
 
                 if (!Schema::hasColumn($this->table, 'channel')) {
                     if (Schema::hasColumn($this->table, 'vars_set')) {
-                        $table->string('vars_set')->default(null)->change();
                         $table->renameColumn('vars_set', 'channel');
                     } else {
                         $table->string('channel');

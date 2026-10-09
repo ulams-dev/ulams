@@ -1,0 +1,43 @@
+---
+import Img from "./Img.astro";
+
+interface Props {
+  image: { src: string; alt: string; width: number; height: number };
+  caption?: string;
+}
+const { image, caption } = Astro.props;
+---
+
+<figure class="u-figure">
+  <a class="u-figure__zoom" href={image.src} target="_blank" rel="noopener" aria-label={`Open full size: ${image.alt}`}>
+    <Img {...image} sizes="(min-width: 1100px) 820px, 100vw" priority fit="contain" />
+  </a>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .u-figure {
+    margin: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .u-figure__zoom {
+    display: block;
+    overflow: hidden;
+    border-radius: var(--ulams-radius-card);
+    border: 1px solid var(--ulams-color-border);
+    background: var(--ulams-color-card-bg);
+    cursor: zoom-in;
+  }
+  .u-figure__zoom :global(img) {
+    width: 100%;
+    transition: transform 0.8s var(--ulams-ease);
+  }
+  .u-figure__zoom:hover :global(img) {
+    transform: scale(1.03);
+  }
+  .u-figure figcaption {
+    font-size: 0.875rem;
+    color: var(--ulams-color-muted);
+  }
+</style>

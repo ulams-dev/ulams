@@ -7,7 +7,7 @@ import ResponsiveImage from "@ulams/components/components/organisms/ResponsiveIm
 import LabelListItem from "@ulams/components/components/molecules/LabelListItem/LabelListItem";
 import { formatDate } from "@/utils/date";
 import { UlamsContext } from "@ulams/sdk/react";
-import { EventInfoStyles } from "./EventInfoStyles";
+import styles from "./EventInfo.module.css";
 import { Medal, StarOrange, ThumbUp } from "../../../../icons";
 
 const EventInfo = () => {
@@ -18,7 +18,7 @@ const EventInfo = () => {
     return null;
   }
   return (
-    <EventInfoStyles>
+    <div className={styles.root}>
       <section className="event-main-info with-border">
         <Row>
           <Col lg={7}>
@@ -88,7 +88,7 @@ const EventInfo = () => {
           )}
         </div>
       </section>
-    </EventInfoStyles>
+    </div>
   );
 };
 

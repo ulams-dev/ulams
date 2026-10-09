@@ -1,0 +1,15 @@
+/* `.root span` outranks the course cards' `.categories *` text colour, as the former styled component did. */
+.root span.categoryName {
+  cursor: pointer;
+  padding: 2px 4px;
+  background-color: var(--ulams-color-secondary);
+  color: var(--ulams-color-black);
+  border-radius: 3px;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.root span.categoryName:hover {
+  text-decoration: underline;
+}

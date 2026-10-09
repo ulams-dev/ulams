@@ -1,0 +1,26 @@
+.wrapper {
+  padding: 12px;
+  border-radius: 12px;
+
+  border: 1px solid var(--ulams-color-primary);
+}
+
+.progress {
+  position: relative;
+  display: block;
+  width: 52px;
+  height: 12px;
+  background-color: var(--ulams-color-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--progress-width, 0px);
+  height: 12px;
+  background-color: var(--ulams-color-primary-on-light);
+}

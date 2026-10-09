@@ -67,12 +67,10 @@ interface UserGroupsSwagger
      *          response=200,
      *          description="successful operation, returns list of groups",
      *          @OA\JsonContent(
-     *              @OA\Schema(
      *                  type="array",
      *                  @OA\Items(
      *                      ref="#/components/schemas/Group"
      *                  )
-     *              )
      *          )
      *     ),
      * )
@@ -125,12 +123,10 @@ interface UserGroupsSwagger
      *          response=200,
      *          description="successful operation, returns list of groups",
      *          @OA\JsonContent(
-     *              @OA\Schema(
      *                  type="array",
      *                  @OA\Items(
      *                      ref="#/components/schemas/Group"
      *                  )
-     *              )
      *          )
      *     ),
      * )
@@ -202,12 +198,10 @@ interface UserGroupsSwagger
      *          response=200,
      *          description="successful operation, returns list of groups",
      *          @OA\JsonContent(
-     *              @OA\Schema(
      *                  type="array",
      *                  @OA\Items(
      *                      ref="#/components/schemas/Group"
      *                  )
-     *              )
      *          )
      *     ),
      * )
@@ -343,12 +337,10 @@ interface UserGroupsSwagger
      *          response=200,
      *          description="successful operation, returns list of group members",
      *          @OA\JsonContent(
-     *              @OA\Schema(
      *                  type="array",
      *                  @OA\Items(
      *                      ref="#/components/schemas/User"
      *                  )
-     *              )
      *          )
      *     ),
      * )
@@ -386,12 +378,10 @@ interface UserGroupsSwagger
      *          response=200,
      *          description="successful operation, returns list of group members",
      *          @OA\JsonContent(
-     *              @OA\Schema(
      *                  type="array",
      *                  @OA\Items(
      *                      ref="#/components/schemas/User"
      *                  )
-     *              )
      *          )
      *     ),
      * )

@@ -1,12 +1,6 @@
-import styled from "styled-components";
+import * as React from "react";
+import "../styles/components.css";
 
-const VisuallyHidden = styled.span`
-  position: absolute !important;
-  height: 1px;
-  width: 1px;
-  overflow: hidden;
-  clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
-  clip: rect(1px, 1px, 1px, 1px);
-`;
-
-export default VisuallyHidden;
+export default function VisuallyHidden({ children }: { children?: React.ReactNode }) {
+  return <span className="ulams-md-visually-hidden">{children}</span>;
+}

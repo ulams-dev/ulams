@@ -1,8 +1,8 @@
-import { DefaultTheme } from "styled-components";
+import type { ThemeTokens } from "./types";
 import { blend } from "chroma-js";
 import { sharedTheme } from "./shared";
 
-export const contrastTheme: DefaultTheme = {
+export const contrastTheme: ThemeTokens = {
   ...sharedTheme,
   primaryColor: "#157493",
   dm__primaryColor: "#03a9f4",

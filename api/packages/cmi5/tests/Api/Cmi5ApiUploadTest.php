@@ -9,6 +9,7 @@ use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class Cmi5ApiUploadTest extends TestCase
 {
@@ -20,23 +21,21 @@ class Cmi5ApiUploadTest extends TestCase
         $this->seed(Cmi5PermissionSeeder::class);
     }
 
-    public function cmiFileProvider(): array
+    public static function cmiFileProvider(): array
     {
         return [
             [
-                'file' => 'cmi5.zip',
-                'au_amount' => 1
+                'fileName' => 'cmi5.zip',
+                'auAmount' => 1
             ],
             [
-                'file' => 'cmi5_multi_au_framed.zip',
-                'au_amount' => 8
+                'fileName' => 'cmi5_multi_au_framed.zip',
+                'auAmount' => 8
             ],
         ];
     }
 
-    /**
-     * @dataProvider cmiFileProvider
-     */
+    #[DataProvider('cmiFileProvider')]
     public function testUploadCmi5(string $fileName, int $auAmount): void
     {
         Storage::fake();

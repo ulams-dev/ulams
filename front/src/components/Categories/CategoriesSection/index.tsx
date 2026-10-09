@@ -3,66 +3,13 @@ import { IconText } from "@ulams/components/components/atoms/IconText/IconText";
 import { CategoryCard } from "@ulams/components/components/molecules/CategoryCard/CategoryCard";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
+import styles from "./CategoriesSection.module.css";
 import { IconSquares } from "../../../icons";
 import { useHistory } from "react-router-dom";
 import { API } from "@ulams/sdk";
 
 import Container from "../../Common/Container";
 import { Swiper, SwiperSlide } from "swiper/react";
-
-const StyledSection = styled.section`
-  overflow: hidden;
-
-  @media (max-width: 768px) {
-    padding: 30px 0;
-  }
-  h2 {
-    margin: 27px 0;
-  }
-  .slider-title {
-    @media (max-width: 575px) {
-      padding-right: 45%;
-    }
-  }
-  .categories-slider {
-    .slick-dots {
-      bottom: 40px;
-    }
-  }
-  .slick-track {
-    display: flex;
-    gap: 0 20px;
-  }
-  .slick-slide {
-    @media (max-width: 991px) {
-      display: flex !important;
-      justify-content: center;
-    }
-  }
-  .single-category-slide {
-    margin: 0 8px;
-
-    @media (max-width: 991px) {
-      margin: 0 auto;
-      min-width: 300px;
-    }
-  }
-  .category-card-icon {
-    img {
-      margin: 0 auto;
-      display: block;
-      max-height: 70px;
-    }
-  }
-`;
-
-const CategoryRow = styled.div`
-  display: grid;
-  grid-auto-columns: minmax(0, 1fr);
-  grid-auto-flow: column;
-  grid-gap: 10px;
-`;
 
 type Props = {
   categories: API.Category[];
@@ -77,13 +24,13 @@ const CategoriesSection: React.FC<Props> = ({ categories, entity }) => {
     (category) => category.count && category.count > 0
   );
   return (
-    <StyledSection>
+    <section className={styles.section}>
       <Container>
         <Title level={1} as="h2">
           <strong>{t<string>("Homepage.CategoriesTitle")}</strong>
         </Title>
         {isMobile ? (
-          <div className="categories-slider">
+          <div className={styles.slider}>
             <Swiper
               spaceBetween={18}
               slidesOffsetAfter={18}
@@ -126,7 +73,7 @@ const CategoriesSection: React.FC<Props> = ({ categories, entity }) => {
             </Swiper>
           </div>
         ) : (
-          <CategoryRow>
+          <div className={styles.row}>
             {filteredCategories.slice(-5).map((item) => (
               <div className="category-item" key={item.id}>
                 <CategoryCard
@@ -148,10 +95,10 @@ const CategoriesSection: React.FC<Props> = ({ categories, entity }) => {
                 />
               </div>
             ))}
-          </CategoryRow>
+          </div>
         )}
       </Container>
-    </StyledSection>
+    </section>
   );
 };
 

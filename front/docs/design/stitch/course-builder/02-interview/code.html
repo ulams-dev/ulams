@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ulams — Curriculum Architect</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed": "#2a1800",
+            "on-secondary-fixed-variant": "#643f00",
+            "on-tertiary-container": "#f7f5ff",
+            "on-secondary-container": "#714800",
+            "on-secondary": "#ffffff",
+            "surface-dim": "#dbdad5",
+            "tertiary": "#545869",
+            "surface": "#fbf9f4",
+            "secondary": "#845400",
+            "error-container": "#ffdad6",
+            "surface-container-low": "#f5f3ee",
+            "error": "#ba1a1a",
+            "tertiary-container": "#6d7082",
+            "secondary-container": "#ffb54d",
+            "on-error": "#ffffff",
+            "tertiary-fixed-dim": "#c3c5d9",
+            "surface-container-highest": "#e4e2dd",
+            "on-primary-fixed-variant": "#2c25cc",
+            "background": "#fbf9f4",
+            "on-surface-variant": "#464555",
+            "on-tertiary-fixed": "#171b29",
+            "surface-container": "#f0eee9",
+            "on-primary": "#ffffff",
+            "primary-container": "#5b5bf7",
+            "primary-fixed": "#e1dfff",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed": "#ffddb6",
+            "secondary-fixed-dim": "#ffb959",
+            "outline-variant": "#c7c4d8",
+            "surface-tint": "#4746e4",
+            "inverse-surface": "#30312e",
+            "on-background": "#1b1c19",
+            "on-primary-fixed": "#09006b",
+            "primary-fixed-dim": "#c1c1ff",
+            "surface-container-high": "#eae8e3",
+            "on-tertiary": "#ffffff",
+            "inverse-on-surface": "#f2f1ec",
+            "on-surface": "#1b1c19",
+            "outline": "#767587",
+            "on-tertiary-fixed-variant": "#424656",
+            "on-error-container": "#93000a",
+            "inverse-primary": "#c1c1ff",
+            "tertiary-fixed": "#dfe1f6",
+            "on-primary-container": "#f8f5ff",
+            "surface-variant": "#e4e2dd",
+            "primary": "#413ede"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2.5rem",
+            "space-xs": "0.25rem",
+            "margin": "1rem",
+            "gutter-desktop": "1.5rem",
+            "space-lg": "1.5rem",
+            "space-md": "1rem",
+            "margin-desktop": "2rem",
+            "space-sm": "0.5rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Inter"],
+            "code-body": ["JetBrains Mono"],
+            "display-editorial": ["Newsreader"],
+            "caption": ["Inter"],
+            "headline-lg": ["Newsreader"],
+            "label-citation": ["JetBrains Mono"],
+            "display-editorial-mobile": ["Newsreader"],
+            "body-strong": ["Inter"],
+            "headline-sm": ["Inter"],
+            "body-editorial": ["Newsreader"],
+            "headline-lg-mobile": ["Newsreader"],
+            "body-default": ["Inter"]
+          },
+          "fontSize": {
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "code-body": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "display-editorial": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "headline-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.015em", "fontWeight": "400" }],
+            "label-citation": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "display-editorial-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "body-strong": ["14px", { "lineHeight": "22px", "fontWeight": "500" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-editorial": ["19px", { "lineHeight": "32px", "fontWeight": "400" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "body-default": ["14px", { "lineHeight": "22px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #E4E2DD;
+      border-radius: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #C7C4D8;
+    }
+    .ai-focus-glow {
+      box-shadow: 0 0 0 1px #5B5BF7, 0 0 20px -2px rgba(91, 91, 247, 0.16), 0 2px 8px rgba(14, 18, 32, 0.04);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased font-body-default text-body-default min-h-screen flex flex-col select-none overflow-hidden">
+<!-- ========================================================================= -->
+<!-- SHARED COMPONENT: SideNavBar (Fixed Left Rail)                           -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-16 z-40 bg-inverse-surface border-r border-outline-variant/30 flex flex-col justify-between py-4 items-center">
+<!-- Top Monogram & Brand Anchor -->
+<div class="flex flex-col items-center gap-6">
+<a class="w-9 h-9 rounded-lg bg-surface-container-lowest/10 hover:bg-surface-container-lowest/20 flex items-center justify-center text-inverse-on-surface transition-all duration-150 group" href="#" title="Ulams">
+<span class="font-display-editorial text-2xl italic font-semibold leading-none text-inverse-on-surface group-hover:scale-105 transition-transform">u</span>
+</a>
+<!-- Navigation Tabs Stack -->
+<nav aria-label="Main Navigation" class="flex flex-col items-center gap-2">
+<!-- Tab 1: Builder (ACTIVE) -->
+<a class="flex flex-col items-center justify-center text-primary-fixed bg-surface-variant/20 rounded-lg p-2.5 transition-all duration-150 relative group" href="#" title="Builder">
+<span class="material-symbols-outlined text-[20px]" data-icon="architecture">architecture</span>
+<span class="absolute -right-1 top-2 w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+</a>
+<!-- Tab 2: Courses -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 p-2.5 rounded-lg transition-all duration-150" href="#" title="Courses">
+<span class="material-symbols-outlined text-[20px]" data-icon="menu_book">menu_book</span>
+</a>
+<!-- Tab 3: Sources -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 p-2.5 rounded-lg transition-all duration-150" href="#" title="Sources">
+<span class="material-symbols-outlined text-[20px]" data-icon="source">source</span>
+</a>
+<!-- Tab 4: Usage -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 p-2.5 rounded-lg transition-all duration-150" href="#" title="Usage">
+<span class="material-symbols-outlined text-[20px]" data-icon="data_usage">data_usage</span>
+</a>
+<!-- Tab 5: Settings -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 p-2.5 rounded-lg transition-all duration-150" href="#" title="Settings">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+</a>
+</nav>
+</div>
+<!-- Footer Profile Tab -->
+<div class="flex flex-col items-center gap-2">
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 p-2.5 rounded-lg transition-all duration-150" href="#" title="Profile">
+<span class="material-symbols-outlined text-[22px]" data-icon="account_circle">account_circle</span>
+</a>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- SHARED COMPONENT: TopNavBar (Fixed Top Bar)                               -->
+<!-- ========================================================================= -->
+<header class="fixed top-0 left-0 right-0 h-14 z-30 flex items-center justify-between pl-20 pr-6 bg-surface-bright border-b border-surface-container-highest">
+<!-- Breadcrumb & Path Status -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1.5 text-on-surface font-headline-sm text-headline-sm font-semibold tracking-tight">
+<span class="text-on-surface-variant font-normal">Course Builder</span>
+<span class="text-outline-variant font-code-body text-xs">/</span>
+<span>Coffee brewing fundamentals</span>
+</div>
+<!-- Live State Status Pill -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-citation text-label-citation border border-surface-container-highest">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+        Draft · not published
+      </span>
+</div>
+<!-- Monospace Token Meter & Trailing Actions -->
+<div class="flex items-center gap-5">
+<!-- Token/Cost Counter -->
+<div class="flex items-center gap-2 px-2.5 py-1 rounded bg-surface-container-low border border-surface-container-highest text-on-surface-variant font-code-body text-code-body">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="tracking-tight text-on-surface font-medium">$0.04</span>
+<span class="text-outline-variant">·</span>
+<span class="text-tertiary">38k tokens</span>
+</div>
+<div class="h-4 w-px bg-surface-container-highest"></div>
+<!-- Icon Actions -->
+<div class="flex items-center gap-1">
+<button class="p-1.5 text-tertiary hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors" title="Documentation &amp; Help">
+<span class="material-symbols-outlined text-[20px]" data-icon="help_outline">help_outline</span>
+</button>
+<button class="p-1.5 text-tertiary hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors relative" title="Notifications">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full"></span>
+</button>
+</div>
+<!-- Avatar with prompt-compliant profile tag -->
+<div class="flex items-center pl-1">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-surface-container-highest overflow-hidden flex items-center justify-center text-on-surface font-headline-sm text-xs font-semibold">
+<img class="w-full h-full object-cover" data-alt="A portrait photograph of an academic curriculum designer in soft natural daylight, featuring neutral minimalist clothing, focused expression, cinematic warm lighting, fine-art photographic paper texture, and clean crisp studio tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnYB2zd2IjWsxZNtSFlU4IQbBvfBsCtc-BmCwp0n-2zatBynsOO3owBIbepUh9Uc9yA2sWGzQYhIIXbHIf20A5lcYZJKJFgvVt7dCF3ryoMkp8VcghVeLGdRAXUFFwHBIZB2aH77Aj1PIwjLG-sP2gPJ1HAbtUCO0sUM6KaTTrvD9yXW9dzVvKyATZ6vmdlMgXb_Gd1M53jtASYdn9Iq2nEVy8iOyjXXGgqXtqX_EbuGV3DBSi0NL5nukHrRWt1LKBl7WJUrrT2Kk"/>
+</div>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE LAYOUT (Center Canvas + Right Inspector)                   -->
+<!-- ========================================================================= -->
+<main class="flex-1 flex ml-16 mt-14 h-[calc(100vh-3.5rem)] overflow-hidden">
+<!-- CENTER COLUMN: Interactive Interview Canvas (~760px fluid container) -->
+<div class="flex-1 flex flex-col items-center justify-between overflow-y-auto custom-scroll px-8 py-7 bg-surface">
+<div class="w-full max-w-[760px] flex flex-col gap-6">
+<!-- Top Collapsed Status Card (Document Ingestion Complete) -->
+<div class="flex items-center justify-between px-3.5 py-2.5 bg-surface-container-lowest border border-surface-container-highest rounded-lg shadow-sm">
+<div class="flex items-center gap-2.5">
+<span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center font-code-body text-xs font-bold leading-none">✓</span>
+<span class="font-body-default text-body-default text-on-surface">
+              Source read: <span class="font-code-body text-xs font-medium text-on-surface">coffee-brewing-handbook.pdf</span>
+</span>
+<span class="text-outline-variant font-code-body text-xs">·</span>
+<span class="font-code-body text-label-citation text-tertiary">42 sections · 31k tokens</span>
+</div>
+<span class="font-label-citation text-label-citation text-primary cursor-pointer hover:underline">Inspect source</span>
+</div>
+<!-- Assistant Intro Bubble -->
+<div class="flex items-start gap-3.5 pt-1">
+<div class="w-8 h-8 rounded-lg bg-inverse-surface flex items-center justify-center text-inverse-on-surface flex-shrink-0 shadow-sm mt-0.5">
+<span class="font-display-editorial text-lg italic font-semibold leading-none">u</span>
+</div>
+<div class="flex-1 bg-surface-container-lowest border border-surface-container-highest rounded-xl p-4 shadow-sm">
+<p class="font-body-editorial text-body-editorial text-on-surface leading-relaxed">
+              I read your handbook. Five quick questions and I'll propose an outline. Skip anything — I'll pick sensible defaults and tell you why.
+            </p>
+</div>
+</div>
+<!-- STACK OF 5 INTERACTIVE INTERVIEW CARDS -->
+<div class="flex flex-col gap-4 pb-20">
+<!-- Card 1 (Answered & Collapsed) -->
+<div class="group bg-surface-container-lowest border border-surface-container-highest hover:border-outline-variant rounded-xl p-4 transition-all duration-150 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-4">
+<span class="font-label-citation text-label-citation text-tertiary uppercase tracking-wider px-2 py-0.5 rounded bg-surface-container">1 of 5</span>
+<span class="font-body-strong text-body-strong text-on-surface">Who is this for?</span>
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-on-surface font-body-default text-xs border border-surface-container-highest">
+<span class="material-symbols-outlined text-[14px] text-emerald-600" data-icon="check_circle">check_circle</span>
+<span>Home baristas · beginner</span>
+</div>
+</div>
+<button class="font-headline-sm text-xs text-primary hover:text-on-primary-fixed-variant font-medium flex items-center gap-1">
+              Edit
+            </button>
+</div>
+<!-- Card 2 (ACTIVE CARD with Iris Glow) -->
+<div class="bg-surface-container-lowest rounded-xl p-6 transition-all duration-200 ai-focus-glow border border-primary-container relative">
+<!-- Active step badge and title -->
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-citation text-label-citation text-primary font-semibold tracking-wider px-2.5 py-0.5 rounded-full bg-primary-fixed/60">
+                STEP 2 OF 5
+              </span>
+<span class="inline-flex items-center gap-1 text-primary text-xs font-code-body">
+<span class="material-symbols-outlined text-[15px]" data-icon="auto_awesome">auto_awesome</span>
+                Focusing context
+              </span>
+</div>
+<h2 class="font-headline-lg text-headline-lg font-display-editorial text-on-surface mb-2">
+              How long should the course be?
+            </h2>
+<!-- Subtle "Why I ask" Rationale Pill -->
+<div class="flex items-start gap-2 p-2.5 rounded-lg bg-surface-container-low border border-surface-container-highest mb-5 text-on-surface-variant font-body-default text-xs leading-normal">
+<span class="material-symbols-outlined text-[16px] text-secondary mt-0.5 flex-shrink-0" data-icon="lightbulb">lightbulb</span>
+<span>
+<strong class="font-medium text-on-surface">Why I ask:</strong> Your source covers 6 brewing methods; 1 h fits all of them at 10-minute lessons.
+              </span>
+</div>
+<!-- Segmented Control 1: Course Duration -->
+<div class="space-y-2 mb-4">
+<label class="block font-headline-sm text-xs text-on-surface-variant font-medium tracking-tight">Total duration</label>
+<div class="grid grid-cols-4 gap-2">
+<button class="px-3 py-2 rounded-lg border border-surface-container-highest bg-surface-container-lowest text-on-surface font-body-strong text-body-strong hover:bg-surface-container transition-colors">
+                  30 min
+                </button>
+<!-- Active button -->
+<button class="px-3 py-2 rounded-lg bg-primary-container text-on-primary font-body-strong text-body-strong shadow-sm flex items-center justify-center gap-1.5 transition-all">
+<span>1 h</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="check">check</span>
+</button>
+<button class="px-3 py-2 rounded-lg border border-surface-container-highest bg-surface-container-lowest text-on-surface font-body-strong text-body-strong hover:bg-surface-container transition-colors">
+                  2 h
+                </button>
+<button class="px-3 py-2 rounded-lg border border-surface-container-highest bg-surface-container-lowest text-on-surface font-body-strong text-body-strong hover:bg-surface-container transition-colors">
+                  4 h
+                </button>
+</div>
+</div>
+<!-- Segmented Control 2: Lesson Granularity -->
+<div class="space-y-2 mb-6">
+<label class="block font-headline-sm text-xs text-on-surface-variant font-medium tracking-tight">Lesson pacing</label>
+<div class="flex items-center gap-2">
+<button class="px-3.5 py-1.5 rounded-lg border border-surface-container-highest bg-surface-container-lowest text-on-surface font-body-default text-xs hover:bg-surface-container transition-colors">
+                  5 min
+                </button>
+<!-- Selected Chip -->
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-tint/15 text-primary border border-primary/30 font-body-strong text-xs flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  10 min
+                </button>
+<button class="px-3.5 py-1.5 rounded-lg border border-surface-container-highest bg-surface-container-lowest text-on-surface font-body-default text-xs hover:bg-surface-container transition-colors">
+                  15 min
+                </button>
+</div>
+</div>
+<!-- Interactive Actions Row -->
+<div class="flex items-center justify-between pt-2 border-t border-surface-container-highest">
+<div class="flex items-center gap-3">
+<button class="h-9 px-4 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-headline-sm text-body-strong flex items-center gap-2 shadow-sm transition-all duration-150">
+<span>Continue</span>
+<kbd class="font-code-body text-[10px] bg-primary-fixed/20 text-on-primary px-1.5 py-0.5 rounded border border-white/20">Enter ↵</kbd>
+</button>
+<button class="h-9 px-3 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container font-headline-sm text-body-default flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="auto_awesome">auto_awesome</span>
+<span>Decide for me</span>
+</button>
+</div>
+<span class="font-code-body text-label-citation text-outline">Press 2 for 1h</span>
+</div>
+</div>
+<!-- Card 3 (Upcoming: 60% Opacity) -->
+<div class="bg-surface-container-lowest/70 border border-surface-container-highest/80 rounded-xl p-4 opacity-60 hover:opacity-80 transition-opacity">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-citation text-label-citation text-tertiary uppercase tracking-wider">3 of 5</span>
+<span class="font-code-body text-xs text-outline">Upcoming</span>
+</div>
+<h3 class="font-body-strong text-body-strong text-on-surface mb-3">Tone &amp; pedagogical style</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-lg border border-surface-container-highest bg-surface-container text-on-surface-variant font-body-default text-xs">Friendly</span>
+<span class="px-3 py-1 rounded-lg border border-surface-container-highest bg-surface-container text-on-surface-variant font-body-default text-xs">Professional</span>
+<span class="px-3 py-1 rounded-lg border border-surface-container-highest bg-surface-container text-on-surface-variant font-body-default text-xs">Playful</span>
+<span class="px-3 py-1 rounded-lg border border-surface-container-highest bg-surface-container text-on-surface-variant font-body-default text-xs">Academic</span>
+</div>
+</div>
+<!-- Card 4 (Upcoming: 45% Opacity) -->
+<div class="bg-surface-container-lowest/50 border border-surface-container-highest/60 rounded-xl p-4 opacity-45 hover:opacity-70 transition-opacity">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-citation text-label-citation text-tertiary uppercase tracking-wider">4 of 5</span>
+<span class="font-code-body text-xs text-outline">Upcoming</span>
+</div>
+<h3 class="font-body-strong text-body-strong text-on-surface mb-3">Assessments &amp; milestones</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-lg border border-surface-container-highest bg-surface-container text-on-surface-variant font-body-default text-xs">Quiz after each lesson</span>
+<span class="px-3 py-1 rounded-lg border border-surface-container-highest bg-surface-container text-on-surface-variant font-body-default text-xs">Final test</span>
+<span class="px-3 py-1 rounded-lg border border-surface-container-highest bg-surface-container text-on-surface-variant font-body-default text-xs">Certificate</span>
+</div>
+</div>
+<!-- Card 5 (Upcoming: 35% Opacity) -->
+<div class="bg-surface-container-lowest/40 border border-surface-container-highest/40 rounded-xl p-4 opacity-35 hover:opacity-60 transition-opacity">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-citation text-label-citation text-tertiary uppercase tracking-wider">5 of 5</span>
+<span class="font-code-body text-xs text-outline">Upcoming</span>
+</div>
+<h3 class="font-body-strong text-body-strong text-on-surface mb-3">Delivery language</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-lg border border-surface-container-highest bg-surface-container text-on-surface-variant font-body-default text-xs">English</span>
+<span class="px-3 py-1 rounded-lg border border-surface-container-highest bg-surface-container text-on-surface-variant font-body-default text-xs">Polski</span>
+<span class="px-3 py-1 rounded-lg border border-surface-container-highest bg-surface-container text-on-surface-variant font-body-default text-xs">Deutsch</span>
+</div>
+</div>
+</div>
+</div>
+<!-- BOTTOM COMPOSER: Docked Prompt Input Pill -->
+<div class="w-full max-w-[760px] sticky bottom-0 pt-2 pb-3 bg-gradient-to-t from-background via-background to-transparent">
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-2xl shadow-sm p-1.5 flex items-center gap-2 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+<button class="p-2 text-tertiary hover:text-on-surface rounded-xl hover:bg-surface-container transition-colors" title="Attach context fragment">
+<span class="material-symbols-outlined text-[20px]" data-icon="attachment">attachment</span>
+</button>
+<input class="flex-1 bg-transparent border-none text-on-surface placeholder:text-outline focus:outline-none focus:ring-0 font-body-default text-body-default py-1.5" placeholder="Or just tell me in your own words…" type="text"/>
+<button class="p-2 text-tertiary hover:text-on-surface rounded-xl hover:bg-surface-container transition-colors" title="Record prompt voice memo">
+<span class="material-symbols-outlined text-[20px]" data-icon="mic">mic</span>
+</button>
+<button class="w-8 h-8 rounded-xl bg-primary-container hover:bg-primary text-on-primary flex items-center justify-center shadow-sm transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[18px]" data-icon="arrow_upward">arrow_upward</span>
+</button>
+</div>
+<!-- Monospace Keyboard Hints -->
+<div class="flex items-center justify-center gap-3 pt-2 text-outline font-code-body text-[11px]">
+<span>1–4 to pick</span>
+<span>·</span>
+<span>Enter to continue</span>
+<span>·</span>
+<span>Shift + Return for newline</span>
+</div>
+</div>
+</div>
+<!-- RIGHT INSPECTOR COLUMN: Course Brief & Knowledge Graph Context (340px) -->
+<aside class="w-[340px] flex-shrink-0 border-l border-surface-container-highest bg-surface-container-low/40 p-5 flex flex-col justify-between overflow-y-auto custom-scroll">
+<div class="space-y-6">
+<!-- Inspector Header -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Course brief</h3>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-citation text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+              Live draft
+            </span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-tertiary cursor-pointer hover:text-on-surface" data-icon="tune">tune</span>
+</div>
+<!-- Main Structured Brief Card -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-4 shadow-sm space-y-3.5">
+<!-- Parameter 1 -->
+<div class="flex items-center justify-between text-xs pb-2 border-b border-surface-container-highest/60">
+<span class="font-body-default text-tertiary">Audience</span>
+<span class="font-body-strong text-on-surface">Home baristas <span class="text-outline font-normal">(author)</span></span>
+</div>
+<!-- Parameter 2 -->
+<div class="flex items-center justify-between text-xs pb-2 border-b border-surface-container-highest/60">
+<span class="font-body-default text-tertiary">Level</span>
+<div class="flex items-center gap-1.5">
+<span class="font-body-strong text-on-surface">Beginner</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container text-tertiary font-code-body text-[10px]">decided for you</span>
+</div>
+</div>
+<!-- Parameter 3 (Active Sync) -->
+<div class="flex items-center justify-between text-xs pb-2 border-b border-surface-container-highest/60 bg-primary-fixed/20 -mx-4 px-4 py-1.5 rounded">
+<span class="font-body-strong text-primary">Duration</span>
+<span class="font-code-body text-xs text-primary font-semibold">1 h · 10m lessons</span>
+</div>
+<!-- Parameter 4 (Pending) -->
+<div class="flex items-center justify-between text-xs pb-2 border-b border-surface-container-highest/60">
+<span class="font-body-default text-tertiary">Tone</span>
+<span class="font-code-body text-outline">—</span>
+</div>
+<!-- Parameter 5 (Pending) -->
+<div class="flex items-center justify-between text-xs pb-2 border-b border-surface-container-highest/60">
+<span class="font-body-default text-tertiary">Assessments</span>
+<span class="font-code-body text-outline">—</span>
+</div>
+<!-- Parameter 6 (Pending) -->
+<div class="flex items-center justify-between text-xs">
+<span class="font-body-default text-tertiary">Language</span>
+<span class="font-code-body text-outline">—</span>
+</div>
+<!-- Helper Note -->
+<p class="font-caption text-caption text-outline pt-1 italic">
+            You can change the brief at any time.
+          </p>
+</div>
+<!-- Mini Source Document Card -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-4 shadow-sm space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-tertiary" data-icon="picture_as_pdf">picture_as_pdf</span>
+<span class="font-body-strong text-xs text-on-surface truncate max-w-[190px]">coffee-brewing-handbook.pdf</span>
+</div>
+<span class="font-code-body text-[11px] text-outline">184p</span>
+</div>
+<!-- Monospace Citation Section Tree -->
+<div class="space-y-1.5 pt-1">
+<div class="p-2 rounded bg-surface-container-low border border-surface-container flex items-center justify-between">
+<span class="font-body-default text-xs text-on-surface">§1 Fundamentals of Extraction</span>
+<!-- Amber Citation Anchor Pill -->
+<span class="px-1.5 py-0.5 rounded font-label-citation text-[10px] bg-amber-500/10 text-amber-800 border border-amber-500/30">frg_8k2q</span>
+</div>
+<div class="p-2 rounded bg-surface-container-low border border-surface-container flex items-center justify-between">
+<span class="font-body-default text-xs text-on-surface">§2 Variables in Water Chemistry</span>
+<span class="px-1.5 py-0.5 rounded font-label-citation text-[10px] bg-amber-500/10 text-amber-800 border border-amber-500/30">frg_3m9x</span>
+</div>
+<div class="p-2 rounded bg-surface-container-low border border-surface-container flex items-center justify-between">
+<div class="flex items-center gap-1.5 truncate">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0"></span>
+<span class="font-body-default text-xs text-on-surface truncate">§2.3 Brewing ratios &amp; Grind</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="px-1.5 py-0.5 rounded font-label-citation text-[10px] bg-amber-500/10 text-amber-800 border border-amber-500/30">frg_7p1w</span>
+<span class="font-label-citation text-[10px] text-emerald-700">Ready</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Provenance Isolation Guarantee Footer -->
+<div class="pt-4 border-t border-surface-container-highest">
+<div class="flex items-start gap-2.5 px-3 py-2.5 rounded-lg bg-surface-container border border-surface-container-highest text-tertiary">
+<span class="material-symbols-outlined text-[18px] text-primary mt-0.5" data-icon="verified_user">verified_user</span>
+<div class="text-[11px] leading-tight">
+<p class="font-body-strong text-on-surface text-[11px]">Provenance isolation</p>
+<p class="font-caption text-outline">100% deterministic grounding on source text fragments.</p>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<script>
+    // Lightweight interactive toggle for duration buttons demonstration
+    document.querySelectorAll('[data-duration-option]').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('[data-duration-option]').forEach(b => {
+          b.classList.remove('bg-primary-container', 'text-on-primary');
+          b.classList.add('bg-surface-container-lowest', 'text-on-surface');
+        });
+        this.classList.add('bg-primary-container', 'text-on-primary');
+        this.classList.remove('bg-surface-container-lowest', 'text-on-surface');
+      });
+    });
+  </script>
+</body></html>

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\App;
 use Ulams\TopicTypes\Services\Contracts\TopicTypeServiceContract;
 
-class FixColumnNameCommand extends TestCase
+class FixColumnNameCommandTest extends TestCase
 {
     use /*ApiTestTrait,*/ DatabaseTransactions;
 

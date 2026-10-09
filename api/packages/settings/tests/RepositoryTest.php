@@ -7,6 +7,7 @@ use Ulams\Settings\Repositories\Contracts\SettingsRepositoryContract;
 use Ulams\Settings\Models\Setting;
 use Ulams\Settings\Database\Seeders\DatabaseSeeder;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class RepositoryTest extends TestCase
 {
@@ -43,9 +44,7 @@ class RepositoryTest extends TestCase
         $this->assertEquals($setting->data, $arr);
     }
 
-    /**
-     * @dataProvider settingDataProvider
-     */
+    #[DataProvider('settingDataProvider')]
     public function test_setting_data_cast(string $type, $value, $expected)
     {
         Storage::shouldReceive('url')

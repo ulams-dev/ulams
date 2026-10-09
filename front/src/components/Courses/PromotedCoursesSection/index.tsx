@@ -3,7 +3,6 @@ import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { Button } from "@ulams/components/components/atoms/Button/Button";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
-import styled from "styled-components";
 import { isMobile } from "react-device-detect";
 import CourseImgPlaceholder from "../CourseImgPlaceholder";
 import { ResponsiveImage } from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
@@ -15,62 +14,7 @@ import CategoriesBreadCrumbs from "@/components/Categories/CategoriesBreadCrumbs
 import { NewCourseCard } from "@ulams/components/components/molecules/NewCourseCard/NewCourseCard";
 import useFetchCourses from "@/hooks/courses/useFetchCourses";
 import { CourseCardSkeleton } from "@/components/Skeletons/CourseCard";
-
-const StyledSection = styled.section`
-  @media (max-width: 768px) {
-    margin: 30px 0;
-  }
-  .container {
-    position: relative;
-
-    z-index: 1;
-    &:after {
-      position: absolute;
-      content: "";
-      width: ${isMobile ? "100%" : "calc(100% + 100px)"};
-      height: 100%;
-      background: ${({ theme }) =>
-        theme.theme === "orangeTheme" && theme.mode === "light"
-          ? theme.gray4
-          : "linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%)"};
-      left: 50%;
-      transform: translate(-50%, 0);
-      top: 0;
-      z-index: -1;
-      opacity: ${({ theme }) => (theme.mode === "dark" ? 0.1 : 1)};
-      border-radius: ${({ theme }) => theme.radius};
-
-      @media (max-width: 1200px) {
-        background: ${({ theme }) =>
-          theme.theme === "orangeTheme"
-            ? "linear-gradient(180deg, #F2F2F2 0%, rgba(242, 242, 242, 0) 100%)"
-            : "linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%)"};
-      }
-    }
-  }
-  .header-wrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-
-    button {
-      @media (max-width: 1200px) {
-        display: none;
-      }
-    }
-  }
-  .show-more-btn {
-    display: none;
-    @media (max-width: 1200px) {
-      display: block;
-      margin-top: 60px;
-    }
-  }
-  .course-section {
-    display: none;
-  }
-`;
+import styles from "./styles.module.css";
 
 const PromotedCoursesSection: React.FC = () => {
   const { courses, loading } = useFetchCourses({
@@ -81,9 +25,9 @@ const PromotedCoursesSection: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <StyledSection>
-      <Container className={"container"}>
-        <div className="header-wrapper">
+    <section className={`${styles.section} ${isMobile ? styles.mobile : ""}`}>
+      <Container className={styles.container}>
+        <div className={styles.headerWrapper}>
           <Title level={1} as="h2">
             {t<string>("Homepage.AwardedCoursesTitle")}
           </Title>
@@ -156,7 +100,7 @@ const PromotedCoursesSection: React.FC = () => {
           </Row>
         )}
         <Button
-          className="show-more-btn"
+          className={styles.showMoreBtn}
           onClick={() => history.push(routeRoutes.courses)}
           block
           mode="outline"
@@ -164,7 +108,7 @@ const PromotedCoursesSection: React.FC = () => {
           {t<string>("Homepage.AwardedCoursesBtnText")}
         </Button>
       </Container>
-    </StyledSection>
+    </section>
   );
 };
 

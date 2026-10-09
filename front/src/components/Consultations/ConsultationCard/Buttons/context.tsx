@@ -8,7 +8,6 @@ export const ConsultationModalContext = createContext<{
     term: string;
     consultationId?: number;
     name?: string;
-    analyze_enabled?: boolean;
   } | null;
   setConsultationData: (
     data: {
@@ -29,7 +28,6 @@ export const ConsultationModalProvider: React.FC<{
     term: string;
     consultationId?: number;
     name?: string;
-    analyze_enabled?: boolean;
   } | null>(null);
 
   return (

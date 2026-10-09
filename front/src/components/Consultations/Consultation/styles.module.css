@@ -1,0 +1,44 @@
+.description {
+  padding: 50px 45px;
+  margin: 45px 0 0;
+  background-color: var(--ulams-gray-5);
+  border-radius: var(--ulams-radius-card);
+}
+
+:global([data-mode="dark"]) .description {
+  background-color: var(--ulams-gray-1);
+}
+
+@media (max-width: 768px) {
+  .description {
+    padding: 20px;
+  }
+}
+
+.relatedConsultations {
+  background-color: var(--ulams-gray-5);
+  padding: 20px 0;
+  margin-top: 60px;
+}
+
+:global([data-mode="dark"]) .relatedConsultations {
+  background-color: var(--ulams-gray-1);
+}
+
+.sidebar {
+  width: 100%;
+  left: 0;
+  position: sticky;
+  top: 130px;
+  bottom: unset;
+  z-index: 100;
+}
+
+.mobileSidebar {
+  width: 100%;
+  left: 0;
+  position: fixed;
+  top: unset;
+  bottom: 0;
+  z-index: 100;
+}

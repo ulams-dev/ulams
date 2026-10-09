@@ -1,7 +1,7 @@
 import { FC, useContext } from "react";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "styled-components";
+import { useThemeTokens } from "@ulams/components/theme/applyTheme";
 import { UlamsContext } from "@ulams/sdk/react";
 import Categories from "@ulams/components/components/molecules/Categories/Categories";
 import Title from "@ulams/components/components/atoms/Typography/Title";
@@ -16,13 +16,13 @@ const CategoriesFilter: FC<CategoriesFilterProps> = ({
   handleChange,
 }) => {
   const { categoryTree } = useContext(UlamsContext);
-  const theme = useTheme();
+  const theme = useThemeTokens();
   const { t } = useTranslation();
 
   return (
     <Categories
       mobile={isMobile}
-      backgroundColor={theme.primaryColor}
+      backgroundColor={theme?.primaryColor}
       categories={categoryTree.list || []}
       label={t("Filters.Category")}
       selectedCategories={selectedCategories}

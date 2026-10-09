@@ -58,6 +58,40 @@ Edit the code here directly. A new module needs three things:
 2. Its provider in `config/app.php`.
 3. A test suite in `phpunit.xml`.
 
+## Packages written here
+
+- `h5p` (`ulams/h5p`, `Ulams\H5P\`): Laravel side of the H5P service in `api/h5p`
+  (Lumi h5p-nodejs-library). It replaced the vendored `headless-h5p` package
+  (`escolalms/headless-h5p` 0.5.8). It reads the service's `h5p.contents` table read-only,
+  exposes `GET /api/admin/h5p/contents` and `DELETE /api/admin/h5p/unused`, and talks to
+  the service with `H5PServiceClientContract` (`X-Internal-Token`). Its migration creates
+  `h5p.contents` with the service's DDL if it is missing (PostgreSQL only).
+
+## Third-party forks
+
+- `laravel-scorm` (`Peopleaps\Scorm\`): the SCORM manifest parser, entities and Eloquent
+  models (`scorm`, `scorm_sco`, `scorm_sco_tracking`) used by the `scorm` package and by
+  `app/Library/ScormHelper.php`. Vendored from `devianl2/laravel-scorm` 4.0.1 (MIT,
+  https://github.com/devianl2/laravel-scorm, commit `d87753ffbbbc5eb75e20f8aa0cb39faed8f34863`)
+  because no release accepts Carbon 3, which Laravel 12 requires. The upstream namespace is
+  kept so its callers did not change; `LICENSE` and `README.md` are upstream's. Changes from
+  upstream: none for Carbon 3 (the code only calls `Carbon::now()`/`Carbon::parse()`);
+  implicitly nullable parameters made explicit (`?Sco`, `?Scorm`, `?Carbon`; deprecated in
+  PHP 8.4). Its provider and the `ScormManager` alias are registered in `config/app.php`,
+  as composer discovery did before.
+- `shopping-cart` (`Treestoneit\ShoppingCart\`): the cart models, `CartManager` and the
+  `carts`/`cart_items` migrations used by the `cart` and `vouchers` packages. Vendored from
+  `treestoneit/shopping-cart` 1.6.1 (MIT, https://github.com/treeStoneIT/shopping-cart, commit
+  `74e606554cc1f1c5c28ba7201067cefe94f4b28e`) because no release accepts Laravel 13. The
+  upstream namespace is kept; `LICENSE.md` and `README.md` are upstream's; no code changes. Its
+  provider is registered by `UlamsCartServiceProvider`, as before. The cart is to be replaced by
+  Sylius, so no upstream syncing is planned.
+
+`gnello/laravel-mattermost-driver` (the Laravel wrapper, no Laravel 13 release) was replaced by
+our own `Ulams\Mattermost\Support\MattermostManager` and `Ulams\Mattermost\Facades\Mattermost`
+in the `mattermost` package; the HTTP client `gnello/php-mattermost-driver` (MIT, no Laravel
+dependency) stays a composer dependency.
+
 ## Provenance
 
 These were imported from the exact versions pinned in `api/composer.lock` at the time of
@@ -82,7 +116,6 @@ commits listed below.
 | `csv-users` | `escolalms/csv-users` | https://github.com/EscolaLMS/CSV-Users | 0.1.16 | `2c52b8bb7a9dac8435f1df8c4a353b2584366c6e` |
 | `dictionaries` | `escolalms/dictionaries` | https://github.com/EscolaLMS/Dictionaries | 0.0.5 | `1961960fe3a1d7c3f6b6556d9df03d184e480cea` |
 | `files` | `escolalms/files` | https://github.com/EscolaLMS/Files | 0.1.29 | `56adbd7217a4103652b0583e398e9ba2eec1581d` |
-| `headless-h5p` | `escolalms/headless-h5p` | https://github.com/EscolaLMS/H5P | 0.5.8 | `a58b5dde283e4d444f5f4ee8e9316be0255b8615` |
 | `images` | `escolalms/images` | https://github.com/EscolaLMS/Images | 0.1.24 | `7919b7bd28f5403377922d673339711117d03e27` |
 | `invoices` | `escolalms/invoices` | https://github.com/EscolaLMS/Invoices | 0.1.9 | `861e38a36ba403139b220dd987204e94d3426a20` |
 | `jitsi` | `escolalms/jitsi` | https://github.com/EscolaLMS/Jitsi | 0.1.2 | `9a60bb6a02ee21b2dc00126b2220b88a50e43c06` |
@@ -97,7 +130,6 @@ commits listed below.
 | `permissions` | `escolalms/permissions` | https://github.com/EscolaLMS/Permissions | 0.1.11 | `e64a528c83c111f7508393124566919ea53d942d` |
 | `przelewy24-php` | `escolalms/przelewy24-php` | https://github.com/EscolaLMS/przelewy24-php | 0.1.0 | `c7c09b9a5c9aa009f30edc473c3fec7786a54cf1` |
 | `questionnaire` | `escolalms/questionnaire` | https://github.com/EscolaLMS/Questionnaire | 0.2.26 | `05942c2fe089f51a582ee1a14d2a027d6ef56327` |
-| `recommender` | `escolalms/recommender` | https://github.com/EscolaLMS/Recommender | 0.0.33 | `b61aa2ff80d12e9f4ee80ae1b935a80face5f581` |
 | `reports` | `escolalms/reports` | https://github.com/EscolaLMS/Reports | 0.1.49 | `a33e7028289a0497fe991ae3740654f416ca705e` |
 | `scorm` | `escolalms/scorm` | https://github.com/EscolaLMS/Scorm | 0.3.1 | `13a15e7dc1547b8c60f5c45f6fa066532e77fe5f` |
 | `settings` | `escolalms/settings` | https://github.com/EscolaLMS/settings | 0.2.6 | `55ed94f4d15fb37a91ce51b05877f5ea494193bc` |

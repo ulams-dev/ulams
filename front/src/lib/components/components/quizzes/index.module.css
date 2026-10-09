@@ -1,0 +1,10 @@
+.wrapper > :global(.spinner__overlay) {
+  min-height: 529px;
+}
+
+.startButtonWrapper {
+  width: 100%;
+  min-height: 529px;
+  display: grid;
+  place-items: center;
+}

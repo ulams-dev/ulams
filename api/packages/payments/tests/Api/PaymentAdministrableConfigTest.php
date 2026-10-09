@@ -8,15 +8,14 @@ use Ulams\Payments\Tests\TestCase;
 use Ulams\Settings\Database\Seeders\PermissionTableSeeder as SettingsPermissionSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
+use PHPUnit\Framework\Attributes\Test;
 
 class PaymentAdministrableConfigTest extends TestCase
 {
     use CreatesUsers;
     use DatabaseTransactions;
 
-    /**
-     * @test
-     */
+    #[Test]
     protected function setUp(): void
     {
         parent::setUp();
@@ -60,7 +59,7 @@ class PaymentAdministrableConfigTest extends TestCase
                         'enabled' => true,
                     ],
                     'revenuecat' => [
-                        'enabled' => true,
+                        'enabled' => false,
                     ],
                 ],
                 'default_gateway' => 'Stripe',

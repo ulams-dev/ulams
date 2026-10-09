@@ -1,6 +1,7 @@
+import { siblingAppUrl } from '@ulams/demo';
 import { Space, Tag } from 'antd';
 import React from 'react';
-import { SelectLang, useModel } from 'umi';
+import { FormattedMessage, SelectLang, useModel } from 'umi';
 import NoticeIconView from '../NoticeIcon';
 import Avatar from './AvatarDropdown';
 import styles from './index.less';
@@ -33,6 +34,10 @@ const GlobalHeaderRight: React.FC = () => {
   }
 
   const { navTheme, layout } = initialState.settings;
+  const demo = initialState.demo;
+  const learnerSite = demo?.enabled
+    ? demo.frontUrl ?? siblingAppUrl(window.location, 'admin', 'app')
+    : null;
   let className = styles.right;
 
   if ((navTheme === 'realDark' && layout === 'top') || layout === 'mix') {
@@ -42,6 +47,22 @@ const GlobalHeaderRight: React.FC = () => {
   return (
     <Space className={className}>
       {/* {!currentUser?.data.roles.includes('admin') && <NoticeIconView />} */}
+      {demo?.enabled && (
+        <Tag>
+          <FormattedMessage id="demo_mode.badge" defaultMessage="Demo mode – reset hourly" />
+          {learnerSite && (
+            <>
+              {' · '}
+              <a href={learnerSite} target="_blank" rel="noopener noreferrer">
+                <FormattedMessage
+                  id="demo_mode.open_front"
+                  defaultMessage="Open the learner site"
+                />
+              </a>
+            </>
+          )}
+        </Tag>
+      )}
       <NoticeIconView />
       <Avatar />
       {REACT_APP_ENV && (

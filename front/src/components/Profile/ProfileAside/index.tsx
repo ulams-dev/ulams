@@ -1,6 +1,5 @@
 import { UlamsContext } from "@ulams/sdk/react";
-import React, { useContext, useEffect, useState } from "react";
-import styled from "styled-components";
+import React, { useContext, useEffect } from "react";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { NavLink, useHistory } from "react-router-dom";
@@ -13,6 +12,7 @@ import routeRoutes from "@/components/Routes/routes";
 import DeleteAccountModal from "@/components/Authentication/DeleteAccountModal";
 import useDeleteAccountModal from "@/hooks/useDeleteAccount";
 import { metaDataKeys } from "@/utils/meta";
+import styles from "./styles.module.css";
 
 export type NavigationTab = {
   title: string;
@@ -20,77 +20,12 @@ export type NavigationTab = {
   url: string;
 };
 
-const StyledAsideWrapper = styled.div`
-  h2 {
-    margin-bottom: 10px;
-  }
-`;
-
-const StyledAside = styled("aside")<{ opened: boolean }>`
-  background: ${({ theme }) =>
-    theme.mode === "dark" ? theme.dm__background : theme.white};
-  border-radius: ${({ theme }) => theme.cardRadius}px;
-
-  .user-main-sidebar {
-    margin-bottom: ${isMobile ? "20px" : "5px"};
-
-    .name {
-      margin: ${isMobile ? "0 0 0 21px" : "16px 0 0 0"};
-    }
-    .navigation {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-
-      cursor: pointer;
-      position: relative;
-      button {
-        all: unset;
-      }
-      a,
-      button {
-        text-decoration: none;
-        display: block;
-        width: 100%;
-        border-radius: ${({ theme }) => theme.cardRadius}px;
-        transition: background-color 0.3s ease, color 0.3s ease;
-        p {
-          padding: 8px 10px;
-        }
-        &:hover {
-          background-color: ${({ theme }) => theme.gray3};
-        }
-        &.selected {
-          background-color: ${({ theme }) => theme.primaryColor};
-          p {
-            color: ${({ theme }) => theme.white};
-          }
-        }
-      }
-    }
-  }
-  .delete-account {
-    p {
-      color: ${({ theme }) => theme.errorColor};
-    }
-  }
-  .progress-container {
-    display: flex;
-    flex-direction: ${isMobile ? "row" : "column"};
-    flex-wrap: wrap;
-    justify-content: ${isMobile ? "space-between" : "flex-start"};
-    align-items: ${isMobile ? "center" : "flex-start"};
-  }
-`;
-
 type Props = {
   tabs: NavigationTab[];
   isProfile?: boolean;
 };
 
 const ProfileAside: React.FC<Props> = ({ tabs, isProfile = true }) => {
-  const [menuOpened] = useState(false);
   const { logout, fetchProgress, settings } = useContext(UlamsContext);
   const {
     triggerDeleteAccount,
@@ -109,17 +44,17 @@ const ProfileAside: React.FC<Props> = ({ tabs, isProfile = true }) => {
   }, []);
 
   return (
-    <StyledAsideWrapper>
+    <div className={styles.asideWrapper}>
       {isProfile && (
         <Title level={2} as="h2">
           {t("MyProfilePage.YourAccount")}
         </Title>
       )}
 
-      <StyledAside opened={menuOpened}>
-        <div className="user-main-sidebar">
+      <aside className={`${styles.aside} ${isMobile ? styles.mobile : ""}`}>
+        <div className={styles.userMainSidebar}>
           <UserSidebar icon={<UserIcon />}>
-            <nav className="navigation">
+            <nav className={styles.navigation}>
               {tabs.map((item) => (
                 <NavLink
                   activeClassName="selected"
@@ -143,12 +78,12 @@ const ProfileAside: React.FC<Props> = ({ tabs, isProfile = true }) => {
             </nav>
           </UserSidebar>
         </div>
-      </StyledAside>
+      </aside>
       {isProfile && (
-        <StyledAside opened={menuOpened}>
-          <div className="user-main-sidebar">
+        <aside className={`${styles.aside} ${isMobile ? styles.mobile : ""}`}>
+          <div className={styles.userMainSidebar}>
             <UserSidebar>
-              <div className="navigation">
+              <div className={styles.navigation}>
                 <button
                   onClick={() =>
                     logout().then(() => history.push(routeRoutes.home))
@@ -157,7 +92,7 @@ const ProfileAside: React.FC<Props> = ({ tabs, isProfile = true }) => {
                   <Text>{t<string>("MyProfilePage.Logout")}</Text>
                 </button>
                 <button
-                  className="delete-account"
+                  className={styles.deleteAccount}
                   onClick={() => triggerDeleteAccount()}
                 >
                   <Text>{t<string>("MyProfilePage.DeleteAccount")}</Text>
@@ -165,7 +100,7 @@ const ProfileAside: React.FC<Props> = ({ tabs, isProfile = true }) => {
               </div>
             </UserSidebar>
           </div>
-        </StyledAside>
+        </aside>
       )}
       <DeleteAccountModal
         closeModal={closeModal}
@@ -173,7 +108,7 @@ const ProfileAside: React.FC<Props> = ({ tabs, isProfile = true }) => {
         handleDeleteAccount={handleDeleteAccount}
         isLoading={loading}
       />
-    </StyledAsideWrapper>
+    </div>
   );
 };
 

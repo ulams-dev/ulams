@@ -1,4 +1,4 @@
-import { StyledActionButton } from "@/components/Profile/ProfileCourses/CourseCardActions";
+import { ActionButton } from "@/components/Profile/ProfileCourses/CourseCardActions";
 import ContentLoader from "@/components/_App/ContentLoader";
 import { useCertificateDownload } from "@/hooks/useDownloadCertificate";
 import { IconCertificate } from "@/icons/index";
@@ -44,14 +44,14 @@ const GetCertificate: React.FC<Props> = ({ courseId }) => {
   }, [courseId, downloadCertificate, t, fetchCertificates]);
 
   return (
-    <StyledActionButton onClick={handleGenerateCertificate}>
+    <ActionButton onClick={handleGenerateCertificate}>
       {!noCertificates && (
         <>
           <IconCertificate /> {t("MyProfilePage.DownloadCertificate")}{" "}
           {loadingId > -1 && <ContentLoader width="10px" height="10px" />}
         </>
       )}
-    </StyledActionButton>
+    </ActionButton>
   );
 };
 

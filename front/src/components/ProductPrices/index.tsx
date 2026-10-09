@@ -4,7 +4,7 @@ import {
   Text,
   TextSize,
 } from "@ulams/components/components/atoms/Typography/Text";
-import styled from "styled-components";
+import styles from "./ProductPrices.module.css";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
 
@@ -21,15 +21,6 @@ type Props = {
   isFree?: boolean;
 };
 
-const Prices = styled.div`
-  display: flex;
-  flex-direction: column;
-
-  .pricing-card-discount {
-    margin: 0;
-  }
-`;
-
 const ProductPrices: React.FC<Props> = ({
   price,
   taxRate,
@@ -40,7 +31,7 @@ const ProductPrices: React.FC<Props> = ({
   const { t } = useTranslation();
   if (isMobile) {
     return (
-      <Prices>
+      <div className={styles.prices}>
         {oldPrice && (
           <div className="pricing-card-discount">
             <Text size={textSizes?.old || "18"}>
@@ -51,18 +42,18 @@ const ProductPrices: React.FC<Props> = ({
         <Text size={textSizes?.new || "16"}>
           {formatPrice(price, taxRate)} zł
         </Text>
-      </Prices>
+      </div>
     );
   }
   if (isFree) {
     return (
-      <Prices>
+      <div className={styles.prices}>
         <Text size={textSizes?.new || "16"}>{t("CoursesPage.Free")}</Text>
-      </Prices>
+      </div>
     );
   }
   return (
-    <Prices>
+    <div className={styles.prices}>
       <Text size={textSizes?.new || "16"}>
         {formatPrice(price, taxRate)} zł
       </Text>
@@ -73,7 +64,7 @@ const ProductPrices: React.FC<Props> = ({
           </Text>
         </div>
       )}
-    </Prices>
+    </div>
   );
 };
 

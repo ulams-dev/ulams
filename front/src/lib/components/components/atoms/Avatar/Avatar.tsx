@@ -1,9 +1,11 @@
 import * as React from "react";
 
-import styled, { withTheme } from "styled-components";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { AvatarTypesStr } from "../../../types/AvatarTypes";
 import { setAvatarBySize } from "../../../utils/components/primitives/avatarUtils";
+import { cx } from "../../../utils/cx";
+import styles from "./Avatar.module.css";
+import { legacyDefault } from "../../../utils/legacy";
 
 export interface AvatarProps
   extends React.ImgHTMLAttributes<HTMLImageElement>,
@@ -11,24 +13,21 @@ export interface AvatarProps
   size?: AvatarTypesStr;
 }
 
-const StyledAvatar = styled("img")<AvatarProps>`
-  border-radius: 50%;
-  width: ${(props) => setAvatarBySize(props.size)};
-  height: ${(props) => setAvatarBySize(props.size)};
-  object-fit: cover;
-`;
-
-export const Avatar: React.FC<AvatarProps> = (props) => {
-  const { size, className = "" } = props;
+export const Avatar: React.FC<AvatarProps> = ({
+  size,
+  className = "",
+  style,
+  ...props
+}) => {
   return (
-    <StyledAvatar
+    <img
       {...props}
-      size={size}
-      className={`ulams-component ${className}`}
+      style={
+        { "--avatar-size": setAvatarBySize(size), ...style } as React.CSSProperties
+      }
+      className={cx(styles.avatar, "ulams-component", className)}
     />
   );
 };
 
-const NewAvatar = styled(Avatar)<{ size: string }>``;
-
-export default withTheme(NewAvatar);
+export default legacyDefault(Avatar);

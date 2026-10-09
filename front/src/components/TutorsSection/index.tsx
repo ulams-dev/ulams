@@ -1,16 +1,11 @@
 import { isMobile } from "react-device-detect";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
 
 import { Tutor } from "@ulams/components/components/molecules/Tutor/Tutor";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
-import { TutorsSectionStyles } from "./TutorsSectionStyles";
+import styles from "./TutorsSection.module.css";
 import { User } from "@ulams/sdk/types";
 import { API_URL } from "@/config/index";
-
-const TutorStyled = styled(Tutor)`
-  margin-bottom: 20px;
-`;
 
 type CustomUser = User & {
   bio?: string;
@@ -26,13 +21,14 @@ const TutorsSection = ({ users, title }: TutorsSectionProps) => {
     return null;
   }
   return (
-    <TutorsSectionStyles>
+    <div className={styles.root}>
       <section className="section-tutor with-border padding-right">
         <Title as="h3" level={4} className="title">
           {title}
         </Title>
         {users.map((user) => (
-          <TutorStyled
+          <Tutor
+            className={styles.tutor}
             mobile={isMobile}
             avatar={{
               alt: `${user.first_name} ${user.last_name}`,
@@ -54,7 +50,7 @@ const TutorsSection = ({ users, title }: TutorsSectionProps) => {
           />
         ))}
       </section>
-    </TutorsSectionStyles>
+    </div>
   );
 };
 

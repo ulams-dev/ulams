@@ -1,6 +1,6 @@
 import React from "react";
-import styled, { withTheme } from "styled-components";
 import { ICONS_DICTIONARY } from "./_components/IconsDictionary";
+import { legacyDefault } from "../../../utils/legacy";
 
 type IconName = keyof typeof ICONS_DICTIONARY;
 
@@ -18,8 +18,4 @@ export const Icon: React.FC<Props> = ({ name, ...pictureProps }) => {
   );
 };
 
-// https://styled-components.com/docs/api#using-custom-props
-const NewIcon = styled(Icon)<Props>``;
-
-// Main button with styles
-export default withTheme(NewIcon);
+export default legacyDefault(Icon);

@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from "react";
-import styled from "styled-components";
+import styles from "./styles.module.css";
 
 interface Props {
   headerTitle: string;
@@ -7,46 +7,6 @@ interface Props {
   initialValue?: boolean;
   children: ReactNode;
 }
-
-const StyledCollapse = styled.div<{ isOpen: boolean }>`
-  transition: max-height 0.5s ease-in-out;
-  max-height: 5000px;
-  ${({ isOpen }) =>
-    !isOpen
-      ? "max-height: 1.2em; overflow: hidden; transition: max-height 1s cubic-bezier(0, 1, 0, 1);"
-      : ""};
-
-  .collapse-header {
-    display: grid;
-    grid-auto-flow: column;
-    justify-content: space-between;
-    align-items: start;
-    gap: 6px;
-    cursor: pointer;
-
-    &__heading {
-        text-overflow: ellipsis;
-        overflow: hidden;
-        color: ${({ theme }) =>
-          theme.mode === "dark" ? theme.dm__textColor : theme.textColor};
-    }
-
-    &__icon {
-      color: ${({ theme }) =>
-        theme.mode === "dark" ? theme.dm__textColor : theme.textColor};
-        opacity: 0.6;
-        width: 12px;
-        margin-top: 3.5px;
-        transition: rotate 0.2s ease-in-out;
-        rotate: ${({ isOpen }) => (isOpen ? "180deg" : "0")};
-
-        &:hover {
-            svg {
-                opacity: 1;
-            }
-        }
-    }
-`;
 
 const ProfileAsideCollapse: React.FC<Props> = ({
   headerTitle,
@@ -57,17 +17,19 @@ const ProfileAsideCollapse: React.FC<Props> = ({
   const [open, setOpen] = useState(initialValue ?? false);
 
   return (
-    <StyledCollapse isOpen={open}>
+    <div className={`${styles.collapse} ${open ? "" : styles.closed}`}>
       <div
-        className={`collapse-header ${headerClassName ?? ""}`}
+        className={`collapse-header ${styles.header} ${headerClassName ?? ""}`}
         onClick={() => setOpen((prev) => !prev)}
         onKeyUp={(e) => e.code === "Enter" && setOpen((prev) => !prev)}
         role="button"
         tabIndex={0}
       >
-        <span className="collapse-header__heading">{headerTitle}</span>
+        <span className={`collapse-header__heading ${styles.heading}`}>
+          {headerTitle}
+        </span>
         <svg
-          className="arrows collapse-header__icon"
+          className={`arrows collapse-header__icon ${styles.icon}`}
           width="14"
           height="8"
           viewBox="0 0 14 8"
@@ -80,7 +42,7 @@ const ProfileAsideCollapse: React.FC<Props> = ({
         </svg>
       </div>
       {children}
-    </StyledCollapse>
+    </div>
   );
 };
 

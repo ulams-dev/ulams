@@ -1,0 +1,905 @@
+{
+ "settings": {
+  "global": {
+   "companyName": "On-Call",
+   "frontURL": "http://oncall.app.localhost"
+  },
+  "theme": {
+   "theme": "oncall",
+   "accent": "#58A6FF"
+  }
+ },
+ "course": {
+  "id": 1,
+  "created_at": "2026-10-08T14:48:36.000000Z",
+  "updated_at": "2026-10-08T14:48:50.000000Z",
+  "title": "On-Call — Incident Command for Platform Engineers",
+  "summary": "A 4-week cohort with a live game-day. You'll command a simulated outage, coordinate responders, communicate to stakeholders and write the postmortem.",
+  "image_path": "course/1/images/3M198K1OHMhjRoaa4EBSP6lFNwRchpJsZPjqlpzU.png",
+  "video_path": "course/1/videos/MUjgmGFvO97U5khc2ebBpv76gcR6hcwNL4skvUWk.mp4",
+  "duration": "4-week cohort + live drills · 5 modules",
+  "author_id": 8,
+  "author": {
+   "id": 8,
+   "first_name": "Marek",
+   "last_name": "Lis",
+   "email": "marek.lis@demo.ulams.app",
+   "path_avatar": "avatars/8/avatar-marek.png",
+   "url_avatar": "http://storage.localhost/ulams-oncall/avatars/8/avatar-marek.png",
+   "interests": [],
+   "categories": []
+  },
+  "authors": [
+   {
+    "id": 8,
+    "first_name": "Marek",
+    "last_name": "Lis",
+    "email": "marek.lis@demo.ulams.app",
+    "path_avatar": "avatars/8/avatar-marek.png",
+    "url_avatar": "http://storage.localhost/ulams-oncall/avatars/8/avatar-marek.png",
+    "interests": [],
+    "categories": []
+   },
+   {
+    "id": 2,
+    "first_name": "Priya",
+    "last_name": "Raman",
+    "email": "tutor@oncall.ulams.app",
+    "path_avatar": "avatars/2/avatar-priya.png",
+    "url_avatar": "http://storage.localhost/ulams-oncall/avatars/2/avatar-priya.png",
+    "interests": [],
+    "categories": []
+   }
+  ],
+  "status": "published",
+  "subtitle": "Run calm incidents, write blameless postmortems, ship reliability",
+  "language": "en",
+  "description": "**Stay calm at 3 a.m.** On-Call is a four-week cohort for engineers who carry the pager, or are about to. You will learn to take command of an incident, coordinate responders, keep stakeholders informed and turn every outage into a better system. In week three you run a live game day: a simulated cascading failure in a sandbox cluster, graded on how you command it.\n\n## Curriculum\n\n| Module | Week | Formats |\n|---|---|---|\n| 0. Briefing | 1 | kickoff video, rules of engagement |\n| 1. Signals | 1 | annotated dashboard, SLOs and error budgets, conference talk |\n| 2. Command | 2 | SEV1 role-play video, bridge-call recording, branching scenario, printable runbook |\n| 3. Game day | 3 | SCORM outage simulator, xAPI-tracked live drill, comms quiz |\n| 4. After | 4 | blameless postmortems, postmortem assignment with peer and tutor review |\n\n## Outcomes\n\n- Declare and classify incidents with a shared severity matrix\n- Run the first five minutes of a SEV1: roles, channel, first update\n- Communicate impact, current action and next update time to any audience\n- Alert on SLO burn rate instead of on causes\n- Write a blameless postmortem with owned, dated action items\n\n## Format\n\nFour weeks, about 4–5 hours a week, plus a 90-minute live drill. Each cohort has at most 24 engineers, so every drill gets individual feedback. Deadlines are real: the comms quiz closes on Thursday of week 3, the postmortem is due at the end of week 4.\n\n## Instructors\n\n**Priya Raman** is a Staff SRE who has run the incident programme for a platform of 400 services, and wrote its runbook, severity matrix and postmortem template.\n\n**Marek Lis** has been an incident commander at a fintech processing card payments in 30 countries. He runs the game day and grades the drills.\n\nComplete all modules and pass the drill to earn **Incident Commander — Level 1**.\n",
+  "categories": [
+   {
+    "id": 2,
+    "name": "Site reliability",
+    "slug": "site-reliability",
+    "is_active": true,
+    "parent_id": 1,
+    "icon": null,
+    "icon_class": null,
+    "created_at": "2026-10-08T14:48:36.000000Z",
+    "updated_at": "2026-10-08T14:48:36.000000Z",
+    "description": null,
+    "order": 1,
+    "pivot": {
+     "course_id": 1,
+     "category_id": 2
+    }
+   },
+   {
+    "id": 3,
+    "name": "Incident management",
+    "slug": "incident-management",
+    "is_active": true,
+    "parent_id": 1,
+    "icon": null,
+    "icon_class": null,
+    "created_at": "2026-10-08T14:48:36.000000Z",
+    "updated_at": "2026-10-08T14:48:36.000000Z",
+    "description": null,
+    "order": 2,
+    "pivot": {
+     "course_id": 1,
+     "category_id": 3
+    }
+   }
+  ],
+  "tags": [
+   {
+    "id": 17,
+    "title": "SRE",
+    "morphable_type": "Ulams\\Courses\\Models\\Course",
+    "morphable_id": 1,
+    "created_at": "2026-10-08T15:49:22.000000Z",
+    "updated_at": "2026-10-08T15:49:22.000000Z"
+   },
+   {
+    "id": 18,
+    "title": "incident response",
+    "morphable_type": "Ulams\\Courses\\Models\\Course",
+    "morphable_id": 1,
+    "created_at": "2026-10-08T15:49:22.000000Z",
+    "updated_at": "2026-10-08T15:49:22.000000Z"
+   },
+   {
+    "id": 19,
+    "title": "on-call",
+    "morphable_type": "Ulams\\Courses\\Models\\Course",
+    "morphable_id": 1,
+    "created_at": "2026-10-08T15:49:22.000000Z",
+    "updated_at": "2026-10-08T15:49:22.000000Z"
+   },
+   {
+    "id": 20,
+    "title": "postmortems",
+    "morphable_type": "Ulams\\Courses\\Models\\Course",
+    "morphable_id": 1,
+    "created_at": "2026-10-08T15:49:22.000000Z",
+    "updated_at": "2026-10-08T15:49:22.000000Z"
+   },
+   {
+    "id": 21,
+    "title": "cohort",
+    "morphable_type": "Ulams\\Courses\\Models\\Course",
+    "morphable_id": 1,
+    "created_at": "2026-10-08T15:49:22.000000Z",
+    "updated_at": "2026-10-08T15:49:22.000000Z"
+   }
+  ],
+  "level": "Advanced",
+  "lessons": [
+   {
+    "id": 1,
+    "title": "0. Briefing",
+    "summary": "Cohort welcome, schedule, grading and the rules everyone follows on the bridge.",
+    "duration": "45 min",
+    "active": true,
+    "order": 1,
+    "course_id": 1,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 1,
+      "title": "Course kickoff",
+      "lesson_id": 1,
+      "active": true,
+      "preview": true,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Video",
+      "summary": "Week 3 is the live game day. Deadlines: comms quiz Thursday of week 3, postmortem end of week 4.",
+      "introduction": "Cohort welcome, the four-week schedule and how drills are graded.",
+      "description": "**Transcript**\n\nPRIYA: Welcome to On-Call. Over four weeks you will learn to command an incident, not just to survive one.\n\nMAREK: Week three is the game day. We break a sandbox cluster, you run the incident. We grade time to declare, the first stakeholder update, time to mitigate and your handover note.\n\nPRIYA: Three rules for the whole cohort: mitigate before you debug; every message says impact, action and next update; and no blame. Ever.",
+      "order": 1,
+      "json": {
+       "ffmpeg": {
+        "state": "finished",
+        "path": "course/1/topic/1/video/hls.m3u8"
+       },
+       "progress_notification": true
+      },
+      "can_skip": false,
+      "duration": "6 min"
+     },
+     {
+      "id": 2,
+      "title": "Rules of engagement",
+      "lesson_id": 1,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+      "summary": "Declare high, downgrade fast. IC decides, comms talks, ops fixes, scribe writes it down.",
+      "introduction": "The severity matrix (SEV1–SEV4) and the four incident roles.",
+      "description": null,
+      "order": 2,
+      "json": null,
+      "can_skip": false,
+      "duration": "25 min"
+     }
+    ]
+   },
+   {
+    "id": 2,
+    "title": "1. Signals",
+    "summary": "Read dashboards like an IC and alert on what users feel.",
+    "duration": "1 h 30 min",
+    "active": true,
+    "order": 2,
+    "course_id": 1,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 3,
+      "title": "Anatomy of an alert",
+      "lesson_id": 2,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Image",
+      "summary": "Start with the symptom (B), rule out traffic (E), follow saturation (C) to the likely cause. Tail latency (D) moves before the median.",
+      "introduction": "An annotated dashboard from the moment checkout started failing.",
+      "description": null,
+      "order": 1,
+      "json": null,
+      "can_skip": false,
+      "duration": "15 min"
+     },
+     {
+      "id": 4,
+      "title": "SLOs and error budgets",
+      "lesson_id": 2,
+      "active": true,
+      "preview": false,
+      "topicable_id": 2,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+      "summary": "budget = (1 − SLO) × window: 99.9 % over 30 days is 43.2 minutes. Page on fast burn, ticket on slow burn.",
+      "introduction": "SLIs, SLOs, error budgets and burn-rate alerts, with worked examples.",
+      "description": null,
+      "order": 2,
+      "json": null,
+      "can_skip": false,
+      "duration": "40 min"
+     },
+     {
+      "id": 5,
+      "title": "Talk: \"Alert fatigue is a bug\"",
+      "lesson_id": 2,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\OEmbed",
+      "summary": "Every page should be urgent, actionable and about user impact. Everything else is a ticket or a dashboard.",
+      "introduction": "SREcon16 talk \"Less Alarming Alerts!\" on cutting alert noise. Watch it with your own alert list open.",
+      "description": null,
+      "order": 3,
+      "json": null,
+      "can_skip": false,
+      "duration": "30 min"
+     }
+    ]
+   },
+   {
+    "id": 3,
+    "title": "2. Command",
+    "summary": "Take command, keep the bridge disciplined and decide under pressure.",
+    "duration": "2 h",
+    "active": true,
+    "order": 3,
+    "course_id": 1,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 6,
+      "title": "Taking command",
+      "lesson_id": 3,
+      "active": true,
+      "preview": false,
+      "topicable_id": 2,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Video",
+      "summary": "Names and roles in every request, questions before theories, a time for the next checkpoint.",
+      "introduction": "Role-play of the first five minutes of a SEV1.",
+      "description": null,
+      "order": 1,
+      "json": {
+       "chapters": [
+        {
+         "time": 5,
+         "title": "The page"
+        },
+        {
+         "time": 10,
+         "title": "Declaring and assigning roles"
+        },
+        {
+         "time": 15,
+         "title": "Three questions"
+        },
+        {
+         "time": 20,
+         "title": "Setting the clock"
+        },
+        {
+         "time": 25,
+         "title": "Debrief"
+        }
+       ],
+       "ffmpeg": {
+        "state": "finished",
+        "path": "course/1/topic/6/video/hls.m3u8"
+       },
+       "progress_notification": true
+      },
+      "can_skip": false,
+      "duration": "12 min"
+     },
+     {
+      "id": 7,
+      "title": "Radio discipline",
+      "lesson_id": 3,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Audio",
+      "summary": "Mistakes: no IC declared, \"can someone…\" requests, two conversations at once, a guess in the public channel, no next-update time.",
+      "introduction": "A recorded incident bridge call. Listen, read the transcript and spot the five mistakes.",
+      "description": "**Transcript (excerpt)**\n\n`03:13` **Dev 1:** Is anyone looking at checkout? *(mistake 1: nobody takes command)*\n\n`03:13` **Dev 2:** Can someone check the database? *(mistake 2: request with no name)*\n\n`03:14` **Dev 3:** I'm restarting the pods… **Dev 1:** wait, I'm also looking at the load balancer *(mistake 3: two conversations, conflicting actions)*\n\n`03:16` **Dev 2 in #general:** Probably Ben's deploy again *(mistake 4: guess and blame in public)*\n\n`03:18` **Manager:** When will it be fixed? **Dev 1:** Soon. *(mistake 5: no impact, no next update time)*\n\n**Rewrite one minute of this call** with roles, names and a next-update time, and bring it to the live session.\n\n*The recording is a soundscape of a bridge line; the dialogue is in this transcript.*",
+      "order": 2,
+      "json": null,
+      "can_skip": false,
+      "duration": "10 min"
+     },
+     {
+      "id": 8,
+      "title": "Who does what?",
+      "lesson_id": 3,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\H5P",
+      "summary": null,
+      "introduction": "A branching scenario: you are the IC of a SEV1. Every choice changes what happens next.",
+      "description": null,
+      "order": 3,
+      "json": null,
+      "can_skip": false,
+      "duration": "20 min"
+     },
+     {
+      "id": 9,
+      "title": "Incident runbook template",
+      "lesson_id": 3,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\PDF",
+      "summary": "Print it, fill in the contacts page for your team and keep it next to your laptop.",
+      "introduction": "A printable runbook: severity matrix, roles, the first five minutes, comms templates and a contacts page.",
+      "description": null,
+      "order": 4,
+      "json": null,
+      "can_skip": false,
+      "duration": "15 min"
+     }
+    ]
+   },
+   {
+    "id": 4,
+    "title": "3. Game day",
+    "summary": "Command a simulated cascading failure, run the live drill and check your comms.",
+    "duration": "3 h",
+    "active": true,
+    "order": 4,
+    "course_id": 1,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 10,
+      "title": "Outage simulator",
+      "lesson_id": 4,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\ScormSco",
+      "summary": "Score 70+ to pass. Your timeline from the simulator is the input for the postmortem in module 4.",
+      "introduction": "A simulated cascading failure with live metrics, a timeline and a chat pane. Keyboard: 1–9.",
+      "description": null,
+      "order": 1,
+      "json": null,
+      "can_skip": false,
+      "duration": "45 min"
+     },
+     {
+      "id": 11,
+      "title": "Live drill",
+      "lesson_id": 4,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\Cmi5Au",
+      "summary": "Tick each checkpoint as it happens; the timestamps go to your learning record and to your facilitator.",
+      "introduction": "The xAPI-tracked live drill in the sandbox cluster drill-eu-1. Thursday of week 3, 18:00 CET.",
+      "description": null,
+      "order": 2,
+      "json": null,
+      "can_skip": false,
+      "duration": "90 min"
+     },
+     {
+      "id": 12,
+      "title": "Comms check",
+      "lesson_id": 4,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypeGift\\Models\\GiftQuiz",
+      "summary": null,
+      "introduction": "Eight questions on incident communication. Two attempts, 15 minutes. Due Thursday of week 3.",
+      "description": null,
+      "order": 3,
+      "json": null,
+      "can_skip": false,
+      "duration": "20 min"
+     }
+    ]
+   },
+   {
+    "id": 5,
+    "title": "4. After",
+    "summary": "Turn the outage into learning: blameless postmortem, review, reading.",
+    "duration": "3 h",
+    "active": true,
+    "order": 5,
+    "course_id": 1,
+    "active_from": null,
+    "active_to": null,
+    "lessons": [],
+    "topics": [
+     {
+      "id": 13,
+      "title": "Blameless postmortems",
+      "lesson_id": 5,
+      "active": true,
+      "preview": false,
+      "topicable_id": 3,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+      "summary": "Describe conditions, not culprits. Several contributing factors, several owned and dated action items.",
+      "introduction": "The template, the five whys used carefully, and contributing factors vs root cause.",
+      "description": null,
+      "order": 1,
+      "json": null,
+      "can_skip": false,
+      "duration": "35 min"
+     },
+     {
+      "id": 14,
+      "title": "Postmortem assignment",
+      "lesson_id": 5,
+      "active": true,
+      "preview": false,
+      "topicable_id": 1,
+      "topicable_type": "Ulams\\TopicTypeProject\\Models\\Project",
+      "summary": null,
+      "introduction": "Write the postmortem for the game-day outage in Markdown or PDF. Peer and tutor review.",
+      "description": null,
+      "order": 2,
+      "json": null,
+      "can_skip": false,
+      "duration": "2 h"
+     },
+     {
+      "id": 15,
+      "title": "Reading list",
+      "lesson_id": 5,
+      "active": true,
+      "preview": false,
+      "topicable_id": 4,
+      "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+      "summary": null,
+      "introduction": "Papers and books the cohort keeps coming back to.",
+      "description": null,
+      "order": 3,
+      "json": null,
+      "can_skip": true,
+      "duration": "10 min"
+     }
+    ]
+   }
+  ],
+  "poster_path": "course/1/posters/fR7sRibxQVucJbhBCYTnrDBhfdToOeQeqF4bJTLl.png",
+  "active_from": null,
+  "active_to": null,
+  "hours_to_complete": 20,
+  "findable": true,
+  "scorm_sco_id": null,
+  "target_group": "SREs, platform/backend engineers joining on-call, engineering managers",
+  "users_count": 2,
+  "image_url": "http://storage.localhost/ulams-oncall/course/1/images/3M198K1OHMhjRoaa4EBSP6lFNwRchpJsZPjqlpzU.png",
+  "video_url": "http://storage.localhost/ulams-oncall/course/1/videos/MUjgmGFvO97U5khc2ebBpv76gcR6hcwNL4skvUWk.mp4",
+  "poster_url": "http://storage.localhost/ulams-oncall/course/1/posters/fR7sRibxQVucJbhBCYTnrDBhfdToOeQeqF4bJTLl.png",
+  "teaser_url": null,
+  "public": false,
+  "fields": {
+   "experience": "oncall",
+   "cohort": {
+    "starts_at": "2026-11-04",
+    "seats": 24,
+    "seats_taken": 18,
+    "weeks": 4
+   },
+   "landing": {
+    "headline": "Stay calm at 3 a.m.",
+    "subheadline": "A 4-week cohort for engineers who carry the pager.",
+    "cta": "Apply for the November cohort",
+    "status_strip": "Next cohort: 4 Nov · 18/24 seats",
+    "testimonials": [
+     {
+      "quote": "[03:12] first page of my rotation. [03:14] roles assigned. [03:41] mitigated. I had never felt that calm.",
+      "author": "Head of Platform, logistics scale-up"
+     },
+     {
+      "quote": "Our postmortems went from blame threads to action items with owners.",
+      "author": "Engineering Manager, payments"
+     },
+     {
+      "quote": "The game day is the closest thing to a real SEV1 without losing money.",
+      "author": "Staff Engineer, e-commerce"
+     }
+    ]
+   }
+  },
+  "product": {
+   "id": 1,
+   "type": "single",
+   "name": "On-Call — Incident Command (1 seat)",
+   "description": "One seat in the November cohort: 4 weeks, live game day, reviewed postmortem, certificate.",
+   "price": 49000,
+   "price_old": null,
+   "tax_rate": 23,
+   "extra_fees": 0,
+   "purchasable": true,
+   "duration": null,
+   "calculated_duration": 0,
+   "limit_per_user": 1,
+   "limit_total": 24,
+   "productables": [
+    {
+     "id": 1,
+     "morph_class": "Ulams\\Courses\\Models\\Course",
+     "productable_id": 1,
+     "productable_type": "App\\Models\\Course",
+     "quantity": 1,
+     "name": "On-Call — Incident Command for Platform Engineers",
+     "description": "**Stay calm at 3 a.m.** On-Call is a four-week cohort for engineers who carry the pager, or are about to. You will learn to take command of an incident, coordinate responders, keep stakeholders informed and turn every outage into a better system. In week three you run a live game day: a simulated cascading failure in a sandbox cluster, graded on how you command it.\n\n## Curriculum\n\n| Module | Week | Formats |\n|---|---|---|\n| 0. Briefing | 1 | kickoff video, rules of engagement |\n| 1. Signals | 1 | annotated dashboard, SLOs and error budgets, conference talk |\n| 2. Command | 2 | SEV1 role-play video, bridge-call recording, branching scenario, printable runbook |\n| 3. Game day | 3 | SCORM outage simulator, xAPI-tracked live drill, comms quiz |\n| 4. After | 4 | blameless postmortems, postmortem assignment with peer and tutor review |\n\n## Outcomes\n\n- Declare and classify incidents with a shared severity matrix\n- Run the first five minutes of a SEV1: roles, channel, first update\n- Communicate impact, current action and next update time to any audience\n- Alert on SLO burn rate instead of on causes\n- Write a blameless postmortem with owned, dated action items\n\n## Format\n\nFour weeks, about 4–5 hours a week, plus a 90-minute live drill. Each cohort has at most 24 engineers, so every drill gets individual feedback. Deadlines are real: the comms quiz closes on Thursday of week 3, the postmortem is due at the end of week 4.\n\n## Instructors\n\n**Priya Raman** is a Staff SRE who has run the incident programme for a platform of 400 services, and wrote its runbook, severity matrix and postmortem template.\n\n**Marek Lis** has been an incident commander at a fintech processing card payments in 30 countries. He runs the game day and grades the drills.\n\nComplete all modules and pass the drill to earn **Incident Commander — Level 1**.\n",
+     "position": 1
+    }
+   ],
+   "teaser_url": null,
+   "poster_path": "http://storage.localhost/ulams-oncall/course/1/posters/fR7sRibxQVucJbhBCYTnrDBhfdToOeQeqF4bJTLl.png",
+   "poster_url": "http://storage.localhost/ulams-oncall/course/1/posters/fR7sRibxQVucJbhBCYTnrDBhfdToOeQeqF4bJTLl.png",
+   "buyable": false,
+   "owned": false,
+   "owned_quantity": 0,
+   "categories": [],
+   "tags": [
+    "sre",
+    "cohort"
+   ],
+   "updated_at": "2026-10-08T15:49:22.000000Z",
+   "authors": [
+    {
+     "id": 8,
+     "first_name": "Marek",
+     "last_name": "Lis",
+     "path_avatar": "avatars/8/avatar-marek.png",
+     "url_avatar": "http://storage.localhost/ulams-oncall/avatars/8/avatar-marek.png",
+     "categories": []
+    },
+    {
+     "id": 2,
+     "first_name": "Priya",
+     "last_name": "Raman",
+     "path_avatar": "avatars/2/avatar-priya.png",
+     "url_avatar": "http://storage.localhost/ulams-oncall/avatars/2/avatar-priya.png",
+     "categories": []
+    }
+   ],
+   "available_quantity": 23,
+   "sold_quantity": 1,
+   "gross_price": 60270,
+   "subscription_period": null,
+   "subscription_duration": null,
+   "recursive": false,
+   "has_trial": null,
+   "trial_period": null,
+   "trial_duration": null,
+   "fields": null,
+   "language": null,
+   "related_products": []
+  },
+  "related_product": null
+ },
+ "products": [
+  {
+   "id": 1,
+   "type": "single",
+   "name": "On-Call — Incident Command (1 seat)",
+   "description": "One seat in the November cohort: 4 weeks, live game day, reviewed postmortem, certificate.",
+   "price": 49000,
+   "price_old": null,
+   "tax_rate": 23,
+   "extra_fees": 0,
+   "purchasable": true,
+   "duration": null,
+   "calculated_duration": 0,
+   "limit_per_user": 1,
+   "limit_total": 24,
+   "productables": [
+    {
+     "id": 1,
+     "morph_class": "Ulams\\Courses\\Models\\Course",
+     "productable_id": 1,
+     "productable_type": "App\\Models\\Course",
+     "quantity": 1,
+     "name": "On-Call — Incident Command for Platform Engineers",
+     "position": 1
+    }
+   ],
+   "teaser_url": null,
+   "poster_path": "http://storage.localhost/ulams-oncall/course/1/posters/fR7sRibxQVucJbhBCYTnrDBhfdToOeQeqF4bJTLl.png",
+   "poster_url": "http://storage.localhost/ulams-oncall/course/1/posters/fR7sRibxQVucJbhBCYTnrDBhfdToOeQeqF4bJTLl.png",
+   "buyable": false,
+   "owned": false,
+   "owned_quantity": 0,
+   "categories": [],
+   "tags": [
+    "sre",
+    "cohort"
+   ],
+   "updated_at": "2026-10-08T15:49:22.000000Z",
+   "authors": [
+    {
+     "id": 8,
+     "first_name": "Marek",
+     "last_name": "Lis",
+     "path_avatar": "avatars/8/avatar-marek.png",
+     "url_avatar": "http://storage.localhost/ulams-oncall/avatars/8/avatar-marek.png",
+     "categories": []
+    },
+    {
+     "id": 2,
+     "first_name": "Priya",
+     "last_name": "Raman",
+     "path_avatar": "avatars/2/avatar-priya.png",
+     "url_avatar": "http://storage.localhost/ulams-oncall/avatars/2/avatar-priya.png",
+     "categories": []
+    }
+   ],
+   "available_quantity": 23,
+   "sold_quantity": 1,
+   "gross_price": 60270,
+   "subscription_period": null,
+   "subscription_duration": null,
+   "recursive": false,
+   "has_trial": null,
+   "trial_period": null,
+   "trial_duration": null,
+   "fields": null,
+   "language": null,
+   "related_products": []
+  },
+  {
+   "id": 2,
+   "type": "subscription",
+   "name": "On-Call for Teams (annual)",
+   "description": "Up to 10 seats per year across cohorts, a private game day for your team and a quarterly on-call review.",
+   "price": 390000,
+   "price_old": null,
+   "tax_rate": 23,
+   "extra_fees": 0,
+   "purchasable": true,
+   "duration": null,
+   "calculated_duration": 0,
+   "limit_per_user": 1,
+   "limit_total": null,
+   "productables": [
+    {
+     "id": 1,
+     "morph_class": "Ulams\\Courses\\Models\\Course",
+     "productable_id": 1,
+     "productable_type": "App\\Models\\Course",
+     "quantity": 10,
+     "name": "On-Call — Incident Command for Platform Engineers",
+     "position": 1
+    }
+   ],
+   "teaser_url": null,
+   "poster_path": null,
+   "poster_url": null,
+   "buyable": false,
+   "owned": false,
+   "owned_quantity": 0,
+   "categories": [],
+   "tags": [],
+   "updated_at": "2026-10-08T15:49:22.000000Z",
+   "authors": [
+    {
+     "id": 8,
+     "first_name": "Marek",
+     "last_name": "Lis",
+     "path_avatar": "avatars/8/avatar-marek.png",
+     "url_avatar": "http://storage.localhost/ulams-oncall/avatars/8/avatar-marek.png",
+     "categories": []
+    },
+    {
+     "id": 2,
+     "first_name": "Priya",
+     "last_name": "Raman",
+     "path_avatar": "avatars/2/avatar-priya.png",
+     "url_avatar": "http://storage.localhost/ulams-oncall/avatars/2/avatar-priya.png",
+     "categories": []
+    }
+   ],
+   "available_quantity": null,
+   "sold_quantity": 0,
+   "gross_price": 479700,
+   "subscription_period": "yearly",
+   "subscription_duration": 1,
+   "recursive": false,
+   "has_trial": false,
+   "trial_period": null,
+   "trial_duration": null,
+   "fields": null,
+   "language": null,
+   "related_products": []
+  },
+  {
+   "id": 3,
+   "type": "single",
+   "name": "On-call review 1:1 (45 min)",
+   "description": "One 45-minute review of your alerts, rotation or postmortem.",
+   "price": 15000,
+   "price_old": null,
+   "tax_rate": 23,
+   "extra_fees": 0,
+   "purchasable": true,
+   "duration": null,
+   "calculated_duration": 45,
+   "limit_per_user": 3,
+   "limit_total": null,
+   "productables": [
+    {
+     "id": 1,
+     "morph_class": "App\\Models\\Consultation",
+     "productable_id": 1,
+     "productable_type": "App\\Models\\Consultation",
+     "quantity": 1,
+     "name": "On-call review 1:1",
+     "position": 1
+    }
+   ],
+   "teaser_url": null,
+   "poster_path": "consultation/1/images/consultation.png",
+   "poster_url": "http://storage.localhost/ulams-oncall/consultation/1/images/consultation.png",
+   "buyable": false,
+   "owned": false,
+   "owned_quantity": 0,
+   "categories": [],
+   "tags": [],
+   "updated_at": "2026-10-08T15:49:22.000000Z",
+   "authors": [
+    {
+     "id": 2,
+     "first_name": "Priya",
+     "last_name": "Raman",
+     "path_avatar": "avatars/2/avatar-priya.png",
+     "url_avatar": "http://storage.localhost/ulams-oncall/avatars/2/avatar-priya.png",
+     "categories": []
+    }
+   ],
+   "available_quantity": null,
+   "sold_quantity": 0,
+   "gross_price": 18450,
+   "subscription_period": null,
+   "subscription_duration": null,
+   "recursive": false,
+   "has_trial": null,
+   "trial_period": null,
+   "trial_duration": null,
+   "fields": null,
+   "language": null,
+   "related_products": []
+  }
+ ],
+ "webinars": [
+  {
+   "id": 1,
+   "created_at": "2026-10-08T14:48:50.000000Z",
+   "updated_at": "2026-10-08T14:48:50.000000Z",
+   "active_from": "2026-11-19T17:00:00.000000Z",
+   "active_to": "2026-11-19T18:00:00.000000Z",
+   "name": "Postmortem teardown — live",
+   "status": "published",
+   "description": "<p>Marek takes a real public postmortem apart live: timeline, contributing factors and action items, and rewrites the parts that slipped into blame.</p>",
+   "short_desc": "Live teardown of a public postmortem with Marek Lis.",
+   "agenda": "<ol><li>The incident in five minutes</li><li>What the timeline hides</li><li>Rewriting contributing factors</li><li>Action items that actually ship</li><li>Q&amp;A</li></ol>",
+   "duration": "1",
+   "trainers": [
+    {
+     "id": 8,
+     "first_name": "Marek",
+     "last_name": "Lis",
+     "email": "marek.lis@demo.ulams.app",
+     "path_avatar": "avatars/8/avatar-marek.png",
+     "url_avatar": "http://storage.localhost/ulams-oncall/avatars/8/avatar-marek.png",
+     "interests": [],
+     "categories": null
+    }
+   ],
+   "image_path": "webinar/1/images/webinar-teardown.png",
+   "image_url": "http://storage.localhost/ulams-oncall/webinar/1/images/webinar-teardown.png",
+   "logotype_path": null,
+   "logotype_url": "",
+   "yt_url": null,
+   "tags": [
+    {
+     "id": 8,
+     "title": "postmortems",
+     "morphable_type": "Ulams\\Webinar\\Models\\Webinar",
+     "morphable_id": 1,
+     "created_at": "2026-10-08T14:48:50.000000Z",
+     "updated_at": "2026-10-08T14:48:50.000000Z"
+    },
+    {
+     "id": 9,
+     "title": "sre",
+     "morphable_type": "Ulams\\Webinar\\Models\\Webinar",
+     "morphable_id": 1,
+     "created_at": "2026-10-08T14:48:50.000000Z",
+     "updated_at": "2026-10-08T14:48:50.000000Z"
+    }
+   ],
+   "deadline": "2026-11-19T19:00:00.000000Z",
+   "analyze_enabled": false,
+   "product": null,
+   "in_coming": true,
+   "is_ended": false,
+   "is_started": false
+  }
+ ],
+ "events": [
+  {
+   "id": 1,
+   "created_at": "2026-10-08T14:48:50.000000Z",
+   "updated_at": "2026-10-08T14:48:50.000000Z",
+   "name": "Game day in Warsaw",
+   "description": "<p>An in-person game day for teams: two simulated outages, a real bridge, real pressure, and a facilitated postmortem over lunch.</p>",
+   "short_desc": "Full-day in-person incident drill for teams.",
+   "started_at": "2026-11-27 09:00:00",
+   "finished_at": "2026-11-27 17:00:00",
+   "max_participants": 24,
+   "place": "Warsaw, Koszyki Hall, ul. Koszykowa 63",
+   "program": "Two drills, postmortem workshop, Q&A",
+   "categories": [],
+   "status": "published",
+   "authors": [
+    {
+     "id": 8,
+     "first_name": "Marek",
+     "last_name": "Lis",
+     "path_avatar": "avatars/8/avatar-marek.png"
+    },
+    {
+     "id": 2,
+     "first_name": "Priya",
+     "last_name": "Raman",
+     "path_avatar": "avatars/2/avatar-priya.png"
+    }
+   ],
+   "image_path": "stationary-events/1/images/event-gameday.png",
+   "image_url": "http://storage.localhost/ulams-oncall/stationary-events/1/images/event-gameday.png",
+   "in_coming": true,
+   "is_ended": false,
+   "is_started": false,
+   "agenda": null,
+   "product": null,
+   "related_product": null
+  }
+ ],
+ "tutors": [
+  {
+   "id": 8,
+   "first_name": "Marek",
+   "last_name": "Lis",
+   "email": "marek.lis@demo.ulams.app",
+   "path_avatar": "avatars/8/avatar-marek.png",
+   "url_avatar": "http://storage.localhost/ulams-oncall/avatars/8/avatar-marek.png",
+   "interests": [],
+   "categories": []
+  },
+  {
+   "id": 2,
+   "first_name": "Priya",
+   "last_name": "Raman",
+   "email": "tutor@oncall.ulams.app",
+   "path_avatar": "avatars/2/avatar-priya.png",
+   "url_avatar": "http://storage.localhost/ulams-oncall/avatars/2/avatar-priya.png",
+   "interests": [],
+   "categories": []
+  }
+ ]
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<courseStructure xmlns="https://w3id.org/xapi/profiles/cmi5/v1/CourseStructure.xsd">
+  <course id="https://ulams.app/demo/cmi5/live-drill">
+    <title><langstring lang="en-US">Live drill</langstring></title>
+    <description><langstring lang="en-US">A tracked live incident drill in the sandbox cluster.</langstring></description>
+  </course>
+  <au id="https://ulams.app/demo/cmi5/live-drill/au" moveOn="CompletedOrPassed" masteryScore="0.7" launchMethod="AnyWindow">
+    <title><langstring lang="en-US">Live drill</langstring></title>
+    <description><langstring lang="en-US">A tracked live incident drill in the sandbox cluster.</langstring></description>
+    <url>index.html</url>
+  </au>
+</courseStructure>

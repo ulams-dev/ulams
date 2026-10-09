@@ -1,0 +1,35 @@
+.wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.leftColumn {
+  width: 100%;
+}
+
+.rightColumn {
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: -3px 0px 6px #0000000b;
+  position: absolute;
+  top: 0;
+  right: -100vw;
+  transition: right 0.3s;
+}
+
+.rightColumn.open {
+  right: 0;
+}
+
+@media (min-width: 1024px) {
+  .leftColumn {
+    width: calc(100% - 280px);
+  }
+
+  .rightColumn {
+    width: 280px;
+    position: unset;
+  }
+}

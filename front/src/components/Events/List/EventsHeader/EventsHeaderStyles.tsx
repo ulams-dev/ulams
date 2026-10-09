@@ -1,37 +1,36 @@
-import { FC, ReactNode, useContext } from "react";
+import { CSSProperties, FC, ReactNode, useContext } from "react";
 import { isMobile } from "react-device-detect";
-import styled from "styled-components";
 import { API } from "@ulams/sdk";
 import { EventsContext } from "@/components/Events/List/EventsContext";
+import styles from "./EventsHeader.module.css";
 
 interface EventsHeaderStylesProps {
   children: ReactNode | ReactNode[];
 }
 
-const EventsHeaderStyles: FC<EventsHeaderStylesProps> = ({ children }) => {
-  const StyledHeader = styled("div")<{ filters: API.EventsParams | undefined }>`
-    background: ${({ theme }) => theme.primaryColor};
-    padding: ${isMobile ? "60px 20px 20px 20px" : "140px 40px 30px"};
-    margin-bottom: ${isMobile ? "100px" : "40px"};
+const titleMarginBottom = (filters: API.EventsParams | undefined): string =>
+  isMobile
+    ? "0"
+    : filters && Object.keys(filters).length > 1
+    ? "35px"
+    : filters && Object.keys(filters).length === 1 && "page" in filters
+    ? "-35px"
+    : filters === undefined
+    ? "-35px"
+    : "35px";
 
-    h1 {
-      color: ${({ theme }) => theme.white};
-      margin-bottom: ${({ filters }) =>
-        isMobile
-          ? 0
-          : filters && Object.keys(filters).length > 1
-          ? "35px"
-          : filters && Object.keys(filters).length === 1 && "page" in filters
-          ? "-35px"
-          : filters === undefined
-          ? "-35px"
-          : "35px"};
-      transition: margin-bottom 0.5s ease-out;
-    }
-  `;
+const EventsHeaderStyles: FC<EventsHeaderStylesProps> = ({ children }) => {
   const { params } = useContext(EventsContext);
 
-  return <StyledHeader filters={params}>{children}</StyledHeader>;
+  return (
+    <div
+      className={styles.root}
+      data-mobile={isMobile}
+      style={{ "--header-title-mb": titleMarginBottom(params) } as CSSProperties}
+    >
+      {children}
+    </div>
+  );
 };
 
 export default EventsHeaderStyles;

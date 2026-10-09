@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 
-class FixAssetCommand extends TestCase
+class FixAssetCommandTest extends TestCase
 {
     use DatabaseTransactions;
 

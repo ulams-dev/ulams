@@ -7,7 +7,7 @@ module.exports = {
     "plugin:react-hooks/recommended",
     "plugin:jsx-a11y/recommended",
   ],
-  ignorePatterns: ["dist", ".eslintrc.cjs", "src/lib"],
+  ignorePatterns: ["dist", ".eslintrc.cjs", "src/lib", "web", "sdk", "ui"],
   parser: "@typescript-eslint/parser",
   plugins: ["react-refresh", "jsx-a11y"],
   rules: {
@@ -26,5 +26,31 @@ module.exports = {
     "prefer-spread": "off",
     "@typescript-eslint/no-var-requires": "off",
     "no-extra-boolean-cast": "off",
+    // H5P/Lumi is GPL: it runs only in the separate api/h5p service, framed via iframe
+    // styled-components was replaced by CSS Modules + --ulams-* variables (src/lib/components/theme/README.md)
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [
+          {
+            name: "styled-components",
+            message:
+              "Use a CSS Module and var(--ulams-*) variables (see src/lib/components/theme/README.md).",
+          },
+        ],
+        patterns: [
+          {
+            group: ["@lumieducation/*", "h5p-*", "@escolalms/h5p-react"],
+            message:
+              "GPL H5P code must stay in api/h5p; use the H5PFrame iframe wrapper instead.",
+          },
+          {
+            group: ["styled-components/*", "babel-plugin-styled-components"],
+            message:
+              "Use a CSS Module and var(--ulams-*) variables (see src/lib/components/theme/README.md).",
+          },
+        ],
+      },
+    ],
   },
 };

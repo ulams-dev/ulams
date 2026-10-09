@@ -2,6 +2,9 @@
 
 namespace Ulams\Payments\Gateway\Responses;
 
+/**
+ * Result of a refund callback. Not successful unless the driver verified the notification.
+ */
 class CallbackRefundResponse
 {
     private bool $success;
@@ -12,7 +15,7 @@ class CallbackRefundResponse
 
     private ?string $error;
 
-    public function __construct(bool $success = true, ?int $order_id = null, ?string $request_id = null, ?string $refunds_uuid = null, ?string $error = null)
+    public function __construct(bool $success = false, ?int $order_id = null, ?string $request_id = null, ?string $refunds_uuid = null, ?string $error = null)
     {
         $this->success = $success;
         $this->order_id = $order_id;

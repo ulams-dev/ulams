@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"tertiary-fixed-dim":"#d8baff","inverse-surface":"#e0e2ea","surface-dim":"#101419","on-primary":"#00315c","on-error-container":"#ffdad6","on-tertiary-container":"#4d198b","on-secondary-fixed":"#002105","on-secondary":"#00390d","primary":"#a2c9ff","surface-container-lowest":"#0a0e13","tertiary-fixed":"#eddcff","tertiary":"#d8baff","on-surface-variant":"#c0c7d4","secondary-fixed":"#83fc89","on-primary-fixed":"#001c38","surface-container-high":"#262a30","on-background":"#e0e2ea","surface-variant":"#31353b","surface-tint":"#a2c9ff","surface-bright":"#36393f","secondary-fixed-dim":"#67df70","surface":"#101419","outline":"#8b919d","outline-variant":"#414752","on-secondary-fixed-variant":"#005317","on-secondary-container":"#00320a","secondary":"#67df70","on-primary-container":"#003a6b","background":"#101419","tertiary-container":"#bc8cff","error":"#ffb4ab","inverse-primary":"#0060aa","surface-container-low":"#181c21","on-error":"#690005","primary-fixed-dim":"#a2c9ff","error-container":"#93000a","surface-container-highest":"#31353b","secondary-container":"#27a640","surface-container":"#1c2025","on-tertiary-fixed-variant":"#5b2b9a","on-primary-fixed-variant":"#004882","inverse-on-surface":"#2d3136","on-surface":"#e0e2ea","on-tertiary":"#430882","primary-container":"#58a6ff","primary-fixed":"#d3e4ff","on-tertiary-fixed":"#290055"},borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},spacing:{"margin":"0.75rem","space-lg":"1rem","gutter":"0.5rem","space-xs":"0.25rem","margin-desktop":"1.5rem","space-md":"0.75rem","space-xl":"1.5rem","gutter-desktop":"1rem","space-sm":"0.5rem"},fontFamily:{"label-sm":["JetBrains Mono"],"body-sm":["Inter"],"body-md":["Inter"],"body-lg":["Inter"],"label-md":["JetBrains Mono"],"headline-md":["Space Grotesk"],"headline-xl":["Space Grotesk"],"label-lg":["JetBrains Mono"],"code-inline":["JetBrains Mono"],"headline-xl-mobile":["Space Grotesk"],"headline-lg":["Space Grotesk"]},fontSize:{"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.03em","fontWeight":"400"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}],"body-md":["13px",{"lineHeight":"18px","fontWeight":"400"}],"body-lg":["15px",{"lineHeight":"22px","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.01em","fontWeight":"500"}],"headline-md":["18px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-xl":["32px",{"lineHeight":"38px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-lg":["13px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"code-inline":["12px",{"lineHeight":"16px","fontWeight":"400"}],"headline-xl-mobile":["24px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"700"}],"headline-lg":["24px",{"lineHeight":"30px","letterSpacing":"-0.015em","fontWeight":"600"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-low/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.35)]"><div class="h-14 w-full px-gutter-desktop flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-lg shrink-0"><div class="flex items-center gap-space-sm"><img alt="On-Call Wordmark &amp; Incident Telemetry Icon" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XIFrpU149a7H4FkpH0crFLo96MDmwi6qr95cSjyLlQPab1dLJIbL-FiPyRJo-nmW-MNSZ_EVJdKjlF81P-hmmNNhbqAwAZ_HulbctdsjB_qdYWVG61ojBL_8MZketxkgvIImdG_F8XbdR0N0AVyqyB24hN-OhNWsGJW3BXHQ4VkNEuwEJ2YdycZ2zwp6RniQTVYcfJvbefXOw5kCqJuwC11IyEUNgYxJKluXA9GiAt"/><span class="font-headline-md text-headline-md text-on-surface tracking-tight hidden sm:inline">ON-CALL</span></div><div class="hidden xl:flex items-center gap-space-xs px-space-sm py-0.5 rounded bg-surface-container-lowest"><span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span><span class="font-label-sm text-label-sm text-secondary uppercase">SYSTEMS OPERATIONAL · LATENCY 14ms</span></div></div><nav class="hidden lg:flex items-center gap-space-lg" data-active-classes="text-primary font-body-md"><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="curriculum" href="#">Curriculum</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="cohorts" href="#">Cohorts</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="live-drills" href="#">Live Drills</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="simulator" href="#">Simulator</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="pricing-and-teams" href="#">Pricing &amp; Teams</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="docs" href="#">Docs</a></nav><div class="flex items-center gap-space-md ml-auto"><div class="hidden md:flex items-center justify-between px-space-sm py-1 rounded bg-surface-container-lowest min-w-[190px]"><span class="font-body-sm text-body-sm text-on-surface-variant">Search docs &amp; drills</span><span class="font-label-sm text-label-sm text-on-surface-variant px-1 rounded bg-surface-container-high">⌘K Search</span></div><div class="flex items-center gap-space-sm"><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface px-space-sm py-1 transition-colors" data-path="sign-in" href="#">Sign in</a><a class="font-label-md text-label-md bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary px-space-md py-1.5 rounded font-semibold transition-colors flex items-center gap-space-xs" data-path="apply-for-cohort" href="#"><span>Apply for Cohort</span><span class="font-label-sm text-label-sm opacity-80 hidden sm:inline">⌘↵</span></a></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-14 bg-background min-h-screen"><div class="flex flex-col w-full">
+<!-- Top Telemetry Sub-Navigation & Breadcrumb Deck -->
+<div class="w-full bg-surface-container-lowest px-gutter-desktop py-space-sm flex flex-col gap-space-sm">
+<div class="flex flex-wrap items-center justify-between gap-space-md">
+<!-- Breadcrumb Chain -->
+<nav aria-label="Lesson Breadcrumb" class="flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface-variant flex-wrap">
+<span class="hover:text-primary transition-colors cursor-pointer">ON-CALL</span>
+<span class="text-outline-variant">/</span>
+<span class="hover:text-primary transition-colors cursor-pointer">COHORT 04</span>
+<span class="text-outline-variant">/</span>
+<span class="hover:text-primary transition-colors cursor-pointer">MODULE 01: SIGNALS &amp; SLOS</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary inline-block"></span>
+          TOPIC 02: SLO MATH &amp; MULTI-WINDOW MULTI-BURN-RATE
+        </span>
+</nav>
+<!-- Topic Metadata & Progress Telemetry -->
+<div class="flex items-center gap-space-md font-label-sm text-label-sm">
+<span class="text-on-surface-variant">EST TIME: <span class="text-on-surface">35 MIN</span></span>
+<span class="text-outline-variant">|</span>
+<div class="flex items-center gap-space-xs">
+<span class="text-on-surface-variant">TELEMETRY:</span>
+<span class="text-secondary bg-surface-container px-space-xs py-0.5 rounded uppercase font-semibold">IN PROGRESS · 45% READ</span>
+</div>
+</div>
+</div>
+<!-- Action Bar & Global Command Controls -->
+<div class="flex flex-wrap items-center justify-between gap-space-md pt-space-xs">
+<!-- Audio Companion Telemetry Pill -->
+<div class="flex items-center gap-space-sm bg-surface-container-low px-space-sm py-1 rounded shadow-sm">
+<div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold tracking-wide">AUDIO DISPATCH SYNC</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Priya Raman · 18:24</span>
+<div class="flex items-center gap-1 bg-surface-container-high px-space-xs py-0.5 rounded text-secondary font-code-inline text-code-inline">
+<span class="material-symbols-outlined text-[14px]">volume_up</span>
+<span>06:12</span>
+</div>
+<button class="font-label-sm text-label-sm bg-primary-container text-on-primary-container hover:bg-primary px-space-xs py-0.5 rounded transition-colors flex items-center gap-1" id="audio-toggle-btn" title="Shortcut: [P]">
+<span class="material-symbols-outlined text-[13px]">pause</span>
+<span>PAUSE</span>
+<span class="text-on-primary-container/80 text-[10px]">P</span>
+</button>
+</div>
+<!-- Quick Action Shortcuts -->
+<div class="flex items-center gap-space-xs flex-wrap">
+<a class="font-label-sm text-label-sm bg-surface-container text-on-surface hover:bg-surface-container-high px-space-sm py-1 rounded transition-colors flex items-center gap-1" href="#previous" title="Shortcut: [J]">
+<span class="material-symbols-outlined text-[13px]">arrow_back</span>
+<span>PREV</span>
+<span class="text-on-surface-variant text-[10px] bg-surface-container-highest px-1 rounded">J</span>
+</a>
+<a class="font-label-sm text-label-sm bg-surface-container text-on-surface hover:bg-surface-container-high px-space-sm py-1 rounded transition-colors flex items-center gap-1" href="#next" title="Shortcut: [K]">
+<span>NEXT</span>
+<span class="material-symbols-outlined text-[13px]">arrow_forward</span>
+<span class="text-on-surface-variant text-[10px] bg-surface-container-highest px-1 rounded">K</span>
+</a>
+<button class="font-label-sm text-label-sm bg-surface-container text-primary hover:bg-surface-container-high px-space-sm py-1 rounded transition-colors flex items-center gap-1" id="launch-sandbox-btn" title="Shortcut: [T]">
+<span class="material-symbols-outlined text-[14px]">terminal</span>
+<span>PROMQL SANDBOX</span>
+<span class="text-on-surface-variant text-[10px] bg-surface-container-highest px-1 rounded">T</span>
+</button>
+<button class="font-label-sm text-label-sm bg-primary text-on-primary hover:bg-primary-fixed font-semibold px-space-sm py-1 rounded transition-colors flex items-center gap-1" id="mark-complete-btn" title="Shortcut: [M]">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>COMPLETE</span>
+<span class="text-on-primary/80 text-[10px] bg-primary-container/40 px-1 rounded">M</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Primary Three-Pane Engineering Canvas -->
+<div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-0 min-h-screen">
+<!-- PANE 1: SYLLABUS & MODULE RUNBOOK TREE (3 of 12 cols desktop) -->
+<aside class="lg:col-span-3 bg-surface-container-lowest p-space-md flex flex-col gap-space-lg select-none">
+<!-- Syllabus Header & Command Filter -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">COMMAND SYLLABUS</span>
+<span class="font-label-sm text-label-sm text-outline-variant bg-surface-container px-1 py-0.5 rounded">PRESS /</span>
+</div>
+<div class="relative w-full">
+<input class="w-full bg-surface-container text-on-surface placeholder:text-outline font-code-inline text-code-inline px-space-sm py-1 rounded focus:outline-none focus:ring-1 focus:ring-primary" id="syllabus-filter" placeholder="Filter topics, drills..." type="text"/>
+</div>
+</div>
+<!-- Modules Tree -->
+<div class="flex flex-col gap-space-md overflow-y-auto pr-1">
+<!-- Module 00 -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between px-space-xs py-1 rounded hover:bg-surface-container cursor-pointer group">
+<span class="font-label-sm text-label-sm text-on-surface-variant group-hover:text-on-surface">MOD 00: ENGAGEMENT RULES</span>
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container-low px-1 rounded">3/3 DONE</span>
+</div>
+</div>
+<!-- Module 01 (Active) -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between px-space-xs py-1 rounded bg-surface-container cursor-pointer">
+<span class="font-label-sm text-label-sm text-primary font-bold">MOD 01: SIGNALS &amp; ERROR BUDGETS</span>
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container-high px-1 rounded">1/4</span>
+</div>
+<!-- Sub-Topics -->
+<div class="flex flex-col pl-space-sm gap-0.5">
+<!-- 01.1 -->
+<a class="flex items-center justify-between px-space-xs py-1.5 rounded hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="material-symbols-outlined text-[14px] text-secondary shrink-0">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-surface truncate">01.1 Actionable Alerts</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline shrink-0">16m</span>
+</a>
+<!-- 01.2 ACTIVE -->
+<div class="flex items-center justify-between px-space-xs py-1.5 rounded bg-surface-container-high text-on-surface shadow-sm relative group cursor-default">
+<div class="absolute left-0 top-1 bottom-1 w-1 bg-primary rounded-r"></div>
+<div class="flex items-center gap-space-xs min-w-0 pl-1.5">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping shrink-0"></span>
+<span class="font-body-sm text-body-sm text-primary font-semibold truncate">01.2 Multi-Window Multi-Burn</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-medium shrink-0">35m</span>
+</div>
+<!-- 01.3 -->
+<a class="flex items-center justify-between px-space-xs py-1.5 rounded hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="material-symbols-outlined text-[14px] text-outline shrink-0">pending</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-surface truncate">01.3 Calm Systems &amp; Fatigue</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline shrink-0">28m</span>
+</a>
+<!-- 01.4 -->
+<a class="flex items-center justify-between px-space-xs py-1.5 rounded hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="material-symbols-outlined text-[14px] text-outline shrink-0">quiz</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-surface truncate">01.4 Comms Check Alpha</span>
+</div>
+<span class="font-label-sm text-label-sm text-tertiary shrink-0">GIFT EXAM</span>
+</a>
+</div>
+</div>
+<!-- Module 02 -->
+<div class="flex flex-col gap-space-xs opacity-75">
+<div class="flex items-center justify-between px-space-xs py-1 rounded hover:bg-surface-container cursor-pointer group">
+<span class="font-label-sm text-label-sm text-on-surface-variant group-hover:text-on-surface">MOD 02: TAKING INCIDENT COMMAND</span>
+<span class="font-label-sm text-label-sm text-outline-variant bg-surface-container-low px-1 rounded">WEEK 2</span>
+</div>
+</div>
+<!-- Module 03 (Locked) -->
+<div class="flex items-center justify-between px-space-xs py-1 text-outline cursor-not-allowed">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+<span class="font-label-sm text-label-sm">MOD 03: LIVE GAME-DAY DRILLS</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline-variant">LOCKED</span>
+</div>
+<!-- Module 04 (Locked) -->
+<div class="flex items-center justify-between px-space-xs py-1 text-outline cursor-not-allowed">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+<span class="font-label-sm text-label-sm">MOD 04: BLAMELESS CULTURE DEFENSE</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline-variant">LOCKED</span>
+</div>
+</div>
+<!-- Cohort Collective Benchmark Widget -->
+<div class="mt-auto bg-surface-container-low p-space-sm rounded flex flex-col gap-space-xs shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">COHORT 04 PULSE</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">19/24 PASSED</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 rounded overflow-hidden">
+<div class="bg-secondary h-full rounded transition-all duration-500" style="width: 79%;"></div>
+</div>
+<div class="flex items-center justify-between text-outline text-[11px] font-label-sm">
+<span>79% COMPLETION</span>
+<span>AVG SCORE: 94%</span>
+</div>
+</div>
+</aside>
+<!-- PANE 2: CENTER MAIN LESSON & MATH LAB (6 of 12 cols desktop) -->
+<main class="lg:col-span-6 bg-surface p-space-lg lg:p-space-xl flex flex-col gap-space-xl overflow-y-auto">
+<!-- Lesson Header & Metadata Callout -->
+<header class="flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-xs font-label-sm text-label-sm text-primary uppercase tracking-wider">
+<span class="material-symbols-outlined text-[16px]">science</span>
+<span>CORE TECHNICAL LAB · FORMULATION 02</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">
+          SLO Math &amp; Multi-Window Multi-Burn-Rate Alerts
+        </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+          Why static threshold alerting triggers pager fatigue, and how Google SRE multi-window multi-burn-rate alerting eliminates 95% of false positives while catching catastrophic budget depletion in under 12 minutes.
+        </p>
+</header>
+<!-- Sticky Audio Scrub Bar Companion Widget -->
+<div class="sticky top-0 z-20 bg-surface-container-low/95 backdrop-blur-md p-space-sm rounded shadow-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary">record_voice_over</span>
+<span class="text-on-surface font-semibold">Instructor Voice Sync: Priya Raman (Staff SRE)</span>
+</div>
+<span class="text-primary font-code-inline text-code-inline">Section 3.2 Burn Equations</span>
+</div>
+<!-- Custom SVG Waveform Track Visualizer -->
+<div class="w-full flex items-center gap-0.5 h-6 px-1 bg-surface-container-lowest rounded overflow-hidden cursor-pointer" title="Scrub dispatch audio">
+<!-- Stylized Waveform Bars -->
+<div class="w-1 bg-secondary h-2 rounded-full"></div>
+<div class="w-1 bg-secondary h-4 rounded-full"></div>
+<div class="w-1 bg-secondary h-5 rounded-full"></div>
+<div class="w-1 bg-secondary h-3 rounded-full"></div>
+<div class="w-1 bg-secondary h-6 rounded-full"></div>
+<div class="w-1 bg-secondary h-4 rounded-full"></div>
+<div class="w-1 bg-secondary h-3 rounded-full"></div>
+<div class="w-1 bg-secondary h-5 rounded-full"></div>
+<div class="w-1 bg-secondary h-2 rounded-full"></div>
+<div class="w-1 bg-primary h-5 rounded-full animate-pulse"></div>
+<!-- Future unplayed tracks -->
+<div class="w-1 bg-outline-variant h-3 rounded-full"></div>
+<div class="w-1 bg-outline-variant h-4 rounded-full"></div>
+<div class="w-1 bg-outline-variant h-2 rounded-full"></div>
+<div class="w-1 bg-outline-variant h-5 rounded-full"></div>
+<div class="w-1 bg-outline-variant h-3 rounded-full"></div>
+<div class="w-1 bg-outline-variant h-2 rounded-full"></div>
+<div class="w-1 bg-outline-variant h-4 rounded-full"></div>
+<div class="w-1 bg-outline-variant h-6 rounded-full"></div>
+<div class="w-1 bg-outline-variant h-3 rounded-full"></div>
+<div class="w-1 bg-outline-variant h-2 rounded-full"></div>
+<div class="w-1 bg-outline-variant h-4 rounded-full"></div>
+<div class="w-1 bg-outline-variant h-3 rounded-full"></div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>06:12 / 18:24</span>
+<div class="flex items-center gap-space-xs">
+<span class="hover:text-primary cursor-pointer px-1 rounded bg-surface-container">1.0x</span>
+<span class="text-primary font-bold px-1 rounded bg-surface-container-high">1.25x</span>
+<span class="hover:text-primary cursor-pointer px-1 rounded bg-surface-container">1.5x</span>
+</div>
+</div>
+</div>
+<!-- SECTION 1: CORE MATH OF ERROR BUDGETS -->
+<section class="flex flex-col gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-bold">01</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">The Mathematical Core of Error Budgets</h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          Alerting on raw CPU, memory, or simple error rate spikes leads to alert fatigue. High-performing engineering teams alert on <span class="text-on-surface font-semibold">Error Budget Burn Rate</span>. Before engineering the alert rules, we anchor our foundational mathematical relationships:
+        </p>
+<!-- Formal Definitions Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
+<div class="bg-surface-container-low p-space-sm rounded flex flex-col gap-1 shadow-sm">
+<span class="font-label-sm text-label-sm text-primary font-bold">SLI (Indicator)</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">A quantifiable metric of service performance (e.g. ratio of successful HTTP requests to total).</p>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded flex flex-col gap-1 shadow-sm">
+<span class="font-label-sm text-label-sm text-secondary font-bold">SLO (Objective)</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Target reliability percentage committed to over a sliding evaluation window (e.g., 99.9% over 30d).</p>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded flex flex-col gap-1 shadow-sm">
+<span class="font-label-sm text-label-sm text-tertiary font-bold">Error Budget</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Allowable unreliability: <code class="font-code-inline text-code-inline text-tertiary">100% - SLO</code>. The currency spent during changes and incidents.</p>
+</div>
+</div>
+<!-- Rendered KaTeX Formula Block -->
+<div class="bg-surface-container-lowest p-space-md rounded flex flex-col gap-space-sm shadow-inner">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span class="uppercase tracking-wide">FORMULATION: ALLOWED DOWNTIME CALCULATION</span>
+<span class="text-primary font-code-inline text-code-inline">SLO = 99.9% (30-DAY WINDOW)</span>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded font-code-inline text-code-inline text-on-surface flex flex-col gap-1 overflow-x-auto">
+<span class="text-secondary font-semibold">Error_Budget_% = 100% - SLO = 100% - 99.9% = 0.1%</span>
+<span class="text-primary">Allowed_Downtime = (1 - 0.999) × 30 days × 24h × 60m</span>
+<span class="text-on-surface font-bold bg-surface-container px-space-xs py-0.5 rounded w-fit text-secondary">Allowed_Downtime = 0.001 × 43,200 min = 43.2 minutes</span>
+</div>
+</div>
+<!-- Downtime Horizon Tabular Matrix -->
+<div class="w-full overflow-x-auto bg-surface-container-low rounded shadow-sm">
+<table class="w-full text-left font-label-sm text-label-sm">
+<thead class="bg-surface-container-high text-on-surface">
+<tr>
+<th class="p-space-sm font-semibold">TARGET SLO</th>
+<th class="p-space-sm font-semibold">ERROR BUDGET</th>
+<th class="p-space-sm font-semibold">30-DAY DOWNTIME</th>
+<th class="p-space-sm font-semibold">7-DAY DOWNTIME</th>
+<th class="p-space-sm font-semibold">1-HOUR DOWNTIME</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-on-surface-variant">
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-space-sm font-bold text-on-surface">99.0% (Two 9s)</td>
+<td class="p-space-sm font-code-inline text-code-inline text-error">1.0%</td>
+<td class="p-space-sm font-code-inline text-code-inline text-on-surface">7.20 hours</td>
+<td class="p-space-sm font-code-inline text-code-inline">1.68 hours</td>
+<td class="p-space-sm font-code-inline text-code-inline">36.0 seconds</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors bg-surface-container-lowest/50">
+<td class="p-space-sm font-bold text-primary">99.9% (Three 9s) ★</td>
+<td class="p-space-sm font-code-inline text-code-inline text-secondary">0.1%</td>
+<td class="p-space-sm font-code-inline text-code-inline text-on-surface">43.2 minutes</td>
+<td class="p-space-sm font-code-inline text-code-inline">10.08 minutes</td>
+<td class="p-space-sm font-code-inline text-code-inline">3.6 seconds</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-space-sm font-bold text-on-surface">99.95%</td>
+<td class="p-space-sm font-code-inline text-code-inline text-secondary">0.05%</td>
+<td class="p-space-sm font-code-inline text-code-inline text-on-surface">21.6 minutes</td>
+<td class="p-space-sm font-code-inline text-code-inline">5.04 minutes</td>
+<td class="p-space-sm font-code-inline text-code-inline">1.8 seconds</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors bg-surface-container-lowest/50">
+<td class="p-space-sm font-bold text-tertiary">99.99% (Four 9s)</td>
+<td class="p-space-sm font-code-inline text-code-inline text-tertiary">0.01%</td>
+<td class="p-space-sm font-code-inline text-code-inline text-on-surface">4.32 minutes</td>
+<td class="p-space-sm font-code-inline text-code-inline">1.01 minutes</td>
+<td class="p-space-sm font-code-inline text-code-inline">0.36 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- SECTION 2: WHY SINGLE-WINDOW ALERTING FAILS -->
+<section class="flex flex-col gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-bold">02</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Why Single-Window Alerting Fails</h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          If you evaluate burn rate using only a single window, you hit the fundamental trade-off of alerting theory: <span class="text-on-surface font-semibold">Detection Latency</span> versus <span class="text-on-surface font-semibold">Reset Latency</span>.
+        </p>
+<!-- Architectural Visual Comparison Diagram -->
+<div class="bg-surface-container-low p-space-md rounded flex flex-col gap-space-sm shadow-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">TELEMETRY WINDOW FAILURE MODES</span>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Mode 1: Short Only -->
+<div class="bg-surface-container p-space-sm rounded flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-error">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+<span class="font-label-sm text-label-sm font-bold">FLAW 1: SHORT WINDOW ONLY (e.g., 5 min)</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Alerts fire instantaneously during temporary blips. Drops immediately when transient error drops. Causes extreme alert fatigue without protecting long-term budget health.
+              </p>
+</div>
+<!-- Mode 2: Long Only -->
+<div class="bg-surface-container p-space-sm rounded flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-error">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span class="font-label-sm text-label-sm font-bold">FLAW 2: LONG WINDOW ONLY (e.g., 1 hour)</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Takes too long to alert during catastrophic complete outages. Worse: after the incident is fixed, the alert continues paging on-call engineers for 50+ minutes until the trailing average falls.
+              </p>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: MULTI-WINDOW MULTI-BURN-RATE (THE SRE STANDARD) -->
+<section class="flex flex-col gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-bold">03</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">The Multi-Window Multi-Burn-Rate Solution</h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          Google SRE solves this by requiring <span class="text-primary font-semibold">both a Long Window AND a Short Window</span> to breach threshold simultaneously. The long window ensures significant budget was actually consumed; the short window ensures the incident is still happening right now.
+        </p>
+<!-- Standard Burn Table -->
+<div class="w-full overflow-x-auto bg-surface-container-low rounded shadow-sm">
+<table class="w-full text-left font-label-sm text-label-sm">
+<thead class="bg-surface-container-high text-on-surface">
+<tr>
+<th class="p-space-sm">SEVERITY</th>
+<th class="p-space-sm">BURN RATE</th>
+<th class="p-space-sm">BUDGET CONSUMED</th>
+<th class="p-space-sm">LONG WINDOW</th>
+<th class="p-space-sm">SHORT WINDOW (1/12th)</th>
+<th class="p-space-sm">ACTION</th>
+</tr>
+</thead>
+<tbody class="text-on-surface-variant">
+<tr class="hover:bg-surface-container transition-colors bg-surface-container-lowest/40">
+<td class="p-space-sm font-bold text-error flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-error"></span> CRITICAL
+                </td>
+<td class="p-space-sm font-code-inline text-code-inline text-on-surface font-semibold">14.4x</td>
+<td class="p-space-sm font-code-inline text-code-inline">2% in 1 hour</td>
+<td class="p-space-sm font-code-inline text-code-inline text-on-surface">1 hour</td>
+<td class="p-space-sm font-code-inline text-code-inline text-primary">5 minutes</td>
+<td class="p-space-sm"><span class="bg-error-container text-on-error-container px-1 rounded">Page Commander</span></td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-space-sm font-bold text-tertiary flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> HIGH
+                </td>
+<td class="p-space-sm font-code-inline text-code-inline text-on-surface font-semibold">6.0x</td>
+<td class="p-space-sm font-code-inline text-code-inline">5% in 6 hours</td>
+<td class="p-space-sm font-code-inline text-code-inline text-on-surface">6 hours</td>
+<td class="p-space-sm font-code-inline text-code-inline text-primary">30 minutes</td>
+<td class="p-space-sm"><span class="bg-surface-container-high text-on-surface px-1 rounded">File High Ticket</span></td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors bg-surface-container-lowest/40">
+<td class="p-space-sm font-bold text-secondary flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> WARNING
+                </td>
+<td class="p-space-sm font-code-inline text-code-inline text-on-surface font-semibold">1.0x</td>
+<td class="p-space-sm font-code-inline text-code-inline">10% in 3 days</td>
+<td class="p-space-sm font-code-inline text-code-inline text-on-surface">3 days (36h)</td>
+<td class="p-space-sm font-code-inline text-code-inline text-primary">2 hours</td>
+<td class="p-space-sm"><span class="bg-surface-container-high text-on-surface-variant px-1 rounded">Slack Digest</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Interactive PromQL Code Telemetry Sandbox Block -->
+<div class="bg-surface-container-lowest rounded overflow-hidden shadow-md flex flex-col">
+<div class="bg-surface-container-high px-space-md py-space-xs flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[16px] text-primary">code</span>
+<span class="font-code-inline text-code-inline text-on-surface font-semibold">alert_rules.rules.yaml (PromQL Production Formulation)</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface bg-surface-container px-space-xs py-0.5 rounded transition-colors flex items-center gap-1" id="copy-promql-btn">
+<span class="material-symbols-outlined text-[13px]">content_copy</span>
+<span id="copy-label">Copy</span>
+</button>
+<button class="font-label-sm text-label-sm bg-primary-container text-on-primary-container hover:bg-primary px-space-xs py-0.5 rounded transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">open_in_new</span>
+<span>Send to Grafana</span>
+</button>
+</div>
+</div>
+<pre class="p-space-md font-code-inline text-code-inline text-on-surface overflow-x-auto leading-relaxed bg-[#0a0e13]"><code><span class="text-outline-variant"># Critical SEV-1: 14.4x Burn Rate Alert (1h Long Window, 5m Short Window)</span>
+<span class="text-secondary">- alert:</span> <span class="text-primary font-bold">PaymentGatewayHighErrorBudgetBurn</span>
+  <span class="text-secondary">expr:</span> <span class="text-on-surface">(</span>
+    <span class="text-on-surface-variant"># Long Window Condition (1h)</span>
+    <span class="text-tertiary">job:slo_errors_per_request:ratio_rate1h</span>{<span class="text-primary">job</span>=<span class="text-secondary">"payment-gw"</span>} &gt; <span class="text-error font-semibold">(14.4 * (1 - 0.999))</span>
+    <span class="text-primary font-bold">and</span>
+    <span class="text-on-surface-variant"># Short Window Condition (5m) ensures issue is still active right now!</span>
+    <span class="text-tertiary">job:slo_errors_per_request:ratio_rate5m</span>{<span class="text-primary">job</span>=<span class="text-secondary">"payment-gw"</span>} &gt; <span class="text-error font-semibold">(14.4 * (1 - 0.999))</span>
+  <span class="text-on-surface">)</span>
+  <span class="text-secondary">for:</span> <span class="text-on-surface">2m</span>
+  <span class="text-secondary">labels:</span>
+    <span class="text-primary">severity:</span> <span class="text-error">page</span>
+    <span class="text-primary">role:</span> incident_commander
+  <span class="text-secondary">annotations:</span>
+    <span class="text-primary">summary:</span> <span class="text-on-surface-variant">"High error budget burn rate (14.4x over 1h &amp; 5m)"</span>
+    <span class="text-primary">runbook_url:</span> <span class="text-primary underline">"https://oncall.academy/runbooks/payments-burn-rate"</span></code></pre>
+</div>
+</section>
+<!-- SECTION 4: INLINE COMPREHENSION MICRO-CHECK (GIFT FORMAT) -->
+<section class="bg-surface-container-low p-space-md rounded flex flex-col gap-space-md shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[16px] text-primary">fact_check</span>
+<span class="font-label-sm text-label-sm text-primary font-bold uppercase">KNOWLEDGE DRILL ALPHA</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">SLO ASSESSMENT 01.2</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface font-semibold">
+          If a production microservice with a 99.9% 30-day SLO experiences a continuous 14.4x burn rate, what exact percentage of the total monthly error budget is consumed in exactly 1 hour?
+        </p>
+<!-- Interactive Question Choices -->
+<div class="flex flex-col gap-space-xs" id="quiz-container">
+<label class="flex items-center gap-space-sm p-space-sm rounded bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer">
+<input class="accent-primary" name="comprehension_q" type="radio" value="a"/>
+<span class="font-code-inline text-code-inline text-on-surface">A) 0.5% of total monthly error budget</span>
+</label>
+<label class="flex items-center gap-space-sm p-space-sm rounded bg-surface-container-high ring-1 ring-secondary cursor-pointer">
+<input checked="" class="accent-secondary" name="comprehension_q" type="radio" value="b"/>
+<div class="flex flex-col">
+<span class="font-code-inline text-code-inline text-on-surface font-bold">B) 2.0% of total monthly error budget</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium pt-1">
+                ✓ Correct! Formulation: 14.4 / (30 days × 24h) = 14.4 / 720h = 0.02 = 2.0%.
+              </span>
+</div>
+</label>
+<label class="flex items-center gap-space-sm p-space-sm rounded bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer">
+<input class="accent-primary" name="comprehension_q" type="radio" value="c"/>
+<span class="font-code-inline text-code-inline text-on-surface">C) 5.0% of total monthly error budget</span>
+</label>
+<label class="flex items-center gap-space-sm p-space-sm rounded bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer">
+<input class="accent-primary" name="comprehension_q" type="radio" value="d"/>
+<span class="font-code-inline text-code-inline text-on-surface">D) 14.4% of total monthly error budget</span>
+</label>
+</div>
+</section>
+<!-- Bottom Traversal Navigation Footer -->
+<footer class="flex items-center justify-between pt-space-lg">
+<a class="flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface bg-surface-container px-space-md py-space-sm rounded transition-colors" href="#prev-topic">
+<span class="material-symbols-outlined text-[16px]">west</span>
+<span>Previous: Anatomy of an Actionable Alert</span>
+</a>
+<a class="flex items-center gap-space-xs font-label-sm text-label-sm text-on-primary bg-primary hover:bg-primary-fixed px-space-md py-space-sm rounded font-semibold transition-colors" href="#next-topic">
+<span>Next: Alert Fatigue Is A Bug</span>
+<span class="material-symbols-outlined text-[16px]">east</span>
+</a>
+</footer>
+</main>
+<!-- PANE 3: CONTEXTUAL TOOLS & COMPANION WIDGETS (3 of 12 cols desktop) -->
+<aside class="lg:col-span-3 bg-surface-container-lowest p-space-md flex flex-col gap-space-lg select-none">
+<!-- Interactive Tool Tab Strip -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center bg-surface-container p-0.5 rounded font-label-sm text-label-sm">
+<button class="flex-1 py-1 rounded bg-surface-container-high text-primary font-semibold text-center transition-colors" id="tab-calculator-btn">
+            CALCULATOR
+          </button>
+<button class="flex-1 py-1 rounded text-on-surface-variant hover:text-on-surface text-center transition-colors" id="tab-scratchpad-btn">
+            SCRATCHPAD
+          </button>
+</div>
+<!-- TAB CONTENT 1: INTERACTIVE TELEMETRY CALCULATOR -->
+<div class="bg-surface-container-low p-space-sm rounded flex flex-col gap-space-md shadow-sm" id="calculator-panel">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">BUDGET ESTIMATOR</span>
+<span class="font-label-sm text-label-sm text-secondary">LIVE ENGINE</span>
+</div>
+<!-- Slider / Input for SLO Target -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">TARGET SLO (%)</span>
+<span class="font-code-inline text-code-inline text-primary font-bold" id="slo-display">99.90%</span>
+</div>
+<input class="w-full accent-primary cursor-pointer bg-surface-container" id="slo-slider" max="99.99" min="95.0" step="0.01" type="range" value="99.90"/>
+</div>
+<!-- Measurement Window Selection -->
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">WINDOW DURATION</span>
+<div class="grid grid-cols-3 gap-1 font-label-sm text-label-sm">
+<button class="window-btn py-1 rounded bg-surface-container-high text-primary font-semibold">30 DAYS</button>
+<button class="window-btn py-1 rounded bg-surface-container text-on-surface-variant hover:text-on-surface">14 DAYS</button>
+<button class="window-btn py-1 rounded bg-surface-container text-on-surface-variant hover:text-on-surface">7 DAYS</button>
+</div>
+</div>
+<!-- Live Dynamic Calculated Readouts -->
+<div class="flex flex-col gap-space-xs bg-surface-container p-space-sm rounded">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Allowed Budget:</span>
+<span class="font-code-inline text-code-inline text-secondary font-bold" id="calc-downtime">43.20 min</span>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">14.4x Pager Threshold:</span>
+<span class="font-code-inline text-code-inline text-error font-bold">2.0% / 1 hr</span>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">1x Exhaustion Time:</span>
+<span class="font-code-inline text-code-inline text-on-surface font-semibold">30.0 days</span>
+</div>
+</div>
+</div>
+<!-- TAB CONTENT 2: MARKDOWN SCRATCHPAD (Hidden by default) -->
+<div class="hidden bg-surface-container-low p-space-sm rounded flex-col gap-space-sm shadow-sm" id="scratchpad-panel">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">LOCAL RUNBOOK NOTES</span>
+<span class="font-label-sm text-label-sm text-outline">AUTO-SAVED</span>
+</div>
+<textarea class="w-full bg-surface-container text-on-surface font-code-inline text-code-inline p-space-xs rounded focus:outline-none focus:ring-1 focus:ring-primary resize-none leading-relaxed" id="notes-textarea" rows="6">// @sarah.m on-call notes:
+- Multi-window: Short window resets alert when incident is patched!
+- 14.4x consumes 2% in 1 hour.</textarea>
+<button class="w-full font-label-sm text-label-sm bg-surface-container-high hover:bg-primary hover:text-on-primary text-on-surface py-1 rounded font-semibold transition-colors" id="save-notes-btn">
+            SAVE TO WORKSPACE
+          </button>
+</div>
+</div>
+<!-- Instructor Field Advice Card -->
+<div class="bg-surface-container-low p-space-sm rounded flex flex-col gap-space-xs shadow-sm">
+<div class="flex items-center gap-space-xs text-primary">
+<span class="material-symbols-outlined text-[16px]">lightbulb</span>
+<span class="font-label-sm text-label-sm font-bold uppercase">PRIYA RAMAN'S PRO-TIP</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          "In Drill #02, our Redis cluster drops packets at 12x burn rate. Watch the 6h burn window before escalating to an incident commander SEV-1 call."
+        </p>
+<div class="pt-1 flex items-center justify-between">
+<a class="font-label-sm text-label-sm text-primary hover:underline flex items-center gap-1" href="#">
+<span>Field Runbook v4.2</span>
+<span class="material-symbols-outlined text-[12px]">download</span>
+</a>
+</div>
+</div>
+<!-- Cohort Real-Time Discussion Stream -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">WAR ROOM THREADS</span>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+<!-- Thread 1 -->
+<div class="bg-surface-container-low p-space-sm rounded flex flex-col gap-1 shadow-sm">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-primary font-semibold">@chen.infra</span>
+<span class="text-outline">12m ago</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Why not 10m short window instead of 5m for the 14.4x alert?
+          </p>
+<div class="bg-surface-container p-space-xs rounded flex flex-col gap-0.5 mt-1">
+<div class="flex items-center gap-1 font-label-sm text-label-sm text-secondary">
+<span class="material-symbols-outlined text-[12px]">verified</span>
+<span>Priya (Instructor):</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface">
+              10m increases mean time to reset! 5m is mathematically 1/12th of 1h.
+            </p>
+</div>
+</div>
+<!-- Thread 2 -->
+<div class="bg-surface-container-low p-space-sm rounded flex flex-col gap-1 shadow-sm">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-primary font-semibold">@alex.lead</span>
+<span class="text-outline">48m ago</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Tested the PromQL snippet against synthetic Thanos data. Fires clean.
+          </p>
+</div>
+</div>
+</aside>
+</div>
+</div>
+<script>
+  // Telemetry Calculator Interactive Logic
+  const sloSlider = document.getElementById('slo-slider');
+  const sloDisplay = document.getElementById('slo-display');
+  const calcDowntime = document.getElementById('calc-downtime');
+
+  if (sloSlider && sloDisplay && calcDowntime) {
+    sloSlider.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      sloDisplay.textContent = val.toFixed(2) + '%';
+      
+      // Calculate allowed downtime for 30 days
+      const errorRate = (100 - val) / 100;
+      const totalMinutesInMonth = 30 * 24 * 60;
+      const downtimeMinutes = (errorRate * totalMinutesInMonth).toFixed(2);
+      
+      calcDowntime.textContent = downtimeMinutes + ' min';
+    });
+  }
+
+  // Right-Pane Tab Switcher
+  const tabCalcBtn = document.getElementById('tab-calculator-btn');
+  const tabNotesBtn = document.getElementById('tab-scratchpad-btn');
+  const calcPanel = document.getElementById('calculator-panel');
+  const notesPanel = document.getElementById('scratchpad-panel');
+
+  if (tabCalcBtn && tabNotesBtn && calcPanel && notesPanel) {
+    tabCalcBtn.addEventListener('click', () => {
+      tabCalcBtn.className = 'flex-1 py-1 rounded bg-surface-container-high text-primary font-semibold text-center transition-colors';
+      tabNotesBtn.className = 'flex-1 py-1 rounded text-on-surface-variant hover:text-on-surface text-center transition-colors';
+      calcPanel.classList.remove('hidden');
+      notesPanel.classList.add('hidden');
+    });
+
+    tabNotesBtn.addEventListener('click', () => {
+      tabNotesBtn.className = 'flex-1 py-1 rounded bg-surface-container-high text-primary font-semibold text-center transition-colors';
+      tabCalcBtn.className = 'flex-1 py-1 rounded text-on-surface-variant hover:text-on-surface text-center transition-colors';
+      notesPanel.classList.remove('hidden');
+      calcPanel.classList.add('hidden');
+    });
+  }
+
+  // Copy PromQL snippet micro-interaction
+  const copyBtn = document.getElementById('copy-promql-btn');
+  const copyLabel = document.getElementById('copy-label');
+  if (copyBtn && copyLabel) {
+    copyBtn.addEventListener('click', () => {
+      copyLabel.textContent = 'Copied!';
+      setTimeout(() => {
+        copyLabel.textContent = 'Copy';
+      }, 1800);
+    });
+  }
+
+  // Keyboard navigation handler for SRE IDE feel
+  window.addEventListener('keydown', (e) => {
+    // If active in text input or notes, don't trigger global shortcuts
+    if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+    if (e.key === 'm' || e.key === 'M') {
+      const btn = document.getElementById('mark-complete-btn');
+      if (btn) btn.click();
+    } else if (e.key === 't' || e.key === 'T') {
+      const btn = document.getElementById('launch-sandbox-btn');
+      if (btn) btn.click();
+    } else if (e.key === '/') {
+      e.preventDefault();
+      const filterInput = document.getElementById('syllabus-filter');
+      if (filterInput) filterInput.focus();
+    } else if (e.key === 'p' || e.key === 'P') {
+      const audioBtn = document.getElementById('audio-toggle-btn');
+      if (audioBtn) audioBtn.click();
+    }
+  });
+</script></main><footer class="w-full bg-surface-container-lowest shadow-[0_-1px_8px_rgba(0,0,0,0.4)]"><div class="w-full px-gutter-desktop py-space-xl flex flex-col gap-space-lg"><div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md"><div class="flex flex-wrap items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container"><span class="w-2 h-2 rounded-full bg-secondary"></span><span class="font-label-sm text-label-sm text-on-surface uppercase">INCIDENT MESH: DEGRADED 0 / HEALTHY 284</span></div><div class="flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container"><span class="material-symbols-outlined text-primary text-[14px]">verified_user</span><span class="font-label-sm text-label-sm text-on-surface-variant">SLA 99.99% GUARANTEE</span></div></div><div class="flex items-center gap-space-sm font-code-inline text-code-inline text-primary bg-surface-container-low px-space-md py-1.5 rounded"><span class="text-on-surface-variant select-none">$</span><span>curl -s https://oncall.academy/curriculum.json | jq .</span></div></div><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md pt-space-md"><div class="font-label-sm text-label-sm text-on-surface-variant">© 2025 ON-CALL ACADEMY INC. ALL RIGHTS RESERVED. PRODUCTION SITE RELIABILITY INFRASTRUCTURE.</div><div class="flex items-center gap-space-lg font-body-sm text-body-sm"><a class="text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1" data-path="community" href="#"><span class="font-label-sm text-label-sm text-secondary-fixed">#slack-community</span></a><a class="text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1" data-path="discord" href="#"><span class="font-label-sm text-label-sm text-tertiary">#discord-war-room</span></a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="privacy-security" href="#">Privacy &amp; Security</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="incident-status" href="#">System Status</a></div></div></div></footer></body></html>

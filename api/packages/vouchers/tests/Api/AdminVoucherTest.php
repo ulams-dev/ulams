@@ -224,7 +224,7 @@ class AdminVoucherTest extends TestCase
 
         $this->response->assertJsonCount(2, 'data');
         $this->response->assertJsonFragment([
-            'data' => CouponResource::collection([$coupon, $coupon2])->toArray(null)
+            'data' => CouponResource::collection([$coupon, $coupon2])->toArray(request())
         ]);
     }
 
@@ -252,7 +252,7 @@ class AdminVoucherTest extends TestCase
         $this->response->assertOk();
         $this->response->assertJsonCount(3, 'data');
         $this->response->assertJsonFragment([
-            'data' => CouponResource::collection([$coupon, $coupon2, $coupon3])->toArray(null)
+            'data' => CouponResource::collection([$coupon, $coupon2, $coupon3])->toArray(request())
         ]);
     }
 
@@ -284,7 +284,7 @@ class AdminVoucherTest extends TestCase
 
         $this->response->assertJsonCount(2, 'data');
         $this->response->assertJsonFragment([
-            'data' => CouponResource::collection([$coupon, $coupon2])->toArray(null)
+            'data' => CouponResource::collection([$coupon, $coupon2])->toArray(request())
         ]);
 
         $this->response = $this->actingAs($this->user, 'api')->json('DELETE', '/api/admin/vouchers/' . $coupon2->getKey());
@@ -295,7 +295,7 @@ class AdminVoucherTest extends TestCase
 
         $this->response->assertJsonCount(1, 'data');
         $this->response->assertJsonFragment([
-            'data' => CouponResource::collection([$coupon])->toArray(null)
+            'data' => CouponResource::collection([$coupon])->toArray(request())
         ]);
     }
 }

@@ -2,23 +2,32 @@
 
 namespace Ulams\TemplatesPdf\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
+use Symfony\Component\HttpFoundation\Response;
 use Ulams\Core\Http\Controllers\UlamsBaseController;
+use Ulams\TemplatesPdf\Exceptions\PdfRenderException;
 use Ulams\TemplatesPdf\Http\Controllers\Swagger\FabricPdfControllerSwagger;
 use Ulams\TemplatesPdf\Http\Requests\PdfListingAdminRequest;
 use Ulams\TemplatesPdf\Http\Requests\PdfListingRequest;
+use Ulams\TemplatesPdf\Http\Requests\PdfPreviewRequest;
 use Ulams\TemplatesPdf\Http\Requests\PdfReadRequest;
 use Ulams\TemplatesPdf\Http\Resources\PdfListResource;
 use Ulams\TemplatesPdf\Http\Resources\PdfResource;
 use Ulams\TemplatesPdf\Models\FabricPDF;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
-use Ulams\TemplatesPdf\Services\Contracts\ReportBroServiceContract;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Ulams\TemplatesPdf\Services\Contracts\PdfGeneratorContract;
+use Ulams\TemplatesPdf\Services\Contracts\PdfRendererContract;
 
 class FabricPdfController extends UlamsBaseController implements FabricPdfControllerSwagger
 {
+    public function __construct(
+        private PdfGeneratorContract $generator,
+        private PdfRendererContract $renderer
+    ) {
+    }
+
     public function index(PdfListingRequest $request): JsonResponse
     {
         $pdfs = FabricPDF::query()
@@ -39,10 +48,28 @@ class FabricPdfController extends UlamsBaseController implements FabricPdfContro
         return $this->sendResponseForResource(PdfResource::make($pdf), "pdf fetched successfully");
     }
 
-    public function generate(PdfReadRequest $request, int $id): BinaryFileResponse
+    public function generate(PdfReadRequest $request, int $id): Response
     {
-        $service = App::make(ReportBroServiceContract::class);
-        return response()->download($service->generateFileFromRecord($id, false));
+        $pdf = FabricPDF::findOrFail($id);
+
+        try {
+            $bytes = $this->generator->pdf($pdf);
+        } catch (PdfRenderException $e) {
+            return $this->renderError($e);
+        }
+
+        return $this->pdfResponse($bytes, 'attachment', $this->fileName($pdf));
+    }
+
+    public function preview(PdfPreviewRequest $request): Response
+    {
+        try {
+            $bytes = $this->generator->preview($request->getTemplateContent(), $request->input('event'), $request->user());
+        } catch (PdfRenderException $e) {
+            return $this->renderError($e);
+        }
+
+        return $this->pdfResponse($bytes, 'inline', 'preview.pdf');
     }
 
     public function admin(PdfListingAdminRequest $request): JsonResponse
@@ -57,16 +84,75 @@ class FabricPdfController extends UlamsBaseController implements FabricPdfContro
         return $this->sendResponseForResource(PdfListResource::collection($pdfs), "pdfs list retrieved successfully");
     }
 
-    public function reportBro(Request $request): mixed
+    public function fonts(): JsonResponse
     {
-        $service = App::make(ReportBroServiceContract::class);
-        $response = $service->passAll($request);
-
-
-        if (strpos($response, "key") !== FALSE) {
-            return response($response, 200);
+        try {
+            $fonts = Cache::remember('templates_pdf.fonts', now()->addHour(), fn () => $this->renderer->fonts());
+        } catch (PdfRenderException $e) {
+            return $this->sendError($e->getMessage(), 503);
         }
 
-        return response()->download($response);
+        return $this->sendResponse($fonts, 'fonts retrieved successfully');
+    }
+
+    /**
+     * Fonts are public (SIL OFL) and immutable: proxied from the renderer once
+     * and kept on the local disk.
+     */
+    public function font(string $file): Response
+    {
+        if (!preg_match('/^[A-Za-z0-9_-]+\.ttf$/', $file)) {
+            return $this->sendError('Unknown font', 404);
+        }
+
+        $path = storage_path('app/pdf-fonts/' . $file);
+        if (!File::exists($path)) {
+            try {
+                $bytes = $this->renderer->font($file);
+            } catch (PdfRenderException $e) {
+                return $this->sendError($e->getStatus() === 404 ? 'Unknown font' : $e->getMessage(), $e->getStatus() === 404 ? 404 : 503);
+            }
+            File::ensureDirectoryExists(dirname($path));
+            File::put($path, $bytes);
+        }
+
+        return response()->file($path, [
+            'Content-Type' => 'font/ttf',
+            'Cache-Control' => 'public, max-age=604800, immutable',
+            'Access-Control-Allow-Origin' => '*',
+        ]);
+    }
+
+    private function pdfResponse(string $bytes, string $disposition, string $fileName): Response
+    {
+        return response($bytes, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => $disposition . '; filename="' . $fileName . '"',
+            'Content-Length' => (string) strlen($bytes),
+        ]);
+    }
+
+    private function fileName(FabricPDF $pdf): string
+    {
+        $slug = \Illuminate\Support\Str::slug((string) ($pdf->title ?: 'certificate'));
+
+        return ($slug ?: 'certificate') . '-' . $pdf->getKey() . '.pdf';
+    }
+
+    private function renderError(PdfRenderException $e): JsonResponse
+    {
+        $status = $e->getStatus();
+        // renderer refused the template (4xx) => 422; renderer down or failing => 503
+        $code = match (true) {
+            $status === 422 || ($status !== null && $status >= 400 && $status < 500) => 422,
+            default => 503,
+        };
+
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage(),
+            'error' => $e->getErrorCode(),
+            'details' => $e->getDetails(),
+        ], $code);
     }
 }

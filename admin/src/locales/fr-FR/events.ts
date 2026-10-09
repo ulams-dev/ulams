@@ -76,8 +76,7 @@ export default {
   'Ulams\\Cart\\Events\\ProductDetached': 'Produit du panier détaché',
   'Ulams\\Cart\\Events\\ProductRemovedFromCart': 'Produit supprimé du panier',
   // TEMPLATES
-  'Ulams\\Templates\\Events\\ManuallyTriggeredEvent':
-    "Modèle d'événement déclenché manuellement",
+  'Ulams\\Templates\\Events\\ManuallyTriggeredEvent': "Modèle d'événement déclenché manuellement",
   // ASSIGN WITHOUT ACCOUNT
   'Ulams\\AssignWithoutAccount\\Events\\AssignToProductable':
     'Assign to productable without account',

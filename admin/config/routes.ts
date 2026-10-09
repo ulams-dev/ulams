@@ -79,6 +79,13 @@
         component: './H5P',
       },
       {
+        path: '/courses/h5ps/libraries',
+        name: 'H5PLibraries',
+        icon: 'appstore',
+        access: 'h5pLibraryListPermission',
+        component: './H5P/libraries',
+      },
+      {
         path: '/courses/h5ps/:h5p',
         name: 'H5Ps',
         icon: 'book',
@@ -126,13 +133,6 @@
         icon: 'CustomerServiceOutlined',
         access: 'webinarListPermission',
         component: './Webinars',
-      },
-      {
-        path: '/courses/webinars/effectiveness-analysis/:modelId/:id',
-        access: 'webinarDetailsPermission',
-        component: './Consultations/components/EffectivenessAnalysisDetails',
-        hideInMenu: true,
-        modelType: 'webinar',
       },
       {
         path: '/courses/webinars/:tab',
@@ -552,13 +552,6 @@
         access: 'consultationDetailsPermission',
         component: './Consultations/form',
         hideInMenu: true,
-      },
-      {
-        path: '/other/consultations/effectiveness-analysis/:modelId/:id',
-        access: 'consultationDetailsPermission',
-        component: './Consultations/components/EffectivenessAnalysisDetails',
-        hideInMenu: true,
-        modelType: 'consultation',
       },
       {
         name: 'StationaryEvents',

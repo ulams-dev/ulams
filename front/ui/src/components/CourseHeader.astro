@@ -1,0 +1,227 @@
+---
+import Icon from "./Icon.astro";
+import Img from "./Img.astro";
+
+interface Person {
+  name: string;
+  role?: string;
+  image?: { src: string; alt: string; width: number; height: number };
+}
+interface Props {
+  variant?: "editorial" | "console" | "adventure";
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  summary?: string;
+  facts?: Array<{ label: string; value: string; note?: string }>;
+  image?: { src: string; alt: string; width: number; height: number };
+  tutors?: Person[];
+  primaryCta?: { label: string; href: string };
+  secondaryCta?: { label: string; href: string };
+  progress?: number;
+  id?: string;
+}
+const { variant = "editorial", eyebrow, title, subtitle, summary, facts = [], image, tutors = [], primaryCta, secondaryCta, progress } = Astro.props;
+---
+
+<header class={`u-course-head u-course-head--${variant}`}>
+  <div class="u-container u-course-head__grid">
+    <div class="u-course-head__copy">
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      <h1 class="u-course-head__title">{title}</h1>
+      {subtitle && <p class="u-course-head__subtitle">{subtitle}</p>}
+      {summary && <p class="u-course-head__summary">{summary}</p>}
+      {
+        facts.length > 0 && (
+          <dl class="u-course-head__facts">
+            {facts.map((f) => (
+              <div>
+                <dt>{f.label}</dt>
+                <dd>{f.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )
+      }
+      {
+        typeof progress === "number" && (
+          <div class="u-course-head__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={progress} aria-label="Your progress" style={`--progress:${progress}%`} data-course-progress>
+            <span class="u-course-head__track" />
+            <span data-progress-label>{progress}%</span>
+          </div>
+        )
+      }
+      <div class="u-actions">
+        {
+          primaryCta && (
+            <a class="u-btn" href={primaryCta.href}>
+              {primaryCta.label}
+              <Icon name="arrow" />
+            </a>
+          )
+        }
+        {
+          secondaryCta && (
+            <a class="u-btn u-btn--ghost" href={secondaryCta.href}>
+              {secondaryCta.label}
+            </a>
+          )
+        }
+      </div>
+      {
+        tutors.length > 0 && (
+          <ul class="u-course-head__tutors" role="list" aria-label="Tutors">
+            {tutors.map((t) => (
+              <li>
+                {t.image && (
+                  <span class="u-course-head__avatar">
+                    <Img {...t.image} sizes="44px" />
+                  </span>
+                )}
+                <span>
+                  <strong>{t.name}</strong>
+                  {t.role && <small>{t.role}</small>}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+    {
+      image && (
+        <div class="u-course-head__media" style="view-transition-name: course-media">
+          <Img {...image} priority sizes="(min-width: 960px) 44vw, 100vw" />
+        </div>
+      )
+    }
+  </div>
+</header>
+
+<style>
+  .u-course-head {
+    padding-block: clamp(32px, 6vw, 80px) clamp(24px, 4vw, 48px);
+  }
+  .u-course-head__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(28px, 5vw, 64px);
+    align-items: center;
+  }
+  .u-course-head__copy {
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+  }
+  .u-course-head__title {
+    font-size: clamp(2.2rem, 1.4rem + 3vw, 3.6rem);
+    letter-spacing: -0.02em;
+    view-transition-name: course-title;
+  }
+  .u-course-head__subtitle {
+    font-size: 1.25rem;
+    line-height: 1.4;
+  }
+  .u-course-head--editorial .u-course-head__subtitle {
+    font-family: var(--ulams-font-family);
+    font-style: italic;
+    color: var(--ulams-color-primary);
+  }
+  .u-course-head__summary {
+    max-width: 58ch;
+    color: var(--ulams-color-muted);
+  }
+  .u-course-head__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+  }
+  .u-course-head__facts div {
+    padding: 10px 14px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius);
+    background: var(--ulams-color-card-bg);
+  }
+  .u-course-head__facts dt {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ulams-color-muted);
+  }
+  .u-course-head__facts dd {
+    margin: 2px 0 0;
+    font-weight: 600;
+  }
+  .u-course-head__progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: min(100%, 420px);
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+  .u-course-head__track {
+    flex: 1;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--ulams-color-positive) var(--progress), var(--ulams-color-border) var(--progress));
+    transition: background 0.6s;
+  }
+  .u-course-head__tutors {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+  .u-course-head__tutors li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .u-course-head__tutors span {
+    display: grid;
+    line-height: 1.25;
+  }
+  .u-course-head__tutors small {
+    color: var(--ulams-color-muted);
+  }
+  .u-course-head__avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--ulams-color-border);
+  }
+  .u-course-head__avatar :global(img) {
+    width: 100%;
+    height: 100%;
+  }
+  .u-course-head__media {
+    overflow: hidden;
+    border-radius: var(--ulams-radius-card);
+    border: 1px solid var(--ulams-color-border);
+    aspect-ratio: 16 / 10;
+  }
+  .u-course-head__media :global(img) {
+    width: 100%;
+    height: 100%;
+    animation: u-kenburns 18s ease-in-out infinite alternate;
+  }
+  @keyframes u-kenburns {
+    to {
+      transform: scale(1.08) translate(-1%, -1%);
+    }
+  }
+  @media (max-width: 900px) {
+    .u-course-head__grid {
+      grid-template-columns: 1fr;
+    }
+    .u-course-head__media {
+      order: -1;
+    }
+  }
+</style>

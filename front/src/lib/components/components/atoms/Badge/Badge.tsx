@@ -1,11 +1,13 @@
 import * as React from "react";
 import { PropsWithChildren } from "react";
 
-import styled, { withTheme, ThemeContext } from "styled-components";
-import { getFontFromTheme } from "../../../theme/provider";
 import { contrast } from "chroma-js";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import { useThemeTokens } from "../../../theme/applyTheme";
+import orangeTheme from "../../../theme/orange";
+import { cx } from "../../../utils/cx";
+import styles from "./Badge.module.css";
+import { legacyDefault } from "../../../utils/legacy";
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
@@ -15,64 +17,43 @@ export interface BadgeProps
   lightContrast?: boolean;
 }
 
-const StyledDiv = styled("div")<BadgeProps>`
-  /* Adapt the colors based on primary prop */
-  background: ${({ color, theme }) => {
-    return (
-      color ??
-      getStylesBasedOnTheme(
-        theme.mode,
-        theme.dm__colorBackground,
-        theme.primaryColor,
-        getStylesBasedOnTheme(
-          theme.mode,
-          theme.dm__primaryColor,
-          theme.primaryColor,
-          "black"
-        )
-      )
-    );
-  }};
-  color: ${(props) => (props.lightContrast ? "#fff" : "#000")};
-  font-family: ${(props) => getFontFromTheme(props.theme).fontFamily};
-  font-weight: bold;
-  font-size: 10px;
-  line-height: 1.3em;
-  border: none;
-  padding: 6px 12px;
-  border-radius: ${(props) => props.theme?.buttonRadius || 2}px;
-  -webkit-font-smoothing: antialiased;
-  box-sizing: border-box;
-  display: inline-flex;
-  text-transform: uppercase;
-`;
-
 export const Badge: React.FC<PropsWithChildren<BadgeProps>> = ({
   children,
   color,
   className = "",
+  style,
+  lightContrast,
   ...props
 }) => {
-  const theme = React.useContext(ThemeContext);
+  const tokens = useThemeTokens();
+  const base = color || tokens?.primaryColor || orangeTheme.primaryColor;
 
   const cts = React.useMemo(() => {
-    return contrast("#fff", color || theme.primaryColor) >= 2.5;
-  }, [color || theme.primaryColor]);
+    try {
+      return contrast("#fff", base) >= 2.5;
+    } catch {
+      return false;
+    }
+  }, [base]);
 
   return (
-    <StyledDiv
-      lightContrast={cts}
-      color={color}
+    <div
       {...props}
-      className={`ulams-component ${className}`}
+      style={
+        (color
+          ? { "--badge-bg": color, ...style }
+          : style) as React.CSSProperties
+      }
+      className={cx(
+        styles.badge,
+        (lightContrast ?? cts) && styles.lightContrast,
+        "ulams-component",
+        className
+      )}
     >
       {children}
-    </StyledDiv>
+    </div>
   );
 };
 
-// https://styled-components.com/docs/api#using-custom-props
-const NewButton = styled(Badge)<{ color?: string }>``;
-
-// Main button with styles
-export default withTheme(NewButton);
+export default legacyDefault(Badge);

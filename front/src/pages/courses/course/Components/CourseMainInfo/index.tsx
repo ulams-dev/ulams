@@ -10,17 +10,9 @@ import { UlamsContext } from "@ulams/sdk/react";
 import { StateTypes } from "@/types/index";
 import { QuestionnaireStarsModel } from "@ulams/sdk/types";
 import ContentLoader from "@/components/_App/ContentLoader";
-import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 
-const RatingWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  p {
-    margin: 0;
-  }
-`;
+import styles from "./CourseMainInfo.module.css";
 
 type State =
   | { type: StateTypes.INIT }
@@ -77,7 +69,7 @@ export const CourseMainInfo: FC<CourseMainInfoProps> = ({ courseData }) => {
           </Title>
 
           {state.type === StateTypes.LOADED ? (
-            <RatingWrapper>
+            <div className={styles.ratingWrapper}>
               <Rating
                 ratingValue={state.rating.avg_rate}
                 label={`${state.rating.avg_rate}`}
@@ -88,7 +80,7 @@ export const CourseMainInfo: FC<CourseMainInfoProps> = ({ courseData }) => {
                   Dodane opinie <strong>{state.rating.count_answers}</strong>
                 </Text>
               </div>
-            </RatingWrapper>
+            </div>
           ) : state.type === StateTypes.LOADING ? (
             <ContentLoader width={"20px"} height="20px" />
           ) : state.type === StateTypes.ERROR ? (

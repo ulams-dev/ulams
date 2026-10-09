@@ -1,0 +1,32 @@
+.asideMenu {
+  margin-bottom: 5px;
+  padding: 11px 15px;
+  display: flex;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: space-between;
+  border-radius: var(--ulams-radius-card);
+  border-left-color: transparent;
+  border-left-width: 3px;
+  border-left-style: solid;
+  transition: border-left 0.4s;
+  background: var(--ulams-color-card-bg);
+}
+
+.asideMenu:hover {
+  border-left-color: color-mix(in srgb, var(--ulams-color-primary) 50%, transparent);
+}
+
+.active,
+.active:hover {
+  border-left-color: var(--ulams-color-primary);
+}
+
+.asideMenu a {
+  text-decoration: none;
+}
+
+.asideMenu a:hover {
+  text-decoration: underline;
+}

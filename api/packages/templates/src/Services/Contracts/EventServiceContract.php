@@ -6,5 +6,5 @@ use Ulams\Templates\Models\Template;
 
 interface EventServiceContract
 {
-    public function dispatchEventManuallyForUsers(array $users, Template $template, int $courseId = null, int $productId = null): bool;
+    public function dispatchEventManuallyForUsers(array $users, Template $template, ?int $courseId = null, ?int $productId = null): bool;
 }

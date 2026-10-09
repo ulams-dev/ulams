@@ -1,5 +1,5 @@
 import ChatMessage from "@/components/Chat/ChatMessage";
-import { StyledChatWindow } from "@/components/Chat/ChatWindow/style";
+import styles from "./ChatWindow.module.css";
 import ContentLoader from "@/components/_App/ContentLoader";
 import useChatLogic from "@/hooks/chat/useChatLogic";
 import { BackArrow } from "@/icons/index";
@@ -32,27 +32,28 @@ const ChatWindow: React.FC<Props> = ({ isOpen, lessonID, onClose }) => {
   }, [onClose]);
 
   return (
-    <StyledChatWindow
-      className="chatwindow"
-      $closeAnimation={!isOpen}
-      $isMobile={isMobile}
+    <div
+      className={`chatwindow ${styles.chatWindow}${
+        isMobile ? ` ${styles.mobile}` : ""
+      }`}
+      data-closing={!isOpen}
     >
-      <header className="chatwindow__header">
+      <header className={`chatwindow__header ${styles.header}`}>
         <Text size="18" bold>
           {t("LetsTalk")}
         </Text>
         <button
           title="close-chat"
-          className="chatwindow__header--close"
+          className={`chatwindow__header--close ${styles.close}`}
           onClick={handleClose}
         >
           <span></span>
         </button>
       </header>
-      <div className="chatwindow__content">
-        <div className="chatwindow__content--messages">
+      <div className={`chatwindow__content ${styles.content}`}>
+        <div className={`chatwindow__content--messages ${styles.messages}`}>
           {chatState.messages.length === 0 && (
-            <div className="chatwindow__content--messages__empty">
+            <div className={`chatwindow__content--messages__empty ${styles.messagesEmpty}`}>
               <Text size="16">{t("StartChat")}</Text>
             </div>
           )}
@@ -65,7 +66,7 @@ const ChatWindow: React.FC<Props> = ({ isOpen, lessonID, onClose }) => {
           ))}
         </div>
         <div>
-          <div className="chatwindow__content--input">
+          <div className={`chatwindow__content--input ${styles.input}`}>
             <input
               value={chatState.inputValue}
               onChange={handleInputChange}
@@ -81,12 +82,12 @@ const ChatWindow: React.FC<Props> = ({ isOpen, lessonID, onClose }) => {
               )}
             </button>
           </div>
-          <div className="chatwindow__content--error">
+          <div className={`chatwindow__content--error ${styles.error}`}>
             <Text size="11">{chatState.error}</Text>
           </div>
         </div>
       </div>
-    </StyledChatWindow>
+    </div>
   );
 };
 

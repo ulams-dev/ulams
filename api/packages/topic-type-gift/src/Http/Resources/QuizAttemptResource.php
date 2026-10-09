@@ -5,6 +5,7 @@ namespace Ulams\TopicTypeGift\Http\Resources;
 use Ulams\TopicTypeGift\Models\GiftQuestion;
 use Ulams\TopicTypeGift\Models\QuizAttempt;
 use Illuminate\Support\Collection;
+use Ulams\TopicTypeGift\Support\SeededShuffle;
 
 /**
  * @OA\Schema(
@@ -92,7 +93,7 @@ class QuizAttemptResource extends QuizAttemptSimpleResource
     private function orderedQuestions(): Collection
     {
         if ($this->giftQuiz->randomize_order) {
-            return $this->giftQuiz->questions->sortBy('id')->values()->shuffle($this->id);
+            return SeededShuffle::shuffle($this->giftQuiz->questions->sortBy('id')->values(), $this->id);
         }
 
         return $this->giftQuiz->questions->sortBy('order')->values();

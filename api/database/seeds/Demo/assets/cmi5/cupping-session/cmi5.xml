@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<courseStructure xmlns="https://w3id.org/xapi/profiles/cmi5/v1/CourseStructure.xsd">
+  <course id="https://ulams.app/demo/cmi5/cupping-session">
+    <title><langstring lang="en-US">Cupping at home</langstring></title>
+    <description><langstring lang="en-US">A guided, timed cupping session with an SCA-style scoring form.</langstring></description>
+  </course>
+  <au id="https://ulams.app/demo/cmi5/cupping-session/au" moveOn="CompletedOrPassed" masteryScore="0.6" launchMethod="AnyWindow">
+    <title><langstring lang="en-US">Cupping at home</langstring></title>
+    <description><langstring lang="en-US">A guided, timed cupping session with an SCA-style scoring form.</langstring></description>
+    <url>index.html</url>
+  </au>
+</courseStructure>

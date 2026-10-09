@@ -1,0 +1,101 @@
+.container {
+  font-family: var(--ulams-font-family-body);
+}
+
+.container :global(.error) {
+  color: var(--ulams-color-error);
+  padding-left: 12px;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  font-family: var(--ulams-font-family-body);
+}
+
+.wrapper :global(.error) {
+  color: var(--ulams-color-error);
+  padding-left: 12px;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.wrapper :global(.required) {
+  color: var(--ulams-color-error);
+  margin-right: 5px;
+  margin-top: 5px;
+}
+
+.option {
+  --option-label-color: #111;
+  font-family: var(--ulams-font-family-body);
+  font-size: 16px;
+  color: var(--ulams-color-primary);
+}
+
+:global([data-mode="dark"]) .option {
+  --option-label-color: var(--ulams-color-white);
+}
+
+.option label {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.option span {
+  margin-left: 15px;
+  color: var(--option-label-color);
+}
+
+.option :global(.required) {
+  margin-left: 5px;
+}
+
+.option input {
+  cursor: pointer;
+  transition: border-color 0.5s;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  position: relative;
+  margin: 0;
+  flex-shrink: 0;
+  background-color: var(--ulams-color-white);
+  border-radius: var(--ulams-radius-checkbox);
+}
+
+.option input:checked {
+  border-color: var(--ulams-color-primary);
+}
+
+.option input::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 12px;
+  height: 12px;
+  background: var(--ulams-color-primary);
+  opacity: 0;
+  transition: opacity 0.5s;
+  /* former `checkboxRadius ? 2 : 0` */
+  border-radius: min(var(--ulams-radius-checkbox), 2px);
+}
+
+.radio input,
+.radio input::after {
+  border-radius: 100%;
+}
+
+.option:hover input {
+  border: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.option input:checked::after {
+  opacity: 1;
+}

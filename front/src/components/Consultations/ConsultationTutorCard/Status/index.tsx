@@ -1,20 +1,8 @@
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
 import { API } from "@ulams/sdk";
 import Status, { StatusTypes } from "@/components/Common/Status";
 import ConsultationTutorCardButtons from "../Actions";
-
-const ConsultationTutorCardStatusStyles = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-
-  button > svg {
-    width: 24px;
-    height: 25px;
-  }
-`;
+import styles from "./styles.module.css";
 
 interface Props {
   consultation: API.AppointmentTerm;
@@ -42,14 +30,14 @@ const ConsultationTutorCardStatus = ({ consultation }: Props) => {
   }
   if (isReported) {
     return (
-      <ConsultationTutorCardStatusStyles>
+      <div className={styles.root}>
         <Status
           status={StatusTypes.WAITING}
           name={t("ConsultationStatus.Unconfirmed")}
         />
 
         <ConsultationTutorCardButtons consultation={consultation} />
-      </ConsultationTutorCardStatusStyles>
+      </div>
     );
   }
   if (isApproved) {

@@ -14,7 +14,7 @@ import {
 import { Tag } from "@ulams/components/components/atoms/Tag/Tag";
 import SelectedTermContent from "../SelectedTermContent";
 import { ProfileConsultationsContext } from "@/components/Profile/ProfileConsultations/ProfileConsultationsProvider";
-import { StyledBookTermButtons } from "../styles";
+import styles from "../styles.module.css";
 
 interface Props {
   consultation: API.Consultation & {
@@ -104,7 +104,7 @@ const ProposedTermsContent = ({ consultation, onClose }: Props) => {
         includeDates={terms}
         includeTimes={currentTimes}
       />
-      <StyledBookTermButtons>
+      <div className={styles.bookTermButtons}>
         {currentTimes.map((date) => (
           <Button
             mode={
@@ -117,7 +117,7 @@ const ProposedTermsContent = ({ consultation, onClose }: Props) => {
             {formatDate(date, "HH:mm")}
           </Button>
         ))}
-      </StyledBookTermButtons>
+      </div>
       {!isAnyTerm && <Tag>{t("ConsultationPage.NoTermsAvailable")}</Tag>}
       {isAnyTerm && (
         <Button

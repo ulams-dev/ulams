@@ -7,7 +7,7 @@ interface ScormPreviewProps {
 }
 
 const ScormPreview: React.FC<ScormPreviewProps> = ({ uuid }) => {
-  const API_URL = REACT_APP_API_URL || window.REACT_APP_API_URL;
+  const API_URL = window.REACT_APP_API_URL || REACT_APP_API_URL;
 
   // Register the Service Worker
 

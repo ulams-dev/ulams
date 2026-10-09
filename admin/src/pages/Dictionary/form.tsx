@@ -1,10 +1,6 @@
 import { useShowNotification } from '@/hooks/useMessage';
 import DictionaryWordsTableList from '@/pages/Dictionary/components/DictionaryWords';
-import {
-  createDictionary,
-  getDictionary,
-  updateDictionary,
-} from '@/services/ulams/dictionary';
+import { createDictionary, getDictionary, updateDictionary } from '@/services/ulams/dictionary';
 import ProCard from '@ant-design/pro-card';
 import ProForm, { ProFormDigit, ProFormText } from '@ant-design/pro-form';
 import { PageContainer } from '@ant-design/pro-layout';

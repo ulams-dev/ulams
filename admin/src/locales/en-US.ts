@@ -11,11 +11,32 @@ import courses from './en-US/courses';
 import events from './en-US/events';
 import fabric from './en-US/fabric';
 import notifications from './en-US/notifications';
-import recommender from './en-US/recommender';
 import templates from './en-US/templates';
 import vouchers from './en-US/vouchers';
 
 export default {
+  // demo tenants (api/packages/demo)
+  'demo_mode.badge': 'Demo mode – reset hourly',
+  'demo_mode.open_front': 'Open the learner site',
+  // H5P (api/h5p service)
+  'menu.Courses.H5PLibraries': 'H5P Libraries',
+  H5P_libraries: 'Libraries',
+  H5P_library_upload: 'Upload library package (.h5p)',
+  H5P_library_uploaded: 'Libraries installed: {installed}, updated: {updated}',
+  H5P_library_machine_name: 'Machine name',
+  H5P_library_version: 'Version',
+  H5P_library_runnable: 'Content type',
+  H5P_library_addon: 'Add-on',
+  H5P_library_restricted: 'Restricted',
+  H5P_library_instances: 'Used by contents',
+  H5P_library_dependents: 'Dependent libraries',
+  H5P_library_delete_question: 'Delete this library?',
+  H5P_update_content_type_cache: 'Update content type cache (H5P Hub)',
+  H5P_content_type_cache_last_update: 'Content type cache updated',
+  H5P_content_type_cache_never: 'never',
+  H5P_remove_unused: 'Remove unused',
+  H5P_remove_unused_question: 'Delete every H5P content that no topic uses?',
+  h5p_edited: 'H5P Element edited and saved successfully',
   customers: 'Customers',
   sales: 'Sales',
   'navBar.lang': 'Languages',
@@ -139,7 +160,6 @@ export default {
   ...vouchers,
   ...courses,
   ...events,
-  ...recommender,
   branding: 'Branding',
   product_details: 'Product details',
   title: 'Title',
@@ -161,8 +181,6 @@ export default {
   answers: 'Answers',
   answer: 'Answer',
   webinars: 'Webinars',
-  screensaves: 'Screen saves',
-  'webinars.screenSaves': 'Screen saves',
   'menu.Webinars': 'Webinars',
   'menu.NewWebinar': 'New webinar',
   'menu.Courses': 'Courses',
@@ -635,6 +653,15 @@ export default {
   user_logs: 'User logs',
   http_method: 'HTTP method',
   path: 'Path',
+  'pdf_editor.legacy': 'This template was made with ReportBro, which is no longer supported.',
+  'pdf_editor.legacy_description':
+    'Start over from the default template of this event (the old layout is not kept), or ask an administrator to run templates-pdf:migrate-reportbro, which converts simple text fields.',
+  'pdf_editor.start_over': 'Start from the default template',
+  'pdf_editor.variables_help':
+    'Click a variable to add a field for it; it is filled in when the PDF is issued. Variables can also be typed into read-only text, e.g. “Issued by @VarAppName”.',
+  'pdf_editor.variable_used': 'Used in the template',
+  'pdf_editor.variable_add': 'Add a field',
+  'pdf_editor.preview_failed': 'Preview failed',
   generated_pdfs: 'Generated PDFs',
   download_all: 'Download all',
   download_pdf: 'Download PDF',

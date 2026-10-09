@@ -1,9 +1,8 @@
 import React, { ReactNode, useMemo } from "react";
-import styled, { withTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
 import { Text } from "../../atoms/Typography/Text";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import styles from "./Orders.module.css";
 
 interface OrdersProps
   extends React.InputHTMLAttributes<HTMLTableElement>,
@@ -18,64 +17,6 @@ interface OrdersProps
   }[];
 }
 
-const StyledOrders = styled("div")<{ mobile: boolean }>`
-  .labels-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 0px 12px 0px;
-    .single-label {
-      &:first-of-type {
-        flex: 0 0 25%;
-        max-width: 40%;
-      }
-      &:nth-of-type(2),
-      &:nth-of-type(3) {
-        flex: 0 0 15%;
-        max-width: 15%;
-      }
-      &:last-of-type {
-        flex: 0 0 20%;
-        max-width: 20%;
-      }
-    }
-  }
-`;
-
-const SingleOrderCard = styled("div")<{ mobile: boolean }>`
-  display: flex;
-  flex-direction: ${({ mobile }) => (mobile ? "column" : "row")};
-  width: 100%;
-  justify-content: ${({ mobile }) => (mobile ? "flex-start" : "space-between")};
-  align-items: ${({ mobile }) => (mobile ? "flex-start" : "center")};
-  margin-bottom: 10px;
-  padding: ${({ mobile }) => (mobile ? "20px 0px" : "12px 0px")};
-  background: ${({ theme }) =>
-    getStylesBasedOnTheme(
-      theme.mode,
-      theme.dm__cardBackgroundColor,
-      theme.cardBackgroundColor
-    )};
-  .single-content {
-    &:not(:last-child) {
-      margin-bottom: ${({ mobile }) => (mobile ? "15px" : 0)};
-    }
-    &:first-of-type {
-      flex: ${({ mobile }) => (mobile ? "0 0 100%" : "0 0 25%")};
-      max-width: ${({ mobile }) => (mobile ? "100%" : "40%")};
-    }
-    &:nth-of-type(2),
-    &:nth-of-type(3) {
-      flex: ${({ mobile }) => (mobile ? "0 0 100%" : "0 0 15%")};
-      max-width: ${({ mobile }) => (mobile ? "100%" : "15%")};
-    }
-    &:last-of-type {
-      flex: ${({ mobile }) => (mobile ? "0 0 100%" : "0 0 20%")};
-      max-width: ${({ mobile }) => (mobile ? "100%" : "20%")};
-    }
-  }
-`;
-
 export const Orders: React.FC<OrdersProps> = (props) => {
   const { data, mobile = false, className = "" } = props;
 
@@ -86,7 +27,7 @@ export const Orders: React.FC<OrdersProps> = (props) => {
   }, [data]);
 
   return (
-    <StyledOrders className={`ulams-component ${className}`} mobile={mobile}>
+    <div className={`ulams-component ${styles.root} ${className}`}>
       {data.length === 0 && <Text>{t<string>("Orders.NoRecords")}</Text>}
       {data.length > 0 && (
         <React.Fragment>
@@ -112,7 +53,10 @@ export const Orders: React.FC<OrdersProps> = (props) => {
             </div>
           )}
           {data.map((record, i) => (
-            <SingleOrderCard mobile={mobile} key={i}>
+            <div
+              key={i}
+              className={`${styles.card} ${mobile ? styles.mobile : ""}`}
+            >
               <div className="single-content">{record.title}</div>
               <div className="single-content">{record.status}</div>
               <div className="single-content">{record.date}</div>
@@ -120,12 +64,12 @@ export const Orders: React.FC<OrdersProps> = (props) => {
               {hasActions && (
                 <div className="single-content">{record.actions}</div>
               )}
-            </SingleOrderCard>
+            </div>
           ))}
         </React.Fragment>
       )}
-    </StyledOrders>
+    </div>
   );
 };
 
-export default withTheme(styled(Orders)<OrdersProps>``);
+export default Orders;

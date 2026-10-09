@@ -1,0 +1,98 @@
+.registerPage {
+  padding-top: 100px;
+  padding-bottom: 50px;
+  min-height: 900px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--ulams-gray-4);
+}
+
+:global([data-mode="dark"]) .registerPage,
+:global([data-mode="dark"]) .content {
+  background-color: var(--ulams-color-bg);
+}
+
+@media (max-width: 991px) {
+  .registerPage {
+    padding-top: 100px;
+    height: 100%;
+    padding-bottom: 50px;
+  }
+  .registerPage * p,
+  .registerPage * a {
+    text-align: center;
+  }
+}
+
+.link {
+  color: var(--ulams-color-primary) !important;
+}
+
+.content {
+  background-color: var(--ulams-gray-4);
+  padding-top: 100px;
+}
+
+@media (max-width: 991px) {
+  .content {
+    height: 100%;
+    padding: 100px 0px;
+    text-align: center;
+  }
+}
+
+.imageWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+.contentContainer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+}
+
+.contentContainer .emailTitle {
+  text-align: center;
+}
+
+.contentContainer :global(.email-main-text) {
+  text-align: center;
+  margin: 25px 0 85px;
+  font-weight: 700;
+}
+
+.contentContainer :global(.email-main-text) span {
+  color: var(--ulams-color-primary);
+}
+
+.contentContainer :global(.email-help-text) {
+  margin: 0 auto 20px 0;
+}
+
+.contentContainer :global(.email-help-text) ul {
+  padding-left: 15px;
+  margin-left: 0;
+}
+
+.contentContainer :global(.email-help-text) ul li {
+  font-size: 12px;
+}
+
+.contentContainer .backText {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.backToLogin {
+  margin: 20px 0px;
+}
+
+.modal a {
+  font-size: 1.14em;
+}

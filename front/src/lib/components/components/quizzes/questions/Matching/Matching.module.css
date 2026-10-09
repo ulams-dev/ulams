@@ -1,0 +1,60 @@
+.matcherWrapper {
+  position: relative;
+}
+
+.row ul {
+  padding: 0px;
+}
+
+.row svg {
+  color: color-mix(in srgb, var(--ulams-color-primary) 50%, transparent);
+}
+
+.circle {
+  position: absolute;
+  height: 8px;
+  width: 8px;
+  top: 42%;
+  background-color: var(--ulams-color-card-bg);
+  border-radius: 50%;
+  border: 1px solid
+    color-mix(in srgb, var(--ulams-color-primary) 50%, transparent);
+}
+
+.circle[data-checked="true"] {
+  border-color: var(--ulams-color-primary);
+}
+
+.startCircle {
+  right: -4px;
+}
+
+.endCircle {
+  left: -4px;
+}
+
+.optionListItem {
+  position: relative;
+  padding: 16px;
+  border: 1px solid
+    color-mix(in srgb, var(--ulams-color-primary) 50%, transparent);
+  border-radius: 32px;
+  text-align: center;
+  list-style: none;
+  margin: 16px 0;
+  z-index: 99;
+  cursor: pointer;
+  pointer-events: all;
+  opacity: 1;
+  transition: 0.3s;
+}
+
+.optionListItem[data-checked="true"] {
+  border-color: var(--ulams-color-primary);
+}
+
+.optionListItem[data-disabled="true"] {
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.5;
+}

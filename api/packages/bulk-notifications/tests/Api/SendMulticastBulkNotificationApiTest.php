@@ -10,6 +10,7 @@ use Ulams\BulkNotifications\Tests\BulkNotificationTesting;
 use Ulams\BulkNotifications\Tests\TestCase;
 use Ulams\Core\Tests\CreatesUsers;
 use Illuminate\Support\Facades\Queue;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class SendMulticastBulkNotificationApiTest extends TestCase
 {
@@ -23,9 +24,7 @@ class SendMulticastBulkNotificationApiTest extends TestCase
         Queue::fake();
     }
 
-    /**
-     * @dataProvider channelDataProvider
-     */
+    #[DataProvider('channelDataProvider')]
     public function testSendMulticastBulkNotification(string $channel): void
     {
         $user = $this->makeAdmin();
@@ -59,9 +58,7 @@ class SendMulticastBulkNotificationApiTest extends TestCase
             ->assertJsonValidationErrors('channel');
     }
 
-    /**
-     * @dataProvider invalidDataProvider
-     */
+    #[DataProvider('invalidDataProvider')]
     public function testSendMulticastBulkNotificationInvalidSections(string $channel, array $data, array $errors): void
     {
         $this->actingAs($this->makeAdmin(), 'api')
@@ -70,9 +67,7 @@ class SendMulticastBulkNotificationApiTest extends TestCase
             ->assertJsonValidationErrors($errors);
     }
 
-    /**
-     * @dataProvider channelDataProvider
-     */
+    #[DataProvider('channelDataProvider')]
     public function testSendMulticastBulkNotificationForbidden(string $channel): void
     {
         $this->actingAs($this->makeStudent(), 'api')
@@ -80,16 +75,14 @@ class SendMulticastBulkNotificationApiTest extends TestCase
             ->assertForbidden();
     }
 
-    /**
-     * @dataProvider channelDataProvider
-     */
+    #[DataProvider('channelDataProvider')]
     public function testSendMulticastBulkNotificationUnauthorized(string $channel): void
     {
         $this->postJson('api/admin/bulk-notifications/send/multicast', $this->makeUserBulkNotificationPayload($channel))
             ->assertUnauthorized();
     }
 
-    public function invalidDataProvider(): array
+    public static function invalidDataProvider(): array
     {
         return [
             ['channel' => PushNotificationChannel::class, 'data' => ['sections' => ['title' => null, 'body' => 'Content']], 'errors' => ['sections.title']],

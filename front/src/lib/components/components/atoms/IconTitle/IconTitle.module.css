@@ -1,0 +1,40 @@
+.iconTitle:global(.lms-icon-title) {
+  --icon-title-color: var(--ulams-gray-1);
+  --icon-title-icon: var(--ulams-color-black);
+  font-size: var(--icon-title-size);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0 0 20px 0;
+  font-family: var(--ulams-font-family);
+  display: flex;
+  flex-wrap: nowrap;
+  color: var(--icon-title-color);
+}
+
+:global([data-mode="dark"]) .iconTitle {
+  --icon-title-color: var(--ulams-color-white);
+  --icon-title-icon: var(--ulams-color-white);
+}
+
+.iconTitle:global(.lms-icon-title) :global(.icon) {
+  width: 0.9em;
+  display: flex;
+  align-items: center;
+  margin-right: 0.6em;
+}
+
+.iconTitle:global(.lms-icon-title) :global(.icon) svg {
+  fill: var(--icon-title-icon);
+  max-width: 100%;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.iconTitle:global(.lms-icon-title) :global(.title) {
+  font-weight: 700;
+  margin-right: 0.4em;
+}
+
+.iconTitle:global(.lms-icon-title) :global(.subtitle) {
+  font-size: 0.65em;
+}

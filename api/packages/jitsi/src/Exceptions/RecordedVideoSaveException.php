@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 
 class RecordedVideoSaveException extends Exception
 {
-    public function __construct($message = "", $code = 0, Throwable $previous = null)
+    public function __construct($message = "", $code = 0, ?Throwable $previous = null)
     {
         $message = $message ?: __('Error while saving jitsi recorded video');
         $code = $code ?: 400;

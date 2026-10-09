@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect } from "react";
 import { UlamsContext } from "@ulams/sdk/react/context";
-import { XAPIEvent } from "@escolalms/h5p-react";
 import TextPlayer from "./Players/TextPlayer";
 import { API } from "@ulams/sdk";
 import { ImagePlayer } from "@ulams/components/components/players/ImagePlayer/ImagePlayer";
@@ -28,7 +27,7 @@ export const CourseProgramContent: React.FC<{
   const topicId = topic?.id;
 
   const onXAPI = useCallback(
-    (event: XAPIEvent): void => {
+    (event: API.H5PXAPIEvent): void => {
       if (event?.statement) {
         h5pProgress(
           String(courseId),
@@ -90,9 +89,9 @@ export const CourseProgramContent: React.FC<{
       case API.TopicType.H5P:
         return (
           <H5Player
-            onXAPI={(e: XAPIEvent) => onXAPI?.(e)}
-            //@ts-ignore
-            h5pObject={topic.topicable.content as API.H5PObject}
+            key={topic.id}
+            contentId={topic.topicable.value}
+            onXAPI={onXAPI}
             hideActionButtons
           />
         );

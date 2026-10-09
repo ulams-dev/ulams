@@ -1,17 +1,6 @@
 import Container from "@/components/Common/Container";
-import styled from "styled-components";
+import styles from "./Layouts.module.css";
 import { Title } from "@ulams/components";
-
-const Wrapper = styled.section`
-  padding-top: 31px;
-`;
-
-const StyledHeader = styled.div`
-  background: ${({ theme }) => theme.gray4};
-  padding: 25px 0px 10px;
-  position: relative;
-  margin-bottom: 16px;
-`;
 
 type Props = {
   children: React.ReactNode;
@@ -20,14 +9,14 @@ type Props = {
 
 const EntityPageWrapper: React.FC<Props> = ({ children, title }) => {
   return (
-    <Wrapper className="consultations-page">
-      <StyledHeader>
+    <section className={`consultations-page ${styles.wrapper}`}>
+      <div className={styles.header}>
         <Container>
           <Title level={1}> {title}</Title>
         </Container>
-      </StyledHeader>
+      </div>
       <Container>{children}</Container>
-    </Wrapper>
+    </section>
   );
 };
 

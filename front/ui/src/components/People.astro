@@ -1,0 +1,100 @@
+---
+import Img from "./Img.astro";
+
+interface Person {
+  name: string;
+  role?: string;
+  place?: string;
+  bio?: string;
+  image?: { src: string; alt: string; width: number; height: number };
+}
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  people: Person[];
+  id?: string;
+}
+const { eyebrow, title, intro, people, id = "people" } = Astro.props;
+---
+
+<section class="u-section u-people" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <div class="u-container">
+    <div class="u-section-head" data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+      {intro && <p class="u-lead">{intro}</p>}
+    </div>
+    <ul class="u-people__grid" role="list">
+      {
+        people.map((person, i) => (
+          <li class="u-person u-card u-card--hover" data-reveal style={`--reveal-i:${i}`}>
+            {person.image && (
+              <div class="u-person__photo">
+                <Img {...person.image} sizes="160px" />
+              </div>
+            )}
+            <div class="u-person__text">
+              <h3>{person.name}</h3>
+              {(person.role || person.place) && <p class="u-person__role">{[person.role, person.place].filter(Boolean).join(" · ")}</p>}
+              {person.bio && <p class="u-person__bio">{person.bio}</p>}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .u-people__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: 18px;
+  }
+  .u-person {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 20px;
+    padding: 20px;
+    align-items: start;
+  }
+  .u-person__photo {
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: var(--ulams-radius);
+    filter: grayscale(0.35);
+    transition: filter 0.5s var(--ulams-ease);
+  }
+  .u-person:hover .u-person__photo {
+    filter: none;
+  }
+  .u-person__photo :global(img) {
+    width: 100%;
+    height: 100%;
+  }
+  .u-person__text {
+    display: grid;
+    gap: 6px;
+  }
+  .u-person h3 {
+    font-size: 1.25rem;
+  }
+  .u-person__role {
+    font-family: var(--ulams-font-mono);
+    font-size: 0.75rem;
+    color: var(--ulams-color-primary);
+  }
+  .u-person__bio {
+    font-size: 0.875rem;
+    color: var(--ulams-color-muted);
+  }
+  @media (max-width: 480px) {
+    .u-person {
+      grid-template-columns: 80px 1fr;
+    }
+  }
+</style>

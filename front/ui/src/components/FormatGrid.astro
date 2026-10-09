@@ -1,0 +1,105 @@
+---
+import Icon from "./Icon.astro";
+import { formatLabel } from "../lib/format.ts";
+
+interface Item {
+  format: string;
+  tag?: string;
+  name: string;
+  text?: string;
+  foot?: string;
+}
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  items: Item[];
+  id?: string;
+}
+const { eyebrow, title, intro, items, id = "formats" } = Astro.props;
+---
+
+<section class="u-section u-formats" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <div class="u-container">
+    <div class="u-section-head u-section-head--center" data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+      {intro && <p class="u-lead">{intro}</p>}
+    </div>
+    <ul class="u-formats__grid" role="list">
+      {
+        items.map((item, i) => (
+          <li class="u-format u-card u-card--hover" data-reveal style={`--reveal-i:${i % 4}`}>
+            <p class="u-format__tag">
+              <span class="u-format__icon">
+                <Icon name={item.format} />
+              </span>
+              {item.tag ?? formatLabel(item.format)}
+            </p>
+            <h3>{item.name}</h3>
+            {item.text && <p class="u-format__text">{item.text}</p>}
+            {item.foot && <p class="u-format__foot">{item.foot}</p>}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .u-formats__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+    gap: 16px;
+  }
+  .u-format {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 20px;
+    min-height: 210px;
+  }
+  .u-format__tag {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ulams-color-primary-on-light);
+  }
+  .u-format__icon {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+    background: var(--ulams-color-bg);
+    color: var(--ulams-color-primary);
+    transition: transform 0.45s var(--ulams-ease-bounce), background-color 0.3s, color 0.3s;
+  }
+  .u-format:hover .u-format__icon {
+    transform: rotate(-8deg) scale(1.1);
+    background: var(--ulams-color-primary);
+    color: var(--ulams-color-on-primary);
+  }
+  .u-format h3 {
+    font-size: 1.2rem;
+  }
+  .u-format__text {
+    font-size: 0.875rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-format__foot {
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid var(--ulams-color-border);
+    font-size: 0.75rem;
+    color: var(--ulams-color-muted);
+  }
+</style>

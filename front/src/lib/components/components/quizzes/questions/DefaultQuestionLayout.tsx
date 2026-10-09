@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { CSSTransition } from "react-transition-group";
-import styled, { DefaultTheme, withTheme } from "styled-components";
 import { Text, Title, Stack } from "../../..";
+import styles from "./DefaultQuestionLayout.module.css";
 
 type ResultScore = null | number;
 
@@ -14,57 +14,6 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
   showScore?: boolean;
   resultScore?: ResultScore;
 }
-
-const RelativeText = styled(Text)`
-  position: relative;
-  width: max-content;
-`;
-
-const scoreBackgrounds = (
-  scoreState: ResultScoreState,
-  theme: DefaultTheme
-) => {
-  switch (scoreState) {
-    case "positive":
-      return theme.positive;
-    case "negative":
-      return theme.dm__errorColor;
-    default:
-      return theme.primaryColor;
-  }
-};
-
-const ScoreIndicator = styled.span<{ $scoreState: ResultScoreState }>`
-  position: absolute;
-  top: -8px;
-  right: -12px;
-  padding-inline: 4px;
-  border-radius: 4px;
-  background-color: ${({ theme, $scoreState }) =>
-    scoreBackgrounds($scoreState, theme)};
-  line-height: 1.3;
-
-  &.fade-enter {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  &.fade-enter-active {
-    opacity: 1;
-    transform: scale(1);
-  }
-  &.fade-enter-done {
-    opacity: 1;
-    transform: scale(1);
-  }
-  &.fade-exit-active {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-`;
-
-const LeftPaddingStack = styled(Stack)`
-  padding-left: 12px;
-`;
 
 function determineResultScoreState(score?: ResultScore): ResultScoreState {
   if (!score) return "neutral";
@@ -95,7 +44,7 @@ const DefaultQuestionLayout: React.FC<Props> = ({
     <Stack {...props} $gap={6}>
       <Stack $gap={2}>
         {title && <Title level="2">{title}</Title>}
-        <RelativeText>
+        <Text className={styles.relativeText}>
           {question}
           <CSSTransition
             in={showScore}
@@ -104,15 +53,21 @@ const DefaultQuestionLayout: React.FC<Props> = ({
             classNames="fade"
             unmountOnExit
           >
-            <ScoreIndicator ref={scoreRef} $scoreState={resultScoreState}>
+            <span
+              ref={scoreRef}
+              className={styles.scoreIndicator}
+              data-score-state={resultScoreState}
+            >
               {`${resultScoreSign[resultScoreState]}${resultScore ?? 0}`}
-            </ScoreIndicator>
+            </span>
           </CSSTransition>
-        </RelativeText>
+        </Text>
       </Stack>
-      <LeftPaddingStack $gap={4}>{children}</LeftPaddingStack>
+      <Stack className={styles.leftPaddingStack} $gap={4}>
+        {children}
+      </Stack>
     </Stack>
   );
 };
 
-export default withTheme(styled(DefaultQuestionLayout)``);
+export default DefaultQuestionLayout;

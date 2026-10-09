@@ -14,8 +14,7 @@ export default {
   'Ulams\\Auth\\Events\\UserAddedToGroup': 'Użytkownik dodany do grupy',
   'Ulams\\Auth\\Events\\UserRemovedFromGroup': 'Użytkownik usunięty z grupy',
   // SETTINGS
-  'Ulams\\Settings\\Events\\SettingPackageConfigUpdated':
-    'Pakiet ustawień został zaktualizowany',
+  'Ulams\\Settings\\Events\\SettingPackageConfigUpdated': 'Pakiet ustawień został zaktualizowany',
   // CSV USER
   'Ulams\\CsvUsers\\Events\\UlamsImportedNewUserTemplateEvent':
     'Zaimportowano nowy szablon użytkownika',
@@ -27,8 +26,7 @@ export default {
     'Termin konsultacji z trenerem zatwierdzony',
   'Ulams\\Consultations\\Events\\ChangeTerm': 'Termin konsultacji zmieniony',
   'Ulams\\Consultations\\Events\\RejectTerm': 'Termin konsultacji odrzucony',
-  'Ulams\\Consultations\\Events\\RejectTermWithTrainer':
-    'Termin konsultacji dla trenera odrzucony',
+  'Ulams\\Consultations\\Events\\RejectTermWithTrainer': 'Termin konsultacji dla trenera odrzucony',
   'Ulams\\Consultations\\Events\\ReminderAboutTerm': 'Przypomnienie o terminie konsultacji',
   'Ulams\\Consultations\\Events\\ReminderTrainerAboutTerm':
     'Przypomnienie o terminie konsultacji dla trenera',
@@ -56,10 +54,8 @@ export default {
   'Ulams\\Courses\\Events\\CourseUnassigned': 'Kurs odpięty',
   'Ulams\\Courses\\Events\\TopicFinished': 'Temat kursu zakończony',
   // STATIONARY EVENT
-  'Ulams\\StationaryEvents\\Events\\StationaryEventAssigned':
-    'Wydarzenie stacjonarne przypisane',
-  'Ulams\\StationaryEvents\\Events\\StationaryEventUnassigned':
-    'Wydarzenie stacjonarne odpięte',
+  'Ulams\\StationaryEvents\\Events\\StationaryEventAssigned': 'Wydarzenie stacjonarne przypisane',
+  'Ulams\\StationaryEvents\\Events\\StationaryEventUnassigned': 'Wydarzenie stacjonarne odpięte',
   'Ulams\\StationaryEvents\\Events\\StationaryEventAuthorAssigned':
     'Autor wydarzenia stacjonarnego przypisany',
   'Ulams\\StationaryEvents\\Events\\StationaryEventAuthorUnassigned':
@@ -103,6 +99,5 @@ export default {
   'Ulams\\ConsultationAccess\\Events\\ConsultationAccessEnquiryApprovedEvent':
     'Zatwierdzono zapytanie o dostęp do konsultacji',
   // TOPIC TYPE PROJECT
-  'Ulams\\TopicTypeProject\\Events\\ProjectSolutionCreatedEvent':
-    'Utworzenie rozwiązania projektu',
+  'Ulams\\TopicTypeProject\\Events\\ProjectSolutionCreatedEvent': 'Utworzenie rozwiązania projektu',
 };

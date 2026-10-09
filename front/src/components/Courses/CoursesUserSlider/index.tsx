@@ -1,7 +1,6 @@
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { SwiperSlide } from "swiper/react";
 import { Link, useHistory } from "react-router-dom";
-import styled from "styled-components";
 import SwiperSlider from "@/components/Courses/CoursesSlider/swiper";
 import { CourseCardSkeleton } from "@/components/Skeletons/CourseCard";
 import useProfileCourses from "@/hooks/courses/useProfileCourses";
@@ -11,10 +10,7 @@ import CourseImgPlaceholder from "@/components/Courses/CourseImgPlaceholder";
 import { NewCourseCard } from "@ulams/components";
 import CategoriesBreadCrumbs from "@/components/Categories/CategoriesBreadCrumbs";
 import { isPast } from "date-fns/esm";
-
-const Wrapper = styled.div`
-  position: relative;
-`;
+import styles from "./styles.module.css";
 
 type Props = {
   titleText: string;
@@ -33,7 +29,7 @@ const CoursesUserSlider: React.FC<Props> = ({
   }
 
   return (
-    <Wrapper>
+    <div className={styles.wrapper}>
       <div className="header-wrapper">
         <Title className="slider-title" level={1} as="h2">
           <strong>{titleText}</strong>
@@ -105,7 +101,7 @@ const CoursesUserSlider: React.FC<Props> = ({
           ))}
         </SwiperSlider>
       )}
-    </Wrapper>
+    </div>
   );
 };
 

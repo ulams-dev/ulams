@@ -12,7 +12,7 @@ import CompaniesSection from "@/components/CompaniesSection";
 import TutorsSection from "@/components/TutorsSection";
 import PackageDescription from "@/components/Packages/Package/PackageDescription";
 
-import { PackageContainerStyles } from "./styles";
+import styles from "./styles.module.css";
 
 const PackageContainer = () => {
   const { product } = useContext(UlamsContext);
@@ -22,7 +22,7 @@ const PackageContainer = () => {
     return <Loader />;
   }
   return (
-    <PackageContainerStyles>
+    <div className={styles.root}>
       <Row>
         <Col md={12} lg={9}>
           <PackageBreadcrumbs />
@@ -38,7 +38,7 @@ const PackageContainer = () => {
           <PackageSidebar />
         </Col>
       </Row>
-    </PackageContainerStyles>
+    </div>
   );
 };
 export default PackageContainer;

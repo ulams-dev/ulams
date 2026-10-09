@@ -1,0 +1,48 @@
+/* Colours are ANALYSIS_COLORS from @/utils/utils (border, textSecondary, darkText). */
+.wrapper {
+  z-index: 1000;
+  width: 260px;
+  padding: 16px;
+  background: white;
+  border: 1px solid #f0f0f0;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* color, background and border come inline from the attention value */
+.badge {
+  padding: 2px 10px;
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+.timeRange {
+  margin-bottom: 4px;
+  color: #8c8c8c;
+  font-size: 12px;
+}
+
+.timeRange b {
+  color: #434343;
+}
+
+.preview {
+  width: 100%;
+  height: 120px;
+  margin-top: 8px;
+  object-fit: cover;
+  background: #262626;
+  border-radius: 6px;
+}

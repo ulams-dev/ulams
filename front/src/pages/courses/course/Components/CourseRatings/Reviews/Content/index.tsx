@@ -2,11 +2,9 @@ import { useCourseAnswers } from "@/hooks/courses/useCourseAnswers";
 import { Spin } from "@ulams/components/components/atoms/Spin/Spin";
 import Pagination from "@/components/Common/Pagination";
 import { AnswerComponent } from "../../AnswerComponent";
-import {
-  StyledStack,
-  PaginationContainerStyled,
-  StyledTitle,
-} from "../../styles";
+import { Stack } from "@ulams/components/components/atoms/Stack/index";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
+import styles from "../../styles.module.css";
 import { useTranslation } from "react-i18next";
 
 interface Props {
@@ -26,29 +24,29 @@ export const CourseRatingsReviewsContent = ({
   const { t } = useTranslation();
 
   return (
-    <StyledStack>
+    <Stack className={styles.stack}>
       {loading ? (
         <Spin />
       ) : (questionnaireAnswers || [])?.length > 0 ? (
         <>
-          <StyledTitle level={4}>
+          <Title level={4} className={styles.title}>
             {t("CoursePage.CourseRatingsTitle")}
-          </StyledTitle>
+          </Title>
           {(questionnaireAnswers || []).map((question) => (
             <AnswerComponent question={question} />
           ))}
           {answersMeta.total > answersMeta.per_page && (
-            <PaginationContainerStyled>
+            <div className={styles.paginationContainer}>
               <Pagination
                 total={answersMeta.total}
                 perPage={answersMeta.per_page}
                 currentPage={answersMeta.current_page}
                 onPage={onPageChange}
               />
-            </PaginationContainerStyled>
+            </div>
           )}
         </>
       ) : null}
-    </StyledStack>
+    </Stack>
   );
 };

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { UlamsContext } from "@ulams/sdk/react";
 import { Tags } from "@ulams/components/components/molecules/Tags/Tags";
 import { isMobile } from "react-device-detect";
-import { useTheme } from "styled-components";
+import { useThemeTokens } from "@ulams/components/theme/applyTheme";
 // import { Tag } from "@ulams/sdk/types";
 
 interface TagsSelectFilterProps {
@@ -17,12 +17,12 @@ const TagsSelectFilter: FC<TagsSelectFilterProps> = ({
 }) => {
   const { uniqueTags } = useContext(UlamsContext);
   const { t } = useTranslation();
-  const theme = useTheme();
+  const theme = useThemeTokens();
 
   return (
     <Tags
       mobile={isMobile}
-      backgroundColor={theme.primaryColor}
+      backgroundColor={theme?.primaryColor}
       tags={uniqueTags?.list || []}
       label={t("Tags")}
       selectedTags={uniqueTags.list

@@ -1,6 +1,11 @@
 import { FC, PropsWithChildren } from "react";
-import { DetailsSidebarStyles } from "./styles";
+import { isMobile } from "react-device-detect";
+import styles from "./styles.module.css";
 
 export const DetailsSidebarContainer: FC<PropsWithChildren> = ({
   children,
-}) => <DetailsSidebarStyles>{children}</DetailsSidebarStyles>;
+}) => (
+  <div className={styles.root} data-mobile={isMobile}>
+    {children}
+  </div>
+);

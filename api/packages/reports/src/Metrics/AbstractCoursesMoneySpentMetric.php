@@ -23,7 +23,7 @@ abstract class AbstractCoursesMoneySpentMetric extends AbstractCoursesMetric
         $productTable = (new Product())->getTable();
         $productProductableTable = (new ProductProductable())->getTable();
 
-        $query = Course::dontCache()->selectRaw($courseTable . '.id, ' . $courseTable . '.title as label, SUM(' . $orderItemTable . '.quantity * ' . $orderItemTable . '.price) as value')
+        $query = Course::query()->selectRaw($courseTable . '.id, ' . $courseTable . '.title as label, SUM(' . $orderItemTable . '.quantity * ' . $orderItemTable . '.price) as value')
             ->leftJoin($productProductableTable, fn (JoinClause $join) => $join->where($productProductableTable . '.productable_id', '=', DB::raw($courseTable . '.id'))->where($productProductableTable . '.productable_type', '=', (new Course)->getMorphClass()))
             ->leftJoin($productTable, fn (JoinClause $join) => $join->where($productTable . '.id', '=', DB::raw($productProductableTable . '.product_id')))
             ->leftJoin($orderItemTable, fn (JoinClause $join) => $join->where($orderItemTable . '.buyable_id', '=', DB::raw($productTable . '.id'))->where($orderItemTable . '.buyable_type', '=', (new Product())->getMorphClass()))

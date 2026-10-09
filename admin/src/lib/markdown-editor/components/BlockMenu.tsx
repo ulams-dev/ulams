@@ -3,7 +3,13 @@ import capitalize from "lodash/capitalize";
 import { Portal } from "react-portal";
 import { EditorView } from "prosemirror-view";
 import { findParentNode } from "prosemirror-utils";
-import styled from "styled-components";
+import {
+  cx,
+  EditorThemeContext,
+  EditorThemeContextValue,
+  themeScopeProps,
+} from "../themeContext";
+import "../styles/components.css";
 import { EmbedDescriptor, MenuItem, ToastType } from "../types";
 import BlockMenuItem from "./BlockMenuItem";
 import Input from "./Input";
@@ -43,6 +49,8 @@ type State = {
 };
 
 class BlockMenu extends React.Component<Props, State> {
+  static contextType = EditorThemeContext;
+
   menuRef = React.createRef<HTMLDivElement>();
   inputRef = React.createRef<HTMLInputElement>();
   inputRefAudio = React.createRef<HTMLInputElement>();
@@ -521,18 +529,30 @@ class BlockMenu extends React.Component<Props, State> {
     const { dictionary, isActive, uploadImage, uploadSketch } = this.props;
     const items = this.filtered;
     const { insertItem, ...positioning } = this.state;
+    const { top, bottom, left, isAbove } = positioning;
+    // Portalled out of the editor root, so it carries the theme variables itself.
+    const scope = themeScopeProps(
+      this.context as EditorThemeContextValue,
+      cx(
+        "ulams-md-block-menu",
+        isActive && "ulams-md-block-menu--active",
+        isAbove && "ulams-md-block-menu--above"
+      ),
+      { top, bottom, left: `${left}px` }
+    );
 
     return (
       <Portal>
-        <Wrapper
+        <div
           id="block-menu-container"
-          active={isActive}
           ref={this.menuRef}
-          {...positioning}
+          className={scope.className}
+          style={scope.style}
         >
           {insertItem ? (
-            <LinkInputWrapper>
-              <LinkInput
+            <div className="ulams-md-block-menu__link-input-wrapper">
+              <Input
+                className="ulams-md-block-menu__link-input"
                 type="text"
                 placeholder={
                   insertItem.title
@@ -543,15 +563,15 @@ class BlockMenu extends React.Component<Props, State> {
                 onPaste={this.handleLinkInputPaste}
                 autoFocus
               />
-            </LinkInputWrapper>
+            </div>
           ) : (
-            <List>
+            <ol className="ulams-md-block-menu__list">
               {items.map((item, index) => {
                 if (item.name === "separator") {
                   return (
-                    <ListItem key={index}>
+                    <li className="ulams-md-block-menu__list-item" key={index}>
                       <hr />
-                    </ListItem>
+                    </li>
                   );
                 }
                 const selected = index === this.state.selectedIndex && isActive;
@@ -561,7 +581,11 @@ class BlockMenu extends React.Component<Props, State> {
                 }
 
                 return (
-                  <ListItem key={index} tabIndex={0}>
+                  <li
+                    className="ulams-md-block-menu__list-item"
+                    key={index}
+                    tabIndex={0}
+                  >
                     <BlockMenuItem
                       onClick={() => this.insertItem(item)}
                       selected={selected}
@@ -571,15 +595,17 @@ class BlockMenu extends React.Component<Props, State> {
                       upgradeCallback={this.props.upgradeCallback}
                       memberOnly={item.memberOnly}
                     ></BlockMenuItem>
-                  </ListItem>
+                  </li>
                 );
               })}
               {items.length === 0 && (
-                <ListItem>
-                  <Empty>{dictionary.noResults}</Empty>
-                </ListItem>
+                <li className="ulams-md-block-menu__list-item">
+                  <div className="ulams-md-block-menu__empty">
+                    {dictionary.noResults}
+                  </div>
+                </li>
               )}
-            </List>
+            </ol>
           )}
           {uploadImage && (
             <VisuallyHidden>
@@ -601,99 +627,10 @@ class BlockMenu extends React.Component<Props, State> {
               />
             </VisuallyHidden>
           )}
-        </Wrapper>
+        </div>
       </Portal>
     );
   }
 }
-
-const LinkInputWrapper = styled.div`
-  margin: 8px;
-`;
-
-const LinkInput = styled(Input)`
-  height: 36px;
-  width: 100%;
-  color: ${props => props.theme.blockToolbarText};
-`;
-
-const List = styled.ol`
-  list-style: none;
-  text-align: left;
-  height: 100%;
-  padding: 8px 0;
-  margin: 0;
-`;
-
-const ListItem = styled.li`
-  padding: 0;
-  margin: 0;
-`;
-
-const Empty = styled.div`
-  display: flex;
-  align-items: center;
-  color: ${props => props.theme.textSecondary};
-  font-weight: 500;
-  font-size: 14px;
-  height: 36px;
-  padding: 0 16px;
-`;
-
-export const Wrapper = styled.div<{
-  active: boolean;
-  top?: number;
-  bottom?: number;
-  left?: number;
-  isAbove: boolean;
-}>`
-  color: ${props => props.theme.text};
-  position: absolute;
-  z-index: ${props => {
-    return props.theme.zIndex + 100;
-  }};
-  ${props => props.top !== undefined && `top: ${props.top}px`};
-  ${props => props.bottom !== undefined && `bottom: ${props.bottom}px`};
-  left: ${props => props.left}px;
-  background-color: ${props => props.theme.blockToolbarBackground};
-  border-radius: 4px;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px,
-    rgba(0, 0, 0, 0.08) 0px 4px 8px, rgba(0, 0, 0, 0.08) 0px 2px 4px;
-  opacity: 0;
-  transform: scale(0.95);
-  transition: opacity 150ms cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    transform 150ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  transition-delay: 150ms;
-  line-height: 0;
-  box-sizing: border-box;
-  pointer-events: none;
-  white-space: nowrap;
-  width: 320px;
-  max-height: 224px;
-  overflow: hidden;
-  overflow-y: auto;
-
-  * {
-    box-sizing: border-box;
-  }
-
-  hr {
-    border: 0;
-    height: 0;
-    border-top: 1px solid ${props => props.theme.blockToolbarDivider};
-  }
-
-  ${({ active, isAbove }) =>
-    active &&
-    `
-    transform: translateY(${isAbove ? "6px" : "-6px"}) scale(1);
-    pointer-events: all;
-    opacity: 1;
-  `};
-
-  @media print {
-    display: none;
-  }
-`;
 
 export default BlockMenu;

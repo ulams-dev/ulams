@@ -1,23 +1,15 @@
-import React, { ReactNode, useContext } from "react";
+import React, { ReactNode, useContext, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Elements } from "@stripe/react-stripe-js";
-import { useTheme } from "styled-components";
 import { loadStripe } from "@stripe/stripe-js";
 import StripeContent from "@/components/Cart/CartContent/stripe";
 import { UlamsContext } from "@ulams/sdk/react";
-import { getFontFromTheme } from "@ulams/components/theme/provider";
+import { useThemeTokens } from "@ulams/components/theme/applyTheme";
+import { FONTS } from "@ulams/components/theme/cssVars";
 import Przelewy24Content from "@/components/Cart/CartContent/p24";
-import styled from "styled-components";
 import usePayment from "@/hooks/usePayment";
 
-const StyledWrapper = styled.div`
-  background-color: ${({ theme }) => theme.gray4};
-  padding-top: 57px;
-  min-height: calc(100vh - 452px);
-
-  h1 {
-    margin-bottom: 20px;
-  }
-`;
+import styles from "./cart.module.css";
 
 enum PaymentGateway {
   Stripe = "Stripe",
@@ -30,40 +22,59 @@ type Props = {
 
 const CartPage: React.FC<Props> = () => {
   const { config } = useContext(UlamsContext);
-  const stripePromise = (publishable_key: string) =>
-    loadStripe(publishable_key);
+  const { t } = useTranslation();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const stripeConfigs: any = config?.value?.ulams_payments?.drivers;
-  const stripeKey = stripeConfigs?.stripe?.publishable_key;
-  const theme = useTheme();
-  const font = getFontFromTheme(theme);
+  const stripeKey: string | undefined = stripeConfigs?.stripe?.publishable_key;
+  // Load Stripe.js once per key; without a key Stripe() throws and the whole cart crashes.
+  const stripePromise = useMemo(
+    () => (stripeKey ? loadStripe(stripeKey) : null),
+    [stripeKey]
+  );
+  // Stripe Elements loads the body font itself, so it needs the raw font links.
+  const theme = useThemeTokens();
+  const fontKey = theme?.bodyFont ?? theme?.font;
+  const fontLinks = (fontKey && FONTS[fontKey]?.links) || [];
 
   const { defaultGateway } = usePayment();
 
   if (defaultGateway === PaymentGateway.Przelewy24) {
     return (
-      <StyledWrapper>
+      <div className={styles.wrapper}>
         <Przelewy24Content />
-      </StyledWrapper>
+      </div>
     );
   }
 
-  if (defaultGateway === PaymentGateway.Stripe) {
+  if (defaultGateway === PaymentGateway.Stripe && !stripeKey) {
     return (
-      <StyledWrapper>
+      <div className={styles.wrapper}>
+        <p role="status" className={styles.notConfigured}>
+          {t(
+            "Cart.PaymentsNotConfigured",
+            "Online payments are not configured for this site yet. Please contact the site administrator."
+          )}
+        </p>
+      </div>
+    );
+  }
+
+  if (defaultGateway === PaymentGateway.Stripe && stripeKey) {
+    return (
+      <div className={styles.wrapper}>
         <Elements
-          stripe={stripePromise(stripeKey)}
+          stripe={stripePromise}
           options={{
             fonts: [
               {
-                cssSrc: font.links[0],
+                cssSrc: fontLinks[0],
               },
             ],
           }}
         >
           <StripeContent stripeKey={stripeKey} />
         </Elements>
-      </StyledWrapper>
+      </div>
     );
   }
 };

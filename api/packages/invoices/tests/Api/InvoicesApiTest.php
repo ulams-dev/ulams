@@ -56,6 +56,8 @@ class InvoicesApiTest extends TestCase
         $response = $this->actingAs($this->user, 'api')->getJson('api/order-invoices/'.$this->order->getKey());
 
         $response->assertOk();
+        $response->assertHeader('Content-Type', 'application/pdf');
+        $this->assertStringStartsWith('%PDF-', $response->getContent());
     }
 
     public function testCannotFindMissingOrder(): void

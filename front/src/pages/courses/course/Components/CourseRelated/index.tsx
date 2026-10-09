@@ -11,24 +11,7 @@ import CourseImgPlaceholder from "@/components/Courses/CourseImgPlaceholder";
 import ResponsiveImage from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import { Link } from "react-router-dom";
 import ProductPrices from "@/components/ProductPrices";
-import styled from "styled-components";
-
-const SectionWrapper = styled.section`
-  position: relative;
-  margin-top: 100px;
-  @media (max-width: 991px) {
-    margin-top: 40px;
-  }
-  .content-container {
-    h2 {
-      margin-bottom: 20px;
-    }
-    .swiper {
-      padding: 7px 10px;
-      margin: 0px -15px;
-    }
-  }
-`;
+import styles from "./CourseRelated.module.css";
 
 type Props = {
   relatedProducts?: Product[];
@@ -38,7 +21,7 @@ export const CourseRelated: React.FC<Props> = ({ relatedProducts }) => {
   const { t } = useTranslation();
 
   return (
-    <SectionWrapper className="course-related-courses">
+    <section className={`${styles.section} course-related-courses`}>
       <Container>
         <Row>
           <Col lg={12}>
@@ -107,6 +90,6 @@ export const CourseRelated: React.FC<Props> = ({ relatedProducts }) => {
           </Col>
         </Row>
       </Container>
-    </SectionWrapper>
+    </section>
   );
 };

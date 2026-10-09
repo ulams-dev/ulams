@@ -26,7 +26,7 @@ trait Cmi5Testing
         return new UploadedFile($storagePath, $fileName, 'application/zip', null, true);
     }
 
-    protected function uploadCmi5(string $fileName, string $token = null): object {
+    protected function uploadCmi5(string $fileName, ?string $token = null): object {
         $file = $this->getCmi5UploadedFile($fileName);
 
         $request = $this;

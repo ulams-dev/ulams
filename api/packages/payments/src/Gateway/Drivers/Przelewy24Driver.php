@@ -52,22 +52,66 @@ class Przelewy24Driver extends AbstractDriver implements GatewayDriverContract
         return Przelewy24GatewayResponse::fromRegisterTransactionResponse($response);
     }
 
+    /**
+     * The status URL is public. A notification is accepted only when its signature is valid for the configured CRC,
+     * it names this merchant and POS, it refers to this payment's session and matches its amount and currency, and
+     * the transaction is then confirmed with Przelewy24's verify call.
+     */
     public function callback(Request $request, array $parameters = []): CallbackResponse
     {
-        $callbackNotification = $this->gateway->handleWebhook($request->input());
+        $payment = $parameters['payment'] ?? null;
+
+        if (!$payment instanceof Payment) {
+            return CallbackResponse::rejected('Missing payment');
+        }
 
         try {
-            $response = $this->gateway->transactions()->verify(
-                sessionId: $callbackNotification->sessionId(),
-                orderId: $callbackNotification->orderId(),
-                amount: $callbackNotification->amount(),
-                currency: $callbackNotification->currency(),
+            $notification = $this->gateway->handleWebhook($request->input());
+
+            if (!$notification->isSignatureValid()) {
+                return CallbackResponse::rejected('Invalid Przelewy24 signature');
+            }
+
+            if (
+                (string) $notification->merchantId() !== (string) $this->config->getPrzelewy24MerchantId()
+                || (string) $notification->posId() !== (string) $this->config->getPrzelewy24PosId()
+            ) {
+                return CallbackResponse::rejected('Przelewy24 notification is for another merchant');
+            }
+
+            if ($notification->sessionId() !== $this->sessionId($payment)) {
+                return CallbackResponse::rejected('Przelewy24 notification does not belong to this payment');
+            }
+
+            if ((int) $notification->amount() !== (int) $payment->amount || $notification->currency() !== $this->currency($payment)) {
+                return CallbackResponse::rejected('Przelewy24 notification amount or currency does not match the payment');
+            }
+        } catch (\Throwable $exception) {
+            return CallbackResponse::rejected('Malformed Przelewy24 notification');
+        }
+
+        try {
+            $this->gateway->transactions()->verify(
+                sessionId: $notification->sessionId(),
+                orderId: $notification->orderId(),
+                amount: $notification->amount(),
+                currency: $notification->currency(),
             );
 
-            return new CallbackResponse(true, $callbackNotification->orderId());
+            return CallbackResponse::success((string) $notification->orderId());
         } catch (Przelewy24Exception $exception) {
-            return new CallbackResponse(false, $callbackNotification->orderId(), $exception->getMessage());
+            return CallbackResponse::failed($exception->getMessage(), (string) $notification->orderId());
         }
+    }
+
+    private function sessionId(Payment $payment): string
+    {
+        return ($payment->order_id ? $payment->order_id . '_' : '') . $payment->getKey() . $payment->created_at->timestamp;
+    }
+
+    private function currency(Payment $payment): Przelewy24Currency
+    {
+        return Przelewy24Currency::tryFrom((string) $payment->currency) ?? Przelewy24Currency::PLN;
     }
 
     private function transaction(Payment $payment, array $parameters = []): RegisterTransactionResponse
@@ -77,12 +121,12 @@ class Przelewy24Driver extends AbstractDriver implements GatewayDriverContract
         }
 
         $transaction = $this->gateway->transactions()->register(
-            sessionId: ($payment->order_id ? $payment->order_id . '_' : '') . $payment->getKey() . $payment->created_at->timestamp,
+            sessionId: $this->sessionId($payment),
             amount: $payment->amount,
             description: !empty($payment->description) ? $payment->description : 'Payment',
             email: $parameters['email'],
             urlReturn: $parameters['return_url'] ?? url('/'),
-            currency: Przelewy24Currency::tryFrom($payment->currency) ?? Przelewy24Currency::PLN,
+            currency: $this->currency($payment),
             urlStatus: route('payments-gateway-callback', ['payment' => $payment->getKey()]),
             channel: !empty($parameters['channel']) ? TransactionChannel::CARDS_ONLY->value : TransactionChannel::ALL_24_7->value,
             methodRefId: isset($cardInfoResponse) ? $cardInfoResponse->refId() : null
@@ -103,7 +147,7 @@ class Przelewy24Driver extends AbstractDriver implements GatewayDriverContract
                 refunds: [
                     new RefundItem(
                         $payment->gateway_order_id,
-                        ($payment->order_id ? $payment->order_id . '_' : '') . $payment->getKey() . $payment->created_at->timestamp,
+                        $this->sessionId($payment),
                         $payment->amount
                     )
                 ],
@@ -121,8 +165,13 @@ class Przelewy24Driver extends AbstractDriver implements GatewayDriverContract
     {
         try {
             $refundNotification = $this->gateway->handleRefundWebhook($request->input());
+
+            if (!$refundNotification->isSignatureValid()) {
+                return new CallbackRefundResponse(false, null, null, null, 'Invalid Przelewy24 refund signature');
+            }
+
             return new CallbackRefundResponse(true, $refundNotification->orderId(), $refundNotification->requestId(), $refundNotification->refundsUuid());
-        } catch (Przelewy24Exception $exception) {
+        } catch (\Throwable $exception) {
             return new CallbackRefundResponse(false, null, null, null, $exception->getMessage());
         }
     }

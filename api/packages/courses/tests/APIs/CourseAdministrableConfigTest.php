@@ -11,15 +11,14 @@ use Ulams\Courses\Tests\TestCase;
 use Ulams\Settings\Database\Seeders\PermissionTableSeeder as SettingsPermissionSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
+use PHPUnit\Framework\Attributes\Test;
 
 class CourseAdministrableConfigTest extends TestCase
 {
     use CreatesUsers;
     use DatabaseTransactions;
 
-    /**
-     * @test
-     */
+    #[Test]
     protected function setUp(): void
     {
         parent::setUp();

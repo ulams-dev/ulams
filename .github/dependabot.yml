@@ -1,0 +1,68 @@
+version: 2
+
+# Weekly, grouped, few open PRs. Minor and patch updates arrive as one PR per ecosystem;
+# major updates get their own PRs so they can be reviewed (or closed) one at a time.
+
+updates:
+  # Root Yarn workspace: admin, front, api/h5p, api/pdf share the root yarn.lock.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      npm-minor-patch:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: "build(deps)"
+
+  - package-ecosystem: composer
+    directory: /api
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      composer-minor-patch:
+        update-types: [minor, patch]
+    ignore:
+      # Framework majors follow the staged upgrade plan (docs/plans/phase-0.md, B.11).
+      - dependency-name: "laravel/*"
+        update-types: [version-update:semver-major]
+      - dependency-name: "orchestra/*"
+        update-types: [version-update:semver-major]
+      - dependency-name: "phpunit/phpunit"
+        update-types: [version-update:semver-major]
+    commit-message:
+      prefix: "build(deps)"
+
+  - package-ecosystem: docker
+    directories:
+      - /api
+      - /api/docker/php
+      - /api/h5p
+      - /api/pdf
+      - /admin
+      - /front
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      docker:
+        patterns: ["*"]
+    commit-message:
+      prefix: "build(deps)"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      github-actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "ci(deps)"

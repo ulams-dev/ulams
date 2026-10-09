@@ -1,0 +1,99 @@
+---
+import type { PreparedNode } from "./render-core.ts";
+import type { ComponentName } from "./registry.ts";
+import Fallback from "./components/Fallback.astro";
+import Page from "./components/Page.astro";
+import Main from "./components/Main.astro";
+import Stack from "./components/Stack.astro";
+import SiteHeader from "./components/SiteHeader.astro";
+import StatusBar from "./components/StatusBar.astro";
+import Hero from "./components/Hero.astro";
+import Syllabus from "./components/Syllabus.astro";
+import Letter from "./components/Letter.astro";
+import People from "./components/People.astro";
+import FormatGrid from "./components/FormatGrid.astro";
+import Quotes from "./components/Quotes.astro";
+import Events from "./components/Events.astro";
+import Pricing from "./components/Pricing.astro";
+import FeatureList from "./components/FeatureList.astro";
+import Badges from "./components/Badges.astro";
+import Faq from "./components/Faq.astro";
+import CtaBand from "./components/CtaBand.astro";
+import SiteFooter from "./components/SiteFooter.astro";
+import Steps from "./components/Steps.astro";
+import Showcase from "./components/Showcase.astro";
+import Chips from "./components/Chips.astro";
+import CourseHeader from "./components/CourseHeader.astro";
+import PurchaseCard from "./components/PurchaseCard.astro";
+import Prose from "./components/Prose.astro";
+import Callout from "./components/Callout.astro";
+import Figure from "./components/Figure.astro";
+import VideoPlayer from "./components/VideoPlayer.astro";
+import AudioPlayer from "./components/AudioPlayer.astro";
+import PdfViewer from "./components/PdfViewer.astro";
+import Embed from "./components/Embed.astro";
+import H5PFrame from "./components/H5PFrame.astro";
+import PackageFrame from "./components/PackageFrame.astro";
+import ActivityCard from "./components/ActivityCard.astro";
+import QuizRunner from "./components/QuizRunner.astro";
+
+// Every registry entry must have an implementation (checked by the type below).
+const COMPONENTS: Record<ComponentName, (props: any) => any> = {
+  Page,
+  Main,
+  Stack,
+  SiteHeader,
+  StatusBar,
+  Hero,
+  Syllabus,
+  Letter,
+  People,
+  FormatGrid,
+  Quotes,
+  Events,
+  Pricing,
+  FeatureList,
+  Badges,
+  Faq,
+  CtaBand,
+  SiteFooter,
+  Steps,
+  Showcase,
+  Chips,
+  CourseHeader,
+  PurchaseCard,
+  Prose,
+  Callout,
+  Figure,
+  VideoPlayer,
+  AudioPlayer,
+  PdfViewer,
+  Embed,
+  H5PFrame,
+  PackageFrame,
+  ActivityCard,
+  QuizRunner,
+};
+
+interface Props {
+  node: PreparedNode;
+}
+const { node } = Astro.props;
+const Component = node.kind === "component" ? COMPONENTS[node.component] : null;
+---
+
+{
+  node.kind === "fallback" && (
+    <>
+      <Fallback text={node.text} component={node.component} />
+      {node.children.map((child) => <Astro.self node={child} />)}
+    </>
+  )
+}
+{
+  node.kind === "component" && Component && (
+    <Component {...node.props} id={node.id ?? node.props.id}>
+      {node.children.map((child) => <Astro.self node={child} />)}
+    </Component>
+  )
+}

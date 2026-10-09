@@ -1,0 +1,70 @@
+.root {
+  display: flex;
+}
+
+.tagsList {
+  display: flex;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  justify-content: flex-start;
+  align-items: center;
+  column-gap: 10px;
+  padding-bottom: 5px;
+}
+
+.tagsList::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+  border: 1px solid transparent;
+}
+
+.tagsList::-webkit-scrollbar-track {
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.tagsList::-webkit-scrollbar-thumb {
+  border-radius: 0;
+  background: #ffffff;
+}
+
+.tagsList .tag {
+  border-width: 2px;
+  border-style: solid;
+  margin-bottom: 0;
+  padding: 10px 20px;
+  line-height: 0.9;
+  text-align: center;
+  max-height: 50px;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  justify-content: center;
+  border-color: var(--ulams-color-white);
+  color: var(--ulams-color-white);
+}
+
+.mobile .tagsList .tag {
+  border-color: var(--ulams-color-primary);
+  color: var(--ulams-color-primary);
+}
+
+.clearBtn {
+  appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  margin-left: 15px;
+  cursor: pointer;
+  display: block;
+}
+
+.mobile .clearBtn {
+  display: none;
+}
+
+.mobile .clearBtn svg path {
+  fill: var(--ulams-color-primary);
+}

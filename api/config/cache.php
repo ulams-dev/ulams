@@ -74,6 +74,11 @@ return [
         'redis' => [
             'driver' => 'redis',
             'connection' => 'cache',
+            // Laravel 11 no longer appends ":" to the cache prefix of the Redis store. Add it here so
+            // cache keys keep the Laravel 10 layout (e.g. "ulams_coffee_cache:<key>") for every tenant.
+            'prefix' => ($cachePrefix = env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_cache')) === ''
+                ? ''
+                : rtrim($cachePrefix, ':').':',
         ],
 
         'dynamodb' => [

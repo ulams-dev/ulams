@@ -7,8 +7,6 @@ import UserSelect from '@/components/UserSelect';
 import UserSubmissions from '@/components/UsersSubmissions';
 import WysiwygMarkdown from '@/components/WysiwygMarkdown';
 import useValidateFormEdit from '@/hooks/useValidateFormEdit';
-import ScreenSaves from '@/pages/Consultations/components/ScreenSaves';
-import { settings } from '@/services/ulams/settings';
 import { createWebinar, getWebinar, updateWebinar } from '@/services/ulams/webinars';
 import { splitImagePath, tagsArrToIds } from '@/utils/utils';
 import ProCard from '@ant-design/pro-card';
@@ -21,7 +19,6 @@ import ProForm, {
 } from '@ant-design/pro-form';
 import { PageContainer } from '@ant-design/pro-layout';
 import { Alert, Button, Col, Row, Spin, message } from 'antd';
-import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, history, useIntl, useParams } from 'umi';
 
@@ -32,7 +29,6 @@ enum TabNames {
   TAGS = 'tags',
   BRANDING = 'branding',
   USER_SUBMISSION = 'user_submission',
-  SCREENSAVES = 'screensaves',
 }
 
 const WebinarForm = () => {
@@ -42,15 +38,9 @@ const WebinarForm = () => {
   const isNew = webinar === 'new';
   const [data, setData] = useState<Partial<API.Webinar>>();
   const { manageCourseEdit, setManageCourseEdit, validateCourseEdit } = useValidateFormEdit();
-  const [showScreenSaves, setShowScreenSaves] = useState<boolean>(false);
   const [form] = ProForm.useForm();
 
   const fetchData = useCallback(async () => {
-    const config = await settings({ per_page: -1 });
-
-    if ('data' in config) {
-      setShowScreenSaves(config.data.find((c) => c.key === 'show_screen_saves')?.value === '1');
-    }
     const response = await getWebinar(Number(webinar));
     if (response.success) {
       if (tab === TabNames.ATTRIBUTES) {
@@ -188,7 +178,6 @@ const WebinarForm = () => {
           },
         }}
       >
-
         <ProCard.TabPane key={TabNames.ATTRIBUTES} tab={<FormattedMessage id="attributes" />}>
           {manageCourseEdit.disableEdit && (
             <Alert
@@ -452,17 +441,6 @@ const WebinarForm = () => {
             disabled={manageCourseEdit.disableEdit}
           >
             {webinar && <UserSubmissions id={Number(webinar)} type="App\Models\Webinar" />}
-          </ProCard.TabPane>
-        )}
-        {!isNew && showScreenSaves && (
-          <ProCard.TabPane
-            key={TabNames.SCREENSAVES}
-            tab={<FormattedMessage id="webinars.screenSaves" />}
-          >
-            <ScreenSaves
-              webinar={Number(webinar)}
-              webinarTimestamp={moment(data.active_to).unix()}
-            />
           </ProCard.TabPane>
         )}
       </ProCard>

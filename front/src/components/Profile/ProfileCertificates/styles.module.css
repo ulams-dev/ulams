@@ -1,0 +1,31 @@
+.list .emptyMessage {
+  background: var(--ulams-gray-5);
+}
+
+:global([data-mode="dark"]) .list .emptyMessage {
+  background: var(--ulams-gray-1);
+}
+
+.list .buttonsContainer {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.list .buttonsContainer .downloadBtn {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--ulams-color-primary);
+}
+
+.list .buttonsContainer .downloadBtn p {
+  color: var(--ulams-color-primary);
+}
+
+.list :global(.certificate-card) {
+  margin-bottom: 24px;
+}

@@ -1,10 +1,10 @@
 import * as React from "react";
 
-import styled, { withTheme } from "styled-components";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { getUniqueId } from "../../../utils/utils";
-import { getFontFromTheme } from "../../../theme/provider";
+import { cx } from "../../../utils/cx";
+import styles from "./BreadCrumbs.module.css";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import { legacyDefault } from "../../../utils/legacy";
 
 interface BreadCrumbsProps extends ExtendableStyledComponent {
   items: React.ReactNode[];
@@ -26,49 +26,14 @@ const HyphenIcon = () => (
   </svg>
 );
 
-const StyledNav = styled("nav")`
-  /* Adapt the colors based on primary prop */
-
-  font-family: ${(props) => getFontFromTheme(props.theme).fontFamily};
-  color: ${({ theme }) =>
-    getStylesBasedOnTheme(theme.mode, theme.gray3, theme.gray2)};
-  font-size: 13px;
-  line-height: 1em;
-  font-weight: 400;
-
-  i svg {
-    fill: ${({ theme }) => theme.gray2};
-  }
-  ul,
-  ol {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-items: center;
-    align-content: center;
-    gap: 2px;
-    li {
-      &,
-      & > a,
-      & > button {
-        font-size: 13px;
-      }
-    }
-  }
-`;
-
 export const BreadCrumbs: React.FC<BreadCrumbsProps> = ({
   items,
   className = "",
   hyphen = <HyphenIcon />,
 }) => {
   return (
-    <StyledNav
-      className={`ulams-component ${className}`}
+    <nav
+      className={cx(styles.nav, "ulams-component", className)}
       aria-label={getUniqueId("nav")}
     >
       <ul>
@@ -81,8 +46,8 @@ export const BreadCrumbs: React.FC<BreadCrumbsProps> = ({
           </React.Fragment>
         ))}
       </ul>
-    </StyledNav>
+    </nav>
   );
 };
 
-export default withTheme(styled(BreadCrumbs)``);
+export default legacyDefault(BreadCrumbs);

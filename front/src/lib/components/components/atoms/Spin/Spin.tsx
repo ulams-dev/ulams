@@ -1,5 +1,6 @@
 import * as React from "react";
 
+/** `color` may be any CSS colour, including `var(--ulams-…)` (applied as CSS, not as SVG attributes). */
 export const Spin: React.FC<{ color?: string }> = ({ color = "#fff" }) => {
   const rndId = React.useMemo(
     () => `svg-def-${Math.round(Math.random() * 99999)}`,
@@ -21,9 +22,13 @@ export const Spin: React.FC<{ color?: string }> = ({ color = "#fff" }) => {
           y2="23.865%"
           id={rndId}
         >
-          <stop stopColor={color} stopOpacity="0" offset="0%" />
-          <stop stopColor={color} stopOpacity=".631" offset="63.146%" />
-          <stop stopColor={color} offset="100%" />
+          <stop style={{ stopColor: color }} stopOpacity="0" offset="0%" />
+          <stop
+            style={{ stopColor: color }}
+            stopOpacity=".631"
+            offset="63.146%"
+          />
+          <stop style={{ stopColor: color }} offset="100%" />
         </linearGradient>
       </defs>
       <g fill="none" fillRule="evenodd">
@@ -43,7 +48,7 @@ export const Spin: React.FC<{ color?: string }> = ({ color = "#fff" }) => {
               repeatCount="indefinite"
             />
           </path>
-          <circle fill={color} cx="36" cy="18" r="1">
+          <circle style={{ fill: color }} cx="36" cy="18" r="1">
             <animateTransform
               attributeName="transform"
               type="rotate"

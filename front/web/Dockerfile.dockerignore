@@ -1,0 +1,19 @@
+# Context filter for `docker build -f front/web/Dockerfile .` run from the repo root.
+# Allow-list: only what the web image needs.
+*
+!package.json
+!yarn.lock
+!front/sdk
+!front/ui
+!front/web
+# @ulams/sdk re-exports the tenant resolver shared with front and admin
+!front/src/lib/tenant/resolveApiUrl.ts
+**/node_modules
+**/dist
+**/.astro
+**/.turbo
+**/test-results
+**/playwright-report
+**/.env
+**/.env.*
+!**/.env.example

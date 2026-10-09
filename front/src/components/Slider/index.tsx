@@ -1,42 +1,7 @@
 import React, { ReactNode, useState } from "react";
-import styled from "styled-components";
 import { Slider as SliderLMS } from "@ulams/components/components/atoms/Slider/Slider";
 import { Settings } from "react-slick";
-
-const Content = styled.div`
-  @media (max-width: 575px) {
-    margin-left: -59px;
-  }
-  .slick-slider {
-    @media (max-width: 575px) {
-      width: calc(100% + 15px);
-    }
-  }
-  .slick-dots {
-    top: -65px;
-    @media (max-width: 575px) {
-      top: -30px !important;
-      right: unset !important;
-      left: 60px !important;
-    }
-  }
-  .slick-track {
-    display: flex;
-    gap: 0 20px;
-    @media (max-width: 991px) {
-      padding-bottom: 20px;
-    }
-  }
-
-  .slick-slide {
-    height: inherit;
-
-    > div {
-      display: flex;
-      height: 100%;
-    }
-  }
-`;
+import styles from "./Slider.module.css";
 
 const defaultSliderSettings = {
   arrows: false,
@@ -84,7 +49,7 @@ const Slider: React.FC<Props> = ({
   const [dots] = useState(true);
 
   return (
-    <Content>
+    <div className={styles.content}>
       <div>
         <SliderLMS
           settings={{
@@ -118,7 +83,7 @@ const Slider: React.FC<Props> = ({
           {nodes}
         </SliderLMS>
       </div>
-    </Content>
+    </div>
   );
 };
 

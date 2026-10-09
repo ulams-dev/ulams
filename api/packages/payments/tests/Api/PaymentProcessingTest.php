@@ -289,6 +289,8 @@ class PaymentProcessingTest extends TestCase
             'refundsUuid' => 'invalid_refunds_uuid'
         ]));
 
-        $this->assertEquals(PaymentStatus::FAILED(), $payment->status);
+        // An unverifiable refund callback is rejected and leaves the payment unchanged.
+        $this->assertTrue($processor->isCallbackRejected());
+        $this->assertEquals(PaymentStatus::PAID(), $payment->status);
     }
 }

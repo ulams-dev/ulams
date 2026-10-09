@@ -46,6 +46,22 @@ class PaymentsConfig
         return $this->config['drivers']['stripe']['allowed_payment_method_types'] ?? ['card'];
     }
 
+    public function getStripeWebhookSecret(): ?string
+    {
+        $secret = $this->config['drivers']['stripe']['webhook_secret'] ?? null;
+        return empty($secret) ? null : (string) $secret;
+    }
+
+    public function getStripeWebhookTolerance(): int
+    {
+        return (int) ($this->config['drivers']['stripe']['webhook_tolerance'] ?? 300);
+    }
+
+    public function getStripeApiBase(): string
+    {
+        return rtrim($this->config['drivers']['stripe']['api_base'] ?? 'https://api.stripe.com', '/');
+    }
+
     public function hasValidConfigForStripe(): bool
     {
         return !is_null($this->getStripeSecretKey())
@@ -97,7 +113,13 @@ class PaymentsConfig
 
     public function isRevenueCatEnabled(): bool
     {
-        return $this->config['drivers']['revenuecat']['enabled'] ?? false;
+        return (bool) ($this->config['drivers']['revenuecat']['enabled'] ?? false);
+    }
+
+    public function getRevenueCatReceiptVerifier(): ?string
+    {
+        $verifier = $this->config['drivers']['revenuecat']['receipt_verifier'] ?? null;
+        return empty($verifier) ? null : (string) $verifier;
     }
 
 }

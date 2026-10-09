@@ -7,17 +7,21 @@ use Ulams\Mattermost\Enum\MattermostRoleEnum;
 use Ulams\Mattermost\Enum\TeamNameEnum;
 use Ulams\Mattermost\Services\Contracts\MattermostServiceContract;
 use Gnello\Mattermost\Driver;
-use Gnello\Mattermost\Laravel\Facades\Mattermost;
+use Ulams\Mattermost\Facades\Mattermost;
 use Illuminate\Support\Str;
 use Psr\Http\Message\ResponseInterface;
 
 class MattermostService implements MattermostServiceContract
 {
-    public Driver $driver;
+    /**
+     * The Mattermost client. It is created and logged in on first use, so building the
+     * service (for example while the router resolves controllers) does no HTTP.
+     */
+    private ?Driver $client = null;
 
-    public function __construct()
+    public function driver(): Driver
     {
-        $this->driver = Mattermost::server('default');
+        return $this->client ??= Mattermost::server('default');
     }
 
     private function getUsername(User $user): string
@@ -56,7 +60,7 @@ class MattermostService implements MattermostServiceContract
 
         // @phpstan-ignore-next-line
         if (isset($team->id) && isset($user->id)) {
-            $teams = $this->driver->getTeamModel();
+            $teams = $this->driver()->getTeamModel();
             $result = $teams->addUser($team->id, [
                 'user_id' => $user->id,
                 'team_id' => $team->id,
@@ -77,7 +81,7 @@ class MattermostService implements MattermostServiceContract
         // @phpstan-ignore-next-line
         if (isset($channel->id) && isset($mmUser->id)) {
             $this->addUserToTeam($user, $teamDisplayName);
-            $channels = $this->driver->getChannelModel();
+            $channels = $this->driver()->getChannelModel();
             $result = $channels->addUser($channel->id, [
                 'user_id' => $mmUser->id,
             ]);
@@ -96,7 +100,7 @@ class MattermostService implements MattermostServiceContract
     {
         $name = Str::slug($displayName);
 
-        $teams = $this->driver->getTeamModel();
+        $teams = $this->driver()->getTeamModel();
         $result = $teams->getTeamByName($name);
 
         if ($result->getStatusCode() < 400) {
@@ -122,7 +126,7 @@ class MattermostService implements MattermostServiceContract
 
         // @phpstan-ignore-next-line
         if (isset($team->id)) {
-            $channels = $this->driver->getChannelModel();
+            $channels = $this->driver()->getChannelModel();
             $result = $channels->getChannelByName($team->id, $channelName);
 
             if ($result->getStatusCode() < 400) {
@@ -146,7 +150,7 @@ class MattermostService implements MattermostServiceContract
     public function getOrCreateUser(User $user): ResponseInterface
     {
         //Retrieve the User Model
-        $userModel = $this->driver->getUserModel();
+        $userModel = $this->driver()->getUserModel();
 
         $result = $userModel->getUserByEmail($user->email);
 
@@ -168,7 +172,7 @@ class MattermostService implements MattermostServiceContract
 
     public function sendMessage(string $markdown, string $channelDisplayName, string $teamDisplayName = TeamNameEnum::COURSES): bool
     {
-        $channels = $this->driver->getChannelModel();
+        $channels = $this->driver()->getChannelModel();
 
         $channel = $channels->getChannelByNameAndTeamName(Str::slug($teamDisplayName), Str::slug($channelDisplayName));
 
@@ -176,7 +180,7 @@ class MattermostService implements MattermostServiceContract
 
         // @phpstan-ignore-next-line
         if ($channelData->id) {
-            $result = $this->driver->getPostModel()->createPost([
+            $result = $this->driver()->getPostModel()->createPost([
                 // @phpstan-ignore-next-line
                 'channel_id' => $channelData->id,
                 'message' => $markdown,
@@ -195,7 +199,7 @@ class MattermostService implements MattermostServiceContract
     {
         $mmUser = json_decode($this->getOrCreateUser($user)->getBody());
 
-        $users = $this->driver->getUserModel();
+        $users = $this->driver()->getUserModel();
 
         $newPassword = Str::random() . rand(0, 9) . '!';
 
@@ -220,7 +224,7 @@ class MattermostService implements MattermostServiceContract
     {
         $server = config('mattermost.servers.default.host');
 
-        $users = $this->driver->getUserModel();
+        $users = $this->driver()->getUserModel();
 
         $result = $users->getUserByEmail($user->email);
 
@@ -230,14 +234,14 @@ class MattermostService implements MattermostServiceContract
 
         $userData = json_decode($result->getBody());
 
-        $teams = $this->driver->getTeamModel();
+        $teams = $this->driver()->getTeamModel();
 
         // @phpstan-ignore-next-line
         $result = $teams->getUserTeams($userData->id);
 
         $userTeamsData = json_decode($result->getBody());
 
-        $channels = $this->driver->getChannelModel();
+        $channels = $this->driver()->getChannelModel();
 
         // @phpstan-ignore-next-line
         foreach ($userTeamsData as $userTeamData) {
@@ -263,7 +267,7 @@ class MattermostService implements MattermostServiceContract
     {
         $this->getOrCreateUser($user);
 
-        $users = $this->driver->getUserModel();
+        $users = $this->driver()->getUserModel();
 
         $users->sendPasswordResetEmail(['email' => $user->email]);
 
@@ -272,7 +276,7 @@ class MattermostService implements MattermostServiceContract
 
     public function blockUser(User $user): bool
     {
-        $userModel = $this->driver->getUserModel();
+        $userModel = $this->driver()->getUserModel();
         $result = $userModel->getUserByEmail($user->email);
 
         if ($result->getStatusCode() === 200) {
@@ -286,7 +290,7 @@ class MattermostService implements MattermostServiceContract
 
     public function deleteUser(User $user): bool
     {
-        $userModel = $this->driver->getUserModel();
+        $userModel = $this->driver()->getUserModel();
         $result = $userModel->getUserByEmail($user->email);
 
         if ($result->getStatusCode() === 200) {
@@ -300,8 +304,8 @@ class MattermostService implements MattermostServiceContract
 
     public function removeUserFromChannel(User $user, string $channelDisplayName, string $teamDisplayName = TeamNameEnum::COURSES): bool
     {
-        $channelModel = $this->driver->getChannelModel();
-        $mmUser = $this->getData($this->driver->getUserModel()->getUserByEmail($user->email));
+        $channelModel = $this->driver()->getChannelModel();
+        $mmUser = $this->getData($this->driver()->getUserModel()->getUserByEmail($user->email));
         $channel = $this->getData(
             $channelModel->getChannelByNameAndTeamName(Str::slug($teamDisplayName), Str::slug($channelDisplayName))
         );

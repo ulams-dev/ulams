@@ -7,7 +7,7 @@ import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import Layout from "../../../components/_App/Layout";
 import { useTranslation } from "react-i18next";
-import styled, { useTheme } from "styled-components";
+import styles from "./TutorPage.module.css";
 import { ResponsiveImage } from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import CoursesSlider from "@/components/Courses/CoursesSlider";
 import Breadcrumbs from "@/components/Common/Breadcrumbs";
@@ -26,35 +26,11 @@ import CategoriesBreadCrumbs from "@/components/Categories/CategoriesBreadCrumbs
 import { APP_CONFIG } from "@/config/app";
 import routeRoutes from "@/components/Routes/routes";
 
-const StyledTutor = styled.section`
-  .tutor-avatar {
-    width: 100%;
-    max-width: 100%;
-  }
-  .tutor-courses {
-    margin-top: 120px;
-    @media (max-width: 991px) {
-      margin-top: 60px;
-    }
-    .slick-dots {
-      @media (max-width: 991px) {
-        display: none !important;
-      }
-    }
-  }
-  .content {
-    @media (max-width: 991px) {
-      margin-top: 50px;
-    }
-  }
-`;
-
 const TutorPage = () => {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
   const { tutor, fetchTutor, courses, fetchCourses } =
     useContext(UlamsContext);
-  const theme = useTheme();
   const history = useHistory();
 
   useEffect(() => {
@@ -65,7 +41,7 @@ const TutorPage = () => {
   }, [id]);
   return (
     <Layout>
-      <StyledTutor>
+      <section className={styles.tutor}>
         <Container>
           <Breadcrumbs
             items={[
@@ -88,7 +64,7 @@ const TutorPage = () => {
                       />
                     ) : (
                       <img
-                        className="tutor-avatar"
+                        className={styles.tutorAvatar}
                         src={APP_CONFIG.tutorPlaceholderPath}
                         alt={"Tutor avatar"}
                       />
@@ -96,7 +72,7 @@ const TutorPage = () => {
                   </div>
                 </Col>
                 <Col lg={8}>
-                  <div className="content">
+                  <div className={styles.content}>
                     <Title level={3}>
                       {tutor.value.first_name} {tutor.value.last_name}
                     </Title>
@@ -111,7 +87,7 @@ const TutorPage = () => {
               </Row>
             </div>
           )}
-          <div className="tutor-courses">
+          <div className={styles.tutorCourses}>
             <Title style={{ marginBottom: 20 }} level={3}>
               {t("TutorPage.Courses")}
             </Title>
@@ -149,7 +125,7 @@ const TutorPage = () => {
                             item.subtitle ? (
                               <Text size="12">
                                 <Link
-                                  style={{ color: theme.primaryColor }}
+                                  style={{ color: "var(--ulams-color-primary)" }}
                                   to={`/courses/${item.id}`}
                                 >
                                   <strong>{item.subtitle}</strong>
@@ -218,7 +194,7 @@ const TutorPage = () => {
             )}
           </div>
         </Container>
-      </StyledTutor>
+      </section>
       {tutor.loading && <Preloader />}
     </Layout>
   );

@@ -2,7 +2,7 @@
 namespace Ulams\Invoices\Services\Contracts;
 
 use Ulams\Cart\Models\Order;
-use LaravelDaily\Invoices\Invoice;
+use Ulams\Invoices\Invoice\Invoice;
 
 interface InvoicesServiceContract
 {

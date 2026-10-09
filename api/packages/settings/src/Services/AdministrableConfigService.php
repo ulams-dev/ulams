@@ -142,7 +142,7 @@ class AdministrableConfigService implements AdministrableConfigServiceContract
         $this->storeConfigInCache();
     }
 
-    public function getConfig(string $key = null): array
+    public function getConfig(?string $key = null): array
     {
         if (empty($key)) {
             $result = [];

@@ -1,0 +1,163 @@
+---
+import Img from "./Img.astro";
+
+interface Person {
+  name: string;
+  role?: string;
+  place?: string;
+  image?: { src: string; alt: string; width: number; height: number };
+}
+interface Props {
+  eyebrow?: string;
+  title: string;
+  paragraphs: string[];
+  quote?: string;
+  people?: Person[];
+  id?: string;
+}
+const { eyebrow, title, paragraphs, quote, people = [], id = "letter" } = Astro.props;
+---
+
+<section class="u-section u-letter" id={id} aria-labelledby={`${id}-title`}>
+  <div class="u-container">
+    <div class="u-letter__sheet" data-reveal>
+      <div class="u-letter__people">
+        {
+          people.map((person, i) => (
+            <figure class="u-letter__person" style={`--tilt:${i % 2 ? 1.5 : -1.5}deg`}>
+              {person.image && (
+                <div class="u-letter__photo">
+                  <Img {...person.image} sizes="(min-width: 960px) 260px, 45vw" />
+                </div>
+              )}
+              <figcaption>
+                {person.role && <span class="u-letter__role">{person.role}</span>}
+                <strong>{person.name}</strong>
+                {person.place && <span>{person.place}</span>}
+              </figcaption>
+            </figure>
+          ))
+        }
+      </div>
+      <div class="u-letter__body">
+        {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+        <h2 class="u-h2" id={`${id}-title`}>{title}</h2>
+        <div class="u-letter__text">
+          {paragraphs.map((p) => <p>{p}</p>)}
+        </div>
+        {quote && <blockquote class="u-letter__quote">“{quote}”</blockquote>}
+        {
+          people.length > 0 && (
+            <p class="u-letter__sign">
+              {people.map((p) => (
+                <span>{p.name}</span>
+              ))}
+            </p>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .u-letter__sheet {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+    gap: clamp(28px, 5vw, 72px);
+    padding: clamp(24px, 5vw, 64px);
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+  }
+  .u-letter__people {
+    display: grid;
+    gap: 28px;
+    align-content: start;
+  }
+  .u-letter__person {
+    margin: 0;
+    display: grid;
+    gap: 10px;
+    transform: rotate(var(--tilt));
+    transition: transform 0.6s var(--ulams-ease-bounce);
+  }
+  .u-letter__person:hover {
+    transform: rotate(0deg) scale(1.02);
+  }
+  .u-letter__photo {
+    padding: 6px;
+    background: #fff;
+    border: 1px solid var(--ulams-color-border);
+    box-shadow: 0 10px 24px -14px rgb(0 0 0 / 0.35);
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+  .u-letter__photo :global(img) {
+    width: 100%;
+    height: 100%;
+  }
+  .u-letter__person figcaption {
+    display: grid;
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-letter__person strong {
+    font-family: var(--ulams-font-family);
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--ulams-color-header);
+  }
+  .u-letter__role {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .u-letter__body {
+    display: grid;
+    gap: 22px;
+    align-content: start;
+  }
+  .u-letter__text {
+    display: grid;
+    gap: 16px;
+    font-size: 1.0625rem;
+    line-height: 1.75;
+  }
+  .u-letter__text p:first-child::first-letter {
+    float: left;
+    margin: 6px 12px 0 0;
+    font-family: var(--ulams-font-family);
+    font-size: 4.2rem;
+    line-height: 0.8;
+    color: var(--ulams-color-accent, var(--ulams-color-primary));
+  }
+  .u-letter__quote {
+    margin: 8px 0;
+    padding: 20px 0;
+    border-block: 1px solid var(--ulams-color-border);
+    font-family: var(--ulams-font-family);
+    font-style: italic;
+    font-size: clamp(1.25rem, 1rem + 0.8vw, 1.6rem);
+    line-height: 1.45;
+    color: var(--ulams-color-header);
+  }
+  .u-letter__sign {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    font-family: var(--ulams-font-family);
+    font-style: italic;
+    font-size: 1.4rem;
+    color: var(--ulams-color-primary);
+  }
+  @media (max-width: 860px) {
+    .u-letter__sheet {
+      grid-template-columns: 1fr;
+    }
+    .u-letter__people {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

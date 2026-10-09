@@ -26,7 +26,7 @@ class UpdateConsultationRequest extends ConsultationRequest
             'status' => ['string', Rule::in(ConsultationStatusEnum::getValues())],
             'description' => ['string', 'min:3'],
             'duration' => ['nullable', 'string', 'max:80'],
-            'image' => [new FileOrStringRule(['image'], $prefixPath)],
+            'image' => [new FileOrStringRule(['image:allow_svg'], $prefixPath)],
             'author_id' => ['integer', 'exists:users,id'],
             'active_from' => ['date'],
             'active_to' => ['date', 'after_or_equal:active_from'],

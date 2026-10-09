@@ -9,7 +9,7 @@ import DescriptionSection from "@/components/DescriptionSection";
 import WebinarBreadcrumbs from "./WebinarBreadcrumbs";
 import WebinarInfo from "./WebinarInfo";
 import WebinarSidebar from "./WebinarSidebar";
-import { WebinarContentStyles } from "./WebinarContentStyles";
+import styles from "./WebinarContent.module.css";
 
 const WebinarContent = () => {
   const { webinar } = useContext(UlamsContext);
@@ -17,7 +17,7 @@ const WebinarContent = () => {
 
   return (
     <Container>
-      <WebinarContentStyles>
+      <div className={styles.root}>
         <Row>
           <Col md={12} lg={9}>
             <WebinarBreadcrumbs />
@@ -37,7 +37,7 @@ const WebinarContent = () => {
             <WebinarSidebar />
           </Col>
         </Row>
-      </WebinarContentStyles>
+      </div>
     </Container>
   );
 };

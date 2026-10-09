@@ -1,0 +1,22 @@
+.note {
+  border-left: 3px solid var(--note-color, #f2c94c);
+  padding: 20px;
+  display: flex;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  border-radius: var(--ulams-radius-card);
+  background: var(--ulams-color-card-bg);
+}
+
+.note :global(.description) {
+  margin: 0;
+  font-size: 14px;
+}
+
+.note :global(.time) {
+  margin: 0 0 0 20px;
+  font-size: 14px;
+}

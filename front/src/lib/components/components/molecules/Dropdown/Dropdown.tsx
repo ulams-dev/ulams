@@ -1,11 +1,10 @@
 import * as React from "react";
 import ReactDropdown, { ReactDropdownProps } from "react-dropdown";
-import styled, { ThemeContext } from "styled-components";
 import "react-dropdown/style.css";
-import { getFontFromTheme } from "../../../theme/provider";
-import chroma, { contrast } from "chroma-js";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
+import { contrast } from "chroma-js";
+import { useThemeTokens } from "../../../theme/applyTheme";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import classes from "./Dropdown.module.css";
 
 export interface DropdownProps
   extends ReactDropdownProps,
@@ -16,127 +15,46 @@ export interface DropdownProps
   backgroundColor?: React.CSSProperties["backgroundColor"];
 }
 
-const StyledDropdown = styled("div")<{
-  placement?: "top" | "bottom";
-  lightContrast: boolean;
-  backgroundColor: React.CSSProperties["backgroundColor"];
-}>`
-  font-family: ${(props) => getFontFromTheme(props.theme).fontFamily};
-  font-size: 16px;
-  min-width: 150px;
-
-  .control {
-    cursor: pointer;
-    transition: none;
-    border-color: transparent;
-    color: ${(props) =>
-      props.lightContrast ? props.theme.gray4 : props.theme.gray2};
-    padding: 7px 39px 7px 10px;
-    background-color: ${(props) => props.backgroundColor};
-
-    &:after {
-      position: absolute;
-      content: "";
-      bottom: ${(props) => (props.placement === "bottom" ? "0" : "96%")};
-      left: 10px;
-      width: calc(100% - 20px);
-      background: ${(props) => props.backgroundColor};
-    }
-  }
-
-  .is-open .control {
-    border-color: currentColor;
-    border-bottom: ${(props) => props.placement === "bottom" && "none"};
-    border-top: ${(props) => props.placement === "top" && "none"};
-    border-radius: ${({ placement, theme }) =>
-      placement === "bottom"
-        ? `${theme.inputRadius}px ${theme.inputRadius}px 0 0`
-        : `0 0 ${theme.inputRadius}px ${theme.inputRadius}px`};
-
-    &:after {
-      height: 1px;
-    }
-  }
-
-  .Dropdown-arrow-wrapper {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    transition: opacity 0.2s ease-in-out;
-  }
-
-  &:hover .arrows {
-    opacity: 0.6;
-  }
-
-  .Dropdown-control {
-    border-radius: ${({ theme }) => theme.inputRadius}px;
-
-    &:hover {
-      box-shadow: none;
-    }
-  }
-
-  .Dropdown-menu {
-    top: ${(props) => (props.placement === "top" ? "auto" : "100%")};
-    bottom: ${(props) => (props.placement === "top" ? "100%" : "auto")};
-    border-color: ${(props) =>
-      props.lightContrast ? props.theme.gray4 : props.theme.gray2};
-    border-top: ${(props) => props.placement === "bottom" && "none"};
-    border-bottom: ${(props) => props.placement === "top" && "none"};
-    box-shadow: none;
-    background-color: ${(props) => props.backgroundColor};
-    font-size: 14px;
-    border-radius: ${({ placement, theme }) =>
-      placement === "bottom"
-        ? `0 0 ${theme.inputRadius}px ${theme.inputRadius}px`
-        : `${theme.inputRadius}px ${theme.inputRadius}px 0 0`};
-  }
-
-  .Dropdown-option {
-    padding: 7px 10px;
-    color: ${(props) =>
-      props.lightContrast ? props.theme.gray4 : props.theme.gray2};
-    &:hover {
-      background: ${(props) =>
-        props.lightContrast
-          ? chroma(props.theme.white).alpha(0.3).hex()
-          : chroma(props.theme.black).alpha(0.2).hex()};
-    }
-    &.is-selected {
-      background: ${(props) =>
-        props.lightContrast
-          ? chroma(props.theme.white).alpha(0.3).hex()
-          : chroma(props.theme.black).alpha(0.3).hex()};
-    }
-  }
-`;
-
 export const Dropdown: React.FC<DropdownProps> = (props) => {
-  const theme = React.useContext(ThemeContext);
+  const theme = useThemeTokens();
   const {
     placement = "bottom",
     styles,
     className = "",
-    backgroundColor = getStylesBasedOnTheme(
-      theme.mode,
-      theme.dm__background,
-      theme.background
-    ),
+    backgroundColor,
   } = props;
 
+  // Raw colour for the contrast check; CSS reads the variable.
+  const themeBackground =
+    theme?.mode === "dark" ? theme?.dm__background : theme?.background;
+  const resolvedBackground = backgroundColor ?? themeBackground;
+
   const cts = React.useMemo(() => {
-    return contrast("#fff", backgroundColor) >= 1.85;
-  }, [backgroundColor]);
+    if (!resolvedBackground) return false;
+    try {
+      return contrast("#fff", resolvedBackground) >= 1.85;
+    } catch {
+      return false;
+    }
+  }, [resolvedBackground]);
 
   return (
-    <StyledDropdown
-      placement={placement}
-      style={styles}
-      className={`ulams-component ${className}`}
-      lightContrast={cts}
-      backgroundColor={backgroundColor}
+    <div
+      style={
+        {
+          "--dropdown-bg": backgroundColor ?? "var(--ulams-color-bg)",
+          ...styles,
+        } as React.CSSProperties
+      }
+      className={[
+        "ulams-component",
+        classes.root,
+        placement === "top" ? classes.top : classes.bottom,
+        cts ? classes.lightContrast : "",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       <ReactDropdown
         {...props}
@@ -171,6 +89,6 @@ export const Dropdown: React.FC<DropdownProps> = (props) => {
           </svg>
         }
       />
-    </StyledDropdown>
+    </div>
   );
 };

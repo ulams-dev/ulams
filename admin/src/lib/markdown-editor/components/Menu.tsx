@@ -1,9 +1,9 @@
 import * as React from "react";
 import { EditorView } from "prosemirror-view";
-import { withTheme } from "styled-components";
 import ToolbarButton from "./ToolbarButton";
 import ToolbarSeparator from "./ToolbarSeparator";
 import theme from "../theme";
+import { withEditorTheme } from "../themeContext";
 import { MenuItem } from "../types";
 
 type Props = {
@@ -165,6 +165,6 @@ class Menu extends React.Component<Props> {
   }
 }
 
-export default withTheme(Menu) as unknown as React.ComponentType<
+export default withEditorTheme(Menu) as unknown as React.ComponentType<
   Omit<Props, "theme">
 >;

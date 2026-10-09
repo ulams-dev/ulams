@@ -1,0 +1,6 @@
+.root {
+  text-align: center;
+}
+.root :global(.text) {
+  margin: 1.5rem 0 3rem 0;
+}

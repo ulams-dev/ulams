@@ -401,56 +401,27 @@ class WebinarApiTest extends TestCase
             ->assertJsonCount(4, 'data');
     }
 
-    public function testGenerateSignedUrls(): void
+    /**
+     * The webcam frame upload endpoint was removed (ADR 0006); it handed out
+     * signed upload URLs without authentication and must stay gone.
+     */
+    public function testWebcamFrameUploadEndpointIsRemoved(): void
     {
         config(['filesystems.default' => 's3']);
+        Storage::shouldReceive('temporaryUploadUrl')->never();
 
-        Storage::shouldReceive('temporaryUploadUrl')
-            ->withArgs(function ($path, $expiration) {
-                return true;
-            })
-            ->andReturnUsing(function ($path, $expiration) {
-                return [
-                    'upload_url' => "https://example.com/{$path}",
-                ];
-            });
-
-        $this->response = $this->json('POST', '/api/webinars/signed-screen-urls', [
+        $status = $this->json('POST', '/api/webinars/signed-screen-urls', [
             'webinar_id' => 1,
             'user_id' => 1,
             'executed_at' => now()->format('Y-m-d H:i:s'),
             'files' => [
                 [
-                    'filename' => now()->format('Y-m-d H:i:s'),
+                    'filename' => 'frame.webp',
                 ],
             ],
-        ])
-            ->assertOk()
-            ->assertJsonStructure([
-                'data' => [
-                    [
-                        'filename',
-                        'upload_url',
-                    ]
-                ]
-            ]);
-    }
+        ])->getStatusCode();
 
-    public function testGenerateSignedUrlsNotSupported(): void
-    {
-        config(['filesystems.default' => 'local']);
-
-        $this->response = $this->json('POST', '/api/webinars/signed-screen-urls', [
-            'webinar_id' => 1,
-            'user_id' => 1,
-            'executed_at' => now()->format('Y-m-d H:i:s'),
-            'files' => [
-                [
-                    'filename' => now()->format('Y-m-d H:i:s'),
-                ],
-            ],
-        ])
-            ->assertStatus(400);
+        $this->assertContains($status, [404, 405]);
     }
 
     public function testWebinarUsersUnauthorized(): void

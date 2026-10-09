@@ -1,0 +1,24 @@
+.header {
+  background: var(--ulams-color-primary-on-light);
+  padding: 140px 40px 30px;
+  margin-bottom: 40px;
+}
+
+.header.mobile {
+  padding: 60px 20px 20px 20px;
+  margin-bottom: 100px;
+}
+
+.header h1 {
+  color: var(--ulams-color-white);
+}
+
+.header :global(.tags) {
+  display: none;
+  width: 100%;
+  margin-top: 35px;
+}
+
+.header[data-show-tags="true"] :global(.tags) {
+  display: block;
+}

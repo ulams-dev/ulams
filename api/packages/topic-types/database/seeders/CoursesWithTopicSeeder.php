@@ -10,7 +10,7 @@ use Ulams\Courses\Models\Course;
 use Ulams\Courses\Models\Lesson;
 use Ulams\Courses\Models\Topic;
 use Ulams\Courses\Models\TopicResource;
-use Ulams\HeadlessH5P\Models\H5PContent;
+use Ulams\H5P\Models\H5PContent;
 use Ulams\Tags\Models\Tag;
 use Ulams\TopicTypes\Models\TopicContent\Audio;
 use Ulams\TopicTypes\Models\TopicContent\H5P;
@@ -62,10 +62,8 @@ class CoursesWithTopicSeeder extends Seeder
             $this->faker->name,
             $this->faker->name
         ];
-        $hasH5P = false;
-        if (class_exists(Ulams\HeadlessH5P\Models\H5PContent::class)) {
-            $hasH5P = H5PContent::first() !== null;
-        }
+        // H5P contents are created by the H5P service seeder (`make h5p-seed`)
+        $hasH5P = H5PContent::query()->exists();
         $path = Storage::disk('public')->path('tutor_avatar.jpg');
         copy(__DIR__ . '/avatar.jpg', $path);
         $tutors = User::role('tutor')->get();

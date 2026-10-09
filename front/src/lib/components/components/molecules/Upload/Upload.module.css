@@ -1,0 +1,89 @@
+.root {
+  width: 100%;
+  text-align: center;
+  position: relative;
+}
+
+.root > a {
+  margin-top: 0.5em;
+}
+
+.root > input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  opacity: 0.001;
+}
+
+.root :global(.wrapper) {
+  width: 100%;
+  position: relative;
+  cursor: pointer;
+}
+
+.root :global(.wrapper)::after {
+  content: "";
+  padding-top: 100%;
+  display: block;
+}
+
+.root :global(.wrapper) :global(.border),
+.root :global(.wrapper) img,
+.root :global(.wrapper) input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.root :global(.wrapper) img {
+  display: block;
+  object-fit: cover;
+  z-index: 998;
+}
+
+.root :global(.wrapper) img,
+.root :global(.wrapper) svg {
+  transition: transform 0.5s ease-out;
+}
+
+.root :global(.wrapper) :global(.border) {
+  overflow: hidden;
+  border-width: 1px;
+  opacity: 1;
+  border: 1px solid var(--ulams-gray-3);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+:global([data-mode="dark"]) .root :global(.wrapper) :global(.border) {
+  border-color: var(--ulams-gray-1);
+}
+
+.root :global(.wrapper) :global(.border) > svg {
+  position: relative;
+  z-index: 997;
+}
+
+.root:hover :global(.wrapper) :global(.border) > svg {
+  transform: scale(1.5);
+  z-index: 998;
+}
+
+.root:hover img {
+  transform: scale(1.1);
+}
+
+.root:hover a::after {
+  transform: scaleX(0);
+  transform-origin: bottom left;
+}

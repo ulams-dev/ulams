@@ -1,5 +1,4 @@
 import * as React from "react";
-import styled from "styled-components";
 import { ReactNode } from "react";
 import { NoteProps, Note } from "../../atoms/Note/Note";
 import { IconTitle } from "../../atoms/IconTitle/IconTitle";
@@ -7,6 +6,7 @@ import Text from "../../atoms/Typography/Text";
 import { Button } from "../../atoms/Button/Button";
 import { useTranslation } from "react-i18next";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import styles from "./Notes.module.css";
 
 const NoteIcon = () => {
   return (
@@ -37,21 +37,12 @@ export interface NotesProps extends ExtendableStyledComponent {
   mobile?: boolean;
 }
 
-const StyledNotes = styled.div`
-  .notes-container {
-    margin-bottom: 50px;
-  }
-  .title {
-    margin: 20px 0 10px;
-  }
-`;
-
 export const Notes: React.FC<NotesProps> = (props) => {
   const { noteGroups, onAddNoteClick, mobile, className = "" } = props;
   const { t } = useTranslation();
 
   return (
-    <StyledNotes className={`ulams-component ${className}`}>
+    <div className={`${styles.root} ulams-component ${className}`}>
       {noteGroups.map((noteGroup, index) => {
         return (
           <div key={index} className="notes-container">
@@ -73,6 +64,6 @@ export const Notes: React.FC<NotesProps> = (props) => {
           </div>
         );
       })}
-    </StyledNotes>
+    </div>
   );
 };

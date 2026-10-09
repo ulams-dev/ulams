@@ -18,7 +18,7 @@ use Ulams\CoursesImportExport\Database\Seeders\CoursesExportImportPermissionSeed
 use Ulams\CsvUsers\Database\Seeders\CsvUsersPermissionSeeder;
 use Ulams\Dictionaries\Database\Seeders\DictionariesPermissionSeeder;
 use Ulams\Files\Database\Seeders\PermissionTableSeeder as FilePermissionTableSeeder;
-use Ulams\HeadlessH5P\Database\Seeders\PermissionTableSeeder as H5PPermissionTableSeeder;
+use Ulams\H5P\Database\Seeders\H5PPermissionSeeder;
 use Ulams\Lrs\Database\Seeders\LrsPermissionSeeder;
 use Ulams\ModelFields\Database\Seeders\PermissionTableSeeder as ModelFieldsPermissionTableSeeder;
 use Ulams\Notifications\Database\Seeders\NotificationsPermissionsSeeder;
@@ -75,7 +75,7 @@ class PermissionsSeeder extends Seeder
         $this->call(TemplatesPdfPermissionTableSeeder::class);
         $this->call(CsvUsersPermissionSeeder::class);
         $this->call(TagsPermissionSeeder::class);
-        $this->call(H5PPermissionTableSeeder::class);
+        $this->call(H5PPermissionSeeder::class);
         $this->call(QuestionnairePermissionsSeeder::class);
         $this->call(ConsultationsPermissionSeeder::class);
         $this->call(AssignWithoutAccountPermissionSeeder::class);

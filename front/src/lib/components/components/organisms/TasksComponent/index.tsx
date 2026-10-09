@@ -21,24 +21,10 @@ import { isAfter, isBefore, isToday, isTomorrow } from "date-fns";
 import { API } from "@ulams/sdk";
 import { t } from "i18next";
 import { OptionType } from "../../atoms/Option/Option";
-import {
-  TasksContainer,
-  TasksHeader,
-  TasksBody,
-  TasksMenu,
-  TasksContent,
-  TasksContentHeader,
-  TaskItem,
-  TaskDate,
-  TaskDateWrapper,
-  ProgrammeText,
-  StyledTitle,
-  TasksPage,
-} from "./styles";
-import styled, { withTheme } from "styled-components";
 import { ModalDeleteTask } from "../ModalDeleteTask";
 import { TaskDetailsModal } from "../TaskDetailsModal";
 import { RelatedTreeSelect } from "../../molecules/RelatedTreeSelect";
+import styles from "./TasksComponent.module.css";
 
 type TasksType = API.Task & { has_notes: boolean };
 
@@ -296,23 +282,23 @@ export const TasksComponent: FC<TasksComponentProps> = ({
 
   return (
     <>
-      <TasksContainer>
-        <TasksHeader>
+      <div className={styles.container}>
+        <div className={styles.header}>
           <Title level={4}>{t<string>("Tasks.TasksHeader")}</Title>
           <Button onClick={addTaskButton.onClick} mode="secondary">
             {t<string>("Tasks.AddTask")}
           </Button>
-        </TasksHeader>
-        <TasksBody>
-          <TasksMenu>
+        </div>
+        <div className={styles.body}>
+          <div className={styles.menu}>
             <List
               listItems={listItems}
               selectedListItem={selectedListItem}
               setSelectedListItem={setSelectedListItem}
             />
-          </TasksMenu>
-          <TasksContent>
-            <TasksContentHeader>
+          </div>
+          <div className={styles.content}>
+            <div className={styles.contentHeader}>
               <Title>{currentlySelectedListItem?.text}</Title>
               <DropdownMenu
                 child={
@@ -338,13 +324,13 @@ export const TasksComponent: FC<TasksComponentProps> = ({
                 child={<Icon name="more" />}
                 menuItems={taskShowAction.options}
               />
-            </TasksContentHeader>
+            </div>
             {tasksToShowInList().map((item: API.Task) => {
               const { id, title, completed_at, related_type, related_id } =
                 item;
               const checkedDate = checkDate(String(item.due_date));
               return (
-                <TaskItem key={id}>
+                <div className={styles.taskItem} key={id}>
                   <Row $gap={16}>
                     <ChangeStatusCheckbox
                       id={id}
@@ -353,27 +339,29 @@ export const TasksComponent: FC<TasksComponentProps> = ({
                       onSuccess={refreshTasks}
                     />
                     <Stack>
-                      <StyledTitle
+                      <Title
                         id={`${id}-label`}
-                        $isCompleted={!!completed_at}
+                        className={`${styles.title} ${
+                          completed_at ? styles.titleCompleted : ""
+                        }`}
                         as="h2"
                       >
                         {title}
-                      </StyledTitle>
+                      </Title>
                       {related_type && (
-                        <ProgrammeText>
+                        <Text className={styles.programmeText}>
                           <RelatedTreeSelect
                             disabled
                             value={`${related_type}:${related_id}`}
                           />
-                        </ProgrammeText>
+                        </Text>
                       )}
                     </Stack>
                   </Row>
-                  <TaskDateWrapper>
-                    <TaskDate $date={checkedDate}>
+                  <div className={styles.taskDateWrapper}>
+                    <div className={styles.taskDate} data-date={checkedDate}>
                       <Text>{t<string>(`Tasks.${checkedDate}`)}</Text>
-                    </TaskDate>
+                    </div>
 
                     <DropdownMenu
                       onClick={() =>
@@ -382,16 +370,16 @@ export const TasksComponent: FC<TasksComponentProps> = ({
                       child={<Icon name="more" />}
                       menuItems={taskAction}
                     />
-                  </TaskDateWrapper>
-                </TaskItem>
+                  </div>
+                </div>
               );
             })}
             {tasksToShowInList().length === 0 && (
               <Text>{t<string>("Tasks.NoTasks")}</Text>
             )}
-          </TasksContent>
-        </TasksBody>
-        <TasksPage>
+          </div>
+        </div>
+        <div className={styles.page}>
           <Button
             type="button"
             mode="outline"
@@ -416,8 +404,8 @@ export const TasksComponent: FC<TasksComponentProps> = ({
           >
             {t<string>("Bookmarks.Next")}
           </Button>
-        </TasksPage>
-      </TasksContainer>
+        </div>
+      </div>
       <Modal
         visible={isModalVisible.addTask}
         onClose={() => closeModal("addTask")}
@@ -469,4 +457,4 @@ export const TasksComponent: FC<TasksComponentProps> = ({
   );
 };
 
-export default withTheme(styled(TasksComponent)``);
+export default TasksComponent;

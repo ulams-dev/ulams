@@ -1,3 +1,6 @@
+// organize-imports-ignore
+// Must stay first: sets window.REACT_APP_API_URL for the tenant host before anything reads it.
+import './tenant';
 import Footer from '@/components/Footer';
 import RightContent from '@/components/RightContent';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
@@ -21,6 +24,8 @@ import {
 import { translations } from './services/ulams/translations';
 import './services/sentry';
 import { refreshTokenCallback } from './services/token_refresh';
+import { ensureDemoLogin } from './services/demo';
+import type { DemoConfig } from '@ulams/demo';
 const authpaths = ['/user/login', '/user/reset-password'];
 
 declare global {
@@ -43,7 +48,10 @@ export async function getInitialState(): Promise<{
   translations?: API.Translation[];
   packages?: Record<string, string>;
   packagesConfigs?: API.Configs;
+  demo?: DemoConfig;
 }> {
+  // demo tenants: log in as the demo admin before anything asks for the current user
+  const demo = await ensureDemoLogin();
   refreshTokenCallback();
   const fetchUserInfo = async () => {
     // Combine the current pathname and search parameters into a full URL
@@ -131,6 +139,7 @@ export async function getInitialState(): Promise<{
       collapsed: false,
       packages: packs.success ? packs.data : {},
       packagesConfigs: packagesConfig.success ? packagesConfig.data : {},
+      demo,
     };
   }
 
@@ -142,6 +151,7 @@ export async function getInitialState(): Promise<{
     settings: defaultSettings as Partial<LayoutSettings>,
     collapsed: false,
     packages: {},
+    demo,
   };
 }
 

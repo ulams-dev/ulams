@@ -53,6 +53,8 @@ class SettingsTest extends TestCase
         Field::truncate();
         Metadata::truncate();
         User::query()->forceDelete();
+
+        parent::tearDown();
     }
 
     public function testAdministrableConfigApi(): void

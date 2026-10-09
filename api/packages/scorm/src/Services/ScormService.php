@@ -82,7 +82,7 @@ class ScormService implements ScormServiceContract
         ];
     }
 
-    public function saveToDb(array $scormData, ScormModel $scormModel = null): void
+    public function saveToDb(array $scormData, ?ScormModel $scormModel = null): void
     {
         foreach ($scormData as $scorm) {
             $sco = new ScormScoModel();

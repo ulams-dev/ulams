@@ -5,6 +5,7 @@ namespace Ulams\TopicTypeGift\Strategies;
 use Ulams\TopicTypeGift\Dtos\CheckAnswerDto;
 use Ulams\TopicTypeGift\Enum\AnswerKeyEnum;
 use Illuminate\Support\Collection;
+use Ulams\TopicTypeGift\Support\SeededShuffle;
 
 class MatchingQuestionStrategy extends QuestionStrategy
 {
@@ -27,7 +28,7 @@ class MatchingQuestionStrategy extends QuestionStrategy
     private function shuffleColumn(Collection $items, string $salt): array
     {
         $items = $this->shouldRandomizeOptions()
-            ? $items->shuffle($this->optionsSeedFor($salt))
+            ? SeededShuffle::shuffle($items, $this->optionsSeedFor($salt))
             : $items->shuffle();
 
         return $items->values()->toArray();

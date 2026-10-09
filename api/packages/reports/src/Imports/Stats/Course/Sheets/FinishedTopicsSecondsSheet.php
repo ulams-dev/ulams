@@ -6,7 +6,7 @@ use Ulams\Courses\Models\CourseProgress;
 
 class FinishedTopicsSecondsSheet extends FinishedTopicsSheet
 {
-    protected function prepareUpdateData($value, CourseProgress $courseProgress = null): array
+    protected function prepareUpdateData($value, ?CourseProgress $courseProgress = null): array
     {
         return [
             'seconds' => $value,

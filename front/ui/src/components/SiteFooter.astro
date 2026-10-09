@@ -1,0 +1,93 @@
+---
+interface Props {
+  brand: string;
+  text?: string;
+  links?: Array<{ label: string; href: string }>;
+  note?: string;
+}
+const { brand, text, links = [], note } = Astro.props;
+---
+
+<footer class="u-footer">
+  <div class="u-container u-footer__grid">
+    <div class="u-footer__brand">
+      <p class="u-footer__name">{brand}</p>
+      {text && <p class="u-footer__text">{text}</p>}
+    </div>
+    {
+      links.length > 0 && (
+        <nav aria-label="Footer">
+          <ul role="list">
+            {links.map((link) => (
+              <li>
+                <a href={link.href}>{link.label}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+  </div>
+  <div class="u-container u-footer__base">
+    <p>{note ?? `© ${new Date().getFullYear()} ${brand}`}</p>
+    <p>Built on <a href="https://github.com/ulams-dev">ulams</a>, the open headless LMS.</p>
+  </div>
+</footer>
+
+<style>
+  .u-footer {
+    margin-top: var(--ulams-section-space);
+    border-top: 1px solid var(--ulams-color-border);
+    background: var(--ulams-color-surface);
+    font-size: 0.875rem;
+  }
+  .u-footer__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 32px;
+    padding-block: 56px 32px;
+  }
+  .u-footer__name {
+    font-family: var(--ulams-font-family);
+    font-size: 1.6rem;
+    color: var(--ulams-color-header);
+  }
+  .u-footer__text {
+    margin-top: 10px;
+    max-width: 44ch;
+    color: var(--ulams-color-muted);
+  }
+  .u-footer nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    columns: 2;
+    column-gap: 24px;
+  }
+  .u-footer nav a {
+    display: inline-block;
+    padding: 6px 0;
+    text-decoration: none;
+    color: var(--ulams-color-text);
+  }
+  .u-footer nav a:hover {
+    color: var(--ulams-color-primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .u-footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    padding-block: 18px 28px;
+    border-top: 1px solid var(--ulams-color-border);
+    color: var(--ulams-color-muted);
+    font-size: 0.8125rem;
+  }
+  @media (max-width: 700px) {
+    .u-footer__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

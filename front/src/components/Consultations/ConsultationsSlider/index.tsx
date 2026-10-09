@@ -1,11 +1,11 @@
 import { Settings } from "react-slick";
-import { SectionConsultationsSlider } from "@/components/Consultations/ConsultationsSlider/styles";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { Col, Row } from "react-grid-system";
 import { API } from "@ulams/sdk";
 import ConsultationCard from "@/components/Consultations/ConsultationCard";
 import { Slider } from "@ulams/components/components/atoms/Slider/Slider";
 import { useState } from "react";
+import styles from "./styles.module.css";
 
 interface ConsultationsSliderProps {
   title?: string;
@@ -58,7 +58,7 @@ const ConsultationsSlider: React.FC<ConsultationsSliderProps> = (props) => {
   );
 
   return (
-    <SectionConsultationsSlider>
+    <section className={styles.section}>
       <Title
         level={3}
         style={{
@@ -113,7 +113,7 @@ const ConsultationsSlider: React.FC<ConsultationsSliderProps> = (props) => {
           ))}
         </Row>
       )}
-    </SectionConsultationsSlider>
+    </section>
   );
 };
 

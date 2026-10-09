@@ -1,0 +1,15 @@
+.progressRing {
+  --ring-bottom: var(--ulams-gray-4);
+}
+
+:global([data-mode="dark"]) .progressRing {
+  --ring-bottom: var(--ulams-color-white);
+}
+
+.progressRing :global(.progress_ring__top) {
+  stroke: var(--ulams-color-primary);
+}
+
+.progressRing :global(.progress_ring__bottom) {
+  stroke: var(--ring-bottom);
+}

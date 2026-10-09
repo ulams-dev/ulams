@@ -4,8 +4,6 @@ namespace Ulams\TopicTypes;
 
 use Ulams\Cmi5\UlamsCmi5ServiceProvider;
 use Ulams\Courses\Facades\Topic;
-use Ulams\HeadlessH5P\Http\Resources\ContentIndexResource;
-use Ulams\HeadlessH5P\Repositories\H5PContentRepository;
 use Ulams\TopicTypes\Commands\FillTopicTypeMetadataCommand;
 use Ulams\TopicTypes\Commands\FixAssetPathsCommand;
 use Ulams\TopicTypes\Commands\FixTopicTypeColumnName;
@@ -49,8 +47,6 @@ use Ulams\TopicTypes\Models\TopicContent\ScormSco;
 use Ulams\TopicTypes\Models\TopicContent\Video;
 use Ulams\TopicTypes\Services\Contracts\TopicTypeServiceContract;
 use Ulams\TopicTypes\Services\TopicTypeService;
-use Illuminate\Database\PostgresConnection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 
 class UlamsTopicTypesServiceProvider extends ServiceProvider
@@ -135,32 +131,5 @@ class UlamsTopicTypesServiceProvider extends ServiceProvider
                 'export' => ExportCmi5AuResource::class,
             ]);
         }
-    }
-
-    public function register()
-    {
-        H5PContentRepository::extendQueryJoin(
-            fn () => [['topic_h5ps.value', 'hh5p_contents.id']],
-            'topic_h5ps'
-        );
-        H5PContentRepository::extendQuerySelect(
-            fn () => DB::raw("COUNT(topic_h5ps.value) as count_h5p"),
-            'topic_h5ps'
-        );
-        H5PContentRepository::extendQueryGroupBy(
-            fn () => [
-                'hh5p_contents.id',
-                'hh5p_contents.uuid',
-                'hh5p_contents.library_id',
-                'hh5p_contents.user_id',
-                'hh5p_contents.author',
-                'hh5p_contents.created_at',
-                DB::Connection() instanceof PostgresConnection ? 'hh5p_contents.parameters::jsonb' : 'hh5p_contents.parameters',
-            ],
-            'topic_h5ps'
-        );
-        ContentIndexResource::extend(fn ($thisObj) => [
-            'count_h5p' => $thisObj->count_h5p,
-        ]);
     }
 }

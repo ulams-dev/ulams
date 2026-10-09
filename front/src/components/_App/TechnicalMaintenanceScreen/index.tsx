@@ -1,29 +1,17 @@
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import React from "react";
-import styled from "styled-components";
+import styles from "./TechnicalMaintenanceScreen.module.css";
 import { isMobile } from "react-device-detect";
 
 type Props = {
   text?: string;
 };
 
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  max-width: 900px;
-  margin: 0 auto;
-  row-gap: 50px;
-  height: 100vh;
-  column-gap: 100px;
-  flex-direction: ${isMobile ? "column" : "row"};
-  padding: 0 30px;
-  text-align: ${isMobile ? "center" : "left"};
-`;
-
 const TechnicalMaintenanceScreen: React.FC<Props> = ({ text }) => {
   return (
-    <Container>
+    <div
+      className={`${styles.container} ${isMobile ? styles.mobile : ""}`}
+    >
       <div>
         <img src={`/images/maintenance-bg.svg`} alt=" " />
       </div>
@@ -40,7 +28,7 @@ const TechnicalMaintenanceScreen: React.FC<Props> = ({ text }) => {
           </Text>
         )}
       </div>
-    </Container>
+    </div>
   );
 };
 

@@ -33,8 +33,15 @@ fi
 rm -f /etc/supervisor/custom.d/horizon.conf
 
 
-# removing default scheduler for multidomain
-rm -f /etc/supervisor/custom.d/scheduler.conf
+# one scheduler loop for every domain (MULTI_DOMAINS and provisioned tenants), see scheduler.sh
+if [ "$DISABLE_SCHEDULER" == 'true' ]
+then
+    rm -f /etc/supervisor/custom.d/scheduler.conf
+    echo scheduler.conf disabled
+else
+    cp docker/conf/supervisor/services/scheduler.conf /etc/supervisor/custom.d/scheduler.conf
+    echo scheduler.conf enabled
+fi
 
 # set env from `LARAVEL_` prefixed env vars
 # this also setup MULTI_DOMAINS eg 
@@ -75,15 +82,6 @@ if [ -n "$MULTI_DOMAINS" ]; then
 
     php artisan domain:add $domain
 
-     # TODO it considers only global variable, what if you want to control which domain has disabled scheduler
-    if [ -z "$DISABLE_SCHEDULER" ] || [ "$DISABLE_SCHEDULER" != "true" ];
-    then
-      cp "docker/conf/supervisor/example/scheduler.conf.example" "/etc/supervisor/custom.d/scheduler.$domain.conf"
-      sed "s/\$SCHEDULER_DOMAIN/$domain/g" "docker/conf/supervisor/example/scheduler.conf.example" > "/etc/supervisor/custom.d/scheduler.$domain.conf"
-      echo "Schedule enabled"
-    else
-      echo "Schedule disabled"
-    fi
     # delare variables
     DOMAIN_KEY=$(echo "$domain" | tr '[:lower:]' '[:upper:]')
     DOMAIN_KEY=$(echo "$DOMAIN_KEY" | tr '.-' '__')
@@ -147,12 +145,6 @@ if [ -n "$MULTI_DOMAINS" ]; then
         php artisan db:seed --domain=$domain --class=PermissionsSeeder --force --no-interaction
     fi
 
-    if [ "$DISABLE_H5P_STORAGE_LINK" == 'true' ]
-    then
-        echo "Disable h5p:storage-link"
-    else
-        php artisan h5p:storage-link --overwrite --domain=$domain
-    fi
     
 
   done
@@ -181,6 +173,16 @@ else
     php artisan migrate --force
 fi
 
+# rebuild env files, registrations and Passport keys of provisioned tenants, see init.sh
+if [ "$DISABLE_TENANT_SYNC" != 'true' ]
+then
+    if [ "$DISABLE_DB_MIGRATE" == 'true' ]; then
+        php artisan ulams:tenant:sync-env
+    else
+        php artisan ulams:tenant:sync-env --migrate
+    fi
+fi
+
 # generate passport keys only if storage/oauth-private.key is not set
 
 FILE=storage/oauth-private.key
@@ -192,6 +194,11 @@ else
     php artisan passport:keys --force --no-interaction 
     #php artisan passport:client --personal --no-interaction
 fi
+
+# Passport 13 rejects key files whose mode is not 400/440/600/640/660 (the chmod -R above
+# made them 0775). The public key stays group-readable for the H5P service.
+find storage -maxdepth 2 -name oauth-private.key -exec chmod 600 {} +
+find storage -maxdepth 2 -name oauth-public.key -exec chmod 640 {} +
 
 touch inited
 

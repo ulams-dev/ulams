@@ -1,96 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { API } from "@ulams/sdk";
 import { Row } from "../../../../";
-import styled, { css, withTheme } from "styled-components";
 import { GiftQuizMatchingAnswer } from "@ulams/components/types/gift-quiz";
 import { BezierLine } from "../../../../utils/bezierLine";
 import DefaultQuestionLayout from "../DefaultQuestionLayout";
-import { getStylesBasedOnTheme } from "../../../../utils/utils";
-import { default as chroma } from "chroma-js";
-
-const MatcherWrapper = styled.div`
-  position: relative;
-`;
-
-const StyledRow = styled(Row)`
-  & ul {
-    padding: 0px;
-  }
-  & svg {
-    color: ${({ theme }) => chroma(theme.primaryColor).alpha(0.5).css()};
-  }
-`;
-
-const circle = css`
-  position: absolute;
-  height: 8px;
-  width: 8px;
-  top: 42%;
-  background-color: ${({ theme }) =>
-    getStylesBasedOnTheme(
-      theme.mode,
-      theme.dm__cardBackgroundColor,
-      theme.cardBackgroundColor
-    )};
-  border-radius: 50%;
-`;
-
-const StartCircle = styled.div<{ checked?: boolean }>`
-  ${circle};
-  right: -4px;
-  border: 1px solid
-    ${({ theme, checked }) =>
-      checked
-        ? getStylesBasedOnTheme(
-            theme.mode,
-            theme.dm__primaryColor,
-            theme.primaryColor,
-            theme.primaryColor
-          )
-        : chroma(theme.primaryColor).alpha(0.5).css()};
-`;
-
-const EndCircle = styled.div<{ checked?: boolean }>`
-  ${circle};
-  left: -4px;
-  border: 1px solid
-    ${({ theme, checked }) =>
-      checked
-        ? getStylesBasedOnTheme(
-            theme.mode,
-            theme.dm__primaryColor,
-            theme.primaryColor,
-            theme.primaryColor
-          )
-        : chroma(theme.primaryColor).alpha(0.5).css()};
-`;
-
-const OptionListItem = styled.li<{
-  checked?: boolean;
-  disabled?: boolean;
-}>`
-  position: relative;
-  padding: 16px;
-  border: 1px solid
-    ${({ theme, checked }) =>
-      checked
-        ? getStylesBasedOnTheme(
-            theme.mode,
-            theme.dm__primaryColor,
-            theme.primaryColor,
-            theme.primaryColor
-          )
-        : chroma(theme.primaryColor).alpha(0.5).css()};
-  border-radius: 32px;
-  text-align: center;
-  list-style: none;
-  margin: 16px 0;
-  z-index: 99;
-  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
-  pointer-events: ${({ disabled }) => (disabled ? "none" : "all")};
-  opacity: ${({ disabled }) => (disabled ? "0.5" : "1")};
-  transition: 0.3s;
-`;
+import styles from "./Matching.module.css";
 
 const getDefaultValues = (
   questions: string[],
@@ -280,21 +194,24 @@ const Matching: React.FC<Props> = ({
       resultScore={resultScore}
       showScore={hasQuizEnded}
     >
-      <MatcherWrapper ref={refContainer}>
-        <StyledRow $justifyContent="space-between">
+      <div className={styles.matcherWrapper} ref={refContainer}>
+        <Row className={styles.row} $justifyContent="space-between">
           <ul ref={startOptionsListRef}>
             {options?.sub_questions.map((name) => (
-              <OptionListItem
+              <li
                 key={name}
-                className={name}
+                className={`${styles.optionListItem} ${name}`}
                 id={name}
-                disabled={hasQuizEnded}
+                data-disabled={!!hasQuizEnded}
+                data-checked={selectedOption?.name === name}
                 onClick={handleSelectOptionFactory(name)}
-                checked={selectedOption?.name === name}
               >
-                <StartCircle checked={selectedOption?.name === name} />
+                <div
+                  className={`${styles.circle} ${styles.startCircle}`}
+                  data-checked={selectedOption?.name === name}
+                />
                 {name}
-              </OptionListItem>
+              </li>
             ))}
           </ul>
           {connectedOptions.map(
@@ -311,22 +228,22 @@ const Matching: React.FC<Props> = ({
           )}
           <ul ref={endOptionsListRef}>
             {options?.sub_answers.map((name) => (
-              <OptionListItem
+              <li
                 key={name}
                 id={name}
-                className={name}
-                disabled={hasQuizEnded}
+                className={`${styles.optionListItem} ${name}`}
+                data-disabled={!!hasQuizEnded}
                 onClick={selectHandlerFactory(name)}
               >
-                <EndCircle />
+                <div className={`${styles.circle} ${styles.endCircle}`} />
                 {name}
-              </OptionListItem>
+              </li>
             ))}
           </ul>
-        </StyledRow>
-      </MatcherWrapper>
+        </Row>
+      </div>
     </DefaultQuestionLayout>
   );
 };
 
-export default withTheme(styled(Matching)``);
+export default Matching;

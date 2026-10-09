@@ -108,7 +108,7 @@ class CourseProgressCollection extends ValueObject implements ValueObjectContrac
         $lastTrack = $this->courseProgressRepositoryContract->getUserLastTimeInTopic($this->user, $topic);
 
         if ($this->hasActiveProgressSession($lastTrack)) {
-            $secondsDiff = $lastTrack->diffInSeconds(Carbon::now());
+            $secondsDiff = (int) abs($lastTrack->diffInSeconds(Carbon::now()));
             $secondsPassed += $secondsDiff;
             $this->courseProgressRepositoryContract
                 ->updateInTopic($topic, $this->user, $progress->status === ProgressStatus::COMPLETE ? ProgressStatus::COMPLETE : ProgressStatus::IN_PROGRESS, $secondsPassed);

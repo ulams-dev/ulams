@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><title>The Coffee Atlas · Editorial Academy</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "secondary-fixed-dim": "#baccad", "on-tertiary-fixed": "#1e1b13", "primary-fixed": "#ffdbcf", "secondary": "#536349", "error-container": "#ffdad6", "on-primary-container": "#ffffff", "on-tertiary-fixed-variant": "#4b463d", "inverse-on-surface": "#ffede4", "outline-variant": "#dec0b7", "tertiary-container": "#7b766b", "primary-container": "#c2552d", "on-tertiary": "#ffffff", "primary": "#a13d17", "on-tertiary-container": "#ffffff", "tertiary-fixed": "#e9e2d5", "on-secondary-fixed": "#111f0b", "surface-dim": "#efd5c6", "on-primary-fixed": "#390c00", "on-surface-variant": "#57423b", "tertiary-fixed-dim": "#cdc6b9", "surface-tint": "#a23e18", "on-error": "#ffffff", "primary-fixed-dim": "#ffb59c", "on-secondary-container": "#57674d", "error": "#ba1a1a", "tertiary": "#625d53", "background": "#fff8f5", "on-primary": "#ffffff", "on-secondary-fixed-variant": "#3c4b33", "secondary-container": "#d3e5c5", "on-error-container": "#93000a", "surface-bright": "#fff8f5", "surface-variant": "#f8ddcf", "surface": "#fff8f5", "inverse-surface": "#3d2d23", "on-secondary": "#ffffff", "outline": "#8a726a", "surface-container-highest": "#f8ddcf", "on-background": "#261910", "surface-container-low": "#fff1ea", "inverse-primary": "#ffb59c", "secondary-fixed": "#d6e8c8", "on-primary-fixed-variant": "#822701", "surface-container": "#ffeade", "surface-container-lowest": "#ffffff", "on-surface": "#261910", "surface-container-high": "#fee3d4" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "gutter": "2rem", "space-sm": "0.5rem", "margin": "3.5rem", "space-lg": "1.75rem", "space-xl": "3rem", "space-xs": "0.25rem", "margin-mobile": "1.25rem", "gutter-mobile": "1rem", "space-md": "1rem" }, "fontFamily": { "body-sm": [ "Plus Jakarta Sans" ], "label-chapter": [ "Playfair Display" ], "caption-editorial": [ "Playfair Display" ], "body-md": [ "Plus Jakarta Sans" ], "label-caps": [ "Plus Jakarta Sans" ], "display-hero": [ "Playfair Display" ], "body-lg": [ "Plus Jakarta Sans" ], "editorial-quote": [ "Playfair Display" ], "headline-sm": [ "Playfair Display" ], "headline-lg-mobile": [ "Playfair Display" ], "headline-lg": [ "Playfair Display" ], "display-hero-mobile": [ "Playfair Display" ], "headline-md": [ "Playfair Display" ] }, "fontSize": { "body-sm": [ "13px", { "lineHeight": "20px", "fontWeight": "400" } ], "label-chapter": [ "14px", { "lineHeight": "18px", "letterSpacing": "0.18em", "fontWeight": "600" } ], "caption-editorial": [ "13px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "400" } ], "body-md": [ "15px", { "lineHeight": "24px", "fontWeight": "400" } ], "label-caps": [ "11px", { "lineHeight": "16px", "letterSpacing": "0.12em", "fontWeight": "600" } ], "display-hero": [ "56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "400" } ], "body-lg": [ "18px", { "lineHeight": "30px", "letterSpacing": "-0.005em", "fontWeight": "400" } ], "editorial-quote": [ "26px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "400" } ], "headline-sm": [ "22px", { "lineHeight": "30px", "fontWeight": "500" } ], "headline-lg-mobile": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "400" } ], "headline-lg": [ "40px", { "lineHeight": "48px", "letterSpacing": "-0.015em", "fontWeight": "400" } ], "display-hero-mobile": [ "38px", { "lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "400" } ], "headline-md": [ "28px", { "lineHeight": "36px", "fontWeight": "400" } ] } } } };</script></head><body class="bg-background font-body-md text-body-md text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-md shadow-[0_1px_8px_rgba(38,25,16,0.06)]"><div class="bg-surface-container-low"><div class="max-w-7xl mx-auto px-margin-mobile lg:px-margin h-8 flex items-center justify-between font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider"><div class="flex items-center gap-space-xs"><span class="inline-block w-1.5 h-1.5 rounded-full bg-secondary"></span><span>Volume IV · Issue 12 · Field Guide &amp; Academy · Next Live Cupping: 14 Nov</span></div><div class="hidden sm:flex items-center gap-space-md font-body-sm text-body-sm"><span class="cursor-pointer hover:text-on-surface transition-colors">EUR (€)</span><span class="text-outline-variant">/</span><span class="cursor-pointer hover:text-on-surface transition-colors">EN</span></div></div></div><div class="h-20 max-w-7xl mx-auto px-margin-mobile lg:px-margin flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><a class="group flex items-center gap-space-sm" data-path="chapters" href="#"><span class="flex flex-col text-left"><span class="font-label-chapter text-label-chapter uppercase text-primary leading-none tracking-widest">The Coffee Atlas</span><span class="font-caption-editorial text-caption-editorial italic text-on-surface-variant leading-tight">Scholarly Journal &amp; Academy</span></span></a></div><nav class="hidden xl:flex items-center gap-space-lg" data-active-classes="text-primary font-bold decoration-primary"><a aria-current="page" class="transition-colors text-primary font-bold decoration-primary" data-path="chapters" href="#">Chapters</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="course-syllabus" href="#">Course Syllabus</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="tutors" href="#">Tutors</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="live-sessions" href="#">Live Sessions</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="journal" href="#">Journal</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="field-notes" href="#">Field Notes</a></nav><div class="flex items-center gap-space-md"><button aria-label="Search Archive" class="p-space-xs text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center" type="button"><span class="material-symbols-outlined text-[20px]">search</span></button><a class="hidden sm:inline-block font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors underline underline-offset-4 decoration-outline-variant" data-path="sign-in" href="#">Sign In</a><a class="hidden md:inline-flex items-center justify-center px-space-md py-space-sm bg-primary-container text-on-primary-container hover:bg-primary font-body-sm text-body-sm font-medium rounded-lg transition-colors shadow-sm" data-path="enrollment" href="#">Start Free Chapter</a><div class="flex items-center gap-space-xs pl-space-xs"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1V4T4WbfHc4VeEP-Z5MLNrYCSxoftSKtdx942cdgJl_NR_kekXHyYvireaX3xUJnjrYc7zGlgkasgT3m2UjT0TKPD6tR6gZXFdCx166KOW_DQOryJ-vZothL5eMFZIDfDbCiazRw1fkHdKy2r_e6S_nL8CzdXLyqzSM6xYin5VrWkfJhIVmpIbE3cw2563f3QJeQF-jacXzOtW-1eulTInvt_Z5VGyKJsXXaY5I3d-v"/></div></div></div></header><main class="w-full pt-28 bg-surface min-h-[calc(100vh-28rem)]"><div class="flex flex-col w-full">
+<!-- Top Ticker / Monograph Header Stamp -->
+<section class="w-full bg-surface-container-low text-on-surface py-space-sm px-margin-mobile lg:px-margin">
+<div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-space-xs font-label-caps text-label-caps tracking-widest uppercase">
+<div class="flex items-center gap-space-sm">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="text-on-surface-variant">Syllabus Edition · Autumn MMXXIV</span>
+<span class="text-outline-variant hidden sm:inline">|</span>
+<span class="text-secondary hidden sm:inline">Accredited Archival Syllabus</span>
+</div>
+<div class="flex items-center gap-space-md text-on-surface-variant">
+<span>Folio No. 04-981</span>
+<span>Huila · Kraków · Addis Ababa</span>
+</div>
+</div>
+</section>
+<!-- 1. Editorial Hero Section -->
+<section class="relative w-full overflow-hidden bg-surface py-space-xl px-margin-mobile lg:px-margin">
+<div class="max-w-7xl mx-auto">
+<!-- Breadcrumb / Topic Metadata Ribbon -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm mb-space-lg">
+<div class="inline-flex items-center gap-space-xs bg-surface-container px-space-sm py-space-xs rounded font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">
+<span class="text-primary font-bold">Vol. IV</span>
+<span>·</span>
+<span>6 Chapters</span>
+<span>·</span>
+<span>22 Topics</span>
+<span>·</span>
+<span>~9 Hours Directed Study</span>
+</div>
+<div class="font-caption-editorial text-caption-editorial italic text-on-surface-variant">
+          Curated by Duarte &amp; Wierzba
+        </div>
+</div>
+<!-- Main Headline + Asymmetric Column Split -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<div class="lg:col-span-7 space-y-space-md pr-0 lg:pr-space-lg">
+<p class="font-label-chapter text-label-chapter uppercase text-primary tracking-widest">
+            A Masterclass in Agronomy, Chemistry &amp; Extraction
+          </p>
+<h1 class="font-display-hero text-display-hero text-on-surface leading-[1.08] tracking-tight">
+            Learn coffee the slow way.
+          </h1>
+<p class="font-headline-md text-headline-md text-on-surface-variant italic font-serif">
+            Six chapters. One cherry. Your best cup.
+          </p>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+            A deliberate, tactile journey across high-altitude harvest soils, thermodynamic roast drums, and precise refractometry. Master the micro-physics of extraction through the unhurried prism of an editorial journal.
+          </p>
+<!-- Primary CTAs -->
+<div class="pt-space-sm flex flex-wrap items-center gap-space-md">
+<a class="px-space-lg py-space-sm bg-primary-container text-on-primary-container hover:bg-primary font-body-md text-body-md font-medium rounded shadow-sm transition-all flex items-center gap-space-xs" href="#toc">
+<span>Start the free chapter</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<a class="font-caption-editorial text-editorial-quote italic text-primary hover:text-on-surface transition-colors underline underline-offset-8 decoration-outline-variant" href="#toc">
+              See the complete syllabus ↓
+            </a>
+</div>
+<!-- Quick Factoids Badge Grid -->
+<div class="pt-space-lg grid grid-cols-3 gap-space-sm">
+<div class="bg-surface-container p-space-sm rounded">
+<span class="font-label-caps text-label-caps uppercase text-tertiary block">Accreditation</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">SCA</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block">Sensory Basis</span>
+</div>
+<div class="bg-surface-container p-space-sm rounded">
+<span class="font-label-caps text-label-caps uppercase text-tertiary block">Format</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">cmi5</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block">+ Interactive H5P</span>
+</div>
+<div class="bg-surface-container p-space-sm rounded">
+<span class="font-label-caps text-label-caps uppercase text-tertiary block">Recognition</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Certified</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block">Home Barista</span>
+</div>
+</div>
+</div>
+<!-- Hero Photograph Plate with Editorial Matting -->
+<div class="lg:col-span-5 relative mt-space-md lg:mt-0">
+<div class="bg-surface-container-high p-space-sm rounded shadow-md">
+<div class="bg-surface p-space-xs rounded overflow-hidden">
+<img alt="Ripe coffee cherries in Huila" class="w-full h-[420px] object-cover rounded" data-alt="Close up shot of weathered sunlit farmers hands cupping radiant ruby red ripe coffee cherries freshly picked from high altitude shrubs in Huila Colombia, deep emerald foliage, morning golden mist, warm editorial film photography tones with rich shadows and parchment warmth" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIpXL_64gwhjrvTIqBHtlxCt0GknsD-zPphP5cBe5s7f8Cte-697WBYeGD5Z_hPSDcBfqTggDql6g24B7A6YPKFz3iAMZVaF5otSmvXib-75oytG09C6ITmYmomqT8rGVUNI15b_fmYhmUd65Ey04Z9QhlSgRNeyYHi6CsmKR0MN87aYjQoKU_qUPfueHZd-GfnLuAQDCeJrlSN3TfJnLEYfjiOLJCXMJErB7ByBU"/>
+</div>
+<div class="mt-space-sm px-space-xs">
+<p class="font-caption-editorial text-caption-editorial italic text-on-surface-variant leading-relaxed">
+                “Hand-harvested Castillo cherry at Finca El Paraíso, 1,750m altitude. Photography by Tomasz Wierzba.”
+              </p>
+<div class="mt-space-xs flex items-center justify-between font-label-caps text-label-caps text-tertiary uppercase">
+<span>Plate No. 01 — Harvest Lot 48</span>
+<span class="text-secondary font-bold">18.4° Brix Sugar Reading</span>
+</div>
+</div>
+</div>
+<!-- Overlapping Archival Stamp -->
+<div class="hidden sm:flex absolute -bottom-6 -left-6 bg-surface-container-highest px-space-md py-space-sm rounded shadow-lg items-center gap-space-sm max-w-xs">
+<span class="material-symbols-outlined text-primary text-[28px]">verified</span>
+<div>
+<p class="font-label-caps text-label-caps uppercase text-on-surface font-semibold tracking-wide">Archival First Edition</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Includes 8-page printable tasting wheel folio.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 2. Table of Contents (Magazine Syllabus Grid) -->
+<section class="w-full bg-surface-container-low py-space-xl px-margin-mobile lg:px-margin" id="toc">
+<div class="max-w-7xl mx-auto space-y-space-lg">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-sm">
+<div>
+<span class="font-label-chapter text-label-chapter uppercase text-primary tracking-widest block mb-space-xs">Course Syllabus</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">The Academic Folio &amp; Index</h2>
+</div>
+<p class="font-caption-editorial text-caption-editorial italic text-on-surface-variant max-w-md">
+          Structured according to the six definitive phases of specialty coffee production. Work at your own rhythm with lifetime enrollment.
+        </p>
+</div>
+<!-- TOC Table-like Index Rows -->
+<div class="space-y-space-md">
+<!-- Chapter I -->
+<div class="bg-surface rounded p-space-md shadow-sm hover:shadow-md transition-shadow">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<span class="font-display-hero text-headline-lg text-primary leading-none w-12 shrink-0">I</span>
+<div>
+<div class="flex flex-wrap items-center gap-space-xs mb-space-xs">
+<span class="font-label-caps text-label-caps uppercase bg-primary-fixed text-on-primary-fixed px-space-xs py-0.5 rounded">Free Preview</span>
+<span class="font-label-caps text-label-caps uppercase text-secondary">Foundational Agronomy</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Origins: Terroir, Genetics &amp; Altitude</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 max-w-2xl">
+                  An exhaustive study of the Bean Belt. Learn how volcanic ash, latitude, and day-night thermal amplitude shape sucrose and phosphoric acid density.
+                </p>
+<!-- Topics list -->
+<div class="mt-space-sm flex flex-wrap gap-x-space-md gap-y-space-xs font-body-sm text-body-sm">
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">play_circle</span>
+                    Welcome to the Atlas (Video · 12m)
+                  </span>
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-secondary">map</span>
+                    The Coffee Belt (Interactive Map)
+                  </span>
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-tertiary">article</span>
+                    Arabica vs. Robusta Phylogenetics (Reading)
+                  </span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between lg:flex-col lg:items-end gap-space-xs shrink-0 bg-surface-container-low lg:bg-transparent p-space-xs lg:p-0 rounded">
+<span class="font-label-chapter text-label-chapter text-tertiary">p. 08</span>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">1h 15m Directed</span>
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-secondary-container text-on-secondary-container rounded">Ready</span>
+</div>
+</div>
+</div>
+<!-- Chapter II -->
+<div class="bg-surface rounded p-space-md shadow-sm hover:shadow-md transition-shadow">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<span class="font-display-hero text-headline-lg text-primary leading-none w-12 shrink-0">II</span>
+<div>
+<div class="flex flex-wrap items-center gap-space-xs mb-space-xs">
+<span class="font-label-caps text-label-caps uppercase text-secondary">Agronomy &amp; Fermentation</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">The Farm: Processing, Anatomy &amp; Labour</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 max-w-2xl">
+                  Deconstruct wet, natural, honey, and anaerobic fermentations. Explore the biochemical role of mucilage breakdown and ambient yeast strains.
+                </p>
+<div class="mt-space-sm flex flex-wrap gap-x-space-md gap-y-space-xs font-body-sm text-body-sm">
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-secondary">podcasts</span>
+                    Voices from the Farm (Binaural Audio · 28m)
+                  </span>
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">touch_app</span>
+                    Anatomy of a Cherry (H5P Hotspot)
+                  </span>
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-tertiary">article</span>
+                    Processing Chemistry (RichText Guide)
+                  </span>
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">view_in_ar</span>
+                    Cooperative Washing Station (360° Field Tour)
+                  </span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between lg:flex-col lg:items-end gap-space-xs shrink-0 bg-surface-container-low lg:bg-transparent p-space-xs lg:p-0 rounded">
+<span class="font-label-chapter text-label-chapter text-tertiary">p. 24</span>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">1h 40m Directed</span>
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-surface-container text-on-surface-variant rounded">Module locked</span>
+</div>
+</div>
+</div>
+<!-- Chapter III -->
+<div class="bg-surface rounded p-space-md shadow-sm hover:shadow-md transition-shadow">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<span class="font-display-hero text-headline-lg text-primary leading-none w-12 shrink-0">III</span>
+<div>
+<div class="flex flex-wrap items-center gap-space-xs mb-space-xs">
+<span class="font-label-caps text-label-caps uppercase text-secondary">Thermodynamics</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Roasting: Heat Transfer, Curves &amp; Chemistry</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 max-w-2xl">
+                  Inspect the Maillard reaction, caramelization, and the development phase ratio (DPR). Read and adjust Rate-of-Rise (RoR) curves without dogma.
+                </p>
+<div class="mt-space-sm flex flex-wrap gap-x-space-md gap-y-space-xs font-body-sm text-body-sm">
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">show_chart</span>
+                    The Roast Curve Spectrum (Image Breakdown)
+                  </span>
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-tertiary">picture_as_pdf</span>
+                    Roaster's Physical Logbook (8-pg Printable PDF)
+                  </span>
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-secondary">tune</span>
+                    Drum Heat Simulator (SCORM Module)
+                  </span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between lg:flex-col lg:items-end gap-space-xs shrink-0 bg-surface-container-low lg:bg-transparent p-space-xs lg:p-0 rounded">
+<span class="font-label-chapter text-label-chapter text-tertiary">p. 48</span>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">1h 25m Directed</span>
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-surface-container text-on-surface-variant rounded">Module locked</span>
+</div>
+</div>
+</div>
+<!-- Chapter IV -->
+<div class="bg-surface rounded p-space-md shadow-sm hover:shadow-md transition-shadow">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<span class="font-display-hero text-headline-lg text-primary leading-none w-12 shrink-0">IV</span>
+<div>
+<div class="flex flex-wrap items-center gap-space-xs mb-space-xs">
+<span class="font-label-caps text-label-caps uppercase text-secondary">Fluid Dynamics &amp; Extraction</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Brewing: Ratios, Hydrodynamics &amp; Math</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 max-w-2xl">
+                  Calculate true Extraction Yield with KaTeX formulas. Diagnose bypass channel flow, bed agitation, and water minerals (Ca²⁺ &amp; Mg²⁺).
+                </p>
+<div class="mt-space-sm flex flex-wrap gap-x-space-md gap-y-space-xs font-body-sm text-body-sm">
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">functions</span>
+                    Ratios &amp; Extraction Yield Formula (RichText + KaTeX)
+                  </span>
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">play_circle</span>
+                    Pour-Over Masterclass (14-min Film)
+                  </span>
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-secondary">grid_view</span>
+                    Micron Micron Matching (H5P Drag-Drop)
+                  </span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between lg:flex-col lg:items-end gap-space-xs shrink-0 bg-surface-container-low lg:bg-transparent p-space-xs lg:p-0 rounded">
+<span class="font-label-chapter text-label-chapter text-tertiary">p. 72</span>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">1h 50m Directed</span>
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-surface-container text-on-surface-variant rounded">Module locked</span>
+</div>
+</div>
+</div>
+<!-- Chapter V -->
+<div class="bg-surface rounded p-space-md shadow-sm hover:shadow-md transition-shadow">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<span class="font-display-hero text-headline-lg text-primary leading-none w-12 shrink-0">V</span>
+<div>
+<div class="flex flex-wrap items-center gap-space-xs mb-space-xs">
+<span class="font-label-caps text-label-caps uppercase text-secondary">Sensory Calibration</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Tasting: The SCA Lexicon &amp; Home Cupping</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 max-w-2xl">
+                  Isolate malic, citric, and acetic acidities. Calibrate your palate via sensory wheels, olfactory triangulation, and structured slurping protocols.
+                </p>
+<div class="mt-space-sm flex flex-wrap gap-x-space-md gap-y-space-xs font-body-sm text-body-sm">
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">psychology</span>
+                    The Flavour Wheel (H5P Interactive Flashcards)
+                  </span>
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-secondary">local_cafe</span>
+                    Cupping Protocol at Home (cmi5 Certified)
+                  </span>
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-tertiary">quiz</span>
+                    Tasting Check Examination (8-Question GIFT Quiz)
+                  </span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between lg:flex-col lg:items-end gap-space-xs shrink-0 bg-surface-container-low lg:bg-transparent p-space-xs lg:p-0 rounded">
+<span class="font-label-chapter text-label-chapter text-tertiary">p. 96</span>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">1h 30m Directed</span>
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-surface-container text-on-surface-variant rounded">Module locked</span>
+</div>
+</div>
+</div>
+<!-- Chapter VI -->
+<div class="bg-surface rounded p-space-md shadow-sm hover:shadow-md transition-shadow">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<span class="font-display-hero text-headline-lg text-primary leading-none w-12 shrink-0">VI</span>
+<div>
+<div class="flex flex-wrap items-center gap-space-xs mb-space-xs">
+<span class="font-label-caps text-label-caps uppercase text-primary font-bold">Capstone Portfolio</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Your Signature Cup: Synthesis &amp; Peer Evaluation</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 max-w-2xl">
+                  Synthesize your personal brewing blueprint for an origin of choice. Submit brew logs and sensory notes for personal feedback from Inés and Tomasz.
+                </p>
+<div class="mt-space-sm flex flex-wrap gap-x-space-md gap-y-space-xs font-body-sm text-body-sm">
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">assignment</span>
+                    Design Your Recipe (Project Brief &amp; Form Upload)
+                  </span>
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-tertiary">menu_book</span>
+                    Final Reflections &amp; Botanical Lexicon
+                  </span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between lg:flex-col lg:items-end gap-space-xs shrink-0 bg-surface-container-low lg:bg-transparent p-space-xs lg:p-0 rounded">
+<span class="font-label-chapter text-label-chapter text-tertiary">p. 118</span>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">1h 00m Capstone</span>
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-surface-container text-on-surface-variant rounded">Module locked</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. "A Letter from Your Tutors" -->
+<section class="w-full bg-surface py-space-xl px-margin-mobile lg:px-margin">
+<div class="max-w-5xl mx-auto bg-surface-container-low p-space-md sm:p-space-xl rounded shadow-sm">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-start">
+<!-- Tutor 1 Portrait Card -->
+<div class="md:col-span-4 space-y-space-md">
+<div class="bg-surface p-space-xs rounded shadow-sm">
+<img alt="Inés Duarte" class="w-full h-56 object-cover rounded" data-alt="Intimate portrait of Ines Duarte, Colombian female Q-grader with soft confident gaze, holding a ceramic cupping bowl against a serene coffee drying patio in Pitalito Colombia, soft diffused natural morning light, muted earth tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkLs_mkQrh4M7YjuY2cht5DbDLha7S-MRl_HCnaoWPExhf3CQRC79Mkb5XQSm0Uxc059fDLsozVlH5rZBCCqbHj9bQcVCPF4z-zaXcSO_jgjSYrynHGVgRYfnn_qJDncFfoFIg1_xwLWWuV3LSAECziUIY5poIdsVs-aVTFbVe1pppzJ0wbdIWI7LMMFgW08339yvAHs1eSLKzQWKSkSJ8xkU3oRUzAMrvNnK9u68"/>
+<div class="p-space-xs mt-1">
+<span class="font-label-caps text-label-caps uppercase text-primary block">Agronomist &amp; Q-Grader</span>
+<p class="font-headline-sm text-headline-sm text-on-surface">Inés Duarte</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Huila, Colombia · SCA Quality Council</p>
+</div>
+</div>
+<div class="bg-surface p-space-xs rounded shadow-sm">
+<img alt="Tomasz Wierzba" class="w-full h-56 object-cover rounded" data-alt="Editorial portrait of Tomasz Wierzba, Polish master artisan roaster in a minimal industrial roastery in Krakow, linen apron, checking green coffee beans from a jute sack, warm vintage Leica camera aesthetic with soft grain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbgvtp5X-cqgznVJOmavEGY8uj6X3E2duUeb4xgUPDXn-W8VYni3yfxMeHLivnBA-pcOUV3p-aaOhAhUaD-CovJiiVCshfi3wOZf5QA8F8Fa2hqPKB8Pz26t_uJvuqDIhNzwpXGAtY22YsbB2W7-JBFemlCCxuW7Hj6WRhNCHm41yA93CZ8tL5pDe_QJGFGvFs2wvZ8lbkMB_uXs0qFL1ys-didpplb7hcPRr2NWM"/>
+<div class="p-space-xs mt-1">
+<span class="font-label-caps text-label-caps uppercase text-secondary block">Master Roaster &amp; Author</span>
+<p class="font-headline-sm text-headline-sm text-on-surface">Tomasz Wierzba</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Kraków, Poland · 18 Years Roasting Guild</p>
+</div>
+</div>
+</div>
+<!-- The Letter -->
+<div class="md:col-span-8 space-y-space-md pl-0 md:pl-space-md">
+<span class="font-label-chapter text-label-chapter uppercase text-primary tracking-widest block">Colophon Correspondence</span>
+<h2 class="font-display-hero-mobile md:font-headline-lg text-display-hero-mobile md:text-headline-lg text-on-surface leading-snug">
+            Why coffee asks for our undivided patience.
+          </h2>
+<div class="space-y-space-md text-on-surface-variant font-body-lg text-body-lg leading-relaxed">
+<p>
+<span class="font-display-hero text-display-hero text-primary float-left mr-3 leading-none -mt-2 font-serif">W</span>e designed this academy as an antidote to thirty-second video shortcuts that treat coffee extraction like a mechanical trick. The coffee cherry on your morning counter spent nine months ripening beneath high equatorial cloud cover. It was harvested berry by berry by calloused hands, rested for twenty-one days in fermentation tanks, transported over oceans, and roasted in six hundred seconds of delicate thermodynamic tension.
+            </p>
+<p>
+              To rush its brewing is to silence its history. In these six chapters, we do not ask you to memorize recipes; we teach you how to listen to the chemistry of the bean. You will touch upon organic chemistry, agronomy, fluid thermodynamics, and the psychology of taste.
+            </p>
+<p class="font-caption-editorial text-editorial-quote italic text-on-surface pt-space-xs">
+              “When you finally master extraction yield, your cup ceases to be just caffeine—it turns into a precise, crystalline landscape of soil, rain, and human devotion.”
+            </p>
+</div>
+<!-- Signatures Section with SVG Handwriting Simulation -->
+<div class="pt-space-md flex flex-wrap items-center justify-between gap-space-md">
+<div>
+<svg class="w-44 h-12 text-primary" fill="none" viewbox="0 0 180 50" xmlns="http://www.w3.org/2000/svg">
+<path d="M10 38C25 20 40 10 55 25C65 35 50 45 42 35C35 22 70 8 95 18C120 28 105 45 125 30C140 18 165 24 175 22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path>
+</svg>
+<span class="font-caption-editorial text-caption-editorial italic text-on-surface block mt-1">Inés Duarte · Pitalito, Huila</span>
+</div>
+<div>
+<svg class="w-44 h-12 text-secondary" fill="none" viewbox="0 0 180 50" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 20C30 15 50 40 60 22C70 4 85 45 95 25C105 5 120 18 140 32C155 42 165 15 172 20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path>
+</svg>
+<span class="font-caption-editorial text-caption-editorial italic text-on-surface block mt-1">Tomasz Wierzba · Kraków</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. "What's Inside" Multi-Format Strip -->
+<section class="w-full bg-surface-container-high py-space-xl px-margin-mobile lg:px-margin">
+<div class="max-w-7xl mx-auto space-y-space-lg">
+<div class="text-center max-w-2xl mx-auto space-y-space-xs">
+<span class="font-label-chapter text-label-chapter uppercase text-primary tracking-widest block">Pedagogical Architecture</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Tactile Digital Learning Artifacts</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          Built with open standards (cmi5, H5P, SCORM, High-Fidelity Audio) to immerse every sense without corporate bloat.
+        </p>
+</div>
+<!-- 8-Card Bento Matrix -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-sm">
+<!-- 1 -->
+<div class="bg-surface p-space-md rounded flex flex-col justify-between shadow-sm hover:translate-y-[-2px] transition-transform">
+<div class="space-y-space-xs">
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-surface-container text-primary rounded font-bold">4K Film</span>
+<div class="flex items-center gap-space-xs text-on-surface pt-space-xs">
+<span class="material-symbols-outlined text-[20px] text-primary">movie</span>
+<h4 class="font-headline-sm text-body-lg font-semibold">Origin Cinematography</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Field recordings from Cauca and Sidama, documenting dawn picking and raised-bed drying.
+            </p>
+</div>
+<div class="pt-space-md font-label-caps text-label-caps text-tertiary uppercase">6 Core Cinema Chapters</div>
+</div>
+<!-- 2 -->
+<div class="bg-surface p-space-md rounded flex flex-col justify-between shadow-sm hover:translate-y-[-2px] transition-transform">
+<div class="space-y-space-xs">
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-secondary-container text-on-secondary-container rounded font-bold">Ambient Audio</span>
+<div class="flex items-center gap-space-xs text-on-surface pt-space-xs">
+<span class="material-symbols-outlined text-[20px] text-secondary">graphic_eq</span>
+<h4 class="font-headline-sm text-body-lg font-semibold">Farm Dispatches</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Binaural audio dispatches recorded inside depulping sheds and sorting terraces.
+            </p>
+</div>
+<div class="pt-space-md font-label-caps text-label-caps text-tertiary uppercase">3 Extended Soundscapes</div>
+</div>
+<!-- 3 -->
+<div class="bg-surface p-space-md rounded flex flex-col justify-between shadow-sm hover:translate-y-[-2px] transition-transform">
+<div class="space-y-space-xs">
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-surface-container text-on-surface rounded font-bold">Interactive H5P</span>
+<div class="flex items-center gap-space-xs text-on-surface pt-space-xs">
+<span class="material-symbols-outlined text-[20px] text-primary">grain</span>
+<h4 class="font-headline-sm text-body-lg font-semibold">Anatomy Hotspots</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Inspect the exocarp, mesocarp, parchment skin, and spermoderm silver layer under microscope view.
+            </p>
+</div>
+<div class="pt-space-md font-label-caps text-label-caps text-tertiary uppercase">Cross-Section Zoom</div>
+</div>
+<!-- 4 -->
+<div class="bg-surface p-space-md rounded flex flex-col justify-between shadow-sm hover:translate-y-[-2px] transition-transform">
+<div class="space-y-space-xs">
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-surface-container text-on-surface rounded font-bold">Printable PDF</span>
+<div class="flex items-center gap-space-xs text-on-surface pt-space-xs">
+<span class="material-symbols-outlined text-[20px] text-tertiary">menu_book</span>
+<h4 class="font-headline-sm text-body-lg font-semibold">8-Page Logbook</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Designed for physical fountain pens. High-density grids for TDS, dose, time, and sensory tracking.
+            </p>
+</div>
+<div class="pt-space-md font-label-caps text-label-caps text-tertiary uppercase">Archival A5 Format</div>
+</div>
+<!-- 5 -->
+<div class="bg-surface p-space-md rounded flex flex-col justify-between shadow-sm hover:translate-y-[-2px] transition-transform">
+<div class="space-y-space-xs">
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-surface-container text-on-surface rounded font-bold">SCORM Engine</span>
+<div class="flex items-center gap-space-xs text-on-surface pt-space-xs">
+<span class="material-symbols-outlined text-[20px] text-primary">thermostat</span>
+<h4 class="font-headline-sm text-body-lg font-semibold">Roast Simulator</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Simulate drum airflow, gas pressure, and charge temperature to prevent baked defects.
+            </p>
+</div>
+<div class="pt-space-md font-label-caps text-label-caps text-tertiary uppercase">Real-Time RoR Dynamics</div>
+</div>
+<!-- 6 -->
+<div class="bg-surface p-space-md rounded flex flex-col justify-between shadow-sm hover:translate-y-[-2px] transition-transform">
+<div class="space-y-space-xs">
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-secondary-container text-on-secondary-container rounded font-bold">cmi5 Certified</span>
+<div class="flex items-center gap-space-xs text-on-surface pt-space-xs">
+<span class="material-symbols-outlined text-[20px] text-secondary">speed</span>
+<h4 class="font-headline-sm text-body-lg font-semibold">Cupping Protocol</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Guided acoustic timer pacing 4-minute crust break, skim, and thermal cooling slurps.
+            </p>
+</div>
+<div class="pt-space-md font-label-caps text-label-caps text-tertiary uppercase">Audio Metronome Sync</div>
+</div>
+<!-- 7 -->
+<div class="bg-surface p-space-md rounded flex flex-col justify-between shadow-sm hover:translate-y-[-2px] transition-transform">
+<div class="space-y-space-xs">
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-surface-container text-on-surface rounded font-bold">GIFT Format</span>
+<div class="flex items-center gap-space-xs text-on-surface pt-space-xs">
+<span class="material-symbols-outlined text-[20px] text-primary">fact_check</span>
+<h4 class="font-headline-sm text-body-lg font-semibold">Sensory Check</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Eight challenging scenario questions assessing brew diagnostics and defect identification.
+            </p>
+</div>
+<div class="pt-space-md font-label-caps text-label-caps text-tertiary uppercase">Immediate Explanations</div>
+</div>
+<!-- 8 -->
+<div class="bg-surface p-space-md rounded flex flex-col justify-between shadow-sm hover:translate-y-[-2px] transition-transform">
+<div class="space-y-space-xs">
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-primary-fixed text-on-primary-fixed rounded font-bold">Peer Evaluation</span>
+<div class="flex items-center gap-space-xs text-on-surface pt-space-xs">
+<span class="material-symbols-outlined text-[20px] text-primary">rate_review</span>
+<h4 class="font-headline-sm text-body-lg font-semibold">Recipe Project</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Upload your grind micron analysis and refractometer notes to receive bespoke written critique.
+            </p>
+</div>
+<div class="pt-space-md font-label-caps text-label-caps text-tertiary uppercase">Graded by Q-Graders</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. Editorial Testimonials & Pull Quotes -->
+<section class="w-full bg-surface py-space-xl px-margin-mobile lg:px-margin">
+<div class="max-w-6xl mx-auto space-y-space-xl">
+<!-- Big Center Pull Quote -->
+<div class="text-center max-w-4xl mx-auto space-y-space-md">
+<span class="material-symbols-outlined text-[36px] text-primary/40 block">format_quote</span>
+<blockquote class="font-editorial-quote text-editorial-quote text-on-surface italic leading-relaxed">
+          “I finally understand why my V60 tasted astringently sour at minute four. This academy did not give me another recipe to memorize; it gave me the physical vocabulary of extraction. It changed my mornings entirely.”
+        </blockquote>
+<div class="space-y-0.5">
+<p class="font-headline-sm text-headline-sm text-on-surface font-semibold">Maja Lindqvist</p>
+<p class="font-caption-editorial text-caption-editorial italic text-on-surface-variant">Architect &amp; Apprentice Home Barista · Gdańsk</p>
+</div>
+</div>
+<!-- Secondary Split Reviews -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter pt-space-md">
+<div class="bg-surface-container-low p-space-lg rounded space-y-space-sm">
+<div class="flex items-center gap-space-xs text-primary">
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface leading-relaxed">
+            “A masterclass that feels like holding an archival monograph in your hands. The interactive roast curve simulator made the Maillard reaction crystal clear.”
+          </p>
+<div class="pt-space-xs">
+<p class="font-headline-sm text-body-lg font-bold text-on-surface">David K.</p>
+<p class="font-label-caps text-label-caps uppercase text-tertiary">Specialty Coffee Guild · Melbourne</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-space-lg rounded space-y-space-sm">
+<div class="flex items-center gap-space-xs text-primary">
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface leading-relaxed">
+            “The chapter on water chemistry and bicarbonate buffer calculation alone is worth three times the price of admission. Unrivaled academic rigour.”
+          </p>
+<div class="pt-space-xs">
+<p class="font-headline-sm text-body-lg font-bold text-on-surface">Elena Rostova</p>
+<p class="font-label-caps text-label-caps uppercase text-tertiary">Head of Sensory Education · Berlin</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. Live Session Teaser -->
+<section class="w-full bg-surface-container py-space-xl px-margin-mobile lg:px-margin">
+<div class="max-w-7xl mx-auto bg-surface rounded p-space-md sm:p-space-xl shadow-md">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
+<!-- Live Badge + Details -->
+<div class="lg:col-span-7 space-y-space-sm pr-0 lg:pr-space-md">
+<div class="inline-flex items-center gap-space-xs bg-error-container text-on-error-container px-space-sm py-space-xs rounded font-label-caps text-label-caps uppercase font-bold tracking-wider">
+<span class="w-2 h-2 rounded-full bg-error animate-ping"></span>
+<span>Live Broadcast Broadcasted from Pitalito</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">
+            Live Cupping with Inés — 14 Nov, 18:00 CET
+          </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+            Join Inés Duarte live from Colombia for a synchronous palate triangulation. We will taste three blinded microlots shipped directly to your door in our curated Masterclass kit.
+          </p>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm pt-space-xs">
+<div class="bg-surface-container-low p-space-sm rounded">
+<span class="font-label-caps text-label-caps uppercase text-tertiary block">Tasting Kit</span>
+<span class="font-body-md text-body-md font-bold text-on-surface">3 Tins Sealed</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block">Dispatched via DHL</span>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded">
+<span class="font-label-caps text-label-caps uppercase text-tertiary block">Duration</span>
+<span class="font-body-md text-body-md font-bold text-on-surface">90 Minutes</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block">Q&amp;A + Blind Slurp</span>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded">
+<span class="font-label-caps text-label-caps uppercase text-tertiary block">Remaining Seats</span>
+<span class="font-headline-sm text-body-lg font-bold text-primary">14 Places Left</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block">Cohort limit: 40</span>
+</div>
+</div>
+<div class="pt-space-sm flex flex-wrap items-center gap-space-md">
+<a class="px-space-lg py-space-sm bg-primary-container text-on-primary-container hover:bg-primary font-body-md text-body-md font-medium rounded shadow-sm transition-colors" href="#pricing">
+              Reserve Seat with Tasting Kit
+            </a>
+<span class="font-caption-editorial text-caption-editorial italic text-on-surface-variant">
+              Included in the Taste Makers Package.
+            </span>
+</div>
+</div>
+<!-- Visual Countdown Graphic / Cupping Kit Mockup -->
+<div class="lg:col-span-5 relative mt-space-md lg:mt-0">
+<div class="bg-surface-container-low p-space-sm rounded shadow-inner">
+<img alt="Cupping Table Setting" class="w-full h-72 object-cover rounded" data-alt="Artisanal cupping table setting viewed from above, with three numbered brass coffee tasting bowls filled with dark amber brew, stainless steel cupping spoons resting on linen napkins, and vintage timer, warm daylight with amber reflections" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_G_7RJauue7WCYejzQmuv7-ZvpevRO4P2k1alJOEOJdV3odw_e2uVjTGr7XL6ey0wB41pK6r2Xv1nodihKJDbqY1_tscdo_lbOyd8HVcEtvd-cqLiWIyWxrxr2xpX8OJKVjZXxzq8Gcbjh_W6KAi9t1w9evWCBRJXRYMS8P06w97RZunnjBEyX-RHcFOO1aztMc45rChq9t6gkA-KBymPSBOQ2qGUWHhHZRnjT6g"/>
+<div class="p-space-xs mt-space-xs flex items-center justify-between font-label-caps text-label-caps text-tertiary uppercase">
+<span>Standard SCA 200ml Glass Protocol</span>
+<span class="text-secondary font-bold">Registration closes 07 Nov</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 7. Transparent Pricing & Packages -->
+<section class="w-full bg-surface py-space-xl px-margin-mobile lg:px-margin" id="pricing">
+<div class="max-w-7xl mx-auto space-y-space-lg">
+<div class="text-center max-w-xl mx-auto space-y-space-xs">
+<span class="font-label-chapter text-label-chapter uppercase text-primary tracking-widest block">Tuition &amp; Archival Access</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Uncomplicated Tuition</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          One-time payment. No subscription lock-in. Permanent access to all updates, worksheets, and forum discussions.
+        </p>
+</div>
+<!-- Two-tier editorial comparison cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter max-w-5xl mx-auto items-stretch">
+<!-- Tier 1: Single Course -->
+<div class="bg-surface-container-low p-space-lg rounded flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+<div class="space-y-space-md">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-tertiary tracking-widest">Digital Monograph</span>
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-surface text-on-surface rounded font-medium">Standard</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Single Course</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Complete digital access for the autodidact barista.</p>
+</div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-display-hero text-display-hero text-on-surface font-serif">€89</span>
+<span class="font-caption-editorial text-caption-editorial italic text-on-surface-variant">one-time payment</span>
+</div>
+<div class="space-y-space-xs pt-space-sm font-body-md text-body-md text-on-surface">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-secondary">check</span>
+<span>Lifetime access to all 6 chapters &amp; future revisions</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-secondary">check</span>
+<span>22 interactive modules (H5P, SCORM, cmi5)</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-secondary">check</span>
+<span>Printable 8-page physical cupping logbook PDF</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-secondary">check</span>
+<span>Verified Certificate of Home Barista Completion</span>
+</div>
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] text-outline">remove</span>
+<span class="line-through">Live cupping sample kit delivery</span>
+</div>
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] text-outline">remove</span>
+<span class="line-through">1:1 Capstone evaluation by Inés Duarte</span>
+</div>
+</div>
+</div>
+<div class="pt-space-lg">
+<button class="w-full py-space-sm px-space-md bg-inverse-surface text-inverse-on-surface hover:bg-on-background font-body-md text-body-md font-medium rounded transition-colors">
+              Enroll in Standard Course
+            </button>
+<span class="font-label-caps text-label-caps text-center block text-tertiary uppercase mt-space-xs">
+              Immediate folio unlock
+            </span>
+</div>
+</div>
+<!-- Tier 2: Taste Makers Package (Featured) -->
+<div class="bg-surface-container p-space-lg rounded flex flex-col justify-between shadow-lg relative">
+<!-- Top Badge -->
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary-container text-on-primary-container px-space-sm py-0.5 rounded font-label-caps text-label-caps uppercase tracking-wider font-bold shadow-sm">
+            Recommended Cohort
+          </div>
+<div class="space-y-space-md">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-primary tracking-widest font-bold">Physical + Live Atelier</span>
+<span class="font-label-caps text-label-caps uppercase px-space-xs py-0.5 bg-primary text-on-primary rounded font-medium">Limited 40</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Taste Makers Package</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Full tactile experience with home sample delivery and live session.</p>
+</div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-display-hero text-display-hero text-primary font-serif">€139</span>
+<span class="font-caption-editorial text-caption-editorial italic text-on-surface-variant">one-time payment</span>
+</div>
+<div class="space-y-space-xs pt-space-sm font-body-md text-body-md text-on-surface">
+<div class="flex items-center gap-space-xs font-semibold">
+<span class="material-symbols-outlined text-[18px] text-primary">check_circle</span>
+<span>Everything included in Standard Course</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary">package_2</span>
+<span>Physical Tasting Kit with 3 origin tins shipped free</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary">videocam</span>
+<span>Guaranteed seat for Live Cupping Masterclass (14 Nov)</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary">draw</span>
+<span>Personal 1:1 recipe critique from Q-Grader Inés</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary">history_edu</span>
+<span>Hand-numbered and stamped physical certificate</span>
+</div>
+</div>
+</div>
+<div class="pt-space-lg">
+<button class="w-full py-space-sm px-space-md bg-primary-container text-on-primary-container hover:bg-primary font-body-md text-body-md font-medium rounded shadow-sm transition-colors">
+              Claim Taste Makers Seat (€139)
+            </button>
+<span class="font-label-caps text-label-caps text-center block text-tertiary uppercase mt-space-xs">
+              Only 14 sample kits remaining in stock
+            </span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 8. FAQ Accordion & "Field Notes" Newsletter Strip -->
+<section class="w-full bg-surface-container-low py-space-xl px-margin-mobile lg:px-margin">
+<div class="max-w-4xl mx-auto space-y-space-xl">
+<!-- FAQ Accordions -->
+<div class="space-y-space-md">
+<div class="text-center space-y-space-xs mb-space-md">
+<span class="font-label-chapter text-label-chapter uppercase text-primary tracking-widest block">Inquiries &amp; Prerequisites</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Frequently Asked Questions</h2>
+</div>
+<div class="space-y-space-xs" id="faq-list">
+<!-- FAQ Item 1 -->
+<div class="bg-surface rounded overflow-hidden shadow-sm">
+<button class="faq-toggle w-full p-space-md flex items-center justify-between text-left hover:bg-surface-container transition-colors" data-target="faq-1" type="button">
+<span class="font-headline-sm text-body-lg font-semibold text-on-surface">What equipment do I need at home to follow the brewing modules?</span>
+<span class="material-symbols-outlined text-primary text-[22px] transition-transform duration-200">expand_more</span>
+</button>
+<div class="faq-content px-space-md pb-space-md pt-0 text-on-surface-variant font-body-md text-body-md hidden" id="faq-1">
+              A standard conical dripper (such as a V60, Kalita Wave, or Chemex), a manual or electric burr grinder, and a digital kitchen scale measuring to 0.1g. We deliberately designed the exercises so you do not need commercial refractometers or laboratory water filtration to master core principles.
+            </div>
+</div>
+<!-- FAQ Item 2 -->
+<div class="bg-surface rounded overflow-hidden shadow-sm">
+<button class="faq-toggle w-full p-space-md flex items-center justify-between text-left hover:bg-surface-container transition-colors" data-target="faq-2" type="button">
+<span class="font-headline-sm text-body-lg font-semibold text-on-surface">Is the Certified Home Barista certificate officially accredited?</span>
+<span class="material-symbols-outlined text-primary text-[22px] transition-transform duration-200">expand_more</span>
+</button>
+<div class="faq-content px-space-md pb-space-md pt-0 text-on-surface-variant font-body-md text-body-md hidden" id="faq-2">
+              Yes. The curriculum strictly matches the Specialty Coffee Association (SCA) Foundation and Intermediate sensory standards. Upon submitting your recipe capstone project, our Q-Grader faculty validates your submission and issues a verifiable digital credential along with an archival printable PDF.
+            </div>
+</div>
+<!-- FAQ Item 3 -->
+<div class="bg-surface rounded overflow-hidden shadow-sm">
+<button class="faq-toggle w-full p-space-md flex items-center justify-between text-left hover:bg-surface-container transition-colors" data-target="faq-3" type="button">
+<span class="font-headline-sm text-body-lg font-semibold text-on-surface">How much time per week should I allocate?</span>
+<span class="material-symbols-outlined text-primary text-[22px] transition-transform duration-200">expand_more</span>
+</button>
+<div class="faq-content px-space-md pb-space-md pt-0 text-on-surface-variant font-body-md text-body-md hidden" id="faq-3">
+              The complete syllabus entails roughly 9 hours of directed coursework and cupping. Most scholars spread their studies across three to four weekends (about two hours per session), allowing palate memory to crystallize between tasting exercises.
+            </div>
+</div>
+<!-- FAQ Item 4 -->
+<div class="bg-surface rounded overflow-hidden shadow-sm">
+<button class="faq-toggle w-full p-space-md flex items-center justify-between text-left hover:bg-surface-container transition-colors" data-target="faq-4" type="button">
+<span class="font-headline-sm text-body-lg font-semibold text-on-surface">What if I cannot attend the Live Cupping on 14 November?</span>
+<span class="material-symbols-outlined text-primary text-[22px] transition-transform duration-200">expand_more</span>
+</button>
+<div class="faq-content px-space-md pb-space-md pt-0 text-on-surface-variant font-body-md text-body-md hidden" id="faq-4">
+              The entire live tasting is recorded with dual camera angles and uploaded to Chapter V within 4 hours. You can taste along asynchronously with your sample kit at your own pace whenever you prefer.
+            </div>
+</div>
+</div>
+</div>
+<!-- Field Notes Slow-Journal Subscription Feature Box -->
+<div class="bg-surface p-space-lg rounded shadow-sm">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-center">
+<div class="md:col-span-7 space-y-space-xs">
+<span class="font-label-chapter text-label-chapter uppercase text-primary tracking-widest block">Slow Journal Dispatch</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Receive the Fortnightly Field Notes</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Every other Sunday, Inés and Tomasz curate botanical harvest reports, unreleased brew curves, and historic coffee monographs directly to your inbox. No promotions, no marketing jargon.
+            </p>
+</div>
+<div class="md:col-span-5">
+<form class="space-y-space-xs" onsubmit="event.preventDefault(); document.getElementById('newsletter-msg').classList.remove('hidden');">
+<div class="flex flex-col sm:flex-row gap-space-xs">
+<input class="flex-1 bg-surface-container px-space-md py-space-sm rounded text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="barista@domain.org" required="" type="email"/>
+<button class="px-space-md py-space-sm bg-primary-container text-on-primary-container hover:bg-primary font-body-sm text-body-sm font-medium rounded transition-colors whitespace-nowrap" type="submit">
+                  Join Folio
+                </button>
+</div>
+<p class="hidden text-secondary font-label-caps text-label-caps uppercase pt-1" id="newsletter-msg">
+                ✓ Registered. Look for Dispatch #89 in your morning post.
+              </p>
+</form>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Accordion Inline Script -->
+<script>
+    (function() {
+      const toggles = document.querySelectorAll('.faq-toggle');
+      toggles.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.getAttribute('data-target');
+          const content = document.getElementById(targetId);
+          const icon = btn.querySelector('.material-symbols-outlined');
+          
+          const isHidden = content.classList.contains('hidden');
+          
+          // Close all
+          document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
+          document.querySelectorAll('.faq-toggle .material-symbols-outlined').forEach(i => i.classList.remove('rotate-180'));
+          
+          if (isHidden) {
+            content.classList.remove('hidden');
+            icon.classList.add('rotate-180');
+          }
+        });
+      });
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface-container-low text-on-surface"><div class="max-w-7xl mx-auto px-margin-mobile lg:px-margin pt-space-xl pb-space-lg"><div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-space-xl"><div class="md:col-span-5 flex flex-col justify-between pr-0 lg:pr-space-lg"><div class="space-y-space-sm"><span class="font-label-chapter text-label-chapter uppercase text-primary tracking-widest block">Colophon &amp; Manifesto</span><h3 class="font-headline-sm text-headline-sm text-on-surface">The Coffee Atlas</h3><p class="font-editorial-quote text-editorial-quote italic text-on-surface-variant max-w-md">“Printed in spirit on archival digital paper, honoring the slow chemistry of harvest and roastery.”</p></div><div class="pt-space-md"><span class="font-label-caps text-label-caps uppercase text-tertiary block mb-space-xs">Curated Academic Rigor</span><p class="font-body-sm text-body-sm text-on-surface-variant">Accredited curriculum aligned with Specialty Coffee Association (SCA) tasting standards, terroir agronomy studies, and botanical conservation monographs.</p></div></div><div class="md:col-span-3 space-y-space-sm"><span class="font-label-caps text-label-caps uppercase text-tertiary block tracking-wider">Curriculum Index</span><ul class="space-y-space-xs font-body-sm text-body-sm"><li class="flex items-center gap-space-xs"><span class="text-primary font-label-chapter text-label-chapter">I.</span><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="chapters" href="#">All Chapters &amp; Field Guides</a></li><li class="flex items-center gap-space-xs"><span class="text-primary font-label-chapter text-label-chapter">II.</span><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="course-syllabus" href="#">Sensory Syllabus &amp; Tasting Wheels</a></li><li class="flex items-center gap-space-xs"><span class="text-primary font-label-chapter text-label-chapter">III.</span><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="live-sessions" href="#">Live Cupping &amp; Masterclasses</a></li><li class="flex items-center gap-space-xs"><span class="text-primary font-label-chapter text-label-chapter">IV.</span><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="tutors" href="#">Agronomists &amp; Roaster Faculty</a></li><li class="flex items-center gap-space-xs"><span class="text-primary font-label-chapter text-label-chapter">V.</span><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="journal" href="#">Monographs &amp; Sensory Research</a></li></ul></div><div class="md:col-span-4 space-y-space-md"><span class="font-label-caps text-label-caps uppercase text-tertiary block tracking-wider">Field Notes Newsletter</span><p class="font-body-sm text-body-sm text-on-surface-variant">Receive fortnightly dispatch dispatches on varietal genetics, harvest elevations, and brew ratio journals directly from our editorial desk.</p><form class="flex flex-col sm:flex-row gap-space-xs" onsubmit="return false;"><input class="flex-1 bg-surface-container-lowest px-space-md py-space-sm rounded text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="roaster@domain.com" type="email"/><button class="px-space-md py-space-sm bg-inverse-surface text-inverse-on-surface hover:bg-on-background font-body-sm text-body-sm font-medium rounded transition-colors" type="button">Subscribe</button></form><div class="flex items-center gap-space-sm text-on-surface-variant font-caption-editorial text-caption-editorial italic"><span class="material-symbols-outlined text-[18px] text-secondary">eco</span><span>Archival quarterly edition dispatched to 14,200 apprentices worldwide.</span></div></div></div><div class="pt-space-md flex flex-col md:flex-row items-center justify-between gap-space-md font-body-sm text-body-sm text-on-surface-variant"><div class="flex flex-wrap items-center gap-space-md"><span class="font-label-caps text-label-caps text-tertiary">© MMXXIV The Coffee Atlas Academy. All rights reserved.</span><span class="hidden md:inline text-outline-variant">·</span><a class="hover:text-on-surface transition-colors" data-path="terms-and-privacy" href="#">Terms of Academics</a><a class="hover:text-on-surface transition-colors" data-path="terms-and-privacy" href="#">Colophon &amp; Privacy</a><a class="hover:text-on-surface transition-colors" data-path="terms-and-privacy" href="#">Certification Criteria</a></div><div class="flex items-center gap-space-xs font-label-caps text-label-caps uppercase text-secondary"><span class="w-2 h-2 rounded-full bg-secondary-container"></span><span>Volume IV · Folio 894</span></div></div></div></footer></body></html>

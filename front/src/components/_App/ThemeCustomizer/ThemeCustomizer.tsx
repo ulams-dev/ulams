@@ -1,75 +1,36 @@
 import { ThemeCustomizer as Wrapper } from "@ulams/components/styleguide/ThemeCustomizer";
 import { useLocalTheme } from "@ulams/components/styleguide/useLocalTheme";
 import defaultTheme from "@ulams/components/theme/contrast";
+import type { getTenantTheme } from "@ulams/components/theme";
 import { useEffect, useState } from "react";
-import styled, { DefaultTheme } from "styled-components";
+import styles from "./ThemeCustomizer.module.css";
 import { useTranslation } from "react-i18next";
 
-const StyledDiv = styled.div`
-  > button {
-    appearance: none;
-    border: none;
-    padding: 0;
-    background: 0;
-    position: fixed;
-    top: 5px;
-    right: 5px;
-    z-index: 1049;
-    width: 24px;
-    height: 24px;
-    color: ${({ theme }) =>
-      theme.mode === "dark" ? theme.gray5 : theme.gray1};
-    > svg {
-      width: 100%;
-      height: auto;
-      transition: transform 0.5s ease-out;
+type TenantTheme = NonNullable<ReturnType<typeof getTenantTheme>>;
 
-      path {
-        stroke: ${({ theme }) =>
-          theme.mode === "dark" ? theme.gray5 : theme.gray1};
-      }
-
-      circle {
-        stroke: ${({ theme }) =>
-          theme.mode === "dark" ? theme.gray5 : theme.gray1};
-      }
-    }
-    &:hover {
-      &:after {
-        top: 5px;
-        position: absolute;
-        content: "customize";
-        right: 30px;
-        font-size: 12px;
-      }
-      > svg {
-        transform: scale(1.1);
-      }
-    }
-  }
-  > div {
-    z-index: 9999;
-  }
-`;
-
-export const ThemeCustomizer = (theme: Record<string, DefaultTheme>) => {
+/**
+ * `theme` is the tenant preset from settings. When it is set, the preset is
+ * stored as the active theme and the customizer button is not rendered.
+ */
+export const ThemeCustomizer = (theme: { theme?: TenantTheme }) => {
   const [, setTheme] = useLocalTheme({
     ...defaultTheme,
     theme: "contrastTheme",
   });
 
+  const tenantTheme = theme.theme;
   useEffect(() => {
-    if (theme.theme) {
-      setTheme(theme.theme);
+    if (tenantTheme) {
+      setTheme(tenantTheme);
     }
-  }, [theme, setTheme]);
+  }, [tenantTheme, setTheme]);
 
   const { t } = useTranslation();
 
   const [hidden, setHidden] = useState(true);
 
   return (
-    <StyledDiv>
+    <div className={styles.root}>
       {!theme.theme && (
         <>
           <button
@@ -101,7 +62,7 @@ export const ThemeCustomizer = (theme: Record<string, DefaultTheme>) => {
           />
         </>
       )}
-    </StyledDiv>
+    </div>
   );
 };
 

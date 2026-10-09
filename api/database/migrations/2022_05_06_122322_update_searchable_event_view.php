@@ -4,7 +4,7 @@ use App\Models\StationaryEvent;
 use App\Models\Webinar;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\MySqlConnection;
-use Staudenmeir\LaravelMigrationViews\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class UpdateSearchableEventView extends Migration
 {
@@ -15,7 +15,7 @@ class UpdateSearchableEventView extends Migration
      */
     public function up()
     {
-        Schema::dropViewIfExists('searchable_events');
+        DB::statement('DROP VIEW IF EXISTS searchable_events');
 
         $stationaryEventClass = StationaryEvent::class;
         $webinarClass = Webinar::class;
@@ -42,7 +42,7 @@ class UpdateSearchableEventView extends Migration
                 FROM stationary_events
                 ORDER BY created_at desc";
 
-        Schema::createView('searchable_events', $query);
+        DB::statement('CREATE VIEW searchable_events AS ' . $query);
     }
 
     /**
@@ -52,7 +52,7 @@ class UpdateSearchableEventView extends Migration
      */
     public function down()
     {
-        Schema::dropViewIfExists('searchable_events');
+        DB::statement('DROP VIEW IF EXISTS searchable_events');
 
         $stationaryEventClass = StationaryEvent::class;
         $webinarClass = Webinar::class;
@@ -79,6 +79,6 @@ class UpdateSearchableEventView extends Migration
                 FROM stationary_events
                 ORDER BY created_at desc";
 
-        Schema::createView('searchable_events', $query);
+        DB::statement('CREATE VIEW searchable_events AS ' . $query);
     }
 }

@@ -1,0 +1,513 @@
+---
+import Icon from "./Icon.astro";
+import { formatLabel, formatMinutes, toRoman } from "../lib/format.ts";
+
+interface Topic {
+  title: string;
+  format?: string;
+  minutes?: number;
+  preview?: boolean;
+  href?: string;
+  status?: "open" | "done" | "current" | "locked";
+}
+interface Lesson {
+  title: string;
+  kicker?: string;
+  summary?: string;
+  minutes?: number;
+  formats?: string[];
+  topics?: Topic[];
+  href?: string;
+}
+interface Props {
+  variant?: "folio" | "timeline" | "missions";
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  lessons: Lesson[];
+  showTopics?: boolean;
+  totalLabel?: string;
+  cta?: { label: string; href: string };
+}
+const { variant = "folio", id = "syllabus", eyebrow, title, intro, lessons, showTopics = true, totalLabel, cta } = Astro.props;
+const numberOf = (lesson: Lesson, i: number) => {
+  if (variant === "folio") return lesson.kicker && /^[IVXLC]+$/.test(lesson.kicker) ? lesson.kicker : toRoman(i + 1);
+  if (variant === "timeline") return `MOD ${String(i).padStart(2, "0")}`;
+  return `${i + 1}`;
+};
+const hasPreview = (lesson: Lesson) => (lesson.topics ?? []).some((t) => t.preview);
+---
+
+<section class={`u-section u-syllabus u-syllabus--${variant}`} id={id} aria-labelledby={`${id}-title`}>
+  <div class="u-container">
+    <div class={`u-section-head ${variant === "missions" ? "u-section-head--center" : ""} u-syllabus__head`} data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+      {intro && <p class="u-lead">{intro}</p>}
+      {totalLabel && <p class="u-syllabus__total">{totalLabel}</p>}
+    </div>
+
+    {
+      variant === "folio" && (
+        <ol class="u-folio" role="list">
+          {lessons.map((lesson, i) => (
+            <li class="u-folio__row" data-reveal style={`--reveal-i:${i % 4}`}>
+              <span class="u-folio__num" aria-hidden="true">
+                {numberOf(lesson, i)}
+              </span>
+              <div class="u-folio__main">
+                <h3 class="u-folio__title">
+                  {lesson.href ? <a href={lesson.href}>{lesson.title}</a> : lesson.title}
+                </h3>
+                {lesson.summary && <p class="u-folio__summary">{lesson.summary}</p>}
+                {showTopics && (lesson.topics ?? []).length > 0 && (
+                  <ul class="u-folio__topics" role="list">
+                    {(lesson.topics ?? []).map((topic) => (
+                      <li>
+                        <a href={topic.href ?? lesson.href ?? "#"} data-status={topic.status ?? "open"}>
+                          {topic.format && <Icon name={topic.format} />}
+                          <span>{topic.title}</span>
+                          {topic.format && <span class="u-visually-hidden">({formatLabel(topic.format)})</span>}
+                          {topic.preview && <span class="u-folio__free">Free</span>}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div class="u-folio__meta">
+                {lesson.minutes ? <span class="u-folio__time">{formatMinutes(lesson.minutes)}</span> : null}
+                <span class="u-folio__count">{(lesson.topics ?? []).length} topics</span>
+                {hasPreview(lesson) && <span class="u-tag u-folio__open">Free preview</span>}
+              </div>
+            </li>
+          ))}
+        </ol>
+      )
+    }
+
+    {
+      variant === "timeline" && (
+        <ol class="u-timeline" role="list">
+          {lessons.map((lesson, i) => (
+            <li class="u-timeline__card u-card u-card--hover" data-reveal style={`--reveal-i:${i}`}>
+              <div class="u-timeline__top">
+                <span>{numberOf(lesson, i)}</span>
+                {lesson.minutes ? <span>{formatMinutes(lesson.minutes)}</span> : null}
+              </div>
+              <h3>{lesson.href ? <a href={lesson.href}>{lesson.title}</a> : lesson.title}</h3>
+              {lesson.summary && <p class="u-timeline__summary">{lesson.summary}</p>}
+              {showTopics && (
+                <ul class="u-timeline__topics" role="list">
+                  {(lesson.topics ?? []).map((topic) => (
+                    <li>
+                      <a href={topic.href ?? lesson.href ?? "#"}>
+                        {topic.format && <Icon name={topic.format} />}
+                        <span>{topic.title}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <p class="u-timeline__formats">
+                {(lesson.formats ?? []).map((f) => (
+                  <span class="u-tag">{formatLabel(f)}</span>
+                ))}
+              </p>
+            </li>
+          ))}
+        </ol>
+      )
+    }
+
+    {
+      variant === "missions" && (
+        <ol class="u-missions" role="list">
+          {lessons.map((lesson, i) => (
+            <li class="u-mission u-card u-card--hover" data-reveal style={`--reveal-i:${i % 3}`} data-free={hasPreview(lesson) ? "true" : undefined}>
+              <div class="u-mission__top">
+                <span class="u-mission__badge" aria-hidden="true">
+                  {numberOf(lesson, i)}
+                </span>
+                <span class="u-mission__label">
+                  {lesson.kicker ?? `Mission ${i + 1}`}
+                  {lesson.minutes ? ` · ${formatMinutes(lesson.minutes)}` : ""}
+                </span>
+                {hasPreview(lesson) && <span class="u-mission__free">Free</span>}
+              </div>
+              <h3>{lesson.title}</h3>
+              {lesson.summary && <p>{lesson.summary}</p>}
+              {showTopics && (
+                <ul class="u-mission__topics" role="list">
+                  {(lesson.topics ?? []).map((topic) => (
+                    <li>
+                      {topic.format && <Icon name={topic.format} />}
+                      <span>{topic.title}</span>
+                      {topic.format && <span class="u-mission__fmt">{formatLabel(topic.format)}</span>}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {lesson.href && (
+                <a class={`u-btn ${hasPreview(lesson) ? "" : "u-btn--ghost"} u-mission__go`} href={lesson.href}>
+                  {hasPreview(lesson) ? "Launch mission" : "Open mission"}
+                  <Icon name="rocket" />
+                </a>
+              )}
+            </li>
+          ))}
+        </ol>
+      )
+    }
+
+    {
+      cta && (
+        <p class="u-syllabus__cta" data-reveal>
+          <a class="u-btn" href={cta.href}>
+            {cta.label}
+            <Icon name="arrow" />
+          </a>
+        </p>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .u-syllabus__total {
+    font-size: 0.875rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-syllabus__cta {
+    margin-top: 40px;
+  }
+  .u-syllabus--missions .u-syllabus__cta {
+    text-align: center;
+  }
+
+  /* folio */
+  .u-folio {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--ulams-color-text);
+  }
+  .u-folio__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr) 160px;
+    gap: 24px;
+    padding: 30px 12px;
+    border-bottom: 1px solid var(--ulams-color-border);
+    transition: background-color 0.4s var(--ulams-ease);
+  }
+  .u-folio__row:hover {
+    background: color-mix(in srgb, var(--ulams-color-card-bg) 70%, transparent);
+  }
+  .u-folio__num {
+    font-family: var(--ulams-font-family);
+    font-size: 2.6rem;
+    line-height: 1;
+    color: var(--ulams-color-accent, var(--ulams-color-primary));
+    transition: transform 0.5s var(--ulams-ease);
+  }
+  .u-folio__row:hover .u-folio__num {
+    transform: translateX(6px);
+  }
+  .u-folio__main {
+    display: grid;
+    gap: 8px;
+  }
+  .u-folio__title {
+    font-size: clamp(1.35rem, 1.1rem + 0.8vw, 1.75rem);
+  }
+  .u-folio__title a {
+    text-decoration: none;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size 0.5s var(--ulams-ease);
+  }
+  .u-folio__title a:hover {
+    background-size: 100% 1px;
+  }
+  .u-folio__summary {
+    color: var(--ulams-color-muted);
+    max-width: 62ch;
+  }
+  .u-folio__topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.8125rem;
+  }
+  .u-folio__topics a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+    text-decoration: none;
+    color: var(--ulams-color-text);
+  }
+  .u-folio__topics a:hover span:not(.u-folio__free) {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .u-folio__topics :global(.u-icon) {
+    color: var(--ulams-color-primary);
+  }
+  .u-folio__free {
+    padding: 1px 6px;
+    border: 1px solid var(--ulams-color-secondary);
+    border-radius: 2px;
+    color: var(--ulams-color-secondary);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .u-folio__meta {
+    display: grid;
+    justify-items: end;
+    align-content: start;
+    gap: 4px;
+    text-align: right;
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-folio__time {
+    font-family: var(--ulams-font-family);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--ulams-color-text);
+  }
+  .u-folio__open {
+    margin-top: 6px;
+    border-color: var(--ulams-color-secondary);
+    color: var(--ulams-color-secondary);
+  }
+  @media (max-width: 760px) {
+    .u-folio__row {
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 14px;
+      padding: 24px 4px;
+    }
+    .u-folio__num {
+      font-size: 1.8rem;
+    }
+    .u-folio__meta {
+      grid-column: 2;
+      justify-items: start;
+      text-align: left;
+      grid-auto-flow: column;
+      justify-content: start;
+      gap: 14px;
+      align-items: center;
+    }
+  }
+
+  /* timeline */
+  .u-timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 12px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(216px, 1fr);
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+  }
+  .u-timeline__card {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    padding: 18px;
+    scroll-snap-align: start;
+  }
+  .u-timeline__card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--ulams-color-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s var(--ulams-ease);
+  }
+  .u-timeline__card:hover::before {
+    transform: scaleX(1);
+  }
+  .u-timeline__top {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.75rem;
+    color: var(--ulams-color-primary);
+  }
+  .u-timeline__top span + span {
+    color: var(--ulams-color-muted);
+  }
+  .u-timeline__card h3 {
+    font-size: 1.2rem;
+  }
+  .u-timeline__card h3 a {
+    text-decoration: none;
+  }
+  .u-timeline__card h3 a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  .u-timeline__summary {
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-timeline__topics {
+    list-style: none;
+    margin: 0;
+    padding: 10px 0 0;
+    border-top: 1px dashed var(--ulams-color-border);
+    display: grid;
+    gap: 8px;
+    font-size: 0.8125rem;
+  }
+  .u-timeline__topics a {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    text-decoration: none;
+  }
+  .u-timeline__topics a:hover {
+    color: var(--ulams-color-primary);
+  }
+  .u-timeline__topics :global(.u-icon) {
+    color: var(--ulams-color-muted);
+  }
+  .u-timeline__formats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: auto;
+  }
+
+  /* missions */
+  .u-missions {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 22px;
+    counter-reset: mission;
+  }
+  .u-mission {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    padding: 22px;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--ulams-color-card-bg) 100%, #fff 4%), var(--ulams-color-card-bg));
+  }
+  .u-mission[data-free] {
+    border-color: var(--ulams-color-primary);
+    box-shadow: 0 0 0 6px rgb(255 210 63 / 0.08);
+  }
+  .u-mission:nth-child(3n + 2) {
+    transform: translateY(18px);
+  }
+  .u-mission:nth-child(3n + 2):hover {
+    transform: translateY(12px);
+  }
+  .u-mission__top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .u-mission__badge {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #fff3c4, var(--ulams-color-primary) 60%, #c99a00);
+    color: #13153a;
+    font-family: var(--ulams-font-family);
+    font-weight: 700;
+    font-size: 1.2rem;
+    box-shadow: 0 0 0 4px rgb(255 210 63 / 0.15);
+    transition: transform 0.5s var(--ulams-ease-bounce);
+  }
+  .u-mission:hover .u-mission__badge {
+    transform: rotate(-12deg) scale(1.12);
+  }
+  .u-mission:nth-child(3n + 2) .u-mission__badge {
+    background: radial-gradient(circle at 30% 30%, #d6fff0, var(--ulams-color-mint) 60%, #1a8a5c);
+  }
+  .u-mission:nth-child(3n) .u-mission__badge {
+    background: radial-gradient(circle at 30% 30%, #ece8ff, var(--ulams-color-lilac) 60%, #6a5cd6);
+  }
+  .u-mission__label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--ulams-color-muted);
+  }
+  .u-mission__free {
+    margin-left: auto;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--ulams-color-mint);
+    color: #0b3a26;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .u-mission h3 {
+    font-size: 1.45rem;
+  }
+  .u-mission p {
+    color: var(--ulams-color-muted);
+    font-size: 0.95rem;
+  }
+  .u-mission__topics {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+    font-size: 0.9rem;
+  }
+  .u-mission__topics li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.05);
+  }
+  .u-mission__fmt {
+    margin-left: auto;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--ulams-color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .u-mission__go {
+    margin-top: 6px;
+    justify-self: stretch;
+  }
+  @media (max-width: 700px) {
+    .u-mission:nth-child(3n + 2),
+    .u-mission:nth-child(3n + 2):hover {
+      transform: none;
+    }
+  }
+</style>

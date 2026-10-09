@@ -7,6 +7,7 @@ use Ulams\Courses\Models\Lesson;
 use Ulams\Courses\Models\Topic;
 use Ulams\TopicTypes\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 
 class TopicTypesAnonymousApiTest extends TestCase
 {
@@ -25,9 +26,7 @@ class TopicTypesAnonymousApiTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testReadTopic()
     {
         $this->response = $this->json(
@@ -38,9 +37,7 @@ class TopicTypesAnonymousApiTest extends TestCase
         $this->response->assertStatus(401);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testDeleteTopic()
     {
         $this->response = $this->json(
@@ -51,9 +48,7 @@ class TopicTypesAnonymousApiTest extends TestCase
         $this->response->assertStatus(401);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testUpdateTopic()
     {
         $this->response = $this->json(
@@ -64,9 +59,7 @@ class TopicTypesAnonymousApiTest extends TestCase
         $this->response->assertStatus(401);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testReadTopicTypes()
     {
         $this->response = $this->json(

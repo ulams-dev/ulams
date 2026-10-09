@@ -13,7 +13,7 @@ class FileOrStringRule implements Rule
     private ?string $pathPrefix;
     private string $message;
 
-    public function __construct(array $fileRules, string $pathPrefix = null)
+    public function __construct(array $fileRules, ?string $pathPrefix = null)
     {
         $this->fileRules = $fileRules;
         $this->pathPrefix = $pathPrefix;

@@ -1,23 +1,7 @@
-import styled, { withTheme } from "styled-components";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import type { ExtendableStyledComponent } from "@ulams/components/types/component";
-
-const StyledSvg = styled("svg")`
-  .progress_ring__top {
-    stroke: ${({ theme }) =>
-      getStylesBasedOnTheme(
-        theme.mode,
-        theme.dm__primaryColor,
-        theme.primaryColor,
-        "#F47820"
-      )};
-  }
-
-  .progress_ring__bottom {
-    stroke: ${({ theme }) =>
-      getStylesBasedOnTheme(theme.mode, theme.white, theme.gray4)};
-  }
-`;
+import { cx } from "../../../utils/cx";
+import styles from "./ProgressRing.module.css";
+import { legacyDefault } from "../../../utils/legacy";
 
 interface ProgressRingType extends ExtendableStyledComponent {
   size?: number;
@@ -37,8 +21,8 @@ const ProgressRing: React.FC<ProgressRingType> = ({
   const dash = (percentage * circumference) / 100;
 
   return (
-    <StyledSvg
-      className={`ulams-component progress-ring ${className}`}
+    <svg
+      className={cx(styles.progressRing, "ulams-component", "progress-ring", className)}
       width={size}
       height={size}
       viewBox={viewBox}
@@ -64,8 +48,8 @@ const ProgressRing: React.FC<ProgressRingType> = ({
         strokeLinecap="round"
         style={{ transition: "all 0.5s" }}
       />
-    </StyledSvg>
+    </svg>
   );
 };
 
-export default withTheme(styled(ProgressRing)<ProgressRingType>``);
+export default legacyDefault(ProgressRing);

@@ -1,0 +1,12 @@
+/* Layout props arrive as inline custom properties so consumer classes can still override the real properties. */
+.row,
+.stack {
+  display: flex;
+  justify-content: var(--flex-justify);
+  align-items: var(--flex-align);
+  gap: var(--flex-gap);
+}
+
+.stack {
+  flex-direction: column;
+}

@@ -1,77 +1,41 @@
-import React, { lazy, useContext, useEffect } from "react";
+import React, { lazy, useContext, useEffect, useMemo } from "react";
 
 import Routes from "./components/Routes";
 
-import styled, { createGlobalStyle } from "styled-components";
 import { isMobile } from "react-device-detect";
 import * as Sentry from "@sentry/react";
 import { UlamsContext } from "@ulams/sdk/react";
 import TechnicalMaintenanceScreen from "./components/_App/TechnicalMaintenanceScreen";
-import themes from "@ulams/components/theme";
+import { getTenantTheme } from "@ulams/components/theme";
+import { useIsBareLayout } from "@/components/_App/bareLayout";
 import routeRoutes from "@/components/Routes/routes";
 import { useFirebase } from "@/hooks/useFirebase";
 import { StatusBar } from "@capacitor/status-bar";
 import { isMobilePlatform } from "@/utils/index";
 import "react-loading-skeleton/dist/skeleton.css";
+import "./styles/global.css";
+import styles from "./App.module.css";
 import usePerformanceMetrics from "@/hooks/usePerformanceMetrics";
 
 const Customizer = lazy(
   () => import("./components/_App/ThemeCustomizer/ThemeCustomizer")
 );
 
-const GlobalStyle = createGlobalStyle`
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    -webkit-font-smoothing: antialiased;
-  }
-  #root {
-    height: 100%;  
-    background-color: ${({ theme }) => theme.gray4};
-
-  }
-  #__ybug-launcher {
-    right: 135px !important;
-  }
-  .table-responsive {
-    td,
-    tr,
-    th {
-      border: 1px solid
-        ${({ theme }) => (theme.mode === "dark" ? theme.gray1 : theme.gray3)};
-      padding: 5px;
-    }
-    table {
-      border: 1px solid
-        ${({ theme }) => (theme.mode === "dark" ? theme.gray1 : theme.gray3)};
-      border-collapse: collapse;
-    }
-  }
-  a {
-    text-decoration: none;
-  }
-
-
-`;
-
-const StyledMain = styled.main<{ noPadding?: boolean }>`
-  height: fit-content;
-  background-color: ${({ theme }) =>
-    theme.mode === "dark" ? theme.dm__background : theme.background};
-  padding-top: ${({ noPadding }) =>
-    noPadding ? "0px" : isMobile ? "92px" : "57px"};
-`;
-
-const mapStringToTheme = (theme: string) => {
-  return themes[theme];
-};
-
 const App = () => {
   const { fetchSettings, settings, fetchNotifications, fetchConfig } =
     useContext(UlamsContext);
 
   usePerformanceMetrics();
+  const isBareLayout = useIsBareLayout();
+  // A tenant theme named in settings (e.g. "coffee" / "coffeeTheme") is applied to both the
+  // --ulams-* CSS variables, and hides the theme customizer.
+  // `theme.accent` replaces the preset's primary colour (adjusted to keep AA contrast).
+  const themeKey = settings.value?.theme?.theme;
+  const themeAccent = settings.value?.theme?.accent;
+  const tenantTheme = useMemo(
+    () => getTenantTheme(themeKey, themeAccent),
+    [themeKey, themeAccent]
+  );
 
   useEffect(() => {
     if (isMobilePlatform) {
@@ -89,16 +53,22 @@ const App = () => {
     fetchConfig();
   }, [fetchSettings, fetchNotifications, fetchConfig]);
 
+  const noPadding =
+    isBareLayout ||
+    settings?.value?.global?.technicalMaintenance ||
+    location.href.includes(routeRoutes.onboarding);
+
   return (
     <React.Fragment>
-      <GlobalStyle />
-      <StyledMain
-        noPadding={
-          settings?.value?.global?.technicalMaintenance ||
-          location.href.includes(routeRoutes.onboarding)
-        }
+      <main
+        className={[
+          styles.main,
+          noPadding ? styles.noPadding : isMobile ? styles.mobile : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
       >
-        <Customizer theme={mapStringToTheme(settings.value?.theme?.theme)} />
+        <Customizer theme={tenantTheme} />
         {settings?.value?.global?.technicalMaintenance ? (
           <TechnicalMaintenanceScreen
             text={settings?.value?.global?.technicalMaintenanceText}
@@ -106,7 +76,7 @@ const App = () => {
         ) : (
           <Routes />
         )}
-      </StyledMain>
+      </main>
     </React.Fragment>
   );
 };

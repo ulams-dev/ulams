@@ -1,24 +1,9 @@
 import { Certificate } from "@ulams/sdk/types";
 import React from "react";
-import styled, { withTheme } from "styled-components";
-
-const StyledCerificateCard = styled.div`
-  background-color: ${({ theme }) => theme.white};
-  border-radius: ${({ theme }) => theme.buttonRadius}px;
-  padding: 15px;
-  .title-wrapper {
-    margin-bottom: 49px;
-  }
-  .title-wrapper,
-  .date-wrapper {
-    &__uptitle {
-      margin-bottom: 6px;
-    }
-  }
-`;
+import styles from "./CertificateCard.module.css";
 
 type Props = {
-  certificate: Certificate;
+  certificate?: Certificate;
   uptitle: React.ReactNode;
   title: React.ReactNode;
   dateUptitle: React.ReactNode;
@@ -34,7 +19,7 @@ export const CertificateCard: React.FC<Props> = ({
   actions,
 }) => {
   return (
-    <StyledCerificateCard className="certificate-card">
+    <div className={`${styles.root} certificate-card`}>
       <div className="title-wrapper">
         <div className="title-wrapper__uptitle">{uptitle}</div>
         {title}
@@ -44,10 +29,8 @@ export const CertificateCard: React.FC<Props> = ({
         {date}
       </div>
       {actions}
-    </StyledCerificateCard>
+    </div>
   );
 };
 
-const NewCertificateCard = styled(CertificateCard)<Props>``;
-
-export default withTheme(NewCertificateCard);
+export default CertificateCard;

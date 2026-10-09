@@ -1,5 +1,4 @@
 import * as React from "react";
-import styled, { withTheme } from "styled-components";
 import ReactPlayer, { ReactPlayerProps } from "react-player";
 import { Dropdown, RatioBox, Text } from "../../..";
 import format from "date-fns/format";
@@ -8,6 +7,7 @@ import { findDOMNode } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { t } from "i18next";
+import styles from "./AudioVideoPlayer.module.css";
 
 interface StyledAudioVideoPlayerProps {
   mobile?: boolean;
@@ -68,208 +68,6 @@ export interface AudioVideoPlayerProps
   ratio?: number;
   onTopicEnd?: () => void;
 }
-
-const StyledAudioVideoPlayer = styled("div")<AudioVideoPlayerProps>`
-  position: relative;
-  background: ${(props) =>
-    props.audio &&
-    props.light &&
-    `url(${props.light}) no-repeat center / cover`};
-
-  ${(props) =>
-    !props.audio &&
-    `
-  &:hover {
-    .video-player-controls {
-      opacity: 1;
-    }
-  }`};
-
-  .react-player__preview {
-    &:before {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      content: "";
-    }
-
-    > svg {
-      position: relative;
-    }
-  }
-
-  .video-player-overlay {
-    position: absolute;
-    padding: 20px;
-    bottom: ${(props) => (props.state?.controls ? "120px" : "20px")};
-    right: ${(props) => (props.state?.controls ? "0" : "")};
-    top: ${(props) => (props.state?.controls ? "0" : "")};
-    display: flex;
-    align-items: flex-end;
-    left: 0;
-    background-color: ${(props) =>
-      props.state?.controls ? "rgba(0, 0, 0, 0.5)" : "transparent"};
-    transition: ${(props) => (props.state?.ready ? "opacity 0.3s" : "none")};
-    opacity: ${(props) => (props.state?.playing ? (props.audio ? 1 : 0) : 1)};
-
-    * {
-      color: ${({ theme }) => theme.white};
-    }
-
-    h3 {
-      margin-bottom: 10px;
-      margin-top: 10px;
-    }
-  }
-
-  .video-player-header {
-    display: flex;
-    align-items: center;
-
-    .video-player-badge {
-      margin-right: 10px;
-    }
-  }
-
-  .video-player-footer {
-    display: flex;
-
-    > p:first-child {
-      margin-right: 35px;
-    }
-  }
-
-  .video-player-breadcrumbs {
-    display: inline-flex;
-
-    a {
-      position: relative;
-      margin-right: 36px;
-
-      &:not(:last-child):before {
-        position: absolute;
-        right: -24px;
-
-        content: ">";
-      }
-    }
-  }
-
-  .video-player-error {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
-`;
-
-const StyledVideoControls = styled("div")<AudioVideoPlayerProps>`
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 120px;
-  width: 100%;
-  padding: 20px;
-  display: flex;
-  opacity: ${(props) => (props.state?.playing ? (props.audio ? 1 : 0) : 1)};
-  justify-content: end;
-  flex-direction: column;
-  background-color: rgba(0, 0, 0, 0.5);
-  box-sizing: border-box;
-  transition: opacity 0.3s ease-in-out;
-
-  input[type="range"] {
-    appearance: none;
-    height: 3px;
-    background: grey;
-    border-radius: 3px;
-    background-image: ${({ theme }) =>
-      `linear-gradient(${theme.primaryColor}, ${theme.primaryColor})`};
-    background-repeat: no-repeat;
-
-    &::-webkit-slider-thumb {
-      appearance: none;
-      height: 14px;
-      width: 14px;
-      border-radius: 50%;
-      background: ${({ theme }) => theme.white};
-      cursor: pointer;
-      box-shadow: 0 0 2px 0 #555;
-    }
-
-    &::-webkit-slider-runnable-track {
-      appearance: none;
-      box-shadow: none;
-      border: none;
-      background: transparent;
-    }
-
-    &.input-seek {
-      width: 100%;
-    }
-
-    &.input-volume {
-      margin-right: 10px;
-      width: 105px;
-    }
-  }
-
-  button {
-    appearance: none;
-    background-color: transparent;
-    border: none;
-    transition: opacity 0.2s ease-in-out;
-    cursor: pointer;
-
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-
-  .controls-group {
-    margin-top: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    .controls-left,
-    .controls-right {
-      display: flex;
-      align-items: center;
-    }
-
-    .control-button {
-      button {
-        display: flex;
-        align-items: center;
-      }
-    }
-
-    .control-button-volume {
-      margin-left: 70px;
-      display: flex;
-      align-items: center;
-    }
-  }
-
-  .control-duration {
-    color: ${({ theme }) => theme.white};
-  }
-
-  .dropdown-playback-rate {
-    &:not(.is-open) {
-      color: ${({ theme }) => theme.white};
-
-      * {
-        background: transparent;
-        color: ${({ theme }) => theme.white};
-      }
-    }
-  }
-`;
 
 const IconPlayCircle = () => {
   return (
@@ -579,6 +377,7 @@ const AudioVideoPlayerControls: React.FC<AudioVideoPlayerControlsProps> = (
     onToggle,
     onVolume,
     onFullscreen,
+    audio,
   } = props;
 
   const getBackgroundSize = (value: number, max: number) => {
@@ -607,7 +406,10 @@ const AudioVideoPlayerControls: React.FC<AudioVideoPlayerControlsProps> = (
   };
 
   return (
-    <StyledVideoControls {...props} className={"video-player-controls"}>
+    <div
+      className={`${styles.controls} video-player-controls`}
+      data-hidden={state.playing && !audio ? "true" : undefined}
+    >
       <div>
         <input
           aria-label={t<string>("VideoPlayer.Progress")}
@@ -754,7 +556,7 @@ const AudioVideoPlayerControls: React.FC<AudioVideoPlayerControlsProps> = (
           </div>
         </div>
       </div>
-    </StyledVideoControls>
+    </div>
   );
 };
 
@@ -799,12 +601,18 @@ export const AudioVideoPlayer: React.FC<AudioVideoPlayerProps> = (props) => {
   }, []);
 
   return (
-    <StyledAudioVideoPlayer
-      className={`ulams-component ${className}`}
-      state={audioVideoState}
+    <div
+      className={`${styles.root} ${audio ? "" : styles.video} ulams-component ${className}`}
       ref={refWrapper}
-      audio={audio}
-      light={light}
+      data-audio={audio ? "true" : undefined}
+      data-controls={audioVideoState.controls ? "true" : undefined}
+      data-ready={audioVideoState.ready ? "true" : undefined}
+      data-playing={audioVideoState.playing ? "true" : undefined}
+      style={
+        audio && light
+          ? { background: `url(${light}) no-repeat center / cover` }
+          : undefined
+      }
     >
       <RatioBox ratio={ratio}>
         <ReactPlayer
@@ -915,8 +723,8 @@ export const AudioVideoPlayer: React.FC<AudioVideoPlayerProps> = (props) => {
           <Text size="16">{t<string>("VideoPlayer.Error")}</Text>
         </div>
       )}
-    </StyledAudioVideoPlayer>
+    </div>
   );
 };
 
-export default withTheme(styled(AudioVideoPlayer)<AudioVideoPlayerProps>``);
+export default AudioVideoPlayer;

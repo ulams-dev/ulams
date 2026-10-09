@@ -1,30 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Gallery, Item } from "react-photoswipe-gallery";
-import styled, { withTheme, createGlobalStyle } from "styled-components";
 import { API } from "@ulams/sdk";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
-import { SharedLightboxStyle } from "../../../utils/utils";
+import "../../../utils/photoswipe.css";
+import styles from "./ImagePlayer.module.css";
 import { ResponsiveImage } from "../../organisms/ResponsiveImage/ResponsiveImage";
-
-const StyledImagePlayer = styled("div")`
-  > div {
-    cursor: pointer;
-
-    img {
-      width: 100%;
-      transition: transform 0.5s ease-out;
-    }
-    &:hover {
-      img {
-        transform: scale(1.02);
-      }
-    }
-  }
-`;
-
-const LightBoxOverwrite = createGlobalStyle`
-${SharedLightboxStyle}
-`;
 
 interface ImagePlayerProps extends ExtendableStyledComponent {
   topic: API.TopicImage;
@@ -54,8 +34,7 @@ export const ImagePlayer: React.FC<ImagePlayerProps> = ({
           maxZoomLevel: 3,
         }}
       >
-        <LightBoxOverwrite />
-        <StyledImagePlayer className={`ulams-component ${className}`}>
+        <div className={`${styles.root} ulams-component ${className}`}>
           <Item
             original={imgSrc}
             width={topic.topicable.width}
@@ -72,10 +51,10 @@ export const ImagePlayer: React.FC<ImagePlayerProps> = ({
               />
             )}
           </Item>
-        </StyledImagePlayer>
+        </div>
       </Gallery>
     </>
   );
 };
 
-export default withTheme(styled(ImagePlayer)<ImagePlayerProps>``);
+export default ImagePlayer;

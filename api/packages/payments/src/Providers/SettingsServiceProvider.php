@@ -19,6 +19,7 @@ class SettingsServiceProvider extends ServiceProvider
             AdministrableConfig::registerConfig('ulams_payments.drivers.stripe.enabled', ['required', 'boolean']);
             AdministrableConfig::registerConfig('ulams_payments.drivers.stripe.secret_key', ['required', 'string'], false);
             AdministrableConfig::registerConfig('ulams_payments.drivers.stripe.publishable_key', ['required', 'string'], true);
+            AdministrableConfig::registerConfig('ulams_payments.drivers.stripe.webhook_secret', ['nullable', 'string'], false);
 
             AdministrableConfig::registerConfig('ulams_payments.drivers.przelewy24.enabled', ['required', 'boolean']);
             AdministrableConfig::registerConfig('ulams_payments.drivers.przelewy24.live', ['required', 'boolean'], false);

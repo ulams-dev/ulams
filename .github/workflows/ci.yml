@@ -1,0 +1,298 @@
+name: CI
+
+# One workflow for the whole monorepo. Path filters live in the `changes` job (not in `on.paths`),
+# so skipped jobs still report a status and `ci-ok` can be the single required check.
+# Nothing here publishes: no image pushes, no Pages deploys, no Sentry releases.
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "phase-*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  # PHPUnit shards: one line per matrix shard, `<shard>=<testsuite>,<testsuite>,...`.
+  # Every <testsuite> in api/phpunit.xml must appear exactly once (checked in each shard).
+  # Grouped by package area and balanced on local run times (~100-130 s of tests per shard).
+  PHPUNIT_SHARDS: |
+    learning=courses,course-access,courses-import-export,scorm,cmi5,h5p,lrs,bookmarks_notes,video
+    tasks-topics=tasks,topic-types,topic-type-project,categories,tags,stationary-events
+    gift-reports=topic-type-gift,reports,dictionaries
+    commerce=cart,vouchers,payments,invoices,consultations,consultation-access,webinar,assign-without-account
+    platform=Integrations,auth,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,tracker
+    content=templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
+  # Known failures on a CI-style prepared database, identical on Laravel 9 to 13
+  # (docs/plans/phase-0.md, B.11): excluded from the blocking run, re-run non-blocking.
+  # Remove an entry once the test is fixed.
+  #   Integrations (2), auth (3), bulk-notifications (3), core (6): depend on rows left by other tests
+  #   consultations (1): timing-flaky on both framework versions
+  PHPUNIT_QUARANTINE: >-
+    EventApiTest::testEventsList\b|EventApiTest::testEventsListOrderBy\b|UserApiTest::testUsersList\b|UserApiTest::testSearchUsersGetSpecificFieldsWithRelations\b|UserApiTest::testSearchUsersGetSpecificFieldsWithAdditionalFields\b|SendMulticastBulkNotificationApiTest::testSendMulticastBulkNotification\b|BulkNotificationServiceTest::testSendMulticastNotificationViaChannel\b|BulkNotificationServiceTest::testSendMulticastNotificationViaChannelFilterSections\b|BaseControllerTest::testSendResponseForResourcePaginator\b|BaseRepositoryTest::testPaginate\b|BaseRepositoryTest::testAll\b|BaseRepositoryTest::testAllPaginated\b|BaseRepositoryTest::testSearchByRoles\b|BaseRepositoryTest::testCount\b|ConsultationChangeTermTest::testChangeTermForOneUser\b
+
+jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      js: ${{ steps.filter.outputs.js }}
+      php: ${{ steps.api.outputs.php == 'true' || steps.filter.outputs.ci == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            js:
+              - "admin/**"
+              - "front/**"
+              - "api/h5p/**"
+              - "api/pdf/**"
+              - "package.json"
+              - "yarn.lock"
+              - "turbo.json"
+              - ".nvmrc"
+              - ".github/**"
+            ci:
+              - ".github/**"
+      # Separate call: `every` is needed for the exclusions and applies to the whole call.
+      - uses: dorny/paths-filter@v3
+        id: api
+        with:
+          predicate-quantifier: every
+          filters: |
+            php:
+              - "api/**"
+              - "!api/h5p/**"
+              - "!api/pdf/**"
+
+  js:
+    name: JS (admin, front, api-h5p, api-pdf)
+    needs: changes
+    if: needs.changes.outputs.js == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      HUSKY: "0"
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+      TURBO_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: corepack yarn install --frozen-lockfile
+
+      # Fails on any GPL-licensed or styled-components import in front/ and the shared
+      # component library (front/src/lib, also compiled into admin). Runs before the slow tasks.
+      - name: Licence guard
+        run: |
+          corepack yarn workspace front lint:gpl
+          corepack yarn workspace front lint:styled
+
+      # admin's `lint` script runs prettier with --write, which never fails; check formatting here.
+      - name: Prettier check (admin)
+        working-directory: admin
+        # Resolve prettier the way Node does from admin/, so a hoisted copy from another workspace can't win
+        run: |
+          PRETTIER=$(node -p "require.resolve('prettier/bin-prettier.js', { paths: [process.cwd()] })")
+          node "$PRETTIER" --version
+          node "$PRETTIER" --check "**/**.{js,jsx,tsx,ts,less,md,json}" --end-of-line auto
+
+      - name: Restore Turborepo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo/cache
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
+      - name: Typecheck, lint, build, test
+        run: >-
+          corepack yarn turbo run typecheck lint build test
+          --filter=admin --filter=front --filter=api-h5p --filter=api-pdf
+          --concurrency=2
+
+  php:
+    name: PHPUnit (${{ matrix.shard }})
+    needs: changes
+    if: needs.changes.outputs.php == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [learning, tasks-topics, gift-reports, commerce, platform, content]
+    defaults:
+      run:
+        working-directory: api
+    services:
+      # Same major as api/docker-compose.yml; move together when Postgres is upgraded.
+      postgres:
+        image: postgres:12
+        env:
+          # Matches the <env> defaults in api/phpunit.xml (DB default/default/secret on 127.0.0.1).
+          POSTGRES_DB: default
+          POSTGRES_USER: default
+          POSTGRES_PASSWORD: secret
+          TZ: Europe/Warsaw
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U default -d default"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      valkey:
+        image: valkey/valkey:8-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "valkey-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      # Real environment variables win over .env (Laravel) and over non-forced <env> in phpunit.xml.
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5432"
+      DB_DATABASE: default
+      DB_USERNAME: default
+      DB_PASSWORD: secret
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ""
+      XDEBUG_MODE: "off"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve shard suites
+        id: shard
+        run: |
+          suites=$(printf '%s\n' "$PHPUNIT_SHARDS" | sed -n "s/^${{ matrix.shard }}=//p")
+          if [ -z "$suites" ]; then
+            echo "::error::Shard '${{ matrix.shard }}' is not defined in PHPUNIT_SHARDS"
+            exit 1
+          fi
+          echo "suites=$suites" >> "$GITHUB_OUTPUT"
+
+      - name: Check every testsuite is in exactly one shard
+        run: |
+          grep -o '<testsuite name="[^"]*"' phpunit.xml | sed 's/.*name="//;s/"$//' | sort > /tmp/declared
+          printf '%s\n' "$PHPUNIT_SHARDS" | sed -n 's/^[^=]*=//p' | tr ',' '\n' | sed '/^$/d' | sort > /tmp/sharded
+          if ! diff -u /tmp/declared /tmp/sharded; then
+            echo "::error::PHPUNIT_SHARDS in .github/workflows/ci.yml does not match the testsuites in api/phpunit.xml (- missing from shards, + unknown or duplicated)"
+            exit 1
+          fi
+
+      # ffprobe reads the length of audio/video topics (topic-types, php-ffmpeg) and ffmpeg
+      # transcodes in packages/video; both are in our PHP image (api/docker/php/install.sh).
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends ffmpeg
+          ffprobe -version | head -1
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          # Same set as api/docker/php/install.sh (pdo_mysql left out: CI is Postgres-only).
+          extensions: apcu, bcmath, exif, gd, intl, pcntl, pdo_pgsql, redis, zip
+          ini-values: memory_limit=2G
+          coverage: none
+          tools: composer:v2
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('api/composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-
+
+      - name: Copy CI environment
+        run: cp docker/envs/.env.ci.postgres .env
+
+      # From the lock: Composer 2.10's advisory blocking only applies to update/require.
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Prepare database and Passport
+        run: |
+          php artisan migrate:fresh --force
+          php artisan db:seed --force --class="Database\Seeders\PermissionsSeeder"
+          php artisan passport:keys --force
+          php artisan passport:client --personal --no-interaction
+          mkdir -p vendor/orchestra/testbench-core/laravel/storage
+          cp storage/oauth-private.key storage/oauth-public.key vendor/orchestra/testbench-core/laravel/storage/
+          php artisan migrate --force --path=packages/courses/tests/Database/Migrations
+
+      # Replaces the old swagger.yml build (without its GitHub Pages deploy): catches annotation errors.
+      - name: OpenAPI generation
+        if: matrix.shard == 'platform'
+        run: php artisan l5-swagger:generate
+
+      - name: PHPUnit
+        run: >-
+          ./vendor/bin/phpunit
+          --testsuite "${{ steps.shard.outputs.suites }}"
+          --filter "/^(?!.*(?:${PHPUNIT_QUARANTINE}))/"
+          --log-junit "junit-${{ matrix.shard }}.xml"
+
+      # PHPUnit exits 1 on "No tests executed!": skip shards without quarantined tests.
+      - name: Quarantined tests (non-blocking)
+        if: success() || failure()
+        continue-on-error: true
+        run: |
+          if ! ./vendor/bin/phpunit --testsuite "${{ steps.shard.outputs.suites }}" \
+              --filter "/(?:${PHPUNIT_QUARANTINE})/" --list-tests | grep -q '^ - '; then
+            echo "No quarantined tests in this shard."
+            exit 0
+          fi
+          ./vendor/bin/phpunit \
+            --testsuite "${{ steps.shard.outputs.suites }}" \
+            --filter "/(?:${PHPUNIT_QUARANTINE})/"
+
+      - name: Upload JUnit report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpunit-${{ matrix.shard }}
+          path: |
+            api/junit-${{ matrix.shard }}.xml
+            api/storage/logs/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  ci-ok:
+    name: CI OK
+    needs: [changes, js, php]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Fail if any job failed or was cancelled
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} php=${{ needs.php.result }}"
+          exit 1
+      - run: echo "All required jobs passed or were skipped by the path filters."

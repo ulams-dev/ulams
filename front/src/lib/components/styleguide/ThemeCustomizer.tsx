@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo } from "react";
-import { DefaultTheme } from "styled-components";
+import type { ThemeTokens } from "../theme/types";
 import themes from "../theme";
 import { useControls, folder, Leva } from "leva";
 import { useLocalTheme } from "./useLocalTheme";
 
-const allowedKeys: (keyof DefaultTheme & string)[] = [
+const allowedKeys: (keyof ThemeTokens & string)[] = [
   "font",
   "theme",
   "mode",
@@ -53,9 +53,9 @@ const allowedKeys: (keyof DefaultTheme & string)[] = [
   "black",
 ];
 
-const filterInputData = (input: DefaultTheme) => {
+const filterInputData = (input: ThemeTokens) => {
   return allowedKeys.reduce(
-    (acc: Partial<DefaultTheme>, curr: string & keyof DefaultTheme) => {
+    (acc: Partial<ThemeTokens>, curr: string & keyof ThemeTokens) => {
       return typeof input[curr] !== "undefined"
         ? { ...acc, [curr]: input[curr] }
         : acc;
@@ -65,10 +65,10 @@ const filterInputData = (input: DefaultTheme) => {
 };
 
 export const ThemeCustomizer: React.FC<{
-  onUpdate: (theme: DefaultTheme) => void;
+  onUpdate: (theme: ThemeTokens) => void;
   hasAll?: boolean;
   hidden?: boolean;
-  initialTheme?: DefaultTheme;
+  initialTheme?: ThemeTokens;
 }> = ({ onUpdate, hasAll = false, hidden = false, initialTheme }) => {
   const [localTheme] = useLocalTheme(initialTheme);
 
@@ -204,7 +204,7 @@ export const ThemeCustomizer: React.FC<{
   }));
 
   useEffect(() => {
-    onUpdate(props as DefaultTheme);
+    onUpdate(props as ThemeTokens);
   }, [props]);
 
   return <Leva hidden={hidden} />;

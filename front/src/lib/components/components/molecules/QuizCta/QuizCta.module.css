@@ -1,0 +1,73 @@
+.root {
+  padding: 55px 45px;
+  background-color: var(--ulams-color-accent-bg);
+  border-radius: var(--ulams-radius-card);
+}
+
+.root.mobile {
+  padding: 22px;
+}
+
+.root *:not(button) {
+  color: var(--ulams-gray-1);
+}
+
+.root.lightContrast *:not(button) {
+  color: var(--ulams-color-white);
+}
+
+.root :global(.quiz-cta-icon) {
+  margin-right: 23px;
+}
+
+.root :global(.quiz-cta-icon) svg {
+  width: 48px;
+  height: 48px;
+}
+
+.root :global(.quiz-cta-icon) svg path {
+  fill: currentColor;
+}
+
+.root :global(.quiz-cta-btn-group) {
+  margin: 0 -8px;
+  width: calc(100% + 16px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.root :global(.quiz-cta-btn-group) > * {
+  margin: 8px;
+}
+
+.root :global(.quiz-cta-btn-group) a {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.root :global(.quiz-cta-btn-group) a::after {
+  background-color: currentColor;
+}
+
+.root :global(.quiz-cta-children) p:not(:last-child) {
+  margin-bottom: 14px;
+}
+
+.root.mobile :global(.quiz-cta-icon) {
+  margin-right: 12px;
+}
+
+.root.mobile :global(.quiz-cta-icon) svg {
+  width: 31px;
+  height: 31px;
+}
+
+.root.mobile :global(.quiz-cta-btn-group) {
+  margin: 21px -8px 0;
+}
+
+.root.mobile :global(.quiz-cta-children) p:not(:last-child) {
+  margin-bottom: 5px;
+}

@@ -2,6 +2,8 @@ networks:
   ulams:
     name: ulams
     driver: bridge
+volumes:
+  h5p_libraries:
 services:
   caddy:
     image: caddy
@@ -62,10 +64,106 @@ services:
       - LARAVEL_AWS_URL="http://storage.localhost/ulams"
       - LARAVEL_AWS_USE_PATH_STYLE_ENDPOINT=true
       - LARAVEL_INITIAL_USER_PASSWORD=secret
+      # H5P service (api/h5p), server-to-server; same token as H5P_INTERNAL_TOKEN of the h5p service
+      - LARAVEL_H5P_SERVICE_URL=http://h5p:8080
+      - LARAVEL_H5P_INTERNAL_TOKEN=ulams-h5p-internal-dev-token
+      # PDF renderer (api/pdf), server-to-server; same token as PDF_INTERNAL_TOKEN of the pdf service
+      - LARAVEL_PDF_SERVICE_URL=http://pdf:3000
+      - LARAVEL_PDF_INTERNAL_TOKEN=ulams-pdf-internal-dev-token
     volumes:
       - ./:/var/www/html
     networks:
       - ulams
+
+  # H5P player/editor/content API (Lumi h5p-nodejs-library), see h5p/README.md.
+  # Browsers reach it same-origin at http://<tenant>.localhost/h5p/* (and
+  # http://api.localhost/h5p/* for the platform) through Caddy. Multi-tenant:
+  # the host selects the Laravel env file (.env.<host>, platform .env) and the
+  # Passport key (storage/<host_with_underscores>/oauth-public.key), read from
+  # the read-only mount of this directory and reloaded when they change.
+  # The image is built from the repository root (yarn workspace).
+  h5p:
+    build:
+      context: ..
+      dockerfile: api/h5p/Dockerfile
+    image: ulams/h5p:dev
+    restart: unless-stopped
+    # Group of the storage files (www-data, gid 82 in the php image): the Passport public keys are
+    # 0640 because Passport 13 rejects world-readable key files.
+    group_add:
+      - "82"
+    networks:
+      - ulams
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    environment:
+      PORT: 8080
+      LOG_LEVEL: info
+      PUBLIC_URL: http://api.localhost
+      TENANCY_MODE: env-files
+      ENV_DIR: /laravel
+      KEYS_DIR: /laravel/storage
+      PLATFORM_HOSTS: api.localhost
+      # Each tenant also allows http(s)://<slug>.app.localhost and http(s)://<slug>.admin.localhost
+      # (TENANT_FRONT_ORIGIN_PATTERNS) for CORS and as frame-ancestors of the embed pages.
+      # admin (:8000) and front (:3000) run on the host.
+      CORS_ORIGINS: http://localhost:3000,http://localhost:8000,http://api.localhost
+      # DB_* / S3_* below are only used with TENANCY_MODE=single; in env-files mode each tenant's
+      # DB_* and AWS_* come from its env file (S3 credentials fall back to S3_KEY / S3_SECRET).
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: default
+      DB_USERNAME: default
+      DB_PASSWORD: secret
+      DB_SCHEMA: h5p
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ulams
+      REDIS_DB: 0
+      REDIS_KEY_PREFIX: "h5p:"
+      S3_ENDPOINT: http://minio:9000
+      S3_REGION: us-east-1
+      S3_KEY: admin
+      S3_SECRET: minio_secretpassword
+      S3_BUCKET: ulams
+      S3_PREFIX: h5p
+      S3_FORCE_PATH_STYLE: "true"
+      JWT_PUBLIC_KEY_PATH: /laravel/storage/oauth-public.key
+      # Profile calls go to Caddy with Host = the tenant's API host.
+      LARAVEL_API_URL: http://caddy
+      LARAVEL_API_HOST: api.localhost
+      # Fallback when a tenant env file has no H5P_INTERNAL_TOKEN.
+      H5P_INTERNAL_TOKEN: ulams-h5p-internal-dev-token
+      H5P_MAX_FILE_SIZE_MB: 64
+      H5P_MAX_TOTAL_SIZE_MB: 256
+    volumes:
+      - h5p_libraries:/data/libraries
+      # Laravel env files (.env, .env.<host>) and storage/**/oauth-public.key, read-only.
+      - ./:/laravel:ro
+
+  # PDF renderer (pdfme, MIT) for certificates and PDF templates, see pdf/README.md.
+  # Internal only: Laravel calls POST /render with X-Internal-Token; browsers never
+  # reach it (the admin designer loads fonts through /api/pdfs/fonts).
+  # The image is built from the repository root (yarn workspace).
+  pdf:
+    build:
+      context: ..
+      dockerfile: api/pdf/Dockerfile
+    image: ulams/pdf:dev
+    restart: unless-stopped
+    networks:
+      - ulams
+    environment:
+      PORT: 3000
+      LOG_LEVEL: info
+      PDF_INTERNAL_TOKEN: ulams-pdf-internal-dev-token
+      PDF_MAX_BODY_SIZE: 5mb
+      PDF_MAX_INPUTS: 100
+      PDF_RENDER_TIMEOUT_MS: 20000
+      PDF_MAX_CONCURRENCY: 2
+      PDF_MAX_QUEUE: 16
 
   # ulams_queue_cron:
   #   command: "./init.sh"
@@ -143,16 +241,12 @@ services:
       #- 1025:1025 # smtp server
       - 8025:8025 # web ui
 
+  # Valkey (BSD-3-Clause) is a drop-in, Redis-protocol compatible server; Redis 8 is RSALv2/SSPLv1/AGPLv3.
   redis:
     networks:
       - ulams
-    image: "redis"
-    command: "redis-server --requirepass ${REDIS_PASSWORD:-ulams}"
-
-  reportbro:
-    networks:
-      - ulams
-    image: escolalms/reportbro-server:latest
+    image: "valkey/valkey:8-alpine"
+    command: "valkey-server --requirepass ${REDIS_PASSWORD:-ulams}"
 
   mjml:
     image: danihodovic/mjml-server
@@ -172,7 +266,8 @@ services:
       - ./docker/minio_storage:/bitnami/minio/data
       - ./docker/conf/minio:/docker-entrypoint-initdb.d
     environment:
-      MINIO_DEFAULT_BUCKETS: "${MINIO_DEFAULT_BUCKETS:-ulams}"
+      # "<bucket>:download" makes the platform bucket publicly readable (files are served by URL)
+      MINIO_DEFAULT_BUCKETS: "${MINIO_DEFAULT_BUCKETS:-ulams:download}"
       MINIO_ROOT_USER: "${MINIO_ROOT_USER:-admin}"
       MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD:-minio_secretpassword}"
       # AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}:admin

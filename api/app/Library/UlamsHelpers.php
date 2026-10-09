@@ -2,6 +2,7 @@
 namespace App\Library;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class UlamsHelpers
 {
@@ -27,9 +28,9 @@ class UlamsHelpers
      */
     public static function slugify($name, $table = null, $column = null)
     {
-        $slug = str_slug($name, '-');
+        $slug = Str::slug($name, '-');
         if ($table) {
-            $results = DB::select(DB::raw("SELECT count(*) as total from $table where $column LIKE '$slug%'"));
+            $results = DB::select("SELECT count(*) as total from $table where $column LIKE ?", [$slug . '%']);
             $slug = ($results['0']->total > 0) ? "{$slug}-{$results['0']->total}" : $slug;
         }
         return $slug;

@@ -51,8 +51,22 @@ export default defineConfig(({ mode }) => {
       plugins: () => [viteTsconfigPaths()],
     },
     server: {
-      open: true,
+      open: !process.env.CI && process.env.BROWSER !== "none",
       port: 3000,
+      // Tenant demos are served as <slug>.app.localhost through Caddy (Host header passed on).
+      // Extra production-like hosts can be added with VITE_DEV_ALLOWED_HOSTS=".example.test,foo.local".
+      allowedHosts: [
+        ".app.localhost",
+        "localhost",
+        ...(process.env.VITE_DEV_ALLOWED_HOSTS || "")
+          .split(",")
+          .map((h) => h.trim())
+          .filter(Boolean),
+      ],
+      // Caddy (Docker) reaches the dev server via host.docker.internal, which Docker Desktop forwards
+      // to the host's IPv4 loopback; "localhost" may bind to ::1 only and give 502 through Caddy.
+      // Set VITE_DEV_HOST=0.0.0.0 if your Docker setup cannot reach the host loopback interface.
+      host: process.env.VITE_DEV_HOST || "127.0.0.1",
     },
     define: {},
   };

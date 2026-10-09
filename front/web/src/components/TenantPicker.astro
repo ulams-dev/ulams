@@ -1,0 +1,36 @@
+---
+import { DEMO_TENANTS } from "../lib/theme.ts";
+const port = Astro.url.port ? `:${Astro.url.port}` : "";
+---
+
+<main id="main" class="u-container u-picker">
+  <h1>ulams demos</h1>
+  <p>Pick a demo academy. Each one is a separate tenant with its own theme, course and data.</p>
+  <ul role="list">
+    {
+      DEMO_TENANTS.map((t) => (
+        <li>
+          <a class="u-btn" href={`${Astro.url.protocol}//${t.slug}.app.localhost${port}/`}>
+            {t.name}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</main>
+
+<style>
+  .u-picker {
+    display: grid;
+    gap: 20px;
+    padding-block: 96px;
+    max-width: 720px;
+  }
+  .u-picker ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+</style>

@@ -1,27 +1,7 @@
 import React from "react";
 import Drawer from "rc-drawer";
 import "rc-drawer/assets/index.css";
-import styled, { createGlobalStyle } from "styled-components";
-
-const StyledMobileDrawer = styled.div`
-  .close {
-    all: unset;
-    cursor: pointer;
-  }
-`;
-
-const GlobalDrawer = createGlobalStyle<{ $height?: string }>`
-.drawer-handle {
-  display: none;
-}
-  .mobile-drawer-drawer-wrapper { 
-     height: ${({ $height }) => $height || "55dvh"};
-     min-height: 105px;
-      width: 100%;
-      bottom: 0;
-      border-radius: 10px 10px 0px 0px; 
-  }
-`;
+import styles from "./MobileDrawer.module.css";
 
 type Props = {
   children: React.ReactNode;
@@ -37,10 +17,14 @@ const MobileDrawer: React.FC<Props> = ({
   height,
 }) => {
   return (
-    <StyledMobileDrawer>
-      <GlobalDrawer $height={height} />
+    <div className={styles.mobileDrawer}>
       <Drawer
-        open={isOpen} // @ts-ignore
+        open={isOpen}
+        rootStyle={
+          height
+            ? ({ "--mobile-drawer-height": height } as React.CSSProperties)
+            : undefined
+        } // @ts-ignore
         classNames={{
           wrapper: "mobile-drawer-drawer-wrapper",
           content: "drawer-content",
@@ -50,7 +34,7 @@ const MobileDrawer: React.FC<Props> = ({
       >
         {children}
       </Drawer>
-    </StyledMobileDrawer>
+    </div>
   );
 };
 export default MobileDrawer;

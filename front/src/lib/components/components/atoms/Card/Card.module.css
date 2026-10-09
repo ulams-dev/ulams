@@ -1,0 +1,83 @@
+.card {
+  width: 100%;
+  display: block;
+  position: relative;
+  padding-top: 0;
+}
+
+.inline {
+  width: auto;
+  display: inline-block;
+}
+
+.wingsLarge {
+  padding-top: 73px;
+}
+
+.wingsSmall {
+  padding-top: 22px;
+}
+
+/* `.content` stays a global class name: other components style it. */
+.card > :global(.content) {
+  --card-color: var(--ulams-gray-1);
+  position: relative;
+  padding: 15px 20px;
+  z-index: 1;
+  border-radius: var(--ulams-radius-card);
+  background: var(--ulams-color-card-bg);
+  color: var(--card-color);
+}
+
+:global([data-mode="dark"]) .card > :global(.content) {
+  --card-color: var(--ulams-color-white);
+}
+
+.inline > :global(.content) {
+  padding: 10px 15px;
+}
+
+.card > :global(.content)::before,
+.card > :global(.content)::after {
+  background: transparent;
+  content: "";
+  position: absolute;
+  right: 0;
+  width: calc(100% - var(--ulams-radius-card) / 1.5);
+  opacity: 0.4;
+  border-radius: var(--ulams-radius-card);
+  z-index: -1;
+}
+
+.wingsLarge > :global(.content)::before,
+.wingsLarge > :global(.content)::after,
+.wingsSmall > :global(.content)::before,
+.wingsSmall > :global(.content)::after,
+.wingsHidden > :global(.content)::before,
+.wingsHidden > :global(.content)::after {
+  background: var(--ulams-color-card-bg);
+}
+
+.wingsLarge > :global(.content)::before {
+  height: calc(100% + 33px);
+  top: -33px;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 33px);
+}
+
+.wingsSmall > :global(.content)::before {
+  height: calc(100% + 10px);
+  top: -10px;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 10px);
+}
+
+.wingsLarge > :global(.content)::after {
+  height: calc(100% + 72px);
+  top: -72px;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 72px);
+}
+
+.wingsSmall > :global(.content)::after {
+  height: calc(100% + 22px);
+  top: -22px;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 22px);
+}

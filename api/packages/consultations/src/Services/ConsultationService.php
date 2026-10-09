@@ -8,12 +8,10 @@ use DateTime;
 use Ulams\Consultations\Dto\ChangeTermConsultationDto;
 use Ulams\Consultations\Dto\ConsultationUserTermDto;
 use Ulams\Consultations\Dto\ConsultationDto;
-use Ulams\Consultations\Dto\ConsultationSaveScreenDto;
 use Ulams\Consultations\Dto\FilterConsultationTermsListDto;
 use Ulams\Consultations\Dto\FilterListDto;
 use Ulams\Consultations\Dto\FilterScheduleForTutorDto;
 use Ulams\Consultations\Dto\FinishTermDto;
-use Ulams\Consultations\Dto\GenerateSignedScreenUrlsDto;
 use Ulams\Consultations\Enum\ConstantEnum;
 use Ulams\Consultations\Enum\ConsultationStatusEnum;
 use Ulams\Consultations\Enum\ConsultationTermStatusEnum;
@@ -48,12 +46,8 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ConsultationService implements ConsultationServiceContract
@@ -75,7 +69,7 @@ class ConsultationService implements ConsultationServiceContract
         $this->consultationUserTermRepository = $consultationUserTermRepository;
     }
 
-    public function getConsultationsList(array $search = [], bool $onlyActive = false, OrderDto $orderDto = null): Builder
+    public function getConsultationsList(array $search = [], bool $onlyActive = false, ?OrderDto $orderDto = null): Builder
     {
         if ($onlyActive) {
             $now = now()->format('Y-m-d');
@@ -592,58 +586,6 @@ class ConsultationService implements ConsultationServiceContract
         ];
 
         return $this->consultationUserTermRepository->allQueryBuilder(FilterConsultationTermsListDto::prepareFilters($data));
-    }
-
-    public function saveScreen(ConsultationSaveScreenDto $dto): void
-    {
-        $userId = $dto->getUserId()
-            ?? User::query()
-                ->select(['id'])
-                ->where('email', '=', $dto->getUserEmail())
-                ->firstOrFail()
-                ->getKey();
-
-        $term = Carbon::make($dto->getExecutedAt());
-        // consultation_id/term_start_timestamp/user_id/timestamp.jpg
-        $folder = ConstantEnum::DIRECTORY . "/{$dto->getConsultationId()}/{$term->getTimestamp()}/{$userId}";
-
-        foreach ($dto->getFiles() as $file) {
-            $screen = $file['file'];
-            $extension = $screen instanceof UploadedFile ? $screen->getClientOriginalExtension() : Str::between($screen, 'data:image/', ';base64');
-            Storage::putFileAs($folder, $screen, Carbon::make($file['timestamp'])->getTimestamp() . '.' . $extension);
-        }
-    }
-
-    public function generateSignedScreenUrls(GenerateSignedScreenUrlsDto $dto): array
-    {
-        if (config('filesystems.default') !== 's3') {
-            abort(400, 'The file driver does not support this method.');
-        }
-
-        $term = Carbon::make($dto->getExecutedAt());
-        $directory = sprintf(
-            '%s/%s/%s/%s/',
-            ConstantEnum::DIRECTORY,
-            $dto->getConsultationId(),
-            $term->getTimestamp(),
-            $dto->getUserId()
-        );
-
-        return array_map(function ($file) use ($directory) {
-            $filename = $file['filename'];
-
-            if (config('cache.default') === 'redis') {
-                $key = 'signed_urls:' . md5($directory . $filename);
-                Redis::command('SETEX', [$key, ConstantEnum::REDIS_IMAGES_TTL, $directory . $filename]);
-                Redis::command('HSET', [ConstantEnum::REDIS_IMAGES_KEY, $key, 1]);
-                Redis::command('EXPIRE', [ConstantEnum::REDIS_IMAGES_KEY, ConstantEnum::REDIS_IMAGES_TTL]);
-            }
-
-            return array_merge(
-                ['filename' => $filename],
-                Storage::temporaryUploadUrl($directory . $filename, now()->addMinutes(5))
-            );
-        }, $dto->getFiles());
     }
 
     public function finishTerm(int $consultationTermId, FinishTermDto $dto): bool

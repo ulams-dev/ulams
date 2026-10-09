@@ -6,7 +6,7 @@ import { qi } from '../db/pool';
 import { H5PServices } from '../h5p/createH5P';
 import { hasPermission, isAuthenticated } from '../auth/users';
 import PgContentStorage from '../storage/PgContentStorage';
-import { asyncHandler, HttpError, ok, requireAny, userOf } from '../http/respond';
+import { asyncHandler, HttpError, ok, requireAny, requireSystem, userOf } from '../http/respond';
 import { importPackage } from '../h5p/importPackage';
 
 export interface ContentListItem {
@@ -163,6 +163,19 @@ export function contentsRouter({ pool, schema, h5p }: ContentsRouterOptions): Ro
                 'Content uploaded',
                 201
             );
+        })
+    );
+
+    // ---- maintenance (internal) ------------------------------------------------
+    // Deletes the files of contents that have no row any more. The router is
+    // bound to the request's tenant (database schema, bucket and prefix), so a
+    // tenant can only sweep its own storage. Internal token only.
+    router.post(
+        '/orphans/delete',
+        requireSystem(),
+        asyncHandler(async (_req, res) => {
+            const result = await contentStorage.deleteOrphanedFiles();
+            ok(res, result, 'Orphaned content files deleted');
         })
     );
 

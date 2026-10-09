@@ -1,0 +1,172 @@
+.footer {
+  padding: 100px 0 50px 15px;
+  z-index: 50;
+  position: relative;
+  background: var(--ulams-color-white);
+}
+
+:global([data-mode="dark"]) .footer {
+  background: var(--ulams-color-black);
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background-color: var(--ulams-gray-3);
+}
+
+.linksRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  column-gap: 58px;
+  row-gap: 0;
+}
+
+.linksRow a {
+  opacity: 0.65;
+}
+
+.linksRow:nth-of-type(1) {
+  margin-bottom: 16px;
+}
+
+.linksRow.pages {
+  display: block;
+  text-align: left;
+  padding: 1em 0;
+}
+
+.linksRow.pages a > p {
+  margin-bottom: 0.5em;
+}
+
+.chunkPages {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+
+.logotypesText {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.logotypesText h1,
+.logotypesText h2,
+.logotypesText h3,
+.logotypesText h4,
+.logotypesText h5,
+.logotypesText h6 {
+  font-size: 16px !important;
+}
+
+.logotypesText * {
+  font-size: 13px !important;
+  opacity: 0.85;
+}
+
+.logotypes {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  justify-content: center;
+}
+
+.singleLink {
+  text-decoration: none;
+  transition: all 0.25s;
+  opacity: 1;
+}
+
+.singleLink:hover {
+  opacity: 0.65;
+}
+
+.copyrights {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 42px;
+  gap: 11px;
+}
+
+.copyrights p {
+  opacity: 0.65;
+  margin: 0;
+}
+
+.footer :global(.go-top) {
+  position: absolute;
+  margin: 0;
+  right: 18px;
+  bottom: 18px;
+}
+
+.euBanner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: -1rem 0;
+}
+
+.euBannerImg {
+  display: block;
+  width: 100%;
+  max-width: 70%;
+  margin: 0 auto;
+  height: auto;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+@media (max-width: 1024px) {
+  .euBannerImg {
+    width: 100%;
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 767px) {
+  .euBannerImg {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    object-fit: contain;
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+}
+
+/* Native/mobile device layout (react-device-detect isMobile) */
+.mobile {
+  padding: 50px 0 18px;
+}
+
+.mobile .linksRow {
+  flex-direction: column;
+  column-gap: 0;
+  row-gap: 20px;
+}
+
+.mobile .linksRow.pages {
+  text-align: center;
+}
+
+.mobile .chunkPages {
+  flex-direction: column;
+  gap: 22px;
+}
+
+.mobile.footer :global(.go-top) {
+  position: static;
+  margin: 20px auto;
+}

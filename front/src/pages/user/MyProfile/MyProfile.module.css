@@ -1,0 +1,17 @@
+.content {
+  background-color: var(--ulams-gray-4);
+}
+:global([data-mode="dark"]) .content {
+  background-color: var(--ulams-color-bg);
+}
+.content :global(.courses-wrapper) {
+  padding-top: 100px;
+  min-height: calc(100vh - 500px);
+  height: fit-content;
+}
+@media (max-width: 991px) {
+  .content :global(.courses-wrapper) {
+    margin-top: 0;
+    min-height: fit-content;
+  }
+}

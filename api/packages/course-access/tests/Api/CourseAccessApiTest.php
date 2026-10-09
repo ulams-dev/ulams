@@ -277,6 +277,25 @@ class CourseAccessApiTest extends TestCase
             ]]);
     }
 
+    public function testGetMyActiveCourseIdsDoesNotIncludeOtherUsersCourses(): void
+    {
+        $student = $this->makeStudent();
+        $otherStudent = $this->makeStudent();
+        $own = Course::factory()->create();
+        $othersActive = Course::factory()->create();
+        $othersOpenEnded = Course::factory()->create();
+
+        $own->users()->sync([$student->getKey() => ['end_date' => Carbon::now()->addDay()]]);
+        $othersActive->users()->sync([$otherStudent->getKey() => ['end_date' => Carbon::now()->addDay()]]);
+        $othersOpenEnded->users()->sync([$otherStudent->getKey()]);
+
+        $ids = $this->actingAs($student, 'api')->getJson('api/courses/my?active=1')
+            ->assertOk()
+            ->json('data.ids');
+
+        $this->assertEquals([$own->getKey()], $ids);
+    }
+
     private function assertUserCanReadProgram(User $user, Course $course): void
     {
         $this->actingAs($user, 'api')->getJson('/api/courses/' . $course->id . '/program')

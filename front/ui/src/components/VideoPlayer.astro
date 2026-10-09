@@ -1,0 +1,141 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  src: string;
+  poster?: string;
+  width?: number;
+  height?: number;
+  title: string;
+  chapters?: Array<{ time: number; title: string }>;
+}
+const { src, poster, width = 1280, height = 720, title, chapters = [] } = Astro.props;
+const clock = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+---
+
+<ulams-video class="u-video" src={src}>
+  <div class="u-video__stage" style={`aspect-ratio:${width}/${height}`}>
+    <video preload="none" playsinline poster={poster} width={width} height={height} aria-label={title}></video>
+    <button class="u-video__play" type="button" data-play aria-label={`Play: ${title}`}>
+      <span class="u-video__btn"><Icon name="play" /></span>
+      <span class="u-video__spinner" aria-hidden="true"></span>
+    </button>
+  </div>
+  {
+    chapters.length > 0 && (
+      <ol class="u-video__chapters" aria-label="Chapters">
+        {chapters.map((c) => (
+          <li>
+            <button type="button" data-seek={c.time}>
+              <time>{clock(c.time)}</time>
+              {c.title}
+            </button>
+          </li>
+        ))}
+      </ol>
+    )
+  }
+</ulams-video>
+
+<script>
+  import "../elements/video.ts";
+</script>
+
+<style>
+  .u-video {
+    display: grid;
+    gap: 14px;
+  }
+  .u-video__stage {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--ulams-radius-card);
+    background: #000;
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.5);
+  }
+  .u-video__stage video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .u-video__play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: linear-gradient(180deg, transparent 50%, rgb(0 0 0 / 0.35));
+    cursor: pointer;
+    color: #fff;
+  }
+  .u-video__btn {
+    display: grid;
+    place-items: center;
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: var(--ulams-color-primary);
+    color: var(--ulams-color-on-primary);
+    box-shadow: 0 0 0 10px color-mix(in srgb, var(--ulams-color-primary) 25%, transparent);
+    transition: transform 0.4s var(--ulams-ease-bounce), box-shadow 0.4s;
+  }
+  .u-video__btn :global(.u-icon) {
+    width: 32px;
+    height: 32px;
+    margin-left: 4px;
+  }
+  .u-video__play:hover .u-video__btn {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 18px color-mix(in srgb, var(--ulams-color-primary) 18%, transparent);
+  }
+  .u-video__spinner {
+    display: none;
+    position: absolute;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #fff;
+    animation: u-spin360 0.9s linear infinite;
+  }
+  @keyframes u-spin360 {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .u-video[state="loading"] .u-video__spinner {
+    display: block;
+  }
+  .u-video[state="playing"] .u-video__play {
+    display: none;
+  }
+  .u-video__chapters {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .u-video__chapters button {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 12px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-button);
+    background: var(--ulams-color-card-bg);
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+  .u-video__chapters button:hover,
+  .u-video__chapters button[aria-current] {
+    border-color: var(--ulams-color-primary);
+  }
+  .u-video__chapters time {
+    font-family: var(--ulams-font-mono);
+    color: var(--ulams-color-primary-on-light);
+  }
+</style>

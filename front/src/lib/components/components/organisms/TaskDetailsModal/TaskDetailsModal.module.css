@@ -1,0 +1,159 @@
+.wrapper {
+  max-width: 100%;
+  max-height: calc(100vh - 60px);
+  overflow: auto;
+}
+
+/* Personal / incoming content */
+
+.form {
+  display: flex;
+  height: calc(100% - 50px);
+}
+
+.contentRow {
+  height: calc(100% - 50px);
+}
+
+.buttonsContainer {
+  width: 100%;
+}
+
+.leftCol {
+  flex-basis: 72.5%;
+  justify-content: space-between;
+  gap: 16px;
+  height: 100%;
+  border-right: 1px solid var(--ulams-color-primary);
+  padding: 24px;
+}
+
+.rightCol {
+  flex-basis: 27.5%;
+  padding: 24px;
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 12px;
+}
+
+.sectionHeader > * {
+  width: 100%;
+}
+
+.notesContainer {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.notesContainer > div {
+  width: 100%;
+  max-height: 380px;
+  overflow: auto;
+}
+
+.notesContainer p {
+  line-height: normal;
+}
+
+.note {
+  display: flex;
+  min-width: 100%;
+  margin: 4px 0px;
+}
+
+.note > div:first-child {
+  display: flex;
+  width: 100%;
+  background-color: var(--ulams-gray-3);
+}
+
+.note > div:first-child:hover {
+  color: var(--ulams-color-accent-bg);
+}
+
+.note > div:first-child button {
+  width: auto;
+  transition: 0.3s;
+  padding: 6px;
+  margin: 4px 6px;
+  margin-left: 0px;
+}
+
+/* The former rule used the dark background key in both modes (gray1 in the presets). */
+.note > div:first-child button:hover {
+  color: var(--ulams-gray-1);
+}
+
+:global([data-mode="dark"]) .note > div:first-child button:hover {
+  color: var(--ulams-color-bg);
+}
+
+.note > div:first-child button picture svg {
+  color: var(--ulams-color-accent-bg);
+}
+
+.note > div:first-child textarea {
+  min-height: 100%;
+  min-width: 75%;
+  border: none;
+  color: var(--ulams-gray-1);
+  background-color: var(--ulams-gray-3);
+  cursor: pointer;
+}
+
+:global([data-mode="dark"]) .note > div:first-child textarea {
+  color: var(--ulams-color-white);
+}
+
+.note > div:first-child textarea:focus,
+:global([data-mode="dark"]) .note > div:first-child textarea:focus {
+  color: var(--ulams-color-accent-bg);
+  outline: none;
+  cursor: text;
+}
+
+/* Due date pill. The former border used `dm__outlineButtonColor`, which no preset defines,
+   so it never rendered; it is left out to keep the output identical. */
+.dueDate {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 12px;
+  padding: 8px 12px;
+  color: var(--ulams-color-primary);
+}
+
+.title.title {
+  text-decoration: none;
+}
+
+.title.titleCompleted {
+  text-decoration: line-through;
+}
+
+.programmeText.programmeText {
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.programmeText :global(.rc-tree-select-arrow) {
+  display: none;
+}
+
+.programmeText :global(.rc-tree-select-selection-item) {
+  display: block;
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.programmeText :global(.rc-tree-select),
+.programmeText :global(.rc-tree-select-selector) {
+  padding: 0px !important;
+}

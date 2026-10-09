@@ -6,6 +6,7 @@ use Ulams\TopicTypeGift\Dtos\CheckAnswerDto;
 use Ulams\TopicTypeGift\Enum\AnswerKeyEnum;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Ulams\TopicTypeGift\Support\SeededShuffle;
 
 class MultipleChoiceWithMultipleAnswersQuestionStrategy extends QuestionStrategy
 {
@@ -14,7 +15,7 @@ class MultipleChoiceWithMultipleAnswersQuestionStrategy extends QuestionStrategy
         $answers = collect($this->getMappedAnswers())->pluck('value');
 
         if ($this->shouldRandomizeOptions()) {
-            $answers = $answers->shuffle($this->optionsSeedFor('answers'));
+            $answers = SeededShuffle::shuffle($answers, $this->optionsSeedFor('answers'));
         }
 
         return [

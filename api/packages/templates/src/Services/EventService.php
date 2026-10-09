@@ -12,7 +12,7 @@ use Ulams\Templates\Services\Contracts\EventServiceContract;
 
 class EventService implements EventServiceContract
 {
-    public function dispatchEventManuallyForUsers(array $users, Template $template, int $courseId = null, int $productId = null): bool
+    public function dispatchEventManuallyForUsers(array $users, Template $template, ?int $courseId = null, ?int $productId = null): bool
     {
         $channelClass = $template->channel;
         $variableClass = $template->variableClass;

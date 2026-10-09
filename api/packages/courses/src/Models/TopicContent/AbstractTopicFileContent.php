@@ -17,7 +17,9 @@ abstract class AbstractTopicFileContent extends AbstractTopicContent implements 
         return Collection::make($this->rules())
             ->filter(function ($field_rules) {
                 if (is_array($field_rules)) {
-                    return in_array('file', $field_rules) || in_array('image', $field_rules);
+                    // `image` may carry parameters (`image:allow_svg`).
+                    return in_array('file', $field_rules)
+                        || collect($field_rules)->contains(fn ($rule) => is_string($rule) && ($rule === 'image' || str_starts_with($rule, 'image:')));
                 }
 
                 return strpos('file', $field_rules) !== false || strpos('image', $field_rules) !== false;

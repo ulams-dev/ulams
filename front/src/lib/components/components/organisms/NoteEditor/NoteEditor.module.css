@@ -1,0 +1,87 @@
+.colorPicker {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 28px;
+  padding-left: 12px;
+}
+
+.colorPicker :global(.label) {
+  font-size: 12px;
+  margin-right: 20px;
+}
+
+.colorPicker :global(.colors-container) {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  column-gap: 10px;
+}
+
+.colorPicker :global(.colors-container) button {
+  appearance: none;
+  outline: none;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.popup {
+  width: calc(100% - 32px);
+  max-width: 468px;
+  padding: 36px 23px 23px 23px;
+  margin: 0 auto;
+}
+
+.popup :global(.form-title) {
+  text-align: center;
+  color: var(--ulams-color-primary);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.popup :global(.lsm-input) {
+  margin: 30px 0;
+}
+
+.popup :global(.buttons-container) {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 30px;
+}
+
+.popup :global(.buttons-container) button:first-of-type {
+  width: 100%;
+  max-width: 171px;
+  margin-bottom: 23px;
+}
+
+.singleColor {
+  width: 12px;
+  height: 12px;
+  border-radius: 50px;
+  background: var(--note-color);
+  position: relative;
+}
+
+.singleColor::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--ulams-gray-2);
+  width: 15px;
+  height: 15px;
+  border-radius: 50px;
+  display: none;
+}
+
+.singleColor.active::after {
+  display: block;
+}

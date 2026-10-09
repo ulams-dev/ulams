@@ -41,10 +41,9 @@ update-composer-to-git:
 swagger-generate:
 	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan l5-swagger:generate"
 
+# H5P content types and demo content, imported by the H5P service (api/h5p, src/cli/seed.ts)
 h5p-seed:
-	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan db:seed --class=H5PLibrarySeeder"
-	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan db:seed --class=H5PContentSeeder"
-	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan db:seed --class=H5PContentCoursesSeeder"
+	- docker compose exec h5p node dist/cli/seed.js --samples
 
 node-packages:
 # install globally at /usr/bin/mjml
@@ -91,3 +90,35 @@ init: docker-up switch-to-postgres composer-update migrate-fresh-quick
 
 wait:
 	- docker compose exec api bash -c "./wait.sh"
+
+# Demo courses from front/docs/design/experiences.md (database/seeds/DemoCoursesSeeder.php).
+# Re-running keeps existing demo courses; DEMO_REFRESH=1 rebuilds them.
+DEMO_REFRESH ?= 0
+EXPERIENCE ?= $(firstword $(subst ., ,$(DOMAIN)))
+
+# platform tenant (api.localhost): all three courses
+demo-seed:
+	- docker compose exec -e DEMO_EXPERIENCE=all -e DEMO_REFRESH=$(DEMO_REFRESH) api bash -c "XDEBUG_MODE=off php artisan db:seed --class=DemoCoursesSeeder --force"
+
+# one tenant with its own course: make demo-seed-tenant DOMAIN=coffee.localhost EXPERIENCE=coffee
+demo-seed-tenant:
+	- docker compose exec -e DEMO_EXPERIENCE=$(EXPERIENCE) -e DEMO_REFRESH=$(DEMO_REFRESH) api bash -c "XDEBUG_MODE=off php artisan db:seed --class=DemoCoursesSeeder --domain=$(DOMAIN) --force"
+# tenant queue workers (queue.sh) do not serve the video long-job queue yet: process it once
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan queue:work redis-long-job --queue=queue-long-job --stop-when-empty --timeout=600 --domain=$(DOMAIN)"
+
+# the three demo tenants
+demo-seed-tenants:
+	- $(MAKE) demo-seed-tenant DOMAIN=coffee.localhost EXPERIENCE=coffee
+	- $(MAKE) demo-seed-tenant DOMAIN=oncall.localhost EXPERIENCE=oncall
+	- $(MAKE) demo-seed-tenant DOMAIN=nightsky.localhost EXPERIENCE=nightsky
+
+# Demo mode (packages/demo): login without password and an hourly reset, on the three demo
+# tenants only. Writes DEMO_MODE=true to their env files (kept by ulams:tenant:sync-env).
+demo-mode-on:
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create coffee --demo=on"
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create oncall --demo=on"
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:tenant:create nightsky --demo=on"
+
+# reset one demo tenant now (the scheduler does it hourly): make demo-reset DOMAIN=coffee.localhost
+demo-reset:
+	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:demo:reset --force --domain=$(DOMAIN)"

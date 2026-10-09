@@ -14,7 +14,8 @@ class TutorResource extends JsonResource
             'id' => $this->resource->id,
             'first_name' => $this->resource->first_name,
             'last_name' => $this->resource->last_name,
-            'email' => $this->resource->email,
+            // public listings are open to anonymous visitors: e-mail on admin routes only
+            ...($request && $request->is('api/admin/*') ? ['email' => $this->resource->email] : []),
             'path_avatar' => $this->resource->path_avatar,
             'url_avatar' => $this->resource->avatar_url,
             'interests' => TutorInterestResource::collection($this->resource->interests),

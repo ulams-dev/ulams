@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Ulams\Settings\Tests\TestCase;
 use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
 use Ulams\Settings\Database\Seeders\DatabaseSeeder;
+use PHPUnit\Framework\Attributes\Test;
 
 class SettingsAnonymousAdminTest extends TestCase
 {
@@ -19,9 +20,7 @@ class SettingsAnonymousAdminTest extends TestCase
         $this->seed(PermissionTableSeeder::class);
         $this->seed(DatabaseSeeder::class);       
     }
-    /**
-     * @test
-     */
+    #[Test]
     public function test_admin_anonymous_fetch()
     {
 

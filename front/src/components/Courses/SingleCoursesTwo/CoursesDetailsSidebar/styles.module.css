@@ -1,0 +1,45 @@
+.wrapper {
+  width: 100%;
+  left: 0;
+  position: sticky;
+  top: 130px;
+  bottom: unset;
+  z-index: 100;
+}
+
+.wrapper.mobile {
+  position: static;
+  top: unset;
+  bottom: 0;
+}
+
+.courseSidebarHeader p {
+  margin-bottom: 0;
+}
+
+.priceWrapper {
+  margin-bottom: 16px;
+}
+
+.priceWrapper * {
+  font-weight: 700;
+}
+
+.wrapper button {
+  width: 100%;
+}
+
+.iconTextWrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.iconTextWrapper span {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.iconTextWrapper span:first-of-type {
+  font-weight: 400;
+}

@@ -1,0 +1,22 @@
+.root h1 {
+  font-size: 2em;
+}
+.root h2 {
+  font-size: 1.5em;
+}
+.root h3 {
+  font-size: 1.17em;
+}
+.root h4 {
+  font-size: 1em;
+}
+.root h5 {
+  font-size: 0.9em;
+}
+.resourcesContainer {
+  padding: 24px 0;
+  margin-top: 24px;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: var(--ulams-color-primary);
+}

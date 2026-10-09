@@ -28,5 +28,6 @@
   "Due": "Zaległe",
   "Page": "Strona",
   "Order number": "Numer zamówienia",
-  "Country": "Kraj"
+  "Country": "Kraj",
+  ":integer :code and :fraction :fraction_name": ":integer :code i :fraction :fraction_name"
 }

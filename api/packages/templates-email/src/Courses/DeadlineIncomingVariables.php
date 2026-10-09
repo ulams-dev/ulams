@@ -24,7 +24,7 @@ class DeadlineIncomingVariables extends CommonUserAndCourseVariables
         $progress = CourseProgressCollection::make($event->getUser(), $event->getCourse());
         return array_merge(parent::variablesFromEvent($event), [
             self::VAR_COURSE_DEADLINE => Carbon::make($progress->getDeadline())
-                ->setTimezone($event->getUser()->current_timezone)
+                ->setTimezone($event->getUser()->current_timezone ?? config('app.timezone'))
                 ->format('Y-m-d H:i:s')
         ]);
     }

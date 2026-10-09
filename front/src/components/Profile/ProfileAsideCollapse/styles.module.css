@@ -1,0 +1,42 @@
+.collapse {
+  transition: max-height 0.5s ease-in-out;
+  max-height: 5000px;
+}
+
+.collapse.closed {
+  max-height: 1.2em;
+  overflow: hidden;
+  transition: max-height 1s cubic-bezier(0, 1, 0, 1);
+}
+
+.collapse .header {
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: space-between;
+  align-items: start;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.collapse .heading {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: var(--ulams-color-text);
+}
+
+.collapse .icon {
+  color: var(--ulams-color-text);
+  opacity: 0.6;
+  width: 12px;
+  margin-top: 3.5px;
+  transition: rotate 0.2s ease-in-out;
+  rotate: 180deg;
+}
+
+.collapse.closed .icon {
+  rotate: 0;
+}
+
+.collapse .icon:hover svg {
+  opacity: 1;
+}

@@ -4,43 +4,14 @@ import { UlamsContext } from "@ulams/sdk/react";
 import { API } from "@ulams/sdk";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
-import styled from "styled-components";
 import { PdfIcon } from "../../../icons";
 import { useCertificateDownload } from "@/hooks/useDownloadCertificate";
 import { CertificateCard } from "@ulams/components";
 import { Col, Row } from "react-grid-system";
 import ContentLoader from "@/components/_App/ContentLoader";
+import styles from "./styles.module.css";
 
 type CertType = API.Certificate;
-
-const CertificatesList = styled.section`
-  .empty-certificates-message {
-    background: ${({ theme }) =>
-      theme.mode === "dark" ? theme.gray1 : theme.gray5};
-  }
-  .buttons-container {
-    margin-top: 20px;
-    display: flex;
-
-    align-items: center;
-    justify-content: flex-start;
-
-    .download-btn {
-      all: unset;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      color: ${({ theme }) => theme.primaryColor};
-      p {
-        color: ${({ theme }) => theme.primaryColor};
-      }
-    }
-  }
-  .certificate-card {
-    margin-bottom: 24px;
-  }
-`;
 
 const ProfileCertificates: React.FC = () => {
   const { certificates, fetchCertificates } = useContext(UlamsContext);
@@ -54,9 +25,9 @@ const ProfileCertificates: React.FC = () => {
 
   return (
     <>
-      <CertificatesList>
+      <section className={styles.list}>
         {certificates.list?.data.length === 0 && (
-          <Text className="empty-certificates-message">
+          <Text className={styles.emptyMessage}>
             <strong>{t("MyProfilePage.EmptyCertificates")}</strong>
           </Text>
         )}
@@ -86,12 +57,12 @@ const ProfileCertificates: React.FC = () => {
                       </Text>
                     }
                     actions={
-                      <div className="buttons-container">
+                      <div className={styles.buttonsContainer}>
                         {loadingId === cert.id ? (
                           <ContentLoader width="15px" height="15px" />
                         ) : (
                           <button
-                            className="download-btn"
+                            className={styles.downloadBtn}
                             onClick={() =>
                               downloadCertificate(cert.id, cert.title)
                             }
@@ -108,7 +79,7 @@ const ProfileCertificates: React.FC = () => {
                 </Col>
               ))}
         </Row>
-      </CertificatesList>
+      </section>
     </>
   );
 };

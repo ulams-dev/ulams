@@ -1,7 +1,6 @@
 import Layout from "../../../components/_App/Layout";
 import ProfileAside, { NavigationTab } from "@/components/Profile/ProfileAside";
 import ProfileHeader from "@/components/Profile/ProfileHeader";
-import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { ReactNode, useContext, useEffect, useMemo } from "react";
 import { UlamsContext } from "@ulams/sdk/react";
@@ -10,6 +9,7 @@ import Container from "@/components/Common/Container";
 import routeRoutes from "@/components/Routes/routes";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
+import styles from "./styles.module.css";
 
 type Props = {
   children: ReactNode;
@@ -17,26 +17,6 @@ type Props = {
   withTabs?: boolean;
   actions?: ReactNode;
 };
-
-const StyledProfile = styled.section`
-  background-color: ${({ theme }) => theme.gray4};
-  padding-top: 100px;
-  padding-bottom: 100px;
-  min-height: 70vh;
-  .tabs-menu {
-    background: #f8f8f8;
-  }
-  .certificates-container {
-    margin-top: 70px;
-    h2 {
-      margin-left: 40px;
-    }
-  }
-  @media (max-width: 767px) {
-    padding-top: 80px;
-    min-height: auto;
-  }
-`;
 
 const ProfileLayout: React.FC<Props> = ({
   children,
@@ -97,7 +77,7 @@ const ProfileLayout: React.FC<Props> = ({
 
   return (
     <Layout metaTitle={title}>
-      <StyledProfile>
+      <section className={styles.profile}>
         <Container>
           <Row>
             {!isMobile && (
@@ -116,7 +96,7 @@ const ProfileLayout: React.FC<Props> = ({
             </Col>
           </Row>
         </Container>
-      </StyledProfile>
+      </section>
     </Layout>
   );
 };

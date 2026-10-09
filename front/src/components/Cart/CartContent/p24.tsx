@@ -17,7 +17,7 @@ import Container from "@/components/Common/Container";
 import { formatPrice } from "@/utils/index";
 import CartSuccess from "@/components/Cart/CartSuccess";
 import routeRoutes from "@/components/Routes/routes";
-import { CartPageStyled } from "@/components/Cart/CartContent/styles";
+import styles from "@/components/Cart/CartContent/styles.module.css";
 import DisplayCourses from "@/components/Courses/DisplayCoursesSlider";
 import { FormikProps } from "formik";
 import BillingForm from "@/components/Cart/BillingForm";
@@ -66,13 +66,17 @@ const Przelewy24Content = () => {
   return (
     <Layout metaTitle={t("Cart.Cart")}>
       {location.search.includes("?status=success") ? (
-        <CartPageStyled $isMobile={isMobile}>
+        <section
+        className={`${styles.cartPage}${isMobile ? ` ${styles.mobile}` : ""}`}
+      >
           <div className="module-wrapper">
             <CartSuccess />
           </div>
-        </CartPageStyled>
+        </section>
       ) : (
-        <CartPageStyled $isMobile={isMobile}>
+        <section
+        className={`${styles.cartPage}${isMobile ? ` ${styles.mobile}` : ""}`}
+      >
           <Container>
             {!(cart.value?.items.length === 0) ? (
               <Row>
@@ -210,7 +214,7 @@ const Przelewy24Content = () => {
             )}
           </Container>
           {(cart.loading || processing) && <Preloader />}
-        </CartPageStyled>
+        </section>
       )}
     </Layout>
   );

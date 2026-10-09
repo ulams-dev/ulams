@@ -1,0 +1,28 @@
+{
+  "name": "@ulams/sdk",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Framework-free TypeScript client for the ulams API. Runs on Node and in the browser (fetch only).",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types.ts",
+    "./h5p": "./src/h5p.ts",
+    "./tenant": "./src/tenant.ts"
+  },
+  "scripts": {
+    "generate": "openapi-typescript ../../api/storage/api-docs/api-docs.json -o src/generated/openapi.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src tests",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "eslint": "9.39.5",
+    "openapi-typescript": "7.13.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.1",
+    "vitest": "3.2.4"
+  }
+}

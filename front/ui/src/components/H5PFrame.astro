@@ -1,0 +1,72 @@
+---
+/**
+ * H5P content from the tenant's H5P service. The frame URL goes through this site's
+ * /h5p proxy (same origin), see front/web/src/pages/h5p/[...path].ts.
+ */
+interface Props {
+  apiUrl: string;
+  contentId: number;
+  title: string;
+  topicId?: number;
+  courseId?: number;
+}
+const { contentId, title, topicId } = Astro.props;
+const src = `/h5p/embed/play/${encodeURIComponent(String(contentId))}?language=en&hideActions=1`;
+---
+
+<ulams-h5p class="u-h5p" topic-id={topicId}>
+  <div class="u-h5p__loading" aria-hidden="true">
+    <span class="u-skeleton"></span><span class="u-skeleton"></span><span class="u-skeleton"></span>
+  </div>
+  <iframe src={src} title={title} allow="fullscreen" style="height:480px"></iframe>
+</ulams-h5p>
+
+<script>
+  import "../elements/h5p.ts";
+</script>
+
+<style>
+  .u-h5p {
+    position: relative;
+    display: block;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: #fff;
+    overflow: hidden;
+  }
+  .u-h5p iframe {
+    position: relative;
+    width: 100%;
+    border: 0;
+    opacity: 0;
+    transition: opacity 0.4s var(--ulams-ease), height 0.3s var(--ulams-ease);
+  }
+  .u-h5p[state="loaded"] iframe {
+    opacity: 1;
+  }
+  .u-h5p__loading {
+    position: absolute;
+    inset: 24px;
+    display: grid;
+    gap: 14px;
+    align-content: start;
+  }
+  .u-h5p__loading span {
+    height: 28px;
+  }
+  .u-h5p__loading span:first-child {
+    height: 220px;
+  }
+  .u-h5p[state="loaded"] .u-h5p__loading {
+    display: none;
+  }
+  /* no message from the frame (e.g. blocked): show it anyway after a moment */
+  .u-h5p iframe {
+    animation: u-h5p-show 0s 4s forwards;
+  }
+  @keyframes u-h5p-show {
+    to {
+      opacity: 1;
+    }
+  }
+</style>

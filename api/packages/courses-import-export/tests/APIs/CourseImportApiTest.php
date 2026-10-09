@@ -360,7 +360,7 @@ class CourseImportApiTest extends TestCase
             'id' => $topicableH5P->topicable_id,
             'value' => $topicableH5P->topicable->value
         ]);
-        $this->assertDatabaseHas('hh5p_contents', [
+        $this->assertDatabaseHas('h5p.contents', [
             'id' => $topicableH5P->topicable->value
         ]);
         $this->assertDatabaseHas('scorm_sco', [

@@ -21,7 +21,7 @@ variables at runtime.
 | Variable | Theme key (dark mode uses `dm__key`) |
 |---|---|
 | `--ulams-color-primary` | `primaryColor` |
-| `--ulams-color-primary-on-light` | `primaryColor` / `dm__primaryColorOnLight` |
+| `--ulams-color-primary-on-light` | `primaryColor` / `dm__primaryColorOnLight`. Use it for filled primary surfaces with white content (buttons, banners, active tabs): it keeps AA contrast against white in dark presets, where `dm__primaryColor` is a light tint |
 | `--ulams-color-secondary` | `secondaryColor` (falls back to primary) |
 | `--ulams-color-header` | `headerColor` (falls back to text) |
 | `--ulams-color-text` | `textColor` |
@@ -42,13 +42,30 @@ variables at runtime.
 
 `<html>` carries `data-mode="light|dark"` and `data-theme="<preset>"`.
 
+### Optional variables
+
+Every colour variable above has an optional twin, `--ulams-opt-<name>` (for example
+`--ulams-opt-color-input-bg` next to `--ulams-color-input-bg`). It holds the theme key's
+**own** value for the current mode (light: `key`, dark: `dm__key`, with no fallback to
+another key) and is `initial`, i.e. unset, when the theme does not define that key. Use it
+when a component needs a different fallback than the one baked into `--ulams-<name>`:
+
+```css
+/* inputBg when the theme sets it, otherwise gray-5 (not white, the contract fallback) */
+background: var(--ulams-opt-color-input-bg, var(--ulams-gray-5));
+```
+
+`themeToCss()` writes them together with the regular variables (`applyTheme()` keeps a
+single `<style id="ulams-theme">`). `tokens.css` does not define them, so before JS runs the
+per-use fallback applies. `optionalVarName(cssVar)` in `cssVars.ts` gives the name.
+
 ## Converting a styled component
 
 | styled-components | CSS |
 |---|---|
 | `styled.div\`…\`` | `.root { … }` in `Component.module.css`, `className={styles.root}` |
 | `${({theme}) => theme.primaryColor}` | `var(--ulams-color-primary)` |
-| `getStylesBasedOnTheme(theme.mode, theme.dm__x, theme.x, theme.y)` | `var(--ulams-x)`; the dark value is already resolved by the variable. If the dark and light *keys* differ (e.g. dark uses `dm__outlineButtonColor`, light uses `textColor`), write the light rule and add `:global([data-mode="dark"]) .root { … }` |
+| `getStylesBasedOnTheme(theme.mode, theme.dm__x, theme.x, theme.y)` | `var(--ulams-x)`; the dark value is already resolved by the variable. If the dark and light *keys* differ (e.g. dark uses `dm__outlineButtonColor`, light uses `textColor`), write the light rule and add `:global([data-mode="dark"]) .root { … }`. If the fallback key differs from the contract one, use `var(--ulams-opt-x, var(--ulams-y))` (see Optional variables) |
 | `${(p) => p.active && css\`…\`}` | modifier class (`styles.active`) or `data-active` attribute + `.root[data-active="true"]` |
 | numeric/size props (`$width`, `$color`) | inline CSS variable: `style={{ "--w": `${width}px` }}` and `width: var(--w)` |
 | `styled(Component)` | pass `className` through to the wrapped component and style it |

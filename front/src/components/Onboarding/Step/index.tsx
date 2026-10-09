@@ -6,86 +6,10 @@ import {
 import SlideOption from "@/components/Onboarding/Step/slide";
 import ResponsiveImage from "@ulams/components/components/organisms/ResponsiveImage/ResponsiveImage";
 import { Radio, Text, Title } from "@ulams/components";
-import { getStylesBasedOnTheme } from "@ulams/components/utils/utils";
 import { UlamsContext } from "@ulams/sdk/react";
 import { useCallback, useContext } from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
-
-const StyledStep = styled.div`
-  .step-image {
-    z-index: 0;
-  }
-  > h4 {
-    margin-top: 20px;
-  }
-  .options {
-    margin-top: 30px;
-    margin-bottom: 160px;
-    .option {
-      &:not(:last-child) {
-        margin-bottom: 26px;
-        @media (max-width: 768px) {
-          margin-bottom: 7px;
-        }
-      }
-    }
-
-    &.buttons {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: 7px;
-      .option {
-        margin-bottom: 0px;
-      }
-    }
-  }
-`;
-
-const ButtonOption = styled.button<{ $isActive: boolean }>`
-  all: unset;
-  border-radius: 20px;
-  font-size: 14px;
-  font-family: ${({ theme }) => theme.font};
-  color: ${({ theme }) => theme.textColor};
-  border: 1px solid
-    ${({ theme, $isActive }) => ($isActive ? theme.primaryColor : "#E0E0E0")};
-  padding: 11px 17px;
-`;
-
-const StyledHint = styled.div`
-  position: relative;
-  border-radius: ${({ theme }) => theme.cardRadius}px;
-  background-color: ${({ theme }) =>
-    getStylesBasedOnTheme(theme.mode, theme.white, theme.textColor)};
-  margin-bottom: 35px;
-  padding: 11px 55px;
-  z-index: 10;
-  h4,
-  p {
-    color: ${({ theme }) =>
-      getStylesBasedOnTheme(theme.mode, theme.textColor, theme.white)};
-  }
-  &:before {
-    content: "";
-    position: absolute;
-    width: 11vmin;
-    height: 6vmin;
-    box-shadow: rgb(51, 51, 51) 4vmin -0.5vmin;
-    border-radius: 50%;
-    top: -1vmin;
-    transform: translate(-140%, -3vmin) rotate(165deg);
-    left: 20vmin;
-    z-index: -1;
-    @media (max-width: 768px) {
-      left: 25vmin;
-      width: 12vmin;
-      height: 9vmin;
-      box-shadow: rgb(51, 51, 51) 5vmin 0.5vmin;
-    }
-  }
-`;
+import styles from "./Step.module.css";
 
 type Props = {
   step: OnboardingStep;
@@ -122,14 +46,15 @@ const Step: React.FC<Props> = ({ step, onAnswer, answers }) => {
 
         case OnboardingStepType.options:
           return (
-            <ButtonOption
-              $isActive={
+            <button
+              className={styles.buttonOption}
+              data-active={
                 (answers && answers[step.data] === option.value) || false
               }
               onClick={() => onAnswer(option.value)}
             >
               {option.label[i18n.language]}
-            </ButtonOption>
+            </button>
           );
 
         default:
@@ -147,22 +72,24 @@ const Step: React.FC<Props> = ({ step, onAnswer, answers }) => {
   );
 
   return (
-    <StyledStep>
+    <div className={styles.step}>
       {step.image && getImage() && (
         <div className="step-image">
           <ResponsiveImage path={getImage()} srcSizes={[500, 750, 1000]} />
         </div>
       )}
       {step.hint && (
-        <StyledHint>
+        <div className={styles.hint}>
           <Title level={4}>{step.hint.title[i18n.language]}</Title>
           <Text size="13">{step.hint.text[i18n.language]}</Text>
-        </StyledHint>
+        </div>
       )}
       <Title level={4}>{step.question[i18n.language]}</Title>
       <div
-        className={`options ${
-          step.type === OnboardingStepType.options ? "buttons" : ""
+        className={`options ${styles.options} ${
+          step.type === OnboardingStepType.options
+            ? `buttons ${styles.buttons}`
+            : ""
         }`}
       >
         {step.type === OnboardingStepType.slide && (
@@ -170,12 +97,12 @@ const Step: React.FC<Props> = ({ step, onAnswer, answers }) => {
         )}
         {step.type !== OnboardingStepType.slide &&
           step.options.map((option, index) => (
-            <div key={option.value + index} className="option">
+            <div key={option.value + index} className={`option ${styles.option}`}>
               {renderProperOptions(option)}
             </div>
           ))}
       </div>
-    </StyledStep>
+    </div>
   );
 };
 export default Step;

@@ -102,7 +102,7 @@ class ImagesService implements ImagesServiceContract
         Storage::put($path,
             "<svg xmlns=\"http://www.w3.org/2000/svg\">
                         <style>.error { font: bold 12px monospace;  fill: red;  }</style>
-                        <text x=\"1\" y=\"12\" class=\"error\">Error: ${message}</text>
+                        <text x=\"1\" y=\"12\" class=\"error\">Error: {$message}</text>
                       </svg>",
             'public');
 

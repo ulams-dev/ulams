@@ -1,0 +1,13 @@
+.placeholder {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--ulams-gray-4);
+}
+
+:global([data-mode="dark"]) .placeholder {
+  border-color: var(--ulams-gray-2);
+}
+
+.placeholder img:hover {
+  transform: none !important;
+}

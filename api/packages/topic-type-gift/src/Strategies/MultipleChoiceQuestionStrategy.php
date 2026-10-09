@@ -5,6 +5,7 @@ namespace Ulams\TopicTypeGift\Strategies;
 use Ulams\TopicTypeGift\Dtos\CheckAnswerDto;
 use Ulams\TopicTypeGift\Enum\AnswerKeyEnum;
 use Illuminate\Support\Str;
+use Ulams\TopicTypeGift\Support\SeededShuffle;
 
 class MultipleChoiceQuestionStrategy extends QuestionStrategy
 {
@@ -19,7 +20,7 @@ class MultipleChoiceQuestionStrategy extends QuestionStrategy
             ->map(fn(string $answer) => $this->removeFeedbackFromAnswer($answer));
 
         if ($this->shouldRandomizeOptions()) {
-            $answers = $answers->shuffle($this->optionsSeedFor('answers'));
+            $answers = SeededShuffle::shuffle($answers, $this->optionsSeedFor('answers'));
         }
 
         return [

@@ -1,15 +1,9 @@
-import styled from "styled-components";
+import * as React from "react";
+import "../styles/components.css";
+import { cx } from "../themeContext";
 
-const Input = styled.input`
-  font-size: 15px;
-  background: ${props => props.theme.toolbarInput};
-  color: ${props => props.theme.toolbarItem};
-  border-radius: 2px;
-  padding: 3px 8px;
-  border: 0;
-  margin: 0;
-  outline: none;
-  flex-grow: 1;
-`;
+type Props = React.InputHTMLAttributes<HTMLInputElement>;
 
-export default Input;
+export default function Input({ className, ...rest }: Props) {
+  return <input className={cx("ulams-md-input", className)} {...rest} />;
+}

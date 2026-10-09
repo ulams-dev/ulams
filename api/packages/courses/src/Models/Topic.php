@@ -2,7 +2,6 @@
 
 namespace Ulams\Courses\Models;
 
-use Ulams\Core\Models\Traits\QueryCacheable;
 use Ulams\Courses\Database\Factories\TopicFactory;
 use Ulams\Courses\Facades\Topic as TopicFacade;
 use Illuminate\Database\Eloquent\Builder;
@@ -105,7 +104,7 @@ use Illuminate\Validation\Rule;
  */
 class Topic extends Model
 {
-    use HasFactory, QueryCacheable;
+    use HasFactory;
 
     public $table = 'topics';
 

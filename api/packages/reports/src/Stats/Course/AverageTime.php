@@ -18,7 +18,7 @@ class AverageTime extends AbstractCourseStat
         $courseProgressTable = (new CourseProgress())->getTable();
 
         /** @var Collection $results */
-        $results = Course::dontCache()->selectRaw($courseTable . '.id, ' . $courseProgressTable . '.user_id, SUM(' . $courseProgressTable . '.seconds) as time')
+        $results = Course::query()->selectRaw($courseTable . '.id, ' . $courseProgressTable . '.user_id, SUM(' . $courseProgressTable . '.seconds) as time')
             ->leftJoin($lessonTable, $courseTable . '.id', '=', $lessonTable . '.course_id')
             ->leftJoin($topicTable, $lessonTable . '.id', '=', $topicTable . '.lesson_id')
             ->leftJoin($courseProgressTable, $topicTable . '.id', '=', $courseProgressTable . '.topic_id')

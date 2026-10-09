@@ -8,13 +8,9 @@ import { useHistory } from "react-router-dom";
 import routeRoutes from "@/components/Routes/routes";
 import { useTranslation } from "react-i18next";
 import { CourseParams } from "@ulams/sdk/types";
-import styled from "styled-components";
 import SwiperSlider from "@/components/Courses/CoursesSlider/swiper";
 import { CourseCardSkeleton } from "@/components/Skeletons/CourseCard";
-
-const Wrapper = styled.div`
-  position: relative;
-`;
+import styles from "./styles.module.css";
 
 type Props = {
   titleText: string;
@@ -36,7 +32,7 @@ const DisplayCourses: React.FC<Props> = ({
   const { t } = useTranslation();
 
   return (
-    <Wrapper>
+    <div className={styles.wrapper}>
       <div className="header-wrapper">
         <Title className="slider-title" level={1} as="h2">
           <strong>{titleText}</strong>
@@ -68,7 +64,7 @@ const DisplayCourses: React.FC<Props> = ({
           slidesPerView={slidesPerView}
         />
       )}
-    </Wrapper>
+    </div>
   );
 };
 

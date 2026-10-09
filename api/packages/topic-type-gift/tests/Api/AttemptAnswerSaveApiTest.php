@@ -9,6 +9,7 @@ use Ulams\TopicTypeGift\Enum\QuestionTypeEnum;
 use Ulams\TopicTypeGift\Models\GiftQuestion;
 use Ulams\TopicTypeGift\Models\QuizAttempt;
 use Ulams\TopicTypeGift\Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AttemptAnswerSaveApiTest extends TestCase
 {
@@ -43,9 +44,7 @@ class AttemptAnswerSaveApiTest extends TestCase
             ->assertForbidden();
     }
 
-    /**
-     * @dataProvider questionDataProvider
-     */
+    #[DataProvider('questionDataProvider')]
     public function testSaveAttemptAnswer(string $question, string $type, array $answer, float $score = 1, float $resultScore = 1, string $feedback = ''): void
     {
         $question = GiftQuestion::factory()
@@ -68,7 +67,7 @@ class AttemptAnswerSaveApiTest extends TestCase
         ]);
     }
 
-    public function questionDataProvider(): array
+    public static function questionDataProvider(): array
     {
         return [
             [

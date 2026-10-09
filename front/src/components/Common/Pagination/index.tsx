@@ -1,41 +1,7 @@
 import React from "react";
-import styled from "styled-components";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { Link } from "react-router-dom";
-
-const StyledPagination = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  a {
-    text-decoration: none !important;
-  }
-  .arrow {
-    width: 10px;
-    height: 10px;
-    border-left: 2px solid;
-    border-bottom: 2px solid;
-    border-color: ${({ theme }) => theme.primaryColor};
-    margin: 0 10px;
-    &--left {
-      transform: rotate(45deg);
-    }
-    &--right {
-      transform: rotate(-135deg);
-    }
-  }
-  .number {
-    margin: 0 8px;
-    p {
-      opacity: 0.5;
-      &.current {
-        color: ${({ theme }) => theme.black}!important;
-
-        opacity: 1;
-      }
-    }
-  }
-`;
+import styles from "./styles.module.css";
 
 const LEFT_PAGE = "LEFT";
 const RIGHT_PAGE = "RIGHT";
@@ -123,7 +89,7 @@ const Pagination: React.FC<{
   };
 
   return (
-    <StyledPagination>
+    <div className={styles.pagination}>
       {fetchPageNumbers().map((page) => {
         if (page === LEFT_PAGE) {
           return (
@@ -135,7 +101,7 @@ const Pagination: React.FC<{
                 onPage(currentPage <= 1 ? 1 : currentPage - 1);
               }}
             >
-              <div className="arrow arrow--left" />
+              <div className={`${styles.arrow} ${styles.arrowLeft}`} />
             </a>
           );
         }
@@ -149,7 +115,7 @@ const Pagination: React.FC<{
                 onPage(currentPage === lastPage ? lastPage : currentPage + 1);
               }}
             >
-              <div className="arrow arrow--right" />
+              <div className={`${styles.arrow} ${styles.arrowRight}`} />
             </a>
           );
         }
@@ -161,10 +127,10 @@ const Pagination: React.FC<{
             }}
             to={`#!page-${Number(page)}`}
             key={`#${Number(page)}`}
-            className="number"
+            className={styles.number}
           >
             <Text
-              className={Number(page) === currentPage ? "current" : ""}
+              className={Number(page) === currentPage ? styles.current : ""}
               size="16"
               aria-current="page"
             >
@@ -173,7 +139,7 @@ const Pagination: React.FC<{
           </Link>
         );
       })}
-    </StyledPagination>
+    </div>
   );
 };
 

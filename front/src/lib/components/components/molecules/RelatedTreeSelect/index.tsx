@@ -1,11 +1,9 @@
 import React, { useContext, useMemo } from "react";
-import styled, { css } from "styled-components";
 import { API } from "@ulams/sdk";
 import { UlamsContext } from "@ulams/sdk/react";
 import { TreeSelect, TreeSelectProps } from "../../atoms/TreeSelect";
 import { Stack } from "../../../";
-import { getFontFromTheme } from "../../../theme/provider";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
+import styles from "./RelatedTreeSelect.module.css";
 
 type Props<ValueType> = Omit<TreeSelectProps<ValueType>, "treeData"> & {
   label?: React.ReactNode;
@@ -55,23 +53,6 @@ const traverseTree = (
   });
 };
 
-const textPartial = css`
-  font-family: ${({ theme }) => getFontFromTheme(theme).fontFamily};
-  font-size: 14px;
-  color: ${({ theme }) =>
-    getStylesBasedOnTheme(theme.mode, theme.white, theme.gray1)};
-`;
-
-const Label = styled.label`
-  ${textPartial}
-`;
-
-const Error = styled.div`
-  ${textPartial};
-  color: ${({ theme }) => theme.errorColor};
-  margin-bottom: 1em;
-`;
-
 export const RelatedTreeSelect = <ValueType,>({
   treeDefaultExpandAll = true,
   id,
@@ -107,14 +88,18 @@ export const RelatedTreeSelect = <ValueType,>({
 
   return (
     <Stack $gap={4}>
-      {label && <Label htmlFor={id}>{label}</Label>}
+      {label && <label className={styles.label} htmlFor={id}>
+          {label}
+        </label>}
       <TreeSelect
         {...props}
         id={id}
         treeDefaultExpandAll={treeDefaultExpandAll}
         treeData={treeData}
       />
-      {error && <Error data-testid={`Error.${id}`}>{error}</Error>}
+      {error && <div className={styles.error} data-testid={`Error.${id}`}>
+          {error}
+        </div>}
     </Stack>
   );
 };

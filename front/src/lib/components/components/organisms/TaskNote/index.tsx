@@ -3,7 +3,7 @@ import { UlamsContext } from "@ulams/sdk/react";
 import { useTranslation } from "react-i18next";
 import { Button, Row, Spin, TextArea } from "../../../";
 import { TaskNote } from "@ulams/sdk/types";
-import { AddNoteWrapper } from "../TaskDetailsModal/content/common";
+import styles from "./TaskNote.module.css";
 import useAutosizeTextArea from "../../../hooks/useAutosizeTextArea";
 
 export const AddTaskNote: React.FC<{
@@ -26,7 +26,7 @@ export const AddTaskNote: React.FC<{
   }, [taskId, value]);
 
   return (
-    <AddNoteWrapper>
+    <div className={styles.addNoteWrapper}>
       {loading && <Spin />}
       <TextArea
         name="note"
@@ -43,7 +43,7 @@ export const AddTaskNote: React.FC<{
       >
         {t<string>("Tasks.AddNote")}
       </Button>
-    </AddNoteWrapper>
+    </div>
   );
 };
 

@@ -32,7 +32,7 @@ class TestCase extends CoreTestCase
         $app['config']->set('passport.client_uuids', true);
     }
 
-    protected function channelDataProvider(): array
+    public static function channelDataProvider(): array
     {
         return [
             ['channel' => PushNotificationChannel::class,]

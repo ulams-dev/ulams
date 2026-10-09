@@ -1,13 +1,9 @@
 import { useCoursePanel } from "@/components/Courses/Course/Context";
-import {
-  ProgressBarContainer,
-  SubHeaderIconWrapper,
-  SubheaderTitle,
-  SubheaderWrapper,
-} from "@/components/Courses/Course/CoursePanelLayout/Subheader/styles";
 import { IconMenuSchedule } from "@/icons/index";
 import { ProgressBar } from "@ulams/components";
+import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { useTranslation } from "react-i18next";
+import styles from "./styles.module.css";
 
 interface Props {
   menuOnClick?: () => void;
@@ -31,28 +27,29 @@ export const Subheader = ({ menuOnClick }: Props) => {
     ((finishedTopicsIds ?? []).length / (flatTopics ?? []).length) * 100;
 
   return (
-    <SubheaderWrapper>
-      <ProgressBarContainer>
+    <div className={styles.wrapper}>
+      <div className={styles.progressBarContainer}>
         <ProgressBar
           currentProgress={progress}
           maxProgress={100}
           label={
-            <SubheaderTitle level={2}>
+            <Title className={styles.title} level={2}>
               <span>{parentLesson?.title || currentLesson?.title || ""}</span>{" "}
               {currentTopic?.title}
-            </SubheaderTitle>
+            </Title>
           }
           variant="square"
         />
-      </ProgressBarContainer>
+      </div>
       {/* Mobile */}
-      <SubHeaderIconWrapper
-        role="button"
+      <button
+        type="button"
+        className={styles.iconWrapper}
         aria-label={t("CoursePanel.MenuButtonAria")}
         onClick={menuOnClick}
       >
         <IconMenuSchedule />
-      </SubHeaderIconWrapper>
-    </SubheaderWrapper>
+      </button>
+    </div>
   );
 };

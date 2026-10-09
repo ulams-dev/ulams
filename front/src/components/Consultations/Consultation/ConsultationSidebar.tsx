@@ -11,10 +11,6 @@ import isPast from "date-fns/isPast";
 import { useTranslation } from "react-i18next";
 import { UlamsContext } from "@ulams/sdk/react/context";
 import { useHistory } from "react-router-dom";
-import {
-  StyledConsultationSidebar,
-  StyledMobileConsultationSidebar,
-} from "@/components/Consultations/Consultation/style";
 import { isMobile } from "react-device-detect";
 import routeRoutes from "@/components/Routes/routes";
 import {
@@ -22,6 +18,7 @@ import {
   useEntityBuyableType,
 } from "@/hooks/useEntityPrice";
 import usePayment, { PaymentGateway } from "@/hooks/usePayment";
+import styles from "./styles.module.css";
 
 interface ConsultationSidebarProps {
   consultation: Consultation | undefined;
@@ -67,7 +64,7 @@ const ConsultationSidebar: React.FC<ConsultationSidebarProps> = (props) => {
   ]);
 
   return isMobile ? (
-    <StyledMobileConsultationSidebar>
+    <div className={styles.mobileSidebar}>
       <PricingCard mobile>
         <Title level={5} as="h5">
           {t("ConsultationPage.SidebarHeader")}
@@ -124,9 +121,9 @@ const ConsultationSidebar: React.FC<ConsultationSidebarProps> = (props) => {
           </div>
         </div>
       </PricingCard>
-    </StyledMobileConsultationSidebar>
+    </div>
   ) : (
-    <StyledConsultationSidebar>
+    <div className={styles.sidebar}>
       <PricingCard>
         <Title level={4} as="h2">
           {t("ConsultationPage.SidebarHeader")}
@@ -193,7 +190,7 @@ const ConsultationSidebar: React.FC<ConsultationSidebarProps> = (props) => {
           noMargin
         />
       </PricingCard>
-    </StyledConsultationSidebar>
+    </div>
   );
 };
 

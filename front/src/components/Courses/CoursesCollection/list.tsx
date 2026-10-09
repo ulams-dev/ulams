@@ -9,15 +9,11 @@ import { NewCourseCard } from "@ulams/components";
 import CategoriesBreadCrumbs from "@/components/Categories/CategoriesBreadCrumbs";
 import CourseImgPlaceholder from "@/components/Courses/CourseImgPlaceholder";
 import { Course } from "@ulams/sdk/types";
-import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import ProductPrices from "@/components/ProductPrices";
 
 import EntitySkeletonList from "@/components/Skeletons/EntityList";
-
-const CoursesListWrapper = styled.section`
-  margin-bottom: ${isMobile ? "50px" : "75px"};
-`;
+import styles from "./list.module.css";
 
 type Props = {
   courses: Course[];
@@ -41,7 +37,11 @@ const CoursesList: React.FC<Props> = ({ courses, loading }) => {
   }
 
   return (
-    <CoursesListWrapper>
+    <section
+      className={`${styles.coursesListWrapper} ${
+        isMobile ? styles.mobile : ""
+      }`}
+    >
       <Row
         style={{
           gap: "30px 0",
@@ -96,7 +96,7 @@ const CoursesList: React.FC<Props> = ({ courses, loading }) => {
           </Col>
         ))}
       </Row>
-    </CoursesListWrapper>
+    </section>
   );
 };
 

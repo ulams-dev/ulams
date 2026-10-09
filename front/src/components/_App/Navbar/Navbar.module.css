@@ -1,0 +1,251 @@
+.header {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background: var(--ulams-color-white);
+  backdrop-filter: blur(10px);
+  padding: 22px 0;
+}
+
+:global([data-mode="dark"]) .header {
+  background: var(--ulams-color-bg);
+}
+
+/* react-device-detect isMobile */
+.header.mobile {
+  padding: 11px 0;
+}
+
+.header :global(.logo-container) {
+  margin-right: 30px;
+}
+
+.header :global(.logo-container),
+.header :global(.logo-container) img {
+  width: 100%;
+  height: auto;
+  max-width: 150px;
+  max-height: 37px;
+}
+
+.header :global(.logo-container) img {
+  width: 100%;
+  height: auto;
+  transition: opacity 0.25s;
+}
+
+.header :global(.logo-container) img:hover {
+  opacity: 0.55;
+}
+
+.header :global(.menu-container) {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+}
+
+.header :global(.menu-container) :global(.search-container) {
+  min-width: 250px;
+}
+
+@media (max-width: 1200px) {
+  .header :global(.menu-container) :global(.search-container) {
+    min-width: 180px;
+  }
+}
+
+@media (max-width: 991px) {
+  .header :global(.menu-container) :global(.search-container) {
+    min-width: 200px;
+    margin-left: 15px;
+  }
+}
+
+.header :global(.menu-container) :global(.navigation) {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.header :global(.menu-container) :global(.navigation) :global(.Dropdown-root) {
+  min-width: 105px;
+}
+
+@media (max-width: 1366px) {
+  .header :global(.menu-container) :global(.navigation) {
+    margin: 0 50px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .header :global(.menu-container) :global(.navigation) {
+    margin: 0 30px;
+    column-gap: 30px;
+  }
+}
+
+@media (max-width: 991px) {
+  .header :global(.menu-container) :global(.navigation) {
+    margin: 0 30px;
+    column-gap: 30px;
+  }
+}
+
+.header :global(.menu-container) :global(.navigation) :global(.Dropdown-menu) {
+  overflow-y: unset;
+  max-height: unset;
+}
+
+.header :global(.logo) {
+  width: auto;
+  height: 37px;
+}
+
+.header :global(.user-container) {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.header :global(.user-container) :global(.user-details) {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  column-gap: 10px;
+  margin-right: 21px;
+  text-decoration: none;
+}
+
+.header :global(.user-container) :global(.user-details):hover p {
+  color: var(--ulams-color-primary);
+}
+
+.header :global(.user-container) :global(.user-details) :global(.name) {
+  min-width: 100px;
+  margin: 0;
+}
+
+.header :global(.icons-container) {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0 5px;
+}
+
+.header :global(.icons-container) button {
+  appearance: none;
+  outline: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.header :global(.icons-container) button:global(.cart-icon) {
+  position: relative;
+}
+
+.header :global(.icons-container) button:global(.cart-icon.cart) svg {
+  width: 25px;
+}
+
+.header :global(.icons-container) button:global(.cart-icon) svg path {
+  transition: fill 0.25s;
+}
+
+.header :global(.icons-container) button:global(.cart-icon):hover svg path {
+  fill: var(--ulams-color-primary);
+}
+
+.header :global(.icons-container) button:global(.cart-icon) span {
+  position: absolute;
+  right: -5px;
+  top: -1px;
+  min-width: 20px;
+  min-height: 20px;
+  border-radius: 50%;
+  background: var(--ulams-color-secondary);
+  color: var(--ulams-color-text);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header :global(.not-logged-container) {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  column-gap: 6px;
+  margin-right: 20px;
+}
+
+.header :global(.not-logged-container) button {
+  font-weight: 400;
+}
+
+.header :global(.not-logged-container) a {
+  text-decoration: none;
+}
+
+.header :global(.not-logged-container) a p {
+  font-weight: 700;
+}
+
+.header :global(.not-logged-container) a p:hover {
+  color: var(--ulams-color-primary);
+}
+
+.lastMobileMenuItem span {
+  font-size: 13px;
+  font-family: var(--ulams-font-family);
+  color: var(--ulams-color-text);
+  margin-top: 15px;
+  text-align: center;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.searchMobileWrapper {
+  padding: 0px 25px;
+  margin-top: 18px;
+}
+
+.searchMobileWrapper > div {
+  width: auto;
+}
+
+.mobileDrawerNavigation {
+  padding-top: 35px;
+}
+
+.mobileDrawerNavigation ul li {
+  list-style: none;
+}
+
+.mobileDrawerNavigation ul li:not(:last-of-type) {
+  margin-bottom: 30px;
+}
+
+.mobileDrawerNavigation ul li button {
+  all: unset;
+}
+
+.mobileDrawerNavigation ul li a,
+.mobileDrawerNavigation ul li button {
+  color: var(--ulams-color-text);
+  font-family: var(--ulams-font-family);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.mobileDrawerNavigation ul li :global(.delete-account) {
+  color: var(--ulams-color-error);
+  font-size: 16px;
+  font-weight: 700;
+}

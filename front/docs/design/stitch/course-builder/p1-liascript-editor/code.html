@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ulams Admin — LiaScript topic editor</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container": "#f0eee9",
+            "on-error-container": "#93000a",
+            "tertiary": "#545869",
+            "surface-variant": "#e4e2dd",
+            "on-secondary-container": "#714800",
+            "on-primary-container": "#f8f5ff",
+            "on-background": "#1b1c19",
+            "on-tertiary-fixed": "#171b29",
+            "inverse-primary": "#c1c1ff",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-fixed-variant": "#643f00",
+            "on-secondary-fixed": "#2a1800",
+            "on-primary": "#ffffff",
+            "surface-dim": "#dbdad5",
+            "surface-bright": "#fbf9f4",
+            "primary-container": "#5b5bf7",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+            "secondary-fixed": "#ffddb6",
+            "on-surface-variant": "#464555",
+            "tertiary-container": "#6d7082",
+            "on-secondary": "#ffffff",
+            "outline": "#767587",
+            "on-primary-fixed": "#09006b",
+            "tertiary-fixed": "#dfe1f6",
+            "surface": "#fbf9f4",
+            "secondary": "#845400",
+            "inverse-on-surface": "#f2f1ec",
+            "surface-container-high": "#eae8e3",
+            "secondary-container": "#ffb54d",
+            "on-tertiary": "#ffffff",
+            "background": "#fbf9f4",
+            "on-primary-fixed-variant": "#2c25cc",
+            "inverse-surface": "#1e2024",
+            "primary-fixed-dim": "#c1c1ff",
+            "secondary-fixed-dim": "#ffb959",
+            "on-tertiary-container": "#f7f5ff",
+            "tertiary-fixed-dim": "#c3c5d9",
+            "surface-container-highest": "#e4e2dd",
+            "outline-variant": "#c7c4d8",
+            "on-surface": "#0e1220",
+            "primary-fixed": "#e1dfff",
+            "surface-tint": "#4746e4",
+            "primary": "#5b5bf7",
+            "error": "#ba1a1a",
+            "on-tertiary-fixed-variant": "#424656",
+            "surface-container-low": "#f5f3ee"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1.5rem",
+            "margin": "1rem",
+            "space-sm": "0.5rem",
+            "margin-desktop": "2rem",
+            "space-xs": "0.25rem",
+            "gutter-desktop": "1.5rem",
+            "gutter": "1rem",
+            "space-md": "1rem",
+            "space-xl": "2.5rem"
+          },
+          "fontFamily": {
+            "label-citation": ["JetBrains Mono"],
+            "body-editorial": ["Newsreader"],
+            "caption": ["Inter"],
+            "headline-lg-mobile": ["Newsreader"],
+            "display-editorial": ["Newsreader"],
+            "code-body": ["JetBrains Mono"],
+            "display-editorial-mobile": ["Newsreader"],
+            "headline-sm": ["Inter"],
+            "body-default": ["Inter"],
+            "headline-md": ["Inter"],
+            "headline-lg": ["Newsreader"],
+            "body-strong": ["Inter"]
+          },
+          "fontSize": {
+            "label-citation": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "body-editorial": ["19px", { "lineHeight": "32px", "fontWeight": "400" }],
+            "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "display-editorial": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "code-body": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "display-editorial-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-default": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.015em", "fontWeight": "400" }],
+            "body-strong": ["14px", { "lineHeight": "22px", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #e4e2dd;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #c7c4d8;
+    }
+  </style>
+</head>
+<body class="h-full bg-background text-on-surface antialiased overflow-hidden flex font-body-default text-body-default selection:bg-primary-fixed selection:text-primary">
+<!-- ========================================================================= -->
+<!-- 1. LEFT DOCKED MICRO-NAV BAR (Shared Component: SideNavBar)               -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-16 z-40 bg-inverse-surface border-r border-outline-variant/30 flex flex-col justify-between py-4 items-center select-none shadow-none">
+<!-- Brand / Monogram Logo -->
+<div class="flex flex-col items-center gap-1">
+<div class="w-10 h-10 rounded-xl bg-surface-container-lowest/10 border border-surface-container-lowest/15 flex items-center justify-center text-inverse-on-surface font-headline-md text-headline-md font-bold tracking-tight">
+        u
+      </div>
+<span class="text-[9px] font-label-citation text-outline-variant uppercase tracking-widest pt-1">ulams</span>
+</div>
+<!-- Navigation Tabs Cluster -->
+<nav aria-label="Main Navigation" class="flex flex-col items-center gap-2 w-full px-2">
+<!-- Tab 1: Builder -->
+<button class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface p-2.5 transition-all duration-150 hover:bg-surface-variant/10 rounded-lg w-full group" title="Builder" type="button">
+<span class="material-symbols-outlined text-[20px] transition-transform duration-150 group-hover:scale-105" data-icon="architecture">architecture</span>
+<span class="text-[10px] font-caption tracking-normal mt-1 opacity-80">Builder</span>
+</button>
+<!-- Tab 2: Courses (ACTIVE MATCH) -->
+<button class="flex flex-col items-center justify-center text-primary-fixed bg-surface-variant/20 rounded-lg p-2.5 transition-all duration-150 w-full relative shadow-sm ring-1 ring-primary/40" title="Courses" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="menu_book" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+<span class="text-[10px] font-caption font-medium tracking-normal mt-1">Courses</span>
+<span class="absolute -right-2 top-1/2 -translate-y-1/2 w-1 h-5 bg-primary-container rounded-l-full"></span>
+</button>
+<!-- Tab 3: Sources -->
+<button class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface p-2.5 transition-all duration-150 hover:bg-surface-variant/10 rounded-lg w-full group" title="Sources" type="button">
+<span class="material-symbols-outlined text-[20px] transition-transform duration-150 group-hover:scale-105" data-icon="source">source</span>
+<span class="text-[10px] font-caption tracking-normal mt-1 opacity-80">Sources</span>
+</button>
+<!-- Tab 4: Usage -->
+<button class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface p-2.5 transition-all duration-150 hover:bg-surface-variant/10 rounded-lg w-full group" title="Usage" type="button">
+<span class="material-symbols-outlined text-[20px] transition-transform duration-150 group-hover:scale-105" data-icon="data_usage">data_usage</span>
+<span class="text-[10px] font-caption tracking-normal mt-1 opacity-80">Usage</span>
+</button>
+<!-- Tab 5: Settings -->
+<button class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface p-2.5 transition-all duration-150 hover:bg-surface-variant/10 rounded-lg w-full group" title="Settings" type="button">
+<span class="material-symbols-outlined text-[20px] transition-transform duration-150 group-hover:scale-105" data-icon="settings">settings</span>
+<span class="text-[10px] font-caption tracking-normal mt-1 opacity-80">Settings</span>
+</button>
+</nav>
+<!-- Footer Profile Tab -->
+<div class="flex flex-col items-center w-full px-2 pt-2 border-t border-surface-container-highest/10">
+<button class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface p-2 transition-all duration-150 hover:bg-surface-variant/10 rounded-lg w-full" title="Profile" type="button">
+<span class="material-symbols-outlined text-[22px]" data-icon="account_circle">account_circle</span>
+<span class="text-[9px] font-caption tracking-normal mt-0.5 opacity-70">Profile</span>
+</button>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- MAIN SHELL (Header + Validation Banner + Main Workspace + Sticky Status)  -->
+<!-- ========================================================================= -->
+<div class="flex-1 ml-16 flex flex-col h-screen overflow-hidden bg-background">
+<!-- 2. TOP HEADER (Shared Component: TopNavBar with contextual curriculum layout) -->
+<header class="h-14 border-b border-surface-container-highest bg-surface-bright flex items-center justify-between px-5 shrink-0 z-30">
+<!-- Breadcrumb Hierarchy -->
+<nav aria-label="Breadcrumbs" class="flex items-center gap-2 text-[13px] font-body-default min-w-0">
+<a class="text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1.5 font-medium shrink-0" href="#">
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-icon="menu_book">menu_book</span>
+<span>Courses</span>
+</a>
+<span class="text-outline-variant">/</span>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors truncate max-w-[170px]" href="#">Coffee brewing fundamentals</a>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface-variant shrink-0">Module 2</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface-variant shrink-0">Lesson 2.1</span>
+<span class="text-outline-variant">/</span>
+<!-- Active Topic pill -->
+<div class="flex items-center gap-1.5 bg-surface-container-low border border-surface-variant px-2.5 py-0.5 rounded-full shrink-0">
+<span class="text-on-surface font-body-strong text-caption">Topic: Interactive ratios</span>
+<span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-label-citation font-semibold bg-primary-fixed text-on-primary-fixed border border-primary-fixed-dim/60">LiaScript</span>
+</div>
+</nav>
+<!-- Right Action Area -->
+<div class="flex items-center gap-3 shrink-0">
+<!-- Amber Status Badge -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-fixed/40 border border-secondary-container text-on-secondary-fixed text-caption font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+<span>Draft · v4 unstaged</span>
+</div>
+<div class="h-4 w-px bg-surface-container-highest mx-0.5"></div>
+<!-- Upload Secondary Button -->
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-surface-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors duration-150 text-caption font-body-strong shadow-sm active:scale-95" type="button">
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-icon="upload_file">upload_file</span>
+<span>Upload .md / .zip</span>
+</button>
+<!-- Save Primary Iris Action Button -->
+<button class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-primary-container hover:bg-[#4949E3] text-surface-container-lowest transition-all duration-150 text-caption font-body-strong shadow-sm active:scale-95 shadow-primary-container/20" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="save">save</span>
+<span>Save as version 4</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-label-citation bg-white/20 text-white tracking-wider">⌘S</span>
+</button>
+<!-- Utility icons and Avatar -->
+<div class="flex items-center gap-1 pl-2 border-l border-surface-container-highest">
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors" title="Help &amp; documentation" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="help_outline">help_outline</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors relative" title="Notifications" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full"></span>
+</button>
+<div class="ml-1 w-7 h-7 rounded-full bg-surface-variant border border-surface-container-highest flex items-center justify-center font-label-citation text-[11px] font-bold text-on-surface text-center">
+            MB
+          </div>
+</div>
+</div>
+</header>
+<!-- 3. AMBER DISMISSIBLE VALIDATION WARNING BANNER -->
+<div class="bg-[#FFF8E7] border-b border-[#E9A23B]/30 px-5 py-2 flex items-center justify-between text-caption shrink-0 transition-all duration-200" id="validation-banner">
+<div class="flex items-center gap-2.5 text-[#845400]">
+<span class="material-symbols-outlined text-[18px] text-[#C27803]" data-icon="warning">warning</span>
+<span class="font-body-strong text-caption">1 external import blocked:</span>
+<span class="text-on-secondary-fixed">macros from a remote URL are not allowed on this platform sandbox.</span>
+<a class="text-primary hover:underline font-body-strong ml-1 inline-flex items-center gap-0.5" href="#blocklist">
+          Review blocklist
+          <span class="material-symbols-outlined text-[13px]" data-icon="open_in_new">open_in_new</span>
+</a>
+</div>
+<button class="text-[#845400] hover:text-[#523300] hover:bg-[#F2E4C2]/50 p-1 rounded transition-colors" onclick="document.getElementById('validation-banner').style.display='none'" title="Dismiss banner" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="close">close</span>
+</button>
+</div>
+<!-- 4. MAIN WORKSPACE (3 Columns: Compact Tree, Split Editor/Preview, Versions Drawer) -->
+<div class="flex-1 flex overflow-hidden">
+<!-- ================================================================= -->
+<!-- 4.A. LEFT COLUMN: COMPACT LESSON TREE (240px wide)                -->
+<!-- ================================================================= -->
+<section class="w-[240px] border-r border-surface-container-highest bg-surface-bright flex flex-col shrink-0 select-none">
+<!-- Tree Header -->
+<div class="p-3 border-b border-surface-container-highest flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-icon="folder_open">folder_open</span>
+<h2 class="font-headline-sm text-[13px] font-semibold text-on-surface">Lesson 2.1 Topics</h2>
+</div>
+<button class="inline-flex items-center gap-0.5 text-caption font-body-strong text-primary hover:text-[#4949E3] hover:bg-surface-container px-2 py-0.5 rounded transition-colors" type="button">
+<span class="material-symbols-outlined text-[14px]" data-icon="add">add</span>
+<span>Add</span>
+</button>
+</div>
+<!-- Topics List -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+<!-- Item 1: Introduction -->
+<div class="group flex items-center justify-between p-2 rounded-lg hover:bg-surface-container transition-colors cursor-pointer text-on-surface-variant">
+<div class="flex items-center gap-2 min-w-0">
+<span class="text-caption font-label-citation text-outline">01</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-icon="article">article</span>
+<span class="text-caption font-body-default truncate">Introduction</span>
+</div>
+<span class="text-[10px] font-label-citation text-outline opacity-0 group-hover:opacity-100">4m</span>
+</div>
+<!-- Item 2: Interactive ratios (ACTIVE LIA STATE) -->
+<div class="group flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest border border-primary/30 border-l-[3px] border-l-primary shadow-sm cursor-pointer text-on-surface ring-1 ring-primary/10">
+<div class="flex items-center gap-2 min-w-0">
+<span class="text-caption font-label-citation font-bold text-primary">02</span>
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="auto_stories">auto_stories</span>
+<span class="text-caption font-body-strong truncate text-on-surface">Interactive ratios</span>
+</div>
+<span class="px-1.5 py-0.2 rounded text-[9px] font-label-citation font-semibold bg-primary-fixed text-primary shrink-0">Lia</span>
+</div>
+<!-- Item 3: Knowledge Check -->
+<div class="group flex items-center justify-between p-2 rounded-lg hover:bg-surface-container transition-colors cursor-pointer text-on-surface-variant">
+<div class="flex items-center gap-2 min-w-0">
+<span class="text-caption font-label-citation text-outline">03</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-icon="quiz">quiz</span>
+<span class="text-caption font-body-default truncate">Knowledge Check</span>
+</div>
+<span class="px-1.5 py-0.2 rounded text-[9px] font-label-citation font-medium bg-surface-container text-tertiary shrink-0">3 Qs</span>
+</div>
+<!-- Item 4: Laboratory Sim -->
+<div class="group flex items-center justify-between p-2 rounded-lg hover:bg-surface-container transition-colors cursor-pointer text-on-surface-variant">
+<div class="flex items-center gap-2 min-w-0">
+<span class="text-caption font-label-citation text-outline">04</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-icon="science">science</span>
+<span class="text-caption font-body-default truncate">Laboratory Sim</span>
+</div>
+<span class="material-symbols-outlined text-[14px] text-outline" data-icon="extension" title="SCORM Package">extension</span>
+</div>
+</div>
+<!-- Base Metadata / Runtime Stamp -->
+<div class="p-3 border-t border-surface-container-highest bg-surface-container-low/70">
+<div class="flex items-center justify-between text-label-citation font-label-citation text-tertiary">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-600 inline-block"></span>
+              Format: LiaScript v1.3.1
+            </span>
+<span class="text-[10px] text-outline">Parser active</span>
+</div>
+<div class="mt-1 text-[10px] font-caption text-outline-variant flex items-center justify-between">
+<span>Markdown dialect: GFM+Lia</span>
+<span class="font-label-citation">UTF-8</span>
+</div>
+</div>
+</section>
+<!-- ================================================================= -->
+<!-- 4.B. MIDDLE SPLIT VIEW (Markdown Editor + Live Preview)           -->
+<!-- ================================================================= -->
+<main class="flex-1 flex overflow-hidden bg-surface-container-low">
+<!-- 4.B.1 MARKDOWN EDITOR (Left Half) -->
+<div class="w-1/2 flex flex-col border-r border-surface-container-highest bg-surface-container-lowest">
+<!-- Rich Editor Toolbar -->
+<div class="h-10 px-3 border-b border-surface-container-highest bg-surface-container-low flex items-center justify-between select-none">
+<!-- Action buttons cluster -->
+<div class="flex items-center gap-0.5">
+<button class="p-1 hover:bg-surface-container rounded text-on-surface-variant hover:text-on-surface transition-colors" title="Bold (⌘B)" type="button">
+<span class="material-symbols-outlined text-[17px]" data-icon="format_bold">format_bold</span>
+</button>
+<button class="p-1 hover:bg-surface-container rounded text-on-surface-variant hover:text-on-surface transition-colors" title="Italic (⌘I)" type="button">
+<span class="material-symbols-outlined text-[17px]" data-icon="format_italic">format_italic</span>
+</button>
+<button class="p-1 hover:bg-surface-container rounded text-on-surface-variant hover:text-on-surface transition-colors" title="Heading (H1-H3)" type="button">
+<span class="material-symbols-outlined text-[17px]" data-icon="title">title</span>
+</button>
+<div class="w-px h-3.5 bg-surface-container-highest mx-1"></div>
+<!-- LiaScript Interactive Quiz Syntax Inserter -->
+<button class="inline-flex items-center gap-1 px-1.5 py-0.5 hover:bg-primary-fixed/50 text-primary rounded transition-colors font-label-citation text-[11px] font-semibold" title="Insert LiaScript Quiz Input [[answer]]" type="button">
+<span class="material-symbols-outlined text-[14px]" data-icon="input">input</span>
+<span>[[?]]</span>
+</button>
+<button class="p-1 hover:bg-surface-container rounded text-on-surface-variant hover:text-on-surface transition-colors" title="Code snippet" type="button">
+<span class="material-symbols-outlined text-[17px]" data-icon="code">code</span>
+</button>
+<button class="p-1 hover:bg-surface-container rounded text-on-surface-variant hover:text-on-surface transition-colors" title="Insert media/image" type="button">
+<span class="material-symbols-outlined text-[17px]" data-icon="image">image</span>
+</button>
+<button class="p-1 hover:bg-surface-container rounded text-on-surface-variant hover:text-on-surface transition-colors" title="Formula LaTeX ($)" type="button">
+<span class="material-symbols-outlined text-[17px]" data-icon="functions">functions</span>
+</button>
+</div>
+<!-- Right Toolbar Status & Asset Manager trigger -->
+<div class="flex items-center gap-2">
+<button class="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-surface-variant bg-surface-container-lowest hover:bg-surface-container text-caption font-body-strong text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[13px] text-tertiary" data-icon="folder_zip">folder_zip</span>
+<span>Assets (3)</span>
+</button>
+<span class="text-label-citation font-label-citation text-[10px] text-outline">284 words · 24 lines</span>
+</div>
+</div>
+<!-- Code / Markdown Canvas with Line Numbers -->
+<div class="flex-1 flex overflow-y-auto custom-scrollbar font-code-body text-code-body bg-surface-container-lowest">
+<!-- Line Numbers Column (1-24) -->
+<div class="w-10 py-3 select-none text-right pr-3 text-outline/50 font-label-citation text-[11px] bg-surface-container-low/40 border-r border-surface-container-highest flex flex-col space-y-[2px]">
+<div>1</div>
+<div>2</div>
+<div>3</div>
+<div>4</div>
+<div>5</div>
+<div>6</div>
+<div>7</div>
+<div>8</div>
+<div>9</div>
+<div>10</div>
+<div>11</div>
+<div>12</div>
+<div>13</div>
+<div>14</div>
+<div>15</div>
+<div>16</div>
+<div>17</div>
+<div>18</div>
+<div>19</div>
+<div>20</div>
+<div>21</div>
+<div>22</div>
+<div>23</div>
+<div>24</div>
+</div>
+<!-- Syntax Highlighted Editor Stream -->
+<div class="flex-1 p-3 overflow-x-auto text-[13px] leading-[22px] font-code-body text-on-surface space-y-[2px] focus:outline-none" contenteditable="true" spellcheck="false">
+<!-- Line 1 -->
+<div><span class="text-primary font-bold">#</span> <span class="font-headline-sm text-[16px] text-on-surface font-semibold">The 1:16 ratio</span></div>
+<!-- Line 2 -->
+<div class="text-outline/40 select-none"> </div>
+<!-- Line 3 -->
+<div><span class="text-tertiary">In specialty coffee brewing, the water-to-coffee ratio is the</span></div>
+<!-- Line 4 -->
+<div><span class="text-tertiary">foundational dial controlling dissolution kinetics and final yield.</span></div>
+<!-- Line 5 -->
+<div class="text-outline/40 select-none"> </div>
+<!-- Line 6 -->
+<div><span class="text-secondary font-semibold">Calculate total brew water needed for 20 g of coffee:</span></div>
+<!-- Line 7 -->
+<div class="inline-flex items-center gap-1 bg-primary-fixed/40 px-1.5 py-0.5 rounded border border-primary/20 text-primary font-bold">
+<span>[[</span><span class="text-[#2c25cc] font-extrabold underline decoration-primary decoration-1">320</span><span>]]</span>
+<span class="text-[10px] font-label-citation text-outline ml-1 font-normal select-none"># Lia input validator</span>
+</div>
+<!-- Line 8 -->
+<div class="text-outline/40 select-none"> </div>
+<!-- Line 9 -->
+<div><span class="text-outline-variant font-medium">coffee-script</span></div>
+<!-- Line 10 -->
+<div class="pl-3"><span class="text-on-surface-variant">ratio</span> <span class="text-primary">=</span> <span class="text-[#C27803]">16</span></div>
+<!-- Line 11 -->
+<div class="pl-3"><span class="text-on-surface-variant">water</span> <span class="text-primary">=</span> <span class="text-on-surface-variant">dose</span> <span class="text-primary">*</span> <span class="text-on-surface-variant">ratio</span></div>
+<!-- Line 12 -->
+<div><span class="text-outline-variant font-medium"></span></div>
+<!-- Line 13 -->
+<div class="text-outline/40 select-none"> </div>
+<!-- Line 14 -->
+<div><span class="text-tertiary">![grinder]</span><span class="text-primary">(assets/grinder.webp)</span></div>
+<!-- Line 15 -->
+<div class="text-outline/40 select-none"> </div>
+<!-- Line 16 -->
+<div><span class="text-tertiary">&gt; *Rule of thumb:* Higher ratios promote clarity, whereas tighter</span></div>
+<!-- Line 17 -->
+<div><span class="text-tertiary">&gt; ratios concentrate tactile viscosity and body.</span></div>
+<!-- Line 18 -->
+<div class="text-outline/40 select-none"> </div>
+<!-- Line 19 -->
+<div><span class="text-primary font-bold">##</span> <span class="font-headline-sm text-[14px] text-on-surface font-medium">Extraction Parameters</span></div>
+<!-- Line 20 -->
+<div>- Target Total Dissolved Solids: <span class="bg-surface-container px-1 rounded text-primary font-mono text-[11px]">1.25% – 1.45%</span></div>
+<!-- Line 21 -->
+<div>- Optimal Brew Time: <span class="bg-surface-container px-1 rounded text-primary font-mono text-[11px]">2:45 – 3:15 min</span></div>
+<!-- Line 22 -->
+<div class="text-outline/40 select-none"> </div>
+<!-- Line 23 -->
+<div><span class="text-outline">// End of interactive unit 2.1</span></div>
+<!-- Line 24 -->
+<div class="text-outline/40 select-none"> </div>
+</div>
+</div>
+</div>
+<!-- 4.B.2 LIVE PREVIEW PANE (Right Half Sandbox) -->
+<div class="w-1/2 flex flex-col bg-surface-container-low">
+<!-- Preview Frame Header Bar -->
+<div class="h-10 px-4 border-b border-surface-container-highest bg-surface-container-low flex items-center justify-between select-none">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="text-caption font-body-strong text-on-surface">Learner preview</span>
+<span class="text-[11px] text-outline truncate">· rendered from your Markdown sandbox</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-label-citation font-label-citation text-[10px] text-outline bg-surface-container px-1.5 py-0.5 rounded">Preview rebuilt 2 s ago</span>
+<!-- Slide Navigation Arrows -->
+<div class="inline-flex items-center border border-surface-variant bg-surface-container-lowest rounded-lg overflow-hidden shadow-sm">
+<button class="p-1 hover:bg-surface-container text-tertiary hover:text-on-surface transition-colors" title="Previous page" type="button">
+<span class="material-symbols-outlined text-[14px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<span class="px-2 text-label-citation font-label-citation text-[10px] text-on-surface border-x border-surface-variant select-none">1 / 3</span>
+<button class="p-1 hover:bg-surface-container text-tertiary hover:text-on-surface transition-colors" title="Next page" type="button">
+<span class="material-symbols-outlined text-[14px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- View controls -->
+<div class="flex items-center gap-0.5 text-tertiary">
+<button class="p-1 hover:bg-surface-container rounded hover:text-on-surface transition-colors" title="Reset zoom" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="fit_screen">fit_screen</span>
+</button>
+<button class="p-1 hover:bg-surface-container rounded hover:text-on-surface transition-colors" title="Full screen preview" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="fullscreen">fullscreen</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Sandbox Content Canvas -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8 flex justify-center bg-surface">
+<!-- Simulated Learner Reading Container (720px max reading width) -->
+<article class="w-full max-w-[620px] bg-surface-container-lowest p-8 rounded-xl border border-surface-variant shadow-[0_1px_3px_rgba(14,18,32,0.04),0_1px_2px_rgba(14,18,32,0.02)] space-y-6">
+<!-- Topic Badge & Citation Pill -->
+<div class="flex items-center justify-between pb-2 border-b border-surface-container-highest">
+<span class="text-caption font-label-citation text-primary font-bold uppercase tracking-wider">Lesson 2.1 — Step 2</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-label-citation text-label-citation bg-[#E9A23B]/10 text-[#975D0A] border border-[#E9A23B]/35">
+                  [§2.3 SCA Protocol]
+                </span>
+</div>
+<!-- Rendered Serif Title -->
+<h1 class="font-display-editorial text-headline-lg text-on-surface leading-tight tracking-tight">
+                The 1:16 ratio
+              </h1>
+<!-- Refined Editorial Paragraph -->
+<p class="font-body-editorial text-body-editorial text-on-surface/90 leading-relaxed">
+                In specialty coffee brewing, the water-to-coffee ratio is the foundational dial controlling dissolution kinetics. By modulating mass interactions within the brew chamber, the barista regulates total soluble yield, beverage clarity, and aromatic balance before brew temperature or agitation comes into play.
+              </p>
+<!-- LIVE INTERACTIVE LIASCRIPT QUIZ CARD COMPONENT -->
+<div class="p-4 rounded-xl bg-surface-container-low border border-surface-variant ring-1 ring-primary/20 space-y-3">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[12px] font-bold">?</span>
+<span class="font-body-strong text-caption text-on-surface">Calculate total brew water needed for 20 g of coffee:</span>
+</div>
+<span class="text-label-citation font-label-citation text-[10px] text-tertiary uppercase">Ratio 1:16</span>
+</div>
+<!-- Interactive Numerical Input Row -->
+<div class="flex items-center gap-2.5 pt-1">
+<div class="relative w-36">
+<input class="w-full rounded-lg bg-surface-container-lowest border border-surface-variant font-label-citation text-body-strong px-3 py-1.5 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none text-on-surface" type="text" value="320"/>
+<span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-caption text-outline font-label-citation select-none">g</span>
+</div>
+<!-- Iris Check Button -->
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary hover:bg-[#4949E3] text-surface-container-lowest text-caption font-body-strong shadow-sm transition-all duration-150 active:scale-95" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="check_circle">check_circle</span>
+<span>Check</span>
+</button>
+<!-- Green Validated State Tag -->
+<div class="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg text-caption font-body-strong">
+<span class="material-symbols-outlined text-[15px] text-emerald-600" data-icon="check">check</span>
+<span>Correct · 320 g</span>
+</div>
+</div>
+<p class="text-[12px] text-on-surface-variant italic pt-1">
+                  Formula: 20 g dose × 16 parts water = 320 g total brew water.
+                </p>
+</div>
+<!-- Rendered Code Snippet Block -->
+<div class="rounded-lg bg-inverse-surface text-inverse-on-surface p-3.5 border border-surface-container-highest shadow-sm">
+<div class="flex items-center justify-between pb-2 mb-2 border-b border-white/10 text-label-citation font-label-citation text-[10px] text-outline-variant">
+<span>coffee-script</span>
+<span>reproducible dial formula</span>
+</div>
+<pre class="font-code-body text-[12px] leading-5"><span class="text-primary-fixed">ratio</span> = 16
+<span class="text-primary-fixed">water</span> = dose * ratio</pre>
+</div>
+<!-- Coffee Grinder Sketch / Illustration Card -->
+<figure class="rounded-xl border border-surface-variant overflow-hidden bg-surface-container-lowest shadow-sm">
+<div class="h-44 w-full bg-surface-container flex items-center justify-center relative overflow-hidden group">
+<img class="w-full h-full object-cover grayscale contrast-125 opacity-90 transition-transform duration-300 group-hover:scale-102" data-alt="A refined, technical architectural line sketch of an artisanal manual coffee grinder, displayed in crisp deep ink strokes against a warm paper textured parchment background with subtle golden ratio geometrical grid lines and annotations, illuminated by gentle natural daylight in a serene academic editorial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDvnqY3k_ioLCn-rs3jUNU3KDJzDg4qKORnGyy9ZJ-uFJtsBVt3BHURWGOnQBpVk1dhR4tyuwYLuY5Tt4XTqPemJeXnB_nTGp2GXNeWZGLiatgOUK4beohOqv9x5m7z4HV1z6V88kefN2eonkJXgZCQLWPlg8KlOFWJ4JvAeD_oFk1qY0rqsQ8eFOlU9B198GVpv20i7e9qJtMOd54WKuzVHDOBAKkCwbCxUXJr4PgeTAWyPUgvdSODw2c2BSvXD1XTv9oovyEGfA"/>
+<div class="absolute bottom-2 right-2 bg-surface-container-lowest/90 backdrop-blur-sm px-2 py-0.5 rounded text-[10px] font-label-citation text-on-surface border border-surface-variant">
+                    assets/grinder.webp · 184 KB
+                  </div>
+</div>
+<figcaption class="p-3 text-[12px] font-body-editorial text-tertiary italic border-t border-surface-container-highest bg-surface-bright flex items-center justify-between">
+<span>Figure 2.1: Uniform distribution of particles alters brew resistance linearly.</span>
+<span class="font-label-citation text-[10px] not-italic text-outline">High resolution</span>
+</figcaption>
+</figure>
+</article>
+</div>
+</div>
+</main>
+<!-- ================================================================= -->
+<!-- 4.C. RIGHT RAIL: "VERSIONS" DRAWER (300px wide)                   -->
+<!-- ================================================================= -->
+<aside class="w-[300px] border-l border-surface-container-highest bg-surface-bright flex flex-col shrink-0 select-none">
+<!-- Drawer Header -->
+<div class="p-3.5 border-b border-surface-container-highest flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-tertiary" data-icon="history">history</span>
+<h2 class="font-headline-sm text-[14px] font-semibold text-on-surface">Versions</h2>
+<span class="px-1.5 py-0.5 rounded-full text-[10px] font-label-citation bg-surface-container text-tertiary font-bold">3 revisions</span>
+</div>
+<button class="p-1 text-tertiary hover:text-on-surface hover:bg-surface-container rounded" title="Branch comparison" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="alt_route">alt_route</span>
+</button>
+</div>
+<!-- Scrollable Versions Area -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-3">
+<!-- Informational Notice Card -->
+<div class="p-3 rounded-lg bg-surface-container-lowest border border-surface-variant text-[12px] leading-relaxed text-on-surface-variant flex gap-2.5 items-start">
+<span class="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5" data-icon="info">info</span>
+<p>Learners keep their progress when you publish a new version. In-flight interactive quizzes gracefully transition.</p>
+</div>
+<!-- Version History Stack -->
+<div class="space-y-2.5">
+<!-- Version 3 (CURRENT · ACTIVE) -->
+<div class="p-3 rounded-xl bg-surface-container-lowest border border-primary/40 shadow-sm ring-1 ring-primary/10 relative">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-citation text-caption font-bold text-primary">v3</span>
+<span class="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[10px] font-label-citation bg-primary-fixed text-primary font-semibold">Active</span>
+</div>
+<span class="text-caption font-label-citation text-tertiary text-[11px]">Today 14:02</span>
+</div>
+<p class="text-caption font-body-strong text-on-surface mt-1.5">Fixed ratio example</p>
+<div class="text-[11px] font-body-default text-outline mt-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="person">person</span>
+<span>Mateusz</span>
+</div>
+<!-- Button actions -->
+<div class="flex items-center justify-between pt-2.5 mt-2 border-t border-surface-container-highest">
+<button class="inline-flex items-center gap-1 text-[11px] font-body-strong text-primary hover:underline" type="button">
+<span class="material-symbols-outlined text-[13px]" data-icon="difference">difference</span>
+<span>Diff</span>
+</button>
+<span class="text-[11px] font-label-citation text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Current</span>
+</div>
+</div>
+<!-- Version 2 -->
+<div class="p-3 rounded-xl bg-surface-container-lowest border border-surface-variant hover:border-outline-variant transition-colors">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-citation text-caption font-semibold text-on-surface">v2</span>
+<span class="text-[10px] font-label-citation text-outline">#b784a9</span>
+</div>
+<span class="text-caption font-label-citation text-tertiary text-[11px]">Yesterday 18:30</span>
+</div>
+<p class="text-caption font-body-strong text-on-surface mt-1.5">Added extraction formula</p>
+<div class="text-[11px] font-body-default text-outline mt-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="person">person</span>
+<span>Mateusz</span>
+</div>
+<!-- Button actions -->
+<div class="flex items-center justify-between pt-2.5 mt-2 border-t border-surface-container-highest">
+<button class="inline-flex items-center gap-1 text-[11px] font-body-strong text-on-surface-variant hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-[13px]" data-icon="difference">difference</span>
+<span>Diff</span>
+</button>
+<button class="px-2 py-0.5 rounded border border-surface-variant bg-surface-container hover:bg-surface-container-high text-[11px] font-body-strong text-on-surface transition-colors" type="button">
+                  Restore
+                </button>
+</div>
+</div>
+<!-- Version 1 -->
+<div class="p-3 rounded-xl bg-surface-container-lowest border border-surface-variant hover:border-outline-variant transition-colors">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-citation text-caption font-semibold text-on-surface">v1</span>
+<span class="text-[10px] font-label-citation text-outline">Initial</span>
+</div>
+<span class="text-caption font-label-citation text-tertiary text-[11px]">3 days ago</span>
+</div>
+<p class="text-caption font-body-strong text-on-surface mt-1.5">Imported from coffee.md</p>
+<div class="text-[11px] font-body-default text-outline mt-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="smart_toy">smart_toy</span>
+<span>System</span>
+</div>
+<!-- Button actions -->
+<div class="flex items-center justify-between pt-2.5 mt-2 border-t border-surface-container-highest">
+<button class="inline-flex items-center gap-1 text-[11px] font-body-strong text-on-surface-variant hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-[13px]" data-icon="difference">difference</span>
+<span>Diff</span>
+</button>
+<button class="px-2 py-0.5 rounded border border-surface-variant bg-surface-container hover:bg-surface-container-high text-[11px] font-body-strong text-on-surface transition-colors" type="button">
+                  Restore
+                </button>
+</div>
+</div>
+</div>
+<!-- Diff comparison teaser toggle -->
+<div class="p-3 rounded-lg bg-surface-container-low border border-dashed border-surface-variant">
+<div class="flex items-center justify-between">
+<span class="text-[12px] font-body-strong text-on-surface">Visual Diff Mode</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-8 h-4 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<p class="text-[11px] text-tertiary mt-1 leading-normal">Highlight additions in green and removed lia macros in terracotta.</p>
+</div>
+</div>
+<!-- Drawer Footer Snapshot Meta -->
+<div class="p-3 border-t border-surface-container-highest bg-surface-container-low/50">
+<div class="flex items-center justify-between text-caption font-label-citation text-tertiary">
+<span>Branch: main</span>
+<span class="text-emerald-700 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+              Auto-saved
+            </span>
+</div>
+</div>
+</aside>
+</div>
+<!-- ========================================================================= -->
+<!-- 5. STICKY FOOTER STATUS BAR                                               -->
+<!-- ========================================================================= -->
+<footer class="h-8 bg-surface-bright border-t border-surface-container-highest px-4 flex items-center justify-between text-label-citation font-label-citation text-[11px] text-tertiary select-none shrink-0 z-30">
+<!-- Primary Status String -->
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-1.5 text-on-surface font-semibold">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="inventory_2">inventory_2</span>
+<span>Packaged as SCORM 2004</span>
+</span>
+<span class="text-outline-variant">·</span>
+<span>3.1 MB</span>
+<span class="text-outline-variant">·</span>
+<span>tracking: completion + score</span>
+</div>
+<!-- Live Sync / Diagnostics Network Metadata -->
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-1.5 text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+          Sync: OK
+        </span>
+<span class="text-outline-variant">·</span>
+<span class="text-outline">Latency: 18ms</span>
+<span class="text-outline-variant">·</span>
+<span class="text-on-surface-variant font-medium">Lia Engine v1.3.1</span>
+</div>
+</footer>
+</div>
+</body></html>

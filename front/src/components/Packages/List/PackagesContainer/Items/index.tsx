@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Spin } from "@ulams/components/components/atoms/Spin/Spin";
-import { useTheme } from "styled-components";
+import { useThemeTokens } from "@ulams/components/theme/applyTheme";
 import { Col, Row } from "react-grid-system";
 import Pagination from "@/components/Common/Pagination";
 import { PackagesContext } from "../../PackagesContext";
@@ -10,12 +10,12 @@ const PackagesContainerItems = () => {
   const { params, setParams, packages } = useContext(PackagesContext);
   const packagesLoading = packages?.loading;
   const packagesMeta = packages?.list?.meta;
-  const theme = useTheme();
+  const theme = useThemeTokens();
 
   if (packagesLoading) {
     return (
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <Spin color={theme.primaryColor} />
+        <Spin color={theme?.primaryColor} />
       </div>
     );
   }

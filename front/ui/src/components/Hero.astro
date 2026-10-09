@@ -1,0 +1,796 @@
+---
+import Icon from "./Icon.astro";
+import Img from "./Img.astro";
+import Orbi from "./Orbi.astro";
+
+interface Link {
+  label: string;
+  href: string;
+}
+interface Props {
+  variant?: "editorial" | "console" | "adventure" | "product";
+  eyebrow?: string;
+  title: string;
+  titleAccent?: string;
+  subtitle?: string;
+  body?: string;
+  primaryCta?: Link;
+  secondaryCta?: Link;
+  image?: { src: string; alt: string; width: number; height: number };
+  caption?: string;
+  illustration?: "none" | "orbi" | "planets";
+  facts?: Array<{ label: string; value: string; note?: string }>;
+  panel?: {
+    title?: string;
+    note?: string;
+    lines: Array<{ time?: string; tag?: string; text: string; tone?: string }>;
+  };
+  diff?: {
+    title?: string;
+    source?: string;
+    note?: string;
+    lines: Array<{ op?: "add" | "del" | "ctx"; text: string }>;
+    citations?: string[];
+    action?: string;
+  };
+}
+
+const {
+  variant = "editorial",
+  eyebrow,
+  title,
+  titleAccent,
+  subtitle,
+  body,
+  primaryCta,
+  secondaryCta,
+  image,
+  caption,
+  illustration = "none",
+  facts = [],
+  panel,
+  diff,
+} = Astro.props;
+
+const at = titleAccent ? title.indexOf(titleAccent) : -1;
+const before = at >= 0 ? title.slice(0, at) : title;
+const accent = at >= 0 ? titleAccent : "";
+const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
+---
+
+<section class={`u-hero u-hero--${variant}`} aria-labelledby="hero-title">
+  <div class="u-container u-hero__grid">
+    <div class="u-hero__copy">
+      {eyebrow && <p class="u-eyebrow u-hero__in" style="--i:0">{eyebrow}</p>}
+      <h1 id="hero-title" class="u-hero__title">
+        {before}{accent && <em class="u-hero__accent">{accent}</em>}{after}
+      </h1>
+      {subtitle && <p class="u-hero__subtitle u-hero__in" style="--i:1">{subtitle}</p>}
+      {body && <p class="u-hero__body u-hero__in" style="--i:2">{body}</p>}
+      {
+        (primaryCta || secondaryCta) && (
+          <div class="u-actions u-hero__in" style="--i:3">
+            {primaryCta && (
+              <a class="u-btn" href={primaryCta.href}>
+                {variant === "console" && <span aria-hidden="true">$</span>}
+                {primaryCta.label}
+                <Icon name="arrow" />
+              </a>
+            )}
+            {secondaryCta && (
+              <a class={variant === "editorial" ? "u-btn u-btn--link" : "u-btn u-btn--ghost"} href={secondaryCta.href}>
+                {secondaryCta.label}
+              </a>
+            )}
+          </div>
+        )
+      }
+      {
+        facts.length > 0 && (
+          <dl class="u-hero__facts u-hero__in" style="--i:4">
+            {facts.map((fact) => (
+              <div>
+                <dt>{fact.label}</dt>
+                <dd>
+                  {fact.value}
+                  {fact.note && <span>{fact.note}</span>}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        )
+      }
+    </div>
+
+    {
+      variant === "console" && panel && (
+        <div class="u-hero__panel u-hero__in" style="--i:2">
+          <div class="u-panel__bar">
+            <span class="u-panel__lights" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </span>
+            <span class="u-panel__title">{panel.title}</span>
+          </div>
+          <svg class="u-panel__spark" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true">
+            <path class="u-spark__area" d="M0 50 L40 48 L70 46 L95 30 L115 8 L140 14 L165 40 L200 47 L240 49 L300 48 L300 60 L0 60 Z" />
+            <path class="u-spark__line" d="M0 50 L40 48 L70 46 L95 30 L115 8 L140 14 L165 40 L200 47 L240 49 L300 48" />
+          </svg>
+          <ol class="u-panel__log">
+            {panel.lines.map((line, i) => (
+              <li data-tone={line.tone ?? "neutral"} style={`--i:${i}`}>
+                {line.time && <time>{line.time}</time>}
+                {line.tag && <b>[{line.tag}]</b>}
+                <span>{line.text}</span>
+              </li>
+            ))}
+          </ol>
+          <p class="u-panel__prompt" aria-hidden="true">
+            <span>$</span> tail -f incident.log<i class="u-caret" />
+          </p>
+          {panel.note && <p class="u-panel__note">{panel.note}</p>}
+        </div>
+      )
+    }
+
+    {
+      variant === "product" && diff && (
+        <figure class="u-hero__product u-hero__in" style="--i:2" aria-label="Example: an update proposal waiting for the author">
+          <div class="u-prod__glow" aria-hidden="true" />
+          <div class="u-prod__card">
+            <div class="u-prod__head">
+              <span class="u-prod__badge">Update proposal</span>
+              {diff.title && <span class="u-prod__title">{diff.title}</span>}
+            </div>
+            {diff.source && (
+              <p class="u-prod__source">
+                <Icon name="sync" /> source changed: <code>{diff.source}</code>
+              </p>
+            )}
+            <ol class="u-prod__diff">
+              {diff.lines.map((line, i) => (
+                <li data-op={line.op ?? "ctx"} style={`--i:${i}`}>
+                  <span aria-hidden="true">{line.op === "add" ? "+" : line.op === "del" ? "−" : " "}</span>
+                  <span class="u-visually-hidden">{line.op === "add" ? "added:" : line.op === "del" ? "removed:" : ""}</span>
+                  {line.text}
+                </li>
+              ))}
+            </ol>
+            <div class="u-prod__foot">
+              <ul class="u-prod__cites" aria-label="Citations">
+                {(diff.citations ?? []).map((c) => (
+                  <li>
+                    <Icon name="quote" /> {c}
+                  </li>
+                ))}
+              </ul>
+              {diff.action && (
+                <span class="u-prod__approve" aria-hidden="true">
+                  <Icon name="check" /> {diff.action}
+                </span>
+              )}
+            </div>
+          </div>
+          <div class="u-prod__peek" aria-hidden="true">
+            <span class="u-prod__peek-dot" />
+            <span>Lesson 2 · SLOs and error budgets</span>
+            <span class="u-prod__peek-bar"><i /></span>
+          </div>
+          {diff.note && <figcaption class="u-prod__note">{diff.note}</figcaption>}
+        </figure>
+      )
+    }
+
+    {
+      variant !== "console" && image && (
+        <figure class="u-hero__media">
+          <div class="u-hero__frame">
+            <Img {...image} priority sizes="(min-width: 960px) 46vw, 100vw" />
+          </div>
+          {caption && <figcaption>{caption}</figcaption>}
+        </figure>
+      )
+    }
+
+    {
+      variant === "adventure" && !image && illustration !== "none" && (
+        <div class="u-hero__art" aria-hidden="true">
+          <span class="u-planet u-planet--a" />
+          <span class="u-planet u-planet--b" />
+          <span class="u-planet u-planet--c" />
+          {illustration === "orbi" && <Orbi />}
+          <span class="u-bubble">{caption ?? "Ready for lift-off?"}</span>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .u-hero {
+    position: relative;
+    padding-block: clamp(40px, 7vw, 96px) clamp(56px, 8vw, 112px);
+  }
+  .u-hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+  }
+  .u-hero__copy {
+    display: grid;
+    gap: 22px;
+    justify-items: start;
+  }
+  .u-hero__title {
+    font-size: clamp(2.6rem, 1.4rem + 4.6vw, 4.6rem);
+    letter-spacing: -0.025em;
+    line-height: 1.02;
+    animation: u-rise 0.9s var(--ulams-ease) both;
+  }
+  .u-hero__accent {
+    font-style: normal;
+    color: var(--ulams-color-accent, var(--ulams-color-primary));
+  }
+  .u-hero__subtitle {
+    font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem);
+    line-height: 1.35;
+  }
+  .u-hero__body {
+    max-width: 52ch;
+    color: var(--ulams-color-muted);
+  }
+  .u-hero__in {
+    animation: u-fade-up 0.8s var(--ulams-ease) both;
+    animation-delay: calc(0.08s + var(--i, 0) * 0.08s);
+  }
+  @keyframes u-rise {
+    from {
+      transform: translateY(14px);
+    }
+  }
+  @keyframes u-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+  }
+  .u-hero__facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+    gap: 10px;
+    width: 100%;
+    margin: 12px 0 0;
+  }
+  .u-hero__facts div {
+    padding: 14px 16px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius);
+    background: color-mix(in srgb, var(--ulams-color-card-bg) 60%, transparent);
+    transition: transform 0.3s var(--ulams-ease), border-color 0.3s;
+  }
+  .u-hero__facts div:hover {
+    transform: translateY(-2px);
+    border-color: var(--ulams-color-primary);
+  }
+  .u-hero__facts dt {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ulams-color-muted);
+  }
+  .u-hero__facts dd {
+    margin: 4px 0 0;
+    font-family: var(--ulams-font-family);
+    font-size: 1.2rem;
+    color: var(--ulams-color-header);
+    display: grid;
+  }
+  .u-hero__facts dd span {
+    font-family: var(--ulams-font-family-body);
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+
+  /* media */
+  .u-hero__media {
+    margin: 0;
+    display: grid;
+    gap: 12px;
+    animation: u-rise 1s var(--ulams-ease) both;
+  }
+  .u-hero__frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--ulams-radius-card);
+    aspect-ratio: 4 / 4.4;
+  }
+  .u-hero__frame :global(img) {
+    width: 100%;
+    height: 100%;
+    transform: scale(1.04);
+    transition: transform 1.6s var(--ulams-ease);
+  }
+  .u-hero__media:hover .u-hero__frame :global(img) {
+    transform: scale(1.09);
+  }
+  .u-hero__media figcaption {
+    font-family: var(--ulams-font-family);
+    font-style: italic;
+    font-size: 0.875rem;
+    color: var(--ulams-color-muted);
+  }
+
+  /* editorial */
+  .u-hero--editorial .u-hero__title {
+    font-weight: 400;
+  }
+  .u-hero--editorial .u-hero__subtitle {
+    font-family: var(--ulams-font-family);
+    font-style: italic;
+    color: var(--ulams-color-primary);
+  }
+  .u-hero--editorial .u-hero__frame {
+    padding: 8px;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+  }
+  .u-hero--editorial .u-hero__frame :global(img) {
+    border-radius: 2px;
+  }
+  .u-hero--editorial .u-hero__media figcaption {
+    padding-left: 12px;
+    border-left: 1px solid var(--ulams-color-sage, var(--ulams-color-secondary));
+  }
+
+  /* console */
+  .u-hero--console .u-hero__title {
+    font-size: clamp(2.5rem, 1.4rem + 4vw, 4.2rem);
+  }
+  .u-hero--console .u-hero__accent {
+    color: var(--ulams-color-primary);
+  }
+  .u-hero--console .u-hero__facts div {
+    font-family: var(--ulams-font-mono);
+  }
+  .u-hero--console .u-hero__facts dt {
+    font-family: var(--ulams-font-mono);
+    letter-spacing: 0.04em;
+  }
+  .u-hero--console .u-hero__facts dd {
+    font-family: var(--ulams-font-mono);
+    font-size: 1rem;
+    color: var(--ulams-color-positive);
+  }
+  .u-hero__panel {
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    font-family: var(--ulams-font-mono);
+    font-size: 0.78rem;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.8), 0 0 0 1px rgb(88 166 255 / 0.06);
+  }
+  .u-panel__bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--ulams-color-border);
+    color: var(--ulams-color-muted);
+  }
+  .u-panel__lights {
+    display: inline-flex;
+    gap: 6px;
+  }
+  .u-panel__lights i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--ulams-color-error);
+  }
+  .u-panel__lights i:nth-child(2) {
+    background: var(--ulams-color-warn);
+  }
+  .u-panel__lights i:nth-child(3) {
+    background: var(--ulams-color-positive);
+  }
+  .u-panel__spark {
+    width: 100%;
+    height: 64px;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .u-spark__area {
+    fill: color-mix(in srgb, var(--ulams-color-error) 18%, transparent);
+  }
+  .u-spark__line {
+    fill: none;
+    stroke: var(--ulams-color-error);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 600;
+    stroke-dashoffset: 600;
+    animation: u-draw 2.2s 0.3s var(--ulams-ease) forwards;
+  }
+  @keyframes u-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .u-panel__log {
+    list-style: none;
+    margin: 0;
+    padding: 12px 14px;
+    display: grid;
+    gap: 9px;
+  }
+  .u-panel__log li {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    gap: 10px;
+    line-height: 1.45;
+    animation: u-fade-up 0.5s var(--ulams-ease) both;
+    animation-delay: calc(0.6s + var(--i) * 0.28s);
+  }
+  .u-panel__log time {
+    color: var(--ulams-color-muted);
+  }
+  .u-panel__log b {
+    font-weight: 500;
+    color: var(--ulams-color-info);
+  }
+  .u-panel__log [data-tone="alert"] b {
+    color: var(--ulams-color-error);
+  }
+  .u-panel__log [data-tone="warn"] b {
+    color: var(--ulams-color-warn);
+  }
+  .u-panel__log [data-tone="ok"] b {
+    color: var(--ulams-color-positive);
+  }
+  .u-panel__prompt {
+    margin: 0 14px 12px;
+    padding: 10px 12px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius);
+    color: var(--ulams-color-muted);
+  }
+  .u-panel__prompt span {
+    color: var(--ulams-color-positive);
+  }
+  .u-caret {
+    display: inline-block;
+    width: 7px;
+    height: 1em;
+    margin-left: 4px;
+    vertical-align: -2px;
+    background: var(--ulams-color-text);
+    animation: u-blink 1s steps(1) infinite;
+  }
+  @keyframes u-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  .u-panel__note {
+    margin: 0;
+    padding: 8px 14px 12px;
+    font-size: 0.7rem;
+    color: var(--ulams-color-muted);
+  }
+
+  /* adventure */
+  .u-hero--adventure .u-hero__title {
+    font-size: clamp(2.5rem, 1.3rem + 4.4vw, 4.5rem);
+    line-height: 1.08;
+  }
+  .u-hero--adventure .u-hero__accent {
+    color: var(--ulams-color-primary);
+    background: linear-gradient(transparent 62%, rgb(255 210 63 / 0.22) 62%);
+  }
+  .u-hero--adventure .u-hero__facts div {
+    border-radius: 999px;
+    border-width: 2px;
+    padding: 10px 18px;
+    text-align: center;
+  }
+  .u-hero--adventure .u-hero__facts dd {
+    font-size: 1rem;
+  }
+  .u-hero__art {
+    position: relative;
+    aspect-ratio: 1;
+    max-width: 520px;
+    width: 100%;
+    justify-self: center;
+    display: grid;
+    place-items: center;
+  }
+  .u-hero__art::before {
+    content: "";
+    position: absolute;
+    inset: 6%;
+    border-radius: 50%;
+    border: 3px dashed rgb(179 168 255 / 0.35);
+    animation: u-spin 60s linear infinite;
+  }
+  @keyframes u-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .u-planet {
+    position: absolute;
+    border-radius: 50%;
+    animation: u-float 6s ease-in-out infinite;
+  }
+  .u-planet--a {
+    width: 18%;
+    aspect-ratio: 1;
+    top: 6%;
+    right: 12%;
+    background: radial-gradient(circle at 30% 30%, #ffe8a3, #ffb020 60%, #c97a00);
+    box-shadow: 0 0 40px rgb(255 210 63 / 0.45);
+  }
+  .u-planet--b {
+    width: 11%;
+    aspect-ratio: 1;
+    bottom: 14%;
+    left: 6%;
+    background: radial-gradient(circle at 30% 30%, #b8ffe0, #3ddc97 60%, #1a8a5c);
+    animation-delay: -2s;
+  }
+  .u-planet--c {
+    width: 8%;
+    aspect-ratio: 1;
+    top: 22%;
+    left: 14%;
+    background: radial-gradient(circle at 30% 30%, #ffc9c9, #ff6b6b 60%, #b83b3b);
+    animation-delay: -4s;
+  }
+  @keyframes u-float {
+    50% {
+      transform: translateY(-14px);
+    }
+  }
+  .u-bubble {
+    position: absolute;
+    top: 4%;
+    left: 4%;
+    max-width: 46%;
+    padding: 12px 16px;
+    border-radius: 20px 20px 20px 4px;
+    background: #fff;
+    color: #13153a;
+    font-family: var(--ulams-font-family);
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.3;
+    box-shadow: 0 10px 30px -10px rgb(0 0 0 / 0.5);
+    animation: u-fade-up 0.8s 0.6s var(--ulams-ease-bounce) both;
+  }
+
+  /* product (platform) */
+  .u-hero--product {
+    overflow: clip;
+  }
+  .u-hero--product .u-hero__title {
+    font-size: clamp(2.6rem, 1.2rem + 5vw, 5rem);
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+  .u-hero--product .u-hero__accent {
+    background: linear-gradient(100deg, var(--ulams-color-primary), var(--ulams-color-accent, var(--ulams-color-primary)) 60%, #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .u-hero--product .u-hero__subtitle {
+    color: var(--ulams-color-muted);
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.3rem);
+    max-width: 46ch;
+  }
+  .u-hero__product {
+    position: relative;
+    margin: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .u-prod__glow {
+    position: absolute;
+    inset: -20% -10% -10% -10%;
+    z-index: -1;
+    background:
+      radial-gradient(40% 50% at 30% 30%, color-mix(in srgb, var(--ulams-color-primary) 30%, transparent), transparent 70%),
+      radial-gradient(40% 50% at 80% 70%, rgb(236 72 153 / 0.18), transparent 70%);
+    filter: blur(30px);
+    animation: u-glow 10s ease-in-out infinite alternate;
+  }
+  @keyframes u-glow {
+    to {
+      transform: translate(4%, -3%) scale(1.06);
+    }
+  }
+  .u-prod__card {
+    position: relative;
+    border-radius: 16px;
+    border: 1px solid var(--ulams-color-border);
+    background: color-mix(in srgb, var(--ulams-color-bg) 82%, transparent);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 40px 80px -40px rgb(14 14 16 / 0.35), 0 0 0 1px rgb(255 255 255 / 0.6) inset;
+    overflow: hidden;
+    transform: perspective(1200px) rotateY(-4deg) rotateX(2deg);
+    transition: transform 0.8s var(--ulams-ease);
+  }
+  .u-hero__product:hover .u-prod__card {
+    transform: perspective(1200px) rotateY(0) rotateX(0);
+  }
+  .u-prod__head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .u-prod__badge {
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ulams-color-primary) 12%, transparent);
+    color: var(--ulams-color-primary-on-light);
+    font-family: var(--ulams-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+  }
+  .u-prod__title {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .u-prod__source {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px 0;
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-prod__source code {
+    font-family: var(--ulams-font-mono);
+    color: var(--ulams-color-text);
+  }
+  .u-prod__diff {
+    list-style: none;
+    margin: 12px 16px;
+    padding: 8px 0;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 10px;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.78rem;
+    line-height: 1.55;
+  }
+  .u-prod__diff li {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    padding: 2px 12px 2px 0;
+    animation: u-fade-up 0.5s var(--ulams-ease) both;
+    animation-delay: calc(0.5s + var(--i) * 0.12s);
+  }
+  .u-prod__diff li > span:first-child {
+    text-align: center;
+    color: var(--ulams-color-muted);
+  }
+  .u-prod__diff [data-op="add"] {
+    background: rgb(22 163 74 / 0.1);
+    color: #166534;
+  }
+  .u-prod__diff [data-op="del"] {
+    background: rgb(220 38 38 / 0.08);
+    color: #991b1b;
+    text-decoration: line-through;
+    text-decoration-color: rgb(153 27 27 / 0.4);
+  }
+  .u-prod__foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px 16px;
+  }
+  .u-prod__cites {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .u-prod__cites li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--ulams-color-border);
+    font-family: var(--ulams-font-mono);
+    font-size: 0.7rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-prod__approve {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 9px;
+    background: var(--ulams-color-text);
+    color: var(--ulams-color-bg);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    animation: u-approve 3.2s 1.8s var(--ulams-ease) infinite;
+  }
+  @keyframes u-approve {
+    0%,
+    70%,
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--ulams-color-primary) 50%, transparent);
+    }
+    85% {
+      box-shadow: 0 0 0 8px transparent;
+    }
+  }
+  .u-prod__peek {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 78%;
+    margin-left: auto;
+    padding: 12px 14px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 12px;
+    background: var(--ulams-color-bg);
+    font-size: 0.8125rem;
+    box-shadow: 0 20px 40px -24px rgb(14 14 16 / 0.3);
+    transform: translateY(-4px);
+    animation: u-float 7s ease-in-out infinite;
+  }
+  .u-prod__peek-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ulams-color-positive);
+  }
+  .u-prod__peek-bar {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--ulams-color-border);
+    overflow: hidden;
+  }
+  .u-prod__peek-bar i {
+    display: block;
+    width: 64%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--ulams-color-primary), var(--ulams-color-accent, var(--ulams-color-primary)));
+  }
+  .u-prod__note {
+    font-size: 0.75rem;
+    color: var(--ulams-color-muted);
+    text-align: right;
+  }
+
+  @media (max-width: 960px) {
+    .u-prod__card {
+      transform: none;
+    }
+    .u-hero__grid {
+      grid-template-columns: 1fr;
+    }
+    .u-hero__frame {
+      aspect-ratio: 16 / 11;
+    }
+    .u-hero__art {
+      max-width: 360px;
+    }
+  }
+</style>

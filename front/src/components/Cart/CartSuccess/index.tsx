@@ -1,59 +1,15 @@
 import { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { UlamsContext } from "@ulams/sdk/react/context";
 import Container from "@/components/Common/Container";
 
 import routeRoutes from "@/components/Routes/routes";
-import { getStylesBasedOnTheme } from "@ulams/components/utils/utils";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { ThankYouIcon } from "@/icons/index";
 import { isMobile } from "react-device-detect";
-
-const CartSuccessPageStyled = styled.div<{ $isMobile: boolean }>`
-  .cart-success-container {
-    font-family: ${({ theme }) => theme.font};
-    background: ${({ theme }) =>
-      getStylesBasedOnTheme(theme.mode, theme.black, theme.white, theme.white)};
-    border-radius: ${({ theme }) => theme.cardRadius}px;
-    padding: 98px 20px 180px;
-    display: grid;
-    place-content: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    gap: 16px;
-    text-align: center;
-
-    .cart-success-buttons {
-      display: grid;
-      grid-auto-flow: column;
-      gap: 8px;
-      justify-content: center;
-      margin: 0.8em;
-    }
-    div {
-      display: flex;
-      flex-direction: ${({ $isMobile }) => ($isMobile ? "column" : "row")};
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      a,
-      p {
-        margin: 0;
-      }
-      a {
-        p {
-          color: ${({ theme }) => theme.primaryColor};
-        }
-      }
-    }
-  }
-`;
+import styles from "./CartSuccess.module.css";
 
 const CartSuccess = () => {
   const { t } = useTranslation();
@@ -66,9 +22,9 @@ const CartSuccess = () => {
   }, []);
 
   return (
-    <CartSuccessPageStyled $isMobile={isMobile}>
+    <div className={isMobile ? styles.mobile : undefined}>
       <Container>
-        <div className="cart-success-container">
+        <div className={`cart-success-container ${styles.container}`}>
           <ThankYouIcon />
           <Title level={2}>{t("Cart.ThankYouTitle")}</Title>
           <div>
@@ -92,7 +48,7 @@ const CartSuccess = () => {
           </div>
         </div>
       </Container>
-    </CartSuccessPageStyled>
+    </div>
   );
 };
 

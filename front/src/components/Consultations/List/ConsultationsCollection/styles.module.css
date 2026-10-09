@@ -1,0 +1,27 @@
+.header {
+  background: var(--ulams-color-primary-on-light);
+  padding: 80px 40px 100px;
+  position: relative;
+}
+
+.header.mobile {
+  padding: 60px 20px 90px 20px;
+}
+
+.header h1 {
+  color: var(--ulams-color-white);
+  transition: margin-bottom 0.5s ease-out;
+}
+
+.tabs {
+  margin-top: -70px;
+  z-index: 1;
+}
+
+.tabs :global(.tabs-menu) {
+  margin-left: 40px;
+}
+
+.tabs.mobile :global(.tabs-menu) {
+  margin-left: 20px;
+}

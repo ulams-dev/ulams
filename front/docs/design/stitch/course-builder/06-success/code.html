@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-surface" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ulams Course Builder — Success: course created</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Newsreader, Inter, JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-high": "#eae8e3",
+            "on-tertiary-fixed-variant": "#424656",
+            "tertiary-fixed": "#dfe1f6",
+            "surface-variant": "#e4e2dd",
+            "error": "#ba1a1a",
+            "surface-container-lowest": "#ffffff",
+            "on-primary": "#ffffff",
+            "secondary-fixed-dim": "#ffb959",
+            "primary-container": "#5b5bf7",
+            "background": "#fbf9f4",
+            "surface-tint": "#4746e4",
+            "tertiary-container": "#6d7082",
+            "surface-dim": "#dbdad5",
+            "on-tertiary": "#ffffff",
+            "outline": "#767587",
+            "secondary-container": "#ffb54d",
+            "primary-fixed": "#e1dfff",
+            "on-error-container": "#93000a",
+            "inverse-on-surface": "#f2f1ec",
+            "surface-bright": "#fbf9f4",
+            "on-primary-container": "#f8f5ff",
+            "secondary": "#845400",
+            "on-secondary-fixed-variant": "#643f00",
+            "error-container": "#ffdad6",
+            "on-secondary": "#ffffff",
+            "surface-container-highest": "#e4e2dd",
+            "surface-container-low": "#f5f3ee",
+            "on-primary-fixed": "#09006b",
+            "surface": "#fbf9f4",
+            "on-secondary-fixed": "#2a1800",
+            "on-tertiary-fixed": "#171b29",
+            "on-tertiary-container": "#f7f5ff",
+            "on-surface": "#1b1c19",
+            "tertiary": "#545869",
+            "primary": "#413ede",
+            "on-surface-variant": "#464555",
+            "tertiary-fixed-dim": "#c3c5d9",
+            "surface-container": "#f0eee9",
+            "primary-fixed-dim": "#c1c1ff",
+            "inverse-primary": "#c1c1ff",
+            "outline-variant": "#c7c4d8",
+            "on-secondary-container": "#714800",
+            "on-background": "#1b1c19",
+            "on-primary-fixed-variant": "#2c25cc",
+            "secondary-fixed": "#ffddb6",
+            "on-error": "#ffffff",
+            "inverse-surface": "#30312e"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-desktop": "2rem",
+            "gutter-desktop": "1.5rem",
+            "space-lg": "1.5rem",
+            "space-md": "1rem",
+            "margin": "1rem",
+            "space-xl": "2.5rem",
+            "space-xs": "0.25rem",
+            "gutter": "1rem",
+            "space-sm": "0.5rem"
+          },
+          "fontFamily": {
+            "label-citation": [
+              "JetBrains Mono"
+            ],
+            "display-editorial": [
+              "Newsreader"
+            ],
+            "headline-lg-mobile": [
+              "Newsreader"
+            ],
+            "display-editorial-mobile": [
+              "Newsreader"
+            ],
+            "headline-lg": [
+              "Newsreader"
+            ],
+            "caption": [
+              "Inter"
+            ],
+            "body-editorial": [
+              "Newsreader"
+            ],
+            "body-default": [
+              "Inter"
+            ],
+            "headline-sm": [
+              "Inter"
+            ],
+            "headline-md": [
+              "Inter"
+            ],
+            "code-body": [
+              "JetBrains Mono"
+            ],
+            "body-strong": [
+              "Inter"
+            ]
+          },
+          "fontSize": {
+            "label-citation": [
+              "11px",
+              {
+                "lineHeight": "14px",
+                "letterSpacing": "0.04em",
+                "fontWeight": "600"
+              }
+            ],
+            "display-editorial": [
+              "48px",
+              {
+                "lineHeight": "56px",
+                "letterSpacing": "-0.02em",
+                "fontWeight": "400"
+              }
+            ],
+            "headline-lg-mobile": [
+              "26px",
+              {
+                "lineHeight": "34px",
+                "letterSpacing": "-0.01em",
+                "fontWeight": "400"
+              }
+            ],
+            "display-editorial-mobile": [
+              "32px",
+              {
+                "lineHeight": "40px",
+                "letterSpacing": "-0.01em",
+                "fontWeight": "400"
+              }
+            ],
+            "headline-lg": [
+              "36px",
+              {
+                "lineHeight": "44px",
+                "letterSpacing": "-0.015em",
+                "fontWeight": "400"
+              }
+            ],
+            "caption": [
+              "12px",
+              {
+                "lineHeight": "16px",
+                "fontWeight": "400"
+              }
+            ],
+            "body-editorial": [
+              "19px",
+              {
+                "lineHeight": "32px",
+                "fontWeight": "400"
+              }
+            ],
+            "body-default": [
+              "14px",
+              {
+                "lineHeight": "22px",
+                "fontWeight": "400"
+              }
+            ],
+            "headline-sm": [
+              "16px",
+              {
+                "lineHeight": "24px",
+                "fontWeight": "600"
+              }
+            ],
+            "headline-md": [
+              "20px",
+              {
+                "lineHeight": "28px",
+                "letterSpacing": "-0.01em",
+                "fontWeight": "600"
+              }
+            ],
+            "code-body": [
+              "13px",
+              {
+                "lineHeight": "20px",
+                "fontWeight": "400"
+              }
+            ],
+            "body-strong": [
+              "14px",
+              {
+                "lineHeight": "22px",
+                "fontWeight": "500"
+              }
+            ]
+          }
+        },
+      },
+    }
+  </script>
+</head>
+<body class="h-full bg-surface text-on-surface antialiased overflow-x-hidden selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- ========================================================================= -->
+<!-- SHARED COMPONENT: SideNavBar (Strict compliance to JSON specs)           -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-16 z-40 bg-inverse-surface border-r border-outline-variant/30 flex flex-col justify-between py-4 items-center">
+<!-- Top Monogram & Brand -->
+<div class="flex flex-col items-center gap-6 w-full">
+<div class="w-10 h-10 rounded-xl bg-surface-variant/15 flex items-center justify-center text-inverse-on-surface font-display-editorial text-2xl font-semibold border border-outline-variant/20 tracking-tight" title="Ulams — Curriculum Architect">
+        u
+      </div>
+<!-- Navigation Tabs (5 tabs from JSON) -->
+<nav aria-label="Main Navigation" class="flex flex-col items-center gap-2 w-full px-2">
+<!-- Builder (Active: mapping to Course Builder flow) -->
+<a class="flex flex-col items-center justify-center text-primary-fixed bg-surface-variant/20 rounded-lg p-2.5 transition-all duration-150 w-11 h-11 relative group" href="#" title="Builder">
+<span class="material-symbols-outlined text-[20px]" data-icon="architecture" data-weight="fill" style="font-variation-settings: 'FILL' 1;">architecture</span>
+<span class="sr-only">Builder</span>
+</a>
+<!-- Courses -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 rounded-lg p-2.5 transition-all duration-150 w-11 h-11 group" href="#" title="Courses">
+<span class="material-symbols-outlined text-[20px]" data-icon="menu_book">menu_book</span>
+<span class="sr-only">Courses</span>
+</a>
+<!-- Sources -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 rounded-lg p-2.5 transition-all duration-150 w-11 h-11 group" href="#" title="Sources">
+<span class="material-symbols-outlined text-[20px]" data-icon="source">source</span>
+<span class="sr-only">Sources</span>
+</a>
+<!-- Usage -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 rounded-lg p-2.5 transition-all duration-150 w-11 h-11 group" href="#" title="Usage">
+<span class="material-symbols-outlined text-[20px]" data-icon="data_usage">data_usage</span>
+<span class="sr-only">Usage</span>
+</a>
+<!-- Settings -->
+<a class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 rounded-lg p-2.5 transition-all duration-150 w-11 h-11 group" href="#" title="Settings">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span class="sr-only">Settings</span>
+</a>
+</nav>
+</div>
+<!-- Footer Profile Tab -->
+<div class="flex flex-col items-center gap-3 w-full">
+<button class="flex flex-col items-center justify-center text-outline-variant hover:text-inverse-on-surface hover:bg-surface-variant/10 rounded-lg p-2.5 transition-all duration-150 w-11 h-11" title="Profile">
+<span class="material-symbols-outlined text-[22px]" data-icon="account_circle">account_circle</span>
+<span class="sr-only">Profile</span>
+</button>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- SHARED COMPONENT: TopNavBar (Strict compliance to JSON specs)            -->
+<!-- ========================================================================= -->
+<header class="fixed top-0 left-0 right-0 h-14 z-30 flex items-center justify-between pl-20 pr-6 bg-surface-bright border-b border-surface-container-highest">
+<!-- Left Trail: Breadcrumb / Product Name & LMS Status Pill -->
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface tracking-tight">Course Builder</span>
+<span class="text-on-surface-variant text-body-default font-body-default">/</span>
+<span class="font-body-strong text-body-strong text-on-surface">Coffee brewing fundamentals</span>
+</div>
+<!-- LMS State Pill -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-surface-container border border-surface-container-high text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+<span>Applied to LMS · unpublished</span>
+</div>
+</div>
+<!-- Right Trail: Token Metrics, Actions & User Profile -->
+<div class="flex items-center gap-4">
+<!-- Token Usage Telemetry -->
+<div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container-low border border-surface-container-highest font-code-body text-code-body text-on-surface-variant">
+<span class="font-label-citation text-label-citation text-secondary font-semibold">$0.18</span>
+<span class="text-outline">·</span>
+<span class="font-label-citation text-label-citation text-on-surface-variant">112k tokens</span>
+</div>
+<!-- Icon Actions from JSON trailing_icon_actions -->
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors duration-150" title="Help &amp; Documentation">
+<span class="material-symbols-outlined text-[20px]" data-icon="help_outline">help_outline</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors duration-150 relative" title="Notifications">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+</button>
+</div>
+<div class="h-4 w-px bg-surface-container-highest"></div>
+<!-- User Avatar Photo -->
+<div class="flex items-center gap-2 pl-1">
+<img class="w-7 h-7 rounded-full object-cover border border-surface-container-highest shadow-sm" data-alt="A portrait photograph of a professional curriculum developer in a bright design studio, warm natural daylight casting soft shadows against linen acoustic walls, wearing minimal eyeglasses with an attentive serene expression, light film grain aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1F4JoLuDmfmL_YtmDMh_2iAuE5R06zGUrfqwOG_J-DIRSzmqSrvtDm9InxhlrCZ3NQCJLZDKtTHTIgMSayAJziD7OlJufZadFLESz_iA_JcTFQ16LINqxsTLG2sS0q8Oqzx-ntcWCcOF5wx6pQ-v3piEjW0hi1Fk6rqqYy2daKEjQdc2PI8uPQf8Wb4lSJrh5kjjQ184foX05S-OYPz-mLqX-atJIatP3g7roOAiLKzqUxv5WBOWrKNTpSiBg9pnl_vW1fOqZsG4"/>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE CANVAS                                                     -->
+<!-- ========================================================================= -->
+<main class="min-h-screen pl-16 pt-14 pb-16 flex flex-col items-center bg-surface">
+<div class="w-full max-w-[880px] px-6 sm:px-8 py-10 flex flex-col gap-8">
+<!-- ===================================================================== -->
+<!-- 1. CENTRE HERO CARD: Celebratory yet restrained                       -->
+<!-- ===================================================================== -->
+<section class="relative rounded-2xl bg-surface-container-lowest border border-surface-container-highest overflow-hidden shadow-sm transition-all">
+<!-- Soft Iris-to-Paper Radial Gradient Halo -->
+<div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-primary-container/10 blur-3xl pointer-events-none"></div>
+<div class="absolute -top-20 right-1/4 w-80 h-80 rounded-full bg-secondary-container/10 blur-3xl pointer-events-none"></div>
+<div class="relative p-7 sm:p-9 flex flex-col gap-6">
+<!-- Editorial Headline -->
+<div class="flex flex-col gap-2 max-w-xl">
+<div class="flex items-center gap-2 mb-1">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary-fixed/50 text-on-primary-fixed text-caption font-caption font-medium border border-primary-fixed">
+<span class="material-symbols-outlined text-[14px]" data-icon="task_alt">task_alt</span>
+                Generation complete
+              </span>
+<span class="font-code-body text-code-body text-outline">v1.0-draft</span>
+</div>
+<h1 class="font-display-editorial text-display-editorial sm:text-[44px] text-on-surface leading-tight tracking-tight">
+              Your course is ready.
+            </h1>
+<p class="font-body-editorial text-body-editorial text-on-surface-variant max-w-lg">
+              Created in your academy through the same services your team uses — nothing hidden, everything cited.
+            </p>
+</div>
+<!-- Two-Column Hero Body -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch pt-2">
+<!-- Left Column: Course Cover Card Mockup (Abstract Coffee Botanical Linework) -->
+<div class="md:col-span-5 rounded-xl border border-surface-container-highest bg-surface-container-low p-4 flex flex-col justify-between relative overflow-hidden group">
+<!-- Visual Placeholder for Abstract Coffee Extraction Linework -->
+<div class="relative h-44 w-full rounded-lg overflow-hidden border border-surface-container-highest bg-surface-container">
+<img class="w-full h-full object-cover grayscale-[30%] contrast-[1.05] group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="An elegant fine-art botanical linework illustration depicting coffee cherry branches and pour-over glass extraction apparatus, warm sepia ink on cream cotton paper, minimalist architectural drawing style with delicate hatching, ambient natural illumination" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxxsecQQ4CD4W2xOpJLy_FzILhxO6MLIrOxIc3nlAEK--mpGwJu4JpHqgKYgyUw944kxHzCi0V_jArevD6k4BQl2okP5wWPgKXupPj4Bf62r0dD-q3bY6vE8wFN47GFARjmR19wwF1Sh5uRSr0P93ArHHtgatyoFgVH0Moe_7OHKN3gROfY2EhDCMkRLQwMkejCXsiuoUt6oRjpnEcxT9MSfAs-jvGP6HLDxaDJAdAOlDABT82P4KUC6dAfkZeqo07OudHr1A_wu8"/>
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-inverse-on-surface">
+<span class="font-label-citation text-label-citation tracking-wider bg-inverse-surface/90 px-2 py-0.5 rounded border border-outline-variant/30 backdrop-blur-sm">MODULE SPEC</span>
+<span class="font-code-body text-code-body text-inverse-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span>
+                    62 min
+                  </span>
+</div>
+</div>
+<!-- Metadata Badge -->
+<div class="mt-4 flex flex-col gap-1.5">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-body-strong text-body-strong text-on-surface line-clamp-1">Coffee brewing fundamentals</span>
+</div>
+<div class="flex items-center justify-between font-label-citation text-label-citation text-on-surface-variant">
+<span>V1.0 Published Draft</span>
+<span class="text-outline">Audio &amp; reading</span>
+</div>
+</div>
+</div>
+<!-- Right Column: 2x3 Key Stats Grid with Mono Metrics -->
+<div class="md:col-span-7 grid grid-cols-2 gap-3">
+<!-- Stat 1 -->
+<div class="p-3.5 rounded-xl bg-surface-container-low border border-surface-container-highest flex flex-col justify-between">
+<span class="font-caption text-caption text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-outline" data-icon="view_timeline">view_timeline</span>
+                  Structure
+                </span>
+<span class="font-code-body text-code-body font-semibold text-on-surface text-[18px]">3 modules</span>
+</div>
+<!-- Stat 2 -->
+<div class="p-3.5 rounded-xl bg-surface-container-low border border-surface-container-highest flex flex-col justify-between">
+<span class="font-caption text-caption text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-outline" data-icon="library_books">library_books</span>
+                  Scope
+                </span>
+<span class="font-code-body text-code-body font-semibold text-on-surface text-[18px]">9 lessons</span>
+</div>
+<!-- Stat 3 -->
+<div class="p-3.5 rounded-xl bg-surface-container-low border border-surface-container-highest flex flex-col justify-between">
+<span class="font-caption text-caption text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-outline" data-icon="timer">timer</span>
+                  Pace
+                </span>
+<span class="font-code-body text-code-body font-semibold text-on-surface text-[18px]">62 min total</span>
+</div>
+<!-- Stat 4 -->
+<div class="p-3.5 rounded-xl bg-surface-container-low border border-surface-container-highest flex flex-col justify-between">
+<span class="font-caption text-caption text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-outline" data-icon="quiz">quiz</span>
+                  Assessment
+                </span>
+<span class="font-code-body text-code-body font-semibold text-on-surface text-[18px]">36 questions</span>
+</div>
+<!-- Stat 5: Warm Amber Highlight for Citations -->
+<div class="p-3.5 rounded-xl bg-secondary-fixed/30 border border-secondary/20 flex flex-col justify-between">
+<span class="font-caption text-caption text-secondary font-medium flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-secondary" data-icon="fact_check">fact_check</span>
+                  Grounding
+                </span>
+<div class="flex items-center gap-1.5">
+<span class="font-code-body text-code-body font-bold text-secondary text-[16px]">100% cited</span>
+<span class="font-label-citation text-[10px] px-1.5 py-0.2 rounded bg-secondary-container/50 text-on-secondary-container">§12 refs</span>
+</div>
+</div>
+<!-- Stat 6: Cost telemetry -->
+<div class="p-3.5 rounded-xl bg-surface-container-low border border-surface-container-highest flex flex-col justify-between">
+<span class="font-caption text-caption text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-outline" data-icon="receipt_long">receipt_long</span>
+                  Compute cost
+                </span>
+<span class="font-code-body text-code-body font-semibold text-on-surface text-[18px]">$1.12 total</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- 2. PRIMARY ACTIONS ROW                                                -->
+<!-- ===================================================================== -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+<!-- 1. Publish Course (Primary Iris) -->
+<div class="flex flex-col gap-1.5">
+<button class="w-full h-11 px-4 rounded-lg bg-primary-container text-on-primary font-headline-sm text-headline-sm font-medium flex items-center justify-center gap-2 hover:bg-surface-tint active:scale-95 transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="rocket_launch">rocket_launch</span>
+<span>Publish course</span>
+</button>
+<span class="font-label-citation text-[10px] text-outline text-center truncate px-1" title="coffee.app.localhost/courses/coffee-brewing">
+            coffee.app.localhost/courses/...
+          </span>
+</div>
+<!-- 2. Open in admin (Secondary) -->
+<div class="flex flex-col gap-1.5">
+<button class="w-full h-11 px-4 rounded-lg bg-surface-container-lowest border border-surface-container-highest text-on-surface font-headline-sm text-headline-sm font-medium flex items-center justify-center gap-2 hover:bg-surface-container active:scale-95 transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant" data-icon="open_in_new">open_in_new</span>
+<span>Open in admin</span>
+</button>
+<span class="font-label-citation text-[10px] text-outline text-center truncate px-1" title="admin.lms.internal/courses/c-912a">
+            admin.lms.internal/courses/c-912a
+          </span>
+</div>
+<!-- 3. Preview as learner (Secondary) -->
+<div class="flex flex-col gap-1.5">
+<button class="w-full h-11 px-4 rounded-lg bg-surface-container-lowest border border-surface-container-highest text-on-surface font-headline-sm text-headline-sm font-medium flex items-center justify-center gap-2 hover:bg-surface-container active:scale-95 transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant" data-icon="visibility">visibility</span>
+<span>Preview as learner</span>
+</button>
+<span class="font-label-citation text-[10px] text-outline text-center truncate px-1" title="coffee.app.localhost/learn/preview">
+            coffee.app.localhost/learn/preview
+          </span>
+</div>
+<!-- 4. View landing page (Ghost) -->
+<div class="flex flex-col gap-1.5">
+<button class="w-full h-11 px-4 rounded-lg bg-transparent border border-surface-container-highest/60 text-on-surface-variant font-headline-sm text-headline-sm font-medium flex items-center justify-center gap-2 hover:bg-surface-container-high/40 hover:text-on-surface active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[18px] text-outline" data-icon="public">public</span>
+<span>Landing page</span>
+</button>
+<span class="font-label-citation text-[10px] text-outline text-center truncate px-1" title="coffee.app.localhost/about">
+            coffee.app.localhost/about
+          </span>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- 3. "BEFORE YOU PUBLISH" CHECKLIST CARD                                -->
+<!-- ===================================================================== -->
+<section class="rounded-xl bg-surface-container-lowest border border-surface-container-highest p-6 shadow-sm flex flex-col gap-5">
+<!-- Header -->
+<div class="flex items-center justify-between pb-3 border-b border-surface-container-highest">
+<div class="flex items-center gap-2.5">
+<h2 class="font-headline-md text-headline-md font-semibold text-on-surface">Before you publish</h2>
+<span class="text-caption font-caption text-outline">Pre-flight verification</span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-code-body bg-secondary-fixed/40 text-secondary border border-secondary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+            3 of 4 quality checks passed
+          </span>
+</div>
+<!-- Structured Checklist Items -->
+<div class="flex flex-col divide-y divide-surface-container-highest">
+<!-- Check 1: Citation Match (Success) -->
+<div class="py-3.5 flex items-start justify-between gap-4 first:pt-0">
+<div class="flex items-start gap-3">
+<div class="mt-0.5 w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
+<span class="material-symbols-outlined text-[15px]" data-icon="check">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-strong text-body-strong text-on-surface">Every lesson cites the source</span>
+<span class="font-caption text-caption text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[13px] text-emerald-600" data-icon="verified">verified</span>
+                  100% matched to <span class="font-code-body text-[11px] underline text-on-surface">coffee-brewing-handbook.pdf</span>
+</span>
+</div>
+</div>
+<span class="font-label-citation text-label-citation text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded shrink-0">
+              Pass
+            </span>
+</div>
+<!-- Check 2: Quiz Validation (Success) -->
+<div class="py-3.5 flex items-start justify-between gap-4">
+<div class="flex items-start gap-3">
+<div class="mt-0.5 w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
+<span class="material-symbols-outlined text-[15px]" data-icon="check">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-strong text-body-strong text-on-surface">Quiz answers supported by the source</span>
+<span class="font-caption text-caption text-on-surface-variant mt-0.5">
+                  36 distractor rationale validations complete with confidence threshold &gt;0.94
+                </span>
+</div>
+</div>
+<span class="font-label-citation text-label-citation text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded shrink-0">
+              Pass
+            </span>
+</div>
+<!-- Check 3: Caution Badge - 1 lesson flagged -->
+<div class="py-3.5 flex items-start justify-between gap-4 bg-secondary-fixed/15 -mx-6 px-6 border-l-2 border-secondary-container">
+<div class="flex items-start gap-3">
+<div class="mt-0.5 w-5 h-5 rounded-full bg-secondary-container/40 flex items-center justify-center text-secondary shrink-0 font-bold text-xs">
+                !
+              </div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-body-strong text-body-strong text-on-surface">1 lesson flagged for review</span>
+<span class="font-code-body text-[11px] text-secondary font-medium px-2 py-0.5 rounded bg-surface-container-lowest border border-secondary/30">
+                    3.2 Pour-over technique
+                  </span>
+</div>
+<span class="font-caption text-caption text-on-surface-variant mt-0.5">
+                  Extraction temperature range (92–96°C) references a supplementary note requiring editor confirmation.
+                </span>
+</div>
+</div>
+<button class="px-3 py-1 rounded bg-surface-container-lowest border border-secondary/40 text-secondary hover:bg-secondary-fixed/30 font-headline-sm text-xs font-semibold shrink-0 transition-colors">
+              Review
+            </button>
+</div>
+<!-- Check 4: Accessibility -->
+<div class="py-3.5 flex items-start justify-between gap-4 last:pb-0">
+<div class="flex items-start gap-3">
+<div class="mt-0.5 w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
+<span class="material-symbols-outlined text-[15px]" data-icon="check">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-strong text-body-strong text-on-surface">Accessibility: headings and alt text present</span>
+<span class="font-caption text-caption text-on-surface-variant mt-0.5">
+                  WCAG AAA structure verified across all 9 generated lesson sheets
+                </span>
+</div>
+</div>
+<span class="font-label-citation text-label-citation text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded shrink-0">
+              Pass
+            </span>
+</div>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- 4. "WHAT'S NEXT" SECTION (Three Cards Bento Grid)                     -->
+<!-- ===================================================================== -->
+<section class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md font-semibold text-on-surface">What's next</h2>
+<span class="font-caption text-caption text-outline">Continuous iteration tooling</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Card 1: Chat Workspace -->
+<div class="p-5 rounded-xl bg-surface-container-lowest border border-surface-container-highest hover:border-primary-container/40 transition-colors shadow-sm flex flex-col justify-between group">
+<div class="flex flex-col gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-primary-container group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div class="flex flex-col gap-1">
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Refine anything by chatting</h3>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed">
+                  Open the prompt workspace to tweak syllabus, expand explanations, or re-generate assessments.
+                </p>
+</div>
+</div>
+<a class="mt-4 inline-flex items-center gap-1 font-body-strong text-body-strong text-primary hover:text-surface-tint font-medium group-hover:translate-x-0.5 transition-transform" href="#">
+<span>Open workspace</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<!-- Card 2: Living Course (Coming Soon) -->
+<div class="p-5 rounded-xl bg-surface-container-low border border-dashed border-surface-container-highest flex flex-col justify-between">
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]" data-icon="sync">sync</span>
+</div>
+<span class="font-label-citation text-[10px] px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-medium">
+                  Coming soon
+                </span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5">
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Keep it in sync</h3>
+<span class="text-caption font-caption text-outline">· Living Course</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed">
+                  Auto-detect when source documents update and create review diffs automatically without losing notes.
+                </p>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-1.5 font-label-citation text-[11px] text-outline">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+<span>Subscribed to coffee-brewing-handbook.pdf</span>
+</div>
+</div>
+<!-- Card 3: Invite Learners -->
+<div class="p-5 rounded-xl bg-surface-container-lowest border border-surface-container-highest hover:border-primary-container/40 transition-colors shadow-sm flex flex-col justify-between group">
+<div class="flex flex-col gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-on-surface group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]" data-icon="group_add">group_add</span>
+</div>
+<div class="flex flex-col gap-1">
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Invite learners</h3>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed">
+                  Send instant enrollment links or sync with your existing team cohort directory and LMS groups.
+                </p>
+</div>
+</div>
+<a class="mt-4 inline-flex items-center gap-1 font-body-strong text-body-strong text-primary hover:text-surface-tint font-medium group-hover:translate-x-0.5 transition-transform" href="#">
+<span>Manage cohorts</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- 5. FOOTER NOTE                                                        -->
+<!-- ===================================================================== -->
+<footer class="pt-6 border-t border-surface-container-highest flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+<p class="font-caption text-caption text-on-surface-variant">
+          AI changes are versioned. Restore any earlier version from <a class="underline hover:text-on-surface" href="#">History</a>.
+        </p>
+<div class="flex items-center gap-2 font-label-citation text-label-citation text-outline">
+<span>SYNC COMMIT</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container font-code-body text-on-surface-variant border border-surface-container-highest">e4b8-912a</span>
+</div>
+</footer>
+</div>
+</main>
+</body></html>

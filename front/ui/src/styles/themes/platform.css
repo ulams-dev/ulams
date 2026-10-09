@@ -1,0 +1,86 @@
+/* ulams platform (product landing): neutral, premium, one violet accent. */
+[data-theme="platform"] {
+  --ulams-color-primary: #4f46e5;
+  --ulams-color-primary-on-light: #4338ca;
+  --ulams-color-accent: #8b5cf6;
+  --ulams-color-on-primary: #ffffff;
+  --ulams-color-secondary: #0f766e;
+  --ulams-color-header: #0e0e10;
+  --ulams-color-text: #18181b;
+  --ulams-color-muted: #52525b;
+  --ulams-color-bg: #fafaf9;
+  --ulams-color-surface: #f4f4f3;
+  --ulams-color-card-bg: #ffffff;
+  --ulams-color-border: #e7e5e4;
+  --ulams-color-accent-bg: #4f46e5;
+  --ulams-color-input-bg: #ffffff;
+  --ulams-color-positive: #15803d;
+  --ulams-color-warn: #a16207;
+  --ulams-color-error: #b91c1c;
+  --ulams-color-info: #1d4ed8;
+  --ulams-gray-1: #3f3f46;
+  --ulams-gray-2: #71717a;
+  --ulams-gray-3: #d4d4d8;
+  --ulams-gray-4: #f4f4f5;
+  --ulams-gray-5: #fafafa;
+  --ulams-radius: 10px;
+  --ulams-radius-button: 10px;
+  --ulams-radius-input: 10px;
+  --ulams-radius-card: 16px;
+  --ulams-radius-modal: 16px;
+  --ulams-font-family: var(--font-inter-tight), "Inter Tight", system-ui, sans-serif;
+  --ulams-font-family-body: var(--font-inter), Inter, system-ui, sans-serif;
+  --ulams-font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, monospace;
+  --ulams-shadow-hover: 0 24px 48px -24px rgb(79 70 229 / 0.35), 0 0 0 1px rgb(79 70 229 / 0.12);
+  --ulams-container: 1180px;
+}
+
+[data-theme="platform"] body {
+  background-image:
+    radial-gradient(900px 520px at 85% -10%, rgb(139 92 246 / 0.14), transparent 70%),
+    radial-gradient(700px 420px at -5% 10%, rgb(79 70 229 / 0.1), transparent 70%),
+    linear-gradient(rgb(14 14 16 / 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(14 14 16 / 0.025) 1px, transparent 1px);
+  background-size: auto, auto, 48px 48px, 48px 48px;
+  background-repeat: no-repeat, no-repeat, repeat, repeat;
+}
+
+[data-theme="platform"] h1,
+[data-theme="platform"] h2,
+[data-theme="platform"] h3 {
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+[data-theme="platform"] .u-h2 {
+  font-size: clamp(2rem, 1.2rem + 2.8vw, 3.4rem);
+}
+
+[data-theme="platform"] .u-eyebrow {
+  font-family: var(--ulams-font-mono);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--ulams-color-border);
+  background: var(--ulams-color-card-bg);
+}
+
+[data-theme="platform"] .u-btn {
+  --_bg: #0e0e10;
+  --_bd: #0e0e10;
+  --_fg: #fff;
+  border-radius: 10px;
+}
+[data-theme="platform"] .u-btn:not(.u-btn--ghost):not(.u-btn--link):hover {
+  --_bg: var(--ulams-color-primary);
+  --_bd: var(--ulams-color-primary);
+}
+[data-theme="platform"] .u-btn--ghost {
+  --_bg: var(--ulams-color-card-bg);
+  --_bd: var(--ulams-color-border);
+  --_fg: var(--ulams-color-text);
+}
+[data-theme="platform"] .u-card {
+  box-shadow: 0 1px 2px rgb(14 14 16 / 0.04);
+}

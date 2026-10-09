@@ -1,0 +1,64 @@
+---
+/** Live sessions, in-person events and 1:1 consultations of the tenant (read-only listing). */
+import Render from "@ulams/ui/Render.astro";
+import type { UiNode } from "@ulams/ui/render-core";
+import Base from "../../layouts/Base.astro";
+import { apiFor, getSettings, getSiteModel, publicData } from "../../lib/data.ts";
+import { chromeFor, withSessionLink } from "../../lib/docs.ts";
+import { themeFor } from "../../lib/theme.ts";
+import { consultationModels } from "../../lib/view-model.ts";
+import { SESSION_COOKIE } from "../../lib/session.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/");
+const [site, settings, consultations] = await Promise.all([
+  getSiteModel(tenant),
+  getSettings(tenant).catch(() => null),
+  publicData(tenant, "consultations", () => apiFor(tenant).consultations.list({ per_page: 12 })).catch(() => []),
+]);
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const chrome = chromeFor(theme);
+const webinars = site.events.filter((e) => e.kind === "webinar");
+const inPerson = site.events.filter((e) => e.kind === "in-person");
+const oneToOne = consultationModels(consultations);
+
+const section = (id: string, eyebrow: string, title: string, items: unknown[]): UiNode[] =>
+  items.length ? [{ component: "Events", props: { id, variant: "cards", eyebrow, title, items } }] : [];
+const doc: UiNode = {
+  component: "Stack",
+  props: { gap: "sm" },
+  children: [
+    ...section("webinars", "Live online", "Webinars", webinars),
+    ...section("in-person", "Meet in person", "Events", inPerson),
+    ...section("consultations", "One to one", "Consultations", oneToOne),
+  ],
+};
+const empty = webinars.length + inPerson.length + oneToOne.length === 0;
+---
+
+<Base theme={theme} accent={settings?.theme?.accent} title={`Live sessions and events — ${site.tenant.name}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  {chrome.header && <Render doc={withSessionLink(chrome.header, Astro.cookies.has(SESSION_COOKIE))} data={site} />}
+  <main id="main" tabindex="-1">
+    <header class="u-container u-events-head">
+      <p class="u-eyebrow">{site.tenant.name}</p>
+      <h1>Live sessions and events</h1>
+      <p class="u-lead">Webinars, in-person events and 1:1 sessions with the tutors.</p>
+    </header>
+    {empty ? <p class="u-container">Nothing is scheduled right now.</p> : <Render doc={doc} data={site} />}
+  </main>
+  {chrome.footer && <Render doc={chrome.footer} data={site} />}
+</Base>
+
+<style>
+  main:focus {
+    outline: none;
+  }
+  .u-events-head {
+    display: grid;
+    gap: 14px;
+    padding-top: clamp(40px, 6vw, 80px);
+  }
+  .u-events-head h1 {
+    font-size: clamp(2.2rem, 1.4rem + 3vw, 3.6rem);
+  }
+</style>

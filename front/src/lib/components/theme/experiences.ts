@@ -6,16 +6,21 @@ import type { ThemeTokens } from "./types";
  * front/docs/design/experiences.md. Colours follow the Stitch design briefs.
  */
 
-/** "The Coffee Atlas": warm editorial, paper background, serif display type. */
+/**
+ * "The Coffee Atlas": warm editorial, paper canvas, serif display type.
+ * Values follow the Stitch design system (front/docs/design/stitch/DESIGN.md).
+ */
 export const coffeeTheme: ThemeTokens = {
   ...sharedTheme,
   theme: "coffee",
   mode: "light",
-  font: "Fraunces",
-  bodyFont: "Inter",
-  radius: 2,
-  buttonRadius: 2,
-  inputRadius: 2,
+  font: "Playfair Display",
+  bodyFont: "Plus Jakarta Sans",
+  radius: 4,
+  buttonRadius: 4,
+  inputRadius: 4,
+  checkboxRadius: 2,
+  noteRadius: 4,
   cardRadius: 4,
   modalRadius: 4,
   primaryColor: "#C2552D",
@@ -28,17 +33,21 @@ export const coffeeTheme: ThemeTokens = {
   dm__textColor: "#F6F1E9",
   background: "#F6F1E9",
   dm__background: "#1E1611",
-  cardBackgroundColor: "#FBF8F3",
+  cardBackgroundColor: "#EDE5D8",
   dm__cardBackgroundColor: "#2B1D14",
   colorBackground: "#C2552D",
-  dm__colorBackground: "#8E3B1D",
-  gray5: "#FBF8F3",
-  gray4: "#EFE8DD",
+  dm__colorBackground: "#A84521",
+  inputBg: "#FDFCFA",
+  dm__inputBg: "#2B1D14",
+  gray5: "#FDFCFA",
+  gray4: "#EDE5D8",
   gray3: "#D9CFC2",
-  gray2: "#8A7B6E",
-  gray1: "#5A4A3E",
+  gray2: "#6B5750",
+  gray1: "#57423B",
   labelListValueColor: "#C2552D",
   breadcrumbsColor: "#7A8B6F",
+  outlineButtonColor: "#2B1D14",
+  dm__outlineButtonColor: "#F6F1E9",
 };
 
 /** "On-Call": dense, dark, pro-tool look with semantic signal colours. */
@@ -81,6 +90,9 @@ export const oncallTheme: ThemeTokens = {
   dm__inputBg: "#0B0F14",
   outlineButtonColor: "#0B0F14",
   dm__outlineButtonColor: "#E6EDF3",
+  // Disabled buttons in dark mode (e.g. "Back" on the first lesson). Before the
+  // CSS-variable migration this value leaked in from the orange preset's defaults.
+  dm__primaryButtonDisabled: "#6D6D6D",
 };
 
 /** "Night Sky Explorers": playful, rounded, night blue with bright accents. */
@@ -122,4 +134,6 @@ export const nightskyTheme: ThemeTokens = {
   gray1: "#2A2E73",
   outlineButtonColor: "#13153A",
   dm__outlineButtonColor: "#FFD23F",
+  // See oncallTheme: formerly leaked in from the orange preset's defaults.
+  dm__primaryButtonDisabled: "#6D6D6D",
 };

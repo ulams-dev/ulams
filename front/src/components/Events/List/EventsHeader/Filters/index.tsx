@@ -6,7 +6,7 @@ import CategoriesFilter from "@/components/Filters/Categories";
 import SearchFilter from "@/components/Filters/Search";
 import FiltersTags from "@/components/Filters/Tags";
 import { FiltersState } from "@/types/filters";
-import { EventsFiltersStyles } from "./EventsFiltersStyles";
+import styles from "./EventsFilters.module.css";
 
 const EventsHeaderFilters = () => {
   const { params, setParams } = useContext(EventsContext);
@@ -25,7 +25,7 @@ const EventsHeaderFilters = () => {
   );
 
   return (
-    <EventsFiltersStyles>
+    <div className={styles.root}>
       <div className="tags">
         <FiltersTags
           filters={filters}
@@ -71,7 +71,7 @@ const EventsHeaderFilters = () => {
           />
         </div>
       </div>
-    </EventsFiltersStyles>
+    </div>
   );
 };
 

@@ -1,113 +1,10 @@
 import ChatWindow from "@/components/Chat/ChatWindow";
 import { ChatIcon } from "@/icons/index";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
-import styled, { CSSProperties, css, keyframes } from "styled-components";
-
-const StyledAIChatWrapper = styled.div<{
-  $isMobile: boolean;
-  $isOpen?: boolean;
-}>`
-  ${({ $isMobile, $isOpen }) =>
-    $isMobile &&
-    $isOpen &&
-    css`
-      height: 100dvh;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-    `};
-`;
-
-const bottomOutAnim = keyframes`
-  from {
-    bottom:  0;
-  }
-  to {
-    bottom:  -100%;
-  }
-`;
-
-const bottomInAnim = keyframes`
-  from {
-    bottom:  -100%;
-  }
-  to {
-    bottom:  0;
-  }
-`;
-
-const StyledAIChatContainer = styled.div<{
-  $placement?: CSSProperties;
-  $isOpen?: boolean;
-}>`
-  ${({ $placement }) =>
-    $placement &&
-    css`
-      ${Object.keys($placement)
-        .map(
-          (property) =>
-            `${property}: ${$placement[property as keyof CSSProperties]};`
-        )
-        .join("\n")}
-    `}
-  ${({ $isOpen }) =>
-    $isOpen
-      ? css`
-          animation: ${bottomInAnim} 0.5s ease forwards;
-          bottom: 0;
-        `
-      : css`
-          animation: ${bottomOutAnim} 0.5s ease forwards;
-          bottom: -100%;
-        `}
-  padding-bottom: env(safe-area-inset-bottom);
-`;
-
-const StyledAIChatButton = styled.div<{ $isMobile: boolean }>`
-  width: ${({ $isMobile }) => ($isMobile ? "45px" : "68px")};
-  height: ${({ $isMobile }) => ($isMobile ? "45px" : "68px")};
-  background-color: ${({ theme }) => theme.primaryColor};
-  border-radius: ${({ $isMobile }) => ($isMobile ? "0" : "50%")};
-  box-shadow: 0px 5px 15px #00000058;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.25s ease-in-out;
-  margin-bottom: 15px;
-  position: fixed;
-  bottom: 5px;
-  right: 15px;
-
-  &:hover {
-    transform: scale(1.05) translateY(-3px);
-  }
-  .badge {
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background-color: ${({ theme }) => theme.secondaryColor};
-    position: absolute;
-    left: 14px;
-    top: 15px;
-  }
-  ${({ $isMobile }) =>
-    $isMobile &&
-    css`
-      margin-left: auto;
-      border-top-left-radius: 29px;
-      border-bottom-left-radius: 29px;
-      top: 110px;
-      right: 0%;
-      svg {
-        width: 23px;
-        height: 23px;
-      }
-    `}
-`;
+import type { CSSProperties } from "react";
+import styles from "./Chat.module.css";
 
 type Props = {
   lessonID: number;
@@ -130,22 +27,42 @@ const AIChat: React.FC<Props> = ({
       },
 }) => {
   const [state, setState] = useState(false);
+  const { t } = useTranslation();
+  // `bottom` is driven by the open/close animation; the rest positions the window.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { bottom: _bottom, ...placementStyle } = placement;
 
   return (
-    <StyledAIChatWrapper $isMobile={isMobile} $isOpen={state}>
-      <StyledAIChatContainer $placement={placement} $isOpen={state}>
+    <div
+      className={[
+        styles.wrapper,
+        isMobile && styles.mobile,
+        state && styles.open,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      <div
+        className={`${styles.container}${state ? ` ${styles.open}` : ""}`}
+        style={placementStyle}
+      >
         <ChatWindow
           isOpen={state}
           lessonID={lessonID}
           onClose={() => setState(false)}
         />
-      </StyledAIChatContainer>
+      </div>
       {!state && (
-        <StyledAIChatButton onClick={() => setState(true)} $isMobile={isMobile}>
+        <button
+          type="button"
+          className={`${styles.button}${isMobile ? ` ${styles.mobile}` : ""}`}
+          aria-label={t("StartChat")}
+          onClick={() => setState(true)}
+        >
           <ChatIcon />
-        </StyledAIChatButton>
+        </button>
       )}
-    </StyledAIChatWrapper>
+    </div>
   );
 };
 

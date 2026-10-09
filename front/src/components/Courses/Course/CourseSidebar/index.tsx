@@ -4,44 +4,13 @@ import { isAfter } from "date-fns";
 import { API } from "@ulams/sdk";
 import { useHistory } from "react-router-dom";
 import { isMobile } from "react-device-detect";
-import styled, { css } from "styled-components";
 import { CourseAgenda } from "@ulams/components/components/organisms/CourseAgenda/CourseAgenda";
 import { UlamsContext } from "@ulams/sdk/react";
 import { getFlatTopics } from "@ulams/components/utils/course";
 import { useLessonProgram } from "@/hooks/useLessonProgram";
 import { Button } from "@ulams/components/components/atoms/Button/Button";
 import { userIsCourseAuthor } from "@/utils/index";
-
-const StyledSidebar = styled.aside`
-  padding-bottom: 100px;
-  .show-agenda-btn {
-    width: 100%;
-  }
-  .agenda-wrapper {
-    ${isMobile &&
-    css`
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      transform: translate(100%, 0);
-      transition: transform 0.25s;
-      overflow: scroll;
-      padding: 40px 0 55px;
-      z-index: 10;
-      background-color: ${({ theme }) =>
-        theme.mode === "dark" ? theme.dm__background : theme.background};
-      &--visible {
-        transform: translate(0, 0);
-      }
-      .hide-agenda-btn {
-        display: block;
-        margin: 0 15px 0 auto;
-      }
-    `}
-  }
-`;
+import styles from "./styles.module.css";
 
 export const CourseSidebar: React.FC<{
   course: API.CourseProgram;
@@ -160,26 +129,24 @@ export const CourseSidebar: React.FC<{
     return <React.Fragment />;
   }
   return (
-    <StyledSidebar>
+    <aside className={`${styles.sidebar} ${isMobile ? styles.mobile : ""}`}>
       {isMobile && (
         <Button
           mode="outline"
-          className="show-agenda-btn"
+          className={styles.showAgendaBtn}
           onClick={() => setAgendaVisible(true)}
         >
           {t("CourseProgram.ShowAgenda").toString()}
         </Button>
       )}
       <div
-        className={`${
-          agendaVisible
-            ? "agenda-wrapper agenda-wrapper--visible"
-            : "agenda-wrapper"
+        className={`${styles.agendaWrapper} ${
+          agendaVisible ? styles.agendaWrapperVisible : ""
         }`}
       >
         {isMobile && (
           <Button
-            className="hide-agenda-btn"
+            className={styles.hideAgendaBtn}
             mode="secondary"
             onClick={() => setAgendaVisible(false)}
           >
@@ -217,7 +184,7 @@ export const CourseSidebar: React.FC<{
           availableTopicsIds={availableTopicsIds}
         />
       </div>
-    </StyledSidebar>
+    </aside>
   );
 };
 

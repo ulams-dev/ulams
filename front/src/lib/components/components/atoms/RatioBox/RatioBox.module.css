@@ -1,0 +1,35 @@
+.ratioBox {
+  overflow: hidden;
+  height: 0;
+  padding-top: var(--ratio-padding);
+  width: 100%;
+  position: relative;
+}
+
+.ratioBox > * {
+  left: 0;
+  top: 0;
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ratioBox > *,
+.ratioBox > * img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--ratio-object-position);
+  transition: transform 0.4s ease-out;
+}
+
+.ratioBox > a,
+.ratioBox > button {
+  cursor: pointer;
+}
+
+.ratioBox > a:hover img,
+.ratioBox > button:hover img {
+  transform: scale(1.1);
+}

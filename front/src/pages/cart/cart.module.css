@@ -1,0 +1,23 @@
+.wrapper {
+  background-color: var(--ulams-gray-4);
+  padding-top: 57px;
+  min-height: calc(100vh - 452px);
+}
+:global([data-mode="dark"]) .wrapper {
+  background-color: var(--ulams-color-bg);
+}
+.wrapper h1 {
+  margin-bottom: 20px;
+}
+
+.notConfigured {
+  max-width: 640px;
+  margin: 48px auto;
+  padding: 24px;
+  border: 1px solid var(--ulams-gray-3);
+  border-radius: var(--ulams-radius-card);
+  background: var(--ulams-color-card-bg);
+  color: var(--ulams-color-text);
+  font-family: var(--ulams-font-family-body);
+  text-align: center;
+}

@@ -1,47 +1,6 @@
 import { useCallback, useRef } from "react";
-import styled from "styled-components";
 import { BreadCrumbs } from "@ulams/components/components/atoms/BreadCrumbs/BreadCrumbs";
-
-const StyledDiv = styled("div")<{ isOpen?: boolean }>`
-  .more-icon {
-    border: 1px solid;
-    border-radius: 50%;
-    padding: 4px;
-    margin-left: 12px;
-    font-size: 0.75em;
-  }
-
-  .category-name {
-    cursor: pointer;
-    padding: 2px 4px;
-    background-color: ${({ theme }) => theme.secondaryColor};
-    color: ${({ theme }) => theme.black};
-    border-radius: 3px;
-    font-size: 11px;
-    text-transform: uppercase;
-    font-weight: 700;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  .categories-menu-container {
-    position: relative;
-
-    .categories-menu {
-      position: absolute;
-      top: 0;
-      right: 0;
-      list-style: none;
-      background-color: #f2f2f2;
-      margin: 4px 0;
-
-      li {
-        margin: 4px 0;
-      }
-    }
-  }
-`;
+import styles from "./CategoriesBreadCrumbs.module.css";
 
 export interface CategoriesProps {
   categories: Ulams.Categories.Models.Category[] | undefined;
@@ -65,13 +24,13 @@ const CategoriesBreadCrumbs = (props: CategoriesProps) => {
   );
 
   return (
-    <StyledDiv ref={parentRef}>
+    <div className={styles.root} ref={parentRef}>
       <BreadCrumbs
         hyphen=""
         items={firstCategories?.map((category, index) => (
           <>
             <span
-              className="category-name"
+              className={styles.categoryName}
               key={category.name + index}
               onClick={() => categoryClick(category.id)}
               aria-hidden="true"
@@ -120,7 +79,7 @@ const CategoriesBreadCrumbs = (props: CategoriesProps) => {
           )}
         </div>
       )} */}
-    </StyledDiv>
+    </div>
   );
 };
 

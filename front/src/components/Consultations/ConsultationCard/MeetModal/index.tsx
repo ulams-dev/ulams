@@ -3,25 +3,16 @@ import { UlamsContext } from "@ulams/sdk/react";
 import { Modal } from "@ulams/components/components/atoms/Modal/Modal";
 import { JitsyData } from "@ulams/sdk/types";
 import ContentLoader from "@/components/_App/ContentLoader";
-import { ConsultationMeetModalStyles } from "./MeetModalStyles";
 import JitsyMeeting from "@/components/Consultations/ConsultationCard/JitsyMeeting";
 import { QuestionnaireModelType } from "@/types/questionnaire";
 import { QuestionnairesModal } from "@/components/Courses/Course/CoursePanelLayout/FinishPage/Rate";
 import { ConsultationModalContext } from "@/components/Consultations/ConsultationCard/Buttons/context";
 import { EndMeetingQuestionnairesModal } from "@/components/Consultations/ConsultationCard/EndMeetingQuestionnaires";
-import MeetingAnalyticsOverlay from "@/components/MeetingAnalyticsOverlay/MeetingAnalyticsOverlay";
-import styled from "styled-components";
+import styles from "./styles.module.css";
 
 interface Props {
   onClose: () => void;
 }
-
-const JitsiContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-`;
 
 const ConsultationMeetModal = ({ onClose }: Props) => {
   const [meetData, setMeetData] = useState<JitsyData | null>(null);
@@ -29,8 +20,6 @@ const ConsultationMeetModal = ({ onClose }: Props) => {
   const [loading, setLoading] = useState(false);
   const { generateConsultationJitsy } = useContext(UlamsContext);
   const consultationModalContext = useContext(ConsultationModalContext);
-  const [recordingUrl, setRecordingUrl] = useState<string | null>(null);
-  const [participantCount, setParticipantCount] = useState<number>(0);
 
   useEffect(() => {
     const getMeetUrl = async () => {
@@ -85,36 +74,18 @@ const ConsultationMeetModal = ({ onClose }: Props) => {
           background: "black",
         }}
       >
-        <ConsultationMeetModalStyles>
+        <div className={styles.meetModal}>
           {loading && <ContentLoader />}
-          <JitsiContainer>
-            <MeetingAnalyticsOverlay
-              onClose={handleOnClose}
-              recordingUrl={recordingUrl}
-              participantCount={participantCount}
-            />
+          <div className={styles.jitsiContainer}>
             {!loading && meetData && (
               <JitsyMeeting
                 key={consultationModalContext?.consultationData?.consultationId}
                 jitsyData={meetData}
-                modelId={
-                  consultationModalContext?.consultationData?.consultationId ??
-                  0
-                }
-                modelType="consultation"
-                consultationTermId={
-                  consultationModalContext?.consultationData
-                    ?.consultationTermId ?? 0
-                }
-                term={consultationModalContext?.consultationData?.term ?? ""}
                 close={handleOnClose}
-                onRecordingAvailable={setRecordingUrl}
-                participantCount={participantCount}
-                onParticipantCountChange={setParticipantCount}
               />
             )}
-          </JitsiContainer>
-        </ConsultationMeetModalStyles>
+          </div>
+        </div>
 
         <QuestionnairesModal
           entityId={Number(

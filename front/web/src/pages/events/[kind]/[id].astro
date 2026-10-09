@@ -1,0 +1,290 @@
+---
+/** Detail of a webinar, in-person event or consultation (read-only; booking goes through the shop later). */
+import Render from "@ulams/ui/Render.astro";
+import Icon from "@ulams/ui/components/Icon.astro";
+import Img from "@ulams/ui/components/Img.astro";
+import { sanitizeHtml } from "@ulams/ui/html";
+import { formatEventDate } from "@ulams/ui/format";
+import { ApiError, type UserSummary } from "@ulams/sdk";
+import Base from "../../../layouts/Base.astro";
+import { apiFor, getSettings, getSiteModel, publicData } from "../../../lib/data.ts";
+import { chromeFor, withSessionLink } from "../../../lib/docs.ts";
+import { themeFor } from "../../../lib/theme.ts";
+import { fullName } from "../../../lib/view-model.ts";
+import { SESSION_COOKIE } from "../../../lib/session.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/");
+const kind = Astro.params.kind;
+const id = Number(Astro.params.id);
+if (!["webinar", "in-person", "consultation"].includes(kind ?? "") || !Number.isInteger(id)) return Astro.rewrite("/404");
+
+const api = apiFor(tenant);
+interface Detail {
+  title: string;
+  kindLabel: string;
+  icon: string;
+  when: string[];
+  place?: string;
+  duration?: string;
+  description: string;
+  agenda: string;
+  people: UserSummary[];
+  image?: string | null;
+  terms: string[];
+}
+let detail: Detail;
+try {
+  if (kind === "webinar") {
+    const w = await publicData(tenant, `webinar:${id}`, () => api.events.webinar(id));
+    const d = formatEventDate(w.active_from ?? undefined);
+    detail = {
+      title: w.name,
+      kindLabel: "Live webinar",
+      icon: "play",
+      when: d ? [d.full, d.time] : [],
+      duration: w.duration ? `${w.duration} h` : undefined,
+      description: sanitizeHtml(w.description),
+      agenda: sanitizeHtml(w.agenda),
+      people: w.trainers ?? [],
+      image: w.image_url,
+      terms: [],
+    };
+  } else if (kind === "in-person") {
+    const e = await publicData(tenant, `event:${id}`, () => api.events.stationaryEvent(id));
+    const d = formatEventDate(e.started_at ? `${e.started_at.replace(" ", "T")}Z` : undefined, { timeZone: "UTC" });
+    detail = {
+      title: e.name,
+      kindLabel: "In-person event",
+      icon: "pin",
+      when: d ? [d.full, d.time] : [],
+      place: e.place ?? undefined,
+      description: sanitizeHtml(e.description),
+      agenda: sanitizeHtml(e.agenda ?? e.program),
+      people: e.authors ?? [],
+      image: e.image_url,
+      terms: [],
+    };
+  } else {
+    const c = await publicData(tenant, `consultation:${id}`, () => api.consultations.get(id));
+    const now = Date.now();
+    detail = {
+      title: c.name,
+      kindLabel: "1:1 consultation",
+      icon: "users",
+      when: [],
+      duration: c.duration ?? undefined,
+      description: sanitizeHtml(c.description),
+      agenda: "",
+      people: c.teachers?.length ? c.teachers : c.author ? [c.author] : [],
+      image: c.image_url,
+      terms: (c.proposed_terms ?? [])
+        .filter((t) => Date.parse(t) >= now)
+        .slice(0, 8)
+        .map((t) => {
+          const d = formatEventDate(t);
+          return d ? `${d.full}, ${d.time}` : t;
+        }),
+    };
+  }
+} catch (error) {
+  if (error instanceof ApiError && error.status === 404) return Astro.rewrite("/404");
+  throw error;
+}
+
+const [site, settings] = await Promise.all([getSiteModel(tenant), getSettings(tenant).catch(() => null)]);
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const chrome = chromeFor(theme);
+---
+
+<Base theme={theme} accent={settings?.theme?.accent} title={`${detail.title} — ${site.tenant.name}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  {chrome.header && <Render doc={withSessionLink(chrome.header, Astro.cookies.has(SESSION_COOKIE))} data={site} />}
+  <main id="main" class="u-container u-event-page" tabindex="-1">
+    <nav aria-label="Breadcrumb" class="u-event-page__crumbs">
+      <a href="/events"><Icon name="back" /> All live sessions and events</a>
+    </nav>
+    <div class="u-event-page__grid">
+      <article class="u-event-page__main">
+        <p class="u-eyebrow"><Icon name={detail.icon} /> {detail.kindLabel}</p>
+        <h1>{detail.title}</h1>
+        <dl class="u-event-page__facts">
+          {detail.when[0] && (<div><dt>Date</dt><dd>{detail.when[0]}</dd></div>)}
+          {detail.when[1] && (<div><dt>Time</dt><dd>{detail.when[1]}</dd></div>)}
+          {detail.duration && (<div><dt>Duration</dt><dd>{detail.duration}</dd></div>)}
+          {detail.place && (<div><dt>Place</dt><dd>{detail.place}</dd></div>)}
+        </dl>
+        {detail.description && <div class="u-event-page__text" set:html={detail.description} />}
+        {
+          detail.agenda && (
+            <section aria-labelledby="agenda-title">
+              <h2 id="agenda-title">Agenda</h2>
+              <div class="u-event-page__text" set:html={detail.agenda} />
+            </section>
+          )
+        }
+        {
+          detail.terms.length > 0 && (
+            <section aria-labelledby="terms-title">
+              <h2 id="terms-title">Open slots</h2>
+              <ul class="u-event-page__terms" role="list">
+                {detail.terms.map((t) => (
+                  <li>
+                    <Icon name="calendar" /> {t}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+      </article>
+      <aside class="u-event-page__side">
+        {
+          detail.image && (
+            <div class="u-event-page__image">
+              <Img src={detail.image} alt="" width={1600} height={900} sizes="(min-width: 960px) 380px, 100vw" />
+            </div>
+          )
+        }
+        {
+          detail.people.length > 0 && (
+            <div class="u-card u-event-page__people">
+              <h2>With</h2>
+              <ul role="list">
+                {detail.people.map((p) => (
+                  <li>{fullName(p)}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+        <p class="u-event-page__note">Registration and booking open through the shop; they are not part of this demo yet.</p>
+      </aside>
+    </div>
+  </main>
+  {chrome.footer && <Render doc={chrome.footer} data={site} />}
+</Base>
+
+<style>
+  main:focus {
+    outline: none;
+  }
+  .u-event-page {
+    padding-block: 32px 24px;
+    display: grid;
+    gap: 24px;
+  }
+  .u-event-page__crumbs a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .u-event-page__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: start;
+  }
+  .u-event-page__main {
+    display: grid;
+    gap: 20px;
+  }
+  .u-event-page__main h1 {
+    font-size: clamp(2.2rem, 1.4rem + 3vw, 3.4rem);
+  }
+  .u-event-page__main h2,
+  .u-event-page__people h2 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+  }
+  .u-event-page__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+  }
+  .u-event-page__facts div {
+    padding: 10px 14px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius);
+    background: var(--ulams-color-card-bg);
+  }
+  .u-event-page__facts dt {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ulams-color-muted);
+  }
+  .u-event-page__facts dd {
+    margin: 2px 0 0;
+    font-weight: 600;
+  }
+  .u-event-page__text {
+    max-width: 66ch;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    display: grid;
+    gap: 12px;
+  }
+  .u-event-page__text :global(ol),
+  .u-event-page__text :global(ul) {
+    margin: 0;
+    padding-left: 1.3em;
+  }
+  .u-event-page__terms {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .u-event-page__terms li {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 14px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius);
+  }
+  .u-event-page__side {
+    display: grid;
+    gap: 16px;
+    position: sticky;
+    top: 92px;
+  }
+  .u-event-page__image {
+    overflow: hidden;
+    border-radius: var(--ulams-radius-card);
+    aspect-ratio: 16 / 10;
+  }
+  .u-event-page__image :global(img) {
+    width: 100%;
+    height: 100%;
+  }
+  .u-event-page__people {
+    padding: 18px;
+  }
+  .u-event-page__people ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+    font-weight: 600;
+  }
+  .u-event-page__note {
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  @media (max-width: 900px) {
+    .u-event-page__grid {
+      grid-template-columns: 1fr;
+    }
+    .u-event-page__side {
+      position: static;
+    }
+  }
+</style>

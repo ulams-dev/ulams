@@ -3,16 +3,12 @@
 namespace Ulams\Consultations\Http\Controllers;
 
 use Ulams\Consultations\Dto\ConsultationUserTermDto;
-use Ulams\Consultations\Dto\ConsultationSaveScreenDto;
 use Ulams\Consultations\Dto\FilterScheduleForTutorDto;
 use Ulams\Consultations\Dto\FinishTermDto;
-use Ulams\Consultations\Dto\GenerateSignedScreenUrlsDto;
 use Ulams\Consultations\Enum\ConstantEnum;
 use Ulams\Consultations\Http\Controllers\Swagger\ConsultationAPISwagger;
 use Ulams\Consultations\Http\Requests\ConsultationUserTermRequest;
-use Ulams\Consultations\Http\Requests\ConsultationScreenSaveRequest;
 use Ulams\Consultations\Http\Requests\FinishTermRequest;
-use Ulams\Consultations\Http\Requests\GenerateSignedScreenUrlsRequest;
 use Ulams\Consultations\Http\Requests\ListAPIConsultationsRequest;
 use Ulams\Consultations\Http\Requests\ListConsultationsRequest;
 use Ulams\Consultations\Http\Requests\ReportTermConsultationRequest;
@@ -122,21 +118,6 @@ class ConsultationAPIController extends UlamsBaseController implements Consultat
             ConsultationTermsResource::collection($consultationTerms),
             __('Consultation updated successfully')
         );
-    }
-
-    public function screenSave(ConsultationScreenSaveRequest $request): JsonResponse
-    {
-        $this->consultationServiceContract->saveScreen(new ConsultationSaveScreenDto($request->all()));
-        return $this->sendSuccess(__('Screen saved successfully'));
-    }
-
-    public function generateSignedScreenUrls(GenerateSignedScreenUrlsRequest $request): JsonResponse
-    {
-        $data = $this
-            ->consultationServiceContract
-            ->generateSignedScreenUrls(new GenerateSignedScreenUrlsDto($request->validated()));
-
-        return $this->sendResponse($data, __('Urls generated successfully'));
     }
 
     public function finishTerm(FinishTermRequest $request, int $consultationTermId): JsonResponse

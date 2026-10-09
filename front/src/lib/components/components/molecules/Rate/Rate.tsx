@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
+import styles from "./Rate.module.css";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import { Button } from "../../atoms/Button/Button";
 import { Rating } from "../../atoms/Rating/Rating";
@@ -17,26 +17,6 @@ interface Props extends ExtendableStyledComponent {
   onCancel: () => void;
   children?: React.ReactNode;
 }
-
-const StyledRate = styled.div`
-  text-align: center;
-
-  .title {
-    margin-bottom: 20px;
-  }
-
-  .selected-info {
-    margin: 6px 0 24px 0;
-    font-size: 14px;
-  }
-  .submit-container {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    width: 100%;
-    margin-top: 37px;
-  }
-`;
 
 export const Rate: React.FC<Props> = (props) => {
   const { t } = useTranslation();
@@ -65,7 +45,7 @@ export const Rate: React.FC<Props> = (props) => {
   // }, [selectedRate, hoverRate]);
 
   return (
-    <StyledRate className={`ulams-component ${className}`}>
+    <div className={`ulams-component ${styles.root} ${className}`}>
       <Title className="title" level={4}>
         {t(header)}
       </Title>
@@ -97,6 +77,6 @@ export const Rate: React.FC<Props> = (props) => {
           {t(submitLabel)}
         </Button>
       </div>
-    </StyledRate>
+    </div>
   );
 };

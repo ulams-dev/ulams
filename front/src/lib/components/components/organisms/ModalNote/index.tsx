@@ -7,34 +7,14 @@ import { UlamsContext } from "@ulams/sdk/react";
 import { Formik, FormikErrors } from "formik";
 import { FC, useContext } from "react";
 import { useTranslation } from "react-i18next";
-import styled, { withTheme } from "styled-components";
+
+import styles from "./ModalNote.module.css";
 
 interface NoteModalProps {
   currentNote?: NoteData;
-  newNoteData: NewNoteData;
+  newNoteData?: NewNoteData;
   onClose: () => void;
 }
-
-const Header = styled.header`
-  padding-bottom: 18px;
-  border-bottom: 1px solid ${({ theme }) => theme.primaryColor};
-  margin-bottom: 24px;
-`;
-
-const NoteModalWrapper = styled.div`
-  & form {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-`;
-
-const ButtonsWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 26px;
-`;
 
 const ModalNote: FC<NoteModalProps> = ({
   currentNote,
@@ -50,10 +30,10 @@ const ModalNote: FC<NoteModalProps> = ({
   const { t } = useTranslation();
 
   return (
-    <NoteModalWrapper>
-      <Header>
+    <div className={styles.wrapper}>
+      <header className={styles.header}>
         <Title>{t<string>("Bookmarks.Notes")}</Title>
-      </Header>
+      </header>
       <Formik
         initialValues={initialValues}
         validate={(values) => {
@@ -75,8 +55,10 @@ const ModalNote: FC<NoteModalProps> = ({
               })
             : createBookmarkNote({
                 value: values.noteValue,
-                bookmarkable_id: newNoteData?.id,
-                bookmarkable_type: newNoteData?.type,
+                // newNoteData is optional for callers (the former styled wrapper erased the
+                // prop type); a new note is only created when it is set.
+                bookmarkable_id: newNoteData?.id as number,
+                bookmarkable_type: newNoteData?.type as NewNoteData["type"],
               }).then(() => {
                 fetchBookmarkNotes(), onClose();
               });
@@ -98,19 +80,19 @@ const ModalNote: FC<NoteModalProps> = ({
               value={values.noteValue}
               onChange={handleChange}
             />
-            <ButtonsWrapper>
+            <div className={styles.buttons}>
               <Button type="button" mode="secondary" onClick={onClose}>
                 {t<string>("Bookmarks.Cancel")}
               </Button>
               <Button type="submit" mode="secondary" disabled={isSubmitting}>
                 {t<string>(`Bookmarks.${currentNote ? "Update" : "Add"}`)}
               </Button>
-            </ButtonsWrapper>
+            </div>
           </form>
         )}
       </Formik>
-    </NoteModalWrapper>
+    </div>
   );
 };
 
-export default withTheme(styled(ModalNote)``);
+export default ModalNote;

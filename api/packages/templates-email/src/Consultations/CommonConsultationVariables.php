@@ -38,7 +38,7 @@ abstract class CommonConsultationVariables extends EmailVariables
                 $executedAt = Carbon::make($executedAt);
             }
             $executedAt = $executedAt
-                ->setTimezone($event->getUser()->current_timezone);
+                ->setTimezone($event->getUser()->current_timezone ?? config('app.timezone'));
 
         }
         $executedTo = $executedAt ? app(ConsultationServiceContract::class)

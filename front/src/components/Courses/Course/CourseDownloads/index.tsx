@@ -1,17 +1,13 @@
 import React from "react";
 import { Downloads } from "@ulams/components/components/molecules/Downloads/Downloads";
-import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { API } from "@ulams/sdk";
+import styles from "./styles.module.css";
 
 type Props = {
   resources: API.TopicResource[];
   subtitle: string;
 };
-
-const StyledDownloads = styled.div`
-  margin-top: 100px;
-`;
 
 const CourseDownloads: React.FC<Props> = ({ resources, subtitle }) => {
   const { t } = useTranslation();
@@ -19,13 +15,13 @@ const CourseDownloads: React.FC<Props> = ({ resources, subtitle }) => {
     return { href: item.url, fileName: item.name };
   });
   return (
-    <StyledDownloads>
+    <div className={styles.root}>
       <Downloads
         subtitle={subtitle}
         title={t<string>("CourseProgram.TopicAttachment")}
         downloads={mappedResources}
       />
-    </StyledDownloads>
+    </div>
   );
 };
 

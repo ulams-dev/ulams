@@ -1,0 +1,5 @@
+.col {
+  border: 1px solid var(--ulams-color-primary);
+  margin: 4px auto;
+  padding: 4px;
+}

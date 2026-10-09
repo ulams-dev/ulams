@@ -1,7 +1,6 @@
 import React from "react";
 import { API } from "@ulams/sdk";
 import { Stack, Text } from "../../../../";
-import styled, { withTheme } from "styled-components";
 
 type Props = API.QuizQuestion_Description;
 
@@ -18,4 +17,4 @@ const Description: React.FC<Props> = ({ title, question }) => (
   </Stack>
 );
 
-export default withTheme(styled(Description)``);
+export default Description;

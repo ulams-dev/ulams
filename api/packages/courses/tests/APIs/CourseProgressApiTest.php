@@ -828,6 +828,8 @@ class CourseProgressApiTest extends TestCase
 
     public function test_ping_complete_topic(): void
     {
+        // Frozen clock: the tracked seconds are a time difference (sleep() made it depend on load).
+        $this->freezeSecond();
         /** @var User $user */
         $user = User::factory()->create();
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
@@ -868,7 +870,7 @@ class CourseProgressApiTest extends TestCase
             ]);
         $this->assertTrue($this->response->getData()->data->status);
 
-        sleep(5);
+        $this->travel(5)->seconds();
         $this
             ->actingAs($user, 'api')
             ->json(
@@ -887,6 +889,8 @@ class CourseProgressApiTest extends TestCase
 
     public function test_ping_complete_topic_when_end_date_is_overdue(): void
     {
+        // Frozen clock: the tracked seconds are a time difference (sleep() made it depend on load).
+        $this->freezeSecond();
         $user = $this->makeStudent();
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
@@ -911,7 +915,7 @@ class CourseProgressApiTest extends TestCase
                 'status' => true
             ]);
 
-        sleep(5);
+        $this->travel(5)->seconds();
 
         $this->actingAs($user, 'api')
             ->putJson('/api/courses/progress/' . $topic->getKey() . '/ping')
@@ -930,6 +934,8 @@ class CourseProgressApiTest extends TestCase
 
     public function test_ping_complete_topic_when_end_date_is_current(): void
     {
+        // Frozen clock: the tracked seconds are a time difference (sleep() made it depend on load).
+        $this->freezeSecond();
         $user = $this->makeStudent();
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
         $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
@@ -954,7 +960,7 @@ class CourseProgressApiTest extends TestCase
                 'status' => true
             ]);
 
-        sleep(5);
+        $this->travel(5)->seconds();
 
         $this->actingAs($user, 'api')
             ->putJson('/api/courses/progress/' . $topic->getKey() . '/ping')

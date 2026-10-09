@@ -1,8 +1,8 @@
 import * as React from "react";
 import { ReactNode } from "react";
-import styled from "styled-components";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import { cx } from "../../../utils/cx";
+import styles from "./NoteAction.module.css";
 
 interface StyledNoteProps extends ExtendableStyledComponent {
   color?: string;
@@ -14,41 +14,18 @@ export interface NoteProps extends StyledNoteProps {
   actions: ReactNode;
 }
 
-const StyledNote = styled("div")<StyledNoteProps>`
-  border-left: 3px solid ${(props) => (props.color ? props.color : "#F2C94C")};
-  padding: 20px;
-  display: flex;
-  position: relative;
-  width: 100%;
-  box-sizing: border-box;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  border-radius: ${(props) => props.theme.cardRadius}px;
-  background: ${({ theme }) =>
-    getStylesBasedOnTheme(
-      theme.mode,
-      theme.dm__cardBackgroundColor,
-      theme.cardBackgroundColor
-    )};
-  > div:first-child {
-    padding-right: 30px;
-  }
-
-  .subtitle {
-    opacity: 0.8;
-  }
-`;
-
 export const NoteAction: React.FC<NoteProps> = (props) => {
   const { title, subtitle, color, actions, className = "" } = props;
   return (
-    <StyledNote className={`ulams-component ${className}`} color={color}>
+    <div
+      className={cx(styles.note, "ulams-component", className)}
+      style={{ "--note-color": color || undefined } as React.CSSProperties}
+    >
       <div>
         <div>{title}</div>
         {subtitle && <div className={"subtitle"}>{subtitle}</div>}
       </div>
       <div>{actions}</div>
-    </StyledNote>
+    </div>
   );
 };

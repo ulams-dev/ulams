@@ -26,7 +26,7 @@ class ModelFieldsService implements ModelFieldsServiceContract
         self::$cache = ['metadata' => [], 'fields' => [], 'table_exists' => null];
     }
 
-    public function addOrUpdateMetadataField(string $class_type, string $name, string $type, string $default = '', array $rules = null, int $visibility = 1 << 0, array $extra = null): Metadata
+    public function addOrUpdateMetadataField(string $class_type, string $name, string $type, string $default = '', ?array $rules = null, int $visibility = 1 << 0, ?array $extra = null): Metadata
     {
         if (!MetaFieldTypeEnum::hasValue($type)) {
             throw ValidationException::withMessages([
@@ -139,7 +139,7 @@ class ModelFieldsService implements ModelFieldsServiceContract
         }
     }
 
-    private function checkVisibility(?int $visibility = null, int $metadataFieldVisibility): int|bool
+    private function checkVisibility(?int $visibility, int $metadataFieldVisibility): int|bool
     {
         return is_int($visibility) ? $visibility & $metadataFieldVisibility : true;
     }

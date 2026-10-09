@@ -1,0 +1,29 @@
+.root :global(.project-player__upload-input) {
+  margin-bottom: 1em;
+}
+
+.root :global(.project-player__upload-input .wrapper .border img) {
+  display: none;
+}
+
+.root :global(.project-player__upload-input .wrapper)::after {
+  padding-top: 0;
+  aspect-ratio: 16 / 3;
+}
+
+.root :global(.project-player__projects-list) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.root :global(.project-player__projects-list .project-card) {
+  width: 100%;
+  max-width: 225px;
+}
+
+.root :global(.project-player__projects-list .project-card .content) {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}

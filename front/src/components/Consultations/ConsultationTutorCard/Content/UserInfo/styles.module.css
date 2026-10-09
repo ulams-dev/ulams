@@ -1,0 +1,27 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 65px;
+  margin-bottom: 5px;
+}
+
+.root .text {
+  margin: 0;
+  font-size: 14px;
+}
+
+.buttonWrapper {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0px;
+}
+
+.buttonWrapper > p {
+  padding: 2px;
+  cursor: pointer;
+}
+
+.buttonWrapper > p:hover {
+  font-weight: bold;
+}

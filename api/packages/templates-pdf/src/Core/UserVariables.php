@@ -5,6 +5,7 @@ namespace Ulams\TemplatesPdf\Core;
 use Ulams\Core\Models\User;
 use Ulams\Templates\Events\EventWrapper;
 use Illuminate\Support\Facades\Lang;
+use Ulams\TemplatesPdf\Pdfme\CertificateTemplates;
 
 class UserVariables extends PdfVariables
 {
@@ -50,9 +51,7 @@ class UserVariables extends PdfVariables
     {
         return [
             'title' => Lang::get('Pdf for :user', ['user' => self::VAR_USER_NAME]),
-            'content' => <<<'JSON'
-            {"docElements":[],"parameters":[{"id":1,"name":"page_count","type":"number","arrayItemType":"string","eval":false,"nullable":false,"pattern":"","expression":"","showOnlyNameType":true,"testData":"","testDataBoolean":false,"testDataImage":"","testDataImageFilename":""},{"id":2,"name":"page_number","type":"number","arrayItemType":"string","eval":false,"nullable":false,"pattern":"","expression":"","showOnlyNameType":true,"testData":"","testDataBoolean":false,"testDataImage":"","testDataImageFilename":""}],"styles":[],"version":4,"documentProperties":{"pageFormat":"A4","pageWidth":"","pageHeight":"","unit":"mm","orientation":"portrait","contentHeight":"","marginLeft":"","marginTop":"","marginRight":"","marginBottom":"","header":true,"headerSize":"80","headerDisplay":"always","footer":true,"footerSize":"80","footerDisplay":"always","patternLocale":"en","patternCurrencySymbol":"$","patternNumberGroupSymbol":""}}
-            JSON,
+            'content' => CertificateTemplates::simpleDocument(),
         ];
     }
 }

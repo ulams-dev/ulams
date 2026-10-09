@@ -1,0 +1,224 @@
+.root {
+  width: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.root > p {
+  margin-bottom: 0px;
+  font-weight: 700;
+}
+
+.root > header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-content: flex-start;
+  margin-bottom: 20px;
+}
+
+.root > header :global(.lms-icon-title) {
+  margin: 0;
+  flex-wrap: nowrap;
+}
+
+.root > header > div {
+  display: inline-flex;
+  align-items: center;
+}
+
+.root > header > div p {
+  margin-right: 6px;
+}
+
+.root :global(.lessons__list) {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.root :global(.lesson__item) {
+  background: var(--ulams-color-card-bg);
+  border-left: 2px solid var(--ulams-color-primary);
+  padding: 10px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.root :global(.lesson__item) :global(.duration) {
+  margin: 1px 0;
+}
+
+.root :global(.lesson__item) > header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  align-content: flex-start;
+}
+
+.root :global(.lesson__item) > header button {
+  margin-left: auto;
+  margin-top: -2px;
+}
+
+.root :global(.lesson__item) > header button svg {
+  transform: rotate(180deg);
+  transition: transform 0.2s ease-in;
+}
+
+.root :global(.lesson__item) > header :global(.lesson__details) {
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.root :global(.lesson__item) > header :global(.lesson__details) > p:first-child {
+  margin-bottom: 2px;
+  margin-top: 3px;
+  text-transform: uppercase;
+  color: var(--ulams-color-primary);
+}
+
+.root :global(.lesson__item) > header :global(.lesson__title) {
+  font-size: 16px;
+  color: var(--ulams-gray-1);
+  margin: 0;
+  font-weight: bold;
+  display: flex;
+}
+
+.root :global(.lesson__item) > header :global(.lesson__title) small {
+  font-size: 12px;
+  font-weight: 300;
+  margin-right: 12px;
+}
+
+.root :global(.lesson__item) > header :global(.lesson__title) small :global(.lesson__index) {
+  text-transform: uppercase;
+  color: var(--ulams-color-primary);
+  white-space: nowrap;
+}
+
+.root :global(.lesson__item) > header :global(.lesson__title) small :global(.lesson__duration) {
+  color: var(--ulams-gray-2);
+}
+
+.root :global(.lesson__item.open) > header button svg {
+  transform: rotate(0);
+}
+
+.root :global(.lesson__item) :global(.lesson__topics) {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  transition: all 0.5s;
+}
+
+.root :global(.lesson__item) :global(.lesson__topics) li {
+  padding: 10px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+}
+
+.root[data-mobile="true"] :global(.lesson__item) :global(.lesson__topics) li {
+  flex-direction: column;
+}
+
+.root :global(.lesson__item) :global(.lesson__topics) li:first-child {
+  margin-top: 10px;
+}
+
+.root :global(.lesson__item) :global(.lesson__topics) li:last-child:not(:global(.lesson__topic-current)) {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.root :global(.lesson__item) :global(.lesson__topics) li:not(:global(.lesson__topic-current)):not(:last-child) {
+  border-bottom: 2px solid var(--ulams-color-white);
+}
+
+:global([data-mode="dark"]) .root :global(.lesson__item) :global(.lesson__topics) li:not(:global(.lesson__topic-current)):not(:last-child) {
+  border-bottom-color: color-mix(in srgb, var(--ulams-color-white) 20%, transparent);
+}
+
+.root :global(.lesson__item) :global(.lesson__topics) li button {
+  margin-left: auto;
+  margin-top: 0;
+  font-size: 12px;
+  padding: 3px 10px;
+}
+
+.root[data-mobile="true"] :global(.lesson__item) :global(.lesson__topics) li button {
+  margin-left: 0;
+  margin-top: 6px;
+}
+
+.root :global(.lesson__item) :global(.lesson__topics) li:global(.lesson__topic-pending) svg {
+  margin-top: 4px;
+}
+
+.root :global(.lesson__item) :global(.lesson__topics) li:global(.lesson__topic-pending) svg path {
+  fill: var(--ulams-gray-1);
+}
+
+:global([data-mode="dark"]) .root :global(.lesson__item) :global(.lesson__topics) li:global(.lesson__topic-pending) svg path {
+  fill: var(--ulams-color-white);
+}
+
+.root :global(.lesson__item) :global(.lesson__topics) li:global(.lesson__topic-finished) svg {
+  margin-top: 7px;
+}
+
+.root :global(.lesson__item) :global(.lesson__topics) li :global(.lesson__description) {
+  display: flex;
+  align-items: center;
+}
+
+.root :global(.lesson__item) :global(.lesson__topics) li :global(.lesson__description) svg {
+  margin-right: 7px;
+  width: 17px;
+  flex-shrink: 0;
+}
+
+.root :global(.lesson__item) :global(.lesson__topics) li :global(.lesson__description) svg path {
+  fill: var(--ulams-gray-1);
+}
+
+:global([data-mode="dark"]) .root :global(.lesson__item) :global(.lesson__topics) li :global(.lesson__description) svg path {
+  fill: var(--ulams-color-white);
+}
+
+.root :global(.lesson__item) :global(.lesson__topics) li :global(.lesson__description) :global(.lesson__index) {
+  opacity: 0.5;
+  margin-right: 4px;
+}
+
+.root[data-numerations="true"] :global(.lesson__item) :global(.lesson__topics) li :global(.lesson__description) :global(.lesson__index) {
+  opacity: 1;
+}
+
+.root :global(.lesson__lessons) {
+  list-style: none;
+  padding-left: 0;
+}
+
+.root :global(.lesson__lessons) :global(.sub-lesson) {
+  padding-inline: 5px;
+  margin-block: 0;
+  border-left: 2px solid transparent;
+  border-bottom: 2px solid var(--ulams-color-white);
+}
+
+.root :global(.lesson__item.open) :global(.lesson__topics) {
+  max-height: 100vh;
+  transition: all 0.35s ease-in;
+}
+
+.root :global(.lesson__item.closed) :global(.lesson__topics),
+.root :global(.lesson__item.closed) :global(.lesson__lessons) {
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.35s ease-out;
+}

@@ -1,0 +1,14 @@
+.root {
+  background-color: var(--ulams-color-white);
+  border-radius: var(--ulams-radius-button);
+  padding: 15px;
+}
+
+.root :global(.title-wrapper) {
+  margin-bottom: 49px;
+}
+
+.root :global(.title-wrapper__uptitle),
+.root :global(.date-wrapper__uptitle) {
+  margin-bottom: 6px;
+}

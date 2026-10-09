@@ -17,7 +17,7 @@ import { Col, Row } from "react-grid-system";
 import Container from "@/components/Common/Container";
 import { ModalCourseAccess } from "@ulams/components/components/organisms/ModalCourseAccess";
 import { QuestionnaireModelType } from "@/types/questionnaire";
-import { ModalOverwriteGlobal, StyledCoursePage } from "./styles";
+import { ModalOverwriteGlobal, StyledCoursePage, styles } from "./styles";
 import {
   CourseMainInfo,
   CourseAuthor,
@@ -26,23 +26,11 @@ import {
 } from "./Components";
 import routeRoutes from "@/components/Routes/routes";
 import { isMobile } from "react-device-detect";
-import styled, { useTheme } from "styled-components";
 import { ArrowRight } from "@/icons/index";
 import SidebarSkeleton from "@/components/Skeletons/CoursePage/sidebar";
 import CoursePageContentSkeleton from "@/components/Skeletons/CoursePage/content";
 import { API_URL } from "@/config/index";
 import { toast } from "@/utils/toast";
-
-const BackButton = styled.button`
-  all: unset;
-  margin-top: 10px;
-  margin-bottom: 15px;
-  svg {
-    transform: rotate(180deg);
-    width: 10px;
-    height: 17px;
-  }
-`;
 
 const CoursePage = () => {
   const [questionnaires, setQuestionnaires] = useState<API.Questionnaire[]>([]);
@@ -53,7 +41,6 @@ const CoursePage = () => {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
   const history = useHistory();
-  const theme = useTheme();
   const {
     course,
     fetchCourse,
@@ -154,11 +141,12 @@ const CoursePage = () => {
               <Row>
                 <Col md={12} lg={8}>
                   {isMobile && (
-                    <BackButton
+                    <button
+                      className={styles.backButton}
                       onClick={() => history.push(routeRoutes.courses)}
                     >
-                      <ArrowRight color={theme.black} />
-                    </BackButton>
+                      <ArrowRight color="currentColor" />
+                    </button>
                   )}
                   <CourseMainInfo courseData={course.value} />
                   {isMobile && course.value && (

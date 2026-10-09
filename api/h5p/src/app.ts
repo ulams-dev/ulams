@@ -16,6 +16,7 @@ import { I18nSetup } from './h5p/i18n';
 import { authMiddleware } from './auth/middleware';
 import { contentsRouter } from './routes/contents';
 import { healthRouter } from './routes/health';
+import { embedRouter } from './routes/embed';
 import { jsonErrorHandler, requireAny } from './http/respond';
 import { Tenant, TenantResolver } from './tenancy/types';
 
@@ -91,13 +92,14 @@ export function createApp(deps: AppDeps): Express {
     const base = config.mountPath; // '/h5p'
     const app = express();
 
-    const routerCache = new Map<string, TenantRouters>();
+    // Keyed by the Tenant object: a rebuilt tenant (changed env file) gets new routers.
+    const routerCache = new WeakMap<Tenant, TenantRouters>();
     const routersFor = (req: Request): TenantRouters => {
         const tenant = (req as RequestWithTenant).tenant;
-        let routers = routerCache.get(tenant.id);
+        let routers = routerCache.get(tenant);
         if (!routers) {
             routers = buildTenantRouters(config, tenant);
-            routerCache.set(tenant.id, routers);
+            routerCache.set(tenant, routers);
         }
         return routers;
     };
@@ -121,38 +123,56 @@ export function createApp(deps: AppDeps): Express {
         })
     );
 
+    // CORS per tenant: CORS_ORIGINS plus the tenant's front/admin origins.
+    // Unknown hosts get the static CORS_ORIGINS (their requests end in 404 anyway).
+    const tenantOrigins = (req: Request): string[] =>
+        (req as Partial<RequestWithTenant>).tenant?.settings.corsOrigins ?? config.corsOrigins;
     app.use(
-        cors({
-            origin: (origin, callback) => {
-                // Same-origin and server-to-server requests have no Origin.
-                if (!origin || config.corsOrigins.includes(origin) || config.corsOrigins.includes('*')) {
-                    callback(null, origin ?? true);
-                } else {
-                    callback(null, false);
+        cors((req, callback) => {
+            const r = req as Partial<RequestWithTenant>;
+            const ready = r.tenant
+                ? Promise.resolve(r.tenant)
+                : tenants.resolve(req as Request).catch(() => undefined);
+            void ready.then((tenant) => {
+                if (tenant) {
+                    r.tenant = tenant;
                 }
-            },
-            credentials: true,
-            exposedHeaders: ['Content-Disposition', 'Content-Length', 'Content-Range', 'Accept-Ranges'],
-            allowedHeaders: [
-                'Authorization',
-                'Content-Type',
-                'Accept',
-                'Accept-Language',
-                'X-Requested-With',
-                'X-Internal-Token',
-                'Range'
-            ],
-            maxAge: 600
+                const allowed = tenantOrigins(req as Request);
+                callback(null, {
+                    origin: (origin, cb) => {
+                        // Same-origin and server-to-server requests have no Origin.
+                        if (!origin || allowed.includes(origin) || allowed.includes('*')) {
+                            cb(null, origin ?? true);
+                        } else {
+                            cb(null, false);
+                        }
+                    },
+                    credentials: true,
+                    exposedHeaders: ['Content-Disposition', 'Content-Length', 'Content-Range', 'Accept-Ranges'],
+                    allowedHeaders: [
+                        'Authorization',
+                        'Content-Type',
+                        'Accept',
+                        'Accept-Language',
+                        'X-Requested-With',
+                        'X-Internal-Token',
+                        'Range'
+                    ],
+                    maxAge: 600
+                });
+            });
         })
     );
 
-    // Health is unauthenticated and does not need body parsing.
+    // Health is unauthenticated, resolves the tenant itself and answers for
+    // loopback hosts too (container health check).
     app.use(`${base}/health`, healthRouter(tenants, deps.redis));
 
-    // Tenant from X-Forwarded-Host / Host.
+    // Tenant from X-Forwarded-Host / Host (usually already set by the CORS
+    // step). Unknown host -> 404, never the platform.
     app.use(async (req, res, next) => {
         try {
-            const tenant = await tenants.resolve(req);
+            const tenant = (req as Partial<RequestWithTenant>).tenant ?? (await tenants.resolve(req));
             if (!tenant) {
                 res.status(404).json({ success: false, message: 'Unknown tenant.' });
                 return;
@@ -163,6 +183,11 @@ export function createApp(deps: AppDeps): Express {
             next(error);
         }
     });
+
+    // Embed pages (HTML + bundled JS): no auth; the token arrives later via
+    // postMessage and is used for same-origin API calls. frame-ancestors and
+    // the postMessage allow-list are the tenant's origins.
+    app.use(`${base}/embed`, embedRouter({ base, allowedOrigins: tenantOrigins }));
 
     app.use(express.json({ limit: '50mb' }));
     app.use(express.urlencoded({ extended: true, limit: '50mb' }));

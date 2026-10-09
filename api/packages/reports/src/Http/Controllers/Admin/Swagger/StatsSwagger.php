@@ -26,14 +26,10 @@ interface StatsSwagger
      *          response=200,
      *          description="successful operation",
      *          @OA\JsonContent(
-     *              @OA\Schema(
      *                  type="array",
      *                  @OA\Items(
-     *                      @OA\Schema(
      *                          type="string"
-     *                      )
      *                  )
-     *              )
      *          )
      *     ),
      * )
@@ -66,9 +62,7 @@ interface StatsSwagger
      *          @OA\Schema(
      *              type="array",
      *              @OA\Items(
-     *                  @OA\Schema(
      *                      type="string"
-     *                  )
      *              )
      *          )
      *      ),
@@ -76,14 +70,10 @@ interface StatsSwagger
      *          response=200,
      *          description="successful operation",
      *          @OA\JsonContent(
-     *              @OA\Schema(
      *                  type="array",
      *                  @OA\Items(
-     *                      @OA\Schema(
      *                          type="string"
-     *                      )
      *                  )
-     *              )
      *          )
      *     ),
      * )
@@ -116,9 +106,7 @@ interface StatsSwagger
      *          @OA\Schema(
      *              type="array",
      *              @OA\Items(
-     *                  @OA\Schema(
      *                      type="string"
-     *                  )
      *              )
      *          )
      *      ),
@@ -126,14 +114,10 @@ interface StatsSwagger
      *          response=200,
      *          description="successful operation",
      *          @OA\JsonContent(
-     *              @OA\Schema(
      *                  type="array",
      *                  @OA\Items(
-     *                      @OA\Schema(
      *                          type="string"
-     *                      )
      *                  )
-     *              )
      *          )
      *     ),
      * )
@@ -157,9 +141,7 @@ interface StatsSwagger
      *          @OA\Schema(
      *              type="array",
      *              @OA\Items(
-     *                  @OA\Schema(
      *                      type="string"
-     *                  )
      *              )
      *          )
      *      ),
@@ -167,14 +149,10 @@ interface StatsSwagger
      *          response=200,
      *          description="successful operation",
      *          @OA\JsonContent(
-     *              @OA\Schema(
      *                  type="array",
      *                  @OA\Items(
-     *                      @OA\Schema(
      *                          type="string"
-     *                      )
      *                  )
-     *              )
      *          )
      *     ),
      * )
@@ -216,9 +194,7 @@ interface StatsSwagger
      *          @OA\Schema(
      *              type="array",
      *              @OA\Items(
-     *                  @OA\Schema(
      *                      type="string"
-     *                  )
      *              )
      *          )
      *      ),
@@ -226,14 +202,10 @@ interface StatsSwagger
      *          response=200,
      *          description="successful operation",
      *          @OA\JsonContent(
-     *              @OA\Schema(
      *                  type="array",
      *                  @OA\Items(
-     *                      @OA\Schema(
      *                          type="string"
-     *                      )
      *                  )
-     *              )
      *          )
      *     ),
      * )

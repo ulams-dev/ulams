@@ -13,8 +13,6 @@ class CourseUserAttendance extends Model
 
     public $timestamps = false;
 
-    protected $dates = ['attendance_date'];
-
     protected $fillable = [
         'course_progress_id',
         'attendance_date',

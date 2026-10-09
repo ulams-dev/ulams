@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Ulams\Courses\Models\Course;
 use Ulams\Courses\Models\Topic;
-use Ulams\HeadlessH5P\Models\H5PContent;
+use Ulams\H5P\Models\H5PContent;
 use Ulams\TopicTypes\Models\TopicContent\H5P;
 use Peopleaps\Scorm\Model\ScormScoModel;
 
@@ -19,7 +19,8 @@ class PostCoursesSeeder extends Seeder
     public function run()
     {
         $courses = Course::with('lessons')->get();
-        $contents = H5PContent::with('library')->get();
+        // H5P contents come from the H5P service seeder (`make h5p-seed`, api/h5p src/cli/seed.ts)
+        $contents = H5PContent::query()->get();
         $scormScos = ScormScoModel::all();
         
         if ( $contents->count() == 0) {
@@ -40,7 +41,7 @@ class PostCoursesSeeder extends Seeder
                         $content = $contents->random();                        
                         $topic = Topic::create([
                             'lesson_id'=>$lesson->id,
-                            'title'=> $content->library->title,
+                            'title'=> $content->title ?: $content->main_library,
                             'order' => 0
                         ]);
                         $topicable = H5P::create([

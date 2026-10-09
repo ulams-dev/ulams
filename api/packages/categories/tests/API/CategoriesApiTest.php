@@ -456,6 +456,27 @@ class CategoriesApiTest extends TestCase
         $this->assertNull($data->icon);
     }
 
+    public function testUpdateCategoryIconAcceptsSvg(): void
+    {
+        Storage::fake();
+
+        $category = Category::factory()->create();
+        // Laravel 12's `image` rule rejects SVG unless `allow_svg` is given; category icons are SVG
+        // (see database/multimedia/categories), so the icon rule allows it.
+        $icon = UploadedFile::fake()->createWithContent(
+            'icon.svg',
+            file_get_contents(__DIR__ . '/../../database/multimedia/categories/1.svg')
+        );
+
+        $this->actingAs($this->user, 'api')->postJson('/api/admin/categories/' . $category->getKey(), [
+            'icon' => $icon,
+        ])->assertOk();
+
+        $category->refresh();
+        Storage::assertExists($category->icon);
+        $this->assertStringEndsWith('.svg', $category->icon);
+    }
+
     public function testUpdateCategoryIconFromExistingFile(): void
     {
         Storage::fake();

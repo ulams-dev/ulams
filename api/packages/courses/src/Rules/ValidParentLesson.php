@@ -9,7 +9,7 @@ class ValidParentLesson implements Rule
 {
     private ?int $courseId;
 
-    public function __construct(int $courseId = null)
+    public function __construct(?int $courseId = null)
     {
         $this->courseId = $courseId;
     }

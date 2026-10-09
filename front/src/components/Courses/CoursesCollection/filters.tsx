@@ -1,11 +1,7 @@
 import React from "react";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
-import {
-  DropdownCategories,
-  DropdownMenu,
-} from "@ulams/components";
+import { DropdownCategories, DropdownMenu } from "@ulams/components";
 import { isMobile } from "react-device-detect";
-import styled from "styled-components";
 import { ArrowDown, IconSquares } from "@/icons/index";
 import { Category, CourseParams } from "@ulams/sdk/types";
 import {
@@ -14,46 +10,7 @@ import {
 } from "@/components/Courses/CoursesCollection";
 import { DropdownMenuItem } from "@ulams/components/components/molecules/DropdownMenu/DropdownMenu";
 import { useTranslation } from "react-i18next";
-
-const FiltersHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  p {
-    margin: 0px;
-  }
-
-  @media (max-width: 335px) {
-    flex-direction: column;
-    gap: 20px;
-  }
-`;
-
-const SortWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  p {
-    margin: unset;
-  }
-  svg {
-    margin-left: 5px;
-    margin-top: -2px;
-  }
-`;
-
-const DropdownCategoriesButton = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  .icon-squares {
-    width: 11px;
-    height: 11px;
-    path {
-      fill: ${({ theme }) => theme.primaryColor};
-    }
-  }
-`;
+import styles from "./filters.module.css";
 
 type Props = {
   prevCategories: Category[];
@@ -85,9 +42,12 @@ const CoursesFilters: React.FC<Props> = ({
   const { t } = useTranslation();
 
   return (
-    <FiltersHeader>
+    <div className={styles.filtersHeader}>
       {isMobile ? (
-        <DropdownCategoriesButton
+        <button
+          type="button"
+          className={`${styles.dropdownCategoriesButton} ${styles.buttonReset}`}
+          aria-expanded={parentState.showDrawer}
           onClick={() =>
             setMobileDrawerState({
               showDrawer: !parentState.showDrawer,
@@ -98,7 +58,7 @@ const CoursesFilters: React.FC<Props> = ({
           <IconSquares />
           <Text size="16">{t("CoursesPage.showByCategory")}</Text>
           <ArrowDown />
-        </DropdownCategoriesButton>
+        </button>
       ) : (
         <DropdownCategories
           checkedCategories={prevCategories}
@@ -106,16 +66,16 @@ const CoursesFilters: React.FC<Props> = ({
           onChange={handleCategoryChange}
           categories={categories || []}
           child={
-            <DropdownCategoriesButton>
+            <div className={styles.dropdownCategoriesButton}>
               <IconSquares />
               <Text size="16">{t("CoursesPage.showByCategory")}</Text>
               <ArrowDown />
-            </DropdownCategoriesButton>
+            </div>
           }
         />
       )}
 
-      <SortWrapper>
+      <div className={styles.sortWrapper}>
         <Text
           onClick={() =>
             isMobile &&
@@ -153,8 +113,8 @@ const CoursesFilters: React.FC<Props> = ({
             }
           />
         )}
-      </SortWrapper>
-    </FiltersHeader>
+      </div>
+    </div>
   );
 };
 

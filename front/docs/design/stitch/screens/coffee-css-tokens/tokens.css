@@ -1,0 +1,110 @@
+:root,
+[data-theme="coffee"] {
+  /* ==========================================================================
+     The Coffee Atlas — Editorial Design Tokens (CSS Custom Properties)
+     Curated for Wellms Front-end Integration & Archival Editorial Aesthetics
+     ========================================================================== */
+
+  /* --- Color Palette: Foundations & Paper Surfaces --- */
+  --color-bg: #f6f1e9;                       /* Archival paper canvas */
+  --color-surface: #fff8f5;                  /* Clean paper surface */
+  --color-surface-dim: #efd5c6;              /* Toned parchment surface */
+  --color-surface-bright: #fff8f5;          /* Elevated paper bright */
+  --color-surface-container-lowest: #ffffff; /* Clean white card */
+  --color-surface-container-low: #fff1ea;    /* Tinted container low */
+  --color-surface-container: #faebe3;        /* Warm paper container */
+  --color-surface-container-high: #f4e5dd;   /* Distinct container section */
+  --color-surface-container-highest: #eedfd8;/* Emphasized container block */
+
+  /* --- Color Palette: Roast Browns, Neutrals & Borders --- */
+  --color-text: #2b1d14;                     /* Deep roast brown primary text */
+  --color-text-primary: #2b1d14;             /* Alias for body/heading typography */
+  --color-text-secondary: #5c4333;           /* Medium roast secondary text */
+  --color-text-muted: #826e63;               /* Subdued editorial caption & folio metadata */
+  --color-text-subtle: #a89a90;              /* Faint stamps, disabled copy & watermarks */
+  --color-border: #d9cfc2;                   /* Hairline bookbinding rules */
+  --color-border-subtle: #e9e1d6;            /* Delicate dividers & paper grid lines */
+  --color-border-strong: #bfaea0;            /* Emphasized frame rules & table strokes */
+
+  /* --- Color Palette: Accents & Semantics --- */
+  --color-accent: #c2552d;                   /* Terracotta / ripe coffee cherry primary accent */
+  --color-accent-hover: #a84521;             /* Deep terracotta hover / active state */
+  --color-accent-subtle: #fbece7;            /* Soft terracotta wash for highlights & badges */
+  --color-accent-muted: #e5997d;             /* Terracotta medium tint */
+  --color-secondary: #7a8b6f;                /* Botanical sage / leaf secondary accent */
+  --color-secondary-hover: #65745b;          /* Deep sage hover */
+  --color-secondary-subtle: #f1f4ee;         /* Sage light wash */
+  --color-success: #3c7a52;                  /* Correct response green / verified stamp */
+  --color-success-subtle: #eef6f1;           /* Correct question pill background */
+  --color-warning: #c27d1a;                  /* Attention amber */
+  --color-warning-subtle: #fdf6ec;           /* Attention callout wash */
+  --color-error: #b8332a;                    /* Defect / error red */
+  --color-error-subtle: #fdf1f0;             /* Error highlight wash */
+
+  /* --- Typography: Font Families --- */
+  --font-display: 'Playfair Display', 'Fraunces', Georgia, serif;
+  --font-serif: 'Playfair Display', 'Fraunces', 'Baskerville', serif;
+  --font-sans: 'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+
+  /* --- Typography: Font Sizes & Type Scale --- */
+  --font-size-2xs: 0.6875rem;                /* 11px - Folio issue labels & sub-indices */
+  --font-size-xs: 0.75rem;                   /* 12px - Small captions & tag pills */
+  --font-size-sm: 0.875rem;                  /* 14px - Metadata, form labels, annotations */
+  --font-size-base: 1rem;                    /* 16px - Base body text */
+  --font-size-md: 1.125rem;                  /* 18px - Editorial long-form reading body */
+  --font-size-lg: 1.25rem;                   /* 20px - Subheadings & callout text */
+  --font-size-xl: 1.5rem;                    /* 24px - Section headers & card titles */
+  --font-size-2xl: 1.875rem;                 /* 30px - Major section titles */
+  --font-size-3xl: 2.25rem;                  /* 36px - Chapter titles & module headlines */
+  --font-size-4xl: 3rem;                     /* 48px - Primary editorial headlines */
+  --font-size-5xl: 3.75rem;                  /* 60px - Display hero headings */
+
+  /* --- Typography: Font Weights --- */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* --- Typography: Leading (Line Heights) --- */
+  --line-height-tight: 1.15;
+  --line-height-snug: 1.3;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;                /* Generous editorial book reading rhythm */
+  --line-height-loose: 1.85;
+
+  /* --- Spacing Scale (4px / 8px Grid Base) --- */
+  --space-3xs: 0.125rem;                     /* 2px */
+  --space-2xs: 0.25rem;                      /* 4px */
+  --space-xs: 0.5rem;                        /* 8px */
+  --space-sm: 0.75rem;                       /* 12px */
+  --space-md: 1rem;                          /* 16px */
+  --space-lg: 1.5rem;                        /* 24px */
+  --space-xl: 2rem;                          /* 32px */
+  --space-2xl: 2.5rem;                       /* 40px */
+  --space-3xl: 3rem;                         /* 48px */
+  --space-4xl: 4rem;                         /* 64px */
+  --space-5xl: 5rem;                         /* 80px */
+  --space-6xl: 6rem;                         /* 96px */
+
+  /* --- Border Radii (Crisp, Archival Feel) --- */
+  --radius-none: 0px;                        /* Letterpress, hairline dividers */
+  --radius-xs: 2px;                          /* Hairline tags & small markers */
+  --radius-sm: 4px;                          /* Standard buttons & input fields */
+  --radius-md: 6px;                          /* Editorial cards & interactive containers */
+  --radius-lg: 8px;                          /* Outer modal and panel frames */
+  --radius-xl: 12px;                         /* Hero image frames */
+  --radius-full: 9999px;                     /* Pills, round badges & avatars */
+
+  /* --- Shadows & Elevations (Tactile Paper Layers) --- */
+  --shadow-none: none;
+  --shadow-sm: 0 1px 2px 0 rgba(43, 29, 20, 0.04);
+  --shadow-md: 0 4px 12px -2px rgba(43, 29, 20, 0.06), 0 2px 4px -1px rgba(43, 29, 20, 0.03);
+  --shadow-lg: 0 12px 28px -6px rgba(43, 29, 20, 0.08), 0 4px 10px -2px rgba(43, 29, 20, 0.04);
+  --shadow-letterpress: inset 0 1px 2px rgba(43, 29, 20, 0.08);
+
+  /* --- Transitions & Timing --- */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}

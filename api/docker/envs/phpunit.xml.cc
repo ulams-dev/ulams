@@ -1,57 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" backupStaticAttributes="false" bootstrap="vendor/autoload.php" colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-  <coverage processUncoveredFiles="true">
-    <include>
-      <directory suffix=".php">./packages/auth/src</directory>
-      <directory suffix=".php">./packages/bookmarks_notes/src</directory>
-      <directory suffix=".php">./packages/bulk-notifications/src</directory>
-      <directory suffix=".php">./packages/cart/src</directory>
-      <directory suffix=".php">./packages/categories/src</directory>
-      <directory suffix=".php">./packages/core/src</directory>
-      <directory suffix=".php">./packages/courses/src</directory>
-      <directory suffix=".php">./packages/course-access/src</directory>
-      <directory suffix=".php">./packages/courses-import-export/src</directory>
-      <directory suffix=".php">./packages/csv-users/src</directory>
-      <directory suffix=".php">./packages/dictionaries/src</directory>
-      <directory suffix=".php">./packages/files/src</directory>
-      <directory suffix=".php">./packages/headless-h5p/src</directory>
-      <directory suffix=".php">./packages/images/src</directory>
-      <directory suffix=".php">./packages/invoices/src</directory>
-      <directory suffix=".php">./packages/lrs/src</directory>
-      <directory suffix=".php">./packages/notifications/src</directory>
-      <directory suffix=".php">./packages/mailerlite/src</directory>
-      <directory suffix=".php">./packages/mattermost/src</directory>
-      <directory suffix=".php">./packages/model-fields/src</directory>
-      <directory suffix=".php">./packages/pages/src</directory>
-      <directory suffix=".php">./packages/payments/src</directory>
-      <directory suffix=".php">./packages/permissions/src</directory>
-      <directory suffix=".php">./packages/recommender/src</directory>
-      <directory suffix=".php">./packages/reports/src</directory>
-      <directory suffix=".php">./packages/scorm/src</directory>
-      <directory suffix=".php">./packages/settings/src</directory>
-      <directory suffix=".php">./packages/stationary-events/src</directory>
-      <directory suffix=".php">./packages/tags/src</directory>
-      <directory suffix=".php">./packages/tasks/src</directory>
-      <directory suffix=".php">./packages/topic-types/src</directory>
-      <directory suffix=".php">./packages/topic-type-gift/src</directory>
-      <directory suffix=".php">./packages/topic-type-project/src</directory>
-      <directory suffix=".php">./packages/templates/src</directory>
-      <directory suffix=".php">./packages/templates-email/src</directory>
-      <directory suffix=".php">./packages/templates-sms/src</directory>
-      <directory suffix=".php">./packages/templates-pdf/src</directory>
-      <directory suffix=".php">./packages/questionnaire/src</directory>
-      <directory suffix=".php">./packages/assign-without-account/src</directory>
-      <!-- <directory suffix=".php">./packages/tracker/src</directory> -->
-      <directory suffix=".php">./packages/translations/src</directory>
-      <directory suffix=".php">./packages/vouchers/src</directory>
-      <directory suffix=".php">./packages/consultations/src</directory>
-      <directory suffix=".php">./packages/consultation-access/src</directory>
-      <directory suffix=".php">./packages/webinar/src</directory>
-      <directory suffix=".php">./packages/cmi5/src</directory>
-      <!-- <directory suffix=".php">./packages/video/src</directory> -->
-
-    </include>
-  </coverage>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" bootstrap="vendor/autoload.php" colors="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.5/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
   <testsuites>
     <testsuite name="Integrations">
       <directory suffix="Test.php">./tests/Integrations</directory>
@@ -92,8 +40,8 @@
     <testsuite name="files">
       <directory suffix="Test.php">./packages/files/tests</directory>
     </testsuite>
-    <testsuite name="headless-h5p">
-      <directory suffix="Test.php">./packages/headless-h5p/tests</directory>
+    <testsuite name="h5p">
+      <directory suffix="Test.php">./packages/h5p/tests</directory>
     </testsuite>
     <testsuite name="images">
       <directory suffix="Test.php">./packages/images/tests</directory>
@@ -125,16 +73,13 @@
     <testsuite name="permissions">
       <directory suffix="Test.php">./packages/permissions/tests</directory>
     </testsuite>
-    <testsuite name="recommender">
-      <directory suffix="Test.php">./packages/recommender/tests</directory>
-    </testsuite>
     <testsuite name="reports">
       <directory suffix="Test.php">./packages/reports/tests</directory>
     </testsuite>
     <testsuite name="scorm">
       <directory suffix="Test.php">./packages/scorm/tests</directory>
     </testsuite>
-     <testsuite name="settings">
+    <testsuite name="settings">
       <directory suffix="Test.php">./packages/settings/tests</directory>
     </testsuite>
     <testsuite name="stationary-events">
@@ -202,7 +147,7 @@
     </testsuite>
     -->
   </testsuites>
-    <php>
+  <php>
     <env name="APP_KEY" value="AckfSECXIvnK5r28GVIWUAxmbBSjTsmF"/>
     <env name="DB_CONNECTION" value="mysql"/>
     <env name="DB_HOST" value="mysql"/>
@@ -214,4 +159,54 @@
     <env name="TELESCOPE_ENABLED" value="false"/>
     <ini name="memory_limit" value="1024M"/>
   </php>
+  <source>
+    <include>
+      <directory suffix=".php">./packages/auth/src</directory>
+      <directory suffix=".php">./packages/bookmarks_notes/src</directory>
+      <directory suffix=".php">./packages/bulk-notifications/src</directory>
+      <directory suffix=".php">./packages/cart/src</directory>
+      <directory suffix=".php">./packages/categories/src</directory>
+      <directory suffix=".php">./packages/core/src</directory>
+      <directory suffix=".php">./packages/courses/src</directory>
+      <directory suffix=".php">./packages/course-access/src</directory>
+      <directory suffix=".php">./packages/courses-import-export/src</directory>
+      <directory suffix=".php">./packages/csv-users/src</directory>
+      <directory suffix=".php">./packages/dictionaries/src</directory>
+      <directory suffix=".php">./packages/files/src</directory>
+      <directory suffix=".php">./packages/h5p/src</directory>
+      <directory suffix=".php">./packages/images/src</directory>
+      <directory suffix=".php">./packages/invoices/src</directory>
+      <directory suffix=".php">./packages/lrs/src</directory>
+      <directory suffix=".php">./packages/notifications/src</directory>
+      <directory suffix=".php">./packages/mailerlite/src</directory>
+      <directory suffix=".php">./packages/mattermost/src</directory>
+      <directory suffix=".php">./packages/model-fields/src</directory>
+      <directory suffix=".php">./packages/pages/src</directory>
+      <directory suffix=".php">./packages/payments/src</directory>
+      <directory suffix=".php">./packages/permissions/src</directory>
+      <directory suffix=".php">./packages/reports/src</directory>
+      <directory suffix=".php">./packages/scorm/src</directory>
+      <directory suffix=".php">./packages/settings/src</directory>
+      <directory suffix=".php">./packages/stationary-events/src</directory>
+      <directory suffix=".php">./packages/tags/src</directory>
+      <directory suffix=".php">./packages/tasks/src</directory>
+      <directory suffix=".php">./packages/topic-types/src</directory>
+      <directory suffix=".php">./packages/topic-type-gift/src</directory>
+      <directory suffix=".php">./packages/topic-type-project/src</directory>
+      <directory suffix=".php">./packages/templates/src</directory>
+      <directory suffix=".php">./packages/templates-email/src</directory>
+      <directory suffix=".php">./packages/templates-sms/src</directory>
+      <directory suffix=".php">./packages/templates-pdf/src</directory>
+      <directory suffix=".php">./packages/questionnaire/src</directory>
+      <directory suffix=".php">./packages/assign-without-account/src</directory>
+      <!-- <directory suffix=".php">./packages/tracker/src</directory> -->
+      <directory suffix=".php">./packages/translations/src</directory>
+      <directory suffix=".php">./packages/vouchers/src</directory>
+      <directory suffix=".php">./packages/consultations/src</directory>
+      <directory suffix=".php">./packages/consultation-access/src</directory>
+      <directory suffix=".php">./packages/webinar/src</directory>
+      <directory suffix=".php">./packages/cmi5/src</directory>
+      <!-- <directory suffix=".php">./packages/video/src</directory> -->
+    </include>
+  </source>
 </phpunit>

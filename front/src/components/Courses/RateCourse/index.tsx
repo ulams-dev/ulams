@@ -4,7 +4,8 @@ import { useTranslation } from "react-i18next";
 import { API } from "@ulams/sdk";
 import { QuestionBox } from "../../QuestionBox";
 import { QuestionnaireModelType, QuestionType } from "@/types/questionnaire";
-import { StyledModal } from "@/components/Courses/RateCourse/styles";
+import { Modal } from "@ulams/components/components/atoms/Modal/Modal";
+import styles from "./styles.module.css";
 import { toast } from "@/utils/toast";
 
 type Props = {
@@ -88,7 +89,8 @@ const RateCourse: React.FC<Props> = ({
   );
 
   return (
-    <StyledModal
+    <Modal
+      className={styles.modal}
       onClose={onClose}
       visible={visible}
       animation="zoom"
@@ -109,7 +111,7 @@ const RateCourse: React.FC<Props> = ({
           onClose={onClose}
         />
       )}
-    </StyledModal>
+    </Modal>
   );
 };
 

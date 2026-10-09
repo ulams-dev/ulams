@@ -19,7 +19,6 @@ import {
 } from '@ant-design/icons';
 import { Button, Popconfirm, Select, Tag, Typography, message } from 'antd';
 import { format } from 'date-fns';
-import EffectivenessAnalysis from '../Consultations/components/EffectivenessAnalysis';
 import TokenForm from './components/TokenForm';
 
 export const TableColumns: ProColumns<API.Webinar>[] = [
@@ -301,13 +300,6 @@ const Webinars: React.FC = () => {
               },
             ]}
           />
-        </ProCard.TabPane>
-
-        <ProCard.TabPane
-          key="effectiveness-analysis"
-          tab={<FormattedMessage id="effectiveness_analysis" />}
-        >
-          <EffectivenessAnalysis modelType="webinar" />
         </ProCard.TabPane>
       </ProCard>
 

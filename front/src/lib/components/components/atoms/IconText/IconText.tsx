@@ -1,9 +1,9 @@
 import * as React from "react";
-import styled, { withTheme } from "styled-components";
-import { getFontFromTheme } from "../../../theme/provider";
 import { ReactNode } from "react";
-import { getStylesBasedOnTheme } from "../../../utils/utils";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
+import { cx } from "../../../utils/cx";
+import cssStyles from "./IconText.module.css";
+import { legacyDefault } from "../../../utils/legacy";
 
 interface Styles {
   icon?: React.CSSProperties;
@@ -19,40 +19,19 @@ export interface IconTextProps
   noMargin?: boolean;
 }
 
-const StyledText = styled("p")<IconTextProps>`
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  margin: ${({ noMargin }) => (noMargin ? "0" : "0 0 20px 0")};
-  font-family: ${(props) => getFontFromTheme(props.theme).fontFamily};
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  color: ${({ theme }) =>
-    getStylesBasedOnTheme(theme.mode, theme.white, theme.gray1)};
-
-  .icon {
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    margin-right: 9px;
-
-    svg {
-      flex-shrink: 0;
-      fill: ${({ theme }) =>
-        getStylesBasedOnTheme(theme.mode, theme.white, theme.black)};
-    }
-  }
-  .text {
-    width: 100%;
-  }
-`;
-
 export const IconText: React.FC<IconTextProps> = (props) => {
-  const { text, icon, styles, className = "" } = props;
+  const { text, icon, styles, className = "", noMargin, ...pProps } = props;
 
   return (
-    <StyledText className={`ulams-component ${className}`} {...props}>
+    <p
+      {...pProps}
+      className={cx(
+        cssStyles.iconText,
+        noMargin && cssStyles.noMargin,
+        "ulams-component",
+        className
+      )}
+    >
       {icon && (
         <span
           className="icon"
@@ -67,10 +46,8 @@ export const IconText: React.FC<IconTextProps> = (props) => {
       <div className="text" style={styles?.text}>
         {text}
       </div>
-    </StyledText>
+    </p>
   );
 };
 
-const NewComponent = styled(IconText)<IconTextProps>``;
-
-export default withTheme(NewComponent);
+export default legacyDefault(IconText);

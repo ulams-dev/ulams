@@ -13,40 +13,41 @@ export const H5PContentSelect: React.FC<{
   onChange?: (value: string) => void;
 }> = ({ value, onChange, multiple = false }) => {
   const [contents, setContents] = useState<API.H5PContentListItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const fetchContents = () => {
+    setLoading(true);
+    return allContent()
+      .then((response) => response.success && setContents(response.data))
+      .finally(() => setLoading(false));
+  };
 
   useEffect(() => {
-    allContent().then((response) => response.success && setContents(response.data));
+    fetchContents();
   }, []);
 
   useEffect(() => {
-    if (contents.length) {
-      if (!contents.find((content) => Number(content.id) === Number(value))) {
-        allContent().then((response) => response.success && setContents(response.data));
-      }
+    // a content created or uploaded in the topic form is not in the list yet
+    if (value && contents.length && !contents.find((c) => String(c.id) === String(value))) {
+      fetchContents();
     }
   }, [value]);
 
   return (
     <Select
-      loading={contents.length === 0}
+      loading={loading}
       style={{ width: '100%' }}
-      value={value}
+      value={value ? String(value) : undefined}
       onChange={onChange}
       mode={multiple ? 'multiple' : undefined}
       showSearch
       placeholder={<FormattedMessage id="H5P_select_content" />}
-      optionFilterProp="children"
-      filterOption={(input, option) => {
-        const h5pTitle = option?.children?.slice(1, option?.children.length).join('');
-        return searchSubstring(h5pTitle, input);
-      }}
-    >
-      {contents.map((content) => (
-        <Select.Option key={content.id.toString()} value={content.id.toString()}>
-          <small>{content.id}</small> {content.title} ({content.library.title})
-        </Select.Option>
-      ))}
-    </Select>
+      filterOption={(input, option) => searchSubstring(String(option?.label ?? ''), input)}
+      options={contents.map((content) => ({
+        value: String(content.id),
+        label: `${content.id} ${content.title} (${content.main_library || content.library})`,
+      }))}
+    />
   );
 };
 

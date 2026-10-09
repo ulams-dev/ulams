@@ -3,22 +3,8 @@ import { Button } from "@ulams/components/components/atoms/Button/Button";
 import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import styled from "styled-components";
 import routeRoutes from "@/components/Routes/routes";
-
-const StyledErrorPage = styled.div`
-  min-height: calc(100vh - 150px);
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-
-  .buttons-block {
-    display: grid;
-    gap: 8px;
-  }
-`;
+import styles from "./styles.module.css";
 
 interface AlternativeButton {
   goTo: string;
@@ -44,13 +30,13 @@ const ErrorBox: React.FC<Props> = ({
 
   return (
     <Layout>
-      <StyledErrorPage>
+      <div className={styles.errorPage}>
         <Text size="16">
           <strong>{t("CoursePage.ErrorOccurred")}</strong>
         </Text>
         <Text size="14">{error}</Text>
         <hr />
-        <div className="buttons-block">
+        <div className={styles.buttonsBlock}>
           <Button mode="secondary" onClick={() => history.push(goTo)}>
             {buttonText}
           </Button>
@@ -63,7 +49,7 @@ const ErrorBox: React.FC<Props> = ({
             </Button>
           )}
         </div>
-      </StyledErrorPage>
+      </div>
     </Layout>
   );
 };

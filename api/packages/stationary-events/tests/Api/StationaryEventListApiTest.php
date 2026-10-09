@@ -212,4 +212,18 @@ class StationaryEventListApiTest extends TestCase
             ]);
 
     }
+
+    public function testStationaryEventsListForCurrentUserAppliesFiltersToAuthoredEvents(): void
+    {
+        $user = $this->makeStudent();
+        $attended = StationaryEvent::factory()->create(['name' => 'Attended workshop']);
+        $authored = StationaryEvent::factory()->create(['name' => 'Authored seminar']);
+        $attended->users()->sync($user->getKey());
+        $authored->authors()->sync($user->getKey());
+
+        $this->actingAs($user, 'api')->getJson('api/stationary-events/me?name=Attended')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment(['id' => $attended->getKey()]);
+    }
 }
