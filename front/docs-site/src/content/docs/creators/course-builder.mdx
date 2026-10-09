@@ -118,7 +118,7 @@ AI cost) and links to the course form in the admin, the learner preview and the 
 ## 9. Keep the course in sync with its sources
 
 Once the course exists, the **Sources** page (in the left navigation) shows each source of the
-course: its name and type, how it is connected (**Upload**), a status (**Up to date** or **New version
+course: its name and type, how it is connected (**Upload**, **Git repository** or **Web page**), a status (**Up to date** or **New version
 available**), the revision your course reflects (**In your course**) and the latest one.
 
 - **Upload a new version**: drop the updated Markdown, PDF or DOCX file on the source. We keep it as
@@ -245,6 +245,81 @@ the system in the same step as the change, it can only grow, and nobody can edit
 - **Export CSV** and **Export JSON** download the trail with the filters you set (all pages, not
   only the one on screen), for audits and compliance reviews. Spreadsheet cells that would start a
   formula are neutralised.
+
+## 13. Connect a repository or web pages
+
+Instead of a file you can follow a **Git repository** or a set of **web pages**. The course then keeps
+reading from the source on its own: a new commit or a changed page becomes a new revision, and the
+revision becomes a reviewable update (sections 8 to 10). Nothing in the course changes until you approve it.
+
+On **New course**, next to the upload area, you find **Connect a repository** and **Add web pages**.
+
+**Connect a repository** (GitHub, GitLab, Gitea and Forgejo):
+
+- **Where does it live?** and, for Gitea, Forgejo and a self-hosted GitLab, the **server address**
+  (for example `https://git.example.com`).
+- **Repository** as `owner/name`. You can paste the address of the repository; we keep the
+  `owner/name` part.
+- **Branch**: leave it empty for the default branch.
+- **Folders and files to read**: one pattern per line, for example `docs/**/*.md`. Empty means every
+  Markdown file.
+- **Access token** (optional). Public repositories work without one, but GitHub then allows only 60
+  requests an hour. A token with read access lifts the limit and opens private repositories. It is
+  stored for the checks and is **never shown again**: the Sources page only says "Token set" and takes
+  a replacement.
+
+**Add web pages**: one address per line, up to 20, all on the same site and all starting with
+`https://`. The optional **main content selector** is a CSS selector (for example `main` or `article`)
+for the part of the page to read; without it we read the main content of the page.
+
+Press the button. The form says it is checking, reads the files or pages, shows revision 1 as the
+source of a new course and continues into the interview as for an uploaded file. If the source is
+refused, you see the reason as the server gave it (for example that the repository was not found, that no file
+matches your paths, or that a page address points to a private network) and nothing is created: change the
+field and try again.
+
+### What is checked and when
+
+On the **Sources** page a connected source shows what it reads from (host, repository and branch, or
+the pages), its status, when it was last checked and when it is checked next.
+
+- **Status** is **Active**, **Paused** or **Error**, always as text with an icon. After repeated failures
+  the status shows the last error, for example a branch that no longer exists or a token that expired.
+- **Check for changes** sets the schedule: every hour, every day, every week, or only when you check.
+  Hourly is the fastest schedule; the installation also caps the number of checks per source per day.
+- **Check now** asks for a check at once. The page says the check is queued and refreshes the card and
+  the revision list when it finishes. A paused source has to be resumed first.
+- **Pause checking** stops scheduled checks, webhooks and manual checks until you press **Resume checking**.
+- A check that finds the same content as before adds no revision.
+
+### Webhooks (Git)
+
+A webhook lets your Git host tell us at once when someone pushes, so the update does not wait for the
+next scheduled check. It is optional; the schedule keeps working without it. The connection shows the
+**Webhook URL** with a copy button. Create the webhook on your host:
+
+- **GitHub**: repository **Settings**, **Webhooks**, **Add webhook**. Payload URL: the webhook URL. Content type:
+  `application/json`. Secret: the webhook secret. Events: **Just the push event**.
+- **GitLab**: project **Settings**, **Webhooks**. URL: the webhook URL. **Secret token**: the webhook secret.
+  Trigger: **Push events**.
+- **Gitea and Forgejo**: repository **Settings**, **Webhooks**, **Add webhook**. Target URL: the webhook URL.
+  Content type: `application/json`. Secret: the webhook secret. Trigger on **Push events**.
+
+The **webhook secret** is shown **once**: right after you connect the repository, and again each time you
+select **Rotate secret**. Copy it before you leave the page. Rotating makes the old secret stop working
+immediately, so the page asks you to confirm and reminds you to update the webhook on your host. Deliveries
+with a wrong signature are refused, and a burst of pushes is merged into one check (the default wait is ten
+minutes; an admin can change it).
+
+### Limits
+
+- Git: up to 500 files, 1 MB per file and 20 MB in total; up to 20 path patterns. Narrow the paths if the
+  repository is larger.
+- Web pages: up to 20 pages of one site, 5 MB per page. Only public `https` pages that return HTML or text
+  can be read; a page that needs a login, a page on a private network address or a page that redirects to
+  another site is refused.
+- An installation can restrict which hosts sources may use. If yours does, the refusal names the allowed hosts.
+- Uploaded sources have no schedule and nothing to check: a new version appears when you upload it.
 
 ## Tips
 

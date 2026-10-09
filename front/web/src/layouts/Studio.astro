@@ -16,7 +16,7 @@ interface Props {
   status?: string;
   sessionId?: string | null;
   active?: "builder" | "workspace" | "done" | "sessions" | "sources" | "updates" | "audit";
-  /** The session has a course: its sources can be kept in sync. */
+  /** The session has a course: updates can be proposed for it. */
   hasCourse?: boolean;
 }
 
@@ -28,13 +28,10 @@ const nav = [
         { key: "builder", href: `/studio/s/${sessionId}`, label: "Builder" },
         { key: "workspace", href: `/studio/s/${sessionId}/workspace`, label: "Workspace" },
         { key: "done", href: `/studio/s/${sessionId}/done`, label: "Course" },
-        ...(hasCourse
-          ? [
-              { key: "sources", href: `/studio/s/${sessionId}/sources`, label: "Sources" },
-              { key: "updates", href: `/studio/s/${sessionId}/updates`, label: "Updates" },
-              { key: "audit", href: `/studio/s/${sessionId}/audit`, label: "Audit" },
-            ]
-          : []),
+        // sources and the audit trail exist from the first connected source; updates need a course
+        { key: "sources", href: `/studio/s/${sessionId}/sources`, label: "Sources" },
+        ...(hasCourse ? [{ key: "updates", href: `/studio/s/${sessionId}/updates`, label: "Updates" }] : []),
+        { key: "audit", href: `/studio/s/${sessionId}/audit`, label: "Audit" },
       ]
     : [{ key: "builder", href: "/studio/new", label: "New course" }]),
 ];
@@ -215,6 +212,8 @@ const nav = [
     }
     .st-rail ul {
       flex-direction: row;
+      flex-wrap: wrap;
+      min-width: 0;
     }
   }
 </style>

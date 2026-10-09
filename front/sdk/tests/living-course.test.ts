@@ -190,4 +190,49 @@ describe("living course client", () => {
       "/studio/api/living-course/proposals/p%201",
     ]);
   });
+
+  it("connects a repository and returns the webhook secret once", async () => {
+    const connection = { id: "c1", connector: "git", schedule: "daily", status: "active", webhookUrl: "http://api/api/living-course/webhooks/w1", secretsSet: ["token"] };
+    const { fn, calls } = fakeFetch([
+      { body: { data: [{ key: "git", label: "Git repository", configSchema: {}, secretFields: ["token"], webhooks: true }] } },
+      { status: 201, body: { data: { connection, source: { id: "src1", name: "ulams-dev/docs" }, webhookSecret: "s3cret" } } },
+      { status: 422, body: { success: false, message: "No file in this branch matches the paths and extensions you chose." } },
+    ]);
+    const lc = createLivingCourseClient({ baseUrl: "/studio/api", prefix: "/living-course", fetch: fn });
+    expect((await lc.connectors.list())[0]?.secretFields).toEqual(["token"]);
+    const input = { connector: "git", config: { host: "github", repository: "ulams-dev/docs", branch: "main" }, secrets: { token: "ghp_x" }, schedule: "daily" } as const;
+    const result = await lc.sources.connect("sess1", input);
+    expect(result.webhookSecret).toBe("s3cret");
+    expect(result.connection.webhookUrl).toContain("/webhooks/w1");
+    await expect(lc.sources.connect("sess1", { connector: "git", config: {} })).rejects.toMatchObject({ status: 422, message: "No file in this branch matches the paths and extensions you chose." });
+    expect(calls[0]!.url).toBe("/studio/api/living-course/connectors");
+    expect(calls[1]!.url).toBe("/studio/api/living-course/sessions/sess1/sources/connect");
+    expect(calls[1]!.init.method).toBe("POST");
+    expect(JSON.parse(String(calls[1]!.init.body))).toEqual(input);
+  });
+
+  it("checks, rotates the secret, updates and disconnects a connection", async () => {
+    const { fn, calls } = fakeFetch([
+      { status: 202, body: { data: { queued: true, connectionId: "c1" } } },
+      { body: { data: { webhookSecret: "fresh" } } },
+      { body: { data: { id: "c1", status: "paused", schedule: "weekly" } } },
+      { body: { data: { id: "c1", status: "paused", schedule: "manual", secretsSet: [] } } },
+      { status: 409, body: { success: false, message: "This source is paused. Resume it before checking." } },
+    ]);
+    const lc = createLivingCourseClient({ baseUrl: "/studio/api", prefix: "/living-course", fetch: fn });
+    expect((await lc.connections.check("c1")).queued).toBe(true);
+    expect((await lc.connections.rotateSecret("c1")).webhookSecret).toBe("fresh");
+    await lc.connections.update("c1", { status: "paused", schedule: "weekly", secrets: { token: "new" } });
+    expect((await lc.connections.disconnect("c1")).secretsSet).toEqual([]);
+    await expect(lc.connections.check("c1")).rejects.toMatchObject({ status: 409 });
+    expect(calls.map((c) => `${c.init.method} ${c.url.replace("/studio/api/living-course", "")}`)).toEqual([
+      "POST /connections/c1/check",
+      "POST /connections/c1/webhook-secret",
+      "PUT /connections/c1",
+      "DELETE /connections/c1",
+      "POST /connections/c1/check",
+    ]);
+    expect(calls[0]!.init.body).toBeUndefined();
+    expect(JSON.parse(String(calls[2]!.init.body))).toEqual({ status: "paused", schedule: "weekly", secrets: { token: "new" } });
+  });
 });

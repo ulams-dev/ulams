@@ -47,6 +47,11 @@ export const LIVING_COURSE_RULES: Array<{ method: string; pattern: RegExp }> = [
   { method: "GET", pattern: new RegExp(`^/proposals/${ID}$`) },
   { method: "POST", pattern: new RegExp(`^/proposals/${ID}/(analyse|accept-all|reject|apply)$`) },
   { method: "POST", pattern: new RegExp(`^/proposals/${ID}/items/${ID}/(accept|reject|reset|regenerate)$`) },
+  // connect a Git repository or web pages, check now, rotate the webhook secret, disconnect
+  { method: "GET", pattern: /^\/connectors$/ },
+  { method: "POST", pattern: new RegExp(`^/sessions/${ID}/sources/connect$`) },
+  { method: "POST", pattern: new RegExp(`^/connections/${ID}/(check|webhook-secret)$`) },
+  { method: "DELETE", pattern: new RegExp(`^/connections/${ID}$`) },
   // the note learners see under "updated since you completed it", and the learner notice settings of a connection
   { method: "PUT", pattern: new RegExp(`^/proposals/${ID}/learner-note$`) },
   { method: "PUT", pattern: new RegExp(`^/connections/${ID}$`) },

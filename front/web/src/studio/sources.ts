@@ -8,6 +8,7 @@ import { renderSurface, type FlatComponent } from "@ulams/ui/builder/renderer.ts
 import type { A2uiActionOut } from "@ulams/ui/builder/components.ts";
 import { h, uid } from "@ulams/ui/builder/dom.ts";
 import { announce, livingClient, message } from "./common.ts";
+import { connectionPanel } from "./connection.ts";
 import { learnerSwitches } from "./learners.ts";
 import { ACCEPTED_FILES, cardProps, changeProps, cosmeticToggleLabel, emptyChangesText, splitChanges, timelineProps, uploadMessage } from "./living.ts";
 
@@ -39,12 +40,18 @@ export function mountSources(root: HTMLElement): void {
     const changesTitle = h("h2", { class: "cb-h3", id: `${fileId}-changes` }, "What changed");
     const toggle = h("button", { type: "button", class: "cb-btn cb-btn-small", hidden: true, "aria-pressed": "false" }) as HTMLButtonElement;
     const changesBody = h("div", { class: "st-changes", role: "region", "data-changes": "", "aria-labelledby": `${fileId}-changes` });
+    const panel = connectionPanel({
+      lc, source,
+      refresh: () => refreshSource(),
+      reloadRevisions: () => load(),
+    });
     const el = h("section", { class: "st-source", "data-source-block": source.id, "aria-label": source.title ?? source.name },
-      card, source.connection ? learnerSwitches(lc, source.connection) : null, drop, h("h2", { class: "cb-h3 st-sub" }, "Revisions"), timeline,
+      card, panel?.el ?? null, source.connection ? learnerSwitches(lc, source.connection) : null, drop, h("h2", { class: "cb-h3 st-sub" }, "Revisions"), timeline,
       h("div", { class: "st-changes-head" }, changesTitle, toggle), changesBody);
 
     const onAction = (a: A2uiActionOut) => {
       if (a.name === "upload_version") fileInput.focus();
+      else if (a.name === "check_now") void panel?.check();
       else if (a.name === "select_revision") void select(String(a.context.revisionId));
     };
 
@@ -126,6 +133,7 @@ export function mountSources(root: HTMLElement): void {
         /* the card keeps its last state */
       }
       renderCard();
+      panel?.render();
     }
 
     async function upload(file: File): Promise<void> {

@@ -56,6 +56,11 @@ describe("studio BFF allow-list", () => {
     ["GET", `/living-course/sessions/${S}/audit/export`],
     ["PUT", `/living-course/proposals/${S}/learner-note`],
     ["PUT", `/living-course/connections/${S}`],
+    ["GET", "/living-course/connectors"],
+    ["POST", `/living-course/sessions/${S}/sources/connect`],
+    ["POST", `/living-course/connections/${S}/check`],
+    ["POST", `/living-course/connections/${S}/webhook-secret`],
+    ["DELETE", `/living-course/connections/${S}`],
   ])("forwards living course %s %s", (method, path) => {
     expect(isLivingCourseCall(method, path)).toBe(true);
     expect(isStudioCall(method, path)).toBe(false);
@@ -69,6 +74,15 @@ describe("studio BFF allow-list", () => {
     ["GET", `/living-course/revisions/${S}/../../users`],
     ["GET", `/living-course/revisions/${S.toUpperCase()}`],
     ["GET", `/living-course/connections/${S}`],
+    ["POST", "/living-course/connectors"],
+    ["GET", `/living-course/sessions/${S}/sources/connect`],
+    ["PUT", `/living-course/sessions/${S}/sources/connect`],
+    ["GET", `/living-course/connections/${S}/check`],
+    ["GET", `/living-course/connections/${S}/webhook-secret`],
+    ["PUT", `/living-course/connections/${S}/webhook-secret`],
+    ["POST", `/living-course/connections/${S}/secrets`],
+    ["POST", `/living-course/connections/${S}/check/../../x`],
+    ["DELETE", `/living-course/connections/${S}/check`],
     ["GET", `/sources/${S}/revisions`],
     ["GET", "/living-course/"],
     ["POST", `/living-course/sessions/${S}/staleness`],
@@ -91,8 +105,7 @@ describe("studio BFF allow-list", () => {
     ["GET", `/living-course/sessions/${S}/audit/other`],
     ["GET", `/living-course/sessions/${S}/audit/export/x`],
     ["GET", `/living-course/sessions/${S}/audit/../staleness/x`],
-    // a connection cannot be removed or read from the browser BFF; the note cannot be read or deleted
-    ["DELETE", `/living-course/connections/${S}`],
+    // a connection cannot be read or created from the browser BFF; the note cannot be read or deleted
     ["POST", `/living-course/connections/${S}`],
     ["PUT", `/living-course/connections/${S}/secret`],
     ["GET", `/living-course/proposals/${S}/learner-note`],

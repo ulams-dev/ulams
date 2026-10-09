@@ -2,6 +2,7 @@
  * Pure helpers of the Sources page: API rows to catalogue props, upload result messages and the
  * cosmetic-change filter. Only values the API returns are shown; nothing is invented.
  */
+import { scheduleLabel } from "./connect-model.ts";
 import type { ChangeCounts, FragmentChangeRow, LivingSource, SourceRevision } from "@ulams/sdk";
 
 type Props = Record<string, unknown>;
@@ -35,10 +36,11 @@ export function cardProps(source: LivingSource): Props {
     syncedRevision: c?.syncedRevision?.number,
     latestRevision: c?.latestRevision?.number,
     lastCheckedAt: c?.lastCheckedAt,
-    schedule: c?.schedule,
+    // uploads have no schedule: a new version appears when the author uploads it
+    schedule: c && c.connector !== "upload" ? scheduleLabel(c.schedule) : undefined,
     error: cut(c?.lastError ?? (source.status === "failed" ? "The source could not be read." : null), 500),
-    // There is no manual check endpoint for the upload connector; the action appears with Git and web connectors.
-    canCheck: false,
+    // an upload has nothing to check; a paused connection must be resumed first
+    canCheck: Boolean(c && c.connector !== "upload" && c.status === "active"),
     canUpload: source.status === "ready",
   });
 }

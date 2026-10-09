@@ -361,6 +361,11 @@
   }
 }
 
+/* a button with the hidden attribute stays hidden (the button class sets display) */
+.cb-btn[hidden] {
+  display: none;
+}
+
 /* Sources page */
 .st-sources {
   display: flex;
@@ -381,7 +386,7 @@
   text-align: left;
 }
 .st-drop-inline[aria-busy="true"] {
-  opacity: 0.7;
+  cursor: progress;
 }
 .st-file:focus-within {
   outline: 3px solid var(--ulams-studio-ink);
@@ -780,4 +785,182 @@
 .st-switches .cb-error:empty,
 .st-switches [role="status"]:empty {
   display: none;
+}
+
+/* Connect a repository or web pages, and the connection panel of a source */
+.st-connect {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+.st-connect > h2,
+.st-connect > p {
+  margin: 0;
+}
+.st-connect-forms {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 16px;
+  align-items: start;
+}
+.st-connect-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.st-connect-form[aria-busy="true"] {
+  cursor: progress;
+}
+.st-connect-form p,
+.st-connect-form h2 {
+  margin: 0;
+}
+.st-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.st-field[hidden] {
+  display: none;
+}
+.st-field .cb-label {
+  margin: 8px 0 0;
+}
+.st-connect-form .cb-error:empty,
+.st-connect-form [role="status"]:empty,
+.st-conn .cb-error:empty,
+.st-conn [role="status"]:empty {
+  display: none;
+}
+.st-connected,
+.st-conn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.st-connected[hidden] {
+  display: none;
+}
+.st-conn h3,
+.st-conn h4,
+.st-connected h2,
+.st-connected h3 {
+  margin: 0;
+}
+.st-conn .cb-sync-status {
+  margin: 0;
+}
+.st-conn-active {
+  color: var(--ulams-studio-success);
+  background: var(--ulams-studio-success-soft);
+}
+.st-conn-paused {
+  color: var(--ulams-studio-ink);
+  background: var(--ulams-studio-sunken);
+}
+.st-conn-error {
+  color: var(--ulams-studio-danger);
+  background: var(--ulams-studio-danger-soft);
+}
+.st-wrap {
+  overflow-wrap: anywhere;
+}
+.st-urls {
+  margin: 0;
+  padding-left: 20px;
+  overflow-wrap: anywhere;
+}
+.st-conn-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 420px;
+}
+.st-conn-field .cb-label {
+  margin: 0;
+}
+.st-conn-field p {
+  margin: 0;
+}
+.st-token-state {
+  font-weight: 600;
+}
+.st-webhook {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid var(--ulams-studio-line);
+  padding-top: 14px;
+}
+.st-webhook p {
+  margin: 0;
+}
+.st-copy .cb-label {
+  margin: 0 0 4px;
+}
+.st-copy-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.st-copy-row input {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+.st-mono-field {
+  font-family: var(--ulams-studio-mono);
+  font-size: 0.85rem;
+}
+.st-secret {
+  border: 2px solid var(--ulams-studio-ink);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.st-secret-warning {
+  font-weight: 600;
+}
+.st-rotate p {
+  margin: 0;
+}
+.st-hint summary {
+  cursor: pointer;
+  font-weight: 600;
+  min-height: 24px;
+}
+.st-hint ol {
+  margin: 8px 0;
+  padding-left: 22px;
+}
+
+.st-audit {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+  min-width: 0;
+}
+.st-audit > * {
+  min-width: 0;
+  max-width: 100%;
+}
+.st-audit .cb-audit-scroll {
+  position: relative;
+}
+
+/* the apply card lists what is created in a table: it wraps inside the card on a narrow screen */
+.cb-apply .cb-table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+.cb-apply .cb-table th,
+.cb-apply .cb-table td {
+  overflow-wrap: anywhere;
 }

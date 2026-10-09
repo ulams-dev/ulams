@@ -43,6 +43,8 @@ export interface SourceConnection {
   failureCount: number;
   lastError: string | null;
   secretsSet: string[];
+  /** Where a source host posts push events; null for uploads. */
+  webhookUrl?: string | null;
 }
 
 export interface LivingSource {
@@ -273,6 +275,54 @@ export interface ConnectionPatch {
   autoAnalyse?: boolean;
   status?: "active" | "paused";
   settings?: { show_pending_to_learners?: boolean; notify_learners_of_updates?: boolean };
+  /** Replaces the connector settings (validated against the host again). */
+  config?: Record<string, unknown>;
+  /** Write-only values such as a token; a field left out keeps its stored value. */
+  secrets?: Record<string, string>;
+}
+
+/** A source connector this installation offers (`git`, `url`, plugins). */
+export interface ConnectorInfo {
+  key: string;
+  label: string;
+  configSchema: Record<string, unknown>;
+  secretFields: string[];
+  webhooks: boolean;
+}
+
+export type GitHost = "github" | "gitlab" | "gitea";
+
+export interface GitConfig {
+  host: GitHost;
+  /** Gitea, Forgejo and self-hosted GitLab. */
+  base_url?: string;
+  /** `owner/name` (GitLab allows groups: `group/sub/name`). */
+  repository: string;
+  branch?: string;
+  paths?: string[];
+  extensions?: string[];
+}
+
+export interface UrlConfig {
+  /** One to 20 https addresses of one site. */
+  urls: string[];
+  /** CSS selector of the main content. */
+  selector?: string;
+}
+
+export interface ConnectInput {
+  connector: "git" | "url" | string;
+  config: GitConfig | UrlConfig | Record<string, unknown>;
+  /** For Git: `{ token }`, optional for public repositories. */
+  secrets?: Record<string, string>;
+  schedule?: "hourly" | "daily" | "weekly" | "manual";
+}
+
+export interface ConnectResult {
+  connection: SourceConnection;
+  source: LivingSource;
+  /** The signing secret for the source host's webhook. Returned once: null for connectors without webhooks. */
+  webhookSecret: string | null;
 }
 
 export interface ProposalDetail extends ProposalSummary {
@@ -446,7 +496,17 @@ export function createLivingCourseClient(options: ClientOptions & { prefix?: str
       apply: async (proposalId: string, overwrite = false) =>
         (await call<{ runId: string; proposal: ProposalSummary }>("POST", `/proposals/${id(proposalId)}/apply`, undefined, { overwrite })).data,
     },
+    connectors: {
+      /** The kinds of source this installation offers. */
+      list: async () => (await call<ConnectorInfo[]>("GET", "/connectors")).data,
+    },
     connections: {
+      /** Asks for a check now (202, queued). Throws 409 for an upload source or a paused connection. */
+      check: async (connectionId: string) => (await call<{ queued: boolean; connectionId: string }>("POST", `/connections/${id(connectionId)}/check`)).data,
+      /** A new webhook secret, returned once; the old one stops working. */
+      rotateSecret: async (connectionId: string) => (await call<{ webhookSecret: string }>("POST", `/connections/${id(connectionId)}/webhook-secret`)).data,
+      /** Stops checking the source and forgets its secrets; revisions and the audit trail stay. */
+      disconnect: async (connectionId: string) => (await call<SourceConnection>("DELETE", `/connections/${id(connectionId)}`)).data,
       /** Changes a connection: schedule, automatic analysis, paused, and the two learner notice settings. */
       update: async (connectionId: string, patch: ConnectionPatch) => (await call<SourceConnection>("PUT", `/connections/${id(connectionId)}`, undefined, patch)).data,
     },
@@ -463,6 +523,12 @@ export function createLivingCourseClient(options: ClientOptions & { prefix?: str
     sources: {
       /** Sources of a builder session with connection and sync state. */
       list: async (sessionId: string) => (await call<LivingSource[]>("GET", `/sessions/${id(sessionId)}/sources`)).data,
+      /**
+       * Adds a Git repository or web pages as a source: the API checks the settings, fetches
+       * revision 1 and starts the interview. Throws 422 with a readable message when the host,
+       * token or paths are refused.
+       */
+      connect: async (sessionId: string, input: ConnectInput) => (await call<ConnectResult>("POST", `/sessions/${id(sessionId)}/sources/connect`, undefined, input)).data,
     },
     revisions: {
       /** Newest first. */
