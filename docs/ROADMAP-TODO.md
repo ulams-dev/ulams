@@ -13,6 +13,9 @@ small commits → tests → summary.
 
 - [x] (2026-10-09) Phase 1 decisions 1–52, Phase 2 decisions 1–28 and the Phase 3 plan with its 17 decisions
       confirmed by the product owner
+- [x] (2026-10-09) Brand identity "Orbital Folio" chosen by the product owner (indigo #0F2B46, orange #FF7A2E);
+      logo drawn as SVG, applied to platform and product surfaces, not to tenants; orange is an accent only
+      (ADR 0038, Proposed; #25). A trademark check on the name and mark is still recommended before launch
 - [x] (2026-10-09) ADRs 0013–0034 accepted
 - [x] (2026-10-09) Phase 1 defaults confirmed: students get `scorm_track-update`; SVG served as attachment
       with CSP (no sanitiser); LTI Instructor → tutor, never admin, no e-mail account linking; LiaScript player
