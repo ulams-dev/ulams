@@ -1,0 +1,7 @@
+.pair { display: grid; grid-template-columns: minmax(120px, 1fr) 6.5rem; gap: 8px; align-items: center; }
+.ix-field.check { align-self: end; padding-bottom: 6px; }
+.ix-field.check label { display: inline-flex; gap: 6px; align-items: center; font-weight: 400; }
+#sp { touch-action: manipulation; }
+.sp-layout { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: start; }
+.sp-side > :first-child { margin-top: 0; }
+@media (max-width: 900px) { .sp-layout { grid-template-columns: minmax(0, 1fr); } }
