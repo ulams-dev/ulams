@@ -101,10 +101,10 @@ class ShopServiceProvider extends ServiceProvider
         if (!isset($this->productServiceContract)) {
             throw new BindingResolutionException();
         }
-        $product = $this->productServiceContract->findProductable(
-            $class,
-            $element->getKey()
-        );
+        // the resource already holds the model: no second query for it
+        $product = $element->resource instanceof \Illuminate\Database\Eloquent\Model
+            ? $this->productServiceContract->productableFromModel($element->resource, $class)
+            : $this->productServiceContract->findProductable($class, $element->getKey());
         $productId = $element->product_id ?? null;
         $relatedProduct = null;
         $prod = null;

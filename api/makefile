@@ -22,8 +22,8 @@ composer-update:
 	- docker compose up -d api
 	- docker compose exec api bash -c "XDEBUG_MODE=off composer self-update"
 	- docker compose exec api bash -c "XDEBUG_MODE=off composer update"
-## supervisd must be restarted, horizon & scheduler must fetch new code
-	- docker compose restart ulams_queue_cron
+## package manifest, caches, opcache and workers follow the new vendor/ (dev-reload.sh)
+	- docker compose exec api bash /var/www/html/dev-reload.sh
 
 restart_queue_cron:
 	- docker compose restart ulams_queue_cron
@@ -122,3 +122,16 @@ demo-mode-on:
 # reset one demo tenant now (the scheduler does it hourly): make demo-reset DOMAIN=coffee.localhost
 demo-reset:
 	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:demo:reset --force --domain=$(DOMAIN)"
+
+# Demo profile of the api container (php-profile.sh, docker-compose.demo.yml): production PHP
+# settings, cached config/routes/events, vendor/ in a named volume. dev-up returns to the
+# development profile (edits on the bind mount apply at once).
+demo-up:
+	- docker compose -f docker-compose.yml -f docker-compose.demo.yml up -d --force-recreate api
+
+dev-up:
+	- docker compose -f docker-compose.yml up -d --force-recreate api
+
+# apply code/config edits without restarting the container (opcache, framework caches, workers)
+dev-reload:
+	- docker compose exec api bash /var/www/html/dev-reload.sh

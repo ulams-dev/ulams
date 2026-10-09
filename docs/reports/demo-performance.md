@@ -434,7 +434,136 @@ Gains are from the measurements above unless marked (estimate).
      would have to beat ~5–15 ms per request and would also inherit the same waterfall, invalidation and N+1
      problems.
 
+## 7. After fixes (2026-10-09)
+
+Fixes 2, 3, 5, 6, 7 and 8 from §5 (API side; the front items are separate work). Same method as
+§1: `curl` total time, warm = back-to-back after one discarded request, cold = 3 s idle before each
+request, p50/p95 ms. The machine was shared with other agents' jobs (load average 3.5–9 during the
+runs), so the main tables are **interleaved A/B runs**: three php-fpm pools (4 static workers each)
+in the api container, each on its own copy of the app on the container's disk, with every round
+shuffling all (endpoint, setup) cells:
+
+- **before**: the committed code (`HEAD`), development PHP settings;
+- **after (dev)**: this change, development PHP settings (timestamps checked, no framework caches,
+  `APP_DEBUG=true`), i.e. the code fixes alone;
+- **after (demo)**: this change with the demo/production PHP profile (no timestamp checks, JIT,
+  config/route/event caches per domain, `APP_DEBUG=false`).
+
+### 7.1 What changed
+
+| # | Fix | Where |
+|---|---|---|
+| 1 | `config:cache` works: the swagger analyser object left the config; `DocBlockConfigFactory` adds it only when docs are generated. Caches are per domain (gecche: `config-<host>.php` etc.); `optimize.sh` builds them for the platform and every tenant; a tenant whose env file is rewritten (`ulams:tenant:create`, `sync-env`) gets its cached config/routes/events dropped | `app/Support/Swagger`, `optimize.sh`, `MultidomainRegistry` |
+| 2 | PHP profiles (`php-profile.sh`): development stays as it was (edits apply at once); `DEMO_PERF=1` (`make demo-up`, back with `make dev-up`) = production PHP settings + caches + `vendor/` in a named volume installed `--no-dev --classmap-authoritative`; `make dev-reload` applies edits (package manifest, caches, opcache reset via fpm USR2, workers). The package manifest is rebuilt from the container's own `vendor/` on every start and reload, and in the demo profile it lives in the vendor volume, so it can never list packages the container does not have (the cause of the 500s on 2026-10-09) | `php-profile.sh`, `dev-reload.sh`, `docker-compose.demo.yml`, `makefile` |
+| 3 | Long-lived workers: `workers.sh` keeps one `queue:work` (default + long-job) and one `ulams:tenant:schedule-loop` (scheduler in-process every minute) per domain, re-reads `domains.sh` every 10 s (new tenants without a restart), restarts exited processes; `--max-time 3600` | `workers.sh`, `queue.sh`, `scheduler.sh`, `broadcast.sh`, `pkg/tenancy` |
+| 4 | Response cache on the default store (Redis, tenant `CACHE_PREFIX`) with tags: `catalogue` (course list/detail/program, topic resources) and `progress`. Progress, time tracking, attendance and quiz attempts clear only `progress`; writes nothing cached shows (LRS, bookmarks, ...) clear nothing. `responsecache:clear` clears the tenant's tags instead of flushing the shared Redis DB. Anonymous catalogue GETs get `Cache-Control: public, max-age=0, s-maxage=60, stale-while-revalidate=300` and `Vary: Host, Authorization, Accept-Language, X-Locale` | `pkg/courses` (`ResponseCacheTags`, middleware), `config/responsecache.php`, `PublicCatalogueCache`, `config/http_cache.php` |
+| 5 | N+1: program (lessons, topics, topicables and resources eager-loaded, lesson set on topics, no unused nested load), course detail, platform course list (authors' categories), products (`withSoldQuantity`, productables/categories/tags/related eager-loaded, canonical productable built from the loaded row instead of re-fetched); column listings memoised per process (`SchemaColumns`) | `pkg/courses`, `pkg/cart`, `pkg/core`, `ShopServiceProvider` |
+| 6 | CORS preflights answered by Caddy (any origin, as `config/cors.php`; `Max-Age: 600`); the H5P service keeps answering its own | `docker/conf/Caddyfile` |
+| 7 | Production: `ulams-production-php.ini` (no timestamp checks, 256 MB / 40k files, JIT `tracing` 64 MB, `display_errors=Off`), `composer install --no-dev --classmap-authoritative`, caches at start, `LOG_LEVEL` honoured (prod template `warning`, `APP_DEBUG=false`), Redis client `phpredis` by default (`RedisKeyPurger` supports both clients) | `Dockerfile`, `docker/conf/php`, `config/logging.php`, `config/database.php`, `docker/envs/.env.postgres.prod` |
+
+JIT: on in the production/demo profile; the full PHPUnit suite and the live demo hosts run with it
+without errors. As in §2.2 it is worth only a few ms for these I/O-bound requests.
+
+### 7.2 Background CPU (api container, no traffic, 24 samples ~5 s apart)
+
+| | mean | min | max |
+|---|---|---|---|
+| before (`queue.sh` / `scheduler.sh` loops) | **101%** | 27% | 178% |
+| after, long-lived workers (dev profile) | **1.6–9%** | 0.2% | 11–53% |
+| after, demo profile | **3.9%** | 0.2% | 21% |
+
+### 7.3 Interleaved A/B, coffee, warm (p50/p95 ms, n=15)
+
+| Endpoint | before | after (dev) | after (demo) |
+|---|---|---|---|
+| `/api/config` | 51/62 | 48/57 | 34/45 |
+| `/api/settings` | 49/58 | 50/60 | 37/45 |
+| `/api/courses?per_page=12` (hit) | 49/55 | 52/70 | 34/50 |
+| same, uncached | 84/98 | 81/85 | 69/84 |
+| `/api/courses/{id}` (hit) | 48/58 | 48/60 | 39/46 |
+| same, uncached | 107/124 | 91/103 | 90/99 |
+| `/api/courses/{id}/program` (auth, hit) | 54/65 | 57/65 | 45/89 |
+| same, uncached | 138/154 | 107/123 | 93/118 |
+| `/api/categories/tree` | 49/57 | 54/63 | 44/59 |
+| `/api/tutors` | 58/74 | 56/81 | 48/51 |
+| `/api/webinars?per_page=6` | 60/76 | 59/73 | 47/73 |
+| `/api/events` | 64/82 | 67/77 | 54/65 |
+| `/api/products?per_page=12` | 84/97 | 75/101 | 64/79 |
+| `/api/consultations?per_page=6` | 54/66 | 50/57 | 38/48 |
+| `/api/profile/me` (auth) | 75/80 | 73/94 | 62/74 |
+| `/api/does-not-exist` (404, boot only) | 49/67 | 54/64 | 40/49 |
+| `OPTIONS` preflight through PHP | 48/54 | 50/58 | 35/42 |
+| `OPTIONS` preflight through Caddy (after) | – | 2/4 | 2/4 |
+
+Platform (`api.localhost`, warm, n=10): course list uncached 111 → 89 → 83; products 134 → 100 →
+80; 404 floor 50 → 48 → 42; config 52 → 52 → 35.
+
+Cold (coffee, 3 s idle, n=8): config 82 → 89 → **39**; course list hit 66 → 135 → **59**; uncached
+124 → 117 → **83**; tutors 89 → 90 → **60**. (The A/B copies are on the container's disk; the
+bind-mount penalty is in 7.5.)
+
+### 7.4 Response cache vs the progress ping (coffee, n=12, interleaved)
+
+A lesson page sends `PUT /api/courses/progress/{topic}/ping` every 5 s. Catalogue GET right after a
+ping:
+
+| Setup | p50/p95 ms | cache |
+|---|---|---|
+| before | 99/131 | MISS: the ping flushed every cached response of the tenant |
+| after (dev) | 59/66 | HIT |
+| after (demo) | 40/50 | HIT |
+
+(`X-Cache-Status` checked on the live stack: HIT before and after the ping; the per-user progress list
+is MISS after a ping, HIT otherwise.)
+
+### 7.5 Live stack (real Caddy, macOS bind mount), coffee
+
+| Endpoint | before, warm | after dev profile, warm | after demo profile, warm | before, cold | after dev, cold | after demo, cold |
+|---|---|---|---|---|---|---|
+| `/api/config` | 67/93 | 55/80 | **37/46** | 328/697 | 84/96 | **68/74** |
+| `/api/courses?per_page=12` (hit) | 74/133 | 55/73 | **38/59** | 394/732 | 79/120 | **58/71** |
+| same, uncached | 124/413 | 89/119 | **60/86** | 487/837 | 145/266 | **93/108** |
+| `/api/courses/{id}/program` (auth, uncached) | 167/312 | 105/183 | **79/99** | – | – | – |
+| `/api/tutors` | 111/221 | 63/121 | **45/62** | 393/819 | 91/333 | **76/78** |
+| `/api/products?per_page=12` | 105/163 | 82/116 | **60/75** | – | – | – |
+| `/api/profile/me` (auth) | 104/127 | 80/115 | **57/66** | – | – | – |
+| `OPTIONS` preflight | 86/208 | **1/4** | **1/1** | 301/547 | **2/7** | **3/6** |
+
+Before and after were measured an hour apart under different background load (the "before" run had
+the 101% worker load inside the container), so the live columns mix the code fixes, the worker fix
+and noise; 7.3 isolates the code. The cold "after dev" numbers are the background-CPU fix: the
+container no longer competes with itself, so the post-idle penalty of §2.3 mostly disappears even
+with timestamp checks on.
+
+### 7.6 Queries per request (in-process, uncached)
+
+| Endpoint | host | before | after |
+|---|---|---|---|
+| `/api/courses?per_page=12` | api | 59 | **31** |
+| `/api/courses/{id}` | coffee / api | 68 / 68 | **38 / 38** |
+| `/api/courses/{id}/program` (auth) | coffee | 121 | **44** |
+| `/api/products?per_page=12` | coffee / api | 43 / 112 | **16 / 40** |
+| `pg_attribute` column introspection, products | api | 24 | 3 per process, then 0 |
+
+What remains: one product lookup per course in course lists (the shop resource extension), the
+authors' categories inside product lists, and model-field values on a cold cache.
+
+### 7.7 Not done here
+
+- The front waterfall (§5 item 4) and the front bundle (item 10).
+- An HTTP cache in front of the API (Souin/Varnish/CDN): the headers are in place
+  (`s-maxage`, `Vary: Host`), nothing in the stack caches yet.
+- fpm pool size (item 9) and worker mode (§6).
+- Finding: a logged-in student gets **403** on the public catalogue `GET /api/courses`
+  (`ListCourseAPIRequest::authorize` requires `course_list`, which only admins and tutors have).
+  Anonymous visitors get the list. Pre-existing upstream behaviour, not changed here.
+
 ## Appendix: reproduction
+
+§7 used `bench.py` (live stack), `bench_ab.py` (interleaved A/B over three extra php-fpm pools on
+ports 9101–9103 behind a throwaway Caddy on 127.0.0.1:8092–8094), `ping_ab.py` (catalogue GET after a
+progress ping), `prof.php` (queries) and `idlecpu.sh` (`docker stats`, 24 samples); all scratch, not
+in the repo, and the extra pools and Caddy were removed afterwards.
 
 - Scratch scripts (not in the repo):
   - `bench.py` / `bench2.py`: interleaved curl timings with `Host` override;

@@ -1,0 +1,17 @@
+# Demo profile of the api container (`make demo-up`, back with `make dev-up`): production PHP
+# settings, cached config/routes/events, APP_DEBUG=false and vendor/ inside the Docker VM
+# instead of on the macOS bind mount. Code edits need `make dev-reload`. See php-profile.sh.
+services:
+  api:
+    environment:
+      - DEMO_PERF=1
+      - APP_DEBUG=false
+      - LOG_LEVEL=warning
+      # package manifest of this vendor/, inside the volume (see php-profile.sh)
+      - APP_PACKAGES_CACHE=/var/www/html/vendor/.ulams-bootstrap/packages.php
+      - APP_SERVICES_CACHE=/var/www/html/vendor/.ulams-bootstrap/services.php
+    volumes:
+      - api_vendor:/var/www/html/vendor
+
+volumes:
+  api_vendor:

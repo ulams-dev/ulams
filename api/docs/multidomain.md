@@ -47,9 +47,13 @@ How it fits together:
   with the platform `.env`. A global middleware answers 404 unless the host is in
   `TENANCY_PLATFORM_HOSTS` or a registered tenant. Console commands are not affected. In k8s,
   add the service and ingress hosts used for health checks to `TENANCY_PLATFORM_HOSTS`.
-- **Workers.** `queue.sh`, `broadcast.sh` and `scheduler.sh` read the domain list
-  (`domains.sh`: `MULTI_DOMAINS` plus registered tenants) on every pass, so new tenants get
-  queue workers and scheduled jobs without a restart. The platform queue runs on Horizon.
+- **Workers.** `queue.sh`, `broadcast.sh` and `scheduler.sh` start `workers.sh`, which keeps
+  long-lived processes per domain: `queue:work` (default and long-job queues, `broadcast`) and
+  `ulams:tenant:schedule-loop` (the scheduler in-process every minute). It reads the domain
+  list (`domains.sh`: `MULTI_DOMAINS` plus registered tenants) every `WORKERS_CHECK_INTERVAL`
+  seconds, so new tenants get workers and scheduled jobs without a restart, and processes that
+  exit (`--max-time`, `queue:restart`, a crash) are started again. The platform queue runs on
+  Horizon.
 
 Known limits: all tenants use the same MinIO credentials (isolation is per bucket, not per
 key), and the H5P service (`api/h5p`) is still single-tenant.

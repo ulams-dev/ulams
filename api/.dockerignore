@@ -60,3 +60,6 @@ docs
 # Node services with their own images (api/h5p is GPL and must not ship in the API image)
 h5p
 pdf
+
+# compiled manifests and caches of the host (dev packages): rebuilt in the container
+bootstrap/cache/*.php

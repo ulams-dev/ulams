@@ -81,6 +81,28 @@ http://*.localhost {
         }
     }
 
+    # CORS preflights for the Laravel API, answered here without booting PHP. Same policy as
+    # config/cors.php (any origin, method and requested headers) plus the credentials header the
+    # API responses carry below; Max-Age lets the browser reuse the answer for 10 minutes. The
+    # H5P service answers its own preflights (per-tenant allow-list).
+    @preflight {
+        method OPTIONS
+        header Origin *
+        header Access-Control-Request-Method *
+        not path /h5p /h5p/*
+    }
+    handle @preflight {
+        header {
+            Access-Control-Allow-Origin {http.request.header.Origin}
+            Access-Control-Allow-Methods {http.request.header.Access-Control-Request-Method}
+            Access-Control-Allow-Headers {http.request.header.Access-Control-Request-Headers}
+            Access-Control-Allow-Credentials true
+            Access-Control-Max-Age 600
+            Vary "Origin, Access-Control-Request-Method, Access-Control-Request-Headers"
+        }
+        respond 204
+    }
+
     # H5P service (api/h5p): player, editor, content API, Lumi AJAX, library admin
     @h5p path /h5p /h5p/*
     handle @h5p {
