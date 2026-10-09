@@ -25,7 +25,8 @@ the question editor builds it from a form.
 1. In the program, add a topic and choose **Quiz**.
 2. Set the quiz options:
    - **Max attempts**: how many attempts a learner gets. Empty means unlimited.
-   - **Max execution time**: the time limit of one attempt, in minutes.
+   - **Max execution time**: the time limit of one attempt, in minutes. The server enforces the deadline
+     itself (answers after it are rejected), on every queue driver, including `sync`.
    - **Min pass score**: the score needed to pass, in percent (0 to 100).
 3. **Save the topic.** Questions can only be added after the first save; until then the form says
    "Create this Topic before adding questions".

@@ -64,6 +64,7 @@ class QuizAttemptGetActiveApiTest extends GiftQuestionTestCase
     public function testCreateNewQuizAttempt(): void
     {
         Event::fake([QuizAttemptStartedEvent::class]);
+        Config::set('queue.default', 'database');
         Queue::fake();
 
         $student = $this->makeStudent();
