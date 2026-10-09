@@ -77,7 +77,7 @@ final class SessionState
             'adminPath' => "/courses/list/{$session->course_id}",
             'learnerPath' => "/courses/{$session->course_id}",
             'landingSlug' => "course-{$session->course_id}",
-            'admin' => $admin !== '' ? "{$admin}/#/courses/list/{$session->course_id}" : null,
+            'admin' => $admin !== '' ? "{$admin}/courses/list/{$session->course_id}" : null,
             'learner' => $front !== '' ? "{$front}/courses/{$session->course_id}" : null,
         ];
     }
