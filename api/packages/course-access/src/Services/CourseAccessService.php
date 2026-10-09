@@ -2,8 +2,8 @@
 
 namespace Ulams\CourseAccess\Services;
 
-use Ulams\Auth\Models\Group;
 use Ulams\Auth\Models\GroupUser;
+use Ulams\Auth\Support\GroupTree;
 use Ulams\Core\Models\User;
 use Ulams\CourseAccess\Services\Contracts\CourseAccessServiceContract;
 use Ulams\Courses\Events\CourseAccessStarted;
@@ -15,7 +15,6 @@ use Ulams\Courses\Models\CourseGroupPivot;
 use Ulams\Courses\Models\CourseUserPivot;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 
 class CourseAccessService implements CourseAccessServiceContract
 {
@@ -64,7 +63,7 @@ class CourseAccessService implements CourseAccessServiceContract
     public function getUserCourseIds(int $userId, ?bool $active = null): array
     {
         $userGroupIds = GroupUser::where('user_id', $userId)->pluck('group_id');
-        $childGroupIds = $this->getChildGroups($userGroupIds);
+        $childGroupIds = collect(GroupTree::descendantsOfMany($userGroupIds));
 
         $courseUserIds = CourseUserPivot::query()
             ->where('user_id', $userId)
@@ -82,15 +81,6 @@ class CourseAccessService implements CourseAccessServiceContract
             ->unique()
             ->values()
             ->toArray();
-    }
-
-    private function getChildGroups(Collection $groupIds): Collection
-    {
-        $childGroups = Group::whereIn('parent_id', $groupIds)->pluck('id');
-        if (!$childGroups->isEmpty()) {
-            $childGroups->concat($this->getChildGroups($childGroups));
-        }
-        return $childGroups;
     }
 
     private function dispatchEventForUsersAttachedToCourse(Course $course, array $users = []): void
