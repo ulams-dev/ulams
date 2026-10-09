@@ -98,6 +98,19 @@
   gap: 11px;
 }
 
+/* Powered-by logo: indigo on the light footer, white on the dark one */
+.logoDark {
+  display: none;
+}
+
+:global([data-mode="dark"]) .logoLight {
+  display: none;
+}
+
+:global([data-mode="dark"]) .logoDark {
+  display: inline;
+}
+
 .copyrights p {
   opacity: 0.65;
   margin: 0;
