@@ -110,6 +110,17 @@ demo-seed-tenant:
 # tenant queue workers (queue.sh) do not serve the video long-job queue yet: process it once
 	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan queue:work redis-long-job --queue=queue-long-job --stop-when-empty --timeout=600 --domain=$(DOMAIN)"
 
+# Interactive packages of the gravity and poland demo academies, built on the host (the API container sees
+# only api/, never demo-content/) into the seeder's cache. Run before seeding those tenants; needs Chromium
+# for the gravity posters (npx playwright install chromium).
+DEMO_PACKAGES = database/seeds/Demo/assets/cache/interactive
+demo-packages:
+	mkdir -p $(DEMO_PACKAGES)
+	cd .. && corepack yarn workspace @ulams/demo-gravity package
+	cp "$$(ls -t ../demo-content/gravity/release/gravity-ulams-*.zip | head -1)" $(DEMO_PACKAGES)/gravity.zip
+	cd .. && node demo-content/poland/scripts/build-manifest.mjs
+	cd .. && node demo-content/scripts/pack.mjs demo-content/poland api/$(DEMO_PACKAGES)/poland.zip
+
 # the six demo tenants
 demo-seed-tenants:
 	- $(MAKE) demo-seed-tenant DOMAIN=coffee.localhost EXPERIENCE=coffee
