@@ -195,11 +195,12 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`.
 
 ### 1.3 LTI 1.3 (high priority)
 - [ ] LTI Platform: launch external tools, AGS grade passback, deep linking (partial: API, admin screens and
-      topic form with "pick content from the tool", old-front player and tests done (ADR 0012); player in the
-      Astro front and the saLTIre round trip pending)
+      topic form with "pick content from the tool", players in the old and the Astro front and tests done
+      (ADR 0012); the saLTIre round trip pending)
 - [ ] LTI Tool: expose our courses to Moodle, Canvas etc. (partial: launch, user/role mapping, course access,
-      deep-linking course picker, grade passback, admin platform screens and the old-front landing page done;
-      Astro landing page and the Moodle `lti-e2e` round trip pending)
+      deep-linking course picker, grade passback, admin platform screens and landing pages in both fronts done;
+      the Moodle `lti-e2e` round trip pending; inside an LMS iframe the front's session cookie can be blocked as
+      third-party, so platforms should open ulams in a new window)
 - [x] Key rotation, nonce/state validation, per-tenant registrations (`ulams:lti:rotate-keys` monthly,
       provisioning step `lti_keys`, single-use hints/state/nonce/jti in `lti_nonces`, registrations in the
       tenant database, isolation tests)
