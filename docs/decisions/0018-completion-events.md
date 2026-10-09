@@ -1,6 +1,6 @@
 # 0018. External content completes topics; completion events fire after progress is saved
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement

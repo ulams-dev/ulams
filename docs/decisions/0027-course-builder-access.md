@@ -1,6 +1,6 @@
 # 0027. Course Builder access: one permission, author acts, admins look
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement

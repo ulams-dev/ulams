@@ -1,6 +1,6 @@
 # 0028. Generation stages, grounding check and quiz support check
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement

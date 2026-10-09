@@ -1,6 +1,6 @@
 # 0013. Adapt Path B: JSON sources in the API, builds in an isolated GPL-3.0 worker
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement

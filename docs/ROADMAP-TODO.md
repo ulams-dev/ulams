@@ -11,6 +11,7 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (2026-10-09) ADRs 0013–0034 accepted
 - [x] (2026-10-09) Phase 1 defaults confirmed: students get `scorm_track-update`; SVG served as attachment
       with CSP (no sanitiser); LTI Instructor → tutor, never admin, no e-mail account linking; LiaScript player
       fetched at image build time; production content origin on a separate registrable domain
