@@ -93,3 +93,4 @@ replacement.
 | [0083](0083-course-builder-stage-advance-under-the-run-lock.md) | Course Builder: a stage change is one transaction under the run lock | Proposed |
 | [0084](0084-cli-builder-and-living-course-commands.md) | CLI and MCP commands for the course builder and Living Course | Proposed |
 | [0085](0085-platform-tenant-api-implementation.md) | The platform tenant API: operations, permission and what stays off | Proposed |
+| [0091](0091-shared-hosting-cron-workers-and-manual-tenant-database.md) | Shared hosting: cron-driven workers (`ulams:tenant:work-once`) and an operator-created tenant database | Proposed |

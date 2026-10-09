@@ -8,13 +8,17 @@ use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 
 class S3BucketProvisioner implements BucketProvisionerContract
 {
-    public function __construct(private S3Client $client)
+    /**
+     * @param bool $publicReadPolicy false for stores without bucket policies (Cloudflare R2): the
+     *                               operator makes the bucket public (custom domain) instead
+     */
+    public function __construct(private S3Client $client, private bool $publicReadPolicy = true)
     {
     }
 
     public static function fromConfig(array $config): self
     {
-        return new self(new S3Client(array_filter([
+        return new self(client: new S3Client(array_filter([
             'version' => 'latest',
             'region' => $config['region'] ?? 'us-east-1',
             'endpoint' => isset($config['endpoint']) ? trim((string) $config['endpoint'], '"') : null,
@@ -23,7 +27,7 @@ class S3BucketProvisioner implements BucketProvisionerContract
                 'key' => (string) ($config['key'] ?? ''),
                 'secret' => (string) ($config['secret'] ?? ''),
             ],
-        ], fn ($value) => $value !== null)));
+        ], fn ($value) => $value !== null)), publicReadPolicy: (bool) ($config['public_read_policy'] ?? true));
     }
 
     public function ensure(string $bucket): void
@@ -32,10 +36,12 @@ class S3BucketProvisioner implements BucketProvisionerContract
             $this->client->createBucket(['Bucket' => $bucket]);
         }
 
-        $this->client->putBucketPolicy([
-            'Bucket' => $bucket,
-            'Policy' => json_encode(self::publicReadPolicy($bucket)),
-        ]);
+        if ($this->publicReadPolicy) {
+            $this->client->putBucketPolicy([
+                'Bucket' => $bucket,
+                'Policy' => json_encode(self::publicReadPolicy($bucket)),
+            ]);
+        }
     }
 
     public function delete(string $bucket): void
