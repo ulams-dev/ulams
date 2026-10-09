@@ -20,8 +20,8 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('meta', [MetaController::class, 'show'])->middleware('throttle:60,1')->name('meta');
 
     // Device login (ADR 0075): code and token are public and throttled; approval needs the user's own login token.
-    Route::post('auth/device/code', [DeviceAuthController::class, 'code'])->middleware('throttle:10,1')->name('auth.device.code');
-    Route::post('auth/device/token', [DeviceAuthController::class, 'token'])->middleware('throttle:60,1')->name('auth.device.token');
+    Route::post('auth/device/code', [DeviceAuthController::class, 'code'])->middleware('throttle:ulams-device-code')->name('auth.device.code');
+    Route::post('auth/device/token', [DeviceAuthController::class, 'token'])->middleware('throttle:ulams-device-token')->name('auth.device.token');
     Route::middleware(['auth:api', 'throttle:ulams-device-approve'])->prefix('auth/device/requests')->where(['user_code' => '[A-Za-z0-9-]{4,16}'])->group(function () {
         Route::get('{user_code}', [DeviceAuthController::class, 'show'])->name('auth.device.show');
         Route::post('{user_code}/approve', [DeviceAuthController::class, 'approve'])->name('auth.device.approve');

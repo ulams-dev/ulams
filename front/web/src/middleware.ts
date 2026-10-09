@@ -2,7 +2,8 @@ import { defineMiddleware } from "astro:middleware";
 import { config } from "./lib/config.ts";
 import { isPlatformHost, tenantForHost } from "./lib/tenant.ts";
 import { warm } from "./lib/data.ts";
-import { ensureSession } from "./lib/session.ts";
+import { ensureSession, readSession } from "./lib/session.ts";
+import { H5P_ROUTE } from "./lib/h5p-proxy.ts";
 import { imageCache } from "./lib/image-cache.ts";
 import { resolveTenant } from "@ulams/sdk/tenant";
 import { refuseCrossSite } from "./lib/bff.ts";
@@ -51,6 +52,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const session = await ensureSession(locals.tenant, cookies, secure);
     locals.token = session?.token ?? null;
     locals.sessionVia = session?.via ?? null;
+  } else if (locals.tenant && H5P_ROUTE.test(url.pathname)) {
+    // The /h5p proxy acts as the learner when the cookie is there (ADR 0045). It never starts a
+    // session itself: the lesson page does, and the player's assets are public.
+    locals.token = readSession(cookies, secure) ?? null;
   }
 
   // Course Builder studio: the author's session (tutor or admin), separate from the learner's

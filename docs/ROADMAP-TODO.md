@@ -346,7 +346,7 @@ approved apply through domain services → element chat edits. Designs:
       hand-written types; the API carries the annotations)
 - [x] (new) Normalise `yarn.lock` with a real `yarn install` (a fresh `yarn install` leaves it unchanged; `--frozen-lockfile` in CI is the check) (entries for `@ag-ui/core` 1.0.2 and
       `diff` 9.0.0 were added by hand while the disk was full)
-- [ ] (new) Delete the RichText/GIFT content row when a topic is deleted (topic repository leaves it;
+- [x] (new) Delete the RichText/GIFT content row when a topic is deleted (topic repository leaves it;
       the applier deletes topics through the repository)
 
 ### 2.1 LLM layer

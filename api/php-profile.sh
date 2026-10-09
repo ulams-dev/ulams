@@ -39,11 +39,13 @@ rebuild_manifest() {
 # Rebuilds the optimized class map from the composer.json and packages on disk, so a package
 # merged since the last start (new `Ulams\` namespace, new provider) is found without a manual
 # `composer dump-autoload`. --no-scripts: no package discovery here (rebuild_manifest does it).
-# The demo profile has no dev packages and is authoritative, like its install.
+# The demo profile is authoritative, like its install. Composer infers dev or no-dev from the last
+# install, so the class map always matches the vendor/ that is there (forcing --no-dev would drop
+# the dev packages' classes while the manifest still lists their providers).
 dump_autoload() {
   local flags=(-o --no-scripts --no-interaction)
   if demo; then
-    flags=(-a --no-dev --no-scripts --no-interaction)
+    flags=(-a --no-scripts --no-interaction)
   fi
   if composer dump-autoload "${flags[@]}" >/dev/null 2>&1; then
     echo "php-profile: autoload rebuilt (composer dump-autoload ${flags[*]})"
