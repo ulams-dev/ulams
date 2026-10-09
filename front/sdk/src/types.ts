@@ -129,11 +129,20 @@ export type TopicKind =
   | "scorm"
   | "liascript"
   | "interactive"
+  | "layout"
   | "lti"
   | "cmi5"
   | "quiz"
   | "project"
   | "unknown";
+
+/** A Layout topic (ADR 0052): a list of catalogue nodes plus a Markdown fallback. */
+export interface LayoutTopicable {
+  id: number;
+  document: Array<{ component: string; props?: Record<string, unknown>; id?: string }>;
+  schema_version: string;
+  markdown_fallback: string;
+}
 
 export interface MediaTopicable {
   id: number;

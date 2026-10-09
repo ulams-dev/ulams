@@ -204,3 +204,39 @@ describe("learner layout manifest", () => {
     expect(file).toEqual(JSON.parse(JSON.stringify(manifest)));
   });
 });
+
+describe("the API copy of the manifest", () => {
+  it("equals the committed manifest (the Layout topic package validates documents against it)", () => {
+    const read = (path: string) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), "utf8");
+    expect(read("../../../api/packages/topic-type-layout/resources/learner-layout-manifest.json")).toBe(read("../catalogue/learner-layout-manifest.json"));
+  });
+});
+
+describe("a whole layout document (Layout topic)", () => {
+  const layout = (): UiNode => ({
+    component: "Stack",
+    props: { gap: "lg" },
+    children: LEARNER_LAYOUT_COMPONENTS.map((name) => ({ component: name, props: example(name).props })),
+  });
+
+  it("renders every approved component in one lesson body without WCAG violations (axe)", async () => {
+    const main = mount(await renderDoc(layout()));
+    // unique ids keep aria-controls and labels unambiguous when several components share a page
+    const ids = [...main.querySelectorAll("[id]")].map((el) => el.id);
+    expect(ids.filter((id, i) => ids.indexOf(id) !== i)).toEqual([]);
+    const result = await axe.run(main, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
+    expect(result.violations.map((v) => `${v.id}: ${v.nodes[0]?.html}`)).toEqual([]);
+  });
+
+  it("completes the lesson with the first checked attempt of a practice activity", async () => {
+    const main = mount(await renderDoc(layout()));
+    const completed: unknown[] = [];
+    main.ownerDocument.addEventListener("ulams:complete", (e) => completed.push((e as CustomEvent).detail));
+    const first = main.querySelector<HTMLElement>("[data-challenge]")!;
+    first.querySelector<HTMLButtonElement>("[data-check]")!.click();
+    expect(completed).toEqual([]);
+    first.querySelectorAll<HTMLInputElement>("input[type=radio]")[0]!.checked = true;
+    first.querySelector<HTMLButtonElement>("[data-check]")!.click();
+    expect(completed).toEqual([{ source: "practice" }]);
+  });
+});

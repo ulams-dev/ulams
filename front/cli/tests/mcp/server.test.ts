@@ -49,6 +49,17 @@ describe("tools/list", () => {
     await topics.close();
   });
 
+  it("the topics toolset has topics_create_layout, a write tool taking the document and the fallback", async () => {
+    const topics = await connect({}, { toolsets: ["core", "topics"] });
+    const tool = (await topics.client.listTools()).tools.find((t) => t.name === "topics_create_layout");
+    expect(tool?.annotations).toMatchObject({ readOnlyHint: false, destructiveHint: false });
+    for (const field of ["lesson", "title", "document", "fallback", "dry_run"]) {
+      expect(tool?.inputSchema.properties, field).toHaveProperty(field);
+    }
+    expect(tool?.inputSchema.required).toEqual(expect.arrayContaining(["lesson", "title", "document", "fallback"]));
+    await topics.close();
+  });
+
   it("--read-only exposes only read tools and --no-destructive hides destructive ones", async () => {
     const ro = await connect({}, { toolsets: "all", readOnly: true });
     const roTools = (await ro.client.listTools()).tools;

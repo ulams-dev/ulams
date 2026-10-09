@@ -171,6 +171,7 @@ export default {
   'menu.Integrations.LTI': 'LTI',
   LiaScript: 'LiaScript',
   Interactive: 'Interaktywny',
+  Layout: 'Układ',
   Lti: 'Narzędzie zewnętrzne (LTI)',
   'menu.Courses.SCORMs': 'SCORMy',
   'menu.Analytics': 'Analityka',

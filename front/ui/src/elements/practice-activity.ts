@@ -5,7 +5,7 @@
  * - hints (templates, one per tier) are shown one at a time, in tier order, on request;
  * - a learner answer (radio option, or "I have tried it" for open tasks) is an *attempt*: it
  *   shows the feedback that explains why and fires `ulams:practice-attempt`
- *   ({ activityId, challengeId, optionIndex, correct }, bubbles);
+ *   ({ activityId, challengeId, optionIndex, correct }, bubbles) and `ulams:complete` on the document;
  * - the worked solution stays inside an inert <template> until an attempt event for that
  *   challenge arrives, then it is inserted into the page.
  * All text comes from template content (set by the server as text), never as HTML.
@@ -98,6 +98,9 @@ class UlamsPractice extends HTMLElement {
     }
     const detail: PracticeAttemptDetail = { activityId: this.getAttribute("activity-id") ?? "", challengeId: id, optionIndex, correct };
     this.dispatchEvent(new CustomEvent<PracticeAttemptDetail>(ATTEMPT_EVENT, { bubbles: true, detail }));
+    // A checked attempt completes a Layout lesson (ADR 0052); only the lesson player's <ulams-progress>
+    // listens, and it ignores the event once the topic is complete.
+    document.dispatchEvent(new CustomEvent("ulams:complete", { detail: { source: "practice" } }));
   }
 
   /** The worked solution leaves its template only here, after an attempt. */

@@ -133,7 +133,14 @@ interface ApiBody {
   error?: string;
   required?: string[];
   errors?: Record<string, string[]>;
+  /** Topic content validation (TopicException) puts its field errors here instead of in `errors`. */
+  data?: unknown;
 }
+
+const fieldErrors = (value: unknown): Record<string, string[]> | null =>
+  value && typeof value === "object" && !Array.isArray(value) && Object.values(value).every((v) => Array.isArray(v) && v.every((m) => typeof m === "string"))
+    ? (value as Record<string, string[]>)
+    : null;
 
 /** Maps an SDK ApiError (or anything thrown) to a CliError following ADR 0073. */
 export function fromApiError(error: unknown, requestId: string | null = null, retryAfter?: number): CliError {
@@ -167,7 +174,7 @@ export function fromApiError(error: unknown, requestId: string | null = null, re
       }
       return new CliError("VALIDATION_FAILED", apiMessage ?? "Validation failed.", {
         ...base,
-        details: { fields: body.errors ?? {} },
+        details: { fields: body.errors ?? fieldErrors(body.data) ?? {} },
       });
     }
     if (status === 429) {

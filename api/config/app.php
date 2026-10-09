@@ -218,6 +218,7 @@ return [
         Ulams\Tenancy\UlamsTenancyServiceProvider::class,
         Ulams\Demo\UlamsDemoServiceProvider::class,
         Ulams\TopicTypeGift\UlamsTopicTypeGiftServiceProvider::class,
+        Ulams\TopicTypeLayout\UlamsTopicTypeLayoutServiceProvider::class,
         Ulams\TopicTypeProject\UlamsTopicTypeProjectServiceProvider::class,
         Ulams\TopicTypes\UlamsTopicTypesServiceProvider::class,
         Ulams\Uploads\UlamsUploadsServiceProvider::class,

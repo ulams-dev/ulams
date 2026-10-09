@@ -216,6 +216,7 @@ export default {
   'menu.Integrations.LTI': 'LTI',
   LiaScript: 'LiaScript',
   Interactive: 'Interactive',
+  Layout: 'Layout',
   Lti: 'External tool (LTI)',
   'menu.Configuration.settings': 'Settings',
   'menu.Analytics.reports': 'Reports',

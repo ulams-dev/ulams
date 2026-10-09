@@ -11,6 +11,7 @@ const KIND_BY_CLASS: Record<string, TopicKind> = {
   scormsco: "scorm",
   liascripttopic: "liascript",
   interactivetopic: "interactive",
+  layouttopic: "layout",
   ltilink: "lti",
   cmi5au: "cmi5",
   giftquiz: "quiz",

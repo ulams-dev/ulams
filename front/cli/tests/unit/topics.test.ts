@@ -137,6 +137,53 @@ describe("topic commands", () => {
     expect(((r.requests.find((q) => q.path === "/api/admin/interactive")?.form) as FormData).get("accept_network")).toBe("1");
   });
 
+  it("layout sends the document and the fallback as one topic, with files read from disk", async () => {
+    const document = [
+      { component: "Timeline", props: { items: [{ label: "1555", title: "Istanbul" }] } },
+      { component: "FlipCards", props: { cards: [{ front: "Q", back: "A" }] }, id: "cards" },
+    ];
+    const r = await runCli(["topics", "create-layout", ...base, "--document", "@layout.json", "--fallback", "@layout.md"], {
+      env,
+      routes: lmsRoutes(),
+      files: { "layout.json": JSON.stringify(document), "layout.md": "## Coffee\n\nA timeline and cards." },
+    });
+    expect(r.code).toBe(0);
+    expect(r.requests.filter((q) => q.method === "POST")).toHaveLength(1);
+    expect(r.requests.at(-1)?.body).toMatchObject({
+      topicable_type: "Ulams\\TopicTypeLayout\\Models\\LayoutTopic",
+      lesson_id: 12,
+      order: 3,
+      document,
+      markdown_fallback: "## Coffee\n\nA timeline and cards.",
+    });
+    expect(r.requests.at(-1)?.body).not.toHaveProperty("value");
+  });
+
+  it("layout takes the document inline or from a YAML --input, and needs both fields", async () => {
+    const inline = await runCli(["topics", "create-layout", ...base, "--document", '[{"component":"Callout","props":{"text":"x"}}]', "--fallback", "Plain text"], { env, routes: lmsRoutes() });
+    expect(inline.code).toBe(0);
+    expect(inline.requests.at(-1)?.body).toMatchObject({ document: [{ component: "Callout", props: { text: "x" } }], markdown_fallback: "Plain text" });
+
+    const yaml = await runCli(["topics", "create-layout", ...base, "--input", "@layout.yaml"], {
+      env,
+      routes: lmsRoutes(),
+      files: { "layout.yaml": "document:\n  - component: Callout\n    props:\n      text: Hi\nfallback: Hi there\n" },
+    });
+    expect(yaml.code).toBe(0);
+    expect(yaml.requests.at(-1)?.body).toMatchObject({ document: [{ component: "Callout", props: { text: "Hi" } }], markdown_fallback: "Hi there" });
+
+    expect((await runCli(["topics", "create-layout", ...base, "--fallback", "x"], { env, routes: lmsRoutes() })).code).toBe(2);
+    expect((await runCli(["topics", "create-layout", ...base, "--document", "[]", "--fallback", "x"], { env, routes: lmsRoutes() })).code).toBe(2);
+    expect((await runCli(["topics", "create-layout", ...base, "--document", '[{"component":"Callout"}]'], { env, routes: lmsRoutes() })).code).toBe(2);
+  });
+
+  it("layout shows the API's validation problems", async () => {
+    const routes = lmsRoutes({ "POST /api/admin/topics": { status: 422, body: { success: false, message: "Topic Content Validation fails", data: { document: ["The document is not a valid layout: /0/component: 'Hero' is not an approved layout component"] } } } });
+    const r = await runCli(["topics", "create-layout", ...base, "--document", '[{"component":"Hero","props":{}}]', "--fallback", "x"], { env, routes });
+    expect(r.code).not.toBe(0);
+    expect(JSON.parse(r.stdout).error).toMatchObject({ code: "VALIDATION_FAILED", details: { fields: { document: [expect.stringContaining("not an approved layout component")] } } });
+  });
+
   it("quiz creates the topic then one GIFT question per entry", async () => {
     const routes = lmsRoutes({ "POST /api/admin/gift-questions": (req) => ({ body: { success: true, data: { id: 1, ...(req.body as object) } } }) });
     const r = await runCli(["topics", "create-quiz", ...base, "--input", "@q.yaml"], {

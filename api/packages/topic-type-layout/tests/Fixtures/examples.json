@@ -1,0 +1,266 @@
+{
+  "Callout": {
+    "props": {
+      "tone": "warning",
+      "title": "Do not skip the bloom",
+      "text": "Pouring all the water at once leaves dry pockets and uneven extraction."
+    },
+    "invalid": {
+      "tone": "loud"
+    }
+  },
+  "Steps": {
+    "props": {
+      "id": "how",
+      "title": "Brew in three steps",
+      "items": [
+        {
+          "icon": "check",
+          "title": "Weigh the coffee",
+          "text": "15 g for a 250 ml cup."
+        },
+        {
+          "icon": "sync",
+          "title": "Bloom for 30 seconds",
+          "text": "Pour twice the weight of the coffee and wait."
+        },
+        {
+          "icon": "check",
+          "title": "Pour in circles",
+          "text": "Finish at 3:00 total."
+        }
+      ]
+    },
+    "invalid": {
+      "items": [
+        {
+          "title": "Only one step"
+        }
+      ]
+    }
+  },
+  "ComparisonTable": {
+    "props": {
+      "id": "compare",
+      "title": "Brew methods",
+      "caption": "Comparison of three brew methods",
+      "asOf": "October 2026",
+      "columns": [
+        {
+          "label": "Pour-over",
+          "highlight": true
+        },
+        {
+          "label": "French press"
+        },
+        {
+          "label": "Espresso"
+        }
+      ],
+      "rows": [
+        {
+          "label": "Needs a grinder",
+          "cells": [
+            {
+              "value": "Yes"
+            },
+            {
+              "value": "Yes"
+            },
+            {
+              "value": "Yes"
+            }
+          ]
+        },
+        {
+          "label": "Brew time",
+          "cells": [
+            {
+              "value": "3 min"
+            },
+            {
+              "value": "4 min"
+            },
+            {
+              "value": "30 s"
+            }
+          ]
+        },
+        {
+          "label": "Paper filter",
+          "cells": [
+            {
+              "value": "Yes"
+            },
+            {
+              "value": "No"
+            },
+            {
+              "value": "No"
+            }
+          ]
+        }
+      ]
+    },
+    "invalid": {
+      "rows": "many"
+    }
+  },
+  "H5PFrame": {
+    "props": {
+      "apiUrl": "https://coffee.localhost",
+      "contentId": 12,
+      "title": "Match the brew method to its grind",
+      "topicId": 4,
+      "courseId": 1
+    },
+    "invalid": {
+      "contentId": "twelve"
+    }
+  },
+  "LiaScriptLesson": {
+    "props": {
+      "src": "https://content.localhost/lia/launch/abc123",
+      "title": "Interactive extraction lab",
+      "sections": 6,
+      "height": 720
+    },
+    "invalid": {
+      "src": "javascript:alert(1)",
+      "title": "Unsafe"
+    }
+  },
+  "Timeline": {
+    "props": {
+      "title": "How coffee reached Europe",
+      "intro": "Five moments that put coffee on the continent.",
+      "items": [
+        {
+          "label": "c. 1450",
+          "title": "Sufi monasteries in Yemen roast and brew coffee",
+          "text": "Brewing starts as a way to stay awake for night prayers.",
+          "status": "done"
+        },
+        {
+          "label": "1555",
+          "title": "The first coffeehouses open in Istanbul",
+          "status": "done"
+        },
+        {
+          "label": "1650",
+          "title": "Oxford opens the first English coffeehouse",
+          "text": "Customers pay a penny for a cup, which gives the shops the nickname penny universities.",
+          "status": "current"
+        },
+        {
+          "label": "1720",
+          "title": "Venice's Caffè Florian opens",
+          "status": "upcoming"
+        }
+      ]
+    },
+    "invalid": {
+      "items": "first, then second"
+    }
+  },
+  "FlipCards": {
+    "props": {
+      "title": "Brewing vocabulary",
+      "intro": "Say the definition out loud, then check it.",
+      "cards": [
+        {
+          "front": "Extraction",
+          "back": "Dissolving flavour compounds from the grounds into the water."
+        },
+        {
+          "front": "Bloom",
+          "back": "The first 30 seconds of a pour-over, when fresh grounds release carbon dioxide."
+        },
+        {
+          "front": "TDS",
+          "back": "Total dissolved solids: how much of the cup is coffee, as a percentage."
+        }
+      ]
+    },
+    "invalid": {
+      "cards": []
+    }
+  },
+  "CodeBlock": {
+    "props": {
+      "title": "extraction.sql",
+      "language": "sql",
+      "code": "SELECT brew_id, ROUND(tds * volume / dose, 1) AS yield_pct\nFROM brews\nWHERE method = 'pour-over'\nORDER BY yield_pct DESC;",
+      "caption": "Yield per brew: dissolved solids times volume, divided by the dose.",
+      "lineNumbers": true
+    },
+    "invalid": {
+      "language": "sql"
+    }
+  },
+  "PracticeActivity": {
+    "props": {
+      "title": "Dial in a pour-over",
+      "intro": "Practise adjusting one variable at a time, with less help at each level.",
+      "toolbox": [
+        {
+          "label": "Brew ratio chart",
+          "text": "Check the target ratio before you change anything."
+        },
+        {
+          "label": "Taste wheel",
+          "text": "Name what you taste before deciding what to fix."
+        }
+      ],
+      "challenges": [
+        {
+          "id": "c1",
+          "level": 1,
+          "prompt": "The cup tastes sour and thin. Which single change should you try first?",
+          "hints": [
+            {
+              "tier": "near_solution",
+              "text": "Sour usually means under-extraction; you want more extraction, not less."
+            },
+            {
+              "tier": "nudge",
+              "text": "What does sourness tell you about how much was dissolved?"
+            },
+            {
+              "tier": "pointer",
+              "text": "Look at the grind and temperature rows of the troubleshooting chart."
+            }
+          ],
+          "options": [
+            {
+              "label": "Grind finer",
+              "correct": true,
+              "feedback": "A finer grind exposes more surface, so more dissolves and the sourness fades."
+            },
+            {
+              "label": "Use cooler water",
+              "correct": false,
+              "feedback": "Cooler water dissolves less, which makes under-extraction worse."
+            }
+          ],
+          "workedSolution": "Sour and thin points to under-extraction. Change one variable: grind one step finer and brew again. Cooler water would extract even less."
+        },
+        {
+          "id": "c2",
+          "level": 3,
+          "prompt": "Write the adjustment plan for a bitter, dry cup, in your own words.",
+          "hints": [
+            {
+              "tier": "nudge",
+              "text": "Bitter and dry is the opposite problem of sour."
+            }
+          ],
+          "workedSolution": "Bitter and dry means over-extraction: grind one step coarser or shorten the brew time, change only one, and taste again."
+        }
+      ]
+    },
+    "invalid": {
+      "intro": "Missing the toolbox and the challenges."
+    }
+  }
+}

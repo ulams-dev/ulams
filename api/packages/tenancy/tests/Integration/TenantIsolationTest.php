@@ -128,6 +128,35 @@ class TenantIsolationTest extends TestCase
         $this->assertSame(401, $this->request(self::B, 'GET', '/api/admin/lti/tools', $tokenA)->getStatusCode());
     }
 
+    public function testLayoutTopicsDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $tokenB = $this->login(self::B);
+        $course = $this->request(self::A, 'POST', '/api/admin/courses', $tokenA, ['title' => 'Layout isolation course', 'status' => 'published']);
+        $this->assertContains($course->getStatusCode(), [200, 201], (string) $course->getBody());
+        $courseId = json_decode((string) $course->getBody(), true)['data']['id'];
+        $lesson = $this->request(self::A, 'POST', '/api/admin/lessons', $tokenA, ['title' => 'Layout isolation lesson', 'course_id' => $courseId, 'active' => true]);
+        $this->assertContains($lesson->getStatusCode(), [200, 201], (string) $lesson->getBody());
+        $lessonId = json_decode((string) $lesson->getBody(), true)['data']['id'];
+
+        $created = $this->request(self::A, 'POST', '/api/admin/topics', $tokenA, [
+            'title' => 'Layout isolation probe',
+            'lesson_id' => $lessonId,
+            'topicable_type' => 'Ulams\\TopicTypeLayout\\Models\\LayoutTopic',
+            'document' => [['component' => 'Callout', 'props' => ['text' => 'Only on A.']]],
+            'markdown_fallback' => 'Only on A.',
+        ]);
+        $this->assertSame(201, $created->getStatusCode(), (string) $created->getBody());
+        $id = json_decode((string) $created->getBody(), true)['data']['id'];
+
+        $this->assertSame(200, $this->request(self::A, 'GET', "/api/admin/topics/{$id}", $tokenA)->getStatusCode());
+        $onB = $this->request(self::B, 'GET', "/api/admin/topics/{$id}", $tokenB);
+        $this->assertNotSame(200, $onB->getStatusCode());
+        $this->assertStringNotContainsString('Only on A', (string) $onB->getBody());
+        $this->assertSame(401, $this->request(self::B, 'GET', "/api/admin/topics/{$id}", $tokenA)->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'PATCH', "/api/admin/topics/{$id}", $tokenA, ['topicable_type' => 'Ulams\\TopicTypeLayout\\Models\\LayoutTopic', 'markdown_fallback' => 'Changed'])->getStatusCode());
+    }
+
     public function testLiaScriptSourcesDoNotCrossTenants(): void
     {
         $tokenA = $this->login(self::A);

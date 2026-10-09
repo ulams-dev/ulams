@@ -1,4 +1,4 @@
-# Build from the repository root (one root yarn.lock; admin also compiles front/src/lib):
+# Build from the repository root (one root yarn.lock; admin also compiles front/src/lib, front/ui/src/schema.ts and the learner layout manifest):
 #   docker build -f admin/Dockerfile -t abc . && docker run -p 8080:8080 --env REACT_APP_TENANT_API_HOST_PATTERN="{slug}.admin.ulams.app=>https://{slug}.api.ulams.app" abc
 ARG NODE_VERSION=22.12.0
 # The static build is the same for every platform: run it natively, only the server stage is per-arch.
@@ -13,6 +13,9 @@ COPY front/package.json front/package.json
 # scripts skipped: `max setup` runs as part of `max build`, husky needs .git
 RUN yarn install --frozen-lockfile --ignore-scripts --network-timeout 1000000000
 COPY front/src/lib/ front/src/lib/
+# the Layout topic editor checks documents with the catalogue's schema checker and manifest
+COPY front/ui/src/schema.ts front/ui/src/schema.ts
+COPY front/ui/catalogue/learner-layout-manifest.json front/ui/catalogue/learner-layout-manifest.json
 COPY admin/ admin/
 RUN cd admin && yarn build && find dist -name '*.map' -delete
 

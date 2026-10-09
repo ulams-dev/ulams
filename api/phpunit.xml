@@ -94,6 +94,9 @@
     <testsuite name="topic-type-gift">
       <directory suffix="Test.php">./packages/topic-type-gift</directory>
     </testsuite>
+    <testsuite name="topic-type-layout">
+      <directory suffix="Test.php">./packages/topic-type-layout/tests</directory>
+    </testsuite>
     <testsuite name="topic-type-project">
       <directory suffix="Test.php">./packages/topic-type-project</directory>
     </testsuite>
@@ -215,6 +218,7 @@
       <directory suffix=".php">./packages/tasks/</directory>
       <directory suffix=".php">./packages/topic-types/</directory>
       <directory suffix=".php">./packages/topic-type-gift/</directory>
+      <directory suffix=".php">./packages/topic-type-layout/</directory>
       <directory suffix=".php">./packages/topic-type-project/</directory>
       <directory suffix=".php">./packages/templates/</directory>
       <directory suffix=".php">./packages/templates-email/</directory>

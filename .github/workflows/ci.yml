@@ -26,7 +26,7 @@ env:
   PHPUNIT_SHARDS: |
     learning=courses,course-access,courses-import-export,scorm,cmi5,h5p,lrs,bookmarks_notes,video,uploads,lti,liascript,interactive,adapt,course-builder
     living=living-course
-    tasks-topics=tasks,topic-types,topic-type-project,categories,tags,stationary-events
+    tasks-topics=tasks,topic-types,topic-type-layout,topic-type-project,categories,tags,stationary-events
     gift-reports=topic-type-gift,reports,dictionaries
     commerce=cart,commerce,vouchers,payments,invoices,consultations,consultation-access,webinar,jitsi,assign-without-account
     platform=Integrations,auth,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,ai

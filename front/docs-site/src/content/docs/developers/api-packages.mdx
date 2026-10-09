@@ -54,6 +54,7 @@ modules:
   - templates-sms
   - tenancy
   - topic-type-gift
+  - topic-type-layout
   - topic-type-project
   - topic-types
   - translations
@@ -191,6 +192,14 @@ multiple choice (one or many right answers), true/false, short answer, matching,
 attempts and answers (`/api/quiz-attempts`, `/api/quiz-answers`), admin routes for questions and
 attempts. Admin screen `/courses/quiz-reports`; questions are edited in the course editor (the admin
 parses GIFT with `@ulams/gift-pegjs`).
+
+### [topic-type-layout](/reference/packages/topic-type-layout/)
+
+The Layout topic (`LayoutTopic`, ADR 0052): a document of approved learner components plus a Markdown
+fallback. The document is validated against `resources/learner-layout-manifest.json`, a copy of
+`front/ui/catalogue/learner-layout-manifest.json` that `yarn workspace @ulams/ui learner-manifest`
+keeps in sync (the UI tests and a package test fail when it is stale). No routes of its own: topics
+are created through the topic API. See [Layouts](/creators/layout/).
 
 ### [topic-type-project](/reference/packages/topic-type-project/)
 
