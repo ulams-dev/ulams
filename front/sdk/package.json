@@ -11,7 +11,8 @@
     "./h5p": "./src/h5p.ts",
     "./tenant": "./src/tenant.ts",
     "./ag-ui": "./src/ag-ui.ts",
-    "./course-builder": "./src/course-builder.ts"
+    "./course-builder": "./src/course-builder.ts",
+    "./living-course": "./src/living-course.ts"
   },
   "scripts": {
     "generate": "openapi-typescript ../../api/storage/api-docs/api-docs.json -o src/generated/openapi.ts",

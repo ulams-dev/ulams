@@ -169,6 +169,55 @@ describe("interactions round-trip as A2UI actions", () => {
     expect(onRestore).toHaveBeenCalledWith("v2");
   });
 
+  it("source connection card emits Check now and Upload a new version", () => {
+    const c = ctx();
+    const main = mount(single("SourceConnectionCard"), c);
+    expect(main.textContent).toContain("New version available");
+    expect(main.textContent).toContain("Revision 1");
+    expect(main.querySelector('[role="alert"]')?.textContent).toContain("could not be read");
+    [...main.querySelectorAll("button")].find((b) => b.textContent === "Check now")!.click();
+    [...main.querySelectorAll("button")].find((b) => b.textContent === "Upload a new version")!.click();
+    expect(c.actions.map((a) => [a.name, a.context])).toEqual([
+      ["check_now", { sourceId: "01src" }],
+      ["upload_version", { sourceId: "01src" }],
+    ]);
+    const quiet = mount(single("SourceConnectionCard", { ...builderFixtures.SourceConnectionCard!, canCheck: false }), c);
+    expect([...quiet.querySelectorAll("button")].map((b) => b.textContent)).toEqual(["Upload a new version"]);
+  });
+
+  it("revision timeline marks the revision in the course, shows counts and selects", () => {
+    const c = ctx();
+    const main = mount(single("RevisionTimeline"), c);
+    const items = [...main.querySelectorAll("li")];
+    expect(items[0]!.textContent).toContain("3 changed, 1 removed, 2 added, 1 moved");
+    expect(items[0]!.textContent).not.toContain("In your course");
+    expect(items[1]!.textContent).toContain("In your course");
+    expect(items[0]!.querySelector("button")?.getAttribute("aria-pressed")).toBe("true");
+    items[1]!.querySelector("button")!.click();
+    expect(c.actions[0]).toMatchObject({ name: "select_revision", context: { revisionId: "01rev1", sourceId: "01src" } });
+  });
+
+  it("revision timeline renders links when a revision has an href", () => {
+    const props = { ...builderFixtures.RevisionTimeline!, revisions: [{ id: "r", number: 3, status: "failed", error: "Bad file", href: "?revision=r" }] };
+    const main = mount(single("RevisionTimeline", props));
+    expect(main.querySelector("a")?.getAttribute("href")).toBe("?revision=r");
+    expect(main.textContent).toContain("Failed");
+    expect(main.textContent).toContain("Bad file");
+  });
+
+  it("fragment change shows kind, magnitude, signal text and +/- markers", () => {
+    const main = mount(single("FragmentChange"));
+    expect(main.textContent).toContain("Changed");
+    expect(main.textContent).toContain("Substantive change");
+    expect(main.textContent).toContain("a number changed");
+    expect(main.querySelector("del")?.textContent).toContain("−15");
+    expect(main.querySelector("ins")?.textContent).toContain("+16");
+    expect(main.querySelector("del")?.textContent).toContain("removed:");
+    const added = mount(single("FragmentChange", { changeId: "8", kind: "added", magnitude: "minor", wordDiff: null, new: { label: "§4 Storage", text: "Keep beans sealed." } }));
+    expect(added.textContent).toContain("Added");
+    expect(added.textContent).toContain("+ After: Keep beans sealed.");
+  });
+
   it("diff states carry text, not only colour", () => {
     const main = mount(single("DiffView"));
     expect(main.querySelector("del")?.textContent).toContain("removed:");

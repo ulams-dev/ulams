@@ -77,6 +77,28 @@ const BLOCK = obj(
   ["id", "kind", "markdown", "citations"]
 );
 
+
+const REVISION_STATUS = oneOf(["fetched", "ingested", "unchanged", "no_impact", "failed"], "Revision state");
+const REV_COUNTS = obj(
+  {
+    changed: int("Fragments changed"),
+    moved: int("Fragments moved"),
+    removed: int("Fragments removed"),
+    added: int("Fragments added"),
+    trivial: int("Cosmetic changes (hidden by default)"),
+    minor: int("Minor changes"),
+    substantive: int("Substantive changes"),
+    total: int("All changes"),
+  },
+  ["changed", "moved", "removed", "added"],
+  "Change counts against the previous revision"
+);
+const SHOWN_FRAGMENT = obj(
+  { fragmentId: str("Fragment id", 32), label: str("Section label, e.g. §2.3 Brewing ratios", 160), text: str("Fragment text", 6000) },
+  ["text"],
+  "One side of a change"
+);
+
 export interface BuilderComponentSpec {
   description: string;
   /** Interview controls and chat replies are the only components the model may choose. */
@@ -407,6 +429,85 @@ export const builderCatalogue = {
       ["versions"]
     ),
     fallback: (p) => `${arr(p.versions).length} versions.`,
+  },
+  SourceConnectionCard: {
+    description:
+      "A source of the course and how it stays in sync: file name and kind, connector (upload, Git, web page), a status pill (up to date, new version, processing, failed, paused), the revision the course reflects against the latest one, when it was last checked, the error if the last check failed, and the actions Check now and Upload a new version. Props come from the API, never from the model.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        sourceId: str("Source id", 32),
+        name: str("Source file or title", 255),
+        kind: str("markdown, pdf, docx", 16),
+        connector: str("upload, git, url", 32),
+        state: oneOf(["up_to_date", "new_version", "processing", "failed", "paused"], "Sync state shown as the status pill"),
+        syncedRevision: int("Number of the revision the course reflects", { minimum: 1 }),
+        latestRevision: int("Number of the latest revision", { minimum: 1 }),
+        lastCheckedAt: str("ISO time of the last check", 40),
+        schedule: str("manual, hourly, daily, weekly", 16),
+        error: str("Why the last check or import failed", 500),
+        canCheck: bool("Show the Check now action"),
+        canUpload: bool("Show the Upload a new version action"),
+      },
+      ["sourceId", "name", "connector", "state"]
+    ),
+    fallback: (p) => `Source ${s(p.name)}: ${s(p.state).replace(/_/g, " ")}${p.latestRevision ? `, latest revision ${s(p.latestRevision)}` : ""}.`,
+  },
+  RevisionTimeline: {
+    description:
+      "Revisions of one source, newest first: number, origin, trigger, time, status and the change counts against the previous one (for example 3 changed, 1 removed, 2 added, 1 moved). The revision the course reflects is marked In your course. One revision can be selected to see its changes.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        sourceId: str("Source id", 32),
+        selectedRevisionId: str("Revision whose changes are shown", 32),
+        revisions: list(
+          obj(
+            {
+              id: str("Revision id", 32),
+              number: int("Revision number", { minimum: 1 }),
+              origin: str("initial, upload, git, url", 16),
+              trigger: str("initial, manual, scheduled, webhook", 16),
+              detectedAt: str("ISO time", 40),
+              status: REVISION_STATUS,
+              counts: REV_COUNTS,
+              synced: bool("The course reflects this revision"),
+              latest: bool("The newest revision"),
+              error: str("Why the revision failed", 500),
+              href: str("Link that selects the revision (progressive enhancement)", 400),
+            },
+            ["id", "number", "status"]
+          ),
+          "Revisions, newest first",
+          500
+        ),
+      },
+      ["sourceId", "revisions"]
+    ),
+    fallback: (p) => `${arr(p.revisions).length} revisions.`,
+  },
+  FragmentChange: {
+    description:
+      "One changed source fragment: the section label, a kind badge (Changed, Moved, Removed, Added), the magnitude and signals as text (for example a number changed), and the old and new text with a word-level diff marked with plus and minus signs, never by colour alone.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        changeId: str("Change id", 32),
+        kind: oneOf(["changed", "moved", "removed", "added"], "What happened to the fragment"),
+        magnitude: oneOf(["trivial", "minor", "substantive"], "How much changed; trivial is cosmetic"),
+        similarity: { type: "number", description: "Text similarity from 0 to 1", minimum: 0, maximum: 1 },
+        signals: list(str("number, code, identifier, modality, large", 32), "Why the change matters", 8),
+        section: str("Section heading path", 300),
+        old: SHOWN_FRAGMENT,
+        new: SHOWN_FRAGMENT,
+        wordDiff: list({ ...list(str("Operator (=, -, +) then text", 8000), "Run", 2), minItems: 2 }, "Word-level diff runs", 4000),
+      },
+      ["changeId", "kind", "magnitude"]
+    ),
+    fallback: (p) => `${s(p.kind)} (${s(p.magnitude)}): ${s((p.new as Record<string, unknown> | undefined)?.label ?? (p.old as Record<string, unknown> | undefined)?.label)}`,
   },
   CostMeter: {
     description: "Running AI cost of the session against its budget.",

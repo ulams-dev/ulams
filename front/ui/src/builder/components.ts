@@ -428,6 +428,154 @@ const VersionList: Renderer = (p, ctx) =>
       v.id === p.currentVersionId ? h("span", { class: "cb-tag" }, "current") : null, restore);
   }));
 
+/* ------------------------------------------------------------------ living course */
+
+const when = (iso: unknown): HTMLElement | null => {
+  if (typeof iso !== "string" || iso === "") return null;
+  const date = new Date(iso);
+  const text = Number.isNaN(date.getTime()) ? iso : date.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
+  return h("time", { datetime: iso }, text);
+};
+
+const CONNECTOR_LABEL: Record<string, string> = { upload: "Upload", git: "Git repository", url: "Web page" };
+const SYNC_STATE: Record<string, { label: string; icon: "check" | "plus" | "clock" | "alert" | "minus" }> = {
+  up_to_date: { label: "Up to date", icon: "check" },
+  new_version: { label: "New version available", icon: "plus" },
+  processing: { label: "Processing", icon: "clock" },
+  failed: { label: "Check failed", icon: "alert" },
+  paused: { label: "Paused", icon: "minus" },
+};
+
+const SourceConnectionCard: Renderer = (p, ctx, id) => {
+  const state = SYNC_STATE[String(p.state)] ?? SYNC_STATE.up_to_date!;
+  const headingId = uid("src");
+  const status = h("p", { class: "cb-sync-status", role: "status" }, h("span", { class: `cb-sync-pill cb-sync-${p.state}` }, icon(state.icon), state.label));
+  const facts = h("dl", { class: "cb-facts" },
+    h("div", {}, h("dt", {}, "In your course"), h("dd", {}, p.syncedRevision ? `Revision ${p.syncedRevision}` : "Not synced yet")),
+    h("div", {}, h("dt", {}, "Latest revision"), h("dd", {}, p.latestRevision ? `Revision ${p.latestRevision}` : "None")),
+    h("div", {}, h("dt", {}, "Last checked"), h("dd", {}, when(p.lastCheckedAt) ?? "Never")),
+    p.schedule ? h("div", {}, h("dt", {}, "Checks"), h("dd", {}, String(p.schedule))) : null);
+  const actions = h("div", { class: "cb-actions" });
+  if (p.canCheck) {
+    const check = h("button", { type: "button", class: "cb-btn cb-btn-small" }, "Check now");
+    check.addEventListener("click", () => act(ctx, id, "check_now", { sourceId: p.sourceId }));
+    actions.append(check);
+  }
+  if (p.canUpload !== false) {
+    const upload = h("button", { type: "button", class: "cb-btn cb-btn-small cb-btn-primary" }, "Upload a new version");
+    upload.addEventListener("click", () => act(ctx, id, "upload_version", { sourceId: p.sourceId }));
+    actions.append(upload);
+  }
+  return h("section", { class: "cb-card cb-source-conn", "aria-labelledby": headingId, "data-source": p.sourceId },
+    h("div", { class: "cb-source-conn-head" },
+      h("div", {},
+        h("p", { class: "cb-eyebrow" }, `${CONNECTOR_LABEL[String(p.connector)] ?? String(p.connector)}${p.kind ? ` · ${String(p.kind).toUpperCase()}` : ""}`),
+        h("h3", { id: headingId, class: "cb-serif cb-h2" }, String(p.name))),
+      status),
+    facts,
+    p.error ? h("p", { class: "cb-error", role: "alert" }, icon("alert"), String(p.error)) : null,
+    actions.childElementCount ? actions : null);
+};
+
+const ORIGIN_LABEL: Record<string, string> = { initial: "First import", upload: "Uploaded", git: "Git", url: "Web page" };
+const TRIGGER_LABEL: Record<string, string> = { initial: "first import", manual: "by you", scheduled: "scheduled check", webhook: "webhook" };
+const REVISION_STATUS_LABEL: Record<string, { label: string; icon: "check" | "plus" | "clock" | "alert" | "minus" | "dot" }> = {
+  fetched: { label: "Fetched", icon: "clock" },
+  ingested: { label: "Imported", icon: "check" },
+  unchanged: { label: "No changes", icon: "minus" },
+  no_impact: { label: "No impact on the course", icon: "minus" },
+  failed: { label: "Failed", icon: "alert" },
+};
+
+/** "3 changed, 1 removed, 2 added, 1 moved"; kinds with a zero count are left out. */
+export function countsText(counts: Props | null | undefined): string {
+  if (!counts) return "";
+  return (["changed", "removed", "added", "moved"] as const)
+    .filter((k) => Number(counts[k]) > 0)
+    .map((k) => `${counts[k]} ${k}`)
+    .join(", ");
+}
+
+const RevisionTimeline: Renderer = (p, ctx, id) => {
+  const items = (p.revisions as Props[]).map((r) => {
+    const selected = r.id === p.selectedRevisionId;
+    const status = REVISION_STATUS_LABEL[String(r.status)] ?? { label: String(r.status), icon: "dot" as const };
+    const title = `Revision ${r.number}`;
+    const hint = sr(selected ? " (changes shown)" : ": show changes");
+    let control: HTMLElement;
+    if (r.href) {
+      control = h("a", { class: "cb-rev-link", href: String(r.href), "aria-current": selected ? "true" : null }, title, hint);
+    } else {
+      control = h("button", { type: "button", class: "cb-rev-link", "aria-pressed": selected ? "true" : "false" }, title, hint);
+      control.addEventListener("click", () => act(ctx, id, "select_revision", { revisionId: r.id, sourceId: p.sourceId }));
+    }
+    const counts = countsText(r.counts);
+    return h("li", { class: `cb-rev${selected ? " cb-rev-selected" : ""}`, "data-revision": r.id },
+      h("div", { class: "cb-rev-head" }, control,
+        r.synced ? h("span", { class: "cb-tag cb-tag-course" }, icon("check"), "In your course") : null,
+        r.latest ? h("span", { class: "cb-tag" }, "Latest") : null),
+      h("p", { class: "cb-muted cb-small cb-rev-meta" },
+        ORIGIN_LABEL[String(r.origin)] ?? (r.origin ? String(r.origin) : "Revision"),
+        r.trigger ? ` · ${TRIGGER_LABEL[String(r.trigger)] ?? String(r.trigger)}` : "",
+        r.detectedAt ? " · " : "", when(r.detectedAt)),
+      h("p", { class: "cb-rev-status" }, icon(status.icon), status.label, counts ? h("span", { class: "cb-rev-counts" }, ` · ${counts}`) : null),
+      r.error ? h("p", { class: "cb-error" }, icon("alert"), String(r.error)) : null);
+  });
+  return h("section", { class: "cb-card cb-timeline", "aria-label": "Revision history" },
+    h("ol", { class: "cb-revs", "aria-label": "Revisions, newest first" }, items));
+};
+
+const SIGNAL_TEXT: Record<string, string> = {
+  number: "a number changed",
+  code: "code changed",
+  identifier: "a name or identifier changed",
+  modality: "a must, should or may changed",
+  large: "a large part was rewritten",
+};
+const KIND_BADGE: Record<string, { label: string; icon: "plus" | "minus" | "tilde" | "dot" }> = {
+  changed: { label: "Changed", icon: "tilde" },
+  moved: { label: "Moved", icon: "dot" },
+  removed: { label: "Removed", icon: "minus" },
+  added: { label: "Added", icon: "plus" },
+};
+const MAGNITUDE_TEXT: Record<string, string> = { trivial: "Cosmetic edit", minor: "Minor change", substantive: "Substantive change" };
+
+/** Word-level runs from the API (`=`, `-`, `+`) with visible and hidden markers. */
+function runsDiff(runs: string[][]): HTMLElement {
+  const out = h("p", { class: "cb-worddiff cb-frag-diff" });
+  for (const [op, text] of runs) {
+    if (op === "+") out.append(h("ins", {}, sr("added: "), h("span", { "aria-hidden": "true", class: "cb-mark" }, "+"), text ?? ""));
+    else if (op === "-") out.append(h("del", {}, sr("removed: "), h("span", { "aria-hidden": "true", class: "cb-mark" }, "−"), text ?? ""));
+    else out.append(text ?? "");
+  }
+  return out;
+}
+
+const FragmentChange: Renderer = (p) => {
+  const badge = KIND_BADGE[String(p.kind)] ?? KIND_BADGE.changed!;
+  const oldF = p.old as Props | undefined;
+  const newF = p.new as Props | undefined;
+  const label = String((newF ?? oldF)?.label ?? p.section ?? "Source fragment");
+  const headingId = uid("chg");
+  const signals = ((p.signals as string[] | undefined) ?? []).map((x) => SIGNAL_TEXT[x] ?? x);
+  const meta = [MAGNITUDE_TEXT[String(p.magnitude)] ?? String(p.magnitude), ...signals];
+  const body: HTMLElement[] = [];
+  if (p.wordDiff && (p.wordDiff as string[][]).length) {
+    body.push(runsDiff(p.wordDiff as string[][]));
+  } else {
+    if (oldF?.text) body.push(h("p", { class: "cb-frag-old" }, h("span", { class: "cb-mark", "aria-hidden": "true" }, "− "), sr("Before: "), String(oldF.text)));
+    if (newF?.text) body.push(h("p", { class: "cb-frag-new" }, h("span", { class: "cb-mark", "aria-hidden": "true" }, "+ "), sr("After: "), String(newF.text)));
+  }
+  return h("article", { class: `cb-card cb-frag cb-frag-${p.kind}`, "aria-labelledby": headingId, "data-change": p.changeId },
+    h("div", { class: "cb-frag-head" },
+      h("h4", { id: headingId, class: "cb-serif cb-h3" }, label),
+      h("span", { class: `cb-badge cb-kind-${p.kind}` }, icon(badge.icon), badge.label)),
+    p.section && p.section !== label ? h("p", { class: "cb-muted cb-small" }, `In ${String(p.section)}`) : null,
+    h("p", { class: "cb-muted cb-small cb-frag-meta" }, meta.join(" · "), typeof p.similarity === "number" ? ` · ${Math.round(Number(p.similarity) * 100)}% similar` : ""),
+    ...body,
+    p.kind === "moved" && body.length === 0 ? h("p", { class: "cb-muted" }, "The text is the same; it moved to a different place.") : null);
+};
+
 const Column: Renderer = (p, _ctx, _id, children) => h("div", { class: `cb-column cb-gap-${p.gap ?? "md"}` }, children);
 const Text: Renderer = (p) => h("p", { class: `cb-text cb-text-${p.variant ?? "body"}` }, String(p.text));
 
@@ -448,5 +596,8 @@ export const builderComponents: Record<string, Renderer> = {
   DiffView,
   ApplySummary,
   VersionList,
+  SourceConnectionCard,
+  RevisionTimeline,
+  FragmentChange,
   CostMeter,
 };
