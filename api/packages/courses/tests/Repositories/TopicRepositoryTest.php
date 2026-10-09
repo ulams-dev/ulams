@@ -162,6 +162,7 @@ class TopicRepositoryTest extends TestCase
         $this->assertEquals($fakeTopic2['topicable_type'], $updatedTopic2->topicable_type);
         $this->assertNotEquals($topicableKey, $updatedTopic2->topicable->getKey());
         $this->assertEquals('https://embed.test/embed', $updatedTopic2->topicable->value);
+        $this->assertNull(ExampleTopicType::find($topicableKey), 'The content of the previous type must be deleted');
     }
 
     #[Test]
@@ -175,6 +176,24 @@ class TopicRepositoryTest extends TestCase
 
         $this->assertTrue($resp);
         $this->assertNull(Topic::find($topic->id), 'Topic should not exist in DB');
+    }
+
+    #[Test]
+    public function testDeleteTopicDeletesItsContent()
+    {
+        $course = Course::factory()->create();
+        $lesson = Lesson::factory()->create(['course_id' => $course->getKey()]);
+        $content = ExampleTopicType::factory()->create();
+        $topic = Topic::factory()->create([
+            'lesson_id' => $lesson->getKey(),
+            'topicable_id' => $content->getKey(),
+            'topicable_type' => ExampleTopicType::class,
+        ]);
+
+        $this->assertTrue($this->topicRepo->delete($topic->id));
+
+        $this->assertNull(Topic::find($topic->id));
+        $this->assertNull(ExampleTopicType::find($content->getKey()), 'The topic content row must be deleted with its topic');
     }
 
     public function testUnregisterContentClass()

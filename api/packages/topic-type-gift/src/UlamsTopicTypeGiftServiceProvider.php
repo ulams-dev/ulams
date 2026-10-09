@@ -28,6 +28,7 @@ use Ulams\TopicTypeGift\Services\Contracts\QuizAttemptServiceContract;
 use Ulams\TopicTypeGift\Services\NoExtraAttempts;
 use Ulams\TopicTypeGift\Console\SnapshotMaxScoresCommand;
 use Ulams\TopicTypeGift\Services\GiftQuestionService;
+use Ulams\TopicTypeGift\Services\GiftQuizContentDeleter;
 use Ulams\TopicTypeGift\Services\GiftQuizService;
 use Ulams\TopicTypeGift\Services\QuizAttemptService;
 use Ulams\TopicTypes\UlamsTopicTypesServiceProvider;
@@ -65,6 +66,7 @@ class UlamsTopicTypeGiftServiceProvider extends ServiceProvider
         }
 
         Topic::registerContentClass(GiftQuiz::class);
+        Topic::registerContentDeleter($this->app->make(GiftQuizContentDeleter::class));
         Topic::registerResourceClasses(GiftQuiz::class, [
             'client' => ClientGiftQuizResource::class,
             'admin' => AdminGiftQuizResource::class,
