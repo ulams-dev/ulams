@@ -14,10 +14,12 @@ interface Props {
   /** Status pill text (e.g. "Draft · not published"). */
   status?: string;
   sessionId?: string | null;
-  active?: "builder" | "workspace" | "done" | "sessions";
+  active?: "builder" | "workspace" | "done" | "sessions" | "sources";
+  /** The session has a course: its sources can be kept in sync. */
+  hasCourse?: boolean;
 }
 
-const { title, crumb, status, sessionId, active = "builder" } = Astro.props;
+const { title, crumb, status, sessionId, active = "builder", hasCourse = false } = Astro.props;
 const nav = [
   { key: "sessions", href: "/studio", label: "Sessions" },
   ...(sessionId
@@ -25,6 +27,7 @@ const nav = [
         { key: "builder", href: `/studio/s/${sessionId}`, label: "Builder" },
         { key: "workspace", href: `/studio/s/${sessionId}/workspace`, label: "Workspace" },
         { key: "done", href: `/studio/s/${sessionId}/done`, label: "Course" },
+        ...(hasCourse ? [{ key: "sources", href: `/studio/s/${sessionId}/sources`, label: "Sources" }] : []),
       ]
     : [{ key: "builder", href: "/studio/new", label: "New course" }]),
 ];

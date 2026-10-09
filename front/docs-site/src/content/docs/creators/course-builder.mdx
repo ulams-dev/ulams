@@ -5,6 +5,7 @@ sidebar:
   order: 40
 modules:
   - course-builder
+  - living-course
 learnerRoutes:
   - /studio
   - /studio/login
@@ -13,6 +14,7 @@ learnerRoutes:
   - /studio/s/[id]/workspace
   - /studio/s/[id]/landing
   - /studio/s/[id]/done
+  - /studio/s/[id]/sources
   - /studio/api/[...path]
 ---
 
@@ -87,6 +89,28 @@ change as a **diff**; **Approve** applies it to the course, **Reject** keeps the
 The success page summarises the course (modules, lessons, minutes, questions, how much is cited,
 AI cost) and links to the course form in the admin, the learner preview and the landing preview.
 **Publish course** makes it available to learners.
+
+## 8. Keep the course in sync with its sources
+
+Once the course exists, the **Sources** page (in the left navigation) shows each source of the
+course: its name and type, how it is connected (**Upload**), a status (**Up to date** or **New version
+available**), the revision your course reflects (**In your course**) and the latest one.
+
+- **Upload a new version**: drop the updated Markdown, PDF or DOCX file on the source. We keep it as
+  a new **revision** and compare it with the previous one. If the file is the same as the latest
+  revision, nothing is added and you are told so. If the file is rejected, the message says why and
+  nothing changes.
+- The **revision timeline** lists every revision, newest first, with its origin, time, status and
+  what changed ("3 changed, 1 removed, 2 added, 1 moved"). Select a revision to see its changes.
+- Each **changed passage** shows the section, whether it was changed, moved, removed or added, how
+  large the change is and why it may matter (for example "a number changed"), with the old and new
+  text. Removed words are marked with a minus sign and added words with a plus sign, so the
+  difference does not depend on colour.
+- **Cosmetic changes** (spacing, punctuation) are hidden by default; use **Show N cosmetic changes**
+  to see them.
+
+Uploading a new version does not change your course. The course keeps reading from the revision it
+reflects until you accept updates.
 
 ## Tips
 

@@ -28,3 +28,25 @@ export const STUDIO_RULES: Array<{ method: string; pattern: RegExp }> = [
 export function isStudioCall(method: string, path: string): boolean {
   return STUDIO_RULES.some((r) => r.method === method.toUpperCase() && r.pattern.test(path));
 }
+
+/**
+ * Living Course calls (/api/admin/living-course). The browser reaches them as
+ * /studio/api/living-course/…; the BFF forwards the part after the prefix. A multipart POST uploads
+ * a new version of a source. The API checks the author and the permission; this list keeps the
+ * BFF from being an open proxy.
+ */
+export const LIVING_COURSE_PREFIX = "/living-course";
+export const LIVING_COURSE_RULES: Array<{ method: string; pattern: RegExp }> = [
+  { method: "GET", pattern: new RegExp(`^/sessions/${ID}/sources$`) },
+  { method: "GET", pattern: new RegExp(`^/sources/${ID}/revisions$`) },
+  { method: "POST", pattern: new RegExp(`^/sources/${ID}/revisions$`) },
+  { method: "GET", pattern: new RegExp(`^/revisions/${ID}$`) },
+  { method: "GET", pattern: new RegExp(`^/revisions/${ID}/changes$`) },
+];
+
+/** `path` is relative to the BFF root, e.g. `/living-course/sources/{id}/revisions`. */
+export function isLivingCourseCall(method: string, path: string): boolean {
+  if (!path.startsWith(`${LIVING_COURSE_PREFIX}/`)) return false;
+  const rest = path.slice(LIVING_COURSE_PREFIX.length);
+  return LIVING_COURSE_RULES.some((r) => r.method === method.toUpperCase() && r.pattern.test(rest));
+}

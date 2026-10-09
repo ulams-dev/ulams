@@ -48,7 +48,7 @@ const checks = [
 ];
 ---
 
-<Studio title="Your course is ready" crumb={doc.course.title} status={published ? "Published" : STATUS_LABEL[state.session.status]} sessionId={id} active="done">
+<Studio title="Your course is ready" crumb={doc.course.title} status={published ? "Published" : STATUS_LABEL[state.session.status]} sessionId={id} active="done" hasCourse>
   <main id="main" class="st-page">
     <section class="cb-card st-hero" aria-labelledby="st-done-title">
       <p class="cb-eyebrow">Generation complete · version {version.number}</p>
