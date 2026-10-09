@@ -19,6 +19,7 @@ export const TOPIC_CLASSES = {
   cmi5: `${NS}Cmi5Au`,
   liascript: "Ulams\\LiaScript\\Models\\LiaScriptTopic",
   interactive: "Ulams\\Interactive\\Models\\InteractiveTopic",
+  layout: "Ulams\\TopicTypeLayout\\Models\\LayoutTopic",
   quiz: "Ulams\\TopicTypeGift\\Models\\GiftQuiz",
   project: "Ulams\\TopicTypeProject\\Models\\Project",
   lti: "Ulams\\Lti\\Models\\LtiLink",
@@ -325,6 +326,27 @@ export const topicCommands: AnyCommand[] = [
         ...(i.text !== undefined ? { text: i.text } : {}),
       };
       return { data: { topic: await createTopic(ctx, i, { type: "interactive", value: packageId, extra }), package: uploaded ?? { id: packageId } } };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "topics.create-layout",
+    summary: "Create a Layout topic from a document of learning components (flip cards, timelines, practice activities)",
+    description:
+      "A Layout topic is a lesson body built from approved learning components instead of prose: Callout, Steps, ComparisonTable, H5PFrame, LiaScriptLesson, Timeline, FlipCards, CodeBlock and PracticeActivity (practice must use PracticeActivity). --document is a JSON (or YAML) list of nodes, [{ \"component\": \"Timeline\", \"props\": {...}, \"id\": \"optional\" }, ...], inline or @path; the props of every component are listed in the learner layout manifest (front/ui/catalogue/learner-layout-manifest.json). --fallback is the Markdown shown by clients that do not render layouts and when the document cannot be rendered (inline or @path); leave hints and worked solutions out of it. The API validates the document and answers 422 with the node and prop path of every problem. The topic completes when the learner has viewed it, or after the first checked attempt when it holds a PracticeActivity.",
+    endpoints: ["POST /api/admin/topics"],
+    input: z.object({
+      ...base,
+      document: z.array(z.record(z.string(), z.unknown())).min(1).describe("Layout nodes: a JSON list of { component, props, id? }, inline or @path."),
+      fallback: z.string().min(1).meta({ fileInput: true }).describe("Markdown fallback, or @path to a Markdown file."),
+    }),
+    output: z.unknown(),
+    examples: [
+      { title: "Flip cards and a timeline for a chapter", argv: "topics create-layout --lesson 12 --title \"Coffee through time\" --document @layout.json --fallback @layout.md --json" },
+    ],
+    plan: plan(["POST /api/admin/topics (LayoutTopic)"]),
+    async run(ctx, i) {
+      return { data: await createTopic(ctx, i, { type: "layout", value: undefined, extra: { document: i.document, markdown_fallback: i.fallback } }) };
     },
   }),
   defineCommand({
