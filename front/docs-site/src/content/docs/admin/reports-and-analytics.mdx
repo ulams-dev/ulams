@@ -1,0 +1,117 @@
+---
+title: Reports and analytics
+description: The Analytics menu of the admin panel, covering the notification log, course and tutor report charts, and the reports API.
+modules:
+  - reports
+adminRoutes:
+  - /analytics/**
+needsReview: "Analytics → Logs calls /api/admin/tracks/routes from the tracker package, which is not in api/packages; confirm whether the screen should be removed or the package restored."
+sidebar:
+  order: 33
+---
+
+import { Aside, Badge } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+The **Analytics** menu groups three screens: a log of notifications sent to users, a reports
+dashboard with charts, and an activity log. The reports data comes from the `reports` package
+([README](https://github.com/ulams-dev/ulams/blob/main/api/packages/reports/README.md)); the
+notification log comes from the `notifications` package.
+
+Course-level and quiz-level statistics are shown on the course itself and under Courses → Quiz
+reports; see [Creators](/creators/).
+
+## Notifications (`/analytics/notifications`)
+
+<Screenshot name="admin-analytics-notifications" alt="The notification log filtered by user, event and date range" />
+
+A table of the in-app notifications stored in the database: date, user and event. Without a
+user filter it lists your own notifications; pick a user to see theirs. You can filter by event
+type (the list comes from `GET /api/admin/notifications/events`) and by a date range.
+
+Seeing other users' notifications needs `dashboard-app_notification-list_access`, which the
+seeder gives to the `admin` role. Which events produce notifications is described in
+[Notifications](/admin/notifications/) and
+[Events and notifications](/reference/events-and-notifications/).
+
+## Reports (`/analytics/reports`)
+
+<Screenshot name="admin-analytics-reports" alt="Four pie charts: money spent, popularity and time spent per course, and tutor popularity" />
+
+Four pie charts, each showing the top entries of one metric:
+
+| Chart | Metric class | What it counts |
+|---|---|---|
+| Money spent per course | `CoursesMoneySpentMetric` | Sum of paid order items for each course |
+| Course popularity | `CoursesPopularityMetric` | Users assigned to each course |
+| Time spent per course | `CoursesSecondsSpentMetric` | Learning time on each course |
+| Tutor popularity | `TutorsPopularityMetric` | Users assigned to courses authored by each tutor |
+
+The package also defines metrics the dashboard does not show: best rated courses, top-selling
+courses, and authored-only variants of popularity, money and time (for tutors who should see
+only their own courses).
+
+### Metrics and history
+
+Each metric in `config/reports.php` has a `limit` (data points returned, default 10), a
+`history` flag and a `cron` expression. When `history` is `true`, the scheduler calculates the
+metric on that cron and stores it, and the API can return the value for a past `date`. In the
+shipped configuration every metric has `history: false`, so nothing is scheduled and each
+request calculates current values. Change the config file to keep history; there is no admin
+setting for it.
+
+### Stats
+
+Stats are calculated on demand for one object and never stored:
+
+- **Course**: average time, average time per topic, money earned, people who bought, started
+  and finished, finished topics, finished course, attendance list.
+- **Topic**: average time, GIFT quiz summary.
+- **Cart**: new customers, returning customers, spend per customer.
+- **Date range**: new users, active users, courses started and finished.
+
+Course and topic stats can be exported to a spreadsheet, and the course "finished topics" stat
+can be imported back from one.
+
+## Logs (`/analytics/logs`) <Badge text="Needs review" variant="caution" />
+
+The screen lists API route calls recorded by the `tracker` package. That package is not part
+of this repository, so its endpoint (`/api/admin/tracks/routes`) does not exist and its
+permission (`tracker_route-list`) is not seeded. In practice nobody sees the menu item. The
+roadmap plans a learning-records layer that covers tracking; see [Roadmap](/roadmap/).
+
+## API
+
+- `GET /api/admin/reports/metrics`: enabled metrics.
+- `GET /api/admin/reports/available-for-user`: metrics the current user may see (their package
+  is installed and they have the metric's permissions).
+- `GET /api/admin/reports/report?metric=…&limit=…&date=…`: one metric's data.
+- `GET /api/admin/stats/available`, `/stats/course/{id}`, `/stats/topic/{id}`, `/stats/cart`,
+  `/stats/date-range`, plus `/export` and `/import` for course and topic stats.
+- `GET /api/admin/notifications`, `/notifications/{user}`, `/notifications/all`,
+  `/notifications/events`.
+
+Full list: [API endpoints](/reference/api-endpoints/).
+
+## Permissions
+
+| Screen | Needs |
+|---|---|
+| Analytics menu | Any of `dashboard-app_notification-list_access`, `report_list`, `tracker_route-list` |
+| Notifications | `dashboard-app_notification-list_access` |
+| Reports | `report_list` (given to `admin`) |
+| Logs | `tracker_route-list` |
+
+<Aside type="caution">
+In the admin panel the Reports item is also hidden when the `hideInMenu-CoursesCategories`
+setting is on (`admin/src/access.ts`). That looks like a copy-paste of the categories key; if
+you hide categories, Reports disappears too.
+</Aside>
+
+See [Permissions](/reference/permissions/).
+
+## Limitations
+
+- The dashboard is fixed to four charts; other metrics are reachable only through the API.
+- No scheduled or emailed reports and no BI export yet. Dashboards for completion, results and
+  overdue learners are on the [roadmap](/roadmap/) (Phase 6.5).

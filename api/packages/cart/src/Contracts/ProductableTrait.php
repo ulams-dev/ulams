@@ -2,6 +2,7 @@
 
 namespace Ulams\Cart\Contracts;
 
+use Ulams\Core\Support\SchemaColumns;
 use Ulams\Cart\Http\Resources\ProductableGenericResource;
 use Ulams\Cart\Models\Product;
 use Ulams\Cart\Models\ProductProductable;
@@ -13,7 +14,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Schema;
 
 /**
  * @see \Ulams\Cart\Contracts\Productable
@@ -123,10 +123,10 @@ trait ProductableTrait
 
     public function getNameColumn(): ?string
     {
-        if (Schema::hasColumn($this->getTable(), 'name')) {
+        if (SchemaColumns::has($this->getTable(), 'name', $this->getConnectionName())) {
             return 'name';
         }
-        if (Schema::hasColumn($this->getTable(), 'title')) {
+        if (SchemaColumns::has($this->getTable(), 'title', $this->getConnectionName())) {
             return 'title';
         }
         return null;

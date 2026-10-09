@@ -1,0 +1,70 @@
+---
+title: Import, export and clone courses
+description: Export a course as a ZIP file, import it on another ulams installation, or clone it, and what each content type carries across.
+sidebar:
+  order: 32
+modules:
+  - courses-import-export
+  - uploads
+needsReview: "Verify by a round trip which topic types survive import: GIFT quizzes export their questions but no import strategy re-creates them; LiaScript and LTI topics export only IDs that must exist on the target."
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+All three actions are on **Courses → List** and need their own permissions, so you may not see all of
+them.
+
+## Export a course
+
+<Steps>
+
+1. Find the course in **Courses → List**.
+2. Click the **Export** button in its row. With the "export authored" permission you can export only
+   courses you are an author of.
+3. ulams builds a ZIP file and the browser downloads it when it is ready ("File exported
+   successfully").
+
+</Steps>
+
+The ZIP contains a `content.json` with the course, its lessons and topics, and the files they use.
+Large courses with many videos take a while to build and download.
+
+## Import a course
+
+<Steps>
+
+1. In **Courses → List**, click **Import file**.
+2. Choose a course ZIP exported from ulams.
+3. When "Course imported successfully" appears, the course is in the list as a new course with a new
+   ID.
+
+</Steps>
+
+The import is checked like every other package upload: a real zip of at most 1 GB by default, at most
+10 000 files, no paths that escape the archive, no zip bombs, and an antivirus scan when the operator
+has enabled one. File paths inside `content.json` are only resolved inside the archive.
+
+<Aside type="caution">
+Check the imported course before you publish it, in particular its status, dates, access and price:
+access lists, products and prices are not part of the export.
+</Aside>
+
+## Clone a course
+
+Click **Clone** in a course's row to create a copy on the same installation. Cloning runs in the
+background; refresh the list if the copy does not appear at once.
+
+## What is included
+
+| Content | Export and import |
+|---|---|
+| Course attributes, image, video, poster, categories, tags | Included |
+| Lessons, nested lessons, topic settings, topic file resources | Included |
+| Rich text (with its embedded files), audio, video, image, PDF, OEmbed | Included, files are re-uploaded |
+| H5P | Included: the H5P content is packed and re-created on import |
+| SCORM | Included: the package is packed and re-uploaded, and the topic points to the same SCO |
+| Quiz | Quiz settings and questions are exported; check the questions after import |
+| Project | Topic settings are exported; learners' submissions are not |
+| LiaScript | Only the ID, title and version of the LiaScript course; the document itself is not exported yet |
+| External tool (LTI) | The tool's ID and the topic settings; the tool must be registered on the target |
+| Learner data (progress, attempts, certificates) | Not included |

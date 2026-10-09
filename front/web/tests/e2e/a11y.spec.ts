@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { demoCourse } from "./demo-data.ts";
 
 /**
  * WCAG 2.2 AA scan (axe-core) of every page type. Third-party frames (the H5P service,
@@ -8,36 +9,51 @@ import { expect, test, type Page } from "@playwright/test";
 const port = process.env.WEB_BASE_PORT ?? "4321";
 const t = (slug: string, path = "/") => `http://${slug}.app.localhost:${port}${path}`;
 
-const PAGES: Array<[string, string]> = [
-  ["platform landing", `http://app.localhost:${port}/`],
-  ["coffee landing", t("coffee")],
-  ["oncall landing", t("oncall")],
-  ["nightsky landing", t("nightsky")],
-  ["coffee course", t("coffee", "/courses/1")],
-  ["oncall course", t("oncall", "/courses/1")],
-  ["nightsky course", t("nightsky", "/courses/2")],
-  ["lesson: reading + math", t("coffee", "/learn/1/11")],
-  ["lesson: video", t("coffee", "/learn/1/1")],
-  ["lesson: H5P", t("coffee", "/learn/1/5")],
-  ["lesson: quiz", t("coffee", "/learn/1/16")],
-  ["lesson: audio", t("coffee", "/learn/1/4")],
-  ["lesson: image", t("coffee", "/learn/1/2")],
-  ["lesson: PDF", t("coffee", "/learn/1/9")],
-  ["lesson: embed", t("coffee", "/learn/1/7")],
-  ["lesson: SCORM", t("coffee", "/learn/1/10")],
-  ["lesson: cmi5", t("coffee", "/learn/1/15")],
-  ["lesson: project", t("coffee", "/learn/1/17")],
-  ["lesson: oncall table", t("oncall", "/learn/1/4")],
-  ["lesson: nightsky preview", t("nightsky", "/learn/2/16")],
-  ["finish", t("coffee", "/learn/1/finish")],
-  ["account", t("coffee", "/account")],
-  ["events", t("oncall", "/events")],
-  ["webinar", t("oncall", "/events/webinar/1")],
-  ["in-person event", t("coffee", "/events/in-person/1")],
-  ["consultation", t("oncall", "/events/consultation/1")],
-  ["login", t("nightsky", "/login")],
-  ["not found", t("coffee", "/nope")],
+/** [name, tenant, path]; "{course}" and "{Kind}" are replaced with ids from the API. */
+const PAGES: Array<[string, string, string]> = [
+  ["platform landing", "", "/"],
+  ["coffee landing", "coffee", "/"],
+  ["oncall landing", "oncall", "/"],
+  ["nightsky landing", "nightsky", "/"],
+  ["coffee course", "coffee", "/courses/{course}"],
+  ["oncall course", "oncall", "/courses/{course}"],
+  ["nightsky course", "nightsky", "/courses/{course}"],
+  ["lesson: reading + math", "coffee", "/learn/{course}/{RichText}"],
+  ["lesson: video", "coffee", "/learn/{course}/{Video}"],
+  ["lesson: H5P", "coffee", "/learn/{course}/{H5P}"],
+  ["lesson: quiz", "coffee", "/learn/{course}/{GiftQuiz}"],
+  ["lesson: audio", "coffee", "/learn/{course}/{Audio}"],
+  ["lesson: image", "coffee", "/learn/{course}/{Image}"],
+  ["lesson: PDF", "coffee", "/learn/{course}/{PDF}"],
+  ["lesson: embed", "coffee", "/learn/{course}/{OEmbed}"],
+  ["lesson: SCORM", "coffee", "/learn/{course}/{ScormSco}"],
+  ["lesson: cmi5", "coffee", "/learn/{course}/{Cmi5Au}"],
+  ["lesson: project", "coffee", "/learn/{course}/{Project}"],
+  ["lesson: oncall reading", "oncall", "/learn/{course}/{RichText}"],
+  ["lesson: nightsky", "nightsky", "/learn/{course}/{Video}"],
+  ["finish", "coffee", "/learn/{course}/finish"],
+  ["account", "coffee", "/account"],
+  ["events", "oncall", "/events"],
+  ["webinar", "oncall", "/events/webinar/1"],
+  ["in-person event", "coffee", "/events/in-person/1"],
+  ["consultation", "oncall", "/events/consultation/1"],
+  ["login", "nightsky", "/login"],
+  ["not found", "coffee", "/nope"],
 ];
+
+async function resolve(slug: string, path: string): Promise<string | null> {
+  if (!slug) return `http://app.localhost:${port}${path}`;
+  if (!path.includes("{")) return t(slug, path);
+  const demo = await demoCourse(slug);
+  let missing = false;
+  const filled = path.replace(/\{(\w+)\}/g, (_, key: string) => {
+    if (key === "course") return String(demo.courseId);
+    const id = demo.topics[key];
+    if (!id) missing = true;
+    return String(id);
+  });
+  return missing ? null : t(slug, filled);
+}
 
 test.use({ contextOptions: { reducedMotion: "reduce" } });
 
@@ -53,10 +69,12 @@ async function revealAll(page: Page) {
   await page.waitForTimeout(1000);
 }
 
-for (const [name, url] of PAGES) {
+for (const [name, slug, path] of PAGES) {
   test(`axe: ${name}`, async ({ page }) => {
+    const url = await resolve(slug, path);
+    test.skip(!url, `no such topic in the seeded course: ${path}`);
     // "load", not "networkidle": embedded players (YouTube) keep the network busy
-    await page.goto(url, { waitUntil: "load" });
+    await page.goto(url!, { waitUntil: "load" });
     await revealAll(page);
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
@@ -70,7 +88,7 @@ for (const [name, url] of PAGES) {
 }
 
 test("axe: quiz question screen", async ({ page }) => {
-  await page.goto(t("coffee", "/learn/1/16"));
+  await page.goto((await resolve("coffee", "/learn/{course}/{GiftQuiz}"))!);
   await page.click("[data-start]");
   const question = page.locator(".u-quiz__q legend");
   const noAttempts = page.locator(".u-quiz__error");

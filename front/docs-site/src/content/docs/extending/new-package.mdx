@@ -1,0 +1,245 @@
+---
+title: A new API package
+description: Build a ulams API module as a package in api/packages, walking through the example-plugin package from provider and settings to the tenant isolation test.
+sidebar:
+  order: 1
+modules:
+  - example-plugin
+  - bookmarks_notes
+  - settings
+needsReview: "The example-plugin tests were written but not run (the Docker stack was down). Run ./vendor/bin/phpunit packages/example-plugin/tests and the enable steps once."
+---
+
+import { Aside, Code, FileTree, Steps } from "@astrojs/starlight/components";
+import provider from "../../../../../../api/packages/example-plugin/src/UlamsExamplePluginServiceProvider.php?raw";
+import settingsProvider from "../../../../../../api/packages/example-plugin/src/Providers/SettingsServiceProvider.php?raw";
+import routes from "../../../../../../api/packages/example-plugin/src/routes.php?raw";
+import permissionEnum from "../../../../../../api/packages/example-plugin/src/Enums/ExamplePluginPermissionEnum.php?raw";
+import permissionSeeder from "../../../../../../api/packages/example-plugin/database/seeders/ExamplePluginPermissionSeeder.php?raw";
+import request from "../../../../../../api/packages/example-plugin/src/Http/Requests/Admin/SendGreetingRequest.php?raw";
+import service from "../../../../../../api/packages/example-plugin/src/Services/GreetingService.php?raw";
+import event from "../../../../../../api/packages/example-plugin/src/Events/GreetingSent.php?raw";
+import controller from "../../../../../../api/packages/example-plugin/src/Http/Controllers/Admin/GreetingAdminApiController.php?raw";
+import swagger from "../../../../../../api/packages/example-plugin/src/Http/Controllers/Admin/Swagger/GreetingAdminApiSwagger.php?raw";
+import testCase from "../../../../../../api/packages/example-plugin/tests/TestCase.php?raw";
+import adminTest from "../../../../../../api/packages/example-plugin/tests/Api/AdminGreetingApiTest.php?raw";
+import isolationTest from "../../../../../../api/packages/example-plugin/tests/Api/TenantIsolationTest.php?raw";
+
+Every API module of ulams is a package in `api/packages/<name>` with the namespace `Ulams\<Name>\`.
+These packages are plain source directories (no `composer.json` of their own). The application
+autoloads them from `api/composer.json` and registers their service providers explicitly in
+`api/config/app.php` ([how packages are wired](https://github.com/ulams-dev/ulams/blob/main/api/packages/README.md)).
+
+This page walks through [`api/packages/example-plugin`](https://github.com/ulams-dev/ulams/blob/main/api/packages/example-plugin),
+a minimal package written for this guide. The code shown here is read from the repository at
+build time, and the package's own tests cover it ([run them](#run-the-tests)). The package does two things:
+
+- `GET /api/example-plugin/hello?name=Ada` returns a greeting read from an administrable setting.
+- `POST /api/admin/example-plugin/greetings` is guarded by a permission and dispatches a domain event.
+
+<Aside>
+The example is **not enabled**. Its provider is not in `config/app.php`, so the running API does
+not serve its routes. Its PSR-4 entries are registered, but it has no suite in `phpunit.xml`,
+so CI does not run its tests. You run them by path.
+[Enable it](#enable-the-package) to try it.
+</Aside>
+
+For larger real packages, follow `bookmarks_notes` (repositories and DTOs, owner policies, a
+migration) or `topic-type-project` (a topic type with its own tables and events).
+
+## Layout
+
+<FileTree>
+- api/packages/example-plugin/
+  - README.md
+  - src/
+    - UlamsExamplePluginServiceProvider.php main provider
+    - config.php
+    - routes.php
+    - Providers/
+      - SettingsServiceProvider.php registers the setting
+    - Enums/ExamplePluginPermissionEnum.php
+    - Events/GreetingSent.php
+    - Services/
+      - Contracts/GreetingServiceContract.php
+      - GreetingService.php
+    - Http/
+      - Controllers/ controllers implement the Swagger interfaces
+      - Requests/Admin/SendGreetingRequest.php
+      - Resources/GreetingResource.php
+  - database/
+    - seeders/ExamplePluginPermissionSeeder.php
+    - migrations/ (none here; see bookmarks_notes)
+  - tests/
+    - TestCase.php
+    - Api/
+</FileTree>
+
+## Service provider
+
+The provider merges the config, binds services as singletons (contract to implementation),
+registers the providers it depends on, and loads the routes. Packages with tables also call
+`$this->loadMigrationsFrom(__DIR__ . '/../database/migrations')`; most do this in `bootForConsole()`,
+as `UlamsBookmarksServiceProvider` does. Policies go in a small `Providers/AuthServiceProvider`
+that extends Laravel's and lists `$policies` (see `bookmarks_notes/src/Providers/AuthServiceProvider.php`).
+
+<Code code={provider} lang="php" title="src/UlamsExamplePluginServiceProvider.php" />
+
+## Routes
+
+Public routes go under `api/<package>`, admin routes under `api/admin/<package>` with the
+`auth:api` middleware (Passport). Authorization is not in the route: the FormRequest or a
+policy does it.
+
+<Code code={routes} lang="php" title="src/routes.php" />
+
+## Settings
+
+A package registers the config keys an admin may change with
+`AdministrableConfig::registerConfig($key, $rules, $public, $readonly)` from the settings package.
+Admins then change the keys per tenant with `POST /api/admin/config`, which validates the
+new value with `$rules`. Public keys are returned to anyone by `GET /api/config`, which the
+frontends load at boot. Values are stored in the tenant's database (`ulams_settings.use_database`)
+and override the package config. The tasks, video, jitsi and payments packages use the same
+`Providers/SettingsServiceProvider` shape.
+
+<Code code={settingsProvider} lang="php" title="src/Providers/SettingsServiceProvider.php" />
+
+Never mark secrets as public. The payments package registers `ulams_payments.drivers.stripe.secret_key`
+with `$public = false`.
+
+## Permissions
+
+Permissions are Spatie permissions on the `api` guard. A package declares them in an enum and
+seeds them onto roles. The roles are `admin`, `tutor` and `student` (`Ulams\Core\Enums\UserRole`).
+`api/database/seeds/PermissionsSeeder.php` calls every package's permission seeder explicitly,
+and `ulams:tenant:create` runs it for each new tenant. Add your seeder to that list, and run it
+once on each existing tenant.
+
+<Code code={permissionEnum} lang="php" title="src/Enums/ExamplePluginPermissionEnum.php" />
+<Code code={permissionSeeder} lang="php" title="database/seeders/ExamplePluginPermissionSeeder.php" />
+
+## FormRequests and authorization
+
+Each endpoint has its own FormRequest. `authorize()` checks the permission, or calls a policy
+with `Gate::allows('update', $model)` when the rule depends on the record (ownership, course
+membership). `rules()` validates the input, and getters hand typed values to the controller.
+
+<Code code={request} lang="php" title="src/Http/Requests/Admin/SendGreetingRequest.php" />
+
+## Services, events and controllers
+
+Controllers stay thin. They extend `Ulams\Core\Http\Controllers\UlamsBaseController`
+(`sendResponse`, `sendResponseForResource`, `sendError`) and call a service bound by its
+contract. The service holds the domain logic and dispatches events. When you change LMS entities
+(courses, topics, progress), do it through the owning package's repository or service, for
+example `TopicRepository` or `CourseProgressRepositoryContract`, never with direct table writes.
+
+<Code code={service} lang="php" title="src/Services/GreetingService.php" />
+
+An event in the `Ulams\` namespace that carries a `User` is also picked up by two wildcard
+listeners: the notifications package stores it as a database notification, and the templates
+package sends it on any channel that has a registered template. See
+[Events and listeners](/extending/events-and-listeners/).
+
+<Code code={event} lang="php" title="src/Events/GreetingSent.php" />
+<Code code={controller} lang="php" title="src/Http/Controllers/Admin/GreetingAdminApiController.php" />
+
+## Swagger annotations
+
+OpenAPI annotations (`swagger-php` `@OA\...` docblocks) sit on an interface that the controller
+implements, in `Http/Controllers/Swagger/`. Request and resource schemas sit on the request and
+resource classes. `config/l5-swagger.php` lists the directories it scans, one line per package
+(`base_path('packages/<name>/src')`). Add yours there when you enable the package.
+
+<Code code={swagger} lang="php" title="src/Http/Controllers/Admin/Swagger/GreetingAdminApiSwagger.php" />
+
+## Tests
+
+Package tests extend the package's own `TestCase`, which builds on `Ulams\Core\Tests\TestCase`
+(Orchestra Testbench) and lists the providers the package needs in `getPackageProviders`. The
+example registers its own provider there, which is why it can be tested without being enabled.
+`DatabaseTransactions` rolls every test back. See [Testing](/developers/testing/) for the test
+database.
+
+<Code code={testCase} lang="php" title="tests/TestCase.php" />
+
+Cover the happy path, 401 without a token, 403 without the permission, and 422 on invalid
+input. Fake the events you assert on.
+
+<Code code={adminTest} lang="php" title="tests/Api/AdminGreetingApiTest.php" />
+
+### Tenant isolation test
+
+Every new endpoint needs a tenant isolation test. Each tenant has its own database, `APP_KEY`
+and Passport key pair (see [Tenancy](/developers/tenancy/)), so a token issued by one tenant
+must be rejected by another. In one process and one test database, swapping the Passport keys
+plays the second tenant, as `packages/demo` does. If your package signs its own tokens or hints
+with `APP_KEY` (as `lti`, `liascript` and `scorm` do), also swap `app.key` and check that
+values from the first tenant are rejected.
+
+<Code code={isolationTest} lang="php" title="tests/Api/TenantIsolationTest.php" />
+
+The opt-in end-to-end check against two real tenants is
+`packages/tenancy/tests/Integration/TenantIsolationTest.php`.
+
+## Register the package
+
+A new package needs these entries. The example has only the first one: it is kept out of the
+test suites and the application on purpose.
+
+<Steps>
+
+1. **Autoload**: PSR-4 entries in `api/composer.json`. Runtime namespaces (`src`, seeders,
+   factories) go in `autoload.psr-4` and tests in `autoload-dev.psr-4`. Then run
+   `composer dump-autoload` in the API container.
+
+   ```json
+   "Ulams\\ExamplePlugin\\": "packages/example-plugin/src",
+   "Ulams\\ExamplePlugin\\Database\\Seeders\\": "packages/example-plugin/database/seeders",
+   ```
+   ```json
+   "Ulams\\ExamplePlugin\\Tests\\": "packages/example-plugin/tests",
+   ```
+
+2. **Test suite**: a `<testsuite name="<name>">` in `api/phpunit.xml`, and the suite
+   name in one shard of `PHPUNIT_SHARDS` in `.github/workflows/ci.yml`. CI fails when a suite is
+   in no shard or in two.
+
+3. **Swagger**: the `src` directory in the annotation paths of `api/config/l5-swagger.php`.
+
+4. **Provider**: the provider class in the "Package Service Providers" list of
+   `api/config/app.php`. Package discovery does not see `api/packages`.
+
+5. **Permissions**: the permission seeder in `api/database/seeds/PermissionsSeeder.php`.
+
+</Steps>
+
+### Enable the package
+
+<Steps>
+
+1. Add `Ulams\ExamplePlugin\UlamsExamplePluginServiceProvider::class` to `api/config/app.php`.
+2. Seed the permission on each tenant:
+
+   ```bash
+   php artisan db:seed --class="Ulams\ExamplePlugin\Database\Seeders\ExamplePluginPermissionSeeder" --domain=<slug>.localhost
+   ```
+
+3. Call it:
+
+   ```bash
+   curl "http://coffee.localhost/api/example-plugin/hello?name=Ada"
+   ```
+
+</Steps>
+
+For a package with migrations, run `php artisan migrate --domain=<slug>.localhost` for each
+tenant. `ulams:tenant:create` runs migrations and `PermissionsSeeder` only for new tenants.
+
+## Run the tests
+
+```bash
+docker compose -f api/docker-compose.yml exec api bash -c \
+  "DB_HOST=postgres DB_DATABASE=test DB_USERNAME=default DB_PASSWORD=secret ./vendor/bin/phpunit packages/example-plugin/tests"
+```

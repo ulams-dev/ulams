@@ -1,0 +1,86 @@
+---
+title: Dictionaries
+description: Build glossaries of words with descriptions, categories and videos in the admin panel, import them from CSV, and limit free views for visitors.
+sidebar:
+  order: 11
+modules:
+  - dictionaries
+adminRoutes:
+  - /other/dictionary/**
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+A dictionary is a named glossary of words. Each word has a short description, categories and
+any number of longer descriptions with an optional video. Learner apps read the words through
+a public API. The [dictionaries](/reference/packages/dictionaries/) package provides it.
+
+| Screen | Route | Shown when |
+|---|---|---|
+| Dictionary list | `/other/dictionary` | `dictionary_list` or `dictionary_read` |
+| Dictionary (tabs Attributes, Words) | `/other/dictionary/:dictionaryId/:tab` | `dictionary_create` |
+| Word (tabs Attributes, Categories, Descriptions) | `/other/dictionary/:dictionaryId/:tab/:dictionaryWordId/:dictionaryWordTab` | `dictionary-word_create` |
+
+All screens also need the `ulams/dictionaries` package, and the menu item can be hidden with
+the `hideInMenu-OtherDictionary` setting. Note that opening a dictionary or a word, even to
+read it, needs the create permission.
+
+<Screenshot name="admin-other-dictionary" alt="The list of dictionaries" />
+
+## Creating a dictionary
+
+<Steps>
+
+1. Click **New** on the list.
+2. On **Attributes** enter the **Name**; the **Slug** is used in the public API URL.
+3. Set **Free views count**: how many words a visitor without access may open per day.
+   Leave it empty for no limit.
+4. Save, then open the **Words** tab to add words.
+
+</Steps>
+
+<Screenshot name="admin-other-dictionary-dictionaryid-tab" alt="The words tab of a dictionary with the import button" />
+
+## Words
+
+On the **Words** tab, **New** opens the word form:
+
+- **Attributes**: the **Word** and a short **Description**.
+- **Categories**: categories from the [category tree](/admin/categories-and-tags/).
+- **Descriptions**: a list of longer entries, each with a **Title**, a **Description** and a
+  **Video URL**.
+
+### Importing words
+
+With the `dictionary-word_import` permission the Words tab shows **Import dictionary**, which
+accepts one `.csv` or `.xlsx` file. The first row is a header and is skipped. Each following
+row is one word:
+
+| Column | Content |
+|---|---|
+| A | the word (required, up to 255 characters) |
+| B | the short description |
+| C | category names separated by commas; each must already exist |
+| D, E, F | title, description and video URL of the first long description |
+| G, H, I, … | further descriptions, three columns each |
+
+A row whose word already exists in the dictionary updates that word; its categories and
+descriptions are replaced by those in the file.
+
+## Access and free views
+
+The public endpoints are `GET /api/dictionaries/{slug}/words` (list),
+`GET /api/dictionaries/{slug}/words/categories` and `GET /api/dictionaries/{slug}/words/{id}`
+(one word).
+
+Opening one word counts as a view. A signed-in user who has been given access to the
+dictionary (optionally until an end date) has no limit. Everyone else gets **Free views
+count** word views per 24 hours, counted per user or, for anonymous visitors, per IP address;
+after that the API answers 429 Too Many Requests.
+
+<Aside>
+The admin panel has no screen for granting access. Use the admin API
+`POST /api/admin/dictionaries/{id}/access` (list with `GET`); a signed-in user can see their
+own access at `GET /api/dictionaries/access`.
+</Aside>

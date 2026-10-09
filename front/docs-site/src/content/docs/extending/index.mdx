@@ -1,0 +1,70 @@
+---
+title: Extending ulams
+description: What you can extend in ulams today (API packages, topic types, UI components, templates, payment drivers, events, LTI, H5P) and what is still planned.
+sidebar:
+  order: 0
+---
+
+import { Aside, Badge, Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+ulams has **no runtime plugin system yet**. There is no plugin manifest, no install button and no
+marketplace. All the extension points below exist in the code today. You use them by adding code
+to the monorepo: usually a new package in `api/packages`, plus a component in the frontends.
+Upgrades are merges, not plugin updates.
+
+<Aside type="caution" title="Planned, not built">
+The roadmap (Phase 7.3 and 7.4 in `docs/ROADMAP-PROMPT.md`) adds a plugin system: extension
+points for content components, UI catalogue components, source connectors, risk rules, webhook
+consumers and admin pages, plus a plugin manifest with versioning and compatibility checks,
+installable without forking core. The marketplace is to be designed for but not built. None of
+it is implemented yet; every Phase 7 item in `docs/ROADMAP-TODO.md` is open. See the
+[roadmap](/roadmap/).
+</Aside>
+
+## Extension points that exist today
+
+| You want to | Mechanism | Guide |
+|---|---|---|
+| Add API endpoints, settings, permissions, events | A package in `api/packages/<name>` with its own service provider | [A new API package](/extending/new-package/) |
+| Add a kind of lesson content | A topic content model registered with `Topic::registerContentClass` | [A new topic type](/extending/new-topic-type/) |
+| Add a block the reference frontend (and agents) can place | A `@ulams/ui` catalogue entry and Astro component | [A UI catalogue component](/extending/ui-components/) |
+| Send something when an event happens | A template variables class registered with `Template::register` | [Templates and channels](/extending/templates-and-channels/) |
+| Take payments with another provider | A gateway driver added with `PaymentGateway::extend` (partial support) | [Payment drivers](/extending/payment-drivers/) |
+| React to domain events | `Event::listen` in your provider | [Events and listeners](/extending/events-and-listeners/) |
+| Embed an external tool, or embed ulams in another LMS | LTI 1.3, platform and tool | [LTI tools](/extending/lti-tools/) |
+| Add interactive content types | H5P libraries in the isolated H5P service | [H5P content types](/extending/h5p-content-types/) |
+
+## Ground rules
+
+Every extension follows the project's non-negotiables (`CLAUDE.md`):
+
+- LMS entities are changed through package repositories and services, never by writing tables directly.
+- Every new endpoint has a policy or permission check, Swagger annotations and a tenant isolation test.
+- No GPL or AGPL code in the API, admin or frontends (`LICENSING.md`). H5P runs as a separate GPL service.
+- Do not use `escolalms/recommender`.
+- Mock the LLM in tests, and keep model names in config.
+
+## Coming
+
+<CardGrid>
+  <Card title="Outgoing webhooks">
+    <Badge text="Coming" variant="caution" /> Stripe-style signed webhooks with retries, replay
+    and a delivery log (roadmap 7.3). Today the API only receives webhooks; see
+    [Events and listeners](/extending/events-and-listeners/).
+  </Card>
+  <Card title="Plugin manifest">
+    <Badge text="Coming" variant="caution" /> Versioned plugins with compatibility checks,
+    installable without forking core (roadmap 7.4).
+  </Card>
+  <Card title="Scoped API keys and SDKs">
+    <Badge text="Coming" variant="caution" /> Scoped API keys with rate limits, a complete
+    OpenAPI document, then a PHP SDK after the TypeScript one (roadmap 7.3). `@ulams/sdk` exists
+    today in `front/sdk` as a fetch-only client.
+  </Card>
+  <Card title="MCP server">
+    <Badge text="Coming" variant="caution" /> Tools for agents operating the platform, for admins
+    and authors as well as learners (roadmap 7.5).
+  </Card>
+</CardGrid>
+
+<LinkCard title="Start with the example package" description="api/packages/example-plugin: provider, setting, permission, event, tests" href="/extending/new-package/" />

@@ -161,6 +161,23 @@ class Lesson extends Model
         return $query->where('lessons.active', '=', true);
     }
 
+    /**
+     * Eager-loads what program resources render: topics with their content and resources, for
+     * this lesson and nested lessons down to $depth levels.
+     */
+    public function scopeWithProgram(Builder $query, int $depth = 4): Builder
+    {
+        $with = [];
+        $prefix = '';
+        for ($level = 0; $level < $depth; $level++) {
+            $with[] = $prefix . 'topics.topicable';
+            $with[] = $prefix . 'topics.resources';
+            $prefix .= 'lessons.';
+        }
+
+        return $query->with($with);
+    }
+
     public function scopeMain(Builder $query): Builder
     {
         return $query->whereNull('parent_lesson_id');

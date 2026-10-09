@@ -1,0 +1,140 @@
+---
+title: Continuous integration
+description: The GitHub Actions workflows of ulams, what each one runs, when it runs, how it caches and which check guards pull requests.
+sidebar:
+  order: 30
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+All workflows live in [`.github/workflows`](https://github.com/ulams-dev/ulams/tree/main/.github/workflows).
+
+| Workflow | File | Triggers | Publishes |
+|---|---|---|---|
+| CI | `ci.yml` | every pull request; push to `main` and `phase-*`; manual | nothing |
+| H5P integration tests | `h5p-integration.yml` | manual only | nothing |
+| Publish images | `publish.yml` | push to `main`, `v*` tags, manual | images to GHCR |
+| Docs | `docs.yml` | pull requests touching the site, `docs/` or the code it documents; push to `main`; manual | this site to GitHub Pages |
+
+## CI (`ci.yml`)
+
+One workflow for the whole monorepo. Path filters are evaluated in a job, not in `on.paths`, so
+skipped jobs still report a status and a single job can be the required check. A new push to a
+pull request cancels the previous run (`concurrency` with `cancel-in-progress` on pull requests).
+Permissions are `contents: read`.
+
+### Jobs
+
+**`changes` (Detect changes)** uses `dorny/paths-filter@v3` to set two outputs:
+
+- `js`: something changed in `admin/**`, `front/**`, `api/h5p/**`, `api/pdf/**`, `package.json`,
+  `yarn.lock`, `turbo.json`, `.nvmrc` or `.github/**`;
+- `php`: something changed in `api/**` outside `api/h5p` and `api/pdf`, or in `.github/**`.
+
+**`js` (JS: admin, front, api-h5p, api-pdf)** runs when `js` is true or on manual dispatch:
+
+1. Node from `.nvmrc`, Yarn cache from `actions/setup-node`, `corepack yarn install --frozen-lockfile`.
+2. Licence guard: `yarn workspace front lint:gpl` fails on any `@lumieducation/*` or
+   `@escolalms/h5p-react` import in `front/src` (shared library included), and `lint:styled` on any
+   styled-components import in `front/src` or `admin/src`.
+3. Prettier check for `admin` (the admin `lint` script runs Prettier with `--write`, which never fails).
+4. Restores the Turborepo cache (`.turbo/cache`, keyed by OS and commit, falling back to the latest).
+5. `turbo run typecheck lint build test --filter=admin --filter=front --filter=api-h5p --filter=api-pdf --concurrency=2`.
+
+<Aside type="caution">
+The `js` job filters on `admin`, `front`, `api-h5p` and `api-pdf` only. `@ulams/sdk`, `@ulams/ui`,
+`@ulams/web` and `@ulams/docs` are not typechecked, linted, built or tested in `ci.yml`. A change
+under `front/web` triggers the job (the path filter matches `front/**`) but runs none of its tasks.
+Run them locally: `corepack yarn turbo run typecheck lint build test --filter=@ulams/web --filter=@ulams/ui --filter=@ulams/sdk`.
+</Aside>
+
+**`php` (PHPUnit, one job per shard)** runs when `php` is true or on manual dispatch. Matrix
+`shard: [learning, tasks-topics, gift-reports, commerce, platform, content]`, `fail-fast: false`:
+
+1. Service containers: `postgres:12` (database `default`, user `default`, password `secret`) and
+   `valkey/valkey:8-alpine`, both with health checks.
+2. Resolves the shard's suites from `PHPUNIT_SHARDS` and checks that every `<testsuite>` in
+   `api/phpunit.xml` is in exactly one shard.
+3. Installs `ffmpeg` (ffprobe is needed by topic types and the video package).
+4. PHP 8.4 via `shivammathur/setup-php` with the extensions of the PHP image (`apcu`, `bcmath`,
+   `exif`, `gd`, `intl`, `pcntl`, `pdo_pgsql`, `redis`, `zip`), `memory_limit=2G`, no coverage.
+5. Composer cache keyed on `api/composer.lock`; `composer install` from the lock.
+6. Copies `api/docker/envs/.env.ci.postgres` to `.env` (the job's `DB_*` and `REDIS_*` variables
+   override it), runs `migrate:fresh`, seeds permissions, creates Passport keys and a personal
+   client, copies the keys for Testbench and runs the courses test migrations.
+7. On the `platform` shard only: `php artisan l5-swagger:generate`, which fails on broken
+   Swagger annotations.
+8. PHPUnit for the shard's suites without the quarantined tests, with a JUnit report.
+9. Quarantined tests of the shard, non-blocking (`continue-on-error`).
+10. On failure, uploads the JUnit file and `api/storage/logs/` as an artifact for 7 days.
+
+Shards and quarantine are explained in [Testing](/developers/testing/#how-ci-shards-phpunit).
+
+**`ci-ok` (CI OK)** always runs after `changes`, `js` and `php`. It fails if any of them failed
+or was cancelled and passes when they passed or were skipped by the path filters. This is the
+job to mark as the required status check: the workflow comment names it as "the single required
+check". Branch protection is configured in GitHub, not in the repository.
+
+## H5P integration tests (`h5p-integration.yml`)
+
+Manual (`workflow_dispatch`). Starts `postgres:12`, `valkey/valkey:8-alpine` and
+`bitnamilegacy/minio:latest` as service containers, installs the workspaces, downloads the H5P
+core and editor files (`yarn workspace api-h5p download:core`), waits for MinIO and runs
+`corepack yarn test:h5p:integration` (`test/http.test.ts` and `test/pg-storage.test.ts`). The
+unit suites of `api-h5p` already run in `ci.yml`.
+
+## Publish images (`publish.yml`)
+
+Builds the seven container images, multi-arch, with provenance and an SBOM, and pushes them to
+`ghcr.io/ulams-dev/*`. Runs on push to `main`, on `v*` tags and manually; runs for the same ref
+queue rather than cancel. Permissions: `contents: read`, `packages: write` (the `GITHUB_TOKEN`
+logs in to GHCR).
+
+- Job `php + api`: builds `php` from `api/docker/php`, then `api` from `api/Dockerfile` with
+  `BASE_IMAGE` pinned to the digest of the `php` image it just pushed.
+- Job `apps` (matrix, `fail-fast: false`): `h5p`, `pdf`, `admin`, `front`, `web`, all built from the
+  repository root.
+
+Layer caching uses the GitHub Actions cache (`type=gha`) with one scope per image. Tags, labels and
+licences are on [Container images](/developers/container-images/).
+
+## Docs (`docs.yml`)
+
+Builds this site (`front/docs-site`). It is separate from `ci.yml` and has two jobs:
+
+- **`check` (Check and build)** runs on pull requests that touch anything the site is made from:
+  `front/docs-site/**`, `docs/**`, root `*.md` files, `api/packages/**`, `api/routes/**`,
+  `api/app/Console/**`, `api/docs/**`, `admin/config/routes.ts`, `front/web/src/pages/**`,
+  `front/ui/src/registry.ts`, `package.json`, `yarn.lock` and the workflow itself; and on every
+  push to `main`. Steps: `sync` (generate pages from the repository), `coverage --report` (every
+  package, admin route, learner route and topic type must be documented by a written page),
+  `typecheck` (`astro check`) and `build` with link validation.
+- **`deploy` (Deploy to GitHub Pages)** runs after `check` on pushes to `main` only. It reads the
+  Pages origin and base path from `actions/configure-pages`, builds with `DOCS_SITE` and
+  `DOCS_BASE` set to them, uploads `front/docs-site/dist` and publishes it with
+  `actions/deploy-pages`. It needs `pages: write` and `id-token: write`, and the repository's
+  Pages source must be set to "GitHub Actions".
+
+Links are written without the base path; a build under a base path prefixes them in the HTML
+and skips link validation, which the root build in `check` has already done.
+`DOCS_VALIDATE_LINKS=0` turns validation off for a local build.
+
+## Caching summary
+
+| Cache | Used by | Key |
+|---|---|---|
+| Yarn cache (`actions/setup-node`, `cache: yarn`) | `js`, H5P integration | `yarn.lock` |
+| Turborepo local cache (`.turbo/cache`) | `js` | `turbo-<os>-<sha>`, restore from `turbo-<os>-` |
+| Composer files cache | `php` | `api/composer.lock` |
+| Docker layer cache (`type=gha`) | Publish images | one scope per image |
+
+Turborepo remote caching is not configured.
+
+## Before you push
+
+```bash
+corepack yarn turbo run typecheck lint build test --filter=<workspace>
+```
+
+and the PHPUnit suites of the packages you touched (see [Testing](/developers/testing/)). The
+pre-commit hook runs lint-staged only (see [Coding standards](/developers/coding-standards/)).

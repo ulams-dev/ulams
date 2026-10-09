@@ -1,0 +1,107 @@
+---
+title: Backups and restore
+description: What to back up in a multi-tenant ulams installation - secrets, the platform and per-tenant databases, buckets and volumes - and how to restore them.
+sidebar:
+  order: 9
+modules:
+  - tenancy
+  - api
+  - api-h5p
+needsReview: "The backup and restore commands follow the example compose file (project name ulams, POSTGRES_USER and POSTGRES_DB = ulams) and have not been rehearsed; run a restore drill."
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+Tenancy in ulams is **one database, one bucket and one key pair per tenant**, plus a registry in
+the platform database. A complete backup covers all of them.
+
+## What to back up
+
+| Item | Where (example) | Why it matters |
+|---|---|---|
+| Secrets | `.env` next to `docker-compose.yml` | `APP_KEY` decrypts the tenant secrets (database passwords, Passport keys, tenant `APP_KEY`s) stored in the `tenants` table. Without it, a database restore is useless. Keep it apart from the data backups. |
+| Platform database | `ulams` (`POSTGRES_DB`) | Platform LMS data and the `tenants` registry |
+| Tenant databases | `ulams_<slug>` | Each tenant's LMS data, including the H5P service's `h5p` schema |
+| PostgreSQL roles | cluster globals | One role per tenant (`ulams_<slug>`) with its password |
+| Buckets | platform bucket and `ulams-<slug>` | Uploaded files, videos, H5P content, packages on the `s3` disk |
+| `api_storage` volume | `/var/www/html/storage` | Local disks (SCORM packages with the default `SCORM_DISK=local`), logs; tenant Passport keys are also here but are restored from the database |
+| `h5p_libraries` volume | `/data/libraries` | Installed H5P content types, shared by all tenants |
+| `valkey_data` volume | `/data` | Queued jobs not yet processed; optional |
+| `caddy_data` volume | `/data` | Certificates and ACME account; can be re-issued |
+
+Not needed: the tenant env files (`.env.<host>`) and the platform `.env` inside the container.
+They are rebuilt on every start from the `LARAVEL_*` variables and the `tenants` table
+(`ulams:tenant:sync-env`).
+
+## Taking a backup
+
+```bash
+cd /opt/ulams
+
+# 1. PostgreSQL roles (tenant roles have passwords)
+docker compose exec -T postgres pg_dumpall -U ulams --globals-only > globals.sql
+
+# 2. The platform database and every tenant database
+for db in $(docker compose exec -T postgres psql -U ulams -d postgres -Atc \
+  "SELECT datname FROM pg_database WHERE datname = 'ulams' OR datname LIKE 'ulams\_%'"); do
+  docker compose exec -T postgres pg_dump -U ulams -Fc "$db" > "$db.dump"
+done
+
+# 3. Volumes
+for v in api_storage h5p_libraries; do
+  docker run --rm -v "ulams_$v:/data:ro" -v "$PWD:/backup" alpine \
+    tar czf "/backup/$v.tgz" -C /data .
+done
+```
+
+For the buckets use the tool of your storage provider, or `rclone sync` / `mc mirror` from the
+store to a second location, one bucket per tenant plus the platform bucket. The list of tenants
+and buckets comes from `docker compose exec api php artisan ulams:tenant:list`.
+
+Take the database dumps first and copy the buckets right after: rows that point at files are then
+older than the files, which is the safe direction. For continuous protection use PostgreSQL WAL
+archiving (for example pgBackRest or a managed service with point-in-time recovery) and bucket
+versioning instead of nightly copies.
+
+<Aside type="caution">
+  Copy backups off the server and encrypt them: the dumps contain password hashes, personal data
+  of learners and the encrypted tenant secrets, and `.env` contains the key to those secrets.
+</Aside>
+
+## Restoring the whole installation
+
+<Steps>
+
+1. Put back `docker-compose.yml`, `Caddyfile` and **the same `.env`** (same `APP_KEY` and
+   `JWT_*_KEY_BASE64`).
+
+2. Start PostgreSQL alone and restore roles and databases:
+
+   ```bash
+   docker compose up -d postgres
+   docker compose exec -T postgres psql -U ulams -d postgres < globals.sql
+   for f in *.dump; do
+     docker compose exec -T postgres pg_restore -U ulams -d postgres --create < "$f"
+   done
+   ```
+
+   The role `ulams` already exists (the image creates it), so `psql` reports an error for it; the
+   tenant roles are created. The platform database `ulams` also exists already: restore it with
+   `pg_restore -U ulams -d ulams --clean --if-exists` instead of `--create`.
+
+3. Restore the buckets and the `api_storage` and `h5p_libraries` volumes (the reverse of the
+   `tar` command above, into empty volumes).
+
+4. Start everything: `docker compose up -d`. On start the API migrates (nothing to do on a
+   current backup) and `ulams:tenant:sync-env` rebuilds every tenant's env file and Passport
+   keys from the restored `tenants` table.
+
+</Steps>
+
+## Restoring one tenant
+
+Restore its database (`ulams_<slug>`) and bucket (`ulams-<slug>`) only. Stop traffic to the tenant
+during the restore, for example by stopping the `api` container on a single server, drop and
+recreate the database from the dump, sync the bucket back, then start again. The platform
+registry row of the tenant does not change, so its env file and keys stay valid. H5P libraries are
+shared: restoring `h5p_libraries` affects every tenant.

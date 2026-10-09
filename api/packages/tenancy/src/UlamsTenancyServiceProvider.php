@@ -8,6 +8,7 @@ use Ulams\Tenancy\Console\CreateTenantCommand;
 use Ulams\Tenancy\Console\DeleteTenantCommand;
 use Ulams\Tenancy\Console\ExportH5PServiceConfigCommand;
 use Ulams\Tenancy\Console\ListTenantsCommand;
+use Ulams\Tenancy\Console\ScheduleLoopCommand;
 use Ulams\Tenancy\Console\SeedTenantDemoCommand;
 use Ulams\Tenancy\Console\SyncTenantEnvCommand;
 use Ulams\Tenancy\Http\Middleware\RejectUnknownHost;
@@ -68,6 +69,7 @@ class UlamsTenancyServiceProvider extends ServiceProvider
                 SyncTenantEnvCommand::class,
                 SeedTenantDemoCommand::class,
                 ExportH5PServiceConfigCommand::class,
+                ScheduleLoopCommand::class,
             ]);
             $this->publishes([
                 __DIR__ . '/config.php' => config_path(self::CONFIG_KEY . '.php'),

@@ -46,7 +46,7 @@ class CourseWithProgramResource extends JsonResource
             'language' =>  $course->language,
             'description' => $course->description,
             'level' =>  $course->level,
-            'lessons' => LessonWithTopicsResource::collection($course->lessons()->main()->active()->orderBy('order')->get()),
+            'lessons' => LessonWithTopicsResource::collection($course->lessons()->main()->active()->withProgram()->orderBy('order')->get()),
             'poster_path' =>  $course->poster_path,
             'poster_url' =>  $course->poster_url,
             'active_from' => $course->active_from,

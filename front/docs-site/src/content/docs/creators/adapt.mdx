@@ -1,0 +1,50 @@
+---
+title: Adapt Learning courses
+description: Use courses built with the Adapt Learning framework by uploading their SCORM export, and what the planned JSON-source path will add.
+sidebar:
+  order: 19
+modules:
+  - adapt
+  - scorm
+---
+
+import { Aside, Badge, Steps } from "@astrojs/starlight/components";
+
+[Adapt Learning](https://www.adaptlearning.org) builds responsive e-learning courses. ulams supports
+Adapt in two ways ("paths"); only the first is ready for authors today.
+
+## Path A: upload the SCORM export (works today)
+
+<Steps>
+
+1. In the Adapt authoring tool or framework, build the course with the **spoor** extension
+   (`adapt-contrib-spoor`), which exports it as a SCORM package.
+2. Upload the `.zip` in **Courses → SCORMs**. ulams recognises Adapt packages from their files and
+   labels them **Adapt** in the **Authoring tool** column.
+3. Put the package's SCO in a lesson with a **SCORM** topic, or use it as the whole course.
+
+</Steps>
+
+From there it behaves exactly like any other SCORM package: same upload checks, same player, same
+completion tracking. See [SCORM packages](/creators/scorm/).
+
+## Path B: Adapt JSON sources <Badge text="Coming" variant="caution" />
+
+The plan ([ADR 0013](/decisions/0013-adapt-build-worker/), status Proposed) is to keep the Adapt course
+source itself in ulams, as versioned JSON (`course`, `config`, `contentObjects`, `articles`, `blocks`,
+`components`), and build it into a SCORM package with a separate build service. The built package then
+goes through Path A, so there is still no separate Adapt topic type.
+
+What exists now is the API side only, and it is **off by default**:
+
+- an administrator or developer can turn it on with `ADAPT_SOURCE_ENABLED=true`;
+- the API (`/api/admin/adapt`, permission `adapt_manage`) stores sources with versions, checks their
+  structure (the six parts, unique `_id`s, parent links, components from the allowed core plugins) and
+  reports errors with their path, for example `/components/3/_component`;
+- a build can be queued, but the build service itself is not built yet, so builds cannot run in a
+  normal installation.
+
+<Aside>
+There is no admin screen for Adapt sources. Until Path B is finished, build Adapt courses in Adapt and
+upload the SCORM export (Path A).
+</Aside>

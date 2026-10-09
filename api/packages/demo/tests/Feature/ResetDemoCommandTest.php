@@ -140,6 +140,27 @@ class ResetDemoCommandTest extends TestCase
         $this->assertCount(5, $this->runner->calls);
     }
 
+    public function testRecreatesTheLtiKeysWhenTheLtiPackageIsInstalled(): void
+    {
+        config(['ulams_tenancy.tenant_slug' => 'coffee']);
+        $this->app->make(\Illuminate\Contracts\Console\Kernel::class)->registerCommand(new class extends \Illuminate\Console\Command {
+            protected $signature = 'ulams:lti:rotate-keys {--init}';
+
+            public function handle(): int
+            {
+                return self::SUCCESS;
+            }
+        });
+
+        $this->artisan('ulams:demo:reset', ['--force' => true])->assertExitCode(0);
+
+        $this->assertSame(
+            ['migrate:fresh', 'passport:client', 'db:seed', 'ulams:lti:rotate-keys', 'ulams:tenant:seed-demo', 'ulams:demo:seed'],
+            $this->runner->commands()
+        );
+        $this->assertSame(['ulams:lti:rotate-keys', '--init'], $this->runner->calls[3]['arguments']);
+    }
+
     public function testAFailingStepFailsTheReset(): void
     {
         config(['ulams_tenancy.tenant_slug' => 'coffee']);

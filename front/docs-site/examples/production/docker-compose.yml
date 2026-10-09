@@ -1,0 +1,296 @@
+# ulams on a single server with the published images (ghcr.io/ulams-dev/*).
+#
+# Example, not tested end to end by the project: read the Operators section of the docs first.
+# Usage: copy this file, Caddyfile and .env.example (as .env) to one directory, fill in .env,
+# then `docker compose up -d` (add `--profile minio` for the bundled object store).
+#
+# Differences from the development stack (api/docker-compose.yml): published images instead of
+# builds, TLS in Caddy, no Adminer/MailHog, secrets from .env, and the Laravel env files shared
+# with the H5P service through the tenant_env volume instead of a bind mount of the source tree.
+
+name: ulams
+
+x-service: &service
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options:
+      max-size: "20m"
+      max-file: "5"
+
+volumes:
+  postgres_data:
+  valkey_data:
+  # Laravel storage/: platform and tenant Passport keys, logs, local disks (e.g. SCORM_DISK=local)
+  api_storage:
+  # Copies of the Laravel env files (.env, .env.<tenant host>), written by the api service
+  tenant_env:
+  # Installed H5P libraries, shared by every tenant
+  h5p_libraries:
+  caddy_data:
+  caddy_config:
+  minio_data:
+
+services:
+  caddy:
+    <<: *service
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      ULAMS_DOMAIN: ${ULAMS_DOMAIN:?set ULAMS_DOMAIN}
+      ULAMS_CONTENT_DOMAIN: ${ULAMS_CONTENT_DOMAIN:?set ULAMS_CONTENT_DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      # read only: the on-demand TLS check issues certificates for provisioned tenants only
+      - tenant_env:/tenant-env:ro
+    depends_on:
+      - api
+      - h5p
+      - web
+      - admin
+
+  # Laravel API: php-fpm (port 9000), Horizon, tenant queue workers and the scheduler under
+  # supervisord (init.sh). On start it writes .env from the LARAVEL_* variables, migrates the
+  # platform, rebuilds the tenant env files and keys (ulams:tenant:sync-env --migrate) and
+  # seeds permissions.
+  api:
+    <<: *service
+    image: ghcr.io/ulams-dev/api:${ULAMS_VERSION:-latest}
+    # The H5P service reads the Laravel env files (ENV_DIR); they live in /var/www/html, so a
+    # small loop copies them to the tenant_env volume every 5 seconds before init.sh starts.
+    command:
+      - bash
+      - -c
+      - |
+        (
+          while true; do
+            for f in /var/www/html/.env /var/www/html/.env.*; do
+              [ -f "$$f" ] || continue
+              case "$${f##*/}" in .env.example|.env.backup) continue ;; esac
+              t="/tenant-env/$${f##*/}"
+              if ! cmp -s "$$f" "$$t"; then
+                cp "$$f" "$$t.tmp" && chgrp 82 "$$t.tmp" && chmod 0640 "$$t.tmp" && mv "$$t.tmp" "$$t"
+              fi
+            done
+            for t in /tenant-env/.env*; do
+              [ -f "$$t" ] || continue
+              [ -f "/var/www/html/$${t##*/}" ] || rm -f "$$t"
+            done
+            sleep 5
+          done
+        ) &
+        exec /var/www/html/init.sh
+    environment:
+      # read by init.sh directly
+      JWT_PRIVATE_KEY_BASE64: ${JWT_PRIVATE_KEY_BASE64:?set JWT_PRIVATE_KEY_BASE64}
+      JWT_PUBLIC_KEY_BASE64: ${JWT_PUBLIC_KEY_BASE64:?set JWT_PUBLIC_KEY_BASE64}
+      # LARAVEL_<NAME> becomes <NAME> in the platform .env (docker/envs/envs.php);
+      # tenant env files start from it.
+      LARAVEL_APP_NAME: ulams
+      LARAVEL_APP_ENV: production
+      LARAVEL_APP_DEBUG: "false"
+      LARAVEL_APP_KEY: ${APP_KEY:?set APP_KEY}
+      LARAVEL_APP_URL: https://api.${ULAMS_DOMAIN}
+      LARAVEL_DB_CONNECTION: pgsql
+      LARAVEL_DB_HOST: postgres
+      LARAVEL_DB_PORT: "5432"
+      LARAVEL_DB_DATABASE: ${POSTGRES_DB:-ulams}
+      LARAVEL_DB_USERNAME: ${POSTGRES_USER:-ulams}
+      LARAVEL_DB_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      LARAVEL_REDIS_HOST: valkey
+      LARAVEL_REDIS_PORT: "6379"
+      LARAVEL_REDIS_PASSWORD: ${VALKEY_PASSWORD:?set VALKEY_PASSWORD}
+      LARAVEL_CACHE_DRIVER: redis
+      LARAVEL_SESSION_DRIVER: cookie
+      LARAVEL_QUEUE_DRIVER: redis
+      LARAVEL_QUEUE_CONNECTION: redis
+      LARAVEL_BROADCAST_DRIVER: log
+      LARAVEL_MAIL_DRIVER: smtp
+      LARAVEL_MAIL_HOST: ${MAIL_HOST}
+      LARAVEL_MAIL_PORT: ${MAIL_PORT:-587}
+      LARAVEL_MAIL_USERNAME: ${MAIL_USERNAME}
+      LARAVEL_MAIL_PASSWORD: ${MAIL_PASSWORD}
+      LARAVEL_MAIL_ENCRYPTION: ${MAIL_ENCRYPTION:-tls}
+      LARAVEL_MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS}
+      LARAVEL_MAIL_FROM_NAME: ${MAIL_FROM_NAME:-ulams}
+      # e-mail templates are rendered by the mjml service (the API image has no mjml binary)
+      LARAVEL_MJML_API_URL: http://mjml:15500/v1
+      LARAVEL_FILESYSTEM_DRIVER: s3
+      LARAVEL_AWS_ACCESS_KEY_ID: ${S3_KEY}
+      LARAVEL_AWS_SECRET_ACCESS_KEY: ${S3_SECRET}
+      LARAVEL_AWS_DEFAULT_REGION: ${S3_REGION:-us-east-1}
+      LARAVEL_AWS_BUCKET: ${S3_PLATFORM_BUCKET:-ulams}
+      LARAVEL_AWS_ENDPOINT: ${S3_ENDPOINT}
+      LARAVEL_AWS_URL: ${S3_PUBLIC_URL}/${S3_PLATFORM_BUCKET:-ulams}
+      LARAVEL_AWS_USE_PATH_STYLE_ENDPOINT: ${S3_USE_PATH_STYLE:-true}
+      LARAVEL_H5P_SERVICE_URL: http://h5p:8080
+      LARAVEL_H5P_INTERNAL_TOKEN: ${H5P_INTERNAL_TOKEN:?set H5P_INTERNAL_TOKEN}
+      LARAVEL_PDF_SERVICE_URL: http://pdf:3000
+      LARAVEL_PDF_INTERNAL_TOKEN: ${PDF_INTERNAL_TOKEN:?set PDF_INTERNAL_TOKEN}
+      LARAVEL_CONTENT_ORIGIN: https://platform.${ULAMS_CONTENT_DOMAIN}
+      LARAVEL_INITIAL_USER_EMAIL: ${PLATFORM_ADMIN_EMAIL}
+      LARAVEL_INITIAL_USER_PASSWORD: ${PLATFORM_ADMIN_PASSWORD}
+      LARAVEL_SENTRY_LARAVEL_DSN: ${SENTRY_DSN:-}
+      LARAVEL_SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT:-production}
+      # Tenancy (packages/tenancy): names and URLs of new tenants
+      LARAVEL_TENANCY_PLATFORM_HOSTS: api.${ULAMS_DOMAIN},caddy,api,localhost,127.0.0.1
+      LARAVEL_TENANCY_SCHEME: https
+      LARAVEL_TENANCY_API_HOST: "{slug}.api.${ULAMS_DOMAIN}"
+      LARAVEL_TENANCY_FRONT_HOST: "{slug}.app.${ULAMS_DOMAIN}"
+      LARAVEL_TENANCY_ADMIN_HOST: "{slug}.admin.${ULAMS_DOMAIN}"
+      LARAVEL_TENANCY_CONTENT_HOST: "{slug}.${ULAMS_CONTENT_DOMAIN}"
+      LARAVEL_TENANCY_EMAIL_DOMAIN: "{slug}.${ULAMS_DOMAIN}"
+      LARAVEL_TENANCY_STORAGE_PUBLIC_URL: ${S3_PUBLIC_URL}
+      LARAVEL_TENANT_DEMO_PASSWORD: ${TENANT_INITIAL_PASSWORD:?set TENANT_INITIAL_PASSWORD}
+    volumes:
+      - api_storage:/var/www/html/storage
+      - tenant_env:/tenant-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+      mjml:
+        condition: service_started
+      pdf:
+        condition: service_started
+
+  # H5P player, editor and content API (GPL-3.0-or-later, see LICENSING.md). Multi-tenant: the
+  # request host selects the Laravel env file and the Passport public key.
+  h5p:
+    <<: *service
+    image: ghcr.io/ulams-dev/h5p:${ULAMS_VERSION:-latest}
+    # group of the Laravel storage files (www-data, gid 82): public keys and env copies are 0640
+    group_add:
+      - "82"
+    environment:
+      PORT: "8080"
+      LOG_LEVEL: info
+      PUBLIC_URL: https://api.${ULAMS_DOMAIN}
+      TENANCY_MODE: env-files
+      ENV_DIR: /laravel
+      KEYS_DIR: /laravel-storage
+      PLATFORM_HOSTS: api.${ULAMS_DOMAIN}
+      CORS_ORIGINS: https://app.${ULAMS_DOMAIN},https://admin.${ULAMS_DOMAIN},https://api.${ULAMS_DOMAIN}
+      TENANT_FRONT_ORIGIN_PATTERNS: https://{slug}.app.${ULAMS_DOMAIN},https://{slug}.admin.${ULAMS_DOMAIN}
+      REDIS_HOST: valkey
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ${VALKEY_PASSWORD}
+      REDIS_DB: "0"
+      REDIS_KEY_PREFIX: "h5p:"
+      # fallbacks; each tenant's bucket and credentials come from its env file
+      S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_REGION: ${S3_REGION:-us-east-1}
+      S3_KEY: ${S3_KEY}
+      S3_SECRET: ${S3_SECRET}
+      S3_BUCKET: ${S3_PLATFORM_BUCKET:-ulams}
+      S3_PREFIX: h5p
+      S3_FORCE_PATH_STYLE: ${S3_USE_PATH_STYLE:-true}
+      JWT_PUBLIC_KEY_PATH: /laravel-storage/oauth-public.key
+      # profile calls (GET /api/profile/me) go to Caddy's internal listener with the tenant host
+      LARAVEL_API_URL: http://caddy:8081
+      LARAVEL_API_HOST: api.${ULAMS_DOMAIN}
+      H5P_INTERNAL_TOKEN: ${H5P_INTERNAL_TOKEN}
+      H5P_MAX_FILE_SIZE_MB: "64"
+      H5P_MAX_TOTAL_SIZE_MB: "256"
+    volumes:
+      - h5p_libraries:/data/libraries
+      - tenant_env:/laravel:ro
+      - api_storage:/laravel-storage:ro
+    depends_on:
+      - api
+      - valkey
+
+  # PDF renderer (certificates); internal only
+  pdf:
+    <<: *service
+    image: ghcr.io/ulams-dev/pdf:${ULAMS_VERSION:-latest}
+    environment:
+      PORT: "3000"
+      LOG_LEVEL: info
+      PDF_INTERNAL_TOKEN: ${PDF_INTERNAL_TOKEN}
+      PDF_MAX_CONCURRENCY: "2"
+      PDF_MAX_QUEUE: "16"
+
+  # Learner front (Astro SSR). Server-side it calls https://<slug>.api.<ULAMS_DOMAIN>, so the
+  # server must be able to reach its own public host names.
+  web:
+    <<: *service
+    image: ghcr.io/ulams-dev/web:${ULAMS_VERSION:-latest}
+    environment:
+      ULAMS_TENANT_HOSTS: "{slug}.app.${ULAMS_DOMAIN}=>https://{slug}.api.${ULAMS_DOMAIN}"
+      ULAMS_ADMIN_URL: "https://{slug}.admin.${ULAMS_DOMAIN}"
+      ULAMS_PLATFORM_HOSTS: app.${ULAMS_DOMAIN}
+      ULAMS_DEMO_TENANTS: ""
+      ULAMS_WARM_TENANTS: ""
+      ULAMS_DEFAULT_TENANT: ""
+
+  # Admin and author panel (static build behind Apache); the tenant API comes from the host
+  admin:
+    <<: *service
+    image: ghcr.io/ulams-dev/admin:${ULAMS_VERSION:-latest}
+    environment:
+      REACT_APP_TENANT_API_HOST_PATTERN: "{slug}.admin.${ULAMS_DOMAIN}=>https://{slug}.api.${ULAMS_DOMAIN}"
+      REACT_APP_SENTRYDSN: ${ADMIN_SENTRY_DSN:-}
+
+  postgres:
+    <<: *service
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ulams}
+      POSTGRES_USER: ${POSTGRES_USER:-ulams}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # Valkey (BSD-3-Clause), Redis protocol
+  valkey:
+    <<: *service
+    image: valkey/valkey:8-alpine
+    command: ["sh", "-c", "exec valkey-server --requirepass \"$$VALKEY_PASSWORD\" --appendonly yes"]
+    environment:
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD}
+    volumes:
+      - valkey_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli -a \"$$VALKEY_PASSWORD\" --no-auth-warning ping | grep -q PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # MJML rendering for e-mail templates (internal only)
+  mjml:
+    <<: *service
+    image: danihodovic/mjml-server:latest
+
+  # Optional bundled object store: `docker compose --profile minio up -d`. MinIO is AGPL-3.0
+  # and this image line is no longer maintained upstream; prefer an external S3-compatible
+  # service. MINIO_DEFAULT_BUCKETS creates the platform bucket with public read.
+  minio:
+    <<: *service
+    image: bitnamilegacy/minio:latest
+    profiles: ["minio"]
+    environment:
+      MINIO_ROOT_USER: ${S3_KEY}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET}
+      MINIO_DEFAULT_BUCKETS: ${S3_PLATFORM_BUCKET:-ulams}:download
+    volumes:
+      - minio_data:/bitnami/minio/data
+
+  # Optional virus scanning of uploads (UPLOADS_SCANNER=clamd), GPL-2.0, separate process:
+  # `docker compose --profile av up -d` and add LARAVEL_UPLOADS_SCANNER: clamd to the api service.
+  clamav:
+    <<: *service
+    image: clamav/clamav:1.4
+    profiles: ["av"]

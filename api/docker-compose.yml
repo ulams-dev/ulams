@@ -70,6 +70,8 @@ services:
       # H5P service (api/h5p), server-to-server; same token as H5P_INTERNAL_TOKEN of the h5p service
       - LARAVEL_H5P_SERVICE_URL=http://h5p:8080
       - LARAVEL_H5P_INTERNAL_TOKEN=ulams-h5p-internal-dev-token
+      # Platform content origin (SCORM/LiaScript players, docs/content-origin.md); tenants get theirs from ulams:tenant:sync-env
+      - LARAVEL_CONTENT_ORIGIN=http://content.localhost
       # PDF renderer (api/pdf), server-to-server; same token as PDF_INTERNAL_TOKEN of the pdf service
       - LARAVEL_PDF_SERVICE_URL=http://pdf:3000
       - LARAVEL_PDF_INTERNAL_TOKEN=ulams-pdf-internal-dev-token

@@ -1,0 +1,163 @@
+---
+title: Settings
+description: Edit tenant settings in the admin panel, from global keys and the learner theme and accent to package configuration, and how each kind is stored.
+sidebar:
+  order: 5
+modules:
+  - settings
+adminRoutes:
+  - /configuration/settings/**
+needsReview: "Package configuration is written to the API config files when CONFIG_USE_DATABASE is false (the default, and no env file in the repository sets it). Confirm whether tenant deployments set CONFIG_USE_DATABASE=true; otherwise a change in one tenant affects all tenants on the same API."
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+**Configuration → Settings** (`/configuration/settings`, permission `settings_list`) edits two
+different kinds of data, both provided by the [settings](/reference/packages/settings/)
+package:
+
+| | Settings | Package configuration |
+|---|---|---|
+| What it is | Free key–value rows with a group, key, type and value | Laravel config keys that packages register as administrable |
+| Examples | `global.companyName`, `theme.accent`, `hideInMenu-CoursesCategories` | `ulams_auth.registration`, `ulams_payments.default_currency`, `mattermost.package_status` |
+| Who defines the keys | You, or the panel's suggestions | The packages, in code |
+| Stored in | the tenant database (`settings` table) | see [Where package configuration is stored](#where-package-configuration-is-stored) |
+| Read by clients | `GET /api/settings` (public rows) | `GET /api/config` (public keys) |
+| Admin API | `/api/admin/settings` | `/api/admin/config` |
+| Tabs | User settings, Global settings | one tab per package |
+
+The tab is part of the URL: `/configuration/settings/:tab`.
+
+<Screenshot name="admin-configuration-settings" alt="The settings screen with the User settings, Global settings and package tabs" />
+
+## Settings rows
+
+Every row has:
+
+- **Group** and **Key**: the name, for example group `global` and key `frontURL`.
+- **Type**: `text`, `markdown`, `json`, `file`, `image`, `boolean`, `number` or `array`. The
+  value editor changes with the type: a file picker for `file` and `image`, a markdown editor,
+  a JSON editor, a checkbox for `boolean`.
+- **Public**: the row can be read without signing in.
+- **Enumerable**: the row is included in the list `GET /api/settings`. A public row that is
+  not enumerable can only be read by name (`GET /api/settings/{group}/{key}`).
+- **Sort**: the order in the list.
+
+Public, enumerable rows are what frontends read to brand the site. They are also available in
+templates as global variables (see [Templates](/admin/templates/#variables)).
+
+### User settings tab
+
+Lists the rows of every group except `global` and filters them by group. Use **New** to add a
+row in any group, **Edit** and **Delete** on existing rows. Despite the name, these are tenant
+settings, not settings of a single user; per-user settings are on
+[My profile](/admin/my-profile/).
+
+### Global settings tab
+
+<Screenshot name="admin-configuration-settings-tab" alt="The Global settings tab with suggested keys" />
+
+Lists the rows of the `global` group. The panel also suggests the keys it understands: a
+suggested key that does not exist yet has a **Create** button instead of **Edit**, pre-filled
+with the type and a default value. If the tenant has no global rows at all, the screen shows a
+warning to add them.
+
+| Key | Type | Used for |
+|---|---|---|
+| `companyName`, `companyURL` | text | The organisation name and website, shown by frontends and in templates |
+| `frontURL` | text | The learner site URL: the dashboard's **Go to platform** button and the email verification link sent from the user form |
+| `logo` | image | The logo in the admin panel menu |
+| `logoLogin` | image | The logo on the admin sign-in screen |
+| `logoFooter` | image | The footer logo |
+| `footerFontColor` | text | Footer text colour |
+| `showLoginBackgroundImage` | boolean | Background image on the admin sign-in screen |
+| `loginHeaderBackgroundColor`, `loginHeaderFontColor`, `loginFormBackgroundColor` | text | Colours of the admin sign-in screen |
+| `contentBackgroundColor` | text | Background colour of the admin panel content area |
+| `technicalMaintenance`, `technicalMaintenanceText` | boolean, text | A maintenance flag and message for frontends |
+| `maxLessonsNestingInProgram`, `minTopicNestingInProgram` | number | Limits of lesson nesting in the course program editor |
+| `disable-ECommerce` | boolean | Hides the Sales menu |
+| `disable-Certificates` | boolean | Hides the PDF (certificate) templates tab |
+| `disableTopicType-{type}` | boolean | Hides a topic type in the course editor, one key per type |
+| `hideInMenu-{Route}` | boolean or array | Hides a menu item, one key per admin route (for example `hideInMenu-CoursesCategories`) |
+| `hideInCourseTabs-{tab}` | boolean | Hides the `statistics`, `user_submission` or `user_projects` tab of the course editor |
+| `showInCourseAdditionalSettings-public` | boolean | Shows the `public` switch in the course editor |
+| `hideTemplateTab-email`, `hideTemplateTab-sms` | boolean | Hides a tab on the Templates screen |
+
+The `hideInMenu-*`, `hideTemplateTab-*` and `disable-*` switches can also hold an array of role
+names: the item is then hidden only for users whose every role is in the array. See
+[Why a menu item is hidden](/admin/#why-a-menu-item-is-hidden). Saved global settings take
+effect in the panel without a reload.
+
+## Learner site theme and accent
+
+The reference learner site (`front/web`) styles each tenant with a theme preset and an accent
+colour, both read from public settings in the `theme` group
+([ADR 0004](/decisions/0004-css-custom-properties-theming/)):
+
+| Group and key | Value | Effect |
+|---|---|---|
+| `theme.theme` | `coffee`, `oncall` or `nightsky` | The preset. Any other value falls back to the preset named like the tenant slug, else `coffee`. |
+| `theme.accent` | a hex colour, `#C2552D` or `#C52` | Overrides the accent CSS variables (`--ulams-color-accent`, `--ulams-color-primary`, …). An invalid value is ignored. |
+
+The site does not use the accent as is for text: it darkens or lightens it until it reaches a
+5:1 contrast ratio on the theme background (3:1 for large type), and picks black or white for
+text on it, so WCAG AA contrast holds whatever colour you choose.
+
+<Steps>
+
+1. Open **User settings** and filter by group `theme`.
+2. Edit `accent` (or create it: group `theme`, key `accent`, type `text`), enter the colour
+   and keep **Public** and **Enumerable** on.
+3. Reload a page of the learner site.
+
+</Steps>
+
+New tenants get both rows from `php artisan ulams:tenant:create … --theme=… --accent=…`; see
+[Tenants](/admin/tenants/).
+
+## Package configuration tabs
+
+<Aside>
+These tabs show only the keys that packages register with
+`AdministrableConfig::registerConfig()`. The complete list, with validation rules and which
+keys are public or read-only, is generated in [Settings keys](/reference/settings/).
+</Aside>
+
+There is one tab per config file, named after it (`ulams_auth` is shown as **Package Auth**).
+Each row shows the key, whether it is **readonly** and **public**, and the current value;
+**Edit** opens a form validated with the package's rules. Read-only keys are shown but cannot
+be changed. Loading the tabs needs `settings_config_list`; saving needs
+`settings_config_update`.
+
+Frequently used keys:
+
+| Key | Purpose |
+|---|---|
+| `ulams_auth.registration` | `enabled` or `disabled`: whether self-registration is open |
+| `ulams_auth.account_must_be_enabled_by_admin` | new accounts wait for an administrator to activate them |
+| `ulams_auth.auto_verified_email` | new accounts are verified without the email link |
+| `ulams_auth.return_url` | the link in the verification email of accounts created in the panel; the panel cannot create users while it is empty |
+| `services.google.*`, `services.facebook.*` | social login credentials |
+| `ulams_payments.*` | payment gateways and currency ([Sales](/admin/sales/)) |
+| `sms.*` | SMS driver and Twilio credentials ([Templates](/admin/templates/#sms-templates)) |
+| `ulams_templates_email.mjml.*` | MJML rendering ([Templates](/admin/templates/#email-templates)) |
+| `ulams_bulk_notifications.push.*` | Firebase credentials for push messages ([Notifications](/admin/notifications/)) |
+| `ulams_mailer_lite.*`, `mattermost.*` | [Other integrations](/admin/other-integrations/) |
+
+### Where package configuration is stored
+
+The `settings` package config key `ulams_settings.use_database` (environment variable
+`CONFIG_USE_DATABASE`, default `false`) decides where saved values go:
+
+- **`true`**: values are stored in the tenant database (`config` table) and cached, and loaded
+  on every request on top of the config files. Each tenant has its own values.
+- **`false`** (default): the panel writes the values into the API's PHP config files
+  (`config/<file>.php`). This rewrites the whole file, drops comments and replaces `env()`
+  calls with their current values, and the files are shared by every tenant served by the same
+  API deployment.
+
+<Aside type="caution">
+On a multi-tenant deployment set `CONFIG_USE_DATABASE=true` before changing package
+configuration in the panel; see [Environment variables](/reference/environment-variables/).
+</Aside>

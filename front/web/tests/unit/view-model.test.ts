@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { courseModel, eventModels, formatMoney, plainText, planModels, siteModel, splitLessonTitle } from "../../src/lib/view-model.ts";
+import { consoleLog, courseModel, eventModels, formatMoney, plainText, planModels, siteModel, splitLessonTitle } from "../../src/lib/view-model.ts";
 import { FIXTURES, raw } from "./fixtures.ts";
 
 describe("view model", () => {
@@ -41,6 +41,16 @@ describe("view model", () => {
     expect(events.map((e) => e.kind)).toEqual(["webinar", "in-person"]);
     expect(events[1]?.date).toBe("2026-11-28T10:00:00Z");
     expect(eventModels(FIXTURES.coffee.webinars, [], Date.parse("2027-06-01"))).toEqual([]);
+  });
+
+  it("builds the On-Call console log from modules and the next session only", () => {
+    const course = courseModel(FIXTURES.oncall.course);
+    const log = consoleLog(course, eventModels(FIXTURES.oncall.webinars, FIXTURES.oncall.events, Date.parse("2026-10-01")));
+    expect(log.lines.slice(0, 5).map((l) => l.time)).toEqual(["mod 0", "mod 1", "mod 2", "mod 3", "mod 4"]);
+    expect(log.lines[0]?.text).toContain("Briefing — Course kickoff");
+    expect(log.lines[5]).toMatchObject({ tag: "LIVE", text: FIXTURES.oncall.webinars[0]!.name });
+    expect(log.values).toEqual(course.lessons.map((l) => l.minutes));
+    expect(consoleLog(undefined, [])).toEqual({ lines: [], values: [] });
   });
 
   it("strips HTML from API rich text", () => {

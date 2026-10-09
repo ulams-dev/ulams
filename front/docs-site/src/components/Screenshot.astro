@@ -1,0 +1,41 @@
+---
+/**
+ * A screenshot from src/assets/screens (captured by `yarn workspace @ulams/docs screenshots`).
+ * Renders nothing when the file does not exist yet, so pages can reference a screen before
+ * it has been captured.
+ *
+ *   <Screenshot name="admin-users-list" alt="The user list with filters" />
+ */
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  name: string;
+  alt: string;
+  caption?: string;
+}
+
+const { name, alt, caption } = Astro.props;
+const screens = import.meta.glob<{ default: ImageMetadata }>("../assets/screens/*.webp", { eager: true });
+const image = screens[`../assets/screens/${name}.webp`]?.default;
+---
+
+{
+  image && (
+    <figure class="ulams-screenshot">
+      <Image src={image} alt={alt} widths={[640, 1024, image.width]} sizes="(min-width: 72rem) 48rem, 100vw" />
+      {caption && <figcaption>{caption}</figcaption>}
+    </figure>
+  )
+}
+
+<style>
+  .ulams-screenshot {
+    margin: 1.5rem 0;
+  }
+  .ulams-screenshot figcaption {
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-3);
+    margin-top: 0.5rem;
+  }
+</style>
