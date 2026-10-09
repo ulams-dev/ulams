@@ -1,0 +1,108 @@
+---
+title: Debugging
+description: Where each ulams service logs, and which debugging tools the local stack has, from Laravel logs and Horizon to MailHog, Adminer and Sentry.
+sidebar:
+  order: 60
+modules:
+  - api
+needsReview: "Tenant log location: assumed storage/<host_with_underscores>/logs/ from laravel-multidomain's per-host storage directory. Check on a running tenant."
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Where things log
+
+| Service | Where | How to read it |
+|---|---|---|
+| php-fpm, Horizon, queue workers, scheduler | stdout and stderr of the `api` container (supervisord programs) | `docker compose -f api/docker-compose.yml logs -f api` or `corepack yarn workspace api logs` |
+| Laravel application log (platform) | `api/storage/logs/laravel-YYYY-MM-DD.log` (`daily` channel, 14 days) | the file on the host (the `api/` folder is mounted) |
+| Laravel application log (tenant) | the tenant's storage directory, `api/storage/<host_with_underscores>/logs/` | the file on the host |
+| supervisord itself | `/tmp/supervisord.log` in the `api` container | `docker compose … exec api tail -f /tmp/supervisord.log` |
+| Caddy | stdout, JSON access log for `*.localhost` | `docker compose … logs -f caddy` |
+| H5P service | stdout, `LOG_LEVEL=info` | `docker compose … logs -f h5p` |
+| PDF service | stdout, `LOG_LEVEL=info` | `docker compose … logs -f pdf` |
+| Postgres, Valkey, MinIO | stdout | `docker compose … logs -f postgres` |
+| MailHog | not logged (`logging.driver: none`) | use its web UI |
+| admin, front, web, docs dev servers | your terminal | |
+
+The Caddy access log for API hosts drops the `Authorization` and `X-Internal-Token` headers and
+replaces the `_token` query parameter (H5P sends the access token that way) with `REDACTED`.
+
+### Laravel log channels
+
+`api/config/logging.php`: the default channel is `stack` (`LOG_CHANNEL`), which writes to `daily`.
+Other channels defined: `single`, `daily`, `slack` (`LOG_SLACK_WEBHOOK_URL`, level `critical`),
+`papertrail`, `stderr`, `syslog`, `errorlog`. In a container platform that collects stdout, set
+`LARAVEL_LOG_CHANNEL=stderr`.
+
+The local compose stack sets `LARAVEL_APP_DEBUG=true` and `LARAVEL_APP_ENV=local`, so API errors
+come back with a stack trace. `spatie/laravel-ignition` is a dev dependency.
+
+### SQL queries
+
+There is no query logger or debug bar installed. For a one-off check, use `DB::listen` or
+`DB::enableQueryLog()` in Tinker:
+
+```bash
+make -C api tinker
+>>> DB::enableQueryLog(); Ulams\Courses\Models\Course::query()->first(); DB::getQueryLog();
+```
+
+Adminer (below) shows the data itself.
+
+## Tools in the local stack
+
+| Tool | URL | Notes |
+|---|---|---|
+| Horizon | http://api.localhost/horizon | Platform queues. Open without login in the `local` and `stage` environments (`App\Providers\HorizonServiceProvider`); elsewhere the `viewHorizon` gate allows an empty e-mail list. Tenant queues are worked by `queue.sh`, not Horizon |
+| MailHog | http://localhost:8025 | Every outgoing e-mail (`LARAVEL_MAIL_HOST=mailhog`, port 1025) |
+| Adminer | http://localhost:8078 | PostgreSQL: server `postgres`, user `default`, password `secret`, database `default` (platform) or `ulams_<slug>` (tenant) |
+| MinIO console | http://minio.localhost | user `admin`, password `minio_secretpassword`; buckets `ulams` and `ulams-<slug>` |
+| Swagger UI | http://api.localhost/api/documentation | Regenerated on each request locally (`L5_SWAGGER_GENERATE_ALWAYS` defaults to true) |
+| Health | http://api.localhost/api/health, `/api/healthcheck` | Database and Redis checks (`spatie/laravel-health`); `php artisan health:check` is the image health check |
+| Tinker | `make -C api tinker` | Add `--domain=<slug>.localhost` inside the container to target a tenant |
+
+<Aside type="note">
+Laravel Telescope is not installed. `api/config/telescope.php` and `TELESCOPE_ENABLED` in
+`phpunit.xml` are leftovers; `laravel/telescope` is not in `api/composer.json`.
+</Aside>
+
+## Step debugging (Xdebug)
+
+Xdebug is **not** in the PHP image: `api/docker/php/install.sh` does not install it, and the
+Xdebug block in `ulams-custom-php.ini` is commented out. The `XDEBUG_MODE=off` prefixes in the
+makefile are left over from the previous image and have no effect. To step-debug, add the
+extension to a local copy of `Dockerfile.develop` (for example
+`install-php-extensions xdebug` in the `php-base` stage) and configure `xdebug.mode=debug`,
+`xdebug.client_host=host.docker.internal`.
+
+`Dockerfile.develop` does add the **excimer** sampling profiler (built from source), loaded by
+`ulams-custom-develop-php.ini`. The Sentry SDK uses it for profiles when
+`SENTRY_PROFILES_SAMPLE_RATE` is set.
+
+## Sentry
+
+| App | Package | Configuration |
+|---|---|---|
+| API | `sentry/sentry-laravel` | `api/config/sentry.php`: `SENTRY_LARAVEL_DSN` or `SENTRY_DSN`, `SENTRY_RELEASE`, `SENTRY_ENVIRONMENT`, `SENTRY_TRACES_SAMPLE_RATE`, `SENTRY_PROFILES_SAMPLE_RATE`, `SENTRY_SEND_DEFAULT_PII` (default false) |
+| admin | `@sentry/react` | `REACT_APP_SENTRYDSN` (runtime-injected in the image), `REACT_APP_SENTRY_ENV`, release from the image version; tracing 10 %, session replay 10 % and 100 % on error; never initialised on `localhost` hosts |
+| front (legacy) | `@sentry/react` | `front/src/sentry.ts`: `VITE_APP_SENTRYDSN`, `VITE_APP_SENTRY_ENV`, `VITE_APP_SENTRY_RELEASE` (runtime `window` value first, then build-time) |
+
+The reference frontend (`front/web`) has no Sentry integration.
+
+<Aside type="caution">
+`api/.env.example` and `front/.env.example` contain Sentry DSNs inherited from the upstream
+project. The compose stack does not set a DSN, so local errors are not reported; do not copy those
+values into a deployment. Admin decision record: [Sentry and Ybug](/decisions/admin/0011-error-monitoring-with-sentry-and-ybug/).
+</Aside>
+
+## Common checks
+
+- **A tenant host answers 404**: the host is neither a platform host (`TENANCY_PLATFORM_HOSTS`) nor
+  a provisioned tenant with an env file. Run `php artisan ulams:tenant:list --hosts` in the
+  container, and `php artisan ulams:tenant:sync-env` to rebuild env files.
+- **Queued work does not happen on a tenant**: tenant queues are served by `queue.sh` inside the
+  `api` container. Check `docker compose … logs api`. The demo seed processes the video long-job
+  queue once by itself (`make -C api demo-seed-tenant`).
+- **Login works in one app and not another**: tokens are signed with the tenant's own Passport key
+  pair; a token of one tenant is rejected by every other. See [Authentication](/developers/authentication/).

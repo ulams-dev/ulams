@@ -1,0 +1,137 @@
+---
+title: Performance
+description: What ulams measures and does for performance today, from the reference frontend budget and caches to queues, HLS video and PHP settings.
+sidebar:
+  order: 50
+modules:
+  - web
+  - video
+  - images
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+This page lists what the code does, not general advice. Numbers come from the files cited.
+
+## Reference frontend (front/web)
+
+### Budget and measurement
+
+The budget in the [front/web README](https://github.com/ulams-dev/ulams/blob/main/front/web/README.md)
+is LCP under 1.0 s, JavaScript under 30 KB gzip on landing and course pages, and CLS under 0.05.
+The latest measured numbers are in `docs/plans/phase-5-reference-frontend.md`.
+
+`front/web/tests/perf/measure.mjs` measures a running production build with Chromium: LCP, CLS,
+TTFB, load time, JavaScript transferred and total transfer for twelve pages (the platform landing,
+and landing, course, lesson, account and events pages of the demo tenants). Each page is loaded
+once to warm the server cache, then measured cold (new browser context) and warm (second visit),
+scrolling through the page so layout shifts below the fold count.
+
+```bash
+corepack yarn workspace @ulams/web build
+corepack yarn workspace @ulams/web start &        # port 4321, reads front/web/.env
+corepack yarn workspace @ulams/web perf           # WEB_BASE_PORT for another port
+```
+
+The script is not part of CI.
+
+### Zero JavaScript by default
+
+- Pages are server-rendered on every request (`output: "server"`). Catalogue components are
+  Astro components and send no JavaScript; interactive behaviour lives in small web components in
+  `front/ui/src/elements` (video, quiz, progress, H5P bridge, navigation), loaded only by the
+  components that use them.
+- HLS video loads `hls.js` (the light build) with a dynamic import when the learner presses play
+  (`front/ui/src/elements/video.ts`).
+- Stylesheets are inlined (`build.inlineStylesheets: "always"`).
+- Fonts are self-hosted through Astro's font support, with fallback faces whose metrics are
+  measured in `@ulams/ui/styles/fallbacks.css` to avoid layout shift.
+- Links are prefetched on hover or focus (`prefetchAll`, strategy `hover`), and
+  `experimental.clientPrerender` prerenders them in Chromium.
+
+### Server-side caches
+
+| Cache | File | Behaviour |
+|---|---|---|
+| Public API data | `src/lib/cache.ts`, `src/lib/data.ts` | In-process stale-while-revalidate: fresh for `ULAMS_CACHE_TTL` seconds (default 45), then served stale for up to 30 minutes while one deduplicated request refreshes it; a failed refresh keeps the stale value; at most 500 entries |
+| Warm start | `src/lib/data.ts` | Tenants in `ULAMS_WARM_TENANTS` are fetched when the server starts |
+| Images | `src/lib/image-cache.ts` | Results of Astro's `/_image` endpoint (sharp) kept in memory for an hour, up to 64 MB, served with `Cache-Control: public, max-age=31536000, immutable` and `X-Ulams-Image-Cache: hit` |
+
+Both caches are per process. The code notes that a multi-instance deployment needs a shared cache
+or a CDN in front instead.
+
+## API
+
+### Response cache
+
+`spatie/laravel-responsecache` is registered by the courses package and applied, through the
+`cacheResponse` middleware alias, to two routes: `GET /api/courses/{course}/program` and
+`GET /api/topics/{topic_id}/resources`. Config in `api/packages/courses/config/responsecache.php`:
+file store by default (`RESPONSE_CACHE_DRIVER`), lifetime seven days (`RESPONSE_CACHE_LIFETIME`),
+`RESPONSE_CACHE_ENABLED` to switch it off. The cache key includes the server name, so tenants do
+not share entries (`CacheGetRequestService`). The whole response cache is cleared on every
+`created`, `updated` or `deleted` Eloquent event of any `Ulams*` model
+(`packages/courses/src/Providers/EventServiceProvider.php`), so on a busy tenant it is short-lived.
+
+### Valkey
+
+Valkey 8 (Redis protocol, BSD-3-Clause) is the cache store, the queue backend and the Horizon
+store in the compose stack (`LARAVEL_CACHE_DRIVER=redis`, `LARAVEL_QUEUE_CONNECTION=redis`).
+Each tenant gets its own key prefix (`ulams_<slug>_`).
+
+### Queues and long jobs
+
+Two Redis queue connections in `api/config/queue.php`:
+
+| Connection | Queue | `retry_after` | Used for |
+|---|---|---|---|
+| `redis` | `default` (also `broadcast`, `video` for tenant workers) | 90 s | everything else |
+| `redis-long-job` | `queue-long-job` | 19000 s | video processing |
+
+Workers:
+
+- **Platform**: Horizon (`api/config/horizon.php`). `supervisor-1` on `default` with 3 processes in
+  `local` and `stage` and 10 in `production`; `supervisor-long-job` on `queue-long-job` with 10
+  processes in `local` and `production` and 1 in `stage`.
+- **Tenants**: `api/queue.sh` loops over the tenant domains and runs
+  `queue:work --queue=default,broadcast,video --max-jobs=20 --stop-when-empty` and then the long-job
+  queue with `--max-jobs=5 --timeout=18000` for each, re-reading the tenant list on every pass.
+
+### HLS video
+
+`packages/video` converts an uploaded video topic into HLS with `pbmedia/laravel-ffmpeg` (ffmpeg is
+in the PHP image). The `ProcessVideo` job runs on `redis-long-job` / `queue-long-job`
+(`VIDEO_QUEUE_CONNECTION`, `VIDEO_QUEUE`), with `$timeout = 18000` and 5 tries. Default renditions
+are 250, 500 and 1000 kbit/s (`bitrates` in `packages/video/src/config.php`);
+`VIDEO_PROCESSING_ENABLE=false` turns it off. `DetectStuckVideo` reports jobs that did not finish.
+
+### Images
+
+`packages/images` resizes images on request (`GET /api/images/img`, throttled by the
+`images.render` rate limiter) within configured limits (max 1000×1000, a `thumbnail` size of
+400×300), and `spatie/laravel-image-optimizer` uses the
+`jpegoptim`, `optipng`, `pngquant` and `gifsicle` binaries from the PHP image.
+
+## PHP runtime
+
+From `api/docker/conf/php/ulams-custom-php.ini` and the php-fpm pool files:
+
+| Setting | Value | Note |
+|---|---|---|
+| `opcache.enable` | On | `opcache.enable_cli=Off` |
+| `opcache.memory_consumption` | 128 MB | `max_accelerated_files=10000`, `interned_strings_buffer=8` |
+| `opcache.validate_timestamps` | On, `revalidate_freq=2` | code changes are picked up within 2 s, in development and in the published image |
+| `opcache.jit` | `tracing` | but `opcache.jit_buffer_size=0`, so the JIT is not active |
+| `memory_limit` | 2G | `max_execution_time=3600` |
+| `realpath_cache_size` | 256k | TTL 120 s |
+| php-fpm | `pm.max_requests=500`, `listen.backlog=1024` | `request_terminate_timeout` 3600 s (app pool file overrides the base 120 s) |
+
+<Aside type="note">
+The same `ulams-custom-php.ini` is used by `api/Dockerfile` (production) and `Dockerfile.develop`.
+It also sets `display_errors = On`.
+</Aside>
+
+## Load testing
+
+There is no load-test suite in the repository. `api/.gitignore` lists a `k6app/` directory, but
+none is committed.

@@ -1,0 +1,91 @@
+---
+title: LLM layer and Course Builder
+description: What is decided for the LLM layer, the Course Blueprint and builder streaming, and what exists in the code today (nothing yet).
+sidebar:
+  order: 8
+coming: true
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+<Aside type="caution" title="Decided, not built">
+  There is no `ai` or `course-builder` package in `api/packages`, no `config/ai.php` and no LLM
+  client in the API or the frontends. Every item of roadmap section 2.1 "LLM layer" is still open.
+  This page summarises the accepted decisions so contributors know the shape of what is coming;
+  the ADRs are the source of truth.
+</Aside>
+
+The AI Course Builder (Phase 2) turns uploaded sources into a cited course through an interview,
+an approved outline and approved generation, then applies the result to the LMS through domain
+services. Three ADRs fix its architecture:
+
+| ADR | Decision |
+|---|---|
+| [0009 LLM layer](/decisions/0009-llm-layer/) | An `ai` package on the official Anthropic SDK |
+| [0010 Course Blueprint and builder](/decisions/0010-course-blueprint-and-builder/) | A versioned Course Blueprint applied through domain services |
+| [0011 Builder streaming](/decisions/0011-ag-ui-over-sse-from-laravel/) | AG-UI events over SSE from Laravel, carrying A2UI surfaces |
+
+The phase plan is [`docs/plans/phase-2.md`](https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-2.md);
+its first milestone, M2.1 "chat course building", is upload → interview → outline diff → approved
+generation with citations → approved apply → element chat edits.
+
+## LLM layer (ADR 0009)
+
+Planned as `api/packages/ai` (`Ulams\Ai`):
+
+- **One entry point**: `LlmClient::generate(LlmRequest): LlmResult`, with drivers `anthropic`,
+  `fake` and `disabled`.
+- **Models only in config**: profiles in `config/ai.php` from environment variables (`default`,
+  `light`, opt-in `premium`). Each task maps to a profile, an effort level and an output limit;
+  prices live next to them. A CI guard will reject model names anywhere else, as the project rules
+  require.
+- **Structured outputs only**: every generation step requests a JSON Schema output and gets no
+  tools. Results are validated (`opis/json-schema` plus task-specific checks); one repair attempt with
+  the errors, then a failed step the author can retry. Refusals and `max_tokens` stops are failures,
+  never partial content.
+- **Prompt caching**: frozen system prompt, then the source block with a cache breakpoint, then
+  brief and outline, then the per-element instruction.
+- **Cost logging**: every call written to an `ai_calls` table in the tenant database (models
+  requested and served, input, output and cache tokens, cost, latency, stop reason, prompt id and
+  version, subject). Budgets per session and tenant are checked before each call.
+- **Prompts** are versioned Markdown files owned by the package that uses them.
+- **Tests** use the fake driver with recorded cassettes; resolving the real driver in the testing
+  environment throws. Real-model runs only through an `ai:eval` command.
+
+API key: `ANTHROPIC_API_KEY` (with a fallback to the legacy misspelled `ANTROPHIC_API_KEY`). Once the
+package exists, its variables will appear in [Environment variables](/reference/environment-variables/).
+
+## Course Blueprint and builder (ADR 0010)
+
+Planned as `api/packages/course-builder` (`Ulams\CourseBuilder`), with its data in the tenant
+database:
+
+- **Source Document**: uploaded Markdown, PDF or DOCX normalised to Markdown and split into fragments
+  with stable ids (`frg_…`, derived from heading position) and a content hash for change detection.
+  Uploaded content is untrusted input (prompt injection).
+- **Course Brief**: the interview answers, schema-validated and editable, recording whether the
+  author or a default decided each field.
+- **Course Blueprint v1**: course, modules, lessons with blocks, quizzes, a final test, objectives and
+  page documents in the `@ulams/ui` catalogue format. Element ids are ULIDs assigned by our code,
+  never by the model. Every block and question cites at least one fragment and serves an approved
+  objective.
+- **Versions and gates**: every stage and chat edit creates a version with an origin, a status and an
+  element-aware diff. The outline is approved before content is generated; the apply is approved
+  before anything is written; publishing is separate.
+- **Applier**: a queued job, running as the author, writes through the course, lesson, topic, GIFT
+  and pages services (`CourseRepositoryContract`, `TopicRepositoryContract::createFromRequest`,
+  `GiftQuestionServiceContract` and others). A test fails if the package writes LMS tables directly.
+- **Element chat**: the model returns a replacement subtree for the selected element, validated
+  against its sub-schema with ids preserved; the server computes the diff shown to the author.
+
+## Streaming (ADR 0011)
+
+Builder progress and generated UI stream as AG-UI events over SSE from Laravel, carrying A2UI
+surfaces rendered by `@ulams/ui`. The parts that already exist (catalogue, renderer, documents) and
+the planned transport are described in [Generative UI](/developers/generative-ui/).
+
+## Where the author works
+
+The roadmap places the builder in the reference frontend (`front/web`, a `/studio` area), with the
+admin only linking to it. Author-facing documentation is in
+[Course builder](/creators/course-builder/). Progress is tracked in the [roadmap](/roadmap/).

@@ -3,7 +3,6 @@ title: Writing docs
 description: How the ulams documentation site works, how to add a page, what the coverage check enforces, and which pages are generated from the repository.
 sidebar:
   order: 5
-needsReview: "scripts/screenshots.mjs and .github/workflows/docs.yml were not in the repository when this page was written; check the screenshot output path, the workflow triggers and the Pages deployment."
 ---
 
 import { Aside, Steps, Tabs, TabItem, FileTree } from "@astrojs/starlight/components";
@@ -174,9 +173,19 @@ Screens are `.webp` files in `src/assets/screens`, captured with:
 corepack yarn workspace @ulams/docs screenshots
 ```
 
-The capture drives the running apps, so start the stack first (see
-[Local development](/developers/local-development/)). Show a screen with the `Screenshot`
-component:
+The capture (`scripts/screenshots.mjs`, Playwright and sharp) opens a demo tenant: the admin panel
+at `http://coffee.admin.localhost` and the learner site at `http://coffee.app.localhost`, with the
+API at `http://coffee.localhost`. Demo mode must be on for that tenant ([Demo mode](/admin/demo-mode/)):
+the admin panel then logs in as the tenant admin and the script logs in as the demo student, so no
+password is involved. Override the hosts with `DOCS_SHOTS_ADMIN`, `DOCS_SHOTS_LEARNER` and
+`DOCS_SHOTS_API`, and pass a name fragment to capture only some screens
+(`… screenshots admin-users`). Admin screens are named after their route in
+`admin/config/routes.ts` (`/users/list` is `admin-users-list`, course editor tabs are
+`admin-courses-list-course-<tab>`), learner screens after their page (`learner-learn-courseid`),
+and every topic type found in the demo course gets `learner-topic-<type>`. The script only opens
+pages; start the stack first (see [Local development](/developers/local-development/)).
+
+Show a screen with the `Screenshot` component:
 
 ```mdx
 import Screenshot from "../../../components/Screenshot.astro";
@@ -214,9 +223,11 @@ Headings become anchors in lowercase with hyphens: "The coverage check" is `#the
 
 ## Build and publishing
 
-`.github/workflows/docs.yml` builds the site on pull requests that touch `front/docs-site/**` or
-`docs/**` (the site pulls ADRs and the roadmap from `docs/`), and on push to `main` builds it and
-deploys it to GitHub Pages. The workflow sets `DOCS_SITE` and `DOCS_BASE` from
+`.github/workflows/docs.yml` checks and builds the site on pull requests that touch
+`front/docs-site/**`, `docs/**` or the code the reference pages and the coverage check are made
+from (packages, routes, admin routes, front/web pages, the UI registry; see
+[Continuous integration](/developers/ci/)), and on push to `main` builds it again and deploys it
+to GitHub Pages. The workflow sets `DOCS_SITE` and `DOCS_BASE` from
 `actions/configure-pages`, which `astro.config.mjs` reads; locally the site runs at the root. A pull
 request whose docs build fails (coverage gap, broken link, invalid frontmatter) is not merged.
 

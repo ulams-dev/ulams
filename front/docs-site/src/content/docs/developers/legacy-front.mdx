@@ -1,0 +1,86 @@
+---
+title: Legacy learner app
+description: The React learner app inherited from EscolaLMS (front/src), the shared libraries in front/src/lib that the admin also uses, and its status next to front/web.
+sidebar:
+  order: 9
+modules:
+  - front
+needsReview: "Long-term status of the legacy front: no ADR or roadmap item says when it is removed; the README and docs/plans/phase-5-reference-frontend.md only say it stays for the features front/web does not have."
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+`front/` (workspace `front`) is the learner app ulams inherited from EscolaLMS: React 18, Vite,
+CSS Modules and the `--ulams-*` theme variables, served as a static build. It is still in the
+repository and still works, but new learner work goes into the
+[reference frontend](/developers/reference-frontend/) (`front/web`).
+
+## Status
+
+- **Not the default anymore.** Caddy sends `*.app.localhost` to `front/web` on port 4321. The legacy
+  app is reached directly at `http://localhost:3000` (`yarn dev` or `yarn dev:front`); its Vite
+  server also accepts `*.app.localhost` hosts if you point Caddy back at it.
+- **Kept for what `front/web` does not do yet.** The phase 5 plan lists cart and checkout (moving to
+  Sylius), webinars and consultations flows, PWA/offline, project file uploads and the cmi5 launch as
+  out of scope for the new app, so the legacy front stays for those.
+- **Kept working.** It has the H5P iframe player, the SCORM player on the content origin, an LTI
+  launch page and the tenant host rules, so it runs against the current API. The phase 5 plan
+  replaces it with `front/web` for the demo academies.
+- **Source of shared libraries.** The admin imports several libraries from `front/src/lib` (below),
+  so that folder outlives the app itself until they move.
+
+## What is in it
+
+| Path | What |
+|---|---|
+| `front/src/pages/` | Routes: catalogue, course page and player, cart, login and registration, profile, consultations, webinars, events, packages, subscriptions, tutors, static pages, `lti-launch`, and the landing pages `landing/{coffee,oncall,nightsky}` |
+| `front/src/components/` | App components (course player for every topic type, profile, consultations, webinars, cart) |
+| `front/src/lib/` | Vendored and shared libraries, below |
+| `front/tests/` | Unit tests (`node --test`) and a visual regression harness |
+| `front/docs/adr/` | Retroactive ADRs from before the monorepo (CRA → Vite, SDK context, runtime env injection, PWA, Capacitor, …) |
+
+Rules that lint enforces: no `styled-components`, and no imports of `@lumieducation/*` (GPL), checked
+by `scripts/check-no-gpl-imports.cjs`. H5P is embedded as an iframe served by `api/h5p`. Learner UI
+must meet WCAG 2.2 AA.
+
+### Configuration
+
+The API URL is resolved in this order: a value injected at runtime into `index.html`, then the host
+rule `VITE_APP_TENANT_API_HOST_PATTERN` (default `{slug}.app.localhost=>http://{slug}.localhost`),
+then the build-time `VITE_APP_PUBLIC_API_URL`. The Docker image (`front/Dockerfile`) serves the static
+build from Apache and its entrypoint writes `API_URL`, `ROUTING_TYPE` (hash or browser router),
+`SENTRYDSN`, Firebase keys and other values into `index.html` at container start, so one build serves
+every environment.
+
+The token is kept in browser local storage by the React context in `front/src/lib/sdk`; see
+[Authentication](/developers/authentication/#how-each-client-keeps-its-token).
+
+## Shared libraries in `front/src/lib`
+
+| Library | Import | Origin | Used by |
+|---|---|---|---|
+| `components` | `@ulams/components` | EscolaLMS Components 0.0.165, vendored | legacy front |
+| `sdk` | `@ulams/sdk` (path alias) | EscolaLMS sdk 1.0.0: API client and React context and hooks | legacy front |
+| `ts-models` | global `App.Models` declarations | EscolaLMS ts-models | legacy front |
+| `scorm-player` | `@ulams/scorm-player` | EscolaLMS Scorm-player: `<ScormPreview>` with scorm-again and a service worker | legacy front, admin |
+| `tenant/resolveApiUrl.ts` | `@ulams/tenant` | ulams | legacy front, admin, re-exported by `@ulams/sdk/tenant` in `front/sdk` |
+| `demo/demoMode.ts` | `@ulams/demo` | ulams: reads `ulams_demo` from `/api/config` and logs in automatically | legacy front, admin |
+
+Each vendored folder has a README with its upstream, version and commit. The admin's aliases are in
+`admin/config/config.ts` and `admin/tsconfig.json`, and Turborepo adds `front/src/lib/**` to the
+admin's build, typecheck and test inputs ([Monorepo layout](/developers/monorepo/)).
+
+<Aside type="caution">
+  Inside the legacy app, `@ulams/sdk` means `front/src/lib/sdk`, not the `front/sdk` workspace. Do not
+  import the legacy React SDK into `front/web` or `front/ui`, and do not import `front/sdk` into the
+  legacy app expecting the old context API.
+</Aside>
+
+## If you have to change it
+
+- Run it with the API stack up: `yarn dev:front`, then open `http://localhost:3000`
+  ([Local development](/developers/local-development/)).
+- Tests: `yarn workspace front test`; lint with `yarn workspace front lint`
+  ([Testing](/developers/testing/)).
+- A change in `front/src/lib/scorm-player`, `tenant` or `demo` also changes the admin: run the admin
+  build and tests too.

@@ -1,0 +1,121 @@
+---
+title: Coding standards
+description: The linters, formatters, hooks, styling rules, blocked imports and commit conventions that ulams code follows, and which of them are enforced where.
+sidebar:
+  order: 110
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+The project rules are in [`CLAUDE.md`](https://github.com/ulams-dev/ulams/blob/main/CLAUDE.md) (non-negotiables,
+workflow, conventions) and [`AGENTS.md`](https://github.com/ulams-dev/ulams/blob/main/AGENTS.md) (practical map).
+This page lists what the tooling checks and what is a convention only.
+
+## What is enforced where
+
+| Check | Scope | Pre-commit hook | CI (`ci.yml`) |
+|---|---|---|---|
+| ESLint | `admin` | yes, staged files | yes (`turbo run lint`) |
+| Prettier (write) | `front/**/*.{js,ts,tsx,json,md,html}`, `admin/**` | yes, staged files | |
+| Prettier (check) | `admin` | | yes |
+| ESLint | `front`, `api/h5p`, `api/pdf` | | yes |
+| ESLint | `front/sdk`, `front/ui`, `front/web` | | no (run locally) |
+| TypeScript | `admin`, `front`, `api/h5p`, `api/pdf` | | yes (`typecheck`) |
+| GPL import guard, styled-components guard | `front/src`, `admin/src` | | yes |
+| Swagger annotations parse | `api` | | yes (`l5-swagger:generate`) |
+| PHP formatting or static analysis | `api` | | none configured |
+
+## Git hooks
+
+Husky (`.husky/pre-commit`, installed by `yarn install` through the root `prepare` script) runs
+`./node_modules/.bin/lint-staged`. [`.lintstagedrc.mjs`](https://github.com/ulams-dev/ulams/blob/main/.lintstagedrc.mjs)
+uses each app's own binaries, because the apps pin different versions (Prettier 2.4.1 in `front`,
+2.8.8 in `admin`):
+
+| Staged files | Command |
+|---|---|
+| `front/**/*.{js,ts,tsx,json,md,html}` | `front`'s `prettier --write` |
+| `admin/**/*.{js,jsx,ts,tsx}` | `admin`'s `eslint --ext .js,.jsx,.ts,.tsx` |
+| `admin/**/*.{js,jsx,tsx,ts,less,md,json}` | `admin`'s `prettier --write` |
+
+Vendored libraries under `*/src/lib/` are skipped so they stay diffable against their upstream
+commit. PHP-only commits match nothing and the hook is a no-op.
+
+## JavaScript and TypeScript
+
+| Workspace | ESLint config | Notes |
+|---|---|---|
+| `admin` | `.eslintrc.js`, extends `@umijs/fabric` | Prettier and Stylelint configs also come from `@umijs/fabric` (`.prettierrc.js`, `.stylelintrc.js`); no script runs Stylelint |
+| `front` | `.eslintrc.cjs`: `eslint:recommended`, `@typescript-eslint/recommended`, `react-hooks`, `jsx-a11y/recommended` | ignores `src/lib`, `web`, `sdk`, `ui` |
+| `front/web`, `front/ui`, `front/sdk` | flat `eslint.config.mjs`: `@eslint/js` recommended plus `typescript-eslint` recommended | unused variables are errors unless prefixed with `_` (web) |
+| `api/h5p`, `api/pdf` | `eslint` plus `tsc --noEmit` in `lint` | |
+
+Formatting follows each folder's `.editorconfig`: two spaces, LF, final newline; four spaces for
+PHP; tabs in makefiles.
+
+## Styling
+
+- **CSS Modules (or Less in the admin) and `var(--ulams-*)` custom properties only.** Theme
+  values are never hard-coded; the token contract is in
+  [`front/src/lib/components/theme/README.md`](https://github.com/ulams-dev/ulams/blob/main/front/src/lib/components/theme/README.md)
+  and [ADR 0004](/decisions/0004-css-custom-properties-theming/). The Astro catalogue in
+  `front/ui` uses scoped `<style>` blocks with the same tokens.
+- **styled-components is removed.** ESLint `no-restricted-imports` in `admin` and `front` blocks
+  `styled-components`, `styled-components/*` and `babel-plugin-styled-components`, and
+  `front/scripts/check-no-styled-components.cjs` (`yarn workspace front lint:styled`) scans
+  `front/src` and `admin/src`, including the folders ESLint ignores.
+- Learner-facing UI meets WCAG 2.2 AA; `front` lints with `jsx-a11y`, and `front/web` runs axe in
+  Playwright ([Testing](/developers/testing/)).
+
+## Licence boundaries (blocked imports)
+
+H5P is GPL-3.0-or-later and runs only in `api/h5p`. Never import code from `api/h5p` elsewhere,
+and never add GPL or AGPL code to the API, admin or front
+([`LICENSING.md`](https://github.com/ulams-dev/ulams/blob/main/LICENSING.md),
+[ADR 0003](/decisions/0003-h5p-as-isolated-gpl-service/)):
+
+- ESLint blocks `@lumieducation/*`, `h5p-*` and `@escolalms/h5p-react` in `admin` and `front`.
+- `front/scripts/check-no-gpl-imports.cjs` (`yarn workspace front lint:gpl`) scans `front/src`
+  for `@lumieducation/*` and `@escolalms/h5p-react`.
+- Embed H5P through the iframe wrappers (`H5PFrame`, `H5PEditorFrame`).
+
+Every new dependency is justified in the milestone plan: licence, maintenance, size and impact on
+self-hosting. `escolalms/recommender` must not be used or depended on.
+
+## PHP
+
+- Follow the existing package pattern (provider, routes, controllers with Swagger interfaces,
+  requests with policies, resources, repositories and services behind contracts, permission enum
+  and seeder, tests): [Adding an endpoint](/developers/adding-an-endpoint/).
+- LMS entities change through package services and repositories, never by writing tables directly.
+- No model names hard-coded outside config; the LLM is mocked in tests; every LLM call logs model,
+  tokens and cost.
+
+<Aside type="note" title="No PHP linters are wired up">
+`api/composer.json` has no PHP-CS-Fixer, Pint, PHPStan or Deptrac. The `extra.hooks.pre-commit`
+entry (`php-cs-fixer fix .`) needs a hooks plugin that is not installed, so it never runs.
+`api/deptrac.yaml` and `api/deptrac.php` (Controller → Service → Repository layers) are kept from
+upstream but nothing executes them. Match the style of the surrounding code (PSR-12-like, four
+spaces).
+</Aside>
+
+## Commits, branches and pull requests
+
+- **Conventional Commits**: `feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`, with an
+  optional scope (`feat(course-builder): ...`). One concern per commit, tests in the same commit.
+- **Branches**: `phase-N/short-description`, for example `phase-1/content-formats`. CI runs on
+  push to `main` and `phase-*` branches and on every pull request.
+- **No AI attribution** anywhere: no `Co-Authored-By` trailers for AI tools, no "Generated with"
+  footers in commits or pull requests, no `claude/` branch prefixes, no generated-by headers in files.
+- Code, comments, docs, commits and pull requests are written in English.
+- Plans go in `docs/plans/phase-N.md`, architecture decisions in `docs/decisions/NNNN-title.md`,
+  progress in `docs/ROADMAP-TODO.md` ([Decisions and documentation](/contributing/decisions-and-documentation/)).
+
+## Run everything locally
+
+```bash
+corepack yarn lint
+corepack yarn typecheck
+corepack yarn test
+corepack yarn turbo run lint typecheck test --filter=@ulams/web --filter=@ulams/ui --filter=@ulams/sdk
+```

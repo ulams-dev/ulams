@@ -1,0 +1,120 @@
+---
+title: Authentication
+description: How ulams issues and refreshes Passport tokens, how roles and permissions apply, and how each frontend, the demo mode and LTI launches keep a session.
+sidebar:
+  order: 5
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+The API authenticates every request with a Laravel Passport bearer token (guard `api`, driver
+`passport`, `api/config/auth.php`). There are no API sessions or cookies. Tokens are **personal
+access tokens** issued by the `auth` package after a password, social, demo or LTI login; there is
+no OAuth authorization-code flow for third-party clients, and the device-code grant is disabled
+(`AppServiceProvider`).
+
+Every tenant has its own Passport key pair and `APP_KEY` ([Tenancy](/developers/tenancy/)), so a
+token issued by one tenant is rejected by every other.
+
+## Login, refresh, logout
+
+| Call | What it does |
+|---|---|
+| `POST /api/auth/login` `{email, password, remember_me}` | Returns `{token, expires_at}` in the usual `{success, message, data}` envelope; 422 on wrong credentials |
+| `GET /api/auth/refresh` (authenticated) | Issues a new token with the same lifetime class as the current one |
+| `POST /api/auth/logout` (authenticated) | Revokes the current token |
+| `POST /api/auth/register`, `/api/auth/password/forgot`, `/api/auth/password/reset`, `/api/auth/email/verify/{id}/{hash}` | Registration, password reset, e-mail verification |
+| `GET /api/auth/social/{provider}` and `/callback` | Socialite login (stateless), then `POST /api/auth/social/complete/{token}` if data is missing |
+| `POST /api/admin/auth/impersonate` | An admin gets a token for another user |
+| `GET /api/profile/me` | The current user with roles and permissions |
+
+Token lifetime (`AuthService::createTokenForUser`):
+
+- with `remember_me`: one month;
+- without it: `ulams_auth.token_expiration_minutes`, **5 minutes** by default. The value is an
+  administrable setting, so admins can change it per tenant ([Settings](/reference/settings/)).
+
+A refresh keeps the class: a token whose lifetime was longer than the configured minutes is treated
+as "remember me" and replaced by another one-month token.
+
+```bash
+curl -s http://coffee.localhost/api/auth/login \
+  -H 'Content-Type: application/json' -H 'Accept: application/json' \
+  -d '{"email":"student1@coffee.ulams.app","password":"secret","remember_me":1}'
+# {"success":true,"message":"Login successful","data":{"token":"eyJ0eXAi…","expires_at":"…"}}
+
+curl -s http://coffee.localhost/api/profile/me -H "Authorization: Bearer $TOKEN" -H 'Accept: application/json'
+```
+
+The demo accounts and their password come from tenant provisioning (`TENANT_DEMO_PASSWORD`,
+development only).
+
+## Roles and permissions
+
+Authorisation uses `spatie/laravel-permission`. The base roles are `student`, `tutor` and `admin`
+(`Ulams\Core\Enums\UserRole`); each package seeds the permissions its policies check, and the
+`permissions` package exposes roles and their permissions at `/api/admin/roles`. The full list per
+role is in [Permissions](/reference/permissions/).
+
+The admin panel reads the permissions from `/api/profile/me` to show or hide screens; the API checks
+them again in policies and form requests. Hiding a screen is never the only control.
+
+## How each client keeps its token
+
+| Client | Where the token lives | Refresh |
+|---|---|---|
+| Reference frontend (`front/web`) | httpOnly, `SameSite=Lax` cookie `ulams_session` set by the server; scripts never see it | The SDK logs in with `remember_me` on by default (one-month token); the cookie expires with the token. On a 401 the BFF re-logs the demo student once |
+| Admin (`admin`) | `localStorage` key `TOKEN` | `refreshTokenCallback` in `admin/src/services/token_refresh.ts` calls `/api/auth/refresh` shortly before expiry and logs out on failure |
+| Legacy front (`front/src`) | Browser local storage, through the React context in `front/src/lib/sdk` | `refreshToken` in the same context |
+| H5P service | Receives the learner's token as `Authorization: Bearer` or `?_token=` (H5P core cannot set headers), verifies the RS256 signature with the tenant's Passport public key and calls `/api/profile/me` | none; Caddy redacts `_token` from logs |
+
+In the reference frontend the browser never calls the API directly. Its server-side pages use the
+token from the cookie, and browser islands call `/bff/api/…`, which adds the token. Details in
+[Reference frontend](/developers/reference-frontend/#session-and-bff).
+
+## Demo login
+
+When a tenant runs in demo mode (`DEMO_MODE=true` in its env file, `demo` package), the API exposes
+`POST /api/demo/login {"role": "student" | "admin"}`. It logs the visitor in as the seeded student or
+admin **without a password**, issues a regular personal access token and answers with the same body
+as `/api/auth/login`. `GET /api/config` then contains `ulams_demo: {enabled, front_url, admin_url}`,
+which the admin and the legacy front read at boot to log in automatically.
+
+The reference frontend uses `demoStudentSession()` from `@ulams/sdk`: demo login first, and a
+password login with `DEMO_STUDENT_EMAIL` / `DEMO_STUDENT_PASSWORD` from the server environment when
+demo mode is off. One demo token per tenant is cached on the server and shared by all visitors.
+
+The hourly demo reset runs `migrate:fresh` on the tenant, including the OAuth tables, so every token
+issued before stops working; clients log in again on the next 401. See [Demo mode](/admin/demo-mode/).
+
+<Aside type="danger">
+  Demo mode has no security: anyone who can reach the API can act as the tenant admin. Enable it only
+  on throwaway demo tenants, never on the platform or a tenant with real data.
+</Aside>
+
+## LTI launches
+
+When another LMS launches a ulams course (tool side of the `lti` package):
+
+1. The platform calls `GET/POST /api/lti/tool/login` (OIDC login initiation) and then
+   `POST /api/lti/tool/launch` with the signed `id_token`. The API validates it
+   (`packbackbooks/lti-1p3-tool`), matches the user by `(platform, sub)` (never by e-mail; Instructor
+   maps to tutor, nobody to admin) and records the launch in `lti_launches`.
+2. The browser is redirected to the front landing URL (`LTI_TOOL_LANDING_URL`) with a one-time
+   `code` and the course id.
+3. The front exchanges the code at `POST /api/lti/tool/exchange` for a Passport token. In the
+   reference frontend `/lti/launch` does this on the server, stores the token in the session cookie
+   (8 hours) and redirects to `/learn/<course>`.
+
+Inside an LMS iframe the session cookie may be blocked as third-party; platforms that frame tools
+should open ulams in a new window. Platform-side launches (ulams launching an external tool from a
+lesson) start with `POST /api/lti/launches/{topic}`, which returns the tool's OIDC login URL with a
+two-minute, single-use login hint. Configuration is in [LTI](/admin/lti/).
+
+## Other scoped tokens
+
+- **SCORM tracking token**: `POST /api/scorm/launch/{sco}` returns a player URL with a token bound to
+  the tenant, user and SCO, sent as `X-Ulams-Tracking-Token` (not `Authorization`, because Passport
+  blanks bearer headers that are not its tokens). It cannot call any other endpoint.
+- **Internal service tokens**: the API calls the H5P and PDF services with `X-Internal-Token`;
+  browsers never hold these.

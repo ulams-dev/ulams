@@ -1,0 +1,152 @@
+---
+title: Adding an admin screen
+description: Add a screen to the ulams admin panel with a route, an access rule, a page, an API service and menu translations, using the LTI screen as the example.
+sidebar:
+  order: 90
+modules:
+  - admin
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+The admin panel (`admin/`) is React 18 with umi/max (`@umijs/max`) and Ant Design. A screen is a
+route in `config/routes.ts`, an access rule in `src/access.ts`, a page under `src/pages`, API calls
+in `src/services/ulams` and menu labels in `src/locales`. The example below is the LTI screen
+(**Integrations → LTI**, `/integrations/lti`), added in Phase 1.
+
+<Steps>
+
+1. **Permission constant.** The API permission string (from the package's permission enum, see
+   [Adding an endpoint](/developers/adding-an-endpoint/)) goes into the `PERMISSIONS` enum in
+   `admin/src/consts/permissions.ts`:
+
+   ```ts
+   LtiManage = 'lti_manage',
+   ```
+
+2. **Access rule.** `admin/src/access.ts` returns one boolean per rule name for the current user.
+   `havePermissionsInDashboard(...)` requires the dashboard permission plus the listed ones. Other
+   helpers: `havePackageInstalled(PACKAGES.X)` (the API reports installed packages, see
+   `src/consts/packages.ts`) and `haveSettingsInDashboard('hideInMenu-...', true)` to hide a menu
+   entry by a setting.
+
+   ```ts
+   ltiPermission: havePermissionsInDashboard(PERMISSIONS.LtiManage),
+   ```
+
+3. **Route.** Add an entry to `admin/config/routes.ts`. `name` builds the menu label key,
+   `access` names the rule from step 2, `component` is relative to `src/pages`:
+
+   ```ts
+   {
+     path: '/integrations',
+     name: 'Integrations',
+     icon: 'api',
+     access: 'ltiPermission',
+     routes: [
+       { path: '/integrations', redirect: '/integrations/lti', access: 'ltiPermission' },
+       {
+         path: '/integrations/lti',
+         name: 'LTI',
+         icon: 'api',
+         access: 'ltiPermission',
+         component: './Lti',
+       },
+     ],
+   },
+   ```
+
+   A route whose rule is false is left out of the menu, and opening it directly does not render the page.
+
+4. **Service.** API calls are plain functions over umi's `request` in `admin/src/services/ulams/<name>.ts`.
+   Paths are relative: the request interceptor in `src/app.tsx` prefixes the tenant API URL and adds
+   the bearer token and `X-locale` header. From `src/services/ulams/lti.ts`:
+
+   ```ts
+   import { request } from 'umi';
+
+   type Response<T> = { success: boolean; data: T; message: string };
+
+   export const ltiTools = () =>
+     request<Response<LtiTool[]>>('/api/admin/lti/tools', { method: 'GET' });
+
+   export const saveLtiTool = (tool: Partial<LtiTool>) =>
+     request<Response<LtiTool>>(tool.id ? `/api/admin/lti/tools/${tool.id}` : '/api/admin/lti/tools', {
+       method: tool.id ? 'PUT' : 'POST',
+       data: tool,
+     });
+   ```
+
+   Older services put shared types in `src/services/ulams/typings.d.ts` (`API.*`); new ones may
+   export their types next to the functions, as `lti.ts` does.
+
+5. **Page.** `admin/src/pages/Lti/index.tsx` exports a component wrapped in `PageContainer` from
+   `@ant-design/pro-layout`, built from Ant Design components, with strings through
+   `FormattedMessage` / `useIntl` from `umi`:
+
+   ```tsx
+   const LtiPage: React.FC = () => {
+     // ...
+     return (
+       <PageContainer
+         content={
+           <FormattedMessage
+             id="lti.intro"
+             defaultMessage="LTI 1.3: add external tools to lessons (with grades and deep linking), and let other LMSs open ulams courses."
+           />
+         }
+       >
+         <Tabs items={[/* Tools, Platforms */]} />
+       </PageContainer>
+     );
+   };
+
+   export default LtiPage;
+   ```
+
+6. **Translations.** Menu labels are `menu.<name>` and `menu.<parent>.<child>`. Add them to every
+   locale you ship; English and Polish are the maintained ones:
+
+   ```ts
+   // admin/src/locales/en-US.ts
+   'menu.Integrations': 'Integrations',
+   'menu.Integrations.LTI': 'LTI',
+   // admin/src/locales/pl-PL.ts
+   'menu.Integrations': 'Integracje',
+   'menu.Integrations.LTI': 'LTI',
+   ```
+
+   Screen strings can rely on `defaultMessage` (the LTI page's `lti.*` ids have no locale entries);
+   add entries when the screen needs a Polish translation.
+
+</Steps>
+
+## Styling and imports
+
+- Ant Design components first. For custom styles use a CSS Module or Less and the `--ulams-*`
+  custom properties; `styled-components` imports are blocked by ESLint
+  (`admin/.eslintrc.js`, `no-restricted-imports`) and by `front`'s `lint:styled` check in CI.
+- `@lumieducation/*`, `h5p-*` and `@escolalms/h5p-react` imports are blocked: H5P is GPL and runs in
+  `api/h5p`. Use the iframe wrappers in `src/components/H5P/`.
+- Shared libraries come from `front/src/lib` as `@ulams/*` (aliases in `admin/config/config.ts`).
+
+## Check it
+
+```bash
+corepack yarn dev:admin                                   # http://localhost:8000
+corepack yarn turbo run typecheck lint test --filter=admin
+# the Prettier check CI runs (admin's own lint script writes instead of checking)
+cd admin && node "$(node -p "require.resolve('prettier/bin-prettier.js', { paths: [process.cwd()] })")" \
+  --check "**/**.{js,jsx,tsx,ts,less,md,json}" --end-of-line auto
+```
+
+Log in as `admin@ulams.app` / `secret` (platform) or `admin@<slug>.ulams.app` on a tenant admin
+(`http://<slug>.admin.localhost`). For an end-to-end test, add a spec to `admin/src/e2e` (Playwright,
+see [Testing](/developers/testing/)). The screen also needs a user-facing page in the
+Administrators section of this site; the docs coverage check
+(`yarn workspace @ulams/docs coverage`) fails until some page lists the route in `adminRoutes`.
+
+<Aside type="note">
+If the screen calls a new endpoint, the endpoint must exist with its permission and policy first,
+and the admin role must have the permission (package permission seeder).
+</Aside>
