@@ -23,4 +23,6 @@ declare const REACT_APP_ENV: 'test' | 'dev' | 'pre' | false;
 interface Window {
   REACT_APP_API_URL?: string;
   REACT_APP_TENANT_API_HOST_PATTERN?: string;
+  /** Reference web app (AI Course Builder), e.g. https://coffee.app.example */
+  REACT_APP_STUDIO_URL?: string;
 }

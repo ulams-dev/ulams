@@ -102,6 +102,13 @@
         hideInMenu: true,
       },
       {
+        path: '/courses/builder',
+        name: 'CourseBuilder',
+        icon: 'experiment',
+        access: 'courseBuilderPermission',
+        component: './CourseBuilder',
+      },
+      {
         path: '/courses/liascript',
         name: 'LiaScript',
         icon: 'read',
