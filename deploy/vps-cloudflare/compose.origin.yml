@@ -1,7 +1,7 @@
 # Origin mode: Cloudflare connects to this host on 443 (proxied DNS records, SSL mode Full (strict)),
 # Caddy presents a Cloudflare Origin CA certificate and requires Cloudflare's client certificate
 # (Authenticated Origin Pulls). Use it only when you cannot run the tunnel; the tunnel is the default
-# (ADR 0091). Also run scripts/cloudflare-firewall.sh: Docker publishes ports around ufw, so the
+# (ADR 0092). Also run scripts/cloudflare-firewall.sh: Docker publishes ports around ufw, so the
 # allow-list for Cloudflare's address ranges must sit in the DOCKER-USER chain.
 #
 #   docker compose --env-file .env -f compose.yml -f compose.origin.yml up -d

@@ -223,6 +223,21 @@ export const builderCatalogue = {
     ),
     fallback: (p) => `${s(p.label)} Themes: ${arr(p.presets).map((o) => s(o.label)).join(", ")}.`,
   },
+  SitePicker: {
+    description:
+      "Question about where the course is published: on this site, or on a new site (its own address) created for it. Only offered to platform operators; asked by the builder itself, never chosen by the model.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        ...QUESTION_BASE,
+        value: obj({ mode: oneOf(["current", "new"], "This site or a new one"), slug: str("Name of the new site: letters, digits and dashes", 40) }, ["mode"]),
+        defaultValue: obj({ mode: oneOf(["current", "new"], "This site or a new one") }, ["mode"]),
+      },
+      ["questionKey", "label", "status", "defaultValue"]
+    ),
+    fallback: (p) => `${s(p.label)} This site, or a new site with its own address.`,
+  },
   DecideForMe: {
     description: "Button that fills every open interview question with its default and explains the choices.",
     modelSelectable: false,

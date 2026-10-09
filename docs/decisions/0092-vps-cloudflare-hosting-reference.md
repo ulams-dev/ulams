@@ -1,4 +1,4 @@
-# 0091. Production reference: one VPS behind Cloudflare, flat tenant hosts, a tunnel and R2
+# 0092. Production reference: one VPS behind Cloudflare, flat tenant hosts, a tunnel and R2
 
 - Status: Proposed
 - Date: 2026-10-09
@@ -68,7 +68,7 @@ provisions, ADR 0007).
    `<slug>-files.ulams.app`, attached by `scripts/create-tenant.sh`) and `ulams-backups` (private). One S3 key for the
    application, as today (the `NullProvisioner` case of ADR 0041); bucket-scoped R2 tokens per tenant are the follow-up
    once the identity contract exists. Two switches make this work without changing defaults:
-   `TENANCY_S3_PUBLIC_POLICY=false` (skip `PutBucketPolicy`, which R2 lacks) and `TENANCY_BUCKET_PUBLIC_URL`
+   `TENANCY_S3_PUBLIC_READ_POLICY=false` (skip `PutBucketPolicy`, which R2 lacks) and `TENANCY_BUCKET_PUBLIC_URL`
    (`https://{slug}-files.ulams.app`, a URL per bucket instead of `<store>/<bucket>`). Uploaded sources stay on the
    private local disk of the Course Builder (`api_storage` volume, in the backups) because no private S3 disk exists; a
    public tenant bucket must never hold them. MinIO is only used by the local trial (`install.sh --local`).

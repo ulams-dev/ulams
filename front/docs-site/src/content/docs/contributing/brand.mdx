@@ -29,6 +29,12 @@ learner and grow with traceable, cited knowledge.
   style="width: 100%; height: auto; border-radius: 10px"
 />
 
+The board is the approved source of the identity. The original is committed as
+[`front/docs/design/brand/orbital-folio-board.png`](https://github.com/ulams-dev/ulams/blob/main/front/docs/design/brand/orbital-folio-board.png);
+the image above is its WebP copy for this site. The logo files below are redrawn from it as SVG
+(see [Using the brand in code](#using-the-brand-in-code)), so when the two differ, the board and
+[ADR 0038](/decisions/0038-brand-identity-orbital-folio/) decide.
+
 ## Logo
 
 Use the horizontal lockup by default. Use the stacked lockup where the space is square or
@@ -210,6 +216,8 @@ The assets are generated from one script, so every app has the same files:
 corepack yarn brand:build
 ```
 
+The generator is
+[`front/docs/design/brand/build.mjs`](https://github.com/ulams-dev/ulams/blob/main/front/docs/design/brand/build.mjs).
 It writes the SVG masters to `front/docs/design/brand/svg/`, the PNG and ICO exports to
 `front/docs/design/brand/png/`, the logo geometry to `front/ui/src/brand/paths.ts`, and copies the
 icons into the `public` folders of the web app, the docs site, the admin, the legacy front and the

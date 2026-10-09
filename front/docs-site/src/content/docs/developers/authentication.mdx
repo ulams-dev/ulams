@@ -49,6 +49,9 @@ curl -s http://coffee.localhost/api/profile/me -H "Authorization: Bearer $TOKEN"
 The demo accounts and their password come from tenant provisioning (`TENANT_DEMO_PASSWORD`,
 development only).
 
+`/api/auth/login`, register and the password endpoints have no application-level rate limiter; see
+[Rate limits](/developers/rate-limits/) for what is throttled and why you should limit them at the proxy.
+
 ## Roles and permissions
 
 Authorisation uses `spatie/laravel-permission`. The base roles are `student`, `tutor` and `admin`
@@ -123,3 +126,9 @@ Long-lived, scope-limited, revocable personal access tokens (`ulams_pat_...`) ar
   blanks bearer headers that are not its tokens). It cannot call any other endpoint.
 - **Internal service tokens**: the API calls the H5P and PDF services with `X-Internal-Token`;
   browsers never hold these.
+
+## Related
+
+- [Rate limits](/developers/rate-limits/): every throttle, with its environment variable.
+- [Webhooks](/developers/webhooks/): inbound endpoints that authenticate by signature, not by token.
+- [SDK usage](/developers/sdk/): calling the API from Node and the browser.

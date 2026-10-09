@@ -227,6 +227,7 @@ final class BriefService
             ['key' => 'assessments', 'label' => 'Assessments', 'value' => $assess ? implode(', ', $assess) : 'None'],
             ['key' => 'language', 'label' => 'Language', 'value' => strtoupper((string) ($brief['language'] ?? ''))],
             ['key' => 'pricing', 'label' => 'Price', 'value' => self::priceLabel($brief['pricing'] ?? ['mode' => 'free'])],
+            ...(isset($brief['site']) ? [['key' => 'site', 'label' => 'Site', 'value' => ($brief['site']['mode'] ?? 'current') === 'new' ? 'New site: ' . ($brief['site']['slug'] ?? '') : 'This site']] : []),
             ...(isset($brief['theme']) ? [['key' => 'theme', 'label' => 'Theme', 'value' => ucfirst($brief['theme']['preset']) . (isset($brief['theme']['accent']) ? ' · ' . $brief['theme']['accent'] : '')]] : []),
         ];
     }

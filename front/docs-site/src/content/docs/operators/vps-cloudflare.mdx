@@ -24,7 +24,7 @@ provides DNS, TLS, the CDN cache and object storage (R2). It costs about EUR 10 
 product owner chose for `ulams.app`. The files are in
 [`deploy/vps-cloudflare/`](https://github.com/ulams-dev/ulams/tree/main/deploy/vps-cloudflare); this page embeds the
 important ones at the end, so the page and the files cannot drift apart. The decisions behind it are in
-[ADR 0091](/decisions/0091-vps-cloudflare-hosting-reference/).
+[ADR 0092](/decisions/0092-vps-cloudflare-hosting-reference/).
 
 <Aside type="caution" title="Prepared, not yet deployed">
   The files were validated locally and run once with the published images and MinIO instead of R2. Nothing has run
@@ -218,7 +218,7 @@ apply unchanged. The Caddy CORS rule that keeps content origins out of the API's
 | `ulams-backups` | no | Output of `scripts/backup.sh` |
 
 How it is wired (all variables in `.env`): `S3_ENDPOINT=https://<account id>.r2.cloudflarestorage.com`,
-`S3_REGION=auto`, path-style addressing. R2 has no bucket policies, so `TENANCY_S3_PUBLIC_POLICY=false` makes
+`S3_REGION=auto`, path-style addressing. R2 has no bucket policies, so `TENANCY_S3_PUBLIC_READ_POLICY=false` makes
 `ulams:tenant:create` skip that call, and `TENANCY_BUCKET_PUBLIC_URL=https://{slug}-files.<domain>` gives every
 tenant bucket its own public host. `scripts/create-tenant.sh` creates the bucket (through the S3 API) and attaches
 the custom domain (through the Cloudflare API, when `CLOUDFLARE_API_TOKEN` is set). The S3 key must be allowed to create
@@ -357,7 +357,7 @@ The installer does the first four; the rest is yours.
 | 413 on an upload | Cloudflare's 100 MB request limit (Free and Pro). Smaller files or chunking; a plan with a higher limit |
 | 524 after about two minutes | A request took longer than Cloudflare's proxy timeout (125 s). Long jobs must run in the queue |
 | Files do not load from `<slug>-files.<domain>` | The R2 custom domain is missing or still initialising: R2, bucket, Settings; run `cloudflare-setup.sh --slug <slug> bucket` |
-| `NotImplemented` on tenant create | `TENANCY_S3_PUBLIC_POLICY` is not `false` (R2 has no bucket policies), or the image is older than ADR 0091 |
+| `NotImplemented` on tenant create | `TENANCY_S3_PUBLIC_READ_POLICY` is not `false` (R2 has no bucket policies), or the image is older than ADR 0092 |
 | The api never becomes healthy | `docker compose logs api` (first start migrates); a wrong `POSTGRES_PASSWORD` after the volume exists: the password only applies when the data directory is created |
 | Sessions break after a restart | `JWT_*_BASE64` or `APP_KEY` changed; restore them from the password manager |
 | E-mail does not arrive | `MAIL_*`, then SPF and DKIM; `docker compose logs api horizon` for SMTP errors |

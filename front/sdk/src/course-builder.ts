@@ -119,6 +119,10 @@ export interface BuilderState {
   session: SessionSummary;
   brief: CourseBrief | null;
   briefRows: Array<{ key: string; label: string; value: string }>;
+  /** True when the author may create a new site for the course (platform operators). */
+  canCreateSite?: boolean;
+  /** Progress of "move this course to a new site". */
+  newSite?: { slug: string; status: "queued" | "provisioning" | "transferring" | "done" | "failed"; error?: string | null; studioUrl?: string; adminUrl?: string; invited?: boolean } | null;
   /** A model-suggested price for a paid course without an amount; the author confirms it in the brief. */
   priceSuggestion?: { amountMinor: number; currency: string; rationale: string; suggested: true } | null;
   /** Notes from the last apply (a skipped theme, a product that was not created). */
@@ -363,6 +367,8 @@ export function createCourseBuilderClient(options: ClientOptions & { prefix?: st
     apply: (sessionId: string) => call<{ runId: string }>("POST", `/sessions/${id(sessionId)}/apply`),
     publish: (sessionId: string, acknowledgedWarnings = false) =>
       call<{ courseId: number; published: boolean }>("POST", `/sessions/${id(sessionId)}/publish`, acknowledgedWarnings ? { acknowledgedWarnings: true } : {}),
+    /** Provisions a new site for the course and moves the session there (platform operators). */
+    newSite: (sessionId: string, slug?: string, name?: string) => call<NonNullable<BuilderState["newSite"]>>("POST", `/sessions/${id(sessionId)}/new-site`, { ...(slug ? { slug } : {}), ...(name ? { name } : {}) }),
     /** Blocking items and warnings before publishing (the publish summary). */
     publishCheck: (sessionId: string) => call<PublishCheck>("GET", `/sessions/${id(sessionId)}/publish-check`),
     usage: (sessionId: string) => call<{ total: BuilderCost; byTask: UsageRow[] }>("GET", `/sessions/${id(sessionId)}/usage`),

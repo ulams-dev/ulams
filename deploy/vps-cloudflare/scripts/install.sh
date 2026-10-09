@@ -9,7 +9,7 @@
 #
 # Options:
 #   --domain D           the Cloudflare domain (default: ULAMS_DOMAIN of .env, or ulams.app)
-#   --style flat|nested  tenant host layout (default flat; see ADR 0091)
+#   --style flat|nested  tenant host layout (default flat; see ADR 0092)
 #   --mode tunnel|origin_ca
 #   --admin-email E      e-mail of the first platform administrator
 #   --version TAG        image tag (a sha-<short> or release tag), or `latest` to resolve the newest
@@ -160,7 +160,7 @@ env_setup() {
     ulams_env_set "$ULAMS_ENV_FILE" S3_REGION us-east-1
     ulams_env_set "$ULAMS_ENV_FILE" S3_PLATFORM_PUBLIC_URL "http://localhost:$s3port/$(ulams_env_get "$ULAMS_ENV_FILE" S3_PLATFORM_BUCKET)"
     ulams_env_set "$ULAMS_ENV_FILE" TENANCY_BUCKET_PUBLIC_URL ""
-    ulams_env_set "$ULAMS_ENV_FILE" TENANCY_S3_PUBLIC_POLICY true
+    ulams_env_set "$ULAMS_ENV_FILE" TENANCY_S3_PUBLIC_READ_POLICY true
     ulams_env_set "$ULAMS_ENV_FILE" ULAMS_STORAGE_ORIGINS "http://localhost:$s3port"
     ulams_env_set "$ULAMS_ENV_FILE" CLOUDFLARE_TUNNEL_ID local
     ulams_env_set "$ULAMS_ENV_FILE" CLOUDFLARE_ACCOUNT_ID local

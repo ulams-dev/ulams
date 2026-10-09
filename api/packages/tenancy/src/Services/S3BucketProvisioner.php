@@ -8,7 +8,11 @@ use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 
 class S3BucketProvisioner implements BucketProvisionerContract
 {
-    public function __construct(private S3Client $client, private bool $publicPolicy = true)
+    /**
+     * @param bool $publicReadPolicy false for stores without bucket policies (Cloudflare R2): the
+     *                               operator makes the bucket public (custom domain) instead
+     */
+    public function __construct(private S3Client $client, private bool $publicReadPolicy = true)
     {
     }
 
@@ -23,7 +27,7 @@ class S3BucketProvisioner implements BucketProvisionerContract
                 'key' => (string) ($config['key'] ?? ''),
                 'secret' => (string) ($config['secret'] ?? ''),
             ],
-        ], fn ($value) => $value !== null)), publicPolicy: (bool) ($config['public_policy'] ?? true));
+        ], fn ($value) => $value !== null)), publicReadPolicy: (bool) ($config['public_read_policy'] ?? true));
     }
 
     public function ensure(string $bucket): void
@@ -32,14 +36,12 @@ class S3BucketProvisioner implements BucketProvisionerContract
             $this->client->createBucket(['Bucket' => $bucket]);
         }
 
-        if (!$this->publicPolicy) {
-            return;
+        if ($this->publicReadPolicy) {
+            $this->client->putBucketPolicy([
+                'Bucket' => $bucket,
+                'Policy' => json_encode(self::publicReadPolicy($bucket)),
+            ]);
         }
-
-        $this->client->putBucketPolicy([
-            'Bucket' => $bucket,
-            'Policy' => json_encode(self::publicReadPolicy($bucket)),
-        ]);
     }
 
     public function delete(string $bucket): void

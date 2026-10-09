@@ -79,7 +79,9 @@ else
 fi
 
 # --- shell scripts -----------------------------------------------------------------------------
-if docker run --rm -v "$root:/mnt:ro" -w /mnt koalaman/shellcheck:stable -x -S warning scripts/*.sh >"$tmp/out" 2>&1; then
+scripts=()
+for f in "$root"/scripts/*.sh; do scripts+=("scripts/$(basename "$f")"); done
+if docker run --rm -v "$root:/mnt:ro" -w /mnt koalaman/shellcheck:stable -x -S warning "${scripts[@]}" >"$tmp/out" 2>&1; then
   ok "shellcheck scripts/*.sh"
 else
   bad "shellcheck: $(cat "$tmp/out")"

@@ -1,5 +1,5 @@
 # ulams production on one VPS behind Cloudflare (guide: docs site, Operators, "Install on a VPS
-# with Cloudflare"; decision: docs/decisions/0091-vps-cloudflare-hosting-reference.md).
+# with Cloudflare"; decision: docs/decisions/0092-vps-cloudflare-hosting-reference.md).
 #
 # Usage (scripts/install.sh does all of this): copy .env.example to .env, fill it in, then
 #   docker compose --env-file .env -f compose.yml up -d                        (Cloudflare Tunnel, default)
@@ -185,8 +185,8 @@ services:
       LARAVEL_TENANCY_CONTENT_HOST: ${ULAMS_CONTENT_PATTERN:?set ULAMS_CONTENT_PATTERN}
       LARAVEL_TENANCY_EMAIL_DOMAIN: ${TENANCY_EMAIL_DOMAIN:?set TENANCY_EMAIL_DOMAIN}
       LARAVEL_TENANCY_STORAGE_PUBLIC_URL: ${S3_PLATFORM_PUBLIC_URL}
-      # R2 has no bucket policies and one public URL per bucket (ADR 0091)
-      LARAVEL_TENANCY_S3_PUBLIC_POLICY: ${TENANCY_S3_PUBLIC_POLICY:-false}
+      # R2 has no bucket policies and one public URL per bucket (ADR 0092)
+      LARAVEL_TENANCY_S3_PUBLIC_READ_POLICY: ${TENANCY_S3_PUBLIC_READ_POLICY:-false}
       LARAVEL_TENANCY_BUCKET_PUBLIC_URL: ${TENANCY_BUCKET_PUBLIC_URL:-}
       LARAVEL_TENANT_DEMO_PASSWORD: ${TENANT_INITIAL_PASSWORD:?set TENANT_INITIAL_PASSWORD}
       LARAVEL_TENANCY_PLATFORM_API: ${TENANCY_PLATFORM_API:-false}

@@ -104,14 +104,16 @@ With `DISABLE_DB_MIGRATE=true`, `init.sh` still runs `ulams:tenant:sync-env` (wi
   failover. The lock needs a shared cache store that supports locks (Redis/Valkey, database,
   Memcached); with the `file` or `array` store each replica would have its own lock. If the
   replica holding a minute dies mid-tick, that minute's tasks are skipped; the next minute is
-  taken by whichever replica gets there first. `TENANCY_SCHEDULER_LOCK=false` turns the lock off
+  taken by whichever replica gets there first (see [Queues and the scheduler](/operators/queues-and-scheduler/#the-scheduler-and-its-minute-lock)). `TENANCY_SCHEDULER_LOCK=false` turns the lock off
   (a deliberate second scheduler). `ulams:tenant:schedule-loop --once` is a manual tick and
   ignores the lock. The demo reset also keeps its `withoutOverlapping()` lock in the cache.
-- **Workers.** Horizon handles the platform queues (`default` and the long-job queue for video);
-  `queue.sh` loops over every tenant host and runs `queue:work --stop-when-empty` per tenant.
-  Both pop jobs atomically from Redis, so several worker replicas are safe. Horizon is installed
-  (`laravel/horizon`) and only supervises the platform queues; tenant queues are not visible in
-  its dashboard.
+- **Workers.** Horizon handles the platform queues (`default`, the builder queue and the long-job
+  queue); `queue.sh` starts long-lived `queue:work` processes for every tenant host (default,
+  builder and long-job, each on a connection whose `retry_after` is above its job timeout) and
+  re-reads the tenant list every 10 seconds. All of them pop jobs atomically from Redis, so several
+  worker replicas are safe. Horizon is installed (`laravel/horizon`) and only supervises the
+  platform queues; tenant queues are not visible in its dashboard. Details and variables:
+  [Queues and the scheduler](/operators/queues-and-scheduler/).
 - **Migrations.** `init.sh` runs `migrate --force` on every start without `--isolated`, and
   `sync-env --migrate` migrates tenants one after another. Run them once per deploy as a job, not
   in every replica.

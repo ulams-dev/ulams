@@ -54,6 +54,11 @@ small commits → tests → summary.
       `ulams mcp`); course-as-code after Phase 3. Plan `docs/plans/cli.md` (draft, waiting for approval),
       ADRs 0072–0079 Proposed; open owner questions #74–#79
 
+- [ ] (2026-10-09) Interactive topic type and three new demo academies (gravity, poland, ulam): plan
+      `docs/plans/interactive-demos.md` (draft, waiting for approval), ADRs 0086–0089 Proposed; owner questions
+      #146 (approve), #147 (gravity repo), #148 (content licences), #149 (poland scope), #150 (on by default),
+      #151 (Ulam fact review)
+
 ## Open decisions
 
 - [ ] Final name (favourite **ULAMS**; alternatives Wellam, Monte, Spiral, Automata, UlamOS)
@@ -320,6 +325,17 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [ ] (new) `yarn install` on Node 24 fails in admin's postinstall (`max setup`: umi's esmi feature loads
       `http-deceiver`, which needs the removed `http_parser` binding); CI and `.nvmrc` use Node 22
 
+### 1.5 Interactive packages (new)
+Plan: `docs/plans/interactive-demos.md` (M1–M2); ADRs 0086, 0087.
+- [ ] (new) Interactive topic type: versioned zip packages with a `ulams-interactive.json` manifest, played in an
+      opaque sandbox on the content origin with a CSP per version, steps and step ranges per topic, text
+      alternatives, background mode (ADR 0086; on by default pending #150)
+- [ ] (new) `ulams-ix` v1 bridge protocol and the MIT `@ulams/interactive-bridge` library (ADR 0087)
+- [ ] (new) `InteractiveLesson` catalogue component with background (full-bleed) mode, reduced-motion posters,
+      WebGL and timeout fallbacks, keyboard flow
+- [ ] (new) Interactive package library and topic editor in the admin; `ulams topics create-interactive` and its MCP
+      tool; docs pages for creators, the bridge and the content origin
+
 ---
 
 ## Phase 2: AI Course Builder
@@ -390,9 +406,10 @@ approved apply through domain services → element chat edits. Designs:
       GIFT rendered by our code, support check against the cited text)
 - [x] Metadata (title, description, SEO, pricing) (a suggested price for a paid course, confirmed by
       the author; ADR 0049)
-- [ ] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (partial: theme,
-      the product (inactive at apply, active at publish), the publish check and the generated landing
-      on the current site done; a new site for platform admins is L2-09)
+- [x] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (theme, the product
+      (inactive at apply, active at publish), the publish check and the generated landing on the current
+      site; a new site for platform operators through the platform tenant API and a session transfer,
+      ADR 0048; the Sylius channel is Phase 6.4)
 - [x] **Course Blueprint**: versioned JSON, stable IDs, citations; entities created via domain
       services; persisted per stage; progress streamed (SSE/websockets) (ADR 0010, 0025)
 - [x] (new) Long jobs on dedicated queue connections: `<driver>-builder` (retry_after 2400) for Course
@@ -435,6 +452,8 @@ Learner layouts (feature flag)
 - [ ] AI-composed declarative lesson layouts from approved components, stored in blueprint
       (partial: the approved components and their manifest are done (L2-20); the Layout topic type
       and generation are L2-21)
+- [ ] (new) Layout topic type, rendering only (ADR 0052; `docs/plans/interactive-demos.md` M6): catalogue documents
+      as LMS topics so flip cards, timelines and practice activities can be course items; generation stays in L2-21
 
 Pedagogical guardrails
 - [ ] Mandatory scaffolding: intro → toolbox → graded challenges → tiered hints →
@@ -566,6 +585,15 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] (new) Platform product landing on the platform host (`app.localhost`) with the live demos;
       account area; webinars/events/consultations pages (partial: implemented and tested, uncommitted;
       see `docs/plans/phase-5-reference-frontend.md`, batch 2)
+- [ ] (new) Three new free demo academies, `gravity` (Gravity Lab, 3D simulation), `poland` (Poland, Measured /
+      Polska w liczbach, map in the background, EN and PL) and `ulam` (The Scottish Book: Stanisław Ulam and the Lwów
+      School, five MIT interactives), each with a preset, landing, certificate, demo users and the hourly reset
+      (ADR 0089; `docs/plans/interactive-demos.md` M3–M9)
+- [ ] (new) Six demos on the platform landing with one-click learner and admin login; `make demo-seed-tenants`
+      seeds all six; README and docs site updated (M10)
+- [ ] (new) `demo-content/`: separately licensed content packages (gravity GPL-3.0 from `qunabu/Gravity` by
+      checksum, never committed; poland and ulam under the owner's chosen licence, pending #148) with a boundary lint
+      (ADR 0088)
 
 ---
 
@@ -711,12 +739,16 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       Container, R2, Hyperdrive, Queues, Durable Objects) with a one-command `wrangler deploy` for a
       dev environment; strangler migration of the API to Hono only if the spike succeeds
 
+- [ ] (new) Shared-hosting variant: the API on MyDevil.net with cron workers and Cloudflare in front
+      (`deploy/mydevil`, docs `operators/install-mydevil`, ADR 0091; partial: runbook, scripts and the
+      code changes (`ulams:tenant:work-once`, manual tenant database, R2 policy switch) done, not run on
+      a real account: needs SSH and `bin/check-host.sh`)
 - [ ] One app image + PostgreSQL + optional Redis (DB fallback)
 - [ ] Commerce as optional profile: + one Sylius image, shared PostgreSQL server (separate DB)
 - [ ] `docker compose up` and Helm chart with sane defaults
 - [ ] Setup wizard (admin, domain, mail, storage, AI provider or none, commerce link)
 - [x] (new) Production reference: one VPS behind Cloudflare (tunnel, flat tenant hosts, R2, cache rules, backups to R2,
-      install, upgrade, backup, restore and tenant scripts) in `deploy/vps-cloudflare/`, guide in Operators, ADR 0091.
+      install, upgrade, backup, restore and tenant scripts) in `deploy/vps-cloudflare/`, guide in Operators, ADR 0092.
       Prepared and validated locally with the published images and MinIO; nothing is deployed
 - [ ] (new) First production deployment on the VPS and Cloudflare (owner publishes later, issue #24): staging
       install, restore drill, R2 custom domains, tunnel, then the launch switches (landing `actual`, CSP enforce)

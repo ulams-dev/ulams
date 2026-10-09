@@ -87,10 +87,15 @@ replacement.
 | [0078](0078-platform-tenant-api.md) | A platform-only HTTP API for tenant management | Proposed |
 | [0079](0079-course-as-code-format.md) | Course-as-code: Markdown with directives + YAML, Blueprint v2 and a committed sync base | Proposed |
 | [0090](0090-living-course-implementation-choices.md) | Living Course: choices made during implementation (own glob matcher, lenient alignment, eval and CI shape) | Proposed |
-| [0091](0091-vps-cloudflare-hosting-reference.md) | Production reference: one VPS behind Cloudflare, flat tenant hosts, a tunnel and R2 | Proposed |
 | [0080](0080-interactive-preview-in-the-studio.md) | Interactive preview in the studio: learner pages from the blueprint, in a frame | Proposed |
 | [0081](0081-upgrade-command-and-step-registry.md) | `ulams:upgrade`: an idempotent per-tenant upgrade command with a step registry | Proposed |
 | [0082](0082-quiz-attempt-deadline-on-any-queue-driver.md) | Quiz attempt deadline holds on every queue driver | Proposed |
 | [0083](0083-course-builder-stage-advance-under-the-run-lock.md) | Course Builder: a stage change is one transaction under the run lock | Proposed |
 | [0084](0084-cli-builder-and-living-course-commands.md) | CLI and MCP commands for the course builder and Living Course | Proposed |
 | [0085](0085-platform-tenant-api-implementation.md) | The platform tenant API: operations, permission and what stays off | Proposed |
+| [0086](0086-interactive-topic-type.md) | Interactive topic type: author-uploaded JavaScript packages in an opaque sandbox on the content origin | Proposed |
+| [0087](0087-interactive-bridge-protocol.md) | The `ulams-ix` bridge protocol and the `@ulams/interactive-bridge` library (MIT) | Proposed |
+| [0088](0088-separately-licensed-content-packages.md) | Separately licensed content packages under `demo-content/`; GPL apps stay GPL and are never linked into MIT code | Proposed |
+| [0089](0089-six-demo-academies-and-content-sourcing.md) | Six demo academies: three free interactive courses, one theme preset each, sourced content, EN/PL as two courses | Proposed |
+| [0091](0091-shared-hosting-cron-workers-and-manual-tenant-database.md) | Shared hosting: cron-driven workers (`ulams:tenant:work-once`) and an operator-created tenant database | Proposed |
+| [0092](0092-vps-cloudflare-hosting-reference.md) | Production reference: one VPS behind Cloudflare, flat tenant hosts, a tunnel and R2 | Proposed |

@@ -29,10 +29,11 @@ this page renders them from there, so the page and the files cannot drift apart.
   file is validated with `docker compose config`, but run it on a staging server first.
 </Aside>
 
-<Aside type="tip" title="Using Cloudflare?">
+<Aside type="tip" title="Other ways to host">
   For one VPS behind Cloudflare (tunnel, wildcard DNS, R2 storage, cache rules, backups to R2, install and upgrade
-  scripts) follow [Install on a VPS with Cloudflare](/operators/vps-cloudflare/) instead. This page is the generic
-  version with Caddy terminating TLS itself.
+  scripts) follow [Install on a VPS with Cloudflare](/operators/vps-cloudflare/) instead of this page, which is the
+  generic version with Caddy terminating TLS itself. A cheaper, smaller option is the API on a MyDevil shared hosting
+  account with the front on Cloudflare: [Install on MyDevil](/operators/install-mydevil/) (not tested end to end; see its limits).
 </Aside>
 
 ## Before you start
@@ -112,7 +113,8 @@ this page renders them from there, so the page and the files cannot drift apart.
 6. Seeds permissions (`PermissionsSeeder`), which also creates the first platform admin while the
    users table is empty and `INITIAL_USER_PASSWORD` is set. `DISABLE_DB_SEED=true` skips it.
 7. Starts supervisord with php-fpm, Horizon (`DISABLE_HORIZON`), the tenant queue loop
-   `queue.sh` (`DISABLE_QUEUE`) and the scheduler loop `scheduler.sh` (`DISABLE_SCHEDULER`).
+   `queue.sh` (`DISABLE_QUEUE`) and the scheduler loop `scheduler.sh` (`DISABLE_SCHEDULER`); see
+   [Queues and the scheduler](/operators/queues-and-scheduler/).
 
 <Aside type="danger" title="Always set the platform key pair">
   Step 5 never changes an existing `APP_KEY`: a missing Passport key only recreates the key
@@ -148,6 +150,16 @@ this page renders them from there, so the page and the files cannot drift apart.
 <Code code={caddyfile} lang="text" title="Caddyfile" />
 
 <Code code={envExample} lang="ini" title=".env.example" />
+
+## Settings to review before going public
+
+- `ULAMS_LANDING_STATUS` on the `web` service: the default `final` shows every roadmap item of the
+  platform landing as delivered; set `actual` for the honest status
+  ([Environment](/operators/environment/#the-platform-landing-switch)). The example does not set it.
+- `CSP_ENFORCE` in `.env` (the example passes it to `web`, default `false`) and `ULAMS_CSP_HEADER` for the
+  admin: report-only first, then enforced
+  ([Security headers](/operators/security-headers/#report-only-first-then-enforce)).
+- Never turn on [demo mode](/admin/demo-mode/) for a tenant with real data.
 
 ## Optional services
 

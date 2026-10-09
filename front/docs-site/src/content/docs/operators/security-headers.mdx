@@ -28,10 +28,16 @@ All three carry `report-uri` and `report-to`, so browsers send violations to the
 `POST /api/csp-report` is public (no credentials), limited to 60 requests a minute per IP and 16 KB
 per body. It accepts both wire formats (`application/csp-report` and `application/reports+json`) and
 keeps **one row per directive, blocked host and page path** with a counter: no full URLs, no query
-strings, nothing from the report text. Rows not seen for 30 days (`CSP_REPORT_RETENTION_DAYS`) are
-deleted every night by `csp-reports:prune`.
+strings, nothing from the report text. Other content types answer `415`, a body over 16 KB `413`, a
+body that is not JSON `400`; a stored report answers `204`. Rows not seen for 30 days
+(`CSP_REPORT_RETENTION_DAYS`, default 30) are deleted every night at 03:20 by `csp-reports:prune`, which
+runs from the scheduler. The Caddy `csp_report` block in the development Caddyfile and the production
+example lets the content origins post to the endpoint without credentials.
 
-Admins read the rows at `GET /api/admin/csp-reports` (newest first). A row such as
+Admins (role `admin`) read the rows at `GET /api/admin/csp-reports` with a bearer token (`per_page`
+1 to 100); each row has `directive`, `blocked_host`, `document_path`, `count`, `first_seen_at` and
+`last_seen_at`. There is no screen for it in the admin panel yet, so use the API or `ulams csp-reports list`
+(see the [CLI](/developers/cli/)). A row such as
 `frame-src` / `tool.example.com` / `/learn/3/12` with a high count means a page tried to frame a
 host the policy does not allow.
 

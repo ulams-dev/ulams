@@ -48,13 +48,23 @@ The full endpoint list is in the [API endpoints reference](/reference/api-endpoi
 3. When an enrolled learner opens the topic, the front asks the API for a launch and frames the AU on
    the tenant [content origin](/operators/content-origin/) (`<slug>.content.<domain>/cmi5/...`) in a
    sandboxed frame, so the package code never runs on the app or API origin.
-4. The launch URL carries the cmi5 `endpoint`, `fetch`, `actor`, `registration` and `activityId`. The
-   `fetch` URL holds a **one-time launch token**, not the learner's access token. The AU posts to it
-   and gets an **LRS-only session token** (valid for `CMI5_SESSION_MINUTES`, 120 by default). That
-   token works only on the built-in LRS, only for that registration, and every other API endpoint
-   rejects it. An AU that fetches twice gets the same token; after the session ends it gets a 401.
+4. The launch URL carries the cmi5 `endpoint`, `fetch`, `actor`, `registration` and `activityId`
+   (`GET /api/cmi5/courses/{id}` or the launch URL of `GET /api/cmi5/player/{auId}`). The `fetch` URL
+   holds a **one-time launch token**, not the learner's access token: 64 random characters, stored only
+   as a hash, and valid for **10 minutes** until the AU first uses it. The AU posts to the `fetch` URL
+   (`POST /api/cmi5/fetch?token=...`, public, 60 requests a minute) and gets `{"auth-token": ...}`, an **LRS-only session
+   token**, valid for `CMI5_SESSION_MINUTES` (default 120) counted from that first fetch. That token
+   works only on the built-in LRS (`/trax/api/<access>/xapi/std`), only for that registration, and every
+   other API endpoint rejects it. An AU that fetches again within the session gets the same token; a
+   token that is unknown, malformed or expired gets a 401 with the cmi5 error body.
 5. The AU sends its xAPI statements to the LRS. A `completed` or `passed` statement completes the
    topic for the learner, and the usual lesson and course completion, certificates and events follow.
+
+The AU runs on the content origin and calls `fetch` and the LRS from there, so the reverse proxy must
+answer those two paths with `Access-Control-Allow-Origin: *` and without cookies. The development
+Caddyfile and the production example have a `@cmi5` block for it; if you write your own proxy
+configuration, copy that block (see [Content origin](/operators/content-origin/)). The design is in
+[ADR 0046](/decisions/0046-cmi5-content-origin-and-launch-token/).
 
 ### Packages uploaded before this change
 
