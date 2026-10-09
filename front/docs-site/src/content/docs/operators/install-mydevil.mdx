@@ -1,0 +1,179 @@
+---
+title: Install on MyDevil (shared hosting)
+description: Run the ulams API on a MyDevil.net shared hosting account with PostgreSQL and cron, with the front, DNS, TLS and storage on Cloudflare - what works, what does not, the limits, the costs and when to move to a VPS.
+sidebar:
+  order: 15
+modules:
+  - api
+  - tenancy
+  - api-h5p
+  - api-pdf
+needsReview: "The owner's account (MD2 on s51, FreeBSD 14.3) was surveyed read-only on 2026-10-09, but ulams was not installed on it. Still to confirm: wildcard or pointer vhosts, the maximum cron process runtime, whether Redis needs binexec, Passenger with the Astro and H5P entry points, and the full test suite on PostgreSQL 16."
+---
+
+import { Aside, Badge } from "@astrojs/starlight/components";
+
+[MyDevil.net](https://www.mydevil.net/) is a Polish shared-hosting provider with PHP 8.4, PostgreSQL,
+Node.js, cron and SSH, on FreeBSD, without Docker and without root. This page says which parts of
+ulams fit there. The runbook and the scripts are in
+[`deploy/mydevil/`](https://github.com/ulams-dev/ulams/tree/main/deploy/mydevil); the decision is
+[ADR 0091](/decisions/0091-shared-hosting-cron-workers-and-manual-tenant-database/).
+
+<Aside type="caution" title="Surveyed, not installed">
+  <Badge text="Estimate" variant="caution" /> A read-only survey of a real MD2 account (server s51,
+  FreeBSD 14.3) confirmed the facts in the next section, but ulams has not been installed there. The
+  rest comes from MyDevil's public documentation and the ulams code, and the unknowns are marked
+  **to confirm** in the runbook. For production with real learners, the
+  [VPS variant](https://github.com/ulams-dev/ulams/tree/main/deploy/vps-cloudflare) or
+  [one server with Docker](/operators/self-hosting/) is the tested direction.
+</Aside>
+
+## The short answer
+
+The **API with PostgreSQL fits**, as a small deployment (a few tenants, light video use), with
+**cron instead of long-lived workers** and **Cloudflare in front** for DNS, TLS, wildcards and the
+front end. The learner front, admin, H5P and video do not fit well. MyDevil is a cheap place to run
+the API for a pilot, not a platform for many tenants.
+
+## What a real account offers
+
+Verified by a read-only survey of an MD2 account on 2026-10-09:
+
+| Item | Value |
+|---|---|
+| OS | FreeBSD 14.3 |
+| Limits | 4 GB memory, **70 processes**, 3000 open files, no disk quota shown (MD2 is 50 GB) |
+| PHP | 5.6 to 8.5; `php84` has `pdo_pgsql`, `redis`, `imagick`, `gd`, `intl`, `zip`, `bcmath`, `sodium`, `pcntl`, `posix`, `apcu`, `mbstring`, OPcache, `exif`; `disable_functions` empty |
+| PostgreSQL | 16.10 on a shared server, databases made with `devil pgsql`. ulams targets 12 to 17 and uses nothing version-specific, and a full migration on a fresh PostgreSQL 16.15 passes; the whole test suite has not been run on 16 |
+| Node | 16 to 26, default 22.22 (the services need 22.12 or later) |
+| Tools | `redis-server`, `ffmpeg`, `ffprobe`, `screen`, `tmux`, `flock`, `rsync`, `git`, `curl`, `pg_dump` |
+| Network | outbound HTTPS to the Anthropic API works |
+| Binexec, reserved ports | off, none: neither is needed for the plan here (cron, unix-socket Redis, Passenger sites) |
+
+## Component by component
+
+| Component | Verdict | Why |
+|---|---|---|
+| Laravel 13 API on PHP 8.4 | Works | PHP 8.4 per vhost (`AddType application/x-httpd-php84 .php`) and as `php84` on the CLI; every extension ulams needs is present (verified) |
+| PostgreSQL | Works with limits | `devil pgsql db add`; 16.10 (verified); databases "unlimited" in the offer; extensions per database (`pg_trgm`, `unaccent`, `pgcrypto`, `vector`, ...). No CREATEDB for the app, so tenant databases are made by hand ([ADR 0091](/decisions/0091-shared-hosting-cron-workers-and-manual-tenant-database/)) |
+| Redis or Valkey | Works with limits | No managed service, not Valkey: you run the installed `redis-server` in `screen`, on a unix socket (no reserved port) with a password, restarted by cron after reboots; binexec is probably not needed (to confirm). Not needed for the API (database queue and cache); needed only by the H5P service |
+| Queue workers | Works with limits | Cron every minute runs `ulams:tenant:work-once` per domain; up to a minute of latency. `screen` workers are possible but each holds a process slot (70 in total) and nothing restarts them, so cron is the default |
+| Builder and long-job queues (30 min, 5 h) | Works with limits, to confirm | A cron process under `flock` drains the queue and exits; whether the host kills a process that runs 30 minutes or 5 hours is not documented |
+| Scheduler | Works | The same cron line runs one tick per domain (`ulams:tenant:schedule-loop --once`, which now also works without ext-pcntl); per-tenant schedules and the minute lock behave as in Docker |
+| Node services: PDF | Works with limits | Node 22 and 24 under Phusion Passenger (`devil www add <host> nodejs ...`); stops after 24 h idle |
+| Node service: H5P | Works with limits, defer | Needs Redis and the exported tenant config; GPL service; more memory than the API; a small VPS is safer |
+| mjml | Works with limits | Same Node pattern, or a hosted mjml |
+| Astro learner front (Node SSR) | Works for one to three tenants | One Passenger application (its own processes, 150 to 300 MB) per host name, so a wildcard of tenants does not fit in 70 processes; use Cloudflare Workers beyond three |
+| Admin (static) | Better elsewhere | Static files per tenant host; Cloudflare serves all tenant hosts with one deployment |
+| Wildcard subdomains | Not documented | Each host is a vhost (`devil www add`); wildcard names are not documented. Cloudflare holds the wildcard DNS and TLS |
+| Custom and wildcard TLS | Works with limits | Let's Encrypt per host with `devil ssl` (needs an unproxied record); own certificates per host with SNI (use a free Cloudflare Origin CA certificate). No wildcard issuance documented |
+| ffmpeg (video) | Works with limits | `ffmpeg` and `ffprobe` are installed (verified); conversion is CPU-bound and shares the 70 processes and 4 GB |
+| S3 / R2 | Works | Outbound HTTPS from PHP; R2 needs `TENANCY_S3_PUBLIC_READ_POLICY=false` (R2 has no bucket policies) |
+| Outbound network (Anthropic API) | Works | Verified for the Anthropic API; R2 and SMTP to confirm |
+| HTTPS | Works | Cloudflare at the edge, Origin CA or Let's Encrypt on the host |
+
+## Multi-tenancy on MyDevil's vhosts
+
+Many domains pointing at one app directory works, with one vhost per host name. Every vhost
+(`devil www add acme.api.example.com php`) gets a document root; `add-vhost.sh` replaces it with a
+symlink to the shared `~/ulams/api/public`, so one copy of the code serves every tenant. The app
+picks the tenant from the `Host` header: laravel-multidomain loads `.env.<host>` (written by
+`ulams:tenant:create`), and unknown hosts get a 404 (`TENANCY_ENFORCE_HOSTS`). Caddy's host routing is
+replaced by: Cloudflare for the front, admin and content hosts, and MyDevil vhosts for the API hosts.
+Only the API host of a tenant lives on MyDevil, so one vhost is created per tenant.
+
+## Recommended split
+
+| Part | Where | Monthly cost (estimate) |
+|---|---|---|
+| API, PostgreSQL, cron workers | MyDevil | the plan you already pay: MD1 20 PLN, MD2 40 PLN, MD3 80 PLN, MD4 160 PLN a month, gross, list price (200/400/800/1600 PLN a year) |
+| Learner front, admin, content-origin proxy | Cloudflare Workers / Pages | 0 on the free tier; USD 5 on Workers Paid if you pass the free limits |
+| Object storage | Cloudflare R2 | 0 up to 10 GB, then about USD 0.015 per GB-month; no egress fee |
+| DNS, wildcard TLS at the edge | Cloudflare | 0, but a wildcard at the second level (`*.api.example.com`) needs Advanced Certificate Manager, about USD 10, or flat host names |
+| Domain | registrar | about USD 14 a year for `.app` |
+| AI | Anthropic API | usage-based |
+
+Roughly **40 PLN a month for a pilot** on the owner's MD2 (plus Cloudflare at 0 to USD 5), plus the AI
+usage. The plan is already paid until 2026-12-18, so until then the extra cost is Cloudflare and the
+domain. Prices on the MyDevil [offer page](https://www.mydevil.net/) were read on 2026-10-09; a
+third-party listing shows half-price promotions, so check the price at renewal.
+
+## What you give up
+
+- **Limits.** The surveyed MD2 has 4 GB of memory and 70 processes for the whole account, shared with
+  the owner's other sites; MyDevil does not publish per-plan limits (it sells extra RAM and processes as
+  add-ons). The ulams containers assume 1 GB per PHP process and up to ten workers, so this variant
+  runs cron passes one at a time and caps Passenger at one process per app. Memory budget for 3 to 6
+  tenants: about 2.5 GB at peak and 50 to 70 processes, so keep the fronts on Cloudflare past three
+  tenants (see the resource plan in the runbook).
+- **No supervisor or root.** Cron is the only dependable scheduler; a `screen` process is allowed
+  but has no restart policy.
+- **Latency.** Jobs wait up to a minute for the next cron pass; the default queue is not for real
+  time.
+- **Large uploads and imports.** SCORM packages up to 512 MB and course imports up to 1 GB go
+  through PHP, which has request time and size limits on shared hosting.
+- **Video.** One conversion at a time; heavy use will hit the process and CPU limits.
+- **No Docker.** You build `vendor/` on your machine or in CI and upload a tarball
+  (`deploy/mydevil/bin/build-release.sh`); there is no `docker compose pull`.
+- **One server.** No replicas, no failover; the backups are `pg_dump` files plus MyDevil's own.
+- **Content origin.** Caddy strips `X-Ulams-Content-Origin` from API requests; MyDevil's nginx does
+  not, so a Cloudflare Transform Rule must, or package HTML could run on the API origin. Treat
+  the content origin as not ready until that rule and the content Worker exist.
+
+## Install in outline
+
+The runbook is [`deploy/mydevil/README.md`](https://github.com/ulams-dev/ulams/blob/main/deploy/mydevil/README.md).
+
+1. Run `bin/check-host.sh` on the account; make `php` point at `php84` (binexec stays off unless something refuses to start).
+2. Put the DNS zone on Cloudflare; add proxied records for the API hosts to the account's web IP.
+3. `devil pgsql db add` for the platform database; fill in `.env` from `.env.example`.
+4. Build the tarball (`build-release.sh`), upload it, run `install.sh` then `setup.sh`.
+5. `crontab` from `deploy/mydevil/crontab` (three queue groups, backup).
+6. Create tenants with `add-tenant.sh` (database, vhost, `ulams:tenant:create --db-password=`).
+7. Cloudflare: Origin CA certificate, Transform Rule for the content header, Workers for the front,
+   admin and content hosts.
+
+Upgrades are `upgrade.sh <tarball>` (backup, swap, `ulams:upgrade`, caches); see also
+[Upgrades](/operators/upgrades/) and [Backups](/operators/backups/) for what they mean in general,
+and [DNS and TLS](/operators/dns-and-tls/) and [Content origin](/operators/content-origin/) for the
+hosts.
+
+## Code changes this variant needed
+
+Done in the same change (tests included):
+
+| Change | Effort | What |
+|---|---|---|
+| `ulams:tenant:work-once` | S (done) | One scheduler tick and one queue drain per domain, for cron |
+| `schedule-loop --once` without ext-pcntl | XS (done) | Signal handlers only in loop mode |
+| `TENANCY_DATABASE_PROVISIONER=manual`, `ulams:tenant:create --db-password` | S (done) | The app checks the login to a database the operator made |
+| `TENANCY_S3_PUBLIC_READ_POLICY=false` | XS (done) | Skip the bucket policy on R2 |
+| Health check without Redis | XS (done) | `RedisCheck` is registered only when the queue or cache uses Redis |
+
+Not done:
+
+| Change | Effort | What |
+|---|---|---|
+| Secret value for `X-Ulams-Content-Origin` (instead of `1`), checked by the API | S | Removes the dependency on header stripping at the proxy; needs an ADR (content-origin security) |
+| Direct-to-R2 browser uploads for large packages | L | Avoids PHP upload limits on shared hosting |
+| Wildcard-aware vhost helper if MyDevil accepts `*.host` | XS | One `devil www add` instead of one per tenant |
+| ffmpeg-less video fallback (external transcoder) | M | Video on hosts without ffmpeg |
+
+## When to move to the VPS variant
+
+Move when any of these happens: a limit above bites (memory kills, process caps, a 504 on an import),
+you need H5P or video, you have more than two or three active tenants, you need job latency under a
+minute, or you need replicas and failover. The
+[VPS and Cloudflare variant](https://github.com/ulams-dev/ulams/tree/main/deploy/vps-cloudflare) keeps
+the Cloudflare side (front, R2, DNS) and replaces the host; the database dumps from `backup.sh` restore
+into any PostgreSQL, and the tenant env files, Passport keys and `APP_KEY` move as they are.
+
+## Sources
+
+MyDevil: [offer](https://www.mydevil.net/), [technologies](https://www.mydevil.net/technologie/),
+[terms and limits annex](https://www.mydevil.net/dokumenty/zalacznik-nr-2-do-regulaminu-limity-bezpieczenstwa-i-ograniczenia/),
+and the wiki pages [PHP](https://pomoc.mydevil.net/PHP/), [PostgreSQL](https://pomoc.mydevil.net/PostgreSQL/),
+[Node.js](https://pomoc.mydevil.net/Node.js/), [Cron](https://pomoc.mydevil.net/Cron/),
+[Redis](https://pomoc.mydevil.net/Redis/), [SSL](https://pomoc.mydevil.net/SSL/),
+[websites](https://pomoc.mydevil.net/Strona_WWW/), [Binexec](https://pomoc.mydevil.net/Binexec/),
+[ports](https://pomoc.mydevil.net/Rezerwacja_portow/).

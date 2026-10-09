@@ -97,6 +97,41 @@ class CreateTenantCommandTest extends TestCase
         $this->assertSame('PUBLIC-acme.localhost', $tenant->passport_public_key);
     }
 
+    public function testDbPasswordOptionIsUsedForTheDatabaseStep(): void
+    {
+        $this->database->shouldReceive('ensure')->once()
+            ->withArgs(fn ($db, $user, $password) => $password === 'a-password-of-16-chars');
+        $this->buckets->shouldReceive('ensure')->once();
+        $this->domains->shouldReceive('add')->once()
+            ->withArgs(fn (string $host, array $values) => $values['DB_PASSWORD'] === 'a-password-of-16-chars');
+
+        $this->artisan('ulams:tenant:create', ['slug' => 'acme', '--db-password' => 'a-password-of-16-chars'])->assertExitCode(0);
+
+        $this->assertSame('a-password-of-16-chars', Tenant::query()->firstWhere('slug', 'acme')->db_password);
+    }
+
+    public function testShortDbPasswordIsRejected(): void
+    {
+        $this->artisan('ulams:tenant:create', ['slug' => 'acme', '--db-password' => 'short'])
+            ->expectsOutputToContain('at least 16 characters')
+            ->assertExitCode(1);
+
+        $this->assertNull(Tenant::query()->firstWhere('slug', 'acme'));
+    }
+
+    public function testDbPasswordDoesNotChangeADatabaseThatIsAlreadySetUp(): void
+    {
+        $this->database->shouldReceive('ensure')->once();
+        $this->buckets->shouldReceive('ensure')->once();
+        $this->domains->shouldReceive('add')->once();
+        $this->artisan('ulams:tenant:create', ['slug' => 'acme'])->assertExitCode(0);
+        $before = Tenant::query()->firstWhere('slug', 'acme')->db_password;
+
+        $this->artisan('ulams:tenant:create', ['slug' => 'acme', '--db-password' => 'another-password-16-chars'])->assertExitCode(0);
+
+        $this->assertSame($before, Tenant::query()->firstWhere('slug', 'acme')->db_password);
+    }
+
     public function testRerunSkipsFinishedSteps(): void
     {
         $this->database->shouldReceive('ensure')->once();
