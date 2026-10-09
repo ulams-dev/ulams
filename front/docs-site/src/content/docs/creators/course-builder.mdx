@@ -1,0 +1,97 @@
+---
+title: Build a course with AI
+description: Turn a Markdown, PDF or DOCX source into a cited course in your academy through an interview, an approved outline and approved generation, then refine it by chatting.
+sidebar:
+  order: 40
+modules:
+  - course-builder
+learnerRoutes:
+  - /studio
+  - /studio/login
+  - /studio/new
+  - /studio/s/[id]
+  - /studio/s/[id]/workspace
+  - /studio/s/[id]/landing
+  - /studio/s/[id]/done
+  - /studio/api/[...path]
+---
+
+The Course Builder turns your own material into a course in your academy. You stay in charge: the
+assistant proposes, you approve every change, and every lesson cites the passage of your source it
+comes from.
+
+## Before you start
+
+- You need a **tutor** or **admin** account. In the admin, open **Courses → Build with AI**, or use
+  the **Build a course with AI** card on the course list. The builder opens in the web app at
+  `/studio`.
+- Have one source document ready: **Markdown, PDF or DOCX**, up to 20 MB (PDF up to 300 pages).
+  Text-based PDFs work best; scanned PDFs without text cannot be read.
+
+## 1. Upload your source
+
+Start a new course and drop the file on the page (or **Browse files**). The builder splits it into
+sections, each with a stable id such as `frg_7p1w…`, and shows them in the source card. Citations
+point to these sections. The upload is read as **data only**: text in the document can never change
+what the assistant does, even if it looks like an instruction.
+
+## 2. Answer the interview
+
+The assistant asks six short questions, one card at a time: who the course is for, the level,
+total length and lesson length, tone, assessments (a quiz after each lesson, a final test) and
+the language. Each card says **why** it asks.
+
+- Pick an answer and press **Continue**, or press **Decide for me** to accept the suggested default.
+- **Decide the rest for me** fills every open question at once.
+- The **Course brief** panel shows your answers; fields the assistant chose are marked
+  "decided for you". You can change the brief later.
+
+## 3. Review the outline and the learning objectives
+
+The outline appears as a proposal: modules, lessons with their length, measurable learning
+objectives and amber **citation chips**. Select a chip to read the source passage.
+
+- **Edit** an objective inline, then **Approve outline & generate**.
+- Or write what you want changed and press **Request changes**; you get a new proposal with the
+  differences marked (added, changed, removed).
+
+Nothing is generated before you approve the outline.
+
+## 4. Watch the lessons being written
+
+The progress card shows the stages (lessons, grounding check, quizzes, metadata) and each lesson
+with its citations, questions and cost. The running AI cost is shown at the top.
+
+- A **grounding check** compares every lesson with the passages it cites; claims it cannot find are
+  rewritten once, and anything left is **flagged** for you.
+- If one lesson fails, press **Retry** on that lesson. The rest of the course is kept.
+- You can close the tab; generation continues and the conversation is there when you come back.
+
+## 5. Apply to your academy
+
+The apply card lists what will be created (course, lessons, topics, quiz questions, landing page)
+and any warnings. Press **Apply to my academy**. The course is created **unpublished**, through the
+same services the admin uses.
+
+## 6. Refine any element by chatting
+
+Open the **Workspace**. Select a lesson or a quiz question in the curriculum tree, then type what you
+want ("make the distractors less obvious", "shorter, with an example"). The assistant proposes the
+change as a **diff**; **Approve** applies it to the course, **Reject** keeps the current version.
+
+- **Undo** and **Redo** move between versions and update the course.
+- **Version history** lists every version; **Restore** brings an old one back as a new version.
+
+## 7. Publish
+
+The success page summarises the course (modules, lessons, minutes, questions, how much is cited,
+AI cost) and links to the course form in the admin, the learner preview and the landing preview.
+**Publish course** makes it available to learners.
+
+## Tips
+
+- Keyboard: every card works with Tab, Space and Enter; new cards take the focus and are
+  announced to screen readers.
+- The assistant only writes what your source supports. If you ask for something the source does not
+  cover, it will say so instead of inventing it.
+- Each course has an AI budget (USD 5 by default). When it is reached, ask an admin to raise it.

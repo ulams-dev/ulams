@@ -1,0 +1,168 @@
+---
+title: H5P libraries
+description: Install, restrict and remove H5P content types for every academy from the platform, and seed sample H5P content with make h5p-seed.
+modules:
+  - h5p
+  - api-h5p
+adminRoutes:
+  - /courses/h5ps/libraries
+needsReview: "Tenant admins with h5p_library_install can still install libraries through the editor's Hub tab or a .h5p upload; only the /h5p/libraries and /h5p/content-type-cache routes are platform-only. Confirm this is intended."
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+H5P content types (Multiple Choice, Drag and Drop, Interactive Video and so on) are H5P
+*libraries*. The **Courses → H5P libraries** screen lists the libraries installed in the H5P
+service, and lets a platform administrator upload, restrict and delete them and refresh the list
+of content types available from the H5P Hub.
+
+Creating and editing H5P content itself is covered in the [creators guide](/creators/).
+
+## How H5P is built
+
+H5P runs in its own service so that its GPL code never mixes with the rest of ulams
+([ADR 0003](/decisions/0003-h5p-as-isolated-gpl-service/)):
+
+| Part | What it does |
+|---|---|
+| `api/h5p` (app key `api-h5p`) | Node.js service built on Lumi's h5p-nodejs-library. Serves the H5P player, editor, AJAX endpoints, library administration and a small REST API under `/h5p/*` on every API host. Owns the `h5p` schema in each tenant database and stores files in the tenant bucket. |
+| `api/packages/h5p` (`h5p`) | Laravel package. A read-only model of the service's `h5p.contents` table, the admin content list with usage counts (`GET /api/admin/h5p/contents`, `DELETE /api/admin/h5p/unused`), an HTTP client for server-to-server calls (upload, download, delete, orphan clean-up) and the H5P permissions. It never writes to the `h5p` schema. |
+| admin and learner apps | Never load H5P code. They frame the service's embed pages and talk to them with `postMessage`. |
+
+The full service reference (environment variables, routes, embedding protocol, tenancy) is in
+the [api/h5p README](https://github.com/ulams-dev/ulams/blob/main/api/h5p/README.md).
+
+## Libraries are shared by all academies
+
+All tenants use **one library volume** (`/data/libraries` in the image). Installing, updating or
+deleting a library therefore affects every academy. Content, user state and results stay per
+tenant (tenant database and bucket).
+
+Because of this, the service only accepts library **writes on the platform host** (tenant id
+`default`, `api.localhost` in development). The guard is the `platformOnlyWrites` middleware in
+[`api/h5p/src/http/platformOnly.ts`](https://github.com/ulams-dev/ulams/blob/main/api/h5p/src/http/platformOnly.ts),
+mounted in front of `/h5p/libraries` and `/h5p/content-type-cache`. On a tenant host,
+`POST`, `PATCH` and `DELETE` on those routes answer `403` with
+"H5P libraries are shared by all academies; install and update them on the platform." `GET`
+stays open, so tenant administrators can see the list.
+
+<Aside type="caution" title="What the platform-only guard does not cover">
+The admin panel does not hide the upload button or the switches on a tenant; the API rejects the
+request and the panel shows the error. Libraries can also be installed outside these routes: from
+the H5P Hub tab in the editor and by uploading a `.h5p` package that contains libraries. Both go
+through Lumi's AJAX router and are allowed for any user with `h5p_library_install` or
+`h5p_library_update`, on any tenant.
+</Aside>
+
+## The libraries screen
+
+<Screenshot name="admin-courses-h5ps-libraries" alt="H5P libraries list with version, instance counts and the restricted switch" />
+
+The table shows, for each installed library:
+
+- **Title**, with a *runnable* tag for content types (libraries a learner can play directly) and
+  an *addon* tag for add-ons.
+- **Machine name** and **version** (`major.minor.patch`).
+- **Instances**: how many contents use it as the main library, plus how many use it as a
+  dependency (shown in brackets).
+- **Dependents**: how many other libraries depend on it.
+- **Restricted**: a switch, enabled only for runnable libraries. A restricted content type can only
+  be used by users with `h5p_library_install` or `h5p_library_update`.
+- **Delete**: enabled only when the service reports that the library can be deleted (nothing
+  depends on it).
+
+Users who may update libraries also see:
+
+- **Upload a library**: a `.h5p` file sent to `POST /h5p/libraries` (field `file`). The result
+  says how many libraries were installed and updated.
+- **Update content type cache**: refreshes the H5P Hub list (`POST /h5p/content-type-cache/update`)
+  and shows when it was last updated. The service also refreshes this cache in the background.
+
+## Ways to install content types
+
+<Steps>
+
+1. **From the platform admin panel**: upload a library package on this screen.
+2. **From the H5P editor**: users with `h5p_library_install` or `h5p_library_update` see the H5P
+   Hub in the content-type selector and can install from there (needs `H5P_HUB_ENABLED=true`, the
+   default).
+3. **By uploading content**: `POST /h5p/contents/upload` (the editor's upload tab) installs every
+   library inside the package when the caller may install libraries.
+4. **From the command line**, in the H5P container:
+
+   ```bash
+   docker compose exec h5p node dist/cli/seed.js --hub H5P.MultiChoice,H5P.DragQuestion
+   ```
+
+</Steps>
+
+## Seeding sample content: `make h5p-seed`
+
+`make h5p-seed` (in `api/makefile`) runs:
+
+```bash
+docker compose exec h5p node dist/cli/seed.js --samples
+```
+
+The seeder runs as the system user and imports the curated sample packages (Image Hotspots, Drag
+and Drop, Dialog Cards, Flashcards, Branching Scenario, Interactive Video, Multiple Choice, Course
+Presentation, True/False, Fill in the Blanks, Memory Game). Importing a package also installs the
+libraries it contains. `make migrate-fresh` and `make refresh` call `h5p-seed` at the end.
+
+Useful options of `seed.js`:
+
+| Option | Effect |
+|---|---|
+| `--samples [k1,k2]` | Import all curated samples or only the listed keys |
+| `--list-samples` | Print the sample keys and exit |
+| `--hub <A,B>` | Install these content types from the H5P Hub first |
+| `--tenant <id>` | Tenant to import into; default `default` (the platform). A tenant's id is its storage directory name, e.g. `coffee_localhost` |
+| `--out <file>` | Also write the JSON report to a file |
+
+Positional arguments are local `.h5p` files, directories or URLs. The exit code is `2` if any
+item failed.
+
+<Aside>
+Without `--tenant`, `make h5p-seed` imports the sample content into the platform tenant only.
+The libraries it installs are visible to every tenant, the sample content is not.
+</Aside>
+
+## Permissions
+
+All H5P permissions come from `H5PPermissionsEnum` and are granted to the `admin` role by
+`H5PPermissionSeeder`. The H5P service reads them from `GET /api/profile/me`.
+
+| Permission | Used for |
+|---|---|
+| `h5p_library_list` | Opening this screen (`GET /h5p/libraries`) |
+| `h5p_library_read` | Reading one library |
+| `h5p_library_upload`, `h5p_library_install` | Uploading a library package |
+| `h5p_library_update` | The restricted switch; with `h5p_library_install`, Hub installs and using restricted types |
+| `h5p_library_delete` | Deleting a library |
+
+The menu entry also disappears when the H5P package is not installed or the
+`hideInMenu-CoursesH5ps` setting is on. See [Permissions](/reference/permissions/).
+
+## Configuration
+
+Laravel side (`api/packages/h5p/src/config.php`):
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `H5P_SERVICE_URL` | `http://h5p:8080` | Where Laravel reaches the service |
+| `H5P_INTERNAL_TOKEN` | none | Shared secret for server-to-server calls (`X-Internal-Token`); must match the service |
+| `H5P_SERVICE_TIMEOUT` | `300` | Seconds, for large uploads and exports |
+
+Service side, the variables most relevant to libraries: `H5P_HUB_ENABLED`, `H5P_LIBRARIES_PATH`,
+`H5P_MAX_TOTAL_SIZE_MB` (upload limit, default 256) and `PLATFORM_HOSTS` (hosts treated as the
+platform). See [Environment variables](/reference/environment-variables/) and the
+[api/h5p README](https://github.com/ulams-dev/ulams/blob/main/api/h5p/README.md#environment-variables).
+
+## Known limitations
+
+- Libraries are global. There is no per-academy set of content types; restricting a type
+  restricts it everywhere.
+- The service caches library metadata in Redis. After changing the library volume by hand, clear
+  the `h5p:lib:*` keys.
+- No events or notifications are emitted for library changes.

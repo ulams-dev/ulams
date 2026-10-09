@@ -1,0 +1,170 @@
+---
+title: Demo mode
+description: Turn a throwaway tenant into a public demo with password-less login and an hourly reset of all its data.
+modules:
+  - demo
+sidebar:
+  order: 41
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+Demo mode turns a [tenant](/admin/tenants/) into a public demo that anyone can try without an
+account. Visitors of the learner site are logged in as the demo student, visitors of the admin
+panel as the demo admin, and the whole tenant is wiped and seeded again every hour.
+
+The three demo tenants of the reference setup, `coffee`, `oncall` and `nightsky`, run in demo
+mode (see [Demos](/getting-started/demos/)).
+
+<Aside type="danger">
+Demo mode has no security. Anyone who can reach the API can act as the tenant admin, and all
+data of the tenant is deleted every hour. Turn it on only for throwaway demo tenants, never for
+a tenant with real data. It never works on the platform.
+</Aside>
+
+## Turn it on or off
+
+Demo mode is on when the tenant's env file `.env.<host>` contains `DEMO_MODE=true`. The default
+is off. Set it through the tenant registry, so that `ulams:tenant:sync-env` keeps the value:
+
+```bash
+php artisan ulams:tenant:create coffee --demo=on    # or --demo=off
+```
+
+Only the env file is rewritten; no data changes. To turn it on for the three demo tenants at
+once, run from `api/`:
+
+```bash
+make demo-mode-on
+```
+
+This runs `ulams:tenant:create <slug> --demo=on` for `coffee`, `oncall` and `nightsky`.
+`ulams:tenant:list` shows the current state in the `demo` column.
+
+When demo mode is off, none of it exists: the demo routes answer 404, `GET /api/config` has no
+`ulams_demo` key and no reset is scheduled.
+
+## Password-less login
+
+| Endpoint | What it does |
+|---|---|
+| `GET /api/demo` | Returns `enabled`, the demo accounts (`role`, `email`, never a password), `front_url`, `admin_url` and `reset_cron`. |
+| `POST /api/demo/login` with `{"role": "student"}` or `{"role": "admin"}` | Issues a regular Passport personal access token for that account. The response body is the same as `POST /api/auth/login`. Rate limited to 60 requests a minute. |
+| `GET /api/config` | Gains `ulams_demo: {enabled, front_url, admin_url}`. |
+
+Before logging in the student, the API gives the demo student access to every published
+course (through the course access service), so any course link opens with access.
+
+The admin panel and the legacy React learner app read `ulams_demo` from `GET /api/config` at
+start-up. When nobody is logged in, the admin panel logs in as the demo admin and the learner
+app as the demo student, and each shows a demo badge that links to the other application.
+
+The reference front (`front/web`) calls `POST /api/demo/login` with the `student` role on the
+server and shares one cached demo token per tenant between visitors. If the tenant has no demo
+mode (404), it falls back to a password login only when a demo student password is configured
+for the front.
+
+The accounts used:
+
+| Role | Account | Override |
+|---|---|---|
+| admin | `INITIAL_USER_EMAIL`, by default `admin@<slug>.ulams.app` | `DEMO_ADMIN_EMAIL` |
+| student | `student1@` at the admin's e-mail domain | `DEMO_STUDENT_EMAIL` |
+
+If the account does not exist, the first user with that role is used.
+
+## Hourly reset
+
+The package schedules `ulams:demo:reset --force --domain=<host>` on every domain whose env has
+`DEMO_MODE=true`, by default at the start of every hour (`DEMO_RESET_CRON`, `0 * * * *`). The
+container scheduler already runs `schedule:run` for every tenant, so nothing else needs to be
+set up. The reset runs in the background and never overlaps with itself.
+
+To reset a tenant now:
+
+```bash
+php artisan ulams:demo:reset --force --domain=coffee.localhost
+make demo-reset DOMAIN=coffee.localhost
+```
+
+| Option | Meaning |
+|---|---|
+| `--force` | Do not ask for confirmation. |
+| `--wipe-files` | Also delete every file in the tenant bucket (same as `DEMO_RESET_WIPE_FILES=true`). By default uploads stay, and the demo assets are uploaded again at the same paths. |
+| `--recapture` | Take a new baseline (name, theme, accent, students) from the current database before wiping. |
+
+The command refuses to run when demo mode is off on that domain, and always refuses on the
+platform.
+
+### What the reset does
+
+<Steps>
+
+1. **H5P content.** Deletes the tenant's H5P contents in the H5P service: every content id the
+   tenant database knows, then the files of contents that no longer have a row. The service
+   stores H5P content outside the main tenant schema, so `migrate:fresh` alone would leave it
+   behind. If the service cannot be reached, the reset continues with a warning and the next
+   reset deletes them.
+2. **Database.** `migrate:fresh --force` on the whole tenant database, including the OAuth
+   tables. Every token issued so far stops working; the admin panel and the front log in again
+   by themselves.
+3. **Passport client.** Creates the personal access client again.
+4. **Roles and admin.** Seeds roles, permissions and the admin account.
+5. **Users and settings.** Creates the tutor and the students and stores the name, theme and
+   accent from the baseline.
+6. **Demo content.** `ulams:demo:seed`: seeds the demo courses for the tenant's experience
+   (by default the tenant slug) and gives the demo student access to every published course.
+
+</Steps>
+
+The tenant's Redis cache keys are deleted after the database wipe and again at the end. The
+shared Redis cache is not flushed, so other tenants are not affected. Each step runs as a
+child `php artisan … --domain=<host>` process.
+
+**Baseline.** Name, theme, accent, front URL, number of students and e-mail domain are stored
+in the database being wiped. The first reset saves them to
+`storage/<host>/app/ulams-demo-baseline.json` (for example
+`storage/coffee_localhost/app/ulams-demo-baseline.json`), and later resets reuse that file. A
+theme change made in the demo admin therefore does not survive the next reset. Use
+`--recapture`, or change the tenant with `ulams:tenant:create`, to keep a change.
+
+### Seed without a reset
+
+```bash
+php artisan ulams:demo:seed --domain=coffee.localhost
+php artisan ulams:demo:seed --skip-content --domain=coffee.localhost
+```
+
+`--experience=` picks the demo content (`coffee`, `oncall`, `nightsky` or `all`; default
+`ULAMS_DEMO_EXPERIENCE`, then the tenant slug). `--skip-content` only grants the demo student
+access to the published courses, for example after courses were created by hand.
+
+## Configuration
+
+Set these in the tenant env file. Defaults are in
+[`api/packages/demo/src/config.php`](https://github.com/ulams-dev/ulams/blob/main/api/packages/demo/src/config.php).
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `DEMO_MODE` | `false` | Turns demo mode on. Set through `ulams:tenant:create --demo=on`. |
+| `DEMO_ADMIN_EMAIL` | `INITIAL_USER_EMAIL` | Account for the admin login. |
+| `DEMO_STUDENT_EMAIL` | `student1@<admin domain>` | Account for the student login. |
+| `DEMO_ADMIN_URL` | `ADMIN_URL` | Admin URL shown on the front's demo badge. |
+| `DEMO_RESET_SCHEDULE` | `true` | Schedule the reset. |
+| `DEMO_RESET_CRON` | `0 * * * *` | When the reset runs. |
+| `DEMO_RESET_WIPE_FILES` | `false` | Also empty the bucket on every reset. |
+| `DEMO_RESET_STUDENTS` | `5` | Number of students when no baseline exists yet. |
+| `DEMO_CONTENT_SEEDER` | `Database\Seeders\DemoCoursesSeeder` | Seeder for the demo courses; skipped if the class does not exist. |
+| `ULAMS_DEMO_EXPERIENCE` | tenant slug | Which demo content to seed. |
+
+See also [Environment variables](/reference/environment-variables/),
+[Artisan commands](/reference/artisan-commands/) and
+[Scheduled jobs](/reference/scheduled-jobs/).
+
+## Known limitations
+
+- Everyone shares the same demo student and demo admin, so visitors see each other's changes
+  until the next reset.
+- Files uploaded to the bucket are kept across resets unless `--wipe-files` is used.
+- More detail on the reset internals is in the
+  [demo package README](https://github.com/ulams-dev/ulams/blob/main/api/packages/demo/README.md).

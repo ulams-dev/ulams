@@ -25,6 +25,8 @@ interface ProductServiceContract
     public function listAllProductables(): Collection;
     public function canonicalProductableClass(string $productableClass): ?string;
 
+    public function productableFromModel(\Illuminate\Database\Eloquent\Model $model, ?string $productableClass = null): ?Productable;
+
     public function findSingleProductForProductable(Productable $productable): ?Product;
     public function findProductable(string $productableClass, $productId): ?Productable;
 

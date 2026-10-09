@@ -1,12 +1,14 @@
 import { expect, test, type Page } from "@playwright/test";
+import { demoCourse } from "./demo-data.ts";
 
 const port = process.env.WEB_BASE_PORT ?? "4321";
 const base = (slug: string) => `http://${slug}.app.localhost:${port}`;
 
+// topic types opened per tenant (looked up in the API, see demo-data.ts)
 const TENANTS = [
-  { slug: "coffee", course: 1, title: /Learn coffee/, topics: [3, 1, 5, 16] },
-  { slug: "oncall", course: 1, title: /Stay calm/, topics: [4, 1] },
-  { slug: "nightsky", course: 2, title: /adventure to the stars/i, topics: [16] },
+  { slug: "coffee", title: /Learn coffee/, kinds: ["RichText", "Video", "H5P", "GiftQuiz"] },
+  { slug: "oncall", title: /Stay calm/, kinds: ["RichText", "Video"] },
+  { slug: "nightsky", title: /adventure to the stars/i, kinds: ["preview"] },
 ];
 
 async function noHorizontalScroll(page: Page) {
@@ -33,17 +35,21 @@ for (const tenant of TENANTS) {
     });
 
     test("course page opens and links into the player", async ({ page }) => {
-      await page.goto(`${base(tenant.slug)}/courses/${tenant.course}`);
+      const { courseId } = await demoCourse(tenant.slug);
+      await page.goto(`${base(tenant.slug)}/courses/${courseId}`);
       await expect(page.locator("h1")).toBeVisible();
       await expect(page.locator("#syllabus")).toBeVisible();
       await noHorizontalScroll(page);
     });
 
-    for (const topic of tenant.topics) {
-      test(`lesson ${topic} opens already logged in`, async ({ page }) => {
+    for (const kind of tenant.kinds) {
+      test(`lesson (${kind}) opens already logged in`, async ({ page }) => {
         const errors: string[] = [];
         page.on("pageerror", (e) => errors.push(e.message));
-        const response = await page.goto(`${base(tenant.slug)}/learn/${tenant.course}/${topic}`);
+        const demo = await demoCourse(tenant.slug);
+        const topic = kind === "preview" ? demo.previewTopic : demo.topics[kind];
+        test.skip(!topic, `no ${kind} topic in the seeded course`);
+        const response = await page.goto(`${base(tenant.slug)}/learn/${demo.courseId}/${topic}`);
         expect(response?.status()).toBe(200);
         await expect(page.locator("h1.u-player__title")).toBeVisible();
         await expect(page.locator("ulams-progress")).toBeVisible();
@@ -58,7 +64,8 @@ for (const tenant of TENANTS) {
 }
 
 test("quiz: start an attempt and see the first question", async ({ page }) => {
-  await page.goto(`${base("coffee")}/learn/1/16`);
+  const demo = await demoCourse("coffee");
+  await page.goto(`${base("coffee")}/learn/${demo.courseId}/${demo.topics.GiftQuiz}`);
   await page.click("[data-start]");
   // the seeded quiz allows three attempts per hour (the demo resets hourly)
   const question = page.locator(".u-quiz__q legend");
@@ -118,4 +125,17 @@ test("events listing and details", async ({ page }) => {
 test("tenant accent from API settings is applied server-side", async ({ request }) => {
   const html = await (await request.get(base("coffee"))).text();
   expect(html).toMatch(/\[data-theme="coffee"\]\{--ulams-color-accent:#[0-9a-f]{6}/);
+});
+
+test("platform comparison table: semantics, ulams column, as-of line and sources", async ({ page }) => {
+  await page.goto(`http://app.localhost:${port}/#compare`);
+  const table = page.locator("#compare table");
+  await expect(table.locator("caption")).toContainText("Feature comparison");
+  expect(await table.locator('thead th[scope="col"]').count()).toBe(8);
+  expect(await table.locator('tbody th[scope="row"]').count()).toBe(15);
+  await expect(table.locator("thead th.is-ours")).toContainText("ulams");
+  await expect(page.locator("#compare")).toContainText("As of");
+  await page.locator("#compare summary").click();
+  expect(await page.locator("#compare details li a[href^='https://']").count()).toBeGreaterThan(30);
+  await noHorizontalScroll(page);
 });

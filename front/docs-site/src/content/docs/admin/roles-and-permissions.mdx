@@ -1,0 +1,122 @@
+---
+title: Roles and permissions
+description: Create roles, choose their permissions in the admin panel, and understand how permissions decide which menu items and API calls a user gets.
+sidebar:
+  order: 3
+modules:
+  - permissions
+adminRoutes:
+  - /users/roles/**
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+Access in ulams is role based. Roles and permissions are
+[spatie/laravel-permission](https://spatie.be/docs/laravel-permission) records on the `api`
+guard, stored per tenant. A user's effective permissions are the permissions of all their
+roles plus any permissions given to the user directly (the only place the panel sets direct
+permissions is the [CSV import](/admin/users/#import-users-from-csv-or-excel)).
+
+The [permissions](/reference/packages/permissions/) package provides the role screens
+(`/api/admin/roles`). The full list of permission names, grouped by package, is generated in
+[Permissions](/reference/permissions/).
+
+| Screen | Route | Permission needed to see it |
+|---|---|---|
+| Role list | `/users/roles` | `permission_role_list` |
+| Role permissions | `/users/roles/:name` | `permission_role_update` |
+
+Creating and deleting roles is checked by the API with `permission_role_create` and
+`permission_role_delete`.
+
+## Default roles
+
+Three roles are created by the core seeder and receive permissions from every package's
+permission seeder (`api/database/seeds/PermissionsSeeder.php`):
+
+| Role | Meant for |
+|---|---|
+| `admin` | Platform or tenant administrators. Each package seeder gives it that package's administrative permissions. |
+| `tutor` | Course authors and trainers. Can open the panel (`access dashboard`); package seeders give it a smaller set, often limited to the tutor's own records. |
+| `student` | Learners. Cannot open the admin panel. |
+
+When a database has no users yet, the seeder also creates the first administrator from the
+`INITIAL_USER_EMAIL` and `INITIAL_USER_PASSWORD` environment variables (see
+[Environment variables](/reference/environment-variables/)). Every new tenant runs this seeder
+during provisioning ([Tenants](/admin/tenants/)).
+
+## The role list
+
+<Screenshot name="admin-users-roles" alt="The role list" />
+
+The table shows each role's ID and name, with a search by name. **Edit** opens the permission
+matrix of the role; **Delete** removes it after confirmation.
+
+To create a role, click **New**, enter a name and confirm. The API stores the name as a slug
+(`Content editors` becomes `content-editors`) and the panel opens its permissions.
+
+## Editing a role's permissions
+
+<Screenshot name="admin-users-roles-name" alt="The permission matrix of a role, grouped in cards" />
+
+<Steps>
+
+1. Open a role from the list.
+2. Permissions are grouped in cards by the part of the name before the first underscore:
+   `user_list` and `user_create` are in the `user` card, `category_list` in `category`, and so
+   on. Hover over a permission to see its description (the `permissions` translation group,
+   if translated).
+3. Tick or clear the checkboxes. **Reset** returns to the saved state.
+4. Click **Submit**. The whole set is saved at once (`PATCH /api/admin/roles/{name}`).
+
+</Steps>
+
+Users with the role get the new permissions on their next request to the API. The admin
+panel reads the current user's permissions only when it loads, so reload the panel to see
+menu changes.
+
+<Aside type="caution">
+The `admin` role cannot be changed or deleted through the API: saving its permissions or
+deleting it returns an error. Its permissions come only from the seeders. Run
+`php artisan db:seed --class=PermissionsSeeder` (with `--domain=<tenant host>` for a tenant)
+after installing or upgrading packages so that `admin` gets the new permissions.
+</Aside>
+
+## How permissions map to the admin menu
+
+The panel shows a screen when your permissions satisfy its rule in
+[`admin/src/access.ts`](https://github.com/ulams-dev/ulams/blob/main/admin/src/access.ts).
+Most rules require `access dashboard`, then at least one permission from the list, and
+sometimes an installed package or a setting (see
+[Why a menu item is hidden](/admin/#why-a-menu-item-is-hidden)). Some examples:
+
+| Menu item | Shown with any of |
+|---|---|
+| Users (group) | `user_list`, `permission_role_list`, `user-group_list` |
+| Users → List | `user_list` |
+| Users → Roles | `permission_role_list` |
+| Users → User groups | `user-group_list` |
+| Users → Notifications | `bulk-notification_list` |
+| Courses → Categories | `category_list` |
+| Configuration (group) | `file_list`, `settings_list`, `template_read`, `translation_list` |
+| Configuration → Settings | `settings_list` |
+| Configuration → Templates | `template_read` |
+| Other activities → Pages | `page_list` |
+| Other activities → Dictionary | `dictionary_list`, `dictionary_read` |
+| My profile | `user_read_self` |
+
+The API does not use these rules. Each endpoint has its own policy, usually with separate
+permissions for listing, reading, creating, updating and deleting, and some with a `_self` or
+`_course-authored` variant that limits the action to the user's own records. A role that
+should edit, and not only see, a screen needs those permissions too.
+
+## Designing a custom role
+
+1. Start from what the person must do in the panel and tick `access dashboard`.
+2. For each screen, tick the list and read permissions that show it, then the create, update
+   and delete permissions for the actions you want to allow.
+3. Sign in as a test user with the role and check both the menu and the actions; a missing
+   write permission shows up as an error message when saving.
+
+Roles and permissions are per tenant, so repeat the setup in every tenant that needs the role.

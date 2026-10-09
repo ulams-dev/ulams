@@ -257,6 +257,40 @@ class CoffeeAtlasExperience extends DemoExperience
                         'summary' => 'Aim for a drop at 205–212 °C with 16–25 % development. Your score is saved to your progress.',
                         'make' => fn () => $this->scorm('roast-simulator.zip', 'roast-simulator'),
                     ],
+                    [
+                        'type' => 'liascript', 'title' => 'Cupping vocabulary', 'duration' => '10 min',
+                        'introduction' => 'An interactive LiaScript lesson: the words cuppers use, with a short check at the end.',
+                        'summary' => 'Fragrance, aroma, acidity, body and finish, in the order you meet them at the table.',
+                        'make' => fn () => $this->liascript('Cupping vocabulary', <<<'MD'
+# Cupping vocabulary
+
+At a cupping table everyone describes the same coffee with the same words. Here they are, in the
+order you meet them.
+
+## Fragrance and aroma
+
+**Fragrance** is the smell of the dry grounds. **Aroma** is the smell after the hot water goes in
+and the crust breaks. Write down both: they often differ.
+
+## Acidity, body, finish
+
+- **Acidity**: the bright, mouth-watering part (citrus, apple, berry).
+- **Body**: weight and texture on the tongue (tea-like to syrupy).
+- **Finish**: what stays after you swallow, and how long it stays.
+
+## Check yourself
+
+What do you smell right after breaking the crust?
+
+- [( )] Fragrance
+- [(X)] Aroma
+- [( )] Finish
+
+Which word describes how heavy a coffee feels?
+
+[[body]]
+MD),
+                    ],
                 ],
             ],
             [

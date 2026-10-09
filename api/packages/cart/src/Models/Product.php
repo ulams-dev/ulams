@@ -15,6 +15,7 @@ use Ulams\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -278,7 +279,18 @@ class Product extends Model implements ProductInterface
 
     public function getSoldQuantityAttribute(): int
     {
+        // withSoldQuantity() loads it with the list query
+        if (array_key_exists('sold_quantity_sum', $this->attributes)) {
+            return (int) $this->attributes['sold_quantity_sum'];
+        }
+
         return $this->users()->sum('quantity');
+    }
+
+    /** Adds `sold_quantity_sum` (one subquery instead of one query per product). */
+    public function scopeWithSoldQuantity(Builder $query): Builder
+    {
+        return $query->withSum('users as sold_quantity_sum', 'products_users.quantity');
     }
 
     public function getGrossPrice(): int

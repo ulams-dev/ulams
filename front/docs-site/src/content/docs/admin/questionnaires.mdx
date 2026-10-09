@@ -1,0 +1,111 @@
+---
+title: Questionnaires
+description: Build surveys with rating, text and review questions, attach them to courses, webinars or consultations and read the results.
+modules:
+  - questionnaire
+adminRoutes:
+  - /other/questionnaire/**
+sidebar:
+  order: 31
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+A questionnaire is a list of questions attached to one or more courses, webinars or
+consultations. Learners answer it in the context of that object, and the admin panel shows the
+answers and a report per question. Typical uses: course feedback, star ratings and public
+reviews.
+
+The feature comes from the `questionnaire` package
+([README](https://github.com/ulams-dev/ulams/blob/main/api/packages/questionnaire/README.md)).
+
+## Who uses it
+
+- **Administrators and tutors** create questionnaires, attach them and read the results. The
+  seeder gives both roles the same management permissions.
+- **Learners** answer through the public API. The legacy React learner app renders
+  questionnaires; the reference frontend (`front/web`) does not yet.
+
+## Screens
+
+### List (`/other/questionnaire`)
+
+<Screenshot name="admin-other-questionnaire" alt="The questionnaire list" />
+
+All questionnaires with their title and active flag. Create, open or delete from here.
+
+### Questionnaire form (`/other/questionnaire/:questionnaireId`)
+
+<Screenshot name="admin-other-questionnaire-questionnaireid" alt="The questionnaire form with its tabs" />
+
+The form has these tabs:
+
+- **Questionnaire**: title and an **active** switch.
+- **Questions**: add, edit, reorder (by position) and deactivate questions. Each question has a
+  title, a description, a type, a public-answers flag and, optionally, a maximum score.
+- **Answers**: the answers given so far, with a switch to hide or show each one. Hidden answers
+  are not returned to learners.
+- **Assign** (one tab per model type: course, webinar, consultations): pick the objects this
+  questionnaire belongs to. For each object you can set a **target group** (`user` or `author`)
+  and a **display frequency** in minutes. Both values are stored and returned by the API; when to
+  show the questionnaire is up to the frontend.
+- **Reports**: per-question results, as a chart for rating questions. You can filter by model
+  type and object and export the answers for one object to a spreadsheet.
+
+## Question types
+
+| Type | What the learner gives |
+|---|---|
+| `rate` | A numeric rating |
+| `text` | Free text |
+| `review` | A rating plus a text review; at most one review question per questionnaire |
+
+Ratings feed the star summaries returned by `GET /api/questionnaire/stars/{model_type}/{model_id}`.
+
+## Model types
+
+Questionnaires attach to rows of the `questionnaire_model_types` table. Migrations add three:
+`course`, `webinar` and `consultations`. A new type needs a new row with a title and a model
+class.
+
+## Settings
+
+| Key | Default | Meaning |
+|---|---|---|
+| `ulams_questionnaires.new_answers_visible_by_default` | `true` | Whether a new answer is publicly visible right away (questions with public answers turned off always store answers as hidden) |
+
+The key is administrable, so it can be changed under [Settings](/admin/settings/).
+
+## API
+
+- Admin: `/api/admin/questionnaire` (CRUD, assign and unassign, report, export),
+  `/api/admin/question` (CRUD), `/api/admin/question-answers/{id}` (list, change visibility),
+  `/api/admin/questionnaire-models` (model types).
+- Learner: `/api/questionnaire/{model_type}/{model_id}` to list, read and answer, plus star and
+  answer summaries.
+
+Full list: [API endpoints](/reference/api-endpoints/).
+
+## Permissions
+
+`questionnaire_list|read|create|update|delete`, `question_list|read|create|update|delete` and
+`question_answer_visibility_change`, given to `admin` and `tutor`. Tutors also get
+`questionnaire_list_authored`. The menu item needs `questionnaire_list` and can be hidden with
+the `hideInMenu-OtherQuestionnaire` setting. See [Permissions](/reference/permissions/).
+
+## Events
+
+The package dispatches no events and sends no notifications.
+
+## Limitations
+
+- Deleting a question also deletes all its answers, and deleting a questionnaire deletes its
+  questions, answers and assignments. There is no archive; switch the questionnaire to
+  inactive instead if you want to keep the results.
+- Display frequency and target group are hints for the frontend; the API does not enforce them.
+
+<Aside type="note">
+Questionnaires are separate from quizzes. Graded quizzes are GIFT quiz topics; their attempts
+are under Courses → Quiz reports.
+</Aside>

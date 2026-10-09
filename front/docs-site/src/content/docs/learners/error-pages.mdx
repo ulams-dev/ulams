@@ -1,0 +1,20 @@
+---
+title: Error pages
+description: The branded 404 and 500 pages of the reference frontend - when learners see them and what they offer.
+sidebar:
+  order: 7
+learnerRoutes:
+  - /404
+  - /500
+---
+
+The reference frontend has two error pages, styled in the tenant's academy theme (by tenant
+slug, falling back to the `coffee` theme) and showing the demo badge on tenant hosts.
+
+| Page | When | Text |
+|---|---|---|
+| 404 | An unknown URL, an unknown course, topic or event id, a topic that is not in the course, or `/platform` on a tenant host | "This page is not here" - "The course or lesson may have moved. The demo data is also rebuilt every hour." |
+| 500 | An unexpected error while rendering, e.g. the tenant's API does not answer as expected | "Something went wrong" - "The academy's API did not answer as expected. Try again in a moment." |
+
+Both pages show the status code and two buttons: "Back to the academy" (`/`) and "Try again"
+(reloads the same path). The 404 page answers with HTTP status 404.

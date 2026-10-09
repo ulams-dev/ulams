@@ -1,0 +1,43 @@
+---
+title: Rich text topics
+description: Write lesson text in the Markdown editor of a rich text topic, with headings, lists, tables, code, math and embedded media.
+sidebar:
+  order: 10
+modules:
+  - topic-types
+topicTypes:
+  - RichText
+---
+
+import Screenshot from "../../../components/Screenshot.astro";
+
+A rich text topic (`RichText`) holds one Markdown document. Use it for reading material, explanations
+and instructions.
+
+## Write the text
+
+1. In the program, add a topic and choose **RichText**.
+2. Write in the editor. It is a WYSIWYG editor that stores plain Markdown, and Markdown shortcuts work
+   as you type (`#` for a heading, `-` for a list, `>` for a quote).
+3. Type `/` on an empty line for the block menu:
+   - **Upload image, audio, video, PDF**: uploads the file to the course's folder and inserts it.
+   - **Link note**: a link (shortcut `[[`).
+   - Checkbox list, bulleted list, ordered list, table, quote, code block.
+   - **Math**: a LaTeX formula.
+   - Big, medium and small headings.
+4. Save the topic.
+
+The same editor is used for course summaries and descriptions and for a topic's introduction,
+description and summary.
+
+<Screenshot name="admin-courses-list-course-program" alt="A rich text topic open in the program editor" />
+
+## What learners see
+
+The reference front renders the Markdown as formatted text. If the text starts with a heading equal to
+the topic title, that heading is dropped so the title is not shown twice.
+
+## Completion
+
+In the reference front, a rich text topic completes when the learner scrolls to the end of the text
+(after a few seconds on the page), or with **Mark as complete**. See the [learner guide](/learners/).

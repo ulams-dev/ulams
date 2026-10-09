@@ -1,0 +1,153 @@
+---
+title: Demo academies
+description: The three demo tenants (The Coffee Atlas, On-Call, Night Sky Explorers), what each one shows, and how demo mode logs you in and resets hourly.
+sidebar:
+  order: 2
+modules:
+  - demo
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+ulams ships with three demo academies. Each one is a separate tenant with its own database,
+theme, landing page and one seeded course, designed to look and feel deliberately different. The
+course content is written in
+[`front/docs/design/experiences.md`](https://github.com/ulams-dev/ulams/blob/main/front/docs/design/experiences.md)
+and created by `DemoCoursesSeeder`.
+
+There is no public hosted demo yet: the demos run on your machine once you follow the
+[quick start](/getting-started/quick-start/).
+
+<Screenshot name="learner-platform" alt="The ulams platform landing with cards for the three demo academies" />
+
+## The three academies
+
+| Academy | Slug | Style | Learner site | Admin | API |
+|---|---|---|---|---|---|
+| The Coffee Atlas | `coffee` | Editorial, self-paced, long-form | http://coffee.app.localhost | http://coffee.admin.localhost | http://coffee.localhost |
+| On-Call | `oncall` | Professional cohort, dark, dense, keyboard-first | http://oncall.app.localhost | http://oncall.admin.localhost | http://oncall.localhost |
+| Night Sky Explorers | `nightsky` | Playful, gamified, mobile-first, for kids 10-14 | http://nightsky.app.localhost | http://nightsky.admin.localhost | http://nightsky.localhost |
+
+The platform host (`localhost:4321` or `app.localhost:4321` with the reference frontend's dev
+server) shows the ulams product landing with a card per demo. Each card has "Open as learner"
+and "Open as admin" buttons.
+
+### The Coffee Atlas
+
+"The Coffee Atlas - From Seed to Cup": follow one coffee cherry from the farm to the cup. A
+magazine-style course with films, a podcast, interactive H5P diagrams, a roasting simulator
+(SCORM), brew-ratio maths, a tasting quiz and a final project. The landing has a chapter index,
+a letter from the tutors, a live cupping webinar and package pricing.
+
+### On-Call
+
+"On-Call - Incident Command for Platform Engineers": a cohort-style course for engineers on an
+on-call rotation. Severity matrices, SLO maths, a branching H5P scenario, an outage simulator
+(SCORM), a comms quiz and a postmortem assignment. It is the only demo with a 1:1 consultation
+("On-call review 1:1"). Its landing has a curriculum, a game-day section, instructors, team
+pricing and a postmortem teardown webinar.
+
+### Night Sky Explorers
+
+"Night Sky Explorers": seven short missions for children, with a robot guide, badges and big
+type. Two topics are free previews. The landing has a mission map, "For parents" and "For
+teachers" sections and a star party event.
+
+### What every demo contains
+
+Each seeded course covers the topic types the reference frontend renders: rich text (with tables
+and maths), video, audio, image, PDF, embed, H5P, SCORM, cmi5, LiaScript, a GIFT quiz with all
+eight question types, and a project. Each tenant also has a webinar, an in-person event, shop
+products, tutors and five demo students. Exact counts depend on the seed; open the course page to
+see them.
+
+See [what learners see](/learners/) for a walk through the pages.
+
+## Demo mode
+
+Demo mode comes from the `demo` package (`api/packages/demo`). It turns a tenant into a public
+demo that anyone can use without an account.
+
+<Aside type="danger" title="Demo mode has no security">
+Anyone who can reach the API of a demo tenant can act as its admin. Turn it on only for
+throwaway tenants whose data is wiped every hour - never for a tenant with real data, and never
+on the platform.
+</Aside>
+
+When `DEMO_MODE=true` is set in a tenant's env file (`.env.<host>`):
+
+- `POST /api/demo/login` with `{"role": "student"}` or `{"role": "admin"}` logs in as the
+  tenant's seeded student or admin, without a password. It returns a normal Passport token, the
+  same body as `POST /api/auth/login`. Before a student login, the student is given access to
+  every published course.
+- `GET /api/demo` returns whether demo mode is on, the demo accounts' roles and e-mails (never
+  passwords), the front and admin URLs and the reset schedule.
+- `GET /api/config` gains `ulams_demo` with `enabled`, `front_url` and `admin_url`. The admin and
+  the legacy React front read it and log in by themselves.
+- The tenant is wiped and seeded again every hour (`DEMO_RESET_CRON`, default `0 * * * *`).
+
+With demo mode off (the default), the demo routes return 404, nothing is added to
+`/api/config` and no reset is scheduled.
+
+### Demo accounts
+
+| Role | Account | Override |
+|---|---|---|
+| Admin | `admin@<slug>.ulams.app` | `DEMO_ADMIN_EMAIL` |
+| Student | `student1@<slug>.ulams.app` | `DEMO_STUDENT_EMAIL` |
+
+The tenant also has `tutor@<slug>.ulams.app` and `student1` to `student5`. Their password is
+`TENANT_DEMO_PASSWORD` from `api/.env` (`secret` in `api/.env.example`; development only).
+
+### How the reference frontend logs you in
+
+The reference frontend (`front/web`) logs every visitor of a demo tenant in as the same demo
+student, so a visitor never sees a sign-in form:
+
+- Opening `/learn/...` or `/account` without a session makes the server call
+  `POST /api/demo/login` and store the token in an httpOnly cookie.
+- If the tenant has no demo mode, the server falls back to a password login with
+  `DEMO_STUDENT_EMAIL` and `DEMO_STUDENT_PASSWORD` from its own environment. With neither
+  available, the visitor is sent to the sign-in page.
+- The sign-in page also has a "Continue as the demo student" button.
+- One token per tenant is cached on the server and shared by all visitors. When the hourly reset
+  invalidates it, the next lesson request logs in again once.
+
+Every page of a tenant shows a "Demo - resets hourly" badge with a link to the tenant's admin
+and to the other demos. See [signing in and out](/learners/signing-in/).
+
+### The hourly reset
+
+`ulams:demo:reset --force --domain=<host>` runs hourly on every domain with demo mode on. It
+refuses to run on a domain without demo mode and always refuses on the platform. It:
+
+<Steps>
+
+1. Deletes the tenant's H5P content in the H5P service (it lives outside the tenant database).
+2. Runs `migrate:fresh` on the tenant database, which also wipes every issued token.
+3. Creates a new personal access client, seeds permissions and the admin account.
+4. Seeds the demo users and the tenant's name, theme and accent from a saved baseline.
+5. Seeds the demo course again and gives the demo student access to every published course.
+
+</Steps>
+
+The baseline (name, theme, accent, front URL, number of students) is captured into the tenant's
+storage directory on the first reset. A theme change made in the demo admin therefore does not
+survive the next reset. Uploaded files stay unless `--wipe-files` (or
+`DEMO_RESET_WIPE_FILES=true`) is set.
+
+Reset one tenant by hand:
+
+```bash
+make -C api demo-reset DOMAIN=coffee.localhost
+```
+
+The full description, including the options, is in the
+[demo package README](https://github.com/ulams-dev/ulams/blob/main/api/packages/demo/README.md).
+For the admin side of demo mode see [demo mode in the admin](/admin/demo-mode/).
+
+## Setting up the demos
+
+Creating the three tenants, seeding them and turning demo mode on is part of the
+[quick start](/getting-started/quick-start/#create-the-demo-academies).

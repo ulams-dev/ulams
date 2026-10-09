@@ -1,0 +1,148 @@
+---
+title: Generative UI
+description: Page documents rendered by @ulams/ui today (A2UI-shaped trees, bindings, validation, fallbacks) and the AG-UI streaming that is still on the roadmap.
+sidebar:
+  order: 7
+---
+
+import { Aside, Badge } from "@astrojs/starlight/components";
+
+ulams renders pages from **declarative documents**: trees of catalogue components with props, never
+model-written HTML or code. Today these documents are written by hand or built in code from API
+data. The same format is what the AI Course Builder generates, streamed from the server as AG-UI
+events over SSE (see [LLM layer and Course Builder](/developers/llm-layer/)).
+
+| | Status |
+|---|---|
+| Component catalogue with JSON Schemas and text fallbacks (`@ulams/ui`) | Built |
+| Renderer with data bindings, validation and fallbacks | Built |
+| Landing pages as documents (`front/web/src/docs/*.json`) | Built |
+| Course page and lesson player built as documents in code | Built |
+| AG-UI event log and SSE stream from Laravel carrying A2UI surfaces | <Badge text="Coming" variant="caution" /> |
+| Builder components (interview controls, outline editor, diff view) | <Badge text="Coming" variant="caution" /> |
+| AI-composed learner layouts, `simulation` component, critics | <Badge text="Coming" variant="caution" /> |
+
+## Documents
+
+A document is a tree of nodes:
+
+```json
+{
+  "component": "Page",
+  "props": { "theme": "coffee", "title": "The Coffee Atlas — Learn coffee the slow way" },
+  "children": [
+    {
+      "component": "SiteHeader",
+      "props": {
+        "brand": "The Coffee Atlas",
+        "links": [{ "label": "Chapters", "href": "#syllabus" }],
+        "cta": {
+          "label": "Start the free chapter",
+          "href": { "$data": "/course/previewHref", "$default": "/" }
+        }
+      }
+    }
+  ]
+}
+```
+
+(abridged from `front/web/src/docs/coffee.json`)
+
+- `component` names an entry of the registry in `front/ui/src/registry.ts`. The
+  [UI catalogue](/reference/ui-catalogue/) lists all of them with their props.
+- `props` are flat and explicit. Text is plain text, never HTML; only `Prose.markdown` takes
+  Markdown, with raw HTML escaped.
+- `children` are allowed only on container components (`Page`, `Main`, `Stack` and similar).
+- `id` is optional and becomes the element id (an A2UI component id).
+
+This is the tree form of an **A2UI v0.9 surface**. A2UI streams a flat component list with ids and
+a separate data model; converting between the two is mechanical and belongs to the AG-UI transport
+([ADR 0008](/decisions/0008-reference-frontend/)).
+
+### Where documents come from today
+
+| Document | Source |
+|---|---|
+| Tenant landing pages | `front/web/src/docs/coffee.json`, `oncall.json`, `nightsky.json`, chosen by the tenant theme |
+| Platform landing | `front/web/src/docs/platform.json` |
+| Site header and footer on every tenant page | Taken from the tenant's landing document (`chromeFor()` in `src/lib/docs.ts`) |
+| Course page, lesson player | Built in code from API data in `front/web/src/lib/page-docs.ts` (`courseHeaderDoc`, `syllabusDoc`, `purchaseDoc`, …) with the same catalogue |
+
+## Data bindings
+
+Any prop value may be a binding to the page's data model:
+
+```json
+{ "$data": "/course/lessons", "$default": [] }
+```
+
+`$data` is an RFC 6901 JSON Pointer into the data model passed to `<Render data={…} />` (in
+`front/web`, the site model built from the tenant's settings, courses, tutors, events and products).
+Missing, null, empty-string and empty-array values resolve to `$default`, or to nothing, so the
+schema default applies. Documents therefore never contain numbers or claims that are not in the data:
+the registry's rules for agents say so explicitly.
+
+## Validation and fallbacks
+
+`<Render>` calls `prepare()` from `@ulams/ui/render-core` once per document:
+
+1. Resolve bindings in the node's props.
+2. Unknown component: render a plain-text fallback built from its string props.
+3. Deeper than 12 levels (configurable): fallback, guarding against runaway generated documents.
+4. Validate props against the component's JSON Schema (`@ulams/ui/schema`), applying defaults.
+   Objects reject unknown properties by default; links and image sources must pass `isSafeHref()`
+   (relative, `#`, `?`, `./`, `http(s)`, `mailto:`, `tel:`), which rejects `javascript:` and `data:`.
+5. Invalid props: render the component's own `fallback(props)` text. A container with invalid props
+   still renders its valid children.
+
+Fallbacks render as plain paragraphs with `data-fallback="<component>"`; in development each issue is
+logged as `[ulams/ui] <component>: <path> <message>`. A broken node never breaks the page.
+
+`validateDocument(doc, data)` runs the same checks without rendering and returns the problems. The
+reference frontend's unit tests (`front/web/tests/unit/docs.test.ts`) use it to check that every
+landing document is valid against the catalogue with real API data and with an empty API.
+
+```ts
+import { validateDocument } from "@ulams/ui/render-core";
+
+const problems = validateDocument(doc, data);
+// [] or [{ component: "Hero", issues: [{ path: "/primaryCta/href", message: "…" }] }]
+```
+
+## Adding a component
+
+1. Write the Astro component in `front/ui/src/components/`, accessible and themed with the
+   `--ulams-*` variables.
+2. Add a registry entry: `description` (for the model), `category`, `interactive`, `children`,
+   `props` schema and `fallback`.
+3. Map it in `front/ui/src/Node.astro`.
+4. Interactive parts are web components in `front/ui/src/elements/`, loaded only by pages that use
+   them; browser calls go through the BFF client (`elements/bff.ts`).
+5. Add schema and fallback tests in `front/ui/tests/`.
+
+The catalogue JSON for prompts and tools: `yarn workspace @ulams/ui catalogue`.
+
+## Streaming from the server
+
+<Aside type="note" title="Built in Phase 2, M2.1">
+  Decided in [ADR 0011](/decisions/0011-ag-ui-over-sse-from-laravel/) and
+  [ADR 0023](/decisions/0023-a2ui-surfaces-as-ag-ui-activity-snapshots/); implemented by the
+  `course-builder` package and the studio in the reference web app.
+</Aside>
+
+- Every Course Builder interaction is an **AG-UI run**. Queued jobs append events (`RUN_*`,
+  `STEP_*`, `TEXT_MESSAGE_*`, `STATE_SNAPSHOT`/`STATE_DELTA`, `ACTIVITY_*`) to a
+  `course_builder_events` table; the row id is the SSE `id`.
+- A2UI messages (`createSurface`, `updateComponents`, `updateDataModel`, `deleteSurface`) travel
+  inside AG-UI events, behind one adapter on each side.
+- `GET …/sessions/{id}/events` streams with `Last-Event-ID` resume and a snapshot on connect.
+  Connections close after 25 s and the client reconnects, so php-fpm workers are not held; the
+  route gets its own small FPM pool and wakes on a Valkey pub/sub ping.
+- User actions start a new run (`POST …/runs`), validated against the surface the server issued.
+- The model picks catalogue components with props, validated against the manifest exported by
+  `@ulams/ui`; invalid specs fall back to text. No CopilotKit, `@ag-ui/client` or `@a2ui/lit`: a
+  small SSE reader and the existing renderer.
+
+Model-written code is only ever allowed inside a sandboxed `simulation` component (isolated origin,
+strict CSP, no network), which is also on the roadmap. The LLM side is described in
+[LLM layer](/developers/llm-layer/).

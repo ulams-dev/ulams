@@ -13,7 +13,7 @@ use Ulams\LiaScript\Models\LiaScriptVersion;
  * Publishes the LiaScript player and course versions to the LiaScript disk, served by the tenant
  * content origin under /liascript/ (api/docs/content-origin.md):
  *
- * - liascript/_player/index.html, player.js: our page, which provides the SCORM 1.2 API to the
+ * - liascript/_player/index.html, player.js, api-bridge.js: our page, which provides the SCORM 1.2 API to the
  *   LiaScript build and reports slide position and status to the API;
  * - liascript/_player/build/: the LiaScript SCORM 1.2 build (BSD-3-Clause), fetched at image build
  *   time by bin/fetch-player.sh, plus config.js;
@@ -44,7 +44,7 @@ class LiaScriptPlayer
 
     public function publishPlayer(bool $force = false): void
     {
-        $hash = sha1($this->buildVersion() . sha1_file(self::RESOURCES . '/index.html') . sha1_file(self::RESOURCES . '/player.js'));
+        $hash = sha1($this->buildVersion() . sha1_file(self::RESOURCES . '/index.html') . sha1_file(self::RESOURCES . '/player.js') . sha1_file(self::RESOURCES . '/api-bridge.js'));
         $cacheKey = 'liascript_player_' . $this->diskName();
         if (!$force && Cache::get($cacheKey) === $hash && $this->disk()->exists(self::PLAYER_DIR . '/build/index.html')) {
             return;
@@ -53,13 +53,16 @@ class LiaScriptPlayer
         $disk = $this->disk();
         $disk->put(self::PLAYER_DIR . '/index.html', (string) file_get_contents(self::RESOURCES . '/index.html'));
         $disk->put(self::PLAYER_DIR . '/player.js', (string) file_get_contents(self::RESOURCES . '/player.js'));
+        $disk->put(self::PLAYER_DIR . '/api-bridge.js', (string) file_get_contents(self::RESOURCES . '/api-bridge.js'));
 
         foreach ((new Finder())->files()->ignoreDotFiles(false)->in($this->build()) as $file) {
             $relative = str_replace('\\', '/', $file->getRelativePathname());
             $contents = (string) file_get_contents($file->getPathname());
             if ($relative === 'index.html') {
-                // the exporter's step: load config.js (empty task/quiz/survey lists) before the app
-                $contents = preg_replace('/<head>/i', '<head><script src="config.js"></script>', $contents, 1) ?? $contents;
+                // the exporter's step: load config.js (empty task/quiz/survey lists) before the app;
+                // then api-bridge.js, which takes the SCORM API from our page so the build never
+                // reads window.top (the learner front, another origin)
+                $contents = preg_replace('/<head>/i', '<head><script src="config.js"></script><script src="../api-bridge.js"></script>', $contents, 1) ?? $contents;
             }
             $disk->put(self::PLAYER_DIR . '/build/' . $relative, $contents);
         }

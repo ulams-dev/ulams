@@ -1,0 +1,481 @@
+---
+title: API packages
+description: Every package in api/packages, grouped by domain, with what it does, who uses it, its main models and its admin screen.
+sidebar:
+  order: 3
+modules:
+  - adapt
+  - assign-without-account
+  - auth
+  - bookmarks_notes
+  - bulk-notifications
+  - cart
+  - categories
+  - cmi5
+  - consultation-access
+  - consultations
+  - core
+  - course-access
+  - courses
+  - courses-import-export
+  - csv-users
+  - demo
+  - dictionaries
+  - files
+  - h5p
+  - images
+  - invoices
+  - jitsi
+  - laravel-scorm
+  - liascript
+  - lrs
+  - lti
+  - mailerlite
+  - mattermost
+  - model-fields
+  - notifications
+  - pages
+  - payments
+  - pencil-spaces
+  - permissions
+  - przelewy24-php
+  - questionnaire
+  - reports
+  - scorm
+  - settings
+  - shopping-cart
+  - stationary-events
+  - tags
+  - tasks
+  - templates
+  - templates-email
+  - templates-pdf
+  - templates-sms
+  - tenancy
+  - topic-type-gift
+  - topic-type-project
+  - topic-types
+  - translations
+  - uploads
+  - video
+  - vouchers
+  - webinar
+  - youtube
+needsReview: "Admin screen mapping per package was derived from admin/config/routes.ts and admin services by name; confirm the less obvious ones (bulk-notifications, assign-without-account, cmi5, adapt)."
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+The API is a Laravel application whose domain code lives in the directories under
+[`api/packages`](https://github.com/ulams-dev/ulams/tree/main/api/packages). Most were imported from
+EscolaLMS (`escolalms/*` composer packages) and are now plain source owned by this repository; a few
+were written for ulams (`adapt`, `demo`, `h5p`, `liascript`, `lti`, `tenancy`, `uploads`), and two
+are vendored third-party forks (`laravel-scorm`, `shopping-cart`). Namespaces are `Ulams\<Name>\`
+except for the forks and `przelewy24-php`.
+
+Every package has a generated reference page (routes, permissions, settings, events, commands,
+schedules) linked from its heading below. Cross-package lists are in the reference section:
+[permissions](/reference/permissions/), [settings](/reference/settings/),
+[endpoints](/reference/api-endpoints/), [events and notifications](/reference/events-and-notifications/),
+[artisan commands](/reference/artisan-commands/) and [scheduled jobs](/reference/scheduled-jobs/).
+
+## How packages are wired
+
+Packages are not composer packages and are not auto-discovered. Each one is wired in three places
+(`api/packages/README.md`):
+
+1. PSR-4 entries in `api/composer.json` (runtime, factories and seeders in `autoload`, tests in
+   `autoload-dev`).
+2. Its service provider in `api/config/app.php` under "Package Service Providers".
+3. A test suite in `api/phpunit.xml` (`vendor/bin/phpunit --testsuite <name>`).
+
+Each package keeps the upstream layout: `src/` (with `routes.php`, `config.php`, models, services,
+repositories, policies, events), `database/` (migrations, seeders, factories), `resources/`,
+`tests/`, and usually a `README.md` and an `ADMIN.md` describing its admin screens.
+
+### Adding a package
+
+Create `api/packages/<name>/src` with a `Ulams\<Name>\Ulams<Name>ServiceProvider`, add the three
+entries above, run `composer dump-autoload`, and seed its permissions from a seeder in the package.
+New endpoints need a tenant isolation test ([Tenancy](/developers/tenancy/#tenant-isolation-tests)).
+The step-by-step guide is [Adding an endpoint](/developers/adding-an-endpoint/).
+
+<Aside type="caution">
+  Do not depend on `escolalms/recommender`: it was removed
+  ([ADR 0006](/decisions/0006-remove-recommender/)) and must not come back.
+</Aside>
+
+## Courses and content
+
+### [courses](/reference/packages/courses/)
+
+The course model and everything inside it: `Course`, `Lesson` (nested lessons), `Topic` and
+`TopicResource`, authors and groups (`CourseAuthorPivot`, `CourseGroupPivot`), learner progress
+(`CourseProgress`, `UserTopicTime`, `H5PUserProgress`, `CourseUserAttendance`). Public and learner
+routes under `/api/courses` (catalogue, program, preview topics, progress, ping), admin routes under
+`/api/admin`. Schedules check deadlines hourly and activate courses daily. Used by creators and
+admins in the admin course editor (`/courses/list`) and by every learner frontend. Topic content
+classes are registered by the topic type packages below.
+
+### [courses-import-export](/reference/packages/courses-import-export/)
+
+Exports a course as a zip in the `.ulam` format (`content.json` plus assets), imports such a zip and
+clones courses. Admin-only routes under `/api/admin`; zip imports go through the upload guard. Used
+from the course list in the admin.
+
+### [categories](/reference/packages/categories/)
+
+Hierarchical `Category` tree attached to courses and other content; public `/api/categories`,
+admin `/api/admin/categories`. Admin screen `/courses/categories`.
+
+### [tags](/reference/packages/tags/)
+
+Free-form `Tag` records on any model (courses, webinars, events). Public `/api/tags`, admin
+`/api/admin/tags`. No screen of its own; tags are edited in the forms of the tagged entities.
+
+### [pages](/reference/packages/pages/)
+
+Static pages (`Page`) such as terms or "about", read by learner frontends at `/api/pages`. Admin
+screen `/other/pages`.
+
+### [questionnaire](/reference/packages/questionnaire/)
+
+Surveys attached to models (courses, webinars and others): `Questionnaire`, `Question`,
+`QuestionAnswer`, `QuestionnaireModel`, `QuestionnaireModelType`. Learners answer through
+`/api/questionnaire`; admins build them and read reports under `/api/admin`. Admin screen
+`/other/questionnaire`.
+
+### [dictionaries](/reference/packages/dictionaries/)
+
+Glossaries: `Dictionary`, `DictionaryWord`, word categories and per-user access. Public
+`/api/dictionaries/{slug}/words`, admin `/api/admin/dictionaries` and `/api/admin/dictionary-words`.
+Admin screen `/other/dictionary`.
+
+### [bookmarks_notes](/reference/packages/bookmarks_notes/)
+
+Learner bookmarks and notes in one `Bookmark` model (a note is a bookmark with a value), on topics
+and other models. Learner routes `/api/bookmarks`, admin `/api/admin/bookmarks`. No dedicated admin
+screen.
+
+### [video](/reference/packages/video/)
+
+Converts video topics to HLS with ffmpeg (`pbmedia/laravel-ffmpeg`). When a topic changes, a
+`ProccessVideo` job runs on the long-job queue; bitrates are configured in the package config.
+Registers its own `Video` topic content class. Admin status routes under `/api/admin/video`. The
+reference frontend plays the result with `hls.js`.
+
+## Topic types
+
+A topic's content is a polymorphic "topicable" class registered with the courses package. The
+generated page lists every registered class; creators see them in
+[Course builder](/creators/course-builder/).
+
+### [topic-types](/reference/packages/topic-types/)
+
+The base content classes: `RichText` (Markdown), `Audio`, `Video`, `Image`, `PDF`, `OEmbed`, `H5P`,
+`ScormSco` and `Cmi5Au`. Also marks SCORM topics complete when the SCO reports `completed` or
+`passed` (`ScormScoCompleted`). No routes of its own.
+
+### [topic-type-gift](/reference/packages/topic-type-gift/)
+
+Quizzes in Moodle's GIFT format (`GiftQuiz`, `GiftQuestion`, `QuizAttempt`, `AttemptAnswer`):
+multiple choice (one or many right answers), true/false, short answer, matching, numerical, essay
+(graded by the tutor) and description items, with attempt and time limits. Learner routes for
+attempts and answers (`/api/quiz-attempts`, `/api/quiz-answers`), admin routes for questions and
+attempts. Admin screen `/courses/quiz-reports`; questions are edited in the course editor (the admin
+parses GIFT with `@ulams/gift-pegjs`).
+
+### [topic-type-project](/reference/packages/topic-type-project/)
+
+Project assignments: learners upload solution files (`Project`, `ProjectSolution`); admins list,
+download and delete solutions (`/api/admin/topic-project-solutions`).
+
+## Content formats and standards
+
+### [h5p](/reference/packages/h5p/)
+
+Laravel side of the H5P service (`api/h5p`), written for ulams; it replaced
+`escolalms/headless-h5p`. Reads the service's `h5p.contents` table read-only (`H5PContent`),
+exposes `GET /api/admin/h5p/contents` and `DELETE /api/admin/h5p/unused`, and calls the service with
+`H5PServiceClientContract` (`X-Internal-Token`). Admin screens `/courses/h5ps` and
+`/courses/h5ps/libraries` (see [H5P libraries](/admin/h5p-libraries/)).
+
+### [scorm](/reference/packages/scorm/)
+
+SCORM 1.2 and 2004 packages: upload and parse (through the upload guard), list, preview and
+tracking. Learner launch (`POST /api/scorm/launch/{sco}`) returns a player URL on the tenant's
+content origin with a scoped tracking token; tracking writes go through `ScormTrackService`.
+Uploads labelled `source_format = adapt` are Adapt exports. Admin screen `/courses/scorms`.
+
+### [laravel-scorm](/reference/packages/laravel-scorm/)
+
+Vendored fork of `devianl2/laravel-scorm` 4.0.1 (namespace `Peopleaps\Scorm\`, MIT): the manifest
+parser, entities and the `scorm`, `scorm_sco`, `scorm_sco_tracking` models used by `scorm`. Kept
+because no upstream release accepts Carbon 3. Library only; developers touch it when SCORM parsing
+changes.
+
+### [cmi5](/reference/packages/cmi5/)
+
+cmi5 courses (`Cmi5`, `Cmi5Au`): admin upload, list and delete at `/api/admin/cmi5`, learner player
+data at `/api/cmi5/player/{auId}`. Statements go to the `lrs` package. Each assignable unit becomes a
+`Cmi5Au` topic. No dedicated admin screen was found in `admin/config/routes.ts`.
+
+### [lrs](/reference/packages/lrs/)
+
+A small first-party xAPI learning record store for cmi5 content (`Statement`, `State`,
+`ActivityProfile`, `AgentProfile`, `Client`, `Access` and others), the cmi5 launch endpoints and an
+admin statement list. xAPI endpoints are under `trax/api/{source}/xapi/std`. A seeder creates the
+store owner, client and access.
+
+### [liascript](/reference/packages/liascript/)
+
+Courses written in [LiaScript](https://liascript.github.io) Markdown, written for ulams. Every edit,
+upload or restore adds an immutable `LiaScriptVersion` of a `LiaScriptDocument`; assets from zip
+uploads live in the tenant bucket. Registers the `LiaScriptTopic` content class; the player runs on
+the content origin. Admin API `/api/admin/liascript`, admin screen `/courses/liascript`.
+
+### [adapt](/reference/packages/adapt/)
+
+Adapt Learning course sources as versioned JSON (`AdaptSource`, `AdaptSourceVersion`) built into
+SCORM by an isolated GPL-3.0 worker ([ADR 0013](/decisions/0013-adapt-build-worker/), Proposed).
+Off by default: `ADAPT_SOURCE_ENABLED=true` turns on `/api/admin/adapt` (permission `adapt_manage`,
+404 otherwise). The worker itself is not built yet, so builds cannot run outside tests. No admin
+screen.
+
+### [lti](/reference/packages/lti/)
+
+LTI 1.3 in both directions ([ADR 0012](/decisions/0012-lti-package-and-libraries/)), written for
+ulams. Platform side: launch external tools from lessons through the `LtiLink` topic type, receive
+grades (AGS 2.0) and deep links. Tool side: Moodle, Canvas and others launch ulams courses, with
+grade passback and a course picker; launch validation uses `packbackbooks/lti-1p3-tool`. Models
+include `LtiTool`, `LtiPlatform`, `LtiKey`, `LtiLaunch`, `LtiLineItem`, `LtiScore`. Per-tenant key
+sets are rotated monthly. Admin screen `/integrations/lti` ([LTI](/admin/lti/)).
+
+## People and access
+
+### [auth](/reference/packages/auth/)
+
+Registration, login, password reset, e-mail verification, social login (Socialite), profile, users,
+groups (`Group`, `GroupUser`), user settings and impersonation. Issues Passport personal access
+tokens; see [Authentication](/developers/authentication/). Admin screens `/users/list` and
+`/users/groups`.
+
+### [permissions](/reference/packages/permissions/)
+
+REST API over `spatie/laravel-permission` for roles and their permissions
+(`/api/admin/roles`). Admin screen `/users/roles`. Permissions themselves are seeded by each
+package; the full list is in [Permissions](/reference/permissions/).
+
+### [course-access](/reference/packages/course-access/)
+
+Grants course access to users and groups, and lets learners send access enquiries
+(`CourseAccessEnquiry`) that admins approve or reject. Admin screen `/courses/access`.
+
+### [assign-without-account](/reference/packages/assign-without-account/)
+
+Assigns e-mail addresses that have no account yet to products and other models (`UserSubmission`,
+admin `/api/admin/user-submissions`); the user gets access after registering. Needs e-mail templates
+for its events. Used from the admin product, course and webinar forms.
+
+### [csv-users](/reference/packages/csv-users/)
+
+Exports and imports users (and group members) as CSV through `/api/admin/csv`, using the `auth`
+package's user repository and resources.
+
+### [tasks](/reference/packages/tasks/)
+
+Personal and assigned tasks with notes (`Task`, `TaskNote`), with completion requests and a
+scheduled reminder for overdue tasks. Learner and admin routes; admin screen `/other/tasks`.
+
+## Commerce
+
+<Aside type="note">
+  The roadmap moves commerce to a separate Sylius 2.x service, with the LMS keeping entitlements.
+  The packages below are the current, interim implementation.
+</Aside>
+
+### [cart](/reference/packages/cart/)
+
+Products and what they sell (`Product`, `ProductProductable`), carts, orders (`Order`, `OrderItem`)
+and product ownership (`ProductUser`). Learner routes `/api/cart`, `/api/products`, `/api/orders`;
+admin routes under `/api/admin`. Depends on `payments` and registers `shopping-cart`. Admin screens
+`/sales/products` and `/sales/orders`.
+
+### [shopping-cart](/reference/packages/shopping-cart/)
+
+Vendored fork of `treestoneit/shopping-cart` 1.6.1 (namespace `Treestoneit\ShoppingCart\`, MIT):
+database-backed cart models, `CartManager` and the `carts`/`cart_items` migrations. Library only, used
+by `cart` and `vouchers`; its provider is registered by the cart package, not `config/app.php`.
+
+### [payments](/reference/packages/payments/)
+
+Payments (`Payment`) and gateway drivers: Stripe (through `league/omnipay` and `omnipay/stripe`) and
+Przelewy24. Gateway keys can be changed through Settings. Webhook and admin routes; admin screen
+`/sales/payments`.
+
+### [przelewy24-php](/reference/packages/przelewy24-php/)
+
+Vendored PHP client for the [Przelewy24](https://www.przelewy24.pl/) API (namespace `Przelewy24\`).
+Library only, no service provider; used by the Przelewy24 driver in `payments`.
+
+### [vouchers](/reference/packages/vouchers/)
+
+Coupons (`Coupon` with category, product and user restrictions) applied to a cart before ordering,
+with configurable discount rules. Extends `cart` and cannot be used alone. Admin screen
+`/sales/vouchers`.
+
+### [invoices](/reference/packages/invoices/)
+
+Renders a PDF invoice for an order at `GET /api/order-invoices/{id}` with `barryvdh/laravel-dompdf`.
+The invoice model is in the package (no database table). Learners download it from their orders.
+
+## Events and live sessions
+
+### [webinar](/reference/packages/webinar/)
+
+Live webinars (`Webinar`, participants), with a YouTube livestream and a Jitsi room. Public and
+learner routes `/api/webinars`, admin `/api/admin`. Admin screen `/courses/webinars`.
+
+### [youtube](/reference/packages/youtube/)
+
+Creates YouTube livestreams for webinars through the YouTube Data API (`google/apiclient`). Admins
+generate a Google OAuth URL (`/api/admin/g-token/generate`); the callback stores the refresh token.
+No models.
+
+### [jitsi](/reference/packages/jitsi/)
+
+A facade that generates Jitsi player parameters and a room URL, with a JWT when an app id and
+secret are configured; host and keys come from config or Settings. Used by `consultations` and `webinar`. No routes or models.
+
+### [pencil-spaces](/reference/packages/pencil-spaces/)
+
+[Pencil Spaces](https://www.pencilspaces.com/) integration: creates API users
+(`PencilSpaceAccount`) and spaces and returns a login link for the current user.
+
+### [consultations](/reference/packages/consultations/)
+
+One-to-one consultations with tutors: `Consultation`, proposed terms, booked terms and reminders
+(scheduled jobs one hour and one day before). Learner routes `/api/consultations`, admin
+`/api/admin`. Admin screen `/other/consultations`.
+
+### [consultation-access](/reference/packages/consultation-access/)
+
+Enquiries for free consultation access that admins accept (with a meeting link) or reject
+(`ConsultationAccessEnquiry`, proposed terms). Admin screen `/other/consultation-access`.
+
+### [stationary-events](/reference/packages/stationary-events/)
+
+In-person events (`StationaryEvent`) with authors, participants, place, programme and capacity.
+Public `/api/stationary-events`, admin `/api/admin/stationary-events`. Admin screen
+`/other/stationary-events`.
+
+## Communication
+
+### [notifications](/reference/packages/notifications/)
+
+Logs events emitted by the packages as database notifications (`DatabaseNotification`) and lets
+users list and mark them read (`/api/notifications`); admins list all of them
+(`/api/admin/notifications`). Admin screen `/analytics/notifications`.
+
+### [bulk-notifications](/reference/packages/bulk-notifications/)
+
+Push notifications to many users at once (`BulkNotification`, sections, recipients) through a push
+channel on Firebase (`kreait/laravel-firebase`); learner apps register device tokens at
+`/api/notifications/tokens`. Admin API `/api/admin/bulk-notifications`, used by the admin's bulk
+notification pages under Users.
+
+### [templates](/reference/packages/templates/)
+
+Stores editable templates per channel and event (`Template`, `TemplateSection`, `Templatable`) and
+renders them when the event fires, replacing the variables registered for that pair. Admin screens
+`/configuration/templates` and `/users/notifications`.
+
+### [templates-email](/reference/packages/templates-email/)
+
+The e-mail channel for `templates`, with MJML layouts. MJML is compiled through an MJML API when
+`MJML_API_URL` is set. Registers the default e-mail templates for user-related events.
+
+### [templates-sms](/reference/packages/templates-sms/)
+
+The SMS channel for `templates`, sending through Twilio (`TWILIO_*` variables, `tzsk/sms`).
+
+### [templates-pdf](/reference/packages/templates-pdf/)
+
+PDF templates (certificates and others) generated when an event fires. Templates are
+[pdfme](https://pdfme.com) JSON designed in the admin designer and rendered by the `api/pdf` service
+(`FabricPDF` holds generated PDFs). Learner routes `/api/pdfs`, admin `/api/admin/pdfs`.
+
+### [mailerlite](/reference/packages/mailerlite/)
+
+Adds users to [MailerLite](https://www.mailerlite.com/) groups when events fire (for example
+registration and paid orders; group names are configurable). Enabled and configured through config or Settings; no routes.
+
+### [mattermost](/reference/packages/mattermost/)
+
+[Mattermost](https://mattermost.com/) integration: listens to account, course and webinar events and
+creates, blocks or removes Mattermost users and adds them to course and webinar channels (tutors and
+trainers as channel admins). Uses our own `MattermostManager` over `gnello/php-mattermost-driver`.
+Learner routes under `/api/mattermost` (own account, credentials, password reset).
+
+## Platform
+
+### [core](/reference/packages/core/)
+
+Base classes every package uses: `BaseRepository` with criteria, base API controller and response
+envelope, the base `User` model and roles (`student`, `tutor`, `admin`), seeders, test helpers.
+Routes: `GET /api/core/packages` (versions from `api/packages/versions.json`) and
+`/api/core/health-check`.
+
+### [settings](/reference/packages/settings/)
+
+Registers config keys that admins can change at runtime (`Config`, `Setting`), and serves public
+values to frontends (`GET /api/settings`, `GET /api/config`). Admin screen `/configuration/settings`.
+Every administrable key is listed in [Settings](/reference/settings/).
+
+### [translations](/reference/packages/translations/)
+
+Database translations (`LanguageLine`, `spatie/laravel-translation-loader`) for the API and the
+frontends. Public `/api/translations`, admin `/api/admin/translations`. Admin screens
+`/configuration/translations` and `/configuration/admin_translations`.
+
+### [model-fields](/reference/packages/model-fields/)
+
+Adds extra typed fields (boolean, number, varchar, text, json) to any model, with metadata
+describing visibility and validation (`Field`, `Metadata`). Mostly used for user profile fields.
+Admin screen `/users/fields`.
+
+### [tenancy](/reference/packages/tenancy/)
+
+Provisions and removes tenants (`Tenant` registry in the platform database) and rejects unknown
+hosts. Written for ulams. Commands `ulams:tenant:create|list|delete|sync-env`. See
+[Tenancy](/developers/tenancy/) and [Tenants](/admin/tenants/).
+
+### [demo](/reference/packages/demo/)
+
+Turns a tenant into a public demo: password-less `POST /api/demo/login` as the seeded student or
+admin, `GET /api/demo`, and an hourly reset. Off unless `DEMO_MODE=true` in the tenant env file. See
+[Demo mode](/admin/demo-mode/).
+
+### [reports](/reference/packages/reports/)
+
+Statistics and reports about other components (`Report`, `Measurement`): registered metrics whose
+values a scheduled job stores per day, and report and stats endpoints under `/api/admin`. Admin
+screen `/analytics/reports`.
+
+### [images](/reference/packages/images/)
+
+Resizes images on request (`GET /api/images/img` with the source path and size parameters), caches the result (`ImageCache`) and
+optimises it with `spatie/image-optimizer`. Used by every frontend for thumbnails.
+
+### [files](/reference/packages/files/)
+
+File manager: upload, list, move and delete files on the tenant disk, with per-user directory access
+(`access_to_directories` on users). Admin API `/api/admin/file`, admin screen `/configuration/files`.
+
+### [uploads](/reference/packages/uploads/)
+
+One upload guard for every path that accepts third-party files (SCORM, cmi5, course import,
+LiaScript, Adapt): size, extension, content-sniffed MIME type, optional ClamAV scan
+(`UPLOADS_SCANNER=clamd`) and a zip inspector (zip-slip, symlinks, zip bombs). Also serves package
+files to the content origin (`GET /api/content/...`, `ContentFileController`). Written for ulams; no
+admin screen.

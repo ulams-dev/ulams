@@ -1,0 +1,74 @@
+---
+title: Developers
+description: Developer documentation for ulams, covering architecture, the API packages, tenancy, auth, the reference frontend, local setup, testing and contribution guides.
+sidebar:
+  order: 0
+---
+
+import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+ulams is a headless LMS: a Laravel 13 API built from vendored packages, two small Node services
+(H5P and PDF), an Astro reference frontend with a framework-free SDK and UI catalogue, a React admin
+panel and a legacy React learner app, all in one Yarn and Turborepo monorepo. Start with the
+architecture, then set up the stack.
+
+## How it fits together
+
+<CardGrid>
+  <LinkCard title="Architecture" href="/developers/architecture/" description="Services, hosts, request flow, workers and backing services." />
+  <LinkCard title="Monorepo layout" href="/developers/monorepo/" description="Folders, workspaces, Turborepo tasks and shared libraries." />
+  <LinkCard title="API packages" href="/developers/api-packages/" description="Every package in api/packages, grouped by domain." />
+  <LinkCard title="Tenancy" href="/developers/tenancy/" description="Database, bucket and keys per tenant; --domain; content origin; isolation tests." />
+  <LinkCard title="Authentication" href="/developers/authentication/" description="Passport tokens, roles, demo login, LTI launches, how clients keep tokens." />
+  <LinkCard title="API reference" href="/developers/api-reference/" description="Swagger UI, the generated spec, SDK types and the endpoint index." />
+</CardGrid>
+
+## Frontends
+
+<CardGrid>
+  <LinkCard title="Reference frontend" href="/developers/reference-frontend/" description="front/web (Astro SSR, BFF, H5P proxy), @ulams/sdk and @ulams/ui." />
+  <LinkCard title="Generative UI" href="/developers/generative-ui/" description="Page documents, bindings, validation and fallbacks; AG-UI streaming to come." />
+  <LinkCard title="Legacy learner app" href="/developers/legacy-front/" description="The React app in front/src and the libraries the admin shares with it." />
+  <LinkCard title="LLM layer and Course Builder" href="/developers/llm-layer/" description="The ai and course-builder packages, the AG-UI stream and the eval command." />
+</CardGrid>
+
+## Working on the code
+
+<CardGrid>
+  <LinkCard title="Local development" href="/developers/local-development/" description="Run the API stack, the frontends and a tenant on your machine." />
+  <LinkCard title="Testing" href="/developers/testing/" description="PHPUnit suites, Vitest, Playwright, integration tests." />
+  <LinkCard title="Debugging" href="/developers/debugging/" description="Logs, Horizon, the database, the services." />
+  <LinkCard title="Performance" href="/developers/performance/" description="Caching, measuring and keeping pages fast." />
+  <LinkCard title="CI" href="/developers/ci/" description="What runs on every pull request." />
+  <LinkCard title="Container images" href="/developers/container-images/" description="The images we build and publish, and their licences." />
+  <LinkCard title="OpenAPI and SDK" href="/developers/openapi-and-sdk/" description="Annotating endpoints and regenerating SDK types." />
+  <LinkCard title="Coding standards" href="/developers/coding-standards/" description="Conventions for PHP, TypeScript, commits and branches." />
+</CardGrid>
+
+## How-to guides
+
+<CardGrid>
+  <LinkCard title="Adding an endpoint" href="/developers/adding-an-endpoint/" description="Route, controller, policy, permission, tests and tenant isolation." />
+  <LinkCard title="Adding an admin screen" href="/developers/adding-an-admin-screen/" description="A new page in the umi/max admin." />
+  <LinkCard title="Adding a web page" href="/developers/adding-a-web-page/" description="A new page in front/web with the catalogue and the BFF." />
+</CardGrid>
+
+## Rules that apply everywhere
+
+<Card title="Non-negotiables">
+
+- LMS entities are changed through domain services, never by writing tables directly.
+- Every new endpoint gets a tenant isolation test; learner-facing UI meets WCAG 2.2 AA.
+- Uploaded content is untrusted input; third-party package code runs only on the content origin.
+- H5P stays in its isolated GPL service; no `@lumieducation/*` imports in MIT code.
+- Do not use or depend on `escolalms/recommender`.
+- Existing tests and linters stay green; H5P and SCORM behaviour does not change by accident.
+
+</Card>
+
+Generated reference pages ([packages](/reference/packages/), [permissions](/reference/permissions/),
+[settings](/reference/settings/), [environment variables](/reference/environment-variables/),
+[endpoints](/reference/api-endpoints/), [events](/reference/events-and-notifications/),
+[artisan commands](/reference/artisan-commands/), [scheduled jobs](/reference/scheduled-jobs/),
+[UI catalogue](/reference/ui-catalogue/)) are rebuilt from the repository on every docs build.
+Decisions are in [Decisions](/decisions/); contributing rules in [Contributing](/contributing/).

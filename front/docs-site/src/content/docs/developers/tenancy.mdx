@@ -1,0 +1,166 @@
+---
+title: Tenancy
+description: How one API deployment serves many tenants with separate databases, buckets, keys and Redis prefixes, and what that means for your code and tests.
+sidebar:
+  order: 4
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+One ulams API deployment serves the platform and any number of tenants. Each tenant has its own
+host, PostgreSQL database, storage bucket, `APP_KEY`, Passport key pair and Redis prefix. The model
+is "database per tenant" on top of
+[`gecche/laravel-multidomain`](https://github.com/gecche/laravel-multidomain), with provisioning and
+isolation fixes in the `tenancy` package. The decision and the rejected options (a `tenant_id`
+column on every model, a stack per tenant) are in [ADR 0007](/decisions/0007-tenancy-package/).
+
+Operator-facing tasks (creating and deleting tenants) are in [Tenants](/admin/tenants/). This page
+is about how it works.
+
+## Host to tenant
+
+`api/bootstrap/app.php` builds a `Gecche\Multidomain\Foundation\Application` whose domain detection
+reads `X-Forwarded-Host`, then `Host`. For a request to `coffee.localhost` Laravel loads
+`.env.coffee.localhost` and uses `storage/coffee_localhost/`; with no tenant env file it would load
+the platform `.env`.
+
+<Steps>
+
+1. Caddy receives `coffee.localhost` and passes the request to php-fpm with the original `Host`.
+2. laravel-multidomain picks `.env.coffee.localhost`: database `ulams_coffee`, bucket
+   `ulams-coffee`, `APP_KEY`, `REDIS_PREFIX`, `TENANT_SLUG=coffee` and the rest.
+3. The global `RejectUnknownHost` middleware (tenancy package) answers 404 with
+   `{"message": "Unknown host."}` unless the host is in `TENANCY_PLATFORM_HOSTS` (default
+   `api.localhost,localhost,127.0.0.1,caddy,api`) or a registered tenant. Without it, any unknown
+   subdomain would be served the platform's data. `TENANCY_ENFORCE_HOSTS=false` turns it off.
+4. Code that needs to know where it runs uses `Ulams\Tenancy\Support\TenantContext::slug()` or
+   `isPlatform()` (from `TENANT_SLUG`).
+
+</Steps>
+
+Frontends resolve the tenant from their own host with host rules
+(`{slug}.app.localhost=>http://{slug}.localhost` by default) and call that tenant's API host; see
+[Reference frontend](/developers/reference-frontend/#tenant-resolution).
+
+## What each tenant gets
+
+| Resource | Platform | Tenant `<slug>` (defaults) | Setting |
+|---|---|---|---|
+| API host | `api.localhost` | `<slug>.localhost` | `TENANCY_API_HOST` |
+| Front / admin hosts | `app.localhost`, `api.admin.localhost` | `<slug>.app.localhost`, `<slug>.admin.localhost` | `TENANCY_FRONT_HOST`, `TENANCY_ADMIN_HOST` |
+| Content origin | `content.localhost` | `<slug>.content.localhost` | `TENANCY_CONTENT_HOST` |
+| Database and role | `default` | `ulams_<slug>` | `TENANCY_DATABASE` |
+| Bucket | `ulams` | `ulams-<slug>`, public read | `TENANCY_BUCKET`, `TENANCY_STORAGE_PUBLIC_URL` |
+| Env file | `.env` (from `LARAVEL_*` variables) | `.env.<slug>.localhost` | |
+| Storage directory | `storage/` | `storage/<slug>_localhost/` | |
+| Passport keys | `storage/oauth-*.key` | `storage/<slug>_localhost/oauth-*.key` | |
+| Redis prefix | `ulams_database_` | `REDIS_PREFIX=ulams_<slug>_`, `CACHE_PREFIX=ulams_<slug>_cache`, `HORIZON_PREFIX=ulams_<slug>_horizon:` | `TENANCY_REDIS_PREFIX` |
+| LTI key set | own | own, created at provisioning | |
+
+The values are written by `TenantNaming` from `api/packages/tenancy/src/config.php`. All variables
+are listed in [Environment variables](/reference/environment-variables/).
+
+## The registry and provisioning
+
+The `tenants` table in the platform database is the source of truth; secrets in it (`db_password`,
+`app_key`, Passport keys) are encrypted with the platform `APP_KEY`. Env files, the entries in
+`config/domain.php` and the Passport key files are derived from it, so a fresh container rebuilds
+them: `init.sh` runs `ulams:tenant:sync-env --migrate` after the platform migrations.
+
+`php artisan ulams:tenant:create <slug>` runs these steps and records each one in `tenants.steps`,
+so a failed run can be repeated and resumes where it stopped (`--redo=<step>` repeats one):
+`database`, `bucket`, `env`, `migrate`, `passport_keys`, `passport_client`, `permissions`,
+`lti_keys`, `demo`. Every step from `migrate` on runs as a child process
+`php artisan … --domain=<host>`: an in-process `Artisan::call` would keep the platform
+configuration. The full step table is in
+[`api/packages/tenancy/README.md`](https://github.com/ulams-dev/ulams/blob/main/api/packages/tenancy/README.md).
+
+## Running commands for a tenant
+
+Every artisan command runs against the platform unless you pass `--domain`:
+
+```bash
+# platform
+docker compose exec api php artisan migrate
+
+# one tenant
+docker compose exec api php artisan migrate --force --domain=coffee.localhost
+docker compose exec api php artisan tinker --domain=coffee.localhost
+```
+
+The `ulams:tenant:*` commands themselves run on the platform (no `--domain`). The full command list
+is in [Artisan commands](/reference/artisan-commands/).
+
+## Queues, cache and the scheduler
+
+Each tenant's Redis keys carry its prefix, so queues, cache entries and Horizon data cannot collide.
+Workers run per domain: `queue.sh`, `broadcast.sh` and `scheduler.sh` read the domain list from
+`domains.sh` (`MULTI_DOMAINS` plus registered tenants) on every pass and run
+`queue:work --domain=<host>` and `schedule:run --domain=<host>`. A new tenant gets workers and
+scheduled jobs without a restart. The platform queue is served by Horizon. See
+[Architecture](/developers/architecture/#api-api).
+
+A job dispatched while serving `coffee.localhost` lands in coffee's prefixed queue and is executed by
+the worker started with `--domain=coffee.localhost`, which loads coffee's env file. Nothing in a job
+needs to carry the tenant explicitly.
+
+## Other services
+
+- **H5P service**: resolves the tenant from the same env files (read-only mount, `TENANCY_MODE=env-files`)
+  and uses the tenant's database (schema `h5p`), bucket and Passport public key.
+- **Reference frontend**: maps its host to the tenant API host; it holds no tenant state other than
+  per-tenant in-memory caches.
+- **Demo mode** is per tenant (`DEMO_MODE` in the env file, `--demo=on|off`), never on the platform.
+
+## Content origin
+
+Third-party package code (SCORM, cmi5, Adapt builds, LiaScript) runs on a per-tenant **content
+origin** that holds nothing else: no API routes, no cookies, no tokens. `ulams:tenant:create` writes
+`CONTENT_ORIGIN` to the tenant env file; for the platform set it in `.env`.
+
+- Caddy only allows `GET`/`HEAD` on `/scorm/*`, `/cmi5/*`, `/adapt/*`, `/liascript/*` there, strips
+  `Cookie`, `Authorization` and `Set-Cookie`, sets its own CSP (`frame-ancestors` = the tenant's front
+  and admin) and proxies to `GET /api/content/...` on the tenant API with
+  `X-Ulams-Content-Origin: 1`. Caddy strips that header from requests to the API hosts and the API
+  answers 404 without it, so package files are never served as active content on the API origin.
+- The SCORM player gets a **tracking token** bound to the tenant `APP_KEY`, the user and the SCO,
+  sent as `X-Ulams-Tracking-Token` (default lifetime 4 hours, `SCORM_TRACKING_TOKEN_TTL`). Another
+  tenant rejects it because its `APP_KEY` differs.
+- In production the content origin must be on a separate registrable domain
+  (for example `<slug>.ulams-content.net`), not a subdomain of the app.
+
+Without `CONTENT_ORIGIN` the legacy SCORM player on the API origin is used. Full description:
+[`api/docs/content-origin.md`](https://github.com/ulams-dev/ulams/blob/main/api/docs/content-origin.md).
+
+## Tenant isolation tests
+
+The spec requires a tenant isolation test for every new endpoint. Three kinds exist today:
+
+| Test | What it checks | How to run |
+|---|---|---|
+| `api/packages/tenancy/tests/Integration/TenantIsolationTest.php` | Provisions two real tenants with `ulams:tenant:create` and talks to them over HTTP through Caddy: each tenant on its own host, data and tokens do not cross, LTI key sets and registrations do not cross, LiaScript sources do not cross | `docker compose exec -T -e TENANCY_INTEGRATION=1 api vendor/bin/phpunit packages/tenancy/tests/Integration` |
+| `api/packages/lti/tests/Feature/TenantIsolationTest.php` | In-process: switches the tenant secrets (`APP_KEY`, LTI key set) and checks that login hints, AGS tokens, deep-linking data and one-time codes of tenant A are rejected by tenant B | `vendor/bin/phpunit --testsuite lti` |
+| `api/packages/scorm/tests/API/ScormContentOriginApiTest.php`, `api/packages/demo/tests/Integration/DemoTenantIsolationTest.php` | Tracking token scope and forgery across tenants; demo login and reset confined to one tenant | per package test suite |
+
+Because tenants have separate databases, most cross-tenant leaks come from values a browser or a tool
+carries from one host to another: tokens, signed hints, URLs, cached data keyed without the tenant.
+When you add an endpoint, test that a value issued by one tenant is rejected by another (the
+in-process pattern of the LTI test), and extend the integration test when the endpoint stores data.
+`TENANCY_INTEGRATION_KEEP=1` keeps the two probe tenants for debugging. More on the suites in
+[Testing](/developers/testing/).
+
+<Aside type="caution" title="Known limits">
+  All tenants use the same MinIO/S3 credentials (isolation is per bucket, not per key),
+  `config/domain.php` is runtime state, and production DNS and TLS for wildcard subdomains are not
+  designed yet (ADR 0007, Consequences). Many tenants mean many databases, migrations and worker
+  passes; see [High availability](/operators/high-availability/).
+</Aside>
+
+## Legacy: domains from environment variables
+
+Before the tenancy package, every domain was declared with `MULTI_DOMAINS` and `LARAVEL_`-prefixed
+per-domain variables at container start (`api/docker/envs/envs.php`, `init_multidomains.sh`). That
+mode still works and can be combined with registered tenants; it is described in
+[`api/docs/multidomain.md`](https://github.com/ulams-dev/ulams/blob/main/api/docs/multidomain.md).
+Parts of that page predate the reference frontend and the multi-tenant H5P service (it still says
+the front runs on `:3000` and that H5P is single-tenant); the Caddyfile and compose file are current.

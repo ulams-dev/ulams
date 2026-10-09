@@ -1,0 +1,73 @@
+---
+title: Object storage
+description: S3-compatible storage for ulams - platform and per-tenant buckets, the variables for the API and the H5P service, public URLs and the MinIO licence note.
+sidebar:
+  order: 8
+modules:
+  - api
+  - tenancy
+  - uploads
+  - api-h5p
+  - scorm
+---
+
+import { Aside, Badge } from "@astrojs/starlight/components";
+
+## Layout
+
+| Bucket | Owner | Contents |
+|---|---|---|
+| Platform bucket (`AWS_BUCKET`, e.g. `ulams`) | Platform | Platform files, `h5p/` for the platform's H5P content |
+| `ulams-<slug>` (`TENANCY_BUCKET`) | One tenant | Course files, images, videos and HLS renditions, LiaScript assets, H5P content and temporary files under `h5p/`, and SCORM/cmi5 packages when their disk is `s3` |
+
+`ulams:tenant:create` creates the tenant bucket and attaches a **public-read** bucket policy
+(`S3BucketProvisioner`): files are served to browsers by URL. The bucket's public base URL is
+`TENANCY_STORAGE_PUBLIC_URL` plus `/<bucket>` and is written to the tenant's `AWS_URL`.
+
+All tenants use the platform's access key: isolation is per bucket, not per credential (a known
+limit recorded in `api/docs/multidomain.md`).
+
+## Variables
+
+| Where | Variables |
+|---|---|
+| `api` (platform) | `FILESYSTEM_DRIVER=s3`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`, `AWS_BUCKET`, `AWS_ENDPOINT`, `AWS_URL`, `AWS_USE_PATH_STYLE_ENDPOINT` |
+| `api` (bucket creation) | `TENANCY_S3_ENDPOINT`, `TENANCY_S3_KEY`, `TENANCY_S3_SECRET`, `TENANCY_S3_REGION` (default to the `AWS_*` values), `TENANCY_BUCKET`, `TENANCY_STORAGE_PUBLIC_URL` |
+| `api` (package disks) | `SCORM_DISK` (default `local`), `LIASCRIPT_DISK` (default `FILESYSTEM_DRIVER`) |
+| `h5p` | `S3_ENDPOINT`, `S3_REGION`, `S3_KEY`, `S3_SECRET`, `S3_BUCKET`, `S3_PREFIX` (`h5p`), `S3_FORCE_PATH_STYLE`; per tenant, the `AWS_*` values of its env file win |
+
+`AWS_ENDPOINT` is the address the containers use; `AWS_URL` and `TENANCY_STORAGE_PUBLIC_URL` are
+what browsers use. They differ when the store sits on the internal network (the example's MinIO:
+`http://minio:9000` inside, `https://storage.<content domain>` outside).
+
+<Aside type="caution" title="SCORM packages on a local disk">
+  `SCORM_DISK` defaults to `local`, so extracted SCORM packages are written under the API's
+  `storage/` directory (the `api_storage` volume in the example) and must be backed up with it.
+  For several API replicas, switch to `SCORM_DISK=s3`; the content origin reads from either disk.
+</Aside>
+
+## Choosing a store
+
+- **A managed S3-compatible service** (AWS S3, Cloudflare R2, Backblaze B2, Scaleway, OVH and
+  others). The access key needs `CreateBucket` and `PutBucketPolicy` for tenant provisioning.
+  On AWS, S3 Block Public Access rejects public bucket policies by default; tenant provisioning
+  fails at the `bucket` step until you allow public policies for these buckets (or pre-create
+  them and serve files through a CDN). Not tested by the project.
+- **Self-hosted.** The development stack uses MinIO, and the example offers it behind
+  `--profile minio`. <Badge text="Recommended" variant="tip" /> evaluate SeaweedFS or RustFS
+  instead: the project plans to move to a permissively licensed default.
+
+<Aside title="MinIO licence">
+  MinIO is AGPL-3.0, and its upstream community distribution is archived; the image in the
+  development stack (`bitnamilegacy/minio`) is no longer updated. Running it unmodified as a
+  separate process is fine for the project's open-core rules (`LICENSING.md`), but you depend on
+  an unmaintained image. Soketi, the optional WebSocket server, is AGPL-3.0 as well.
+</Aside>
+
+## Serving files safely
+
+Uploaded files are untrusted. The API stores SVG, HTML and XML outside package paths with
+`Content-Disposition: attachment` and sets `Content-Type` from the extension
+(`ActiveContentSafeS3Adapter`), and the storage host in the Caddyfile adds `nosniff` and a
+`script-src 'none'; sandbox` policy for active file types. Put the public storage host on the
+content domain, not on the application domain. See [Security](/operators/security/).

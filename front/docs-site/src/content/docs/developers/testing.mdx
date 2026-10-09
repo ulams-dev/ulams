@@ -1,0 +1,204 @@
+---
+title: Testing
+description: How ulams is tested, from PHPUnit suites per package and JS unit tests to Playwright, axe, visual regression, H5P integration and tenant isolation.
+sidebar:
+  order: 20
+needsReview: "Local PHPUnit database: AGENTS.md uses DB_DATABASE=test, which the compose Postgres does not create by default. Check the createdb step and the preparation commands."
+---
+
+import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
+
+| Layer | Tool | Where | Runs in CI |
+|---|---|---|---|
+| API packages | PHPUnit 12, Orchestra Testbench 11 | `api/packages/<name>/tests`, `api/tests` | yes, 6 shards |
+| Admin unit | Jest | `admin/src/**/*.test.ts` | yes |
+| Admin end to end | Playwright | `admin/src/e2e` | no |
+| Legacy front unit | `node --test` | `front/tests/*.test.ts` | yes |
+| SDK, UI catalogue, web unit | Vitest | `front/sdk/tests`, `front/ui/tests`, `front/web/tests/unit` | no (see [CI](/developers/ci/)) |
+| Reference frontend end to end and accessibility | Playwright, `@axe-core/playwright` | `front/web/tests/e2e` | no |
+| H5P and PDF services | Vitest | `api/h5p/test`, `api/pdf/test` | unit yes; H5P integration on manual dispatch |
+| Visual regression | Playwright script | `front/tests/visual` | no |
+
+## PHPUnit
+
+[`api/phpunit.xml`](https://github.com/ulams-dev/ulams/blob/main/api/phpunit.xml) declares one test
+suite per package (`auth`, `bookmarks_notes`, `courses`, `tenancy`, `lti`, and so on) plus
+`Integrations` for `api/tests/Integrations`. Package tests extend the package's own `TestCase`,
+which builds on `Ulams\Core\Tests\TestCase` (Testbench) and registers the providers the package needs.
+Most use `DatabaseTransactions`, so each test rolls back.
+
+### Database for tests
+
+The `<php>` block of `phpunit.xml` sets `DB_HOST=127.0.0.1`, database `default`, user `default`,
+password `secret`. Real environment variables win over these values. Inside the `api` container
+Postgres is at `postgres`, so pass the connection explicitly. Use a separate database so tests do
+not touch your dev data:
+
+```bash
+# once: create the test database
+docker compose -f api/docker-compose.yml exec postgres createdb -U default test
+
+# prepare it the way CI does
+docker compose -f api/docker-compose.yml exec \
+  -e DB_HOST=postgres -e DB_DATABASE=test -e DB_USERNAME=default -e DB_PASSWORD=secret api bash -c '
+    php artisan migrate:fresh --force &&
+    php artisan db:seed --force --class="Database\Seeders\PermissionsSeeder" &&
+    php artisan passport:keys --force &&
+    php artisan passport:client --personal --no-interaction &&
+    mkdir -p vendor/orchestra/testbench-core/laravel/storage &&
+    cp storage/oauth-private.key storage/oauth-public.key vendor/orchestra/testbench-core/laravel/storage/ &&
+    php artisan migrate --force --path=packages/courses/tests/Database/Migrations'
+```
+
+Then run one suite, several, or a filter:
+
+```bash
+docker compose -f api/docker-compose.yml exec \
+  -e DB_HOST=postgres -e DB_DATABASE=test -e DB_USERNAME=default -e DB_PASSWORD=secret \
+  api ./vendor/bin/phpunit --testsuite bookmarks_notes
+
+# several suites, comma separated
+... ./vendor/bin/phpunit --testsuite courses,course-access
+# one test
+... ./vendor/bin/phpunit --testsuite lti --filter TenantIsolationTest
+```
+
+`corepack yarn test:api` and `make -C api test-phpunit` run the whole PHPUnit configuration
+without these overrides.
+
+<Aside type="caution">
+`passport:keys --force` overwrites the platform's `storage/oauth-*.key`, which invalidates every
+token issued by your dev platform. In the dev container the keys already exist (`init.sh` creates
+them), so you can drop that step and keep only the copy into the Testbench storage directory.
+</Aside>
+
+### How CI shards PHPUnit
+
+`.github/workflows/ci.yml` splits the suites into six shards with the `PHPUNIT_SHARDS` variable,
+one line per shard (`learning`, `tasks-topics`, `gift-reports`, `commerce`, `platform`,
+`content`). A check step compares the suites in `phpunit.xml` with the shard lists and fails if a
+suite is missing, unknown or listed twice. **When you add a package suite to `phpunit.xml`, add it
+to one shard in `ci.yml` in the same commit.**
+
+### Quarantined tests
+
+`PHPUNIT_QUARANTINE` in `ci.yml` is a regular expression of known failures (tests that depend on
+rows left by other tests, and one timing-flaky consultation test). The blocking PHPUnit step
+excludes them with a negative `--filter`; a second step runs only the quarantined tests with
+`continue-on-error: true`, so they are visible but do not fail the build. Remove an entry when the
+test is fixed. The history is in `docs/plans/phase-0.md` (item B.11).
+
+### Opt-in integration tests
+
+Two suites talk to the running Docker stack through Caddy and are skipped unless an environment
+variable is set:
+
+| Test | Enable with | What it does |
+|---|---|---|
+| `packages/tenancy/tests/Integration/TenantIsolationTest.php` | `TENANCY_INTEGRATION=1` | Provisions two real tenants with `ulams:tenant:create`, checks hosts, data and tokens do not cross, then deletes them (`TENANCY_INTEGRATION_KEEP=1` keeps them) |
+| `packages/demo/tests/Integration/DemoTenantIsolationTest.php` | `DEMO_INTEGRATION=1` | Demo login on two demo tenants; a token of one is rejected by the other |
+
+```bash
+docker compose -f api/docker-compose.yml exec -T -e TENANCY_INTEGRATION=1 api \
+  vendor/bin/phpunit packages/tenancy/tests/Integration
+```
+
+## Tenant isolation tests
+
+The spec requires a tenant isolation test for every new endpoint (`docs/ROADMAP-PROMPT.md`,
+quality bar). The tracker item for full coverage is still open. Two patterns exist:
+
+- **In-process**, inside the package suite: switch the tenant secrets and check that a value
+  issued for tenant A is rejected. Example:
+  [`api/packages/lti/tests/Feature/TenantIsolationTest.php`](https://github.com/ulams-dev/ulams/blob/main/api/packages/lti/tests/Feature/TenantIsolationTest.php)
+  replaces `APP_KEY` (and the LTI key set) with `becomeAnotherTenant()` and asserts that login
+  hints, AGS tokens and deep-linking data of the first tenant fail.
+- **End to end**, against two provisioned tenants: the opt-in tenancy and demo tests above.
+
+See [Adding an endpoint](/developers/adding-an-endpoint/) for where the test goes.
+
+## JavaScript unit tests
+
+```bash
+corepack yarn test                                  # admin, front, api-h5p, api-pdf, sdk, ui, web
+corepack yarn turbo run test --filter=@ulams/ui     # one workspace
+corepack yarn workspace @ulams/web test
+```
+
+| Workspace | Runner | Notes |
+|---|---|---|
+| `admin` | Jest (config in `admin/package.json`) | Collects coverage from `src/components`; ignores `/e2e/` |
+| `front` | `node --experimental-strip-types --test "tests/**/*.test.ts"` | Tenant resolution, demo mode, landing |
+| `@ulams/sdk` | Vitest | Client, tenant, topic helpers |
+| `@ulams/ui` | Vitest | Registry (every component has an Astro file mapped in `Node.astro`, defaults validate), schema, renderer, Markdown, contrast |
+| `@ulams/web` | Vitest | View model, documents against the catalogue, cache, tenant resolution, BFF rules |
+| `api-h5p` | Vitest | Unit suites; `test/http.test.ts` and `test/pg-storage.test.ts` are excluded |
+| `api-pdf` | Vitest | |
+
+The LLM is mocked in unit and feature tests; real-model runs go only through the eval command
+(project rule in `CLAUDE.md`).
+
+## End-to-end tests
+
+<Tabs>
+<TabItem label="front/web">
+
+Playwright against a running server (default port 4321, `WEB_BASE_PORT` for another) and the
+demo tenants. Two projects: `desktop` (1440×900) and `phone` (Pixel 7 at 360 px).
+
+```bash
+corepack yarn dev:web                 # or a production build: build + start
+corepack yarn test:web:e2e            # yarn workspace @ulams/web test:e2e
+```
+
+- `smoke.spec.ts`: every tenant and the platform page render.
+- `a11y.spec.ts`: an axe scan with the tags `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`,
+  `wcag22aa` on every page type (landings, course pages, each topic type in the player, finish,
+  account, events, login, 404) and on the quiz question screen. Iframes (H5P, YouTube, PDF,
+  SCORM) are excluded. A violation fails the test.
+
+Add every new learner page to the `PAGES` list in `a11y.spec.ts`.
+
+</TabItem>
+<TabItem label="admin">
+
+Playwright specs in `admin/src/e2e` (login, logout, creating a category, course, user, user
+group, voucher, product, consultation and stationary event), Chromium only.
+
+```bash
+corepack yarn workspace admin playwright:headed   # installs browsers, runs headed
+corepack yarn workspace admin playwright:local    # existing browsers, PORT=8000
+```
+
+</TabItem>
+</Tabs>
+
+## Visual regression
+
+`front/tests/visual/visual.mjs` captures full-page screenshots of the legacy front and the admin
+and compares two runs pixel by pixel (`prepare`, `capture`, `compare`). It uses the repository's
+Playwright and needs the API stack and dev servers. Usage, options and targets:
+[`front/tests/visual/README.md`](https://github.com/ulams-dev/ulams/blob/main/front/tests/visual/README.md).
+
+```bash
+node front/tests/visual/visual.mjs --help
+```
+
+## H5P integration tests
+
+`api/h5p/test/http.test.ts` and `test/pg-storage.test.ts` need real Postgres, Valkey and MinIO.
+In CI they run only from the **H5P integration tests** workflow (manual dispatch). Locally:
+
+```bash
+corepack yarn workspace api-h5p download:core      # H5P core and editor files
+corepack yarn test:h5p:integration                 # turbo run test:integration --filter=api-h5p
+```
+
+The defaults in `api/h5p/src/config.ts` point at compose service names; set `DB_HOST`,
+`REDIS_HOST`, `S3_ENDPOINT` and the S3 credentials when the services run on `localhost`, as
+`.github/workflows/h5p-integration.yml` does.
+
+## Performance
+
+`corepack yarn workspace @ulams/web perf` measures LCP, CLS and JavaScript per page of a running
+production build. See [Performance](/developers/performance/).

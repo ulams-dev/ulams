@@ -1,0 +1,49 @@
+---
+title: My profile
+description: Change your own name, avatar, extra profile fields, password and per-user settings from the My profile screen of the admin panel.
+sidebar:
+  order: 4
+modules:
+  - auth
+adminRoutes:
+  - /my-profile/**
+---
+
+import Screenshot from "../../../components/Screenshot.astro";
+
+**My profile** is your own account page. It is not in the left menu: open it from the avatar
+menu in the top-right corner. The screen needs the `user_read_self` permission and has three
+tabs, each with its own URL (`/my-profile/:tab`; `/my-profile` opens `general`).
+
+<Screenshot name="admin-my-profile-tab" alt="The My profile screen with General, Change password and User settings tabs" />
+
+## General (`/my-profile/general`)
+
+- **First name** and **Last name**.
+- Extra fields defined in [User fields](/admin/users/#user-fields).
+- **Avatar**: upload an image (`POST /api/profile/upload-avatar`), pick one from the
+  [file library](/admin/files/) (folder `avatars/{your id}`) or delete it.
+
+**Submit** saves the form with `PUT /api/profile/me`. Your email and roles cannot be changed
+here; another administrator changes them on [Users](/admin/users/).
+
+## Change password (`/my-profile/change_password`)
+
+Enter your **current password**, the **new password** and its **confirmation**. The API
+(`PUT /api/profile/password`) checks that the current password matches and that the new one
+has at least 6 characters, and dispatches the `PasswordChanged` event (which has an email
+template; see [Templates](/admin/templates/)).
+
+If you have forgotten your password, sign out and use **Forgot password** on the sign-in
+screen ([The admin panel](/admin/#forgotten-password)).
+
+## User settings (`/my-profile/user_settings`)
+
+A key–value table of settings stored on your account (`/api/admin/users/{id}/settings`).
+Frontends use these to remember per-user preferences. The toolbar has two actions:
+
+- **New** adds or changes the given keys and keeps the others (`PATCH`).
+- **Overwrite** replaces all your settings with the keys you enter (`PUT`).
+
+The same settings exist for every user, but the panel lets you edit only your own; the
+corresponding tab on other users' edit screens is disabled in the code.

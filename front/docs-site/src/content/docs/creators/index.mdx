@@ -1,0 +1,89 @@
+---
+title: Content creators
+description: How course authors and tutors build courses in ulams, from the course form to lessons, topics, quizzes, certificates and access.
+sidebar:
+  order: 0
+modules:
+  - courses
+adminRoutes:
+  - /courses
+  - /courses/:courseTab
+---
+
+import { LinkCard, CardGrid, Aside } from "@astrojs/starlight/components";
+
+This section is for course authors and tutors. It walks through the admin panel screens you use to
+build a course and explains what each topic type does for the learner.
+
+## The authoring workflow
+
+1. **Create the course** in **Courses → List → Create new**: title, descriptions, dates, status and
+   authors. See [Create a course](/creators/create-a-course/).
+2. **Build the program**: lessons (which can be nested) and topics inside them. Each topic has one
+   type: text, video, H5P, quiz and so on. See [Lessons and topics](/creators/lessons-and-topics/).
+3. **Prepare reusable content** where a topic needs it: H5P content, SCORM packages and LiaScript
+   courses live in their own libraries under **Courses** and are picked from the topic form.
+4. **Decide who gets in**: grant access to users and groups, handle access requests, attach a price,
+   or make the course public. See [Access, prices and publishing](/creators/access-and-publishing/).
+5. **Add a certificate** that is issued when a learner finishes the course. See
+   [Certificates](/creators/certificates/).
+6. **Publish** by setting the status to Published.
+
+## Where things are in the admin panel
+
+All authoring screens are under the **Courses** menu:
+
+| Menu item | Path | What it is for |
+|---|---|---|
+| List | `/courses/list` | Course list, create, import, export, clone; opens the course editor |
+| H5Ps | `/courses/h5ps` | H5P content library: create, edit, upload, export ([H5P](/creators/h5p/)) |
+| LiaScript | `/courses/liascript` | LiaScript courses with versions ([LiaScript](/creators/liascript/)) |
+| SCORMs | `/courses/scorms` | SCORM package library ([SCORM](/creators/scorm/)) |
+| Categories | `/courses/categories` | Course categories (administrators) |
+| Webinars | `/courses/webinars/list` | Live sessions (not covered here) |
+| Access Requests | `/courses/access` | Learners' requests to join a course ([Access](/creators/access-and-publishing/)) |
+| Quiz Reports | `/courses/quiz-reports` | Quiz attempts and manual grading ([Quizzes](/creators/quizzes/)) |
+
+External tools for the [external tool topic](/creators/external-tool/) are registered by an
+administrator under **Integrations → LTI** (see [LTI](/admin/lti/)), and certificate templates under
+**Configuration → Templates** (see [Templates](/admin/templates/)).
+
+<Aside>
+Which menu items and tabs you see depends on your role's permissions and on a few global settings
+(for example, a topic type can be switched off for the whole platform). If something described here is
+missing, ask an administrator. The address `/courses/<anything>` (for example `/courses/list`) shows the
+same course list.
+</Aside>
+
+## Guides in this section
+
+<CardGrid>
+  <LinkCard title="Create a course" href="/creators/create-a-course/" description="The course form and every tab of the course editor." />
+  <LinkCard title="Lessons and topics" href="/creators/lessons-and-topics/" description="The program editor, nesting, ordering and the fields every topic has." />
+  <LinkCard title="Quizzes (GIFT)" href="/creators/quizzes/" description="Quiz topics, question types, import/export and quiz reports." />
+  <LinkCard title="GIFT syntax reference" href="/creators/gift-syntax/" description="Every question type the grader understands, with examples." />
+  <LinkCard title="Certificates" href="/creators/certificates/" description="PDF certificates issued when a learner finishes a course." />
+  <LinkCard title="Access, prices and publishing" href="/creators/access-and-publishing/" description="Status, dates, public courses, access, requests and products." />
+  <LinkCard title="Import and export" href="/creators/import-export/" description="Move a course between installations as a ZIP file, or clone it." />
+  <LinkCard title="Build a course with AI" href="/creators/course-builder/" description="Chat that drafts a cited course from your source for you to approve." />
+</CardGrid>
+
+### Topic types
+
+| Topic type | Guide |
+|---|---|
+| Rich text (Markdown) | [Rich text](/creators/rich-text/) |
+| Video file, YouTube/Vimeo link (OEmbed) | [Video and embeds](/creators/video/) |
+| Audio | [Audio](/creators/audio/) |
+| Image | [Image](/creators/image/) |
+| PDF | [PDF](/creators/pdf/) |
+| H5P | [H5P](/creators/h5p/) |
+| SCORM | [SCORM](/creators/scorm/) |
+| cmi5 | [cmi5](/creators/cmi5/) |
+| LiaScript | [LiaScript](/creators/liascript/) |
+| Adapt | [Adapt](/creators/adapt/) (uploaded as SCORM) |
+| External tool (LTI 1.3) | [External tool](/creators/external-tool/) |
+| Project (file hand-in) | [Project](/creators/project/) |
+| Quiz (GIFT) | [Quizzes](/creators/quizzes/) |
+
+What learners see when they open these topics is described in the [learner guide](/learners/).

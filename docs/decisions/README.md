@@ -29,6 +29,8 @@ replacement.
 | [0017](0017-upload-guard.md) | One upload guard and safe extractor for every upload path | Proposed |
 | [0018](0018-completion-events.md) | External content completes topics; completion events fire after progress is saved | Proposed |
 | [0019](0019-nightly-conformance.md) | Conformance against real LMSs and builders in an opt-in nightly workflow | Proposed |
+| [0020](0020-public-competitor-comparison.md) | Public comparison with other learning platforms: sourced data, neutral values | Proposed |
+| [0021](0021-ha-reference-architecture.md) | High-availability reference architecture | Proposed |
 | [0022](0022-course-builder-studio-in-web-app.md) | Course Builder studio in the reference web app, with its own author session | Proposed |
 | [0023](0023-a2ui-surfaces-as-ag-ui-activity-snapshots.md) | A2UI surfaces travel as AG-UI activity snapshots (`a2ui-surface`) | Proposed |
 | [0024](0024-fake-llm-driver-cassettes-and-synthetic-answers.md) | Fake LLM driver: normalised cassettes and synthetic answers | Proposed |

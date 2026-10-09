@@ -1,0 +1,12 @@
+dist/
+.astro/
+node_modules/
+
+# Written by scripts/sync-content.mjs from the repository on every dev/build run.
+# Edit the sources (docs/decisions, docs/ROADMAP-TODO.md, api/packages, front/ui), not these.
+src/content/docs/decisions/
+src/content/docs/reference/
+src/content/docs/roadmap.md
+src/content/docs/contributing/code-of-conduct.md
+src/content/docs/contributing/security-policy.md
+src/content/docs/contributing/contributing-guide.md

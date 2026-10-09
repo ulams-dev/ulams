@@ -1,0 +1,154 @@
+---
+title: Container images
+description: The seven ulams container images on GHCR, how each Dockerfile builds them, their tags, platforms, licences and runtime configuration.
+sidebar:
+  order: 40
+modules:
+  - api
+  - api-h5p
+  - api-pdf
+  - admin
+  - front
+  - web
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+[`.github/workflows/publish.yml`](https://github.com/ulams-dev/ulams/blob/main/.github/workflows/publish.yml)
+builds seven images and pushes them to GitHub Container Registry as `ghcr.io/ulams-dev/<name>`.
+For running them in production, see [Self-hosting](/operators/self-hosting/).
+
+| Image | Dockerfile | Build context | Runs | Port | Licence label |
+|---|---|---|---|---|---|
+| `php` | `api/docker/php/Dockerfile` | `api/docker/php` | PHP 8.4 FPM runtime (base of `api`) | 9000 | Apache-2.0 |
+| `api` | `api/Dockerfile` | `api` | Laravel: php-fpm, Horizon, tenant queue workers, scheduler (supervisord) | 9000 (FastCGI) | Apache-2.0 |
+| `h5p` | `api/h5p/Dockerfile` | repository root | H5P service (Lumi h5p-nodejs-library), Node 22 | 8080 | GPL-3.0-or-later |
+| `pdf` | `api/pdf/Dockerfile` | repository root | PDF renderer (pdfme), Node 22 | 3000 | MIT |
+| `admin` | `admin/Dockerfile` | repository root | Admin static build served by Apache (`php:apache`) | 80 | MIT |
+| `front` | `front/Dockerfile` | repository root | Legacy learner front, static build on Apache | 80 | MIT |
+| `web` | `front/web/Dockerfile` | repository root | Reference frontend, Astro SSR on Node | 4321 | MIT |
+
+## Tags, platforms, attestations
+
+Every image is built with `docker/build-push-action@v6` for `linux/amd64` and `linux/arm64`
+(QEMU), with `provenance: mode=max` and `sbom: true`. Tags come from `docker/metadata-action@v5`:
+
+| Tag | When |
+|---|---|
+| `sha-<short>` | every build |
+| `<branch>` | push to a branch (`main`) |
+| `<version>`, `<major>.<minor>` | `v*` tags, for example `v1.2.3` gives `1.2.3` and `1.2` |
+| `latest` | default branch only |
+| `8.4` | `php` image only, on the default branch |
+
+OCI labels (`title`, `description`, `licenses`) are written to the manifests and to the
+multi-arch index (`DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index`), so GHCR shows them.
+
+The `api` image is built in the same job as `php`, with
+`--build-arg BASE_IMAGE=ghcr.io/ulams-dev/php@<digest>`, so each `api` image sits on exactly the
+`php` image pushed a moment earlier. The other five are a matrix job and receive
+`APP_VERSION` / `ADMIN_VERSION` set to the computed version tag.
+
+## Build them locally
+
+```bash
+docker build -t ulams/php:8.4 api/docker/php
+docker build -t ulams/api:dev api                                    # builds the php-base stage inline
+docker build -f api/h5p/Dockerfile -t ulams/h5p:dev .
+docker build -f api/pdf/Dockerfile -t ulams/pdf:dev .
+docker build -f admin/Dockerfile -t ulams/admin:dev .
+docker build -f front/Dockerfile -t ulams/front:dev .
+docker build -f front/web/Dockerfile -t ulams/web:dev .
+```
+
+The Node images use an allow-list `Dockerfile.dockerignore` next to their Dockerfile and install
+only their own workspace (plus `front/sdk` and `front/ui` for `web`) against the frozen root
+`yarn.lock`.
+
+## Per image
+
+### php and api
+
+`api/docker/php/install.sh` is the single package list, used by `api/docker/php/Dockerfile` and
+by the inline `php-base` stage of `api/Dockerfile` and `api/Dockerfile.develop`:
+
+- base `php:8.4-fpm-alpine3.24`, Composer 2.10, `mlocati/php-extension-installer` 2.12.0;
+- extensions `apcu`, `bcmath`, `exif`, `gd`, `intl`, `pcntl`, `pdo_mysql`, `pdo_pgsql`, `redis`, `zip`;
+- tools: `bash`, `supervisor`, `ffmpeg`, `jpegoptim`, `optipng`, `pngquant`, `gifsicle`, `unzip`;
+- php-fpm pool defaults in `conf/php-fpm.d/00-ulams-base.conf`.
+
+`api/Dockerfile` copies the app, the supervisor config and `docker/conf/php/ulams-custom-php.ini`,
+runs `composer install --no-dev`, fetches the pinned LiaScript player, and starts
+[`init.sh`](https://github.com/ulams-dev/ulams/blob/main/api/init.sh). Its health check is
+`php artisan health:check`. `Dockerfile.develop` (local compose only) adds the excimer profiler
+and `ulams-custom-develop-php.ini`.
+
+**Runtime configuration.** `init.sh` copies every `LARAVEL_<NAME>` environment variable into
+`.env` as `<NAME>`, decodes `JWT_PUBLIC_KEY_BASE64` / `JWT_PRIVATE_KEY_BASE64` into Passport key
+files, runs migrations and the tenant env sync, seeds permissions and starts supervisord. Switches:
+`DISABLE_PHP_FPM`, `DISABLE_HORIZON`, `DISABLE_QUEUE`, `DISABLE_SCHEDULER`, `DISABLE_DB_MIGRATE`,
+`DISABLE_TENANT_SYNC`, `DISABLE_DB_SEED` (each `true` to turn off), and `MULTI_DOMAINS` for the
+older multi-domain mode. Details: [`api/docs/init-script.md`](https://github.com/ulams-dev/ulams/blob/main/api/docs/init-script.md)
+and [Environment variables](/reference/environment-variables/).
+
+### h5p
+
+Multi-stage: manifests, full install, `tsc` plus the esbuild embed bundle, production
+dependencies, and an `alpine:3.22` stage that downloads the H5P core and editor at pinned commits
+(`H5P_CORE_REF`, `H5P_EDITOR_REF`). Runs as `node`, declares the volume `/data/libraries`, health
+check `GET /h5p/health`. Configuration is environment variables (`TENANCY_MODE`, `ENV_DIR`,
+`KEYS_DIR`, `DB_*`, `REDIS_*`, `S3_*`, `H5P_INTERNAL_TOKEN`, …); the compose file shows a full set.
+
+### pdf
+
+Same pattern without the core download. Ships `api/pdf/fonts` (`PDF_FONTS_DIR`), runs as `node`,
+health check `GET /health`. Laravel calls it with `X-Internal-Token` (`PDF_INTERNAL_TOKEN`).
+
+### admin and front
+
+The static build runs once on the build platform (`--platform=$BUILDPLATFORM`, `node:22.12.0-bookworm`),
+and only the `php:apache` server stage is per architecture. Configuration is injected when the
+container starts, not at build time:
+
+- `admin/config/php/index.php` and `front/config/php/index.php` serve `index.html` and inject every
+  `REACT_APP_*` and `VITE_APP_*` environment variable as `window.<NAME>`, plus per-host values in
+  `MULTI_DOMAINS` mode. The admin also sets `REACT_APP_SENTRY_RELEASE` from the image version.
+- The entrypoints (`admin/entrypoint.sh`, `front/entrypoint.sh`) still replace a few legacy
+  placeholders (`API_URL`, `SENTRYDSN`, `YBUG`; the front also `BASENAME`, `ROUTING_TYPE`, Firebase
+  keys) in `index.html`.
+
+Leave `REACT_APP_API_URL` empty for a multi-tenant admin: it derives the tenant API from its host
+with `REACT_APP_TENANT_API_HOST_PATTERN`, for example
+`{slug}.admin.ulams.app=>https://{slug}.api.ulams.app`.
+
+### web
+
+Astro SSR with `@astrojs/node` in standalone mode (`node dist/server/entry.mjs`), runs as `node`,
+health check `GET /healthz`. The build downloads the self-hosted Google fonts, so it needs network
+access. Nothing tenant-specific is baked in: every `ULAMS_*` variable and the demo login are read
+from the environment when the server starts (see
+[`front/web/.env.example`](https://github.com/ulams-dev/ulams/blob/main/front/web/.env.example)).
+
+```bash
+docker run -p 4321:4321 \
+  -e ULAMS_TENANT_HOSTS='{slug}.ulams.app=>https://{slug}.api.ulams.app' \
+  ghcr.io/ulams-dev/web:latest
+```
+
+## Licences
+
+Source licences per folder are in [`LICENSING.md`](https://github.com/ulams-dev/ulams/blob/main/LICENSING.md).
+
+<Aside type="caution" title="h5p is GPL-3.0-or-later">
+Publishing the `h5p` image conveys GPL software. The image carries the licence text at
+`/app/api/h5p/LICENSE`, and its labels name the source revision of this repository and the pinned
+H5P core and editor commits (`dev.ulams.h5p.core-ref`, `dev.ulams.h5p.editor-ref`). That
+corresponding source must stay available for as long as the image is offered. Code from `api/h5p`
+is never imported by the API, admin or front; they reach it over HTTP and iframes only.
+</Aside>
+
+The `php` and `api` images contain GPL command-line tools from Alpine packages (`ffmpeg`,
+`pngquant`, `gifsicle`, `jpegoptim`). `api/docker/php/NOTICE` lists them and where their source
+is; `install.sh` copies it to `/usr/local/share/doc/ulams-php/NOTICE` in the image. (The `php`
+image description in `publish.yml` points at `/usr/local/src/ulams-php/NOTICE`, a directory that
+`install.sh` deletes at the end of the build.)

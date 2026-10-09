@@ -89,6 +89,9 @@ class LiaScriptPlayerTest extends TestCase
         $disk->assertExists('liascript/_player/player.js');
         $disk->assertExists('liascript/_player/build/assets/app.js');
         $this->assertStringContainsString('<script src="config.js">', $disk->get('liascript/_player/build/index.html'));
+        // the build takes the SCORM API from our page before it would read window.top (another origin)
+        $disk->assertExists('liascript/_player/api-bridge.js');
+        $this->assertStringContainsString('<script src="config.js"></script><script src="../api-bridge.js"></script>', $disk->get('liascript/_player/build/index.html'));
         $this->assertDatabaseHas('course_progress', ['topic_id' => $this->topic->getKey(), 'user_id' => $student->getKey(), 'status' => ProgressStatus::IN_PROGRESS]);
     }
 

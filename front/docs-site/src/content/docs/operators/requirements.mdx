@@ -1,0 +1,87 @@
+---
+title: Requirements
+description: What a ulams server needs - CPU, memory and disk estimates, operating system, Docker, network ports, outbound access and DNS records.
+sidebar:
+  order: 1
+modules:
+  - api
+  - api-h5p
+  - api-pdf
+  - web
+  - admin
+---
+
+import { Aside, Badge } from "@astrojs/starlight/components";
+
+## Sizing
+
+<Badge text="Estimate" variant="caution" />
+
+<Aside type="caution">
+  The project has not load-tested ulams. The figures below are estimates from the container
+  configuration (PHP `memory_limit = 2G` per request, up to 10 Horizon processes per supervisor
+  in production, ffmpeg for video, Node services for H5P, PDF and the front). Measure your own
+  workload and adjust.
+</Aside>
+
+| Profile | vCPU | RAM | Local disk | Notes |
+|---|---|---|---|---|
+| Trial, one or two tenants, a handful of users | 2 | 4 GB | 40 GB SSD | Enough to evaluate; video conversion will be slow |
+| Small production, a few tenants, up to about 100 concurrent learners | 4 | 8 GB | 80 GB SSD | The single-server example in this section |
+| Medium, tens of tenants or regular video uploads | 8 | 16 GB | 160 GB SSD | Consider moving PostgreSQL and object storage off the host |
+
+What drives the numbers:
+
+- **PHP workers.** Each php-fpm worker and each queue worker can use up to 2 GB
+  (`api/docker/conf/php/ulams-custom-php.ini`), although typical requests use far less. Large
+  package imports (SCORM up to 512 MB, course imports up to 1 GB) are the memory peaks.
+- **Video.** `packages/video` converts uploads to HLS with ffmpeg in the long-job queue
+  (timeout 5 hours). That is CPU-bound and runs in the `api` container.
+- **PostgreSQL.** One database per tenant; each holds the LMS tables plus the H5P service's
+  `h5p` schema. Size grows with learners and tracking data (SCORM, xAPI, H5P results).
+- **Object storage** is separate from the local disk: course files, videos (original and HLS),
+  SCORM packages and H5P content live in buckets. Plan it from your content, not from user
+  counts.
+- **Images.** The application images and their upstream dependencies need several GB of disk;
+  keep room for two versions during an upgrade.
+
+## Operating system and software
+
+- 64-bit Linux on `amd64` or `arm64` (the images are published for both).
+- Docker Engine with the Compose v2 plugin (`docker compose`). The example uses Compose
+  features such as `profiles`, `group_add` and `depends_on` conditions.
+- Time synchronisation (NTP): Passport tokens, LTI messages and signed URLs depend on clocks.
+- A non-root operator account with access to Docker, and SSH hardened as usual.
+
+## Network
+
+| Direction | Port / destination | Why |
+|---|---|---|
+| Inbound | TCP 80, TCP 443, UDP 443 | HTTP (redirects and ACME), HTTPS, HTTP/3 |
+| Outbound | Your ACME CA (Let's Encrypt by default) | Certificates |
+| Outbound | Your SMTP relay | E-mail |
+| Outbound | `ghcr.io`, Docker Hub | Images |
+| Outbound | Your S3 endpoint, if external | Object storage |
+| Outbound | `h5p.org` (H5P Hub) | Content type list and installs; turn off with `H5P_HUB_ENABLED=false` |
+| Outbound | Your public host names | The learner front calls the tenant API by its public URL from inside the server |
+
+Everything else (PostgreSQL, Valkey, PHP-FPM, the H5P and PDF services) stays on the internal
+Docker network and must not be published.
+
+## DNS
+
+You need two domains: one for the application and a **different registrable domain** for content
+origins (see [Content origin](/operators/content-origin/)). With `ULAMS_DOMAIN=lms.example.com`
+and `ULAMS_CONTENT_DOMAIN=example-content.net`, point these records at the server:
+
+| Record | Serves |
+|---|---|
+| `api.lms.example.com`, `*.api.lms.example.com` | Platform and tenant APIs (and `/h5p/*`) |
+| `app.lms.example.com`, `*.app.lms.example.com` | Learner front |
+| `admin.lms.example.com`, `*.admin.lms.example.com` | Admin panel |
+| `platform.example-content.net`, `*.example-content.net` | Content origins |
+| `storage.example-content.net` | Bundled MinIO, only if you use it |
+
+Create the `*.api`, `*.app` and `*.admin` wildcards explicitly: a single `*.lms.example.com`
+record does not cover `coffee.api.lms.example.com` once `api.lms.example.com` has its own
+record. Certificates are covered in [DNS and TLS](/operators/dns-and-tls/).

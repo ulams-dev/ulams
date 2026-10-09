@@ -1,0 +1,207 @@
+---
+title: LTI 1.3 integrations
+description: Register external LTI 1.3 tools that ulams launches in lessons, and LMS platforms such as Moodle that launch ulams courses.
+modules:
+  - lti
+adminRoutes:
+  - /integrations/**
+---
+
+import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+ulams speaks LTI 1.3 in both directions, separately for every academy (tenant):
+
+- **Platform side**: ulams launches an external tool inside a lesson (topic type `LtiLink`),
+  receives grades back through Assignment and Grade Services (AGS) 2.0, and lets authors pick
+  content in the tool with Deep Linking 2.0.
+- **Tool side**: Moodle, Canvas or another LMS launches a ulams course. The learner is signed in,
+  given access to the course, and their course progress is sent back as a grade. Instructors can
+  pick courses with deep linking.
+
+The design and the choice of libraries are recorded in
+[ADR 0012](/decisions/0012-lti-package-and-libraries/). The package README is at
+[api/packages/lti/README.md](https://github.com/ulams-dev/ulams/blob/main/api/packages/lti/README.md).
+
+## The Integrations → LTI screen
+
+<Screenshot name="admin-integrations-lti" alt="LTI screen with the Tools and Platforms tabs" />
+
+`/integrations` redirects to `/integrations/lti`. The page has two tabs. Each opens a drawer to add
+or edit a record, and the drawer shows the ulams URLs to give to the other side, with copy buttons
+(from `GET /api/admin/lti/endpoints`).
+
+<Tabs>
+<TabItem label="Tools (ulams launches them)">
+
+The table lists each tool's name, the **Client ID** and **Deployment ID** that ulams issued for
+it, and whether it is enabled.
+
+Fields in the drawer:
+
+| Field | Required | Notes |
+|---|---|---|
+| Name | yes | |
+| OIDC login URL | yes | The tool's login initiation URL |
+| Launch URL | yes | |
+| Deep linking URL | no | Enables content picking from the lesson editor |
+| Other redirect URIs | no | One per line |
+| JWKS URL | one of the two | The tool's public key set |
+| Public key (PEM) | one of the two | If the tool has no JWKS URL |
+| Custom parameters | no | `key=value`, one per line, sent with every launch |
+| Share names / Share e-mails | no | Off by default: the tool receives no name or e-mail unless switched on |
+| Enabled | | |
+
+Give the tool the values shown in the drawer: issuer, OIDC auth URL, token URL, JWKS URL, and
+after saving, the client ID and deployment ID.
+
+</TabItem>
+<TabItem label="Platforms (they launch ulams)">
+
+The table lists each platform's name, issuer, client ID and deployment IDs.
+
+Fields in the drawer:
+
+| Field | Required | Notes |
+|---|---|---|
+| Name | yes | |
+| Issuer (platform ID) | yes | For Moodle, the site URL |
+| Client ID | yes | Issued by the platform |
+| Deployment IDs | yes | One or more |
+| Authentication request URL | yes | Moodle: `.../mod/lti/auth.php` |
+| Access token URL | yes | Moodle: `.../mod/lti/token.php` |
+| Public keyset URL | yes | Moodle: `.../mod/lti/certs.php` |
+| Default course ID | no | Used when a link does not name a course |
+| Enabled | | |
+
+Register ulams in the LMS with the values in the drawer: login URL, launch/redirect URL, deep
+linking URL and JWKS URL.
+
+</TabItem>
+</Tabs>
+
+## Registering a tool in ulams
+
+<Steps>
+
+1. In **Integrations → LTI → Tools**, add the tool with its OIDC login URL, launch URL, optional
+   deep linking URL, and its JWKS URL or PEM key. Save.
+2. Copy the issuer, OIDC auth URL, token URL, JWKS URL, client ID and deployment ID from the
+   drawer into the tool's configuration.
+3. In a course program, add a topic of type LTI link and choose the tool. If the tool has a deep
+   linking URL, the topic form can open the tool in a pop-up window to pick content
+   (`POST /api/admin/lti/tools/{tool}/deep-link`); the tool's response creates `LtiLink` topics.
+   See the [creators guide](/creators/).
+
+</Steps>
+
+When a learner opens the topic, the learner app calls `POST /api/lti/launches/{topic}` and gets
+the tool's OIDC login URL with a single-use login hint valid for two minutes. Roles sent to the
+tool: `admin` becomes Administrator and Instructor, `tutor` becomes Instructor, everyone else
+Learner.
+
+Scores the tool sends through AGS are stored append-only. A score with `activityProgress`
+`Completed` or `gradingProgress` `FullyGraded` marks the topic as finished in the learner's course
+progress.
+
+## Registering ulams in Moodle (or another LMS)
+
+<Steps>
+
+1. In Moodle, add an external tool (LTI 1.3) using the tool URLs from the **Platforms** drawer:
+   login URL, launch URL, deep linking URL, JWKS URL.
+2. In **Integrations → LTI → Platforms**, add the platform with Moodle's issuer (site URL),
+   client ID, deployment ID and its `auth.php`, `token.php` and `certs.php` URLs.
+3. Point resource links at a course. ulams takes the course from, in this order: the custom
+   parameter `course_id=<id>` (deep linking sets it), `?course=<id>` on the target link URI, or the
+   platform's default course ID.
+
+</Steps>
+
+On a launch, ulams:
+
+- matches the user by `(platform, sub)`, never by e-mail. A new user is created with the
+  platform's e-mail, or a placeholder `lti-…@lti.invalid` address if the e-mail is missing or
+  already taken;
+- assigns `tutor` to Instructor, ContentDeveloper and TeachingAssistant roles and `student` to
+  everyone else; nobody becomes an administrator through LTI;
+- grants access to the course through the course access service;
+- remembers the AGS line item if the platform allows score passback;
+- redirects to the learner site with a one-time code (`LTI_TOOL_LANDING_URL`, default
+  `{front}/lti/launch?code={code}&course={course}`), which the front exchanges for a session at
+  `POST /api/lti/tool/exchange`.
+
+Only instructors can use deep linking to add course links. When a learner finishes a topic
+(`TopicFinished` event), ulams queues a job that sends their course progress to the platform as a
+score out of 100, marked `Completed` / `FullyGraded` once the course is complete.
+
+<Aside type="caution">
+Inside an LMS iframe the learner site's session cookie may be blocked as a third-party cookie.
+Configure the platform to open ulams in a new window.
+</Aside>
+
+## Keys and JWKS
+
+Every tenant has its own RSA key set (2048-bit by default), with private keys encrypted with the
+tenant `APP_KEY`. Keys have three states: `next` (published, not used yet), `active` (signs
+everything) and `retired` (still published for a grace period).
+
+- Public key set: `GET /api/lti/jwks` and `GET /.well-known/jwks.json`, no authentication.
+- Initial keys: `ulams:lti:rotate-keys --init`, run as the `lti_keys` step when a tenant is
+  created (see [Tenants](/admin/tenants/)).
+- Rotation: `ulams:lti:rotate-keys`, scheduled monthly on the 1st at 03:00. `next` becomes
+  `active`, a new `next` is generated, and retired keys stay in the JWKS for
+  `LTI_RETIRED_KEY_GRACE_DAYS` (30) days.
+
+## API endpoints
+
+| Caller | Endpoints |
+|---|---|
+| Anyone | `GET /api/lti/jwks`, `GET /.well-known/jwks.json` |
+| Admin (`lti_manage`) | `GET /api/admin/lti/endpoints`; CRUD on `/api/admin/lti/tools` and `/api/admin/lti/platforms`; `POST /api/admin/lti/tools/{tool}/deep-link` |
+| Learner | `POST /api/lti/launches/{topic}` |
+| External tool | `GET/POST /api/lti/platform/authorize`, `POST /api/lti/platform/token`, `/api/lti/platform/ags/{course}/lineitems[/{id}[/scores, /results]]`, `POST /api/lti/platform/deep-links` |
+| External platform | `GET/POST /api/lti/tool/login`, `POST /api/lti/tool/launch` |
+| Learner's browser / front | `POST /api/lti/tool/deep-link`, `POST /api/lti/tool/exchange` (throttled to 30 per minute) |
+
+See [API endpoints](/reference/api-endpoints/).
+
+## Permissions
+
+One permission, `lti_manage`, controls the whole Integrations menu and every admin endpoint. The
+`LtiPermissionSeeder` grants it to the `admin` role. See [Permissions](/reference/permissions/).
+
+## Configuration
+
+All optional (`api/packages/lti/src/config.php`):
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `LTI_ISSUER` | `APP_URL` | Our issuer and endpoint base |
+| `LTI_RETIRED_KEY_GRACE_DAYS` | `30` | How long retired keys stay in the JWKS |
+| `LTI_KEY_BITS` | `2048` | RSA key size |
+| `LTI_LOGIN_HINT_TTL` | `120` | Seconds |
+| `LTI_ID_TOKEN_TTL` | `300` | Seconds |
+| `LTI_ACCESS_TOKEN_TTL` | `3600` | AGS access tokens, seconds |
+| `LTI_STATE_TTL` | `600` | OIDC state, seconds |
+| `LTI_CODE_TTL` | `60` | One-time launch code, seconds |
+| `LTI_ALLOW_INSECURE_URLS` | `false` | Development only: allow `http` and private addresses for JWKS, OIDC and AGS calls |
+| `LTI_HTTP_TIMEOUT` | `10` | Seconds |
+| `LTI_JWKS_CACHE_TTL` | `600` | Seconds |
+| `LTI_TOOL_LANDING_URL` | `{front}/lti/launch?code={code}&course={course}` | Where a launched learner lands |
+
+See [Environment variables](/reference/environment-variables/).
+
+## Security notes
+
+- Every inbound JWT is checked for signature, `iss`, `aud`, `exp`, nonce or `jti`, and deployment
+  ID. Login hints, JWT ids, OIDC state and nonce, and launch codes are single use.
+- Outgoing requests go only to public `https` addresses, without following redirects, unless
+  `LTI_ALLOW_INSECURE_URLS` is on.
+- Hints, AGS tokens, deep-linking data and keys of one tenant are rejected by another.
+- Launches are audited in the `lti_launches` table.
+
+## Known limitations
+
+- The launch audit log and AGS scores are stored but not shown in the admin panel.
+- Tool-side grade passback sends course progress, not individual quiz scores.

@@ -1,0 +1,71 @@
+---
+title: User groups
+description: Create nested user groups, let learners join registerable groups at sign-up, and add or remove group members in the admin panel.
+sidebar:
+  order: 2
+modules:
+  - auth
+adminRoutes:
+  - /users/groups/**
+---
+
+import { Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+**Users → User groups** organises accounts into groups. Groups can be nested, and a group can
+be given access to a course as a whole (on the course's access tab; see
+[Content creators](/creators/)). Groups belong to the [auth](/reference/packages/auth/)
+package (`/api/admin/user-groups`).
+
+| Screen | Route | Permission needed to see it |
+|---|---|---|
+| Group list | `/users/groups` | `user-group_list` |
+| New or edit group | `/users/groups/:group` (`new` for a new group) | `user-group_read` |
+
+Creating, updating and deleting groups and changing members are checked by the API with
+`user-group_create`, `user-group_update`, `user-group_delete`, `user-group_member-add` and
+`user-group_member-remove`.
+
+## The group list
+
+<Screenshot name="admin-users-groups" alt="The user group list with search and the Show tree button" />
+
+The table shows ID, the full name (the group name with its parents, for example
+`School / Class 1A`), the name, **Registerable** and the parent group. Search by name or
+filter by parent. **Show tree** opens the whole hierarchy in a dialog.
+
+## Creating or editing a group
+
+<Screenshot name="admin-users-groups-group" alt="The group form with members" />
+
+<Steps>
+
+1. Click **New** on the list, or **Edit** on a row.
+2. Enter a **Name** and, optionally, a **Parent group**. Leave the parent empty for a
+   top-level group.
+3. Turn on **Registerable** if people may join the group themselves when they register.
+4. Click **Submit**.
+5. On an existing group, use **Add user to group** to search for a user by name and add them.
+   **Delete** next to a member removes them from the group.
+
+</Steps>
+
+Adding and removing members takes effect immediately and dispatches the `UserAddedToGroup` and
+`UserRemovedFromGroup` events, which have email templates (see
+[Templates](/admin/templates/)). You can also change a user's groups from the user's edit
+screen; see [Users](/admin/users/).
+
+## Registerable groups
+
+Groups marked **Registerable** are listed without authentication at
+`GET /api/auth/registerable-groups`. A registration form can offer them, and the registration
+request accepts a `groups` array: the new user is added only to the groups in that list that
+are registerable. Other groups are ignored.
+
+## Group import and export
+
+The [csv-users](/reference/packages/csv-users/) package has endpoints to export the members of
+a group and import a group (`/api/admin/csv/groups`, permissions `csv-user_group_export` and
+`csv-user_group_import`). The admin panel does not use them. When users are imported from a
+file, the group names in their `groups` column are created if they do not exist; see
+[Users](/admin/users/).

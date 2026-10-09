@@ -1,0 +1,99 @@
+---
+title: LiaScript courses
+description: Write interactive courses in LiaScript Markdown in the admin editor, keep every change as a version with diff and restore, and play them in lessons.
+sidebar:
+  order: 18
+modules:
+  - liascript
+  - uploads
+topicTypes:
+  - LiaScriptTopic
+adminRoutes:
+  - /courses/liascript/**
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+[LiaScript](https://liascript.github.io) is a Markdown dialect for interactive courses: quizzes,
+surveys, animations, code you can run, text-to-speech, all written as text. In ulams a LiaScript
+course is a versioned Markdown document (plus its images and other assets) that you play in a lesson
+with a **LiaScript** topic.
+
+## The LiaScript library
+
+**Courses → LiaScript** (`/courses/liascript`) lists LiaScript courses with their title and current
+version, with **Edit** and **Delete** per row. Deleting removes the course with all its versions and
+assets.
+
+<Screenshot name="admin-courses-liascript" alt="The LiaScript list with the New LiaScript course button" />
+
+### Create a LiaScript course
+
+<Steps>
+
+1. Click **New LiaScript course**.
+2. Enter a **Title**, or leave it empty to take it from the first heading of the Markdown.
+3. Either click **Create** to start with an empty document, or **Upload .md or .zip**:
+   - a `.md` file becomes the first version;
+   - a `.zip` must have `README.md` at its root; the other files in it (images, audio) become the
+     version's assets and keep working with relative links such as `![](img/grinder.png)`.
+4. The editor opens.
+
+</Steps>
+
+Uploads are limited to 128 MB by default and go through the same checks as SCORM packages (no paths
+that escape the folder, no symbolic links, no zip bombs).
+
+## Edit and version
+
+The editor (`/courses/liascript/<id>`) has the **Markdown source** on the left and **Versions** on the
+right.
+
+- **Save as new version** stores the text as a new version; add an optional note in
+  **What changed**. Nothing is overwritten: every save, upload and restore adds a version.
+- **Show** on a version compares it with the current text, line by line (removed lines in red, added
+  in green).
+- **Restore** makes an old version current by copying it into a new version
+  ("Restored from v3").
+- A text-only save keeps the assets of the previous version.
+
+The editor warns when the Markdown uses remote `import:` macros. They would load code from another
+site and are blocked by the player's security policy, so copy what you need into the document instead.
+
+<Screenshot name="admin-courses-liascript-id" alt="The LiaScript editor with the Markdown source and the version list" />
+
+<Aside>
+There is no live preview of unsaved text yet. To check a version, save it and open a LiaScript topic
+that uses the course in the learner front.
+</Aside>
+
+## Use it in a lesson
+
+<Steps>
+
+1. In the program, add a topic and choose **LiaScript**.
+2. Pick the course in **LiaScript course**; the list shows each course with its current version. Use
+   **Edit the course** to jump to the editor, or **New LiaScript course** to create one.
+3. Save the topic.
+
+</Steps>
+
+The topic always plays the **current** version, so a new saved version reaches learners immediately.
+
+## Playback and completion
+
+The learner front asks ulams to launch the topic; ulams publishes the player and the current version
+on the tenant's content origin and opens it in the lesson. The player reports slide position and
+status back to ulams.
+
+The topic completes when the learner reaches the **last section** of the course (each heading outside
+code blocks is a section) or when LiaScript reports the course as completed or passed.
+
+<Aside type="caution">
+Playback needs the LiaScript player build on the server and a content origin. Without them the
+learner sees an explanation instead of the course; ask your operator.
+</Aside>
+
+Course export does not include the LiaScript document itself yet; see
+[Import and export](/creators/import-export/#what-is-included).

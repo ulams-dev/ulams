@@ -1,0 +1,56 @@
+---
+title: Events
+description: The events pages of the reference frontend - webinars, in-person events and 1:1 consultations, listed and shown in detail, read-only.
+sidebar:
+  order: 5
+learnerRoutes:
+  - /events
+  - /events/[kind]/[id]
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+The events pages show a tenant's live sessions. They are public and read-only. Each landing page
+links to them ("Live sessions" or "Events" in the header) and its event cards link to the detail
+pages.
+
+## Event list
+
+<Screenshot name="learner-events" alt="The Live sessions and events page with webinar, event and consultation cards" />
+
+`/events` ("Live sessions and events") has up to three sections, each shown only when it has
+entries:
+
+| Section | Source |
+|---|---|
+| Webinars ("Live online") | The tenant's webinars (`GET /api/webinars`), up to 6 |
+| Events ("Meet in person") | In-person events (`GET /api/stationary-events`), up to 6 |
+| Consultations ("One to one") | Consultations (`GET /api/consultations`), up to 12 |
+
+With nothing scheduled the page says "Nothing is scheduled right now."
+
+## Event detail
+
+`/events/<kind>/<id>` shows one item. `<kind>` is `webinar`, `in-person` or `consultation`; any
+other kind or an unknown id gives the [404 page](/learners/error-pages/).
+
+| Kind | Shows |
+|---|---|
+| Webinar ("Live webinar") | Date, time, duration in hours, description, agenda, trainers, image |
+| In-person ("In-person event") | Date, time, place, description, agenda or program, authors, image |
+| Consultation ("1:1 consultation") | Duration, description, tutors (or the author), image, and up to eight upcoming open slots |
+
+Descriptions and agendas are HTML from the API, sanitised before rendering. In-person event
+times are stored without a time zone and are shown as written (wall-clock time). A breadcrumb
+link goes back to all live sessions and events.
+
+<Aside type="caution" title="No registration or booking">
+The reference frontend does not register learners for webinars or events, and does not book
+consultation slots; each detail page says "Registration and booking open through the shop; they
+are not part of this demo yet." The [legacy React app](/learners/legacy-react-app/) still has webinar,
+event and consultation pages, and the learner's "My webinars", "My stationary events" and
+"My consultations" lists.
+</Aside>
+
+How administrators create these is described in the [admin guide](/admin/).

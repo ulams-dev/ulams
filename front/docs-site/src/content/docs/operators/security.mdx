@@ -1,0 +1,103 @@
+---
+title: Security
+description: Security notes for running ulams - untrusted uploads, content and H5P isolation, SVG handling, CSP headers, tenant isolation, secrets and network exposure.
+sidebar:
+  order: 12
+modules:
+  - uploads
+  - scorm
+  - tenancy
+  - api-h5p
+  - web
+  - demo
+---
+
+import { Aside, Badge } from "@astrojs/starlight/components";
+
+## Uploaded content is untrusted
+
+Course packages, H5P files, images and documents come from authors and imports and are treated as
+hostile input.
+
+- **Upload guard** (`packages/uploads`): every package and import goes through checks for zip-slip
+  paths, symlinks, zip bombs (entry count, total and per-entry size, compression ratio), the
+  sniffed MIME type and size limits (`UPLOADS_*`, see the
+  [environment reference](/reference/environment-variables/)).
+- **Virus scanning** is a hook, off by default (`UPLOADS_SCANNER=null`). To turn it on, run
+  ClamAV (`--profile av` in the example) and set `UPLOADS_SCANNER=clamd`. With
+  `UPLOADS_CLAMD_FAIL_CLOSED=true` (the default) uploads are rejected while clamd is unreachable.
+- **Package code runs on the content origin** only: SCORM, cmi5, Adapt and LiaScript files are
+  served from a per-tenant host on a separate registrable domain, without cookies or API routes,
+  with its own CSP. See [Content origin](/operators/content-origin/).
+- **H5P runs in its own service** (`api/h5p`): the front and admin frame its embed pages and talk
+  to them with `postMessage`; the embed pages send `frame-ancestors` limited to the tenant's front
+  and admin origins, and CORS is per tenant.
+
+## SVG, HTML and other active files
+
+- In buckets, `ActiveContentSafeS3Adapter` sets `Content-Type` from the file extension (an HTML
+  file renamed to `.png` is not served as HTML) and stores SVG, HTML, XML and unknown types with
+  `Content-Disposition: attachment`, so opening the URL downloads instead of rendering. `<img>`
+  tags ignore that header, so SVG images still display. Package paths are exempt because they are
+  played from the content origin.
+- On the storage host, Caddy adds `X-Content-Type-Options: nosniff` and, for active file types,
+  `Content-Security-Policy: script-src 'none'; sandbox`. The development Caddyfile does this for SVG
+  only; the production example extends it to HTML and XML.
+- Serve the storage host from the content domain, never from the application domain.
+
+## Security headers
+
+| Origin | Headers today | Source |
+|---|---|---|
+| Content origins | Enforced CSP, `nosniff`, `Referrer-Policy: no-referrer`, cookies stripped | Caddy `content_origin` snippet |
+| Learner front (`web`) | `nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, same-origin check on state-changing requests (CSRF) | `front/web/src/middleware.ts` |
+| Front and admin | `Content-Security-Policy-Report-Only` | Caddy `app_csp_report_only` snippet |
+| H5P embed pages | `frame-ancestors` per tenant, `Referrer-Policy: no-referrer` | `api/h5p` |
+
+<Badge text="Recommended" variant="tip" /> Collect the report-only CSP reports for a while, then
+switch the front and admin to an enforced `Content-Security-Policy`, and add
+`Strict-Transport-Security` once HTTPS works on every host. Neither is in the example by default.
+
+<Aside type="caution" title="CORS on the API">
+  The API site in the development Caddyfile, and therefore in the example, echoes any request
+  `Origin` back in `Access-Control-Allow-Origin` with `Access-Control-Allow-Credentials: true`. The
+  API authenticates with bearer tokens in the `Authorization` header, not cookies, which limits
+  the impact, but you can restrict the echo to your own front and admin hosts with a matcher such
+  as `header_regexp Origin ^https://([a-z0-9]+\.)?(app|admin)\.lms\.example\.com$`. Not tested by
+  the project.
+</Aside>
+
+## Tenant isolation
+
+- Each tenant has its own PostgreSQL role and database, bucket, `APP_KEY` and Passport key pair:
+  a token issued by one tenant is rejected by every other.
+- Requests for hosts that are neither platform hosts nor provisioned tenants get 404
+  (`TENANCY_ENFORCE_HOSTS`, on by default).
+- Shared between tenants: one Valkey instance (separated by key prefix only), one object-store
+  access key (separated by bucket only), the H5P library volume, and the platform's SMTP account.
+- The tenant's internal H5P token is derived from its `APP_KEY`; the platform's comes from
+  `H5P_INTERNAL_TOKEN`.
+
+## Accounts and modes
+
+- `APP_ENV=production` and `APP_DEBUG=false`. With `APP_ENV` set to `local` or `stage`, the
+  Horizon dashboard is open to anyone.
+- Never enable demo mode (`--demo=on`, `DEMO_MODE=true`) on a tenant with real data: it allows
+  sign-in without a password and resets the tenant every hour.
+- `TENANT_DEMO_PASSWORD` is the initial password of every new tenant's admin and tutor; set a
+  strong value and rotate those passwords after provisioning
+  (see [First admin and first tenant](/operators/first-tenant/)).
+- `LTI_ALLOW_INSECURE_URLS` is for development only.
+
+## Network exposure
+
+Publish only Caddy (80 and 443). PostgreSQL, Valkey, php-fpm (9000), the H5P service (8080), the
+PDF service (3000), MJML and the two internal Caddy listeners (8081 and 5555) must stay on the
+internal network. php-fpm and the H5P service pick the tenant from `X-Forwarded-Host`, which only
+the proxy may set.
+
+## Secrets
+
+`APP_KEY`, the platform key pair, database and Valkey passwords, internal tokens and S3 and SMTP
+credentials are in `.env`. Restrict its file mode, keep it out of version control, and keep a copy
+in a password manager: [losing `APP_KEY`](/operators/backups/) makes every tenant unrecoverable.

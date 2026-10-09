@@ -1,0 +1,150 @@
+---
+title: DNS and TLS
+description: Host names, wildcard DNS and certificates for a multi-tenant ulams - on-demand TLS with a tenant check, or wildcard certificates through a DNS challenge.
+sidebar:
+  order: 4
+modules:
+  - tenancy
+  - web
+  - admin
+needsReview: "The on-demand TLS ask check (vars_regexp on {query.domain} plus a file matcher on /tenant-env) could not be run through `caddy validate` while writing; validate it and issue a certificate for a test tenant."
+---
+
+import { Aside, Badge, Tabs, TabItem } from "@astrojs/starlight/components";
+
+## Host names
+
+Every tenant gets four host names, built from patterns in the API configuration
+(`packages/tenancy/src/config.php`). The development defaults are `*.localhost`; the
+[production example](/operators/self-hosting/) sets these:
+
+| Variable (on `api`, as `LARAVEL_…`) | Development default | Production example |
+|---|---|---|
+| `TENANCY_SCHEME` | `http` | `https` |
+| `TENANCY_API_HOST` | `{slug}.localhost` | `{slug}.api.lms.example.com` |
+| `TENANCY_FRONT_HOST` | `{slug}.app.localhost` | `{slug}.app.lms.example.com` |
+| `TENANCY_ADMIN_HOST` | `{slug}.admin.localhost` | `{slug}.admin.lms.example.com` |
+| `TENANCY_CONTENT_HOST` | `{slug}.content.localhost` | `{slug}.example-content.net` |
+| `TENANCY_PLATFORM_HOSTS` | `api.localhost,localhost,127.0.0.1,caddy,api` | `api.lms.example.com,caddy,api,localhost,127.0.0.1` |
+
+The patterns are applied when a tenant is created or synced; they end up in its env file as
+`APP_URL`, `FRONTEND_URL`, `ADMIN_URL` and `CONTENT_ORIGIN`. The front and admin find the tenant
+API from their own host with a matching rule:
+
+- `web`: `ULAMS_TENANT_HOSTS={slug}.app.lms.example.com=>https://{slug}.api.lms.example.com`
+- `admin`: `REACT_APP_TENANT_API_HOST_PATTERN={slug}.admin.lms.example.com=>https://{slug}.api.lms.example.com`
+
+Slugs are 2 to 30 lowercase letters and digits starting with a letter; `api`, `app`, `admin`,
+`www`, `storage`, `minio`, `ws`, `metrics`, `platform`, `default`, `test` and `postgres` are
+reserved (`TenantNaming`). The fronts additionally never treat `www`, `api`, `app`, `admin`,
+`stage` or `staging` as a slug.
+
+The API decides which tenant a request belongs to from `X-Forwarded-Host`, else `Host`
+(`api/bootstrap/app.php`), and answers 404 for hosts that are neither platform hosts nor
+provisioned tenants (`TENANCY_ENFORCE_HOSTS`). Keep php-fpm reachable only through the proxy,
+which sets those headers itself.
+
+## DNS records
+
+See [Requirements](/operators/requirements/#dns). In short: explicit wildcard records for
+`*.api`, `*.app` and `*.admin` under the application domain, plus a wildcard on the separate
+content domain.
+
+## Certificates
+
+The development Caddyfile serves plain HTTP. For production, pick one of these. The example
+Caddyfile ships the first.
+
+<Tabs>
+<TabItem label="On-demand TLS (example default)">
+
+<Badge text="Recommended" variant="tip" /> Caddy obtains a certificate for a tenant host name the
+first time a browser connects to it, from Let's Encrypt or ZeroSSL, with the stock `caddy:2`
+image and no DNS API access.
+
+The example restricts issuance with Caddy's `ask` check, served by Caddy itself on an internal
+port: a name gets a certificate only if it has the form `<slug>.api|app|admin.<domain>` or
+`<slug>.<content domain>` **and** the env file `.env.<slug>.api.<domain>` exists. The `api`
+container copies those files to the `tenant_env` volume, which Caddy mounts read-only, so a newly
+created tenant becomes eligible within about five seconds. Unknown names get no certificate, so
+random sub-domains under your wildcard DNS cannot use up the CA's rate limits.
+
+```text
+{
+	email {$ACME_EMAIL}
+	on_demand_tls {
+		ask http://localhost:5555/check
+	}
+}
+
+*.app.{$ULAMS_DOMAIN} {
+	tls {
+		on_demand
+	}
+	reverse_proxy web:4321
+}
+```
+
+Things to know:
+
+- The first request to a new tenant host waits for the ACME exchange (a few seconds).
+- Let's Encrypt allows a limited number of certificates per registered domain per week; each
+  tenant uses four. Many tenants created at once can hit the limit.
+- Fixed names (`api.`, `app.`, `admin.`, `platform.`, `storage.`) get ordinary certificates at
+  start-up.
+
+</TabItem>
+<TabItem label="Wildcard certificates (DNS-01)">
+
+<Badge text="Recommended" variant="tip" /> for many tenants. Four wildcard certificates
+(`*.api.<domain>`, `*.app.<domain>`, `*.admin.<domain>`, `*.<content domain>`) cover every tenant,
+are issued once and need no per-tenant step. Wildcards require the DNS-01 challenge, so Caddy needs
+a plugin for your DNS provider and an API token. The stock image has no DNS plugins; build one:
+
+```dockerfile
+FROM caddy:2-builder AS builder
+RUN xcaddy build --with github.com/caddy-dns/cloudflare
+
+FROM caddy:2
+COPY --from=builder /usr/bin/caddy /usr/bin/caddy
+```
+
+Then replace `import on_demand` in the wildcard sites with a DNS challenge, here for Cloudflare
+(other providers have their own `caddy-dns` module and options):
+
+```text
+*.app.{$ULAMS_DOMAIN} {
+	tls {
+		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+	}
+	import web
+}
+```
+
+Drop the `on_demand_tls` global option and the `:5555` site; nothing calls them any more.
+
+</TabItem>
+<TabItem label="Certificates from elsewhere">
+
+If certificates come from your own process (a corporate CA, certbot with a DNS hook, a load
+balancer in front), mount them into the Caddy container and use `tls <cert> <key>` in each site,
+or terminate TLS on the load balancer and run Caddy on plain HTTP behind it. In the second case
+make sure the load balancer forwards `Host` unchanged and Caddy trusts it for
+`X-Forwarded-Proto` (`trusted_proxies`), or Laravel will build `http://` URLs.
+
+</TabItem>
+</Tabs>
+
+<Aside>
+  Laravel switches to `https://` URLs when `APP_URL` starts with `https`
+  (`AppServiceProvider`). Tenants get `https` URLs from `TENANCY_SCHEME=https`.
+</Aside>
+
+## Moving an existing installation to new host names
+
+The `TENANCY_*_HOST` patterns only name **new** tenants. Each tenant row stores its `api_host`,
+`front_host` and `admin_host`, and `ulams:tenant:sync-env` rebuilds the env files from those
+stored values (only `CONTENT_ORIGIN` and the scheme follow the current configuration). Renaming
+the hosts of existing tenants therefore means updating those rows and the tenants'
+`global.frontURL` setting; there is no command for it yet. Check the current values with
+`php artisan ulams:tenant:list`.

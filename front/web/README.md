@@ -132,6 +132,24 @@ a completing H5P statement or a passed quiz.
    breaks the page, but it should not ship.
 5. Render: `<Render doc={doc} data={model} />` inside the `Base` layout (see `src/pages/index.astro`).
 
+## Catalogue component notes
+
+(Short notes until the documentation site, built on another branch, covers the catalogue.)
+
+**ComparisonTable** (`front/ui/src/components/ComparisonTable.astro`, schema in `front/ui/src/registry.ts`).
+Products in columns, features in rows; no JavaScript. Sticky header and first column, the column with
+`highlight: true` is tinted, rows highlight on hover, sections reveal on scroll (off with reduced
+motion). Below 1180 px the table scrolls sideways inside a focusable region with edge shadows and a
+"scroll sideways" hint. Accessible table markup: `caption`, `th scope="col"` and `th scope="row"`.
+Cell values are neutral: Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming (Coming
+only for our own roadmap), or a short phrase for licence and pricing.
+
+The platform landing feeds it from `src/data/comparison.json`: every cell is
+`{value, note, source, checkedAt}`, competitor sources are official docs, pricing pages or licences,
+and `tests/unit/comparison.test.ts` fails when a cell has no https source or date. To update a fact,
+change the cell, its source and `checkedAt`, and the top-level `asOf`; the table shows "As of …" and
+a Sources list under it. Plain product names only, no logos.
+
 ## Performance budget
 
 Production build, measured with `yarn workspace @ulams/web perf` (Chromium, local API): see

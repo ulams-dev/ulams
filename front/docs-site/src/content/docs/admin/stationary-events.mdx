@@ -1,0 +1,106 @@
+---
+title: Stationary events
+description: Publish in-person events with a place, dates, participant limit and program, assign authors, and sell seats as a product.
+modules:
+  - stationary-events
+adminRoutes:
+  - /other/stationary-events/**
+sidebar:
+  order: 22
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+A stationary event is an in-person event: a workshop, a meetup, a classroom session. It has a
+place, start and end dates, a participant limit, a program and an agenda. Seats are sold through
+the event's product, and participants can also be added by hand. The `stationary-events` package
+holds the data; there is no check-in or attendance tracking.
+
+## Who uses it
+
+- **Administrators and tutors** manage events. With the default roles both have the full set of
+  `stationary-event_*` permissions; there are no `-own` variants, so a tutor can edit any event.
+- **Learners** see published events on the learner site and in their account
+  (`GET /api/stationary-events/me`).
+
+## Screens
+
+### Event list
+
+`/other/stationary-events` (Other activities → StationaryEvents). Columns: ID, name, started at and
+finished at. The entry can be hidden with the dashboard setting
+`hideInMenu-OtherStationary-events`.
+
+<Screenshot name="admin-other-stationary-events" alt="Stationary events list in the admin panel" />
+
+### Event form
+
+`/other/stationary-events/:id/:tab` (`new` to create). Tabs:
+
+| Tab | Content |
+|---|---|
+| Attributes | Name, place, authors, maximum participants, status, started at, finished at, short description, program and description |
+| Agenda | Agenda items |
+| Product | Price and sale settings (see [Sales](/admin/sales/)) |
+| Media | Cover image |
+| Categories | Categories |
+| User submission | Assign participants by e-mail, including people without an account yet |
+
+The tabs other than Attributes appear after the first save.
+
+<Screenshot name="admin-other-stationary-events-id" alt="Stationary event form with the Attributes tab" />
+
+### Statuses
+
+| Status | Meaning in the code |
+|---|---|
+| `draft` | Not listed publicly |
+| `published` | Listed publicly |
+| `published_unactivated` | Also listed publicly by `GET /api/stationary-events` |
+| `archived` | Not listed publicly |
+
+<Aside type="note">
+The public list filters on `published` and `published_unactivated` only. The code does not show
+any other behaviour tied to `published_unactivated`.
+</Aside>
+
+## API endpoints
+
+| Method and path | Purpose |
+|---|---|
+| `GET /api/admin/stationary-events`, `POST /api/admin/stationary-events` | List and create |
+| `GET/PUT/DELETE /api/admin/stationary-events/{id}` | Read, update, delete |
+| `GET /api/stationary-events`, `GET /api/stationary-events/{id}` | Public list and detail |
+| `GET /api/stationary-events/me` | Events the current user is assigned to |
+
+Full list: [API endpoints](/reference/api-endpoints/).
+
+## Permissions
+
+| Permission | admin | tutor |
+|---|---|---|
+| `stationary-event_list`, `stationary-event_read`, `stationary-event_create`, `stationary-event_update`, `stationary-event_delete` | yes | yes |
+
+See [Permissions](/reference/permissions/).
+
+## Events and notifications
+
+| Event | When |
+|---|---|
+| `StationaryEventAssigned` | A user is attached to the event (purchase or manual assignment) |
+| `StationaryEventUnassigned` | A user is detached |
+| `StationaryEventAuthorAssigned` | An author is added |
+| `StationaryEventAuthorUnassigned` | An author is removed |
+
+No e-mail or SMS templates are registered for these events in `templates-email` or
+`templates-sms`. There are no scheduled reminders. See
+[Events and notifications](/reference/events-and-notifications/).
+
+## Known limitations
+
+- No reminders, check-in, attendance or waiting list.
+- `max_participants` is stored and shown; the package itself does not refuse assignments above
+  the limit.
+- The learner site (`front/web`) shows events read-only under `/events`; buying a seat needs the
+  legacy learner app or a custom front. See [Learners](/learners/).

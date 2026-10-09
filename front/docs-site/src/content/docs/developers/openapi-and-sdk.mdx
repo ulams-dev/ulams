@@ -1,0 +1,103 @@
+---
+title: OpenAPI and the SDK
+description: How the API's OpenAPI document is built from Swagger annotations in the packages, and how @ulams/sdk regenerates its typed paths from it.
+sidebar:
+  order: 70
+modules:
+  - sdk
+  - core
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+The OpenAPI document is generated from `@OA\` docblocks in the PHP code by
+`darkaonline/l5-swagger` 11 (`zircote/swagger-php` 6). The TypeScript SDK in `front/sdk` turns that
+document into types with `openapi-typescript`. Decision record:
+[OpenAPI docs from Swagger annotations](/decisions/api/0006-openapi-docs-from-swagger-annotations/).
+
+## Where the annotations live
+
+| Annotation | Where | Example |
+|---|---|---|
+| `@OA\Info`, `@OA\SecurityScheme` (`passport`, bearer JWT) | `api/packages/core/src/Http/Controllers/CoreController.php` | once for the whole API |
+| Operations (`@OA\Get`, `@OA\Post`, …) | a **Swagger interface** per controller, `src/Http/Controllers/Swagger/<Name>ControllerSwagger.php`; the controller implements it | `BookmarkControllerSwagger` in `api/packages/bookmarks_notes` |
+| Request schemas (`@OA\Schema`) | on the FormRequest class | `CreateBookmarkRequest` → schema `BookmarkCreateRequest` |
+| Response schemas | on the API Resource class | `BookmarkResource` |
+
+Keeping the operation docblocks on an interface keeps the controller readable and makes the
+interface the place to check the documented contract. See
+[Adding an endpoint](/developers/adding-an-endpoint/) for a full example.
+
+<Aside type="caution" title="Register the package's source path">
+l5-swagger scans an explicit list of directories: `documentations.default.paths.annotations` in
+[`api/config/l5-swagger.php`](https://github.com/ulams-dev/ulams/blob/main/api/config/l5-swagger.php)
+(`app/` plus one `base_path('packages/<name>/src')` per package). A new package's endpoints do not
+appear in the document until you add its `src` directory there.
+</Aside>
+
+## Generating the document
+
+```bash
+make -C api swagger-generate
+# = docker compose exec api bash -c "php artisan l5-swagger:generate"
+```
+
+The result is `api/storage/api-docs/api-docs.json`. The `api/` folder is mounted into the
+container, so the file appears on the host at that path; there is nothing to copy out. It is
+git-ignored.
+
+- Swagger UI: http://api.localhost/api/documentation (or `http://<slug>.localhost/api/documentation`).
+- With `L5_SWAGGER_GENERATE_ALWAYS` (default `true`) the UI regenerates the document on every
+  request, which also refreshes the JSON file.
+- CI runs `php artisan l5-swagger:generate` in the `platform` PHPUnit shard, so a broken annotation
+  fails the build.
+
+## Regenerating the SDK types
+
+`@ulams/sdk` is a framework-free client (`createClient(...)`) used by `front/web`. Its request
+paths are typed by the generated file:
+
+```ts
+// front/sdk/src/types.ts
+import type { components, paths } from "./generated/openapi.ts";
+export type ApiPath = keyof paths;
+```
+
+Every `request()` call in `front/sdk/src/client.ts` takes an `ApiPath`, so calling a path the API
+does not document is a type error. Paths that are not in the document yet are cast
+(`"/api/demo/login" as ApiPath`).
+
+<Steps>
+
+1. Generate the OpenAPI JSON (above).
+
+2. Regenerate the types from the repository root:
+
+   ```bash
+   corepack yarn workspace @ulams/sdk generate
+   # openapi-typescript ../../api/storage/api-docs/api-docs.json -o src/generated/openapi.ts
+   ```
+
+3. Typecheck the SDK and its consumers, then commit `front/sdk/src/generated/openapi.ts` with the
+   change that caused it:
+
+   ```bash
+   corepack yarn turbo run typecheck --filter=@ulams/sdk --filter=@ulams/web
+   ```
+
+</Steps>
+
+If you generate the JSON in a container that does not mount the source (for example from a
+published `api` image), copy it out first:
+
+```bash
+docker cp <container>:/var/www/html/storage/api-docs/api-docs.json api/storage/api-docs/api-docs.json
+```
+
+## Limits of the current document
+
+The annotations describe request bodies and paths well but almost no response bodies, so most
+responses come out as `unknown` in `openapi.ts`. The response types in `front/sdk/src/types.ts`
+are written by hand from real API responses; replacing them with generated ones depends on the
+roadmap item "OpenAPI spec complete and published". The endpoint list is on
+[API endpoints](/reference/api-endpoints/) and the reference on [API reference](/developers/api-reference/).
