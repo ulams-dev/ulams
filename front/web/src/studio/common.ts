@@ -2,11 +2,32 @@
  * Shared browser code of the studio islands: the BFF client, the screen-reader announcer, the
  * top-bar status/cost pills and the citation popover (the source passage behind a chip).
  */
-import { createCourseBuilderClient, type BuilderState } from "@ulams/sdk";
+import { createCourseBuilderClient, isApplied, type BuilderState } from "@ulams/sdk";
 import { STATUS_LABEL } from "./labels.ts";
 import { h, usd } from "@ulams/ui/builder/dom.ts";
 
 export const studioClient = () => createCourseBuilderClient({ baseUrl: "/studio/api", prefix: "", timeoutMs: 120_000 });
+
+/**
+ * After the `applied` event: report "applied" only from authoritative state. The stream's own
+ * state usually settles within milliseconds; when it has not, read the session endpoint.
+ * Returns the settled state, or null when it could not be confirmed (the caller keeps showing
+ * "applying").
+ */
+export async function settleApplied(
+  cb: ReturnType<typeof studioClient>,
+  sessionId: string,
+  versionId: string | undefined,
+  current: () => BuilderState | undefined
+): Promise<BuilderState | null> {
+  const session = current()?.session;
+  if (session && isApplied(session) && (!versionId || session.appliedVersionId === versionId)) return current()!;
+  try {
+    return await cb.sessions.waitForApplied(sessionId, { versionId });
+  } catch {
+    return null;
+  }
+}
 
 export function announce(text: string): void {
   const region = document.querySelector<HTMLElement>("[data-announcer]");

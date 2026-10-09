@@ -2,11 +2,11 @@
  * Workspace (/studio/s/:id/workspace): course tree, live preview of the selected element,
  * element-scoped chat with diff approve/reject, undo/redo and version history.
  */
-import { ApiError, type Blueprint, type BlueprintQuestion, type BuilderState, type BlueprintVersion } from "@ulams/sdk";
+import { ApiError, isApplied, type Blueprint, type BlueprintQuestion, type BuilderState, type BlueprintVersion } from "@ulams/sdk";
 import { renderSurface } from "@ulams/ui/builder/renderer.ts";
 import type { A2uiActionOut } from "@ulams/ui/builder/components.ts";
 import { h } from "@ulams/ui/builder/dom.ts";
-import { announce, connectionStatus, showCitation, studioClient, updateTopBar } from "./common.ts";
+import { announce, connectionStatus, settleApplied, showCitation, studioClient, updateTopBar } from "./common.ts";
 import { Timeline } from "./timeline.ts";
 
 type Selection = { id: string; label: string; type: "lesson" | "question" | "block" | "module" | "course" };
@@ -47,8 +47,14 @@ export function mountWorkspace(root: HTMLElement): void {
     startAfterKind: "apply",
     onCitation,
     onState: (state) => void onState(state),
-    onCustom: (name) => {
-      if (name === "applied") void loadVersion(timeline.state.session.currentVersionId, true);
+    onCustom: (name, value) => {
+      if (name !== "applied") return;
+      // the event carries the applied version; the stream's state may not have caught up yet
+      const versionId = typeof value.versionId === "string" ? value.versionId : undefined;
+      void loadVersion(versionId ?? timeline.state.session?.currentVersionId ?? null, true);
+      void settleApplied(cb, sessionId, versionId, () => timeline.state).then((state) => {
+        if (state) timeline.adopt(state);
+      });
     },
   });
 
@@ -59,7 +65,9 @@ export function mountWorkspace(root: HTMLElement): void {
     const status = state.session?.status;
     applyBar.replaceChildren(
       ...(status === "apply_review" ? [h("a", { class: "cb-btn", href: `/studio/s/${sessionId}` }, "Review the apply in the builder")] : []),
-      ...(status === "applied" ? [h("a", { class: "cb-btn cb-btn-primary", href: `/studio/s/${sessionId}/done` }, "Course overview")] : [])
+      // "applied" only once the applied version is the current one; until then the re-apply is running
+      ...(isApplied(state.session) ? [h("a", { class: "cb-btn cb-btn-primary", href: `/studio/s/${sessionId}/done` }, "Course overview")] : []),
+      ...(status === "applying" || (status === "applied" && !isApplied(state.session)) ? [h("p", { class: "cb-muted", role: "status" }, "Applying your change to the course…")] : [])
     );
     if (state.session?.currentVersionId && state.session.currentVersionId !== loadedVersionId) await loadVersion(state.session.currentVersionId);
   }
