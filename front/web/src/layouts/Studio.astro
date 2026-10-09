@@ -6,6 +6,7 @@
 import { Font } from "astro:assets";
 import studioCss from "@ulams/ui/builder/studio.css?inline";
 import "../styles/studio-pages.css";
+import Logo from "@ulams/ui/brand/Logo.astro";
 
 interface Props {
   title: string;
@@ -47,6 +48,8 @@ const nav = [
     <title>{title} · Course Builder</title>
     <meta name="robots" content="noindex" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <Font cssVariable="--font-newsreader" preload={[{ weight: "400", style: "normal" }]} />
     <Font cssVariable="--font-inter" preload={[{ weight: "400" }]} />
     <Font cssVariable="--font-jetbrains" />
@@ -56,7 +59,7 @@ const nav = [
     <a class="st-skip" href="#main">Skip to content</a>
     <div class="st-app">
       <nav class="st-rail" aria-label="Course Builder">
-        <a class="st-logo" href="/studio" aria-label="Course Builder home">u</a>
+        <a class="st-logo" href="/studio" aria-label="Course Builder home"><Logo variant="symbol" /></a>
         <ul>
           {
             nav.map((item) => (
@@ -144,14 +147,17 @@ const nav = [
     box-shadow: inset 3px 0 0 #8c8cff;
   }
   .st-logo {
-    font-family: var(--ulams-studio-serif);
-    font-size: 1.6rem !important;
+    --ulams-brand-indigo: #fff;
     background: #262b3d;
     width: 44px;
     height: 44px;
     display: grid !important;
     place-items: center;
     padding: 0 !important;
+  }
+  .st-logo .u-logo {
+    width: 28px;
+    height: auto;
   }
   .st-frame {
     display: flex;

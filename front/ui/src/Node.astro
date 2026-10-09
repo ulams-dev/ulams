@@ -42,6 +42,10 @@ import UpdateNotice from "./components/UpdateNotice.astro";
 import ReattemptNotice from "./components/ReattemptNotice.astro";
 import PendingUpdateNotice from "./components/PendingUpdateNotice.astro";
 import CourseUpdates from "./components/CourseUpdates.astro";
+import Timeline from "./components/Timeline.astro";
+import FlipCards from "./components/FlipCards.astro";
+import CodeBlock from "./components/CodeBlock.astro";
+import PracticeActivity from "./components/PracticeActivity.astro";
 
 // Every registry entry must have an implementation (checked by the type below).
 const COMPONENTS: Record<ComponentName, (props: any) => any> = {
@@ -85,6 +89,10 @@ const COMPONENTS: Record<ComponentName, (props: any) => any> = {
   ReattemptNotice,
   PendingUpdateNotice,
   CourseUpdates,
+  Timeline,
+  FlipCards,
+  CodeBlock,
+  PracticeActivity,
 };
 
 interface Props {

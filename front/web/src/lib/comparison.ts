@@ -14,9 +14,13 @@ export interface ComparisonCell {
 
 export interface ComparisonData {
   asOf: string;
-  rows: Array<{ key: string; label: string; help?: string }>;
-  systems: Array<{ key: string; name: string; note?: string; ours?: boolean; cells: Record<string, ComparisonCell> }>;
+  /** Segmented groups, in display order. A row or system without `groups` belongs to every group. */
+  groups: Array<{ key: string; label: string; caption: string }>;
+  rows: Array<{ key: string; label: string; help?: string; groups?: string[] }>;
+  systems: Array<{ key: string; name: string; note?: string; ours?: boolean; groups: string[]; cells: Record<string, ComparisonCell> }>;
 }
+
+const inGroup = (memberOf: string[] | undefined, group: string) => !memberOf || memberOf.includes(group);
 
 export const comparisonData = data as ComparisonData;
 
@@ -26,19 +30,27 @@ const formatDate = (iso: string) => {
 };
 
 export function comparisonModel(input: ComparisonData = comparisonData) {
-  const systems = [...input.systems].sort((a, b) => Number(Boolean(b.ours)) - Number(Boolean(a.ours)));
-  const columns = systems.map((s) => ({ label: s.name, note: s.note, highlight: Boolean(s.ours) }));
-  const rows = input.rows.map((row) => ({
-    label: row.label,
-    help: row.help,
-    cells: systems.map((s) => {
-      const cell = s.cells[row.key];
-      return cell ? { value: cell.value, note: cell.note } : { value: "Not documented" };
-    }),
-  }));
-  // one source entry per system and URL, listing the rows it supports
+  const ordered = [...input.systems].sort((a, b) => Number(Boolean(b.ours)) - Number(Boolean(a.ours)));
+  const groups = input.groups.map((g) => {
+    const systems = ordered.filter((s) => inGroup(s.groups, g.key));
+    const rows = input.rows.filter((r) => inGroup(r.groups, g.key));
+    return {
+      label: g.label,
+      caption: g.caption,
+      columns: systems.map((s) => ({ label: s.name, note: s.note, highlight: Boolean(s.ours) })),
+      rows: rows.map((row) => ({
+        label: row.label,
+        help: row.help,
+        cells: systems.map((s) => {
+          const cell = s.cells[row.key];
+          return cell ? { value: cell.value, note: cell.note } : { value: "Not documented" };
+        }),
+      })),
+    };
+  });
+  // one source entry per system and URL, listing the rows it supports (rows shown in a group the system is in)
   const sources: Array<{ label: string; href: string; checked: string }> = [];
-  for (const s of systems) {
+  for (const s of ordered) {
     const byUrl = new Map<string, { rows: string[]; checked: string }>();
     for (const row of input.rows) {
       const cell = s.cells[row.key];
@@ -50,5 +62,5 @@ export function comparisonModel(input: ComparisonData = comparisonData) {
     }
     for (const [href, entry] of byUrl) sources.push({ label: `${s.name}: ${entry.rows.join(", ")}`, href, checked: formatDate(entry.checked) });
   }
-  return { asOf: input.asOf, columns, rows, sources };
+  return { asOf: input.asOf, groups, sources };
 }

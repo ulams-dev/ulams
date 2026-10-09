@@ -11,7 +11,7 @@ import { apiFor, getSettings, getSiteModel, publicData } from "../../../lib/data
 import { chromeFor, withSessionLink } from "../../../lib/docs.ts";
 import { themeFor } from "../../../lib/theme.ts";
 import { fullName } from "../../../lib/view-model.ts";
-import { SESSION_COOKIE } from "../../../lib/session.ts";
+import { hasSession } from "../../../lib/session.ts";
 
 const tenant = Astro.locals.tenant;
 if (!tenant) return Astro.redirect("/");
@@ -98,7 +98,7 @@ const chrome = chromeFor(theme);
 ---
 
 <Base theme={theme} accent={settings?.theme?.accent} title={`${detail.title} — ${site.tenant.name}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
-  {chrome.header && <Render doc={withSessionLink(chrome.header, Astro.cookies.has(SESSION_COOKIE))} data={site} />}
+  {chrome.header && <Render doc={withSessionLink(chrome.header, hasSession(Astro.cookies, Astro.locals.secure))} data={site} />}
   <main id="main" class="u-container u-event-page" tabindex="-1">
     <nav aria-label="Breadcrumb" class="u-event-page__crumbs">
       <a href="/events"><Icon name="back" /> All live sessions and events</a>

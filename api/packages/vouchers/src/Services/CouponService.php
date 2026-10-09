@@ -48,21 +48,25 @@ class CouponService implements CouponServiceContract
         }
 
         if (!is_null($searchDto->getActiveFrom())) {
-            $query->whereDate('active_from', '>=', $searchDto->getActiveFrom())
-                ->orWhere(
-                    fn (Builder $subquery) =>
-                    $subquery->whereNull('active_from')
-                        ->whereDate('active_to', '>=', $searchDto->getActiveFrom())
-                );
+            $activeFrom = $searchDto->getActiveFrom();
+            $query->where(
+                fn (Builder $subquery) => $subquery
+                    ->whereDate('active_from', '>=', $activeFrom)
+                    ->orWhere(
+                        fn (Builder $nested) => $nested->whereNull('active_from')->whereDate('active_to', '>=', $activeFrom)
+                    )
+            );
         }
 
         if (!is_null($searchDto->getActiveTo())) {
-            $query->whereDate('active_to', '<=', $searchDto->getActiveFrom())
-                ->orWhere(
-                    fn (Builder $subquery) =>
-                    $subquery->whereNull('active_to')
-                        ->whereDate('active_from', '<=', $searchDto->getActiveFrom())
-                );
+            $activeTo = $searchDto->getActiveTo();
+            $query->where(
+                fn (Builder $subquery) => $subquery
+                    ->whereDate('active_to', '<=', $activeTo)
+                    ->orWhere(
+                        fn (Builder $nested) => $nested->whereNull('active_to')->whereDate('active_from', '<=', $activeTo)
+                    )
+            );
         }
 
         if (!is_null($orderDto) && !is_null($orderDto->getOrder())) {

@@ -22,6 +22,8 @@ export interface BuilderContext {
   /** Scopes the chat to an element (lesson, block, question). */
   onSelect?: (elementId: string, label: string) => void;
   onRestore?: (versionId: string) => void;
+  /** True while the session's applied version is behind the approved one (the re-apply is still running). */
+  applying?: boolean;
 }
 
 type Props = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -386,7 +388,7 @@ const DiffView: Renderer = (p, ctx, id) => {
     actions.append(approve, reject);
   } else {
     actions.append(h("p", { class: `cb-decision cb-decision-${p.status}` }, icon(p.status === "approved" ? "check" : "minus"),
-      p.status === "approved" ? "Approved and applied" : p.status === "rejected" ? "Rejected; nothing changed" : "Replaced by a newer proposal"));
+      p.status === "approved" ? (ctx.applying ? "Approved; applying to the course…" : "Approved and applied") : p.status === "rejected" ? "Rejected; nothing changed" : "Replaced by a newer proposal"));
   }
   return h("section", { class: "cb-card cb-diff", "aria-label": `Proposed change to ${p.elementLabel}` },
     h("header", {}, h("h3", { class: "cb-h3" }, `Proposed change to ${p.elementLabel}`), p.reason ? h("p", { class: "cb-muted" }, `You asked: “${p.reason}”`) : null),

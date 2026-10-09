@@ -59,7 +59,10 @@ interface TagsApiSwagger
     /**
      * @OA\Post(
      *      tags={"Tags"},
-     *      path="/api/admin/tags/create",
+     *      security={
+     *          {"passport": {}},
+     *      },
+     *      path="/api/admin/tags",
      *      description="Create multiple Tags",
      *      @OA\RequestBody(
      *          required=true,
@@ -86,6 +89,20 @@ interface TagsApiSwagger
      *                      ),
      *                  ),
      *              ),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
      *          )
      *      ),
      *      @OA\Response(
@@ -129,6 +146,20 @@ interface TagsApiSwagger
      *         )
      *     ),
      *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\MediaType(
+     *             mediaType="application/json"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\MediaType(
+     *             mediaType="application/json"
+     *         )
+     *     ),
+     *     @OA\Response(
      *          response=200,
      *          description="successful operation",
      *          @OA\MediaType(
@@ -163,6 +194,20 @@ interface TagsApiSwagger
      *          ),
      *      ),
      *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          )
+     *      ),
+     *      @OA\Response(
      *          response=200,
      *          description="successful operation",
      *          @OA\MediaType(
@@ -179,4 +224,37 @@ interface TagsApiSwagger
      *   )
      */
     public function show(Tag $tag, Request $request): JsonResponse;
+
+    /**
+     * @OA\Get(
+     *      tags={"Tags"},
+     *      security={
+     *          {"passport": {}},
+     *      },
+     *      path="/api/admin/tags/unique",
+     *      description="Display the unique Tags (admin)",
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *          ),
+     *      )
+     *   )
+     */
+    public function uniqueAdmin(Request $request): JsonResponse;
 }

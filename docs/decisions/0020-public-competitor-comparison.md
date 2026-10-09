@@ -26,6 +26,24 @@ must be accurate, checkable and fair, and must not misuse trademarks.
 - Plain product names only, no logos; a line says the names are trademarks of their owners.
 - Rendered by a catalogue component, `ComparisonTable` (no JavaScript).
 
+## Amended (2026-10-09): enterprise group
+
+The product owner asked for enterprise learning products. The table now has two groups behind a
+CSS-only segmented control (radio inputs, no JavaScript), ulams highlighted in both:
+
+- Open source & creator platforms: the six products above, 15 rows.
+- Enterprise suites: Articulate 360 (authoring suite with light hosted distribution through Reach),
+  Docebo, Cornerstone, SAP SuccessFactors Learning, Absorb LMS and 360Learning, on the same 15 rows
+  plus five enterprise rows: data residency, SSO (SAML / OIDC), SCIM provisioning, built-in authoring
+  tool and content library / marketplace. "AI authoring" and "open API" reuse the AI course generation
+  and Headless API rows.
+- The rules above are unchanged: official sources only, neutral values, "No" only when an official
+  source states the absence. Where a vendor's help centre could not be read, the cell says Not
+  documented. ulams cells for the new rows come from the code and the roadmap (SSO Partial: Google and
+  Facebook sign-in only; SCIM Coming). Workday Learning is not included: its documentation is gated.
+- Data model: top-level `groups`, rows and systems carry an optional/required `groups` list; the unit
+  test checks every row of a system's groups.
+
 ## Consequences
 
 - Good: every claim can be traced and re-checked; corrections are a data change.

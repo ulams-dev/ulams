@@ -1,0 +1,107 @@
+---
+interface Props {
+  id?: string;
+  title?: string;
+  language?: string;
+  code: string;
+  caption?: string;
+  lineNumbers?: boolean;
+}
+const { id = "code", title, language = "text", code, caption, lineNumbers = false } = Astro.props;
+const lines = code.replace(/\n$/, "").split("\n");
+const text = lines.join("\n");
+const lang = language.toLowerCase().replace(/[^a-z0-9+#-]/g, "") || "text";
+---
+
+<figure class="u-code" id={id}>
+  <ulams-code-block>
+    <div class="u-code__bar">
+      <p class="u-code__title">{title ?? lang}</p>
+      <!-- The copy button is added by the element; without JavaScript the code is still selectable. -->
+    </div>
+    {
+      lineNumbers ? (
+        <pre class="u-code__pre" tabindex="0"><code class={`language-${lang} u-code__numbered`} data-code>{lines.map((line) => <span class="u-code__line">{line + "\n"}</span>)}</code></pre>
+      ) : (
+        <pre class="u-code__pre" tabindex="0"><code class={`language-${lang}`} data-code>{text}</code></pre>
+      )
+    }
+    <p class="u-visually-hidden" role="status" aria-live="polite" data-live></p>
+  </ulams-code-block>
+  {caption && <figcaption class="u-code__caption">{caption}</figcaption>}
+</figure>
+
+<script>
+  import "../elements/code-block.ts";
+</script>
+
+<style>
+  .u-code {
+    margin: 0;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-surface, var(--ulams-color-card-bg));
+    overflow: hidden;
+  }
+  .u-code__bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 8px 6px 16px;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .u-code__title {
+    font-family: var(--ulams-font-mono);
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-code :global(.u-code__copy) {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 6px 14px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-button);
+    background: var(--ulams-color-card-bg);
+    color: var(--ulams-color-text);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .u-code :global(.u-code__copy:focus-visible) {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+  }
+  .u-code__pre {
+    margin: 0;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    tab-size: 2;
+  }
+  .u-code__pre:focus-visible {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: -3px;
+  }
+  .u-code__numbered {
+    counter-reset: line;
+  }
+  .u-code__line::before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    width: 2.5ch;
+    margin-inline-end: 1.5ch;
+    text-align: end;
+    color: var(--ulams-color-muted);
+    user-select: none;
+  }
+  .u-code__caption {
+    padding: 8px 16px 12px;
+    font-size: 0.875rem;
+    color: var(--ulams-color-muted);
+  }
+</style>

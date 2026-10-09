@@ -30,7 +30,7 @@ interface DemoApiSwagger
      *                      type="array",
      *                      @OA\Items(
      *                          type="object",
-     *                          @OA\Property(property="role", type="string", enum={"student", "admin"}),
+     *                          @OA\Property(property="role", type="string", enum={"student", "tutor", "admin"}),
      *                          @OA\Property(property="email", type="string")
      *                      )
      *                  ),
@@ -56,7 +56,7 @@ interface DemoApiSwagger
      *          @OA\JsonContent(
      *              type="object",
      *              required={"role"},
-     *              @OA\Property(property="role", type="string", enum={"student", "admin"})
+     *              @OA\Property(property="role", type="string", enum={"student", "tutor", "admin"})
      *          )
      *      ),
      *      @OA\Response(

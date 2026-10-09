@@ -16,13 +16,15 @@
     "./elements/*": "./src/elements/*",
     "./styles/*": "./src/styles/*",
     "./html": "./src/lib/html.ts",
-    "./builder/*": "./src/builder/*"
+    "./builder/*": "./src/builder/*",
+    "./brand/*": "./src/brand/*"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "eslint src tests",
-    "test": "node --experimental-strip-types --no-warnings scripts/builder-manifest.mjs --check && vitest run",
+    "test": "node --experimental-strip-types --no-warnings scripts/builder-manifest.mjs --check && node --experimental-strip-types --no-warnings scripts/learner-manifest.mjs --check && vitest run",
     "catalogue": "node --experimental-strip-types --no-warnings scripts/catalogue.mjs",
+    "learner-manifest": "node --experimental-strip-types --no-warnings scripts/learner-manifest.mjs",
     "builder-manifest": "node --experimental-strip-types --no-warnings scripts/builder-manifest.mjs"
   },
   "dependencies": {

@@ -108,7 +108,7 @@ are 250, 500 and 1000 kbit/s (`bitrates` in `packages/video/src/config.php`);
 ### Images
 
 `packages/images` resizes images on request (`GET /api/images/img`, throttled by the
-`images.render` rate limiter) within configured limits (max 1000×1000, a `thumbnail` size of
+`images.render` rate limiter; the batch form `POST /api/images/img` takes at most 20 paths, 4096 px per side, and is always throttled) within configured limits (max 1000×1000, a `thumbnail` size of
 400×300), and `spatie/laravel-image-optimizer` uses the
 `jpegoptim`, `optipng`, `pngquant` and `gifsicle` binaries from the PHP image.
 

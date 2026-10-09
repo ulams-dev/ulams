@@ -30,10 +30,38 @@ export function matchBffRule(method: string, path: string): BffRule | null {
   return BFF_RULES.find((r) => r.method === method.toUpperCase() && r.pattern.test(path)) ?? null;
 }
 
-/** Mutating calls must come from this site (CSRF): Origin, else Sec-Fetch-Site. */
-export function isSameOrigin(request: Request, ownOrigin: string): boolean {
-  if (request.method === "GET" || request.method === "HEAD") return true;
+/**
+ * The allow-list for state-changing requests: this site's own origin and nothing else. In
+ * particular no sibling subdomain of the same registrable domain (the tenant content origin
+ * `<slug>.content.ulams.app` runs third-party package code and is same-site with this app, ADR 0014).
+ * `host` is the Host the browser asked for (x-forwarded-host from the proxy; only its first entry is
+ * used), `secure` whether it reached us over https.
+ */
+export function ownOrigins(host: string, secure: boolean): string[] {
+  const first = host.split(",")[0]?.trim().toLowerCase() ?? "";
+  if (!/^[a-z0-9.-]+(:\d{1,5})?$/.test(first)) return [];
+  return [`${secure ? "https" : "http"}://${first}`];
+}
+
+/**
+ * Mutating calls (POST/PUT/PATCH/DELETE) must come from an allow-listed origin (CSRF, cookie
+ * tossing from a sibling subdomain): the exact `Origin` header, else `Sec-Fetch-Site: same-origin`.
+ * `Origin: null` (sandboxed frames, redirects across origins) and `Sec-Fetch-Site: same-site` are
+ * refused; a request with neither header (not a browser) is refused as well.
+ */
+/** The 403 for a refused cross-site write, or null when the request may proceed (used by the middleware). */
+export function refuseCrossSite(request: Request, host: string, secure: boolean): Response | null {
+  if (isSameOrigin(request, ownOrigins(host, secure))) return null;
+  return new Response(JSON.stringify({ message: "Cross-site request refused" }), {
+    status: 403,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+export function isSameOrigin(request: Request, allowed: string | string[]): boolean {
+  if (request.method === "GET" || request.method === "HEAD" || request.method === "OPTIONS") return true;
+  const list = Array.isArray(allowed) ? allowed : [allowed];
   const origin = request.headers.get("origin");
-  if (origin) return origin === ownOrigin;
+  if (origin) return list.includes(origin);
   return request.headers.get("sec-fetch-site") === "same-origin";
 }

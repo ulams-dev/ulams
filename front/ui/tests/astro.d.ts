@@ -1,6 +1,5 @@
-// Astro components are rendered with the container API in tests; their props are not typed here.
+// Astro components imported by the render helper (the container API takes any component factory).
 declare module "*.astro" {
-  import type { AstroComponentFactory } from "astro/runtime/server/index.js";
-  const component: AstroComponentFactory;
+  const component: (props: never) => unknown;
   export default component;
 }

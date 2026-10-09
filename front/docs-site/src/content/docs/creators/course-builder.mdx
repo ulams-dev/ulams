@@ -19,6 +19,8 @@ learnerRoutes:
   - /studio/s/[id]/updates/[proposal]
   - /studio/s/[id]/audit
   - /studio/api/[...path]
+  - /preview/courses/[id]
+  - /preview/courses/[id]/[topicId]
 ---
 
 The Course Builder turns your own material into a course in your academy. You stay in charge: the
@@ -83,11 +85,31 @@ same services the admin uses.
 Open the **Workspace**. Select a lesson or a quiz question in the curriculum tree, then type what you
 want ("make the distractors less obvious", "shorter, with an example"). The assistant proposes the
 change as a **diff**; **Approve** applies it to the course, **Reject** keeps the current version.
+After you approve, the card reads "Approved; applying to the course…" until the course in your academy
+has caught up with the approved version, then "Approved and applied". The **Course overview** link
+appears at the same moment.
 
 - **Undo** and **Redo** move between versions and update the course.
 - **Version history** lists every version; **Restore** brings an old one back as a new version.
 
-## 7. Publish
+## 7. Preview as a learner
+
+On the success page, **Preview as learner** opens the course the way learners will see it, even
+while it is still unpublished: the course page at `/preview/courses/<id>` and every lesson under it
+(`/preview/courses/<id>/<topic>`). A yellow banner says **Preview: not published** and links back to
+the studio.
+
+- Only a signed-in author (a tutor of the course, or an admin) can open it. Learners, anonymous
+  visitors and authors of other academies get the normal "not found" page.
+- It is a preview, not a learner session: progress is **not** recorded, **Mark as complete** is
+  hidden, and quizzes show a note instead of starting an attempt, so nothing is saved.
+- The page is private (`Cache-Control: private, no-store`) and marked `noindex`.
+- Once the course is published, the success page offers **View as learner**, which goes to the
+  public course page. The preview keeps working and shows **Preview: published**.
+
+The landing page preview links its call to action to the same preview.
+
+## 8. Publish
 
 The success page summarises the course (modules, lessons, minutes, questions, how much is cited,
 AI cost) and links to the course form in the admin, the learner preview and the landing preview.

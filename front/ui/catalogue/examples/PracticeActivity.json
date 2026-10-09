@@ -1,0 +1,65 @@
+{
+  "props": {
+    "title": "Dial in a pour-over",
+    "intro": "Practise adjusting one variable at a time, with less help at each level.",
+    "toolbox": [
+      {
+        "label": "Brew ratio chart",
+        "text": "Check the target ratio before you change anything."
+      },
+      {
+        "label": "Taste wheel",
+        "text": "Name what you taste before deciding what to fix."
+      }
+    ],
+    "challenges": [
+      {
+        "id": "c1",
+        "level": 1,
+        "prompt": "The cup tastes sour and thin. Which single change should you try first?",
+        "hints": [
+          {
+            "tier": "near_solution",
+            "text": "Sour usually means under-extraction; you want more extraction, not less."
+          },
+          {
+            "tier": "nudge",
+            "text": "What does sourness tell you about how much was dissolved?"
+          },
+          {
+            "tier": "pointer",
+            "text": "Look at the grind and temperature rows of the troubleshooting chart."
+          }
+        ],
+        "options": [
+          {
+            "label": "Grind finer",
+            "correct": true,
+            "feedback": "A finer grind exposes more surface, so more dissolves and the sourness fades."
+          },
+          {
+            "label": "Use cooler water",
+            "correct": false,
+            "feedback": "Cooler water dissolves less, which makes under-extraction worse."
+          }
+        ],
+        "workedSolution": "Sour and thin points to under-extraction. Change one variable: grind one step finer and brew again. Cooler water would extract even less."
+      },
+      {
+        "id": "c2",
+        "level": 3,
+        "prompt": "Write the adjustment plan for a bitter, dry cup, in your own words.",
+        "hints": [
+          {
+            "tier": "nudge",
+            "text": "Bitter and dry is the opposite problem of sour."
+          }
+        ],
+        "workedSolution": "Bitter and dry means over-extraction: grind one step coarser or shorten the brew time, change only one, and taste again."
+      }
+    ]
+  },
+  "invalid": {
+    "intro": "Missing the toolbox and the challenges."
+  }
+}

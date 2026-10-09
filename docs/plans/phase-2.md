@@ -730,7 +730,7 @@ Commits 2–19 need the Laravel 13 upgrade merged; 20–21 can start earlier aga
 
 ---
 
-## 18. Decisions taken (to confirm)
+## 18. Decisions (confirmed by the product owner, 2026-10-09)
 
 1. **Author UI in the reference web app (`front/web`, `/studio`)**, admin only links to it (4.2).
 2. **Transport: AG-UI events over SSE from Laravel**, replayed from a `builder_events` table; jobs do

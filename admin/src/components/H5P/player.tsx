@@ -62,6 +62,8 @@ export const Player: React.FC<{
           title="H5P"
           style={{ width: '100%', height, border: 0, display: 'block' }}
           allow="fullscreen; autoplay; encrypted-media"
+          // allow-same-origin is required, see editor.tsx (SANDBOX_H5P)
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals allow-presentation"
           allowFullScreen
           referrerPolicy="no-referrer"
         />

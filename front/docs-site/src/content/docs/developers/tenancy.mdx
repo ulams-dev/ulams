@@ -126,8 +126,10 @@ origin** that holds nothing else: no API routes, no cookies, no tokens. `ulams:t
 - The SCORM player gets a **tracking token** bound to the tenant `APP_KEY`, the user and the SCO,
   sent as `X-Ulams-Tracking-Token` (default lifetime 4 hours, `SCORM_TRACKING_TOKEN_TTL`). Another
   tenant rejects it because its `APP_KEY` differs.
-- In production the content origin must be on a separate registrable domain
-  (for example `<slug>.ulams-content.net`), not a subdomain of the app.
+- In production the content origin is either on a separate registrable domain (strongest, for
+  example `<slug>.ulams-content.net`) or a same-site subdomain (`<slug>.content.ulams.app`,
+  `TENANCY_CONTENT_HOST={slug}.content.ulams.app`) with the mitigations in
+  [Content origin](/operators/content-origin/).
 
 Without `CONTENT_ORIGIN` the legacy SCORM player on the API origin is used. Full description:
 [`api/docs/content-origin.md`](https://github.com/ulams-dev/ulams/blob/main/api/docs/content-origin.md).

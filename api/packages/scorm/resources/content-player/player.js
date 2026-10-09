@@ -5,6 +5,12 @@
  *   #api=<tenant API base URL>&sco=<SCO uuid>&token=<topic-scoped tracking token>
  * The token only reads this SCO's launch data and writes this learner's tracking for it; the
  * learner's API token never reaches this origin.
+ *
+ * Same-site hardening (ADR 0014, amended 2026-10-09): this page needs `allow-same-origin` in its
+ * host frame because the SCO finds window.API by walking up its parent frames, so it can only trust
+ * what it checks itself: the API base must be an absolute http(s) URL, and the SCO is framed only
+ * when its URL is on this very origin (a response can not point the frame, and so window.API, at
+ * another origin).
  */
 (function () {
   'use strict';
@@ -22,7 +28,24 @@
     status.hidden = false;
   }
 
-  if (!api || !sco || !token || typeof Scorm12API === 'undefined') {
+  function isHttpUrl(value) {
+    try {
+      var protocol = new URL(value).protocol;
+      return protocol === 'https:' || protocol === 'http:';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function isSameOrigin(value) {
+    try {
+      return new URL(value, window.location.href).origin === window.location.origin;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  if (!api || !sco || !token || !isHttpUrl(api) || typeof Scorm12API === 'undefined') {
     fail('This content could not be started. Close it and open the lesson again.');
     return;
   }
@@ -67,6 +90,10 @@
       });
     }
 
+    if (!isSameOrigin(data.entry_url)) {
+      fail('This content could not be started. Close it and open the lesson again.');
+      return;
+    }
     var frame = document.createElement('iframe');
     frame.title = data.title || 'Course content';
     frame.src = data.entry_url;

@@ -103,13 +103,15 @@ export interface TopicDocInput {
   liascript?: { url: string; sections?: number } | { error: string } | null;
   /** For external-tool topics: the LTI launch (see ltiLaunch). */
   lti?: { url: string; presentation: string; tool: string } | { error: string } | null;
+  /** Author preview: nothing that records progress runs (quizzes, tracked launches, H5P xAPI). */
+  preview?: boolean;
 }
 
 const str = (v: unknown): string | undefined => (typeof v === "string" && v.trim() !== "" ? v : undefined);
 const num = (v: unknown): number | undefined => (typeof v === "number" && Number.isFinite(v) ? v : typeof v === "string" && v !== "" && !Number.isNaN(Number(v)) ? Number(v) : undefined);
 
 /** Body of the lesson player for one topic. */
-export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null, liascript = null, lti = null }: TopicDocInput): UiNode {
+export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null, liascript = null, lti = null, preview = false }: TopicDocInput): UiNode {
   const kind = topicKind(topic.topicable_type);
   const t = (topic.topicable ?? {}) as Record<string, unknown>;
   const children: UiNode[] = [];
@@ -127,6 +129,22 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
         cta: { label: "Back to the course", href: `/courses/${course.id}` },
       },
     });
+    return { component: "Stack", props: { gap: "lg" }, children };
+  }
+
+  if (preview && (kind === "quiz" || kind === "liascript" || kind === "lti")) {
+    children.push({
+      component: "Callout",
+      props: {
+        tone: "key",
+        title: kind === "quiz" ? "Quiz: not run in preview" : "Not launched in preview",
+        text:
+          kind === "quiz"
+            ? "Learners answer this quiz and see their score here. The preview does not start attempts, so nothing is saved."
+            : "Learners open this activity here and it reports their progress. The preview does not launch it, so nothing is recorded.",
+      },
+    });
+    if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
     return { component: "Stack", props: { gap: "lg" }, children };
   }
 
@@ -177,7 +195,7 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
     case "h5p":
       children.push({
         component: "H5PFrame",
-        props: { apiUrl: tenant.apiUrl, contentId: num(t.value) ?? 0, title: topic.title, topicId: topic.id, courseId: course.id },
+        props: { apiUrl: tenant.apiUrl, contentId: num(t.value) ?? 0, title: topic.title, ...(preview ? {} : { topicId: topic.id, courseId: course.id }) },
       });
       if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
       break;

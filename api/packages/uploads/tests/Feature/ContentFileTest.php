@@ -27,7 +27,9 @@ class ContentFileTest extends TestCase
         $this->withHeaders(['X-Ulams-Content-Origin' => '1'])->get('/api/content/scorm/scorm_12/abc/index.html')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/html; charset=UTF-8')
-            ->assertHeader('X-Content-Type-Options', 'nosniff');
+            ->assertHeader('X-Content-Type-Options', 'nosniff')
+            ->assertHeader('Cross-Origin-Opener-Policy', 'same-origin')
+            ->assertHeader('Cross-Origin-Resource-Policy', 'cross-origin');
         $response = $this->withHeaders(['X-Ulams-Content-Origin' => '1'])->get('/api/content/scorm/scorm_12/abc/app.js');
         $response->assertOk()->assertHeader('Content-Type', 'text/javascript; charset=UTF-8');
         $this->assertSame('run()', $response->streamedContent());

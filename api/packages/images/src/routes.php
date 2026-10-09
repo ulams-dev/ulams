@@ -5,5 +5,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api/images'], function () {
     Route::get('/img', [ImagesController::class, 'image'])->middleware(['throttle:images.render']);
-    Route::post('/img', [ImagesController::class, 'images']);
+    Route::post('/img', [ImagesController::class, 'images'])->middleware(['throttle:images.render']);
 });

@@ -2,6 +2,7 @@
 import Studio from "../../../../layouts/Studio.astro";
 import { ApiError, type Blueprint, type BuilderState } from "@ulams/sdk";
 import { builderFor } from "../../../../lib/studio.ts";
+import { previewCourseHref } from "../../../../lib/preview.ts";
 import { STATUS_LABEL } from "../../../../studio/labels.ts";
 
 const id = Astro.params.id ?? "";
@@ -26,6 +27,16 @@ try {
 } catch (e) {
   if (e instanceof ApiError && (e.status === 404 || e.status === 403)) return new Response("Not found", { status: 404 });
   throw e;
+}
+// an approved edit is re-applied by a queued run: give it a moment so this page shows the course
+// the author approved, not the previous applied version
+const lagging = state.session.status === "applying" || (state.session.appliedVersionId !== null && state.session.appliedVersionId !== state.session.currentVersionId);
+if (lagging) {
+  try {
+    state = await cb.sessions.waitForApplied(id, { timeoutMs: 8_000 });
+  } catch {
+    // keep what the server reports now
+  }
 }
 if (!state.session.appliedVersionId) return Astro.redirect(`/studio/s/${id}`);
 const version = await cb.versions.get(state.session.appliedVersionId);
@@ -69,7 +80,13 @@ const checks = [
         <button class="cb-btn cb-btn-primary" type="submit" style="width:100%" disabled={published}>{published ? "Published" : "Publish course"}</button>
       </form>
       <a class="cb-btn" href={`${adminBase}/courses/list/${courseId}`} rel="noopener">Open in admin</a>
-      <a class="cb-btn" href={`/courses/${courseId}`}>Preview as learner</a>
+      {
+        published ? (
+          <a class="cb-btn" href={`/courses/${courseId}`}>View as learner</a>
+        ) : (
+          <a class="cb-btn" href={previewCourseHref(courseId)}>Preview as learner</a>
+        )
+      }
       <a class="cb-btn" href={`/studio/s/${id}/landing`}>Landing page</a>
       <a class="cb-btn" href={`/studio/s/${id}/workspace`}>Keep refining</a>
     </div>

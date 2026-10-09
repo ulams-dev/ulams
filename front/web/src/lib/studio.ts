@@ -1,20 +1,24 @@
 import type { AstroCookies } from "astro";
 import { ApiError, createCourseBuilderClient, createLivingCourseClient, type Tenant } from "@ulams/sdk";
 import { apiFor } from "./data.ts";
+import { AUTHOR_BASE, cookieName, sessionCookieOptions } from "./cookies.ts";
+import { config } from "./config.ts";
 
 /**
  * Author session for the Course Builder studio. The Passport token of a tutor or admin lives in an
  * httpOnly cookie (separate from the learner session); the browser only talks to the BFF
  * (/studio/api/…), which adds it. On demo tenants the studio signs in as the demo admin.
  */
-export const AUTHOR_COOKIE = "ulams_author";
-
-export function setAuthorCookie(cookies: AstroCookies, token: string, expiresAt: number, secure: boolean): void {
-  cookies.set(AUTHOR_COOKIE, token, { httpOnly: true, sameSite: "lax", secure, path: "/", expires: new Date(expiresAt) });
+export function authorCookieName(secure: boolean): string {
+  return cookieName(AUTHOR_BASE, secure, config.cookieFallbackPrefix);
 }
 
-export function clearAuthorCookie(cookies: AstroCookies): void {
-  cookies.delete(AUTHOR_COOKIE, { path: "/" });
+export function setAuthorCookie(cookies: AstroCookies, token: string, expiresAt: number, secure: boolean): void {
+  cookies.set(authorCookieName(secure), token, sessionCookieOptions(secure, expiresAt));
+}
+
+export function clearAuthorCookie(cookies: AstroCookies, secure: boolean): void {
+  cookies.delete(authorCookieName(secure), { path: "/", secure });
 }
 
 const expiry = (value: string | null | undefined) => {
@@ -24,7 +28,7 @@ const expiry = (value: string | null | undefined) => {
 
 /** Cookie token, else a demo admin login when the tenant runs in demo mode; null means "sign in". */
 export async function authorToken(tenant: Tenant, cookies: AstroCookies, secure: boolean): Promise<string | null> {
-  const existing = cookies.get(AUTHOR_COOKIE)?.value;
+  const existing = cookies.get(authorCookieName(secure))?.value;
   if (existing) return existing;
   try {
     const demo = await apiFor(tenant).auth.demoLogin("admin");

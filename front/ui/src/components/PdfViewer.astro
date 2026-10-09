@@ -8,6 +8,9 @@ interface Props {
 const { src, title } = Astro.props;
 ---
 
+<!-- No sandbox attribute (documented exception, front/ui/tests/frames.test.ts): the browser's built-in PDF
+     viewer does not render inside a sandboxed frame. The file comes from the storage origin, which sends
+     nosniff and serves no script. -->
 <div class="u-pdf">
   <div class="u-pdf__bar">
     <span><Icon name="pdf" /> {title}</span>

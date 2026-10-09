@@ -39,7 +39,7 @@ export interface LoginResult {
   expires_at?: string | null;
 }
 
-export type DemoRole = "student" | "admin";
+export type DemoRole = "student" | "tutor" | "admin";
 
 /** `GET /api/config` → `ulams_demo` (demo package). */
 export interface DemoConfig {
@@ -75,6 +75,8 @@ export interface UserSummary {
 export interface Profile extends UserSummary {
   name?: string;
   roles?: string[];
+  /** Spatie permission names of the user (`/api/profile/me`). */
+  permissions?: string[];
 }
 
 export interface Category {

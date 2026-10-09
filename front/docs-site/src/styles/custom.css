@@ -1,22 +1,30 @@
 /*
- * ulams brand for Starlight: the platform theme of the reference frontend
- * (front/ui/src/styles/themes/platform.css): zinc neutrals, one indigo/violet accent,
- * Inter for text, Inter Tight for headings, JetBrains Mono for code.
+ * ulams brand for Starlight: Orbital Folio (ADR 0038; guidelines in Contributing > Brand).
+ * Indigo #0F2B46 carries text, links and buttons; orange #FF7A2E is an accent only (the orbit
+ * dot, a header rule), never text on a light background. Inter for text, Inter Tight for
+ * headings, JetBrains Mono for code.
  *
  * Contrast (WCAG 2.2 AA, 4.5:1 for text):
- * - light: links #4338ca on #ffffff = 7.9:1; text #18181b on #ffffff = 17.7:1
- * - dark:  links #c7d2fe on #0e0e10 = 13.9:1; accent #a5b4fc on #18181b = 9.1:1
+ * - light: links #0f2b46 on #ffffff = 14.4:1; text #18181b on #ffffff = 17.7:1
+ * - dark:  links #8fb3d9 on #0e0e10 = 8.8:1; button text #0e0e10 on #8fb3d9 = 8.8:1
+ * - orange #ff7a2e: 2.6:1 on white (graphics only); 7.4:1 on #0e0e10, 5.5:1 on #0f2b46
  */
 
 :root {
+  /* Same values as front/ui/src/styles/base.css (checked by front/ui/tests/brand.test.ts) */
+  --ulams-brand-indigo: #0f2b46;
+  --ulams-brand-orange: #ff7a2e;
+  --ulams-brand-blue: #1f5a94;
+  --ulams-brand-sky: #8fb3d9;
+
   --sl-font: "Inter Variable", Inter, system-ui, sans-serif;
   --sl-font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
   --ulams-font-heading: "Inter Tight Variable", "Inter Tight", var(--sl-font);
 
-  /* Dark mode (Starlight's default) */
-  --sl-color-accent-low: #1e1b4b;
-  --sl-color-accent: #6366f1;
-  --sl-color-accent-high: #c7d2fe;
+  /* Dark mode (Starlight's default): indigo tints for text, orange for the accent fill */
+  --sl-color-accent-low: #0f2b46;
+  --sl-color-accent: #ff7a2e;
+  --sl-color-accent-high: var(--ulams-brand-sky);
   --sl-color-white: #ffffff;
   --sl-color-gray-1: #f4f4f5;
   --sl-color-gray-2: #d4d4d8;
@@ -28,9 +36,9 @@
 }
 
 :root[data-theme="light"] {
-  --sl-color-accent-low: #e0e7ff;
-  --sl-color-accent: #4338ca;
-  --sl-color-accent-high: #312e81;
+  --sl-color-accent-low: #e3ecf5;
+  --sl-color-accent: var(--ulams-brand-blue);
+  --sl-color-accent-high: var(--ulams-brand-indigo);
   --sl-color-white: #18181b;
   --sl-color-gray-1: #27272a;
   --sl-color-gray-2: #3f3f46;
@@ -40,6 +48,17 @@
   --sl-color-gray-6: #f4f4f3;
   --sl-color-gray-7: #fafaf9;
   --sl-color-black: #ffffff;
+}
+
+/* The logo is the title: size it for the header and leave the orbit dot room. */
+.site-title img {
+  height: 1.75rem;
+  width: auto;
+}
+
+/* A thin orange rule above the header: the orbit dot's colour as a graphic, not text. */
+header.header {
+  box-shadow: inset 0 3px 0 var(--ulams-brand-orange);
 }
 
 h1,

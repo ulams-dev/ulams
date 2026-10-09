@@ -52,6 +52,8 @@ the client build.
 | `ULAMS_DEFAULT_TENANT` | `coffee` | tenant for other hosts without a rule (e.g. a LAN IP); empty shows a picker |
 | `ULAMS_CACHE_TTL` | `45` | seconds public API data is fresh; it is served stale for 30 min while refreshing |
 | `ULAMS_WARM_TENANTS` | `coffee,oncall,nightsky` | tenants fetched when the server starts |
+| `ULAMS_COOKIE_SECURE` | `auto` | `auto` detects https from the request / `X-Forwarded-Proto`; `true` forces Secure cookies (proxy without the header), `false` only for a plain-http trial install |
+| `ULAMS_COOKIE_FALLBACK_PREFIX` | empty | name prefix of the session cookies over plain http (dev on `*.localhost`), where the browser rejects `__Host-` |
 | `DEMO_STUDENT_EMAIL` | `student1@{slug}.ulams.app` | fallback demo account when the tenant has no demo mode |
 | `DEMO_STUDENT_PASSWORD` | (empty) | its password; keep it in `.env` (git-ignored) |
 
@@ -67,6 +69,10 @@ browser ── HTML (SSR) ──────────────── Astro
 
 - `src/middleware.ts`: tenant from the `Host` header; on `/learn/*` and `/bff/*` it makes sure there is
   a session (cookie, else a demo login: `POST /api/demo/login`, falling back to the password account).
+- Same-site content origin (ADR 0014, amended): the session cookies are `__Host-ulams_session` and
+  `__Host-ulams_author` (Secure, Path=/, never a `Domain`), and every POST/PUT/PATCH/DELETE must carry
+  the exact `Origin` of this site (or `Sec-Fetch-Site: same-origin`); `src/lib/cookies.ts`,
+  `src/lib/bff.ts` (`refuseCrossSite`). A request from `<slug>.content.<base>` is a 403.
 - `src/lib/data.ts`: API access with the stale-while-revalidate cache (`src/lib/cache.ts`).
 - `src/lib/view-model.ts`: turns API responses into the **data model** documents bind to. It only
   uses API data; no invented numbers.
@@ -149,6 +155,12 @@ The platform landing feeds it from `src/data/comparison.json`: every cell is
 and `tests/unit/comparison.test.ts` fails when a cell has no https source or date. To update a fact,
 change the cell, its source and `checkedAt`, and the top-level `asOf`; the table shows "As of …" and
 a Sources list under it. Plain product names only, no logos.
+
+The table has two groups behind a segmented control built from radio inputs and CSS (no JavaScript;
+without `:has()` support both tables simply show): "Open source & creator platforms" and "Enterprise
+suites", ulams in both. `comparison.json` has top-level `groups`; a system lists the groups it is in,
+a row lists `groups` or applies to all. The component takes `groups` (2 to 4 tables) instead of
+`columns` and `rows`. Enterprise-only rows: data residency, SSO, SCIM, authoring tool, content library.
 
 ## Performance budget
 

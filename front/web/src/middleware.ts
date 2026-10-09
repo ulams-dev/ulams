@@ -5,8 +5,10 @@ import { warm } from "./lib/data.ts";
 import { ensureSession } from "./lib/session.ts";
 import { imageCache } from "./lib/image-cache.ts";
 import { resolveTenant } from "@ulams/sdk/tenant";
-import { isSameOrigin } from "./lib/bff.ts";
-import { authorToken } from "./lib/studio.ts";
+import { refuseCrossSite } from "./lib/bff.ts";
+import { isSecureRequest } from "./lib/cookies.ts";
+import { authorCookieName, authorToken } from "./lib/studio.ts";
+import { PREVIEW_HEADERS, isPreviewPath } from "./lib/preview.ts";
 
 let warmed = false;
 function warmOnce(): void {
@@ -32,13 +34,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   // CSRF: every state-changing request must come from this site (forms, BFF, H5P proxy).
-  const ownOrigin = `${url.protocol}//${host}`;
-  if (!isSameOrigin(request, ownOrigin)) {
-    return new Response(JSON.stringify({ message: "Cross-site request refused" }), {
-      status: 403,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+  const secure = isSecureRequest(request.headers, url.protocol, config.cookieSecure);
+  locals.secure = secure;
+  const refused = refuseCrossSite(request, host, secure);
+  if (refused) return refused;
 
   locals.platform = isPlatformHost(host, config.platformHosts);
   locals.tenant = locals.platform ? null : tenantForHost(host, config);
@@ -48,20 +47,29 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   if (locals.tenant && SESSION_ROUTES.test(url.pathname)) {
     // Prefetch/prerender requests may log in too: the next navigation is then instant.
-    const session = await ensureSession(locals.tenant, cookies, url.protocol === "https:");
+    const session = await ensureSession(locals.tenant, cookies, secure);
     locals.token = session?.token ?? null;
     locals.sessionVia = session?.via ?? null;
   }
 
   // Course Builder studio: the author's session (tutor or admin), separate from the learner's
   if (locals.tenant && STUDIO_ROUTES.test(url.pathname) && url.pathname !== "/studio/login") {
-    locals.authorToken = await authorToken(locals.tenant, cookies, url.protocol === "https:");
+    locals.authorToken = await authorToken(locals.tenant, cookies, secure);
     if (!locals.authorToken && !url.pathname.startsWith("/studio/api/")) {
       return context.redirect(`/studio/login?next=${encodeURIComponent(url.pathname)}`, 303);
     }
   }
 
+  // Author preview: only the studio author's own cookie counts. Never the learner (demo student)
+  // session and never the demo-admin auto sign-in of the studio: without the cookie it is a 404.
+  if (locals.tenant && isPreviewPath(url.pathname)) {
+    locals.authorToken = cookies.get(authorCookieName(secure))?.value ?? null;
+  }
+
   const response = await next();
+  if (isPreviewPath(url.pathname)) {
+    for (const [name, value] of Object.entries(PREVIEW_HEADERS)) response.headers.set(name, value);
+  }
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   if (!response.headers.has("Cache-Control") && (response.headers.get("content-type") ?? "").includes("text/html")) {

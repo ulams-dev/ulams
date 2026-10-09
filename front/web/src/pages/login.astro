@@ -11,7 +11,7 @@ const settings = await getSettings(tenant).catch(() => null);
 const theme = themeFor(settings?.theme?.theme, tenant.slug);
 const next = Astro.url.searchParams.get("next");
 const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
-const secure = Astro.url.protocol === "https:";
+const secure = Astro.locals.secure;
 
 let error: string | null = null;
 if (Astro.request.method === "POST") {
