@@ -43,16 +43,9 @@ class AppServiceProvider extends ServiceProvider
         // any provider boots, because Passport registers its routes in boot().
         Passport::$deviceCodeGrantEnabled = false;
 
-        // swagger-php 6 (l5-swagger 11) reads only PHP attributes by default. The API is
-        // documented with `@OA\` docblock annotations (223 files), which need the DocBlock
-        // factory (and doctrine/annotations). Set here because objects in config files cannot
-        // be cached by `config:cache`.
-        if (config('l5-swagger.defaults.scanOptions.analyser') === null) {
-            config(['l5-swagger.defaults.scanOptions.analyser' => new \OpenApi\Analysers\ReflectionAnalyser([
-                new \OpenApi\Analysers\DocBlockAnnotationFactory(),
-                new \OpenApi\Analysers\AttributeAnnotationFactory(),
-            ])]);
-        }
+        // Docblock annotations need an analyser object, which cannot be cached in config:
+        // DocBlockConfigFactory adds it when documentation is generated.
+        $this->app->bind(\L5Swagger\ConfigFactory::class, \App\Support\Swagger\DocBlockConfigFactory::class);
     }
 
     /**

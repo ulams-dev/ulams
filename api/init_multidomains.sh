@@ -57,6 +57,9 @@ if [ ! -d "storage/framework/cache" ]; then mkdir storage/framework/cache; fi
 if [ ! -d "storage/app" ]; then mkdir storage/app; fi
 if [ ! -d "storage/logs" ]; then mkdir storage/logs; fi
 
+# PHP profile (development, DEMO_PERF=1 demo, production image), see php-profile.sh
+./php-profile.sh prepare
+
 # generate general .env file for next specific domain files 
 # as `php artisan domain:add $domain` copy values from `.env`
 echo "Generating general .env file for next specific domain files"
@@ -199,6 +202,9 @@ fi
 # made them 0775). The public key stays group-readable for the H5P service.
 find storage -maxdepth 2 -name oauth-private.key -exec chmod 600 {} +
 find storage -maxdepth 2 -name oauth-public.key -exec chmod 640 {} +
+
+# config/route/event caches per domain (demo profile, production image) or none (development)
+./php-profile.sh cache
 
 touch inited
 

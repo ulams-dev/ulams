@@ -290,6 +290,11 @@ export const registry = {
               "Log lines",
               { maxItems: 8 }
             ),
+            prompt: text("Command shown at the bottom of the panel, without the $", { maxLength: 60 }),
+            values: list({ type: "number", minimum: 0, description: "Value" }, "Series drawn as the sparkline (e.g. minutes per module); omit for none", {
+              maxItems: 24,
+            }),
+            valuesLabel: text("What the sparkline shows, e.g. 'minutes per module'", { maxLength: 60 }),
           },
           ["lines"],
           "Log-style panel for the console variant"
@@ -626,6 +631,67 @@ export const registry = {
       ["items"]
     ),
     fallback: (p) => join(p.title, ...titles(p.items)),
+  },
+  ComparisonTable: {
+    description:
+      "Feature comparison of products in columns, features in rows. Every competitor cell must come from a sourced data file (value, note, source URL, checked date); list the sources and the 'as of' date under the table. Neutral values only.",
+    category: "section",
+    interactive: false,
+    children: false,
+    props: obj(
+      {
+        eyebrow: EYEBROW,
+        title: TITLE,
+        intro: INTRO,
+        caption: text("Table caption read by screen readers (what is compared)", { maxLength: 160 }),
+        asOf: text("When the facts were checked, e.g. 'October 2026'", { maxLength: 40 }),
+        columns: list(
+          obj(
+            {
+              label: text("Product name, plain text (no logos)", { maxLength: 40 }),
+              note: text("Small line under the name, e.g. 'hosted SaaS'", { maxLength: 40 }),
+              highlight: bool("The column of our own product", false),
+            },
+            ["label"]
+          ),
+          "Products, in column order",
+          { minItems: 2, maxItems: 8 }
+        ),
+        rows: list(
+          obj(
+            {
+              label: text("Feature", { maxLength: 60 }),
+              help: text("What the row means", { maxLength: 160 }),
+              cells: list(
+                obj(
+                  {
+                    value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }),
+                    note: text("Short neutral note", { maxLength: 120 }),
+                  },
+                  ["value"]
+                ),
+                "One cell per column, same order",
+                { maxItems: 8 }
+              ),
+            },
+            ["label", "cells"]
+          ),
+          "Features",
+          { minItems: 1, maxItems: 24 }
+        ),
+        sources: list(
+          obj({ label: text("What the source supports, e.g. 'Moodle: SCORM, H5P'", { maxLength: 300 }), href: href("Source URL"), checked: text("Date checked", { maxLength: 20 }) }, [
+            "label",
+            "href",
+          ]),
+          "Sources for the cells",
+          { maxItems: 200 }
+        ),
+        note: text("Small print under the table", { maxLength: 300 }),
+      },
+      ["caption", "columns", "rows"]
+    ),
+    fallback: (p) => join(p.title, p.caption),
   },
   Chips: {
     description: "A strip of short labels (standards, integrations); each marked available or coming.",

@@ -141,10 +141,36 @@ class ProductService implements ProductServiceContract
         return $this->canonicalProductableClass($productableClass)::find($productableId);
     }
 
+    /**
+     * The productable for an already loaded model, built from its row when the canonical class
+     * shares its table (no query); otherwise fetched by id.
+     */
+    public function productableFromModel(Model $model, ?string $productableClass = null): ?Productable
+    {
+        if ($model instanceof Productable && ($productableClass === null || $model instanceof $productableClass)) {
+            return $model;
+        }
+        $class = $this->canonicalProductableClass($productableClass ?? get_class($model));
+        $canonical = new $class();
+        if ($canonical instanceof Model && $canonical->getTable() === $model->getTable()) {
+            $built = $canonical->newFromBuilder($model->getAttributes(), $model->getConnectionName());
+            $built->setRelations($model->getRelations());
+            if ($built instanceof Productable) {
+                return $built;
+            }
+        }
+
+        return $this->findProductable($productableClass ?? get_class($model), $model->getKey());
+    }
+
     public function findSingleProductForProductable(Productable $productable): ?Product
     {
         /** @var Product|null $product */
-        $product = Product::where('type', ProductType::SINGLE)->whereHasProductable($productable)->first();
+        $product = Product::where('type', ProductType::SINGLE)
+            ->whereHasProductable($productable)
+            ->withSoldQuantity()
+            ->with(['productables.productable', 'categories', 'tags', 'relatedProducts'])
+            ->first();
         return $product;
     }
 
@@ -190,6 +216,14 @@ class ProductService implements ProductServiceContract
         if (!is_null($orderDto) && !is_null($orderDto->getOrder())) {
             $query = $query->orderBy($orderDto->getOrderBy(), $orderDto->getOrder());
         }
+
+        // everything the list resource reads per product, in a fixed number of queries
+        $query->withSoldQuantity()->with([
+            'productables.productable',
+            'categories',
+            'tags',
+            'relatedProducts',
+        ]);
 
         return $query->paginate($searchDto->getPerPage() ?? 15);
     }

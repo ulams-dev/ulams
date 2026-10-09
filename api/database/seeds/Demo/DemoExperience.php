@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Demo;
 
+use Ulams\LiaScript\Services\LiaScriptService;
 use Carbon\Carbon;
 use Database\Seeders\Demo\Support\AssetFactory;
 use Database\Seeders\Demo\Support\Canvas;
@@ -460,6 +461,19 @@ abstract class DemoExperience
         $this->report['extras']['h5p_contents'][] = $id;
 
         return ['fields' => ['value' => $id], 'files' => []];
+    }
+
+    /**
+     * A LiaScript topic: the Markdown becomes a versioned LiaScript document (through the
+     * LiaScript service, like the admin API), played on the tenant content origin.
+     *
+     * @return array{fields: array<string, mixed>, files: array<string, string>}
+     */
+    protected function liascript(string $title, string $markdown): array
+    {
+        $document = app(LiaScriptService::class)->create($title, $markdown, null, Auth::id());
+
+        return ['fields' => ['value' => $document->getKey()], 'files' => []];
     }
 
     /** @return array{fields: array<string, mixed>, files: array<string, string>} */

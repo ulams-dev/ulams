@@ -289,8 +289,7 @@ abstract class BaseRepository implements BaseRepositoryContract, UserableReposit
     public function getEmptyColumns(): object
     {
         $columns = array();
-        $prefix = \DB::getTablePrefix();
-        foreach (\DB::getSchemaBuilder()->getColumnListing($prefix . $this->model->getTable()) as $column) {
+        foreach (\Ulams\Core\Support\SchemaColumns::listing($this->model->getTable(), $this->model->getConnectionName()) as $column) {
             $columns[$column] = '';
         }
 

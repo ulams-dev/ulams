@@ -34,7 +34,9 @@ use Ulams\ModelFields\ModelFieldsServiceProvider;
 use Ulams\Scorm\UlamsScormServiceProvider;
 use Ulams\Tags\UlamsTagsServiceProvider;
 use Illuminate\Support\ServiceProvider;
-use Spatie\ResponseCache\Middlewares\CacheResponse;
+use Ulams\Courses\Http\Middleware\CacheResponse;
+use Ulams\Courses\Console\ClearResponseCacheCommand;
+use Spatie\ResponseCache\Commands\ClearCommand;
 use Spatie\ResponseCache\ResponseCacheServiceProvider;
 
 class UlamsCourseServiceProvider extends ServiceProvider
@@ -86,6 +88,8 @@ class UlamsCourseServiceProvider extends ServiceProvider
         $this->app->register(ScheduleServiceProvider::class);
         $this->app->register(SettingsServiceProvider::class);
         $this->app->register(ResponseCacheServiceProvider::class);
+        // `responsecache:clear` clears the tagged entries of this tenant only
+        $this->app->bind(ClearCommand::class, ClearResponseCacheCommand::class);
         $this->app->register(EventServiceProvider::class);
         $this->app->register(UlamsScormServiceProvider::class);
         $this->app->register(UlamsTagsServiceProvider::class);

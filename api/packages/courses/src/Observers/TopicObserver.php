@@ -3,7 +3,7 @@
 namespace Ulams\Courses\Observers;
 
 use Ulams\Courses\Models\Topic;
-use Spatie\ResponseCache\Facades\ResponseCache;
+use Ulams\Courses\Support\ResponseCacheTags;
 
 class TopicObserver
 {
@@ -16,11 +16,11 @@ class TopicObserver
 
     public function saved(Topic $topic)
     {
-        ResponseCache::clear();
+        ResponseCacheTags::clear(ResponseCacheTags::CATALOGUE);
     }
 
     public function deleted(Topic $topic)
     {
-        ResponseCache::clear();
+        ResponseCacheTags::clear(ResponseCacheTags::CATALOGUE);
     }
 }

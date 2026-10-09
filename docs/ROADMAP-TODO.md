@@ -11,6 +11,11 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (2026-10-09) Phase 1 defaults confirmed: students get `scorm_track-update`; SVG served as attachment
+      with CSP (no sanitiser); LTI Instructor → tutor, never admin, no e-mail account linking; LiaScript player
+      fetched at image build time; production content origin on a separate registrable domain
+- [x] (2026-10-09) GHCR images are public; the upstream EscolaLMS security reports stay as public issues
+- [x] (2026-10-09) Replace the illustrative incident log on the On-Call landing with real course content
 - [x] (2026-10-09) Phase 1 and Phase 2 plans approved; ADRs 0008 (reference frontend: Astro SSR, plain TS SDK,
       agent UI catalogue), 0009 (LLM layer), 0010 (Course Blueprint), 0011 (AG-UI over SSE) and 0012 (LTI 1.3)
       accepted
@@ -155,14 +160,17 @@ stale content.
 ### 0.2 Framework upgrade
 - [x] Upgrade plan from Laravel 9 (EOL) to supported Laravel/PHP: order, breaking changes,
       forks/patches needed, risks (docs/plans/phase-0.md: 9 → 10 → 11 → 12 → 13 on PHP 8.4)
-- [ ] Implement after approval with test suite green at every step
-      (steps 1–4 done, step 4 uncommitted — Laravel 13.35 on PHP 8.4 (Passport 13 with data migration for the
+- [x] Implement after approval with test suite green at every step
+      (steps 1–4 done and merged to main in PR #1 — Laravel 13.35 on PHP 8.4 (Passport 13 with data migration for the
       platform and every tenant, Testbench 11, PHPUnit 12; query cache dropped, `treestoneit/shopping-cart` vendored
       as `api/packages/shopping-cart`, Mattermost Laravel wrapper replaced), no new test failures; see
-      docs/plans/phase-0.md B.11–B.14. Tick after the step-4 commit is merged)
-- [ ] (new) Decide on Passport 13's device-code routes (`oauth/device*`, exposed by default, unused): keep or disable
+      docs/plans/phase-0.md B.11–B.14)
+- [x] (new) Decide on Passport 13's device-code routes (`oauth/device*`, exposed by default, unused): keep or disable
+      (disabled, `e6c21b9e`)
 - [ ] (new) Move the `@OA\` docblock annotations (223 files) to PHP attributes and drop the abandoned
       `doctrine/annotations`
+- [ ] (new) Smaller admin and front images: nginx-unprivileged instead of Apache+PHP, with runtime settings
+      injected without PHP (approved 2026-10-09; after Phase 1)
 
 ---
 

@@ -23,11 +23,29 @@ class MultidomainRegistry implements DomainRegistryContract
         $quoted = array_map(fn ($value) => TenantNaming::envValue((string) $value), $values);
 
         $this->call('domain:add', ['domain' => $host, '--domain_values' => json_encode($quoted)]);
+        $this->forgetCachedBootstrap($host);
     }
 
     public function remove(string $host): void
     {
         $this->call('domain:remove', ['domain' => $host, '--force' => true]);
+        $this->forgetCachedBootstrap($host);
+    }
+
+    /**
+     * Cached config, routes and events of the domain (`php artisan optimize --domain=<host>`)
+     * were built from the previous env file: drop them, so the domain reads the new file until
+     * they are cached again (optimize.sh).
+     */
+    public function forgetCachedBootstrap(string $host): void
+    {
+        $sanitized = function_exists('domain_sanitized') ? domain_sanitized($host) : str_replace('.', '_', $host);
+        foreach (['config', 'routes', 'events'] as $name) {
+            $file = $this->app->bootstrapPath('cache/' . $name . '-' . $sanitized . '.php');
+            if (is_file($file)) {
+                @unlink($file);
+            }
+        }
     }
 
     public function isRegistered(string $host): bool
