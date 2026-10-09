@@ -2,7 +2,20 @@
 
 namespace Ulams\Auth;
 
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Routing\Events\RouteMatched;
+use Illuminate\Support\Facades\Event;
+use Laravel\Passport\Passport;
 use Ulams\Auth\Console\Commands\CreateAdminCommand;
+use Ulams\Auth\Console\Commands\ExportTokenScopesCommand;
+use Ulams\Auth\Console\Commands\PruneAgentAuditCommand;
+use Ulams\Auth\Http\Middleware\EnforceTokenScopes;
+use Ulams\Auth\Http\Middleware\RecordAgentAudit;
+use Ulams\Auth\Http\Middleware\StripTokenPrefix;
+use Ulams\Auth\Services\Contracts\PersonalAccessTokenServiceContract;
+use Ulams\Auth\Services\PersonalAccessTokenService;
+use Ulams\Auth\Support\TokenScopes;
 use Ulams\Auth\Providers\AuthServiceProvider;
 use Ulams\Auth\Providers\EventServiceProvider;
 use Ulams\Auth\Providers\SettingsServiceProvider;
@@ -38,6 +51,7 @@ class UlamsAuthServiceProvider extends ServiceProvider
         UserGroupServiceContract::class => UserGroupService::class,
         UserServiceContract::class => UserService::class,
         SocialAccountServiceContract::class => SocialAccountService::class,
+        PersonalAccessTokenServiceContract::class => PersonalAccessTokenService::class,
     ];
 
     public const REPOSITORIES = [
@@ -71,6 +85,16 @@ class UlamsAuthServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
+        // scoped personal access tokens (ADR 0074): Passport only keeps scopes it knows
+        Passport::tokensCan(array_fill_keys(TokenScopes::passportScopes(), 'API token scope'));
+        $kernel = $this->app->make(Kernel::class);
+        if (method_exists($kernel, 'prependMiddleware')) {
+            $kernel->prependMiddleware(StripTokenPrefix::class);
+        }
+        // package routes are not in the `api` group: attach on match (audit wraps the scope check)
+        Event::listen(RouteMatched::class, fn (RouteMatched $e) => $e->route->middleware([RecordAgentAudit::class, EnforceTokenScopes::class]));
+        $this->callAfterResolving(Schedule::class, fn (Schedule $schedule) => $schedule->command('ulams:auth:prune-agent-audit')->daily());
+
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
@@ -82,7 +106,9 @@ class UlamsAuthServiceProvider extends ServiceProvider
             __DIR__ . '/config.php' => config_path(self::CONFIG_KEY . '.php'),
         ], self::CONFIG_KEY . '.config');
         $this->commands([
-            CreateAdminCommand::class
+            CreateAdminCommand::class,
+            ExportTokenScopesCommand::class,
+            PruneAgentAuditCommand::class,
         ]);
     }
 }

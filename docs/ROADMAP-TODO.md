@@ -116,7 +116,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] (new) Replace styled-components with CSS custom properties everywhere (front, its component
       library and the admin markdown editor; blocked by lint; verified with the visual regression harness)
 - [x] (new) Demo content seeder for the three experience courses (`front/docs/design/experiences.md`)
-- [ ] (new) Root README, AGENTS.md and per-package READMEs for the monorepo
+- [x] (new) Root README, AGENTS.md and per-package READMEs for the monorepo
 - [ ] (new) Documentation site (Astro Starlight, `front/docs-site`): guides per audience, reference pages generated from the code, every ADR and the roadmap rendered from `docs/`, coverage check over packages, admin routes, learner routes and topic types, GitHub Pages deploy (partial: on branch `docs/starlight-site`, not merged; Pages source and private vulnerability reporting to be enabled)
 - [ ] (new) Remaining legacy references (partial: `escolalms/php` replaced by a base built in-repo, ReportBro removed and replaced by pdfme): replace the `escolalms/php` and `escolalms/reportbro-server`
       images, decide on upstream provenance links, reword ADR prose, retarget Docker Hub publishing
@@ -216,7 +216,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [x] (new) LiaScript topic type (learners), admin editor with preview and version diff, export/import strategy
       (topic type, Astro `LiaScriptLesson`, admin editor with versions, diff, restore and a live preview of
       unsaved text; course export carries the current text and assets, import creates a new document; ADR 0016)
-- [ ] (new) Run `sh packages/liascript/bin/fetch-player.sh` in the dev api container once (the image build does
+- [x] (new) Run `sh packages/liascript/bin/fetch-player.sh` in the dev api container once (the image build does
       it; the bind mount hides it)
 
 ### 1.2 Adapt Learning
@@ -631,11 +631,11 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Complete published OpenAPI; TS SDK first, PHP second
 - [ ] Stripe-style webhooks (signed, retries, replay, delivery log, test sends, versioned events)
 - [ ] Scoped API keys with rate limits and usage stats
-- [ ] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit
+- [x] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit
       log, `Idempotency-Key`, `X-Request-Id`, `GET /api/meta`; admin "API tokens" page (ADR 0074)
 - [ ] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075; pending #74)
 - [ ] (new) S3 platform tenant API with queued provisioning (ADR 0078; pending #79)
-- [ ] (new) S4 course builder run-status endpoint `GET /api/admin/course-builder/runs/{run}`
+- [x] (new) S4 course builder run-status endpoint `GET /api/admin/course-builder/runs/{run}`
 - [ ] (new) S5 OpenAPI response schemas for the top 60 operations the CLI uses, after L0-11; stable operationIds
 - [ ] `npx create-ulams` / `docker compose up` with seed data
 - [ ] Docs site with runnable examples; free cloud sandbox tenant (partial: Starlight site in `front/docs-site` on branch `docs/starlight-site`; runnable examples and the sandbox tenant pending)
