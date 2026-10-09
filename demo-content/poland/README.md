@@ -68,7 +68,8 @@ number its publisher gives:
 | `gas`, `food`, `jobs`, `air`, `brands` | EU and Germany gas storage, "self-sufficient", unicorn count, essay remarks | removed; the figures that remain keep their publisher |
 | `c-outlook`, `outro` | the outlook chapter | dropped: opinion, not measurement |
 
-Not yet re-checked at the publisher (the research step M8b re-opens every kept link and records the figure,
-period and URL in `FACTCHECK.md`): the figures of `solar`, `flank`, `ai`, `parcels`, `mob`, `pit`, `blik`,
-`travel`, `roaddeaths`, `happy`, `social`, the Kraków coal ban date in `air`, and the quarter of agri-food exports
-outside the EU in `food`.
+Every figure was then re-opened at its publisher (M8b) and the result is in [`FACTCHECK.md`](FACTCHECK.md): which
+wordings were corrected (the NATO operations, the Ax-4 mission, the Kraków air sentence, "nearly 2.8 million"
+containers), which claims were removed because the cited page does not show them (actual individual consumption, the
+Kraków coal ban, "first Pole since 1978", the 32 allies), and which publisher pages could not be read in a script (GAZ-SYSTEM,
+ULC, OpenAI), with the reason each is kept.
