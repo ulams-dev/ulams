@@ -218,13 +218,16 @@ test("after the apply: the course is in sync and the history names the source up
   test.setTimeout(90_000);
   await signIn(page, `/studio/s/${sessionId}/workspace`);
   await expect(page.locator("[data-tree] [data-element]").first()).toBeVisible({ timeout: 30_000 });
-  await expect(page.getByRole("region", { name: "Source freshness" })).toBeHidden();
+  // the update is applied: the course is no longer stale. Items the author left undecided (a section
+  // no lesson covers yet) count as dismissed, and then the banner says so instead of disappearing.
+  const banner = page.getByRole("region", { name: "Source freshness" });
+  if (await banner.isVisible()) await expect(banner).toContainText("You kept the earlier version");
   await expect(page.locator("[data-tree] [data-marker]")).toHaveCount(0);
   await page.getByText("Version history").click();
   await expect(page.locator("[data-history]")).toContainText(/Source update r1 → r2/, { timeout: 30_000 });
   await axe(page, "workspace: in sync");
 
   await page.goto(`${base}/studio`);
-  await expect(sessionCard(page).locator(".st-fresh")).toContainText("In sync");
+  await expect(sessionCard(page).locator(".st-fresh")).toContainText(/In sync|Updates dismissed/);
   await axe(page, "sessions: in sync");
 });

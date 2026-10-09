@@ -231,7 +231,7 @@ export function mountWorkspace(root: HTMLElement): void {
   async function renderHistory(): Promise<void> {
     try {
       const list = await cb.versions.list(sessionId);
-      history.replaceChildren(renderSurface([{ id: "root", component: "VersionList", currentVersionId: list.currentVersionId ?? "", versions: list.versions.map((v) => ({ ...v, reason: v.reason ?? undefined, createdAt: v.createdAt })) } as never], {
+      history.replaceChildren(renderSurface([{ id: "root", component: "VersionList", currentVersionId: list.currentVersionId ?? "", versions: list.versions.map((v) => ({ id: v.id, number: v.number, kind: v.kind, origin: v.origin, status: v.status, reason: v.reason ?? undefined, createdAt: v.createdAt })) } as never], {
         surfaceId: "versions",
         dispatch: () => undefined,
         onRestore: async (id) => {

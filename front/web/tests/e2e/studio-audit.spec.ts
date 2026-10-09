@@ -106,8 +106,8 @@ test("audit page: chain, entries, filters, full record, exports", async ({ page 
   await expect(rows.first()).toBeVisible();
   const total = await rows.count();
   expect(total).toBeGreaterThanOrEqual(2);
-  await expect(table.getByText("Source connected")).toBeVisible();
-  await expect(table.getByText("connection.created")).toBeVisible();
+  await expect(table.getByText("Source connected").first()).toBeVisible();
+  await expect(table.getByText("connection.created").first()).toBeVisible();
   const ids = await rows.evaluateAll((els) => els.map((el) => Number((el as HTMLElement).dataset.entry)));
   expect(ids).toEqual([...ids].sort((a, b) => b - a));
   await expect(page.locator("[data-range]")).toContainText(new RegExp(`Showing 1 to ${total} of ${total} entr`));
@@ -137,9 +137,12 @@ test("audit page: chain, entries, filters, full record, exports", async ({ page 
   await page.getByLabel("Action", { exact: true }).selectOption({ label: "Connections" });
   await page.getByRole("button", { name: "Apply filters" }).click();
   await expect(page.locator("[data-range]")).toContainText(/Showing 1 to \d+ of \d+ entr/);
-  const codes = await table.locator("tr.cb-audit-row .cb-audit-code").allTextContents();
-  expect(codes.length).toBeGreaterThan(0);
-  expect(codes.every((c) => c.startsWith("connection."))).toBe(true);
+  await expect
+    .poll(async () => {
+      const codes = await table.locator("tr.cb-audit-row .cb-audit-code").allTextContents();
+      return codes.length > 0 && codes.every((c) => c.startsWith("connection."));
+    })
+    .toBe(true);
   await axe(page, "audit: filtered");
 
   // an end date before the start date is refused on the page

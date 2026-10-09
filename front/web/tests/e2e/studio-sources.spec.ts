@@ -92,7 +92,7 @@ test("sources page: card, upload a new version, revision diff, same file, reject
 
   // the connection card: upload connector, revision 1 in the course, no changes yet
   const block = page.locator(`[data-source-block="${sourceId}"]`);
-  await expect(block.getByRole("heading", { name: /coffee-brewing/i }).first()).toBeVisible({ timeout: 30_000 });
+  await expect(block.getByRole("heading", { name: /Coffee Brewing/i }).first()).toBeVisible({ timeout: 30_000 });
   await expect(block.getByText("Up to date")).toBeVisible();
   await expect(block.getByText("Upload", { exact: false }).first()).toBeVisible();
   await expect(block.getByText("In your course").first()).toBeVisible();
