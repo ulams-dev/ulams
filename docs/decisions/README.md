@@ -45,3 +45,4 @@ replacement.
 | [0033](0033-never-regenerate-app-key.md) | init.sh never regenerates an existing APP_KEY | Proposed |
 | [0034](0034-quiz-time-limit-setting-key.md) | The quiz time limit default is read from `ulams_gift_quiz.max_quiz_time` | Proposed |
 | [0035](0035-scheduler-minute-lock.md) | The scheduler loop claims each minute with a shared cache lock | Proposed |
+| [0036](0036-ci-covers-web-ui-sdk.md) | CI typechecks, lints and tests the web app, ui and sdk | Proposed |

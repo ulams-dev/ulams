@@ -31,7 +31,7 @@ Permissions are `contents: read`.
   `yarn.lock`, `turbo.json`, `.nvmrc` or `.github/**`;
 - `php`: something changed in `api/**` outside `api/h5p` and `api/pdf`, or in `.github/**`.
 
-**`js` (JS: admin, front, api-h5p, api-pdf)** runs when `js` is true or on manual dispatch:
+**`js` (JS: admin, front, web, ui, sdk, api-h5p, api-pdf)** runs when `js` is true or on manual dispatch:
 
 1. Node from `.nvmrc`, Yarn cache from `actions/setup-node`, `corepack yarn install --frozen-lockfile`.
 2. Licence guard: `yarn workspace front lint:gpl` fails on any `@lumieducation/*` or
@@ -40,12 +40,13 @@ Permissions are `contents: read`.
 3. Prettier check for `admin` (the admin `lint` script runs Prettier with `--write`, which never fails).
 4. Restores the Turborepo cache (`.turbo/cache`, keyed by OS and commit, falling back to the latest).
 5. `turbo run typecheck lint build test --filter=admin --filter=front --filter=api-h5p --filter=api-pdf --concurrency=2`.
+6. `turbo run typecheck lint test --filter=@ulams/web --filter=@ulams/ui --filter=@ulams/sdk --concurrency=2`:
+   the reference frontend and its libraries (type check, lint, unit tests).
 
 <Aside type="caution">
-The `js` job filters on `admin`, `front`, `api-h5p` and `api-pdf` only. `@ulams/sdk`, `@ulams/ui`,
-`@ulams/web` and `@ulams/docs` are not typechecked, linted, built or tested in `ci.yml`. A change
-under `front/web` triggers the job (the path filter matches `front/**`) but runs none of its tasks.
-Run them locally: `corepack yarn turbo run typecheck lint build test --filter=@ulams/web --filter=@ulams/ui --filter=@ulams/sdk`.
+`@ulams/docs` is not built in `ci.yml` (the docs workflow does it), and the Playwright suites of
+`@ulams/web` (end-to-end, visual, accessibility) need the whole stack, so they run locally only:
+`corepack yarn workspace @ulams/web test:e2e`.
 </Aside>
 
 **`php` (PHPUnit, one job per shard)** runs when `php` is true or on manual dispatch. Matrix

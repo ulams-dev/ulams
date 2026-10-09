@@ -79,7 +79,7 @@ jobs:
               - "!api/pdf/**"
 
   js:
-    name: JS (admin, front, api-h5p, api-pdf)
+    name: JS (admin, front, web, ui, sdk, api-h5p, api-pdf)
     needs: changes
     if: needs.changes.outputs.js == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
@@ -130,6 +130,14 @@ jobs:
         run: >-
           corepack yarn turbo run typecheck lint build test
           --filter=admin --filter=front --filter=api-h5p --filter=api-pdf
+          --concurrency=2
+
+      # The reference frontend and its libraries: typecheck, lint and unit tests. Playwright (e2e,
+      # visual, a11y) needs the whole stack and stays out of CI.
+      - name: Typecheck, lint, test (web, ui, sdk)
+        run: >-
+          corepack yarn turbo run typecheck lint test
+          --filter=@ulams/web --filter=@ulams/ui --filter=@ulams/sdk
           --concurrency=2
 
   php:
