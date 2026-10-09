@@ -37,6 +37,14 @@ operations:
   "POST /api/admin/scorm/parse": { id: scorm.parse, upload: { zip: { field: zip, accept: [".zip"] } }, kind: read, idempotent: true }
   "POST /api/admin/cmi5": { id: cmi5.upload, upload: { file: { field: file, accept: [".zip"] } } }
   "POST /api/admin/liascript": { id: liascript.create }
+  # --- interactive packages (topics create-interactive is the usual path, ADR 0086)
+  "POST /api/admin/interactive": { id: interactive.create, upload: { file: { field: file, accept: [".zip"] } }, summary: "Upload an interactive package (.zip with ulams-interactive.json)" }
+  "POST /api/admin/interactive/{id}/versions": { id: interactive.add-version, upload: { file: { field: file, accept: [".zip"] } }, summary: "Upload a new version of an interactive package" }
+  "GET /api/admin/interactive": { id: interactive.list }
+  "GET /api/admin/interactive/{id}": { id: interactive.get }
+  "GET /api/admin/interactive/{id}/versions": { id: interactive.versions }
+  "GET /api/admin/interactive/{id}/preview": { id: interactive.preview }
+  "DELETE /api/admin/interactive/{id}": { id: interactive.delete }
 
   # --- tokens (scoped personal access tokens, ADR 0074)
   "GET /api/auth/tokens": { id: tokens.list }

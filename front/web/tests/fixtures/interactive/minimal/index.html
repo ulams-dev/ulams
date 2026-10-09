@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>E2E package</title></head>
+<body style="font:16px sans-serif;margin:0;padding:16px">
+  <h1 id="step">…</h1>
+  <button id="next" type="button">Next in the package</button>
+  <script type="module">
+    import { connect } from "./vendor/interactive-bridge.js";
+    const ids = ["step-a", "step-b", "step-c"];
+    const names = { "step-a": "Step A", "step-b": "Step B", "step-c": "Step C" };
+    let current = "step-a";
+    const show = (id) => {
+      if (!ids.includes(id)) return;
+      current = id;
+      document.getElementById("step").textContent = names[id];
+      bridge.stepChanged(id);
+      if (id === "step-c") bridge.complete();
+    };
+    const bridge = connect({
+      steps: ids,
+      capabilities: { steps: true, reducedMotion: false },
+      onInit(init) { window.__init = init; show(init.startStep ?? "step-a"); },
+      onGoToStep: show,
+    });
+    document.getElementById("next").addEventListener("click", () => show(ids[Math.min(ids.indexOf(current) + 1, ids.length - 1)]));
+    window.__bridge = bridge;
+  </script>
+</body>
+</html>

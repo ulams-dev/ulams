@@ -13,7 +13,7 @@ const METHODS = ["get", "post", "put", "patch", "delete"];
 
 /** Scope areas by first matching path pattern (plan 6.2). */
 const AREAS = [
-  [/^\/api\/admin\/(courses|lessons|topics|categories|tags|file|scorm|cmi5|liascript|h5p|adapt|gift-|topic-project|video|youtube|images|dictionar|csv\/groups)/, "courses"],
+  [/^\/api\/admin\/(courses|lessons|topics|categories|tags|file|scorm|cmi5|liascript|interactive|h5p|adapt|gift-|topic-project|video|youtube|images|dictionar|csv\/groups)/, "courses"],
   [/^\/api\/admin\/(users|user-groups|user|roles|permissions|csv\/users|user-submissions)/, "users"],
   [/^\/api\/admin\/(course-access-enquiries|consultation-access)/, "enrolments"],
   [/^\/api\/admin\/(settings|config|pages|templates|translations|notifications|bulk-notifications|model-fields|mattermost|mailerlite|events)/, "settings"],

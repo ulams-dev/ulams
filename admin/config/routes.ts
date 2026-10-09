@@ -124,6 +124,21 @@
         hideInMenu: true,
       },
       {
+        path: '/courses/interactive',
+        name: 'Interactive',
+        icon: 'experiment',
+        access: 'interactiveListPermission',
+        component: './Interactive',
+      },
+      {
+        path: '/courses/interactive/:id',
+        name: 'Interactive',
+        icon: 'experiment',
+        access: 'interactiveListPermission',
+        component: './Interactive/editor',
+        hideInMenu: true,
+      },
+      {
         path: '/courses/adapt',
         name: 'Adapt',
         icon: 'build',

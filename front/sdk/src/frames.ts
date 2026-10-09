@@ -39,6 +39,14 @@ export const SANDBOX_H5P = [...BASE, "allow-same-origin", "allow-modals", "allow
  */
 export const SANDBOX_THIRD_PARTY = [...BASE, "allow-same-origin", "allow-modals", "allow-presentation", "allow-popups-to-escape-sandbox"].join(" ");
 
+/**
+ * Interactive packages (ADR 0086): author-uploaded JavaScript on the tenant content origin. The
+ * strictest policy that still runs scripts: no `allow-same-origin` (an opaque origin: no cookies,
+ * storage or same-origin requests to the app), no forms, no modals, no downloads. The package talks to
+ * the lesson page only through the `ulams-ix` bridge (`@ulams/interactive-bridge`) and holds no token.
+ */
+export const SANDBOX_INTERACTIVE = ["allow-scripts", "allow-popups", "allow-popups-to-escape-sandbox"].join(" ");
+
 /** The strictest policy for frames that can run without their own origin (opaque origin). */
 export const SANDBOX_OPAQUE = [...BASE, "allow-modals", "allow-presentation"].join(" ");
 

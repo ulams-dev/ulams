@@ -679,6 +679,54 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/interactive",
+  "summary": "List interactive packages",
+  "tag": "Admin Interactive"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/interactive",
+  "summary": "Upload a package (.zip with ulams-interactive.json)",
+  "tag": "Admin Interactive"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/interactive/{id}",
+  "summary": "Delete a package with all versions and files",
+  "tag": "Admin Interactive"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/interactive/{id}",
+  "summary": "Show a package with its current manifest",
+  "tag": "Admin Interactive"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/interactive/{id}",
+  "summary": "Rename a package",
+  "tag": "Admin Interactive"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/interactive/{id}/preview",
+  "summary": "Admin preview of a version on the content origin (nothing is tracked)",
+  "tag": "Admin Interactive"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/interactive/{id}/versions",
+  "summary": "List versions",
+  "tag": "Admin Interactive"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/interactive/{id}/versions",
+  "summary": "Upload a new version (the manifest id must match)",
+  "tag": "Admin Interactive"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/lessons",
   "summary": "Get a listing of the Lessons.",
   "tag": "Admin Courses"
@@ -2572,6 +2620,18 @@
   "path": "/api/health-check",
   "summary": "Check health of the application",
   "tag": "Api"
+ },
+ {
+  "method": "POST",
+  "path": "/api/interactive/launches/{topic}",
+  "summary": "Start an Interactive topic",
+  "tag": "Interactive"
+ },
+ {
+  "method": "POST",
+  "path": "/api/interactive/topics/{topic}/events",
+  "summary": "Progress events from the lesson page",
+  "tag": "Interactive"
  },
  {
   "method": "POST",

@@ -4,6 +4,7 @@ import {
   AudioOutlined,
   BookOutlined,
   CarryOutOutlined,
+  ExperimentOutlined,
   FileImageOutlined,
   FilePdfOutlined,
   FileTextOutlined,
@@ -21,6 +22,7 @@ import { Button, Divider, Space, Tooltip } from 'antd';
 import { useCallback, useState } from 'react';
 
 import { TopicType } from '@/services/ulams/enums';
+import { isInteractiveEnabled } from '@/services/ulams/interactive';
 import { FormattedMessage, useIntl, useModel } from 'umi';
 import './types.css';
 
@@ -183,6 +185,20 @@ export const TopicTypesSelector: React.FC<{
                 block
                 onClick={() => setSelected(TopicType.LiaScript)}
                 icon={<BookOutlined />}
+              />
+            </Tooltip>
+          )}
+        {!positionsToHide?.includes(TopicType.Interactive) &&
+          !topicTypeIsDisabled(TopicType.Interactive) &&
+          isInteractiveEnabled(initialState?.publicConfig) && (
+            <Tooltip
+              placement="right"
+              title={<FormattedMessage id="Interactive" defaultMessage="Interactive" />}
+            >
+              <Button
+                block
+                onClick={() => setSelected(TopicType.Interactive)}
+                icon={<ExperimentOutlined />}
               />
             </Tooltip>
           )}

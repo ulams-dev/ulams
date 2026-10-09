@@ -3293,6 +3293,67 @@
     ],
     "type": "object"
    },
+   "TopicInteractive": {
+    "properties": {
+     "completion_rule": {
+      "enum": [
+       "on_open",
+       "on_range_end",
+       "on_complete",
+       "on_score"
+      ],
+      "type": "string"
+     },
+     "display": {
+      "enum": [
+       "inline",
+       "background"
+      ],
+      "type": "string"
+     },
+     "end_step": {
+      "nullable": true,
+      "type": "string"
+     },
+     "follow_latest": {
+      "description": "Play the package's current version instead of a pinned one",
+      "type": "boolean"
+     },
+     "height": {
+      "type": "integer"
+     },
+     "id": {
+      "type": "integer"
+     },
+     "pass_score": {
+      "description": "Percentage, for on_score",
+      "nullable": true,
+      "type": "integer"
+     },
+     "start_step": {
+      "nullable": true,
+      "type": "string"
+     },
+     "text": {
+      "description": "Markdown shown beside the frame or over the background",
+      "nullable": true,
+      "type": "string"
+     },
+     "value": {
+      "description": "Interactive package id",
+      "type": "integer"
+     },
+     "version": {
+      "description": "Pinned package version; set to the current one when omitted",
+      "nullable": true,
+      "type": "integer"
+     }
+    },
+    "required": [
+     "value"
+    ],
+    "type": "object"
+   },
    "TopicLiaScript": {
     "properties": {
      "id": {
@@ -9391,6 +9452,304 @@
     "summary": "Delete H5P contents that no topic uses",
     "tags": [
      "Admin H5P"
+    ]
+   }
+  },
+  "/api/admin/interactive": {
+   "get": {
+    "description": "The interactive package library (ADR 0086): uploaded zip packages, versioned and immutable.",
+    "operationId": "4347c5c99bf03763e02139c074b83cf5",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "search",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "per_page",
+      "required": false,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "packages"
+     },
+     "403": {
+      "description": "interactive_manage required"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List interactive packages",
+    "tags": [
+     "Admin Interactive"
+    ]
+   },
+   "post": {
+    "operationId": "e6738266165a8cebf3d479921deae2a2",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "properties": {
+         "accept_network": {
+          "description": "Confirm the manifest's network origins; without it a manifest that lists some answers 422 with errors.network",
+          "type": "boolean"
+         },
+         "change_note": {
+          "type": "string"
+         },
+         "file": {
+          "format": "binary",
+          "type": "string"
+         },
+         "title": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "file"
+        ],
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "package with version 1"
+     },
+     "422": {
+      "description": "rejected upload or invalid manifest"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Upload a package (.zip with ulams-interactive.json)",
+    "tags": [
+     "Admin Interactive"
+    ]
+   }
+  },
+  "/api/admin/interactive/{id}": {
+   "delete": {
+    "operationId": "6c2686f2cc543019eb10d33038bfffc3",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "deleted"
+     },
+     "409": {
+      "description": "topics use this package"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete a package with all versions and files",
+    "tags": [
+     "Admin Interactive"
+    ]
+   },
+   "get": {
+    "operationId": "ded03c93d62d013018bc50eed26c9a68",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "package"
+     },
+     "404": {
+      "description": "not found"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Show a package with its current manifest",
+    "tags": [
+     "Admin Interactive"
+    ]
+   },
+   "put": {
+    "operationId": "56d4fd0a7453862f363bd3d8f802f4f7",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "package"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Rename a package",
+    "tags": [
+     "Admin Interactive"
+    ]
+   }
+  },
+  "/api/admin/interactive/{id}/preview": {
+   "get": {
+    "operationId": "6199536635616ce9d3befccb681f8e4f",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "version",
+      "required": false,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "{url, nonce, version, manifest}"
+     },
+     "503": {
+      "description": "no content origin"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Admin preview of a version on the content origin (nothing is tracked)",
+    "tags": [
+     "Admin Interactive"
+    ]
+   }
+  },
+  "/api/admin/interactive/{id}/versions": {
+   "get": {
+    "operationId": "3a74aeb1eed8404cf85f34db180ca394",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "versions"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List versions",
+    "tags": [
+     "Admin Interactive"
+    ]
+   },
+   "post": {
+    "operationId": "65e64610bd7f7ceb3f0b5520b2c305a1",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "properties": {
+         "change_note": {
+          "type": "string"
+         },
+         "file": {
+          "format": "binary",
+          "type": "string"
+         }
+        },
+        "required": [
+         "file"
+        ],
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "package with the new current version"
+     },
+     "422": {
+      "description": "rejected upload or invalid manifest"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Upload a new version (the manifest id must match)",
+    "tags": [
+     "Admin Interactive"
     ]
    }
   },
@@ -24591,6 +24950,113 @@
     "summary": "Check health of the application",
     "tags": [
      "Api"
+    ]
+   }
+  },
+  "/api/interactive/launches/{topic}": {
+   "post": {
+    "description": "Learners play an Interactive topic from the tenant content origin (ADR 0086). The frame never gets a\ntoken: the lesson page forwards the bridge's events through the front BFF with the learner's session.",
+    "operationId": "f8360ecab4b14a849308fd08ea9726cb",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "topic",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "{url, version, manifest, topic}; url is the entry file on the content origin"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "no access to the course"
+     },
+     "404": {
+      "description": "not an Interactive topic, or the type is switched off"
+     },
+     "503": {
+      "description": "no content origin"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Start an Interactive topic",
+    "tags": [
+     "Interactive"
+    ]
+   }
+  },
+  "/api/interactive/topics/{topic}/events": {
+   "post": {
+    "description": "A batch of at most 40 bridge events (stepChanged, progress, complete, score, event) for the logged-in learner. Completion follows the topic's completion rule.",
+    "operationId": "bd4bcfa788ca76f864bfb81c76fdb712",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "topic",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "events": {
+          "items": {
+           "type": "object"
+          },
+          "type": "array"
+         }
+        },
+        "required": [
+         "events"
+        ],
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "{status, progress}; status 1 means the topic is complete"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "no access to the course"
+     },
+     "404": {
+      "description": "not an Interactive topic"
+     },
+     "422": {
+      "description": "invalid batch"
+     },
+     "429": {
+      "description": "too many requests"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Progress events from the lesson page",
+    "tags": [
+     "Interactive"
     ]
    }
   },

@@ -1,0 +1,32 @@
+{
+  "props": {
+    "src": "https://content.localhost/interactive/0f8c1c3e-4d5b-4a8e-9c0a-1b2c3d4e5f60/v1/index.html",
+    "title": "Too slow: the Sun and a falling Earth",
+    "topicId": 42,
+    "courseId": 7,
+    "display": "background",
+    "height": 640,
+    "startStep": "too-slow",
+    "endStep": "too-slow",
+    "steps": [
+      {
+        "id": "too-slow",
+        "title": "Too slow, it falls in",
+        "text": "Earth moving much slower than its orbital speed falls toward the Sun instead of circling it.",
+        "poster": "https://content.localhost/interactive/0f8c1c3e-4d5b-4a8e-9c0a-1b2c3d4e5f60/v1/posters/too-slow.webp"
+      }
+    ],
+    "text": "Drag the speed slider and watch what happens to the orbit.",
+    "requires": ["webgl"],
+    "reducedMotionSupported": true,
+    "locale": "en",
+    "licence": "MIT",
+    "attribution": "Written by the course authors.",
+    "sourceUrl": "https://example.com/gravity"
+  },
+  "invalid": {
+    "src": "javascript:alert(1)",
+    "title": "Unsafe",
+    "steps": []
+  }
+}

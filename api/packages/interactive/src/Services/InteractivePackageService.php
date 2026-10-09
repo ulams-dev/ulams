@@ -36,9 +36,9 @@ class InteractivePackageService implements InteractivePackageServiceContract
     ) {
     }
 
-    public function create(UploadedFile $zip, ?string $title, ?int $authorId, ?string $note = null): InteractivePackage
+    public function create(UploadedFile $zip, ?string $title, ?int $authorId, ?string $note = null, bool $networkConfirmed = true): InteractivePackage
     {
-        [$manifest, $entries] = $this->inspect($zip);
+        [$manifest, $entries] = $this->inspect($zip, $networkConfirmed);
 
         return DB::transaction(function () use ($zip, $title, $authorId, $note, $manifest, $entries) {
             $package = InteractivePackage::query()->create([
@@ -52,9 +52,9 @@ class InteractivePackageService implements InteractivePackageServiceContract
         });
     }
 
-    public function addVersion(InteractivePackage $package, UploadedFile $zip, ?int $authorId, ?string $note = null): InteractivePackage
+    public function addVersion(InteractivePackage $package, UploadedFile $zip, ?int $authorId, ?string $note = null, bool $networkConfirmed = true): InteractivePackage
     {
-        [$manifest, $entries] = $this->inspect($zip);
+        [$manifest, $entries] = $this->inspect($zip, $networkConfirmed);
 
         return DB::transaction(function () use ($package, $zip, $authorId, $note, $manifest, $entries) {
             /** @var InteractivePackage $locked */
@@ -88,7 +88,7 @@ class InteractivePackageService implements InteractivePackageServiceContract
      *
      * @return array{0: array<string, mixed>, 1: ZipEntry[]}
      */
-    private function inspect(UploadedFile $file): array
+    private function inspect(UploadedFile $file, bool $networkConfirmed): array
     {
         try {
             $this->guard->check($file, self::KIND);
@@ -142,6 +142,10 @@ class InteractivePackageService implements InteractivePackageServiceContract
         }
 
         $manifest = $this->validator->validate($json, array_map(fn (ZipEntry $e) => $e->path, $entries));
+        if (!$networkConfirmed && ($manifest['network'] ?? []) !== []) {
+            // the author sees the origins first and confirms them (ADR 0086); `errors.network` is the list
+            throw ValidationException::withMessages(['network' => array_values($manifest['network'])]);
+        }
 
         return [$manifest, $entries];
     }

@@ -4322,6 +4322,157 @@
         "additionalProperties": false
       }
     },
+    "InteractiveLesson": {
+      "description": "An author-uploaded interactive package (3D scene, map, simulation) in a sandboxed frame on the tenant content origin, inline or as the background of the page, with steps, a text version and the licence. Progress goes through the learner session.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string",
+            "format": "href",
+            "description": "Entry file on the content origin (from POST /api/interactive/launches/{topic})",
+            "maxLength": 2048
+          },
+          "title": {
+            "type": "string",
+            "description": "Title",
+            "maxLength": 160
+          },
+          "topicId": {
+            "type": "integer",
+            "description": "Topic id for the events call (omitted in a preview: nothing is tracked)",
+            "minimum": 0
+          },
+          "courseId": {
+            "type": "integer",
+            "description": "Course id",
+            "minimum": 0
+          },
+          "display": {
+            "type": "string",
+            "enum": [
+              "inline",
+              "background"
+            ],
+            "description": "Inline in the page, or the background of the page with the text over it",
+            "default": "inline"
+          },
+          "height": {
+            "type": "integer",
+            "description": "Frame height px (inline only)",
+            "minimum": 240,
+            "default": 640,
+            "maximum": 2000
+          },
+          "startStep": {
+            "type": "string",
+            "description": "First step of the range this topic plays",
+            "maxLength": 64
+          },
+          "endStep": {
+            "type": "string",
+            "description": "Last step of the range this topic plays",
+            "maxLength": 64
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Step id",
+                  "maxLength": 64
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Step title",
+                  "maxLength": 255
+                },
+                "text": {
+                  "type": "string",
+                  "description": "Text alternative of the step",
+                  "maxLength": 4000
+                },
+                "poster": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Poster image of the step",
+                  "maxLength": 2048
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Steps with their text alternatives and posters",
+            "default": [],
+            "maxItems": 200,
+            "minItems": 1
+          },
+          "text": {
+            "type": "string",
+            "description": "The lesson's own explanation (Markdown)",
+            "maxLength": 20000
+          },
+          "requires": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "webgl"
+              ],
+              "description": "Browser capability the package needs"
+            },
+            "description": "Capabilities the package needs",
+            "default": [],
+            "maxItems": 5
+          },
+          "reducedMotionSupported": {
+            "type": "boolean",
+            "description": "The package handles reduced motion itself",
+            "default": false
+          },
+          "locale": {
+            "type": "string",
+            "description": "Language of the texts",
+            "maxLength": 16,
+            "default": "en"
+          },
+          "licence": {
+            "type": "string",
+            "description": "SPDX licence id",
+            "maxLength": 64
+          },
+          "attribution": {
+            "type": "string",
+            "description": "Attribution line",
+            "maxLength": 1000
+          },
+          "sourceUrl": {
+            "type": "string",
+            "format": "href",
+            "description": "Source code or origin of the package",
+            "maxLength": 2048
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "src",
+          "title",
+          "steps"
+        ],
+        "additionalProperties": false
+      }
+    },
     "ActivityCard": {
       "description": "Launch card for an activity that runs outside the page (cmi5 tracked activity, project hand-in).",
       "children": false,

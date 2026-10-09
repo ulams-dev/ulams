@@ -30,6 +30,7 @@
     "page-manifest": "node --experimental-strip-types --no-warnings scripts/page-manifest.mjs"
   },
   "dependencies": {
+    "@ulams/interactive-bridge": "0.1.0",
     "@ulams/sdk": "0.1.0",
     "diff": "9.0.0",
     "hls.js": "1.7.3",

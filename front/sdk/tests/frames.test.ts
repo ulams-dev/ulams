@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { SANDBOX_H5P, SANDBOX_LIASCRIPT, SANDBOX_OPAQUE, SANDBOX_SCORM, SANDBOX_THIRD_PARTY, frameTargetOrigin, isTrustedFrameMessage } from "../src/frames.ts";
+import { SANDBOX_H5P, SANDBOX_INTERACTIVE, SANDBOX_LIASCRIPT, SANDBOX_OPAQUE, SANDBOX_SCORM, SANDBOX_THIRD_PARTY, frameTargetOrigin, isTrustedFrameMessage } from "../src/frames.ts";
 
 describe("sandbox policies", () => {
   it("the opaque policy never has allow-same-origin or top navigation", () => {
@@ -9,6 +9,18 @@ describe("sandbox policies", () => {
   it.each([SANDBOX_SCORM, SANDBOX_LIASCRIPT, SANDBOX_H5P, SANDBOX_THIRD_PARTY, SANDBOX_OPAQUE])("%s never allows top navigation", (policy) => {
     expect(policy).not.toMatch(/allow-top-navigation/);
     expect(policy).not.toMatch(/allow-popups-to-escape-sandbox.*allow-top/);
+  });
+});
+
+describe("SANDBOX_INTERACTIVE", () => {
+  it("runs scripts in an opaque origin with nothing else", () => {
+    expect(SANDBOX_INTERACTIVE.split(" ").sort()).toEqual(["allow-popups", "allow-popups-to-escape-sandbox", "allow-scripts"]);
+    for (const forbidden of ["allow-same-origin", "allow-forms", "allow-modals", "allow-downloads", "allow-top-navigation", "allow-pointer-lock"]) {
+      expect(SANDBOX_INTERACTIVE).not.toContain(forbidden);
+    }
+  });
+  it("is a strict subset of the opaque policy's scripts-only core", () => {
+    for (const flag of SANDBOX_INTERACTIVE.split(" ")) expect(["allow-scripts", "allow-popups", "allow-popups-to-escape-sandbox"]).toContain(flag);
   });
 });
 

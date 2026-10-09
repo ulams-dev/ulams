@@ -7,6 +7,7 @@ import { durationToMinutes, topicKind, type Course, type Lesson, type Tenant, ty
 import type { UiNode } from "@ulams/ui/render-core";
 import type { ThemeName } from "@ulams/ui/registry";
 import { stripLeadingTitle } from "@ulams/ui/markdown";
+import { interactiveNode, type InteractiveResult } from "./interactive.ts";
 import { FORMAT_BY_KIND, type CourseModel, type SiteModel } from "./view-model.ts";
 
 export const SYLLABUS_VARIANT: Record<ThemeName, "folio" | "timeline" | "missions"> = {
@@ -103,6 +104,8 @@ export interface TopicDocInput {
   cmi5Src?: string | null;
   /** For LiaScript topics: the launch result (see liascriptLaunch). */
   liascript?: { url: string; sections?: number } | { error: string } | null;
+  /** For Interactive topics: the launch (or the author preview) result (see interactiveLaunch). */
+  interactive?: InteractiveResult | null;
   /** For external-tool topics: the LTI launch (see ltiLaunch). */
   lti?: { url: string; presentation: string; tool: string } | { error: string } | null;
   /** Author preview: nothing that records progress runs (quizzes, tracked launches, H5P xAPI). */
@@ -113,7 +116,7 @@ const str = (v: unknown): string | undefined => (typeof v === "string" && v.trim
 const num = (v: unknown): number | undefined => (typeof v === "number" && Number.isFinite(v) ? v : typeof v === "string" && v !== "" && !Number.isNaN(Number(v)) ? Number(v) : undefined);
 
 /** Body of the lesson player for one topic. */
-export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null, cmi5Src = null, liascript = null, lti = null, preview = false }: TopicDocInput): UiNode {
+export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null, cmi5Src = null, liascript = null, interactive = null, lti = null, preview = false }: TopicDocInput): UiNode {
   const kind = topicKind(topic.topicable_type);
   const t = (topic.topicable ?? {}) as Record<string, unknown>;
   const children: UiNode[] = [];
@@ -247,6 +250,18 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
       );
       if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
       break;
+    case "interactive": {
+      children.push(
+        !interactive && preview
+          ? { component: "Callout", props: { tone: "key", title: "Not launched in preview", text: "Learners open this interactive here and it reports their progress. This preview does not launch it, so nothing is recorded." } }
+          : interactiveNode(interactive, { title: topic.title, course, topicId: topic.id, preview })
+      );
+      // the topic's own text still shows when the package cannot be played
+      const own = str(t.text);
+      if (own && (!interactive || "error" in interactive)) children.push({ component: "Prose", props: { markdown: own } });
+      if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
+      break;
+    }
     case "quiz":
       children.push({
         component: "QuizRunner",
@@ -298,13 +313,16 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
 }
 
 /** How a topic gets marked complete in the player. */
-export function completionMode(topic: Topic): "view" | "manual" | "media" | "h5p" | "quiz" {
+export function completionMode(topic: Topic): "view" | "manual" | "media" | "h5p" | "quiz" | "external" {
   switch (topicKind(topic.topicable_type)) {
     case "video":
     case "audio":
       return "media";
     case "h5p":
       return "h5p";
+    case "interactive":
+      // the package completes the topic through the bridge: `ulams:complete` from <ulams-interactive>
+      return "external";
     case "quiz":
       return "quiz";
     case "scorm":

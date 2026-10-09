@@ -26,7 +26,7 @@ class InteractivePackageApiTest extends TestCase
 
     public function testUploadCreatesAPackageWithVersionOneAndStoresTheFiles(): void
     {
-        $data = $this->uploadFixture('steps')->assertCreated()
+        $data = $this->uploadFixture('steps', body: ['accept_network' => 1])->assertCreated()
             ->assertJsonPath('data.title', 'A stepped interactive')
             ->assertJsonPath('data.current_version', 1)
             ->assertJsonPath('data.licence', 'CC-BY-4.0')
@@ -46,6 +46,35 @@ class InteractivePackageApiTest extends TestCase
         $this->assertSame(hash('sha256', "console.log('steps');\n"), $version->files['app.js']['sha256']);
         $this->assertSame(['intro', 'middle', 'last'], $version->stepIds());
         $this->assertGreaterThan(0, $version->total_bytes);
+    }
+
+    public function testAManifestWithNetworkOriginsNeedsTheAuthorsConfirmation(): void
+    {
+        $this->uploadFixture('steps')->assertUnprocessable()->assertJsonPath('errors.network', ['https://tiles.example.com']);
+        $this->assertSame(0, InteractivePackage::query()->count());
+        $this->assertSame([], Storage::disk(config('filesystems.default'))->allFiles('interactive'));
+
+        $id = $this->uploadFixture('steps', body: ['accept_network' => true])->assertCreated()->json('data.id');
+        // a new version asks again; a manifest without origins never does
+        $this->uploadFixture('steps', [], [], [], "/api/admin/interactive/{$id}/versions")->assertUnprocessable()->assertJsonPath('errors.network', ['https://tiles.example.com']);
+        $this->uploadFixture('steps', [], [], [], "/api/admin/interactive/{$id}/versions", ['accept_network' => 1])->assertCreated()->assertJsonPath('data.current_version', 2);
+        $this->uploadFixture('minimal')->assertCreated();
+    }
+
+    public function testTheSamplePackageOfTheFrontendTestsIsAValidPackage(): void
+    {
+        $folder = __DIR__ . '/../../../../../front/web/tests/fixtures/interactive/minimal';
+        if (!is_dir($folder)) {
+            $this->markTestSkipped('front/ is outside the mounted api/ directory');
+        }
+        $entries = ['vendor/interactive-bridge.js' => '/* the bridge */'];
+        foreach (['index.html', 'ulams-interactive.json', 'posters/a.png'] as $file) {
+            $entries[$file] = (string) file_get_contents($folder . '/' . $file);
+        }
+        $zip = $this->makeZip($entries);
+
+        $this->actingAs($this->makeAdmin(), 'api')->post('/api/admin/interactive', ['file' => $this->upload($zip)], ['Accept' => 'application/json'])
+            ->assertCreated()->assertJsonPath('data.manifest.id', 'e2e-minimal')->assertJsonPath('data.licence', 'MIT');
     }
 
     public function testATitleOverridesTheManifestTitle(): void
@@ -84,7 +113,7 @@ class InteractivePackageApiTest extends TestCase
     {
         $admin = $this->makeAdmin();
         $id = $this->uploadFixture('minimal')->json('data.id');
-        $this->uploadFixture('steps');
+        $this->uploadFixture('steps', body: ['accept_network' => 1]);
 
         $this->actingAs($admin, 'api')->putJson("/api/admin/interactive/{$id}", ['title' => 'Renamed'])->assertOk()->assertJsonPath('data.title', 'Renamed');
         $this->actingAs($admin, 'api')->getJson('/api/admin/interactive')->assertOk()->assertJsonPath('meta.total', 2);
