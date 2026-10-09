@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Ulams\LivingCourse\Http\Controllers\AuditController;
+use Ulams\LivingCourse\Http\Controllers\ConnectController;
 use Ulams\LivingCourse\Http\Controllers\ConnectionsController;
 use Ulams\LivingCourse\Http\Controllers\NoticesController;
 use Ulams\LivingCourse\Http\Controllers\ProposalsController;
@@ -33,6 +34,10 @@ Route::group([
     Route::post('proposals/{proposal}/items/{item}/regenerate', [ProposalsController::class, 'regenerate']);
     Route::post('proposals/{proposal}/reanalyse', [ProposalsController::class, 'reanalyse']);
     Route::put('proposals/{proposal}/learner-note', [ProposalsController::class, 'learnerNote']);
+    Route::get('connectors', [ConnectController::class, 'connectors']);
+    Route::post('sessions/{session}/sources/connect', [ConnectController::class, 'connect']);
+    Route::post('connections/{connection}/check', [ConnectController::class, 'check']);
+    Route::post('connections/{connection}/webhook-secret', [ConnectController::class, 'rotateSecret']);
     Route::put('connections/{connection}', [ConnectionsController::class, 'update']);
     Route::delete('connections/{connection}', [ConnectionsController::class, 'destroy']);
     Route::post('proposals/{proposal}/apply', [ProposalsController::class, 'apply']);

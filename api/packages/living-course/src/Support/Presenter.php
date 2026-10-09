@@ -61,6 +61,7 @@ final class Presenter
             'failureCount' => $c->failure_count,
             'lastError' => $c->last_error,
             'secretsSet' => array_keys(array_filter((array) $c->secrets)),
+            'webhookUrl' => $c->connector !== 'upload' ? url('/api/living-course/webhooks/' . $c->webhook_id) : null,
         ];
     }
 

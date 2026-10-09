@@ -27,6 +27,9 @@ use Ulams\CourseBuilder\Pipeline\Llm;
 use Ulams\CourseBuilder\Services\RunService;
 use Ulams\CourseBuilder\Services\SessionState;
 use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
+use Ulams\LivingCourse\Connectors\GitConnector;
+use Ulams\LivingCourse\Connectors\SourceConnectorRegistry;
+use Ulams\LivingCourse\Connectors\UploadConnector;
 use Ulams\LivingCourse\Console\BackfillCommand;
 use Ulams\LivingCourse\Fake\UpdateResponder;
 use Ulams\LivingCourse\Models\Proposal;
@@ -49,6 +52,7 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
         AuditLog::class => AuditLog::class,
         RevisionService::class => RevisionService::class,
         StalenessService::class => StalenessService::class,
+        SourceConnectorRegistry::class => SourceConnectorRegistry::class,
     ];
 
     public function register(): void
@@ -71,6 +75,9 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
         RunService::extend(ApplyService::HANDLER, fn (Run $run, Session $session) => $this->app->make(ApplyService::class)->execute($run, $session));
         RunService::extendRetry(AnalysisService::HANDLER, fn (Step $step) => $this->app->make(AnalysisService::class)->retry($step));
         Llm::extendCost('living-course', fn (Session $session) => ['type' => Proposal::SUBJECT_TYPE, 'ids' => Proposal::query()->where('session_id', $session->id)->pluck('id')->all()]);
+        $registry = $this->app->make(SourceConnectorRegistry::class);
+        $registry->register(new UploadConnector());
+        $registry->register(new GitConnector());
         $this->app->make(PromptRegistry::class)->addPath('living-course', __DIR__ . '/../resources/prompts');
         UpdateResponder::register($this->app->make(FakeResponders::class));
         SessionState::extendSummary('living-course', fn (Session $s) => ['freshness' => $this->app->make(StalenessService::class)->summary($s)]);

@@ -142,13 +142,25 @@ final class RevisionService
         return ['revision' => $revision, 'unchanged' => false];
     }
 
+    /** A file name or repository path as stored under the revision's raw directory. */
+    public static function safeName(string $name): string
+    {
+        return ltrim((string) preg_replace('/[^A-Za-z0-9._\/-]+/', '_', str_replace('..', '_', $name)), '/') ?: 'file';
+    }
+
+    /** Where a file of a revision is stored (null when the revision has no stored files). */
+    public static function rawFilePath(Revision $revision, string $path): ?string
+    {
+        return $revision->markdown_path !== null ? dirname($revision->markdown_path) . '/raw/' . self::safeName($path) : null;
+    }
+
     /**
      * Stores one fetched state of a source: raw files, normalised Markdown and its own copy of
      * every fragment. Connectors call this with the documents they converted. Ids are computed with
      * the source row id, so unchanged heading positions keep their fragment ids.
      *
      * @param ConvertedDocument[] $documents
-     * @param array<int,array{0:string,1:string}> $rawFiles [file name or path, bytes]
+     * @param array<int,array{0:string,1:string,2?:?string}> $rawFiles [file name or path, bytes, remote blob id]
      * @param array<string,mixed> $meta
      * @throws RuntimeException
      */
@@ -166,10 +178,10 @@ final class RevisionService
             $number = (int) Revision::query()->where('source_id', $source->id)->max('number') + 1;
             $dir = trim((string) config('living_course.revisions_prefix'), '/') . "/{$source->id}/{$number}";
             $files = [];
-            foreach ($rawFiles as [$name, $bytes]) {
-                $safe = ltrim((string) preg_replace('/[^A-Za-z0-9._\/-]+/', '_', str_replace('..', '_', $name)), '/') ?: 'file';
-                $disk->put("{$dir}/raw/{$safe}", $bytes);
-                $files[] = ['path' => $name, 'sha256' => hash('sha256', $bytes), 'size' => strlen($bytes)];
+            foreach ($rawFiles as $raw) {
+                [$name, $bytes] = $raw;
+                $disk->put("{$dir}/raw/" . self::safeName($name), $bytes);
+                $files[] = ['path' => $name, 'sha256' => hash('sha256', $bytes), 'size' => strlen($bytes)] + (isset($raw[2]) && $raw[2] !== null ? ['blob' => $raw[2]] : []);
             }
             $markdownPath = "{$dir}/source.md";
             $disk->put($markdownPath, $built['markdown']);
@@ -182,7 +194,7 @@ final class RevisionService
                 'trigger' => $trigger,
                 'triggered_by' => $userId,
                 'status' => 'ingested',
-                'raw_path' => count($files) === 1 ? $dir . '/raw/' . ltrim((string) preg_replace('/[^A-Za-z0-9._\/-]+/', '_', str_replace('..', '_', $files[0]['path'])), '/') : "{$dir}/raw",
+                'raw_path' => count($files) === 1 ? $dir . '/raw/' . self::safeName($files[0]['path']) : "{$dir}/raw",
                 'markdown_path' => $markdownPath,
                 'normalised_sha256' => Normaliser::hash($built['markdown']),
                 'metadata' => $meta + ['title' => $built['meta']['title'] ?? null, 'language' => $built['meta']['language'] ?? null, 'files' => $files, 'sourceMeta' => $built['meta']],
