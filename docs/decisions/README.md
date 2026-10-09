@@ -46,3 +46,4 @@ replacement.
 | [0034](0034-tamper-evident-audit-trail.md) | A tamper-evident audit trail for Living Course | Accepted |
 | [0038](0038-brand-identity-orbital-folio.md) | Brand identity: Orbital Folio, drawn logo, brand tokens, orange as accent only | Proposed |
 | [0039](0039-author-preview-of-draft-courses.md) | Author preview of draft courses on its own routes with the author's token | Proposed |
+| [0040](0040-interactive-preview-in-the-studio.md) | Interactive preview in the studio: learner pages from the blueprint, in a frame | Proposed |

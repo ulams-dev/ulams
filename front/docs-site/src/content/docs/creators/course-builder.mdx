@@ -13,6 +13,8 @@ learnerRoutes:
   - /studio/s/[id]/workspace
   - /studio/s/[id]/landing
   - /studio/s/[id]/done
+  - /studio/s/[id]/preview/[...page]
+  - /studio/s/[id]/frame/[...page]
   - /studio/api/[...path]
   - /preview/courses/[id]
   - /preview/courses/[id]/[topicId]
@@ -75,7 +77,33 @@ The apply card lists what will be created (course, lessons, topics, quiz questio
 and any warnings. Press **Apply to my academy**. The course is created **unpublished**, through the
 same services the admin uses.
 
-## 6. Refine any element by chatting
+## 6. Preview and discuss each element
+
+Press **Preview and discuss** on the success page (or in the workspace) to see the course the way a
+learner will, and talk to the assistant about any part of it. The page at `/studio/s/<session>/preview`
+shows the same course page, lesson player and landing page learners get, built from the current
+version of your course, with the chat in a panel on the right (**Hide chat** collapses it).
+
+- **Select an element.** Hover a part of the page (the course title, a module, a lesson's title, a
+  paragraph, a quiz question, a landing section) and press **Discuss**; with the keyboard, Tab to the
+  **Discuss** button and press Enter. The element is outlined and the chat is now about it. **Esc**
+  in the panel, or **Back to the preview**, returns you to the element.
+- **See the sources.** The panel lists the source passages the element cites; select one to read it.
+- **Ask, then approve.** Type what you want ("make the distractors less obvious"). The proposed
+  change appears in the panel as a **diff** with its citations. Nothing changes until you press
+  **Approve**; **Reject** keeps the current version.
+- **See it change.** After you approve, that element is re-rendered in place and highlighted for a
+  moment, and the course in your academy is updated. **Undo** and **Redo** work from the preview too.
+- **Pages.** Switch between the **Course page**, the **Landing page** and the **Lessons** (the lesson
+  player has the program tree, the quizzes and the final test). Quiz questions show the correct
+  answers so you can discuss them.
+- **Landing sections** (headline, outcomes, syllabus, questions) belong to the course: discussing one
+  changes the course title, subtitle or description. Objectives and the FAQ change with the lessons.
+
+The preview never records progress or quiz attempts. The studio's Preview as learner (below) is the
+plain page without the chat.
+
+## 7. Refine any element by chatting
 
 Open the **Workspace**. Select a lesson or a quiz question in the curriculum tree, then type what you
 want ("make the distractors less obvious", "shorter, with an example"). The assistant proposes the
@@ -84,7 +112,7 @@ change as a **diff**; **Approve** applies it to the course, **Reject** keeps the
 - **Undo** and **Redo** move between versions and update the course.
 - **Version history** lists every version; **Restore** brings an old one back as a new version.
 
-## 7. Preview as a learner
+## 8. Preview as a learner
 
 On the success page, **Preview as learner** opens the course the way learners will see it, even
 while it is still unpublished: the course page at `/preview/courses/<id>` and every lesson under it
@@ -101,7 +129,7 @@ the studio.
 
 The landing page preview links its call to action to the same preview.
 
-## 8. Publish
+## 9. Publish
 
 The success page summarises the course (modules, lessons, minutes, questions, how much is cited,
 AI cost) and links to the course form in the admin, the learner preview and the landing preview.
