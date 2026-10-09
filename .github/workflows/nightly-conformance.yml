@@ -77,6 +77,10 @@ jobs:
           - 6379:6379
     steps:
       - uses: actions/checkout@v7
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - uses: actions/setup-node@v6
         with:
@@ -159,6 +163,10 @@ jobs:
       CACHE_STORE: array
     steps:
       - uses: actions/checkout@v7
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Start Moodle 5.0 (first start installs it, a few minutes)
         run: |

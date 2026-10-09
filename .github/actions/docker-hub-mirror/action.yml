@@ -1,0 +1,36 @@
+name: Docker Hub mirror
+description: >-
+  Pull docker.io images through mirror.gcr.io so CI does not hit the anonymous Docker Hub rate
+  limit (HTTP 429). Configures the runner's Docker daemon (docker build, docker run, docker
+  compose) and, when the repository secrets exist, also logs in to Docker Hub.
+inputs:
+  username:
+    description: Docker Hub username (optional; login is skipped when empty)
+    required: false
+    default: ""
+  token:
+    description: Docker Hub read-only access token (optional)
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - name: Point the Docker daemon at mirror.gcr.io
+      shell: bash
+      run: |
+        set -euo pipefail
+        sudo mkdir -p /etc/docker
+        if [ -s /etc/docker/daemon.json ]; then
+          jq '. + {"registry-mirrors": ["https://mirror.gcr.io"]}' /etc/docker/daemon.json | sudo tee /etc/docker/daemon.json.new >/dev/null
+          sudo mv /etc/docker/daemon.json.new /etc/docker/daemon.json
+        else
+          echo '{"registry-mirrors":["https://mirror.gcr.io"]}' | sudo tee /etc/docker/daemon.json >/dev/null
+        fi
+        sudo systemctl restart docker
+        docker info --format 'registry mirrors: {{.RegistryConfig.Mirrors}}'
+    - name: Log in to Docker Hub (only when credentials are configured)
+      if: inputs.username != '' && inputs.token != ''
+      uses: docker/login-action@v4
+      with:
+        username: ${{ inputs.username }}
+        password: ${{ inputs.token }}

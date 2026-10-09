@@ -409,6 +409,10 @@ jobs:
             prefix: VITE_APP_
     steps:
       - uses: actions/checkout@v7
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build
         run: docker build -f ${{ matrix.name }}/Dockerfile -t smoke-${{ matrix.name }} .
       - name: Start, request and check
@@ -439,6 +443,19 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
+      # `docker run` falls back to docker.io when the daemon mirror is skipped; pull through the
+      # mirror explicitly and retag, so validate.sh finds the images locally.
+      - name: Pre-pull the validation images through the mirror
+        run: |
+          images=$(grep -oE '(caddy:[0-9.]+-alpine|cloudflare/cloudflared:[0-9.]+)' deploy/vps-cloudflare/compose.yml | sort -u)
+          for img in $images koalaman/shellcheck:stable; do
+            case "$img" in */*) src="mirror.gcr.io/$img" ;; *) src="mirror.gcr.io/library/$img" ;; esac
+            docker pull "$src" && docker tag "$src" "$img"
+          done
       - run: deploy/vps-cloudflare/scripts/validate.sh
 
   ci-ok:
