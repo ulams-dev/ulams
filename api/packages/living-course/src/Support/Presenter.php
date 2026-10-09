@@ -129,6 +129,7 @@ final class Presenter
             'counts' => $p->counts,
             'fromRevision' => $from ? ['id' => $from->id, 'number' => $from->number] : null,
             'toRevision' => $to ? ['id' => $to->id, 'number' => $to->number, 'detectedAt' => $to->detected_at?->toIso8601String()] : null,
+            'runId' => $p->run_id,
             'baseVersionId' => $p->base_version_id,
             'resultVersionId' => $p->result_version_id,
             'estimatedCostMicroUsd' => $p->estimated_cost_micro_usd,

@@ -236,6 +236,7 @@ class ProposalsController extends Controller
         }
 
         return Presenter::proposalSummary($p) + [
+            'steps' => $p->run_id ? \Ulams\CourseBuilder\Models\Step::query()->where('run_id', $p->run_id)->orderBy('key')->get()->map(fn ($st) => ['id' => $st->id, 'groupKey' => str_starts_with($st->key, 'group:') ? substr($st->key, 6) : $st->key, 'status' => $st->status, 'error' => $st->error])->all() : [],
             'groups' => array_values($groups),
             'items' => $items->map(fn (ProposalItem $i) => Presenter::item($i, $labels))->all(),
         ];
