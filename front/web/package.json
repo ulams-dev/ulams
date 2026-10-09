@@ -17,7 +17,7 @@
     "perf": "node tests/perf/measure.mjs"
   },
   "dependencies": {
-    "@astrojs/node": "9.5.5",
+    "@astrojs/node": "11.1.7",
     "@ulams/sdk": "0.1.0",
     "@ulams/ui": "0.1.0",
     "astro": "5.18.2",
