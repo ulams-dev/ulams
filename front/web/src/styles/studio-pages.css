@@ -458,6 +458,27 @@
   color: var(--ulams-studio-muted);
 }
 .st-banner {
+/* interactive preview: the course in a frame, the element chat on the right */
+.st-pv {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  min-height: calc(100vh - 60px);
+}
+.st-pv[data-panel="closed"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+.st-pv-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 20px;
+  min-width: 0;
+  border-right: 1px solid var(--ulams-studio-line);
+}
+.st-pv[data-panel="closed"] .st-pv-stage {
+  border-right: 0;
+}
+.st-pv-bar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -963,4 +984,84 @@
 .cb-apply .cb-table th,
 .cb-apply .cb-table td {
   overflow-wrap: anywhere;
+}
+}
+.st-pv-bar h1 {
+  margin: 0;
+}
+.st-pv-bar .st-toolbar {
+  margin: 0 0 0 auto;
+}
+.st-pv-tabs {
+  display: flex;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.st-pv-tabs a {
+  display: block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  color: var(--ulams-studio-ink);
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+.st-pv-tabs a[aria-current="page"] {
+  background: var(--ulams-studio-iris-soft);
+  color: var(--ulams-studio-iris);
+  font-weight: 600;
+  border-color: var(--ulams-studio-iris);
+}
+.st-pv-version {
+  font-size: 0.8rem;
+  color: var(--ulams-studio-muted);
+}
+.st-pv-hint {
+  margin: 0;
+}
+.st-pv-frame {
+  flex: 1;
+  width: 100%;
+  min-height: 70vh;
+  border: 1px solid var(--ulams-studio-line);
+  border-radius: 12px;
+  background: #fff;
+}
+.st-pv-panel {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  position: sticky;
+  top: 60px;
+  align-self: start;
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+.st-pv-panel[hidden] {
+  display: none;
+}
+.st-pv-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+}
+.st-pv .st-composer {
+  position: static;
+  grid-template-columns: 1fr;
+}
+@media (max-width: 1100px) {
+  .st-pv {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .st-pv-panel {
+    position: static;
+    max-height: none;
+    border-top: 1px solid var(--ulams-studio-line);
+  }
 }

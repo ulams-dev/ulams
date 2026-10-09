@@ -8,6 +8,8 @@
 import { readFileSync } from "node:fs";
 import { relative } from "node:path";
 import { parse as parseYaml } from "yaml";
+import { pathToFileURL } from "node:url";
+import { join } from "node:path";
 import { DOCS_DIR, isDir, list, read, walk, ROOT } from "./lib.mjs";
 
 const APPS = {
@@ -16,6 +18,7 @@ const APPS = {
   front: "front (React learner app, legacy)",
   web: "front/web (Astro reference frontend)",
   sdk: "front/sdk (@ulams/sdk)",
+  cli: "front/cli (ulams CLI and MCP server)",
   ui: "front/ui (@ulams/ui)",
   "api-h5p": "api/h5p (H5P service)",
   "api-pdf": "api/pdf (PDF service)",
@@ -51,6 +54,12 @@ export function inventory() {
     }
   }
   return { modules, adminRoutes, learnerRoutes, topicTypes };
+}
+
+/** UI catalogue components (front/ui/src/registry.ts); each needs front/ui/catalogue/examples/<Name>.json for the playground. */
+export async function catalogueComponents() {
+  const mod = await import(pathToFileURL(join(ROOT, "front/ui/src/registry.ts")).href);
+  return Object.keys(mod.registry);
 }
 
 export function pages() {
@@ -104,6 +113,25 @@ if (isMain) {
     else if (!p.data.description || String(p.data.description).trim().length < 20)
       problems.push(`${p.file}: missing or too short description`);
   }
+  // The component playground (ADR 0054) renders each catalogue component from an example file.
+  const components = await catalogueComponents();
+  const exampleFiles = list("front/ui/catalogue/examples").filter((f) => f.endsWith(".json"));
+  const withExample = components.filter((c) => exampleFiles.includes(`${c}.json`));
+  console.log(`coverage: catalogue examples ${withExample.length}/${components.length}`);
+  for (const c of components) {
+    if (!exampleFiles.includes(`${c}.json`)) problems.push(`component "${c}" has no example (front/ui/catalogue/examples/${c}.json), so the playground cannot render it`);
+    else {
+      try {
+        const example = JSON.parse(read(`front/ui/catalogue/examples/${c}.json`));
+        if (!example.props || typeof example.props !== "object" || !example.invalid || typeof example.invalid !== "object")
+          problems.push(`front/ui/catalogue/examples/${c}.json needs "props" (valid) and "invalid" (props that fail the schema)`);
+      } catch (e) {
+        problems.push(`front/ui/catalogue/examples/${c}.json is not valid JSON (${e.message})`);
+      }
+    }
+  }
+  for (const f of exampleFiles) if (!components.includes(f.slice(0, -5))) problems.push(`front/ui/catalogue/examples/${f} matches no catalogue component`);
+
   if (process.argv.includes("--report")) {
     const review = written.filter((p) => p.data.needsReview);
     const coming = written.filter((p) => p.data.coming);

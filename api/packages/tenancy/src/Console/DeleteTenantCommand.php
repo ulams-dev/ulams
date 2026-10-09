@@ -5,6 +5,7 @@ namespace Ulams\Tenancy\Console;
 use Illuminate\Console\Command;
 use Throwable;
 use Ulams\Tenancy\Models\Tenant;
+use Ulams\Tenancy\Models\TenantUpgradeStep;
 use Ulams\Tenancy\Services\TenantProvisioner;
 use Ulams\Tenancy\Support\RedisKeyPurger;
 use Ulams\Tenancy\Support\TenantContext;
@@ -44,6 +45,7 @@ class DeleteTenantCommand extends Command
 
             return self::FAILURE;
         }
+        TenantUpgradeStep::query()->where('target', $tenant->slug)->delete();
         $tenant->delete();
         $this->info("Deleted tenant {$tenant->slug}.");
 

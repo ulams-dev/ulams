@@ -1,0 +1,23 @@
+{
+  "props": {
+    "gap": "md"
+  },
+  "invalid": {
+    "gap": "huge"
+  },
+  "children": [
+    {
+      "component": "Prose",
+      "props": {
+        "markdown": "Brewing is **extraction**: water dissolves flavour from the grounds.\n\n- Grind sets the surface area\n- Time and temperature set the speed"
+      }
+    },
+    {
+      "component": "Callout",
+      "props": {
+        "tone": "tip",
+        "text": "Taste before you adjust."
+      }
+    }
+  ]
+}

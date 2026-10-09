@@ -18,6 +18,8 @@ learnerRoutes:
   - /studio/s/[id]/updates
   - /studio/s/[id]/updates/[proposal]
   - /studio/s/[id]/audit
+  - /studio/s/[id]/preview/[...page]
+  - /studio/s/[id]/frame/[...page]
   - /studio/api/[...path]
   - /preview/courses/[id]
   - /preview/courses/[id]/[topicId]
@@ -80,7 +82,33 @@ The apply card lists what will be created (course, lessons, topics, quiz questio
 and any warnings. Press **Apply to my academy**. The course is created **unpublished**, through the
 same services the admin uses.
 
-## 6. Refine any element by chatting
+## 6. Preview and discuss each element
+
+Press **Preview and discuss** on the success page (or in the workspace) to see the course the way a
+learner will, and talk to the assistant about any part of it. The page at `/studio/s/<session>/preview`
+shows the same course page, lesson player and landing page learners get, built from the current
+version of your course, with the chat in a panel on the right (**Hide chat** collapses it).
+
+- **Select an element.** Hover a part of the page (the course title, a module, a lesson's title, a
+  paragraph, a quiz question, a landing section) and press **Discuss**; with the keyboard, Tab to the
+  **Discuss** button and press Enter. The element is outlined and the chat is now about it. **Esc**
+  in the panel, or **Back to the preview**, returns you to the element.
+- **See the sources.** The panel lists the source passages the element cites; select one to read it.
+- **Ask, then approve.** Type what you want ("make the distractors less obvious"). The proposed
+  change appears in the panel as a **diff** with its citations. Nothing changes until you press
+  **Approve**; **Reject** keeps the current version.
+- **See it change.** After you approve, that element is re-rendered in place and highlighted for a
+  moment, and the course in your academy is updated. **Undo** and **Redo** work from the preview too.
+- **Pages.** Switch between the **Course page**, the **Landing page** and the **Lessons** (the lesson
+  player has the program tree, the quizzes and the final test). Quiz questions show the correct
+  answers so you can discuss them.
+- **Landing sections** (headline, outcomes, syllabus, questions) belong to the course: discussing one
+  changes the course title, subtitle or description. Objectives and the FAQ change with the lessons.
+
+The preview never records progress or quiz attempts. The studio's Preview as learner (below) is the
+plain page without the chat.
+
+## 7. Refine any element by chatting
 
 Open the **Workspace**. Select a lesson or a quiz question in the curriculum tree, then type what you
 want ("make the distractors less obvious", "shorter, with an example"). The assistant proposes the
@@ -92,7 +120,7 @@ appears at the same moment.
 - **Undo** and **Redo** move between versions and update the course.
 - **Version history** lists every version; **Restore** brings an old one back as a new version.
 
-## 7. Preview as a learner
+## 8. Preview as a learner
 
 On the success page, **Preview as learner** opens the course the way learners will see it, even
 while it is still unpublished: the course page at `/preview/courses/<id>` and every lesson under it
@@ -109,13 +137,13 @@ the studio.
 
 The landing page preview links its call to action to the same preview.
 
-## 8. Publish
+## 9. Publish
 
 The success page summarises the course (modules, lessons, minutes, questions, how much is cited,
 AI cost) and links to the course form in the admin, the learner preview and the landing preview.
 **Publish course** makes it available to learners.
 
-## 9. Keep the course in sync with its sources
+## 10. Keep the course in sync with its sources
 
 Once the course exists, the **Sources** page (in the left navigation) shows each source of the
 course: its name and type, how it is connected (**Upload**, **Git repository** or **Web page**), a status (**Up to date** or **New version
@@ -137,7 +165,7 @@ available**), the revision your course reflects (**In your course**) and the lat
 Uploading a new version does not change your course. The course keeps reading from the revision it
 reflects until you accept updates.
 
-## 10. See what is out of date
+## 11. See what is out of date
 
 When a source changes, the course is marked **stale** until you decide what to do with the change.
 The marks always use words and an icon, never colour alone:
@@ -150,7 +178,7 @@ The marks always use words and an icon, never colour alone:
   §3.2 Ratios, changed 3 days ago".
 - Staleness works without AI: it only needs the source to have changed.
 
-## 11. Review an update
+## 12. Review an update
 
 **Updates** (in the left navigation) lists every update proposal for the course, newest first, with
 the source revisions it compares, its status, how many elements and quiz answers it touches, how
@@ -188,7 +216,7 @@ version of the course (named "Source update r1 → r2" in the version history) a
 have done. If you edited elements after the analysis, the apply stops and lists them; if elements
 were edited in the admin after the last apply, you confirm **Overwrite and apply**.
 
-## 12. What learners see after an update
+## 13. What learners see after an update
 
 Applying an update never changes what a learner has done: completion, scores and attempts stay as
 they are, and nobody is graded again. Learners are told what is different:
@@ -223,7 +251,7 @@ You see this before you apply, on the review page, in the **Learners** panel und
   question and the extra attempt are always sent. **Show that an update is under review** (off by
   default) controls the marker on the course page. A switch is saved as soon as you change it.
 
-## 13. See who decided what
+## 14. See who decided what
 
 **Audit** (in the left navigation) is the trail of everything that happened to the course and its
 sources: a source was connected or changed, a new revision was found, an update proposal was
@@ -246,7 +274,7 @@ the system in the same step as the change, it can only grow, and nobody can edit
   only the one on screen), for audits and compliance reviews. Spreadsheet cells that would start a
   formula are neutralised.
 
-## 13. Connect a repository or web pages
+## 15. Connect a repository or web pages
 
 Instead of a file you can follow a **Git repository** or a set of **web pages**. The course then keeps
 reading from the source on its own: a new commit or a changed page becomes a new revision, and the

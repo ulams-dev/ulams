@@ -80,6 +80,22 @@ class ContentOriginHeadersConfigTest extends TestCase
     }
 
     #[DataProvider('caddyfiles')]
+    public function testCmi5AusMayCallOnlyTheLrsAndTheFetchEndpointWithoutCookies(string $path): void
+    {
+        $caddyfile = $this->read($path);
+
+        $this->assertSame(1, preg_match('/@cmi5 path (.*)\n/', $caddyfile, $m));
+        // a `*` does not cross a `/`: statements are one segment, state and profiles are two
+        $this->assertSame('/api/cmi5/fetch /trax/api/*/xapi/std/* /trax/api/*/xapi/std/*/*', trim($m[1]));
+        $this->assertSame(1, preg_match('/handle @cmi5 \{\n\s*request_header -Cookie\n\s*header Access-Control-Allow-Origin \*\n/', $caddyfile));
+        // the session token travels in Authorization, so it is not dropped here, and the preflight
+        // names the header explicitly (a wildcard does not cover it)
+        $block = substr($caddyfile, (int) strpos($caddyfile, 'handle @cmi5 {'), 1400);
+        $this->assertStringNotContainsString('request_header -Authorization', $block);
+        $this->assertMatchesRegularExpression('/Access-Control-Allow-Headers "[^"]*Authorization[^"]*X-Experience-API-Version/', $caddyfile);
+    }
+
+    #[DataProvider('caddyfiles')]
     public function testTheFrontsRefuseNoCorsEmbeddingOfTheirJson(string $path): void
     {
         $caddyfile = $this->read($path);

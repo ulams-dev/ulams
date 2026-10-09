@@ -144,6 +144,10 @@ enum PERMISSIONS {
   CourseExportAuthored = 'course-import-export_export_authored',
   COURSES_CLONE = 'course-import-export_clone',
 
+  /* -------- Ulams/Auth: scoped API tokens -------- */
+
+  TokenManage = 'token_manage',
+
   /* -------- Ulams/Permissions -------- */
 
   PermissionRoleManage = 'permission_role_manage',
@@ -203,10 +207,6 @@ enum PERMISSIONS {
   StationaryEventsUpdate = 'stationary-event_update',
   StationaryEventsRead = 'stationary-event_read',
   StationaryEventsDelete = 'stationary-event_delete',
-
-  /* -------- Ulams/Tracker -------- */
-
-  TrackerList = 'tracker_route-list',
 
   /* -------- Ulams/Vouchers -------- */
 

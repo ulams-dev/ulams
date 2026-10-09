@@ -109,6 +109,18 @@ redeploy. Secret keys are stored but not exposed publicly. See [Settings](/admin
 
 Payment statuses: `new`, `redirect`, `paid`, `failed`, `cancelled`, `refunded`.
 
+### Stripe webhook and 3-D Secure
+
+Stripe confirms payments to `POST /api/payments-gateways/webhook/stripe` on the API host (one URL
+per Stripe account). In the Stripe dashboard, add an endpoint with that URL and subscribe it to
+`payment_intent.succeeded`, `payment_intent.payment_failed` and `payment_intent.canceled`. Copy the
+endpoint's signing secret (`whsec_...`) into `PAYMENTS_STRIPE_WEBHOOK_SECRET` (or the administrable
+`ulams_payments.drivers.stripe.webhook_secret` setting). Without the secret the webhook answers 400
+and only the `payment_intent` returned on the checkout redirect can confirm a payment.
+
+When the card needs 3-D Secure, `POST /api/cart/pay` returns a `redirect_url` in `data`. The legacy
+learner front sends the browser to that URL; the return goes to the `return_url` of the request.
+
 ## How a purchase grants access today
 
 <Steps>

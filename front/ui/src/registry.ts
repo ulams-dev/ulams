@@ -129,6 +129,7 @@ export const IMAGE: JsonSchema = obj(
   ["src", "alt", "width", "height"],
   "An image with explicit size (prevents layout shift)"
 );
+export const WORKFLOW_KINDS = ["prompt", "cmd", "cont", "agent", "out", "spin", "tool", "add", "del", "ctx", "note", "user", "assistant", "card"] as const;
 const FORMAT = oneOf(FORMATS, "Learning format of a topic");
 const ICON = oneOf(ICONS, "Icon from the catalogue's icon set");
 const TONE = oneOf(["neutral", "ok", "warn", "alert", "info"], "Semantic colour", "neutral");
@@ -648,6 +649,159 @@ export const registry = {
       ["items"]
     ),
     fallback: (p) => join(p.title, ...titles(p.items)),
+  },
+  WorkflowShowcase: {
+    description:
+      "Tabs of realistic windows (a terminal, an agent session, a chat with tool calls, an API call, the studio) whose commands and answers are typed line by line, to show that the product can be run from agents and the command line as well as the UI. Each tab may carry a status badge; unbuilt interfaces must be labelled.",
+    category: "section",
+    interactive: true,
+    children: false,
+    props: obj(
+      {
+        eyebrow: EYEBROW,
+        title: TITLE,
+        intro: INTRO,
+        valueLine: text("One line of value copy under the tabs", { maxLength: 200 }),
+        description: text("Text alternative of the whole animation for screen readers", { maxLength: 600 }),
+        footnote: text("Small print under the tabs, e.g. that some commands are the planned interface", { maxLength: 300 }),
+        legal: text("Trademark line, e.g. that product names belong to their owners and are not endorsements", { maxLength: 300 }),
+        tabs: list(
+          obj(
+            {
+              key: text("Stable key (letters, digits, dashes)", { maxLength: 24 }),
+              label: text("Tab label", { maxLength: 24 }),
+              status: oneOf(["available", "preview", "coming"], "Status badge; omit when everything shown exists"),
+              window: oneOf(["terminal", "chat", "studio"], "Look of the window frame", "terminal"),
+              title: text("Window title", { maxLength: 60 }),
+              caption: text("One line under the window", { maxLength: 200 }),
+              note: text("Honest note under the caption, e.g. what the example depends on", { maxLength: 200 }),
+              lines: list(
+                obj(
+                  {
+                    kind: oneOf(WORKFLOW_KINDS, "Line type: typed (prompt, cmd, cont, agent, user, assistant) or shown whole"),
+                    text: text("The line", { maxLength: 400 }),
+                    args: text("Tool arguments, or the buttons of a card separated by |", { maxLength: 200 }),
+                    result: text("Short tool result shown after the call", { maxLength: 120 }),
+                  },
+                  ["kind", "text"]
+                ),
+                "Lines, in order",
+                { minItems: 1, maxItems: 30 }
+              ),
+            },
+            ["key", "label", "title", "lines"]
+          ),
+          "Tabs",
+          { minItems: 1, maxItems: 6 }
+        ),
+      },
+      ["tabs"]
+    ),
+    fallback: (p) => join(p.title, p.intro, ...titles(p.tabs, "label")),
+  },
+  LivingCourseStory: {
+    description:
+      "A looping three-beat animation: a source document changes, ulams finds every lesson and quiz question that cites it, and an approved proposal updates the lesson while learner progress is kept. Example values only.",
+    category: "section",
+    interactive: true,
+    children: false,
+    props: obj(
+      {
+        eyebrow: EYEBROW,
+        title: TITLE,
+        intro: INTRO,
+        status: oneOf(["available", "coming"], "Roadmap label under the heading; omit when the feature exists"),
+        valueLine: text("One line of value copy under the animation", { maxLength: 200 }),
+        description: text("Text alternative of the whole animation for screen readers", { maxLength: 600 }),
+        beats: list(obj({ title: text("Beat title", { maxLength: 60 }), text: text("One-line caption", { maxLength: 140 }) }, ["title", "text"]), "Exactly three beats", {
+          minItems: 3,
+          maxItems: 3,
+        }),
+        source: obj(
+          {
+            file: text("Source file name", { maxLength: 60 }),
+            heading: text("Heading line of the source", { maxLength: 80 }),
+            context: text("An unchanged line", { maxLength: 120 }),
+            lead: text("Text of the edited line before the value", { maxLength: 80 }),
+            before: text("Old value", { maxLength: 24 }),
+            after: text("New value", { maxLength: 24 }),
+            added: text("A new line typed after the edit", { maxLength: 120 }),
+          },
+          ["file", "lead", "before", "after", "added"]
+        ),
+        lesson: obj(
+          {
+            title: text("Lesson title", { maxLength: 80 }),
+            lead: text("Lesson sentence before the value", { maxLength: 120 }),
+            citation: text("Citation chip of the sentence", { maxLength: 40 }),
+            question: text("Quiz question", { maxLength: 160 }),
+            questionCite: text("Citation chip of the question", { maxLength: 40 }),
+          },
+          ["title", "lead", "citation", "question", "questionCite"]
+        ),
+        proposal: obj(
+          { title: text("Proposal card title", { maxLength: 80 }), approve: text("Approve button", { maxLength: 24 }), done: text("Badge after approval", { maxLength: 60 }) },
+          ["title", "approve", "done"]
+        ),
+      },
+      ["description", "beats", "source", "lesson", "proposal"]
+    ),
+    fallback: (p) => join(p.title, p.intro, p.description),
+  },
+  BuilderStory: {
+    description:
+      "A looping animation of the studio course builder: a document drops in, interview answers appear, an outline grows with a source chip per lesson, a lesson streams in with citations, a quiz question cites its source, a running cost ticks (example values) and Apply publishes the course.",
+    category: "section",
+    interactive: true,
+    children: false,
+    props: obj(
+      {
+        eyebrow: EYEBROW,
+        title: TITLE,
+        intro: INTRO,
+        valueLine: text("One line of value copy under the animation", { maxLength: 200 }),
+        description: text("Text alternative of the whole animation for screen readers", { maxLength: 600 }),
+        windowTitle: text("Window title", { maxLength: 60 }),
+        file: obj({ name: text("File name", { maxLength: 60 }), label: text("Small label", { maxLength: 30 }) }, ["name"]),
+        interview: list(obj({ question: text("Question", { maxLength: 30 }), answer: text("Answer", { maxLength: 30 }) }, ["question", "answer"]), "Interview answers", {
+          minItems: 1,
+          maxItems: 4,
+        }),
+        outline: list(
+          obj(
+            {
+              title: text("Module title", { maxLength: 60 }),
+              lessons: list(obj({ title: text("Lesson title", { maxLength: 60 }), source: text("Source chip", { maxLength: 30 }) }, ["title", "source"]), "Lessons", {
+                minItems: 1,
+                maxItems: 4,
+              }),
+            },
+            ["title", "lessons"]
+          ),
+          "Modules",
+          { minItems: 1, maxItems: 4 }
+        ),
+        lesson: obj(
+          {
+            title: text("Lesson shown streaming in", { maxLength: 60 }),
+            text: text("Its text", { maxLength: 240 }),
+            citations: list(text("Citation chip", { maxLength: 30 }), "Citation chips", { maxItems: 3 }),
+          },
+          ["title", "text"]
+        ),
+        quiz: obj({ question: text("Quiz question", { maxLength: 120 }), source: text("Source chip", { maxLength: 30 }) }, ["question", "source"]),
+        cost: obj(
+          { label: text("Counter label", { maxLength: 30 }), amount: { type: "number", description: "Final amount shown (an example)", minimum: 0 }, note: text("Note, e.g. 'example run'", { maxLength: 60 }) },
+          ["label", "amount"]
+        ),
+        apply: obj(
+          { label: text("Apply button", { maxLength: 24 }), publishedTitle: text("Published course title", { maxLength: 60 }), publishedMeta: text("Facts after the title", { maxLength: 80 }) },
+          ["label", "publishedTitle", "publishedMeta"]
+        ),
+      },
+      ["description", "file", "interview", "outline", "lesson", "quiz", "cost", "apply"]
+    ),
+    fallback: (p) => join(p.title, p.intro, p.description),
   },
   ComparisonTable: {
     description:

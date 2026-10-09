@@ -23,7 +23,7 @@ class EnforceTrustedOriginTest extends TestCase
         $this->app['env'] = 'production';
 
         foreach (['api/test/write', 'api/admin/course-builder/sessions', 'api/admin/files/upload',
-            'api/scorm/content/abc/track', 'api/liascript/progress/5', 'api/lti/tool/launch',
+            'api/scorm/content/abc/track', 'api/liascript/progress/5', 'api/cmi5/fetch', 'api/lti/tool/launch',
             'api/payments-gateways/webhook/stripe'] as $uri) {
             Route::any($uri, fn () => response()->json(['ok' => true]));
         }
@@ -102,7 +102,7 @@ class EnforceTrustedOriginTest extends TestCase
         $this->call('POST', 'api/admin/files/upload', [], [], [], ['HTTP_ORIGIN' => 'null'])->assertForbidden();
 
         // the sandboxed players authenticate with their scoped tracking token, not with cookies
-        foreach (['api/scorm/content/abc/track', 'api/liascript/progress/5', 'api/lti/tool/launch', 'api/payments-gateways/webhook/stripe'] as $uri) {
+        foreach (['api/scorm/content/abc/track', 'api/liascript/progress/5', 'api/cmi5/fetch', 'api/lti/tool/launch', 'api/payments-gateways/webhook/stripe'] as $uri) {
             $this->call('POST', $uri, [], [], [], ['HTTP_ORIGIN' => 'null'])->assertOk();
             $this->call('POST', $uri, [], [], [], ['HTTP_ORIGIN' => self::CONTENT])->assertOk();
         }

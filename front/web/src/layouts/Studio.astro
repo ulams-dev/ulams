@@ -15,7 +15,7 @@ interface Props {
   /** Status pill text (e.g. "Draft · not published"). */
   status?: string;
   sessionId?: string | null;
-  active?: "builder" | "workspace" | "done" | "sessions" | "sources" | "updates" | "audit";
+  active?: "builder" | "workspace" | "preview" | "done" | "sessions" | "sources" | "updates" | "audit";
   /** The session has a course: updates can be proposed for it. */
   hasCourse?: boolean;
 }
@@ -27,6 +27,7 @@ const nav = [
     ? [
         { key: "builder", href: `/studio/s/${sessionId}`, label: "Builder" },
         { key: "workspace", href: `/studio/s/${sessionId}/workspace`, label: "Workspace" },
+        { key: "preview", href: `/studio/s/${sessionId}/preview`, label: "Preview" },
         { key: "done", href: `/studio/s/${sessionId}/done`, label: "Course" },
         // sources and the audit trail exist from the first connected source; updates need a course
         { key: "sources", href: `/studio/s/${sessionId}/sources`, label: "Sources" },

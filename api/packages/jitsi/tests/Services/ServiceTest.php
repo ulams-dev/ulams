@@ -21,6 +21,8 @@ class ServiceTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        // HS256 keys must be at least 32 bytes (firebase/php-jwt 7)
+        \Config::set('jitsi.secret', str_repeat('s', 32));
         $this->user = $this->makeStudent();
     }
 
@@ -48,7 +50,7 @@ class ServiceTest extends TestCase
 
         $private_key = openssl_pkey_new([
             'digest_alg' => 'RS256',
-            'private_key_bits' => 1024,
+            'private_key_bits' => 2048,
             'private_key_type' => OPENSSL_KEYTYPE_RSA
         ]);
         \Config::set('jitsi.private_key', $private_key);
@@ -68,7 +70,7 @@ class ServiceTest extends TestCase
         // public function getChannelData(User $user, string $channelDisplayName, bool $isModerator = false, array $configOverwrite = [], $interfaceConfigOverwrite = []): array
         $private_key = openssl_pkey_new([
             'digest_alg' => 'RS256',
-            'private_key_bits' => 1024,
+            'private_key_bits' => 2048,
             'private_key_type' => OPENSSL_KEYTYPE_RSA
         ]);
         \Config::set('jitsi.private_key', $private_key);

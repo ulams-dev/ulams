@@ -1,0 +1,80 @@
+# Curated names and fixes for the commands generated from spec/openapi.json (plan 4.4).
+# Keys under `operations` are "METHOD /path". Supported keys: id, hide, kind, idempotent, scopes,
+# positionals, upload, paginated, longRunning, summary, description, examples, output (file|json), mcp.
+nouns:
+  user-groups: groups
+  gift-quizes: quizzes
+  gift-questions: questions
+  question: questionnaire-questions
+  user: users
+  stationary-events: events
+  bulk-notifications: notifications-bulk
+
+operations:
+  # --- access and enrolment (curated commands in src/commands/access.ts cover the course access routes)
+  "GET /api/admin/courses/{id}/access": { hide: true }
+  "POST /api/admin/courses/{id}/access/add": { hide: true }
+  "POST /api/admin/courses/{id}/access/remove": { hide: true }
+  "POST /api/admin/courses/{id}/access/set": { hide: true }
+  "GET /api/admin/course-access-enquiries": { id: access.enquiries-list }
+  "POST /api/admin/course-access-enquiries/approve/{id}": { id: access.enquiries-approve }
+  "DELETE /api/admin/course-access-enquiries/{id}": { id: access.enquiries-delete }
+  "GET /api/admin/consultation-access-enquiries": { id: consultations.access-enquiries-list }
+  "POST /api/admin/consultation-access-enquiries/approve/{proposedTermId}": { id: consultations.access-enquiries-approve }
+  "POST /api/admin/consultation-access-enquiries/disapprove/{id}": { id: consultations.access-enquiries-disapprove }
+
+  # --- courses
+  "GET /api/admin/courses/{id}/clone": { id: courses.clone, kind: write, idempotent: false, summary: "Clone a course with its lessons and topics" }
+  "GET /api/admin/courses/{id}/export": { id: courses.export, output: file, summary: "Export a course as a .zip (use --out)" }
+  "POST /api/admin/courses/zip/import": { id: courses.import, upload: { file: { field: file, accept: [".zip"] } }, summary: "Import a course from an exported .zip" }
+  "POST /api/admin/courses/{id}": { id: courses.update, summary: "Update a course (send only the fields to change, plus title)" }
+
+  # --- lessons / topics
+  "PUT /api/admin/lessons/{id}": { id: lessons.update }
+
+  # --- scorm, liascript, cmi5, h5p (low level; topics create-* is the usual path)
+  "POST /api/admin/scorm/upload": { id: scorm.upload, upload: { zip: { field: zip, accept: [".zip"] } } }
+  "POST /api/admin/scorm/parse": { id: scorm.parse, upload: { zip: { field: zip, accept: [".zip"] } }, kind: read, idempotent: true }
+  "POST /api/admin/cmi5": { id: cmi5.upload, upload: { file: { field: file, accept: [".zip"] } } }
+  "POST /api/admin/liascript": { id: liascript.create }
+
+  # --- tokens (scoped personal access tokens, ADR 0074)
+  "GET /api/auth/tokens": { id: tokens.list }
+  "POST /api/auth/tokens": { id: tokens.create, summary: "Create a scoped personal access token (shown once)" }
+  "DELETE /api/auth/tokens/{id}": { id: tokens.revoke }
+  "GET /api/auth/tokens/current": { id: tokens.current }
+  "GET /api/admin/tokens": { id: tokens.list-all }
+  "DELETE /api/admin/tokens/{id}": { id: tokens.revoke-any }
+  "GET /api/admin/tokens/{id}/audit": { id: tokens.audit }
+  "GET /api/admin/agent-audit": { id: tokens.agent-audit }
+
+  # --- users
+  "PUT /api/admin/user/{id}": { id: users.update }
+  "PATCH /api/admin/user/{id}": { id: users.patch }
+
+  # --- duplicates the generator could not name
+  "GET /api/admin/lti/platforms": { id: lti.platforms-list }
+  "GET /api/admin/lti/platforms/{platform}": { id: lti.platforms-get }
+  "GET /api/admin/lti/tools": { id: lti.tools-list }
+  "GET /api/admin/lti/tools/{tool}": { id: lti.tools-get }
+  "GET /api/dictionaries/{slug}/words": { id: public.dictionaries-words-list }
+  "GET /api/dictionaries/{slug}/words/{id}": { id: public.dictionaries-words-get }
+  "GET /api/lti/platform/ags/{course}/lineitems": { id: public.lti-lineitems-list }
+  "GET /api/lti/platform/ags/{course}/lineitems/{lineItem}": { id: public.lti-lineitems-get }
+  "GET /api/pdfs/fonts": { id: public.pdfs-fonts-list }
+  "GET /api/pdfs/fonts/{file}": { id: public.pdfs-fonts-get }
+  "DELETE /api/profile": { id: my.profile-delete-account, kind: destructive }
+  "GET /api/profile/delete/{userId}/{token}": { id: my.profile-delete-confirm, kind: destructive }
+  "GET /api/questionnaire/{model_type_title}/{model_id}": { id: my.questionnaire-list }
+  "GET /api/questionnaire/{model_type_title}/{model_id}/{id}": { id: my.questionnaire-get }
+  "POST /api/scorm/track/{uuid}": { id: my.scorm-track-save }
+  "GET /api/scorm/track/{scoId}/{key}": { id: my.scorm-track-get }
+  "GET /api/events": { id: public.events-feed }
+
+  # --- covered by hand-written commands (login) or renamed
+  "POST /api/auth/login": { hide: true }
+  "POST /api/demo/login": { hide: true }
+  "POST /api/auth/device/code": { hide: true }
+  "POST /api/auth/device/token": { hide: true }
+  "GET /api/admin/settings/{id}": { id: settings.get-by-id }
+  "GET /api/meta": { id: meta }

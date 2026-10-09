@@ -88,7 +88,6 @@ export default function (initialState: {
     analyticsPermission: havePermissionsInDashboard(
       PERMISSIONS.NotificationListAll,
       PERMISSIONS.ReportList,
-      PERMISSIONS.TrackerList,
     ),
 
     configurationPermission: havePermissionsInDashboard(
@@ -186,8 +185,11 @@ export default function (initialState: {
       havePermissionsInDashboard(PERMISSIONS.ReportList) &&
       !haveSettingsInDashboard('hideInMenu-CoursesCategories', true),
 
+    tokenManagePermission: havePermissionsInDashboard(PERMISSIONS.TokenManage),
+
     usersPermission: havePermissionsInDashboard(
       PERMISSIONS.UserList,
+      PERMISSIONS.TokenManage,
       PERMISSIONS.PermisionRoleList,
       PERMISSIONS.UserGroupList,
     ),
@@ -213,8 +215,6 @@ export default function (initialState: {
 
     productsDetailsPermission: havePermissionsInDashboard(PERMISSIONS.ProductsList),
     productsListPermission: havePermissionsInDashboard(PERMISSIONS.ProductsManage),
-
-    trackerListPermission: havePermissionsInDashboard(PERMISSIONS.TrackerList),
 
     voucherListPermission: havePermissionsInDashboard(PERMISSIONS.VoucherList),
     voucherDetailPermission: havePermissionsInDashboard(PERMISSIONS.VoucherRead),

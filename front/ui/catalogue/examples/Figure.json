@@ -1,0 +1,16 @@
+{
+  "props": {
+    "image": {
+      "src": "/og-image.png",
+      "alt": "A pour-over coffee brewing on a scale",
+      "width": 1200,
+      "height": 630
+    },
+    "caption": "Pour-over at the 30-second bloom."
+  },
+  "invalid": {
+    "image": {
+      "src": "/og-image.png"
+    }
+  }
+}

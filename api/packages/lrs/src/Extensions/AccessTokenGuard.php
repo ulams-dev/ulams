@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\Passport;
 use Throwable;
 use Ulams\Lrs\Models\BasicHttpCredentials;
+use Ulams\Lrs\Models\LaunchToken;
 
 /**
  * Authenticates requests to the xAPI endpoints.
@@ -20,11 +21,17 @@ use Ulams\Lrs\Models\BasicHttpCredentials;
  *   from the fetch URL). The RS256 signature is verified with the Passport public key, the
  *   `exp`/`nbf` claims are checked, and the token must exist in the database, not be revoked
  *   and not be expired.
+ * - `Basic ulrs1.<payload>.<signature>`: the LRS-only session token that `POST /api/cmi5/fetch`
+ *   hands to a cmi5 AU (see SessionToken). Signature, expiry and the launch row are checked;
+ *   `session()` returns its claims so the xAPI controllers can keep it to its own registration.
  * - `Basic base64(username:password)`: the access's own HTTP Basic credentials.
  */
 class AccessTokenGuard
 {
     private ?Authenticatable $user = null;
+
+    /** @var array{i: int, u: int, r: string, a: int|null, x: string, exp: int}|null */
+    private ?array $session = null;
 
     public function type(): string
     {
@@ -42,6 +49,7 @@ class AccessTokenGuard
     public function check($credentials, Request $request): bool
     {
         $this->user = null;
+        $this->session = null;
         $header = (string) $request->header('Authorization', '');
 
         if (!preg_match('/^(Basic|Bearer)\s+(\S+)$/i', trim($header), $matches)) {
@@ -49,6 +57,10 @@ class AccessTokenGuard
         }
 
         [, $scheme, $value] = $matches;
+
+        if (SessionToken::looksLikeOne($value)) {
+            return $this->sessionTokenIsValid($value);
+        }
 
         if (substr_count($value, '.') === 2) {
             return $this->passportTokenIsValid($value);
@@ -63,6 +75,47 @@ class AccessTokenGuard
     public function user(): ?Authenticatable
     {
         return $this->user;
+    }
+
+    /**
+     * Claims of the session token of the last successful check, null for every other credential.
+     *
+     * @return array{i: int, u: int, r: string, a: int|null, x: string, exp: int}|null
+     */
+    public function session(): ?array
+    {
+        return $this->session;
+    }
+
+    private function sessionTokenIsValid(string $token): bool
+    {
+        $claims = SessionToken::verify($token);
+
+        if ($claims === null) {
+            return false;
+        }
+
+        $launch = LaunchToken::query()->find($claims['i']);
+
+        if (!$launch
+            || $launch->used_at === null
+            || $launch->expires_at->isPast()
+            || (int) $launch->user_id !== $claims['u']
+            || strtolower((string) $launch->registration) !== $claims['r']
+        ) {
+            return false;
+        }
+
+        $user = config('auth.providers.users.model')::query()->find($claims['u']);
+
+        if (!$user) {
+            return false;
+        }
+
+        $this->user = $user;
+        $this->session = $claims;
+
+        return true;
     }
 
     private function passportTokenIsValid(string $jwt): bool

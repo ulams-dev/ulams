@@ -79,6 +79,7 @@ const checks = [
       <form method="post">
         <button class="cb-btn cb-btn-primary" type="submit" style="width:100%" disabled={published}>{published ? "Published" : "Publish course"}</button>
       </form>
+      <a class="cb-btn cb-btn-primary" href={`/studio/s/${id}/preview`}>Preview and discuss</a>
       <a class="cb-btn" href={`${adminBase}/courses/list/${courseId}`} rel="noopener">Open in admin</a>
       {
         published ? (

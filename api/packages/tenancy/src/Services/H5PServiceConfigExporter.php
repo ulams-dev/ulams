@@ -142,6 +142,35 @@ class H5PServiceConfigExporter
             $this->files->delete($temp);
             throw new RuntimeException("Cannot write {$path}");
         }
+        $this->handOver($path);
+    }
+
+    /**
+     * `ulams:h5p:export-config` and the tenant commands usually run as root (`docker compose exec`).
+     * The service reads the files through its storage group (`group_add` in docker-compose.yml), so a
+     * root-owned 0640 file or 0750 directory would be unreadable. As root, give the file and its
+     * directories up to the export directory to the owner and group of the Laravel storage directory
+     * (the php-fpm user, like StorageOwnership does for tenant storage).
+     */
+    private function handOver(string $path): void
+    {
+        if (!function_exists('posix_geteuid') || posix_geteuid() !== 0) {
+            return;
+        }
+        $owner = @fileowner($this->platformStorage);
+        $group = @filegroup($this->platformStorage);
+        if ($owner === false || $owner === 0) {
+            return;
+        }
+
+        $root = rtrim((string) $this->exportDir, '/');
+        for ($item = $path; str_starts_with($item, $root) && strlen($item) >= strlen($root); $item = dirname($item)) {
+            @chown($item, $owner);
+            @chgrp($item, $group);
+            if ($item === $root) {
+                break;
+            }
+        }
     }
 
     /** Double-quoted dotenv value; the H5P service's parser handles the same escapes. */

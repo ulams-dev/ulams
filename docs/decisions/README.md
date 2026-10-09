@@ -87,3 +87,5 @@ replacement.
 | [0078](0078-platform-tenant-api.md) | A platform-only HTTP API for tenant management | Proposed |
 | [0079](0079-course-as-code-format.md) | Course-as-code: Markdown with directives + YAML, Blueprint v2 and a committed sync base | Proposed |
 | [0090](0090-living-course-implementation-choices.md) | Living Course: choices made during implementation (own glob matcher, lenient alignment, eval and CI shape) | Proposed |
+| [0080](0080-interactive-preview-in-the-studio.md) | Interactive preview in the studio: learner pages from the blueprint, in a frame | Proposed |
+| [0081](0081-upgrade-command-and-step-registry.md) | `ulams:upgrade`: an idempotent per-tenant upgrade command with a step registry | Proposed |

@@ -118,9 +118,6 @@
     <testsuite name="assign-without-account">
       <directory suffix="Test.php">./packages/assign-without-account</directory>
     </testsuite>
-    <!-- <testsuite name="tracker">
-      <directory suffix="Test.php">./packages/tracker</directory>
-    </testsuite> -->
     <testsuite name="translations">
       <directory suffix="Test.php">./packages/translations</directory>
     </testsuite>
@@ -153,6 +150,9 @@
     </testsuite>
     <testsuite name="consultation-access">
       <directory suffix="Test.php">./packages/consultation-access</directory>
+    </testsuite>
+    <testsuite name="jitsi">
+      <directory suffix="Test.php">./packages/jitsi</directory>
     </testsuite>
     <testsuite name="webinar">
       <directory suffix="Test.php">./packages/webinar</directory>
@@ -217,7 +217,6 @@
       <directory suffix=".php">./packages/tenancy/</directory>
       <directory suffix=".php">./packages/demo/</directory>
       <directory suffix=".php">./packages/assign-without-account/</directory>
-      <!-- <directory suffix=".php">./packages/tracker/</directory> -->
       <directory suffix=".php">./packages/translations/</directory>
       <directory suffix=".php">./packages/uploads/</directory>
       <directory suffix=".php">./packages/lti/</directory>

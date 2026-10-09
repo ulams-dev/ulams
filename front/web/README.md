@@ -162,6 +162,27 @@ suites", ulams in both. `comparison.json` has top-level `groups`; a system lists
 a row lists `groups` or applies to all. The component takes `groups` (2 to 4 tables) instead of
 `columns` and `rows`. Enterprise-only rows: data residency, SSO, SCIM, authoring tool, content library.
 
+## Landing stories and display status
+
+The platform landing has three animated stories, all catalogue components: `LivingCourseStory` (hero
+story: a changed source updates the lesson that cites it), `BuilderStory` (a document becomes a cited
+course) and `WorkflowShowcase` (tabs: Claude Code, Claude + MCP, CLI, REST & SDK, Studio). A tiny
+timeline player (`front/ui/src/elements/story.ts`, `<ulams-story>` and `<ulams-workflows>`) plays them
+when visible, loops or auto-advances slowly, pauses on hover, focus and a Pause button, and under
+`prefers-reduced-motion` (or without JS) shows the final frame. Space is reserved, so nothing shifts;
+screen readers get a description or a plain transcript. The workflow commands and each tab's true
+status are in `src/data/workflows.json` (`available`, `preview`, `coming`).
+
+`ULAMS_LANDING_STATUS` (`src/lib/landing-status.ts`) decides what the platform landing displays:
+
+- `final` (default while the product is in review): every roadmap item is shown as delivered. No
+  Coming/Preview badges or roadmap captions, no footnote about planned interfaces, and ulams's own
+  comparison cells that say Coming or Partial read Yes.
+- `actual`: the honest status. The data files always keep the true status, and competitor cells never change.
+
+**Before any public launch, run in `actual` mode or confirm that everything the landing shows has shipped.**
+Nodes of `platform.json` may carry `final: { …prop overrides… }` for text that only reads right in one mode.
+
 ## Performance budget
 
 Production build, measured with `yarn workspace @ulams/web perf` (Chromium, local API): see

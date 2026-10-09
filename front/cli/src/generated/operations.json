@@ -1,0 +1,2864 @@
+[
+ {
+  "method": "GET",
+  "path": "/api/admin/adapt",
+  "summary": "List Adapt JSON sources",
+  "tag": "Admin Adapt"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/adapt",
+  "summary": "Create from Adapt JSON (course, config, contentObjects, articles, blocks, components)",
+  "tag": "Admin Adapt"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/adapt/{id}",
+  "summary": "Delete a source (the built SCORM package stays)",
+  "tag": "Admin Adapt"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/adapt/{id}",
+  "summary": "Show a source and its build status",
+  "tag": "Admin Adapt"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/adapt/{id}/build",
+  "summary": "Build the current version into a SCORM package (queued)",
+  "tag": "Admin Adapt"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/adapt/{id}/source",
+  "summary": "JSON of the current or a given version",
+  "tag": "Admin Adapt"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/adapt/{id}/versions",
+  "summary": "Add a version",
+  "tag": "Admin Adapt"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/agent-audit",
+  "summary": "Agent audit log",
+  "tag": "Admin Tokens"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/bookmarks",
+  "summary": "Get a listing of the bookmarks",
+  "tag": "Admin Bookmarks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/bookmarks",
+  "summary": "Store a newly created bookmark",
+  "tag": "Admin Bookmarks"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/bookmarks/{id}",
+  "summary": "Remove the specified bookmark",
+  "tag": "Admin Bookmarks"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/bookmarks/{id}",
+  "summary": "Update bookmark",
+  "tag": "Admin Bookmarks"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/bulk-notifications",
+  "summary": "Get a listing of the bulk notifications",
+  "tag": "Admin Bulk Notifications"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/bulk-notifications/send",
+  "summary": "Store a newly notification",
+  "tag": "Admin Bulk Notifications"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/bulk-notifications/send/multicast",
+  "summary": "Store a newly notification",
+  "tag": "Admin Bulk Notifications"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/categories",
+  "summary": "Category create",
+  "tag": "Categories"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/categories/{id}",
+  "summary": "Destroy category",
+  "tag": "Categories"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/categories/{id}",
+  "summary": "",
+  "tag": "Categories"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/categories/{id}",
+  "summary": "Update category",
+  "tag": "Categories"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/categories/sort",
+  "summary": "",
+  "tag": "Categories"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/cmi5",
+  "summary": "Convert ZIP Cmi5 Package into Ulams LMS Cmi5 storage",
+  "tag": "cmi5"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/cmi5/",
+  "summary": "Get a listing of the cmi5",
+  "tag": "cmi5"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/cmi5/{id}",
+  "summary": "Delete cmi5 package by id",
+  "tag": "cmi5"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/cmi5/statements",
+  "summary": "Lists available statements",
+  "tag": "cmi5"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/config",
+  "summary": "Get admin config",
+  "tag": "Admin Settings"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/config",
+  "summary": "Set config for registered config keys",
+  "tag": "Admin Settings"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/consultation-access-enquiries",
+  "summary": "Get all consultation access enquiries",
+  "tag": "Admin Consultation Access"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/consultation-access-enquiries/approve/{proposedTermId}",
+  "summary": "Approve the specified consultation access enquiry by proposed term id",
+  "tag": "Admin Consultation Access"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/consultation-access-enquiries/disapprove/{id}",
+  "summary": "Disapprove the specified consultation access enquiry by id",
+  "tag": "Admin Consultation Access"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/consultations",
+  "summary": "",
+  "tag": "Admin Consultations"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/consultations",
+  "summary": "Store a newly created Consultation in storage",
+  "tag": "Admin Consultations"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/consultations/{id}",
+  "summary": "Remove the specified Consultation from storage",
+  "tag": "Admin Consultations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/consultations/{id}",
+  "summary": "Display the specified Consultation",
+  "tag": "Admin Consultations"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/consultations/{id}",
+  "summary": "Update the specified Consultation in storage",
+  "tag": "Admin Consultations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/consultations/{id}/schedule",
+  "summary": "",
+  "tag": "Consultations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/consultations/users/assignable",
+  "summary": "",
+  "tag": "Admin Consultations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-access-enquiries",
+  "summary": "Get all course access enquiries",
+  "tag": "Admin Course Access"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/course-access-enquiries/{id}",
+  "summary": "Remove the specified Course Access Enquiry",
+  "tag": "Admin Course Access"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-access-enquiries/approve/{id}",
+  "summary": "Approve the specified Course Access Enquiry",
+  "tag": "Admin Course Access"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/courses",
+  "summary": "Get a listing of the Courses.",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/courses",
+  "summary": "Store a newly created Course in storage",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/courses/{id}",
+  "summary": "Remove the specified Course from storage",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/courses/{id}",
+  "summary": "Update the specified Course in storage",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/courses/{id}/access",
+  "summary": "Get list of users and groups with access to the course",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/courses/{id}/access/add",
+  "summary": "Add users and groups with access to the course",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/courses/{id}/access/remove",
+  "summary": "Remove users and groups with access to the course",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/courses/{id}/access/set",
+  "summary": "Set users and groups with access to the course",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/courses/{id}/clone",
+  "summary": "",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/courses/{id}/export",
+  "summary": "",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/courses/sort",
+  "summary": "Sorts Lessons or Topics",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/courses/users/assignable",
+  "summary": "",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/courses/zip/import",
+  "summary": "",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/csv/groups",
+  "summary": "",
+  "tag": "Admin CSV"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/csv/groups/group_id",
+  "summary": "",
+  "tag": "Admin CSV"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/csv/users",
+  "summary": "",
+  "tag": "Admin CSV"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/csv/users",
+  "summary": "",
+  "tag": "Admin CSV"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/dictionaries",
+  "summary": "Get a listing of the Dictionaries",
+  "tag": "Admin Dictionaries"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/dictionaries",
+  "summary": "Store a newly created dictionary in storage",
+  "tag": "Admin Dictionaries"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/dictionaries/{id}",
+  "summary": "Remove the specified Dictionary from storage",
+  "tag": "Admin Dictionaries"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/dictionaries/{id}",
+  "summary": "Display the specified Dictionary",
+  "tag": "Admin Dictionaries"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/dictionaries/{id}",
+  "summary": "Update the specified Dictionary in storage",
+  "tag": "Admin Dictionaries"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/dictionaries/{id}/access",
+  "summary": "Get list of users with access to the dictionary",
+  "tag": "Admin Dictionaries"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/dictionaries/{id}/access",
+  "summary": "Add users with access to the dictionary",
+  "tag": "Admin Dictionaries"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/dictionary-words",
+  "summary": "Get a listing of the Dictionary Word",
+  "tag": "Admin Dictionary Words"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/dictionary-words",
+  "summary": "Store a newly created dictionary word in storage",
+  "tag": "Admin Dictionary Words"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/dictionary-words/{id}",
+  "summary": "Remove the specified Dictionary Word from storage",
+  "tag": "Admin Dictionary Words"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/dictionary-words/{id}",
+  "summary": "Display the specified Dictionary Word",
+  "tag": "Admin Dictionary Words"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/dictionary-words/{id}",
+  "summary": "Update the specified Dictionary Word in storage",
+  "tag": "Admin Dictionary Words"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/dictionary-words/import",
+  "summary": "Import dictionary words from file",
+  "tag": "Admin Dictionary Words"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/events/trigger-manually/{id}",
+  "summary": "Manually triggered event for users",
+  "tag": "Templates"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/file/delete",
+  "summary": "Delete given file",
+  "tag": "Files"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/file/find",
+  "summary": "Lists files found by name",
+  "tag": "Files"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/file/list",
+  "summary": "Lists files prefixed by given directory name",
+  "tag": "Files"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/file/move",
+  "summary": "Move the file from one path to another",
+  "tag": "Files"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/file/upload",
+  "summary": "Upload files using multipart form-data",
+  "tag": "Files"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/gift-questions",
+  "summary": "Store a newly Gift Question",
+  "tag": "Admin Gift Question"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/gift-questions/{id}",
+  "summary": "Remove the specified Gift Question",
+  "tag": "Admin Gift Question"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/gift-questions/{id}",
+  "summary": "Update Gift Question",
+  "tag": "Admin Gift Question"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/gift-questions/export",
+  "summary": "Export Gift Questions",
+  "tag": "Admin Gift Question"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/gift-questions/import",
+  "summary": "Import Gift Questions",
+  "tag": "Admin Gift Question"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/gift-questions/sort",
+  "summary": "Sort Gift Questions",
+  "tag": "Admin Gift Question"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/gift-quizes",
+  "summary": "List gift quizes of a course (for report filter select)",
+  "tag": "Gift Quiz"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/gift-quizes/{id}",
+  "summary": "Get gift quiz by id",
+  "tag": "Gift Quiz"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/gift-quizes/{id}",
+  "summary": "Update gift quiz by id",
+  "tag": "Gift Quiz"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/h5p/contents",
+  "summary": "List H5P contents with the number of topics using each",
+  "tag": "Admin H5P"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/h5p/unused",
+  "summary": "Delete H5P contents that no topic uses",
+  "tag": "Admin H5P"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/lessons",
+  "summary": "Get a listing of the Lessons.",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/lessons",
+  "summary": "Store a newly created Lesson in storage",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/lessons/{id}",
+  "summary": "Remove the specified Lesson from storage",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/lessons/{id}",
+  "summary": "Display the specified Lesson",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/lessons/{id}",
+  "summary": "Update the specified Lesson in storage",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/lessons/{id}/clone",
+  "summary": "Clone Lesson",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/liascript",
+  "summary": "List LiaScript sources",
+  "tag": "Admin LiaScript"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/liascript",
+  "summary": "Create from Markdown, an .md file or a .zip (Markdown + assets)",
+  "tag": "Admin LiaScript"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/liascript/{id}",
+  "summary": "Delete a LiaScript source with all versions and assets",
+  "tag": "Admin LiaScript"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/liascript/{id}",
+  "summary": "Show a LiaScript source",
+  "tag": "Admin LiaScript"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/liascript/{id}",
+  "summary": "Rename a LiaScript source",
+  "tag": "Admin LiaScript"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/liascript/{id}/preview",
+  "summary": "Live preview of unsaved Markdown on the tenant content origin",
+  "tag": "Admin LiaScript"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/liascript/{id}/source",
+  "summary": "Markdown of the current or a given version",
+  "tag": "Admin LiaScript"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/liascript/{id}/versions",
+  "summary": "List versions",
+  "tag": "Admin LiaScript"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/liascript/{id}/versions",
+  "summary": "Add a version from Markdown or an upload",
+  "tag": "Admin LiaScript"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/liascript/{id}/versions/{version}/restore",
+  "summary": "Restore a version (adds a new version with its content)",
+  "tag": "Admin LiaScript"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/lti/endpoints",
+  "summary": "Our LTI endpoints and issuer, to register us elsewhere",
+  "tag": "Admin LTI"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/lti/platforms",
+  "summary": "List platforms that may launch us",
+  "tag": "Admin LTI"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/lti/platforms",
+  "summary": "Register a platform",
+  "tag": "Admin LTI"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/lti/platforms/{platform}",
+  "summary": "Delete a platform",
+  "tag": "Admin LTI"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/lti/platforms/{platform}",
+  "summary": "Show a platform",
+  "tag": "Admin LTI"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/lti/platforms/{platform}",
+  "summary": "Update a platform",
+  "tag": "Admin LTI"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/lti/tools",
+  "summary": "List registered tools",
+  "tag": "Admin LTI"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/lti/tools",
+  "summary": "Register a tool (we issue client_id and deployment_id)",
+  "tag": "Admin LTI"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/lti/tools/{tool}",
+  "summary": "Delete a tool without topics",
+  "tag": "Admin LTI"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/lti/tools/{tool}",
+  "summary": "Show a tool",
+  "tag": "Admin LTI"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/lti/tools/{tool}",
+  "summary": "Update a tool",
+  "tag": "Admin LTI"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/lti/tools/{tool}/deep-link",
+  "summary": "Start deep linking into a lesson",
+  "tag": "Admin LTI"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/model-fields",
+  "summary": "delete metafile and related values from model",
+  "tag": "Admin Model Fields"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/model-fields",
+  "summary": "Lists available Model extended fields",
+  "tag": "Model Fields"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/model-fields",
+  "summary": "Create or update metafile",
+  "tag": "Admin Model Fields"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/notifications",
+  "summary": "Get list of events for which notifications exist",
+  "tag": "Notifications Admin"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/notifications/all",
+  "summary": "Get notifications",
+  "tag": "Notifications Admin"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/notifications/events",
+  "summary": "Get list of events for which notifications exist",
+  "tag": "Notifications Admin"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/notifications/read-all",
+  "summary": "Mark all notifications as read",
+  "tag": "Notifications Admin"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/orders",
+  "summary": "",
+  "tag": "Admin Orders"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/orders/{id}",
+  "summary": "Display the specified Order",
+  "tag": "Admin Orders"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/orders/export",
+  "summary": "",
+  "tag": "Admin Orders"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/pages",
+  "summary": "Lists available pages",
+  "tag": "Pages"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/pages",
+  "summary": "Create a new page identified by id",
+  "tag": "Pages"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/pages/{id}",
+  "summary": "Delete a page identified by a id",
+  "tag": "Pages"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/pages/{id}",
+  "summary": "Read a page identified by a given id identifier",
+  "tag": "Pages"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/pages/{id}",
+  "summary": "Update an existing page identified by id",
+  "tag": "Pages"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/payments",
+  "summary": "Search payments",
+  "tag": "Admin Payments"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/payments/{id}",
+  "summary": "Display the specified Payment",
+  "tag": "Admin Payments"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/payments/export",
+  "summary": "Export payments to file",
+  "tag": "Admin Payments"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/pdfs",
+  "summary": "Display the specified generated PDF",
+  "tag": "Admin Template PDFs"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/pdfs/preview",
+  "summary": "Preview a pdfme template with sample data",
+  "tag": "Template PDFs"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/play/{cmi5AuId}",
+  "summary": "",
+  "tag": "cmi5"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/productables/",
+  "summary": "",
+  "tag": "Admin Product"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/productables/attach",
+  "summary": "",
+  "tag": "Admin Products"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/productables/detach",
+  "summary": "",
+  "tag": "Admin Product"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/productables/product",
+  "summary": "",
+  "tag": "Admin Product"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/productables/registered",
+  "summary": "",
+  "tag": "Admin Product"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/products",
+  "summary": "",
+  "tag": "Admin Products"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/products/",
+  "summary": "",
+  "tag": "Admin Product"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/products/{id}",
+  "summary": "",
+  "tag": "Admin Products"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/products/{id}",
+  "summary": "",
+  "tag": "Admin Products"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/products/{id}",
+  "summary": "",
+  "tag": "Admin Product"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/products/{id}/attach",
+  "summary": "",
+  "tag": "Admin Product"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/products/{id}/detach",
+  "summary": "",
+  "tag": "Admin Product"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/products/{id}/trigger-event-manually/{idTemplate}",
+  "summary": "Manually triggered event for users of the product",
+  "tag": "Admin Product"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/question",
+  "summary": "Lists available questions",
+  "tag": "Question"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/question",
+  "summary": "Create a new question identified by id",
+  "tag": "Question"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/question-answers/{id}",
+  "summary": "Lists questions answers for questionaire",
+  "tag": "QuestionAnswersForQuestionaire"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/question-answers/{id}/change-visibility",
+  "summary": "Change answer visibility on front",
+  "tag": "QuestionAnswersForQuestionaire"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/question/{id}",
+  "summary": "Delete a question identified by a id",
+  "tag": "Question"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/question/{id}",
+  "summary": "Read a question identified by a given id identifier",
+  "tag": "Question"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/question/{id}",
+  "summary": "Update an existing question identified by id",
+  "tag": "Question"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/questionnaire",
+  "summary": "Lists available questionnaires",
+  "tag": "Questionnaire"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/questionnaire",
+  "summary": "Create a new questionnaire",
+  "tag": "Questionnaire"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/questionnaire-model",
+  "summary": "Lists available questionnaire model type",
+  "tag": "QuestionnaireModelType"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/questionnaire/{id}",
+  "summary": "Delete a questionnaire identified by a id",
+  "tag": "Questionnaire"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/questionnaire/{id}",
+  "summary": "Read a questionnaire identified by a given id identifier",
+  "tag": "Questionnaire"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/questionnaire/{id}",
+  "summary": "Update an existing questionnaire identified by id",
+  "tag": "Questionnaire"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/questionnaire/assign/{model_type_title}/{model_id}/{id}/{target_group}",
+  "summary": "assign a questionnaire model",
+  "tag": "Questionnaire"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/questionnaire/report/{id}/{model_type_id}/{model_id}",
+  "summary": "Read a questionnaire report identified by a given id identifier and model type and model identified",
+  "tag": "QuestionnaireReportForModel"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/questionnaire/unassign/{model_type_title}/{model_id}/{id}/{target_group}",
+  "summary": "unassign a questionnaire model",
+  "tag": "Questionnaire"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/quiz-answers/{id}",
+  "summary": "Update answer",
+  "tag": "Admin Gift Quiz Attempt"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/quiz-attempts",
+  "summary": "Get all quiz attempts",
+  "tag": "Admin Gift Quiz Attempt"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/quiz-attempts/{id}",
+  "summary": "Get quiz attempt by id",
+  "tag": "Admin Gift Quiz Attempt"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/quiz-attempts/{id}/feedback",
+  "summary": "Add, edit or remove tutor feedback for a quiz attempt",
+  "tag": "Admin Gift Quiz Attempt"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/quiz-attempts/export",
+  "summary": "Export course quiz results to an XLSX or XLS file",
+  "tag": "Admin Gift Quiz Attempt"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/reports/available-for-user",
+  "summary": "Get list of available metrics for logged user",
+  "tag": "Admin Reports"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/reports/metrics",
+  "summary": "Get list of available metrics",
+  "tag": "Admin Reports"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/reports/report",
+  "summary": "Get list of available metrics",
+  "tag": "Admin Reports"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/roles",
+  "summary": "Lists available roles",
+  "tag": "Admin Permissions"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/roles",
+  "summary": "Find or Create a Role",
+  "tag": "Admin Permissions"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/roles/{name}",
+  "summary": "Delete a Role identified by a name",
+  "tag": "Admin Permissions"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/roles/{name}",
+  "summary": "Read a role and returns list of all permissions",
+  "tag": "Admin Permissions"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/roles/{name}",
+  "summary": "Update an existing Role identified by name by list or new permissions",
+  "tag": "Admin Permissions"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/scorm/",
+  "summary": "Read a page identified by a given slug identifier",
+  "tag": "SCORM"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/scorm/{scorm_id}",
+  "summary": "Delete scorm package by id",
+  "tag": "SCORM"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/scorm/parse",
+  "summary": "Parse ZIP Scorm to see if it's valid",
+  "tag": "SCORM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/scorm/scos",
+  "summary": "Get all scos",
+  "tag": "SCORM"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/scorm/upload",
+  "summary": "Convert ZIP Scorm Package into Ulams LMS Scorm storage",
+  "tag": "SCORM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/settings",
+  "summary": "",
+  "tag": "Admin Settings"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/settings",
+  "summary": "Settings create",
+  "tag": "Admin Settings"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/settings/{id}",
+  "summary": "Destroy setting",
+  "tag": "Admin Settings"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/settings/{id}",
+  "summary": "",
+  "tag": "Admin Settings"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/settings/{id}",
+  "summary": "Update setting",
+  "tag": "Admin Settings"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/settings/groups",
+  "summary": "",
+  "tag": "Admin Settings"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/stationary-events",
+  "summary": "Get a listing of the Stationary events",
+  "tag": "Admin Stationary Events"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/stationary-events",
+  "summary": "Store a newly created Stationary event in storage",
+  "tag": "Admin Stationary Events"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/stationary-events/{id}",
+  "summary": "Remove the specified Stationary Event from storage",
+  "tag": "Admin Stationary Events"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/stationary-events/{id}",
+  "summary": "Display the specified Stationary Event",
+  "tag": "Admin Stationary Events"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/stationary-events/{id}",
+  "summary": "Update the specified Stationary Event in storage",
+  "tag": "Admin Stationary Events"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/stats/available",
+  "summary": "Get list of available stats for models",
+  "tag": "Admin Reports"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/stats/cart",
+  "summary": "Calculate stats for Cart",
+  "tag": "Admin Reports"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/stats/course/{course_id}",
+  "summary": "Calculate stats for Course",
+  "tag": "Admin Reports"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/stats/course/{course_id}/export",
+  "summary": "Export stat for Course",
+  "tag": "Admin Reports"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/stats/date-range",
+  "summary": "Calculate stats for Course",
+  "tag": "Admin Reports"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/stats/topic/{topic_id}",
+  "summary": "Calculate stats for Topic",
+  "tag": "Admin Reports"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/stats/topic/{topic_id}/export",
+  "summary": "Export stat for Topic",
+  "tag": "Admin Reports"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/tags",
+  "summary": "Destroy Tags",
+  "tag": "Tags"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/tags",
+  "summary": "",
+  "tag": "Tags"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/tags/{tag}",
+  "summary": "",
+  "tag": "Tags"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/tags/unique",
+  "summary": "",
+  "tag": "Tags"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/tasks",
+  "summary": "Get a listing of the tasks",
+  "tag": "Admin Tasks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/tasks",
+  "summary": "Store a newly created task",
+  "tag": "Admin Tasks"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/tasks/{id}",
+  "summary": "Remove the specified task",
+  "tag": "Admin Tasks"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/tasks/{id}",
+  "summary": "Task details",
+  "tag": "Admin Tasks"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/tasks/{id}",
+  "summary": "Update the specified task",
+  "tag": "Admin Tasks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/tasks/complete/{id}",
+  "summary": "Complete task",
+  "tag": "Admin Tasks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/tasks/incomplete/{id}",
+  "summary": "Incomplete task",
+  "tag": "Admin Tasks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/tasks/notes",
+  "summary": "Store a newly created task note",
+  "tag": "Admin Tasks Notes"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/tasks/notes/{id}",
+  "summary": "Remove the specified task notes",
+  "tag": "Admin Tasks Notes"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/tasks/notes/{id}",
+  "summary": "Update task note",
+  "tag": "Admin Tasks Notes"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/templates",
+  "summary": "Lists available templates",
+  "tag": "Templates"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/templates",
+  "summary": "Create a new template identified by id",
+  "tag": "Templates"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/templates/{id}",
+  "summary": "Delete a template identified by a id",
+  "tag": "Templates"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/templates/{id}",
+  "summary": "Read a template identified by a given id identifier",
+  "tag": "Templates"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/templates/{id}",
+  "summary": "Update an existing template identified by id",
+  "tag": "Templates"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/templates/{id}/assign",
+  "summary": "Assign template to model (of class assignable to the Variable Set)",
+  "tag": "Templates"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/templates/{id}/preview",
+  "summary": "Read a template identified by a given id identifier",
+  "tag": "Templates"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/templates/{id}/unassign",
+  "summary": "Remove template assignment to model",
+  "tag": "Templates"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/templates/assignable",
+  "summary": "Get Templates that can be assigned to model",
+  "tag": "Templates"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/templates/assigned",
+  "summary": "Get Template assigned to the model",
+  "tag": "Templates"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/templates/variables",
+  "summary": "Dictionary list of available template variables",
+  "tag": "Templates"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/tokens",
+  "summary": "Every user's scoped API tokens",
+  "tag": "Admin Tokens"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/tokens/{id}",
+  "summary": "Revoke any scoped token",
+  "tag": "Admin Tokens"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/tokens/{id}/audit",
+  "summary": "Audit log of one token",
+  "tag": "Admin Tokens"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/topic-project-solutions",
+  "summary": "Get a listing of the project solutions",
+  "tag": "Admin Project Solution"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/topic-project-solutions/{id}",
+  "summary": "Remove the specified Project Solution",
+  "tag": "Admin Project Solution"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/topic-project-solutions/{id}",
+  "summary": "Get a single project solution",
+  "tag": "Admin Project Solution"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/topic-project-solutions/{id}/feedback",
+  "summary": "Add, edit or remove tutor feedback for a project solution",
+  "tag": "Admin Project Solution"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/topic-project-solutions/{id}/grade",
+  "summary": "Grade the specified Project Solution",
+  "tag": "Admin Project Solution"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/topics",
+  "summary": "Get a listing of the Topics.",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/topics",
+  "summary": "Store a newly created Topic in storage",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/topics/{id}",
+  "summary": "Remove the specified Topic from storage",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/topics/{id}",
+  "summary": "Display the specified Topic",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/topics/{id}",
+  "summary": "Update the specified Topic in storage",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/topics/{id}/clone",
+  "summary": "Clone topic",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/topics/{topic_id}/resources/",
+  "summary": "Get list of resources",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/topics/{topic_id}/resources/",
+  "summary": "Post new resource",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/topics/{topic_id}/resources/{resource_id}",
+  "summary": "Delete resource",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/topics/{topic_id}/resources/{resource_id}",
+  "summary": "Rename resource",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/topics/types",
+  "summary": "Get a listing of the Availabe Topic Content Types Classes.",
+  "tag": "Admin Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/translations",
+  "summary": "Get a list of translations stored in the database",
+  "tag": "Admin Translations"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/translations",
+  "summary": "Store a newly created translation",
+  "tag": "Admin Translations"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/translations/{id}",
+  "summary": "Remove the specified translation",
+  "tag": "Admin Translations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/translations/{id}",
+  "summary": "Display the specified translation",
+  "tag": "Admin Translations"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/translations/{id}",
+  "summary": "Update the specified translation",
+  "tag": "Admin Translations"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/translations/retrieve",
+  "summary": "Retrieve translation",
+  "tag": "Admin Translations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/user-groups/",
+  "summary": "List groups",
+  "tag": "Admin User Groups"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/user-groups/",
+  "summary": "Create group",
+  "tag": "Admin User Groups"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/user-groups/{id}",
+  "summary": "Delete group",
+  "tag": "Admin User Groups"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/user-groups/{id}",
+  "summary": "Get group details",
+  "tag": "Admin User Groups"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/user-groups/{id}",
+  "summary": "Update group",
+  "tag": "Admin User Groups"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/user-groups/{id}/members",
+  "summary": "Add user to group",
+  "tag": "Admin User Groups"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/user-groups/{id}/members/{user_id}",
+  "summary": "Add user to group",
+  "tag": "Admin User Groups"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/user-groups/tree/",
+  "summary": "List groups in a tree",
+  "tag": "Admin User Groups"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/user-groups/users",
+  "summary": "List of groups with users",
+  "tag": "Admin User Groups"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/user-submissions",
+  "summary": "Lists available user submissions",
+  "tag": "Assign Without Account"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/user-submissions",
+  "summary": "Create a new user submission identified by id",
+  "tag": "Assign Without Account"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/user-submissions/{id}",
+  "summary": "Delete user submission identified by a id",
+  "tag": "Assign Without Account"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/user-submissions/{id}",
+  "summary": "Update an existing user submission identified by id",
+  "tag": "Assign Without Account"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/user/{id}",
+  "summary": "Partial Update User (will only change sent fields)",
+  "tag": "Admin Users"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/user/{id}",
+  "summary": "Update/Replace user data (will overwrite unset fields with nulls)",
+  "tag": "Admin Users"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/users",
+  "summary": "Get users",
+  "tag": "Admin Users"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/users",
+  "summary": "Create user",
+  "tag": "Admin Users"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/users/{id}",
+  "summary": "Delete user",
+  "tag": "Admin Users"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/users/{id}",
+  "summary": "Get user",
+  "tag": "Admin Users"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/users/{id}/avatar",
+  "summary": "",
+  "tag": "Admin Users"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/users/{id}/avatar",
+  "summary": "",
+  "tag": "Admin Users"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/users/{id}/interests",
+  "summary": "Get user interests",
+  "tag": "Admin User Interests"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/users/{id}/interests",
+  "summary": "Add single user interest",
+  "tag": "Admin User Interests"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/users/{id}/interests",
+  "summary": "Set user interests",
+  "tag": "Admin User Interests"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/users/{id}/interests/{interest_id}",
+  "summary": "Add single user interest",
+  "tag": "Admin User Interests"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/users/{id}/settings",
+  "summary": "Get user settings",
+  "tag": "Admin User Settings"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/users/{id}/settings",
+  "summary": "Update user setting(s) without changing other settings",
+  "tag": "Admin User Settings"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/users/{id}/settings",
+  "summary": "Set user setting (removes settings not sent)",
+  "tag": "Admin User Settings"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/video/states",
+  "summary": "List of processed videos",
+  "tag": "Video"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/vouchers",
+  "summary": "Get a listing of the Vouchers.",
+  "tag": "Admin Vouchers"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/vouchers",
+  "summary": "Create Voucher",
+  "tag": "Admin Vouchers"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/vouchers/{id}",
+  "summary": "Delete Voucher",
+  "tag": "Admin Vouchers"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/vouchers/{id}",
+  "summary": "Read Voucher",
+  "tag": "Admin Vouchers"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/vouchers/{id}",
+  "summary": "Update Voucher",
+  "tag": "Admin Vouchers"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/webinars",
+  "summary": "",
+  "tag": "Admin Webinars"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/webinars",
+  "summary": "Store a newly created Webinar in storage",
+  "tag": "Admin Webinars"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/webinars/{id}",
+  "summary": "Remove the specified Webinar from storage",
+  "tag": "Admin Webinars"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/webinars/{id}",
+  "summary": "Display the specified Webinar",
+  "tag": "Admin Webinars"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/webinars/{id}",
+  "summary": "Update the specified Webinar in storage",
+  "tag": "Admin Webinars"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/webinars/{id}/users",
+  "summary": "",
+  "tag": "Admin Webinars"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/webinars/users/assignable",
+  "summary": "",
+  "tag": "Admin Webinars"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/device/code",
+  "summary": "Start a device login (RFC 8628)",
+  "tag": "Auth"
+ },
+ {
+  "method": "GET",
+  "path": "/api/auth/device/requests/{user_code}",
+  "summary": "Details of a pending device request (for the approval page)",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/device/requests/{user_code}/approve",
+  "summary": "Approve a device request",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/device/requests/{user_code}/deny",
+  "summary": "Deny a device request",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/device/token",
+  "summary": "Poll for the token of a device login (RFC 8628)",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/email/resend",
+  "summary": "Resend email verification",
+  "tag": "Auth"
+ },
+ {
+  "method": "GET",
+  "path": "/api/auth/email/verify/{id}/{hash}",
+  "summary": "Email verification",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/impersonate",
+  "summary": "",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/login",
+  "summary": "",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/logout",
+  "summary": "",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/password/forgot",
+  "summary": "Password forget call",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/password/reset",
+  "summary": "Password reset",
+  "tag": "Auth"
+ },
+ {
+  "method": "GET",
+  "path": "/api/auth/refresh",
+  "summary": "Refresh access token",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/register",
+  "summary": "",
+  "tag": "Auth"
+ },
+ {
+  "method": "GET",
+  "path": "/api/auth/registerable-groups/",
+  "summary": "List registerable groups",
+  "tag": "Auth"
+ },
+ {
+  "method": "GET",
+  "path": "/api/auth/social/{provider}",
+  "summary": "Redirect to social login",
+  "tag": "Auth"
+ },
+ {
+  "method": "GET",
+  "path": "/api/auth/social/{provider}/callback",
+  "summary": "Redirect after sucessfull login",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/social/complete/{token}",
+  "summary": "Complete the missing data from socials",
+  "tag": "Auth"
+ },
+ {
+  "method": "GET",
+  "path": "/api/auth/tokens",
+  "summary": "My scoped API tokens",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/tokens",
+  "summary": "Create a scoped API token (the secret is returned once)",
+  "tag": "Auth"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/auth/tokens/{id}",
+  "summary": "Revoke one of my scoped tokens",
+  "tag": "Auth"
+ },
+ {
+  "method": "GET",
+  "path": "/api/auth/tokens/current",
+  "summary": "The token this request is authenticated with",
+  "tag": "Auth"
+ },
+ {
+  "method": "GET",
+  "path": "/api/bookmarks",
+  "summary": "Get a listing of the bookmarks",
+  "tag": "Bookmarks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/bookmarks",
+  "summary": "Store a newly created bookmark",
+  "tag": "Bookmarks"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/bookmarks/{id}",
+  "summary": "Remove the specified bookmark",
+  "tag": "Bookmarks"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/bookmarks/{id}",
+  "summary": "Update bookmark",
+  "tag": "Bookmarks"
+ },
+ {
+  "method": "GET",
+  "path": "/api/cart",
+  "summary": "",
+  "tag": "Cart"
+ },
+ {
+  "method": "POST",
+  "path": "/api/cart/add",
+  "summary": "",
+  "tag": "Cart"
+ },
+ {
+  "method": "POST",
+  "path": "/api/cart/missing",
+  "summary": "",
+  "tag": "Cart"
+ },
+ {
+  "method": "POST",
+  "path": "/api/cart/pay",
+  "summary": "",
+  "tag": "Cart"
+ },
+ {
+  "method": "POST",
+  "path": "/api/cart/products",
+  "summary": "",
+  "tag": "Cart"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/cart/products/{id}",
+  "summary": "",
+  "tag": "Cart"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/cart/voucher",
+  "summary": "Remove Voucher from your Cart",
+  "tag": "Cart"
+ },
+ {
+  "method": "POST",
+  "path": "/api/cart/voucher",
+  "summary": "Add Voucher Code to your Cart",
+  "tag": "Cart"
+ },
+ {
+  "method": "GET",
+  "path": "/api/categories",
+  "summary": "",
+  "tag": "Categories"
+ },
+ {
+  "method": "GET",
+  "path": "/api/categories/tree",
+  "summary": "",
+  "tag": "Categories"
+ },
+ {
+  "method": "GET",
+  "path": "/api/cmi5/courses/{id}",
+  "summary": "Get Course cmi5 launch params",
+  "tag": "cmi5"
+ },
+ {
+  "method": "POST",
+  "path": "/api/cmi5/fetch",
+  "summary": "cmi5 token fetch",
+  "tag": "cmi5"
+ },
+ {
+  "method": "GET",
+  "path": "/api/config",
+  "summary": "Get a listing of public config values.",
+  "tag": "Settings"
+ },
+ {
+  "method": "GET",
+  "path": "/api/consultation-access-enquiries",
+  "summary": "Get my consultation access enquiries",
+  "tag": "Consultation Access"
+ },
+ {
+  "method": "POST",
+  "path": "/api/consultation-access-enquiries",
+  "summary": "Store a newly Consultation Access Enqiury",
+  "tag": "Consultation Access"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/consultation-access-enquiries/{id}",
+  "summary": "Remove the specified Consultation Access Enquiry",
+  "tag": "Consultation Access"
+ },
+ {
+  "method": "GET",
+  "path": "/api/consultation-access-enquiries/{id}",
+  "summary": "Get my consultation access enquiry by id",
+  "tag": "Consultation Access"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/consultation-access-enquiries/{id}",
+  "summary": "Update Consultation Access Enqiury",
+  "tag": "Consultation Access"
+ },
+ {
+  "method": "GET",
+  "path": "/api/consultation-access-enquiries/{id}/join",
+  "summary": "Get url to consultation by enquiry id",
+  "tag": "Consultation Access"
+ },
+ {
+  "method": "GET",
+  "path": "/api/consultations",
+  "summary": "Get a listing of the Consultations.",
+  "tag": "Consultations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/consultations/{id}",
+  "summary": "Display the specified Consultation",
+  "tag": "Consultations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/consultations/approve-term/{consultationTermId}",
+  "summary": "",
+  "tag": "Consultations"
+ },
+ {
+  "method": "POST",
+  "path": "/api/consultations/change-term/{consultationTermId}",
+  "summary": "Change term in consultation with tutor",
+  "tag": "Consultations"
+ },
+ {
+  "method": "POST",
+  "path": "/api/consultations/finish-term/{consultationTermId}",
+  "summary": "Finish consultation term",
+  "tag": "Consultations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/consultations/generate-jitsi/{consultationTermId}",
+  "summary": "",
+  "tag": "Consultations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/consultations/me",
+  "summary": "Get a listing of the Consultations bought by user.",
+  "tag": "Consultations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/consultations/my-schedule",
+  "summary": "",
+  "tag": "Consultations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/consultations/proposed-terms/{orderItemId}",
+  "summary": "",
+  "tag": "Consultations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/consultations/reject-term/{consultationTermId}",
+  "summary": "",
+  "tag": "Consultations"
+ },
+ {
+  "method": "POST",
+  "path": "/api/consultations/report-term/{orderItemId}",
+  "summary": "Report term with bought consultation",
+  "tag": "Consultations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/core/packages",
+  "summary": "List installed ulams packages",
+  "tag": "Core Admin"
+ },
+ {
+  "method": "GET",
+  "path": "/api/course-access-enquiries",
+  "summary": "Get my course access enquiries",
+  "tag": "Course Access"
+ },
+ {
+  "method": "POST",
+  "path": "/api/course-access-enquiries",
+  "summary": "Store a newly Course Access Enqiury",
+  "tag": "Course Access"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/course-access-enquiries/{id}",
+  "summary": "Remove the specified Course Access Enquiry",
+  "tag": "Course Access"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses",
+  "summary": "Get a listing of the Courses.",
+  "tag": "Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/{id}",
+  "summary": "Display the specified Course",
+  "tag": "Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/{id}/preview/{topic_id}",
+  "summary": "Preview the specified Course Topic is set to preview",
+  "tag": "Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/{id}/program",
+  "summary": "Display the specified Course program/curriculum/syllabus. No token required when course is free",
+  "tag": "Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/{id}/scorm",
+  "summary": "Display the specified Course scorm View to be embeede with iframe",
+  "tag": "Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/authored",
+  "summary": "Get a listing of the authored Courses.",
+  "tag": "Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/my",
+  "summary": "Get my course list IDs",
+  "tag": "Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/progress",
+  "summary": "",
+  "tag": "Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/progress/{course_id}",
+  "summary": "",
+  "tag": "Courses"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/courses/progress/{course_id}",
+  "summary": "",
+  "tag": "Courses"
+ },
+ {
+  "method": "POST",
+  "path": "/api/courses/progress/{topic_id}/h5p",
+  "summary": "",
+  "tag": "Courses"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/courses/progress/{topic_id}/ping",
+  "summary": "",
+  "tag": "Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/progress/paginated",
+  "summary": "",
+  "tag": "Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/demo",
+  "summary": "Demo mode status and the accounts used for the automatic login",
+  "tag": "Demo"
+ },
+ {
+  "method": "POST",
+  "path": "/api/demo/login",
+  "summary": "Log in as the demo student or admin without a password",
+  "tag": "Demo"
+ },
+ {
+  "method": "GET",
+  "path": "/api/dictionaries/{slug}/words",
+  "summary": "Get a listing of the Dictionary Word",
+  "tag": "Dictionaries"
+ },
+ {
+  "method": "GET",
+  "path": "/api/dictionaries/{slug}/words/{id}",
+  "summary": "Display the specified Dictionary Word",
+  "tag": "Dictionaries"
+ },
+ {
+  "method": "GET",
+  "path": "/api/dictionaries/{slug}/words/categories",
+  "summary": "Get the categories used in the dictionary for a given slug",
+  "tag": "Dictionaries"
+ },
+ {
+  "method": "GET",
+  "path": "/api/dictionaries/access",
+  "summary": "Display my dictionaries",
+  "tag": "Dictionaries"
+ },
+ {
+  "method": "GET",
+  "path": "/api/events",
+  "summary": "Get a listing of the Stationary events and Webinars",
+  "tag": "Events"
+ },
+ {
+  "method": "GET",
+  "path": "/api/health-check",
+  "summary": "Check health of the application",
+  "tag": "Api"
+ },
+ {
+  "method": "POST",
+  "path": "/api/liascript/launches/{topic}",
+  "summary": "Start a LiaScript topic on the tenant content origin",
+  "tag": "LiaScript"
+ },
+ {
+  "method": "POST",
+  "path": "/api/liascript/progress/{topic}",
+  "summary": "Progress reported by the content-origin player",
+  "tag": "LiaScript"
+ },
+ {
+  "method": "GET",
+  "path": "/api/lti/jwks",
+  "summary": "Public key set of this tenant (LTI platform and tool side)",
+  "tag": "LTI"
+ },
+ {
+  "method": "POST",
+  "path": "/api/lti/launches/{topic}",
+  "summary": "Start an LTI launch of an external-tool topic",
+  "tag": "LTI"
+ },
+ {
+  "method": "GET",
+  "path": "/api/lti/platform/ags/{course}/lineitems",
+  "summary": "AGS: list line items",
+  "tag": "LTI"
+ },
+ {
+  "method": "POST",
+  "path": "/api/lti/platform/ags/{course}/lineitems",
+  "summary": "AGS: create a line item",
+  "tag": "LTI"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/lti/platform/ags/{course}/lineitems/{lineItem}",
+  "summary": "AGS: delete a line item",
+  "tag": "LTI"
+ },
+ {
+  "method": "GET",
+  "path": "/api/lti/platform/ags/{course}/lineitems/{lineItem}",
+  "summary": "AGS: read a line item",
+  "tag": "LTI"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/lti/platform/ags/{course}/lineitems/{lineItem}",
+  "summary": "AGS: update a line item",
+  "tag": "LTI"
+ },
+ {
+  "method": "GET",
+  "path": "/api/lti/platform/ags/{course}/lineitems/{lineItem}/results",
+  "summary": "AGS: latest result per learner",
+  "tag": "LTI"
+ },
+ {
+  "method": "POST",
+  "path": "/api/lti/platform/ags/{course}/lineitems/{lineItem}/scores",
+  "summary": "AGS: post a score",
+  "tag": "LTI"
+ },
+ {
+  "method": "GET",
+  "path": "/api/lti/platform/authorize",
+  "summary": "OIDC authentication endpoint (the tool redirects the browser here)",
+  "tag": "LTI"
+ },
+ {
+  "method": "POST",
+  "path": "/api/lti/platform/deep-links",
+  "summary": "Deep-linking return URL (the tool posts the author's selection here)",
+  "tag": "LTI"
+ },
+ {
+  "method": "POST",
+  "path": "/api/lti/platform/token",
+  "summary": "AGS access token (OAuth 2 client credentials with a JWT client assertion)",
+  "tag": "LTI"
+ },
+ {
+  "method": "POST",
+  "path": "/api/lti/tool/deep-link",
+  "summary": "Return the courses picked in the deep-linking picker to the platform",
+  "tag": "LTI"
+ },
+ {
+  "method": "POST",
+  "path": "/api/lti/tool/exchange",
+  "summary": "Exchange the one-time launch code for an API token",
+  "tag": "LTI"
+ },
+ {
+  "method": "POST",
+  "path": "/api/lti/tool/launch",
+  "summary": "LTI launch (resource link or deep-linking request) from a registered platform",
+  "tag": "LTI"
+ },
+ {
+  "method": "GET",
+  "path": "/api/lti/tool/login",
+  "summary": "OIDC login initiation from a registered platform (also POST)",
+  "tag": "LTI"
+ },
+ {
+  "method": "GET",
+  "path": "/api/mattermost/generate_credentials",
+  "summary": "Generates user (creates one if not exists) credentials and sets a new random password",
+  "tag": "Mattermost"
+ },
+ {
+  "method": "GET",
+  "path": "/api/mattermost/me",
+  "summary": "List all of the available mattermost teams and channels for a user",
+  "tag": "Mattermost"
+ },
+ {
+  "method": "GET",
+  "path": "/api/mattermost/reset_password",
+  "summary": "Sends request for mattermost to send reset password link with email",
+  "tag": "Mattermost"
+ },
+ {
+  "method": "GET",
+  "path": "/api/meta",
+  "summary": "Capabilities of this host",
+  "tag": "Auth"
+ },
+ {
+  "method": "GET",
+  "path": "/api/model-fields",
+  "summary": "Lists available Model extended fields",
+  "tag": "Model Fields"
+ },
+ {
+  "method": "POST",
+  "path": "/api/notifications/{notification}/read",
+  "summary": "Mark notification as read",
+  "tag": "Notifications"
+ },
+ {
+  "method": "POST",
+  "path": "/api/notifications/tokens",
+  "summary": "Store a newly notification device token",
+  "tag": "Notification Device Tokens"
+ },
+ {
+  "method": "GET",
+  "path": "/api/order-invoices/{id}",
+  "summary": "Get invoice identified by a given id identifier of order",
+  "tag": "Invoices"
+ },
+ {
+  "method": "GET",
+  "path": "/api/orders",
+  "summary": "",
+  "tag": "Orders"
+ },
+ {
+  "method": "GET",
+  "path": "/api/orders/{id}",
+  "summary": "Display the specified Order",
+  "tag": "Orders"
+ },
+ {
+  "method": "GET",
+  "path": "/api/pages",
+  "summary": "Lists available pages",
+  "tag": "Pages"
+ },
+ {
+  "method": "GET",
+  "path": "/api/pages/{slug}",
+  "summary": "Read a page identified by a given slug identifier",
+  "tag": "Pages"
+ },
+ {
+  "method": "GET",
+  "path": "/api/payments",
+  "summary": "Search payments",
+  "tag": "Payments"
+ },
+ {
+  "method": "GET",
+  "path": "/api/payments/{id}",
+  "summary": "Display the specified Payment",
+  "tag": "Payments"
+ },
+ {
+  "method": "GET",
+  "path": "/api/pdfs",
+  "summary": "Get generated PDFs",
+  "tag": "Template PDFs"
+ },
+ {
+  "method": "GET",
+  "path": "/api/pdfs/{id}",
+  "summary": "Display the specified generated PDF",
+  "tag": "Template PDFs"
+ },
+ {
+  "method": "GET",
+  "path": "/api/pdfs/fonts",
+  "summary": "Fonts available in PDF templates",
+  "tag": "Template PDFs"
+ },
+ {
+  "method": "GET",
+  "path": "/api/pdfs/fonts/{file}",
+  "summary": "Font file used in PDF templates",
+  "tag": "Template PDFs"
+ },
+ {
+  "method": "GET",
+  "path": "/api/pdfs/generate/{id}",
+  "summary": "Download a generated PDF (certificate)",
+  "tag": "Template PDFs"
+ },
+ {
+  "method": "POST",
+  "path": "/api/product/{id}/pay",
+  "summary": "",
+  "tag": "Cart"
+ },
+ {
+  "method": "POST",
+  "path": "/api/productables/attach",
+  "summary": "",
+  "tag": "Products"
+ },
+ {
+  "method": "GET",
+  "path": "/api/products",
+  "summary": "",
+  "tag": "Products"
+ },
+ {
+  "method": "GET",
+  "path": "/api/products/{id}",
+  "summary": "",
+  "tag": "Products"
+ },
+ {
+  "method": "POST",
+  "path": "/api/products/cancel/{id}",
+  "summary": "",
+  "tag": "Products"
+ },
+ {
+  "method": "GET",
+  "path": "/api/products/my",
+  "summary": "",
+  "tag": "Products"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/profile",
+  "summary": "",
+  "tag": "Profile"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/profile/delete-avatar",
+  "summary": "",
+  "tag": "Profile"
+ },
+ {
+  "method": "GET",
+  "path": "/api/profile/delete/{userId}/{token}",
+  "summary": "",
+  "tag": "Profile"
+ },
+ {
+  "method": "POST",
+  "path": "/api/profile/delete/init",
+  "summary": "",
+  "tag": "Profile"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/profile/interests",
+  "summary": "Update user interests",
+  "tag": "Profile"
+ },
+ {
+  "method": "GET",
+  "path": "/api/profile/me",
+  "summary": "",
+  "tag": "Profile"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/profile/me",
+  "summary": "",
+  "tag": "Profile"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/profile/me-auth",
+  "summary": "",
+  "tag": "Profile"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/profile/password",
+  "summary": "",
+  "tag": "Profile"
+ },
+ {
+  "method": "GET",
+  "path": "/api/profile/settings",
+  "summary": "",
+  "tag": "Profile"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/profile/settings",
+  "summary": "Update user settings",
+  "tag": "Profile"
+ },
+ {
+  "method": "POST",
+  "path": "/api/profile/upload-avatar",
+  "summary": "",
+  "tag": "Profile"
+ },
+ {
+  "method": "GET",
+  "path": "/api/questionnaire/{model_type_title}/{model_id}",
+  "summary": "Lists available questionnaires",
+  "tag": "Questionnaire"
+ },
+ {
+  "method": "GET",
+  "path": "/api/questionnaire/{model_type_title}/{model_id}/{id}",
+  "summary": "Read a questionnaire identified by a given id identifier and model",
+  "tag": "Questionnaire"
+ },
+ {
+  "method": "POST",
+  "path": "/api/questionnaire/{model_type_title}/{model_id}/{id}",
+  "summary": "Save a questionnaire answers",
+  "tag": "Questionnaire"
+ },
+ {
+  "method": "GET",
+  "path": "/api/questionnaire/{model_type_title}/{model_id}/questions/{question_id}/answers",
+  "summary": "Read a question answers by a given model title and model id identifier",
+  "tag": "Questionnaire"
+ },
+ {
+  "method": "GET",
+  "path": "/api/questionnaire/{model_type_title}/{model_id}/questions/{question_id}/stars",
+  "summary": "Read a model stars by a given model title, model id identifier and question id.",
+  "tag": "Questionnaire"
+ },
+ {
+  "method": "GET",
+  "path": "/api/questionnaire/stars/{model_type_title}/{model_id}",
+  "summary": "Read a questionnaire stars identified by a given model title and model id identifier",
+  "tag": "QuestionnaireStars"
+ },
+ {
+  "method": "POST",
+  "path": "/api/quiz-answers",
+  "summary": "Save your answer",
+  "tag": "Gift Quiz Attempt"
+ },
+ {
+  "method": "POST",
+  "path": "/api/quiz-answers/all",
+  "summary": "Save your all answers",
+  "tag": "Gift Quiz Attempt"
+ },
+ {
+  "method": "GET",
+  "path": "/api/quiz-attempts",
+  "summary": "Get my quiz attempts",
+  "tag": "Gift Quiz Attempt"
+ },
+ {
+  "method": "POST",
+  "path": "/api/quiz-attempts",
+  "summary": "Create a new attempt or return an active attempt",
+  "tag": "Gift Quiz Attempt"
+ },
+ {
+  "method": "GET",
+  "path": "/api/quiz-attempts/{id}",
+  "summary": "Get my quiz attempt by id",
+  "tag": "Gift Quiz Attempt"
+ },
+ {
+  "method": "POST",
+  "path": "/api/quiz-attempts/{id}/end",
+  "summary": "Finish quiz attempt",
+  "tag": "Gift Quiz Attempt"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scorm/assets/scorm-again.min.js",
+  "summary": "Vendored scorm-again runtime (MIT) for the legacy player",
+  "tag": "SCORM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scorm/content/{uuid}",
+  "summary": "Launch data for the content-origin player",
+  "tag": "SCORM"
+ },
+ {
+  "method": "POST",
+  "path": "/api/scorm/content/{uuid}/track",
+  "summary": "Store CMI data sent by the content-origin player",
+  "tag": "SCORM"
+ },
+ {
+  "method": "POST",
+  "path": "/api/scorm/launch/{uuid}",
+  "summary": "Start a SCO on the tenant content origin",
+  "tag": "SCORM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scorm/play/{uuid}",
+  "summary": "Read a page identified by a given slug identifier",
+  "tag": "SCORM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scorm/show/{uuid}",
+  "summary": "Read a page identified by a given slug identifier",
+  "tag": "SCORM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scorm/track/{scoId}/{key}",
+  "summary": "Get user progress by scorm sco id and scorm data key",
+  "tag": "SCORM"
+ },
+ {
+  "method": "POST",
+  "path": "/api/scorm/track/{uuid}",
+  "summary": "Track Scorm user progress",
+  "tag": "SCORM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/settings",
+  "summary": "Get a listing of the public and enuerable settings.",
+  "tag": "Settings"
+ },
+ {
+  "method": "GET",
+  "path": "/api/settings/{group}/{key}",
+  "summary": "Display the specified public setting",
+  "tag": "Settings"
+ },
+ {
+  "method": "GET",
+  "path": "/api/stationary-events",
+  "summary": "Get a listing of published stationary events",
+  "tag": "Stationary Events"
+ },
+ {
+  "method": "GET",
+  "path": "/api/stationary-events/{id}",
+  "summary": "Display the specified Stationary Event.",
+  "tag": "Stationary Events"
+ },
+ {
+  "method": "GET",
+  "path": "/api/stationary-events/me",
+  "summary": "Get a listing of stationary events bought by user",
+  "tag": "Stationary Events"
+ },
+ {
+  "method": "GET",
+  "path": "/api/tags",
+  "summary": "",
+  "tag": "Tags"
+ },
+ {
+  "method": "GET",
+  "path": "/api/tags/unique",
+  "summary": "",
+  "tag": "Tags"
+ },
+ {
+  "method": "GET",
+  "path": "/api/tags/uniqueTags",
+  "summary": "Endpoints get unique tags from active courses",
+  "tag": "Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/tasks",
+  "summary": "Get a listing of the tasks",
+  "tag": "Tasks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/tasks",
+  "summary": "Store a newly created task",
+  "tag": "Tasks"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/tasks/{id}",
+  "summary": "Remove the specified task",
+  "tag": "Tasks"
+ },
+ {
+  "method": "GET",
+  "path": "/api/tasks/{id}",
+  "summary": "Task details",
+  "tag": "Tasks"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/tasks/{id}",
+  "summary": "Update task",
+  "tag": "Tasks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/tasks/complete/{id}",
+  "summary": "Complete task",
+  "tag": "Tasks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/tasks/incomplete/{id}",
+  "summary": "Incomplete task",
+  "tag": "Tasks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/tasks/notes",
+  "summary": "Store a newly created task note",
+  "tag": "Tasks Notes"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/tasks/notes/{id}",
+  "summary": "Remove the specified task notes",
+  "tag": "Tasks Notes"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/tasks/notes/{id}",
+  "summary": "Update task note",
+  "tag": "Tasks Notes"
+ },
+ {
+  "method": "GET",
+  "path": "/api/topic-project-solutions",
+  "summary": "Get a listing of the project solutions",
+  "tag": "Project Solution"
+ },
+ {
+  "method": "POST",
+  "path": "/api/topic-project-solutions",
+  "summary": "Store a newly Project Solution",
+  "tag": "Project Solution"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/topic-project-solutions/{id}",
+  "summary": "Remove the specified Project Solution",
+  "tag": "Project Solution"
+ },
+ {
+  "method": "GET",
+  "path": "/api/topic-project-solutions/{id}",
+  "summary": "Get a single project solution",
+  "tag": "Project Solution"
+ },
+ {
+  "method": "GET",
+  "path": "/api/translations",
+  "summary": "Get a list of public translations",
+  "tag": "Translations"
+ },
+ {
+  "method": "GET",
+  "path": "/api/tutors",
+  "summary": "",
+  "tag": "Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/tutors/{id}",
+  "summary": "",
+  "tag": "Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/webinars",
+  "summary": "Get a listing of the Webinars.",
+  "tag": "Webinars"
+ },
+ {
+  "method": "GET",
+  "path": "/api/webinars/{id}",
+  "summary": "Display the specified Webinar",
+  "tag": "Webinars"
+ },
+ {
+  "method": "GET",
+  "path": "/api/webinars/generate-jitsi/{id}",
+  "summary": "",
+  "tag": "Webinars"
+ },
+ {
+  "method": "GET",
+  "path": "/api/webinars/me",
+  "summary": "Get a listing of the Webinars bought by user.",
+  "tag": "Webinars"
+ },
+ {
+  "method": "GET",
+  "path": "/api/webinars/start-live-stream/{id}",
+  "summary": "Start live stream in yt.",
+  "tag": "Webinars"
+ }
+]

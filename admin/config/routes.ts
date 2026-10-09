@@ -319,6 +319,13 @@
         hideInMenu: true,
       },
       {
+        path: '/users/tokens',
+        name: 'API Tokens',
+        icon: 'key',
+        access: 'tokenManagePermission',
+        component: './Tokens',
+      },
+      {
         path: '/users/groups',
         name: 'User Groups',
         icon: 'team',
@@ -475,13 +482,6 @@
         path: '/analytics/reports',
         access: 'reportListPermission',
         component: './Reports',
-      },
-      {
-        name: 'Logs',
-        icon: 'history',
-        path: '/analytics/logs',
-        access: 'trackerListPermission',
-        component: './Logs',
       },
     ],
   },

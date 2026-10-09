@@ -1,0 +1,48 @@
+---
+/**
+ * Standalone live render of one catalogue component from its example props, with the real
+ * components, base styles and all four tenant themes (pick one with ?theme=). Embedded as an
+ * iframe by /catalogue/<component>/ so the catalogue CSS never touches the docs theme.
+ */
+import Render from "@ulams/ui/Render.astro";
+import baseCss from "@ulams/ui/styles/base.css?inline";
+import fallbackCss from "@ulams/ui/styles/fallbacks.css?inline";
+import coffeeCss from "@ulams/ui/styles/themes/coffee.css?inline";
+import oncallCss from "@ulams/ui/styles/themes/oncall.css?inline";
+import nightskyCss from "@ulams/ui/styles/themes/nightsky.css?inline";
+import platformCss from "@ulams/ui/styles/themes/platform.css?inline";
+import { docOf, exampleOf, isStructure, names } from "../../../lib/playground.ts";
+import type { ComponentName } from "@ulams/ui/registry";
+
+export function getStaticPaths() {
+  return names.map((component) => ({ params: { component } }));
+}
+
+const name = Astro.params.component as ComponentName;
+const doc = docOf(name, exampleOf(name));
+const css = [baseCss, fallbackCss, platformCss, coffeeCss, oncallCss, nightskyCss].join("\n");
+---
+
+<!doctype html>
+<html lang="en" data-theme="platform">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>{name} preview</title>
+    <style is:inline set:html={css}></style>
+    <style is:inline>
+      body {
+        padding: 16px;
+      }
+    </style>
+    <script is:inline>
+      // The theme comes from the query string, e.g. ?theme=coffee (docs page picks one for the iframe).
+      var theme = new URLSearchParams(location.search).get("theme");
+      if (["platform", "coffee", "oncall", "nightsky"].indexOf(theme) !== -1) document.documentElement.dataset.theme = theme;
+    </script>
+  </head>
+  <body>
+    {isStructure(name) ? <Render doc={doc} /> : <main><Render doc={doc} /></main>}
+  </body>
+</html>

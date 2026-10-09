@@ -23,6 +23,7 @@ Route::group([
 
     Route::post('sessions/{session}/runs', [CourseBuilderController::class, 'run']);
     Route::get('sessions/{session}/events', [EventStreamController::class, 'stream']);
+    Route::get('runs/{run}', [CourseBuilderController::class, 'runStatus']);
     Route::post('runs/{run}/cancel', [CourseBuilderController::class, 'cancel']);
     Route::post('runs/{run}/steps/{step}/retry', [CourseBuilderController::class, 'retryStep']);
 
