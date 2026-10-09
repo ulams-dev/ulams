@@ -439,7 +439,7 @@ round-trips` · `docs(roadmap): Phase 1 status`.
 
 ---
 
-## 14. Decisions taken (to confirm)
+## 14. Decisions (confirmed by the product owner, 2026-10-09)
 
 1. **Milestone order**: hardening → LTI Platform → LTI deep linking → LTI Tool → LiaScript → Adapt A →
    Adapt B → H5P items → conformance.
