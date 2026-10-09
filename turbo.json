@@ -140,6 +140,14 @@
     "lint": {
       "outputs": []
     },
+    "ulams#test": {
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [
+        "coverage/**"
+      ]
+    },
     "test": {
       "outputs": [
         "coverage/**"

@@ -69,24 +69,18 @@ describe("stdio (built CLI)", () => {
   });
   afterAll(() => void fake.close());
 
-  /** Spawns `ulams mcp` and connects; a child that dies during start-up (a loaded CI runner) is retried on a fresh process. */
+  /** Spawns `ulams mcp` and connects; a child that dies during start-up fails with its stderr instead of a bare "Connection closed". */
   async function connectStdio(env: Record<string, string>): Promise<Client> {
-    let last: unknown;
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      const client = new Client({ name: "stdio-client", version: "1" });
-      const transport = new StdioClientTransport({ command: "node", args: [dist, "mcp"], env: { ...(process.env as Record<string, string>), ...env }, stderr: "pipe" });
-      let stderr = "";
-      transport.stderr?.on("data", (d: Buffer) => (stderr += d.toString()));
-      try {
-        await client.connect(transport);
-        return client;
-      } catch (e) {
-        last = new Error(`${(e as Error).message} (attempt ${attempt}; stderr: ${stderr.trim() || "empty"})`);
-        await client.close().catch(() => undefined);
-        await new Promise((r) => setTimeout(r, 250 * attempt));
-      }
+    const client = new Client({ name: "stdio-client", version: "1" });
+    const transport = new StdioClientTransport({ command: "node", args: [dist, "mcp"], env: { ...(process.env as Record<string, string>), ...env }, stderr: "pipe" });
+    let stderr = "";
+    transport.stderr?.on("data", (d: Buffer) => (stderr += d.toString()));
+    try {
+      await client.connect(transport);
+    } catch (e) {
+      throw new Error(`${(e as Error).message} (child stderr: ${stderr.trim() || "empty"})`);
     }
-    throw last;
+    return client;
   }
 
   it("runs `ulams mcp`, lists tools and calls one against the API with the env credentials", async () => {
