@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { ApiError } from "../src/client.ts";
-import { createCourseBuilderClient } from "../src/course-builder.ts";
+import { ApplyNotSettledError, createCourseBuilderClient, isApplied } from "../src/course-builder.ts";
 
 type Call = { url: string; init: RequestInit };
 
@@ -66,5 +66,36 @@ describe("course builder client", () => {
     const cb = createCourseBuilderClient({ baseUrl: "/b", prefix: "", fetch: fn });
     await cb.versions.diff("v 1", "v/2");
     expect(calls[0]!.url).toBe("/b/versions/v%201/diff?against=v%2F2");
+  });
+});
+
+describe("applied state", () => {
+  const state = (session: Record<string, unknown>) => ({ success: true, data: { session: { id: "s1", status: "applied", currentVersionId: "v2", appliedVersionId: "v1", ...session } } });
+
+  it("isApplied needs the applied version to be the current one", () => {
+    expect(isApplied({ status: "applied", currentVersionId: "v2", appliedVersionId: "v2" })).toBe(true);
+    expect(isApplied({ status: "applied", currentVersionId: "v2", appliedVersionId: "v1" })).toBe(false);
+    expect(isApplied({ status: "applying", currentVersionId: "v2", appliedVersionId: "v2" })).toBe(false);
+    expect(isApplied({ status: "applied", currentVersionId: null, appliedVersionId: null })).toBe(false);
+    expect(isApplied(null)).toBe(false);
+  });
+
+  it("waitForApplied keeps polling the session endpoint until the queue has caught up", async () => {
+    const { fn, calls } = fakeFetch([{ body: state({}) }, { body: state({ status: "applying" }) }, { body: state({ appliedVersionId: "v2" }) }]);
+    const cb = createCourseBuilderClient({ baseUrl: "/b", prefix: "", fetch: fn });
+    const result = await cb.sessions.waitForApplied("s1", { versionId: "v2", intervalMs: 1, timeoutMs: 2000 });
+    expect(result.session.appliedVersionId).toBe("v2");
+    expect(calls).toHaveLength(3);
+    expect(calls.every((c) => c.url === "/b/sessions/s1")).toBe(true);
+  });
+
+  it("waitForApplied gives up when the apply never settles or fails", async () => {
+    const stuck = fakeFetch(Array.from({ length: 20 }, () => ({ body: state({}) })));
+    const cb = createCourseBuilderClient({ baseUrl: "/b", prefix: "", fetch: stuck.fn });
+    await expect(cb.sessions.waitForApplied("s1", { intervalMs: 1, timeoutMs: 20 })).rejects.toBeInstanceOf(ApplyNotSettledError);
+
+    const failed = fakeFetch([{ body: state({ status: "failed" }) }]);
+    const cb2 = createCourseBuilderClient({ baseUrl: "/b", prefix: "", fetch: failed.fn });
+    await expect(cb2.sessions.waitForApplied("s1", { intervalMs: 1 })).rejects.toThrow("The apply failed.");
   });
 });

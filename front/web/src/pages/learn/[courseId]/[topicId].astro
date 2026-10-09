@@ -22,7 +22,7 @@ try {
 } catch (error) {
   // Tokens die with the hourly demo reset: log in again once.
   if (error instanceof ApiError && error.status === 401) {
-    token = await renewSession(tenant, Astro.cookies, Astro.url.protocol === "https:", token);
+    token = await renewSession(tenant, Astro.cookies, Astro.locals.secure, token);
     if (!token) return Astro.redirect(`/login?next=${encodeURIComponent(Astro.url.pathname)}`);
     program = await getProgram(tenant, token, courseId);
   } else if (error instanceof ApiError && error.status === 404) {

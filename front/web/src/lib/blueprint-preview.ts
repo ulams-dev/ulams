@@ -3,7 +3,7 @@ import type { CourseLinks } from "./view-model.ts";
 
 /**
  * The studio's interactive preview shows a Course Blueprint version the way a learner will see it
- * (ADR 0040). The blueprint is mapped to the same `Course` shape the learner pages read, so the
+ * (ADR 0071). The blueprint is mapped to the same `Course` shape the learner pages read, so the
  * course page and the lesson player render it with the components they already use, and every
  * element keeps the blueprint id the element chat addresses (`data-blueprint-id`).
  */

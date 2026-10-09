@@ -2,7 +2,9 @@
 # Derived from the development config api/docker/conf/Caddyfile, with HTTPS host names.
 # Not tested end to end by the project.
 #
-# Hosts (D = ULAMS_DOMAIN, C = ULAMS_CONTENT_DOMAIN, <slug> = tenant):
+# Hosts (D = ULAMS_DOMAIN, C = ULAMS_CONTENT_DOMAIN, <slug> = tenant). C is a separate registrable
+# domain (strongest) or a subdomain of D's site such as content.D (supported, see
+# api/docs/content-origin.md for the mitigations):
 #   api.D, <slug>.api.D        Laravel API (php-fpm) and /h5p/* (H5P service)
 #   app.D, <slug>.app.D        learner front (web)
 #   admin.D, <slug>.admin.D    admin panel
@@ -32,6 +34,12 @@
 	header {
 		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'"
 		>X-Content-Type-Options nosniff
+		# Own browsing-context group (no window.opener link to the app); public package files
+		# that players in sandboxed frames (opaque origin, every request cross-origin) may load.
+		# No credentials ever travel to this origin.
+		>Cross-Origin-Opener-Policy same-origin
+		>Cross-Origin-Resource-Policy cross-origin
+		>Access-Control-Allow-Origin *
 		Referrer-Policy no-referrer
 		-Set-Cookie
 		-Server
@@ -88,6 +96,36 @@
 		}
 	}
 
+	# Progress tracking of the package players, called from the content origin or from a
+	# sandboxed frame (`Origin: null`). They authenticate with the scoped X-Ulams-Tracking-Token
+	# header, never with cookies: any origin may call them, without credentials, and no cookie
+	# is passed on. Every other API path refuses to reflect a content origin.
+	@tracking path /api/scorm/content/* /api/liascript/progress/*
+	handle @tracking {
+		request_header -Cookie
+		request_header -Authorization
+		header Access-Control-Allow-Origin *
+		@tracking_preflight method OPTIONS
+		handle @tracking_preflight {
+			header {
+				Access-Control-Allow-Methods "GET, POST, OPTIONS"
+				Access-Control-Allow-Headers "Content-Type, X-Ulams-Tracking-Token"
+				Access-Control-Max-Age 600
+			}
+			respond 204
+		}
+		handle {
+			reverse_proxy api:9000 {
+				header_up -Access-Control-Allow-Origin
+				header_down -Access-Control-Allow-Origin
+				header_down -Set-Cookie
+				transport fastcgi {
+					env SCRIPT_FILENAME /var/www/html/index.php
+				}
+			}
+		}
+	}
+
 	@h5p path /h5p /h5p/*
 	handle @h5p {
 		request_body {
@@ -114,9 +152,12 @@
 				env SCRIPT_FILENAME /var/www/html/index.php
 			}
 		}
-		@origin_upload header Origin {http.request.header.Origin}
+		@origin_upload {
+			header Origin *
+			not header_regexp Origin ^(null|https?://([^/:]+\.)*content\.)
+		}
 		header @origin_upload Access-Control-Allow-Origin {http.request.header.Origin}
-		header Access-Control-Allow-Credentials true
+		header @origin_upload Access-Control-Allow-Credentials true
 	}
 
 	# Only the content origin's proxy may set this header
@@ -134,19 +175,26 @@
 			}
 		}
 
-		@origin header Origin {http.request.header.Origin}
+		@origin {
+			header Origin *
+			not header_regexp Origin ^(null|https?://([^/:]+\.)*content\.)
+		}
 		header @origin Access-Control-Allow-Origin {http.request.header.Origin}
 		@excluded {
 			not header Origin {http.request.header.Origin}
 		}
 		header @excluded Access-Control-Allow-Origin *
-		header Access-Control-Allow-Credentials true
+		header @origin Access-Control-Allow-Credentials true
 	}
 }
 
 (web) {
 	import app_csp_report_only
 	encode zstd gzip
+	# The BFF and studio JSON is for this front only: a page of another origin (the content
+	# origin runs third-party code) cannot load it in no-cors mode.
+	header /bff/* Cross-Origin-Resource-Policy same-origin
+	header /studio/api/* Cross-Origin-Resource-Policy same-origin
 	reverse_proxy web:4321
 }
 
@@ -189,9 +237,17 @@ platform.{$ULAMS_CONTENT_DOMAIN} {
 }
 
 # Tenant content origins: <slug>.C -> tenant API <slug>.api.D
+# The slug is the label in front of ULAMS_CONTENT_DOMAIN, whether that is a separate domain
+# (example-content.net) or a subdomain of the app's site (content.example.com).
 *.{$ULAMS_CONTENT_DOMAIN} {
 	import on_demand
-	import content_origin {labels.2}.api.{$ULAMS_DOMAIN} https://{labels.2}.api.{$ULAMS_DOMAIN} "https://{labels.2}.app.{$ULAMS_DOMAIN} https://{labels.2}.admin.{$ULAMS_DOMAIN}"
+	@tenant vars_regexp slug {http.request.host} ^([a-z][a-z0-9]{1,29})\.{$ULAMS_CONTENT_DOMAIN}$
+	handle @tenant {
+		import content_origin {re.slug.1}.api.{$ULAMS_DOMAIN} https://{re.slug.1}.api.{$ULAMS_DOMAIN} "https://{re.slug.1}.app.{$ULAMS_DOMAIN} https://{re.slug.1}.admin.{$ULAMS_DOMAIN}"
+	}
+	handle {
+		respond "Not found" 404
+	}
 }
 
 # Bundled MinIO (profile `minio`). Uploaded files must not run as active content here: no MIME

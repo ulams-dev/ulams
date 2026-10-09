@@ -2,7 +2,7 @@
 
 return [
     /*
-     * Demo mode: password-less login as the demo student or admin and an hourly reset of the
+     * Demo mode: password-less login as the demo student, tutor or admin and an hourly reset of the
      * whole tenant database. Set DEMO_MODE=true only in the `.env.<host>` of a demo tenant
      * (`ulams:tenant:create <slug> --demo=on`). When it is off, no route, command schedule or
      * public config key of this package is registered.
@@ -17,6 +17,9 @@ return [
      */
     'admin_email' => env('DEMO_ADMIN_EMAIL') ?: env('INITIAL_USER_EMAIL'),
     'student_email' => env('DEMO_STUDENT_EMAIL'),
+    // The tutor (the studio author role) is `tutor@` at the admin's e-mail domain, created by
+    // `ulams:tenant:seed-demo`.
+    'tutor_email' => env('DEMO_TUTOR_EMAIL'),
 
     /*
      * Shown on the demo badge of the front ("open the admin panel") and of the admin

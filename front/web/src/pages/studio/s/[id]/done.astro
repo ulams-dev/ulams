@@ -28,6 +28,16 @@ try {
   if (e instanceof ApiError && (e.status === 404 || e.status === 403)) return new Response("Not found", { status: 404 });
   throw e;
 }
+// an approved edit is re-applied by a queued run: give it a moment so this page shows the course
+// the author approved, not the previous applied version
+const lagging = state.session.status === "applying" || (state.session.appliedVersionId !== null && state.session.appliedVersionId !== state.session.currentVersionId);
+if (lagging) {
+  try {
+    state = await cb.sessions.waitForApplied(id, { timeoutMs: 8_000 });
+  } catch {
+    // keep what the server reports now
+  }
+}
 if (!state.session.appliedVersionId) return Astro.redirect(`/studio/s/${id}`);
 const version = await cb.versions.get(state.session.appliedVersionId);
 const doc: Blueprint = version.document;

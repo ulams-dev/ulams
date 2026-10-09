@@ -1,4 +1,4 @@
-# 0040. Interactive preview in the studio: learner pages from the blueprint, in a frame
+# 0071. Interactive preview in the studio: learner pages from the blueprint, in a frame
 
 - Status: Proposed
 - Date: 2026-10-09

@@ -109,17 +109,9 @@ else
     php artisan ulams:tenant:sync-env --migrate
 fi
 
-# generate passport keys only if storage/oauth-private.key is not set
-
-FILE=storage/oauth-private.key
-if [ -f "$FILE" ]; then
-    echo "$FILE exists."     
-else 
-    echo "$FILE does not exist. Generating app keys, passport keys and passport client"
-    php artisan key:generate --force --no-interaction
-    php artisan passport:keys --force --no-interaction 
-    php artisan passport:client --personal --no-interaction
-fi
+# APP_KEY is generated only when empty (it encrypts the tenant secrets: ADR 0007); Passport keys
+# only when storage/oauth-private.key is missing. See init-keys.sh.
+./init-keys.sh
 
 if [ "$DISABLE_DB_SEED" == 'true' ]
 then

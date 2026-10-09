@@ -65,6 +65,32 @@ export interface SessionSummary {
   costMicroUsd?: number;
 }
 
+/**
+ * True only when the session's applied version is its current version and the apply run has
+ * finished. The `applied` event, an approved patch and a `status` of `applied` alone are not
+ * enough: after an approved edit the status can still read `applied` while the re-apply of the
+ * new version is queued, so the course in the academy is behind what the author approved.
+ */
+export function isApplied(session: Pick<SessionSummary, "status" | "currentVersionId" | "appliedVersionId"> | null | undefined): boolean {
+  return Boolean(session && session.status === "applied" && session.appliedVersionId && session.appliedVersionId === session.currentVersionId);
+}
+
+export interface WaitForAppliedOptions {
+  /** Wait until exactly this version is the applied one (from the `applied` event). */
+  versionId?: string;
+  timeoutMs?: number;
+  intervalMs?: number;
+  signal?: AbortSignal;
+}
+
+/** Raised by `sessions.waitForApplied` when the apply did not finish in time or failed. */
+export class ApplyNotSettledError extends Error {
+  constructor(message: string, readonly state?: BuilderState) {
+    super(message);
+    this.name = "ApplyNotSettledError";
+  }
+}
+
 /** The AG-UI shared state (STATE_SNAPSHOT / STATE_DELTA). */
 export interface BuilderState {
   session: SessionSummary;
@@ -237,6 +263,22 @@ export function createCourseBuilderClient(options: ClientOptions & { prefix?: st
       create: (title?: string) => call<BuilderState>("POST", "/sessions", title ? { title } : {}),
       get: (sessionId: string) => call<BuilderState>("GET", `/sessions/${id(sessionId)}`),
       delete: (sessionId: string) => call<{ id: string }>("DELETE", `/sessions/${id(sessionId)}`),
+      /**
+       * Polls the session endpoint (the authoritative state) until the applied version has caught
+       * up with the current one, so a UI never reports "applied" from an event that arrived first.
+       */
+      waitForApplied: async (sessionId: string, opts: WaitForAppliedOptions = {}): Promise<BuilderState> => {
+        const deadline = Date.now() + (opts.timeoutMs ?? 20_000);
+        const interval = opts.intervalMs ?? 500;
+        for (;;) {
+          const state = await call<BuilderState>("GET", `/sessions/${id(sessionId)}`);
+          const settled = opts.versionId ? state.session.status === "applied" && state.session.appliedVersionId === opts.versionId : isApplied(state.session);
+          if (settled) return state;
+          if (state.session.status === "failed") throw new ApplyNotSettledError("The apply failed.", state);
+          if (opts.signal?.aborted || Date.now() + interval > deadline) throw new ApplyNotSettledError("The apply did not finish in time.", state);
+          await new Promise((resolve) => setTimeout(resolve, interval));
+        }
+      },
     },
     sources: {
       upload: (sessionId: string, file: Blob, filename: string) => {

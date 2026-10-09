@@ -49,7 +49,7 @@ When demo mode is off, none of it exists: the demo routes answer 404, `GET /api/
 | Endpoint | What it does |
 |---|---|
 | `GET /api/demo` | Returns `enabled`, the demo accounts (`role`, `email`, never a password), `front_url`, `admin_url` and `reset_cron`. |
-| `POST /api/demo/login` with `{"role": "student"}` or `{"role": "admin"}` | Issues a regular Passport personal access token for that account. The response body is the same as `POST /api/auth/login`. Rate limited to 60 requests a minute. |
+| `POST /api/demo/login` with `{"role": "student"}`, `{"role": "tutor"}` or `{"role": "admin"}` | Issues a regular Passport personal access token for that account. The response body is the same as `POST /api/auth/login`. Rate limited to 60 requests a minute. |
 | `GET /api/config` | Gains `ulams_demo: {enabled, front_url, admin_url}`. |
 
 Before logging in the student, the API gives the demo student access to every published
@@ -70,6 +70,7 @@ The accounts used:
 |---|---|---|
 | admin | `INITIAL_USER_EMAIL`, by default `admin@<slug>.ulams.app` | `DEMO_ADMIN_EMAIL` |
 | student | `student1@` at the admin's e-mail domain | `DEMO_STUDENT_EMAIL` |
+| tutor | `tutor@` at the admin's e-mail domain (the course author in the studio) | `DEMO_TUTOR_EMAIL` |
 
 If the account does not exist, the first user with that role is used.
 
@@ -149,6 +150,7 @@ Set these in the tenant env file. Defaults are in
 | `DEMO_MODE` | `false` | Turns demo mode on. Set through `ulams:tenant:create --demo=on`. |
 | `DEMO_ADMIN_EMAIL` | `INITIAL_USER_EMAIL` | Account for the admin login. |
 | `DEMO_STUDENT_EMAIL` | `student1@<admin domain>` | Account for the student login. |
+| `DEMO_TUTOR_EMAIL` | `tutor@<admin domain>` | Account for the tutor login. |
 | `DEMO_ADMIN_URL` | `ADMIN_URL` | Admin URL shown on the front's demo badge. |
 | `DEMO_RESET_SCHEDULE` | `true` | Schedule the reset. |
 | `DEMO_RESET_CRON` | `0 * * * *` | When the reset runs. |

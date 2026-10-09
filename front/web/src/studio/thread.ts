@@ -2,10 +2,10 @@
  * Builder thread (/studio/new and /studio/s/:id): upload drop zone, the conversation with A2UI
  * surfaces (interview, outline review, generation progress, apply) and the brief/source panel.
  */
-import { ApiError, type BuilderState } from "@ulams/sdk";
+import { ApiError, isApplied, type BuilderState } from "@ulams/sdk";
 import { h, usd } from "@ulams/ui/builder/dom.ts";
 import type { A2uiActionOut } from "@ulams/ui/builder/components.ts";
-import { announce, connectionStatus, showCitation, studioClient, updateTopBar } from "./common.ts";
+import { announce, connectionStatus, settleApplied, showCitation, studioClient, updateTopBar } from "./common.ts";
 import { Timeline } from "./timeline.ts";
 
 const MAX_BYTES = 20 * 1024 * 1024;
@@ -38,8 +38,13 @@ export function mountThread(root: HTMLElement): void {
     dispatch,
     onCitation: (id, label, trigger) => void showCitation(id, label, trigger),
     onState: (state) => render(state),
-    onCustom: (name) => {
-      if (name === "applied") renderNext(timeline.state);
+    onCustom: (name, value) => {
+      if (name !== "applied") return;
+      renderNext(timeline.state);
+      const versionId = typeof value.versionId === "string" ? value.versionId : undefined;
+      void settleApplied(cb, sessionId ?? "", versionId, () => timeline.state).then((state) => {
+        if (state) timeline.adopt(state);
+      });
     },
   });
 
@@ -86,7 +91,7 @@ export function mountThread(root: HTMLElement): void {
     if (status && ["apply_review", "applying", "applied"].includes(status)) {
       links.push(h("a", { class: "cb-btn", href: `/studio/s/${sessionId}/workspace` }, "Open the workspace"));
     }
-    if (status === "applied") links.push(h("a", { class: "cb-btn cb-btn-primary", href: `/studio/s/${sessionId}/done` }, "See your course"));
+    if (isApplied(state.session)) links.push(h("a", { class: "cb-btn cb-btn-primary", href: `/studio/s/${sessionId}/done` }, "See your course"));
     nextLinks.replaceChildren(...links);
   }
 

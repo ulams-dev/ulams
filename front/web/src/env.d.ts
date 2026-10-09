@@ -6,6 +6,8 @@ declare namespace App {
     tenant: import("@ulams/sdk").Tenant | null;
     /** The request is for the platform host (product landing), not a tenant. */
     platform: boolean;
+    /** The browser reached the site over https (decides the `__Host-` cookie names). */
+    secure: boolean;
     /** Session token (httpOnly cookie), set on /learn and /bff routes. */
     token: string | null;
     /** How the session was obtained on this request. */

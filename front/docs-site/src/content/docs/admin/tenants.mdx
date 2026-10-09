@@ -148,6 +148,22 @@ platform migrations, so a fresh container or pod gets all tenants back. It runs 
 Because the env files are generated, edit tenant values through `ulams:tenant:create`, not
 by hand: hand edits are overwritten on the next sync.
 
+### AI settings per tenant: `ulams:tenant:set-env`
+
+Every tenant inherits the platform AI settings (`ANTHROPIC_API_KEY`, `AI_DRIVER`, `AI_MODEL_*`,
+`ANTHROPIC_BASE_URL`) when `create` or `sync-env` writes its env file, so one platform key serves all
+tenants and a changed key reaches them on the next `sync-env` (which also runs on container start).
+A tenant can override them:
+
+```bash
+php artisan ulams:tenant:set-env coffee --set=ANTHROPIC_API_KEY=sk-... --set=AI_MODEL_DEFAULT=...
+php artisan ulams:tenant:set-env coffee --set=AI_DRIVER=disabled
+php artisan ulams:tenant:set-env coffee --unset=ANTHROPIC_API_KEY   # inherit the platform value again
+```
+
+Overrides are stored encrypted in the `tenants` table and only the listed keys are accepted. The
+command prints key names, never values; the key is never logged. See ADR 0063.
+
 ### Delete a tenant: `ulams:tenant:delete`
 
 ```bash

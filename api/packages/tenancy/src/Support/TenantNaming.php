@@ -28,6 +28,38 @@ class TenantNaming
         }
     }
 
+    /**
+     * Keys a tenant can inherit from the platform or override (the allow-list of
+     * `ulams_tenancy.inherited_env`); secrets never travel through any other key.
+     *
+     * @return list<string>
+     */
+    public static function inheritableKeys(): array
+    {
+        return array_keys((array) config('ulams_tenancy.inherited_env', []));
+    }
+
+    /**
+     * Platform defaults (non-empty only) overlaid with the tenant's own overrides.
+     *
+     * @return array<string, string>
+     */
+    public static function inheritedValues(Tenant $tenant): array
+    {
+        $allowed = self::inheritableKeys();
+        $values = array_filter(
+            (array) config('ulams_tenancy.inherited_env', []),
+            fn ($value) => is_string($value) && $value !== ''
+        );
+        $overrides = array_filter(
+            (array) ($tenant->env_overrides ?? []),
+            fn ($value, $key) => in_array($key, $allowed, true) && is_string($value) && $value !== '',
+            ARRAY_FILTER_USE_BOTH
+        );
+
+        return array_merge($values, $overrides);
+    }
+
     public static function pattern(string $key, string $slug): string
     {
         return str_replace('{slug}', $slug, (string) config('ulams_tenancy.' . $key));
@@ -78,7 +110,7 @@ class TenantNaming
     {
         $prefix = $tenant->redis_prefix;
 
-        return [
+        return self::inheritedValues($tenant) + [
             'APP_NAME' => $tenant->name,
             'APP_URL' => $tenant->apiUrl(),
             'APP_KEY' => $tenant->app_key,

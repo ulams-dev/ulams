@@ -86,7 +86,8 @@ Matching questions always shuffle their two columns.
 - Starting the quiz opens an attempt; an unfinished attempt is resumed instead of starting a new one.
 - When **Max attempts** is used up, no new attempt can be started.
 - An attempt closes automatically when its time is up. Without **Max execution time** it closes after
-  120 minutes.
+  the platform default, the **max_quiz_time** setting (`ulams_gift_quiz.max_quiz_time`, in minutes,
+  editable by admins in the settings; 120 when nobody set it).
 - Results are shown when the attempt ends. In the reference front, passing the quiz completes the topic.
 
 ## Quiz reports

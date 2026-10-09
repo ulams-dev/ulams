@@ -4,6 +4,9 @@
  * same-origin iframe and reports through window.API; this page forwards slide position and status
  * to the API with a topic-scoped token. Launch parameters arrive in the URL fragment:
  *   #api=<tenant API>&topic=<topic id>&token=<progress token>&course=<path of the Markdown>&sections=<n>
+ * Same-site hardening (ADR 0014, amended 2026-10-09): the build finds window.API in this page, so the
+ * host frame needs `allow-same-origin`; the API base must be an absolute http(s) URL and the build is
+ * framed from a path on this origin only.
  * The admin editor's live preview opens it with #preview=1&course=<draft>: nothing is reported.
  */
 (function () {
@@ -23,7 +26,16 @@
     status.hidden = false;
   }
 
-  if (!course || course.charAt(0) !== '/' || (!preview && (!api || !topic || !token))) {
+  function isHttpUrl(value) {
+    try {
+      var protocol = new URL(value).protocol;
+      return protocol === 'https:' || protocol === 'http:';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  if (!course || course.charAt(0) !== '/' || course.charAt(1) === '/' || (!preview && (!api || !isHttpUrl(api) || !topic || !token))) {
     fail('This course could not be started. Close it and open the lesson again.');
     return;
   }
