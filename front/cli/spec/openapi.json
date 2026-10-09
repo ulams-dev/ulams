@@ -3354,6 +3354,35 @@
     ],
     "type": "object"
    },
+   "TopicLayout": {
+    "properties": {
+     "document": {
+      "description": "Layout document (a JSON string is accepted in multipart requests): a list of {component, props, id?} nodes using only the approved learner layout components (Callout, Steps, ComparisonTable, H5PFrame, LiaScriptLesson, Timeline, FlipCards, CodeBlock, PracticeActivity), validated against the learner layout manifest",
+      "items": {
+       "type": "object"
+      },
+      "type": "array"
+     },
+     "id": {
+      "type": "integer"
+     },
+     "markdown_fallback": {
+      "description": "Markdown shown by clients that do not render layouts, and when the document cannot be rendered",
+      "type": "string"
+     },
+     "schema_version": {
+      "enum": [
+       "1"
+      ],
+      "type": "string"
+     }
+    },
+    "required": [
+     "document",
+     "markdown_fallback"
+    ],
+    "type": "object"
+   },
    "TopicLiaScript": {
     "properties": {
      "id": {
