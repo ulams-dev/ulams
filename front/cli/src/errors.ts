@@ -144,6 +144,9 @@ export function fromApiError(error: unknown, requestId: string | null = null, re
     const status = error.status;
     const base = { status, requestId };
     if (status === 0) return new CliError("NETWORK", error.message, { ...base, retryable: true });
+    if (status === 400) {
+      return new CliError("INPUT_INVALID", apiMessage ?? (typeof body.error === "string" ? body.error : "Bad request."), { ...base, details: { body: error.body as never } });
+    }
     if (status === 401) return new CliError("AUTH_EXPIRED", apiMessage ?? "Unauthenticated.", base);
     if (status === 403) {
       if (body.error === "scope_missing") {

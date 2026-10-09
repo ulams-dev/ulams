@@ -1,3 +1,5 @@
+import { spawn } from "node:child_process";
+import { hostname } from "node:os";
 import { z } from "zod";
 import { CliError } from "../../errors.ts";
 import { HttpClient } from "../../http/client.ts";
@@ -18,6 +20,7 @@ const input = z.object({
   passwordStdin: z.boolean().optional().describe("Read the password from stdin (one line)."),
   demo: z.enum(["admin", "tutor", "student"]).optional().describe("Log in as a demo user (demo tenants only)."),
   device: z.boolean().optional().describe("Browser login with a device code (needs server support)."),
+  scope: z.array(z.string()).optional().describe("Scopes to request with --device (repeatable), e.g. courses:write."),
   makeDefault: z.boolean().optional().describe("Make this the default profile (default true)."),
 });
 
@@ -53,6 +56,7 @@ export const login = defineCommand({
     let token: string;
     let expiresAt: string | null = null;
     let method: Profile["login"];
+    let scopes: string[] = ["*"];
 
     if (i.demo) {
       method = "demo";
@@ -91,9 +95,10 @@ export const login = defineCommand({
           hint: "Pass --demo admin, --email + --password-stdin, or --token-stdin. Device login is not available on this server.",
         });
       }
-      throw new CliError("UNSUPPORTED_SERVER", "Device login is advertised by the server but this CLI version cannot complete it yet.", {
-        hint: "Update the CLI, or use --token-stdin.",
-      });
+      const granted = await deviceLogin(ctx, anon, i.scope);
+      token = granted.token;
+      expiresAt = granted.expiresAt;
+      scopes = granted.scopes;
     } else {
       throw new CliError("INPUT_INVALID", "Choose a login method.");
     }
@@ -117,13 +122,65 @@ export const login = defineCommand({
       ...(me.email ? { user: me.email } : {}),
       tokenId: null,
       expiresAt,
-      scopes: ["*"],
+      scopes,
       login: method,
     };
     ctx.store.saveLogin(name, profile, token, i.makeDefault !== false);
     return {
-      data: { profile: name, url, user: me.email ?? null, roles: me.roles ?? [], expiresAt, scopes: ["*"], method },
+      data: { profile: name, url, user: me.email ?? null, roles: me.roles ?? [], expiresAt, scopes, method },
       warnings,
     };
   },
 });
+
+interface DeviceCode {
+  device_code: string;
+  user_code: string;
+  verification_uri: string;
+  verification_uri_complete?: string;
+  expires_in: number;
+  interval: number;
+}
+
+function openBrowser(url: string): void {
+  const cmd = process.platform === "darwin" ? "open" : process.platform === "win32" ? "cmd" : "xdg-open";
+  const args = process.platform === "win32" ? ["/c", "start", "", url] : [url];
+  try {
+    spawn(cmd, args, { stdio: "ignore", detached: true }).on("error", () => undefined).unref();
+  } catch {
+    /* the URL is printed anyway */
+  }
+}
+
+/** RFC 8628 shaped device flow (ADR 0075): print the code, poll until approved, denied or expired. */
+async function deviceLogin(ctx: Ctx, anon: HttpClient, scopes: string[] | undefined): Promise<{ token: string; expiresAt: string | null; scopes: string[] }> {
+  const code = (
+    await anon.call<DeviceCode>("POST", "/api/auth/device/code", {
+      body: { client_name: `ulams-cli on ${hostname()}`, scopes: scopes ?? [], agent: ctx.env.ULAMS_AGENT ?? null },
+    })
+  ).data;
+  const link = code.verification_uri_complete ?? code.verification_uri;
+  ctx.io.stderr(`Open ${link} and enter the code ${code.user_code} to approve this login.`);
+  if (ctx.io.isTTY) openBrowser(link);
+  const deadline = Date.now() + code.expires_in * 1000;
+  let interval = Math.max(0, code.interval) * 1000;
+  for (;;) {
+    if (Date.now() > deadline) throw new CliError("AUTH_EXPIRED", "The device code expired before it was approved.", { hint: "Run `ulams login --device` again." });
+    await new Promise((r) => setTimeout(r, interval));
+    try {
+      const res = (await anon.call<{ access_token: string; expires_at?: string | null; scopes?: string[] }>("POST", "/api/auth/device/token", { body: { device_code: code.device_code } })).data;
+      return { token: res.access_token, expiresAt: res.expires_at ?? null, scopes: res.scopes ?? scopes ?? [] };
+    } catch (error) {
+      const e = (error as CliError).details as { body?: { error?: string } } | undefined;
+      const reason = e?.body?.error ?? (error as CliError).message;
+      if (/authorization_pending/.test(reason)) continue;
+      if (/slow_down/.test(reason)) {
+        interval += 5000;
+        continue;
+      }
+      if (/access_denied/.test(reason)) throw new CliError("FORBIDDEN", "The login was denied in the browser.", { hint: "Run `ulams login --device` again and approve it." });
+      if (/expired_token/.test(reason)) throw new CliError("AUTH_EXPIRED", "The device code expired.", { hint: "Run `ulams login --device` again." });
+      throw error;
+    }
+  }
+}
