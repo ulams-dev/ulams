@@ -1,0 +1,17 @@
+{
+    "task": "patch",
+    "prompt_id": "course-builder/patch",
+    "prompt_version": 1,
+    "hash": "7be7d8c573a20eaa657525a0bac711c0",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 717,
+        "output_tokens": 500,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 4888,
+        "cache_read_tokens": 0
+    },
+    "text": "{\"reply\":\"I made the wrong answers more plausible: each distractor is now a believable alternative order phrased like the correct answer, and I dropped the obviously wrong 'all at the same rate' option. The correct answer and its explanation are unchanged.\",\"ui\":\"QuizQuestionCard\",\"replacement\":{\"id\":\"{{id_13}}\",\"type\":\"single\",\"stem\":\"In which order do the compounds in ground coffee dissolve during brewing?\",\"options\":[{\"id\":\"{{id_14}}\",\"text\":\"Acids first, then sugars, then bitter and woody compounds\",\"correct\":true},{\"id\":\"{{id_15}}\",\"text\":\"Sugars first, then acids, then bitter and woody compounds\",\"correct\":false},{\"id\":\"{{id_16}}\",\"text\":\"Acids first, then bitter and woody compounds, then sugars\",\"correct\":false},{\"id\":\"{{id_17}}\",\"text\":\"Bitter and woody compounds first, then sugars, then acids\",\"correct\":false}],\"explanation\":\"Acids dissolve first, sugars come next, and the bitter, woody compounds come last. That is why stopping too early leaves a sour cup and going too far gives a bitter one.\",\"citations\":[\"{{frg_2}}\"],\"objectiveIds\":[\"{{id_2}}\"]}}"
+}

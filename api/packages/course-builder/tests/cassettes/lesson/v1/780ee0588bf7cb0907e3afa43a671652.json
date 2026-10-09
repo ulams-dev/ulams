@@ -1,0 +1,17 @@
+{
+    "task": "lesson",
+    "prompt_id": "course-builder/lesson",
+    "prompt_version": 1,
+    "hash": "780ee0588bf7cb0907e3afa43a671652",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 359,
+        "output_tokens": 1155,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "cache_read_tokens": 4863
+    },
+    "text": "{\"blocks\":[{\"kind\":\"paragraph\",\"markdown\":\"You already know that a cup can taste weak or strong. In this lesson you'll learn how to control that with a simple number: the **brew ratio**. It is just the weight of coffee compared to the weight of water. A ratio of **1:16** means one gram of coffee for every sixteen grams of water.\",\"citations\":[\"{{frg_4}}\"],\"objectiveIds\":[\"{{id_7}}\"]},{\"kind\":\"paragraph\",\"markdown\":\"### Why weigh instead of scoop?\\n\\nWeigh both the coffee and the water with a kitchen scale. Measuring by volume with spoons is unreliable, because a spoonful of a light roast weighs more than a spoonful of a dark roast. So two \\\"identical\\\" scoops can hold different amounts of coffee. A scale removes that guesswork.\",\"citations\":[\"{{frg_4}}\"],\"objectiveIds\":[\"{{id_6}}\"]},{\"kind\":\"paragraph\",\"markdown\":\"### Choosing your ratio\\n\\nMost filter recipes sit between **1:15 and 1:17**, and 1:16 is a good starting point. The lower the second number, the stronger the cup.\",\"citations\":[\"{{frg_4}}\"],\"objectiveIds\":[\"{{id_7}}\"]},{\"kind\":\"table\",\"markdown\":\"| Ratio | Result |\\n|---|---|\\n| 1:15 | Stronger cup |\\n| 1:16 | Good starting point |\\n| 1:17 | Lighter cup |\",\"citations\":[\"{{frg_4}}\"],\"objectiveIds\":[\"{{id_7}}\"]},{\"kind\":\"steps\",\"markdown\":\"### Doing the maths\\n\\n1. **Water for a known dose:** multiply the coffee weight by the ratio number.\\n2. **Coffee for a known amount of water:** divide the water weight by the ratio number.\\n3. Remember that one gram of water is one millilitre, so the scale reading in grams equals the volume in millilitres.\",\"citations\":[\"{{frg_5}}\"],\"objectiveIds\":[\"{{id_8}}\"]},{\"kind\":\"example\",\"markdown\":\"**Example 1: water for a dose.** You have 20 g of coffee and want 1:16. Water = 20 × 16 = **320 g**.\\n\\n**Example 2: coffee for a pot.** You want a 500 g pot at 1:16. Coffee = 500 ÷ 16 ≈ **31 g**.\",\"citations\":[\"{{frg_5}}\"],\"objectiveIds\":[\"{{id_8}}\"]},{\"kind\":\"callout\",\"markdown\":\"**Key takeaway:** Weigh, don't scoop. Start at 1:16, go toward 1:15 for a stronger cup or 1:17 for a lighter one. Multiply to find water, divide to find coffee.\",\"citations\":[\"{{frg_4}}\",\"{{frg_5}}\"],\"objectiveIds\":[\"{{id_6}}\",\"{{id_7}}\",\"{{id_8}}\"]}]}"
+}

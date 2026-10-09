@@ -1,0 +1,17 @@
+{
+    "task": "quiz",
+    "prompt_id": "course-builder/quiz",
+    "prompt_version": 1,
+    "hash": "85475a61ea00830827a19501a29ec7ec",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 1330,
+        "output_tokens": 858,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "cache_read_tokens": 4818
+    },
+    "text": "{\"questions\":[{\"type\":\"single\",\"stem\":\"You are brewing in a French press with a four-minute steep. Which grind size should you choose, and why?\",\"options\":[{\"text\":\"Coarse, like sea salt, so the metal filter can hold the grounds back\",\"correct\":true},{\"text\":\"Very fine, like flour, so the coffee extracts as quickly as possible\",\"correct\":false},{\"text\":\"Medium-fine, like table salt, so the water flows through at the same speed as a V60\",\"correct\":false},{\"text\":\"Very fine, so the metal filter can strain out more of the flavour\",\"correct\":false}],\"explanation\":\"A French press steeps coffee for about four minutes and uses a metal filter, so the grind must be coarse enough for the filter to hold the grounds back. Very fine grounds would pass through the filter and over-extract.\",\"citations\":[\"{{frg_7}}\"],\"objectiveIds\":[\"{{id_10}}\"]},{\"type\":\"single\",\"stem\":\"You are brewing a dense light roast. Which water temperature suits it best?\",\"options\":[{\"text\":\"Just off the boil, around 96 °C\",\"correct\":true},{\"text\":\"90 to 92 °C, the same as for a dark roast\",\"correct\":false},{\"text\":\"About 80 °C, so the coffee does not taste harsh\",\"correct\":false},{\"text\":\"Any temperature, as long as the water is clean\",\"correct\":false}],\"explanation\":\"Light roasts are dense and harder to extract, so they need hotter water of around 96 °C. The cooler 90 to 92 °C range is better for dark roasts, which extract easily and can taste harsh with very hot water.\",\"citations\":[\"{{frg_8}}\"],\"objectiveIds\":[\"{{id_11}}\"]},{\"type\":\"single\",\"stem\":\"Your pour-over tastes sour and thin. What is the best single change to try for the next brew?\",\"options\":[{\"text\":\"Grind finer\",\"correct\":true},{\"text\":\"Grind coarser\",\"correct\":false},{\"text\":\"Use cooler water\",\"correct\":false},{\"text\":\"Change the ratio and the grind together\",\"correct\":false}],\"explanation\":\"Sour and thin points to under-extraction, so you want to extract more by grinding finer or using hotter water. Grinding coarser or using cooler water would extract even less. Change only one variable so you can taste its effect.\",\"citations\":[\"{{frg_13}}\",\"{{frg_6}}\"],\"objectiveIds\":[\"{{id_12}}\"]}]}"
+}
