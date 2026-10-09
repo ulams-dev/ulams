@@ -1,0 +1,67 @@
+{
+  "props": {
+    "id": "compare",
+    "title": "Brew methods",
+    "caption": "Comparison of three brew methods",
+    "asOf": "October 2026",
+    "columns": [
+      {
+        "label": "Pour-over",
+        "highlight": true
+      },
+      {
+        "label": "French press"
+      },
+      {
+        "label": "Espresso"
+      }
+    ],
+    "rows": [
+      {
+        "label": "Needs a grinder",
+        "cells": [
+          {
+            "value": "Yes"
+          },
+          {
+            "value": "Yes"
+          },
+          {
+            "value": "Yes"
+          }
+        ]
+      },
+      {
+        "label": "Brew time",
+        "cells": [
+          {
+            "value": "3 min"
+          },
+          {
+            "value": "4 min"
+          },
+          {
+            "value": "30 s"
+          }
+        ]
+      },
+      {
+        "label": "Paper filter",
+        "cells": [
+          {
+            "value": "Yes"
+          },
+          {
+            "value": "No"
+          },
+          {
+            "value": "No"
+          }
+        ]
+      }
+    ]
+  },
+  "invalid": {
+    "rows": "many"
+  }
+}

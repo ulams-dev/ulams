@@ -1,0 +1,12 @@
+{
+  "props": {
+    "apiUrl": "https://coffee.localhost",
+    "contentId": 12,
+    "title": "Match the brew method to its grind",
+    "topicId": 4,
+    "courseId": 1
+  },
+  "invalid": {
+    "contentId": "twelve"
+  }
+}
