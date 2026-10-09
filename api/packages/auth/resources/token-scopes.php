@@ -55,6 +55,7 @@ return [
     ['api/jitsi/*', 'public'],
     ['api/payments-gateways/*', 'public'],
     ['api/demo/*', 'public'],
+    ['api/interactive/showcase', 'public'],
     ['.well-known/*', 'public'],
     ['docs*', 'public'],
 

@@ -25094,6 +25094,30 @@
     ]
    }
   },
+  "/api/interactive/showcase": {
+   "get": {
+    "description": "Public, throttled. The first Interactive topic of the first published public course that has one, in the shape of a launch ({url, version, manifest, topic}). Nothing is tracked.",
+    "operationId": "1118bc3a1e5de0b3bc444a69a2f4c5fd",
+    "responses": {
+     "200": {
+      "description": "{url, version, manifest, topic}"
+     },
+     "404": {
+      "description": "no public interactive, or the type is switched off"
+     },
+     "429": {
+      "description": "too many requests"
+     },
+     "503": {
+      "description": "no content origin"
+     }
+    },
+    "summary": "The interactive shown on a landing page",
+    "tags": [
+     "Interactive"
+    ]
+   }
+  },
   "/api/interactive/topics/{topic}/events": {
    "post": {
     "description": "A batch of at most 40 bridge events (stepChanged, progress, complete, score, event) for the logged-in learner. Completion follows the topic's completion rule.",

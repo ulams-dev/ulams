@@ -23,6 +23,7 @@ content-runtime:
   - "POST /api/liascript/launches/*"
   - "POST /api/liascript/progress/*"
   - "POST /api/interactive/launches/*"
+  - "GET /api/interactive/showcase"
   - "POST /api/interactive/topics/{topic}/events"
   - "POST /api/courses/progress/{topic_id}/h5p"
   - "* /api/pdfs/fonts*"
