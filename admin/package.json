@@ -1,9 +1,9 @@
 {
   "name": "admin",
-  "license": "MIT",
   "version": "6.0.0",
   "private": true,
   "description": "An out-of-box UI solution for enterprise applications",
+  "license": "MIT",
   "scripts": {
     "analyze": "cross-env ANALYZE=1 node scripts/max.cjs build",
     "build": "node scripts/max.cjs build",
@@ -17,9 +17,15 @@
     "lint:fix": "eslint --fix --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src ",
     "lint:js": "eslint --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src",
     "lint:prettier": "prettier -c --write \"**/**.{js,jsx,tsx,ts,less,md,json}\" --end-of-line auto",
+    "playwright": "PORT=8000 playwright install && playwright test",
+    "playwright:debug": "PORT=8000 playwright install && playwright test --debug",
+    "playwright:headed": "PORT=8000 playwright install && playwright test --headed --project=chromium",
+    "playwright:local": "PORT=8000 playwright test",
     "prettier": "prettier -c --write \"**/**.{js,jsx,tsx,ts,less,md,json}\"",
     "preview": "npm run build && node scripts/max.cjs preview --port 8000",
     "record": "cross-env NODE_ENV=development REACT_APP_ENV=test node scripts/max.cjs record --scene=login",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org ulams --project ulams-admin ./dist && sentry-cli --url https://ulams.sentry.io sourcemaps upload --org ulams --project ulams-admin ./dist",
+    "serve": "REACT_APP_API_URL=http://localhost PORT=8000 umi-serve",
     "start": "cross-env UMI_ENV=dev node scripts/max.cjs dev",
     "start:dev": "cross-env REACT_APP_ENV=dev MOCK=none UMI_ENV=dev node scripts/max.cjs dev",
     "start:no-mock": "cross-env MOCK=none UMI_ENV=dev node scripts/max.cjs dev",
@@ -27,16 +33,10 @@
     "start:test": "cross-env REACT_APP_ENV=test MOCK=none UMI_ENV=dev node scripts/max.cjs dev",
     "test": "jest",
     "test:coverage": "npm run jest -- --coverage",
+    "test:e2e": "PORT=8000 node ./tests/run-tests.js",
     "test:update": "npm run jest -- -u",
     "tsc": "tsc -b src/lib/markdown-editor && NODE_OPTIONS='--max-old-space-size=16384' tsc --noEmit",
     "tsc:noemit": "tsc -b src/lib/markdown-editor && NODE_OPTIONS='--max-old-space-size=16384' tsc --noEmit",
-    "test:e2e": "PORT=8000 node ./tests/run-tests.js",
-    "serve": "REACT_APP_API_URL=http://localhost PORT=8000 umi-serve",
-    "playwright": "PORT=8000 playwright install && playwright test",
-    "playwright:headed": "PORT=8000 playwright install && playwright test --headed --project=chromium",
-    "playwright:debug": "PORT=8000 playwright install && playwright test --debug",
-    "playwright:local": "PORT=8000 playwright test",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org ulams --project ulams-admin ./dist && sentry-cli --url https://ulams.sentry.io sourcemaps upload --org ulams --project ulams-admin ./dist",
     "typecheck": "tsc -b src/lib/markdown-editor && NODE_OPTIONS='--max-old-space-size=16384' tsc --noEmit"
   },
   "browserslist": [
@@ -44,10 +44,39 @@
     "last 2 versions",
     "not ie <= 10"
   ],
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/components/**/*.{js,jsx,ts,tsx}",
+      "!src/**/*.d.ts",
+      "!src/.umi/**/*"
+    ],
+    "coverageDirectory": "./coverage/",
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "clover"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/config/jest/setupTests.js"
+    ],
+    "testPathIgnorePatterns": [
+      "/e2e/"
+    ],
+    "transform": {
+      "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "<rootDir>/config/jest/babelTransform.js",
+      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
+      "^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!antd|@ant-design|rc-.+?|@babel/runtime).+(js|jsx)$"
+    ]
+  },
   "dependencies": {
     "@ant-design/icons": "^4.8.1",
     "@ant-design/plots": "^2.6.8",
-    "@ant-design/pro-components": "^2.8.10",
+    "@ant-design/pro-components": "2.8.4",
     "@atlaskit/tree": "^8.8.7",
     "@benrbray/prosemirror-math": "0.2.2",
     "@cfaester/enzyme-adapter-react-18": "^0.8.0",
@@ -187,35 +216,6 @@
       "docker",
       "CNAME",
       "create-umi"
-    ]
-  },
-  "jest": {
-    "setupFilesAfterEnv": [
-      "<rootDir>/config/jest/setupTests.js"
-    ],
-    "transform": {
-      "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "<rootDir>/config/jest/babelTransform.js",
-      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
-      "^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
-    },
-    "transformIgnorePatterns": [
-      "/node_modules/(?!antd|@ant-design|rc-.+?|@babel/runtime).+(js|jsx)$"
-    ],
-    "coverageReporters": [
-      "json",
-      "lcov",
-      "text",
-      "clover"
-    ],
-    "testPathIgnorePatterns": [
-      "/e2e/"
-    ],
-    "coverageDirectory": "./coverage/",
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "src/components/**/*.{js,jsx,ts,tsx}",
-      "!src/**/*.d.ts",
-      "!src/.umi/**/*"
     ]
   }
 }
