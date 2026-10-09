@@ -1,0 +1,25 @@
+# cloudflared (Cloudflare Tunnel), locally managed. Read by the `cloudflared` service of compose.yml.
+#
+# One catch-all rule: every host name whose DNS record points at the tunnel
+# (<tunnel id>.cfargotunnel.com, proxied) is sent to Caddy, which routes by host. The routing logic
+# and the list of valid hosts therefore live in the Caddyfile and in DNS, not here, and a new tenant
+# needs no change to this file (the wildcard DNS record already covers it).
+#
+# `tunnel` and `credentials-file` come from scripts/cloudflare-setup.sh, which creates the tunnel and
+# writes cloudflared/credentials.json (mode 600, never committed). The tunnel id is not a secret but
+# is not needed here: the credentials file carries it.
+#
+# Validate: docker run --rm -v "$PWD/cloudflared:/etc/cloudflared:ro" cloudflare/cloudflared:2026.9.3 \
+#           tunnel --config /etc/cloudflared/config.yml ingress validate
+credentials-file: /etc/cloudflared/credentials.json
+no-autoupdate: true
+
+originRequest:
+  connectTimeout: 10s
+  # the 100 s Cloudflare proxy limit applies on the edge side; keep idle upstream connections open
+  # for the course builder's server-sent events
+  keepAliveTimeout: 120s
+  keepAliveConnections: 100
+
+ingress:
+  - service: http://caddy:80

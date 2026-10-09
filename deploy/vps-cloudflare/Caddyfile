@@ -1,0 +1,339 @@
+# Caddyfile of the VPS + Cloudflare install (guide: Operators, "Install on a VPS with Cloudflare").
+# Derived from front/docs-site/examples/production/Caddyfile. Differences:
+#
+# - No ACME, no on-demand TLS: Cloudflare terminates TLS. ULAMS_ORIGIN_MODE picks how Cloudflare
+#   reaches this Caddy: `tunnel` (cloudflared over the Docker network, plain HTTP, nothing
+#   published) or `origin_ca` (Cloudflare Origin CA certificate on :443 plus Authenticated Origin
+#   Pulls, compose.origin.yml).
+# - One catch-all site. The host patterns are regular expressions from the environment, so the
+#   flat layout (acme.D, acme-admin.D, acme-api.D, acme-content.D) and the nested one
+#   (acme.D, acme.admin.D, acme.api.D, acme.content.D) use the same file. The environment block that
+#   scripts/install.sh derives from ULAMS_HOST_STYLE holds them; each regex has ONE capture group,
+#   the tenant slug. Unknown tenants get 404 from the API (TENANCY_ENFORCE_HOSTS).
+# - Platform hosts: D (landing and learner front), api.D, admin.D, platform-content.D (flat) or
+#   platform.content.D (nested). docs.D and files.D are not served here (Pages/GitHub Pages and R2).
+
+{
+	auto_https off
+	servers {
+		# Cloudflare (and cloudflared, which connects from a private address) set these headers
+		trusted_proxies static private_ranges 173.245.48.0/20 103.21.244.0/22 103.22.200.0/22 103.31.4.0/22 141.101.64.0/18 108.162.192.0/18 190.93.240.0/20 188.114.96.0/20 197.234.240.0/22 198.41.128.0/17 162.158.0.0/15 104.16.0.0/13 104.24.0.0/14 172.64.0.0/13 131.0.72.0/22 2400:cb00::/32 2606:4700::/32 2803:f800::/32 2405:b500::/32 2405:8100::/32 2a06:98c0::/29 2c0f:f248::/32
+		client_ip_headers CF-Connecting-IP X-Forwarded-For
+	}
+}
+
+(tunnel) {
+	header -X-Powered-By
+}
+
+# Origin CA certificate + Authenticated Origin Pulls: only Cloudflare can complete the handshake
+(origin_ca) {
+	tls /certs/origin.pem /certs/origin.key {
+		client_auth {
+			mode require_and_verify
+			trusted_ca_cert_file /certs/authenticated_origin_pull_ca.pem
+		}
+	}
+}
+
+# Content origin (api/docs/content-origin.md): package files only, read-only, own CSP, no
+# cookies. Arguments: <API host> <API origin> <frame ancestors>
+(content_origin) {
+	header {
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'; report-uri {args[1]}/api/csp-report; report-to csp-endpoint"
+		Reporting-Endpoints `csp-endpoint="{args[1]}/api/csp-report"`
+		>X-Content-Type-Options nosniff
+		# Own browsing-context group (no window.opener link to the app); public package files
+		# that players in sandboxed frames (opaque origin, every request cross-origin) may load.
+		# No credentials ever travel to this origin.
+		>Cross-Origin-Opener-Policy same-origin
+		>Cross-Origin-Resource-Policy cross-origin
+		>Access-Control-Allow-Origin *
+		Referrer-Policy no-referrer
+		-Set-Cookie
+		-Server
+	}
+
+	@package {
+		method GET HEAD
+		path /scorm/* /cmi5/* /adapt/* /liascript/*
+	}
+	handle @package {
+		request_header -Cookie
+		request_header -Authorization
+		rewrite * /api/content{uri}
+		reverse_proxy api:9000 {
+			header_up Host {args[0]}
+			header_up X-Forwarded-Host {args[0]}
+			header_up X-Ulams-Content-Origin 1
+			header_down -Set-Cookie
+			header_down -Access-Control-Allow-Origin
+			transport fastcgi {
+				env SCRIPT_FILENAME /var/www/html/index.php
+				env HTTPS {$ULAMS_FCGI_HTTPS}
+				env HTTP_HOST {args[0]}
+				env SERVER_NAME {args[0]}
+				env REQUEST_URI {http.request.uri}
+			}
+		}
+	}
+
+	handle {
+		respond "Not found" 404
+	}
+}
+
+# CSP of the admin. The learner front sets its own in front/web (its middleware names the tenant's
+# registered tool origins in frame-src, ADR 0044). The admin is staff only and frames tools for deep
+# linking, so its frame-src allows https:. Report-only until ULAMS_CSP_HEADER=Content-Security-Policy
+# (after about a week without unexpected reports: GET /api/admin/csp-reports, #121). Arguments: <API origin>
+(app_csp_admin) {
+	header {$ULAMS_CSP_HEADER:Content-Security-Policy-Report-Only} "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' {$ULAMS_SCHEME}://*.{$ULAMS_DOMAIN}{$ULAMS_PORT_SUFFIX}; frame-src 'self' {$ULAMS_SCHEME}://*.{$ULAMS_DOMAIN}{$ULAMS_PORT_SUFFIX} https:; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; report-uri {args[0]}/api/csp-report; report-to csp-endpoint"
+	header Reporting-Endpoints `csp-endpoint="{args[0]}/api/csp-report"`
+}
+
+# Laravel API and the H5P service on one host
+(api) {
+	encode zstd gzip
+
+	# Progress tracking of the package players, called from the content origin or from a
+	# sandboxed frame (`Origin: null`). They authenticate with the scoped X-Ulams-Tracking-Token
+	# header, never with cookies: any origin may call them, without credentials, and no cookie
+	# is passed on. Every other API path refuses to reflect a content origin.
+	@tracking path /api/scorm/content/* /api/liascript/progress/*
+	handle @tracking {
+		request_header -Cookie
+		request_header -Authorization
+		header Access-Control-Allow-Origin *
+		@tracking_preflight method OPTIONS
+		handle @tracking_preflight {
+			header {
+				Access-Control-Allow-Methods "GET, POST, OPTIONS"
+				Access-Control-Allow-Headers "Content-Type, X-Ulams-Tracking-Token"
+				Access-Control-Max-Age 600
+			}
+			respond 204
+		}
+		handle {
+			reverse_proxy api:9000 {
+				header_up -Access-Control-Allow-Origin
+				header_down -Access-Control-Allow-Origin
+				header_down -Set-Cookie
+				transport fastcgi {
+					env SCRIPT_FILENAME /var/www/html/index.php
+				env HTTPS {$ULAMS_FCGI_HTTPS}
+				}
+			}
+		}
+	}
+
+	# cmi5 AUs on the content origin (ADR 0046): the one-time launch token in the fetch URL and the LRS
+	# session token (`Authorization: Basic ulrs1.<...>`, valid on the LRS only) are the credentials, never
+	# cookies. Any origin may call these routes without credentials; no cookie is passed on, and
+	# Authorization stays because the session token travels in it. A `*` does not cross a `/`, so the
+	# two-segment documents (activities/state, agents/profile) need their own pattern.
+	@cmi5 path /api/cmi5/fetch /trax/api/*/xapi/std/* /trax/api/*/xapi/std/*/*
+	handle @cmi5 {
+		request_header -Cookie
+		header Access-Control-Allow-Origin *
+		header Access-Control-Expose-Headers "ETag, Last-Modified, X-Experience-API-Consistent-Through, X-Experience-API-Version"
+		@cmi5_preflight method OPTIONS
+		handle @cmi5_preflight {
+			header {
+				Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+				Access-Control-Allow-Headers "Content-Type, Authorization, X-Experience-API-Version, If-Match, If-None-Match, Accept"
+				Access-Control-Max-Age 600
+			}
+			respond 204
+		}
+		handle {
+			reverse_proxy api:9000 {
+				header_up -Access-Control-Allow-Origin
+				header_down -Access-Control-Allow-Origin
+				header_down -Set-Cookie
+				transport fastcgi {
+					env SCRIPT_FILENAME /var/www/html/index.php
+				env HTTPS {$ULAMS_FCGI_HTTPS}
+				}
+			}
+		}
+	}
+
+	# Browsers report CSP violations of any page, content origins included, without credentials
+	# (ADR 0044): any origin may POST, nothing else is opened here.
+	@csp_report path /api/csp-report
+	handle @csp_report {
+		request_header -Cookie
+		request_header -Authorization
+		header Access-Control-Allow-Origin *
+		@csp_report_preflight method OPTIONS
+		handle @csp_report_preflight {
+			header {
+				Access-Control-Allow-Methods "POST, OPTIONS"
+				Access-Control-Allow-Headers "Content-Type"
+				Access-Control-Max-Age 600
+			}
+			respond 204
+		}
+		handle {
+			reverse_proxy api:9000 {
+				header_up -Access-Control-Allow-Origin
+				header_down -Access-Control-Allow-Origin
+				header_down -Set-Cookie
+				transport fastcgi {
+					env SCRIPT_FILENAME /var/www/html/index.php
+				env HTTPS {$ULAMS_FCGI_HTTPS}
+				}
+			}
+		}
+	}
+
+	@h5p path /h5p /h5p/*
+	handle @h5p {
+		request_body {
+			max_size 300MB
+		}
+		reverse_proxy h5p:8080 {
+			header_up X-Forwarded-Host {host}
+			transport http {
+				read_timeout 10m
+				write_timeout 10m
+			}
+		}
+	}
+
+	@large_uploads path /api/admin/scorm/upload /api/admin/scorm/parse /api/admin/cmi5 /api/admin/courses/zip/import
+	handle @large_uploads {
+		request_body {
+			max_size 1100MB
+		}
+		reverse_proxy api:9000 {
+			header_up -Access-Control-Allow-Origin
+			header_down -Access-Control-Allow-Origin
+			transport fastcgi {
+				env SCRIPT_FILENAME /var/www/html/index.php
+				env HTTPS {$ULAMS_FCGI_HTTPS}
+			}
+		}
+		@origin_upload {
+			header Origin *
+			not header_regexp Origin {$ULAMS_RE_CONTENT_ORIGIN}
+		}
+		header @origin_upload Access-Control-Allow-Origin {http.request.header.Origin}
+		header @origin_upload Access-Control-Allow-Credentials true
+	}
+
+	# Only the content origin's proxy may set this header
+	request_header -X-Ulams-Content-Origin
+
+	handle {
+		request_body {
+			max_size 600MB
+		}
+		reverse_proxy api:9000 {
+			header_up -Access-Control-Allow-Origin
+			header_down -Access-Control-Allow-Origin
+			transport fastcgi {
+				env SCRIPT_FILENAME /var/www/html/index.php
+				env HTTPS {$ULAMS_FCGI_HTTPS}
+			}
+		}
+
+		@origin {
+			header Origin *
+			not header_regexp Origin {$ULAMS_RE_CONTENT_ORIGIN}
+		}
+		header @origin Access-Control-Allow-Origin {http.request.header.Origin}
+		@excluded {
+			not header Origin {http.request.header.Origin}
+		}
+		header @excluded Access-Control-Allow-Origin *
+		header @origin Access-Control-Allow-Credentials true
+	}
+}
+
+(web) {
+	# The CSP of the pages comes from the front itself (front/web/src/middleware.ts)
+	encode zstd gzip
+	# The BFF and studio JSON is for this front only: a page of another origin (the content
+	# origin runs third-party code) cannot load it in no-cors mode.
+	header /bff/* Cross-Origin-Resource-Policy same-origin
+	header /studio/api/* Cross-Origin-Resource-Policy same-origin
+	reverse_proxy web:4321
+}
+
+(admin) {
+	import app_csp_admin {args[0]}
+	encode zstd gzip
+	reverse_proxy admin:8080
+}
+
+{$ULAMS_SITE_ADDRESS} {
+	import {$ULAMS_ORIGIN_MODE}
+
+	# H5P core sends the access token as ?_token=: keep it and the auth headers out of the log
+	log {
+		format filter {
+			wrap json
+			fields {
+				request>uri query {
+					replace _token REDACTED
+				}
+				request>headers>Authorization delete
+				request>headers>X-Internal-Token delete
+			}
+		}
+	}
+
+	@platform_front host {$ULAMS_DOMAIN}
+	@platform_api host api.{$ULAMS_DOMAIN}
+	@platform_admin host admin.{$ULAMS_DOMAIN}
+	@platform_content host {$ULAMS_PLATFORM_CONTENT_HOST}
+	@tenant_front vars_regexp slug {http.request.host} {$ULAMS_RE_FRONT}
+	@tenant_api vars_regexp slug {http.request.host} {$ULAMS_RE_API}
+	@tenant_admin vars_regexp slug {http.request.host} {$ULAMS_RE_ADMIN}
+	@tenant_content vars_regexp slug {http.request.host} {$ULAMS_RE_CONTENT}
+
+	handle @platform_front {
+		import web
+	}
+	handle @platform_api {
+		import api
+	}
+	handle @platform_admin {
+		import admin {$ULAMS_SCHEME}://api.{$ULAMS_DOMAIN}{$ULAMS_PORT_SUFFIX}
+	}
+	# Platform content origin -> platform API
+	handle @platform_content {
+		import content_origin api.{$ULAMS_DOMAIN} {$ULAMS_SCHEME}://api.{$ULAMS_DOMAIN}{$ULAMS_PORT_SUFFIX} "{$ULAMS_SCHEME}://{$ULAMS_DOMAIN}{$ULAMS_PORT_SUFFIX} {$ULAMS_SCHEME}://admin.{$ULAMS_DOMAIN}{$ULAMS_PORT_SUFFIX}"
+	}
+	handle @tenant_front {
+		import web
+	}
+	handle @tenant_api {
+		import api
+	}
+	handle @tenant_admin {
+		# its CSP reports go to the tenant API
+		import admin {$ULAMS_SCHEME}://{$ULAMS_API_HOST_OF_SLUG}{$ULAMS_PORT_SUFFIX}
+	}
+	# Tenant content origin -> the tenant API of the same slug
+	handle @tenant_content {
+		import content_origin {$ULAMS_API_HOST_OF_SLUG} {$ULAMS_SCHEME}://{$ULAMS_API_HOST_OF_SLUG}{$ULAMS_PORT_SUFFIX} "{$ULAMS_SCHEME}://{$ULAMS_FRONT_HOST_OF_SLUG}{$ULAMS_PORT_SUFFIX} {$ULAMS_SCHEME}://{$ULAMS_ADMIN_HOST_OF_SLUG}{$ULAMS_PORT_SUFFIX}"
+	}
+	handle {
+		respond "Not found" 404
+	}
+}
+
+# Internal listener (not published): the H5P service calls GET /api/profile/me here with the
+# tenant API host in the Host header (LARAVEL_API_URL=http://caddy:8081).
+http://:8081 {
+	request_header -X-Ulams-Content-Origin
+	reverse_proxy api:9000 {
+		transport fastcgi {
+			env SCRIPT_FILENAME /var/www/html/index.php
+			env HTTPS {$ULAMS_FCGI_HTTPS}
+		}
+	}
+}

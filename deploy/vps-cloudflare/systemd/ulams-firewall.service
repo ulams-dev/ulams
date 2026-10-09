@@ -1,0 +1,14 @@
+# Origin mode only: re-applies the Cloudflare allow-list for port 443 after every boot and Docker start.
+# Install: cp to /etc/systemd/system, replace @DIR@, systemctl enable --now ulams-firewall.service
+[Unit]
+Description=Allow only Cloudflare to reach ulams on 443
+After=docker.service network-online.target
+Wants=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=@DIR@/scripts/cloudflare-firewall.sh
+
+[Install]
+WantedBy=multi-user.target

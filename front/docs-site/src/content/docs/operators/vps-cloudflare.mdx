@@ -1,0 +1,415 @@
+---
+title: Install on a VPS with Cloudflare
+description: Production install of ulams on one VPS behind Cloudflare - tunnel, DNS and TLS, R2 storage, cache rules, e-mail, first tenant, backups, upgrades, monitoring, hardening and troubleshooting - with the costs.
+sidebar:
+  order: 3
+modules:
+  - api
+  - api-h5p
+  - api-pdf
+  - web
+  - admin
+  - tenancy
+needsReview: "Prepared and validated locally (compose config, Caddy and cloudflared validation, shellcheck, a local run of install.sh with MinIO standing in for R2), not yet deployed to a VPS or run against a real Cloudflare account: do the first install on a staging domain and check the Cloudflare API steps, the R2 custom domain and the tunnel."
+---
+
+import { Aside, Badge, Code, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
+import compose from "../../../../../../deploy/vps-cloudflare/compose.yml?raw";
+import caddyfile from "../../../../../../deploy/vps-cloudflare/Caddyfile?raw";
+import envExample from "../../../../../../deploy/vps-cloudflare/.env.example?raw";
+import cloudflaredConfig from "../../../../../../deploy/vps-cloudflare/cloudflared/config.yml?raw";
+
+This is the reference production install: **one VPS** runs the whole platform with Docker Compose, **Cloudflare**
+provides DNS, TLS, the CDN cache and object storage (R2). It costs about EUR 10 to 25 a month and is the setup the
+product owner chose for `ulams.app`. The files are in
+[`deploy/vps-cloudflare/`](https://github.com/ulams-dev/ulams/tree/main/deploy/vps-cloudflare); this page embeds the
+important ones at the end, so the page and the files cannot drift apart. The decisions behind it are in
+[ADR 0092](/decisions/0092-vps-cloudflare-hosting-reference/).
+
+<Aside type="caution" title="Prepared, not yet deployed">
+  The files were validated locally and run once with the published images and MinIO instead of R2. Nothing has run
+  against a real Cloudflare account or a real VPS yet. Use a staging domain for the first install.
+</Aside>
+
+## What you get
+
+```text
+ browser ──TLS──> Cloudflare (DNS, TLS, cache, DDoS) ──tunnel (outbound only)──> cloudflared ─> Caddy ─┬─> web    (Astro, Node)
+                       │                                                                              ├─> admin  (static, nginx)
+                       │                                                                              ├─> api    (php-fpm, Horizon, workers, scheduler)
+                       └──> R2: files.<domain>, <slug>-files.<domain>   (public read)                  ├─> h5p, pdf, mjml
+                                  ulams-backups                          (private)                      └─> postgres, valkey
+```
+
+| Host (flat layout, the default) | Serves | Where |
+|---|---|---|
+| `ulams.app` | platform landing (and the platform learner front) | VPS, `web` |
+| `docs.ulams.app` | this documentation | GitHub Pages or Cloudflare Pages |
+| `acme.ulams.app` | learner front of the tenant `acme` | VPS, `web` |
+| `acme-admin.ulams.app`, `admin.ulams.app` | admin panel of a tenant, of the platform | VPS, `admin` (or Cloudflare Pages) |
+| `acme-api.ulams.app`, `api.ulams.app` | tenant API (and `/h5p/*`), platform API | VPS, `api` and `h5p` |
+| `acme-content.ulams.app`, `platform-content.ulams.app` | content origin for SCORM, cmi5, Adapt and LiaScript packages | VPS, Caddy to `api` |
+| `files.ulams.app`, `acme-files.ulams.app` | public files of the platform and of a tenant | R2 custom domains |
+
+<Aside title="Why flat hosts instead of `acme.admin.ulams.app`">
+  Cloudflare's free certificate (Universal SSL) covers the apex and **first-level** subdomains. `acme.admin.ulams.app`
+  has two levels and needs the paid Advanced Certificate Manager with Total TLS. `acme-admin.ulams.app` is first-level,
+  so it is free; tenant slugs cannot contain a hyphen, so the suffixes never collide with a tenant. The nested layout of
+  issue #24 stays available (`ULAMS_HOST_STYLE=nested`, see [DNS and TLS](#dns-and-tls)). Decide before the first real
+  tenant: changing it later changes every tenant's URLs.
+</Aside>
+
+## Costs
+
+Prices change; the figures below were read from Cloudflare's documentation on 2026-10-09 or are marked as examples.
+**Check the current price before you buy.**
+
+| Item | Monthly cost | Source and notes |
+|---|---|---|
+| VPS, 4 vCPU and 8 GB, Ubuntu 24.04 or Debian 12 | about EUR 8 to 20 | Example: [Hetzner Cloud](https://www.hetzner.com/cloud/) shared-vCPU plans; others: [OVHcloud VPS](https://www.ovhcloud.com/en/vps/), [Contabo](https://contabo.com/en/vps/), [DigitalOcean](https://www.digitalocean.com/pricing/droplets). Example only, check the current price |
+| Cloudflare plan | USD 0 (Free) or USD 25 (Pro) | [Plans](https://www.cloudflare.com/plans/). Free is enough; Pro raises the upload limit to the same 100 MB, so it is no reason to upgrade |
+| Cloudflare Tunnel | USD 0 | [Tunnel docs](https://developers.cloudflare.com/tunnel/) |
+| Universal SSL (flat hosts) | USD 0 | [Universal SSL](https://developers.cloudflare.com/ssl/edge-certificates/universal-ssl/) |
+| Advanced Certificate Manager + Total TLS (nested hosts only) | about USD 10 | [Advanced Certificate Manager](https://developers.cloudflare.com/ssl/edge-certificates/advanced-certificate-manager/); the docs do not list the price, check the dashboard |
+| R2 storage | USD 0.015 per GB-month; first 10 GB free | [R2 pricing](https://developers.cloudflare.com/r2/pricing/) (Standard storage) |
+| R2 operations | Class A (writes) USD 4.50 per million, Class B (reads) USD 0.36 per million; 1 and 10 million free | same page |
+| R2 egress | USD 0 | same page |
+| Cloudflare Pages (admin and docs, optional) | USD 0 | Static asset requests are free and unlimited ([Pages pricing](https://developers.cloudflare.com/pages/functions/pricing/)) |
+| SMTP provider | USD 0 to 10 | Any provider; most have a free tier for a few hundred mails a day. Example only |
+| Domain | about EUR 15 a year | `ulams.app` is already bought |
+| **Total** | **about EUR 10 to 25** | VPS plus a few cents to a few euros of R2 |
+
+## Prerequisites
+
+- A VPS with **Ubuntu 24.04 LTS or Debian 12**, 4 vCPU, 8 GB RAM and 80 GB SSD, with SSH access (key only) and sudo.
+  The memory limits in `compose.yml` add up to 6.65 GB; see [Sizing and scaling](#sizing-and-scaling).
+- A domain whose DNS is on Cloudflare (a zone in your account, nameservers switched), for example `ulams.app`.
+- A Cloudflare account with R2 enabled (it asks for a payment method even when you stay in the free tier).
+- An SMTP account for outgoing e-mail ([E-mail](#e-mail)).
+- On your own machine: this repository (or the `deploy/vps-cloudflare` directory) and an SSH client.
+- Two API credentials, created in the dashboard: a **Cloudflare API token** for the setup script and an **R2 API token**
+  (S3 access key) for the application. [Cloudflare setup](#cloudflare-setup) lists the permissions.
+
+## Install
+
+<Steps>
+
+1. **Create the Cloudflare pieces first** (about 15 minutes), so that the install can finish in one go: follow
+   [Cloudflare setup](#cloudflare-setup), either the checklist or `scripts/cloudflare-setup.sh`. You need the tunnel
+   credentials, the R2 buckets and an R2 access key.
+
+2. **Get the files onto the server.**
+
+   ```bash
+   ssh you@your-vps
+   git clone --depth 1 https://github.com/ulams-dev/ulams.git
+   cd ulams/deploy/vps-cloudflare
+   ```
+
+   Copy `cloudflared/credentials.json` there if `cloudflare-setup.sh` ran on another machine. For a dry run on your
+   laptop first, `scripts/install.sh --local` starts the same stack on `http://*.ulams.localhost:8480` with MinIO instead
+   of R2 and changes nothing on the host.
+
+3. **Run the installer.**
+
+   ```bash
+   sudo scripts/install.sh --domain ulams.app --admin-email you@example.com
+   ```
+
+   It stops at the first thing that needs you (R2 values, tunnel), says what, and can be run again. Every run does
+   the same steps and skips what is done: packages and Docker; a `ulams` system user; ufw (SSH only, with the tunnel);
+   automatic security updates; a 2 GB swap file if the host has none; the install directory `/opt/ulams`; `.env` from
+   `.env.example` with generated secrets (it never overwrites a value that is set); the image tag pinned to
+   `sha-<short>`; the images; the stack; the H5P configuration; checks; the daily backup timer. A re-run also runs
+   `ulams:upgrade`.
+
+4. **Fill in `/opt/ulams/.env`** where the installer asked (`S3_ENDPOINT`, `S3_KEY`, `S3_SECRET`, the `MAIL_*`
+   values) and run the installer again.
+
+5. **Check it.** The installer ends with checks through Caddy: `api.<domain>/api/health`, `/h5p/health`, the front
+   and the admin, and that the platform administrator exists. Then open `https://<domain>` and
+   `https://admin.<domain>` in a browser. The administrator's password is `PLATFORM_ADMIN_PASSWORD` in `.env`
+   (printed once on the first run); change it after the first sign-in.
+
+6. **Store the secrets** in a password manager: `.env` (above all `APP_KEY`, the Passport keys and
+   `BACKUP_PASSPHRASE`). `APP_KEY` decrypts every tenant's database password; without it a database backup is useless.
+
+7. **Create the first tenant** ([First tenant](#first-tenant)), then the [production switches](#before-launch).
+
+</Steps>
+
+## Cloudflare setup
+
+Everything here can be done by hand (checklist) or with `scripts/cloudflare-setup.sh`, which reads
+`CLOUDFLARE_API_TOKEN` from the environment and never prints it. Run `scripts/cloudflare-setup.sh --dry-run all` to see
+the plan without a token.
+
+**API token** (dashboard, My Profile, API Tokens, scope it to the zone and the account; an account-owned token works too, set `CLOUDFLARE_ACCOUNT_ID` so that the script can verify it):
+Zone: Zone Read, DNS Edit, Zone Settings Edit, SSL and Certificates Edit, Cache Rules Edit.
+Account: Cloudflare Tunnel Edit, Workers R2 Storage Edit.
+
+```bash
+export CLOUDFLARE_API_TOKEN=...            # in your shell only, not in .env
+export CLOUDFLARE_ACCOUNT_ID=...
+scripts/cloudflare-setup.sh --docs-target ulams-dev.github.io all
+```
+
+| Step | Checklist (dashboard) | Script step |
+|---|---|---|
+| SSL/TLS | SSL/TLS, Overview: mode **Full (strict)**. Edge Certificates: Always Use HTTPS on, minimum TLS 1.2, TLS 1.3 on | `ssl` |
+| Tunnel | Zero Trust, Networks, Tunnels, create `ulams-ulams-app` (locally managed config: use the CLI or the script, so that the credentials file exists); the ingress is a single catch-all to `http://caddy:80` (`cloudflared/config.yml`) | `tunnel` |
+| DNS | Proxied (orange) `CNAME` records `@` and `*` to `<tunnel id>.cfargotunnel.com`; `docs` as a `CNAME` to your Pages target (explicit records win over the wildcard) | `dns` |
+| R2 | R2, create `ulams` and `ulams-backups`; on `ulams`: Settings, Custom Domains, `files.<domain>`; CORS: GET and HEAD from `*`; create an **S3 API token** with Admin Read and Write (Manage API tokens) | `r2` (the token is dashboard-only) |
+| Cache rules | Caching, Cache Rules: see [Cache](#cache) | `cache` |
+
+<Aside type="note" title="Wrangler and Terraform">
+  The R2 part has a one-line equivalent for each bucket: `wrangler r2 bucket create ulams`, then
+  `wrangler r2 bucket domain add ulams --domain files.ulams.app --zone-id <zone id>` and
+  `wrangler r2 bucket cors set ulams --file cors.json`. A Terraform module is not provided: the script covers the same
+  ground in one file, and Terraform would need state storage for a handful of records.
+</Aside>
+
+### Origin CA instead of the tunnel
+
+Use it only when you cannot run cloudflared. Set `ULAMS_ORIGIN_MODE=origin_ca` and `COMPOSE_PROFILES=` in `.env`; run
+`scripts/cloudflare-setup.sh --origin-ip <server ip> all` (proxied `A` records instead of the tunnel, and Authenticated
+Origin Pulls); create an **Origin CA certificate** (SSL/TLS, Origin Server) for the apex and `*.<domain>`, save it as
+`certs/origin.pem` and `certs/origin.key`, and download
+[`authenticated_origin_pull_ca.pem`](https://developers.cloudflare.com/ssl/static/authenticated_origin_pull_ca.pem)
+into `certs/`. The installer then uses `compose.origin.yml` (port 443, mutual TLS) and `scripts/cloudflare-firewall.sh`,
+which lets only Cloudflare's address ranges reach 443. Docker publishes ports around ufw, so the script also writes
+rules into the `DOCKER-USER` chain; `systemd/ulams-firewall.service` re-applies them after a reboot. The tunnel needs
+none of this, which is why it is the default.
+
+## DNS and TLS
+
+With the tunnel there is **no certificate on the server**: Cloudflare terminates TLS (Universal SSL) and cloudflared
+carries plain HTTP to Caddy over the private Docker network. Two wildcard records (`*` and the apex) cover every
+platform host and every tenant, so creating a tenant needs no DNS change.
+
+`ULAMS_HOST_STYLE` in `.env` selects the layout. `install.sh` writes everything that depends on it into the block
+between `# BEGIN derived` and `# END derived` (tenant host patterns for the API, the front and the admin, and the
+regular expressions Caddy routes by); do not edit that block.
+
+| | `flat` (default) | `nested` |
+|---|---|---|
+| Tenant hosts | `acme.d`, `acme-admin.d`, `acme-api.d`, `acme-content.d` | `acme.d`, `acme.admin.d`, `acme.api.d`, `acme.content.d` |
+| Certificates | Universal SSL, free | Advanced Certificate Manager + Total TLS (about USD 10 a month) |
+| DNS records | `@`, `*` | `@`, `*`, `*.admin`, `*.api`, `*.content` |
+| Extra step | none | order Advanced Certificate Manager, then `cloudflare-setup.sh --total-tls ssl` |
+
+<Aside type="caution">
+  With the nested layout and no Total TLS, `https://acme.admin.<domain>` fails with a certificate error in the browser
+  (the edge has no certificate for it). The setup script warns about it. Do not use `*.admin.<domain>` records
+  with the free certificate.
+</Aside>
+
+The content origin is a same-site subdomain, as decided in
+[ADR 0014](/decisions/0014-content-origin/) (amended): the mitigations listed in [Content origin](/operators/content-origin/)
+apply unchanged. The Caddy CORS rule that keeps content origins out of the API's allow-list follows the layout through
+`ULAMS_RE_CONTENT_ORIGIN`.
+
+## R2
+
+| Bucket | Public | What it holds |
+|---|---|---|
+| `ulams` | `files.<domain>` | Files of the platform |
+| `ulams-<slug>` | `<slug>-files.<domain>` | A tenant's uploads: images, video, H5P content, `s3`-disk packages |
+| `ulams-backups` | no | Output of `scripts/backup.sh` |
+
+How it is wired (all variables in `.env`): `S3_ENDPOINT=https://<account id>.r2.cloudflarestorage.com`,
+`S3_REGION=auto`, path-style addressing. R2 has no bucket policies, so `TENANCY_S3_PUBLIC_READ_POLICY=false` makes
+`ulams:tenant:create` skip that call, and `TENANCY_BUCKET_PUBLIC_URL=https://{slug}-files.<domain>` gives every
+tenant bucket its own public host. `scripts/create-tenant.sh` creates the bucket (through the S3 API) and attaches
+the custom domain (through the Cloudflare API, when `CLOUDFLARE_API_TOKEN` is set). The S3 key must be allowed to create
+buckets (Admin Read and Write). One key serves every tenant for now; per-tenant keys come with
+[ADR 0041](/decisions/0041-seaweedfs-and-per-tenant-s3-identities/).
+
+Private data never goes into a public bucket. Uploaded course sources stay on the Course Builder's private local disk
+(the `api_storage` volume, which the backup includes). The objects in R2 are durable but not versioned and not part of
+`backup.sh`; mirror the buckets with `rclone sync` to another provider if you need that.
+
+## Cache
+
+`scripts/cloudflare-setup.sh cache` creates two cache rules and leaves other rules alone (its own rules start with
+`ulams: `):
+
+- **Hashed front assets**: any path under `/_astro/` is cached for a year (the file names carry a content hash).
+- **Public catalogue**: anonymous `GET /api/*` on the API hosts is eligible for cache, but only where the API sends
+  `Cache-Control: public, s-maxage=...` (the catalogue endpoints do, see `api/config/http_cache.php`; everything else
+  says `private`). The rule bypasses requests with an `Authorization` header or a `_token` parameter, and passes `Vary`
+  through (`Host`, `Accept-Language`, `X-Locale`), because Cloudflare ignores `Vary` unless a rule asks for it.
+
+Static files of the admin (hashed JavaScript and CSS) are cached by Cloudflare's default rules by extension. To turn
+the catalogue cache off, set `HTTP_CACHE_PUBLIC=false` on the API (the API then sends `private` everywhere).
+
+## E-mail
+
+Set the `MAIL_*` variables to any SMTP provider (host, port 587 with `tls`, user, password). Tenants send as
+`no-reply@<slug>.<domain>` with the tenant's name, so add SPF, DKIM and DMARC for the sending domain at the provider
+(the provider's setup page shows the DNS records; add them in the Cloudflare zone as **DNS only**). Cloudflare Email
+Routing can forward mail that arrives at `@<domain>` to a mailbox you read, but it is inbound only and cannot send, so it
+does not replace SMTP. Test with a password reset on the platform admin.
+
+## First tenant
+
+```bash
+cd /opt/ulams
+scripts/create-tenant.sh acme --name "Acme Academy"
+```
+
+It runs `ulams:tenant:create` (database and role, bucket, env file, migrations, keys, permissions) with **demo mode
+off** and no demo students, refreshes the H5P configuration, attaches the R2 domain, and prints the four hosts, the admin
+user (`admin@acme.<domain>`, password `TENANT_INITIAL_PASSWORD`) and a health check. Re-running it is safe. Slugs are
+2 to 30 lowercase letters and digits; `docs`, `files`, `content`, `status`, `mail`, `cdn` and `assets` are reserved with
+the earlier ones. See [First admin and first tenant](/operators/first-tenant/) for the platform admin panel.
+
+## Before launch
+
+- **Demo mode off.** `create-tenant.sh` creates tenants with `--demo=off`. Demo mode (password-less login, hourly reset
+  of the tenant, see [Demo mode](/admin/demo-mode/)) must never be on in production. The compose file sets no demo tenants on the
+  landing (`ULAMS_DEMO_TENANTS` empty). Check a tenant with `docker compose exec api php artisan ulams:tenant:list`.
+- **Landing status.** `ULAMS_LANDING_STATUS=actual` is the default in this compose file: the landing keeps the honest
+  Coming and Partial labels. `final` renders everything as delivered; do not use it for a public launch (issue #92).
+- **CSP.** Both Content Security Policies start in **report-only** mode (`CSP_ENFORCE=false`,
+  `ULAMS_CSP_HEADER=Content-Security-Policy-Report-Only`). After about a week of real traffic without unexpected rows in
+  `GET /api/admin/csp-reports` (see [Security headers](/operators/security-headers/)), set `CSP_ENFORCE=true` and
+  `ULAMS_CSP_HEADER=Content-Security-Policy` in `.env` and run `docker compose up -d` (issue #121).
+- **Secrets.** Change the platform administrator's and the tenant admin's passwords; keep `.env` in a password manager.
+- **A restore drill** ([Backups](#backups-and-restore)) on a spare server, once, before real data arrives.
+
+## Backups and restore
+
+`scripts/backup.sh` runs daily from `ulams-backup.timer` (installed by `install.sh`; `systemd/ulams-backup.cron` if you
+have no systemd) and writes to the private `ulams-backups` bucket, under `<domain>/<UTC time>/`:
+
+| File | Content |
+|---|---|
+| `globals.sql` | PostgreSQL roles |
+| `ulams.dump`, `ulams_<slug>.dump` | `pg_dump -Fc` of the platform database and of every tenant database |
+| `volumes.tar.gz` | `api_storage` (keys, local disks) and `h5p_libraries` |
+| `secrets.tar.gz.enc` | `.env`, tunnel credentials and origin certificates, AES-256 with `BACKUP_PASSPHRASE` |
+
+Rotation deletes backups older than `BACKUP_KEEP_DAYS` (14). Check that it ran: `systemctl list-timers ulams-backup.timer`
+and `journalctl -u ulams-backup`. **Restore** (destructive, asks you to type `RESTORE`):
+
+```bash
+# same server
+scripts/restore.sh --remote latest
+# new server: install the files and docker, put S3_*/BACKUP_*/ULAMS_DOMAIN in a fresh .env, then
+BACKUP_PASSPHRASE=... scripts/restore.sh --remote latest --restore-secrets
+```
+
+The passphrase and `APP_KEY` are the two things that must exist outside the server. The longer background is in
+[Backups and restore](/operators/backups/).
+
+## Upgrades
+
+```bash
+cd /opt/ulams
+git -C ~/ulams pull && sudo scripts/install.sh      # new compose and scripts, if you want them
+scripts/upgrade.sh latest                           # or a sha-<short> / release tag
+```
+
+`upgrade.sh` takes a backup, resolves and pins the new tag, pulls every image while the old containers keep serving,
+recreates the stateless services (pdf, mjml, web, admin, h5p) one at a time, then the `api` (its start migrates the
+platform and every tenant), then runs `ulams:upgrade` and the checks. The API answers 502 while it restarts, typically
+30 to 90 seconds, and Cloudflare keeps serving cached catalogue responses; it is "zero-downtime-ish", not zero.
+Rolling back is `scripts/upgrade.sh <previous tag>` (kept as `ULAMS_VERSION_PREVIOUS`); migrations are not reverted,
+so restore a backup to undo one. More in [Upgrades](/operators/upgrades/).
+
+## Monitoring
+
+- **Health checks.** Every container has one (`docker compose ps` shows `healthy`). Public: `https://api.<domain>/api/health`
+  and `https://api.<domain>/h5p/health`.
+- **Uptime.** Point an external monitor at those two URLs and at `https://<domain>/healthz` (for example the free tier
+  of a hosted uptime service). Cloudflare's own health shows tunnel status under Zero Trust, Networks, Tunnels.
+- **Logs.** `docker compose logs -f --tail 100 api`; Docker keeps 5 files of 20 MB per container. Caddy logs JSON with
+  access tokens redacted. Set `SENTRY_DSN` (API) and `ADMIN_SENTRY_DSN` for error tracking. See [Monitoring](/operators/monitoring/).
+- **Disk, memory.** `docker stats --no-stream`, `df -h`. Alert at 80% disk: the Docker volumes and the backups staging
+  directory live on the same disk.
+
+## Security hardening
+
+The installer does the first four; the rest is yours.
+
+- ufw denies everything except SSH (with the tunnel nothing else listens; `ss -tlnp` should show only sshd).
+- `fail2ban` for SSH; unattended security updates; the stack runs as containers, the deployment directory is owned by the
+  `ulams` user and `.env` is mode 600.
+- Secrets are generated, never defaults; `APP_KEY` and the Passport keys are never regenerated by the scripts.
+- **SSH**: keys only, no root login. In `/etc/ssh/sshd_config.d/10-ulams.conf` put `PasswordAuthentication no` and
+  `PermitRootLogin no`, check `sshd -t`, reload, and test a second session before closing the first.
+- **Cloudflare**: turn on 2FA on the account; scope API tokens (the setup token can be deleted after the install);
+  consider a WAF rate-limiting rule on `/api/auth/*` and the platform login; enable "Block AI bots" or Bot Fight Mode if you
+  do not want crawlers; keep the SSL mode on Full (strict).
+- Do not publish container ports. Do not run the optional MinIO or Adminer services on this host.
+- Uploads: virus scanning is optional (`clamav` profile of the generic example, see [Security](/operators/security/)).
+
+## Troubleshooting
+
+| Symptom | Check |
+|---|---|
+| Error 1016 or 530 | The tunnel is down: `docker compose ps cloudflared`, `docker compose logs cloudflared`; wrong `CLOUDFLARE_TUNNEL_ID` or credentials |
+| Error 502 or 521 | Caddy or the api is not running: `docker compose ps`, `docker compose logs caddy api` |
+| Browser certificate error on `acme.admin.<domain>` | Nested layout without Total TLS: use the flat layout or order Advanced Certificate Manager |
+| 404 `Not found` from Caddy | The host matches no pattern: compare the host with `ULAMS_RE_*` in `.env`; a slug has no hyphen and must be created (`ulams:tenant:list`) |
+| 404 from the API on a tenant host | The tenant does not exist or its env file was lost: `docker compose exec api php artisan ulams:tenant:sync-env` |
+| 413 on an upload | Cloudflare's 100 MB request limit (Free and Pro). Smaller files or chunking; a plan with a higher limit |
+| 524 after about two minutes | A request took longer than Cloudflare's proxy timeout (125 s). Long jobs must run in the queue |
+| Files do not load from `<slug>-files.<domain>` | The R2 custom domain is missing or still initialising: R2, bucket, Settings; run `cloudflare-setup.sh --slug <slug> bucket` |
+| `NotImplemented` on tenant create | `TENANCY_S3_PUBLIC_READ_POLICY` is not `false` (R2 has no bucket policies), or the image is older than ADR 0092 |
+| The api never becomes healthy | `docker compose logs api` (first start migrates); a wrong `POSTGRES_PASSWORD` after the volume exists: the password only applies when the data directory is created |
+| Sessions break after a restart | `JWT_*_BASE64` or `APP_KEY` changed; restore them from the password manager |
+| E-mail does not arrive | `MAIL_*`, then SPF and DKIM; `docker compose logs api horizon` for SMTP errors |
+| The front is slow on every page | Each server-side API call goes through Cloudflare and back; check the cache rule for the catalogue and `ULAMS_CACHE_TTL` |
+
+## Sizing and scaling
+
+The limits in `compose.yml` (PostgreSQL 1.5 GB, API 2.5 GB, H5P 0.75 GB, PDF, front 0.5 GB each, Valkey, MJML 0.25 GB each,
+Caddy and cloudflared 0.15 GB each, admin 0.1 GB) leave about 1.3 GB of an 8 GB host for the system. That is the profile of
+[Requirements](/operators/requirements/) for a few tenants and about 100 concurrent learners; these are estimates, not
+load-test results. Watch `docker stats`: raise the API limit first if Horizon workers are killed (`OOMKilled` in
+`docker inspect`), and move to 16 GB before you add video-heavy tenants. When one host is not enough, the next steps are
+a bigger VPS, PostgreSQL on its own host (a managed service or a second VPS), then the topology in
+[High availability](/operators/high-availability/): several API replicas behind the tunnel (run another `cloudflared`
+with the same credentials), shared object storage (already R2) and one scheduler lock (ADR 0068).
+
+## Options
+
+<Tabs>
+  <TabItem label="Admin on Cloudflare Pages">
+    The admin is a static build, so Pages can serve it for free instead of the VPS. Build it from `admin/` with
+    `corepack yarn workspace admin build` and publish `admin/dist` to a Pages project. The runtime settings that the container writes
+    at start (`REACT_APP_TENANT_API_HOST_PATTERN`, `REACT_APP_API_URL`) are baked in at build time instead; set them in the Pages build
+    environment. Pages serves one site per hostname, while the admin needs `*-admin.<domain>`: attach a custom
+    domain per tenant (`acme-admin.<domain>`) or keep the admin on the VPS. This is why the VPS is the default.
+  </TabItem>
+  <TabItem label="Docs on Pages or GitHub Pages">
+    The documentation site is static. It deploys to GitHub Pages from CI today. For `docs.<domain>` create the project in
+    Pages (or enable Pages custom domain in the repository) and add the proxied `CNAME` for `docs`
+    (`--docs-target`). An explicit `docs` record wins over the `*` record to the tunnel.
+  </TabItem>
+  <TabItem label="Workers for the Astro front">
+    Not built. The front uses the Astro Node adapter in a container. Moving it to Workers means swapping the adapter and
+    its Node-only code (BFF, session cookies, the in-memory cache) and is a later option.
+  </TabItem>
+</Tabs>
+
+## The files
+
+`deploy/vps-cloudflare/scripts/` holds `install.sh`, `upgrade.sh`, `backup.sh`, `restore.sh`, `create-tenant.sh`,
+`cloudflare-setup.sh`, `cloudflare-firewall.sh` and `validate.sh` (offline checks: compose, Caddy in both layouts and
+modes, cloudflared, shellcheck). `systemd/` has the timer and units.
+
+<Code code={compose} lang="yaml" title="compose.yml" />
+
+<Code code={caddyfile} lang="text" title="Caddyfile" />
+
+<Code code={cloudflaredConfig} lang="yaml" title="cloudflared/config.yml" />
+
+<Code code={envExample} lang="ini" title=".env.example" />
+
+<Aside type="note" title="Licensing">
+  The `h5p` image is GPL-3.0-or-later. Pulling it from `ghcr.io/ulams-dev/h5p` is fine; the source offer for it stays public
+  through this repository (see [Licensing](/operators/licensing/)).
+</Aside>

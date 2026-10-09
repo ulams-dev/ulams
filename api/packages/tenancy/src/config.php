@@ -42,6 +42,10 @@ return [
     'redis_prefix' => env('TENANCY_REDIS_PREFIX', 'ulams_{slug}_'),
     // Public base URL of the object store; the bucket name is appended.
     'storage_public_url' => env('TENANCY_STORAGE_PUBLIC_URL', 'http://storage.localhost'),
+    // Public URL pattern of one tenant bucket, `{slug}` replaced (e.g. https://{slug}-files.ulams.app).
+    // For stores that give every bucket its own public host name, like a Cloudflare R2 custom domain
+    // (no bucket name in the path). Empty = `storage_public_url` + `/` + bucket (ADR 0092).
+    'bucket_public_url' => env('TENANCY_BUCKET_PUBLIC_URL') ?: null,
 
     /*
      * Platform-level settings every tenant inherits (ADR 0063). `ulams:tenant:sync-env` copies the

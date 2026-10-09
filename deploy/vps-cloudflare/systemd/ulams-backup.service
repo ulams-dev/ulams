@@ -1,0 +1,14 @@
+[Unit]
+Description=ulams backup (databases, volumes, encrypted secrets to R2)
+Wants=docker.service
+After=docker.service network-online.target
+
+[Service]
+Type=oneshot
+User=ulams
+Group=ulams
+WorkingDirectory=@DIR@
+ExecStart=@DIR@/scripts/backup.sh
+TimeoutStartSec=2h
+Nice=10
+IOSchedulingClass=idle

@@ -1,0 +1,379 @@
+# ulams production on one VPS behind Cloudflare (guide: docs site, Operators, "Install on a VPS
+# with Cloudflare"; decision: docs/decisions/0092-vps-cloudflare-hosting-reference.md).
+#
+# Usage (scripts/install.sh does all of this): copy .env.example to .env, fill it in, then
+#   docker compose --env-file .env -f compose.yml up -d                        (Cloudflare Tunnel, default)
+#   docker compose --env-file .env -f compose.yml -f compose.origin.yml up -d  (Origin CA + open 443)
+# `docker compose config` needs the variables, so validate with `--env-file .env.example`.
+#
+# Differences from front/docs-site/examples/production (the generic single-server example):
+# no TLS or ACME in Caddy (Cloudflare terminates TLS; the tunnel reaches Caddy over plain HTTP on
+# the private Docker network), no object store container (Cloudflare R2), image tags pinned, memory
+# limits sized for an 8 GB host, health checks on every service, host patterns from the env.
+#
+# Memory budget (limits, not reservations): postgres 1.5G, api 2.5G, h5p 0.75G, pdf 0.5G, web 0.5G,
+# valkey 0.25G, mjml 0.25G, caddy 0.15G, cloudflared 0.15G, admin 0.1G = 6.65G, which leaves
+# about 1.3G for the kernel, page cache, sshd and Docker on an 8 GB host.
+
+name: ulams
+
+x-service: &service
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options:
+      max-size: "20m"
+      max-file: "5"
+
+volumes:
+  postgres_data:
+  valkey_data:
+  # Laravel storage/: platform and tenant Passport keys, logs, local disks (e.g. SCORM_DISK=local)
+  api_storage:
+  # What the H5P service reads: per tenant only the database, bucket and URL settings plus the
+  # Passport PUBLIC key (H5PServiceConfigExporter), written by the api service
+  h5p_service_config:
+  # Installed H5P libraries, shared by every tenant
+  h5p_libraries:
+  caddy_data:
+  caddy_config:
+
+services:
+  # Routes by host name (all the patterns of one install come from the ULAMS_* variables) and adds
+  # the content-origin and CSP headers. Plain HTTP on :80 inside the network; nothing is published
+  # in tunnel mode. compose.origin.yml publishes 443 and mounts the Origin CA certificate.
+  caddy:
+    <<: *service
+    image: caddy:2.11.7-alpine
+    environment:
+      ULAMS_DOMAIN: ${ULAMS_DOMAIN:?set ULAMS_DOMAIN}
+      ULAMS_SITE_ADDRESS: ${ULAMS_SITE_ADDRESS:-http://}
+      ULAMS_ORIGIN_MODE: ${ULAMS_ORIGIN_MODE:-tunnel}
+      ULAMS_RE_FRONT: ${ULAMS_RE_FRONT:?set ULAMS_RE_FRONT}
+      ULAMS_RE_ADMIN: ${ULAMS_RE_ADMIN:?set ULAMS_RE_ADMIN}
+      ULAMS_RE_API: ${ULAMS_RE_API:?set ULAMS_RE_API}
+      ULAMS_RE_CONTENT: ${ULAMS_RE_CONTENT:?set ULAMS_RE_CONTENT}
+      ULAMS_PLATFORM_CONTENT_HOST: ${ULAMS_PLATFORM_CONTENT_HOST:?set ULAMS_PLATFORM_CONTENT_HOST}
+      ULAMS_API_HOST_OF_SLUG: ${ULAMS_API_HOST_OF_SLUG:?set ULAMS_API_HOST_OF_SLUG}
+      ULAMS_FRONT_HOST_OF_SLUG: ${ULAMS_FRONT_HOST_OF_SLUG:?set ULAMS_FRONT_HOST_OF_SLUG}
+      ULAMS_ADMIN_HOST_OF_SLUG: ${ULAMS_ADMIN_HOST_OF_SLUG:?set ULAMS_ADMIN_HOST_OF_SLUG}
+      ULAMS_RE_CONTENT_ORIGIN: ${ULAMS_RE_CONTENT_ORIGIN:?set ULAMS_RE_CONTENT_ORIGIN}
+      ULAMS_SCHEME: ${ULAMS_SCHEME:-https}
+      ULAMS_PORT_SUFFIX: ${ULAMS_PORT_SUFFIX:-}
+      # "on" tells php-fpm the request was HTTPS (Cloudflare terminated TLS); "off" for local runs
+      ULAMS_FCGI_HTTPS: ${ULAMS_FCGI_HTTPS:-on}
+      # admin CSP: report-only until the reports are clean (docs: operators/security-headers, #121)
+      ULAMS_CSP_HEADER: ${ULAMS_CSP_HEADER:-Content-Security-Policy-Report-Only}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:2019/config/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 150M
+    depends_on:
+      - api
+      - h5p
+      - web
+      - admin
+
+  # Cloudflare Tunnel: an outbound-only connection from this host to Cloudflare. DNS records point
+  # at <tunnel id>.cfargotunnel.com; every request arrives here and goes to Caddy. Credentials come
+  # from scripts/cloudflare-setup.sh (cloudflared/credentials.json, mode 600, not in git; the tunnel
+  # id is CLOUDFLARE_TUNNEL_ID in .env).
+  cloudflared:
+    <<: *service
+    image: cloudflare/cloudflared:2026.9.3
+    profiles: ["tunnel"]
+    command: ["tunnel", "--no-autoupdate", "--config", "/etc/cloudflared/config.yml", "--metrics", "0.0.0.0:2000", "run", "${CLOUDFLARE_TUNNEL_ID:-}"]
+    volumes:
+      - ./cloudflared/config.yml:/etc/cloudflared/config.yml:ro
+      - ./cloudflared/credentials.json:/etc/cloudflared/credentials.json:ro
+    healthcheck:
+      test: ["CMD", "cloudflared", "--metrics", "127.0.0.1:2000", "tunnel", "ready"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 150M
+    depends_on:
+      - caddy
+
+  # Laravel API: php-fpm (port 9000), Horizon, tenant queue workers and the scheduler under
+  # supervisord (init.sh). On start it writes .env from the LARAVEL_* variables, migrates the
+  # platform, rebuilds the tenant env files and keys (ulams:tenant:sync-env --migrate) and seeds
+  # permissions and the first platform admin.
+  api:
+    <<: *service
+    image: ghcr.io/ulams-dev/api:${ULAMS_VERSION:?set ULAMS_VERSION}
+    environment:
+      # read by init.sh directly
+      JWT_PRIVATE_KEY_BASE64: ${JWT_PRIVATE_KEY_BASE64:?set JWT_PRIVATE_KEY_BASE64}
+      JWT_PUBLIC_KEY_BASE64: ${JWT_PUBLIC_KEY_BASE64:?set JWT_PUBLIC_KEY_BASE64}
+      # LARAVEL_<NAME> becomes <NAME> in the platform .env (docker/envs/envs.php)
+      LARAVEL_APP_NAME: ulams
+      LARAVEL_APP_ENV: production
+      LARAVEL_APP_DEBUG: "false"
+      LARAVEL_APP_KEY: ${APP_KEY:?set APP_KEY}
+      LARAVEL_APP_URL: ${ULAMS_SCHEME:-https}://api.${ULAMS_DOMAIN}${ULAMS_PORT_SUFFIX:-}
+      LARAVEL_FRONTEND_URL: ${ULAMS_SCHEME:-https}://${ULAMS_DOMAIN}${ULAMS_PORT_SUFFIX:-}
+      LARAVEL_ADMIN_URL: ${ULAMS_SCHEME:-https}://admin.${ULAMS_DOMAIN}${ULAMS_PORT_SUFFIX:-}
+      LARAVEL_DB_CONNECTION: pgsql
+      LARAVEL_DB_HOST: postgres
+      LARAVEL_DB_PORT: "5432"
+      LARAVEL_DB_DATABASE: ${POSTGRES_DB:-ulams}
+      LARAVEL_DB_USERNAME: ${POSTGRES_USER:-ulams}
+      LARAVEL_DB_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      LARAVEL_REDIS_HOST: valkey
+      LARAVEL_REDIS_PORT: "6379"
+      LARAVEL_REDIS_PASSWORD: ${VALKEY_PASSWORD:?set VALKEY_PASSWORD}
+      LARAVEL_CACHE_DRIVER: redis
+      LARAVEL_SESSION_DRIVER: cookie
+      LARAVEL_QUEUE_DRIVER: redis
+      LARAVEL_QUEUE_CONNECTION: redis
+      LARAVEL_BROADCAST_DRIVER: log
+      # The platform is behind Cloudflare: public catalogue responses carry s-maxage and Vary
+      # (config/http_cache.php), which the cache rules of scripts/cloudflare-setup.sh use.
+      LARAVEL_HTTP_CACHE_PUBLIC: "true"
+      LARAVEL_MAIL_DRIVER: smtp
+      LARAVEL_MAIL_HOST: ${MAIL_HOST:-}
+      LARAVEL_MAIL_PORT: ${MAIL_PORT:-587}
+      LARAVEL_MAIL_USERNAME: ${MAIL_USERNAME:-}
+      LARAVEL_MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      LARAVEL_MAIL_ENCRYPTION: ${MAIL_ENCRYPTION:-tls}
+      LARAVEL_MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-no-reply@example.com}
+      LARAVEL_MAIL_FROM_NAME: ${MAIL_FROM_NAME:-ulams}
+      # e-mail templates are rendered by the mjml service (the API image has no mjml binary)
+      LARAVEL_MJML_API_URL: http://mjml:15500/v1
+      # Object storage: Cloudflare R2 (or any S3 API). Region "auto" and path-style addressing.
+      LARAVEL_FILESYSTEM_DRIVER: s3
+      LARAVEL_AWS_ACCESS_KEY_ID: ${S3_KEY:?set S3_KEY}
+      LARAVEL_AWS_SECRET_ACCESS_KEY: ${S3_SECRET:?set S3_SECRET}
+      LARAVEL_AWS_DEFAULT_REGION: ${S3_REGION:-auto}
+      LARAVEL_AWS_BUCKET: ${S3_PLATFORM_BUCKET:-ulams}
+      LARAVEL_AWS_ENDPOINT: ${S3_ENDPOINT:?set S3_ENDPOINT}
+      LARAVEL_AWS_URL: ${S3_PLATFORM_PUBLIC_URL:?set S3_PLATFORM_PUBLIC_URL}
+      LARAVEL_AWS_USE_PATH_STYLE_ENDPOINT: ${S3_USE_PATH_STYLE:-true}
+      LARAVEL_H5P_SERVICE_URL: http://h5p:8080
+      LARAVEL_H5P_INTERNAL_TOKEN: ${H5P_INTERNAL_TOKEN:?set H5P_INTERNAL_TOKEN}
+      LARAVEL_H5P_SERVICE_CONFIG_DIR: /var/www/html/storage/h5p-service
+      LARAVEL_PDF_SERVICE_URL: http://pdf:3000
+      LARAVEL_PDF_INTERNAL_TOKEN: ${PDF_INTERNAL_TOKEN:?set PDF_INTERNAL_TOKEN}
+      LARAVEL_CONTENT_ORIGIN: ${ULAMS_SCHEME:-https}://${ULAMS_PLATFORM_CONTENT_HOST:?set ULAMS_PLATFORM_CONTENT_HOST}${ULAMS_PORT_SUFFIX:-}
+      # First platform administrator (PermissionsSeeder, only while the users table is empty)
+      LARAVEL_INITIAL_USER_EMAIL: ${PLATFORM_ADMIN_EMAIL:?set PLATFORM_ADMIN_EMAIL}
+      LARAVEL_INITIAL_USER_PASSWORD: ${PLATFORM_ADMIN_PASSWORD:?set PLATFORM_ADMIN_PASSWORD}
+      LARAVEL_SENTRY_LARAVEL_DSN: ${SENTRY_DSN:-}
+      LARAVEL_SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT:-production}
+      # Tenancy (packages/tenancy): names and URLs of new tenants. The host patterns are the ones
+      # the Caddyfile and the front/admin are configured with (ULAMS_HOST_STYLE in .env.example).
+      LARAVEL_TENANCY_PLATFORM_HOSTS: api.${ULAMS_DOMAIN},caddy,api,localhost,127.0.0.1
+      LARAVEL_TENANCY_SCHEME: ${ULAMS_SCHEME:-https}
+      LARAVEL_TENANCY_API_HOST: ${ULAMS_API_PATTERN:?set ULAMS_API_PATTERN}
+      LARAVEL_TENANCY_FRONT_HOST: ${ULAMS_FRONT_PATTERN:?set ULAMS_FRONT_PATTERN}
+      LARAVEL_TENANCY_ADMIN_HOST: ${ULAMS_ADMIN_PATTERN:?set ULAMS_ADMIN_PATTERN}
+      LARAVEL_TENANCY_CONTENT_HOST: ${ULAMS_CONTENT_PATTERN:?set ULAMS_CONTENT_PATTERN}
+      LARAVEL_TENANCY_EMAIL_DOMAIN: ${TENANCY_EMAIL_DOMAIN:?set TENANCY_EMAIL_DOMAIN}
+      LARAVEL_TENANCY_STORAGE_PUBLIC_URL: ${S3_PLATFORM_PUBLIC_URL}
+      # R2 has no bucket policies and one public URL per bucket (ADR 0092)
+      LARAVEL_TENANCY_S3_PUBLIC_READ_POLICY: ${TENANCY_S3_PUBLIC_READ_POLICY:-false}
+      LARAVEL_TENANCY_BUCKET_PUBLIC_URL: ${TENANCY_BUCKET_PUBLIC_URL:-}
+      LARAVEL_TENANT_DEMO_PASSWORD: ${TENANT_INITIAL_PASSWORD:?set TENANT_INITIAL_PASSWORD}
+      LARAVEL_TENANCY_PLATFORM_API: ${TENANCY_PLATFORM_API:-false}
+    volumes:
+      - api_storage:/var/www/html/storage
+      - h5p_service_config:/var/www/html/storage/h5p-service
+    deploy:
+      resources:
+        limits:
+          memory: 2560M
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+      mjml:
+        condition: service_started
+      pdf:
+        condition: service_started
+
+  # H5P player, editor and content API (GPL-3.0-or-later, see LICENSING.md). Multi-tenant: the
+  # request host selects the Laravel env file and the Passport public key.
+  h5p:
+    <<: *service
+    image: ghcr.io/ulams-dev/h5p:${ULAMS_VERSION:?set ULAMS_VERSION}
+    # group of the Laravel storage files (www-data, gid 82): public keys and env copies are 0640
+    group_add:
+      - "82"
+    environment:
+      PORT: "8080"
+      LOG_LEVEL: info
+      PUBLIC_URL: ${ULAMS_SCHEME:-https}://api.${ULAMS_DOMAIN}${ULAMS_PORT_SUFFIX:-}
+      TENANCY_MODE: env-files
+      ENV_DIR: /config
+      KEYS_DIR: /config/keys
+      PLATFORM_HOSTS: api.${ULAMS_DOMAIN}
+      CORS_ORIGINS: ${ULAMS_SCHEME:-https}://${ULAMS_DOMAIN}${ULAMS_PORT_SUFFIX:-},${ULAMS_SCHEME:-https}://admin.${ULAMS_DOMAIN}${ULAMS_PORT_SUFFIX:-},${ULAMS_SCHEME:-https}://api.${ULAMS_DOMAIN}${ULAMS_PORT_SUFFIX:-}
+      TENANT_FRONT_ORIGIN_PATTERNS: ${ULAMS_SCHEME:-https}://${ULAMS_FRONT_PATTERN:?set ULAMS_FRONT_PATTERN},${ULAMS_SCHEME:-https}://${ULAMS_ADMIN_PATTERN:?set ULAMS_ADMIN_PATTERN}
+      REDIS_HOST: valkey
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ${VALKEY_PASSWORD}
+      REDIS_DB: "0"
+      REDIS_KEY_PREFIX: "h5p:"
+      # fallbacks; each tenant's bucket and credentials come from its env file
+      S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_REGION: ${S3_REGION:-auto}
+      S3_KEY: ${S3_KEY}
+      S3_SECRET: ${S3_SECRET}
+      S3_BUCKET: ${S3_PLATFORM_BUCKET:-ulams}
+      S3_PREFIX: h5p
+      S3_FORCE_PATH_STYLE: ${S3_USE_PATH_STYLE:-true}
+      JWT_PUBLIC_KEY_PATH: /config/keys/oauth-public.key
+      # profile calls (GET /api/profile/me) go to Caddy's internal listener with the tenant host
+      LARAVEL_API_URL: http://caddy:8081
+      LARAVEL_API_HOST: api.${ULAMS_DOMAIN}
+      H5P_INTERNAL_TOKEN: ${H5P_INTERNAL_TOKEN}
+      H5P_MAX_FILE_SIZE_MB: "64"
+      H5P_MAX_TOTAL_SIZE_MB: "256"
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - h5p_libraries:/data/libraries
+      - h5p_service_config:/config:ro
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+    depends_on:
+      - api
+      - valkey
+
+  # PDF renderer (certificates); internal only. The image has its own health check.
+  pdf:
+    <<: *service
+    image: ghcr.io/ulams-dev/pdf:${ULAMS_VERSION:?set ULAMS_VERSION}
+    environment:
+      PORT: "3000"
+      LOG_LEVEL: info
+      PDF_INTERNAL_TOKEN: ${PDF_INTERNAL_TOKEN}
+      PDF_MAX_CONCURRENCY: "2"
+      PDF_MAX_QUEUE: "16"
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # Learner front and platform landing (Astro SSR, Node adapter; the image has a /healthz check).
+  # Server-side it calls the tenant API by its public host name, so the host must resolve it (the
+  # request goes through Cloudflare and back; see the guide).
+  web:
+    <<: *service
+    image: ghcr.io/ulams-dev/web:${ULAMS_VERSION:?set ULAMS_VERSION}
+    environment:
+      ULAMS_TENANT_HOSTS: "${ULAMS_FRONT_PATTERN:?set ULAMS_FRONT_PATTERN}=>${ULAMS_SCHEME:-https}://${ULAMS_API_PATTERN:?set ULAMS_API_PATTERN}${ULAMS_PORT_SUFFIX:-}"
+      ULAMS_ADMIN_URL: "${ULAMS_SCHEME:-https}://${ULAMS_ADMIN_PATTERN}${ULAMS_PORT_SUFFIX:-}"
+      ULAMS_PLATFORM_HOSTS: ${ULAMS_DOMAIN}
+      # Production is not a demo: no demo tenants on the landing, nothing warmed up at start
+      ULAMS_DEMO_TENANTS: ""
+      ULAMS_WARM_TENANTS: ""
+      ULAMS_DEFAULT_TENANT: ""
+      # `final` shows every roadmap item as delivered; set `actual` before the public launch (#92)
+      ULAMS_LANDING_STATUS: ${ULAMS_LANDING_STATUS:-actual}
+      # CSP of the pages: report-only until the reports are clean, then CSP_ENFORCE=true (#121)
+      CSP_ENFORCE: ${CSP_ENFORCE:-false}
+      ULAMS_COOKIE_SECURE: ${ULAMS_COOKIE_SECURE:-true}
+      ULAMS_CONTENT_ORIGIN: "${ULAMS_SCHEME:-https}://${ULAMS_CONTENT_PATTERN:?set ULAMS_CONTENT_PATTERN}${ULAMS_PORT_SUFFIX:-}"
+      ULAMS_STORAGE_ORIGINS: ${ULAMS_STORAGE_ORIGINS:-}
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # Admin and author panel (static build on nginx-unprivileged, port 8080); the tenant API comes
+  # from the host name. Alternative: Cloudflare Pages (guide, "Admin on Cloudflare Pages").
+  admin:
+    <<: *service
+    image: ghcr.io/ulams-dev/admin:${ULAMS_VERSION:?set ULAMS_VERSION}
+    environment:
+      REACT_APP_TENANT_API_HOST_PATTERN: "${ULAMS_ADMIN_PATTERN:?set ULAMS_ADMIN_PATTERN}=>${ULAMS_SCHEME:-https}://${ULAMS_API_PATTERN}${ULAMS_PORT_SUFFIX:-}"
+      REACT_APP_API_URL: ${ULAMS_SCHEME:-https}://api.${ULAMS_DOMAIN}${ULAMS_PORT_SUFFIX:-}
+      REACT_APP_SENTRYDSN: ${ADMIN_SENTRY_DSN:-}
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  postgres:
+    <<: *service
+    image: postgres:17.11-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ulams}
+      POSTGRES_USER: ${POSTGRES_USER:-ulams}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+    # sized for a shared 8 GB host: about 25% of the 1.5 GB limit for shared_buffers; one database
+    # and one role per tenant means many connections, so keep max_connections moderate
+    command: ["postgres", "-c", "shared_buffers=384MB", "-c", "effective_cache_size=1GB", "-c", "max_connections=150", "-c", "work_mem=8MB", "-c", "log_min_duration_statement=1000"]
+    shm_size: 256m
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 1536M
+
+  # Valkey (BSD-3-Clause), Redis protocol: queues, cache, locks. Persist it (queued jobs).
+  valkey:
+    <<: *service
+    image: valkey/valkey:8.1.10-alpine
+    command: ["sh", "-c", "exec valkey-server --requirepass \"$$VALKEY_PASSWORD\" --appendonly yes --maxmemory 192mb --maxmemory-policy noeviction"]
+    environment:
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD:?set VALKEY_PASSWORD}
+    volumes:
+      - valkey_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli -a \"$$VALKEY_PASSWORD\" --no-auth-warning ping | grep -q PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  # MJML rendering for e-mail templates (internal only)
+  mjml:
+    <<: *service
+    image: danihodovic/mjml-server:4.15.3
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 256M

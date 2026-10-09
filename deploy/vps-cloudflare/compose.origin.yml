@@ -1,0 +1,22 @@
+# Origin mode: Cloudflare connects to this host on 443 (proxied DNS records, SSL mode Full (strict)),
+# Caddy presents a Cloudflare Origin CA certificate and requires Cloudflare's client certificate
+# (Authenticated Origin Pulls). Use it only when you cannot run the tunnel; the tunnel is the default
+# (ADR 0092). Also run scripts/cloudflare-firewall.sh: Docker publishes ports around ufw, so the
+# allow-list for Cloudflare's address ranges must sit in the DOCKER-USER chain.
+#
+#   docker compose --env-file .env -f compose.yml -f compose.origin.yml up -d
+#
+# .env: ULAMS_ORIGIN_MODE=origin_ca, ULAMS_SITE_ADDRESS=https://, COMPOSE_PROFILES= (empty: no cloudflared)
+# certs/origin.pem, certs/origin.key: the Origin CA certificate for ulams.app and *.ulams.app (and
+#   *.admin/api/content.ulams.app in the nested layout); certs/authenticated_origin_pull_ca.pem:
+#   https://developers.cloudflare.com/ssl/static/authenticated_origin_pull_ca.pem
+
+services:
+  caddy:
+    ports:
+      - "443:443"
+    environment:
+      ULAMS_SITE_ADDRESS: https://
+      ULAMS_ORIGIN_MODE: origin_ca
+    volumes:
+      - ./certs:/certs:ro

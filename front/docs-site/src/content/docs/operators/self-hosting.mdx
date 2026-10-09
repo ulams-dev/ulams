@@ -29,11 +29,11 @@ this page renders them from there, so the page and the files cannot drift apart.
   file is validated with `docker compose config`, but run it on a staging server first.
 </Aside>
 
-<Aside type="note" title="Other ways to host">
-  A cheaper, smaller option is the API on a MyDevil shared hosting account with the front on
-  Cloudflare: [Install on MyDevil](/operators/install-mydevil/) (not tested end to end; see its limits).
-  The VPS and Cloudflare variant is in
-  [`deploy/vps-cloudflare`](https://github.com/ulams-dev/ulams/tree/main/deploy/vps-cloudflare).
+<Aside type="tip" title="Other ways to host">
+  For one VPS behind Cloudflare (tunnel, wildcard DNS, R2 storage, cache rules, backups to R2, install and upgrade
+  scripts) follow [Install on a VPS with Cloudflare](/operators/vps-cloudflare/) instead of this page, which is the
+  generic version with Caddy terminating TLS itself. A cheaper, smaller option is the API on a MyDevil shared hosting
+  account with the front on Cloudflare: [Install on MyDevil](/operators/install-mydevil/) (not tested end to end; see its limits).
 </Aside>
 
 ## Before you start

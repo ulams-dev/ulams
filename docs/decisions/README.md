@@ -103,5 +103,6 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0089](0089-six-demo-academies-and-content-sourcing.md) | Six demo academies: three free interactive courses, one theme preset each, sourced content, EN/PL as two courses | Proposed |
 | [0090](0090-living-course-implementation-choices.md) | Living Course: choices made during implementation | Proposed |
 | [0091](0091-shared-hosting-cron-workers-and-manual-tenant-database.md) | Shared hosting: cron-driven workers and an operator-created tenant database | Proposed |
+| [0092](0092-vps-cloudflare-hosting-reference.md) | Production reference: one VPS behind Cloudflare, flat tenant hosts, a tunnel and R2 | Proposed |
 
 <!-- END GENERATED: adr-index -->
