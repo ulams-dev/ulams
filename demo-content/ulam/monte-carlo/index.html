@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monte Carlo: estimate π by throwing points</title>
+<link rel="stylesheet" href="vendor/ulam-shell.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="ix-app">
+  <header id="ix-card" class="ix-card" hidden>
+    <p class="ix-step-no"></p>
+    <h1 class="ix-title"></h1>
+    <p class="ix-text"></p>
+    <nav class="ix-nav" aria-label="Steps">
+      <button type="button" class="ix-prev">Back</button>
+      <button type="button" class="ix-next ix-primary">Next step</button>
+    </nav>
+  </header>
+
+  <main id="ix-stage" class="ix-stage">
+    <h2 class="ix-sr">Monte Carlo: estimating π with random points</h2>
+    <div class="mc-layout">
+      <div class="mc-left">
+        <canvas id="square" role="img" aria-label="A unit square with a quarter circle. No points yet."></canvas>
+        <div class="ix-controls mc-buttons" id="buttons" role="group" aria-label="Throw points">
+          <button type="button" data-n="1">+1</button>
+          <button type="button" data-n="100">+100</button>
+          <button type="button" data-n="10000" class="ix-primary">+10,000</button>
+          <button type="button" id="reset">Reset</button>
+        </div>
+        <div class="ix-controls">
+          <div class="ix-field"><label for="seed">Seed</label><input id="seed" type="number" min="1" max="999999" step="1" value="2026"></div>
+        </div>
+      </div>
+      <div class="mc-right">
+        <p id="result" class="ix-summary" aria-live="polite"></p>
+        <figure id="chart-box" class="mc-chart">
+          <canvas id="chart" role="img" aria-label="Log-log chart of the error of the estimate against the number of throws."></canvas>
+          <figcaption class="ix-note">Error of the estimate (vertical) against the number of throws (horizontal), both on logarithmic axes. The dashed line is the error to expect, 1.64 divided by the square root of the number of throws.</figcaption>
+          <details class="mc-table"><summary>Data table</summary><table id="data"><caption class="ix-sr">Error of the estimate by number of throws</caption><thead><tr><th scope="col">Throws</th><th scope="col">Estimate of π</th><th scope="col">Error</th></tr></thead><tbody></tbody></table></details>
+        </figure>
+      </div>
+    </div>
+  </main>
+  <p id="ix-live" class="ix-sr" aria-live="polite"></p>
+</div>
+<script type="module" src="main.js"></script>
+</body>
+</html>

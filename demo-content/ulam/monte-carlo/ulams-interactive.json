@@ -1,0 +1,46 @@
+{
+  "$schema": "https://ulams.dev/schemas/ulams-interactive/v1.json",
+  "id": "ulam-monte-carlo",
+  "title": { "en": "Monte Carlo: estimate π by throwing points" },
+  "version": "1.0.0",
+  "entry": "index.html",
+  "licence": "MIT",
+  "attribution": "© 2026 Mateusz Wojczal. Code: MIT. Text: CC BY 4.0.",
+  "source": { "url": "https://github.com/ulams-dev/ulams/tree/main/demo-content/ulam/monte-carlo", "ref": "main" },
+  "locales": ["en"],
+  "defaultLocale": "en",
+  "bridge": 1,
+  "capabilities": { "steps": true, "reducedMotion": true, "score": false, "background": false },
+  "requires": [],
+  "network": [],
+  "steps": [
+    {
+      "id": "idea",
+      "title": { "en": "The idea: ask the dice" },
+      "text": { "en": "Take a square one unit wide and draw a quarter circle of radius 1 in it. The quarter circle covers π/4 of the square, about 78.5%. So if you throw points at random into the square, about π/4 of them should land inside the circle, and four times the share inside is an estimate of π." },
+      "poster": "posters/idea.webp"
+    },
+    {
+      "id": "throw",
+      "title": { "en": "Throw some points" },
+      "text": { "en": "Add one point, a hundred, or ten thousand. Blue points landed inside the quarter circle, red points outside. After each throw the page shows 4 times the share inside as the estimate of π. The seed makes a run repeatable: the same seed gives the same points." },
+      "poster": "posters/throw.webp"
+    },
+    {
+      "id": "converge",
+      "title": { "en": "Watch the estimate settle" },
+      "text": { "en": "Each dot on the chart is the error of the estimate after that many throws, on logarithmic axes. The estimate wanders at first and then settles. Throw at least 10,000 points to see the dots follow the dashed line, the error to expect." },
+      "poster": "posters/converge.webp"
+    },
+    {
+      "id": "error",
+      "title": { "en": "How fast does the error shrink?" },
+      "text": { "en": "The error to expect after n throws is about 1.64 divided by the square root of n. Ten times the throws cut the error by a factor of about three, not ten: to gain one more correct digit you need a hundred times as many points. Change the seed and compare runs." },
+      "poster": "posters/error.webp"
+    }
+  ],
+  "a11y": {
+    "keyboard": "All controls are native buttons and inputs. The picture and the chart have text descriptions that update after every throw, and the chart has a data table.",
+    "notes": "Nothing animates, so reduced motion needs no change: points appear at once and the chart is drawn in its final state."
+  }
+}
