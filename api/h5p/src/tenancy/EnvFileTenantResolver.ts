@@ -449,7 +449,7 @@ export class EnvFileTenantResolver implements TenantResolver {
         if (id.includes('.')) {
             return this.sourceFor(id.toLowerCase());
         }
-        let files: string[] = [];
+        let files: string[];
         try {
             files = readdirSync(this.envDir);
         } catch {
