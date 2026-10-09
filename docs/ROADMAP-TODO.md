@@ -623,7 +623,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       ADRs 0072–0079)
 - [x] (new) M1 CLI core: `front/cli` workspace, command registry, output contract and exit codes, profiles,
       `login` (token/password/demo), `whoami`, `ulams api`, `schema`, `describe`
-- [ ] (new) M2 noun commands generated from OpenAPI + overrides, topic uploads of every type, pagination,
+- [x] (new) M2 noun commands generated from OpenAPI + overrides, topic uploads of every type, pagination,
       `--dry-run`, `--wait`, `apply -f`, coverage matrix enforced in CI
 - [ ] (new) M4 course builder commands with AG-UI events as NDJSON; Living Course commands after the Phase 3 merge
 - [ ] (new) M5 course-as-code: Blueprint v2, Markdown + directives format, sync base and conflict diffs
@@ -665,7 +665,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       API: hand-written course/topic/quiz tools + tools generated from the OpenAPI spec
       (note: the CLI plan proposes the local `ulams mcp` first and this as the later hosted variant from the
       same registry; pending #75)
-- [ ] (new) M3 `ulams mcp` (stdio + Streamable HTTP) generated from the CLI registry: toolsets, annotations,
+- [x] (new) M3 `ulams mcp` (stdio + Streamable HTTP) generated from the CLI registry: toolsets, annotations,
       confirmation for destructive tools, resources, MCP client tests, agent eval (ADR 0076)
 
 ### 7.6 Machine-readable content
