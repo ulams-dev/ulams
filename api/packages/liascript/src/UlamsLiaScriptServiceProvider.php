@@ -3,12 +3,18 @@
 namespace Ulams\LiaScript;
 
 use Illuminate\Support\ServiceProvider;
+use Ulams\Courses\Facades\Topic;
+use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\LiaScript\Http\Resources\LiaScriptTopicResource;
+use Ulams\LiaScript\Models\LiaScriptTopic;
+use Ulams\LiaScript\Services\LiaScriptPlayer;
 use Ulams\LiaScript\Services\LiaScriptService;
+use Ulams\TopicTypes\UlamsTopicTypesServiceProvider;
 use Ulams\Uploads\UlamsUploadsServiceProvider;
 
 /**
- * LiaScript course sources: versioned Markdown plus assets (spec 1.1). Rendering (packaging the
- * vendored LiaScript SCORM build) is a follow-up, see docs/plans/phase-1.md section 5.
+ * LiaScript (spec 1.1): versioned Markdown sources plus assets, the LiaScript topic type, and
+ * playback on the tenant content origin with the LiaScript SCORM build (LiaScriptPlayer).
  */
 class UlamsLiaScriptServiceProvider extends ServiceProvider
 {
@@ -16,17 +22,27 @@ class UlamsLiaScriptServiceProvider extends ServiceProvider
 
     public $singletons = [
         LiaScriptService::class => LiaScriptService::class,
+        LiaScriptPlayer::class => LiaScriptPlayer::class,
     ];
 
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/config.php', self::CONFIG_KEY);
         $this->app->register(UlamsUploadsServiceProvider::class);
+        $this->app->register(UlamsTopicTypesServiceProvider::class);
+        $this->app->register(UlamsCourseServiceProvider::class);
     }
 
     public function boot(): void
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        Topic::registerContentClass(LiaScriptTopic::class);
+        Topic::registerResourceClasses(LiaScriptTopic::class, [
+            'client' => LiaScriptTopicResource::class,
+            'admin' => LiaScriptTopicResource::class,
+            'export' => LiaScriptTopicResource::class,
+        ]);
     }
 }

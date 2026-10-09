@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Ulams\LiaScript\Http\Requests\LiaScriptRequest;
 use Ulams\LiaScript\Models\LiaScriptDocument;
+use Ulams\LiaScript\Models\LiaScriptTopic;
 use Ulams\LiaScript\Models\LiaScriptVersion;
 use Ulams\LiaScript\Services\LiaScriptService;
 
@@ -103,6 +104,9 @@ class LiaScriptController extends Controller
 
     public function destroy(LiaScriptRequest $request, int $id): JsonResponse
     {
+        if (LiaScriptTopic::query()->where('value', $id)->exists()) {
+            return response()->json(['success' => false, 'message' => 'Topics use this course; remove them first.'], 409);
+        }
         $this->service->delete(LiaScriptDocument::query()->findOrFail($id));
 
         return response()->json(['success' => true, 'data' => null, 'message' => 'Deleted']);

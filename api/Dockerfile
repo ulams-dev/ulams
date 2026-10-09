@@ -23,6 +23,8 @@ RUN \
   && cp docker/conf/php/ulams-custom-php.ini /usr/local/etc/php/conf.d/ulams-custom-php.ini \  
   && cp docker/conf/php/php-fpm-custom.conf /usr/local/etc/php-fpm.d/php-fpm-custom.conf
 RUN composer install --no-scripts --no-dev
+# LiaScript player (BSD-3-Clause), pinned version and checksum, not kept in git
+RUN sh packages/liascript/bin/fetch-player.sh
 
 CMD /var/www/html/init.sh
 

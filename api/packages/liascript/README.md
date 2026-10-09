@@ -22,11 +22,27 @@ plus assets** (spec 1.1). The Markdown is the source of truth, so the AI phases 
 | GET / POST | `/api/admin/liascript/{id}/versions` | list versions, add a version (`markdown` or `file`, `change_note`) |
 | POST | `/api/admin/liascript/{id}/versions/{version}/restore` | restore (adds a new version) |
 
-## Rendering (not yet)
+## Topic type and playback
 
-Learners do not see LiaScript topics yet. The plan (docs/plans/phase-1.md, 5.2, option b′) is to
-package the source as SCORM with the vendored LiaScript SCORM build and play it through the existing
-SCORM runtime on the content origin. The spike result is recorded in the plan.
+The topic type `Ulams\LiaScript\Models\LiaScriptTopic` (`value` = document id) plays the document's
+current version on the tenant content origin (api/docs/content-origin.md):
+
+1. `POST /api/liascript/launches/{topic}` (learner, course access checked) publishes the player and the
+   version to the LiaScript disk (`liascript/_player/...`, `liascript/<doc>/v<n>/README.md` with its
+   assets copied into the version folder) and returns
+   `<content origin>/liascript/_player/index.html#api=…&topic=…&token=…&course=…&sections=…`.
+2. Our page (`resources/player/index.html`, `player.js`) runs the LiaScript SCORM 1.2 build in a
+   same-origin iframe and provides `window.API`; slide position and status go to
+   `POST /api/liascript/progress/{topic}` with a topic-scoped token (`X-Ulams-Tracking-Token`, HMAC
+   with the tenant `APP_KEY`, 4 h).
+3. The topic is complete when the learner reaches the last section (one section per heading outside
+   code blocks) or LiaScript reports `completed`/`passed`.
+
+The LiaScript build (`@liascript/exporter` 3.4.2--2.1.0, `dist/assets/scorm1.2` + `common`,
+BSD-3-Clause, about 12 MB) is **not in git**: `bin/fetch-player.sh` downloads it at a pinned version
+and SHA-256 into `resources/player/build/`. The Dockerfiles run it at image build time; in development
+(the api folder is bind-mounted) run it once: `docker compose exec api sh packages/liascript/bin/fetch-player.sh`.
+Without the build or a content origin, launches answer 503 with an explanation.
 
 ## Tests
 
