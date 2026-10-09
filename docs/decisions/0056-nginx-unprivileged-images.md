@@ -1,6 +1,6 @@
 # 0056. Admin and legacy front served by nginx-unprivileged with runtime JSON config
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-09
 - Plan: `docs/plans/leftovers-0-2.md` (L0-16)
 
@@ -23,6 +23,15 @@ Option 1:
 - **Server.** Port 8080, non-root, SPA fallback, long cache for hashed assets.
 - **Runtime config.** The apps fetch `runtime-config.json` before boot.
 - **Headers.** Security headers and the CSP come from the reverse proxy (ADR 0044).
+
+## Implementation notes
+
+- Settings keep their names: the entrypoint writes every `REACT_APP_*` (admin) or `VITE_APP_*` (front)
+  variable, so existing deployments only change the port (80 to 8080). The plan's `ULAMS_*` allow-list
+  was not introduced, to avoid renaming settings that the apps and the docs already use.
+- The page loads `runtime-config.json` with a synchronous request in an inline script, before any
+  bundle, because Sentry and the tenant resolution read the values when their modules load.
+- Source maps are removed from the images; `MULTI_DOMAINS` and the PHP front controller are gone.
 
 ## Consequences
 

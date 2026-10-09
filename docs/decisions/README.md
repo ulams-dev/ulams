@@ -62,7 +62,7 @@ replacement.
 | [0053](0053-simulations-sandbox.md) | Simulations: single-file HTML on the content origin, sandboxed, typed postMessage, off by default | Proposed |
 | [0054](0054-component-playground-in-docs-site.md) | Component playground in the docs site instead of Storybook | Proposed |
 | [0055](0055-course-experiments.md) | Course experiments with delayed retention, surveys and a tenant-level consent model | Proposed |
-| [0056](0056-nginx-unprivileged-images.md) | Admin and legacy front served by nginx-unprivileged with runtime JSON config | Proposed |
+| [0056](0056-nginx-unprivileged-images.md) | Admin and legacy front served by nginx-unprivileged with runtime JSON config | Accepted |
 | [0057](0057-learner-insights-signal-stream.md) | learner-insights package: an append-only signal stream keyed by blueprint element IDs | Proposed |
 | [0058](0058-rule-based-risk-scoring.md) | Rule-based risk scoring with reasons behind a RiskScorer interface | Proposed |
 | [0059](0059-personal-remediations.md) | Personal remediations: learner-scoped, grounded, cached per struggle pattern | Proposed |

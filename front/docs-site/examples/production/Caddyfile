@@ -232,7 +232,7 @@
 (admin) {
 	import app_csp_report_only
 	encode zstd gzip
-	reverse_proxy admin:80
+	reverse_proxy admin:8080
 }
 
 api.{$ULAMS_DOMAIN} {
