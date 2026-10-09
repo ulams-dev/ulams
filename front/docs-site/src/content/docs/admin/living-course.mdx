@@ -1,0 +1,64 @@
+---
+title: Living Course settings
+description: Enable source sync for the Course Builder, set the connectors, polling, webhooks and AI cost limits, give reviewers access, and run the queue, scheduler and backfill commands.
+sidebar:
+  order: 26
+modules:
+  - living-course
+---
+
+Living Course keeps a course built with the [Course Builder](/admin/course-builder/) in sync with its sources. Authors work with it in the studio ([author guide](/creators/course-builder/#9-keep-the-course-in-sync-with-its-sources)); this page is for the person who runs the installation. It adds no admin route: everything is configured by environment variables, one permission and a few commands.
+
+## Turn it on
+
+The module ships with the API and is always loaded. After an upgrade, run once per tenant:
+
+```bash
+php artisan migrate --force
+php artisan db:seed --class="Ulams\\LivingCourse\\Database\\Seeders\\LivingCoursePermissionSeeder" --force
+php artisan living-course:backfill     # first revision for courses built before the upgrade
+php artisan gift:snapshot-max-scores   # keeps old quiz results comparable (progress rules)
+```
+
+Add `--domain=<tenant>` on a multi-tenant installation. The seeder creates the permission `living_course_review` and gives it to the `admin` role. The author of a session and admins can always act; give `living_course_review` to tutors who should review updates of courses they did not build.
+
+The requirements of the Course Builder apply: a configured `AI_DRIVER`, a queue worker for `COURSE_BUILDER_QUEUE` (or `LIVING_COURSE_QUEUE`) and the scheduler, which runs `living-course:poll` every 15 minutes.
+
+## Environment variables
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `LIVING_COURSE_CONNECTORS` | `upload,git,url` | Connectors offered to authors. Plugins can register more. |
+| `LIVING_COURSE_QUEUE_CONNECTION`, `LIVING_COURSE_QUEUE` | the Course Builder queue | Where source checks and analysis steps run. |
+| `LIVING_COURSE_MIN_POLL_MINUTES` | `60` | Shortest polling interval an author can choose. |
+| `LIVING_COURSE_WEBHOOK_DEBOUNCE_SECONDS` | `600` | Pushes within this window collapse into one check. |
+| `LIVING_COURSE_AUTO_ANALYSE_USD` | `0.50` | Estimated cost below which analysis starts by itself; above it the author confirms. |
+| `LIVING_COURSE_PROPOSAL_COST_USD` | `2` | Hard cap of one update proposal. |
+| `LIVING_COURSE_SOURCE_MONTHLY_USD` | `10` | Hard cap per source and month. |
+| `LIVING_COURSE_MAX_GROUPS` | `40` | Most analysis groups of one proposal. |
+| `LIVING_COURSE_MAX_FRAGMENTS` | `4000` | Most fragments per revision before a check fails with a readable message. |
+| `LIVING_COURSE_ALLOWED_HOSTS` | empty | Allow-list of hosts (comma separated) the connectors may reach. Empty means any public host; once set, only these. |
+| `LIVING_COURSE_INSECURE_HOSTS` | empty | Hosts allowed over plain HTTP or on private addresses (development only). |
+| `LIVING_COURSE_LEARNER_NOTICE_AFTER_DAYS` | `3` | Days before an unseen update notice reaches a learner by e-mail. |
+| `AI_TASK_UPDATE_PROFILE` | the default profile | Model profile of the analysis (`update` task); the model name lives in `config/ai.php`. |
+
+Every model call of the analysis is logged in `ai_calls` with its model, tokens and cost, and the proposal as subject, so the [cost log](/admin/course-builder/) shows it.
+
+## Connectors and webhooks
+
+- **Upload** needs nothing. **Git** reads GitHub, GitLab and Gitea or Forgejo hosts through their APIs with a token the author provides; tokens are stored encrypted and never returned. **URL** reads up to 20 web pages and stores their Markdown.
+- Every outbound request goes through one SSRF-safe client: private and link-local addresses, redirects to them and unlisted hosts are refused.
+- The webhook of a connection is `https://<tenant API host>/api/living-course/webhooks/{id}`; the studio shows it with its secret. GitHub (`X-Hub-Signature-256`), GitLab (`X-Gitlab-Token`) and Gitea signatures are verified, deliveries are deduplicated and the endpoint is throttled. Polling is the fallback when a webhook is not possible.
+
+## Commands
+
+| Command | Use |
+|---|---|
+| `living-course:poll` | Checks the sources that are due; scheduled every 15 minutes, also prunes webhook deliveries older than 30 days. |
+| `living-course:backfill` | Creates the first revision of sessions that have none. Safe to repeat. |
+| `living-course:eval` | Runs the update fixtures end to end and writes a report; `--live` calls the real model (set a `--max-usd`), `--record` stores the answers for CI replay. |
+| `gift:snapshot-max-scores` | Stores the maximum score on existing quiz results. |
+
+## Audit
+
+The audit trail is append-only (a database trigger refuses updates and deletes) and hash-chained. Admins can export it as CSV or JSON and verify the chain from the studio or with `GET /api/admin/living-course/audit/verify`.

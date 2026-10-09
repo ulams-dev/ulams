@@ -86,3 +86,4 @@ replacement.
 | [0077](0077-cli-distribution.md) | CLI distribution: npm, bun-compiled binaries and a Docker image; no telemetry | Proposed |
 | [0078](0078-platform-tenant-api.md) | A platform-only HTTP API for tenant management | Proposed |
 | [0079](0079-course-as-code-format.md) | Course-as-code: Markdown with directives + YAML, Blueprint v2 and a committed sync base | Proposed |
+| [0090](0090-living-course-implementation-choices.md) | Living Course: choices made during implementation (own glob matcher, lenient alignment, eval and CI shape) | Proposed |

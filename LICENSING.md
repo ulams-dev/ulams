@@ -49,6 +49,7 @@ that has no closer licence file. This page is an engineering summary, not legal 
 | `anthropic-ai/sdk` | MIT | `api/packages/ai` | Official Claude SDK; only used with `AI_DRIVER=anthropic` |
 | `opis/json-schema` | Apache-2.0 | `api/packages/ai` | JSON Schema validation of model outputs, briefs and blueprints |
 | `smalot/pdfparser` | LGPL-3.0 | `api/packages/course-builder` | Already in the lock file; used unmodified as a library to read PDF text (LGPL permits linking; changes to the library itself would have to be shared) |
+| `league/html-to-markdown` | MIT | `api/packages/living-course` | Converts web pages of the URL connector to Markdown before fragmenting; used unmodified |
 | `@ag-ui/core` | MIT | `front/sdk` | AG-UI event types; its schemas subpath (zod) is only used in tests |
 | `diff` (jsdiff) | BSD-3-Clause | `front/ui` | Word-level diffs in the builder's DiffView; keep its notice in distributed bundles |
 | A2UI v0.9 JSON Schemas | Apache-2.0 | `front/ui/vendor/a2ui/v0.9` | Unmodified copies of the A2UI message schemas, pinned at a commit (URL and SHA in the `NOTICE` there, with the `LICENSE` text and a README). Used only for dev-mode and test validation of `a2ui-surface` envelopes; not part of production bundles |
