@@ -12,11 +12,12 @@ interface Props {
   courseId?: number;
   topicId?: number;
   finishHref?: string;
+  id?: string;
 }
-const { quizId, title, intro, maxAttempts = 0, minutes = 0, passScore = 0, finishHref } = Astro.props;
+const { quizId, title, intro, maxAttempts = 0, minutes = 0, passScore = 0, finishHref, id } = Astro.props;
 ---
 
-<ulams-quiz class="u-quiz" quiz-id={quizId} pass-score={passScore} finish-href={finishHref}>
+<ulams-quiz class="u-quiz" id={id} quiz-id={quizId} pass-score={passScore} finish-href={finishHref}>
   <div class="u-quiz__top">
     <p class="u-quiz__title"><Icon name="quiz" /> {title}</p>
     <p class="u-quiz__clock" data-clock hidden aria-label="Time left"></p>

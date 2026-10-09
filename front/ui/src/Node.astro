@@ -38,6 +38,10 @@ import PackageFrame from "./components/PackageFrame.astro";
 import LiaScriptLesson from "./components/LiaScriptLesson.astro";
 import ActivityCard from "./components/ActivityCard.astro";
 import QuizRunner from "./components/QuizRunner.astro";
+import UpdateNotice from "./components/UpdateNotice.astro";
+import ReattemptNotice from "./components/ReattemptNotice.astro";
+import PendingUpdateNotice from "./components/PendingUpdateNotice.astro";
+import CourseUpdates from "./components/CourseUpdates.astro";
 
 // Every registry entry must have an implementation (checked by the type below).
 const COMPONENTS: Record<ComponentName, (props: any) => any> = {
@@ -77,6 +81,10 @@ const COMPONENTS: Record<ComponentName, (props: any) => any> = {
   LiaScriptLesson,
   ActivityCard,
   QuizRunner,
+  UpdateNotice,
+  ReattemptNotice,
+  PendingUpdateNotice,
+  CourseUpdates,
 };
 
 interface Props {

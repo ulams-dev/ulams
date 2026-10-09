@@ -10,8 +10,9 @@ import Prose from "@ulams/ui/components/Prose.astro";
 import { formatLabel, formatMinutes } from "@ulams/ui/format";
 import { completionPercent, flattenTopics, topicNeighbours, type TopicProgress } from "@ulams/sdk";
 import Base from "../../../layouts/Base.astro";
-import { apiFor, getProgram, getSettings, liascriptLaunch, ltiLaunch, scormAvailable, scormLaunch } from "../../../lib/data.ts";
+import { apiFor, getLearnerNotices, getProgram, getSettings, liascriptLaunch, ltiLaunch, scormAvailable, scormLaunch } from "../../../lib/data.ts";
 import { completionMode, formatOf, topicDoc, topicMinutes } from "../../../lib/page-docs.ts";
+import { NO_NOTICES, topicNoticeDocs } from "../../../lib/notices.ts";
 import { themeFor } from "../../../lib/theme.ts";
 import { splitLessonTitle, topicHref } from "../../../lib/view-model.ts";
 import { renewSession } from "../../../lib/session.ts";
@@ -56,6 +57,8 @@ const nav = topicNeighbours(course, topicId);
 const percent = completionPercent(course, progress);
 const statusOf = (id: number): TopicProgress["status"] | undefined => progress.find((p) => p.topic_id === id)?.status;
 const done = statusOf(topicId) === 1;
+// Living Course: "updated since you completed it", the quiz re-attempt notice and the opt-in marker.
+const noticeDocs = topicNoticeDocs(access ? await getLearnerNotices(tenant, token, courseId) : NO_NOTICES, topicId, done);
 const nextHref = nav.next ? topicHref(courseId, nav.next.id) : `/learn/${courseId}/finish`;
 const prevHref = nav.previous ? topicHref(courseId, nav.previous.id) : null;
 const scormUuid = (topic.topicable as { uuid?: string } | undefined)?.uuid;
@@ -162,6 +165,7 @@ const resources = topic.resources ?? [];
             </p>
           )
         }
+        {noticeDocs.map((notice) => <Render doc={notice} />)}
         <Render doc={doc} />
         {
           resources.length > 0 && (

@@ -1,0 +1,32 @@
+---
+import Icon from "./Icon.astro";
+import { pendingNoticeText } from "../lib/notices.ts";
+
+interface Props {
+  since?: string;
+  id?: string;
+}
+const { since, id } = Astro.props;
+---
+
+<p class="u-pending" id={id} role="note" data-notice="pending">
+  <Icon name="clock" />
+  <span>{pendingNoticeText(since)}</span>
+</p>
+
+<style>
+  .u-pending {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: var(--ulams-radius);
+    border: 1px dashed var(--ulams-color-muted);
+    color: var(--ulams-color-text);
+    font-size: 0.9rem;
+  }
+  .u-pending :global(.u-icon) {
+    margin-top: 2px;
+    color: var(--ulams-color-muted);
+  }
+</style>

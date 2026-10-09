@@ -20,6 +20,10 @@ export const BFF_RULES: BffRule[] = [
   { method: "POST", pattern: /^\/api\/quiz-attempts$/ },
   { method: "POST", pattern: /^\/api\/quiz-attempts\/\d+\/end$/, writesProgress: true },
   { method: "POST", pattern: /^\/api\/quiz-answers$/ },
+  // Living Course: the learner's own update notices (the API scopes them to the caller)
+  { method: "GET", pattern: /^\/api\/living-course\/courses\/\d+\/notices$/ },
+  { method: "POST", pattern: /^\/api\/living-course\/notices\/\d+\/dismiss$/ },
+  { method: "GET", pattern: /^\/api\/living-course\/courses\/\d+\/freshness$/ },
 ];
 
 export function matchBffRule(method: string, path: string): BffRule | null {

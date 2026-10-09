@@ -7,3 +7,4 @@ export * from "./ag-ui.ts";
 export * from "./course-builder.ts";
 export type * from "./types.ts";
 export * from "./living-course.ts";
+export * from "./living-learner.ts";
