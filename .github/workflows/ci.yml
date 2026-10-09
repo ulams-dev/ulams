@@ -24,7 +24,7 @@ env:
   # Every <testsuite> in api/phpunit.xml must appear exactly once (checked in each shard).
   # Grouped by package area and balanced on local run times (~100-130 s of tests per shard).
   PHPUNIT_SHARDS: |
-    learning=courses,course-access,courses-import-export,scorm,cmi5,h5p,lrs,bookmarks_notes,video,uploads,lti,liascript,adapt
+    learning=courses,course-access,courses-import-export,scorm,cmi5,h5p,lrs,bookmarks_notes,video,uploads,lti,liascript,adapt,course-builder
     tasks-topics=tasks,topic-types,topic-type-project,categories,tags,stationary-events
     gift-reports=topic-type-gift,reports,dictionaries
     commerce=cart,vouchers,payments,invoices,consultations,consultation-access,webinar,assign-without-account

@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/course-blueprint/v1.json",
+  "title": "Course Blueprint v1",
+  "description": "One version of a course built by the Course Builder (ADR 0010). Element ids are ULIDs assigned by server code; citations are fragment ids of the session's sources.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "sources", "course", "modules", "finalTest", "pages"],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[0-9a-z]{26}$" },
+    "fragmentId": { "type": "string", "pattern": "^frg_[a-z2-7]{12}$" },
+    "citations": { "type": "array", "items": { "$ref": "#/$defs/fragmentId" }, "maxItems": 20 },
+    "objective": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text", "citations"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "text": { "type": "string", "minLength": 3, "maxLength": 400 },
+        "citations": { "$ref": "#/$defs/citations" }
+      }
+    },
+    "block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "markdown", "citations", "objectiveIds"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "kind": { "type": "string", "enum": ["paragraph", "callout", "steps", "code", "table", "example"] },
+        "markdown": { "type": "string", "minLength": 1, "maxLength": 20000 },
+        "citations": { "$ref": "#/$defs/citations", "minItems": 1 },
+        "objectiveIds": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+      }
+    },
+    "option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text", "correct"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "text": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "correct": { "type": "boolean" }
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "stem", "options", "explanation", "citations", "objectiveIds"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "type": { "type": "string", "enum": ["single", "multiple", "truefalse", "short"] },
+        "stem": { "type": "string", "minLength": 3, "maxLength": 1000 },
+        "options": { "type": "array", "items": { "$ref": "#/$defs/option" }, "minItems": 1, "maxItems": 8 },
+        "explanation": { "type": "string", "minLength": 3, "maxLength": 2000 },
+        "citations": { "$ref": "#/$defs/citations", "minItems": 1 },
+        "objectiveIds": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+      }
+    },
+    "quiz": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "questions"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "passScore": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "questions": { "type": "array", "items": { "$ref": "#/$defs/question" }, "maxItems": 50 }
+      }
+    },
+    "lesson": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "minutes", "objectives", "citations", "contentType", "status", "blocks", "quiz", "flags"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "type": "string", "minLength": 2, "maxLength": 200 },
+        "summary": { "type": "string", "maxLength": 600 },
+        "minutes": { "type": "integer", "minimum": 1, "maximum": 600 },
+        "objectives": { "type": "array", "items": { "$ref": "#/$defs/objective" }, "minItems": 1, "maxItems": 8 },
+        "citations": { "$ref": "#/$defs/citations", "minItems": 1 },
+        "contentType": { "type": "string", "enum": ["richtext"] },
+        "status": { "type": "string", "enum": ["planned", "generated", "failed"] },
+        "blocks": { "type": "array", "items": { "$ref": "#/$defs/block" }, "maxItems": 60 },
+        "quiz": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/quiz" }] },
+        "flags": { "type": "array", "items": { "type": "string", "maxLength": 500 }, "maxItems": 20 }
+      }
+    },
+    "module": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "lessons"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "type": "string", "minLength": 2, "maxLength": 200 },
+        "summary": { "type": "string", "maxLength": 600 },
+        "lessons": { "type": "array", "items": { "$ref": "#/$defs/lesson" }, "minItems": 1, "maxItems": 30 }
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "fragmentCount"],
+        "properties": { "id": { "type": "string" }, "title": { "type": "string" }, "fragmentCount": { "type": "integer" } }
+      }
+    },
+    "course": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "language", "objectives"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "type": "string", "minLength": 3, "maxLength": 200 },
+        "subtitle": { "type": "string", "maxLength": 300 },
+        "description": { "type": "string", "maxLength": 4000 },
+        "seo": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "title": { "type": "string", "maxLength": 70 }, "description": { "type": "string", "maxLength": 160 } }
+        },
+        "language": { "type": "string", "pattern": "^[a-z]{2}$" },
+        "audience": { "type": "string", "maxLength": 300 },
+        "objectives": { "type": "array", "items": { "$ref": "#/$defs/objective" }, "maxItems": 12 },
+        "faq": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["question", "answer", "citations"],
+            "properties": {
+              "question": { "type": "string", "maxLength": 300 },
+              "answer": { "type": "string", "maxLength": 2000 },
+              "citations": { "$ref": "#/$defs/citations" }
+            }
+          }
+        }
+      }
+    },
+    "modules": { "type": "array", "items": { "$ref": "#/$defs/module" }, "minItems": 1, "maxItems": 20 },
+    "finalTest": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/quiz" }] },
+    "pages": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "landing": { "type": ["object", "null"] },
+        "header": { "type": ["object", "null"] }
+      }
+    }
+  }
+}

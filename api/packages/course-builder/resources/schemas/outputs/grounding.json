@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Grounding check",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "unsupported"
+  ],
+  "properties": {
+    "unsupported": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "blockIndex",
+          "claim",
+          "reason"
+        ],
+        "properties": {
+          "blockIndex": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "claim": {
+            "type": "string",
+            "description": "The claim",
+            "maxLength": 300,
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why it is not supported",
+            "maxLength": 300,
+            "minLength": 1
+          }
+        }
+      },
+      "maxItems": 20
+    }
+  }
+}
