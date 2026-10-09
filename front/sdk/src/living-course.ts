@@ -281,6 +281,67 @@ export function apiErrorInfo(error: unknown): { status: number; code: string | n
   };
 }
 
+export type AuditActorType = "user" | "system" | "agent";
+
+export interface AuditEntry {
+  id: number;
+  at: string | null;
+  /** For example `proposal.applied` or `item.accepted`. */
+  action: string;
+  actor: { type: AuditActorType | string; id: number | null; name: string | null; onBehalfOf: number | null };
+  subject: { type: string | null; id: string | null };
+  sourceId: string | null;
+  revisionId: string | null;
+  originRef: string | null;
+  /** Course version numbers the entry moved between (the API sends numbers). */
+  versionFrom: number | string | null;
+  versionTo: number | string | null;
+  aiCallIds: Array<number | string>;
+  /** Reason, fingerprints and counts the action recorded; the shape depends on the action. */
+  data: Record<string, unknown>;
+  hash: string;
+  prevHash: string | null;
+}
+
+export interface AuditPage {
+  entries: AuditEntry[];
+  total: number;
+  page: number;
+  perPage: number;
+}
+
+export interface AuditFilters {
+  /** Action prefix, for example `proposal.` or `item.accepted`. */
+  action?: string;
+  actorType?: string;
+  /** Date-time strings the API compares with the entry time. */
+  from?: string;
+  to?: string;
+  source?: string;
+  page?: number;
+  perPage?: number;
+}
+
+/** The hash chain of the audit trail (the whole academy's chain, not one session's). */
+export interface AuditVerdict {
+  ok: boolean;
+  checked: number;
+  brokenId: number | null;
+  reason: string | null;
+}
+
+/** Query string of the audit endpoints; empty filters are left out. */
+export function auditQuery(filters: AuditFilters, format?: "csv" | "json"): string {
+  const search = new URLSearchParams();
+  if (format) search.set("format", format);
+  for (const [key, value] of Object.entries(filters)) {
+    if (value === undefined || value === null || value === "") continue;
+    search.set(key, String(value));
+  }
+  const text = search.toString();
+  return text ? `?${text}` : "";
+}
+
 const PREFIX = "/api/admin/living-course";
 
 export type LivingCourseClient = ReturnType<typeof createLivingCourseClient>;
@@ -356,6 +417,16 @@ export function createLivingCourseClient(options: ClientOptions & { prefix?: str
        */
       apply: async (proposalId: string, overwrite = false) =>
         (await call<{ runId: string; proposal: ProposalSummary }>("POST", `/proposals/${id(proposalId)}/apply`, undefined, { overwrite })).data,
+    },
+    audit: {
+      /** Newest first. */
+      list: async (sessionId: string, filters: AuditFilters = {}) =>
+        (await call<AuditPage>("GET", `/sessions/${id(sessionId)}/audit${auditQuery(filters)}`)).data,
+      /** Recomputes the hash chain. */
+      verify: async (sessionId: string) => (await call<AuditVerdict>("GET", `/sessions/${id(sessionId)}/audit/verify`)).data,
+      /** Link for a plain download; the filters apply, paging does not. The browser sends the author's cookie to the BFF. */
+      exportUrl: (sessionId: string, format: "csv" | "json", filters: AuditFilters = {}) =>
+        `${base}/sessions/${id(sessionId)}/audit/export${auditQuery({ ...filters, page: undefined, perPage: undefined }, format)}`,
     },
     sources: {
       /** Sources of a builder session with connection and sync state. */

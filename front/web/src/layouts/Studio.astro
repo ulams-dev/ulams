@@ -14,7 +14,7 @@ interface Props {
   /** Status pill text (e.g. "Draft · not published"). */
   status?: string;
   sessionId?: string | null;
-  active?: "builder" | "workspace" | "done" | "sessions" | "sources" | "updates";
+  active?: "builder" | "workspace" | "done" | "sessions" | "sources" | "updates" | "audit";
   /** The session has a course: its sources can be kept in sync. */
   hasCourse?: boolean;
 }
@@ -31,6 +31,7 @@ const nav = [
           ? [
               { key: "sources", href: `/studio/s/${sessionId}/sources`, label: "Sources" },
               { key: "updates", href: `/studio/s/${sessionId}/updates`, label: "Updates" },
+              { key: "audit", href: `/studio/s/${sessionId}/audit`, label: "Audit" },
             ]
           : []),
       ]

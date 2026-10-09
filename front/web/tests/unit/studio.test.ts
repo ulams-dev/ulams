@@ -51,6 +51,9 @@ describe("studio BFF allow-list", () => {
     ["POST", `/living-course/proposals/${S}/items/${S}/reject`],
     ["POST", `/living-course/proposals/${S}/items/${S}/reset`],
     ["POST", `/living-course/proposals/${S}/items/${S}/regenerate`],
+    ["GET", `/living-course/sessions/${S}/audit`],
+    ["GET", `/living-course/sessions/${S}/audit/verify`],
+    ["GET", `/living-course/sessions/${S}/audit/export`],
   ])("forwards living course %s %s", (method, path) => {
     expect(isLivingCourseCall(method, path)).toBe(true);
     expect(isStudioCall(method, path)).toBe(false);
@@ -78,6 +81,17 @@ describe("studio BFF allow-list", () => {
     ["POST", `/living-course/proposals/${S}/items/${S}`],
     ["POST", `/living-course/proposals/${S}/items/../apply`],
     ["DELETE", `/living-course/proposals/${S}/items/${S}/accept`],
+    // the audit trail is append-only and read from here
+    ["POST", `/living-course/sessions/${S}/audit`],
+    ["PUT", `/living-course/sessions/${S}/audit`],
+    ["DELETE", `/living-course/sessions/${S}/audit`],
+    ["POST", `/living-course/sessions/${S}/audit/verify`],
+    ["GET", `/living-course/sessions/${S}/audit/other`],
+    ["GET", `/living-course/sessions/${S}/audit/export/x`],
+    ["GET", `/living-course/sessions/${S}/audit/../staleness/x`],
+    // the academy-wide trail is for admins in the admin app
+    ["GET", "/living-course/audit/export"],
+    ["GET", "/living-course/audit/verify"],
   ])("refuses living course %s %s", (method, path) => {
     expect(isLivingCourseCall(method, path)).toBe(false);
   });

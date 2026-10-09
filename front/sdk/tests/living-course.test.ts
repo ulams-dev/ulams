@@ -131,6 +131,25 @@ describe("living course client", () => {
     expect(apiErrorInfo(new Error("x"))).toEqual({ status: 0, code: null, data: null });
   });
 
+  it("reads the audit trail with filters, verifies the chain and builds export links", async () => {
+    const entry = { id: 12, at: "2026-10-09T10:00:00+00:00", action: "proposal.applied", actor: { type: "user", id: 3, name: "Ada", onBehalfOf: null }, subject: { type: "proposal", id: "p1" }, aiCallIds: [], data: {}, hash: "h2", prevHash: "h1" };
+    const { fn, calls } = fakeFetch([
+      { body: { data: { entries: [entry], total: 1, page: 2, perPage: 25 } } },
+      { body: { data: { ok: false, checked: 12, brokenId: 7, reason: "hash mismatch" } } },
+    ]);
+    const lc = createLivingCourseClient({ baseUrl: "/studio/api", prefix: "/living-course", fetch: fn });
+    const page = await lc.audit.list("sess1", { action: "proposal.", actorType: "user", from: "2026-10-01 00:00:00", page: 2, perPage: 25, to: "" });
+    expect(page.entries[0]?.actor.name).toBe("Ada");
+    expect(calls[0]!.url).toBe("/studio/api/living-course/sessions/sess1/audit?action=proposal.&actorType=user&from=2026-10-01+00%3A00%3A00&page=2&perPage=25");
+    expect(await lc.audit.verify("sess1")).toEqual({ ok: false, checked: 12, brokenId: 7, reason: "hash mismatch" });
+    expect(calls[1]!.url).toBe("/studio/api/living-course/sessions/sess1/audit/verify");
+    expect(lc.audit.exportUrl("sess1", "csv")).toBe("/studio/api/living-course/sessions/sess1/audit/export?format=csv");
+    // the export covers every page of the filtered trail
+    expect(lc.audit.exportUrl("sess 1", "json", { action: "item.", page: 3, perPage: 10 })).toBe(
+      "/studio/api/living-course/sessions/sess%201/audit/export?format=json&action=item."
+    );
+  });
+
   it("reads staleness and proposals", async () => {
     const summary = { state: "stale", since: "2026-10-01T00:00:00+00:00", days: 3, pendingElements: 2, openProposalId: "p1", syncedRevision: 1, latestRevision: 2, lastCheckedAt: null, tracked: true };
     const { fn, calls } = fakeFetch([

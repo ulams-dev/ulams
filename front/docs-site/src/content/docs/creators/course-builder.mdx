@@ -17,6 +17,7 @@ learnerRoutes:
   - /studio/s/[id]/sources
   - /studio/s/[id]/updates
   - /studio/s/[id]/updates/[proposal]
+  - /studio/s/[id]/audit
   - /studio/api/[...path]
 ---
 
@@ -182,6 +183,29 @@ they are, and nobody is graded again. Learners are told what is different:
 
 Optionally the course page can also show "The source of this lesson changed on …; an update is
 under review". That marker is off by default.
+
+## 12. See who decided what
+
+**Audit** (in the left navigation) is the trail of everything that happened to the course and its
+sources: a source was connected or changed, a new revision was found, an update proposal was
+created, analysed, accepted, rejected or applied, and learner notices were sent. It is written by
+the system in the same step as the change, it can only grow, and nobody can edit or delete an entry.
+
+- The table shows **when**, **what** (in words, with the action code under it), **who** (a person,
+  the system or an agent) and a one-line summary, newest first, 25 to a page.
+- **Details** on a row opens the full record: the source revision, the course versions it moved
+  between (for example "v3 to v4"), the number of AI calls, what was recorded, and the hash of the
+  entry with the hash of the one before it.
+- **Filters**: an action group (connections, source revisions, update proposals, decisions on
+  changes, learner progress, learner notices), who acted, and a date range. They apply when you
+  select **Apply filters**; **Clear filters** shows everything again.
+- The bar at the top says **Chain verified: N entries checked, none has been changed**. Each entry
+  carries a hash of the previous one, so a changed or removed entry breaks the chain. If it does, the
+  bar names the first broken entry and why. **Check the chain again** repeats the check; it covers
+  the whole academy's trail, not only this course.
+- **Export CSV** and **Export JSON** download the trail with the filters you set (all pages, not
+  only the one on screen), for audits and compliance reviews. Spreadsheet cells that would start a
+  formula are neutralised.
 
 ## Tips
 

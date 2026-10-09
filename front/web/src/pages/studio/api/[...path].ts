@@ -49,10 +49,11 @@ export const ALL: APIRoute = async ({ params, request, locals, cookies, url }) =
       headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no" },
     });
   }
-  return new Response(await upstream.text(), {
-    status: upstream.status,
-    headers: { "Content-Type": upstream.headers.get("content-type") ?? "application/json", "Cache-Control": "no-store" },
-  });
+  const out: Record<string, string> = { "Content-Type": upstream.headers.get("content-type") ?? "application/json", "Cache-Control": "no-store" };
+  // a file download (audit export) keeps the name the API chose
+  const disposition = upstream.headers.get("content-disposition");
+  if (disposition) out["Content-Disposition"] = disposition;
+  return new Response(await upstream.text(), { status: upstream.status, headers: out });
 };
 
 const json = (status: number, body: unknown) =>

@@ -788,6 +788,50 @@ const StalenessBadge: Renderer = (p) => {
     : h("span", { class: `cb-fresh cb-fresh-${state}` }, glyph, text, pending);
 };
 
+const ACTOR_TYPE_LABEL: Record<string, string> = { user: "Person", system: "System", agent: "Agent" };
+
+const AuditTable: Renderer = (p) => {
+  const entries = (p.entries ?? []) as Props[];
+  const caption = String(p.caption ?? "Audit trail, newest first");
+  if (entries.length === 0) return h("p", { class: "cb-muted cb-audit-empty" }, String(p.emptyText ?? "No entries match."));
+  const tableId = uid("audit");
+  const rows = entries.flatMap((entry) => {
+    const detailId = `${tableId}-${entry.id}`;
+    const details = (entry.details ?? []) as Props[];
+    const toggle = h("button", { type: "button", class: "cb-btn cb-btn-small", "aria-expanded": "false", "aria-controls": detailId },
+      "Details", sr(` for entry ${entry.id}: ${entry.actionLabel}`)) as HTMLButtonElement;
+    const detail = h("tr", { id: detailId, class: "cb-audit-detail", hidden: true },
+      h("td", { colspan: "5" },
+        h("dl", { class: "cb-audit-facts" },
+          details.flatMap((d) => [h("dt", {}, String(d.label)), h("dd", { class: d.mono ? "cb-mono" : "" }, String(d.value))]))));
+    toggle.addEventListener("click", () => {
+      const open = toggle.getAttribute("aria-expanded") !== "true";
+      toggle.setAttribute("aria-expanded", String(open));
+      detail.hidden = !open;
+    });
+    const actorType = String(entry.actorType ?? "user");
+    return [
+      h("tr", { class: "cb-audit-row", "data-entry": String(entry.id) },
+        h("td", {}, when(entry.at) ?? "-"),
+        h("td", {}, h("span", { class: "cb-audit-action" }, String(entry.actionLabel)), h("span", { class: "cb-muted cb-small cb-mono cb-audit-code" }, String(entry.action))),
+        h("td", {}, String(entry.actor), " ", h("span", { class: "cb-tag" }, ACTOR_TYPE_LABEL[actorType] ?? actorType)),
+        h("td", {}, entry.summary ? String(entry.summary) : ""),
+        h("td", {}, toggle)),
+      detail,
+    ];
+  });
+  return h("div", { class: "cb-audit-scroll", role: "region", "aria-label": `${caption} (scrolls sideways on small screens)`, tabindex: "0" },
+    h("table", { class: "cb-audit" },
+      h("caption", { class: "cb-sr" }, caption),
+      h("thead", {}, h("tr", {},
+        h("th", { scope: "col" }, "When"),
+        h("th", { scope: "col" }, "Action"),
+        h("th", { scope: "col" }, "Who"),
+        h("th", { scope: "col" }, "What happened"),
+        h("th", { scope: "col" }, h("span", { class: "cb-sr" }, "Details")))),
+      h("tbody", {}, rows)));
+};
+
 const Column: Renderer = (p, _ctx, _id, children) => h("div", { class: `cb-column cb-gap-${p.gap ?? "md"}` }, children);
 const Text: Renderer = (p) => h("p", { class: `cb-text cb-text-${p.variant ?? "body"}` }, String(p.text));
 
@@ -815,4 +859,5 @@ export const builderComponents: Record<string, Renderer> = {
   ImpactSummary,
   StalenessBadge,
   CostMeter,
+  AuditTable,
 };

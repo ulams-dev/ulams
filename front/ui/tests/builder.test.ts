@@ -363,6 +363,61 @@ describe("interactions round-trip as A2UI actions", () => {
     expect(mount(single("StalenessBadge", { state: "stale", days: 1 })).textContent).toContain("Stale · 1 day");
   });
 
+  describe("audit table", () => {
+    it("is a captioned table with column headers, who and what in words, and a scrollable labelled region", () => {
+      const main = mount(single("AuditTable"));
+      const table = main.querySelector("table")!;
+      expect(table.querySelector("caption")?.textContent).toBe("Audit trail of this course, newest first");
+      expect([...table.querySelectorAll("th[scope=col]")].map((th) => th.textContent)).toEqual(["When", "Action", "Who", "What happened", "Details"]);
+      expect(main.querySelectorAll("tr.cb-audit-row")).toHaveLength(3);
+      const first = main.querySelector("tr.cb-audit-row")!;
+      expect(first.textContent).toContain("Update applied");
+      expect(first.textContent).toContain("proposal.applied");
+      expect(first.textContent).toContain("Ada Lovelace");
+      expect(first.textContent).toContain("Person");
+      expect(main.querySelector("tr[data-entry='10']")?.textContent).toContain("System");
+      const region = main.querySelector("[role=region]")!;
+      expect(region.getAttribute("tabindex")).toBe("0");
+      expect(region.getAttribute("aria-label")).toContain("Audit trail");
+    });
+
+    it("opens and closes the full record of one entry from a button that names the entry", () => {
+      const main = mount(single("AuditTable"));
+      const button = main.querySelector<HTMLButtonElement>("tr[data-entry='12'] button")!;
+      const detail = main.querySelector<HTMLElement>(`#${button.getAttribute("aria-controls")}`)!;
+      expect(button.getAttribute("aria-expanded")).toBe("false");
+      expect(detail.hidden).toBe(true);
+      expect(button.textContent).toBe("Details for entry 12: Update applied");
+      button.click();
+      expect(button.getAttribute("aria-expanded")).toBe("true");
+      expect(detail.hidden).toBe(false);
+      expect(detail.textContent).toContain("Revision 2 (upload)");
+      expect(detail.textContent).toContain("v3 to v4");
+      expect(detail.textContent).toContain("9f2c1d0e8b7a");
+      expect(detail.querySelectorAll("dt")).toHaveLength(5);
+      button.click();
+      expect(detail.hidden).toBe(true);
+    });
+
+    it("says so when there is nothing to show, and escapes what the trail recorded", () => {
+      expect(mount(single("AuditTable", { entries: [], emptyText: "Nothing yet." })).textContent).toBe("Nothing yet.");
+      const main = mount(
+        single("AuditTable", {
+          entries: [{ id: 1, action: "x.y", actionLabel: "<b>bold</b>", actor: "<img src=x>", summary: "<script>1</script>" }],
+        })
+      );
+      expect(main.querySelector("b, img, script")).toBeNull();
+      expect(main.textContent).toContain("<b>bold</b>");
+    });
+
+    it("passes axe with a detail row open", async () => {
+      const main = mount(single("AuditTable"));
+      main.querySelector<HTMLButtonElement>("tr[data-entry='12'] button")!.click();
+      const result = await axe.run(main, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
+      expect(result.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.html).join(" | ")}`)).toEqual([]);
+    });
+  });
+
   it("diff states carry text, not only colour", () => {
     const main = mount(single("DiffView"));
     expect(main.querySelector("del")?.textContent).toContain("removed:");

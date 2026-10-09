@@ -2447,6 +2447,115 @@
         ],
         "additionalProperties": false
       }
+    },
+    "AuditTable": {
+      "description": "The audit trail of a course's sources and updates as a table, newest first: when, what happened, who did it (a person, the system or an agent) and a short summary, with a Details button per row that opens the full record: the source revision, the course versions it moved between, the number of AI calls, the recorded data and the two hashes that chain the entries. Props come from the audit API, never from the model.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "caption": {
+            "type": "string",
+            "description": "Caption read by screen readers",
+            "maxLength": 200
+          },
+          "emptyText": {
+            "type": "string",
+            "description": "Shown when there are no entries",
+            "maxLength": 300
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "Entry id",
+                  "minimum": 0
+                },
+                "at": {
+                  "type": "string",
+                  "description": "ISO time",
+                  "maxLength": 40
+                },
+                "action": {
+                  "type": "string",
+                  "description": "Action code, for example proposal.applied",
+                  "maxLength": 64
+                },
+                "actionLabel": {
+                  "type": "string",
+                  "description": "The action in plain words",
+                  "maxLength": 120
+                },
+                "actorType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system",
+                    "agent"
+                  ],
+                  "description": "Who acted: a person, the system or an agent"
+                },
+                "actor": {
+                  "type": "string",
+                  "description": "Name of the actor, or System",
+                  "maxLength": 120
+                },
+                "summary": {
+                  "type": "string",
+                  "description": "One line about what happened",
+                  "maxLength": 500
+                },
+                "details": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "Field name",
+                        "maxLength": 60
+                      },
+                      "value": {
+                        "type": "string",
+                        "description": "Field value",
+                        "maxLength": 2000
+                      },
+                      "mono": {
+                        "type": "boolean",
+                        "description": "Show in a monospace font (ids and hashes)"
+                      }
+                    },
+                    "required": [
+                      "label",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "The full record of the entry",
+                  "maxItems": 40
+                }
+              },
+              "required": [
+                "id",
+                "action",
+                "actionLabel",
+                "actor"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Entries, newest first",
+            "maxItems": 200
+          }
+        },
+        "required": [
+          "entries"
+        ],
+        "additionalProperties": false
+      }
     }
   }
 }

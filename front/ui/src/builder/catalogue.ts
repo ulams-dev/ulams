@@ -600,6 +600,41 @@ export const builderCatalogue = {
     ),
     fallback: (p) => `${usd(p.usedMicroUsd)} of ${usd(p.budgetMicroUsd)}`,
   },
+  AuditTable: {
+    description:
+      "The audit trail of a course's sources and updates as a table, newest first: when, what happened, who did it (a person, the system or an agent) and a short summary, with a Details button per row that opens the full record: the source revision, the course versions it moved between, the number of AI calls, the recorded data and the two hashes that chain the entries. Props come from the audit API, never from the model.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        caption: str("Caption read by screen readers", 200),
+        emptyText: str("Shown when there are no entries", 300),
+        entries: list(
+          obj(
+            {
+              id: int("Entry id", { minimum: 0 }),
+              at: str("ISO time", 40),
+              action: str("Action code, for example proposal.applied", 64),
+              actionLabel: str("The action in plain words", 120),
+              actorType: oneOf(["user", "system", "agent"], "Who acted: a person, the system or an agent"),
+              actor: str("Name of the actor, or System", 120),
+              summary: str("One line about what happened", 500),
+              details: list(
+                obj({ label: str("Field name", 60), value: str("Field value", 2000), mono: bool("Show in a monospace font (ids and hashes)") }, ["label", "value"]),
+                "The full record of the entry",
+                40
+              ),
+            },
+            ["id", "action", "actionLabel", "actor"]
+          ),
+          "Entries, newest first",
+          200
+        ),
+      },
+      ["entries"]
+    ),
+    fallback: (p) => `${arr(p.entries).length} audit entries.`,
+  },
 } satisfies Record<string, BuilderComponentSpec>;
 
 export type BuilderComponentName = keyof typeof builderCatalogue;

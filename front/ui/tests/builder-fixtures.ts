@@ -218,4 +218,28 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
   },
   StalenessBadge: { state: "stale", days: 3, pendingElements: 4, href: "/studio/s/01s/updates" },
   CostMeter: { usedMicroUsd: 710000, budgetMicroUsd: 5000000, tokens: 120000, label: "Sonnet" },
+  AuditTable: {
+    caption: "Audit trail of this course, newest first",
+    emptyText: "No entries match these filters.",
+    entries: [
+      {
+        id: 12,
+        at: "2026-10-20T10:15:00+00:00",
+        action: "proposal.applied",
+        actionLabel: "Update applied",
+        actorType: "user",
+        actor: "Ada Lovelace",
+        summary: "Applied 5 accepted changes as version r1 to r2.",
+        details: [
+          { label: "Source revision", value: "Revision 2 (upload)" },
+          { label: "Course version", value: "v3 to v4" },
+          { label: "AI calls", value: "2" },
+          { label: "Hash", value: "9f2c1d0e8b7a", mono: true },
+          { label: "Previous hash", value: "03ab44c1e5d2", mono: true },
+        ],
+      },
+      { id: 11, at: "2026-10-20T10:10:00+00:00", action: "item.accepted", actionLabel: "Change accepted", actorType: "user", actor: "Ada Lovelace", summary: "Lesson 1.1, paragraph 1." },
+      { id: 10, at: "2026-10-20T09:31:00+00:00", action: "revision.detected", actionLabel: "New source revision", actorType: "system", actor: "System", summary: "Revision 2 of coffee-brewing.md.", details: [] },
+    ],
+  },
 };
