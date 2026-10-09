@@ -19,7 +19,7 @@ operator-facing summary is the docs page *Install on MyDevil (shared hosting)*
 | Plan | MD2 (50 GB SSD/NVMe), valid until 2026-12-18; 2FA on; the account also hosts the owner's other live sites (PHP and pointer types): never change them while testing |
 | Limits | max memory **4 GB** (`ulimit -m 4096000`), max user processes **70**, open files 3000, no disk quota shown, CPU time unlimited |
 | PHP | `php56` to `php85`; default CLI 8.3. `php84` has `pdo_pgsql`, `pgsql`, `redis`, `imagick`, `gd`, `intl`, `zip`, `bcmath`, `sodium`, `pcntl`, `posix`, `sockets`, `apcu`, `memcached`, `mbstring`, OPcache, `gmp`, `exif`: every extension ulams needs. CLI `memory_limit` 512M, `disable_functions` empty |
-| PostgreSQL | **16.10** on the shared server `pgsql51.mydevil.net`, created with `devil pgsql`; no databases yet. ulams is developed against 12 and its default for 0-2 is 17 (#41): 16 is in between and no migration uses a version-specific feature, so it should work, but a migrate and test run on 16 has not been done |
+| PostgreSQL | **16.10** on the shared server `pgsql51.mydevil.net`, created with `devil pgsql`; no databases yet. ulams is developed against 12 and its default for 0-2 is 17 (#41): 16 is in between and no migration uses a version-specific feature, and a full `php artisan migrate` on a fresh PostgreSQL 16.15 passes (168 tables); the full test suite has not been run on 16 |
 | Node | `node16` to `node26`; default 22.22 |
 | Tools present | `redis-server`, `redis-cli`, `ffmpeg`, `ffprobe`, `screen`, `tmux`, `flock`, `rsync`, `git`, `curl`, `openssl`, `psql`, `pg_dump`. `composer84` is not on the path (not needed: `vendor/` is built elsewhere) |
 | Network | outbound HTTPS works (`api.anthropic.com` answers) |

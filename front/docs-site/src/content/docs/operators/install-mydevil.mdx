@@ -8,7 +8,7 @@ modules:
   - tenancy
   - api-h5p
   - api-pdf
-needsReview: "The owner's account (MD2 on s51, FreeBSD 14.3) was surveyed read-only on 2026-10-09, but ulams was not installed on it. Still to confirm: wildcard or pointer vhosts, the maximum cron process runtime, whether Redis needs binexec, Passenger with the Astro and H5P entry points, and PostgreSQL 16 with the full test suite."
+needsReview: "The owner's account (MD2 on s51, FreeBSD 14.3) was surveyed read-only on 2026-10-09, but ulams was not installed on it. Still to confirm: wildcard or pointer vhosts, the maximum cron process runtime, whether Redis needs binexec, Passenger with the Astro and H5P entry points, and the full test suite on PostgreSQL 16."
 ---
 
 import { Aside, Badge } from "@astrojs/starlight/components";
@@ -44,7 +44,7 @@ Verified by a read-only survey of an MD2 account on 2026-10-09:
 | OS | FreeBSD 14.3 |
 | Limits | 4 GB memory, **70 processes**, 3000 open files, no disk quota shown (MD2 is 50 GB) |
 | PHP | 5.6 to 8.5; `php84` has `pdo_pgsql`, `redis`, `imagick`, `gd`, `intl`, `zip`, `bcmath`, `sodium`, `pcntl`, `posix`, `apcu`, `mbstring`, OPcache, `exif`; `disable_functions` empty |
-| PostgreSQL | 16.10 on a shared server, databases made with `devil pgsql`. ulams targets 12 to 17 and uses nothing version-specific, so 16 should work (a full test run on 16 is still to do) |
+| PostgreSQL | 16.10 on a shared server, databases made with `devil pgsql`. ulams targets 12 to 17 and uses nothing version-specific, and a full migration on a fresh PostgreSQL 16.15 passes; the whole test suite has not been run on 16 |
 | Node | 16 to 26, default 22.22 (the services need 22.12 or later) |
 | Tools | `redis-server`, `ffmpeg`, `ffprobe`, `screen`, `tmux`, `flock`, `rsync`, `git`, `curl`, `pg_dump` |
 | Network | outbound HTTPS to the Anthropic API works |
