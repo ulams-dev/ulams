@@ -128,6 +128,14 @@ with `features` = `ai`, `courseBuilder`, `livingCourse`, `deviceLogin`, `scopedT
 `platformApi`, `demo`. The CLI reads it on login and exits with `FEATURE_DISABLED` instead of calling
 an endpoint the host does not have.
 
+## My tokens (web)
+
+Learners, authors and admins manage their own tokens on the account page of the reference frontend,
+[My tokens](/learners/account/#my-tokens): create one with a preset (`@read-only`, `@author`, `@ci`,
+`@learner`, `@admin`), a lifetime (7, 30, 90 or 365 days) and a kind, copy the secret once, and revoke
+it. The page posts plain forms to `/account` and calls `GET|POST /api/auth/tokens` and
+`DELETE /api/auth/tokens/{id}` with the user's own login token; the API enforces every rule above.
+
 <Aside type="note" title="Coming">
-  The platform tenant API and the "My tokens" section of the web profile are separate steps of the plan.
+  The platform tenant API is a separate step of the plan.
 </Aside>
