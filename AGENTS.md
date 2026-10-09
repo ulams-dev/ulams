@@ -41,9 +41,12 @@ practical map.
 
 - Every decision gets an ADR: architecture, dependencies, protocols, data model, infrastructure,
   security trade-offs and product decisions that shape the code. Write it in `docs/decisions/NNNN-title.md`
-  (MADR, status Proposed), add a row to `docs/decisions/README.md` and link it from the tracker. The
+  (MADR, status Proposed; first line `# NNNN. Title`, then `- Status: Proposed`), run `node scripts/adr-index.mjs` and link it from the tracker. The
   product owner accepts it; superseded ADRs stay and link to their replacement. The documentation
   site renders the ADRs, so they can be browsed there (`front/docs-site`, at `/decisions/`, linked from Contributing rather than the sidebar).
+- The table in `docs/decisions/README.md` is generated: never add or edit rows by hand. Run
+  `node scripts/adr-index.mjs` (`yarn adr:index`) and commit the result; CI runs it with `--check`. When a merge
+  conflicts in that README, take either side and re-run the script instead of resolving rows.
 - Every change that is big enough to matter to a user, author, admin, developer or operator updates
   the documentation site in the same branch: new or changed features, modules, admin screens,
   topic types, endpoints, permissions, settings, environment variables, commands and deployment

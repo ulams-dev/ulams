@@ -8,6 +8,11 @@ Workflow (see `CLAUDE.md`): the agent proposes an ADR with status **Proposed**; 
 approves it, which changes the status to **Accepted**. Superseded records stay and link to their
 replacement.
 
+The index below is generated from each record's title and `Status:` line: run `node scripts/adr-index.mjs`
+(or `yarn adr:index`) after adding or changing a record, never edit the rows by hand. CI fails when it is stale.
+
+<!-- BEGIN GENERATED: adr-index (run `node scripts/adr-index.mjs`, do not edit by hand) -->
+
 | # | Title | Status |
 |---|---|---|
 | [0001](0001-monorepo-with-vendored-packages.md) | Monorepo with vendored packages | Accepted |
@@ -23,7 +28,7 @@ replacement.
 | [0011](0011-ag-ui-over-sse-from-laravel.md) | Builder streaming: AG-UI events over SSE from Laravel, carrying A2UI surfaces | Accepted |
 | [0012](0012-lti-package-and-libraries.md) | LTI 1.3: one `lti` package, first-party platform side, packbackbooks tool side | Accepted |
 | [0013](0013-adapt-build-worker.md) | Adapt Path B: JSON sources in the API, builds in an isolated GPL-3.0 worker | Accepted |
-| [0014](0014-content-origin.md) | Third-party packages on a per-tenant content origin, files served through the API | Accepted |
+| [0014](0014-content-origin.md) | Third-party packages run on a per-tenant content origin, files served through the API | Accepted |
 | [0015](0015-h5p-service-tenancy.md) | H5P service per tenant: derived internal token, platform-only libraries, least-privilege mounts | Accepted |
 | [0016](0016-liascript-without-scorm-package.md) | LiaScript: versioned Markdown documents played without a SCORM package | Accepted |
 | [0017](0017-upload-guard.md) | One upload guard and safe extractor for every upload path | Accepted |
@@ -44,8 +49,8 @@ replacement.
 | [0032](0032-source-connectors-as-plugins.md) | Source connectors as plugins; Git through host APIs; one SSRF-safe HTTP client | Accepted |
 | [0033](0033-progress-preservation-rules.md) | Progress preservation rules for content updates | Accepted |
 | [0034](0034-tamper-evident-audit-trail.md) | A tamper-evident audit trail for Living Course | Accepted |
-| [0038](0038-brand-identity-orbital-folio.md) | Brand identity: Orbital Folio, drawn logo, brand tokens, orange as accent only | Proposed |
-| [0039](0039-author-preview-of-draft-courses.md) | Author preview of draft courses on its own routes with the author's token | Proposed |
+| [0038](0038-brand-identity-orbital-folio.md) | Brand identity: Orbital Folio | Proposed |
+| [0039](0039-author-preview-of-draft-courses.md) | Author preview of draft courses runs on its own routes with the author's token | Proposed |
 | [0040](0040-postgresql-17.md) | PostgreSQL 17 with a tested dump-and-restore upgrade | Proposed |
 | [0041](0041-seaweedfs-and-per-tenant-s3-identities.md) | SeaweedFS replaces MinIO; per-tenant S3 identities; server-side reads use the internal endpoint | Proposed |
 | [0042](0042-no-websocket-server.md) | No WebSocket server: Soketi and Pusher removed, Reverb only when a feature needs push | Proposed |
@@ -86,7 +91,6 @@ replacement.
 | [0077](0077-cli-distribution.md) | CLI distribution: npm, bun-compiled binaries and a Docker image; no telemetry | Proposed |
 | [0078](0078-platform-tenant-api.md) | A platform-only HTTP API for tenant management | Proposed |
 | [0079](0079-course-as-code-format.md) | Course-as-code: Markdown with directives + YAML, Blueprint v2 and a committed sync base | Proposed |
-| [0090](0090-living-course-implementation-choices.md) | Living Course: choices made during implementation (own glob matcher, lenient alignment, eval and CI shape) | Proposed |
 | [0080](0080-interactive-preview-in-the-studio.md) | Interactive preview in the studio: learner pages from the blueprint, in a frame | Proposed |
 | [0081](0081-upgrade-command-and-step-registry.md) | `ulams:upgrade`: an idempotent per-tenant upgrade command with a step registry | Proposed |
 | [0082](0082-quiz-attempt-deadline-on-any-queue-driver.md) | Quiz attempt deadline holds on every queue driver | Proposed |
@@ -97,4 +101,7 @@ replacement.
 | [0087](0087-interactive-bridge-protocol.md) | The `ulams-ix` bridge protocol and the `@ulams/interactive-bridge` library (MIT) | Proposed |
 | [0088](0088-separately-licensed-content-packages.md) | Separately licensed content packages under `demo-content/`; GPL apps stay GPL and are never linked into MIT code | Proposed |
 | [0089](0089-six-demo-academies-and-content-sourcing.md) | Six demo academies: three free interactive courses, one theme preset each, sourced content, EN/PL as two courses | Proposed |
-| [0091](0091-shared-hosting-cron-workers-and-manual-tenant-database.md) | Shared hosting: cron-driven workers (`ulams:tenant:work-once`) and an operator-created tenant database | Proposed |
+| [0090](0090-living-course-implementation-choices.md) | Living Course: choices made during implementation | Proposed |
+| [0091](0091-shared-hosting-cron-workers-and-manual-tenant-database.md) | Shared hosting: cron-driven workers and an operator-created tenant database | Proposed |
+
+<!-- END GENERATED: adr-index -->
