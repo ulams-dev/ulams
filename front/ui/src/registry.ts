@@ -18,6 +18,16 @@
  * Run `yarn workspace @ulams/ui catalogue` to print this registry as JSON.
  */
 import type { JsonSchema } from "./schema.ts";
+import {
+  COURSE_UPDATES_TITLE,
+  extendedText,
+  pendingNoticeText,
+  REATTEMPT_LINK,
+  REATTEMPT_TEXT,
+  REATTEMPT_TITLE,
+  RETIRED_TEXT,
+  updateNoticeText,
+} from "./lib/notices.ts";
 
 export const FORMATS = [
   "video",
@@ -184,6 +194,13 @@ const join = (...parts: unknown[]): string =>
     .flat()
     .filter((p) => typeof p === "string" && p.trim() !== "")
     .join("\n");
+const str = (value: unknown): string | null => (typeof value === "string" && value !== "" ? value : null);
+const DATE = text("ISO 8601 date", { format: "date-time", maxLength: 40 });
+const LESSON_TITLE = text("Lesson title", { maxLength: 200 });
+const UPDATED_ROW: JsonSchema = obj({ title: LESSON_TITLE, href: href("Lesson link"), date: DATE }, ["title", "href"]);
+const RETIRED_ROW: JsonSchema = obj({ title: LESSON_TITLE, date: DATE }, ["title"]);
+const EXTENDED_ROW: JsonSchema = obj({ title: LESSON_TITLE, href: href("Lesson link") }, ["title", "href"]);
+const PENDING_ROW: JsonSchema = obj({ title: LESSON_TITLE, href: href("Lesson link"), since: DATE }, ["title", "href"]);
 const titles = (items: unknown, key = "title"): string[] =>
   Array.isArray(items) ? items.map((i) => (i && typeof i === "object" ? String((i as Record<string, unknown>)[key] ?? "") : "")) : [];
 
@@ -1279,6 +1296,67 @@ export const registry = {
       ["quizId", "title"]
     ),
     fallback: (p) => `Quiz: ${String(p.title ?? "")}`,
+  },
+  UpdateNotice: {
+    description:
+      "Notice on a lesson that changed after the learner completed or started it: the date, what changed (the author's note) and a 'Mark as reviewed' button. Filled by the app from the learner's own notices; it never changes progress. Authors do not place it.",
+    category: "learning",
+    interactive: true,
+    children: false,
+    props: obj({
+      noticeId: int("Id of the learner notice; without it there is no 'Mark as reviewed' button", { minimum: 1 }),
+      started: bool("The learner started the lesson but had not completed it", false),
+      date: text("ISO 8601 date of the update", { format: "date-time", maxLength: 40 }),
+      message: text("What changed (plain text, written by the course author)", { maxLength: 500 }),
+    }),
+    fallback: (p) => {
+      const t = updateNoticeText({ started: p.started === true, date: str(p.date), message: str(p.message) });
+      return join(t.title, t.change);
+    },
+  },
+  ReattemptNotice: {
+    description:
+      "Notice on a quiz where one question was corrected: the previous score stays on record and the learner may retake the quiz once more. It stays until the quiz is retaken. Filled by the app; authors do not place it.",
+    category: "learning",
+    interactive: false,
+    children: false,
+    props: obj({
+      quizHref: href("Where the quiz is: an in-page anchor on the quiz topic, or the topic link elsewhere"),
+      linkLabel: text("Label of the link to the quiz", { maxLength: 80, default: REATTEMPT_LINK }),
+    }),
+    fallback: () => join(REATTEMPT_TITLE, REATTEMPT_TEXT),
+  },
+  PendingUpdateNotice: {
+    description:
+      "Opt-in marker on a lesson whose source changed and whose update is under review ('The source of this lesson changed on {date}; an update is under review'). Shown only when the course turned it on. Filled by the app; authors do not place it.",
+    category: "learning",
+    interactive: false,
+    children: false,
+    props: obj({ since: text("ISO 8601 date the source changed", { format: "date-time", maxLength: 40 }) }),
+    fallback: (p) => pendingNoticeText(str(p.since)),
+  },
+  CourseUpdates: {
+    description:
+      "Summary on the course page of what changed for a returning learner: lessons updated since they completed them, retired lessons, new lessons since they finished, and lessons whose update is under review. Each entry names its status in words. Filled by the app; authors do not place it.",
+    category: "learning",
+    interactive: false,
+    children: false,
+    props: obj({
+      title: text("Heading", { maxLength: 120, default: COURSE_UPDATES_TITLE }),
+      updated: list(UPDATED_ROW, "Lessons updated since the learner completed them"),
+      retired: list(RETIRED_ROW, "Lessons removed from the course that the learner had completed"),
+      extended: list(EXTENDED_ROW, "Lessons added after the learner finished the course"),
+      pending: list(PENDING_ROW, "Lessons whose source changed and whose update is under review"),
+    }),
+    fallback: (p) => {
+      const rows = (key: string): Array<Record<string, unknown>> => (Array.isArray(p[key]) ? (p[key] as Array<Record<string, unknown>>) : []);
+      return join(
+        rows("updated").map((r) => `${updateNoticeText({ date: str(r.date) }).title.replace(/[.]$/, "")}: ${String(r.title ?? "")}`),
+        rows("extended").map((r) => extendedText(String(r.title ?? ""))),
+        rows("retired").map((r) => `${RETIRED_TEXT}: ${String(r.title ?? "")}`),
+        rows("pending").map((r) => `${String(r.title ?? "")}: ${pendingNoticeText(str(r.since))}`)
+      );
+    },
   },
 } as const satisfies Record<string, ComponentSpec>;
 

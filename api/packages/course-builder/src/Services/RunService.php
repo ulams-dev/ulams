@@ -9,6 +9,7 @@ use Throwable;
 use Ulams\Ai\Exceptions\LlmException;
 use Ulams\CourseBuilder\Apply\BlueprintApplier;
 use Ulams\CourseBuilder\Events\EventLog;
+use Ulams\CourseBuilder\Events\SourceIngested;
 use Ulams\CourseBuilder\Exceptions\BuilderException;
 use Ulams\CourseBuilder\Ingestion\SourceIngestor;
 use Ulams\CourseBuilder\Jobs\RunJob;
@@ -32,6 +33,48 @@ use Ulams\CourseBuilder\Ui\Surfaces;
 final class RunService
 {
     public const LLM_KINDS = ['interview', 'outline', 'generate', 'patch'];
+
+    /**
+     * Run handlers contributed by other packages (Living Course). A run whose `input.handler`
+     * (or, failing that, `kind`) names a registered handler is executed by it; a handler that
+     * returns false keeps the run open (it finishes the run itself, e.g. after queued steps).
+     *
+     * @var array<string,\Closure(Run,Session):mixed>
+     */
+    private static array $handlers = [];
+
+    /** @param \Closure(Run,Session):mixed $handler */
+    public static function extend(string $name, \Closure $handler): void
+    {
+        self::$handlers[$name] = $handler;
+    }
+
+    /** @var array<string,\Closure(Step):void> */
+    private static array $retries = [];
+
+    /** @param \Closure(Step):void $retry how a failed step of runs of this handler is retried */
+    public static function extendRetry(string $name, \Closure $retry): void
+    {
+        self::$retries[$name] = $retry;
+    }
+
+    /** Retries one failed step of a run (generation steps, or the steps of a registered handler). */
+    public function retryStep(Step $step): void
+    {
+        $handler = $step->run->input['handler'] ?? null;
+        if ($handler !== null && isset(self::$retries[$handler])) {
+            (self::$retries[$handler])($step);
+
+            return;
+        }
+        $this->generation->retry($step);
+    }
+
+    public function finish(Run $run): void
+    {
+        $run->forceFill(['status' => 'finished', 'finished_at' => now()])->save();
+        $this->events->runFinished($run);
+    }
 
     public function __construct(
         private readonly EventLog $events,
@@ -80,7 +123,14 @@ final class RunService
         }
         $run->forceFill(['status' => 'running', 'started_at' => now()])->save();
         $this->events->runStarted($run);
-        $ok = $this->guard($run, function () use ($run, $session) {
+        $open = false;
+        $ok = $this->guard($run, function () use ($run, $session, &$open) {
+            $handler = self::$handlers[(string) ($run->input['handler'] ?? $run->kind)] ?? null;
+            if ($handler !== null) {
+                $open = $handler($run, $session) === false;
+
+                return;
+            }
             match ($run->kind) {
                 'ingest' => $this->ingest($session, $run),
                 'interview' => $this->interview->start($session, $run),
@@ -95,9 +145,8 @@ final class RunService
                 default => throw new InvalidArgumentException("Unknown run kind {$run->kind}"),
             };
         });
-        if ($ok) {
-            $run->forceFill(['status' => 'finished', 'finished_at' => now()])->save();
-            $this->events->runFinished($run);
+        if ($ok && !$open) {
+            $this->finish($run);
         }
     }
 
@@ -160,6 +209,7 @@ final class RunService
         }
         $this->surfaces->source($session, $run, $source);
         $this->events->stepFinished($run, 'ingest');
+        event(new SourceIngested($source));
         if ($session->title === null) {
             $session->title = mb_substr((string) ($source->metadata['title'] ?? $source->original_name), 0, 255);
         }
@@ -188,7 +238,7 @@ final class RunService
         }
         $first = $session->course_id === null;
         $plan = $this->applier->plan($session, $version->document);
-        $courseId = $this->applier->apply($session, $version, $author);
+        $courseId = $this->applier->apply($session, $version, $author, (bool) ($run->input['overwrite'] ?? false));
         $session->forceFill(['course_id' => $courseId, 'applied_version_id' => $version->id, 'status' => Session::APPLIED])->save();
         $this->surfaces->apply($session, $run, $version, ['courseId' => $courseId] + $plan, 'applied');
         $this->events->stepFinished($run, 'apply');
@@ -352,7 +402,7 @@ final class RunService
 
             case 'retry_step':
                 $step = Step::query()->whereIn('run_id', Run::query()->where('session_id', $session->id)->select('id'))->findOrFail((string) ($context['stepId'] ?? ''));
-                $this->generation->retry($step);
+                $this->retryStep($step);
 
                 return ['run' => $step->run, 'accepted' => true];
 

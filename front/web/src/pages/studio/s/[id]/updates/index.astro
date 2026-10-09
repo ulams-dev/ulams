@@ -1,0 +1,106 @@
+---
+import Studio from "../../../../../layouts/Studio.astro";
+import { ApiError, type BuilderState, type ProposalSummary } from "@ulams/sdk";
+import { builderFor, livingCourseFor } from "../../../../../lib/studio.ts";
+import { STATUS_LABEL } from "../../../../../studio/labels.ts";
+import { PROPOSAL_STATUS_LABEL, usdText } from "../../../../../studio/updates.ts";
+
+const id = Astro.params.id ?? "";
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/tenants");
+if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 });
+
+let state: BuilderState;
+let proposals: ProposalSummary[] = [];
+let error: string | null = null;
+try {
+  const token = Astro.locals.authorToken!;
+  state = await builderFor(tenant, token).sessions.get(id);
+  try {
+    proposals = await livingCourseFor(tenant, token).proposals.list(id);
+  } catch (e) {
+    if (e instanceof ApiError && (e.status === 404 || e.status === 403)) throw e;
+    error = "The updates could not be loaded.";
+  }
+} catch (e) {
+  if (e instanceof ApiError && (e.status === 404 || e.status === 403)) return new Response("Not found", { status: 404 });
+  throw e;
+}
+const fmt = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "short" });
+const OPEN = ["analysing", "ready", "awaiting_analysis", "budget_blocked", "applying", "failed"];
+---
+
+<Studio
+  title="Updates"
+  crumb={state.session.title ?? "Updates"}
+  status={STATUS_LABEL[state.session.status]}
+  sessionId={id}
+  active="updates"
+  hasCourse={state.session.courseId !== null}
+>
+  <main id="main" class="st-page" tabindex="-1" data-studio-updates>
+    <div class="st-toolbar">
+      <h1 class="cb-serif cb-h2" style="flex:1">Source updates</h1>
+      <a class="cb-btn cb-btn-small" href={`/studio/s/${id}/sources`}>Sources</a>
+    </div>
+    <p class="cb-muted">
+      When a source of your course changes, the affected lessons are listed here with proposed edits. Nothing changes in the course until you
+      approve it.
+    </p>
+    {error && <p class="cb-error" role="alert">{error}</p>}
+    {
+      !error && proposals.length === 0 && (
+        <section class="cb-card">
+          <h2 class="cb-h3">No updates yet</h2>
+          <p class="cb-muted">
+            When you upload a new version of a source, or a connected source changes, the proposed changes appear here.
+          </p>
+          <a class="cb-btn cb-btn-small" href={`/studio/s/${id}/sources`}>Go to sources</a>
+        </section>
+      )
+    }
+    {
+      proposals.length > 0 && (
+        <div class="st-table-wrap">
+          <table class="cb-table st-updates" data-updates-table>
+            <caption class="cb-sr">Update proposals, newest first</caption>
+            <thead>
+              <tr>
+                <th scope="col">Update</th>
+                <th scope="col">Source revisions</th>
+                <th scope="col">Status</th>
+                <th scope="col">Elements</th>
+                <th scope="col">Answers to check</th>
+                <th scope="col">Decisions</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              {proposals.map((p) => (
+                <tr>
+                  <th scope="row">
+                    <a href={`/studio/s/${id}/updates/${p.id}`}>
+                      Update {p.number}
+                      <span class="cb-sr"> ({PROPOSAL_STATUS_LABEL[p.status] ?? p.status})</span>
+                    </a>
+                    {OPEN.includes(p.status) && <span class="cb-tag">Open</span>}
+                  </th>
+                  <td>{p.fromRevision && p.toRevision ? `r${p.fromRevision.number} → r${p.toRevision.number}` : "–"}</td>
+                  <td>{PROPOSAL_STATUS_LABEL[p.status] ?? p.status}</td>
+                  <td>{p.counts?.elements ?? 0}</td>
+                  <td>{p.counts?.answerChecks ?? 0}</td>
+                  <td>
+                    {p.decisions.accepted ?? 0} accepted · {p.decisions.rejected ?? 0} rejected · {p.decisions.pending ?? 0} undecided
+                  </td>
+                  <td>{p.costMicroUsd ? usdText(p.costMicroUsd) : p.estimatedCostMicroUsd ? `about ${usdText(p.estimatedCostMicroUsd)}` : "–"}</td>
+                  <td>{p.createdAt ? fmt.format(new Date(p.createdAt)) : "–"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+  </main>
+</Studio>

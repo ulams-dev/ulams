@@ -17,6 +17,7 @@ use Ulams\Courses\Models\H5PUserProgress;
 use Ulams\Courses\Models\Topic;
 use Ulams\Courses\Models\User as CoursesUser;
 use Ulams\Courses\Repositories\Contracts\CourseH5PProgressRepositoryContract;
+use Ulams\Courses\Services\Contracts\CourseCompletionGuardContract;
 use Ulams\Courses\Services\Contracts\ProgressServiceContract;
 use Ulams\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,7 +32,8 @@ class ProgressService implements ProgressServiceContract
     private CourseH5PProgressRepositoryContract $courseH5PProgressContract;
 
     public function __construct(
-        CourseH5PProgressRepositoryContract $courseH5PProgressContract
+        CourseH5PProgressRepositoryContract $courseH5PProgressContract,
+        private readonly CourseCompletionGuardContract $completionGuard
     )
     {
         $this->courseH5PProgressContract = $courseH5PProgressContract;
@@ -120,7 +122,7 @@ class ProgressService implements ProgressServiceContract
                 $user->courses()->updateExistingPivot($course->getKey(), ['finished' => true]);
                 event(new CourseAccessFinished($user, $courseProgressCollection->getCourse()));
                 event(new CourseFinished($user, $courseProgressCollection->getCourse()));
-            } elseif (!$courseIsFinished && $userHasCourseMarkedAsFinished) {
+            } elseif (!$courseIsFinished && $userHasCourseMarkedAsFinished && $this->completionGuard->mayUnfinish($course, $user)) {
                 $user->courses()->updateExistingPivot($course->getKey(), ['finished' => false]);
             }
         }
@@ -141,7 +143,7 @@ class ProgressService implements ProgressServiceContract
                 /** @var CoursesUser $user */
                 $user = CoursesUser::find($user->getKey());
             }
-            if (!$courseProgressCollection->isFinished() && $user->finishedCourse($course->getKey())) {
+            if (!$courseProgressCollection->isFinished() && $user->finishedCourse($course->getKey()) && $this->completionGuard->mayUnfinish($course, $user)) {
                 $user->courses()->updateExistingPivot($course->getKey(), ['finished' => false]);
             }
         }

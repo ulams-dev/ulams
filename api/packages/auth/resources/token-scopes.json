@@ -233,6 +233,22 @@
             "area": "living-course"
         },
         {
+            "pattern": "api/living-course/courses/*/notices",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/living-course/courses/*/freshness",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/living-course/notices/*/dismiss",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/living-course/webhooks/*",
+            "area": "public"
+        },
+        {
             "pattern": "api/admin/courses/*/access*",
             "area": "enrolments"
         },

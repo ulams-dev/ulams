@@ -224,6 +224,7 @@ return [
         Ulams\LiaScript\UlamsLiaScriptServiceProvider::class,
         Ulams\Ai\UlamsAiServiceProvider::class,
         Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider::class,
+        Ulams\LivingCourse\UlamsLivingCourseServiceProvider::class,
         Ulams\Adapt\UlamsAdaptServiceProvider::class,
         Ulams\Translations\UlamsTranslationsServiceProvider::class,
         Ulams\Video\UlamsVideoServiceProvider::class,

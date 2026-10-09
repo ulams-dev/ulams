@@ -6,7 +6,7 @@ if (!Astro.locals.tenant) return Astro.redirect("/tenants");
 if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 });
 ---
 
-<Studio title="Workspace" crumb="Workspace" sessionId={id} active="workspace">
+<Studio title="Workspace" crumb="Workspace" sessionId={id} active="workspace" hasCourse>
   <div class="st-ws" data-studio-workspace data-session={id}>
     <nav class="st-ws-col" aria-labelledby="st-tree-title">
       <h2 id="st-tree-title" class="cb-eyebrow">Curriculum tree</h2>
@@ -14,6 +14,7 @@ if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 }
     </nav>
     <main id="main" class="st-ws-col" tabindex="-1">
       <h1 class="cb-sr">Workspace</h1>
+      <div data-stale-banner role="region" aria-label="Source freshness" hidden></div>
       <div class="st-toolbar">
         <button type="button" class="cb-btn cb-btn-small" data-undo disabled>Undo</button>
         <button type="button" class="cb-btn cb-btn-small" data-redo disabled>Redo</button>

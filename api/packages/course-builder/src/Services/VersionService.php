@@ -15,7 +15,7 @@ use Ulams\CourseBuilder\Models\Version;
  */
 final class VersionService
 {
-    public const CONTENT_KINDS = ['content', 'patch', 'author', 'restore'];
+    public const CONTENT_KINDS = ['content', 'patch', 'author', 'restore', 'update'];
 
     public function create(
         Session $session,
@@ -28,8 +28,9 @@ final class VersionService
         ?string $elementId = null,
         array $callIds = [],
         ?int $decidedBy = null,
+        ?array $sourceRevisions = null,
     ): Version {
-        return DB::transaction(function () use ($session, $document, $kind, $origin, $status, $parent, $reason, $elementId, $callIds, $decidedBy) {
+        return DB::transaction(function () use ($session, $document, $kind, $origin, $status, $parent, $reason, $elementId, $callIds, $decidedBy, $sourceRevisions) {
             Session::query()->whereKey($session->id)->lockForUpdate()->first(['id']);
             $number = (int) Version::query()->where('session_id', $session->id)->max('number') + 1;
             $diff = null;
@@ -53,6 +54,7 @@ final class VersionService
                 'decided_by' => $status === Version::APPROVED ? $decidedBy : null,
                 'decided_at' => $status === Version::APPROVED ? now() : null,
                 'ai_call_ids' => $callIds ?: null,
+                'source_revisions' => $sourceRevisions ?: null,
             ]);
         });
     }
@@ -151,6 +153,7 @@ final class VersionService
             'origin' => $v->origin,
             'status' => $v->status,
             'reason' => $v->reason ? mb_substr($v->reason, 0, 1000) : null,
+            'sourceRevisions' => $v->source_revisions,
             'createdAt' => $v->created_at?->toIso8601String(),
         ], fn ($x) => $x !== null))->all();
     }

@@ -1,0 +1,58 @@
+---
+import Icon from "./Icon.astro";
+import { REATTEMPT_LINK, REATTEMPT_TEXT, REATTEMPT_TITLE } from "../lib/notices.ts";
+
+interface Props {
+  quizHref?: string;
+  linkLabel?: string;
+  id?: string;
+}
+const { quizHref, linkLabel = REATTEMPT_LINK, id } = Astro.props;
+const titleId = `u-reattempt-${id ?? "notice"}-title`;
+---
+
+<section class="u-notice" id={id} aria-labelledby={titleId} data-notice="reattempt">
+  <Icon name="quiz" />
+  <div class="u-notice__body">
+    <h2 class="u-notice__title" id={titleId}>{REATTEMPT_TITLE}</h2>
+    <p class="u-notice__text">{REATTEMPT_TEXT}</p>
+    {
+      quizHref && (
+        <p>
+          <a class="u-btn u-btn--ghost u-btn--sm" href={quizHref}>
+            {linkLabel} <Icon name="arrow" />
+          </a>
+        </p>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .u-notice {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+    border-left: 4px solid var(--ulams-color-primary);
+    background: var(--ulams-color-card-bg);
+    color: var(--ulams-color-text);
+  }
+  .u-notice :global(.u-icon) {
+    color: var(--ulams-color-primary-on-light);
+    margin-top: 3px;
+  }
+  .u-notice__body {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+  }
+  .u-notice__title {
+    font-family: var(--ulams-font-family-body);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+</style>

@@ -1,11 +1,13 @@
 ---
 import Render from "@ulams/ui/Render.astro";
 import Base from "../../layouts/Base.astro";
-import { getCourse, getProgram, getSiteModel, getSettings } from "../../lib/data.ts";
+import type { UiNode } from "@ulams/ui/render-core";
+import { getCourse, getLearnerNotices, getProgram, getSiteModel, getSettings } from "../../lib/data.ts";
+import { courseUpdatesDoc, NO_NOTICES, type LearnerNotices } from "../../lib/notices.ts";
 import { chromeFor, withSessionLink } from "../../lib/docs.ts";
 import { courseHeaderDoc, descriptionDoc, purchaseDoc, syllabusDoc } from "../../lib/page-docs.ts";
 import { themeFor } from "../../lib/theme.ts";
-import { completionPercent, resumeTopic } from "@ulams/sdk";
+import { completionPercent, flattenTopics, resumeTopic } from "@ulams/sdk";
 import { lessonModels, topicHref } from "../../lib/view-model.ts";
 import { readSession } from "../../lib/session.ts";
 
@@ -28,6 +30,7 @@ const chrome = chromeFor(theme);
 const token = readSession(Astro.cookies, Astro.locals.secure);
 let progress: number | undefined;
 let resumeHref = course!.learnHref;
+let updatesDoc: UiNode | null = null;
 if (token) {
   const program = await Promise.race([
     getProgram(tenant, token, id).catch(() => null),
@@ -38,6 +41,10 @@ if (token) {
     const next = resumeTopic(program.course, program.progress);
     if (next) resumeHref = topicHref(id, next.id);
     course!.lessons = lessonModels(program.course, { progress: program.progress });
+    // Living Course: what changed since the learner completed or started lessons.
+    const learnerNotices = await Promise.race([getLearnerNotices(tenant, token, id), new Promise<LearnerNotices>((r) => setTimeout(() => r(NO_NOTICES), 900))]);
+    const titles = new Map(flattenTopics(program.course).map((t) => [t.id, t.title] as const));
+    updatesDoc = courseUpdatesDoc(learnerNotices, id, titles);
   }
 }
 const description = descriptionDoc(theme, course!);
@@ -47,6 +54,7 @@ const description = descriptionDoc(theme, course!);
   {chrome.header && <Render doc={withSessionLink(chrome.header, Boolean(token))} data={site} />}
   <main id="main" tabindex="-1">
     <Render doc={courseHeaderDoc(theme, course!, progress, resumeHref)} data={site} />
+    {updatesDoc && <Render doc={updatesDoc} />}
     <Render doc={syllabusDoc(theme, course!)} data={site} />
     <section class="u-container u-course-about" aria-label="About the course">
       <div class="u-course-about__text">

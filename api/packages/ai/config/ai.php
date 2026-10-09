@@ -45,6 +45,8 @@ return [
         'metadata' => ['profile' => env('AI_TASK_METADATA_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 4000],
         'patch' => ['profile' => env('AI_TASK_PATCH_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
         'grounding' => ['profile' => env('AI_TASK_GROUNDING_PROFILE', 'light'), 'effort' => 'medium', 'max_tokens' => 4000],
+        // Living Course: patches for the elements affected by a source change (one call per lesson group)
+        'update' => ['profile' => env('AI_TASK_UPDATE_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
     ],
     'task_defaults' => ['profile' => 'default', 'effort' => 'medium', 'max_tokens' => 8000],
 

@@ -1,0 +1,52 @@
+---
+title: Living Course internals
+description: How source revisions, deterministic change detection, impact analysis, update proposals, learner progress rules and the audit trail fit together, with the endpoints, events and connector contract.
+sidebar:
+  order: 62
+modules:
+  - living-course
+---
+
+The package `api/packages/living-course` (`Ulams\LivingCourse`) builds on the [Course Builder](/developers/api-packages/). Decisions are recorded in ADRs 0030 to 0034; the operator view is in [Living Course settings](/admin/living-course/).
+
+## Flow
+
+1. A **connector** fetches a source (upload, Git repository, web pages) and the course builder's own ingestion turns it into fragments with stable ids and a `file_path`. Each fetch that differs from the last one becomes a **revision** (numbered per source; raw files are kept on the private disk).
+2. **Change detection** is deterministic and costs nothing: `FragmentDiff` pairs fragments by id, heading path and token similarity (`TokenDiff`, `Normaliser`) and classifies them as unchanged, changed, moved, added or removed. A change is substantive above `living_course.diff.substantive_ratio` or when a modality word flips (`not`, `must`, `deprecated`, per language).
+3. **Impact** (`ImpactAnalyzer`) maps changed fragments to the course elements that cite them through the blueprint's citations; `StalenessService` stores `element_status` (current, stale, source removed) so the studio and the API show what is out of date.
+4. **Analysis** (`AnalysisService`) groups impacted elements (one group per lesson or question set), estimates the cost and, below the auto threshold or after confirmation, runs one model call per group as steps of a Course Builder run of kind `sync`. The model sees the old fragments, the new fragments and the current element, and answers with an update that must cite fragments of the new revision (`UpdateValidator`; unknown or uncited output is rejected, and source text is untrusted data in the prompt).
+5. The result is an **update proposal** of items (`update`, `citation_remap`, `remove`, `no_change`, `manual`, `uncovered`). `DecisionService` accepts, rejects, resets or regenerates items; `ApplyService` applies the accepted ones through the blueprint applier as a new blueprint version of kind `update` and publishes it only on approval. Elements an admin edited after the last apply are detected as drift and shown as conflicts.
+6. **Learner rules** (ADR 0033, `ProgressRules`): completed lessons stay completed, quiz results keep their score and are compared by a max-score snapshot, a changed quiz can allow a re-attempt, and learners see an "updated since you completed it" notice (`LearnerNotice`).
+7. Every decision is written to a hash-chained, append-only **audit log** (`AuditLog`; a PostgreSQL trigger refuses updates and deletes).
+
+## Endpoints
+
+Authors and reviewers (`auth:api`, policies: the session author or `living_course_review` may act, author or admin may view):
+
+| Path under `/api/admin/living-course` | Methods |
+|---|---|
+| `connectors`, `sessions/{s}/sources`, `sessions/{s}/sources/connect` | list, connect |
+| `connections/{c}`, `connections/{c}/check`, `connections/{c}/webhook-secret` | update, delete, check now, rotate secret |
+| `sources/{s}/revisions`, `revisions/{r}`, `revisions/{r}/changes` | list, upload, show, changes |
+| `sessions/{s}/staleness`, `sessions/{s}/proposals`, `proposals/{p}` | read |
+| `proposals/{p}/analyse`, `reanalyse`, `reject`, `accept-all`, `apply`, `learner-note` | act |
+| `proposals/{p}/items/{i}/accept`, `reject`, `reset`, `regenerate` | decide |
+| `sessions/{s}/audit`, `audit/export`, `audit/verify` and the tenant-wide `audit/...` | audit |
+
+Learners: `GET /api/living-course/courses/{c}/notices`, `GET .../freshness`, `POST /api/living-course/notices/{n}/dismiss`. Webhooks: `POST /api/living-course/webhooks/{webhookId}` (public, verified by signature, throttled). The typed client is `createLivingCourseClient` in `@ulams/sdk`.
+
+## Events and notifications
+
+`SourceRevisionDetected`, `UpdateProposalReady`, `UpdateProposalApplied`, `CourseContentUpdated` and `SourceCheckFailing` are dispatched through Laravel events; the `Notifier` turns them into e-mail and in-app notifications using templates registered with `templates-email`. The studio stream also carries the custom events `update_proposal`, `update_analysis` and `update_applied`.
+
+## Writing a connector
+
+Implement `Ulams\LivingCourse\Connectors\SourceConnector`, register it with `SourceConnectorRegistry` and list its key in `LIVING_COURSE_CONNECTORS`. Use `Ulams\Core\Http\SafeHttp` for every request. The worked example is `ExampleConnector` in `api/packages/example-plugin`; the step-by-step guide is `docs/living-course/connector-plugins.md` in the repository.
+
+## Guards
+
+`GuardsTest` of the package fails the build when the code writes LMS tables directly (everything goes through domain services) or hardcodes a model name; `ConnectorPluginTest` and the isolation tests cover tenant boundaries of every endpoint.
+
+## Evaluating
+
+`php artisan living-course:eval --fixtures=all` runs three fixture sets (`coffee-brewing`, `git-basics`, `injection`, each in a v1 and a v2) on the fake driver. The recorded answers of a real run are replayed in CI by `CassetteReplayTest`; the reports are in `docs/reports/phase-3-evals`.

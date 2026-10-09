@@ -34,9 +34,23 @@ final class SessionState
         ];
     }
 
+    /** @var array<string,\Closure(Session):array<string,mixed>> */
+    private static array $summaryExtras = [];
+
+    /** Other packages add keys to every session summary (Living Course adds `freshness`); one closure per name. */
+    public static function extendSummary(string $name, \Closure $extra): void
+    {
+        self::$summaryExtras[$name] = $extra;
+    }
+
     public static function summary(Session $session): array
     {
-        return [
+        $extras = [];
+        foreach (self::$summaryExtras as $extra) {
+            $extras = [...$extras, ...$extra($session)];
+        }
+
+        return $extras + [
             'id' => $session->id,
             'title' => $session->title,
             'status' => $session->status,

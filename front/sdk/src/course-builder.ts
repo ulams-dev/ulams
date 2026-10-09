@@ -4,6 +4,7 @@
  * reference app points `baseUrl` at its BFF (`/studio/api`), which adds the author's token.
  */
 import { ApiError, type ClientOptions } from "./client.ts";
+import type { StalenessSummary } from "./living-course.ts";
 import { connectEventStream, type AgUiEvent, type StreamStatus } from "./ag-ui.ts";
 
 export type SessionStatus =
@@ -63,6 +64,8 @@ export interface SessionSummary {
   createdAt?: string;
   updatedAt?: string;
   costMicroUsd?: number;
+  /** How far the course is behind its sources (added by the Living Course package; absent without it). */
+  freshness?: StalenessSummary;
 }
 
 /**
@@ -161,13 +164,15 @@ export interface Blueprint {
 export interface BlueprintVersion {
   id: string;
   number: number;
-  kind: "outline" | "content" | "patch" | "author" | "restore";
+  kind: "outline" | "content" | "patch" | "author" | "restore" | "update";
   origin: "ai" | "author" | "restore";
   status: "proposed" | "approved" | "rejected" | "superseded";
   reason: string | null;
   parentId: string | null;
   elementId: string | null;
   document: Blueprint;
+  /** Source revisions an `update` version applied: source id → revision id. */
+  sourceRevisions?: Record<string, string> | null;
   /** fragment id → "§2.3 Title" */
   fragments: Record<string, string>;
   createdAt: string;

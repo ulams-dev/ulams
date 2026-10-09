@@ -5,6 +5,7 @@ sidebar:
   order: 40
 modules:
   - course-builder
+  - living-course
 learnerRoutes:
   - /studio
   - /studio/login
@@ -13,6 +14,10 @@ learnerRoutes:
   - /studio/s/[id]/workspace
   - /studio/s/[id]/landing
   - /studio/s/[id]/done
+  - /studio/s/[id]/sources
+  - /studio/s/[id]/updates
+  - /studio/s/[id]/updates/[proposal]
+  - /studio/s/[id]/audit
   - /studio/s/[id]/preview/[...page]
   - /studio/s/[id]/frame/[...page]
   - /studio/api/[...path]
@@ -137,6 +142,212 @@ The landing page preview links its call to action to the same preview.
 The success page summarises the course (modules, lessons, minutes, questions, how much is cited,
 AI cost) and links to the course form in the admin, the learner preview and the landing preview.
 **Publish course** makes it available to learners.
+
+## 10. Keep the course in sync with its sources
+
+Once the course exists, the **Sources** page (in the left navigation) shows each source of the
+course: its name and type, how it is connected (**Upload**, **Git repository** or **Web page**), a status (**Up to date** or **New version
+available**), the revision your course reflects (**In your course**) and the latest one.
+
+- **Upload a new version**: drop the updated Markdown, PDF or DOCX file on the source. We keep it as
+  a new **revision** and compare it with the previous one. If the file is the same as the latest
+  revision, nothing is added and you are told so. If the file is rejected, the message says why and
+  nothing changes.
+- The **revision timeline** lists every revision, newest first, with its origin, time, status and
+  what changed ("3 changed, 1 removed, 2 added, 1 moved"). Select a revision to see its changes.
+- Each **changed passage** shows the section, whether it was changed, moved, removed or added, how
+  large the change is and why it may matter (for example "a number changed"), with the old and new
+  text. Removed words are marked with a minus sign and added words with a plus sign, so the
+  difference does not depend on colour.
+- **Cosmetic changes** (spacing, punctuation) are hidden by default; use **Show N cosmetic changes**
+  to see them.
+
+Uploading a new version does not change your course. The course keeps reading from the revision it
+reflects until you accept updates.
+
+## 11. See what is out of date
+
+When a source changes, the course is marked **stale** until you decide what to do with the change.
+The marks always use words and an icon, never colour alone:
+
+- In the **session list** each course shows **In sync**, **Stale · 3 days** (how long ago the
+  source changed) or **Updates dismissed**. Select it to open the update.
+- In the **workspace** a banner at the top says how many elements are out of date and links to the
+  review. In the course tree, lessons and questions carry **Update pending**, **Answer may be wrong**
+  or **Source removed**, and the affected passages are highlighted with a note such as "Based on
+  §3.2 Ratios, changed 3 days ago".
+- Staleness works without AI: it only needs the source to have changed.
+
+## 12. Review an update
+
+**Updates** (in the left navigation) lists every update proposal for the course, newest first, with
+the source revisions it compares, its status, how many elements and quiz answers it touches, how
+many items you decided, and its cost. Open one to review it. Nothing in the course changes until you
+accept changes and apply them.
+
+- The **source changes** are on the left, with the old and new text of every changed passage.
+- The **proposed changes** are in the middle, grouped by lesson. Each item says why it changes, shows
+  the old and new text with removed and added words marked in words as well as colour, and cites the
+  passages it relies on. **Accept** and **Reject** are toggle buttons; **Undo my decision** takes a
+  decision back. After you decide, focus moves to the next undecided item and a screen reader
+  announces the decision.
+- **Ask for changes** lets you write what should be different; the assistant writes a new version of
+  that one element (up to three times per item). Without AI you edit the element in the workspace.
+- Warnings are explicit: **Possibly unsupported** (a claim the source does not back), **Answer may be
+  wrong** (the source changed where an answer comes from) and **Answer changed** (the correct answer
+  is different now; learners' earlier scores stay on record).
+- Quiet changes are shown too: **Citation update** (only the references moved), **No change
+  needed** (the assistant found nothing to change), **Removal** (the source no longer covers it),
+  **New in the source** (a section no lesson covers yet) and **Update by hand**.
+- An item you edited in the workspace after the analysis is marked **Conflict** or **Edited after
+  the analysis**. Ask for a new version of it, or reject it.
+
+**Accept all** accepts every undecided update, removal and no-change item. **Reject all** keeps your
+course as it is and marks the new source revision as reviewed, so the same changes are not proposed
+again; the page asks you to confirm first.
+
+When the estimated AI cost is above the automatic limit, the proposal waits with an **Analyse (about
+$0.42)** button and asks you to confirm. While the analysis runs you see its progress per lesson. If
+a lesson fails, **Retry this group** runs only that part again. If the AI budget is used up or AI is
+turned off, the changed elements are listed for you to update by hand in the workspace.
+
+The bar at the bottom shows how many changes are accepted. **Apply N accepted changes** creates a new
+version of the course (named "Source update r1 → r2" in the version history) and keeps what learners
+have done. If you edited elements after the analysis, the apply stops and lists them; if elements
+were edited in the admin after the last apply, you confirm **Overwrite and apply**.
+
+## 13. What learners see after an update
+
+Applying an update never changes what a learner has done: completion, scores and attempts stay as
+they are, and nobody is graded again. Learners are told what is different:
+
+- a lesson with a **major** change shows learners who completed or started it "Updated since you
+  completed it" with the note you wrote and a **Mark as reviewed** button;
+- a quiz question whose **correct answer changed** shows "One question was corrected. Your previous
+  score stays on record. Retake it to update your result." and gives each learner one extra
+  attempt;
+- a removed lesson that a learner had completed stays in their history as "Retired lesson, no longer
+  part of the course";
+- a lesson added after a learner finished the course shows "New since you finished" on the course
+  page, and their course completion is kept.
+
+Optionally the course page can also show "The source of this lesson changed on …; an update is
+under review". That marker is off by default.
+
+You see this before you apply, on the review page, in the **Learners** panel under the summary:
+
+- **What learners will see** counts the learners each rule reaches, in words ("12 learners will see
+  an "updated since you completed it" notice", "3 learners get one extra attempt for the corrected
+  question") and always ends with "Completion and past scores stay as they are." After the update is
+  applied the same panel is in the past tense.
+- **Note for learners: what changed** is the text under "Updated since you completed it". It starts
+  as the reasons of the major changes. Edit it (plain text, up to 500 characters; it is never
+  interpreted as formatting) and select **Save the note**, or **Use the suggested note** to start
+  again. If you change it and then apply, the note is saved first; if it cannot be saved, nothing is
+  applied.
+- **Learner notices for this source** has two switches, also on the **Sources** page. **Tell
+  learners when a lesson they completed is updated** (on by default) controls the "Updated since you
+  completed it", "New since you finished" and retired-lesson notices; the notice for a corrected quiz
+  question and the extra attempt are always sent. **Show that an update is under review** (off by
+  default) controls the marker on the course page. A switch is saved as soon as you change it.
+
+## 14. See who decided what
+
+**Audit** (in the left navigation) is the trail of everything that happened to the course and its
+sources: a source was connected or changed, a new revision was found, an update proposal was
+created, analysed, accepted, rejected or applied, and learner notices were sent. It is written by
+the system in the same step as the change, it can only grow, and nobody can edit or delete an entry.
+
+- The table shows **when**, **what** (in words, with the action code under it), **who** (a person,
+  the system or an agent) and a one-line summary, newest first, 25 to a page.
+- **Details** on a row opens the full record: the source revision, the course versions it moved
+  between (for example "v3 to v4"), the number of AI calls, what was recorded, and the hash of the
+  entry with the hash of the one before it.
+- **Filters**: an action group (connections, source revisions, update proposals, decisions on
+  changes, learner progress, learner notices), who acted, and a date range. They apply when you
+  select **Apply filters**; **Clear filters** shows everything again.
+- The bar at the top says **Chain verified: N entries checked, none has been changed**. Each entry
+  carries a hash of the previous one, so a changed or removed entry breaks the chain. If it does, the
+  bar names the first broken entry and why. **Check the chain again** repeats the check; it covers
+  the whole academy's trail, not only this course.
+- **Export CSV** and **Export JSON** download the trail with the filters you set (all pages, not
+  only the one on screen), for audits and compliance reviews. Spreadsheet cells that would start a
+  formula are neutralised.
+
+## 15. Connect a repository or web pages
+
+Instead of a file you can follow a **Git repository** or a set of **web pages**. The course then keeps
+reading from the source on its own: a new commit or a changed page becomes a new revision, and the
+revision becomes a reviewable update (sections 8 to 10). Nothing in the course changes until you approve it.
+
+On **New course**, next to the upload area, you find **Connect a repository** and **Add web pages**.
+
+**Connect a repository** (GitHub, GitLab, Gitea and Forgejo):
+
+- **Where does it live?** and, for Gitea, Forgejo and a self-hosted GitLab, the **server address**
+  (for example `https://git.example.com`).
+- **Repository** as `owner/name`. You can paste the address of the repository; we keep the
+  `owner/name` part.
+- **Branch**: leave it empty for the default branch.
+- **Folders and files to read**: one pattern per line, for example `docs/**/*.md`. Empty means every
+  Markdown file.
+- **Access token** (optional). Public repositories work without one, but GitHub then allows only 60
+  requests an hour. A token with read access lifts the limit and opens private repositories. It is
+  stored for the checks and is **never shown again**: the Sources page only says "Token set" and takes
+  a replacement.
+
+**Add web pages**: one address per line, up to 20, all on the same site and all starting with
+`https://`. The optional **main content selector** is a CSS selector (for example `main` or `article`)
+for the part of the page to read; without it we read the main content of the page.
+
+Press the button. The form says it is checking, reads the files or pages, shows revision 1 as the
+source of a new course and continues into the interview as for an uploaded file. If the source is
+refused, you see the reason as the server gave it (for example that the repository was not found, that no file
+matches your paths, or that a page address points to a private network) and nothing is created: change the
+field and try again.
+
+### What is checked and when
+
+On the **Sources** page a connected source shows what it reads from (host, repository and branch, or
+the pages), its status, when it was last checked and when it is checked next.
+
+- **Status** is **Active**, **Paused** or **Error**, always as text with an icon. After repeated failures
+  the status shows the last error, for example a branch that no longer exists or a token that expired.
+- **Check for changes** sets the schedule: every hour, every day, every week, or only when you check.
+  Hourly is the fastest schedule; the installation also caps the number of checks per source per day.
+- **Check now** asks for a check at once. The page says the check is queued and refreshes the card and
+  the revision list when it finishes. A paused source has to be resumed first.
+- **Pause checking** stops scheduled checks, webhooks and manual checks until you press **Resume checking**.
+- A check that finds the same content as before adds no revision.
+
+### Webhooks (Git)
+
+A webhook lets your Git host tell us at once when someone pushes, so the update does not wait for the
+next scheduled check. It is optional; the schedule keeps working without it. The connection shows the
+**Webhook URL** with a copy button. Create the webhook on your host:
+
+- **GitHub**: repository **Settings**, **Webhooks**, **Add webhook**. Payload URL: the webhook URL. Content type:
+  `application/json`. Secret: the webhook secret. Events: **Just the push event**.
+- **GitLab**: project **Settings**, **Webhooks**. URL: the webhook URL. **Secret token**: the webhook secret.
+  Trigger: **Push events**.
+- **Gitea and Forgejo**: repository **Settings**, **Webhooks**, **Add webhook**. Target URL: the webhook URL.
+  Content type: `application/json`. Secret: the webhook secret. Trigger on **Push events**.
+
+The **webhook secret** is shown **once**: right after you connect the repository, and again each time you
+select **Rotate secret**. Copy it before you leave the page. Rotating makes the old secret stop working
+immediately, so the page asks you to confirm and reminds you to update the webhook on your host. Deliveries
+with a wrong signature are refused, and a burst of pushes is merged into one check (the default wait is ten
+minutes; an admin can change it).
+
+### Limits
+
+- Git: up to 500 files, 1 MB per file and 20 MB in total; up to 20 path patterns. Narrow the paths if the
+  repository is larger.
+- Web pages: up to 20 pages of one site, 5 MB per page. Only public `https` pages that return HTML or text
+  can be read; a page that needs a login, a page on a private network address or a page that redirects to
+  another site is refused.
+- An installation can restrict which hosts sources may use. If yours does, the refusal names the allowed hosts.
+- Uploaded sources have no schedule and nothing to check: a new version appears when you upload it.
 
 ## Tips
 

@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $entity_id
  * @property string|null $fingerprint
  * @property string|null $applied_version_id
+ * @property \Illuminate\Support\Carbon|null $retired_at set when the entity was deactivated instead of deleted
+ * @property string|null $added_by_proposal_id the update proposal that created the entity
  */
 class EntityMapEntry extends Model
 {
@@ -23,5 +25,5 @@ class EntityMapEntry extends Model
 
     protected $guarded = [];
 
-    protected $casts = ['entity_id' => 'integer'];
+    protected $casts = ['entity_id' => 'integer', 'retired_at' => 'datetime'];
 }

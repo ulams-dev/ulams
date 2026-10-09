@@ -1,0 +1,17 @@
+{
+    "task": "update",
+    "prompt_id": "living-course/update",
+    "prompt_version": 1,
+    "hash": "ffce57284aed601e1dc7100ae0baaf37",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 1903,
+        "output_tokens": 1266,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "cache_read_tokens": 8144
+    },
+    "text": "{\"items\":[{\"elementId\":\"{{id_6}}\",\"decision\":\"no_change\",\"reason\":\"§2.1 changed only the numeric ratios; the objective to explain the main points of the brew ratio is still accurate.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_17}}\",\"decision\":\"update\",\"reason\":\"§2.1 now gives 1:15 as the example and starting point, with a typical range of 1:14 to 1:17.\",\"severity\":\"major\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"not_a_question\",\"block\":{\"id\":\"{{id_17}}\",\"kind\":\"paragraph\",\"markdown\":\"The brew ratio is the weight of coffee compared to the weight of water. A ratio of 1:15 means one gram of coffee for every fifteen grams of water. Most filter recipes sit between 1:14 and 1:17; 1:15 is a good starting point.\",\"citations\":[\"{{frg_1}}\"],\"objectiveIds\":[\"{{id_6}}\"]},\"question\":null,\"objective\":null},{\"elementId\":\"{{id_18}}\",\"decision\":\"no_change\",\"reason\":\"The takeaway defines the brew ratio generally, and §2.1 still says this; only the example numbers changed.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_19}}\",\"decision\":\"no_change\",\"reason\":\"The correct option is the general definition, which §2.1 still states unchanged.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"unchanged\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_23}}\",\"decision\":\"update\",\"reason\":\"§2.1 now says a ratio of 1:15 means one gram of coffee per fifteen grams of water, not 1:16 and sixteen.\",\"severity\":\"major\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"unchanged\",\"block\":null,\"question\":{\"id\":\"{{id_23}}\",\"type\":\"single\",\"stem\":\"Which statement matches what the source says in §2.1 The brew ratio?\",\"options\":[{\"id\":\"{{id_24}}\",\"text\":\"A short handbook for people who want to brew better coffee at home.\",\"correct\":false},{\"id\":\"{{id_25}}\",\"text\":\"A ratio of 1:15 means one gram of coffee for every fifteen grams of water.\",\"correct\":true},{\"id\":\"{{id_26}}\",\"text\":\"It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.\",\"correct\":false}],\"explanation\":\"The source states: A ratio of 1:15 means one gram of coffee for every fifteen grams of water.\",\"citations\":[\"{{frg_1}}\"],\"objectiveIds\":[\"{{id_6}}\"]},\"objective\":null}],\"reply\":\"Updated the ratio paragraph and Q2 to 1:15; the objective, takeaway callout and Q1 still hold.\"}"
+}

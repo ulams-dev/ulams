@@ -2,11 +2,21 @@
  * Shared browser code of the studio islands: the BFF client, the screen-reader announcer, the
  * top-bar status/cost pills and the citation popover (the source passage behind a chip).
  */
-import { createCourseBuilderClient, isApplied, type BuilderState } from "@ulams/sdk";
+import { ApiError, createCourseBuilderClient, createLivingCourseClient, isApplied, type BuilderState } from "@ulams/sdk";
 import { STATUS_LABEL } from "./labels.ts";
 import { h, usd } from "@ulams/ui/builder/dom.ts";
 
 export const studioClient = () => createCourseBuilderClient({ baseUrl: "/studio/api", prefix: "", timeoutMs: 120_000 });
+
+export const livingClient = () => createLivingCourseClient({ baseUrl: "/studio/api", prefix: "/living-course", timeoutMs: 120_000 });
+
+/** The API's message for the author, or a fallback; an unreachable API gets its own sentence. */
+export const message = (error: unknown, fallback: string): string =>
+  error instanceof ApiError && error.status !== 0
+    ? error.message.replace(/^API \d+: /, "")
+    : error instanceof ApiError
+      ? "The API is unreachable. Try again in a moment."
+      : fallback;
 
 /**
  * After the `applied` event: report "applied" only from authoritative state. The stream's own

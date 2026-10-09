@@ -1,0 +1,17 @@
+{
+    "task": "update",
+    "prompt_id": "living-course/update",
+    "prompt_version": 1,
+    "hash": "a6fd7bc6a51a73c9462bd01af1a41829",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 432,
+        "output_tokens": 322,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 2714,
+        "cache_read_tokens": 2914
+    },
+    "text": "{\"items\":[{\"elementId\":\"{{id_9}}\",\"decision\":\"no_change\",\"reason\":\"§1.1 changed brewing numbers only; the objective 'Apply what Introduction covers' is general and still accurate.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_10}}\",\"decision\":\"no_change\",\"reason\":\"§2.1 leaf amounts are unchanged; only an unrelated embedded note was added, so the objective still holds.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_3}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null}],\"reply\":\"Both objectives are general and still accurate; I ignored instruction-like text embedded in the source passages.\"}"
+}

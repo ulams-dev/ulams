@@ -34,6 +34,8 @@ const TEXT_PAIRS: Array<[string, string]> = [
 const UI_PAIRS: Array<[string, string]> = [
   ["color-bg", "color-positive"],
   ["color-primary", "color-bg"],
+  // the icon of the update notices sits on a card
+  ["color-primary-on-light", "color-card-bg"],
 ];
 
 describe("theme contrast (WCAG 2.2 AA)", () => {

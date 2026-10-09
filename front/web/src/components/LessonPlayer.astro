@@ -12,8 +12,9 @@ import { formatLabel, formatMinutes } from "@ulams/ui/format";
 import { completionPercent, flattenTopics, topicNeighbours, type Course, type PublicSettings, type Tenant, type TopicProgress } from "@ulams/sdk";
 import Base from "../layouts/Base.astro";
 import PreviewBanner from "./PreviewBanner.astro";
-import { apiFor, cmi5Launch, liascriptLaunch, ltiLaunch, scormAvailable, scormLaunch } from "../lib/data.ts";
+import { apiFor, cmi5Launch, getLearnerNotices, liascriptLaunch, ltiLaunch, scormAvailable, scormLaunch } from "../lib/data.ts";
 import { completionMode, formatOf, topicDoc, topicMinutes } from "../lib/page-docs.ts";
+import { NO_NOTICES, topicNoticeDocs } from "../lib/notices.ts";
 import { PREVIEW_LINKS, isPublished, previewCourseHref, studioHref } from "../lib/preview.ts";
 import { themeFor } from "../lib/theme.ts";
 import { LEARNER_LINKS, splitLessonTitle, type CourseLinks } from "../lib/view-model.ts";
@@ -69,6 +70,8 @@ const backHref = preview ? (preview.backHref ?? previewCourseHref(courseId)) : `
 const scormUuid = (topic.topicable as { uuid?: string } | undefined)?.uuid;
 // Launches that report progress are skipped in preview (the topic then explains why).
 const tracked = Boolean(token) && !preview;
+// Living Course: "updated since you completed it", the quiz re-attempt notice and the opt-in marker.
+const noticeDocs = topicNoticeDocs(access && tracked ? await getLearnerNotices(tenant, token!, courseId) : NO_NOTICES, topicId, done);
 // SCORM: the player on the tenant content origin (tracks through a SCO-scoped token), else the legacy API player.
 const contentOriginSrc = scormUuid && access && tracked ? await scormLaunch(tenant, token!, scormUuid) : null;
 const packageAvailable = scormUuid && !contentOriginSrc ? await scormAvailable(tenant, scormUuid) : true;
@@ -185,6 +188,7 @@ const resources = topic.resources ?? [];
             </p>
           )
         }
+        {noticeDocs.map((notice) => <Render doc={notice} />)}
         {doc && <Render doc={doc} />}
         {
           resources.length > 0 && (

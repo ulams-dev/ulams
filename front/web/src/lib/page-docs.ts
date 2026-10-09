@@ -251,6 +251,7 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
       children.push({
         component: "QuizRunner",
         props: {
+          id: "quiz",
           quizId: num(t.id) ?? 0,
           title: topic.title,
           intro: str(t.value),

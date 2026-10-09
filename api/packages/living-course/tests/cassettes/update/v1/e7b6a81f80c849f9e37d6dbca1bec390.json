@@ -1,0 +1,17 @@
+{
+    "task": "update",
+    "prompt_id": "living-course/update",
+    "prompt_version": 1,
+    "hash": "e7b6a81f80c849f9e37d6dbca1bec390",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 431,
+        "output_tokens": 322,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 5230,
+        "cache_read_tokens": 2914
+    },
+    "text": "{\"items\":[{\"elementId\":\"{{id_17}}\",\"decision\":\"no_change\",\"reason\":\"§2.1 changed the ratio numbers (1:16 to 1:15), but the objective is generic and states no figures, so it still holds.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_18}}\",\"decision\":\"no_change\",\"reason\":\"§4.1 changed temperature ranges, but the objective is generic and names no temperatures, so it still holds.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_3}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null}],\"reply\":\"Both objectives are generic and contain no figures, so the ratio and temperature changes need no edits.\"}"
+}

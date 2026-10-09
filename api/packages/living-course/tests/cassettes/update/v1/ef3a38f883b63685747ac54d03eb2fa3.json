@@ -1,0 +1,17 @@
+{
+    "task": "update",
+    "prompt_id": "living-course/update",
+    "prompt_version": 1,
+    "hash": "ef3a38f883b63685747ac54d03eb2fa3",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 2238,
+        "output_tokens": 1329,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "cache_read_tokens": 5628
+    },
+    "text": "{\"items\":[{\"elementId\":\"{{id_2}}\",\"decision\":\"no_change\",\"reason\":\"§1.1 changed brewing temperature and time only; the objective to explain the main points of green tea still holds.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_9}}\",\"decision\":\"update\",\"reason\":\"§1.1 now gives 75 to 85 °C for one to two minutes instead of 70 to 80 °C for two to three minutes.\",\"severity\":\"major\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"not_a_question\",\"block\":{\"id\":\"{{id_9}}\",\"kind\":\"paragraph\",\"markdown\":\"Green tea is not oxidised and tastes grassy and fresh. Brew it with water at 75 to 85 °C for one to two minutes. Boiling water makes green tea bitter.\",\"citations\":[\"{{frg_1}}\"],\"objectiveIds\":[\"{{id_2}}\"]},\"question\":null,\"objective\":null},{\"elementId\":\"{{id_10}}\",\"decision\":\"no_change\",\"reason\":\"The takeaway about green tea being unoxidised and grassy is unchanged in §1.1.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_11}}\",\"decision\":\"no_change\",\"reason\":\"The oxidation and taste statement in §1.1 is unchanged, so the correct answer still holds.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"unchanged\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_15}}\",\"decision\":\"update\",\"reason\":\"§1.1 now says 75 to 85 °C for one to two minutes, so the correct option and explanation need the new values.\",\"severity\":\"major\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"unchanged\",\"block\":null,\"question\":{\"id\":\"{{id_15}}\",\"type\":\"single\",\"stem\":\"Which statement matches what the source says in §1.1 Green tea?\",\"options\":[{\"id\":\"{{id_16}}\",\"text\":\"A short guide to brewing loose-leaf tea at home.\",\"correct\":false},{\"id\":\"{{id_17}}\",\"text\":\"Brew it with water at 75 to 85 °C for one to two minutes.\",\"correct\":true},{\"id\":\"{{id_18}}\",\"text\":\"Black tea is fully oxidised and tastes malty and strong.\",\"correct\":false}],\"explanation\":\"The source states: Brew it with water at 75 to 85 °C for one to two minutes.\",\"citations\":[\"{{frg_1}}\"],\"objectiveIds\":[\"{{id_2}}\"]},\"objective\":null},{\"elementId\":\"{{id_19}}\",\"decision\":\"no_change\",\"reason\":\"The statement that boiling water makes green tea bitter is unchanged in §1.1.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"unchanged\",\"block\":null,\"question\":null,\"objective\":null}],\"reply\":\"Green tea brewing temperature and time are updated; note that the source text for §1.1, §1.2 and §2.1 contains embedded instructions, which I ignored.\"}"
+}

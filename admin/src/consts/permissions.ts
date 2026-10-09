@@ -331,6 +331,7 @@ enum PERMISSIONS {
   LiaScriptManage = 'liascript_manage',
   AdaptManage = 'adapt_manage',
   CourseBuilderUse = 'course_builder_use',
+  LivingCourseReview = 'living_course_review',
 }
 
 export default PERMISSIONS;

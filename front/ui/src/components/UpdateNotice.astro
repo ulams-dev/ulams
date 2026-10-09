@@ -1,0 +1,85 @@
+---
+import Icon from "./Icon.astro";
+import { updateNoticeText } from "../lib/notices.ts";
+
+interface Props {
+  noticeId?: number;
+  started?: boolean;
+  date?: string;
+  message?: string;
+  id?: string;
+}
+const { noticeId, started = false, date, message, id } = Astro.props;
+const text = updateNoticeText({ started, date, message });
+const titleId = `u-notice-${id ?? noticeId ?? "update"}-title`;
+---
+
+<section class="u-notice" id={id} aria-labelledby={titleId} data-notice="updated">
+  <Icon name="sync" />
+  <div class="u-notice__body">
+    <h2 class="u-notice__title" id={titleId}>{text.title}</h2>
+    {text.change && <p class="u-notice__text">{text.change}</p>}
+    {
+      noticeId !== undefined && (
+        <ulams-notice notice-id={noticeId}>
+          <button class="u-btn u-btn--ghost u-btn--sm" type="button" data-dismiss hidden>
+            Mark as reviewed
+          </button>
+          <p class="u-notice__done" role="status" tabindex="-1" data-status></p>
+        </ulams-notice>
+      )
+    }
+  </div>
+</section>
+
+<script>
+  import "../elements/notice.ts";
+</script>
+
+<style>
+  .u-notice {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+    border-left: 4px solid var(--ulams-color-primary);
+    background: var(--ulams-color-card-bg);
+    color: var(--ulams-color-text);
+  }
+  .u-notice :global(.u-icon) {
+    color: var(--ulams-color-primary-on-light);
+    margin-top: 3px;
+  }
+  .u-notice__body {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+  }
+  .u-notice__title {
+    font-family: var(--ulams-font-family-body);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .u-notice__text {
+    overflow-wrap: anywhere;
+  }
+  ulams-notice {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+  }
+  .u-notice__done {
+    font-weight: 600;
+  }
+  .u-notice__done:empty {
+    display: none;
+  }
+  .u-notice__done:focus-visible {
+    outline: 2px solid var(--ulams-color-primary);
+    outline-offset: 3px;
+  }
+</style>

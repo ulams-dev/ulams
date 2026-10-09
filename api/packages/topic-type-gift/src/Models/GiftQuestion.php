@@ -19,6 +19,7 @@ use Illuminate\Support\Carbon;
  * @property int $score
  * @property int $order
  * @property ?int $category_id
+ * @property ?Carbon $archived_at set when the question was retired but learners answered it
  * @property Carbon $created_at
  * @property Carbon $updated_at
  *
@@ -38,7 +39,17 @@ class GiftQuestion extends Model
         'score',
         'order',
         'category_id',
+        'archived_at',
     ];
+
+    public $casts = [
+        'archived_at' => 'datetime',
+    ];
+
+    public function isArchived(): bool
+    {
+        return $this->archived_at !== null;
+    }
 
     public function giftQuiz(): BelongsTo
     {

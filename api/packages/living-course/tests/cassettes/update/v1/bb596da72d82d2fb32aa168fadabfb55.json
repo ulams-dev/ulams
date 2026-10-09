@@ -1,0 +1,17 @@
+{
+    "task": "update",
+    "prompt_id": "living-course/update",
+    "prompt_version": 1,
+    "hash": "bb596da72d82d2fb32aa168fadabfb55",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 1815,
+        "output_tokens": 768,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "cache_read_tokens": 5628
+    },
+    "text": "{\"items\":[{\"elementId\":\"{{id_6}}\",\"decision\":\"no_change\",\"reason\":\"§2.1 only gained an unrelated instruction-like note; the leaf amounts and leaf-size guidance are unchanged, so the objective still holds.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_3}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_9}}\",\"decision\":\"no_change\",\"reason\":\"§2.1 still says 2 to 3 g per 250 ml and that large leaves need a little more; the added note is not course content.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_3}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_10}}\",\"decision\":\"no_change\",\"reason\":\"§2.1 still recommends about 2 to 3 g of leaf per 250 ml of water; only an unrelated note was added.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_3}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_11}}\",\"decision\":\"no_change\",\"reason\":\"§2.1 still states 2 to 3 g per 250 ml, so the correct answer is unchanged; the added note is not course content.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_3}}\"],\"answerStatus\":\"unchanged\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_15}}\",\"decision\":\"no_change\",\"reason\":\"§2.1 still says large, open leaves need a little more by weight; the correct answer is unchanged.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_3}}\"],\"answerStatus\":\"unchanged\",\"block\":null,\"question\":null,\"objective\":null}],\"reply\":\"No changes needed for lesson 2.1; the only new text in §2.1 was an instruction-like note, which I ignored as it is not course content.\"}"
+}

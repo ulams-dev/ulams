@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/living-course/update-output.json",
+  "title": "Update proposal for one group of course elements",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["items", "reply"],
+  "$defs": {
+    "fragmentId": { "type": "string", "pattern": "^frg_[a-z2-7]{12}$" },
+    "citations": { "type": "array", "items": { "$ref": "#/$defs/fragmentId" }, "minItems": 1, "maxItems": 6 },
+    "block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "markdown", "citations", "objectiveIds"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "type": "string", "enum": ["paragraph", "callout", "steps", "code", "table", "example"] },
+        "markdown": { "type": "string", "minLength": 1, "maxLength": 20000 },
+        "citations": { "$ref": "#/$defs/citations" },
+        "objectiveIds": { "type": "array", "items": { "type": "string" }, "maxItems": 6 }
+      }
+    },
+    "option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text", "correct"],
+      "properties": {
+        "id": { "type": "string" },
+        "text": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "correct": { "type": "boolean" }
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "stem", "options", "explanation", "citations", "objectiveIds"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string", "enum": ["single", "multiple", "truefalse", "short"] },
+        "stem": { "type": "string", "minLength": 3, "maxLength": 1000 },
+        "options": { "type": "array", "items": { "$ref": "#/$defs/option" }, "minItems": 1, "maxItems": 6 },
+        "explanation": { "type": "string", "minLength": 3, "maxLength": 2000 },
+        "citations": { "$ref": "#/$defs/citations" },
+        "objectiveIds": { "type": "array", "items": { "type": "string" }, "maxItems": 6 }
+      }
+    },
+    "objective": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "citations"],
+      "properties": {
+        "text": { "type": "string", "minLength": 3, "maxLength": 400 },
+        "citations": { "$ref": "#/$defs/citations" }
+      }
+    }
+  },
+  "properties": {
+    "items": {
+      "type": "array",
+      "maxItems": 60,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["elementId", "decision", "reason", "severity", "fragmentIds", "answerStatus", "block", "question", "objective"],
+        "properties": {
+          "elementId": { "type": "string" },
+          "decision": { "type": "string", "enum": ["update", "no_change", "remove"] },
+          "reason": { "type": "string", "minLength": 3, "maxLength": 240 },
+          "severity": { "type": "string", "enum": ["minor", "major"] },
+          "fragmentIds": { "type": "array", "items": { "$ref": "#/$defs/fragmentId" }, "maxItems": 12 },
+          "answerStatus": { "type": "string", "enum": ["unchanged", "changed", "unsure", "not_a_question"] },
+          "block": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/block" }] },
+          "question": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/question" }] },
+          "objective": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/objective" }] }
+        }
+      }
+    },
+    "reply": { "type": "string", "minLength": 1, "maxLength": 400 }
+  }
+}

@@ -1,0 +1,17 @@
+{
+    "task": "update",
+    "prompt_id": "living-course/update",
+    "prompt_version": 1,
+    "hash": "09835504e1c753f20cac1e70c872e098",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 1885,
+        "output_tokens": 928,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "cache_read_tokens": 6666
+    },
+    "text": "{\"items\":[{\"elementId\":\"{{id_12}}\",\"decision\":\"no_change\",\"reason\":\"§3.2 only fixes the spelling of 'Misspelled'; the objective is unaffected.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_17}}\",\"decision\":\"update\",\"reason\":\"§3.2 corrected the typo 'Mispelled' to 'Misspelled'; the paragraph repeats the old spelling.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"not_a_question\",\"block\":{\"id\":\"{{id_17}}\",\"kind\":\"paragraph\",\"markdown\":\"When the work is ready, switch back to the main branch and run git merge with the branch name. If both branches changed the same lines, Git stops with a merge conflict: edit the marked lines, stage the file and commit to finish the merge. Misspelled branch names are the usual reason a merge does not find what you asked for.\",\"citations\":[\"{{frg_2}}\"],\"objectiveIds\":[\"{{id_12}}\"]},\"question\":null,\"objective\":null},{\"elementId\":\"{{id_18}}\",\"decision\":\"no_change\",\"reason\":\"§3.2 only corrected a spelling elsewhere in the passage; the takeaway sentence is unchanged.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_19}}\",\"decision\":\"no_change\",\"reason\":\"§3.2 only fixes a typo; the quoted sentence and correct answer are unchanged.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"unchanged\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_23}}\",\"decision\":\"no_change\",\"reason\":\"§3.2 only fixes a typo; the quoted sentence and correct answer are unchanged.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_2}}\"],\"answerStatus\":\"unchanged\",\"block\":null,\"question\":null,\"objective\":null}],\"reply\":\"Only the paragraph in lesson 3.2 needs the 'Misspelled' typo fix; the other elements stay as they are.\"}"
+}

@@ -1,0 +1,10 @@
+{
+  "props": {
+    "noticeId": 7,
+    "date": "2026-10-09T10:00:00Z",
+    "message": "The water ratio is now 1:16."
+  },
+  "invalid": {
+    "noticeId": 0
+  }
+}

@@ -1,6 +1,7 @@
-import { ApiError, createClient, type Course, type Tenant, type TopicProgress } from "@ulams/sdk";
+import { ApiError, createClient, createLivingLearnerClient, type Course, type Tenant, type TopicProgress } from "@ulams/sdk";
 import { cache } from "./cache.ts";
 import { config } from "./config.ts";
+import type { LearnerNotices } from "./notices.ts";
 import { siteModel, type RawSiteData, type SiteModel } from "./view-model.ts";
 
 /** Server-side API client for a tenant (straight to the tenant API, not through the browser). */
@@ -85,6 +86,17 @@ export async function getProgram(tenant: Tenant, token: string, courseId: number
   const progressP = publicData(tenant, progressKey, () => api.progress.course(courseId), 5_000).catch(() => [] as TopicProgress[]);
   const [program, progress] = await Promise.all([programP, progressP]);
   return { ...program, progress: program.access ? progress : [] };
+}
+
+/**
+ * The learner's Living Course notices and the opt-in freshness marker for a course. Never cached
+ * (a dismissed notice must go away at once) and never fatal: an older API without the routes, a
+ * slow answer or an error all mean "no notices".
+ */
+export async function getLearnerNotices(tenant: Tenant, token: string, courseId: number): Promise<LearnerNotices> {
+  const client = createLivingLearnerClient({ baseUrl: tenant.apiUrl, token, timeoutMs: 3_000 });
+  const [notices, freshness] = await Promise.all([client.notices(courseId).catch(() => []), client.freshness(courseId).catch(() => [])]);
+  return { notices, freshness };
 }
 
 /** The learner's profile, cached per session for 10 minutes. */

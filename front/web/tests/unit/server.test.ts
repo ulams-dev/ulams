@@ -74,6 +74,18 @@ describe("BFF rules", () => {
     expect(matchBffRule("DELETE", "/api/courses/progress/1")).toBeNull();
     expect(matchBffRule("GET", "/api/courses/progress/1/../../admin")).toBeNull();
   });
+  it("forwards the learner notice routes and nothing else of the Living Course", () => {
+    expect(matchBffRule("GET", "/api/living-course/courses/5/notices")).not.toBeNull();
+    expect(matchBffRule("POST", "/api/living-course/notices/12/dismiss")).not.toBeNull();
+    expect(matchBffRule("GET", "/api/living-course/courses/5/freshness")).not.toBeNull();
+    expect(matchBffRule("GET", "/api/living-course/notices/12/dismiss")).toBeNull();
+    expect(matchBffRule("POST", "/api/living-course/courses/5/notices")).toBeNull();
+    expect(matchBffRule("DELETE", "/api/living-course/notices/12/dismiss")).toBeNull();
+    expect(matchBffRule("GET", "/api/living-course/courses/x/notices")).toBeNull();
+    expect(matchBffRule("GET", "/api/living-course/courses/5/notices/../../admin")).toBeNull();
+    // author routes are only reachable through the studio BFF
+    expect(matchBffRule("GET", "/api/admin/living-course/sessions/01hzzzzzzzzzzzzzzzzzzzzzzz/audit")).toBeNull();
+  });
   it("refuses cross-site writes", () => {
     const req = (headers: Record<string, string>, method = "POST") => new Request("http://coffee.app.localhost:4321/bff/x", { method, headers });
     expect(isSameOrigin(req({ origin: "http://coffee.app.localhost:4321" }), "http://coffee.app.localhost:4321")).toBe(true);

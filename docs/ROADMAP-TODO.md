@@ -11,6 +11,8 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (2026-10-09) Phase 3 plan (`docs/plans/phase-3.md`) approved with all 17 decisions of its section 18 as recommended (issue #27 closed)
+
 - [x] (2026-10-09) Phase 1 decisions 1–52, Phase 2 decisions 1–28 and the Phase 3 plan with its 17 decisions
       confirmed by the product owner
 - [x] (2026-10-09) Brand identity "Orbital Folio" chosen by the product owner (indigo #0F2B46, orange #FF7A2E);
@@ -454,24 +456,28 @@ Quality
 
 ## Phase 3: Living Course (killer feature)
 
-Plan (new): `docs/plans/phase-3.md` (draft, waiting for approval; ADRs 0030–0034 Proposed). Milestones
+Plan: `docs/plans/phase-3.md` (approved 2026-10-09; ADRs 0030–0034 Accepted). Milestones
 M3.1 revisions and fragment diff (re-upload) → M3.2 impact and staleness → M3.3 AI update proposals →
 M3.4 progress rules → M3.5 audit and notifications → M3.6 Git, webhooks, polling → M3.7 URL connector →
 M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
 
-- [ ] Source connectors: re-upload → Git (path + branch) → Drive / Notion as plugins
-- [ ] Change detection (webhook, poll, manual) with fragment-level diff
-- [ ] Impact analysis via citations, incl. quiz answers that may now be wrong
-- [ ] Update proposals: patches with reasons, reviewed as one diff (accept all / per element / reject)
-- [ ] Progress rules: minor edit keeps completion; changed quiz answer → re-attempt; never
+- [ ] Source connectors: re-upload → Git (path + branch) → Drive / Notion as plugins (partial: upload, Git
+      (GitHub, GitLab, Gitea/Forgejo) and URL connectors done, plugin contract and example connector in
+      `docs/living-course/connector-plugins.md`; Drive and Notion not built, see the `(new)` item)
+- [x] Change detection (webhook, poll, manual) with fragment-level diff
+- [x] Impact analysis via citations, incl. quiz answers that may now be wrong
+- [x] Update proposals: patches with reasons, reviewed as one diff (accept all / per element / reject)
+- [x] Progress rules: minor edit keeps completion; changed quiz answer → re-attempt; never
       silently change past scores
-- [ ] Staleness signals per course and element
-- [ ] Audit trail (who accepted what, when, which source revision)
-- [ ] Tests: source v1/v2 fixtures; progress survives accepted update
-- [ ] (new) URL connector (web pages on one host, CSS selector, HTML → Markdown)
-- [ ] (new) Shared SSRF-safe HTTP client in `core` (extracted from `lti`; IPv6, CGNAT, redirects re-checked)
-- [ ] (new) GIFT: snapshot the max score per attempt and archive questions instead of deleting them
-- [ ] (new) Suggest a new lesson for newly added, uncovered source sections
+- [x] Staleness signals per course and element
+- [x] Audit trail (who accepted what, when, which source revision)
+- [x] Tests: source v1/v2 fixtures; progress survives accepted update (API: `ProgressSurvivesUpdateTest`, eval
+      fixtures with recorded live answers; studio e2e on the fake driver)
+- [x] (new) URL connector (web pages on one host, CSS selector, HTML → Markdown)
+- [x] (new) Shared SSRF-safe HTTP client in `core` (extracted from `lti`; IPv6, CGNAT, redirects re-checked)
+- [x] (new) GIFT: snapshot the max score per attempt and archive questions instead of deleting them
+- [ ] (new) Suggest a new lesson for newly added, uncovered source sections (partial: uncovered sections are
+      listed in the proposal as `uncovered` items; no generated lesson proposal yet)
 - [ ] (new) Generic Git (`git` CLI) connector for hosts without a supported API
 - [ ] (new) Google Drive and Notion connector plugins (designed in `docs/plans/phase-3.md` 6.6)
 

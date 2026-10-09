@@ -13,6 +13,9 @@ interface GiftQuestionServiceContract
     public function update(GiftQuestionDto $dto, int $id): GiftQuestion;
     public function delete(int $id): void;
 
+    /** Retires a question that learners answered: kept for their history, excluded from new attempts. */
+    public function archive(int $id): void;
+
     /**
      * @throws UnknownGiftTypeException
      */

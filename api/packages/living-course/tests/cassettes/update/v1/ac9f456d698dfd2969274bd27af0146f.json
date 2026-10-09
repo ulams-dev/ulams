@@ -1,0 +1,17 @@
+{
+    "task": "update",
+    "prompt_id": "living-course/update",
+    "prompt_version": 1,
+    "hash": "ac9f456d698dfd2969274bd27af0146f",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 1429,
+        "output_tokens": 1236,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "cache_read_tokens": 6666
+    },
+    "text": "{\"items\":[{\"elementId\":\"{{id_8}}\",\"decision\":\"no_change\",\"reason\":\"§2.2 only swaps the flag name; the objective is generic and does not mention the specific command.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_17}}\",\"decision\":\"update\",\"reason\":\"§2.2 now names git diff --cached instead of git diff --staged for what the next commit will contain.\",\"severity\":\"major\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"not_a_question\",\"block\":{\"id\":\"{{id_17}}\",\"kind\":\"paragraph\",\"markdown\":\"git status lists changed, staged and untracked files. git diff shows the changes that are not staged yet, and git diff --cached shows what the next commit will contain.\",\"citations\":[\"{{frg_1}}\"],\"objectiveIds\":[\"{{id_8}}\"]},\"question\":null,\"objective\":null},{\"elementId\":\"{{id_18}}\",\"decision\":\"update\",\"reason\":\"§2.2 now names git diff --cached instead of git diff --staged for what the next commit will contain.\",\"severity\":\"major\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"not_a_question\",\"block\":{\"id\":\"{{id_18}}\",\"kind\":\"callout\",\"markdown\":\"**Key takeaway:** git status lists changed, staged and untracked files. git diff shows the changes that are not staged yet, and git diff --cached shows what the next commit will contain.\",\"citations\":[\"{{frg_1}}\"],\"objectiveIds\":[\"{{id_8}}\"]},\"question\":null,\"objective\":null},{\"elementId\":\"{{id_19}}\",\"decision\":\"update\",\"reason\":\"§2.2 now names git diff --cached instead of git diff --staged; the correct option and explanation must use the new flag.\",\"severity\":\"major\",\"fragmentIds\":[\"{{frg_1}}\"],\"answerStatus\":\"unchanged\",\"block\":null,\"question\":{\"id\":\"{{id_19}}\",\"type\":\"single\",\"stem\":\"Which statement matches what the source says in §2.2 Checking the state?\",\"options\":[{\"id\":\"{{id_20}}\",\"text\":\"How to keep course material under version control with Git.\",\"correct\":false},{\"id\":\"{{id_21}}\",\"text\":\"git status lists changed, staged and untracked files. git diff shows the changes that are not staged yet, and git diff --cached shows what the next commit will contain.\",\"correct\":true},{\"id\":\"{{id_22}}\",\"text\":\"A repository is a folder whose history Git records.\",\"correct\":false}],\"explanation\":\"The source states: git status lists changed, staged and untracked files. git diff shows the changes that are not staged yet, and git diff --cached shows what the next commit will contain.\",\"citations\":[\"{{frg_1}}\"],\"objectiveIds\":[\"{{id_8}}\"]},\"objective\":null}],\"reply\":\"The objective stays as is; the two blocks and the quiz question now use git diff --cached per §2.2.\"}"
+}

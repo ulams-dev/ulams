@@ -73,7 +73,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  *
- * @property-read Collection|GiftQuestion[] $questions
+ * @property-read Collection|GiftQuestion[] $questions active questions
+ * @property-read Collection|GiftQuestion[] $allQuestions active and archived questions
  */
 class GiftQuiz extends AbstractTopicContent
 {
@@ -115,7 +116,14 @@ class GiftQuiz extends AbstractTopicContent
         ];
     }
 
+    /** The questions of the quiz as learners see them: archived questions are left out. */
     public function questions(): HasMany
+    {
+        return $this->hasMany(GiftQuestion::class, 'topic_gift_quiz_id')->whereNull('archived_at');
+    }
+
+    /** Every question including archived ones, for history views of past attempts. */
+    public function allQuestions(): HasMany
     {
         return $this->hasMany(GiftQuestion::class, 'topic_gift_quiz_id');
     }

@@ -29,6 +29,7 @@ const { sessionId } = Astro.props;
       </label>
       <p class="cb-error" data-drop-error role="alert"></p>
     </section>
+    {!sessionId && <section class="st-connect" data-studio-connect></section>}
     <div class="st-next" data-next></div>
     <form class="st-composer cb-card" data-composer>
       <label class="cb-sr" for="st-message">Message</label>
@@ -44,4 +45,5 @@ const { sessionId } = Astro.props;
 
 <script>
   import "../studio/thread.ts";
+  import "../studio/connect.ts";
 </script>
