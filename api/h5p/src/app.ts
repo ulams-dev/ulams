@@ -1,3 +1,4 @@
+import { platformOnlyWrites } from './http/platformOnly';
 import { rm } from 'node:fs/promises';
 import express, { Express, Request, RequestHandler, Router } from 'express';
 import cors from 'cors';
@@ -228,9 +229,10 @@ export function createApp(deps: AppDeps): Express {
     // Lumi routers: AJAX endpoints, core/editor/library/content files,
     // contentUserData, finishedData, download.
     app.use(base, dispatch((r) => r.ajax));
-    app.use(`${base}/libraries`, libraryAdminGuards(), dispatch((r) => r.libraries), jsonErrorHandler(logger));
+    app.use(`${base}/libraries`, platformOnlyWrites, libraryAdminGuards(), dispatch((r) => r.libraries), jsonErrorHandler(logger));
     app.use(
         `${base}/content-type-cache`,
+        platformOnlyWrites,
         contentTypeCacheGuards(),
         dispatch((r) => r.contentTypeCache),
         jsonErrorHandler(logger)
