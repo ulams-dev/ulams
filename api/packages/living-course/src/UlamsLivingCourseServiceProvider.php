@@ -6,7 +6,19 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Ulams\Ai\Fake\FakeResponders;
 use Ulams\Ai\Prompts\PromptRegistry;
+use Ulams\CourseBuilder\Contracts\FragmentArchive;
+use Ulams\CourseBuilder\Contracts\RemovalPolicy;
 use Ulams\CourseBuilder\Events\ElementPatched;
+use Ulams\Courses\Services\Contracts\CourseCompletionGuardContract;
+use Ulams\LivingCourse\Events\ProposalApplied;
+use Ulams\LivingCourse\Jobs\ProgressRulesJob;
+use Ulams\LivingCourse\Progress\LivingCourseAttemptAllowance;
+use Ulams\LivingCourse\Progress\LivingCourseCompletionGuard;
+use Ulams\LivingCourse\Progress\LivingCourseFragmentArchive;
+use Ulams\LivingCourse\Progress\LivingCourseRemovalPolicy;
+use Ulams\LivingCourse\Services\ProgressRules;
+use Ulams\TopicTypeGift\Events\QuizAttemptFinishedEvent;
+use Ulams\TopicTypeGift\Services\Contracts\QuizAttemptAllowanceContract;
 use Ulams\CourseBuilder\Events\SourceIngested;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
@@ -43,6 +55,11 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/living_course.php', 'living_course');
         $this->app->register(UlamsCourseBuilderServiceProvider::class);
+        // progress preservation (ADR 0033): the contracts of the builder, courses and GIFT packages
+        $this->app->singleton(RemovalPolicy::class, LivingCourseRemovalPolicy::class);
+        $this->app->singleton(FragmentArchive::class, LivingCourseFragmentArchive::class);
+        $this->app->singleton(CourseCompletionGuardContract::class, LivingCourseCompletionGuard::class);
+        $this->app->singleton(QuizAttemptAllowanceContract::class, LivingCourseAttemptAllowance::class);
     }
 
     public function boot(): void
@@ -61,6 +78,9 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([BackfillCommand::class]);
         }
+
+        Event::listen(ProposalApplied::class, fn (ProposalApplied $e) => ProgressRulesJob::dispatchFor($e->proposal->id));
+        Event::listen(QuizAttemptFinishedEvent::class, fn (QuizAttemptFinishedEvent $e) => $this->app->make(ProgressRules::class)->attemptFinished($e->getAttempt()));
 
         // an element edited in chat after the analysis: its pending item is out of date
         Event::listen(ElementPatched::class, function (ElementPatched $e) {

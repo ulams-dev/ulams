@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Ulams\LivingCourse\Http\Controllers\ConnectionsController;
+use Ulams\LivingCourse\Http\Controllers\NoticesController;
 use Ulams\LivingCourse\Http\Controllers\ProposalsController;
 use Ulams\LivingCourse\Http\Controllers\SourcesController;
 use Ulams\LivingCourse\Http\Controllers\StalenessController;
@@ -23,8 +25,21 @@ Route::group([
     Route::post('proposals/{proposal}/items/{item}/reject', [ProposalsController::class, 'reject']);
     Route::post('proposals/{proposal}/items/{item}/reset', [ProposalsController::class, 'reset']);
     Route::post('proposals/{proposal}/items/{item}/regenerate', [ProposalsController::class, 'regenerate']);
+    Route::put('proposals/{proposal}/learner-note', [ProposalsController::class, 'learnerNote']);
+    Route::put('connections/{connection}', [ConnectionsController::class, 'update']);
+    Route::delete('connections/{connection}', [ConnectionsController::class, 'destroy']);
     Route::post('proposals/{proposal}/apply', [ProposalsController::class, 'apply']);
     Route::post('proposals/{proposal}/accept-all', [ProposalsController::class, 'acceptAll']);
     Route::post('proposals/{proposal}/reject', [ProposalsController::class, 'rejectAll']);
     Route::get('revisions/{revision}/changes', [SourcesController::class, 'changes']);
+});
+
+// Learners: their own notices and the opt-in "an update is under review" marker.
+Route::group([
+    'prefix' => 'api/living-course',
+    'middleware' => ['auth:api'],
+], function () {
+    Route::get('courses/{course}/notices', [NoticesController::class, 'index'])->whereNumber('course');
+    Route::post('notices/{notice}/dismiss', [NoticesController::class, 'dismiss'])->whereNumber('notice');
+    Route::get('courses/{course}/freshness', [NoticesController::class, 'freshness'])->whereNumber('course');
 });

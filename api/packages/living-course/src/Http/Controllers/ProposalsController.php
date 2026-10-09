@@ -18,6 +18,7 @@ use Ulams\LivingCourse\Exceptions\ProposalException;
 use Ulams\LivingCourse\Services\AnalysisService;
 use Ulams\LivingCourse\Services\ApplyService;
 use Ulams\LivingCourse\Services\DecisionService;
+use Ulams\LivingCourse\Services\ProgressRules;
 use Ulams\LivingCourse\Models\ProposalItem;
 use Ulams\LivingCourse\Models\RevisionFragment;
 use Ulams\LivingCourse\Support\Presenter;
@@ -53,6 +54,10 @@ use Ulams\LivingCourse\Support\Presenter;
  * @OA\Post(path="/api/admin/living-course/proposals/{proposal}/reject", summary="Reject the whole proposal and acknowledge the source revision", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="proposal", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\Response(response=200, description="the proposal"), @OA\Response(response=403, description="not allowed"), @OA\Response(response=409, description="already settled"))
+ * @OA\Put(path="/api/admin/living-course/proposals/{proposal}/learner-note", summary="The text learners see for updated lessons (plain text, up to 500 characters)", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="proposal", in="path", required=true, @OA\Schema(type="string")),
+ *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="note", type="string"))),
+ *     @OA\Response(response=200, description="note"), @OA\Response(response=409, description="already settled"))
  * @OA\Post(path="/api/admin/living-course/proposals/{proposal}/apply", summary="Apply the accepted items as a new course version (409 with conflicting items or admin edits)", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="proposal", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="overwrite", type="boolean"))),
@@ -62,7 +67,7 @@ class ProposalsController extends Controller
 {
     use ResolvesLivingCourse;
 
-    public function __construct(private readonly AnalysisService $analysis, private readonly LlmClient $llm, private readonly DecisionService $decisions, private readonly ApplyService $applying)
+    public function __construct(private readonly AnalysisService $analysis, private readonly LlmClient $llm, private readonly DecisionService $decisions, private readonly ApplyService $applying, private readonly ProgressRules $rules)
     {
     }
 
@@ -109,6 +114,18 @@ class ProposalsController extends Controller
         }
 
         return self::ok(['item' => Presenter::item($i), 'proposal' => Presenter::proposalSummary($p->refresh())]);
+    }
+
+    public function learnerNote(Request $request, string $proposal): JsonResponse
+    {
+        [, $p] = $this->proposalFor($request, $proposal, 'act');
+        $data = $request->validate(['note' => ['nullable', 'string', 'max:500']]);
+        if (!in_array($p->status, Proposal::OPEN, true)) {
+            return self::fail('This proposal is already settled.', 409);
+        }
+        $p->forceFill(['learner_note' => trim((string) ($data['note'] ?? '')) ?: null])->save();
+
+        return self::ok(['learnerNote' => $p->learner_note, 'effectiveNote' => $this->rules->note($p)]);
     }
 
     public function apply(Request $request, string $proposal): JsonResponse
@@ -237,6 +254,7 @@ class ProposalsController extends Controller
 
         return Presenter::proposalSummary($p) + [
             'steps' => $p->run_id ? \Ulams\CourseBuilder\Models\Step::query()->where('run_id', $p->run_id)->orderBy('key')->get()->map(fn ($st) => ['id' => $st->id, 'groupKey' => str_starts_with($st->key, 'group:') ? substr($st->key, 6) : $st->key, 'status' => $st->status, 'error' => $st->error])->all() : [],
+            'learnerImpact' => ['learners' => $this->rules->impact($p, $p->status === 'applied' ? ['accepted'] : ['accepted']), 'note' => $this->rules->note($p)],
             'groups' => array_values($groups),
             'items' => $items->map(fn (ProposalItem $i) => Presenter::item($i, $labels))->all(),
         ];

@@ -189,6 +189,15 @@ final class BlueprintApplier
                 default => null,
             };
             $updated = $model !== null ? $model::query()->whereKey($entry->entity_id)->value('updated_at') : null;
+            if ($updated !== null && $entry->entity_type === 'gift_question') {
+                // admins change scores and categories all the time: only an edit of the question text is drift
+                $applied = $entry->applied_version_id ? \Ulams\CourseBuilder\Models\Version::query()->find($entry->applied_version_id) : null;
+                $was = $applied !== null ? ($this->desired($applied->document, (array) $session->brief)[$key]['data']['value'] ?? null) : null;
+                $now = \Ulams\TopicTypeGift\Models\GiftQuestion::query()->whereKey($entry->entity_id)->value('value');
+                if ($was === null || $now === $was) {
+                    continue;
+                }
+            }
             if ($updated !== null && $entry->updated_at !== null && Carbon::parse($updated)->gt($entry->updated_at)) {
                 $drift[$key] = (string) ($desired[$key]['data']['title'] ?? $entry->entity_type);
             }
@@ -349,10 +358,13 @@ final class BlueprintApplier
     private function question(array $item, ?int $existing, int $quizTopicId): int
     {
         $quizId = (int) \Ulams\Courses\Models\Topic::query()->findOrFail($quizTopicId)->topicable_id;
-        $dto = new GiftQuestionDto($quizId, $item['data']['value'], 1, $item['order'], null);
         if ($existing !== null) {
-            return $this->questions->update($dto, $existing)->getKey();
+            // an update keeps the score (and category) the author or an admin gave the question
+            $current = \Ulams\TopicTypeGift\Models\GiftQuestion::query()->find($existing);
+
+            return $this->questions->update(new GiftQuestionDto($quizId, $item['data']['value'], $current?->score ?? 1, $item['order'], $current?->category_id), $existing)->getKey();
         }
+        $dto = new GiftQuestionDto($quizId, $item['data']['value'], 1, $item['order'], null);
 
         return $this->questions->create($dto)->getKey();
     }
