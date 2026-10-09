@@ -6,10 +6,27 @@ operator-facing summary is the docs page *Install on MyDevil (shared hosting)*
 (`front/docs-site/src/content/docs/operators/install-mydevil.mdx`); the decision is
 [ADR 0091](../../docs/decisions/0091-shared-hosting-cron-workers-and-manual-tenant-database.md).
 
-> **Status: not run on a real account.** Everything here is written from MyDevil's published
-> documentation and from the ulams code; nobody had SSH access when it was written. Facts the account
-> must confirm are marked **(to confirm)**; `bin/check-host.sh` answers most of them in one run. Read
-> the limits in section 11 before you spend a weekend on it.
+> **Status: surveyed, not installed.** The scripts were not run on the account. The facts in
+> "Verified on the owner's account" below come from a read-only SSH survey of server s51 (2026-10-09);
+> everything else is from MyDevil's published documentation and the ulams code and is marked
+> **(to confirm)**. `bin/check-host.sh` answers the rest in one run. Read section 11 before you start.
+
+## Verified on the owner's account (read-only survey, 2026-10-09)
+
+| Fact | Value |
+|---|---|
+| Server, OS | `s51.mydevil.net`, FreeBSD 14.3 |
+| Plan | MD2 (50 GB SSD/NVMe), valid until 2026-12-18; 2FA on; the account also hosts the owner's other live sites (PHP and pointer types): never change them while testing |
+| Limits | max memory **4 GB** (`ulimit -m 4096000`), max user processes **70**, open files 3000, no disk quota shown, CPU time unlimited |
+| PHP | `php56` to `php85`; default CLI 8.3. `php84` has `pdo_pgsql`, `pgsql`, `redis`, `imagick`, `gd`, `intl`, `zip`, `bcmath`, `sodium`, `pcntl`, `posix`, `sockets`, `apcu`, `memcached`, `mbstring`, OPcache, `gmp`, `exif`: every extension ulams needs. CLI `memory_limit` 512M, `disable_functions` empty |
+| PostgreSQL | **16.10** on the shared server `pgsql51.mydevil.net`, created with `devil pgsql`; no databases yet. ulams is developed against 12 and its default for 0-2 is 17 (#41): 16 is in between and no migration uses a version-specific feature, so it should work, but a migrate and test run on 16 has not been done |
+| Node | `node16` to `node26`; default 22.22 |
+| Tools present | `redis-server`, `redis-cli`, `ffmpeg`, `ffprobe`, `screen`, `tmux`, `flock`, `rsync`, `git`, `curl`, `openssl`, `psql`, `pg_dump`. `composer84` is not on the path (not needed: `vendor/` is built elsewhere) |
+| Network | outbound HTTPS works (`api.anthropic.com` answers) |
+| Binexec | **off** (`devil binexec on` has not been run) |
+| Ports | `devil port list` is empty (no reserved ports) |
+| Hosting | existing www sites are PHP and pointer types; no Node app yet |
+| DNS / mail servers | `dns1`/`dns2.mydevil.net`, `mail51.mydevil.net` |
 
 ## What runs where
 
@@ -18,12 +35,12 @@ operator-facing summary is the docs page *Install on MyDevil (shared hosting)*
 | Laravel API (php-fpm via MyDevil's nginx) | **MyDevil**, PHP 8.4 | one vhost per tenant API host, all with the same document root |
 | PostgreSQL (platform + one database per tenant) | **MyDevil** | databases are made with `devil pgsql`, not by the app (ADR 0091) |
 | Queue workers, scheduler | **MyDevil cron**, every minute | `ulams:tenant:work-once` (no long-lived processes) |
-| Redis | not needed (database queue and cache); optional self-run | only the H5P service needs it |
-| H5P service, PDF service, mjml | MyDevil Node (Passenger) if you need them, or a small VPS | section 8; defer them |
+| Redis | not needed for the API (database queue and cache); a private `redis-server` (installed) on a unix socket for H5P and if you want it | section 9 |
+| H5P service, PDF service, mjml | MyDevil Node (Passenger), one site each | section 8 |
 | Learner front (Astro SSR), admin (static), content-origin proxy | **Cloudflare** (Workers / Pages) | see `deploy/vps-cloudflare` for the Worker side |
 | Object storage | **Cloudflare R2** | S3 API |
 | DNS, TLS, wildcards, caching | **Cloudflare** in front of everything | proxied records |
-| ffmpeg video conversion | only if the account has `ffmpeg` (to confirm) | otherwise turn video upload off |
+| ffmpeg video conversion | MyDevil (`ffmpeg` is installed; verified) | CPU and process limits apply |
 
 The VPS variant is `deploy/vps-cloudflare` (another branch of work; link: <https://github.com/ulams-dev/ulams/tree/main/deploy/vps-cloudflare> once merged). Use it when a limit in section 11 bites.
 
@@ -65,21 +82,21 @@ It prints the PHP extensions of `php84`, the tools present (`ffmpeg`, `redis-ser
 `node22`, ...), outbound reachability (Anthropic API), `devil info`, `ulimit` and the process count.
 Send the output to the repository (an issue) so the "to confirm" items here can be closed.
 
-Enable running your own software and make PHP 8.4 the CLI default (the account default is 8.3; the CLI
-binaries are `php84`, `composer84`: <https://pomoc.mydevil.net/PHP/>, <https://pomoc.mydevil.net/Composer/>):
+Make PHP 8.4 the CLI default (the account default is 8.3; the CLI binary is `php84`:
+<https://pomoc.mydevil.net/PHP/>). Binexec (running your own binaries from your home directory, off on
+this account) is **not needed for the plan below** (every tool it uses is a system binary); turn it on
+only if something refuses to start, and only with the owner's approval:
 
 ```sh
-devil binexec on        # then log out and in again: https://pomoc.mydevil.net/Binexec/
+# devil binexec on      # only if needed; log out and in again: https://pomoc.mydevil.net/Binexec/
 mkdir -p ~/bin && ln -sf /usr/local/bin/php84 ~/bin/php
 echo 'export PATH=$HOME/bin:$PATH' >> ~/.bash_profile && . ~/.bash_profile
 php -v                  # 8.4.x
 ```
 
 Required PHP extensions (from `api/composer.json` and `api/docker/php/install.sh`): `pdo_pgsql`, `redis`
-(only with Redis), `intl`, `gd`, `zip`, `bcmath`, `opcache`, `sodium`, `dom`, `mbstring`, `exif`.
-MyDevil lists `sodium` as an extra module loaded with `anp.extensions = "sodium"` in `~/.user.ini` for
-older versions (the wiki table stops at 8.2); the others are expected in the base build **(to confirm)**.
-`pcntl` is optional: without it `--timeout` of a queue job is not enforced and `--once` still works.
+(only with Redis), `intl`, `gd`, `zip`, `bcmath`, `opcache`, `sodium`, `dom`, `mbstring`, `exif`. All are
+present in `php84` on the account (verified), including `pcntl`, so `--timeout` of queue jobs is enforced.
 
 ## 2. DNS and the platform host
 
@@ -107,7 +124,7 @@ devil www options api.example.com sslonly on
 ```
 
 The PHP limits go to `~/domains/<host>/.user.ini` (`memory_limit`, `upload_max_filesize`; the script
-writes them). `memory_limit` of the account is not published **(to confirm)**; the container uses 1 GB.
+writes them). The CLI `memory_limit` is 512M (verified); the web value is set by `.user.ini` (the script writes 768M); the container uses 1 GB.
 The `open_basedir` option and `.user.ini` are documented at <https://pomoc.mydevil.net/PHP/>.
 
 Whether `devil www add` accepts a wildcard name (`*.api.example.com`) is not documented **(to
@@ -123,11 +140,11 @@ devil pgsql db add ulams          # asks for a password; a same-named user is cr
 devil pgsql list                  # the exact database and user names (an account prefix may be added)
 ```
 
-The host is `pgsqlN.mydevil.net` for server `sN.mydevil.net`. Put the names and password in `api/.env`
+The host is `pgsqlN.mydevil.net` for server `sN.mydevil.net` (here `pgsql51.mydevil.net`). Put the names and password in `api/.env`
 (`DB_*`) and the prefix in `TENANCY_DATABASE` (e.g. `m1234_{slug}`). ulams needs no PostgreSQL
 extensions (no migration runs `CREATE EXTENSION`); MyDevil offers `pg_trgm`, `unaccent`, `pgcrypto`,
 `uuid-ossp`, `vector` and others per database with `devil pgsql extensions <db> <name>`. The server
-version is not stated on the wiki **(to confirm: `select version()`; ulams is developed against 12)**.
+is PostgreSQL 16.10 (verified; see the table above for the compatibility note).
 Remote access is only through an SSH tunnel (`ssh -L`), so run `psql` and `pg_dump` on the account.
 
 ## 4. Build, upload, install
@@ -273,28 +290,78 @@ to the public host and keep the `*_INTERNAL_TOKEN` secrets. The **H5P service ne
 and reads the tenants' env files from the exported config directory
 (`H5P_SERVICE_CONFIG_DIR`, `ulams:h5p:export-config`); both are documented in `api/h5p/README.md`.
 Nothing here was run on MyDevil **(to confirm: native modules, memory, Passenger startup of a module
-that listens itself)**. If you want H5P, a small VPS is the safer home for it.
+that listens itself)**. The account has no Node app yet and no reserved ports; Passenger sites need
+neither a port nor binexec (the wiki: "port reservation is not needed for `nodejs` sites"). The
+first site to try is the PDF service (no Redis, no state).
 
-The Astro front can also run as a `nodejs` site, but each host is its own Passenger application with
-its own processes, so it does not scale to a wildcard of tenants: use Cloudflare Workers.
+The Astro front (`output: server`, `@astrojs/node` standalone, `dist/server/entry.mjs`) can also run as a
+`nodejs` site, with `app.js` doing `import('.../dist/server/entry.mjs')`. Each host is its own Passenger
+application with its own processes, so it suits one to three tenants (see the resource plan) and does
+not scale to a wildcard of tenants: use Cloudflare Workers beyond that. Passenger stops an app after 24 h
+without requests and starts it on the next, so the first request after a quiet day is slow.
+
+### Resource plan (MD2: 4 GB, 70 processes)
+
+The two hard limits are **70 processes** (every `sh`, `flock`, `php`, `node`, `screen` and SSH session
+counts) and **4 GB of memory** for everything the account runs, including the owner's other sites.
+The plan keeps ulams to about half of both for 3 to 6 tenants:
+
+| Consumer | Processes | Memory (estimate) |
+|---|---|---|
+| php-fpm for the API vhosts (shared with the other PHP sites) | 5 to 15 | 100 to 200 MB each at work, up to the 768M limit on a big request |
+| Cron `default` pass (`sh`, `flock`, `php`, child tenant steps) | 3 to 4 | up to 256 MB (`--memory=256`) |
+| Cron `builder` pass | 3 to 4 while a job runs | up to 512 MB |
+| Cron `long` pass (video: `php` plus `ffmpeg`) | 4 to 5 while a job runs | 512 MB plus ffmpeg (a few hundred MB) |
+| Redis (`redis-server` and `screen`) | 2 | `maxmemory 128mb` |
+| PDF service (Passenger + node) | 2 to 3 | 100 to 200 MB |
+| H5P service (Passenger + node) | 2 to 3 | 200 to 400 MB |
+| Astro front, one Passenger app per tenant host | 2 to 3 each | 150 to 300 MB each |
+| SSH sessions | 3 to 5 | small |
+
+Worst case with 3 tenants' fronts: about 50 processes and 2.7 GB with all three cron lines busy; with 6
+tenants' fronts on MyDevil it is 60 to 70 processes and the limit bites, so past three tenants put the
+fronts on Cloudflare (section 7) and keep only the API, PDF and H5P here. All cron lines run under
+`flock`, so each group is at most one pass at a time; tenants within a pass are sequential, never in
+parallel. Cap Passenger with `devil www options <host> processes 1`. These are estimates: watch
+`ps -U $USER | wc -l` and `top -U $USER` during the first week.
 
 ## 9. Redis (optional)
 
-Not needed for the API on this variant. If you want it (the H5P service does):
+Not needed for the API on this variant. The H5P service needs it (locks), and you may want it for the
+queue and cache once latency matters. `redis-server` and `redis-cli` are installed system-wide on the
+account (verified), so:
+
+- **No reserved port is needed**: the script runs Redis on a **unix socket** (`port 0`) in `~/ulams/redis`
+  (mode 700) with a password, which is what the wiki recommends (<https://pomoc.mydevil.net/Redis/>).
+  `devil port add tcp <port>` is only for a TCP listener; if you use one, bind `127.0.0.1` and keep the
+  password, because every user of the server can reach the loopback interface.
+- **Binexec is probably not needed**: it governs your own binaries (<https://pomoc.mydevil.net/Binexec/>);
+  `/usr/local/bin/redis-server` is a system one. Start without it; ask the owner to turn it on only if the
+  start fails **(to confirm)**.
+- It runs in `screen`, started by `redis-start.sh`; there is no restart policy, so the crontab has an
+  `@reboot` line and a five-minute check.
 
 ```sh
-devil binexec on
-devil port add tcp 16379 "ulams redis"        # only needed for TCP; the script uses a unix socket
+sh ~/ulams/bin/redis-start.sh                  # starts redis-server in screen on ~/ulams/redis/redis.sock
 # api/.env: REDIS_CLIENT=phpredis REDIS_HOST=/usr/home/LOGIN/ulams/redis/redis.sock REDIS_PORT=0 REDIS_PASSWORD=...
-sh ~/ulams/bin/redis-start.sh                  # runs redis-server in screen; add the @reboot lines of the crontab
+# H5P service: REDIS_URL=unix:///usr/home/LOGIN/ulams/redis/redis.sock  (node-redis 4; plus the password)
 ```
 
-Redis is a process you start yourself (<https://pomoc.mydevil.net/Redis/>): `screen redis-server redis.conf`,
-unix socket recommended, **a password is mandatory** because every user of the server can reach
-`127.0.0.1`. It is not Valkey, it stops on a server reboot (the `@reboot` line starts it), and its memory
-counts against your account. Then set `QUEUE_CONNECTION=redis`, `CACHE_DRIVER=redis`, and
-`ULAMS_QUEUE_DRIVER=redis` for the cron scripts. Memcached is available too
+Then, to move the API to Redis: `QUEUE_CONNECTION=redis`, `CACHE_DRIVER=redis`, `ULAMS_QUEUE_DRIVER=redis`
+for the cron scripts, and (optionally) a `screen` worker (below). It is not Valkey, it stops on a
+server reboot, and its memory counts against the account. Memcached is also installed
 (<https://pomoc.mydevil.net/Memcached/>) but ulams does not use it.
+
+### Workers: cron or background processes?
+
+Both work; cron is the default. Background processes (`screen`/`tmux` are installed) are allowed by the
+terms and the wiki shows them for Redis and PHP's built-in server, and they do not need binexec when they
+are `php84`, a system binary. But each long-lived `php artisan queue:work` holds 100 to 250 MB and a
+process slot forever, per tenant and per queue (`workers.sh` runs three per tenant: 3 tenants = 9
+processes and over 1 GB), they die with the server's reboots, and nothing restarts them. Cron passes only
+use memory while there is work, and a crashed pass is replaced a minute later. Use cron; add one
+`screen` worker (`workers.sh queue` needs bash, which exists at `/usr/local/bin/bash`) only for a queue
+where a minute of latency is too much, after Redis is in place.
 
 ## 10. Upgrade, backup, rollback
 
@@ -316,12 +383,11 @@ confirm**). R2 data is not in these dumps: enable R2 object versioning or `rclon
 
 ## 11. Limits and unknowns
 
-- **RAM, CPU and process limits per plan are not published** (the offer page lists disk, unlimited sites,
-  e-mail and databases; a third-party listing mentions paid add-ons for RAM and processes, which implies
-  limits exist). The ulams images assume gigabytes (PHP `memory_limit` 1 GB, up to 10 workers). Read
-  `devil info` and `ulimit -a` on the account and size accordingly.
-- Which plan you have decides the disk (25, 50, 100 or 200 GB SSD/NVMe) and the price; ask the owner
-  (issue `owner-action`).
+- **Limits on the owner's MD2 (verified):** 4 GB memory and **70 processes** for the whole account,
+  3000 open files. MyDevil does not publish limits per plan, so MD1, MD3 and MD4 differ **(to confirm)**.
+  The ulams images assume gigabytes and up to ten workers per container; the cron design and the resource
+  plan above stay inside 70 processes for 3 to 6 tenants.
+- The plan is MD2, valid until 2026-12-18: renew or decide before then (issue `owner-action`).
 - No Docker, no root, no systemd, no supervisor. Long-lived processes are allowed by the terms (only P2P
   software and some game and IRC servers are forbidden: <https://www.mydevil.net/dokumenty/zalacznik-nr-2-do-regulaminu-limity-bezpieczenstwa-i-ograniczenia/>)
   and the wiki runs Redis and PHP's built-in server in `screen`, but there is no restart policy and the
@@ -329,9 +395,9 @@ confirm**). R2 data is not in these dumps: enable R2 object versioning or `rclon
 - Web requests have a time limit (error 504 on the error-page list); PHP scripts "without time limits"
   run from the CLI. Large SCORM (512 MB) and course imports (1 GB) through PHP uploads will hit limits
   **(to confirm)**; `upload_max_filesize` is set in `.user.ini`.
-- ffmpeg: not documented. `check-host.sh` looks for it. Without it, video conversion (the long-job
-  queue) cannot run; do not enable video upload.
-- Outbound network (Anthropic, R2, SMTP) is not documented as restricted **(to confirm with `check-host.sh`)**.
+- ffmpeg and ffprobe are installed (verified). Video conversion is CPU-bound and counts against the 70
+  processes and 4 GB; keep it to one job at a time (the single `long` cron line does).
+- Outbound HTTPS works (verified for `api.anthropic.com`); R2 and SMTP ports are to confirm with `check-host.sh`.
 - MyDevil's nginx uses its own `.htaccess` emulation; the app's `public/.htaccess` is standard
   (front controller and `Authorization` header). Check that the `Authorization` header reaches PHP
   (login works) **(to confirm)**.

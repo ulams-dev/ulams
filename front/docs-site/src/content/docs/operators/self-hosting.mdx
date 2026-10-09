@@ -29,6 +29,13 @@ this page renders them from there, so the page and the files cannot drift apart.
   file is validated with `docker compose config`, but run it on a staging server first.
 </Aside>
 
+<Aside type="note" title="Other ways to host">
+  A cheaper, smaller option is the API on a MyDevil shared hosting account with the front on
+  Cloudflare: [Install on MyDevil](/operators/install-mydevil/) (not tested end to end; see its limits).
+  The VPS and Cloudflare variant is in
+  [`deploy/vps-cloudflare`](https://github.com/ulams-dev/ulams/tree/main/deploy/vps-cloudflare).
+</Aside>
+
 ## Before you start
 
 - A server that meets the [requirements](/operators/requirements/), with Docker and Compose v2.

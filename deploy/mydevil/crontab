@@ -13,7 +13,7 @@ ULAMS_HOME=/usr/home/LOGIN/ulams
 #    while a job runs, so at most one builder worker exists; the next minute starts it again.
 * * * * * /usr/local/bin/flock -n /usr/home/LOGIN/ulams/run/builder.lock /bin/sh /usr/home/LOGIN/ulams/bin/cron-tick.sh builder >> /usr/home/LOGIN/ulams/logs/cron-builder.log 2>&1
 
-# 3. Every minute: video and course clone jobs (up to 5 hours). Needs ffmpeg and a host that lets a process run that long (to confirm).
+# 3. Every minute: video and course clone jobs (up to 5 hours). ffmpeg is installed (verified); whether the host lets a process run that long is to confirm.
 * * * * * /usr/local/bin/flock -n /usr/home/LOGIN/ulams/run/long.lock /bin/sh /usr/home/LOGIN/ulams/bin/cron-tick.sh long >> /usr/home/LOGIN/ulams/logs/cron-long.log 2>&1
 
 # 4. Daily: backup (database dumps and env files), keeps 7 days.

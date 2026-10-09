@@ -3,7 +3,7 @@
 # default setup uses the database for queues and cache. Redis on MyDevil is a process you run
 # yourself: it is not a service, it stops when the server reboots, and every other user of the server
 # can reach 127.0.0.1, so it listens on a unix socket in your home directory with a password.
-# Needs `devil binexec on`, redis-server in PATH (to confirm), and REDIS_PASSWORD in api/.env.
+# redis-server is a system binary (binexec is probably not needed, to confirm); needs REDIS_PASSWORD in api/.env.
 DIR="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=lib.sh
 . "$DIR/lib.sh"
