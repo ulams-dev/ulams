@@ -18,6 +18,9 @@ class AuthenticateXapiAccess
 {
     public const ACCESS_ATTRIBUTE = 'xapi_access';
 
+    /** Claims of the cmi5 session token, when that is what authenticated the request. */
+    public const SESSION_ATTRIBUTE = 'xapi_session';
+
     public function handle(Request $request, Closure $next): mixed
     {
         $source = (string) $request->route('source');
@@ -34,8 +37,18 @@ class AuthenticateXapiAccess
             ? BasicHttpCredentials::query()->find($access->credentials_id)
             : null;
 
-        if (!(new AccessTokenGuard())->check($credentials, $request)) {
+        $guard = new AccessTokenGuard();
+
+        if (!$guard->check($credentials, $request)) {
             throw XapiException::unauthorized();
+        }
+
+        if (($session = $guard->session()) !== null) {
+            // A session token works on the access it was issued for, nowhere else.
+            if ($session['x'] !== strtolower((string) $access->uuid)) {
+                throw XapiException::unauthorized();
+            }
+            $request->attributes->set(self::SESSION_ATTRIBUTE, $session);
         }
 
         $request->attributes->set(self::ACCESS_ATTRIBUTE, $access);

@@ -9,6 +9,7 @@ use Illuminate\Routing\Controller;
 use Ulams\Lrs\Http\Middleware\AuthenticateXapiAccess;
 use Ulams\Lrs\Models\Access;
 use Ulams\Lrs\Services\Contracts\XapiStatementServiceContract;
+use Ulams\Lrs\Xapi\SessionScope;
 use Ulams\Lrs\Xapi\StatementValidator;
 use Ulams\Lrs\Xapi\XapiException;
 
@@ -30,7 +31,13 @@ class XapiStatementController extends Controller
             throw XapiException::badRequest('The body must be a statement or a list of statements.');
         }
 
-        return new JsonResponse($this->statements->store($batch, $this->access($request)));
+        $session = SessionScope::of($request);
+        $session?->assertOwnStatements($batch);
+
+        $ids = $this->statements->store($batch, $this->access($request));
+        $session?->reportCompletion($batch);
+
+        return new JsonResponse($ids);
     }
 
     public function put(Request $request): Response
@@ -50,8 +57,12 @@ class XapiStatementController extends Controller
             throw XapiException::badRequest('The statement id does not match the [statementId] parameter.');
         }
 
+        $session = SessionScope::of($request);
+        $session?->assertOwnStatements([$statement]);
+
         $statement['id'] = $id;
         $this->statements->store([$statement], $this->access($request));
+        $session?->reportCompletion([$statement]);
 
         return new Response('', Response::HTTP_NO_CONTENT);
     }
@@ -59,6 +70,7 @@ class XapiStatementController extends Controller
     public function get(Request $request): JsonResponse
     {
         $access = $this->access($request);
+        $session = SessionScope::of($request);
         $statementId = $request->query('statementId');
         $voidedId = $request->query('voidedStatementId');
 
@@ -69,10 +81,20 @@ class XapiStatementController extends Controller
         if ($statementId !== null || $voidedId !== null) {
             $single = $this->statements->find((string) ($statementId ?? $voidedId), $access, $voidedId !== null);
 
+            if ($session && !$session->isOwnStatement($single)) {
+                throw XapiException::notFound();
+            }
+
             return $this->json($single);
         }
 
-        $result = $this->statements->query($request->query(), $access, $request->url());
+        $filters = $request->query();
+        if ($session) {
+            // a session reads its own registration only
+            $filters['registration'] = $session->registration();
+        }
+
+        $result = $this->statements->query($filters, $access, $request->url());
 
         return $this->json($result);
     }
