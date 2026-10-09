@@ -46,7 +46,7 @@ test("the zip is a valid package: manifest, posters for every step, licences, no
   expect(validateManifest(manifest, files)).toEqual([]);
   expect(manifest.steps).toHaveLength(44);
   expect(manifest.licence).toBe("MIT");
-  for (const s of manifest.steps) expect(statSync(join(dir, s.poster)).size).toBeGreaterThan(5_000);
+  for (const s of manifest.steps) expect(statSync(join(dir, s.poster)).size).toBeGreaterThan(4_000);
   for (const f of ["LICENSE.txt", "NOTICE.txt", "licenses/inter-OFL.txt", "licenses/roboto-mono-OFL.txt", "earth_daymap.jpg"]) expect(files.has(f), f).toBe(true);
   expect([...files].filter((f) => /\.(mp3|wav|ogg)$/i.test(f) || (!f.startsWith("posters/") && /moon/i.test(f)))).toEqual([]);
   expect(statSync(zip).size).toBeLessThan(5 * 1024 * 1024);

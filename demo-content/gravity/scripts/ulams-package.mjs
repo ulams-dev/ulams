@@ -20,6 +20,7 @@ import { buildManifest, version } from "./manifest.mjs";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = join(root, "dist");
 const noPosters = process.argv.includes("--no-posters");
+const MIN_POSTER_BYTES = 4_000; // the plainest scene is about 8 KB; a black frame (WebGL did not render in time) is about 2 KB
 
 await build({ root, logLevel: "warn" });
 
@@ -36,9 +37,15 @@ if (!noPosters) {
     for (let id = queue.shift(); id; id = queue.shift()) {
       await page.goto(`${server.url}/index.html?ulams-poster#${id}`);
       await page.waitForFunction(() => document.body.classList.contains("ulams-booted"), null, { timeout: 60_000 });
-      await page.waitForTimeout(3500); // let the step's animation develop
-      const png = await page.screenshot({ type: "png" });
-      await sharp(png).webp({ quality: 70 }).toFile(join(dist, "posters", `${id}.webp`));
+      // let the step's animation develop; a slow software GL (CI) may still show a blank frame, so look again
+      let webp;
+      for (let attempt = 0; attempt < 4; attempt++) {
+        await page.waitForTimeout(attempt === 0 ? 3500 : 4000);
+        webp = await sharp(await page.screenshot({ type: "png" })).webp({ quality: 70 }).toBuffer();
+        if (webp.length > MIN_POSTER_BYTES) break;
+      }
+      if (webp.length <= MIN_POSTER_BYTES) throw new Error(`the poster of "${id}" is blank (${webp.length} bytes): WebGL did not render`);
+      writeFileSync(join(dist, "posters", `${id}.webp`), webp);
       process.stdout.write(`poster ${id}\n`);
     }
     await page.close();
