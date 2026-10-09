@@ -109,15 +109,31 @@ redeploy. Secret keys are stored but not exposed publicly. See [Settings](/admin
 
 Payment statuses: `new`, `redirect`, `paid`, `failed`, `cancelled`, `refunded`.
 
+### Stripe webhook and 3-D Secure
+
+Stripe confirms payments to `POST /api/payments-gateways/webhook/stripe` on the API host (one URL
+per Stripe account). In the Stripe dashboard, add an endpoint with that URL and subscribe it to
+`payment_intent.succeeded`, `payment_intent.payment_failed` and `payment_intent.canceled`. Copy the
+endpoint's signing secret (`whsec_...`) into `PAYMENTS_STRIPE_WEBHOOK_SECRET` (or the administrable
+`ulams_payments.drivers.stripe.webhook_secret` setting). Without the secret the webhook answers 400
+and only the `payment_intent` returned on the checkout redirect can confirm a payment.
+
+When the card needs 3-D Secure, `POST /api/cart/pay` returns a `redirect_url` in `data`. The legacy
+learner front sends the browser to that URL; the return goes to the `return_url` of the request.
+
 ## How a purchase grants access today
 
 <Steps>
 
 1. The learner adds products to the cart (`POST /api/cart/products`) or buys a single product
-   directly (`POST /api/product/{id}/pay`).
+   directly (`POST /api/product/{id}/pay`, which answers 403 for a product that is not
+   purchasable or whose limits are reached).
 2. `POST /api/cart/pay` turns the cart into an **order** (status `PROCESSING`, or
    `TRIAL_PROCESSING` for a trial) and creates a **payment** for it. Zero-value orders go
-   through the `free` driver and are paid immediately.
+   through the `free` driver and are paid immediately. Price, currency, product type and trial
+   settings always come from the product; of the request body only `gateway`, `payment_method`,
+   `return_url`, `email` and `channel` reach the payment drivers, and anything else (such as
+   `currency`, `amount` or `has_trial`) is ignored.
 3. For Stripe or Przelewy24, the payment either succeeds at once or returns a redirect URL. The
    gateway later calls `/api/payments-gateways/callback/{payment}` (Stripe also has
    `/api/payments-gateways/webhook/stripe`). The callback runs in a transaction with the payment

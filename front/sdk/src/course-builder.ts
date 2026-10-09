@@ -4,6 +4,7 @@
  * reference app points `baseUrl` at its BFF (`/studio/api`), which adds the author's token.
  */
 import { ApiError, type ClientOptions } from "./client.ts";
+import type { StalenessSummary } from "./living-course.ts";
 import { connectEventStream, type AgUiEvent, type StreamStatus } from "./ag-ui.ts";
 
 export type SessionStatus =
@@ -27,7 +28,27 @@ export interface CourseBrief {
   assessments: { perLessonQuiz: boolean; finalTest: boolean; passScore: number };
   language: string;
   notes?: string;
+  /** Brief v2: a v1 brief has none of these (price reads as free, the site is left as it is). */
+  theme?: { preset: "coffee" | "oncall" | "nightsky"; accent?: string };
+  pricing?: { mode: "free" | "paid"; amountMinor?: number; currency?: string };
+  site?: { mode: "current" | "new"; slug?: string };
   decidedBy: Record<string, "author" | "default"> | [];
+}
+
+export interface PublishCheck {
+  blocking: Array<{ code: string; message: string }>;
+  warnings: Array<{ code: string; message: string; elementId?: string }>;
+  facts: {
+    courseId: number | null;
+    title: string | null;
+    url: string | null;
+    published: boolean;
+    price: { mode: "free" | "paid"; amountMinor: number | null; currency: string | null; label: string; suggestion: { amountMinor: number; currency: string; rationale: string } | null };
+    theme: { preset: string; accent?: string; adjustedAccent: string | null } | null;
+    counts: { modules?: number; lessons?: number; minutes?: number; questions?: number };
+    applyNotes: string[];
+    landingValid: boolean;
+  };
 }
 
 export interface BuilderCost {
@@ -63,6 +84,8 @@ export interface SessionSummary {
   createdAt?: string;
   updatedAt?: string;
   costMicroUsd?: number;
+  /** How far the course is behind its sources (added by the Living Course package; absent without it). */
+  freshness?: StalenessSummary;
 }
 
 /**
@@ -96,6 +119,14 @@ export interface BuilderState {
   session: SessionSummary;
   brief: CourseBrief | null;
   briefRows: Array<{ key: string; label: string; value: string }>;
+  /** True when the author may create a new site for the course (platform operators). */
+  canCreateSite?: boolean;
+  /** Progress of "move this course to a new site". */
+  newSite?: { slug: string; status: "queued" | "provisioning" | "transferring" | "done" | "failed"; error?: string | null; studioUrl?: string; adminUrl?: string; invited?: boolean } | null;
+  /** A model-suggested price for a paid course without an amount; the author confirms it in the brief. */
+  priceSuggestion?: { amountMinor: number; currency: string; rationale: string; suggested: true } | null;
+  /** Notes from the last apply (a skipped theme, a product that was not created). */
+  applyNotes?: string[];
   cost: BuilderCost;
   sources: BuilderSource[];
   aiEnabled: boolean;
@@ -161,13 +192,15 @@ export interface Blueprint {
 export interface BlueprintVersion {
   id: string;
   number: number;
-  kind: "outline" | "content" | "patch" | "author" | "restore";
+  kind: "outline" | "content" | "patch" | "author" | "restore" | "update";
   origin: "ai" | "author" | "restore";
   status: "proposed" | "approved" | "rejected" | "superseded";
   reason: string | null;
   parentId: string | null;
   elementId: string | null;
   document: Blueprint;
+  /** Source revisions an `update` version applied: source id → revision id. */
+  sourceRevisions?: Record<string, string> | null;
   /** fragment id → "§2.3 Title" */
   fragments: Record<string, string>;
   createdAt: string;
@@ -244,7 +277,7 @@ export function createCourseBuilderClient(options: ClientOptions & { prefix?: st
       throw new ApiError(0, path, null, `API unreachable on ${path}: ${(error as Error).message}`);
     }
     const text = await response.text();
-    let json: { data?: T; message?: string } | null = null;
+    let json: { data?: T; message?: string } | null;
     try {
       json = text ? JSON.parse(text) : null;
     } catch {
@@ -332,7 +365,12 @@ export function createCourseBuilderClient(options: ClientOptions & { prefix?: st
       redo: (sessionId: string) => call<{ currentVersionId: string; runId: string | null; state: BuilderState }>("POST", `/sessions/${id(sessionId)}/redo`),
     },
     apply: (sessionId: string) => call<{ runId: string }>("POST", `/sessions/${id(sessionId)}/apply`),
-    publish: (sessionId: string) => call<{ courseId: number; published: boolean }>("POST", `/sessions/${id(sessionId)}/publish`),
+    publish: (sessionId: string, acknowledgedWarnings = false) =>
+      call<{ courseId: number; published: boolean }>("POST", `/sessions/${id(sessionId)}/publish`, acknowledgedWarnings ? { acknowledgedWarnings: true } : {}),
+    /** Provisions a new site for the course and moves the session there (platform operators). */
+    newSite: (sessionId: string, slug?: string, name?: string) => call<NonNullable<BuilderState["newSite"]>>("POST", `/sessions/${id(sessionId)}/new-site`, { ...(slug ? { slug } : {}), ...(name ? { name } : {}) }),
+    /** Blocking items and warnings before publishing (the publish summary). */
+    publishCheck: (sessionId: string) => call<PublishCheck>("GET", `/sessions/${id(sessionId)}/publish-check`),
     usage: (sessionId: string) => call<{ total: BuilderCost; byTask: UsageRow[] }>("GET", `/sessions/${id(sessionId)}/usage`),
     /** AG-UI event stream with resume; resolves when `signal` aborts or access is refused. */
     events: (

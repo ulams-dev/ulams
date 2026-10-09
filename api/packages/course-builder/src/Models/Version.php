@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $session_id
  * @property int $number
  * @property string|null $parent_id
- * @property string $kind outline | content | patch | author | restore
+ * @property string $kind outline | content | patch | author | restore | update
  * @property array $document
  * @property array|null $diff_from_parent
  * @property string $origin ai | author | restore
@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $status proposed | approved | rejected | superseded
  * @property string|null $element_id
  * @property array|null $ai_call_ids
+ * @property array|null $source_revisions {sourceId: revisionId} this version was written from
  */
 class Version extends Model
 {
@@ -39,6 +40,7 @@ class Version extends Model
         'document' => 'array',
         'diff_from_parent' => 'array',
         'ai_call_ids' => 'array',
+        'source_revisions' => 'array',
         'number' => 'integer',
         'decided_at' => 'datetime',
     ];

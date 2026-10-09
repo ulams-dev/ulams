@@ -2,7 +2,7 @@ import * as React from "react";
 import type { Category } from "@ulams/sdk/types";
 import { ReactNode, useRef } from "react";
 import { useOnClickOutside } from "../../../hooks/useOnClickOutside";
-import { contrast } from "chroma-js";
+import chroma from "chroma-js";
 import { Title, Checkbox, Button } from "../../../";
 import Drawer from "rc-drawer";
 import { useTranslation } from "react-i18next";
@@ -182,7 +182,7 @@ const CategoriesDropdown: React.FC<CategoriesProps> = (props) => {
 
   const cts = React.useMemo(() => {
     try {
-      return contrast("#fff", rawBackground) >= 1.85;
+      return chroma.contrast("#fff", rawBackground) >= 1.85;
     } catch {
       return false;
     }

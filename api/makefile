@@ -45,6 +45,10 @@ swagger-generate:
 h5p-seed:
 	- docker compose exec h5p node dist/cli/seed.js --samples
 
+# LiaScript SCORM player build (not in git); init.sh also runs this on container start when it is missing
+liascript-player:
+	docker compose exec api sh packages/liascript/bin/fetch-player.sh
+
 node-packages:
 # install globally at /usr/bin/mjml
 	- docker compose exec api bash -c "npm install -g mjml"

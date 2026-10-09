@@ -36,6 +36,7 @@ final class GenerationService
         private readonly Surfaces $surfaces,
         private readonly EventLog $events,
         private readonly BlueprintApplier $applier,
+        private readonly PriceService $prices,
     ) {
     }
 
@@ -55,10 +56,10 @@ final class GenerationService
         return Version::query()->findOrFail($run->input['outlineVersionId'])->document;
     }
 
-    /** Creates the steps of a stage and dispatches the first window. */
-    private function openStage(Run $run, string $stage, array $outline, array $brief): void
+    /** The step keys of a stage, in dispatch order. */
+    private function stageKeys(string $stage, array $outline, array $brief): array
     {
-        $keys = match ($stage) {
+        return match ($stage) {
             'lessons' => array_map(fn ($i) => 'lesson:' . $i['lesson']['id'], iterator_to_array(Blueprint::lessons($outline), false)),
             'grounding' => array_map(fn ($i) => 'grounding:' . $i['lesson']['id'], iterator_to_array(Blueprint::lessons($outline), false)),
             'quizzes' => [
@@ -67,11 +68,23 @@ final class GenerationService
             ],
             'metadata' => ['metadata'],
         };
-        $run->forceFill(['stage' => $stage])->save();
-        $this->events->stepStarted($run, $stage);
+    }
+
+    /** @param array<int,string> $keys */
+    private function createSteps(Run $run, string $stage, array $keys): void
+    {
         foreach ($keys as $key) {
             Step::query()->firstOrCreate(['run_id' => $run->id, 'key' => $key], ['stage' => $stage, 'status' => 'pending']);
         }
+    }
+
+    /** Opens the first stage of a new run: creates its steps and dispatches the first window. */
+    private function openStage(Run $run, string $stage, array $outline, array $brief): void
+    {
+        $keys = $this->stageKeys($stage, $outline, $brief);
+        $run->forceFill(['stage' => $stage])->save();
+        $this->events->stepStarted($run, $stage);
+        $this->createSteps($run, $stage, $keys);
         $this->publishProgress($run);
         if ($keys === []) {
             $this->advance($run);
@@ -81,16 +94,28 @@ final class GenerationService
         $this->dispatchWindow($run, $stage);
     }
 
+    /**
+     * Queues pending steps of a stage up to the concurrency window. The count and the claim happen
+     * under the run lock, so workers finishing steps at the same moment cannot overfill the window;
+     * the jobs are dispatched after the commit.
+     */
     private function dispatchWindow(Run $run, string $stage): void
     {
         $limit = max(1, (int) config('course_builder.limits.lesson_concurrency', 4));
-        $running = Step::query()->where('run_id', $run->id)->where('stage', $stage)->whereIn('status', ['queued', 'running'])->count();
-        $free = $limit - $running;
-        foreach (Step::query()->where('run_id', $run->id)->where('stage', $stage)->where('status', 'pending')->orderBy('created_at')->orderBy('key')->limit(max(0, $free))->get() as $step) {
-            $claimed = Step::query()->whereKey($step->id)->where('status', 'pending')->update(['status' => 'queued']);
-            if ($claimed) {
-                StepJob::dispatchFor($step->id);
+        $claimed = DB::transaction(function () use ($run, $stage, $limit) {
+            Run::query()->lockForUpdate()->find($run->id);
+            $running = Step::query()->where('run_id', $run->id)->where('stage', $stage)->whereIn('status', ['queued', 'running'])->count();
+            $ids = [];
+            foreach (Step::query()->where('run_id', $run->id)->where('stage', $stage)->where('status', 'pending')->orderBy('created_at')->orderBy('key')->limit(max(0, $limit - $running))->get() as $step) {
+                if (Step::query()->whereKey($step->id)->where('status', 'pending')->update(['status' => 'queued'])) {
+                    $ids[] = $step->id;
+                }
             }
+
+            return $ids;
+        });
+        foreach ($claimed as $id) {
+            StepJob::dispatchFor($id);
         }
     }
 
@@ -132,10 +157,16 @@ final class GenerationService
         $this->dispatchWindow($run, $step->stage);
     }
 
-    /** Moves to the next stage once every step of the current one is done. */
+    /**
+     * Moves to the next stage once every step of the current one is done. The whole transition
+     * (closing the stage, creating the next stage's steps, writing `stage`) is one transaction under
+     * the run lock, so workers that finish the last steps of a stage at the same moment cannot both
+     * advance, and a worker that arrives late sees the next stage already open with its steps. Events
+     * and job dispatches follow the commit and belong to the one worker that made the transition.
+     */
     public function advance(Run $run): void
     {
-        $next = DB::transaction(function () use ($run) {
+        $transition = DB::transaction(function () use ($run) {
             $locked = Run::query()->lockForUpdate()->find($run->id);
             if ($locked === null || in_array($locked->status, ['cancelled', 'failed', 'finished'], true)) {
                 return null;
@@ -151,24 +182,42 @@ final class GenerationService
                 return null;
             }
             $order = array_keys(self::STAGES);
-            $index = array_search($locked->stage, $order, true);
-            $nextStage = $order[$index + 1] ?? 'assemble';
-            $locked->forceFill(['stage' => $nextStage === 'assemble' ? 'assembling' : $nextStage . ':opening', 'status' => 'running'])->save();
+            $outline = $this->outline($locked);
+            $brief = (array) $locked->session->brief;
+            $events = [];
+            $stage = $locked->stage;
+            while (true) {
+                $events[] = ['finished', $stage];
+                $next = $order[array_search($stage, $order, true) + 1] ?? null;
+                if ($next === null) {
+                    $locked->forceFill(['stage' => 'assembling', 'status' => 'running'])->save();
 
-            return [$locked->stage, $nextStage, $order[$index]];
+                    return ['events' => $events, 'open' => null];
+                }
+                $keys = $this->stageKeys($next, $outline, $brief);
+                $locked->forceFill(['stage' => $next, 'status' => 'running'])->save();
+                $events[] = ['started', $next];
+                $this->createSteps($locked, $next, $keys);
+                if ($keys !== []) {
+                    return ['events' => $events, 'open' => $next];
+                }
+                $stage = $next; // a stage without steps (no quizzes asked for) closes at once
+            }
         });
-        if ($next === null) {
+        if ($transition === null) {
             return;
         }
-        [, $nextStage, $finished] = $next;
         $run->refresh();
-        $this->events->stepFinished($run, $finished);
-        if ($nextStage === 'assemble') {
+        foreach ($transition['events'] as [$kind, $name]) {
+            $kind === 'finished' ? $this->events->stepFinished($run, $name) : $this->events->stepStarted($run, $name);
+        }
+        if ($transition['open'] === null) {
             $this->assemble($run);
 
             return;
         }
-        $this->openStage($run, $nextStage, $this->outline($run), $run->session->brief);
+        $this->publishProgress($run);
+        $this->dispatchWindow($run, $transition['open']);
     }
 
     /** @return array{data:array,cost:int} */
@@ -411,6 +460,7 @@ final class GenerationService
             $doc['course']['seo'] = ['title' => mb_substr($meta['seoTitle'], 0, 70), 'description' => mb_substr($meta['seoDescription'], 0, 160)];
             $doc['course']['faq'] = array_map(fn ($f) => ['question' => $f['question'], 'answer' => $f['answer'], 'citations' => array_values(array_unique($f['citations']))], $meta['faq']);
         }
+        $suggestion = $this->prices->suggest($session, $run, $outlineVersion->document);
         $doc['pages'] = ['landing' => LandingDocument::landing($doc, $session->brief), 'header' => LandingDocument::header($doc, $session->brief)];
 
         $version = $this->versions->create($session, $doc, 'content', 'ai', Version::PROPOSED, $outlineVersion, 'Generated lessons, quizzes and metadata');
@@ -426,6 +476,12 @@ final class GenerationService
             'Your course is drafted: %d modules, %d lessons, %d quiz questions, %d minutes. Review what will be created in your academy and approve to apply. Nothing is written to the LMS before that.',
             $stats['modules'], $stats['lessons'], $stats['questions'], $stats['minutes'],
         ));
+        if ($suggestion !== null) {
+            $this->events->text($session, $run, sprintf(
+                'Suggested price: %s %s. %s Confirm or change it in the Course brief before you publish; nothing is sold until you do.',
+                number_format($suggestion['amountMinor'] / 100, 2, '.', ''), $suggestion['currency'], $suggestion['rationale'],
+            ));
+        }
         $this->surfaces->apply($session, $run, $version, $this->applier->plan($session, $doc));
         $this->events->runFinished($run, ['versionId' => $version->id]);
 

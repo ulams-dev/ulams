@@ -16,7 +16,10 @@ import { Aside } from "@astrojs/starlight/components";
 
 [`.github/workflows/publish.yml`](https://github.com/ulams-dev/ulams/blob/main/.github/workflows/publish.yml)
 builds seven images and pushes them to GitHub Container Registry as `ghcr.io/ulams-dev/<name>`.
-For running them in production, see [Self-hosting](/operators/self-hosting/).
+For running them in production, see [Self-hosting](/operators/self-hosting/). The build
+workflow runs on every push to `main`, on `v*` tags and manually. The Adapt build service
+(`api/adapt-builder`, GPL-3.0) is not among the published images; build it from its Dockerfile if you
+turn on [Adapt sources](/creators/adapt/#configuration).
 
 | Image | Dockerfile | Build context | Runs | Port | Licence label |
 |---|---|---|---|---|---|
@@ -24,14 +27,14 @@ For running them in production, see [Self-hosting](/operators/self-hosting/).
 | `api` | `api/Dockerfile` | `api` | Laravel: php-fpm, Horizon, tenant queue workers, scheduler (supervisord) | 9000 (FastCGI) | Apache-2.0 |
 | `h5p` | `api/h5p/Dockerfile` | repository root | H5P service (Lumi h5p-nodejs-library), Node 22 | 8080 | GPL-3.0-or-later |
 | `pdf` | `api/pdf/Dockerfile` | repository root | PDF renderer (pdfme), Node 22 | 3000 | MIT |
-| `admin` | `admin/Dockerfile` | repository root | Admin static build served by Apache (`php:apache`) | 80 | MIT |
-| `front` | `front/Dockerfile` | repository root | Legacy learner front, static build on Apache | 80 | MIT |
+| `admin` | `admin/Dockerfile` | repository root | Admin static build on `nginx-unprivileged`, non-root, runtime settings in `runtime-config.json` | 8080 | MIT |
+| `front` | `front/Dockerfile` | repository root | Legacy learner front, static build on `nginx-unprivileged`, non-root | 8080 | MIT |
 | `web` | `front/web/Dockerfile` | repository root | Reference frontend, Astro SSR on Node | 4321 | MIT |
 
 ## Tags, platforms, attestations
 
-Every image is built with `docker/build-push-action@v6` for `linux/amd64` and `linux/arm64`
-(QEMU), with `provenance: mode=max` and `sbom: true`. Tags come from `docker/metadata-action@v5`:
+Every image is built with `docker/build-push-action@v7` for `linux/amd64` and `linux/arm64`
+(QEMU), with `provenance: mode=max` and `sbom: true`. Tags come from `docker/metadata-action@v6`:
 
 | Tag | When |
 |---|---|
@@ -107,19 +110,33 @@ health check `GET /health`. Laravel calls it with `X-Internal-Token` (`PDF_INTER
 ### admin and front
 
 The static build runs once on the build platform (`--platform=$BUILDPLATFORM`, `node:22.12.0-bookworm`),
-and only the `php:apache` server stage is per architecture. Configuration is injected when the
-container starts, not at build time:
+and only the server stage is per architecture: `nginxinc/nginx-unprivileged:1.29-alpine`, pinned by
+digest, running as uid 101 on port 8080 ([ADR 0056](/decisions/0056-nginx-unprivileged-images/)).
+Configuration is read when the container starts, not at build time:
 
-- `admin/config/php/index.php` and `front/config/php/index.php` serve `index.html` and inject every
-  `REACT_APP_*` and `VITE_APP_*` environment variable as `window.<NAME>`, plus per-host values in
-  `MULTI_DOMAINS` mode. The admin also sets `REACT_APP_SENTRY_RELEASE` from the image version.
-- The entrypoints (`admin/entrypoint.sh`, `front/entrypoint.sh`) still replace a few legacy
-  placeholders (`API_URL`, `SENTRYDSN`, `YBUG`; the front also `BASENAME`, `ROUTING_TYPE`, Firebase
-  keys) in `index.html`.
+- `admin/entrypoint.sh` and `front/entrypoint.sh` run from `/docker-entrypoint.d/` and write
+  `/runtime-config.json` from every environment variable that starts with `REACT_APP_` (admin) or
+  `VITE_APP_` (front). Nothing else from the environment is exposed. The release name for Sentry
+  (`REACT_APP_SENTRY_RELEASE`, `VITE_APP_SENTRY_RELEASE`) comes from the image version unless set.
+- The page loads that file before the app boots (a small inline script in `index.html`) and copies
+  the values to `window.<NAME>`. If the file is missing, as in the dev server, build-time defaults apply.
+- `admin/nginx.conf` and `front/nginx.conf`: SPA fallback to `index.html`, a year of cache for hashed
+  assets, no cache for `index.html`, the service workers and `runtime-config.json`, `GET /healthz`.
+  Security headers and the CSP come from the reverse proxy in front.
+- Source maps are not shipped in the images. The previous `MULTI_DOMAINS` per-host mode and the
+  PHP front controller are gone; use the tenant host patterns instead.
 
 Leave `REACT_APP_API_URL` empty for a multi-tenant admin: it derives the tenant API from its host
 with `REACT_APP_TENANT_API_HOST_PATTERN`, for example
-`{slug}.admin.ulams.app=>https://{slug}.api.ulams.app`.
+`{slug}.admin.ulams.app=>https://{slug}.api.ulams.app`. To try an image on its own:
+
+```bash
+docker run --rm -p 8080:8080 \
+  -e REACT_APP_TENANT_API_HOST_PATTERN='{slug}.admin.localhost=>http://{slug}.localhost' \
+  ghcr.io/ulams-dev/admin:latest
+curl -s http://localhost:8080/healthz        # ok
+curl -s http://localhost:8080/runtime-config.json
+```
 
 ### web
 

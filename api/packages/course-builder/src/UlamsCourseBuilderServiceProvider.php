@@ -7,9 +7,17 @@ use Ulams\Ai\Fake\FakeResponders;
 use Ulams\Ai\Prompts\PromptRegistry;
 use Ulams\Ai\UlamsAiServiceProvider;
 use Ulams\CourseBuilder\Apply\BlueprintApplier;
+use Ulams\CourseBuilder\Apply\CourseCommerce;
+use Ulams\CourseBuilder\Apply\DeleteEverything;
+use Ulams\CourseBuilder\Apply\SiteTheme;
+use Ulams\CourseBuilder\Contracts\FragmentArchive;
+use Ulams\CourseBuilder\Contracts\RemovalPolicy;
+use Ulams\CourseBuilder\Ingestion\NoFragmentArchive;
 use Ulams\CourseBuilder\Blueprint\SchemaRegistry;
 use Ulams\CourseBuilder\Console\EvalCommand;
 use Ulams\CourseBuilder\Console\PruneEventsCommand;
+use Ulams\CourseBuilder\Console\SessionExportCommand;
+use Ulams\CourseBuilder\Console\SessionImportCommand;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Fake\SyntheticResponders;
 use Ulams\CourseBuilder\Ingestion\SourceIngestor;
@@ -19,13 +27,20 @@ use Ulams\CourseBuilder\Pipeline\InterviewService;
 use Ulams\CourseBuilder\Pipeline\Llm;
 use Ulams\CourseBuilder\Pipeline\OutlineService;
 use Ulams\CourseBuilder\Pipeline\PatchService;
+use Ulams\CourseBuilder\Pipeline\PriceService;
+use Ulams\CourseBuilder\Publish\LandingValidator;
+use Ulams\CourseBuilder\Publish\PublishCheck;
+use Ulams\CourseBuilder\Site\NewSite;
+use Ulams\CourseBuilder\Transfer\SessionArchive;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
 use Ulams\CourseBuilder\Services\RunService;
 use Ulams\CourseBuilder\Services\VersionService;
 use Ulams\CourseBuilder\Ui\Surfaces;
 use Ulams\CourseBuilder\Ui\UiCatalogue;
+use Ulams\Commerce\UlamsCommerceServiceProvider;
 use Ulams\Courses\UlamsCourseServiceProvider;
 use Ulams\Pages\UlamsPagesServiceProvider;
+use Ulams\Settings\UlamsSettingsServiceProvider;
 use Ulams\TopicTypeGift\UlamsTopicTypeGiftServiceProvider;
 use Ulams\TopicTypes\UlamsTopicTypesServiceProvider;
 use Ulams\Uploads\UlamsUploadsServiceProvider;
@@ -52,13 +67,22 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         GenerationService::class => GenerationService::class,
         PatchService::class => PatchService::class,
         BlueprintApplier::class => BlueprintApplier::class,
+        SiteTheme::class => SiteTheme::class,
+        CourseCommerce::class => CourseCommerce::class,
+        PriceService::class => PriceService::class,
+        PublishCheck::class => PublishCheck::class,
+        NewSite::class => NewSite::class,
+        SessionArchive::class => SessionArchive::class,
+        LandingValidator::class => LandingValidator::class,
         RunService::class => RunService::class,
+        RemovalPolicy::class => DeleteEverything::class,
+        FragmentArchive::class => NoFragmentArchive::class,
     ];
 
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/course_builder.php', 'course_builder');
-        foreach ([UlamsAiServiceProvider::class, UlamsUploadsServiceProvider::class, UlamsCourseServiceProvider::class, UlamsTopicTypesServiceProvider::class, UlamsTopicTypeGiftServiceProvider::class, UlamsPagesServiceProvider::class] as $provider) {
+        foreach ([UlamsAiServiceProvider::class, UlamsUploadsServiceProvider::class, UlamsCourseServiceProvider::class, UlamsTopicTypesServiceProvider::class, UlamsTopicTypeGiftServiceProvider::class, UlamsPagesServiceProvider::class, UlamsSettingsServiceProvider::class, UlamsCommerceServiceProvider::class] as $provider) {
             $this->app->register($provider);
         }
     }
@@ -81,7 +105,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         SyntheticResponders::register($this->app->make(FakeResponders::class));
 
         if ($this->app->runningInConsole()) {
-            $this->commands([EvalCommand::class, PruneEventsCommand::class]);
+            $this->commands([EvalCommand::class, PruneEventsCommand::class, SessionExportCommand::class, SessionImportCommand::class]);
         }
     }
 }

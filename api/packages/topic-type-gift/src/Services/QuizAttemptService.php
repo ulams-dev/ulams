@@ -14,6 +14,7 @@ use Ulams\TopicTypeGift\Models\GiftQuiz;
 use Ulams\TopicTypeGift\Models\QuizAttempt;
 use Ulams\TopicTypeGift\Providers\SettingsServiceProvider;
 use Ulams\TopicTypeGift\Repositories\Contracts\QuizAttemptRepositoryContract;
+use Ulams\TopicTypeGift\Services\Contracts\QuizAttemptAllowanceContract;
 use Ulams\TopicTypeGift\Services\Contracts\QuizAttemptServiceContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
@@ -23,7 +24,7 @@ class QuizAttemptService implements QuizAttemptServiceContract
 {
     private QuizAttemptRepositoryContract $attemptRepository;
 
-    public function __construct(QuizAttemptRepositoryContract $attemptRepository)
+    public function __construct(QuizAttemptRepositoryContract $attemptRepository, private readonly QuizAttemptAllowanceContract $allowance)
     {
         $this->attemptRepository = $attemptRepository;
     }
@@ -69,19 +70,26 @@ class QuizAttemptService implements QuizAttemptServiceContract
         /** @var GiftQuiz $quiz */
         $quiz = GiftQuiz::findOrFail($dto->getQuizId());
         $userAttempts = $this->attemptRepository->queryByUserIdAndQuizId($dto->getUserId(), $dto->getQuizId());
-        if (is_numeric($quiz->max_attempts) && $userAttempts->count() >= $quiz->max_attempts) {
+        if (is_numeric($quiz->max_attempts) && $userAttempts->count() >= $quiz->max_attempts + $this->allowance->extraAttempts($dto->getUserId(), $dto->getQuizId())) {
             throw new TooManyAttemptsException();
         }
 
         /** @var QuizAttempt $attempt */
         $attempt =  $this->attemptRepository->create(array_merge($dto->toArray(), [
+            // frozen now: questions added or removed later never change the percentage of this attempt
+            'max_score' => $quiz->questions()->sum('score'),
             'end_at' => $quiz->max_execution_time
                 ? Carbon::now()->addMinutes($quiz->max_execution_time)
                 : Carbon::now()->addMinutes((int) Config::get(SettingsServiceProvider::KEY . '.max_quiz_time', 120)),
         ]));
 
         event(new QuizAttemptStartedEvent($attempt->user, $attempt));
-        MarkAttemptAsEnded::dispatch($attempt->getKey())->delay($attempt->end_at);
+        // `end_at` is enforced server-side on read and submit (QuizAttempt::isEnded, the attempt
+        // policy), so the delayed job only finalises the attempt. Drivers that cannot delay
+        // (sync, null) would end it the moment it is created, so they get no job.
+        if (MarkAttemptAsEnded::queueCanDelay()) {
+            MarkAttemptAsEnded::dispatch($attempt->getKey(), true)->delay($attempt->end_at);
+        }
 
         return $attempt;
     }

@@ -85,6 +85,18 @@ does not document is a type error. Paths that are not in the document yet are ca
    corepack yarn turbo run typecheck --filter=@ulams/sdk --filter=@ulams/web
    ```
 
+4. Update the CLI from the same document, so every new operation has a command (or an exclusion with a
+   reason) and the coverage check stays green:
+
+   ```bash
+   corepack yarn workspace ulams sync-spec   # api-docs.json -> front/cli/spec/openapi.json
+   corepack yarn workspace ulams generate    # spec + overrides -> src/generated/commands.ts
+   corepack yarn workspace ulams coverage    # fails on an operation without a command
+   ```
+
+   The course builder and Living Course are the exception: their commands are hand-written
+   (`front/cli/src/commands/builder.ts`, `living.ts`) and list the endpoints they cover.
+
 </Steps>
 
 If you generate the JSON in a container that does not mount the source (for example from a
@@ -100,4 +112,5 @@ The annotations describe request bodies and paths well but almost no response bo
 responses come out as `unknown` in `openapi.ts`. The response types in `front/sdk/src/types.ts`
 are written by hand from real API responses; replacing them with generated ones depends on the
 roadmap item "OpenAPI spec complete and published". The endpoint list is on
-[API endpoints](/reference/api-endpoints/) and the reference on [API reference](/developers/api-reference/).
+[API endpoints](/reference/api-endpoints/), the reference on [API reference](/developers/api-reference/)
+and usage examples of the client on [SDK usage](/developers/sdk/).

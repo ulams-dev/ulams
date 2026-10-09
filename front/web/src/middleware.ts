@@ -1,14 +1,17 @@
 import { defineMiddleware } from "astro:middleware";
 import { config } from "./lib/config.ts";
 import { isPlatformHost, tenantForHost } from "./lib/tenant.ts";
-import { warm } from "./lib/data.ts";
-import { ensureSession } from "./lib/session.ts";
+import { getFrameOrigins, warm } from "./lib/data.ts";
+import { contentOriginFor, cspHeaders, wantsCsp } from "./lib/csp.ts";
+import { ensureSession, readSession } from "./lib/session.ts";
+import { H5P_ROUTE } from "./lib/h5p-proxy.ts";
 import { imageCache } from "./lib/image-cache.ts";
 import { resolveTenant } from "@ulams/sdk/tenant";
 import { refuseCrossSite } from "./lib/bff.ts";
 import { isSecureRequest } from "./lib/cookies.ts";
 import { authorCookieName, authorToken } from "./lib/studio.ts";
 import { PREVIEW_HEADERS, isPreviewPath } from "./lib/preview.ts";
+import { CLI_HEADERS, isCliPath } from "./lib/cli-authorize.ts";
 
 let warmed = false;
 function warmOnce(): void {
@@ -50,6 +53,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const session = await ensureSession(locals.tenant, cookies, secure);
     locals.token = session?.token ?? null;
     locals.sessionVia = session?.via ?? null;
+  } else if (locals.tenant && H5P_ROUTE.test(url.pathname)) {
+    // The /h5p proxy acts as the learner when the cookie is there (ADR 0045). It never starts a
+    // session itself: the lesson page does, and the player's assets are public.
+    locals.token = readSession(cookies, secure) ?? null;
   }
 
   // Course Builder studio: the author's session (tutor or admin), separate from the learner's
@@ -66,12 +73,31 @@ export const onRequest = defineMiddleware(async (context, next) => {
     locals.authorToken = cookies.get(authorCookieName(secure))?.value ?? null;
   }
 
+  // CSP: the tool origins are cached (5 min), asked for while the page renders
+  const csp = wantsCsp(url.pathname, null) && !url.pathname.startsWith("/_") ? (locals.tenant ? getFrameOrigins(locals.tenant) : Promise.resolve([] as string[])) : null;
+
   const response = await next();
+  if (csp && wantsCsp(url.pathname, response.headers.get("content-type"))) {
+    const headers = cspHeaders(
+      {
+        tenant: locals.tenant,
+        toolOrigins: await csp,
+        contentOrigin: locals.tenant ? contentOriginFor(config.contentOrigin, locals.tenant.slug) : null,
+        storageOrigins: config.storageOrigins,
+      },
+      config.cspEnforce
+    );
+    for (const [name, value] of Object.entries(headers)) response.headers.set(name, value);
+  }
   if (isPreviewPath(url.pathname)) {
     for (const [name, value] of Object.entries(PREVIEW_HEADERS)) response.headers.set(name, value);
   }
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  if (isCliPath(url.pathname)) {
+    // device-login approval: never cached, never framed, the code never leaves through Referer
+    for (const [name, value] of Object.entries(CLI_HEADERS)) response.headers.set(name, value);
+  }
   if (!response.headers.has("Cache-Control") && (response.headers.get("content-type") ?? "").includes("text/html")) {
     response.headers.set("Cache-Control", "private, no-cache");
   }

@@ -23,8 +23,12 @@ use Ulams\TopicTypeGift\Services\AttemptAnswerService;
 use Ulams\TopicTypeGift\Services\Contracts\AttemptAnswerServiceContract;
 use Ulams\TopicTypeGift\Services\Contracts\GiftQuestionServiceContract;
 use Ulams\TopicTypeGift\Services\Contracts\GiftQuizServiceContract;
+use Ulams\TopicTypeGift\Services\Contracts\QuizAttemptAllowanceContract;
 use Ulams\TopicTypeGift\Services\Contracts\QuizAttemptServiceContract;
+use Ulams\TopicTypeGift\Services\NoExtraAttempts;
+use Ulams\TopicTypeGift\Console\SnapshotMaxScoresCommand;
 use Ulams\TopicTypeGift\Services\GiftQuestionService;
+use Ulams\TopicTypeGift\Services\GiftQuizContentDeleter;
 use Ulams\TopicTypeGift\Services\GiftQuizService;
 use Ulams\TopicTypeGift\Services\QuizAttemptService;
 use Ulams\TopicTypes\UlamsTopicTypesServiceProvider;
@@ -40,6 +44,7 @@ class UlamsTopicTypeGiftServiceProvider extends ServiceProvider
         QuizAttemptServiceContract::class => QuizAttemptService::class,
         AttemptAnswerServiceContract::class => AttemptAnswerService::class,
         GiftQuizServiceContract::class => GiftQuizService::class,
+        QuizAttemptAllowanceContract::class => NoExtraAttempts::class,
     ];
 
     public const REPOSITORIES = [
@@ -56,7 +61,12 @@ class UlamsTopicTypeGiftServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
+        if ($this->app->runningInConsole()) {
+            $this->commands([SnapshotMaxScoresCommand::class]);
+        }
+
         Topic::registerContentClass(GiftQuiz::class);
+        Topic::registerContentDeleter($this->app->make(GiftQuizContentDeleter::class));
         Topic::registerResourceClasses(GiftQuiz::class, [
             'client' => ClientGiftQuizResource::class,
             'admin' => AdminGiftQuizResource::class,

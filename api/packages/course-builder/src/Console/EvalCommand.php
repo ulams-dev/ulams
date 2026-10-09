@@ -134,7 +134,7 @@ class EvalCommand extends Command
             $this->line(sprintf('  %s %s %s', $ok ? 'PASS' : 'FAIL', $key, $detail));
         };
 
-        $expected = ['level' => 'SingleChoice', 'duration' => 'DurationSlider', 'language' => 'LanguagePicker', 'tone' => 'ChoiceChips', 'assessments' => 'ChoiceChips', 'audience' => 'ChoiceChips'];
+        $expected = ['level' => 'SingleChoice', 'duration' => 'DurationSlider', 'language' => 'LanguagePicker', 'tone' => 'ChoiceChips', 'assessments' => 'ChoiceChips', 'audience' => 'ChoiceChips', 'pricing' => 'PriceInput'];
         $choices = collect($questions)->mapWithKeys(fn ($q) => [$q['key'] => $q['component']])->all();
         $check('interview.components', $questions !== [] && collect($expected)->every(fn ($c, $k) => ($choices[$k] ?? null) === $c), json_encode($choices));
         if ($questions === []) {

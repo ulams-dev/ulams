@@ -66,35 +66,245 @@
               "label": "Self-host it (MIT)",
               "href": "#self-host"
             },
-            "diff": {
-              "title": "Lesson 2 · SLOs and error budgets",
-              "source": "docs/slo.md",
-              "lines": [
-                {
-                  "op": "ctx",
-                  "text": "Error budget = (1 − SLO) × window"
-                },
-                {
-                  "op": "del",
-                  "text": "Default SLO for checkout: 99.9 %"
-                },
-                {
-                  "op": "add",
-                  "text": "Default SLO for checkout: 99.95 %"
-                },
-                {
-                  "op": "add",
-                  "text": "Budget over 30 days: 21.6 minutes"
-                }
-              ],
-              "citations": [
-                "docs/slo.md §2",
-                "runbook.md §4"
-              ],
-              "action": "Approve",
-              "note": "Illustration of the Living Course flow (on the roadmap)."
+            "body": "Courses built to keep up with your docs and repos, delivered as a white-label site per customer, on your own servers if you like.",
+            "capabilities": [
+              {
+                "icon": "sync",
+                "label": "Living Course",
+                "caption": "Your course updates itself when sources change",
+                "href": "#living",
+                "ring": 1,
+                "status": "coming",
+                "angle": 173
+              },
+              {
+                "icon": "sparkle",
+                "label": "AI course builder",
+                "caption": "Turn a document into a cited course in minutes",
+                "href": "#builder",
+                "ring": 1,
+                "angle": 63
+              },
+              {
+                "icon": "eye",
+                "label": "Preview & discuss",
+                "caption": "Preview and discuss every element before it goes live",
+                "href": "#product",
+                "ring": 1,
+                "angle": 138
+              },
+              {
+                "icon": "chart",
+                "label": "Learner insights & AI tutor",
+                "caption": "See who is stuck, and give every learner an AI tutor",
+                "href": "#product",
+                "ring": 2,
+                "angle": 323
+              },
+              {
+                "icon": "terminal",
+                "label": "CLI · MCP · REST API",
+                "caption": "Run your academy from a terminal, an agent or the API",
+                "href": "#agents",
+                "ring": 2,
+                "status": "coming",
+                "angle": 196
+              },
+              {
+                "icon": "code",
+                "label": "Claude & Claude Code",
+                "caption": "Build and manage courses from Claude and Claude Code",
+                "href": "#agents",
+                "ring": 2,
+                "status": "coming",
+                "angle": 224
+              },
+              {
+                "icon": "layers",
+                "label": "Site per customer",
+                "caption": "A branded academy site for every customer",
+                "href": "#demos",
+                "ring": 3,
+                "angle": 245
+              },
+              {
+                "icon": "puzzle",
+                "label": "H5P · SCORM · LTI 1.3",
+                "caption": "H5P, SCORM, cmi5 and LTI 1.3: deliver anywhere",
+                "href": "#standards",
+                "ring": 3,
+                "angle": 131
+              },
+              {
+                "icon": "cart",
+                "label": "Commerce",
+                "caption": "Sell courses and subscriptions with built-in commerce",
+                "href": "#compare",
+                "ring": 3,
+                "status": "coming",
+                "angle": 15
+              },
+              {
+                "icon": "server",
+                "label": "Self-hosted, open source",
+                "caption": "MIT-licensed and self-hosted: your servers, your data",
+                "href": "#self-host",
+                "ring": 3,
+                "angle": 299
+              }
+            ]
+          }
+        },
+        {
+          "component": "LivingCourseStory",
+          "props": {
+            "id": "living",
+            "eyebrow": "living course",
+            "title": "Your course updates itself when your sources change",
+            "intro": "Edit a doc or merge to a repo. ulams finds every lesson and question that cites it and proposes the update. You approve, and learners keep their progress.",
+            "status": "coming",
+            "valueLine": "Courses stop going stale, and nothing changes without your approval.",
+            "description": "An animated example in three steps. First, a line in docs/slo.md changes from 99.9 % to 99.95 % and a new line about the 30-day budget is added. Second, ulams finds the lesson paragraph and the quiz question that cite docs/slo.md section 2. Third, a proposal with a red and green diff appears, the author clicks Approve, the lesson text updates and a badge confirms that learner progress was kept.",
+            "beats": [
+              {
+                "title": "Your source changes",
+                "text": "A line in docs/slo.md is edited."
+              },
+              {
+                "title": "ulams finds every lesson that cites it",
+                "text": "The lesson paragraph and a quiz question light up."
+              },
+              {
+                "title": "You approve, learners keep their progress",
+                "text": "The proposal is a diff; one click updates the lesson."
+              }
+            ],
+            "source": {
+              "file": "docs/slo.md",
+              "heading": "Error budgets",
+              "context": "Error budget = (1 − SLO) × window",
+              "lead": "Default SLO for checkout:",
+              "before": "99.9 %",
+              "after": "99.95 %",
+              "added": "Budget over 30 days: 21.6 minutes"
             },
-            "body": "Courses built to keep up with your docs and repos, delivered as a white-label site per customer, on your own servers if you like."
+            "lesson": {
+              "title": "Lesson 2 · SLOs and error budgets",
+              "lead": "Default SLO for checkout:",
+              "citation": "docs/slo.md §2",
+              "question": "What is the default SLO for checkout?",
+              "questionCite": "docs/slo.md §2"
+            },
+            "proposal": {
+              "title": "Proposed update · 1 lesson, 1 question",
+              "approve": "Approve",
+              "done": "Updated · learner progress kept"
+            }
+          }
+        },
+        {
+          "component": "BuilderStory",
+          "props": {
+            "id": "builder",
+            "eyebrow": "course builder",
+            "title": "Build a course from a document in minutes",
+            "intro": "Drop in a runbook, answer three questions, and review a cited outline and drafts before anything goes live.",
+            "valueLine": "From a PDF to a published, cited course, with you approving every step.",
+            "description": "An animated example of the studio course builder. A file named incident-runbook.pdf is dropped in, three interview answers appear (engineers, 45 minutes, a quiz per lesson), an outline of three modules and five lessons grows with a source chip on each lesson, one lesson streams in with citations, a quiz question cites its source, an example cost counter reaches 18 cents, and Apply publishes the course.",
+            "file": {
+              "name": "incident-runbook.pdf",
+              "label": "PDF"
+            },
+            "interview": [
+              {
+                "question": "Audience",
+                "answer": "Engineers"
+              },
+              {
+                "question": "Length",
+                "answer": "45 min"
+              },
+              {
+                "question": "Practice",
+                "answer": "Quiz per lesson"
+              }
+            ],
+            "outline": [
+              {
+                "title": "Detect and declare",
+                "lessons": [
+                  {
+                    "title": "What counts as an incident",
+                    "source": "runbook p.2"
+                  },
+                  {
+                    "title": "Severity levels",
+                    "source": "runbook p.3"
+                  }
+                ]
+              },
+              {
+                "title": "Triage and mitigate",
+                "lessons": [
+                  {
+                    "title": "The first ten minutes",
+                    "source": "runbook p.5"
+                  },
+                  {
+                    "title": "Roll back or roll forward",
+                    "source": "runbook p.6"
+                  }
+                ]
+              },
+              {
+                "title": "Learn from it",
+                "lessons": [
+                  {
+                    "title": "Blameless postmortems",
+                    "source": "runbook p.9"
+                  }
+                ]
+              }
+            ],
+            "lesson": {
+              "title": "Severity levels",
+              "text": "Sev 1 means customers cannot check out. Page the on-call lead and open an incident channel straight away.",
+              "citations": ["runbook p.3 · Severity", "runbook p.4 · Paging"]
+            },
+            "quiz": {
+              "question": "Who declares a Sev 1?",
+              "source": "runbook p.3"
+            },
+            "cost": {
+              "label": "Cost so far",
+              "amount": 0.18,
+              "note": "Example run, not a quote"
+            },
+            "apply": {
+              "label": "Apply",
+              "publishedTitle": "Incident response",
+              "publishedMeta": "· 5 lessons · 1 quiz · published"
+            }
+          }
+        },
+        {
+          "component": "WorkflowShowcase",
+          "props": {
+            "id": "agents",
+            "eyebrow": "run it from anywhere",
+            "title": "Manage your academy from Claude, Claude Code or your terminal",
+            "intro": "Use Claude Code, Claude or any MCP-compatible agent, the command line or the API. The studio is one way to run ulams, not the only one.",
+            "valueLine": "One platform, every interface your team already works in.",
+            "legal": "Claude and Claude Code are products of Anthropic. ulams is independent and not affiliated with or endorsed by Anthropic.",
+            "description": {
+              "$data": "/workflows/description"
+            },
+            "footnote": {
+              "$data": "/workflows/footnote"
+            },
+            "tabs": {
+              "$data": "/workflows/tabs"
+            }
           }
         },
         {
@@ -139,6 +349,42 @@
                 "status": "coming"
               }
             ]
+          },
+          "final": {
+            "items": [
+              {
+                "icon": "sync",
+                "title": "Living Course",
+                "text": "Courses stay in sync with the docs and repos they come from, and adapt to each learner.",
+                "status": "coming"
+              },
+              {
+                "icon": "quote",
+                "title": "Cited by design",
+                "text": "Every AI-generated element cites the source fragment it is based on. AI proposes, the author approves the diff."
+              },
+              {
+                "icon": "layers",
+                "title": "A site per customer",
+                "text": "Each tenant gets its own subdomain, theme and isolated database: white-label academies for customers and partners."
+              },
+              {
+                "icon": "server",
+                "title": "Self-hosted, open core",
+                "text": "MIT-licensed core you can run on your own servers. Your content and learner data stay yours; no lock-in."
+              },
+              {
+                "icon": "puzzle",
+                "title": "Standards first",
+                "text": "H5P, SCORM, cmi5 and xAPI work today; the same course can be delivered anywhere. LTI 1.3 works too."
+              },
+              {
+                "icon": "cart",
+                "title": "Commerce built in",
+                "text": "Catalogue, checkout and subscriptions through a headless Sylius shop; access granted only from verified orders.",
+                "status": "coming"
+              }
+            ]
           }
         },
         {
@@ -165,6 +411,9 @@
                 "text": "A change upstream becomes an update proposal: a reviewable diff you approve, edit or reject."
               }
             ]
+          },
+          "final": {
+            "intro": "The killer feature: when your docs change, the course proposes its own update, and you stay in control."
           }
         },
         {
@@ -233,6 +482,9 @@
               "$data": "/comparison/sources"
             },
             "note": "Product names are trademarks of their owners and are used only to identify the products. Corrections are welcome."
+          },
+          "final": {
+            "intro": "What buyers usually weigh, product by product, in two groups: open-source and creator platforms, and enterprise suites."
           }
         },
         {

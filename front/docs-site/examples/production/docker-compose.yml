@@ -5,8 +5,9 @@
 # then `docker compose up -d` (add `--profile minio` for the bundled object store).
 #
 # Differences from the development stack (api/docker-compose.yml): published images instead of
-# builds, TLS in Caddy, no Adminer/MailHog, secrets from .env, and the Laravel env files shared
-# with the H5P service through the tenant_env volume instead of a bind mount of the source tree.
+# builds, TLS in Caddy, no Adminer/MailHog, secrets from .env, and a least-privilege config
+# directory for the H5P service (volume h5p_service_config, written by `ulams:h5p:export-config`)
+# instead of a bind mount of the source tree.
 
 name: ulams
 
@@ -23,8 +24,12 @@ volumes:
   valkey_data:
   # Laravel storage/: platform and tenant Passport keys, logs, local disks (e.g. SCORM_DISK=local)
   api_storage:
-  # Copies of the Laravel env files (.env, .env.<tenant host>), written by the api service
+  # Copies of the Laravel env files (.env, .env.<tenant host>), written by the api service. Only
+  # Caddy reads them (the on-demand TLS check); it is replaced by an API check in a later release.
   tenant_env:
+  # What the H5P service reads: per tenant only the database, bucket and URL settings plus the
+  # Passport PUBLIC key (H5PServiceConfigExporter, same layout as api/h5p/compose.h5p.prod.yml)
+  h5p_service_config:
   # Installed H5P libraries, shared by every tenant
   h5p_libraries:
   caddy_data:
@@ -43,6 +48,8 @@ services:
       ULAMS_DOMAIN: ${ULAMS_DOMAIN:?set ULAMS_DOMAIN}
       ULAMS_CONTENT_DOMAIN: ${ULAMS_CONTENT_DOMAIN:?set ULAMS_CONTENT_DOMAIN}
       ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL}
+      # admin CSP: report-only until the reports are clean (docs: operators/security-headers)
+      ULAMS_CSP_HEADER: ${ULAMS_CSP_HEADER:-Content-Security-Policy-Report-Only}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
@@ -62,8 +69,8 @@ services:
   api:
     <<: *service
     image: ghcr.io/ulams-dev/api:${ULAMS_VERSION:-latest}
-    # The H5P service reads the Laravel env files (ENV_DIR); they live in /var/www/html, so a
-    # small loop copies them to the tenant_env volume every 5 seconds before init.sh starts.
+    # Caddy's on-demand TLS check looks for the tenant env files in the tenant_env volume, so a
+    # small loop copies them there every 5 seconds before init.sh starts.
     command:
       - bash
       - -c
@@ -135,6 +142,10 @@ services:
       LARAVEL_AWS_USE_PATH_STYLE_ENDPOINT: ${S3_USE_PATH_STYLE:-true}
       LARAVEL_H5P_SERVICE_URL: http://h5p:8080
       LARAVEL_H5P_INTERNAL_TOKEN: ${H5P_INTERNAL_TOKEN:?set H5P_INTERNAL_TOKEN}
+      # Where the H5P config is exported (the volume below). Written at start (`ulams:tenant:sync-env`),
+      # when a tenant is created, synced or deleted, and by `ulams:h5p:export-config` (also a step of
+      # `ulams:upgrade`). Run that command once after the first start and after creating tenants.
+      LARAVEL_H5P_SERVICE_CONFIG_DIR: /var/www/html/storage/h5p-service
       LARAVEL_PDF_SERVICE_URL: http://pdf:3000
       LARAVEL_PDF_INTERNAL_TOKEN: ${PDF_INTERNAL_TOKEN:?set PDF_INTERNAL_TOKEN}
       LARAVEL_CONTENT_ORIGIN: https://platform.${ULAMS_CONTENT_DOMAIN}
@@ -154,6 +165,7 @@ services:
       LARAVEL_TENANT_DEMO_PASSWORD: ${TENANT_INITIAL_PASSWORD:?set TENANT_INITIAL_PASSWORD}
     volumes:
       - api_storage:/var/www/html/storage
+      - h5p_service_config:/var/www/html/storage/h5p-service
       - tenant_env:/tenant-env
     depends_on:
       postgres:
@@ -178,8 +190,9 @@ services:
       LOG_LEVEL: info
       PUBLIC_URL: https://api.${ULAMS_DOMAIN}
       TENANCY_MODE: env-files
-      ENV_DIR: /laravel
-      KEYS_DIR: /laravel-storage
+      # the exported config directory (compose.h5p.prod.yml): env subsets and public keys only
+      ENV_DIR: /config
+      KEYS_DIR: /config/keys
       PLATFORM_HOSTS: api.${ULAMS_DOMAIN}
       CORS_ORIGINS: https://app.${ULAMS_DOMAIN},https://admin.${ULAMS_DOMAIN},https://api.${ULAMS_DOMAIN}
       TENANT_FRONT_ORIGIN_PATTERNS: https://{slug}.app.${ULAMS_DOMAIN},https://{slug}.admin.${ULAMS_DOMAIN}
@@ -196,17 +209,20 @@ services:
       S3_BUCKET: ${S3_PLATFORM_BUCKET:-ulams}
       S3_PREFIX: h5p
       S3_FORCE_PATH_STYLE: ${S3_USE_PATH_STYLE:-true}
-      JWT_PUBLIC_KEY_PATH: /laravel-storage/oauth-public.key
+      JWT_PUBLIC_KEY_PATH: /config/keys/oauth-public.key
       # profile calls (GET /api/profile/me) go to Caddy's internal listener with the tenant host
       LARAVEL_API_URL: http://caddy:8081
       LARAVEL_API_HOST: api.${ULAMS_DOMAIN}
       H5P_INTERNAL_TOKEN: ${H5P_INTERNAL_TOKEN}
       H5P_MAX_FILE_SIZE_MB: "64"
       H5P_MAX_TOTAL_SIZE_MB: "256"
+    # nothing writable except the libraries volume and /tmp
+    read_only: true
+    tmpfs:
+      - /tmp
     volumes:
       - h5p_libraries:/data/libraries
-      - tenant_env:/laravel:ro
-      - api_storage:/laravel-storage:ro
+      - h5p_service_config:/config:ro
     depends_on:
       - api
       - valkey
@@ -234,8 +250,12 @@ services:
       ULAMS_DEMO_TENANTS: ""
       ULAMS_WARM_TENANTS: ""
       ULAMS_DEFAULT_TENANT: ""
+      # CSP of the pages: report-only until the reports are clean, then CSP_ENFORCE=true
+      CSP_ENFORCE: ${CSP_ENFORCE:-false}
+      ULAMS_CONTENT_ORIGIN: "https://{slug}.${ULAMS_CONTENT_DOMAIN}"
+      ULAMS_STORAGE_ORIGINS: https://storage.${ULAMS_CONTENT_DOMAIN}
 
-  # Admin and author panel (static build behind Apache); the tenant API comes from the host
+  # Admin and author panel (static build on nginx-unprivileged, port 8080); the tenant API comes from the host
   admin:
     <<: *service
     image: ghcr.io/ulams-dev/admin:${ULAMS_VERSION:-latest}

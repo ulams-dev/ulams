@@ -1,0 +1,178 @@
+---
+title: Build courses from the command line
+description: "Drive the AI Course Builder and Living Course with ulams commands or MCP tools: start from a file or URL, answer the interview, approve the outline, generate, apply, publish, chat with one element, undo, stream events and review source updates."
+sidebar:
+  order: 82
+modules:
+  - cli
+  - course-builder
+  - living-course
+---
+
+Every step of the [AI Course Builder](/developers/api-packages/) and of [Living Course](/developers/living-course/) is a
+command (`ulams builder …`, `ulams living …`) and an MCP tool of the same name (`builder_start`, `living_proposals_apply`,
+toolsets `builder` and `living`). The decisions behind them are in
+[ADR 0084](/decisions/0084-cli-builder-and-living-course-commands/). The principle holds on the command line: **AI proposes,
+the author approves**. Nothing past the interview happens unless you pass the flag for it, and nothing reaches the academy
+before `apply`.
+
+You need AI enabled on the instance (commands exit 12 `FEATURE_DISABLED` otherwise) and a token with the `builder:write`
+scope (`builder:read` for the read commands; Living Course uses `living-course:read` and `living-course:write`). The `@author`
+preset has them ([scoped tokens](/developers/scoped-tokens/)). Every command is a call to the
+[Course Builder API](/developers/course-builder-api/) (`ulams describe builder.start` lists the endpoints it uses), and
+`--dry-run` prints the request without sending it:
+
+```bash
+ulams builder chat <session> "Shorter" --element blk_x1 --dry-run --json
+# {"ok":true,…,"data":{"dryRun":true,"request":{"method":"POST","path":"/api/admin/course-builder/sessions/<session>/runs","body":{"message":"Shorter","selection":{"elementId":"blk_x1"}}}}}
+```
+
+## One command, as far as you allow
+
+```bash
+# Until the first question: prints the questions in data.pending, exit 0
+ulams builder start --from ./guide.md --json
+
+# A whole course as an unpublished draft: defaults for the interview, approve the outline, apply
+ulams builder start --from ./guide.md --defaults --approve-outline --apply --json
+
+# Answers from a file, stop at the outline for review
+ulams builder start --from ./guide.md --answers @answers.yaml --json
+
+# A document by URL (the file itself: Markdown, PDF or DOCX, e.g. a raw GitHub link)
+ulams builder start --from-url https://raw.githubusercontent.com/org/repo/main/docs/guide.md --defaults
+```
+
+`answers.yaml` maps the interview's question keys to answers:
+
+```yaml
+audience: new baristas
+level: beginner            # beginner | intermediate | advanced
+duration: "60|10"          # total|lesson minutes
+tone: friendly             # friendly | professional | playful | academic
+assessments: [quiz, final]
+language: en
+```
+
+The flags of `start` are `--from` and `--from-url` (repeatable), `--session` (continue one), `--title`, `--answers`,
+`--defaults`, `--approve-outline`, `--apply`, `--publish` and `--overwrite`. Each stage past the interview runs only if its
+flag is there: `--approve-outline` approves the proposed outline and generates the lessons, `--apply` creates the unpublished
+course, `--publish` publishes it. Long steps wait by default (`--wait`, `--timeout <s>`, 600 s); `--no-wait` returns a handle.
+
+The result names where it stopped (`status`: `interviewing`, `outline_review`, `apply_review`, `applied`) and what is
+waiting in `data.pending`, so an agent knows the next command. `--no-wait` returns right after the upload with a run handle
+(`builder-run:<id>`) for `ulams operations wait`. Generation takes a few minutes and costs model tokens; the budget limits of
+the instance apply and `ulams builder usage <session>` shows tokens and cost per task.
+
+## Stage by stage
+
+```bash
+ulams builder sessions list
+ulams builder sources add <session> --file ./handbook.pdf          # more sources; waits for ingestion
+ulams builder interview show <session>                             # questions, options, defaults, which are open
+ulams builder interview answer <session> --key level --value beginner
+ulams builder interview answer <session> --answers @answers.json --defaults
+ulams builder interview decide <session>                           # defaults for everything open
+ulams builder outline show <session>                               # objectives, modules, lessons
+ulams builder outline request-changes <session> --comment "Fewer modules, more practice"
+ulams builder outline approve <session> --edit obj_a1="Brew a balanced espresso"   # generates the lessons
+ulams builder apply <session>                                      # creates the course, unpublished
+ulams builder publish <session>
+```
+
+Waiting commands print progress to stderr and return the run and the session (`status`, `currentVersionId`, `courseId`).
+A failed run exits 9 with the run's error; a wait that runs out exits 10 and names the handle.
+`ulams builder sessions wait <session> --for outline_review` waits for a status on its own.
+
+### Sessions and runs
+
+```bash
+ulams builder sessions create --title "Onboarding"    # empty session; at most 10 per author per day
+ulams builder sessions get <session>                  # status, brief, sources, cost, links
+ulams builder sessions delete <session>               # an applied course is kept
+ulams builder sources get <session> <source>          # section tree of a source
+ulams builder runs get <run>                          # status and steps; needsAttention when a step failed
+ulams builder runs retry-step <run> <step>            # one failed generation step
+ulams builder runs cancel <run>
+ulams builder retry <session>                         # repeat the interview or outline step that failed
+```
+
+### Change one element
+
+```bash
+ulams builder elements list <session> --type lesson           # ids to scope a message to
+ulams builder chat <session> "Make this shorter and add an example" --element blk_x1   # proposes a patch with its diff
+ulams builder patches approve <version>                       # an applied course is updated
+ulams builder patches reject <version>
+```
+
+The proposal cites source fragments like everything else the builder writes; `ulams builder fragments get frg_…` shows the
+passage a citation points to.
+
+### Versions, undo and the brief
+
+```bash
+ulams builder versions list <session>
+ulams builder versions get <version> [--document]
+ulams builder versions diff <version> [--against <version>]   # element-aware diff, default: against its parent
+ulams builder versions restore <version>
+ulams builder undo <session>        # and redo
+ulams builder brief get <session>
+ulams builder brief set <session> --lesson-minutes 5 --level beginner   # marks the outline stale, regenerates nothing
+```
+
+## Events as NDJSON
+
+```bash
+ulams builder events <session>                                   # stored events so far, then exit
+ulams builder events <session> --follow --until-run <run>        # stream until that run finishes
+ulams builder events <session> --types RUN_STARTED,RUN_FINISHED,RUN_ERROR,TEXT_MESSAGE_CONTENT
+```
+
+Each line is `{"type":"event","id":"412","data":{…AG-UI event…}}` (the server's AG-UI over SSE, resumed across its 25 s
+connection cap with `Last-Event-ID`, never repeated). The last line is the normal envelope with `events` and
+`lastEventId` (pass it to `--after` to continue). `--until-run` exits 0 on that run's `RUN_FINISHED` and 9 on `RUN_ERROR`
+with the event in `error.details`. For agents, `builder events list` returns a bounded batch as ordinary JSON.
+
+## Living Course
+
+```bash
+ulams living sources list <session>
+ulams living sources add <session> --file ./handbook-v2.md        # or: living revisions upload <source> ./handbook-v2.md
+ulams living connectors list                        # connectors, their settings schema and whether they have webhooks
+ulams living sources connect <session> --connector git --secrets @token.json --schedule daily \
+  --config '{"host":"github","repository":"owner/name","branch":"main","paths":["docs/**/*.md"]}'
+ulams living connections check <connection>         # check for a new revision now
+ulams living connections update <connection> --schedule weekly
+ulams living connections webhook-secret <connection>   # new secret, shown once
+ulams living connections delete <connection>        # stop checking; revisions and audit stay
+ulams living revisions get <revision>
+ulams living revisions list <source>
+ulams living revisions changes <revision>           # fragments added, removed, moved, changed
+ulams living staleness <session>                    # works with AI off
+ulams living proposals list <session>
+ulams living proposals get <proposal>               # items grouped by lesson
+ulams living proposals analyse <proposal> --confirm-estimate   # model calls; the estimate is in the error if it is high
+ulams living proposals accept <proposal> --item <item>         # reject, reset, regenerate --comment "…"
+ulams living proposals accept-all <proposal>        # also: reject-all, reanalyse, learner-note --note "…"
+ulams living proposals apply <proposal>             # a new course version; --overwrite replaces admin edits
+ulams living audit list <session>
+ulams living audit export <session> --format csv --out audit.csv
+ulams living audit verify <session>                 # recompute the hash chain (whole academy)
+ulams living audit export-all --format json --out all.json   # admins; also verify-all
+```
+
+The Git connector's `--config` keys are `host` (`github`, `gitlab` or `gitea`; Gitea and Forgejo also need `base_url`),
+`repository` (`owner/name`), `branch` (default `main`), `paths` (globs, default `**/*.md`) and `extensions`; unknown keys are
+refused. The `url` connector takes `urls` (1 to 20 `https` addresses of one site) and an optional `selector`. `--secrets
+@token.json` (`{"token": "…"}`) is write-only. The webhook URL and secret of a Git connection are in the `connect` result
+(`connection.webhookUrl`, `webhookSecret`, shown once); see [Living Course internals](/developers/living-course/#webhook-requests).
+`proposals analyse` exits with `CONFLICT` and the estimate when it is above `LIVING_COURSE_AUTO_ANALYSE_USD`; repeat with
+`--confirm-estimate`. A proposal over its cost caps is `budget_blocked` and the elements are updated by hand.
+
+## MCP
+
+`ulams mcp --toolsets core,builder,living` adds these as tools. Tools that start runs accept `wait` and
+`timeout_seconds`; the wait is capped at 55 seconds so the call returns inside a client's tool timeout. When it runs out the
+result is a success with `status: "running"`, the run handle and a `STILL_RUNNING` warning: call `operations_wait` with the
+handle to continue. See [ulams for AI agents](/developers/agents/).

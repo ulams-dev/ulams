@@ -17,29 +17,32 @@
     "./styles/*": "./src/styles/*",
     "./html": "./src/lib/html.ts",
     "./builder/*": "./src/builder/*",
-    "./brand/*": "./src/brand/*"
+    "./brand/*": "./src/brand/*",
+    "./theme/*": "./src/theme/*"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "eslint src tests",
-    "test": "node --experimental-strip-types --no-warnings scripts/builder-manifest.mjs --check && vitest run",
+    "test": "node --experimental-strip-types --no-warnings scripts/builder-manifest.mjs --check && node --experimental-strip-types --no-warnings scripts/learner-manifest.mjs --check && node --experimental-strip-types --no-warnings scripts/page-manifest.mjs --check && vitest run",
     "catalogue": "node --experimental-strip-types --no-warnings scripts/catalogue.mjs",
-    "builder-manifest": "node --experimental-strip-types --no-warnings scripts/builder-manifest.mjs"
+    "learner-manifest": "node --experimental-strip-types --no-warnings scripts/learner-manifest.mjs",
+    "builder-manifest": "node --experimental-strip-types --no-warnings scripts/builder-manifest.mjs",
+    "page-manifest": "node --experimental-strip-types --no-warnings scripts/page-manifest.mjs"
   },
   "dependencies": {
     "@ulams/sdk": "0.1.0",
     "diff": "9.0.0",
     "hls.js": "1.7.3",
-    "katex": "0.16.22",
-    "marked": "18.0.14"
+    "katex": "0.19.0",
+    "marked": "18.1.0"
   },
   "peerDependencies": {
     "astro": "^5.18.0"
   },
   "devDependencies": {
-    "@eslint/js": "9.39.5",
-    "axe-core": "^4.10.0",
-    "eslint": "9.39.5",
+    "@eslint/js": "10.0.1",
+    "axe-core": "^4.14.0",
+    "eslint": "10.12.0",
     "jsdom": "^20.0.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.71.1",

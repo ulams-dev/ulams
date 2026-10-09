@@ -12,6 +12,7 @@ modules:
   - cart
   - categories
   - cmi5
+  - commerce
   - consultation-access
   - consultations
   - core
@@ -300,6 +301,13 @@ Products and what they sell (`Product`, `ProductProductable`), carts, orders (`O
 and product ownership (`ProductUser`). Learner routes `/api/cart`, `/api/products`, `/api/orders`;
 admin routes under `/api/admin`. Depends on `payments` and registers `shopping-cart`. Admin screens
 `/sales/products` and `/sales/orders`.
+
+### [commerce](/reference/packages/commerce/)
+
+The `CommerceProvider` interface (`syncProduct`, `createCheckout`, `handleOrderEvent`) and the
+`WellmsCartProvider` adapter that creates cart products for courses through the cart services,
+with the mapping in `commerce_product_links`. Used by the Course Builder to price a course; no
+routes. A Sylius adapter is planned (Phase 6.4).
 
 ### [shopping-cart](/reference/packages/shopping-cart/)
 

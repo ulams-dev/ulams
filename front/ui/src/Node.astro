@@ -23,6 +23,9 @@ import SiteFooter from "./components/SiteFooter.astro";
 import Steps from "./components/Steps.astro";
 import Showcase from "./components/Showcase.astro";
 import Chips from "./components/Chips.astro";
+import WorkflowShowcase from "./components/WorkflowShowcase.astro";
+import LivingCourseStory from "./components/LivingCourseStory.astro";
+import BuilderStory from "./components/BuilderStory.astro";
 import ComparisonTable from "./components/ComparisonTable.astro";
 import CourseHeader from "./components/CourseHeader.astro";
 import PurchaseCard from "./components/PurchaseCard.astro";
@@ -38,6 +41,14 @@ import PackageFrame from "./components/PackageFrame.astro";
 import LiaScriptLesson from "./components/LiaScriptLesson.astro";
 import ActivityCard from "./components/ActivityCard.astro";
 import QuizRunner from "./components/QuizRunner.astro";
+import UpdateNotice from "./components/UpdateNotice.astro";
+import ReattemptNotice from "./components/ReattemptNotice.astro";
+import PendingUpdateNotice from "./components/PendingUpdateNotice.astro";
+import CourseUpdates from "./components/CourseUpdates.astro";
+import Timeline from "./components/Timeline.astro";
+import FlipCards from "./components/FlipCards.astro";
+import CodeBlock from "./components/CodeBlock.astro";
+import PracticeActivity from "./components/PracticeActivity.astro";
 
 // Every registry entry must have an implementation (checked by the type below).
 const COMPONENTS: Record<ComponentName, (props: any) => any> = {
@@ -62,6 +73,9 @@ const COMPONENTS: Record<ComponentName, (props: any) => any> = {
   Steps,
   Showcase,
   Chips,
+  WorkflowShowcase,
+  LivingCourseStory,
+  BuilderStory,
   ComparisonTable,
   CourseHeader,
   PurchaseCard,
@@ -77,6 +91,14 @@ const COMPONENTS: Record<ComponentName, (props: any) => any> = {
   LiaScriptLesson,
   ActivityCard,
   QuizRunner,
+  UpdateNotice,
+  ReattemptNotice,
+  PendingUpdateNotice,
+  CourseUpdates,
+  Timeline,
+  FlipCards,
+  CodeBlock,
+  PracticeActivity,
 };
 
 interface Props {

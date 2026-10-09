@@ -5,6 +5,7 @@ namespace Ulams\CourseBuilder\Pipeline;
 use InvalidArgumentException;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Blueprint\Checks;
+use Ulams\CourseBuilder\Events\ElementPatched;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
@@ -199,6 +200,7 @@ final class PatchService
     {
         $this->versions->approve($version, $userId);
         $this->versions->setCurrent($session, $version);
+        event(new ElementPatched($session, (string) $version->element_id));
         $found = Blueprint::find($version->document, (string) $version->element_id);
         $this->surfaces->patch($session, $run, $version, (string) $version->element_id, $found['label'] ?? 'Element', (string) $version->reason, 'approved');
     }

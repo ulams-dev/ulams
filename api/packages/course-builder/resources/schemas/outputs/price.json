@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Price suggestion",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "amountMinor",
+    "rationale"
+  ],
+  "properties": {
+    "amountMinor": {
+      "type": "integer",
+      "description": "Suggested price in minor units",
+      "minimum": 500,
+      "maximum": 10000000
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Why this price, one or two sentences",
+      "maxLength": 400,
+      "minLength": 10
+    }
+  }
+}

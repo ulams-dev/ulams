@@ -1,0 +1,10 @@
+{
+  "props": {
+    "tone": "warning",
+    "title": "Do not skip the bloom",
+    "text": "Pouring all the water at once leaves dry pockets and uneven extraction."
+  },
+  "invalid": {
+    "tone": "loud"
+  }
+}

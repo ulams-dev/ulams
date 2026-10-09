@@ -1,0 +1,31 @@
+# Operations deliberately without a CLI command, by reason (plan 4.10). "METHOD /path" or "* /prefix*".
+# `ulams api` can still call them; they do not count as coverage.
+inbound-webhook: []
+browser-only:
+  - "GET /api/auth/social/*"
+  - "POST /api/auth/social/complete/*"
+  - "GET /api/auth/email/verify/*"
+  - "GET /api/consultations/approve-term/*"
+  - "GET /api/consultations/reject-term/*"
+  - "GET /api/profile/delete/*"
+  - "GET /api/courses/{id}/scorm"
+  - "* /api/lti/tool/*"
+  - "* /api/lti/platform/*"
+  - "POST /api/lti/launches/*"
+content-runtime:
+  - "* /api/scorm/assets/*"
+  - "* /api/scorm/content/*"
+  - "POST /api/scorm/launch/*"
+  - "GET /api/scorm/play/*"
+  - "GET /api/scorm/show/*"
+  - "* /api/scorm/track/*"
+  - "* /api/cmi5/*"
+  - "POST /api/liascript/launches/*"
+  - "POST /api/liascript/progress/*"
+  - "POST /api/courses/progress/{topic_id}/h5p"
+  - "* /api/pdfs/fonts*"
+internal:
+  - "GET /api/health-check"
+  - "GET /api/lti/jwks"
+deprecated:
+  - "GET /api/tags/uniqueTags"

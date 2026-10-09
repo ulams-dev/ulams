@@ -1,0 +1,22 @@
+{
+  "impacted": [
+    "§2.2 Checking the state",
+    "§3.2 Merging",
+    "§4.1 Pulling changes"
+  ],
+  "answerChanged": [
+    "§2.2 Checking the state",
+    "§4.1 Pulling changes"
+  ],
+  "factsPresent": [
+    "fast-forward",
+    "--cached"
+  ],
+  "factsAbsent": [
+    "--staged",
+    "then merges it into your current branch"
+  ],
+  "uncovered": [
+    "Worktrees"
+  ]
+}

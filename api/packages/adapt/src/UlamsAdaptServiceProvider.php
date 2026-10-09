@@ -37,6 +37,7 @@ class UlamsAdaptServiceProvider extends ServiceProvider
             Route::get('{id}', [AdaptSourceController::class, 'show']);
             Route::delete('{id}', [AdaptSourceController::class, 'destroy']);
             Route::get('{id}/source', [AdaptSourceController::class, 'source']);
+            Route::get('{id}/versions', [AdaptSourceController::class, 'versions']);
             Route::post('{id}/versions', [AdaptSourceController::class, 'addVersion']);
             Route::post('{id}/build', [AdaptSourceController::class, 'build']);
         });

@@ -118,8 +118,23 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
      */
     public function h5p($topic_id, Request $request): JsonResponse
     {
+        // `event` is the verb IRI (legacy clients, with the statement in `data`) or the whole xAPI
+        // statement object (the SDK)
+        $request->validate([
+            'event' => ['required', function (string $attribute, mixed $value, \Closure $fail) {
+                if (!is_string($value) && !is_array($value)) {
+                    $fail(__('The :attribute must be a verb or a statement.', ['attribute' => $attribute]));
+                }
+            }],
+            'data' => ['nullable', 'array'],
+        ]);
+
         $topic = $this->topicRepositoryContract->getById($topic_id);
 
+        // enrolled in the course (directly or through a group), or allowed to edit it
+        if (!\Illuminate\Support\Facades\Gate::forUser($request->user())->allows('attend', $topic)) {
+            return $this->sendError(__('You do not have access to this course'), 403);
+        }
         if (!$topic->course->is_active) {
             return $this->sendError(__('Course is not active'), 403);
         }

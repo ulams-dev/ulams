@@ -139,6 +139,8 @@ export default {
   'menu.Users.List': 'Lista',
   'menu.Courses.List': 'Lista',
   'menu.Courses.Form': 'Formularz',
+  'menu.Users.API Tokens': 'Tokeny API',
+  apiTokens: 'Tokeny API',
   'menu.Users.Roles': 'Role',
   'menu.Sales': 'Sprzedaż',
   'menu.Users.User': 'Użytkownik',
@@ -187,7 +189,6 @@ export default {
   'menu.Other activities.Consultations': 'Konsultacje',
   'menu.Other activities.Form': 'Formularz',
   'menu.Configuration.Panel Translations': 'Tłumaczenia w panelu',
-  'menu.Analytics.Logs': 'Logi',
   'menu.Competency challenges': 'Wyzwania',
   'menu.Competency challenges.List': 'Lista',
   'menu.Competency challenges.Competency challenge': 'Wyzwanie',
@@ -418,9 +419,6 @@ export default {
   target_group: 'Grupa docelowa',
   author_tutor: 'Autor / Nauczyciel',
   short_description: 'Krótki opis',
-  ai_analysis_enable_label: 'Analiza nagrania AI',
-  ai_analysis_enable_tooltip:
-    'Zaznacz tę opcję aby włączyć analizę badania atencji oraz satystakcji użytkowników na spotkaniu',
   summary: 'Podsumowanie',
   summary_tooltip:
     'Dany edytor WYSIWYG zawiera narzędzia do formatowania, zachowując jednocześnie możliwość pisania Markdown z klawiatury oraz wyświetlania zwykłego Markdown.',
@@ -640,7 +638,6 @@ export default {
   categories_and_tags: 'Kategorie i Tagi',
   course_edit_warning_message:
     'Ten rekord już trwa, jeśli chcesz edytować kliknij zatwierdź. Edytujesz na własną odpowiedzialność',
-  user_logs: 'Logi użytkownika',
   http_method: 'Metoda HTTP',
   path: 'Ścieżka',
   'pdf_editor.legacy': 'Ten szablon powstał w ReportBro, który nie jest już obsługiwany.',

@@ -1,0 +1,17 @@
+{
+    "task": "update",
+    "prompt_id": "living-course/update",
+    "prompt_version": 1,
+    "hash": "87051f79a4d3eb67c9af7a2581e33d87",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 1919,
+        "output_tokens": 650,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "cache_read_tokens": 8144
+    },
+    "text": "{\"items\":[{\"elementId\":\"{{id_16}}\",\"decision\":\"no_change\",\"reason\":\"Objectives are never removed; §4.2 Water quality was removed from the source, so the author should decide whether to drop this lesson objective.\",\"severity\":\"minor\",\"fragmentIds\":[],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_17}}\",\"decision\":\"remove\",\"reason\":\"§4.2 Water quality was removed from the source and nothing in the new revision supports this paragraph.\",\"severity\":\"major\",\"fragmentIds\":[],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_18}}\",\"decision\":\"remove\",\"reason\":\"§4.2 Water quality was removed from the source and nothing in the new revision supports this takeaway.\",\"severity\":\"major\",\"fragmentIds\":[],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_19}}\",\"decision\":\"remove\",\"reason\":\"§4.2 Water quality was removed from the source, so the correct answer is no longer stated anywhere.\",\"severity\":\"major\",\"fragmentIds\":[],\"answerStatus\":\"unsure\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_23}}\",\"decision\":\"remove\",\"reason\":\"§4.2 Water quality was removed from the source, so the correct answer is no longer stated anywhere.\",\"severity\":\"major\",\"fragmentIds\":[],\"answerStatus\":\"unsure\",\"block\":null,\"question\":null,\"objective\":null}],\"reply\":\"The water quality section was removed from the source, so I propose removing its blocks and questions and flagging the objective for your decision.\"}"
+}

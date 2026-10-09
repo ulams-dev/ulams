@@ -105,6 +105,29 @@ Completing a topic updates the tree and the progress bar without reloading the p
 belongs to the signed-in user; on demo tenants that is the shared demo student, and it is wiped
 by the hourly reset.
 
+## When the author updates a lesson
+
+Courses built with the Course Builder can stay in sync with their sources (see
+[Build a course with AI](/creators/course-builder/)). When an author applies an update, nothing
+you have done changes: completion, scores and attempts stay as they are. The player only tells
+you what is different, above the lesson content. Each notice names its status in words and is a
+labelled region, so a screen reader reads it as a heading followed by the text.
+
+- **Updated since you completed it, 9 October 2026.** The lesson changed after you completed it.
+  Below it is "What changed:", the note the author wrote (plain text, up to 500 characters). If you
+  had started the lesson but not completed it, the notice reads "This lesson was updated after you
+  started it". **Mark as reviewed** closes the notice for good; it does not touch your progress. The
+  button needs scripts; without them the notice stays visible.
+- **One question was corrected.** On a quiz where the correct answer of a question changed: "Your
+  previous score stays on record. Retake it to update your result." A **Go to the quiz** link jumps
+  to the quiz. You get one extra attempt even if you used all of them, and the notice goes away by
+  itself when you retake the quiz.
+- **The source of this lesson changed on 1 October 2026; an update is under review.** Shown only
+  when the author turned this on for the course. It names no details of the change.
+
+The notices are fetched with your own session; if the API has none, or does not know the feature,
+the page looks as before.
+
 ## Preview mode
 
 A signed-in learner without access to the course (the API answers 403 for the program) can

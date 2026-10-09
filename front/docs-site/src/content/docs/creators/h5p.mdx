@@ -79,7 +79,9 @@ Editing content from a topic changes it everywhere it is used.
 The H5P content reports what the learner does as xAPI statements. In the reference front the topic
 completes when the content sends a completing statement (for example, the learner finishes an
 interactive exercise), or with **Mark as complete**. H5P keeps the learner's state, so they can
-continue where they left off.
+continue where they left off. The reference front loads and saves that state for the logged-in learner
+through its own `/h5p` route, which adds the session on the server; the H5P frame never holds the
+learner's API token.
 
 <Aside>
 Content types without a "completed" event (for example a plain accordion) never complete the topic by

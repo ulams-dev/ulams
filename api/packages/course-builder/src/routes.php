@@ -23,6 +23,7 @@ Route::group([
 
     Route::post('sessions/{session}/runs', [CourseBuilderController::class, 'run']);
     Route::get('sessions/{session}/events', [EventStreamController::class, 'stream']);
+    Route::get('runs/{run}', [CourseBuilderController::class, 'runStatus']);
     Route::post('runs/{run}/cancel', [CourseBuilderController::class, 'cancel']);
     Route::post('runs/{run}/steps/{step}/retry', [CourseBuilderController::class, 'retryStep']);
 
@@ -36,6 +37,8 @@ Route::group([
     Route::post('sessions/{session}/redo', [CourseBuilderController::class, 'redo']);
 
     Route::post('sessions/{session}/apply', [CourseBuilderController::class, 'apply']);
+    Route::post('sessions/{session}/new-site', [CourseBuilderController::class, 'newSite']);
+    Route::get('sessions/{session}/publish-check', [CourseBuilderController::class, 'publishCheck']);
     Route::post('sessions/{session}/publish', [CourseBuilderController::class, 'publish']);
     Route::get('sessions/{session}/usage', [CourseBuilderController::class, 'usage']);
 });

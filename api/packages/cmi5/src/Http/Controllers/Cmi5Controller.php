@@ -31,13 +31,17 @@ class Cmi5Controller extends UlamsBaseController implements Cmi5ControllerSwagge
         return $this->sendResponseForResource(Cmi5Resource::make($cmi5), __('Cmi5 uploaded successfully'));
     }
 
-    public function read(Cmi5ReadRequest $request, int $cmi5AuId): View
+    public function read(Cmi5ReadRequest $request, int $cmi5AuId): View|JsonResponse
     {
-        $token = $request->header('Authorization');
         $courseId = $request->get('course_id');
         $topicId = $request->get('topic_id');
 
-        $data = $this->cmi5Service->getPlayerData($cmi5AuId, $token, $courseId, $topicId);
+        $data = $this->cmi5Service->getPlayerData($cmi5AuId, $courseId, $topicId);
+
+        if ($request->query('format') === 'json') {
+            // the front frames the AU itself (PackageFrame); the URL carries the one-time token
+            return $this->sendResponse(['url' => $data['url'], 'origin' => $data['origin']], __('Cmi5 launch data retrieved successfully'));
+        }
 
         return view('cmi5::player', ['data' => $data]);
     }

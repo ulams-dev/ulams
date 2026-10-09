@@ -1,0 +1,20 @@
+{
+  "props": {
+    "eyebrow": "Status",
+    "title": "What works today",
+    "items": [
+      {
+        "label": "Markdown lessons",
+        "status": "available"
+      },
+      {
+        "label": "A2UI layouts",
+        "note": "Phase 2",
+        "status": "coming"
+      }
+    ]
+  },
+  "invalid": {
+    "items": 3
+  }
+}

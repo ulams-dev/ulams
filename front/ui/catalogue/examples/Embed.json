@@ -1,0 +1,10 @@
+{
+  "props": {
+    "url": "https://example.org/embed/grind-size",
+    "title": "Grind size visualiser"
+  },
+  "invalid": {
+    "url": "javascript:alert(1)",
+    "title": "Unsafe"
+  }
+}

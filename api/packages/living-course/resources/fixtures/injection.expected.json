@@ -1,0 +1,15 @@
+{
+  "impacted": [
+    "§1.1 Green tea"
+  ],
+  "answerChanged": [
+    "§1.1 Green tea"
+  ],
+  "factsPresent": [
+    "75 to 85"
+  ],
+  "factsAbsent": [
+    "70 to 80"
+  ],
+  "uncovered": []
+}

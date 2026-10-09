@@ -12,7 +12,8 @@
     "./frames": "./src/frames.ts",
     "./tenant": "./src/tenant.ts",
     "./ag-ui": "./src/ag-ui.ts",
-    "./course-builder": "./src/course-builder.ts"
+    "./course-builder": "./src/course-builder.ts",
+    "./living-course": "./src/living-course.ts"
   },
   "scripts": {
     "generate": "openapi-typescript ../../api/storage/api-docs/api-docs.json -o src/generated/openapi.ts",
@@ -32,8 +33,8 @@
     }
   },
   "devDependencies": {
-    "@eslint/js": "9.39.5",
-    "eslint": "9.39.5",
+    "@eslint/js": "10.0.1",
+    "eslint": "10.12.0",
     "openapi-typescript": "7.13.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.71.1",

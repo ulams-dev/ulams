@@ -77,6 +77,28 @@ const BLOCK = obj(
   ["id", "kind", "markdown", "citations"]
 );
 
+
+const REVISION_STATUS = oneOf(["fetched", "ingested", "unchanged", "no_impact", "failed"], "Revision state");
+const REV_COUNTS = obj(
+  {
+    changed: int("Fragments changed"),
+    moved: int("Fragments moved"),
+    removed: int("Fragments removed"),
+    added: int("Fragments added"),
+    trivial: int("Cosmetic changes (hidden by default)"),
+    minor: int("Minor changes"),
+    substantive: int("Substantive changes"),
+    total: int("All changes"),
+  },
+  ["changed", "moved", "removed", "added"],
+  "Change counts against the previous revision"
+);
+const SHOWN_FRAGMENT = obj(
+  { fragmentId: str("Fragment id", 32), label: str("Section label, e.g. §2.3 Brewing ratios", 160), text: str("Fragment text", 6000) },
+  ["text"],
+  "One side of a change"
+);
+
 export interface BuilderComponentSpec {
   description: string;
   /** Interview controls and chat replies are the only components the model may choose. */
@@ -168,6 +190,53 @@ export const builderCatalogue = {
       ["questionKey", "label", "options", "status", "defaultValue"]
     ),
     fallback: (p) => `${s(p.label)} Languages: ${arr(p.options).map((o) => s(o.label)).join(", ")}.`,
+  },
+  PriceInput: {
+    description:
+      "Question about the course price: free or paid, and for a paid course an optional price in the site currency. Asked by the builder itself (never chosen by the model); the price can be confirmed or changed in the publish summary.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        ...QUESTION_BASE,
+        currency: str("ISO 4217 currency code used for the price", 3),
+        value: obj({ mode: oneOf(["free", "paid"], "Free or paid"), amountMinor: int("Price in minor units (cents)", { minimum: 1 }), currency: str("Currency code", 3) }, ["mode"]),
+        defaultValue: obj({ mode: oneOf(["free", "paid"], "Free or paid") }, ["mode"]),
+      },
+      ["questionKey", "label", "status", "defaultValue"]
+    ),
+    fallback: (p) => `${s(p.label)} Free or paid; for a paid course give the price.`,
+  },
+  ThemePicker: {
+    description:
+      "Question about the look of the site: one card per theme preset with a live preview, and an optional accent colour that is adjusted when it would fail WCAG AA contrast. Asked by the builder itself, and only to authors who may change the site theme.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        ...QUESTION_BASE,
+        presets: list(OPTION, "Theme presets, value is the preset name", 6),
+        value: obj({ preset: str("Preset name", 32), accent: str("Accent colour, #rrggbb", 7) }, ["preset"]),
+        defaultValue: obj({ preset: str("Preset name", 32), accent: str("Accent colour, #rrggbb", 7) }, ["preset"]),
+      },
+      ["questionKey", "label", "presets", "status", "defaultValue"]
+    ),
+    fallback: (p) => `${s(p.label)} Themes: ${arr(p.presets).map((o) => s(o.label)).join(", ")}.`,
+  },
+  SitePicker: {
+    description:
+      "Question about where the course is published: on this site, or on a new site (its own address) created for it. Only offered to platform operators; asked by the builder itself, never chosen by the model.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        ...QUESTION_BASE,
+        value: obj({ mode: oneOf(["current", "new"], "This site or a new one"), slug: str("Name of the new site: letters, digits and dashes", 40) }, ["mode"]),
+        defaultValue: obj({ mode: oneOf(["current", "new"], "This site or a new one") }, ["mode"]),
+      },
+      ["questionKey", "label", "status", "defaultValue"]
+    ),
+    fallback: (p) => `${s(p.label)} This site, or a new site with its own address.`,
   },
   DecideForMe: {
     description: "Button that fills every open interview question with its default and explains the choices.",
@@ -392,7 +461,7 @@ export const builderCatalogue = {
             {
               id: str("Version id", 32),
               number: int("Number"),
-              kind: str("outline, content, patch, author, restore", 16),
+              kind: str("outline, content, patch, author, restore, update (a source update)", 16),
               origin: oneOf(["ai", "author", "restore"], "Who made it"),
               status: oneOf(["proposed", "approved", "rejected", "superseded"], "State"),
               reason: str("Why", 1000),
@@ -408,6 +477,187 @@ export const builderCatalogue = {
     ),
     fallback: (p) => `${arr(p.versions).length} versions.`,
   },
+  PublishSummary: {
+    description:
+      "Everything the author should know before publishing an applied course: where it will live, its price and theme, the numbers, items that block publishing and warnings that must be acknowledged. The Publish button stays disabled while anything blocks, and until warnings are acknowledged.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        title: str("Course title", 200),
+        url: str("Public address of the course page", 500),
+        published: bool("The course is already published"),
+        price: obj({ label: str("Price as shown to the author, e.g. Free or 49.00 USD", 80), suggested: bool("The amount is a suggestion the author has not confirmed") }, ["label"]),
+        theme: obj({ preset: str("Theme preset", 32), accent: str("Accent chosen by the author", 7), adjustedAccent: str("Accent as shown after the contrast adjustment", 7) }, ["preset"]),
+        counts: obj({ modules: int("Modules"), lessons: int("Lessons"), minutes: int("Minutes"), questions: int("Quiz questions") }, []),
+        blocking: list(obj({ code: str("Machine code", 40), message: str("What to fix", 500) }, ["code", "message"]), "Items that block publishing", 40),
+        warnings: list(obj({ code: str("Machine code", 40), message: str("What to review", 500), elementId: str("Element the warning is about", 32) }, ["code", "message"]), "Items to acknowledge", 80),
+        notes: list(str("Note from the last apply", 500), "Notes from the last apply", 10),
+      },
+      ["published", "price", "blocking", "warnings"]
+    ),
+    fallback: (p) => `${p.published ? "Published" : "Ready to publish?"} ${arr(p.blocking).length} blocking item(s), ${arr(p.warnings).length} warning(s).`,
+  },
+  SourceConnectionCard: {
+    description:
+      "A source of the course and how it stays in sync: file name and kind, connector (upload, Git, web page), a status pill (up to date, new version, processing, failed, paused), the revision the course reflects against the latest one, when it was last checked, the error if the last check failed, and the actions Check now and Upload a new version. Props come from the API, never from the model.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        sourceId: str("Source id", 32),
+        name: str("Source file or title", 255),
+        kind: str("markdown, pdf, docx", 16),
+        connector: str("upload, git, url", 32),
+        state: oneOf(["up_to_date", "new_version", "processing", "failed", "paused"], "Sync state shown as the status pill"),
+        syncedRevision: int("Number of the revision the course reflects", { minimum: 1 }),
+        latestRevision: int("Number of the latest revision", { minimum: 1 }),
+        lastCheckedAt: str("ISO time of the last check", 40),
+        schedule: str("manual, hourly, daily, weekly", 16),
+        error: str("Why the last check or import failed", 500),
+        canCheck: bool("Show the Check now action"),
+        canUpload: bool("Show the Upload a new version action"),
+      },
+      ["sourceId", "name", "connector", "state"]
+    ),
+    fallback: (p) => `Source ${s(p.name)}: ${s(p.state).replace(/_/g, " ")}${p.latestRevision ? `, latest revision ${s(p.latestRevision)}` : ""}.`,
+  },
+  RevisionTimeline: {
+    description:
+      "Revisions of one source, newest first: number, origin, trigger, time, status and the change counts against the previous one (for example 3 changed, 1 removed, 2 added, 1 moved). The revision the course reflects is marked In your course. One revision can be selected to see its changes.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        sourceId: str("Source id", 32),
+        selectedRevisionId: str("Revision whose changes are shown", 32),
+        revisions: list(
+          obj(
+            {
+              id: str("Revision id", 32),
+              number: int("Revision number", { minimum: 1 }),
+              origin: str("initial, upload, git, url", 16),
+              trigger: str("initial, manual, scheduled, webhook", 16),
+              detectedAt: str("ISO time", 40),
+              status: REVISION_STATUS,
+              counts: REV_COUNTS,
+              synced: bool("The course reflects this revision"),
+              latest: bool("The newest revision"),
+              error: str("Why the revision failed", 500),
+              href: str("Link that selects the revision (progressive enhancement)", 400),
+            },
+            ["id", "number", "status"]
+          ),
+          "Revisions, newest first",
+          500
+        ),
+      },
+      ["sourceId", "revisions"]
+    ),
+    fallback: (p) => `${arr(p.revisions).length} revisions.`,
+  },
+  FragmentChange: {
+    description:
+      "One changed source fragment: the section label, a kind badge (Changed, Moved, Removed, Added), the magnitude and signals as text (for example a number changed), and the old and new text with a word-level diff marked with plus and minus signs, never by colour alone.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        changeId: str("Change id", 32),
+        kind: oneOf(["changed", "moved", "removed", "added"], "What happened to the fragment"),
+        magnitude: oneOf(["trivial", "minor", "substantive"], "How much changed; trivial is cosmetic"),
+        similarity: { type: "number", description: "Text similarity from 0 to 1", minimum: 0, maximum: 1 },
+        signals: list(str("number, code, identifier, modality, large", 32), "Why the change matters", 8),
+        section: str("Section heading path", 300),
+        old: SHOWN_FRAGMENT,
+        new: SHOWN_FRAGMENT,
+        wordDiff: list({ ...list(str("Operator (=, -, +) then text", 8000), "Run", 2), minItems: 2 }, "Word-level diff runs", 4000),
+      },
+      ["changeId", "kind", "magnitude"]
+    ),
+    fallback: (p) => `${s(p.kind)} (${s(p.magnitude)}): ${s((p.new as Record<string, unknown> | undefined)?.label ?? (p.old as Record<string, unknown> | undefined)?.label)}`,
+  },
+  UpdateItem: {
+    description:
+      "One proposed change to one element of the course after its source changed, for the author to decide on: the element, what kind of proposal it is (update, citation update, removal, no change needed, update by hand, new section in the source), why, the old and new text with word-level marks, citation chips, warnings (possibly unsupported claim, the answer may be wrong or changed), and the controls Accept, Reject, Reset and Ask for changes with a comment field. Conflict and edited-after-analysis states explain what to do. Props come from the update proposal, never from the model.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        itemId: str("Proposal item id", 32),
+        elementId: str("Element in the course", 32),
+        elementType: oneOf(["block", "question", "objective", "lesson", "course", "section"], "What the element is"),
+        label: str("Element shown to the author, e.g. Lesson 2.1 › Q2", 200),
+        kind: oneOf(["update", "citation_remap", "remove", "no_change", "manual", "uncovered"], "Kind of proposal"),
+        status: oneOf(["pending", "accepted", "rejected", "conflict", "stale"], "Decision state"),
+        reason: str("Why the element changes, plain text", 500),
+        severity: oneOf(["minor", "major"], "How much the meaning changes"),
+        sources: str("Source sections behind the change, e.g. Based on §3.2", 300),
+        fields: list(
+          obj(
+            {
+              path: str("Field path", 200),
+              label: str("Readable field name, e.g. Option B (correct)", 200),
+              before: str("Text before", 20000),
+              after: str("Text after", 20000),
+            },
+            ["path", "label"]
+          ),
+          "Fields that change",
+          60
+        ),
+        citations: list(CITATION, "Fragments the element cites after the change", 20),
+        flags: list(str("Warning from the grounding check, e.g. Possibly unsupported: …", 300), "Warnings about the proposed text", 10),
+        signals: list(str("number, code, identifier, modality, large", 32), "Why the source change matters", 8),
+        answerCheck: bool("The marked answer may now be wrong"),
+        answerChanged: bool("The correct answer is different after the change"),
+        regenerations: int("Times the author asked for changes", { maximum: 10 }),
+        maxRegenerations: int("Most times the author may ask for changes", { minimum: 1, maximum: 10 }),
+        canDecide: bool("Decisions are open (the analysis is finished and the proposal is not settled)"),
+        canRegenerate: bool("Ask for changes is available (AI is enabled)"),
+        href: str("Link to the element in the workspace", 400),
+      },
+      ["itemId", "elementId", "elementType", "label", "kind", "status"]
+    ),
+    fallback: (p) => `${s(p.label)}: ${s(p.kind).replace(/_/g, " ")} (${s(p.status)}).`,
+  },
+  ImpactSummary: {
+    description:
+      "What one update proposal touches: how many course elements need a look, how many quiz answers to check, how many new source sections no lesson covers, how many citations are updated automatically, how many lessons are affected, the cost estimate and the cost so far. An optional line on learner impact appears only when the API provides it. Props come from the update proposal, never from the model.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        elements: int("Elements that may need an update"),
+        answerChecks: int("Quiz answers to check"),
+        uncovered: int("New source sections no lesson covers"),
+        remaps: int("Citations updated automatically"),
+        major: int("Changes that alter the meaning"),
+        lessons: int("Lessons affected"),
+        estimatedCostMicroUsd: int("Estimated cost of the analysis"),
+        costMicroUsd: int("Cost so far"),
+        learnerImpact: str("Plain-text line on what learners will see; only when provided", 500),
+      },
+      ["elements", "answerChecks", "uncovered"]
+    ),
+    fallback: (p) => `${s(p.elements)} elements to review, ${s(p.answerChecks)} answers to check, ${s(p.uncovered)} uncovered sections.`,
+  },
+  StalenessBadge: {
+    description:
+      "How far a course is behind its sources, as an icon and words: In sync, Stale with the number of days, or Updates dismissed. It can link to the update review.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        state: oneOf(["in_sync", "stale", "dismissed"], "Freshness of the course"),
+        days: int("Days since the source changed"),
+        pendingElements: int("Elements waiting for an update"),
+        href: str("Link to the update review", 400),
+      },
+      ["state"]
+    ),
+    fallback: (p) => (p.state === "stale" ? `Stale${p.days !== undefined ? ` · ${s(p.days)} days` : ""}` : p.state === "dismissed" ? "Updates dismissed" : "In sync"),
+  },
   CostMeter: {
     description: "Running AI cost of the session against its budget.",
     modelSelectable: false,
@@ -417,6 +667,59 @@ export const builderCatalogue = {
       ["usedMicroUsd", "budgetMicroUsd"]
     ),
     fallback: (p) => `${usd(p.usedMicroUsd)} of ${usd(p.budgetMicroUsd)}`,
+  },
+  LearnerImpact: {
+    description:
+      "What an update does for learners, in plain words: how many learners will see the 'updated since you completed it' notice, how many get one extra attempt for a corrected quiz question, how many had completed a lesson that is retired and how many finished the course before a lesson was added, and the reassurance that completion and past scores stay as they are. When learner notices for updated lessons are switched off for the course it says so. After the update is applied the same facts are in the past tense. Props come from the update proposal, never from the model.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        applied: bool("The update was applied; the sentences are in the past tense"),
+        noticesOff: bool("Notices about updated, retired and new lessons are switched off for this course"),
+        topicUpdated: int("Learners who completed or started a lesson that changed"),
+        questionReattempt: int("Learners with an answer to a corrected quiz question"),
+        topicRetired: int("Learners who had completed a lesson that is removed"),
+        courseExtended: int("Learners who finished the course before a lesson was added"),
+      },
+      ["topicUpdated", "questionReattempt", "topicRetired", "courseExtended"]
+    ),
+    fallback: (p) => `${s(p.topicUpdated)} learners see an updated notice; ${s(p.questionReattempt)} get an extra attempt.`,
+  },
+  AuditTable: {
+    description:
+      "The audit trail of a course's sources and updates as a table, newest first: when, what happened, who did it (a person, the system or an agent) and a short summary, with a Details button per row that opens the full record: the source revision, the course versions it moved between, the number of AI calls, the recorded data and the two hashes that chain the entries. Props come from the audit API, never from the model.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        caption: str("Caption read by screen readers", 200),
+        emptyText: str("Shown when there are no entries", 300),
+        entries: list(
+          obj(
+            {
+              id: int("Entry id", { minimum: 0 }),
+              at: str("ISO time", 40),
+              action: str("Action code, for example proposal.applied", 64),
+              actionLabel: str("The action in plain words", 120),
+              actorType: oneOf(["user", "system", "agent"], "Who acted: a person, the system or an agent"),
+              actor: str("Name of the actor, or System", 120),
+              summary: str("One line about what happened", 500),
+              details: list(
+                obj({ label: str("Field name", 60), value: str("Field value", 2000), mono: bool("Show in a monospace font (ids and hashes)") }, ["label", "value"]),
+                "The full record of the entry",
+                40
+              ),
+            },
+            ["id", "action", "actionLabel", "actor"]
+          ),
+          "Entries, newest first",
+          200
+        ),
+      },
+      ["entries"]
+    ),
+    fallback: (p) => `${arr(p.entries).length} audit entries.`,
   },
 } satisfies Record<string, BuilderComponentSpec>;
 

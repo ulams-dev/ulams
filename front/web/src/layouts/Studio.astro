@@ -15,17 +15,24 @@ interface Props {
   /** Status pill text (e.g. "Draft · not published"). */
   status?: string;
   sessionId?: string | null;
-  active?: "builder" | "workspace" | "done" | "sessions";
+  active?: "builder" | "workspace" | "preview" | "done" | "sessions" | "sources" | "updates" | "audit";
+  /** The session has a course: updates can be proposed for it. */
+  hasCourse?: boolean;
 }
 
-const { title, crumb, status, sessionId, active = "builder" } = Astro.props;
+const { title, crumb, status, sessionId, active = "builder", hasCourse = false } = Astro.props;
 const nav = [
   { key: "sessions", href: "/studio", label: "Sessions" },
   ...(sessionId
     ? [
         { key: "builder", href: `/studio/s/${sessionId}`, label: "Builder" },
         { key: "workspace", href: `/studio/s/${sessionId}/workspace`, label: "Workspace" },
+        { key: "preview", href: `/studio/s/${sessionId}/preview`, label: "Preview" },
         { key: "done", href: `/studio/s/${sessionId}/done`, label: "Course" },
+        // sources and the audit trail exist from the first connected source; updates need a course
+        { key: "sources", href: `/studio/s/${sessionId}/sources`, label: "Sources" },
+        ...(hasCourse ? [{ key: "updates", href: `/studio/s/${sessionId}/updates`, label: "Updates" }] : []),
+        { key: "audit", href: `/studio/s/${sessionId}/audit`, label: "Audit" },
       ]
     : [{ key: "builder", href: "/studio/new", label: "New course" }]),
 ];
@@ -206,6 +213,8 @@ const nav = [
     }
     .st-rail ul {
       flex-direction: row;
+      flex-wrap: wrap;
+      min-width: 0;
     }
   }
 </style>

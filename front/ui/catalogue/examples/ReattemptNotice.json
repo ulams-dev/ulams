@@ -1,0 +1,8 @@
+{
+  "props": {
+    "quizHref": "#quiz"
+  },
+  "invalid": {
+    "quizHref": 5
+  }
+}

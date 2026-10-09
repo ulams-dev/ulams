@@ -485,6 +485,341 @@
         "additionalProperties": false
       }
     },
+    "PriceInput": {
+      "description": "Question about the course price: free or paid, and for a paid course an optional price in the site currency. Asked by the builder itself (never chosen by the model); the price can be confirmed or changed in the publish summary.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "questionKey": {
+            "type": "string",
+            "description": "Brief field the question fills",
+            "maxLength": 40
+          },
+          "label": {
+            "type": "string",
+            "description": "The question, short and plain",
+            "maxLength": 200
+          },
+          "why": {
+            "type": "string",
+            "description": "One sentence on why the question matters for this source",
+            "maxLength": 300
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "answered",
+              "upcoming"
+            ],
+            "description": "Card state"
+          },
+          "decidedBy": {
+            "type": "string",
+            "enum": [
+              "author",
+              "default"
+            ],
+            "description": "Who decided the value"
+          },
+          "step": {
+            "type": "integer",
+            "description": "Position in the interview, from 1",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "total": {
+            "type": "integer",
+            "description": "Number of questions",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "currency": {
+            "type": "string",
+            "description": "ISO 4217 currency code used for the price",
+            "maxLength": 3
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "free",
+                  "paid"
+                ],
+                "description": "Free or paid"
+              },
+              "amountMinor": {
+                "type": "integer",
+                "description": "Price in minor units (cents)",
+                "minimum": 1
+              },
+              "currency": {
+                "type": "string",
+                "description": "Currency code",
+                "maxLength": 3
+              }
+            },
+            "required": [
+              "mode"
+            ],
+            "additionalProperties": false
+          },
+          "defaultValue": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "free",
+                  "paid"
+                ],
+                "description": "Free or paid"
+              }
+            },
+            "required": [
+              "mode"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "questionKey",
+          "label",
+          "status",
+          "defaultValue"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ThemePicker": {
+      "description": "Question about the look of the site: one card per theme preset with a live preview, and an optional accent colour that is adjusted when it would fail WCAG AA contrast. Asked by the builder itself, and only to authors who may change the site theme.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "questionKey": {
+            "type": "string",
+            "description": "Brief field the question fills",
+            "maxLength": 40
+          },
+          "label": {
+            "type": "string",
+            "description": "The question, short and plain",
+            "maxLength": 200
+          },
+          "why": {
+            "type": "string",
+            "description": "One sentence on why the question matters for this source",
+            "maxLength": 300
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "answered",
+              "upcoming"
+            ],
+            "description": "Card state"
+          },
+          "decidedBy": {
+            "type": "string",
+            "enum": [
+              "author",
+              "default"
+            ],
+            "description": "Who decided the value"
+          },
+          "step": {
+            "type": "integer",
+            "description": "Position in the interview, from 1",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "total": {
+            "type": "integer",
+            "description": "Number of questions",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "presets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "description": "Value sent back when chosen",
+                  "maxLength": 120
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Visible text",
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "value",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Theme presets, value is the preset name",
+            "maxItems": 6
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "preset": {
+                "type": "string",
+                "description": "Preset name",
+                "maxLength": 32
+              },
+              "accent": {
+                "type": "string",
+                "description": "Accent colour, #rrggbb",
+                "maxLength": 7
+              }
+            },
+            "required": [
+              "preset"
+            ],
+            "additionalProperties": false
+          },
+          "defaultValue": {
+            "type": "object",
+            "properties": {
+              "preset": {
+                "type": "string",
+                "description": "Preset name",
+                "maxLength": 32
+              },
+              "accent": {
+                "type": "string",
+                "description": "Accent colour, #rrggbb",
+                "maxLength": 7
+              }
+            },
+            "required": [
+              "preset"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "questionKey",
+          "label",
+          "presets",
+          "status",
+          "defaultValue"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "SitePicker": {
+      "description": "Question about where the course is published: on this site, or on a new site (its own address) created for it. Only offered to platform operators; asked by the builder itself, never chosen by the model.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "questionKey": {
+            "type": "string",
+            "description": "Brief field the question fills",
+            "maxLength": 40
+          },
+          "label": {
+            "type": "string",
+            "description": "The question, short and plain",
+            "maxLength": 200
+          },
+          "why": {
+            "type": "string",
+            "description": "One sentence on why the question matters for this source",
+            "maxLength": 300
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "answered",
+              "upcoming"
+            ],
+            "description": "Card state"
+          },
+          "decidedBy": {
+            "type": "string",
+            "enum": [
+              "author",
+              "default"
+            ],
+            "description": "Who decided the value"
+          },
+          "step": {
+            "type": "integer",
+            "description": "Position in the interview, from 1",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "total": {
+            "type": "integer",
+            "description": "Number of questions",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "current",
+                  "new"
+                ],
+                "description": "This site or a new one"
+              },
+              "slug": {
+                "type": "string",
+                "description": "Name of the new site: letters, digits and dashes",
+                "maxLength": 40
+              }
+            },
+            "required": [
+              "mode"
+            ],
+            "additionalProperties": false
+          },
+          "defaultValue": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "current",
+                  "new"
+                ],
+                "description": "This site or a new one"
+              }
+            },
+            "required": [
+              "mode"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "questionKey",
+          "label",
+          "status",
+          "defaultValue"
+        ],
+        "additionalProperties": false
+      }
+    },
     "DecideForMe": {
       "description": "Button that fills every open interview question with its default and explains the choices.",
       "modelSelectable": false,
@@ -1706,7 +2041,7 @@
                 },
                 "kind": {
                   "type": "string",
-                  "description": "outline, content, patch, author, restore",
+                  "description": "outline, content, patch, author, restore, update (a source update)",
                   "maxLength": 16
                 },
                 "origin": {
@@ -1757,6 +2092,827 @@
         "additionalProperties": false
       }
     },
+    "PublishSummary": {
+      "description": "Everything the author should know before publishing an applied course: where it will live, its price and theme, the numbers, items that block publishing and warnings that must be acknowledged. The Publish button stays disabled while anything blocks, and until warnings are acknowledged.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Course title",
+            "maxLength": 200
+          },
+          "url": {
+            "type": "string",
+            "description": "Public address of the course page",
+            "maxLength": 500
+          },
+          "published": {
+            "type": "boolean",
+            "description": "The course is already published"
+          },
+          "price": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Price as shown to the author, e.g. Free or 49.00 USD",
+                "maxLength": 80
+              },
+              "suggested": {
+                "type": "boolean",
+                "description": "The amount is a suggestion the author has not confirmed"
+              }
+            },
+            "required": [
+              "label"
+            ],
+            "additionalProperties": false
+          },
+          "theme": {
+            "type": "object",
+            "properties": {
+              "preset": {
+                "type": "string",
+                "description": "Theme preset",
+                "maxLength": 32
+              },
+              "accent": {
+                "type": "string",
+                "description": "Accent chosen by the author",
+                "maxLength": 7
+              },
+              "adjustedAccent": {
+                "type": "string",
+                "description": "Accent as shown after the contrast adjustment",
+                "maxLength": 7
+              }
+            },
+            "required": [
+              "preset"
+            ],
+            "additionalProperties": false
+          },
+          "counts": {
+            "type": "object",
+            "properties": {
+              "modules": {
+                "type": "integer",
+                "description": "Modules",
+                "minimum": 0
+              },
+              "lessons": {
+                "type": "integer",
+                "description": "Lessons",
+                "minimum": 0
+              },
+              "minutes": {
+                "type": "integer",
+                "description": "Minutes",
+                "minimum": 0
+              },
+              "questions": {
+                "type": "integer",
+                "description": "Quiz questions",
+                "minimum": 0
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "blocking": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "description": "Machine code",
+                  "maxLength": 40
+                },
+                "message": {
+                  "type": "string",
+                  "description": "What to fix",
+                  "maxLength": 500
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Items that block publishing",
+            "maxItems": 40
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "description": "Machine code",
+                  "maxLength": 40
+                },
+                "message": {
+                  "type": "string",
+                  "description": "What to review",
+                  "maxLength": 500
+                },
+                "elementId": {
+                  "type": "string",
+                  "description": "Element the warning is about",
+                  "maxLength": 32
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Items to acknowledge",
+            "maxItems": 80
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Note from the last apply",
+              "maxLength": 500
+            },
+            "description": "Notes from the last apply",
+            "maxItems": 10
+          }
+        },
+        "required": [
+          "published",
+          "price",
+          "blocking",
+          "warnings"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "SourceConnectionCard": {
+      "description": "A source of the course and how it stays in sync: file name and kind, connector (upload, Git, web page), a status pill (up to date, new version, processing, failed, paused), the revision the course reflects against the latest one, when it was last checked, the error if the last check failed, and the actions Check now and Upload a new version. Props come from the API, never from the model.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "description": "Source id",
+            "maxLength": 32
+          },
+          "name": {
+            "type": "string",
+            "description": "Source file or title",
+            "maxLength": 255
+          },
+          "kind": {
+            "type": "string",
+            "description": "markdown, pdf, docx",
+            "maxLength": 16
+          },
+          "connector": {
+            "type": "string",
+            "description": "upload, git, url",
+            "maxLength": 32
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "up_to_date",
+              "new_version",
+              "processing",
+              "failed",
+              "paused"
+            ],
+            "description": "Sync state shown as the status pill"
+          },
+          "syncedRevision": {
+            "type": "integer",
+            "description": "Number of the revision the course reflects",
+            "minimum": 1
+          },
+          "latestRevision": {
+            "type": "integer",
+            "description": "Number of the latest revision",
+            "minimum": 1
+          },
+          "lastCheckedAt": {
+            "type": "string",
+            "description": "ISO time of the last check",
+            "maxLength": 40
+          },
+          "schedule": {
+            "type": "string",
+            "description": "manual, hourly, daily, weekly",
+            "maxLength": 16
+          },
+          "error": {
+            "type": "string",
+            "description": "Why the last check or import failed",
+            "maxLength": 500
+          },
+          "canCheck": {
+            "type": "boolean",
+            "description": "Show the Check now action"
+          },
+          "canUpload": {
+            "type": "boolean",
+            "description": "Show the Upload a new version action"
+          }
+        },
+        "required": [
+          "sourceId",
+          "name",
+          "connector",
+          "state"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "RevisionTimeline": {
+      "description": "Revisions of one source, newest first: number, origin, trigger, time, status and the change counts against the previous one (for example 3 changed, 1 removed, 2 added, 1 moved). The revision the course reflects is marked In your course. One revision can be selected to see its changes.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "description": "Source id",
+            "maxLength": 32
+          },
+          "selectedRevisionId": {
+            "type": "string",
+            "description": "Revision whose changes are shown",
+            "maxLength": 32
+          },
+          "revisions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Revision id",
+                  "maxLength": 32
+                },
+                "number": {
+                  "type": "integer",
+                  "description": "Revision number",
+                  "minimum": 1
+                },
+                "origin": {
+                  "type": "string",
+                  "description": "initial, upload, git, url",
+                  "maxLength": 16
+                },
+                "trigger": {
+                  "type": "string",
+                  "description": "initial, manual, scheduled, webhook",
+                  "maxLength": 16
+                },
+                "detectedAt": {
+                  "type": "string",
+                  "description": "ISO time",
+                  "maxLength": 40
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "fetched",
+                    "ingested",
+                    "unchanged",
+                    "no_impact",
+                    "failed"
+                  ],
+                  "description": "Revision state"
+                },
+                "counts": {
+                  "type": "object",
+                  "properties": {
+                    "changed": {
+                      "type": "integer",
+                      "description": "Fragments changed",
+                      "minimum": 0
+                    },
+                    "moved": {
+                      "type": "integer",
+                      "description": "Fragments moved",
+                      "minimum": 0
+                    },
+                    "removed": {
+                      "type": "integer",
+                      "description": "Fragments removed",
+                      "minimum": 0
+                    },
+                    "added": {
+                      "type": "integer",
+                      "description": "Fragments added",
+                      "minimum": 0
+                    },
+                    "trivial": {
+                      "type": "integer",
+                      "description": "Cosmetic changes (hidden by default)",
+                      "minimum": 0
+                    },
+                    "minor": {
+                      "type": "integer",
+                      "description": "Minor changes",
+                      "minimum": 0
+                    },
+                    "substantive": {
+                      "type": "integer",
+                      "description": "Substantive changes",
+                      "minimum": 0
+                    },
+                    "total": {
+                      "type": "integer",
+                      "description": "All changes",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "changed",
+                    "moved",
+                    "removed",
+                    "added"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Change counts against the previous revision"
+                },
+                "synced": {
+                  "type": "boolean",
+                  "description": "The course reflects this revision"
+                },
+                "latest": {
+                  "type": "boolean",
+                  "description": "The newest revision"
+                },
+                "error": {
+                  "type": "string",
+                  "description": "Why the revision failed",
+                  "maxLength": 500
+                },
+                "href": {
+                  "type": "string",
+                  "description": "Link that selects the revision (progressive enhancement)",
+                  "maxLength": 400
+                }
+              },
+              "required": [
+                "id",
+                "number",
+                "status"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Revisions, newest first",
+            "maxItems": 500
+          }
+        },
+        "required": [
+          "sourceId",
+          "revisions"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "FragmentChange": {
+      "description": "One changed source fragment: the section label, a kind badge (Changed, Moved, Removed, Added), the magnitude and signals as text (for example a number changed), and the old and new text with a word-level diff marked with plus and minus signs, never by colour alone.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "changeId": {
+            "type": "string",
+            "description": "Change id",
+            "maxLength": 32
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "changed",
+              "moved",
+              "removed",
+              "added"
+            ],
+            "description": "What happened to the fragment"
+          },
+          "magnitude": {
+            "type": "string",
+            "enum": [
+              "trivial",
+              "minor",
+              "substantive"
+            ],
+            "description": "How much changed; trivial is cosmetic"
+          },
+          "similarity": {
+            "type": "number",
+            "description": "Text similarity from 0 to 1",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "number, code, identifier, modality, large",
+              "maxLength": 32
+            },
+            "description": "Why the change matters",
+            "maxItems": 8
+          },
+          "section": {
+            "type": "string",
+            "description": "Section heading path",
+            "maxLength": 300
+          },
+          "old": {
+            "type": "object",
+            "properties": {
+              "fragmentId": {
+                "type": "string",
+                "description": "Fragment id",
+                "maxLength": 32
+              },
+              "label": {
+                "type": "string",
+                "description": "Section label, e.g. §2.3 Brewing ratios",
+                "maxLength": 160
+              },
+              "text": {
+                "type": "string",
+                "description": "Fragment text",
+                "maxLength": 6000
+              }
+            },
+            "required": [
+              "text"
+            ],
+            "additionalProperties": false,
+            "description": "One side of a change"
+          },
+          "new": {
+            "type": "object",
+            "properties": {
+              "fragmentId": {
+                "type": "string",
+                "description": "Fragment id",
+                "maxLength": 32
+              },
+              "label": {
+                "type": "string",
+                "description": "Section label, e.g. §2.3 Brewing ratios",
+                "maxLength": 160
+              },
+              "text": {
+                "type": "string",
+                "description": "Fragment text",
+                "maxLength": 6000
+              }
+            },
+            "required": [
+              "text"
+            ],
+            "additionalProperties": false,
+            "description": "One side of a change"
+          },
+          "wordDiff": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Operator (=, -, +) then text",
+                "maxLength": 8000
+              },
+              "description": "Run",
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "description": "Word-level diff runs",
+            "maxItems": 4000
+          }
+        },
+        "required": [
+          "changeId",
+          "kind",
+          "magnitude"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "UpdateItem": {
+      "description": "One proposed change to one element of the course after its source changed, for the author to decide on: the element, what kind of proposal it is (update, citation update, removal, no change needed, update by hand, new section in the source), why, the old and new text with word-level marks, citation chips, warnings (possibly unsupported claim, the answer may be wrong or changed), and the controls Accept, Reject, Reset and Ask for changes with a comment field. Conflict and edited-after-analysis states explain what to do. Props come from the update proposal, never from the model.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "description": "Proposal item id",
+            "maxLength": 32
+          },
+          "elementId": {
+            "type": "string",
+            "description": "Element in the course",
+            "maxLength": 32
+          },
+          "elementType": {
+            "type": "string",
+            "enum": [
+              "block",
+              "question",
+              "objective",
+              "lesson",
+              "course",
+              "section"
+            ],
+            "description": "What the element is"
+          },
+          "label": {
+            "type": "string",
+            "description": "Element shown to the author, e.g. Lesson 2.1 › Q2",
+            "maxLength": 200
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "update",
+              "citation_remap",
+              "remove",
+              "no_change",
+              "manual",
+              "uncovered"
+            ],
+            "description": "Kind of proposal"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "accepted",
+              "rejected",
+              "conflict",
+              "stale"
+            ],
+            "description": "Decision state"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why the element changes, plain text",
+            "maxLength": 500
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "minor",
+              "major"
+            ],
+            "description": "How much the meaning changes"
+          },
+          "sources": {
+            "type": "string",
+            "description": "Source sections behind the change, e.g. Based on §3.2",
+            "maxLength": 300
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Field path",
+                  "maxLength": 200
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Readable field name, e.g. Option B (correct)",
+                  "maxLength": 200
+                },
+                "before": {
+                  "type": "string",
+                  "description": "Text before",
+                  "maxLength": 20000
+                },
+                "after": {
+                  "type": "string",
+                  "description": "Text after",
+                  "maxLength": 20000
+                }
+              },
+              "required": [
+                "path",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Fields that change",
+            "maxItems": 60
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "fragmentId": {
+                  "type": "string",
+                  "description": "Fragment id (frg_…)",
+                  "maxLength": 16
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Section label shown on the chip, e.g. §2.3 Brewing ratios",
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "fragmentId",
+                "label"
+              ],
+              "additionalProperties": false,
+              "description": "A source citation"
+            },
+            "description": "Fragments the element cites after the change",
+            "maxItems": 20
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Warning from the grounding check, e.g. Possibly unsupported: …",
+              "maxLength": 300
+            },
+            "description": "Warnings about the proposed text",
+            "maxItems": 10
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "number, code, identifier, modality, large",
+              "maxLength": 32
+            },
+            "description": "Why the source change matters",
+            "maxItems": 8
+          },
+          "answerCheck": {
+            "type": "boolean",
+            "description": "The marked answer may now be wrong"
+          },
+          "answerChanged": {
+            "type": "boolean",
+            "description": "The correct answer is different after the change"
+          },
+          "regenerations": {
+            "type": "integer",
+            "description": "Times the author asked for changes",
+            "minimum": 0,
+            "maximum": 10
+          },
+          "maxRegenerations": {
+            "type": "integer",
+            "description": "Most times the author may ask for changes",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "canDecide": {
+            "type": "boolean",
+            "description": "Decisions are open (the analysis is finished and the proposal is not settled)"
+          },
+          "canRegenerate": {
+            "type": "boolean",
+            "description": "Ask for changes is available (AI is enabled)"
+          },
+          "href": {
+            "type": "string",
+            "description": "Link to the element in the workspace",
+            "maxLength": 400
+          }
+        },
+        "required": [
+          "itemId",
+          "elementId",
+          "elementType",
+          "label",
+          "kind",
+          "status"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ImpactSummary": {
+      "description": "What one update proposal touches: how many course elements need a look, how many quiz answers to check, how many new source sections no lesson covers, how many citations are updated automatically, how many lessons are affected, the cost estimate and the cost so far. An optional line on learner impact appears only when the API provides it. Props come from the update proposal, never from the model.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "elements": {
+            "type": "integer",
+            "description": "Elements that may need an update",
+            "minimum": 0
+          },
+          "answerChecks": {
+            "type": "integer",
+            "description": "Quiz answers to check",
+            "minimum": 0
+          },
+          "uncovered": {
+            "type": "integer",
+            "description": "New source sections no lesson covers",
+            "minimum": 0
+          },
+          "remaps": {
+            "type": "integer",
+            "description": "Citations updated automatically",
+            "minimum": 0
+          },
+          "major": {
+            "type": "integer",
+            "description": "Changes that alter the meaning",
+            "minimum": 0
+          },
+          "lessons": {
+            "type": "integer",
+            "description": "Lessons affected",
+            "minimum": 0
+          },
+          "estimatedCostMicroUsd": {
+            "type": "integer",
+            "description": "Estimated cost of the analysis",
+            "minimum": 0
+          },
+          "costMicroUsd": {
+            "type": "integer",
+            "description": "Cost so far",
+            "minimum": 0
+          },
+          "learnerImpact": {
+            "type": "string",
+            "description": "Plain-text line on what learners will see; only when provided",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "elements",
+          "answerChecks",
+          "uncovered"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "StalenessBadge": {
+      "description": "How far a course is behind its sources, as an icon and words: In sync, Stale with the number of days, or Updates dismissed. It can link to the update review.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "in_sync",
+              "stale",
+              "dismissed"
+            ],
+            "description": "Freshness of the course"
+          },
+          "days": {
+            "type": "integer",
+            "description": "Days since the source changed",
+            "minimum": 0
+          },
+          "pendingElements": {
+            "type": "integer",
+            "description": "Elements waiting for an update",
+            "minimum": 0
+          },
+          "href": {
+            "type": "string",
+            "description": "Link to the update review",
+            "maxLength": 400
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "additionalProperties": false
+      }
+    },
     "CostMeter": {
       "description": "Running AI cost of the session against its budget.",
       "modelSelectable": false,
@@ -1788,6 +2944,160 @@
         "required": [
           "usedMicroUsd",
           "budgetMicroUsd"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "LearnerImpact": {
+      "description": "What an update does for learners, in plain words: how many learners will see the 'updated since you completed it' notice, how many get one extra attempt for a corrected quiz question, how many had completed a lesson that is retired and how many finished the course before a lesson was added, and the reassurance that completion and past scores stay as they are. When learner notices for updated lessons are switched off for the course it says so. After the update is applied the same facts are in the past tense. Props come from the update proposal, never from the model.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "applied": {
+            "type": "boolean",
+            "description": "The update was applied; the sentences are in the past tense"
+          },
+          "noticesOff": {
+            "type": "boolean",
+            "description": "Notices about updated, retired and new lessons are switched off for this course"
+          },
+          "topicUpdated": {
+            "type": "integer",
+            "description": "Learners who completed or started a lesson that changed",
+            "minimum": 0
+          },
+          "questionReattempt": {
+            "type": "integer",
+            "description": "Learners with an answer to a corrected quiz question",
+            "minimum": 0
+          },
+          "topicRetired": {
+            "type": "integer",
+            "description": "Learners who had completed a lesson that is removed",
+            "minimum": 0
+          },
+          "courseExtended": {
+            "type": "integer",
+            "description": "Learners who finished the course before a lesson was added",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "topicUpdated",
+          "questionReattempt",
+          "topicRetired",
+          "courseExtended"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "AuditTable": {
+      "description": "The audit trail of a course's sources and updates as a table, newest first: when, what happened, who did it (a person, the system or an agent) and a short summary, with a Details button per row that opens the full record: the source revision, the course versions it moved between, the number of AI calls, the recorded data and the two hashes that chain the entries. Props come from the audit API, never from the model.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "caption": {
+            "type": "string",
+            "description": "Caption read by screen readers",
+            "maxLength": 200
+          },
+          "emptyText": {
+            "type": "string",
+            "description": "Shown when there are no entries",
+            "maxLength": 300
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "Entry id",
+                  "minimum": 0
+                },
+                "at": {
+                  "type": "string",
+                  "description": "ISO time",
+                  "maxLength": 40
+                },
+                "action": {
+                  "type": "string",
+                  "description": "Action code, for example proposal.applied",
+                  "maxLength": 64
+                },
+                "actionLabel": {
+                  "type": "string",
+                  "description": "The action in plain words",
+                  "maxLength": 120
+                },
+                "actorType": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "system",
+                    "agent"
+                  ],
+                  "description": "Who acted: a person, the system or an agent"
+                },
+                "actor": {
+                  "type": "string",
+                  "description": "Name of the actor, or System",
+                  "maxLength": 120
+                },
+                "summary": {
+                  "type": "string",
+                  "description": "One line about what happened",
+                  "maxLength": 500
+                },
+                "details": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "Field name",
+                        "maxLength": 60
+                      },
+                      "value": {
+                        "type": "string",
+                        "description": "Field value",
+                        "maxLength": 2000
+                      },
+                      "mono": {
+                        "type": "boolean",
+                        "description": "Show in a monospace font (ids and hashes)"
+                      }
+                    },
+                    "required": [
+                      "label",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "The full record of the entry",
+                  "maxItems": 40
+                }
+              },
+              "required": [
+                "id",
+                "action",
+                "actionLabel",
+                "actor"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Entries, newest first",
+            "maxItems": 200
+          }
+        },
+        "required": [
+          "entries"
         ],
         "additionalProperties": false
       }

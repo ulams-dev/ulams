@@ -6,10 +6,10 @@ use Closure;
 use Illuminate\Http\Request;
 
 /**
- * AGS calls carry `Authorization: Bearer <our AGS access token>`. Global middleware resolves the
+ * AGS and NRPS calls carry `Authorization: Bearer <our AGS access token>`. Global middleware resolves the
  * Passport user on every request, and Passport blanks (and reports) any bearer header that is not
- * one of its tokens. This middleware runs first: on AGS paths it moves the header aside, so
- * Passport never sees it and the AGS controller reads it with {@see token()}.
+ * one of its tokens. This middleware runs first: on AGS and NRPS paths it moves the header aside, so
+ * Passport never sees it and the AGS and NRPS controllers read it with {@see token()}.
  */
 class IsolateLtiBearer
 {
@@ -17,7 +17,7 @@ class IsolateLtiBearer
 
     public function handle(Request $request, Closure $next)
     {
-        if ($request->is('api/lti/platform/ags/*')) {
+        if ($request->is('api/lti/platform/ags/*', 'api/lti/platform/nrps/*')) {
             $header = (string) $request->headers->get('Authorization', '');
             if (stripos($header, 'Bearer ') === 0) {
                 $request->attributes->set(self::ATTRIBUTE, trim(substr($header, 7)));

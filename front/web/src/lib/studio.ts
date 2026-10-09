@@ -1,5 +1,5 @@
 import type { AstroCookies } from "astro";
-import { ApiError, createCourseBuilderClient, type Tenant } from "@ulams/sdk";
+import { ApiError, createCourseBuilderClient, createLivingCourseClient, type Tenant } from "@ulams/sdk";
 import { apiFor } from "./data.ts";
 import { AUTHOR_BASE, cookieName, sessionCookieOptions } from "./cookies.ts";
 import { config } from "./config.ts";
@@ -50,4 +50,9 @@ export function builderFor(tenant: Tenant, token: string) {
   return createCourseBuilderClient({ baseUrl: tenant.apiUrl, token, timeoutMs: 20_000 });
 }
 
-export { STUDIO_RULES, isStudioCall } from "./studio-rules.ts";
+/** Server-side Living Course client for SSR pages. */
+export function livingCourseFor(tenant: Tenant, token: string) {
+  return createLivingCourseClient({ baseUrl: tenant.apiUrl, token, timeoutMs: 20_000 });
+}
+
+export { STUDIO_RULES, LIVING_COURSE_RULES, LIVING_COURSE_PREFIX, isStudioCall, isLivingCourseCall } from "./studio-rules.ts";

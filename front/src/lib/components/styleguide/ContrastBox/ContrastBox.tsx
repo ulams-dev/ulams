@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { contrast } from "chroma-js";
+import chroma from "chroma-js";
 
 import { useThemeTokens } from "../../theme/applyTheme";
 import orangeTheme from "../../theme/orange";
@@ -20,7 +20,7 @@ export const ContrastBox: React.FC<{
 
   const cts = React.useMemo(() => {
     try {
-      return contrast("#fff", primary) >= 5;
+      return chroma.contrast("#fff", primary) >= 5;
     } catch {
       return false;
     }

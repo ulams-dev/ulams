@@ -1,0 +1,106 @@
+---
+import Icon from "./Icon.astro";
+import { COURSE_UPDATES_TITLE, EXTENDED_LABEL, formatNoticeDate, pendingNoticeText, RETIRED_TEXT } from "../lib/notices.ts";
+
+interface Props {
+  title?: string;
+  updated?: Array<{ title: string; href: string; date?: string }>;
+  retired?: Array<{ title: string; date?: string }>;
+  extended?: Array<{ title: string; href: string }>;
+  pending?: Array<{ title: string; href: string; since?: string }>;
+  id?: string;
+}
+const { title = COURSE_UPDATES_TITLE, updated = [], retired = [], extended = [], pending = [], id } = Astro.props;
+const empty = updated.length + retired.length + extended.length + pending.length === 0;
+const headingId = `u-updates-${id ?? "course"}-title`;
+---
+
+{
+  !empty && (
+    <section class="u-container u-updates" id={id} aria-labelledby={headingId} data-notice="course-updates">
+      <h2 class="u-updates__title" id={headingId}>
+        <Icon name="sync" /> {title}
+      </h2>
+      <ul class="u-updates__list" role="list">
+        {updated.map((row) => {
+          const date = formatNoticeDate(row.date);
+          return (
+            <li>
+              <span class="u-updates__kind">Updated since you completed it{date ? `, ${date}` : ""}</span>
+              <a href={row.href}>{row.title}</a>
+            </li>
+          );
+        })}
+        {extended.map((row) => (
+          <li>
+            <span class="u-updates__kind">{EXTENDED_LABEL}</span>
+            <a href={row.href}>{row.title}</a>
+          </li>
+        ))}
+        {retired.map((row) => {
+          const date = formatNoticeDate(row.date);
+          return (
+            <li>
+              <span class="u-updates__kind">{RETIRED_TEXT}{date ? ` (${date})` : ""}</span>
+              <span class="u-updates__name">{row.title}</span>
+            </li>
+          );
+        })}
+        {pending.map((row) => (
+          <li>
+            <span class="u-updates__kind">{pendingNoticeText(row.since)}</span>
+            <a href={row.href}>{row.title}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+<style>
+  .u-updates {
+    display: grid;
+    gap: 12px;
+    padding-block: 20px;
+  }
+  .u-updates__title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--ulams-font-family-body);
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+  .u-updates__title :global(.u-icon) {
+    color: var(--ulams-color-primary-on-light);
+  }
+  .u-updates__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .u-updates__list li {
+    display: grid;
+    gap: 2px;
+    padding: 12px 16px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+    border-left: 4px solid var(--ulams-color-primary);
+    background: var(--ulams-color-card-bg);
+    color: var(--ulams-color-text);
+  }
+  .u-updates__kind {
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+  .u-updates__list a {
+    font-weight: 600;
+    min-height: 24px;
+  }
+  .u-updates__name {
+    font-weight: 600;
+    color: var(--ulams-color-muted);
+  }
+</style>

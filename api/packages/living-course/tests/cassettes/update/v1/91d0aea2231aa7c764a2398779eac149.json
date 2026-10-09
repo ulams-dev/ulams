@@ -1,0 +1,17 @@
+{
+    "task": "update",
+    "prompt_id": "living-course/update",
+    "prompt_version": 1,
+    "hash": "91d0aea2231aa7c764a2398779eac149",
+    "model": "claude-sonnet-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 1895,
+        "output_tokens": 1374,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "cache_read_tokens": 8144
+    },
+    "text": "{\"items\":[{\"elementId\":\"{{id_14}}\",\"decision\":\"no_change\",\"reason\":\"§4.1 changed only temperature figures; the objective is general and still matches the passage.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_3}}\"],\"answerStatus\":\"not_a_question\",\"block\":null,\"question\":null,\"objective\":null},{\"elementId\":\"{{id_17}}\",\"decision\":\"update\",\"reason\":\"§4.1 now gives 92 to 96 °C as the good range and 92 to 93 °C for dark roasts instead of 90 to 92 °C.\",\"severity\":\"major\",\"fragmentIds\":[\"{{frg_3}}\"],\"answerStatus\":\"not_a_question\",\"block\":{\"id\":\"{{id_17}}\",\"kind\":\"paragraph\",\"markdown\":\"Water between 92 and 96 °C extracts coffee well. Water just off the boil, around 96 °C, suits light roasts, which are dense and harder to extract. Dark roasts extract easily and can taste harsh with very hot water, so 92 to 93 °C works better for them.\",\"citations\":[\"{{frg_3}}\"],\"objectiveIds\":[\"{{id_14}}\"]},\"question\":null,\"objective\":null},{\"elementId\":\"{{id_18}}\",\"decision\":\"update\",\"reason\":\"§4.1 now says water between 92 and 96 °C extracts well, not 90 to 96 °C.\",\"severity\":\"major\",\"fragmentIds\":[\"{{frg_3}}\"],\"answerStatus\":\"not_a_question\",\"block\":{\"id\":\"{{id_18}}\",\"kind\":\"callout\",\"markdown\":\"**Key takeaway:** Water between 92 and 96 °C extracts coffee well.\",\"citations\":[\"{{frg_3}}\"],\"objectiveIds\":[\"{{id_14}}\"]},\"question\":null,\"objective\":null},{\"elementId\":\"{{id_19}}\",\"decision\":\"update\",\"reason\":\"§4.1 now says 92 to 96 °C extracts coffee well instead of 90 to 96 °C.\",\"severity\":\"major\",\"fragmentIds\":[\"{{frg_3}}\"],\"answerStatus\":\"changed\",\"block\":null,\"question\":{\"id\":\"{{id_19}}\",\"type\":\"single\",\"stem\":\"Which statement matches what the source says in §4.1 Temperature?\",\"options\":[{\"id\":\"{{id_20}}\",\"text\":\"A short handbook for people who want to brew better coffee at home.\",\"correct\":false},{\"id\":\"{{id_21}}\",\"text\":\"Water between 92 and 96 °C extracts coffee well.\",\"correct\":true},{\"id\":\"{{id_22}}\",\"text\":\"It covers what happens during extraction, how to set the ratio of coffee to water, how grind size and water temperature change the cup, and how to taste your results.\",\"correct\":false}],\"explanation\":\"The source states: Water between 92 and 96 °C extracts coffee well.\",\"citations\":[\"{{frg_3}}\"],\"objectiveIds\":[\"{{id_14}}\"]},\"objective\":null},{\"elementId\":\"{{id_23}}\",\"decision\":\"no_change\",\"reason\":\"§4.1 still says water just off the boil, around 96 °C, suits light roasts; that sentence is unchanged.\",\"severity\":\"minor\",\"fragmentIds\":[\"{{frg_3}}\"],\"answerStatus\":\"unchanged\",\"block\":null,\"question\":null,\"objective\":null}],\"reply\":\"Temperature figures updated to 92–96 °C and 92–93 °C for dark roasts in the block, callout and Q1; the objective and Q2 stay as they are.\"}"
+}

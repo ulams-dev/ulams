@@ -4,9 +4,11 @@ namespace Ulams\ExamplePlugin;
 
 use Illuminate\Support\ServiceProvider;
 use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\ExamplePlugin\Connectors\ExampleConnector;
 use Ulams\ExamplePlugin\Providers\SettingsServiceProvider;
 use Ulams\ExamplePlugin\Services\Contracts\GreetingServiceContract;
 use Ulams\ExamplePlugin\Services\GreetingService;
+use Ulams\LivingCourse\Connectors\SourceConnectorRegistry;
 
 /**
  * Example module for the "Extending ulams" guide: a public endpoint that reads an
@@ -34,6 +36,11 @@ class UlamsExamplePluginServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
+
+        // a source connector for Living Course, only where Living Course is installed (docs/living-course/connector-plugins.md)
+        if (class_exists(SourceConnectorRegistry::class)) {
+            $this->app->afterResolving(SourceConnectorRegistry::class, fn (SourceConnectorRegistry $registry) => $registry->register(new ExampleConnector()));
+        }
 
         if ($this->app->runningInConsole()) {
             $this->publishes([

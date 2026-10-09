@@ -1,7 +1,10 @@
 #!/bin/bash
 # Long-lived per-domain processes, one supervisor program per kind:
 #
-#   workers.sh queue      default,broadcast,video queue + the long-job (video) queue, per tenant
+#   workers.sh queue      per tenant: default,broadcast,video queue; the builder queue (Course
+#                         Builder, Living Course, Adapt build; --timeout 1800); the long-job queue
+#                         (video, course clone; --timeout 18000). Each queue has its own connection
+#                         whose retry_after is above that timeout (config/queue.php, ADR 0083).
 #   workers.sh broadcast  broadcast queue, per tenant (MULTI_DOMAINS mode)
 #   workers.sh scheduler  `ulams:tenant:schedule-loop` per tenant, plus the platform unless
 #                         MULTI_DOMAINS is set
@@ -17,6 +20,8 @@ KIND="${1:-queue}"
 INTERVAL="${WORKERS_CHECK_INTERVAL:-10}"
 MAX_TIME="${WORKERS_MAX_TIME:-3600}"
 PHP="${PHP_BINARY:-php}"
+# `database` or `redis`: the driver of the default connection (the long queues come in both variants)
+DRIVER="$([ "${QUEUE_CONNECTION:-redis}" = database ] && echo database || echo redis)"
 
 declare -A pids=()
 
@@ -26,7 +31,8 @@ command_for() {
   [ -n "$domain" ] && dom=(--domain="$domain")
   case "$name" in
     default) echo "$PHP" "$DIR/artisan" queue:work --queue=default,broadcast,video --sleep=3 --max-time="$MAX_TIME" --memory=256 "${dom[@]}" ;;
-    long) echo "$PHP" "$DIR/artisan" queue:work "${LONG_JOB_CONNECTION:-redis-long-job}" --queue="${LONG_JOB_QUEUE:-queue-long-job}" --sleep=5 --timeout=18000 --max-time="$MAX_TIME" --memory=512 "${dom[@]}" ;;
+    builder) echo "$PHP" "$DIR/artisan" queue:work "${COURSE_BUILDER_QUEUE_CONNECTION:-$DRIVER-builder}" --queue="${COURSE_BUILDER_QUEUE:-builder}" --sleep=3 --timeout=1800 --max-time="$MAX_TIME" --memory=512 "${dom[@]}" ;;
+    long) echo "$PHP" "$DIR/artisan" queue:work "${LONG_JOB_CONNECTION:-$DRIVER-long-job}" --queue="${LONG_JOB_QUEUE:-queue-long-job}" --sleep=5 --timeout=18000 --max-time="$MAX_TIME" --memory=512 "${dom[@]}" ;;
     broadcast) echo "$PHP" "$DIR/artisan" queue:work --queue=broadcast --sleep=3 --max-time="$MAX_TIME" "${dom[@]}" ;;
     schedule) echo "$PHP" "$DIR/artisan" ulams:tenant:schedule-loop --max-time="$MAX_TIME" "${dom[@]}" ;;
   esac
@@ -37,9 +43,13 @@ wanted() {
   if [ "$KIND" = scheduler ] && [ -z "${MULTI_DOMAINS:-}" ]; then
     echo "schedule|"
   fi
+  if [ "$KIND" = queue ] && [ -z "${MULTI_DOMAINS:-}" ]; then
+    # the platform runs tenant provisioning (platform API, ADR 0078) on the long-job queue
+    echo "long|"
+  fi
   while read -r domain; do
     case "$KIND" in
-      queue) echo "default|$domain"; echo "long|$domain" ;;
+      queue) echo "default|$domain"; echo "builder|$domain"; echo "long|$domain" ;;
       broadcast) echo "broadcast|$domain" ;;
       scheduler) echo "schedule|$domain" ;;
     esac

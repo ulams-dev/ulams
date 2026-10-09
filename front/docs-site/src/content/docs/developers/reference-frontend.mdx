@@ -64,9 +64,24 @@ never inlined into the build). Defaults are in `src/lib/config.ts` and `front/we
 | `ULAMS_PLATFORM_HOSTS` | `app.localhost,localhost,127.0.0.1` | Hosts that serve the platform landing instead of a tenant |
 | `ULAMS_DEFAULT_TENANT` | `coffee` | Tenant for hosts without a rule (for example a LAN IP); empty shows the tenant picker |
 | `ULAMS_DEMO_TENANTS` | `coffee,oncall,nightsky` | Demo tenants listed on the platform landing |
+| `ULAMS_LANDING_STATUS` | `final` | What the platform landing shows for roadmap items: `final` (also used for any other value) renders everything as delivered, `actual` keeps the honest Coming and Partial labels. Run `actual` (or confirm everything shipped) before a public launch; see [Environment](/operators/environment/#the-platform-landing-switch) |
 | `ULAMS_CACHE_TTL` | `45` | Seconds public API data stays fresh in the server cache (minimum 5) |
 | `ULAMS_WARM_TENANTS` | `coffee,oncall,nightsky` | Tenants whose public data is fetched at server start |
 | `DEMO_STUDENT_EMAIL`, `DEMO_STUDENT_PASSWORD` | `student1@{slug}.ulams.app`, empty | Fallback login when a tenant has no demo mode; never sent to the browser |
+
+### The platform landing's stories
+
+Besides the demo cards and the comparison table, the platform landing has three animated stories built
+from catalogue components: `LivingCourseStory` (a changed source updates the lesson that cites it),
+`BuilderStory` (a document becomes a cited course in the studio) and `WorkflowShowcase` (tabs for
+Claude Code, Claude with the MCP server, the CLI, REST and the studio). They are played by a small
+timeline player (`front/ui/src/elements/story.ts`): elements carry `data-at`, `data-until`, `data-type`
+and `data-count` in milliseconds, the player toggles classes and text, and CSS does the moving
+(transforms and opacity). Stories play only while visible, pause on hover or focus (tabs), have a Pause
+control, show their final frame with `prefers-reduced-motion` or without JavaScript, and give screen
+readers a text description or a plain transcript. The commands of the workflow tabs live in
+`front/web/src/data/workflows.json` together with their true status (the Claude Code, MCP and CLI tabs are
+labelled Coming until the CLI is released, roadmap item M6). `ULAMS_LANDING_STATUS` only changes how that status is displayed.
 
 All variables of every app are in [Environment variables](/reference/environment-variables/). The
 production image is described in [Container images](/developers/container-images/).

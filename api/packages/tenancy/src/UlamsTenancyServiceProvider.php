@@ -3,6 +3,9 @@
 namespace Ulams\Tenancy;
 
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Ulams\Tenancy\Console\CreateTenantCommand;
 use Ulams\Tenancy\Console\DeleteTenantCommand;
@@ -11,31 +14,40 @@ use Ulams\Tenancy\Console\ListTenantsCommand;
 use Ulams\Tenancy\Console\ScheduleLoopCommand;
 use Ulams\Tenancy\Console\SeedTenantDemoCommand;
 use Ulams\Tenancy\Console\SetTenantEnvCommand;
+use Ulams\Tenancy\Console\RecreateViewsCommand;
 use Ulams\Tenancy\Console\SyncTenantEnvCommand;
+use Ulams\Tenancy\Console\UpgradeCommand;
+use Ulams\Tenancy\Console\WorkOnceCommand;
 use Ulams\Tenancy\Http\Middleware\RejectUnknownHost;
 use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
 use Ulams\Tenancy\Services\Contracts\TenantCommandRunnerContract;
 use Ulams\Tenancy\Services\H5PServiceConfigExporter;
+use Ulams\Tenancy\Services\ManualDatabaseProvisioner;
 use Ulams\Tenancy\Services\MultidomainRegistry;
 use Ulams\Tenancy\Services\PostgresDatabaseProvisioner;
 use Ulams\Tenancy\Services\ProcessTenantCommandRunner;
 use Ulams\Tenancy\Services\S3BucketProvisioner;
+use Ulams\Tenancy\Upgrade\DefaultUpgradeSteps;
 
 class UlamsTenancyServiceProvider extends ServiceProvider
 {
     public const CONFIG_KEY = 'ulams_tenancy';
 
     public $singletons = [
-        DatabaseProvisionerContract::class => PostgresDatabaseProvisioner::class,
         DomainRegistryContract::class => MultidomainRegistry::class,
     ];
 
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/config.php', self::CONFIG_KEY);
+        // in register(), so steps of other packages (registered when they boot) come after these
+        DefaultUpgradeSteps::register();
 
+        $this->app->singleton(DatabaseProvisionerContract::class, fn ($app) => config(self::CONFIG_KEY . '.database_provisioner') === 'manual'
+            ? $app->make(ManualDatabaseProvisioner::class)
+            : $app->make(PostgresDatabaseProvisioner::class));
         $this->app->singleton(
             BucketProvisionerContract::class,
             fn () => S3BucketProvisioner::fromConfig(config(self::CONFIG_KEY . '.s3', []))
@@ -56,6 +68,8 @@ class UlamsTenancyServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        RateLimiter::for('ulams-platform', fn (Request $request) => Limit::perMinute(60)->by('platform:' . ($request->user('api')?->getAuthIdentifier() ?? $request->ip())));
 
         $kernel = $this->app->make(HttpKernel::class);
         if (method_exists($kernel, 'prependMiddleware')) {
@@ -72,6 +86,9 @@ class UlamsTenancyServiceProvider extends ServiceProvider
                 SeedTenantDemoCommand::class,
                 ExportH5PServiceConfigCommand::class,
                 ScheduleLoopCommand::class,
+                WorkOnceCommand::class,
+                UpgradeCommand::class,
+                RecreateViewsCommand::class,
             ]);
             $this->publishes([
                 __DIR__ . '/config.php' => config_path(self::CONFIG_KEY . '.php'),

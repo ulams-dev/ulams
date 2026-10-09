@@ -6,6 +6,8 @@
  */
 import { h, miniMarkdown, sr, uid, usd } from "./dom.ts";
 import { wordDiff } from "./word-diff.ts";
+import { adjustAccent } from "../theme/contrast.ts";
+import { THEME_PRESETS } from "../theme/presets.ts";
 
 export interface A2uiActionOut {
   name: string;
@@ -115,6 +117,15 @@ function answerLabel(p: Props): string {
   if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "totalMinutes" in p.value) {
     return `${p.value.totalMinutes} min · ${p.value.lessonMinutes}-min lessons`;
   }
+  if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "mode" in p.value && (p.value.mode === "free" || p.value.mode === "paid")) {
+    return p.value.mode === "paid" ? (p.value.amountMinor ? `${minorToMajor(Number(p.value.amountMinor))} ${p.value.currency ?? ""}`.trim() : "Paid (price to confirm)") : "Free";
+  }
+  if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "preset" in p.value) {
+    return `${THEME_PRESETS[p.value.preset as keyof typeof THEME_PRESETS]?.label ?? p.value.preset}${p.value.accent ? ` · ${p.value.accent}` : ""}`;
+  }
+  if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "mode" in p.value && ("slug" in p.value || p.value.mode === "current" || p.value.mode === "new")) {
+    return p.value.mode === "new" ? `New site: ${p.value.slug ?? ""}`.trim() : "This site";
+  }
   if (Array.isArray(p.value)) return p.value.map(label).join(", ") || "None";
   return p.value !== undefined ? label(p.value) : "";
 }
@@ -177,6 +188,119 @@ const LanguagePicker: Renderer = (p, ctx, id) => {
   const select = h("select", { id: selectId, class: "cb-select" },
     (p.options as Props[]).map((o) => h("option", { value: o.value, selected: o.value === (p.value ?? p.defaultValue) }, String(o.label))));
   return questionShell(p, id, [h("label", { for: selectId, class: "cb-label" }, "Language"), select], ctx, () => select.value);
+};
+
+const SitePicker: Renderer = (p, ctx, id) => {
+  const current = (p.value ?? p.defaultValue ?? { mode: "current" }) as Props;
+  const modes = radioGroup(uid("site"), "Where to publish", [{ value: "current", label: "This site" }, { value: "new", label: "A new site" }], current.mode);
+  modes.classList.add("cb-radios-cards");
+  const slugId = uid("slug");
+  const slug = h("input", { id: slugId, class: "cb-input", type: "text", maxlength: 40, autocomplete: "off", spellcheck: "false", value: current.slug ?? "", "aria-describedby": `${slugId}-hint` });
+  const hint = h("p", { id: `${slugId}-hint`, class: "cb-muted cb-small" }, "Letters, digits and dashes, 3 to 40 characters. The site gets its own address, theme and learners.");
+  const error = h("p", { class: "cb-error", role: "alert", hidden: true });
+  const field = h("div", { class: "cb-price-field" }, h("label", { for: slugId, class: "cb-label" }, "Name of the new site"), slug, hint, error);
+  const selected = () => modes.querySelector<HTMLInputElement>("input:checked")?.value ?? "current";
+  const sync = () => {
+    field.hidden = selected() !== "new";
+  };
+  modes.addEventListener("change", sync);
+  sync();
+  return questionShell(p, id, [modes, field], ctx, () => {
+    if (selected() !== "new") return { mode: "current" };
+    const value = slug.value.trim().toLowerCase();
+    if (!/^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$/.test(value)) {
+      error.hidden = false;
+      error.textContent = "Use 3 to 40 letters, digits or dashes.";
+      slug.setAttribute("aria-invalid", "true");
+      return undefined;
+    }
+    return { mode: "new", slug: value };
+  });
+};
+
+const minorToMajor = (minor: number): string => (minor / 100).toFixed(2);
+
+const PriceInput: Renderer = (p, ctx, id) => {
+  const current = (p.value ?? p.defaultValue ?? { mode: "free" }) as Props;
+  const currency = String(p.currency ?? current.currency ?? "USD");
+  const modes = radioGroup(uid("mode"), "Free or paid", [{ value: "free", label: "Free" }, { value: "paid", label: "Paid" }], current.mode);
+  modes.classList.add("cb-radios-cards");
+  const amountId = uid("price");
+  const amount = h("input", { id: amountId, class: "cb-input", type: "text", inputmode: "decimal", autocomplete: "off", value: current.amountMinor ? minorToMajor(Number(current.amountMinor)) : "", "aria-describedby": `${amountId}-hint` });
+  const hint = h("p", { id: `${amountId}-hint`, class: "cb-muted cb-small" }, `Price in ${currency}. You confirm it again in the publish summary.`);
+  const error = h("p", { class: "cb-error", role: "alert", hidden: true });
+  const field = h("div", { class: "cb-price-field" }, h("label", { for: amountId, class: "cb-label" }, `Price (${currency})`), amount, hint, error);
+  const selected = () => modes.querySelector<HTMLInputElement>("input:checked")?.value ?? "free";
+  const sync = () => {
+    field.hidden = selected() !== "paid";
+  };
+  modes.addEventListener("change", sync);
+  sync();
+  return questionShell(p, id, [modes, field], ctx, () => {
+    if (selected() !== "paid") return { mode: "free" };
+    const text = amount.value.trim().replace(",", ".");
+    if (text === "") return { mode: "paid" };
+    const major = Number(text);
+    if (!/^\d+(\.\d{1,2})?$/.test(text) || !(major > 0)) {
+      error.hidden = false;
+      error.textContent = "Enter the price as a positive amount like 49 or 49.99.";
+      amount.setAttribute("aria-invalid", "true");
+      return undefined;
+    }
+    return { mode: "paid", amountMinor: Math.round(major * 100), currency };
+  });
+};
+
+/** One preset card: a mini landing (Hero + Prose) drawn with the preset's own tokens. */
+function presetPreview(name: keyof typeof THEME_PRESETS, accent: string | undefined): HTMLElement {
+  const t = THEME_PRESETS[name];
+  const shade = accent ? (adjustAccent(accent, t.bg)?.value ?? t.primary) : t.primary;
+  return h("span", { class: "cb-theme-preview", "aria-hidden": "true", style: `--p-bg:${t.bg};--p-card:${t.card};--p-text:${t.text};--p-muted:${t.muted};--p-primary:${shade};--p-on:${t.onPrimary};--p-border:${t.border}` },
+    h("span", { class: "cb-theme-hero" }, h("span", { class: "cb-theme-title" }, "Brew better coffee"), h("span", { class: "cb-theme-cta" }, "Start")),
+    h("span", { class: "cb-theme-prose" }, h("span", {}), h("span", {}), h("span", {})));
+}
+
+const ThemePicker: Renderer = (p, ctx, id) => {
+  const current = (p.value ?? p.defaultValue ?? {}) as Props;
+  const name = uid("theme");
+  const cards = h("fieldset", { class: "cb-radios cb-theme-cards" }, h("legend", {}, "Theme"));
+  const accentId = uid("accent");
+  const accent = h("input", { id: accentId, class: "cb-input cb-accent", type: "text", maxlength: 7, placeholder: "#c2552d", autocomplete: "off", value: current.accent ?? "", "aria-describedby": `${accentId}-note` });
+  const note = h("p", { id: `${accentId}-note`, class: "cb-muted cb-small", "aria-live": "polite" }, "Optional. Leave empty to keep the theme's own accent.");
+  const picked = () => cards.querySelector<HTMLInputElement>("input:checked")?.value ?? current.preset ?? (p.presets as Props[])[0]?.value;
+  const refresh = () => {
+    const preset = picked() as keyof typeof THEME_PRESETS;
+    const value = accent.value.trim();
+    cards.querySelectorAll<HTMLElement>("[data-preset]").forEach((card) => {
+      card.querySelector(".cb-theme-preview")?.replaceWith(presetPreview(card.dataset.preset as keyof typeof THEME_PRESETS, /^#[0-9a-f]{6}$/i.test(value) ? value : undefined));
+    });
+    if (value === "") note.textContent = "Optional. Leave empty to keep the theme's own accent.";
+    else if (!/^#[0-9a-f]{6}$/i.test(value)) note.textContent = "Use a colour like #c2552d.";
+    else {
+      const result = adjustAccent(value, THEME_PRESETS[preset]?.bg ?? "#ffffff");
+      note.textContent = result?.adjusted ? `${value} is too light or too dark to read on this theme, so it will be shown as ${result.value} (WCAG AA).` : `${value} reads well on this theme (WCAG AA).`;
+    }
+  };
+  for (const option of p.presets as Props[]) {
+    const inputId = uid(name);
+    const input = h("input", { type: "radio", id: inputId, name, value: String(option.value), checked: option.value === current.preset });
+    const card = h("span", { class: "cb-radio cb-theme-card", "data-preset": String(option.value) },
+      input,
+      h("label", { for: inputId }, presetPreview(option.value as keyof typeof THEME_PRESETS, undefined), h("span", { class: "cb-theme-name" }, String(option.label)), h("span", { class: "cb-muted cb-small" }, THEME_PRESETS[option.value as keyof typeof THEME_PRESETS]?.mood ?? "")));
+    cards.append(card);
+  }
+  cards.addEventListener("change", refresh);
+  accent.addEventListener("input", refresh);
+  queueMicrotask(refresh);
+  return questionShell(p, id, [cards, h("label", { for: accentId, class: "cb-label" }, "Accent colour"), accent, note], ctx, () => {
+    const value = accent.value.trim();
+    if (value !== "" && !/^#[0-9a-f]{6}$/i.test(value)) {
+      note.textContent = "Use a colour like #c2552d.";
+      accent.setAttribute("aria-invalid", "true");
+      return undefined;
+    }
+    return { preset: picked(), ...(value ? { accent: value.toLowerCase() } : {}) };
+  });
 };
 
 const DecideForMe: Renderer = (p, ctx, id) => {
@@ -425,10 +549,481 @@ const VersionList: Renderer = (p, ctx) =>
     const restore = v.id !== p.currentVersionId && v.status === "approved" && v.kind !== "outline" ? h("button", { type: "button", class: "cb-link" }, `Restore v${v.number}`) : null;
     restore?.addEventListener("click", () => ctx.onRestore?.(String(v.id)));
     return h("li", { class: v.id === p.currentVersionId ? "cb-version-current" : "", "aria-current": v.id === p.currentVersionId ? "true" : null },
-      h("span", { class: "cb-mono" }, `v${v.number}`), " ", h("span", {}, v.reason ? String(v.reason) : String(v.kind)),
+      h("span", { class: "cb-mono" }, `v${v.number}`), " ", h("span", {}, v.reason ? String(v.reason) : v.kind === "update" ? "Source update" : String(v.kind)),
+      v.kind === "update" && !String(v.reason ?? "").startsWith("Source update") ? h("span", { class: "cb-tag" }, "Source update") : null,
       h("span", { class: "cb-muted" }, ` · ${v.origin === "ai" ? "AI" : v.origin === "author" ? "You" : "Restore"} · ${v.status}`),
       v.id === p.currentVersionId ? h("span", { class: "cb-tag" }, "current") : null, restore);
   }));
+
+/* ------------------------------------------------------------------ living course */
+
+const when = (iso: unknown): HTMLElement | null => {
+  if (typeof iso !== "string" || iso === "") return null;
+  const date = new Date(iso);
+  const text = Number.isNaN(date.getTime()) ? iso : date.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
+  return h("time", { datetime: iso }, text);
+};
+
+const CONNECTOR_LABEL: Record<string, string> = { upload: "Upload", git: "Git repository", url: "Web page" };
+const SYNC_STATE: Record<string, { label: string; icon: "check" | "plus" | "clock" | "alert" | "minus" }> = {
+  up_to_date: { label: "Up to date", icon: "check" },
+  new_version: { label: "New version available", icon: "plus" },
+  processing: { label: "Processing", icon: "clock" },
+  failed: { label: "Check failed", icon: "alert" },
+  paused: { label: "Paused", icon: "minus" },
+};
+
+const PublishSummary: Renderer = (p, ctx, id) => {
+  const blocking: Props[] = p.blocking ?? [];
+  const warnings: Props[] = p.warnings ?? [];
+  const headingId = uid("pub");
+  const counts = p.counts ?? {};
+  const facts: Array<[string, string]> = [
+    ["Address", p.url ? String(p.url) : "Available after you publish"],
+    ["Price", `${p.price.label}${p.price.suggested ? " (suggested, confirm it in the brief)" : ""}`],
+    ...(p.theme ? ([["Theme", `${p.theme.preset}${p.theme.adjustedAccent ? ` · accent shown as ${p.theme.adjustedAccent}` : p.theme.accent ? ` · ${p.theme.accent}` : ""}`]] as Array<[string, string]>) : []),
+    ...(counts.lessons ? ([["Course", `${counts.modules ?? 0} modules · ${counts.lessons} lessons · ${counts.minutes ?? 0} min · ${counts.questions ?? 0} questions`]] as Array<[string, string]>) : []),
+  ];
+  const list = (items: Props[], kind: "blocking" | "warning") =>
+    h("ul", { class: `cb-publish-list cb-publish-${kind}`, "aria-label": kind === "blocking" ? "Items that block publishing" : "Warnings" },
+      items.map((item) => h("li", {}, icon("alert"), h("span", { class: "cb-tag" }, kind === "blocking" ? "Blocking" : "Warning"), " ", String(item.message))));
+  const acknowledgeId = uid("ack");
+  const acknowledge = warnings.length && !blocking.length && !p.published
+    ? h("label", { class: "cb-check", for: acknowledgeId }, h("input", { type: "checkbox", id: acknowledgeId }), `I have read the ${warnings.length} warning${warnings.length > 1 ? "s" : ""} and want to publish anyway`)
+    : null;
+  const button = h("button", { type: "button", class: "cb-btn cb-btn-primary", disabled: true }, p.published ? "Published" : "Publish course");
+  const ack = acknowledge?.querySelector("input") as HTMLInputElement | null;
+  const sync = () => {
+    button.disabled = Boolean(p.published) || blocking.length > 0 || (warnings.length > 0 && !ack?.checked);
+  };
+  ack?.addEventListener("change", sync);
+  sync();
+  button.addEventListener("click", () => {
+    button.disabled = true;
+    act(ctx, id, "publish", { acknowledgedWarnings: Boolean(ack?.checked) });
+  });
+  return h("section", { class: "cb-card cb-publish", "aria-labelledby": headingId },
+    h("h2", { id: headingId, class: "cb-h3" }, p.published ? "Published" : "Before you publish"),
+    h("dl", { class: "cb-publish-facts" }, facts.flatMap(([k, v]) => [h("dt", {}, k), h("dd", {}, v)])),
+    blocking.length ? h("div", {}, h("h3", { class: "cb-h3" }, "Fix before publishing"), list(blocking, "blocking")) : null,
+    warnings.length ? h("div", {}, h("h3", { class: "cb-h3" }, "Review"), list(warnings, "warning")) : null,
+    !blocking.length && !warnings.length && !p.published ? h("p", { class: "cb-muted" }, icon("check"), " Nothing blocks publishing and nothing needs review.") : null,
+    ...((p.notes as string[] | undefined) ?? []).map((n) => h("p", { class: "cb-muted cb-small" }, n)),
+    acknowledge,
+    h("div", { class: "cb-actions" }, button));
+};
+
+const SourceConnectionCard: Renderer = (p, ctx, id) => {
+  const state = SYNC_STATE[String(p.state)] ?? SYNC_STATE.up_to_date!;
+  const headingId = uid("src");
+  const status = h("p", { class: "cb-sync-status", role: "status" }, h("span", { class: `cb-sync-pill cb-sync-${p.state}` }, icon(state.icon), state.label));
+  const facts = h("dl", { class: "cb-facts" },
+    h("div", {}, h("dt", {}, "In your course"), h("dd", {}, p.syncedRevision ? `Revision ${p.syncedRevision}` : "Not synced yet")),
+    h("div", {}, h("dt", {}, "Latest revision"), h("dd", {}, p.latestRevision ? `Revision ${p.latestRevision}` : "None")),
+    h("div", {}, h("dt", {}, "Last checked"), h("dd", {}, when(p.lastCheckedAt) ?? "Never")),
+    p.schedule ? h("div", {}, h("dt", {}, "Checks"), h("dd", {}, String(p.schedule))) : null);
+  const actions = h("div", { class: "cb-actions" });
+  if (p.canCheck) {
+    const check = h("button", { type: "button", class: "cb-btn cb-btn-small" }, "Check now");
+    check.addEventListener("click", () => act(ctx, id, "check_now", { sourceId: p.sourceId }));
+    actions.append(check);
+  }
+  if (p.canUpload !== false) {
+    const upload = h("button", { type: "button", class: "cb-btn cb-btn-small cb-btn-primary" }, "Upload a new version");
+    upload.addEventListener("click", () => act(ctx, id, "upload_version", { sourceId: p.sourceId }));
+    actions.append(upload);
+  }
+  return h("section", { class: "cb-card cb-source-conn", "aria-labelledby": headingId, "data-source": p.sourceId },
+    h("div", { class: "cb-source-conn-head" },
+      h("div", {},
+        h("p", { class: "cb-eyebrow" }, `${CONNECTOR_LABEL[String(p.connector)] ?? String(p.connector)}${p.kind ? ` · ${String(p.kind).toUpperCase()}` : ""}`),
+        h("h3", { id: headingId, class: "cb-serif cb-h2" }, String(p.name))),
+      status),
+    facts,
+    p.error ? h("p", { class: "cb-error", role: "alert" }, icon("alert"), String(p.error)) : null,
+    actions.childElementCount ? actions : null);
+};
+
+const ORIGIN_LABEL: Record<string, string> = { initial: "First import", upload: "Uploaded", git: "Git", url: "Web page" };
+const TRIGGER_LABEL: Record<string, string> = { initial: "first import", manual: "by you", scheduled: "scheduled check", webhook: "webhook" };
+const REVISION_STATUS_LABEL: Record<string, { label: string; icon: "check" | "plus" | "clock" | "alert" | "minus" | "dot" }> = {
+  fetched: { label: "Fetched", icon: "clock" },
+  ingested: { label: "Imported", icon: "check" },
+  unchanged: { label: "No changes", icon: "minus" },
+  no_impact: { label: "No impact on the course", icon: "minus" },
+  failed: { label: "Failed", icon: "alert" },
+};
+
+/** "3 changed, 1 removed, 2 added, 1 moved"; kinds with a zero count are left out. */
+export function countsText(counts: Props | null | undefined): string {
+  if (!counts) return "";
+  return (["changed", "removed", "added", "moved"] as const)
+    .filter((k) => Number(counts[k]) > 0)
+    .map((k) => `${counts[k]} ${k}`)
+    .join(", ");
+}
+
+const RevisionTimeline: Renderer = (p, ctx, id) => {
+  const items = (p.revisions as Props[]).map((r) => {
+    const selected = r.id === p.selectedRevisionId;
+    const status = REVISION_STATUS_LABEL[String(r.status)] ?? { label: String(r.status), icon: "dot" as const };
+    const title = `Revision ${r.number}`;
+    const hint = sr(selected ? " (changes shown)" : ": show changes");
+    let control: HTMLElement;
+    if (r.href) {
+      control = h("a", { class: "cb-rev-link", href: String(r.href), "aria-current": selected ? "true" : null }, title, hint);
+    } else {
+      control = h("button", { type: "button", class: "cb-rev-link", "aria-pressed": selected ? "true" : "false" }, title, hint);
+      control.addEventListener("click", () => act(ctx, id, "select_revision", { revisionId: r.id, sourceId: p.sourceId }));
+    }
+    const counts = countsText(r.counts);
+    return h("li", { class: `cb-rev${selected ? " cb-rev-selected" : ""}`, "data-revision": r.id },
+      h("div", { class: "cb-rev-head" }, control,
+        r.synced ? h("span", { class: "cb-tag cb-tag-course" }, icon("check"), "In your course") : null,
+        r.latest ? h("span", { class: "cb-tag" }, "Latest") : null),
+      h("p", { class: "cb-muted cb-small cb-rev-meta" },
+        ORIGIN_LABEL[String(r.origin)] ?? (r.origin ? String(r.origin) : "Revision"),
+        r.trigger ? ` · ${TRIGGER_LABEL[String(r.trigger)] ?? String(r.trigger)}` : "",
+        r.detectedAt ? " · " : "", when(r.detectedAt)),
+      h("p", { class: "cb-rev-status" }, icon(status.icon), status.label, counts ? h("span", { class: "cb-rev-counts" }, ` · ${counts}`) : null),
+      r.error ? h("p", { class: "cb-error" }, icon("alert"), String(r.error)) : null);
+  });
+  return h("section", { class: "cb-card cb-timeline", "aria-label": "Revision history" },
+    h("ol", { class: "cb-revs", "aria-label": "Revisions, newest first" }, items));
+};
+
+const SIGNAL_TEXT: Record<string, string> = {
+  number: "a number changed",
+  code: "code changed",
+  identifier: "a name or identifier changed",
+  modality: "a must, should or may changed",
+  large: "a large part was rewritten",
+};
+const KIND_BADGE: Record<string, { label: string; icon: "plus" | "minus" | "tilde" | "dot" }> = {
+  changed: { label: "Changed", icon: "tilde" },
+  moved: { label: "Moved", icon: "dot" },
+  removed: { label: "Removed", icon: "minus" },
+  added: { label: "Added", icon: "plus" },
+};
+const MAGNITUDE_TEXT: Record<string, string> = { trivial: "Cosmetic edit", minor: "Minor change", substantive: "Substantive change" };
+
+/** Word-level runs from the API (`=`, `-`, `+`) with visible and hidden markers. */
+function runsDiff(runs: string[][]): HTMLElement {
+  const out = h("p", { class: "cb-worddiff cb-frag-diff" });
+  for (const [op, text] of runs) {
+    if (op === "+") out.append(h("ins", {}, sr("added: "), h("span", { "aria-hidden": "true", class: "cb-mark" }, "+"), text ?? ""));
+    else if (op === "-") out.append(h("del", {}, sr("removed: "), h("span", { "aria-hidden": "true", class: "cb-mark" }, "−"), text ?? ""));
+    else out.append(text ?? "");
+  }
+  return out;
+}
+
+const FragmentChange: Renderer = (p) => {
+  const badge = KIND_BADGE[String(p.kind)] ?? KIND_BADGE.changed!;
+  const oldF = p.old as Props | undefined;
+  const newF = p.new as Props | undefined;
+  const label = String((newF ?? oldF)?.label ?? p.section ?? "Source fragment");
+  const headingId = uid("chg");
+  const signals = ((p.signals as string[] | undefined) ?? []).map((x) => SIGNAL_TEXT[x] ?? x);
+  const meta = [MAGNITUDE_TEXT[String(p.magnitude)] ?? String(p.magnitude), ...signals];
+  const body: HTMLElement[] = [];
+  if (p.wordDiff && (p.wordDiff as string[][]).length) {
+    body.push(runsDiff(p.wordDiff as string[][]));
+  } else {
+    if (oldF?.text) body.push(h("p", { class: "cb-frag-old" }, h("span", { class: "cb-mark", "aria-hidden": "true" }, "− "), sr("Before: "), String(oldF.text)));
+    if (newF?.text) body.push(h("p", { class: "cb-frag-new" }, h("span", { class: "cb-mark", "aria-hidden": "true" }, "+ "), sr("After: "), String(newF.text)));
+  }
+  return h("article", { class: `cb-card cb-frag cb-frag-${p.kind}`, "aria-labelledby": headingId, "data-change": p.changeId },
+    h("div", { class: "cb-frag-head" },
+      h("h4", { id: headingId, class: "cb-serif cb-h3" }, label),
+      h("span", { class: `cb-badge cb-kind-${p.kind}` }, icon(badge.icon), badge.label)),
+    p.section && p.section !== label ? h("p", { class: "cb-muted cb-small" }, `In ${String(p.section)}`) : null,
+    h("p", { class: "cb-muted cb-small cb-frag-meta" }, meta.join(" · "), typeof p.similarity === "number" ? ` · ${Math.round(Number(p.similarity) * 100)}% similar` : ""),
+    ...body,
+    p.kind === "moved" && body.length === 0 ? h("p", { class: "cb-muted" }, "The text is the same; it moved to a different place.") : null);
+};
+
+/* ------------------------------------------------------------------ update proposals */
+
+const ITEM_KIND: Record<string, { label: string; icon: "tilde" | "check" | "minus" | "alert" | "plus" | "dot" }> = {
+  update: { label: "Update", icon: "tilde" },
+  citation_remap: { label: "Citation update", icon: "dot" },
+  remove: { label: "Removal", icon: "minus" },
+  no_change: { label: "No change needed", icon: "check" },
+  manual: { label: "Update by hand", icon: "alert" },
+  uncovered: { label: "New in the source", icon: "plus" },
+};
+const ITEM_STATUS: Record<string, { label: string; icon: "check" | "minus" | "clock" | "alert" }> = {
+  pending: { label: "Not decided yet", icon: "clock" },
+  accepted: { label: "Accepted", icon: "check" },
+  rejected: { label: "Rejected", icon: "minus" },
+  conflict: { label: "Conflict", icon: "alert" },
+  stale: { label: "Edited after the analysis", icon: "alert" },
+};
+/** Button words per kind: what "accept" means differs when nothing is written to the course. */
+const ACCEPT_LABEL: Record<string, string> = { no_change: "Agree, no change", manual: "Mark as handled", uncovered: "Acknowledge" };
+const REJECT_LABEL: Record<string, string> = { no_change: "Disagree", manual: "Keep as it is", uncovered: "Skip", remove: "Keep the element", update: "Reject" };
+const KIND_NOTE: Record<string, string> = {
+  citation_remap: "Only the citations change: the source text this element relies on moved or was renumbered. The wording stays the same.",
+  remove: "The source no longer covers this. Accepting removes the element from the course.",
+  no_change: "AI found no change needed. Nothing is written to the course unless you ask for changes.",
+  manual: "This needs an update by hand: it has not been analysed. Open it in the workspace and edit it there.",
+  uncovered: "A new section in the source that no lesson covers yet. Add a lesson for it in the workspace.",
+};
+
+function fieldDiff(f: Props): HTMLElement {
+  const before = typeof f.before === "string" ? f.before : "";
+  const after = typeof f.after === "string" ? f.after : "";
+  let kind: "added" | "removed" | "changed" = "changed";
+  let body: HTMLElement;
+  if (f.before === undefined && f.after !== undefined) {
+    kind = "added";
+    body = h("ins", {}, sr("added: "), after);
+  } else if (f.after === undefined && f.before !== undefined) {
+    kind = "removed";
+    body = h("del", {}, sr("removed: "), before);
+  } else if (before === after) {
+    return h("li", { class: "cb-change cb-change-unchanged" }, h("p", { class: "cb-change-label" }, String(f.label)), h("p", { class: "cb-change-text" }, before));
+  } else {
+    body = wordDiff(before, after);
+  }
+  return h("li", { class: `cb-change cb-change-${kind}`, "data-field": f.path },
+    h("p", { class: "cb-change-label" }, changeBadge(kind), String(f.label)),
+    h("p", { class: "cb-change-text" }, body));
+}
+
+const UpdateItem: Renderer = (p, ctx, id) => {
+  const headingId = uid("upd");
+  const kind = String(p.kind);
+  const kindInfo = ITEM_KIND[kind] ?? ITEM_KIND.update!;
+  const max = Number(p.maxRegenerations ?? 3);
+  const used = Number(p.regenerations ?? 0);
+  const canDecide = p.canDecide !== false;
+  const canRegenerate = p.canRegenerate !== false && ["update", "no_change", "remove", "manual"].includes(kind);
+  let status = String(p.status);
+
+  const live = h("p", { class: "cb-sr", role: "status", "aria-live": "polite" });
+  const statusEl = h("p", { class: "cb-item-status" });
+  const accept = h("button", { type: "button", class: "cb-btn cb-btn-small", "data-decision": "accepted", "data-focus-target": "" }, icon("check"), ACCEPT_LABEL[kind] ?? "Accept");
+  const reject = h("button", { type: "button", class: "cb-btn cb-btn-small", "data-decision": "rejected" }, REJECT_LABEL[kind] ?? "Reject");
+  const reset = h("button", { type: "button", class: "cb-link", "data-decision": "pending" }, "Undo my decision");
+  const note = h("p", { class: "cb-item-note", role: "alert" });
+
+  function paint(): void {
+    const info = ITEM_STATUS[status] ?? ITEM_STATUS.pending!;
+    statusEl.replaceChildren(icon(info.icon), h("span", {}, sr("Decision: "), info.label));
+    statusEl.className = `cb-item-status cb-item-status-${status}`;
+    accept.setAttribute("aria-pressed", String(status === "accepted"));
+    reject.setAttribute("aria-pressed", String(status === "rejected"));
+    accept.disabled = status === "conflict" || status === "stale";
+    reset.hidden = status !== "accepted" && status !== "rejected";
+    root.dataset.status = status;
+    note.textContent = status === "conflict" ? "You edited this element after the analysis. Ask for a new version of it, or reject it."
+      : status === "stale" ? "You edited this element after the analysis. Ask for a new version that builds on your edit, or reject this one."
+      : "";
+    note.hidden = note.textContent === "";
+  }
+
+  /** Moves focus to the next undecided item so a keyboard user keeps going. */
+  function focusNext(): void {
+    const items = [...document.querySelectorAll<HTMLElement>("[data-update-item]")];
+    const index = items.indexOf(root);
+    const next = items.slice(index + 1).concat(items.slice(0, Math.max(index, 0))).find((el) => el.dataset.status === "pending");
+    const target = next?.querySelector<HTMLElement>("[data-focus-target]:not([disabled])");
+    if (target) target.focus();
+  }
+
+  const decide = (decision: "accepted" | "rejected" | "pending") => {
+    const was = status;
+    if (decision === "accepted" && (status === "conflict" || status === "stale")) return;
+    status = decision;
+    paint();
+    const words = { accepted: "Accepted", rejected: "Rejected", pending: "Decision removed" }[decision];
+    live.textContent = "";
+    window.setTimeout(() => (live.textContent = `${words}: ${String(p.label)}.`), 30);
+    act(ctx, id, "decide_item", { itemId: p.itemId, decision: { accepted: "accept", rejected: "reject", pending: "reset" }[decision], previous: was });
+    if (decision !== "pending") focusNext();
+  };
+  accept.addEventListener("click", () => decide(status === "accepted" ? "pending" : "accepted"));
+  reject.addEventListener("click", () => decide(status === "rejected" ? "pending" : "rejected"));
+  reset.addEventListener("click", () => {
+    decide("pending");
+    accept.focus();
+  });
+
+  const controls = h("div", { class: "cb-item-controls" });
+  if (canDecide) controls.append(h("div", { role: "group", "aria-label": `Decision for ${String(p.label)}`, class: "cb-item-decision" }, accept, reject, reset));
+  else controls.append(h("p", { class: "cb-muted cb-small" }, status === "pending" ? "Decisions open when the analysis is finished." : "This proposal is settled."));
+
+  if (canDecide && canRegenerate) {
+    const exhausted = used >= max;
+    const textId = uid("ask");
+    const toggle = h("button", { type: "button", class: "cb-btn cb-btn-small cb-btn-ghost", "aria-expanded": "false", "aria-controls": textId, disabled: exhausted },
+      status === "stale" || status === "conflict" ? "Regenerate against your edit" : "Ask for changes");
+    const area = h("textarea", { id: `${textId}-comment`, rows: 3, maxlength: 1000, placeholder: "e.g. Keep the second example" }) as HTMLTextAreaElement;
+    const send = h("button", { type: "submit", class: "cb-btn cb-btn-small cb-btn-primary" }, "Ask for a new version");
+    const form = h("form", { id: textId, class: "cb-item-ask", hidden: true },
+      h("label", { for: `${textId}-comment` }, "What should change?"), area,
+      h("div", { class: "cb-actions" }, send));
+    const open = (value: boolean) => {
+      form.hidden = !value;
+      toggle.setAttribute("aria-expanded", String(value));
+      if (value) area.focus();
+      else toggle.focus();
+    };
+    toggle.addEventListener("click", () => open(form.hidden));
+    area.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        event.stopPropagation();
+        open(false);
+      }
+    });
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      send.disabled = true;
+      root.setAttribute("aria-busy", "true");
+      live.textContent = "";
+      window.setTimeout(() => (live.textContent = `Asking for a new version of ${String(p.label)}…`), 30);
+      act(ctx, id, "regenerate_item", { itemId: p.itemId, comment: area.value.trim() });
+    });
+    controls.append(
+      toggle,
+      h("span", { class: "cb-muted cb-small cb-item-count" }, exhausted ? `You asked ${used} times. Edit it by hand in the workspace.` : used > 0 ? `Asked for changes ${used} of ${max} times` : ""),
+      form
+    );
+  }
+
+  const fields = (p.fields as Props[] | undefined) ?? [];
+  const body: Array<HTMLElement | null> = [];
+  if (KIND_NOTE[kind]) body.push(h("p", { class: "cb-item-kind-note" }, KIND_NOTE[kind]!));
+  if (p.answerChanged) body.push(h("p", { class: "cb-item-warn cb-item-warn-answer", role: "note" }, icon("alert"), h("strong", {}, "Answer changed. "), "The correct answer is different now. Learners' earlier scores stay on record."));
+  else if (p.answerCheck) body.push(h("p", { class: "cb-item-warn cb-item-warn-answer", role: "note" }, icon("alert"), h("strong", {}, "Answer may be wrong. "), "The source changed where this answer comes from. Check the marked answer."));
+  for (const flag of (p.flags as string[] | undefined) ?? []) {
+    body.push(h("p", { class: "cb-item-warn", role: "note" }, icon("alert"), h("strong", {}, flag.startsWith("Possibly unsupported") ? "Possibly unsupported. " : "Check. "), flag.replace(/^Possibly unsupported:\s*/, "")));
+  }
+  if (p.reason) body.push(h("p", { class: "cb-item-reason" }, h("strong", {}, "Why: "), String(p.reason)));
+  if (fields.length && kind !== "citation_remap") body.push(h("ul", { class: "cb-changes cb-item-fields" }, fields.map(fieldDiff)));
+  else if (kind === "update" && fields.length === 0) body.push(h("p", { class: "cb-muted" }, "No visible text change; only the sources of the element are updated."));
+  const signals = ((p.signals as string[] | undefined) ?? []).map((x) => SIGNAL_TEXT[x] ?? x);
+  if (signals.length) body.push(h("p", { class: "cb-muted cb-small" }, `Source change: ${signals.join(", ")}`));
+  if (p.sources) body.push(h("p", { class: "cb-muted cb-small" }, String(p.sources)));
+
+  const root = h("article", { class: `cb-card cb-item cb-item-${kind}`, "aria-labelledby": headingId, "data-update-item": p.itemId, "data-element": p.elementId },
+    h("header", { class: "cb-item-head" },
+      h("h4", { id: headingId, class: "cb-serif cb-h3" }, String(p.label)),
+      h("span", { class: `cb-badge cb-item-kind cb-item-kind-${kind}` }, icon(kindInfo.icon), kindInfo.label),
+      p.severity === "major" ? h("span", { class: "cb-tag" }, "Changes the meaning") : null),
+    statusEl, note, ...body,
+    citations(p.citations, ctx),
+    p.href && (kind === "manual" || kind === "uncovered" || used >= max) ? h("a", { class: "cb-link", href: String(p.href) }, "Open in the workspace") : null,
+    controls, live);
+  paint();
+  return root;
+};
+
+const COST_LINE = (label: string, micro: unknown): HTMLElement | null =>
+  micro === undefined ? null : h("div", {}, h("dt", {}, label), h("dd", {}, usd(micro)));
+
+const ImpactSummary: Renderer = (p) => {
+  const headingId = uid("imp");
+  const stat = (label: string, value: number, warn = false): HTMLElement =>
+    h("div", { class: warn && value > 0 ? "cb-impact-warn" : "" }, h("dt", {}, label), h("dd", {}, warn && value > 0 ? icon("alert") : null, String(value)));
+  const sentence = `${p.elements} ${p.elements === 1 ? "element" : "elements"} may need an update${p.lessons ? ` across ${p.lessons} ${p.lessons === 1 ? "lesson" : "lessons"}` : ""}${p.answerChecks > 0 ? `, and ${p.answerChecks} quiz ${p.answerChecks === 1 ? "answer" : "answers"} may now be wrong` : ""}.`;
+  return h("section", { class: "cb-card cb-impact", "aria-labelledby": headingId },
+    h("h3", { id: headingId, class: "cb-serif cb-h3" }, "Impact of this update"),
+    h("p", { class: "cb-impact-sentence" }, sentence),
+    h("dl", { class: "cb-facts" },
+      stat("Elements to review", p.elements),
+      stat("Answers to check", p.answerChecks, true),
+      stat("Uncovered source sections", p.uncovered),
+      p.remaps !== undefined ? stat("Citations updated automatically", p.remaps) : null,
+      p.major !== undefined ? stat("Changes to the meaning", p.major) : null,
+      COST_LINE("Estimated cost", p.estimatedCostMicroUsd),
+      COST_LINE("Cost so far", p.costMicroUsd)),
+    p.learnerImpact ? h("p", { class: "cb-impact-learners" }, h("strong", {}, "Learner impact: "), String(p.learnerImpact)) : null);
+};
+
+const StalenessBadge: Renderer = (p) => {
+  const state = String(p.state);
+  const days = p.days as number | undefined;
+  const text = state === "stale" ? (days === undefined ? "Stale" : days === 0 ? "Stale · today" : `Stale · ${days} ${days === 1 ? "day" : "days"}`) : state === "dismissed" ? "Updates dismissed" : "In sync";
+  const glyph = icon(state === "in_sync" ? "check" : state === "stale" ? "clock" : "minus");
+  const pending = p.pendingElements ? sr(` · ${p.pendingElements} ${p.pendingElements === 1 ? "element" : "elements"} waiting for an update`) : null;
+  return p.href
+    ? h("a", { class: `cb-fresh cb-fresh-${state}`, href: String(p.href) }, glyph, text, pending)
+    : h("span", { class: `cb-fresh cb-fresh-${state}` }, glyph, text, pending);
+};
+
+const learners = (n: number): string => `${n} ${n === 1 ? "learner" : "learners"}`;
+
+/** The sentences of the learner impact panel; the rules are in ADR 0033. Completion and scores are never touched. */
+export function learnerImpactLines(p: Props): string[] {
+  const done = p.applied === true;
+  const lines: string[] = [];
+  if (p.noticesOff) {
+    lines.push("Notices about updated, retired and new lessons are switched off for this course, so learners are not told about those changes.");
+  } else {
+    if (p.topicUpdated > 0) lines.push(`${learners(p.topicUpdated)} ${done ? (p.topicUpdated === 1 ? "was shown" : "were shown") : "will see"} an “updated since you completed it” notice, with the note below.`);
+    if (p.topicRetired > 0) lines.push(`${learners(p.topicRetired)} had completed a lesson that is removed; it stays in their history as “Retired lesson”.`);
+    if (p.courseExtended > 0) lines.push(`${learners(p.courseExtended)} who finished the course ${done ? (p.courseExtended === 1 ? "was shown" : "were shown") : "will see"} “New since you finished” for the new lessons; their completion is kept.`);
+  }
+  if (p.questionReattempt > 0) lines.push(`${learners(p.questionReattempt)} ${done ? "got" : "get"} one extra attempt for the corrected question.`);
+  if (lines.length === 0) lines.push("No learner needs a notice for these changes.");
+  lines.push("Completion and past scores stay as they are.");
+  return lines;
+}
+
+const LearnerImpact: Renderer = (p) => {
+  const headingId = uid("learn");
+  const lines = learnerImpactLines(p);
+  return h("section", { class: "cb-card cb-learner-impact", "aria-labelledby": headingId },
+    h("h3", { id: headingId, class: "cb-serif cb-h3" }, p.applied ? "What learners saw" : "What learners will see"),
+    h("ul", { class: "cb-learner-lines" }, lines.map((line) => h("li", {}, line))));
+};
+
+const ACTOR_TYPE_LABEL: Record<string, string> = { user: "Person", system: "System", agent: "Agent" };
+
+const AuditTable: Renderer = (p) => {
+  const entries = (p.entries ?? []) as Props[];
+  const caption = String(p.caption ?? "Audit trail, newest first");
+  if (entries.length === 0) return h("p", { class: "cb-muted cb-audit-empty" }, String(p.emptyText ?? "No entries match."));
+  const tableId = uid("audit");
+  const rows = entries.flatMap((entry) => {
+    const detailId = `${tableId}-${entry.id}`;
+    const details = (entry.details ?? []) as Props[];
+    const toggle = h("button", { type: "button", class: "cb-btn cb-btn-small", "aria-expanded": "false", "aria-controls": detailId },
+      "Details", sr(` for entry ${entry.id}: ${entry.actionLabel}`)) as HTMLButtonElement;
+    const detail = h("tr", { id: detailId, class: "cb-audit-detail", hidden: true },
+      h("td", { colspan: "5" },
+        h("dl", { class: "cb-audit-facts" },
+          details.flatMap((d) => [h("dt", {}, String(d.label)), h("dd", { class: d.mono ? "cb-mono" : "" }, String(d.value))]))));
+    toggle.addEventListener("click", () => {
+      const open = toggle.getAttribute("aria-expanded") !== "true";
+      toggle.setAttribute("aria-expanded", String(open));
+      detail.hidden = !open;
+    });
+    const actorType = String(entry.actorType ?? "user");
+    return [
+      h("tr", { class: "cb-audit-row", "data-entry": String(entry.id) },
+        h("td", {}, when(entry.at) ?? "-"),
+        h("td", {}, h("span", { class: "cb-audit-action" }, String(entry.actionLabel)), h("span", { class: "cb-muted cb-small cb-mono cb-audit-code" }, String(entry.action))),
+        h("td", {}, String(entry.actor), " ", h("span", { class: "cb-tag" }, ACTOR_TYPE_LABEL[actorType] ?? actorType)),
+        h("td", {}, entry.summary ? String(entry.summary) : ""),
+        h("td", {}, toggle)),
+      detail,
+    ];
+  });
+  return h("div", { class: "cb-audit-scroll", role: "region", "aria-label": `${caption} (scrolls sideways on small screens)`, tabindex: "0" },
+    h("table", { class: "cb-audit" },
+      h("caption", { class: "cb-sr" }, caption),
+      h("thead", {}, h("tr", {},
+        h("th", { scope: "col" }, "When"),
+        h("th", { scope: "col" }, "Action"),
+        h("th", { scope: "col" }, "Who"),
+        h("th", { scope: "col" }, "What happened"),
+        h("th", { scope: "col" }, h("span", { class: "cb-sr" }, "Details")))),
+      h("tbody", {}, rows)));
+};
 
 const Column: Renderer = (p, _ctx, _id, children) => h("div", { class: `cb-column cb-gap-${p.gap ?? "md"}` }, children);
 const Text: Renderer = (p) => h("p", { class: `cb-text cb-text-${p.variant ?? "body"}` }, String(p.text));
@@ -440,6 +1035,9 @@ export const builderComponents: Record<string, Renderer> = {
   SingleChoice,
   DurationSlider,
   LanguagePicker,
+  PriceInput,
+  ThemePicker,
+  SitePicker,
   DecideForMe,
   SourceCard,
   CitationChip,
@@ -450,5 +1048,14 @@ export const builderComponents: Record<string, Renderer> = {
   DiffView,
   ApplySummary,
   VersionList,
+  PublishSummary,
+  SourceConnectionCard,
+  RevisionTimeline,
+  FragmentChange,
+  UpdateItem,
+  ImpactSummary,
+  StalenessBadge,
   CostMeter,
+  LearnerImpact,
+  AuditTable,
 };

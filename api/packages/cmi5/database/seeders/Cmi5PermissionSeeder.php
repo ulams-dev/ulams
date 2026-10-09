@@ -21,6 +21,10 @@ class Cmi5PermissionSeeder extends Seeder
             Cmi5PermissionEnum::CMI5_UPLOAD,
             Cmi5PermissionEnum::CMI5_LIST,
             Cmi5PermissionEnum::CMI5_READ,
+            Cmi5PermissionEnum::CMI5_DELETE,
         ]);
+
+        // Learners launch cmi5 activities; uploading, listing and deleting stay with the admin.
+        Role::findOrCreate('student', 'api')->givePermissionTo(Cmi5PermissionEnum::CMI5_READ);
     }
 }

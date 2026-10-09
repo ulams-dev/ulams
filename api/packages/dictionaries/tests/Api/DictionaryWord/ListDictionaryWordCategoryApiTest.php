@@ -14,12 +14,14 @@ class ListDictionaryWordCategoryApiTest extends TestCase
         Category::factory()->count(10)->create();
         DictionaryWord::factory()->count(10)->hasAttached(Category::factory()->count(2))->create();
 
-        $category1 = Category::factory()->create();
-        $category2 = Category::factory()->create();
+        // Fixed words: faker words can contain one another, and the `word` filter is a substring
+        // match, so random words made the counts below depend on the seed.
+        $category1 = Category::factory()->create(['name' => 'First category']);
+        $category2 = Category::factory()->create(['name' => 'Second category']);
         $dictionary1 = Dictionary::factory()->create();
-        $word1 = DictionaryWord::factory()->for($dictionary1)->hasAttached($category1)->create();
-        DictionaryWord::factory()->for($dictionary1)->hasAttached($category1)->create();
-        DictionaryWord::factory()->for($dictionary1)->hasAttached($category2)->create();
+        $word1 = DictionaryWord::factory()->for($dictionary1)->hasAttached($category1)->create(['word' => 'alpha']);
+        DictionaryWord::factory()->for($dictionary1)->hasAttached($category1)->create(['word' => 'bravo']);
+        DictionaryWord::factory()->for($dictionary1)->hasAttached($category2)->create(['word' => 'charlie']);
 
         $this->getJson('api/dictionaries/123/words/categories')
             ->assertOk()

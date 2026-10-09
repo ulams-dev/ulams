@@ -2,14 +2,19 @@
 
 use Illuminate\Support\Facades\Route;
 use Ulams\Lti\Http\Controllers\Admin\LtiAdminController;
+use Ulams\Lti\Http\Controllers\FrameOriginsController;
 use Ulams\Lti\Http\Controllers\JwksController;
 use Ulams\Lti\Http\Controllers\Platform\AgsController;
+use Ulams\Lti\Http\Controllers\Platform\NrpsController;
 use Ulams\Lti\Http\Controllers\Platform\PlatformController;
 use Ulams\Lti\Http\Controllers\Tool\ToolController;
 
 // Public key set (both sides)
 Route::get('api/lti/jwks', JwksController::class);
 Route::get('.well-known/jwks.json', JwksController::class);
+
+// Origins the front's CSP must allow in frame-src (public, cached)
+Route::get('api/lti/frame-origins', FrameOriginsController::class);
 
 // Admin registrations (permission lti_manage, checked in the form requests)
 Route::group(['prefix' => 'api/admin/lti', 'middleware' => ['auth:api']], function () {
@@ -42,8 +47,12 @@ Route::group(['prefix' => 'api/lti/platform/ags/{course}/lineitems', 'where' => 
     Route::get('{lineItem}/results', [AgsController::class, 'results']);
 });
 
+// Names and Role Provisioning Services 2.0: the member list of a course, for tools with NRPS enabled
+Route::get('api/lti/platform/nrps/{course}', [NrpsController::class, 'memberships'])->whereNumber('course');
+
 // Tool side: platforms launch us
 Route::match(['get', 'post'], 'api/lti/tool/login', [ToolController::class, 'login']);
 Route::post('api/lti/tool/launch', [ToolController::class, 'launch']);
+Route::post('api/lti/tool/launch/verify', [ToolController::class, 'verify']);
 Route::post('api/lti/tool/deep-link', [ToolController::class, 'deepLink']);
 Route::post('api/lti/tool/exchange', [ToolController::class, 'exchange'])->middleware('throttle:30,1');

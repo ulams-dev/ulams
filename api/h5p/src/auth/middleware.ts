@@ -23,6 +23,9 @@ export interface RequestWithH5PUser extends Request {
     user: H5PUser;
 }
 
+/** Set by a proxy that holds the learner's token itself (front/web `/h5p`). */
+export const SESSION_PROXY_HEADER = 'x-ulams-session-proxy';
+
 /** Extracts the bearer token from the Authorization header or ?_token=. */
 export function extractToken(req: Request): string | undefined {
     const header = req.headers.authorization;
@@ -129,8 +132,13 @@ export function authMiddleware(options: AuthMiddlewareOptions) {
                     isSystem: false
                 };
             }
-            // Not enumerable: never ends up in JSON or logs.
-            Object.defineProperty(user, 'token', { value: token, enumerable: false });
+            // Not enumerable: never ends up in JSON or logs. Not set at all for requests that came
+            // through a session proxy (the Astro front's /h5p route adds the learner's token on the
+            // server): the model's AJAX URLs must then stay without `?_token=`, so the token never
+            // reaches the content frame; the proxy adds it to those calls as well.
+            if (req.headers[SESSION_PROXY_HEADER] !== '1') {
+                Object.defineProperty(user, 'token', { value: token, enumerable: false });
+            }
             r.user = user;
             return next();
         } catch (error) {

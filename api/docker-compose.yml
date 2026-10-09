@@ -33,6 +33,8 @@ services:
       - LARAVEL_APP_NAME=Ulams
       - LARAVEL_APP_ENV=local
       - LARAVEL_APP_KEY=base64:jgaCduGIEEmn4/UMJR5d38Y5ncfNE+rXqV3Fvewd37w=
+      # Dev only: APP_DEBUG=true exposes stack traces and Ignition's /_ignition routes. The demo
+      # profile (docker-compose.demo.yml) sets it to false and installs vendor/ without dev packages.
       - LARAVEL_APP_DEBUG=true
       - LARAVEL_APP_LOG_LEVEL=debug
       - LARAVEL_APP_URL=http://api.localhost

@@ -1,0 +1,30 @@
+{
+  "props": {
+    "id": "how",
+    "title": "Brew in three steps",
+    "items": [
+      {
+        "icon": "check",
+        "title": "Weigh the coffee",
+        "text": "15 g for a 250 ml cup."
+      },
+      {
+        "icon": "sync",
+        "title": "Bloom for 30 seconds",
+        "text": "Pour twice the weight of the coffee and wait."
+      },
+      {
+        "icon": "check",
+        "title": "Pour in circles",
+        "text": "Finish at 3:00 total."
+      }
+    ]
+  },
+  "invalid": {
+    "items": [
+      {
+        "title": "Only one step"
+      }
+    ]
+  }
+}

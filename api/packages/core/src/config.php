@@ -27,8 +27,12 @@ return [
         // header, a signature, HTTP Basic from an LRS client) and called by design from other
         // origins or none: the sandboxed players send `Origin: null`.
         'origin_exempt' => [
+            // CSP reports of browsers: no credentials, any page (content origins included) may send them
+            'api/csp-report',
             'api/scorm/content/*/track',
             'api/liascript/progress/*',
+            // cmi5 AUs on the content origin, authenticated by the one-time token of the launch URL
+            'api/cmi5/fetch',
             'trax/api/*/xapi/std/*',
             'api/lti/jwks',
             'api/lti/platform/authorize',
@@ -37,9 +41,20 @@ return [
             'api/lti/platform/ags/*',
             'api/lti/tool/login',
             'api/lti/tool/launch',
+            // second step of a launch that used the platform's storage: posted by our own page, whose
+            // referrer policy makes the browser send Origin: null
+            'api/lti/tool/launch/verify',
             'api/lti/tool/deep-link',
             'api/payments-gateways/callback/*',
             'api/payments-gateways/webhook/*',
         ],
+    ],
+
+    /*
+     * Content Security Policy report collector (ADR 0044).
+     */
+    'csp' => [
+        // aggregated rows not seen for this many days are deleted by `csp-reports:prune` (daily)
+        'retention_days' => (int) env('CSP_REPORT_RETENTION_DAYS', 30),
     ],
 ];

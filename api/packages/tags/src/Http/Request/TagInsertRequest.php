@@ -14,7 +14,7 @@ class TagInsertRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('create', Tag::class);
+        return auth()->user()?->can('create', Tag::class) ?? false;
     }
 
     /**

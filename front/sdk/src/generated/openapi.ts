@@ -24,6 +24,97 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/adapt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Adapt JSON sources
+         * @description Adapt Path B (behind ADAPT_SOURCE_ENABLED; 404 when off). Permission `adapt_manage`.
+         */
+        get: operations["8b9ad4f7c70f3a761ffff0b47b553ff3"];
+        put?: never;
+        /** Create from Adapt JSON (course, config, contentObjects, articles, blocks, components) */
+        post: operations["72e4db4d02b63a62703037681c624c0f"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/adapt/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Show a source and its build status */
+        get: operations["cd4e1d13364cb9f0c7935ccd92b6c84a"];
+        put?: never;
+        post?: never;
+        /** Delete a source (the built SCORM package stays) */
+        delete: operations["00874d03a5aa6d89045ee0c0414b0ccc"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/adapt/{id}/source": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** JSON of the current or a given version */
+        get: operations["32b440d186aea3454c733206b640cfea"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/adapt/{id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Version history (version, change note, author, date; no source) */
+        get: operations["cccce706bca9719bcb70215298b01a60"];
+        put?: never;
+        /** Add a version */
+        post: operations["059c1b12b7d16100085d0a48ec076764"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/adapt/{id}/build": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Build the current version into a SCORM package (queued) */
+        post: operations["35b47f4ebdcf77b9d555a4c2ee8349be"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/user-submissions": {
         parameters: {
             query?: never;
@@ -55,6 +146,74 @@ export interface paths {
         post?: never;
         /** Delete user submission identified by a id */
         delete: operations["a0adf935e4cc3861e5a63c3e87958b88"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/tokens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Every user's scoped API tokens */
+        get: operations["c97e7ee722008f1f0aae83ea70b29fa6"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/tokens/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Revoke any scoped token */
+        delete: operations["86c0bd374d2c2016525af40c59f2a18e"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/tokens/{id}/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Audit log of one token */
+        get: operations["a0d644a176215e6a71e0c442eebedd6c"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/agent-audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Agent audit log */
+        get: operations["e05f3171d6b8ada25c8975c3aa362d9c"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -451,6 +610,103 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/device/code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start a device login (RFC 8628)
+         * @description No authentication. Throttled to 10 requests per minute per IP.
+         */
+        post: operations["ea404fe1bfc1d7cec2c000550cba8005"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/device/token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Poll for the token of a device login (RFC 8628)
+         * @description No authentication. Poll every `interval` seconds. Errors are HTTP 400 with an RFC 8628 error code. The token is returned once.
+         */
+        post: operations["d021d1c83eb5b155962e28f33d742868"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/device/requests/{user_code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Details of a pending device request (for the approval page)
+         * @description Needs a login token of the approving user (not a scoped token). Throttled to 5 requests per minute per user.
+         */
+        get: operations["d11c076f4f258f272b9d2f54496ba17a"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/device/requests/{user_code}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Approve a device request
+         * @description Mints a scoped token for the approving user with the approved scopes that the client requested. The CLI collects it on its next poll.
+         */
+        post: operations["ed52f6a54e88ba0eec1daea558b8ba56"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/device/requests/{user_code}/deny": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Deny a device request */
+        post: operations["502ca62527836cb88f1a6fa63b7f32be"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/login": {
         parameters: {
             query?: never;
@@ -496,6 +752,23 @@ export interface paths {
         put?: never;
         /** @description User logout */
         post: operations["7fe1da3621cd98ac4fa94d3f656f192d"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/meta": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Capabilities of this host */
+        get: operations["49809d821fe8d943f2c8ea0d7f2347ac"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -685,6 +958,58 @@ export interface paths {
         put?: never;
         /** @description Register new user */
         post: operations["5c66b81d373a1cf56c497035942da651"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/tokens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My scoped API tokens */
+        get: operations["f59ede12ce38c91320ace16e57f0a1d9"];
+        put?: never;
+        /** Create a scoped API token (the secret is returned once) */
+        post: operations["a875828dc5b276a102378c005eb05829"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/tokens/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Revoke one of my scoped tokens */
+        delete: operations["fef5ceb391432c3471ee2e3223e7db42"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/tokens/current": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The token this request is authenticated with */
+        get: operations["939c4d8f2959e9d3fe7536b5174c1a78"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1463,14 +1788,18 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/play/{cmi5AuId}": {
+    "/api/cmi5/player/{cmi5AuId}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["c1b982c417130365232c02c0e70def00"];
+        /**
+         * Launch a cmi5 AU
+         * @description Needs `cmi5_read` (students have it). Returns the player page, or with `format=json` the launch URL on the tenant content origin. The URL carries a one-time launch token, never the learner's access token (ADR 0046).
+         */
+        get: operations["110a514ff187653c675f7bbd455f20cf"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1934,6 +2263,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/csp-report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Collect a Content Security Policy violation report
+         * @description Public, rate limited (60 per minute and IP), body up to 16 KB. Accepts `application/csp-report` (report-uri) and `application/reports+json` (Reporting API). Only the directive, the host of the blocked resource and the path of the page are kept, aggregated with a counter, and pruned after 30 days.
+         */
+        post: operations["85f7ae7cab7ab8ec520e63e6c427b339"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/csp-reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List the aggregated CSP violation reports
+         * @description Admins only. Newest first.
+         */
+        get: operations["1019392d092cea54f12c8fe80cccf2bf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/health-check": {
         parameters: {
             query?: never;
@@ -2144,6 +2513,395 @@ export interface paths {
          * @description Delete Course Access Enquiry
          */
         delete: operations["b3fd2c8be8fd6e1401c9d7ca941c4c95"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My builder sessions */
+        get: operations["cd5468d0a1a722714a8a897f6bfa6afc"];
+        put?: never;
+        /**
+         * Start a builder session
+         * @description AI Course Builder REST API (prefix `/api/admin/course-builder`, `auth:api`, permission
+         *     `course_builder_use`). UI actions sent as runs and these endpoints share the same services, so
+         *     the CLI and the MCP server can drive the builder without the UI.
+         */
+        post: operations["6a2456054c25d9e388382c19ee5667de"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A session's state snapshot */
+        get: operations["097a8f957c1e9c480479a4b73098736c"];
+        put?: never;
+        post?: never;
+        /** Delete a session (an applied course is kept) */
+        delete: operations["8f977ac329aa2e1720a4c72775c60d84"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/sources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload a source (MD, PDF, DOCX); ingestion and the interview start by themselves */
+        post: operations["e2d9e3dd4d42bf8a1e1e06945b4400a3"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/sources/{source}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A source with its section tree */
+        get: operations["e5ee3815ce7b28ec54e83ff99f8b9ce3"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/fragments/{fragment}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One source fragment (citation popover) */
+        get: operations["5514f96c136b291b703df1c82cb06c39"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/brief": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Course Brief */
+        get: operations["13275e2e7b5e12fc78da7860840babe3"];
+        /** Edit the Course Brief */
+        put: operations["29adfbac442e3777b7f41b8d0531463c"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start a run from a chat message or a UI action (AG-UI RunAgentInput) */
+        post: operations["24836a812e2252ba271af42a7ae04f58"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/runs/{run}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Status of one run (poll it for --wait) */
+        get: operations["ad22ae07ebbbb386a4c6160c18d6c433"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/runs/{run}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel a run */
+        post: operations["c6f4943df5cfe1e54dd2ff7d3daf8357"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/runs/{run}/steps/{step}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retry one failed generation step */
+        post: operations["f1e869affcbe6253b50ab68066ad5d2a"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Blueprint version history */
+        get: operations["8ae74d5bbb65bad917bdebb71726b507"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/versions/{version}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A blueprint version with fragment labels */
+        get: operations["7385a7e2cb179ef1e527400ad9355a92"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/versions/{version}/diff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Element-aware diff against another version (default: its parent) */
+        get: operations["5fa4979aba6423ee3ddd249b8d96d943"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/versions/{version}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve a proposal (outline or patch) */
+        post: operations["363fe3c5faaf019b7aeccb8ce0692be2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/versions/{version}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject a proposal */
+        post: operations["894dc1e40da11f4ee1b272de9535e40f"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/versions/{version}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Restore an old version as a new one */
+        post: operations["78c59c3a3e86e4b27532721ce0e571f7"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/undo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Undo the last content change */
+        post: operations["dd74d5b979952d2b47442749f468fa6c"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/redo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Redo */
+        post: operations["109f522dfbb519cdd9c95d9fc358db68"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve the apply of the current version */
+        post: operations["509821f6c31ea0c0c3cec6ae22f4b45b"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publish the applied course */
+        post: operations["fb8f6decce43224a86c2af1707019831"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/usage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** AI calls of the session by task and model */
+        get: operations["f914d359cc7a401202a1337d2ddd97f1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * AG-UI event stream (SSE)
+         * @description AG-UI events over SSE (ADR 0011). On connect: a STATE_SNAPSHOT (not stored, no id), then every
+         *     stored event after `Last-Event-ID` (or `?after=`), then new events as they are appended. The
+         *     connection closes after `course_builder.sse.max_seconds` (25 s) so PHP-FPM workers are not held;
+         *     the client reconnects with the last id. Between polls the loop watches the session's "last event"
+         *     key in the cache and only queries the table when it moved (polling fallback every 500 ms).
+         */
+        get: operations["cb4592a0eb6d5d81094288be826850ad"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -2811,6 +3569,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/demo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Demo mode status and the accounts used for the automatic login
+         * @description Exists only on a tenant with DEMO_MODE=true; 404 everywhere else.
+         */
+        get: operations["9a87b65bcd8010fe27d4496d482090b4"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/demo/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Log in as the demo student or admin without a password
+         * @description Issues a regular Passport token for the seeded account of that role, with the same response body as /api/auth/login. The demo student is given access to every published course. Exists only on a tenant with DEMO_MODE=true.
+         */
+        post: operations["bf97bd9d4463c3eee2373f7234beebac"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/dictionaries/{id}/access": {
         parameters: {
             query?: never;
@@ -3130,6 +3928,716 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/liascript": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List LiaScript sources
+         * @description LiaScript sources (spec 1.1): versioned Markdown plus assets.
+         */
+        get: operations["ea8eb3db404fe703a1c196cadb0064fc"];
+        put?: never;
+        /** Create from Markdown, an .md file or a .zip (Markdown + assets) */
+        post: operations["fdccc039f6be45630d81157450d08157"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/liascript/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Show a LiaScript source */
+        get: operations["ff9e6d6d27d001f322a4c580edb05d75"];
+        /** Rename a LiaScript source */
+        put: operations["f29a6003b883037e9c37e6cd603f2c57"];
+        post?: never;
+        /** Delete a LiaScript source with all versions and assets */
+        delete: operations["57d2eedf3af835250a8d78bd41abd68e"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/liascript/{id}/source": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Markdown of the current or a given version */
+        get: operations["e54c72cbabbfacaf3aa19970838d8474"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/liascript/{id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List versions */
+        get: operations["7104ac68daa271b7c18a9d9f9a9604ef"];
+        put?: never;
+        /** Add a version from Markdown or an upload */
+        post: operations["e9bf16fee91b5aa1905907d54594df93"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/liascript/{id}/versions/{version}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Restore a version (adds a new version with its content) */
+        post: operations["6b6b7984f00c6385a6e4b9bf0b41e890"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/liascript/{id}/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Live preview of unsaved Markdown on the tenant content origin
+         * @description Publishes the text as a short-lived draft next to the current version (its assets resolve) and returns a player URL without progress tracking. Nothing is saved as a version.
+         */
+        post: operations["a3cf1179533e1fef834163a046924ec6"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/liascript/launches/{topic}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start a LiaScript topic on the tenant content origin
+         * @description Learners play a LiaScript topic on the tenant content origin and the player reports progress.
+         */
+        post: operations["e2592511607f4708bf15bb002a81c59f"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/liascript/progress/{topic}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Progress reported by the content-origin player
+         * @description Authenticated with the progress token (X-Ulams-Tracking-Token). The topic is complete when the learner reaches the last section, or LiaScript reports completed/passed.
+         */
+        post: operations["d02be1ed0ec261b16af61bf2c927d658"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/sessions/{session}/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Audit entries of a session (filters: action, actorType, from, to, source)
+         * @description The audit trail (ADR 0034): who decided what and when, tied to the source revision and the
+         *     blueprint versions. Per session for its author and admins; tenant-wide for admins.
+         */
+        get: operations["a5674b1e8bd1a4678f62157d825bc6a0"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/sessions/{session}/audit/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export the audit entries of a session as CSV or JSON */
+        get: operations["c4060fcadca6e7c0ca17650a791b6633"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/sessions/{session}/audit/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Verify the hash chain of the audit trail */
+        get: operations["cf742cf7eac0e7662e06681e61bb1d33"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/audit/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Tenant-wide audit export (admins) */
+        get: operations["6c02d48b60a69ef2b2e712063a6c4eba"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/audit/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Tenant-wide chain verification (admins) */
+        get: operations["119dfcf567b151c09f6a8ea8a6aff036"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/connectors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The source connectors this installation offers, with their settings schema
+         * @description Connecting a source through a connector, checking it on demand and rotating its webhook secret.
+         */
+        get: operations["045403cfae13012786a9529d9c43b9bc"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/sessions/{session}/sources/connect": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add a source through a connector (Git repository, web pages, plugins); validates and fetches revision 1 */
+        post: operations["492bb84123f4a93ae760a119f5100422"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/connections/{connection}/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Check the source now */
+        post: operations["87b25a4d27c8194aebaae4c1b3843f0c"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/connections/{connection}/webhook-secret": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Rotate the webhook secret (returned once) */
+        post: operations["e2189a328c5b103855d182f784b92ab9"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/connections/{connection}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Change a connection: schedule, automatic analysis, learner notice settings, paused
+         * @description Settings of a source connection and disconnecting it (history is kept).
+         */
+        put: operations["6f7156f91faa8bebff6b264c7621a44b"];
+        post?: never;
+        /** Disconnect a source (revisions and the audit trail are kept) */
+        delete: operations["8471ffe30ba421f54e74cbe5037e8118"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/living-course/courses/{course}/notices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The caller's open update notices for a course
+         * @description Learner side (ADR 0033): the caller's own notices about updated courses, and the opt-in "an
+         *      * update is under review" marker. Notices never change progress.
+         */
+        get: operations["3c52deb0f157d9c1d01e913acde4f41c"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/living-course/notices/{notice}/dismiss": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark a notice as reviewed */
+        post: operations["a1eda619d456a6eecf75d32b810d70f1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/living-course/courses/{course}/freshness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Topics with an update under review (only when the course shows it) */
+        get: operations["3513137a7e99c3fff961672373daad08"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/sessions/{session}/proposals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Update proposals of a session, newest first
+         * @description Update proposals: list and detail (decisions, analysis and apply are added by their own endpoints).
+         */
+        get: operations["9f72817da6b47c4be646b6984a047814"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/proposals/{proposal}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A proposal with its items grouped by lesson, citations and source changes */
+        get: operations["13412db1de147bf01a7835b034597bb9"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/proposals/{proposal}/analyse": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start or resume the AI analysis (confirmEstimate when above the automatic threshold) */
+        post: operations["4e671eb576fee6cbd7284c74c6247856"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/proposals/{proposal}/items/{item}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Accept one item */
+        post: operations["2adb9f99a54ebd74df91f87423f91571"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/proposals/{proposal}/items/{item}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject one item (keep the earlier version of the element) */
+        post: operations["4b86483c24f29a73c57ceb57deac49f5"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/proposals/{proposal}/items/{item}/reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Back to undecided */
+        post: operations["0faf97a5821be49554bab84c4052c042"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/proposals/{proposal}/items/{item}/regenerate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Ask for another version of one element ({comment}); one call, at most three per item */
+        post: operations["3214452d8179bf22ecd29f235dd1281b"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/proposals/{proposal}/accept-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Accept every undecided update, no-change and removal item */
+        post: operations["3dab066a6de079460f9f866d2989c14e"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/proposals/{proposal}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject the whole proposal and acknowledge the source revision */
+        post: operations["4b8f251c3f67afcc429123a8d1593958"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/proposals/{proposal}/reanalyse": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Replace the proposal by a new one from the newest source revision */
+        post: operations["4ecdad03c656ef08615bbbccf6beca1f"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/proposals/{proposal}/learner-note": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** The text learners see for updated lessons (plain text, up to 500 characters) */
+        put: operations["5f1fff47bbf112a36833f964fdd2e5fe"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/proposals/{proposal}/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Apply the accepted items as a new course version (409 with conflicting items or admin edits) */
+        post: operations["0ad25825160fabdd5a5041b38a3e24c2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/sessions/{session}/sources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Sources of a session with connection, sync state and revisions
+         * @description Sources of a builder session with their sync state, and their revisions.
+         */
+        get: operations["66b48a735abd7716008ee166be38392c"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/sources/{source}/revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Revisions of a source, newest first */
+        get: operations["df75e3a7a4db6e836d052844be479220"];
+        put?: never;
+        /** Upload a new version of a source (MD, PDF or DOCX): creates a revision and its fragment diff */
+        post: operations["df094d9cda3ece4e4a725254aff14dbe"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/revisions/{revision}/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fragment changes of a revision against the synced revision it was compared with (or ?against=<revision id>) */
+        get: operations["35fa055e0edab3457af79f252d85bd98"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/revisions/{revision}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One revision */
+        get: operations["5b0687d7aea85b5c6c93b2d4c62e6616"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/living-course/sessions/{session}/staleness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Per-element staleness and the course summary
+         * @description Staleness per element and per course. Works with AI disabled.
+         */
+        get: operations["7f7df3d32948fa73e3b71790bc187f90"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/living-course/webhooks/{webhookId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Receive a push webhook of a connected repository
+         * @description Inbound webhooks of source hosts (ADR 0032). Public route, authenticated by the signature with the
+         *     connection's own secret: invalid signatures are refused and logged, duplicates answer 200 without
+         *     work, only pushes to the tracked branch that touch the tracked paths queue a (debounced) check.
+         *     Payloads are never sent to the model and never stored, only their digest.
+         */
+        post: operations["54af035cebb8262704cfee7f3e72bba3"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/cmi5/fetch": {
         parameters: {
             query?: never;
@@ -3139,7 +4647,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** cmi5 token fetch */
+        /**
+         * cmi5 token fetch
+         * @description Exchanges the one-time token of a cmi5 launch URL for an LRS-only session token (`auth-token`). Repeat calls within the session return the same token. Public: the one-time token is the credential.
+         */
         post: operations["49c2bee176f5a6c16a83bad0630cace3"];
         delete?: never;
         options?: never;
@@ -3178,6 +4689,401 @@ export interface paths {
         get: operations["47413fb4360dae5bc348a94465d7eaf9"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/lti/endpoints": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Our LTI endpoints and issuer, to register us elsewhere
+         * @description Registrations (permission `lti_manage`): tools we launch and platforms that launch us, plus
+         *     the URLs and key set to give to the other side.
+         */
+        get: operations["6c07572455eeea027effbb2da673b280"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/lti/tools": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List registered tools */
+        get: operations["b771cbefccebfc06b59ba11309cc26f3"];
+        put?: never;
+        /** Register a tool (we issue client_id and deployment_id) */
+        post: operations["ea302bf96dc152c876c5d0eb0232299e"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/lti/tools/{tool}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Show a tool */
+        get: operations["a8ff323e4c15c4db5449145088e28e4d"];
+        /** Update a tool */
+        put: operations["389eabef701408d9e07ce067cdf24ed7"];
+        post?: never;
+        /** Delete a tool without topics */
+        delete: operations["f52db15a79c018b6184665f6aed037f1"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/lti/tools/{tool}/deep-link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start deep linking into a lesson */
+        post: operations["667f1aefacbee6ebc97650d3d49de394"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/lti/platforms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List platforms that may launch us */
+        get: operations["4c80b8cecff4c038f772914097d1908d"];
+        put?: never;
+        /** Register a platform */
+        post: operations["f9b0c227156df523f785b035a9b8d014"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/lti/platforms/{platform}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Show a platform */
+        get: operations["031c7ff614f2f5a67c25f16c9dad07ba"];
+        /** Update a platform */
+        put: operations["c3deed3a7a8f857de74319c8f9b16a78"];
+        post?: never;
+        /** Delete a platform */
+        delete: operations["f686d2153b3700947c55435a1f8db370"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/frame-origins": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Origins of the enabled external tools of this tenant
+         * @description For the front's Content Security Policy: the `frame-src` of a learner page must name the origins a tool launch loads (its OIDC login, launch and deep-linking URLs). Public and cached for 5 minutes; it reveals only the origins of tools the tenant registered for its learners.
+         */
+        get: operations["9501c319c6b2b356ec601963caad0176"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/jwks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Public key set of this tenant (LTI platform and tool side)
+         * @description Also served at /.well-known/jwks.json. Contains the next, active and recently retired keys.
+         */
+        get: operations["e21c466f7e6dac972c24fd1e77e9016c"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/platform/ags/{course}/lineitems": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * AGS: list line items
+         * @description AGS 2.0 endpoints of the platform side. Authenticated with an access token from
+         *     /api/lti/platform/token; every line item belongs to the token's tool and the course in the URL.
+         */
+        get: operations["7730a7dac173ffa45a97055e8e75c95d"];
+        put?: never;
+        /** AGS: create a line item */
+        post: operations["e8f007a8e1261cc54ba33cd30a680fd2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/platform/ags/{course}/lineitems/{lineItem}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** AGS: read a line item */
+        get: operations["6992c6d0116bb09c248c024fa0422749"];
+        /** AGS: update a line item */
+        put: operations["42ab598db0454b738021d26ee4a33625"];
+        post?: never;
+        /** AGS: delete a line item */
+        delete: operations["cbaab5f4f2960312e3544a704e1e73d8"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/platform/ags/{course}/lineitems/{lineItem}/scores": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** AGS: post a score */
+        post: operations["9205b9d986d566d34fb5aeed9e3b2b46"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/platform/ags/{course}/lineitems/{lineItem}/results": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** AGS: latest result per learner */
+        get: operations["ffbc8addccea9d6645cde339b6e5d5fe"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/platform/nrps/{course}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * NRPS: members of a course (membership container)
+         * @description Bearer token from /api/lti/platform/token with scope https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly. Names and e-mails only when the tool registration shares them. Paged by `limit` (max 100) and `page`; a Link header with rel=next points to the next page. `role` filters by LTI role.
+         */
+        get: operations["d7b8c3bdee515c8afd8f24fc61ec218c"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/launches/{topic}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start an LTI launch of an external-tool topic
+         * @description Returns the tool's OIDC login URL (with a signed, 2-minute login_hint) to open in an iframe or a new window.
+         */
+        post: operations["a2b70edeeebeaa8a7af3caafc5670a09"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/platform/authorize": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * OIDC authentication endpoint (the tool redirects the browser here)
+         * @description Checks client_id, redirect_uri and the login_hint (single use) and posts a signed id_token to the tool. Also accepts POST.
+         */
+        get: operations["7268a70fc27bb0e2b1c94b3baaa57d91"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/platform/token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** AGS access token (OAuth 2 client credentials with a JWT client assertion) */
+        post: operations["9776042d51bd30ab9137a4d5f7b5ac3e"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/platform/deep-links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Deep-linking return URL (the tool posts the author's selection here)
+         * @description Verifies the LtiDeepLinkingResponse JWT and creates one external-tool topic per ltiResourceLink item in the lesson the request was made for.
+         */
+        post: operations["735e9c6129d12dc85b291584a0b01e6d"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/tool/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** OIDC login initiation from a registered platform (also POST) */
+        get: operations["10a0ad0d978804363cde5d19eae1520c"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/tool/launch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * LTI launch (resource link or deep-linking request) from a registered platform
+         * @description Resource link: maps the platform user, grants course access and redirects to the front with a one-time code. Deep linking: shows the course picker.
+         */
+        post: operations["1263d4a5230bc11b6606102640e87bb2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/tool/deep-link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Return the courses picked in the deep-linking picker to the platform */
+        post: operations["5e799230ade3ec16002f9f2d15108475"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/tool/exchange": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Exchange the one-time launch code for an API token */
+        post: operations["d27017060d1d967be9b6295c32733343"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4020,6 +5926,83 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/scorm/launch/{uuid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start a SCO on the tenant content origin
+         * @description Issues a SCO-scoped tracking token and returns the player URL on the content origin. `url` is null when no content origin is configured; use /api/scorm/play/{uuid} then.
+         */
+        post: operations["e9f3a5028f401c1030a8b16093efccc9"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/scorm/content/{uuid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Launch data for the content-origin player
+         * @description Authenticated with the tracking token from /api/scorm/launch/{uuid} in the X-Ulams-Tracking-Token header, not with a user token.
+         */
+        get: operations["262ecdd2ec002682574687fb4fbd729c"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/scorm/content/{uuid}/track": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Store CMI data sent by the content-origin player
+         * @description Authenticated with the tracking token in the X-Ulams-Tracking-Token header.
+         */
+        post: operations["213ec51bfaf514aa40963dcadd464686"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/scorm/assets/scorm-again.min.js": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Vendored scorm-again runtime (MIT) for the legacy player */
+        get: operations["eea2545f66501d1424469e9023cd0378"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/scorm/upload": {
         parameters: {
             query?: never;
@@ -4463,23 +6446,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/tags/create": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Create multiple Tags */
-        post: operations["d06c8505e7612240f574b99eeec1795f"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/admin/tags": {
         parameters: {
             query?: never;
@@ -4489,7 +6455,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post?: never;
+        /** @description Create multiple Tags */
+        post: operations["770a202ae86e7b65ba276ba3b8ff8003"];
         /**
          * Destroy Tags
          * @description Destroy Tags
@@ -4509,6 +6476,23 @@ export interface paths {
         };
         /** @description Display the specified Tag */
         get: operations["b76580467477d1acb30a23fe5889de3f"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/tags/unique": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Display the unique Tags (admin) */
+        get: operations["d963be93f13bd4ab990c024bd695d8ad"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5080,6 +7064,93 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/platform/operations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The latest tenant operations */
+        get: operations["fd8a8310786cb7d3b749da1945c41573"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/operations/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Status and steps of a tenant operation (poll it) */
+        get: operations["63486428fcc1835220898ec2e1775315"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/tenants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the tenants */
+        get: operations["4ee59d29162c33be46676ac192fea763"];
+        put?: never;
+        /** Create a tenant (queued; poll the operation) */
+        post: operations["135135c2c7a8b3f064f45fc65b42e3e2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/tenants/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One tenant */
+        get: operations["2008e0e13e05d2463e87c51103f3e725"];
+        put?: never;
+        post?: never;
+        /** Delete a tenant and all its data (queued; send the slug as confirm) */
+        delete: operations["7e5d0171cf58c83d4e39f68c56ab1f6d"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/tenants/{slug}/env": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Override or reset inheritable settings (AI driver, models) of a tenant */
+        patch: operations["fc7c9945e536e6e4e77fc034a89aeada"];
         trace?: never;
     };
     "/api/admin/quiz-answers/{id}": {
@@ -5929,6 +8000,119 @@ export interface components {
              */
             avatar?: Record<string, never>;
         };
+        DeviceCodeResponse: {
+            /** @description Secret of the polling client; never shown to the user */
+            device_code: string;
+            /** @example BDWP-HQPK */
+            user_code: string;
+            /** @example https://coffee.app.ulams.app/cli/authorize */
+            verification_uri: string;
+            /** @example https://coffee.app.ulams.app/cli/authorize?code=BDWP-HQPK */
+            verification_uri_complete: string;
+            /** @example 600 */
+            expires_in: number;
+            /** @example 5 */
+            interval: number;
+        };
+        DeviceTokenResponse: {
+            /** @description ulams_pat_... shown once */
+            access_token: string;
+            /** @example Bearer */
+            token_type: string;
+            /** Format: date-time */
+            expires_at?: string | null;
+            scopes: string[];
+            token_id: string;
+        };
+        DeviceError: {
+            /** @enum {string} */
+            error: "authorization_pending" | "slow_down" | "access_denied" | "expired_token" | "invalid_scope";
+            error_description?: string;
+        };
+        DeviceRequest: {
+            user_code?: string;
+            client_name?: string;
+            agent_name?: string | null;
+            requested_scopes?: string[];
+            ip?: string | null;
+            user_agent?: string | null;
+            /** Format: date-time */
+            created_at?: string;
+            /** Format: date-time */
+            expires_at?: string;
+            expires_in?: number;
+            expiry_options_days?: number[];
+            default_expires_in_days?: number;
+            max_expires_in_days?: number;
+        };
+        ApiToken: {
+            /** @description Reusable OpenAPI schemas of the scoped token endpoints (ADR 0074). */
+            id: string;
+            name: string;
+            scopes: string[];
+            /** @enum {string} */
+            kind: "cli" | "agent" | "ci" | "integration";
+            agent_name?: string | null;
+            /** @enum {string} */
+            created_via?: "admin" | "cli" | "device";
+            rate_limit_per_minute?: number | null;
+            user_id?: number | null;
+            /** Format: date-time */
+            created_at?: string;
+            /** Format: date-time */
+            expires_at: string;
+            /** Format: date-time */
+            last_used_at?: string | null;
+            last_used_ip?: string | null;
+            revoked: boolean;
+        };
+        ApiTokenCreated: components["schemas"]["ApiToken"] & {
+            /**
+             * @description The secret, prefixed ulams_pat_. Shown once.
+             * @example ulams_pat_eyJ0eXAi...
+             */
+            token?: string;
+        };
+        ApiTokenList: {
+            success?: boolean;
+            message?: string;
+            data?: components["schemas"]["ApiToken"][];
+            meta?: Record<string, never>;
+        };
+        AgentAuditEntry: {
+            id?: number;
+            token_id?: string | null;
+            user_id?: number | null;
+            agent_name?: string | null;
+            client?: string | null;
+            user_agent?: string | null;
+            method?: string;
+            route_name?: string | null;
+            path?: string;
+            route_params?: Record<string, never> | null;
+            status?: number;
+            dry_run?: boolean;
+            idempotency_key?: string | null;
+            request_id?: string | null;
+            duration_ms?: number | null;
+            ip?: string | null;
+            /** Format: date-time */
+            created_at?: string;
+        };
+        AgentAuditList: {
+            success?: boolean;
+            message?: string;
+            data?: components["schemas"]["AgentAuditEntry"][];
+            meta?: Record<string, never>;
+        };
+        ScopeError: {
+            /** @example false */
+            success?: boolean;
+            message?: string;
+            /** @enum {string} */
+            error?: "scope_missing" | "scope_forbidden" | "scope_unmapped" | "rate_limited";
+            required?: string[];
+        };
         /**
          * Group
          * @description Group model
@@ -6317,8 +8501,6 @@ export interface components {
             }[];
             /** @description max_session_students */
             max_session_students?: number;
-            /** @description analyze_enabled */
-            analyze_enabled?: boolean;
         };
         ConsultationTermForUserCurrent: {
             /** @description name */
@@ -6378,6 +8560,36 @@ export interface components {
             name?: string;
             /** @description email */
             email?: string;
+        };
+        CourseBuilderRunStatus: {
+            /**
+             * @description The public, stable shape of a run for pollers (CLI `--wait`, MCP, CI):
+             *     `GET /api/admin/course-builder/runs/{run}`. Internal statuses are folded into
+             *     queued | running | succeeded | failed | cancelled; `needsAttention` is true while the run waits
+             *     for the author (an answer or an approval), so a poller can stop and ask instead of looping.
+             * @example 01j9z3k8m2x4q7r5t6v8w0y1ab
+             */
+            id: string;
+            sessionId: string;
+            /** @enum {string} */
+            kind: "ingest" | "interview" | "outline" | "generate" | "patch" | "apply" | "action";
+            /** @enum {string} */
+            status: "queued" | "running" | "succeeded" | "failed" | "cancelled";
+            stage?: string | null;
+            needsAttention?: boolean;
+            steps: {
+                id?: string;
+                /** @example lesson:el_8f2c */
+                name?: string;
+                /** @enum {string} */
+                status?: "queued" | "running" | "succeeded" | "failed";
+                error?: string | null;
+            }[];
+            /** Format: date-time */
+            startedAt?: string | null;
+            /** Format: date-time */
+            finishedAt?: string | null;
+            error?: string | null;
         };
         Course: {
             /** @description id */
@@ -6637,6 +8849,23 @@ export interface components {
             library?: string;
             /** @example H5P.MultiChoice */
             main_library?: string;
+        };
+        TopicLiaScript: {
+            id?: number;
+            /** @description LiaScript document id (its current version is played) */
+            value: number;
+        };
+        TopicLtiLink: {
+            id?: number;
+            /** @description registered LTI tool */
+            lti_tool_id: number;
+            /** @description target link URI; the tool's launch URL when empty */
+            url?: string;
+            /** @description custom parameters sent with the launch */
+            custom?: Record<string, never>;
+            /** @enum {string} */
+            presentation?: "iframe" | "window";
+            score_maximum?: number;
         };
         ModelField: {
             /** @description template id */
@@ -7113,6 +9342,56 @@ export interface components {
             /** @description this template is default template for given channel and event pair */
             default?: boolean;
         };
+        PlatformTenant: {
+            /**
+             * @description The platform tenant API (ADR 0078): only on a platform host with TENANCY_PLATFORM_API=true (404
+             *     otherwise), for users with the `platform_admin` permission; scoped tokens need `platform:read|write`.
+             * @example coffee
+             */
+            slug?: string;
+            name?: string;
+            theme?: string | null;
+            accent?: string | null;
+            demo?: boolean;
+            /** @enum {string} */
+            status?: "provisioning" | "active" | "failed";
+            urls?: {
+                api?: string;
+                front?: string;
+                admin?: string;
+            };
+            /** @description Finished provisioning steps with their time */
+            steps?: Record<string, never>;
+            /** @description Names only, never values */
+            env_override_keys?: string[];
+            last_error?: string | null;
+            /** Format: date-time */
+            created_at?: string;
+            /** Format: date-time */
+            updated_at?: string;
+        };
+        PlatformOperation: {
+            /** @example 01j9z3k8m2x4q7r5t6v8w0y1ab */
+            id?: string;
+            /** @enum {string} */
+            kind?: "create" | "delete";
+            /** @enum {string} */
+            status?: "queued" | "running" | "succeeded" | "failed";
+            tenant?: string;
+            steps?: {
+                name?: string;
+                /** @enum {string} */
+                status?: "pending" | "running" | "succeeded" | "skipped" | "failed";
+                startedAt?: string | null;
+                finishedAt?: string | null;
+                error?: string | null;
+            }[];
+            error?: string | null;
+            requested_by?: number | null;
+            created_at?: string;
+            started_at?: string | null;
+            finished_at?: string | null;
+        };
         AdminGiftQuestionRequest: {
             /** @description topic_gift_quiz_id */
             topic_gift_quiz_id: number;
@@ -7352,8 +9631,6 @@ export interface components {
             yt_stream_url?: string;
             /** @description yt_stream_key */
             yt_stream_key?: string;
-            /** @description analyze_enabled */
-            analyze_enabled?: boolean;
         };
         Jitsi: {
             data?: Record<string, never>;
@@ -7400,6 +9677,169 @@ export interface operations {
                 content: {
                     "application/json": unknown;
                 };
+            };
+        };
+    };
+    "8b9ad4f7c70f3a761ffff0b47b553ff3": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description sources */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "72e4db4d02b63a62703037681c624c0f": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description source, version 1 */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description structural errors with paths */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    cd4e1d13364cb9f0c7935ccd92b6c84a: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description source */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "00874d03a5aa6d89045ee0c0414b0ccc": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "32b440d186aea3454c733206b640cfea": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Adapt JSON */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    cccce706bca9719bcb70215298b01a60: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description versions, newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "059c1b12b7d16100085d0a48ec076764": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description source */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "35b47f4ebdcf77b9d555a4c2ee8349be": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -7595,6 +10035,173 @@ export interface operations {
             };
             /** @description Server-side error */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    c97e7ee722008f1f0aae83ea70b29fa6: {
+        parameters: {
+            query?: {
+                user_id?: number;
+                kind?: "cli" | "agent" | "ci" | "integration";
+                include_revoked?: boolean;
+                per_page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated tokens */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiTokenList"];
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs token_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "86c0bd374d2c2016525af40c59f2a18e": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Revoked */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs token_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown token */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    a0d644a176215e6a71e0c442eebedd6c: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated audit rows */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentAuditList"];
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs token_manage or token owner */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown token */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    e05f3171d6b8ada25c8975c3aa362d9c: {
+        parameters: {
+            query?: {
+                token_id?: string;
+                user_id?: number;
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated audit rows */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentAuditList"];
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs token_manage */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8500,6 +11107,296 @@ export interface operations {
             };
         };
     };
+    ea404fe1bfc1d7cec2c000550cba8005: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @example ulams-cli on mateusz-mbp */
+                    client_name: string;
+                    scopes: string[];
+                    agent?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Codes and polling interval */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeviceCodeResponse"];
+                };
+            };
+            /** @description invalid_scope */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeviceError"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    d021d1c83eb5b155962e28f33d742868: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    device_code: string;
+                    /** @example urn:ietf:params:oauth:grant-type:device_code */
+                    grant_type?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Approved: the scoped token */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeviceTokenResponse"];
+                };
+            };
+            /** @description authorization_pending, slow_down, access_denied or expired_token */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeviceError"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    d11c076f4f258f272b9d2f54496ba17a: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["DeviceRequest"];
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Scoped tokens cannot approve */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScopeError"];
+                };
+            };
+            /** @description Unknown, expired or already answered code */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ed52f6a54e88ba0eec1daea558b8ba56: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_code: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    scopes: string[];
+                    /** @example 90 */
+                    expires_in_days?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Approved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            /** @example approved */
+                            status?: string;
+                            scopes?: string[];
+                            token_id?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Scoped tokens cannot approve */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown, expired or already answered code */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No requested scope approved, or invalid lifetime */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "502ca62527836cb88f1a6fa63b7f32be": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Denied */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            /** @example denied */
+                            status?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Scoped tokens cannot deny */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown, expired or already answered code */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     e19db8f50fc8143b1ccb91fb21dd203a: {
         parameters: {
             query: {
@@ -8580,6 +11477,49 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    "49809d821fe8d943f2c8ea0d7f2347ac": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description API name, version, contract, host kind and feature flags */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            /** @example ulams */
+                            api?: string;
+                            version?: string;
+                            /** @example 1 */
+                            contract?: number;
+                            host?: string;
+                            /** @enum {string} */
+                            kind?: "tenant" | "platform";
+                            features?: {
+                                ai?: boolean;
+                                courseBuilder?: boolean;
+                                livingCourse?: boolean;
+                                deviceLogin?: boolean;
+                                scopedTokens?: boolean;
+                                idempotency?: boolean;
+                                platformApi?: boolean;
+                                demo?: boolean;
+                            };
+                        };
+                    };
                 };
             };
         };
@@ -8988,6 +11928,207 @@ export interface operations {
                 content: {
                     "application/json": unknown;
                 };
+            };
+        };
+    };
+    f59ede12ce38c91320ace16e57f0a1d9: {
+        parameters: {
+            query?: {
+                include_revoked?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Active scoped tokens of the signed-in user */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["ApiToken"][];
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Token lacks the tokens:read scope */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScopeError"];
+                };
+            };
+        };
+    };
+    a875828dc5b276a102378c005eb05829: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @example ulams-cli on my laptop */
+                    name: string;
+                    /** @description Scopes or @presets (read-only, author, admin, learner, ci) */
+                    scopes: string[];
+                    /** @example 90 */
+                    expires_in_days?: number;
+                    /** @enum {string} */
+                    kind?: "cli" | "agent" | "ci" | "integration";
+                    agent_name?: string | null;
+                    rate_limit_per_minute?: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["ApiTokenCreated"];
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Token lacks tokens:write */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScopeError"];
+                };
+            };
+            /** @description Invalid scopes, lifetime, limit reached or scopes exceed the calling token's */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    fef5ceb391432c3471ee2e3223e7db42: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Revoked */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Somebody else's token */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown token */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "939c4d8f2959e9d3fe7536b5174c1a78": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Token, user and host */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            id?: string | null;
+                            name?: string | null;
+                            scoped?: boolean;
+                            scopes?: string[];
+                            kind?: string | null;
+                            agent_name?: string | null;
+                            created_via?: string | null;
+                            /** Format: date-time */
+                            expires_at?: string | null;
+                            /** Format: date-time */
+                            last_used_at?: string | null;
+                            user?: {
+                                id?: number;
+                                name?: string;
+                                email?: string;
+                            };
+                            host?: string;
+                            /** @enum {string} */
+                            host_kind?: "tenant" | "platform";
+                        };
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -10267,6 +13408,15 @@ export interface operations {
                     "application/json": unknown;
                 };
             };
+            /** @description The product is not purchasable or the user reached its limits */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
             /** @description Bad request */
             422: {
                 headers: {
@@ -10751,9 +13901,11 @@ export interface operations {
             };
         };
     };
-    c1b982c417130365232c02c0e70def00: {
+    "110a514ff187653c675f7bbd455f20cf": {
         parameters: {
             query?: {
+                /** @description `json` returns {data: {url, origin}} instead of the player page */
+                format?: "json";
                 /** @description Course id */
                 course_id?: string;
                 /** @description Topic id */
@@ -11711,6 +14863,110 @@ export interface operations {
             };
         };
     };
+    "85f7ae7cab7ab8ec520e63e6c427b339": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/csp-report": Record<string, never>;
+                "application/reports+json": Record<string, never>[];
+            };
+        };
+        responses: {
+            /** @description Report accepted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The body is not a JSON report */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The body is larger than 16 KB */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unsupported content type */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many reports */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "1019392d092cea54f12c8fe80cccf2bf": {
+        parameters: {
+            query?: {
+                per_page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            id?: number;
+                            /** @example frame-src */
+                            directive?: string;
+                            /** @example tool.example.test */
+                            blocked_host?: string;
+                            /** @example /learn/1/2 */
+                            document_path?: string;
+                            count?: number;
+                            /** Format: date-time */
+                            first_seen_at?: string;
+                            /** Format: date-time */
+                            last_seen_at?: string;
+                        }[];
+                    };
+                };
+            };
+            /** @description Endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User is not an admin */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     "1125991bf9cc6c8f0c66c0899d22d579": {
         parameters: {
             query?: never;
@@ -12026,6 +15282,595 @@ export interface operations {
                 content: {
                     "application/json": unknown;
                 };
+            };
+        };
+    };
+    cd5468d0a1a722714a8a897f6bfa6afc: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "6a2456054c25d9e388382c19ee5667de": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    title?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description session with its state snapshot */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description daily limit reached */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description AI disabled */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "097a8f957c1e9c480479a4b73098736c": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description snapshot */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "8f977ac329aa2e1720a4c72775c60d84": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    e2d9e3dd4d42bf8a1e1e06945b4400a3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description source and ingest run */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description rejected upload */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    e5ee3815ce7b28ec54e83ff99f8b9ce3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+                source: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description source */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "5514f96c136b291b703df1c82cb06c39": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                fragment: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description fragment */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "13275e2e7b5e12fc78da7860840babe3": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description brief */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "29adfbac442e3777b7f41b8d0531463c": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description brief */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "24836a812e2252ba271af42a7ae04f58": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    messages?: Record<string, never>[];
+                    forwardedProps?: Record<string, never>;
+                };
+            };
+        };
+        responses: {
+            /** @description run id (null when the action finished in the request) */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ad22ae07ebbbb386a4c6160c18d6c433: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the run and its steps */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["CourseBuilderRunStatus"];
+                    };
+                };
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown run */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    c6f4943df5cfe1e54dd2ff7d3daf8357: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description cancelled */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    f1e869affcbe6253b50ab68066ad5d2a: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run: string;
+                step: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "8ae74d5bbb65bad917bdebb71726b507": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description versions */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "7385a7e2cb179ef1e527400ad9355a92": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description version */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "5fa4979aba6423ee3ddd249b8d96d943": {
+        parameters: {
+            query?: {
+                against?: string;
+            };
+            header?: never;
+            path: {
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description changes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "363fe3c5faaf019b7aeccb8ce0692be2": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description approved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "894dc1e40da11f4ee1b272de9535e40f": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description rejected */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "78c59c3a3e86e4b27532721ce0e571f7": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description restored */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    dd74d5b979952d2b47442749f468fa6c: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description current version */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "109f522dfbb519cdd9c95d9fc358db68": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description current version */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "509821f6c31ea0c0c3cec6ae22f4b45b": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description apply run */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    fb8f6decce43224a86c2af1707019831: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description published */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    f914d359cc7a401202a1337d2ddd97f1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description usage */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    cb4592a0eb6d5d81094288be826850ad: {
+        parameters: {
+            query?: {
+                /** @description resume after this event id (or Last-Event-ID header) */
+                after?: number;
+            };
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description text/event-stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -12732,8 +16577,8 @@ export interface operations {
         requestBody?: {
             content: {
                 "application/json": {
-                    /** @example http://adlnet.gov/expapi/verbs/attempted */
-                    event?: string;
+                    /** @description The verb IRI (with the statement in `data`) or the whole xAPI statement object; a statement is stored as `data` and its verb as the event */
+                    event?: string | Record<string, never>;
                     data?: Record<string, never>;
                 };
             };
@@ -13339,6 +17184,96 @@ export interface operations {
             };
             /** @description server-side error */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "9a87b65bcd8010fe27d4496d482090b4": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Demo mode is on */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            enabled?: boolean;
+                            users?: {
+                                /** @enum {string} */
+                                role?: "student" | "tutor" | "admin";
+                                email?: string;
+                            }[];
+                            front_url?: string | null;
+                            admin_url?: string | null;
+                            reset_cron?: string | null;
+                        };
+                    };
+                };
+            };
+            /** @description Demo mode is off */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    bf97bd9d4463c3eee2373f7234beebac: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    role: "student" | "tutor" | "admin";
+                };
+            };
+        };
+        responses: {
+            /** @description Logged in */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            token?: string;
+                            /** Format: date-time */
+                            expires_at?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Demo mode is off */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown role, or no seeded account for it */
+            422: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -14270,9 +18205,1421 @@ export interface operations {
             };
         };
     };
+    ea8eb3db404fe703a1c196cadb0064fc: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description documents */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description liascript_manage required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    fdccc039f6be45630d81157450d08157: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    title?: string;
+                    markdown?: string;
+                    /** Format: binary */
+                    file?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description document with version 1 and warnings */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid Markdown or upload */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ff9e6d6d27d001f322a4c580edb05d75: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description document */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    f29a6003b883037e9c37e6cd603f2c57: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description document */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "57d2eedf3af835250a8d78bd41abd68e": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    e54c72cbabbfacaf3aa19970838d8474: {
+        parameters: {
+            query?: {
+                version?: number;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description text/markdown */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/markdown": unknown;
+                };
+            };
+        };
+    };
+    "7104ac68daa271b7c18a9d9f9a9604ef": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description versions */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    e9bf16fee91b5aa1905907d54594df93: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description document */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "6b6b7984f00c6385a6e4b9bf0b41e890": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                version: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description document */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    a3cf1179533e1fef834163a046924ec6: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    markdown: string;
+                };
+            };
+        };
+        responses: {
+            /** @description {url, sections, warnings} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid Markdown */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no content origin or player not installed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    e2592511607f4708bf15bb002a81c59f: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {url, sections, version}; url carries a topic-scoped progress token in its fragment */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no access to the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a LiaScript topic */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no content origin or player not installed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    d02be1ed0ec261b16af61bf2c927d658: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    location?: number;
+                    status?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description {status: in_progress|complete} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid or expired token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    a5674b1e8bd1a4678f62157d825bc6a0: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description entries */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    c4060fcadca6e7c0ca17650a791b6633: {
+        parameters: {
+            query?: {
+                format?: "csv" | "json";
+            };
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description file */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    cf742cf7eac0e7662e06681e61bb1d33: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description verdict */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "6c02d48b60a69ef2b2e712063a6c4eba": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description file */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description admins only */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "119dfcf567b151c09f6a8ea8a6aff036": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description verdict */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description admins only */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "045403cfae13012786a9529d9c43b9bc": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description connectors */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "492bb84123f4a93ae760a119f5100422": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    connector?: string;
+                    config?: Record<string, never>;
+                    secrets?: Record<string, never>;
+                    schedule?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description connection, source and the webhook secret (shown once) */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description settings refused by the connector */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "87b25a4d27c8194aebaae4c1b3843f0c": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                connection: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description nothing to check */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    e2189a328c5b103855d182f784b92ab9: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                connection: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the new secret */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "6f7156f91faa8bebff6b264c7621a44b": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                connection: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description connection */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "8471ffe30ba421f54e74cbe5037e8118": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                connection: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description disconnected */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "3c52deb0f157d9c1d01e913acde4f41c": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description notices */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    a1eda619d456a6eecf75d32b810d70f1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                notice: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description dismissed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not the caller's notice */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "3513137a7e99c3fff961672373daad08": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description topics */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "9f72817da6b47c4be646b6984a047814": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description proposals */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown session */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "13412db1de147bf01a7835b034597bb9": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description proposal */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown proposal */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "4e671eb576fee6cbd7284c74c6247856": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    confirmEstimate?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description analysis started */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description estimate must be confirmed */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description budget blocked */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description AI disabled */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "2adb9f99a54ebd74df91f87423f91571": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal: string;
+                item: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the item */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not decidable now */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "4b86483c24f29a73c57ceb57deac49f5": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal: string;
+                item: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the item */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not decidable now */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "0faf97a5821be49554bab84c4052c042": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal: string;
+                item: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the item */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not decidable now */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "3214452d8179bf22ecd29f235dd1281b": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal: string;
+                item: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the item */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not decidable now */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "3dab066a6de079460f9f866d2989c14e": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the proposal */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description already settled */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "4b8f251c3f67afcc429123a8d1593958": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the proposal */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description already settled */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "4ecdad03c656ef08615bbbccf6beca1f": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the new proposal */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description already settled */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "5f1fff47bbf112a36833f964fdd2e5fe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    note?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description note */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description already settled */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "0ad25825160fabdd5a5041b38a3e24c2": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    overwrite?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description apply run */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description conflicts or admin edits */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "66b48a735abd7716008ee166be38392c": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description sources */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown session */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    df75e3a7a4db6e836d052844be479220: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description revisions */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown source */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    df094d9cda3ece4e4a725254aff14dbe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description the file is the latest revision already (unchanged: true) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description the new revision */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description rejected upload */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "35fa055e0edab3457af79f252d85bd98": {
+        parameters: {
+            query?: {
+                against?: string;
+            };
+            header?: never;
+            path: {
+                revision: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description counts and changes with old and new text and word diffs */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown revision */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "5b0687d7aea85b5c6c93b2d4c62e6616": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                revision: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description revision */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown revision */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "7f7df3d32948fa73e3b71790bc187f90": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description summary and elements */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown session */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "54af035cebb8262704cfee7f3e72bba3": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                webhookId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description ignored or duplicate */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description a check is queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid signature */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown webhook */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description body too large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description rate limit */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     "49c2bee176f5a6c16a83bad0630cace3": {
         parameters: {
             query: {
+                /** @description one-time launch token */
                 token: string;
             };
             header?: never;
@@ -14289,6 +19636,13 @@ export interface operations {
                 content: {
                     "application/json": unknown;
                 };
+            };
+            /** @description the launch token is unknown or expired */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -14368,6 +19722,746 @@ export interface operations {
             };
             /** @description Server-side error */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "6c07572455eeea027effbb2da673b280": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description issuer, JWKS URL, platform and tool endpoints */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description lti_manage required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    b771cbefccebfc06b59ba11309cc26f3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description tools */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ea302bf96dc152c876c5d0eb0232299e: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description tool */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    a8ff323e4c15c4db5449145088e28e4d: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                tool: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description tool */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "389eabef701408d9e07ce067cdf24ed7": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                tool: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description tool */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    f52db15a79c018b6184665f6aed037f1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                tool: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description used by topics */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "667f1aefacbee6ebc97650d3d49de394": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                tool: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {url} to open in a window */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "4c80b8cecff4c038f772914097d1908d": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description platforms */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    f9b0c227156df523f785b035a9b8d014: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description platform */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "031c7ff614f2f5a67c25f16c9dad07ba": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                platform: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description platform */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    c3deed3a7a8f857de74319c8f9b16a78: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                platform: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description platform */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    f686d2153b3700947c55435a1f8db370: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                platform: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "9501c319c6b2b356ec601963caad0176": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Sorted, unique origins (`scheme://host[:port]`) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: string[];
+                    };
+                };
+            };
+        };
+    };
+    e21c466f7e6dac972c24fd1e77e9016c: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description JWKS */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "7730a7dac173ffa45a97055e8e75c95d": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description line item container */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    e8f007a8e1261cc54ba33cd30a680fd2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description line item */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description scope lineitem required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "6992c6d0116bb09c248c024fa0422749": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+                lineItem: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description line item */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "42ab598db0454b738021d26ee4a33625": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+                lineItem: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description line item */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    cbaab5f4f2960312e3544a704e1e73d8: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+                lineItem: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "9205b9d986d566d34fb5aeed9e3b2b46": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+                lineItem: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description stored; completes the topic when Completed or FullyGraded */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ffbc8addccea9d6645cde339b6e5d5fe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+                lineItem: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description result container */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    d7b8c3bdee515c8afd8f24fc61ec218c: {
+        parameters: {
+            query?: {
+                limit?: number;
+                page?: number;
+                role?: string;
+            };
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description application/vnd.ims.lti-nrps.v2.membershipcontainer+json */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description scope missing or NRPS not enabled for the tool */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description the course holds no link of this tool */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    a2b70edeeebeaa8a7af3caafc5670a09: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {url, presentation, tool} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no access to the topic */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown topic */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description the tool is disabled */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "7268a70fc27bb0e2b1c94b3baaa57d91": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description auto-submitting form to the tool */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown client, invalid or reused login hint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "9776042d51bd30ab9137a4d5f7b5ac3e": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {access_token, token_type, expires_in, scope} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid request or scope */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid client assertion */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "735e9c6129d12dc85b291584a0b01e6d": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description confirmation page; posts {type: 'ulams:lti:deep-link', topics} to the opener */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid or reused response */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "10a0ad0d978804363cde5d19eae1520c": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description redirect to the platform's OIDC auth URL */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown platform or missing login_hint */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "1263d4a5230bc11b6606102640e87bb2": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description course picker (deep linking) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description redirect to the front landing page */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid launch */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "5e799230ade3ec16002f9f2d15108475": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description auto-submitting form with the LtiDeepLinkingResponse JWT */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description the deep-linking session expired */
+            410: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    d27017060d1d967be9b6295c32733343: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    code?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description {token, course_id} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description expired or used code */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -16878,6 +22972,121 @@ export interface operations {
             };
         };
     };
+    e9f3a5028f401c1030a8b16093efccc9: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description SCO uuid */
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Player URL (or null) and token expiry */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown SCO */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "262ecdd2ec002682574687fb4fbd729c": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description SCO uuid */
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description SCORM version, entry URL relative to the content origin, learner CMI */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid, expired or foreign tracking token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "213ec51bfaf514aa40963dcadd464686": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description SCO uuid */
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    cmi?: Record<string, never>;
+                };
+            };
+        };
+        responses: {
+            /** @description stored */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid, expired or foreign tracking token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    eea2545f66501d1424469e9023cd0378: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description JavaScript */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     d6dc70f28a642c0b0a9370497b81659f: {
         parameters: {
             query?: never;
@@ -17818,7 +24027,7 @@ export interface operations {
             };
         };
     };
-    d06c8505e7612240f574b99eeec1795f: {
+    "770a202ae86e7b65ba276ba3b8ff8003": {
         parameters: {
             query?: never;
             header?: never;
@@ -17842,6 +24051,24 @@ export interface operations {
         responses: {
             /** @description successful operation */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Forbidden */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -17884,6 +24111,24 @@ export interface operations {
                     "application/json": unknown;
                 };
             };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
             /** @description Bad request */
             422: {
                 headers: {
@@ -17915,8 +24160,64 @@ export interface operations {
                     "application/json": unknown;
                 };
             };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
             /** @description Not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    d963be93f13bd4ab990c024bd695d8ad: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Forbidden */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -19280,6 +25581,288 @@ export interface operations {
             };
             /** @description server-side error */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    fd8a8310786cb7d3b749da1945c41573: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Up to 50 operations, newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["PlatformOperation"][];
+                    };
+                };
+            };
+        };
+    };
+    "63486428fcc1835220898ec2e1775315": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["PlatformOperation"];
+                    };
+                };
+            };
+            /** @description Unknown operation */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "4ee59d29162c33be46676ac192fea763": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tenants */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["PlatformTenant"][];
+                    };
+                };
+            };
+            /** @description Not a platform administrator, or the token lacks platform:read */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The platform API is off, or this is a tenant host */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "135135c2c7a8b3f064f45fc65b42e3e2": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description 2-30 lowercase letters and digits, starting with a letter
+                     * @example acme
+                     */
+                    slug: string;
+                    name?: string;
+                    /** @example coffee */
+                    theme?: string;
+                    /** @example #C2552D */
+                    accent?: string;
+                    users?: number;
+                    demo?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            operation?: components["schemas"]["PlatformOperation"];
+                            tenant?: components["schemas"]["PlatformTenant"];
+                        };
+                    };
+                };
+            };
+            /** @description The tenant exists, or an operation for it is in progress */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid slug or option */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "2008e0e13e05d2463e87c51103f3e725": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The tenant */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["PlatformTenant"];
+                    };
+                };
+            };
+            /** @description Unknown tenant, or the platform API is off */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "7e5d0171cf58c83d4e39f68c56ab1f6d": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Must equal the slug */
+                    confirm: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            operation?: components["schemas"]["PlatformOperation"];
+                        };
+                    };
+                };
+            };
+            /** @description An operation for this tenant is in progress */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description confirm does not equal the slug */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    fc7c9945e536e6e4e77fc034a89aeada: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @example {
+                     *       "AI_DRIVER": "fake"
+                     *     }
+                     */
+                    set?: {
+                        [key: string]: string;
+                    };
+                    unset?: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description The tenant */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["PlatformTenant"];
+                    };
+                };
+            };
+            /** @description A key outside the allow-list */
+            422: {
                 headers: {
                     [name: string]: unknown;
                 };

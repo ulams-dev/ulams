@@ -1,0 +1,46 @@
+---
+import Studio from "../../../../layouts/Studio.astro";
+import { ApiError, type BuilderState } from "@ulams/sdk";
+import { builderFor } from "../../../../lib/studio.ts";
+import { STATUS_LABEL } from "../../../../studio/labels.ts";
+
+const id = Astro.params.id ?? "";
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/tenants");
+if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 });
+
+let state: BuilderState;
+try {
+  state = await builderFor(tenant, Astro.locals.authorToken!).sessions.get(id);
+} catch (e) {
+  if (e instanceof ApiError && (e.status === 404 || e.status === 403)) return new Response("Not found", { status: 404 });
+  throw e;
+}
+---
+
+<Studio
+  title="Sources"
+  crumb={state.session.title ?? "Sources"}
+  status={STATUS_LABEL[state.session.status]}
+  sessionId={id}
+  active="sources"
+  hasCourse={state.session.courseId !== null}
+>
+  <main id="main" class="st-page" tabindex="-1" data-studio-sources data-session={id}>
+    <div class="st-toolbar">
+      <h1 class="cb-serif cb-h2" style="flex:1">Sources</h1>
+    </div>
+    <p class="cb-muted">
+      Your course stays in sync with its sources. Upload a new version of a source and see exactly which passages changed. Nothing in
+      the course changes until you approve it.
+    </p>
+    <div class="st-sources" data-sources>
+      <p class="cb-muted">Loading your sources…</p>
+    </div>
+    <noscript><p class="cb-error">The Sources page needs JavaScript to load revisions and upload files.</p></noscript>
+  </main>
+</Studio>
+
+<script>
+  import "../../../../studio/sources.ts";
+</script>

@@ -27,4 +27,6 @@ return [
     AuthPermissionsEnum::USER_INTEREST_UPDATE_SELF => 'Aktualizuj swoje zainteresowanie',
     AuthPermissionsEnum::USER_SETTING_UPDATE => 'Aktualizuj ustawienie',
     AuthPermissionsEnum::USER_SETTING_UPDATE_SELF => 'Aktualizuj swoje ustawienie',
+    AuthPermissionsEnum::TOKEN_MANAGE => 'Zarządzaj tokenami API i czytaj dziennik audytu agentów',
+    AuthPermissionsEnum::PLATFORM_ADMIN => 'Zarządzaj tenantami przez API platformy',
 ];

@@ -1,0 +1,44 @@
+---
+import Studio from "../../../../layouts/Studio.astro";
+import { ApiError, type BuilderState } from "@ulams/sdk";
+import { builderFor } from "../../../../lib/studio.ts";
+import { STATUS_LABEL } from "../../../../studio/labels.ts";
+
+const id = Astro.params.id ?? "";
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/tenants");
+if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 });
+
+let state: BuilderState;
+try {
+  state = await builderFor(tenant, Astro.locals.authorToken!).sessions.get(id);
+} catch (e) {
+  if (e instanceof ApiError && (e.status === 404 || e.status === 403)) return new Response("Not found", { status: 404 });
+  throw e;
+}
+---
+
+<Studio
+  title="Audit trail"
+  crumb={state.session.title ?? "Audit trail"}
+  status={STATUS_LABEL[state.session.status]}
+  sessionId={id}
+  active="audit"
+  hasCourse={state.session.courseId !== null}
+>
+  <main id="main" class="st-page" tabindex="-1">
+    <div class="st-toolbar">
+      <h1 class="cb-serif cb-h2" style="flex:1">Audit trail</h1>
+    </div>
+    <p class="cb-muted">
+      Every connection, source revision, decision and update of this course is recorded here: who did it, when, and which source
+      revision and course versions it concerns. Entries are chained with hashes and cannot be changed.
+    </p>
+    <div class="st-audit" data-studio-audit data-session={id}></div>
+    <noscript><p class="cb-error">The audit trail needs JavaScript to load, filter and export.</p></noscript>
+  </main>
+</Studio>
+
+<script>
+  import "../../../../studio/audit.ts";
+</script>

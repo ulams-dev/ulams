@@ -70,11 +70,13 @@ class ShopService implements ShopServiceContract
 
         $paymentProcessor = $order->process();
 
-        $parameters['type'] = $product->type;
+        // Server values go last, so product price terms, type and trial settings always win over client input.
+        $serverParameters = ['type' => $product->type];
         if (ProductType::isSubscriptionType($product->type)) {
-            $parameters += $product->getSubscriptionParameters();
-            $parameters += $order->status === OrderStatus::TRIAL_PROCESSING ? $product->getTrailParameters() : [];
+            $serverParameters += $product->getSubscriptionParameters();
+            $serverParameters += $order->status === OrderStatus::TRIAL_PROCESSING ? $product->getTrailParameters() : [];
         }
+        $parameters = array_merge($parameters, $serverParameters);
 
         $paymentProcessor->purchase($parameters);
         $payment = $paymentProcessor->getPayment();

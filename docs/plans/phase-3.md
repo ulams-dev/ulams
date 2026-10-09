@@ -1,6 +1,6 @@
 # Phase 3 plan: Living Course (source sync)
 
-Status: **draft, waiting for the product owner's approval**. Nothing in this plan is implemented.
+Status: **approved by the product owner (2026-10-09)**. Implementation is in progress; deviations are recorded in section 18 as "changed during implementation".
 
 Phase 3 follows Phase 2 and builds on its Course Blueprint, Source Documents with stable fragment IDs,
 element-aware diffs, versions and the approve → apply flow (`docs/plans/phase-2.md`, ADRs 0009–0011,
@@ -1067,7 +1067,7 @@ M3.8
 
 ---
 
-## 18. Decisions taken (to confirm)
+## 18. Decisions taken (confirmed by the product owner, 2026-10-09)
 
 1. **New package `living-course`** on top of `course-builder`; course-builder keeps sources,
    fragments, blueprint and versions and gains only small extension points (ADR 0030).
@@ -1110,3 +1110,21 @@ M3.8
     together), not per element, for cost and context; regenerate works per element.
 16. **The studio hosts all Living Course screens** (ADR 0022); the admin only links to them.
 17. **`league/html-to-markdown`** is the only new dependency (URL connector, M3.7).
+
+### Changed during implementation
+
+Recorded in ADR 0090. The 17 decisions above stand; these details differ from the text of the plan:
+
+- Path filters use our own glob matcher instead of Symfony's `Glob` (matching tree paths, not files).
+- The eval command builds the course on the fake driver and only the analysis and grounding calls are
+  live with `--live`; recorded answers are replayed in CI (`CassetteReplayTest`). Total live spend of
+  the phase: about USD 0.48.
+- Commits 10 and 11, and 23 and 24, were delivered as one commit each.
+- A GIFT question keeps its score when it is updated; the drift check on an admin-edited GIFT question
+  fires only when the question text changed.
+- Same-heading alignment is lenient: the only fragment under a heading on both sides is a change, not
+  an add and a remove.
+- The URL connector stores the converted Markdown as the raw revision.
+- The living-course tests have their own CI shard (`living`).
+- The studio hosts connection management (connect a repository, webhook URL and secret, schedule, check
+  now) on the Sources page, as planned for M3.6, together with the review and audit screens.

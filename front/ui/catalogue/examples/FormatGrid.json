@@ -1,0 +1,34 @@
+{
+  "props": {
+    "eyebrow": "Formats",
+    "title": "Learn the way that suits you",
+    "items": [
+      {
+        "format": "video",
+        "tag": "Watch",
+        "name": "Short videos",
+        "text": "Brew along in real time."
+      },
+      {
+        "format": "quiz",
+        "tag": "Check",
+        "name": "Quizzes",
+        "text": "Instant feedback."
+      },
+      {
+        "format": "project",
+        "tag": "Make",
+        "name": "Projects",
+        "text": "Dial in your own coffee."
+      }
+    ]
+  },
+  "invalid": {
+    "items": [
+      {
+        "format": "hologram",
+        "name": "x"
+      }
+    ]
+  }
+}

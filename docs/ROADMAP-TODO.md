@@ -11,6 +11,8 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (2026-10-09) Phase 3 plan (`docs/plans/phase-3.md`) approved with all 17 decisions of its section 18 as recommended (issue #27 closed)
+
 - [x] (2026-10-09) Phase 1 decisions 1–52, Phase 2 decisions 1–28 and the Phase 3 plan with its 17 decisions
       confirmed by the product owner
 - [x] (2026-10-09) Brand identity "Orbital Folio" chosen by the product owner (indigo #0F2B46, orange #FF7A2E);
@@ -48,6 +50,14 @@ small commits → tests → summary.
 - [x] (new) styled-components replaced by CSS custom properties (`--ulams-*`) (ADR 0004)
 - [x] (new) Remove `recommender` from the API composition, not just stop using it (ADR 0006)
 - [x] (new) Repository: public `github.com/ulams-dev/ulams`, no AI attribution in history
+- [x] (2026-10-09) Build the agent-first `ulams` CLI core now (login and tokens, `ulams api`, main nouns,
+      `ulams mcp`); course-as-code after Phase 3. Plan `docs/plans/cli.md` (draft, waiting for approval),
+      ADRs 0072–0079 Proposed; open owner questions #74–#79
+
+- [ ] (2026-10-09) Interactive topic type and three new demo academies (gravity, poland, ulam): plan
+      `docs/plans/interactive-demos.md` (draft, waiting for approval), ADRs 0086–0089 Proposed; owner questions
+      #146 (approve), #147 (gravity repo), #148 (content licences), #149 (poland scope), #150 (on by default),
+      #151 (Ulam fact review)
 
 ## Open decisions
 
@@ -57,7 +67,8 @@ small commits → tests → summary.
   - [ ] Check domains (ulams.ai, ulams.dev) and trademarks
   - [ ] Check legal aspects of using the Ulam name
   - [x] (new) Copyright of the original EscolaLMS/Wellms code and `scorm-player`: owned by the product owner; admin and scorm-player licensed MIT
-- [ ] Move MCP server (7.5) right after Phase 2? Cheap to build, strong demo
+- [x] Move MCP server (7.5) right after Phase 2? Cheap to build, strong demo (yes, 2026-10-09: the local
+      `ulams mcp` ships with the CLI core; `docs/plans/cli.md`, #73)
 - [ ] Move certificates (6.1) earlier if compliance is the priority segment
 - [ ] Multitenancy for the POC: one deployment, tenant per subdomain with own theme?
 - [ ] Prototype the Sylius order → entitlement flow early (highest-risk commerce piece)
@@ -92,7 +103,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] Inventory of learner activity data (tracker, xAPI/cmi5, SCORM CMI, H5P, quizzes, progress,
       logins): storage, granularity, retention, gaps (see docs/reports/phase-0-audit.md)
 - [x] How content updates preserve learner progress today (see docs/reports/phase-0-audit.md)
-- [ ] Tests, CI, code style, queues (Horizon), storage, existing AI code (partial: explored; no AI code exists; baseline failures: core 6, auth 3)
+- [x] Tests, CI, code style, queues (Horizon), storage, existing AI code (explored; no AI code exists; the baseline failures (core 6, auth 3) no longer reproduce and the quarantine list `api/phpunit.quarantine.xml` is empty)
 - [x] Licence audit of all `escolalms/*` and key dependencies for open core (LICENSING.md and docs/reports/phase-0-audit.md; remediation items below)
 - [x] Runtime dependency inventory (input for Phase 8) (see docs/reports/phase-0-audit.md)
 - [x] Commerce audit: what Wellms commerce does, dependent flows, Sylius 2.x API coverage,
@@ -112,16 +123,20 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] (new) Replace styled-components with CSS custom properties everywhere (front, its component
       library and the admin markdown editor; blocked by lint; verified with the visual regression harness)
 - [x] (new) Demo content seeder for the three experience courses (`front/docs/design/experiences.md`)
-- [ ] (new) Root README, AGENTS.md and per-package READMEs for the monorepo
+- [x] (new) Root README, AGENTS.md and per-package READMEs for the monorepo
 - [ ] (new) Documentation site (Astro Starlight, `front/docs-site`): guides per audience, reference pages generated from the code, every ADR and the roadmap rendered from `docs/`, coverage check over packages, admin routes, learner routes and topic types, GitHub Pages deploy (partial: on branch `docs/starlight-site`, not merged; Pages source and private vulnerability reporting to be enabled)
 - [ ] (new) Remaining legacy references (partial: `escolalms/php` replaced by a base built in-repo, ReportBro removed and replaced by pdfme): replace the `escolalms/php` and `escolalms/reportbro-server`
       images, decide on upstream provenance links, reword ADR prose, retarget Docker Hub publishing
       workflows, replace the `ulams.app` placeholder domain, recreate SQL views in pre-rename databases
 - [x] (new) Fix `php artisan route:list` (Mattermost client connects in its constructor)
-- [ ] (new) CI (partial: root `ci.yml` with path filters, PHP shards, licence guards and Dependabot committed; not yet run on GitHub — the branch is unpushed; publishing workflows intentionally dropped): move workflows to the root `.github/` with path filters; drop MySQL services; run Jest
+- [x] (new) CI (partial: root `ci.yml` with path filters, PHP shards, licence guards and Dependabot committed; not yet run on GitHub — the branch is unpushed; publishing workflows intentionally dropped): move workflows to the root `.github/` with path filters; drop MySQL services; run Jest
       in admin/front; Dockerfiles build from the repo root
-- [ ] (new) Remove the non-existent `packages/tracker/src` path from Swagger (done); consider Git LFS for
-      large test fixtures; revisit exact pins (`faker-markdown-generator`, `tzsk/sms`)
+      (done: workflows are on `main` and run on GitHub; admin Jest (3 suites) and the front tests run in the `js` job;
+      yarn installs are frozen; the quarantine is empty)
+- [x] (new) Remove the non-existent `packages/tracker/src` path from Swagger (done); consider Git LFS for
+      large test fixtures; revisit exact pins (`faker-markdown-generator`, `tzsk/sms`) (no LFS: CI rejects new files over 2 MB
+      and the 24 MB and 6.8 MB SCORM mocks are generated minimal packages; `faker-markdown-generator` moved to
+      `require-dev`; `tzsk/sms` stays `^10.0`; owner confirmation of no LFS pending #48)
 
 ### 0.1c Security and audit follow-ups (new)
 - [x] (new) Replace the GPL PHP libraries `trax2/framework` (lrs) and `laraveldaily/laravel-invoices` with first-party code
@@ -131,33 +146,41 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] (new) Authenticate the Jitsi recording webhook and restrict the downloaded URL (SSRF)
 - [x] (new) Verify JWT signatures in the LRS guard
 - [x] (new) Fix the ungrouped `orWhere` in `CourseAccessService::getUserCourseIds` and similar queries
-- [ ] (new) Remove the tracker Logs screen in admin and other tracker leftovers
+- [x] (new) Remove the tracker Logs screen in admin and other tracker leftovers
 - [x] (new) Fix the tenant video processing queue (jobs dispatched to a queue no tenant worker consumes)
 - [ ] (new) `Relation::enforceMorphMap` for topic types so class renames never orphan data
 - [x] (new) ADR for the tenancy package (docs/decisions/0007)
 - [ ] (new) Upgrade PostgreSQL 12 (EOL) to 16/17 with a tested dump/restore path
 - [ ] (new) Drop Soketi until realtime is needed (broadcast driver is `log`); Laravel Reverb after 0.2
 
-- [ ] (new) cmi5 for learners: give students the cmi5 launch permission and serve AU files from
+- [x] (new) cmi5 for learners: give students the cmi5 launch permission and serve AU files from
       object storage (they sit on the local disk that Caddy does not serve) — found by the demo seeders
+      (students have `cmi5_read`; `CMI5_DISK` follows `SCORM_DISK`; `cmi5:move-to-bucket` copies old
+      packages; AUs play from the content origin in `front/web`; ADR 0046)
 - [ ] (new) Containers cannot reach `storage.localhost` (it resolves to the container itself); use the
       internal MinIO endpoint for server-side fetches (e.g. Image topic creation)
 - [x] (new) Platform bucket publicly readable by default (`MINIO_DEFAULT_BUCKETS=ulams:download`)
 - [x] (new) Demo course seeders for the three experiences (`make demo-seed`, `demo-seed-tenants`)
 
-- [ ] (new) Security follow-ups (medium): require `auth:api` on admin tag routes; rate-limit/authorise
-      `POST api/images/img`; review `POST api/cmi5/fetch`; client-set `has_trial`, client currency override
-      and `payProduct` skipping `purchasable`; vouchers admin search OR grouping; `getChildGroups` depth;
-      keep `_ignition` off in production
+- [x] (new) Security follow-ups (medium) (done and merged: `auth:api` and `tags_list` on admin tag
+      routes, `POST api/images/img` limits and throttle, client payment parameters allow-listed with server
+      price/currency/trial values winning, `payProduct` purchasability, vouchers search grouping,
+      `GroupTree` depth limit and cycle safety, `_ignition` absent from demo and production images
+      (ADR 0071); `POST api/cmi5/fetch` no longer echoes a token: it exchanges a one-time launch token for an
+      LRS-only session token (ADR 0046))
 - [ ] (new) Stripe: handle the 3-D Secure redirect in the front and document the webhook setup
       (`PAYMENTS_STRIPE_WEBHOOK_SECRET`, `/api/payments-gateways/webhook/stripe`); RevenueCat receipt verifier
-- [ ] (new) Jitsi: confirm the JaaS webhook signature format against the JaaS docs; configure
+      (partial: 3-D Secure redirect in the legacy front and webhook docs done; the RevenueCat verifier is
+      obsolete by default, pending owner decision #46)
+- [x] (new) Jitsi: confirm the JaaS webhook signature format against the JaaS docs; configure
       `JITSI_RECORDING_HOSTS`
-- [ ] (new) Drop the unused `analyze_enabled` columns (consultations, webinars) and clean up stored meeting
+- [x] (new) Drop the unused `analyze_enabled` columns (consultations, webinars) and clean up stored meeting
       frames in tenant buckets
-- [ ] (new) Remove the Stripe test key committed in `api/docker/envs/*.example`
+- [x] (new) Remove the Stripe test key committed in `api/docker/envs/*.example` (keys emptied in the six env
+      files; rolling the key at Stripe is an owner action, #49)
 - [ ] (new) Responsible disclosure: the payment-callback, LRS-token, webcam-upload and course-access issues
       exist in the upstream EscolaLMS packages; notify upstream users
+      (partial: notice drafted in `docs/security/upstream-notice.md`; sending it is an owner action, #50)
 
 - [ ] (new) mjml: the `mjml` compose service is not on the `ulams` network and `MJML_API_URL` is not set
       (templates fall back silently); wire it or drop the service
@@ -169,9 +192,16 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] (new) Cart on tenants crashes without a Stripe publishable key (`stripe.tsx` calls
       `stripeKey.includes` on null); show a configuration message instead
 - [ ] (new) Yarn install on Node 23 needs `--ignore-engines` (vitest engines); CI pins Node 22
+- [ ] (new) Dependency holds (Dependabot ignore rules in `.github/dependabot.yml`): `sharp` 0.35 fails to load
+      in the docs-site build on the CI runner (MissingSharp; Astro depends on `sharp ^0.34`); `@ant-design/pro-components`
+      2.8.5 to 2.8.10 break admin typecheck (`@ant-design/pro-form` 2.31.5+ declaration files import `src/...`).
+      Revisit when Astro supports sharp 0.35 and when a pro-form release fixes its typings
+- [ ] (new) ESLint 10 in `admin` (umi lint, fabric config) and `front` (vite, `@typescript-eslint` 7, legacy `.eslintrc`);
+      the other five packages are on eslint 10 already. The Dependabot major ignore for `eslint` and `@eslint/js`
+      comes off when both move to flat config
 - [ ] (new) Replace MinIO with SeaweedFS (or RustFS) and give each tenant its own S3 identity (ADR 0041, plan L0-03)
-- [ ] (new) `ulams:upgrade`: one idempotent per-tenant upgrade command (plan L0-19)
-- [ ] (new) Fix `Cmi5Policy::delete` checking the read permission (plan L0-09)
+- [x] (new) `ulams:upgrade`: one idempotent per-tenant upgrade command (plan L0-19) (ADR 0081; the cmi5 and frame steps run once their commands land)
+- [x] (new) Fix `Cmi5Policy::delete` checking the read permission (new `cmi5_delete` permission, admins only; plan L0-09)
 - [ ] (new) Five packages with `@OA\` annotations are missing from the Swagger scan paths (plan L0-11)
 
 ### 0.2 Framework upgrade
@@ -186,7 +216,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
       (disabled, `e6c21b9e`)
 - [ ] (new) Move the `@OA\` docblock annotations (223 files) to PHP attributes and drop the abandoned
       `doctrine/annotations`
-- [ ] (new) Smaller admin and front images: nginx-unprivileged instead of Apache+PHP, with runtime settings
+- [x] (new) Smaller admin and front images: nginx-unprivileged instead of Apache+PHP, with runtime settings
       injected without PHP (approved 2026-10-09; after Phase 1)
 
 ---
@@ -208,13 +238,13 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [x] (new) LiaScript topic type (learners), admin editor with preview and version diff, export/import strategy
       (topic type, Astro `LiaScriptLesson`, admin editor with versions, diff, restore and a live preview of
       unsaved text; course export carries the current text and assets, import creates a new document; ADR 0016)
-- [ ] (new) Run `sh packages/liascript/bin/fetch-player.sh` in the dev api container once (the image build does
+- [x] (new) Run `sh packages/liascript/bin/fetch-player.sh` in the dev api container once (the image build does
       it; the bind mount hides it)
 
 ### 1.2 Adapt Learning
 - [x] Path A: import built SCORM zip (`adapt-contrib-spoor`) (detected on upload, `scorm.source_format = adapt`,
       admin tag; generated spoor-style fixture)
-- [ ] Path B (feature flag): JSON source, schema-validated, isolated build worker (partial: `packages/adapt`
+- [x] Path B (feature flag): JSON source, schema-validated, isolated build worker (partial: `packages/adapt`
       behind `ADAPT_SOURCE_ENABLED` with versioned sources, structural validation, queued build and import
       through Path A; GPL worker `api/adapt-builder` (adapt_framework v5.56.2, compose profile `adapt`,
       real build round trip in the nightly conformance workflow); ADR 0013 (Proposed); an admin screen pending)
@@ -233,23 +263,24 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       tenant database, isolation tests)
 - [x] (new) Admin UI for LTI: tools and platforms screens, external-tool topic form with "pick content from
       tool" (Integrations → LTI)
-- [ ] (new) LTI: Client-Side OIDC (platform storage via `postMessage`) on the tool side, NRPS on the platform
-      side, per-tool `frame-src` in the CSP
-- [ ] (new) Run `ulams:lti:rotate-keys --init` for existing tenants (new tenants get it at provisioning)
+- [x] (new) LTI: Client-Side OIDC (platform storage via `postMessage`) on the tool side, NRPS on the platform
+      side, per-tool `frame-src` in the CSP (client-side OIDC: `lti_storage_target`, `POST /api/lti/tool/launch/verify`,
+      browser test with a fake platform in the nightly conformance; NRPS: `GET /api/lti/platform/nrps/{course}`
+      per tool switch; `frame-src`: the front reads `GET /api/lti/frame-origins`)
+- [x] (new) Run `ulams:lti:rotate-keys --init` for existing tenants (new tenants get it at provisioning) (done by `ulams:upgrade`, step `lti_keys`, ADR 0081)
 
 ### 1.4 Shared
 - [x] Upload hardening (zip-slip, MIME, size limits, virus-scan hook) (`packages/uploads`: SCORM, cmi5,
       course import, file manager; clamd hook tested with a fake clamd, compose profile `av` not run in CI)
-- [ ] Isolated origin / strict CSP for third-party JS (partial: SCORM, Adapt and LiaScript play from the
-      per-tenant content origin with a strict CSP, files served by `/api/content` from local or bucket disks;
-      cmi5 still plays from the API origin; front/admin CSP is report-only)
+- [x] Isolated origin / strict CSP for third-party JS (SCORM, Adapt, LiaScript and cmi5 play from the
+      per-tenant content origin with a strict CSP, files served by `/api/content` from local or bucket disks
+      (ADR 0046); the front/admin CSP is enforced in development and switches with `CSP_ENFORCE` (ADR 0044))
 - [x] (new) Zip-slip: SCORM (`ScormService::unzipScormArchive`) and cmi5 (`Cmi5UploadService`) extract
       archives with `ZipArchive::extractTo` and no entry-path checks; replace with a safe extractor (M1.1)
 - [x] (new) The SCORM player loads `scorm-again` from the jsDelivr CDN; vendor it (air-gapped installs)
-- [ ] (new) SCORM/cmi5 content of all tenants is served from the shared `storage.localhost` origin; move
-      packages and players to a per-tenant content origin (M1.1) (partial: SCORM done, `<slug>.content.localhost`,
-      `api/docs/content-origin.md`; cmi5 player and AU files pending; run `ulams:tenant:sync-env` so existing
-      tenants get `CONTENT_ORIGIN`)
+- [x] (new) SCORM/cmi5 content of all tenants is served from the shared `storage.localhost` origin; move
+      packages and players to a per-tenant content origin (M1.1) (SCORM and cmi5 done, `<slug>.content.localhost`,
+      `api/docs/content-origin.md`; run `ulams:tenant:sync-env` so existing tenants get `CONTENT_ORIGIN`)
 - [x] (new) Course import read files outside the extracted archive through paths in `content.json`
       (e.g. `../../../.env` as a category icon, published to the bucket); paths now resolved inside it
 - [x] (new) SVG/HTML uploads served from the bucket: stored with `Content-Disposition: attachment` and an
@@ -261,9 +292,13 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       app), and add registered LTI tool origins to the front/admin `frame-src` (documented in
       `api/docs/content-origin.md`; deployment pending). Note 2026-10-09: the owner chose the same-site
       `*.content.ulams.app` instead; the separate domain stays supported (ADR 0014, amended)
+      (partial: deployment docs with DNS and TLS steps done (operators/content-origin) and the registered LTI tool origins are in the front's `frame-src` (ADR 0044); the real domain is owner decision #24)
 - [x] (new) Same-site content subdomain hardening: `__Host-` cookies, exact-Origin checks on front and API,
       sandboxed player frames, COOP/CORP headers, both modes documented
-- [ ] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector
+- [x] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector (collector
+      `POST /api/csp-report`, admin list `GET /api/admin/csp-reports`, `report-uri`/`report-to` on every policy,
+      the front builds its CSP per request, `CSP_ENFORCE` and `ULAMS_CSP_HEADER` switch enforcement; ADR 0044;
+      production turns it on after a clean week, see `operators/security-headers`)
 - [x] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket) (env-file
       resolver; per-tenant `H5P_INTERNAL_TOKEN`; library administration limited to the platform; production
       mounts limited to an exported least-privilege config (`ulams:h5p:export-config`, `compose.h5p.prod.yml`);
@@ -279,14 +314,27 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       (sync queue) sent the previous LTI score; now dispatched after saving (found by the Moodle run, ADR 0018)
 - [ ] (new) Turn on the nightly conformance runs (`NIGHTLY_CONFORMANCE=true`) and run the saLTIre job once
       with an operator
-- [ ] (new) Adapt Path B admin screen (sources, versions, build status)
-- [ ] (new) Astro front: H5P plays without a token, so learner state is not restored (decide: a short-lived
-      H5P token from the BFF, or state through the BFF)
-- [ ] (new) Production: set `H5P_SERVICE_CONFIG_DIR`, run `ulams:h5p:export-config` and start the H5P service
+- [x] (new) Adapt Path B admin screen (sources, versions, build status)
+- [x] (new) Astro front: H5P plays without a token, so learner state is not restored (decide: a short-lived
+      H5P token from the BFF, or state through the BFF) (decided: state through the BFF, ADR 0045; the `/h5p`
+      proxy adds the session token server-side for the player's own calls, the frame still gets `token: null`
+      and the model's URLs carry no `_token`)
+- [x] (new) Production: set `H5P_SERVICE_CONFIG_DIR`, run `ulams:h5p:export-config` and start the H5P service
       with `compose.h5p.prod.yml`
-- [ ] (new) H5P xAPI progress endpoint rejects statement objects (`ProgressService::h5p()` typed `string`) (plan L1-06)
+- [x] (new) H5P xAPI progress endpoint rejects statement objects (`ProgressService::h5p()` typed `string`) (plan L1-06; the statement is stored as JSON, its verb as the event)
 - [ ] (new) `yarn install` on Node 24 fails in admin's postinstall (`max setup`: umi's esmi feature loads
       `http-deceiver`, which needs the removed `http_parser` binding); CI and `.nvmrc` use Node 22
+
+### 1.5 Interactive packages (new)
+Plan: `docs/plans/interactive-demos.md` (M1–M2); ADRs 0086, 0087.
+- [ ] (new) Interactive topic type: versioned zip packages with a `ulams-interactive.json` manifest, played in an
+      opaque sandbox on the content origin with a CSP per version, steps and step ranges per topic, text
+      alternatives, background mode (ADR 0086; on by default pending #150)
+- [ ] (new) `ulams-ix` v1 bridge protocol and the MIT `@ulams/interactive-bridge` library (ADR 0087)
+- [ ] (new) `InteractiveLesson` catalogue component with background (full-bleed) mode, reduced-motion posters,
+      WebGL and timeout fallbacks, keyboard flow
+- [ ] (new) Interactive package library and topic editor in the admin; `ulams topics create-interactive` and its MCP
+      tool; docs pages for creators, the bridge and the content origin
 
 ---
 
@@ -306,20 +354,20 @@ approved apply through domain services → element chat edits. Designs:
 - [x] (new) AG-UI event log and SSE stream from Laravel, carrying A2UI surfaces (ADR 0011; A2UI as
       `a2ui-surface` activity snapshots, ADR 0023; cache-key wake instead of pub/sub, ADR 0029)
 - [x] (new) Builder components in `@ulams/ui` and the course landing document in the catalogue format
-- [ ] (new) Studio: edit the Course Brief from the brief panel (partial: `PUT …/brief` with stale
-      marking done; the panel is read-only)
+- [x] (new) Studio: edit the Course Brief from the brief panel (`Edit` on a row opens the interview's
+      own control, saves through `PUT …/brief`; price, theme and site never mark stages stale)
 - [ ] (new) Detect admin edits made after an apply before re-applying (ADR 0010 drift check)
-- [ ] (new) Vendor the A2UI v0.9 JSON Schemas in `@ulams/ui` for dev-mode validation (plan 13.2); the
-      builder catalogue is validated, the A2UI envelope is not
+- [x] (new) Vendor the A2UI v0.9 JSON Schemas in `@ulams/ui` for dev-mode validation (plan 13.2; L2-02;
+      the studio validates `a2ui-surface` envelopes in dev, tests cover every surface kind)
 - [ ] (new) Operations for the builder: a separate PHP-FPM pool and Caddy route for
       `…/sessions/{id}/events`, a daily `course-builder:prune-events`, a Horizon queue for builder jobs
 - [ ] (new) Run the opt-in cross-tenant check `TenantIsolationTest::testCourseBuilderSessionsDoNotCrossTenants`
       (written; needs `TENANCY_INTEGRATION=1` and two probe tenants)
 - [ ] (new) Regenerate the OpenAPI spec and SDK path types for the builder endpoints (the SDK uses
       hand-written types; the API carries the annotations)
-- [ ] (new) Normalise `yarn.lock` with a real `yarn install` (entries for `@ag-ui/core` 1.0.2 and
+- [x] (new) Normalise `yarn.lock` with a real `yarn install` (a fresh `yarn install` leaves it unchanged; `--frozen-lockfile` in CI is the check) (entries for `@ag-ui/core` 1.0.2 and
       `diff` 9.0.0 were added by hand while the disk was full)
-- [ ] (new) Delete the RichText/GIFT content row when a topic is deleted (topic repository leaves it;
+- [x] (new) Delete the RichText/GIFT content row when a topic is deleted (topic repository leaves it;
       the applier deletes topics through the repository)
 
 ### 2.1 LLM layer
@@ -342,11 +390,12 @@ approved apply through domain services → element chat edits. Designs:
 
 ### 2.3 Interview
 - [x] Adaptive chips/buttons with defaults and "decide for me"
-- [ ] Audience, duration, tone, theme preset + accent, free/paid (via `CommerceProvider`;
+- [x] Audience, duration, tone, theme preset + accent, free/paid (via `CommerceProvider`;
       interim: existing `payments`), assessments, language (partial: audience, level, duration and
-      lesson length, tone, assessments, language done; theme and free/paid are M2.2)
-- [ ] Editable **Course Brief** (partial: schema-validated brief with decided-by per field, editable
-      through the API with stale marking; studio panel read-only, see the new item above)
+      lesson length, tone, assessments, language, theme preset + accent and a free/paid question: Course
+      Brief v2; the product is created through `CommerceProvider`, ADR 0049)
+- [x] Editable **Course Brief** (schema-validated brief v2 with decided-by per field, editable in the
+      studio panel and through the API with stale marking)
 
 ### 2.4 Generation pipeline (queued, resumable, streamed)
 - [x] **Learning objectives** proposed and **approved by the author** first (with inline edits)
@@ -355,11 +404,17 @@ approved apply through domain services → element chat edits. Designs:
       in a concurrency window; LiaScript and H5P lessons are M2.3)
 - [x] Assessments with explanations, each traceable to a fragment (per-lesson quizzes and a final test,
       GIFT rendered by our code, support check against the cited text)
-- [ ] Metadata (title, description, SEO, pricing) (partial: no pricing, M2.2)
-- [ ] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (M2.2; publish
-      is done as a separate action)
+- [x] Metadata (title, description, SEO, pricing) (a suggested price for a paid course, confirmed by
+      the author; ADR 0049)
+- [x] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (theme, the product
+      (inactive at apply, active at publish), the publish check and the generated landing on the current
+      site; a new site for platform operators through the platform tenant API and a session transfer,
+      ADR 0048; the Sylius channel is Phase 6.4)
 - [x] **Course Blueprint**: versioned JSON, stable IDs, citations; entities created via domain
       services; persisted per stage; progress streamed (SSE/websockets) (ADR 0010, 0025)
+- [x] (new) Long jobs on dedicated queue connections: `<driver>-builder` (retry_after 2400) for Course
+      Builder, Living Course and Adapt builds, `<driver>-long-job` for video and course clone; workers
+      and Horizon with matching timeouts; config test `QueueRetryAfterConfigTest` (ADR 0083 amendment)
 
 ### 2.5 Element-level chat editing
 - [x] Select element → chat → structured patch → diff → apply (course, module, lesson, block, question)
@@ -377,26 +432,33 @@ Architecture
 - [x] Verify current A2UI / AG-UI versions and choose renderer (CopilotKit vs own) (A2UI v0.9,
       `@ag-ui/core` 1.0.2, own renderer; ADR 0011, 0023)
 - [ ] UI component catalogue: name, props JSON Schema, model description, accessible
-      implementation, text fallback (partial: the 17 builder components; learner layout components
-      are M2.5)
+      implementation, text fallback (partial: the 17 builder components and the approved learner
+      layout set (Timeline, FlipCards, CodeBlock, PracticeActivity, Callout, Steps, ComparisonTable,
+      H5PFrame, LiaScriptLesson; L2-20); playground at `/catalogue/` in the docs site, L2-19)
 - [x] `render_ui` validated server-side; invalid/unknown → text fallback (structured output choice
       validated against the `@ulams/ui` manifest)
 - [x] Progressive streaming with skeletons; interactions sent back as structured events
 
 Builder components (MVP)
 - [ ] Interview controls · theme picker with live preview · drag-and-drop outline editor (partial:
-      interview controls done; theme picker M2.2, drag-and-drop editor M2.3)
+      interview controls and theme picker done; drag-and-drop editor M2.3)
 - [ ] Lesson preview card · variant comparison · quiz question card (partial: lesson preview and quiz
       question cards done; variant comparison M2.3)
 - [ ] Diff view · generation progress with retry and cost · publish summary with warnings (partial:
-      diff view, progress and the apply summary with warnings done; publish summary M2.2/M2.4)
+      diff view, progress, the apply summary and the publish summary with blocking items and warnings
+      done; critique results in the summary are M2.4)
 
 Learner layouts (feature flag)
 - [ ] AI-composed declarative lesson layouts from approved components, stored in blueprint
+      (partial: the approved components and their manifest are done (L2-20); the Layout topic type
+      and generation are L2-21)
+- [ ] (new) Layout topic type, rendering only (ADR 0052; `docs/plans/interactive-demos.md` M6): catalogue documents
+      as LMS topics so flip cards, timelines and practice activities can be course items; generation stays in L2-21
 
 Pedagogical guardrails
 - [ ] Mandatory scaffolding: intro → toolbox → graded challenges → tiered hints →
-      explanatory feedback → worked solution after attempt
+      explanatory feedback → worked solution after attempt (partial: the `PracticeActivity` component
+      enforces the slots and hides the solution until an attempt (L2-20); generation is L2-21)
 - [ ] Four pillars check: objective alignment, agency, scaffolding, formative feedback
 
 Generate-then-refine loop
@@ -420,7 +482,8 @@ Impact measurement
 - [ ] Results visible to authors; opt-in per tenant, consent where required
 
 Quality
-- [ ] Component playground (Storybook) with model-facing descriptions
+- [x] Component playground with model-facing descriptions (in the docs site instead of Storybook, ADR 0054,
+      default pending #57; `/catalogue/`, L2-19)
 - [x] Schema, fallback, interaction round-trip and accessibility tests per component (builder
       catalogue: vitest + axe in jsdom; axe on every studio screen in the e2e)
 - [ ] Evals: right component choice, no raw markup outside `simulation`, simulation pass rate
@@ -431,24 +494,28 @@ Quality
 
 ## Phase 3: Living Course (killer feature)
 
-Plan (new): `docs/plans/phase-3.md` (draft, waiting for approval; ADRs 0030–0034 Proposed). Milestones
+Plan: `docs/plans/phase-3.md` (approved 2026-10-09; ADRs 0030–0034 Accepted). Milestones
 M3.1 revisions and fragment diff (re-upload) → M3.2 impact and staleness → M3.3 AI update proposals →
 M3.4 progress rules → M3.5 audit and notifications → M3.6 Git, webhooks, polling → M3.7 URL connector →
 M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
 
-- [ ] Source connectors: re-upload → Git (path + branch) → Drive / Notion as plugins
-- [ ] Change detection (webhook, poll, manual) with fragment-level diff
-- [ ] Impact analysis via citations, incl. quiz answers that may now be wrong
-- [ ] Update proposals: patches with reasons, reviewed as one diff (accept all / per element / reject)
-- [ ] Progress rules: minor edit keeps completion; changed quiz answer → re-attempt; never
+- [ ] Source connectors: re-upload → Git (path + branch) → Drive / Notion as plugins (partial: upload, Git
+      (GitHub, GitLab, Gitea/Forgejo) and URL connectors done, plugin contract and example connector in
+      `docs/living-course/connector-plugins.md`; Drive and Notion not built, see the `(new)` item)
+- [x] Change detection (webhook, poll, manual) with fragment-level diff
+- [x] Impact analysis via citations, incl. quiz answers that may now be wrong
+- [x] Update proposals: patches with reasons, reviewed as one diff (accept all / per element / reject)
+- [x] Progress rules: minor edit keeps completion; changed quiz answer → re-attempt; never
       silently change past scores
-- [ ] Staleness signals per course and element
-- [ ] Audit trail (who accepted what, when, which source revision)
-- [ ] Tests: source v1/v2 fixtures; progress survives accepted update
-- [ ] (new) URL connector (web pages on one host, CSS selector, HTML → Markdown)
-- [ ] (new) Shared SSRF-safe HTTP client in `core` (extracted from `lti`; IPv6, CGNAT, redirects re-checked)
-- [ ] (new) GIFT: snapshot the max score per attempt and archive questions instead of deleting them
-- [ ] (new) Suggest a new lesson for newly added, uncovered source sections
+- [x] Staleness signals per course and element
+- [x] Audit trail (who accepted what, when, which source revision)
+- [x] Tests: source v1/v2 fixtures; progress survives accepted update (API: `ProgressSurvivesUpdateTest`, eval
+      fixtures with recorded live answers; studio e2e on the fake driver)
+- [x] (new) URL connector (web pages on one host, CSS selector, HTML → Markdown)
+- [x] (new) Shared SSRF-safe HTTP client in `core` (extracted from `lti`; IPv6, CGNAT, redirects re-checked)
+- [x] (new) GIFT: snapshot the max score per attempt and archive questions instead of deleting them
+- [ ] (new) Suggest a new lesson for newly added, uncovered source sections (partial: uncovered sections are
+      listed in the proposal as `uncovered` items; no generated lesson proposal yet)
 - [ ] (new) Generic Git (`git` CLI) connector for hosts without a supported API
 - [ ] (new) Google Drive and Notion connector plugins (designed in `docs/plans/phase-3.md` 6.6)
 
@@ -518,6 +585,15 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] (new) Platform product landing on the platform host (`app.localhost`) with the live demos;
       account area; webinars/events/consultations pages (partial: implemented and tested, uncommitted;
       see `docs/plans/phase-5-reference-frontend.md`, batch 2)
+- [ ] (new) Three new free demo academies, `gravity` (Gravity Lab, 3D simulation), `poland` (Poland, Measured /
+      Polska w liczbach, map in the background, EN and PL) and `ulam` (The Scottish Book: Stanisław Ulam and the Lwów
+      School, five MIT interactives), each with a preset, landing, certificate, demo users and the hourly reset
+      (ADR 0089; `docs/plans/interactive-demos.md` M3–M9)
+- [ ] (new) Six demos on the platform landing with one-click learner and admin login; `make demo-seed-tenants`
+      seeds all six; README and docs site updated (M10)
+- [ ] (new) `demo-content/`: separately licensed content packages (gravity GPL-3.0 from `qunabu/Gravity` by
+      checksum, never committed; poland and ulam under the owner's chosen licence, pending #148) with a boundary lint
+      (ADR 0088)
 
 ---
 
@@ -564,7 +640,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] SAML 2.0 and OIDC per tenant · SCIM 2.0 · HRIS import (CSV/API first)
 
 ### 6.4 Commerce (Sylius) and extended enterprise
-- [ ] `CommerceProvider` interface (sync product, create checkout, handle order events)
+- [ ] `CommerceProvider` interface (sync product, create checkout, handle order events) (partial: interface and the Wellms cart adapter shipped in `api/packages/commerce`, ADR 0049; the Sylius adapter is pending)
 - [ ] Sylius adapter as default implementation
 - [ ] Entitlements model in LMS (access, validity, source order or seat package)
 - [ ] Catalogue sync: course/bundle/subscription/seat package → digital Sylius product
@@ -598,6 +674,21 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Two-way Git sync with diff-based conflicts
 - [ ] GitHub Action + Docker image; preview deployment per PR
 - [ ] Git merge triggers Living Course update proposal
+- [ ] (new) CLI plan `docs/plans/cli.md`: agent-first `ulams` CLI and MCP server (draft, waiting for approval;
+      ADRs 0072–0079)
+- [x] (new) M1 CLI core: `front/cli` workspace, command registry, output contract and exit codes, profiles,
+      `login` (token/password/demo), `whoami`, `ulams api`, `schema`, `describe`
+- [x] (new) M2 noun commands generated from OpenAPI + overrides, topic uploads of every type, pagination,
+      `--dry-run`, `--wait`, `apply -f`, coverage matrix enforced in CI
+- [x] (new) M4 course builder commands with AG-UI events as NDJSON, `--wait` on run status, builder and Living Course commands as MCP tools (ADR 0084; e2e on a fake-driver tenant)
+- [x] (new) CLI device login against the real server, `ulams tokens`, `logout --revoke`, `ulams login --scopes` (e2e with a Playwright approval)
+- [x] (new) `make dev-reload` rebuilds the class map and per-domain caches; device login endpoints get their own rate limit buckets
+- [x] (new) OpenAPI covers the course builder and Living Course; SDK types and CLI spec regenerated (504 of 547 operations covered, 0 missing)
+- [x] (new) "My tokens" on the web account page (create, list, revoke; axe)
+- [ ] (new) M5 course-as-code: Blueprint v2, Markdown + directives format, sync base and conflict diffs
+      (after Phase 3; citations for author blocks pending #78)
+- [ ] (new) M6 CLI release: npm `ulams` (pending #77), bun-compiled binaries (signing pending #76), Docker image
+- [ ] (new) Endpoints to import a blueprint as a builder version and export a course as a blueprint (for M5)
 
 ### 7.2 Code exercises
 - [ ] WebContainers/Sandpack (JS/TS), Pyodide (Python), optional server sandbox
@@ -608,6 +699,12 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Complete published OpenAPI; TS SDK first, PHP second
 - [ ] Stripe-style webhooks (signed, retries, replay, delivery log, test sends, versioned events)
 - [ ] Scoped API keys with rate limits and usage stats
+- [x] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit
+      log, `Idempotency-Key`, `X-Request-Id`, `GET /api/meta`; admin "API tokens" page (ADR 0074)
+- [x] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075; pending #74)
+- [x] (new) S3 platform tenant API with queued provisioning, off by default, `ulams tenants …` (ADR 0078, 0085; #79 default "off by default"; ADR acceptance pending)
+- [x] (new) S4 course builder run-status endpoint `GET /api/admin/course-builder/runs/{run}`
+- [ ] (new) S5 OpenAPI response schemas for the top 60 operations the CLI uses, after L0-11; stable operationIds
 - [ ] `npx create-ulams` / `docker compose up` with seed data
 - [ ] Docs site with runnable examples; free cloud sandbox tenant (partial: Starlight site in `front/docs-site` on branch `docs/starlight-site`; runnable examples and the sandbox tenant pending)
 
@@ -625,6 +722,10 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Tool description evals with typical agent tasks
 - [ ] (new) First version on Cloudflare Workers (TypeScript, Agents SDK, OAuth) against the current REST
       API: hand-written course/topic/quiz tools + tools generated from the OpenAPI spec
+      (note: the CLI plan proposes the local `ulams mcp` first and this as the later hosted variant from the
+      same registry; pending #75)
+- [x] (new) M3 `ulams mcp` (stdio + Streamable HTTP) generated from the CLI registry: toolsets, annotations,
+      confirmation for destructive tools, resources, MCP client tests, agent eval (ADR 0076)
 
 ### 7.6 Machine-readable content
 - [ ] `llms.txt`, Markdown version of every page, public schemas, `AGENTS.md`
@@ -638,6 +739,10 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       Container, R2, Hyperdrive, Queues, Durable Objects) with a one-command `wrangler deploy` for a
       dev environment; strangler migration of the API to Hono only if the spike succeeds
 
+- [ ] (new) Shared-hosting variant: the API on MyDevil.net with cron workers and Cloudflare in front
+      (`deploy/mydevil`, docs `operators/install-mydevil`, ADR 0091; partial: runbook, scripts and the
+      code changes (`ulams:tenant:work-once`, manual tenant database, R2 policy switch) done, not run on
+      a real account: needs SSH and `bin/check-host.sh`)
 - [ ] One app image + PostgreSQL + optional Redis (DB fallback)
 - [ ] Commerce as optional profile: + one Sylius image, shared PostgreSQL server (separate DB)
 - [ ] `docker compose up` and Helm chart with sane defaults

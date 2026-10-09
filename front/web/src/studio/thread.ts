@@ -4,6 +4,7 @@
  */
 import { ApiError, isApplied, type BuilderState } from "@ulams/sdk";
 import { h, usd } from "@ulams/ui/builder/dom.ts";
+import { isEditable, renderBriefEditor } from "@ulams/ui/builder/brief-editor.ts";
 import type { A2uiActionOut } from "@ulams/ui/builder/components.ts";
 import { announce, connectionStatus, settleApplied, showCitation, studioClient, updateTopBar } from "./common.ts";
 import { Timeline } from "./timeline.ts";
@@ -48,6 +49,27 @@ export function mountThread(root: HTMLElement): void {
     },
   });
 
+  function editButton(key: string, label: string): HTMLElement {
+    const button = h("button", { type: "button", class: "cb-btn cb-btn-ghost st-brief-edit-btn", "aria-label": `Edit ${label.toLowerCase()}` }, "Edit");
+    button.addEventListener("click", () => {
+      panel.dataset.editing = key;
+      render(timeline.state);
+      panel.querySelector<HTMLElement>(".st-brief-edit input, .st-brief-edit select, .st-brief-edit button")?.focus();
+    });
+    return button;
+  }
+
+  function suggestionBlock(state: BuilderState, save: (patch: Record<string, unknown>) => Promise<void>): HTMLElement | null {
+    const suggestion = state.priceSuggestion;
+    const pricing = state.brief?.pricing;
+    if (!suggestion || pricing?.mode !== "paid" || pricing.amountMinor) return null;
+    const use = h("button", { type: "button", class: "cb-btn" }, `Use ${(suggestion.amountMinor / 100).toFixed(2)} ${suggestion.currency}`);
+    use.addEventListener("click", () => void save({ pricing: { mode: "paid", amountMinor: suggestion.amountMinor, currency: suggestion.currency } }));
+    return h("div", { class: "st-price-suggestion" },
+      h("p", {}, h("span", { class: "cb-tag" }, "suggested"), " ", `${(suggestion.amountMinor / 100).toFixed(2)} ${suggestion.currency}. ${suggestion.rationale}`),
+      use);
+  }
+
   function render(state: BuilderState): void {
     updateTopBar(state);
     const hasReady = state.sources?.some((s) => s.status === "ready" || s.status === "processing" || s.status === "uploaded");
@@ -55,17 +77,48 @@ export function mountThread(root: HTMLElement): void {
     if (!state.aiEnabled) {
       dropError.textContent = "AI features are disabled on this installation. Ask your admin to configure them.";
     }
-    const brief = state.briefRows ?? [];
+    // an open brief editor survives the state events that stream in meanwhile (a re-render would drop
+    // what the author is typing and move focus); the panel catches up when the edit is saved or cancelled
+    if (panel.dataset.editing && panel.querySelector(".st-brief-edit")) {
+      renderNext(state);
+      return;
+    }
+    const brief = [...(state.briefRows ?? [])];
+    // operators can choose a new site even before the brief has a site row
+    if (state.canCreateSite && !brief.some((row) => row.key === "site")) brief.push({ key: "site", label: "Site", value: "This site" });
     const decided = (state.brief?.decidedBy ?? {}) as Record<string, string>;
+    const editing = panel.dataset.editing ?? "";
+    const stopEditing = () => {
+      delete panel.dataset.editing;
+      render(timeline.state);
+    };
+    const save = async (patch: Record<string, unknown>) => {
+      if (!sessionId) return;
+      try {
+        const result = await cb.brief.update(sessionId, patch as Parameters<typeof cb.brief.update>[1]);
+        announce(result.stale ? "Brief saved. The outline and lessons still follow the old brief." : "Brief saved.");
+        delete panel.dataset.editing;
+        const fresh = await cb.sessions.get(sessionId);
+        timeline.adopt(fresh);
+      } catch (error) {
+        announce(error instanceof ApiError ? error.message.replace(/^API \d+: /, "") : "The brief could not be saved.");
+      }
+    };
+    const editor = (key: string) =>
+      renderBriefEditor(key as Parameters<typeof renderBriefEditor>[0], (state.brief ?? {}) as Record<string, unknown>, (patch) => void save(patch), stopEditing);
     panel.replaceChildren(
       h("section", { class: "cb-card st-brief", "aria-labelledby": "st-brief-title" },
         h("h2", { id: "st-brief-title", class: "cb-h3" }, "Course brief"),
         brief.length
           ? h("dl", {}, brief.flatMap((row) => [
               h("dt", {}, row.label),
-              h("dd", {}, row.value, decided[row.key === "duration" ? "totalMinutes" : row.key] === "default" ? h("span", { class: "cb-tag" }, "decided for you") : null),
+              editing === row.key
+                ? h("dd", { class: "st-brief-edit" }, editor(row.key))
+                : h("dd", {}, row.value, decided[row.key === "duration" ? "totalMinutes" : row.key] === "default" ? h("span", { class: "cb-tag" }, "decided for you") : null,
+                    isEditable(row.key) ? editButton(row.key, row.label) : null),
             ]))
           : h("p", { class: "cb-muted" }, "The interview fills this in. You can change the brief at any time."),
+        suggestionBlock(state, save),
         state.budgetReached ? h("p", { class: "cb-error", role: "alert" }, "Budget reached: ask an admin to raise the AI limit.") : null),
       h("section", { class: "cb-card st-sources", "aria-labelledby": "st-src-title" },
         h("h2", { id: "st-src-title", class: "cb-h3" }, "Sources"),

@@ -3,7 +3,6 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { FormattedMessage, history, useIntl, useParams } from 'umi';
 import UserForm from './form';
 
-import LogsWidget from '@/components/LogsWidget';
 import { user as fetchUser } from '@/services/ulams/user';
 import { categoriesArrToIds } from '@/utils/utils';
 import { useCallback, useEffect, useState } from 'react';
@@ -95,18 +94,6 @@ export default () => {
             {user && <Settings user={user} isProfile={false} />}
           </ProCard.TabPane>
         )} */}
-        {!isNew && (
-          <ProCard.TabPane
-            key={'logs'}
-            tab={
-              <span>
-                <FormattedMessage id="user_logs" />
-              </span>
-            }
-          >
-            {user && <LogsWidget useAsWidget userID={Number(user)} />}
-          </ProCard.TabPane>
-        )}
       </ProCard>
     </PageContainer>
   );

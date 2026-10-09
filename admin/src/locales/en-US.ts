@@ -207,6 +207,7 @@ export default {
   'menu.Sales.Products': 'Products',
   'menu.Courses.SCORMs': 'SCORMs',
   'menu.Courses.LiaScript': 'LiaScript',
+  'menu.Courses.Adapt': 'Adapt',
   'menu.Courses.CourseBuilder': 'Build with AI',
   CourseBuilder: 'Build with AI',
   'course_builder.card': 'Build a course with AI',
@@ -225,7 +226,6 @@ export default {
   'menu.Other activities': 'Other activities',
   'menu.Other activities.Consultations': 'Consultations',
   'menu.Other activities.StationaryEvents': 'Stationary events',
-  'menu.Analytics.Logs': 'Logs',
   'menu.Sales.Vouchers': 'Vouchers',
   'menu.Competency challenges': 'Competency challenges',
   'menu.Competency challenges.List': 'List',
@@ -427,9 +427,6 @@ export default {
   short_description: 'Short description',
   description_tooltip:
     'The editor is WYSIWYG and includes formatting tools whilst retaining the ability to write markdown shortcuts inline and output plain Markdown.',
-  ai_analysis_enable_label: 'AI Recording Analysis',
-  ai_analysis_enable_tooltip:
-    'Check this option to enable AI-powered analysis of user attention and satisfaction during the meeting',
   attributes: 'Attributes',
   new_course: 'New course',
   new_questionnaire: 'New Questionnaire',
@@ -570,6 +567,8 @@ export default {
   PDF: 'PDF',
   'menu.Analytics': 'Analytics',
   'menu.Analytics.Notifications': 'Notifications',
+  'menu.Users.API Tokens': 'API tokens',
+  apiTokens: 'API tokens',
   'menu.Users.Roles': 'Roles',
   'menu.Configuration.Templates': 'Templates',
   'menu.Users.Permissions': 'Permissions',
@@ -658,7 +657,6 @@ export default {
   categories_and_tags: 'Categories & Tags',
   course_edit_warning_message:
     'This record is already in progress, if you wish to edit click confirm. You edit at your own risk',
-  user_logs: 'User logs',
   http_method: 'HTTP method',
   path: 'Path',
   'pdf_editor.legacy': 'This template was made with ReportBro, which is no longer supported.',

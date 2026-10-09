@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use Throwable;
 use Ulams\Tenancy\Models\Tenant;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
+use Ulams\Tenancy\Services\TenantLifecycle;
 use Ulams\Tenancy\Services\TenantProvisioner;
 use Ulams\Tenancy\Support\StorageOwnership;
 use Ulams\Tenancy\Support\TenantContext;
@@ -21,12 +22,17 @@ class CreateTenantCommand extends Command
         {--accent= : Accent colour, e.g. #C2552D}
         {--users=5 : Number of demo students}
         {--demo= : Demo mode (DEMO_MODE: login without password, hourly reset): on or off}
+        {--db-password= : Password of a database you created yourself (TENANCY_DATABASE_PROVISIONER=manual), at least 16 characters}
         {--redo=* : Step to run again even if recorded as done: database, bucket, env, migrate, passport_keys, passport_client, permissions or demo}';
 
     protected $description = 'Provision a tenant (database, bucket, env file, migrations, keys, demo users). Safe to re-run: finished steps are skipped.';
 
-    public function handle(TenantProvisioner $provisioner, DomainRegistryContract $domains): int
+    private TenantLifecycle $lifecycle;
+
+    public function handle(TenantProvisioner $provisioner, DomainRegistryContract $domains, TenantLifecycle $lifecycle): int
     {
+        $this->lifecycle = $lifecycle;
+
         if (!TenantContext::isPlatform()) {
             $this->error('Run tenant commands on the platform, without --domain.');
 
@@ -77,43 +83,12 @@ class CreateTenantCommand extends Command
 
     private function resolveTenant(string $slug): Tenant
     {
-        TenantNaming::assertValidSlug($slug);
-
-        foreach (['theme' => '/^[A-Za-z0-9_-]{1,40}$/', 'accent' => '/^#[0-9A-Fa-f]{6}$/', 'demo' => '/^(on|off)$/'] as $option => $pattern) {
-            $value = $this->option($option);
-            if ($value !== null && !preg_match($pattern, $value)) {
-                throw new InvalidArgumentException("Invalid --{$option} value '{$value}'.");
-            }
-        }
-
-        $tenant = Tenant::query()->firstWhere('slug', $slug)
-            ?? new Tenant(TenantNaming::newTenantAttributes($slug));
-
-        $changes = array_filter([
+        return $this->lifecycle->prepare($slug, [
             'name' => $this->option('name'),
             'theme' => $this->option('theme'),
             'accent' => $this->option('accent'),
-        ], fn ($value) => $value !== null && $value !== '');
-        $tenant->fill($changes);
-        if ($this->option('demo') !== null) {
-            $tenant->demo = $this->option('demo') === 'on';
-        }
-
-        if ($tenant->exists && $tenant->isDirty(['name', 'theme', 'accent'])) {
-            // Display name and theme live in the env file and the settings table.
-            $tenant->forget('env', 'demo');
-        } elseif ($tenant->exists && $tenant->isDirty('demo')) {
-            // DEMO_MODE lives in the env file only.
-            $tenant->forget('env');
-        }
-        $redo = (array) $this->option('redo');
-        $unknown = array_diff($redo, TenantProvisioner::STEPS);
-        if ($unknown) {
-            throw new InvalidArgumentException('Unknown step(s) in --redo: ' . implode(', ', $unknown));
-        }
-        $tenant->forget(...$redo);
-        $tenant->save();
-
-        return $tenant;
+            'demo' => $this->option('demo'),
+            'db_password' => $this->option('db-password'),
+        ], (array) $this->option('redo'));
     }
 }

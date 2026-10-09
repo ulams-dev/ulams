@@ -32,7 +32,8 @@
 # cookies. Arguments: <API host> <API origin> <frame ancestors>
 (content_origin) {
 	header {
-		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'"
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'; report-uri {args[1]}/api/csp-report; report-to csp-endpoint"
+		Reporting-Endpoints `csp-endpoint="{args[1]}/api/csp-report"`
 		>X-Content-Type-Options nosniff
 		# Own browsing-context group (no window.opener link to the app); public package files
 		# that players in sandboxed frames (opaque origin, every request cross-origin) may load.
@@ -73,9 +74,13 @@
 	}
 }
 
-# Report-only CSP for the front and admin; enforce it once the reports are clean.
-(app_csp_report_only) {
-	header Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://*.{$ULAMS_DOMAIN} https://*.{$ULAMS_CONTENT_DOMAIN}; media-src 'self' blob: https://*.{$ULAMS_DOMAIN} https://*.{$ULAMS_CONTENT_DOMAIN}; connect-src 'self' https://*.{$ULAMS_DOMAIN} wss://*.{$ULAMS_DOMAIN}; frame-src 'self' https://*.{$ULAMS_DOMAIN} https://*.{$ULAMS_CONTENT_DOMAIN}; frame-ancestors 'self'; object-src 'none'; base-uri 'self'"
+# CSP of the admin. The learner front sets its own in front/web (its middleware names the tenant's
+# registered tool origins in frame-src, ADR 0044). The admin is staff only and frames tools for deep
+# linking, so its frame-src allows https:. Report-only until ULAMS_CSP_HEADER=Content-Security-Policy
+# (after about a week without unexpected reports: GET /api/admin/csp-reports). Arguments: <API origin>
+(app_csp_admin) {
+	header {$ULAMS_CSP_HEADER:Content-Security-Policy-Report-Only} "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://*.{$ULAMS_DOMAIN} wss://*.{$ULAMS_DOMAIN}; frame-src 'self' https://*.{$ULAMS_CONTENT_DOMAIN} https://*.{$ULAMS_DOMAIN} https:; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; report-uri {args[0]}/api/csp-report; report-to csp-endpoint"
+	header Reporting-Endpoints `csp-endpoint="{args[0]}/api/csp-report"`
 }
 
 # Laravel API and the H5P service on one host
@@ -110,6 +115,65 @@
 			header {
 				Access-Control-Allow-Methods "GET, POST, OPTIONS"
 				Access-Control-Allow-Headers "Content-Type, X-Ulams-Tracking-Token"
+				Access-Control-Max-Age 600
+			}
+			respond 204
+		}
+		handle {
+			reverse_proxy api:9000 {
+				header_up -Access-Control-Allow-Origin
+				header_down -Access-Control-Allow-Origin
+				header_down -Set-Cookie
+				transport fastcgi {
+					env SCRIPT_FILENAME /var/www/html/index.php
+				}
+			}
+		}
+	}
+
+	# cmi5 AUs on the content origin (ADR 0046): the one-time launch token in the fetch URL and the LRS
+	# session token (`Authorization: Basic ulrs1.<...>`, valid on the LRS only) are the credentials, never
+	# cookies. Any origin may call these routes without credentials; no cookie is passed on, and
+	# Authorization stays because the session token travels in it. A `*` does not cross a `/`, so the
+	# two-segment documents (activities/state, agents/profile) need their own pattern.
+	@cmi5 path /api/cmi5/fetch /trax/api/*/xapi/std/* /trax/api/*/xapi/std/*/*
+	handle @cmi5 {
+		request_header -Cookie
+		header Access-Control-Allow-Origin *
+		header Access-Control-Expose-Headers "ETag, Last-Modified, X-Experience-API-Consistent-Through, X-Experience-API-Version"
+		@cmi5_preflight method OPTIONS
+		handle @cmi5_preflight {
+			header {
+				Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+				Access-Control-Allow-Headers "Content-Type, Authorization, X-Experience-API-Version, If-Match, If-None-Match, Accept"
+				Access-Control-Max-Age 600
+			}
+			respond 204
+		}
+		handle {
+			reverse_proxy api:9000 {
+				header_up -Access-Control-Allow-Origin
+				header_down -Access-Control-Allow-Origin
+				header_down -Set-Cookie
+				transport fastcgi {
+					env SCRIPT_FILENAME /var/www/html/index.php
+				}
+			}
+		}
+	}
+
+	# Browsers report CSP violations of any page, content origins included, without credentials
+	# (ADR 0044): any origin may POST, nothing else is opened here.
+	@csp_report path /api/csp-report
+	handle @csp_report {
+		request_header -Cookie
+		request_header -Authorization
+		header Access-Control-Allow-Origin *
+		@csp_report_preflight method OPTIONS
+		handle @csp_report_preflight {
+			header {
+				Access-Control-Allow-Methods "POST, OPTIONS"
+				Access-Control-Allow-Headers "Content-Type"
 				Access-Control-Max-Age 600
 			}
 			respond 204
@@ -189,7 +253,7 @@
 }
 
 (web) {
-	import app_csp_report_only
+	# The CSP of the pages comes from the front itself (front/web/src/middleware.ts)
 	encode zstd gzip
 	# The BFF and studio JSON is for this front only: a page of another origin (the content
 	# origin runs third-party code) cannot load it in no-cors mode.
@@ -199,9 +263,9 @@
 }
 
 (admin) {
-	import app_csp_report_only
+	import app_csp_admin {args[0]}
 	encode zstd gzip
-	reverse_proxy admin:80
+	reverse_proxy admin:8080
 }
 
 api.{$ULAMS_DOMAIN} {
@@ -223,12 +287,19 @@ app.{$ULAMS_DOMAIN} {
 }
 
 admin.{$ULAMS_DOMAIN} {
-	import admin
+	import admin https://api.{$ULAMS_DOMAIN}
 }
 
 *.admin.{$ULAMS_DOMAIN} {
 	import on_demand
-	import admin
+	# the slug is the label in front of .admin.<domain>; its reports go to <slug>.api.<domain>
+	@tenant vars_regexp slug {http.request.host} ^([a-z][a-z0-9]{1,29})\.admin\.{$ULAMS_DOMAIN}$
+	handle @tenant {
+		import admin https://{re.slug.1}.api.{$ULAMS_DOMAIN}
+	}
+	handle {
+		respond "Not found" 404
+	}
 }
 
 # Platform content origin -> platform API

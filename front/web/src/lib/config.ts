@@ -10,8 +10,14 @@ import {
   ULAMS_WARM_TENANTS,
   ULAMS_COOKIE_SECURE,
   ULAMS_COOKIE_FALLBACK_PREFIX,
+  ULAMS_LANDING_STATUS,
+  CSP_ENFORCE,
+  ULAMS_CONTENT_ORIGIN,
+  ULAMS_STORAGE_ORIGINS,
 } from "astro:env/server";
 import { parseSecureMode } from "./cookies.ts";
+import { parseLandingStatus } from "./landing-status.ts";
+import { parseEnforce } from "./csp.ts";
 
 /** Runtime settings (process env, see .env.example). Read once. */
 export const config = {
@@ -38,6 +44,21 @@ export const config = {
   cookieSecure: parseSecureMode(ULAMS_COOKIE_SECURE),
   /** Cookie name prefix over plain http (dev), where `__Host-` is rejected by browsers. */
   cookieFallbackPrefix: ULAMS_COOKIE_FALLBACK_PREFIX ?? "",
+  /** `final` shows every roadmap item as delivered, `actual` the honest status (see landing-status.ts). */
+  landingStatus: parseLandingStatus(ULAMS_LANDING_STATUS),
+  /**
+   * Enforce the Content Security Policy (`CSP_ENFORCE=true`) or only report violations. Unset, it
+   * enforces everywhere but in the production image (NODE_ENV=production), so developers see
+   * violations at once and operators switch it on after a clean week (ADR 0044).
+   */
+  cspEnforce: parseEnforce(CSP_ENFORCE, process.env.NODE_ENV !== "production"),
+  /** The tenant's content origin, `{slug}` replaced; empty = none (the CSP then lists no content frame source). */
+  contentOrigin: ULAMS_CONTENT_ORIGIN ?? "http://{slug}.content.localhost",
+  /** Origins that serve uploaded files (images, media, PDFs), comma separated. */
+  storageOrigins: (ULAMS_STORAGE_ORIGINS ?? "http://storage.localhost")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean),
   demoStudentEmail: DEMO_STUDENT_EMAIL || "student1@{slug}.ulams.app",
   /** Never logged or sent to the browser. */
   demoStudentPassword: DEMO_STUDENT_PASSWORD || "",

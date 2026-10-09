@@ -78,13 +78,14 @@ HTTP checks in `packages/tenancy/tests/Integration/TenantIsolationTest`, opt-in)
 Events: `RUN_STARTED/FINISHED/ERROR`, `STEP_STARTED/FINISHED` (stage names), `TEXT_MESSAGE_*`
 (assistant and the author's own messages), `STATE_DELTA` (JSON Patch on `/cost`, `/brief`,
 `/session`, `/sources`, `/budgetReached`), `ACTIVITY_SNAPSHOT` with activity type `a2ui-surface`
-(ADR 0023), `CUSTOM` (`applied`, `published`).
+(ADR 0023), `CUSTOM` (`applied`, `published`; Living Course adds `update_proposal`, `update_analysis`, `update_applied`).
+The full endpoint list, payloads and a `curl` example are in the [Course Builder API](/developers/course-builder-api/).
 
 UI actions: `POST /sessions/{id}/runs` with a `RunAgentInput`:
 `forwardedProps.action = {name, surfaceId, sourceComponentId, context}`. Actions:
 `answer {key, value}`, `decide_for_me {key?}`, `approve_outline {versionId, edits:[{objectiveId,text}]}`,
 `reject_outline {versionId, comment}`, `retry_step {stepId}`, `approve_apply {versionId}`,
-`approve_patch|reject_patch {versionId}`, `retry`. Typed text goes in `messages`, scoped by
+`approve_patch|reject_patch {versionId}`, `retry` (the interview or outline step that failed). Typed text goes in `messages`, scoped by
 `forwardedProps.selection.elementId`.
 
 In TypeScript: `createCourseBuilderClient()` and `connectEventStream()` from `@ulams/sdk`,
@@ -108,6 +109,11 @@ php artisan course-builder:eval --fixtures=coffee,injection --live --author=<use
 # record cassettes for the replay test
 php artisan course-builder:eval --fixtures=coffee --live --record --author=<user id>
 ```
+
+Options: `--fixtures`, `--live`, `--record`, `--author=<user id>` (default: the first admin), `--patch=1` (also run one element
+chat patch on a quiz question) and `--total-minutes=30` (course length of the brief). It runs everything inline (sync queue).
+`--live` needs `ANTHROPIC_API_KEY` and refuses to start once the month's eval spend reaches `COURSE_BUILDER_EVAL_MONTHLY_USD`.
+For Living Course there is `php artisan living-course:eval` ([internals](/developers/living-course/#evaluating)).
 
 Fixtures: `coffee` (Markdown), `injection` (Markdown with injected instructions), `git` (Markdown with
 code), `pdf` (generated handbook), `docx` (generated). Checks: blueprint schema, citation coverage,

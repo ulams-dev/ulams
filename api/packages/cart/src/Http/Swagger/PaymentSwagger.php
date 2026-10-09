@@ -160,6 +160,13 @@ interface PaymentSwagger
      *          ),
      *      ),
      *      @OA\Response(
+     *          response=403,
+     *          description="The product is not purchasable or the user reached its limits",
+     *          @OA\MediaType(
+     *              mediaType="application/json"
+     *          )
+     *      ),
+     *      @OA\Response(
      *          response=422,
      *          description="Bad request",
      *          @OA\MediaType(

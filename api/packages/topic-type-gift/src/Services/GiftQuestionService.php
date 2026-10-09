@@ -48,6 +48,11 @@ class GiftQuestionService implements GiftQuestionServiceContract
         $this->giftQuestionRepository->delete($id);
     }
 
+    public function archive(int $id): void
+    {
+        $this->giftQuestionRepository->update(['archived_at' => now()], $id);
+    }
+
     /**
      * @throws UnknownGiftTypeException
      */

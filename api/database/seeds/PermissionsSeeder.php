@@ -24,6 +24,7 @@ use Ulams\ModelFields\Database\Seeders\PermissionTableSeeder as ModelFieldsPermi
 use Ulams\Adapt\Database\Seeders\AdaptPermissionSeeder;
 use Ulams\LiaScript\Database\Seeders\LiaScriptPermissionSeeder;
 use Ulams\CourseBuilder\Database\Seeders\CourseBuilderPermissionSeeder;
+use Ulams\LivingCourse\Database\Seeders\LivingCoursePermissionSeeder;
 use Ulams\Lti\Database\Seeders\LtiPermissionSeeder;
 use Ulams\Notifications\Database\Seeders\NotificationsPermissionsSeeder;
 use Ulams\Pages\Database\Seeders\PermissionTableSeeder as PagesPermissionTableSeeder;
@@ -40,7 +41,6 @@ use Ulams\Templates\Database\Seeders\PermissionTableSeeder as TemplatesPermissio
 use Ulams\TemplatesPdf\Database\Seeders\PermissionTableSeeder as TemplatesPdfPermissionTableSeeder;
 use Ulams\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder;
 use Ulams\TopicTypeProject\Database\Seeders\TopicTypeProjectPermissionSeeder;
-use Ulams\Tracker\Database\Seeders\TrackerPermissionSeeder;
 use Ulams\Translations\Database\Seeders\TranslationsPermissionSeeder;
 use Ulams\Video\Database\Seeders\VideoPermissionSeeder;
 use Ulams\Vouchers\Database\Seeders\VoucherPermissionsSeeder;
@@ -85,9 +85,6 @@ class PermissionsSeeder extends Seeder
         $this->call(AssignWithoutAccountPermissionSeeder::class);
         $this->call(StationaryEventPermissionSeeder::class);
         $this->call(WebinarsPermissionSeeder::class);
-        if (class_exists(TrackerPermissionSeeder::class)) {
-            $this->call(TrackerPermissionSeeder::class);
-        }
         $this->call(ModelFieldsPermissionTableSeeder::class);
         $this->call(VoucherPermissionsSeeder::class);
         $this->call(LrsPermissionSeeder::class);
@@ -105,6 +102,7 @@ class PermissionsSeeder extends Seeder
         $this->call(LtiPermissionSeeder::class);
         $this->call(LiaScriptPermissionSeeder::class);
         $this->call(CourseBuilderPermissionSeeder::class);
+        $this->call(LivingCoursePermissionSeeder::class);
         $this->call(AdaptPermissionSeeder::class);
 
         // if there are no users, we need to create first admin 

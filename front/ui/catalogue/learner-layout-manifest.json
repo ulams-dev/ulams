@@ -1,0 +1,838 @@
+{
+  "catalogId": "https://ulams.dev/catalogue/learner/v1",
+  "components": {
+    "Callout": {
+      "description": "Highlighted note inside a lesson: a tip, a warning or a key idea.",
+      "interactive": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "tone": {
+            "type": "string",
+            "enum": [
+              "tip",
+              "warning",
+              "key"
+            ],
+            "description": "Kind of note",
+            "default": "tip"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title",
+            "maxLength": 120
+          },
+          "text": {
+            "type": "string",
+            "description": "Text",
+            "maxLength": 1000
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Steps": {
+      "description": "A numbered process in 3–5 steps with a connector line (how something works).",
+      "interactive": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "coming"
+            ],
+            "description": "Whether the whole process ships today",
+            "default": "available"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "icon": {
+                  "type": "string",
+                  "enum": [
+                    "check",
+                    "arrow",
+                    "play",
+                    "clock",
+                    "calendar",
+                    "pin",
+                    "users",
+                    "mail",
+                    "shield",
+                    "star",
+                    "moon",
+                    "planet",
+                    "telescope",
+                    "rocket",
+                    "medal",
+                    "book",
+                    "terminal",
+                    "pager",
+                    "chart",
+                    "print",
+                    "lock",
+                    "sync",
+                    "quote",
+                    "layers",
+                    "server",
+                    "puzzle",
+                    "cart",
+                    "code",
+                    "sparkle",
+                    "eye",
+                    "chat"
+                  ],
+                  "description": "Icon from the catalogue's icon set"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Step",
+                  "maxLength": 80
+                },
+                "text": {
+                  "type": "string",
+                  "description": "Sentence",
+                  "maxLength": 260
+                }
+              },
+              "required": [
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Steps",
+            "default": [],
+            "maxItems": 5,
+            "minItems": 2
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ComparisonTable": {
+      "description": "Feature comparison of products in columns, features in rows. Every competitor cell must come from a sourced data file (value, note, source URL, checked date); list the sources and the 'as of' date under the table. Neutral values only.",
+      "interactive": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "caption": {
+            "type": "string",
+            "description": "Table caption read by screen readers (what is compared)",
+            "maxLength": 160
+          },
+          "asOf": {
+            "type": "string",
+            "description": "When the facts were checked, e.g. 'October 2026'",
+            "maxLength": 40
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Product name, plain text (no logos)",
+                  "maxLength": 40
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Small line under the name, e.g. 'hosted SaaS'",
+                  "maxLength": 40
+                },
+                "highlight": {
+                  "type": "boolean",
+                  "description": "The column of our own product",
+                  "default": false
+                }
+              },
+              "required": [
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Products, in column order (omit when groups is set)",
+            "default": [],
+            "maxItems": 8,
+            "minItems": 0
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Feature",
+                  "maxLength": 60
+                },
+                "help": {
+                  "type": "string",
+                  "description": "What the row means",
+                  "maxLength": 160
+                },
+                "cells": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "description": "Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase",
+                        "maxLength": 60
+                      },
+                      "note": {
+                        "type": "string",
+                        "description": "Short neutral note",
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "One cell per column, same order",
+                  "default": [],
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "label",
+                "cells"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Features (omit when groups is set)",
+            "default": [],
+            "maxItems": 24,
+            "minItems": 0
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Name of the group, shown on the segmented control",
+                  "maxLength": 40
+                },
+                "caption": {
+                  "type": "string",
+                  "description": "Table caption for this group",
+                  "maxLength": 160
+                },
+                "columns": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "Product name, plain text (no logos)",
+                        "maxLength": 40
+                      },
+                      "note": {
+                        "type": "string",
+                        "description": "Small line under the name, e.g. 'hosted SaaS'",
+                        "maxLength": 40
+                      },
+                      "highlight": {
+                        "type": "boolean",
+                        "description": "The column of our own product",
+                        "default": false
+                      }
+                    },
+                    "required": [
+                      "label"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Products, in column order",
+                  "default": [],
+                  "maxItems": 8,
+                  "minItems": 2
+                },
+                "rows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "Feature",
+                        "maxLength": 60
+                      },
+                      "help": {
+                        "type": "string",
+                        "description": "What the row means",
+                        "maxLength": 160
+                      },
+                      "cells": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "value": {
+                              "type": "string",
+                              "description": "Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase",
+                              "maxLength": 60
+                            },
+                            "note": {
+                              "type": "string",
+                              "description": "Short neutral note",
+                              "maxLength": 120
+                            }
+                          },
+                          "required": [
+                            "value"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "One cell per column, same order",
+                        "default": [],
+                        "maxItems": 8
+                      }
+                    },
+                    "required": [
+                      "label",
+                      "cells"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Features",
+                  "default": [],
+                  "maxItems": 24,
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "label",
+                "columns",
+                "rows"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Several tables behind a CSS-only segmented control (no JavaScript); each group lists its own products and features. Omit for a single table (columns and rows)",
+            "default": [],
+            "maxItems": 4,
+            "minItems": 0
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "What the source supports, e.g. 'Moodle: SCORM, H5P'",
+                  "maxLength": 300
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Source URL",
+                  "maxLength": 2048
+                },
+                "checked": {
+                  "type": "string",
+                  "description": "Date checked",
+                  "maxLength": 20
+                }
+              },
+              "required": [
+                "label",
+                "href"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Sources for the cells",
+            "default": [],
+            "maxItems": 200
+          },
+          "note": {
+            "type": "string",
+            "description": "Small print under the table",
+            "maxLength": 300
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "caption"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "H5PFrame": {
+      "description": "Interactive H5P content from the H5P service, framed. Reports completion to progress.",
+      "interactive": true,
+      "props": {
+        "type": "object",
+        "properties": {
+          "apiUrl": {
+            "type": "string",
+            "format": "href",
+            "description": "Tenant API origin (the H5P service is under /h5p)",
+            "maxLength": 2048
+          },
+          "contentId": {
+            "type": "integer",
+            "description": "H5P content id",
+            "minimum": 0
+          },
+          "title": {
+            "type": "string",
+            "description": "Title",
+            "maxLength": 160
+          },
+          "topicId": {
+            "type": "integer",
+            "description": "Topic id for progress",
+            "minimum": 0
+          },
+          "courseId": {
+            "type": "integer",
+            "description": "Course id for progress",
+            "minimum": 0
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "apiUrl",
+          "contentId",
+          "title"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "LiaScriptLesson": {
+      "description": "A LiaScript course (Markdown with quizzes, code and slides) played in a sandboxed frame on the tenant content origin; it completes itself at the last section.",
+      "interactive": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string",
+            "format": "href",
+            "description": "Player URL on the content origin (from POST /api/liascript/launches/{topic})",
+            "maxLength": 2048
+          },
+          "title": {
+            "type": "string",
+            "description": "Title",
+            "maxLength": 160
+          },
+          "sections": {
+            "type": "integer",
+            "description": "Number of sections",
+            "minimum": 1
+          },
+          "height": {
+            "type": "integer",
+            "description": "Frame height px",
+            "minimum": 0,
+            "default": 720
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "src",
+          "title"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Timeline": {
+      "description": "Ordered sequence of events or stages (history, a process over time, a project plan). Use for anything where the order or the dates matter; use Steps for a short how-to on a landing page.",
+      "interactive": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "timeline"
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "When: a date, period or stage name",
+                  "maxLength": 40
+                },
+                "title": {
+                  "type": "string",
+                  "description": "What happened or happens",
+                  "maxLength": 100
+                },
+                "text": {
+                  "type": "string",
+                  "description": "One or two sentences of detail",
+                  "maxLength": 400
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "done",
+                    "current",
+                    "upcoming"
+                  ],
+                  "description": "Where the learner is on the line; omit for a purely historical timeline"
+                }
+              },
+              "required": [
+                "label",
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Entries in order, earliest first",
+            "default": [],
+            "maxItems": 20,
+            "minItems": 2
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "FlipCards": {
+      "description": "Self-test cards: the learner reads the front (a term or question), thinks, then reveals the back (the definition or answer). Use for vocabulary, definitions and quick recall; not for graded questions.",
+      "interactive": true,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "cards"
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "cards": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "front": {
+                  "type": "string",
+                  "description": "Term or question",
+                  "maxLength": 200
+                },
+                "back": {
+                  "type": "string",
+                  "description": "Definition or answer",
+                  "maxLength": 600
+                }
+              },
+              "required": [
+                "front",
+                "back"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Cards",
+            "default": [],
+            "maxItems": 24,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "cards"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "CodeBlock": {
+      "description": "A code or command listing with a copy button. Plain text with the language named; no syntax colouring and no execution. Put prose around it, not inside it.",
+      "interactive": true,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "code"
+          },
+          "title": {
+            "type": "string",
+            "description": "File name or short title shown above the code",
+            "maxLength": 120
+          },
+          "language": {
+            "type": "string",
+            "description": "Language name, e.g. sql, python, bash, json",
+            "maxLength": 24,
+            "default": "text"
+          },
+          "code": {
+            "type": "string",
+            "description": "The code, exactly as it is to be copied",
+            "maxLength": 8000
+          },
+          "caption": {
+            "type": "string",
+            "description": "One sentence under the listing",
+            "maxLength": 300
+          },
+          "lineNumbers": {
+            "type": "boolean",
+            "description": "Show line numbers",
+            "default": false
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "PracticeActivity": {
+      "description": "Scaffolded practice container (required for any practice in a layout): an intro, a toolbox of allowed resources, and 1-6 challenges of rising level (1 guided, 2 supported, 3 independent). Each challenge may offer hints in tiers (nudge, then pointer, then near_solution), answer options that each explain why, and a worked solution that stays hidden until the learner has made an attempt.",
+      "interactive": true,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "practice"
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "What the learner will practise and why, in one or two sentences",
+            "maxLength": 800
+          },
+          "toolbox": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Resource or tool",
+                  "maxLength": 80
+                },
+                "text": {
+                  "type": "string",
+                  "description": "When and how to use it",
+                  "maxLength": 300
+                }
+              },
+              "required": [
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Resources the learner may use (formulas, glossary, earlier lesson); at least one",
+            "default": [],
+            "maxItems": 8,
+            "minItems": 1
+          },
+          "challenges": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Stable challenge id, unique in this activity",
+                  "maxLength": 40
+                },
+                "level": {
+                  "type": "integer",
+                  "description": "1 = guided, 2 = supported, 3 = independent",
+                  "minimum": 1,
+                  "maximum": 3
+                },
+                "prompt": {
+                  "type": "string",
+                  "description": "The task",
+                  "maxLength": 800
+                },
+                "hints": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "tier": {
+                        "type": "string",
+                        "enum": [
+                          "nudge",
+                          "pointer",
+                          "near_solution"
+                        ],
+                        "description": "nudge = a question to think about; pointer = where to look; near_solution = almost the answer"
+                      },
+                      "text": {
+                        "type": "string",
+                        "description": "The hint",
+                        "maxLength": 400
+                      }
+                    },
+                    "required": [
+                      "tier",
+                      "text"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Hints, revealed one at a time in tier order",
+                  "default": [],
+                  "maxItems": 3
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "Answer option",
+                        "maxLength": 300
+                      },
+                      "correct": {
+                        "type": "boolean",
+                        "description": "Whether this option is right",
+                        "default": false
+                      },
+                      "feedback": {
+                        "type": "string",
+                        "description": "Why this option is right or wrong",
+                        "maxLength": 500
+                      }
+                    },
+                    "required": [
+                      "label",
+                      "feedback"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Answer options; leave empty for an open task the learner marks as tried",
+                  "default": [],
+                  "maxItems": 6
+                },
+                "workedSolution": {
+                  "type": "string",
+                  "description": "Full worked solution; shown only after the learner has made an attempt",
+                  "maxLength": 2000
+                }
+              },
+              "required": [
+                "id",
+                "level",
+                "prompt",
+                "workedSolution"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Challenges in rising level",
+            "default": [],
+            "maxItems": 6,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "intro",
+          "toolbox",
+          "challenges"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

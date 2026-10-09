@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { InvoiceData } from "@ulams/sdk/types";
 import { APP_URL } from "@/config/index";
 import { toast } from "@/utils/toast";
+import { stripeRedirectUrl } from "@ulams/sdk/utils/stripeRedirect";
 
 export enum PaymentGateway {
   Stripe = "Stripe",
@@ -44,10 +45,16 @@ const usePayment = () => {
           setProcessing(false);
           return;
         }
-        await payWithStripe(
+        const response = await payWithStripe(
           paymentMethodId,
           `${APP_URL}/#/cart?status=success`
         );
+        // 3-D Secure: the bank needs the customer to authenticate on its own page
+        const redirectUrl = stripeRedirectUrl(response);
+        if (redirectUrl) {
+          window.location.assign(redirectUrl);
+          return;
+        }
         setProcessing(false);
 
         push("/cart?status=success");

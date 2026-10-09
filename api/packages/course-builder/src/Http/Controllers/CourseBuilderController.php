@@ -10,6 +10,7 @@ use InvalidArgumentException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Ulams\Ai\Models\AiCall;
 use Ulams\CourseBuilder\Apply\BlueprintApplier;
+use Ulams\CourseBuilder\Contracts\FragmentArchive;
 use Ulams\CourseBuilder\Blueprint\BlueprintDiff;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Exceptions\BuilderException;
@@ -25,7 +26,11 @@ use Ulams\CourseBuilder\Pipeline\BriefService;
 use Ulams\CourseBuilder\Pipeline\GenerationService;
 use Ulams\CourseBuilder\Pipeline\OutlineService;
 use Ulams\CourseBuilder\Pipeline\PatchService;
+use Ulams\CourseBuilder\Pipeline\PromptContext;
+use Ulams\CourseBuilder\Publish\PublishCheck;
+use Ulams\CourseBuilder\Site\NewSite;
 use Ulams\CourseBuilder\Services\RunService;
+use Ulams\CourseBuilder\Services\RunStatus;
 use Ulams\CourseBuilder\Services\SessionState;
 use Ulams\CourseBuilder\Services\VersionService;
 use Ulams\CourseBuilder\Ui\Surfaces;
@@ -40,41 +45,49 @@ use Ulams\Uploads\Exceptions\UploadRejected;
  *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="title", type="string"))),
  *     @OA\Response(response=201, description="session with its state snapshot"), @OA\Response(response=429, description="daily limit reached"), @OA\Response(response=503, description="AI disabled"))
  * @OA\Get(path="/api/admin/course-builder/sessions", summary="My builder sessions", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Response(response=200, description="list"))
- * @OA\Get(path="/api/admin/course-builder/sessions/{id}", summary="A session's state snapshot", tags={"Admin Course Builder"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="snapshot"), @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown"))
- * @OA\Delete(path="/api/admin/course-builder/sessions/{id}", summary="Delete a session (an applied course is kept)", tags={"Admin Course Builder"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="deleted"))
- * @OA\Post(path="/api/admin/course-builder/sessions/{id}/sources", summary="Upload a source (MD, PDF, DOCX); ingestion and the interview start by themselves", tags={"Admin Course Builder"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+ * @OA\Get(path="/api/admin/course-builder/sessions/{session}", summary="A session's state snapshot", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="snapshot"), @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown"))
+ * @OA\Delete(path="/api/admin/course-builder/sessions/{session}", summary="Delete a session (an applied course is kept)", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="deleted"))
+ * @OA\Post(path="/api/admin/course-builder/sessions/{session}/sources", summary="Upload a source (MD, PDF, DOCX); ingestion and the interview start by themselves", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\RequestBody(@OA\MediaType(mediaType="multipart/form-data", @OA\Schema(@OA\Property(property="file", type="string", format="binary")))),
  *     @OA\Response(response=202, description="source and ingest run"), @OA\Response(response=422, description="rejected upload"))
- * @OA\Get(path="/api/admin/course-builder/sessions/{id}/sources/{source}", summary="A source with its section tree", tags={"Admin Course Builder"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="source", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="source"))
+ * @OA\Get(path="/api/admin/course-builder/sessions/{session}/sources/{source}", summary="A source with its section tree", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="source", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="source"))
  * @OA\Get(path="/api/admin/course-builder/fragments/{fragment}", summary="One source fragment (citation popover)", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="fragment", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="fragment"))
- * @OA\Get(path="/api/admin/course-builder/sessions/{id}/brief", summary="Course Brief", tags={"Admin Course Builder"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="brief"))
- * @OA\Put(path="/api/admin/course-builder/sessions/{id}/brief", summary="Edit the Course Brief", tags={"Admin Course Builder"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\RequestBody(@OA\JsonContent(type="object")), @OA\Response(response=200, description="brief"), @OA\Response(response=422, description="invalid"))
- * @OA\Post(path="/api/admin/course-builder/sessions/{id}/runs", summary="Start a run from a chat message or a UI action (AG-UI RunAgentInput)", tags={"Admin Course Builder"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+ * @OA\Get(path="/api/admin/course-builder/sessions/{session}/brief", summary="Course Brief", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="brief"))
+ * @OA\Put(path="/api/admin/course-builder/sessions/{session}/brief", summary="Edit the Course Brief", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\RequestBody(@OA\JsonContent(type="object")), @OA\Response(response=200, description="brief"), @OA\Response(response=422, description="invalid"))
+ * @OA\Post(path="/api/admin/course-builder/sessions/{session}/runs", summary="Start a run from a chat message or a UI action (AG-UI RunAgentInput)", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="messages", type="array", @OA\Items(type="object")), @OA\Property(property="forwardedProps", type="object"))),
  *     @OA\Response(response=202, description="run id (null when the action finished in the request)"))
+ * @OA\Get(path="/api/admin/course-builder/runs/{run}", summary="Status of one run (poll it for --wait)", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="run", in="path", required=true, @OA\Schema(type="string")),
+ *     @OA\Response(response=200, description="the run and its steps", @OA\JsonContent(
+ *         @OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),
+ *         @OA\Property(property="data", ref="#/components/schemas/CourseBuilderRunStatus"))),
+ *     @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown run"))
  * @OA\Post(path="/api/admin/course-builder/runs/{run}/cancel", summary="Cancel a run", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="run", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="cancelled"))
  * @OA\Post(path="/api/admin/course-builder/runs/{run}/steps/{step}/retry", summary="Retry one failed generation step", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="run", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="step", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=202, description="queued"))
- * @OA\Get(path="/api/admin/course-builder/sessions/{id}/versions", summary="Blueprint version history", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="versions"))
+ * @OA\Get(path="/api/admin/course-builder/sessions/{session}/versions", summary="Blueprint version history", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="versions"))
  * @OA\Get(path="/api/admin/course-builder/versions/{version}", summary="A blueprint version with fragment labels", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="version", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="version"))
  * @OA\Get(path="/api/admin/course-builder/versions/{version}/diff", summary="Element-aware diff against another version (default: its parent)", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="version", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="against", in="query", @OA\Schema(type="string")), @OA\Response(response=200, description="changes"))
  * @OA\Post(path="/api/admin/course-builder/versions/{version}/approve", summary="Approve a proposal (outline or patch)", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="version", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="approved"))
  * @OA\Post(path="/api/admin/course-builder/versions/{version}/reject", summary="Reject a proposal", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="version", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="rejected"))
  * @OA\Post(path="/api/admin/course-builder/versions/{version}/restore", summary="Restore an old version as a new one", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="version", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="restored"))
- * @OA\Post(path="/api/admin/course-builder/sessions/{id}/undo", summary="Undo the last content change", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="current version"))
- * @OA\Post(path="/api/admin/course-builder/sessions/{id}/redo", summary="Redo", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="current version"))
- * @OA\Post(path="/api/admin/course-builder/sessions/{id}/apply", summary="Approve the apply of the current version", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=202, description="apply run"))
- * @OA\Post(path="/api/admin/course-builder/sessions/{id}/publish", summary="Publish the applied course", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="published"))
- * @OA\Get(path="/api/admin/course-builder/sessions/{id}/usage", summary="AI calls of the session by task and model", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="usage"))
+ * @OA\Post(path="/api/admin/course-builder/sessions/{session}/undo", summary="Undo the last content change", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="current version"))
+ * @OA\Post(path="/api/admin/course-builder/sessions/{session}/redo", summary="Redo", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="current version"))
+ * @OA\Post(path="/api/admin/course-builder/sessions/{session}/apply", summary="Approve the apply of the current version", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=202, description="apply run"))
+ * @OA\Get(path="/api/admin/course-builder/sessions/{session}/publish-check", summary="Blocking items and warnings before publishing", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="blocking, warnings and facts"))
+ * @OA\Post(path="/api/admin/course-builder/sessions/{session}/new-site", summary="Create a new site and move the session there (platform operators; TENANCY_NEW_SITES)", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\RequestBody(@OA\JsonContent(type="object")), @OA\Response(response=202, description="queued"), @OA\Response(response=403, description="not allowed"))
+ * @OA\Post(path="/api/admin/course-builder/sessions/{session}/publish", summary="Publish the applied course (409 while blocking items or unacknowledged warnings remain; body acknowledgedWarnings)", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="published"))
+ * @OA\Get(path="/api/admin/course-builder/sessions/{session}/usage", summary="AI calls of the session by task and model", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="usage"))
  */
 class CourseBuilderController extends Controller
 {
@@ -84,6 +97,8 @@ class CourseBuilderController extends Controller
         private readonly RunService $runs,
         private readonly VersionService $versions,
         private readonly BriefService $briefs,
+        private readonly PublishCheck $publishChecks,
+        private readonly NewSite $newSites,
         private readonly SourceIngestor $ingestor,
         private readonly BlueprintApplier $applier,
         private readonly EventLog $events,
@@ -171,7 +186,15 @@ class CourseBuilderController extends Controller
         $f = preg_match('/^frg_[a-z2-7]{12}$/', $fragment) ? Fragment::query()->find($fragment) : null;
         $source = $f?->source;
         if ($f === null || $source === null) {
-            throw new NotFoundHttpException('Fragment not found.');
+            // a fragment the source no longer has: the archive keeps what the course was written from
+            $old = preg_match('/^frg_[a-z2-7]{12}$/', $fragment) ? app(FragmentArchive::class)->find($fragment) : null;
+            if ($old === null) {
+                throw new NotFoundHttpException('Fragment not found.');
+            }
+            $this->sessionFor($request, $old['sessionId']);
+            unset($old['sessionId']);
+
+            return self::ok($old + ['removed' => true]);
         }
         $this->sessionFor($request, $source->session_id);
 
@@ -193,8 +216,21 @@ class CourseBuilderController extends Controller
     public function updateBrief(Request $request, string $session): JsonResponse
     {
         $s = $this->sessionFor($request, $session, 'update');
-        $brief = array_replace_recursive($this->briefs->current($s), (array) $request->input('brief', $request->except('brief')));
-        foreach (array_keys((array) $request->input('brief', $request->except('brief'))) as $field) {
+        $before = $this->briefs->current($s);
+        $patch = (array) $request->input('brief', $request->except('brief'));
+        try {
+            // price, theme and site are replaced as a whole (a merge would keep a stale amount)
+            foreach (['pricing' => 'pricing', 'theme' => 'theme', 'site' => 'site'] as $field => $normalise) {
+                if (array_key_exists($field, $patch)) {
+                    $patch[$field] = BriefService::$normalise($patch[$field]);
+                    unset($before[$field]);
+                }
+            }
+        } catch (InvalidArgumentException $e) {
+            return self::fail($e->getMessage(), 422);
+        }
+        $brief = array_replace_recursive($before, $patch);
+        foreach (array_keys($patch) as $field) {
             if ($field !== 'decidedBy') {
                 $brief['decidedBy'][$field] = 'author';
             }
@@ -206,8 +242,12 @@ class CourseBuilderController extends Controller
         }
         $s->brief = $brief;
         $s->brief_version++;
-        $stale = in_array($s->status, [Session::OUTLINE_REVIEW, Session::GENERATING, Session::APPLY_REVIEW, Session::APPLIED], true);
-        $s->putState('briefStale', $stale);
+        // only fields that shape the writing make stages stale: not price, theme or site
+        $changesContent = PromptContext::contentBrief($before) !== PromptContext::contentBrief($brief);
+        $stale = $changesContent && in_array($s->status, [Session::OUTLINE_REVIEW, Session::GENERATING, Session::APPLY_REVIEW, Session::APPLIED], true);
+        if ($stale) {
+            $s->putState('briefStale', true);
+        }
         $s->save();
         $this->events->stateDelta($s, null, [['op' => 'replace', 'path' => '/brief', 'value' => $brief], ['op' => 'replace', 'path' => '/briefRows', 'value' => BriefService::rows($brief)]]);
         if ($stale) {
@@ -228,6 +268,15 @@ class CourseBuilderController extends Controller
         }
 
         return self::ok(['runId' => $result['run']?->id, 'accepted' => $result['accepted'], 'message' => $result['message'] ?? null], 202);
+    }
+
+    public function runStatus(Request $request, string $run): JsonResponse
+    {
+        $r = (preg_match('/^[0-9a-z]{26}$/i', $run) ? Run::query()->with('steps')->find(strtolower($run)) : null)
+            ?? throw new NotFoundHttpException('Run not found.');
+        $this->sessionFor($request, $r->session_id, 'view');
+
+        return self::ok(RunStatus::from($r));
     }
 
     public function cancel(Request $request, string $run): JsonResponse
@@ -251,7 +300,7 @@ class CourseBuilderController extends Controller
         if ($st->status !== 'failed') {
             return self::fail('Only a failed step can be retried.', 409);
         }
-        app(GenerationService::class)->retry($st);
+        $this->runs->retryStep($st);
 
         return self::ok(['stepId' => $st->id, 'sessionId' => $s->id], 202);
     }
@@ -392,9 +441,31 @@ class CourseBuilderController extends Controller
             return self::fail('There is no generated content to apply yet.', 409);
         }
         $this->surfaces->apply($s, null, $v, $this->applier->plan($s, $v->document), 'applying');
-        $run = $this->runs->start($s, 'apply', ['versionId' => $v->id], (int) $request->user()->getKey());
+        $run = $this->runs->start($s, 'apply', ['versionId' => $v->id, 'overwrite' => $request->boolean('overwrite')], (int) $request->user()->getKey());
 
         return self::ok(['runId' => $run->id], 202);
+    }
+
+    public function newSite(Request $request, string $session): JsonResponse
+    {
+        $s = $this->sessionFor($request, $session, 'update');
+        if (!$this->newSites->available($request->user())) {
+            return self::fail('Creating a new site is not available to you.', 403);
+        }
+        $data = $request->validate(['slug' => ['nullable', 'string'], 'name' => ['nullable', 'string', 'max:120']]);
+        $slug = (string) ($data['slug'] ?? ($s->brief['site']['slug'] ?? ''));
+        try {
+            $this->newSites->start($s, $slug, $data['name'] ?? null);
+        } catch (InvalidArgumentException $e) {
+            return self::fail($e->getMessage(), 422);
+        }
+
+        return self::ok($this->newSites->status($s->refresh()), 202);
+    }
+
+    public function publishCheck(Request $request, string $session): JsonResponse
+    {
+        return self::ok($this->publishChecks->run($this->sessionFor($request, $session, 'update')));
     }
 
     public function publish(Request $request, string $session): JsonResponse
@@ -402,6 +473,13 @@ class CourseBuilderController extends Controller
         $s = $this->sessionFor($request, $session, 'update');
         if ($s->course_id === null) {
             return self::fail('Apply the course before publishing it.', 409);
+        }
+        $check = $this->publishChecks->run($s);
+        if ($check['blocking'] !== []) {
+            return response()->json(['success' => false, 'message' => $check['blocking'][0]['message'], 'data' => $check], 409);
+        }
+        if ($check['warnings'] !== [] && !$request->boolean('acknowledgedWarnings')) {
+            return response()->json(['success' => false, 'message' => 'Review the warnings and acknowledge them to publish.', 'data' => $check], 409);
         }
         $this->applier->publish($s, $request->user());
         $s->putState('published', true);

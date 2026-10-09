@@ -4,6 +4,12 @@
 
 rm inited
 
+# LiaScript player: baked into the images; in development the api folder is bind-mounted and the
+# build (not kept in git) is missing, so fetch it once (pinned version and SHA-256, never fatal)
+if [ ! -f packages/liascript/resources/player/build/index.html ]; then
+  sh packages/liascript/bin/fetch-player.sh || echo "warning: LiaScript player not fetched; run 'make liascript-player'"
+fi
+
 mkdir -p /etc/supervisor/custom.d 
 mkdir -p /etc/supervisor/conf.d 
 

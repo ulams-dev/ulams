@@ -2,7 +2,26 @@
 
 namespace Ulams\Auth;
 
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Routing\Events\RouteMatched;
+use Illuminate\Support\Facades\Event;
+use Laravel\Passport\Passport;
 use Ulams\Auth\Console\Commands\CreateAdminCommand;
+use Ulams\Auth\Console\Commands\ExportTokenScopesCommand;
+use Ulams\Auth\Console\Commands\PruneAgentAuditCommand;
+use Ulams\Auth\Console\Commands\PruneDeviceAuthorizationsCommand;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Ulams\Auth\Services\Contracts\DeviceAuthorizationServiceContract;
+use Ulams\Auth\Services\DeviceAuthorizationService;
+use Ulams\Auth\Http\Middleware\EnforceTokenScopes;
+use Ulams\Auth\Http\Middleware\RecordAgentAudit;
+use Ulams\Auth\Http\Middleware\StripTokenPrefix;
+use Ulams\Auth\Services\Contracts\PersonalAccessTokenServiceContract;
+use Ulams\Auth\Services\PersonalAccessTokenService;
+use Ulams\Auth\Support\TokenScopes;
 use Ulams\Auth\Providers\AuthServiceProvider;
 use Ulams\Auth\Providers\EventServiceProvider;
 use Ulams\Auth\Providers\SettingsServiceProvider;
@@ -38,6 +57,8 @@ class UlamsAuthServiceProvider extends ServiceProvider
         UserGroupServiceContract::class => UserGroupService::class,
         UserServiceContract::class => UserService::class,
         SocialAccountServiceContract::class => SocialAccountService::class,
+        PersonalAccessTokenServiceContract::class => PersonalAccessTokenService::class,
+        DeviceAuthorizationServiceContract::class => DeviceAuthorizationService::class,
     ];
 
     public const REPOSITORIES = [
@@ -71,6 +92,27 @@ class UlamsAuthServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
+        // scoped personal access tokens (ADR 0074): Passport only keeps scopes it knows
+        Passport::tokensCan(array_fill_keys(TokenScopes::passportScopes(), 'API token scope'));
+        $kernel = $this->app->make(Kernel::class);
+        if (method_exists($kernel, 'prependMiddleware')) {
+            $kernel->prependMiddleware(StripTokenPrefix::class);
+        }
+        // package routes are not in the `api` group: attach on match (audit wraps the scope check)
+        Event::listen(RouteMatched::class, fn (RouteMatched $e) => $e->route->middleware([RecordAgentAudit::class, EnforceTokenScopes::class]));
+        $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+            $schedule->command('ulams:auth:prune-agent-audit')->daily();
+            $schedule->command('ulams:auth:prune-device-authorizations')->hourly();
+        });
+        // device login: one bucket per endpoint. Unnamed `throttle:N,M` limiters on the same host and IP
+        // share one counter, so the CLI's 5 s polling would eat the `code` budget of every other login
+        // from the same address.
+        RateLimiter::for('ulams-device-code', fn (Request $r) => Limit::perMinute(10)->by('device-code:' . $r->ip()));
+        RateLimiter::for('ulams-device-token', fn (Request $r) => Limit::perMinute(60)->by('device-token:' . $r->ip()));
+        // device approval: 5 requests per minute per signed-in user (lookups and answers share the bucket)
+        RateLimiter::for('ulams-device-approve', fn (Request $r) => Limit::perMinute((int) config(self::CONFIG_KEY . '.device_approve_per_minute', 5))
+            ->by('device-approve:' . ($r->user('api')?->getAuthIdentifier() ?? $r->ip())));
+
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
@@ -82,7 +124,10 @@ class UlamsAuthServiceProvider extends ServiceProvider
             __DIR__ . '/config.php' => config_path(self::CONFIG_KEY . '.php'),
         ], self::CONFIG_KEY . '.config');
         $this->commands([
-            CreateAdminCommand::class
+            CreateAdminCommand::class,
+            ExportTokenScopesCommand::class,
+            PruneAgentAuditCommand::class,
+            PruneDeviceAuthorizationsCommand::class,
         ]);
     }
 }

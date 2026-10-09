@@ -15,4 +15,7 @@ interface SettingsServiceContract
     public function searchAndPaginate(array $search = [], ?int $per_page  = 15): LengthAwarePaginator|Collection;
 
     public function groups(): Collection;
+
+    /** Creates or updates one setting value (the theme step of the course builder uses it). */
+    public function put(string $group, string $key, string $value, string $type = 'text', bool $public = true): Model;
 }

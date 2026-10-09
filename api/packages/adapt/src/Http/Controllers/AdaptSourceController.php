@@ -21,6 +21,8 @@ use Ulams\Adapt\Services\AdaptSourceValidator;
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="source"))
  * @OA\Get(path="/api/admin/adapt/{id}/source", summary="JSON of the current or a given version", tags={"Admin Adapt"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="Adapt JSON"))
+ * @OA\Get(path="/api/admin/adapt/{id}/versions", summary="Version history (version, change note, author, date; no source)", tags={"Admin Adapt"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="versions, newest first"))
  * @OA\Post(path="/api/admin/adapt/{id}/versions", summary="Add a version", tags={"Admin Adapt"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=201, description="source"))
  * @OA\Post(path="/api/admin/adapt/{id}/build", summary="Build the current version into a SCORM package (queued)", tags={"Admin Adapt"}, security={{"passport": {}}},
@@ -80,6 +82,15 @@ class AdaptSourceController extends Controller
         abort_if($version === null, 404);
 
         return response()->json($version->source)->header('X-Adapt-Version', (string) $version->version);
+    }
+
+    public function versions(Request $request, int $id): JsonResponse
+    {
+        $this->guard($request);
+        $model = AdaptSource::query()->findOrFail($id);
+        $versions = $model->versions()->reorder('version', 'desc')->get(['version', 'change_note', 'author_id', 'created_at']);
+
+        return $this->ok($versions);
     }
 
     public function addVersion(Request $request, int $id): JsonResponse

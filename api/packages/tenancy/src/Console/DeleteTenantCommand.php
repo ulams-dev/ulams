@@ -5,8 +5,7 @@ namespace Ulams\Tenancy\Console;
 use Illuminate\Console\Command;
 use Throwable;
 use Ulams\Tenancy\Models\Tenant;
-use Ulams\Tenancy\Services\TenantProvisioner;
-use Ulams\Tenancy\Support\RedisKeyPurger;
+use Ulams\Tenancy\Services\TenantLifecycle;
 use Ulams\Tenancy\Support\TenantContext;
 
 class DeleteTenantCommand extends Command
@@ -15,7 +14,7 @@ class DeleteTenantCommand extends Command
 
     protected $description = 'Delete a tenant and all its data';
 
-    public function handle(TenantProvisioner $provisioner, RedisKeyPurger $redis): int
+    public function handle(TenantLifecycle $lifecycle): int
     {
         if (!TenantContext::isPlatform()) {
             $this->error('Run tenant commands on the platform, without --domain.');
@@ -36,15 +35,12 @@ class DeleteTenantCommand extends Command
         }
 
         try {
-            $provisioner->deprovision($tenant, fn (string $step) => $this->line("  <info>remove</info> {$step}"));
-            $this->line('  <info>remove</info> redis keys');
-            $redis->purge($tenant->redis_prefix);
+            $lifecycle->delete($tenant, fn (string $step) => $this->line("  <info>remove</info> {$step}" . ($step === 'redis' ? ' keys' : '')));
         } catch (Throwable $exception) {
             $this->error($exception->getMessage());
 
             return self::FAILURE;
         }
-        $tenant->delete();
         $this->info("Deleted tenant {$tenant->slug}.");
 
         return self::SUCCESS;

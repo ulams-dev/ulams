@@ -52,20 +52,76 @@ The H5P service re-reads the env files every `TENANT_RELOAD_CHECK_MS` (2 s).
 | Database | `api` | `DB_*`; `DB_ADMIN_*` for the role that creates tenant databases |
 | Redis protocol | `api`, `h5p` | `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`; prefixes are set per tenant |
 | Object storage | `api`, `h5p` | `FILESYSTEM_DRIVER=s3`, `AWS_*`; `TENANCY_S3_*` for bucket creation; `S3_*` on `h5p` |
-| Tenancy | `api` | `TENANCY_*` host patterns, `TENANCY_PLATFORM_HOSTS`, `TENANT_DEMO_PASSWORD` |
+| Tenancy | `api` | `TENANCY_*` host patterns, `TENANCY_PLATFORM_HOSTS`, `TENANCY_PLATFORM_API` (off by default), `TENANT_DEMO_PASSWORD` |
 | Content origin | `api` | `CONTENT_ORIGIN` (platform), `TENANCY_CONTENT_HOST` (tenants; `{slug}.content.<app domain>` for the same-site mode) |
 | Cookies and origins | `api`, `web` | `SESSION_COOKIE_PREFIX`, `TRUSTED_ORIGINS`, `ORIGIN_CHECK` (`api`); `ULAMS_COOKIE_SECURE`, `ULAMS_COOKIE_FALLBACK_PREFIX` (`web`) |
 | Services | `api`, `h5p`, `pdf` | `H5P_SERVICE_URL`, `H5P_INTERNAL_TOKEN`, `PDF_SERVICE_URL`, `PDF_INTERNAL_TOKEN` |
 | E-mail | `api` | `MAIL_*`, `MJML_API_URL` |
 | First admin | `api` | `INITIAL_USER_EMAIL`, `INITIAL_USER_PASSWORD` |
 | Uploads | `api` | `UPLOADS_*` size and archive limits, `UPLOADS_SCANNER` |
-| LTI | `api` | `LTI_*` (issuer defaults to `APP_URL`) |
+| LTI | `api` | `LTI_*` (issuer defaults to `APP_URL`; full list in [LTI](/admin/lti/#configuration)) |
 | Error tracking | `api`, `admin` | `SENTRY_LARAVEL_DSN` or `SENTRY_DSN`, `SENTRY_ENVIRONMENT`; `REACT_APP_SENTRYDSN` |
 | Process control | `api` | `DISABLE_PHP_FPM`, `DISABLE_HORIZON`, `DISABLE_QUEUE`, `DISABLE_SCHEDULER`, `DISABLE_DB_MIGRATE`, `DISABLE_DB_SEED`, `DISABLE_TENANT_SYNC` |
+| Content Security Policy | `web`, `api`, proxy | `CSP_ENFORCE`, `ULAMS_CONTENT_ORIGIN`, `ULAMS_STORAGE_ORIGINS` (`web`); `CSP_REPORT_RETENTION_DAYS` (`api`); `ULAMS_CSP_HEADER` (admin policy in the proxy). See [Security headers](/operators/security-headers/) |
 | Front routing | `web`, `admin` | `ULAMS_TENANT_HOSTS`, `ULAMS_PLATFORM_HOSTS`, `REACT_APP_TENANT_API_HOST_PATTERN` |
+| Platform landing | `web` | `ULAMS_LANDING_STATUS` (`final` or `actual`, see [below](#the-platform-landing-switch)) |
+| Queues and workers | `api` (container) | `BUILDER_QUEUE_RETRY_AFTER` (`api`, default 2400); `QUEUE_CONNECTION`, `WORKERS_CHECK_INTERVAL`, `WORKERS_MAX_TIME`, `COURSE_BUILDER_QUEUE(_CONNECTION)`, `LONG_JOB_*` (worker script). See [Queues and the scheduler](/operators/queues-and-scheduler/) |
+| Scheduler | `api` | `TENANCY_SCHEDULER_LOCK` (default `true`: one replica runs each minute, ADR 0068). See [Queues and the scheduler](/operators/queues-and-scheduler/#the-scheduler-and-its-minute-lock) |
+| Demo mode | tenant env file | `DEMO_MODE` (default `false`), `DEMO_ADMIN_EMAIL`, `DEMO_STUDENT_EMAIL`, `DEMO_TUTOR_EMAIL`, `DEMO_ADMIN_URL`, `DEMO_RESET_SCHEDULE` (`true`), `DEMO_RESET_CRON` (`0 * * * *`), `DEMO_RESET_WIPE_FILES` (`false`), `DEMO_RESET_STUDENTS` (`5`), `ULAMS_DEMO_EXPERIENCE`. Set `DEMO_MODE` with `ulams:tenant:create <slug> --demo=on`, never on the platform. See [Demo mode](/admin/demo-mode/) |
+| cmi5 | `api` | `CMI5_DISK` (follows `SCORM_DISK`), `CMI5_SESSION_MINUTES` (default 120). See [cmi5 packages](/creators/cmi5/) |
+| Adapt sources | `api` | `ADAPT_SOURCE_ENABLED` (default `false`), `ADAPT_BUILDER_URL` (`http://adapt-builder:8080`), `ADAPT_BUILDER_TOKEN`, `ADAPT_BUILDER_TIMEOUT` (300), `ADAPT_MAX_SOURCE_KB` (4096). See [Adapt](/creators/adapt/#configuration) |
 
 Do not set tenant-only values on the platform: `TENANT_SLUG`, `REDIS_PREFIX`, `CACHE_PREFIX`,
 `HORIZON_PREFIX`, `FRONTEND_URL`, `ADMIN_URL` and `DEMO_MODE` are written into each tenant's file.
+
+## Platform env, tenant env and overrides
+
+A tenant's `.env.<host>` file is generated, never edited by hand. Its values come from three layers,
+lowest first:
+
+1. **The platform environment** (`LARAVEL_*` written to the platform `.env`, or plain variables).
+   `ulams:tenant:create` and `ulams:tenant:sync-env` start every tenant file from a copy of the
+   platform `.env`.
+2. **Inherited settings.** For the keys listed in `ulams_tenancy.inherited_env`, the platform's
+   non-empty value is written into every tenant file: `ANTHROPIC_API_KEY` (the legacy spelling
+   `ANTROPHIC_API_KEY` is accepted), `ANTHROPIC_BASE_URL`, `AI_DRIVER`, `AI_MODEL_DEFAULT`,
+   `AI_MODEL_LIGHT`, `AI_MODEL_PREMIUM` and their `_LABEL` variants. A changed platform value reaches
+   the tenants on the next `ulams:tenant:sync-env`, which also runs when the `api` container starts.
+3. **Per-tenant overrides**, which win over layer 2 and over the platform. They are stored encrypted
+   in the `tenants` table and written into the tenant file on every sync:
+
+   ```bash
+   php artisan ulams:tenant:set-env coffee --set=AI_DRIVER=disabled --set=AI_MODEL_DEFAULT=<model>
+   php artisan ulams:tenant:set-env coffee --unset=AI_DRIVER   # inherit the platform value again
+   ```
+
+   Only the inheritable keys are accepted; any other key is refused, so the command cannot change a
+   database, bucket or key setting. It prints key names, never values. Run it on the platform, without
+   `--domain`. The same is available through the [platform API](/operators/platform-api/) and
+   `ulams tenants set-env`. See [Tenants](/admin/tenants/#ai-settings-per-tenant-ulamstenantset-env)
+   and [ADR 0063](/decisions/0063-tenants-inherit-platform-ai-settings/).
+
+The tenant's own values (database, bucket, keys, URLs, Redis prefix, `DEMO_MODE`, `CONTENT_ORIGIN`)
+come from the `tenants` table and replace the platform's.
+
+## The platform landing switch
+
+`ULAMS_LANDING_STATUS` is read by the `web` container when it starts. It only changes what the
+platform landing (the product page on the platform host, not a tenant's site) shows for roadmap
+items:
+
+| Value | Effect |
+|---|---|
+| `final` (default; any other or empty value counts as `final`) | Every roadmap item reads as delivered: no Coming or Preview badges, no roadmap captions, and ulams's own Coming and Partial cells in the comparison table read Yes |
+| `actual` | The honest status kept in the data files; competitor cells never change |
+
+<Aside type="caution">
+  The default is `final`, and the [production example](/operators/self-hosting/) does not set the
+  variable. Before a public launch set `ULAMS_LANDING_STATUS=actual` on the `web` service, or confirm
+  that everything the landing shows has shipped. Set it in the `environment:` of the `web` container
+  in Compose, or in `front/web/.env` for a local run. See
+  [Reference frontend](/developers/reference-frontend/#configuration).
+</Aside>
 
 ## Repository documents
 

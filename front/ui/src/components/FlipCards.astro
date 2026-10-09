@@ -1,0 +1,93 @@
+---
+interface Props {
+  id?: string;
+  title?: string;
+  intro?: string;
+  cards: Array<{ front: string; back: string }>;
+}
+const { id = "cards", title, intro, cards } = Astro.props;
+---
+
+<section class="u-flip" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+  {intro && <p class="u-lead">{intro}</p>}
+  <!-- Without JavaScript both sides stay visible; the element turns the backs into reveal-on-demand. -->
+  <ulams-flip-cards>
+    <ul class="u-flip__list" role="list">
+      {
+        cards.map((card, i) => (
+          <li class="u-flip__card">
+            <p class="u-flip__front" id={`${id}-front-${i}`}>
+              {card.front}
+            </p>
+            <p class="u-flip__back" id={`${id}-back-${i}`} data-back>
+              <span class="u-visually-hidden">Answer: </span>
+              {card.back}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </ulams-flip-cards>
+</section>
+
+<script>
+  import "../elements/flip-cards.ts";
+</script>
+
+<style>
+  .u-flip {
+    display: grid;
+    gap: 12px;
+  }
+  .u-flip__list {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    gap: 14px;
+  }
+  .u-flip__card {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 16px 18px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-card-bg);
+  }
+  .u-flip__front {
+    font-weight: 700;
+  }
+  .u-flip__back {
+    color: var(--ulams-color-muted);
+  }
+  .u-flip__toggle {
+    justify-self: start;
+    min-height: 44px;
+    padding: 8px 16px;
+    border: 1px solid var(--ulams-color-primary);
+    border-radius: var(--ulams-radius-button);
+    background: transparent;
+    color: var(--ulams-color-primary-on-light, var(--ulams-color-primary));
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .u-flip__toggle:focus-visible {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .u-flip__back:not([hidden]) {
+      animation: u-flip-in 0.25s ease-out;
+    }
+  }
+  @keyframes u-flip-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
+</style>

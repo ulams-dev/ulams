@@ -1,0 +1,717 @@
+{
+    "contract": 1,
+    "areas": [
+        "courses",
+        "users",
+        "enrolments",
+        "settings",
+        "events",
+        "certificates",
+        "commerce",
+        "reports",
+        "lti",
+        "builder",
+        "living-course",
+        "learner",
+        "tokens",
+        "platform"
+    ],
+    "scopes": [
+        "courses:read",
+        "courses:write",
+        "users:read",
+        "users:write",
+        "enrolments:read",
+        "enrolments:write",
+        "settings:read",
+        "settings:write",
+        "events:read",
+        "events:write",
+        "certificates:read",
+        "certificates:write",
+        "commerce:read",
+        "commerce:write",
+        "reports:read",
+        "reports:write",
+        "lti:read",
+        "lti:write",
+        "builder:read",
+        "builder:write",
+        "living-course:read",
+        "living-course:write",
+        "learner:read",
+        "learner:write",
+        "tokens:read",
+        "tokens:write",
+        "platform:read",
+        "platform:write",
+        "*"
+    ],
+    "presets": {
+        "read-only": [
+            "courses:read",
+            "users:read",
+            "enrolments:read",
+            "settings:read",
+            "events:read",
+            "certificates:read",
+            "commerce:read",
+            "reports:read",
+            "lti:read",
+            "builder:read",
+            "living-course:read",
+            "learner:read",
+            "tokens:read"
+        ],
+        "author": [
+            "courses:write",
+            "builder:write",
+            "living-course:write",
+            "reports:read"
+        ],
+        "admin": [
+            "*"
+        ],
+        "learner": [
+            "learner:write"
+        ],
+        "ci": [
+            "courses:write",
+            "builder:write",
+            "living-course:write"
+        ]
+    },
+    "routes": [
+        {
+            "pattern": "api/auth/refresh",
+            "area": "none"
+        },
+        {
+            "pattern": "api/refresh-token",
+            "area": "none"
+        },
+        {
+            "pattern": "api/admin/auth/*",
+            "area": "none"
+        },
+        {
+            "pattern": "api/admin/g-token/*",
+            "area": "none"
+        },
+        {
+            "pattern": "api/profile/me-auth",
+            "area": "none"
+        },
+        {
+            "pattern": "api/profile/password",
+            "area": "none"
+        },
+        {
+            "pattern": "api/profile/delete*",
+            "area": "none"
+        },
+        {
+            "pattern": "api/profile",
+            "area": "none"
+        },
+        {
+            "pattern": "api/auth/device/requests*",
+            "area": "none"
+        },
+        {
+            "pattern": "oauth/*",
+            "area": "none"
+        },
+        {
+            "pattern": "api/meta",
+            "area": "public"
+        },
+        {
+            "pattern": "api/auth/tokens/current",
+            "area": "public"
+        },
+        {
+            "pattern": "api/auth/logout",
+            "area": "public"
+        },
+        {
+            "pattern": "api/profile/me",
+            "area": "public",
+            "options": {
+                "methods": [
+                    "GET",
+                    "HEAD"
+                ]
+            }
+        },
+        {
+            "pattern": "api/auth/device*",
+            "area": "public"
+        },
+        {
+            "pattern": "api/auth/login",
+            "area": "public"
+        },
+        {
+            "pattern": "api/auth/register*",
+            "area": "public"
+        },
+        {
+            "pattern": "api/auth/password/*",
+            "area": "public"
+        },
+        {
+            "pattern": "api/auth/social/*",
+            "area": "public"
+        },
+        {
+            "pattern": "api/auth/email/*",
+            "area": "public"
+        },
+        {
+            "pattern": "api/health*",
+            "area": "public"
+        },
+        {
+            "pattern": "api/core/health-check",
+            "area": "public"
+        },
+        {
+            "pattern": "api/name",
+            "area": "public"
+        },
+        {
+            "pattern": "api/documentation",
+            "area": "public"
+        },
+        {
+            "pattern": "api/oauth2-callback",
+            "area": "public"
+        },
+        {
+            "pattern": "api/lti/jwks",
+            "area": "public"
+        },
+        {
+            "pattern": "api/csp-report",
+            "area": "public"
+        },
+        {
+            "pattern": "api/jitsi/*",
+            "area": "public"
+        },
+        {
+            "pattern": "api/payments-gateways/*",
+            "area": "public"
+        },
+        {
+            "pattern": "api/demo/*",
+            "area": "public"
+        },
+        {
+            "pattern": ".well-known/*",
+            "area": "public"
+        },
+        {
+            "pattern": "docs*",
+            "area": "public"
+        },
+        {
+            "pattern": "api/auth/tokens*",
+            "area": "tokens"
+        },
+        {
+            "pattern": "api/admin/tokens*",
+            "area": "tokens"
+        },
+        {
+            "pattern": "api/admin/agent-audit*",
+            "area": "tokens"
+        },
+        {
+            "pattern": "api/admin/course-builder*",
+            "area": "builder"
+        },
+        {
+            "pattern": "api/admin/living-course*",
+            "area": "living-course"
+        },
+        {
+            "pattern": "api/living-course/courses/*/notices",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/living-course/courses/*/freshness",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/living-course/notices/*/dismiss",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/living-course/webhooks/*",
+            "area": "public"
+        },
+        {
+            "pattern": "api/admin/courses/*/access*",
+            "area": "enrolments"
+        },
+        {
+            "pattern": "api/admin/courses/users/assignable",
+            "area": "enrolments"
+        },
+        {
+            "pattern": "api/admin/dictionaries/*/access",
+            "area": "enrolments"
+        },
+        {
+            "pattern": "api/admin/course-access-enquiries*",
+            "area": "enrolments"
+        },
+        {
+            "pattern": "api/admin/consultation-access-enquiries*",
+            "area": "enrolments"
+        },
+        {
+            "pattern": "api/admin/tutors/*",
+            "area": "enrolments"
+        },
+        {
+            "pattern": "api/admin/courses/*/clone",
+            "area": "courses",
+            "options": {
+                "level": "write"
+            }
+        },
+        {
+            "pattern": "api/admin/courses*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/lessons*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/topics*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/categories*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/tags*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/file/*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/scorm*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/cmi5*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/liascript*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/h5p*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/adapt*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/gift-*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/question",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/question/*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/question-answers*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/quiz-*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/topic-project-solutions*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/user-submissions*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/video*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/youtube*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/dictionaries*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/dictionary-words*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/bookmarks*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/images/*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/users*",
+            "area": "users"
+        },
+        {
+            "pattern": "api/admin/user-groups*",
+            "area": "users"
+        },
+        {
+            "pattern": "api/admin/roles*",
+            "area": "users"
+        },
+        {
+            "pattern": "api/admin/permissions*",
+            "area": "users"
+        },
+        {
+            "pattern": "api/admin/csv/*",
+            "area": "users"
+        },
+        {
+            "pattern": "api/admin/assign-without-account*",
+            "area": "users"
+        },
+        {
+            "pattern": "api/admin/settings*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/admin/config*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/admin/csp-reports*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/admin/pages*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/admin/templates*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/admin/translations*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/admin/notifications*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/admin/bulk-notifications*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/admin/model-fields*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/admin/mattermost*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/admin/mailerlite*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/admin/webinars*",
+            "area": "events"
+        },
+        {
+            "pattern": "api/admin/stationary-events*",
+            "area": "events"
+        },
+        {
+            "pattern": "api/admin/consultations*",
+            "area": "events"
+        },
+        {
+            "pattern": "api/admin/events*",
+            "area": "events"
+        },
+        {
+            "pattern": "api/admin/jitsi*",
+            "area": "events"
+        },
+        {
+            "pattern": "api/admin/pencil-spaces*",
+            "area": "events"
+        },
+        {
+            "pattern": "api/admin/pdfs*",
+            "area": "certificates"
+        },
+        {
+            "pattern": "api/admin/orders*",
+            "area": "commerce"
+        },
+        {
+            "pattern": "api/admin/products*",
+            "area": "commerce"
+        },
+        {
+            "pattern": "api/admin/productables*",
+            "area": "commerce"
+        },
+        {
+            "pattern": "api/admin/vouchers*",
+            "area": "commerce"
+        },
+        {
+            "pattern": "api/admin/payments*",
+            "area": "commerce"
+        },
+        {
+            "pattern": "api/admin/invoices*",
+            "area": "commerce"
+        },
+        {
+            "pattern": "api/admin/reports*",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/admin/stats*",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/admin/questionnaire*",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/admin/tasks*",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/admin/lti*",
+            "area": "lti"
+        },
+        {
+            "pattern": "api/platform*",
+            "area": "platform"
+        },
+        {
+            "pattern": "api/consultations/generate-jitsi/*",
+            "area": "learner",
+            "options": {
+                "level": "write"
+            }
+        },
+        {
+            "pattern": "api/consultations/approve-term/*",
+            "area": "learner",
+            "options": {
+                "level": "write"
+            }
+        },
+        {
+            "pattern": "api/webinars/generate-jitsi/*",
+            "area": "learner",
+            "options": {
+                "level": "write"
+            }
+        },
+        {
+            "pattern": "api/webinars/start-live-stream/*",
+            "area": "learner",
+            "options": {
+                "level": "write"
+            }
+        },
+        {
+            "pattern": "api/webinars/stop-live-stream/*",
+            "area": "learner",
+            "options": {
+                "level": "write"
+            }
+        },
+        {
+            "pattern": "api/mattermost/*",
+            "area": "learner",
+            "options": {
+                "level": "write"
+            }
+        },
+        {
+            "pattern": "api/profile*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/courses*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/cart*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/bookmarks*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/notifications*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/orders*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/order-invoices/*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/payments*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/product*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/quiz-*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/tasks*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/topic-project-solutions*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/webinars*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/stationary-events*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/consultations*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/consultation-access-enquiries*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/course-access-enquiries*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/dictionaries*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/categories*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/tags*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/pages*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/settings*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/translations*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/config",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/model-fields",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/events",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/tutors*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/content/*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/pdfs*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/questionnaire/*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/scorm/*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/cmi5/*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/liascript/*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/lti/*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/pencil-spaces/*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/core/packages",
+            "area": "learner"
+        },
+        {
+            "pattern": "broadcasting/auth",
+            "area": "learner"
+        }
+    ]
+}

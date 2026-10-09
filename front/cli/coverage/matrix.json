@@ -1,0 +1,3309 @@
+{
+ "summary": "504/547 covered, 43 excluded, 0 missing, 5 routes missing from the spec",
+ "operations": [
+  {
+   "key": "GET /api/admin/adapt",
+   "summary": "List Adapt JSON sources",
+   "command": "adapt.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/adapt",
+   "summary": "Create from Adapt JSON (course, config, contentObjects, articles, blocks, components)",
+   "command": "adapt.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/adapt/{id}",
+   "summary": "Show a source and its build status",
+   "command": "adapt.get",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/adapt/{id}",
+   "summary": "Delete a source (the built SCORM package stays)",
+   "command": "adapt.delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/adapt/{id}/build",
+   "summary": "Build the current version into a SCORM package (queued)",
+   "command": "adapt.build",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/adapt/{id}/source",
+   "summary": "JSON of the current or a given version",
+   "command": "adapt.source",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/adapt/{id}/versions",
+   "summary": "Version history (version, change note, author, date; no source)",
+   "command": "adapt.versions-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/adapt/{id}/versions",
+   "summary": "Add a version",
+   "command": "adapt.versions-add",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/agent-audit",
+   "summary": "Agent audit log",
+   "command": "tokens.agent-audit",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/bookmarks",
+   "summary": "Get a listing of the bookmarks",
+   "command": "bookmarks.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/bookmarks",
+   "summary": "Store a newly created bookmark",
+   "command": "bookmarks.create",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/bookmarks/{id}",
+   "summary": "Update bookmark",
+   "command": "bookmarks.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/bookmarks/{id}",
+   "summary": "Remove the specified bookmark",
+   "command": "bookmarks.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/bulk-notifications",
+   "summary": "Get a listing of the bulk notifications",
+   "command": "notifications-bulk.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/bulk-notifications/send",
+   "summary": "Store a newly notification",
+   "command": "notifications-bulk.send",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/bulk-notifications/send/multicast",
+   "summary": "Store a newly notification",
+   "command": "notifications-bulk.send-multicast",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/categories",
+   "summary": "Category create",
+   "command": "categories.create",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/categories/sort",
+   "summary": "",
+   "command": "categories.sort",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/categories/{id}",
+   "summary": "",
+   "command": "categories.get",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/categories/{id}",
+   "summary": "Update category",
+   "command": "categories.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/categories/{id}",
+   "summary": "Destroy category",
+   "command": "categories.delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/cmi5",
+   "summary": "Convert ZIP Cmi5 Package into Ulams LMS Cmi5 storage",
+   "command": "cmi5.upload",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/cmi5/",
+   "summary": "Get a listing of the cmi5",
+   "command": "cmi5.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/cmi5/statements",
+   "summary": "Lists available statements",
+   "command": "cmi5.statements",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/cmi5/{id}",
+   "summary": "Delete cmi5 package by id",
+   "command": "cmi5.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/config",
+   "summary": "Get admin config",
+   "command": "config.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/config",
+   "summary": "Set config for registered config keys",
+   "command": "config.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/consultation-access-enquiries",
+   "summary": "Get all consultation access enquiries",
+   "command": "consultations.access-enquiries-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/consultation-access-enquiries/approve/{proposedTermId}",
+   "summary": "Approve the specified consultation access enquiry by proposed term id",
+   "command": "consultations.access-enquiries-approve",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/consultation-access-enquiries/disapprove/{id}",
+   "summary": "Disapprove the specified consultation access enquiry by id",
+   "command": "consultations.access-enquiries-disapprove",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/consultations",
+   "summary": "",
+   "command": "consultations.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/consultations",
+   "summary": "Store a newly created Consultation in storage",
+   "command": "consultations.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/consultations/users/assignable",
+   "summary": "",
+   "command": "consultations.users-assignable",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/consultations/{id}",
+   "summary": "Display the specified Consultation",
+   "command": "consultations.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/consultations/{id}",
+   "summary": "Update the specified Consultation in storage",
+   "command": "consultations.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/consultations/{id}",
+   "summary": "Remove the specified Consultation from storage",
+   "command": "consultations.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/consultations/{id}/schedule",
+   "summary": "",
+   "command": "consultations.schedule",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-access-enquiries",
+   "summary": "Get all course access enquiries",
+   "command": "access.enquiries-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-access-enquiries/approve/{id}",
+   "summary": "Approve the specified Course Access Enquiry",
+   "command": "access.enquiries-approve",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/course-access-enquiries/{id}",
+   "summary": "Remove the specified Course Access Enquiry",
+   "command": "access.enquiries-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/fragments/{fragment}",
+   "summary": "One source fragment (citation popover)",
+   "command": "builder.fragments.get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/runs/{run}",
+   "summary": "Status of one run (poll it for --wait)",
+   "command": "builder.runs.get",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/runs/{run}/cancel",
+   "summary": "Cancel a run",
+   "command": "builder.runs.cancel",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/runs/{run}/steps/{step}/retry",
+   "summary": "Retry one failed generation step",
+   "command": "builder.runs.retry-step",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions",
+   "summary": "My builder sessions",
+   "command": "builder.sessions.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions",
+   "summary": "Start a builder session",
+   "command": "builder.sessions.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions/{session}",
+   "summary": "A session's state snapshot",
+   "command": "builder.sessions.get",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/course-builder/sessions/{session}",
+   "summary": "Delete a session (an applied course is kept)",
+   "command": "builder.sessions.delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/apply",
+   "summary": "Approve the apply of the current version",
+   "command": "builder.apply",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions/{session}/brief",
+   "summary": "Course Brief",
+   "command": "builder.brief.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/course-builder/sessions/{session}/brief",
+   "summary": "Edit the Course Brief",
+   "command": "builder.brief.set",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions/{session}/events",
+   "summary": "AG-UI event stream (SSE)",
+   "command": "builder.events",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/publish",
+   "summary": "Publish the applied course",
+   "command": "builder.publish",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/redo",
+   "summary": "Redo",
+   "command": "builder.redo",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/runs",
+   "summary": "Start a run from a chat message or a UI action (AG-UI RunAgentInput)",
+   "command": "builder.chat",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/sources",
+   "summary": "Upload a source (MD, PDF, DOCX); ingestion and the interview start by themselves",
+   "command": "builder.sources.add",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions/{session}/sources/{source}",
+   "summary": "A source with its section tree",
+   "command": "builder.sources.get",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/undo",
+   "summary": "Undo the last content change",
+   "command": "builder.undo",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions/{session}/usage",
+   "summary": "AI calls of the session by task and model",
+   "command": "builder.usage",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions/{session}/versions",
+   "summary": "Blueprint version history",
+   "command": "builder.chat",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/versions/{version}",
+   "summary": "A blueprint version with fragment labels",
+   "command": "builder.elements.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/versions/{version}/approve",
+   "summary": "Approve a proposal (outline or patch)",
+   "command": "builder.outline.approve",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/versions/{version}/diff",
+   "summary": "Element-aware diff against another version (default: its parent)",
+   "command": "builder.chat",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/versions/{version}/reject",
+   "summary": "Reject a proposal",
+   "command": "builder.outline.request-changes",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/versions/{version}/restore",
+   "summary": "Restore an old version as a new one",
+   "command": "builder.versions.restore",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/courses",
+   "summary": "Get a listing of the Courses.",
+   "command": "courses.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/courses",
+   "summary": "Store a newly created Course in storage",
+   "command": "courses.create",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/courses/sort",
+   "summary": "Sorts Lessons or Topics",
+   "command": "courses.sort",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/courses/users/assignable",
+   "summary": "",
+   "command": "courses.users-assignable",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/courses/zip/import",
+   "summary": "",
+   "command": "courses.import",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/courses/{id}",
+   "summary": "Update the specified Course in storage",
+   "command": "courses.publish",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/courses/{id}",
+   "summary": "Remove the specified Course from storage",
+   "command": "courses.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/courses/{id}/access",
+   "summary": "Get list of users and groups with access to the course",
+   "command": "access.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/courses/{id}/access/add",
+   "summary": "Add users and groups with access to the course",
+   "command": "access.grant",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/courses/{id}/access/remove",
+   "summary": "Remove users and groups with access to the course",
+   "command": "access.revoke",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/courses/{id}/access/set",
+   "summary": "Set users and groups with access to the course",
+   "command": "access.set",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/courses/{id}/clone",
+   "summary": "",
+   "command": "courses.clone",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/courses/{id}/export",
+   "summary": "",
+   "command": "courses.export",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/csp-reports",
+   "summary": "List the aggregated CSP violation reports",
+   "command": "csp-reports.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/csv/groups",
+   "summary": "",
+   "command": "csv.groups",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/csv/groups/group_id",
+   "summary": "",
+   "command": "csv.groups-group-id",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/csv/users",
+   "summary": "",
+   "command": "csv.users-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/csv/users",
+   "summary": "",
+   "command": "csv.users-add",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/dictionaries",
+   "summary": "Get a listing of the Dictionaries",
+   "command": "dictionaries.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/dictionaries",
+   "summary": "Store a newly created dictionary in storage",
+   "command": "dictionaries.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/dictionaries/{id}",
+   "summary": "Display the specified Dictionary",
+   "command": "dictionaries.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/dictionaries/{id}",
+   "summary": "Update the specified Dictionary in storage",
+   "command": "dictionaries.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/dictionaries/{id}",
+   "summary": "Remove the specified Dictionary from storage",
+   "command": "dictionaries.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/dictionaries/{id}/access",
+   "summary": "Get list of users with access to the dictionary",
+   "command": "dictionaries.access-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/dictionaries/{id}/access",
+   "summary": "Add users with access to the dictionary",
+   "command": "dictionaries.access-add",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/dictionary-words",
+   "summary": "Get a listing of the Dictionary Word",
+   "command": "dictionary-words.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/dictionary-words",
+   "summary": "Store a newly created dictionary word in storage",
+   "command": "dictionary-words.create",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/dictionary-words/import",
+   "summary": "Import dictionary words from file",
+   "command": "dictionary-words.import",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/dictionary-words/{id}",
+   "summary": "Display the specified Dictionary Word",
+   "command": "dictionary-words.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/dictionary-words/{id}",
+   "summary": "Update the specified Dictionary Word in storage",
+   "command": "dictionary-words.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/dictionary-words/{id}",
+   "summary": "Remove the specified Dictionary Word from storage",
+   "command": "dictionary-words.delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/events/trigger-manually/{id}",
+   "summary": "Manually triggered event for users",
+   "command": "events.trigger-manually",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/file/delete",
+   "summary": "Delete given file",
+   "command": "file.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/file/find",
+   "summary": "Lists files found by name",
+   "command": "file.find",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/file/list",
+   "summary": "Lists files prefixed by given directory name",
+   "command": "file.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/file/move",
+   "summary": "Move the file from one path to another",
+   "command": "file.move",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/file/upload",
+   "summary": "Upload files using multipart form-data",
+   "command": "file.upload",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/gift-questions",
+   "summary": "Store a newly Gift Question",
+   "command": "questions.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/gift-questions/export",
+   "summary": "Export Gift Questions",
+   "command": "questions.export",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/gift-questions/import",
+   "summary": "Import Gift Questions",
+   "command": "questions.import",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/gift-questions/sort",
+   "summary": "Sort Gift Questions",
+   "command": "questions.sort",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/gift-questions/{id}",
+   "summary": "Update Gift Question",
+   "command": "questions.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/gift-questions/{id}",
+   "summary": "Remove the specified Gift Question",
+   "command": "questions.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/gift-quizes",
+   "summary": "List gift quizes of a course (for report filter select)",
+   "command": "quizzes.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/gift-quizes/{id}",
+   "summary": "Get gift quiz by id",
+   "command": "quizzes.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/gift-quizes/{id}",
+   "summary": "Update gift quiz by id",
+   "command": "quizzes.update",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/h5p/contents",
+   "summary": "List H5P contents with the number of topics using each",
+   "command": "h5p.contents",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/h5p/unused",
+   "summary": "Delete H5P contents that no topic uses",
+   "command": "h5p.unused",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/lessons",
+   "summary": "Get a listing of the Lessons.",
+   "command": "lessons.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/lessons",
+   "summary": "Store a newly created Lesson in storage",
+   "command": "lessons.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/lessons/{id}",
+   "summary": "Display the specified Lesson",
+   "command": "lessons.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/lessons/{id}",
+   "summary": "Update the specified Lesson in storage",
+   "command": "lessons.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/lessons/{id}",
+   "summary": "Remove the specified Lesson from storage",
+   "command": "lessons.delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/lessons/{id}/clone",
+   "summary": "Clone Lesson",
+   "command": "lessons.clone",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/liascript",
+   "summary": "List LiaScript sources",
+   "command": "liascript.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/liascript",
+   "summary": "Create from Markdown, an .md file or a .zip (Markdown + assets)",
+   "command": "liascript.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/liascript/{id}",
+   "summary": "Show a LiaScript source",
+   "command": "liascript.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/liascript/{id}",
+   "summary": "Rename a LiaScript source",
+   "command": "liascript.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/liascript/{id}",
+   "summary": "Delete a LiaScript source with all versions and assets",
+   "command": "liascript.delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/liascript/{id}/preview",
+   "summary": "Live preview of unsaved Markdown on the tenant content origin",
+   "command": "liascript.preview",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/liascript/{id}/source",
+   "summary": "Markdown of the current or a given version",
+   "command": "liascript.source",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/liascript/{id}/versions",
+   "summary": "List versions",
+   "command": "liascript.versions-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/liascript/{id}/versions",
+   "summary": "Add a version from Markdown or an upload",
+   "command": "liascript.versions-add",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/liascript/{id}/versions/{version}/restore",
+   "summary": "Restore a version (adds a new version with its content)",
+   "command": "liascript.versions-restore",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/audit/export",
+   "summary": "Tenant-wide audit export (admins)",
+   "command": "living.audit.export-all",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/audit/verify",
+   "summary": "Tenant-wide chain verification (admins)",
+   "command": "living.audit.verify-all",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/living-course/connections/{connection}",
+   "summary": "Change a connection: schedule, automatic analysis, learner notice settings, paused",
+   "command": "living.connections.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/living-course/connections/{connection}",
+   "summary": "Disconnect a source (revisions and the audit trail are kept)",
+   "command": "living.connections.delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/connections/{connection}/check",
+   "summary": "Check the source now",
+   "command": "living.connections.check",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/connections/{connection}/webhook-secret",
+   "summary": "Rotate the webhook secret (returned once)",
+   "command": "living.connections.webhook-secret",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/connectors",
+   "summary": "The source connectors this installation offers, with their settings schema",
+   "command": "living.connectors.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/proposals/{proposal}",
+   "summary": "A proposal with its items grouped by lesson, citations and source changes",
+   "command": "living.proposals.get",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/accept-all",
+   "summary": "Accept every undecided update, no-change and removal item",
+   "command": "living.proposals.accept-all",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/analyse",
+   "summary": "Start or resume the AI analysis (confirmEstimate when above the automatic threshold)",
+   "command": "living.proposals.analyse",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/apply",
+   "summary": "Apply the accepted items as a new course version (409 with conflicting items or admin edits)",
+   "command": "living.proposals.apply",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/accept",
+   "summary": "Accept one item",
+   "command": "living.proposals.accept",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/regenerate",
+   "summary": "Ask for another version of one element ({comment}); one call, at most three per item",
+   "command": "living.proposals.regenerate",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/reject",
+   "summary": "Reject one item (keep the earlier version of the element)",
+   "command": "living.proposals.reject",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/reset",
+   "summary": "Back to undecided",
+   "command": "living.proposals.reset",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/living-course/proposals/{proposal}/learner-note",
+   "summary": "The text learners see for updated lessons (plain text, up to 500 characters)",
+   "command": "living.proposals.learner-note",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/reanalyse",
+   "summary": "Replace the proposal by a new one from the newest source revision",
+   "command": "living.proposals.reanalyse",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/reject",
+   "summary": "Reject the whole proposal and acknowledge the source revision",
+   "command": "living.proposals.reject-all",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/revisions/{revision}",
+   "summary": "One revision",
+   "command": "living.revisions.get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/revisions/{revision}/changes",
+   "summary": "Fragment changes of a revision against the synced revision it was compared with (or ?against=<revision id>)",
+   "command": "living.revisions.changes",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/sessions/{session}/audit",
+   "summary": "Audit entries of a session (filters: action, actorType, from, to, source)",
+   "command": "living.audit.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/sessions/{session}/audit/export",
+   "summary": "Export the audit entries of a session as CSV or JSON",
+   "command": "living.audit.export",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/sessions/{session}/audit/verify",
+   "summary": "Verify the hash chain of the audit trail",
+   "command": "living.audit.verify",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/sessions/{session}/proposals",
+   "summary": "Update proposals of a session, newest first",
+   "command": "living.proposals.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/sessions/{session}/sources",
+   "summary": "Sources of a session with connection, sync state and revisions",
+   "command": "living.sources.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/sessions/{session}/sources/connect",
+   "summary": "Add a source through a connector (Git repository, web pages, plugins); validates and fetches revision 1",
+   "command": "living.sources.connect",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/sessions/{session}/staleness",
+   "summary": "Per-element staleness and the course summary",
+   "command": "living.staleness",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/living-course/sources/{source}/revisions",
+   "summary": "Revisions of a source, newest first",
+   "command": "living.revisions.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/sources/{source}/revisions",
+   "summary": "Upload a new version of a source (MD, PDF or DOCX): creates a revision and its fragment diff",
+   "command": "living.revisions.upload",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/lti/endpoints",
+   "summary": "Our LTI endpoints and issuer, to register us elsewhere",
+   "command": "lti.endpoints",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/lti/platforms",
+   "summary": "List platforms that may launch us",
+   "command": "lti.platforms-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/lti/platforms",
+   "summary": "Register a platform",
+   "command": "lti.platforms-add",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/lti/platforms/{platform}",
+   "summary": "Show a platform",
+   "command": "lti.platforms-get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/lti/platforms/{platform}",
+   "summary": "Update a platform",
+   "command": "lti.platforms-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/lti/platforms/{platform}",
+   "summary": "Delete a platform",
+   "command": "lti.platforms-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/lti/tools",
+   "summary": "List registered tools",
+   "command": "lti.tools-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/lti/tools",
+   "summary": "Register a tool (we issue client_id and deployment_id)",
+   "command": "lti.tools-add",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/lti/tools/{tool}",
+   "summary": "Show a tool",
+   "command": "lti.tools-get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/lti/tools/{tool}",
+   "summary": "Update a tool",
+   "command": "lti.tools-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/lti/tools/{tool}",
+   "summary": "Delete a tool without topics",
+   "command": "lti.tools-delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/lti/tools/{tool}/deep-link",
+   "summary": "Start deep linking into a lesson",
+   "command": "lti.tools-deep-link",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/model-fields",
+   "summary": "Lists available Model extended fields",
+   "command": "model-fields.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/model-fields",
+   "summary": "Create or update metafile",
+   "command": "model-fields.create",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/model-fields",
+   "summary": "delete metafile and related values from model",
+   "command": "model-fields.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/notifications",
+   "summary": "Get list of events for which notifications exist",
+   "command": "notifications.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/notifications/all",
+   "summary": "Get notifications",
+   "command": "notifications.all",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/notifications/events",
+   "summary": "Get list of events for which notifications exist",
+   "command": "notifications.events",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/notifications/read-all",
+   "summary": "Mark all notifications as read",
+   "command": "notifications.read-all",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/orders",
+   "summary": "",
+   "command": "orders.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/orders/export",
+   "summary": "",
+   "command": "orders.export",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/orders/{id}",
+   "summary": "Display the specified Order",
+   "command": "orders.get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/pages",
+   "summary": "Lists available pages",
+   "command": "pages.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/pages",
+   "summary": "Create a new page identified by id",
+   "command": "pages.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/pages/{id}",
+   "summary": "Read a page identified by a given id identifier",
+   "command": "pages.get",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/pages/{id}",
+   "summary": "Update an existing page identified by id",
+   "command": "pages.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/pages/{id}",
+   "summary": "Delete a page identified by a id",
+   "command": "pages.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/payments",
+   "summary": "Search payments",
+   "command": "payments.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/payments/export",
+   "summary": "Export payments to file",
+   "command": "payments.export",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/payments/{id}",
+   "summary": "Display the specified Payment",
+   "command": "payments.get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/pdfs",
+   "summary": "Display the specified generated PDF",
+   "command": "pdfs.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/pdfs/preview",
+   "summary": "Preview a pdfme template with sample data",
+   "command": "pdfs.preview",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/productables/",
+   "summary": "",
+   "command": "productables.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/productables/attach",
+   "summary": "",
+   "command": "productables.attach",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/productables/detach",
+   "summary": "",
+   "command": "productables.detach",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/productables/product",
+   "summary": "",
+   "command": "productables.product",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/productables/registered",
+   "summary": "",
+   "command": "productables.registered",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/products",
+   "summary": "",
+   "command": "products.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/products/",
+   "summary": "",
+   "command": "products.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/products/{id}",
+   "summary": "",
+   "command": "products.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/products/{id}",
+   "summary": "",
+   "command": "products.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/products/{id}",
+   "summary": "",
+   "command": "products.delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/products/{id}/attach",
+   "summary": "",
+   "command": "products.attach",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/products/{id}/detach",
+   "summary": "",
+   "command": "products.detach",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/products/{id}/trigger-event-manually/{idTemplate}",
+   "summary": "Manually triggered event for users of the product",
+   "command": "products.trigger-event-manually",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/question",
+   "summary": "Lists available questions",
+   "command": "questionnaire-questions.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/question",
+   "summary": "Create a new question identified by id",
+   "command": "questionnaire-questions.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/question-answers/{id}",
+   "summary": "Lists questions answers for questionaire",
+   "command": "question-answers.get",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/question-answers/{id}/change-visibility",
+   "summary": "Change answer visibility on front",
+   "command": "question-answers.change-visibility",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/question/{id}",
+   "summary": "Read a question identified by a given id identifier",
+   "command": "questionnaire-questions.get",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/question/{id}",
+   "summary": "Update an existing question identified by id",
+   "command": "questionnaire-questions.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/question/{id}",
+   "summary": "Delete a question identified by a id",
+   "command": "questionnaire-questions.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/questionnaire",
+   "summary": "Lists available questionnaires",
+   "command": "questionnaire.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/questionnaire",
+   "summary": "Create a new questionnaire",
+   "command": "questionnaire.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/questionnaire-model",
+   "summary": "Lists available questionnaire model type",
+   "command": "questionnaire-model.list",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/questionnaire/assign/{model_type_title}/{model_id}/{id}/{target_group}",
+   "summary": "assign a questionnaire model",
+   "command": "questionnaire.assign",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/questionnaire/report/{id}/{model_type_id}/{model_id}",
+   "summary": "Read a questionnaire report identified by a given id identifier and model type and model identified",
+   "command": "questionnaire.report",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/questionnaire/unassign/{model_type_title}/{model_id}/{id}/{target_group}",
+   "summary": "unassign a questionnaire model",
+   "command": "questionnaire.unassign-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/questionnaire/{id}",
+   "summary": "Read a questionnaire identified by a given id identifier",
+   "command": "questionnaire.get",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/questionnaire/{id}",
+   "summary": "Update an existing questionnaire identified by id",
+   "command": "questionnaire.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/questionnaire/{id}",
+   "summary": "Delete a questionnaire identified by a id",
+   "command": "questionnaire.delete",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/quiz-answers/{id}",
+   "summary": "Update answer",
+   "command": "quiz-answers.update",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/quiz-attempts",
+   "summary": "Get all quiz attempts",
+   "command": "quiz-attempts.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/quiz-attempts/export",
+   "summary": "Export course quiz results to an XLSX or XLS file",
+   "command": "quiz-attempts.export",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/quiz-attempts/{id}",
+   "summary": "Get quiz attempt by id",
+   "command": "quiz-attempts.get",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/quiz-attempts/{id}/feedback",
+   "summary": "Add, edit or remove tutor feedback for a quiz attempt",
+   "command": "quiz-attempts.feedback",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/reports/available-for-user",
+   "summary": "Get list of available metrics for logged user",
+   "command": "reports.available-for-user",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/reports/metrics",
+   "summary": "Get list of available metrics",
+   "command": "reports.metrics",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/reports/report",
+   "summary": "Get list of available metrics",
+   "command": "reports.report",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/roles",
+   "summary": "Lists available roles",
+   "command": "roles.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/roles",
+   "summary": "Find or Create a Role",
+   "command": "roles.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/roles/{name}",
+   "summary": "Read a role and returns list of all permissions",
+   "command": "roles.get",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/roles/{name}",
+   "summary": "Update an existing Role identified by name by list or new permissions",
+   "command": "roles.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/roles/{name}",
+   "summary": "Delete a Role identified by a name",
+   "command": "roles.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/scorm/",
+   "summary": "Read a page identified by a given slug identifier",
+   "command": "scorm.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/scorm/parse",
+   "summary": "Parse ZIP Scorm to see if it's valid",
+   "command": "scorm.parse",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/scorm/scos",
+   "summary": "Get all scos",
+   "command": "scorm.scos",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/scorm/upload",
+   "summary": "Convert ZIP Scorm Package into Ulams LMS Scorm storage",
+   "command": "scorm.upload",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/scorm/{scorm_id}",
+   "summary": "Delete scorm package by id",
+   "command": "scorm.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/settings",
+   "summary": "",
+   "command": "settings.get",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/settings",
+   "summary": "Settings create",
+   "command": "settings.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/settings/groups",
+   "summary": "",
+   "command": "settings.groups",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/settings/{id}",
+   "summary": "",
+   "command": "settings.get-by-id",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/settings/{id}",
+   "summary": "Update setting",
+   "command": "settings.set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/settings/{id}",
+   "summary": "Destroy setting",
+   "command": "settings.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/stationary-events",
+   "summary": "Get a listing of the Stationary events",
+   "command": "events.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/stationary-events",
+   "summary": "Store a newly created Stationary event in storage",
+   "command": "events.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/stationary-events/{id}",
+   "summary": "Display the specified Stationary Event",
+   "command": "events.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/stationary-events/{id}",
+   "summary": "Update the specified Stationary Event in storage",
+   "command": "events.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/stationary-events/{id}",
+   "summary": "Remove the specified Stationary Event from storage",
+   "command": "events.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/stats/available",
+   "summary": "Get list of available stats for models",
+   "command": "stats.available",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/stats/cart",
+   "summary": "Calculate stats for Cart",
+   "command": "stats.cart",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/stats/course/{course_id}",
+   "summary": "Calculate stats for Course",
+   "command": "stats.course",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/stats/course/{course_id}/export",
+   "summary": "Export stat for Course",
+   "command": "stats.course-export",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/stats/date-range",
+   "summary": "Calculate stats for Course",
+   "command": "stats.date-range",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/stats/topic/{topic_id}",
+   "summary": "Calculate stats for Topic",
+   "command": "stats.topic",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/stats/topic/{topic_id}/export",
+   "summary": "Export stat for Topic",
+   "command": "stats.topic-export",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/tags",
+   "summary": "",
+   "command": "tags.create",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/tags",
+   "summary": "Destroy Tags",
+   "command": "tags.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/tags/unique",
+   "summary": "",
+   "command": "tags.unique",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/tags/{tag}",
+   "summary": "",
+   "command": "tags.get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/tasks",
+   "summary": "Get a listing of the tasks",
+   "command": "tasks.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/tasks",
+   "summary": "Store a newly created task",
+   "command": "tasks.create",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/tasks/complete/{id}",
+   "summary": "Complete task",
+   "command": "tasks.complete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/tasks/incomplete/{id}",
+   "summary": "Incomplete task",
+   "command": "tasks.incomplete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/tasks/notes",
+   "summary": "Store a newly created task note",
+   "command": "tasks.notes",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/tasks/notes/{id}",
+   "summary": "Update task note",
+   "command": "tasks.notes-update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/tasks/notes/{id}",
+   "summary": "Remove the specified task notes",
+   "command": "tasks.notes-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/tasks/{id}",
+   "summary": "Task details",
+   "command": "tasks.get",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/tasks/{id}",
+   "summary": "Update the specified task",
+   "command": "tasks.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/tasks/{id}",
+   "summary": "Remove the specified task",
+   "command": "tasks.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/templates",
+   "summary": "Lists available templates",
+   "command": "templates.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/templates",
+   "summary": "Create a new template identified by id",
+   "command": "templates.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/templates/assignable",
+   "summary": "Get Templates that can be assigned to model",
+   "command": "templates.assignable",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/templates/assigned",
+   "summary": "Get Template assigned to the model",
+   "command": "templates.assigned",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/templates/variables",
+   "summary": "Dictionary list of available template variables",
+   "command": "templates.variables",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/templates/{id}",
+   "summary": "Read a template identified by a given id identifier",
+   "command": "templates.get",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/templates/{id}",
+   "summary": "Update an existing template identified by id",
+   "command": "templates.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/templates/{id}",
+   "summary": "Delete a template identified by a id",
+   "command": "templates.delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/templates/{id}/assign",
+   "summary": "Assign template to model (of class assignable to the Variable Set)",
+   "command": "templates.assign",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/templates/{id}/preview",
+   "summary": "Read a template identified by a given id identifier",
+   "command": "templates.preview",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/templates/{id}/unassign",
+   "summary": "Remove template assignment to model",
+   "command": "templates.unassign",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/tokens",
+   "summary": "Every user's scoped API tokens",
+   "command": "tokens.list-all",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/tokens/{id}",
+   "summary": "Revoke any scoped token",
+   "command": "tokens.revoke-any",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/tokens/{id}/audit",
+   "summary": "Audit log of one token",
+   "command": "tokens.audit",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/topic-project-solutions",
+   "summary": "Get a listing of the project solutions",
+   "command": "topic-project-solutions.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/topic-project-solutions/{id}",
+   "summary": "Get a single project solution",
+   "command": "topic-project-solutions.get",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/topic-project-solutions/{id}",
+   "summary": "Remove the specified Project Solution",
+   "command": "topic-project-solutions.delete",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/topic-project-solutions/{id}/feedback",
+   "summary": "Add, edit or remove tutor feedback for a project solution",
+   "command": "topic-project-solutions.feedback",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/topic-project-solutions/{id}/grade",
+   "summary": "Grade the specified Project Solution",
+   "command": "topic-project-solutions.grade",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/topics",
+   "summary": "Get a listing of the Topics.",
+   "command": "topics.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/topics",
+   "summary": "Store a newly created Topic in storage",
+   "command": "topics.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/topics/types",
+   "summary": "Get a listing of the Availabe Topic Content Types Classes.",
+   "command": "topics.types",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/topics/{id}",
+   "summary": "Display the specified Topic",
+   "command": "topics.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/topics/{id}",
+   "summary": "Update the specified Topic in storage",
+   "command": "topics.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/topics/{id}",
+   "summary": "Remove the specified Topic from storage",
+   "command": "topics.delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/topics/{id}/clone",
+   "summary": "Clone topic",
+   "command": "topics.clone",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/topics/{topic_id}/resources/",
+   "summary": "Get list of resources",
+   "command": "topics.resources-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/topics/{topic_id}/resources/",
+   "summary": "Post new resource",
+   "command": "topics.resources-add",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/topics/{topic_id}/resources/{resource_id}",
+   "summary": "Rename resource",
+   "command": "topics.resources-update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/topics/{topic_id}/resources/{resource_id}",
+   "summary": "Delete resource",
+   "command": "topics.resources-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/translations",
+   "summary": "Get a list of translations stored in the database",
+   "command": "translations.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/translations",
+   "summary": "Store a newly created translation",
+   "command": "translations.create",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/translations/retrieve",
+   "summary": "Retrieve translation",
+   "command": "translations.retrieve",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/translations/{id}",
+   "summary": "Display the specified translation",
+   "command": "translations.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/translations/{id}",
+   "summary": "Update the specified translation",
+   "command": "translations.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/translations/{id}",
+   "summary": "Remove the specified translation",
+   "command": "translations.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/user-groups/",
+   "summary": "List groups",
+   "command": "groups.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/user-groups/",
+   "summary": "Create group",
+   "command": "groups.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/user-groups/tree/",
+   "summary": "List groups in a tree",
+   "command": "groups.tree",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/user-groups/users",
+   "summary": "List of groups with users",
+   "command": "groups.users",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/user-groups/{id}",
+   "summary": "Get group details",
+   "command": "groups.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/user-groups/{id}",
+   "summary": "Update group",
+   "command": "groups.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/user-groups/{id}",
+   "summary": "Delete group",
+   "command": "groups.delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/user-groups/{id}/members",
+   "summary": "Add user to group",
+   "command": "groups.members",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/user-groups/{id}/members/{user_id}",
+   "summary": "Add user to group",
+   "command": "groups.members-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/user-submissions",
+   "summary": "Lists available user submissions",
+   "command": "user-submissions.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/user-submissions",
+   "summary": "Create a new user submission identified by id",
+   "command": "user-submissions.create",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/user-submissions/{id}",
+   "summary": "Update an existing user submission identified by id",
+   "command": "user-submissions.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/user-submissions/{id}",
+   "summary": "Delete user submission identified by a id",
+   "command": "user-submissions.delete",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/user/{id}",
+   "summary": "Update/Replace user data (will overwrite unset fields with nulls)",
+   "command": "users.update",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/user/{id}",
+   "summary": "Partial Update User (will only change sent fields)",
+   "command": "users.patch",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/users",
+   "summary": "Get users",
+   "command": "users.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/users",
+   "summary": "Create user",
+   "command": "users.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/users/{id}",
+   "summary": "Get user",
+   "command": "users.get",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/users/{id}",
+   "summary": "Delete user",
+   "command": "users.delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/users/{id}/avatar",
+   "summary": "",
+   "command": "users.avatar-add",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/users/{id}/avatar",
+   "summary": "",
+   "command": "users.avatar-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/users/{id}/interests",
+   "summary": "Get user interests",
+   "command": "users.interests-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/users/{id}/interests",
+   "summary": "Add single user interest",
+   "command": "users.interests-add",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/users/{id}/interests",
+   "summary": "Set user interests",
+   "command": "users.interests-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/users/{id}/interests/{interest_id}",
+   "summary": "Add single user interest",
+   "command": "users.interests-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/users/{id}/settings",
+   "summary": "Get user settings",
+   "command": "users.settings-list",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/users/{id}/settings",
+   "summary": "Set user setting (removes settings not sent)",
+   "command": "users.settings-set",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/users/{id}/settings",
+   "summary": "Update user setting(s) without changing other settings",
+   "command": "users.settings-update",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/video/states",
+   "summary": "List of processed videos",
+   "command": "video.states",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/vouchers",
+   "summary": "Get a listing of the Vouchers.",
+   "command": "vouchers.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/vouchers",
+   "summary": "Create Voucher",
+   "command": "vouchers.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/vouchers/{id}",
+   "summary": "Read Voucher",
+   "command": "vouchers.get",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/vouchers/{id}",
+   "summary": "Update Voucher",
+   "command": "vouchers.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/vouchers/{id}",
+   "summary": "Delete Voucher",
+   "command": "vouchers.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/webinars",
+   "summary": "",
+   "command": "webinars.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/webinars",
+   "summary": "Store a newly created Webinar in storage",
+   "command": "webinars.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/webinars/users/assignable",
+   "summary": "",
+   "command": "webinars.users-assignable",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/webinars/{id}",
+   "summary": "Display the specified Webinar",
+   "command": "webinars.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/webinars/{id}",
+   "summary": "Update the specified Webinar in storage",
+   "command": "webinars.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/webinars/{id}",
+   "summary": "Remove the specified Webinar from storage",
+   "command": "webinars.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/webinars/{id}/users",
+   "summary": "",
+   "command": "webinars.users",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/auth/device/code",
+   "summary": "Start a device login (RFC 8628)",
+   "command": "login",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/auth/device/requests/{user_code}",
+   "summary": "Details of a pending device request (for the approval page)",
+   "command": "my.auth-device-requests",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/auth/device/requests/{user_code}/approve",
+   "summary": "Approve a device request",
+   "command": "my.auth-device-requests-approve",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/auth/device/requests/{user_code}/deny",
+   "summary": "Deny a device request",
+   "command": "my.auth-device-requests-deny",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/auth/device/token",
+   "summary": "Poll for the token of a device login (RFC 8628)",
+   "command": "login",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/auth/email/resend",
+   "summary": "Resend email verification",
+   "command": "public.auth-email-resend",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/auth/email/verify/{id}/{hash}",
+   "summary": "Email verification",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/auth/impersonate",
+   "summary": "",
+   "command": "public.auth-impersonate",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/auth/login",
+   "summary": "",
+   "command": "login",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/auth/logout",
+   "summary": "",
+   "command": "my.auth-logout",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/auth/password/forgot",
+   "summary": "Password forget call",
+   "command": "public.auth-password-forgot",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/auth/password/reset",
+   "summary": "Password reset",
+   "command": "public.auth-password-reset",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/auth/refresh",
+   "summary": "Refresh access token",
+   "command": "my.auth-refresh",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/auth/register",
+   "summary": "",
+   "command": "public.auth-register",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/auth/registerable-groups/",
+   "summary": "List registerable groups",
+   "command": "public.auth-registerable-groups",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/auth/social/complete/{token}",
+   "summary": "Complete the missing data from socials",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/auth/social/{provider}",
+   "summary": "Redirect to social login",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/auth/social/{provider}/callback",
+   "summary": "Redirect after sucessfull login",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/auth/tokens",
+   "summary": "My scoped API tokens",
+   "command": "tokens.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/auth/tokens",
+   "summary": "Create a scoped API token (the secret is returned once)",
+   "command": "tokens.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/auth/tokens/current",
+   "summary": "The token this request is authenticated with",
+   "command": "tokens.current",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/auth/tokens/{id}",
+   "summary": "Revoke one of my scoped tokens",
+   "command": "logout",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/bookmarks",
+   "summary": "Get a listing of the bookmarks",
+   "command": "my.bookmarks-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/bookmarks",
+   "summary": "Store a newly created bookmark",
+   "command": "my.bookmarks-create",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/bookmarks/{id}",
+   "summary": "Update bookmark",
+   "command": "my.bookmarks-update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/bookmarks/{id}",
+   "summary": "Remove the specified bookmark",
+   "command": "my.bookmarks-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/cart",
+   "summary": "",
+   "command": "my.cart-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/cart/add",
+   "summary": "",
+   "command": "my.cart-add",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/cart/missing",
+   "summary": "",
+   "command": "my.cart-missing",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/cart/pay",
+   "summary": "",
+   "command": "my.cart-pay",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/cart/products",
+   "summary": "",
+   "command": "my.cart-products",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/cart/products/{id}",
+   "summary": "",
+   "command": "my.cart-products-delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/cart/voucher",
+   "summary": "Add Voucher Code to your Cart",
+   "command": "my.cart-voucher-add",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/cart/voucher",
+   "summary": "Remove Voucher from your Cart",
+   "command": "my.cart-voucher-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/categories",
+   "summary": "",
+   "command": "public.categories-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/categories/tree",
+   "summary": "",
+   "command": "public.categories-tree",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/cmi5/courses/{id}",
+   "summary": "Get Course cmi5 launch params",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "POST /api/cmi5/fetch",
+   "summary": "cmi5 token fetch",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "GET /api/cmi5/player/{cmi5AuId}",
+   "summary": "Launch a cmi5 AU",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "GET /api/config",
+   "summary": "Get a listing of public config values.",
+   "command": "public.config-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/consultation-access-enquiries",
+   "summary": "Get my consultation access enquiries",
+   "command": "my.consultation-access-enquiries-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/consultation-access-enquiries",
+   "summary": "Store a newly Consultation Access Enqiury",
+   "command": "my.consultation-access-enquiries-create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/consultation-access-enquiries/{id}",
+   "summary": "Get my consultation access enquiry by id",
+   "command": "my.consultation-access-enquiries-get",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/consultation-access-enquiries/{id}",
+   "summary": "Update Consultation Access Enqiury",
+   "command": "my.consultation-access-enquiries-update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/consultation-access-enquiries/{id}",
+   "summary": "Remove the specified Consultation Access Enquiry",
+   "command": "my.consultation-access-enquiries-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/consultation-access-enquiries/{id}/join",
+   "summary": "Get url to consultation by enquiry id",
+   "command": "my.consultation-access-enquiries-join",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/consultations",
+   "summary": "Get a listing of the Consultations.",
+   "command": "public.consultations-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/consultations/approve-term/{consultationTermId}",
+   "summary": "",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/consultations/change-term/{consultationTermId}",
+   "summary": "Change term in consultation with tutor",
+   "command": "my.consultations-change-term",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/consultations/finish-term/{consultationTermId}",
+   "summary": "Finish consultation term",
+   "command": "my.consultations-finish-term",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/consultations/generate-jitsi/{consultationTermId}",
+   "summary": "",
+   "command": "my.consultations-generate-jitsi",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/consultations/me",
+   "summary": "Get a listing of the Consultations bought by user.",
+   "command": "my.consultations-me",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/consultations/my-schedule",
+   "summary": "",
+   "command": "my.consultations-my-schedule",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/consultations/proposed-terms/{orderItemId}",
+   "summary": "",
+   "command": "my.consultations-proposed-terms",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/consultations/reject-term/{consultationTermId}",
+   "summary": "",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/consultations/report-term/{orderItemId}",
+   "summary": "Report term with bought consultation",
+   "command": "my.consultations-report-term",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/consultations/{id}",
+   "summary": "Display the specified Consultation",
+   "command": "public.consultations-get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/core/packages",
+   "summary": "List installed ulams packages",
+   "command": "my.core-packages",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/course-access-enquiries",
+   "summary": "Get my course access enquiries",
+   "command": "my.course-access-enquiries-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/course-access-enquiries",
+   "summary": "Store a newly Course Access Enqiury",
+   "command": "my.course-access-enquiries-create",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/course-access-enquiries/{id}",
+   "summary": "Remove the specified Course Access Enquiry",
+   "command": "my.course-access-enquiries-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/courses",
+   "summary": "Get a listing of the Courses.",
+   "command": "public.courses-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/courses/authored",
+   "summary": "Get a listing of the authored Courses.",
+   "command": "my.courses-authored",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/courses/my",
+   "summary": "Get my course list IDs",
+   "command": "my.courses-my",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/courses/progress",
+   "summary": "",
+   "command": "my.courses-progress",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/courses/progress/paginated",
+   "summary": "",
+   "command": "my.courses-progress-paginated",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/courses/progress/{course_id}",
+   "summary": "",
+   "command": "my.courses-progress-list",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/courses/progress/{course_id}",
+   "summary": "",
+   "command": "my.courses-progress-update",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/courses/progress/{topic_id}/h5p",
+   "summary": "",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "PUT /api/courses/progress/{topic_id}/ping",
+   "summary": "",
+   "command": "my.courses-progress-ping",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/courses/{id}",
+   "summary": "Display the specified Course",
+   "command": "public.courses-get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/courses/{id}/preview/{topic_id}",
+   "summary": "Preview the specified Course Topic is set to preview",
+   "command": "public.courses-preview",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/courses/{id}/program",
+   "summary": "Display the specified Course program/curriculum/syllabus. No token required when course is free",
+   "command": "my.courses-program",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/courses/{id}/scorm",
+   "summary": "Display the specified Course scorm View to be embeede with iframe",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/csp-report",
+   "summary": "Collect a Content Security Policy violation report",
+   "command": "public.csp-report-create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/demo",
+   "summary": "Demo mode status and the accounts used for the automatic login",
+   "command": "public.demo-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/demo/login",
+   "summary": "Log in as the demo student or admin without a password",
+   "command": "login",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/dictionaries/access",
+   "summary": "Display my dictionaries",
+   "command": "my.dictionaries-access",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/dictionaries/{slug}/words",
+   "summary": "Get a listing of the Dictionary Word",
+   "command": "public.dictionaries-words-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/dictionaries/{slug}/words/categories",
+   "summary": "Get the categories used in the dictionary for a given slug",
+   "command": "public.dictionaries-words-categories",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/dictionaries/{slug}/words/{id}",
+   "summary": "Display the specified Dictionary Word",
+   "command": "public.dictionaries-words-get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/events",
+   "summary": "Get a listing of the Stationary events and Webinars",
+   "command": "public.events-feed",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/health-check",
+   "summary": "Check health of the application",
+   "command": "",
+   "status": "excluded: internal"
+  },
+  {
+   "key": "POST /api/liascript/launches/{topic}",
+   "summary": "Start a LiaScript topic on the tenant content origin",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "POST /api/liascript/progress/{topic}",
+   "summary": "Progress reported by the content-origin player",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "GET /api/living-course/courses/{course}/freshness",
+   "summary": "Topics with an update under review (only when the course shows it)",
+   "command": "my.living-course-courses-freshness",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/living-course/courses/{course}/notices",
+   "summary": "The caller's open update notices for a course",
+   "command": "my.living-course-courses-notices",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/living-course/notices/{notice}/dismiss",
+   "summary": "Mark a notice as reviewed",
+   "command": "my.living-course-notices-dismiss",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/living-course/webhooks/{webhookId}",
+   "summary": "Receive a push webhook of a connected repository",
+   "command": "public.living-course-webhooks",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/lti/frame-origins",
+   "summary": "Origins of the enabled external tools of this tenant",
+   "command": "public.lti-frame-origins",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/lti/jwks",
+   "summary": "Public key set of this tenant (LTI platform and tool side)",
+   "command": "",
+   "status": "excluded: internal"
+  },
+  {
+   "key": "POST /api/lti/launches/{topic}",
+   "summary": "Start an LTI launch of an external-tool topic",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/lti/platform/ags/{course}/lineitems",
+   "summary": "AGS: list line items",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/lti/platform/ags/{course}/lineitems",
+   "summary": "AGS: create a line item",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/lti/platform/ags/{course}/lineitems/{lineItem}",
+   "summary": "AGS: read a line item",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "PUT /api/lti/platform/ags/{course}/lineitems/{lineItem}",
+   "summary": "AGS: update a line item",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "DELETE /api/lti/platform/ags/{course}/lineitems/{lineItem}",
+   "summary": "AGS: delete a line item",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/lti/platform/ags/{course}/lineitems/{lineItem}/results",
+   "summary": "AGS: latest result per learner",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/lti/platform/ags/{course}/lineitems/{lineItem}/scores",
+   "summary": "AGS: post a score",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/lti/platform/authorize",
+   "summary": "OIDC authentication endpoint (the tool redirects the browser here)",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/lti/platform/deep-links",
+   "summary": "Deep-linking return URL (the tool posts the author's selection here)",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/lti/platform/nrps/{course}",
+   "summary": "NRPS: members of a course (membership container)",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/lti/platform/token",
+   "summary": "AGS access token (OAuth 2 client credentials with a JWT client assertion)",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/lti/tool/deep-link",
+   "summary": "Return the courses picked in the deep-linking picker to the platform",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/lti/tool/exchange",
+   "summary": "Exchange the one-time launch code for an API token",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/lti/tool/launch",
+   "summary": "LTI launch (resource link or deep-linking request) from a registered platform",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/lti/tool/login",
+   "summary": "OIDC login initiation from a registered platform (also POST)",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/mattermost/generate_credentials",
+   "summary": "Generates user (creates one if not exists) credentials and sets a new random password",
+   "command": "my.mattermost-generate-credentials",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/mattermost/me",
+   "summary": "List all of the available mattermost teams and channels for a user",
+   "command": "my.mattermost-me",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/mattermost/reset_password",
+   "summary": "Sends request for mattermost to send reset password link with email",
+   "command": "my.mattermost-reset-password",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/meta",
+   "summary": "Capabilities of this host",
+   "command": "meta",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/model-fields",
+   "summary": "Lists available Model extended fields",
+   "command": "public.model-fields-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/notifications/tokens",
+   "summary": "Store a newly notification device token",
+   "command": "my.notifications-tokens",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/notifications/{notification}/read",
+   "summary": "Mark notification as read",
+   "command": "my.notifications-read",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/order-invoices/{id}",
+   "summary": "Get invoice identified by a given id identifier of order",
+   "command": "my.order-invoices-get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/orders",
+   "summary": "",
+   "command": "my.orders-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/orders/{id}",
+   "summary": "Display the specified Order",
+   "command": "my.orders-get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/pages",
+   "summary": "Lists available pages",
+   "command": "public.pages-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/pages/{slug}",
+   "summary": "Read a page identified by a given slug identifier",
+   "command": "public.pages-get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/payments",
+   "summary": "Search payments",
+   "command": "my.payments-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/payments/{id}",
+   "summary": "Display the specified Payment",
+   "command": "my.payments-get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/pdfs",
+   "summary": "Get generated PDFs",
+   "command": "my.pdfs-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/pdfs/fonts",
+   "summary": "Fonts available in PDF templates",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "GET /api/pdfs/fonts/{file}",
+   "summary": "Font file used in PDF templates",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "GET /api/pdfs/generate/{id}",
+   "summary": "Download a generated PDF (certificate)",
+   "command": "my.pdfs-generate",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/pdfs/{id}",
+   "summary": "Display the specified generated PDF",
+   "command": "my.pdfs-get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/platform/operations",
+   "summary": "The latest tenant operations",
+   "command": "tenants.operations.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/platform/operations/{id}",
+   "summary": "Status and steps of a tenant operation (poll it)",
+   "command": "tenants.operations.get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/platform/tenants",
+   "summary": "List the tenants",
+   "command": "tenants.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/platform/tenants",
+   "summary": "Create a tenant (queued; poll the operation)",
+   "command": "tenants.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/platform/tenants/{slug}",
+   "summary": "One tenant",
+   "command": "tenants.get",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/platform/tenants/{slug}",
+   "summary": "Delete a tenant and all its data (queued; send the slug as confirm)",
+   "command": "tenants.delete",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/platform/tenants/{slug}/env",
+   "summary": "Override or reset inheritable settings (AI driver, models) of a tenant",
+   "command": "tenants.set-env",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/product/{id}/pay",
+   "summary": "",
+   "command": "my.product-pay",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/productables/attach",
+   "summary": "",
+   "command": "my.productables-attach",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/products",
+   "summary": "",
+   "command": "my.products-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/products/cancel/{id}",
+   "summary": "",
+   "command": "my.products-cancel",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/products/my",
+   "summary": "",
+   "command": "my.products-my",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/products/{id}",
+   "summary": "",
+   "command": "my.products-get",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/profile",
+   "summary": "",
+   "command": "my.profile-delete-account",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/profile/delete-avatar",
+   "summary": "",
+   "command": "my.profile-delete-avatar",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/profile/delete/init",
+   "summary": "",
+   "command": "my.profile-delete-init",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/profile/delete/{userId}/{token}",
+   "summary": "",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "PUT /api/profile/interests",
+   "summary": "Update user interests",
+   "command": "my.profile-interests",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/profile/me",
+   "summary": "",
+   "command": "my.profile-me-list",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/profile/me",
+   "summary": "",
+   "command": "my.profile-me-set",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/profile/me-auth",
+   "summary": "",
+   "command": "my.profile-me-auth",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/profile/password",
+   "summary": "",
+   "command": "my.profile-password",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/profile/settings",
+   "summary": "",
+   "command": "my.profile-settings-list",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/profile/settings",
+   "summary": "Update user settings",
+   "command": "my.profile-settings-set",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/profile/upload-avatar",
+   "summary": "",
+   "command": "my.profile-upload-avatar",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/questionnaire/stars/{model_type_title}/{model_id}",
+   "summary": "Read a questionnaire stars identified by a given model title and model id identifier",
+   "command": "public.questionnaire-stars",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/questionnaire/{model_type_title}/{model_id}",
+   "summary": "Lists available questionnaires",
+   "command": "my.questionnaire-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/questionnaire/{model_type_title}/{model_id}/questions/{question_id}/answers",
+   "summary": "Read a question answers by a given model title and model id identifier",
+   "command": "public.questionnaire-questions-answers",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/questionnaire/{model_type_title}/{model_id}/questions/{question_id}/stars",
+   "summary": "Read a model stars by a given model title, model id identifier and question id.",
+   "command": "public.questionnaire-questions-stars",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/questionnaire/{model_type_title}/{model_id}/{id}",
+   "summary": "Read a questionnaire identified by a given id identifier and model",
+   "command": "my.questionnaire-get",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/questionnaire/{model_type_title}/{model_id}/{id}",
+   "summary": "Save a questionnaire answers",
+   "command": "my.questionnaire-update",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/quiz-answers",
+   "summary": "Save your answer",
+   "command": "my.quiz-answers-create",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/quiz-answers/all",
+   "summary": "Save your all answers",
+   "command": "my.quiz-answers-all",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/quiz-attempts",
+   "summary": "Get my quiz attempts",
+   "command": "my.quiz-attempts-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/quiz-attempts",
+   "summary": "Create a new attempt or return an active attempt",
+   "command": "my.quiz-attempts-create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/quiz-attempts/{id}",
+   "summary": "Get my quiz attempt by id",
+   "command": "my.quiz-attempts-get",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/quiz-attempts/{id}/end",
+   "summary": "Finish quiz attempt",
+   "command": "my.quiz-attempts-end",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/scorm/assets/scorm-again.min.js",
+   "summary": "Vendored scorm-again runtime (MIT) for the legacy player",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "GET /api/scorm/content/{uuid}",
+   "summary": "Launch data for the content-origin player",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "POST /api/scorm/content/{uuid}/track",
+   "summary": "Store CMI data sent by the content-origin player",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "POST /api/scorm/launch/{uuid}",
+   "summary": "Start a SCO on the tenant content origin",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "GET /api/scorm/play/{uuid}",
+   "summary": "Read a page identified by a given slug identifier",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "GET /api/scorm/show/{uuid}",
+   "summary": "Read a page identified by a given slug identifier",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "GET /api/scorm/track/{scoId}/{key}",
+   "summary": "Get user progress by scorm sco id and scorm data key",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "POST /api/scorm/track/{uuid}",
+   "summary": "Track Scorm user progress",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "GET /api/settings",
+   "summary": "Get a listing of the public and enuerable settings.",
+   "command": "public.settings-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/settings/{group}/{key}",
+   "summary": "Display the specified public setting",
+   "command": "my.settings-get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/stationary-events",
+   "summary": "Get a listing of published stationary events",
+   "command": "public.events-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/stationary-events/me",
+   "summary": "Get a listing of stationary events bought by user",
+   "command": "public.events-me",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/stationary-events/{id}",
+   "summary": "Display the specified Stationary Event.",
+   "command": "public.events-get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/tags",
+   "summary": "",
+   "command": "public.tags-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/tags/unique",
+   "summary": "",
+   "command": "public.tags-unique",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/tags/uniqueTags",
+   "summary": "Endpoints get unique tags from active courses",
+   "command": "",
+   "status": "excluded: deprecated"
+  },
+  {
+   "key": "GET /api/tasks",
+   "summary": "Get a listing of the tasks",
+   "command": "my.tasks-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/tasks",
+   "summary": "Store a newly created task",
+   "command": "my.tasks-create",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/tasks/complete/{id}",
+   "summary": "Complete task",
+   "command": "my.tasks-complete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/tasks/incomplete/{id}",
+   "summary": "Incomplete task",
+   "command": "my.tasks-incomplete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/tasks/notes",
+   "summary": "Store a newly created task note",
+   "command": "my.tasks-notes",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/tasks/notes/{id}",
+   "summary": "Update task note",
+   "command": "my.tasks-notes-update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/tasks/notes/{id}",
+   "summary": "Remove the specified task notes",
+   "command": "my.tasks-notes-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/tasks/{id}",
+   "summary": "Task details",
+   "command": "my.tasks-get",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/tasks/{id}",
+   "summary": "Update task",
+   "command": "my.tasks-update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/tasks/{id}",
+   "summary": "Remove the specified task",
+   "command": "my.tasks-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/topic-project-solutions",
+   "summary": "Get a listing of the project solutions",
+   "command": "my.topic-project-solutions-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/topic-project-solutions",
+   "summary": "Store a newly Project Solution",
+   "command": "my.topic-project-solutions-create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/topic-project-solutions/{id}",
+   "summary": "Get a single project solution",
+   "command": "my.topic-project-solutions-get",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/topic-project-solutions/{id}",
+   "summary": "Remove the specified Project Solution",
+   "command": "my.topic-project-solutions-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/translations",
+   "summary": "Get a list of public translations",
+   "command": "public.translations-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/tutors",
+   "summary": "",
+   "command": "my.tutors-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/tutors/{id}",
+   "summary": "",
+   "command": "my.tutors-get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/webinars",
+   "summary": "Get a listing of the Webinars.",
+   "command": "public.webinars-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/webinars/generate-jitsi/{id}",
+   "summary": "",
+   "command": "my.webinars-generate-jitsi",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/webinars/me",
+   "summary": "Get a listing of the Webinars bought by user.",
+   "command": "my.webinars-me",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/webinars/start-live-stream/{id}",
+   "summary": "Start live stream in yt.",
+   "command": "my.webinars-start-live-stream",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/webinars/{id}",
+   "summary": "Display the specified Webinar",
+   "command": "public.webinars-get",
+   "status": "covered"
+  }
+ ],
+ "undocumented": [
+  {
+   "endpoint": "GET /api/admin/courses/{course}",
+   "command": "courses.get"
+  },
+  {
+   "endpoint": "GET /api/admin/courses/{course}/program",
+   "command": "courses.program"
+  },
+  {
+   "endpoint": "GET /api/admin/courses/{course}",
+   "command": "courses.publish"
+  },
+  {
+   "endpoint": "GET /api/admin/courses/{course}",
+   "command": "courses.unpublish"
+  },
+  {
+   "endpoint": "GET /api/auth/tokens/current",
+   "command": "whoami"
+  }
+ ]
+}

@@ -1,0 +1,11 @@
+{
+  "props": {
+    "updated": [{ "title": "Brewing ratios", "href": "/learn/1/10", "date": "2026-10-09T10:00:00Z" }],
+    "retired": [{ "title": "Old grinder guide" }],
+    "extended": [{ "title": "Cold brew", "href": "/learn/1/12" }],
+    "pending": [{ "title": "Water quality", "href": "/learn/1/11", "since": "2026-10-09T10:00:00Z" }]
+  },
+  "invalid": {
+    "updated": "none"
+  }
+}

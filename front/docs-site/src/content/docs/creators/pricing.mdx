@@ -1,0 +1,44 @@
+---
+title: Pricing a course built with AI
+description: Choose free or paid in the Course Builder interview, confirm the price before publishing, and what happens in the cart when you apply and publish.
+sidebar:
+  order: 32
+modules:
+  - commerce
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+The Course Builder asks one fixed question about price: **free or paid**. It never sells anything on
+its own: a product is created only for a paid course with a price you confirmed, and it stays
+hidden until you publish.
+
+## Choose free or paid
+
+- **Free** (the default): learners enrol without paying. No product is created.
+- **Paid**: type the price in the currency of your shop (set in the payments settings). If you leave
+  it empty, the assistant suggests a starting price once your course is drafted, with a short reason.
+  A suggestion is only a suggestion: it is marked **suggested** and it is not used until you press
+  **Use this price** or type your own in the **Course brief** panel.
+
+You can change the price at any time with **Edit** on the **Price** row of the brief. Changing the price
+does not make the outline or the lessons out of date.
+
+## What happens when you apply and publish
+
+1. **Apply to my academy** creates the course unpublished. For a paid course with a confirmed price it also
+   creates a **product** for the course in **Sales → Products**, not yet purchasable.
+2. If the shop cannot sell the price (for example a currency other than the shop's), the course is still
+   applied and the apply notes tell you the product was not created.
+3. **Publish course** publishes the course and makes its product purchasable. Learners who buy it get access
+   after the payment is confirmed, as for any product.
+
+<Aside type="note">
+Switching a course back to free and applying again hides the product. Existing buyers keep their access.
+</Aside>
+
+## For developers
+
+The builder talks to commerce through the `CommerceProvider` interface of the `commerce` package; the
+built-in cart is the default adapter and a Sylius adapter is planned. See the
+[commerce package](/developers/api-packages/#commerce).

@@ -3,13 +3,20 @@
 namespace Ulams\Core;
 
 use Illuminate\Database\Events\MigrationsEnded;
+use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Database\Events\SchemaLoaded;
 use Illuminate\Support\Facades\Event;
 use Ulams\Core\Support\SchemaColumns;
 use Ulams\Core\Http\Middleware\EnforceTrustedOrigin;
+use Ulams\Core\Http\Middleware\Idempotency;
 use Ulams\Core\Http\Middleware\ProtectJsonResponses;
+use Ulams\Core\Http\Middleware\RequestId;
 use Ulams\Core\Http\Middleware\SetTimezoneForUserMiddleware;
+use Ulams\Core\Console\PruneCspReportsCommand;
+use Ulams\Core\Services\Contracts\CspReportServiceContract;
 use Ulams\Core\Services\Contracts\HealthCheckServiceContract;
+use Ulams\Core\Services\CspReportService;
+use Illuminate\Console\Scheduling\Schedule;
 use Ulams\Core\Services\HealthCheckService;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
@@ -18,6 +25,7 @@ class UlamsServiceProvider extends ServiceProvider
 {
     public const SERVICES = [
         HealthCheckServiceContract::class => HealthCheckService::class,
+        CspReportServiceContract::class => CspReportService::class,
     ];
 
     public array $bindings = self::SERVICES;
@@ -37,10 +45,20 @@ class UlamsServiceProvider extends ServiceProvider
         $kernel->pushMiddleware(SetTimezoneForUserMiddleware::class);
         $kernel->prependMiddleware(EnforceTrustedOrigin::class);
         $kernel->pushMiddleware(ProtectJsonResponses::class);
+        $kernel->prependMiddleware(RequestId::class);
+        // package routes are not in the `api` group, so the route-level middleware is attached on match
+        Event::listen(RouteMatched::class, fn (RouteMatched $e) => $e->route->middleware(Idempotency::class));
 
         $this->loadConfig();
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrations();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([PruneCspReportsCommand::class]);
+            $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+                $schedule->command('csp-reports:prune')->dailyAt('03:20');
+            });
+        }
 
         // memoised column listings must not outlive a schema change in this process
         Event::listen([MigrationsEnded::class, SchemaLoaded::class], fn () => SchemaColumns::flush());

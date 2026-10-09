@@ -35,6 +35,7 @@ class IsolationTest extends TestCase
             ['PUT', "{$p}/sessions/{$s->id}/brief"],
             ['POST', "{$p}/sessions/{$s->id}/runs"],
             ['GET', "{$p}/sessions/{$s->id}/events"],
+            ['GET', "{$p}/runs/{$run->id}"],
             ['POST', "{$p}/runs/{$run->id}/cancel"],
             ['POST', "{$p}/runs/{$run->id}/steps/" . ($step?->id ?? '01aaaaaaaaaaaaaaaaaaaaaaaa') . '/retry'],
             ['GET', "{$p}/sessions/{$s->id}/versions"],
@@ -46,6 +47,8 @@ class IsolationTest extends TestCase
             ['POST', "{$p}/sessions/{$s->id}/undo"],
             ['POST', "{$p}/sessions/{$s->id}/redo"],
             ['POST', "{$p}/sessions/{$s->id}/apply"],
+            ['GET', "{$p}/sessions/{$s->id}/publish-check"],
+            ['POST', "{$p}/sessions/{$s->id}/new-site"],
             ['POST', "{$p}/sessions/{$s->id}/publish"],
             ['GET', "{$p}/sessions/{$s->id}/usage"],
         ];
@@ -97,6 +100,8 @@ class IsolationTest extends TestCase
             ['GET', "{$p}/sessions/{$missing}"],
             ['GET', "{$p}/fragments/frg_aaaaaaaaaaaa"],
             ['GET', "{$p}/versions/{$missing}"],
+            ['GET', "{$p}/runs/{$missing}"],
+            ['GET', "{$p}/runs/not-an-id"],
             ['POST', "{$p}/runs/{$missing}/cancel"],
             ['GET', "{$p}/sessions/not-an-id/events"],
         ] as [$method, $uri]) {

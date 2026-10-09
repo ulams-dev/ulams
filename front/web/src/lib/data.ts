@@ -1,6 +1,9 @@
-import { ApiError, createClient, type Course, type Tenant, type TopicProgress } from "@ulams/sdk";
+import { ApiError, createClient, createLivingLearnerClient, type Course, type Tenant, type TopicProgress } from "@ulams/sdk";
+import type { UiNode } from "@ulams/ui/render-core";
 import { cache } from "./cache.ts";
 import { config } from "./config.ts";
+import { fetchFrameOrigins } from "./frame-origins.ts";
+import type { LearnerNotices } from "./notices.ts";
 import { siteModel, type RawSiteData, type SiteModel } from "./view-model.ts";
 
 /** Server-side API client for a tenant (straight to the tenant API, not through the browser). */
@@ -18,6 +21,26 @@ const settle = <T>(promise: Promise<T>, fallback: T): Promise<T> => promise.catc
 
 export function getSettings(tenant: Tenant) {
   return publicData(tenant, "settings", () => apiFor(tenant).settings.public());
+}
+
+/**
+ * The generated landing document of a course (an active page `course-<id>`, written by the course
+ * builder when it publishes), or null when the course has none. Never throws: the course page falls
+ * back to the page built from API data.
+ */
+export function getCoursePage(tenant: Tenant, courseId: number): Promise<UiNode | null> {
+  return publicData(tenant, `course-page:${courseId}`, async () => {
+    try {
+      const response = await fetch(`${tenant.apiUrl}/api/pages/course-${courseId}`, { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(4_000) });
+      if (!response.ok) return null;
+      const content = ((await response.json()) as { data?: { content?: unknown; active?: unknown } }).data;
+      if (!content || content.active === false || typeof content.content !== "string") return null;
+      const doc = JSON.parse(content.content) as UiNode;
+      return doc && typeof doc === "object" && typeof doc.component === "string" ? doc : null;
+    } catch {
+      return null;
+    }
+  }, 30_000);
 }
 
 export function getCourses(tenant: Tenant) {
@@ -87,6 +110,17 @@ export async function getProgram(tenant: Tenant, token: string, courseId: number
   return { ...program, progress: program.access ? progress : [] };
 }
 
+/**
+ * The learner's Living Course notices and the opt-in freshness marker for a course. Never cached
+ * (a dismissed notice must go away at once) and never fatal: an older API without the routes, a
+ * slow answer or an error all mean "no notices".
+ */
+export async function getLearnerNotices(tenant: Tenant, token: string, courseId: number): Promise<LearnerNotices> {
+  const client = createLivingLearnerClient({ baseUrl: tenant.apiUrl, token, timeoutMs: 3_000 });
+  const [notices, freshness] = await Promise.all([client.notices(courseId).catch(() => []), client.freshness(courseId).catch(() => [])]);
+  return { notices, freshness };
+}
+
 /** The learner's profile, cached per session for 10 minutes. */
 export function getProfile(tenant: Tenant, token: string) {
   return publicData(tenant, `profile:${tokenKey(token)}`, () => apiFor(tenant, token).auth.me(), 10 * 60_000);
@@ -109,6 +143,18 @@ export function invalidateProgress(tenant: Tenant): void {
 }
 
 /**
+ * Origins of the tenant's enabled external tools, for `frame-src` (GET /api/lti/frame-origins, ADR
+ * 0044). Cached for 5 minutes; a failed fetch gives none rather than blocking the page.
+ */
+export async function getFrameOrigins(tenant: Tenant): Promise<string[]> {
+  try {
+    return await publicData(tenant, "lti:frame-origins", () => fetchFrameOrigins(tenant.apiUrl), 5 * 60_000);
+  } catch {
+    return [];
+  }
+}
+
+/**
  * Starts a SCO on the tenant content origin (api/docs/content-origin.md): the API returns a player
  * URL on <slug>.content.<base> carrying a SCO-scoped tracking token in its fragment. Null when the
  * tenant has no content origin (the legacy API player is used then). Never cached: every call
@@ -124,6 +170,28 @@ export async function scormLaunch(tenant: Tenant, token: string, uuid: string): 
     if (!response.ok) return null;
     const body = (await response.json()) as { data?: { url?: string | null } };
     return typeof body.data?.url === "string" ? body.data.url : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Starts a cmi5 AU on the tenant content origin (ADR 0046): the API returns the AU URL on
+ * <slug>.content.<base> with a one-time launch token in its `fetch` parameter; the AU swaps it for
+ * an LRS-only session token. The learner's own token never reaches the AU. Null when the tenant has
+ * no content origin or the launch fails. Never cached: every call issues a new launch.
+ */
+export async function cmi5Launch(tenant: Tenant, token: string, auId: number, courseId: number, topicId: number): Promise<string | null> {
+  try {
+    const query = new URLSearchParams({ format: "json", course_id: String(courseId), topic_id: String(topicId) });
+    const response = await fetch(`${tenant.apiUrl}/api/cmi5/player/${auId}?${query}`, {
+      headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(6000),
+    });
+    if (!response.ok) return null;
+    const body = (await response.json()) as { data?: { url?: string; origin?: string | null } };
+    // without a content origin the AU would run on the storage origin: do not frame it
+    return typeof body.data?.url === "string" && body.data.origin ? body.data.url : null;
   } catch {
     return null;
   }

@@ -118,17 +118,20 @@
     <testsuite name="assign-without-account">
       <directory suffix="Test.php">./packages/assign-without-account</directory>
     </testsuite>
-    <!-- <testsuite name="tracker">
-      <directory suffix="Test.php">./packages/tracker</directory>
-    </testsuite> -->
     <testsuite name="translations">
       <directory suffix="Test.php">./packages/translations</directory>
     </testsuite>
     <testsuite name="ai">
       <directory suffix="Test.php">./packages/ai/tests</directory>
     </testsuite>
+    <testsuite name="commerce">
+      <directory suffix="Test.php">./packages/commerce/tests</directory>
+    </testsuite>
     <testsuite name="course-builder">
       <directory suffix="Test.php">./packages/course-builder/tests</directory>
+    </testsuite>
+    <testsuite name="living-course">
+      <directory suffix="Test.php">./packages/living-course/tests</directory>
     </testsuite>
     <testsuite name="adapt">
       <directory suffix="Test.php">./packages/adapt/tests</directory>
@@ -150,6 +153,9 @@
     </testsuite>
     <testsuite name="consultation-access">
       <directory suffix="Test.php">./packages/consultation-access</directory>
+    </testsuite>
+    <testsuite name="jitsi">
+      <directory suffix="Test.php">./packages/jitsi</directory>
     </testsuite>
     <testsuite name="webinar">
       <directory suffix="Test.php">./packages/webinar</directory>
@@ -214,14 +220,15 @@
       <directory suffix=".php">./packages/tenancy/</directory>
       <directory suffix=".php">./packages/demo/</directory>
       <directory suffix=".php">./packages/assign-without-account/</directory>
-      <!-- <directory suffix=".php">./packages/tracker/</directory> -->
       <directory suffix=".php">./packages/translations/</directory>
       <directory suffix=".php">./packages/uploads/</directory>
       <directory suffix=".php">./packages/lti/</directory>
       <directory suffix=".php">./packages/liascript/</directory>
       <directory suffix=".php">./packages/adapt/</directory>
       <directory suffix=".php">./packages/ai/</directory>
-      <directory suffix=".php">./packages/course-builder/</directory>
+      <directory suffix=".php">./packages/commerce/</directory>
+<directory suffix=".php">./packages/course-builder/</directory>
+      <directory suffix=".php">./packages/living-course/</directory>
       <directory suffix=".php">./packages/vouchers/</directory>
       <directory suffix=".php">./packages/consultations/</directory>
       <directory suffix=".php">./packages/consultation-access/</directory>

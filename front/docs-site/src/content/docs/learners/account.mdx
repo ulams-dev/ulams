@@ -1,6 +1,6 @@
 ---
 title: Account
-description: The account page of the reference frontend - the learner's profile, their courses with progress and continue links, and logging out.
+description: The account page of the reference frontend - the learner's profile, their courses with progress and continue links, their personal API tokens, and logging out.
 sidebar:
   order: 6
 learnerRoutes:
@@ -31,6 +31,24 @@ The learner's courses as returned by `GET /api/courses/progress`, each with:
 
 With no courses the page says "No courses yet." and links to the academy. If the API does not
 answer, it says the courses could not be loaded and offers to try again.
+
+## My tokens
+
+Tokens let the [`ulams` command line](/developers/cli/), scripts and AI agents act as the signed-in
+person. A token can never do more than the account itself, and the person chooses how much less
+([scoped tokens](/developers/scoped-tokens/)).
+
+- **List.** Every token with its name, what it may do (for example "Change: courses · Read: reports"), the
+  creation date (and "command line login" when it came from `ulams login --device`), the expiry, when it was
+  last used and a status: Active, Expired or Revoked.
+- **Create.** A name, what the token may do (Read only, Author, Automation, Learning, or everything the
+  account can do), how long it stays valid (7, 30, 90 or 365 days; 90 by default) and who uses it. The new token
+  is shown once, in a field that can be selected and copied, together with how to use it. After the next page
+  load it cannot be shown again.
+- **Revoke.** The "Revoke" button of a token stops it at once. The page confirms with "Token revoked".
+
+The section is plain HTML forms, so it works without JavaScript. It is checked with axe (WCAG 2.2 AA) in
+every state, and each control stays clear of the fixed demo badge on small screens.
 
 ## What is not here yet
 

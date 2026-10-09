@@ -26,6 +26,10 @@ final class SessionState
             'sources' => self::sources($session),
             'aiEnabled' => $client->enabled(),
             'profiles' => ['default' => $client->profileLabel('outline'), 'light' => $client->profileLabel('interview')],
+            'newSite' => $session->stateValue('newSite'),
+            'canCreateSite' => app(\Ulams\CourseBuilder\Site\NewSite::class)->available(request()->user('api')),
+            'priceSuggestion' => $session->stateValue('priceSuggestion'),
+            'applyNotes' => (array) $session->stateValue('applyNotes', []),
             'budgetReached' => (bool) $session->stateValue('budgetReached', false),
             'activeRunId' => Run::query()->where('session_id', $session->id)->whereIn('status', ['queued', 'running'])->latest('created_at')->value('id'),
             'canUndo' => app(VersionService::class)->undoTarget($session) !== null,
@@ -34,9 +38,23 @@ final class SessionState
         ];
     }
 
+    /** @var array<string,\Closure(Session):array<string,mixed>> */
+    private static array $summaryExtras = [];
+
+    /** Other packages add keys to every session summary (Living Course adds `freshness`); one closure per name. */
+    public static function extendSummary(string $name, \Closure $extra): void
+    {
+        self::$summaryExtras[$name] = $extra;
+    }
+
     public static function summary(Session $session): array
     {
-        return [
+        $extras = [];
+        foreach (self::$summaryExtras as $extra) {
+            $extras = [...$extras, ...$extra($session)];
+        }
+
+        return $extras + [
             'id' => $session->id,
             'title' => $session->title,
             'status' => $session->status,

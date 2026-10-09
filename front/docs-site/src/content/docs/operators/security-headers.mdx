@@ -1,0 +1,78 @@
+---
+title: Security headers and the CSP
+description: The Content Security Policy of the learner front, the admin and the content origins, how violations are reported and collected, and how to switch from report-only to enforced.
+sidebar:
+  order: 13
+modules:
+  - core
+  - lti
+  - web
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+Every origin ulams serves sends a Content Security Policy (CSP). The policy of the **learner front**
+is built by the front itself, so it can allow the external tools (LTI) each tenant registered. The
+**admin** and the **content origins** get theirs from the reverse proxy.
+
+| Origin | Policy | Set by |
+|---|---|---|
+| Learner front | `default-src 'self'`; scripts, styles, connections and base limited to the page and the tenant API; `frame-src` is the page, the tenant's content origin, uploads, YouTube (no-cookie) and Vimeo embeds, **plus the origins of the tenant's enabled LTI tools** | `front/web/src/middleware.ts` |
+| Admin | The same shape; `frame-src 'self'`, the content origins and `https:` (staff frame tools for deep linking) | Caddy `app_csp_admin` snippet |
+| Content origins | Always enforced (strict, `connect-src` limited to the tenant API) | Caddy `content_origin` snippet |
+
+All three carry `report-uri` and `report-to`, so browsers send violations to the tenant API.
+
+## Reports
+
+`POST /api/csp-report` is public (no credentials), limited to 60 requests a minute per IP and 16 KB
+per body. It accepts both wire formats (`application/csp-report` and `application/reports+json`) and
+keeps **one row per directive, blocked host and page path** with a counter: no full URLs, no query
+strings, nothing from the report text. Other content types answer `415`, a body over 16 KB `413`, a
+body that is not JSON `400`; a stored report answers `204`. Rows not seen for 30 days
+(`CSP_REPORT_RETENTION_DAYS`, default 30) are deleted every night at 03:20 by `csp-reports:prune`, which
+runs from the scheduler. The Caddy `csp_report` block in the development Caddyfile and the production
+example lets the content origins post to the endpoint without credentials.
+
+Admins (role `admin`) read the rows at `GET /api/admin/csp-reports` with a bearer token (`per_page`
+1 to 100); each row has `directive`, `blocked_host`, `document_path`, `count`, `first_seen_at` and
+`last_seen_at`. There is no screen for it in the admin panel yet, so use the API or `ulams csp-reports list`
+(see the [CLI](/developers/cli/)). A row such as
+`frame-src` / `tool.example.com` / `/learn/3/12` with a high count means a page tried to frame a
+host the policy does not allow.
+
+## Tools in the front's policy
+
+The front asks the tenant API for the origins of its enabled LTI tools (`GET /api/lti/frame-origins`:
+the host of each tool's login, launch and deep-linking URL) and caches the answer for five minutes.
+A tool you register or enable is therefore framed by learners within five minutes, without touching
+any proxy file. Origins that are not plain `http(s)` hosts are dropped.
+
+## Report-only first, then enforce
+
+| Setting | Where | Default |
+|---|---|---|
+| `CSP_ENFORCE` | `web` | `true` in development, report-only when `NODE_ENV=production` (the Docker image) |
+| `ULAMS_CSP_HEADER` | proxy (admin) | development: `Content-Security-Policy`; production example: `Content-Security-Policy-Report-Only` |
+| `ULAMS_CONTENT_ORIGIN` | `web` | `http://{slug}.content.localhost`; set it to your content origin (`https://{slug}.content.<domain>`) |
+| `ULAMS_STORAGE_ORIGINS` | `web` | `http://storage.localhost`; the origins that serve uploaded files |
+
+<Steps>
+
+1. Deploy with the defaults. The production image reports violations without blocking anything.
+2. Use the site for about a week: learners (every topic type), the studio, an LTI launch, an H5P
+   lesson, SCORM, LiaScript and cmi5.
+3. Read `GET /api/admin/csp-reports`. Every row is either a source to allow (set
+   `ULAMS_CONTENT_ORIGIN` / `ULAMS_STORAGE_ORIGINS`, register the tool) or something that should not
+   be loaded.
+4. With no unexpected reports, set `CSP_ENFORCE=true` on the front and `ULAMS_CSP_HEADER=Content-Security-Policy`
+   on the proxy for the admin.
+
+</Steps>
+
+<Aside type="note">
+`script-src` still allows `'unsafe-inline'` and `'unsafe-eval'`: the front's pages use inline scripts
+and the H5P and LiaScript players need `eval`. The policy therefore protects mainly against loading
+code, frames, forms and connections from places you did not list; the script isolation of
+third-party packages comes from the [content origin](/operators/content-origin/).
+</Aside>

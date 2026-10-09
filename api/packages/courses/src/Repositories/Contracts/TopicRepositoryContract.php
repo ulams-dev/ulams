@@ -6,6 +6,8 @@ use Ulams\Core\Repositories\Contracts\BaseRepositoryContract;
 use Ulams\Courses\Http\Requests\CreateTopicAPIRequest;
 use Ulams\Courses\Http\Requests\UpdateTopicAPIRequest;
 use Ulams\Courses\Models\Topic;
+use Ulams\Courses\Services\Contracts\TopicContentDeleter;
+use Illuminate\Database\Eloquent\Model;
 
 interface TopicRepositoryContract extends BaseRepositoryContract
 {
@@ -26,6 +28,10 @@ interface TopicRepositoryContract extends BaseRepositoryContract
     public function registerResourceClasses(string $topicTypeClass, array $resourceClasses): array;
 
     public function getResourceClass(?string $topicTypeClass = null, string $type = 'client'): string;
+
+    public function registerContentDeleter(TopicContentDeleter $deleter): void;
+
+    public function deleteTopicContent(?Model $content): void;
 
     public function deleteModel(Topic $topic): ?bool;
     public function availableContentClasses(): array;

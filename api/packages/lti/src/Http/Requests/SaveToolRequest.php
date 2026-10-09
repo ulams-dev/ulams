@@ -23,6 +23,7 @@ class SaveToolRequest extends LtiManageRequest
             'custom.*' => ['string', 'max:1024'],
             'share_name' => ['boolean'],
             'share_email' => ['boolean'],
+            'nrps_enabled' => ['boolean'],
             'enabled' => ['boolean'],
         ];
     }

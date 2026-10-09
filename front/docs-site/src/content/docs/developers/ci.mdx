@@ -31,6 +31,11 @@ Permissions are `contents: read`.
   `yarn.lock`, `turbo.json`, `.nvmrc` or `.github/**`;
 - `php`: something changed in `api/**` outside `api/h5p` and `api/pdf`, or in `.github/**`.
 
+It also runs two repository checks on every run: every `api/packages/*` directory has a `README.md`,
+and (pull requests only) no newly added file is larger than 2 MB. Exceptions to the size check are
+listed in `.github/large-files-allowed.txt`. `yarn.lock` is checked by `yarn install --frozen-lockfile`
+in the `js` job, which fails when the lock file is not what `yarn install` would write.
+
 **`js` (JS: admin, front, web, ui, sdk, api-h5p, api-pdf)** runs when `js` is true or on manual dispatch:
 
 1. Node from `.nvmrc`, Yarn cache from `actions/setup-node`, `corepack yarn install --frozen-lockfile`.
@@ -65,8 +70,9 @@ Permissions are `contents: read`.
    client, copies the keys for Testbench and runs the courses test migrations.
 7. On the `platform` shard only: `php artisan l5-swagger:generate`, which fails on broken
    Swagger annotations.
-8. PHPUnit for the shard's suites without the quarantined tests, with a JUnit report.
-9. Quarantined tests of the shard, non-blocking (`continue-on-error`).
+8. Reads `api/phpunit.quarantine.xml`, then PHPUnit for the shard's suites without the quarantined
+   tests, with a JUnit report.
+9. Quarantined tests of the shard, non-blocking (`continue-on-error`); nothing runs when the file is empty.
 10. On failure, uploads the JUnit file and `api/storage/logs/` as an artifact for 7 days.
 
 Shards and quarantine are explained in [Testing](/developers/testing/#how-ci-shards-phpunit).

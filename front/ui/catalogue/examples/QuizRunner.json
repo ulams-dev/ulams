@@ -1,0 +1,15 @@
+{
+  "props": {
+    "quizId": 7,
+    "title": "Extraction quiz",
+    "intro": "Five questions. You can retry twice.",
+    "maxAttempts": 2,
+    "minutes": 10,
+    "passScore": 3,
+    "finishHref": "/learn/1/9"
+  },
+  "invalid": {
+    "quizId": "seven",
+    "title": "x"
+  }
+}

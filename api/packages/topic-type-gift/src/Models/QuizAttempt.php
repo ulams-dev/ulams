@@ -46,6 +46,7 @@ class QuizAttempt extends Model
         'started_at',
         'end_at',
         'tutor_feedback',
+        'max_score',
     ];
 
     public $casts = [
@@ -90,13 +91,15 @@ class QuizAttempt extends Model
     }
 
     /**
-     * Maximum points obtainable in the quiz (sum of question scores).
+     * Maximum points obtainable in the quiz: the snapshot taken when the attempt started, or the
+     * sum of the active question scores for attempts that predate the snapshot.
      *
      * @return int|float
      */
-    public function getMaxScoreAttribute()
+    public function getMaxScoreAttribute($snapshot = null)
     {
-        return $this->giftQuiz->questions->sum('score');
+        // snapshotted when the attempt started; older attempts keep the live sum
+        return $snapshot !== null ? $snapshot + 0 : $this->giftQuiz->questions->sum('score');
     }
 
     /**
@@ -145,7 +148,7 @@ class QuizAttempt extends Model
             return null;
         }
 
-        $questionScores = $this->giftQuiz->questions->keyBy('id');
+        $questionScores = $this->giftQuiz->allQuestions->keyBy('id');
 
         return $this->answers->filter(function (AttemptAnswer $answer) use ($questionScores) {
             $question = $questionScores->get($answer->topic_gift_question_id);

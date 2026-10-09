@@ -32,7 +32,9 @@ hostile input.
   with its own CSP. See [Content origin](/operators/content-origin/).
 - **H5P runs in its own service** (`api/h5p`): the front and admin frame its embed pages and talk
   to them with `postMessage`; the embed pages send `frame-ancestors` limited to the tenant's front
-  and admin origins, and CORS is per tenant.
+  and admin origins, and CORS is per tenant. The reference front keeps the learner's token in an
+  httpOnly cookie and adds it server-side, for the player's own calls only, in its `/h5p` proxy, so
+  H5P content scripts never see a token ([H5P in production](/operators/h5p/#the-state-proxy-of-the-reference-front)).
 
 ## SVG, HTML and other active files
 
@@ -52,12 +54,16 @@ hostile input.
 |---|---|---|
 | Content origins | Enforced CSP, `nosniff`, `Referrer-Policy: no-referrer`, cookies stripped | Caddy `content_origin` snippet |
 | Learner front (`web`) | `nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, same-origin check on state-changing requests (CSRF) | `front/web/src/middleware.ts` |
-| Front and admin | `Content-Security-Policy-Report-Only` | Caddy `app_csp_report_only` snippet |
+| Learner front (`web`) | `Content-Security-Policy` (enforced in development, report-only in the production image until `CSP_ENFORCE=true`) with `frame-src` for the tenant's registered tools, and `Reporting-Endpoints` | `front/web/src/middleware.ts` |
+| Admin | The same, with `frame-src 'self' <content origins> https:` | Caddy `app_csp_admin` snippet |
 | H5P embed pages | `frame-ancestors` per tenant, `Referrer-Policy: no-referrer` | `api/h5p` |
 
-<Badge text="Recommended" variant="tip" /> Collect the report-only CSP reports for a while, then
-switch the front and admin to an enforced `Content-Security-Policy`, and add
-`Strict-Transport-Security` once HTTPS works on every host. Neither is in the example by default.
+Violation reports go to `POST /api/csp-report` and admins read them at `GET /api/admin/csp-reports`
+([Security headers](/operators/security-headers/#reports)).
+
+<Badge text="Recommended" variant="tip" /> Collect the CSP reports for about a week, then enforce the
+policy of the front and admin (see [Security headers](/operators/security-headers/)), and add
+`Strict-Transport-Security` once HTTPS works on every host. HSTS is not in the example by default.
 
 <Aside type="caution" title="CORS on the API">
   The API site in the development Caddyfile, and therefore in the example, echoes any request
@@ -78,6 +84,27 @@ switch the front and admin to an enforced `Content-Security-Policy`, and add
   access key (separated by bucket only), the H5P library volume, and the platform's SMTP account.
 - The tenant's internal H5P token is derived from its `APP_KEY`; the platform's comes from
   `H5P_INTERNAL_TOKEN`.
+
+## API tokens and the agent audit log
+
+Users and admins can create scoped API tokens for the CLI, agents and CI
+([API tokens](/admin/api-tokens/), [Scoped API tokens](/developers/scoped-tokens/)). Tokens are
+Passport tokens (one key pair per tenant), expire in at most 365 days and are never stored: the
+database holds only Passport's token id. Every change a scoped token makes, and every read of user
+and report data, is written to `agent_audit_log` without request bodies and deleted after
+`AUTH_AGENT_AUDIT_DAYS` (default 365) by `ulams:auth:prune-agent-audit`, which runs from the
+scheduler (make sure `schedule:run` or `ulams:tenant:schedule-loop` is running).
+
+After upgrading, run the migrations and the permission seeder for every tenant so the admin role
+gets `token_manage`:
+
+```bash
+php artisan ulams:tenant:sync-env --migrate
+php artisan db:seed --class="Ulams\Auth\Database\Seeders\AuthPermissionSeeder" --domain=<tenant host>
+```
+
+`AUTH_MAX_TOKENS_PER_USER` (default 50) limits active tokens per user, `AUTH_DEVICE_APPROVE_PER_MINUTE` (default 5) the approval attempts of the CLI browser sign-in per user (the scheduler also runs `ulams:auth:prune-device-authorizations` hourly), `APP_VERSION` is what
+`GET /api/meta` reports.
 
 ## Accounts and modes
 

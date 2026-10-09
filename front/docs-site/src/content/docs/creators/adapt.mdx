@@ -1,14 +1,16 @@
 ---
 title: Adapt Learning courses
-description: Use courses built with the Adapt Learning framework by uploading their SCORM export, and what the planned JSON-source path will add.
+description: Use courses built with the Adapt Learning framework by uploading their SCORM export, or keep the JSON source in ulams and build it into a SCORM package.
 sidebar:
   order: 19
 modules:
   - adapt
   - scorm
+adminRoutes:
+  - /courses/adapt/**
 ---
 
-import { Aside, Badge, Steps } from "@astrojs/starlight/components";
+import { Aside, Steps } from "@astrojs/starlight/components";
 
 [Adapt Learning](https://www.adaptlearning.org) builds responsive e-learning courses. ulams supports
 Adapt in two ways ("paths"); only the first is ready for authors today.
@@ -28,23 +30,67 @@ Adapt in two ways ("paths"); only the first is ready for authors today.
 From there it behaves exactly like any other SCORM package: same upload checks, same player, same
 completion tracking. See [SCORM packages](/creators/scorm/).
 
-## Path B: Adapt JSON sources <Badge text="Coming" variant="caution" />
+## Path B: Adapt JSON sources
 
-The plan ([ADR 0013](/decisions/0013-adapt-build-worker/), status Proposed) is to keep the Adapt course
-source itself in ulams, as versioned JSON (`course`, `config`, `contentObjects`, `articles`, `blocks`,
-`components`), and build it into a SCORM package with a separate build service. The built package then
-goes through Path A, so there is still no separate Adapt topic type.
+Path B keeps the Adapt course source itself in ulams, as versioned JSON (`course`, `config`,
+`contentObjects`, `articles`, `blocks`, `components`), and builds it into a SCORM package with a
+separate build service ([ADR 0013](/decisions/0013-adapt-build-worker/)). The built package goes
+through Path A, so there is still no separate Adapt topic type.
 
-What exists now is the API side only, and it is **off by default**:
+It is a feature flag, **off by default**. An operator turns it on with `ADAPT_SOURCE_ENABLED=true`
+and starts the build service (see [Configuration](#configuration)). While it is off, **Courses → Adapt**
+shows a notice that Adapt sources are not enabled. You need the `adapt_manage` permission (given to
+`admin`).
 
-- an administrator or developer can turn it on with `ADAPT_SOURCE_ENABLED=true`;
-- the API (`/api/admin/adapt`, permission `adapt_manage`) stores sources with versions, checks their
-  structure (the six parts, unique `_id`s, parent links, components from the allowed core plugins) and
-  reports errors with their path, for example `/components/3/_component`;
-- a build can be queued, but the build service itself is not built yet, so builds cannot run in a
-  normal installation.
+### The Adapt library
+
+**Courses → Adapt** (`/courses/adapt`) lists sources with their title, **status**, current version,
+the version last built and the SCORM package it produced.
+
+| Status | Meaning |
+|---|---|
+| `draft` | Saved, not built yet, or changed since the last build |
+| `building` | A build is queued or running. The list and the editor refresh every 3 seconds |
+| `built` | The built version was imported as a SCORM package |
+| `failed` | The build failed. The error is shown in the row and in the editor |
+
+<Steps>
+
+1. **New Adapt source**: paste the JSON or upload a `.json` file, and optionally give a title (it
+   defaults to the course title). The structure is checked first; errors are listed with their path,
+   for example `/components/3/_component`.
+2. Open the source with **Edit** to change the JSON. **Save as new version** (with an optional change
+   note) keeps the previous versions; open an older one with **Open** in the version list to start
+   from it.
+3. **Build** turns the current version into a SCORM package. The editor asks you to save changes first.
+4. When the status is `built`, the editor shows the package number. Add a **SCORM** topic to a lesson
+   and select that package (see [SCORM packages](/creators/scorm/)).
+
+</Steps>
+
+Deleting a source does not delete the SCORM package that was built from it.
 
 <Aside>
-There is no admin screen for Adapt sources. Until Path B is finished, build Adapt courses in Adapt and
-upload the SCORM export (Path A).
+The version list comes from `GET /api/admin/adapt/{id}/versions`; the other endpoints are listed in
+[API endpoints](/reference/api-endpoints/).
 </Aside>
+
+## Configuration
+
+For operators. Path A needs none of this.
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `ADAPT_SOURCE_ENABLED` | `false` | Turns Path B on |
+| `ADAPT_BUILDER_URL` | `http://adapt-builder:8080` | Where the API reaches the build service |
+| `ADAPT_BUILDER_TOKEN` | none | Shared secret for calls to the build service; must match the service |
+| `ADAPT_BUILDER_TIMEOUT` | `300` | Seconds the API waits for one build call |
+| `ADAPT_MAX_SOURCE_KB` | `4096` | Largest source JSON accepted |
+| `ADAPT_QUEUE_CONNECTION`, `ADAPT_QUEUE` | `<driver>-builder`, `builder` | Where the build job runs |
+
+The build runs as a job on the builder queue (job timeout 900 s, `retry_after` above it), so a worker for
+that queue must be running: see [Queues and the scheduler](/operators/queues-and-scheduler/). The build
+service is a separate GPL-3.0 program in `api/adapt-builder` (about 30 to 90 seconds of CPU per build). In
+the development stack start it with `docker compose --profile adapt up -d adapt-builder` from `api/`. Its
+image is not among the images published to GHCR, so a production install builds it from
+`api/adapt-builder` (see its README) and runs it where only the API can reach it.

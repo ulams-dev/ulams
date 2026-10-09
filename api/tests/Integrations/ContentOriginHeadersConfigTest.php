@@ -38,6 +38,20 @@ class ContentOriginHeadersConfigTest extends TestCase
     }
 
     #[DataProvider('caddyfiles')]
+    public function testEveryContentOriginExclusionUsesTheSameCleanRegexp(string $path): void
+    {
+        // a stray quote at the end of the pattern (it was in the preflight matcher) never matches an Origin,
+        // so the content origins were not excluded
+        $caddyfile = $this->read($path);
+        $count = preg_match_all('/not header_regexp Origin (\S+)\s*$/m', $caddyfile, $m);
+        $this->assertGreaterThanOrEqual(2, $count);
+        $this->assertSame($count, substr_count($caddyfile, 'not header_regexp Origin'), 'a pattern with trailing characters was not matched');
+        foreach ($m[1] as $pattern) {
+            $this->assertSame('^(null|https?://([^/:]+\.)*content\.)', $pattern);
+        }
+    }
+
+    #[DataProvider('caddyfiles')]
     public function testTheContentOriginKeepsItsCspAndAddsIsolationHeaders(string $path): void
     {
         $snippet = $this->snippet($this->read($path));
@@ -77,6 +91,57 @@ class ContentOriginHeadersConfigTest extends TestCase
         $this->assertSame(1, preg_match('/@tracking path (.*)\n/', $caddyfile, $m));
         $this->assertSame('/api/scorm/content/* /api/liascript/progress/*', trim($m[1]));
         $this->assertSame(1, preg_match('/handle @tracking \{\n\s*request_header -Cookie\n\s*request_header -Authorization/', $caddyfile));
+    }
+
+    #[DataProvider('caddyfiles')]
+    public function testCmi5AusMayCallOnlyTheLrsAndTheFetchEndpointWithoutCookies(string $path): void
+    {
+        $caddyfile = $this->read($path);
+
+        $this->assertSame(1, preg_match('/@cmi5 path (.*)\n/', $caddyfile, $m));
+        // a `*` does not cross a `/`: statements are one segment, state and profiles are two
+        $this->assertSame('/api/cmi5/fetch /trax/api/*/xapi/std/* /trax/api/*/xapi/std/*/*', trim($m[1]));
+        $this->assertSame(1, preg_match('/handle @cmi5 \{\n\s*request_header -Cookie\n\s*header Access-Control-Allow-Origin \*\n/', $caddyfile));
+        // the session token travels in Authorization, so it is not dropped here, and the preflight
+        // names the header explicitly (a wildcard does not cover it)
+        $start = (int) strpos($caddyfile, 'handle @cmi5 {');
+        $block = substr($caddyfile, $start, (int) strpos($caddyfile, '@csp_report path', $start) - $start);
+        $this->assertStringNotContainsString('request_header -Authorization', $block);
+        $this->assertMatchesRegularExpression('/Access-Control-Allow-Headers "[^"]*Authorization[^"]*X-Experience-API-Version/', $caddyfile);
+    }
+
+    #[DataProvider('caddyfiles')]
+    public function testCspViolationsAreReportedToTheTenantApiAndTheCollectorTakesNoCookies(string $path): void
+    {
+        $caddyfile = $this->read($path);
+
+        // content origin: its own CSP reports to the tenant API, which is the 2nd argument
+        $snippet = $this->snippet($caddyfile);
+        $this->assertStringContainsString('report-uri {args[1]}/api/csp-report; report-to csp-endpoint', $snippet);
+        $this->assertStringContainsString('Reporting-Endpoints `csp-endpoint="{args[1]}/api/csp-report"`', $snippet);
+
+        // the collector answers any origin, without cookies or credentials, and nothing else is opened
+        $this->assertSame(1, preg_match('/@csp_report path (.*)\n/', $caddyfile, $m));
+        $this->assertSame('/api/csp-report', trim($m[1]));
+        $this->assertSame(1, preg_match('/handle @csp_report \{\n\s*request_header -Cookie\n\s*request_header -Authorization\n\s*header Access-Control-Allow-Origin \*\n/', $caddyfile));
+    }
+
+    #[DataProvider('caddyfiles')]
+    public function testTheAdminHasItsOwnPolicyAndTheFrontSetsItsOwnInsteadOfTheProxy(string $path): void
+    {
+        $caddyfile = $this->read($path);
+
+        $this->assertSame(1, preg_match('/^\(app_csp_admin\) \{\n(.*?)^\}$/ms', $caddyfile, $m));
+        $admin = $m[1];
+        $this->assertStringContainsString("frame-src 'self'", $admin);
+        $this->assertMatchesRegularExpression('/frame-src [^;]* https:;/', $admin);
+        $this->assertStringContainsString('report-uri {args[0]}/api/csp-report; report-to csp-endpoint', $admin);
+        $this->assertStringContainsString('Reporting-Endpoints', $admin);
+        $this->assertStringNotContainsString('app_csp_report_only', $caddyfile);
+        // the learner front's CSP comes from front/web/src/middleware.ts: no import in its site block
+        $this->assertSame(1, preg_match('/(?:^|\n)(?:http:\/\/\*\.app\.localhost, http:\/\/app\.localhost|\(web\)) \{\n(.*?)\n\}/s', $caddyfile, $web));
+        $this->assertStringNotContainsString('app_csp', $web[1]);
+        $this->assertStringContainsString('front/web/src/middleware.ts', $web[1]);
     }
 
     #[DataProvider('caddyfiles')]

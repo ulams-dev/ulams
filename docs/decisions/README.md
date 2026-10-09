@@ -62,7 +62,7 @@ replacement.
 | [0053](0053-simulations-sandbox.md) | Simulations: single-file HTML on the content origin, sandboxed, typed postMessage, off by default | Proposed |
 | [0054](0054-component-playground-in-docs-site.md) | Component playground in the docs site instead of Storybook | Proposed |
 | [0055](0055-course-experiments.md) | Course experiments with delayed retention, surveys and a tenant-level consent model | Proposed |
-| [0056](0056-nginx-unprivileged-images.md) | Admin and legacy front served by nginx-unprivileged with runtime JSON config | Proposed |
+| [0056](0056-nginx-unprivileged-images.md) | Admin and legacy front served by nginx-unprivileged with runtime JSON config | Accepted |
 | [0057](0057-learner-insights-signal-stream.md) | learner-insights package: an append-only signal stream keyed by blueprint element IDs | Proposed |
 | [0058](0058-rule-based-risk-scoring.md) | Rule-based risk scoring with reasons behind a RiskScorer interface | Proposed |
 | [0059](0059-personal-remediations.md) | Personal remediations: learner-scoped, grounded, cached per struggle pattern | Proposed |
@@ -77,3 +77,24 @@ replacement.
 | [0068](0068-scheduler-minute-lock.md) | The scheduler loop claims each minute with a shared cache lock | Proposed |
 | [0069](0069-ci-covers-web-ui-sdk.md) | CI typechecks, lints and tests the web app, ui and sdk | Proposed |
 | [0070](0070-admin-node-24-shim.md) | The admin runs umi/max on Node 24 through a small shim | Proposed |
+| [0071](0071-api-security-hardening-leftovers.md) | API security hardening: auth on admin routes, allow-listed payment input, bounded group walks | Proposed |
+| [0072](0072-agent-first-cli-command-registry.md) | The agent-first `ulams` CLI: one command registry generates the parser, help, `describe`, MCP tools and docs | Proposed |
+| [0073](0073-cli-machine-contract.md) | CLI machine contract: JSON envelope, NDJSON, exit codes and error codes | Proposed |
+| [0074](0074-scoped-personal-access-tokens.md) | Scoped personal access tokens with an agent audit log and `Idempotency-Key` | Proposed |
+| [0075](0075-device-login.md) | Device login with our own RFC 8628 flow approved in the web app; Passport's device grant stays off | Proposed |
+| [0076](0076-local-mcp-server-from-cli-registry.md) | `ulams mcp`: a local MCP server (spec 2026-07-28, SDK v2) generated from the CLI registry | Proposed |
+| [0077](0077-cli-distribution.md) | CLI distribution: npm, bun-compiled binaries and a Docker image; no telemetry | Proposed |
+| [0078](0078-platform-tenant-api.md) | A platform-only HTTP API for tenant management | Proposed |
+| [0079](0079-course-as-code-format.md) | Course-as-code: Markdown with directives + YAML, Blueprint v2 and a committed sync base | Proposed |
+| [0090](0090-living-course-implementation-choices.md) | Living Course: choices made during implementation (own glob matcher, lenient alignment, eval and CI shape) | Proposed |
+| [0080](0080-interactive-preview-in-the-studio.md) | Interactive preview in the studio: learner pages from the blueprint, in a frame | Proposed |
+| [0081](0081-upgrade-command-and-step-registry.md) | `ulams:upgrade`: an idempotent per-tenant upgrade command with a step registry | Proposed |
+| [0082](0082-quiz-attempt-deadline-on-any-queue-driver.md) | Quiz attempt deadline holds on every queue driver | Proposed |
+| [0083](0083-course-builder-stage-advance-under-the-run-lock.md) | Course Builder: a stage change is one transaction under the run lock | Proposed |
+| [0084](0084-cli-builder-and-living-course-commands.md) | CLI and MCP commands for the course builder and Living Course | Proposed |
+| [0085](0085-platform-tenant-api-implementation.md) | The platform tenant API: operations, permission and what stays off | Proposed |
+| [0086](0086-interactive-topic-type.md) | Interactive topic type: author-uploaded JavaScript packages in an opaque sandbox on the content origin | Proposed |
+| [0087](0087-interactive-bridge-protocol.md) | The `ulams-ix` bridge protocol and the `@ulams/interactive-bridge` library (MIT) | Proposed |
+| [0088](0088-separately-licensed-content-packages.md) | Separately licensed content packages under `demo-content/`; GPL apps stay GPL and are never linked into MIT code | Proposed |
+| [0089](0089-six-demo-academies-and-content-sourcing.md) | Six demo academies: three free interactive courses, one theme preset each, sourced content, EN/PL as two courses | Proposed |
+| [0091](0091-shared-hosting-cron-workers-and-manual-tenant-database.md) | Shared hosting: cron-driven workers (`ulams:tenant:work-once`) and an operator-created tenant database | Proposed |
