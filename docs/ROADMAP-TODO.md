@@ -276,6 +276,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       app), and add registered LTI tool origins to the front/admin `frame-src` (documented in
       `api/docs/content-origin.md`; deployment pending). Note 2026-10-09: the owner chose the same-site
       `*.content.ulams.app` instead; the separate domain stays supported (ADR 0014, amended)
+      (partial: deployment docs with DNS and TLS steps done (operators/content-origin); the real domain is owner decision #24 and `frame-src` is L1-05)
 - [x] (new) Same-site content subdomain hardening: `__Host-` cookies, exact-Origin checks on front and API,
       sandboxed player frames, COOP/CORP headers, both modes documented
 - [ ] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector
@@ -297,7 +298,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [ ] (new) Adapt Path B admin screen (sources, versions, build status)
 - [ ] (new) Astro front: H5P plays without a token, so learner state is not restored (decide: a short-lived
       H5P token from the BFF, or state through the BFF)
-- [ ] (new) Production: set `H5P_SERVICE_CONFIG_DIR`, run `ulams:h5p:export-config` and start the H5P service
+- [x] (new) Production: set `H5P_SERVICE_CONFIG_DIR`, run `ulams:h5p:export-config` and start the H5P service
       with `compose.h5p.prod.yml`
 - [ ] (new) H5P xAPI progress endpoint rejects statement objects (`ProgressService::h5p()` typed `string`) (plan L1-06)
 - [ ] (new) `yarn install` on Node 24 fails in admin's postinstall (`max setup`: umi's esmi feature loads
