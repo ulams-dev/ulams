@@ -213,7 +213,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [x] (new) LiaScript topic type (learners), admin editor with preview and version diff, export/import strategy
       (topic type, Astro `LiaScriptLesson`, admin editor with versions, diff, restore and a live preview of
       unsaved text; course export carries the current text and assets, import creates a new document; ADR 0016)
-- [ ] (new) Run `sh packages/liascript/bin/fetch-player.sh` in the dev api container once (the image build does
+- [x] (new) Run `sh packages/liascript/bin/fetch-player.sh` in the dev api container once (the image build does
       it; the bind mount hides it)
 
 ### 1.2 Adapt Learning
