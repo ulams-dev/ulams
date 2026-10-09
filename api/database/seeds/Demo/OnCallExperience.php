@@ -42,7 +42,7 @@ class OnCallExperience extends DemoExperience
             'level' => 'Advanced',
             'language' => 'en',
             'duration' => '4-week cohort + live drills · 5 modules',
-            'hours_to_complete' => 20,
+            'hours_to_complete' => null, // lifetime access: a number is a per-learner deadline
             'target_group' => 'SREs, platform/backend engineers joining on-call, engineering managers',
             'public' => false,
             'fields' => [
