@@ -37,7 +37,7 @@ return [
     'storage_public_url' => env('TENANCY_STORAGE_PUBLIC_URL', 'http://storage.localhost'),
 
     /*
-     * Platform-level settings every tenant inherits (ADR 0030). `ulams:tenant:sync-env` copies the
+     * Platform-level settings every tenant inherits (ADR 0063). `ulams:tenant:sync-env` copies the
      * non-empty ones into each `.env.<host>`; a tenant's own value (`tenants.env_overrides`, set with
      * `ulams:tenant:set-env`) wins. Read from the platform environment, never from a tenant's.
      * The legacy spelling ANTROPHIC_API_KEY is accepted for the key.

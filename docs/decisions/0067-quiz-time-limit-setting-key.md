@@ -1,4 +1,4 @@
-# 0034. The quiz time limit default is read from `ulams_gift_quiz.max_quiz_time`
+# 0067. The quiz time limit default is read from `ulams_gift_quiz.max_quiz_time`
 
 - Status: Proposed
 - Date: 2026-10-09

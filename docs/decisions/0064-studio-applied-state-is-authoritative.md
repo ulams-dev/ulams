@@ -1,4 +1,4 @@
-# 0031. The studio reports "applied" only from authoritative state
+# 0064. The studio reports "applied" only from authoritative state
 
 - Status: Proposed
 - Date: 2026-10-09

@@ -1,4 +1,4 @@
-# 0030. Tenants inherit the platform AI settings, with per-tenant overrides
+# 0063. Tenants inherit the platform AI settings, with per-tenant overrides
 
 - Status: Proposed
 - Date: 2026-10-09

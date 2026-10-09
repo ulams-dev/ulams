@@ -1,5 +1,5 @@
 /**
- * Node 24 compatibility for umi/max (ADR 0037).
+ * Node 24 compatibility for umi/max (ADR 0070).
  *
  * `@umijs/bundler-utils` requires `spdy` at load time, `spdy-transport` requires `http-deceiver`,
  * and `http-deceiver` reads `process.binding('http_parser')` while it is being loaded. Node 24

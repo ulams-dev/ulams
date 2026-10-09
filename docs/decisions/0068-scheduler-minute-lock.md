@@ -1,4 +1,4 @@
-# 0035. The scheduler loop claims each minute with a shared cache lock
+# 0068. The scheduler loop claims each minute with a shared cache lock
 
 - Status: Proposed
 - Date: 2026-10-09

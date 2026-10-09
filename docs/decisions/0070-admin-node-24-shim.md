@@ -1,4 +1,4 @@
-# 0037. The admin runs umi/max on Node 24 through a small shim
+# 0070. The admin runs umi/max on Node 24 through a small shim
 
 - Status: Proposed
 - Date: 2026-10-09

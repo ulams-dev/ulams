@@ -7,7 +7,7 @@ use Ulams\Tenancy\Support\TenantContext;
 
 /**
  * `tenants.env_overrides`: encrypted JSON with the tenant's own values for the inheritable
- * platform settings (AI key, driver, models; ADR 0030). Platform database only.
+ * platform settings (AI key, driver, models; ADR 0063). Platform database only.
  */
 return new class extends Migration
 {

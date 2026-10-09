@@ -12,7 +12,7 @@ small commits → tests → summary.
 ## Decisions made
 
 - [x] (2026-10-09) ADRs 0013–0034 accepted
-- [ ] (2026-10-09) Post-Phase 2 bug batch: ADRs 0030–0037 proposed, awaiting acceptance (tenant AI settings,
+- [ ] (2026-10-09) Post-Phase 2 bug batch: ADRs 0063–0070 proposed, awaiting acceptance (tenant AI settings,
       studio applied state, tutor demo login, APP_KEY, quiz time limit key, scheduler lock, CI scope, admin on Node 24)
 - [x] (2026-10-09) Phase 1 defaults confirmed: students get `scorm_track-update`; SVG served as attachment
       with CSP (no sanitiser); LTI Instructor → tutor, never admin, no e-mail account linking; LiaScript player

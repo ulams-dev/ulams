@@ -129,8 +129,8 @@ Read on the platform by `ulams:tenant:*`, see [multidomain.md](multidomain.md).
 | `DB_ADMIN_PASSWORD`          | Its password                                                                                  | `DB_PASSWORD`                                |
 | `TENANCY_PHP_BINARY`         | PHP binary for tenant subprocesses                                                           | current PHP binary                           |
 | `TENANCY_PROCESS_TIMEOUT`    | Timeout of one tenant subprocess, seconds                                                    | `900`                                        |
-| `TENANCY_SCHEDULER_LOCK`     | Several scheduler replicas: only the one that takes the per-minute cache lock runs the tick (ADR 0035) | `true`                             |
-| `ANTHROPIC_API_KEY`, `AI_DRIVER`, `AI_MODEL_*`, `ANTHROPIC_BASE_URL` | Platform AI settings inherited by every tenant env file on create and `sync-env`; override per tenant with `ulams:tenant:set-env` (ADR 0030) | unset |
+| `TENANCY_SCHEDULER_LOCK`     | Several scheduler replicas: only the one that takes the per-minute cache lock runs the tick (ADR 0068) | `true`                             |
+| `ANTHROPIC_API_KEY`, `AI_DRIVER`, `AI_MODEL_*`, `ANTHROPIC_BASE_URL` | Platform AI settings inherited by every tenant env file on create and `sync-env`; override per tenant with `ulams:tenant:set-env` (ADR 0063) | unset |
 | `WORKERS_CHECK_INTERVAL`     | Seconds between `workers.sh` checks of the domain list and of exited processes               | `10`                                         |
 | `WORKERS_MAX_TIME`           | Seconds a per-domain worker or scheduler loop runs before it is restarted (fresh code/config) | `3600`                                       |
 

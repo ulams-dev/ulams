@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\NullOutput;
  * exits.
  *
  * With several API replicas every replica runs this loop, so each minute is claimed with a lock
- * in the shared cache (ADR 0021, ADR 0035): the replica that gets it runs the tick, the others
+ * in the shared cache (ADR 0021, ADR 0068): the replica that gets it runs the tick, the others
  * skip that minute. `--once` is a manual tick and does not take the lock.
  */
 class ScheduleLoopCommand extends Command

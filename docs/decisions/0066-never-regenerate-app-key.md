@@ -1,4 +1,4 @@
-# 0033. init.sh never regenerates an existing APP_KEY
+# 0066. init.sh never regenerates an existing APP_KEY
 
 - Status: Proposed
 - Date: 2026-10-09

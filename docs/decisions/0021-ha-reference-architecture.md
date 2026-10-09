@@ -68,7 +68,7 @@ Option 2 as the reference architecture, documented in the operators guide
 - Nothing in the code changes for this ADR; it records how the existing runtime is meant to be
   replicated and which limits remain (no Redis Cluster, no zero-downtime guarantee for
   migrations, manual env-file rollout after tenant changes, single scheduler).
-- Follow-ups worth separate items: (scheduler replication is done, see ADR 0035: a per-minute lock in the
+- Follow-ups worth separate items: (scheduler replication is done, see ADR 0068: a per-minute lock in the
   cache store) `migrate --isolated`; a shared or database-backed source
   for tenant env files and keys so new tenants reach every replica without a sync; Redis
   Sentinel configuration; a Helm chart; a real `api/docs/high-availability.md`.

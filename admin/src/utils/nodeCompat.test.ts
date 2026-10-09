@@ -1,6 +1,6 @@
 /**
  * admin/scripts/node-compat.cjs: Node 24 removed process.binding('http_parser'), which umi/max
- * reaches through spdy -> http-deceiver while loading (ADR 0037).
+ * reaches through spdy -> http-deceiver while loading (ADR 0070).
  */
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';

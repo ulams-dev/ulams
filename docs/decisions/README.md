@@ -39,11 +39,11 @@ replacement.
 | [0027](0027-course-builder-access.md) | Course Builder access: one permission, author acts, admins look | Accepted |
 | [0028](0028-generation-stages-and-grounding.md) | Generation stages, grounding check and quiz support check | Accepted |
 | [0029](0029-sse-wake-without-pubsub.md) | The SSE endpoint wakes on a cache key, not Valkey pub/sub | Accepted |
-| [0030](0030-tenants-inherit-platform-ai-settings.md) | Tenants inherit the platform AI settings, with per-tenant overrides | Proposed |
-| [0031](0031-studio-applied-state-is-authoritative.md) | The studio reports "applied" only from authoritative state | Proposed |
-| [0032](0032-demo-login-supports-tutor.md) | Demo login supports the tutor role | Proposed |
-| [0033](0033-never-regenerate-app-key.md) | init.sh never regenerates an existing APP_KEY | Proposed |
-| [0034](0034-quiz-time-limit-setting-key.md) | The quiz time limit default is read from `ulams_gift_quiz.max_quiz_time` | Proposed |
-| [0035](0035-scheduler-minute-lock.md) | The scheduler loop claims each minute with a shared cache lock | Proposed |
-| [0036](0036-ci-covers-web-ui-sdk.md) | CI typechecks, lints and tests the web app, ui and sdk | Proposed |
-| [0037](0037-admin-node-24-shim.md) | The admin runs umi/max on Node 24 through a small shim | Proposed |
+| [0063](0063-tenants-inherit-platform-ai-settings.md) | Tenants inherit the platform AI settings, with per-tenant overrides | Proposed |
+| [0064](0064-studio-applied-state-is-authoritative.md) | The studio reports "applied" only from authoritative state | Proposed |
+| [0065](0065-demo-login-supports-tutor.md) | Demo login supports the tutor role | Proposed |
+| [0066](0066-never-regenerate-app-key.md) | init.sh never regenerates an existing APP_KEY | Proposed |
+| [0067](0067-quiz-time-limit-setting-key.md) | The quiz time limit default is read from `ulams_gift_quiz.max_quiz_time` | Proposed |
+| [0068](0068-scheduler-minute-lock.md) | The scheduler loop claims each minute with a shared cache lock | Proposed |
+| [0069](0069-ci-covers-web-ui-sdk.md) | CI typechecks, lints and tests the web app, ui and sdk | Proposed |
+| [0070](0070-admin-node-24-shim.md) | The admin runs umi/max on Node 24 through a small shim | Proposed |

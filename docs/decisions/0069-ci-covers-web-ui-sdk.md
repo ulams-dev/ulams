@@ -1,4 +1,4 @@
-# 0036. CI typechecks, lints and tests the web app, ui and sdk
+# 0069. CI typechecks, lints and tests the web app, ui and sdk
 
 - Status: Proposed
 - Date: 2026-10-09

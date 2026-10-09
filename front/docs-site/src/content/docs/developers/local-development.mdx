@@ -35,7 +35,7 @@ Use a 22.12 or newer release. The admin, front and web Dockerfiles build on `nod
 Node 24 works for installing and building everything, including the admin: umi/max loads a
 module (`http-deceiver`, through `spdy`) that reads `process.binding('http_parser')`, which Node 24
 removed. The admin's `max` scripts therefore run through `admin/scripts/max.cjs`, which loads a small
-shim (`admin/scripts/node-compat.cjs`) first (ADR 0037). Run `max` through `yarn` scripts, not
+shim (`admin/scripts/node-compat.cjs`) first (ADR 0070). Run `max` through `yarn` scripts, not
 directly, on Node 24.
 </Aside>
 
