@@ -32,7 +32,7 @@ command_for() {
   case "$name" in
     default) echo "$PHP" "$DIR/artisan" queue:work --queue=default,broadcast,video --sleep=3 --max-time="$MAX_TIME" --memory=256 "${dom[@]}" ;;
     builder) echo "$PHP" "$DIR/artisan" queue:work "${COURSE_BUILDER_QUEUE_CONNECTION:-$DRIVER-builder}" --queue="${COURSE_BUILDER_QUEUE:-builder}" --sleep=3 --timeout=1800 --max-time="$MAX_TIME" --memory=512 "${dom[@]}" ;;
-    long) echo "$PHP" "$DIR/artisan" queue:work "${LONG_JOB_CONNECTION:-$DRIVER-long-job}" --queue="${LONG_JOB_QUEUE:-queue-long-job}" --sleep=5 --timeout=18000 --max-time="$MAX_TIME" --memory=512 "${dom[@]}" ;;
+    long) echo "$PHP" "$DIR/artisan" queue:work "${LONG_JOB_QUEUE_CONNECTION:-${LONG_JOB_CONNECTION:-$DRIVER-long-job}}" --queue="${LONG_JOB_QUEUE:-queue-long-job}" --sleep=5 --timeout=18000 --max-time="$MAX_TIME" --memory=512 "${dom[@]}" ;;
     broadcast) echo "$PHP" "$DIR/artisan" queue:work --queue=broadcast --sleep=3 --max-time="$MAX_TIME" "${dom[@]}" ;;
     schedule) echo "$PHP" "$DIR/artisan" ulams:tenant:schedule-loop --max-time="$MAX_TIME" "${dom[@]}" ;;
   esac

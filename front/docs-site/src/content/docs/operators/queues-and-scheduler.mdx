@@ -66,7 +66,7 @@ that `LARAVEL_*` variables are written to:
 | `QUEUE_CONNECTION` | `redis` | `database` or `redis`: which variant of the builder and long-job connections to use. Set it as a plain variable on the container if you run the `database` driver |
 | `COURSE_BUILDER_QUEUE_CONNECTION` | `<driver>-builder` | Connection of the builder worker |
 | `COURSE_BUILDER_QUEUE` | `builder` | Queue of the builder worker |
-| `LONG_JOB_CONNECTION` | `<driver>-long-job` | Connection of the long-job worker |
+| `LONG_JOB_QUEUE_CONNECTION` | `<driver>-long-job` | Connection of the long-job worker. The same name `config/queue.php` reads; the old name `LONG_JOB_CONNECTION` is still accepted as a fallback |
 | `LONG_JOB_QUEUE` | `queue-long-job` | Queue of the long-job worker |
 | `WORKERS_CHECK_INTERVAL` | `10` | Seconds between reads of the tenant list |
 | `WORKERS_MAX_TIME` | `3600` | Seconds a worker or scheduler loop lives before it is restarted |
