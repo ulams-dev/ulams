@@ -28,7 +28,7 @@
     {
       "key": "cli",
       "label": "CLI for authors and developers",
-      "help": "Manage course content from the terminal (init, validate, push, pull)",
+      "help": "Manage course content from the terminal (declarative apply, export, builder commands)",
       "section": "developer"
     },
     {
@@ -324,15 +324,15 @@
           "checkedAt": "2026-10-09"
         },
         "cli": {
-          "value": "Partial",
-          "note": "Operator CLI today (php artisan ulams:*); agent-first CLI in progress",
-          "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/tenancy/src/Console/CreateTenantCommand.php",
+          "value": "Yes",
+          "note": "Agent-first CLI (ulams): courses, builder and Living Course as commands, declarative apply, JSON output",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/front/cli/src/commands/index.ts",
           "checkedAt": "2026-10-09"
         },
         "mcp": {
-          "value": "Coming",
-          "note": "Roadmap 7.5; no server in the repository yet, agent-first MCP server in progress",
-          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
+          "value": "Yes",
+          "note": "ulams mcp (stdio and HTTP): the same commands as tools, scoped tokens, confirm tokens for destructive ones",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/front/cli/src/mcp/server.ts",
           "checkedAt": "2026-10-09"
         },
         "webhooks": {
