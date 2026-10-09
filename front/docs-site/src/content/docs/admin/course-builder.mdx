@@ -97,7 +97,10 @@ answer or an approval. Only the session's author and tenant admins can read a ru
 ## Queues and streaming
 
 Generation runs in queued jobs (`COURSE_BUILDER_QUEUE_CONNECTION`, `COURSE_BUILDER_QUEUE`; default:
-the default queue). Make sure a worker (Horizon) runs for each tenant. The event stream
+the default queue). Make sure a worker (Horizon) runs for each tenant. You can run several workers
+(`queue:work` processes) against the same queue, including the `database` connection: stage changes of a
+run are serialised on the run row, so a run finishes the same way with one worker or four.
+A step can take minutes, so set the connection's `retry_after` above the job timeout (1800 s). The event stream
 (`/api/admin/course-builder/sessions/{id}/events`) holds a PHP worker for up to 25 s per open
 browser tab (`COURSE_BUILDER_SSE_SECONDS`); in production route it to a small separate PHP-FPM pool.
 Old events are deleted by `php artisan course-builder:prune-events` (30 days,

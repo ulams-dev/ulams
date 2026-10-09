@@ -90,3 +90,4 @@ replacement.
 | [0080](0080-interactive-preview-in-the-studio.md) | Interactive preview in the studio: learner pages from the blueprint, in a frame | Proposed |
 | [0081](0081-upgrade-command-and-step-registry.md) | `ulams:upgrade`: an idempotent per-tenant upgrade command with a step registry | Proposed |
 | [0082](0082-quiz-attempt-deadline-on-any-queue-driver.md) | Quiz attempt deadline holds on every queue driver | Proposed |
+| [0083](0083-course-builder-stage-advance-under-the-run-lock.md) | Course Builder: a stage change is one transaction under the run lock | Proposed |
