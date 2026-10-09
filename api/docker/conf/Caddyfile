@@ -7,6 +7,12 @@
 	header {
 		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'"
 		>X-Content-Type-Options nosniff
+		# Third-party package code runs here. Own browsing-context group (no window.opener link
+		# to the app), and public package files that players in sandboxed frames (opaque origin,
+		# so every request is cross-origin) may load: no credentials ever travel here.
+		>Cross-Origin-Opener-Policy same-origin
+		>Cross-Origin-Resource-Policy cross-origin
+		>Access-Control-Allow-Origin *
 		Referrer-Policy no-referrer
 		-Set-Cookie
 		-Server
@@ -95,7 +101,10 @@ http://*.admin.localhost {
     reverse_proxy host.docker.internal:8000
 
     # Cors logic 
-    @origin header Origin {http.request.header.Origin}
+    @origin {
+        header Origin *
+        not header_regexp Origin ^(null|https?://([^/:]+\.)*content\.)
+    }
     header @origin Access-Control-Allow-Origin {http.request.header.Origin}
 
     #@referer header Referer {http.request.header.Referer}
@@ -106,7 +115,7 @@ http://*.admin.localhost {
         #not header Referer {http.request.header.Referer}
     }
     header @excluded Access-Control-Allow-Origin *
-    header Access-Control-Allow-Credentials true
+    header @origin Access-Control-Allow-Credentials true
 }
 
 # app.localhost: the platform front (it would otherwise fall to the *.localhost API site)
@@ -120,15 +129,24 @@ http://*.app.localhost, http://app.localhost {
 
     reverse_proxy host.docker.internal:4321
 
+    # The BFF and studio JSON is for this front only: a page of another origin (the content
+    # origin runs third-party code) cannot load it in no-cors mode. CORS-mode fetches are
+    # governed by the headers below, which never name a content origin.
+    header /bff/* Cross-Origin-Resource-Policy same-origin
+    header /studio/api/* Cross-Origin-Resource-Policy same-origin
+
     # Cors logic
-    @origin header Origin {http.request.header.Origin}
+    @origin {
+        header Origin *
+        not header_regexp Origin ^(null|https?://([^/:]+\.)*content\.)
+    }
     header @origin Access-Control-Allow-Origin {http.request.header.Origin}
 
     @excluded {
         not header Origin {http.request.header.Origin}
     }
     header @excluded Access-Control-Allow-Origin *
-    header Access-Control-Allow-Credentials true
+    header @origin Access-Control-Allow-Credentials true
 }
 
 
@@ -152,6 +170,36 @@ http://*.localhost {
         }
     }
 
+    # Progress tracking of the package players, called from the content origin (or from a
+    # sandboxed frame, `Origin: null`). They authenticate with the scoped X-Ulams-Tracking-Token
+    # header, never with cookies, so any origin may call them, without credentials, and no
+    # cookie is passed on. Every other API path below refuses to reflect a content origin.
+    @tracking path /api/scorm/content/* /api/liascript/progress/*
+    handle @tracking {
+        request_header -Cookie
+        request_header -Authorization
+        header Access-Control-Allow-Origin *
+        @tracking_preflight method OPTIONS
+        handle @tracking_preflight {
+            header {
+                Access-Control-Allow-Methods "GET, POST, OPTIONS"
+                Access-Control-Allow-Headers "Content-Type, X-Ulams-Tracking-Token"
+                Access-Control-Max-Age 600
+            }
+            respond 204
+        }
+        handle {
+            reverse_proxy api:9000 {
+                header_up -Access-Control-Allow-Origin
+                header_down -Access-Control-Allow-Origin
+                header_down -Set-Cookie
+                transport fastcgi {
+                    env SCRIPT_FILENAME /var/www/html/index.php
+                }
+            }
+        }
+    }
+
     # CORS preflights for the Laravel API, answered here without booting PHP. Same policy as
     # config/cors.php (any origin, method and requested headers) plus the credentials header the
     # API responses carry below; Max-Age lets the browser reuse the answer for 10 minutes. The
@@ -161,6 +209,7 @@ http://*.localhost {
         header Origin *
         header Access-Control-Request-Method *
         not path /h5p /h5p/*
+        not header_regexp Origin ^(null|https?://([^/:]+\.)*content\.)"
     }
     handle @preflight {
         header {
@@ -205,9 +254,12 @@ http://*.localhost {
                 env SCRIPT_FILENAME /var/www/html/index.php
             }
         }
-        @origin_upload header Origin {http.request.header.Origin}
+        @origin_upload {
+            header Origin *
+            not header_regexp Origin ^(null|https?://([^/:]+\.)*content\.)
+        }
         header @origin_upload Access-Control-Allow-Origin {http.request.header.Origin}
-        header Access-Control-Allow-Credentials true
+        header @origin_upload Access-Control-Allow-Credentials true
     }
 
     # Only the content origin's proxy may set this (ContentFileController)
@@ -228,7 +280,10 @@ http://*.localhost {
         }
 
         # CORS for the Laravel API only (the H5P service sets its own per-tenant CORS)
-        @origin header Origin {http.request.header.Origin}
+        @origin {
+            header Origin *
+            not header_regexp Origin ^(null|https?://([^/:]+\.)*content\.)
+        }
         header @origin Access-Control-Allow-Origin {http.request.header.Origin}
 
         @excluded {
@@ -236,7 +291,7 @@ http://*.localhost {
         }
         header @excluded Access-Control-Allow-Origin *
 
-        header Access-Control-Allow-Credentials true
+        header @origin Access-Control-Allow-Credentials true
     }
 }
 
