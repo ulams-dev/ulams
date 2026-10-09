@@ -79,6 +79,88 @@ class ToolLaunchService
     }
 
     /**
+     * OIDC login initiation with Client Side postMessage Storage support. When the platform offers
+     * a storage frame (`lti_storage_target`), `storage` tells the login page where and what to
+     * put there before it continues to `url`; the nonce is remembered server-side for the launch.
+     * Without it, or when the platform's origin cannot be told, this is the plain redirect.
+     *
+     * @return array{url: string, storage: ?array{target: string, origin: string, key: string, value: string}}
+     */
+    public function login(array $request): array
+    {
+        $url = $this->loginRedirect($request);
+
+        $target = trim((string) ($request['lti_storage_target'] ?? ''));
+        if ($target === '' || !preg_match('/^[A-Za-z0-9_.:-]{1,128}$/', $target)) {
+            return ['url' => $url, 'storage' => null];
+        }
+        parse_str((string) parse_url($url, PHP_URL_QUERY), $auth);
+        $platform = $this->db->platform((string) $request['iss'], isset($request['client_id']) ? (string) $request['client_id'] : null);
+        $origin = self::originOf((string) $request['iss']) ?? ($platform ? self::originOf($platform->auth_login_url) : null);
+        if (empty($auth['state']) || empty($auth['nonce']) || $origin === null) {
+            return ['url' => $url, 'storage' => null];
+        }
+
+        $storage = [
+            'target' => $target,
+            'origin' => $origin,
+            'key' => LtiOidcLogin::COOKIE_PREFIX . $auth['state'],
+            'value' => (string) $auth['nonce'],
+        ];
+        $this->nonces->remember(NonceStore::STORAGE, (string) $auth['state'], (int) config('ulams_lti.state_ttl', 600), $storage);
+
+        return ['url' => $url, 'storage' => $storage];
+    }
+
+    /**
+     * A launch whose login used the platform's storage first reads the value back in the browser:
+     * returns where to read it, or null for a launch that did not use storage.
+     *
+     * @return ?array{target: string, origin: string, key: string}
+     */
+    public function storageChallenge(array $request): ?array
+    {
+        $state = (string) ($request['state'] ?? '');
+        $record = $state === '' ? null : $this->nonces->peek(NonceStore::STORAGE, $state);
+        if ($record === null) {
+            return null;
+        }
+
+        return ['target' => $record['target'], 'origin' => $record['origin'], 'key' => $record['key']];
+    }
+
+    /**
+     * The value read from the platform's storage must be the nonce this login put there (single
+     * use). A platform whose storage returns nothing falls back to the server-side state, which
+     * is checked by the launch itself; a different value means the launch does not belong to the
+     * browser that started the login.
+     *
+     * @throws LtiRequestException
+     */
+    public function verifyStorage(string $state, ?string $stored): void
+    {
+        $record = $state === '' ? null : $this->nonces->take(NonceStore::STORAGE, $state);
+        if ($record === null) {
+            throw new LtiRequestException('This launch has expired or was already used. Open the activity again.', 401);
+        }
+        if ($stored !== null && $stored !== '' && !hash_equals((string) $record['value'], $stored)) {
+            $this->recordFailure([], 'The launch does not match the platform storage of this browser.');
+            throw new LtiRequestException('This launch does not belong to this browser session. Open the activity again.', 401);
+        }
+    }
+
+    /** scheme://host[:port] of an https (or, for development, http) URL, else null */
+    private static function originOf(string $url): ?string
+    {
+        $parts = parse_url($url);
+        if (!is_array($parts) || empty($parts['host']) || !in_array($parts['scheme'] ?? '', ['https', 'http'], true)) {
+            return null;
+        }
+
+        return $parts['scheme'] . '://' . $parts['host'] . (isset($parts['port']) ? ':' . $parts['port'] : '');
+    }
+
+    /**
      * @return array{type: string, redirect?: string, form_token?: string, courses?: array, user_id: int}
      */
     public function launch(array $request): array

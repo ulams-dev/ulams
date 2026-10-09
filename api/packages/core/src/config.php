@@ -39,6 +39,9 @@ return [
             'api/lti/platform/ags/*',
             'api/lti/tool/login',
             'api/lti/tool/launch',
+            // second step of a launch that used the platform's storage: posted by our own page, whose
+            // referrer policy makes the browser send Origin: null
+            'api/lti/tool/launch/verify',
             'api/lti/tool/deep-link',
             'api/payments-gateways/callback/*',
             'api/payments-gateways/webhook/*',

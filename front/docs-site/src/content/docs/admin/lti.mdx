@@ -131,6 +131,17 @@ On a launch, ulams:
   `{front}/lti/launch?code={code}&course={course}`), which the front exchanges for a session at
   `POST /api/lti/tool/exchange`.
 
+When the platform offers **Client Side postMessage Storage** (`lti_storage_target` in the login request),
+the login page first asks the platform's storage frame (`lti.capabilities`, then `lti.put_data`) to keep
+the nonce of this login under the key `lti1p3_<state>`. The launch then reads it back (`lti.get_data`) in a
+second step and posts it with the `id_token` to `POST /api/lti/tool/launch/verify`; a value that is not the
+nonce of that login is refused, so a launch cannot be replayed into another browser. Only the platform's
+frame and origin (the origin of its issuer) are talked to. The state kept by ulams stays the source of
+truth: when the platform's storage does not answer within about two seconds per step, or the platform
+sends no `lti_storage_target`, the launch continues exactly as before, with no cookie involved either way.
+Implemented from the 1EdTech LTI Client Side postMessage Storage specification (frame lookup by name or
+`_parent`, the `frame` of a capabilities answer, `org.imsglobal.` prefixed or plain subjects).
+
 Only instructors can use deep linking to add course links. When a learner finishes a topic
 (`TopicFinished` event), ulams queues a job that sends their course progress to the platform as a
 score out of 100, marked `Completed` / `FullyGraded` once the course is complete.
@@ -162,6 +173,7 @@ everything) and `retired` (still published for a grace period).
 | Learner | `POST /api/lti/launches/{topic}` |
 | External tool | `GET/POST /api/lti/platform/authorize`, `POST /api/lti/platform/token`, `/api/lti/platform/ags/{course}/lineitems[/{id}[/scores, /results]]`, `POST /api/lti/platform/deep-links` |
 | External platform | `GET/POST /api/lti/tool/login`, `POST /api/lti/tool/launch` |
+| Learner's browser (storage step) | `POST /api/lti/tool/launch/verify` |
 | Learner's browser / front | `POST /api/lti/tool/deep-link`, `POST /api/lti/tool/exchange` (throttled to 30 per minute) |
 
 See [API endpoints](/reference/api-endpoints/).

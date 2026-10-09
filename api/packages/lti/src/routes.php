@@ -45,5 +45,6 @@ Route::group(['prefix' => 'api/lti/platform/ags/{course}/lineitems', 'where' => 
 // Tool side: platforms launch us
 Route::match(['get', 'post'], 'api/lti/tool/login', [ToolController::class, 'login']);
 Route::post('api/lti/tool/launch', [ToolController::class, 'launch']);
+Route::post('api/lti/tool/launch/verify', [ToolController::class, 'verify']);
 Route::post('api/lti/tool/deep-link', [ToolController::class, 'deepLink']);
 Route::post('api/lti/tool/exchange', [ToolController::class, 'exchange'])->middleware('throttle:30,1');
