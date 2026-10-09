@@ -271,7 +271,8 @@ const hasAbout = Boolean(licence || attribution || sourceUrl);
     background: var(--ulams-color-card-bg);
   }
   /* explore freely: the card and the heading go away, a button brings them back */
-  .u-ix__back {
+  /* .u-btn sets display too, and the order of the style sheets is not ours: be more specific */
+  ulams-interactive .u-ix__back {
     display: none;
     position: fixed;
     top: 76px;
