@@ -3,10 +3,10 @@
 namespace Ulams\Tenancy\Console;
 
 use Illuminate\Console\Command;
+use InvalidArgumentException;
 use Ulams\Tenancy\Models\Tenant;
-use Ulams\Tenancy\Services\TenantProvisioner;
+use Ulams\Tenancy\Services\TenantLifecycle;
 use Ulams\Tenancy\Support\TenantContext;
-use Ulams\Tenancy\Support\TenantNaming;
 
 class SetTenantEnvCommand extends Command
 {
@@ -16,7 +16,7 @@ class SetTenantEnvCommand extends Command
 
     protected $description = 'Override or reset inheritable platform settings (AI key, driver, models) for one tenant';
 
-    public function handle(TenantProvisioner $provisioner): int
+    public function handle(TenantLifecycle $lifecycle): int
     {
         if (!TenantContext::isPlatform()) {
             $this->error('Run tenant commands on the platform, without --domain.');
@@ -31,28 +31,21 @@ class SetTenantEnvCommand extends Command
             return self::FAILURE;
         }
 
-        $allowed = TenantNaming::inheritableKeys();
-        $overrides = (array) ($tenant->env_overrides ?? []);
+        $set = [];
         foreach ((array) $this->option('set') as $pair) {
             [$key, $value] = array_pad(explode('=', (string) $pair, 2), 2, '');
-            $key = strtoupper(trim($key));
-            if (!in_array($key, $allowed, true) || $value === '') {
-                $this->error('Use --set=KEY=value with one of: ' . implode(', ', $allowed));
-
-                return self::FAILURE;
-            }
-            $overrides[$key] = $value;
+            $set[strtoupper(trim($key))] = $value;
         }
-        foreach ((array) $this->option('unset') as $key) {
-            unset($overrides[strtoupper(trim((string) $key))]);
-        }
+        try {
+            $lifecycle->applyEnv($tenant, $set, (array) $this->option('unset'));
+        } catch (InvalidArgumentException $exception) {
+            $this->error($exception->getMessage());
 
-        $tenant->env_overrides = $overrides ?: null;
-        $tenant->save();
+            return self::FAILURE;
+        }
+        $overrides = (array) ($tenant->env_overrides ?? []);
         // only key names are printed, never values
         $this->line("  <info>{$tenant->slug}</info> overrides: " . ($overrides ? implode(', ', array_keys($overrides)) : 'none (inherits the platform)'));
-
-        $provisioner->syncRuntime($tenant);
 
         return self::SUCCESS;
     }

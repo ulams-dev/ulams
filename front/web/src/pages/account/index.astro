@@ -1,5 +1,5 @@
 ---
-/** Account: profile, my courses with progress, logout. */
+/** Account: profile, my courses with progress, my tokens (create, list, revoke), logout. */
 import Render from "@ulams/ui/Render.astro";
 import Icon from "@ulams/ui/components/Icon.astro";
 import Img from "@ulams/ui/components/Img.astro";
@@ -9,18 +9,58 @@ import { getAllProgress, getProfile, getSettings, getSiteModel } from "../../lib
 import { chromeFor, withSessionLink } from "../../lib/docs.ts";
 import { themeFor } from "../../lib/theme.ts";
 import { topicHref } from "../../lib/view-model.ts";
+import {
+  DEFAULT_EXPIRY_DAYS,
+  EXPIRY_DAYS,
+  FAILURE_TEXT,
+  KINDS,
+  PRESETS,
+  createToken,
+  formatDate,
+  isExpired,
+  listTokens,
+  parseCreateForm,
+  revokeToken,
+  sortTokens,
+  summariseScopes,
+} from "../../lib/tokens.ts";
+import type { CreatedToken } from "../../lib/tokens.ts";
 
 const tenant = Astro.locals.tenant;
 if (!tenant) return Astro.redirect("/");
 const token = Astro.locals.token;
 if (!token) return Astro.redirect("/login?next=/account");
 
-const [me, progress, settings, site] = await Promise.all([
+// "My tokens": plain forms posted to this page. The secret of a new token is shown in this response only.
+const posted = Astro.request.method === "POST" ? await Astro.request.formData() : null;
+let created: CreatedToken | null = null;
+let tokenError: string | null = null;
+if (posted) {
+  const action = String(posted.get("action") ?? "");
+  if (action === "create-token") {
+    const parsed = parseCreateForm(posted);
+    if (!parsed.ok) tokenError = parsed.error;
+    else {
+      const result = await createToken(tenant, token, parsed.input);
+      if (result.ok) created = result.token;
+      else tokenError = result.message ?? FAILURE_TEXT[result.reason];
+    }
+  } else if (action === "revoke-token") {
+    const result = await revokeToken(tenant, token, String(posted.get("id") ?? ""));
+    return Astro.redirect(`/account?tokens=${result.ok ? "revoked" : "failed"}#tokens`, 303);
+  }
+}
+if (created) Astro.response.headers.set("Cache-Control", "private, no-store");
+const tokenNotice = Astro.url.searchParams.get("tokens");
+
+const [me, progress, settings, site, tokenList] = await Promise.all([
   getProfile(tenant, token).catch(() => null),
   getAllProgress(tenant, token).catch(() => null as CourseProgressSummary[] | null),
   getSettings(tenant).catch(() => null),
   getSiteModel(tenant).catch(() => null),
+  listTokens(tenant, token),
 ]);
+const tokens = tokenList.ok ? sortTokens(tokenList.tokens) : [];
 const theme = themeFor(settings?.theme?.theme, tenant.slug);
 const chrome = chromeFor(theme);
 const name = me ? [me.first_name, me.last_name].filter(Boolean).join(" ") : "Learner";
@@ -115,6 +155,122 @@ const courses = (progress ?? []).map((entry) => {
           </ul>
         )
       }
+    </section>
+
+    <section aria-labelledby="tokens-title" class="u-account__tokens" id="tokens">
+      <h2 id="tokens-title" class="u-h2">My tokens</h2>
+      <p class="u-account__lead">
+        Tokens let the <code>ulams</code> command line, scripts and AI agents act as you. A token can never do more than your account can, and
+        you choose how much less. Copy a new token once, store it safely, and revoke it when you no longer need it.
+      </p>
+
+      {tokenNotice === "revoked" && <p class="u-account__notice" role="status">Token revoked. It stops working at once.</p>}
+      {tokenNotice === "failed" && <p class="u-account__error" role="alert">The token could not be revoked. Try again.</p>}
+      {tokenError && <p class="u-account__error" role="alert">{tokenError}</p>}
+
+      {
+        created && (
+          <div class="u-account__secret u-card" role="status">
+            <h3>Copy your new token now</h3>
+            <p>It is shown only once. Keep it in a password manager or a secret store, never in code or a chat.</p>
+            <label for="new-token">Your new token “{created.name}”</label>
+            <input id="new-token" class="u-account__secret-value" type="text" readonly value={created.token} autocomplete="off" spellcheck="false" />
+            <p>
+              Use it as <code>ULAMS_TOKEN</code> next to <code>ULAMS_URL={tenant.apiUrl}</code>, or run{" "}
+              <code>printf '%s' "$TOKEN" | ulams login --url {tenant.apiUrl} --token-stdin</code>.
+            </p>
+          </div>
+        )
+      }
+
+      {
+        !tokenList.ok ? (
+          <p class="u-account__empty" role="alert">
+            {FAILURE_TEXT[tokenList.reason]} <a href="/account#tokens">Try again</a>.
+          </p>
+        ) : tokens.length === 0 ? (
+          <p class="u-account__empty">You have no tokens yet.</p>
+        ) : (
+          <ul role="list" class="u-account__token-list" aria-label="Your tokens">
+            {tokens.map((t) => (
+              <li class="u-account__token u-card">
+                <div class="u-account__token-head">
+                  <h3>{t.name ?? "Unnamed token"}</h3>
+                  <span class={`u-account__badge${t.revoked || isExpired(t) ? " u-account__badge--off" : ""}`}>
+                    {t.revoked ? "Revoked" : isExpired(t) ? "Expired" : "Active"}
+                  </span>
+                </div>
+                <dl class="u-account__token-meta">
+                  <div>
+                    <dt>Access</dt>
+                    <dd>{summariseScopes(t.scopes)}</dd>
+                  </div>
+                  <div>
+                    <dt>Created</dt>
+                    <dd>{formatDate(t.created_at)}{t.created_via === "device" ? " · command line login" : ""}</dd>
+                  </div>
+                  <div>
+                    <dt>Expires</dt>
+                    <dd>{formatDate(t.expires_at)}</dd>
+                  </div>
+                  <div>
+                    <dt>Last used</dt>
+                    <dd>{formatDate(t.last_used_at)}</dd>
+                  </div>
+                </dl>
+                {!t.revoked && (
+                  <form method="post" action="/account">
+                    <input type="hidden" name="action" value="revoke-token" />
+                    <input type="hidden" name="id" value={t.id} />
+                    <button class="u-btn u-btn--ghost u-btn--sm" type="submit" aria-label={`Revoke token ${t.name ?? t.id.slice(0, 8)}`}>
+                      Revoke
+                    </button>
+                  </form>
+                )}
+              </li>
+            ))}
+          </ul>
+        )
+      }
+
+      <form method="post" action="/account#tokens" class="u-account__create u-card" aria-labelledby="create-token-title">
+        <h3 id="create-token-title">Create a token</h3>
+        <input type="hidden" name="action" value="create-token" />
+        <div class="u-account__field">
+          <label for="token-name">Name</label>
+          <input id="token-name" name="name" type="text" required maxlength="100" autocomplete="off" aria-describedby="token-name-hint" />
+          <span id="token-name-hint" class="u-account__hint">For example “laptop” or “nightly build”.</span>
+        </div>
+        <fieldset class="u-account__field">
+          <legend>What may it do?</legend>
+          {
+            PRESETS.map((p, i) => (
+              <label class="u-account__choice">
+                <input type="radio" name="access" value={p.key} checked={i === 0} />
+                <span>
+                  <strong>{p.label}</strong>
+                  <span class="u-account__hint">{p.description}</span>
+                </span>
+              </label>
+            ))
+          }
+        </fieldset>
+        <div class="u-account__row">
+          <div class="u-account__field">
+            <label for="token-days">Valid for</label>
+            <select id="token-days" name="days">
+              {EXPIRY_DAYS.map((d) => <option value={d} selected={d === DEFAULT_EXPIRY_DAYS}>{d} days</option>)}
+            </select>
+          </div>
+          <div class="u-account__field">
+            <label for="token-kind">Used by</label>
+            <select id="token-kind" name="kind">
+              {KINDS.map((k) => <option value={k.value}>{k.label}</option>)}
+            </select>
+          </div>
+        </div>
+        <button class="u-btn" type="submit">Create token</button>
+      </form>
     </section>
   </main>
   {chrome.footer && site && <Render doc={chrome.footer} data={site} />}
@@ -215,6 +371,142 @@ const courses = (progress ?? []).map((entry) => {
     height: 8px;
     border-radius: 4px;
     background: linear-gradient(90deg, var(--ulams-color-positive) var(--progress), var(--ulams-color-border) var(--progress));
+  }
+  .u-account__tokens {
+    display: grid;
+    gap: 16px;
+  }
+  .u-account__lead {
+    color: var(--ulams-color-muted);
+    max-width: 68ch;
+  }
+  .u-account__notice,
+  .u-account__error {
+    padding: 12px 16px;
+    border-radius: var(--ulams-radius-card, 8px);
+    border: 1px solid var(--ulams-color-border);
+    font-weight: 600;
+  }
+  .u-account__error {
+    border-color: var(--ulams-color-error, #b3261e);
+    color: var(--ulams-color-error, #b3261e);
+  }
+  .u-account__secret {
+    display: grid;
+    gap: 10px;
+    padding: 20px;
+    border-color: var(--ulams-color-positive);
+  }
+  .u-account__secret-value {
+    width: 100%;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9rem;
+    padding: 10px 12px;
+  }
+  .u-account__token-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .u-account__token {
+    display: grid;
+    gap: 12px;
+    padding: 18px 20px;
+    justify-items: start;
+  }
+  .u-account__token-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+  .u-account__token-head h3 {
+    font-size: 1.1rem;
+    overflow-wrap: anywhere;
+  }
+  .u-account__badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--ulams-color-positive);
+    color: var(--ulams-color-text);
+  }
+  .u-account__badge--off {
+    border-color: var(--ulams-color-border);
+    color: var(--ulams-color-muted);
+  }
+  .u-account__token-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 8px 24px;
+    margin: 0;
+    width: 100%;
+  }
+  .u-account__token-meta dt {
+    font-size: 0.75rem;
+    color: var(--ulams-color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .u-account__token-meta dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  /* the demo badge is fixed at the bottom left: keep focused controls clear of it (WCAG 2.4.11) */
+  .u-account__tokens :global(button),
+  .u-account__tokens :global(input),
+  .u-account__tokens :global(select) {
+    scroll-margin-block-end: 88px;
+  }
+  .u-account__create {
+    display: grid;
+    gap: 16px;
+    padding: 20px;
+  }
+  .u-account__field {
+    display: grid;
+    gap: 6px;
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+  .u-account__field legend {
+    font-weight: 600;
+    padding: 0;
+    margin-bottom: 6px;
+  }
+  .u-account__field > label {
+    font-weight: 600;
+  }
+  .u-account__field input[type="text"],
+  .u-account__field select {
+    max-width: 420px;
+    padding: 8px 10px;
+  }
+  .u-account__choice {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 6px 0;
+  }
+  .u-account__choice input {
+    margin-top: 4px;
+  }
+  .u-account__choice > span {
+    display: grid;
+    gap: 2px;
+  }
+  .u-account__hint {
+    color: var(--ulams-color-muted);
+    font-size: 0.8125rem;
+  }
+  .u-account__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 32px;
   }
   @media (max-width: 640px) {
     .u-account__profile {

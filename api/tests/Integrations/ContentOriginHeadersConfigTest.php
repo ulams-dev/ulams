@@ -38,6 +38,20 @@ class ContentOriginHeadersConfigTest extends TestCase
     }
 
     #[DataProvider('caddyfiles')]
+    public function testEveryContentOriginExclusionUsesTheSameCleanRegexp(string $path): void
+    {
+        // a stray quote at the end of the pattern (it was in the preflight matcher) never matches an Origin,
+        // so the content origins were not excluded
+        $caddyfile = $this->read($path);
+        $count = preg_match_all('/not header_regexp Origin (\S+)\s*$/m', $caddyfile, $m);
+        $this->assertGreaterThanOrEqual(2, $count);
+        $this->assertSame($count, substr_count($caddyfile, 'not header_regexp Origin'), 'a pattern with trailing characters was not matched');
+        foreach ($m[1] as $pattern) {
+            $this->assertSame('^(null|https?://([^/:]+\.)*content\.)', $pattern);
+        }
+    }
+
+    #[DataProvider('caddyfiles')]
     public function testTheContentOriginKeepsItsCspAndAddsIsolationHeaders(string $path): void
     {
         $snippet = $this->snippet($this->read($path));

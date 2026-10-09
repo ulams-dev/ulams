@@ -19,8 +19,8 @@ use Ulams\CourseBuilder\Services\SessionState;
  * the client reconnects with the last id. Between polls the loop watches the session's "last event"
  * key in the cache and only queries the table when it moved (polling fallback every 500 ms).
  *
- * @OA\Get(path="/api/admin/course-builder/sessions/{id}/events", summary="AG-UI event stream (SSE)", tags={"Admin Course Builder"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+ * @OA\Get(path="/api/admin/course-builder/sessions/{session}/events", summary="AG-UI event stream (SSE)", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\Parameter(name="after", in="query", description="resume after this event id (or Last-Event-ID header)", @OA\Schema(type="integer")),
  *     @OA\Response(response=200, description="text/event-stream"))
  */

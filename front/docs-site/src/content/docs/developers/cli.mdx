@@ -169,3 +169,8 @@ email, name or group and key, only changed fields are written, and a second run 
 access entries missing from the manifest (it needs `--yes`). `ulams get Course "Kubernetes 101" --output yaml`
 exports a live course as a manifest. A full example is in
 [`front/docs-site/examples/cli`](https://github.com/ulams-dev/ulams/tree/main/front/docs-site/examples/cli).
+
+## Tenants (platform)
+
+On a platform host (`TENANCY_PLATFORM_API=true`) `ulams tenants list|get|create|delete|set-env` manage tenants and
+wait for the queued operations: [Platform tenant API](/operators/platform-api/).

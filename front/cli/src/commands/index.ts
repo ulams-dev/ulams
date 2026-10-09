@@ -11,6 +11,7 @@ import { livingCommands } from "./living.ts";
 import { curatedCommands } from "./curated.ts";
 import { mcp } from "./mcp.ts";
 import { operationCommands } from "./operations.ts";
+import { tenantCommands } from "./tenants.ts";
 import { topicCommands } from "./topics.ts";
 
 export const handWritten: AnyCommand[] = [
@@ -34,4 +35,5 @@ export const handWritten: AnyCommand[] = [
   ...applyCommands,
   ...builderCommands,
   ...livingCommands,
+  ...tenantCommands,
 ];

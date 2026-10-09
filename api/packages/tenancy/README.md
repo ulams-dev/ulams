@@ -51,6 +51,14 @@ php artisan ulams:tenant:set-env acme --set=AI_DRIVER=disabled
 php artisan ulams:tenant:delete coffee --force
 ```
 
+## Platform API (off by default)
+
+`/api/platform/tenants` and `/api/platform/operations` manage tenants over HTTP (ADR 0078, 0085). They exist only on a
+platform host with `TENANCY_PLATFORM_API=true` (404 otherwise), for users with the `platform_admin` permission and
+scoped tokens with `platform:read|write`. Creation and deletion are queued jobs (`ProvisionTenantJob`,
+`DeleteTenantJob`) that record each step in `tenant_operations`; `TenantLifecycle` is the code the artisan commands
+and the API share. CLI: `ulams tenants …`. Operator guide: the docs site, "Platform tenant API".
+
 Steps of `ulams:tenant:create`, recorded in `tenants.steps`:
 
 | Step | What it does |

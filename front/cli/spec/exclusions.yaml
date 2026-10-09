@@ -20,7 +20,6 @@ content-runtime:
   - "GET /api/scorm/show/*"
   - "* /api/scorm/track/*"
   - "* /api/cmi5/*"
-  - "GET /api/admin/play/*"
   - "POST /api/liascript/launches/*"
   - "POST /api/liascript/progress/*"
   - "POST /api/courses/progress/{topic_id}/h5p"

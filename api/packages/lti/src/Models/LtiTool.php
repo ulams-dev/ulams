@@ -23,6 +23,7 @@ use Ulams\Lti\Database\Factories\LtiToolFactory;
  * @property ?array $custom
  * @property bool $share_name
  * @property bool $share_email
+ * @property bool $nrps_enabled the tool may read the course member list (NRPS)
  * @property bool $enabled
  */
 class LtiTool extends Model
@@ -33,7 +34,7 @@ class LtiTool extends Model
 
     protected $fillable = [
         'name', 'client_id', 'deployment_id', 'oidc_login_url', 'launch_url', 'deep_linking_url',
-        'redirect_uris', 'jwks_url', 'public_key', 'custom', 'share_name', 'share_email', 'enabled',
+        'redirect_uris', 'jwks_url', 'public_key', 'custom', 'share_name', 'share_email', 'nrps_enabled', 'enabled',
     ];
 
     protected $casts = [
@@ -41,6 +42,7 @@ class LtiTool extends Model
         'custom' => 'array',
         'share_name' => 'boolean',
         'share_email' => 'boolean',
+        'nrps_enabled' => 'boolean',
         'enabled' => 'boolean',
     ];
 

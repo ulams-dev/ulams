@@ -8,6 +8,8 @@ use Tests\TestCase;
 use Ulams\Adapt\Jobs\BuildAdaptSource;
 use Ulams\CourseBuilder\Jobs\RunJob;
 use Ulams\CourseBuilder\Jobs\StepJob;
+use Ulams\Tenancy\Jobs\DeleteTenantJob;
+use Ulams\Tenancy\Jobs\ProvisionTenantJob;
 use Ulams\CoursesImportExport\Jobs\CloneCourse;
 use Ulams\LivingCourse\Jobs\AnalyseGroupJob;
 use Ulams\LivingCourse\Jobs\CheckSourceJob;
@@ -35,6 +37,8 @@ class QueueRetryAfterConfigTest extends TestCase
         BuildAdaptSource::class => ['packages/adapt/src/config.php', 'queue_connection', 'queue'],
         ProcessVideo::class => ['packages/video/src/config.php', 'queue_connection', 'queue'],
         CloneCourse::class => ['config/queue.php', 'long_job.connection', 'long_job.queue'],
+        ProvisionTenantJob::class => ['config/queue.php', 'long_job.connection', 'long_job.queue'],
+        DeleteTenantJob::class => ['config/queue.php', 'long_job.connection', 'long_job.queue'],
     ];
 
     public static function jobsAndDrivers(): array

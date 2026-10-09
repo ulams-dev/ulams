@@ -207,6 +207,7 @@ Platform environment variables of the tenancy package (defaults in
 | `TENANCY_ADMIN_CONNECTION` | `pgsql_admin` | Database connection with rights to create roles and databases. |
 | `TENANT_DEMO_PASSWORD` | `secret` | Password of the seeded accounts. Development only. |
 | `TENANCY_PROCESS_TIMEOUT` | `900` | Timeout of each child `artisan` process, in seconds. |
+| `TENANCY_PLATFORM_API` | `false` | Turn on the [platform tenant API](/operators/platform-api/) (`/api/platform/*`, `ulams tenants`). Platform hosts only. |
 
 See also [Environment variables](/reference/environment-variables/) and
 [Artisan commands](/reference/artisan-commands/).
@@ -214,7 +215,7 @@ See also [Environment variables](/reference/environment-variables/) and
 ## Known limitations
 
 - All tenants use the same object store credentials; isolation is per bucket, not per key.
-- There is no admin UI or API for tenants; they are managed only through the CLI.
+- There is no admin UI for tenants. They are managed with the artisan commands above or, when `TENANCY_PLATFORM_API=true`, over HTTP and with `ulams tenants` ([Platform tenant API](/operators/platform-api/)).
 - Theme presets are defined in the frontends. The reference front (`front/web`) uses the
   `theme.theme` setting if it is a known preset, else the slug if that names a preset, else
   `coffee`.

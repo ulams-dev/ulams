@@ -258,9 +258,10 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       tenant database, isolation tests)
 - [x] (new) Admin UI for LTI: tools and platforms screens, external-tool topic form with "pick content from
       tool" (Integrations → LTI)
-- [ ] (new) LTI: Client-Side OIDC (platform storage via `postMessage`) on the tool side, NRPS on the platform
-      side, per-tool `frame-src` in the CSP (partial: per-tool `frame-src` done, the front reads
-      `GET /api/lti/frame-origins`; Client-Side OIDC and NRPS pending)
+- [x] (new) LTI: Client-Side OIDC (platform storage via `postMessage`) on the tool side, NRPS on the platform
+      side, per-tool `frame-src` in the CSP (client-side OIDC: `lti_storage_target`, `POST /api/lti/tool/launch/verify`,
+      browser test with a fake platform in the nightly conformance; NRPS: `GET /api/lti/platform/nrps/{course}`
+      per tool switch; `frame-src`: the front reads `GET /api/lti/frame-origins`)
 - [x] (new) Run `ulams:lti:rotate-keys --init` for existing tenants (new tenants get it at provisioning) (done by `ulams:upgrade`, step `lti_keys`, ADR 0081)
 
 ### 1.4 Shared

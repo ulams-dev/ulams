@@ -18,6 +18,8 @@ class NonceStore
     public const JTI = 'jti';
     public const CODE = 'code';
     public const LAUNCH = 'launch';
+    /** tool side: a login that put its nonce in the platform's storage (client side postMessage) */
+    public const STORAGE = 'storage';
 
     /**
      * Records a value. Returns false when it was already recorded and has not expired (replay).
