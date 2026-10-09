@@ -1,0 +1,141 @@
+---
+title: Layouts
+description: Build a lesson from learning components, such as timelines, flip cards, steps and practice activities, by writing a JSON document that is checked against the approved component set.
+sidebar:
+  order: 22
+modules:
+  - topic-type-layout
+topicTypes:
+  - LayoutTopic
+adminRoutes:
+  - /courses/list
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+A **Layout** topic is a lesson body built from learning components instead of prose: a timeline of
+events, flip cards for recall, a numbered process, a callout, a code listing, a comparison table or a
+practice activity. You describe the layout as a JSON list. Learners see the components in the lesson
+page; any other client sees a Markdown version you write next to it.
+
+<Aside type="note" title="Hand-written for now">
+  The AI course builder will compose layouts for you later. Until then you write the JSON yourself, with
+  the editor checking it as you type, or generate it with a script and create the topic from the
+  command line.
+</Aside>
+
+## The components
+
+A layout may use only these nine components. Each one has a closed set of properties, listed in the
+[component catalogue](/catalogue/).
+
+| Component | Use it for |
+|---|---|
+| `Timeline` | events or stages in order, optionally marked done, current or upcoming |
+| `FlipCards` | a term or question on the front and the answer behind a button |
+| `Steps` | a process in two to five numbered steps |
+| `Callout` | a tip, a warning or a key idea |
+| `CodeBlock` | a code listing with a copy button (it does not run the code) |
+| `ComparisonTable` | products in columns and features in rows, every cell with a source |
+| `PracticeActivity` | scaffolded practice: a toolbox, challenges of rising level, tiered hints and a worked solution |
+| `H5PFrame`, `LiaScriptLesson` | existing H5P or LiaScript content inside the layout |
+
+Practice must use `PracticeActivity`: it requires an intro, a toolbox and at least one challenge, shows
+the hints one at a time and keeps the worked solution hidden until the learner has made an attempt.
+
+## The document
+
+```json
+[
+  {
+    "component": "Timeline",
+    "props": {
+      "title": "How coffee reached Europe",
+      "items": [
+        { "label": "c. 1450", "title": "Sufi monasteries in Yemen roast and brew coffee", "status": "done" },
+        { "label": "1650", "title": "Oxford opens the first English coffeehouse", "status": "current" }
+      ]
+    }
+  },
+  {
+    "component": "FlipCards",
+    "id": "recall",
+    "props": {
+      "title": "Recall",
+      "cards": [{ "front": "Why grind finer?", "back": "A finer grind exposes more surface, so more dissolves." }]
+    }
+  },
+  {
+    "component": "PracticeActivity",
+    "props": {
+      "intro": "Dial in a pour-over.",
+      "toolbox": [{ "label": "Brew ratio chart" }],
+      "challenges": [
+        {
+          "id": "c1",
+          "level": 1,
+          "prompt": "The cup tastes sour and thin. Which single change should you try first?",
+          "hints": [{ "tier": "nudge", "text": "What does sourness tell you about how much dissolved?" }],
+          "options": [
+            { "label": "Grind finer", "correct": true, "feedback": "More surface, more extraction." },
+            { "label": "Use cooler water", "correct": false, "feedback": "Cooler water dissolves less." }
+          ],
+          "workedSolution": "Sour and thin points to under-extraction. Grind one step finer and brew again."
+        }
+      ]
+    }
+  }
+]
+```
+
+- The document is a **list of nodes**, one to 80. A node has a `component`, its `props` and, optionally,
+  an `id` (letters, digits, dashes and underscores, up to 40) for links within the page.
+- Nodes cannot contain other nodes.
+- Links (`src`, `href`) must be relative, `#anchors`, `https://`, `mailto:` or `tel:`. `javascript:` and
+  `data:` links are rejected.
+- Give each `PracticeActivity` and `FlipCards` its own `id` when a layout holds more than one, so the
+  page has no duplicate ids.
+
+## Create a layout topic
+
+<Steps>
+
+1. Open the course editor, hover the lesson and click **+**, then choose **Layout**.
+2. Paste or write the JSON. Below the editor you see either "The document is valid" or the list of
+   problems, each with the node and the property it concerns (`/2/props/items`). **Add a component**
+   appends a starting point, and **Start from an example** fills an empty editor.
+3. Write the **Markdown fallback**. It is required. It is shown to clients that do not render layouts and
+   when the document cannot be rendered. Leave hints and worked solutions out of it: text cannot hold
+   them back.
+4. Click **Save**. The API validates the document again and answers with the same list of problems if
+   something is wrong.
+5. Use **Preview in the learner site** (after the first save) to see the lesson as a learner does,
+   without recording any progress.
+
+</Steps>
+
+From the command line:
+
+```bash
+ulams topics create-layout --lesson 12 --title "Coffee through time" \
+  --document @layout.json --fallback @layout.md --json
+```
+
+`--document` takes a JSON or YAML list, inline or as `@path`. See [the CLI](/developers/cli/); the same
+command is the MCP tool `topics_create_layout`.
+
+## What learners get
+
+- The components render in order inside the lesson. Flip cards, code listings and practice activities
+  use a small script each; the others need none. Every component is keyboard and screen reader
+  friendly.
+- The topic completes when the learner has scrolled to the end and spent a few seconds on the page. If
+  the layout holds a **practice activity**, the first checked answer (or "I have tried it" on an open
+  task) completes it instead, and "Mark as complete" always works.
+- If a stored document no longer fits the catalogue, for example after a component changed, the lesson
+  shows the Markdown fallback instead of a broken page.
+
+## Export, import and cloning
+
+A layout is plain JSON, so it travels with the course export and import and with a topic clone. The
+import validates the document again.

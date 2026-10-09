@@ -451,10 +451,13 @@ Builder components (MVP)
 
 Learner layouts (feature flag)
 - [ ] AI-composed declarative lesson layouts from approved components, stored in blueprint
-      (partial: the approved components and their manifest are done (L2-20); the Layout topic type
-      and generation are L2-21)
-- [ ] (new) Layout topic type, rendering only (ADR 0052; `docs/plans/interactive-demos.md` M6): catalogue documents
+      (partial: the approved components and their manifest are done (L2-20), and the Layout topic type
+      stores and renders them (M6); generation is L2-21)
+- [x] (new) Layout topic type, rendering only (ADR 0052; `docs/plans/interactive-demos.md` M6): catalogue documents
       as LMS topics so flip cards, timelines and practice activities can be course items; generation stays in L2-21
+      (API package `topic-type-layout` with server-side validation against the manifest copy, admin JSON
+      editor with validation and preview link, lesson player rendering with a Prose fallback, completion by
+      view or the first PracticeActivity attempt, `ulams topics create-layout` and the MCP tool, docs)
 
 Pedagogical guardrails
 - [ ] Mandatory scaffolding: intro → toolbox → graded challenges → tiered hints →

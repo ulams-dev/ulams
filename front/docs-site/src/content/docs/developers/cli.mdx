@@ -265,6 +265,7 @@ ulams theme set --accent '#C2552D'                       # also --theme <name>
 | `topics create-cmi5 --package au.zip [--au id]` | cmi5 package, the assignable unit by `--au` |
 | `topics create-h5p --package quiz.h5p` | H5P content, uploaded to the H5P service |
 | `topics create-liascript --markdown @course.md` (or `--file course.zip`) | LiaScript |
+| `topics create-layout --document @layout.json --fallback @layout.md` | a Layout topic: a JSON list of learning components (timeline, flip cards, practice activity, ...) and its Markdown fallback; the API validates the document ([Layouts](/creators/layout/)) |
 | `topics create-quiz --input @quiz.yaml` | a quiz; the file lists `questions` with `prompt` and `options` (`text`, `correct`) or a raw `gift` string, plus `maxAttempts`, `minPassScore` |
 | `topics create --topicable <class> --value …` | any other registered type (`ulams topics types` lists the classes), such as a project or an LTI tool |
 

@@ -64,6 +64,7 @@ Learners can open any topic from the tree; the player does not enforce an order.
 | GIFT quiz | The quiz runner, see below |
 | Project | The assignment brief, and a card saying that file upload is not part of the reference frontend yet |
 | cmi5 | A card describing the tracked activity. Launching cmi5 activities is not implemented in the reference frontend yet |
+| Layout | The lesson built from learning components: timelines, flip cards, steps, callouts, code listings, comparison tables and practice activities, see [Layouts](/creators/layout/). A document that cannot be rendered shows its Markdown version instead |
 
 Any other topic type shows an "Unsupported topic type" notice. Adapt courses imported as SCORM
 packages play as SCORM. If the API returns a topic without its content, the player shows "This
@@ -99,6 +100,7 @@ task. A topic is marked complete in one of these ways:
 | Video | The video plays to the end, or "Mark as complete" |
 | H5P | The content sends a completing xAPI statement (every H5P xAPI statement is also stored), or "Mark as complete" |
 | Quiz | The learner passes, or "Mark as complete" |
+| Layout | The learner scrolls to the end and has been on the page for at least four seconds. When the layout has a practice activity, the first checked answer (or "I have tried it") completes the topic instead. "Mark as complete" always works |
 | Audio, SCORM, LiaScript, LTI, cmi5, project | "Mark as complete". LiaScript and SCORM packages also report completion to the API themselves |
 
 Completing a topic updates the tree and the progress bar without reloading the page. Progress

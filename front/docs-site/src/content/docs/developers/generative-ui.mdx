@@ -20,6 +20,7 @@ events over SSE (see [LLM layer and Course Builder](/developers/llm-layer/)).
 | Course page and lesson player built as documents in code | Built |
 | AG-UI event log and SSE stream from Laravel carrying A2UI surfaces | <Badge text="Coming" variant="caution" /> |
 | Builder components (interview controls, outline editor, diff view) | <Badge text="Coming" variant="caution" /> |
+| Layout topic that stores and renders a hand-written learner layout (ADR 0052) | Built |
 | AI-composed learner layouts, `simulation` component, critics | <Badge text="Coming" variant="caution" /> |
 
 ## Documents
@@ -142,9 +143,11 @@ from `@ulams/ui/registry` and as a manifest for the API (`front/ui/catalogue/lea
 
 `PracticeActivity` shows the worked solution only after an attempt (an answer checked, or "I have
 tried it" for open tasks), signalled by the bubbling event `ulams:practice-attempt`; until then the
-solution sits in an inert `<template>`. Its text fallback lists the tasks without hints or solutions.
-Tests render each component with the Astro container API and run axe on the result
-(`front/ui/tests/learner-layout.test.ts`).
+solution sits in an inert `<template>`. The same attempt fires `ulams:complete` on the document, which
+completes a Layout topic in the lesson player. Its text fallback lists the tasks without hints or solutions.
+Tests render each component with the Astro container API and run axe on the result, alone and all nine
+in one lesson body (`front/ui/tests/learner-layout.test.ts`). The API stores a layout as a
+[Layout topic](/creators/layout/) and validates it against this manifest.
 
 ## Streaming from the server
 
