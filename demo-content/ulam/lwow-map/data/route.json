@@ -1,0 +1,14 @@
+{
+  "placeholder": true,
+  "note": "Placeholder content: the place names and coordinates are real (Wikidata, CC0), but the years and the notes about each stop are not facts. They are replaced when the fact sheet is cleared (plan section 7.3, M9a and M9b).",
+  "caption": "Present-day country borders; no historical borders are drawn. Distances are straight lines over the globe.",
+  "stops": [
+    { "id": "lwow", "name": "Lwów (today Lviv)", "lonlat": [24.0297, 49.8397], "years": "Placeholder years" },
+    { "id": "princeton", "name": "Princeton", "lonlat": [-74.6672, 40.3573], "years": "Placeholder years" },
+    { "id": "harvard", "name": "Cambridge, Massachusetts", "lonlat": [-71.1097, 42.3736], "years": "Placeholder years" },
+    { "id": "madison", "name": "Madison", "lonlat": [-89.4012, 43.0731], "years": "Placeholder years" },
+    { "id": "los-alamos", "name": "Los Alamos", "lonlat": [-106.2978, 35.88], "years": "Placeholder years" },
+    { "id": "boulder", "name": "Boulder", "lonlat": [-105.2705, 40.015], "years": "Placeholder years" },
+    { "id": "santa-fe", "name": "Santa Fe", "lonlat": [-105.9378, 35.687], "years": "Placeholder years" }
+  ]
+}

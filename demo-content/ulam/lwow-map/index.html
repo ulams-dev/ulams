@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A mathematician's journey on a map</title>
+<link rel="stylesheet" href="vendor/ulam-shell.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="ix-app">
+  <header id="ix-card" class="ix-card" hidden>
+    <p class="ix-step-no"></p>
+    <h1 class="ix-title"></h1>
+    <p class="ix-text"></p>
+    <nav class="ix-nav" aria-label="Steps">
+      <button type="button" class="ix-prev">Back</button>
+      <button type="button" class="ix-next ix-primary">Next step</button>
+    </nav>
+  </header>
+
+  <main id="ix-stage" class="ix-stage">
+    <h2 class="ix-sr">A journey on a map, one stop at a time</h2>
+    <p id="banner" class="lm-banner" role="note" hidden></p>
+    <div id="map-wrap" class="lm-map-wrap">
+      <svg id="map" aria-hidden="true"></svg>
+      <canvas id="fx" role="img" aria-label="Map of the journey"></canvas>
+      <figure id="inset-box" class="lm-inset" hidden>
+        <svg id="inset" viewBox="0 0 300 190" role="img" aria-label="Schematic plan of central Lwów"></svg>
+        <figcaption class="ix-note"></figcaption>
+      </figure>
+    </div>
+    <p id="leg" class="ix-summary" aria-live="polite"></p>
+    <nav aria-label="Stops of the journey"><ol id="stops" class="lm-stops"></ol></nav>
+    <p class="ix-note" id="caption"></p>
+  </main>
+  <p id="ix-live" class="ix-sr" aria-live="polite"></p>
+</div>
+<script src="vendor/atlas.js"></script>
+<script type="module" src="main.js"></script>
+</body>
+</html>

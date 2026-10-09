@@ -10,7 +10,7 @@ MIT code and CC BY 4.0 text (`LICENSE`, `LICENSE-content`, `CREDITS.md`, shared 
 | [`monte-carlo/`](monte-carlo) | `idea`, `throw`, `converge`, `error` | Throws seeded random points into a square to estimate π and watches the error shrink on a log-log chart | `complete` after 10,000 throws |
 | [`automaton/`](automaton) | `rule30`, `rule90`, `rule110`, `life`, `ulam-growth` | Runs elementary rules (any number 0 to 255), Conway's Life (editable by keyboard) and a growth rule from one cell | `complete` once three different steps were visited |
 | [`scottish-book/`](scottish-book) | `intro` and one step per problem (19, 153, 193) | Reads notebook cards, filters by poser and guesses the outcome of each problem; every guess sends a score | the topic's `on_score` rule (pass 60%), never `complete` |
-| `lwow-map/` | `lwow` … `santa-fe` | Follows a journey on a map (coming) | coming |
+| [`lwow-map/`](lwow-map) | `lwow`, `princeton`, `harvard`, `madison`, `los-alamos`, `boulder`, `santa-fe` | Follows a journey on a map (the shared map engine, great-circle legs, a schematic inset of central Lwów); the stops are also a button list | the end of the topic's step range (`on_range_end`) |
 
 ## How a package is built
 

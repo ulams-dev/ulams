@@ -6,8 +6,6 @@ code or listed below.
 | Package | Third-party material |
 |---|---|
 | `spiral` | none (the sieve of Eratosthenes and Euler's polynomial are mathematics, not material) |
-
-Packages that use the shared map engine (`lwow-map`) credit their map data in their own manifest and here when
-they are added: Natural Earth (public domain) through world-atlas (ISC).
+| `lwow-map` | Map: Natural Earth (public domain) through `world-atlas` 2.0.2 (ISC), simplified (`poland/scripts/build-topo.mjs`, copied into `data/`). Place coordinates: Wikidata (CC0) |
 
 The shared files in each package's `vendor/` are MIT: `@ulams/interactive-bridge` and `ulam-shell`.
