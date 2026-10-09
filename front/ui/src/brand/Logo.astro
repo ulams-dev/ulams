@@ -1,0 +1,47 @@
+---
+/**
+ * The ulams logo (Orbital Folio) as inline SVG. Product and platform surfaces only: tenant
+ * sites keep their own identity (ADR 0038).
+ *
+ * Colours come from --ulams-brand-indigo / --ulams-brand-orange (src/styles/base.css). Set
+ * `mono` to draw everything in currentColor (one-colour print, a tinted rail).
+ */
+import { HORIZONTAL, SYMBOL, BRAND_INDIGO, BRAND_ORANGE } from "./paths.ts";
+
+interface Props {
+  variant?: "horizontal" | "symbol";
+  /** Accessible name; omit when the logo sits next to the name or inside a labelled link. */
+  label?: string;
+  mono?: boolean;
+  class?: string;
+}
+const { variant = "horizontal", label, mono = false, class: className } = Astro.props;
+const geo = variant === "symbol" ? SYMBOL : HORIZONTAL;
+const ink = mono ? "currentColor" : `var(--ulams-brand-indigo, ${BRAND_INDIGO})`;
+const dot = mono ? "currentColor" : `var(--ulams-brand-orange, ${BRAND_ORANGE})`;
+---
+
+<svg
+  class:list={["u-logo", `u-logo--${variant}`, className]}
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox={geo.viewBox}
+  role={label ? "img" : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : "true"}
+  focusable="false"
+>
+  <g fill={ink}>
+    {geo.wings.map((d) => <path d={d} />)}
+    {"word" in geo && <path d={geo.word} fill-rule="evenodd" />}
+  </g>
+  <circle cx={geo.dot.cx} cy={geo.dot.cy} r={geo.dot.r} fill={dot}></circle>
+</svg>
+
+<style>
+  .u-logo {
+    display: block;
+    height: 1em;
+    width: auto;
+    overflow: visible;
+  }
+</style>

@@ -127,15 +127,24 @@ test("tenant accent from API settings is applied server-side", async ({ request 
   expect(html).toMatch(/\[data-theme="coffee"\]\{--ulams-color-accent:#[0-9a-f]{6}/);
 });
 
-test("platform comparison table: semantics, ulams column, as-of line and sources", async ({ page }) => {
+test("platform comparison: two groups behind a segmented control, ulams column, as-of line and sources", async ({ page }) => {
   await page.goto(`http://app.localhost:${port}/#compare`);
-  const table = page.locator("#compare table");
-  await expect(table.locator("caption")).toContainText("Feature comparison");
-  expect(await table.locator('thead th[scope="col"]').count()).toBe(8);
-  expect(await table.locator('tbody th[scope="row"]').count()).toBe(15);
-  await expect(table.locator("thead th.is-ours")).toContainText("ulams");
+  const first = page.locator("#compare .u-compare__panel").nth(0).locator("table");
+  const second = page.locator("#compare .u-compare__panel").nth(1).locator("table");
+  await expect(first.locator("caption")).toContainText("Feature comparison");
+  expect(await first.locator('thead th[scope="col"]').count()).toBe(8);
+  expect(await first.locator('tbody th[scope="row"]').count()).toBe(15);
+  await expect(first.locator("thead th.is-ours")).toContainText("ulams");
+  await expect(second).toBeHidden();
+  await page.locator('#compare label:has-text("Enterprise suites")').click();
+  await expect(second).toBeVisible();
+  await expect(first).toBeHidden();
+  expect(await second.locator('thead th[scope="col"]').count()).toBe(8);
+  expect(await second.locator('tbody th[scope="row"]').count()).toBe(20);
+  await expect(second.locator("thead th.is-ours")).toContainText("ulams");
+  await expect(second.locator("thead")).toContainText("Articulate 360");
   await expect(page.locator("#compare")).toContainText("As of");
   await page.locator("#compare summary").click();
-  expect(await page.locator("#compare details li a[href^='https://']").count()).toBeGreaterThan(30);
+  expect(await page.locator("#compare details li a[href^='https://']").count()).toBeGreaterThan(60);
   await noHorizontalScroll(page);
 });

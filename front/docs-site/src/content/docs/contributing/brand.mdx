@@ -1,0 +1,234 @@
+---
+title: Brand
+description: "The ulams brand identity, Orbital Folio: concept, logo variants with downloads, clear space, minimum sizes, colours and contrast rules, do and don't, and how the assets are built and used in code."
+sidebar:
+  order: 6
+---
+
+import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
+
+ulams has one visual identity, **Orbital Folio**, chosen by the product owner and recorded in
+[ADR 0038](/decisions/0038-brand-identity-orbital-folio/). It applies to the product and the
+platform: the documentation site, the platform landing, the admin sign-in and navigation, the
+Course Builder, the apps' icons and the "built on ulams" mark. A customer's own site keeps the
+customer's logo, colours and theme; it only carries the small ulams mark in its footer.
+
+## Concept
+
+An open book, two dark page-wings with the left one slightly smaller, and a thin arc that sweeps
+up from the lower left over the book and ends in an orange dot. The book stands for open
+knowledge. The arc is an orbit: courses that stay in sync with their sources, adapt to each
+learner and grow with traceable, cited knowledge.
+
+<img
+  src="/brand/orbital-folio-board.webp"
+  alt="The Orbital Folio brand board: the horizontal, stacked and symbol-only logos, light and dark app icons, one-colour versions, the colour palette and the clear-space rule."
+  width="1536"
+  height="1024"
+  loading="lazy"
+  style="width: 100%; height: auto; border-radius: 10px"
+/>
+
+## Logo
+
+Use the horizontal lockup by default. Use the stacked lockup where the space is square or
+narrow, and the symbol alone only where the name is already present (an app icon, a favicon, a
+rail button). Every file is hand-written SVG with a `viewBox`, no raster image and no font.
+
+<div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); margin-block: 1.5rem">
+  <figure style="margin: 0; padding: 1.5rem; background: #ffffff; border: 1px solid #d9e0e8; border-radius: 10px; text-align: center">
+    <img src="/brand/ulams-logo-horizontal.svg" alt="Horizontal lockup, indigo with an orange dot" style="height: 3.5rem; width: auto; border: 0; border-radius: 0" />
+    <figcaption style="color: #3f3f46; font-size: 0.8rem; margin-top: 0.75rem">Horizontal, primary</figcaption>
+  </figure>
+  <figure style="margin: 0; padding: 1.5rem; background: #0f2b46; border-radius: 10px; text-align: center">
+    <img src="/brand/ulams-logo-horizontal-reversed.svg" alt="Horizontal lockup, white with an orange dot" style="height: 3.5rem; width: auto; border: 0; border-radius: 0" />
+    <figcaption style="color: #e8eef5; font-size: 0.8rem; margin-top: 0.75rem">Horizontal, on indigo or dark</figcaption>
+  </figure>
+  <figure style="margin: 0; padding: 1.5rem; background: #ffffff; border: 1px solid #d9e0e8; border-radius: 10px; text-align: center">
+    <img src="/brand/ulams-logo-stacked.svg" alt="Stacked lockup, symbol above the wordmark" style="height: 6rem; width: auto; border: 0; border-radius: 0" />
+    <figcaption style="color: #3f3f46; font-size: 0.8rem; margin-top: 0.75rem">Stacked</figcaption>
+  </figure>
+  <figure style="margin: 0; padding: 1.5rem; background: #ffffff; border: 1px solid #d9e0e8; border-radius: 10px; text-align: center">
+    <img src="/brand/ulams-symbol.svg" alt="The symbol alone" style="height: 4.5rem; width: auto; border: 0; border-radius: 0" />
+    <figcaption style="color: #3f3f46; font-size: 0.8rem; margin-top: 0.75rem">Symbol only</figcaption>
+  </figure>
+  <figure style="margin: 0; padding: 1.5rem; background: #ffffff; border: 1px solid #d9e0e8; border-radius: 10px; text-align: center">
+    <img src="/brand/ulams-app-icon-light.svg" alt="App icon on white" style="height: 5rem; width: auto; border: 0; border-radius: 0" />
+    <figcaption style="color: #3f3f46; font-size: 0.8rem; margin-top: 0.75rem">App icon, light</figcaption>
+  </figure>
+  <figure style="margin: 0; padding: 1.5rem; background: #e8eef5; border-radius: 10px; text-align: center">
+    <img src="/brand/ulams-app-icon-dark.svg" alt="App icon on indigo" style="height: 5rem; width: auto; border: 0; border-radius: 0" />
+    <figcaption style="color: #0f2b46; font-size: 0.8rem; margin-top: 0.75rem">App icon, dark</figcaption>
+  </figure>
+</div>
+
+### Downloads
+
+Each lockup comes in four colourways. **Primary** is indigo with the orange dot, for white and
+light backgrounds. **Reversed** is white with the orange dot, for indigo and dark backgrounds.
+**Black** and **white** are one-colour, dot included, for print, stamps, embossing and anywhere
+colour is not available.
+
+| Form | Primary | Reversed | Black | White |
+|---|---|---|---|---|
+| Horizontal | [SVG](/brand/ulams-logo-horizontal.svg) | [SVG](/brand/ulams-logo-horizontal-reversed.svg) | [SVG](/brand/ulams-logo-horizontal-black.svg) | [SVG](/brand/ulams-logo-horizontal-white.svg) |
+| Stacked | [SVG](/brand/ulams-logo-stacked.svg) | [SVG](/brand/ulams-logo-stacked-reversed.svg) | [SVG](/brand/ulams-logo-stacked-black.svg) | [SVG](/brand/ulams-logo-stacked-white.svg) |
+| Symbol | [SVG](/brand/ulams-symbol.svg) | [SVG](/brand/ulams-symbol-reversed.svg) | [SVG](/brand/ulams-symbol-black.svg) | [SVG](/brand/ulams-symbol-white.svg) |
+| Wordmark | [SVG](/brand/ulams-wordmark.svg) | [SVG](/brand/ulams-wordmark-reversed.svg) | [SVG](/brand/ulams-wordmark-black.svg) | [SVG](/brand/ulams-wordmark-white.svg) |
+
+| Other | Files |
+|---|---|
+| App icon | [light SVG](/brand/ulams-app-icon-light.svg), [light PNG 1024](/brand/ulams-app-icon-light-1024.png), [dark SVG](/brand/ulams-app-icon-dark.svg), [dark PNG 1024](/brand/ulams-app-icon-dark-1024.png), [maskable SVG](/brand/ulams-app-icon-maskable.svg) |
+| Favicon | [SVG](/brand/favicon.svg), [ICO](/favicon.ico) |
+| Social image (1200 by 630) | [PNG](/brand/ulams-og.png), [SVG](/brand/ulams-og.svg) |
+
+## Clear space
+
+Keep an empty margin around the logo on every side, at least the **width of the letter u** in the
+wordmark (about 40 % of the lockup's height). No text, image edge or other logo enters that
+margin. The orbit dot is part of the logo and sits inside it.
+
+## Minimum sizes
+
+| Form | Screen | Print |
+|---|---|---|
+| Horizontal | 96 px wide | 25 mm wide |
+| Stacked | 64 px wide | 16 mm wide |
+| Symbol | 16 px wide (favicon on the dark tile) | 6 mm wide |
+
+Below those sizes the left page-wing and the gap beside the arc close up. Use the favicon tile,
+which draws the symbol larger inside its square, instead of shrinking the lockup further.
+
+## Colours
+
+<div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); margin-block: 1.5rem">
+  <div style="border: 1px solid #d9e0e8; border-radius: 10px; overflow: hidden">
+    <div style="background: #0f2b46; height: 5rem"></div>
+    <p style="margin: 0; padding: 0.75rem 1rem; font-size: 0.9rem"><strong>Indigo</strong><br />#0F2B46<br /><code>--ulams-brand-indigo</code></p>
+  </div>
+  <div style="border: 1px solid #d9e0e8; border-radius: 10px; overflow: hidden">
+    <div style="background: #ff7a2e; height: 5rem"></div>
+    <p style="margin: 0; padding: 0.75rem 1rem; font-size: 0.9rem"><strong>Orange</strong><br />#FF7A2E<br /><code>--ulams-brand-orange</code></p>
+  </div>
+  <div style="border: 1px solid #d9e0e8; border-radius: 10px; overflow: hidden">
+    <div style="background: #1f5a94; height: 5rem"></div>
+    <p style="margin: 0; padding: 0.75rem 1rem; font-size: 0.9rem"><strong>Blue</strong> (indigo tint)<br />#1F5A94<br /><code>--ulams-brand-blue</code></p>
+  </div>
+  <div style="border: 1px solid #d9e0e8; border-radius: 10px; overflow: hidden">
+    <div style="background: #8fb3d9; height: 5rem"></div>
+    <p style="margin: 0; padding: 0.75rem 1rem; font-size: 0.9rem"><strong>Sky</strong> (indigo tint)<br />#8FB3D9<br /><code>--ulams-brand-sky</code></p>
+  </div>
+</div>
+
+Indigo and orange are the brand. Blue and sky are tints of indigo for the places where indigo
+itself is too dark to show an accent: blue for large accent text on a light page (the platform
+hero), sky for links and accent text on a dark page.
+
+### Contrast rules (WCAG 2.2 AA)
+
+<Aside type="caution" title="Orange is an accent, not a text colour">
+Orange `#FF7A2E` on white is **2.6:1**, below the 4.5:1 that body text needs and the 3:1 that
+large text, icons and focus rings need. Use orange for the orbit dot, small graphics and
+decoration such as a thin rule. Never use it for body text, links, labels, borders of inputs or
+focus indicators on a light background, and never put white text on an orange fill.
+</Aside>
+
+| Pair | Ratio | Use |
+|---|---|---|
+| Indigo on white | 14.4:1 | Text, links, buttons with white labels. |
+| White on indigo | 14.4:1 | Reversed logo, text on indigo panels. |
+| Indigo on orange | 5.5:1 | The only text colour on an orange fill. |
+| Orange on indigo | 5.5:1 | Orange text or icons are allowed on indigo. |
+| Orange on near-black `#0E0E10` | 7.4:1 | Orange accents on the dark docs theme. |
+| Blue `#1F5A94` on `#FAFAF9` | 6.8:1 | Large accent text on the platform page. |
+| Sky `#8FB3D9` on `#0E0E10` | 8.8:1 | Links and accent text in dark mode. |
+| White on orange | 2.6:1 | **Fails.** Do not use. |
+| Orange on white | 2.6:1 | **Fails** for text and for focus rings. Graphics only. |
+
+The unit test `front/ui/tests/brand.test.ts` pins these rules, so a token change that breaks one
+fails CI. The same file checks that the token values agree in the web UI, the docs site and the
+admin.
+
+## Typography
+
+The wordmark is **drawn, not typeset**: the five letters `u l a m s` are geometric paths with
+squared stems and rounded corners, traced from the approved board and outlined, so no font is
+needed to display it and no font licence applies to the logo. Do not retype the name in another
+font to imitate it; use the wordmark file.
+
+Interface text uses the fonts already in the product: [Inter](https://rsms.me/inter/) for text,
+Inter Tight for headings and JetBrains Mono for code, all under the SIL Open Font License 1.1.
+The closest open-licence display faces to the wordmark (Exo 2, Saira, Orbitron; all OFL 1.1) can
+be used for headlines in marketing material, but never as a replacement for the wordmark.
+
+## Do and don't
+
+<div style="display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr))">
+<div>
+
+**Do**
+
+- Use the supplied files; scale them proportionally.
+- Use the primary logo on white or very light backgrounds and the reversed logo on indigo, dark
+  or photographic backgrounds with enough contrast.
+- Use the one-colour versions when colour is not available.
+- Keep the clear space and the minimum sizes.
+- Use orange for the dot and for small graphic accents.
+
+</div>
+<div>
+
+**Don't**
+
+- Redraw, recolour, outline, stretch, rotate, add shadows or effects to the logo.
+- Move the dot, change the arc, or separate the symbol from a wordmark that it appears with.
+- Put the primary (indigo) logo on a dark or busy background.
+- Set text in orange on white, or white text on orange.
+- Use the ulams logo as a tenant's own logo, or in a tenant's header: customers keep their own
+  identity.
+- Put the symbol on a coloured tile other than the supplied app icons.
+
+</div>
+</div>
+
+## Where it is used
+
+| Surface | What it shows |
+|---|---|
+| Documentation site | Horizontal lockup in the header (reversed in dark mode), indigo and orange accents, favicon and social image. |
+| Platform landing (`front/web`) | Horizontal lockup, indigo theme with an orange accent dot. |
+| Course Builder | The symbol on the rail. |
+| Admin | Horizontal lockup on sign-in and in the navigation, symbol when the navigation is collapsed. A tenant's own logo, when configured, replaces it. |
+| Tenant sites | A small "Built on ulams" mark with the symbol in the footer. Nothing else. |
+| Apps and API pages | Favicon, touch icon, PWA icons and the social image in the web app, docs, admin, the legacy front and the API's Swagger page. |
+
+## Using the brand in code
+
+The assets are generated from one script, so every app has the same files:
+
+```bash
+corepack yarn brand:build
+```
+
+It writes the SVG masters to `front/docs/design/brand/svg/`, the PNG and ICO exports to
+`front/docs/design/brand/png/`, the logo geometry to `front/ui/src/brand/paths.ts`, and copies the
+icons into the `public` folders of the web app, the docs site, the admin, the legacy front and the
+API. Run it after changing the geometry or a colour in `build.mjs` and commit the result.
+
+In Astro components use the shared logo:
+
+```astro
+---
+import Logo from "@ulams/ui/brand/Logo.astro";
+---
+<Logo variant="horizontal" label="ulams" />   <!-- or variant="symbol", or add `mono` -->
+```
+
+It reads `--ulams-brand-indigo` and `--ulams-brand-orange`, so a dark panel can set
+`--ulams-brand-indigo: #fff` to get the reversed logo. In the admin and the legacy front, which
+are not Astro, reference the SVG files in their `public` folders.
+
+<Aside type="note" title="Trademark">
+The name and the mark have not been through a trademark search yet. That check is recommended
+before the public launch and is tracked as an owner action.
+</Aside>

@@ -5,9 +5,37 @@ const VALUES = ["Yes", "No", "Partial", "Via plugin", "Paid add-on", "Not docume
 const FREE_TEXT_ROWS = new Set(["licence", "pricing"]);
 
 describe("comparison data (public claims about other products)", () => {
-  it("has every row for every system", () => {
+  const rowsOf = (group: string) => comparisonData.rows.filter((r) => !r.groups || r.groups.includes(group));
+
+  it("has every row of its groups for every system", () => {
     for (const system of comparisonData.systems) {
-      for (const row of comparisonData.rows) expect(system.cells[row.key], `${system.name} · ${row.key}`).toBeDefined();
+      for (const group of system.groups) {
+        for (const row of rowsOf(group)) expect(system.cells[row.key], `${system.name} · ${row.key}`).toBeDefined();
+      }
+    }
+  });
+
+  it("covers the enterprise suites and the enterprise rows", () => {
+    const names = comparisonData.systems.filter((s) => s.groups.includes("enterprise") && !s.ours).map((s) => s.name);
+    expect(names).toEqual(["Articulate 360", "Docebo", "Cornerstone", "SAP SuccessFactors Learning", "Absorb LMS", "360Learning"]);
+    const enterpriseOnly = ["data_residency", "sso", "scim", "authoring_tool", "content_library"];
+    for (const key of enterpriseOnly) {
+      expect(comparisonData.rows.find((r) => r.key === key)?.groups, key).toEqual(["enterprise"]);
+      for (const name of names) expect(comparisonData.systems.find((s) => s.name === name)?.cells[key], `${name} · ${key}`).toBeDefined();
+    }
+    // keeps every existing row for the enterprise group too
+    for (const key of ["self_hosting", "licence", "headless_api", "ai_generation", "scorm", "lti13", "pricing"]) {
+      expect(rowsOf("enterprise").map((r) => r.key)).toContain(key);
+    }
+  });
+
+  it("keeps ulams in every group, first, and honest about unbuilt enterprise rows", () => {
+    const ulams = comparisonData.systems.find((s) => s.ours)!;
+    expect(ulams.groups).toEqual(comparisonData.groups.map((g) => g.key));
+    expect(ulams.cells.scim?.value).toBe("Coming");
+    expect(ulams.cells.sso?.value).not.toBe("Yes");
+    for (const key of ["sso", "scim", "authoring_tool", "content_library", "data_residency"]) {
+      expect(ulams.cells[key]?.source, key).toMatch(/^https:\/\/github\.com\/ulams-dev\/ulams\/blob\/main\//);
     }
   });
 
@@ -38,10 +66,17 @@ describe("comparison data (public claims about other products)", () => {
     }
   });
 
-  it("builds table props with ulams first and every source listed", () => {
+  it("builds one table per group with ulams first and every source listed", () => {
     const model = comparisonModel();
-    expect(model.columns[0]).toMatchObject({ label: "ulams", highlight: true });
-    expect(model.rows.every((r) => r.cells.length === model.columns.length)).toBe(true);
+    expect(model.groups.map((g) => g.label)).toEqual(["Open source & creator platforms", "Enterprise suites"]);
+    for (const group of model.groups) {
+      expect(group.columns[0]).toMatchObject({ label: "ulams", highlight: true });
+      expect(group.rows.every((r) => r.cells.length === group.columns.length)).toBe(true);
+    }
+    expect(model.groups[0]!.columns).toHaveLength(7);
+    expect(model.groups[1]!.columns).toHaveLength(7);
+    expect(model.groups[0]!.rows).toHaveLength(15);
+    expect(model.groups[1]!.rows).toHaveLength(20);
     const urls = new Set(comparisonData.systems.flatMap((s) => Object.values(s.cells).map((c) => c.source)));
     expect(new Set(model.sources.map((s) => s.href))).toEqual(urls);
   });

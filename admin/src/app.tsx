@@ -171,7 +171,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     history.push(`/user/login?redirect=${url}`);
   }
 
-  let logo = 'logo.svg';
+  // ulams brand (ADR 0038): the horizontal lockup, the symbol alone when the sider is collapsed.
+  // A tenant's own logo (config key `logo`) replaces both.
+  let logo = initialState?.collapsed ? 'icon.svg' : 'logo.svg';
 
   const configLogo = initialState?.config?.find((row) => row.key === 'logo');
   const backgroundColor = initialState?.publicConfig?.global?.contentBackgroundColor ?? '#f0f2f5';

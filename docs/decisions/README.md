@@ -44,6 +44,7 @@ replacement.
 | [0032](0032-source-connectors-as-plugins.md) | Source connectors as plugins; Git through host APIs; one SSRF-safe HTTP client | Accepted |
 | [0033](0033-progress-preservation-rules.md) | Progress preservation rules for content updates | Accepted |
 | [0034](0034-tamper-evident-audit-trail.md) | A tamper-evident audit trail for Living Course | Accepted |
+| [0038](0038-brand-identity-orbital-folio.md) | Brand identity: Orbital Folio, drawn logo, brand tokens, orange as accent only | Proposed |
 | [0040](0040-postgresql-17.md) | PostgreSQL 17 with a tested dump-and-restore upgrade | Proposed |
 | [0041](0041-seaweedfs-and-per-tenant-s3-identities.md) | SeaweedFS replaces MinIO; per-tenant S3 identities; server-side reads use the internal endpoint | Proposed |
 | [0042](0042-no-websocket-server.md) | No WebSocket server: Soketi and Pusher removed, Reverb only when a feature needs push | Proposed |
