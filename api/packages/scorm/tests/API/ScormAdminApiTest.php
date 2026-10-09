@@ -333,4 +333,30 @@ class ScormAdminApiTest extends TestCase
         $response = $this->actingAs($this->user, 'api')->get('/api/scorm/play/' . $data->data->scormData->scos[0]->uuid);
         $response->assertOk();
     }
+
+    public function test_adapt_packages_are_detected_and_labelled(): void
+    {
+        Storage::fake(config('scorm.disk'));
+        // a minimal adapt-contrib-spoor export: SCORM manifest plus the Adapt runtime layout
+        $adapt = $this->makeScormZip([
+            'adapt/js/adapt.min.js' => 'window.Adapt = {};',
+            'course/config.json' => '{"_spoor":{"_isEnabled":true}}',
+            'course/en/course.json' => '{"title":"Adapt fixture"}',
+        ]);
+
+        $response = $this->actingAs($this->user, 'api')->postJson('/api/admin/scorm/upload', [
+            'zip' => new UploadedFile($adapt, 'adapt.zip', null, null, true),
+        ])->assertOk();
+
+        $this->assertSame('adapt', $response->json('data.model.source_format'));
+        $this->assertDatabaseHas('scorm', ['id' => $response->json('data.model.id'), 'source_format' => 'adapt']);
+        $this->actingAs($this->user, 'api')->getJson('/api/admin/scorm?per_page=100')
+            ->assertOk()
+            ->assertJsonFragment(['source_format' => 'adapt']);
+
+        $plain = $this->actingAs($this->user, 'api')->postJson('/api/admin/scorm/upload', [
+            'zip' => new UploadedFile($this->makeScormZip(), 'plain.zip', null, null, true),
+        ])->assertOk();
+        $this->assertNull($plain->json('data.model.source_format'));
+    }
 }

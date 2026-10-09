@@ -73,6 +73,7 @@ class ScormService implements ScormServiceContract
             $scorm->origin_file_mime = $scormData['type'];
             $scorm->uuid = $scormData['hashName'];
             $scorm->user_id = Auth::user() ? Auth::user()->getKey() : null;
+            $scorm->source_format = $this->detectSourceFormat($file);
             $scorm->save();
 
             $this->saveToDb($scormData['scos'], $scorm);
@@ -85,6 +86,30 @@ class ScormService implements ScormServiceContract
             'scormData' => $scormData,
             'model' => $scorm ?? null
         ];
+    }
+
+    /**
+     * Authoring tool of a package, from its file layout: Adapt (adapt-contrib-spoor) exports
+     * contain adapt/js/adapt.min.js or course/config.json. Null when unknown.
+     */
+    public function detectSourceFormat(UploadedFile|string $file): ?string
+    {
+        $zip = new ZipArchive();
+        if ($zip->open($file instanceof UploadedFile ? (string) $file->getRealPath() : $file, ZipArchive::RDONLY) !== true) {
+            return null;
+        }
+        try {
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $name = ltrim((string) $zip->getNameIndex($i), './');
+                if (preg_match('#(^|/)adapt/js/adapt(\.min)?\.js$#', $name) || preg_match('#(^|/)course/config\.json$#', $name)) {
+                    return 'adapt';
+                }
+            }
+        } finally {
+            $zip->close();
+        }
+
+        return null;
     }
 
     public function saveToDb(array $scormData, ?ScormModel $scormModel = null): void
