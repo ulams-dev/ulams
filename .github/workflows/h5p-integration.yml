@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 20
     services:
       postgres:
-        image: mirror.gcr.io/library/postgres:12
+        image: postgres:12
         env:
           POSTGRES_DB: default
           POSTGRES_USER: default
@@ -31,7 +31,7 @@ jobs:
           --health-cmd "pg_isready -U default -d default"
           --health-interval 5s --health-timeout 5s --health-retries 20
       valkey:
-        image: mirror.gcr.io/valkey/valkey:8-alpine
+        image: valkey/valkey:8-alpine
         ports:
           - 6379:6379
         options: >-
@@ -39,7 +39,7 @@ jobs:
           --health-interval 5s --health-timeout 5s --health-retries 20
       minio:
         # Same image as api/docker-compose.yml; it creates the bucket from MINIO_DEFAULT_BUCKETS.
-        image: mirror.gcr.io/bitnamilegacy/minio:latest
+        image: bitnamilegacy/minio:latest
         env:
           MINIO_ROOT_USER: admin
           MINIO_ROOT_PASSWORD: minio_secretpassword
