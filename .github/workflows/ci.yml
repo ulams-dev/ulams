@@ -162,6 +162,10 @@ jobs:
       - name: Typecheck, lint, build, test (ulams CLI)
         run: corepack yarn turbo run typecheck lint build test --filter=ulams --concurrency=2
 
+      # Every operation of the API's OpenAPI snapshot has a CLI command or a reasoned exclusion.
+      - name: CLI endpoint coverage
+        run: corepack yarn workspace ulams coverage
+
   php:
     name: PHPUnit (${{ matrix.shard }})
     needs: changes

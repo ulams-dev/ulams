@@ -1,5 +1,6 @@
 import { CliError } from "../errors.ts";
 import { fillPath, buildRequest } from "./request.ts";
+import { diffFields } from "./diff.ts";
 import type { AnyCommand, Ctx, Kind, PageMeta, Plan, Result } from "./types.ts";
 import { commandPath } from "./schema-export.ts";
 
@@ -34,15 +35,31 @@ export async function planFor(cmd: AnyCommand, ctx: Ctx, input: Record<string, u
   if (cmd.plan) return cmd.plan(ctx, input);
   if (cmd.request) {
     const req = buildRequest(cmd.request, input);
-    return {
+    const path = fillPath(req.path, req.params);
+    const plan: Plan = {
       request: {
         method: req.method,
-        path: fillPath(req.path, req.params),
+        path,
         ...(Object.keys(req.query).length ? { query: req.query } : {}),
         ...(req.body !== undefined ? { body: req.body } : {}),
         ...(req.form ? { body: req.form, files: Object.keys(req.files ?? {}) } : {}),
       },
     };
+    const itemPath = cmd.request.pathParams.length > 0 && req.path.endsWith("}");
+    const body = (req.body ?? req.form) as Record<string, unknown> | undefined;
+    if (itemPath && req.method !== "GET" && (req.method !== "POST" || cmd.id.endsWith(".update"))) {
+      // Update or delete of one item: show what exists now (best effort: the same path with GET).
+      try {
+        const current = (await ctx.client.call<Record<string, unknown>>("GET", path, { idempotent: true, signal: ctx.signal })).data;
+        if (req.method === "DELETE") plan.current = current;
+        else if (body && typeof body === "object") plan.changes = diffFields(current, body);
+      } catch {
+        plan.note = "The current resource could not be fetched, so no diff is shown.";
+      }
+    } else if (body && typeof body === "object" && req.method === "POST") {
+      plan.changes = diffFields(null, body);
+    }
+    return plan;
   }
   return { note: "This command has no client-side plan." };
 }

@@ -58,6 +58,7 @@ export function exportCommand(cmd: AnyCommand) {
     scopes: cmd.scopes,
     audience: cmd.audience,
     endpoints: cmd.endpoints,
+    undocumented: cmd.undocumented ?? [],
     paginated: Boolean(cmd.paginated),
     longRunning: cmd.longRunning ?? null,
     dryRun: cmd.dryRun ?? (cmd.kind === "write" || cmd.kind === "destructive" ? "client" : "none"),

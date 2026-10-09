@@ -37,7 +37,7 @@ export function mockApi(routes: Record<string, Handler>) {
       ...(form ? { form } : {}),
     };
     requests.push(req);
-    const handler = routes[`${req.method} ${req.path}`];
+    const handler = routes[`${req.method} ${req.path}`] ?? routes["*"];
     if (!handler) return new Response(JSON.stringify({ success: false, message: `no mock for ${req.method} ${req.path}` }), { status: 404 });
     const reply = typeof handler === "function" ? await handler(req) : handler;
     const text = reply.raw ?? JSON.stringify(reply.body ?? { success: true, data: null });

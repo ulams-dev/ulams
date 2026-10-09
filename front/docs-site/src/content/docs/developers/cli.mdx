@@ -91,3 +91,54 @@ ulams --help
 ```
 
 Run `ulams schema` once at the start of an agent session; it works without credentials.
+
+## Commands for everything the admin panel does
+
+Noun commands are generated from the API's OpenAPI document by method and path (`courses list`,
+`lessons create`, `users get 12`, `quizzes update`, ...), with a curated override file for names and a few
+hand-written commands where the generic one is not enough. Every operation of the API is either covered
+or deliberately excluded; the [coverage matrix](/reference/cli/coverage/) is checked in CI.
+
+```bash
+ulams courses list --title Kube --per-page 5            # filters are flags
+ulams courses list --all --fields id,title,status        # every page; NDJSON with --output ndjson
+ulams courses get 12                                     # lessons and topics included
+ulams courses publish 12                                 # idempotent
+ulams access grant --course 12 --user 34 --group 5       # enrol (alias: ulams enrol)
+ulams settings set global companyName "Acme Academy"
+ulams theme set --accent '#C2552D'
+ulams courses export 12 --out course-12.zip
+```
+
+List commands take `--page`, `--per-page`, `--all` and `--limit`. Names that are not obvious: learner
+endpoints are under `my` (signed in) and `public`, tokens under `tokens`. `ulams schema` lists them all.
+
+### Topics of every type
+
+| Command | Creates |
+|---|---|
+| `topics create-richtext --markdown @file.md` | rich text from Markdown (or `--html`) |
+| `topics create-oembed --url …`, `create-video --youtube-url …` | an embedded video or page |
+| `topics create-video --file v.mp4` | uploaded video; waits for processing (`--no-wait` prints `video:<id>`) |
+| `topics create-file --file doc.pdf` | PDF, image or audio, by extension |
+| `topics create-scorm --package pkg.zip [--sco id]` | SCORM package; several SCOs without `--sco` exit 2 with the choices |
+| `topics create-cmi5`, `create-h5p`, `create-liascript` | the same pattern for each package type |
+| `topics create-quiz --input @quiz.yaml` | a GIFT quiz with its questions |
+| `topics create --topicable <class> --value …` | any other registered type |
+
+### Dry run, confirmation and long operations
+
+`--dry-run` makes no change: for updates it fetches the current resource and prints a diff, for deletes
+it shows the resource. Destructive commands exit 11 with that plan until you pass `--yes`. Long
+operations wait by default (`--timeout 600`); `--no-wait` prints a handle such as `video:42` that you can
+give to `ulams operations get|wait`; a timeout exits 10 and names the handle.
+
+## Declarative apply
+
+`ulams apply --file course.yaml` takes YAML or JSON documents (`apiVersion: ulams.dev/v1`; kinds `Course`
+with nested lessons and topics, `User`, `Group`, `Page`, `Setting`, `Access`). Objects are found by title,
+email, name or group and key, only changed fields are written, and a second run performs no writes.
+`--dry-run --exit-code` exits 13 when the plan has changes; `--prune` also deletes lessons, topics and
+access entries missing from the manifest (it needs `--yes`). `ulams get Course "Kubernetes 101" --output yaml`
+exports a live course as a manifest. A full example is in
+[`front/docs-site/examples/cli`](https://github.com/ulams-dev/ulams/tree/main/front/docs-site/examples/cli).

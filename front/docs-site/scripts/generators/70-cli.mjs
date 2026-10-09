@@ -1,7 +1,7 @@
 // CLI reference generated from the command registry: runs `ulams schema --json` from the built CLI
 // (front/cli, built here when dist/ is missing) and writes one page per noun plus the index.
 import { spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT, cell, writePage } from "../lib.mjs";
 
@@ -111,5 +111,24 @@ ${exits}
 `
     )
   );
+  const matrix = join(ROOT, "front/cli/coverage/matrix.md");
+  if (existsSync(matrix)) {
+    const lines = readFileSync(matrix, "utf8").split("\n");
+    const summary = (lines.find((l) => l.startsWith("**")) ?? "").replace(/\*\*/g, "");
+    const body = lines.slice(lines.findIndex((l) => l.startsWith("| Operation"))).join("\n");
+    written.push(
+      writePage(
+        "reference/cli/coverage.md",
+        {
+          title: "CLI endpoint coverage",
+          description: `Which API operations have a CLI command and which are deliberately excluded. ${summary}`,
+          generatedFrom: "front/cli/coverage/matrix.md",
+          editUrl: false,
+          sidebar: { order: 90 },
+        },
+        `Every operation of the API's OpenAPI document is covered by a command or excluded with a reason, checked in CI by \`yarn workspace ulams coverage\`. ${summary}.\n\n${body}`
+      )
+    );
+  }
   return written;
 }

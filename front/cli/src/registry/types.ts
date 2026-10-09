@@ -119,6 +119,8 @@ export interface CommandDef<I extends z.ZodObject = z.ZodObject, O extends z.Zod
   scopes: string[];
   audience: Audience[];
   endpoints: string[];
+  /** Routes that exist but are missing from the OpenAPI spec (fix the spec; reported by the coverage check). */
+  undocumented?: string[];
   paginated?: boolean;
   longRunning?: LongRunning;
   dryRun?: "client" | "server" | "none";

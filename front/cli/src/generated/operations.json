@@ -43,6 +43,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/agent-audit",
+  "summary": "Agent audit log",
+  "tag": "Admin Tokens"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/bookmarks",
   "summary": "Get a listing of the bookmarks",
   "tag": "Admin Bookmarks"
@@ -1345,6 +1351,24 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/tokens",
+  "summary": "Every user's scoped API tokens",
+  "tag": "Admin Tokens"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/tokens/{id}",
+  "summary": "Revoke any scoped token",
+  "tag": "Admin Tokens"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/tokens/{id}/audit",
+  "summary": "Audit log of one token",
+  "tag": "Admin Tokens"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/topic-project-solutions",
   "summary": "Get a listing of the project solutions",
   "tag": "Admin Project Solution"
@@ -1723,6 +1747,36 @@
  },
  {
   "method": "POST",
+  "path": "/api/auth/device/code",
+  "summary": "Start a device login (RFC 8628)",
+  "tag": "Auth"
+ },
+ {
+  "method": "GET",
+  "path": "/api/auth/device/requests/{user_code}",
+  "summary": "Details of a pending device request (for the approval page)",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/device/requests/{user_code}/approve",
+  "summary": "Approve a device request",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/device/requests/{user_code}/deny",
+  "summary": "Deny a device request",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/device/token",
+  "summary": "Poll for the token of a device login (RFC 8628)",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
   "path": "/api/auth/email/resend",
   "summary": "Resend email verification",
   "tag": "Auth"
@@ -1797,6 +1851,30 @@
   "method": "POST",
   "path": "/api/auth/social/complete/{token}",
   "summary": "Complete the missing data from socials",
+  "tag": "Auth"
+ },
+ {
+  "method": "GET",
+  "path": "/api/auth/tokens",
+  "summary": "My scoped API tokens",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/tokens",
+  "summary": "Create a scoped API token (the secret is returned once)",
+  "tag": "Auth"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/auth/tokens/{id}",
+  "summary": "Revoke one of my scoped tokens",
+  "tag": "Auth"
+ },
+ {
+  "method": "GET",
+  "path": "/api/auth/tokens/current",
+  "summary": "The token this request is authenticated with",
   "tag": "Auth"
  },
  {
@@ -2278,6 +2356,12 @@
   "path": "/api/mattermost/reset_password",
   "summary": "Sends request for mattermost to send reset password link with email",
   "tag": "Mattermost"
+ },
+ {
+  "method": "GET",
+  "path": "/api/meta",
+  "summary": "Capabilities of this host",
+  "tag": "Auth"
  },
  {
   "method": "GET",
