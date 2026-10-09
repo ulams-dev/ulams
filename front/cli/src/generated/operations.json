@@ -36,6 +36,12 @@
   "tag": "Admin Adapt"
  },
  {
+  "method": "GET",
+  "path": "/api/admin/adapt/{id}/versions",
+  "summary": "Version history (version, change note, author, date; no source)",
+  "tag": "Admin Adapt"
+ },
+ {
   "method": "POST",
   "path": "/api/admin/adapt/{id}/versions",
   "summary": "Add a version",
@@ -232,6 +238,156 @@
   "path": "/api/admin/course-access-enquiries/approve/{id}",
   "summary": "Approve the specified Course Access Enquiry",
   "tag": "Admin Course Access"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/fragments/{fragment}",
+  "summary": "One source fragment (citation popover)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/runs/{run}",
+  "summary": "Status of one run (poll it for --wait)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/runs/{run}/cancel",
+  "summary": "Cancel a run",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/runs/{run}/steps/{step}/retry",
+  "summary": "Retry one failed generation step",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/sessions",
+  "summary": "My builder sessions",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/sessions",
+  "summary": "Start a builder session",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/course-builder/sessions/{session}",
+  "summary": "Delete a session (an applied course is kept)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/sessions/{session}",
+  "summary": "A session's state snapshot",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/sessions/{session}/apply",
+  "summary": "Approve the apply of the current version",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/sessions/{session}/brief",
+  "summary": "Course Brief",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/course-builder/sessions/{session}/brief",
+  "summary": "Edit the Course Brief",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/sessions/{session}/events",
+  "summary": "AG-UI event stream (SSE)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/sessions/{session}/publish",
+  "summary": "Publish the applied course",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/sessions/{session}/redo",
+  "summary": "Redo",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/sessions/{session}/runs",
+  "summary": "Start a run from a chat message or a UI action (AG-UI RunAgentInput)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/sessions/{session}/sources",
+  "summary": "Upload a source (MD, PDF, DOCX); ingestion and the interview start by themselves",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/sessions/{session}/sources/{source}",
+  "summary": "A source with its section tree",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/sessions/{session}/undo",
+  "summary": "Undo the last content change",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/sessions/{session}/usage",
+  "summary": "AI calls of the session by task and model",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/sessions/{session}/versions",
+  "summary": "Blueprint version history",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/versions/{version}",
+  "summary": "A blueprint version with fragment labels",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/versions/{version}/approve",
+  "summary": "Approve a proposal (outline or patch)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/versions/{version}/diff",
+  "summary": "Element-aware diff against another version (default: its parent)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/versions/{version}/reject",
+  "summary": "Reject a proposal",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/versions/{version}/restore",
+  "summary": "Restore an old version as a new one",
+  "tag": "Admin Course Builder"
  },
  {
   "method": "GET",
@@ -613,6 +769,180 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/living-course/audit/export",
+  "summary": "Tenant-wide audit export (admins)",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/living-course/audit/verify",
+  "summary": "Tenant-wide chain verification (admins)",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/living-course/connections/{connection}",
+  "summary": "Disconnect a source (revisions and the audit trail are kept)",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/living-course/connections/{connection}",
+  "summary": "Change a connection: schedule, automatic analysis, learner notice settings, paused",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/connections/{connection}/check",
+  "summary": "Check the source now",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/connections/{connection}/webhook-secret",
+  "summary": "Rotate the webhook secret (returned once)",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/living-course/connectors",
+  "summary": "The source connectors this installation offers, with their settings schema",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/living-course/proposals/{proposal}",
+  "summary": "A proposal with its items grouped by lesson, citations and source changes",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/proposals/{proposal}/accept-all",
+  "summary": "Accept every undecided update, no-change and removal item",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/proposals/{proposal}/analyse",
+  "summary": "Start or resume the AI analysis (confirmEstimate when above the automatic threshold)",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/proposals/{proposal}/apply",
+  "summary": "Apply the accepted items as a new course version (409 with conflicting items or admin edits)",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/proposals/{proposal}/items/{item}/accept",
+  "summary": "Accept one item",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/proposals/{proposal}/items/{item}/regenerate",
+  "summary": "Ask for another version of one element ({comment}); one call, at most three per item",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/proposals/{proposal}/items/{item}/reject",
+  "summary": "Reject one item (keep the earlier version of the element)",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/proposals/{proposal}/items/{item}/reset",
+  "summary": "Back to undecided",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/living-course/proposals/{proposal}/learner-note",
+  "summary": "The text learners see for updated lessons (plain text, up to 500 characters)",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/proposals/{proposal}/reanalyse",
+  "summary": "Replace the proposal by a new one from the newest source revision",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/proposals/{proposal}/reject",
+  "summary": "Reject the whole proposal and acknowledge the source revision",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/living-course/revisions/{revision}",
+  "summary": "One revision",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/living-course/revisions/{revision}/changes",
+  "summary": "Fragment changes of a revision against the synced revision it was compared with (or ?against=<revision id>)",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/living-course/sessions/{session}/audit",
+  "summary": "Audit entries of a session (filters: action, actorType, from, to, source)",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/living-course/sessions/{session}/audit/export",
+  "summary": "Export the audit entries of a session as CSV or JSON",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/living-course/sessions/{session}/audit/verify",
+  "summary": "Verify the hash chain of the audit trail",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/living-course/sessions/{session}/proposals",
+  "summary": "Update proposals of a session, newest first",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/living-course/sessions/{session}/sources",
+  "summary": "Sources of a session with connection, sync state and revisions",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/sessions/{session}/sources/connect",
+  "summary": "Add a source through a connector (Git repository, web pages, plugins); validates and fetches revision 1",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/living-course/sessions/{session}/staleness",
+  "summary": "Per-element staleness and the course summary",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/living-course/sources/{source}/revisions",
+  "summary": "Revisions of a source, newest first",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/sources/{source}/revisions",
+  "summary": "Upload a new version of a source (MD, PDF or DOCX): creates a revision and its fragment diff",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/lti/endpoints",
   "summary": "Our LTI endpoints and issuer, to register us elsewhere",
   "tag": "Admin LTI"
@@ -802,12 +1132,6 @@
   "path": "/api/admin/pdfs/preview",
   "summary": "Preview a pdfme template with sample data",
   "tag": "Template PDFs"
- },
- {
-  "method": "GET",
-  "path": "/api/admin/play/{cmi5AuId}",
-  "summary": "",
-  "tag": "cmi5"
  },
  {
   "method": "GET",
@@ -1975,6 +2299,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/cmi5/player/{cmi5AuId}",
+  "summary": "Launch a cmi5 AU",
+  "tag": "cmi5"
+ },
+ {
+  "method": "GET",
   "path": "/api/config",
   "summary": "Get a listing of public config values.",
   "tag": "Settings"
@@ -2242,6 +2572,30 @@
   "path": "/api/liascript/progress/{topic}",
   "summary": "Progress reported by the content-origin player",
   "tag": "LiaScript"
+ },
+ {
+  "method": "GET",
+  "path": "/api/living-course/courses/{course}/freshness",
+  "summary": "Topics with an update under review (only when the course shows it)",
+  "tag": "Living Course learner"
+ },
+ {
+  "method": "GET",
+  "path": "/api/living-course/courses/{course}/notices",
+  "summary": "The caller's open update notices for a course",
+  "tag": "Living Course learner"
+ },
+ {
+  "method": "POST",
+  "path": "/api/living-course/notices/{notice}/dismiss",
+  "summary": "Mark a notice as reviewed",
+  "tag": "Living Course learner"
+ },
+ {
+  "method": "POST",
+  "path": "/api/living-course/webhooks/{webhookId}",
+  "summary": "Receive a push webhook of a connected repository",
+  "tag": "Living Course webhooks"
  },
  {
   "method": "GET",

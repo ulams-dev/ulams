@@ -25,6 +25,9 @@ const AREAS = [
   [/^\/api\/admin\/course-builder/, "builder"],
 ];
 
+/** Areas with hand-written commands only (src/commands/builder.ts, living.ts): the builder is driven through runs, not CRUD. */
+const HAND_WRITTEN = ["/api/admin/course-builder/", "/api/admin/living-course/"];
+
 const kebab = (s) =>
   s
     .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
@@ -251,7 +254,7 @@ export function buildCommands({ spec, overrides, exclusions }) {
   for (const { path, method, op, siblings } of entries) {
     const key = `${method.toUpperCase()} ${path}`;
     const ov = byKey[key] ?? {};
-    if (ov.hide || isExcluded(exclusions, method.toUpperCase(), path)) continue;
+    if (ov.hide || isExcluded(exclusions, method.toUpperCase(), path) || HAND_WRITTEN.some((prefix) => path.startsWith(prefix))) continue;
     const params = collectParams(spec, op);
     const pathParams = splitPath(path).filter((s) => s.startsWith("{")).map((s) => s.slice(1, -1));
     const queryParams = params.filter((p) => p.in === "query");
