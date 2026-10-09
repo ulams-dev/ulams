@@ -53,7 +53,7 @@ them). A new optional field is a minor change; renaming or removing one means `"
    string `"null"`, the nonce matches, the size is within 16 KB and the payload is valid. Nothing but
    `ready` counts before `ready`. With no `ready` within 10 s the page shows the text alternative.
 4. Events go from the page to the front BFF with the learner's session, in batches every two seconds
-   (`POST /bff/interactive/{topic}/events` → `POST /api/interactive/topics/{topic}/events`). The frame
+   (`POST /bff/api/interactive/topics/{topic}/events` → `POST /api/interactive/topics/{topic}/events`). The frame
    never holds a token.
 
 ## Using the library

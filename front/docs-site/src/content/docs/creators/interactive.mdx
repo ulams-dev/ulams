@@ -8,6 +8,8 @@ modules:
   - uploads
 topicTypes:
   - InteractiveTopic
+adminRoutes:
+  - /courses/interactive/**
 ---
 
 import { Aside, Steps } from "@astrojs/starlight/components";
@@ -117,7 +119,8 @@ package in a normal browser tab.
 
 1. Open **Courses → Interactive** (`/courses/interactive`) and click **Upload package**.
 2. Choose the `.zip`. The package appears with its manifest, steps and licence. If the manifest lists
-   `network` origins, you must confirm them before the upload is accepted.
+   `network` origins, the screen shows them and the upload is accepted only after you tick the
+   confirmation box.
 3. To change the package, open it and **Upload new version**. Versions are immutable: a new upload never
    changes a topic that already plays an older version.
 4. In the course editor add an **Interactive** topic and pick the package.
@@ -171,7 +174,8 @@ ulams topics create-interactive --lesson 12 --title "Too slow" --file gravity.zi
 ```
 
 `--file` uploads a new package; `--package <id>` uses an existing one (add `--version` to pin another
-version). The MCP tool `topics_create_interactive` does the same. See [CLI](/developers/cli/).
+version, or `--follow-latest`). A manifest that lists `network` origins needs `--accept-network`, the
+command-line form of the confirmation box in the admin. The MCP tool `topics_create_interactive` does the same. See [CLI](/developers/cli/).
 
 ## Licences
 
