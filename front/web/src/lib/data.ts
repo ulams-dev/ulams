@@ -3,6 +3,7 @@ import type { UiNode } from "@ulams/ui/render-core";
 import { cache } from "./cache.ts";
 import { config } from "./config.ts";
 import { fetchFrameOrigins } from "./frame-origins.ts";
+import { fetchShowcase } from "./interactive.ts";
 import type { LearnerNotices } from "./notices.ts";
 import { siteModel, type RawSiteData, type SiteModel } from "./view-model.ts";
 
@@ -54,17 +55,18 @@ export function getCourse(tenant: Tenant, id: number) {
 /** Everything a landing or course page shows, fetched in parallel; a failing endpoint only empties its section. */
 export async function getRawSiteData(tenant: Tenant, courseId?: number): Promise<RawSiteData> {
   const api = apiFor(tenant);
-  const [settings, courses, tutors, webinars, events, products] = await Promise.all([
+  const [settings, courses, tutors, webinars, events, products, showcase] = await Promise.all([
     settle(getSettings(tenant), null),
     settle(getCourses(tenant), []),
     settle(publicData(tenant, "tutors", () => api.courses.tutors()), []),
     settle(publicData(tenant, "webinars", () => api.events.webinars({ per_page: 6 })), []),
     settle(publicData(tenant, "events", () => api.events.stationary({ per_page: 6 })), []),
     settle(publicData(tenant, "products", () => api.products.list({ per_page: 12 })), []),
+    settle(publicData(tenant, "showcase", () => fetchShowcase(tenant)), null),
   ]);
   const id = courseId ?? courses[0]?.id;
   const course = id ? await settle<Course | null>(getCourse(tenant, id), null) : null;
-  return { settings, courses, course, tutors, webinars, events, products };
+  return { settings, courses, course, tutors, webinars, events, products, showcase };
 }
 
 export async function getSiteModel(tenant: Tenant, courseId?: number): Promise<SiteModel> {

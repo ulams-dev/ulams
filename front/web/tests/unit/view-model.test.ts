@@ -63,12 +63,19 @@ describe("view model", () => {
     expect(consoleLog(undefined, [])).toEqual({ lines: [], values: [] });
   });
 
+  it("reads landing lists from a nested `lists` object as well as from the landing root", () => {
+    const c = courseModel(FIXTURES.gravity.course);
+    expect(c.lists.sources?.length).toBeGreaterThan(0);
+    expect(c.lists.features?.[0]?.title).toMatch(/^[A-Z]/);
+    expect(courseModel(FIXTURES.nightsky.course).lists.for_parents?.length).toBeGreaterThan(0);
+  });
+
   it("strips HTML from API rich text", () => {
     expect(plainText("<p>Cup &amp; spoon</p>")).toBe("Cup & spoon");
   });
 
   it("builds the site model for every demo tenant", () => {
-    for (const slug of ["coffee", "oncall", "nightsky"] as const) {
+    for (const slug of ["coffee", "oncall", "nightsky", "gravity", "poland", "ulam"] as const) {
       const site = siteModel(raw(slug), { slug, adminUrl: `http://${slug}.admin.localhost` });
       expect(site.course?.lessons.length, slug).toBeGreaterThan(0);
       expect(site.tenant.name, slug).not.toBe(slug);

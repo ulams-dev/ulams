@@ -112,31 +112,60 @@ export function interactiveNode(result: InteractiveResult | null, input: { title
       props: { tone: "warning", title: input.title, text: result && "error" in result ? result.error : "This interactive opens once you are enrolled." },
     };
   }
-  const m = result.manifest;
-  const locale = pickLocale(m, input.course.language);
   return {
     component: "InteractiveLesson",
     props: {
-      src: result.url,
-      title: input.title,
+      ...playerProps(result, input.course.language),
       ...(input.preview ? {} : { topicId: input.topicId, courseId: input.course.id }),
+      title: input.title,
       display: result.topic.display,
       height: result.topic.height,
-      ...(result.topic.start_step ? { startStep: result.topic.start_step } : {}),
-      ...(result.topic.end_step ? { endStep: result.topic.end_step } : {}),
-      steps: m.steps.map((s) => ({
-        id: s.id,
-        title: pick(s.title, locale, m.defaultLocale),
-        text: pick(s.text, locale, m.defaultLocale),
-        ...(s.poster ? { poster: s.poster } : {}),
-      })),
       ...(result.topic.text ? { text: result.topic.text } : {}),
-      requires: m.requires,
-      reducedMotionSupported: m.capabilities.reducedMotion === true,
-      locale,
-      licence: m.licence,
-      ...(m.attribution ? { attribution: m.attribution } : {}),
-      ...(m.source?.url ? { sourceUrl: m.source.url } : {}),
     },
   };
+}
+
+/** The part of the InteractiveLesson props that comes from a launch answer (shared with the landing showcase). */
+function playerProps(result: InteractiveLaunch, courseLanguage?: string | null): Record<string, unknown> {
+  const m = result.manifest;
+  const locale = pickLocale(m, courseLanguage);
+  return {
+    src: result.url,
+    ...(result.topic.start_step ? { startStep: result.topic.start_step } : {}),
+    ...(result.topic.end_step ? { endStep: result.topic.end_step } : {}),
+    steps: m.steps.map((s) => ({
+      id: s.id,
+      title: pick(s.title, locale, m.defaultLocale),
+      text: pick(s.text, locale, m.defaultLocale),
+      ...(s.poster ? { poster: s.poster } : {}),
+    })),
+    requires: m.requires,
+    reducedMotionSupported: m.capabilities.reducedMotion === true,
+    locale,
+    licence: m.licence,
+    ...(m.attribution ? { attribution: m.attribution } : {}),
+    ...(m.source?.url ? { sourceUrl: m.source.url } : {}),
+  };
+}
+
+/**
+ * Props of the landing hero's live package (the Hero `showcase` prop): the first interactive topic of the first
+ * public course, as the public showcase endpoint returns it. Nothing is tracked, so no topic or course id.
+ */
+export function showcaseProps(launch: InteractiveLaunch, courseLanguage?: string | null): Record<string, unknown> {
+  const m = launch.manifest;
+  const locale = pickLocale(m, courseLanguage);
+  return { ...playerProps(launch, courseLanguage), title: pick(m.title, locale, m.defaultLocale), height: 440 };
+}
+
+/** The public showcase of a tenant (no login): null when no public course has an interactive topic, or on any failure. */
+export async function fetchShowcase(tenant: Tenant): Promise<InteractiveLaunch | null> {
+  try {
+    const response = await fetch(`${tenant.apiUrl}/api/interactive/showcase`, { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(3000) });
+    if (!response.ok) return null;
+    const body = (await response.json().catch(() => null)) as { data?: InteractiveLaunch } | null;
+    return typeof body?.data?.url === "string" && Array.isArray(body.data.manifest?.steps) ? body.data : null;
+  } catch {
+    return null;
+  }
 }

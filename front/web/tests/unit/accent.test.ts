@@ -17,6 +17,9 @@ describe("tenant accent from settings", () => {
     ["coffee", "#C2552D"],
     ["oncall", "#58A6FF"],
     ["nightsky", "#FFD23F"],
+    ["gravity", "#3DD6F5"],
+    ["poland", "#C8102E"],
+    ["ulam", "#1D3B8F"],
     ["coffee", "#FFE600"],
     ["oncall", "#1A1A2E"],
   ])("%s with %s: text colour reaches AA on the background, on-primary on the fill", (theme, accent) => {

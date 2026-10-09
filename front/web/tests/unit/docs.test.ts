@@ -1,11 +1,28 @@
 import { describe, expect, it } from "vitest";
-import { validateDocument } from "@ulams/ui/render-core";
+import { resolveBindings, validateDocument } from "@ulams/ui/render-core";
 import { THEMES } from "@ulams/ui/registry";
 import { chromeFor, landingDocs, pageMeta } from "../../src/lib/docs.ts";
 import { siteModel } from "../../src/lib/view-model.ts";
 import { completionMode, topicDoc } from "../../src/lib/page-docs.ts";
 import { flattenTopics } from "@ulams/sdk";
 import { COFFEE_PROGRAM, raw } from "./fixtures.ts";
+import type { InteractiveLaunch } from "../../src/lib/interactive.ts";
+
+const SHOWCASE: InteractiveLaunch = {
+  url: "http://gravity.content.localhost/interactive/k/v1/index.html",
+  version: 1,
+  manifest: {
+    title: { en: "Solar system" },
+    steps: [{ id: "solar-system", title: { en: "The solar system" }, text: { en: "Eight planets orbit the Sun." }, poster: "http://gravity.content.localhost/interactive/k/v1/posters/solar-system.webp" }],
+    capabilities: {},
+    requires: ["webgl"],
+    locales: ["en"],
+    defaultLocale: "en",
+    licence: "MIT",
+    source: { url: "https://github.com/qunabu/Gravity" },
+  },
+  topic: { start_step: null, end_step: null, completion_rule: "on_open", pass_score: null, display: "inline", height: 640, text: null },
+};
 import { comparisonModel } from "../../src/lib/comparison.ts";
 import { workflowsModel } from "../../src/lib/workflows.ts";
 
@@ -18,9 +35,16 @@ describe("platform landing", () => {
     primary: { label: "Open as learner", href: "http://coffee.app.localhost:4321/learn/1" },
     secondary: { label: "Open as admin", href: "http://coffee.admin.localhost" },
   });
-  it("is valid against the catalogue with three demo cards", () => {
+  it("is valid against the catalogue with six demo cards", () => {
     const data = {
-      demos: [demo("The Coffee Atlas", "coffee"), demo("On-Call", "oncall"), demo("Night Sky Explorers", "nightsky")],
+      demos: [
+        demo("The Coffee Atlas", "coffee"),
+        demo("On-Call", "oncall"),
+        demo("Night Sky Explorers", "nightsky"),
+        demo("Gravity Lab", "gravity"),
+        demo("Poland, Measured", "poland"),
+        demo("The Scottish Book", "ulam"),
+      ],
       comparison: comparisonModel(),
       workflows: workflowsModel("actual"),
     };
@@ -59,10 +83,47 @@ describe("landing documents", () => {
 
     it(`${theme}: header links point back to the landing from other pages`, () => {
       const { header } = chromeFor(theme);
-      const links = (header?.props?.links ?? []) as Array<{ href: string }>;
+      // a link may be bound to API data (the Polish course); other pages render its default
+      const links = resolveBindings(header?.props?.links ?? [], {}) as Array<{ href: string }>;
       expect(links.every((l) => !l.href.startsWith("#"))).toBe(true);
     });
   }
+});
+
+describe("the three new landings", () => {
+  it.each([["gravity", "cosmos", "orbits"], ["poland", "atlas", "atlas"], ["ulam", "notebook", "timeline"]] as const)(
+    "%s: hero %s and syllabus %s, a live showcase when the API has one, no roadmap statuses",
+    (theme, heroVariant, syllabusVariant) => {
+      const doc = landingDocs[theme]!;
+      const nodes: Array<{ component: string; props?: Record<string, unknown> }> = [];
+      const walk = (n: { component: string; props?: Record<string, unknown>; children?: unknown[] }) => {
+        nodes.push(n);
+        (n.children as typeof nodes | undefined)?.forEach((c) => walk(c as never));
+      };
+      walk(doc as never);
+      expect(nodes.find((n) => n.component === "Hero")?.props).toMatchObject({ variant: heroVariant, showcase: { $data: "/showcase" } });
+      expect(nodes.find((n) => n.component === "Syllabus")?.props).toMatchObject({ variant: syllabusVariant });
+      expect(JSON.stringify(doc)).not.toContain('"status"');
+
+      const base = raw(theme);
+      const site = siteModel({ ...base, showcase: SHOWCASE }, { slug: theme, adminUrl: "http://admin" });
+      expect(validateDocument(doc, site)).toEqual([]);
+      // the showcase reaches the hero without any tracking ids
+      const hero = resolveBindings(nodes.find((n) => n.component === "Hero")!.props, site) as { showcase: Record<string, unknown> };
+      expect(hero.showcase).toMatchObject({ src: SHOWCASE.url, title: "Solar system" });
+      expect(hero.showcase).not.toHaveProperty("topicId");
+    }
+  );
+
+  it("ulam has no Quotes section and answers why the product is called ulams", () => {
+    const json = JSON.stringify(landingDocs.ulam);
+    expect(json).not.toContain('"Quotes"');
+    expect(json).toContain("Why is the product called ulams?");
+  });
+
+  it("poland links the Polish course from the header and the footer", () => {
+    expect(JSON.stringify(landingDocs.poland)).toContain("Polski");
+  });
 });
 
 describe("lesson documents", () => {

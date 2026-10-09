@@ -8,10 +8,14 @@ const port = process.env.WEB_BASE_PORT ?? "4321";
 const base = (slug: string) => `http://${slug}.app.localhost:${port}`;
 
 // topic types opened per tenant (looked up in the API, see demo-data.ts)
-const TENANTS = [
+const TENANTS: Array<{ slug: string; title: RegExp; kinds: string[]; syllabusMin?: number }> = [
   { slug: "coffee", title: /Learn coffee/, kinds: ["RichText", "Video", "H5P", "GiftQuiz"] },
   { slug: "oncall", title: /Stay calm/, kinds: ["RichText", "Video"] },
   { slug: "nightsky", title: /adventure to the stars/i, kinds: ["preview"] },
+  // the free interactive demos: one welcome lesson each until the real courses land (plan milestones M8 and M9)
+  { slug: "gravity", title: /solar system|gravity|orbit/i, kinds: ["preview"], syllabusMin: 1 },
+  { slug: "poland", title: /poland|polska/i, kinds: ["preview"], syllabusMin: 1 },
+  { slug: "ulam", title: /scottish|ulam|mathematic/i, kinds: ["preview"], syllabusMin: 1 },
 ];
 
 async function noHorizontalScroll(page: Page) {
@@ -31,7 +35,7 @@ for (const tenant of TENANTS) {
       await expect(page.locator("footer")).toHaveCount(1);
       await expect(page.locator("a.u-skip")).toHaveAttribute("href", "#main");
       // syllabus comes from the API: one link per seeded topic
-      expect(await page.locator("#syllabus li").count()).toBeGreaterThan(5);
+      expect(await page.locator("#syllabus li").count()).toBeGreaterThanOrEqual(tenant.syllabusMin ?? 6);
       await expect(page.locator(".u-demo summary")).toContainText("resets hourly");
       await noHorizontalScroll(page);
       expect(errors).toEqual([]);
@@ -92,8 +96,8 @@ test("platform landing sells the product and links every demo", async ({ page })
   await page.goto(`http://app.localhost:${port}/`);
   await expect(page.locator("h1")).toContainText("true to their sources");
   const cards = page.locator("#demos li");
-  await expect(cards).toHaveCount(3);
-  for (const slug of ["coffee", "oncall", "nightsky"]) {
+  await expect(cards).toHaveCount(6);
+  for (const slug of ["coffee", "oncall", "nightsky", "gravity", "poland", "ulam"]) {
     await expect(page.locator(`#demos a[href^="http://${slug}.app.localhost"]`)).toHaveCount(1);
     await expect(page.locator(`#demos a[href^="http://${slug}.admin.localhost"]`)).toHaveCount(1);
   }
