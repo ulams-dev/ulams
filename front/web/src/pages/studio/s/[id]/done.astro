@@ -2,6 +2,7 @@
 import Studio from "../../../../layouts/Studio.astro";
 import { ApiError, type Blueprint, type BuilderState } from "@ulams/sdk";
 import { builderFor } from "../../../../lib/studio.ts";
+import { previewCourseHref } from "../../../../lib/preview.ts";
 import { STATUS_LABEL } from "../../../../studio/labels.ts";
 
 const id = Astro.params.id ?? "";
@@ -79,7 +80,13 @@ const checks = [
         <button class="cb-btn cb-btn-primary" type="submit" style="width:100%" disabled={published}>{published ? "Published" : "Publish course"}</button>
       </form>
       <a class="cb-btn" href={`${adminBase}/courses/list/${courseId}`} rel="noopener">Open in admin</a>
-      <a class="cb-btn" href={`/courses/${courseId}`}>Preview as learner</a>
+      {
+        published ? (
+          <a class="cb-btn" href={`/courses/${courseId}`}>View as learner</a>
+        ) : (
+          <a class="cb-btn" href={previewCourseHref(courseId)}>Preview as learner</a>
+        )
+      }
       <a class="cb-btn" href={`/studio/s/${id}/landing`}>Landing page</a>
       <a class="cb-btn" href={`/studio/s/${id}/workspace`}>Keep refining</a>
     </div>

@@ -45,6 +45,7 @@ replacement.
 | [0033](0033-progress-preservation-rules.md) | Progress preservation rules for content updates | Accepted |
 | [0034](0034-tamper-evident-audit-trail.md) | A tamper-evident audit trail for Living Course | Accepted |
 | [0038](0038-brand-identity-orbital-folio.md) | Brand identity: Orbital Folio, drawn logo, brand tokens, orange as accent only | Proposed |
+| [0039](0039-author-preview-of-draft-courses.md) | Author preview of draft courses on its own routes with the author's token | Proposed |
 | [0063](0063-tenants-inherit-platform-ai-settings.md) | Tenants inherit the platform AI settings, with per-tenant overrides | Proposed |
 | [0064](0064-studio-applied-state-is-authoritative.md) | The studio reports "applied" only from authoritative state | Proposed |
 | [0065](0065-demo-login-supports-tutor.md) | Demo login supports the tutor role | Proposed |

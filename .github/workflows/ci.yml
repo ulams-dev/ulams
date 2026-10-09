@@ -50,8 +50,8 @@ jobs:
       js: ${{ steps.filter.outputs.js }}
       php: ${{ steps.api.outputs.php == 'true' || steps.filter.outputs.ci == 'true' }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           filters: |
@@ -68,7 +68,7 @@ jobs:
             ci:
               - ".github/**"
       # Separate call: `every` is needed for the exclusions and applies to the whole call.
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@v4
         id: api
         with:
           predicate-quantifier: every
@@ -89,9 +89,9 @@ jobs:
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
       TURBO_TELEMETRY_DISABLED: "1"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
           cache: yarn
@@ -119,7 +119,7 @@ jobs:
           node "$PRETTIER" --check "**/**.{js,jsx,tsx,ts,less,md,json}" --end-of-line auto
 
       - name: Restore Turborepo cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .turbo/cache
           key: turbo-${{ runner.os }}-${{ github.sha }}
@@ -188,7 +188,7 @@ jobs:
       REDIS_PASSWORD: ""
       XDEBUG_MODE: "off"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Resolve shard suites
         id: shard
@@ -230,7 +230,7 @@ jobs:
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: composer-${{ runner.os }}-${{ hashFiles('api/composer.lock') }}
@@ -282,7 +282,7 @@ jobs:
 
       - name: Upload JUnit report
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: phpunit-${{ matrix.shard }}
           path: |

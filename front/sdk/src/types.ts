@@ -75,6 +75,8 @@ export interface UserSummary {
 export interface Profile extends UserSummary {
   name?: string;
   roles?: string[];
+  /** Spatie permission names of the user (`/api/profile/me`). */
+  permissions?: string[];
 }
 
 export interface Category {

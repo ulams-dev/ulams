@@ -218,6 +218,14 @@ export function splitLessonTitle(title: string): { kicker?: string; title: strin
 
 export const topicHref = (courseId: number, topicId: number): string => `/learn/${courseId}/${topicId}`;
 
+/** Where the links of a course page and its program point: the learner pages, or the author preview. */
+export interface CourseLinks {
+  learn: (courseId: number) => string;
+  topic: (courseId: number, topicId: number) => string;
+}
+
+export const LEARNER_LINKS: CourseLinks = { learn: (id) => `/learn/${id}`, topic: topicHref };
+
 export function topicStatus(
   topic: Topic,
   progress: TopicProgress[] | null,
@@ -232,8 +240,9 @@ export function topicStatus(
 
 export function lessonModels(
   course: Course,
-  options: { progress?: TopicProgress[] | null; currentTopicId?: number; access?: boolean } = {}
+  options: { progress?: TopicProgress[] | null; currentTopicId?: number; access?: boolean; links?: CourseLinks } = {}
 ): LessonModel[] {
+  const links = options.links ?? LEARNER_LINKS;
   const sortTopics = (topics: Topic[]) => [...topics].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   const lessons: Lesson[] = [...(course.lessons ?? [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   return lessons.map((lesson) => {
@@ -250,7 +259,7 @@ export function lessonModels(
       format: FORMAT_BY_KIND[topicKind(topic.topicable_type)],
       minutes: durationToMinutes(topic.duration),
       preview: Boolean(topic.preview),
-      href: topicHref(course.id, topic.id),
+      href: links.topic(course.id, topic.id),
       status: topicStatus(topic, options.progress ?? null, options.currentTopicId, options.access ?? true),
     }));
     const minutes = topicModels.reduce((sum, t) => sum + t.minutes, 0) || durationToMinutes(lesson.duration);
@@ -296,8 +305,8 @@ function stringLists(landing: Record<string, unknown>): Record<string, Array<{ t
   return out;
 }
 
-export function courseModel(course: Course, currency = "EUR", tutors: UserSummary[] = []): CourseModel {
-  const lessons = lessonModels(course);
+export function courseModel(course: Course, currency = "EUR", tutors: UserSummary[] = [], links: CourseLinks = LEARNER_LINKS): CourseModel {
+  const lessons = lessonModels(course, { links });
   const topics = flattenTopics(course);
   const minutes = lessons.reduce((sum, l) => sum + l.minutes, 0);
   const formats: Format[] = [];
@@ -325,8 +334,8 @@ export function courseModel(course: Course, currency = "EUR", tutors: UserSummar
     language: clean(course.language),
     targetGroup: clean(course.target_group),
     href: `/courses/${course.id}`,
-    learnHref: `/learn/${course.id}`,
-    previewHref: preview ? topicHref(course.id, preview.id) : `/learn/${course.id}`,
+    learnHref: links.learn(course.id),
+    previewHref: preview ? links.topic(course.id, preview.id) : links.learn(course.id),
     image: imageFromUrl(course.image_url ?? course.poster_url, course.title),
     durationLabel: clean(course.duration),
     lessonCount: lessons.length,
@@ -421,9 +430,9 @@ export interface RawSiteData {
   products: Product[];
 }
 
-export function siteModel(raw: RawSiteData, tenant: { slug: string; adminUrl: string }): SiteModel {
+export function siteModel(raw: RawSiteData, tenant: { slug: string; adminUrl: string }, links: CourseLinks = LEARNER_LINKS): SiteModel {
   const currency = (raw.settings?.currencies?.default as string | undefined) || "EUR";
-  const course = raw.course ? courseModel(raw.course, currency, raw.tutors) : undefined;
+  const course = raw.course ? courseModel(raw.course, currency, raw.tutors, links) : undefined;
   const events = eventModels(raw.webinars, raw.events);
   return {
     tenant: {

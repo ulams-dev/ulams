@@ -1,6 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { consoleLog, courseModel, eventModels, formatMoney, plainText, planModels, siteModel, splitLessonTitle } from "../../src/lib/view-model.ts";
 import { FIXTURES, raw } from "./fixtures.ts";
+import { PREVIEW_LINKS } from "../../src/lib/preview.ts";
+
+describe("view model links", () => {
+  it("points the program of a course page at the author preview when asked", () => {
+    const c = courseModel(FIXTURES.coffee.course, "EUR", [], PREVIEW_LINKS);
+    expect(c.learnHref).toBe(`/preview/courses/${c.id}`);
+    expect(c.lessons.flatMap((l) => l.topics.map((t) => t.href)).every((h) => h.startsWith(`/preview/courses/${c.id}/`))).toBe(true);
+    expect(courseModel(FIXTURES.coffee.course, "EUR").learnHref).toBe(`/learn/${c.id}`);
+  });
+});
 
 describe("view model", () => {
   it("splits the lesson title conventions of the three demo courses", () => {

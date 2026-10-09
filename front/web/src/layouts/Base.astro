@@ -26,9 +26,11 @@ interface Props {
   bodyClass?: string;
   /** Tenant accent colour from API settings (`theme.accent`); applied as CSS variables. */
   accent?: string | null;
+  /** Keep the page out of search engines (the author preview). */
+  noindex?: boolean;
 }
 
-const { theme, title, description, lang = "en", demo, bodyClass, accent } = Astro.props;
+const { theme, title, description, lang = "en", demo, bodyClass, accent, noindex = false } = Astro.props;
 const tenantCss = accentCss(theme, accent);
 const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, platform: platformCss }[theme];
 ---
@@ -39,6 +41,7 @@ const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     {description && <meta name="description" content={description} />}
     <meta name="theme-color" content={THEME_COLOR[theme]} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
