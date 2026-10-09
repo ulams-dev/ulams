@@ -148,41 +148,6 @@ export function applyStyle(
 
 export const cssDataUrl = (css: string) => `data:text/css;base64,${btoa(unescape(encodeURIComponent(css)))}`;
 
-/**
- * Replaces the old token with the new one in every URL string of an object
- * tree (H5PIntegration, editor model). H5P core sends its own AJAX calls with
- * the token in `?_token=`, so these must follow token refreshes.
- */
-export function swapToken(target: unknown, oldToken: string, newToken: string): void {
-    const pairs: [string, string][] = [
-        [encodeURIComponent(oldToken), encodeURIComponent(newToken)],
-        [oldToken, newToken]
-    ];
-    const visit = (obj: any, depth: number) => {
-        if (!obj || typeof obj !== 'object' || depth > 4) {
-            return;
-        }
-        for (const key of Object.keys(obj)) {
-            if (key === 'contents' || key === 'l10n' || key === 'jsonContent') {
-                continue;
-            }
-            const value = obj[key];
-            if (typeof value === 'string') {
-                let next = value;
-                for (const [a, b] of pairs) {
-                    next = next.split(a).join(b);
-                }
-                if (next !== value) {
-                    obj[key] = next;
-                }
-            } else if (value && typeof value === 'object' && !Array.isArray(value)) {
-                visit(value, depth + 1);
-            }
-        }
-    };
-    visit(target, 0);
-}
-
 export function errorMessage(error: unknown): string {
     if (error instanceof Error) {
         return error.message;
