@@ -42,21 +42,31 @@ The requirements of the Course Builder apply: a configured `AI_DRIVER`, a queue 
 | `LIVING_COURSE_LEARNER_NOTICE_AFTER_DAYS` | `3` | Days before an unseen update notice reaches a learner by e-mail. |
 | `AI_TASK_UPDATE_PROFILE` | the default profile | Model profile of the analysis (`update` task); the model name lives in `config/ai.php`. |
 
+Not configurable by environment variable (set in `api/packages/living-course/config/living_course.php`): at most 48 checks per connection and day, 5 update proposals per source and day, 3 regenerations per item, 3000 output tokens per analysis group, 3 failed checks before a connection shows **Error**, and a weekly digest of learner notices.
+
 Every model call of the analysis is logged in `ai_calls` with its model, tokens and cost, and the proposal as subject, so the [cost log](/admin/course-builder/) shows it.
 
 ## Connectors and webhooks
 
 - **Upload** needs nothing. **Git** reads GitHub, GitLab and Gitea or Forgejo hosts through their APIs with a token the author provides; tokens are stored encrypted and never returned. **URL** reads up to 20 web pages and stores their Markdown.
 - Every outbound request goes through one SSRF-safe client: private and link-local addresses, redirects to them and unlisted hosts are refused.
-- The webhook of a connection is `https://<tenant API host>/api/living-course/webhooks/{id}`; the studio shows it with its secret. GitHub (`X-Hub-Signature-256`), GitLab (`X-Gitlab-Token`) and Gitea signatures are verified, deliveries are deduplicated and the endpoint is throttled. Polling is the fallback when a webhook is not possible.
+- The webhook of a connection is `https://<tenant API host>/api/living-course/webhooks/{id}`; the studio shows it with its secret. GitHub (`X-Hub-Signature-256`), GitLab (`X-Gitlab-Token`) and Gitea signatures are verified, deliveries are deduplicated and the endpoint is throttled. Polling is the fallback when a webhook is not possible. Signature headers, replies and a `curl` example are in [Living Course internals](/developers/living-course/#webhook-requests). The route must be reachable from your Git host without a login; it is throttled to 60 requests a minute per webhook, refuses bodies over 1 MB and logs a refused signature once a minute per connection in the audit trail (`webhook.rejected`).
+
+## Scheduler and checks
+
+The scheduler (`php artisan schedule:run` every minute) runs `living-course:poll` every 15 minutes. It queues a check for every Git or web connection whose time has come: schedules are `hourly`, `daily` and `weekly` (`manual` and uploads are never polled), never shorter than `LIVING_COURSE_MIN_POLL_MINUTES`, each with a random delay of up to 10 % so tenants do not all fetch at once. After three failed checks a connection shows **Error** with the last message and backs off to daily; **Check now**, resuming or fixing the settings clears it. Checks run as jobs on the builder queue.
+
+## When a cost limit is reached
+
+Analysis is estimated before it starts. At or below `LIVING_COURSE_AUTO_ANALYSE_USD` it runs by itself (if the connection's automatic analysis is on); above it the proposal waits as `awaiting_analysis` until an author confirms (`ulams living proposals analyse --confirm-estimate`). If the estimate would exceed `LIVING_COURSE_PROPOSAL_COST_USD`, or this source's month (`LIVING_COURSE_SOURCE_MONTHLY_USD`), the proposal becomes `budget_blocked` with the reason and the changed elements are listed for editing by hand. The course session budget and `AI_LIMIT_TENANT_MONTHLY_USD` of the [Course Builder](/admin/course-builder/) also apply to every call. Change detection, staleness and the audit trail cost nothing and keep working.
 
 ## Commands
 
 | Command | Use |
 |---|---|
 | `living-course:poll` | Checks the sources that are due; scheduled every 15 minutes, also prunes webhook deliveries older than 30 days. |
-| `living-course:backfill` | Creates the first revision of sessions that have none. Safe to repeat. |
-| `living-course:eval` | Runs the update fixtures end to end and writes a report; `--live` calls the real model (set a `--max-usd`), `--record` stores the answers for CI replay. |
+| `living-course:backfill` | Creates the first revision of sessions that have none (`--session=<id>` for one). Safe to repeat. |
+| `living-course:eval` | Runs the update fixtures end to end (`--fixtures=all` or `coffee,git,injection`) and writes a report; `--live` calls the real model, capped by `--max-usd` (default 1), `--record` stores the answers for CI replay, `--author=<user id>`. |
 | `gift:snapshot-max-scores` | Stores the maximum score on existing quiz results. |
 
 ## Audit

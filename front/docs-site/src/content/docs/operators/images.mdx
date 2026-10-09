@@ -15,6 +15,16 @@ PHP, run as a non-root user (uid 101) and listen on **port 8080**. Point your re
 `admin:8080` and `front:8080`; the production example in
 [Self-hosting](/operators/self-hosting/) already does.
 
+```bash
+docker run --rm -p 8080:8080 \
+  -e REACT_APP_TENANT_API_HOST_PATTERN='{slug}.admin.localhost=>http://{slug}.localhost' \
+  ghcr.io/ulams-dev/admin:latest
+```
+
+Images are published for `linux/amd64` and `linux/arm64`. Pin `ghcr.io/ulams-dev/admin:sha-<short>` or a
+release tag rather than `latest`; use the same tag as the other ulams images
+([Upgrades](/operators/upgrades/#image-tags), [Container images](/developers/container-images/#tags-platforms-attestations)).
+
 ## Settings
 
 Settings are plain environment variables, read when the container starts:
@@ -41,5 +51,5 @@ with `REACT_APP_TENANT_API_HOST_PATTERN`, for example `{slug}.admin.example.com=
 
 <Aside type="caution" title="Headers come from your proxy">
 The image sets no security headers. Add the Content-Security-Policy, HSTS and the other headers in the
-reverse proxy; the production example Caddyfile does this with its `app_csp_report_only` snippet (see [Security](/operators/security/)).
+reverse proxy; the production example Caddyfile does this for the admin with its `app_csp_admin` snippet, which sends the CSP in report-only mode until `ULAMS_CSP_HEADER` is set to `Content-Security-Policy` (see [Security headers](/operators/security-headers/)). Add HSTS there once HTTPS works on every host.
 </Aside>

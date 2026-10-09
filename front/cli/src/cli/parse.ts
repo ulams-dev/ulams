@@ -218,6 +218,14 @@ export async function parseInvocation(
     });
   }
   const values = parsed.values as Values;
+  // Node reads `--no-x` as "x = false" even when the command declares a flag named `no-x` (mcp --no-destructive).
+  for (const flag of Object.keys(options)) {
+    const base = flag.startsWith("no-") ? flag.slice(3) : "";
+    if (base && !(base in options) && values[base] === false) {
+      delete values[base];
+      values[flag] = true;
+    }
+  }
   // A flag the command defines itself (e.g. topics create-oembed --url) is never also a global flag.
   const globalValues: Values = { ...values };
   for (const owned of ["url", "profile", "output", "timeout", "idempotency-key", "yes", "wait", "json"]) {

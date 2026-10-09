@@ -396,4 +396,10 @@ minutes; an admin can change it).
   announced to screen readers.
 - The assistant only writes what your source supports. If you ask for something the source does not
   cover, it will say so instead of inventing it.
-- Each course has an AI budget (USD 5 by default). When it is reached, ask an admin to raise it.
+- Each course has an AI budget (USD 5 by default), and the academy has a monthly one. When one is reached the step stops with
+  "Budget reached" and nothing you already have is lost; ask an admin to raise it ([settings](/admin/course-builder/)), then
+  press **Retry**. The running cost is shown at the top of the workspace.
+- If a step fails, **Retry** repeats only that step.
+- Prefer a terminal or an agent? Every step above is also a command, see
+  [Build courses from the command line](/developers/cli-builder/); developers can use the
+  [Course Builder API](/developers/course-builder-api/).

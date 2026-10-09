@@ -24,12 +24,16 @@ or the tenant's `.env.<host>`):
 | `AI_MODEL_DEFAULT` / `AI_MODEL_LIGHT` / `AI_MODEL_PREMIUM` | `claude-sonnet-5-5` / `claude-haiku-5-5` / `claude-opus-5-5` | Models of the three profiles. The premium profile is only used when a task is switched to it |
 | `AI_TASK_<TASK>_PROFILE` | see below | Switch one task to another profile, e.g. `AI_TASK_OUTLINE_PROFILE=premium` |
 | `AI_CACHE_TTL` | `1h` | Prompt cache TTL for the source (`5m` or `1h`) |
+| `AI_TIMEOUT` / `AI_MAX_RETRIES` | `600` / `2` | Seconds per model request and retries of transient HTTP errors |
+| `ANTHROPIC_BASE_URL` | – | Point the SDK at a proxy or gateway |
+| `AI_FAKE_MODE` | `synthetic` | With `AI_DRIVER=fake`: `cassette` (replay only) or `synthetic` (replay, else a built-in deterministic answer) |
 
 When AI is disabled, every builder endpoint answers 503 with a message and the studio says so; the
 rest of the LMS works as before.
 
 Tasks and their default profiles: interview (light), outline (default), lesson (default), quiz
-(default), grounding (light), metadata (light), patch (default).
+(default), grounding (light), metadata (light), price (light), patch (default) and, for
+[Living Course](/admin/living-course/), update (default).
 
 The web app needs nothing new. The admin link derives the studio address from the admin host
 (`coffee.admin.example` → `coffee.app.example`); set `REACT_APP_STUDIO_URL` in the admin's runtime
@@ -58,11 +62,16 @@ Sessions are visible to their author and to admins; only the author can act on a
 | `COURSE_BUILDER_CONCURRENT_RUNS` | 2 | AI runs at once per author |
 | `COURSE_BUILDER_SESSIONS_PER_DAY` | 10 | New sessions per author per day |
 | `COURSE_BUILDER_LESSON_CONCURRENCY` | 4 | Lessons generated at once per run |
-| `AI_LIMIT_TENANT_MONTHLY_USD` | 50 | AI spend per tenant per month (all tasks) |
+| `AI_LIMIT_TENANT_MONTHLY_USD` | 50 | AI spend per tenant per month (all tasks); `0` turns the cap off |
 | `COURSE_BUILDER_EVAL_MONTHLY_USD` | 20 | Spend cap of the eval command |
+| `COURSE_BUILDER_DOCX_UNCOMPRESSED_MB` | 100 | Largest unpacked size of a DOCX (zip-bomb guard) |
 
-A session over budget stops cleanly with "Budget reached"; nothing is lost, and the author can
-continue when the limit is raised.
+Before every model call the budget is checked against the session tokens, the session cost and the tenant's month. The first
+that would be exceeded stops the call: the run fails with `RUN_ERROR` (`code: "budget"`) and a message such as "Budget
+reached: this course has used $5.00 of its $5.00 AI budget. Ask an admin to raise the limit to continue.", the studio shows the
+message, and the session is marked `budgetReached`. Nothing already generated is lost; the author retries after you raise the
+limit. `AI_LIMIT_SUBJECT_TOKENS` and `AI_LIMIT_SUBJECT_COST_USD` (3,000,000 and 5) are the defaults for AI calls that carry no budget of their own; builder sessions always carry one. A run that would start another AI run beyond `COURSE_BUILDER_CONCURRENT_RUNS` is refused with 429, a new
+session beyond `COURSE_BUILDER_SESSIONS_PER_DAY` too. The [API page](/developers/course-builder-api/#cost-limits-and-what-happens-at-the-limit) has the exact messages.
 
 ## Cost and usage
 
@@ -90,8 +99,7 @@ state without opening the event stream, which is what the `ulams` CLI polls for 
 ```
 
 `status` is one of `queued`, `running`, `succeeded`, `failed`, `cancelled`; step status is one of
-`queued`, `running`, `succeeded`, `failed`. `needsAttention` is true while the run waits for an
-answer or an approval. Only the session's author and tenant admins can read a run (403 otherwise,
+`queued`, `running`, `succeeded`, `failed`. `needsAttention` is true while a step has failed and the run waits for a retry (`ulams builder runs retry-step`), so a poller stops and asks. Only the session's author and tenant admins can read a run (403 otherwise,
 404 for an unknown id).
 
 ## Queues and streaming
@@ -105,11 +113,24 @@ Generation runs in queued jobs on a dedicated connection (`COURSE_BUILDER_QUEUE_
 worker would pick up a step that is still running and the model would be called, and billed, twice. You can run several workers
 (`queue:work` processes) against the same queue, including the `database` connection: stage changes of a
 run are serialised on the run row, so a run finishes the same way with one worker or four.
-A step can take minutes; a test (`QueueRetryAfterConfigTest`) keeps `retry_after` above every job timeout. The event stream
+The long-job queue (`LONG_JOB_QUEUE_CONNECTION`, `LONG_JOB_QUEUE`; `<driver>-long-job`, queue `queue-long-job`, `retry_after` 19000 s) is separate and serves course clone and import. Living Course checks and analysis steps use the builder queue by default (`LIVING_COURSE_QUEUE_CONNECTION`, `LIVING_COURSE_QUEUE`). A run job has one try (`tries = 1`): the SDK already retries transient errors, and a failed step is retried by the author, so a model call is never repeated silently. A step can take minutes; a test (`QueueRetryAfterConfigTest`) keeps `retry_after` above every job timeout. The event stream
 (`/api/admin/course-builder/sessions/{id}/events`) holds a PHP worker for up to 25 s per open
 browser tab (`COURSE_BUILDER_SSE_SECONDS`); in production route it to a small separate PHP-FPM pool.
 Old events are deleted by `php artisan course-builder:prune-events` (30 days,
 `COURSE_BUILDER_EVENTS_RETENTION_DAYS`); schedule it daily.
+
+## Eval command
+
+```bash
+php artisan course-builder:eval --fixtures=all --author=<user id>                  # fake driver, free
+php artisan course-builder:eval --fixtures=coffee,injection --live --author=<id>   # real model, costs money
+php artisan course-builder:eval --fixtures=coffee --live --record --author=<id>    # also write cassettes
+```
+
+Options: `--fixtures` (`all` or a list of `coffee`, `injection`, `git`, `pdf`, `docx`), `--live`, `--record`, `--author`
+(default: the first admin), `--patch=1` (one element-chat patch) and `--total-minutes=30`. `--live` needs `ANTHROPIC_API_KEY`
+and stops at `COURSE_BUILDER_EVAL_MONTHLY_USD` for the month. Details: [LLM layer](/developers/llm-layer/#eval-command).
+For the endpoints and the event stream see the [Course Builder API](/developers/course-builder-api/).
 
 ## Data
 
