@@ -67,6 +67,24 @@ class ContentOriginHeadersConfigTest extends TestCase
     }
 
     #[DataProvider('caddyfiles')]
+    public function testInteractivePackagesGetTheirCspFromTheApiAndTheOtherPrefixesKeepTheProxyOne(string $path): void
+    {
+        $caddyfile = $this->read($path);
+        $snippet = $this->snippet($caddyfile);
+
+        // `?` sets the generic policy only when the upstream sent none: ContentFileController sets the
+        // per-version CSP of /interactive/* itself (ADR 0086); every other prefix is unchanged
+        $this->assertMatchesRegularExpression('/^\s*\?Content-Security-Policy "default-src \'self\'; script-src \'self\' \'unsafe-inline\' \'unsafe-eval\';/m', $snippet);
+        $this->assertDoesNotMatchRegularExpression('/^\s*Content-Security-Policy /m', $snippet);
+        $this->assertSame(1, preg_match('/path (\/scorm\/\*[^\n]*)\n/', $snippet, $m));
+        $this->assertSame('/scorm/* /cmi5/* /adapt/* /liascript/* /interactive/*', trim($m[1]));
+
+        // package uploads of up to UPLOADS_INTERACTIVE_MAX_MB, plus multipart overhead
+        $this->assertSame(1, preg_match('/@large_uploads path (.*)\n/', $caddyfile, $m));
+        $this->assertStringContainsString('/api/admin/interactive /api/admin/interactive/*/versions', $m[1]);
+    }
+
+    #[DataProvider('caddyfiles')]
     public function testNoSiteReflectsAContentOrigin(string $path): void
     {
         $caddyfile = $this->read($path);

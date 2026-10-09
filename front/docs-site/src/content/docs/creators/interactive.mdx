@@ -1,0 +1,184 @@
+---
+title: Interactive lessons
+description: Put your own JavaScript on a lesson, a 3D scene, a map or a small simulation, as a zip package with a manifest that plays in a sandbox, reports progress and shows a text version.
+sidebar:
+  order: 19
+modules:
+  - interactive
+  - uploads
+topicTypes:
+  - InteractiveTopic
+adminRoutes:
+  - /courses/interactive/**
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+An **Interactive** topic plays a web app that you wrote: a 3D scene, a map with charts, a small
+mathematical toy. You upload it once as a **package** (a zip file) and use it in as many topics as you
+like. Each topic can open the package at its own **step**, play it **inline** or as the **background of
+the page**, and complete when the learner reaches the end of the step range.
+
+<Aside type="note" title="You answer for the code">
+  A package is code that runs in your learners' browsers. ulams runs it in a sandbox with no access to
+  the learner's account, and checks the upload, but you are responsible for what it contains and for
+  its licence.
+</Aside>
+
+## What a package is
+
+A zip file with, at its root:
+
+- `index.html`, the entry file (the manifest may name another);
+- the files it loads: scripts, styles, images, fonts, data, models, audio, video;
+- **`ulams-interactive.json`**, the manifest.
+
+```json
+{
+  "id": "gravity",
+  "title": { "en": "Gravity: a guided solar system" },
+  "version": "1.4.0",
+  "entry": "index.html",
+  "licence": "MIT",
+  "attribution": "© 2026 The authors",
+  "source": { "url": "https://example.com/gravity", "ref": "v1.4.0" },
+  "locales": ["en"],
+  "defaultLocale": "en",
+  "bridge": 1,
+  "capabilities": { "steps": true, "reducedMotion": true, "score": false, "background": true },
+  "requires": ["webgl"],
+  "network": [],
+  "steps": [
+    {
+      "id": "what-is-gravity",
+      "title": { "en": "What is gravity?" },
+      "text": { "en": "Two bodies, Sun and Earth, with equal and opposite force arrows." },
+      "poster": "posters/what-is-gravity.webp"
+    }
+  ],
+  "a11y": { "keyboard": "Tab reaches all buttons; the 3D view itself is pointer-only." }
+}
+```
+
+### Manifest reference
+
+| Field | Required | Rules |
+|---|---|---|
+| `id` | yes | `a-z`, digits and `-`, 2 to 40 characters. A new version of a package must keep it |
+| `title` | yes | Text per locale; must include `defaultLocale` |
+| `version` | yes | Your own version string |
+| `entry` | no | An `.html` file in the zip; default `index.html` |
+| `licence` | yes | An SPDX id: `MIT`, `Apache-2.0`, `BSD-2-Clause`, `BSD-3-Clause`, `ISC`, `GPL-3.0-only`, `GPL-3.0-or-later`, `CC-BY-4.0`, `CC-BY-SA-4.0`, `CC0-1.0` or `LicenseRef-Proprietary` |
+| `attribution`, `source` | no | Shown to learners under "About this interactive" |
+| `locales`, `defaultLocale` | yes | Language codes such as `en`, `pl` |
+| `bridge` | yes | `1`: the protocol version |
+| `capabilities` | no | `steps`, `reducedMotion`, `score`, `background`: what the package supports |
+| `requires` | no | `["webgl"]`: the lesson shows the poster and the text when the browser has no WebGL |
+| `network` | no | Exact `https://host[:port]` origins the package may call; see [Limits and the CSP](#limits-and-the-csp) |
+| `steps` | yes | 1 to 200 steps: `id`, `title` and `text` per locale, and an optional `poster` image in the zip |
+| `a11y` | no | Notes on keyboard use and alternatives |
+
+Every step needs a `text` in **every** locale: it is the text alternative that learners with a screen
+reader, reduced motion or no WebGL read instead of the scene. The upload is refused when one is missing.
+The JSON Schema is `api/packages/interactive/resources/schemas/ulams-interactive/v1.json`.
+
+## Talk to the lesson page with the bridge
+
+The package learns which step to open, and tells the page which step it is on and when it is done, with
+the small [`@ulams/interactive-bridge`](/developers/interactive-bridge/) library (MIT, no dependencies,
+one file under 3 KB). Copy `dist/interactive-bridge.js` into your package:
+
+```js
+import { connect } from "./vendor/interactive-bridge.js";
+
+const bridge = connect({
+  steps: ["what-is-gravity", "inertia"],
+  capabilities: { steps: true, reducedMotion: true },
+  onInit(init) { /* init.locale, init.theme, init.reducedMotion, init.startStep, init.chrome */ },
+  onGoToStep(step) { /* show that step */ },
+});
+
+bridge.stepChanged("inertia"); // the learner moved to another step
+bridge.complete();             // the learner finished
+bridge.score(8, 10);           // a result, for the on_score rule
+bridge.resize(document.documentElement.scrollHeight);
+```
+
+Without a parent page (you open `index.html` on its own) every call does nothing, so you can develop the
+package in a normal browser tab.
+
+<Aside type="caution" title="Things a package cannot do">
+  It runs in an opaque origin: no cookies, no `localStorage` or IndexedDB (guard those calls with
+  `try/catch`), no requests to the learner site or to the API, no forms, no top-level navigation.
+  State that must survive goes through the bridge.
+</Aside>
+
+## Upload and use a package
+
+<Steps>
+
+1. Open **Courses → Interactive** (`/courses/interactive`) and click **Upload package**.
+2. Choose the `.zip`. The package appears with its manifest, steps and licence. If the manifest lists
+   `network` origins, the screen shows them and the upload is accepted only after you tick the
+   confirmation box.
+3. To change the package, open it and **Upload new version**. Versions are immutable: a new upload never
+   changes a topic that already plays an older version.
+4. In the course editor add an **Interactive** topic and pick the package.
+
+</Steps>
+
+### Topic settings
+
+| Setting | Meaning |
+|---|---|
+| **Package** and **Version** | The package, pinned to a version. New topics pin the current version. Choose **Follow latest** to play every new upload automatically |
+| **Start step**, **End step** | The range this topic plays. One package can back many topics, each at its own steps |
+| **Completion** | `on_range_end` (default): the learner reaches the end step, or the package sends `complete`. `on_complete`: only `complete`. `on_score`: a `score` of at least the **pass score** (a percentage). `on_open`: opening the topic is enough (for packages that do not use the bridge) |
+| **Display** | **Inline**: the text above and the frame below at the chosen **height**. **Background**: the package fills the page and the text floats over it in a card |
+| **Text** | Your own explanation, in Markdown |
+
+A step outside the range is recorded but never completes the topic. Saving fails when a chosen step does
+not exist in the played version.
+
+## What learners get
+
+- A **text version** of every step in the topic's range, in a disclosure under the frame, and the
+  licence, attribution and source link under "About this interactive".
+- In **background** mode a stepper (Previous, Next), **Explore freely** to hide the card and use the
+  scene (a **Back to the lesson** button or Escape brings it back) and spoken step changes for screen
+  readers.
+- With **reduced motion** turned on in the system, and a package that does not say it supports it, the
+  poster of the step is shown instead of the live frame, with a button to play it anyway.
+- When WebGL is missing, or the package does not answer within 10 seconds, the poster and the text.
+
+## Limits and the CSP
+
+- The upload goes through the upload guard: at most `UPLOADS_INTERACTIVE_MAX_MB` (50 MB by default), zip
+  entry and ratio limits, no path tricks, no symbolic links.
+- Only these file types are accepted: `html htm js mjs css json map txt md svg png jpg jpeg webp avif gif
+  ico woff woff2 ttf otf mp3 ogg wav mp4 webm glb gltf bin wasm csv tsv geojson topojson xml`. `.php`,
+  `.phar`, `.htaccess`, `.svgz` and dotfiles are always refused.
+- Files are served from the tenant [content origin](/operators/content-origin/), and each version gets its
+  own Content-Security-Policy from the API: scripts and styles from the package only, no `eval`, no
+  frames, no forms, `connect-src 'self'`.
+- A manifest `network` list adds origins to `connect-src` **only** when the tenant setting
+  `ulams_interactive.allow_network` is on (it is off by default) ([Settings](/admin/settings/)).
+- The whole topic type can be switched off per tenant with `ulams_interactive.enabled`.
+- Progress and scores reach ulams through the learner's own session. The package never receives a token.
+
+## Create topics from the command line
+
+```bash
+ulams topics create-interactive --lesson 12 --title "Too slow" --file gravity.zip \
+  --start-step too-slow --end-step too-slow --display background --json
+```
+
+`--file` uploads a new package; `--package <id>` uses an existing one (add `--version` to pin another
+version, or `--follow-latest`). A manifest that lists `network` origins needs `--accept-network`, the
+command-line form of the confirmation box in the admin. The MCP tool `topics_create_interactive` does the same. See [CLI](/developers/cli/).
+
+## Licences
+
+Choose the SPDX id that matches your code. The licence travels with the package, is shown to learners
+and is kept in course exports. Platform code is MIT; the bridge is MIT, so packages under any licence
+may include it.

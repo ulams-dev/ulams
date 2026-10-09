@@ -21,4 +21,4 @@ const settings = await getSettings(tenant).catch(() => null);
 const sessionId = await sessionForCourse(() => builderFor(tenant, Astro.locals.authorToken!).sessions.list(), courseId);
 ---
 
-<LessonPlayer tenant={tenant} settings={settings} course={access.course} access={true} progress={[]} topicId={topicId} preview={{ sessionId }} />
+<LessonPlayer tenant={tenant} settings={settings} course={access.course} access={true} progress={[]} topicId={topicId} authorToken={Astro.locals.authorToken} preview={{ sessionId }} />

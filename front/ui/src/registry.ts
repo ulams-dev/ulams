@@ -893,24 +893,44 @@ export const registry = {
               label: text("Feature", { maxLength: 60 }),
               help: text("What the row means", { maxLength: 160 }),
               cells: list(
-                obj(
-                  {
-                    value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }),
-                    note: text("Short neutral note", { maxLength: 120 }),
-                  },
-                  ["value"]
-                ),
+                obj({ value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }), note: text("Short neutral note", { maxLength: 120 }) }, ["value"]),
                 "One cell per column, same order",
                 { maxItems: 8 }
               ),
             },
             ["label", "cells"]
           ),
-          "Features",
-          { minItems: 1, maxItems: 24 }
+          "Features (omit when sections is set)",
+          { minItems: 0, maxItems: 40 }
+        ),
+              sections: list(
+          obj(
+            {
+              label: text("Section heading shown as a header row, e.g. 'Developer & headless'", { maxLength: 60 }),
+              rows: list(
+                obj(
+                  {
+                    label: text("Feature", { maxLength: 60 }),
+                    help: text("What the row means", { maxLength: 160 }),
+                    cells: list(
+                      obj({ value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }), note: text("Short neutral note", { maxLength: 120 }) }, ["value"]),
+                      "One cell per column, same order",
+                      { maxItems: 8 }
+                    ),
+                  },
+                  ["label", "cells"]
+                ),
+                "Features in this section",
+                { minItems: 1, maxItems: 24 }
+              ),
+            },
+            ["label", "rows"]
+          ),
+          "Rows grouped under header rows (each section is its own tbody with a rowgroup header)",
+          { minItems: 0, maxItems: 8 }
         ),
             },
-            ["label", "columns", "rows"]
+            ["label", "columns"]
           ),
           "Several tables behind a CSS-only segmented control (no JavaScript); each group lists its own products and features. Omit for a single table (columns and rows)",
           { minItems: 0, maxItems: 4 }
@@ -921,7 +941,7 @@ export const registry = {
             "href",
           ]),
           "Sources for the cells",
-          { maxItems: 200 }
+          { maxItems: 400 }
         ),
         note: text("Small print under the table", { maxLength: 300 }),
       },
@@ -1275,6 +1295,47 @@ export const registry = {
         height: int("Frame height px", { default: 720 }),
       },
       ["src", "title"]
+    ),
+    fallback: (p) => String(p.title ?? ""),
+  },
+  InteractiveLesson: {
+    description:
+      "An author-uploaded interactive package (3D scene, map, simulation) in a sandboxed frame on the tenant content origin, inline or as the background of the page, with steps, a text version and the licence. Progress goes through the learner session.",
+    category: "learning",
+    interactive: true,
+    children: false,
+    props: obj(
+      {
+        src: href("Entry file on the content origin (from POST /api/interactive/launches/{topic})"),
+        title: text("Title", { maxLength: 160 }),
+        topicId: int("Topic id for the events call (omitted in a preview: nothing is tracked)"),
+        courseId: int("Course id"),
+        display: oneOf(["inline", "background"], "Inline in the page, or the background of the page with the text over it", "inline"),
+        height: int("Frame height px (inline only)", { default: 640, minimum: 240, maximum: 2000 }),
+        startStep: text("First step of the range this topic plays", { maxLength: 64 }),
+        endStep: text("Last step of the range this topic plays", { maxLength: 64 }),
+        steps: list(
+          obj(
+            {
+              id: text("Step id", { maxLength: 64 }),
+              title: text("Step title", { maxLength: 255 }),
+              text: text("Text alternative of the step", { maxLength: 4000 }),
+              poster: href("Poster image of the step"),
+            },
+            ["id", "title", "text"]
+          ),
+          "Steps with their text alternatives and posters",
+          { minItems: 1, maxItems: 200 }
+        ),
+        text: text("The lesson's own explanation (Markdown)", { maxLength: 20000 }),
+        requires: list(oneOf(["webgl"], "Browser capability the package needs"), "Capabilities the package needs", { maxItems: 5 }),
+        reducedMotionSupported: bool("The package handles reduced motion itself", false),
+        locale: text("Language of the texts", { maxLength: 16, default: "en" }),
+        licence: text("SPDX licence id", { maxLength: 64 }),
+        attribution: text("Attribution line", { maxLength: 1000 }),
+        sourceUrl: href("Source code or origin of the package"),
+      },
+      ["src", "title", "steps"]
     ),
     fallback: (p) => String(p.title ?? ""),
   },

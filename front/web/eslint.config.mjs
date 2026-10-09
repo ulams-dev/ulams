@@ -11,7 +11,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ["tests/perf/**/*.mjs", "*.mjs"],
+    files: ["tests/perf/**/*.mjs", "tests/fixtures/**/*.mjs", "*.mjs"],
     languageOptions: { globals: { console: "readonly", process: "readonly", URL: "readonly" } },
   },
   {

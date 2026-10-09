@@ -162,6 +162,15 @@ suites", ulams in both. `comparison.json` has top-level `groups`; a system lists
 a row lists `groups` or applies to all. The component takes `groups` (2 to 4 tables) instead of
 `columns` and `rows`. Enterprise-only rows: data residency, SSO, SCIM, authoring tool, content library.
 
+Rows are grouped in sections, in this order: Developer & headless, AI, Content standards, Business
+(top-level `sections` in `comparison.json`; each row has a `section`). The component takes `sections`
+per group (label plus rows) and renders one `tbody` per section with a header row
+(`th scope="rowgroup"`); `rows` still works for a flat table. Developer & headless rows: REST API,
+headless course management, published OpenAPI spec, typed SDK, CLI, MCP server, webhooks,
+course-as-code, self-hosting, generative UI. "CLI" means a tool for authors and developers; an
+operator CLI is Partial. Keep the true status in the data (the CLI and MCP server have shipped; webhooks and
+course-as-code are still Coming); official sources only, see ADR 0020.
+
 ## Landing stories and display status
 
 The platform landing has three animated stories, all catalogue components: `LivingCourseStory` (hero
@@ -188,6 +197,10 @@ tile grid. A capability's `status` shows a small "Coming" tag in `actual` mode o
   Coming/Preview badges or roadmap captions, no footnote about planned interfaces, and ulams's own
   comparison cells that say Coming or Partial read Yes.
 - `actual`: the honest status. The data files always keep the true status, and competitor cells never change.
+
+The Playwright smoke test "platform landing sells the product" asserts the mode it runs in: start it with the same
+`ULAMS_LANDING_STATUS` as the server (unset means `final`), e.g. `ULAMS_LANDING_STATUS=actual yarn playwright test`
+against a server started in `actual` mode.
 
 **Before any public launch, run in `actual` mode or confirm that everything the landing shows has shipped.**
 Nodes of `platform.json` may carry `final: { …prop overrides… }` for text that only reads right in one mode.

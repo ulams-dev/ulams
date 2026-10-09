@@ -34,6 +34,7 @@ describe("topics", () => {
   it("maps topicable classes to kinds", () => {
     expect(topicKind("Ulams\\TopicTypes\\Models\\TopicContent\\ScormSco")).toBe("scorm");
     expect(topicKind("Ulams\\TopicTypeGift\\Models\\GiftQuiz")).toBe("quiz");
+    expect(topicKind("Ulams\\Interactive\\Models\\InteractiveTopic")).toBe("interactive");
     expect(topicKind("Something\\Else")).toBe("unknown");
     expect(topicKind(undefined)).toBe("unknown");
   });

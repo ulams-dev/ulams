@@ -198,7 +198,7 @@ ulams courses create --input '{"title":"Draft"}' --set status=draft --dry-run
 
 ```bash
 ulams schema --json                 # every command, input JSON Schema, kind, scopes, endpoints, exit codes, global flags
-ulams describe courses.create       # one command (the dotted id, or `ulams describe courses create`)
+ulams describe courses.create       # one command (the dotted id, or the quoted path `ulams describe "courses create"`)
 ulams courses create --help         # human help with flags and examples
 ulams --help
 ```

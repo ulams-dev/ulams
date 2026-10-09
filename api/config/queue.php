@@ -30,11 +30,12 @@ return [
 
     /*
     | Where long jobs that are not part of a package with its own setting run (course clone/import):
-    | `<driver>-long-job` on the `database` or `redis` default connection, ADR 0083.
+    | `<driver>-long-job` on the `database` or `redis` default connection, ADR 0083. The connection name is
+    | LONG_JOB_QUEUE_CONNECTION (the same name workers.sh reads); LONG_JOB_CONNECTION is the old name, still accepted.
     */
 
     'long_job' => [
-        'connection' => env('LONG_JOB_QUEUE_CONNECTION', in_array(env('QUEUE_CONNECTION'), ['database', 'redis'], true) ? env('QUEUE_CONNECTION') . '-long-job' : null),
+        'connection' => env('LONG_JOB_QUEUE_CONNECTION', env('LONG_JOB_CONNECTION', in_array(env('QUEUE_CONNECTION'), ['database', 'redis'], true) ? env('QUEUE_CONNECTION') . '-long-job' : null)),
         'queue' => env('LONG_JOB_QUEUE', in_array(env('QUEUE_CONNECTION'), ['database', 'redis'], true) ? 'queue-long-job' : null),
     ],
 

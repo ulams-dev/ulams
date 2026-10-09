@@ -351,16 +351,89 @@
                     ],
                     "additionalProperties": false
                   },
-                  "description": "Features",
+                  "description": "Features (omit when sections is set)",
                   "default": [],
-                  "maxItems": 24,
-                  "minItems": 1
+                  "maxItems": 40,
+                  "minItems": 0
+                },
+                "sections": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "Section heading shown as a header row, e.g. 'Developer & headless'",
+                        "maxLength": 60
+                      },
+                      "rows": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "label": {
+                              "type": "string",
+                              "description": "Feature",
+                              "maxLength": 60
+                            },
+                            "help": {
+                              "type": "string",
+                              "description": "What the row means",
+                              "maxLength": 160
+                            },
+                            "cells": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "value": {
+                                    "type": "string",
+                                    "description": "Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase",
+                                    "maxLength": 60
+                                  },
+                                  "note": {
+                                    "type": "string",
+                                    "description": "Short neutral note",
+                                    "maxLength": 120
+                                  }
+                                },
+                                "required": [
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "description": "One cell per column, same order",
+                              "default": [],
+                              "maxItems": 8
+                            }
+                          },
+                          "required": [
+                            "label",
+                            "cells"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "Features in this section",
+                        "default": [],
+                        "maxItems": 24,
+                        "minItems": 1
+                      }
+                    },
+                    "required": [
+                      "label",
+                      "rows"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Rows grouped under header rows (each section is its own tbody with a rowgroup header)",
+                  "default": [],
+                  "maxItems": 8,
+                  "minItems": 0
                 }
               },
               "required": [
                 "label",
-                "columns",
-                "rows"
+                "columns"
               ],
               "additionalProperties": false
             },
@@ -399,7 +472,7 @@
             },
             "description": "Sources for the cells",
             "default": [],
-            "maxItems": 200
+            "maxItems": 400
           },
           "note": {
             "type": "string",

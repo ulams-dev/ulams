@@ -128,6 +128,7 @@ export type TopicKind =
   | "h5p"
   | "scorm"
   | "liascript"
+  | "interactive"
   | "lti"
   | "cmi5"
   | "quiz"

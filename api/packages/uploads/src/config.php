@@ -31,6 +31,13 @@ return [
             'max_size' => $mb('UPLOADS_LIASCRIPT_MAX_MB', 128),
             'zip' => 'package',
         ],
+        // Interactive packages (packages/interactive, ADR 0086): a zip with index.html, assets and a manifest
+        'interactive' => [
+            'extensions' => ['zip'],
+            'mimes' => $zipMimes,
+            'max_size' => $mb('UPLOADS_INTERACTIVE_MAX_MB', 50),
+            'zip' => 'package',
+        ],
         'course-import' => [
             'extensions' => ['zip'],
             'mimes' => $zipMimes,
@@ -79,7 +86,7 @@ return [
      * prefixes, which are served from the per-tenant content origin with its own CSP.
      */
     'attachment_extensions' => ['svg', 'svgz', 'html', 'htm', 'xhtml', 'xht', 'xml', 'xsl'],
-    'package_prefixes' => ['scorm/', 'cmi5/', 'adapt/', 'liascript/', 'h5p/'],
+    'package_prefixes' => ['scorm/', 'cmi5/', 'adapt/', 'liascript/', 'interactive/', 'h5p/'],
 
     /*
      * Tenant content origin (e.g. http://coffee.content.localhost), written to every tenant env file.
@@ -91,5 +98,12 @@ return [
         'scorm' => 'scorm.disk',
         'cmi5' => 'ulams_cmi5.disk',
         'liascript' => 'ulams_liascript.disk',
+        'interactive' => 'ulams_interactive.disk',
+    ],
+    // Package types that set response headers (the CSP) for their files themselves: prefix => class
+    // implementing Ulams\Uploads\Http\ContentHeaderProvider. The generic CSP of the proxy only applies
+    // to files that come back without one.
+    'content_headers' => [
+        'interactive' => \Ulams\Interactive\Services\InteractiveCsp::class,
     ],
 ];

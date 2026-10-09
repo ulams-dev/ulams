@@ -16,12 +16,14 @@ import MediaUpload from './media/upload';
 import Resources from './resources';
 
 import ScormSelector from '@/components/Scorm';
+import type { InteractiveTopicable } from '@/services/ulams/interactive';
 import {
   ApiOutlined,
   AudioOutlined,
   BookOutlined,
   CarryOutOutlined,
   ExclamationCircleOutlined,
+  ExperimentOutlined,
   FileImageOutlined,
   FilePdfOutlined,
   FileTextOutlined,
@@ -32,6 +34,7 @@ import {
   YoutubeOutlined,
 } from '@ant-design/icons';
 import GiftQuiz from './media/giftquiz';
+import InteractiveTopicForm from './media/interactive';
 import LiaScriptTopicForm from './media/liascript';
 import type { LtiTopicable } from './media/lti';
 import LtiTopicForm from './media/lti';
@@ -62,6 +65,8 @@ export const getTypeIcon = (type: string | undefined) => {
         return <PercentageOutlined />;
       case 'LiaScriptTopic':
         return <BookOutlined />;
+      case 'InteractiveTopic':
+        return <ExperimentOutlined />;
       case 'LtiLink':
         return <ApiOutlined />;
     }
@@ -310,6 +315,16 @@ export const Topic: React.FC = () => {
             <LiaScriptTopicForm
               value={topics.value}
               onChange={(value) => updateValue('value', value)}
+            />
+          )}
+          {type && type === TopicType.Interactive && (
+            <InteractiveTopicForm
+              topicable={topic?.topicable as InteractiveTopicable | undefined}
+              onChange={(fields) =>
+                Object.entries(fields).forEach(([key, value]) =>
+                  updateValue(key as keyof API.Topic, value),
+                )
+              }
             />
           )}
           {type && type === TopicType.Lti && (

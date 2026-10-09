@@ -1,5 +1,5 @@
 {
- "summary": "504/547 covered, 43 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "512/557 covered, 45 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -677,6 +677,54 @@
    "key": "DELETE /api/admin/h5p/unused",
    "summary": "Delete H5P contents that no topic uses",
    "command": "h5p.unused",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/interactive",
+   "summary": "List interactive packages",
+   "command": "interactive.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/interactive",
+   "summary": "Upload a package (.zip with ulams-interactive.json)",
+   "command": "interactive.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/interactive/{id}",
+   "summary": "Show a package with its current manifest",
+   "command": "interactive.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/interactive/{id}",
+   "summary": "Rename a package",
+   "command": "interactive.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/interactive/{id}",
+   "summary": "Delete a package with all versions and files",
+   "command": "interactive.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/interactive/{id}/preview",
+   "summary": "Admin preview of a version on the content origin (nothing is tracked)",
+   "command": "interactive.preview",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/interactive/{id}/versions",
+   "summary": "List versions",
+   "command": "interactive.versions",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/interactive/{id}/versions",
+   "summary": "Upload a new version (the manifest id must match)",
+   "command": "interactive.add-version",
    "status": "covered"
   },
   {
@@ -2574,6 +2622,18 @@
    "summary": "Check health of the application",
    "command": "",
    "status": "excluded: internal"
+  },
+  {
+   "key": "POST /api/interactive/launches/{topic}",
+   "summary": "Start an Interactive topic",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "POST /api/interactive/topics/{topic}/events",
+   "summary": "Progress events from the lesson page",
+   "command": "",
+   "status": "excluded: content-runtime"
   },
   {
    "key": "POST /api/liascript/launches/{topic}",

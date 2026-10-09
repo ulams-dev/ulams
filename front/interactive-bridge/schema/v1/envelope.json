@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/ulams-ix/v1/envelope.json",
+  "title": "ulams-ix envelope",
+  "description": "Every message: {\"ulams-ix\":1,\"type\":...,\"nonce\":...,...payload}. Messages over 16 KB are dropped.",
+  "type": "object",
+  "required": [
+    "ulams-ix",
+    "type",
+    "nonce"
+  ],
+  "properties": {
+    "ulams-ix": {
+      "const": 1
+    },
+    "type": {
+      "enum": [
+        "init",
+        "goToStep",
+        "setTheme",
+        "setLocale",
+        "pause",
+        "resume",
+        "ready",
+        "resize",
+        "stepChanged",
+        "progress",
+        "complete",
+        "score",
+        "event",
+        "error"
+      ]
+    },
+    "nonce": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    }
+  }
+}

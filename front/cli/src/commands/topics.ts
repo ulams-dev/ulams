@@ -18,6 +18,7 @@ export const TOPIC_CLASSES = {
   scorm: `${NS}ScormSco`,
   cmi5: `${NS}Cmi5Au`,
   liascript: "Ulams\\LiaScript\\Models\\LiaScriptTopic",
+  interactive: "Ulams\\Interactive\\Models\\InteractiveTopic",
   quiz: "Ulams\\TopicTypeGift\\Models\\GiftQuiz",
   project: "Ulams\\TopicTypeProject\\Models\\Project",
   lti: "Ulams\\Lti\\Models\\LtiLink",
@@ -272,6 +273,58 @@ export const topicCommands: AnyCommand[] = [
       ).data as { id?: number };
       if (!doc.id) throw new CliError("SERVER_ERROR", "The API did not return a LiaScript document id.");
       return { data: { topic: await createTopic(ctx, i, { type: "liascript", value: doc.id }), document: doc } };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "topics.create-interactive",
+    summary: "Create an Interactive topic from a package .zip (or an uploaded package)",
+    description:
+      "An Interactive topic plays an uploaded web app (3D scene, map, simulation) in a sandbox, inline or as the background of the page. Pass --file to upload a package (a .zip with ulams-interactive.json) or --package to use an uploaded one. The topic pins the package's current version unless --version is given; --follow-latest plays every new upload instead. --start-step and --end-step choose the steps (ids from the manifest); the topic completes by --completion (default on_range_end). A manifest that lists network origins needs --accept-network.",
+    endpoints: ["POST /api/admin/interactive", "POST /api/admin/topics"],
+    input: z.object({
+      ...base,
+      file: z.string().optional().describe("Local .zip of a new package."),
+      package: z.number().int().optional().describe("Id of an uploaded package (from `ulams interactive list`)."),
+      version: z.number().int().min(1).optional().describe("Pin this version of the package (default: the current one)."),
+      followLatest: z.boolean().optional().describe("Play the package's current version instead of pinning one."),
+      startStep: z.string().optional().describe("First step id of the range."),
+      endStep: z.string().optional().describe("Last step id of the range."),
+      completion: z.enum(["on_open", "on_range_end", "on_complete", "on_score"]).default("on_range_end").describe("When the topic completes."),
+      passScore: z.number().int().min(0).max(100).optional().describe("Pass percentage for --completion on_score."),
+      display: z.enum(["inline", "background"]).default("inline").describe("Inline in the lesson, or the background of the page."),
+      height: z.number().int().min(240).max(2000).optional().describe("Frame height in px (inline)."),
+      text: z.string().optional().meta({ fileInput: true }).describe("Lesson text in Markdown, or @path."),
+      acceptNetwork: z.boolean().optional().describe("Accept the network origins the manifest lists."),
+    }),
+    output: z.unknown(),
+    examples: [
+      { title: "A step of a 3D scene as the page background", argv: "topics create-interactive --lesson 12 --title \"Too slow\" --file gravity.zip --start-step too-slow --end-step too-slow --display background --json" },
+      { title: "Another topic on an uploaded package", argv: "topics create-interactive --lesson 12 --title \"Too fast\" --package 3 --start-step too-fast --end-step too-fast --json" },
+    ],
+    plan: plan(["POST /api/admin/interactive (when --file)", "POST /api/admin/topics (InteractiveTopic)"]),
+    async run(ctx, i) {
+      if ((i.file === undefined) === (i.package === undefined)) throw new CliError("INPUT_INVALID", "Pass exactly one of --file or --package.");
+      if (i.completion === "on_score" && i.passScore === undefined) throw new CliError("INPUT_INVALID", "--completion on_score needs --pass-score.");
+      let packageId = i.package;
+      let uploaded: unknown;
+      if (i.file) {
+        uploaded = (await uploadFile(ctx, "/api/admin/interactive", "file", i.file, { ...(i.acceptNetwork ? { accept_network: 1 } : {}) })).data;
+        packageId = (uploaded as { id?: number }).id;
+      }
+      if (!packageId) throw new CliError("SERVER_ERROR", "The API did not return an interactive package id.");
+      const extra = {
+        ...(i.followLatest ? { follow_latest: 1 } : {}),
+        ...(i.version !== undefined && !i.followLatest ? { version: i.version } : {}),
+        ...(i.startStep !== undefined ? { start_step: i.startStep } : {}),
+        ...(i.endStep !== undefined ? { end_step: i.endStep } : {}),
+        completion_rule: i.completion,
+        ...(i.passScore !== undefined ? { pass_score: i.passScore } : {}),
+        display: i.display,
+        ...(i.height !== undefined ? { height: i.height } : {}),
+        ...(i.text !== undefined ? { text: i.text } : {}),
+      };
+      return { data: { topic: await createTopic(ctx, i, { type: "interactive", value: packageId, extra }), package: uploaded ?? { id: packageId } } };
     },
   }),
   defineCommand({

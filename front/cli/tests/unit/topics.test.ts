@@ -96,6 +96,47 @@ describe("topic commands", () => {
     expect(lia.requests.at(-1)?.body).toMatchObject({ topicable_type: "Ulams\\LiaScript\\Models\\LiaScriptTopic", value: 21 });
   });
 
+  it("interactive uploads the package first, then creates the topic with its range, rule and display", async () => {
+    const routes = lmsRoutes({ "POST /api/admin/interactive": () => ({ body: { success: true, data: { id: 31, title: "Gravity" } } }) });
+    const r = await runCli(
+      ["topics", "create-interactive", ...base, "--file", "gravity.zip", "--start-step", "too-slow", "--end-step", "too-slow", "--display", "background", "--text", "@intro.md"],
+      { env, routes, files: { "gravity.zip": "zip-bytes", "intro.md": "Drag the slider." } }
+    );
+    expect(r.code).toBe(0);
+    const upload = r.requests.find((q) => q.path === "/api/admin/interactive");
+    expect((upload?.form as FormData).get("file")).toBeTruthy();
+    expect((upload?.form as FormData).get("accept_network")).toBeNull();
+    expect(r.requests.at(-1)?.body).toMatchObject({
+      topicable_type: "Ulams\\Interactive\\Models\\InteractiveTopic",
+      value: 31,
+      start_step: "too-slow",
+      end_step: "too-slow",
+      completion_rule: "on_range_end",
+      display: "background",
+      text: "Drag the slider.",
+    });
+    expect(JSON.parse(r.stdout).data.package).toMatchObject({ id: 31 });
+  });
+
+  it("interactive on an uploaded package pins a version, or follows the latest, and checks its inputs", async () => {
+    const pinned = await runCli(["topics", "create-interactive", ...base, "--package", "3", "--version", "2", "--completion", "on_score", "--pass-score", "80"], { env, routes: lmsRoutes() });
+    expect(pinned.requests.some((q) => q.path === "/api/admin/interactive")).toBe(false);
+    expect(pinned.requests.at(-1)?.body).toMatchObject({ value: 3, version: 2, completion_rule: "on_score", pass_score: 80, display: "inline" });
+    const follow = await runCli(["topics", "create-interactive", ...base, "--package", "3", "--version", "2", "--follow-latest"], { env, routes: lmsRoutes() });
+    expect(follow.requests.at(-1)?.body).toMatchObject({ follow_latest: 1 });
+    expect(follow.requests.at(-1)?.body).not.toHaveProperty("version");
+
+    expect((await runCli(["topics", "create-interactive", ...base], { env, routes: lmsRoutes() })).code).toBe(2);
+    expect((await runCli(["topics", "create-interactive", ...base, "--package", "3", "--file", "a.zip"], { env, routes: lmsRoutes(), files: { "a.zip": "x" } })).code).toBe(2);
+    expect((await runCli(["topics", "create-interactive", ...base, "--package", "3", "--completion", "on_score"], { env, routes: lmsRoutes() })).code).toBe(2);
+  });
+
+  it("interactive confirms the manifest's network origins only when asked to", async () => {
+    const routes = lmsRoutes({ "POST /api/admin/interactive": () => ({ body: { success: true, data: { id: 31 } } }) });
+    const r = await runCli(["topics", "create-interactive", ...base, "--file", "g.zip", "--accept-network"], { env, routes, files: { "g.zip": "zip" } });
+    expect(((r.requests.find((q) => q.path === "/api/admin/interactive")?.form) as FormData).get("accept_network")).toBe("1");
+  });
+
   it("quiz creates the topic then one GIFT question per entry", async () => {
     const routes = lmsRoutes({ "POST /api/admin/gift-questions": (req) => ({ body: { success: true, data: { id: 1, ...(req.body as object) } } }) });
     const r = await runCli(["topics", "create-quiz", ...base, "--input", "@q.yaml"], {

@@ -51,6 +51,14 @@ class ContentFileController extends Controller
         $disks = (array) config('ulams_uploads.content_disks', []);
         abort_unless($normalised !== $prefix && array_key_exists($prefix, $disks), 404);
 
+        $extra = [];
+        $provider = config('ulams_uploads.content_headers.' . $prefix);
+        if (is_string($provider) && class_exists($provider)) {
+            $provided = app($provider)->headersFor($normalised);
+            abort_if($provided === null, 404);
+            $extra = $provided;
+        }
+
         $diskName = (string) (config((string) $disks[$prefix]) ?: config('filesystems.default'));
         $disk = Storage::disk($diskName);
         abort_unless($disk->exists($normalised), 404);
@@ -66,6 +74,8 @@ class ContentFileController extends Controller
             'Cross-Origin-Resource-Policy' => 'cross-origin',
             'Cache-Control' => str_contains($normalised, '/_player/') ? 'no-cache' : 'public, max-age=3600',
         ];
+
+        $headers = $extra + $headers;
 
         if ((config("filesystems.disks.{$diskName}.driver")) === 'local') {
             return response()->file($disk->path($normalised), $headers);

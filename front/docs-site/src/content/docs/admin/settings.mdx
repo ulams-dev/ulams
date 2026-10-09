@@ -139,6 +139,8 @@ Frequently used keys:
 | `ulams_auth.auto_verified_email` | new accounts are verified without the email link |
 | `ulams_auth.return_url` | the link in the verification email of accounts created in the panel; the panel cannot create users while it is empty |
 | `services.google.*`, `services.facebook.*` | social login credentials |
+| `ulams_interactive.enabled` | `true` by default: Interactive topics can be played. Off: launches answer 404, the course editor hides the type and existing topics show their text version ([Interactive](/creators/interactive/)) |
+| `ulams_interactive.allow_network` | `false` by default: when `true`, the origins a package lists under `network` in its manifest are added to its `connect-src` |
 | `ulams_payments.*` | payment gateways and currency ([Sales](/admin/sales/)) |
 | `sms.*` | SMS driver and Twilio credentials ([Templates](/admin/templates/#sms-templates)) |
 | `ulams_templates_email.mjml.*` | MJML rendering ([Templates](/admin/templates/#email-templates)) |

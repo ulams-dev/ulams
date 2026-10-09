@@ -17,6 +17,10 @@ interface Row {
   help?: string;
   cells: Cell[];
 }
+interface Section {
+  label: string;
+  rows: Row[];
+}
 interface Props {
   id?: string;
   eyebrow?: string;
@@ -27,13 +31,15 @@ interface Props {
   columns?: Column[];
   rows?: Row[];
   /** Several tables (max 4) behind a CSS-only segmented control; replaces columns and rows. */
-  groups?: Array<{ label: string; caption?: string; columns: Column[]; rows: Row[] }>;
+  groups?: Array<{ label: string; caption?: string; columns: Column[]; rows?: Row[]; sections?: Section[] }>;
   sources?: Array<{ label: string; href: string; checked?: string }>;
   note?: string;
 }
 const { id = "compare", eyebrow, title, intro, caption, asOf, columns = [], rows = [], groups, sources = [], note } = Astro.props;
 const panels = (groups?.length ? groups.slice(0, 4) : [{ label: "", caption, columns, rows }]).map((g) => ({
   ...g,
+  /** Rows are grouped in sections (each its own tbody with a header row) or listed flat. */
+  sections: g.sections?.length ? g.sections : [{ label: "", rows: g.rows ?? [] }],
   caption: g.caption ?? caption,
   highlighted: g.columns.findIndex((c) => c.highlight),
 }));
@@ -97,33 +103,42 @@ const MARK: Record<Kind, string> = { yes: "✓", no: "–", partial: "◐", plug
                       ))}
                     </tr>
                   </thead>
-                  <tbody>
-                    {g.rows.map((row) => (
-                      <tr>
-                        <th scope="row">
-                          <span class="u-compare__feature">{row.label}</span>
-                          {row.help && <span class="u-compare__help">{row.help}</span>}
-                        </th>
-                        {g.columns.map((_, i) => {
-                          const cell = row.cells[i] ?? { value: "Not documented" };
-                          const kind = kindOf(cell.value);
-                          return (
-                            <td class:list={[{ "is-ours": i === g.highlighted }]} data-kind={kind}>
-                              <span class="u-compare__value">
-                                {MARK[kind] && (
-                                  <span class="u-compare__mark" aria-hidden="true">
-                                    {MARK[kind]}
-                                  </span>
-                                )}
-                                {cell.value}
-                              </span>
-                              {cell.note && <span class="u-compare__note">{cell.note}</span>}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    ))}
-                  </tbody>
+                  {g.sections.map((section) => (
+                    <tbody>
+                      {section.label && (
+                        <tr class="u-compare__section">
+                          <th scope="rowgroup" colspan={g.columns.length + 1}>
+                            {section.label}
+                          </th>
+                        </tr>
+                      )}
+                      {section.rows.map((row) => (
+                        <tr>
+                          <th scope="row">
+                            <span class="u-compare__feature">{row.label}</span>
+                            {row.help && <span class="u-compare__help">{row.help}</span>}
+                          </th>
+                          {g.columns.map((_, i) => {
+                            const cell = row.cells[i] ?? { value: "Not documented" };
+                            const kind = kindOf(cell.value);
+                            return (
+                              <td class:list={[{ "is-ours": i === g.highlighted }]} data-kind={kind}>
+                                <span class="u-compare__value">
+                                  {MARK[kind] && (
+                                    <span class="u-compare__mark" aria-hidden="true">
+                                      {MARK[kind]}
+                                    </span>
+                                  )}
+                                  {cell.value}
+                                </span>
+                                {cell.note && <span class="u-compare__note">{cell.note}</span>}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  ))}
                 </table>
               </div>
             </div>
@@ -274,7 +289,7 @@ const MARK: Record<Kind, string> = { yes: "✓", no: "–", partial: "◐", plug
     border-bottom: 1px solid var(--ulams-color-border);
     vertical-align: bottom;
   }
-  tbody th {
+  tbody tr:not(.u-compare__section) > th {
     position: sticky;
     left: 0;
     z-index: 1;
@@ -282,6 +297,21 @@ const MARK: Record<Kind, string> = { yes: "✓", no: "–", partial: "◐", plug
     min-width: 190px;
     font-weight: 600;
     box-shadow: 1px 0 0 var(--ulams-color-border);
+  }
+  .u-compare__section th {
+    position: static;
+    padding: 18px 14px 8px;
+    border-top: 1px solid var(--ulams-color-border);
+    background: color-mix(in srgb, var(--ulams-color-primary) 4%, var(--ulams-color-card-bg));
+    font-family: var(--ulams-font-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ulams-color-primary-on-light);
+  }
+  tbody tr.u-compare__section:hover > * {
+    background-color: color-mix(in srgb, var(--ulams-color-primary) 4%, var(--ulams-color-card-bg));
   }
   .u-compare__corner {
     left: 0;
@@ -399,7 +429,7 @@ const MARK: Record<Kind, string> = { yes: "✓", no: "–", partial: "◐", plug
     }
   }
   @media (max-width: 640px) {
-    tbody th {
+    tbody tr:not(.u-compare__section) > th {
       min-width: 140px;
     }
     .u-compare__table {
