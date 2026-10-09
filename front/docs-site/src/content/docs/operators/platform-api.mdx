@@ -1,0 +1,71 @@
+---
+title: Platform tenant API
+description: "Create, inspect and delete tenants over HTTP or with ulams tenants: off by default, platform hosts only, platform administrators only, queued operations with progress."
+sidebar:
+  order: 7
+modules:
+  - tenancy
+  - cli
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+The platform tenant API manages tenants without shell access to the API container: the same steps as
+`ulams:tenant:create`, `set-env` and `delete` ([Tenants](/admin/tenants/)), behind
+`/api/platform/*`. The decision is [ADR 0078](/decisions/0078-platform-tenant-api/), the details are in
+[ADR 0085](/decisions/0085-platform-tenant-api-implementation/).
+
+<Aside type="caution" title="Off by default">
+  Set `TENANCY_PLATFORM_API=true` in the **platform** environment to turn it on. Until then, and on every
+  tenant host, each route answers `404 Not found` before authentication, as if it did not exist.
+</Aside>
+
+## Who can call it
+
+- A user of the platform with the `platform_admin` permission (the platform's `admin` role has it after
+  `AuthPermissionSeeder` ran; run it once on an existing platform: `php artisan db:seed --class=PermissionsSeeder`).
+- A scoped token needs `platform:read` for reads and `platform:write` for changes, and lasts at most 30 days
+  on a platform host ([scoped tokens](/developers/scoped-tokens/)). Create one from a platform login:
+
+  ```bash
+  printf '%s' "$PASSWORD" | ulams login --url http://api.localhost --email admin@ulams.app --password-stdin
+  ulams tokens create --name platform-ci --scopes platform:write --expires-in-days 7 --json
+  ```
+
+- Calls are throttled to 60 per minute per user and recorded in the agent audit log.
+
+## With the CLI
+
+```bash
+ulams tenants list --fields slug,status,urls.front
+ulams tenants get coffee
+ulams tenants create acme --name "Acme Academy" --theme coffee --accent "#C2552D" --users 3 --demo   # waits, prints steps
+ulams tenants create acme --no-wait                       # returns tenant-op:<id>
+ulams operations wait tenant-op:01j9z3k8m2x4q7r5t6v8w0y1ab
+ulams tenants set-env acme --override AI_DRIVER=fake      # values are never shown back
+ulams tenants delete acme --yes                           # permanent: database, files, settings
+ulams tenants operations list
+```
+
+A login on a platform host saves a `platform` profile. The commands exit 12 (`FEATURE_DISABLED`) with the
+variable to set when the host answers 404.
+
+## Endpoints
+
+| Request | Does |
+|---|---|
+| `GET /api/platform/tenants`, `GET /api/platform/tenants/{slug}` | List, show: status, URLs, finished steps, names of the setting overrides. Never a database password, key or override value. |
+| `POST /api/platform/tenants` `{slug, name?, theme?, accent?, users?, demo?}` | Queue creation. 202 with `{operation, tenant}`. 409 if the tenant is active or an operation for it runs; a failed tenant is resumed. 422 for an invalid slug. |
+| `PATCH /api/platform/tenants/{slug}/env` `{set?: {KEY: value}, unset?: [KEY]}` | Override or reset inheritable settings (`ANTHROPIC_API_KEY`, `AI_DRIVER`, `AI_MODEL_*`). 422 for any other key. |
+| `DELETE /api/platform/tenants/{slug}` `{confirm: "<slug>"}` | Queue deletion. 422 unless `confirm` equals the slug. |
+| `GET /api/platform/operations`, `GET /api/platform/operations/{id}` | Latest 50, or one: `status` (`queued`, `running`, `succeeded`, `failed`), `steps` with `name`, `status`, times and `error`, and `error`. |
+
+Provisioning runs as a queued job on the platform queue worker (the supplied stack has one) and takes about a
+minute: `database`, `bucket`, `env`, `migrate`, `passport_keys`, `passport_client`, `permissions`, `lti_keys`,
+`demo`. A step that failed is kept on the operation; asking for the tenant again continues from it. Deletion has
+the steps `database`, `bucket`, `env`, `redis`.
+
+<Aside type="note" title="Not here">
+  There is no UI and no tenant update beyond settings. The artisan commands keep working and share the same
+  code (`TenantLifecycle`).
+</Aside>
