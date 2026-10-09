@@ -7,6 +7,7 @@ import { configGet, configSet, profilesDelete, profilesList, profilesUse } from 
 import { logout, whoami } from "./core/session.ts";
 import { applyCommands } from "./apply.ts";
 import { curatedCommands } from "./curated.ts";
+import { mcp } from "./mcp.ts";
 import { operationCommands } from "./operations.ts";
 import { topicCommands } from "./topics.ts";
 
@@ -24,6 +25,7 @@ export const handWritten: AnyCommand[] = [
   describeCommand,
   version,
   completion,
+  mcp,
   ...operationCommands,
   ...topicCommands,
   ...curatedCommands,
