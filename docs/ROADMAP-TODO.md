@@ -228,7 +228,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`.
 - [x] (new) SVG/HTML uploads served from the bucket: stored with `Content-Disposition: attachment` and an
       extension-based `Content-Type`; storage origin sends `script-src 'none'` for SVG (follow-up of 0.2)
 - [x] (new) Students have no `scorm_track-update` permission, so the legacy `/api/scorm/track` rejects
-      them and the front's legacy SCORM player never tracked (seeded for students, default taken; re-run
+      them and the front's legacy SCORM player never tracked (seeded for students, confirmed 2026-10-09; re-run
       `PermissionsSeeder` on existing tenants). SCORM completion now completes the SCORM topics using the SCO
 - [ ] (new) Production: serve content origins from a separate registrable domain (not same-site with the
       app), and add registered LTI tool origins to the front/admin `frame-src` (documented in

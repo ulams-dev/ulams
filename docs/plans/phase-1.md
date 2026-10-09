@@ -530,14 +530,14 @@ Taken during implementation (M1.5, LiaScript, partial):
     course until the topic type exists).
 36. ~~Rendering not started~~ superseded by 37–40.
 
-Defaults taken after the first review (product owner to confirm):
+Defaults taken after the first review, **confirmed by the product owner (2026-10-09)** and implemented:
 
-- #12 yes: students are seeded with `scorm_track-update` (and `scorm_track-read`).
-- #27 kept: Instructor → tutor, nobody becomes admin, no linking by e-mail.
-- #14 kept: attachment + CSP for SVG/HTML, no sanitiser.
+- #12 confirmed: students are seeded with `scorm_track-update` (and `scorm_track-read`); re-run `PermissionsSeeder` on existing tenants.
+- #27 confirmed: Instructor → tutor, nobody becomes admin, no linking by e-mail.
+- #14 confirmed: attachment + CSP for SVG/HTML, no sanitiser.
 - #21 fine: one commit for the LTI package.
-- Production content origin on a separate registrable domain: documented in `api/docs/content-origin.md`.
-- LiaScript player fetched at image build time with a pinned version and checksum, not vendored in git.
+- Confirmed: production content origin on a separate registrable domain (documented in `api/docs/content-origin.md`, `TENANCY_CONTENT_HOST`).
+- Confirmed: LiaScript player fetched at image build time with a pinned version and SHA-256 (`packages/liascript/bin/fetch-player.sh`), not vendored in git.
 
 Taken during the second pass (rebase onto main, M1.5–M1.9), to confirm:
 
@@ -584,6 +584,9 @@ Admin: Integrations → LTI (tools, platforms), Courses → LiaScript (editor), 
 External tool (LTI), Adapt tag in the SCORM list.
 
 Full suite after rebasing onto `phase-0/foundation` (fc9dea54): 2,399 tests, all green (the webinar
-errors were the helper rename on that branch). Results after the rebase onto `main` (963499a8): see the
-last commit of this branch.
+errors were the helper rename on that branch). After the rebase onto `phase-0/foundation` aa87253b
+(main 963499a8 plus the approval docs): 2,419 tests; 2 failures caused by `CONTENT_ORIGIN` set in the
+test environment (fixed in the tests: they now clear both content-origin keys) and the quarantined,
+timing-flaky `ConsultationChangeTermTest::testChangeTermForOneUser`. Scorm, LiaScript and uploads suites
+pass with and without `CONTENT_ORIGIN`.
 
