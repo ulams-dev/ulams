@@ -2,11 +2,12 @@ import { Context } from '@/components/ProgramForm/Context';
 import { getFormData } from '@/services/api';
 import { getTopic } from '@/services/ulams/course';
 import { TopicType } from '@/services/ulams/enums';
+import { siblingAppUrl } from '@ulams/demo';
 import { Affix, Alert, Col, Row, Space } from 'antd';
 import Button from 'antd/lib/button';
 import Divider from 'antd/lib/divider';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { FormattedMessage } from 'umi';
+import { FormattedMessage, useModel } from 'umi';
 import TopicForm from './form';
 import { getTypeName } from './media';
 import H5PForm from './media/h5p';
@@ -17,8 +18,10 @@ import Resources from './resources';
 
 import ScormSelector from '@/components/Scorm';
 import type { InteractiveTopicable } from '@/services/ulams/interactive';
+import type { LayoutTopicable } from '@/services/ulams/layout';
 import {
   ApiOutlined,
+  AppstoreOutlined,
   AudioOutlined,
   BookOutlined,
   CarryOutOutlined,
@@ -35,6 +38,7 @@ import {
 } from '@ant-design/icons';
 import GiftQuiz from './media/giftquiz';
 import InteractiveTopicForm from './media/interactive';
+import LayoutTopicForm from './media/layout';
 import LiaScriptTopicForm from './media/liascript';
 import type { LtiTopicable } from './media/lti';
 import LtiTopicForm from './media/lti';
@@ -67,6 +71,8 @@ export const getTypeIcon = (type: string | undefined) => {
         return <BookOutlined />;
       case 'InteractiveTopic':
         return <ExperimentOutlined />;
+      case 'LayoutTopic':
+        return <AppstoreOutlined />;
       case 'LtiLink':
         return <ApiOutlined />;
     }
@@ -79,6 +85,7 @@ const topicCanHaveEmptyValue = (type: TopicType) => {
 };
 
 export const Topic: React.FC = () => {
+  const { initialState } = useModel('@@initialState');
   const {
     state,
     currentEditMode,
@@ -320,6 +327,26 @@ export const Topic: React.FC = () => {
           {type && type === TopicType.Interactive && (
             <InteractiveTopicForm
               topicable={topic?.topicable as InteractiveTopicable | undefined}
+              onChange={(fields) =>
+                Object.entries(fields).forEach(([key, value]) =>
+                  updateValue(key as keyof API.Topic, value),
+                )
+              }
+            />
+          )}
+          {type && type === TopicType.Layout && (
+            <LayoutTopicForm
+              topicable={topic?.topicable as LayoutTopicable | undefined}
+              courseId={state?.id}
+              topicId={topic?.id}
+              isNew={!!topic?.isNew}
+              learnerUrl={
+                initialState?.demo?.frontUrl ??
+                siblingAppUrl(window.location, 'admin', 'app') ??
+                (typeof initialState?.publicConfig?.frontURL === 'string'
+                  ? initialState.publicConfig.frontURL
+                  : null)
+              }
               onChange={(fields) =>
                 Object.entries(fields).forEach(([key, value]) =>
                   updateValue(key as keyof API.Topic, value),

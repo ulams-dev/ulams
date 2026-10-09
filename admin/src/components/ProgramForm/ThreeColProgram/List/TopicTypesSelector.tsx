@@ -1,6 +1,7 @@
 import PACKAGES from '@/consts/packages';
 import {
   ApiOutlined,
+  AppstoreOutlined,
   AudioOutlined,
   BookOutlined,
   CarryOutOutlined,
@@ -202,6 +203,18 @@ export const TopicTypesSelector: React.FC<{
               />
             </Tooltip>
           )}
+        {!positionsToHide?.includes(TopicType.Layout) && !topicTypeIsDisabled(TopicType.Layout) && (
+          <Tooltip
+            placement="right"
+            title={<FormattedMessage id="Layout" defaultMessage="Layout" />}
+          >
+            <Button
+              block
+              onClick={() => setSelected(TopicType.Layout)}
+              icon={<AppstoreOutlined />}
+            />
+          </Tooltip>
+        )}
         {!positionsToHide?.includes(TopicType.Lti) && !topicTypeIsDisabled(TopicType.Lti) && (
           <Tooltip
             placement="right"
