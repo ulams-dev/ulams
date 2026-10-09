@@ -185,6 +185,7 @@ which the demo academies use. They are also the best templates for your own.
 | Package | What it shows | Steps |
 |---|---|---|
 | `gravity` | A Three.js solar system with a guided tour; built with Vite, so it bundles the bridge from source | 44, English and Polish; a poster per step |
+| `poland` | A map and charts of public statistics, plain JavaScript with no build; loads its data with `fetch`, so it holds `ready` back with `whenReady` | 40, English and Polish; a poster per step; honours reduced motion |
 
 Build one and use it in a lesson (the posters are rendered with Chromium, so it needs
 `npx playwright install chromium` once):
@@ -194,6 +195,11 @@ yarn workspace @ulams/demo-gravity package
 ulams topics create-interactive --lesson 12 --title "Too slow" \
   --file demo-content/gravity/release/gravity-ulams-1.0.0.zip \
   --start-step too-slow --end-step too-slow --display background --json
+
+# a package with no build step is zipped as it is
+node demo-content/scripts/pack.mjs demo-content/poland
+ulams topics create-interactive --lesson 12 --title "Gas" --file demo-content/poland/release/poland-ulams.zip \
+  --start-step gas --end-step gas --display background --json
 ```
 
 What the gravity package teaches about writing your own: guard every storage call, load fonts and textures

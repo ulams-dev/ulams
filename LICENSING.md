@@ -69,6 +69,7 @@ admin or front (`demo-content/scripts/check-demo-content-boundary.mjs`, part of 
 
 | Package | Code | Provenance and third-party material |
 |---|---|---|
+| `poland` | MIT, © 2026 Mateusz Wojczal; text and data CC BY 4.0 | The owner's own project (`github.com/qunabu/poland-october-2026`, no licence file there), rebuilt for ulams (#148, #149). Not used: the saved third-party article and its files, the `world.topo.json` copied from that article, the mp4. Map: Natural Earth (public domain) through `world-atlas` (ISC), regenerated. Fonts: Barlow, Barlow Semi Condensed, JetBrains Mono, SIL OFL 1.1 (`fonts/OFL.txt`). Figures link to their publishers |
 | `gravity` | MIT, © 2026 Mateusz Wojczal | The owner's own simulator (`github.com/qunabu/Gravity`, originally GPL-3.0), relicensed by its copyright holder (#147). Left out: commits bc9d770 and 9db0edc (David Frankel, Docker files), commit 4adaa1b (jin, the Chinese translation), the music track and the Moon photograph (no stated licence). Earth day map: Solar System Scope, CC BY 4.0. Three.js: MIT. Inter and Roboto Mono: SIL OFL 1.1 (via `@fontsource`), licence texts ship in the package |
 
 ## PDF templates and certificates

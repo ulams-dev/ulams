@@ -1,8 +1,8 @@
 # Plan: the Interactive topic type and three new demo academies
 
 Status: **draft, waiting for the product owner's approval** (#146). M1 and M2 (the bridge, the Interactive
-topic type and its learner, admin, CLI and docs surfaces) are merged. M3 (gravity) is implemented under the
-amendment below.
+topic type and its learner, admin, CLI and docs surfaces) are merged. M3 (gravity) is merged and M4 (poland)
+is implemented, both under the amendment below.
 
 **Amended 2026-10-09 (product owner decisions in chat and on #147, #148, #149, #150).** These override the text
 below where they differ:
@@ -654,7 +654,27 @@ lint, so of the root `lint` task) fails if any file outside `demo-content/` impo
 it, or depends on a `demo-content` workspace. PHP seeders may read files from it as data (`file_get_contents`,
 `ZipArchive::addFile`, `glob`); `require` and `include` are refused.
 
-### 6.2 poland (owner's code; ADR 0088; licence pending #148; scope pending #149)
+### 6.2 poland (owner's code; ADR 0088; MIT code and CC BY 4.0 text, #148; scope, #149)
+
+**Built in M4 (2026-10-09).** The result differs from the sketch below in these ways, all from the owner's
+decisions:
+- The data is fetched (`data/steps.json`, `data/sources.json`, `data/world.topo.json`); the story has 40 steps
+  (the outlook chapter and the outro are dropped) in nine chapters, EN and PL in one package.
+- Only sources that publish the figure are kept: every entry that came from the article, press, an aggregator
+  or an encyclopedia is gone (`scripts/check.mjs` enforces it), and figures were re-sourced or removed
+  (`demo-content/poland/README.md`, "What changed in the figures"). Where a number could not be confirmed the
+  publisher's number replaced it; each change is recorded there. Steps keep their ids.
+- The map: `world-atlas@2.0.2` through `topojson-server` and `topojson-simplify` (ISC), simplified harder
+  outside Europe: 358 KB, 170 countries. `topojson-server` and `topojson-simplify` are two more dev dependencies
+  (section 14).
+- The map engine is `demo-content/shared/atlas.js` (MIT); poland and the future `lwow-map` each get a copy in
+  `vendor/` from `sync-bridge`, and the lint fails when a copy differs.
+- The bridge gained `whenReady` and a `steps` function, because a package that loads its data asynchronously
+  must register its `init` listener at start and answer `ready` only once it knows its steps.
+- Posters are committed (40 WebP stills, about 630 KB); the zip is 1.0 MB (`scripts/pack.mjs`).
+- Step mode shows the figures in a right-hand panel (`chrome: none`); on a phone a native button opens it.
+
+The original sketch:
 
 **Where the work happens.** In the ulams repo, `demo-content/poland/`. The files are a cleaned copy of
 `src/template.html` and `src/sources.json` at commit `<HEAD of qunabu/poland-october-2026>` (recorded
@@ -1290,7 +1310,8 @@ Each line gives the default the plan uses and, where there is one, the issue tha
 | `@ulams/interactive-bridge` (new, ours) | MIT | `front/interactive-bridge` | The protocol on both ends | ours; under 3 KB | none |
 | `esbuild` (if not already in the lockfile) | MIT | dev only, bridge bundle | One-file ESM build | very active | none |
 | `world-atlas@2.0.2` | ISC (data: Natural Earth, public domain) | dev only, `demo-content` | Regenerate the poland map | stable (2020), data only | none |
-| `topojson-client@3.1.0` | ISC | dev only, `demo-content` | Filter and re-quantise the topology | stable | none |
+| `topojson-client@3.1.0`, `topojson-server@3.0.1`, `topojson-simplify@3.0.3` | ISC | dev only, `demo-content` | Filter, simplify and re-quantise the topology (the output is committed) | stable | none |
+| `@fontsource/barlow`, `@fontsource/barlow-semi-condensed`, `@fontsource/jetbrains-mono` | MIT (code) + SIL OFL 1.1 (fonts) | dev only, `demo-content/poland` (the woff2 subsets are committed) | The poland package's own fonts, self-hosted | very active | none |
 | Fonts: Inter, Source Serif 4, IBM Plex Sans and Mono, EB Garamond | SIL OFL 1.1 | `front/web` via Astro `<Font>` (self-hosted) | The three presets | Google Fonts / upstream | about 40 KB per subset; no external requests |
 | `@fontsource-variable/inter`, `@fontsource/roboto-mono` | MIT (code) + SIL OFL 1.1 (fonts) | `demo-content/gravity` | Self-hosted fonts in the package | very active | none |
 | `three@0.184`, `vite@8`, `typescript@6`, `@types/three` | MIT / Apache-2.0 | `demo-content/gravity` (the simulator and its build) | The simulator is the owner's Three.js app | very active | none; dev and build only except Three.js, which ships inside the package |
