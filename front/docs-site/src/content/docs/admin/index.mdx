@@ -1,0 +1,179 @@
+---
+title: The admin panel
+description: How to sign in to the ulams admin panel, what the dashboard shows, where each menu group leads and why some items are hidden.
+sidebar:
+  order: 0
+modules:
+  - admin
+  - core
+adminRoutes:
+  - /user/login
+  - /user/reset-password
+  - /welcome
+  - /users
+  - /configuration
+  - /other
+---
+
+import { Aside, LinkCard, CardGrid } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+The admin panel (`admin/` in the repository) is a React application built on Umi and Ant Design
+Pro. It has no data of its own: every screen calls the ulams REST API, and what you can see and
+do depends on the permissions of your account.
+
+Each tenant has its own admin panel host. In local development it is `{slug}.admin.localhost`,
+for example `http://coffee.admin.localhost`, and the panel derives the tenant API host from it
+(`http://coffee.localhost`). Accounts, roles, settings and content belong to one tenant; an
+account in one tenant cannot sign in to another. See [Tenants](/admin/tenants/) and
+[Tenancy](/developers/tenancy/).
+
+## Signing in
+
+<Screenshot name="admin-user-login" alt="The admin panel sign-in form with email and password fields" />
+
+The sign-in screen is at `/user/login`. Enter your email and password; **Remember me** is
+sent with the request. After a successful sign-in the panel stores the API token in the
+browser, loads your user, the tenant settings, the list of installed packages and the panel
+translations, and opens the page you were trying to reach (or the dashboard).
+
+Any account can sign in, but the panel only shows screens the account has permissions for.
+An account without the `access dashboard` permission (the default `student` role) sees no
+menu at all.
+
+The look of the sign-in screen comes from the `global` settings `logoLogin`,
+`showLoginBackgroundImage`, `loginHeaderBackgroundColor`, `loginHeaderFontColor` and
+`loginFormBackgroundColor` (see [Settings](/admin/settings/)).
+
+<Aside>
+On a tenant in demo mode the panel signs you in as the demo administrator automatically and
+skips this screen. See [Demo mode](/admin/demo-mode/).
+</Aside>
+
+### Forgotten password
+
+<Screenshot name="admin-user-reset-password" alt="The reset password form" />
+
+1. On the sign-in screen click **Forgot password**, enter your email and send the form. The
+   API (`POST /api/auth/password/forgot`) emails a reset link that points back to the panel's
+   `/user/reset-password` page.
+2. The link carries `token` and `email` in the query string. Enter a new password on
+   `/user/reset-password`; the panel sends it with the token to
+   `POST /api/auth/password/reset` and returns you to the sign-in screen.
+
+The email is built from the template for the `ResetPassword` event (see
+[Templates](/admin/templates/)).
+
+### Signing out and your profile
+
+The avatar menu in the top-right corner leads to [My profile](/admin/my-profile/) and signs you
+out. Next to it are the notification bell (see [Notifications](/admin/notifications/)) and the
+language switcher, which changes the panel language and the `X-locale` header sent to the API.
+
+## The dashboard
+
+<Screenshot name="admin-welcome" alt="The dashboard with course and sales widgets" />
+
+`/welcome` is the start page. It needs only the `access dashboard` permission. It is a grid of
+widgets that you can drag, resize, remove and add back with the **Add** widget:
+
+- tutorial, your courses, hall of fame (best selling and best rated courses), ratings,
+  current users, customers and sales,
+- pie charts of the report metrics: money spent per course, course popularity, time spent per
+  course and tutor popularity.
+
+The layout is saved in your browser (`localStorage`), not on the server, so it is per browser
+and not shared with other administrators. The metrics come from the reports package; see
+[Reports and analytics](/admin/reports-and-analytics/).
+
+When the `global.frontURL` setting is set, the dashboard shows a **Go to platform** button
+that opens the learner site with your token appended (`#/login?token=…`, the format of the
+legacy React learner app).
+
+## Menu structure
+
+The left menu is generated from
+[`admin/config/routes.ts`](https://github.com/ulams-dev/ulams/blob/main/admin/config/routes.ts).
+Each top-level group and where it is documented:
+
+| Menu group | Screens | Documented in |
+|---|---|---|
+| Courses | Course list and editor, H5P content, LiaScript, SCORM packages, access requests, quiz reports | [Content creators](/creators/) |
+| Courses | Categories | [Categories and tags](/admin/categories-and-tags/) |
+| Courses | Webinars | [Webinars](/admin/webinars/) |
+| Courses | H5P libraries | [H5P libraries](/admin/h5p-libraries/) |
+| Integrations | LTI | [LTI 1.3 integrations](/admin/lti/) |
+| Sales | Orders, payments, vouchers, products | [Sales](/admin/sales/) |
+| Users | List, user fields | [Users](/admin/users/) |
+| Users | Roles and permissions | [Roles and permissions](/admin/roles-and-permissions/) |
+| Users | User groups | [User groups](/admin/user-groups/) |
+| Users | Notifications (push) | [Notifications](/admin/notifications/) |
+| Teacher, Competency challenges | Subjects, challenges | [Teacher and competency challenges](/admin/teacher-and-competencies/) |
+| Analytics | Notifications, reports, logs | [Reports and analytics](/admin/reports-and-analytics/) |
+| Configuration | Files | [Files](/admin/files/) |
+| Configuration | Settings | [Settings](/admin/settings/) |
+| Configuration | Templates (email, PDF, SMS) | [Templates](/admin/templates/) |
+| Configuration | Translations, panel translations | [Translations](/admin/translations/) |
+| Other activities | Consultations, consultation requests | [Consultations](/admin/consultations/) |
+| Other activities | Stationary events | [Stationary events](/admin/stationary-events/) |
+| Other activities | Questionnaires | [Questionnaires](/admin/questionnaires/) |
+| Other activities | Pages | [Pages](/admin/pages/) |
+| Other activities | Tasks | [Tasks](/admin/tasks/) |
+| Other activities | Dictionary | [Dictionaries](/admin/dictionaries/) |
+
+My profile (`/my-profile`) is not in the menu; open it from the avatar menu. Tenants are
+managed from the command line, not from the panel ([Tenants](/admin/tenants/)).
+
+## Why a menu item is hidden
+
+Every route in `routes.ts` has an `access` key, a named rule defined in
+[`admin/src/access.ts`](https://github.com/ulams-dev/ulams/blob/main/admin/src/access.ts).
+A route whose rule is false is removed from the menu, and opening its URL directly shows the
+403 page. A rule combines up to three checks:
+
+1. **Permissions.** Almost every rule requires `access dashboard` plus at least one of the
+   listed permissions. For example the Users group appears with any of `user_list`,
+   `permission_role_list` or `user-group_list`, and the Configuration group with any of
+   `file_list`, `settings_list`, `template_read` or `translation_list`. The permissions come
+   from your roles; see [Roles and permissions](/admin/roles-and-permissions/).
+2. **Installed packages.** Some screens also need an API package to be installed, read from
+   `GET /api/core/packages` (for example Translations needs `ulams/translations`, Dictionary
+   needs `ulams/dictionaries`, H5P needs `ulams/h5p`). The Teacher and Competency challenges
+   screens depend on packages that are not part of this repository.
+3. **Settings.** An administrator can hide items for everyone with boolean `global` settings
+   named after the route: `hideInMenu-CoursesCategories`, `hideInMenu-OtherDictionary`,
+   `hideInMenu-ConfigurationTranslations` and so on. Some features have their own switch:
+   `disable-ECommerce` hides Sales, `disable-Certificates` hides the PDF templates tab. If such
+   a setting holds an array of role names instead of a boolean, the item is hidden only for
+   users whose every role is in the array. See [Settings](/admin/settings/).
+
+<Aside type="caution">
+These rules only hide screens. The API checks permissions again on every request through its
+policies, so hiding a menu item is not access control by itself, and granting a permission
+without the matching menu rule still lets the account call the API.
+</Aside>
+
+## Pages in this section
+
+<CardGrid>
+  <LinkCard title="Users" href="/admin/users/" description="User list, accounts, CSV import and export, extra user fields." />
+  <LinkCard title="User groups" href="/admin/user-groups/" description="Nested groups, registration groups and members." />
+  <LinkCard title="Roles and permissions" href="/admin/roles-and-permissions/" description="Roles, the permission matrix and how it maps to the menu." />
+  <LinkCard title="My profile" href="/admin/my-profile/" description="Your own name, avatar, password and user settings." />
+  <LinkCard title="Settings" href="/admin/settings/" description="Global settings, custom settings, package configuration, theme and accent." />
+  <LinkCard title="Categories and tags" href="/admin/categories-and-tags/" description="The category tree and free-form tags." />
+  <LinkCard title="Pages" href="/admin/pages/" description="Static pages such as terms of service." />
+  <LinkCard title="Templates" href="/admin/templates/" description="Email, PDF and SMS templates bound to events." />
+  <LinkCard title="Notifications" href="/admin/notifications/" description="Event notifications and bulk push messages." />
+  <LinkCard title="Translations" href="/admin/translations/" description="API and admin panel translation overrides." />
+  <LinkCard title="Dictionaries" href="/admin/dictionaries/" description="Glossaries of words with descriptions and CSV import." />
+  <LinkCard title="Files" href="/admin/files/" description="The file library and upload folders." />
+  <LinkCard title="Other integrations" href="/admin/other-integrations/" description="MailerLite and Mattermost, configured through settings." />
+</CardGrid>
+
+The other pages of this section cover [sales](/admin/sales/), [webinars](/admin/webinars/),
+[consultations](/admin/consultations/), [stationary events](/admin/stationary-events/),
+[tasks](/admin/tasks/), [questionnaires](/admin/questionnaires/),
+[reports and analytics](/admin/reports-and-analytics/), [H5P libraries](/admin/h5p-libraries/),
+[LTI](/admin/lti/), [teacher and competency screens](/admin/teacher-and-competencies/),
+[tenants](/admin/tenants/) and [demo mode](/admin/demo-mode/).

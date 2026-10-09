@@ -1,0 +1,230 @@
+---
+title: Sales
+description: Products, orders, payments and vouchers in the admin panel, the payment gateways, and how a paid order grants course access today.
+sidebar:
+  order: 20
+modules:
+  - payments
+  - cart
+  - shopping-cart
+  - invoices
+  - vouchers
+  - przelewy24-php
+adminRoutes:
+  - "/sales/**"
+needsReview: "Stripe and Przelewy24 checkout not exercised end to end against a live gateway; refunds are only used for trial card checks."
+---
+
+import { Aside, Badge, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+The **Sales** menu is where you sell access to learning content: you wrap courses, webinars,
+consultations, stationary events and dictionaries in **products**, learners buy them through a
+cart, and the platform records **orders** and **payments**. **Vouchers** give discounts at
+checkout.
+
+This is the commerce stack inherited from Wellms. The roadmap replaces it with a separate
+Sylius service (see the last section of this page); until then, everything
+on this page is what runs.
+
+Who uses it: administrators and sales staff with the cart, payment and voucher permissions.
+
+## Screens
+
+| Screen | Route | What you do there |
+|---|---|---|
+| Orders | `/sales/orders` | List orders with subtotal, tax, total, items, buyer and status; filter by date range, user, product and status. |
+| Payments | `/sales/payments` | List payments with amount, currency, status and the paid-for object (`payable`); filter by date range and status. |
+| Vouchers | `/sales/vouchers` | List discount codes. |
+| Voucher form | `/sales/vouchers/:voucherId/` | Create or edit a voucher (`new` creates one). |
+| Products | `/sales/products` | List products. |
+| Product form | `/sales/products/:id`, `/sales/products/:id/:tab` | Create or edit a product, in tabs. |
+
+<Screenshot name="admin-sales-orders" alt="Orders list in the admin panel" />
+
+<Screenshot name="admin-sales-products" alt="Products list in the admin panel" />
+
+### Product form tabs
+
+- **Attributes**: name, the productables it sells (one or more courses, webinars and so on, each
+  with a quantity), type, purchasable flag, price, old price, tax rate, extra fees, duration,
+  per-user and total limits, teaser URL, language, related products and description. For
+  subscription types also the period and duration, auto-renew (`recursive`) and an optional trial
+  (period and duration). App Store and Play Store IDs appear when the RevenueCat integration package is
+  installed.
+- **Media**: poster.
+- **Categories**: categories and tags.
+- **Users attached**: who owns the product. You can attach or detach users by hand, which grants
+  or removes access without an order.
+- **User submissions**: answers to custom fields submitted for the product.
+- **Template**: trigger a notification template manually for every user of the product.
+
+Product types (`ProductType`): `single`, `bundle`, `subscription`, `subscription-all-in`.
+
+<Screenshot name="admin-sales-products-id-tab" alt="Product form with its tabs" />
+
+### Voucher form
+
+A voucher has a name, a code, a type, active flag, an "exclude promotions" flag, an active-from
+and active-to window, a total usage limit, a per-user limit, minimum and maximum cart value, and an
+amount. It can be limited to products, categories or users, or exclude products and categories.
+
+Voucher types (`CouponTypeEnum`):
+
+| Type | Discount |
+|---|---|
+| `cart_fixed` | Fixed amount off the cart |
+| `cart_percent` | Percentage off the cart |
+| `product_fixed` | Fixed amount off the included products |
+| `product_percent` | Percentage off the included products |
+
+Learners apply a code to their cart with `POST /api/cart/voucher` and remove it with
+`DELETE /api/cart/voucher`.
+
+<Screenshot name="admin-sales-vouchers-voucherid" alt="Voucher form" />
+
+## Payment gateways
+
+The `payments` package picks a driver per payment. Drivers in
+`api/packages/payments/src/Gateway/Drivers`:
+
+| Driver | Used for | Configuration |
+|---|---|---|
+| `free` | Always used when the amount is 0; it refuses non-zero payments. | None |
+| `stripe` | Card payments through a Stripe PaymentIntent. Callbacks are accepted only with a valid `Stripe-Signature` header or after the PaymentIntent is fetched from the Stripe API. | `PAYMENTS_STRIPE_SECRET_KEY`, `PAYMENTS_STRIPE_PUBLISHABLE_KEY`, `PAYMENTS_STRIPE_WEBHOOK_SECRET`, `PAYMENTS_STRIPE_WEBHOOK_TOLERANCE`, `PAYMENTS_STRIPE_API_BASE` |
+| `przelewy24` | Redirect payments through Przelewy24 (Polish bank transfers, BLIK, cards), using the vendored `przelewy24-php` API client. | `PAYMENTS_PRZELEWY24_LIVE`, `PAYMENTS_PRZELEWY24_MERCHANT_ID`, `PAYMENTS_PRZELEWY24_POS_ID`, `PAYMENTS_PRZELEWY24_API_KEY`, `PAYMENTS_PRZELEWY24_CRC` |
+| `revenuecat` | Mobile in-app purchases. Off by default; a purchase is accepted only when a server-side receipt verifier class is configured. | `PAYMENTS_REVENUECAT_ENABLED`, `PAYMENTS_REVENUECAT_RECEIPT_VERIFIER` |
+
+The default gateway (`PAYMENTS_DEFAULT_GATEWAY`, default `Stripe`) and currency
+(`PAYMENTS_DEFAULT_CURRENCY`, default `USD`) apply unless the checkout request names a
+`gateway` and `currency`. `GET /api/payments-gateways` lists the gateways, whether each is enabled
+and which parameters the frontend must send (for example `return_url` and `payment_method` for
+Stripe, `return_url` and `email` for Przelewy24).
+
+Gateway credentials, enable flags, default gateway and default currency are also administrable
+settings (`ulams_payments.*`), so they can be changed per tenant in the admin settings without a
+redeploy. Secret keys are stored but not exposed publicly. See [Settings](/admin/settings/) and
+[Settings reference](/reference/settings/); environment variables are listed in
+[Environment variables](/reference/environment-variables/).
+
+Payment statuses: `new`, `redirect`, `paid`, `failed`, `cancelled`, `refunded`.
+
+## How a purchase grants access today
+
+<Steps>
+
+1. The learner adds products to the cart (`POST /api/cart/products`) or buys a single product
+   directly (`POST /api/product/{id}/pay`).
+2. `POST /api/cart/pay` turns the cart into an **order** (status `PROCESSING`, or
+   `TRIAL_PROCESSING` for a trial) and creates a **payment** for it. Zero-value orders go
+   through the `free` driver and are paid immediately.
+3. For Stripe or Przelewy24, the payment either succeeds at once or returns a redirect URL. The
+   gateway later calls `/api/payments-gateways/callback/{payment}` (Stripe also has
+   `/api/payments-gateways/webhook/stripe`). The callback runs in a transaction with the payment
+   row locked; rejected (unverified) callbacks are logged and ignored, and an already settled
+   payment is left untouched, so repeated notifications do not fire events twice.
+4. A successful payment fires `PaymentSuccess`. The cart's `PaymentSuccessListener` marks the
+   order `PAID` (or `TRIAL_PAID`) and fires `OrderPaid`. Marking an already paid order is a no-op.
+5. For each order item the order service fires `ProductBought` and attaches the product to the
+   buyer (`products_users`, respecting `limit_per_user`; subscriptions get an end date). Then each
+   productable in the product is attached: for a course this enrols the learner (with the
+   subscription end date, if any) and fires `CourseAssigned` and `CourseAccessStarted`.
+
+</Steps>
+
+Products can sell `Course`, `Webinar`, `Consultation`, `StationaryEvent` and `Dictionary`
+(registered in `api/app/Providers/ShopServiceProvider.php`).
+
+Access can also be granted without payment: attach a user on the product's **Users attached**
+tab, or assign the course directly (see [Users](/admin/users/)).
+
+<Aside type="note">
+The reference learner site (`front/web`) has no cart or checkout yet; the cart API is used by the
+legacy React learner app (`front/`). Invoices are generated on demand as PDF from
+`GET /api/order-invoices/{id}` for the order's buyer or a user who can list all orders; seller
+details and currency come from the `invoices` settings.
+</Aside>
+
+## Subscriptions and scheduled jobs
+
+The `cart` package schedules:
+
+- `RenewRecursiveProduct` hourly and `ExpireRecursiveProduct` daily, for subscription products.
+- `cart:abandoned-event` daily at 01:00: finds carts abandoned 24 to 48 hours ago and fires
+  `AbandonedCartEvent`.
+
+Learners cancel a subscription with `POST /api/products/cancel/{id}`. See
+[Scheduled jobs](/reference/scheduled-jobs/).
+
+## API endpoints
+
+| Area | Endpoints |
+|---|---|
+| Orders (admin) | `GET /api/admin/orders`, `GET /api/admin/orders/{id}`, `GET /api/admin/orders/export` |
+| Products (admin) | `GET`, `POST /api/admin/products`; `GET`, `PUT`, `DELETE /api/admin/products/{id}`; `POST /api/admin/products/{id}/attach` and `/detach`; `POST /api/admin/products/{id}/trigger-event-manually/{idTemplate}`; `/api/admin/productables` (list, registered types, product of a productable, attach, detach) |
+| Payments (admin) | `GET /api/admin/payments`, `GET /api/admin/payments/{payment}`, `GET /api/admin/payments/export` |
+| Vouchers (admin) | `GET`, `POST /api/admin/vouchers`; `GET`, `PUT`, `PATCH`, `DELETE /api/admin/vouchers/{id}` |
+| Learner | `/api/cart` (view, set quantity, add missing, remove, add productable), `/api/cart/voucher`, `/api/cart/pay`, `/api/product/{id}/pay`, `/api/products` (catalogue, `my`, cancel), `/api/orders`, `/api/payments`, `/api/order-invoices/{id}` |
+| Gateways | `GET /api/payments-gateways`, callbacks, Stripe webhook |
+
+The export endpoints exist in the API; the admin screens do not show an export button. Full list:
+[API endpoints](/reference/api-endpoints/).
+
+## Permissions
+
+| Permission | Allows |
+|---|---|
+| `cart_order_list` | Orders screen and any order |
+| `orders_export` | Order export |
+| `products_list` | Open a product |
+| `products_manage` | Products list, create, edit, delete, attach users |
+| `products_list_purchasable`, `products_buy` | Learner catalogue and purchase |
+| `payment_list`, `payment_read`, `payment_export` | Payments screen, details, export |
+| `coupon_list`, `coupon_read`, `coupon_create`, `coupon_update`, `coupon_delete` | Vouchers |
+| `coupon_use` | Apply a voucher at checkout |
+
+The **Sales** menu appears when the user has any of `cart_order_list`, `payment_list`,
+`coupon_list` or `products_manage`. See [Permissions reference](/reference/permissions/) and
+[Roles and permissions](/admin/roles-and-permissions/).
+
+## Events and notifications
+
+| Event | Package | Used by |
+|---|---|---|
+| `OrderCreated` | cart | Email template; MailerLite |
+| `OrderPaid`, `OrderCancelled` | cart | |
+| `ProductBought` | cart | MailerLite |
+| `ProductAttached`, `ProductDetached`, `ProductableAttached`, `ProductableDetached` | cart | `ProductAttached` email template |
+| `ProductAddedToCart`, `ProductRemovedFromCart`, `AbandonedCartEvent` | cart | `AbandonedCartEvent`: MailerLite |
+| `PaymentRegistered`, `PaymentSuccess`, `PaymentFailed`, `PaymentCancelled` | payments | Email templates |
+
+Configure the templates under [Templates](/admin/templates/). Full list:
+[Events and notifications](/reference/events-and-notifications/).
+
+## Settings
+
+| Key | Meaning |
+|---|---|
+| `ulams_payments.default_gateway` | `Free`, `Stripe` or `Przelewy24` |
+| `ulams_payments.default_currency` | Default currency |
+| `ulams_payments.drivers.*` | Enable flags and credentials per gateway |
+| `ulams_cart.min_product_price` | Minimum product price (default 0) |
+| `invoices.*` | Payment term (`date.pay_until_days`), currency, seller name, address, code, VAT, phone, SWIFT |
+
+## Known limitations
+
+- Refunds are not an admin action. The only refund path is automatic: a trial paid with a card
+  check is refunded right after the gateway confirms it.
+- `GET /api/order-invoices/{id}` sits outside the `auth:api` group; it relies on the order policy
+  and is useful only to an authenticated owner or admin.
+- Access is granted inside the platform from the verified gateway callback, not from the frontend
+  redirect, but there is no reconciliation job for missed callbacks.
+
+## Planned: Sylius commerce <Badge text="Coming" variant="caution" />
+
+The spec moves commerce to a separate **Sylius 2.x** headless service (roadmap Phase 6.4): Sylius
+will own catalogue, cart, checkout, taxes and invoices, while the LMS keeps an entitlements model
+and stays the only system that decides who has access. Access will be granted only from signed,
+idempotent Sylius order events plus a reconciliation job, behind a `CommerceProvider` interface.
+None of this is implemented yet; see the [Roadmap](/roadmap/) and the
+[Phase 0 commerce audit](https://github.com/ulams-dev/ulams/blob/main/docs/reports/phase-0-audit.md).

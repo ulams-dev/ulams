@@ -1,0 +1,54 @@
+---
+title: Pages
+description: Create and edit static pages such as terms of service or a privacy policy in the admin panel, and how frontends read them by slug.
+sidebar:
+  order: 7
+modules:
+  - pages
+adminRoutes:
+  - /other/pages/**
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+**Other activities → Pages** manages static content pages: terms of service, privacy policy,
+an about page. The [pages](/reference/packages/pages/) package stores them per tenant.
+
+| Screen | Route | Permission needed to see it |
+|---|---|---|
+| Page list | `/other/pages` | `page_list` |
+| New or edit page | `/other/pages/:page` (`new` for a new page) | `page_read` |
+
+Saving and deleting need `page_create`, `page_update` and `page_delete`.
+
+<Screenshot name="admin-other-pages" alt="The list of static pages" />
+
+The list shows ID, title, slug and author, with **Edit** and **Delete** on each row.
+
+## Creating a page
+
+<Screenshot name="admin-other-pages-page" alt="The page form with title, slug and the content editor" />
+
+<Steps>
+
+1. Click **New**.
+2. Enter the **Title**. The **Slug** is filled in from the title; change it if you need a
+   different URL.
+3. Turn on **Active** to publish the page.
+4. Write the **Content** in the markdown editor. Images inserted in the editor are uploaded
+   to the `pages/{id}/wysiwyg` folder of the [file library](/admin/files/).
+5. Click **Submit**.
+
+</Steps>
+
+## How frontends show pages
+
+Pages are public: `GET /api/pages` lists them and `GET /api/pages/{slug}` returns one if it
+is active (an inactive page answers 403), so a frontend can link `/terms` to the page with
+slug `terms`.
+
+<Aside>
+The legacy React learner app (`front/src`) renders pages at `/{slug}`. The reference learner
+site (`front/web`) does not render static pages yet.
+</Aside>

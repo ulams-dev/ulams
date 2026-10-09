@@ -1,0 +1,166 @@
+---
+title: Consultations
+description: Sell one-to-one consultations with proposed terms, approve or move booked terms, and handle free consultation access requests.
+modules:
+  - consultations
+  - consultation-access
+adminRoutes:
+  - /other/consultations/**
+  - /other/consultation-access
+sidebar:
+  order: 21
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+A consultation is a one-to-one (or small group) session with a tutor. The author defines the
+consultation, its duration and the terms they propose. A learner who has access to it (usually by
+buying its product) reports a term; a tutor approves or rejects it; at the approved time both join a
+Jitsi room.
+
+Two packages are involved:
+
+| Package | Role |
+|---|---|
+| `consultations` | Consultations, proposed terms, booked terms, the approve/reject/change flow, reminders |
+| `consultation-access` | Requests for **free** access: a learner asks for a consultation with proposed dates, an administrator approves one date or rejects the request |
+
+## Who uses it
+
+- **Administrators** create consultations and review consultation requests.
+- **Tutors** (author or teachers of a consultation) approve, reject, move and finish terms. With
+  the default roles they have only the `-own` permissions, so the admin menu entry, which needs
+  `consultation_list`, is hidden for them; they work through the API or a front.
+- **Learners** buy consultations, report terms and send consultation requests.
+
+## Screens
+
+### Consultation list
+
+`/other/consultations` (Other activities → Consultations). Columns: ID, name, status, product,
+duration, active from, active to and category; filters by date range, name and category. A second
+tab, **Fields** (`/other/consultations/fields`), manages extra model fields for consultations.
+
+<Screenshot name="admin-other-consultations" alt="Consultation list in the admin panel" />
+
+### Consultation form
+
+`/other/consultations/:consultation/:tab` (`new` to create). Tabs:
+
+| Tab | Content |
+|---|---|
+| Attributes | Name, duration, status (`draft`, `published`, `archived`), active from and to, author, teachers, maximum students per session (`max_session_students`), the "AI Recording Analysis" switch, description, proposed terms, and any extra fields |
+| Product | Price and sale settings (see [Sales](/admin/sales/)) |
+| Media | Cover image |
+| Categories | Categories |
+| Branding | Logotype shown in the Jitsi room |
+| User submission | Assign users by e-mail, including people without an account yet |
+| Calendar | Booked terms on a calendar; a term can be moved to another date |
+
+<Screenshot name="admin-other-consultations-consultation-tab" alt="Consultation form with the Calendar tab" />
+
+<Aside type="note" title="AI Recording Analysis">
+The switch is stored in `analyze_enabled` but nothing in the API reads it; the roadmap lists
+dropping the column.
+</Aside>
+
+### Consultation requests
+
+`/other/consultation-access` (Other activities → Consultation Requests). One row per request:
+description, user, consultation, the proposed dates, meeting link, created date and status
+(`pending` or `approved`).
+
+- **Approve** a proposed date. Choose the meeting type:
+  - *Custom*: paste a meeting link;
+  - *Jitsi*: the admin panel generates a public `https://meet.jit.si/<uuid>` link;
+  - *Pencil Spaces* (only when the package is installed): no link is sent, and the API queues
+    `CreatePencilSpaceJob`, which creates a Pencil Space for the author and the learner and stores
+    its link.
+- **Disapprove** with an optional reason. The request is deleted and the learner is notified.
+
+Approving fails if the request is already approved or if the date is already full
+(`max_session_students`). The menu entry can be hidden with the setting
+`hideInMenu-OtherConsultation-access`.
+
+<Screenshot name="admin-other-consultation-access" alt="Consultation requests list with Approve and Disapprove actions" />
+
+## Term lifecycle
+
+1. The learner gets access (product purchase or user submission). A booked consultation row is
+   created for them.
+2. The learner reports a term: `POST /api/consultations/report-term/{id}`. It fails with 400 if
+   the term already has `max_session_students` bookings. Status becomes `reported`. If the
+   product is a bundle, the term is approved automatically (`App\Listeners\UpdateReportTermListener`).
+3. A tutor approves (`approved`) or rejects (`reject`) it.
+4. A tutor or administrator with `consultation_change_term` can move the term
+   (admin calendar or `POST .../change-term/{id}`).
+5. From the start time until start + duration, `GET /api/consultations/generate-jitsi/{id}`
+   returns the room data. Learners need an approved term; tutors need at least one approved term
+   at that time. The room uses the [Jitsi configuration](/admin/webinars/#video-conference-configuration-jitsi).
+6. A tutor marks the session finished with `POST /api/consultations/finish-term/{id}`.
+
+## API endpoints
+
+| Method and path | Purpose |
+|---|---|
+| `GET/POST /api/admin/consultations`, `GET/PUT/DELETE /api/admin/consultations/{id}`, `POST /api/admin/consultations/{id}` | Admin CRUD |
+| `GET /api/admin/consultations/{id}/schedule` | Booked terms (admin calendar) |
+| `POST /api/admin/consultations/change-term/{termId}` | Move a term |
+| `GET /api/admin/consultations/users/assignable` | Users that can be author or teacher |
+| `GET /api/consultations`, `GET /api/consultations/{id}` | Public list and detail |
+| `GET /api/consultations/me`, `GET /api/consultations/my-schedule` | Learner's consultations, tutor's schedule |
+| `POST /api/consultations/report-term/{id}`, `GET .../proposed-terms/{id}` | Book a term |
+| `GET .../approve-term/{id}`, `GET .../reject-term/{id}`, `POST .../change-term/{id}`, `POST .../finish-term/{id}` | Tutor actions |
+| `GET /api/consultations/generate-jitsi/{id}` | Room data |
+| `GET /api/admin/consultation-access-enquiries`, `POST .../approve/{proposedTermId}`, `POST .../disapprove/{id}` | Admin review of requests |
+| `GET/POST /api/consultation-access-enquiries`, `GET/PATCH/DELETE .../{id}`, `GET .../{id}/join` | Learner's own requests; `join` returns the meeting link (a Pencil Spaces direct-login link for Pencil Spaces rooms) |
+
+Full list: [API endpoints](/reference/api-endpoints/).
+
+## Permissions
+
+| Permission | admin | tutor | student |
+|---|---|---|---|
+| `consultation_list`, `consultation_read`, `consultation_update`, `consultation_delete` | yes | no | no |
+| `consultation_list-own`, `consultation_read-own`, `consultation_update-own`, `consultation_delete-own` | no | yes | no |
+| `consultation_create`, `consultation_change_term` | yes | yes | no |
+| `consultation-access_list`, `consultation-access_approve`, `consultation-access_disapprove` | yes | no | no |
+| `consultation-access_*-own` (create, list, read, update, delete) | yes | no | yes |
+
+See [Permissions](/reference/permissions/).
+
+## Events and notifications
+
+| Event | Recipient | E-mail | SMS |
+|---|---|---|---|
+| `ReportTerm` | Author and teachers | yes | yes |
+| `ApprovedTerm` / `ApprovedTermWithTrainer` | Learner / tutor | yes | yes |
+| `RejectTerm` / `RejectTermWithTrainer` | Learner / tutor | yes | yes |
+| `ChangeTerm` | Learner | yes | no |
+| `ReminderAboutTerm` | Learner, one day and one hour before | yes | yes |
+| `ReminderTrainerAboutTerm` | Tutor, before the term | yes | yes |
+| `ConsultationAccessEnquiryAdminCreatedEvent` | Consultation author, on a new request | yes | no |
+| `ConsultationAccessEnquiryAdminUpdatedEvent` | Consultation author, on an edited request | no | no |
+| `ConsultationAccessEnquiryApprovedEvent` | Learner | yes | no |
+| `ConsultationAccessEnquiryDisapprovedEvent` | Learner, with the reason | yes | no |
+
+Reminders come from the scheduled job `ReminderAboutConsultationJob`: the one-hour reminder runs
+every minute and the one-day reminder hourly. See [Scheduled jobs](/reference/scheduled-jobs/),
+[Templates](/admin/templates/) and [Events and notifications](/reference/events-and-notifications/).
+
+## Settings
+
+- Jitsi or JaaS: see [Webinars](/admin/webinars/#video-conference-configuration-jitsi).
+- Pencil Spaces: `PENCIL_SPACES_API_URL` and `PENCIL_SPACES_API_KEY`, or the `pencil_spaces.api_url`
+  and `pencil_spaces.api_key` settings in [Settings](/admin/settings/).
+
+## Known limitations
+
+- If Pencil Spaces is not configured or its API fails, `CreatePencilSpaceJob` only logs the error:
+  the request stays approved without a meeting link and the learner gets no approval e-mail.
+- The "Jitsi" option for requests uses the public `meet.jit.si` service, not the configured Jitsi
+  server.
+- The learner site (`front/web`) lists consultations read-only; booking and requests need the
+  legacy learner app or a custom front. See [Learners](/learners/).
+- `analyze_enabled` is stored but unused.
