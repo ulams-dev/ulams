@@ -266,6 +266,16 @@ parser's counts, `config_` would be empty, and whether LiaScript then still repo
 score to SCORM needs a browser check. Fallbacks: count quizzes/tasks/surveys with our own Markdown
 scan, or run the exporter once per version in a short-lived build container (option b).
 
+Browser check (headless Chromium, 2026-10-09): with an empty `config_` the SCORM 1.2 build loads the
+course from an absolute path (`build/index.html?/liascript/<doc>/v<n>/README.md`), calls
+`LMSInitialize` and sets `cmi.core.lesson_location` to the section index on every slide change;
+`lesson_status` stays `not attempted` when there are no counted quizzes. Implemented design: no SCORM
+package at all. Our page on the content origin provides `window.API` to the build in a same-origin
+iframe and forwards position and status to `POST /api/liascript/progress/{topic}`; the topic is
+complete at the last section (one per heading outside code blocks) or on `completed`/`passed`. The
+build is fetched at image build time (`packages/liascript/bin/fetch-player.sh`, pinned version and
+SHA-256), not kept in git.
+
 ### 5.4 Tests
 
 Minimal LiaScript fixture course (headings, quiz, code block, an image asset); packaging produces a
@@ -518,8 +528,41 @@ Taken during implementation (M1.5, LiaScript, partial):
     files under the new version's folder.
 35. **`liascript_manage` for admins and tutors** (not course-scoped yet; documents are not tied to a
     course until the topic type exists).
-36. **Rendering not started**: the spike (section 5.5) leaves one browser check open before the packager
-    is written; no LiaScript topic type is registered until learners can play it.
+36. ~~Rendering not started~~ superseded by 37–40.
+
+Defaults taken after the first review (product owner to confirm):
+
+- #12 yes: students are seeded with `scorm_track-update` (and `scorm_track-read`).
+- #27 kept: Instructor → tutor, nobody becomes admin, no linking by e-mail.
+- #14 kept: attachment + CSP for SVG/HTML, no sanitiser.
+- #21 fine: one commit for the LTI package.
+- Production content origin on a separate registrable domain: documented in `api/docs/content-origin.md`.
+- LiaScript player fetched at image build time with a pinned version and checksum, not vendored in git.
+
+Taken during the second pass (rebase onto main, M1.5–M1.9), to confirm:
+
+37. **One content-origin design for every disk**: the content origin proxies package paths to the
+    tenant API's `GET /api/content/<path>`, which reads from the package type's disk (local or bucket)
+    and answers only the proxy (`X-Ulams-Content-Origin`, stripped from client requests on the API
+    site). The per-tenant SCORM file route on the API origin (from `phase-0`) answers 404 when the
+    tenant has a content origin. Costs one PHP request per file; production may serve the bucket from a
+    CDN with the same headers instead.
+38. **SCORM completion completes topics**: `ScormScoCompleted` (first `completed`/`passed`) marks every
+    SCORM topic using that SCO complete for learners with course access (checked on the course policy,
+    since the topic and lesson policies re-check with the current auth user, which token requests lack).
+39. **LiaScript plays without a SCORM package** (section 5.5): progress through our SCORM API page and a
+    topic-scoped token; completion at the last section. Documents are standalone; the topic type stores
+    the document id and always plays the current version. Documents used by topics cannot be deleted.
+40. **The Astro front launches packages server-side** (SCORM and LiaScript) with the learner's session
+    and shows them in sandboxed frames without a full-screen link (the URL carries a one-off token).
+41. **Adapt Path A labels the package, not the SCO** (`scorm.source_format`), since the authoring tool is
+    a property of the whole export.
+42. **Adapt Path B builds into a SCORM package used in a SCORM topic** (no separate topic type); the API
+    side and the worker contract are done, the GPL worker image is not (ADR 0013, Proposed). Structural
+    validation is our own (no `opis/json-schema` dependency needed for it).
+43. **H5P**: the per-tenant `H5P_INTERNAL_TOKEN` is derived from the tenant `APP_KEY` (no new column or
+    provisioning step); library writes are platform-only; hub installs from the editor stay open to
+    tenants (they also write shared libraries; to decide).
 
 ---
 
@@ -531,11 +574,16 @@ Taken during implementation (M1.5, LiaScript, partial):
 | M1.2 | done (admin screens pending) | `packages/lti` platform side: keys/JWKS/rotation, `LtiLink` topic type, OIDC launch, AGS (token, line items, scores, results), front `LtiPlayer`; ADR 0012 |
 | M1.3 | done (admin "pick content" button pending) | Deep-linking request and response; topics created through `TopicRepository` |
 | M1.4 | done (admin screens and Moodle profile pending) | Tool side on packbackbooks/lti-1p3-tool: login, launch, user/role mapping, course access, one-time code + front `/lti/launch`, course picker, queued grade passback |
-| M1.5 | partial | Versioned sources and CRUD API (`packages/liascript`); spike done (5.5); packager, player, topic type and admin editor pending |
+| M1.5 | done (live preview and export/import strategy pending) | Sources, topic type, player on the content origin, Astro `LiaScriptLesson`, admin editor with versions, diff and restore |
+| M1.6 | done | Adapt exports detected and labelled; generated fixture |
+| M1.7 | partial | API side behind `ADAPT_SOURCE_ENABLED` (sources, validation, queued build, import); GPL worker image pending (ADR 0013) |
+| M1.8 | partial | Per-tenant H5P token, platform-only library writes, `_token` redaction (Caddy, service); player token refresh, mounts and idle eviction pending |
+| M1.9 | partial | Permissions, OpenAPI for every new endpoint, fixtures and tests with fakes; nightly saLTIre, Moodle and Adapt-worker round trips pending |
 
-Full suite on the branch head (2026-10-09, throwaway container, fresh database): 2,347 tests, 1 failure
-(`UserApiTest::testSearchUsersGetSpecificFieldsWithRelations`, in the CI quarantine) and 5 errors in
-`webinar` (`Class "Ulams\Webinar\Tests\Mocks\MockTest" not found`: the class lives in
-`MockTestHelper.php`, which PSR-4 cannot autoload; untouched by Phase 1). New suites: `uploads` 33,
-`lti` 45, `liascript` 8; `scorm` 41, `cmi5` 19, `courses-import-export` 15, `files` 60, `tenancy` 50 green.
+Admin: Integrations → LTI (tools, platforms), Courses → LiaScript (editor), topic types LiaScript and
+External tool (LTI), Adapt tag in the SCORM list.
+
+Full suite after rebasing onto `phase-0/foundation` (fc9dea54): 2,399 tests, all green (the webinar
+errors were the helper rename on that branch). Results after the rebase onto `main` (963499a8): see the
+last commit of this branch.
 
