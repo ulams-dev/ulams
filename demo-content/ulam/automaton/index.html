@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cellular automata</title>
+<link rel="stylesheet" href="vendor/ulam-shell.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="ix-app">
+  <header id="ix-card" class="ix-card" hidden>
+    <p class="ix-step-no"></p>
+    <h1 class="ix-title"></h1>
+    <p class="ix-text"></p>
+    <nav class="ix-nav" aria-label="Steps">
+      <button type="button" class="ix-prev">Back</button>
+      <button type="button" class="ix-next ix-primary">Next step</button>
+    </nav>
+  </header>
+
+  <main id="ix-stage" class="ix-stage">
+    <h2 class="ix-sr">Cellular automata: simple rules, surprising patterns</h2>
+    <form class="ix-controls" id="controls" aria-label="Automaton controls" onsubmit="return false">
+      <div class="ix-field" id="rule-field"><label for="rule">Rule (0 to 255)</label><input id="rule" type="number" min="0" max="255" step="1" value="30"></div>
+      <div class="ix-field" id="preset-field"><label for="preset">Pattern</label>
+        <select id="preset"><option value="glider">Glider</option><option value="blinker">Blinker</option><option value="toad">Toad</option><option value="r-pentomino" selected>R-pentomino</option><option value="acorn">Acorn</option></select></div>
+      <div class="ix-field"><button type="button" id="step">Step</button></div>
+      <div class="ix-field"><button type="button" id="play" class="ix-primary" aria-pressed="false">Play</button></div>
+      <div class="ix-field"><button type="button" id="run">Run to the end</button></div>
+      <div class="ix-field"><button type="button" id="reset">Reset</button></div>
+    </form>
+    <canvas id="ca" tabindex="-1" role="img" aria-label="Cellular automaton"></canvas>
+    <p id="status" class="ix-summary" aria-live="polite"></p>
+    <p id="hint" class="ix-note"></p>
+  </main>
+  <p id="ix-live" class="ix-sr" aria-live="polite"></p>
+</div>
+<script type="module" src="main.js"></script>
+</body>
+</html>
