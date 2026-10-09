@@ -70,6 +70,8 @@
    *   isReduced           function () -> bool: reduced motion (instant moves, no animation)
    *   onChange            function (): called after every camera change
    *   graticule           bool, default true
+   *   fit                 "window" (default: the map fills the window, as in the poland package) or "stage" (it fills
+   *                       the stage element, whose size the page sets in CSS)
    */
   function create(o) {
     var svg = o.svg, canvas = o.canvas, stage = o.stage, topo = o.topo, views = o.views;
@@ -113,11 +115,12 @@
 
     /** Re-measures the window; returns true when the size changed. Mobile address-bar height jitter (under 160 px) is ignored. */
     function measure() {
-      var w = innerWidth, h = innerHeight;
-      if (w === layoutW && layoutH && Math.abs(h - layoutH) < 160) h = Math.max(h, layoutH);
+      var fit = o.fit === "stage", w, h;
+      if (fit) { w = stage.clientWidth || 640; h = stage.clientHeight || 400; }
+      else { w = innerWidth; h = innerHeight; if (w === layoutW && layoutH && Math.abs(h - layoutH) < 160) h = Math.max(h, layoutH); }
       var changed = w !== layoutW || h !== layoutH;
       layoutW = w; layoutH = h; A.W = w; A.H = h;
-      if (changed) { stage.style.height = A.H + "px"; A.DPR = Math.min(2, window.devicePixelRatio || 1); canvas.width = A.W * A.DPR; canvas.height = A.H * A.DPR; }
+      if (changed) { if (!fit) stage.style.height = A.H + "px"; A.DPR = Math.min(2, window.devicePixelRatio || 1); canvas.width = A.W * A.DPR; canvas.height = A.H * A.DPR; }
       return changed;
     }
     function viewFor(name) {
@@ -169,13 +172,13 @@
       ctx.fillStyle = "rgba(" + rgb + "," + al + ")"; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill();
     }
     var hasLS = "letterSpacing" in ctx;
-    /** Draws outlined text. opt: {w: weight, size, mono, ls: letter spacing, color, family: css font family list for the non-mono face} */
+    /** Draws outlined text. opt: {w: weight, size, mono, ls: letter spacing, color, outline (rgb list, default "0,0,0"), family: css font family list for the non-mono face} */
     function label(text, x, y, align, al, opt) {
       opt = opt || {};
       ctx.font = (opt.w || 500) + " " + (opt.size || 11) + "px " + (opt.mono ? '"JetBrains Mono",monospace' : opt.family || '"Barlow Semi Condensed","Barlow",sans-serif');
       if (hasLS) ctx.letterSpacing = (opt.ls != null ? opt.ls : 2) + "px";
       ctx.textAlign = align || "left"; ctx.textBaseline = "middle";
-      ctx.lineJoin = "round"; ctx.lineWidth = 3; ctx.strokeStyle = "rgba(0,0,0," + 0.8 * al + ")"; ctx.strokeText(text, x, y);
+      ctx.lineJoin = "round"; ctx.lineWidth = 3; ctx.strokeStyle = "rgba(" + (opt.outline || "0,0,0") + "," + 0.8 * al + ")"; ctx.strokeText(text, x, y);
       ctx.fillStyle = opt.color || "rgba(255,255,255," + al + ")"; ctx.fillText(text, x, y);
     }
 
