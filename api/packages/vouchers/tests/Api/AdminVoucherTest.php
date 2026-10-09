@@ -8,6 +8,7 @@ use Ulams\Vouchers\Database\Seeders\VoucherPermissionsSeeder;
 use Ulams\Vouchers\Http\Resources\CouponResource;
 use Ulams\Vouchers\Models\CartItem;
 use Ulams\Vouchers\Models\Category;
+use Ulams\Vouchers\Enums\CouponTypeEnum;
 use Ulams\Vouchers\Models\Coupon;
 use Ulams\Vouchers\Models\User;
 use Ulams\Vouchers\Services\Contracts\CouponServiceContract;
@@ -297,5 +298,53 @@ class AdminVoucherTest extends TestCase
         $this->response->assertJsonFragment([
             'data' => CouponResource::collection([$coupon])->toArray(request())
         ]);
+    }
+
+    public function testSearchByNameAndTypeReturnsOnlyMatches()
+    {
+        $match = Coupon::factory()->cart_fixed()->create(['name' => 'spring']);
+        Coupon::factory()->cart_percent()->create(['name' => 'spring']);
+        Coupon::factory()->cart_fixed()->create(['name' => 'winter']);
+        Coupon::factory()->cart_percent()->create(['name' => 'winter']);
+
+        $this->response = $this->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/vouchers?name=spring&type=' . CouponTypeEnum::CART_FIXED);
+
+        $this->response->assertOk();
+        $this->response->assertJsonCount(1, 'data');
+        $this->response->assertJsonPath('data.0.id', $match->getKey());
+    }
+
+    public function testSearchByActiveToIsGroupedAndComparesActiveTo()
+    {
+        $match = Coupon::factory()->cart_fixed()->create([
+            'name' => 'spring',
+            'active_to' => '2030-01-10',
+        ]);
+        // Same name, but ends too late.
+        Coupon::factory()->cart_fixed()->create(['name' => 'spring', 'active_to' => '2030-03-10']);
+        // Other name, would match the active_to branch if the OR branches were not grouped.
+        Coupon::factory()->cart_fixed()->create(['name' => 'winter', 'active_to' => '2030-01-05']);
+
+        $this->response = $this->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/vouchers?name=spring&active_to=2030-02-01');
+
+        $this->response->assertOk();
+        $this->response->assertJsonCount(1, 'data');
+        $this->response->assertJsonPath('data.0.id', $match->getKey());
+    }
+
+    public function testSearchByActiveFromIsGrouped()
+    {
+        $match = Coupon::factory()->cart_fixed()->create(['name' => 'spring', 'active_from' => '2030-03-01']);
+        Coupon::factory()->cart_fixed()->create(['name' => 'spring', 'active_from' => '2029-01-01']);
+        Coupon::factory()->cart_fixed()->create(['name' => 'winter', 'active_from' => '2030-03-01']);
+
+        $this->response = $this->actingAs($this->user, 'api')
+            ->json('GET', '/api/admin/vouchers?name=spring&active_from=2030-02-01');
+
+        $this->response->assertOk();
+        $this->response->assertJsonCount(1, 'data');
+        $this->response->assertJsonPath('data.0.id', $match->getKey());
     }
 }
