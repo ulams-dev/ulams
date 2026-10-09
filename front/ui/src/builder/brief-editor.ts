@@ -8,8 +8,8 @@ import { renderSurface, type FlatComponent } from "./renderer.ts";
 import type { A2uiActionOut, BuilderContext } from "./components.ts";
 import { THEME_PRESETS } from "../theme/presets.ts";
 
-export type BriefKey = "audience" | "level" | "duration" | "tone" | "assessments" | "language" | "pricing" | "theme";
-export const EDITABLE_KEYS: ReadonlyArray<BriefKey> = ["audience", "level", "duration", "tone", "assessments", "language", "pricing", "theme"];
+export type BriefKey = "audience" | "level" | "duration" | "tone" | "assessments" | "language" | "pricing" | "theme" | "site";
+export const EDITABLE_KEYS: ReadonlyArray<BriefKey> = ["audience", "level", "duration", "tone", "assessments", "language", "pricing", "theme", "site"];
 
 type Brief = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -41,6 +41,8 @@ export function briefQuestion(key: BriefKey, brief: Brief): { component: string;
       return { component: "LanguagePicker", props: { ...base, label: "Which language?", options: LANGUAGES.map(([value, label]) => ({ value, label })), value: brief.language, defaultValue: String(brief.language ?? "en") } };
     case "pricing":
       return { component: "PriceInput", props: { ...base, label: "Free or paid?", currency: String(brief.pricing?.currency ?? "USD"), value: brief.pricing ?? { mode: "free" }, defaultValue: { mode: "free" } } };
+    case "site":
+      return { component: "SitePicker", props: { ...base, label: "Where should the course be published?", value: brief.site ?? { mode: "current" }, defaultValue: { mode: "current" } } };
     case "theme":
       return { component: "ThemePicker", props: { ...base, label: "Which look should the site have?", presets: Object.entries(THEME_PRESETS).map(([value, p]) => ({ value, label: p.label })), value: brief.theme ?? { preset: "coffee" }, defaultValue: { preset: "coffee" } } };
   }
@@ -63,6 +65,7 @@ export function briefPatch(key: BriefKey, value: unknown): Brief {
     }
     case "pricing":
     case "theme":
+    case "site":
       return { [key]: value };
   }
 }
