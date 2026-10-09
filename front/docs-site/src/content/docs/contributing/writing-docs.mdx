@@ -1,0 +1,236 @@
+---
+title: Writing docs
+description: How the ulams documentation site works, how to add a page, what the coverage check enforces, and which pages are generated from the repository.
+sidebar:
+  order: 5
+needsReview: "scripts/screenshots.mjs and .github/workflows/docs.yml were not in the repository when this page was written; check the screenshot output path, the workflow triggers and the Pages deployment."
+---
+
+import { Aside, Steps, Tabs, TabItem, FileTree } from "@astrojs/starlight/components";
+
+This site is an [Astro Starlight](https://starlight.astro.build/) project in `front/docs-site`
+(workspace `@ulams/docs`). Most pages are written by hand; ADRs, the roadmap, the contributor files
+and the reference pages are generated from the repository on every run, so the site never holds a
+second copy of a document.
+
+## Run it locally
+
+```bash
+corepack yarn install
+corepack yarn dev:docs          # http://localhost:4322
+```
+
+`dev:docs` runs the `dev` script of `@ulams/docs`: first `sync` (regenerates the generated pages),
+then `astro dev` on port 4322. The site does not need the API stack. Other scripts:
+
+| Command | What it does |
+|---|---|
+| `corepack yarn workspace @ulams/docs sync` | Regenerates the generated pages only |
+| `corepack yarn workspace @ulams/docs coverage` | Runs the coverage check |
+| `corepack yarn workspace @ulams/docs coverage --report` | Also lists "Needs review" and "Coming" pages |
+| `corepack yarn workspace @ulams/docs typecheck` | `sync`, then `astro check` |
+| `corepack yarn workspace @ulams/docs build` | `sync`, coverage check, `astro build` with link validation |
+| `corepack yarn workspace @ulams/docs screenshots` | Captures UI screenshots (see below) |
+
+`DOCS_VALIDATE_LINKS=0` turns link validation off for a quick local build.
+
+## Where pages live
+
+Pages are `.md` or `.mdx` files in `src/content/docs`. Each top-level folder is a sidebar section,
+listed in `astro.config.mjs`, and the sidebar inside a section is generated from the files.
+
+<FileTree>
+- front/docs-site
+  - astro.config.mjs sidebar sections, link validation
+  - scripts
+    - sync-content.mjs runs the generators
+    - generators/ one file per kind of generated page
+    - coverage.mjs the coverage check
+  - src
+    - components
+      - Screenshot.astro
+    - assets
+      - screens/ captured screenshots (.webp)
+    - content/docs
+      - getting-started/
+      - creators/
+      - learners/
+      - admin/
+      - developers/
+      - extending/
+      - operators/
+      - contributing/
+      - reference/ generated
+      - decisions/ generated
+      - roadmap.md generated
+</FileTree>
+
+## Add a page
+
+<Steps>
+
+1. Create a file in the section folder, for example `src/content/docs/admin/certificates.mdx`. The
+   URL follows the path: `/admin/certificates/`. Use `.mdx` when you need components, `.md`
+   otherwise.
+
+2. Add the frontmatter. `title` and `description` are required; the description is one sentence of
+   50 to 160 characters (it is the search-result and link-preview text).
+
+   ```yaml
+   ---
+   title: Certificates
+   description: Design certificate templates, bind them to course completion and check what learners receive.
+   sidebar:
+     order: 30          # position in the section, lower first
+   modules:
+     - templates-pdf    # what this page documents, see the coverage check
+   adminRoutes:
+     - /configuration/templates/**
+   ---
+   ```
+
+3. Write the page. Import components at the top of an `.mdx` file:
+
+   ```js
+   import { Aside, Badge, Steps, Tabs, TabItem, FileTree } from "@astrojs/starlight/components";
+   ```
+
+   In `.mdx` prose, `{`, `}` and `<` start expressions and tags: escape them (`\{`, `\}`, `&lt;`)
+   or put them in inline code.
+
+4. Run `corepack yarn workspace @ulams/docs coverage` and look at the page in `dev:docs`.
+
+</Steps>
+
+A new section (a new top-level folder) also needs an entry in the `sidebar` list in
+`astro.config.mjs`. The section's `index.mdx` with `sidebar.order: 0` is its overview.
+
+## Frontmatter fields
+
+Besides Starlight's own fields (`title`, `description`, `sidebar`, `tableOfContents`, ...), the
+content schema in `src/content.config.ts` adds these:
+
+| Field | Type | Meaning |
+|---|---|---|
+| `modules` | list of strings | Modules this page documents: folder names in `api/packages` (for example `tenancy`, `lti`) and the app keys `api`, `admin`, `front`, `web`, `sdk`, `ui`, `api-h5p`, `api-pdf`. |
+| `adminRoutes` | list of strings | Admin routes this page documents, as written in `admin/config/routes.ts` (for example `/users/groups`). A trailing `/**` matches the route and everything below it. |
+| `learnerRoutes` | list of strings | Learner routes of the reference frontend, derived from the file paths in `front/web/src/pages` (`index` dropped, so `courses/[id].astro` is `/courses/[id]`). `/**` works the same way. |
+| `topicTypes` | list of strings | Topic types this page documents, by class name as registered in a package service provider (for example `RichText`). |
+| `coming` | boolean | The feature is on the roadmap but not in the code yet. Shows a "Coming" badge under the title. |
+| `needsReview` | boolean or string | Documented from the code but not verified end to end. Shows a "Needs review" badge; a string is shown under the title as what to check. |
+| `generatedFrom` | string | Set only by the generators: the source file of a generated page. Never set it on a written page. |
+
+Set `coming` and `needsReview` honestly: they tell readers how far to trust a page, and the
+`--report` option lists them so they can be worked down.
+
+## The coverage check
+
+`scripts/coverage.mjs` builds an inventory from the code and fails when any item is not named by at
+least one **written** page:
+
+- every folder in `api/packages` plus the eight app keys (`modules`);
+- every admin route in `admin/config/routes.ts`, except redirects, `/`, `*` and `/user`
+  (`adminRoutes`);
+- every page file under `front/web/src/pages` (`learnerRoutes`);
+- every topic type class registered with `registerContentClass` or `registerContentClasses` in a
+  package service provider (`topicTypes`).
+
+It also fails when a frontmatter entry matches nothing in the code (a renamed route or a removed
+package), when frontmatter is not valid YAML, and when a page has no description or one shorter
+than 20 characters. Generated pages do not count towards coverage, so a reference page cannot stand
+in for a missing guide.
+
+```bash
+corepack yarn workspace @ulams/docs coverage            # exit 1 on gaps
+corepack yarn workspace @ulams/docs coverage --report   # plus "Needs review" and "Coming" lists
+```
+
+The check runs in `build` and `lint`, so the docs build in CI fails on gaps. When you add a package,
+an admin route, a learner page or a topic type, add or extend a page in the same branch (see
+[Decisions and documentation](/contributing/decisions-and-documentation/)).
+
+## Generated pages
+
+`scripts/sync-content.mjs` deletes and rewrites these on every `dev`, `build`, `typecheck` and
+`lint`. They are listed in `front/docs-site/.gitignore` and carry a "Generated from" badge.
+**Never edit a generated file**: your change is overwritten on the next run. Edit the source:
+
+| Pages | Source to edit |
+|---|---|
+| [Decisions](/decisions/) | `docs/decisions/*.md` and `docs/decisions/README.md`; `api/docs/adr`, `admin/docs/adr`, `front/docs/adr` |
+| [Roadmap](/roadmap/) | `docs/ROADMAP-TODO.md` |
+| [Packages](/reference/packages/) and the other reference pages | Package READMEs (`api/packages/*/README.md`) and the code itself: permissions, settings, environment variables, events, artisan commands, schedules, routes, topic types, the UI catalogue |
+| Contributing guide, Code of conduct, Security policy | `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md` at the repository root |
+
+The "Edit page" link on a generated page already points to its source file. Relative links in the
+sources are rewritten: links to another ADR or the roadmap become site links, everything else
+becomes a GitHub link, so write ordinary relative links in the source files.
+
+## Screenshots
+
+Screens are `.webp` files in `src/assets/screens`, captured with:
+
+```bash
+corepack yarn workspace @ulams/docs screenshots
+```
+
+The capture drives the running apps, so start the stack first (see
+[Local development](/developers/local-development/)). Show a screen with the `Screenshot`
+component:
+
+```mdx
+import Screenshot from "../../../components/Screenshot.astro";
+
+<Screenshot name="admin-users-list" alt="The user list with filters" caption="Users, filtered by group." />
+```
+
+`name` is the file name without `.webp`. `alt` is required: describe what the screen shows, not
+"screenshot". The component renders nothing while the file does not exist yet, so a page can
+reference a screen before it is captured. Images are resized and served responsively by Astro.
+
+## Links
+
+- Link between pages with root-relative paths and a trailing slash: `/admin/tenants/`, not
+  `../tenants` or `/admin/tenants`. When the site is published under a base path (GitHub Pages),
+  the paths are prefixed automatically.
+- Link to code and files in the repository with full GitHub URLs
+  (`https://github.com/ulams-dev/ulams/blob/main/...`).
+- `starlight-links-validator` checks every internal link, including `#anchors`, during `build`; a
+  broken link fails the build. `/api/**` is excluded.
+
+<Aside type="tip">
+Headings become anchors in lowercase with hyphens: "The coverage check" is `#the-coverage-check`.
+</Aside>
+
+## Style
+
+- Write for the reader of the section: course authors and administrators get task-oriented pages
+  without code; developers and operators get commands and file paths.
+- Describe what the code does today. Planned behaviour goes on a page marked `coming: true` or in an
+  `Aside`, never mixed into the description of current behaviour.
+- English, short sentences, sentence-case headings. Code conventions are in
+  [Coding standards](/developers/coding-standards/); how to test what you document is in
+  [Testing](/developers/testing/).
+
+## Build and publishing
+
+`.github/workflows/docs.yml` builds the site on pull requests that touch `front/docs-site/**` or
+`docs/**` (the site pulls ADRs and the roadmap from `docs/`), and on push to `main` builds it and
+deploys it to GitHub Pages. The workflow sets `DOCS_SITE` and `DOCS_BASE` from
+`actions/configure-pages`, which `astro.config.mjs` reads; locally the site runs at the root. A pull
+request whose docs build fails (coverage gap, broken link, invalid frontmatter) is not merged.
+
+<Tabs>
+  <TabItem label="Before you push">
+    ```bash
+    corepack yarn workspace @ulams/docs coverage
+    corepack yarn workspace @ulams/docs typecheck
+    ```
+  </TabItem>
+  <TabItem label="Full local build">
+    ```bash
+    corepack yarn build:docs
+    corepack yarn workspace @ulams/docs preview   # http://localhost:4322
+    ```
+  </TabItem>
+</Tabs>
