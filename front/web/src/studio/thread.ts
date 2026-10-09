@@ -59,6 +59,17 @@ export function mountThread(root: HTMLElement): void {
     return button;
   }
 
+  function suggestionBlock(state: BuilderState, save: (patch: Record<string, unknown>) => Promise<void>): HTMLElement | null {
+    const suggestion = state.priceSuggestion;
+    const pricing = state.brief?.pricing;
+    if (!suggestion || pricing?.mode !== "paid" || pricing.amountMinor) return null;
+    const use = h("button", { type: "button", class: "cb-btn" }, `Use ${(suggestion.amountMinor / 100).toFixed(2)} ${suggestion.currency}`);
+    use.addEventListener("click", () => void save({ pricing: { mode: "paid", amountMinor: suggestion.amountMinor, currency: suggestion.currency } }));
+    return h("div", { class: "st-price-suggestion" },
+      h("p", {}, h("span", { class: "cb-tag" }, "suggested"), " ", `${(suggestion.amountMinor / 100).toFixed(2)} ${suggestion.currency}. ${suggestion.rationale}`),
+      use);
+  }
+
   function render(state: BuilderState): void {
     updateTopBar(state);
     const hasReady = state.sources?.some((s) => s.status === "ready" || s.status === "processing" || s.status === "uploaded");
@@ -99,6 +110,7 @@ export function mountThread(root: HTMLElement): void {
                     isEditable(row.key) ? editButton(row.key, row.label) : null),
             ]))
           : h("p", { class: "cb-muted" }, "The interview fills this in. You can change the brief at any time."),
+        suggestionBlock(state, save),
         state.budgetReached ? h("p", { class: "cb-error", role: "alert" }, "Budget reached: ask an admin to raise the AI limit.") : null),
       h("section", { class: "cb-card st-sources", "aria-labelledby": "st-src-title" },
         h("h2", { id: "st-src-title", class: "cb-h3" }, "Sources"),
