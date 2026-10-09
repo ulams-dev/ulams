@@ -230,7 +230,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 ### 1.2 Adapt Learning
 - [x] Path A: import built SCORM zip (`adapt-contrib-spoor`) (detected on upload, `scorm.source_format = adapt`,
       admin tag; generated spoor-style fixture)
-- [ ] Path B (feature flag): JSON source, schema-validated, isolated build worker (partial: `packages/adapt`
+- [x] Path B (feature flag): JSON source, schema-validated, isolated build worker (partial: `packages/adapt`
       behind `ADAPT_SOURCE_ENABLED` with versioned sources, structural validation, queued build and import
       through Path A; GPL worker `api/adapt-builder` (adapt_framework v5.56.2, compose profile `adapt`,
       real build round trip in the nightly conformance workflow); ADR 0013 (Proposed); an admin screen pending)
@@ -295,7 +295,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       (sync queue) sent the previous LTI score; now dispatched after saving (found by the Moodle run, ADR 0018)
 - [ ] (new) Turn on the nightly conformance runs (`NIGHTLY_CONFORMANCE=true`) and run the saLTIre job once
       with an operator
-- [ ] (new) Adapt Path B admin screen (sources, versions, build status)
+- [x] (new) Adapt Path B admin screen (sources, versions, build status)
 - [ ] (new) Astro front: H5P plays without a token, so learner state is not restored (decide: a short-lived
       H5P token from the BFF, or state through the BFF)
 - [x] (new) Production: set `H5P_SERVICE_CONFIG_DIR`, run `ulams:h5p:export-config` and start the H5P service

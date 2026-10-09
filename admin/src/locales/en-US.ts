@@ -207,6 +207,7 @@ export default {
   'menu.Sales.Products': 'Products',
   'menu.Courses.SCORMs': 'SCORMs',
   'menu.Courses.LiaScript': 'LiaScript',
+  'menu.Courses.Adapt': 'Adapt',
   'menu.Courses.CourseBuilder': 'Build with AI',
   CourseBuilder: 'Build with AI',
   'course_builder.card': 'Build a course with AI',

@@ -124,6 +124,21 @@
         hideInMenu: true,
       },
       {
+        path: '/courses/adapt',
+        name: 'Adapt',
+        icon: 'build',
+        access: 'adaptListPermission',
+        component: './Adapt',
+      },
+      {
+        path: '/courses/adapt/:id',
+        name: 'Adapt',
+        icon: 'build',
+        access: 'adaptListPermission',
+        component: './Adapt/editor',
+        hideInMenu: true,
+      },
+      {
         path: '/courses/scorms',
         name: 'SCORMs',
         icon: 'experiment',
