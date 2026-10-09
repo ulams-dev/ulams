@@ -6,13 +6,13 @@ the OFL allows. Every font covers Polish diacritics (ą ć ę ł ń ó ś ź ż)
 
 | Key (`fontName`) | File | Family | Licence | Used by |
 |---|---|---|---|---|
-| `NotoSans-Regular` (fallback) | NotoSans-Regular.ttf | Noto Sans | [OFL](licenses/OFL-notosans.txt) | default certificate, fallback |
+| `NotoSans-Regular` (fallback) | NotoSans-Regular.ttf | Noto Sans | [OFL](licenses/OFL-notosans.txt) | default certificate, fallback, poland |
 | `NotoSans-Bold` | NotoSans-Bold.ttf | Noto Sans | [OFL](licenses/OFL-notosans.txt) | |
 | `PlusJakartaSans-Regular` | PlusJakartaSans-Regular.ttf | Plus Jakarta Sans | [OFL](licenses/OFL-plusjakartasans.txt) | coffee |
 | `PlusJakartaSans-Bold` | PlusJakartaSans-Bold.ttf | Plus Jakarta Sans | [OFL](licenses/OFL-plusjakartasans.txt) | default certificate title |
-| `PlayfairDisplay-Bold` | PlayfairDisplay-Bold.ttf | Playfair Display (Reserved Font Name) | [OFL](licenses/OFL-playfairdisplay.txt) | coffee |
-| `SpaceGrotesk-Bold` | SpaceGrotesk-Bold.ttf | Space Grotesk | [OFL](licenses/OFL-spacegrotesk.txt) | oncall |
-| `JetBrainsMono-Regular` | JetBrainsMono-Regular.ttf | JetBrains Mono | [OFL](licenses/OFL-jetbrainsmono.txt) | oncall |
+| `PlayfairDisplay-Bold` | PlayfairDisplay-Bold.ttf | Playfair Display (Reserved Font Name) | [OFL](licenses/OFL-playfairdisplay.txt) | coffee, poland, ulam |
+| `SpaceGrotesk-Bold` | SpaceGrotesk-Bold.ttf | Space Grotesk | [OFL](licenses/OFL-spacegrotesk.txt) | oncall, gravity |
+| `JetBrainsMono-Regular` | JetBrainsMono-Regular.ttf | JetBrains Mono | [OFL](licenses/OFL-jetbrainsmono.txt) | oncall, gravity, ulam |
 | `Baloo2-Bold` | Baloo2-Bold.ttf | Baloo 2 | [OFL](licenses/OFL-baloo2.txt) | nightsky |
 | `Nunito-Regular` | Nunito-Regular.ttf | Nunito | [OFL](licenses/OFL-nunito.txt) | nightsky |
 

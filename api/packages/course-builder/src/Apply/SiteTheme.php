@@ -37,7 +37,7 @@ final class SiteTheme
             return null;
         }
 
-        return in_array($value, ['coffee', 'oncall', 'nightsky'], true) ? $value : null;
+        return in_array($value, ['coffee', 'oncall', 'nightsky', 'gravity', 'poland', 'ulam'], true) ? $value : null;
     }
 
     /**

@@ -15,7 +15,7 @@ use InvalidArgumentException;
 class CertificateTemplates
 {
     public const DEFAULT = 'default';
-    public const THEMES = ['default', 'coffee', 'oncall', 'nightsky'];
+    public const THEMES = ['default', 'coffee', 'oncall', 'nightsky', 'gravity', 'poland', 'ulam'];
 
     public static function path(string $theme = self::DEFAULT): string
     {
