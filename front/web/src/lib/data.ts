@@ -130,6 +130,28 @@ export async function scormLaunch(tenant: Tenant, token: string, uuid: string): 
 }
 
 /**
+ * Starts a cmi5 AU on the tenant content origin (ADR 0046): the API returns the AU URL on
+ * <slug>.content.<base> with a one-time launch token in its `fetch` parameter; the AU swaps it for
+ * an LRS-only session token. The learner's own token never reaches the AU. Null when the tenant has
+ * no content origin or the launch fails. Never cached: every call issues a new launch.
+ */
+export async function cmi5Launch(tenant: Tenant, token: string, auId: number, courseId: number, topicId: number): Promise<string | null> {
+  try {
+    const query = new URLSearchParams({ format: "json", course_id: String(courseId), topic_id: String(topicId) });
+    const response = await fetch(`${tenant.apiUrl}/api/cmi5/player/${auId}?${query}`, {
+      headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(6000),
+    });
+    if (!response.ok) return null;
+    const body = (await response.json()) as { data?: { url?: string; origin?: string | null } };
+    // without a content origin the AU would run on the storage origin: do not frame it
+    return typeof body.data?.url === "string" && body.data.origin ? body.data.url : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Starts an LTI 1.3 launch of an external-tool topic: the tool's OIDC login URL with a single-use,
  * 2-minute hint (api/packages/lti). Never cached.
  */
