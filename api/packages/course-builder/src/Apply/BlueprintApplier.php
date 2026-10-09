@@ -52,6 +52,7 @@ final class BlueprintApplier
         private readonly RemovalPolicy $removal,
         private readonly FragmentArchive $archive,
         private readonly SiteTheme $theme,
+        private readonly CourseCommerce $commerce,
     ) {
     }
 
@@ -313,7 +314,8 @@ final class BlueprintApplier
         $courseId = (int) $ids["course:{$doc['course']['id']}"];
         $this->sort($desired, $ids);
         $themeResult = $this->theme->apply($session, $author);
-        $session->putState('applyNotes', array_values(array_filter([$themeResult['note']])));
+        $commerceResult = $this->commerce->apply($session, $courseId);
+        $session->putState('applyNotes', array_values(array_filter([$themeResult['note'], $commerceResult['note']])));
         $session->save();
         // everything above was written by this apply: later edits in the admin are newer than this mark
         EntityMapEntry::query()->where('session_id', $session->id)->update(['updated_at' => now()]);
@@ -414,6 +416,7 @@ final class BlueprintApplier
         Auth::setUser($author);
         try {
             $this->courses->update(['status' => CourseStatusEnum::PUBLISHED], (int) $session->course_id);
+            $this->commerce->activate($session);
         } finally {
             $previous !== null ? Auth::setUser($previous) : Auth::forgetUser();
         }

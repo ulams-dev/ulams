@@ -21,6 +21,7 @@ final class SyntheticResponders
         $responders->register('grounding', fn (DriverRequest $r) => ['unsupported' => []]);
         $responders->register('quiz', fn (DriverRequest $r) => self::quiz($r));
         $responders->register('metadata', fn (DriverRequest $r) => self::metadata($r));
+        $responders->register('price', fn (DriverRequest $r) => self::price($r));
         $responders->register('patch', fn (DriverRequest $r) => self::patch($r));
     }
 
@@ -261,6 +262,17 @@ final class SyntheticResponders
         }
 
         return ['questions' => $questions];
+    }
+
+    private static function price(DriverRequest $r): array
+    {
+        $brief = (array) json_decode((string) self::tag($r, 'course_brief'), true);
+        $minutes = (int) ($brief['totalMinutes'] ?? 60);
+
+        return [
+            'amountMinor' => max(900, (int) (round($minutes / 30) * 1000) - 100),
+            'rationale' => sprintf('A %d-minute %s course with quizzes; comparable short courses are typically priced in this range.', $minutes, (string) ($brief['level'] ?? 'beginner')),
+        ];
     }
 
     private static function metadata(DriverRequest $r): array

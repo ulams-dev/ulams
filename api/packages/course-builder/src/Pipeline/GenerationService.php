@@ -36,6 +36,7 @@ final class GenerationService
         private readonly Surfaces $surfaces,
         private readonly EventLog $events,
         private readonly BlueprintApplier $applier,
+        private readonly PriceService $prices,
     ) {
     }
 
@@ -411,6 +412,7 @@ final class GenerationService
             $doc['course']['seo'] = ['title' => mb_substr($meta['seoTitle'], 0, 70), 'description' => mb_substr($meta['seoDescription'], 0, 160)];
             $doc['course']['faq'] = array_map(fn ($f) => ['question' => $f['question'], 'answer' => $f['answer'], 'citations' => array_values(array_unique($f['citations']))], $meta['faq']);
         }
+        $suggestion = $this->prices->suggest($session, $run, $outlineVersion->document);
         $doc['pages'] = ['landing' => LandingDocument::landing($doc, $session->brief), 'header' => LandingDocument::header($doc, $session->brief)];
 
         $version = $this->versions->create($session, $doc, 'content', 'ai', Version::PROPOSED, $outlineVersion, 'Generated lessons, quizzes and metadata');
@@ -426,6 +428,12 @@ final class GenerationService
             'Your course is drafted: %d modules, %d lessons, %d quiz questions, %d minutes. Review what will be created in your academy and approve to apply. Nothing is written to the LMS before that.',
             $stats['modules'], $stats['lessons'], $stats['questions'], $stats['minutes'],
         ));
+        if ($suggestion !== null) {
+            $this->events->text($session, $run, sprintf(
+                'Suggested price: %s %s. %s Confirm or change it in the Course brief before you publish; nothing is sold until you do.',
+                number_format($suggestion['amountMinor'] / 100, 2, '.', ''), $suggestion['currency'], $suggestion['rationale'],
+            ));
+        }
         $this->surfaces->apply($session, $run, $version, $this->applier->plan($session, $doc));
         $this->events->runFinished($run, ['versionId' => $version->id]);
 
