@@ -231,6 +231,29 @@ class ToolLaunchTest extends TestCase
         $this->assertSame('moodle-client', $assertion->iss);
     }
 
+    public function testWithASyncQueueTheGradeIncludesTheTopicJustFinished(): void
+    {
+        // found by the Moodle round trip: TopicFinished fired before the progress was saved, so a
+        // job running at once (sync queue) sent the previous score
+        config(['queue.default' => 'sync']);
+        $lesson = Lesson::factory()->create(['course_id' => $this->course->getKey()]);
+        $topic = Topic::factory()->create(['lesson_id' => $lesson->getKey(), 'active' => true]);
+        [$state, $nonce] = $this->oidcLogin();
+        $this->post('/api/lti/tool/launch', ['id_token' => $this->idToken($nonce), 'state' => $state])->assertRedirect();
+        $user = config('auth.providers.users.model')::query()->findOrFail(LtiUserLink::query()->where('sub', 'moodle-7')->value('user_id'));
+
+        $this->outgoing = [];
+        app(CourseProgressRepositoryContract::class)->updateInTopic($topic, $user, ProgressStatus::IN_PROGRESS);
+        app(CourseProgressRepositoryContract::class)->updateInTopic($topic, $user, ProgressStatus::COMPLETE);
+
+        $score = collect($this->outgoing)->first(fn (RequestInterface $r) => str_ends_with($r->getUri()->getPath(), '/lineitem/scores'));
+        $this->assertNotNull($score, 'score posted during the request');
+        $body = json_decode((string) $score->getBody(), true);
+        $this->assertEquals(100, $body['scoreGiven']);
+        $this->assertSame('Completed', $body['activityProgress']);
+        $this->assertSame('FullyGraded', $body['gradingProgress']);
+    }
+
     /**
      * @return array{0: string, 1: string} state and nonce from the OIDC redirect
      */
