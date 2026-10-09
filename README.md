@@ -93,8 +93,8 @@ PHPUnit suites (one per package) need a database; see [`api/README.md`](api/READ
 | `ghcr.io/ulams-dev/api` | `api/Dockerfile`, built on the `php` image above | Apache-2.0 |
 | `ghcr.io/ulams-dev/h5p` | `api/h5p/Dockerfile` | **GPL-3.0-or-later**, see [`LICENSING.md`](LICENSING.md) |
 | `ghcr.io/ulams-dev/pdf` | `api/pdf/Dockerfile` | MIT |
-| `ghcr.io/ulams-dev/admin` | `admin/Dockerfile` (`REACT_APP_*` env injected at runtime) | MIT |
-| `ghcr.io/ulams-dev/front` | `front/Dockerfile` (`VITE_APP_*` env injected at runtime) | MIT |
+| `ghcr.io/ulams-dev/admin` | `admin/Dockerfile` (nginx-unprivileged, port 8080; `REACT_APP_*` env written to `runtime-config.json` at start) | MIT |
+| `ghcr.io/ulams-dev/front` | `front/Dockerfile` (nginx-unprivileged, port 8080; `VITE_APP_*` env written to `runtime-config.json` at start) | MIT |
 | `ghcr.io/ulams-dev/web` | `front/web/Dockerfile` (Astro SSR on Node, `ULAMS_*` env, port 4321) | MIT |
 
 All Dockerfiles except `api/` and `api/docker/php/` build from the repository root, e.g.

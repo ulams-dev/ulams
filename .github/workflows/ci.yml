@@ -332,9 +332,47 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+  # The static images (admin, legacy front) run as non-root on nginx-unprivileged (ADR 0056):
+  # build them, start them with settings in the environment and check what they serve.
+  images:
+    name: Image smoke (${{ matrix.name }})
+    needs: changes
+    if: needs.changes.outputs.js == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: admin
+            prefix: REACT_APP_
+          - name: front
+            prefix: VITE_APP_
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build
+        run: docker build -f ${{ matrix.name }}/Dockerfile -t smoke-${{ matrix.name }} .
+      - name: Start, request and check
+        run: |
+          docker run -d --name smoke -p 8080:8080 -e ${{ matrix.prefix }}API_URL=https://api.example.com -e ${{ matrix.prefix }}NOT_ALLOWED=1 -e SECRET_TOKEN=must-not-leak smoke-${{ matrix.name }}
+          for i in $(seq 1 30); do curl -sf http://localhost:8080/healthz && break; sleep 1; done
+          test "$(docker exec smoke id -u)" != "0"
+          curl -sf http://localhost:8080/ | grep -q '<div id="root"'
+          curl -sf http://localhost:8080/some/spa/route | grep -q '<div id="root"'
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/missing.js)" = 404
+          config=$(curl -sf http://localhost:8080/runtime-config.json)
+          echo "$config"
+          echo "$config" | grep -q '"${{ matrix.prefix }}API_URL":"https://api.example.com"'
+          if echo "$config" | grep -q 'must-not-leak'; then echo "::error::runtime-config.json leaks a variable outside ${{ matrix.prefix }}*"; exit 1; fi
+          size=$(docker image inspect smoke-${{ matrix.name }} --format '{{.Size}}')
+          echo "image size: $((size / 1000000)) MB"
+      - name: Logs on failure
+        if: failure()
+        run: docker logs smoke || true
+
   ci-ok:
     name: CI OK
-    needs: [changes, js, php]
+    needs: [changes, js, php, images]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -342,6 +380,6 @@ jobs:
       - name: Fail if any job failed or was cancelled
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: |
-          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} php=${{ needs.php.result }}"
+          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} php=${{ needs.php.result }} images=${{ needs.images.result }}"
           exit 1
       - run: echo "All required jobs passed or were skipped by the path filters."

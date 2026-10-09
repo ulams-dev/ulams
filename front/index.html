@@ -29,7 +29,21 @@
     <base href="/" />
 
     <script>
-      <!-- inject env variables -->
+      (function () {
+        // Runtime settings of the container (ADR 0056): load them synchronously so that everything
+        // that reads window.VITE_APP_* at start sees them. Missing or invalid file: build-time defaults apply.
+        try {
+          var x = new XMLHttpRequest();
+          x.open('GET', '/runtime-config.json', false);
+          x.send();
+          if (x.status === 200) {
+            var c = JSON.parse(x.responseText);
+            Object.keys(c).forEach(function (k) {
+              if (k.indexOf('VITE_APP_') === 0) window[k] = c[k];
+            });
+          }
+        } catch (e) {}
+      })();
     </script>
   </head>
 

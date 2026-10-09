@@ -211,7 +211,7 @@ open Phase 0, 1 and 2 item as work packages L0-01â€¦L2-24; owner questions #41â€
       (disabled, `e6c21b9e`)
 - [ ] (new) Move the `@OA\` docblock annotations (223 files) to PHP attributes and drop the abandoned
       `doctrine/annotations`
-- [ ] (new) Smaller admin and front images: nginx-unprivileged instead of Apache+PHP, with runtime settings
+- [x] (new) Smaller admin and front images: nginx-unprivileged instead of Apache+PHP, with runtime settings
       injected without PHP (approved 2026-10-09; after Phase 1)
 
 ---
