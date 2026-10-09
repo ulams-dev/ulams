@@ -11,6 +11,11 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (2026-10-09) Phase 1 decisions 1–52, Phase 2 decisions 1–28 and the Phase 3 plan with its 17 decisions
+      confirmed by the product owner
+- [x] (2026-10-09) Brand identity "Orbital Folio" chosen by the product owner (indigo #0F2B46, orange #FF7A2E);
+      logo drawn as SVG, applied to platform and product surfaces, not to tenants; orange is an accent only
+      (ADR 0038, Proposed; #25). A trademark check on the name and mark is still recommended before launch
 - [x] (2026-10-09) ADRs 0013–0034 accepted
 - [ ] (2026-10-09) Post-Phase 2 bug batch: ADRs 0063–0070 proposed, awaiting acceptance (tenant AI settings,
       studio applied state, tutor demo login, APP_KEY, quiz time limit key, scheduler lock, CI scope, admin on Node 24)
@@ -413,6 +418,11 @@ Quality
 
 ## Phase 3: Living Course (killer feature)
 
+Plan (new): `docs/plans/phase-3.md` (draft, waiting for approval; ADRs 0030–0034 Proposed). Milestones
+M3.1 revisions and fragment diff (re-upload) → M3.2 impact and staleness → M3.3 AI update proposals →
+M3.4 progress rules → M3.5 audit and notifications → M3.6 Git, webhooks, polling → M3.7 URL connector →
+M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
+
 - [ ] Source connectors: re-upload → Git (path + branch) → Drive / Notion as plugins
 - [ ] Change detection (webhook, poll, manual) with fragment-level diff
 - [ ] Impact analysis via citations, incl. quiz answers that may now be wrong
@@ -422,6 +432,12 @@ Quality
 - [ ] Staleness signals per course and element
 - [ ] Audit trail (who accepted what, when, which source revision)
 - [ ] Tests: source v1/v2 fixtures; progress survives accepted update
+- [ ] (new) URL connector (web pages on one host, CSS selector, HTML → Markdown)
+- [ ] (new) Shared SSRF-safe HTTP client in `core` (extracted from `lti`; IPv6, CGNAT, redirects re-checked)
+- [ ] (new) GIFT: snapshot the max score per attempt and archive questions instead of deleting them
+- [ ] (new) Suggest a new lesson for newly added, uncovered source sections
+- [ ] (new) Generic Git (`git` CLI) connector for hosts without a supported API
+- [ ] (new) Google Drive and Notion connector plugins (designed in `docs/plans/phase-3.md` 6.6)
 
 ---
 

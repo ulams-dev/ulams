@@ -17,6 +17,9 @@ const base = process.env.DOCS_BASE || "/";
  */
 const validateLinks = process.env.DOCS_VALIDATE_LINKS !== "0" && base === "/";
 
+/** Public files (favicons, social image) live at the site root, under the base path when there is one. */
+const assetBase = base.endsWith("/") ? base : `${base}/`;
+
 const repo = "https://github.com/ulams-dev/ulams";
 
 export default defineConfig({
@@ -31,8 +34,18 @@ export default defineConfig({
       title: "ulams docs",
       description:
         "Documentation for ulams, the open, AI-native, headless LMS: guides for course authors, administrators, developers and operators.",
-      logo: { src: "./src/assets/logo.svg", replacesTitle: false, alt: "ulams" },
+      // Orbital Folio (ADR 0038): the horizontal lockup carries the name, so it replaces the title text.
+      logo: { light: "./src/assets/logo-light.svg", dark: "./src/assets/logo-dark.svg", replacesTitle: true, alt: "ulams" },
       favicon: "/favicon.svg",
+      head: [
+        { tag: "link", attrs: { rel: "icon", href: `${assetBase}favicon.ico`, sizes: "48x48" } },
+        { tag: "link", attrs: { rel: "apple-touch-icon", href: `${assetBase}apple-touch-icon.png` } },
+        { tag: "meta", attrs: { name: "theme-color", content: "#0F2B46" } },
+        { tag: "meta", attrs: { property: "og:image", content: `${site}${assetBase}og-image.png` } },
+        { tag: "meta", attrs: { property: "og:image:width", content: "1200" } },
+        { tag: "meta", attrs: { property: "og:image:height", content: "630" } },
+        { tag: "meta", attrs: { name: "twitter:card", content: "summary_large_image" } },
+      ],
       social: [{ icon: "github", label: "GitHub", href: repo }],
       editLink: { baseUrl: `${repo}/edit/main/front/docs-site/` },
       lastUpdated: false,
@@ -59,7 +72,6 @@ export default defineConfig({
         { label: "Operators", items: [{ autogenerate: { directory: "operators" } }] },
         { label: "Reference", collapsed: true, items: [{ autogenerate: { directory: "reference" } }] },
         { label: "Contributing", items: [{ autogenerate: { directory: "contributing" } }] },
-        { label: "Decisions", collapsed: true, items: [{ autogenerate: { directory: "decisions" } }] },
         { label: "Roadmap", link: "/roadmap/" },
       ],
     }),

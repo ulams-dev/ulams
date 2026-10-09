@@ -43,7 +43,7 @@ practical map.
   security trade-offs and product decisions that shape the code. Write it in `docs/decisions/NNNN-title.md`
   (MADR, status Proposed), add a row to `docs/decisions/README.md` and link it from the tracker. The
   product owner accepts it; superseded ADRs stay and link to their replacement. The documentation
-  site renders the ADRs, so they can be browsed there (`front/docs-site`, Decisions section).
+  site renders the ADRs, so they can be browsed there (`front/docs-site`, at `/decisions/`, linked from Contributing rather than the sidebar).
 - Every change that is big enough to matter to a user, author, admin, developer or operator updates
   the documentation site in the same branch: new or changed features, modules, admin screens,
   topic types, endpoints, permissions, settings, environment variables, commands and deployment

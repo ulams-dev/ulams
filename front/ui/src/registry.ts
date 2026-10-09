@@ -654,10 +654,49 @@ export const registry = {
             },
             ["label"]
           ),
+          "Products, in column order (omit when groups is set)",
+          { minItems: 0, maxItems: 8 }
+        ),
+        rows: list(
+          obj(
+            {
+              label: text("Feature", { maxLength: 60 }),
+              help: text("What the row means", { maxLength: 160 }),
+              cells: list(
+                obj(
+                  {
+                    value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }),
+                    note: text("Short neutral note", { maxLength: 120 }),
+                  },
+                  ["value"]
+                ),
+                "One cell per column, same order",
+                { maxItems: 8 }
+              ),
+            },
+            ["label", "cells"]
+          ),
+          "Features (omit when groups is set)",
+          { minItems: 0, maxItems: 24 }
+        ),
+        groups: list(
+          obj(
+            {
+              label: text("Name of the group, shown on the segmented control", { maxLength: 40 }),
+              caption: text("Table caption for this group", { maxLength: 160 }),
+              columns: list(
+          obj(
+            {
+              label: text("Product name, plain text (no logos)", { maxLength: 40 }),
+              note: text("Small line under the name, e.g. 'hosted SaaS'", { maxLength: 40 }),
+              highlight: bool("The column of our own product", false),
+            },
+            ["label"]
+          ),
           "Products, in column order",
           { minItems: 2, maxItems: 8 }
         ),
-        rows: list(
+              rows: list(
           obj(
             {
               label: text("Feature", { maxLength: 60 }),
@@ -679,6 +718,12 @@ export const registry = {
           "Features",
           { minItems: 1, maxItems: 24 }
         ),
+            },
+            ["label", "columns", "rows"]
+          ),
+          "Several tables behind a CSS-only segmented control (no JavaScript); each group lists its own products and features",
+          { minItems: 2, maxItems: 4 }
+        ),
         sources: list(
           obj({ label: text("What the source supports, e.g. 'Moodle: SCORM, H5P'", { maxLength: 300 }), href: href("Source URL"), checked: text("Date checked", { maxLength: 20 }) }, [
             "label",
@@ -689,7 +734,7 @@ export const registry = {
         ),
         note: text("Small print under the table", { maxLength: 300 }),
       },
-      ["caption", "columns", "rows"]
+      ["caption"]
     ),
     fallback: (p) => join(p.title, p.caption),
   },

@@ -32,7 +32,10 @@ const AuthLayout: React.FC<PropsWithChildren> = ({ children }) => {
       className={`${styles.container} ${showBackgroundImage ? styles[`background-image`] : ''}`}
       style={{ backgroundColor: mainBackgroundColor }}
     >
-      <header className={styles.header} style={{ backgroundColor: headerBackgroundColor, color }}>
+      <header
+        className={`${styles.header} ${configLogo ? '' : styles['brand-header']}`}
+        style={{ backgroundColor: headerBackgroundColor, color }}
+      >
         <div className={styles.lang}>{SelectLang && <SelectLang />}</div>
         <div className={styles['logo-wrapper']}>
           <Link to="/">

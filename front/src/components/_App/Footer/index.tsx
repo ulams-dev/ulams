@@ -163,7 +163,8 @@ const Footer = () => {
         <div className={styles.copyrights}>
           <Text size="14">{t<string>("Footer.PoweredBy")}</Text>
           <LmsLink href="https://www.ulams.app">
-            <UlamsLogo />
+            <UlamsLogo className={styles.logoLight} />
+            <UlamsLogo className={styles.logoDark} reversed />
           </LmsLink>
         </div>
       </Container>
