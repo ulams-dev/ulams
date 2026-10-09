@@ -43,7 +43,8 @@ display_errors = off
 log_errors = on
 error_log = $SITE/phperror.log
 INI
-devil www options "$HOST" php_openbasedir "$ULAMS_HOME" || say "warning: php_openbasedir not set; set it in the panel (Websites, Details)"
+# the home directory is reachable as /usr/home/LOGIN and /home/LOGIN: list both (PHP compares real paths)
+devil www options "$HOST" php_openbasedir "$SITE/public_html:/tmp:/usr/share:/usr/local/share:/dev:$ULAMS_HOME:$(echo "$ULAMS_HOME" | sed 's#^/usr/home#/home#')" || say "warning: php_openbasedir not set; set it in the panel (Websites, Details)"
 # TenantProvisioner and the artisan calls of the app use proc_open/exec
 devil www options "$HOST" php_exec on || say "warning: php_exec not set"
 devil www options "$HOST" sslonly on || true
