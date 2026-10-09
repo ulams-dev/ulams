@@ -50,6 +50,8 @@
     "**/fmin/rollup": "^2.79.2",
     "underscore": "^1.12.1",
     "body-parser": "^1.20.3",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.6.7",
+    "internal-slot": "^1.1.0",
+    "**/enzyme/cheerio": "1.0.0-rc.12"
   }
 }
