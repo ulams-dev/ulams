@@ -1,0 +1,12 @@
+{
+  "props": {
+    "src": "https://content.localhost/lia/launch/abc123",
+    "title": "Interactive extraction lab",
+    "sections": 6,
+    "height": 720
+  },
+  "invalid": {
+    "src": "javascript:alert(1)",
+    "title": "Unsafe"
+  }
+}

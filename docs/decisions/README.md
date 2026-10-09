@@ -78,3 +78,12 @@ replacement.
 | [0069](0069-ci-covers-web-ui-sdk.md) | CI typechecks, lints and tests the web app, ui and sdk | Proposed |
 | [0070](0070-admin-node-24-shim.md) | The admin runs umi/max on Node 24 through a small shim | Proposed |
 | [0071](0071-api-security-hardening-leftovers.md) | API security hardening: auth on admin routes, allow-listed payment input, bounded group walks | Proposed |
+| [0072](0072-agent-first-cli-command-registry.md) | The agent-first `ulams` CLI: one command registry generates the parser, help, `describe`, MCP tools and docs | Proposed |
+| [0073](0073-cli-machine-contract.md) | CLI machine contract: JSON envelope, NDJSON, exit codes and error codes | Proposed |
+| [0074](0074-scoped-personal-access-tokens.md) | Scoped personal access tokens with an agent audit log and `Idempotency-Key` | Proposed |
+| [0075](0075-device-login.md) | Device login with our own RFC 8628 flow approved in the web app; Passport's device grant stays off | Proposed |
+| [0076](0076-local-mcp-server-from-cli-registry.md) | `ulams mcp`: a local MCP server (spec 2026-07-28, SDK v2) generated from the CLI registry | Proposed |
+| [0077](0077-cli-distribution.md) | CLI distribution: npm, bun-compiled binaries and a Docker image; no telemetry | Proposed |
+| [0078](0078-platform-tenant-api.md) | A platform-only HTTP API for tenant management | Proposed |
+| [0079](0079-course-as-code-format.md) | Course-as-code: Markdown with directives + YAML, Blueprint v2 and a committed sync base | Proposed |
+| [0080](0080-interactive-preview-in-the-studio.md) | Interactive preview in the studio: learner pages from the blueprint, in a frame | Proposed |

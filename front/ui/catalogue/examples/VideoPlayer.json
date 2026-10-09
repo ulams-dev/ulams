@@ -1,0 +1,23 @@
+{
+  "props": {
+    "src": "https://example.org/media/bloom.mp4",
+    "poster": "/og-image.png",
+    "width": 1280,
+    "height": 720,
+    "title": "The bloom, explained",
+    "chapters": [
+      {
+        "time": 0,
+        "title": "Why bloom"
+      },
+      {
+        "time": 45,
+        "title": "Timing"
+      }
+    ]
+  },
+  "invalid": {
+    "src": "ftp://x",
+    "title": "No"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "props": {
+    "variant": "ribbon",
+    "items": [
+      {
+        "label": "New course: Dialling in",
+        "tone": "info"
+      },
+      {
+        "label": "Free preview lessons",
+        "tone": "ok"
+      }
+    ]
+  },
+  "invalid": {
+    "items": "none"
+  }
+}

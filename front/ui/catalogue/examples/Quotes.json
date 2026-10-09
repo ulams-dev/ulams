@@ -1,0 +1,20 @@
+{
+  "props": {
+    "variant": "pull",
+    "eyebrow": "Learners",
+    "title": "What they say",
+    "items": [
+      {
+        "quote": "My espresso stopped tasting sour in a week.",
+        "author": "Maya, home barista"
+      },
+      {
+        "quote": "The practice challenges were exactly the right size.",
+        "author": "Tom, cafe owner"
+      }
+    ]
+  },
+  "invalid": {
+    "items": "great"
+  }
+}

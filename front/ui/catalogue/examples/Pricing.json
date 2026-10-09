@@ -1,0 +1,42 @@
+{
+  "props": {
+    "id": "pricing",
+    "eyebrow": "Pricing",
+    "title": "Choose a plan",
+    "plans": [
+      {
+        "name": "Free",
+        "price": "0",
+        "period": "forever",
+        "description": "Preview lessons.",
+        "items": [
+          "3 lessons",
+          "Community forum"
+        ],
+        "cta": {
+          "label": "Start free",
+          "href": "/signup"
+        }
+      },
+      {
+        "name": "Pro",
+        "price": "19",
+        "period": "per month",
+        "description": "Everything.",
+        "items": [
+          "All courses",
+          "Certificates"
+        ],
+        "highlighted": true,
+        "cta": {
+          "label": "Go Pro",
+          "href": "/buy/pro"
+        }
+      }
+    ],
+    "note": "Prices include VAT."
+  },
+  "invalid": {
+    "plans": "free"
+  }
+}

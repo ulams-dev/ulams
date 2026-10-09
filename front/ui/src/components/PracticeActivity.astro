@@ -1,0 +1,204 @@
+---
+type Tier = "nudge" | "pointer" | "near_solution";
+interface Challenge {
+  id: string;
+  level: 1 | 2 | 3;
+  prompt: string;
+  hints?: Array<{ tier: Tier; text: string }>;
+  options?: Array<{ label: string; correct?: boolean; feedback: string }>;
+  workedSolution: string;
+}
+interface Props {
+  id?: string;
+  title?: string;
+  intro: string;
+  toolbox: Array<{ label: string; text?: string }>;
+  challenges: Challenge[];
+}
+const { id = "practice", title, intro, toolbox, challenges } = Astro.props;
+const LEVEL = { 1: "Guided", 2: "Supported", 3: "Independent" } as const;
+const TIER_ORDER: Tier[] = ["nudge", "pointer", "near_solution"];
+const TIER_LABEL: Record<Tier, string> = { nudge: "Nudge", pointer: "Pointer", near_solution: "Near the solution" };
+const hintsOf = (c: Challenge) => [...(c.hints ?? [])].sort((a, b) => TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier));
+---
+
+<section class="u-practice" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+  <p class="u-practice__intro">{intro}</p>
+  <div class="u-practice__toolbox">
+    <h3 class="u-practice__h">Toolbox</h3>
+    <ul class="u-practice__tools">
+      {
+        toolbox.map((tool) => (
+          <li>
+            <strong>{tool.label}</strong>
+            {tool.text && <span>: {tool.text}</span>}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+  <ulams-practice activity-id={id}>
+    <p class="u-practice__nojs" data-nojs>Hints, feedback and the worked solution need JavaScript. The tasks are listed below.</p>
+    <ol class="u-practice__challenges" role="list">
+      {
+        challenges.map((c, i) => (
+          <li class="u-practice__challenge" data-challenge={c.id} data-level={c.level}>
+            <h3 class="u-practice__h" id={`${id}-c${i}`}>
+              Challenge {i + 1} <span class={`u-practice__level u-practice__level--${c.level}`}>Level {c.level}: {LEVEL[c.level]}</span>
+            </h3>
+            <p class="u-practice__prompt">{c.prompt}</p>
+            {hintsOf(c).map((hint) => (
+              <template data-hint data-tier={hint.tier} data-label={TIER_LABEL[hint.tier]}>
+                {hint.text}
+              </template>
+            ))}
+            <div class="u-practice__hints" data-hints hidden />
+            {c.options && c.options.length > 0 ? (
+              <fieldset class="u-practice__options" data-options>
+                <legend>Your answer</legend>
+                {c.options.map((option, k) => (
+                  <label class="u-practice__option">
+                    <input type="radio" name={`${id}-${c.id}`} value={k} data-correct={option.correct ? "1" : "0"} />
+                    <span>{option.label}</span>
+                    <template data-feedback>{option.feedback}</template>
+                  </label>
+                ))}
+              </fieldset>
+            ) : null}
+            <div class="u-practice__actions" data-actions hidden>
+              <button class="u-btn u-btn--sm" type="button" data-check>
+                {c.options && c.options.length > 0 ? "Check my answer" : "I have tried it"}
+              </button>
+            </div>
+            <p class="u-practice__feedback" data-feedback-out role="status" aria-live="polite" />
+            <template data-solution>{c.workedSolution}</template>
+            <div class="u-practice__solution" data-solution-out />
+          </li>
+        ))
+      }
+    </ol>
+  </ulams-practice>
+</section>
+
+<script>
+  import "../elements/practice-activity.ts";
+</script>
+
+<style>
+  .u-practice {
+    display: grid;
+    gap: 16px;
+    padding: 20px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-card-bg);
+  }
+  .u-practice__h {
+    font-size: 1.0625rem;
+    margin: 0 0 6px;
+  }
+  .u-practice__tools {
+    margin: 0;
+    padding-inline-start: 1.2em;
+    display: grid;
+    gap: 4px;
+  }
+  .u-practice__nojs {
+    color: var(--ulams-color-muted);
+    font-size: 0.9375rem;
+  }
+  .u-practice__challenges {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 20px;
+  }
+  .u-practice__challenge {
+    display: grid;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 1px solid var(--ulams-color-border);
+  }
+  .u-practice__level {
+    margin-inline-start: 8px;
+    padding: 2px 10px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ulams-color-muted);
+    white-space: nowrap;
+  }
+  .u-practice__options {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .u-practice__options legend {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .u-practice__option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius);
+    cursor: pointer;
+  }
+  .u-practice__option input {
+    margin-top: 4px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--ulams-color-primary);
+  }
+  .u-practice__option:has(input:focus-visible) {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+  }
+  .u-practice__option--correct {
+    border-color: var(--ulams-color-positive);
+  }
+  .u-practice__option--wrong {
+    border-color: var(--ulams-color-error);
+  }
+  .u-practice :global(.u-practice__hint) {
+    margin: 0;
+    padding: 8px 12px;
+    border-inline-start: 4px solid var(--ulams-color-secondary);
+    background: var(--ulams-color-surface, transparent);
+  }
+  .u-practice :global(.u-practice__hint-btn) {
+    justify-self: start;
+    min-height: 44px;
+    padding: 8px 16px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-button);
+    background: transparent;
+    color: var(--ulams-color-text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .u-practice :global(.u-practice__hint-btn:focus-visible) {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+  }
+  .u-practice__feedback:not(:empty) {
+    padding: 10px 12px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+  }
+  .u-practice :global(.u-practice__solution-body) {
+    padding: 12px 14px;
+    border-radius: var(--ulams-radius);
+    background: var(--ulams-color-surface, transparent);
+    border: 1px dashed var(--ulams-color-border);
+  }
+</style>
