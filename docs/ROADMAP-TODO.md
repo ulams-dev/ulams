@@ -370,8 +370,9 @@ Architecture
 - [x] Verify current A2UI / AG-UI versions and choose renderer (CopilotKit vs own) (A2UI v0.9,
       `@ag-ui/core` 1.0.2, own renderer; ADR 0011, 0023)
 - [ ] UI component catalogue: name, props JSON Schema, model description, accessible
-      implementation, text fallback (partial: the 17 builder components; learner layout components
-      are M2.5)
+      implementation, text fallback (partial: the 17 builder components and the approved learner
+      layout set (Timeline, FlipCards, CodeBlock, PracticeActivity, Callout, Steps, ComparisonTable,
+      H5PFrame, LiaScriptLesson; L2-20); the playground is L2-19)
 - [x] `render_ui` validated server-side; invalid/unknown → text fallback (structured output choice
       validated against the `@ulams/ui` manifest)
 - [x] Progressive streaming with skeletons; interactions sent back as structured events
@@ -386,10 +387,13 @@ Builder components (MVP)
 
 Learner layouts (feature flag)
 - [ ] AI-composed declarative lesson layouts from approved components, stored in blueprint
+      (partial: the approved components and their manifest are done (L2-20); the Layout topic type
+      and generation are L2-21)
 
 Pedagogical guardrails
 - [ ] Mandatory scaffolding: intro → toolbox → graded challenges → tiered hints →
-      explanatory feedback → worked solution after attempt
+      explanatory feedback → worked solution after attempt (partial: the `PracticeActivity` component
+      enforces the slots and hides the solution until an attempt (L2-20); generation is L2-21)
 - [ ] Four pillars check: objective alignment, agency, scaffolding, formative feedback
 
 Generate-then-refine loop
