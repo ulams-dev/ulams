@@ -1,5 +1,5 @@
 {
- "summary": "435/477 covered, 42 excluded, 0 missing, 4 routes missing from the spec",
+ "summary": "435/477 covered, 42 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1876,7 +1876,7 @@
   {
    "key": "DELETE /api/auth/tokens/{id}",
    "summary": "Revoke one of my scoped tokens",
-   "command": "tokens.revoke",
+   "command": "logout",
    "status": "covered"
   },
   {
@@ -2880,6 +2880,10 @@
   {
    "endpoint": "GET /api/admin/courses/{course}",
    "command": "courses.unpublish"
+  },
+  {
+   "endpoint": "GET /api/auth/tokens/current",
+   "command": "whoami"
   }
  ]
 }

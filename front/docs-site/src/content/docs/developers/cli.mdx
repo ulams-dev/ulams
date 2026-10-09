@@ -46,10 +46,32 @@ ulams whoami            # user, roles, instance, where the token came from
 ulams profiles list     # saved profiles; `ulams profiles use <name>` switches
 ```
 
-Password logins use the API's one-month token, which has the full permissions of the user. Scoped
-tokens and browser login (`ulams login --device`) arrive with the server work in
-[ADR 0074](/decisions/0074-scoped-personal-access-tokens/) and [ADR 0075](/decisions/0075-device-login/);
-`ulams login --device` runs the browser flow (a code to approve in the web app, scopes with `--scope`) on servers that advertise `deviceLogin` in `/api/meta`, and answers "not available on this server" otherwise.
+Password logins use the API's one-month token, which has the full permissions of the user. Prefer
+browser login, which mints a **scoped token** ([ADR 0074](/decisions/0074-scoped-personal-access-tokens/),
+[ADR 0075](/decisions/0075-device-login/)):
+
+```bash
+ulams login --url https://school.example.com --device                  # default scopes: @author,tokens:write
+ulams login --url https://school.example.com --device --scopes @admin  # everything the user can do
+ulams login --url https://school.example.com --device --scopes courses:write,builder:write
+```
+
+The CLI prints a link and a code (`BDWP-HQPK`) on stderr and opens the browser when it runs in a
+terminal. Open `/cli/authorize` in the web app (signed in as yourself), untick any scope you do not want
+to give, pick an expiry and approve; the CLI collects its token and saves the profile. Scopes are
+`<area>:read|write` or a preset (`@read-only`, `@author`, `@admin`, `@learner`, `@ci`); see
+[Scoped tokens](/developers/scoped-tokens/). Servers without device login answer "not available on this
+server" (check `features.deviceLogin` in `/api/meta`).
+
+Manage tokens from the CLI (a token can only grant scopes it has itself):
+
+```bash
+ulams tokens create --name ci --scopes @ci --expires-in-days 30 --kind ci   # the secret is printed once
+ulams tokens list
+ulams tokens revoke <id> --yes
+ulams whoami            # shows the token id, scopes and expiry
+ulams logout --revoke   # revoke the saved token, then forget it
+```
 
 For CI and agents no files are needed: set `ULAMS_URL` and `ULAMS_TOKEN`. Precedence is flag, then
 environment, then profile. A profile token is never sent to another `--url`.

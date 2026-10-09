@@ -6,7 +6,7 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ["scripts/**", "evals/**"],
+    files: ["scripts/**", "evals/**", "tests/e2e/*.mjs"],
     languageOptions: { globals: { process: "readonly", console: "readonly", fetch: "readonly", URL: "readonly", AbortSignal: "readonly", setTimeout: "readonly" } },
   },
   {
