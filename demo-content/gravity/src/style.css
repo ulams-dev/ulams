@@ -1,0 +1,556 @@
+/* ── SpaceX-inspired design system ───────────────────────────────────────
+   Pure black, hairline borders, thin wide-tracked uppercase labels, white
+   "fill" active states, monospace telemetry numerals. Minimal, technical. */
+
+:root {
+  --bg: #000000;
+  --panel: rgba(0, 0, 0, 0.55);
+  --line: rgba(255, 255, 255, 0.14);
+  --line-strong: rgba(255, 255, 255, 0.28);
+  --text: #f2f4f7;
+  --muted: rgba(255, 255, 255, 0.46);
+  --muted-2: rgba(255, 255, 255, 0.62);
+  --accent: #ffffff;
+  --data: #8fb6ff;       /* cool technical blue for live values */
+  --warn: #ffb84a;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'Roboto Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); }
+body { font-family: var(--sans); color: var(--text); font-weight: 400; -webkit-font-smoothing: antialiased; }
+
+#scene { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+
+/* ℹ button + the About sheet behind it. The credits, texture licences and the
+   bug link all used to sit in the footer, in view of every single frame; they
+   are reference material, so they hide here until asked for. */
+.info-btn {
+  position: fixed; left: 52px; bottom: 14px; z-index: 6;
+  display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; padding: 0;
+  background: var(--panel); color: var(--muted);
+  border: 1px solid var(--line); border-radius: 50%;
+  cursor: pointer; backdrop-filter: blur(6px);
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+.info-btn:hover { color: var(--text); border-color: var(--line-strong); }
+.info-btn[aria-expanded='true'] { color: #05070d; background: var(--accent); border-color: var(--accent); }
+
+.about { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; }
+.about[hidden] { display: none; }
+.about-scrim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.72); backdrop-filter: blur(3px); }
+.about-card {
+  position: relative; width: min(420px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px); overflow-y: auto;
+  padding: 22px 24px 20px;
+  background: rgba(8, 10, 16, 0.94); border: 1px solid var(--line); border-radius: 4px;
+  backdrop-filter: blur(10px);
+  animation: about-in 0.22s ease both;
+}
+@keyframes about-in { from { opacity: 0; transform: translateY(8px); } }
+.about-x {
+  position: absolute; top: 10px; right: 10px; width: 24px; height: 24px; padding: 0;
+  background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; line-height: 1;
+}
+.about-x:hover { color: var(--text); }
+.about-eyebrow {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted);
+}
+.about-name { margin-top: 8px; font-size: 14px; font-weight: 600; letter-spacing: 0.04em; }
+.about-intro { margin: 8px 0 16px; font-size: 12.5px; line-height: 1.55; color: var(--muted-2); }
+.about-list { margin: 0; display: grid; gap: 7px; }
+.about-list > div { display: grid; grid-template-columns: 104px 1fr; gap: 12px; align-items: baseline; }
+.about-list dt {
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); padding-top: 1px;
+}
+.about-list dd { margin: 0; font-size: 12px; color: var(--text); }
+.about-list a { color: var(--text); text-decoration: none; border-bottom: 1px dotted rgba(255, 255, 255, 0.4); }
+.about-list a:hover { border-bottom-color: var(--text); }
+/* A quiet offer, not a call to action — same voice as the credits above it. */
+.about-issue {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 18px; padding: 7px 12px;
+  background: none; border: 1px solid var(--line); border-radius: 2px; cursor: pointer;
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); transition: color 0.18s ease, border-color 0.18s ease;
+}
+.about-issue:hover { color: var(--text); border-color: var(--line-strong); }
+
+
+/* Frame + caption over the 3-D coastline inset (tides slide only). The diorama
+   itself is drawn on the canvas behind this transparent div. */
+.tide-panel {
+  position: fixed; left: 14px; bottom: 64px; z-index: 6;
+  width: 240px; height: 164px; pointer-events: none;
+  border: 1px solid var(--line); border-radius: 4px;
+}
+.tide-panel-title {
+  position: absolute; top: 6px; left: 8px;
+  font-family: var(--mono); font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted);
+}
+.tide2d-label {
+  position: absolute; top: 6px; right: 8px;
+  font-family: var(--sans); font-size: 11px; font-weight: 600; color: var(--text);
+}
+@media (max-width: 760px) { .tide-panel { width: 180px; height: 124px; bottom: auto; top: 40px; left: 10px; } }
+
+/* Caption for the current shot of the Lagrange fly-round — top centre, over the scene. */
+.lag-caption {
+  position: fixed; top: 22px; left: 0; right: 380px; z-index: 6; pointer-events: none;
+  text-align: center; font-size: 15px; letter-spacing: 0.08em; color: #8affc0;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.9);
+}
+@media (max-width: 760px) { .lag-caption { right: 0; top: 14px; font-size: 13px; padding: 0 16px; } }
+
+/* Colour key for the Lagrange contour map — bottom-left. The map is the whole
+   slide, and a map without a key is decoration. */
+.lag-legend {
+  position: fixed; left: 14px; bottom: 56px; z-index: 6;
+  width: 330px; padding: 9px 11px 10px; pointer-events: none;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 4px;
+  backdrop-filter: blur(6px);
+}
+.lag-legend-title {
+  font-family: var(--mono); font-size: 8px; letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 7px;
+}
+.lag-bar {
+  height: 7px; border-radius: 1px;
+  background: linear-gradient(90deg, #04060e, #12183a 14%, #342e6a 30%, #703a7a 50%, #ba5864 70%, #ec9656 88%, #f6c480);
+}
+.lag-bar-ends {
+  display: flex; justify-content: space-between; margin-top: 3px;
+  font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted);
+}
+.lag-key { margin: 9px 0 0; padding: 0; list-style: none; display: grid; gap: 5px; }
+.lag-key li {
+  display: grid; grid-template-columns: 10px 1fr; gap: 7px; align-items: start;
+  font-size: 10.5px; line-height: 1.35; color: var(--muted-2);
+}
+.lag-sw { width: 8px; height: 8px; margin-top: 3px; border-radius: 50%; }
+.lag-sw-stable { background: #8affc0; box-shadow: 0 0 6px rgba(138, 255, 192, 0.6); }
+.lag-sw-saddle { background: #ffb04a; box-shadow: 0 0 6px rgba(255, 176, 74, 0.6); }
+@media (max-width: 760px) { .lag-legend { width: calc(100vw - 28px); bottom: auto; top: 46px; } }
+
+/* Tide-height-vs-time graph (tides slide only) — top-left. */
+.tide-graph {
+  position: fixed; left: 14px; top: 14px; z-index: 6;
+  width: 460px; padding: 8px 10px 4px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 4px;
+  backdrop-filter: blur(6px);
+}
+.tide-graph-title {
+  font-family: var(--mono); font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 2px;
+}
+.tide-graph svg { width: 100%; height: auto; display: block; }
+@media (max-width: 760px) { .tide-graph { width: 280px; } }
+
+/* First-slide call-to-action: one tap starts the auto-play.
+   Same visual language as the Back/Next buttons (uppercase, hairline, accent
+   fill), just standalone and a touch larger. */
+.tour-cta {
+  position: fixed; left: 50%; bottom: 13%; transform: translateX(-50%); z-index: 40;
+  align-items: center; gap: 9px; padding: 12px 22px; border-radius: 2px;
+  background: var(--accent); color: #000; border: 1px solid var(--accent);
+  font-family: var(--sans); text-transform: uppercase; letter-spacing: 0.12em;
+  font-size: 11px; font-weight: 600; cursor: pointer; opacity: 0.9;
+  transition: background 0.18s, border-color 0.18s, opacity 0.18s;
+}
+.tour-cta:hover { background: #d9e2ee; opacity: 1; }
+.tour-cta svg { display: block; margin-left: -2px; }
+.label-layer { position: fixed; inset: 0; pointer-events: none; }
+
+/* ── In-scene labels ─────────────────────────────────────────────────── */
+.body-label {
+  font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
+  text-shadow: 0 0 8px rgba(0, 0, 0, 1);
+  transform: translate(12px, -7px); padding-left: 0; white-space: nowrap;
+}
+.body-label::before {
+  content: ''; position: absolute; left: -8px; top: 50%; width: 6px; height: 1px;
+  background: rgba(255, 255, 255, 0.5);
+}
+.moon-label {
+  font-family: var(--mono);
+  font-size: 8.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5); text-shadow: 0 0 6px rgba(0, 0, 0, 1);
+  transform: translate(8px, -5px); white-space: nowrap;
+}
+/* The flag planted on the Moon's near side — the one that never turns away. */
+.moon-label.near-side {
+  color: #ffd08a; letter-spacing: 0.1em;
+  transform: translate(2px, -5px);
+}
+.vec-label {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em;
+  padding: 2px 7px; white-space: nowrap; text-shadow: 0 0 6px #000;
+  background: rgba(0, 0, 0, 0.6); border-radius: 1px;
+}
+.vec-label.stack { text-align: center; line-height: 1.4; }
+.vec-label.stack b { font-weight: 500; color: #ffe6a8; }
+/* A readout that ticks every frame: fixed width so it can't shimmy. */
+.vec-label.clock { min-width: 27ch; font-variant-numeric: tabular-nums; }
+.vec-label.big { font-size: 13px; letter-spacing: 0.07em; padding: 4px 10px; color: #fff; }
+.vec-label.vel { color: #7af0a6; border: 1px solid rgba(122, 240, 166, 0.55); }
+.vec-label.grav { color: #ff8f8f; border: 1px solid rgba(255, 90, 90, 0.55); }
+
+/* "Go deeper" link under a slide's narration (e.g. the Moon explainer). */
+.tour-link {
+  display: none; flex: none; margin: 2px 0 16px;
+  font-size: 11.5px; line-height: 1.45; letter-spacing: 0.01em;
+  color: var(--accent); text-decoration: none;
+  border-left: 2px solid var(--accent); padding-left: 9px;
+}
+.tour-link:hover { text-decoration: underline; }
+
+/* A glossary term linked inline in the narration (e.g. "barycenter"). */
+.body-link {
+  color: var(--text); text-decoration: none;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.45);
+}
+.body-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── Panels ──────────────────────────────────────────────────────────── */
+.panel {
+  position: fixed;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  padding: 18px 18px 20px;
+  z-index: 10;
+}
+/* HUD corner tick */
+.panel::before {
+  content: ''; position: absolute; top: -1px; left: -1px;
+  width: 14px; height: 14px;
+  border-top: 1px solid var(--accent); border-left: 1px solid var(--accent);
+}
+
+#controls { top: 18px; left: 18px; width: 296px; }
+#info { top: 18px; right: 18px; width: 280px; }
+
+h1 {
+  font-size: 17px; margin: 0; font-weight: 600;
+  letter-spacing: 0.34em; text-transform: uppercase;
+}
+.sub {
+  margin: 6px 0 18px; color: var(--muted); font-size: 9.5px;
+  letter-spacing: 0.22em; text-transform: uppercase; font-family: var(--mono);
+}
+
+.group { margin-bottom: 16px; }
+.glabel {
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.24em;
+  color: var(--muted); margin-bottom: 9px; font-weight: 500;
+}
+
+/* segmented toggles */
+.seg { display: flex; gap: 0; border: 1px solid var(--line); border-radius: 2px; overflow: hidden; }
+.seg button {
+  flex: 1; padding: 8px 4px; font-size: 10.5px; cursor: pointer;
+  background: transparent; color: var(--muted-2);
+  border: none; border-right: 1px solid var(--line);
+  text-transform: uppercase; letter-spacing: 0.12em; font-family: var(--sans);
+  transition: background 0.18s, color 0.18s;
+}
+.seg button:last-child { border-right: none; }
+.seg button:hover { background: rgba(255, 255, 255, 0.06); color: var(--text); }
+.seg button.on { background: var(--accent); color: #000; font-weight: 600; }
+
+.hint {
+  font-size: 10px; color: var(--muted); margin-top: 8px; line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+.chk {
+  display: flex; align-items: center; gap: 9px; font-size: 11.5px;
+  margin: 9px 0; cursor: pointer; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--muted-2);
+}
+.chk input {
+  appearance: none; -webkit-appearance: none; width: 14px; height: 14px;
+  border: 1px solid var(--line-strong); border-radius: 1px; background: transparent;
+  cursor: pointer; position: relative; flex: none;
+}
+.chk input:checked { background: var(--accent); border-color: var(--accent); }
+.chk input:checked::after {
+  content: '✓'; position: absolute; inset: 0; color: #000; font-size: 10px;
+  display: flex; align-items: center; justify-content: center; font-weight: 700;
+}
+
+.tag {
+  font-family: var(--mono); font-size: 8px; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--warn);
+  border: 1px solid rgba(255, 184, 74, 0.4); border-radius: 1px;
+  padding: 1px 5px; margin-left: 6px;
+}
+
+/* range slider */
+input[type=range] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 2px;
+  background: var(--line-strong); outline: none; margin: 6px 0;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--accent); cursor: pointer; box-shadow: 0 0 8px rgba(255,255,255,0.5);
+}
+input[type=range]::-moz-range-thumb {
+  width: 12px; height: 12px; border-radius: 50%; background: var(--accent);
+  border: none; cursor: pointer;
+}
+
+.row { display: flex; gap: 8px; margin-top: 11px; }
+.row button, select, .tour-restart {
+  font-family: var(--sans); text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--muted-2); background: transparent;
+  border: 1px solid var(--line); border-radius: 2px; cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+.row button { flex: 1; padding: 8px; font-size: 10.5px; }
+.row button:hover { background: rgba(255, 255, 255, 0.06); color: var(--text); border-color: var(--line-strong); }
+
+select { width: 100%; padding: 8px 9px; font-size: 11px; }
+#focus { font-family: var(--mono); }
+
+.tour-restart {
+  width: 100%; margin-top: 6px; padding: 10px; font-size: 11px; color: var(--text);
+  border-color: var(--line-strong);
+}
+.tour-restart:hover { background: var(--accent); color: #000; }
+
+/* ── Info / telemetry panel ──────────────────────────────────────────── */
+#info h2 {
+  font-size: 13px; margin: 2px 0 12px; color: var(--text);
+  letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600;
+}
+.date {
+  font-family: var(--mono); font-size: 10.5px; color: var(--data);
+  letter-spacing: 0.06em; margin-bottom: 12px;
+  border-bottom: 1px solid var(--line); padding-bottom: 10px;
+}
+.fact {
+  display: flex; justify-content: space-between; font-size: 11px;
+  padding: 4px 0; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.fact span { color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-size: 9.5px; align-self: center; }
+.fact b { font-weight: 500; text-align: right; font-family: var(--mono); color: var(--text); }
+.note { font-size: 10.5px; color: var(--muted); line-height: 1.6; margin: 12px 0 0; }
+.energy {
+  font-family: var(--mono); font-size: 10px; color: var(--warn); margin-top: 12px;
+  letter-spacing: 0.04em; border-top: 1px solid var(--line); padding-top: 10px;
+}
+
+/* ── Guided tour panel (single, right side) ──────────────────────────── */
+body.tour-active #controls { display: none; }
+
+.tour-panel {
+  top: 18px; right: 18px; width: 304px;
+  max-height: calc(100vh - 36px);
+  display: none; flex-direction: column;
+  z-index: 20;
+}
+body.tour-active .tour-panel { display: flex; }
+
+/* Auto-play progress line (time until the next slide) */
+.tour-progress { display: none; height: 2px; background: rgba(255, 255, 255, 0.12); margin-bottom: 12px; flex: none; overflow: hidden; }
+.tour-progress.on { display: block; }
+.tour-progress-fill { display: block; height: 100%; width: 0%; background: #fff; }
+
+.tour-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 7px; margin-bottom: 12px; flex: none; }
+.tour-eyebrow {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.13em;
+  text-transform: uppercase; color: var(--muted); white-space: nowrap;
+}
+.tour-skip { white-space: nowrap; }
+.tour-skip {
+  background: transparent; color: var(--muted); border: none; cursor: pointer;
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px;
+}
+.tour-skip:hover { color: var(--text); }
+
+/* Collapse toggle — mobile only (hidden on desktop). Styled as a clear,
+   bordered button with a generous tap target so it's obviously tappable. */
+.tour-collapse {
+  display: none; cursor: pointer; flex: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line-strong); border-radius: 3px;
+  color: var(--text); font-size: 15px; line-height: 1;
+  padding: 8px 12px; margin-left: 4px;
+}
+.tour-collapse:active { background: rgba(255, 255, 255, 0.2); }
+
+/* Language switch (EN / PL) */
+.lang-switch { display: flex; border: 1px solid var(--line); border-radius: 2px; overflow: hidden; margin-left: auto; }
+.lang-btn {
+  background: transparent; color: var(--muted); border: none; cursor: pointer;
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; padding: 3px 7px;
+}
+.lang-btn + .lang-btn { border-left: 1px solid var(--line); }
+.lang-btn:hover { color: var(--text); }
+.lang-btn.on { background: var(--text); color: #000; }
+
+/* Step dropdown */
+.tour-dd { position: relative; margin-bottom: 14px; flex: none; }
+.tour-dd-toggle {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; padding: 9px 11px; cursor: pointer; border-radius: 2px;
+  background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line);
+  color: var(--text); font-family: var(--mono); font-size: 10.5px;
+  letter-spacing: 0.08em; text-transform: uppercase; text-align: left;
+}
+.tour-dd-toggle:hover { background: rgba(255, 255, 255, 0.09); border-color: var(--line-strong); }
+.dd-current { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-chev { color: var(--muted); transition: transform 0.2s; flex: none; }
+.tour-dd.open .dd-chev { transform: rotate(180deg); }
+
+.steps-list {
+  list-style: none; margin: 0; padding: 4px;
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 5;
+  max-height: 52vh; overflow-y: auto; display: none;
+  background: rgba(8, 10, 16, 0.97); border: 1px solid var(--line-strong);
+  border-radius: 2px; box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+}
+.tour-dd.open .steps-list { display: block; }
+
+/* Time-speed control */
+.tour-speed { flex: none; margin-bottom: 14px; }
+.tour-speed .glabel { margin-bottom: 6px; }
+.speed-val { color: var(--data); font-family: var(--mono); letter-spacing: 0; }
+.speed-range { width: 100%; }
+
+/* Stopped-galaxy controls */
+.tour-sg { display: none; flex: none; margin-bottom: 14px; }
+.tour-sg .row { margin-top: 8px; }
+.tour-sg .row button { padding: 8px 4px; }
+.tour-sg .sg-stop { flex: 1.6; background: var(--accent); border-color: var(--accent); color: #000; font-weight: 600; }
+.tour-sg .sg-stop:hover:not(:disabled) { background: #d9e2ee; color: #000; }
+.tour-sg .sg-stop:disabled { opacity: 0.35; cursor: default; }
+.tour-lag { display: none; flex: none; margin-bottom: 14px; }
+.sg-status { color: var(--data); font-family: var(--mono); letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.step-item {
+  display: flex; gap: 10px; align-items: baseline; cursor: pointer;
+  padding: 6px 8px; border-left: 2px solid transparent; border-radius: 2px;
+  color: var(--muted); transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.step-item:hover { background: rgba(255, 255, 255, 0.05); color: var(--text); }
+.step-item .step-num { font-family: var(--mono); font-size: 10px; width: 18px; text-align: right; flex: none; color: var(--muted); }
+.step-item .step-title { font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; line-height: 1.3; }
+.step-item.done { color: rgba(255, 255, 255, 0.4); }
+.step-item.on { background: rgba(255, 255, 255, 0.07); color: #fff; border-left-color: var(--accent); }
+.step-item.on .step-num { color: var(--accent); }
+
+/* Narration */
+.tour-title {
+  font-size: 13px; font-weight: 600; color: var(--accent);
+  letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.35; flex: none;
+}
+.tour-body {
+  font-size: 12px; line-height: 1.6; color: var(--muted-2);
+  margin: 10px 0 14px; overflow-y: auto; flex: 1 1 auto; min-height: 0;
+}
+.tour-foot { display: flex; align-items: center; gap: 10px; flex: none; }
+.tour-foot button {
+  flex: 1; font-family: var(--sans); text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 9px 10px; font-size: 10.5px; cursor: pointer; border-radius: 2px;
+  background: transparent; color: var(--muted-2); border: 1px solid var(--line);
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+.tour-foot button:hover:not(:disabled) { background: rgba(255,255,255,0.06); color: var(--text); border-color: var(--line-strong); }
+.tour-foot button:disabled { opacity: 0.3; cursor: default; }
+.tour-next { background: var(--accent) !important; border-color: var(--accent) !important; color: #000 !important; font-weight: 600; }
+.tour-next:hover { background: #d9e2ee !important; }
+
+/* ── Mobile: dock the panels to a compact bottom sheet so they don't cover the
+   (centered) scene. Desktop layout above is untouched. ───────────────────── */
+@media (max-width: 760px) {
+  #info { display: none; }
+
+  .panel { padding: 12px 14px 14px; }
+
+  /* Guided-tour panel → bottom sheet spanning the width, capped in height so the
+     top ~half of the screen (where the Sun/planets sit) stays clear. */
+  .tour-panel {
+    top: auto; bottom: 10px; left: 10px; right: 10px; width: auto;
+    max-height: 42vh;
+  }
+  .tour-head { margin-bottom: 8px; }
+  .tour-dd { margin-bottom: 10px; }
+  .tour-speed { margin-bottom: 10px; }
+  .tour-body { font-size: 12px; margin: 8px 0 10px; }
+  .tour-title { font-size: 12px; }
+  /* The step dropdown opens upward out of the bottom sheet. */
+  .steps-list { top: auto; bottom: calc(100% + 4px); max-height: 56vh; }
+
+  /* Show the collapse toggle on mobile; collapsed = slim bar, just navigation. */
+  .tour-collapse { display: inline-block; }
+  /* Collapsed = slim bar: keep the title (so you know the slide) + nav;
+     hide the dropdown, description, and speed control. */
+  .tour-panel.collapsed { max-height: none; }
+  .tour-panel.collapsed .tour-dd,
+  .tour-panel.collapsed .tour-body,
+  .tour-panel.collapsed .tour-speed,
+  .tour-panel .sg-help { display: none; }
+  .tour-panel.collapsed .tour-title { margin-bottom: 10px; }
+
+  /* Free-explore controls also dock to the bottom on mobile. */
+  #controls {
+    top: auto; bottom: 10px; left: 10px; right: 10px; width: auto;
+    max-height: 56vh; overflow-y: auto;
+  }
+
+  /* Move the two round buttons to the top, clear of the bottom sheet. */
+  .info-btn { bottom: auto; top: 8px; left: auto; right: 48px; }
+  .about-card { padding: 20px 18px 18px; }
+  .about-list > div { grid-template-columns: 92px 1fr; }
+
+  /* Keep the CTA in the upper area, clear of the bottom-sheet panel. */
+  .tour-cta { bottom: auto; top: 34%; }
+}
+
+/* ── Embedded in a lesson page (the ulams bridge, src/ulams/adapter.ts) ────────────
+   The lesson page owns the narration, the stepper, the language and the About text. In "none"
+   chrome only the scene and the controls a step really needs (time speed, Lagrange shots, the
+   stopped-galaxy buttons) stay; "minimal" adds Back and Next. */
+body.ulams-embed .info-btn,
+body.ulams-embed #about,
+body.ulams-embed .tour-cta,
+body.ulams-embed #controls { display: none !important; }
+
+body.ulams-chrome-none .tour-panel > :not(.tour-speed):not(.tour-lag):not(.tour-sg),
+body.ulams-chrome-minimal .tour-head,
+body.ulams-chrome-minimal .tour-dd,
+body.ulams-chrome-minimal .tour-title,
+body.ulams-chrome-minimal .tour-body,
+body.ulams-chrome-minimal .tour-link,
+body.ulams-chrome-minimal .tour-progress { display: none !important; }
+
+body.ulams-chrome-none .tour-panel { padding: 0; background: none; border: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+body.ulams-chrome-none .tour-panel::before { display: none; }
+body.ulams-chrome-none .tour-speed,
+body.ulams-chrome-none .tour-lag,
+body.ulams-chrome-none .tour-sg { background: var(--panel); border: 1px solid var(--line); padding: 12px; margin-bottom: 8px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+body.ulams-poster .tour-panel { display: none !important; }
+
+@media (max-width: 760px) {
+  /* The lesson page's own card is a bottom sheet: keep the scene controls at the top. */
+  body.ulams-chrome-none .tour-panel { top: 10px; bottom: auto; max-height: 40vh; overflow-y: auto; }
+}
+
+:focus-visible { outline: 2px solid var(--data); outline-offset: 2px; }
+
+body.no-webgl::after {
+  content: 'This simulation needs WebGL, which is not available in this browser.';
+  position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+  padding: 24px; text-align: center; color: var(--text); font-size: 14px;
+}
