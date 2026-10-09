@@ -3,6 +3,7 @@
 namespace Ulams\CourseBuilder\Pipeline;
 
 use InvalidArgumentException;
+use Ulams\CourseBuilder\Apply\SiteTheme;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
@@ -26,6 +27,7 @@ final class InterviewService
         private readonly Surfaces $surfaces,
         private readonly UiCatalogue $catalogue,
         private readonly EventLog $events,
+        private readonly SiteTheme $theme,
     ) {
     }
 
@@ -46,12 +48,45 @@ final class InterviewService
             'default' => $q['defaultValue'],
             'answered' => false,
         ], $result->data['questions']);
+        array_push($questions, ...$this->fixedQuestions($session));
         $session->putState('interview', ['questions' => $questions, 'message' => $result->data['message']]);
         $session->status = Session::INTERVIEWING;
         $session->save();
 
         $this->events->text($session, $run, (string) $result->data['message']);
         $this->publish($session, $run);
+    }
+
+    /**
+     * The questions code asks itself, with fixed options: pricing always, theme only when the author
+     * may change the site theme or chose a new site (otherwise the apply would skip it anyway).
+     *
+     * @return array<int,array<string,mixed>>
+     */
+    private function fixedQuestions(Session $session): array
+    {
+        $questions = [[
+            'key' => 'pricing',
+            'label' => 'Will the course be free or paid?',
+            'why' => 'Free courses open as soon as you publish. For a paid course you confirm the price in the publish summary before anyone can buy it.',
+            'component' => 'PriceInput',
+            'options' => [['value' => 'free', 'label' => 'Free'], ['value' => 'paid', 'label' => 'Paid']],
+            'default' => ['mode' => 'free'],
+            'answered' => false,
+        ]];
+        if ($this->theme->authorMayChange($session->author, (array) $session->brief)) {
+            $questions[] = [
+                'key' => 'theme',
+                'label' => 'Which look should the site have?',
+                'why' => 'The theme sets colours and type for the course page and lessons. You can change it later in Settings.',
+                'component' => 'ThemePicker',
+                'options' => array_map(fn ($t) => ['value' => $t, 'label' => ucfirst($t)], BriefService::THEMES),
+                'default' => ['preset' => $this->theme->current() ?? 'coffee'],
+                'answered' => false,
+            ];
+        }
+
+        return $questions;
     }
 
     /** @return string[] */
@@ -143,7 +178,7 @@ final class InterviewService
             $status = $q['answered'] ? 'answered' : ($i === $firstOpen ? 'open' : 'upcoming');
             $open += $q['answered'] ? 0 : 1;
             [$component, $props] = $this->control($q, $brief, $status, $i + 1, count($questions));
-            $nodes[] = $this->catalogue->nodeOrFallback("q-{$q['key']}", $component, $props, "{$q['label']} (answer in your own words)", 'interview');
+            $nodes[] = $this->catalogue->nodeOrFallback("q-{$q['key']}", $component, $props, "{$q['label']} (answer in your own words)", in_array($q['key'], BriefService::EXTRA_KEYS, true) ? null : 'interview');
         }
         $this->surfaces->interview($session, $run, $nodes, $open);
 
@@ -163,6 +198,20 @@ final class InterviewService
         ];
         if (isset($brief['decidedBy'][self::field($q['key'])])) {
             $base['decidedBy'] = $brief['decidedBy'][self::field($q['key'])];
+        }
+        if ($q['key'] === 'pricing') {
+            $pricing = $brief['pricing'] ?? ['mode' => 'free'];
+
+            return ['PriceInput', $base + [
+                'currency' => (string) ($pricing['currency'] ?? config('course_builder.currency', 'USD')),
+                'defaultValue' => $q['default'],
+            ] + ($q['answered'] ? ['value' => $pricing] : [])];
+        }
+        if ($q['key'] === 'theme') {
+            return ['ThemePicker', $base + [
+                'presets' => array_map(fn ($o) => ['value' => $o['value'], 'label' => $o['label']], $q['options']),
+                'defaultValue' => $q['default'],
+            ] + ($q['answered'] && isset($brief['theme']) ? ['value' => $brief['theme']] : [])];
         }
         $options = array_slice($q['options'], 0, 6);
         $component = $q['component'];
@@ -218,6 +267,7 @@ final class InterviewService
                 !empty($brief['assessments']['perLessonQuiz']) ? 'quiz' : null,
                 !empty($brief['assessments']['finalTest']) ? 'final' : null,
             ])),
+            'pricing', 'theme' => $brief[$key] ?? null,
             default => $brief[$key] ?? null,
         };
     }

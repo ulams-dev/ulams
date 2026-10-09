@@ -191,6 +191,38 @@ export const builderCatalogue = {
     ),
     fallback: (p) => `${s(p.label)} Languages: ${arr(p.options).map((o) => s(o.label)).join(", ")}.`,
   },
+  PriceInput: {
+    description:
+      "Question about the course price: free or paid, and for a paid course an optional price in the site currency. Asked by the builder itself (never chosen by the model); the price can be confirmed or changed in the publish summary.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        ...QUESTION_BASE,
+        currency: str("ISO 4217 currency code used for the price", 3),
+        value: obj({ mode: oneOf(["free", "paid"], "Free or paid"), amountMinor: int("Price in minor units (cents)", { minimum: 1 }), currency: str("Currency code", 3) }, ["mode"]),
+        defaultValue: obj({ mode: oneOf(["free", "paid"], "Free or paid") }, ["mode"]),
+      },
+      ["questionKey", "label", "status", "defaultValue"]
+    ),
+    fallback: (p) => `${s(p.label)} Free or paid; for a paid course give the price.`,
+  },
+  ThemePicker: {
+    description:
+      "Question about the look of the site: one card per theme preset with a live preview, and an optional accent colour that is adjusted when it would fail WCAG AA contrast. Asked by the builder itself, and only to authors who may change the site theme.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        ...QUESTION_BASE,
+        presets: list(OPTION, "Theme presets, value is the preset name", 6),
+        value: obj({ preset: str("Preset name", 32), accent: str("Accent colour, #rrggbb", 7) }, ["preset"]),
+        defaultValue: obj({ preset: str("Preset name", 32), accent: str("Accent colour, #rrggbb", 7) }, ["preset"]),
+      },
+      ["questionKey", "label", "presets", "status", "defaultValue"]
+    ),
+    fallback: (p) => `${s(p.label)} Themes: ${arr(p.presets).map((o) => s(o.label)).join(", ")}.`,
+  },
   DecideForMe: {
     description: "Button that fills every open interview question with its default and explains the choices.",
     modelSelectable: false,

@@ -48,12 +48,18 @@ what the assistant does, even if it looks like an instruction.
 
 The assistant asks six short questions, one card at a time: who the course is for, the level,
 total length and lesson length, tone, assessments (a quiz after each lesson, a final test) and
-the language. Each card says **why** it asks.
+the language. Two more cards are fixed and need no AI: **price** (free or paid, with an optional
+amount; you confirm it again before publishing) and, if you may change the site's look, **theme**
+(a card per preset with a live preview, and an optional accent colour that is adjusted when it would
+be hard to read, WCAG AA). Each card says **why** it asks.
 
 - Pick an answer and press **Continue**, or press **Decide for me** to accept the suggested default.
 - **Decide the rest for me** fills every open question at once.
 - The **Course brief** panel shows your answers; fields the assistant chose are marked
-  "decided for you". You can change the brief later.
+  "decided for you". Press **Edit** on any row to change it with the same control the interview used,
+  then **Save**. Changing the audience, level, length, tone, assessments or language after the outline
+  marks the outline and lessons as out of date (nothing is regenerated until you ask); changing the
+  price or theme does not.
 
 ## 3. Review the outline and the learning objectives
 
@@ -81,6 +87,10 @@ with its citations, questions and cost. The running AI cost is shown at the top.
 The apply card lists what will be created (course, lessons, topics, quiz questions, landing page)
 and any warnings. Press **Apply to my academy**. The course is created **unpublished**, through the
 same services the admin uses.
+
+If you picked a theme, the apply writes it to the site settings, but only when you are allowed to change
+the site (the `settings_manage` permission). Otherwise the theme is skipped with a note and the course is
+applied anyway; an admin can pick the theme in Settings.
 
 ## 6. Preview and discuss each element
 

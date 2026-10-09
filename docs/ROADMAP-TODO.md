@@ -333,8 +333,8 @@ approved apply through domain services → element chat edits. Designs:
 - [x] (new) AG-UI event log and SSE stream from Laravel, carrying A2UI surfaces (ADR 0011; A2UI as
       `a2ui-surface` activity snapshots, ADR 0023; cache-key wake instead of pub/sub, ADR 0029)
 - [x] (new) Builder components in `@ulams/ui` and the course landing document in the catalogue format
-- [ ] (new) Studio: edit the Course Brief from the brief panel (partial: `PUT …/brief` with stale
-      marking done; the panel is read-only)
+- [x] (new) Studio: edit the Course Brief from the brief panel (`Edit` on a row opens the interview's
+      own control, saves through `PUT …/brief`; price, theme and site never mark stages stale)
 - [ ] (new) Detect admin edits made after an apply before re-applying (ADR 0010 drift check)
 - [x] (new) Vendor the A2UI v0.9 JSON Schemas in `@ulams/ui` for dev-mode validation (plan 13.2; L2-02;
       the studio validates `a2ui-surface` envelopes in dev, tests cover every surface kind)
@@ -371,9 +371,10 @@ approved apply through domain services → element chat edits. Designs:
 - [x] Adaptive chips/buttons with defaults and "decide for me"
 - [ ] Audience, duration, tone, theme preset + accent, free/paid (via `CommerceProvider`;
       interim: existing `payments`), assessments, language (partial: audience, level, duration and
-      lesson length, tone, assessments, language done; theme and free/paid are M2.2)
-- [ ] Editable **Course Brief** (partial: schema-validated brief with decided-by per field, editable
-      through the API with stale marking; studio panel read-only, see the new item above)
+      lesson length, tone, assessments, language, theme preset + accent and a free/paid question done
+      (Course Brief v2); creating the product through `CommerceProvider` is L2-07)
+- [x] Editable **Course Brief** (schema-validated brief v2 with decided-by per field, editable in the
+      studio panel and through the API with stale marking)
 
 ### 2.4 Generation pipeline (queued, resumable, streamed)
 - [x] **Learning objectives** proposed and **approved by the author** first (with inline edits)
@@ -413,7 +414,7 @@ Architecture
 
 Builder components (MVP)
 - [ ] Interview controls · theme picker with live preview · drag-and-drop outline editor (partial:
-      interview controls done; theme picker M2.2, drag-and-drop editor M2.3)
+      interview controls and theme picker done; drag-and-drop editor M2.3)
 - [ ] Lesson preview card · variant comparison · quiz question card (partial: lesson preview and quiz
       question cards done; variant comparison M2.3)
 - [ ] Diff view · generation progress with retry and cost · publish summary with warnings (partial:

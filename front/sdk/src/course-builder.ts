@@ -28,6 +28,10 @@ export interface CourseBrief {
   assessments: { perLessonQuiz: boolean; finalTest: boolean; passScore: number };
   language: string;
   notes?: string;
+  /** Brief v2: a v1 brief has none of these (price reads as free, the site is left as it is). */
+  theme?: { preset: "coffee" | "oncall" | "nightsky"; accent?: string };
+  pricing?: { mode: "free" | "paid"; amountMinor?: number; currency?: string };
+  site?: { mode: "current" | "new"; slug?: string };
   decidedBy: Record<string, "author" | "default"> | [];
 }
 

@@ -485,6 +485,241 @@
         "additionalProperties": false
       }
     },
+    "PriceInput": {
+      "description": "Question about the course price: free or paid, and for a paid course an optional price in the site currency. Asked by the builder itself (never chosen by the model); the price can be confirmed or changed in the publish summary.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "questionKey": {
+            "type": "string",
+            "description": "Brief field the question fills",
+            "maxLength": 40
+          },
+          "label": {
+            "type": "string",
+            "description": "The question, short and plain",
+            "maxLength": 200
+          },
+          "why": {
+            "type": "string",
+            "description": "One sentence on why the question matters for this source",
+            "maxLength": 300
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "answered",
+              "upcoming"
+            ],
+            "description": "Card state"
+          },
+          "decidedBy": {
+            "type": "string",
+            "enum": [
+              "author",
+              "default"
+            ],
+            "description": "Who decided the value"
+          },
+          "step": {
+            "type": "integer",
+            "description": "Position in the interview, from 1",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "total": {
+            "type": "integer",
+            "description": "Number of questions",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "currency": {
+            "type": "string",
+            "description": "ISO 4217 currency code used for the price",
+            "maxLength": 3
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "free",
+                  "paid"
+                ],
+                "description": "Free or paid"
+              },
+              "amountMinor": {
+                "type": "integer",
+                "description": "Price in minor units (cents)",
+                "minimum": 1
+              },
+              "currency": {
+                "type": "string",
+                "description": "Currency code",
+                "maxLength": 3
+              }
+            },
+            "required": [
+              "mode"
+            ],
+            "additionalProperties": false
+          },
+          "defaultValue": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "free",
+                  "paid"
+                ],
+                "description": "Free or paid"
+              }
+            },
+            "required": [
+              "mode"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "questionKey",
+          "label",
+          "status",
+          "defaultValue"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ThemePicker": {
+      "description": "Question about the look of the site: one card per theme preset with a live preview, and an optional accent colour that is adjusted when it would fail WCAG AA contrast. Asked by the builder itself, and only to authors who may change the site theme.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "questionKey": {
+            "type": "string",
+            "description": "Brief field the question fills",
+            "maxLength": 40
+          },
+          "label": {
+            "type": "string",
+            "description": "The question, short and plain",
+            "maxLength": 200
+          },
+          "why": {
+            "type": "string",
+            "description": "One sentence on why the question matters for this source",
+            "maxLength": 300
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "answered",
+              "upcoming"
+            ],
+            "description": "Card state"
+          },
+          "decidedBy": {
+            "type": "string",
+            "enum": [
+              "author",
+              "default"
+            ],
+            "description": "Who decided the value"
+          },
+          "step": {
+            "type": "integer",
+            "description": "Position in the interview, from 1",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "total": {
+            "type": "integer",
+            "description": "Number of questions",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "presets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "description": "Value sent back when chosen",
+                  "maxLength": 120
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Visible text",
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "value",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Theme presets, value is the preset name",
+            "maxItems": 6
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "preset": {
+                "type": "string",
+                "description": "Preset name",
+                "maxLength": 32
+              },
+              "accent": {
+                "type": "string",
+                "description": "Accent colour, #rrggbb",
+                "maxLength": 7
+              }
+            },
+            "required": [
+              "preset"
+            ],
+            "additionalProperties": false
+          },
+          "defaultValue": {
+            "type": "object",
+            "properties": {
+              "preset": {
+                "type": "string",
+                "description": "Preset name",
+                "maxLength": 32
+              },
+              "accent": {
+                "type": "string",
+                "description": "Accent colour, #rrggbb",
+                "maxLength": 7
+              }
+            },
+            "required": [
+              "preset"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "questionKey",
+          "label",
+          "presets",
+          "status",
+          "defaultValue"
+        ],
+        "additionalProperties": false
+      }
+    },
     "DecideForMe": {
       "description": "Button that fills every open interview question with its default and explains the choices.",
       "modelSelectable": false,

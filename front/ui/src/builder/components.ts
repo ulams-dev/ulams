@@ -6,6 +6,8 @@
  */
 import { h, miniMarkdown, sr, uid, usd } from "./dom.ts";
 import { wordDiff } from "./word-diff.ts";
+import { adjustAccent } from "../theme/contrast.ts";
+import { THEME_PRESETS } from "../theme/presets.ts";
 
 export interface A2uiActionOut {
   name: string;
@@ -115,6 +117,12 @@ function answerLabel(p: Props): string {
   if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "totalMinutes" in p.value) {
     return `${p.value.totalMinutes} min · ${p.value.lessonMinutes}-min lessons`;
   }
+  if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "mode" in p.value) {
+    return p.value.mode === "paid" ? (p.value.amountMinor ? `${minorToMajor(Number(p.value.amountMinor))} ${p.value.currency ?? ""}`.trim() : "Paid (price to confirm)") : "Free";
+  }
+  if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "preset" in p.value) {
+    return `${THEME_PRESETS[p.value.preset as keyof typeof THEME_PRESETS]?.label ?? p.value.preset}${p.value.accent ? ` · ${p.value.accent}` : ""}`;
+  }
   if (Array.isArray(p.value)) return p.value.map(label).join(", ") || "None";
   return p.value !== undefined ? label(p.value) : "";
 }
@@ -177,6 +185,91 @@ const LanguagePicker: Renderer = (p, ctx, id) => {
   const select = h("select", { id: selectId, class: "cb-select" },
     (p.options as Props[]).map((o) => h("option", { value: o.value, selected: o.value === (p.value ?? p.defaultValue) }, String(o.label))));
   return questionShell(p, id, [h("label", { for: selectId, class: "cb-label" }, "Language"), select], ctx, () => select.value);
+};
+
+const minorToMajor = (minor: number): string => (minor / 100).toFixed(2);
+
+const PriceInput: Renderer = (p, ctx, id) => {
+  const current = (p.value ?? p.defaultValue ?? { mode: "free" }) as Props;
+  const currency = String(p.currency ?? current.currency ?? "USD");
+  const modes = radioGroup(uid("mode"), "Free or paid", [{ value: "free", label: "Free" }, { value: "paid", label: "Paid" }], current.mode);
+  modes.classList.add("cb-radios-cards");
+  const amountId = uid("price");
+  const amount = h("input", { id: amountId, class: "cb-input", type: "text", inputmode: "decimal", autocomplete: "off", value: current.amountMinor ? minorToMajor(Number(current.amountMinor)) : "", "aria-describedby": `${amountId}-hint` });
+  const hint = h("p", { id: `${amountId}-hint`, class: "cb-muted cb-small" }, `Price in ${currency}. You confirm it again in the publish summary.`);
+  const error = h("p", { class: "cb-error", role: "alert", hidden: true });
+  const field = h("div", { class: "cb-price-field" }, h("label", { for: amountId, class: "cb-label" }, `Price (${currency})`), amount, hint, error);
+  const selected = () => modes.querySelector<HTMLInputElement>("input:checked")?.value ?? "free";
+  const sync = () => {
+    field.hidden = selected() !== "paid";
+  };
+  modes.addEventListener("change", sync);
+  sync();
+  return questionShell(p, id, [modes, field], ctx, () => {
+    if (selected() !== "paid") return { mode: "free" };
+    const text = amount.value.trim().replace(",", ".");
+    if (text === "") return { mode: "paid" };
+    const major = Number(text);
+    if (!/^\d+(\.\d{1,2})?$/.test(text) || !(major > 0)) {
+      error.hidden = false;
+      error.textContent = "Enter the price as a positive amount like 49 or 49.99.";
+      amount.setAttribute("aria-invalid", "true");
+      return undefined;
+    }
+    return { mode: "paid", amountMinor: Math.round(major * 100), currency };
+  });
+};
+
+/** One preset card: a mini landing (Hero + Prose) drawn with the preset's own tokens. */
+function presetPreview(name: keyof typeof THEME_PRESETS, accent: string | undefined): HTMLElement {
+  const t = THEME_PRESETS[name];
+  const shade = accent ? (adjustAccent(accent, t.bg)?.value ?? t.primary) : t.primary;
+  return h("span", { class: "cb-theme-preview", "aria-hidden": "true", style: `--p-bg:${t.bg};--p-card:${t.card};--p-text:${t.text};--p-muted:${t.muted};--p-primary:${shade};--p-on:${t.onPrimary};--p-border:${t.border}` },
+    h("span", { class: "cb-theme-hero" }, h("span", { class: "cb-theme-title" }, "Brew better coffee"), h("span", { class: "cb-theme-cta" }, "Start")),
+    h("span", { class: "cb-theme-prose" }, h("span", {}), h("span", {}), h("span", {})));
+}
+
+const ThemePicker: Renderer = (p, ctx, id) => {
+  const current = (p.value ?? p.defaultValue ?? {}) as Props;
+  const name = uid("theme");
+  const cards = h("fieldset", { class: "cb-radios cb-theme-cards" }, h("legend", {}, "Theme"));
+  const accentId = uid("accent");
+  const accent = h("input", { id: accentId, class: "cb-input cb-accent", type: "text", maxlength: 7, placeholder: "#c2552d", autocomplete: "off", value: current.accent ?? "", "aria-describedby": `${accentId}-note` });
+  const note = h("p", { id: `${accentId}-note`, class: "cb-muted cb-small", "aria-live": "polite" }, "Optional. Leave empty to keep the theme's own accent.");
+  const picked = () => cards.querySelector<HTMLInputElement>("input:checked")?.value ?? current.preset ?? (p.presets as Props[])[0]?.value;
+  const refresh = () => {
+    const preset = picked() as keyof typeof THEME_PRESETS;
+    const value = accent.value.trim();
+    cards.querySelectorAll<HTMLElement>("[data-preset]").forEach((card) => {
+      card.querySelector(".cb-theme-preview")?.replaceWith(presetPreview(card.dataset.preset as keyof typeof THEME_PRESETS, /^#[0-9a-f]{6}$/i.test(value) ? value : undefined));
+    });
+    if (value === "") note.textContent = "Optional. Leave empty to keep the theme's own accent.";
+    else if (!/^#[0-9a-f]{6}$/i.test(value)) note.textContent = "Use a colour like #c2552d.";
+    else {
+      const result = adjustAccent(value, THEME_PRESETS[preset]?.bg ?? "#ffffff");
+      note.textContent = result?.adjusted ? `${value} is too light or too dark to read on this theme, so it will be shown as ${result.value} (WCAG AA).` : `${value} reads well on this theme (WCAG AA).`;
+    }
+  };
+  for (const option of p.presets as Props[]) {
+    const inputId = uid(name);
+    const input = h("input", { type: "radio", id: inputId, name, value: String(option.value), checked: option.value === current.preset });
+    const card = h("span", { class: "cb-radio cb-theme-card", "data-preset": String(option.value) },
+      input,
+      h("label", { for: inputId }, presetPreview(option.value as keyof typeof THEME_PRESETS, undefined), h("span", { class: "cb-theme-name" }, String(option.label)), h("span", { class: "cb-muted cb-small" }, THEME_PRESETS[option.value as keyof typeof THEME_PRESETS]?.mood ?? "")));
+    cards.append(card);
+  }
+  cards.addEventListener("change", refresh);
+  accent.addEventListener("input", refresh);
+  queueMicrotask(refresh);
+  return questionShell(p, id, [cards, h("label", { for: accentId, class: "cb-label" }, "Accent colour"), accent, note], ctx, () => {
+    const value = accent.value.trim();
+    if (value !== "" && !/^#[0-9a-f]{6}$/i.test(value)) {
+      note.textContent = "Use a colour like #c2552d.";
+      accent.setAttribute("aria-invalid", "true");
+      return undefined;
+    }
+    return { preset: picked(), ...(value ? { accent: value.toLowerCase() } : {}) };
+  });
 };
 
 const DecideForMe: Renderer = (p, ctx, id) => {
@@ -871,6 +964,8 @@ export const builderComponents: Record<string, Renderer> = {
   SingleChoice,
   DurationSlider,
   LanguagePicker,
+  PriceInput,
+  ThemePicker,
   DecideForMe,
   SourceCard,
   CitationChip,

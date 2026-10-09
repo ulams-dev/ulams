@@ -24,8 +24,10 @@ test.describe.configure({ mode: "serial" });
 // eslint-disable-next-line no-empty-pattern
 test.beforeEach(({}, info) => test.skip(info.project.name !== "desktop", "desktop only"));
 
-async function axe(page: Page, name: string): Promise<void> {
-  const result = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+async function axe(page: Page, name: string, scope?: string): Promise<void> {
+  const builder = new AxeBuilder({ page });
+  if (scope) builder.include(scope);
+  const result = await builder.withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
   expect(result.violations.map((v) => `${name}: ${v.id} ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);
 }
 
@@ -77,6 +79,16 @@ test("build a course from a document, edit a question in chat, undo", async ({ p
   await open.getByRole("button", { name: "Decide for me" }).click();
   await expect(page.locator(".cb-question-answered").first()).toBeVisible();
   await page.getByRole("button", { name: "Decide the rest for me" }).click();
+
+  // the brief panel is editable: price is free by default, the same control sets a paid price
+  const briefPanel = page.locator(".st-brief");
+  await expect(briefPanel.locator("dd").filter({ hasText: /^Free/ })).toBeVisible();
+  await briefPanel.getByRole("button", { name: "Edit price" }).click();
+  await axe(page, "brief editor", ".st-brief");
+  await briefPanel.locator("label", { hasText: /^Paid$/ }).click();
+  await briefPanel.getByLabel(/^Price \(/).fill("49");
+  await briefPanel.getByRole("button", { name: "Save" }).click();
+  await expect(briefPanel.locator("dd").filter({ hasText: /^49\.00 USD/ })).toBeVisible();
 
   // outline review: edit one objective, approve
   const outline = page.getByRole("region", { name: "Proposed outline" }).last();
