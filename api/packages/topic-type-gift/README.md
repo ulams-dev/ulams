@@ -19,7 +19,7 @@ This package supports the following types of questions:
 Each question is stored in the database as a string. In the tests you can see examples of questions of different types. See [examples](https://github.com/EscolaLMS/Topic-Type-GIFT/blob/main/tests/GiftQuestionTesting.php)
 
 The quiz can have a set maximum number of attempts for the user to solve the test and a maximum time for each attempt.
-If the user doesn't complete the attempt then it is closed automatically after the time set by the variable `Config::get('ulams_gift_quiz.max_quiz_time');`
+If the user doesn't complete the attempt then it is closed automatically after the time set by the variable `Config::get('ulams_gift_quiz.max_quiz_time')` (an administrable setting, 120 minutes when unset). A quiz's own `max_execution_time` wins.
 The user will see the results when the attempt is finished.
 
 The answer to an essay type question is not automatically graded. The teacher should do it.

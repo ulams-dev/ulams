@@ -230,11 +230,64 @@ class CreateTenantCommandTest extends TestCase
         File::deleteDirectory($this->storage);
         $this->runner->calls = [];
 
-        $this->domains->shouldReceive('add')->once()->withArgs(fn ($host, $values) => $host === 'acme.localhost' && $values['DB_DATABASE'] === 'ulams_acme');
+        config(['ulams_tenancy.scheme' => 'https', 'ulams_tenancy.content_host' => '{slug}.content.ulams.app']);
+        // sync-env writes the content origin of the current naming patterns to existing tenants
+        $this->domains->shouldReceive('add')->once()->withArgs(fn ($host, $values) => $host === 'acme.localhost'
+            && $values['DB_DATABASE'] === 'ulams_acme'
+            && $values['CONTENT_ORIGIN'] === 'https://acme.content.ulams.app');
         $this->artisan('ulams:tenant:sync-env', ['--migrate' => true])->assertExitCode(0);
 
         $this->assertSame(['migrate'], $this->runner->commands());
         $this->assertSame('PUBLIC-acme.localhost', file_get_contents($this->storage . '/oauth-public.key'));
+    }
+
+    public function testSyncEnvKeepsPlatformAiSettingsAndTenantOverridesWin(): void
+    {
+        config(['ulams_tenancy.inherited_env' => [
+            'ANTHROPIC_API_KEY' => 'sk-platform-secret',
+            'AI_DRIVER' => 'anthropic',
+            'AI_MODEL_DEFAULT' => 'model-from-platform',
+            'AI_MODEL_LIGHT' => null,
+        ]]);
+        $this->database->shouldReceive('ensure')->twice();
+        $this->buckets->shouldReceive('ensure')->twice();
+        $this->domains->shouldReceive('add')->twice();
+        $this->artisan('ulams:tenant:create', ['slug' => 'acme'])->assertExitCode(0);
+        $this->artisan('ulams:tenant:create', ['slug' => 'bravo'])->assertExitCode(0);
+        Tenant::query()->where('slug', 'bravo')->firstOrFail()->update(['env_overrides' => ['AI_DRIVER' => 'fake', 'NOT_ALLOWED' => 'x']]);
+
+        $seen = [];
+        $this->domains->shouldReceive('add')->twice()->andReturnUsing(function ($host, $values) use (&$seen) {
+            $seen[$host] = $values;
+        });
+        $this->artisan('ulams:tenant:sync-env')
+            ->doesntExpectOutputToContain('sk-platform-secret')
+            ->assertExitCode(0);
+
+        $this->assertSame('sk-platform-secret', $seen['acme.localhost']['ANTHROPIC_API_KEY']);
+        $this->assertSame('anthropic', $seen['acme.localhost']['AI_DRIVER']);
+        $this->assertArrayNotHasKey('AI_MODEL_LIGHT', $seen['acme.localhost']);
+        $this->assertSame('fake', $seen['bravo.localhost']['AI_DRIVER']);
+        $this->assertSame('sk-platform-secret', $seen['bravo.localhost']['ANTHROPIC_API_KEY']);
+        $this->assertArrayNotHasKey('NOT_ALLOWED', $seen['bravo.localhost']);
+    }
+
+    public function testSetEnvStoresOverridesEncryptedAndNeverPrintsThem(): void
+    {
+        Tenant::query()->create(array_merge(\Ulams\Tenancy\Support\TenantNaming::newTenantAttributes('keyed'), ['steps' => []]));
+
+        $this->artisan('ulams:tenant:set-env', ['slug' => 'keyed', '--set' => ['ANTHROPIC_API_KEY=sk-tenant-secret']])
+            ->doesntExpectOutputToContain('sk-tenant-secret')
+            ->expectsOutputToContain('ANTHROPIC_API_KEY')
+            ->assertExitCode(0);
+
+        $raw = \Illuminate\Support\Facades\DB::table('tenants')->where('slug', 'keyed')->value('env_overrides');
+        $this->assertStringNotContainsString('sk-tenant-secret', $raw);
+        $this->assertSame('sk-tenant-secret', Tenant::query()->firstWhere('slug', 'keyed')->env_overrides['ANTHROPIC_API_KEY']);
+
+        $this->artisan('ulams:tenant:set-env', ['slug' => 'keyed', '--set' => ['DB_PASSWORD=x']])->assertExitCode(1);
+        $this->artisan('ulams:tenant:set-env', ['slug' => 'keyed', '--unset' => ['ANTHROPIC_API_KEY']])->assertExitCode(0);
+        $this->assertNull(Tenant::query()->firstWhere('slug', 'keyed')->env_overrides);
     }
 
     public function testDeleteRequiresForceAndRemovesEverything(): void

@@ -24,6 +24,7 @@ class TestCase extends CoreTestCase
         }
         // idempotent: adds tenants.demo to a test database migrated before it existed
         (require __DIR__ . '/../database/migrations/2026_10_09_000000_add_demo_to_tenants_table.php')->up();
+        (require __DIR__ . '/../database/migrations/2026_10_10_000000_add_env_overrides_to_tenants_table.php')->up();
     }
 
     protected function getPackageProviders($app): array

@@ -110,7 +110,7 @@ documentation site.
 
 ## Running the checks locally
 
-Requirements: Docker, Node 22 (`.nvmrc`) and Yarn 1 via Corepack (`corepack enable`). Setup is in
+Requirements: Docker, Node 22 (`.nvmrc`) or 24 and Yarn 1 via Corepack (`corepack enable`). Setup is in
 the [README](README.md#quick-start).
 
 ```bash

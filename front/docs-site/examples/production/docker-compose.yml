@@ -97,6 +97,10 @@ services:
       LARAVEL_APP_DEBUG: "false"
       LARAVEL_APP_KEY: ${APP_KEY:?set APP_KEY}
       LARAVEL_APP_URL: https://api.${ULAMS_DOMAIN}
+      # the exact-Origin check of the API (api/docs/content-origin.md): the platform's own apps;
+      # tenants get theirs from their env file. Extra first-party origins: LARAVEL_TRUSTED_ORIGINS.
+      LARAVEL_FRONTEND_URL: https://app.${ULAMS_DOMAIN}
+      LARAVEL_ADMIN_URL: https://admin.${ULAMS_DOMAIN}
       LARAVEL_DB_CONNECTION: pgsql
       LARAVEL_DB_HOST: postgres
       LARAVEL_DB_PORT: "5432"

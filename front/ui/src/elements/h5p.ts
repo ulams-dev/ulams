@@ -1,4 +1,5 @@
 import { isCompletingStatement, isH5PEmbedMessage, type H5PParentToEmbed } from "@ulams/sdk/h5p";
+import { isTrustedFrameMessage } from "@ulams/sdk/frames";
 import { announceComplete, bff } from "./bff.ts";
 
 /**
@@ -19,8 +20,9 @@ class UlamsH5P extends HTMLElement {
     window.removeEventListener("message", this.onMessage);
   }
 
-  private send(message: H5PParentToEmbed, origin: string): void {
-    this.iframe?.contentWindow?.postMessage(message, origin);
+  /** The frame is served through this site's /h5p proxy, so its origin is ours and nothing else. */
+  private send(message: H5PParentToEmbed): void {
+    this.iframe?.contentWindow?.postMessage(message, window.location.origin);
   }
 
   private themeCss(): string {
@@ -32,13 +34,13 @@ body{font-family:${v("--ulams-font-family-body")};}
   }
 
   private onMessage = (event: MessageEvent) => {
-    if (!this.iframe || event.source !== this.iframe.contentWindow || !isH5PEmbedMessage(event.data)) return;
+    if (!this.iframe || !isTrustedFrameMessage(event, { frame: this.iframe.contentWindow, origin: window.location.origin }) || !isH5PEmbedMessage(event.data)) return;
     const message = event.data;
     const topicId = Number(this.getAttribute("topic-id"));
     switch (message.type) {
       case "ulams-h5p:ready":
-        this.send({ type: "ulams-h5p:style", css: this.themeCss(), urls: [] }, event.origin);
-        this.send({ type: "ulams-h5p:token", token: null }, event.origin);
+        this.send({ type: "ulams-h5p:style", css: this.themeCss(), urls: [] });
+        this.send({ type: "ulams-h5p:token", token: null });
         break;
       case "ulams-h5p:loaded":
         this.setAttribute("state", "loaded");

@@ -70,8 +70,9 @@ Docker network and must not be published.
 
 ## DNS
 
-You need two domains: one for the application and a **different registrable domain** for content
-origins (see [Content origin](/operators/content-origin/)). With `ULAMS_DOMAIN=lms.example.com`
+You need a domain for the application and one for content origins: a **different registrable
+domain** (strongest) or a subdomain of the app domain such as `content.lms.example.com` (supported
+with mitigations; see [Content origin](/operators/content-origin/)). With `ULAMS_DOMAIN=lms.example.com`
 and `ULAMS_CONTENT_DOMAIN=example-content.net`, point these records at the server:
 
 | Record | Serves |

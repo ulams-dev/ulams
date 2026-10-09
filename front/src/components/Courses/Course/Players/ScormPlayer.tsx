@@ -90,7 +90,8 @@ const ScormPlayer: FunctionComponent<{
           <iframe
             title={value.title}
             src={launch.url}
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            // allow-same-origin is required: the SCO finds window.API in the player page (SANDBOX_SCORM)
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"
             allow="fullscreen; autoplay"
             referrerPolicy="no-referrer"
           />

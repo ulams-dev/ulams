@@ -198,6 +198,8 @@ export const H5Player: React.FC<H5PProps> = ({
           title="H5P"
           style={{ height }}
           allow="fullscreen; autoplay; encrypted-media"
+          // allow-same-origin is required: the embed page calls its own service (SANDBOX_H5P)
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals allow-presentation"
           allowFullScreen
           referrerPolicy="no-referrer"
         />

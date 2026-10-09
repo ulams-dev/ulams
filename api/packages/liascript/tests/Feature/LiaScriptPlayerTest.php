@@ -87,6 +87,9 @@ class LiaScriptPlayerTest extends TestCase
         $disk->assertExists("liascript/{$this->documentId}/v2/img/x.png");
         $disk->assertExists('liascript/_player/index.html');
         $disk->assertExists('liascript/_player/player.js');
+        // same-site hardening: an http(s) API base and a path on this origin only
+        $this->assertStringContainsString('isHttpUrl(api)', $disk->get('liascript/_player/player.js'));
+        $this->assertStringContainsString("course.charAt(1) === '/'", $disk->get('liascript/_player/player.js'));
         $disk->assertExists('liascript/_player/build/assets/app.js');
         $this->assertStringContainsString('<script src="config.js">', $disk->get('liascript/_player/build/index.html'));
         // the build takes the SCORM API from our page before it would read window.top (another origin)

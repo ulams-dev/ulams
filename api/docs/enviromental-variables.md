@@ -98,6 +98,25 @@ Every domain shares one Redis. Set by `ulams:tenant:create` for each tenant
 | `CACHE_PREFIX`   | Cache store prefix (inside `REDIS_PREFIX`)       | `<slug of APP_NAME>_cache`     |
 | `HORIZON_PREFIX` | Horizon metadata prefix                          | `<slug of APP_NAME>_horizon:`  |
 
+## Cookies and origin checks
+
+Third-party package code runs on the content origin; where that origin is a subdomain of the app's
+site the browser treats it as same-site, so the API hardens its cookies and checks the `Origin` of
+every state-changing request (see [content-origin.md](content-origin.md)). No cookie ever carries a
+`Domain` attribute.
+
+| Variable name           | Description                                                                                                                              | Default                                  |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| `SESSION_COOKIE_PREFIX` | Prefix of the session and `XSRF-TOKEN` cookie names. `__Host-` makes them Secure, `Path=/` and host-only. Empty over plain http          | `__Host-` when `APP_ENV=production`, else empty |
+| `SESSION_COOKIE`        | Full name of the session cookie (overrides the prefix and `APP_NAME`)                                                                    | `<prefix><slug of APP_NAME>_session`     |
+| `SESSION_SECURE_COOKIE` | `Secure` attribute; must stay `true` while the prefix is `__Host-`                                                                       | `true` with a prefix, else `false`       |
+| `ORIGIN_CHECK`          | Refuse POST/PUT/PATCH/DELETE whose `Origin` is not one of the tenant's own apps (`403`). Turn off only to debug                          | `true`                                   |
+| `TRUSTED_ORIGINS`       | Comma separated extra origins allowed to call the API from a browser, besides `FRONTEND_URL`, `ADMIN_URL` and `APP_URL`; never content origins | empty                                    |
+| `ADMIN_URL`             | Origin of the tenant's admin panel (also trusted by the origin check); written by `ulams:tenant:create`                                   | empty                                    |
+
+Outside production `localhost` and `*.localhost` (any port) are trusted too, so the development
+stack and the old front on `:3000`/`:8000` keep working.
+
 ## Tenancy (`packages/tenancy`)
 
 Read on the platform by `ulams:tenant:*`, see [multidomain.md](multidomain.md).
@@ -129,6 +148,8 @@ Read on the platform by `ulams:tenant:*`, see [multidomain.md](multidomain.md).
 | `DB_ADMIN_PASSWORD`          | Its password                                                                                  | `DB_PASSWORD`                                |
 | `TENANCY_PHP_BINARY`         | PHP binary for tenant subprocesses                                                           | current PHP binary                           |
 | `TENANCY_PROCESS_TIMEOUT`    | Timeout of one tenant subprocess, seconds                                                    | `900`                                        |
+| `TENANCY_SCHEDULER_LOCK`     | Several scheduler replicas: only the one that takes the per-minute cache lock runs the tick (ADR 0068) | `true`                             |
+| `ANTHROPIC_API_KEY`, `AI_DRIVER`, `AI_MODEL_*`, `ANTHROPIC_BASE_URL` | Platform AI settings inherited by every tenant env file on create and `sync-env`; override per tenant with `ulams:tenant:set-env` (ADR 0063) | unset |
 | `WORKERS_CHECK_INTERVAL`     | Seconds between `workers.sh` checks of the domain list and of exited processes               | `10`                                         |
 | `WORKERS_MAX_TIME`           | Seconds a per-domain worker or scheduler loop runs before it is restarted (fresh code/config) | `3600`                                       |
 
@@ -146,6 +167,7 @@ the others are optional overrides. See [packages/demo/README.md](../packages/dem
 | `DEMO_MODE`             | Login without password (`/api/demo/*`) and an hourly reset. **Never on production data** | `false`                     |
 | `DEMO_ADMIN_EMAIL`      | Account of the automatic admin login                                                | `INITIAL_USER_EMAIL`             |
 | `DEMO_STUDENT_EMAIL`    | Account of the automatic student login                                              | `student1@<admin e-mail domain>` |
+| `DEMO_TUTOR_EMAIL`      | Account of the tutor login (`role: tutor`)                                           | `tutor@<admin e-mail domain>`    |
 | `DEMO_ADMIN_URL`        | Admin panel link on the front's demo badge                                          | `ADMIN_URL`                      |
 | `DEMO_RESET_SCHEDULE`   | Schedule `ulams:demo:reset`                                                          | `true`                           |
 | `DEMO_RESET_CRON`       | When                                                                                 | `0 * * * *`                      |

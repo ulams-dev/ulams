@@ -2,6 +2,15 @@
 
 use Illuminate\Support\Str;
 
+/*
+ * `__Host-` cookies (Secure, Path=/, no Domain) cannot be set or overwritten by a sibling
+ * subdomain, which matters when the content origin (third-party package code) is a subdomain of
+ * the app's site (docs/content-origin.md). On in production; in development over plain http
+ * (*.localhost) the browser would drop them, so the prefix is empty there. Override with
+ * SESSION_COOKIE_PREFIX (set it empty to turn it off, e.g. behind a TLS-less test proxy).
+ */
+$hostPrefix = (string) env('SESSION_COOKIE_PREFIX', env('APP_ENV') === 'production' ? '__Host-' : '');
+
 return [
 
     /*
@@ -126,8 +135,11 @@ return [
 
     'cookie' => env(
         'SESSION_COOKIE',
-        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
+        $hostPrefix.Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
     ),
+
+    // name of the CSRF cookie that the browser reads back (App\Http\Middleware\PreventRequestForgery)
+    'xsrf_cookie' => $hostPrefix.'XSRF-TOKEN',
 
     /*
     |--------------------------------------------------------------------------
@@ -153,7 +165,8 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN', null),
+    // never set: a Domain attribute makes the cookie visible to every subdomain, content origin included
+    'domain' => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -166,7 +179,7 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE', null),
+    'secure' => filter_var(env('SESSION_SECURE_COOKIE', $hostPrefix !== ''), FILTER_VALIDATE_BOOLEAN),
 
     /*
     |--------------------------------------------------------------------------
@@ -194,6 +207,6 @@ return [
     |
     */
 
-    'same_site' => null,
+    'same_site' => 'lax',
 
 ];

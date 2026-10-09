@@ -75,7 +75,7 @@ token from the cookie, and browser islands call `/bff/api/…`, which adds the t
 ## Demo login
 
 When a tenant runs in demo mode (`DEMO_MODE=true` in its env file, `demo` package), the API exposes
-`POST /api/demo/login {"role": "student" | "admin"}`. It logs the visitor in as the seeded student or
+`POST /api/demo/login {"role": "student" | "tutor" | "admin"}`. It logs the visitor in as the seeded student, tutor or
 admin **without a password**, issues a regular personal access token and answers with the same body
 as `/api/auth/login`. `GET /api/config` then contains `ulams_demo: {enabled, front_url, admin_url}`,
 which the admin and the legacy front read at boot to log in automatically.

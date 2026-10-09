@@ -4,8 +4,8 @@
 
 Turns a tenant into a public demo that anyone can try without an account:
 
-- `POST /api/demo/login {"role": "student" | "admin"}` logs the visitor in as the tenant's
-  seeded student or admin, without a password. It issues a regular Passport personal access
+- `POST /api/demo/login {"role": "student" | "tutor" | "admin"}` logs the visitor in as the tenant's
+  seeded student, tutor or admin, without a password. It issues a regular Passport personal access
   token and answers with the same body as `POST /api/auth/login`, so the front and the admin
   store it like after a normal login. The demo student is first given access to every
   published course, so any course link opens with access.
@@ -37,6 +37,7 @@ make demo-mode-on                                   # coffee, oncall and nightsk
 |---|---|---|
 | admin | `INITIAL_USER_EMAIL` (`admin@<slug>.ulams.app`, created by `PermissionsSeeder`) | `DEMO_ADMIN_EMAIL` |
 | student | `student1@<admin e-mail domain>` (created by `ulams:tenant:seed-demo`) | `DEMO_STUDENT_EMAIL` |
+| tutor | `tutor@<admin e-mail domain>` (created by `ulams:tenant:seed-demo`; the course author in the studio) | `DEMO_TUTOR_EMAIL` |
 
 If the account does not exist, the first user with that role is used.
 

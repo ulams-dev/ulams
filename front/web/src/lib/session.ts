@@ -2,8 +2,20 @@ import type { AstroCookies } from "astro";
 import { ApiError, demoStudentSession, type Tenant } from "@ulams/sdk";
 import { config } from "./config.ts";
 import { apiFor, warmLearner } from "./data.ts";
+import { SESSION_BASE, cookieName, sessionCookieOptions } from "./cookies.ts";
 
-export const SESSION_COOKIE = "ulams_session";
+/** Name of the session cookie: `__Host-ulams_session` on https, the configured fallback over http. */
+export function sessionCookieName(secure: boolean): string {
+  return cookieName(SESSION_BASE, secure, config.cookieFallbackPrefix);
+}
+
+export function hasSession(cookies: AstroCookies, secure: boolean): boolean {
+  return cookies.has(sessionCookieName(secure));
+}
+
+export function readSession(cookies: AstroCookies, secure: boolean): string | undefined {
+  return cookies.get(sessionCookieName(secure))?.value;
+}
 
 interface DemoToken {
   token: string;
@@ -53,17 +65,11 @@ export function forgetDemoToken(tenant: Tenant, token: string): void {
 }
 
 export function setSessionCookie(cookies: AstroCookies, token: string, expiresAt: number, secure: boolean): void {
-  cookies.set(SESSION_COOKIE, token, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure,
-    path: "/",
-    expires: new Date(expiresAt),
-  });
+  cookies.set(sessionCookieName(secure), token, sessionCookieOptions(secure, expiresAt));
 }
 
-export function clearSessionCookie(cookies: AstroCookies): void {
-  cookies.delete(SESSION_COOKIE, { path: "/" });
+export function clearSessionCookie(cookies: AstroCookies, secure: boolean): void {
+  cookies.delete(sessionCookieName(secure), { path: "/", secure });
 }
 
 /** Token from the cookie, or a fresh demo session stored in the cookie. Null when login is impossible. */
@@ -72,7 +78,7 @@ export async function ensureSession(
   cookies: AstroCookies,
   secure: boolean
 ): Promise<{ token: string; via: "cookie" | "demo" | "password" } | null> {
-  const existing = cookies.get(SESSION_COOKIE)?.value;
+  const existing = readSession(cookies, secure);
   if (existing) return { token: existing, via: "cookie" };
   try {
     const demo = await demoToken(tenant);
@@ -88,7 +94,7 @@ export async function ensureSession(
 /** After a 401 (tokens are wiped by the hourly demo reset): drop the session and log in again once. */
 export async function renewSession(tenant: Tenant, cookies: AstroCookies, secure: boolean, stale: string) {
   forgetDemoToken(tenant, stale);
-  clearSessionCookie(cookies);
+  clearSessionCookie(cookies, secure);
   try {
     const demo = await demoToken(tenant, true);
     setSessionCookie(cookies, demo.token, demo.expiresAt, secure);
