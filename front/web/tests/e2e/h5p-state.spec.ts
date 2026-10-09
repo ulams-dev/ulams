@@ -38,7 +38,8 @@ test.describe("H5P state through the BFF", () => {
     // state goes through the proxy as the learner and is there on the next load
     const stateUrl = `${base}/h5p/contentUserData/${contentId}/state/0`;
     const marker = JSON.stringify({ answered: Date.now() });
-    const saved = await page.request.post(stateUrl, { form: { data: marker, preload: "1", invalidate: "1" } });
+    // a browser sends Origin on its own POSTs; the front refuses writes without a same-site one
+    const saved = await page.request.post(stateUrl, { form: { data: marker, preload: "1", invalidate: "1" }, headers: { Origin: base } });
     expect(saved.status()).toBe(200);
 
     await page.reload();

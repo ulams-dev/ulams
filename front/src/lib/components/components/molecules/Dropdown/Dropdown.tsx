@@ -1,7 +1,7 @@
 import * as React from "react";
 import ReactDropdown, { ReactDropdownProps } from "react-dropdown";
 import "react-dropdown/style.css";
-import { contrast } from "chroma-js";
+import chroma from "chroma-js";
 import { useThemeTokens } from "../../../theme/applyTheme";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import classes from "./Dropdown.module.css";
@@ -32,7 +32,7 @@ export const Dropdown: React.FC<DropdownProps> = (props) => {
   const cts = React.useMemo(() => {
     if (!resolvedBackground) return false;
     try {
-      return contrast("#fff", resolvedBackground) >= 1.85;
+      return chroma.contrast("#fff", resolvedBackground) >= 1.85;
     } catch {
       return false;
     }

@@ -7,6 +7,9 @@
  * saved state (`contentUserData`) and the result (`finishedData`). Everything else (library,
  * content, editor and admin routes) is forwarded as it came, without the session.
  */
+/** The routes of the proxy (src/pages/h5p). The middleware reads the session cookie for them. */
+export const H5P_ROUTE = /^\/h5p(\/|$)/;
+
 const ID = "[1-9][0-9]{0,18}";
 const SEGMENT = "[A-Za-z0-9_.-]{1,64}";
 

@@ -265,7 +265,7 @@
 (admin) {
 	import app_csp_admin {args[0]}
 	encode zstd gzip
-	reverse_proxy admin:80
+	reverse_proxy admin:8080
 }
 
 api.{$ULAMS_DOMAIN} {

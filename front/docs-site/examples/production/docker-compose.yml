@@ -255,7 +255,7 @@ services:
       ULAMS_CONTENT_ORIGIN: "https://{slug}.${ULAMS_CONTENT_DOMAIN}"
       ULAMS_STORAGE_ORIGINS: https://storage.${ULAMS_CONTENT_DOMAIN}
 
-  # Admin and author panel (static build behind Apache); the tenant API comes from the host
+  # Admin and author panel (static build on nginx-unprivileged, port 8080); the tenant API comes from the host
   admin:
     <<: *service
     image: ghcr.io/ulams-dev/admin:${ULAMS_VERSION:-latest}

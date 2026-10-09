@@ -138,7 +138,21 @@ export default defineConfig({
     `window.REACT_APP_API_URL = null;
     window.REACT_APP_SENTRYDSN = null;
     window.REACT_APP_YBUG = null;`,
-    `<!-- inject env variables -->`,
+    `(function () {
+  // Runtime settings of the container (ADR 0056): load them synchronously so that everything
+  // that reads window.REACT_APP_* at start sees them. Missing or invalid file: build-time defaults apply.
+  try {
+    var x = new XMLHttpRequest();
+    x.open('GET', '/runtime-config.json', false);
+    x.send();
+    if (x.status === 200) {
+      var c = JSON.parse(x.responseText);
+      Object.keys(c).forEach(function (k) {
+        if (k.indexOf('REACT_APP_') === 0) window[k] = c[k];
+      });
+    }
+  } catch (e) {}
+})();`,
   ],
   //================ pro 插件配置 =================
   presets: ['umi-presets-pro'],

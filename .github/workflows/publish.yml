@@ -146,11 +146,11 @@ jobs:
           - name: admin
             file: admin/Dockerfile
             licenses: MIT
-            description: ulams admin panel (static build served by Apache; REACT_APP_* injected at runtime)
+            description: ulams admin panel (static build on nginx-unprivileged, port 8080; REACT_APP_* written to runtime-config.json at start)
           - name: front
             file: front/Dockerfile
             licenses: MIT
-            description: ulams learner front (static build served by Apache; VITE_APP_* injected at runtime)
+            description: ulams learner front (static build on nginx-unprivileged, port 8080; VITE_APP_* written to runtime-config.json at start)
           - name: web
             file: front/web/Dockerfile
             licenses: MIT

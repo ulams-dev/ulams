@@ -1,0 +1,45 @@
+---
+title: Admin and front images
+description: How to run the admin and legacy front container images - port, user, runtime settings in runtime-config.json, health check and what the reverse proxy must add.
+sidebar:
+  order: 4
+modules:
+  - admin
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+The `admin` and `front` images (`ghcr.io/ulams-dev/admin`, `ghcr.io/ulams-dev/front`) are static builds
+served by [nginx-unprivileged](https://hub.docker.com/r/nginxinc/nginx-unprivileged). They contain no
+PHP, run as a non-root user (uid 101) and listen on **port 8080**. Point your reverse proxy at
+`admin:8080` and `front:8080`; the production example in
+[Self-hosting](/operators/self-hosting/) already does.
+
+## Settings
+
+Settings are plain environment variables, read when the container starts:
+
+| Image | Variables | Examples |
+|---|---|---|
+| `admin` | every `REACT_APP_*` | `REACT_APP_TENANT_API_HOST_PATTERN`, `REACT_APP_API_URL`, `REACT_APP_STUDIO_URL`, `REACT_APP_SENTRYDSN`, `REACT_APP_YBUG` |
+| `front` | every `VITE_APP_*` | `VITE_APP_API_URL`, `VITE_APP_TENANT_API_HOST_PATTERN`, `VITE_APP_SENTRYDSN`, `VITE_APP_FIREBASE_*` |
+
+At start the container writes them to `/runtime-config.json`; the page fetches that file before the
+app boots. Only variables with the prefix above are written, so other secrets in the container
+environment are never served. Open `https://<host>/runtime-config.json` to see what a running
+container exposes. To change a setting, restart the container.
+
+Leave `REACT_APP_API_URL` empty for a multi-tenant admin: it derives the tenant API from the page host
+with `REACT_APP_TENANT_API_HOST_PATTERN`, for example `{slug}.admin.example.com=>https://{slug}.api.example.com`.
+
+## What the image serves
+
+- `/` and every path without a file extension return `index.html` (single page app).
+- Hashed assets are cached for a year; `index.html`, the service workers and `runtime-config.json` are
+  never cached.
+- `GET /healthz` returns `200 ok` for load balancer and orchestrator checks.
+
+<Aside type="caution" title="Headers come from your proxy">
+The image sets no security headers. Add the Content-Security-Policy, HSTS and the other headers in the
+reverse proxy; the production example Caddyfile does this with its `app_csp_report_only` snippet (see [Security](/operators/security/)).
+</Aside>

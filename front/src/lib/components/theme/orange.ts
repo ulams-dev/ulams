@@ -1,5 +1,5 @@
 import type { ThemeTokens } from "./types";
-import { blend } from "chroma-js";
+import chroma from "chroma-js";
 import { sharedTheme } from "./shared";
 
 export const orangeTheme: ThemeTokens = {
@@ -8,8 +8,8 @@ export const orangeTheme: ThemeTokens = {
   primaryColor: "#F47820",
   dm__primaryColor: "#F47820",
 
-  secondaryColor: blend("#F47820", "#BDBDBD", "multiply").hex(),
-  dm__secondaryColor: blend("#F47820", "#BDBDBD", "multiply").hex(),
+  secondaryColor: chroma.blend("#F47820", "#BDBDBD", "multiply").hex(),
+  dm__secondaryColor: chroma.blend("#F47820", "#BDBDBD", "multiply").hex(),
 
   headerColor: "#111111",
 

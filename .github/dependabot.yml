@@ -14,6 +14,22 @@ updates:
     groups:
       npm-minor-patch:
         update-types: [minor, patch]
+    ignore:
+      # eslint 10 is live in the flat-config packages (api/h5p, api/pdf, front/sdk, front/ui, front/web),
+      # but admin (umi lint, fabric) and front (vite, legacy .eslintrc) are still on eslint 8. Dependabot
+      # bumps one range for every manifest, so hold the major until those two migrate (docs/ROADMAP-TODO.md).
+      - dependency-name: "eslint"
+        update-types: [version-update:semver-major]
+      - dependency-name: "@eslint/js"
+        update-types: [version-update:semver-major]
+      # sharp 0.35 fails to load in the docs-site production build on the CI runner (Astro reports
+      # MissingSharp) and Astro depends on sharp ^0.34.
+      - dependency-name: "sharp"
+        versions: [">= 0.35.0"]
+      # @ant-design/pro-form 2.31.5+ ships declaration files with import("src/...") paths, so
+      # ProForm.Item props resolve to any and admin typecheck fails. Held at pro-components 2.8.4.
+      - dependency-name: "@ant-design/pro-components"
+        versions: [">= 2.8.5, <= 2.8.10"]
     commit-message:
       prefix: "build(deps)"
 

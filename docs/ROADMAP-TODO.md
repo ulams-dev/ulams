@@ -187,6 +187,13 @@ open Phase 0, 1 and 2 item as work packages L0-01â€¦L2-24; owner questions #41â€
 - [x] (new) Cart on tenants crashes without a Stripe publishable key (`stripe.tsx` calls
       `stripeKey.includes` on null); show a configuration message instead
 - [ ] (new) Yarn install on Node 23 needs `--ignore-engines` (vitest engines); CI pins Node 22
+- [ ] (new) Dependency holds (Dependabot ignore rules in `.github/dependabot.yml`): `sharp` 0.35 fails to load
+      in the docs-site build on the CI runner (MissingSharp; Astro depends on `sharp ^0.34`); `@ant-design/pro-components`
+      2.8.5 to 2.8.10 break admin typecheck (`@ant-design/pro-form` 2.31.5+ declaration files import `src/...`).
+      Revisit when Astro supports sharp 0.35 and when a pro-form release fixes its typings
+- [ ] (new) ESLint 10 in `admin` (umi lint, fabric config) and `front` (vite, `@typescript-eslint` 7, legacy `.eslintrc`);
+      the other five packages are on eslint 10 already. The Dependabot major ignore for `eslint` and `@eslint/js`
+      comes off when both move to flat config
 - [ ] (new) Replace MinIO with SeaweedFS (or RustFS) and give each tenant its own S3 identity (ADR 0041, plan L0-03)
 - [x] (new) `ulams:upgrade`: one idempotent per-tenant upgrade command (plan L0-19) (ADR 0081; the cmi5 and frame steps run once their commands land)
 - [x] (new) Fix `Cmi5Policy::delete` checking the read permission (new `cmi5_delete` permission, admins only; plan L0-09)
@@ -204,7 +211,7 @@ open Phase 0, 1 and 2 item as work packages L0-01â€¦L2-24; owner questions #41â€
       (disabled, `e6c21b9e`)
 - [ ] (new) Move the `@OA\` docblock annotations (223 files) to PHP attributes and drop the abandoned
       `doctrine/annotations`
-- [ ] (new) Smaller admin and front images: nginx-unprivileged instead of Apache+PHP, with runtime settings
+- [x] (new) Smaller admin and front images: nginx-unprivileged instead of Apache+PHP, with runtime settings
       injected without PHP (approved 2026-10-09; after Phase 1)
 
 ---

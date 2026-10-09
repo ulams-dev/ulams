@@ -1,5 +1,5 @@
 import type { ThemeTokens } from "./types";
-import { blend } from "chroma-js";
+import chroma from "chroma-js";
 import { sharedTheme } from "./shared";
 
 export const contrastTheme: ThemeTokens = {
@@ -9,7 +9,7 @@ export const contrastTheme: ThemeTokens = {
   dm__primaryColorOnLight: "#75c2ff",
   colorBackground: "#0073cf",
   dm__colorBackground: "#0174cf",
-  secondaryColor: blend("#56CCF2", "#BDBDBD", "multiply").hex(),
+  secondaryColor: chroma.blend("#56CCF2", "#BDBDBD", "multiply").hex(),
   font: "Mulish",
   headerColor: "#111111",
   dm__background: "#232225",
