@@ -2,6 +2,8 @@
 # PHP runtime profile of the api container, called by init.sh / init_multidomains.sh.
 #
 #   php-profile.sh prepare   before the first artisan call
+#   php-profile.sh autoload  rebuild the optimized class map (composer dump-autoload)
+#   php-profile.sh manifest  rebuild the package manifest
 #   php-profile.sh cache     after migrations and tenant env files are in place
 #
 # Profiles:
@@ -34,6 +36,22 @@ rebuild_manifest() {
   echo "php-profile: package manifest rebuilt ($packages)"
 }
 
+# Rebuilds the optimized class map from the composer.json and packages on disk, so a package
+# merged since the last start (new `Ulams\` namespace, new provider) is found without a manual
+# `composer dump-autoload`. --no-scripts: no package discovery here (rebuild_manifest does it).
+# The demo profile has no dev packages and is authoritative, like its install.
+dump_autoload() {
+  local flags=(-o --no-scripts --no-interaction)
+  if demo; then
+    flags=(-a --no-dev --no-scripts --no-interaction)
+  fi
+  if composer dump-autoload "${flags[@]}" >/dev/null 2>&1; then
+    echo "php-profile: autoload rebuilt (composer dump-autoload ${flags[*]})"
+  else
+    echo "php-profile: composer dump-autoload failed; keeping the autoloader that is there" >&2
+  fi
+}
+
 prepare() {
   if demo; then
     echo "php-profile: demo (DEMO_PERF=1)"
@@ -55,6 +73,7 @@ prepare() {
   else
     rm -f "$CONF_D/zz-ulams-production-php.ini" "$CONF_D/zz-ulams-demo-php.ini" "$FPM_D/zz-ulams-demo.conf"
   fi
+  dump_autoload
   rebuild_manifest
 }
 
@@ -68,7 +87,8 @@ cache() {
 
 case "${1:-}" in
   prepare) prepare ;;
+  autoload) dump_autoload ;;
   manifest) rebuild_manifest ;;
   cache) cache ;;
-  *) echo "usage: $0 prepare|manifest|cache" >&2; exit 2 ;;
+  *) echo "usage: $0 prepare|autoload|manifest|cache" >&2; exit 2 ;;
 esac
