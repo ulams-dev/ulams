@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { h5pSearch, h5pUsesSession } from "../../src/lib/h5p-proxy.ts";
+import { H5P_ROUTE, h5pSearch, h5pUsesSession } from "../../src/lib/h5p-proxy.ts";
 
 describe("h5p proxy session rules (ADR 0045)", () => {
   it("adds the session to the learner's own player calls", () => {
@@ -61,5 +61,13 @@ describe("h5p proxy session rules (ADR 0045)", () => {
     expect(h5pSearch("?_token=abc")).toBe("");
     expect(h5pSearch("")).toBe("");
     expect(h5pSearch("?contextId=a")).toBe("?contextId=a");
+  });
+
+  it("reads the session cookie for the proxy routes and nothing else", () => {
+    expect(H5P_ROUTE.test("/h5p/embed/play/12")).toBe(true);
+    expect(H5P_ROUTE.test("/h5p")).toBe(true);
+    expect(H5P_ROUTE.test("/h5pfoo")).toBe(false);
+    expect(H5P_ROUTE.test("/learn/1/2")).toBe(false);
+    expect(H5P_ROUTE.test("/x/h5p/embed")).toBe(false);
   });
 });
