@@ -6,7 +6,6 @@ use finfo;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use RuntimeException;
 use Ulams\CourseBuilder\Models\Fragment;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Source;
@@ -109,63 +108,27 @@ final class SourceIngestor
         $tmp = tempnam(sys_get_temp_dir(), 'cbsrc');
         file_put_contents($tmp, (string) $disk->get($source->path));
         try {
-            $pageMarks = [];
-            $meta = ['kind' => $source->kind()];
-            switch ($source->kind()) {
-                case 'pdf':
-                    $pdf = (new PdfConverter())->convert($tmp, (int) config('course_builder.limits.pdf_pages', 300));
-                    $markdown = $pdf['markdown'];
-                    $pageMarks = $pdf['page_marks'];
-                    $meta += ['pages' => $pdf['pages'], 'pdf_native' => $pdf['pdf_native'], 'title' => $pdf['title']];
-                    break;
-                case 'docx':
-                    $docx = (new DocxConverter())->convert($tmp, (int) config('course_builder.limits.docx_uncompressed_bytes'));
-                    $markdown = $docx['markdown'];
-                    $meta['title'] = $docx['title'];
-                    break;
-                default:
-                    $markdown = self::cleanMarkdown((string) file_get_contents($tmp));
-            }
-        } catch (UploadRejected $e) {
-            throw new RuntimeException($e->getMessage(), 0, $e);
+            $document = (new SourceConverter())->toMarkdown($tmp, $source->kind());
         } finally {
             @unlink($tmp);
         }
-
-        $split = (new Fragmenter((int) config('course_builder.fragments.min_tokens', 150), (int) config('course_builder.fragments.max_tokens', 600)))
-            ->split($markdown, $pageMarks);
-        if ($split['fragments'] === []) {
-            throw new RuntimeException('No text could be extracted from this file.');
-        }
-
-        // ordinal within the heading path across the document (two sections with the same path never collide)
-        $seen = [];
-        $rows = [];
-        foreach ($split['fragments'] as $fragment) {
-            $pathKey = implode("\x1E", $fragment['heading_path']);
-            $ordinal = $seen[$pathKey] = ($seen[$pathKey] ?? -1) + 1;
-            $rows[] = $fragment + [
-                'id' => FragmentId::make($source->id, $fragment['heading_path'], $ordinal),
-                'source_id' => $source->id,
-                'content_hash' => hash('sha256', $fragment['text']),
-                'path_ordinal' => $ordinal,
-            ];
-        }
-
-        $tokens = array_sum(array_column($rows, 'token_estimate'));
-        $title = $split['title'] ?? ($meta['title'] ?? null) ?: pathinfo($source->original_name, PATHINFO_FILENAME);
-        $meta += [
-            'title' => $title,
-            'sections' => $split['sections'],
-            'fragments' => count($rows),
-            'words' => str_word_count(strip_tags($markdown)),
-            'language' => self::guessLanguage($markdown),
-        ];
-        $meta['title'] = $title;
-
+        $built = (new SourceDocumentBuilder())->rows($source, [$document]);
         $markdownPath = $source->path . '.md';
-        $disk->put($markdownPath, $markdown);
+        $disk->put($markdownPath, $built['markdown']);
+        $this->writeLive($source, $built['rows'], $built['meta'], $markdownPath, $built['tokens']);
 
+        return new SourceDocument($built['markdown'], $built['rows'], $built['meta']);
+    }
+
+    /**
+     * Replaces the live fragments of a source (the ones the course is written from) in one
+     * transaction. Called by `ingest()` and by Living Course when a revision is promoted.
+     *
+     * @param array<int,array<string,mixed>> $rows rows built by SourceDocumentBuilder
+     * @param array<string,mixed> $meta
+     */
+    public function writeLive(Source $source, array $rows, array $meta, string $markdownPath, int $tokens): void
+    {
         DB::transaction(function () use ($source, $rows, $tokens, $meta, $markdownPath) {
             Fragment::query()->where('source_id', $source->id)->delete();
             foreach ($rows as $i => $row) {
@@ -193,8 +156,6 @@ final class SourceIngestor
                 'error' => null,
             ])->save();
         });
-
-        return new SourceDocument($markdown, $rows, $meta);
     }
 
     public static function cleanMarkdown(string $text): string
