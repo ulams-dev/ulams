@@ -21,8 +21,12 @@ if [ -S "$RDIR/redis.sock" ] && redis-cli -s "$RDIR/redis.sock" -a "$PASS" ping 
   exit 0
 fi
 rm -f "$RDIR/redis.sock"
+# ULAMS_REDIS_PORT: also listen on 127.0.0.1 at a port reserved with `devil port add tcp random` (the H5P
+# service reads REDIS_URL/REDIS_HOST and cannot use a unix socket); the password is still required
+if [ -n "${ULAMS_REDIS_PORT:-}" ]; then LISTEN="port $ULAMS_REDIS_PORT
+bind 127.0.0.1"; else LISTEN="port 0"; fi
 cat > "$RDIR/redis.conf" <<CONF
-port 0
+$LISTEN
 unixsocket $RDIR/redis.sock
 unixsocketperm 700
 requirepass $PASS

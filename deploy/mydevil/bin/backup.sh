@@ -34,6 +34,7 @@ status=0
 dump_from_env "$ULAMS_API/.env" platform || status=1
 for f in "$ULAMS_API"/.env.*; do
   [ -e "$f" ] || continue
+  case "$f" in *.env.example) continue ;; esac   # the template is not a tenant
   dump_from_env "$f" "tenant-${f##*/.env.}" || status=1
 done
 

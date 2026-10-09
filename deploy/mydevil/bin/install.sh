@@ -19,6 +19,7 @@ command -v "$ULAMS_PHP" >/dev/null 2>&1 || die "$ULAMS_PHP not found; see README
 [ ! -d "$ULAMS_HOME/api" ] || die "$ULAMS_HOME/api exists: it is installed already, use upgrade.sh"
 
 mkdir -p "$ULAMS_HOME/logs" "$ULAMS_HOME/run" "$ULAMS_HOME/backups" "$ULAMS_HOME/releases"
+chmod 711 "$ULAMS_HOME"   # the web server must traverse it to reach api/public
 tar -xzf "$TARBALL" -C "$ULAMS_HOME"
 chmod +x "$ULAMS_HOME"/bin/*.sh
 

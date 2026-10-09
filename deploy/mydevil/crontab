@@ -23,5 +23,6 @@ ULAMS_HOME=/usr/home/LOGIN/ulams
 5 4 * * 0 /usr/bin/find /usr/home/LOGIN/ulams/logs -name 'cron-*.log' -size +20M -exec /usr/bin/truncate -s 0 {} \;
 
 # Optional, only with Redis (README, "Redis"): start it after a server reboot and every five minutes if it died.
+#ULAMS_REDIS_PORT=<port from `devil port add tcp random`>  (needed by the H5P service)
 #@reboot /bin/sh /usr/home/LOGIN/ulams/bin/redis-start.sh >> /usr/home/LOGIN/ulams/logs/redis.log 2>&1
 #*/5 * * * * /bin/sh /usr/home/LOGIN/ulams/bin/redis-start.sh >> /usr/home/LOGIN/ulams/logs/redis.log 2>&1
