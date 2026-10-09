@@ -16,7 +16,7 @@ import { apiFor, liascriptLaunch, ltiLaunch, scormAvailable, scormLaunch } from 
 import { completionMode, formatOf, topicDoc, topicMinutes } from "../lib/page-docs.ts";
 import { PREVIEW_LINKS, isPublished, previewCourseHref, studioHref } from "../lib/preview.ts";
 import { themeFor } from "../lib/theme.ts";
-import { LEARNER_LINKS, splitLessonTitle } from "../lib/view-model.ts";
+import { LEARNER_LINKS, splitLessonTitle, type CourseLinks } from "../lib/view-model.ts";
 
 interface Props {
   tenant: Tenant;
@@ -27,13 +27,26 @@ interface Props {
   topicId: number;
   /** Learner token for the launches that track progress (SCORM, LiaScript, LTI); unused in preview. */
   token?: string | null;
-  /** Author preview: nothing is tracked, the banner links back to the studio. */
-  preview?: { sessionId?: string | null } | null;
+  /**
+   * Author preview: nothing is tracked, the banner links back to the studio. The studio's
+   * interactive preview (blueprint content in a frame) passes its own links, no banner and fills
+   * the "content" slot.
+   */
+  preview?: {
+    sessionId?: string | null;
+    links?: CourseLinks;
+    backHref?: string;
+    finishHref?: string;
+    banner?: boolean;
+    /** The page sits in a frame of the studio: links open in the top window. */
+    framed?: boolean;
+  } | null;
 }
 
 const { tenant, settings, course, access, progress, topicId, token = null, preview = null } = Astro.props;
 const courseId = course.id;
-const links = preview ? PREVIEW_LINKS : LEARNER_LINKS;
+const links = preview ? (preview.links ?? PREVIEW_LINKS) : LEARNER_LINKS;
+const custom = Astro.slots.has("content");
 const theme = themeFor(settings?.theme?.theme, tenant.slug);
 const lessons = [...(course.lessons ?? [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 const topics = flattenTopics(course);
@@ -50,9 +63,9 @@ const nav = topicNeighbours(course, topicId);
 const percent = completionPercent(course, progress);
 const statusOf = (id: number): TopicProgress["status"] | undefined => progress.find((p) => p.topic_id === id)?.status;
 const done = statusOf(topicId) === 1;
-const nextHref = nav.next ? links.topic(courseId, nav.next.id) : preview ? previewCourseHref(courseId) : `/learn/${courseId}/finish`;
+const nextHref = nav.next ? links.topic(courseId, nav.next.id) : preview ? (preview.finishHref ?? previewCourseHref(courseId)) : `/learn/${courseId}/finish`;
 const prevHref = nav.previous ? links.topic(courseId, nav.previous.id) : null;
-const backHref = preview ? previewCourseHref(courseId) : `/courses/${courseId}`;
+const backHref = preview ? (preview.backHref ?? previewCourseHref(courseId)) : `/courses/${courseId}`;
 const scormUuid = (topic.topicable as { uuid?: string } | undefined)?.uuid;
 // Launches that report progress are skipped in preview (the topic then explains why).
 const tracked = Boolean(token) && !preview;
@@ -63,7 +76,7 @@ const packageAvailable = scormUuid && !contentOriginSrc ? await scormAvailable(t
 const liascript = topic.topicable_type.endsWith("\\LiaScriptTopic") && access && tracked ? await liascriptLaunch(tenant, token!, topic.id) : null;
 // External tool (LTI 1.3): the tool's login URL with a single-use hint; scores come back through AGS.
 const lti = topic.topicable_type.endsWith("\\LtiLink") && access && tracked ? await ltiLaunch(tenant, token!, topic.id) : null;
-const doc = topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, liascript, lti, preview: Boolean(preview) });
+const doc = custom ? null : topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, liascript, lti, preview: Boolean(preview) });
 const format = formatOf(topic);
 const minutes = topicMinutes(topic);
 const lessonNoun = { coffee: "Chapter", oncall: "Module", nightsky: "Mission" }[theme];
@@ -75,8 +88,8 @@ const resources = topic.resources ?? [];
 ---
 
 
-<Base theme={theme} accent={settings?.theme?.accent} title={`${topic.title} — ${course.title}`} demo={preview ? null : { adminUrl: tenant.adminUrl, slug: tenant.slug }} bodyClass="u-player-body" noindex={Boolean(preview)}>
-  {preview && <PreviewBanner published={isPublished(course)} studioHref={studioHref(preview.sessionId)} publicHref={`/courses/${courseId}`} />}
+<Base theme={theme} accent={settings?.theme?.accent} title={`${topic.title} — ${course.title}`} demo={preview ? null : { adminUrl: tenant.adminUrl, slug: tenant.slug }} bodyClass="u-player-body" noindex={Boolean(preview)} baseTarget={preview?.framed ? "_top" : undefined}>
+  {preview && preview.banner !== false && <PreviewBanner published={isPublished(course)} studioHref={studioHref(preview.sessionId)} publicHref={`/courses/${courseId}`} />}
   <div class="u-player">
     <header class="u-player__top">
       <a class="u-player__back" href={backHref}>
@@ -146,6 +159,11 @@ const resources = topic.resources ?? [];
 
     <main id="main" class="u-player__main" tabindex="-1">
       <div class="u-player__content">
+        {
+          custom ? (
+            <slot name="content" />
+          ) : (
+            <>
         <p class="u-player__kicker">
           {lessonParts.kicker ? (/^([IVXLC]+|\d+)$/.test(lessonParts.kicker) ? `${lessonNoun} ${lessonParts.kicker}` : lessonParts.kicker) : lessonNoun} · {lessonParts.title}
         </p>
@@ -164,7 +182,7 @@ const resources = topic.resources ?? [];
             </p>
           )
         }
-        <Render doc={doc} />
+        {doc && <Render doc={doc} />}
         {
           resources.length > 0 && (
             <section class="u-player__resources" aria-label="Downloads">
@@ -179,6 +197,9 @@ const resources = topic.resources ?? [];
                 ))}
               </ul>
             </section>
+          )
+        }
+            </>
           )
         }
         <div data-end-of-content aria-hidden="true"></div>

@@ -1,0 +1,77 @@
+---
+/**
+ * Interactive preview: the course page, the lessons and the landing page as the learner will see
+ * them (rendered in a frame, same components as the learner pages), with the element chat in a
+ * collapsible panel. See ADR 0080 and src/studio/preview.ts.
+ */
+import Studio from "../../../../../layouts/Studio.astro";
+import { LANDING_KEY, buildPreview, framePageHref, loadSessionPreview, previewBase, previewPageHref } from "../../../../../lib/blueprint-preview.ts";
+import { builderFor } from "../../../../../lib/studio.ts";
+import { STATUS_LABEL } from "../../../../../studio/labels.ts";
+
+const id = Astro.params.id ?? "";
+const page = Astro.params.page ?? "";
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/tenants");
+if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 });
+
+const source = await loadSessionPreview(builderFor(tenant, Astro.locals.authorToken!), id);
+if (!source) return new Response("Not found", { status: 404 });
+if (!source.version) return Astro.redirect(`/studio/s/${id}`);
+const preview = buildPreview(source.version.document);
+const current = preview.byKey.get(page);
+if (page !== "" && page !== LANDING_KEY && !current) return new Response("Not found", { status: 404 });
+
+const title = page === "" ? "Course page" : page === LANDING_KEY ? "Landing page" : (current?.title ?? "Lesson");
+const first = preview.pages[0];
+const tabs = [
+  { key: "", label: "Course page", href: previewBase(id) },
+  { key: LANDING_KEY, label: "Landing page", href: previewPageHref(id, LANDING_KEY) },
+  ...(first ? [{ key: "lessons", label: "Lessons", href: previewPageHref(id, first.key) }] : []),
+];
+const activeTab = page === "" ? "" : page === LANDING_KEY ? LANDING_KEY : "lessons";
+const courseId = source.state.session.courseId;
+---
+
+<Studio title={`Preview: ${title}`} crumb="Preview and discuss" status={STATUS_LABEL[source.state.session.status]} sessionId={id} active="preview">
+  <div class="st-pv" data-studio-preview data-session={id} data-panel="open">
+    <section class="st-pv-stage" aria-labelledby="st-pv-title">
+      <div class="st-pv-bar">
+        <h1 id="st-pv-title" class="cb-h3">Preview and discuss</h1>
+        <nav aria-label="Preview pages">
+          <ul class="st-pv-tabs" role="list">
+            {tabs.map((tab) => <li><a href={tab.href} aria-current={tab.key === activeTab ? "page" : undefined}>{tab.label}</a></li>)}
+          </ul>
+        </nav>
+        <span class="st-pv-version cb-mono" data-version>Version {source.version.number}</span>
+        <div class="st-toolbar">
+          <button type="button" class="cb-btn cb-btn-small" data-undo disabled>Undo</button>
+          <button type="button" class="cb-btn cb-btn-small" data-redo disabled>Redo</button>
+          {courseId && <a class="cb-btn cb-btn-small" href={`/preview/courses/${courseId}`}>Plain learner preview</a>}
+          <button type="button" class="cb-btn cb-btn-small cb-btn-primary" data-toggle-panel aria-expanded="true" aria-controls="st-pv-panel">Hide chat</button>
+        </div>
+      </div>
+      <p class="cb-muted cb-small st-pv-hint">
+        This is how learners will see the course. Hover an element and press <strong>Discuss</strong> (or Tab to it and press Enter) to talk to the assistant about it. Progress is not recorded.
+      </p>
+      <iframe class="st-pv-frame" data-frame title={`Course preview: ${title}`} src={framePageHref(id, page)} data-src={framePageHref(id, page)}></iframe>
+    </section>
+    <aside id="st-pv-panel" class="st-pv-panel" data-panel aria-labelledby="st-chat-title">
+      <h2 id="st-chat-title" class="cb-h3">Discuss with the assistant</h2>
+      <p data-scope><span class="cb-muted">Select an element in the preview.</span></p>
+      <div class="st-pv-sources" data-sources></div>
+      <div class="st-chat" data-chat aria-label="Element chat"></div>
+      <form class="st-composer cb-card" data-composer>
+        <label class="cb-sr" for="st-pv-message">Change request</label>
+        <textarea id="st-pv-message" rows="3" maxlength="4000" placeholder="e.g. Make the distractors less obvious"></textarea>
+        <button class="cb-btn cb-btn-primary" type="submit">Propose a change</button>
+        <button class="cb-btn cb-btn-small" type="button" data-to-preview>Back to the preview</button>
+        <p class="cb-muted cb-small st-hint">Every change is shown as a diff with its sources; nothing changes until you approve it. Esc returns to the preview.</p>
+      </form>
+    </aside>
+  </div>
+</Studio>
+
+<script>
+  import "../../../../../studio/preview.ts";
+</script>

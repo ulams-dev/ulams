@@ -17,6 +17,7 @@ if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 }
       <div class="st-toolbar">
         <button type="button" class="cb-btn cb-btn-small" data-undo disabled>Undo</button>
         <button type="button" class="cb-btn cb-btn-small" data-redo disabled>Redo</button>
+        <a class="cb-btn cb-btn-small cb-btn-primary" href={`/studio/s/${id}/preview`}>Preview and discuss</a>
         <span data-apply style="display:contents"></span>
       </div>
       <div data-preview aria-live="off"></div>
