@@ -65,6 +65,11 @@ return [
     // ---- builder and living course -------------------------------------------------------------
     ['api/admin/course-builder*', 'builder'],
     ['api/admin/living-course*', 'living-course'],
+    // the learner's own update notices; the webhook is verified by its signature, not a token
+    ['api/living-course/courses/*/notices', 'learner'],
+    ['api/living-course/courses/*/freshness', 'learner'],
+    ['api/living-course/notices/*/dismiss', 'learner'],
+    ['api/living-course/webhooks/*', 'public'],
 
     // ---- enrolments (before the broader courses and users prefixes) ----------------------------
     ['api/admin/courses/*/access*', 'enrolments'],
