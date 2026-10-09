@@ -96,12 +96,12 @@ class DriftTest extends TestCase
         $this->editedVersion($session);
         $url = "/api/admin/course-builder/sessions/{$session->id}/apply";
 
-        $this->actingAs($author, 'api')->postJson($url)->assertStatus(202);
-        $run = $session->runs()->where('kind', 'apply')->orderByDesc('id')->first();
-        $this->assertSame('failed', $run->refresh()->status);
+        $first = $this->actingAs($author, 'api')->postJson($url)->assertStatus(202)->json('data.runId');
+        $run = \Ulams\CourseBuilder\Models\Run::query()->findOrFail($first);
+        $this->assertSame('failed', $run->status);
         $this->assertStringContainsString('edited in the admin', (string) $run->error);
 
-        $this->actingAs($author, 'api')->postJson($url, ['overwrite' => true])->assertStatus(202);
-        $this->assertSame('finished', $session->runs()->where('kind', 'apply')->orderByDesc('id')->first()->status);
+        $second = $this->actingAs($author, 'api')->postJson($url, ['overwrite' => true])->assertStatus(202)->json('data.runId');
+        $this->assertSame('finished', \Ulams\CourseBuilder\Models\Run::query()->findOrFail($second)->status);
     }
 }
