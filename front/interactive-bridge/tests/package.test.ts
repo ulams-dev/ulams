@@ -46,6 +46,32 @@ describe("connect (package side)", () => {
     expect(parent.posted.map((p) => p.message.type)).toEqual(["ready", "stepChanged", "stepChanged"]);
   });
 
+  it("holds ready until whenReady settles, reads the steps then, and queues calls meanwhile", async () => {
+    let finish!: () => void;
+    const loading = new Promise<void>((resolve) => (finish = resolve));
+    let ids: string[] = [];
+    const holder: { bridge?: ReturnType<typeof connect> } = {};
+    const { parent, win, bridge } = setup({ steps: () => ids, whenReady: loading });
+    holder.bridge = bridge;
+    win.dispatch(env(VALID.init!), parent);
+    bridge.stepChanged("too-slow");
+    expect(parent.posted).toHaveLength(0);
+    ids = ["too-slow", "too-fast"];
+    finish();
+    await loading;
+    await Promise.resolve();
+    expect(parent.posted.map((p) => p.message.type)).toEqual(["ready", "stepChanged"]);
+    expect((parent.posted[0]!.message as { steps: string[] }).steps).toEqual(["too-slow", "too-fast"]);
+  });
+
+  it("answers ready even when whenReady rejects (the package reports its own error)", async () => {
+    const { parent, win } = setup({ whenReady: Promise.reject(new Error("no data")) });
+    win.dispatch(env(VALID.init!), parent);
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(parent.posted.map((p) => p.message.type)).toEqual(["ready"]);
+  });
+
   it("ignores messages that do not come from the parent, with a wrong nonce, or a second init", () => {
     const onGo = vi.fn();
     const { parent, win } = setup({ onGoToStep: onGo });
