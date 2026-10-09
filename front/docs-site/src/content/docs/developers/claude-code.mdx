@@ -64,11 +64,26 @@ Desktop does not read your shell `PATH`, so give absolute paths:
 }
 ```
 
+## Other clients and HTTP
+
+Any MCP client that can start a stdio command works like Claude Desktop (`command`, `args`, optional `env` with `ULAMS_URL` and
+`ULAMS_TOKEN`). Clients that connect to a URL use the Streamable HTTP server, which takes the token from the request:
+
+```bash
+ulams mcp --http --port 8787 &
+claude mcp add --transport http ulams http://127.0.0.1:8787/mcp --header "Authorization: Bearer $ULAMS_TOKEN"
+```
+
+Configuration examples, the tool counts per toolset and troubleshooting are in [ulams for AI agents](/developers/agents/).
+
 ## Staying safe
 
 - Start with `--read-only` to let an agent explore: `claude mcp add ulams -- ulams mcp --profile coffee --read-only`.
 - Destructive tools (deleting a course, replacing access) return a plan and a one-time confirm token; the agent has to show you
   the plan and call again, so nothing is deleted by accident.
-- The agent can do what the logged-in user can do and no more. Use a dedicated user, or a scoped token, for agents.
+- The agent can do what the logged-in user can do and no more. Use a dedicated user, or a scoped token, for agents:
+  `ulams tokens create --name claude --scopes @author --kind agent --agent-name claude-code --expires-in-days 30`, then log in with it
+  (`printf '%s' "$TOKEN" | ulams login --url … --token-stdin --profile claude`). Its calls appear in the
+  [agent audit log](/developers/scoped-tokens/#agent-audit-log).
 
 More options (toolsets, HTTP transport, resources) are in [ulams for AI agents](/developers/agents/).
