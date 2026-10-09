@@ -72,7 +72,6 @@ export default defineConfig({
         { label: "Operators", items: [{ autogenerate: { directory: "operators" } }] },
         { label: "Reference", collapsed: true, items: [{ autogenerate: { directory: "reference" } }] },
         { label: "Contributing", items: [{ autogenerate: { directory: "contributing" } }] },
-        { label: "Decisions", collapsed: true, items: [{ autogenerate: { directory: "decisions" } }] },
         { label: "Roadmap", link: "/roadmap/" },
       ],
     }),
