@@ -18,7 +18,9 @@
       "front/docs-site",
       "api",
       "api/h5p",
-      "api/pdf"
+      "api/pdf",
+      "demo-content",
+      "demo-content/gravity"
     ],
     "nohoist": [
       "front/**/@types/react-router",
@@ -42,7 +44,7 @@
     "brand:build": "node front/docs/design/brand/build.mjs",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test --filter=admin --filter=front --filter=api-h5p --filter=api-pdf --filter=@ulams/sdk --filter=@ulams/interactive-bridge --filter=ulams --filter=@ulams/ui --filter=@ulams/web",
+    "test": "turbo run test --filter=admin --filter=front --filter=api-h5p --filter=api-pdf --filter=@ulams/sdk --filter=@ulams/interactive-bridge --filter=@ulams/demo-content --filter=@ulams/demo-gravity --filter=ulams --filter=@ulams/ui --filter=@ulams/web",
     "test:api": "yarn workspace api test",
     "prepare": "husky",
     "test:h5p:integration": "turbo run test:integration --filter=api-h5p",
