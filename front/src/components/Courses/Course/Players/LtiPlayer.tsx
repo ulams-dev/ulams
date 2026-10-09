@@ -69,6 +69,8 @@ const LtiPlayer: React.FC<LtiPlayerProps> = ({ topicId, title }) => {
         title={title}
         src={launch.url}
         allow="fullscreen; clipboard-write; microphone; camera"
+        // the tool runs on its own origin (never ours): allow-same-origin only keeps that origin working
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals allow-presentation"
         referrerPolicy="origin"
       />
     </div>

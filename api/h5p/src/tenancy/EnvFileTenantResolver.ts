@@ -156,7 +156,8 @@ function originOf(url: string | undefined): string | undefined {
  * CORS / frame-ancestors origins of a tenant: the static CORS_ORIGINS, the
  * TENANT_FRONT_ORIGIN_PATTERNS with {slug} replaced (tenants only) and the
  * origins of FRONTEND_URL and ADMIN_URL from the tenant's env file, each with
- * its port as configured. Only exact origins: no wildcard hosts or ports.
+ * its port as configured. Only exact origins: no wildcard hosts or ports, and never a
+ * content origin.
  */
 export function deriveCorsOrigins(input: {
     staticOrigins: string[];
@@ -180,7 +181,18 @@ export function deriveCorsOrigins(input: {
             out.add(origin);
         }
     }
-    return [...out];
+    // A content origin (`<slug>.content.<domain>`) runs third-party package code: it is never a
+    // CORS origin or a frame ancestor, whatever a pattern or env file says.
+    return [...out].filter((origin) => !isContentOrigin(origin));
+}
+
+/** True for `content.<domain>` and `<anything>.content.<domain>` hosts. */
+export function isContentOrigin(origin: string): boolean {
+    try {
+        return new URL(origin).hostname.split('.').includes('content');
+    } catch {
+        return false;
+    }
 }
 
 function bool(value: string | undefined, fallback: boolean): boolean {

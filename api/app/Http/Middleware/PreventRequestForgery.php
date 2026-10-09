@@ -26,6 +26,25 @@ class PreventRequestForgery extends Middleware
         //
     ];
 
+    /**
+     * The CSRF cookie under the same `__Host-` rules as the session cookie (config/session.php).
+     */
+    protected function newCookie($request, $config)
+    {
+        return new \Symfony\Component\HttpFoundation\Cookie(
+            $config['xsrf_cookie'] ?? 'XSRF-TOKEN',
+            $request->session()->token(),
+            $this->availableAt(60 * $config['lifetime']),
+            '/',
+            null,
+            (bool) $config['secure'],
+            false,
+            false,
+            $config['same_site'] ?? 'lax',
+            false
+        );
+    }
+
     public function handle($request, \Closure $next)
     {
         // Don't validate CSRF when testing.

@@ -1,6 +1,6 @@
 ---
 title: Content origin
-description: Why SCORM, cmi5, Adapt and LiaScript packages are served from a separate per-tenant domain, and how to configure it in production.
+description: Why SCORM, cmi5, Adapt and LiaScript packages are served from a per-tenant content origin, the separate-domain and same-site modes, and how to configure it in production.
 sidebar:
   order: 5
 modules:
@@ -21,14 +21,39 @@ Policy. The full design is in
 [`api/docs/content-origin.md`](https://github.com/ulams-dev/ulams/blob/main/api/docs/content-origin.md);
 this page covers what an operator sets up.
 
-## Use a separate registrable domain
+## Two modes
 
-The content origin must not share a registrable domain with the application. With the app on
-`*.lms.example.com`, put content on something like `*.example-content.net`, not on
-`*.content.lms.example.com`: package code on a same-site host weakens `SameSite` cookie protection
-and can set cookies for the parent domain. The development setup uses `*.content.localhost` only
-because everything there is local. The repository document records the separate domain as the
-production default, pending product-owner confirmation.
+| Mode | Example (app on `*.lms.example.com`) | Status |
+|---|---|---|
+| **Separate registrable domain** | `{slug}.example-content.net` | Strongest. Package code is cross-site with the app, so browsers keep their cookies and process isolation away from it. |
+| **Same-site subdomain** | `{slug}.content.lms.example.com` (for ulams.app: `*.content.ulams.app`) | Supported with the mitigations below. Chosen for the hosted ulams.app service (product owner, 2026-10-09). |
+
+On a same-site content origin, package code is same-site with the application. Browsers then send
+`SameSite=Lax` and `Strict` cookies on its requests to the app's hosts (so `SameSite` gives no CSRF
+protection against it), it can set cookies for the parent domain (cookie tossing, session
+fixation), and it shares site-level process isolation. ulams ships these mitigations, and they are
+also on in the separate-domain mode:
+
+1. **Host-only cookies.** Every session cookie uses the `__Host-` prefix in production (`Secure`,
+   `Path=/`, never a `Domain`), so a sibling subdomain cannot overwrite them: the learner front and
+   studio (`__Host-ulams_session`, `__Host-ulams_author`), and the API's Laravel session and
+   `XSRF-TOKEN`. Over plain http in development the prefix is dropped
+   (`ULAMS_COOKIE_FALLBACK_PREFIX`, `SESSION_COOKIE_PREFIX`). Sessions created before the rollout
+   used unprefixed names; ask users to sign in again or clear those cookies.
+2. **Exact-Origin checks.** Every `POST`, `PUT`, `PATCH` and `DELETE` to the learner front and to the
+   API must come from the tenant's own app origins (`FRONTEND_URL`, `ADMIN_URL`, `APP_URL`, plus
+   `TRUSTED_ORIGINS`). A content origin, `Origin: null` or a `Sec-Fetch-Site` other than
+   `same-origin` gets `403`. Only routes authenticated by a non-ambient credential are exempt:
+   the tracking-token endpoints, LTI, payment callbacks. The API authenticates with bearer tokens only
+   (no cookie-only endpoint exists). CORS allow-lists never include content origins.
+3. **Sandboxed frames.** Players are framed with `sandbox` and `referrerpolicy="no-referrer"`.
+   SCORM, cmi5, Adapt, LiaScript and H5P still need `allow-same-origin` (the SCO finds `window.API`
+   through its parent frame; LiaScript uses a Worker, storage and a service worker; H5P calls its
+   service with fetch), so for them mitigations 1, 2 and 4 carry the protection.
+4. **Response headers.** Content files send the CSP, `X-Content-Type-Options: nosniff`,
+   `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Resource-Policy: cross-origin`. The
+   app hosts send `Cross-Origin-Resource-Policy: same-origin` on sensitive JSON (API JSON, `/bff/*`,
+   `/studio/api/*`), so content pages cannot embed it.
 
 ## Configure it
 
@@ -36,7 +61,9 @@ production default, pending product-owner confirmation.
 |---|---|---|
 | `api` | `TENANCY_CONTENT_HOST` (tenants; written as `CONTENT_ORIGIN` into each env file) | `{slug}.example-content.net` |
 | `api` | `CONTENT_ORIGIN` (platform) | `https://platform.example-content.net` |
+| `api` | `TRUSTED_ORIGINS` (optional extra app origins allowed to write to the API) | `https://custom-front.example.com` |
 | DNS | Wildcard on the content domain | `*.example-content.net`, `platform.example-content.net` |
+| Same-site mode | `TENANCY_CONTENT_HOST` and `ULAMS_CONTENT_DOMAIN` on a subdomain of the app domain | `{slug}.content.lms.example.com`, `content.lms.example.com` |
 | Caddy | One site per content host, using the `content_origin` snippet | see the [example Caddyfile](/operators/self-hosting/#the-files) |
 
 Existing tenants pick up a changed `TENANCY_CONTENT_HOST` on the next
@@ -54,15 +81,16 @@ The `content_origin` snippet, copied from the development Caddyfile with HTTPS h
 - drops `Cookie` and `Authorization` on the way in and `Set-Cookie` on the way out;
 - sends `Content-Security-Policy` (scripts allowed, `connect-src` limited to the tenant API,
   `frame-ancestors` limited to the tenant front and admin, `form-action 'none'`),
-  `X-Content-Type-Options: nosniff` and `Referrer-Policy: no-referrer`.
+  `X-Content-Type-Options: nosniff`, `Cross-Origin-Opener-Policy: same-origin`,
+  `Cross-Origin-Resource-Policy: cross-origin` and `Referrer-Policy: no-referrer`.
 
 The API sites strip `X-Ulams-Content-Origin` from client requests, and the API answers 404 to
 `/api/content/...` without it, so package HTML never runs on the API origin.
 
 <Aside type="caution" title="Slug from the host name">
-  The example Caddyfile reads the tenant slug as `{labels.2}`, the third label from the right.
-  That works for a content domain with exactly two labels (`example-content.net`). For a domain
-  such as `example-content.co.uk` use `{labels.3}`.
+  The example Caddyfile reads the tenant slug with a regular expression on the host, so it works
+  for a content domain with any number of labels (`example-content.net`,
+  `content.lms.example.com`).
 </Aside>
 
 Serving package files straight from the bucket through a CDN with the same headers also works;

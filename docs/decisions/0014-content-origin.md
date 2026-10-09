@@ -47,3 +47,38 @@ Option 2, with option 3 allowed in production.
   origin. cmi5 still plays from the API origin (follow-up).
 - Front and admin CSP is report-only until a report collector exists.
 - Details: `api/docs/content-origin.md`.
+
+## Amended 2026-10-09: same-site content subdomain
+
+**Owner decision (2026-10-09).** Production serves content origins from `{slug}.content.ulams.app`,
+on the same registrable domain as the app (`ulams.app`, `*.ulams.app`, `*.admin.ulams.app`,
+`*.api.ulams.app`), instead of the separate domain recorded above as the default. The separate
+domain remains supported and is the strongest option for self-hosters.
+
+**Trade-off.** Package code is same-site with the app. Browsers send `SameSite=Lax`/`Strict` cookies
+on its requests to the app's hosts, so `SameSite` offers no CSRF protection against it; it can set
+cookies on the parent domain (cookie tossing, session fixation); and it shares site-level process
+isolation with the app. We accept this in exchange for one domain, one wildcard certificate and no
+second registrable domain to operate.
+
+**Mitigations (all shipped, each with tests; also on for the separate domain).**
+
+1. Every session cookie of the Astro front, the studio and the API (session, `XSRF-TOKEN`) uses the
+   `__Host-` prefix in production (`Secure`, `Path=/`, no `Domain`); development over http uses a
+   configurable fallback name. No `Domain=` anywhere.
+2. Every state-changing request to the front, the API (uploads and the course builder included) is
+   refused unless its `Origin` is one of the tenant's own app origins (or `Sec-Fetch-Site` is
+   `same-origin`); content origins and `Origin: null` get 403. Exempt: routes authenticated by
+   non-ambient credentials (tracking tokens, LTI, payment callbacks). The API authenticates by bearer
+   token only, with no cookie-only endpoint. CORS allow-lists never include content origins.
+3. All player iframes are sandboxed with `referrerpolicy="no-referrer"` and verify `postMessage`
+   source and origin. SCORM, cmi5, Adapt, LiaScript and H5P keep `allow-same-origin`, because the SCO
+   finds `window.API` through its parent frame, LiaScript needs a Worker and storage, and H5P calls
+   its service with fetch; the protection for these comes from 1, 2 and 4.
+4. The content origin sends the CSP, `nosniff`, `Cross-Origin-Opener-Policy: same-origin` and
+   `Cross-Origin-Resource-Policy: cross-origin`; app JSON sends `Cross-Origin-Resource-Policy:
+   same-origin`, so content pages cannot embed it.
+5. `TENANCY_CONTENT_HOST={slug}.content.ulams.app` works with `ulams:tenant:sync-env`.
+
+Consequence: sessions created before the rollout used unprefixed cookie names and must be re-created.
+Details: `api/docs/content-origin.md`, `front/docs-site` (Operators, Content origin).

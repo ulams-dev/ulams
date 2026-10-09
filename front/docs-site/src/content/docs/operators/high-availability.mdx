@@ -192,7 +192,11 @@ Caddy routes by host, talks FastCGI to php-fpm and implements the content-origin
 (or reproduce those rules) in a cluster. Several Caddy replicas need a shared certificate storage
 backend, or let the load balancer or cert-manager terminate TLS with wildcard certificates
 (DNS-01) and run Caddy on plain HTTP behind it. Point its `api:9000`, `h5p:8080`, `web:4321` and
-`admin:80` upstreams at the replicated services.
+`admin:80` upstreams at the replicated services. The same rules add the `__Host-`-safe headers
+for the same-site content mode (`Cross-Origin-Resource-Policy: same-origin` on the app JSON,
+`Cross-Origin-Opener-Policy` on the content origin), so a replacement proxy must reproduce them;
+forward the original `Origin` and `X-Forwarded-Proto` headers unchanged, because the exact-Origin
+checks and the `__Host-` cookies depend on them.
 
 ## Zero-downtime deploys and migrations
 

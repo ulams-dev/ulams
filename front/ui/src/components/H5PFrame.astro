@@ -3,6 +3,8 @@
  * H5P content from the tenant's H5P service. The frame URL goes through this site's
  * /h5p proxy (same origin), see front/web/src/pages/h5p/[...path].ts.
  */
+import { SANDBOX_H5P } from "@ulams/sdk/frames";
+
 interface Props {
   apiUrl: string;
   contentId: number;
@@ -18,7 +20,7 @@ const src = `/h5p/embed/play/${encodeURIComponent(String(contentId))}?language=e
   <div class="u-h5p__loading" aria-hidden="true">
     <span class="u-skeleton"></span><span class="u-skeleton"></span><span class="u-skeleton"></span>
   </div>
-  <iframe src={src} title={title} allow="fullscreen" style="height:480px"></iframe>
+  <iframe src={src} title={title} allow="fullscreen" sandbox={SANDBOX_H5P} style="height:480px"></iframe>
 </ulams-h5p>
 
 <script>
