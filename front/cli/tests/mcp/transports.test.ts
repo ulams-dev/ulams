@@ -69,10 +69,22 @@ describe("stdio (built CLI)", () => {
   });
   afterAll(() => void fake.close());
 
-  it("runs `ulams mcp`, lists tools and calls one against the API with the env credentials", async () => {
+  /** Spawns `ulams mcp` and connects; a child that dies during start-up fails with its stderr instead of a bare "Connection closed". */
+  async function connectStdio(env: Record<string, string>): Promise<Client> {
     const client = new Client({ name: "stdio-client", version: "1" });
-    const transport = new StdioClientTransport({ command: "node", args: [dist, "mcp"], env: { ...process.env, ULAMS_URL: url, ULAMS_TOKEN: "stdio-token", ULAMS_CONFIG_DIR: mkdtempSync(join(tmpdir(), "ulams-stdio-")) }, stderr: "pipe" });
-    await client.connect(transport);
+    const transport = new StdioClientTransport({ command: "node", args: [dist, "mcp"], env: { ...(process.env as Record<string, string>), ...env }, stderr: "pipe" });
+    let stderr = "";
+    transport.stderr?.on("data", (d: Buffer) => (stderr += d.toString()));
+    try {
+      await client.connect(transport);
+    } catch (e) {
+      throw new Error(`${(e as Error).message} (child stderr: ${stderr.trim() || "empty"})`, { cause: e });
+    }
+    return client;
+  }
+
+  it("runs `ulams mcp`, lists tools and calls one against the API with the env credentials", async () => {
+    const client = await connectStdio({ ULAMS_URL: url, ULAMS_TOKEN: "stdio-token", ULAMS_CONFIG_DIR: mkdtempSync(join(tmpdir(), "ulams-stdio-")) });
     expect((await client.listTools()).tools.length).toBeGreaterThan(10);
     const r = await client.callTool({ name: "courses_list", arguments: {} });
     expect(r.structuredContent).toMatchObject({ ok: true, data: [{ id: 1 }] });
