@@ -9,7 +9,7 @@ Route::group(['prefix' => 'api/tags'], function () {
 });
 
 
-Route::group(['prefix' => 'api/admin/tags'], function () {
+Route::group(['prefix' => 'api/admin/tags', 'middleware' => ['auth:api']], function () {
     Route::post('/', [TagsAPIController::class, 'create']);
     Route::delete('/', [TagsAPIController::class, 'destroy']);
     Route::get('unique', [TagsAPIController::class, 'uniqueAdmin']);
