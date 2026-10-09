@@ -8,6 +8,6 @@
   </style>
 </head>
   <body>
-    <iframe src={{ $data['url'] }}></iframe>
+    <iframe src="{{ $data['url'] }}" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" referrerpolicy="no-referrer"></iframe>
   </body>
 </html>

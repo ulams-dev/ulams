@@ -75,21 +75,13 @@ class cmi5ApiTest extends TestCase
         ]);
     }
 
-    public function test_get_cmi5_fetch()
+    public function test_the_launch_params_hold_no_access_token(): void
     {
-        $token = "lorem-ipsum";
-        $this->response = $this->postJson(
-            '/api/cmi5/fetch?token=' . $token
-        );
+        $response = $this->withHeaders(['Authorization' => "Bearer {$this->token}"])
+            ->json('GET', '/api/cmi5/courses/' . $this->course->id);
 
-        $this->response->assertOk();
-
-        $this->response->assertJsonStructure([
-            'auth-token'
-        ]);
-
-        $this->response->assertJson([
-            'auth-token' => $token
-        ]);
+        $response->assertOk();
+        $this->assertStringNotContainsString($this->token, $response->json('data.fetch'));
+        $this->assertStringNotContainsString($this->token, $response->json('data.url'));
     }
 }

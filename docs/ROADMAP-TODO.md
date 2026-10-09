@@ -142,18 +142,21 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [ ] (new) Upgrade PostgreSQL 12 (EOL) to 16/17 with a tested dump/restore path
 - [ ] (new) Drop Soketi until realtime is needed (broadcast driver is `log`); Laravel Reverb after 0.2
 
-- [ ] (new) cmi5 for learners: give students the cmi5 launch permission and serve AU files from
+- [x] (new) cmi5 for learners: give students the cmi5 launch permission and serve AU files from
       object storage (they sit on the local disk that Caddy does not serve) — found by the demo seeders
+      (students have `cmi5_read`; `CMI5_DISK` follows `SCORM_DISK`; `cmi5:move-to-bucket` copies old
+      packages; AUs play from the content origin in `front/web`; ADR 0046)
 - [ ] (new) Containers cannot reach `storage.localhost` (it resolves to the container itself); use the
       internal MinIO endpoint for server-side fetches (e.g. Image topic creation)
 - [x] (new) Platform bucket publicly readable by default (`MINIO_DEFAULT_BUCKETS=ulams:download`)
 - [x] (new) Demo course seeders for the three experiences (`make demo-seed`, `demo-seed-tenants`)
 
-- [ ] (new) Security follow-ups (medium) (partial: done and merged: `auth:api` and `tags_list` on admin tag
+- [x] (new) Security follow-ups (medium) (done and merged: `auth:api` and `tags_list` on admin tag
       routes, `POST api/images/img` limits and throttle, client payment parameters allow-listed with server
       price/currency/trial values winning, `payProduct` purchasability, vouchers search grouping,
       `GroupTree` depth limit and cycle safety, `_ignition` absent from demo and production images
-      (ADR 0071); pending: review `POST api/cmi5/fetch` (L0-09))
+      (ADR 0071); `POST api/cmi5/fetch` no longer echoes a token: it exchanges a one-time launch token for an
+      LRS-only session token (ADR 0046))
 - [ ] (new) Stripe: handle the 3-D Secure redirect in the front and document the webhook setup
       (`PAYMENTS_STRIPE_WEBHOOK_SECRET`, `/api/payments-gateways/webhook/stripe`); RevenueCat receipt verifier
 - [ ] (new) Jitsi: confirm the JaaS webhook signature format against the JaaS docs; configure
@@ -176,7 +179,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [ ] (new) Yarn install on Node 23 needs `--ignore-engines` (vitest engines); CI pins Node 22
 - [ ] (new) Replace MinIO with SeaweedFS (or RustFS) and give each tenant its own S3 identity (ADR 0041, plan L0-03)
 - [ ] (new) `ulams:upgrade`: one idempotent per-tenant upgrade command (plan L0-19)
-- [ ] (new) Fix `Cmi5Policy::delete` checking the read permission (plan L0-09)
+- [x] (new) Fix `Cmi5Policy::delete` checking the read permission (new `cmi5_delete` permission, admins only; plan L0-09)
 - [ ] (new) Five packages with `@OA\` annotations are missing from the Swagger scan paths (plan L0-11)
 
 ### 0.2 Framework upgrade
@@ -247,14 +250,13 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       course import, file manager; clamd hook tested with a fake clamd, compose profile `av` not run in CI)
 - [ ] Isolated origin / strict CSP for third-party JS (partial: SCORM, Adapt and LiaScript play from the
       per-tenant content origin with a strict CSP, files served by `/api/content` from local or bucket disks;
-      cmi5 still plays from the API origin; front/admin CSP is report-only)
+      cmi5 plays from the content origin too (ADR 0046); front/admin CSP is report-only)
 - [x] (new) Zip-slip: SCORM (`ScormService::unzipScormArchive`) and cmi5 (`Cmi5UploadService`) extract
       archives with `ZipArchive::extractTo` and no entry-path checks; replace with a safe extractor (M1.1)
 - [x] (new) The SCORM player loads `scorm-again` from the jsDelivr CDN; vendor it (air-gapped installs)
-- [ ] (new) SCORM/cmi5 content of all tenants is served from the shared `storage.localhost` origin; move
-      packages and players to a per-tenant content origin (M1.1) (partial: SCORM done, `<slug>.content.localhost`,
-      `api/docs/content-origin.md`; cmi5 player and AU files pending; run `ulams:tenant:sync-env` so existing
-      tenants get `CONTENT_ORIGIN`)
+- [x] (new) SCORM/cmi5 content of all tenants is served from the shared `storage.localhost` origin; move
+      packages and players to a per-tenant content origin (M1.1) (SCORM and cmi5 done, `<slug>.content.localhost`,
+      `api/docs/content-origin.md`; run `ulams:tenant:sync-env` so existing tenants get `CONTENT_ORIGIN`)
 - [x] (new) Course import read files outside the extracted archive through paths in `content.json`
       (e.g. `../../../.env` as a category icon, published to the bucket); paths now resolved inside it
 - [x] (new) SVG/HTML uploads served from the bucket: stored with `Content-Disposition: attachment` and an

@@ -44,7 +44,7 @@ Option 2, with option 3 allowed in production.
 - One PHP request per package file; acceptable for courses, and production may switch to a CDN with
   the same headers without code changes.
 - The legacy per-tenant SCORM file route on the API origin answers 404 for tenants with a content
-  origin. cmi5 still plays from the API origin (follow-up).
+  origin. cmi5 plays from the content origin too (ADR 0046).
 - Front and admin CSP is report-only until a report collector exists.
 - Details: `api/docs/content-origin.md`.
 

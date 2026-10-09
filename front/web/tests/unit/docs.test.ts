@@ -86,6 +86,18 @@ describe("lesson documents", () => {
     expect(legacy.children?.[0]).toMatchObject({ component: "PackageFrame", props: { src: "http://coffee.localhost/api/scorm/play/abc" } });
   });
 
+  it("plays cmi5 from the content origin in a sandboxed frame, or shows a card without a launch", () => {
+    const topic = { ...flattenTopics(COFFEE_PROGRAM)[0]!, topicable_type: "Ulams\\TopicTypes\\Models\\TopicContent\\Cmi5Au", topicable: { id: 1, value: 5 } };
+    const src = "http://coffee.content.localhost/cmi5/2/index.html?fetch=x";
+    const doc = topicDoc({ tenant, theme: "coffee", course: COFFEE_PROGRAM, lesson: undefined, topic, access: true, nextHref: "/", cmi5Src: src });
+    expect(validateDocument(doc)).toEqual([]);
+    expect(doc.children?.[0]).toMatchObject({ component: "PackageFrame", props: { src, isolated: true } });
+
+    const without = topicDoc({ tenant, theme: "coffee", course: COFFEE_PROGRAM, lesson: undefined, topic, access: true, nextHref: "/" });
+    expect(validateDocument(without)).toEqual([]);
+    expect(without.children?.[0]).toMatchObject({ component: "ActivityCard" });
+  });
+
   it("plays LiaScript from the content origin, or explains why it cannot", () => {
     const topic = {
       ...flattenTopics(COFFEE_PROGRAM)[0]!,
