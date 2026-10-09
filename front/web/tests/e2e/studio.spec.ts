@@ -20,6 +20,8 @@ const fixture = fileURLToPath(new URL("../../../../api/packages/course-builder/r
 test.skip(process.env.STUDIO_E2E !== "1", "set STUDIO_E2E=1 with the fake-driver API running");
 test.describe.configure({ mode: "serial" });
 // one run creates a course: desktop only
+// Playwright requires the destructuring pattern for fixtures
+// eslint-disable-next-line no-empty-pattern
 test.beforeEach(({}, info) => test.skip(info.project.name !== "desktop", "desktop only"));
 
 async function axe(page: Page, name: string): Promise<void> {
