@@ -74,11 +74,6 @@ of the event: the room opens at `active_to` and closes at `active_to + duration`
 YouTube broadcast start time and the `is_started` / `is_ended` flags are all computed from it.
 </Aside>
 
-<Aside type="note" title="AI Recording Analysis">
-The switch is stored in `analyze_enabled` but nothing in the API reads it. The roadmap lists
-dropping the column (see the [roadmap](/roadmap/)).
-</Aside>
-
 ## How joining works
 
 1. A learner gets access, normally by buying the webinar product; the webinar is then attached to
@@ -192,6 +187,5 @@ user is not reminded twice. See [Scheduled jobs](/reference/scheduled-jobs/),
   webinars there with the default roles.
 - The learner site (`front/web`) lists webinars read-only; buying and joining happen in the legacy
   learner app or a custom front. See [Learners](/learners/).
-- `analyze_enabled` is stored but unused.
 - The JaaS webhook signature format still has to be confirmed against the JaaS documentation
   (open roadmap item).

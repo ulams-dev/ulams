@@ -167,7 +167,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
       obsolete by default, pending owner decision #46)
 - [x] (new) Jitsi: confirm the JaaS webhook signature format against the JaaS docs; configure
       `JITSI_RECORDING_HOSTS`
-- [ ] (new) Drop the unused `analyze_enabled` columns (consultations, webinars) and clean up stored meeting
+- [x] (new) Drop the unused `analyze_enabled` columns (consultations, webinars) and clean up stored meeting
       frames in tenant buckets
 - [x] (new) Remove the Stripe test key committed in `api/docker/envs/*.example` (keys emptied in the six env
       files; rolling the key at Stripe is an owner action, #49)
@@ -230,7 +230,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 ### 1.2 Adapt Learning
 - [x] Path A: import built SCORM zip (`adapt-contrib-spoor`) (detected on upload, `scorm.source_format = adapt`,
       admin tag; generated spoor-style fixture)
-- [ ] Path B (feature flag): JSON source, schema-validated, isolated build worker (partial: `packages/adapt`
+- [x] Path B (feature flag): JSON source, schema-validated, isolated build worker (partial: `packages/adapt`
       behind `ADAPT_SOURCE_ENABLED` with versioned sources, structural validation, queued build and import
       through Path A; GPL worker `api/adapt-builder` (adapt_framework v5.56.2, compose profile `adapt`,
       real build round trip in the nightly conformance workflow); ADR 0013 (Proposed); an admin screen pending)
@@ -295,7 +295,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       (sync queue) sent the previous LTI score; now dispatched after saving (found by the Moodle run, ADR 0018)
 - [ ] (new) Turn on the nightly conformance runs (`NIGHTLY_CONFORMANCE=true`) and run the saLTIre job once
       with an operator
-- [ ] (new) Adapt Path B admin screen (sources, versions, build status)
+- [x] (new) Adapt Path B admin screen (sources, versions, build status)
 - [x] (new) Astro front: H5P plays without a token, so learner state is not restored (decide: a short-lived
       H5P token from the BFF, or state through the BFF) (decided: state through the BFF, ADR 0045; the `/h5p`
       proxy adds the session token server-side for the player's own calls, the frame still gets `token: null`
@@ -625,7 +625,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       ADRs 0072–0079)
 - [x] (new) M1 CLI core: `front/cli` workspace, command registry, output contract and exit codes, profiles,
       `login` (token/password/demo), `whoami`, `ulams api`, `schema`, `describe`
-- [ ] (new) M2 noun commands generated from OpenAPI + overrides, topic uploads of every type, pagination,
+- [x] (new) M2 noun commands generated from OpenAPI + overrides, topic uploads of every type, pagination,
       `--dry-run`, `--wait`, `apply -f`, coverage matrix enforced in CI
 - [ ] (new) M4 course builder commands with AG-UI events as NDJSON; Living Course commands after the Phase 3 merge
 - [ ] (new) M5 course-as-code: Blueprint v2, Markdown + directives format, sync base and conflict diffs
@@ -667,7 +667,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       API: hand-written course/topic/quiz tools + tools generated from the OpenAPI spec
       (note: the CLI plan proposes the local `ulams mcp` first and this as the later hosted variant from the
       same registry; pending #75)
-- [ ] (new) M3 `ulams mcp` (stdio + Streamable HTTP) generated from the CLI registry: toolsets, annotations,
+- [x] (new) M3 `ulams mcp` (stdio + Streamable HTTP) generated from the CLI registry: toolsets, annotations,
       confirmation for destructive tools, resources, MCP client tests, agent eval (ADR 0076)
 
 ### 7.6 Machine-readable content

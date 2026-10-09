@@ -207,6 +207,7 @@ export default {
   'menu.Sales.Products': 'Products',
   'menu.Courses.SCORMs': 'SCORMs',
   'menu.Courses.LiaScript': 'LiaScript',
+  'menu.Courses.Adapt': 'Adapt',
   'menu.Courses.CourseBuilder': 'Build with AI',
   CourseBuilder: 'Build with AI',
   'course_builder.card': 'Build a course with AI',
@@ -426,9 +427,6 @@ export default {
   short_description: 'Short description',
   description_tooltip:
     'The editor is WYSIWYG and includes formatting tools whilst retaining the ability to write markdown shortcuts inline and output plain Markdown.',
-  ai_analysis_enable_label: 'AI Recording Analysis',
-  ai_analysis_enable_tooltip:
-    'Check this option to enable AI-powered analysis of user attention and satisfaction during the meeting',
   attributes: 'Attributes',
   new_course: 'New course',
   new_questionnaire: 'New Questionnaire',

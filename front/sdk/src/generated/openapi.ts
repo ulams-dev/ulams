@@ -6317,8 +6317,6 @@ export interface components {
             }[];
             /** @description max_session_students */
             max_session_students?: number;
-            /** @description analyze_enabled */
-            analyze_enabled?: boolean;
         };
         ConsultationTermForUserCurrent: {
             /** @description name */
@@ -7352,8 +7350,6 @@ export interface components {
             yt_stream_url?: string;
             /** @description yt_stream_key */
             yt_stream_key?: string;
-            /** @description analyze_enabled */
-            analyze_enabled?: boolean;
         };
         Jitsi: {
             data?: Record<string, never>;

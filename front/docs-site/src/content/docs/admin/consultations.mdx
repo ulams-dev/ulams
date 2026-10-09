@@ -60,11 +60,6 @@ tab, **Fields** (`/other/consultations/fields`), manages extra model fields for 
 
 <Screenshot name="admin-other-consultations-consultation-tab" alt="Consultation form with the Calendar tab" />
 
-<Aside type="note" title="AI Recording Analysis">
-The switch is stored in `analyze_enabled` but nothing in the API reads it; the roadmap lists
-dropping the column.
-</Aside>
-
 ### Consultation requests
 
 `/other/consultation-access` (Other activities → Consultation Requests). One row per request:
@@ -163,4 +158,3 @@ every minute and the one-day reminder hourly. See [Scheduled jobs](/reference/sc
   server.
 - The learner site (`front/web`) lists consultations read-only; booking and requests need the
   legacy learner app or a custom front. See [Learners](/learners/).
-- `analyze_enabled` is stored but unused.

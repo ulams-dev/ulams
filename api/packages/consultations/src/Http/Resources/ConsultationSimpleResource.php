@@ -37,7 +37,6 @@ class ConsultationSimpleResource extends JsonResource
             'categories' => $this->resource->categories,
             'max_session_students' => $this->resource->max_session_students,
             'teachers' => ConsultationAuthorResource::collection($this->resource->teachers),
-            'analyze_enabled' => $this->resource->analyze_enabled,
             ...ModelFields::getExtraAttributesValues($this->resource, MetaFieldVisibilityEnum::PUBLIC)
         ];
         return self::apply($fields, $this);

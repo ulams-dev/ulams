@@ -107,11 +107,6 @@ use Illuminate\Support\Facades\Storage;
  *          description="yt_stream_key",
  *          type="string",
  *      ),
- *     @OA\Property(
- *           property="analyze_enabled",
- *           description="analyze_enabled",
- *           type="bool",
- *       ),
  * )
  *
  * @property string $status
@@ -141,7 +136,6 @@ class Webinar extends Model
         'active_from',
         'active_to',
         'reminder_status',
-        'analyze_enabled',
     ];
 
     public function trainers(): BelongsToMany

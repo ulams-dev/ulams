@@ -329,6 +329,7 @@ enum PERMISSIONS {
 
   LtiManage = 'lti_manage',
   LiaScriptManage = 'liascript_manage',
+  AdaptManage = 'adapt_manage',
   CourseBuilderUse = 'course_builder_use',
 }
 

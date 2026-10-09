@@ -184,3 +184,38 @@ describe("error mapping and redaction", () => {
     expect(r.stdout).not.toContain("abcdefghijkl");
   });
 });
+
+describe("device login", () => {
+  const meta = { "GET /api/meta": { body: { success: true, data: { features: { deviceLogin: true } } } } };
+  const code = { "POST /api/auth/device/code": { body: { success: true, data: { device_code: "dc", user_code: "BDWP-HQPK", verification_uri: "http://coffee.localhost/cli/authorize", expires_in: 600, interval: 0 } } } };
+
+  it("prints the code, polls through pending and slow_down, then saves the scoped token", async () => {
+    let polls = 0;
+    const r = await runCli(["login", "--url", URL_, "--device", "--scope", "courses:write", "--json"], {
+      routes: {
+        ...meta,
+        ...code,
+        "POST /api/auth/device/token": () => {
+          polls++;
+          if (polls === 1) return { status: 400, body: { error: "authorization_pending" } };
+          if (polls === 2) return { status: 400, body: { error: "slow_down" } };
+          return { body: { access_token: "ulams_pat_secret1", token_type: "Bearer", expires_at: "2027-01-01T00:00:00Z", scopes: ["courses:write"], token_id: "t1" } };
+        },
+        "GET /api/profile/me": { body: ME },
+      },
+    });
+    expect(r.code).toBe(0);
+    expect(r.stderr).toContain("BDWP-HQPK");
+    expect(r.requests.find((q) => q.path === "/api/auth/device/code")?.body).toMatchObject({ scopes: ["courses:write"] });
+    expect(r.json()).toMatchObject({ data: { method: "device", scopes: ["courses:write"] } });
+    expect(r.stdout + r.stderr).not.toContain("ulams_pat_secret1");
+    expect(JSON.parse(readFileSync(join(r.configDir, "credentials.json"), "utf8")).coffee.token).toBe("ulams_pat_secret1");
+  }, 20_000);
+
+  it("access_denied and expired_token are errors", async () => {
+    for (const [error, exit] of [["access_denied", 4], ["expired_token", 3]] as const) {
+      const r = await runCli(["login", "--url", URL_, "--device", "--json"], { routes: { ...meta, ...code, "POST /api/auth/device/token": { status: 400, body: { error } } } });
+      expect(r.code).toBe(exit);
+    }
+  });
+});

@@ -4,6 +4,7 @@ namespace Ulams\Consultations;
 
 use Ulams\Auth\UlamsAuthServiceProvider;
 use Ulams\Categories\UlamsCategoriesServiceProvider;
+use Ulams\Consultations\Console\PurgeMeetingFrames;
 use Ulams\Consultations\Providers\EventServiceProvider;
 use Ulams\Consultations\Repositories\ConsultationRepository;
 use Ulams\Consultations\Repositories\ConsultationUserRepository;
@@ -48,6 +49,7 @@ class UlamsConsultationsServiceProvider extends ServiceProvider
 
     protected function bootForConsole(): void
     {
+        $this->commands([PurgeMeetingFrames::class]);
         $this->publishes([
             __DIR__ . '/config.php' => config_path('config.php'),
         ], 'ulams_consultations');

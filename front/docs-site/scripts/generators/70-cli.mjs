@@ -82,7 +82,7 @@ export default function generate() {
         editUrl: false,
         sidebar: { label: "CLI", order: 8 },
       },
-      `Generated from the CLI's command registry (\`ulams schema\`), so it always matches the binary. Guides: [Using the CLI](/developers/cli/).
+      `Generated from the CLI's command registry (\`ulams schema\`), so it always matches the binary. Guides: [Using the CLI](/developers/cli/), [ulams for AI agents](/developers/agents/).
 
 ## Commands
 

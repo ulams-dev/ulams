@@ -13,7 +13,6 @@ import ProCard from '@ant-design/pro-card';
 import ProForm, {
   ProFormDateTimePicker,
   ProFormSelect,
-  ProFormSwitch,
   ProFormText,
   ProFormTextArea,
 } from '@ant-design/pro-form';
@@ -312,14 +311,6 @@ const WebinarForm = () => {
               >
                 <UserSelect multiple />
               </ProForm.Item>
-            </ProForm.Group>
-            <ProForm.Group>
-              <ProFormSwitch
-                name="analyze_enabled"
-                label={<FormattedMessage id="ai_analysis_enable_label" />}
-                tooltip={<FormattedMessage id="ai_analysis_enable_tooltip" />}
-                width="lg"
-              />
             </ProForm.Group>
             <ProForm.Group>
               <ProFormTextArea

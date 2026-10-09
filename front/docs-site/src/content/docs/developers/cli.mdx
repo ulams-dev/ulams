@@ -12,7 +12,7 @@ import { Aside } from "@astrojs/starlight/components";
 `ulams` is a command line tool for people and AI agents. It talks to the same REST API as the admin
 panel and the learner frontend, through [`@ulams/sdk`](/developers/openapi-and-sdk/). Every command is
 defined once in a registry, so the help, the JSON schema (`ulams schema`), the
-[CLI reference](/reference/cli/) and the MCP server cannot drift apart.
+[CLI reference](/reference/cli/) and the [MCP server](/developers/agents/) cannot drift apart.
 Decision records: [ADR 0072](/decisions/0072-agent-first-cli-command-registry/) (registry) and
 [ADR 0073](/decisions/0073-cli-machine-contract/) (output contract).
 
@@ -49,7 +49,7 @@ ulams profiles list     # saved profiles; `ulams profiles use <name>` switches
 Password logins use the API's one-month token, which has the full permissions of the user. Scoped
 tokens and browser login (`ulams login --device`) arrive with the server work in
 [ADR 0074](/decisions/0074-scoped-personal-access-tokens/) and [ADR 0075](/decisions/0075-device-login/);
-until then `--device` answers "not available on this server".
+`ulams login --device` runs the browser flow (a code to approve in the web app, scopes with `--scope`) on servers that advertise `deviceLogin` in `/api/meta`, and answers "not available on this server" otherwise.
 
 For CI and agents no files are needed: set `ULAMS_URL` and `ULAMS_TOKEN`. Precedence is flag, then
 environment, then profile. A profile token is never sent to another `--url`.
