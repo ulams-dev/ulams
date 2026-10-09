@@ -447,6 +447,15 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           token: ${{ secrets.DOCKERHUB_TOKEN }}
+      # `docker run` falls back to docker.io when the daemon mirror is skipped; pull through the
+      # mirror explicitly and retag, so validate.sh finds the images locally.
+      - name: Pre-pull the validation images through the mirror
+        run: |
+          images=$(grep -oE '(caddy|cloudflare/cloudflared):[^ ]+' deploy/vps-cloudflare/compose.yml | sort -u)
+          for img in $images koalaman/shellcheck:stable; do
+            case "$img" in */*) src="mirror.gcr.io/$img" ;; *) src="mirror.gcr.io/library/$img" ;; esac
+            docker pull "$src" && docker tag "$src" "$img"
+          done
       - run: deploy/vps-cloudflare/scripts/validate.sh
 
   ci-ok:
