@@ -11,5 +11,6 @@ Route::group([
 ], function () {
     Route::get('sessions/{session}/sources', [SourcesController::class, 'index']);
     Route::get('sources/{source}/revisions', [SourcesController::class, 'revisions']);
+    Route::post('sources/{source}/revisions', [SourcesController::class, 'upload']);
     Route::get('revisions/{revision}', [SourcesController::class, 'revision']);
 });

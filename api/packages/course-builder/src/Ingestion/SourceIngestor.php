@@ -48,8 +48,13 @@ final class SourceIngestor
         ];
     }
 
-    /** @throws UploadRejected */
-    public function store(Session $session, UploadedFile $file): Source
+    /**
+     * Runs the upload guard and the extension/content check; returns what the file is.
+     *
+     * @return array{kind:string,name:string,sha256:string,size:int,mime:string}
+     * @throws UploadRejected
+     */
+    public function inspect(UploadedFile $file): array
     {
         $this->guard->check($file, self::UPLOAD_KIND);
         $name = $file->getClientOriginalName();
@@ -60,7 +65,20 @@ final class SourceIngestor
             throw new UploadRejected('wrong_type', sprintf('The file extension .%s does not match its content (%s).', $extension, $sniffed));
         }
 
-        $sha = (string) hash_file('sha256', (string) $file->getRealPath());
+        return [
+            'kind' => $kind,
+            'name' => mb_substr($name, 0, 255),
+            'sha256' => (string) hash_file('sha256', (string) $file->getRealPath()),
+            'size' => (int) $file->getSize(),
+            'mime' => $kind === 'docx' ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' : ($kind === 'pdf' ? 'application/pdf' : 'text/markdown'),
+        ];
+    }
+
+    /** @throws UploadRejected */
+    public function store(Session $session, UploadedFile $file): Source
+    {
+        $info = $this->inspect($file);
+        $sha = $info['sha256'];
         $existing = Source::query()->where('session_id', $session->id)->where('sha256', $sha)->first();
         if ($existing !== null) {
             return $existing;
@@ -71,9 +89,9 @@ final class SourceIngestor
 
         return Source::query()->create([
             'session_id' => $session->id,
-            'original_name' => mb_substr($name, 0, 255),
-            'mime' => $kind === 'docx' ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' : ($kind === 'pdf' ? 'application/pdf' : 'text/markdown'),
-            'size' => (int) $file->getSize(),
+            'original_name' => $info['name'],
+            'mime' => $info['mime'],
+            'size' => $info['size'],
             'sha256' => $sha,
             'path' => $path,
             'status' => 'uploaded',
