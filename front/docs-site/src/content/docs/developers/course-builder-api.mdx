@@ -1,0 +1,131 @@
+---
+title: Course Builder API
+description: Every endpoint under /api/admin/course-builder, the run and AG-UI event model, how to read the event stream with curl, the actions you can send to a run, and what happens at the cost limits.
+sidebar:
+  order: 83
+modules:
+  - course-builder
+---
+
+The [AI Course Builder](/creators/course-builder/) is a plain REST API plus one Server-Sent Events (SSE) stream. The studio,
+the [`ulams builder` commands](/developers/cli-builder/) and the MCP tools all use the same endpoints. Settings and limits
+are in [Course Builder settings](/admin/course-builder/); the internals are in [LLM layer and Course Builder](/developers/llm-layer/).
+
+## Conventions
+
+- Base path `/api/admin/course-builder`, header `Authorization: Bearer <token>`. A [scoped token](/developers/scoped-tokens/)
+  needs `builder:read` for GET and `builder:write` for everything else.
+- The user needs the `course_builder_use` permission. Only the author of a session (and admins) can read it; only the author can change it.
+- Responses are `{"success": true, "data": …, "message": "OK"}`; errors are `{"success": false, "message": "…"}`.
+- Every endpoint answers 503 with `"code": "ai_disabled"` while AI is off (`AI_DRIVER=disabled` or no API key).
+- Ids of sessions, runs and versions are ULIDs; fragments are `frg_…`.
+
+## Endpoints
+
+| Method and path | Purpose |
+|---|---|
+| `GET sessions` | My sessions (latest 100), each with `costMicroUsd` |
+| `POST sessions` `{title?}` | New session; 201 with the state snapshot, 429 after `COURSE_BUILDER_SESSIONS_PER_DAY` |
+| `GET sessions/{session}` | State snapshot: `session`, `brief`, `briefRows`, `cost`, `sources`, `aiEnabled`, `budgetReached`, `activeRunId`, `canUndo`, `canRedo`, `links` |
+| `DELETE sessions/{session}` | Cancel its active runs and delete the session; an applied course is kept |
+| `POST sessions/{session}/sources` (multipart `file`) | Upload Markdown, PDF or DOCX; 202 with `source` and `runId` of the ingest run (the interview starts by itself after the first source); 422 with `reason` for a rejected file |
+| `GET sessions/{session}/sources/{source}` | A source with its section tree (`fragments`) |
+| `GET fragments/{fragment}` | One source passage, for a citation (`removed: true` when the source no longer has it and the archive does) |
+| `GET sessions/{session}/brief`, `PUT sessions/{session}/brief` | Read or edit the Course Brief; the PUT returns `stale: true` when the outline no longer follows it (nothing is regenerated) |
+| `POST sessions/{session}/runs` | Start a run from a chat message or a UI action (below); 202 with `runId` (null when the action finished inside the request), `accepted`, `message` |
+| `GET runs/{run}` | Run status for pollers: `status` (`queued`, `running`, `succeeded`, `failed`, `cancelled`), `stage`, `needsAttention`, `steps[]`, `error` |
+| `POST runs/{run}/cancel` | Cancel a queued or running run |
+| `POST runs/{run}/steps/{step}/retry` | Retry one failed generation step; 409 for a step that did not fail |
+| `GET sessions/{session}/events` | The SSE event stream (below) |
+| `GET sessions/{session}/versions` | `currentVersionId`, `appliedVersionId` and the version history |
+| `GET versions/{version}` | One version with its blueprint `document` and fragment labels |
+| `GET versions/{version}/diff?against=` | Element-aware diff against another version (default: its parent) |
+| `POST versions/{version}/approve` `{edits?}` | Approve a proposed outline, patch or content version; 409 when it is not waiting for a decision |
+| `POST versions/{version}/reject` `{comment?}` | Reject a proposed outline or patch |
+| `POST versions/{version}/restore` | Make an old version current as a new version |
+| `POST sessions/{session}/undo`, `POST sessions/{session}/redo` | Move through the history; an applied course is re-applied |
+| `POST sessions/{session}/apply` `{overwrite?}` | Create or update the course (unpublished); 202 with `runId`; 409 when there is no generated content |
+| `POST sessions/{session}/publish` | Publish the applied course; 409 before the first apply |
+| `GET sessions/{session}/usage` | AI calls by task and model: tokens, cost in micro-USD (1,000,000 = 1 USD), latency |
+
+The session `status` moves through `draft`, `ingesting`, `interviewing`, `outlining`, `outline_review`, `generating`,
+`apply_review`, `applying`, `applied` (or `failed`).
+
+## Sending a message or an action
+
+`POST sessions/{session}/runs` takes an AG-UI `RunAgentInput`. Typed text goes in `messages` (the last `user` message is used,
+up to 4000 characters). With `forwardedProps.selection.elementId` the message starts a **patch** run on that element and the
+result is a proposed version you approve or reject; without it, the text answers the open interview question or, during outline
+review, requests changes to the outline.
+
+```bash
+curl -sS -X POST "$API/api/admin/course-builder/sessions/$S/runs" \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"messages":[{"role":"user","content":"Make this shorter"}],"forwardedProps":{"selection":{"elementId":"blk_x1"}}}'
+```
+
+A UI action goes in `forwardedProps.action = {name, surfaceId, context}`; the surface must be the open one the server issued
+(an out-of-date card gets `accepted: false`). Actions: `answer {key, value}`, `decide_for_me {key?}`,
+`approve_outline {versionId, edits}`, `reject_outline {versionId, comment}`, `approve_apply {versionId}`,
+`approve_patch {versionId}`, `reject_patch {versionId}`, `retry_step {stepId}` and `retry` (repeats the interview or outline
+step that failed). The `versions/{version}/approve|reject` endpoints are shortcuts that look up the surface for you, which is
+what scripts should use.
+
+## Reading the event stream with curl
+
+`GET sessions/{session}/events` is `text/event-stream`. On connect you get `retry: 1000` and one
+`STATE_SNAPSHOT` (no id, sent on every connect). Then every stored event after `Last-Event-ID` (or `?after=`), each as
+`id: <n>` and `data: <json>`, then new events as they happen. The server closes the connection after
+`COURSE_BUILDER_SSE_SECONDS` (25) and sends a `: ping` comment every 10 s, so a client reconnects with the last id.
+
+```bash
+# one connection, from the beginning
+curl -sS -N -H "Authorization: Bearer $TOKEN" "$API/api/admin/course-builder/sessions/$S/events?after=0"
+
+# resume after event 412
+curl -sS -N -H "Authorization: Bearer $TOKEN" -H 'Last-Event-ID: 412' "$API/api/admin/course-builder/sessions/$S/events"
+```
+
+For a loop that survives the 25 s cap, use `ulams builder events <session> --follow --until-run <run>`
+([NDJSON output](/developers/cli-builder/#events-as-ndjson)). Events are kept `COURSE_BUILDER_EVENTS_RETENTION_DAYS` (30) days.
+
+### Event types
+
+Every payload is `{"type": …, "timestamp": <ms>, …}`.
+
+| `type` | Payload |
+|---|---|
+| `RUN_STARTED` | `threadId` (the session), `runId` |
+| `RUN_FINISHED` | `threadId`, `runId`, optional `result` |
+| `RUN_ERROR` | `message`, `code` (`error`, `cancelled`, or an AI failure reason such as `budget`), `runId` |
+| `STEP_STARTED`, `STEP_FINISHED` | `stepName` (stage name, e.g. `ingest`, `apply`) |
+| `TEXT_MESSAGE_START`, `TEXT_MESSAGE_CONTENT`, `TEXT_MESSAGE_END` | `messageId`; `role` (`assistant` or `user`) on start; `delta` on content |
+| `STATE_DELTA` | `delta`: RFC 6902 patch on `/cost`, `/brief`, `/briefRows`, `/session`, `/sources`, `/budgetReached` |
+| `ACTIVITY_SNAPSHOT` | `activityType: "a2ui-surface"`, `messageId` (the surface id), `content: {surfaceId, messages: [A2UI v0.9 …]}`, `replace: true`: the interview, outline, progress, patch and apply cards |
+| `CUSTOM` | `name` and `value`: `applied {courseId, versionId, links}`, `published {courseId}`; with Living Course also `update_proposal`, `update_analysis`, `update_applied` |
+
+`STATE_SNAPSHOT` (connect only) carries the snapshot described above. The cards are declarative A2UI components
+([Generative UI](/developers/generative-ui/)); the CLI turns them into `data.pending` so an agent does not parse them.
+
+## Cost limits and what happens at the limit
+
+Every model call is checked before it is made, against three limits. The first that would be exceeded stops the call with a
+`budget` failure:
+
+| Limit | Setting (default) | At the limit |
+|---|---|---|
+| Tokens per session (cache reads count 10 %) | `COURSE_BUILDER_SESSION_TOKENS` (3,000,000) | "Budget reached: this course has used its AI token allowance." |
+| Cost per session | `COURSE_BUILDER_SESSION_COST_USD` (5) | "Budget reached: this course has used $x of its $y AI budget." |
+| Cost per tenant and month, all tasks | `AI_LIMIT_TENANT_MONTHLY_USD` (50; `0` turns the cap off) | "Budget reached: this academy has used its monthly AI allowance." |
+
+The run fails with `RUN_ERROR` (`code: "budget"`), the session sets `budgetReached: true` (a `STATE_DELTA` on `/budgetReached`),
+and everything already generated is kept. Raise the limit and retry the step or the run. Other limits answer before a run
+starts: 429 for `COURSE_BUILDER_CONCURRENT_RUNS` (2 AI runs per author) and `COURSE_BUILDER_SESSIONS_PER_DAY` (10), 422 for a
+source over `COURSE_BUILDER_SOURCE_TOKENS` (400,000), `COURSE_BUILDER_SOURCE_MB` (20) or `COURSE_BUILDER_PDF_PAGES` (300).
+See [Course Builder settings](/admin/course-builder/) for the full table.
+
+## Queues and timing
+
+Runs execute in `RunJob` (one try, 1800 s timeout) on the `builder` queue; see
+[Queues and streaming](/admin/course-builder/#queues-and-streaming). A poller should use `GET runs/{run}`, a UI should use the
+stream.

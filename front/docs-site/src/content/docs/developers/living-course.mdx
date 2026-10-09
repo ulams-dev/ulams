@@ -21,19 +21,55 @@ The package `api/packages/living-course` (`Ulams\LivingCourse`) builds on the [C
 
 ## Endpoints
 
-Authors and reviewers (`auth:api`, policies: the session author or `living_course_review` may act, author or admin may view):
+Authors and reviewers (`auth:api`, scope `living-course:read` for GET and `living-course:write` otherwise; policies: the session author or `living_course_review` may act, author or admin may view). Paths are under `/api/admin/living-course`:
 
-| Path under `/api/admin/living-course` | Methods |
+| Method and path | Purpose |
 |---|---|
-| `connectors`, `sessions/{s}/sources`, `sessions/{s}/sources/connect` | list, connect |
-| `connections/{c}`, `connections/{c}/check`, `connections/{c}/webhook-secret` | update, delete, check now, rotate secret |
-| `sources/{s}/revisions`, `revisions/{r}`, `revisions/{r}/changes` | list, upload, show, changes |
-| `sessions/{s}/staleness`, `sessions/{s}/proposals`, `proposals/{p}` | read |
-| `proposals/{p}/analyse`, `reanalyse`, `reject`, `accept-all`, `apply`, `learner-note` | act |
-| `proposals/{p}/items/{i}/accept`, `reject`, `reset`, `regenerate` | decide |
-| `sessions/{s}/audit`, `audit/export`, `audit/verify` and the tenant-wide `audit/...` | audit |
+| `GET connectors` | Connectors enabled here with `configSchema`, `secretFields` and `webhooks` |
+| `GET sessions/{s}/sources` | Sources of a course with their connection and sync state |
+| `POST sessions/{s}/sources/connect` `{connector, config, secrets?, schedule?}` | Validate, fetch revision 1; 201 with `connection`, `source`, `webhookSecret` (once); 422 when the connector refuses the settings |
+| `PUT connections/{c}` | `schedule` (`manual`, `hourly`, `daily`, `weekly`), `autoAnalyse`, `status` (`active`, `paused`), `config`, `secrets`, `settings.show_pending_to_learners`, `settings.notify_learners_of_updates` |
+| `DELETE connections/{c}` | Disconnect: paused, manual, secrets removed; revisions and audit stay |
+| `POST connections/{c}/check` | Check now; 202, 409 for an upload or a paused source |
+| `POST connections/{c}/webhook-secret` | Rotate; the new secret is returned once, the old one stops working |
+| `GET sources/{s}/revisions`, `POST sources/{s}/revisions` (multipart `file`) | List, or upload a new version (no new revision when the file equals the latest) |
+| `GET revisions/{r}`, `GET revisions/{r}/changes?against=` | One revision; changed, moved, added and removed fragments with old and new text |
+| `GET sessions/{s}/staleness` | `element_status` of the course (works with AI off) |
+| `GET sessions/{s}/proposals`, `GET proposals/{p}` | List; one proposal with items grouped by lesson |
+| `POST proposals/{p}/analyse` `{confirmEstimate?}` | 202 started; 409 when the estimate needs confirming; 422 when budget blocked; 503 with AI off |
+| `POST proposals/{p}/items/{i}/accept`, `reject`, `reset` | Decide one item; 409 when it is not decidable now |
+| `POST proposals/{p}/items/{i}/regenerate` `{comment}` | New suggestion for one item (one call, at most 3 per item) |
+| `POST proposals/{p}/accept-all`, `reject`, `reanalyse` | Accept every undecided update, removal and no-change item; reject the whole proposal and acknowledge the revision; start again from the newest revision |
+| `PUT proposals/{p}/learner-note` `{note}` | Plain text, up to 500 characters |
+| `POST proposals/{p}/apply` `{overwrite?}` | New blueprint version of kind `update`; 202 with the run; 409 lists conflicts or admin edits |
+| `GET sessions/{s}/audit` | Entries, newest first; filters `action` (prefix), `actorType`, `source`, `from`, `to`, `page`, `perPage` (max 200) |
+| `GET sessions/{s}/audit/export?format=csv\|json` | Download with the same filters |
+| `GET audit/export`, `GET audit/verify` | Whole academy (admins only) |
+| `GET sessions/{s}/audit/verify` | `{ok, checked, brokenId, reason}`; the chain covers the whole academy |
 
-Learners: `GET /api/living-course/courses/{c}/notices`, `GET .../freshness`, `POST /api/living-course/notices/{n}/dismiss`. Webhooks: `POST /api/living-course/webhooks/{webhookId}` (public, verified by signature, throttled). The typed client is `createLivingCourseClient` in `@ulams/sdk`.
+Learners (scope `learner`): `GET /api/living-course/courses/{c}/notices` (open notices of the caller: `kind` is `topic_updated`, `question_reattempt`, `topic_retired` or `course_extended`), `POST /api/living-course/notices/{n}/dismiss` (a re-attempt notice closes when the quiz is retaken), `GET /api/living-course/courses/{c}/freshness` (topics with an update under review, only when the course shows it; never the content). Webhooks: `POST /api/living-course/webhooks/{webhookId}`, below. The typed client is `createLivingCourseClient` in `@ulams/sdk`. Settings, limits and the scheduler are in [Living Course settings](/admin/living-course/); the commands in [Build courses from the command line](/developers/cli-builder/#living-course).
+
+## Webhook requests
+
+The URL is `https://<tenant API host>/api/living-course/webhooks/<webhookId>`; the connection returns it as `webhookUrl`. There is no login: the credential is the signature made with the connection's webhook secret.
+
+| Host | Header checked |
+|---|---|
+| any (generic, and for tests) | `X-Ulams-Signature: sha256=<hex>`: HMAC-SHA256 of the raw body with the secret |
+| GitHub | `X-Hub-Signature-256: sha256=<hex>` |
+| Gitea, Forgejo | `X-Gitea-Signature` or `X-Forgejo-Signature`: hex HMAC-SHA256 |
+| GitLab | `X-Gitlab-Token`: the secret itself |
+
+Only `push` events to the tracked branch that touch the tracked paths queue a check; others answer 200 `{"ignored": true}`. Replies: 202 `{"queued": true}`; 200 for `duplicate` (same delivery id) or `dropped` (paused connection or daily check limit); 401 invalid signature; 404 unknown id; 413 body over 1 MB; 429 over 60 requests a minute per webhook. Several pushes within `LIVING_COURSE_WEBHOOK_DEBOUNCE_SECONDS` become one check. Bodies are never stored, only their SHA-256.
+
+```bash
+SECRET='<webhook secret>'
+BODY='{"ref":"refs/heads/main","after":"0123abc","commits":[{"modified":["docs/brewing.md"]}]}'
+SIG=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$SECRET" | sed 's/^.* //')
+curl -sS -X POST "https://coffee.example/api/living-course/webhooks/<webhookId>" \
+  -H 'Content-Type: application/json' -H "X-Ulams-Signature: sha256=$SIG" --data-binary "$BODY"
+# {"success":true,"data":{"queued":true},...}
+```
 
 ## Events and notifications
 
@@ -42,6 +78,10 @@ Learners: `GET /api/living-course/courses/{c}/notices`, `GET .../freshness`, `PO
 ## Writing a connector
 
 Implement `Ulams\LivingCourse\Connectors\SourceConnector`, register it with `SourceConnectorRegistry` and list its key in `LIVING_COURSE_CONNECTORS`. Use `Ulams\Core\Http\SafeHttp` for every request. The worked example is `ExampleConnector` in `api/packages/example-plugin`; the step-by-step guide is `docs/living-course/connector-plugins.md` in the repository.
+
+## Scheduler
+
+`living-course:poll` is registered by the package on the Laravel scheduler (every 15 minutes, without overlapping). It queues checks of due Git and web connections on the builder queue and prunes webhook deliveries older than 30 days. `course-builder:prune-events` is not scheduled by the package; schedule it daily yourself.
 
 ## Guards
 
