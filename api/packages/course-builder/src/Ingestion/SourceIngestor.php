@@ -146,6 +146,7 @@ final class SourceIngestor
                     'page_end' => $row['page_end'],
                     'token_estimate' => $row['token_estimate'],
                     'content_hash' => $row['content_hash'],
+                    'file_path' => $row['file_path'] ?? null,
                 ]);
             }
             $source->forceFill([

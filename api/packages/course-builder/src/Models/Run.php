@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property string $id
  * @property string $session_id
- * @property string $kind ingest | interview | outline | generate | patch | apply | action
+ * @property string $kind ingest | interview | outline | generate | patch | apply | action | sync
  * @property string $status queued | running | needs_attention | finished | failed | cancelled
  * @property string|null $stage
  * @property array|null $input

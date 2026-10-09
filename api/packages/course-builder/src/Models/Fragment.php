@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $page_end
  * @property int $token_estimate
  * @property string $content_hash
+ * @property string|null $file_path the file of a multi-file source (repository, several web pages)
  */
 class Fragment extends Model
 {
@@ -55,6 +56,8 @@ class Fragment extends Model
         $path = (array) $this->heading_path;
         $title = $path === [] ? 'Introduction' : (string) end($path);
 
-        return trim(($this->section ? '§' . $this->section . ' ' : '') . $title);
+        $label = trim(($this->section ? '§' . $this->section . ' ' : '') . $title);
+
+        return $this->file_path ? basename($this->file_path) . ' ' . $label : $label;
     }
 }

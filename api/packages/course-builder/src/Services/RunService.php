@@ -33,6 +33,27 @@ final class RunService
 {
     public const LLM_KINDS = ['interview', 'outline', 'generate', 'patch'];
 
+    /**
+     * Run handlers contributed by other packages (Living Course). A run whose `input.handler`
+     * (or, failing that, `kind`) names a registered handler is executed by it; a handler that
+     * returns false keeps the run open (it finishes the run itself, e.g. after queued steps).
+     *
+     * @var array<string,\Closure(Run,Session):mixed>
+     */
+    private static array $handlers = [];
+
+    /** @param \Closure(Run,Session):mixed $handler */
+    public static function extend(string $name, \Closure $handler): void
+    {
+        self::$handlers[$name] = $handler;
+    }
+
+    public function finish(Run $run): void
+    {
+        $run->forceFill(['status' => 'finished', 'finished_at' => now()])->save();
+        $this->events->runFinished($run);
+    }
+
     public function __construct(
         private readonly EventLog $events,
         private readonly Surfaces $surfaces,
@@ -80,7 +101,14 @@ final class RunService
         }
         $run->forceFill(['status' => 'running', 'started_at' => now()])->save();
         $this->events->runStarted($run);
-        $ok = $this->guard($run, function () use ($run, $session) {
+        $open = false;
+        $ok = $this->guard($run, function () use ($run, $session, &$open) {
+            $handler = self::$handlers[(string) ($run->input['handler'] ?? $run->kind)] ?? null;
+            if ($handler !== null) {
+                $open = $handler($run, $session) === false;
+
+                return;
+            }
             match ($run->kind) {
                 'ingest' => $this->ingest($session, $run),
                 'interview' => $this->interview->start($session, $run),
@@ -95,9 +123,8 @@ final class RunService
                 default => throw new InvalidArgumentException("Unknown run kind {$run->kind}"),
             };
         });
-        if ($ok) {
-            $run->forceFill(['status' => 'finished', 'finished_at' => now()])->save();
-            $this->events->runFinished($run);
+        if ($ok && !$open) {
+            $this->finish($run);
         }
     }
 
