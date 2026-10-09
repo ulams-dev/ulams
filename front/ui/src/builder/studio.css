@@ -352,3 +352,11 @@ a.cb-fresh:hover { border-color: var(--ulams-studio-iris); }
 /* learner impact of an update */
 .cb-learner-impact { display: flex; flex-direction: column; gap: 8px; }
 .cb-learner-lines { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 4px; }
+
+.cb-publish-facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 12px 0; }
+.cb-publish-facts dt { font-weight: 600; }
+.cb-publish-facts dd { margin: 0; overflow-wrap: anywhere; }
+.cb-publish-list { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 8px; }
+.cb-publish-list li { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+.cb-check { display: flex; gap: 10px; align-items: center; min-height: 44px; margin-top: 12px; }
+.cb-check input { width: 24px; height: 24px; }

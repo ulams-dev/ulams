@@ -1,4 +1,5 @@
 import { ApiError, createClient, createLivingLearnerClient, type Course, type Tenant, type TopicProgress } from "@ulams/sdk";
+import type { UiNode } from "@ulams/ui/render-core";
 import { cache } from "./cache.ts";
 import { config } from "./config.ts";
 import { fetchFrameOrigins } from "./frame-origins.ts";
@@ -20,6 +21,26 @@ const settle = <T>(promise: Promise<T>, fallback: T): Promise<T> => promise.catc
 
 export function getSettings(tenant: Tenant) {
   return publicData(tenant, "settings", () => apiFor(tenant).settings.public());
+}
+
+/**
+ * The generated landing document of a course (an active page `course-<id>`, written by the course
+ * builder when it publishes), or null when the course has none. Never throws: the course page falls
+ * back to the page built from API data.
+ */
+export function getCoursePage(tenant: Tenant, courseId: number): Promise<UiNode | null> {
+  return publicData(tenant, `course-page:${courseId}`, async () => {
+    try {
+      const response = await fetch(`${tenant.apiUrl}/api/pages/course-${courseId}`, { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(4_000) });
+      if (!response.ok) return null;
+      const content = ((await response.json()) as { data?: { content?: unknown; active?: unknown } }).data;
+      if (!content || content.active === false || typeof content.content !== "string") return null;
+      const doc = JSON.parse(content.content) as UiNode;
+      return doc && typeof doc === "object" && typeof doc.component === "string" ? doc : null;
+    } catch {
+      return null;
+    }
+  }, 30_000);
 }
 
 export function getCourses(tenant: Tenant) {

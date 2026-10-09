@@ -462,6 +462,27 @@ export const builderCatalogue = {
     ),
     fallback: (p) => `${arr(p.versions).length} versions.`,
   },
+  PublishSummary: {
+    description:
+      "Everything the author should know before publishing an applied course: where it will live, its price and theme, the numbers, items that block publishing and warnings that must be acknowledged. The Publish button stays disabled while anything blocks, and until warnings are acknowledged.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        title: str("Course title", 200),
+        url: str("Public address of the course page", 500),
+        published: bool("The course is already published"),
+        price: obj({ label: str("Price as shown to the author, e.g. Free or 49.00 USD", 80), suggested: bool("The amount is a suggestion the author has not confirmed") }, ["label"]),
+        theme: obj({ preset: str("Theme preset", 32), accent: str("Accent chosen by the author", 7), adjustedAccent: str("Accent as shown after the contrast adjustment", 7) }, ["preset"]),
+        counts: obj({ modules: int("Modules"), lessons: int("Lessons"), minutes: int("Minutes"), questions: int("Quiz questions") }, []),
+        blocking: list(obj({ code: str("Machine code", 40), message: str("What to fix", 500) }, ["code", "message"]), "Items that block publishing", 40),
+        warnings: list(obj({ code: str("Machine code", 40), message: str("What to review", 500), elementId: str("Element the warning is about", 32) }, ["code", "message"]), "Items to acknowledge", 80),
+        notes: list(str("Note from the last apply", 500), "Notes from the last apply", 10),
+      },
+      ["published", "price", "blocking", "warnings"]
+    ),
+    fallback: (p) => `${p.published ? "Published" : "Ready to publish?"} ${arr(p.blocking).length} blocking item(s), ${arr(p.warnings).length} warning(s).`,
+  },
   SourceConnectionCard: {
     description:
       "A source of the course and how it stays in sync: file name and kind, connector (upload, Git, web page), a status pill (up to date, new version, processing, failed, paused), the revision the course reflects against the latest one, when it was last checked, the error if the last check failed, and the actions Check now and Upload a new version. Props come from the API, never from the model.",

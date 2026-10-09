@@ -110,6 +110,11 @@ test("build a course from a document, edit a question in chat, undo", async ({ p
 
   // success screen and the course in the LMS
   await expect(page.getByRole("heading", { name: "Your course is ready." })).toBeVisible();
+  // the publish summary: where it lives, the price from the brief, nothing blocking; publishing is not done here
+  const summary = page.locator("[data-publish]");
+  await expect(summary.getByRole("heading", { name: "Before you publish" })).toBeVisible();
+  await expect(summary.getByText("49.00 USD")).toBeVisible();
+  await expect(summary.getByRole("button", { name: "Publish course" })).toBeVisible();
   await axe(page, "success");
   const href = await page.getByRole("link", { name: "Preview as learner" }).getAttribute("href");
   const courseId = Number(href!.split("/").pop());

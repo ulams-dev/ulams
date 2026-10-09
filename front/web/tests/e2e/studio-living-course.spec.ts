@@ -132,6 +132,9 @@ test.describe("update with learner progress intact", () => {
     await expect(page.getByRole("heading", { name: "Your course is ready." })).toBeVisible();
     const href = await page.getByRole("link", { name: "Preview as learner" }).getAttribute("href");
     courseId = Number(href!.split("/").pop());
+    const acknowledge = page.getByLabel(/I have read the \d+ warning/);
+    await expect(page.getByRole("button", { name: "Publish course" })).toBeVisible({ timeout: 30_000 });
+    if (await acknowledge.isVisible()) await acknowledge.check();
     await page.getByRole("button", { name: "Publish course" }).click();
     await expect(page.getByText("The course is published")).toBeVisible({ timeout: 30_000 });
     await context.close();

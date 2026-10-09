@@ -1,0 +1,4516 @@
+{
+  "catalogId": "https://ulams.dev/catalogue/page/v1",
+  "components": {
+    "Page": {
+      "description": "Root of a page document. Sets the theme and metadata. Children: SiteHeader, Main, SiteFooter in that order.",
+      "children": true,
+      "props": {
+        "type": "object",
+        "properties": {
+          "theme": {
+            "type": "string",
+            "enum": [
+              "coffee",
+              "oncall",
+              "nightsky",
+              "platform"
+            ],
+            "description": "Tenant theme preset"
+          },
+          "title": {
+            "type": "string",
+            "description": "Document title for the browser tab and search results",
+            "maxLength": 70
+          },
+          "description": {
+            "type": "string",
+            "description": "Meta description, under 160 characters",
+            "maxLength": 160
+          },
+          "lang": {
+            "type": "string",
+            "description": "BCP 47 language of the page",
+            "maxLength": 10,
+            "default": "en"
+          }
+        },
+        "required": [
+          "theme",
+          "title"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Main": {
+      "description": "The page's main landmark. Put every section between the header and the footer inside it.",
+      "children": true,
+      "props": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "Stack": {
+      "description": "Vertical group of components with consistent spacing (e.g. the body of a lesson).",
+      "children": true,
+      "props": {
+        "type": "object",
+        "properties": {
+          "gap": {
+            "type": "string",
+            "enum": [
+              "sm",
+              "md",
+              "lg"
+            ],
+            "description": "Space between children",
+            "default": "md"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "SiteHeader": {
+      "description": "Top navigation bar with the brand, up to six links and one call to action. Collapses to a menu on phones.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "brand": {
+            "type": "string",
+            "description": "Brand name",
+            "maxLength": 60
+          },
+          "tagline": {
+            "type": "string",
+            "description": "Small line under the brand",
+            "maxLength": 60
+          },
+          "mark": {
+            "type": "string",
+            "enum": [
+              "wordmark",
+              "terminal",
+              "rocket",
+              "logo"
+            ],
+            "description": "Brand mark style; logo = the ulams mark",
+            "default": "wordmark"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Visible text",
+                  "maxLength": 80
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Target URL",
+                  "maxLength": 2048
+                }
+              },
+              "required": [
+                "label",
+                "href"
+              ],
+              "description": "A link or call to action",
+              "additionalProperties": false
+            },
+            "description": "Navigation links",
+            "default": [],
+            "maxItems": 6
+          },
+          "cta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "signIn": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "brand"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "StatusBar": {
+      "description": "Thin strip of short facts above or below the header: an editorial ribbon or a status-page line (coloured dots by tone).",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "variant": {
+            "type": "string",
+            "enum": [
+              "ribbon",
+              "status"
+            ],
+            "description": "ribbon = editorial small caps, status = monospace with status dots",
+            "default": "ribbon"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Text",
+                  "maxLength": 80
+                },
+                "tone": {
+                  "type": "string",
+                  "enum": [
+                    "neutral",
+                    "ok",
+                    "warn",
+                    "alert",
+                    "info"
+                  ],
+                  "description": "Semantic colour",
+                  "default": "neutral"
+                }
+              },
+              "required": [
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Items",
+            "default": [],
+            "maxItems": 6
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Hero": {
+      "description": "First screen of a landing page. editorial = magazine cover with a photo; console = dark split with a log panel; adventure = playful with an illustration.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "variant": {
+            "type": "string",
+            "enum": [
+              "editorial",
+              "console",
+              "adventure",
+              "product"
+            ],
+            "description": "Layout",
+            "default": "editorial"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Headline (the LCP element: keep it short)",
+            "maxLength": 90
+          },
+          "titleAccent": {
+            "type": "string",
+            "description": "Part of the headline to emphasise; must appear in the title",
+            "maxLength": 60
+          },
+          "subtitle": {
+            "type": "string",
+            "description": "Second line under the headline",
+            "maxLength": 160
+          },
+          "body": {
+            "type": "string",
+            "description": "Paragraph",
+            "maxLength": 500
+          },
+          "primaryCta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "secondaryCta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "image": {
+            "type": "object",
+            "properties": {
+              "src": {
+                "type": "string",
+                "format": "href",
+                "description": "Image URL (local /images/… or the tenant storage)",
+                "maxLength": 2048
+              },
+              "alt": {
+                "type": "string",
+                "description": "Text alternative; empty string only for decorative images",
+                "maxLength": 300
+              },
+              "width": {
+                "type": "integer",
+                "description": "Intrinsic width in px",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "description": "Intrinsic height in px",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "src",
+              "alt",
+              "width",
+              "height"
+            ],
+            "description": "An image with explicit size (prevents layout shift)",
+            "additionalProperties": false
+          },
+          "caption": {
+            "type": "string",
+            "description": "Image caption",
+            "maxLength": 160
+          },
+          "illustration": {
+            "type": "string",
+            "enum": [
+              "none",
+              "orbi",
+              "planets"
+            ],
+            "description": "Inline illustration (adventure variant)",
+            "default": "none"
+          },
+          "facts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Label",
+                  "maxLength": 40
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Value",
+                  "maxLength": 60
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Small note",
+                  "maxLength": 80
+                }
+              },
+              "required": [
+                "label",
+                "value"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Up to four facts shown under the call to action",
+            "default": [],
+            "maxItems": 4
+          },
+          "panel": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Panel title",
+                "maxLength": 80
+              },
+              "note": {
+                "type": "string",
+                "description": "Small note under the panel, e.g. 'Example drill replay'",
+                "maxLength": 120
+              },
+              "lines": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "time": {
+                      "type": "string",
+                      "description": "Timestamp",
+                      "maxLength": 12
+                    },
+                    "tag": {
+                      "type": "string",
+                      "description": "Tag",
+                      "maxLength": 20
+                    },
+                    "text": {
+                      "type": "string",
+                      "description": "Line",
+                      "maxLength": 200
+                    },
+                    "tone": {
+                      "type": "string",
+                      "enum": [
+                        "neutral",
+                        "ok",
+                        "warn",
+                        "alert",
+                        "info"
+                      ],
+                      "description": "Semantic colour",
+                      "default": "neutral"
+                    }
+                  },
+                  "required": [
+                    "text"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Log lines",
+                "default": [],
+                "maxItems": 8
+              },
+              "prompt": {
+                "type": "string",
+                "description": "Command shown at the bottom of the panel, without the $",
+                "maxLength": 60
+              },
+              "values": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": 0,
+                  "description": "Value"
+                },
+                "description": "Series drawn as the sparkline (e.g. minutes per module); omit for none",
+                "default": [],
+                "maxItems": 24
+              },
+              "valuesLabel": {
+                "type": "string",
+                "description": "What the sparkline shows, e.g. 'minutes per module'",
+                "maxLength": 60
+              }
+            },
+            "required": [
+              "lines"
+            ],
+            "description": "Log-style panel for the console variant",
+            "additionalProperties": false
+          },
+          "diff": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Card title, e.g. the lesson being updated",
+                "maxLength": 80
+              },
+              "source": {
+                "type": "string",
+                "description": "Source the change comes from, e.g. docs/slo.md",
+                "maxLength": 80
+              },
+              "note": {
+                "type": "string",
+                "description": "Small note under the card",
+                "maxLength": 160
+              },
+              "lines": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "type": "string",
+                      "enum": [
+                        "add",
+                        "del",
+                        "ctx"
+                      ],
+                      "description": "Diff line kind",
+                      "default": "ctx"
+                    },
+                    "text": {
+                      "type": "string",
+                      "description": "Line",
+                      "maxLength": 160
+                    }
+                  },
+                  "required": [
+                    "text"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Diff lines",
+                "default": [],
+                "maxItems": 8
+              },
+              "citations": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "description": "Citation chip, e.g. docs/slo.md §2",
+                  "maxLength": 40
+                },
+                "description": "Citations",
+                "default": [],
+                "maxItems": 4
+              },
+              "action": {
+                "type": "string",
+                "description": "Label of the approve button",
+                "maxLength": 30
+              }
+            },
+            "required": [
+              "lines"
+            ],
+            "description": "Update-proposal card for the product variant",
+            "additionalProperties": false
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Syllabus": {
+      "description": "Course program. folio = magazine table of contents with roman numerals; timeline = horizontal modules with week labels; missions = winding adventure path.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "variant": {
+            "type": "string",
+            "enum": [
+              "folio",
+              "timeline",
+              "missions"
+            ],
+            "description": "Layout",
+            "default": "folio"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links",
+            "maxLength": 40,
+            "default": "syllabus"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "lessons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "Lesson id from the API",
+                  "minimum": 0
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Lesson / chapter / mission title",
+                  "maxLength": 160
+                },
+                "kicker": {
+                  "type": "string",
+                  "description": "Short label above the title",
+                  "maxLength": 80
+                },
+                "summary": {
+                  "type": "string",
+                  "description": "One sentence",
+                  "maxLength": 400
+                },
+                "minutes": {
+                  "type": "integer",
+                  "description": "Total duration in minutes",
+                  "minimum": 0
+                },
+                "formats": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "video",
+                      "audio",
+                      "reading",
+                      "image",
+                      "pdf",
+                      "embed",
+                      "interactive",
+                      "scorm",
+                      "tracked",
+                      "quiz",
+                      "project"
+                    ],
+                    "description": "Learning format of a topic"
+                  },
+                  "description": "Formats inside, in order of first appearance",
+                  "default": [],
+                  "maxItems": 60
+                },
+                "topics": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "description": "Topic id from the API",
+                        "minimum": 0
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Topic title",
+                        "maxLength": 160
+                      },
+                      "format": {
+                        "type": "string",
+                        "enum": [
+                          "video",
+                          "audio",
+                          "reading",
+                          "image",
+                          "pdf",
+                          "embed",
+                          "interactive",
+                          "scorm",
+                          "tracked",
+                          "quiz",
+                          "project"
+                        ],
+                        "description": "Learning format of a topic"
+                      },
+                      "minutes": {
+                        "type": "integer",
+                        "description": "Duration in minutes",
+                        "minimum": 0
+                      },
+                      "preview": {
+                        "type": "boolean",
+                        "description": "Free preview without an account",
+                        "default": false
+                      },
+                      "href": {
+                        "type": "string",
+                        "format": "href",
+                        "description": "Topic link (lesson player)",
+                        "maxLength": 2048
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "open",
+                          "done",
+                          "current",
+                          "locked"
+                        ],
+                        "description": "Learner status",
+                        "default": "open"
+                      }
+                    },
+                    "required": [
+                      "title"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Topics",
+                  "default": [],
+                  "maxItems": 60
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Link to the lesson",
+                  "maxLength": 2048
+                }
+              },
+              "required": [
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Lessons in order",
+            "default": [],
+            "maxItems": 60,
+            "minItems": 1
+          },
+          "showTopics": {
+            "type": "boolean",
+            "description": "List topics under each lesson",
+            "default": true
+          },
+          "totalLabel": {
+            "type": "string",
+            "description": "Summary label, e.g. '6 chapters · 18 topics'",
+            "maxLength": 80
+          },
+          "cta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "lessons"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Letter": {
+      "description": "Personal letter from the tutors with portraits, paragraphs and a pull quote (editorial).",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "paragraphs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Paragraph",
+              "maxLength": 1200
+            },
+            "description": "Paragraphs",
+            "default": [],
+            "maxItems": 6
+          },
+          "quote": {
+            "type": "string",
+            "description": "Pull quote",
+            "maxLength": 400
+          },
+          "people": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Full name",
+                  "maxLength": 80
+                },
+                "role": {
+                  "type": "string",
+                  "description": "Role or title",
+                  "maxLength": 80
+                },
+                "place": {
+                  "type": "string",
+                  "description": "Place",
+                  "maxLength": 80
+                },
+                "bio": {
+                  "type": "string",
+                  "description": "Short bio",
+                  "maxLength": 600
+                },
+                "image": {
+                  "type": "object",
+                  "properties": {
+                    "src": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Image URL (local /images/… or the tenant storage)",
+                      "maxLength": 2048
+                    },
+                    "alt": {
+                      "type": "string",
+                      "description": "Text alternative; empty string only for decorative images",
+                      "maxLength": 300
+                    },
+                    "width": {
+                      "type": "integer",
+                      "description": "Intrinsic width in px",
+                      "minimum": 1
+                    },
+                    "height": {
+                      "type": "integer",
+                      "description": "Intrinsic height in px",
+                      "minimum": 1
+                    }
+                  },
+                  "required": [
+                    "src",
+                    "alt",
+                    "width",
+                    "height"
+                  ],
+                  "description": "An image with explicit size (prevents layout shift)",
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Signatories",
+            "default": [],
+            "maxItems": 3
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title",
+          "paragraphs"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "People": {
+      "description": "Instructor cards with portrait, role and a short bio.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "people": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Full name",
+                  "maxLength": 80
+                },
+                "role": {
+                  "type": "string",
+                  "description": "Role or title",
+                  "maxLength": 80
+                },
+                "place": {
+                  "type": "string",
+                  "description": "Place",
+                  "maxLength": 80
+                },
+                "bio": {
+                  "type": "string",
+                  "description": "Short bio",
+                  "maxLength": 600
+                },
+                "image": {
+                  "type": "object",
+                  "properties": {
+                    "src": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Image URL (local /images/… or the tenant storage)",
+                      "maxLength": 2048
+                    },
+                    "alt": {
+                      "type": "string",
+                      "description": "Text alternative; empty string only for decorative images",
+                      "maxLength": 300
+                    },
+                    "width": {
+                      "type": "integer",
+                      "description": "Intrinsic width in px",
+                      "minimum": 1
+                    },
+                    "height": {
+                      "type": "integer",
+                      "description": "Intrinsic height in px",
+                      "minimum": 1
+                    }
+                  },
+                  "required": [
+                    "src",
+                    "alt",
+                    "width",
+                    "height"
+                  ],
+                  "description": "An image with explicit size (prevents layout shift)",
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "description": "People",
+            "default": [],
+            "maxItems": 8,
+            "minItems": 1
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "people"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "FormatGrid": {
+      "description": "Grid of the learning formats inside the course, one card per format with a short example.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "format": {
+                  "type": "string",
+                  "enum": [
+                    "video",
+                    "audio",
+                    "reading",
+                    "image",
+                    "pdf",
+                    "embed",
+                    "interactive",
+                    "scorm",
+                    "tracked",
+                    "quiz",
+                    "project"
+                  ],
+                  "description": "Learning format of a topic"
+                },
+                "tag": {
+                  "type": "string",
+                  "description": "Card label",
+                  "maxLength": 30
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Example title",
+                  "maxLength": 80
+                },
+                "text": {
+                  "type": "string",
+                  "description": "One sentence",
+                  "maxLength": 240
+                },
+                "foot": {
+                  "type": "string",
+                  "description": "Small footer",
+                  "maxLength": 60
+                }
+              },
+              "required": [
+                "format",
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Cards",
+            "default": [],
+            "maxItems": 12
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Quotes": {
+      "description": "Testimonials. Only quote people from the data model or source material, never invent them. pull = large serif quote; log = timestamped log lines; bubbles = playful cards.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "variant": {
+            "type": "string",
+            "enum": [
+              "pull",
+              "log",
+              "bubbles"
+            ],
+            "description": "Layout",
+            "default": "pull"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "quote": {
+                  "type": "string",
+                  "description": "Quote",
+                  "maxLength": 400
+                },
+                "author": {
+                  "type": "string",
+                  "description": "Who said it",
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "quote",
+                "author"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Quotes",
+            "default": [],
+            "maxItems": 8
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Events": {
+      "description": "Upcoming live sessions (webinars) and in-person events. Dates come from the data model.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "variant": {
+            "type": "string",
+            "enum": [
+              "feature",
+              "cards"
+            ],
+            "description": "feature = one large event with an image; cards = a row of cards",
+            "default": "cards"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "image": {
+            "type": "object",
+            "properties": {
+              "src": {
+                "type": "string",
+                "format": "href",
+                "description": "Image URL (local /images/… or the tenant storage)",
+                "maxLength": 2048
+              },
+              "alt": {
+                "type": "string",
+                "description": "Text alternative; empty string only for decorative images",
+                "maxLength": 300
+              },
+              "width": {
+                "type": "integer",
+                "description": "Intrinsic width in px",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "description": "Intrinsic height in px",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "src",
+              "alt",
+              "width",
+              "height"
+            ],
+            "description": "An image with explicit size (prevents layout shift)",
+            "additionalProperties": false
+          },
+          "caption": {
+            "type": "string",
+            "description": "Image caption",
+            "maxLength": 160
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "webinar",
+                    "in-person",
+                    "consultation"
+                  ],
+                  "description": "Kind of event",
+                  "default": "webinar"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Event title",
+                  "maxLength": 120
+                },
+                "date": {
+                  "type": "string",
+                  "description": "ISO 8601 start",
+                  "maxLength": 40,
+                  "format": "date-time"
+                },
+                "place": {
+                  "type": "string",
+                  "description": "Place (in-person)",
+                  "maxLength": 120
+                },
+                "text": {
+                  "type": "string",
+                  "description": "One or two sentences",
+                  "maxLength": 400
+                },
+                "cta": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "Visible text",
+                      "maxLength": 80
+                    },
+                    "href": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Target URL",
+                      "maxLength": 2048
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "href"
+                  ],
+                  "description": "A link or call to action",
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Events",
+            "default": [],
+            "maxItems": 4
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Pricing": {
+      "description": "Plans side by side. Prices come preformatted from the data model (products); never invent a price.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "pricing"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "plans": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Plan name",
+                  "maxLength": 80
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Small label above the name",
+                  "maxLength": 40
+                },
+                "price": {
+                  "type": "string",
+                  "description": "Formatted price, e.g. €89",
+                  "maxLength": 20
+                },
+                "period": {
+                  "type": "string",
+                  "description": "e.g. one-off, per month",
+                  "maxLength": 30
+                },
+                "description": {
+                  "type": "string",
+                  "description": "One sentence",
+                  "maxLength": 300
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "Included item",
+                    "maxLength": 120
+                  },
+                  "description": "What is included",
+                  "default": [],
+                  "maxItems": 10
+                },
+                "cta": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "Visible text",
+                      "maxLength": 80
+                    },
+                    "href": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Target URL",
+                      "maxLength": 2048
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "href"
+                  ],
+                  "description": "A link or call to action",
+                  "additionalProperties": false
+                },
+                "highlighted": {
+                  "type": "boolean",
+                  "description": "Visually recommended plan",
+                  "default": false
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Plans",
+            "default": [],
+            "maxItems": 4,
+            "minItems": 1
+          },
+          "note": {
+            "type": "string",
+            "description": "Small print under the plans",
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "plans"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "FeatureList": {
+      "description": "A short list of benefits or facts with icons (e.g. 'For parents', 'For teams').",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "variant": {
+            "type": "string",
+            "enum": [
+              "tiles",
+              "checks",
+              "grid"
+            ],
+            "description": "tiles = icon cards; checks = compact checklist; grid = 3-column feature grid with glow",
+            "default": "tiles"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "icon": {
+                  "type": "string",
+                  "enum": [
+                    "check",
+                    "arrow",
+                    "play",
+                    "clock",
+                    "calendar",
+                    "pin",
+                    "users",
+                    "mail",
+                    "shield",
+                    "star",
+                    "moon",
+                    "planet",
+                    "telescope",
+                    "rocket",
+                    "medal",
+                    "book",
+                    "terminal",
+                    "pager",
+                    "chart",
+                    "print",
+                    "lock",
+                    "sync",
+                    "quote",
+                    "layers",
+                    "server",
+                    "puzzle",
+                    "cart",
+                    "code"
+                  ],
+                  "description": "Icon from the catalogue's icon set"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Title",
+                  "maxLength": 80
+                },
+                "text": {
+                  "type": "string",
+                  "description": "Sentence",
+                  "maxLength": 240
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "available",
+                    "coming"
+                  ],
+                  "description": "Shipped today or on the roadmap (say so honestly)",
+                  "default": "available"
+                }
+              },
+              "required": [
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Items",
+            "default": [],
+            "maxItems": 8
+          },
+          "cta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Badges": {
+      "description": "Rewards the learner earns (gamified courses).",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Badge",
+                  "maxLength": 60
+                },
+                "text": {
+                  "type": "string",
+                  "description": "How to earn it",
+                  "maxLength": 160
+                },
+                "icon": {
+                  "type": "string",
+                  "enum": [
+                    "check",
+                    "arrow",
+                    "play",
+                    "clock",
+                    "calendar",
+                    "pin",
+                    "users",
+                    "mail",
+                    "shield",
+                    "star",
+                    "moon",
+                    "planet",
+                    "telescope",
+                    "rocket",
+                    "medal",
+                    "book",
+                    "terminal",
+                    "pager",
+                    "chart",
+                    "print",
+                    "lock",
+                    "sync",
+                    "quote",
+                    "layers",
+                    "server",
+                    "puzzle",
+                    "cart",
+                    "code"
+                  ],
+                  "description": "Icon from the catalogue's icon set"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Badges",
+            "default": [],
+            "maxItems": 8
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Faq": {
+      "description": "Questions and answers as an accessible disclosure list (no JavaScript).",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "faq"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "q": {
+                  "type": "string",
+                  "description": "Question",
+                  "maxLength": 200
+                },
+                "a": {
+                  "type": "string",
+                  "description": "Answer",
+                  "maxLength": 1000
+                }
+              },
+              "required": [
+                "q",
+                "a"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Questions",
+            "default": [],
+            "maxItems": 12,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "CtaBand": {
+      "description": "Closing call to action: a banner or a newsletter-style band.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "variant": {
+            "type": "string",
+            "enum": [
+              "banner",
+              "newsletter",
+              "terminal"
+            ],
+            "description": "Style; terminal shows `code` lines in a terminal window",
+            "default": "banner"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "text": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "code": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Command or output line",
+              "maxLength": 120
+            },
+            "description": "Terminal lines (terminal variant); lines starting with $ are commands",
+            "default": [],
+            "maxItems": 10
+          },
+          "cta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "secondary": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title",
+          "cta"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Steps": {
+      "description": "A numbered process in 3–5 steps with a connector line (how something works).",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "coming"
+            ],
+            "description": "Whether the whole process ships today",
+            "default": "available"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "icon": {
+                  "type": "string",
+                  "enum": [
+                    "check",
+                    "arrow",
+                    "play",
+                    "clock",
+                    "calendar",
+                    "pin",
+                    "users",
+                    "mail",
+                    "shield",
+                    "star",
+                    "moon",
+                    "planet",
+                    "telescope",
+                    "rocket",
+                    "medal",
+                    "book",
+                    "terminal",
+                    "pager",
+                    "chart",
+                    "print",
+                    "lock",
+                    "sync",
+                    "quote",
+                    "layers",
+                    "server",
+                    "puzzle",
+                    "cart",
+                    "code"
+                  ],
+                  "description": "Icon from the catalogue's icon set"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Step",
+                  "maxLength": 80
+                },
+                "text": {
+                  "type": "string",
+                  "description": "Sentence",
+                  "maxLength": 260
+                }
+              },
+              "required": [
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Steps",
+            "default": [],
+            "maxItems": 5,
+            "minItems": 2
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Showcase": {
+      "description": "Cards that each open something live (demo sites), with a colour swatch, facts and two buttons.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "note": {
+            "type": "string",
+            "description": "Small note under the cards",
+            "maxLength": 200
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Card title",
+                  "maxLength": 80
+                },
+                "text": {
+                  "type": "string",
+                  "description": "Sentence",
+                  "maxLength": 300
+                },
+                "theme": {
+                  "type": "string",
+                  "enum": [
+                    "coffee",
+                    "oncall",
+                    "nightsky",
+                    "platform"
+                  ],
+                  "description": "Colour swatch of the card"
+                },
+                "facts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "Label",
+                        "maxLength": 30
+                      },
+                      "value": {
+                        "type": "string",
+                        "description": "Value",
+                        "maxLength": 40
+                      }
+                    },
+                    "required": [
+                      "label",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Facts",
+                  "default": [],
+                  "maxItems": 4
+                },
+                "image": {
+                  "type": "object",
+                  "properties": {
+                    "src": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Image URL (local /images/… or the tenant storage)",
+                      "maxLength": 2048
+                    },
+                    "alt": {
+                      "type": "string",
+                      "description": "Text alternative; empty string only for decorative images",
+                      "maxLength": 300
+                    },
+                    "width": {
+                      "type": "integer",
+                      "description": "Intrinsic width in px",
+                      "minimum": 1
+                    },
+                    "height": {
+                      "type": "integer",
+                      "description": "Intrinsic height in px",
+                      "minimum": 1
+                    }
+                  },
+                  "required": [
+                    "src",
+                    "alt",
+                    "width",
+                    "height"
+                  ],
+                  "description": "An image with explicit size (prevents layout shift)",
+                  "additionalProperties": false
+                },
+                "primary": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "Visible text",
+                      "maxLength": 80
+                    },
+                    "href": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Target URL",
+                      "maxLength": 2048
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "href"
+                  ],
+                  "description": "A link or call to action",
+                  "additionalProperties": false
+                },
+                "secondary": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "Visible text",
+                      "maxLength": 80
+                    },
+                    "href": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Target URL",
+                      "maxLength": 2048
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "href"
+                  ],
+                  "description": "A link or call to action",
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "title",
+                "primary"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Cards",
+            "default": [],
+            "maxItems": 6,
+            "minItems": 1
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "WorkflowShowcase": {
+      "description": "Tabs of realistic windows (a terminal, an agent session, a chat with tool calls, an API call, the studio) whose commands and answers are typed line by line, to show that the product can be run from agents and the command line as well as the UI. Each tab may carry a status badge; unbuilt interfaces must be labelled.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "valueLine": {
+            "type": "string",
+            "description": "One line of value copy under the tabs",
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "description": "Text alternative of the whole animation for screen readers",
+            "maxLength": 600
+          },
+          "footnote": {
+            "type": "string",
+            "description": "Small print under the tabs, e.g. that some commands are the planned interface",
+            "maxLength": 300
+          },
+          "legal": {
+            "type": "string",
+            "description": "Trademark line, e.g. that product names belong to their owners and are not endorsements",
+            "maxLength": 300
+          },
+          "tabs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "Stable key (letters, digits, dashes)",
+                  "maxLength": 24
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Tab label",
+                  "maxLength": 24
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "available",
+                    "preview",
+                    "coming"
+                  ],
+                  "description": "Status badge; omit when everything shown exists"
+                },
+                "window": {
+                  "type": "string",
+                  "enum": [
+                    "terminal",
+                    "chat",
+                    "studio"
+                  ],
+                  "description": "Look of the window frame",
+                  "default": "terminal"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Window title",
+                  "maxLength": 60
+                },
+                "caption": {
+                  "type": "string",
+                  "description": "One line under the window",
+                  "maxLength": 200
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Honest note under the caption, e.g. what the example depends on",
+                  "maxLength": 200
+                },
+                "lines": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "prompt",
+                          "cmd",
+                          "cont",
+                          "agent",
+                          "out",
+                          "spin",
+                          "tool",
+                          "add",
+                          "del",
+                          "ctx",
+                          "note",
+                          "user",
+                          "assistant",
+                          "card"
+                        ],
+                        "description": "Line type: typed (prompt, cmd, cont, agent, user, assistant) or shown whole"
+                      },
+                      "text": {
+                        "type": "string",
+                        "description": "The line",
+                        "maxLength": 400
+                      },
+                      "args": {
+                        "type": "string",
+                        "description": "Tool arguments, or the buttons of a card separated by |",
+                        "maxLength": 200
+                      },
+                      "result": {
+                        "type": "string",
+                        "description": "Short tool result shown after the call",
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "text"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Lines, in order",
+                  "default": [],
+                  "maxItems": 30,
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "key",
+                "label",
+                "title",
+                "lines"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Tabs",
+            "default": [],
+            "maxItems": 6,
+            "minItems": 1
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "tabs"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "LivingCourseStory": {
+      "description": "A looping three-beat animation: a source document changes, ulams finds every lesson and quiz question that cites it, and an approved proposal updates the lesson while learner progress is kept. Example values only.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "coming"
+            ],
+            "description": "Roadmap label under the heading; omit when the feature exists"
+          },
+          "valueLine": {
+            "type": "string",
+            "description": "One line of value copy under the animation",
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "description": "Text alternative of the whole animation for screen readers",
+            "maxLength": 600
+          },
+          "beats": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Beat title",
+                  "maxLength": 60
+                },
+                "text": {
+                  "type": "string",
+                  "description": "One-line caption",
+                  "maxLength": 140
+                }
+              },
+              "required": [
+                "title",
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Exactly three beats",
+            "default": [],
+            "maxItems": 3,
+            "minItems": 3
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string",
+                "description": "Source file name",
+                "maxLength": 60
+              },
+              "heading": {
+                "type": "string",
+                "description": "Heading line of the source",
+                "maxLength": 80
+              },
+              "context": {
+                "type": "string",
+                "description": "An unchanged line",
+                "maxLength": 120
+              },
+              "lead": {
+                "type": "string",
+                "description": "Text of the edited line before the value",
+                "maxLength": 80
+              },
+              "before": {
+                "type": "string",
+                "description": "Old value",
+                "maxLength": 24
+              },
+              "after": {
+                "type": "string",
+                "description": "New value",
+                "maxLength": 24
+              },
+              "added": {
+                "type": "string",
+                "description": "A new line typed after the edit",
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "file",
+              "lead",
+              "before",
+              "after",
+              "added"
+            ],
+            "additionalProperties": false
+          },
+          "lesson": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Lesson title",
+                "maxLength": 80
+              },
+              "lead": {
+                "type": "string",
+                "description": "Lesson sentence before the value",
+                "maxLength": 120
+              },
+              "citation": {
+                "type": "string",
+                "description": "Citation chip of the sentence",
+                "maxLength": 40
+              },
+              "question": {
+                "type": "string",
+                "description": "Quiz question",
+                "maxLength": 160
+              },
+              "questionCite": {
+                "type": "string",
+                "description": "Citation chip of the question",
+                "maxLength": 40
+              }
+            },
+            "required": [
+              "title",
+              "lead",
+              "citation",
+              "question",
+              "questionCite"
+            ],
+            "additionalProperties": false
+          },
+          "proposal": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Proposal card title",
+                "maxLength": 80
+              },
+              "approve": {
+                "type": "string",
+                "description": "Approve button",
+                "maxLength": 24
+              },
+              "done": {
+                "type": "string",
+                "description": "Badge after approval",
+                "maxLength": 60
+              }
+            },
+            "required": [
+              "title",
+              "approve",
+              "done"
+            ],
+            "additionalProperties": false
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "description",
+          "beats",
+          "source",
+          "lesson",
+          "proposal"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "BuilderStory": {
+      "description": "A looping animation of the studio course builder: a document drops in, interview answers appear, an outline grows with a source chip per lesson, a lesson streams in with citations, a quiz question cites its source, a running cost ticks (example values) and Apply publishes the course.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "valueLine": {
+            "type": "string",
+            "description": "One line of value copy under the animation",
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "description": "Text alternative of the whole animation for screen readers",
+            "maxLength": 600
+          },
+          "windowTitle": {
+            "type": "string",
+            "description": "Window title",
+            "maxLength": 60
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "File name",
+                "maxLength": 60
+              },
+              "label": {
+                "type": "string",
+                "description": "Small label",
+                "maxLength": 30
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "interview": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "question": {
+                  "type": "string",
+                  "description": "Question",
+                  "maxLength": 30
+                },
+                "answer": {
+                  "type": "string",
+                  "description": "Answer",
+                  "maxLength": 30
+                }
+              },
+              "required": [
+                "question",
+                "answer"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Interview answers",
+            "default": [],
+            "maxItems": 4,
+            "minItems": 1
+          },
+          "outline": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Module title",
+                  "maxLength": 60
+                },
+                "lessons": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "description": "Lesson title",
+                        "maxLength": 60
+                      },
+                      "source": {
+                        "type": "string",
+                        "description": "Source chip",
+                        "maxLength": 30
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "source"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Lessons",
+                  "default": [],
+                  "maxItems": 4,
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "title",
+                "lessons"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Modules",
+            "default": [],
+            "maxItems": 4,
+            "minItems": 1
+          },
+          "lesson": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Lesson shown streaming in",
+                "maxLength": 60
+              },
+              "text": {
+                "type": "string",
+                "description": "Its text",
+                "maxLength": 240
+              },
+              "citations": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "description": "Citation chip",
+                  "maxLength": 30
+                },
+                "description": "Citation chips",
+                "default": [],
+                "maxItems": 3
+              }
+            },
+            "required": [
+              "title",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          "quiz": {
+            "type": "object",
+            "properties": {
+              "question": {
+                "type": "string",
+                "description": "Quiz question",
+                "maxLength": 120
+              },
+              "source": {
+                "type": "string",
+                "description": "Source chip",
+                "maxLength": 30
+              }
+            },
+            "required": [
+              "question",
+              "source"
+            ],
+            "additionalProperties": false
+          },
+          "cost": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Counter label",
+                "maxLength": 30
+              },
+              "amount": {
+                "type": "number",
+                "description": "Final amount shown (an example)",
+                "minimum": 0
+              },
+              "note": {
+                "type": "string",
+                "description": "Note, e.g. 'example run'",
+                "maxLength": 60
+              }
+            },
+            "required": [
+              "label",
+              "amount"
+            ],
+            "additionalProperties": false
+          },
+          "apply": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Apply button",
+                "maxLength": 24
+              },
+              "publishedTitle": {
+                "type": "string",
+                "description": "Published course title",
+                "maxLength": 60
+              },
+              "publishedMeta": {
+                "type": "string",
+                "description": "Facts after the title",
+                "maxLength": 80
+              }
+            },
+            "required": [
+              "label",
+              "publishedTitle",
+              "publishedMeta"
+            ],
+            "additionalProperties": false
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "description",
+          "file",
+          "interview",
+          "outline",
+          "lesson",
+          "quiz",
+          "cost",
+          "apply"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ComparisonTable": {
+      "description": "Feature comparison of products in columns, features in rows. Every competitor cell must come from a sourced data file (value, note, source URL, checked date); list the sources and the 'as of' date under the table. Neutral values only.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "caption": {
+            "type": "string",
+            "description": "Table caption read by screen readers (what is compared)",
+            "maxLength": 160
+          },
+          "asOf": {
+            "type": "string",
+            "description": "When the facts were checked, e.g. 'October 2026'",
+            "maxLength": 40
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Product name, plain text (no logos)",
+                  "maxLength": 40
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Small line under the name, e.g. 'hosted SaaS'",
+                  "maxLength": 40
+                },
+                "highlight": {
+                  "type": "boolean",
+                  "description": "The column of our own product",
+                  "default": false
+                }
+              },
+              "required": [
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Products, in column order (omit when groups is set)",
+            "default": [],
+            "maxItems": 8,
+            "minItems": 0
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Feature",
+                  "maxLength": 60
+                },
+                "help": {
+                  "type": "string",
+                  "description": "What the row means",
+                  "maxLength": 160
+                },
+                "cells": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "description": "Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase",
+                        "maxLength": 60
+                      },
+                      "note": {
+                        "type": "string",
+                        "description": "Short neutral note",
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "One cell per column, same order",
+                  "default": [],
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "label",
+                "cells"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Features (omit when groups is set)",
+            "default": [],
+            "maxItems": 24,
+            "minItems": 0
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Name of the group, shown on the segmented control",
+                  "maxLength": 40
+                },
+                "caption": {
+                  "type": "string",
+                  "description": "Table caption for this group",
+                  "maxLength": 160
+                },
+                "columns": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "Product name, plain text (no logos)",
+                        "maxLength": 40
+                      },
+                      "note": {
+                        "type": "string",
+                        "description": "Small line under the name, e.g. 'hosted SaaS'",
+                        "maxLength": 40
+                      },
+                      "highlight": {
+                        "type": "boolean",
+                        "description": "The column of our own product",
+                        "default": false
+                      }
+                    },
+                    "required": [
+                      "label"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Products, in column order",
+                  "default": [],
+                  "maxItems": 8,
+                  "minItems": 2
+                },
+                "rows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "Feature",
+                        "maxLength": 60
+                      },
+                      "help": {
+                        "type": "string",
+                        "description": "What the row means",
+                        "maxLength": 160
+                      },
+                      "cells": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "value": {
+                              "type": "string",
+                              "description": "Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase",
+                              "maxLength": 60
+                            },
+                            "note": {
+                              "type": "string",
+                              "description": "Short neutral note",
+                              "maxLength": 120
+                            }
+                          },
+                          "required": [
+                            "value"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "One cell per column, same order",
+                        "default": [],
+                        "maxItems": 8
+                      }
+                    },
+                    "required": [
+                      "label",
+                      "cells"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Features",
+                  "default": [],
+                  "maxItems": 24,
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "label",
+                "columns",
+                "rows"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Several tables behind a CSS-only segmented control (no JavaScript); each group lists its own products and features. Omit for a single table (columns and rows)",
+            "default": [],
+            "maxItems": 4,
+            "minItems": 0
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "What the source supports, e.g. 'Moodle: SCORM, H5P'",
+                  "maxLength": 300
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Source URL",
+                  "maxLength": 2048
+                },
+                "checked": {
+                  "type": "string",
+                  "description": "Date checked",
+                  "maxLength": 20
+                }
+              },
+              "required": [
+                "label",
+                "href"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Sources for the cells",
+            "default": [],
+            "maxItems": 200
+          },
+          "note": {
+            "type": "string",
+            "description": "Small print under the table",
+            "maxLength": 300
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "caption"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Chips": {
+      "description": "A strip of short labels (standards, integrations); each marked available or coming.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Label",
+                  "maxLength": 40
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Small note",
+                  "maxLength": 60
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "available",
+                    "coming"
+                  ],
+                  "description": "Shipped today or on the roadmap",
+                  "default": "available"
+                }
+              },
+              "required": [
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Chips",
+            "default": [],
+            "maxItems": 16,
+            "minItems": 1
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "SiteFooter": {
+      "description": "Page footer with brand, a sentence, links and small print.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "brand": {
+            "type": "string",
+            "description": "Brand name",
+            "maxLength": 60
+          },
+          "text": {
+            "type": "string",
+            "description": "Sentence under the brand",
+            "maxLength": 300
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Visible text",
+                  "maxLength": 80
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Target URL",
+                  "maxLength": 2048
+                }
+              },
+              "required": [
+                "label",
+                "href"
+              ],
+              "description": "A link or call to action",
+              "additionalProperties": false
+            },
+            "description": "Links",
+            "default": [],
+            "maxItems": 10
+          },
+          "note": {
+            "type": "string",
+            "description": "Small print",
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "brand"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "CourseHeader": {
+      "description": "Top of a course page: title, subtitle, facts, tutors, poster and the start button.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "variant": {
+            "type": "string",
+            "enum": [
+              "editorial",
+              "console",
+              "adventure"
+            ],
+            "description": "Layout",
+            "default": "editorial"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Course title",
+            "maxLength": 160
+          },
+          "subtitle": {
+            "type": "string",
+            "description": "Subtitle",
+            "maxLength": 200
+          },
+          "summary": {
+            "type": "string",
+            "description": "Summary",
+            "maxLength": 600
+          },
+          "facts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Label",
+                  "maxLength": 40
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Value",
+                  "maxLength": 60
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Small note",
+                  "maxLength": 80
+                }
+              },
+              "required": [
+                "label",
+                "value"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Facts (level, length, language…)",
+            "default": [],
+            "maxItems": 6
+          },
+          "image": {
+            "type": "object",
+            "properties": {
+              "src": {
+                "type": "string",
+                "format": "href",
+                "description": "Image URL (local /images/… or the tenant storage)",
+                "maxLength": 2048
+              },
+              "alt": {
+                "type": "string",
+                "description": "Text alternative; empty string only for decorative images",
+                "maxLength": 300
+              },
+              "width": {
+                "type": "integer",
+                "description": "Intrinsic width in px",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "description": "Intrinsic height in px",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "src",
+              "alt",
+              "width",
+              "height"
+            ],
+            "description": "An image with explicit size (prevents layout shift)",
+            "additionalProperties": false
+          },
+          "tutors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Full name",
+                  "maxLength": 80
+                },
+                "role": {
+                  "type": "string",
+                  "description": "Role or title",
+                  "maxLength": 80
+                },
+                "place": {
+                  "type": "string",
+                  "description": "Place",
+                  "maxLength": 80
+                },
+                "bio": {
+                  "type": "string",
+                  "description": "Short bio",
+                  "maxLength": 600
+                },
+                "image": {
+                  "type": "object",
+                  "properties": {
+                    "src": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Image URL (local /images/… or the tenant storage)",
+                      "maxLength": 2048
+                    },
+                    "alt": {
+                      "type": "string",
+                      "description": "Text alternative; empty string only for decorative images",
+                      "maxLength": 300
+                    },
+                    "width": {
+                      "type": "integer",
+                      "description": "Intrinsic width in px",
+                      "minimum": 1
+                    },
+                    "height": {
+                      "type": "integer",
+                      "description": "Intrinsic height in px",
+                      "minimum": 1
+                    }
+                  },
+                  "required": [
+                    "src",
+                    "alt",
+                    "width",
+                    "height"
+                  ],
+                  "description": "An image with explicit size (prevents layout shift)",
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Tutors",
+            "default": [],
+            "maxItems": 4
+          },
+          "primaryCta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "secondaryCta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "progress": {
+            "type": "integer",
+            "description": "Learner completion 0–100; omit when unknown",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "PurchaseCard": {
+      "description": "Sticky side card with the price, what is included and the start button.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "string",
+            "description": "Formatted price",
+            "maxLength": 20
+          },
+          "priceNote": {
+            "type": "string",
+            "description": "e.g. one-off payment",
+            "maxLength": 60
+          },
+          "title": {
+            "type": "string",
+            "description": "Card title",
+            "maxLength": 80
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Included item",
+              "maxLength": 120
+            },
+            "description": "What is included",
+            "default": [],
+            "maxItems": 8
+          },
+          "cta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "note": {
+            "type": "string",
+            "description": "Small print",
+            "maxLength": 200
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "cta"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Prose": {
+      "description": "Long-form Markdown (GFM tables, block quotes, $$ math $$). Raw HTML is escaped. Use for articles, briefs and descriptions.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "markdown": {
+            "type": "string",
+            "description": "Markdown source",
+            "maxLength": 60000
+          },
+          "dropCap": {
+            "type": "boolean",
+            "description": "Editorial drop cap on the first paragraph",
+            "default": false
+          },
+          "size": {
+            "type": "string",
+            "enum": [
+              "sm",
+              "md",
+              "lg"
+            ],
+            "description": "Text size",
+            "default": "md"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "markdown"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Callout": {
+      "description": "Highlighted note inside a lesson: a tip, a warning or a key idea.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "tone": {
+            "type": "string",
+            "enum": [
+              "tip",
+              "warning",
+              "key"
+            ],
+            "description": "Kind of note",
+            "default": "tip"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title",
+            "maxLength": 120
+          },
+          "text": {
+            "type": "string",
+            "description": "Text",
+            "maxLength": 1000
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Timeline": {
+      "description": "Ordered sequence of events or stages (history, a process over time, a project plan). Use for anything where the order or the dates matter; use Steps for a short how-to on a landing page.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "timeline"
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "When: a date, period or stage name",
+                  "maxLength": 40
+                },
+                "title": {
+                  "type": "string",
+                  "description": "What happened or happens",
+                  "maxLength": 100
+                },
+                "text": {
+                  "type": "string",
+                  "description": "One or two sentences of detail",
+                  "maxLength": 400
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "done",
+                    "current",
+                    "upcoming"
+                  ],
+                  "description": "Where the learner is on the line; omit for a purely historical timeline"
+                }
+              },
+              "required": [
+                "label",
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Entries in order, earliest first",
+            "default": [],
+            "maxItems": 20,
+            "minItems": 2
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "FlipCards": {
+      "description": "Self-test cards: the learner reads the front (a term or question), thinks, then reveals the back (the definition or answer). Use for vocabulary, definitions and quick recall; not for graded questions.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "cards"
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "cards": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "front": {
+                  "type": "string",
+                  "description": "Term or question",
+                  "maxLength": 200
+                },
+                "back": {
+                  "type": "string",
+                  "description": "Definition or answer",
+                  "maxLength": 600
+                }
+              },
+              "required": [
+                "front",
+                "back"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Cards",
+            "default": [],
+            "maxItems": 24,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "cards"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "CodeBlock": {
+      "description": "A code or command listing with a copy button. Plain text with the language named; no syntax colouring and no execution. Put prose around it, not inside it.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "code"
+          },
+          "title": {
+            "type": "string",
+            "description": "File name or short title shown above the code",
+            "maxLength": 120
+          },
+          "language": {
+            "type": "string",
+            "description": "Language name, e.g. sql, python, bash, json",
+            "maxLength": 24,
+            "default": "text"
+          },
+          "code": {
+            "type": "string",
+            "description": "The code, exactly as it is to be copied",
+            "maxLength": 8000
+          },
+          "caption": {
+            "type": "string",
+            "description": "One sentence under the listing",
+            "maxLength": 300
+          },
+          "lineNumbers": {
+            "type": "boolean",
+            "description": "Show line numbers",
+            "default": false
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "PracticeActivity": {
+      "description": "Scaffolded practice container (required for any practice in a layout): an intro, a toolbox of allowed resources, and 1-6 challenges of rising level (1 guided, 2 supported, 3 independent). Each challenge may offer hints in tiers (nudge, then pointer, then near_solution), answer options that each explain why, and a worked solution that stays hidden until the learner has made an attempt.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "practice"
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "What the learner will practise and why, in one or two sentences",
+            "maxLength": 800
+          },
+          "toolbox": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Resource or tool",
+                  "maxLength": 80
+                },
+                "text": {
+                  "type": "string",
+                  "description": "When and how to use it",
+                  "maxLength": 300
+                }
+              },
+              "required": [
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Resources the learner may use (formulas, glossary, earlier lesson); at least one",
+            "default": [],
+            "maxItems": 8,
+            "minItems": 1
+          },
+          "challenges": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Stable challenge id, unique in this activity",
+                  "maxLength": 40
+                },
+                "level": {
+                  "type": "integer",
+                  "description": "1 = guided, 2 = supported, 3 = independent",
+                  "minimum": 1,
+                  "maximum": 3
+                },
+                "prompt": {
+                  "type": "string",
+                  "description": "The task",
+                  "maxLength": 800
+                },
+                "hints": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "tier": {
+                        "type": "string",
+                        "enum": [
+                          "nudge",
+                          "pointer",
+                          "near_solution"
+                        ],
+                        "description": "nudge = a question to think about; pointer = where to look; near_solution = almost the answer"
+                      },
+                      "text": {
+                        "type": "string",
+                        "description": "The hint",
+                        "maxLength": 400
+                      }
+                    },
+                    "required": [
+                      "tier",
+                      "text"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Hints, revealed one at a time in tier order",
+                  "default": [],
+                  "maxItems": 3
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "Answer option",
+                        "maxLength": 300
+                      },
+                      "correct": {
+                        "type": "boolean",
+                        "description": "Whether this option is right",
+                        "default": false
+                      },
+                      "feedback": {
+                        "type": "string",
+                        "description": "Why this option is right or wrong",
+                        "maxLength": 500
+                      }
+                    },
+                    "required": [
+                      "label",
+                      "feedback"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Answer options; leave empty for an open task the learner marks as tried",
+                  "default": [],
+                  "maxItems": 6
+                },
+                "workedSolution": {
+                  "type": "string",
+                  "description": "Full worked solution; shown only after the learner has made an attempt",
+                  "maxLength": 2000
+                }
+              },
+              "required": [
+                "id",
+                "level",
+                "prompt",
+                "workedSolution"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Challenges in rising level",
+            "default": [],
+            "maxItems": 6,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "intro",
+          "toolbox",
+          "challenges"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Figure": {
+      "description": "Image with caption, click to zoom.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "image": {
+            "type": "object",
+            "properties": {
+              "src": {
+                "type": "string",
+                "format": "href",
+                "description": "Image URL (local /images/… or the tenant storage)",
+                "maxLength": 2048
+              },
+              "alt": {
+                "type": "string",
+                "description": "Text alternative; empty string only for decorative images",
+                "maxLength": 300
+              },
+              "width": {
+                "type": "integer",
+                "description": "Intrinsic width in px",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "description": "Intrinsic height in px",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "src",
+              "alt",
+              "width",
+              "height"
+            ],
+            "description": "An image with explicit size (prevents layout shift)",
+            "additionalProperties": false
+          },
+          "caption": {
+            "type": "string",
+            "description": "Caption",
+            "maxLength": 300
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "image"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "VideoPlayer": {
+      "description": "Video with poster, chapters and transcript. HLS streams load a player only when played.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string",
+            "format": "href",
+            "description": "Video URL (.mp4 or .m3u8)",
+            "maxLength": 2048
+          },
+          "poster": {
+            "type": "string",
+            "format": "href",
+            "description": "Poster image URL",
+            "maxLength": 2048
+          },
+          "width": {
+            "type": "integer",
+            "description": "Width in px",
+            "minimum": 1,
+            "default": 1280
+          },
+          "height": {
+            "type": "integer",
+            "description": "Height in px",
+            "minimum": 1,
+            "default": 720
+          },
+          "title": {
+            "type": "string",
+            "description": "Accessible title",
+            "maxLength": 160
+          },
+          "chapters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "time": {
+                  "type": "integer",
+                  "description": "Start in seconds",
+                  "minimum": 0
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Chapter",
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "time",
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Chapters",
+            "default": [],
+            "maxItems": 40
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "src",
+          "title"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "AudioPlayer": {
+      "description": "Audio (podcast, recording) with an accessible native player.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string",
+            "format": "href",
+            "description": "Audio URL",
+            "maxLength": 2048
+          },
+          "title": {
+            "type": "string",
+            "description": "Title",
+            "maxLength": 160
+          },
+          "seconds": {
+            "type": "integer",
+            "description": "Length in seconds",
+            "minimum": 0
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "src",
+          "title"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "PdfViewer": {
+      "description": "Embedded PDF with open and download links.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string",
+            "format": "href",
+            "description": "PDF URL",
+            "maxLength": 2048
+          },
+          "title": {
+            "type": "string",
+            "description": "Title",
+            "maxLength": 160
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "src",
+          "title"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Embed": {
+      "description": "External media by URL (YouTube, Vimeo); other URLs become a link card.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "href",
+            "description": "Media URL",
+            "maxLength": 2048
+          },
+          "title": {
+            "type": "string",
+            "description": "Title",
+            "maxLength": 160
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "url",
+          "title"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "H5PFrame": {
+      "description": "Interactive H5P content from the H5P service, framed. Reports completion to progress.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "apiUrl": {
+            "type": "string",
+            "format": "href",
+            "description": "Tenant API origin (the H5P service is under /h5p)",
+            "maxLength": 2048
+          },
+          "contentId": {
+            "type": "integer",
+            "description": "H5P content id",
+            "minimum": 0
+          },
+          "title": {
+            "type": "string",
+            "description": "Title",
+            "maxLength": 160
+          },
+          "topicId": {
+            "type": "integer",
+            "description": "Topic id for progress",
+            "minimum": 0
+          },
+          "courseId": {
+            "type": "integer",
+            "description": "Course id for progress",
+            "minimum": 0
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "apiUrl",
+          "contentId",
+          "title"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "PackageFrame": {
+      "description": "A packaged activity (SCORM) in a frame, with a link to open it full screen.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string",
+            "format": "href",
+            "description": "Player URL",
+            "maxLength": 2048
+          },
+          "title": {
+            "type": "string",
+            "description": "Title",
+            "maxLength": 160
+          },
+          "height": {
+            "type": "integer",
+            "description": "Frame height px",
+            "minimum": 0,
+            "default": 640
+          },
+          "isolated": {
+            "type": "boolean",
+            "description": "Third-party package on the tenant content origin: sandboxed frame, no full-screen link (the URL carries a one-off token)",
+            "default": false
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "src",
+          "title"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "LiaScriptLesson": {
+      "description": "A LiaScript course (Markdown with quizzes, code and slides) played in a sandboxed frame on the tenant content origin; it completes itself at the last section.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string",
+            "format": "href",
+            "description": "Player URL on the content origin (from POST /api/liascript/launches/{topic})",
+            "maxLength": 2048
+          },
+          "title": {
+            "type": "string",
+            "description": "Title",
+            "maxLength": 160
+          },
+          "sections": {
+            "type": "integer",
+            "description": "Number of sections",
+            "minimum": 1
+          },
+          "height": {
+            "type": "integer",
+            "description": "Frame height px",
+            "minimum": 0,
+            "default": 720
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "src",
+          "title"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ActivityCard": {
+      "description": "Launch card for an activity that runs outside the page (cmi5 tracked activity, project hand-in).",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "tracked",
+              "project",
+              "locked"
+            ],
+            "description": "Kind of activity",
+            "default": "tracked"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title",
+            "maxLength": 160
+          },
+          "text": {
+            "type": "string",
+            "description": "What happens",
+            "maxLength": 600
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Step",
+              "maxLength": 200
+            },
+            "description": "Checklist",
+            "default": [],
+            "maxItems": 8
+          },
+          "cta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "QuizRunner": {
+      "description": "GIFT quiz through the quiz-attempts API: one question at a time (8 question types), timer, score and review.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "quizId": {
+            "type": "integer",
+            "description": "topic_gift_quiz id",
+            "minimum": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "Quiz title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "Intro text",
+            "maxLength": 1000
+          },
+          "maxAttempts": {
+            "type": "integer",
+            "description": "Attempts allowed (0 = unlimited)",
+            "minimum": 0
+          },
+          "minutes": {
+            "type": "integer",
+            "description": "Time limit in minutes (0 = none)",
+            "minimum": 0
+          },
+          "passScore": {
+            "type": "integer",
+            "description": "Points needed to pass",
+            "minimum": 0
+          },
+          "courseId": {
+            "type": "integer",
+            "description": "Course id for progress",
+            "minimum": 0
+          },
+          "topicId": {
+            "type": "integer",
+            "description": "Topic id for progress",
+            "minimum": 0
+          },
+          "finishHref": {
+            "type": "string",
+            "format": "href",
+            "description": "Where 'Continue' goes after the result",
+            "maxLength": 2048
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "quizId",
+          "title"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "UpdateNotice": {
+      "description": "Notice on a lesson that changed after the learner completed or started it: the date, what changed (the author's note) and a 'Mark as reviewed' button. Filled by the app from the learner's own notices; it never changes progress. Authors do not place it.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "noticeId": {
+            "type": "integer",
+            "description": "Id of the learner notice; without it there is no 'Mark as reviewed' button",
+            "minimum": 1
+          },
+          "started": {
+            "type": "boolean",
+            "description": "The learner started the lesson but had not completed it",
+            "default": false
+          },
+          "date": {
+            "type": "string",
+            "description": "ISO 8601 date of the update",
+            "maxLength": 40,
+            "format": "date-time"
+          },
+          "message": {
+            "type": "string",
+            "description": "What changed (plain text, written by the course author)",
+            "maxLength": 500
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "ReattemptNotice": {
+      "description": "Notice on a quiz where one question was corrected: the previous score stays on record and the learner may retake the quiz once more. It stays until the quiz is retaken. Filled by the app; authors do not place it.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "quizHref": {
+            "type": "string",
+            "format": "href",
+            "description": "Where the quiz is: an in-page anchor on the quiz topic, or the topic link elsewhere",
+            "maxLength": 2048
+          },
+          "linkLabel": {
+            "type": "string",
+            "description": "Label of the link to the quiz",
+            "maxLength": 80,
+            "default": "Go to the quiz"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "PendingUpdateNotice": {
+      "description": "Opt-in marker on a lesson whose source changed and whose update is under review ('The source of this lesson changed on {date}; an update is under review'). Shown only when the course turned it on. Filled by the app; authors do not place it.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "since": {
+            "type": "string",
+            "description": "ISO 8601 date the source changed",
+            "maxLength": 40,
+            "format": "date-time"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "CourseUpdates": {
+      "description": "Summary on the course page of what changed for a returning learner: lessons updated since they completed them, retired lessons, new lessons since they finished, and lessons whose update is under review. Each entry names its status in words. Filled by the app; authors do not place it.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Heading",
+            "maxLength": 120,
+            "default": "What changed in this course"
+          },
+          "updated": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Lesson title",
+                  "maxLength": 200
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Lesson link",
+                  "maxLength": 2048
+                },
+                "date": {
+                  "type": "string",
+                  "description": "ISO 8601 date",
+                  "maxLength": 40,
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "title",
+                "href"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Lessons updated since the learner completed them",
+            "default": [],
+            "maxItems": 60
+          },
+          "retired": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Lesson title",
+                  "maxLength": 200
+                },
+                "date": {
+                  "type": "string",
+                  "description": "ISO 8601 date",
+                  "maxLength": 40,
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Lessons removed from the course that the learner had completed",
+            "default": [],
+            "maxItems": 60
+          },
+          "extended": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Lesson title",
+                  "maxLength": 200
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Lesson link",
+                  "maxLength": 2048
+                }
+              },
+              "required": [
+                "title",
+                "href"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Lessons added after the learner finished the course",
+            "default": [],
+            "maxItems": 60
+          },
+          "pending": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Lesson title",
+                  "maxLength": 200
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Lesson link",
+                  "maxLength": 2048
+                },
+                "since": {
+                  "type": "string",
+                  "description": "ISO 8601 date",
+                  "maxLength": 40,
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "title",
+                "href"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Lessons whose source changed and whose update is under review",
+            "default": [],
+            "maxItems": 60
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    }
+  }
+}

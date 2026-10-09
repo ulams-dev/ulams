@@ -417,6 +417,10 @@ final class BlueprintApplier
         try {
             $this->courses->update(['status' => CourseStatusEnum::PUBLISHED], (int) $session->course_id);
             $this->commerce->activate($session);
+            $landing = EntityMapEntry::query()->where(['session_id' => $session->id, 'entity_type' => 'page'])->first();
+            if ($landing !== null) {
+                $this->pages->update((int) $landing->entity_id, ['active' => true]);
+            }
         } finally {
             $previous !== null ? Auth::setUser($previous) : Auth::forgetUser();
         }
