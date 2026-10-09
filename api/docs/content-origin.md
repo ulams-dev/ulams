@@ -69,7 +69,7 @@ acceptable; each has a test:
    POST/PUT/PATCH/DELETE whose `Origin` is not `FRONTEND_URL`, `ADMIN_URL`, `APP_URL` or
    `TRUSTED_ORIGINS` (or, without `Origin`, whose `Sec-Fetch-Site` is not `same-origin`/`none`).
    Content origins never match, not even through the localhost patterns of development. Exempt by
-   route: the players' tracking endpoints (`api/scorm/content/*/track`, `api/liascript/progress/*`,
+   route: the players' tracking endpoints (`api/scorm/content/*/track`, `api/liascript/progress/*`, `api/cmi5/fetch`,
    scoped `X-Ulams-Tracking-Token`, no ambient credentials; sandboxed frames send `Origin: null`),
    the LRS (`trax/api/*/xapi/std/*`), LTI and payment callbacks (signed, server to server). Nothing in
    the API authenticates by cookie alone: the default guard is the Passport bearer guard, there is no
@@ -99,7 +99,9 @@ acceptable; each has a test:
    `/studio/api/*` of the front), so a content page cannot embed it in no-cors mode. CORP does not
    restrict CORS-mode `fetch`, which the SPAs use. Caddy also never reflects `Origin: null` or a
    content origin in `Access-Control-Allow-Origin`/`-Credentials`; only the tracking endpoints answer
-   any origin, without credentials and with `Cookie` and `Authorization` dropped. Tests:
+   any origin, without credentials and with `Cookie` and `Authorization` dropped, and the cmi5
+   endpoints (`/api/cmi5/fetch`, `/trax/api/*/xapi/std/*`), which answer any origin without credentials,
+   drop `Cookie` and keep `Authorization` (it carries the LRS session token; the preflight names it). Tests:
    `tests/Integrations/ContentOriginHeadersConfigTest.php`, `ContentFileTest`, `ProtectJsonResponsesTest`.
 5. **Config.** `TENANCY_CONTENT_HOST` accepts `{slug}.content.ulams.app`; the tenancy env writer and
    `ulams:tenant:sync-env` write it as `CONTENT_ORIGIN` (`TenantNamingTest`,
@@ -148,3 +150,22 @@ that SCO complete for the learner (course access checked), which fires `TopicFin
 lesson/course checks. Students hold `scorm_track-update` (seeded), so the legacy endpoint works for
 them too.
 
+
+## cmi5 (ADR 0046)
+
+AUs play from the content origin like SCORM (`/cmi5/<id>/<entry>` through `/api/content`, from
+`CMI5_DISK`). The launch URL carries a **one-time launch token** in its `fetch` parameter, never the
+learner's Passport token:
+
+1. `GET /api/cmi5/player/{auId}?format=json` (the learner's bearer token) stores a row in
+   `lrs_launch_tokens` (SHA-256 of the token, user, registration, AU, access) and returns the URL.
+2. The AU calls `POST /api/cmi5/fetch?token=...` from the content origin (exempt from the Origin check,
+   throttled). The first call opens the session (`CMI5_SESSION_MINUTES`) and returns an HMAC-signed
+   `ulrs1.` token (key derived from the tenant `APP_KEY`); later calls in the session return the same
+   token; an unused launch token expires after 10 minutes; after the session it answers 401.
+3. The LRS guard accepts the token as `Authorization: Basic <token>`. It is limited to its xAPI access,
+   its registration (statements, state), read-only profiles. No other guard accepts it. A `completed`
+   or `passed` statement fires `AuCompletionReported`, which completes the topics that use the AU.
+
+CORS on the LRS already answers any origin without credentials, so the AU needs no extra allow-list
+entry; the content origin is still refused on every other state-changing route.

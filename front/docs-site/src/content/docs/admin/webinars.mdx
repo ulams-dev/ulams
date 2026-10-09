@@ -129,6 +129,16 @@ Downloads are allowed only over HTTPS from hosts in `JITSI_RECORDING_HOSTS` (com
 `JITSI_RECORDING_MAX_BYTES` (default 2 GB) and `JITSI_RECORDING_DOWNLOAD_TIMEOUT` (default 600 s).
 The endpoint is throttled to 60 requests per minute.
 
+For JaaS, set `JITSI_WEBHOOK_SECRET` to the endpoint secret shown by the "Reveal secret" button in
+the JaaS console (Webhooks). JaaS signs `<timestamp>.<raw body>` with HMAC-SHA256, base64 encoded, in
+`X-Jaas-Signature: t=<timestamp>,v1=<signature>`; schemes other than `v1` are ignored. The
+recording link of `RECORDING_UPLOADED` is a pre-authenticated, 24-hour URL on Oracle object storage
+(`https://objectstorage.<region>.oraclecloud.com/...mp4`), so JaaS deployments set
+`JITSI_RECORDING_HOSTS=*.oraclecloud.com`, or the exact region host if it is known. Both formats follow
+the [JaaS webhook documentation](https://developer.8x8.com/jaas/docs/webhooks-signatures) (checked
+2026-10-09). Self-hosted Jitsi leaves the secret empty and uses `JITSI_WEBHOOK_TOKEN` with its own
+recording host.
+
 ### YouTube
 
 Live streaming uses the `youtube` package (Google OAuth client ID, secret and API key, plus a

@@ -8,7 +8,9 @@ import { config } from "./config.ts";
 import { getSiteModel } from "./data.ts";
 import { tenantFrontUrl } from "./tenant.ts";
 import { THEME_COLOR } from "./theme.ts";
-import { comparisonModel } from "./comparison.ts";
+import { comparisonData, comparisonModel } from "./comparison.ts";
+import { applyComparisonStatus, type LandingStatus } from "./landing-status.ts";
+import { workflowsModel } from "./workflows.ts";
 import type { ThemeName } from "@ulams/ui/registry";
 
 export interface DemoCard {
@@ -27,7 +29,7 @@ const STYLE: Record<string, { label: string; fallbackTitle: string; text: string
   nightsky: { label: "Gamified · kids 10–14", fallbackTitle: "Night Sky Explorers", text: "Seven short missions to the stars with Orbi the robot guide, badges and a printable diploma." },
 };
 
-export async function platformModel(current: URL) {
+export async function platformModel(current: URL, status: LandingStatus = config.landingStatus) {
   const firstRule = config.tenantHosts.split(/[,\n]+/)[0]?.split("=>")[0]?.trim() ?? "";
   const demos = await Promise.all(
     config.demoTenants.map(async (slug): Promise<DemoCard | null> => {
@@ -59,7 +61,7 @@ export async function platformModel(current: URL) {
     })
   );
   const list = demos.filter((d): d is DemoCard => d !== null);
-  return { demos: list, demoCount: list.length, comparison: comparisonModel() };
+  return { demos: list, demoCount: list.length, comparison: comparisonModel(applyComparisonStatus(comparisonData, status)), workflows: workflowsModel(status) };
 }
 
 export const PLATFORM_THEME_COLOR = "#fafaf9";

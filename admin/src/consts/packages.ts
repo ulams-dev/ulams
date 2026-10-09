@@ -46,7 +46,6 @@ enum PACKAGES {
   TopicTypeGift = 'ulams/topic-type-gift',
   TopicTypeProject = 'ulams/topic-type-project',
   TopicTypes = 'ulams/topic-types',
-  Tracker = 'ulams/tracker',
   Translations = 'ulams/translations',
   Video = 'ulams/video',
   Vouchers = 'ulams/vouchers',

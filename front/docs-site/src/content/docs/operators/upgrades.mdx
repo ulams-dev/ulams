@@ -53,7 +53,8 @@ talk to each other through internal contracts. In the example that is one variab
    `migrate --force` in each tenant database, one tenant after another), then the permissions
    seeder, then starts php-fpm and the workers.
 
-5. Check the log for `synced <host>` lines and for errors, then the health endpoints
+5. Run `ulams:upgrade` (below) for the one-off steps of the release, check the log for `synced <host>`
+   lines and for errors, then the health endpoints
    (see [Monitoring](/operators/monitoring/)). A tenant that failed to migrate is reported by
    host; fix the cause and rerun:
 
@@ -62,6 +63,50 @@ talk to each other through internal contracts. In the example that is one variab
    ```
 
 </Steps>
+
+## `ulams:upgrade`: one command for the platform and every tenant
+
+Start-up only migrates and rebuilds env files. Releases also need steps that must run once per
+tenant: new permissions, keys, moving files, cleaning data, recreating SQL views. `ulams:upgrade`
+runs all of them, idempotently, for the platform first and then for each active tenant:
+
+```bash
+docker compose exec api php artisan ulams:upgrade --dry-run   # list what would run
+docker compose exec api php artisan ulams:upgrade             # run it
+```
+
+| Step | Runs | What it does |
+|---|---|---|
+| `sync_env` | platform, every upgrade | `ulams:tenant:sync-env`: tenant env files, registrations and Passport keys |
+| `h5p_export_config` | platform, every upgrade | `ulams:h5p:export-config` for the production H5P service (does nothing without `H5P_SERVICE_CONFIG_DIR`) |
+| `migrate` | each target, every upgrade | `migrate --force` |
+| `permissions` | each target, every upgrade | `db:seed --class=PermissionsSeeder` (adds missing permissions) |
+| `lti_keys` | each target, every upgrade | `ulams:lti:rotate-keys --init` (creates the LTI key set when missing) |
+| `cmi5_move_to_bucket` | each target, once | `cmi5:move-to-bucket` (when this release has the command) |
+| `meetings_purge_frames` | each target, once | `meetings:purge-frames`, preceded by a logged `--dry-run` (when this release has the command) |
+| `recreate_views` | each target, once | `ulams:db:recreate-views`: SQL views created before the package rename carry old class names |
+
+"Once" steps are recorded in the platform table `tenant_upgrade_steps` (`target` is `platform` or
+the tenant slug), so a second run skips them. A step whose command does not exist in the running
+release is skipped and not recorded; it runs on the first upgrade that has it.
+
+| Option | Effect |
+|---|---|
+| `--tenant=<slug>` (repeatable) | Only these tenants; the platform is left out |
+| `--platform-only` | Only the platform |
+| `--force-step=<name>` (repeatable) | Run a one-off step again |
+| `--dry-run` | Print the plan, change and record nothing |
+
+A failing step stops that target's remaining steps and is reported; the other targets still run.
+The command exits non-zero when any target failed, so it can gate a deploy. Tenants that are not
+`active` (still provisioning or failed) are skipped with a note. Run it on the platform, never with
+`--domain`.
+
+Packages add their own steps from a service provider with
+`UpgradeSteps::register('name', fn (UpgradeContext $context) => $context->artisan('my:command'), since: '1.4')`
+(or `UpgradeSteps::command(...)`). Pass `once: false` for idempotent work that must run on every
+upgrade, and make every step safe to run twice. See
+[New package](/extending/new-package/) for package conventions.
 
 The H5P service migrates its own `h5p` schema in a tenant database on the first request for that
 tenant after the upgrade, not at start-up.

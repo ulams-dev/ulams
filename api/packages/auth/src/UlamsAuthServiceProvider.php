@@ -10,6 +10,12 @@ use Laravel\Passport\Passport;
 use Ulams\Auth\Console\Commands\CreateAdminCommand;
 use Ulams\Auth\Console\Commands\ExportTokenScopesCommand;
 use Ulams\Auth\Console\Commands\PruneAgentAuditCommand;
+use Ulams\Auth\Console\Commands\PruneDeviceAuthorizationsCommand;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Ulams\Auth\Services\Contracts\DeviceAuthorizationServiceContract;
+use Ulams\Auth\Services\DeviceAuthorizationService;
 use Ulams\Auth\Http\Middleware\EnforceTokenScopes;
 use Ulams\Auth\Http\Middleware\RecordAgentAudit;
 use Ulams\Auth\Http\Middleware\StripTokenPrefix;
@@ -52,6 +58,7 @@ class UlamsAuthServiceProvider extends ServiceProvider
         UserServiceContract::class => UserService::class,
         SocialAccountServiceContract::class => SocialAccountService::class,
         PersonalAccessTokenServiceContract::class => PersonalAccessTokenService::class,
+        DeviceAuthorizationServiceContract::class => DeviceAuthorizationService::class,
     ];
 
     public const REPOSITORIES = [
@@ -93,7 +100,13 @@ class UlamsAuthServiceProvider extends ServiceProvider
         }
         // package routes are not in the `api` group: attach on match (audit wraps the scope check)
         Event::listen(RouteMatched::class, fn (RouteMatched $e) => $e->route->middleware([RecordAgentAudit::class, EnforceTokenScopes::class]));
-        $this->callAfterResolving(Schedule::class, fn (Schedule $schedule) => $schedule->command('ulams:auth:prune-agent-audit')->daily());
+        $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+            $schedule->command('ulams:auth:prune-agent-audit')->daily();
+            $schedule->command('ulams:auth:prune-device-authorizations')->hourly();
+        });
+        // device approval: 5 requests per minute per signed-in user (lookups and answers share the bucket)
+        RateLimiter::for('ulams-device-approve', fn (Request $r) => Limit::perMinute((int) config(self::CONFIG_KEY . '.device_approve_per_minute', 5))
+            ->by('device-approve:' . ($r->user('api')?->getAuthIdentifier() ?? $r->ip())));
 
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
@@ -109,6 +122,7 @@ class UlamsAuthServiceProvider extends ServiceProvider
             CreateAdminCommand::class,
             ExportTokenScopesCommand::class,
             PruneAgentAuditCommand::class,
+            PruneDeviceAuthorizationsCommand::class,
         ]);
     }
 }

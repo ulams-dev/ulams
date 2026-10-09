@@ -9,6 +9,7 @@ use Illuminate\Routing\Controller;
 use Ulams\Lrs\Http\Middleware\AuthenticateXapiAccess;
 use Ulams\Lrs\Services\Contracts\XapiDocumentServiceContract;
 use Ulams\Lrs\Xapi\DocumentScope;
+use Ulams\Lrs\Xapi\SessionScope;
 use Ulams\Lrs\Xapi\XapiException;
 
 /**
@@ -90,6 +91,12 @@ class XapiDocumentController extends Controller
 
     private function scope(Request $request): DocumentScope
     {
+        SessionScope::of($request)?->assertDocumentAccess(
+            (string) $request->route('resource'),
+            $request->getMethod(),
+            $request->query('registration') ?? ($request->isJson() ? null : $request->request->get('registration')),
+        );
+
         return match ($request->route('resource')) {
             'state' => DocumentScope::state($request),
             'activity_profile' => DocumentScope::activityProfile($request),

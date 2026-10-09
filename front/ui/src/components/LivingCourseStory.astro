@@ -1,0 +1,418 @@
+---
+/**
+ * "Your course updates itself when your sources change": a looping three-beat story played by the
+ * timeline player (elements/story.ts). A source line is edited, ulams finds every lesson and quiz
+ * question that cites it, and an approved proposal updates the lesson while learner progress stays.
+ * The decorative stage is hidden from assistive tech; `description` and the beat captions carry the story.
+ */
+import Icon from "./Icon.astro";
+import StoryStyles from "./StoryStyles.astro";
+
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  status?: "available" | "coming";
+  valueLine?: string;
+  description: string;
+  beats: Array<{ title: string; text: string }>;
+  source: { file: string; heading?: string; context?: string; lead: string; before: string; after: string; added: string };
+  lesson: { title: string; lead: string; citation: string; question: string; questionCite: string };
+  proposal: { title: string; approve: string; done: string };
+}
+const { id = "living-course", eyebrow, title, intro, status, valueLine, description, beats, source, lesson, proposal } = Astro.props;
+const T = { b1: 0, b2: 3300, b3: 6600, end: 9600 };
+---
+
+<section class="u-section u-lc" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <StoryStyles />
+  <div class="u-container">
+    <div class="u-section-head u-section-head--center" data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+      {intro && <p class="u-lead">{intro}</p>}
+      {status === "coming" && <p class="u-status u-status--coming">On the roadmap</p>}
+    </div>
+    <ulams-story class="u-stage u-lc__stage" data-total={T.end} data-hold="3200" loop>
+      <p class="u-visually-hidden">{description}</p>
+      <div class="u-lc__grid" aria-hidden="true">
+        <div class="u-win u-lc__doc">
+          <div class="u-win__bar"><span class="u-win__dots"><i></i><i></i><i></i></span><span>{source.file}</span></div>
+          <div class="u-win__body">
+            {source.heading && <p class="u-lc__h"># {source.heading}</p>}
+            {source.context && <p class="u-lc__dim">{source.context}</p>}
+            <p class="u-lc__line" data-at="900">
+              <span class="u-lc__gutter">~</span>{source.lead}
+              <span class="u-lc__val">
+                <s class="u-lc__old" data-at="0" data-until="900">{source.before}</s>
+                <b class="u-lc__new" data-at="900" data-type="650">{source.after}</b>
+              </span>
+            </p>
+            <p class="u-lc__line u-lc__added">
+              <span class="u-lc__gutter">+</span><span data-at="1800" data-type="1100">{source.added}</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="u-lc__beam" data-at={T.b2} style="--beam-on:1"><i></i></div>
+
+        <div class="u-win u-lc__course">
+          <div class="u-win__bar"><span class="u-win__dots"><i></i><i></i><i></i></span><span>{lesson.title}</span></div>
+          <div class="u-win__body">
+            <p class="u-lc__para" data-at="3700">
+              {lesson.lead}
+              <span class="u-lc__val">
+                <s class="u-lc__old u-lc__old2" data-at="0" data-until="8350">{source.before}</s>
+                <b class="u-lc__new2" data-at="8350">{source.after}</b>
+              </span>
+              <span class="u-chip2 pulse" data-at="3800">{lesson.citation}</span>
+            </p>
+            <p class="u-lc__para u-lc__para2" data-at="8500">{source.added}</p>
+            <p class="u-lc__quiz" data-at="4300">
+              <span class="u-lc__qlabel">Quiz</span> {lesson.question}
+              <span class="u-chip2 pulse" data-at="4400">{lesson.questionCite}</span>
+            </p>
+
+            <div class="u-lc__proposal" data-at={T.b3}>
+              <p class="u-lc__ptitle">{proposal.title}</p>
+              <ul class="u-lc__diff">
+                <li data-op="del"><span>−</span>{source.lead} {source.before}</li>
+                <li data-op="add"><span>+</span>{source.lead} {source.after}</li>
+                <li data-op="add"><span>+</span>{source.added}</li>
+              </ul>
+              <div class="u-lc__actions">
+                <span class="u-lc__btn" data-at="8150" data-until="8700">{proposal.approve}</span>
+                <span class="u-lc__done" data-at="8700"><Icon name="check" /> {proposal.done}</span>
+              </div>
+              <svg class="u-pointer" viewBox="0 0 24 24" data-at="7500" data-at2="7900" fill="currentColor"><path d="M5 3l14 8-6 1.5L10 19z"></path></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ol class="u-lc__beats">
+        {
+          beats.map((beat, i) => (
+            <li class="u-lc__beat" data-at={[T.b1, T.b2, T.b3][i]} data-until={i < 2 ? [T.b2, T.b3][i] : undefined}>
+              <span class="u-lc__n">{i + 1}</span>
+              <span>
+                <b>{beat.title}</b>
+                <span>{beat.text}</span>
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="u-stage__controls">
+        <button type="button" data-pause aria-pressed="false">Pause</button>
+        <button type="button" data-replay>Replay</button>
+      </div>
+    </ulams-story>
+    {valueLine && <p class="u-lc__value">{valueLine}</p>}
+  </div>
+</section>
+
+<style is:global>
+  .u-lc__grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 72px minmax(0, 1.15fr);
+    align-items: stretch;
+  }
+  .u-lc__line,
+  .u-lc__h,
+  .u-lc__dim {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .u-lc__h {
+    color: var(--st-dim);
+    margin-bottom: 4px;
+  }
+  .u-lc__dim {
+    color: var(--st-dim);
+  }
+  .u-lc__line {
+    position: relative;
+    padding: 2px 8px 2px 22px;
+    margin-inline: -8px;
+    border-radius: 4px;
+  }
+  .u-lc__line.on {
+    background: color-mix(in srgb, var(--ulams-brand-orange) 14%, transparent);
+  }
+  .u-lc__line[data-at] {
+    opacity: 1;
+  }
+  .u-lc__gutter {
+    position: absolute;
+    left: 8px;
+    color: var(--ulams-brand-orange);
+  }
+  .u-lc__val {
+    display: inline-grid;
+    vertical-align: top;
+  }
+  .u-lc__val > * {
+    grid-area: 1 / 1;
+  }
+  .u-lc__old {
+    color: var(--st-bad);
+    text-decoration-thickness: 1px;
+  }
+  .u-lc__new {
+    color: var(--ulams-brand-orange);
+    font-weight: 700;
+  }
+  .u-lc__added {
+    margin-top: 4px;
+  }
+  .u-lc__added span[data-at] {
+    color: var(--ulams-brand-orange);
+  }
+  .u-lc__beam {
+    position: relative;
+    display: grid;
+    place-items: center;
+    opacity: 1 !important;
+  }
+  .u-lc__beam i {
+    display: block;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--ulams-brand-orange), var(--ulams-brand-sky));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.9s var(--ulams-ease);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--ulams-brand-orange) 70%, transparent);
+  }
+  .u-lc__beam.on i {
+    transform: scaleX(1);
+  }
+  .u-lc__course .u-win__body {
+    position: relative;
+    display: grid;
+    gap: 10px;
+    padding-bottom: 196px;
+    font-family: var(--ulams-font-family-body, system-ui, sans-serif);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+  .u-lc__para,
+  .u-lc__quiz {
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border-left: 3px solid transparent;
+    transition:
+      background-color 0.5s,
+      border-color 0.5s;
+  }
+  .u-lc__para[data-at],
+  .u-lc__quiz[data-at] {
+    opacity: 1;
+  }
+  .u-lc__para.on,
+  .u-lc__quiz.on {
+    border-left-color: var(--ulams-brand-orange);
+    background: color-mix(in srgb, var(--ulams-brand-orange) 12%, transparent);
+  }
+  .u-lc__para2.on {
+    border-left-color: var(--st-ok);
+    background: color-mix(in srgb, var(--st-ok) 12%, transparent);
+  }
+  .u-lc__qlabel {
+    font-family: var(--ulams-font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--st-dim);
+    margin-right: 4px;
+  }
+  .u-lc__new2 {
+    color: var(--st-ok);
+  }
+  .u-lc__old2 {
+    text-decoration: none;
+  }
+  .u-lc__proposal {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #fff;
+    color: #18181b;
+    border: 1px solid color-mix(in srgb, var(--ulams-brand-orange) 70%, #fff);
+    box-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.6);
+    transform: translateY(26px) scale(0.97);
+  }
+  .u-lc__proposal.on {
+    transform: none;
+  }
+  .u-lc__ptitle {
+    margin: 0 0 8px;
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+  .u-lc__diff {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 2px;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.75rem;
+  }
+  .u-lc__diff li {
+    display: flex;
+    gap: 8px;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  .u-lc__diff [data-op="del"] {
+    background: #fde8e8;
+    color: #8f1d1d;
+  }
+  .u-lc__diff [data-op="add"] {
+    background: #e0f5e8;
+    color: #14602f;
+  }
+  .u-lc__actions {
+    position: relative;
+    display: grid;
+    margin-top: 12px;
+    justify-items: end;
+    min-height: 34px;
+  }
+  .u-lc__actions > * {
+    grid-area: 1 / 1;
+  }
+  .u-lc__btn {
+    padding: 6px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.8125rem;
+    background: var(--ulams-brand-indigo);
+    color: #fff;
+    transition:
+      transform 0.2s,
+      opacity 0.45s;
+  }
+  .u-lc__actions .u-lc__btn[data-at] {
+    opacity: 1;
+  }
+  .u-lc__btn.on {
+    transform: scale(0.94);
+    background: color-mix(in srgb, var(--ulams-brand-indigo) 70%, #fff);
+  }
+  .u-lc__done {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    justify-self: stretch;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: #e0f5e8;
+    color: #14602f;
+    font-weight: 700;
+    font-size: 0.8125rem;
+  }
+  .u-lc__done svg {
+    width: 16px;
+    height: 16px;
+  }
+  .u-lc__proposal .u-pointer {
+    right: 28px;
+    bottom: 4px;
+    color: #111;
+    filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.9)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
+    transform: translate(-120px, -70px);
+  }
+  .u-lc__proposal .u-pointer.on2 {
+    transform: translate(0, 0);
+  }
+  .u-lc__beats {
+    list-style: none;
+    margin: 28px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .u-lc__beat {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    color: var(--st-dim);
+    opacity: 0.55;
+  }
+  ulams-story .u-lc__beat[data-at] {
+    opacity: 0.55;
+  }
+  ulams-story .u-lc__beat[data-at].on {
+    opacity: 1;
+    color: var(--st-text);
+  }
+  .u-lc__beat b {
+    display: block;
+    font-size: 1.0625rem;
+    color: var(--st-text);
+    margin-bottom: 2px;
+  }
+  .u-lc__beat > span:last-child > span {
+    font-size: 0.875rem;
+  }
+  .u-lc__n {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--st-line);
+    font-family: var(--ulams-font-mono);
+    font-size: 0.75rem;
+  }
+  .u-lc__beat.on .u-lc__n {
+    background: var(--ulams-brand-orange);
+    border-color: var(--ulams-brand-orange);
+    color: var(--ulams-brand-indigo);
+    font-weight: 700;
+  }
+  .u-lc__value {
+    margin: 22px auto 0;
+    max-width: 62ch;
+    text-align: center;
+    font-size: 1.125rem;
+    color: var(--ulams-color-muted);
+  }
+  @media (max-width: 860px) {
+    .u-lc__grid {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto 44px auto;
+    }
+    .u-lc__beam i {
+      width: 2px;
+      height: 100%;
+      justify-self: center;
+      background: linear-gradient(180deg, var(--ulams-brand-orange), var(--ulams-brand-sky));
+      transform: scaleY(0);
+      transform-origin: top;
+    }
+    .u-lc__beam.on i {
+      transform: scaleY(1);
+    }
+    .u-lc__beats {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .u-lc__course .u-win__body {
+      padding-bottom: 300px;
+    }
+  }
+</style>

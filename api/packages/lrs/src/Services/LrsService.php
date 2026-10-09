@@ -3,8 +3,9 @@
 namespace Ulams\Lrs\Services;
 
 use Ulams\Courses\Models\Topic;
-use Ulams\Lrs\Enums\XApiEnum;
 use Ulams\Lrs\Services\Contracts\LrsServiceContract;
+use Ulams\Lrs\Services\Contracts\XapiDocumentServiceContract;
+use Ulams\Lrs\Xapi\DocumentScope;
 use Illuminate\Http\Request;
 use Ulams\Lrs\Models\Access;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,13 @@ use Illuminate\Support\Str;
 
 class LrsService implements LrsServiceContract
 {
-    public function launchParams(string $token, ?int $courseId = null, ?int $topicId = null): array
+    public function __construct(
+        private readonly LaunchTokenService $launchTokens,
+        private readonly XapiDocumentServiceContract $documents,
+    ) {
+    }
+
+    public function launchParams(?int $courseId = null, ?int $topicId = null, ?int $auId = null): array
     {
         $access = Access::firstOrFail();
         $user = Auth::user();
@@ -22,9 +29,10 @@ class LrsService implements LrsServiceContract
             $courseId = $topic->lesson->course->getKey();
         }
 
-        $token = explode(" ", $token);
-        $token = array_pop($token);
-        $fetch = route("cmi5.fetch") . "?token=" . $token;
+        // The AU gets a one-time launch token, never the learner's access token (ADR 0046).
+        $registration = (string) Str::uuid();
+        $oneTime = $this->launchTokens->issue((int) $user?->getKey(), $registration, $auId, $access);
+        $fetch = route("cmi5.fetch") . "?token=" . $oneTime;
 
         $result = [
             'endpoint' => $access->xapi_endpoint,
@@ -36,7 +44,7 @@ class LrsService implements LrsServiceContract
                     'name' => isset($user) ? $user->email : '',
                 ]
             ],
-            'registration' => (string) Str::uuid(),
+            'registration' => $registration,
             'activityId' => $this->getActivityId($courseId, $topicId)
         ];
 
@@ -59,33 +67,34 @@ class LrsService implements LrsServiceContract
         return $result;
     }
 
-    public function saveState(string $token, array $params): array
+    public function saveState(array $params): array
     {
-        $putUrl = $params['endpoint'] . '/activities/state?' . http_build_query($params['state']);
+        $scope = DocumentScope::state(Request::create('/', 'GET', $params['state']));
+        $launchData = [
+            'contextTemplate' => [
+                'context' => [
+                    'registration' => $params['registration'],
+                    'contextActivities' => ['grouping' => [['objectType' => 'Activity', 'id' => $params['activityId']]]],
+                    'extensions' => ['https://w3id.org/xapi/cmi5/context/extensions/sessionid' => (string) Str::uuid()],
+                ],
+            ],
+            'launchMode' => 'Normal',
+            'moveOn' => 'CompletedOrPassed',
+        ];
 
-        $putRequest = Request::create($putUrl, 'PUT', $params['state']);
-        $putRequest->headers->set('Authorization', $token);
-        $putRequest->headers->set('X-Experience-API-Version', XApiEnum::API_VERSION);
-
-        $params['response'] = app()->handle($putRequest);
+        $this->documents->save($scope, Access::firstOrFail(), (string) json_encode($launchData), 'application/json', false);
 
         return $params;
     }
 
-    public function saveAgent(string $token, array $params): array
+    public function saveAgent(array $params): array
     {
-        $post = $params['endpoint'] . '/agents/profile';
-
-        $data = [
+        $scope = DocumentScope::agentProfile(Request::create('/', 'GET', [
             'agent' => json_encode($params['actor']),
             'profileId' => 'cmi5LearnerPreferences',
-        ];
+        ]));
 
-        $request = Request::create($post, 'POST', $data);
-        $request->headers->set('Authorization', $token);
-        $request->headers->set('X-Experience-API-Version', XApiEnum::API_VERSION);
-
-        $params['response'] = app()->handle($request);
+        $this->documents->save($scope, Access::firstOrFail(), '{}', 'application/json', true);
 
         return $params;
     }

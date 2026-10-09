@@ -1,0 +1,40 @@
+---
+title: Approving a CLI sign-in
+description: What the Authorize the ulams CLI page asks you, how to read the code, narrow the permissions and the lifetime, and how to revoke the token later.
+sidebar:
+  order: 7
+learnerRoutes:
+  - /cli/authorize
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+When you run `ulams login --url <your site>` in a terminal, the CLI prints a code such as
+`BDWP-HQPK` and opens `/cli/authorize` in your browser. The page lets you decide whether that
+terminal may act as you. You can use it from a phone while the terminal is on a server over SSH.
+
+<Steps>
+
+1. **Sign in** if you are not signed in yet. The page returns to the code afterwards.
+2. **Check the code** on the page against the one in your terminal. Approve only a code you
+   just started yourself; if you did not run a command, choose **Deny**.
+3. **Read what is asked.** The page shows the name of the client, the address the request came
+   from and the permissions requested, in words. Sensitive ones (changing users, settings, orders
+   or tokens, or everything) are marked.
+4. **Untick what the CLI does not need** and choose how long it stays signed in (7, 30 or 90 days;
+   90 by default).
+5. Choose **Approve** or **Deny**. Within a few seconds the terminal says it is signed in.
+
+</Steps>
+
+The token can never do more than your own account can: permissions only narrow it. Codes are valid
+for 10 minutes and for one answer. If the page says the code is unknown or expired, run the command
+in the terminal again.
+
+<Aside type="note">
+  Administrators see every token of the site under **Users > API tokens**
+  ([API tokens](/admin/api-tokens/)) and can revoke any of them. A token that was approved but never
+  collected by the CLI is revoked automatically after the code expires.
+</Aside>
+
+For the protocol see [Scoped API tokens](/developers/scoped-tokens/#device-login).

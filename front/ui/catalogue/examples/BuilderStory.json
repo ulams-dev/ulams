@@ -1,0 +1,90 @@
+{
+  "props": {
+    "id": "builder",
+    "eyebrow": "course builder",
+    "title": "Build a course from a document in minutes",
+    "intro": "Drop in a runbook, answer three questions, and review a cited outline and drafts before anything goes live.",
+    "valueLine": "From a PDF to a published, cited course, with you approving every step.",
+    "description": "An animated example of the studio course builder. A file named incident-runbook.pdf is dropped in, three interview answers appear (engineers, 45 minutes, a quiz per lesson), an outline of three modules and five lessons grows with a source chip on each lesson, one lesson streams in with citations, a quiz question cites its source, an example cost counter reaches 18 cents, and Apply publishes the course.",
+    "file": {
+      "name": "incident-runbook.pdf",
+      "label": "PDF"
+    },
+    "interview": [
+      {
+        "question": "Audience",
+        "answer": "Engineers"
+      },
+      {
+        "question": "Length",
+        "answer": "45 min"
+      },
+      {
+        "question": "Practice",
+        "answer": "Quiz per lesson"
+      }
+    ],
+    "outline": [
+      {
+        "title": "Detect and declare",
+        "lessons": [
+          {
+            "title": "What counts as an incident",
+            "source": "runbook p.2"
+          },
+          {
+            "title": "Severity levels",
+            "source": "runbook p.3"
+          }
+        ]
+      },
+      {
+        "title": "Triage and mitigate",
+        "lessons": [
+          {
+            "title": "The first ten minutes",
+            "source": "runbook p.5"
+          },
+          {
+            "title": "Roll back or roll forward",
+            "source": "runbook p.6"
+          }
+        ]
+      },
+      {
+        "title": "Learn from it",
+        "lessons": [
+          {
+            "title": "Blameless postmortems",
+            "source": "runbook p.9"
+          }
+        ]
+      }
+    ],
+    "lesson": {
+      "title": "Severity levels",
+      "text": "Sev 1 means customers cannot check out. Page the on-call lead and open an incident channel straight away.",
+      "citations": [
+        "runbook p.3 · Severity",
+        "runbook p.4 · Paging"
+      ]
+    },
+    "quiz": {
+      "question": "Who declares a Sev 1?",
+      "source": "runbook p.3"
+    },
+    "cost": {
+      "label": "Cost so far",
+      "amount": 0.18,
+      "note": "Example run, not a quote"
+    },
+    "apply": {
+      "label": "Apply",
+      "publishedTitle": "Incident response",
+      "publishedMeta": "· 5 lessons · 1 quiz · published"
+    }
+  },
+  "invalid": {
+    "interview": []
+  }
+}

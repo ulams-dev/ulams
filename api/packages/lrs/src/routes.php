@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api'], function () {
     Route::group(['prefix' => '/cmi5'], function () {
-        Route::post('/fetch', [LrsController::class, 'fetch'])->name("cmi5.fetch");
+        // The AU calls this from the content origin with the one-time token of its launch URL (ADR 0046).
+        Route::post('/fetch', [LrsController::class, 'fetch'])->middleware('throttle:60,1')->name("cmi5.fetch");
         Route::group(['middleware' => ['auth:api']], function () {
             Route::get('/courses/{id}', [LrsController::class, 'launchParams']);
         });

@@ -97,7 +97,7 @@ php artisan ulams:tenant:sync-env --migrate
 php artisan db:seed --class="Ulams\Auth\Database\Seeders\AuthPermissionSeeder" --domain=<tenant host>
 ```
 
-`AUTH_MAX_TOKENS_PER_USER` (default 50) limits active tokens per user, `APP_VERSION` is what
+`AUTH_MAX_TOKENS_PER_USER` (default 50) limits active tokens per user, `AUTH_DEVICE_APPROVE_PER_MINUTE` (default 5) the approval attempts of the CLI browser sign-in per user (the scheduler also runs `ulams:auth:prune-device-authorizations` hourly), `APP_VERSION` is what
 `GET /api/meta` reports.
 
 ## Accounts and modes

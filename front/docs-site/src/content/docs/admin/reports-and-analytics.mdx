@@ -5,16 +5,15 @@ modules:
   - reports
 adminRoutes:
   - /analytics/**
-needsReview: "Analytics → Logs calls /api/admin/tracks/routes from the tracker package, which is not in api/packages; confirm whether the screen should be removed or the package restored."
 sidebar:
   order: 33
 ---
 
-import { Aside, Badge } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
 import Screenshot from "../../../components/Screenshot.astro";
 
-The **Analytics** menu groups three screens: a log of notifications sent to users, a reports
-dashboard with charts, and an activity log. The reports data comes from the `reports` package
+The **Analytics** menu groups two screens: a log of notifications sent to users and a reports
+dashboard with charts. The reports data comes from the `reports` package
 ([README](https://github.com/ulams-dev/ulams/blob/main/api/packages/reports/README.md)); the
 notification log comes from the `notifications` package.
 
@@ -73,13 +72,6 @@ Stats are calculated on demand for one object and never stored:
 Course and topic stats can be exported to a spreadsheet, and the course "finished topics" stat
 can be imported back from one.
 
-## Logs (`/analytics/logs`) <Badge text="Needs review" variant="caution" />
-
-The screen lists API route calls recorded by the `tracker` package. That package is not part
-of this repository, so its endpoint (`/api/admin/tracks/routes`) does not exist and its
-permission (`tracker_route-list`) is not seeded. In practice nobody sees the menu item. The
-roadmap plans a learning-records layer that covers tracking; see [Roadmap](/roadmap/).
-
 ## API
 
 - `GET /api/admin/reports/metrics`: enabled metrics.
@@ -97,10 +89,9 @@ Full list: [API endpoints](/reference/api-endpoints/).
 
 | Screen | Needs |
 |---|---|
-| Analytics menu | Any of `dashboard-app_notification-list_access`, `report_list`, `tracker_route-list` |
+| Analytics menu | Any of `dashboard-app_notification-list_access`, `report_list` |
 | Notifications | `dashboard-app_notification-list_access` |
 | Reports | `report_list` (given to `admin`) |
-| Logs | `tracker_route-list` |
 
 <Aside type="caution">
 In the admin panel the Reports item is also hidden when the `hideInMenu-CoursesCategories`

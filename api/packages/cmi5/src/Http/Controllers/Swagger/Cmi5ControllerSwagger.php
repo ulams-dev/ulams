@@ -58,8 +58,9 @@ interface Cmi5ControllerSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/play/{cmi5AuId}",
-     *     summary="",
+     *     path="/api/cmi5/player/{cmi5AuId}",
+     *     summary="Launch a cmi5 AU",
+     *     description="Needs `cmi5_read` (students have it). Returns the player page, or with `format=json` the launch URL on the tenant content origin. The URL carries a one-time launch token, never the learner's access token (ADR 0046).",
      *     tags={"cmi5"},
      *     security={
      *         {"passport": {}},
@@ -71,6 +72,16 @@ interface Cmi5ControllerSwagger
      *         required=true,
      *         @OA\Schema(
      *             type="string"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         description="`json` returns {data: {url, origin}} instead of the player page",
+     *         in="query",
+     *         name="format",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *             enum={"json"}
      *         )
      *     ),
      *     @OA\Parameter(
@@ -111,9 +122,9 @@ interface Cmi5ControllerSwagger
      *
      * @param Cmi5ReadRequest $request
      * @param int $cmi5AuId
-     * @return View
+     * @return View|JsonResponse
      */
-    public function read(Cmi5ReadRequest $request, int $cmi5AuId): View;
+    public function read(Cmi5ReadRequest $request, int $cmi5AuId): View|JsonResponse;
 
     /**
      * @OA\Get(
