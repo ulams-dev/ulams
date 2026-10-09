@@ -75,6 +75,13 @@ return [
      */
     'admin_connection' => env('TENANCY_ADMIN_CONNECTION', 'pgsql_admin'),
 
+    /*
+     * Several API replicas each run the scheduler loop; only the one that takes the per-minute
+     * lock in the shared cache runs the tick (`ulams:tenant:schedule-loop`). Turn off only to run
+     * a second scheduler on purpose.
+     */
+    'scheduler_lock' => filter_var(env('TENANCY_SCHEDULER_LOCK', true), FILTER_VALIDATE_BOOLEAN),
+
     'php_binary' => env('TENANCY_PHP_BINARY', PHP_BINARY ?: 'php'),
     'process_timeout' => (int) env('TENANCY_PROCESS_TIMEOUT', 900),
 
