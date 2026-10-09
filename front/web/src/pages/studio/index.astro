@@ -3,6 +3,7 @@ import Studio from "../../layouts/Studio.astro";
 import { ApiError, type SessionSummary } from "@ulams/sdk";
 import { builderFor } from "../../lib/studio.ts";
 import { STATUS_LABEL } from "../../studio/labels.ts";
+import { freshnessLabel, reviewHref } from "../../studio/staleness.ts";
 
 const tenant = Astro.locals.tenant;
 if (!tenant) return Astro.redirect("/tenants");
@@ -48,6 +49,15 @@ const fmt = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "sho
                 {s.updatedAt && ` · updated ${fmt.format(new Date(s.updatedAt))}`}
                 {s.costMicroUsd ? ` · $${(s.costMicroUsd / 1e6).toFixed(2)}` : ""}
               </p>
+              {freshnessLabel(s.freshness) && (
+                <p class="st-session-fresh">
+                  <a class={`st-fresh st-fresh-${freshnessLabel(s.freshness)!.state}`} href={reviewHref(s.id, s.freshness)}>
+                    <span aria-hidden="true">{freshnessLabel(s.freshness)!.state === "in_sync" ? "✓" : freshnessLabel(s.freshness)!.state === "stale" ? "↻" : "–"}</span>
+                    <span class="st-fresh-text">{freshnessLabel(s.freshness)!.text}</span>
+                    <span class="cb-sr"> · source freshness</span>
+                  </a>
+                </p>
+              )}
             </li>
           ))}
         </ul>

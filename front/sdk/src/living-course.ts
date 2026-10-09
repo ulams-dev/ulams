@@ -117,6 +117,147 @@ export interface UploadResult {
   revision: SourceRevision;
 }
 
+export type Freshness = "in_sync" | "stale" | "dismissed";
+
+/** The course summary of staleness; also `freshness` on every builder session summary. */
+export interface StalenessSummary {
+  state: Freshness;
+  since: string | null;
+  days: number | null;
+  pendingElements: number;
+  openProposalId: string | null;
+  syncedRevision: number | null;
+  latestRevision: number | null;
+  lastCheckedAt: string | null;
+  /** The course has a source connection; without one there is nothing to be stale against. */
+  tracked: boolean;
+}
+
+export type ElementStaleness = "pending" | "source_removed" | "dismissed";
+
+export interface StaleElement {
+  elementId: string;
+  status: ElementStaleness;
+  type: string;
+  label: string;
+  since: string | null;
+  proposalId: string | null;
+  fragmentIds: string[];
+  /** A quiz answer may be wrong because the source changed. */
+  answerCheck: boolean;
+}
+
+export interface Staleness {
+  summary: StalenessSummary;
+  elements: StaleElement[];
+}
+
+export type ProposalStatus =
+  | "analysing"
+  | "ready"
+  | "awaiting_analysis"
+  | "budget_blocked"
+  | "applying"
+  | "applied"
+  | "no_impact"
+  | "rejected"
+  | "superseded"
+  | "failed";
+
+export type ItemKind = "update" | "citation_remap" | "remove" | "no_change" | "manual" | "uncovered";
+export type ItemType = "block" | "question" | "objective" | "lesson" | "course" | "section";
+export type ItemStatus = "pending" | "accepted" | "rejected" | "conflict" | "stale";
+export type ChangeClass = "none" | "minor" | "major" | "answer_changed" | "removed";
+
+export interface ProposalCounts {
+  items: number;
+  elements: number;
+  remaps: number;
+  uncovered: number;
+  major: number;
+  answerChecks: number;
+  groups: number;
+  byType?: Record<string, number>;
+  source?: ChangeCounts | null;
+  failedGroups?: string[];
+  newerRevision?: number | null;
+}
+
+export interface ProposalSummary {
+  id: string;
+  number: number;
+  sessionId: string;
+  sourceId: string;
+  status: ProposalStatus;
+  trigger: string;
+  counts: ProposalCounts | null;
+  fromRevision: RevisionRef | null;
+  toRevision: (RevisionRef & { detectedAt: string | null }) | null;
+  /** Analysis run (kind `sync`); its steps are in `ProposalDetail.steps`. */
+  runId?: string | null;
+  baseVersionId: string | null;
+  resultVersionId: string | null;
+  estimatedCostMicroUsd: number | null;
+  costMicroUsd: number | null;
+  decisions: Partial<Record<ItemStatus, number>>;
+  learnerNote: string | null;
+  error: string | null;
+  createdAt: string | null;
+  decidedAt: string | null;
+  appliedAt: string | null;
+}
+
+/** A blueprint node as the item shows it (shape depends on `ItemType`). */
+export type ElementNode = Record<string, unknown> & { id?: string };
+
+export interface ItemFlags {
+  grounding?: string[];
+  signals?: string[];
+  checkAnswer?: boolean;
+}
+
+export interface ProposalItem {
+  id: string;
+  groupKey: string;
+  elementId: string;
+  type: ItemType;
+  label: string;
+  kind: ItemKind;
+  reason: string | null;
+  severity: "minor" | "major" | null;
+  before: ElementNode | null;
+  after: ElementNode | null;
+  changeClass: ChangeClass | null;
+  answerStatus: string | null;
+  answerCheck: boolean;
+  status: ItemStatus;
+  flags: ItemFlags;
+  regenerations: number;
+  fragments: Array<{ fragmentId: string; label: string }>;
+  /** Ids of the source changes (`FragmentChangeRow.id`) behind the item. */
+  changeIds: Array<number | string>;
+  decidedAt: string | null;
+}
+
+export interface ProposalGroup {
+  key: string;
+  label: string;
+  items: ProposalItem[];
+}
+
+export interface AnalysisStep {
+  id: string;
+  groupKey: string;
+  status: string;
+  error: string | null;
+}
+
+export interface ProposalDetail extends ProposalSummary {
+  steps?: AnalysisStep[];
+  groups: ProposalGroup[];
+  items: ProposalItem[];
+}
+
 const PREFIX = "/api/admin/living-course";
 
 export type LivingCourseClient = ReturnType<typeof createLivingCourseClient>;
@@ -156,6 +297,16 @@ export function createLivingCourseClient(options: ClientOptions & { prefix?: str
 
   return {
     base,
+    staleness: {
+      /** Per-element staleness and the course summary. Works with AI disabled. */
+      get: async (sessionId: string) => (await call<Staleness>("GET", `/sessions/${id(sessionId)}/staleness`)).data,
+    },
+    proposals: {
+      /** Newest first. */
+      list: async (sessionId: string) => (await call<ProposalSummary[]>("GET", `/sessions/${id(sessionId)}/proposals`)).data,
+      /** Summary, items grouped by lesson, and the analysis steps. */
+      get: async (proposalId: string) => (await call<ProposalDetail>("GET", `/proposals/${id(proposalId)}`)).data,
+    },
     sources: {
       /** Sources of a builder session with connection and sync state. */
       list: async (sessionId: string) => (await call<LivingSource[]>("GET", `/sessions/${id(sessionId)}/sources`)).data,

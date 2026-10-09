@@ -40,6 +40,9 @@ describe("studio BFF allow-list", () => {
     ["POST", `/living-course/sources/${S}/revisions`],
     ["GET", `/living-course/revisions/${S}`],
     ["GET", `/living-course/revisions/${S}/changes`],
+    ["GET", `/living-course/sessions/${S}/staleness`],
+    ["GET", `/living-course/sessions/${S}/proposals`],
+    ["GET", `/living-course/proposals/${S}`],
   ])("forwards living course %s %s", (method, path) => {
     expect(isLivingCourseCall(method, path)).toBe(true);
     expect(isStudioCall(method, path)).toBe(false);
@@ -55,6 +58,11 @@ describe("studio BFF allow-list", () => {
     ["GET", `/living-course/connections/${S}`],
     ["GET", `/sources/${S}/revisions`],
     ["GET", "/living-course/"],
+    ["POST", `/living-course/sessions/${S}/staleness`],
+    ["POST", `/living-course/sessions/${S}/proposals`],
+    ["DELETE", `/living-course/proposals/${S}`],
+    ["GET", `/living-course/proposals/${S}/items`],
+    ["GET", `/living-course/proposals/${S}/../x`],
   ])("refuses living course %s %s", (method, path) => {
     expect(isLivingCourseCall(method, path)).toBe(false);
   });

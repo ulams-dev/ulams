@@ -410,3 +410,91 @@
 .st-empty {
   margin: 0;
 }
+
+/* staleness: markers, highlighted blocks, banner and the session-list badge. Amber stays reserved for
+   citations; these use neutral tones and danger only for "Answer may be wrong". */
+.st-marker {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ulams-studio-ink);
+  background: var(--ulams-studio-sunken);
+  border: 1px solid var(--ulams-studio-ink);
+  border-radius: 6px;
+  padding: 1px 7px;
+}
+.st-marker-answer {
+  color: var(--ulams-studio-danger);
+  background: var(--ulams-studio-danger-soft);
+  border-color: var(--ulams-studio-danger);
+}
+.st-marker-glyph {
+  font-family: var(--ulams-studio-mono);
+  font-weight: 700;
+}
+.st-tree-marker {
+  display: block;
+  margin: 2px 0 6px 12px;
+}
+.st-stale {
+  border-left: 4px solid var(--ulams-studio-ink);
+  padding-left: 12px;
+  background: var(--ulams-studio-sunken);
+}
+.st-stale-answer {
+  border-left-color: var(--ulams-studio-danger);
+}
+.st-stale-note {
+  margin: 0 0 6px;
+  font-family: var(--ulams-studio-sans);
+  font-size: 0.85rem;
+  color: var(--ulams-studio-muted);
+}
+.st-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+  border-left: 4px solid var(--ulams-studio-ink);
+}
+.st-banner[hidden] {
+  display: none;
+}
+.st-banner p {
+  margin: 0;
+}
+.st-banner-title {
+  font-weight: 600;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+.st-banner .cb-btn {
+  margin-left: auto;
+}
+.st-fresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid var(--ulams-studio-line);
+  border-radius: 999px;
+  padding: 3px 12px;
+  background: var(--ulams-studio-sunken);
+  color: var(--ulams-studio-ink);
+  text-decoration: none;
+}
+.st-fresh-in_sync {
+  color: var(--ulams-studio-success);
+  background: var(--ulams-studio-success-soft);
+}
+.st-fresh-stale {
+  border-color: var(--ulams-studio-ink);
+}
+.st-session-fresh {
+  margin: 8px 0 0;
+}

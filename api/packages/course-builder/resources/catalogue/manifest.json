@@ -1706,7 +1706,7 @@
                 },
                 "kind": {
                   "type": "string",
-                  "description": "outline, content, patch, author, restore",
+                  "description": "outline, content, patch, author, restore, update (a source update)",
                   "maxLength": 16
                 },
                 "origin": {

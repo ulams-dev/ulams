@@ -3,16 +3,12 @@
  * new version, the revision timeline and the fragment changes of the selected revision. The
  * browser talks to the studio BFF; every part renders from what the API returns.
  */
-import { ApiError, createLivingCourseClient, type LivingSource, type RevisionChanges, type SourceRevision } from "@ulams/sdk";
+import type { LivingSource, RevisionChanges, SourceRevision } from "@ulams/sdk";
 import { renderSurface, type FlatComponent } from "@ulams/ui/builder/renderer.ts";
 import type { A2uiActionOut } from "@ulams/ui/builder/components.ts";
 import { h, uid } from "@ulams/ui/builder/dom.ts";
-import { announce } from "./common.ts";
+import { announce, livingClient, message } from "./common.ts";
 import { ACCEPTED_FILES, cardProps, changeProps, cosmeticToggleLabel, emptyChangesText, splitChanges, timelineProps, uploadMessage } from "./living.ts";
-
-export const livingClient = () => createLivingCourseClient({ baseUrl: "/studio/api", prefix: "/living-course", timeoutMs: 120_000 });
-
-const message = (error: unknown, fallback: string): string => (error instanceof ApiError && error.status !== 0 ? error.message.replace(/^API \d+: /, "") : error instanceof ApiError ? "The API is unreachable. Try again in a moment." : fallback);
 
 export function mountSources(root: HTMLElement): void {
   const lc = livingClient();

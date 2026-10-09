@@ -129,6 +129,7 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
     versions: [
       { id: "v2", number: 2, kind: "content", origin: "ai", status: "approved", reason: "Generated lessons" },
       { id: "v3", number: 3, kind: "patch", origin: "ai", status: "approved", reason: "Shorter" },
+      { id: "v4", number: 4, kind: "update", origin: "ai", status: "approved", reason: "Source update r1 → r2: 3 changes" },
     ],
   },
   SourceConnectionCard: {

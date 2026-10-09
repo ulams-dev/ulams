@@ -76,4 +76,24 @@ describe("living course client", () => {
     });
     await expect(lc.sources.list("s")).rejects.toBeInstanceOf(ApiError);
   });
+
+  it("reads staleness and proposals", async () => {
+    const summary = { state: "stale", since: "2026-10-01T00:00:00+00:00", days: 3, pendingElements: 2, openProposalId: "p1", syncedRevision: 1, latestRevision: 2, lastCheckedAt: null, tracked: true };
+    const { fn, calls } = fakeFetch([
+      { body: { data: { summary, elements: [{ elementId: "e1", status: "pending", type: "block", label: "Lesson 1", since: null, proposalId: "p1", fragmentIds: [], answerCheck: true }] } } },
+      { body: { data: [{ id: "p1", number: 1, status: "ready" }] } },
+      { body: { data: { id: "p1", status: "ready", groups: [{ key: "lesson:1", label: "Lesson 1", items: [] }], items: [], steps: [] } } },
+    ]);
+    const lc = createLivingCourseClient({ baseUrl: "/studio/api", prefix: "/living-course", fetch: fn });
+    const staleness = await lc.staleness.get("sess1");
+    expect(staleness.summary.state).toBe("stale");
+    expect(staleness.elements[0]?.answerCheck).toBe(true);
+    expect((await lc.proposals.list("sess1"))[0]?.number).toBe(1);
+    expect((await lc.proposals.get("p 1")).groups[0]?.label).toBe("Lesson 1");
+    expect(calls.map((c) => c.url)).toEqual([
+      "/studio/api/living-course/sessions/sess1/staleness",
+      "/studio/api/living-course/sessions/sess1/proposals",
+      "/studio/api/living-course/proposals/p%201",
+    ]);
+  });
 });

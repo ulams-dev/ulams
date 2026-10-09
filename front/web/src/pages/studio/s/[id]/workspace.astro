@@ -14,6 +14,7 @@ if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 }
     </nav>
     <main id="main" class="st-ws-col" tabindex="-1">
       <h1 class="cb-sr">Workspace</h1>
+      <div data-stale-banner role="region" aria-label="Source freshness" hidden></div>
       <div class="st-toolbar">
         <button type="button" class="cb-btn cb-btn-small" data-undo disabled>Undo</button>
         <button type="button" class="cb-btn cb-btn-small" data-redo disabled>Redo</button>

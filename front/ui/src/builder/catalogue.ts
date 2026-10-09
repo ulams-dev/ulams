@@ -414,7 +414,7 @@ export const builderCatalogue = {
             {
               id: str("Version id", 32),
               number: int("Number"),
-              kind: str("outline, content, patch, author, restore", 16),
+              kind: str("outline, content, patch, author, restore, update (a source update)", 16),
               origin: oneOf(["ai", "author", "restore"], "Who made it"),
               status: oneOf(["proposed", "approved", "rejected", "superseded"], "State"),
               reason: str("Why", 1000),

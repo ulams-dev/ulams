@@ -2,17 +2,19 @@
  * Workspace (/studio/s/:id/workspace): course tree, live preview of the selected element,
  * element-scoped chat with diff approve/reject, undo/redo and version history.
  */
-import { ApiError, type Blueprint, type BlueprintQuestion, type BuilderState, type BlueprintVersion } from "@ulams/sdk";
+import { ApiError, type Blueprint, type BlueprintQuestion, type BuilderState, type BlueprintVersion, type StaleElement, type StalenessSummary } from "@ulams/sdk";
 import { renderSurface } from "@ulams/ui/builder/renderer.ts";
 import type { A2uiActionOut } from "@ulams/ui/builder/components.ts";
 import { h } from "@ulams/ui/builder/dom.ts";
-import { announce, connectionStatus, showCitation, studioClient, updateTopBar } from "./common.ts";
+import { announce, connectionStatus, livingClient, showCitation, studioClient, updateTopBar } from "./common.ts";
+import { bannerModel, lessonMarker, markerFor, reviewHref, staleMap, staleNote, type Marker } from "./staleness.ts";
 import { Timeline } from "./timeline.ts";
 
 type Selection = { id: string; label: string; type: "lesson" | "question" | "block" | "module" | "course" };
 
 export function mountWorkspace(root: HTMLElement): void {
   const cb = studioClient();
+  const lc = livingClient();
   const sessionId = root.dataset.session!;
   const tree = root.querySelector<HTMLElement>("[data-tree]")!;
   const preview = root.querySelector<HTMLElement>("[data-preview]")!;
@@ -24,6 +26,9 @@ export function mountWorkspace(root: HTMLElement): void {
   const redo = root.querySelector<HTMLButtonElement>("[data-redo]")!;
   const history = root.querySelector<HTMLElement>("[data-history]")!;
   const applyBar = root.querySelector<HTMLElement>("[data-apply]")!;
+  const banner = root.querySelector<HTMLElement>("[data-stale-banner]");
+  let stale = new Map<string, StaleElement>();
+  let freshness: StalenessSummary | null = null;
   let version: BlueprintVersion | null = null;
   let selection: Selection | null = null;
   let loadedVersionId: string | null = null;
@@ -49,6 +54,7 @@ export function mountWorkspace(root: HTMLElement): void {
     onState: (state) => void onState(state),
     onCustom: (name) => {
       if (name === "applied") void loadVersion(timeline.state.session.currentVersionId, true);
+      if (name === "update_proposal" || name === "update_applied" || name === "update_analysis") void loadStaleness();
     },
   });
 
@@ -64,6 +70,43 @@ export function mountWorkspace(root: HTMLElement): void {
     if (state.session?.currentVersionId && state.session.currentVersionId !== loadedVersionId) await loadVersion(state.session.currentVersionId);
   }
 
+  const markerEl = (marker: Marker & { count?: number }): HTMLElement =>
+    h("span", { class: `st-marker st-marker-${marker.kind}`, "data-marker": marker.kind },
+      h("span", { class: "st-marker-glyph", "aria-hidden": "true" }, marker.kind === "answer" ? "?" : marker.kind === "removed" ? "×" : "↻"),
+      marker.text, marker.count && marker.count > 1 ? ` (${marker.count})` : "");
+
+  function renderBanner(): void {
+    if (!banner) return;
+    const model = bannerModel(freshness);
+    if (!model) {
+      banner.hidden = true;
+      banner.replaceChildren();
+      return;
+    }
+    banner.hidden = false;
+    banner.className = `st-banner st-banner-${model.state} cb-card`;
+    banner.replaceChildren(
+      h("p", { class: "st-banner-title" }, h("span", { class: "st-marker-glyph", "aria-hidden": "true" }, model.state === "stale" ? "↻" : "–"), model.title),
+      ...(model.detail ? [h("p", { class: "cb-muted cb-small" }, model.detail)] : []),
+      h("a", { class: "cb-btn cb-btn-small", href: reviewHref(sessionId, freshness) }, freshness?.openProposalId ? "Review the update" : "Open updates")
+    );
+  }
+
+  async function loadStaleness(): Promise<void> {
+    try {
+      const result = await lc.staleness.get(sessionId);
+      stale = staleMap(result.elements);
+      freshness = result.summary;
+    } catch {
+      return; // the course still works without the markers
+    }
+    renderBanner();
+    if (version) {
+      renderTree(version.document);
+      renderPreview();
+    }
+  }
+
   async function loadVersion(id: string | null, force = false): Promise<void> {
     if (!id || (!force && id === loadedVersionId)) return;
     loadedVersionId = id;
@@ -74,6 +117,7 @@ export function mountWorkspace(root: HTMLElement): void {
       return;
     }
     renderTree(version.document);
+    void loadStaleness();
     if (selection && !findLabel(version.document, selection.id)) selection = null;
     renderPreview();
     void renderHistory();
@@ -81,6 +125,31 @@ export function mountWorkspace(root: HTMLElement): void {
 
   function findLabel(doc: Blueprint, id: string): boolean {
     return JSON.stringify(doc).includes(`"id":"${id}"`);
+  }
+
+  function questionMarker(id: string): HTMLElement | null {
+    const m = markerFor(stale.get(id));
+    return m ? h("span", { class: "st-tree-marker" }, markerEl(m)) : null;
+  }
+
+  /** Highlights stale blocks and questions in the preview with "based on §3.2, changed N days ago". */
+  function decoratePreview(): void {
+    const labels = version?.fragments ?? {};
+    const mark = (host: Element, element: StaleElement) => {
+      const marker = markerFor(element);
+      if (!marker) return;
+      host.classList.add("st-stale", `st-stale-${marker.kind}`);
+      host.prepend(h("p", { class: "st-stale-note", "data-stale-note": element.elementId }, markerEl(marker), " ", staleNote(element, labels)));
+    };
+    for (const block of preview.querySelectorAll("[data-block]")) {
+      const element = stale.get(block.getAttribute("data-block") ?? "");
+      if (element) mark(block, element);
+    }
+    const card = preview.querySelector<HTMLElement>(".cb-question-card");
+    if (card && selection?.type === "question") {
+      const element = stale.get(selection.id);
+      if (element) mark(card, element);
+    }
   }
 
   function renderTree(doc: Blueprint): void {
@@ -98,13 +167,15 @@ export function mountWorkspace(root: HTMLElement): void {
             h("ul", {}, m.lessons.map((l, li) => {
               const label = `Lesson ${mi + 1}.${li + 1}`;
               const questions = l.quiz?.questions ?? [];
+              const lm = lessonMarker(l, stale);
               return item({ id: l.id, label, type: "lesson" }, `${mi + 1}.${li + 1} ${l.title}`,
                 h("ul", {},
+                  lm ? h("li", {}, markerEl(lm)) : null,
                   l.flags.length ? h("li", { class: "cb-tag" }, `${l.flags.length} flagged`) : null,
-                  questions.map((q, qi) => item({ id: q.id, label: `${label} › Q${qi + 1}`, type: "question" }, `Q${qi + 1} · ${q.stem.slice(0, 60)}`))));
+                  questions.map((q, qi) => item({ id: q.id, label: `${label} › Q${qi + 1}`, type: "question" }, `Q${qi + 1} · ${q.stem.slice(0, 60)}`, questionMarker(q.id)))));
             })))),
         doc.finalTest ? h("li", {}, h("p", { class: "st-tree-module" }, "Final test"),
-          h("ul", {}, doc.finalTest.questions.map((q, qi) => item({ id: q.id, label: `Final test › Q${qi + 1}`, type: "question" }, `Q${qi + 1} · ${q.stem.slice(0, 60)}`)))) : null)
+          h("ul", {}, doc.finalTest.questions.map((q, qi) => item({ id: q.id, label: `Final test › Q${qi + 1}`, type: "question" }, `Q${qi + 1} · ${q.stem.slice(0, 60)}`, questionMarker(q.id))))) : null)
     );
   }
 
@@ -146,6 +217,7 @@ export function mountWorkspace(root: HTMLElement): void {
         ? renderSurface([node as never], { surfaceId: "preview", dispatch: () => undefined, onCitation, onSelect: (id, label) => select({ id, label: label.slice(0, 80), type: node!.component === "QuizQuestionCard" ? "question" : "lesson" }) })
         : h("p", { class: "cb-muted" }, "Lessons appear here once they are generated.")
     );
+    decoratePreview();
   }
 
   async function renderHistory(): Promise<void> {
@@ -202,6 +274,7 @@ export function mountWorkspace(root: HTMLElement): void {
     }
   });
 
+  void loadStaleness();
   void cb.events(sessionId, { onEvent: (event) => timeline.handle(event), onStatus: connectionStatus });
 }
 

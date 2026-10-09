@@ -423,7 +423,8 @@ const VersionList: Renderer = (p, ctx) =>
     const restore = v.id !== p.currentVersionId && v.status === "approved" && v.kind !== "outline" ? h("button", { type: "button", class: "cb-link" }, `Restore v${v.number}`) : null;
     restore?.addEventListener("click", () => ctx.onRestore?.(String(v.id)));
     return h("li", { class: v.id === p.currentVersionId ? "cb-version-current" : "", "aria-current": v.id === p.currentVersionId ? "true" : null },
-      h("span", { class: "cb-mono" }, `v${v.number}`), " ", h("span", {}, v.reason ? String(v.reason) : String(v.kind)),
+      h("span", { class: "cb-mono" }, `v${v.number}`), " ", h("span", {}, v.reason ? String(v.reason) : v.kind === "update" ? "Source update" : String(v.kind)),
+      v.kind === "update" && !String(v.reason ?? "").startsWith("Source update") ? h("span", { class: "cb-tag" }, "Source update") : null,
       h("span", { class: "cb-muted" }, ` · ${v.origin === "ai" ? "AI" : v.origin === "author" ? "You" : "Restore"} · ${v.status}`),
       v.id === p.currentVersionId ? h("span", { class: "cb-tag" }, "current") : null, restore);
   }));

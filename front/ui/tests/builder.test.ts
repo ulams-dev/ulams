@@ -169,6 +169,14 @@ describe("interactions round-trip as A2UI actions", () => {
     expect(onRestore).toHaveBeenCalledWith("v2");
   });
 
+  it("version list names a source update and keeps its revision range", () => {
+    const main = mount(single("VersionList"));
+    const row = [...main.querySelectorAll("li")].find((li) => li.textContent?.includes("v4"))!;
+    expect(row.textContent).toContain("Source update r1 → r2: 3 changes");
+    const bare = mount(single("VersionList", { versions: [{ id: "v9", number: 9, kind: "update", origin: "ai", status: "approved" }] }));
+    expect(bare.textContent).toContain("Source update");
+  });
+
   it("source connection card emits Check now and Upload a new version", () => {
     const c = ctx();
     const main = mount(single("SourceConnectionCard"), c);
