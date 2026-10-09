@@ -1,0 +1,103 @@
+---
+title: Events and listeners
+description: React to ulams domain events from your own package with Event::listen, what the wildcard listeners do, and the state of outgoing webhooks.
+sidebar:
+  order: 6
+modules:
+  - notifications
+---
+
+import { Aside, Badge } from "@astrojs/starlight/components";
+
+The API packages communicate through Laravel events. A package dispatches a domain event
+(`TopicFinished`, `CourseAssigned`, `PaymentSuccess`, …), and other packages listen without
+depending on each other's services. This is the main way to extend behaviour without editing an
+existing package. The full list of events is in
+[Events and notifications](/reference/events-and-notifications/).
+
+## Listen from your package
+
+Register listeners in your service provider's `boot()`, or in a dedicated
+`Providers/EventServiceProvider` that you register from the main provider. The LTI package uses
+the same mechanism: when a learner finishes a topic, it queues a grade for the platform the learner came from.
+
+```php
+// api/packages/lti/src/UlamsLtiServiceProvider.php, boot()
+Event::listen(TopicFinished::class, QueueGradePassback::class);
+```
+
+```php
+// api/packages/lti/src/Listeners/QueueGradePassback.php
+class QueueGradePassback
+{
+    public function handle(TopicFinished $event): void
+    {
+        $courseId = $event->getTopic()->lesson?->course_id;
+        if ($courseId === null) {
+            return;
+        }
+
+        LtiGradeTarget::query()
+            ->where('user_id', $event->getUser()->getKey())
+            ->where('course_id', $courseId)
+            ->pluck('id')
+            ->each(fn (int $id) => SendGradeToPlatform::dispatch($id));
+    }
+}
+```
+
+Other examples: `topic-types` listens to `ScormScoCompleted` to complete SCORM topics, and
+`mattermost` and `mailerlite` listen to account, course and order events in their
+`Providers/EventServiceProvider.php`.
+
+Guidelines:
+
+- **Use the getters**: events expose their data through `getUser()`, `getCourse()`,
+  `getTopic()` and similar methods. For your own events, use `SerializesModels` and public
+  properties, so that a queued event can be restored.
+- **Do slow work in jobs**: dispatch a job from the listener, or make the listener queued
+  (`ShouldQueue`, or `Event::listen(queueable(fn (…) => …))` as in `video`). Every tenant has its
+  own queue workers (`api/queue.sh` runs `queue:work --domain=<host>`), so a job runs with the
+  tenant's database and configuration.
+- **Change LMS entities through services**: to complete a topic from a listener, call
+  `CourseProgressRepositoryContract::updateInTopic()`. Do not write `course_progress` directly.
+- **Test with fakes**: `Event::fake([YourEvent::class])` and `Event::assertDispatched(...)` (see
+  `api/packages/example-plugin/tests/Api/AdminGreetingApiTest.php`). To test a listener, call its
+  `handle()` or dispatch the real event.
+
+## Wildcard listeners
+
+Three packages listen to patterns instead of classes:
+
+| Package | Pattern | Effect |
+|---|---|---|
+| `notifications` | `Ulams*` | an event that carries a `User` (a `user` property, or any property holding a `User`) is stored as a database notification of that user (`GET /api/notifications`) |
+| `templates` | `Ulams*` | an event with a user is sent on each channel that has a registered template; see [Templates and channels](/extending/templates-and-channels/) |
+| `courses` | `eloquent.created: Ulams*` (also updated, deleted) | clears the response cache and dispatches `ClearedResponseCacheEvent` |
+
+The patterns match the event's class name. An event class you put in another namespace
+(`Acme\...`) is not stored as a notification and cannot have templates. To use either, keep
+your events under `Ulams\<YourPackage>\Events`, as the
+[example package](/extending/new-package/) does with `GreetingSent`.
+
+<Aside type="caution">
+Every `Ulams*` event with a user becomes a row in the user's notifications. Do not put secrets
+or large payloads in event properties. The notifications package's `except_events` config
+only hides events from the list endpoints; they are still stored.
+</Aside>
+
+## Webhooks
+
+The API **receives** webhooks: Stripe (`POST /api/payments-gateways/webhook/stripe`), the
+Przelewy24 callbacks and Jitsi recordings (`POST /api/jitsi/recorded-video`, signature checked by
+`VerifyJitsiWebhook`).
+
+There is **no outgoing webhook mechanism** today: no subscriptions, no signed delivery, no
+delivery log. To notify an external system now, write a listener in your package that calls
+it from a queued job, with retries and a signature you define.
+
+<Badge text="Coming" variant="caution" /> Stripe-style outgoing webhooks are planned in roadmap
+7.3: signed payloads, retries with backoff, replay, a delivery log, test sends in the admin UI
+and versioned event types (enrolment, progress, completion, certificates, update proposals).
+"Webhook consumers" are also listed as a plugin extension point (7.4). See the
+[roadmap](/roadmap/).
