@@ -4,7 +4,9 @@ namespace Ulams\TopicTypes;
 
 use Illuminate\Support\Facades\Event;
 use Ulams\Cmi5\UlamsCmi5ServiceProvider;
+use Ulams\Lrs\Events\AuCompletionReported;
 use Ulams\Scorm\Events\ScormScoCompleted;
+use Ulams\TopicTypes\Listeners\CompleteCmi5Topics;
 use Ulams\TopicTypes\Listeners\CompleteScormTopics;
 use Ulams\Courses\Facades\Topic;
 use Ulams\TopicTypes\Commands\FillTopicTypeMetadataCommand;
@@ -66,6 +68,7 @@ class UlamsTopicTypesServiceProvider extends ServiceProvider
     public function boot()
     {
         Event::listen(ScormScoCompleted::class, CompleteScormTopics::class);
+        Event::listen(AuCompletionReported::class, CompleteCmi5Topics::class);
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->mergeConfigFrom(__DIR__ . '/../config/topic-h5p.php', 'topic-h5p');
         if ($this->app->runningInConsole()) {

@@ -10,8 +10,10 @@ import {
   ULAMS_WARM_TENANTS,
   ULAMS_COOKIE_SECURE,
   ULAMS_COOKIE_FALLBACK_PREFIX,
+  ULAMS_LANDING_STATUS,
 } from "astro:env/server";
 import { parseSecureMode } from "./cookies.ts";
+import { parseLandingStatus } from "./landing-status.ts";
 
 /** Runtime settings (process env, see .env.example). Read once. */
 export const config = {
@@ -38,6 +40,8 @@ export const config = {
   cookieSecure: parseSecureMode(ULAMS_COOKIE_SECURE),
   /** Cookie name prefix over plain http (dev), where `__Host-` is rejected by browsers. */
   cookieFallbackPrefix: ULAMS_COOKIE_FALLBACK_PREFIX ?? "",
+  /** `final` shows every roadmap item as delivered, `actual` the honest status (see landing-status.ts). */
+  landingStatus: parseLandingStatus(ULAMS_LANDING_STATUS),
   demoStudentEmail: DEMO_STUDENT_EMAIL || "student1@{slug}.ulams.app",
   /** Never logged or sent to the browser. */
   demoStudentPassword: DEMO_STUDENT_PASSWORD || "",

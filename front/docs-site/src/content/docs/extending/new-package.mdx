@@ -243,3 +243,26 @@ tenant. `ulams:tenant:create` runs migrations and `PermissionsSeeder` only for n
 docker compose -f api/docker-compose.yml exec api bash -c \
   "DB_HOST=postgres DB_DATABASE=test DB_USERNAME=default DB_PASSWORD=secret ./vendor/bin/phpunit packages/example-plugin/tests"
 ```
+
+## Upgrade steps
+
+When a release of your package needs data work that must run once for the platform and for every
+tenant (backfilling a column, moving files, recreating a view), register a step from the service
+provider. `ulams:upgrade` runs it per target and records it in `tenant_upgrade_steps`:
+
+```php
+use Ulams\Tenancy\Upgrade\UpgradeContext;
+use Ulams\Tenancy\Upgrade\UpgradeSteps;
+
+UpgradeSteps::register(
+    'bookmarks_backfill_kind',
+    fn (UpgradeContext $context) => $context->artisan('bookmarks:backfill-kind'),
+    since: '1.4',
+);
+```
+
+The closure runs in the platform process for the platform and in a child
+`artisan --domain=<host>` for a tenant, so put the work in an artisan command and call it through
+`$context->artisan()`. Pass `once: false` for idempotent work that runs on every upgrade and
+`requiresCommand: '<command>'` to skip the step in a build that lacks the command. See
+[Upgrades](/operators/upgrades/).

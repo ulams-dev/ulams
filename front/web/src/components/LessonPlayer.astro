@@ -12,7 +12,7 @@ import { formatLabel, formatMinutes } from "@ulams/ui/format";
 import { completionPercent, flattenTopics, topicNeighbours, type Course, type PublicSettings, type Tenant, type TopicProgress } from "@ulams/sdk";
 import Base from "../layouts/Base.astro";
 import PreviewBanner from "./PreviewBanner.astro";
-import { apiFor, liascriptLaunch, ltiLaunch, scormAvailable, scormLaunch } from "../lib/data.ts";
+import { apiFor, cmi5Launch, liascriptLaunch, ltiLaunch, scormAvailable, scormLaunch } from "../lib/data.ts";
 import { completionMode, formatOf, topicDoc, topicMinutes } from "../lib/page-docs.ts";
 import { PREVIEW_LINKS, isPublished, previewCourseHref, studioHref } from "../lib/preview.ts";
 import { themeFor } from "../lib/theme.ts";
@@ -72,11 +72,14 @@ const tracked = Boolean(token) && !preview;
 // SCORM: the player on the tenant content origin (tracks through a SCO-scoped token), else the legacy API player.
 const contentOriginSrc = scormUuid && access && tracked ? await scormLaunch(tenant, token!, scormUuid) : null;
 const packageAvailable = scormUuid && !contentOriginSrc ? await scormAvailable(tenant, scormUuid) : true;
+// cmi5: the AU on the content origin; it reports to the LRS with a session token and completes the topic.
+const cmi5AuId = topic.topicable_type.endsWith("\\Cmi5Au") ? Number((topic.topicable as { value?: unknown } | undefined)?.value) : NaN;
+const cmi5Src = Number.isInteger(cmi5AuId) && access && tracked ? await cmi5Launch(tenant, token!, cmi5AuId, courseId, topic.id) : null;
 // LiaScript: player on the content origin; it reports progress and completes the topic itself.
 const liascript = topic.topicable_type.endsWith("\\LiaScriptTopic") && access && tracked ? await liascriptLaunch(tenant, token!, topic.id) : null;
 // External tool (LTI 1.3): the tool's login URL with a single-use hint; scores come back through AGS.
 const lti = topic.topicable_type.endsWith("\\LtiLink") && access && tracked ? await ltiLaunch(tenant, token!, topic.id) : null;
-const doc = custom ? null : topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, liascript, lti, preview: Boolean(preview) });
+const doc = custom ? null : topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, cmi5Src, liascript, lti, preview: Boolean(preview) });
 const format = formatOf(topic);
 const minutes = topicMinutes(topic);
 const lessonNoun = { coffee: "Chapter", oncall: "Module", nightsky: "Mission" }[theme];

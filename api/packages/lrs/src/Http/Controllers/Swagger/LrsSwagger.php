@@ -12,8 +12,10 @@ interface LrsSwagger
      *     path="/api/cmi5/fetch",
      *     summary="cmi5 token fetch",
      *     tags={"cmi5"},
+     *     description="Exchanges the one-time token of a cmi5 launch URL for an LRS-only session token (`auth-token`). Repeat calls within the session return the same token. Public: the one-time token is the credential.",
      *     @OA\Parameter(
      *          name="token",
+     *          description="one-time launch token",
      *          required=true,
      *          in="query"
      *      ),
@@ -23,6 +25,10 @@ interface LrsSwagger
      *          @OA\MediaType(
      *              mediaType="application/json",
      *          ),
+     *      ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="the launch token is unknown or expired",
      *      ),
      * )
      */

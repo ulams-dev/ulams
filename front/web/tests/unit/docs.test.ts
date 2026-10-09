@@ -7,6 +7,7 @@ import { completionMode, topicDoc } from "../../src/lib/page-docs.ts";
 import { flattenTopics } from "@ulams/sdk";
 import { COFFEE_PROGRAM, raw } from "./fixtures.ts";
 import { comparisonModel } from "../../src/lib/comparison.ts";
+import { workflowsModel } from "../../src/lib/workflows.ts";
 
 describe("platform landing", () => {
   const demo = (title: string, theme: string) => ({
@@ -21,12 +22,16 @@ describe("platform landing", () => {
     const data = {
       demos: [demo("The Coffee Atlas", "coffee"), demo("On-Call", "oncall"), demo("Night Sky Explorers", "nightsky")],
       comparison: comparisonModel(),
+      workflows: workflowsModel("actual"),
     };
     expect(validateDocument(landingDocs.platform!, data)).toEqual([]);
   });
   it("labels roadmap items as coming and invents no numbers", () => {
     // the hero's update-proposal card is an illustration of an SLO lesson (its numbers are lesson content)
-    const json = JSON.stringify(landingDocs.platform, (key, value) => (key === "diff" ? undefined : value));
+    // the animated stories are labelled example simulations with example numbers
+    const json = JSON.stringify(landingDocs.platform, (key, value) =>
+      key === "diff" || ["LivingCourseStory", "BuilderStory"].includes(value?.component) ? undefined : value
+    );
     expect(json).toContain('"status":"coming"');
     expect(json).not.toMatch(/\b\d{2,}[,.]?\d*\s*(%|\+|customers|learners|users)/i);
   });
@@ -84,6 +89,18 @@ describe("lesson documents", () => {
 
     const legacy = topicDoc({ tenant, theme: "coffee", course: COFFEE_PROGRAM, lesson: undefined, topic, access: true, nextHref: "/" });
     expect(legacy.children?.[0]).toMatchObject({ component: "PackageFrame", props: { src: "http://coffee.localhost/api/scorm/play/abc" } });
+  });
+
+  it("plays cmi5 from the content origin in a sandboxed frame, or shows a card without a launch", () => {
+    const topic = { ...flattenTopics(COFFEE_PROGRAM)[0]!, topicable_type: "Ulams\\TopicTypes\\Models\\TopicContent\\Cmi5Au", topicable: { id: 1, value: 5 } };
+    const src = "http://coffee.content.localhost/cmi5/2/index.html?fetch=x";
+    const doc = topicDoc({ tenant, theme: "coffee", course: COFFEE_PROGRAM, lesson: undefined, topic, access: true, nextHref: "/", cmi5Src: src });
+    expect(validateDocument(doc)).toEqual([]);
+    expect(doc.children?.[0]).toMatchObject({ component: "PackageFrame", props: { src, isolated: true } });
+
+    const without = topicDoc({ tenant, theme: "coffee", course: COFFEE_PROGRAM, lesson: undefined, topic, access: true, nextHref: "/" });
+    expect(validateDocument(without)).toEqual([]);
+    expect(without.children?.[0]).toMatchObject({ component: "ActivityCard" });
   });
 
   it("plays LiaScript from the content origin, or explains why it cannot", () => {

@@ -1,0 +1,228 @@
+---
+/**
+ * Shared look of the landing stories (LivingCourseStory, BuilderStory, WorkflowShowcase): the dark
+ * indigo stage, window chrome, chips, the typing cursor and the scheduled-element states driven by
+ * the timeline player (elements/story.ts). Transforms and opacity only; orange (ADR 0038) only for
+ * the change highlights, the cursor and small accents, never for text on a light background.
+ */
+---
+
+<script>
+  import "../elements/story.ts";
+</script>
+
+<noscript>
+  <style is:inline>
+    ulams-story [data-at] {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    ulams-story [data-until] {
+      display: none !important;
+    }
+    ulams-story [data-replay],
+    ulams-story [data-pause],
+    ulams-workflows [data-pause] {
+      display: none !important;
+    }
+    ulams-workflows [role="tablist"] {
+      display: none !important;
+    }
+    ulams-workflows [role="tabpanel"] {
+      visibility: visible !important;
+      grid-area: auto !important;
+    }
+  </style>
+</noscript>
+
+<style is:global>
+  ulams-story,
+  ulams-workflows {
+    display: block;
+  }
+  /* scheduled elements start hidden and are switched on by the player (class "on") */
+  ulams-story [data-at] {
+    opacity: 0;
+    transition:
+      opacity 0.45s var(--ulams-ease),
+      transform 0.7s var(--ulams-ease),
+      background-color 0.4s,
+      box-shadow 0.4s,
+      border-color 0.4s;
+  }
+  ulams-story [data-at].on {
+    opacity: 1;
+  }
+  ulams-story .u-rest {
+    visibility: hidden;
+  }
+  ulams-story .u-cur {
+    display: none;
+    width: 0.55ch;
+    height: 1.1em;
+    margin-left: 1px;
+    vertical-align: -0.18em;
+    background: var(--ulams-brand-orange);
+    animation: u-blink 1s steps(2, start) infinite;
+  }
+  ulams-story .typing > .u-cur {
+    display: inline-block;
+  }
+  @keyframes u-blink {
+    to {
+      visibility: hidden;
+    }
+  }
+  @keyframes u-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes u-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--ulams-brand-orange) 55%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--ulams-brand-orange) 0%, transparent);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    ulams-story [data-at] {
+      transition: none;
+    }
+    ulams-story .u-cur {
+      display: none !important;
+    }
+  }
+
+  /* the stage: dark indigo with a faint grid and a glow */
+  .u-stage {
+    --st-bg: var(--ulams-brand-indigo);
+    --st-deep: color-mix(in srgb, var(--ulams-brand-indigo) 62%, #000);
+    --st-line: color-mix(in srgb, #fff 14%, transparent);
+    --st-text: #eaf1f8;
+    --st-dim: #a9bed3;
+    --st-ok: #7ee2a8;
+    --st-bad: #ffa3a3;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(16px, 3vw, 36px);
+    border-radius: 20px;
+    border: 1px solid color-mix(in srgb, var(--ulams-brand-indigo) 80%, #fff);
+    background:
+      radial-gradient(900px 380px at 12% -10%, color-mix(in srgb, var(--ulams-brand-blue) 55%, transparent), transparent 70%),
+      radial-gradient(700px 320px at 100% 110%, color-mix(in srgb, var(--ulams-brand-orange) 14%, transparent), transparent 70%),
+      var(--st-bg);
+    color: var(--st-text);
+    box-shadow: 0 40px 80px -40px color-mix(in srgb, var(--ulams-brand-indigo) 70%, transparent);
+  }
+  .u-stage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(var(--st-line) 1px, transparent 1px), linear-gradient(90deg, var(--st-line) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 75%);
+    opacity: 0.5;
+  }
+  .u-stage__controls {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 14px;
+  }
+  .u-stage__controls button,
+  .u-wf__pause {
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--st-line, var(--ulams-color-border));
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+  .u-stage__controls button:hover {
+    background: color-mix(in srgb, #fff 10%, transparent);
+  }
+  .u-stage__controls button:focus-visible,
+  .u-wf__pause:focus-visible {
+    outline: 3px solid var(--ulams-brand-sky);
+    outline-offset: 2px;
+  }
+
+  /* window chrome */
+  .u-win {
+    border-radius: 12px;
+    background: var(--st-deep);
+    border: 1px solid var(--st-line);
+    overflow: hidden;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    box-shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.6);
+  }
+  .u-win__bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--st-line);
+    background: color-mix(in srgb, #000 22%, transparent);
+    color: var(--st-dim);
+    font-size: 0.75rem;
+  }
+  .u-win__dots {
+    display: inline-flex;
+    gap: 6px;
+  }
+  .u-win__dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: color-mix(in srgb, #fff 24%, transparent);
+  }
+  .u-win__body {
+    padding: 14px 16px;
+  }
+
+  /* small chips (citations, sources) */
+  .u-chip2 {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--ulams-brand-sky) 55%, transparent);
+    color: var(--ulams-brand-sky);
+    background: color-mix(in srgb, var(--ulams-brand-sky) 10%, transparent);
+    font-family: var(--ulams-font-mono);
+    font-size: 0.6875rem;
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+  .u-chip2.on.pulse {
+    animation: u-pulse 1.6s ease-out infinite;
+    border-color: var(--ulams-brand-orange);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .u-chip2.on.pulse {
+      animation: none;
+    }
+  }
+
+  /* an animated pointer */
+  .u-pointer {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    pointer-events: none;
+    color: #fff;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.5));
+  }
+</style>

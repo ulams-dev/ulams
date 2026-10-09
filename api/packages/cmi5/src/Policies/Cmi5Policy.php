@@ -28,6 +28,6 @@ class Cmi5Policy
 
     public function delete(User $user, Cmi5 $cmi5): bool
     {
-        return $user->can(Cmi5PermissionEnum::CMI5_READ);
+        return $user->can(Cmi5PermissionEnum::CMI5_DELETE);
     }
 }
