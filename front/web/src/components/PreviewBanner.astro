@@ -1,0 +1,59 @@
+---
+/**
+ * Banner of the author preview: says what the visitor is looking at (a course learners may not be
+ * able to open yet), that nothing is tracked, and links back to the studio.
+ */
+interface Props {
+  published: boolean;
+  studioHref: string;
+  /** The public course page, offered once the course is published. */
+  publicHref?: string;
+}
+const { published, studioHref, publicHref } = Astro.props;
+---
+
+<aside class="u-preview" aria-label="Author preview" data-preview-banner>
+  <p class="u-preview__title">{published ? "Preview: published" : "Preview: not published"}</p>
+  <p class="u-preview__text">
+    {published ? "Only signed-in authors see this page." : "Learners cannot open this course yet."} Progress is not saved and quizzes do not record attempts.
+  </p>
+  <p class="u-preview__links">
+    <a href={studioHref}>Back to the studio</a>
+    {published && publicHref && <a href={publicHref}>Open the public page</a>}
+  </p>
+</aside>
+
+<style>
+  .u-preview {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 18px;
+    padding: 10px clamp(16px, 4vw, 48px);
+    background: #f6c453;
+    color: #1c1405;
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+  .u-preview p {
+    margin: 0;
+  }
+  .u-preview__title {
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .u-preview__text {
+    flex: 1 1 280px;
+  }
+  .u-preview__links {
+    display: flex;
+    gap: 16px;
+    font-weight: 700;
+  }
+  .u-preview a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>
