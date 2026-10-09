@@ -130,6 +130,9 @@
     <testsuite name="course-builder">
       <directory suffix="Test.php">./packages/course-builder/tests</directory>
     </testsuite>
+    <testsuite name="living-course">
+      <directory suffix="Test.php">./packages/living-course/tests</directory>
+    </testsuite>
     <testsuite name="adapt">
       <directory suffix="Test.php">./packages/adapt/tests</directory>
     </testsuite>
@@ -222,6 +225,7 @@
       <directory suffix=".php">./packages/adapt/</directory>
       <directory suffix=".php">./packages/ai/</directory>
       <directory suffix=".php">./packages/course-builder/</directory>
+      <directory suffix=".php">./packages/living-course/</directory>
       <directory suffix=".php">./packages/vouchers/</directory>
       <directory suffix=".php">./packages/consultations/</directory>
       <directory suffix=".php">./packages/consultation-access/</directory>

@@ -9,6 +9,7 @@ use Throwable;
 use Ulams\Ai\Exceptions\LlmException;
 use Ulams\CourseBuilder\Apply\BlueprintApplier;
 use Ulams\CourseBuilder\Events\EventLog;
+use Ulams\CourseBuilder\Events\SourceIngested;
 use Ulams\CourseBuilder\Exceptions\BuilderException;
 use Ulams\CourseBuilder\Ingestion\SourceIngestor;
 use Ulams\CourseBuilder\Jobs\RunJob;
@@ -187,6 +188,7 @@ final class RunService
         }
         $this->surfaces->source($session, $run, $source);
         $this->events->stepFinished($run, 'ingest');
+        event(new SourceIngested($source));
         if ($session->title === null) {
             $session->title = mb_substr((string) ($source->metadata['title'] ?? $source->original_name), 0, 255);
         }
