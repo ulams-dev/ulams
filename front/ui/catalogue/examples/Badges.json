@@ -1,0 +1,21 @@
+{
+  "props": {
+    "eyebrow": "Recognition",
+    "title": "What you earn",
+    "items": [
+      {
+        "name": "Certificate",
+        "text": "A signed PDF.",
+        "icon": "medal"
+      },
+      {
+        "name": "Skill badge",
+        "text": "Shareable and verifiable.",
+        "icon": "star"
+      }
+    ]
+  },
+  "invalid": {
+    "items": 7
+  }
+}

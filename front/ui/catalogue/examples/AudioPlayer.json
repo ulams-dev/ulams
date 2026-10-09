@@ -1,0 +1,11 @@
+{
+  "props": {
+    "src": "https://example.org/media/tasting-notes.mp3",
+    "title": "Tasting notes, lesson 2",
+    "seconds": 240
+  },
+  "invalid": {
+    "src": "",
+    "title": "x"
+  }
+}

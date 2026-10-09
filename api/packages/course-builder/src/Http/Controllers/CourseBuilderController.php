@@ -26,6 +26,7 @@ use Ulams\CourseBuilder\Pipeline\GenerationService;
 use Ulams\CourseBuilder\Pipeline\OutlineService;
 use Ulams\CourseBuilder\Pipeline\PatchService;
 use Ulams\CourseBuilder\Services\RunService;
+use Ulams\CourseBuilder\Services\RunStatus;
 use Ulams\CourseBuilder\Services\SessionState;
 use Ulams\CourseBuilder\Services\VersionService;
 use Ulams\CourseBuilder\Ui\Surfaces;
@@ -60,6 +61,12 @@ use Ulams\Uploads\Exceptions\UploadRejected;
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="messages", type="array", @OA\Items(type="object")), @OA\Property(property="forwardedProps", type="object"))),
  *     @OA\Response(response=202, description="run id (null when the action finished in the request)"))
+ * @OA\Get(path="/api/admin/course-builder/runs/{run}", summary="Status of one run (poll it for --wait)", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="run", in="path", required=true, @OA\Schema(type="string")),
+ *     @OA\Response(response=200, description="the run and its steps", @OA\JsonContent(
+ *         @OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),
+ *         @OA\Property(property="data", ref="#/components/schemas/CourseBuilderRunStatus"))),
+ *     @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown run"))
  * @OA\Post(path="/api/admin/course-builder/runs/{run}/cancel", summary="Cancel a run", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="run", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="cancelled"))
  * @OA\Post(path="/api/admin/course-builder/runs/{run}/steps/{step}/retry", summary="Retry one failed generation step", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="run", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="step", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=202, description="queued"))
@@ -228,6 +235,15 @@ class CourseBuilderController extends Controller
         }
 
         return self::ok(['runId' => $result['run']?->id, 'accepted' => $result['accepted'], 'message' => $result['message'] ?? null], 202);
+    }
+
+    public function runStatus(Request $request, string $run): JsonResponse
+    {
+        $r = (preg_match('/^[0-9a-z]{26}$/i', $run) ? Run::query()->with('steps')->find(strtolower($run)) : null)
+            ?? throw new NotFoundHttpException('Run not found.');
+        $this->sessionFor($request, $r->session_id, 'view');
+
+        return self::ok(RunStatus::from($r));
     }
 
     public function cancel(Request $request, string $run): JsonResponse

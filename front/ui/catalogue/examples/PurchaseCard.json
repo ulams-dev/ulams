@@ -1,0 +1,22 @@
+{
+  "props": {
+    "price": "49 EUR",
+    "priceNote": "one-off",
+    "title": "Get the course",
+    "items": [
+      "Lifetime access",
+      "Certificate"
+    ],
+    "cta": {
+      "label": "Buy now",
+      "href": "/checkout/1"
+    },
+    "note": "14-day refund."
+  },
+  "invalid": {
+    "cta": {
+      "label": "Buy",
+      "href": "data:text/html,x"
+    }
+  }
+}

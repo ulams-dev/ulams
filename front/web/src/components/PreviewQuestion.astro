@@ -1,0 +1,84 @@
+---
+/**
+ * A quiz question as the author reviews it: stem, the options with the correct ones marked, and
+ * the explanation. Read-only: the preview never starts an attempt.
+ */
+import Prose from "@ulams/ui/components/Prose.astro";
+import type { BlueprintQuestion } from "@ulams/sdk";
+
+interface Props {
+  question: BlueprintQuestion;
+  number: number;
+}
+const { question, number } = Astro.props;
+const kind = { single: "Choose one answer", multiple: "Choose all that apply", truefalse: "True or false", short: "Short answer" }[question.type];
+---
+
+<article class="u-pq" aria-label={`Question ${number}`}>
+  <p class="u-pq__kicker">Question {number} · {kind}</p>
+  <div class="u-pq__stem"><Prose markdown={question.stem} /></div>
+  <ul class="u-pq__options" role="list">
+    {
+      question.options.map((option) => (
+        <li class:list={["u-pq__option", { "is-correct": option.correct }]}>
+          <span class="u-pq__mark" aria-hidden="true">{option.correct ? "✓" : "○"}</span>
+          <span>{option.text}</span>
+          {option.correct && <span class="u-pq__flag">Correct answer</span>}
+        </li>
+      ))
+    }
+  </ul>
+  {
+    question.explanation && (
+      <div class="u-pq__explanation">
+        <p class="u-pq__kicker">Explanation</p>
+        <Prose markdown={question.explanation} size="sm" />
+      </div>
+    )
+  }
+</article>
+
+<style>
+  .u-pq {
+    display: grid;
+    gap: 12px;
+    padding: 20px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius);
+    background: var(--ulams-color-card-bg);
+  }
+  .u-pq__kicker {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ulams-color-primary-on-light);
+  }
+  .u-pq__options {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .u-pq__option {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius);
+  }
+  .u-pq__option.is-correct {
+    border-color: var(--ulams-color-positive);
+    background: color-mix(in srgb, var(--ulams-color-positive) 10%, transparent);
+  }
+  .u-pq__flag {
+    margin-left: auto;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--ulams-color-text);
+  }
+</style>

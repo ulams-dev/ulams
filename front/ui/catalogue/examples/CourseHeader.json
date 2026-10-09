@@ -1,0 +1,45 @@
+{
+  "props": {
+    "variant": "editorial",
+    "eyebrow": "Course",
+    "title": "Brewing basics",
+    "subtitle": "Extraction, grind and ratio.",
+    "summary": "Twelve short lessons that take you from a bad cup to a repeatable good one.",
+    "facts": [
+      {
+        "label": "Lessons",
+        "value": "12"
+      },
+      {
+        "label": "Level",
+        "value": "Beginner"
+      }
+    ],
+    "image": {
+      "src": "/og-image.png",
+      "alt": "A pour-over coffee brewing on a scale",
+      "width": 1200,
+      "height": 630
+    },
+    "tutors": [
+      {
+        "name": "Ada Kowalska",
+        "role": "Head roaster",
+        "place": "Krakow",
+        "bio": "Fifteen years of roasting and teaching extraction."
+      }
+    ],
+    "primaryCta": {
+      "label": "Start learning",
+      "href": "/learn/1"
+    },
+    "secondaryCta": {
+      "label": "Syllabus",
+      "href": "#syllabus"
+    },
+    "progress": 40
+  },
+  "invalid": {
+    "subtitle": "No title"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "props": {
+    "brand": "Coffee Atlas",
+    "tagline": "Courses for home brewers",
+    "mark": "wordmark",
+    "links": [
+      {
+        "label": "Courses",
+        "href": "/courses"
+      },
+      {
+        "label": "About",
+        "href": "/about"
+      }
+    ],
+    "cta": {
+      "label": "Start free",
+      "href": "/signup"
+    },
+    "signIn": {
+      "label": "Sign in",
+      "href": "/login"
+    }
+  },
+  "invalid": {
+    "brand": "Coffee Atlas",
+    "links": [
+      {
+        "label": "Bad",
+        "href": "javascript:alert(1)"
+      }
+    ]
+  }
+}

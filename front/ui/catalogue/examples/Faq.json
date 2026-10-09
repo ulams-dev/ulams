@@ -1,0 +1,24 @@
+{
+  "props": {
+    "id": "faq",
+    "eyebrow": "FAQ",
+    "title": "Questions",
+    "items": [
+      {
+        "q": "Do I need equipment?",
+        "a": "A scale and a kettle are enough to start."
+      },
+      {
+        "q": "Can I take it on my phone?",
+        "a": "Yes, every lesson works on small screens."
+      }
+    ]
+  },
+  "invalid": {
+    "items": [
+      {
+        "q": "No answer"
+      }
+    ]
+  }
+}

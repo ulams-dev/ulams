@@ -1,0 +1,32 @@
+{
+  "props": {
+    "variant": "tiles",
+    "eyebrow": "Why ulams",
+    "title": "Courses that stay current",
+    "items": [
+      {
+        "icon": "sync",
+        "title": "Living courses",
+        "text": "Lessons update when the source changes."
+      },
+      {
+        "icon": "shield",
+        "title": "Cited content",
+        "text": "Every claim links to its source."
+      },
+      {
+        "icon": "puzzle",
+        "title": "Adaptive practice",
+        "text": "Challenges follow your level.",
+        "status": "coming"
+      }
+    ],
+    "cta": {
+      "label": "Read more",
+      "href": "/features"
+    }
+  },
+  "invalid": {
+    "items": "all"
+  }
+}

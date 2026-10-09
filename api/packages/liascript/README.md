@@ -49,7 +49,8 @@ current version on the tenant content origin (api/docs/content-origin.md):
 The LiaScript build (`@liascript/exporter` 3.4.2--2.1.0, `dist/assets/scorm1.2` + `common`,
 BSD-3-Clause, about 12 MB) is **not in git**: `bin/fetch-player.sh` downloads it at a pinned version
 and SHA-256 into `resources/player/build/`. The Dockerfiles run it at image build time; in development
-(the api folder is bind-mounted) run it once: `docker compose exec api sh packages/liascript/bin/fetch-player.sh`.
+(the api folder is bind-mounted) `init.sh` runs it on container start when the build is missing; run it by hand
+with `make liascript-player` (from `api/`).
 Without the build or a content origin, launches answer 503 with an explanation.
 
 ## Course export and import

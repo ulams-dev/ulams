@@ -1,0 +1,20 @@
+{
+  "props": {
+    "brand": "Coffee Atlas",
+    "text": "Courses for people who love coffee.",
+    "links": [
+      {
+        "label": "Privacy",
+        "href": "/privacy"
+      },
+      {
+        "label": "Terms",
+        "href": "/terms"
+      }
+    ],
+    "note": "(c) 2026 Coffee Atlas"
+  },
+  "invalid": {
+    "links": "many"
+  }
+}
