@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Ulams\CourseBuilder\Events\SourceIngested;
 use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
+use Ulams\LivingCourse\Services\AuditLog;
 use Ulams\LivingCourse\Services\RevisionService;
 
 /**
@@ -17,6 +18,7 @@ use Ulams\LivingCourse\Services\RevisionService;
 class UlamsLivingCourseServiceProvider extends ServiceProvider
 {
     public $singletons = [
+        AuditLog::class => AuditLog::class,
         RevisionService::class => RevisionService::class,
     ];
 

@@ -20,6 +20,10 @@ use Ulams\LivingCourse\Models\RevisionFragment;
  */
 final class RevisionService
 {
+    public function __construct(private readonly AuditLog $audit)
+    {
+    }
+
     /**
      * Creates the implicit `upload` connection and revision 1 of a source from its live fragments.
      * Idempotent: a source that already has a synced revision is returned as it is.
@@ -84,6 +88,12 @@ final class RevisionService
                 ]);
             }
             $connection->forceFill(['synced_revision_id' => $revision->id, 'latest_revision_id' => $revision->id])->save();
+            $this->audit->record('connection.created', [
+                'session_id' => $session->id, 'subject_type' => 'connection', 'subject_id' => $connection->id, 'source_id' => $source->id,
+                'revision_id' => $revision->id, 'origin_ref' => $revision->origin_ref,
+                'data' => ['connector' => $connection->connector, 'revision' => 1, 'fragments' => $revision->fragment_count],
+                ...($userId === null ? ['actor_type' => 'system'] : []),
+            ]);
 
             return $revision;
         });
