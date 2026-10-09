@@ -1,0 +1,115 @@
+---
+title: Tasks
+description: Create to-do tasks for users, link them to a course, lesson or topic, track completion and send overdue reminders.
+modules:
+  - tasks
+adminRoutes:
+  - /other/tasks/**
+sidebar:
+  order: 30
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+A task is a to-do item with a title, an optional description and type, an optional due date and
+an optional link to a course, lesson or topic. Administrators create tasks for any user;
+learners can create tasks for themselves. Either side can add notes to a task.
+
+The feature comes from the `tasks` package
+([README](https://github.com/ulams-dev/ulams/blob/main/api/packages/tasks/README.md)).
+
+## Who uses it
+
+- **Administrators** assign tasks to users and confirm that assigned tasks are done
+  (**Other activities → Tasks**).
+- **Learners** manage their own tasks through the learner API. The legacy React learner app has a
+  "My tasks" screen (`/user/my-tasks`); the reference frontend (`front/web`) does not show tasks
+  yet.
+
+## Screens
+
+### Task list (`/other/tasks`)
+
+<Screenshot name="admin-other-tasks" alt="The task list with title, type, author, assignee and completion date" />
+
+The list shows the ID, title, type, author, assigned user and completion date of every task.
+You can search by title, by the type of the linked resource and by author, open a task, create a
+new one or delete one.
+
+### Task form (`/other/tasks/:task`)
+
+<Screenshot name="admin-other-tasks-task" alt="The task form with assigned user, linked resource and notes" />
+
+- **Title** (required), **description**, **type** (free text) and **due date** (today or later).
+- **User**: the person the task is assigned to (required).
+- **Related**: a course, lesson or topic picked from the course tree. It is stored as a
+  `related_type` and `related_id` pair.
+- **Complete / incomplete**: mark the task as done or reopen it.
+- **Notes**: a thread of notes on the task. Each note records who wrote it.
+
+## How completion works
+
+- A task is **assigned** when its author and its user are different people.
+- When the assigned user marks the task complete through the learner API, the task is **not**
+  completed. Instead a completion request goes to the author (`TaskCompleteRequestEvent`).
+- When the author (or an administrator through the admin API) marks it complete, `completed_at`
+  is set and the assigned user is told the task was accepted
+  (`TaskCompleteUserConfirmationEvent`).
+- Reopening a task clears `completed_at` and notifies the assigned user (`TaskIncompleteEvent`).
+- A user's own task (author = user) is completed directly, with no request.
+
+## Overdue reminders
+
+A scheduled job (`OverdueTaskJob`) runs **daily**. Each run fires `TaskOverdueEvent` for every
+uncompleted task whose due date lies between now and the overdue period ago, so a user keeps
+getting a reminder every day until the task is completed or the period has passed. Older tasks
+are not reminded about.
+
+The period is `ulams_tasks.notifications.overdue_period`, in days, default `30`. It is
+administrable, so you can change it under [Settings](/admin/settings/) without a deploy. The
+job needs the Laravel scheduler to run; see [Scheduled jobs](/reference/scheduled-jobs/).
+
+## Events and notifications
+
+| Event | When |
+|---|---|
+| `TaskAssignedEvent` | An assigned task is created |
+| `TaskUpdatedEvent` | An assigned task is updated |
+| `TaskDeletedEvent` | An assigned task is deleted |
+| `TaskCompleteRequestEvent` | The assigned user asks the author to accept the task |
+| `TaskCompleteUserConfirmationEvent` | The author accepts the task as done |
+| `TaskIncompleteEvent` | An assigned task is reopened |
+| `TaskOverdueEvent` | The daily overdue check |
+| `TaskNoteCreatedEvent` | A note is added |
+
+The `templates-email` package registers email template variables for these events, and the
+`notifications` package stores them as in-app notifications. Edit the emails under
+[Templates](/admin/templates/); see also [Events and notifications](/reference/events-and-notifications/).
+
+## API
+
+- Admin: `GET|POST /api/admin/tasks`, `GET|PATCH|DELETE /api/admin/tasks/{id}`,
+  `POST /api/admin/tasks/complete/{id}`, `POST /api/admin/tasks/incomplete/{id}`, and
+  `POST|PATCH|DELETE /api/admin/tasks/notes[/{id}]`.
+- Learner: the same shape under `/api/tasks`, limited to the user's own tasks.
+
+All endpoints need a signed-in user. Full list: [API endpoints](/reference/api-endpoints/).
+
+## Permissions
+
+The seeder gives the `admin` role every task permission and the `student` role the `-own`
+variants (`task_create-own`, `task_list-own`, `task-note_create-own` and so on). The admin menu
+item needs `task_list`. Admin endpoints check `task_list`, `task_find`, `task_create`,
+`task_update` and `task_delete`. See [Permissions](/reference/permissions/).
+
+## Limitations
+
+- Learners cannot assign tasks to other users; only the admin API takes a `user_id`.
+- **Type** is a free-text field with no predefined values.
+- A task has one assignee. To give the same task to a group, create one task per user.
+
+<Aside type="note">
+The admin panel shows the menu item to anyone with `task_list`; the API still checks the finer
+permissions on each action.
+</Aside>

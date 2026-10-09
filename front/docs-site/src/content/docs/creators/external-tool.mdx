@@ -1,0 +1,69 @@
+---
+title: External tool topics (LTI)
+description: Launch an external LTI 1.3 tool inside a lesson, pick content from the tool with deep linking, and receive the learner's score back in ulams.
+sidebar:
+  order: 20
+modules:
+  - lti
+topicTypes:
+  - LtiLink
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+An **External tool** topic (`LtiLink`) opens a tool from another provider inside the lesson using
+LTI 1.3: a coding sandbox, a virtual lab, a publisher's exercise set. The tool knows who the learner
+is without a second login and can send a score back to ulams.
+
+<Aside>
+Before you can add such a topic, an administrator registers the tool under **Integrations → LTI**.
+See [LTI](/admin/lti/). Without a registered, enabled tool the topic form shows "No external tools are
+registered yet" with a link to register one.
+</Aside>
+
+## Add an external tool topic
+
+<Steps>
+
+1. In the program, add a topic and choose **External tool (LTI)**.
+2. Choose the **External tool** from the registered, enabled tools.
+3. Optionally enter a **Link inside the tool** to open a specific resource instead of the tool's
+   default launch URL (shown as the placeholder).
+4. Optionally add **Custom parameters**, one `key=value` per line. They are sent to the tool with every
+   launch.
+5. Choose how it opens: **In the page** (inside the lesson) or **New window**.
+6. Set the **Maximum score** the tool's grades are measured against (default 100).
+7. Save the topic.
+
+</Steps>
+
+## Pick content from the tool (deep linking)
+
+If the tool supports LTI Deep Linking, the form shows **Pick content from the tool**:
+
+1. Choose the tool and click **Pick content from the tool**. The tool opens in a pop-up window.
+2. Select one or more items in the tool and confirm.
+
+The tool adds **one topic per selected item** to the lesson ("2 items added to the lesson") and the
+program reloads. If you started from a new, empty topic, you can delete it afterwards.
+
+## What learners get
+
+When the learner opens the topic, ulams signs them in to the tool (OIDC launch, single-use and
+short-lived). With **In the page** the tool runs in a frame in the lesson; with **New window** the
+learner gets a button that opens it.
+
+<Aside type="tip">
+Some tools refuse to run inside a frame or need cookies that browsers block in frames. If the tool does
+not load in the page, switch the topic to **New window**.
+</Aside>
+
+## Scores and completion
+
+Tools that support LTI Assignment and Grade Services (AGS) send scores to ulams. Scores are stored
+without overwriting earlier ones. When the tool reports the activity as **Completed** or the grade as
+**Fully graded**, ulams completes the topic for the learner. Learners can also use
+**Mark as complete** in the reference front.
+
+A course export stores the tool's ID and the topic settings, not the tool registration. On another
+installation the tool has to be registered there, and the topic may need to be pointed at it again. See [Import and export](/creators/import-export/#what-is-included).

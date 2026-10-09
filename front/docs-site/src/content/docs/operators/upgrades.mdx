@@ -1,0 +1,90 @@
+---
+title: Upgrades
+description: Upgrading ulams - image tags, what runs on start, migrations for the platform and every tenant, the H5P schema, rollback and infrastructure upgrades.
+sidebar:
+  order: 10
+modules:
+  - api
+  - tenancy
+  - api-h5p
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+## Image tags
+
+`.github/workflows/publish.yml` pushes every image on each push to `main`, on `v*` tags and on
+manual runs, with these tags:
+
+| Tag | Meaning |
+|---|---|
+| `sha-<short>` | One exact commit; the safest thing to pin |
+| `main` | The branch name, moves with every merge |
+| `latest` | The default branch, same as `main` |
+| `<version>`, `<major>.<minor>` | Release tags (`v1.2.3` gives `1.2.3` and `1.2`), once releases are cut |
+
+Use the same tag for `api`, `h5p`, `pdf`, `web` and `admin`: they are built from one commit and
+talk to each other through internal contracts. In the example that is one variable,
+`ULAMS_VERSION`. Every image carries provenance and an SBOM.
+
+## Upgrade procedure
+
+<Steps>
+
+1. Read the changes since your version (commit history, `docs/ROADMAP-TODO.md`, ADRs).
+
+2. [Back up](/operators/backups/) the databases, buckets and volumes.
+
+3. Set the new tag in `.env` and pull:
+
+   ```bash
+   docker compose pull
+   ```
+
+4. Recreate the containers:
+
+   ```bash
+   docker compose up -d
+   docker compose logs -f api
+   ```
+
+   The `api` container runs, in order: `migrate --force` on the platform database,
+   `ulams:tenant:sync-env --migrate` (rewrites every tenant env file, restores keys and runs
+   `migrate --force` in each tenant database, one tenant after another), then the permissions
+   seeder, then starts php-fpm and the workers.
+
+5. Check the log for `synced <host>` lines and for errors, then the health endpoints
+   (see [Monitoring](/operators/monitoring/)). A tenant that failed to migrate is reported by
+   host; fix the cause and rerun:
+
+   ```bash
+   docker compose exec api php artisan ulams:tenant:sync-env --migrate
+   ```
+
+</Steps>
+
+The H5P service migrates its own `h5p` schema in a tenant database on the first request for that
+tenant after the upgrade, not at start-up.
+
+<Aside type="caution" title="Downtime">
+  On one server the API is unavailable while its container restarts and the migrations run:
+  php-fpm starts only after every tenant has been migrated, so the window grows with the number
+  of tenants. Plan upgrades in a maintenance window. Rolling upgrades are covered in
+  [High availability](/operators/high-availability/#zero-downtime-deploys-and-migrations).
+</Aside>
+
+## Rolling back
+
+Migrations are not guaranteed to be reversible. To go back, restore the backup taken before the
+upgrade and start the previous image tag. Rolling back only the images over a migrated database
+is unsupported.
+
+## Infrastructure upgrades
+
+- **PostgreSQL major versions**: dump and restore every database (see
+  [Backups](/operators/backups/)) or use `pg_upgrade`; a new major version cannot start on the old
+  data directory.
+- **Valkey**: drain the queues first (`DISABLE_QUEUE`, `DISABLE_HORIZON` or simply wait), then
+  upgrade.
+- **Caddy**: compatible within version 2; validate the Caddyfile with the new image
+  (`caddy validate`) before switching.

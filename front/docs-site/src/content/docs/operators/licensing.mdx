@@ -1,0 +1,70 @@
+---
+title: Licensing for operators
+description: Licences of the ulams images and infrastructure an operator runs or redistributes - the GPL H5P image and its source offer, ffmpeg, MinIO and Soketi.
+sidebar:
+  order: 14
+modules:
+  - api-h5p
+  - api
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+<Aside>
+  An engineering summary of
+  [`LICENSING.md`](https://github.com/ulams-dev/ulams/blob/main/LICENSING.md), not legal advice.
+</Aside>
+
+## The images
+
+| Image | Licence | What it means for you |
+|---|---|---|
+| `ghcr.io/ulams-dev/api`, `php` | Apache-2.0 (application); contains GPL command-line tools | See ffmpeg and tools below |
+| `ghcr.io/ulams-dev/h5p` | **GPL-3.0-or-later** | Redistributing it means conveying GPL software |
+| `ghcr.io/ulams-dev/pdf` | MIT; bundled fonts SIL OFL 1.1 | Keep the font licences with the image |
+| `ghcr.io/ulams-dev/admin` | MIT; includes BSD-3-Clause code (`markdown-editor`) | The BSD notice must ship with distributed builds |
+| `ghcr.io/ulams-dev/front`, `web` | MIT | |
+
+Running the images for your own users is not redistribution. The obligations below apply when you
+**pass the images on**: publishing them in your registry, shipping them to a customer, or bundling
+them in an appliance or chart.
+
+## The H5P image
+
+The H5P service is a separate GPL program (Lumi's `h5p-nodejs-library` with the H5P core and
+editor), reached only over HTTP and iframes, so the GPL does not extend to the API or the fronts
+(ADR [0003](/decisions/0003-h5p-as-isolated-gpl-service/)). The published image:
+
+- ships the licence text at `/app/api/h5p/LICENSE`;
+- names its corresponding source in labels: `org.opencontainers.image.source` and `.revision`
+  (this repository at the exact commit) and `dev.ulams.h5p.core-ref` / `dev.ulams.h5p.editor-ref`
+  (the pinned H5P core and editor commits);
+- relies on GPL-3.0 section 6(d): the source is offered from a network server for as long as the
+  image is offered.
+
+If you redistribute the image, or an image you built from `api/h5p`, keep the corresponding source
+available the same way, including any changes you made. Read the labels with
+`docker image inspect ghcr.io/ulams-dev/h5p:<tag>`.
+
+## ffmpeg and other tools in the PHP image
+
+The API image runs ffmpeg/ffprobe (built by Alpine with GPL codecs, so GPL-3.0-or-later),
+jpegoptim, pngquant, gifsicle and bash as separate processes. The image lists them in
+`/usr/local/share/doc/ulams-php/NOTICE`. Anyone redistributing the image must offer their source;
+the Alpine aports repository and the package versions in the image (`apk info -v`) make that
+possible.
+
+## Infrastructure with copyleft licences
+
+| Component | Licence | Status in ulams |
+|---|---|---|
+| MinIO | AGPL-3.0 (upstream archived) | Default object store of the development stack; optional profile in the example. To be replaced by SeaweedFS or RustFS |
+| Soketi | AGPL-3.0 | WebSocket server in the development stack, unused by default (`BROADCAST_DRIVER=log`); to be replaced by Laravel Reverb |
+| ClamAV | GPL-2.0 | Optional virus scanner, separate process |
+| Valkey | BSD-3-Clause | Replaced Redis (now RSALv2/SSPLv1/AGPLv3) |
+
+Unmodified copies of these, running as separate processes, are compatible with the project's
+open-core rules. If you modify an AGPL service and offer it over a network, the AGPL asks you to
+offer your modified source to its users.
+
+The PDF service replaced ReportBro (AGPL-3.0); it is no longer part of ulams.

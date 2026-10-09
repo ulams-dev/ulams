@@ -1,0 +1,148 @@
+---
+title: Decisions and documentation
+description: When a change needs an architecture decision record, the MADR template used in ulams, how ADRs are approved, and why docs ship with the code.
+sidebar:
+  order: 2
+---
+
+import { Aside, Badge, Steps, FileTree } from "@astrojs/starlight/components";
+
+Two rules keep ulams understandable as it grows:
+
+1. **Every decision gets an ADR** (architecture decision record) in `docs/decisions`.
+2. **Every significant change updates this documentation site in the same branch.**
+
+Both are checked in review, and the pull request template asks for them.
+
+## When to write an ADR
+
+Write an ADR whenever a change involves a decision someone could later ask "why did we do it this
+way?" about. In particular, when the change:
+
+- is **architectural**: a new package, service or app, a new integration pattern, a change in how
+  components talk to each other (for example ADR 0011, AG-UI events over SSE);
+- **adds a dependency**: a library, service, image or external API (the plan already has to justify
+  its licence, maintenance, size and self-hosting impact; the ADR records the choice);
+- **changes a licence boundary**: anything that touches what is GPL and what is not, or how a
+  copyleft component is isolated (ADR 0003, ADR 0013);
+- **changes the data model**: new entities, tenancy, how content or progress is stored;
+- **changes a public API**: REST endpoints, SDK surface, events, the component catalogue, CLI
+  commands;
+- **is hard to reverse**: anything that would be expensive to undo once data, users or integrations
+  depend on it.
+
+Choosing between options that the spec leaves open is a decision too. A product decision the product
+owner makes in chat goes into "Decisions made" in `docs/ROADMAP-TODO.md`; if it is architectural,
+it also gets an ADR.
+
+When in doubt, write a short one. A three-paragraph ADR costs little; a decision nobody can trace
+costs a lot.
+
+## The template
+
+ADRs use the [MADR](https://adr.github.io/madr/) format, trimmed to the sections the existing
+records use. Copy the skeleton below, or start from a recent ADR such as 0012 (LTI) or 0009 (LLM
+layer).
+
+```markdown
+# NNNN. Short title that states the decision
+
+- Status: Proposed
+- Date: YYYY-MM-DD
+
+## Context and problem statement
+
+What forces are at play: the requirement (with the spec section), constraints such as tenancy,
+licensing or self-hosting, and the question to answer.
+
+## Considered options
+
+| Option | Licence | Notes |
+|---|---|---|
+| **Chosen option** | MIT | Why it fits |
+| Alternative | ... | Why not |
+
+## Decision
+
+What we do, concretely: packages, endpoints, data, configuration. Specific enough that a
+reviewer can check the code against it.
+
+## Consequences
+
+What becomes easier, what becomes harder, follow-up work, risks and how to revisit the decision.
+```
+
+The site reads the `Status:` and `Date:` lines and the `# NNNN. Title` heading, so keep them in
+exactly this form. "Considered options" can be a table or a list; small decisions without real
+alternatives may skip it (ADR 0001 does).
+
+## Numbering and files
+
+- File name: `docs/decisions/NNNN-short-title.md`, with the next free four-digit number and a
+  kebab-case title. Numbers are never reused.
+- Add the record to the table in `docs/decisions/README.md` with its status.
+- Link the ADR from the plan (`docs/plans/phase-N.md`) and from the pull request.
+
+<FileTree>
+- docs
+  - decisions
+    - README.md the index table
+    - 0001-monorepo-with-vendored-packages.md
+    - …
+    - 0013-adapt-build-worker.md
+- api/docs/adr/ API history before the monorepo
+- admin/docs/adr/ admin history before the monorepo
+- front/docs/adr/ old front history before the monorepo
+</FileTree>
+
+`docs/decisions` holds the project-wide decisions. The `docs/adr` folders inside `api`, `admin` and
+`front` hold retroactive records mined from each application's history before the monorepo; new
+decisions go in `docs/decisions`, even when they concern one application.
+
+## Status and approval
+
+<Steps>
+
+1. **Proposed** <Badge text="Proposed" variant="caution" />: the contributor writes the ADR, usually
+   together with the plan, and opens it for review. Implementation that depends on it waits.
+
+2. **Accepted** <Badge text="Accepted" variant="success" />: the product owner approves it. The
+   status line becomes `- Status: Accepted (YYYY-MM-DD)` and the README table is updated.
+
+3. **Superseded** <Badge text="Superseded" variant="default" />: a later ADR replaces it. The old
+   record stays, its status becomes `Superseded by NNNN` with a link to the replacement, and the new
+   record links back. Records are never deleted.
+
+</Steps>
+
+Contributors propose; only the product owner accepts.
+
+## ADRs on this site
+
+The [Decisions](/decisions/) section is generated from the files on every build: each ADR becomes a
+page, and the overview table shows its number, title, status and date as written in the file. A new
+ADR appears there with its status badge as soon as it is merged; there is nothing to update on the
+site by hand. The per-application history records are listed there too.
+
+<Aside type="tip">
+The generated pages show an "Edit page" link that opens the ADR file on GitHub. Edit the ADR in
+`docs/decisions`, never the generated page under `front/docs-site/src/content/docs/decisions`.
+</Aside>
+
+## Documentation ships with the code
+
+Every significant change updates this site in the same branch as the code: a new feature, a
+changed screen or flow, a new endpoint, package, admin route, learner route or topic type, new
+configuration, or a changed way to run, test or deploy something. Docs that arrive "later" usually
+never arrive.
+
+The [coverage check](/contributing/writing-docs/#the-coverage-check) enforces the part that can be
+checked mechanically: every module in `api/packages` and every app, every admin route, every
+learner route and every topic type must be named by at least one written page. Adding a package or
+a route without a page fails the docs build. Reference pages (ADRs, the roadmap, package READMEs)
+are generated from the repository, so keeping a package README or an ADR current also keeps the
+site current.
+
+For the mechanics (where pages live, frontmatter, screenshots, links) see
+[Writing docs](/contributing/writing-docs/). Progress on roadmap items is on the
+[Roadmap](/roadmap/) page, generated from `docs/ROADMAP-TODO.md`.

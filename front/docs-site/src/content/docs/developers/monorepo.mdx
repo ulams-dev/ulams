@@ -1,0 +1,130 @@
+---
+title: Monorepo layout
+description: How the ulams repository is organised, which Yarn workspaces exist, what Turborepo runs and where shared code lives.
+sidebar:
+  order: 2
+---
+
+import { Aside, FileTree } from "@astrojs/starlight/components";
+
+ulams is one git repository with three applications (`api`, `admin`, `front`) plus documentation
+and root tooling. The decision and its history are in
+[ADR 0001](/decisions/0001-monorepo-with-vendored-packages/) (monorepo with vendored packages) and
+[ADR 0005](/decisions/0005-turborepo-and-yarn-workspaces/) (Turborepo and Yarn workspaces).
+
+## Layout
+
+<FileTree>
+
+- api/ Laravel API (`api` workspace: scripts only)
+  - app/ application code: kernels, providers, a few controllers
+  - config/ Laravel config; `app.php` registers every package provider
+  - packages/ vendored domain packages, one directory each, see API packages
+  - h5p/ H5P service, Node, GPL (`api-h5p` workspace)
+  - pdf/ PDF renderer, Node, pdfme (`api-pdf` workspace)
+  - docker/ PHP base image, Caddyfile, supervisor configs, env scripts
+  - docs/ API docs: multidomain, content origin, env variables, retroactive ADRs
+  - tests/ application tests; package tests live in `packages/<name>/tests`
+  - docker-compose.yml development stack
+  - init.sh, queue.sh, scheduler.sh, broadcast.sh, domains.sh container processes
+- admin/ admin panel, umi/max (`admin` workspace)
+  - config/ routes, umi config, `@ulams/*` aliases
+  - src/
+    - lib/ vendored `gift-pegjs` and `markdown-editor`
+- front/
+  - src/ legacy React learner app (`front` workspace)
+    - lib/ shared libraries: components, sdk, ts-models, scorm-player, tenant, demo
+  - web/ reference frontend, Astro SSR (`@ulams/web`)
+  - sdk/ framework-free API client (`@ulams/sdk`)
+  - ui/ UI catalogue and renderer (`@ulams/ui`)
+  - docs-site/ this documentation site (`@ulams/docs`)
+- docs/
+  - ROADMAP-PROMPT.md spec
+  - ROADMAP-TODO.md progress tracker
+  - decisions/ project-wide ADRs
+  - plans/ phase plans
+- package.json root workspaces and scripts
+- turbo.json task graph
+- yarn.lock one lockfile for every workspace
+
+</FileTree>
+
+## Workspaces
+
+Yarn 1 workspaces (`packageManager: yarn@1.22.22`, Node `>=22.12`) with a single root `yarn.lock`.
+The root `package.json` lists:
+
+| Path | Package name | What |
+|---|---|---|
+| `admin` | `admin` | Admin panel (umi/max, React, Ant Design Pro) |
+| `front` | `front` | Legacy learner app (React 18, Vite) |
+| `front/sdk` | `@ulams/sdk` | TypeScript API client, fetch only |
+| `front/ui` | `@ulams/ui` | Component catalogue, renderer, web components, themes |
+| `front/web` | `@ulams/web` | Reference frontend (Astro 5 SSR) |
+| `front/docs-site` | `@ulams/docs` | This site (Astro Starlight) |
+| `api` | `api` | Scripts only (Docker, artisan, phpunit), so the API joins the task graph |
+| `api/h5p` | `api-h5p` | H5P service |
+| `api/pdf` | `api-pdf` | PDF renderer |
+
+A few packages are excluded from hoisting (`nohoist`) because the legacy front and the H5P service
+need their own copies.
+
+## Turborepo tasks
+
+`turbo.json` defines `dev`, `build`, `lint`, `typecheck`, `test` and `test:integration`. Notable
+details:
+
+- `build` outputs `dist/**`; `test` outputs `coverage/**`; `dev` and `test:integration` are never
+  cached.
+- `admin#build`, `admin#typecheck` and `admin#test` add `front/src/lib/**` to their inputs, because
+  the admin imports libraries from there. A change in a shared library invalidates the admin cache.
+- Build-time environment variables that affect the output are declared (`VITE_*`, `REACT_APP_*`,
+  `SENTRY_*`, `BASE_PATH`, `UMI_ENV`), so they are part of the cache key.
+
+Root scripts wrap the common filters:
+
+```bash
+yarn dev          # admin (:8000) and legacy front (:3000)
+yarn dev:web      # reference frontend (:4321)
+yarn dev:docs     # this site
+yarn dev:api      # docker compose -f api/docker-compose.yml up -d
+yarn build        # turbo run build
+yarn lint && yarn typecheck
+yarn test         # JS tests of admin, front, api-h5p, api-pdf, sdk, ui, web
+yarn test:api     # PHP tests (yarn workspace api test)
+```
+
+Running the stack and the test suites is covered in [Local development](/developers/local-development/)
+and [Testing](/developers/testing/).
+
+## Where shared code lives
+
+| Code | Location | Imported as | Used by |
+|---|---|---|---|
+| PHP domain packages | `api/packages/<name>` | `Ulams\<Name>\` (PSR-4 in `api/composer.json`) | API |
+| API client for new apps | `front/sdk` | `@ulams/sdk` (workspace) | `front/web`, `front/ui` |
+| UI catalogue | `front/ui` | `@ulams/ui` (workspace) | `front/web` |
+| Legacy component library | `front/src/lib/components` | `@ulams/components` (path alias) | legacy front |
+| Legacy API client and React context | `front/src/lib/sdk` | `@ulams/sdk` (path alias, a different package from `front/sdk`) | legacy front |
+| API types | `front/src/lib/ts-models` | global declarations (`models.d.ts`, included through `src`) | legacy front |
+| SCORM runtime | `front/src/lib/scorm-player` | `@ulams/scorm-player` | legacy front, admin |
+| Tenant host rules | `front/src/lib/tenant/resolveApiUrl.ts` | `@ulams/tenant`; re-exported by `@ulams/sdk/tenant` | legacy front, admin, `front/web` |
+| Demo-mode helpers | `front/src/lib/demo/demoMode.ts` | `@ulams/demo` | legacy front, admin |
+| GIFT parser, Markdown editor | `admin/src/lib` | `@ulams/gift-pegjs`, `@ulams/markdown-editor` | admin |
+
+The admin aliases are in `admin/config/config.ts` and `admin/tsconfig.json`; keep both in sync.
+
+<Aside type="caution" title="Two packages called @ulams/sdk">
+  Inside the legacy front, `@ulams/sdk` is a TypeScript path alias to `front/src/lib/sdk` (the
+  EscolaLMS React SDK). Everywhere else it is the workspace package in `front/sdk`. New code should
+  use `front/sdk`; see [Legacy learner app](/developers/legacy-front/).
+</Aside>
+
+## Vendored code and provenance
+
+Every former `escolalms/*` composer package is plain source in `api/packages/` with no
+`composer.json` of its own. The provenance table (upstream repository, version, commit) is in
+[`api/packages/README.md`](https://github.com/ulams-dev/ulams/blob/main/api/packages/README.md) and
+the imported versions are in `api/packages/versions.json`. The JS libraries in `front/src/lib` and
+`admin/src/lib` keep a README with their origin. Adding or changing an API package is described in
+[API packages](/developers/api-packages/#adding-a-package).

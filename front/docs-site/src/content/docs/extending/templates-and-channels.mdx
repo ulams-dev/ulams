@@ -1,0 +1,211 @@
+---
+title: Templates and channels
+description: How notification templates bind an event, a channel and a variables class, and how to add a template type for your own event or a new delivery channel.
+sidebar:
+  order: 4
+modules:
+  - templates
+  - templates-email
+  - templates-sms
+  - templates-pdf
+  - notifications
+needsReview: "The variables class for GreetingSent is a sketch that is not in the repository or tested. Check it against templates-email before you copy it."
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+The `templates` package sends messages when domain events happen. A **template type** is a
+triple:
+
+```php
+Template::register(string $eventClass, string $channelClass, string $variableClass);
+```
+
+- **Event**: a domain event class, for example `Ulams\Payments\Events\PaymentSuccess`.
+- **Channel**: how the message is delivered. The channels that exist are `EmailChannel`
+  (`templates-email`, MJML), `SmsChannel` (`templates-sms`) and `PdfChannel` (`templates-pdf`, which
+  generates certificates).
+- **Variables**: which `@Var…` tokens the template may use and how to fill them from the event.
+
+Admins write the actual templates per channel in the admin panel
+([Templates](/admin/templates/)). A template can be the default for its event and channel, or
+assigned to one record, for example one course. `GET /api/admin/templates/events` lists every
+registered event, channel and token.
+
+## How sending works
+
+<Steps>
+
+1. `UlamsTemplatesServiceProvider` listens to every event whose class name starts with `Ulams`:
+   `Event::listen('Ulams*', …)`. Events in other namespaces never reach templates.
+2. `TemplateEventListener` wraps the event in `EventWrapper` and continues only when the event has
+   a user: a `getUser()` method, or any property holding a `User`.
+3. `TemplateEventService::handleEvent()` goes through each channel registered for the event. It
+   picks the template assigned to the record of `assignableClass()`, or else the default. It
+   skips templates that are not valid, then fills the tokens with
+   `$variableClass::variablesFromEvent($event)`.
+4. It calls `$channelClass::send($event, $sections)`.
+
+</Steps>
+
+`EventWrapper` resolves `getX()` calls through the event's `getX()` method, a `toArray()` key or a
+property. So `$event->getCourse()` works for any event with a `course` property.
+
+The `notifications` package runs a similar wildcard listener: every `Ulams*` event with a user
+is stored as a database notification of that user (`GET /api/notifications`). See
+[Events and notifications](/reference/events-and-notifications/) for the list of events.
+
+## The contracts
+
+`Ulams\Templates\Contracts\TemplateVariableContract`:
+
+```php
+public static function variables(): array;
+public static function mockedVariables(?User $user = null): array;
+public static function variablesFromEvent(EventWrapper $event): array;
+public static function assignableClass(): ?string;
+public static function requiredSections(): array;
+public static function requiredVariables(): array;
+public static function requiredVariablesInSection(string $sectionKey): array;
+public static function defaultSectionsContent(): array;
+public static function processTemplateAfterSaving(Template $template): Template;
+```
+
+Variables classes extend `Ulams\Templates\Core\AbstractTemplateVariableClass`, which is an
+enum. The tokens are class constants, and `variables()` returns them together with the settings
+tokens (`SettingsVariables`). Each channel package has a base class: `EmailVariables` adds
+`@VarAppName` and `wrapWithMjml()`. `mockedVariables()` fills the preview (`GET /api/admin/templates/{id}/preview`).
+
+`Ulams\Templates\Contracts\TemplateChannelContract`:
+
+```php
+public static function send(EventWrapper $event, array $sections): bool;
+public static function preview(User $user, array $sections): bool;
+public static function sections(): Collection;
+public static function sectionsRequired(): array;
+public static function sectionsReadonly(): array;
+public static function section(string $sectionKey): ?TemplateSectionSchema;
+public static function sectionExists(string $sectionKey): bool;
+public static function processTemplateAfterSaving(Template $template): Template;
+public static function channelAvailable(User $user): bool;
+```
+
+`AbstractTemplateChannelClass` implements all of them except `send`, `preview` and `sections`.
+The channels declare these sections:
+
+| Channel | Sections |
+|---|---|
+| `EmailChannel` | `title` (text, required), `content` (MJML, required), `contentHtml` (HTML, read-only, rendered from `content` on save) |
+| `SmsChannel` | `content` (text, required) |
+| `PdfChannel` | `title` (text, required), `content` (a Fabric.js canvas, the certificate layout) |
+
+## A template type for your event
+
+Your event must:
+
+- live in the `Ulams\` namespace, or the wildcard listener ignores it;
+- carry the recipient as a `User` (a `user` property or `getUser()`);
+- expose what the variables need as public properties or getters. Keep them public if the event
+  may be queued (`SerializesModels`).
+
+`Ulams\ExamplePlugin\Events\GreetingSent` from the [example package](/extending/new-package/)
+qualifies. The repository does not register a template for it. A variables class following
+`templates-email/src/Courses/CommonUserAndCourseVariables.php` would look like this:
+
+```php
+namespace Ulams\ExamplePlugin\Templates;
+
+use Ulams\Core\Models\User;
+use Ulams\Templates\Events\EventWrapper;
+use Ulams\TemplatesEmail\Core\EmailVariables;
+
+class GreetingSentVariables extends EmailVariables
+{
+    const VAR_USER_NAME = '@VarUserName';
+    const VAR_GREETING  = '@VarGreeting';
+
+    public static function mockedVariables(?User $user = null): array
+    {
+        return array_merge(parent::mockedVariables($user), [
+            self::VAR_USER_NAME => 'Ada Lovelace',
+            self::VAR_GREETING  => 'Hello from the example plugin, Ada',
+        ]);
+    }
+
+    public static function variablesFromEvent(EventWrapper $event): array
+    {
+        return array_merge(parent::variablesFromEvent($event), [
+            self::VAR_USER_NAME => $event->getUser()->name,
+            self::VAR_GREETING  => $event->getGreeting(),
+        ]);
+    }
+
+    public static function requiredVariables(): array
+    {
+        return [self::VAR_GREETING];
+    }
+
+    public static function requiredVariablesInSection(string $sectionKey): array
+    {
+        return $sectionKey === 'content' ? [self::VAR_GREETING] : [];
+    }
+
+    public static function assignableClass(): ?string
+    {
+        return null; // one default template, not per record
+    }
+
+    public static function defaultSectionsContent(): array
+    {
+        return [
+            'title' => 'A greeting for you',
+            'content' => self::wrapWithMjml('<h1>' . self::VAR_GREETING . '</h1>'),
+        ];
+    }
+}
+```
+
+Register it in a provider's `boot()`, only when the channel package is present:
+
+```php
+use Ulams\Templates\Facades\Template;
+use Ulams\TemplatesEmail\Core\EmailChannel;
+use Ulams\TemplatesEmail\UlamsTemplatesEmailServiceProvider;
+
+if (class_exists(UlamsTemplatesEmailServiceProvider::class)) {
+    Template::register(GreetingSent::class, EmailChannel::class, GreetingSentVariables::class);
+}
+```
+
+In the repository the registrations sit in the channel packages, one provider per feature, for
+example `templates-email/src/Providers/PaymentsTemplatesServiceProvider.php`:
+`Template::register(PaymentSuccess::class, EmailChannel::class, PaymentSuccessVariables::class)`.
+Only the first registration of an event and channel pair counts.
+
+Create the default template row with `Template::createDefaultTemplatesForChannel(EmailChannel::class)`
+(the seeders in `templates-*/database/seeders` do this), or let an admin create it. Test with
+`Template::fake()` and `Template::assertEventHandled(...)`.
+
+## A new channel
+
+<Steps>
+
+1. Create a package, for example `templates-push`, following `templates-sms`.
+2. Write the channel: extend `AbstractTemplateChannelClass`, implement `TemplateChannelContract`,
+   declare `sections()` as `TemplateSectionSchema` objects (`TemplateSectionTypeEnum::SECTION_TEXT()`,
+   `SECTION_MJML()`, `SECTION_HTML()`, `SECTION_URL()`, `SECTION_FABRIC()`), and deliver in `send()`. Return `false` when the user
+   cannot receive the message, for example when there is no phone number, and log failures
+   instead of throwing. `channelAvailable(User $user)` decides whether the channel is offered
+   for a user.
+3. Write a variables base class for the channel and one variables class per event.
+4. Register each event with `Template::register(Event::class, YourChannel::class, YourVariables::class)`
+   in the provider's `boot()`, guarded by `class_exists` on the feature package.
+5. Register the provider in `api/config/app.php` and add a seeder that calls
+   `Template::createDefaultTemplatesForChannel(YourChannel::class)`.
+
+</Steps>
+
+<Aside type="caution">
+The admin templates screen knows the existing channels. Check that a new channel's sections
+render in the editor (`admin/src/pages/Templates`) before you rely on it.
+</Aside>

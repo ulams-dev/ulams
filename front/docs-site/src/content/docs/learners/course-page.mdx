@@ -1,0 +1,62 @@
+---
+title: Course page
+description: The course page of the reference frontend - header with facts and tutors, the program, the description, progress for returning learners and the enrol card.
+sidebar:
+  order: 2
+learnerRoutes:
+  - /courses/[id]
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+`/courses/<id>` shows one course of the tenant. It is public: anyone can open it without
+signing in. An unknown course id shows the [404 page](/learners/error-pages/).
+
+<Screenshot name="learner-courses-id" alt="A course page with the course header, the program and the enrol card" />
+
+## What is on the page
+
+- **Header.** Level and number of lessons, title, subtitle, summary, up to six facts (level,
+  length, language and others from the course), the course image and up to four tutors. The
+  buttons are "Start learning" (or "Continue learning") and, when the course has a free-preview
+  topic, "Free preview".
+- **Program.** Every lesson with its topics, their format icons and durations. Each academy
+  styles it differently: a folio for `coffee`, a timeline for `oncall`, a mission map
+  ("Your mission map") for `nightsky`. Lessons are called chapters, modules or missions.
+- **About the course.** The course description, rendered from Markdown.
+- **Enrol card.** See below.
+
+The site header and footer are the same as on the [landing page](/learners/home/).
+
+## Progress for returning learners
+
+If the learner has a session cookie, the page asks the API for the learner's program and
+progress (and gives up after 0.9 seconds, rendering the public page instead). When the learner
+has access to the course:
+
+- the header shows the completion percentage;
+- the primary button reads "Continue learning" and opens the first topic that is not completed;
+- topics in the program show whether they are done.
+
+A learner without a session sees the public page; "Start learning" opens `/learn/<id>`, which
+signs the visitor in (as the demo student on demo tenants) and redirects to the right topic. See
+[course player](/learners/course-player/).
+
+## Enrol card
+
+The card titled "Demo access" lists the number of lessons and topics, the formats used, "Progress
+saved as you go" and "Every lesson open in this demo". It shows the course price, or the first
+shop product's price, and an "Open the course" button that goes to the player.
+
+<Aside type="caution" title="No purchase in the reference frontend">
+The reference frontend has no cart or checkout. The card says so: "Payments run through the shop
+service in production; this demo opens the course directly." Access is granted by the API, not
+by the frontend: on demo tenants the demo student gets access to every published course; on
+other tenants an administrator grants access, or the learner buys through the
+[legacy React app](/learners/legacy-react-app/), which still has the cart. The planned
+Sylius-based commerce is on the [roadmap](/roadmap/).
+</Aside>
+
+A signed-in learner without access to the course can still open its free-preview topics; see
+[preview mode](/learners/course-player/#preview-mode).

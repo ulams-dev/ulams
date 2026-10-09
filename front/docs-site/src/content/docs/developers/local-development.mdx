@@ -1,0 +1,281 @@
+---
+title: Local development
+description: Run the whole ulams stack on your machine, from the Docker API stack and demo tenants to the admin, learner frontends and this site.
+sidebar:
+  order: 10
+modules:
+  - api
+  - admin
+  - front
+  - web
+needsReview: "First run on a fresh clone: vendor/ is not in the image because the API container mounts api/ over /var/www/html, and admin/.env must exist for `yarn dev:admin` (env-cmd). Check the exact order end to end."
+---
+
+import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
+
+The API and its services run in Docker; the JavaScript apps run from source on the host and
+reach the API through Caddy on port 80. Every host name ends in `.localhost`, which current
+browsers resolve to `127.0.0.1` without any `/etc/hosts` change.
+
+## Requirements
+
+| Tool | Version | Where it is set |
+|---|---|---|
+| Node.js | 22 | [`.nvmrc`](https://github.com/ulams-dev/ulams/blob/main/.nvmrc) contains `22`; the root `package.json` declares `"node": ">=22.12"` |
+| Yarn | 1.22.22 (classic), through Corepack | `packageManager` in the root `package.json` |
+| Docker | Docker Engine or Desktop with Compose v2 (`docker compose`) | [`api/docker-compose.yml`](https://github.com/ulams-dev/ulams/blob/main/api/docker-compose.yml) |
+| make | any | [`api/makefile`](https://github.com/ulams-dev/ulams/blob/main/api/makefile) |
+
+<Aside type="note">
+`.nvmrc` pins only the major version (22), while the root `engines` field needs at least
+22.12. `api/h5p` and `api/pdf` also declare `>=22.12.0`, and the admin declares `>=20.0.0`.
+Use a 22.12 or newer release. The admin, front and web Dockerfiles build on `node:22.12.0` or
+`node:22-alpine`.
+</Aside>
+
+You do not need PHP or Composer on the host: every PHP command runs inside the `api` container.
+
+## First run
+
+<Steps>
+
+1. Install the JavaScript workspaces (one root `yarn.lock` for `admin`, `front`, `front/sdk`,
+   `front/ui`, `front/web`, `front/docs-site`, `api`, `api/h5p` and `api/pdf`):
+
+   ```bash
+   corepack enable
+   corepack yarn install
+   ```
+
+   `install` also runs `husky` (the root `prepare` script), which installs the pre-commit hook.
+
+2. Start the API stack. `yarn dev:api` is `docker compose -f api/docker-compose.yml up -d`; the
+   first start builds the `api`, `h5p` and `pdf` images.
+
+   ```bash
+   corepack yarn dev:api
+   ```
+
+3. Install the PHP dependencies. The `api` service mounts `api/` over `/var/www/html`, so the
+   `vendor/` directory built into the image is hidden by your checkout:
+
+   ```bash
+   docker compose -f api/docker-compose.yml exec api composer install
+   docker compose -f api/docker-compose.yml restart api
+   ```
+
+   On restart the container runs [`api/init.sh`](https://github.com/ulams-dev/ulams/blob/main/api/init.sh):
+   it writes the `LARAVEL_*` variables of the compose file into `api/.env`, runs migrations,
+   rebuilds tenant env files (`ulams:tenant:sync-env --migrate`), creates Passport keys if
+   they are missing, seeds permissions and starts php-fpm, Horizon, the tenant queue workers
+   and the scheduler under supervisord.
+
+4. Load the platform database and the H5P content types:
+
+   ```bash
+   make -C api migrate-fresh
+   ```
+
+   This runs `migrate:fresh --seed`, creates the Passport keys and personal client, and
+   imports H5P libraries and samples (`h5p-seed`). It wipes the platform database.
+
+5. Create the demo tenants and their courses (see [Demo tenants](#demo-tenants) below).
+
+6. Start the apps you need: `corepack yarn dev:admin`, `corepack yarn dev:web` and so on.
+
+</Steps>
+
+<Aside type="caution">
+The make targets start with `include .env`, so they need `api/.env`. The container creates it
+on its first start from the `LARAVEL_*` variables. `api/.env.example` is a reference only:
+compose does not read it.
+</Aside>
+
+## The Docker stack
+
+Services in `api/docker-compose.yml`, all on the `ulams` network:
+
+| Service | Image | What it does | Reachable at |
+|---|---|---|---|
+| `caddy` | `caddy` | Routes every `*.localhost` host (config: `api/docker/conf/Caddyfile`) | ports 80 and 443 |
+| `api` | built from `api/Dockerfile.develop` | php-fpm on port 9000, plus Horizon, queue workers and scheduler | `http://api.localhost`, `http://<slug>.localhost` |
+| `h5p` | built from `api/h5p/Dockerfile` | H5P player, editor and content API | `/h5p/*` on every API host |
+| `pdf` | built from `api/pdf/Dockerfile` | PDF renderer for certificates and templates | internal only |
+| `postgres` | `postgres:12` | Database; data in `api/docker/postgres-data` | internal; Adminer |
+| `redis` | `valkey/valkey:8-alpine` | Cache, queues, Horizon (password `ulams`) | internal |
+| `minio` | `bitnamilegacy/minio:latest` | S3-compatible storage; data in `api/docker/minio_storage` | `http://storage.localhost`, console at `http://minio.localhost` |
+| `mailhog` | `mailhog/mailhog` | Catches outgoing mail | http://localhost:8025 |
+| `adminer` | `adminer` | Database UI (server `postgres`, user `default`, password `secret`) | http://localhost:8078 |
+| `mjml` | `danihodovic/mjml-server` | MJML rendering for e-mail templates | internal |
+| `soketi` | `quay.io/soketi/soketi:latest` | WebSocket server | `http://ws.localhost`, metrics at `http://metrics.localhost` |
+| `clamav` | `clamav/clamav:1.4` | Optional virus scanning of uploads | only with the `av` profile |
+
+ClamAV is the only service behind a Compose profile. Start it with:
+
+```bash
+docker compose -f api/docker-compose.yml --profile av up -d clamav
+```
+
+The `api` package also wraps a few compose commands, run with `corepack yarn workspace api <script>`:
+`up`, `down`, `logs` (follows the `api` service), `artisan` and `test`.
+
+### Host routing
+
+Caddy sends each host to a service:
+
+| Host | Goes to |
+|---|---|
+| `api.localhost`, `<slug>.localhost` | Laravel (php-fpm), `/h5p/*` to the H5P service |
+| `<slug>.app.localhost` | `front/web` dev server on the host, port 4321 |
+| `<slug>.admin.localhost` | admin dev server on the host, port 8000 |
+| `content.localhost`, `<slug>.content.localhost` | read-only content origin for SCORM, cmi5, Adapt and LiaScript packages |
+| `storage.localhost` | MinIO |
+
+The legacy React front is not behind Caddy: open it at http://localhost:3000.
+
+## Running PHP commands
+
+Run artisan, composer and PHPUnit inside the `api` container:
+
+```bash
+docker compose -f api/docker-compose.yml exec api bash -c "php artisan about"
+# or open a shell
+make -C api bash
+```
+
+Artisan targets the platform unless you pass `--domain`. To run a command for one tenant,
+add `--domain=<slug>.localhost`:
+
+```bash
+docker compose -f api/docker-compose.yml exec api \
+  php artisan migrate --force --domain=coffee.localhost
+```
+
+### make targets
+
+All targets are in [`api/makefile`](https://github.com/ulams-dev/ulams/blob/main/api/makefile) and run
+`docker compose exec` from `api/`. Call them as `make -C api <target>`.
+
+| Target | What it does |
+|---|---|
+| `bash` | Shell in the `api` container |
+| `tinker` | `php artisan tinker` in a loop (Ctrl+C quits, Ctrl+D restarts) |
+| `migrate-fresh-quick` | `migrate:fresh --seed`, Passport keys and personal client |
+| `migrate-fresh` | `migrate-fresh-quick` plus `h5p-seed` |
+| `h5p-seed` | Imports H5P content types and sample content through the H5P service |
+| `demo-seed` | Demo courses on the platform tenant (`DemoCoursesSeeder`, all three experiences) |
+| `demo-seed-tenant` | One tenant: `make -C api demo-seed-tenant DOMAIN=coffee.localhost` (the experience defaults to the first label of `DOMAIN`), then works through the video long-job queue once |
+| `demo-seed-tenants` | `demo-seed-tenant` for `coffee`, `oncall` and `nightsky` |
+| `demo-mode-on` | Turns demo mode on for the three demo tenants (`ulams:tenant:create <slug> --demo=on`) |
+| `demo-reset` | Resets one demo tenant now: `make -C api demo-reset DOMAIN=coffee.localhost` |
+| `swagger-generate` | `php artisan l5-swagger:generate` |
+| `test-phpunit` | `./vendor/bin/phpunit` (see [Testing](/developers/testing/) for the database settings) |
+| `backup-postgres` | `pg_dump` into `api/docker/postgres-backups` (`backup-<date>.sql` and `backup-latest.sql`) |
+| `import-postgres` | Restores a dump: `make -C api import-postgres BACKUP_FILE=backup-latest.sql` |
+| `restart_queue_cron` | Restarts the `ulams_queue_cron` service |
+| `composer-update` | `composer update` in the container, then restarts `ulams_queue_cron` |
+
+Demo seeding keeps existing demo courses; pass `DEMO_REFRESH=1` to rebuild them.
+
+<Aside type="caution">
+`composer-update`, `restart_queue_cron` and `refresh` reference a `ulams_queue_cron` service that
+is commented out in `docker-compose.yml`, so the restart step fails (the make recipes ignore
+errors). `update-composer-to-git` checks out and pushes a `develop` branch that this repository
+does not use. Queue workers run inside the `api` container: restart that instead.
+</Aside>
+
+## Demo tenants
+
+Each tenant has its own database, bucket, env file (`api/.env.<slug>.localhost`), Passport keys
+and Redis prefix. Create the three demo tenants on the platform (no `--domain`), then seed them:
+
+```bash
+docker compose -f api/docker-compose.yml exec api bash
+php artisan ulams:tenant:create coffee --name="The Coffee Atlas" --theme=coffee --accent="#C2552D"
+php artisan ulams:tenant:create oncall --name="On-Call" --theme=oncall --accent="#58A6FF"
+php artisan ulams:tenant:create nightsky --name="Night Sky Explorers" --theme=nightsky --accent="#FFD23F"
+exit
+make -C api demo-seed demo-seed-tenants
+make -C api demo-mode-on      # optional: password-less demo login and hourly reset
+```
+
+`ulams:tenant:create` is safe to re-run: finished steps are skipped, and `--redo=<step>` runs one
+again. Demo users per tenant are `admin@<slug>.ulams.app`, `tutor@<slug>.ulams.app` and
+`student1@<slug>.ulams.app` and up; their password is `TENANT_DEMO_PASSWORD` from `api/.env`
+(dev only). The full command set is in the
+[tenancy package README](https://github.com/ulams-dev/ulams/blob/main/api/packages/tenancy/README.md);
+see also [Tenancy](/developers/tenancy/) and [Demo mode](/admin/demo-mode/).
+
+## Running the apps
+
+| Command | App | URL |
+|---|---|---|
+| `corepack yarn dev:admin` | Admin panel (umi/max) | http://localhost:8000 (platform), `http://<slug>.admin.localhost` |
+| `corepack yarn dev:web` | Reference learner frontend (`@ulams/web`, Astro) | http://app.localhost:4321, `http://<slug>.app.localhost:4321`, or `http://<slug>.app.localhost` through Caddy |
+| `corepack yarn dev:front` | Legacy React learner front (Vite) | http://localhost:3000 |
+| `corepack yarn dev` | Admin and legacy front together | as above |
+| `corepack yarn dev:docs` | This documentation site | http://localhost:4322 |
+
+Notes per app:
+
+<Tabs>
+<TabItem label="admin">
+
+The `dev` script runs `env-cmd -f .env`, so `admin/.env` must exist. The admin derives the
+tenant API from its host (`<slug>.admin.localhost` to `http://<slug>.localhost`); the build-time
+`REACT_APP_API_URL` is the fallback for the platform, for example:
+
+```bash
+echo "REACT_APP_API_URL='http://api.localhost'" > admin/.env
+```
+
+Platform login: `admin@ulams.app` / `secret`.
+
+</TabItem>
+<TabItem label="web">
+
+Copy the example environment and set the demo password:
+
+```bash
+cp front/web/.env.example front/web/.env   # set DEMO_STUDENT_PASSWORD = TENANT_DEMO_PASSWORD
+```
+
+Every `ULAMS_*` variable is read on the server at runtime. See the
+[front/web README](https://github.com/ulams-dev/ulams/blob/main/front/web/README.md) and
+[Reference frontend](/developers/reference-frontend/).
+
+</TabItem>
+<TabItem label="front (legacy)">
+
+Vite on port 3000. Variables are in
+[`front/.env.example`](https://github.com/ulams-dev/ulams/blob/main/front/.env.example); the tenant
+API comes from `VITE_APP_TENANT_API_HOST_PATTERN`. The tenant hosts `<slug>.app.localhost` now go
+to `front/web`, so open the legacy front directly on `localhost:3000`.
+
+</TabItem>
+<TabItem label="docs">
+
+`yarn dev:docs` runs `yarn sync` (copies ADRs, the roadmap, package READMEs and the UI catalogue
+into the site) and `astro dev --port 4322`.
+
+</TabItem>
+</Tabs>
+
+The Node services can also run from source with `tsx watch`: `corepack yarn workspace api-h5p dev`
+and `corepack yarn workspace api-pdf dev`. In the default setup they run in Docker.
+
+## Useful URLs
+
+| URL | What |
+|---|---|
+| http://api.localhost/api/documentation | Swagger UI of the platform API |
+| http://api.localhost/horizon | Horizon dashboard (open in the `local` environment) |
+| http://api.localhost/api/healthcheck | Health check results (database, Redis) as JSON |
+| http://localhost:8025 | MailHog |
+| http://localhost:8078 | Adminer |
+
+## Next steps
+
+- [Testing](/developers/testing/) and [CI](/developers/ci/)
+- [Debugging](/developers/debugging/)
+- [Monorepo layout](/developers/monorepo/)

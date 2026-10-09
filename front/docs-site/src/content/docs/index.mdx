@@ -1,0 +1,41 @@
+---
+title: ulams documentation
+description: Guides for course authors, administrators, developers and operators of ulams, the open, AI-native, headless LMS.
+template: splash
+hero:
+  tagline: The open, AI-native LMS where AI drafts, the author decides, and every generated element cites its source.
+  image:
+    file: ../../assets/logo.svg
+  actions:
+    - text: Get started
+      link: /getting-started/what-is-ulams/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/ulams-dev/ulams
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+## Find your guide
+
+<CardGrid>
+  <LinkCard title="Content creators" description="Build courses, lessons and topics: video, H5P, SCORM, cmi5, LiaScript, quizzes, certificates." href="/creators/" />
+  <LinkCard title="Learners" description="What learners see: the course catalogue, the player, progress, certificates and the account page." href="/learners/" />
+  <LinkCard title="Administrators" description="The admin panel screen by screen: users, roles, settings, payments, templates, reports." href="/admin/" />
+  <LinkCard title="Developers" description="Architecture, the API packages, tenancy, authentication, the reference frontend and testing." href="/developers/" />
+  <LinkCard title="Extending ulams" description="Write a package, a topic type, a catalogue component or an integration." href="/extending/" />
+  <LinkCard title="Operators" description="Self-host ulams: images, environment, tenants, TLS, backups, upgrades and high availability." href="/operators/" />
+</CardGrid>
+
+## Also here
+
+<CardGrid>
+  <Card title="Reference" icon="document">
+    Generated from the code on every build: [packages](/reference/packages/), [permissions](/reference/permissions/), [settings](/reference/settings/), [environment variables](/reference/environment-variables/), [API endpoints](/reference/api-endpoints/) and the [UI catalogue](/reference/ui-catalogue/).
+  </Card>
+  <Card title="Decisions and roadmap" icon="list-format">
+    Every [architecture decision](/decisions/) and the [roadmap](/roadmap/), rendered straight from `docs/` in the repository.
+  </Card>
+</CardGrid>

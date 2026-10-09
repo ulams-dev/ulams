@@ -1,0 +1,92 @@
+name: Docs
+
+# Builds the documentation site (front/docs-site) and publishes it to GitHub Pages.
+# - Pull requests: coverage check, `astro check` and a build with link validation, when a change
+#   can affect the site: its sources, the docs it renders (docs/, contributor files) or the code
+#   its reference pages and the coverage check are generated from.
+# - Push to main: the same checks, then a build under the Pages base path and a deploy.
+
+on:
+  pull_request:
+    paths:
+      - "front/docs-site/**"
+      - "docs/**"
+      - "api/packages/**"
+      - "api/routes/**"
+      - "api/app/Console/**"
+      - "api/docs/**"
+      - "admin/config/routes.ts"
+      - "admin/README.md"
+      - "front/web/src/pages/**"
+      - "front/ui/src/registry.ts"
+      - "*.md"
+      - "package.json"
+      - "yarn.lock"
+      - ".github/workflows/docs.yml"
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    name: Check and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - name: Install dependencies
+        run: corepack yarn install --frozen-lockfile
+      - name: Generate pages from the repository
+        run: corepack yarn workspace @ulams/docs sync
+      - name: Coverage (every package, admin route, learner route and topic type has a page)
+        run: corepack yarn workspace @ulams/docs coverage --report
+      - name: Type check
+        run: corepack yarn workspace @ulams/docs typecheck
+      - name: Build with link validation
+        run: corepack yarn workspace @ulams/docs build
+
+  deploy:
+    name: Deploy to GitHub Pages
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - id: pages
+        uses: actions/configure-pages@v5
+      - name: Install dependencies
+        run: corepack yarn install --frozen-lockfile
+      - name: Build under the Pages base path
+        env:
+          DOCS_SITE: ${{ steps.pages.outputs.origin }}
+          DOCS_BASE: ${{ steps.pages.outputs.base_path }}
+        run: corepack yarn workspace @ulams/docs build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: front/docs-site/dist
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,87 @@
+---
+title: SCORM packages
+description: Upload SCORM 1.2 and 2004 packages to the SCORM library, preview them, and use them as lesson topics or as a whole course.
+sidebar:
+  order: 16
+modules:
+  - scorm
+  - laravel-scorm
+  - uploads
+  - topic-types
+topicTypes:
+  - ScormSco
+adminRoutes:
+  - /courses/scorms/**
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+SCORM packages made in authoring tools (Articulate, iSpring, Adapt, Captivate and others) are uploaded
+once to the **SCORM library** and then used in courses. ulams accepts **SCORM 1.2** and **SCORM 2004**
+packages. Each package contains one or more SCOs (sharable content objects); a topic plays one SCO.
+
+## Upload a package
+
+<Steps>
+
+1. Open **Courses → SCORMs** (`/courses/scorms`).
+2. In **New Scorm**, choose the package `.zip` file (the zip that contains `imsmanifest.xml`).
+3. When the upload succeeds, the package appears in the table with its SCORM version, and its SCOs as
+   buttons.
+
+</Steps>
+
+Uploaded packages are checked before anything is extracted:
+
+- the file must be a real zip, at most 512 MB by default (operators can change the limit);
+- at most 5000 files, no paths that escape the package folder, no symbolic links, no suspicious
+  compression (zip bombs);
+- an antivirus scan when the operator has enabled one.
+
+A rejected upload shows the reason, for example `zip_slip`, `too_large` or `infected`.
+
+The **Authoring tool** column shows **Adapt** for packages exported from Adapt Learning (see
+[Adapt](/creators/adapt/)).
+
+<Screenshot name="admin-courses-scorms" alt="The SCORM library with the upload field, versions and SCO buttons" />
+
+## Preview
+
+Click a SCO button in the table to play it at `/courses/scorms/preview/<uuid>`. Use this to check a
+package before you put it in a course.
+
+<Screenshot name="admin-courses-scorms-preview-uuid" alt="A SCORM package playing in the admin preview" />
+
+## Use a SCO as a topic
+
+<Steps>
+
+1. In the program, add a topic and choose **SCORM**.
+2. Pick the SCO from the list. SCOs are grouped by package (`<package id>: <version>`) and the list
+   can be searched.
+3. Save the topic.
+
+</Steps>
+
+You can mix SCORM topics with any other topic types in the same lesson. The package must already be in
+the library; uploading from the topic form is not available.
+
+## A whole course from one package
+
+The course editor's **SCORM** tab (`/courses/list/<id>/scorm`) lets you pick one SCO for the course
+itself, for courses that are just one SCORM presentation. Use **Clear selection** to remove it.
+
+## Playback and completion
+
+The player runs the package with a SCORM runtime and saves the learner's progress (bookmark, score,
+status). When the operator has configured a content origin, packages play from a separate, per-tenant
+address with a strict security policy, so their scripts cannot reach the learner's session.
+
+When the package reports completion, ulams completes the topics that use that SCO. Learners can also
+press **Mark as complete** in the reference front.
+
+<Aside type="caution">
+Check where a package is used before you delete it from the library: topics and courses that point to
+its SCOs can no longer play it.
+</Aside>

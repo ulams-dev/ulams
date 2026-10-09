@@ -1,0 +1,107 @@
+---
+title: Video and embeds
+description: Add video to a lesson by uploading a file that is converted to HLS streaming, or by embedding a YouTube or Vimeo link with an OEmbed topic.
+sidebar:
+  order: 11
+modules:
+  - topic-types
+  - video
+  - youtube
+topicTypes:
+  - Video
+  - OEmbed
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+There are two ways to put a video in a lesson:
+
+- a **Video** topic: you upload the file and ulams streams it;
+- an **OEmbed** topic: you paste a link to a video hosted elsewhere (YouTube, Vimeo).
+
+## Upload a video file
+
+<Steps>
+
+1. In the program, add a topic and choose **Video**.
+2. Click **Click to upload** and choose a file, or pick one already uploaded from the file browser.
+   The server accepts MP4, OGG, WebM and MOV.
+3. The upload saves the topic. Set the title and the other [common fields](/creators/lessons-and-topics/#fields-every-topic-has)
+   and save again.
+
+</Steps>
+
+### HLS processing
+
+After the upload, the platform converts the video to HLS (HTTP Live Streaming) in the background with
+`ffmpeg`, in several bitrates, so learners get a stream that adapts to their connection. While it runs
+the topic shows **Encoding progress** with a progress bar, which refreshes on its own.
+
+The status is stored in the topic's **JSON Metadata** under `ffmpeg`:
+
+- `"state": "coding"` with a `percentage` while converting;
+- `"state": "finished"` with the `path` of the HLS playlist;
+- `"state": "error"` with a `message` when it failed (for example, a file that `ffmpeg` cannot read).
+
+<Aside type="caution">
+By default learners get **no video** until processing has finished: the player only receives the HLS
+stream. If you need the topic available right away, ask an administrator to enable
+`non_strict_value`, which serves the original file until the stream is ready.
+</Aside>
+
+Administrators control processing in **Configuration → Settings**, group `ulams_video`:
+
+| Setting | Effect |
+|---|---|
+| `enable` | Turns HLS conversion on or off. When off, learners get the original file. |
+| `non_strict_value` | Serve the original file until conversion has finished. |
+| `bitrates` | List of renditions, each with `kiloBitrate` (quality) and an optional `scale` such as `640:480` (resolution; a wrong ratio distorts the picture). Defaults: 250, 500 and 1000 kbit/s. |
+
+Operators set the defaults with the environment variables `VIDEO_PROCESSING_ENABLE`,
+`VIDEO_NON_STRICT_VALUE` and `VIDEO_DISK` (see [Environment variables](/reference/environment-variables/)).
+Conversion runs on the long-job queue, so a queue worker must be running for it to start.
+
+### Chapters
+
+The reference front shows chapters for a video when the topic's **JSON Metadata** contains a
+`chapters` list, each with a start `time` in seconds and a `title`:
+
+```json
+{
+  "ffmpeg": { "state": "finished", "path": "course/1/topic/7/video/hls.m3u8" },
+  "chapters": [
+    { "time": 0, "title": "Why grind size matters" },
+    { "time": 95, "title": "Dialling in espresso" }
+  ]
+}
+```
+
+Keep the existing `ffmpeg` entry when you edit the JSON; it is how the player finds the stream.
+
+### Completion
+
+In the reference front a video topic completes when the video plays to the end, or with
+**Mark as complete**.
+
+## Embed a YouTube or Vimeo video (OEmbed)
+
+<Steps>
+
+1. Add a topic and choose **OEmbed**.
+2. Paste the page URL of the video, for example `https://www.youtube.com/watch?v=...` or
+   `https://vimeo.com/...`.
+3. Click **Preview** to check the embed, then save.
+
+</Steps>
+
+The admin preview understands links from YouTube (including Shorts and `youtu.be`), Vimeo, SoundCloud,
+Flickr, Reddit, Twitter and GIPHY. The reference front plays YouTube links through
+`youtube-nocookie.com` and Vimeo links through the Vimeo player; any other URL is shown as a link card.
+
+An embed completes when the learner reaches the end of the page, or with **Mark as complete**; ulams
+cannot see how much of an external video was watched.
+
+<Aside>
+The `youtube` package is not used by video topics. It creates YouTube live streams for webinars and is
+configured by an administrator under **Settings → Services** (YouTube API key, client ID and secret).
+</Aside>

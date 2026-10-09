@@ -2,34 +2,147 @@
   "$schema": "https://turbo.build/schema.json",
   "ui": "stream",
   "envMode": "loose",
-  "globalDependencies": [".nvmrc"],
+  "globalDependencies": [
+    ".nvmrc"
+  ],
   "tasks": {
     "build": {
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "env": ["VITE_*", "REACT_APP_*", "SENTRY_*", "BASE_PATH", "UMI_ENV"],
-      "outputs": ["dist/**"]
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*"
+      ],
+      "env": [
+        "VITE_*",
+        "REACT_APP_*",
+        "SENTRY_*",
+        "BASE_PATH",
+        "UMI_ENV"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
     },
     "admin#build": {
-      "inputs": ["$TURBO_DEFAULT$", ".env*", "$TURBO_ROOT$/front/src/lib/**"],
-      "env": ["REACT_APP_*", "SENTRY_*", "BASE_PATH", "UMI_ENV"],
-      "outputs": ["dist/**"]
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*",
+        "$TURBO_ROOT$/front/src/lib/**"
+      ],
+      "env": [
+        "REACT_APP_*",
+        "SENTRY_*",
+        "BASE_PATH",
+        "UMI_ENV"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "@ulams/docs#build": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/docs/**",
+        "$TURBO_ROOT$/*.md",
+        "$TURBO_ROOT$/api/packages/**",
+        "$TURBO_ROOT$/api/routes/**",
+        "$TURBO_ROOT$/api/app/**",
+        "$TURBO_ROOT$/api/config/**",
+        "$TURBO_ROOT$/api/docs/**",
+        "$TURBO_ROOT$/api/README.md",
+        "$TURBO_ROOT$/api/h5p/README.md",
+        "$TURBO_ROOT$/api/pdf/README.md",
+        "$TURBO_ROOT$/admin/README.md",
+        "$TURBO_ROOT$/admin/docs/adr/**",
+        "$TURBO_ROOT$/admin/config/routes.ts",
+        "$TURBO_ROOT$/front/README.md",
+        "$TURBO_ROOT$/front/docs/adr/**",
+        "$TURBO_ROOT$/front/web/README.md",
+        "$TURBO_ROOT$/front/web/src/pages/**",
+        "$TURBO_ROOT$/front/ui/src/**"
+      ],
+      "env": [
+        "DOCS_SITE",
+        "DOCS_BASE",
+        "DOCS_VALIDATE_LINKS"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
     },
     "typecheck": {
       "outputs": []
     },
     "admin#typecheck": {
-      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/front/src/lib/**"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/front/src/lib/**"
+      ],
+      "outputs": []
+    },
+    "@ulams/docs#typecheck": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/docs/**",
+        "$TURBO_ROOT$/*.md",
+        "$TURBO_ROOT$/api/packages/**",
+        "$TURBO_ROOT$/api/routes/**",
+        "$TURBO_ROOT$/api/app/**",
+        "$TURBO_ROOT$/api/config/**",
+        "$TURBO_ROOT$/api/docs/**",
+        "$TURBO_ROOT$/api/README.md",
+        "$TURBO_ROOT$/api/h5p/README.md",
+        "$TURBO_ROOT$/api/pdf/README.md",
+        "$TURBO_ROOT$/admin/README.md",
+        "$TURBO_ROOT$/admin/docs/adr/**",
+        "$TURBO_ROOT$/admin/config/routes.ts",
+        "$TURBO_ROOT$/front/README.md",
+        "$TURBO_ROOT$/front/docs/adr/**",
+        "$TURBO_ROOT$/front/web/README.md",
+        "$TURBO_ROOT$/front/web/src/pages/**",
+        "$TURBO_ROOT$/front/ui/src/**"
+      ],
+      "outputs": []
+    },
+    "@ulams/docs#lint": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/docs/**",
+        "$TURBO_ROOT$/*.md",
+        "$TURBO_ROOT$/api/packages/**",
+        "$TURBO_ROOT$/api/routes/**",
+        "$TURBO_ROOT$/api/app/**",
+        "$TURBO_ROOT$/api/config/**",
+        "$TURBO_ROOT$/api/docs/**",
+        "$TURBO_ROOT$/api/README.md",
+        "$TURBO_ROOT$/api/h5p/README.md",
+        "$TURBO_ROOT$/api/pdf/README.md",
+        "$TURBO_ROOT$/admin/README.md",
+        "$TURBO_ROOT$/admin/docs/adr/**",
+        "$TURBO_ROOT$/admin/config/routes.ts",
+        "$TURBO_ROOT$/front/README.md",
+        "$TURBO_ROOT$/front/docs/adr/**",
+        "$TURBO_ROOT$/front/web/README.md",
+        "$TURBO_ROOT$/front/web/src/pages/**",
+        "$TURBO_ROOT$/front/ui/src/**"
+      ],
       "outputs": []
     },
     "lint": {
       "outputs": []
     },
     "test": {
-      "outputs": ["coverage/**"]
+      "outputs": [
+        "coverage/**"
+      ]
     },
     "admin#test": {
-      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/front/src/lib/**"],
-      "outputs": ["coverage/**"]
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/front/src/lib/**"
+      ],
+      "outputs": [
+        "coverage/**"
+      ]
     },
     "api-h5p#test": {
       "outputs": []

@@ -1,0 +1,175 @@
+---
+title: GIFT syntax reference
+description: The GIFT question syntax that ulams quizzes understand, with an example, grading rules and pitfalls for each of the eight supported question types.
+sidebar:
+  order: 23
+modules:
+  - topic-type-gift
+topicTypes:
+  - GiftQuiz
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+ulams stores every quiz question as one [GIFT](https://docs.moodle.org/en/GIFT_format) string. You
+need this page when you write questions in a spreadsheet for **Import questions** (column
+**Question**), or when you want to know exactly how a question is graded. The question editor in the
+admin panel writes valid GIFT for you.
+
+<Aside>
+ulams supports a subset of Moodle's GIFT. One GIFT string is one question: there is no blank-line
+separation of several questions, no `$CATEGORY:`, and no question-level weights. The points of a
+question are a separate **Score** field (column **Score** in the import file).
+</Aside>
+
+## Building blocks
+
+| Syntax | Meaning |
+|---|---|
+| `::Title::` | Optional question title at the start. It is removed from the text learners see. |
+| `{ ... }` | The answer block. Its contents decide the question type. |
+| `=` | A correct answer (or, in matching, the start of a pair). |
+| `~` | A wrong answer (or, with a percentage, a weighted answer). |
+| `#` | Feedback for the answer it follows, or the start of a numerical answer. |
+| `%50%` | A percentage of the question's score for that answer. |
+| `->` | Separates the two sides of a matching pair. |
+| `// comment` | A comment line, removed before the question is shown or graded. |
+| `\~ \= \# \{ \} \:` | A literal `~`, `=`, `#`, `{`, `}` or `:` in question or answer text. |
+
+**Missing word.** If text follows the answer block, learners see the block replaced by a blank:
+`The grinder sits {=before ~after} the scale.` is shown as "The grinder sits _____ the scale."
+
+## How the type is detected
+
+The type comes from the answer block, checked in this order; the first rule that matches wins:
+
+1. No `{` and `}` at all → **Description**.
+2. Empty block `{}` → **Essay**.
+3. Block starts with `#` → **Numerical**.
+4. Block contains `~%` → **Multiple choice with multiple right answers**.
+5. Block contains both `~` and `=` → **Multiple choice**.
+6. Block contains `=` and `->` → **Matching**.
+7. Block contains `=` and no `~` → **Short answers**.
+8. Block contains `T`, `F`, `TRUE` or `FALSE` → **True/False**.
+
+Anything else is rejected as an unknown type.
+
+## Multiple choice (one right answer)
+
+```text
+::Grind size::Which grind suits a French press?{
+  =Coarse#Right: coarse grounds stay behind the mesh.
+  ~Fine#Too fine: it clogs the filter and over-extracts.
+  ~Extra fine#That is for Turkish coffee.
+}
+```
+
+- Exactly one answer starts with `=`; the others start with `~`.
+- Full score for the correct answer, 0 for any other. Feedback after `#` is returned with the answer.
+
+## Multiple choice with multiple right answers
+
+```text
+Which of these are brewing methods?{
+  ~%50%Pour-over
+  ~%50%AeroPress
+  ~%-50%Roasting
+  ~%-50%Grinding
+}
+```
+
+- Every answer starts with `~%<percent>%`. Positive percentages add up to the full score (normally
+  100 in total); negative ones subtract.
+- The learner's score is the question score times the sum of the percentages of the answers they
+  ticked, capped at the full score. The result is not floored at zero, so negative percentages can give
+  a negative score.
+- An answer written with `=` counts as 100 %.
+
+## True/False
+
+```text
+Espresso is brewed under pressure.{T}
+```
+
+```text
+Lighter roasts always contain less caffeine.{FALSE#It depends on how you measure: by weight or by volume.}
+```
+
+- Use `T` or `TRUE` for true, `F` or `FALSE` for false, in **capital letters**. Lowercase `{true}` is
+  not recognised.
+- Feedback can follow `#`.
+
+## Short answers
+
+```text
+What is the name of the crema-forming coffee drink made under pressure?{
+  =espresso#Correct.
+  =Espresso
+  =%50%ristretto#A ristretto is a short espresso: half the points.
+}
+```
+
+- One or more accepted answers, each starting with `=` (no `~`).
+- The learner's answer must **match one accepted answer exactly**, including capital letters. List
+  each spelling you accept.
+- `=%50%answer` gives that percentage of the score for that answer.
+- Do not use `->` in an answer; it would make the question a matching question.
+
+## Matching
+
+```text
+Match each drink with its base:{
+  =Latte -> Espresso and steamed milk
+  =Americano -> Espresso and hot water
+  =Cold brew -> Coffee steeped in cold water
+}
+```
+
+- Each pair starts with `=` and uses `->` between the item and its match.
+- Both columns are shown shuffled.
+- All-or-nothing: the full score only if every pair is right, otherwise 0.
+
+## Numerical
+
+```text
+How many grams of coffee for 250 ml of water at a 1\:16 ratio?{#15.6:0.5}
+```
+
+| Form | Accepted answers |
+|---|---|
+| `{#15}` | exactly 15 |
+| `{#15.6:0.5}` | 15.6 plus or minus 0.5 (15.1 to 16.1) |
+| `{#14..17}` | anything from 14 to 17 |
+
+- Full score inside the range, otherwise 0.
+- Only one numerical answer per question. Moodle's form with several weighted numerical answers
+  (`{# =%100%15 =%50%14}`) is not supported.
+- The editor in the admin panel always writes the `value:margin` form.
+
+## Essay
+
+```text
+Describe how you would adjust your espresso if it tastes sour.{}
+```
+
+- An empty answer block. The learner writes free text.
+- Not graded automatically: the attempt gets 0 for it until a tutor enters a score in
+  [Quiz Reports](/creators/quizzes/#quiz-reports).
+
+## Description
+
+```text
+The next three questions are about milk texturing.
+```
+
+- No answer block. Shown as text between questions, with no answer and no score.
+
+## Pitfalls
+
+- **Double slashes.** `//` starts a comment up to the end of the line, wherever it appears. A URL such
+  as `https://example.com` followed by a line break loses everything after `https:`. Keep URLs at the end
+  of a single-line question, or avoid them.
+- **Special characters.** Escape `~ = # { } :` with a backslash when they are part of the text, for
+  example `Ratio 1\:16`. The admin editor does this for you.
+- **Formats.** Moodle's `[html]`, `[markdown]` and `[plain]` markers are not interpreted by the grader
+  and may show up as text. Write plain text.

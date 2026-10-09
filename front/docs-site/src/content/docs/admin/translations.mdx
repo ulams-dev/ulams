@@ -1,0 +1,69 @@
+---
+title: Translations
+description: Override the API's and frontends' texts per language with database translations, and change the labels of the admin panel itself.
+sidebar:
+  order: 10
+modules:
+  - translations
+adminRoutes:
+  - /configuration/translations
+  - /configuration/admin_translations
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+The [translations](/reference/packages/translations/) package stores translation lines in the
+tenant database. A line has a **group**, a **key** and a **text** per language, and a
+**public** flag. Two screens under **Configuration** edit them; both need the
+`translation_list` permission, the `ulams/translations` package, and can be hidden with the
+`hideInMenu-ConfigurationTranslations` and `hideInMenu-ConfigurationAdminTranslations`
+settings. Creating, updating and deleting lines need `translation_create`,
+`translation_update` and `translation_delete`.
+
+## Translations (API and frontends)
+
+<Screenshot name="admin-configuration-translations" alt="The translations list with group and key filters" />
+
+`/configuration/translations` lists all database lines with their group, key and texts, and
+filters them by group and key. **New** and **Edit** open a form with:
+
+- **Group** and **Key**: for API messages, the Laravel translation file and key. For example
+  group `validation`, key `required` overrides `validation.required`.
+- **Public**: the line is returned without signing in by `GET /api/translations`, so a
+  frontend can load its labels from the API.
+- **Text**: a JSON object with one entry per language, for example
+  `{"en": "Required", "pl": "Wymagane"}`.
+
+How the lines are used:
+
+- **API messages**: when the API translates a key, a database line with the same group and
+  key replaces the value from the package's language files. The language comes from the
+  request's locale header (`en-US` uses the `en` files).
+- **Frontends**: public lines are available at `GET /api/translations` for any frontend that
+  wants editable labels.
+
+## Panel translations
+
+<Screenshot name="admin-configuration-admin_translations" alt="The panel translations list" />
+
+`/configuration/admin_translations` changes the labels of the admin panel. The list shows every
+message of the panel's built-in language files (language, key, value), searchable by language,
+key and text. **Edit** on a key opens the values in all languages; saving stores them as a
+database line in the `Admin` group with that key.
+
+<Steps>
+
+1. Search for the label, for example key `menu.Users` or the text `Users`.
+2. Click **Edit**, change the text in the languages you need and save.
+3. The change applies immediately in your browser. Other administrators see it after they
+   sign in again or reload the panel, which loads the `Admin` group on start.
+
+</Steps>
+
+<Aside>
+The panel ships language files for English, Polish and French (plus small partial files for
+a few other languages); the language switcher in the top bar chooses among them. Panel translations
+override those messages per tenant, so different tenants can label the same screen
+differently.
+</Aside>

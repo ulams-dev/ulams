@@ -1,0 +1,307 @@
+---
+title: Adding an endpoint
+description: Add an API endpoint the ulams way, with a package route, Swagger interface, FormRequest and policy, resource, service, permission seeder and tests.
+sidebar:
+  order: 80
+modules:
+  - bookmarks_notes
+---
+
+import { Aside, FileTree, Steps } from "@astrojs/starlight/components";
+
+The rules come from [`AGENTS.md`](https://github.com/ulams-dev/ulams/blob/main/AGENTS.md) and
+[`CLAUDE.md`](https://github.com/ulams-dev/ulams/blob/main/CLAUDE.md): domain code lives in a
+package under `api/packages/<name>` (namespace `Ulams\`), LMS entities change only through package
+repositories and services, and every new endpoint has a policy, Swagger annotations and a tenant
+isolation test. This page walks through the small `bookmarks_notes` package as the template. For a
+brand-new package, start with [A new package](/extending/new-package/).
+
+<FileTree>
+- api/packages/bookmarks_notes/
+  - database/
+    - factories/BookmarkFactory.php
+    - migrations/
+    - seeders/BookmarkPermissionSeeder.php
+  - src/
+    - Dtos/
+    - Enums/BookmarkPermissionEnum.php
+    - Http/
+      - Controllers/
+        - BookmarkController.php
+        - Swagger/BookmarkControllerSwagger.php
+      - Requests/CreateBookmarkRequest.php
+      - Resources/BookmarkResource.php
+    - Models/Bookmark.php
+    - Policies/BookmarkPolicy.php
+    - Providers/AuthServiceProvider.php
+    - Repositories/
+      - Contracts/BookmarkRepositoryContract.php
+      - BookmarkRepository.php
+    - Services/
+      - Contracts/BookmarkServiceContract.php
+      - BookmarkService.php
+    - routes.php
+    - UlamsBookmarksServiceProvider.php
+  - tests/
+    - Api/BookmarkCreateApiTest.php
+    - TestCase.php
+</FileTree>
+
+<Steps>
+
+1. **Route in the package.** `src/routes.php`, loaded by the package's service provider
+   (`$this->loadRoutesFrom(__DIR__ . '/routes.php')`). Admin endpoints go under `api/admin/...`.
+
+   ```php
+   Route::prefix('api/bookmarks')
+       ->middleware(['auth:api'])
+       ->group(function (): void {
+           Route::post(null, [BookmarkController::class, 'create']);
+           Route::patch('{id}', [BookmarkController::class, 'update']);
+           Route::delete('{id}', [BookmarkController::class, 'delete']);
+           Route::get(null, [BookmarkController::class, 'findAll']);
+       });
+   ```
+
+2. **Permission enum and seeder.** Permissions are strings in an enum extending
+   `Ulams\Core\Enums\BasicEnum`, with `-own` variants for learners:
+
+   ```php
+   class BookmarkPermissionEnum extends BasicEnum
+   {
+       public const CREATE_BOOKMARK = 'bookmark_create';
+       public const CREATE_BOOKMARK_OWN = 'bookmark_create-own';
+       // ...
+   }
+   ```
+
+   The package seeder creates them for the `api` guard and gives them to roles:
+
+   ```php
+   foreach (BookmarkPermissionEnum::asArray() as $const => $value) {
+       Permission::findOrCreate($value, 'api');
+   }
+   $admin->givePermissionTo(BookmarkPermissionEnum::adminPermissions());
+   $student->givePermissionTo(BookmarkPermissionEnum::studentPermissions());
+   ```
+
+   Call the seeder from `api/database/seeds/PermissionsSeeder.php`, which `init.sh` runs on every
+   container start and CI runs before PHPUnit. If the admin panel needs the permission, add it to
+   `admin/src/consts/permissions.ts` too (see [Adding an admin screen](/developers/adding-an-admin-screen/)).
+   All permissions: [Permissions](/reference/permissions/).
+
+3. **Policy.** Checks the permission and, for `-own` actions, ownership. Registered in the
+   package's `Providers/AuthServiceProvider.php` (`protected $policies = [BookmarkPolicy::class]`).
+
+   ```php
+   public function updateOwn(User $user, Bookmark $bookmark): bool
+   {
+       return $user->can(BookmarkPermissionEnum::UPDATE_BOOKMARK_OWN) && $this->isOwner($bookmark);
+   }
+   ```
+
+4. **FormRequest with authorisation.** `authorize()` asks the gate; `rules()` validates; a `toDto()`
+   method hands the controller a typed DTO. The `@OA\Schema` docblock documents the body.
+
+   ```php
+   /**
+    * @OA\Schema(
+    *      schema="BookmarkCreateRequest",
+    *      required={"bookmarkable_id", "bookmarkable_type"},
+    *      @OA\Property(property="value", type="string"),
+    *      ...
+    * )
+    */
+   class CreateBookmarkRequest extends BookmarkRequest
+   {
+       public function authorize(): bool
+       {
+           return Gate::allows('createOwn', Bookmark::class);
+       }
+
+       public function rules(): array
+       {
+           return [
+               'value' => ['nullable', 'string'],
+               'bookmarkable_id' => ['required', 'integer'],
+               'bookmarkable_type' => ['required', 'string'],
+           ];
+       }
+   }
+   ```
+
+   The DTO takes the user from `auth()->id()`, never from the payload (a test checks that a
+   `user_id` in the body is ignored).
+
+5. **Repository and service behind contracts.** The controller depends on
+   `BookmarkServiceContract`; the service on `BookmarkRepositoryContract` (which extends
+   `Ulams\Core\Repositories\Contracts\BaseRepositoryContract`). The provider binds them as
+   singletons:
+
+   ```php
+   public const REPOSITORIES = [BookmarkRepositoryContract::class => BookmarkRepository::class];
+   public const SERVICES = [BookmarkServiceContract::class => BookmarkService::class];
+   public $singletons = self::SERVICES + self::REPOSITORIES;
+   ```
+
+   Other packages change bookmarks through the service contract, never by writing the table.
+
+6. **Controller with a Swagger interface.** The controller extends
+   `Ulams\Core\Http\Controllers\UlamsBaseController` and implements an interface that holds the
+   `@OA\` operation docblocks:
+
+   ```php
+   class BookmarkController extends UlamsBaseController implements BookmarkControllerSwagger
+   {
+       public function create(CreateBookmarkRequest $request): JsonResponse
+       {
+           $bookmark = $this->bookmarkService->create($request->toDto());
+
+           return $this->sendResponseForResource(BookmarkResource::make($bookmark), 'Bookmark created successfully.');
+       }
+   }
+   ```
+
+   ```php
+   interface BookmarkControllerSwagger
+   {
+       /**
+        * @OA\Post(
+        *      path="/api/bookmarks",
+        *      tags={"Bookmarks"},
+        *      security={{"passport": {}}},
+        *      @OA\RequestBody(required=true, @OA\MediaType(mediaType="application/json",
+        *          @OA\Schema(ref="#/components/schemas/BookmarkCreateRequest"))),
+        *      @OA\Response(response=201, description="Successfull operation", ...)
+        * )
+        */
+       public function create(CreateBookmarkRequest $request): JsonResponse;
+   }
+   ```
+
+7. **Resource.** `BookmarkResource` shapes the JSON and carries the `@OA\Schema` of the response.
+   Responses use the `{ success, data, message }` envelope from `UlamsBaseController`.
+
+8. **Tests.** See the next section.
+
+</Steps>
+
+## Wiring a new package
+
+When the endpoint lives in a new package, register it in five places:
+
+| File | Entry |
+|---|---|
+| `api/composer.json` | `autoload.psr-4` for `src`, `database/factories` and `database/seeders` |
+| `api/config/app.php` | the service provider (providers are registered explicitly) |
+| `api/config/l5-swagger.php` | `base_path('packages/<name>/src')` in `annotations`, or the endpoints will be missing from the OpenAPI document |
+| `api/phpunit.xml` | a `<testsuite>` for `packages/<name>/tests` |
+| `.github/workflows/ci.yml` | the suite name in exactly one line of `PHPUNIT_SHARDS` (CI fails otherwise) |
+
+Then regenerate the OpenAPI document and the SDK types: [OpenAPI and the SDK](/developers/openapi-and-sdk/).
+
+## Tests
+
+Package tests extend the package `TestCase` (Testbench, `DatabaseTransactions`, the providers the
+package needs) and seed the package permissions in `setUp()`. Cover the happy path, validation,
+forbidden (authenticated without the permission) and unauthenticated:
+
+```php
+class BookmarkCreateApiTest extends TestCase
+{
+    use BookmarkTesting, CreatesUsers;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(BookmarkPermissionSeeder::class);
+    }
+
+    public function testCreateBookmark(): void
+    {
+        $user = $this->makeStudent();
+        $payload = $this->bookmarkPayload();
+
+        $this->actingAs($user, 'api')
+            ->postJson('/api/bookmarks', $payload)
+            ->assertCreated();
+
+        $this->assertDatabaseHas($this->getTable(Bookmark::class), [
+            'bookmarkable_id' => $payload['bookmarkable_id'],
+            'user_id' => $user->getKey(),
+        ]);
+    }
+
+    public function testCreateBookmarkForbidden(): void
+    {
+        $this->actingAs($this->makeUser(), 'api')
+            ->postJson('/api/bookmarks', $this->bookmarkPayload())
+            ->assertForbidden();
+    }
+
+    public function testCreateBookmarkUnauthorized(): void
+    {
+        $this->postJson('/api/bookmarks', $this->bookmarkPayload())
+            ->assertUnauthorized();
+    }
+}
+```
+
+`CreatesUsers` (from `Ulams\Core\Tests`) provides `makeStudent()`, `makeInstructor()` and `makeAdmin()`.
+
+### Tenant isolation test
+
+Each tenant has its own database, `APP_KEY` and Passport key pair, so rows cannot leak between
+tenants through the database. What can cross is what a client carries from one host to another:
+tokens, signed hints, one-time codes, URLs. The test should show that such a value issued by
+tenant A is rejected by tenant B. The pattern is in
+[`api/packages/lti/tests/Feature/TenantIsolationTest.php`](https://github.com/ulams-dev/ulams/blob/main/api/packages/lti/tests/Feature/TenantIsolationTest.php):
+
+```php
+public function testAgsAccessTokensOfAnotherTenantAreRejected(): void
+{
+    // ... obtain a token as tenant A
+    $this->becomeAnotherTenant();
+
+    $this->withHeaders(['Authorization' => 'Bearer ' . $token])
+        ->getJson("/api/lti/platform/ags/{$course->getKey()}/lineitems")
+        ->assertUnauthorized();
+}
+
+/** Same process, other tenant: a different APP_KEY and (unless kept) a different key set. */
+private function becomeAnotherTenant(bool $keepKeys = false): void
+{
+    $key = 'base64:' . base64_encode(random_bytes(32));
+    config(['app.key' => $key]);
+    $this->app->forgetInstance('encrypter');
+    \Illuminate\Support\Facades\Crypt::clearResolvedInstance('encrypter');
+    // ...
+}
+```
+
+The opt-in end-to-end variant, against two real tenants, is
+`api/packages/tenancy/tests/Integration/TenantIsolationTest.php` (see [Testing](/developers/testing/#tenant-isolation-tests)).
+
+<Aside type="note">
+`bookmarks_notes` predates the isolation rule and has no isolation test of its own. The spec
+requires one for every new endpoint; the tracker item to cover all existing endpoints is open.
+</Aside>
+
+Run the suite:
+
+```bash
+docker compose -f api/docker-compose.yml exec \
+  -e DB_HOST=postgres -e DB_DATABASE=test -e DB_USERNAME=default -e DB_PASSWORD=secret \
+  api ./vendor/bin/phpunit --testsuite bookmarks_notes
+```
+
+## Checklist
+
+- Route in the package, under `auth:api` unless public.
+- Permission constants, seeder, call from `PermissionsSeeder`.
+- Policy registered; FormRequest `authorize()` uses it.
+- Service and repository contracts bound in the provider; no direct table writes from other packages.
+- Swagger interface on the controller, schemas on the request and resource; package path in `l5-swagger.php`.
+- Tests: success, validation, forbidden, unauthenticated, tenant isolation.
+- If an LLM is involved: mocked in tests, model name only in config, model/tokens/cost logged.
+- Regenerate `front/sdk/src/generated/openapi.ts` if a frontend uses the endpoint.

@@ -1,0 +1,81 @@
+name: Bug report
+description: Something in ulams does not work as expected.
+title: "fix: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. **Security problems must not be reported here**: use
+        [private vulnerability reporting](https://github.com/ulams-dev/ulams/security/advisories/new)
+        instead. Do not paste secrets, tokens or personal data of real users.
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Where does the problem happen?
+      options:
+        - API (api/, api/packages)
+        - Admin panel (admin/)
+        - Learner front (front/)
+        - Reference frontend (front/web)
+        - SDK or UI library (front/sdk, front/ui)
+        - H5P service (api/h5p)
+        - PDF service (api/pdf)
+        - Container images or deployment
+        - Documentation site (front/docs-site)
+        - Other or not sure
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: A clear description of the bug, with error messages or screenshots.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Exact steps, the tenant setup (single or multi-tenant) and the user role involved.
+      placeholder: |
+        1. Sign in to the admin as ...
+        2. Open ...
+        3. Click ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Commit SHA, branch, or image name and tag (for example ghcr.io/ulams-dev/api:sha-abc1234).
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - Local development stack (corepack yarn dev:api)
+        - Self-hosted with the published images
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Relevant log output (API storage/logs, browser console, container logs). Rendered as code.
+      render: shell
+  - type: textarea
+    id: context
+    attributes:
+      label: Anything else
+      description: Browser and OS for UI bugs, assistive technology for accessibility bugs, related issues.

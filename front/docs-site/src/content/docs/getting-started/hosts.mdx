@@ -1,0 +1,81 @@
+---
+title: Local hosts and ports
+description: Every host and port of the local ulams stack - Caddy routes for tenants, API, H5P, content origins and storage, plus the dev servers and tools.
+sidebar:
+  order: 4
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+The local stack is reached through Caddy on port 80, which routes by host name, plus a few dev
+servers and tools on their own ports. Sources: `api/docker/conf/Caddyfile`,
+`api/docker-compose.yml` and the `package.json` files of the apps. In the tables, `<slug>` is a
+tenant slug such as `coffee`.
+
+`*.localhost` names resolve to `127.0.0.1` in current browsers. Command-line tools differ; recent
+`curl` versions resolve them too.
+
+## Through Caddy (port 80)
+
+| Host | Served by | What |
+|---|---|---|
+| `http://api.localhost` | `api` (php-fpm) | Platform API; Swagger UI at `/api/documentation` |
+| `http://<slug>.localhost` | `api` (php-fpm) | Tenant API, e.g. `http://coffee.localhost` |
+| `http://<slug>.localhost/h5p/...` and `http://api.localhost/h5p/...` | `h5p` service | H5P player, editor and content API of that tenant |
+| `http://<slug>.app.localhost` | host port 4321 | Learner site: the reference frontend `front/web` |
+| `http://<slug>.admin.localhost` | host port 8000 | Admin panel of the tenant |
+| `http://<slug>.content.localhost` | `api` through `/api/content` | Tenant content origin: SCORM, cmi5, Adapt and LiaScript package files under a strict CSP, no cookies |
+| `http://content.localhost` | `api` through `/api/content` | Platform content origin |
+| `http://storage.localhost` | `minio` (S3 API) | Uploaded files, e.g. `http://storage.localhost/ulams-coffee/...`; SVGs get `script-src 'none'` |
+| `http://minio.localhost` | `minio` (console) | MinIO console; user `admin`, password from `MINIO_ROOT_PASSWORD` (`minio_secretpassword` by default) |
+| `http://ws.localhost` | `soketi` (6001) | WebSockets (the broadcast driver is `log` by default, so nothing uses it yet) |
+| `http://metrics.localhost` | `soketi` (9601) | Soketi metrics |
+
+The `*.app.localhost` and `*.admin.localhost` blocks proxy to `host.docker.internal`, so the
+reference frontend (`yarn dev:web`) and the admin (`yarn dev:admin` or `yarn dev`) must run on the
+host. Caddy also publishes port 443, but every site is configured for plain HTTP.
+
+<Aside type="note">
+`*.app.localhost` matches `coffee.app.localhost` but not `app.localhost` itself; in the committed
+Caddyfile `app.localhost` falls through to the API block. Open the platform landing of the
+reference frontend directly on port 4321 instead (see below).
+</Aside>
+
+## Dev servers on the host
+
+| URL | Started by | What |
+|---|---|---|
+| http://localhost:4321, http://app.localhost:4321 | `yarn dev:web` | Reference frontend on a platform host: the ulams product landing (`ULAMS_PLATFORM_HOSTS`) |
+| `http://<slug>.app.localhost:4321` | `yarn dev:web` | Reference frontend for a tenant, bypassing Caddy |
+| http://localhost:3000 | `yarn dev` or `yarn dev:front` | Legacy React learner app on the platform API |
+| `http://<slug>.app.localhost:3000` | `yarn dev` or `yarn dev:front` | Legacy React learner app for a tenant |
+| http://localhost:8000 | `yarn dev` or `yarn dev:admin` | Admin on the platform; `admin@ulams.app` / `secret` |
+| http://localhost:4322 | `yarn dev:docs` | This documentation site |
+
+The production image of the reference frontend (`front/web/Dockerfile`, `yarn workspace
+@ulams/web start`) also listens on port 4321.
+
+## Tools
+
+| URL | Service | Notes |
+|---|---|---|
+| http://localhost:8025 | MailHog | Web UI for every e-mail the API sends (SMTP on `mailhog:1025` inside the network) |
+| http://localhost:8078 | Adminer | Database UI; server `postgres`, user `default`, password `secret`, database `default` (tenants: `ulams_<slug>`) |
+
+## Internal only
+
+These services are on the `ulams` Docker network and publish no port to the host:
+
+| Service | Address inside the network | What |
+|---|---|---|
+| `api` | `api:9000` (FastCGI) | Laravel API, reached through Caddy |
+| `h5p` | `h5p:8080` | H5P service, reached through Caddy at `/h5p` |
+| `pdf` | `pdf:3000` | PDF renderer; only the API calls it, with an internal token |
+| `postgres` | `postgres:5432` | PostgreSQL 12; one database per tenant |
+| `redis` | `redis:6379` | Valkey (Redis protocol), password `ulams` |
+| `minio` | `minio:9000`, `minio:9001` | S3 API and console, published through Caddy as above |
+| `mjml` | not on the `ulams` network | E-mail template renderer; not wired to the API yet |
+| `clamav` | `clamav` | Optional virus scanner, compose profile `av` |
+
+To change the host rules (for example for a real domain), see
+[environment variables](/reference/environment-variables/) and [tenancy](/developers/tenancy/).

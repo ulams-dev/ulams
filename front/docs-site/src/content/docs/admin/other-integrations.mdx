@@ -1,0 +1,100 @@
+---
+title: Other integrations
+description: Connect ulams to MailerLite mailing groups and to Mattermost chat channels; both are configured through package settings and have no screens of their own.
+sidebar:
+  order: 13
+modules:
+  - mailerlite
+  - mattermost
+needsReview: "Both integrations register their event listeners at application boot only when package_status is enabled; confirm that changing package_status in the panel takes effect on the next request in the deployed setup (PHP-FPM, queue workers)."
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+Two integrations are installed with the API but have no admin screens. They react to
+platform events and are configured on their tabs in [Settings](/admin/settings/), through the
+package configuration API (`POST /api/admin/config`) or in the config files. Both are
+**disabled by default**.
+
+<Aside>
+For LTI 1.3 tools and platforms see [LTI 1.3 integrations](/admin/lti/). For payment gateways
+see [Sales](/admin/sales/).
+</Aside>
+
+## MailerLite
+
+The [mailerlite](/reference/packages/mailerlite/) package keeps
+[MailerLite](https://www.mailerlite.com/) subscriber groups in sync with what users do:
+
+| Event | Action |
+|---|---|
+| `AccountConfirmed` (the user verified the account) | add to the registered users group, only if the user's newsletter attribute is true |
+| `ProductBought` | add to the paid orders group |
+| `AbandonedCartEvent` | add to the abandoned cart group |
+| `OrderCreated` | remove from the abandoned cart group |
+| `AccountBlocked` | delete the subscriber |
+
+Groups are found by name and created in MailerLite if they do not exist.
+
+### Configuring MailerLite
+
+On the **Package Mailer Lite** tab of [Settings](/admin/settings/) (config file
+`ulams_mailer_lite`):
+
+| Key | Default | Meaning |
+|---|---|---|
+| `package_status` | `disabled` | `enabled` turns the listeners on |
+| `api_key` | none | the MailerLite API key |
+| `newsletter_field_key` | `newsletter` | the user attribute that holds newsletter consent, for example a boolean [user field](/admin/users/#user-fields) |
+| `group_registered_group` | `Registered users` | group for confirmed accounts |
+| `group_order_paid` | `Users with paid orders` | group for buyers |
+| `group_left_cart` | `Left cart` | group for abandoned carts |
+
+<Steps>
+
+1. Create a boolean user field named `newsletter` (or set `newsletter_field_key` to an
+   existing field) so that registration can record consent.
+2. Enter the `api_key`.
+3. Set `package_status` to `enabled`.
+
+</Steps>
+
+## Mattermost
+
+The [mattermost](/reference/packages/mattermost/) package creates
+[Mattermost](https://mattermost.com/) accounts for users and adds them to a channel per
+course and per webinar:
+
+| Event | Action |
+|---|---|
+| `AccountConfirmed` | create the user in Mattermost |
+| `AccountDeleted` | remove the user |
+| `AccountBlocked` | block the user's Mattermost account |
+| `CourseAssigned` / `CourseUnassigned` | add the learner to the course channel as a member, or remove them |
+| `CourseTutorAssigned` / `CourseTutorUnassigned` | add the tutor to the course channel as a channel admin, or remove them |
+| `WebinarUserAssigned` / `WebinarUserUnassigned` | add the participant to the webinar channel, or remove them |
+| `WebinarTrainerAssigned` / `WebinarTrainerUnassigned` | add the trainer to the webinar channel as a channel admin, or remove them |
+
+Signed-in users can call `GET /api/mattermost/me`, `GET /api/mattermost/reset_password` and
+`GET /api/mattermost/generate_credentials` to get or reset their Mattermost credentials, for
+example from a "Open chat" button in a learner app.
+
+### Configuring Mattermost
+
+On the **Package Mattermost** tab of [Settings](/admin/settings/) (config file `mattermost`):
+
+| Key | Meaning |
+|---|---|
+| `package_status` | `enabled` turns the listeners on (default `disabled`) |
+| `servers.default.host` | the Mattermost server host |
+| `servers.default.login`, `servers.default.password` | an administrator account the API uses |
+
+The same values can come from the environment: `MATTERMOST_HOST`, `MATTERMOST_LOGIN`,
+`MATTERMOST_PASSWORD` (and `MATTERMOST_SERVER`, `MATTERMOST_AUTH`, `MATTERMOST_TOKEN` for a
+token-based server entry); see [Environment variables](/reference/environment-variables/).
+
+<Aside type="caution">
+Package settings are written to the API config files unless `CONFIG_USE_DATABASE=true`, which
+makes them shared by every tenant on the same API. See
+[Where package configuration is stored](/admin/settings/#where-package-configuration-is-stored).
+</Aside>
