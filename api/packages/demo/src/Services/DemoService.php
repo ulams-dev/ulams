@@ -113,12 +113,13 @@ class DemoService implements Contracts\DemoServiceContract
             return $admin ?: null;
         }
 
-        $student = (string) config($config . '.student_email');
-        if ($student) {
-            return $student;
+        $local = $role === DemoRole::TUTOR ? 'tutor' : 'student1';
+        $configured = (string) config($config . ($role === DemoRole::TUTOR ? '.tutor_email' : '.student_email'));
+        if ($configured) {
+            return $configured;
         }
 
-        return str_contains($admin, '@') ? 'student1@' . substr($admin, strpos($admin, '@') + 1) : null;
+        return str_contains($admin, '@') ? $local . '@' . substr($admin, strpos($admin, '@') + 1) : null;
     }
 
     private function usersWithRole(DemoRole $role): Builder

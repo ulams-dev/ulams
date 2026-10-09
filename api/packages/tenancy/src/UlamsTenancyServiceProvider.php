@@ -10,6 +10,7 @@ use Ulams\Tenancy\Console\ExportH5PServiceConfigCommand;
 use Ulams\Tenancy\Console\ListTenantsCommand;
 use Ulams\Tenancy\Console\ScheduleLoopCommand;
 use Ulams\Tenancy\Console\SeedTenantDemoCommand;
+use Ulams\Tenancy\Console\SetTenantEnvCommand;
 use Ulams\Tenancy\Console\SyncTenantEnvCommand;
 use Ulams\Tenancy\Http\Middleware\RejectUnknownHost;
 use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
@@ -67,6 +68,7 @@ class UlamsTenancyServiceProvider extends ServiceProvider
                 ListTenantsCommand::class,
                 DeleteTenantCommand::class,
                 SyncTenantEnvCommand::class,
+            SetTenantEnvCommand::class,
                 SeedTenantDemoCommand::class,
                 ExportH5PServiceConfigCommand::class,
                 ScheduleLoopCommand::class,

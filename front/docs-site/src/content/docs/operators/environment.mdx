@@ -39,6 +39,8 @@ values travel and which groups matter for an operator.
 
 Changing a `LARAVEL_*` value needs a restart of `api` (the file is rewritten on start); tenant
 env files pick up platform changes on the next `ulams:tenant:sync-env`, which also runs on start.
+Tenants inherit the platform AI settings (`ANTHROPIC_API_KEY`, `AI_DRIVER`, `AI_MODEL_*`) this way,
+unless a tenant overrides them with `ulams:tenant:set-env` (see [Tenants](/admin/tenants/)).
 The H5P service re-reads the env files every `TENANT_RELOAD_CHECK_MS` (2 s).
 
 ## Categories

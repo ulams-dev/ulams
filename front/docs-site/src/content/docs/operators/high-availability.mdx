@@ -27,7 +27,7 @@ import { Aside, Badge, LinkCard } from "@astrojs/starlight/components";
 |---|---|---|
 | API web (php-fpm) | Platform `.env` built from `LARAVEL_*`; tenant env files, domain registrations and Passport keys rebuilt from the `tenants` table on start; sessions use the `cookie` driver; cache in Redis | Yes, with the rules below |
 | API workers (Horizon, `queue.sh`) | Jobs in Redis | Yes |
-| API scheduler (`scheduler.sh`) | None, but tasks are not de-duplicated | **Exactly one** |
+| API scheduler (`scheduler.sh`) | None; each minute is claimed with a lock in the shared cache | Yes, if the cache is shared (Valkey) |
 | H5P service | Installed libraries on a local volume (`/data/libraries`); content in the tenant bucket and the tenant database (`h5p` schema); editor temporary files in the bucket; caches and locks in Redis; multipart uploads in `/tmp/h5p` during one request | Yes, if the library volume is shared |
 | PDF service | None | Yes |
 | Learner front (`web`) | In-memory cache of public API data (`ULAMS_CACHE_TTL`, 45 s) | Yes; replicas may differ for up to the TTL |
@@ -50,7 +50,7 @@ flowchart TB
   subgraph app["Application tier"]
     W["api web<br/>php-fpm, N replicas"]
     Q["api worker<br/>Horizon + queue.sh, M replicas"]
-    S["api scheduler<br/>1 replica"]
+    S["api scheduler<br/>any replicas, one tick per minute"]
     H["h5p, N replicas"]
     P["pdf, N replicas"]
     F["web, N replicas"]
@@ -90,16 +90,23 @@ what a container does:
 |---|---|---|
 | web | `DISABLE_HORIZON=true`, `DISABLE_QUEUE=true`, `DISABLE_SCHEDULER=true`, `DISABLE_DB_MIGRATE=true` | N, behind Caddy |
 | worker | `DISABLE_PHP_FPM=true`, `DISABLE_SCHEDULER=true`, `DISABLE_DB_MIGRATE=true` | M |
-| scheduler | `DISABLE_PHP_FPM=true`, `DISABLE_HORIZON=true`, `DISABLE_QUEUE=true`, `DISABLE_DB_MIGRATE=true` | 1 |
+| scheduler | `DISABLE_PHP_FPM=true`, `DISABLE_HORIZON=true`, `DISABLE_QUEUE=true`, `DISABLE_DB_MIGRATE=true` | 1, or more for failover |
 | migration job | the image with `php artisan migrate --force && php artisan ulams:tenant:sync-env --migrate` as command | one run per deploy |
 
 With `DISABLE_DB_MIGRATE=true`, `init.sh` still runs `ulams:tenant:sync-env` (without
 `--migrate`), so every replica rebuilds the tenant env files and keys it needs.
 
-- **Scheduler.** `scheduler.sh` runs `schedule:run` for the platform and every tenant each
-  minute, and no scheduled task uses `onOneServer()`. Two scheduler containers would send every
-  reminder twice and run every daily job twice. Only the demo reset uses `withoutOverlapping()`;
-  its lock is in the Redis cache store.
+- **Scheduler.** `scheduler.sh` runs `ulams:tenant:schedule-loop` for the platform and every
+  tenant. Every replica wakes at the start of each minute and takes an atomic lock
+  `ulams:schedule-tick:<tenant or platform>:<YmdHi>` in the cache store (Valkey, prefixed per
+  tenant); the replica that gets it runs the minute's `schedule:run`, the others skip that minute,
+  so reminders and daily jobs run once however many scheduler containers there are. Run two for
+  failover. The lock needs a shared cache store that supports locks (Redis/Valkey, database,
+  Memcached); with the `file` or `array` store each replica would have its own lock. If the
+  replica holding a minute dies mid-tick, that minute's tasks are skipped; the next minute is
+  taken by whichever replica gets there first. `TENANCY_SCHEDULER_LOCK=false` turns the lock off
+  (a deliberate second scheduler). `ulams:tenant:schedule-loop --once` is a manual tick and
+  ignores the lock. The demo reset also keeps its `withoutOverlapping()` lock in the cache.
 - **Workers.** Horizon handles the platform queues (`default` and the long-job queue for video);
   `queue.sh` loops over every tenant host and runs `queue:work --stop-when-empty` per tenant.
   Both pop jobs atomically from Redis, so several worker replicas are safe. Horizon is installed
@@ -113,7 +120,7 @@ With `DISABLE_DB_MIGRATE=true`, `init.sh` still runs `ulams:tenant:sync-env` (wi
 
 - **Platform**: `APP_KEY`, `JWT_PRIVATE_KEY_BASE64` and `JWT_PUBLIC_KEY_BASE64` must be identical
   on every replica (a secret store or Kubernetes Secret). Without the key pair a fresh container
-  generates its own keys and a new `APP_KEY`, see
+  generates its own Passport keys (never a new `APP_KEY` while one is configured), see
   [Self-hosting](/operators/self-hosting/#what-happens-when-the-api-container-starts).
 - **Tenants**: each tenant's Passport keys, `APP_KEY` and database password are stored encrypted
   in the `tenants` table and written to `storage/<host>/` and `.env.<host>` by
@@ -211,8 +218,8 @@ duration of the job; the H5P service migrates its schema per tenant on first use
 
 <Badge text="Coming" variant="caution" /> There is no Helm chart yet. A deployment needs:
 
-- Deployments for API web, API worker, H5P, PDF, web, admin and Caddy; a single-replica API
-  scheduler (strategy `Recreate`); a migration Job per release.
+- Deployments for API web, API worker, H5P, PDF, web, admin and Caddy; an API
+  scheduler (one replica is enough; more are safe thanks to the per-minute lock); a migration Job per release.
 - Secrets for `APP_KEY`, the platform key pair, database, Valkey, S3 and SMTP credentials and the
   internal tokens; the `LARAVEL_*` variables as a ConfigMap.
 - A ReadWriteMany volume for the H5P libraries and one for the env files shared with H5P.

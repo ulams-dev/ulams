@@ -17,6 +17,8 @@ small commits → tests → summary.
       logo drawn as SVG, applied to platform and product surfaces, not to tenants; orange is an accent only
       (ADR 0038, Proposed; #25). A trademark check on the name and mark is still recommended before launch
 - [x] (2026-10-09) ADRs 0013–0034 accepted
+- [ ] (2026-10-09) Post-Phase 2 bug batch: ADRs 0063–0070 proposed, awaiting acceptance (tenant AI settings,
+      studio applied state, tutor demo login, APP_KEY, quiz time limit key, scheduler lock, CI scope, admin on Node 24)
 - [x] (2026-10-09) Phase 1 defaults confirmed: students get `scorm_track-update`; SVG served as attachment
       with CSP (no sanitiser); LTI Instructor → tutor, never admin, no e-mail account linking; LiaScript player
       fetched at image build time; production content origin on a separate registrable domain

@@ -100,19 +100,21 @@ this page renders them from there, so the page and the files cannot drift apart.
 4. Runs `php artisan ulams:tenant:sync-env --migrate`: rebuilds every tenant's `.env.<host>` file,
    domain registration and Passport keys from the `tenants` table, then migrates each tenant
    database. `DISABLE_TENANT_SYNC=true` skips it.
-5. Only if `storage/oauth-private.key` is still missing: `key:generate --force`,
-   `passport:keys` and `passport:client --personal`.
+5. `api/init-keys.sh`: `key:generate` only if `APP_KEY` is empty (it never replaces an existing
+   one), and, only if `storage/oauth-private.key` is missing, `passport:keys` and
+   `passport:client --personal`.
 6. Seeds permissions (`PermissionsSeeder`), which also creates the first platform admin while the
    users table is empty and `INITIAL_USER_PASSWORD` is set. `DISABLE_DB_SEED=true` skips it.
 7. Starts supervisord with php-fpm, Horizon (`DISABLE_HORIZON`), the tenant queue loop
    `queue.sh` (`DISABLE_QUEUE`) and the scheduler loop `scheduler.sh` (`DISABLE_SCHEDULER`).
 
 <Aside type="danger" title="Always set the platform key pair">
-  Step 5 generates a new `APP_KEY` as well as new keys. The new key replaces the one from
-  `LARAVEL_APP_KEY` in the running container's `.env`; anything encrypted with it (tenant
-  database passwords and keys) becomes unreadable after the next restart restores the
-  configured key. Setting `JWT_PRIVATE_KEY_BASE64` and `JWT_PUBLIC_KEY_BASE64` skips step 5, which
-  is why the example makes them mandatory.
+  Step 5 never changes an existing `APP_KEY`: a missing Passport key only recreates the key
+  files, so tenant secrets stay readable. It still generates a new `APP_KEY` when none is
+  configured at all; set `LARAVEL_APP_KEY` and keep it, because anything encrypted with it (tenant
+  database passwords and keys) is lost with it. A fresh container without `JWT_PRIVATE_KEY_BASE64`
+  and `JWT_PUBLIC_KEY_BASE64` gets a new Passport key pair: tokens signed with the old pair stop
+  working, so the example makes both mandatory.
 </Aside>
 
 ## How the example differs from the development stack

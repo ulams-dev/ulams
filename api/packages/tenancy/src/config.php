@@ -39,6 +39,24 @@ return [
     'storage_public_url' => env('TENANCY_STORAGE_PUBLIC_URL', 'http://storage.localhost'),
 
     /*
+     * Platform-level settings every tenant inherits (ADR 0063). `ulams:tenant:sync-env` copies the
+     * non-empty ones into each `.env.<host>`; a tenant's own value (`tenants.env_overrides`, set with
+     * `ulams:tenant:set-env`) wins. Read from the platform environment, never from a tenant's.
+     * The legacy spelling ANTROPHIC_API_KEY is accepted for the key.
+     */
+    'inherited_env' => [
+        'ANTHROPIC_API_KEY' => env('ANTHROPIC_API_KEY', env('ANTROPHIC_API_KEY')),
+        'ANTHROPIC_BASE_URL' => env('ANTHROPIC_BASE_URL'),
+        'AI_DRIVER' => env('AI_DRIVER'),
+        'AI_MODEL_DEFAULT' => env('AI_MODEL_DEFAULT'),
+        'AI_MODEL_LIGHT' => env('AI_MODEL_LIGHT'),
+        'AI_MODEL_PREMIUM' => env('AI_MODEL_PREMIUM'),
+        'AI_MODEL_DEFAULT_LABEL' => env('AI_MODEL_DEFAULT_LABEL'),
+        'AI_MODEL_LIGHT_LABEL' => env('AI_MODEL_LIGHT_LABEL'),
+        'AI_MODEL_PREMIUM_LABEL' => env('AI_MODEL_PREMIUM_LABEL'),
+    ],
+
+    /*
      * Password of every demo user created by `ulams:tenant:create`. DEV ONLY.
      */
     'demo_password' => env('TENANT_DEMO_PASSWORD', 'secret'),
@@ -58,6 +76,13 @@ return [
      * Connection with CREATEROLE/CREATEDB rights (see `pgsql_admin` in config/database.php).
      */
     'admin_connection' => env('TENANCY_ADMIN_CONNECTION', 'pgsql_admin'),
+
+    /*
+     * Several API replicas each run the scheduler loop; only the one that takes the per-minute
+     * lock in the shared cache runs the tick (`ulams:tenant:schedule-loop`). Turn off only to run
+     * a second scheduler on purpose.
+     */
+    'scheduler_lock' => filter_var(env('TENANCY_SCHEDULER_LOCK', true), FILTER_VALIDATE_BOOLEAN),
 
     'php_binary' => env('TENANCY_PHP_BINARY', PHP_BINARY ?: 'php'),
     'process_timeout' => (int) env('TENANCY_PROCESS_TIMEOUT', 900),
