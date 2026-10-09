@@ -15,6 +15,7 @@ use Ulams\Cart\Tests\Traits\CreatesPaymentMethods;
 use Ulams\Core\Enums\UserRole;
 use Ulams\Core\Models\User;
 use Ulams\Payments\Facades\PaymentGateway;
+use Ulams\Payments\Models\Payment;
 use Ulams\Settings\UlamsSettingsServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
@@ -103,6 +104,72 @@ class PaymentApiTest extends TestCase
         $product->refresh();
 
         $this->assertTrue($product->getOwnedByUserAttribute($user));
+    }
+
+    public function test_pay_product_ignores_client_currency_amount_and_trial_flags(): void
+    {
+        Event::fake(ProductBought::class);
+        PaymentGateway::fake();
+
+        $product = Product::factory()->create([
+            'price' => 1000,
+            'purchasable' => true,
+        ]);
+
+        $this->actingAs($this->user, 'api')
+            ->postJson('/api/product/' . $product->getKey() . '/pay', [
+                'currency' => 'EUR',
+                'amount' => 1,
+                'price' => 1,
+                'has_trial' => true,
+                'type' => 'subscription',
+                'recursive' => true,
+            ])
+            ->assertCreated();
+
+        $payment = Payment::query()->where('user_id', $this->user->getKey())->latest('id')->firstOrFail();
+        $this->assertSame(1000, $payment->amount);
+        $this->assertEquals(PaymentGateway::getPaymentsConfig()->getDefaultCurrency(), $payment->currency);
+        $this->assertFalse((bool) $payment->refund);
+    }
+
+    public function test_pay_cart_ignores_client_currency_and_trial_flags(): void
+    {
+        Event::fake(ProductBought::class);
+        PaymentGateway::fake();
+
+        $product = Product::factory()->create([
+            'price' => 1000,
+            'purchasable' => true,
+        ]);
+        $this->shopService->addProductToCart($this->shopService->cartForUser($this->user), $product);
+
+        $this->actingAs($this->user, 'api')
+            ->postJson('/api/cart/pay', ['currency' => 'EUR', 'amount' => 1, 'has_trial' => true])
+            ->assertCreated();
+
+        $payment = Payment::query()->where('user_id', $this->user->getKey())->latest('id')->firstOrFail();
+        $this->assertEquals(PaymentGateway::getPaymentsConfig()->getDefaultCurrency(), $payment->currency);
+        $this->assertFalse((bool) $payment->refund);
+    }
+
+    public function test_pay_product_that_is_not_purchasable_is_forbidden(): void
+    {
+        Event::fake(ProductBought::class);
+        PaymentGateway::fake();
+
+        $product = Product::factory()->create([
+            'price' => 1000,
+            'purchasable' => false,
+        ]);
+
+        $this->actingAs($this->user, 'api')
+            ->postJson('/api/product/' . $product->getKey() . '/pay')
+            ->assertForbidden();
+
+        Event::assertNotDispatched(ProductBought::class);
+        $this->assertFalse($product->fresh()->getOwnedByUserAttribute($this->user));
+        $this->assertSame(0, Payment::query()->where('user_id', $this->user->getKey())->count());
     }
 
     public function test_pay_subscription(): void

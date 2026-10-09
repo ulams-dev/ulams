@@ -114,10 +114,14 @@ Payment statuses: `new`, `redirect`, `paid`, `failed`, `cancelled`, `refunded`.
 <Steps>
 
 1. The learner adds products to the cart (`POST /api/cart/products`) or buys a single product
-   directly (`POST /api/product/{id}/pay`).
+   directly (`POST /api/product/{id}/pay`, which answers 403 for a product that is not
+   purchasable or whose limits are reached).
 2. `POST /api/cart/pay` turns the cart into an **order** (status `PROCESSING`, or
    `TRIAL_PROCESSING` for a trial) and creates a **payment** for it. Zero-value orders go
-   through the `free` driver and are paid immediately.
+   through the `free` driver and are paid immediately. Price, currency, product type and trial
+   settings always come from the product; of the request body only `gateway`, `payment_method`,
+   `return_url`, `email` and `channel` reach the payment drivers, and anything else (such as
+   `currency`, `amount` or `has_trial`) is ignored.
 3. For Stripe or Przelewy24, the payment either succeeds at once or returns a redirect URL. The
    gateway later calls `/api/payments-gateways/callback/{payment}` (Stripe also has
    `/api/payments-gateways/webhook/stripe`). The callback runs in a transaction with the payment
