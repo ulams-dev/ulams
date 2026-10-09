@@ -34,6 +34,7 @@ use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
 use Ulams\LivingCourse\Connectors\GitConnector;
 use Ulams\LivingCourse\Connectors\SourceConnectorRegistry;
 use Ulams\LivingCourse\Connectors\UploadConnector;
+use Ulams\LivingCourse\Connectors\UrlConnector;
 use Ulams\LivingCourse\Console\BackfillCommand;
 use Ulams\LivingCourse\Console\PollCommand;
 use Ulams\LivingCourse\Fake\UpdateResponder;
@@ -84,6 +85,7 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
         $registry = $this->app->make(SourceConnectorRegistry::class);
         $registry->register(new UploadConnector());
         $registry->register(new GitConnector());
+        $registry->register(new UrlConnector());
         $this->app->make(PromptRegistry::class)->addPath('living-course', __DIR__ . '/../resources/prompts');
         UpdateResponder::register($this->app->make(FakeResponders::class));
         SessionState::extendSummary('living-course', fn (Session $s) => ['freshness' => $this->app->make(StalenessService::class)->summary($s)]);

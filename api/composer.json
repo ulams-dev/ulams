@@ -59,6 +59,7 @@
     "laravel/socialite": "^5.31",
     "laravel/tinker": "^3.0",
     "league/flysystem-aws-s3-v3": "^3.0",
+    "league/html-to-markdown": "^5.1",
     "league/omnipay": "^3",
     "maatwebsite/excel": "^3.1.70",
     "mailerlite/mailerlite-api-v2-php-sdk": "^0.3.2",

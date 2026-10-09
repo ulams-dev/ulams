@@ -86,6 +86,15 @@ final class FragmentDiff
                 continue;
             }
             $s = self::jaccard($sh($old[$id]), $sh($new[$id]));
+            if ($s < $sameIdThreshold) {
+                // short fragments have few shingles, so one edit weighs a lot: the same heading position
+                // with at least half of the tokens in common is still the same passage
+                $diff = TokenDiff::diff($old[$id]['text'], $new[$id]['text']);
+                $tokenSimilarity = 1 - max($diff['removed'], $diff['added']) / max(1, $diff['oldCount'], $diff['oldCount'] - $diff['removed'] + $diff['added']);
+                if ($tokenSimilarity >= $sameIdThreshold) {
+                    $s = max($s, $sameIdThreshold);
+                }
+            }
             if ($s >= $sameIdThreshold) {
                 $oldMatched[$id] = $newMatched[$id] = true;
                 $changes[] = self::withMagnitude('changed', $old[$id], $new[$id], $s);
