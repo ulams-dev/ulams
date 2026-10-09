@@ -5,10 +5,13 @@ namespace Ulams\LivingCourse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Ulams\CourseBuilder\Events\SourceIngested;
+use Ulams\CourseBuilder\Models\Session;
+use Ulams\CourseBuilder\Services\SessionState;
 use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
 use Ulams\LivingCourse\Console\BackfillCommand;
 use Ulams\LivingCourse\Services\AuditLog;
 use Ulams\LivingCourse\Services\RevisionService;
+use Ulams\LivingCourse\Services\StalenessService;
 
 /**
  * Living Course (ADR 0030 to 0034): a course built with the Course Builder stays connected to its
@@ -21,6 +24,7 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
     public $singletons = [
         AuditLog::class => AuditLog::class,
         RevisionService::class => RevisionService::class,
+        StalenessService::class => StalenessService::class,
     ];
 
     public function register(): void
@@ -33,6 +37,8 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        SessionState::extendSummary('living-course', fn (Session $s) => ['freshness' => $this->app->make(StalenessService::class)->summary($s)]);
 
         if ($this->app->runningInConsole()) {
             $this->commands([BackfillCommand::class]);

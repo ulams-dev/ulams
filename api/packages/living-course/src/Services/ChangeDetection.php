@@ -22,6 +22,7 @@ final class ChangeDetection
         private readonly FragmentDiff $diff,
         private readonly RevisionService $revisions,
         private readonly AuditLog $audit,
+        private readonly ProposalService $proposals,
     ) {
     }
 
@@ -82,6 +83,11 @@ final class ChangeDetection
                 $this->audit->record('revision.detected', $context + ['data' => $data]);
             }
         });
+
+        $to->refresh();
+        if ($to->status === 'ingested') {
+            $this->proposals->createFor($to, $to->trigger, $userId);
+        }
 
         return ['revision' => $to->refresh(), 'changes' => $changes];
     }

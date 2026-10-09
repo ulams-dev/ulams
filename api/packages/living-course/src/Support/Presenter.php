@@ -4,6 +4,8 @@ namespace Ulams\LivingCourse\Support;
 
 use Ulams\CourseBuilder\Models\Source;
 use Ulams\LivingCourse\Models\Connection;
+use Ulams\LivingCourse\Models\Proposal;
+use Ulams\LivingCourse\Models\ProposalItem;
 use Ulams\LivingCourse\Models\Revision;
 use Ulams\LivingCourse\Models\RevisionFragment;
 
@@ -109,5 +111,62 @@ final class Presenter
             'old' => $fragment($c['old'], $from),
             'new' => $fragment($c['new'], $to),
         ], $changes, array_keys($changes));
+    }
+
+    /** @return array<string,mixed> */
+    public static function proposalSummary(Proposal $p): array
+    {
+        $from = Revision::query()->find($p->from_revision_id);
+        $to = Revision::query()->find($p->to_revision_id);
+
+        return [
+            'id' => $p->id,
+            'number' => $p->number,
+            'sessionId' => $p->session_id,
+            'sourceId' => $p->source_id,
+            'status' => $p->status,
+            'trigger' => $p->trigger,
+            'counts' => $p->counts,
+            'fromRevision' => $from ? ['id' => $from->id, 'number' => $from->number] : null,
+            'toRevision' => $to ? ['id' => $to->id, 'number' => $to->number, 'detectedAt' => $to->detected_at?->toIso8601String()] : null,
+            'baseVersionId' => $p->base_version_id,
+            'resultVersionId' => $p->result_version_id,
+            'estimatedCostMicroUsd' => $p->estimated_cost_micro_usd,
+            'costMicroUsd' => $p->cost_micro_usd,
+            'learnerNote' => $p->learner_note,
+            'error' => $p->error,
+            'createdAt' => $p->created_at?->toIso8601String(),
+            'decidedAt' => $p->decided_at?->toIso8601String(),
+            'appliedAt' => $p->applied_at?->toIso8601String(),
+        ];
+    }
+
+    /**
+     * @param array<string,string> $labels fragment id => label
+     * @return array<string,mixed>
+     */
+    public static function item(ProposalItem $i, array $labels = []): array
+    {
+        return [
+            'id' => $i->id,
+            'groupKey' => $i->group_key,
+            'elementId' => $i->element_id,
+            'type' => $i->element_type,
+            'label' => $i->label,
+            'kind' => $i->kind,
+            'reason' => $i->reason,
+            'severity' => $i->severity,
+            'before' => $i->before,
+            'after' => $i->after,
+            'changeClass' => $i->change_class,
+            'answerStatus' => $i->answer_status,
+            'answerCheck' => $i->answer_check,
+            'status' => $i->status,
+            'flags' => $i->flags ?? [],
+            'regenerations' => $i->regenerations,
+            'fragments' => array_map(fn ($id) => ['fragmentId' => $id, 'label' => $labels[$id] ?? $id], (array) $i->fragment_ids),
+            'changeIds' => $i->change_ids ?? [],
+            'decidedAt' => $i->decided_at?->toIso8601String(),
+        ];
     }
 }
