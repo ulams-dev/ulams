@@ -10,6 +10,8 @@ export enum TopicType {
   SCORM = 'Ulams\\TopicTypes\\Models\\TopicContent\\ScormSco',
   Project = 'Ulams\\TopicTypeProject\\Models\\Project',
   GiftQuiz = 'Ulams\\TopicTypeGift\\Models\\GiftQuiz',
+  LiaScript = 'Ulams\\LiaScript\\Models\\LiaScriptTopic',
+  Lti = 'Ulams\\Lti\\Models\\LtiLink',
 }
 
 export enum EventTypes {

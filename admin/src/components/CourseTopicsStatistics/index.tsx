@@ -14,6 +14,8 @@ interface TopicsGroupedByType {
   [TopicType.SCORM]: API.TopicScorm[];
   [TopicType.Project]: API.TopicProject[];
   [TopicType.GiftQuiz]: API.TopicQuiz[];
+  [TopicType.LiaScript]: API.Topic[];
+  [TopicType.Lti]: API.Topic[];
   [TopicType.Unselected]: API.TopicUnselected[];
 }
 
@@ -37,6 +39,8 @@ export const CourseTopicsStatistics: React.FC<Props> = ({ flatTopics }) => {
           [TopicType.SCORM]: [],
           [TopicType.Project]: [],
           [TopicType.GiftQuiz]: [],
+          [TopicType.LiaScript]: [],
+          [TopicType.Lti]: [],
           [TopicType.Unselected]: [],
         },
       ),

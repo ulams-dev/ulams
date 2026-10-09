@@ -1,6 +1,8 @@
 import PACKAGES from '@/consts/packages';
 import {
+  ApiOutlined,
   AudioOutlined,
+  BookOutlined,
   CarryOutOutlined,
   FileImageOutlined,
   FilePdfOutlined,
@@ -169,6 +171,27 @@ export const TopicTypesSelector: React.FC<{
         {!positionsToHide?.includes(TopicType.SCORM) && !topicTypeIsDisabled(TopicType.SCORM) && (
           <Tooltip placement="right" title={<FormattedMessage id="SCORM" />}>
             <Button block onClick={() => setSelected(TopicType.SCORM)} icon={<FundOutlined />} />
+          </Tooltip>
+        )}
+        {!positionsToHide?.includes(TopicType.LiaScript) &&
+          !topicTypeIsDisabled(TopicType.LiaScript) && (
+            <Tooltip
+              placement="right"
+              title={<FormattedMessage id="LiaScript" defaultMessage="LiaScript" />}
+            >
+              <Button
+                block
+                onClick={() => setSelected(TopicType.LiaScript)}
+                icon={<BookOutlined />}
+              />
+            </Tooltip>
+          )}
+        {!positionsToHide?.includes(TopicType.Lti) && !topicTypeIsDisabled(TopicType.Lti) && (
+          <Tooltip
+            placement="right"
+            title={<FormattedMessage id="Lti" defaultMessage="External tool (LTI)" />}
+          >
+            <Button block onClick={() => setSelected(TopicType.Lti)} icon={<ApiOutlined />} />
           </Tooltip>
         )}
         {!positionsToHide?.includes(TopicType.Project) &&
