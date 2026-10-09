@@ -19,6 +19,13 @@ use Ulams\LivingCourse\Tests\TestCase;
 /** Impact analysis and the deterministic proposal on the coffee handbook v1 to v2 (plan 7, 13.1). */
 class ImpactAnalysisTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // these tests look at the deterministic proposal: the analysis waits for the author
+        config(['living_course.cost.auto_analyse_usd' => 0]);
+    }
+
     private function upload($author, Session $session, string|UploadedFile $file): TestResponse
     {
         $file = is_string($file) ? $this->lcFixture($file) : $file;

@@ -18,5 +18,6 @@ Route::group([
     Route::get('sessions/{session}/staleness', [StalenessController::class, 'show']);
     Route::get('sessions/{session}/proposals', [ProposalsController::class, 'index']);
     Route::get('proposals/{proposal}', [ProposalsController::class, 'show']);
+    Route::post('proposals/{proposal}/analyse', [ProposalsController::class, 'analyse']);
     Route::get('revisions/{revision}/changes', [SourcesController::class, 'changes']);
 });

@@ -32,11 +32,12 @@ final class ProposalService
         private readonly RevisionService $revisions,
         private readonly EventLog $events,
         private readonly LlmClient $llm,
+        private readonly AnalysisService $analysis,
     ) {
     }
 
     /**
-     * @return array{proposal:?Proposal,state:string} state: created | superseded_previous | kept_existing | no_impact | not_applicable
+     * @return array{proposal:?Proposal,state:string} state: created | kept_existing | no_impact | not_applicable | deferred
      */
     public function createFor(Revision $to, string $trigger = 'manual', ?int $userId = null): array
     {
@@ -47,6 +48,13 @@ final class ProposalService
         if ($session === null || $from === null || $current === null || $current->status !== Version::APPROVED || !in_array($current->kind, VersionService::CONTENT_KINDS, true)) {
             // no generated course yet: nothing cites the source, the next build reads the live fragments
             return ['proposal' => null, 'state' => 'not_applicable'];
+        }
+        $today = Proposal::query()->where('source_id', $connection->source_id)->where('created_at', '>=', now()->startOfDay())->count();
+        if ($today >= (int) config('living_course.cost.proposals_per_source_per_day', 5) && !Proposal::query()->where('to_revision_id', $to->id)->exists()) {
+            // later revisions wait for the next day; a manual check processes them then
+            $to->forceFill(['metadata' => array_merge((array) $to->metadata, ['deferred' => true])])->save();
+
+            return ['proposal' => null, 'state' => 'deferred'];
         }
         $kept = $this->supersedeOpen($connection, $to, $userId);
         if ($kept instanceof Proposal) {
@@ -80,6 +88,10 @@ final class ProposalService
         $status = $actionable === [] ? 'ready' : ($this->llm->enabled() ? 'awaiting_analysis' : 'ready');
         $proposal = $this->persist($session, $connection, $from, $to, $current, $analysis, $status, $trigger, $userId, $elements);
         $this->announce($session, $proposal);
+        if ($status === 'awaiting_analysis' && $connection->auto_analyse) {
+            $this->analysis->begin($proposal, false, $userId);
+            $proposal->refresh();
+        }
 
         return ['proposal' => $proposal, 'state' => 'created'];
     }

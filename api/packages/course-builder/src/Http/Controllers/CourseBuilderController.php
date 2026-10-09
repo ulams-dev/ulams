@@ -251,7 +251,7 @@ class CourseBuilderController extends Controller
         if ($st->status !== 'failed') {
             return self::fail('Only a failed step can be retried.', 409);
         }
-        app(GenerationService::class)->retry($st);
+        $this->runs->retryStep($st);
 
         return self::ok(['stepId' => $st->id, 'sessionId' => $s->id], 202);
     }

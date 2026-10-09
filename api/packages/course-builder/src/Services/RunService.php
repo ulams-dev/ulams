@@ -49,6 +49,27 @@ final class RunService
         self::$handlers[$name] = $handler;
     }
 
+    /** @var array<string,\Closure(Step):void> */
+    private static array $retries = [];
+
+    /** @param \Closure(Step):void $retry how a failed step of runs of this handler is retried */
+    public static function extendRetry(string $name, \Closure $retry): void
+    {
+        self::$retries[$name] = $retry;
+    }
+
+    /** Retries one failed step of a run (generation steps, or the steps of a registered handler). */
+    public function retryStep(Step $step): void
+    {
+        $handler = $step->run->input['handler'] ?? null;
+        if ($handler !== null && isset(self::$retries[$handler])) {
+            (self::$retries[$handler])($step);
+
+            return;
+        }
+        $this->generation->retry($step);
+    }
+
     public function finish(Run $run): void
     {
         $run->forceFill(['status' => 'finished', 'finished_at' => now()])->save();
@@ -381,7 +402,7 @@ final class RunService
 
             case 'retry_step':
                 $step = Step::query()->whereIn('run_id', Run::query()->where('session_id', $session->id)->select('id'))->findOrFail((string) ($context['stepId'] ?? ''));
-                $this->generation->retry($step);
+                $this->retryStep($step);
 
                 return ['run' => $step->run, 'accepted' => true];
 

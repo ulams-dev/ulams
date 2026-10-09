@@ -16,6 +16,13 @@ use Ulams\LivingCourse\Tests\TestCase;
 /** The `update` prompt, its schema, the request layout and the semantic checks (plan 8.2). */
 class UpdateTaskTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // these tests look at the deterministic proposal: the analysis waits for the author
+        config(['living_course.cost.auto_analyse_usd' => 0]);
+    }
+
     private function schema(): array
     {
         return json_decode((string) file_get_contents(__DIR__ . '/../../resources/schemas/outputs/update.json'), true);

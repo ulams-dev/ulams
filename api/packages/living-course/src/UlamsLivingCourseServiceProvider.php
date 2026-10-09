@@ -7,11 +7,17 @@ use Illuminate\Support\ServiceProvider;
 use Ulams\Ai\Fake\FakeResponders;
 use Ulams\Ai\Prompts\PromptRegistry;
 use Ulams\CourseBuilder\Events\SourceIngested;
+use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
+use Ulams\CourseBuilder\Models\Step;
+use Ulams\CourseBuilder\Pipeline\Llm;
+use Ulams\CourseBuilder\Services\RunService;
 use Ulams\CourseBuilder\Services\SessionState;
 use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
 use Ulams\LivingCourse\Console\BackfillCommand;
 use Ulams\LivingCourse\Fake\UpdateResponder;
+use Ulams\LivingCourse\Models\Proposal;
+use Ulams\LivingCourse\Services\AnalysisService;
 use Ulams\LivingCourse\Services\AuditLog;
 use Ulams\LivingCourse\Services\RevisionService;
 use Ulams\LivingCourse\Services\StalenessService;
@@ -41,6 +47,9 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
+        RunService::extend(AnalysisService::HANDLER, fn (Run $run, Session $session) => $this->app->make(AnalysisService::class)->handleRun($run, $session));
+        RunService::extendRetry(AnalysisService::HANDLER, fn (Step $step) => $this->app->make(AnalysisService::class)->retry($step));
+        Llm::extendCost('living-course', fn (Session $session) => ['type' => Proposal::SUBJECT_TYPE, 'ids' => Proposal::query()->where('session_id', $session->id)->pluck('id')->all()]);
         $this->app->make(PromptRegistry::class)->addPath('living-course', __DIR__ . '/../resources/prompts');
         UpdateResponder::register($this->app->make(FakeResponders::class));
         SessionState::extendSummary('living-course', fn (Session $s) => ['freshness' => $this->app->make(StalenessService::class)->summary($s)]);

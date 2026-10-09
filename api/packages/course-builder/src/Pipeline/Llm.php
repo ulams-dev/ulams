@@ -76,9 +76,27 @@ final class Llm
     }
 
     /** @return array{usedMicroUsd:int,budgetMicroUsd:int,inputTokens:int,outputTokens:int,cacheReadTokens:int,cacheWriteTokens:int,calls:int} */
+    /** @var array<string,Closure(Session):array{type:string,ids:string[]}> other subjects whose calls count for a session */
+    private static array $costSubjects = [];
+
+    /** Other packages add their call subjects to a session's running cost (Living Course: its proposals). */
+    public static function extendCost(string $name, Closure $subjects): void
+    {
+        self::$costSubjects[$name] = $subjects;
+    }
+
     public static function cost(Session $session): array
     {
-        $row = AiCall::query()->forSubject(Session::SUBJECT_TYPE, $session->id)
+        $extras = array_map(fn (Closure $f) => $f($session), array_values(self::$costSubjects));
+        $row = AiCall::query()
+            ->where(function ($q) use ($session, $extras) {
+                $q->where(fn ($w) => $w->where('subject_type', Session::SUBJECT_TYPE)->where('subject_id', $session->id));
+                foreach ($extras as $extra) {
+                    if ($extra['ids'] !== []) {
+                        $q->orWhere(fn ($w) => $w->where('subject_type', $extra['type'])->whereIn('subject_id', $extra['ids']));
+                    }
+                }
+            })
             ->selectRaw('COUNT(*) AS n, COALESCE(SUM(cost_micro_usd),0) AS c, COALESCE(SUM(input_tokens),0) AS i, COALESCE(SUM(output_tokens),0) AS o, COALESCE(SUM(cache_read_tokens),0) AS r, COALESCE(SUM(cache_creation_tokens),0) AS w')
             ->first();
 

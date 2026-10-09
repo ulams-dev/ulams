@@ -87,9 +87,10 @@ final class UpdateRequest
 
     /**
      * @param ProposalItem[] $items
+     * @param array<int,array<string,string>> $feedback unsupported claims of a previous attempt (grounding check)
      * @return array{blocks:ContentBlock[],expected:array<string,array{type:string,node:array,removedOnly:bool}>,known:array<string,string>,objectiveIds:string[]}
      */
-    public function build(string $groupKey, array $items, ?string $authorRequest = null): array
+    public function build(string $groupKey, array $items, ?string $authorRequest = null, array $feedback = []): array
     {
         $removed = [];
         foreach ($this->changes as $c) {
@@ -143,6 +144,9 @@ final class UpdateRequest
             'objectiveIds' => $objectiveIds,
             'elements' => $inputElements,
         ];
+        if ($feedback !== []) {
+            $input['grounding_feedback'] = $feedback;
+        }
         $text = 'Review the elements of task_input against the source changes and return one item per element.';
         if ($authorRequest !== null) {
             $text = '<author_request>' . PromptContext::esc($authorRequest) . "</author_request>\nThe author asked for a different result for the element in task_input. " . $text;
