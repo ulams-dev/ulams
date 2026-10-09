@@ -351,6 +351,11 @@ Quality
 
 ## Phase 3: Living Course (killer feature)
 
+Plan (new): `docs/plans/phase-3.md` (draft, waiting for approval; ADRs 0030–0034 Proposed). Milestones
+M3.1 revisions and fragment diff (re-upload) → M3.2 impact and staleness → M3.3 AI update proposals →
+M3.4 progress rules → M3.5 audit and notifications → M3.6 Git, webhooks, polling → M3.7 URL connector →
+M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
+
 - [ ] Source connectors: re-upload → Git (path + branch) → Drive / Notion as plugins
 - [ ] Change detection (webhook, poll, manual) with fragment-level diff
 - [ ] Impact analysis via citations, incl. quiz answers that may now be wrong
@@ -360,6 +365,12 @@ Quality
 - [ ] Staleness signals per course and element
 - [ ] Audit trail (who accepted what, when, which source revision)
 - [ ] Tests: source v1/v2 fixtures; progress survives accepted update
+- [ ] (new) URL connector (web pages on one host, CSS selector, HTML → Markdown)
+- [ ] (new) Shared SSRF-safe HTTP client in `core` (extracted from `lti`; IPv6, CGNAT, redirects re-checked)
+- [ ] (new) GIFT: snapshot the max score per attempt and archive questions instead of deleting them
+- [ ] (new) Suggest a new lesson for newly added, uncovered source sections
+- [ ] (new) Generic Git (`git` CLI) connector for hosts without a supported API
+- [ ] (new) Google Drive and Notion connector plugins (designed in `docs/plans/phase-3.md` 6.6)
 
 ---
 

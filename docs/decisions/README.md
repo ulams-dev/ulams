@@ -24,3 +24,8 @@ replacement.
 | [0012](0012-lti-package-and-libraries.md) | LTI 1.3: one `lti` package, first-party platform side, packbackbooks tool side | Accepted |
 | [0013](0013-adapt-build-worker.md) | Adapt Path B: JSON sources in the API, builds in an isolated GPL-3.0 worker | Proposed |
 | [0021](0021-ha-reference-architecture.md) | High-availability reference architecture | Proposed |
+| [0030](0030-living-course-revisions-and-update-proposals.md) | Living Course: source revisions and update proposals on top of the Course Blueprint | Proposed |
+| [0031](0031-deterministic-fragment-change-detection.md) | Fragment-level change detection is deterministic | Proposed |
+| [0032](0032-source-connectors-as-plugins.md) | Source connectors as plugins; Git through host APIs; one SSRF-safe HTTP client | Proposed |
+| [0033](0033-progress-preservation-rules.md) | Progress preservation rules for content updates | Proposed |
+| [0034](0034-tamper-evident-audit-trail.md) | A tamper-evident audit trail for Living Course | Proposed |
