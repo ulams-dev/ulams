@@ -44,6 +44,8 @@ return [
         'quiz' => ['profile' => env('AI_TASK_QUIZ_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
         'metadata' => ['profile' => env('AI_TASK_METADATA_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 4000],
         'patch' => ['profile' => env('AI_TASK_PATCH_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
+        // a suggested price for a paid course; the author always confirms it
+        'price' => ['profile' => env('AI_TASK_PRICE_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 1000],
         'grounding' => ['profile' => env('AI_TASK_GROUNDING_PROFILE', 'light'), 'effort' => 'medium', 'max_tokens' => 4000],
         // Living Course: patches for the elements affected by a source change (one call per lesson group)
         'update' => ['profile' => env('AI_TASK_UPDATE_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],

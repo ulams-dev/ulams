@@ -373,10 +373,10 @@ approved apply through domain services → element chat edits. Designs:
 
 ### 2.3 Interview
 - [x] Adaptive chips/buttons with defaults and "decide for me"
-- [ ] Audience, duration, tone, theme preset + accent, free/paid (via `CommerceProvider`;
+- [x] Audience, duration, tone, theme preset + accent, free/paid (via `CommerceProvider`;
       interim: existing `payments`), assessments, language (partial: audience, level, duration and
-      lesson length, tone, assessments, language, theme preset + accent and a free/paid question done
-      (Course Brief v2); creating the product through `CommerceProvider` is L2-07)
+      lesson length, tone, assessments, language, theme preset + accent and a free/paid question: Course
+      Brief v2; the product is created through `CommerceProvider`, ADR 0049)
 - [x] Editable **Course Brief** (schema-validated brief v2 with decided-by per field, editable in the
       studio panel and through the API with stale marking)
 
@@ -387,9 +387,11 @@ approved apply through domain services → element chat edits. Designs:
       in a concurrency window; LiaScript and H5P lessons are M2.3)
 - [x] Assessments with explanations, each traceable to a fragment (per-lesson quizzes and a final test,
       GIFT rendered by our code, support check against the cited text)
-- [ ] Metadata (title, description, SEO, pricing) (partial: no pricing, M2.2)
-- [ ] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (M2.2; publish
-      is done as a separate action)
+- [x] Metadata (title, description, SEO, pricing) (a suggested price for a paid course, confirmed by
+      the author; ADR 0049)
+- [ ] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (partial: theme
+      and the product (inactive at apply, active at publish) done; publish-check, landing and the new
+      site are L2-08 and L2-09)
 - [x] **Course Blueprint**: versioned JSON, stable IDs, citations; entities created via domain
       services; persisted per stage; progress streamed (SSE/websockets) (ADR 0010, 0025)
 - [x] (new) Long jobs on dedicated queue connections: `<driver>-builder` (retry_after 2400) for Course
@@ -608,7 +610,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] SAML 2.0 and OIDC per tenant · SCIM 2.0 · HRIS import (CSV/API first)
 
 ### 6.4 Commerce (Sylius) and extended enterprise
-- [ ] `CommerceProvider` interface (sync product, create checkout, handle order events)
+- [ ] `CommerceProvider` interface (sync product, create checkout, handle order events) (partial: interface and the Wellms cart adapter shipped in `api/packages/commerce`, ADR 0049; the Sylius adapter is pending)
 - [ ] Sylius adapter as default implementation
 - [ ] Entitlements model in LMS (access, validity, source order or seat package)
 - [ ] Catalogue sync: course/bundle/subscription/seat package → digital Sylius product

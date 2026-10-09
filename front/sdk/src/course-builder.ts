@@ -103,6 +103,10 @@ export interface BuilderState {
   session: SessionSummary;
   brief: CourseBrief | null;
   briefRows: Array<{ key: string; label: string; value: string }>;
+  /** A model-suggested price for a paid course without an amount; the author confirms it in the brief. */
+  priceSuggestion?: { amountMinor: number; currency: string; rationale: string; suggested: true } | null;
+  /** Notes from the last apply (a skipped theme, a product that was not created). */
+  applyNotes?: string[];
   cost: BuilderCost;
   sources: BuilderSource[];
   aiEnabled: boolean;
