@@ -1,0 +1,74 @@
+---
+title: Use ulams from Claude Code
+description: Install the ulams CLI from the repository, log in to an instance and add ulams mcp to Claude Code and Claude Desktop so agents can build and manage courses.
+sidebar:
+  order: 82
+modules:
+  - cli
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+The CLI is not on npm yet, so install it from a checkout of the repository. You need Node 22.12 or newer and an
+instance to talk to (`http://coffee.localhost` on a local stack).
+
+<Steps>
+
+1. Build the CLI and put it on your `PATH`:
+
+   ```bash
+   corepack yarn install --ignore-engines
+   corepack yarn workspace ulams build
+   mkdir -p ~/.local/bin
+   ln -sf "$PWD/front/cli/dist/ulams.mjs" ~/.local/bin/ulams     # the build marks it executable
+   ulams version
+   ```
+
+2. Log in once. The token is stored in `~/.config/ulams/credentials.json` (mode 0600), so the MCP client config needs no secret:
+
+   ```bash
+   ulams login --url http://coffee.localhost --demo admin        # demo tenants
+   ulams whoami
+   ```
+
+3. Add the MCP server to Claude Code:
+
+   ```bash
+   claude mcp add ulams -- ulams mcp --profile coffee            # this project
+   claude mcp add --scope user ulams -- ulams mcp --profile coffee   # every project
+   claude mcp list                                               # ulams: ... Connected
+   ```
+
+   Without a login, pass the credentials as environment variables instead:
+   `claude mcp add ulams -e ULAMS_URL=https://school.example.com -e ULAMS_TOKEN=... -- ulams mcp`.
+
+4. Ask Claude Code to work on the instance, for example: *"Create a course 'Kubernetes 101' with two lessons and a quiz,
+   publish it and enrol student1."* It calls `whoami`, then `courses_create`, `lessons_create`, `topics_create_quiz`,
+   `courses_publish` and `access_grant`.
+
+</Steps>
+
+## Claude Desktop
+
+Edit `claude_desktop_config.json` (macOS: `~/Library/Application Support/Claude/`, Windows: `%APPDATA%\Claude\`) and restart the app.
+Desktop does not read your shell `PATH`, so give absolute paths:
+
+```json
+{
+  "mcpServers": {
+    "ulams": {
+      "command": "/usr/local/bin/node",
+      "args": ["/path/to/ulams/front/cli/dist/ulams.mjs", "mcp", "--profile", "coffee"]
+    }
+  }
+}
+```
+
+## Staying safe
+
+- Start with `--read-only` to let an agent explore: `claude mcp add ulams -- ulams mcp --profile coffee --read-only`.
+- Destructive tools (deleting a course, replacing access) return a plan and a one-time confirm token; the agent has to show you
+  the plan and call again, so nothing is deleted by accident.
+- The agent can do what the logged-in user can do and no more. Use a dedicated user, or a scoped token, for agents.
+
+More options (toolsets, HTTP transport, resources) are in [ulams for AI agents](/developers/agents/).
