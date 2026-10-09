@@ -447,7 +447,7 @@ export function createLivingCourseClient(options: ClientOptions & { prefix?: str
       throw new ApiError(0, path, null, `API unreachable on ${path}: ${(error as Error).message}`);
     }
     const text = await response.text();
-    let json: { data?: T; message?: string } | null = null;
+    let json: { data?: T; message?: string } | null;
     try {
       json = text ? JSON.parse(text) : null;
     } catch {

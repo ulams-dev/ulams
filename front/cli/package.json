@@ -31,12 +31,12 @@
     "zod": "4.6.5"
   },
   "devDependencies": {
-    "@eslint/js": "9.39.5",
+    "@eslint/js": "10.0.1",
     "ajv": "8.17.1",
     "@modelcontextprotocol/client": "2.3.1",
     "@types/node": "22.19.1",
     "@ulams/sdk": "0.1.0",
-    "eslint": "9.39.5",
+    "eslint": "10.12.0",
     "tsup": "8.5.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.71.1",
