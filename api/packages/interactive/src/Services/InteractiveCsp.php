@@ -47,15 +47,26 @@ class InteractiveCsp implements ContentHeaderProvider
         return implode('; ', $directives);
     }
 
-    /** The tenant's learner front and admin: the only pages that may frame a package. */
+    /**
+     * The tenant's learner front and admin (and the extra first-party origins in TRUSTED_ORIGINS): the only
+     * pages that may frame a package. Outside production, `localhost` and `*.localhost` hosts without a port
+     * get `:*`, because the dev front runs on its own port (:4321), like the trusted-origin check does.
+     */
     public static function frameAncestors(): string
     {
+        $local = !app()->environment('production') && config('ulams.core.security.trust_localhost_outside_production', false);
         $origins = [];
-        foreach ([config('app.frontend_url'), config('ulams.core.security.admin_url')] as $url) {
+        $urls = [config('app.frontend_url'), config('ulams.core.security.admin_url'), ...(array) config('ulams.core.security.trusted_origins', [])];
+        foreach ($urls as $url) {
             $parts = parse_url((string) $url);
-            if (is_array($parts) && isset($parts['scheme'], $parts['host']) && in_array($parts['scheme'], ['http', 'https'], true)) {
-                $origins[] = $parts['scheme'] . '://' . $parts['host'] . (isset($parts['port']) ? ':' . $parts['port'] : '');
+            if (!is_array($parts) || !isset($parts['scheme'], $parts['host']) || !in_array($parts['scheme'], ['http', 'https'], true)) {
+                continue;
             }
+            if (!preg_match('/^[A-Za-z0-9.-]+$/', $parts['host'])) {
+                continue;
+            }
+            $port = isset($parts['port']) ? ':' . $parts['port'] : ($local && ($parts['host'] === 'localhost' || str_ends_with($parts['host'], '.localhost')) ? ':*' : '');
+            $origins[] = $parts['scheme'] . '://' . $parts['host'] . $port;
         }
 
         return $origins === [] ? "'none'" : implode(' ', array_values(array_unique($origins)));
