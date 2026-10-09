@@ -46,8 +46,12 @@ Option 1:
   internal HTTP request carrying the learner's token.
 - A `completed` or `passed` statement fires `AuCompletionReported`; `topic-types` completes the
   topics that use the AU for learners who may attend the course (as for SCORM, ADR 0018).
-- CORS on `trax/api/*` already answers any origin without credentials, so the content origin needs
-  no allow-list entry. This is consistent with ADR 0014, whose rule concerns credentialed routes.
+- Laravel's CORS config answers any origin without credentials, but Caddy refuses to reflect a content
+  origin on API responses (ADR 0014). A dedicated `@cmi5` block (dev Caddyfile and the production
+  example) answers `Access-Control-Allow-Origin: *` on `/api/cmi5/fetch` and `/trax/api/*/xapi/std/*`
+  only, drops `Cookie`, keeps `Authorization` (the session token) and names it in the preflight. This
+  is consistent with ADR 0014: the routes take no ambient credentials. Found by playing an AU in the
+  browser against the dev stack.
 - `POST /api/cmi5/fetch` is exempt from the Origin check (the AU calls it from the content origin)
   and throttled to 60 requests a minute.
 
