@@ -78,7 +78,7 @@ describe("stdio (built CLI)", () => {
     try {
       await client.connect(transport);
     } catch (e) {
-      throw new Error(`${(e as Error).message} (child stderr: ${stderr.trim() || "empty"})`);
+      throw new Error(`${(e as Error).message} (child stderr: ${stderr.trim() || "empty"})`, { cause: e });
     }
     return client;
   }
