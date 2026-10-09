@@ -1,0 +1,158 @@
+---
+title: SDK usage
+description: Working examples for @ulams/sdk on a server (Node with a scoped token) and in the browser, pagination, error handling, idempotent writes and the error codes the API returns.
+sidebar:
+  order: 71
+modules:
+  - sdk
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+`@ulams/sdk` (`front/sdk`) is a framework-free client on `fetch`. It is a **private workspace
+package**, not published to npm: use it from another workspace of the monorepo
+(`"@ulams/sdk": "0.1.0"`, resolved to the workspace), where the bundler compiles its TypeScript source. Outside the
+monorepo, call the REST API directly ([Authentication](/developers/authentication/)). The client
+methods and sessions are described in [Reference frontend](/developers/reference-frontend/#ulamssdk);
+this page shows how to use it end to end.
+
+## Server (Node) with a scoped token
+
+Create a token with `ulams tokens create` or on the account page
+([Scoped API tokens](/developers/scoped-tokens/)); the client sends it as `Authorization: Bearer`,
+and the `ulams_pat_` prefix is accepted.
+
+```ts
+import { ApiError, createClient } from "@ulams/sdk";
+
+const api = createClient({
+  baseUrl: process.env.ULAMS_URL!,   // tenant API origin, e.g. http://coffee.localhost
+  token: process.env.ULAMS_TOKEN,    // ulams_pat_...
+});
+
+const me = await api.auth.me();       // GET /api/profile/me
+console.log(me.id, me.roles);
+```
+
+A token without a scope for an endpoint gets 403 `scope_missing`; see the table below.
+
+## Pagination
+
+List methods that return `{ data, meta }` take `page` and `per_page`. `meta` is
+`{ current_page, last_page, per_page, total }`. Walk the pages with a generator:
+
+```ts
+async function* allCourses() {
+  for (let page = 1; ; page++) {
+    const { data, meta } = await api.courses.list({ page, per_page: 50 });
+    yield* data;
+    if (!meta || page >= meta.last_page) return;
+  }
+}
+
+for await (const course of allCourses()) console.log(course.id, course.title);
+```
+
+For an endpoint without a typed wrapper, `api.raw("GET", path, { query })` returns the whole
+envelope (`data` and `meta`) and `api.request(...)` only `data`. Paths must be documented in the
+OpenAPI spec ([OpenAPI and SDK](/developers/openapi-and-sdk/)).
+
+## Error handling
+
+Every non-2xx answer throws `ApiError` with `status`, `path` (the documented template, for example
+`/api/courses/{id}`) and the parsed JSON `body`. `status` 0 means the request never reached the API
+(network error or the 15 s `timeoutMs`).
+
+```ts
+try {
+  await api.courses.program(9);
+} catch (e) {
+  if (!(e instanceof ApiError)) throw e;
+  const body = e.body as { error?: string; required?: string[]; errors?: Record<string, string[]> } | null;
+  switch (true) {
+    case e.status === 0:                         /* unreachable: retry later */ break;
+    case e.status === 401:                       /* token expired or revoked: sign in again */ break;
+    case e.status === 403 && body?.error === "scope_missing":
+      console.error("token needs", body.required); break;
+    case e.status === 422:                       console.error(body?.errors); break;
+    case e.status === 429:                       /* back off */ break;
+    default:                                     throw e;
+  }
+}
+```
+
+The SDK does not expose response headers. To honour `Retry-After`, pass a `fetch` wrapper:
+
+```ts
+let retryAfter = 0;
+const api = createClient({
+  baseUrl: process.env.ULAMS_URL!,
+  token: process.env.ULAMS_TOKEN,
+  fetch: async (input, init) => {
+    const response = await fetch(input, init);
+    retryAfter = Number(response.headers.get("Retry-After") ?? 0);
+    return response;
+  },
+});
+```
+
+## Safe retries of writes
+
+`Idempotency-Key` is a request header, and `headers` is a client option, so build one client per
+operation and reuse the same key when you retry
+([details](/developers/scoped-tokens/#idempotency-key-and-x-request-id)):
+
+```ts
+const once = createClient({
+  baseUrl: process.env.ULAMS_URL!,
+  token: process.env.ULAMS_TOKEN,
+  headers: { "Idempotency-Key": crypto.randomUUID() },
+});
+await once.request("POST", "/api/quiz-attempts", { body: { topic_gift_quiz_id: 1 } });
+```
+
+## Browser
+
+The API enables CORS for every origin without credentials (`api/config/cors.php`), so a browser app
+can call it with a bearer token it holds in memory. The API itself sets no cookies.
+
+```ts
+import { createClient } from "@ulams/sdk";
+
+const anonymous = createClient({ baseUrl: "https://coffee.api.example.com" });
+const { token } = await anonymous.auth.login(email, password, false); // remember_me off: short-lived token
+const api = anonymous.withToken(token);
+const courses = await api.courses.myIds();
+```
+
+Prefer the pattern of the reference frontend: a server keeps the token in an httpOnly cookie and
+the browser calls a same-origin proxy with no token at all.
+
+```ts
+const api = createClient({ baseUrl: "/bff" }); // the server adds the token from the cookie
+const progress = await api.progress.course(1);
+```
+
+The `/bff` proxy forwards only an allow-list of learner calls (`front/web/src/lib/bff.ts`: profile,
+progress, quiz, Living Course notices), so it is not a general API gateway
+([Reference frontend](/developers/reference-frontend/#session-and-bff)).
+
+<Aside type="note">
+  The examples were run against a local mock of the API with Node 23.10 using
+  `node --experimental-transform-types`, which the SDK's TypeScript source needs when it is
+  imported without a bundler.
+</Aside>
+
+## Common errors
+
+| Status | `error` | Meaning | What to do |
+|---|---|---|---|
+| 401 | none | Missing, expired or revoked token | Log in again or create a new token |
+| 403 | `scope_missing` (`required: ["courses:write"]`) | The token lacks a scope | Create a token with the scope ([scopes](/developers/scoped-tokens/#scopes)) |
+| 403 | `scope_forbidden` | Endpoint never available to scoped tokens (impersonation, refresh, account deletion, device approval) | Use a login token |
+| 403 | `scope_unmapped` | Route not in the scope map | Report it; not usable with a scoped token |
+| 409 | `idempotency_in_progress` | The first request with this key still runs | Retry shortly with the same key |
+| 422 | `idempotency_mismatch` | Key reused with another body | Use a new key |
+| 422 | none, `errors: { field: [...] }` | Validation failed | Fix the fields |
+| 429 | `rate_limited` | The token's `rate_limit_per_minute` is exceeded | Wait `Retry-After` seconds ([Rate limits](/developers/rate-limits/)) |
+| 0 | none | Network error or timeout | Retry with backoff |

@@ -406,9 +406,10 @@ approved apply through domain services → element chat edits. Designs:
       GIFT rendered by our code, support check against the cited text)
 - [x] Metadata (title, description, SEO, pricing) (a suggested price for a paid course, confirmed by
       the author; ADR 0049)
-- [ ] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (partial: theme,
-      the product (inactive at apply, active at publish), the publish check and the generated landing
-      on the current site done; a new site for platform admins is L2-09)
+- [x] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (theme, the product
+      (inactive at apply, active at publish), the publish check and the generated landing on the current
+      site; a new site for platform operators through the platform tenant API and a session transfer,
+      ADR 0048; the Sylius channel is Phase 6.4)
 - [x] **Course Blueprint**: versioned JSON, stable IDs, citations; entities created via domain
       services; persisted per stage; progress streamed (SSE/websockets) (ADR 0010, 0025)
 - [x] (new) Long jobs on dedicated queue connections: `<driver>-builder` (retry_after 2400) for Course
@@ -738,6 +739,10 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       Container, R2, Hyperdrive, Queues, Durable Objects) with a one-command `wrangler deploy` for a
       dev environment; strangler migration of the API to Hono only if the spike succeeds
 
+- [ ] (new) Shared-hosting variant: the API on MyDevil.net with cron workers and Cloudflare in front
+      (`deploy/mydevil`, docs `operators/install-mydevil`, ADR 0091; partial: runbook, scripts and the
+      code changes (`ulams:tenant:work-once`, manual tenant database, R2 policy switch) done, not run on
+      a real account: needs SSH and `bin/check-host.sh`)
 - [ ] One app image + PostgreSQL + optional Redis (DB fallback)
 - [ ] Commerce as optional profile: + one Sylius image, shared PostgreSQL server (separate DB)
 - [ ] `docker compose up` and Helm chart with sane defaults

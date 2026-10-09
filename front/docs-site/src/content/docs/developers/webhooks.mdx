@@ -1,0 +1,89 @@
+---
+title: Webhooks
+description: The inbound webhooks the API accepts (Living Course Git pushes, Stripe, Jitsi recordings), how each one is authenticated, their status codes, and the fact that there are no outgoing webhooks yet.
+sidebar:
+  order: 8
+---
+
+The API **receives** three kinds of webhook. All are public routes (no `Authorization` header): the
+signature or shared secret is the credential, and the request is rejected without it. There is **no
+outgoing webhook mechanism** today; see [Events and listeners](/extending/events-and-listeners/#webhooks).
+The commerce package has a provider contract for verified order events (`CommerceProvider`) but
+registers no webhook route.
+
+Webhooks are per host: send them to the **tenant's API host** (for example
+`http://coffee.localhost`), never to the platform host.
+
+| Webhook | Route | Credential | Setup |
+|---|---|---|---|
+| Living Course, Git push | `POST /api/living-course/webhooks/{webhookId}` | HMAC-SHA256 of the raw body with the connection's own secret | [Living Course admin](/admin/living-course/#connectors-and-webhooks) |
+| Stripe payment events | `POST /api/payments-gateways/webhook/stripe` | `Stripe-Signature` with `PAYMENTS_STRIPE_WEBHOOK_SECRET` | [Sales](/admin/sales/#stripe-webhook-and-3-d-secure) |
+| Jitsi / JaaS recordings | `POST /api/jitsi/recorded-video` | `X-Jaas-Signature` with `JITSI_WEBHOOK_SECRET`, or `Authorization: Bearer $JITSI_WEBHOOK_TOKEN` | [Webinars](/admin/webinars/#recording-webhook) |
+
+## Living Course (Git push)
+
+`webhookId` is the 26-character lowercase id of a connection (shown in the studio with its secret;
+rotate it with `POST /api/living-course/connections/{connection}/webhook-secret`). A delivery is
+accepted when its signature matches the secret of that connection. Accepted signatures:
+
+| Header | Hosts |
+|---|---|
+| `X-Ulams-Signature: [sha256=]<hex>` | every Git host (generic, useful for tests and CI) |
+| `X-Hub-Signature-256: sha256=<hex>` | GitHub |
+| `X-Gitea-Signature` or `X-Forgejo-Signature` | Gitea, Forgejo |
+| `X-Gitlab-Token: <secret>` | GitLab (the secret itself) |
+
+The hex value is `HMAC-SHA256(raw body, secret)`. Only `push` events to the connection's tracked
+branch (`ref` equal to `refs/heads/<branch>`) that touch the tracked paths queue a check; the check
+is debounced by `LIVING_COURSE_WEBHOOK_DEBOUNCE_SECONDS` (600). Bodies over 1 MiB are refused. The
+payload is not stored, only its SHA-256 digest.
+
+```bash
+SECRET='<webhook secret of the connection>'
+BODY='{"ref":"refs/heads/main","after":"0123abcd","commits":[]}'
+SIG=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$SECRET" | sed 's/^.* //')
+
+curl -i -X POST "http://coffee.localhost/api/living-course/webhooks/<webhookId>" \
+  -H 'Content-Type: application/json' \
+  -H "X-Ulams-Signature: sha256=$SIG" \
+  --data-binary "$BODY"
+# 202 {"success":true,"data":{"queued":true}}
+```
+
+| Status | Meaning |
+|---|---|
+| 202 `data.queued` | A check is queued |
+| 200 `data.ignored` | Not a push, other branch, or no tracked path changed |
+| 200 `data.duplicate` | The delivery id was already seen |
+| 200 `data.dropped` | The connection is paused or hit its daily automatic check limit (48, `living_course.poll.checks_per_connection_per_day`) |
+| 401 | Invalid signature (logged; one audit entry per connection and minute) |
+| 404 | Unknown id, or a connector without webhooks. Answers after a fixed delay so timing reveals nothing |
+| 413 | Body larger than 1 MiB |
+| 429 | More than 60 requests per minute for this `webhookId` |
+
+## Stripe
+
+Add an endpoint in the Stripe dashboard with the tenant's URL and subscribe it to
+`payment_intent.succeeded`, `payment_intent.payment_failed` and `payment_intent.canceled`. The
+`Stripe-Signature` header (`t=<unix time>,v1=<hex>`) is verified as `HMAC-SHA256("<t>.<raw body>")`
+with the signing secret, within `PAYMENTS_STRIPE_WEBHOOK_TOLERANCE` seconds (default 300). To test
+locally use the Stripe CLI, which signs for you:
+
+```bash
+stripe listen --forward-to http://coffee.localhost/api/payments-gateways/webhook/stripe
+```
+
+Answers: 200 `Ignored` for verified events that do not belong to a ulams payment (so Stripe stops
+retrying), 400 `Invalid signature` when the signature or secret is wrong or missing, 400 when the
+Stripe driver is not enabled. The route has no ulams throttle.  See [Sales](/admin/sales/#stripe-webhook-and-3-d-secure) for how a payment is confirmed.
+
+## Jitsi and JaaS recordings
+
+`POST /api/jitsi/recorded-video` is accepted with a valid `X-Jaas-Signature`
+(`t=<timestamp>,v1=<signature>`, HMAC-SHA256 of `<t>.<raw body>`, base64 or hex, tolerance
+`JITSI_WEBHOOK_TOLERANCE`, default 300) or with `Authorization: Bearer <JITSI_WEBHOOK_TOKEN>`.
+Answers 403 when neither secret is configured and 401 when the credential is wrong. Throttled to 60
+requests per minute; download rules and hosts are in [Webinars](/admin/webinars/#recording-webhook).
+
+
+See [Rate limits](/developers/rate-limits/) for the throttles.

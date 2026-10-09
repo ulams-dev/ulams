@@ -32,10 +32,13 @@ class ScheduleLoopCommand extends Command
 
     public function handle(): int
     {
-        $this->trap([SIGTERM, SIGINT, SIGQUIT], fn () => $this->stopping = true);
-
         if ($this->option('once')) {
             return $this->tick();
+        }
+
+        // SIGTERM and friends exist only with ext-pcntl; a host without it still runs `--once`
+        if (defined('SIGTERM')) {
+            $this->trap([SIGTERM, SIGINT, SIGQUIT], fn () => $this->stopping = true);
         }
 
         $until = time() + max(60, (int) $this->option('max-time'));

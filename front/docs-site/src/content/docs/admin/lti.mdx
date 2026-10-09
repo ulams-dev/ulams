@@ -182,7 +182,7 @@ everything) and `retired` (still published for a grace period).
 
 | Caller | Endpoints |
 |---|---|
-| Anyone | `GET /api/lti/jwks`, `GET /.well-known/jwks.json` |
+| Anyone | `GET /api/lti/jwks`, `GET /.well-known/jwks.json`, `GET /api/lti/frame-origins` (origins of the enabled tools, cached 5 minutes; used for the front's [CSP](/operators/security-headers/#tools-in-the-fronts-policy)) |
 | Admin (`lti_manage`) | `GET /api/admin/lti/endpoints`; CRUD on `/api/admin/lti/tools` and `/api/admin/lti/platforms`; `POST /api/admin/lti/tools/{tool}/deep-link` |
 | Learner | `POST /api/lti/launches/{topic}` |
 | External tool | `GET/POST /api/lti/platform/authorize`, `POST /api/lti/platform/token`, `/api/lti/platform/ags/{course}/lineitems[/{id}[/scores, /results]]`, `GET /api/lti/platform/nrps/{course}`, `POST /api/lti/platform/deep-links` |

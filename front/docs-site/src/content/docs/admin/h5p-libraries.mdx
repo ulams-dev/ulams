@@ -37,7 +37,8 @@ the [api/h5p README](https://github.com/ulams-dev/ulams/blob/main/api/h5p/README
 
 All tenants use **one library volume** (`/data/libraries` in the image). Installing, updating or
 deleting a library therefore affects every academy. Content, user state and results stay per
-tenant (tenant database and bucket).
+tenant (tenant database and bucket). In production the volume is a normal Docker volume of the `h5p`
+service; see [H5P service in production](/operators/h5p/).
 
 Because of this, the service only accepts library **writes on the platform host** (tenant id
 `default`, `api.localhost` in development). The guard is the `platformOnlyWrites` middleware in

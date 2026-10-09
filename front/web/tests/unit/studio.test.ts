@@ -18,6 +18,7 @@ describe("studio BFF allow-list", () => {
     ["POST", `/sessions/${S}/undo`],
     ["POST", `/sessions/${S}/publish`],
     ["GET", `/sessions/${S}/publish-check`],
+    ["POST", `/sessions/${S}/new-site`],
     ["POST", `/runs/${S}/steps/${S}/retry`],
   ])("forwards %s %s", (method, path) => {
     expect(isStudioCall(method, path)).toBe(true);

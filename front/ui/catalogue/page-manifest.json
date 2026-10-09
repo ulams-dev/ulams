@@ -481,6 +481,98 @@
             "description": "Log-style panel for the console variant",
             "additionalProperties": false
           },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "icon": {
+                  "type": "string",
+                  "enum": [
+                    "check",
+                    "arrow",
+                    "play",
+                    "clock",
+                    "calendar",
+                    "pin",
+                    "users",
+                    "mail",
+                    "shield",
+                    "star",
+                    "moon",
+                    "planet",
+                    "telescope",
+                    "rocket",
+                    "medal",
+                    "book",
+                    "terminal",
+                    "pager",
+                    "chart",
+                    "print",
+                    "lock",
+                    "sync",
+                    "quote",
+                    "layers",
+                    "server",
+                    "puzzle",
+                    "cart",
+                    "code",
+                    "sparkle",
+                    "eye",
+                    "chat"
+                  ],
+                  "description": "Icon from the catalogue's icon set"
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Short label of the capability (2 to 4 words)",
+                  "maxLength": 32
+                },
+                "caption": {
+                  "type": "string",
+                  "description": "One line shown under the orbit while this capability is highlighted",
+                  "maxLength": 90
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "In-page anchor of the section that shows it, e.g. #living",
+                  "maxLength": 2048
+                },
+                "ring": {
+                  "type": "integer",
+                  "description": "Orbit the card travels on, 1 = inner",
+                  "minimum": 1,
+                  "maximum": 3,
+                  "default": 1
+                },
+                "angle": {
+                  "type": "integer",
+                  "description": "Start angle on the orbit in degrees (0 = right, 90 = below); spreads the cards evenly when omitted",
+                  "minimum": 0,
+                  "maximum": 359
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "available",
+                    "preview",
+                    "coming"
+                  ],
+                  "description": "Roadmap status; shown as a Coming marker only in the actual landing mode",
+                  "default": "available"
+                }
+              },
+              "required": [
+                "label",
+                "caption"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Capability orbit for the product variant: cards on up to three orbits around the logo, one highlighted at a time",
+            "default": [],
+            "maxItems": 12
+          },
           "diff": {
             "type": "object",
             "properties": {
@@ -1479,7 +1571,10 @@
                     "server",
                     "puzzle",
                     "cart",
-                    "code"
+                    "code",
+                    "sparkle",
+                    "eye",
+                    "chat"
                   ],
                   "description": "Icon from the catalogue's icon set"
                 },
@@ -1612,7 +1707,10 @@
                     "server",
                     "puzzle",
                     "cart",
-                    "code"
+                    "code",
+                    "sparkle",
+                    "eye",
+                    "chat"
                   ],
                   "description": "Icon from the catalogue's icon set"
                 }
@@ -1858,7 +1956,10 @@
                     "server",
                     "puzzle",
                     "cart",
-                    "code"
+                    "code",
+                    "sparkle",
+                    "eye",
+                    "chat"
                   ],
                   "description": "Icon from the catalogue's icon set"
                 },

@@ -11,7 +11,8 @@ import { Aside, Steps } from "@astrojs/starlight/components";
 
 One ulams API deployment serves the **platform** and any number of **tenants**. Each tenant
 has its own hosts, database, storage bucket, encryption and token keys, Redis prefix and
-theme. Tenants are managed from the command line on the platform; there is no admin screen
+theme. Tenants are managed from the command line on the platform, or over HTTP with the
+[platform tenant API](/operators/platform-api/) (off by default); there is no admin screen
 for them.
 
 This page is for operators who create and maintain tenants. For how tenant resolution works
@@ -205,9 +206,13 @@ Platform environment variables of the tenancy package (defaults in
 | `TENANCY_STORAGE_PUBLIC_URL` | `http://storage.localhost` | Public base URL of the object store; the bucket name is appended. |
 | `TENANCY_S3_ENDPOINT`, `TENANCY_S3_REGION`, `TENANCY_S3_KEY`, `TENANCY_S3_SECRET` | the `AWS_*` values | Object store used to create buckets. |
 | `TENANCY_ADMIN_CONNECTION` | `pgsql_admin` | Database connection with rights to create roles and databases. |
+| `TENANCY_DATABASE_PROVISIONER` | `admin` | `manual`: you create each tenant database (shared hosting); the `database` step only checks the login. Pass its password to `ulams:tenant:create --db-password=` (16+ characters). See [Install on MyDevil](/operators/install-mydevil/). |
+| `TENANCY_S3_PUBLIC_READ_POLICY` | `true` | `false` for stores without bucket policies (Cloudflare R2): no policy is attached; make the buckets public yourself. |
 | `TENANT_DEMO_PASSWORD` | `secret` | Password of the seeded accounts. Development only. |
 | `TENANCY_PROCESS_TIMEOUT` | `900` | Timeout of each child `artisan` process, in seconds. |
 | `TENANCY_PLATFORM_API` | `false` | Turn on the [platform tenant API](/operators/platform-api/) (`/api/platform/*`, `ulams tenants`). Platform hosts only. |
+| `TENANCY_NEW_SITES` | `false` | Lets an author with the `platform_admin` permission create a new site for a course from the Course Builder. |
+| `TENANCY_PLATFORM_HOST` | `api.localhost` | The host platform commands run under when a tenant's queue worker has to create a tenant. |
 
 See also [Environment variables](/reference/environment-variables/) and
 [Artisan commands](/reference/artisan-commands/).

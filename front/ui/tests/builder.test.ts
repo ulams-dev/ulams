@@ -543,3 +543,21 @@ describe("PublishSummary", () => {
     expect(done.textContent).toContain("Published");
   });
 });
+
+describe("SitePicker", () => {
+  it("sends the current site, or a new site with a valid name", () => {
+    const c = ctx();
+    const main = mount(single("SitePicker"), c);
+    main.querySelector("form")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    expect(c.actions.at(-1)!.context).toEqual({ key: "site", value: { mode: "current" } });
+    (main.querySelector('input[value="new"]') as HTMLInputElement).click();
+    const slug = main.querySelector('input[type="text"]') as HTMLInputElement;
+    slug.value = "Brew House!";
+    main.querySelector("form")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    expect(c.actions.at(-1)!.name).toBe("decide_for_me");
+    expect(main.querySelector('[role="alert"]')!.textContent).toMatch(/3 to 40/);
+    slug.value = "Brew-House";
+    main.querySelector("form")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    expect(c.actions.at(-1)!.context).toEqual({ key: "site", value: { mode: "new", slug: "brew-house" } });
+  });
+});

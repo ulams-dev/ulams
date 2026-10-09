@@ -97,3 +97,4 @@ replacement.
 | [0087](0087-interactive-bridge-protocol.md) | The `ulams-ix` bridge protocol and the `@ulams/interactive-bridge` library (MIT) | Proposed |
 | [0088](0088-separately-licensed-content-packages.md) | Separately licensed content packages under `demo-content/`; GPL apps stay GPL and are never linked into MIT code | Proposed |
 | [0089](0089-six-demo-academies-and-content-sourcing.md) | Six demo academies: three free interactive courses, one theme preset each, sourced content, EN/PL as two courses | Proposed |
+| [0091](0091-shared-hosting-cron-workers-and-manual-tenant-database.md) | Shared hosting: cron-driven workers (`ulams:tenant:work-once`) and an operator-created tenant database | Proposed |
