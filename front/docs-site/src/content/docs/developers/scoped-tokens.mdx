@@ -98,7 +98,7 @@ approval waits in the row, encrypted, until the first poll collects it and the c
 deletes rows expired for over a day. The approval page is
 [`/cli/authorize`](/learners/cli-sign-in/) in the web app; its POSTs pass the same exact-`Origin` check
 as every state-changing request of the front (ADR 0014, amended), the page is never framed and never
-cached, and the code is kept out of `Referer`.
+cached, and the code is never sent to another site in `Referer` (`Referrer-Policy: same-origin`).
 
 ## Agent audit log
 

@@ -60,7 +60,8 @@ describe("response headers", () => {
     expect(isCliPath("/client")).toBe(false);
     expect(CLI_HEADERS["X-Frame-Options"]).toBe("DENY");
     expect(CLI_HEADERS["Content-Security-Policy"]).toContain("frame-ancestors 'none'");
-    expect(CLI_HEADERS["Referrer-Policy"]).toBe("no-referrer");
+    // never "no-referrer": that makes browsers send `Origin: null` on the approval POST
+    expect(CLI_HEADERS["Referrer-Policy"]).toBe("same-origin");
     expect(CLI_HEADERS["Cache-Control"]).toContain("no-store");
   });
   it("approval POSTs obey the exact-origin rule of the site", () => {

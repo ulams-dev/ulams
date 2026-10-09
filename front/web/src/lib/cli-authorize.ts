@@ -12,10 +12,12 @@ export const isCliPath = (pathname: string): boolean => pathname === "/cli" || p
 /**
  * Headers of every /cli response. The code in the URL is single use and short lived, still it must
  * not leak through Referer; the approve button must not be clickjackable; nothing is cached.
+ * `same-origin`, not `no-referrer`: with `no-referrer` browsers send `Origin: null` on the approval
+ * POST, which the exact-Origin check (rightly) refuses.
  */
 export const CLI_HEADERS: Readonly<Record<string, string>> = {
   "Cache-Control": "private, no-store",
-  "Referrer-Policy": "no-referrer",
+  "Referrer-Policy": "same-origin",
   "X-Frame-Options": "DENY",
   "Content-Security-Policy": "frame-ancestors 'none'",
   "X-Robots-Tag": "noindex, nofollow, noarchive",

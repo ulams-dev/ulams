@@ -18,14 +18,22 @@ interface Started {
   verification_uri_complete: string;
 }
 
+/** The code endpoint is throttled to 10 per minute per IP: wait out a 429 instead of failing the suite. */
 async function start(scopes = ["courses:write", "builder:write", "users:write"]): Promise<Started> {
-  const res = await fetch(`${api}/api/auth/device/code`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({ client_name: "ulams-cli on e2e-host", scopes }),
-  });
-  expect(res.status).toBe(200);
-  return (await res.json()) as Started;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const res = await fetch(`${api}/api/auth/device/code`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ client_name: "ulams-cli on e2e-host", scopes }),
+    });
+    if (res.status === 429) {
+      await new Promise((r) => setTimeout(r, (Number(res.headers.get("retry-after")) || 60) * 1000 + 500));
+      continue;
+    }
+    expect(res.status).toBe(200);
+    return (await res.json()) as Started;
+  }
+  throw new Error("the device code endpoint stayed throttled");
 }
 
 const poll = (deviceCode: string) =>
@@ -52,6 +60,14 @@ test.beforeAll(async () => {
 });
 
 test.describe("/cli/authorize", () => {
+  test.setTimeout(240_000);
+  test.use({ actionTimeout: 15_000 });
+
+  // The approval endpoints allow 5 calls per minute per user and every test signs in as the same
+  // demo student: space the tests out so the throttle (which is the point of it) does not fail them.
+  test.beforeEach(async () => {
+    await new Promise((r) => setTimeout(r, Number(process.env.CLI_E2E_GAP_MS ?? 20_000)));
+  });
   test("signed-out visitors are sent to the login and come back to the code", async ({ page }) => {
     const { user_code } = await start();
     await page.goto(`${web}/cli/authorize?code=${user_code}`);
@@ -74,7 +90,7 @@ test.describe("/cli/authorize", () => {
     // pending until answered
     expect((await poll(started.device_code)).status).toBe(400);
 
-    await page.getByRole("checkbox", { name: /users and groups/i }).uncheck();
+    await page.getByRole("checkbox", { name: /users, groups and roles/i }).uncheck();
     await page.getByRole("radio", { name: "30 days" }).check();
     await page.getByRole("button", { name: "Approve" }).click();
     await expect(page.getByRole("heading", { name: "Approved" })).toBeVisible();
@@ -146,7 +162,7 @@ test.describe("/cli/authorize", () => {
     const headers = response!.headers();
     expect(headers["x-frame-options"]).toBe("DENY");
     expect(headers["content-security-policy"]).toContain("frame-ancestors 'none'");
-    expect(headers["referrer-policy"]).toBe("no-referrer");
+    expect(headers["referrer-policy"]).toBe("same-origin");
     expect(headers["cache-control"]).toContain("no-store");
   });
 
