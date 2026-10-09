@@ -4,11 +4,14 @@ namespace Ulams\LivingCourse;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Ulams\Ai\Fake\FakeResponders;
+use Ulams\Ai\Prompts\PromptRegistry;
 use Ulams\CourseBuilder\Events\SourceIngested;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Services\SessionState;
 use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
 use Ulams\LivingCourse\Console\BackfillCommand;
+use Ulams\LivingCourse\Fake\UpdateResponder;
 use Ulams\LivingCourse\Services\AuditLog;
 use Ulams\LivingCourse\Services\RevisionService;
 use Ulams\LivingCourse\Services\StalenessService;
@@ -38,6 +41,8 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
+        $this->app->make(PromptRegistry::class)->addPath('living-course', __DIR__ . '/../resources/prompts');
+        UpdateResponder::register($this->app->make(FakeResponders::class));
         SessionState::extendSummary('living-course', fn (Session $s) => ['freshness' => $this->app->make(StalenessService::class)->summary($s)]);
 
         if ($this->app->runningInConsole()) {
