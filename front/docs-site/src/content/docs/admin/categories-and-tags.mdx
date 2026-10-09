@@ -69,5 +69,6 @@ Course, webinar and product forms have a **Tags** field. Type a word or phrase a
 item uses it.
 
 The public endpoints `GET /api/tags` and `GET /api/tags/unique` let frontends list items by
-tag. Creating and deleting tags through the admin API needs `tags_create` and `tags_delete`.
+tag. The admin endpoints under `/api/admin/tags` require a signed-in user: listing needs `tags_list`, creating `tags_create` and deleting `tags_delete` (admins and tutors have all three).
+Installs that predate `tags_list` get it by re-running `TagsPermissionSeeder`.
 

@@ -145,10 +145,11 @@ open Phase 0, 1 and 2 item as work packages L0-01â€¦L2-24; owner questions #41â€
 - [x] (new) Platform bucket publicly readable by default (`MINIO_DEFAULT_BUCKETS=ulams:download`)
 - [x] (new) Demo course seeders for the three experiences (`make demo-seed`, `demo-seed-tenants`)
 
-- [ ] (new) Security follow-ups (medium): require `auth:api` on admin tag routes; rate-limit/authorise
-      `POST api/images/img`; review `POST api/cmi5/fetch`; client-set `has_trial`, client currency override
-      and `payProduct` skipping `purchasable`; vouchers admin search OR grouping; `getChildGroups` depth;
-      keep `_ignition` off in production
+- [ ] (new) Security follow-ups (medium) (partial: done and merged: `auth:api` and `tags_list` on admin tag
+      routes, `POST api/images/img` limits and throttle, client payment parameters allow-listed with server
+      price/currency/trial values winning, `payProduct` purchasability, vouchers search grouping,
+      `GroupTree` depth limit and cycle safety, `_ignition` absent from demo and production images
+      (ADR 0071); pending: review `POST api/cmi5/fetch` (L0-09))
 - [ ] (new) Stripe: handle the 3-D Secure redirect in the front and document the webhook setup
       (`PAYMENTS_STRIPE_WEBHOOK_SECRET`, `/api/payments-gateways/webhook/stripe`); RevenueCat receipt verifier
 - [ ] (new) Jitsi: confirm the JaaS webhook signature format against the JaaS docs; configure

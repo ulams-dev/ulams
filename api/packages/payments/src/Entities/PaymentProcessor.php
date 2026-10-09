@@ -105,11 +105,7 @@ class PaymentProcessor
             $this->setPaymentDriverName($this->getPaymentDriverName());
         }
 
-        $currency = $parameters['currency'] ?? null;
-
-        if (!is_null($currency) && Currency::hasValue($currency)) {
-            $this->setCurrency(Currency::fromValue($currency));
-        }
+        // The currency comes from the payable (see PaymentsService); a client `currency` parameter is ignored.
 
         $this->setRefund($parameters);
         $this->savePayment();

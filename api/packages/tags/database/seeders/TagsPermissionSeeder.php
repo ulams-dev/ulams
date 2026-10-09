@@ -17,6 +17,7 @@ class TagsPermissionSeeder extends Seeder
 
         $permissions = [
             TagsPermissionsEnum::TAGS_CREATE,
+            TagsPermissionsEnum::TAGS_LIST,
             TagsPermissionsEnum::TAGS_UPDATE,
             TagsPermissionsEnum::TAGS_DELETE,
         ];

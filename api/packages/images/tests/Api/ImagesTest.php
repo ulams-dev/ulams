@@ -2,6 +2,7 @@
 
 namespace Api;
 
+use Ulams\Images\Enum\PackageStatusEnum;
 use Ulams\Images\Events\FileStored;
 use Ulams\Images\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -494,6 +495,47 @@ class ImagesTest extends TestCase
 
         $hash = sha1($filename . json_encode(['format' => 'webp']));
         $response->assertRedirectContains($hash . '.webp');
+    }
+
+    public function test_image_post_rejects_more_than_twenty_paths(): void
+    {
+        $paths = array_fill(0, 21, ['path' => 'test.jpg', 'params' => ['w' => 100]]);
+
+        $this->postJson('/api/images/img', ['paths' => $paths])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['paths']);
+    }
+
+    public function test_image_post_accepts_twenty_paths(): void
+    {
+        copy(realpath(__DIR__ . '/test.jpg'), Storage::disk('local')->path('test.jpg'));
+        $paths = array_fill(0, 20, ['path' => 'test.jpg', 'params' => ['w' => 100]]);
+
+        $this->postJson('/api/images/img', ['paths' => $paths])->assertOk();
+    }
+
+    public function test_image_post_rejects_oversized_dimensions(): void
+    {
+        $this->postJson('/api/images/img', ['paths' => [
+            ['path' => 'test.jpg', 'params' => ['w' => 4097]],
+        ]])->assertUnprocessable()->assertJsonValidationErrors(['paths.0.params.w']);
+
+        $this->postJson('/api/images/img', ['paths' => [
+            ['path' => 'test.jpg', 'params' => ['h' => 100000]],
+        ]])->assertUnprocessable()->assertJsonValidationErrors(['paths.0.params.h']);
+    }
+
+    public function test_image_post_is_throttled_even_when_the_limiter_status_is_disabled(): void
+    {
+        Config::set('images.private.rate_limiter_status', PackageStatusEnum::DISABLED);
+        Config::set('images.private.rate_limit_global', 2);
+        Config::set('images.private.rate_limit_per_ip', 2);
+        copy(realpath(__DIR__ . '/test.jpg'), Storage::disk('local')->path('test.jpg'));
+        $json = ['paths' => [['path' => 'test.jpg', 'params' => ['w' => 100]]]];
+
+        $this->postJson('/api/images/img', $json)->assertOk();
+        $this->postJson('/api/images/img', $json)->assertOk();
+        $this->postJson('/api/images/img', $json)->assertStatus(429);
     }
 
     private function getHash($json, $index): string

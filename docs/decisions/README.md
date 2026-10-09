@@ -77,3 +77,4 @@ replacement.
 | [0068](0068-scheduler-minute-lock.md) | The scheduler loop claims each minute with a shared cache lock | Proposed |
 | [0069](0069-ci-covers-web-ui-sdk.md) | CI typechecks, lints and tests the web app, ui and sdk | Proposed |
 | [0070](0070-admin-node-24-shim.md) | The admin runs umi/max on Node 24 through a small shim | Proposed |
+| [0071](0071-api-security-hardening-leftovers.md) | API security hardening: auth on admin routes, allow-listed payment input, bounded group walks | Proposed |

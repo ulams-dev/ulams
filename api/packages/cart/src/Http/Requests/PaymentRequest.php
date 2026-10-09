@@ -44,19 +44,22 @@ abstract class PaymentRequest extends FormRequest
         );
     }
 
+    /**
+     * Client fields that may reach the payment drivers (what the drivers read: `gateway`, `payment_method`,
+     * `return_url`, `email`, `channel`). Everything else is dropped, so a client can never set the currency,
+     * the amount, trial/refund flags or subscription terms; the server supplies those.
+     */
+    public const PAYMENT_PARAMETERS_ALLOW_LIST = [
+        'gateway',
+        'payment_method',
+        'return_url',
+        'email',
+        'channel',
+    ];
+
     public function getAdditionalPaymentParameters(): array
     {
-        return $this->except([
-            'client_name',
-            'client_email',
-            'client_street',
-            'client_street_number',
-            'client_postal',
-            'client_city',
-            'client_country',
-            'client_company',
-            'client_taxid',
-        ]);
+        return $this->only(self::PAYMENT_PARAMETERS_ALLOW_LIST);
     }
 
     public function getCartUser(): User
