@@ -9,7 +9,7 @@ MIT code and CC BY 4.0 text (`LICENSE`, `LICENSE-content`, `CREDITS.md`, shared 
 | [`spiral/`](spiral) | `grid`, `primes`, `diagonals`, `explore` | Writes the integers on a square spiral, marks the primes (a sieve), highlights n² + n + 41 | `complete` after `explore` |
 | [`monte-carlo/`](monte-carlo) | `idea`, `throw`, `converge`, `error` | Throws seeded random points into a square to estimate π and watches the error shrink on a log-log chart | `complete` after 10,000 throws |
 | [`automaton/`](automaton) | `rule30`, `rule90`, `rule110`, `life`, `ulam-growth` | Runs elementary rules (any number 0 to 255), Conway's Life (editable by keyboard) and a growth rule from one cell | `complete` once three different steps were visited |
-| `scottish-book/` | `intro` and one step per problem | Reads notebook cards and guesses outcomes (coming) | coming |
+| [`scottish-book/`](scottish-book) | `intro` and one step per problem (19, 153, 193) | Reads notebook cards, filters by poser and guesses the outcome of each problem; every guess sends a score | the topic's `on_score` rule (pass 60%), never `complete` |
 | `lwow-map/` | `lwow` … `santa-fe` | Follows a journey on a map (coming) | coming |
 
 ## How a package is built
@@ -24,6 +24,10 @@ MIT code and CC BY 4.0 text (`LICENSE`, `LICENSE-content`, `CREDITS.md`, shared 
 - The lesson page asks for `chrome: full` when it plays the package inline: the package shows its own step card.
   With `none` (background display) only the interactive shows. `?ulams-poster#<step>` renders a still.
 - The package fetches its own manifest, so it holds `ready` back until it knows its steps (`whenReady`).
+
+`scottish-book` and `lwow-map` contain **placeholder text** until the fact sheet is cleared (plan section 7.3, M9a);
+their data files (`data/problems.json`, `data/route.json`, `data/places.json`) are filled in M9b. The package
+says so on screen and its unit test pins it, so a placeholder cannot ship as a fact.
 
 ## Rules every package follows
 
