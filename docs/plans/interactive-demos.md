@@ -744,6 +744,13 @@ demo-content/poland/
 
 ### 6.3 The five Ulam packages (MIT, new; licence pending #148)
 
+**Built in M5 (2026-10-09).** Shared by the five: `demo-content/shared/ulam-shell.{js,css}` (the step card, Back
+and Next inside the lesson's step range, the bridge wiring with `whenReady`, reduced motion, poster mode and the
+notebook look), copied into each package's `vendor/` by `sync-bridge`, and `tests/e2e/ulam-common.mjs` (the checks
+every package must pass). The package fetches its own manifest, which is the one source of step titles and texts.
+The lesson page asks for `chrome: full` when it plays a package inline, so the package shows its step card;
+with `none` (background display) only the interactive shows. Done so far: `spiral` (M5a).
+
 ```
 demo-content/ulam/
   LICENSE (MIT)  LICENSE-content (CC BY 4.0)  CREDITS.md  sources.json

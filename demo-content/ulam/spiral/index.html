@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Ulam spiral</title>
+<link rel="stylesheet" href="vendor/ulam-shell.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="ix-app">
+  <header id="ix-card" class="ix-card" hidden>
+    <p class="ix-step-no"></p>
+    <h1 class="ix-title"></h1>
+    <p class="ix-text"></p>
+    <nav class="ix-nav" aria-label="Steps">
+      <button type="button" class="ix-prev">Back</button>
+      <button type="button" class="ix-next ix-primary">Next step</button>
+    </nav>
+  </header>
+
+  <main id="ix-stage" class="ix-stage">
+    <h2 class="ix-sr">The Ulam spiral: whole numbers on a square spiral, primes marked</h2>
+    <form class="ix-controls" id="controls" aria-label="Spiral settings" onsubmit="return false">
+      <div class="ix-field">
+        <label for="count">Numbers shown (N)</label>
+        <div class="pair"><input id="count-range" type="range" min="100" max="40000" step="100" value="2500" aria-label="Numbers shown, slider"><input id="count" type="number" min="100" max="40000" step="1" value="2500"></div>
+      </div>
+      <div class="ix-field">
+        <label for="start">Start with</label>
+        <input id="start" type="number" min="1" max="1000000" step="1" value="1">
+      </div>
+      <div class="ix-field check"><label><input id="show-primes" type="checkbox" checked> Mark the primes</label></div>
+      <div class="ix-field check"><label><input id="show-poly" type="checkbox"> Highlight n² + n + 41</label></div>
+    </form>
+    <div class="sp-layout">
+      <canvas id="sp" tabindex="0" role="application" aria-label="Ulam spiral. Use the arrow keys to move from number to number; the number and whether it is prime are read out."></canvas>
+      <div class="sp-side">
+        <p id="cell" class="ix-summary" aria-live="polite">Select a number with the pointer or the arrow keys.</p>
+        <p id="summary" class="ix-summary" aria-live="polite"></p>
+        <p class="ix-note" id="legend">Blue squares are primes. A red outline marks the values of n² + n + 41.</p>
+      </div>
+    </div>
+  </main>
+  <p id="ix-live" class="ix-sr" aria-live="polite"></p>
+</div>
+<script type="module" src="main.js"></script>
+</body>
+</html>

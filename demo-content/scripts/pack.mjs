@@ -6,6 +6,7 @@ import { execFileSync } from "node:child_process";
 import { copyFileSync, mkdirSync, mkdtempSync, readdirSync, rmSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, dirname, join, relative, resolve } from "node:path";
+import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const SKIP_DIRS = new Set(["scripts", "tests", "node_modules", "dist", "release", "test-results"]);
@@ -28,6 +29,13 @@ export function packageFiles(dir) {
     }
   };
   walk(dir);
+  // a package under ulam/ shares the licence texts and credits of that folder
+  const parent = dirname(dir);
+  if (basename(parent) === "ulam") {
+    for (const name of ["LICENSE", "LICENSE-content", "CREDITS"]) {
+      for (const file of [name, `${name}.md`]) if (existsSync(join(parent, file))) out.push({ from: join(parent, file), to: RENAME[name] });
+    }
+  }
   return out;
 }
 

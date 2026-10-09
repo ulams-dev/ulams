@@ -50,6 +50,14 @@ if (copies.length) {
 const atlasSource = readFileSync(join(root, "shared", "atlas.js"), "utf8");
 for (const copy of all.filter((f) => f.endsWith("/vendor/atlas.js"))) if (readFileSync(copy, "utf8") !== atlasSource) problems.push(`${relative(root, copy)}: differs from shared/atlas.js (run: yarn workspace @ulams/demo-content sync-bridge)`);
 
+for (const copy of all.filter((f) => /\/vendor\/ulam-shell\.(js|css)$/.test(f))) {
+  const source = readFileSync(join(root, "shared", copy.split("/").pop()), "utf8");
+  if (readFileSync(copy, "utf8") !== source) problems.push(`${relative(root, copy)}: differs from shared/ (run: yarn workspace @ulams/demo-content sync-bridge)`);
+}
+for (const copy of all.filter((f) => f.endsWith("/lwow-map/data/world.topo.json"))) {
+  if (readFileSync(copy, "utf8") !== readFileSync(join(root, "poland", "data", "world.topo.json"), "utf8")) problems.push(`${relative(root, copy)}: differs from poland/data/world.topo.json (run: yarn workspace @ulams/demo-content sync-bridge)`);
+}
+
 if (problems.length) {
   console.error(problems.map((p) => `  ${p}`).join("\n"));
   console.error(`\n${problems.length} problem(s) in demo-content.`);

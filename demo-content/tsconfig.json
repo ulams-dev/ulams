@@ -3,14 +3,31 @@
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "allowJs": true,
     "checkJs": true,
     "noEmit": true,
     "strict": false,
     "noImplicitAny": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": false
   },
-  "include": ["poland/app.js", "shared/atlas.js", "poland/vendor/*.js", "poland/*.d.ts"],
-  "exclude": ["**/node_modules", "**/release"]
+  "include": [
+    "poland/app.js",
+    "shared/*.js",
+    "poland/vendor/atlas.js",
+    "ulam/*/main.js",
+    "ulam/*/logic.js",
+    "ulam/*/*.d.ts"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/release",
+    "ulam/*/vendor/interactive-bridge.js",
+    "ulam/*/vendor/*.js"
+  ]
 }

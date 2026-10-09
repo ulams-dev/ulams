@@ -1,0 +1,46 @@
+{
+  "$schema": "https://ulams.dev/schemas/ulams-interactive/v1.json",
+  "id": "ulam-spiral",
+  "title": { "en": "The Ulam spiral" },
+  "version": "1.0.0",
+  "entry": "index.html",
+  "licence": "MIT",
+  "attribution": "© 2026 Mateusz Wojczal. Code: MIT. Text: CC BY 4.0.",
+  "source": { "url": "https://github.com/ulams-dev/ulams/tree/main/demo-content/ulam/spiral", "ref": "main" },
+  "locales": ["en"],
+  "defaultLocale": "en",
+  "bridge": 1,
+  "capabilities": { "steps": true, "reducedMotion": true, "score": false, "background": false },
+  "requires": [],
+  "network": [],
+  "steps": [
+    {
+      "id": "grid",
+      "title": { "en": "Write the numbers on a spiral" },
+      "text": { "en": "Put 1 in the middle and write the whole numbers outwards in a square spiral: right, up, left, down, and on. Here are 1 to 100; nothing is marked yet. Click a number, or press the arrow keys on the picture, to move from number to number." },
+      "poster": "posters/grid.webp"
+    },
+    {
+      "id": "primes",
+      "title": { "en": "Mark the primes" },
+      "text": { "en": "A prime has exactly two divisors, 1 and itself. The blue squares are the primes among the first 2,500 numbers, found with the sieve of Eratosthenes. Notice how many of them fall on diagonal lines." },
+      "poster": "posters/primes.webp"
+    },
+    {
+      "id": "diagonals",
+      "title": { "en": "A diagonal full of primes" },
+      "text": { "en": "The polynomial n² + n + 41 gives a prime for every n from 0 to 39. Start the spiral at 41 and its values, outlined in red, fall on one diagonal: forty values in a row, and every one is prime." },
+      "poster": "posters/diagonals.webp"
+    },
+    {
+      "id": "explore",
+      "title": { "en": "Explore the spiral" },
+      "text": { "en": "Change how many numbers are shown (up to 40,000), the number the spiral starts with, and what is marked. Try starting at 41, then at other numbers. Which settings show the clearest diagonal lines? Click or use the arrow keys to read any number." },
+      "poster": "posters/explore.webp"
+    }
+  ],
+  "a11y": {
+    "keyboard": "The picture is a focusable region: the arrow keys move from number to number, Home returns to the first number, and each number is read out with whether it is prime. All settings are native form controls.",
+    "notes": "Nothing moves, so reduced motion needs no change. The summary under the picture gives the count of primes and the share on the highlighted diagonal as text."
+  }
+}
