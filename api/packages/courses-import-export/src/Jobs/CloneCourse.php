@@ -35,6 +35,14 @@ class CloneCourse implements ShouldQueue
     {
         $this->course = $course;
         $this->user = $user;
+
+        // retry_after of the long-job connection is above $timeout (ADR 0083)
+        if ($c = config('queue.long_job.connection')) {
+            $this->onConnection($c);
+        }
+        if ($q = config('queue.long_job.queue')) {
+            $this->onQueue($q);
+        }
     }
 
     public function handle(ExportImportServiceContract $exportImportService): bool

@@ -28,6 +28,16 @@ return [
     |
     */
 
+    /*
+    | Where long jobs that are not part of a package with its own setting run (course clone/import):
+    | `<driver>-long-job` on the `database` or `redis` default connection, ADR 0083.
+    */
+
+    'long_job' => [
+        'connection' => env('LONG_JOB_QUEUE_CONNECTION', in_array(env('QUEUE_CONNECTION'), ['database', 'redis'], true) ? env('QUEUE_CONNECTION') . '-long-job' : null),
+        'queue' => env('LONG_JOB_QUEUE', in_array(env('QUEUE_CONNECTION'), ['database', 'redis'], true) ? 'queue-long-job' : null),
+    ],
+
     'connections' => [
 
         'sync' => [
@@ -66,13 +76,41 @@ return [
             'block_for' => null,
         ],
 
+        // Long jobs. `retry_after` must stay above the longest `$timeout` of a job on the connection
+        // plus a margin, or a second worker picks up a job that is still running (a double LLM call,
+        // a double clone). Guarded by tests/Integrations/QueueRetryAfterConfigTest.php (ADR 0083).
+
+        // Course Builder, Living Course and the Adapt build: jobs run up to 1800 s.
+        'database-builder' => [
+            'driver' => 'database',
+            'table' => 'jobs',
+            'queue' => 'builder',
+            'retry_after' => (int) env('BUILDER_QUEUE_RETRY_AFTER', 2400),
+        ],
+
+        'redis-builder' => [
+            'driver' => 'redis',
+            'connection' => 'default',
+            'queue' => 'builder',
+            'retry_after' => (int) env('BUILDER_QUEUE_RETRY_AFTER', 2400),
+            'block_for' => null,
+        ],
+
+        // Video processing and course clone/import: jobs run up to 18000 s.
+        'database-long-job' => [
+            'driver' => 'database',
+            'table' => 'jobs',
+            'queue' => 'queue-long-job',
+            'retry_after' => 19000,
+        ],
+
         'redis-long-job' => [
             'driver' => 'redis',
             'connection' => 'default',
             'queue' => env('REDIS_QUEUE', 'default'),
             'retry_after' => 19000,
             'block_for' => null,
-        ]
+        ],
     ],
 
     /*
