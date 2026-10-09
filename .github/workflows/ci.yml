@@ -451,7 +451,7 @@ jobs:
       # mirror explicitly and retag, so validate.sh finds the images locally.
       - name: Pre-pull the validation images through the mirror
         run: |
-          images=$(grep -oE '(caddy|cloudflare/cloudflared):[^ ]+' deploy/vps-cloudflare/compose.yml | sort -u)
+          images=$(grep -oE '(caddy:[0-9.]+-alpine|cloudflare/cloudflared:[0-9.]+)' deploy/vps-cloudflare/compose.yml | sort -u)
           for img in $images koalaman/shellcheck:stable; do
             case "$img" in */*) src="mirror.gcr.io/$img" ;; *) src="mirror.gcr.io/library/$img" ;; esac
             docker pull "$src" && docker tag "$src" "$img"
