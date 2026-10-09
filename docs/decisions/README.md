@@ -69,3 +69,4 @@ replacement.
 | [0060](0060-ai-tutor.md) | AI tutor: course-scoped full-text retrieval, citations and an attempt guard | Proposed |
 | [0061](0061-personalisation-privacy.md) | Personalisation privacy: off by default, opt-out or consent, minimal data, explainable, erasable | Proposed |
 | [0062](0062-adaptive-interface-profile.md) | Adaptive interface as a presentation profile over catalogue components | Proposed |
+| [0063](0063-api-security-hardening-leftovers.md) | API security hardening: auth on admin routes, allow-listed payment input, bounded group walks | Proposed |
