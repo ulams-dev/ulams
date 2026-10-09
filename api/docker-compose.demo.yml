@@ -12,6 +12,11 @@ services:
       - APP_SERVICES_CACHE=/var/www/html/vendor/.ulams-bootstrap/services.php
     volumes:
       - api_vendor:/var/www/html/vendor
+      # framework caches of this profile stay in the container: the bind-mounted bootstrap/cache
+      # is what development, tests and the host see (gecche/laravel-multidomain cannot move the
+      # per-domain cache files with APP_*_CACHE)
+      - api_bootstrap_cache:/var/www/html/bootstrap/cache
 
 volumes:
   api_vendor:
+  api_bootstrap_cache:

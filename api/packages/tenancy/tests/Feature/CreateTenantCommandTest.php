@@ -250,7 +250,10 @@ class CreateTenantCommandTest extends TestCase
         $this->database->shouldReceive('drop')->once()->with('ulams_acme', 'ulams_acme');
         $this->buckets->shouldReceive('delete')->once()->with('ulams-acme');
         $this->domains->shouldReceive('remove')->once()->with('acme.localhost');
-        config(['database.redis.client' => 'phpredis']); // skip the Redis purge in this test
+        // the Redis purge is RedisKeyPurgerTest's job
+        $redis = Mockery::mock(\Ulams\Tenancy\Support\RedisKeyPurger::class);
+        $redis->shouldReceive('purge')->once()->with('ulams_acme_')->andReturn(0);
+        $this->app->instance(\Ulams\Tenancy\Support\RedisKeyPurger::class, $redis);
 
         $this->artisan('ulams:tenant:delete', ['slug' => 'acme', '--force' => true])->assertExitCode(0);
         $this->assertSame(0, Tenant::query()->where('slug', 'acme')->count());

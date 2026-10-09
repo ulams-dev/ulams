@@ -8,8 +8,8 @@
 #  - development (default): opcache re-checks file timestamps, no framework caches, so edits on
 #    the bind mount apply at once. A previous demo run's caches are removed.
 #  - demo (DEMO_PERF=1, `make demo-up`): production PHP settings (no timestamp checks, JIT,
-#    APP_DEBUG=false), cached config/routes/events per domain, vendor/ in a named volume
-#    installed without dev dependencies. Apply edits with `make dev-reload`.
+#    APP_DEBUG=false), cached config/routes/events per domain, vendor/ and bootstrap/cache in
+#    named volumes (vendor installed without dev dependencies). Apply edits with `make dev-reload`.
 #  - production image: ULAMS_OPTIMIZE=true (set in Dockerfile) builds the caches at start;
 #    its PHP settings are baked into the image.
 set -e

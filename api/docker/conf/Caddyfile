@@ -109,7 +109,8 @@ http://*.admin.localhost {
     header Access-Control-Allow-Credentials true
 }
 
-http://*.app.localhost {
+# app.localhost: the platform front (it would otherwise fall to the *.localhost API site)
+http://*.app.localhost, http://app.localhost {
     import app_csp_report_only
 
     # Learner front (front/web, Astro dev server on the host: `yarn workspace web dev`, port 4321).
