@@ -43,7 +43,9 @@ describe('layout service', () => {
     const bad = (node: unknown) => checkLayoutDocument([node]).errors.join('\n');
     expect(bad({ component: 'Hero', props: {} })).toMatch(/not an approved layout component/);
     expect(bad({ props: { text: 'x' } })).toMatch(/\/0\/component: missing/);
-    expect(bad({ component: 'Callout', props: { text: 'x' }, children: [] })).toMatch(/unknown key children/);
+    expect(bad({ component: 'Callout', props: { text: 'x' }, children: [] })).toMatch(
+      /unknown key children/,
+    );
     expect(bad({ component: 'Callout', props: { text: 'x' }, id: 'a b' })).toMatch(/\/0\/id/);
     expect(bad('text')).toMatch(/must be an object/);
     expect(bad({ component: 'Callout', props: ['x'] })).toMatch(/\/0\/props: must be an object/);
@@ -76,7 +78,10 @@ describe('layout service', () => {
     expect(layoutText(undefined)).toBe('');
     expect(layoutText('[]')).toBe('[]');
     expect(layoutText(LAYOUT_STARTER)).toBe(JSON.stringify(LAYOUT_STARTER, null, 2));
-    expect(layoutFields('[1]', 'Fallback')).toEqual({ document: '[1]', markdown_fallback: 'Fallback' });
+    expect(layoutFields('[1]', 'Fallback')).toEqual({
+      document: '[1]',
+      markdown_fallback: 'Fallback',
+    });
   });
 
   it('builds the preview link only for a saved topic', () => {

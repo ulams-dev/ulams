@@ -62,15 +62,22 @@ export function checkLayoutDocument(document: unknown): LayoutCheck {
     }
     const unknown = Object.keys(node).filter((key) => !['component', 'props', 'id'].includes(key));
     if (unknown.length > 0) {
-      errors.push(`${at}: unknown key ${unknown.join(', ')} (only component, props and id are allowed)`);
+      errors.push(
+        `${at}: unknown key ${unknown.join(', ')} (only component, props and id are allowed)`,
+      );
     }
-    if (node.id !== undefined && (typeof node.id !== 'string' || !/^[A-Za-z0-9_-]{1,40}$/.test(node.id))) {
+    if (
+      node.id !== undefined &&
+      (typeof node.id !== 'string' || !/^[A-Za-z0-9_-]{1,40}$/.test(node.id))
+    ) {
       errors.push(`${at}/id: letters, digits, dashes and underscores, at most 40 characters`);
     }
     const name = node.component;
     if (typeof name !== 'string' || !components[name]) {
       errors.push(
-        `${at}/component: ${typeof name === 'string' ? `'${name}'` : 'missing'} is not an approved layout component (allowed: ${layoutComponents().join(', ')})`,
+        `${at}/component: ${
+          typeof name === 'string' ? `'${name}'` : 'missing'
+        } is not an approved layout component (allowed: ${layoutComponents().join(', ')})`,
       );
       return;
     }
@@ -83,7 +90,9 @@ export function checkLayoutDocument(document: unknown): LayoutCheck {
       errors.push(`${at}/props${issue.path === '/' ? '' : issue.path}: ${issue.message}`);
     });
   });
-  return errors.length > 0 ? { errors: errors.slice(0, 20) } : { document: document as LayoutNode[], errors: [] };
+  return errors.length > 0
+    ? { errors: errors.slice(0, 20) }
+    : { document: document as LayoutNode[], errors: [] };
 }
 
 /** Text for the editor from what the API returned. */
@@ -99,7 +108,14 @@ export const layoutText = (document: LayoutTopicable['document']): string => {
 
 /** A small valid document to start from: a callout and a timeline. */
 export const LAYOUT_STARTER: LayoutNode[] = [
-  { component: 'Callout', props: { tone: 'tip', title: 'Start here', text: 'One sentence that says what this lesson is for.' } },
+  {
+    component: 'Callout',
+    props: {
+      tone: 'tip',
+      title: 'Start here',
+      text: 'One sentence that says what this lesson is for.',
+    },
+  },
   {
     component: 'Timeline',
     props: {
@@ -126,7 +142,11 @@ export const layoutFields = (text: string, fallback: string): Record<string, unk
  * The preview needs a saved topic and a course the author may edit. `learnerUrl` is the learner site
  * origin (the demo config, or the tenant's `app` host next to the `admin` one); null hides the link.
  */
-export function layoutPreviewHref(learnerUrl: string | null | undefined, courseId?: number, topicId?: number): string | null {
+export function layoutPreviewHref(
+  learnerUrl: string | null | undefined,
+  courseId?: number,
+  topicId?: number,
+): string | null {
   if (!learnerUrl || !courseId || !topicId) {
     return null;
   }
