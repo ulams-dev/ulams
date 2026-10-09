@@ -556,10 +556,6 @@
       "format": "date-time",
       "type": "string"
      },
-     "analyze_enabled": {
-      "description": "analyze_enabled",
-      "type": "boolean"
-     },
      "author_id": {
       "description": "author_id",
       "type": "integer"
@@ -1193,6 +1189,97 @@
       "$ref": "#/components/schemas/UserShortResource"
      }
     },
+    "type": "object"
+   },
+   "CourseBuilderRunStatus": {
+    "properties": {
+     "error": {
+      "nullable": true,
+      "type": "string"
+     },
+     "finishedAt": {
+      "format": "date-time",
+      "nullable": true,
+      "type": "string"
+     },
+     "id": {
+      "description": "The public, stable shape of a run for pollers (CLI `--wait`, MCP, CI):\n`GET /api/admin/course-builder/runs/{run}`. Internal statuses are folded into\nqueued | running | succeeded | failed | cancelled; `needsAttention` is true while the run waits\nfor the author (an answer or an approval), so a poller can stop and ask instead of looping.",
+      "example": "01j9z3k8m2x4q7r5t6v8w0y1ab",
+      "type": "string"
+     },
+     "kind": {
+      "enum": [
+       "ingest",
+       "interview",
+       "outline",
+       "generate",
+       "patch",
+       "apply",
+       "action"
+      ],
+      "type": "string"
+     },
+     "needsAttention": {
+      "type": "boolean"
+     },
+     "sessionId": {
+      "type": "string"
+     },
+     "stage": {
+      "nullable": true,
+      "type": "string"
+     },
+     "startedAt": {
+      "format": "date-time",
+      "nullable": true,
+      "type": "string"
+     },
+     "status": {
+      "enum": [
+       "queued",
+       "running",
+       "succeeded",
+       "failed",
+       "cancelled"
+      ],
+      "type": "string"
+     },
+     "steps": {
+      "items": {
+       "properties": {
+        "error": {
+         "nullable": true,
+         "type": "string"
+        },
+        "id": {
+         "type": "string"
+        },
+        "name": {
+         "example": "lesson:el_8f2c",
+         "type": "string"
+        },
+        "status": {
+         "enum": [
+          "queued",
+          "running",
+          "succeeded",
+          "failed"
+         ],
+         "type": "string"
+        }
+       },
+       "type": "object"
+      },
+      "type": "array"
+     }
+    },
+    "required": [
+     "id",
+     "sessionId",
+     "kind",
+     "status",
+     "steps"
+    ],
     "type": "object"
    },
    "CourseShortResource": {
@@ -3329,10 +3416,6 @@
       "description": "agenda",
       "type": "string"
      },
-     "analyze_enabled": {
-      "description": "analyze_enabled",
-      "type": "boolean"
-     },
      "created_at": {
       "description": "created_at",
       "format": "date-time",
@@ -3823,6 +3906,33 @@
    }
   },
   "/api/admin/adapt/{id}/versions": {
+   "get": {
+    "operationId": "cccce706bca9719bcb70215298b01a60",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "versions, newest first"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Version history (version, change note, author, date; no source)",
+    "tags": [
+     "Admin Adapt"
+    ]
+   },
    "post": {
     "operationId": "059c1b12b7d16100085d0a48ec076764",
     "parameters": [
@@ -5571,6 +5681,838 @@
     "summary": "Remove the specified Course Access Enquiry",
     "tags": [
      "Admin Course Access"
+    ]
+   }
+  },
+  "/api/admin/course-builder/fragments/{fragment}": {
+   "get": {
+    "operationId": "5514f96c136b291b703df1c82cb06c39",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "fragment",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "fragment"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One source fragment (citation popover)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/runs/{run}": {
+   "get": {
+    "operationId": "ad22ae07ebbbb386a4c6160c18d6c433",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "run",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/CourseBuilderRunStatus"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "the run and its steps"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "404": {
+      "description": "unknown run"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Status of one run (poll it for --wait)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/runs/{run}/cancel": {
+   "post": {
+    "operationId": "c6f4943df5cfe1e54dd2ff7d3daf8357",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "run",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "cancelled"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Cancel a run",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/runs/{run}/steps/{step}/retry": {
+   "post": {
+    "operationId": "f1e869affcbe6253b50ab68066ad5d2a",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "run",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "step",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "202": {
+      "description": "queued"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Retry one failed generation step",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions": {
+   "get": {
+    "operationId": "cd5468d0a1a722714a8a897f6bfa6afc",
+    "responses": {
+     "200": {
+      "description": "list"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "My builder sessions",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   },
+   "post": {
+    "description": "AI Course Builder REST API (prefix `/api/admin/course-builder`, `auth:api`, permission\n`course_builder_use`). UI actions sent as runs and these endpoints share the same services, so\nthe CLI and the MCP server can drive the builder without the UI.",
+    "operationId": "6a2456054c25d9e388382c19ee5667de",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "title": {
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "session with its state snapshot"
+     },
+     "429": {
+      "description": "daily limit reached"
+     },
+     "503": {
+      "description": "AI disabled"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Start a builder session",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions/{session}": {
+   "delete": {
+    "operationId": "8f977ac329aa2e1720a4c72775c60d84",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "deleted"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete a session (an applied course is kept)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   },
+   "get": {
+    "operationId": "097a8f957c1e9c480479a4b73098736c",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "snapshot"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "404": {
+      "description": "unknown"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "A session's state snapshot",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions/{session}/apply": {
+   "post": {
+    "operationId": "509821f6c31ea0c0c3cec6ae22f4b45b",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "202": {
+      "description": "apply run"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Approve the apply of the current version",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions/{session}/brief": {
+   "get": {
+    "operationId": "13275e2e7b5e12fc78da7860840babe3",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "brief"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Course Brief",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   },
+   "put": {
+    "operationId": "29adfbac442e3777b7f41b8d0531463c",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "brief"
+     },
+     "422": {
+      "description": "invalid"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Edit the Course Brief",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions/{session}/events": {
+   "get": {
+    "description": "AG-UI events over SSE (ADR 0011). On connect: a STATE_SNAPSHOT (not stored, no id), then every\nstored event after `Last-Event-ID` (or `?after=`), then new events as they are appended. The\nconnection closes after `course_builder.sse.max_seconds` (25 s) so PHP-FPM workers are not held;\nthe client reconnects with the last id. Between polls the loop watches the session's \"last event\"\nkey in the cache and only queries the table when it moved (polling fallback every 500 ms).",
+    "operationId": "cb4592a0eb6d5d81094288be826850ad",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "resume after this event id (or Last-Event-ID header)",
+      "in": "query",
+      "name": "after",
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "text/event-stream"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "AG-UI event stream (SSE)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions/{session}/publish": {
+   "post": {
+    "operationId": "fb8f6decce43224a86c2af1707019831",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "published"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Publish the applied course",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions/{session}/redo": {
+   "post": {
+    "operationId": "109f522dfbb519cdd9c95d9fc358db68",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "current version"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Redo",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions/{session}/runs": {
+   "post": {
+    "operationId": "24836a812e2252ba271af42a7ae04f58",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "forwardedProps": {
+          "type": "object"
+         },
+         "messages": {
+          "items": {
+           "type": "object"
+          },
+          "type": "array"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "202": {
+      "description": "run id (null when the action finished in the request)"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Start a run from a chat message or a UI action (AG-UI RunAgentInput)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions/{session}/sources": {
+   "post": {
+    "operationId": "e2d9e3dd4d42bf8a1e1e06945b4400a3",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "properties": {
+         "file": {
+          "format": "binary",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "202": {
+      "description": "source and ingest run"
+     },
+     "422": {
+      "description": "rejected upload"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Upload a source (MD, PDF, DOCX); ingestion and the interview start by themselves",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions/{session}/sources/{source}": {
+   "get": {
+    "operationId": "e5ee3815ce7b28ec54e83ff99f8b9ce3",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "source",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "source"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "A source with its section tree",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions/{session}/undo": {
+   "post": {
+    "operationId": "dd74d5b979952d2b47442749f468fa6c",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "current version"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Undo the last content change",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions/{session}/usage": {
+   "get": {
+    "operationId": "f914d359cc7a401202a1337d2ddd97f1",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "usage"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "AI calls of the session by task and model",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions/{session}/versions": {
+   "get": {
+    "operationId": "8ae74d5bbb65bad917bdebb71726b507",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "versions"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Blueprint version history",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/versions/{version}": {
+   "get": {
+    "operationId": "7385a7e2cb179ef1e527400ad9355a92",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "version",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "version"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "A blueprint version with fragment labels",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/versions/{version}/approve": {
+   "post": {
+    "operationId": "363fe3c5faaf019b7aeccb8ce0692be2",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "version",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "approved"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Approve a proposal (outline or patch)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/versions/{version}/diff": {
+   "get": {
+    "operationId": "5fa4979aba6423ee3ddd249b8d96d943",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "version",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "against",
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "changes"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Element-aware diff against another version (default: its parent)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/versions/{version}/reject": {
+   "post": {
+    "operationId": "894dc1e40da11f4ee1b272de9535e40f",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "version",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "rejected"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Reject a proposal",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/versions/{version}/restore": {
+   "post": {
+    "operationId": "78c59c3a3e86e4b27532721ce0e571f7",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "version",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "restored"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Restore an old version as a new one",
+    "tags": [
+     "Admin Course Builder"
     ]
    }
   },
@@ -8745,6 +9687,1099 @@
     ]
    }
   },
+  "/api/admin/living-course/audit/export": {
+   "get": {
+    "operationId": "6c02d48b60a69ef2b2e712063a6c4eba",
+    "responses": {
+     "200": {
+      "description": "file"
+     },
+     "403": {
+      "description": "admins only"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Tenant-wide audit export (admins)",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/audit/verify": {
+   "get": {
+    "operationId": "119dfcf567b151c09f6a8ea8a6aff036",
+    "responses": {
+     "200": {
+      "description": "verdict"
+     },
+     "403": {
+      "description": "admins only"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Tenant-wide chain verification (admins)",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/connections/{connection}": {
+   "delete": {
+    "operationId": "8471ffe30ba421f54e74cbe5037e8118",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "connection",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "disconnected"
+     },
+     "403": {
+      "description": "not allowed"
+     },
+     "404": {
+      "description": "unknown"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Disconnect a source (revisions and the audit trail are kept)",
+    "tags": [
+     "Admin Living Course"
+    ]
+   },
+   "put": {
+    "description": "Settings of a source connection and disconnecting it (history is kept).",
+    "operationId": "6f7156f91faa8bebff6b264c7621a44b",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "connection",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "connection"
+     },
+     "403": {
+      "description": "not allowed"
+     },
+     "404": {
+      "description": "unknown"
+     },
+     "422": {
+      "description": "invalid"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Change a connection: schedule, automatic analysis, learner notice settings, paused",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/connections/{connection}/check": {
+   "post": {
+    "operationId": "87b25a4d27c8194aebaae4c1b3843f0c",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "connection",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "202": {
+      "description": "queued"
+     },
+     "409": {
+      "description": "nothing to check"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Check the source now",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/connections/{connection}/webhook-secret": {
+   "post": {
+    "operationId": "e2189a328c5b103855d182f784b92ab9",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "connection",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "the new secret"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Rotate the webhook secret (returned once)",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/connectors": {
+   "get": {
+    "description": "Connecting a source through a connector, checking it on demand and rotating its webhook secret.",
+    "operationId": "045403cfae13012786a9529d9c43b9bc",
+    "responses": {
+     "200": {
+      "description": "connectors"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The source connectors this installation offers, with their settings schema",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/proposals/{proposal}": {
+   "get": {
+    "operationId": "13412db1de147bf01a7835b034597bb9",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "proposal",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "proposal"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "404": {
+      "description": "unknown proposal"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "A proposal with its items grouped by lesson, citations and source changes",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/proposals/{proposal}/accept-all": {
+   "post": {
+    "operationId": "3dab066a6de079460f9f866d2989c14e",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "proposal",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "the proposal"
+     },
+     "403": {
+      "description": "not allowed"
+     },
+     "409": {
+      "description": "already settled"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Accept every undecided update, no-change and removal item",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/proposals/{proposal}/analyse": {
+   "post": {
+    "operationId": "4e671eb576fee6cbd7284c74c6247856",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "proposal",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "confirmEstimate": {
+          "type": "boolean"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "202": {
+      "description": "analysis started"
+     },
+     "409": {
+      "description": "estimate must be confirmed"
+     },
+     "422": {
+      "description": "budget blocked"
+     },
+     "503": {
+      "description": "AI disabled"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Start or resume the AI analysis (confirmEstimate when above the automatic threshold)",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/proposals/{proposal}/apply": {
+   "post": {
+    "operationId": "0ad25825160fabdd5a5041b38a3e24c2",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "proposal",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "overwrite": {
+          "type": "boolean"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "202": {
+      "description": "apply run"
+     },
+     "409": {
+      "description": "conflicts or admin edits"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Apply the accepted items as a new course version (409 with conflicting items or admin edits)",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/proposals/{proposal}/items/{item}/accept": {
+   "post": {
+    "operationId": "2adb9f99a54ebd74df91f87423f91571",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "proposal",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "item",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "the item"
+     },
+     "403": {
+      "description": "not allowed"
+     },
+     "404": {
+      "description": "unknown"
+     },
+     "409": {
+      "description": "not decidable now"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Accept one item",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/proposals/{proposal}/items/{item}/regenerate": {
+   "post": {
+    "operationId": "3214452d8179bf22ecd29f235dd1281b",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "proposal",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "item",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "the item"
+     },
+     "403": {
+      "description": "not allowed"
+     },
+     "404": {
+      "description": "unknown"
+     },
+     "409": {
+      "description": "not decidable now"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Ask for another version of one element ({comment}); one call, at most three per item",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/proposals/{proposal}/items/{item}/reject": {
+   "post": {
+    "operationId": "4b86483c24f29a73c57ceb57deac49f5",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "proposal",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "item",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "the item"
+     },
+     "403": {
+      "description": "not allowed"
+     },
+     "404": {
+      "description": "unknown"
+     },
+     "409": {
+      "description": "not decidable now"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Reject one item (keep the earlier version of the element)",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/proposals/{proposal}/items/{item}/reset": {
+   "post": {
+    "operationId": "0faf97a5821be49554bab84c4052c042",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "proposal",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "item",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "the item"
+     },
+     "403": {
+      "description": "not allowed"
+     },
+     "404": {
+      "description": "unknown"
+     },
+     "409": {
+      "description": "not decidable now"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Back to undecided",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/proposals/{proposal}/learner-note": {
+   "put": {
+    "operationId": "5f1fff47bbf112a36833f964fdd2e5fe",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "proposal",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "note": {
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "note"
+     },
+     "409": {
+      "description": "already settled"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The text learners see for updated lessons (plain text, up to 500 characters)",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/proposals/{proposal}/reanalyse": {
+   "post": {
+    "operationId": "4ecdad03c656ef08615bbbccf6beca1f",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "proposal",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "201": {
+      "description": "the new proposal"
+     },
+     "409": {
+      "description": "already settled"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Replace the proposal by a new one from the newest source revision",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/proposals/{proposal}/reject": {
+   "post": {
+    "operationId": "4b8f251c3f67afcc429123a8d1593958",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "proposal",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "the proposal"
+     },
+     "403": {
+      "description": "not allowed"
+     },
+     "409": {
+      "description": "already settled"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Reject the whole proposal and acknowledge the source revision",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/revisions/{revision}": {
+   "get": {
+    "operationId": "5b0687d7aea85b5c6c93b2d4c62e6616",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "revision",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "revision"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "404": {
+      "description": "unknown revision"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One revision",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/revisions/{revision}/changes": {
+   "get": {
+    "operationId": "35fa055e0edab3457af79f252d85bd98",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "revision",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "against",
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "counts and changes with old and new text and word diffs"
+     },
+     "404": {
+      "description": "unknown revision"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Fragment changes of a revision against the synced revision it was compared with (or ?against=<revision id>)",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/sessions/{session}/audit": {
+   "get": {
+    "description": "The audit trail (ADR 0034): who decided what and when, tied to the source revision and the\nblueprint versions. Per session for its author and admins; tenant-wide for admins.",
+    "operationId": "a5674b1e8bd1a4678f62157d825bc6a0",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "entries"
+     },
+     "403": {
+      "description": "not allowed"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Audit entries of a session (filters: action, actorType, from, to, source)",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/sessions/{session}/audit/export": {
+   "get": {
+    "operationId": "c4060fcadca6e7c0ca17650a791b6633",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "format",
+      "schema": {
+       "enum": [
+        "csv",
+        "json"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "file"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Export the audit entries of a session as CSV or JSON",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/sessions/{session}/audit/verify": {
+   "get": {
+    "operationId": "cf742cf7eac0e7662e06681e61bb1d33",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "verdict"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Verify the hash chain of the audit trail",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/sessions/{session}/proposals": {
+   "get": {
+    "description": "Update proposals: list and detail (decisions, analysis and apply are added by their own endpoints).",
+    "operationId": "9f72817da6b47c4be646b6984a047814",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "proposals"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "404": {
+      "description": "unknown session"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Update proposals of a session, newest first",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/sessions/{session}/sources": {
+   "get": {
+    "description": "Sources of a builder session with their sync state, and their revisions.",
+    "operationId": "66b48a735abd7716008ee166be38392c",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "sources"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "404": {
+      "description": "unknown session"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Sources of a session with connection, sync state and revisions",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/sessions/{session}/sources/connect": {
+   "post": {
+    "operationId": "492bb84123f4a93ae760a119f5100422",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "config": {
+          "type": "object"
+         },
+         "connector": {
+          "type": "string"
+         },
+         "schedule": {
+          "type": "string"
+         },
+         "secrets": {
+          "type": "object"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "connection, source and the webhook secret (shown once)"
+     },
+     "422": {
+      "description": "settings refused by the connector"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Add a source through a connector (Git repository, web pages, plugins); validates and fetches revision 1",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/sessions/{session}/staleness": {
+   "get": {
+    "description": "Staleness per element and per course. Works with AI disabled.",
+    "operationId": "7f7df3d32948fa73e3b71790bc187f90",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "summary and elements"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "404": {
+      "description": "unknown session"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Per-element staleness and the course summary",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/sources/{source}/revisions": {
+   "get": {
+    "operationId": "df75e3a7a4db6e836d052844be479220",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "source",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "revisions"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "404": {
+      "description": "unknown source"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Revisions of a source, newest first",
+    "tags": [
+     "Admin Living Course"
+    ]
+   },
+   "post": {
+    "operationId": "df094d9cda3ece4e4a725254aff14dbe",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "source",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "properties": {
+         "file": {
+          "format": "binary",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "the file is the latest revision already (unchanged: true)"
+     },
+     "201": {
+      "description": "the new revision"
+     },
+     "422": {
+      "description": "rejected upload"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Upload a new version of a source (MD, PDF or DOCX): creates a revision and its fragment diff",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
   "/api/admin/lti/endpoints": {
    "get": {
     "description": "Registrations (permission `lti_manage`): tools we launch and platforms that launch us, plus\nthe URLs and key set to give to the other side.",
@@ -10239,63 +12274,6 @@
     "summary": "Preview a pdfme template with sample data",
     "tags": [
      "Template PDFs"
-    ]
-   }
-  },
-  "/api/admin/play/{cmi5AuId}": {
-   "get": {
-    "operationId": "c1b982c417130365232c02c0e70def00",
-    "parameters": [
-     {
-      "description": "Unique id cmi5 au identifier",
-      "in": "path",
-      "name": "cmi5AuId",
-      "required": true,
-      "schema": {
-       "type": "string"
-      }
-     },
-     {
-      "description": "Course id",
-      "in": "query",
-      "name": "course_id",
-      "required": false,
-      "schema": {
-       "type": "string"
-      }
-     },
-     {
-      "description": "Topic id",
-      "in": "query",
-      "name": "topic_id",
-      "required": false,
-      "schema": {
-       "type": "string"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": ""
-     },
-     "401": {
-      "description": "Endpoint requires authentication"
-     },
-     "403": {
-      "description": "User doesn't have required access rights"
-     },
-     "500": {
-      "description": "Server-side error"
-     }
-    },
-    "security": [
-     {
-      "passport": []
-     }
-    ],
-    "summary": "",
-    "tags": [
-     "cmi5"
     ]
    }
   },
@@ -19888,9 +21866,11 @@
   },
   "/api/cmi5/fetch": {
    "post": {
+    "description": "Exchanges the one-time token of a cmi5 launch URL for an LRS-only session token (`auth-token`). Repeat calls within the session return the same token. Public: the one-time token is the credential.",
     "operationId": "49c2bee176f5a6c16a83bad0630cace3",
     "parameters": [
      {
+      "description": "one-time launch token",
       "in": "query",
       "name": "token",
       "required": true
@@ -19902,9 +21882,82 @@
        "application/json": {}
       },
       "description": "successful operation"
+     },
+     "401": {
+      "description": "the launch token is unknown or expired"
      }
     },
     "summary": "cmi5 token fetch",
+    "tags": [
+     "cmi5"
+    ]
+   }
+  },
+  "/api/cmi5/player/{cmi5AuId}": {
+   "get": {
+    "description": "Needs `cmi5_read` (students have it). Returns the player page, or with `format=json` the launch URL on the tenant content origin. The URL carries a one-time launch token, never the learner's access token (ADR 0046).",
+    "operationId": "110a514ff187653c675f7bbd455f20cf",
+    "parameters": [
+     {
+      "description": "Unique id cmi5 au identifier",
+      "in": "path",
+      "name": "cmi5AuId",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "`json` returns {data: {url, origin}} instead of the player page",
+      "in": "query",
+      "name": "format",
+      "required": false,
+      "schema": {
+       "enum": [
+        "json"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "description": "Course id",
+      "in": "query",
+      "name": "course_id",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "Topic id",
+      "in": "query",
+      "name": "topic_id",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": ""
+     },
+     "401": {
+      "description": "Endpoint requires authentication"
+     },
+     "403": {
+      "description": "User doesn't have required access rights"
+     },
+     "500": {
+      "description": "Server-side error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Launch a cmi5 AU",
     "tags": [
      "cmi5"
     ]
@@ -21572,8 +23625,16 @@
           "type": "object"
          },
          "event": {
-          "example": "http://adlnet.gov/expapi/verbs/attempted",
-          "type": "string"
+          "description": "The verb IRI (with the statement in `data`) or the whole xAPI statement object; a statement is stored as `data` and its verb as the event",
+          "oneOf": [
+           {
+            "example": "http://adlnet.gov/expapi/verbs/attempted",
+            "type": "string"
+           },
+           {
+            "type": "object"
+           }
+          ]
          }
         },
         "type": "object"
@@ -22337,6 +24398,143 @@
     "summary": "Progress reported by the content-origin player",
     "tags": [
      "LiaScript"
+    ]
+   }
+  },
+  "/api/living-course/courses/{course}/freshness": {
+   "get": {
+    "operationId": "3513137a7e99c3fff961672373daad08",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "topics"
+     },
+     "404": {
+      "description": "unknown course"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Topics with an update under review (only when the course shows it)",
+    "tags": [
+     "Living Course learner"
+    ]
+   }
+  },
+  "/api/living-course/courses/{course}/notices": {
+   "get": {
+    "description": "Learner side (ADR 0033): the caller's own notices about updated courses, and the opt-in \"an\n * update is under review\" marker. Notices never change progress.",
+    "operationId": "3c52deb0f157d9c1d01e913acde4f41c",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "notices"
+     },
+     "401": {
+      "description": "not signed in"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The caller's open update notices for a course",
+    "tags": [
+     "Living Course learner"
+    ]
+   }
+  },
+  "/api/living-course/notices/{notice}/dismiss": {
+   "post": {
+    "operationId": "a1eda619d456a6eecf75d32b810d70f1",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "notice",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "dismissed"
+     },
+     "404": {
+      "description": "not the caller's notice"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Mark a notice as reviewed",
+    "tags": [
+     "Living Course learner"
+    ]
+   }
+  },
+  "/api/living-course/webhooks/{webhookId}": {
+   "post": {
+    "description": "Inbound webhooks of source hosts (ADR 0032). Public route, authenticated by the signature with the\nconnection's own secret: invalid signatures are refused and logged, duplicates answer 200 without\nwork, only pushes to the tracked branch that touch the tracked paths queue a (debounced) check.\nPayloads are never sent to the model and never stored, only their digest.",
+    "operationId": "54af035cebb8262704cfee7f3e72bba3",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "webhookId",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "ignored or duplicate"
+     },
+     "202": {
+      "description": "a check is queued"
+     },
+     "401": {
+      "description": "invalid signature"
+     },
+     "404": {
+      "description": "unknown webhook"
+     },
+     "413": {
+      "description": "body too large"
+     },
+     "429": {
+      "description": "rate limit"
+     }
+    },
+    "summary": "Receive a push webhook of a connected repository",
+    "tags": [
+     "Living Course webhooks"
     ]
    }
   },
@@ -27219,6 +29417,10 @@
    "name": "Course Access"
   },
   {
+   "description": "Admin Course Builder",
+   "name": "Admin Course Builder"
+  },
+  {
    "description": "Admin CSV",
    "name": "Admin CSV"
   },
@@ -27257,6 +29459,18 @@
   {
    "description": "LiaScript",
    "name": "LiaScript"
+  },
+  {
+   "description": "Admin Living Course",
+   "name": "Admin Living Course"
+  },
+  {
+   "description": "Living Course learner",
+   "name": "Living Course learner"
+  },
+  {
+   "description": "Living Course webhooks",
+   "name": "Living Course webhooks"
   },
   {
    "description": "Admin LTI",
