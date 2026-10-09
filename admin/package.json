@@ -119,7 +119,7 @@
     "resize-observer-polyfill": "^1.5.1",
     "scorm-again": "^2.6.0",
     "slugify": "^1.4.0",
-    "smooth-scroll-into-view-if-needed": "^1.1.29"
+    "smooth-scroll-into-view-if-needed": "^2.0.2"
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^3.3.0",
