@@ -6,6 +6,16 @@
  */
 
 :root {
+  /*
+   * ulams brand (Orbital Folio, ADR 0038). Product and platform surfaces only: tenant themes
+   * set their own --ulams-color-* and never read these. Orange is an accent and a graphic:
+   * 2.6:1 on white, so never text or a focus ring on a light background (5.5:1 on indigo).
+   */
+  --ulams-brand-indigo: #0f2b46;
+  --ulams-brand-orange: #ff7a2e;
+  --ulams-brand-blue: #1f5a94; /* indigo tint for large accent text on light: 6.8:1 on #fafaf9 */
+  --ulams-brand-sky: #8fb3d9; /* indigo tint for text on dark: 8.8:1 on #0e0e10 */
+
   --ulams-color-primary: #a84521;
   --ulams-color-primary-on-light: #a84521;
   --ulams-color-on-primary: #ffffff;
