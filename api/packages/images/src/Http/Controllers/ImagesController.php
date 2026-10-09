@@ -3,6 +3,7 @@
 namespace Ulams\Images\Http\Controllers;
 
 use Ulams\Images\Http\Controllers\Swagger\ImagesControllerSwagger;
+use Ulams\Images\Http\Requests\ImagesRenderRequest;
 use Ulams\Images\Services\Contracts\ImagesServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -32,9 +33,9 @@ class ImagesController extends Controller implements ImagesControllerSwagger
         return redirect($output['url']);
     }
 
-    public function images(Request $request): JsonResponse
+    public function images(ImagesRenderRequest $request): JsonResponse
     {
-        $paths = $request->input('paths');
+        $paths = $request->validated('paths');
         $output = $this->imagesService->images($paths);
         return response()->json($output);
     }
