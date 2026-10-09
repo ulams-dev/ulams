@@ -49,7 +49,7 @@ env:
   REDIS_PORT: "6379"
   REDIS_PASSWORD: ""
   XDEBUG_MODE: "off"
-  PLAYWRIGHT_VERSION: 1.48.2
+  PLAYWRIGHT_VERSION: 1.63.0
 
 jobs:
   adapt:

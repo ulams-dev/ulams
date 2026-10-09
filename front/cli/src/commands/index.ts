@@ -6,6 +6,8 @@ import { login } from "./core/login.ts";
 import { configGet, configSet, profilesDelete, profilesList, profilesUse } from "./core/profiles.ts";
 import { logout, whoami } from "./core/session.ts";
 import { applyCommands } from "./apply.ts";
+import { builderCommands } from "./builder.ts";
+import { livingCommands } from "./living.ts";
 import { curatedCommands } from "./curated.ts";
 import { mcp } from "./mcp.ts";
 import { operationCommands } from "./operations.ts";
@@ -30,4 +32,6 @@ export const handWritten: AnyCommand[] = [
   ...topicCommands,
   ...curatedCommands,
   ...applyCommands,
+  ...builderCommands,
+  ...livingCommands,
 ];

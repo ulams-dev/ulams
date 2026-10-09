@@ -155,6 +155,11 @@ it shows the resource. Destructive commands exit 11 with that plan until you pas
 operations wait by default (`--timeout 600`); `--no-wait` prints a handle such as `video:42` that you can
 give to `ulams operations get|wait`; a timeout exits 10 and names the handle.
 
+## Course builder and Living Course
+
+`ulams builder start --from ./guide.md --defaults --approve-outline --apply` builds a course from a source file, and
+`ulams living …` reviews source updates. See [Build courses from the command line](/developers/cli-builder/).
+
 ## Declarative apply
 
 `ulams apply --file course.yaml` takes YAML or JSON documents (`apiVersion: ulams.dev/v1`; kinds `Course`

@@ -82,6 +82,7 @@ const ToolsTab: React.FC<{ endpoints?: LtiEndpoints }> = ({ endpoints }) => {
     form.setFieldsValue({
       share_name: false,
       share_email: false,
+      nrps_enabled: false,
       enabled: true,
       ...tool,
       custom: customToText(tool.custom),
@@ -293,6 +294,19 @@ const ToolsTab: React.FC<{ endpoints?: LtiEndpoints }> = ({ endpoints }) => {
               name="share_email"
               valuePropName="checked"
               label={<FormattedMessage id="lti.share_email" defaultMessage="Share e-mails" />}
+            >
+              <Switch />
+            </Form.Item>
+            <Form.Item
+              name="nrps_enabled"
+              valuePropName="checked"
+              tooltip={
+                <FormattedMessage
+                  id="lti.nrps_enabled.tooltip"
+                  defaultMessage="Lets the tool read the member list of courses it is linked in (Names and Role Provisioning). Names and e-mails follow the two switches on the left."
+                />
+              }
+              label={<FormattedMessage id="lti.nrps_enabled" defaultMessage="Member list (NRPS)" />}
             >
               <Switch />
             </Form.Item>

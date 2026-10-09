@@ -258,17 +258,18 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       tenant database, isolation tests)
 - [x] (new) Admin UI for LTI: tools and platforms screens, external-tool topic form with "pick content from
       tool" (Integrations → LTI)
-- [ ] (new) LTI: Client-Side OIDC (platform storage via `postMessage`) on the tool side, NRPS on the platform
-      side, per-tool `frame-src` in the CSP (partial: client-side OIDC done, `/api/lti/tool/launch/verify` and a
-      browser test with a fake platform in the nightly conformance; NRPS and `frame-src` pending)
+- [x] (new) LTI: Client-Side OIDC (platform storage via `postMessage`) on the tool side, NRPS on the platform
+      side, per-tool `frame-src` in the CSP (client-side OIDC: `lti_storage_target`, `POST /api/lti/tool/launch/verify`,
+      browser test with a fake platform in the nightly conformance; NRPS: `GET /api/lti/platform/nrps/{course}`
+      per tool switch; `frame-src`: the front reads `GET /api/lti/frame-origins`)
 - [x] (new) Run `ulams:lti:rotate-keys --init` for existing tenants (new tenants get it at provisioning) (done by `ulams:upgrade`, step `lti_keys`, ADR 0081)
 
 ### 1.4 Shared
 - [x] Upload hardening (zip-slip, MIME, size limits, virus-scan hook) (`packages/uploads`: SCORM, cmi5,
       course import, file manager; clamd hook tested with a fake clamd, compose profile `av` not run in CI)
-- [ ] Isolated origin / strict CSP for third-party JS (partial: SCORM, Adapt and LiaScript play from the
-      per-tenant content origin with a strict CSP, files served by `/api/content` from local or bucket disks;
-      cmi5 plays from the content origin too (ADR 0046); front/admin CSP is report-only)
+- [x] Isolated origin / strict CSP for third-party JS (SCORM, Adapt, LiaScript and cmi5 play from the
+      per-tenant content origin with a strict CSP, files served by `/api/content` from local or bucket disks
+      (ADR 0046); the front/admin CSP is enforced in development and switches with `CSP_ENFORCE` (ADR 0044))
 - [x] (new) Zip-slip: SCORM (`ScormService::unzipScormArchive`) and cmi5 (`Cmi5UploadService`) extract
       archives with `ZipArchive::extractTo` and no entry-path checks; replace with a safe extractor (M1.1)
 - [x] (new) The SCORM player loads `scorm-again` from the jsDelivr CDN; vendor it (air-gapped installs)
@@ -286,10 +287,13 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       app), and add registered LTI tool origins to the front/admin `frame-src` (documented in
       `api/docs/content-origin.md`; deployment pending). Note 2026-10-09: the owner chose the same-site
       `*.content.ulams.app` instead; the separate domain stays supported (ADR 0014, amended)
-      (partial: deployment docs with DNS and TLS steps done (operators/content-origin); the real domain is owner decision #24 and `frame-src` is L1-05)
+      (partial: deployment docs with DNS and TLS steps done (operators/content-origin) and the registered LTI tool origins are in the front's `frame-src` (ADR 0044); the real domain is owner decision #24)
 - [x] (new) Same-site content subdomain hardening: `__Host-` cookies, exact-Origin checks on front and API,
       sandboxed player frames, COOP/CORP headers, both modes documented
-- [ ] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector
+- [x] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector (collector
+      `POST /api/csp-report`, admin list `GET /api/admin/csp-reports`, `report-uri`/`report-to` on every policy,
+      the front builds its CSP per request, `CSP_ENFORCE` and `ULAMS_CSP_HEADER` switch enforcement; ADR 0044;
+      production turns it on after a clean week, see `operators/security-headers`)
 - [x] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket) (env-file
       resolver; per-tenant `H5P_INTERNAL_TOKEN`; library administration limited to the platform; production
       mounts limited to an exported least-privilege config (`ulams:h5p:export-config`, `compose.h5p.prod.yml`);
@@ -370,10 +374,10 @@ approved apply through domain services → element chat edits. Designs:
 
 ### 2.3 Interview
 - [x] Adaptive chips/buttons with defaults and "decide for me"
-- [ ] Audience, duration, tone, theme preset + accent, free/paid (via `CommerceProvider`;
+- [x] Audience, duration, tone, theme preset + accent, free/paid (via `CommerceProvider`;
       interim: existing `payments`), assessments, language (partial: audience, level, duration and
-      lesson length, tone, assessments, language, theme preset + accent and a free/paid question done
-      (Course Brief v2); creating the product through `CommerceProvider` is L2-07)
+      lesson length, tone, assessments, language, theme preset + accent and a free/paid question: Course
+      Brief v2; the product is created through `CommerceProvider`, ADR 0049)
 - [x] Editable **Course Brief** (schema-validated brief v2 with decided-by per field, editable in the
       studio panel and through the API with stale marking)
 
@@ -384,11 +388,16 @@ approved apply through domain services → element chat edits. Designs:
       in a concurrency window; LiaScript and H5P lessons are M2.3)
 - [x] Assessments with explanations, each traceable to a fragment (per-lesson quizzes and a final test,
       GIFT rendered by our code, support check against the cited text)
-- [ ] Metadata (title, description, SEO, pricing) (partial: no pricing, M2.2)
-- [ ] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (M2.2; publish
-      is done as a separate action)
+- [x] Metadata (title, description, SEO, pricing) (a suggested price for a paid course, confirmed by
+      the author; ADR 0049)
+- [ ] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (partial: theme
+      and the product (inactive at apply, active at publish) done; publish-check, landing and the new
+      site are L2-08 and L2-09)
 - [x] **Course Blueprint**: versioned JSON, stable IDs, citations; entities created via domain
       services; persisted per stage; progress streamed (SSE/websockets) (ADR 0010, 0025)
+- [x] (new) Long jobs on dedicated queue connections: `<driver>-builder` (retry_after 2400) for Course
+      Builder, Living Course and Adapt builds, `<driver>-long-job` for video and course clone; workers
+      and Horizon with matching timeouts; config test `QueueRetryAfterConfigTest` (ADR 0083 amendment)
 
 ### 2.5 Element-level chat editing
 - [x] Select element → chat → structured patch → diff → apply (course, module, lesson, block, question)
@@ -602,7 +611,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] SAML 2.0 and OIDC per tenant · SCIM 2.0 · HRIS import (CSV/API first)
 
 ### 6.4 Commerce (Sylius) and extended enterprise
-- [ ] `CommerceProvider` interface (sync product, create checkout, handle order events)
+- [ ] `CommerceProvider` interface (sync product, create checkout, handle order events) (partial: interface and the Wellms cart adapter shipped in `api/packages/commerce`, ADR 0049; the Sylius adapter is pending)
 - [ ] Sylius adapter as default implementation
 - [ ] Entitlements model in LMS (access, validity, source order or seat package)
 - [ ] Catalogue sync: course/bundle/subscription/seat package → digital Sylius product

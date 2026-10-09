@@ -28,7 +28,7 @@ env:
     living=living-course
     tasks-topics=tasks,topic-types,topic-type-project,categories,tags,stationary-events
     gift-reports=topic-type-gift,reports,dictionaries
-    commerce=cart,vouchers,payments,invoices,consultations,consultation-access,webinar,jitsi,assign-without-account
+    commerce=cart,commerce,vouchers,payments,invoices,consultations,consultation-access,webinar,jitsi,assign-without-account
     platform=Integrations,auth,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,ai
     content=templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
 

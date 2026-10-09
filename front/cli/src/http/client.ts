@@ -85,6 +85,19 @@ export class HttpClient {
     return this.opts.token;
   }
 
+  /** Headers for a request made outside `call` (the SSE stream). Never log these. */
+  streamHeaders(): Record<string, string> {
+    const headers: Record<string, string> = {
+      Accept: "text/event-stream",
+      "User-Agent": this.opts.userAgent,
+      "X-Ulams-Client": this.opts.client,
+      "X-Request-Id": ulid(),
+    };
+    if (this.opts.token) headers.Authorization = `Bearer ${this.opts.token}`;
+    if (this.opts.agent) headers["X-Ulams-Agent"] = this.opts.agent;
+    return headers;
+  }
+
   withToken(token: string | null): HttpClient {
     return new HttpClient({ ...this.opts, token });
   }

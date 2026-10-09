@@ -16,6 +16,7 @@ export type LtiTool = {
   custom?: Record<string, string> | null;
   share_name: boolean;
   share_email: boolean;
+  nrps_enabled: boolean;
   enabled: boolean;
 };
 

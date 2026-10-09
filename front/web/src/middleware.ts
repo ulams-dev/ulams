@@ -1,7 +1,8 @@
 import { defineMiddleware } from "astro:middleware";
 import { config } from "./lib/config.ts";
 import { isPlatformHost, tenantForHost } from "./lib/tenant.ts";
-import { warm } from "./lib/data.ts";
+import { getFrameOrigins, warm } from "./lib/data.ts";
+import { contentOriginFor, cspHeaders, wantsCsp } from "./lib/csp.ts";
 import { ensureSession, readSession } from "./lib/session.ts";
 import { H5P_ROUTE } from "./lib/h5p-proxy.ts";
 import { imageCache } from "./lib/image-cache.ts";
@@ -72,7 +73,22 @@ export const onRequest = defineMiddleware(async (context, next) => {
     locals.authorToken = cookies.get(authorCookieName(secure))?.value ?? null;
   }
 
+  // CSP: the tool origins are cached (5 min), asked for while the page renders
+  const csp = wantsCsp(url.pathname, null) && !url.pathname.startsWith("/_") ? (locals.tenant ? getFrameOrigins(locals.tenant) : Promise.resolve([] as string[])) : null;
+
   const response = await next();
+  if (csp && wantsCsp(url.pathname, response.headers.get("content-type"))) {
+    const headers = cspHeaders(
+      {
+        tenant: locals.tenant,
+        toolOrigins: await csp,
+        contentOrigin: locals.tenant ? contentOriginFor(config.contentOrigin, locals.tenant.slug) : null,
+        storageOrigins: config.storageOrigins,
+      },
+      config.cspEnforce
+    );
+    for (const [name, value] of Object.entries(headers)) response.headers.set(name, value);
+  }
   if (isPreviewPath(url.pathname)) {
     for (const [name, value] of Object.entries(PREVIEW_HEADERS)) response.headers.set(name, value);
   }

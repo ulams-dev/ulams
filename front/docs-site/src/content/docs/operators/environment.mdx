@@ -62,6 +62,7 @@ The H5P service re-reads the env files every `TENANT_RELOAD_CHECK_MS` (2 s).
 | LTI | `api` | `LTI_*` (issuer defaults to `APP_URL`) |
 | Error tracking | `api`, `admin` | `SENTRY_LARAVEL_DSN` or `SENTRY_DSN`, `SENTRY_ENVIRONMENT`; `REACT_APP_SENTRYDSN` |
 | Process control | `api` | `DISABLE_PHP_FPM`, `DISABLE_HORIZON`, `DISABLE_QUEUE`, `DISABLE_SCHEDULER`, `DISABLE_DB_MIGRATE`, `DISABLE_DB_SEED`, `DISABLE_TENANT_SYNC` |
+| Content Security Policy | `web`, `api`, proxy | `CSP_ENFORCE`, `ULAMS_CONTENT_ORIGIN`, `ULAMS_STORAGE_ORIGINS` (`web`); `CSP_REPORT_RETENTION_DAYS` (`api`); `ULAMS_CSP_HEADER` (admin policy in the proxy). See [Security headers](/operators/security-headers/) |
 | Front routing | `web`, `admin` | `ULAMS_TENANT_HOSTS`, `ULAMS_PLATFORM_HOSTS`, `REACT_APP_TENANT_API_HOST_PATTERN` |
 
 Do not set tenant-only values on the platform: `TENANT_SLUG`, `REDIS_PREFIX`, `CACHE_PREFIX`,

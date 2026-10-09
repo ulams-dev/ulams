@@ -72,6 +72,8 @@ return [
                     base_path('packages/invoices/src'),
                     base_path('packages/video/src'),
                     base_path('packages/course-access/src'),
+                    base_path('packages/course-builder/src'),
+                    base_path('packages/living-course/src'),
                     base_path('packages/tasks/src'),
                     base_path('packages/bookmarks_notes/src'),
                     base_path('packages/topic-type-project/src'),

@@ -67,8 +67,10 @@ returns it per task and model.
 
 ## Queues and streaming
 
-Generation runs in queued jobs (`COURSE_BUILDER_QUEUE_CONNECTION`, `COURSE_BUILDER_QUEUE`; default:
-the default queue). Make sure a worker (Horizon) runs for each tenant. The event stream
+Generation runs in queued jobs on a dedicated connection (`COURSE_BUILDER_QUEUE_CONNECTION`,
+`COURSE_BUILDER_QUEUE`; default with `QUEUE_CONNECTION=database|redis`: `<driver>-builder`, queue `builder`,
+`retry_after` 2400 s, above the 1800 s job timeout; ADR 0083). Make sure a worker (Horizon
+`supervisor-builder`, or `api/workers.sh queue`) runs for each tenant. The event stream
 (`/api/admin/course-builder/sessions/{id}/events`) holds a PHP worker for up to 25 s per open
 browser tab (`COURSE_BUILDER_SSE_SECONDS`); in production route it to a small separate PHP-FPM pool.
 Old events are deleted by `php artisan course-builder:prune-events` (30 days,

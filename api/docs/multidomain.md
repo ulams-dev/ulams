@@ -48,7 +48,7 @@ How it fits together:
   `TENANCY_PLATFORM_HOSTS` or a registered tenant. Console commands are not affected. In k8s,
   add the service and ingress hosts used for health checks to `TENANCY_PLATFORM_HOSTS`.
 - **Workers.** `queue.sh`, `broadcast.sh` and `scheduler.sh` start `workers.sh`, which keeps
-  long-lived processes per domain: `queue:work` (default and long-job queues, `broadcast`) and
+  long-lived processes per domain: `queue:work` (default, builder and long-job queues, `broadcast`) and
   `ulams:tenant:schedule-loop` (the scheduler in-process every minute). It reads the domain
   list (`domains.sh`: `MULTI_DOMAINS` plus registered tenants) every `WORKERS_CHECK_INTERVAL`
   seconds, so new tenants get workers and scheduled jobs without a restart, and processes that
