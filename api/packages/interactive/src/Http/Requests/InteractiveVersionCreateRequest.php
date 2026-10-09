@@ -11,6 +11,7 @@ class InteractiveVersionCreateRequest extends InteractiveRequest
         return [
             'file' => ['required', 'file', new SafeUpload('interactive')],
             'change_note' => ['nullable', 'string', 'max:500'],
+            'accept_network' => ['nullable', 'boolean'],
         ];
     }
 }

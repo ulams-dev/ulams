@@ -22,7 +22,8 @@ use Ulams\Interactive\Services\Contracts\InteractivePackageServiceContract;
  *     @OA\Response(response=200, description="packages"), @OA\Response(response=403, description="interactive_manage required"))
  * @OA\Post(path="/api/admin/interactive", summary="Upload a package (.zip with ulams-interactive.json)", tags={"Admin Interactive"}, security={{"passport": {}}},
  *     @OA\RequestBody(@OA\MediaType(mediaType="multipart/form-data", @OA\Schema(required={"file"},
- *         @OA\Property(property="file", type="string", format="binary"), @OA\Property(property="title", type="string"), @OA\Property(property="change_note", type="string")))),
+ *         @OA\Property(property="file", type="string", format="binary"), @OA\Property(property="title", type="string"), @OA\Property(property="change_note", type="string"),
+ *         @OA\Property(property="accept_network", type="boolean", description="Confirm the manifest's network origins; without it a manifest that lists some answers 422 with errors.network")))),
  *     @OA\Response(response=201, description="package with version 1"), @OA\Response(response=422, description="rejected upload or invalid manifest"))
  * @OA\Get(path="/api/admin/interactive/{id}", summary="Show a package with its current manifest", tags={"Admin Interactive"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="package"), @OA\Response(response=404, description="not found"))
@@ -68,7 +69,8 @@ class InteractivePackageController extends Controller
             $request->file('file'),
             $request->input('title'),
             $request->user()?->getKey(),
-            $request->input('change_note')
+            $request->input('change_note'),
+            $request->boolean('accept_network')
         );
 
         return $this->package($package, 201);
@@ -108,7 +110,8 @@ class InteractivePackageController extends Controller
             InteractivePackage::query()->findOrFail($id),
             $request->file('file'),
             $request->user()?->getKey(),
-            $request->input('change_note')
+            $request->input('change_note'),
+            $request->boolean('accept_network')
         );
 
         return $this->package($package, 201);

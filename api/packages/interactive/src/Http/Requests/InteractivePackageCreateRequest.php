@@ -12,6 +12,7 @@ class InteractivePackageCreateRequest extends InteractiveRequest
             'file' => ['required', 'file', new SafeUpload('interactive')],
             'title' => ['nullable', 'string', 'max:255'],
             'change_note' => ['nullable', 'string', 'max:500'],
+            'accept_network' => ['nullable', 'boolean'],
         ];
     }
 }
