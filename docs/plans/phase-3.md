@@ -1,6 +1,6 @@
 # Phase 3 plan: Living Course (source sync)
 
-Status: **draft, waiting for the product owner's approval**. Nothing in this plan is implemented.
+Status: **approved by the product owner (2026-10-09)**. Implementation is in progress; deviations are recorded in section 18 as "changed during implementation".
 
 Phase 3 follows Phase 2 and builds on its Course Blueprint, Source Documents with stable fragment IDs,
 element-aware diffs, versions and the approve → apply flow (`docs/plans/phase-2.md`, ADRs 0009–0011,
@@ -1067,7 +1067,7 @@ M3.8
 
 ---
 
-## 18. Decisions taken (to confirm)
+## 18. Decisions taken (confirmed by the product owner, 2026-10-09)
 
 1. **New package `living-course`** on top of `course-builder`; course-builder keeps sources,
    fragments, blueprint and versions and gains only small extension points (ADR 0030).

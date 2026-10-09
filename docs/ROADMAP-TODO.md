@@ -11,6 +11,8 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- 2026-10-09: Phase 3 plan (`docs/plans/phase-3.md`) approved with all 17 decisions of its section 18 as recommended (GitHub issue #27 closed); ADRs 0030-0034 accepted.
+
 - [x] (2026-10-09) ADRs 0013–0034 accepted
 - [x] (2026-10-09) Phase 1 defaults confirmed: students get `scorm_track-update`; SVG served as attachment
       with CSP (no sanitiser); LTI Instructor → tutor, never admin, no e-mail account linking; LiaScript player
