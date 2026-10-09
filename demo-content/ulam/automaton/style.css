@@ -1,0 +1,3 @@
+#ca { image-rendering: pixelated; touch-action: manipulation; }
+.ix-field button { white-space: nowrap; }
+[hidden] { display: none !important; }
