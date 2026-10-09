@@ -33,6 +33,33 @@ could overfill the concurrency window.
 ## Consequences
 
 - Workers briefly queue on the run row; the work inside the lock is a few queries.
-- A separate hazard stays documented, not changed: the `database` connection has `retry_after = 90` while a
-  step may run up to 1800 s, so a long LLM call can be handed to a second worker. Set `retry_after` above
-  the job timeout (admin docs).
+- The separate `retry_after` hazard (below) is resolved by the amendment.
+
+## Amendment (2026-10-09): long jobs get their own queue connections
+
+The `database` and `redis` connections have `retry_after = 90`, while a Course Builder or Living Course step
+runs up to 1800 s: a long real LLM call was handed to a second worker while the first still ran it (a double
+call, double cost). The same held for other long jobs that ran on the default connection.
+
+- New connections in `api/config/queue.php`, each in a `database` and a `redis` variant, with their own queue
+  name (a queue name is shared by all connections of one driver, so the worker that pops it decides
+  `retry_after`; the name must be dedicated):
+  - `<driver>-builder`, queue `builder`, `retry_after` 2400 (`BUILDER_QUEUE_RETRY_AFTER`): `RunJob`, `StepJob`
+    (1800 s, 1 try), Living Course `AnalyseGroupJob`, `ProgressRulesJob` (1800 s), `CheckSourceJob` (900 s) and
+    the Adapt `BuildAdaptSource` (now with `$timeout = 900`; the HTTP call to the builder stays at 300 s).
+  - `<driver>-long-job`, queue `queue-long-job`, `retry_after` 19000: `ProcessVideo` and `CloneCourse`
+    (18000 s; the clone ran on the default connection so far). `redis-long-job` existed already.
+- The jobs pick the variant that matches `QUEUE_CONNECTION` (`database` or `redis`); any other default
+  connection (`sync`) is used unchanged. `COURSE_BUILDER_QUEUE(_CONNECTION)`, `LIVING_COURSE_QUEUE(_CONNECTION)`,
+  `ADAPT_QUEUE(_CONNECTION)`, `VIDEO_QUEUE(_CONNECTION)` and `LONG_JOB_QUEUE(_CONNECTION)` still override.
+- `api/workers.sh queue` starts a third worker per tenant for the builder queue with `--timeout=1800`
+  (the long-job worker keeps `--timeout=18000`); Horizon has `supervisor-builder` with `timeout` 1800.
+  Rule: worker `--timeout` >= job `$timeout` and < `retry_after`.
+- H5P and SCORM imports and PDF rendering are synchronous HTTP calls, not queued jobs, so `retry_after` does
+  not apply to them.
+- `tests/Integrations/QueueRetryAfterConfigTest.php` asserts, per job and per driver, that its connection
+  exists, has a dedicated queue and a `retry_after` above `$timeout` plus a margin; that every job in
+  `packages/*/src/Jobs` with a timeout above the default connection's `retry_after` is routed; and that the
+  worker and Horizon timeouts match.
+- Jobs already queued on the old connection (`default` queue) finish there; set the variables above, restart the
+  workers (`queue:restart`) and run a worker for `builder`.

@@ -22,14 +22,14 @@ php artisan gift:snapshot-max-scores   # keeps old quiz results comparable (prog
 
 Add `--domain=<tenant>` on a multi-tenant installation. The seeder creates the permission `living_course_review` and gives it to the `admin` role. The author of a session and admins can always act; give `living_course_review` to tutors who should review updates of courses they did not build.
 
-The requirements of the Course Builder apply: a configured `AI_DRIVER`, a queue worker for `COURSE_BUILDER_QUEUE` (or `LIVING_COURSE_QUEUE`) and the scheduler, which runs `living-course:poll` every 15 minutes.
+The requirements of the Course Builder apply: a configured `AI_DRIVER`, a queue worker for the builder queue (`COURSE_BUILDER_QUEUE`, default `builder`, or `LIVING_COURSE_QUEUE`; see the Course Builder queue notes: `retry_after` must stay above the 1800 s job timeout) and the scheduler, which runs `living-course:poll` every 15 minutes.
 
 ## Environment variables
 
 | Variable | Default | Meaning |
 |---|---|---|
 | `LIVING_COURSE_CONNECTORS` | `upload,git,url` | Connectors offered to authors. Plugins can register more. |
-| `LIVING_COURSE_QUEUE_CONNECTION`, `LIVING_COURSE_QUEUE` | the Course Builder queue | Where source checks and analysis steps run. |
+| `LIVING_COURSE_QUEUE_CONNECTION`, `LIVING_COURSE_QUEUE` | the Course Builder queue (`<driver>-builder`, queue `builder`) | Where source checks and analysis steps run. Use a connection whose `retry_after` is above 1800 s. |
 | `LIVING_COURSE_MIN_POLL_MINUTES` | `60` | Shortest polling interval an author can choose. |
 | `LIVING_COURSE_WEBHOOK_DEBOUNCE_SECONDS` | `600` | Pushes within this window collapse into one check. |
 | `LIVING_COURSE_AUTO_ANALYSE_USD` | `0.50` | Estimated cost below which analysis starts by itself; above it the author confirms. |
