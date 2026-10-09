@@ -1,0 +1,68 @@
+---
+title: ulams for AI agents (MCP)
+description: Expose a ulams instance to Claude Code, Claude Desktop and other MCP clients with ulams mcp, with toolsets, read-only mode and confirmation of destructive tools.
+sidebar:
+  order: 81
+modules:
+  - cli
+---
+
+`ulams mcp` serves the CLI's commands as [Model Context Protocol](https://modelcontextprotocol.io) tools. Tools,
+the CLI and the [reference](/reference/cli/) come from one registry, so they cannot drift apart
+([ADR 0076](/decisions/0076-local-mcp-server-from-cli-registry/)). The server speaks the 2026-07-28 spec (stateless,
+no sessions) through the official TypeScript SDK v2.
+
+## Run it
+
+```bash
+ulams login --url http://coffee.localhost --demo admin   # once; the MCP client config then holds no secret
+ulams mcp                                                # stdio: the default, for local clients
+ulams mcp --http --port 8787                             # Streamable HTTP on http://127.0.0.1:8787/mcp
+```
+
+- **stdio** uses the credentials of the current profile (`--profile`) or `ULAMS_URL` + `ULAMS_TOKEN`. Logs go to stderr;
+  stdout carries only the protocol.
+- **HTTP** binds loopback. Every request must send `Authorization: Bearer <ulams token>`; the server forwards it to the API
+  per request and stores nothing (401 with `WWW-Authenticate` otherwise). `--host 0.0.0.0` needs `--allow-remote`. File
+  access is disabled in this mode.
+
+## Which tools
+
+The default toolset `core` keeps the list short: `whoami`, courses, lessons, `topics_create_richtext`, `topics_create_quiz`,
+users, `access_grant`, `reports_metrics`, plus three meta tools that reach everything else:
+
+| Tool | Use |
+|---|---|
+| `commands_search` | find a command by keyword (all toolsets) |
+| `commands_describe` | the input JSON Schema and examples of one command |
+| `commands_run` | run any exposed command by id, with the same confirmation rules |
+
+`--toolsets core,courses,users,settings` adds the generated tools of those nouns (`--toolsets all` exposes about 300; for
+clients that filter tools themselves). `--read-only` exposes read commands only; `--no-destructive` hides destructive ones.
+
+Every tool carries annotations from its kind: `readOnlyHint` for reads, `destructiveHint` for deletes and replaces,
+`idempotentHint`, `openWorldHint: false`. Results are the CLI envelope as `structuredContent` (and compact JSON text, at most
+25 kB; longer lists are truncated with a `TRUNCATED` warning, narrow them with `per_page` or `fields`).
+
+## Safety
+
+- Every write tool accepts `dry_run: true`: the plan, and for updates a diff, with no change.
+- A destructive tool called without `confirm` makes no change. It returns an error result `CONFIRMATION_REQUIRED` whose
+  `details` hold the plan and a single-use `confirm` token (valid 5 minutes, bound to the exact input). The model shows the
+  plan to the user, then calls again with the token.
+- `--unsafe-yes` disables the confirmation; use it only in a throw-away sandbox.
+- The API enforces the user's permissions (and, with scoped tokens, the token's scopes), so an MCP client can never do more
+  than the user behind the token. Prefer a read-only token or `--read-only` for exploration.
+- Each request carries `X-Ulams-Client: mcp` and the agent name, which the agent audit log records.
+
+## Rules that make agents reliable
+
+1. Call `whoami` first. 2. Use `--json` or `ulams schema` for discovery in the shell. 3. Pass whole inputs as JSON
+(`--input @file.json`). 4. List before you act (`courses_list`) instead of guessing ids. 5. Use `dry_run` before writes.
+
+## Resources
+
+`ulams://courses/{id}` is the course outline as Markdown (title, status, lessons, topics) and
+`ulams://courses/{id}/program.json` the full object; `resources/list` returns the first 100 courses.
+
+See also: [the CLI guide](/developers/cli/).
