@@ -2,6 +2,7 @@
 
 namespace Ulams\Images\Http\Controllers\Swagger;
 
+use Ulams\Images\Http\Requests\ImagesRenderRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -130,5 +131,5 @@ interface ImagesControllerSwagger
      * )
      *
      */
-    public function images(Request $request): JsonResponse;
+    public function images(ImagesRenderRequest $request): JsonResponse;
 }
