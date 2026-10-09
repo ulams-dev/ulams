@@ -61,6 +61,22 @@ class InteractivePackageApiTest extends TestCase
         $this->uploadFixture('minimal')->assertCreated();
     }
 
+    public function testTheSamplePackageOfTheFrontendTestsIsAValidPackage(): void
+    {
+        $folder = __DIR__ . '/../../../../../front/web/tests/fixtures/interactive/minimal';
+        if (!is_dir($folder)) {
+            $this->markTestSkipped('front/ is outside the mounted api/ directory');
+        }
+        $entries = ['vendor/interactive-bridge.js' => '/* the bridge */'];
+        foreach (['index.html', 'ulams-interactive.json', 'posters/a.png'] as $file) {
+            $entries[$file] = (string) file_get_contents($folder . '/' . $file);
+        }
+        $zip = $this->makeZip($entries);
+
+        $this->actingAs($this->makeAdmin(), 'api')->post('/api/admin/interactive', ['file' => $this->upload($zip)], ['Accept' => 'application/json'])
+            ->assertCreated()->assertJsonPath('data.manifest.id', 'e2e-minimal')->assertJsonPath('data.licence', 'MIT');
+    }
+
     public function testATitleOverridesTheManifestTitle(): void
     {
         $this->uploadFixture('minimal', body: ['title' => 'My title'])->assertCreated()->assertJsonPath('data.title', 'My title');
