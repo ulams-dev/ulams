@@ -228,8 +228,11 @@ interface CourseProgressAPISwagger
      *         @OA\JsonContent(
      *             @OA\Property(
      *                 property="event",
-     *                 type="string",
-     *                 example="http://adlnet.gov/expapi/verbs/attempted",
+     *                 description="The verb IRI (with the statement in `data`) or the whole xAPI statement object; a statement is stored as `data` and its verb as the event",
+     *                 oneOf={
+     *                     @OA\Schema(type="string", example="http://adlnet.gov/expapi/verbs/attempted"),
+     *                     @OA\Schema(type="object"),
+     *                 },
      *             ),
      *             @OA\Property(
      *                 property="data",

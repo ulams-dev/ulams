@@ -118,6 +118,17 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
      */
     public function h5p($topic_id, Request $request): JsonResponse
     {
+        // `event` is the verb IRI (legacy clients, with the statement in `data`) or the whole xAPI
+        // statement object (the SDK)
+        $request->validate([
+            'event' => ['required', function (string $attribute, mixed $value, \Closure $fail) {
+                if (!is_string($value) && !is_array($value)) {
+                    $fail(__('The :attribute must be a verb or a statement.', ['attribute' => $attribute]));
+                }
+            }],
+            'data' => ['nullable', 'array'],
+        ]);
+
         $topic = $this->topicRepositoryContract->getById($topic_id);
 
         if (!$topic->course->is_active) {

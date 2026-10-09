@@ -296,11 +296,13 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [ ] (new) Turn on the nightly conformance runs (`NIGHTLY_CONFORMANCE=true`) and run the saLTIre job once
       with an operator
 - [x] (new) Adapt Path B admin screen (sources, versions, build status)
-- [ ] (new) Astro front: H5P plays without a token, so learner state is not restored (decide: a short-lived
-      H5P token from the BFF, or state through the BFF)
+- [x] (new) Astro front: H5P plays without a token, so learner state is not restored (decide: a short-lived
+      H5P token from the BFF, or state through the BFF) (decided: state through the BFF, ADR 0045; the `/h5p`
+      proxy adds the session token server-side for the player's own calls, the frame still gets `token: null`
+      and the model's URLs carry no `_token`)
 - [x] (new) Production: set `H5P_SERVICE_CONFIG_DIR`, run `ulams:h5p:export-config` and start the H5P service
       with `compose.h5p.prod.yml`
-- [ ] (new) H5P xAPI progress endpoint rejects statement objects (`ProgressService::h5p()` typed `string`) (plan L1-06)
+- [x] (new) H5P xAPI progress endpoint rejects statement objects (`ProgressService::h5p()` typed `string`) (plan L1-06; the statement is stored as JSON, its verb as the event)
 - [ ] (new) `yarn install` on Node 24 fails in admin's postinstall (`max setup`: umi's esmi feature loads
       `http-deceiver`, which needs the removed `http_parser` binding); CI and `.nvmrc` use Node 22
 
