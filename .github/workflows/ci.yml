@@ -294,6 +294,12 @@ jobs:
         if: matrix.shard == 'platform'
         run: php artisan l5-swagger:generate
 
+      # The ulams CLI commits the normalised spec (front/cli/spec/openapi.json) and the operation list it
+      # derives; fail when the annotations moved on without them. The failure message lists the refresh commands.
+      - name: CLI spec is current
+        if: matrix.shard == 'platform'
+        run: node ../front/cli/scripts/sync-spec.mjs storage/api-docs/api-docs.json --check
+
       # api/phpunit.quarantine.xml lists tests that are known to fail, each with a reason and an issue.
       # They are excluded from the blocking run and re-run non-blocking below. Keep the file empty.
       - name: Load quarantine

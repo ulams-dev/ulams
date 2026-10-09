@@ -6296,6 +6296,47 @@
     ]
    }
   },
+  "/api/admin/course-builder/sessions/{session}/new-site": {
+   "post": {
+    "operationId": "ffb4f52bc6989ec984b3ac71aad90de4",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "202": {
+      "description": "queued"
+     },
+     "403": {
+      "description": "not allowed"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create a new site and move the session there (platform operators; TENANCY_NEW_SITES)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
   "/api/admin/course-builder/sessions/{session}/publish": {
    "post": {
     "operationId": "fb8f6decce43224a86c2af1707019831",
@@ -6319,7 +6360,36 @@
       "passport": []
      }
     ],
-    "summary": "Publish the applied course",
+    "summary": "Publish the applied course (409 while blocking items or unacknowledged warnings remain; body acknowledgedWarnings)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions/{session}/publish-check": {
+   "get": {
+    "operationId": "e5744635437e3a56d9bd9aea453ef2ec",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "blocking, warnings and facts"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Blocking items and warnings before publishing",
     "tags": [
      "Admin Course Builder"
     ]
@@ -25776,10 +25846,45 @@
     ]
    }
   },
+  "/api/lti/tool/launch/verify": {
+   "post": {
+    "description": "Posted by the storage page with the id_token, the state and the value read from the platform's storage. A different value is refused; an empty one (storage unavailable) falls back to the server-side state. Then it behaves like /api/lti/tool/launch.",
+    "operationId": "459e0a6fbb45c66f0c38a6dcc1667162",
+    "responses": {
+     "200": {
+      "description": "course picker (deep linking)"
+     },
+     "302": {
+      "description": "redirect to the front landing page"
+     },
+     "401": {
+      "description": "the value does not match, or the login expired"
+     }
+    },
+    "summary": "Second step of a launch whose login used the platform's storage (Client Side postMessage Storage)",
+    "tags": [
+     "LTI"
+    ]
+   }
+  },
   "/api/lti/tool/login": {
    "get": {
     "operationId": "10a0ad0d978804363cde5d19eae1520c",
+    "parameters": [
+     {
+      "description": "Client Side postMessage Storage: the platform's storage frame. Present: the response is a page that puts the nonce in the platform's storage before it continues.",
+      "in": "query",
+      "name": "lti_storage_target",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
     "responses": {
+     "200": {
+      "description": "storage page that continues to the platform's OIDC auth URL (lti_storage_target given)"
+     },
      "302": {
       "description": "redirect to the platform's OIDC auth URL"
      },
@@ -30720,6 +30825,14 @@
   {
    "description": "Admin H5P",
    "name": "Admin H5P"
+  },
+  {
+   "description": "Interactive",
+   "name": "Interactive"
+  },
+  {
+   "description": "Admin Interactive",
+   "name": "Admin Interactive"
   },
   {
    "description": "Invoices",
