@@ -17,6 +17,9 @@ be given access to a course as a whole (on the course's access tab; see
 [Content creators](/creators/)). Groups belong to the [auth](/reference/packages/auth/)
 package (`/api/admin/user-groups`).
 
+Access given to a group reaches the members of its sub-groups too, down to 10 levels below it. A
+group that ends up as its own ancestor does not make the lookup loop.
+
 | Screen | Route | Permission needed to see it |
 |---|---|---|
 | Group list | `/users/groups` | `user-group_list` |
