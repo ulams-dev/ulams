@@ -36,6 +36,16 @@ describe("connect (package side)", () => {
     expect((parent.posted[2]!.message as { value: number }).value).toBe(1);
   });
 
+  it("holds calls made inside onInit until ready has been sent (the host ignores anything before ready)", () => {
+    const holder: { bridge?: ReturnType<typeof connect> } = {};
+    const { parent, win, bridge } = setup({ onInit: () => holder.bridge?.stepChanged("too-slow") });
+    holder.bridge = bridge;
+    win.dispatch(env(VALID.init!), parent);
+    expect(parent.posted.map((p) => p.message.type)).toEqual(["ready", "stepChanged"]);
+    bridge.stepChanged("too-fast");
+    expect(parent.posted.map((p) => p.message.type)).toEqual(["ready", "stepChanged", "stepChanged"]);
+  });
+
   it("ignores messages that do not come from the parent, with a wrong nonce, or a second init", () => {
     const onGo = vi.fn();
     const { parent, win } = setup({ onGoToStep: onGo });

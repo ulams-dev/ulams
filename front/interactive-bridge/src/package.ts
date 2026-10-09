@@ -47,6 +47,7 @@ export function connect(options: ConnectOptions = {}): Bridge {
   if (!win || win.parent === win) return NOOP;
   const parent = win.parent;
   let nonce: string | null = null;
+  let initializing = false;
   let queue: Outgoing[] = [];
 
   const post = (m: Outgoing) => {
@@ -57,7 +58,8 @@ export function connect(options: ConnectOptions = {}): Bridge {
     parent.postMessage(msg, "*");
   };
   const send = (m: Outgoing) => {
-    if (nonce === null) {
+    // Before `init`, and inside `onInit`, calls wait: the host ignores everything that arrives before `ready`.
+    if (nonce === null || initializing) {
       if (queue.length < 100) queue.push(m);
       return;
     }
@@ -72,7 +74,12 @@ export function connect(options: ConnectOptions = {}): Bridge {
       case "init": {
         if (nonce !== null) return; // the nonce is fixed by the first init
         nonce = msg.nonce;
-        options.onInit?.(msg);
+        initializing = true;
+        try {
+          options.onInit?.(msg);
+        } finally {
+          initializing = false;
+        }
         post({ type: "ready", protocol: PROTOCOL, steps: options.steps ?? [], capabilities: options.capabilities ?? {} });
         const pending = queue;
         queue = [];
