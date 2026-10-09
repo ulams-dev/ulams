@@ -2,7 +2,7 @@
 // packages (one page each, from its README plus what the code declares), permissions,
 // administrable settings, environment variables, events and notification templates,
 // artisan commands, scheduled jobs, API endpoints, topic types and the UI catalogue.
-import { cell, exists, firstParagraph, plain, read, rewriteLinks, splitTitle, writePage, BLOB, EDIT, list, isDir, walk } from "../lib.mjs";
+import { cell, exists, firstParagraph, plain, read, rewriteLinks, splitTitle, writePage, BLOB, EDIT, list, isDir, walk, demoteHeadings } from "../lib.mjs";
 import {
   commands,
   envCalls,
@@ -87,7 +87,7 @@ export default function generate() {
     const body = [
       `Source: [\`api/packages/${p}\`](https://github.com/ulams-dev/ulams/tree/main/api/packages/${p})${versions[`ulams/${p}`] ? ` · imported version ${code(versions[`ulams/${p}`])}` : ""}. The sections after the README are extracted from the code on every docs build.`,
       readme.body.trim()
-        ? `## README\n\n${rewriteLinks(readme.body, readmePath).replace(/^(#{1,5}) /gm, "#$1 ")}`
+        ? `## README\n\n${demoteHeadings(rewriteLinks(readme.body, readmePath))}`
         : "## README\n\n_This package has no README._",
       extraDocs.length ? `## More documentation in the package\n\n${extraDocs.map((f) => `- ${fileLink(f, f)}`).join("\n")}` : "",
       topicTypes.length ? `## Topic types\n\n${topicTypes.map((t) => `- ${code(t)}`).join("\n")}` : "",
@@ -208,7 +208,7 @@ export default function generate() {
         editUrl: `${EDIT}/api/docs/enviromental-variables.md`,
         sidebar: { order: 4 },
       },
-      `The first part is [\`api/docs/enviromental-variables.md\`](${BLOB}/api/docs/enviromental-variables.md); the second is built from the code. Front-end and service variables (\`ULAMS_*\` for front/web, \`REACT_APP_*\` for admin, \`VITE_APP_*\` for the legacy front, H5P and PDF service settings) are described in [Self-hosting](/operators/self-hosting/) and the app READMEs under [Reference](/reference/).\n\n## Guide\n\n${rewriteLinks(envDoc.body, "api/docs/enviromental-variables.md").replace(/^(#{1,5}) /gm, "#$1 ")}\n\n## Every env() read in the code\n\nVariables read with \`env()\` in \`api/config\`, \`api/app\` and the packages. Laravel's \`LARAVEL_*\` prefixed variables (see the guide above) are mapped onto config keys at runtime and are not listed here.\n\n${table(
+      `The first part is [\`api/docs/enviromental-variables.md\`](${BLOB}/api/docs/enviromental-variables.md); the second is built from the code. Front-end and service variables (\`ULAMS_*\` for front/web, \`REACT_APP_*\` for admin, \`VITE_APP_*\` for the legacy front, H5P and PDF service settings) are described in [Self-hosting](/operators/self-hosting/) and the app READMEs under [Reference](/reference/).\n\n## Guide\n\n${demoteHeadings(rewriteLinks(envDoc.body, "api/docs/enviromental-variables.md"))}\n\n## Every env() read in the code\n\nVariables read with \`env()\` in \`api/config\`, \`api/app\` and the packages. Laravel's \`LARAVEL_*\` prefixed variables (see the guide above) are mapped onto config keys at runtime and are not listed here.\n\n${table(
         ["Variable", "Default(s) in code", "Read by"],
         V.map((v) => [code(v.name), [...v.defaults].map(code).join(" "), [...v.owners].sort().join(", ")])
       )}`

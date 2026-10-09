@@ -121,6 +121,23 @@ export function rewriteLinks(md, sourceRel, mapInternal = () => null) {
     .replace(/^(\[[^\]]+\]:\s*)(\S+)/gm, (_, a, t) => `${a}${fix(t)}`);
 }
 
+/** Moves every Markdown heading one level down (outside fenced code blocks). */
+export function demoteHeadings(md) {
+  let fence = null;
+  return md
+    .split("\n")
+    .map((line) => {
+      const f = line.match(/^\s*(`{3,}|~{3,})/);
+      if (f) {
+        if (!fence) fence = f[1][0];
+        else if (f[1][0] === fence) fence = null;
+        return line;
+      }
+      return !fence && /^#{1,5} /.test(line) ? `#${line}` : line;
+    })
+    .join("\n");
+}
+
 /** Escapes text for a Markdown table cell. */
 export const cell = (s) =>
   String(s ?? "")
