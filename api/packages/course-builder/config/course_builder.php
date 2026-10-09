@@ -6,8 +6,11 @@ return [
     'private_root' => env('COURSE_BUILDER_PRIVATE_ROOT', storage_path('app/private')),
 
     // Queue for pipeline jobs (long LLM calls)
-    'queue_connection' => env('COURSE_BUILDER_QUEUE_CONNECTION'),
-    'queue' => env('COURSE_BUILDER_QUEUE'),
+    // On the `database` or `redis` default connection they go to `<driver>-builder` (queue `builder`,
+    // retry_after above the 1800 s job timeout, see config/queue.php and ADR 0083). Any other default
+    // connection (sync in tests) is used as it is.
+    'queue_connection' => env('COURSE_BUILDER_QUEUE_CONNECTION', in_array(env('QUEUE_CONNECTION'), ['database', 'redis'], true) ? env('QUEUE_CONNECTION') . '-builder' : null),
+    'queue' => env('COURSE_BUILDER_QUEUE', in_array(env('QUEUE_CONNECTION'), ['database', 'redis'], true) ? 'builder' : null),
 
     'limits' => [
         'source_bytes' => (int) env('COURSE_BUILDER_SOURCE_MB', 20) * 1024 * 1024,

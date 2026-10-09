@@ -273,6 +273,8 @@ async function coerce(
   if (type === "array") {
     const items = value as string[];
     const itemType = primaryType(prop?.items);
+    // Scopes are a comma list of names and @presets (@author is not a file): --scopes @author,tokens:write.
+    if (flag === "scopes" && !(items.length === 1 && (items[0] as string).startsWith("["))) return items.flatMap((v) => v.split(",")).map((v) => v.trim()).filter(Boolean);
     // A single JSON array or @file replaces repeated flags.
     if (items.length === 1 && (items[0] as string).startsWith("[")) return readStructured(items[0] as string, fs, readStdin);
     if (items.length === 1 && (items[0] as string).startsWith("@")) return readStructured(items[0] as string, fs, readStdin);

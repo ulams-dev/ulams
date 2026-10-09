@@ -1,5 +1,5 @@
 {
- "summary": "435/477 covered, 42 excluded, 0 missing, 4 routes missing from the spec",
+ "summary": "435/477 covered, 42 excluded, 0 missing, 82 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1876,7 +1876,7 @@
   {
    "key": "DELETE /api/auth/tokens/{id}",
    "summary": "Revoke one of my scoped tokens",
-   "command": "tokens.revoke",
+   "command": "logout",
    "status": "covered"
   },
   {
@@ -2866,6 +2866,202 @@
  ],
  "undocumented": [
   {
+   "endpoint": "POST /api/admin/course-builder/sessions/{session}/apply",
+   "command": "builder.apply"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions/{session}/brief",
+   "command": "builder.brief.get"
+  },
+  {
+   "endpoint": "PUT /api/admin/course-builder/sessions/{session}/brief",
+   "command": "builder.brief.set"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/sessions/{session}/runs",
+   "command": "builder.chat"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions/{session}/versions",
+   "command": "builder.chat"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/versions/{version}/diff",
+   "command": "builder.chat"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions/{session}/versions",
+   "command": "builder.elements.list"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/versions/{version}",
+   "command": "builder.elements.list"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions/{session}/events",
+   "command": "builder.events"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions/{session}/events",
+   "command": "builder.events.list"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/fragments/{fragment}",
+   "command": "builder.fragments.get"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/sessions/{session}/runs",
+   "command": "builder.interview.answer"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/sessions/{session}/runs",
+   "command": "builder.interview.decide"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions/{session}/events",
+   "command": "builder.interview.show"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/versions/{version}/approve",
+   "command": "builder.outline.approve"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions/{session}/versions",
+   "command": "builder.outline.approve"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/versions/{version}/reject",
+   "command": "builder.outline.request-changes"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions/{session}/versions",
+   "command": "builder.outline.request-changes"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions/{session}/versions",
+   "command": "builder.outline.show"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/versions/{version}",
+   "command": "builder.outline.show"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/versions/{version}/approve",
+   "command": "builder.patches.approve"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/versions/{version}/reject",
+   "command": "builder.patches.reject"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/sessions/{session}/publish",
+   "command": "builder.publish"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/sessions/{session}/redo",
+   "command": "builder.redo"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/sessions/{session}/runs",
+   "command": "builder.retry"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/runs/{run}/cancel",
+   "command": "builder.runs.cancel"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/runs/{run}",
+   "command": "builder.runs.get"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/runs/{run}/steps/{step}/retry",
+   "command": "builder.runs.retry-step"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/sessions",
+   "command": "builder.sessions.create"
+  },
+  {
+   "endpoint": "DELETE /api/admin/course-builder/sessions/{session}",
+   "command": "builder.sessions.delete"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions/{session}",
+   "command": "builder.sessions.get"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions",
+   "command": "builder.sessions.list"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions/{session}",
+   "command": "builder.sessions.wait"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/runs/{run}",
+   "command": "builder.sessions.wait"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/sessions/{session}/sources",
+   "command": "builder.sources.add"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions/{session}/sources/{source}",
+   "command": "builder.sources.get"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/sessions",
+   "command": "builder.start"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/sessions/{session}/sources",
+   "command": "builder.start"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions/{session}",
+   "command": "builder.start"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/sessions/{session}/runs",
+   "command": "builder.start"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/versions/{version}/approve",
+   "command": "builder.start"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/sessions/{session}/apply",
+   "command": "builder.start"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/sessions/{session}/publish",
+   "command": "builder.start"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/sessions/{session}/undo",
+   "command": "builder.undo"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions/{session}/usage",
+   "command": "builder.usage"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/versions/{version}/diff",
+   "command": "builder.versions.diff"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/versions/{version}",
+   "command": "builder.versions.get"
+  },
+  {
+   "endpoint": "GET /api/admin/course-builder/sessions/{session}/versions",
+   "command": "builder.versions.list"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/versions/{version}/restore",
+   "command": "builder.versions.restore"
+  },
+  {
    "endpoint": "GET /api/admin/courses/{course}",
    "command": "courses.get"
   },
@@ -2880,6 +3076,122 @@
   {
    "endpoint": "GET /api/admin/courses/{course}",
    "command": "courses.unpublish"
+  },
+  {
+   "endpoint": "GET /api/admin/living-course/sessions/{session}/audit/export",
+   "command": "living.audit.export"
+  },
+  {
+   "endpoint": "GET /api/admin/living-course/sessions/{session}/audit",
+   "command": "living.audit.list"
+  },
+  {
+   "endpoint": "GET /api/admin/living-course/sessions/{session}/audit/verify",
+   "command": "living.audit.verify"
+  },
+  {
+   "endpoint": "POST /api/admin/living-course/connections/{connection}/check",
+   "command": "living.connections.check"
+  },
+  {
+   "endpoint": "DELETE /api/admin/living-course/connections/{connection}",
+   "command": "living.connections.delete"
+  },
+  {
+   "endpoint": "PUT /api/admin/living-course/connections/{connection}",
+   "command": "living.connections.update"
+  },
+  {
+   "endpoint": "POST /api/admin/living-course/connections/{connection}/webhook-secret",
+   "command": "living.connections.webhook-secret"
+  },
+  {
+   "endpoint": "GET /api/admin/living-course/connectors",
+   "command": "living.connectors.list"
+  },
+  {
+   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/accept",
+   "command": "living.proposals.accept"
+  },
+  {
+   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/accept-all",
+   "command": "living.proposals.accept-all"
+  },
+  {
+   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/analyse",
+   "command": "living.proposals.analyse"
+  },
+  {
+   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/apply",
+   "command": "living.proposals.apply"
+  },
+  {
+   "endpoint": "GET /api/admin/living-course/proposals/{proposal}",
+   "command": "living.proposals.get"
+  },
+  {
+   "endpoint": "PUT /api/admin/living-course/proposals/{proposal}/learner-note",
+   "command": "living.proposals.learner-note"
+  },
+  {
+   "endpoint": "GET /api/admin/living-course/sessions/{session}/proposals",
+   "command": "living.proposals.list"
+  },
+  {
+   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/reanalyse",
+   "command": "living.proposals.reanalyse"
+  },
+  {
+   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/regenerate",
+   "command": "living.proposals.regenerate"
+  },
+  {
+   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/reject",
+   "command": "living.proposals.reject"
+  },
+  {
+   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/reject",
+   "command": "living.proposals.reject-all"
+  },
+  {
+   "endpoint": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/reset",
+   "command": "living.proposals.reset"
+  },
+  {
+   "endpoint": "GET /api/admin/living-course/revisions/{revision}/changes",
+   "command": "living.revisions.changes"
+  },
+  {
+   "endpoint": "GET /api/admin/living-course/revisions/{revision}",
+   "command": "living.revisions.get"
+  },
+  {
+   "endpoint": "GET /api/admin/living-course/sources/{source}/revisions",
+   "command": "living.revisions.list"
+  },
+  {
+   "endpoint": "POST /api/admin/living-course/sources/{source}/revisions",
+   "command": "living.revisions.upload"
+  },
+  {
+   "endpoint": "POST /api/admin/course-builder/sessions/{session}/sources",
+   "command": "living.sources.add"
+  },
+  {
+   "endpoint": "POST /api/admin/living-course/sessions/{session}/sources/connect",
+   "command": "living.sources.connect"
+  },
+  {
+   "endpoint": "GET /api/admin/living-course/sessions/{session}/sources",
+   "command": "living.sources.list"
+  },
+  {
+   "endpoint": "GET /api/admin/living-course/sessions/{session}/staleness",
+   "command": "living.staleness"
+  },
+  {
+   "endpoint": "GET /api/auth/tokens/current",
+   "command": "whoami"
   }
  ]
 }

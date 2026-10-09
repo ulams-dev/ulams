@@ -23,8 +23,17 @@ class BuildAdaptSource implements ShouldQueue
 
     public int $tries = 1;
 
+    /** Above ADAPT_BUILDER_TIMEOUT; the builder queue's retry_after is higher still (ADR 0083). */
+    public int $timeout = 900;
+
     public function __construct(public readonly int $sourceId, public readonly int $version)
     {
+        if ($c = config('ulams_adapt.queue_connection')) {
+            $this->onConnection($c);
+        }
+        if ($q = config('ulams_adapt.queue')) {
+            $this->onQueue($q);
+        }
     }
 
     public function handle(ScormServiceContract $scorm): void

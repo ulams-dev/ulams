@@ -74,7 +74,8 @@ export interface Ctx {
   fs: FsPort;
   io: { stderr(line: string): void; isTTY: boolean; interactive: boolean };
   signal: AbortSignal;
-  emit(event: unknown): void;
+  /** Stream commands: one NDJSON line `{type:"event", id?, data}` (CLI) or one progress notification (MCP). */
+  emit(event: unknown, meta?: { id?: string | null }): void;
   flags: GlobalFlags;
   env: NodeJS.ProcessEnv;
   readStdin(): Promise<string>;
