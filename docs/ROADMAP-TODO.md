@@ -11,6 +11,11 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (2026-10-09) Phase 1 defaults confirmed: students get `scorm_track-update`; SVG served as attachment
+      with CSP (no sanitiser); LTI Instructor → tutor, never admin, no e-mail account linking; LiaScript player
+      fetched at image build time; production content origin on a separate registrable domain
+- [x] (2026-10-09) GHCR images are public; the upstream EscolaLMS security reports stay as public issues
+- [x] (2026-10-09) Keep the illustrative incident log on the On-Call landing
 - [x] (2026-10-09) Phase 1 and Phase 2 plans approved; ADRs 0008 (reference frontend: Astro SSR, plain TS SDK,
       agent UI catalogue), 0009 (LLM layer), 0010 (Course Blueprint), 0011 (AG-UI over SSE) and 0012 (LTI 1.3)
       accepted
@@ -162,6 +167,8 @@ stale content.
 - [ ] (new) Decide on Passport 13's device-code routes (`oauth/device*`, exposed by default, unused): keep or disable
 - [ ] (new) Move the `@OA\` docblock annotations (223 files) to PHP attributes and drop the abandoned
       `doctrine/annotations`
+- [ ] (new) Smaller admin and front images: nginx-unprivileged instead of Apache+PHP, with runtime settings
+      injected without PHP (approved 2026-10-09; after Phase 1)
 
 ---
 
