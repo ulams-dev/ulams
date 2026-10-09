@@ -568,6 +568,7 @@ class CourseProgressApiTest extends TestCase
 
         $this->assertTrue($progress->attempt === 0);
 
+        $student->courses()->attach($course->getKey());
         $this->response = $this->actingAs($student, 'api')->json(
             'PATCH',
             '/api/courses/progress/' . $course->getKey(),
@@ -603,6 +604,7 @@ class CourseProgressApiTest extends TestCase
             'points' => 0,
         ])->create();
 
+        $student->courses()->attach($course->getKey());
         $this->response = $this->actingAs($student, 'api')->json(
             'PATCH',
             '/api/courses/progress/' . $course->getKey(),
@@ -644,6 +646,7 @@ class CourseProgressApiTest extends TestCase
             'points' => 0,
         ])->create();
 
+        $student->courses()->attach($course->getKey());
         $this->response = $this->actingAs($student, 'api')->json(
             'PATCH',
             '/api/courses/progress/' . $course->getKey(),
@@ -697,6 +700,7 @@ class CourseProgressApiTest extends TestCase
             'points' => 0,
         ])->create();
 
+        $student->courses()->attach($course->getKey());
         $this->response = $this->actingAs($student, 'api')->json(
             'PATCH',
             '/api/courses/progress/' . $course->getKey(),
@@ -742,6 +746,7 @@ class CourseProgressApiTest extends TestCase
 
         $courseProgress = CourseProgressCollection::make($student, $course);
 
+        $student->courses()->attach($course->getKey());
         $this->response = $this->actingAs($student, 'api')->json(
             'PATCH',
             '/api/courses/progress/' . $course->getKey(),
@@ -887,7 +892,7 @@ class CourseProgressApiTest extends TestCase
         ]);
     }
 
-    public function test_ping_complete_topic_when_end_date_is_overdue(): void
+    public function test_ping_is_refused_when_end_date_is_overdue(): void
     {
         // Frozen clock: the tracked seconds are a time difference (sleep() made it depend on load).
         $this->freezeSecond();
@@ -908,21 +913,16 @@ class CourseProgressApiTest extends TestCase
             'seconds' => 10,
         ]);
 
+        // access ended with the end date, so progress is no longer recorded
         $this->actingAs($user, 'api')
             ->putJson('/api/courses/progress/' . $topic->getKey() . '/ping')
-            ->assertOk()
-            ->assertJsonFragment([
-                'status' => true
-            ]);
+            ->assertForbidden();
 
         $this->travel(5)->seconds();
 
         $this->actingAs($user, 'api')
             ->putJson('/api/courses/progress/' . $topic->getKey() . '/ping')
-            ->assertOk()
-            ->assertJsonFragment([
-                'status' => true
-            ]);
+            ->assertForbidden();
 
         $this->assertDatabaseHas('course_progress', [
             'user_id' => $user->getKey(),
@@ -1003,6 +1003,7 @@ class CourseProgressApiTest extends TestCase
         $courseProgress = CourseProgressCollection::make($student, $course);
         $this->assertFalse($courseProgress->isFinished());
 
+        $student->courses()->attach($course->getKey());
         $this->response = $this->actingAs($student, 'api')->json(
             'PATCH',
             '/api/courses/progress/' . $course->getKey(),
