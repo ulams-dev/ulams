@@ -1,6 +1,7 @@
 import { ApiError, createClient, createLivingLearnerClient, type Course, type Tenant, type TopicProgress } from "@ulams/sdk";
 import { cache } from "./cache.ts";
 import { config } from "./config.ts";
+import { fetchFrameOrigins } from "./frame-origins.ts";
 import type { LearnerNotices } from "./notices.ts";
 import { siteModel, type RawSiteData, type SiteModel } from "./view-model.ts";
 
@@ -118,6 +119,18 @@ export function warmLearner(tenant: Tenant, token: string): void {
 /** Drops cached progress after a write through the BFF. */
 export function invalidateProgress(tenant: Tenant): void {
   cache.delete(key(tenant, "progress:"));
+}
+
+/**
+ * Origins of the tenant's enabled external tools, for `frame-src` (GET /api/lti/frame-origins, ADR
+ * 0044). Cached for 5 minutes; a failed fetch gives none rather than blocking the page.
+ */
+export async function getFrameOrigins(tenant: Tenant): Promise<string[]> {
+  try {
+    return await publicData(tenant, "lti:frame-origins", () => fetchFrameOrigins(tenant.apiUrl), 5 * 60_000);
+  } catch {
+    return [];
+  }
 }
 
 /**
