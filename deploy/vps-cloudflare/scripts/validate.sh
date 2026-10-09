@@ -70,8 +70,10 @@ for style in flat nested; do
 done
 
 # --- cloudflared -------------------------------------------------------------------------------
-cp "$root/cloudflared/config.yml" "$tmp/config.yml"
-if docker run --rm -v "$tmp:/etc/cloudflared:ro" "$cloudflared_image" \
+# the cloudflared image runs as a non-root user: the directory must be readable for it
+mkdir "$tmp/cf" && chmod 755 "$tmp/cf"
+cp "$root/cloudflared/config.yml" "$tmp/cf/config.yml" && chmod 644 "$tmp/cf/config.yml"
+if docker run --rm -v "$tmp/cf:/etc/cloudflared:ro" "$cloudflared_image" \
   tunnel --config /etc/cloudflared/config.yml ingress validate >"$tmp/out" 2>&1; then
   ok "cloudflared ingress validate"
 else
