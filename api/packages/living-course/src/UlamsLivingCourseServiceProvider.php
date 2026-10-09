@@ -36,6 +36,7 @@ use Ulams\LivingCourse\Connectors\SourceConnectorRegistry;
 use Ulams\LivingCourse\Connectors\UploadConnector;
 use Ulams\LivingCourse\Connectors\UrlConnector;
 use Ulams\LivingCourse\Console\BackfillCommand;
+use Ulams\LivingCourse\Console\EvalCommand;
 use Ulams\LivingCourse\Console\PollCommand;
 use Ulams\LivingCourse\Fake\UpdateResponder;
 use Ulams\LivingCourse\Models\Proposal;
@@ -91,7 +92,7 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
         SessionState::extendSummary('living-course', fn (Session $s) => ['freshness' => $this->app->make(StalenessService::class)->summary($s)]);
 
         if ($this->app->runningInConsole()) {
-            $this->commands([BackfillCommand::class, PollCommand::class]);
+            $this->commands([BackfillCommand::class, PollCommand::class, EvalCommand::class]);
         }
 
         Event::listen(ProposalApplied::class, fn (ProposalApplied $e) => ProgressRulesJob::dispatchFor($e->proposal->id));

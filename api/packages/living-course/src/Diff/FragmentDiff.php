@@ -81,6 +81,14 @@ final class FragmentDiff
             return $shingles[$r['id'] . $r['content_hash']] ??= self::shingles($r['text']);
         };
         $sameIdThreshold = (float) config('living_course.diff.same_id_similarity', 0.5);
+        $perHeading = ['old' => [], 'new' => []];
+        foreach (['old' => $old, 'new' => $new] as $side => $list) {
+            foreach ($list as $r) {
+                $key = ($r['file_path'] ?? '') . "\x1E" . implode("\x1E", (array) $r['heading_path']);
+                $perHeading[$side][$key] = ($perHeading[$side][$key] ?? 0) + 1;
+            }
+        }
+        $alone = fn (string $side, array $r) => ($perHeading[$side][($r['file_path'] ?? '') . "\x1E" . implode("\x1E", (array) $r['heading_path'])] ?? 0) === 1;
         foreach ($sameIdCandidates as $id) {
             if (isset($oldMatched[$id]) || isset($newMatched[$id])) {
                 continue;
@@ -95,9 +103,13 @@ final class FragmentDiff
                     $s = max($s, $sameIdThreshold);
                 }
             }
+            // the only fragment under a heading in both revisions: a rewritten section, not a packing shift
+            if ($s < $sameIdThreshold && $alone('old', $old[$id]) && $alone('new', $new[$id])) {
+                $s = $sameIdThreshold;
+            }
             if ($s >= $sameIdThreshold) {
                 $oldMatched[$id] = $newMatched[$id] = true;
-                $changes[] = self::withMagnitude('changed', $old[$id], $new[$id], $s);
+                $changes[] = self::withMagnitude('changed', $old[$id], $new[$id], min($s, 1.0));
             }
         }
 

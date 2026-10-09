@@ -70,7 +70,7 @@ class GitConnectorTest extends TestCase
         $this->assertSame('daily', $data['connection']['schedule']);
         $this->assertSame(['token', 'webhook_secret'], $data['connection']['secretsSet']);
         $this->assertSame(43, strlen($data['webhookSecret']), '32 random bytes, base64url');
-        $this->assertStringEndsWith('/api/living-course/webhooks/' . Connection::query()->firstOrFail()->webhook_id, $data['connection']['webhookUrl']);
+        $this->assertStringEndsWith('/api/living-course/webhooks/' . Connection::query()->findOrFail($data['connection']['id'])->webhook_id, $data['connection']['webhookUrl']);
         $this->assertStringNotContainsString('verysecrettoken', $response->getContent());
         $this->assertSame('acme/handbook', $data['source']['name']);
 
@@ -316,7 +316,7 @@ class GitConnectorTest extends TestCase
         $this->actingAs($owner, 'api')->postJson('/api/admin/living-course/connections/01aaaaaaaaaaaaaaaaaaaaaaaa/check')->assertStatus(404);
 
         $connectors = $this->actingAs($owner, 'api')->getJson('/api/admin/living-course/connectors')->assertOk()->json('data');
-        $this->assertSame(['upload', 'git'], array_column($connectors, 'key'));
+        $this->assertSame(['upload', 'git', 'url'], array_column($connectors, 'key'));
         $this->assertSame(['token'], collect($connectors)->firstWhere('key', 'git')['secretFields']);
         config(['living_course.connectors' => ['upload']]);
         $this->assertSame(['upload'], array_column($this->actingAs($owner, 'api')->getJson('/api/admin/living-course/connectors')->json('data'), 'key'));

@@ -138,7 +138,10 @@ final class UpdateResponder
         $text = trim((string) preg_replace('/\s+/', ' ', str_replace(['**', '__', '`', '#'], '', $text)));
         $parts = preg_split('/(?<=[.!?])\s+(?=[A-Z0-9])/u', $text) ?: [];
 
-        return array_values(array_filter(array_map('trim', $parts), fn ($s) => str_word_count($s) >= 5 && mb_strlen($s) <= 400));
+        // a well-behaved stand-in never repeats what looks like an instruction to a model
+        $injected = '/ignore (all )?previous|admin mode|system:|note to the ai|api key|system prompt|reveal your|publish the course|no_change for every|set every quiz|hacked|as the course title|admin|<\/?[a-z_]+>/i';
+
+        return array_values(array_filter(array_map('trim', $parts), fn ($s) => str_word_count($s) >= 5 && mb_strlen($s) <= 400 && !preg_match($injected, $s)));
     }
 
     /** @param string[] $added */
