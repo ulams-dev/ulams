@@ -34,6 +34,7 @@ class UlamsLrsServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->mergeConfigFrom(__DIR__ . '/config.php', 'ulams_lrs');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'lrs');

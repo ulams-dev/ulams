@@ -9,7 +9,7 @@ modules:
   - topic-types
 topicTypes:
   - Cmi5Au
-needsReview: "cmi5 has no admin screen and no learner player yet; re-check this page when the cmi5 admin UI and the learner launch (ROADMAP-TODO 0.1c 'cmi5 for learners') land."
+needsReview: "cmi5 still has no admin screen; re-check this page when the cmi5 admin UI lands."
 ---
 
 import { Aside } from "@astrojs/starlight/components";
@@ -19,11 +19,10 @@ content from an LMS. A cmi5 package is a zip with a `cmi5.xml` course structure 
 **assignable units** (AUs). ulams can store cmi5 packages, has a cmi5 topic type and includes its own
 xAPI learning record store (LRS) for the statements the content sends.
 
-<Aside type="caution" title="Not usable from the admin panel yet">
-There is no cmi5 screen in the admin panel and cmi5 is not offered when you add a topic. Learner
-launch is also incomplete: learners still need the launch permission, and AU files must be served
-from object storage. Both are open items on the [roadmap](/roadmap/). Until then cmi5 content is set up
-through the API by an administrator or developer.
+<Aside type="caution" title="Set up through the API for now">
+There is no cmi5 screen in the admin panel and cmi5 is not offered when you add a topic. An
+administrator or developer uploads the package and creates the topic through the API. Learners
+launch cmi5 activities in the course player like any other topic.
 </Aside>
 
 ## What exists today
@@ -31,21 +30,34 @@ through the API by an administrator or developer.
 | Piece | Where |
 |---|---|
 | Upload a cmi5 zip; it is checked by the upload guard (zip only, 512 MB by default, safe extraction) and its AUs are read from `cmi5.xml` | `POST /api/admin/cmi5` (field `file`) |
-| List and delete uploaded packages | `GET /api/admin/cmi5`, `DELETE /api/admin/cmi5/{id}` |
+| List and delete uploaded packages | `GET /api/admin/cmi5`, `DELETE /api/admin/cmi5/{id}` (deleting needs the `cmi5_delete` permission, admins only) |
 | Topic type `Cmi5Au` whose `value` is the ID of one AU | created through the topics API |
+| Launch an AU (the player page, or with `?format=json` the launch URL) | `GET /api/cmi5/player/{auId}`; learners have the `cmi5_read` permission |
+| Exchange the one-time launch token for the AU's LRS session token | `POST /api/cmi5/fetch?token=...` (public; the launch token is the credential) |
 | Launch parameters for a course (endpoint, fetch URL, actor, registration) | `GET /api/cmi5/courses/{id}` |
 | Statements received for cmi5 content | `GET /api/admin/cmi5/statements` |
 | The xAPI LRS the content talks to | `/trax/api/<access>/xapi/std` |
 
 The full endpoint list is in the [API endpoints reference](/reference/api-endpoints/).
 
-## How it is meant to work
+## How a learner launch works
 
-1. Upload the cmi5 zip; ulams stores the package and creates one record per AU.
+1. Upload the cmi5 zip; ulams stores the package on the cmi5 disk (`CMI5_DISK`, which follows
+   `SCORM_DISK`: the tenant bucket in production) and creates one record per AU.
 2. Add a topic of type cmi5 for an AU.
-3. When the learner opens the topic, the front asks for launch parameters and opens the AU with the
-   cmi5 `endpoint`, `fetch`, `actor`, `registration` and `activityId`.
-4. The AU sends xAPI statements to the built-in LRS, authenticated with the learner's token.
+3. When an enrolled learner opens the topic, the front asks the API for a launch and frames the AU on
+   the tenant [content origin](/operators/content-origin/) (`<slug>.content.<domain>/cmi5/...`) in a
+   sandboxed frame, so the package code never runs on the app or API origin.
+4. The launch URL carries the cmi5 `endpoint`, `fetch`, `actor`, `registration` and `activityId`. The
+   `fetch` URL holds a **one-time launch token**, not the learner's access token. The AU posts to it
+   and gets an **LRS-only session token** (valid for `CMI5_SESSION_MINUTES`, 120 by default). That
+   token works only on the built-in LRS, only for that registration, and every other API endpoint
+   rejects it. An AU that fetches twice gets the same token; after the session ends it gets a 401.
+5. The AU sends its xAPI statements to the LRS. A `completed` or `passed` statement completes the
+   topic for the learner, and the usual lesson and course completion, certificates and events follow.
 
-The reference front already shows cmi5 topics as a tracked activity card that "opens outside this page",
-and the learner marks them complete with **Mark as complete**.
+### Packages uploaded before this change
+
+Older installs stored cmi5 packages on the API's local disk. After switching `CMI5_DISK` to the
+bucket, copy them with `php artisan cmi5:move-to-bucket` (add `--domain=<host>` for one tenant). The
+command is safe to run again and leaves the originals in place.

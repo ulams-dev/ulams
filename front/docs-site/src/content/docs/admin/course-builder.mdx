@@ -77,6 +77,23 @@ php artisan ai:usage --days=30 --domain=<tenant host>
 The studio shows the running cost per course; `GET /api/admin/course-builder/sessions/{id}/usage`
 returns it per task and model.
 
+## Checking a run from a script
+
+Every generation, patch or apply is a run. `GET /api/admin/course-builder/runs/{run}` returns its
+state without opening the event stream, which is what the `ulams` CLI polls for `--wait`:
+
+```json
+{ "id": "01j9z3k8m2x4q7r5t6v8w0y1ab", "sessionId": "01j9z3…", "kind": "generate",
+  "status": "running", "needsAttention": false,
+  "steps": [{ "id": "01j9z4…", "name": "lesson:el_8f2c", "status": "succeeded", "error": null }],
+  "startedAt": "2026-10-09T10:02:11+00:00", "finishedAt": null, "error": null }
+```
+
+`status` is one of `queued`, `running`, `succeeded`, `failed`, `cancelled`; step status is one of
+`queued`, `running`, `succeeded`, `failed`. `needsAttention` is true while the run waits for an
+answer or an approval. Only the session's author and tenant admins can read a run (403 otherwise,
+404 for an unknown id).
+
 ## Queues and streaming
 
 Generation runs in queued jobs (`COURSE_BUILDER_QUEUE_CONNECTION`, `COURSE_BUILDER_QUEUE`; default:

@@ -70,7 +70,12 @@ export default defineConfig({
         { label: "Developers", items: [{ autogenerate: { directory: "developers" } }] },
         { label: "Extending ulams", items: [{ autogenerate: { directory: "extending" } }] },
         { label: "Operators", items: [{ autogenerate: { directory: "operators" } }] },
-        { label: "Reference", collapsed: true, items: [{ autogenerate: { directory: "reference" } }] },
+        {
+          label: "Reference",
+          collapsed: true,
+          items: [{ autogenerate: { directory: "reference" } }],
+        },
+        { label: "Component playground", collapsed: true, items: [{ autogenerate: { directory: "catalogue" } }] },
         { label: "Contributing", items: [{ autogenerate: { directory: "contributing" } }] },
         { label: "Roadmap", link: "/roadmap/" },
       ],

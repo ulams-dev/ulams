@@ -1,0 +1,480 @@
+---
+/**
+ * "Run your academy from anywhere": tabs of realistic windows (Claude Code, Claude chat with the
+ * ulams MCP server, a plain shell, REST/SDK, the studio) whose commands, tool calls and answers are
+ * typed line by line by the timeline player (elements/story.ts). The schedule is computed here, on the
+ * server; the DOM holds the whole text from the start (no layout shift), every panel shares one grid
+ * cell (the tallest wins) and screen readers get a plain transcript. Tabs: roving tabindex,
+ * aria-selected, aria-controls; they auto-advance slowly and stop on hover, focus, a manual choice or Pause.
+ * Each tab may carry a status badge (the landing shows roadmap items honestly unless told otherwise).
+ */
+import StoryStyles from "./StoryStyles.astro";
+
+type Kind = "prompt" | "cmd" | "cont" | "agent" | "out" | "spin" | "tool" | "add" | "del" | "ctx" | "note" | "user" | "assistant" | "card";
+interface Line {
+  kind: Kind;
+  text: string;
+  args?: string;
+  result?: string;
+}
+interface Tab {
+  key: string;
+  label: string;
+  status?: "available" | "preview" | "coming";
+  window: "terminal" | "chat" | "studio";
+  title: string;
+  caption?: string;
+  note?: string;
+  lines: Line[];
+}
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  valueLine?: string;
+  description?: string;
+  footnote?: string;
+  legal?: string;
+  tabs: Tab[];
+}
+const { id = "agents", eyebrow, title, intro, valueLine, description, footnote, legal, tabs } = Astro.props;
+
+const STATUS = { available: "Available", preview: "Preview", coming: "Coming" } as const;
+const GLYPH: Partial<Record<Kind, string>> = { prompt: ">", cmd: "$", agent: "●", add: "+", del: "−", ctx: " ", out: " ", note: " ", cont: " " };
+const SR: Record<Kind, string> = {
+  prompt: "You ask Claude Code",
+  cmd: "Command",
+  cont: "Command, continued",
+  agent: "Claude Code",
+  out: "Output",
+  spin: "Running",
+  tool: "Tool call",
+  add: "Added line",
+  del: "Removed line",
+  ctx: "Unchanged line",
+  note: "Comment",
+  user: "You",
+  assistant: "Claude",
+  card: "Proposal",
+};
+
+const RATE: Partial<Record<Kind, number>> = { prompt: 24, cmd: 26, cont: 20, user: 22, agent: 8, assistant: 9 };
+const GAP: Partial<Record<Kind, number>> = { prompt: 500, cmd: 500, cont: 120, user: 600, agent: 350, assistant: 450, out: 220, tool: 450, spin: 250, card: 500 };
+
+function schedule(lines: Line[]) {
+  let t = 500;
+  const rows = lines.map((line) => {
+    t += GAP[line.kind] ?? 140;
+    const rate = RATE[line.kind];
+    const dur = rate ? Math.min(Math.round(line.text.length * rate), 2400) : 0;
+    const row = { ...line, at: t, dur };
+    t += dur;
+    if (line.kind === "spin") t += 1000;
+    if (line.kind === "tool" && line.result) t += 800;
+    return row;
+  });
+  return { rows, total: t + 1500 };
+}
+
+const panels = tabs.map((tab, i) => ({ ...tab, ...schedule(tab.lines), i, tabId: `${id}-tab-${tab.key}`, panelId: `${id}-panel-${tab.key}` }));
+---
+
+<section class="u-section u-wf" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <StoryStyles />
+  <div class="u-container">
+    <div class="u-section-head u-section-head--center" data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+      {intro && <p class="u-lead">{intro}</p>}
+    </div>
+    <ulams-workflows dwell="3500">
+      {description && <p class="u-visually-hidden">{description}</p>}
+      <div class="u-wf__tabbar">
+        <div class="u-wf__tabs" role="tablist" aria-label="Ways to run ulams">
+          {
+            panels.map((p) => (
+              <button type="button" role="tab" id={p.tabId} aria-selected={p.i === 0 ? "true" : "false"} aria-controls={p.panelId} tabindex={p.i === 0 ? 0 : -1} class="u-wf__tab">
+                <span>{p.label}</span>
+                {p.status && <span class={`u-status ${p.status === "available" ? "u-status--available" : "u-status--coming"}`}>{STATUS[p.status]}</span>}
+              </button>
+            ))
+          }
+        </div>
+        <button type="button" class="u-wf__pause" data-pause aria-pressed="false">Pause</button>
+      </div>
+      <div class="u-stage u-wf__stage">
+        <div class="u-wf__panels">
+          {
+            panels.map((p) => (
+              <div class="u-wf__panel" role="tabpanel" id={p.panelId} aria-labelledby={p.tabId} tabindex="0" data-active={p.i === 0 ? "" : undefined}>
+                <ulams-story data-total={p.total} data-hold="0" data-host-gated>
+                  <div class={`u-win u-wf__win u-wf__win--${p.window}`} aria-hidden="true">
+                    <div class="u-win__bar">
+                      <span class="u-win__dots"><i></i><i></i><i></i></span>
+                      <span>{p.title}</span>
+                    </div>
+                    <div class="u-win__body u-wf__body">
+                      {p.rows.map((row) => {
+                        const typed = row.dur > 0;
+                        if (row.kind === "tool") {
+                          return (
+                            <div class="u-wf__ln u-wf__tool" data-at={row.at}>
+                              <span class="u-wf__chip">
+                                <span class="u-wf__caret">▸</span>
+                                <b>{row.text}</b>
+                                {row.args && <span class="u-wf__args">{row.args}</span>}
+                                {row.result && <span class="u-wf__res" data-at={row.at + 800}>→ {row.result}</span>}
+                              </span>
+                            </div>
+                          );
+                        }
+                        if (row.kind === "user" || row.kind === "assistant") {
+                          return (
+                            <div class={`u-wf__ln u-wf__bubble u-wf__bubble--${row.kind}`} data-at={row.at}>
+                              <span data-at={row.at} data-type={row.dur}>{row.text}</span>
+                            </div>
+                          );
+                        }
+                        if (row.kind === "card") {
+                          return (
+                            <div class="u-wf__ln u-wf__card" data-at={row.at}>
+                              <p>{row.text}</p>
+                              {row.args && <span class="u-wf__actions">{row.args.split("|").map((a, k) => <span class={k === 0 ? "is-primary" : ""}>{a.trim()}</span>)}</span>}
+                            </div>
+                          );
+                        }
+                        if (row.kind === "spin") {
+                          return (
+                            <div class="u-wf__ln u-wf__row" data-kind="spin" data-at={row.at}>
+                              <span class="u-wf__g">
+                                <i class="u-wf__spinner" data-at={row.at} data-until={row.at + 1000}></i>
+                                <b class="u-wf__ok" data-at={row.at + 1000}>✓</b>
+                              </span>
+                              <span>{row.text}</span>
+                            </div>
+                          );
+                        }
+                        return (
+                          <div class="u-wf__ln u-wf__row" data-kind={row.kind} data-at={row.at}>
+                            <span class="u-wf__g">{GLYPH[row.kind] ?? " "}</span>
+                            {typed ? <span data-at={row.at} data-type={row.dur}>{row.text}</span> : <span>{row.text}</span>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <ul class="u-visually-hidden">
+                    {p.lines.map((l) => (
+                      <li>
+                        {SR[l.kind]}: {l.text}
+                        {l.args ? ` ${l.args}` : ""}
+                        {l.result ? ` returned ${l.result}` : ""}
+                      </li>
+                    ))}
+                  </ul>
+                </ulams-story>
+                {p.caption && <p class="u-wf__cap">{p.caption}</p>}
+                {p.note && <p class="u-wf__note">{p.note}</p>}
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </ulams-workflows>
+    {valueLine && <p class="u-wf__value">{valueLine}</p>}
+    {footnote && <p class="u-wf__foot">{footnote}</p>}
+    {legal && <p class="u-wf__foot">{legal}</p>}
+  </div>
+</section>
+
+<style is:global>
+  .u-wf__tabbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .u-wf__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .u-wf__tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--ulams-color-border);
+    background: var(--ulams-color-card-bg);
+    color: var(--ulams-color-text);
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition:
+      background-color 0.25s,
+      color 0.25s,
+      border-color 0.25s;
+  }
+  .u-wf__tab:hover {
+    border-color: var(--ulams-brand-indigo);
+  }
+  .u-wf__tab[aria-selected="true"] {
+    background: var(--ulams-brand-indigo);
+    border-color: var(--ulams-brand-indigo);
+    color: #fff;
+  }
+  .u-wf__tab[aria-selected="true"] .u-status {
+    color: #fff;
+  }
+  .u-wf__tab[aria-selected="true"] .u-status--available {
+    background: color-mix(in srgb, #fff 18%, transparent);
+  }
+  .u-wf__tab:focus-visible {
+    outline: 3px solid var(--ulams-brand-blue);
+    outline-offset: 2px;
+  }
+  .u-wf__pause {
+    color: var(--ulams-color-text);
+  }
+  .u-wf__panels {
+    display: grid;
+  }
+  .u-wf__panel {
+    grid-area: 1 / 1;
+    visibility: hidden;
+    min-width: 0;
+  }
+  .u-wf__panel[data-active] {
+    visibility: visible;
+  }
+  .u-wf__panel:focus-visible {
+    outline: 3px solid var(--ulams-brand-sky);
+    outline-offset: 4px;
+    border-radius: 12px;
+  }
+  .u-wf__body {
+    display: grid;
+    gap: 3px;
+    align-content: start;
+    min-height: 100%;
+  }
+  .u-wf__row {
+    display: grid;
+    grid-template-columns: 2ch minmax(0, 1fr);
+    gap: 1ch;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .u-wf__g {
+    position: relative;
+    color: var(--ulams-brand-orange);
+    user-select: none;
+  }
+  .u-wf__row[data-kind="out"],
+  .u-wf__row[data-kind="note"] {
+    color: var(--st-dim);
+  }
+  .u-wf__row[data-kind="agent"] {
+    color: var(--st-text);
+    margin-top: 6px;
+  }
+  .u-wf__row[data-kind="prompt"],
+  .u-wf__row[data-kind="cmd"] {
+    margin-top: 8px;
+    color: #fff;
+  }
+  .u-wf__row[data-kind="add"] {
+    color: var(--st-ok);
+    background: color-mix(in srgb, var(--st-ok) 10%, transparent);
+  }
+  .u-wf__row[data-kind="del"] {
+    color: var(--st-bad);
+    background: color-mix(in srgb, var(--st-bad) 10%, transparent);
+  }
+  .u-wf__row[data-kind="add"] .u-wf__g,
+  .u-wf__row[data-kind="del"] .u-wf__g {
+    color: inherit;
+  }
+  .u-wf__row[data-kind="spin"] {
+    color: var(--st-dim);
+  }
+  .u-wf__spinner {
+    position: absolute;
+    top: 0.45em;
+    left: 0.1ch;
+    width: 0.9em;
+    height: 0.9em;
+    border-radius: 50%;
+    border: 2px solid color-mix(in srgb, var(--ulams-brand-orange) 30%, transparent);
+    border-top-color: var(--ulams-brand-orange);
+    animation: u-spin 0.8s linear infinite;
+  }
+  .u-wf__ok {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: var(--st-ok);
+  }
+  .u-wf__tool {
+    margin: 4px 0;
+  }
+  .u-wf__chip {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 8px;
+    max-width: 100%;
+    padding: 3px 10px;
+    border-radius: 8px;
+    border: 1px dashed color-mix(in srgb, var(--ulams-brand-sky) 60%, transparent);
+    background: color-mix(in srgb, var(--ulams-brand-sky) 9%, transparent);
+    color: var(--ulams-brand-sky);
+    overflow-wrap: anywhere;
+  }
+  .u-wf__chip b {
+    font-weight: 600;
+  }
+  .u-wf__caret {
+    color: var(--ulams-brand-orange);
+  }
+  .u-wf__args {
+    color: var(--st-dim);
+  }
+  .u-wf__res {
+    color: var(--st-ok);
+  }
+
+  /* chat and studio windows are light */
+  .u-wf__win--chat,
+  .u-wf__win--studio {
+    --st-text: #18181b;
+    --st-dim: #52525b;
+    --st-line: #e7e5e4;
+    background: #fff;
+    color: #18181b;
+    font-family: var(--ulams-font-family-body, system-ui, sans-serif);
+    font-size: 0.9375rem;
+  }
+  .u-wf__win--chat .u-win__bar,
+  .u-wf__win--studio .u-win__bar {
+    background: #f4f4f3;
+    color: #52525b;
+    font-family: var(--ulams-font-mono);
+  }
+  .u-wf__win--chat .u-win__dots i,
+  .u-wf__win--studio .u-win__dots i {
+    background: #d6d3d1;
+  }
+  .u-wf__win--chat .u-wf__body,
+  .u-wf__win--studio .u-wf__body {
+    gap: 10px;
+    padding: 18px;
+  }
+  .u-wf__bubble {
+    max-width: 88%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    line-height: 1.55;
+  }
+  .u-wf__bubble--user {
+    justify-self: end;
+    background: var(--ulams-brand-indigo);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+  .u-wf__bubble--assistant {
+    justify-self: start;
+    background: #f4f4f3;
+    border-bottom-left-radius: 4px;
+  }
+  .u-wf__win--chat .u-wf__chip,
+  .u-wf__win--studio .u-wf__chip {
+    color: var(--ulams-brand-blue);
+    border-color: color-mix(in srgb, var(--ulams-brand-blue) 55%, transparent);
+    background: color-mix(in srgb, var(--ulams-brand-blue) 7%, transparent);
+    font-family: var(--ulams-font-mono);
+    font-size: 0.8125rem;
+  }
+  .u-wf__win--chat .u-wf__args {
+    color: #52525b;
+  }
+  .u-wf__win--chat .u-wf__res {
+    color: #15803d;
+  }
+  .u-wf__card {
+    border: 1px solid var(--ulams-color-border, #e7e5e4);
+    border-radius: 12px;
+    padding: 12px 14px;
+    background: #fafaf9;
+    display: grid;
+    gap: 10px;
+  }
+  .u-wf__card p {
+    margin: 0;
+  }
+  .u-wf__actions {
+    display: flex;
+    gap: 8px;
+  }
+  .u-wf__actions span {
+    padding: 4px 14px;
+    border-radius: 8px;
+    border: 1px solid #d6d3d1;
+    font-weight: 600;
+    font-size: 0.8125rem;
+  }
+  .u-wf__actions .is-primary {
+    background: var(--ulams-brand-indigo);
+    border-color: var(--ulams-brand-indigo);
+    color: #fff;
+  }
+  .u-wf__win--chat .u-cur,
+  .u-wf__win--studio .u-cur {
+    background: var(--ulams-brand-indigo);
+  }
+  .u-wf__win--chat .u-wf__bubble--user .u-cur {
+    background: #fff;
+  }
+  .u-wf__cap {
+    margin: 14px 4px 0;
+    color: var(--st-dim, #a9bed3);
+    font-size: 0.9375rem;
+  }
+  .u-wf__stage .u-wf__cap {
+    color: #c9d8e8;
+  }
+  .u-wf__note {
+    margin: 6px 4px 0;
+    font-size: 0.8125rem;
+    color: #a9bed3;
+    font-style: italic;
+  }
+  .u-wf__value {
+    margin: 22px auto 0;
+    max-width: 62ch;
+    text-align: center;
+    font-size: 1.125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-wf__foot {
+    margin: 12px auto 0;
+    max-width: 70ch;
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  @media (max-width: 640px) {
+    .u-wf__win {
+      font-size: 0.75rem;
+    }
+    .u-wf__tab {
+      font-size: 0.8125rem;
+      padding: 6px 10px;
+    }
+  }
+</style>

@@ -6,6 +6,7 @@ node_modules/
 # Edit the sources (docs/decisions, docs/ROADMAP-TODO.md, api/packages, front/ui), not these.
 src/content/docs/decisions/
 src/content/docs/reference/
+src/content/docs/catalogue/
 src/content/docs/roadmap.md
 src/content/docs/contributing/code-of-conduct.md
 src/content/docs/contributing/security-policy.md

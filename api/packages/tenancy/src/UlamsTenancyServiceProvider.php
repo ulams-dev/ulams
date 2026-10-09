@@ -11,7 +11,9 @@ use Ulams\Tenancy\Console\ListTenantsCommand;
 use Ulams\Tenancy\Console\ScheduleLoopCommand;
 use Ulams\Tenancy\Console\SeedTenantDemoCommand;
 use Ulams\Tenancy\Console\SetTenantEnvCommand;
+use Ulams\Tenancy\Console\RecreateViewsCommand;
 use Ulams\Tenancy\Console\SyncTenantEnvCommand;
+use Ulams\Tenancy\Console\UpgradeCommand;
 use Ulams\Tenancy\Http\Middleware\RejectUnknownHost;
 use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
@@ -22,6 +24,7 @@ use Ulams\Tenancy\Services\MultidomainRegistry;
 use Ulams\Tenancy\Services\PostgresDatabaseProvisioner;
 use Ulams\Tenancy\Services\ProcessTenantCommandRunner;
 use Ulams\Tenancy\Services\S3BucketProvisioner;
+use Ulams\Tenancy\Upgrade\DefaultUpgradeSteps;
 
 class UlamsTenancyServiceProvider extends ServiceProvider
 {
@@ -35,6 +38,8 @@ class UlamsTenancyServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/config.php', self::CONFIG_KEY);
+        // in register(), so steps of other packages (registered when they boot) come after these
+        DefaultUpgradeSteps::register();
 
         $this->app->singleton(
             BucketProvisionerContract::class,
@@ -72,6 +77,8 @@ class UlamsTenancyServiceProvider extends ServiceProvider
                 SeedTenantDemoCommand::class,
                 ExportH5PServiceConfigCommand::class,
                 ScheduleLoopCommand::class,
+                UpgradeCommand::class,
+                RecreateViewsCommand::class,
             ]);
             $this->publishes([
                 __DIR__ . '/config.php' => config_path(self::CONFIG_KEY . '.php'),

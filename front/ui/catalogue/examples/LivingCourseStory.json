@@ -1,0 +1,54 @@
+{
+  "props": {
+    "id": "living",
+    "eyebrow": "living course",
+    "title": "Your course updates itself when your sources change",
+    "intro": "Edit a doc or merge to a repo. ulams finds every lesson and question that cites it and proposes the update. You approve, and learners keep their progress.",
+    "status": "coming",
+    "valueLine": "Courses stop going stale, and nothing changes without your approval.",
+    "description": "An animated example in three steps. First, a line in docs/slo.md changes from 99.9 % to 99.95 % and a new line about the 30-day budget is added. Second, ulams finds the lesson paragraph and the quiz question that cite docs/slo.md section 2. Third, a proposal with a red and green diff appears, the author clicks Approve, the lesson text updates and a badge confirms that learner progress was kept.",
+    "beats": [
+      {
+        "title": "Your source changes",
+        "text": "A line in docs/slo.md is edited."
+      },
+      {
+        "title": "ulams finds every lesson that cites it",
+        "text": "The lesson paragraph and a quiz question light up."
+      },
+      {
+        "title": "You approve, learners keep their progress",
+        "text": "The proposal is a diff; one click updates the lesson."
+      }
+    ],
+    "source": {
+      "file": "docs/slo.md",
+      "heading": "Error budgets",
+      "context": "Error budget = (1 − SLO) × window",
+      "lead": "Default SLO for checkout:",
+      "before": "99.9 %",
+      "after": "99.95 %",
+      "added": "Budget over 30 days: 21.6 minutes"
+    },
+    "lesson": {
+      "title": "Lesson 2 · SLOs and error budgets",
+      "lead": "Default SLO for checkout:",
+      "citation": "docs/slo.md §2",
+      "question": "What is the default SLO for checkout?",
+      "questionCite": "docs/slo.md §2"
+    },
+    "proposal": {
+      "title": "Proposed update · 1 lesson, 1 question",
+      "approve": "Approve",
+      "done": "Updated · learner progress kept"
+    }
+  },
+  "invalid": {
+    "beats": [
+      {
+        "title": "Only one beat",
+        "text": "x"
+      }
+    ]
+  }
+}

@@ -170,7 +170,10 @@ export interface UlamsContextAPIConfig {
     void | API.DefaultResponse<API.Cart> | API.DefaultMetaResponse<API.Cart>
   >;
   resetCart: () => void;
-  payWithStripe: (payment_method: string, return_url: string) => Promise<void>;
+  payWithStripe: (
+    payment_method: string,
+    return_url: string
+  ) => Promise<void | API.SuccessResponse>;
   payWithP24: (
     email: string,
     return_url: string,

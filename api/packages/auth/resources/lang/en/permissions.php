@@ -28,4 +28,5 @@ return [
     AuthPermissionsEnum::USER_INTEREST_UPDATE_SELF => 'Update self interest',
     AuthPermissionsEnum::USER_SETTING_UPDATE => 'Update setting',
     AuthPermissionsEnum::USER_SETTING_UPDATE_SELF => 'Update self setting',
+    AuthPermissionsEnum::TOKEN_MANAGE => 'Manage API tokens and read the agent audit log',
 ];

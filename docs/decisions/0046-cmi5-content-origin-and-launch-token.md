@@ -33,6 +33,28 @@ Option 1:
   session return the same token. The LRS guard accepts it, and every other API guard rejects it.
 - **Permissions.** Students get `cmi5_read`, and deletion requires a new `cmi5_delete` permission.
 
+## Implementation notes
+
+- `lrs_launch_tokens` stores the SHA-256 of the launch token, the user, registration, AU and xAPI
+  access. Before the first fetch `expires_at` ends a 10-minute launch window; the first fetch sets
+  `used_at` and moves `expires_at` to the end of the session (`CMI5_SESSION_MINUTES`).
+- The session token is `ulrs1.<payload>.<HMAC>` with a key derived from the tenant `APP_KEY`. The LRS
+  guard also checks that the launch row is used and unexpired, so a session can be revoked by
+  deleting the row. The session reads and writes only its registration (statements, state) and may
+  read, never write, profiles.
+- The LMS writes `LMS.LaunchData` and the learner preferences in process, no longer through an
+  internal HTTP request carrying the learner's token.
+- A `completed` or `passed` statement fires `AuCompletionReported`; `topic-types` completes the
+  topics that use the AU for learners who may attend the course (as for SCORM, ADR 0018).
+- Laravel's CORS config answers any origin without credentials, but Caddy refuses to reflect a content
+  origin on API responses (ADR 0014). A dedicated `@cmi5` block (dev Caddyfile and the production
+  example) answers `Access-Control-Allow-Origin: *` on `/api/cmi5/fetch` and `/trax/api/*/xapi/std/*`
+  only, drops `Cookie`, keeps `Authorization` (the session token) and names it in the preflight. This
+  is consistent with ADR 0014: the routes take no ambient credentials. Found by playing an AU in the
+  browser against the dev stack.
+- `POST /api/cmi5/fetch` is exempt from the Origin check (the AU calls it from the content origin)
+  and throttled to 60 requests a minute.
+
 ## Consequences
 
 - Good: an AU can no longer act as the learner on the rest of the API.

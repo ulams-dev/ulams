@@ -1,0 +1,12 @@
+{
+  "props": {
+    "src": "https://example.org/scorm/launch.html",
+    "title": "SCORM: Brewing safety",
+    "height": 600,
+    "isolated": true
+  },
+  "invalid": {
+    "src": "data:text/html,x",
+    "title": "x"
+  }
+}
