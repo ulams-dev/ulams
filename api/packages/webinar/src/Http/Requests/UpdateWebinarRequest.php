@@ -36,7 +36,6 @@ class UpdateWebinarRequest extends FormRequest
             'trainers.*' => ['integer', 'exists:users,id'],
             'tags' => ['array'],
             'tags.*' => ['string'],
-            'analyze_enabled' => ['boolean', 'nullable'],
         ];
     }
 

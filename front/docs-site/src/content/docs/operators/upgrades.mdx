@@ -83,7 +83,7 @@ docker compose exec api php artisan ulams:upgrade             # run it
 | `permissions` | each target, every upgrade | `db:seed --class=PermissionsSeeder` (adds missing permissions) |
 | `lti_keys` | each target, every upgrade | `ulams:lti:rotate-keys --init` (creates the LTI key set when missing) |
 | `cmi5_move_to_bucket` | each target, once | `cmi5:move-to-bucket` (when this release has the command) |
-| `meetings_purge_frames` | each target, once | `meetings:purge-frames`, preceded by a logged `--dry-run` (when this release has the command) |
+| `meetings_purge_frames` | each target, once | `meetings:purge-frames`, preceded by a logged `--dry-run`: deletes the webcam frames the removed meeting capture stored under `consultation/{id}/{term}/{user}/` and `webinar/{id}/{term}/{user}/`; the `images` folders stay |
 | `recreate_views` | each target, once | `ulams:db:recreate-views`: SQL views created before the package rename carry old class names |
 
 "Once" steps are recorded in the platform table `tenant_upgrade_steps` (`target` is `platform` or

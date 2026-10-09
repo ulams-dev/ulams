@@ -167,7 +167,7 @@ open Phase 0, 1 and 2 item as work packages L0-01â€¦L2-24; owner questions #41â€
       obsolete by default, pending owner decision #46)
 - [x] (new) Jitsi: confirm the JaaS webhook signature format against the JaaS docs; configure
       `JITSI_RECORDING_HOSTS`
-- [ ] (new) Drop the unused `analyze_enabled` columns (consultations, webinars) and clean up stored meeting
+- [x] (new) Drop the unused `analyze_enabled` columns (consultations, webinars) and clean up stored meeting
       frames in tenant buckets
 - [x] (new) Remove the Stripe test key committed in `api/docker/envs/*.example` (keys emptied in the six env
       files; rolling the key at Stripe is an owner action, #49)
