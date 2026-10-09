@@ -44,6 +44,30 @@ CSS-only segmented control (radio inputs, no JavaScript), ulams highlighted in b
 - Data model: top-level `groups`, rows and systems carry an optional/required `groups` list; the unit
   test checks every row of a system's groups.
 
+## Amended (2026-10-09): developer and headless focus
+
+The product owner asked to compare on what the other products lack: REST API, CLI, MCP, headless
+course management. The table is now grouped under section header rows, in this order: Developer &
+headless (REST API, headless course management, published OpenAPI spec, typed TypeScript SDK, CLI for
+authors and developers, MCP server, webhooks, course-as-code / Git sync, self-hosting, generative UI),
+AI, Content standards, Business. Both groups get the same sections; the page intro says ulams is built
+for developers and AI agents first.
+
+- The sourcing rules are unchanged. Every new cell was researched from official sources for all twelve
+  competitors; where capability exists the table says so (for example Moodle and Open edX have admin
+  or operator CLIs and Open edX publishes an OpenAPI spec, Canvas and Open edX have extensive REST APIs,
+  LearnDash, Docebo and 360Learning have official MCP servers). "No" only with an official statement;
+  otherwise "Not documented". Third-party MCP servers do not count as official: "Via plugin" only for
+  a plugin in the vendor's own plugin directory or a platform plugin, with the note saying so.
+- "CLI" means a tool for authors and developers to manage content. An operator or admin CLI (ulams
+  `php artisan ulams:*`, Moodle admin scripts, Tutor) is "Partial" for everyone, ulams included.
+- ulams cells are checked against `main`: REST API, headless course management, OpenAPI and the
+  TypeScript SDK are Yes (the SDK is in the repository, not yet on npm; OpenAPI coverage is still being
+  completed); CLI is Partial; MCP, webhooks and course-as-code are Coming (roadmap 7.1, 7.3, 7.5).
+  The data keeps the true status; any display mode that shows planned items as delivered must not change it.
+- Data model: top-level `sections`, and each row names its `section`. The component renders one `tbody`
+  per section with a `th scope="rowgroup"` header row.
+
 ## Consequences
 
 - Good: every claim can be traced and re-checked; corrections are a data change.

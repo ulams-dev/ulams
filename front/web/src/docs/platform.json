@@ -221,7 +221,7 @@
             "id": "compare",
             "eyebrow": "compare",
             "title": "How ulams compares",
-            "intro": "What buyers usually weigh, product by product, in two groups: open-source and creator platforms, and enterprise suites. Our own roadmap items are marked Coming.",
+            "intro": "ulams is built for developers and AI agents first: courses are managed through the REST API and the TypeScript SDK, with an agent-first CLI and MCP server coming. Compared with open-source and creator platforms, and with enterprise suites; our roadmap items are marked Coming.",
             "caption": "Feature comparison of ulams with open-source and creator platforms, and with enterprise learning suites",
             "asOf": {
               "$data": "/comparison/asOf"

@@ -2,78 +2,135 @@
   "asOf": "October 2026",
   "rows": [
     {
+      "key": "headless_api",
+      "label": "REST API",
+      "help": "Documented REST API covering the platform, not only reporting or user sync",
+      "section": "developer"
+    },
+    {
+      "key": "headless_authoring",
+      "label": "Headless course management",
+      "help": "Create, edit and publish courses, lessons and content entirely through the API",
+      "section": "developer"
+    },
+    {
+      "key": "openapi",
+      "label": "Published OpenAPI spec",
+      "help": "Machine-readable API description",
+      "section": "developer"
+    },
+    {
+      "key": "sdk",
+      "label": "Typed SDK (TypeScript)",
+      "help": "Official client library for TypeScript or JavaScript",
+      "section": "developer"
+    },
+    {
+      "key": "cli",
+      "label": "CLI for authors and developers",
+      "help": "Manage course content from the terminal (init, validate, push, pull)",
+      "section": "developer"
+    },
+    {
+      "key": "mcp",
+      "label": "MCP server",
+      "help": "Official server so AI agents and assistants can work with courses",
+      "section": "developer"
+    },
+    {
+      "key": "webhooks",
+      "label": "Webhooks / events",
+      "help": "Outbound events to your systems",
+      "section": "developer"
+    },
+    {
+      "key": "course_as_code",
+      "label": "Course-as-code / Git sync",
+      "help": "Courses as text files kept in Git",
+      "section": "developer"
+    },
+    {
       "key": "self_hosting",
       "label": "Self-hosting",
-      "help": "Run it on your own servers"
-    },
-    {
-      "key": "licence",
-      "label": "Open-source licence",
-      "help": "Licence of the core"
-    },
-    {
-      "key": "multi_tenant",
-      "label": "Site per customer",
-      "help": "Separate white-label sites/tenants from one install"
-    },
-    {
-      "key": "headless_api",
-      "label": "Headless API",
-      "help": "Documented API to build your own frontend"
-    },
-    {
-      "key": "ai_generation",
-      "label": "AI course generation",
-      "help": "Courses drafted by AI from your own sources"
-    },
-    {
-      "key": "ai_citations",
-      "label": "Cited AI, approved diffs",
-      "help": "Generated content cites sources; changes are diffs the author approves"
-    },
-    {
-      "key": "source_sync",
-      "label": "Courses in sync with sources",
-      "help": "Updates proposed when the sources change"
-    },
-    {
-      "key": "adaptive_paths",
-      "label": "Adaptive learner paths",
-      "help": "Paths that adapt to each learner"
-    },
-    {
-      "key": "h5p",
-      "label": "H5P",
-      "help": "Interactive H5P content"
-    },
-    {
-      "key": "scorm",
-      "label": "SCORM",
-      "help": "SCORM packages"
-    },
-    {
-      "key": "cmi5_xapi",
-      "label": "cmi5 / xAPI",
-      "help": "cmi5 activities and xAPI tracking"
-    },
-    {
-      "key": "lti13",
-      "label": "LTI 1.3",
-      "help": "LTI 1.3 / LTI Advantage"
-    },
-    {
-      "key": "commerce",
-      "label": "Built-in commerce",
-      "help": "Selling courses and taking payments"
+      "help": "Run it on your own servers; see the licence row for open source",
+      "section": "developer"
     },
     {
       "key": "generative_ui",
       "label": "Generative UI",
-      "help": "Interfaces composed by AI at runtime"
+      "help": "Interfaces composed by AI at runtime (A2UI)",
+      "section": "developer"
+    },
+    {
+      "key": "ai_generation",
+      "label": "AI course generation",
+      "help": "Courses drafted by AI from your own sources",
+      "section": "ai"
+    },
+    {
+      "key": "ai_citations",
+      "label": "Cited AI, approved diffs",
+      "help": "Generated content cites sources; changes are diffs the author approves",
+      "section": "ai"
+    },
+    {
+      "key": "source_sync",
+      "label": "Courses in sync with sources",
+      "help": "Updates proposed when the sources change",
+      "section": "ai"
+    },
+    {
+      "key": "adaptive_paths",
+      "label": "Adaptive learner paths",
+      "help": "Paths that adapt to each learner",
+      "section": "ai"
+    },
+    {
+      "key": "h5p",
+      "label": "H5P",
+      "help": "Interactive H5P content",
+      "section": "standards"
+    },
+    {
+      "key": "scorm",
+      "label": "SCORM",
+      "help": "SCORM packages",
+      "section": "standards"
+    },
+    {
+      "key": "cmi5_xapi",
+      "label": "cmi5 / xAPI",
+      "help": "cmi5 activities and xAPI tracking",
+      "section": "standards"
+    },
+    {
+      "key": "lti13",
+      "label": "LTI 1.3",
+      "help": "LTI 1.3 / LTI Advantage",
+      "section": "standards"
+    },
+    {
+      "key": "multi_tenant",
+      "label": "Site per customer",
+      "help": "Separate white-label sites/tenants from one install",
+      "section": "business"
+    },
+    {
+      "key": "commerce",
+      "label": "Built-in commerce",
+      "help": "Selling courses and taking payments",
+      "section": "business"
+    },
+    {
+      "key": "licence",
+      "label": "Open-source licence",
+      "help": "Licence of the core",
+      "section": "business"
     },
     {
       "key": "pricing",
-      "label": "Pricing model"
+      "label": "Pricing model",
+      "section": "business"
     },
     {
       "key": "data_residency",
@@ -81,7 +138,8 @@
       "help": "Choose the region where data is stored, or self-host",
       "groups": [
         "enterprise"
-      ]
+      ],
+      "section": "business"
     },
     {
       "key": "sso",
@@ -89,7 +147,8 @@
       "help": "Single sign-on with the company identity provider",
       "groups": [
         "enterprise"
-      ]
+      ],
+      "section": "business"
     },
     {
       "key": "scim",
@@ -97,7 +156,8 @@
       "help": "Users and groups provisioned from the identity provider",
       "groups": [
         "enterprise"
-      ]
+      ],
+      "section": "business"
     },
     {
       "key": "authoring_tool",
@@ -105,7 +165,8 @@
       "help": "Build courses without a separate authoring product",
       "groups": [
         "enterprise"
-      ]
+      ],
+      "section": "business"
     },
     {
       "key": "content_library",
@@ -113,7 +174,8 @@
       "help": "Ready-made courses or third-party content to buy or include",
       "groups": [
         "enterprise"
-      ]
+      ],
+      "section": "business"
     }
   ],
   "systems": [
@@ -143,8 +205,8 @@
         },
         "headless_api": {
           "value": "Yes",
-          "note": "REST API with an OpenAPI spec and a TypeScript SDK",
-          "source": "https://github.com/ulams-dev/ulams/blob/main/front/web/README.md",
+          "note": "REST endpoints under /api and /api/admin for courses, lessons, topics, users, progress and more",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/courses/src/routes.php",
           "checkedAt": "2026-10-09"
         },
         "ai_generation": {
@@ -240,6 +302,48 @@
         "content_library": {
           "value": "No",
           "note": "No bundled content library; plugin marketplace is roadmap",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_authoring": {
+          "value": "Yes",
+          "note": "Create, update, clone and delete courses, lessons and topics, upload resources, set status, all over the API",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/courses/src/routes.php",
+          "checkedAt": "2026-10-09"
+        },
+        "openapi": {
+          "value": "Yes",
+          "note": "Generated with l5-swagger and served by the API; complete coverage is still on the roadmap",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/api/config/l5-swagger.php",
+          "checkedAt": "2026-10-09"
+        },
+        "sdk": {
+          "value": "Yes",
+          "note": "Typed TypeScript client, types generated from the OpenAPI spec; in the repository, not yet on npm",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/front/sdk/package.json",
+          "checkedAt": "2026-10-09"
+        },
+        "cli": {
+          "value": "Partial",
+          "note": "Operator CLI today (php artisan ulams:*); agent-first CLI in progress",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/tenancy/src/Console/CreateTenantCommand.php",
+          "checkedAt": "2026-10-09"
+        },
+        "mcp": {
+          "value": "Coming",
+          "note": "Roadmap 7.5; no server in the repository yet, agent-first MCP server in progress",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
+          "checkedAt": "2026-10-09"
+        },
+        "webhooks": {
+          "value": "Coming",
+          "note": "Roadmap 7.3: signed, retried outbound webhooks; payment gateways post to us today",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
+          "checkedAt": "2026-10-09"
+        },
+        "course_as_code": {
+          "value": "Coming",
+          "note": "Roadmap 7.1: Markdown + YAML format and Git sync; zip import and export today",
           "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
           "checkedAt": "2026-10-09"
         }
@@ -340,6 +444,48 @@
           "source": "https://moodle.com/solutions/moodlecloud/",
           "checkedAt": "2026-10-09",
           "note": "MoodleCloud annual plans and Moodle Partner hosting"
+        },
+        "openapi": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked; API docs are served per site",
+          "source": "https://moodledev.io/docs/5.0/apis/subsystems/external",
+          "checkedAt": "2026-10-09"
+        },
+        "sdk": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://moodledev.io/docs/5.0/apis/subsystems/external",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_authoring": {
+          "value": "Partial",
+          "note": "Web services cover courses and enrolments; no generic add-activity function found",
+          "source": "https://moodledev.io/docs/5.0/apis/subsystems/external",
+          "checkedAt": "2026-10-09"
+        },
+        "cli": {
+          "value": "Partial",
+          "note": "Admin CLI scripts only (install, upgrade, maintenance); no author push/pull CLI",
+          "source": "https://docs.moodle.org/en/Administration_via_command_line",
+          "checkedAt": "2026-10-09"
+        },
+        "mcp": {
+          "value": "Via plugin",
+          "note": "Community plugin webservice_mcp on Moodle plugin directory; no Moodle HQ server found",
+          "source": "https://marketplace.moodle.com/plugins/webservice_mcp",
+          "checkedAt": "2026-10-09"
+        },
+        "webhooks": {
+          "value": "Not documented",
+          "note": "Internal Events API only; outbound webhooks not found in docs checked",
+          "source": "https://moodledev.io/docs/apis/core/event",
+          "checkedAt": "2026-10-09"
+        },
+        "course_as_code": {
+          "value": "Not documented",
+          "note": "Backups are .mbz archives; GIFT/XML text only for questions; no Git sync found",
+          "source": "https://moodledev.io/docs/5.0/apis/subsystems/external",
+          "checkedAt": "2026-10-09"
         }
       },
       "groups": [
@@ -437,6 +583,48 @@
           "source": "https://www.instructure.com/try-canvas",
           "checkedAt": "2026-10-09",
           "note": "No public price list; free Canvas Lite for individual educators"
+        },
+        "openapi": {
+          "value": "Partial",
+          "note": "OpenAPI 3 spec generated from source (rake doc:openapi); no hosted download found",
+          "source": "https://developerdocs.instructure.com/services/canvas",
+          "checkedAt": "2026-10-09"
+        },
+        "sdk": {
+          "value": "Partial",
+          "note": "Only a Python DAP client library (data export); no official JS/TS API client found",
+          "source": "https://developerdocs.instructure.com/services/dap/lib-index.md",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_authoring": {
+          "value": "Yes",
+          "note": "REST API covers courses, modules, pages, assignments, quizzes and content migrations",
+          "source": "https://developerdocs.instructure.com/services/canvas",
+          "checkedAt": "2026-10-09"
+        },
+        "cli": {
+          "value": "Partial",
+          "note": "DAP CLI exports data only; no course authoring CLI found",
+          "source": "https://developerdocs.instructure.com/services/dap/dap-cli-readme.md",
+          "checkedAt": "2026-10-09"
+        },
+        "mcp": {
+          "value": "Not documented",
+          "note": "An Instructure Community post mentions a Canvas MCP; no official documentation confirmed",
+          "source": "https://developerdocs.instructure.com/services/canvas",
+          "checkedAt": "2026-10-09"
+        },
+        "webhooks": {
+          "value": "Yes",
+          "note": "Live Events: Canvas pushes event data to HTTPS or SQS endpoints",
+          "source": "https://developerdocs.instructure.com/services/canvas/data-services/live-events.md",
+          "checkedAt": "2026-10-09"
+        },
+        "course_as_code": {
+          "value": "Not documented",
+          "note": "Common Cartridge/content export packages only; no Git sync found",
+          "source": "https://developerdocs.instructure.com/services/canvas/resources/content_migrations.md",
+          "checkedAt": "2026-10-09"
         }
       },
       "groups": [
@@ -534,6 +722,48 @@
           "source": "https://openedx.org/faq/",
           "checkedAt": "2026-10-09",
           "note": "No licence fees; hosting via your team or third-party providers"
+        },
+        "openapi": {
+          "value": "Yes",
+          "note": "drf-yasg spec at /api-docs.yaml on instances; coverage of endpoints is incomplete",
+          "source": "https://pypi.org/project/edx-api-doc-tools/",
+          "checkedAt": "2026-10-09"
+        },
+        "sdk": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://docs.openedx.org/en/latest/developers/references/index.html",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_authoring": {
+          "value": "Partial",
+          "note": "Studio APIs for course runs and per-block OLX export; no full content authoring API documented",
+          "source": "https://docs.openedx.org/en/latest/developers/references/index.html",
+          "checkedAt": "2026-10-09"
+        },
+        "cli": {
+          "value": "Partial",
+          "note": "Tutor is a deployment/operator CLI; no author push/pull CLI",
+          "source": "https://docs.tutor.edly.io/reference/cli/index.html",
+          "checkedAt": "2026-10-09"
+        },
+        "mcp": {
+          "value": "Via plugin",
+          "note": "Third-party plugin openedx-mcp (blend-ed); no server under openedx org found",
+          "source": "https://pypi.org/project/openedx-mcp/",
+          "checkedAt": "2026-10-09"
+        },
+        "webhooks": {
+          "value": "Partial",
+          "note": "Event bus pub/sub (Open edX Events) between services; no HTTP webhook feature documented",
+          "source": "https://docs.openedx.org/projects/openedx-events/en/ulmo/concepts/event-bus.html",
+          "checkedAt": "2026-10-09"
+        },
+        "course_as_code": {
+          "value": "Yes",
+          "note": "OLX text/XML course format, exported and imported as tar.gz archives",
+          "source": "https://docs.openedx.org/en/release-teak/educators/olx/studio-example/index.html",
+          "checkedAt": "2026-10-09"
         }
       },
       "groups": [
@@ -631,6 +861,48 @@
           "source": "https://www.talentlms.com/prices",
           "checkedAt": "2026-10-09",
           "note": "Core, Grow, Pro and Enterprise plans"
+        },
+        "openapi": {
+          "value": "Not documented",
+          "note": "API V2 docs published as Postman collection; no OpenAPI file found",
+          "source": "https://documenter.gw.postman.com/view/metadata/2sAY548Kou",
+          "checkedAt": "2026-10-09"
+        },
+        "sdk": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://help.talentlms.com/hc/en-us/articles/24874457011356-TalentLMS-API-V2",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_authoring": {
+          "value": "Partial",
+          "note": "API V2 manages users, courses, groups, branches, enrolment; unit authoring not documented",
+          "source": "https://documenter.gw.postman.com/view/metadata/2sAY548Kou",
+          "checkedAt": "2026-10-09"
+        },
+        "cli": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://help.talentlms.com/hc/en-us/articles/24874457011356-TalentLMS-API-V2",
+          "checkedAt": "2026-10-09"
+        },
+        "mcp": {
+          "value": "Not documented",
+          "note": "No vendor MCP found; community servers exist",
+          "source": "https://help.talentlms.com/hc/en-us/articles/24874457011356-TalentLMS-API-V2",
+          "checkedAt": "2026-10-09"
+        },
+        "webhooks": {
+          "value": "Partial",
+          "note": "Automation 'call URL on course completion' only; no webhook API documented",
+          "source": "https://help.talentlms.com/hc/en-us/articles/9651467215900-How-to-work-with-automations-in-TalentLMS",
+          "checkedAt": "2026-10-09"
+        },
+        "course_as_code": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://help.talentlms.com/hc/en-us/articles/24874457011356-TalentLMS-API-V2",
+          "checkedAt": "2026-10-09"
         }
       },
       "groups": [
@@ -727,6 +999,48 @@
           "source": "https://www.thinkific.com/pricing/",
           "checkedAt": "2026-10-09",
           "note": "Published Basic, Start and Grow plans; free trial"
+        },
+        "openapi": {
+          "value": "Yes",
+          "note": "Admin API OpenAPI 3.0 YAML served at /openapi/thinkific-admin-api-v1.yaml",
+          "source": "https://developers.thinkific.com/api/api-documentation",
+          "checkedAt": "2026-10-09"
+        },
+        "sdk": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked; official GitHub org lists none",
+          "source": "https://support.thinkific.dev/hc/en-us/articles/5700872617111-API-Overview",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_authoring": {
+          "value": "No",
+          "note": "Admin API spec has only GET for courses, chapters, contents; GraphQL covers admin/student data",
+          "source": "https://developers.thinkific.com/openapi/thinkific-admin-api-v1.yaml",
+          "checkedAt": "2026-10-09"
+        },
+        "cli": {
+          "value": "Not documented",
+          "note": "No CLI found; themes edited in the in-app code editor, theme extensions via apps",
+          "source": "https://support.thinkific.dev/hc/en-us/articles/5700872617111-API-Overview",
+          "checkedAt": "2026-10-09"
+        },
+        "mcp": {
+          "value": "Not documented",
+          "note": "No vendor MCP found; third-party hosted servers exist",
+          "source": "https://support.thinkific.dev/hc/en-us",
+          "checkedAt": "2026-10-09"
+        },
+        "webhooks": {
+          "value": "Yes",
+          "note": "Webhooks API plus admin UI; HMAC-signed, retries up to 14 times",
+          "source": "https://support.thinkific.dev/hc/en-us/articles/4422685850775-Using-Webhooks",
+          "checkedAt": "2026-10-09"
+        },
+        "course_as_code": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://support.thinkific.dev/hc/en-us/articles/5700872617111-API-Overview",
+          "checkedAt": "2026-10-09"
         }
       },
       "groups": [
@@ -824,6 +1138,48 @@
           "source": "https://www.liquidweb.com/software/learndash/",
           "checkedAt": "2026-10-09",
           "note": "Essentials, Pro and Elite tiers; hosted Cloud plan separate"
+        },
+        "openapi": {
+          "value": "Yes",
+          "note": "OpenAPI docs served at /wp-json/learndash/v1/docs/openapi (YAML supported)",
+          "source": "https://docs.nexcess.com/software/learndash/developers.md",
+          "checkedAt": "2026-10-09"
+        },
+        "sdk": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://developers.learndash.com/",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_authoring": {
+          "value": "Yes",
+          "note": "REST ldlms/v2 plus MCP create/update courses, lessons, topics; quizzes not via MCP",
+          "source": "https://learndash.com/support/kb/non-knowledgebase/getting-started-with-learndash-mcp-server/mcp-setup/",
+          "checkedAt": "2026-10-09"
+        },
+        "cli": {
+          "value": "Not documented",
+          "note": "No official WP-CLI commands or author CLI found; generic WP-CLI only",
+          "source": "https://developers.learndash.com/",
+          "checkedAt": "2026-10-09"
+        },
+        "mcp": {
+          "value": "Yes",
+          "note": "Official @stellarwp/learndash-mcp-server (LearnDash 5.0); uses REST API and app password",
+          "source": "https://learndash.com/support/kb/non-knowledgebase/getting-started-with-learndash-mcp-server/mcp-setup/",
+          "checkedAt": "2026-10-09"
+        },
+        "webhooks": {
+          "value": "Via plugin",
+          "note": "No native webhook system found; first-party Zapier add-on sends events",
+          "source": "https://learndash.com/support/kb/add-ons/zapier-add-on/zapier-integration/",
+          "checkedAt": "2026-10-09"
+        },
+        "course_as_code": {
+          "value": "Partial",
+          "note": "Course transfer via WordPress XML export/import; no Git sync documented",
+          "source": "https://developers.learndash.com/",
+          "checkedAt": "2026-10-09"
         }
       },
       "groups": [
@@ -957,6 +1313,48 @@
           "note": "US or EU hosting location for subscriptions started after 2025-02-21; some processing may occur elsewhere",
           "source": "https://www.articulate.com/trust/regional-data-hosting/",
           "checkedAt": "2026-10-09"
+        },
+        "openapi": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://www.articulatesupport.com/article/Reach-360-API",
+          "checkedAt": "2026-10-09"
+        },
+        "sdk": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://www.articulatesupport.com/article/Reach-360-API",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_authoring": {
+          "value": "Partial",
+          "note": "Reach 360 API: courses, enrollments, users, invitations, reports; Rise/Storyline authoring has no API",
+          "source": "https://www.articulatesupport.com/article/Reach-360-API",
+          "checkedAt": "2026-10-09"
+        },
+        "cli": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://www.articulatesupport.com/article/Reach-360-API",
+          "checkedAt": "2026-10-09"
+        },
+        "mcp": {
+          "value": "Not documented",
+          "note": "No official server found; third-party hosted MCP wrappers exist",
+          "source": "https://www.articulatesupport.com/article/Reach-360-API",
+          "checkedAt": "2026-10-09"
+        },
+        "webhooks": {
+          "value": "Yes",
+          "note": "Reach 360 Webhooks API and Webhook Events articles; plan gating not stated",
+          "source": "https://www.articulatesupport.com/article/Reach-360-API",
+          "checkedAt": "2026-10-09"
+        },
+        "course_as_code": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://www.articulatesupport.com/article/Reach-360-API",
+          "checkedAt": "2026-10-09"
         }
       }
     },
@@ -1086,6 +1484,48 @@
           "value": "Yes",
           "note": "Data hosting in any of Docebo's global data centers (Elevate and Enterprise)",
           "source": "https://www.docebo.com/company/docebo-service-descriptions-ee/",
+          "checkedAt": "2026-10-09"
+        },
+        "openapi": {
+          "value": "Not documented",
+          "note": "API browser (Swagger UI style) per platform; no spec download found",
+          "source": "https://developer.docebo.com/docs/get-started-with-the-docebo-api-browser",
+          "checkedAt": "2026-10-09"
+        },
+        "sdk": {
+          "value": "No",
+          "note": "Docebo states it provides no client library for its APIs; Mobile SDK is for embedding UI",
+          "source": "https://developer.docebo.com/docs/api-general-information",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_authoring": {
+          "value": "Partial",
+          "note": "API manages users and courses; learning object content creation not documented",
+          "source": "https://developer.docebo.com/docs/api-general-information",
+          "checkedAt": "2026-10-09"
+        },
+        "cli": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://developer.docebo.com/llms.txt",
+          "checkedAt": "2026-10-09"
+        },
+        "mcp": {
+          "value": "Yes",
+          "note": "Official Docebo MCP server, beta, learner-focused; admin tools planned",
+          "source": "https://www.docebo.com/products/mcp/",
+          "checkedAt": "2026-10-09"
+        },
+        "webhooks": {
+          "value": "Yes",
+          "note": "HTTP/HTTPS; SQS and EventBridge depend on plan; Superadmin Webhooks app",
+          "source": "https://developer.docebo.com/docs/creating-and-managing-webhooks",
+          "checkedAt": "2026-10-09"
+        },
+        "course_as_code": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://developer.docebo.com/llms.txt",
           "checkedAt": "2026-10-09"
         }
       }
@@ -1217,6 +1657,48 @@
           "note": "Trust Center lists Hosting Regions but choice of region could not be read",
           "source": "https://trustcenter.cornerstoneondemand.com/",
           "checkedAt": "2026-10-09"
+        },
+        "openapi": {
+          "value": "Not documented",
+          "note": "Portal is script-rendered; could not be read. Not found in the public documentation checked",
+          "source": "https://csod.dev/",
+          "checkedAt": "2026-10-09"
+        },
+        "sdk": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://csod.dev/",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_authoring": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://csod.dev/",
+          "checkedAt": "2026-10-09"
+        },
+        "cli": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://csod.dev/",
+          "checkedAt": "2026-10-09"
+        },
+        "mcp": {
+          "value": "Not documented",
+          "note": "No official server found; third-party unified-API MCP servers exist",
+          "source": "https://csod.dev/",
+          "checkedAt": "2026-10-09"
+        },
+        "webhooks": {
+          "value": "Not documented",
+          "note": "Third-party guides show webhooks in Cornerstone; official page not readable",
+          "source": "https://csod.dev/",
+          "checkedAt": "2026-10-09"
+        },
+        "course_as_code": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://csod.dev/",
+          "checkedAt": "2026-10-09"
         }
       }
     },
@@ -1346,6 +1828,48 @@
           "value": "Partial",
           "note": "SAP says customers can select the data centre for only some cloud services",
           "source": "https://www.sap.com/about/trust-center/data-center.html",
+          "checkedAt": "2026-10-09"
+        },
+        "openapi": {
+          "value": "Not documented",
+          "note": "OData APIs listed on SAP Business Accelerator Hub; Learning spec not confirmed",
+          "source": "https://api.sap.com/products/SAPSuccessFactors/apis/ODATAV4",
+          "checkedAt": "2026-10-09"
+        },
+        "sdk": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://help.sap.com/docs/successfactors-learning",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_authoring": {
+          "value": "Partial",
+          "note": "OData cannot create items/classes; SAP KBA points to Item/Class Connectors instead",
+          "source": "https://userapps.support.sap.com/sap/support/knowledge/en/2859976",
+          "checkedAt": "2026-10-09"
+        },
+        "cli": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://help.sap.com/docs/successfactors-learning",
+          "checkedAt": "2026-10-09"
+        },
+        "mcp": {
+          "value": "Not documented",
+          "note": "No SAP-published server found; community and CData/StackOne servers exist",
+          "source": "https://help.sap.com/docs/successfactors-learning",
+          "checkedAt": "2026-10-09"
+        },
+        "webhooks": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://help.sap.com/docs/successfactors-learning",
+          "checkedAt": "2026-10-09"
+        },
+        "course_as_code": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://help.sap.com/docs/successfactors-learning",
           "checkedAt": "2026-10-09"
         }
       }
@@ -1477,6 +2001,48 @@
           "note": "Choose one of five AWS regions at onboarding; data stays in that region",
           "source": "https://support.absorblms.com/hc/en-us/articles/53677872546323-Data-Hosting-Locations-and-AWS-Regions",
           "checkedAt": "2026-10-09"
+        },
+        "openapi": {
+          "value": "Not documented",
+          "note": "Integration API v2 docs page links no OpenAPI/Swagger spec file",
+          "source": "https://docs.myabsorb.com/integration-api/v2/docs",
+          "checkedAt": "2026-10-09"
+        },
+        "sdk": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://docs.myabsorb.com/integration-api/v2/docs",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_authoring": {
+          "value": "Partial",
+          "note": "REST API has courses, chapters, lessons resources; authoring depth not verified",
+          "source": "https://docs.myabsorb.com/integration-api/v2/docs",
+          "checkedAt": "2026-10-09"
+        },
+        "cli": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://docs.myabsorb.com/integration-api/v2/docs",
+          "checkedAt": "2026-10-09"
+        },
+        "mcp": {
+          "value": "Not documented",
+          "note": "No Absorb-published server found; third-party Unified.to connector exists (beta)",
+          "source": "https://docs.myabsorb.com/integration-api/v2/docs",
+          "checkedAt": "2026-10-09"
+        },
+        "webhooks": {
+          "value": "Yes",
+          "note": "Webhooks push LMS events (e.g. learner created, course completed) to external systems",
+          "source": "https://support.absorblms.com/hc/en-us/articles/28999993938451-Webhooks",
+          "checkedAt": "2026-10-09"
+        },
+        "course_as_code": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://docs.myabsorb.com/integration-api/v2/docs",
+          "checkedAt": "2026-10-09"
         }
       }
     },
@@ -1607,6 +2173,48 @@
           "note": "Azure hosting outside Patriot Act scope; no customer region choice stated",
           "source": "https://360learning.com/privacy-and-security/",
           "checkedAt": "2026-10-09"
+        },
+        "openapi": {
+          "value": "Not documented",
+          "note": "API v2 docs on ReadMe; no spec download documented",
+          "source": "https://360learning.readme.io/docs",
+          "checkedAt": "2026-10-09"
+        },
+        "sdk": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://360learning.readme.io/docs",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_authoring": {
+          "value": "Partial",
+          "note": "API v2 creates/edits paths and uploads SCORM/AICC/xAPI courses; no native content authoring",
+          "source": "https://360learning.readme.io/llms.txt",
+          "checkedAt": "2026-10-09"
+        },
+        "cli": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://360learning.readme.io/docs",
+          "checkedAt": "2026-10-09"
+        },
+        "mcp": {
+          "value": "Yes",
+          "note": "Official MCP server, beta, on request; tools: ping and catalog search only",
+          "source": "https://360learning.readme.io/docs/mcp",
+          "checkedAt": "2026-10-09"
+        },
+        "webhooks": {
+          "value": "Yes",
+          "note": "Subscription API with signed HTTP POST delivery, retries and subscription status",
+          "source": "https://360learning.readme.io/docs/webhooks",
+          "checkedAt": "2026-10-09"
+        },
+        "course_as_code": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://360learning.readme.io/docs",
+          "checkedAt": "2026-10-09"
         }
       }
     }
@@ -1621,6 +2229,24 @@
       "key": "enterprise",
       "label": "Enterprise suites",
       "caption": "Feature comparison of ulams with Articulate 360, Docebo, Cornerstone, SAP SuccessFactors Learning, Absorb LMS and 360Learning"
+    }
+  ],
+  "sections": [
+    {
+      "key": "developer",
+      "label": "Developer & headless"
+    },
+    {
+      "key": "ai",
+      "label": "AI"
+    },
+    {
+      "key": "standards",
+      "label": "Content standards"
+    },
+    {
+      "key": "business",
+      "label": "Business"
     }
   ]
 }

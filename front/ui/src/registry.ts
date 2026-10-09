@@ -702,24 +702,44 @@ export const registry = {
               label: text("Feature", { maxLength: 60 }),
               help: text("What the row means", { maxLength: 160 }),
               cells: list(
-                obj(
-                  {
-                    value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }),
-                    note: text("Short neutral note", { maxLength: 120 }),
-                  },
-                  ["value"]
-                ),
+                obj({ value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }), note: text("Short neutral note", { maxLength: 120 }) }, ["value"]),
                 "One cell per column, same order",
                 { maxItems: 8 }
               ),
             },
             ["label", "cells"]
           ),
-          "Features",
-          { minItems: 1, maxItems: 24 }
+          "Features (omit when sections is set)",
+          { minItems: 0, maxItems: 40 }
+        ),
+              sections: list(
+          obj(
+            {
+              label: text("Section heading shown as a header row, e.g. 'Developer & headless'", { maxLength: 60 }),
+              rows: list(
+                obj(
+                  {
+                    label: text("Feature", { maxLength: 60 }),
+                    help: text("What the row means", { maxLength: 160 }),
+                    cells: list(
+                      obj({ value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }), note: text("Short neutral note", { maxLength: 120 }) }, ["value"]),
+                      "One cell per column, same order",
+                      { maxItems: 8 }
+                    ),
+                  },
+                  ["label", "cells"]
+                ),
+                "Features in this section",
+                { minItems: 1, maxItems: 24 }
+              ),
+            },
+            ["label", "rows"]
+          ),
+          "Rows grouped under header rows (each section is its own tbody with a rowgroup header)",
+          { minItems: 0, maxItems: 8 }
         ),
             },
-            ["label", "columns", "rows"]
+            ["label", "columns"]
           ),
           "Several tables behind a CSS-only segmented control (no JavaScript); each group lists its own products and features",
           { minItems: 2, maxItems: 4 }
@@ -730,7 +750,7 @@ export const registry = {
             "href",
           ]),
           "Sources for the cells",
-          { maxItems: 200 }
+          { maxItems: 400 }
         ),
         note: text("Small print under the table", { maxLength: 300 }),
       },
