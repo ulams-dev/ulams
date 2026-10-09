@@ -75,6 +75,15 @@ describe("whoami and sessions", () => {
     first.cleanup();
   });
 
+  it("whoami shows the scopes and expiry of a scoped token from the server", async () => {
+    const r = await runCli(["whoami", "--json"], {
+      routes: { ...routes, "GET /api/auth/tokens/current": { body: { success: true, data: { id: "t1", scoped: true, scopes: ["courses:write"], kind: "cli", expires_at: "2027-01-01T00:00:00+00:00" } } } },
+      env: { ULAMS_URL: URL_, ULAMS_TOKEN: "env-token" },
+    });
+    expect(r.json()).toMatchObject({ data: { auth: { scoped: true, scopes: ["courses:write"], tokenId: "t1", expiresAt: "2027-01-01T00:00:00+00:00" } } });
+    r.cleanup();
+  });
+
   it("works with ULAMS_URL and ULAMS_TOKEN only (no files)", async () => {
     const r = await runCli(["whoami", "--json"], { routes, env: { ULAMS_URL: URL_, ULAMS_TOKEN: "env-token" } });
     expect(r.code).toBe(0);
@@ -191,7 +200,7 @@ describe("device login", () => {
 
   it("prints the code, polls through pending and slow_down, then saves the scoped token", async () => {
     let polls = 0;
-    const r = await runCli(["login", "--url", URL_, "--device", "--scope", "courses:write", "--json"], {
+    const r = await runCli(["login", "--url", URL_, "--device", "--scopes", "courses:write", "--json"], {
       routes: {
         ...meta,
         ...code,
@@ -211,6 +220,39 @@ describe("device login", () => {
     expect(r.stdout + r.stderr).not.toContain("ulams_pat_secret1");
     expect(JSON.parse(readFileSync(join(r.configDir, "credentials.json"), "utf8")).coffee.token).toBe("ulams_pat_secret1");
   }, 20_000);
+
+  it("speaks the real wire format: flat RFC 8628 JSON, default scopes, comma-separated --scopes, token id kept", async () => {
+    const flat = {
+      "POST /api/auth/device/code": { body: { device_code: "dc", user_code: "BDWP-HQPK", verification_uri: "http://coffee.app.localhost/cli/authorize", verification_uri_complete: "http://coffee.app.localhost/cli/authorize?code=BDWP-HQPK", expires_in: 600, interval: 0 } },
+      "POST /api/auth/device/token": { body: { access_token: "ulams_pat_x", token_type: "Bearer", expires_at: "2027-01-01T00:00:00+00:00", scopes: ["courses:write", "tokens:write"], token_id: "tok1" } },
+      "GET /api/profile/me": { body: ME },
+    };
+    const def = await runCli(["login", "--url", URL_, "--device", "--json"], { routes: { ...meta, ...flat } });
+    expect(def.code).toBe(0);
+    expect(def.requests.find((q) => q.path === "/api/auth/device/code")?.body).toMatchObject({ scopes: ["@author", "tokens:write"] });
+    expect(def.stderr).toContain("http://coffee.app.localhost/cli/authorize?code=BDWP-HQPK");
+    expect(JSON.parse(readFileSync(join(def.configDir, "config.json"), "utf8")).profiles.coffee).toMatchObject({ tokenId: "tok1", login: "device" });
+    const csv = await runCli(["login", "--url", URL_, "--device", "--scopes", "courses:write,@ci", "--json"], { routes: { ...meta, ...flat } });
+    expect(csv.requests.find((q) => q.path === "/api/auth/device/code")?.body).toMatchObject({ scopes: ["courses:write", "@ci"] });
+    def.cleanup();
+    csv.cleanup();
+  });
+
+  it("logout --revoke revokes the scoped token before forgetting it", async () => {
+    const first = await runCli(["login", "--url", URL_, "--device", "--json"], {
+      routes: {
+        ...meta,
+        "POST /api/auth/device/code": { body: { device_code: "dc", user_code: "AAAA-BBBB", verification_uri: "x", expires_in: 600, interval: 0 } },
+        "POST /api/auth/device/token": { body: { access_token: "ulams_pat_y", token_type: "Bearer", scopes: ["tokens:write"], token_id: "tok9" } },
+        "GET /api/profile/me": { body: ME },
+      },
+    });
+    const out = await runCli(["logout", "--revoke", "--json"], { configDir: first.configDir, routes: { "DELETE /api/auth/tokens/tok9": { body: { success: true, message: "Token revoked" } } } });
+    expect(out.code).toBe(0);
+    expect(out.json()).toMatchObject({ data: { removed: true, revoked: true } });
+    expect(out.requests.map((q) => `${q.method} ${q.path}`)).toEqual(["DELETE /api/auth/tokens/tok9"]);
+    first.cleanup();
+  });
 
   it("access_denied and expired_token are errors", async () => {
     for (const [error, exit] of [["access_denied", 4], ["expired_token", 3]] as const) {
