@@ -11,6 +11,7 @@ use Ulams\Courses\Models\Contracts\TopicFileContentContract;
 use Ulams\Courses\Models\Topic;
 use Ulams\Courses\Models\TopicContent\AbstractTopicFileContent;
 use Ulams\Courses\Repositories\Contracts\TopicRepositoryContract;
+use Ulams\Courses\Services\Contracts\TopicContentDeleter;
 use Ulams\Files\Helpers\FileHelper;
 use Ulams\Files\Rules\FileOrStringRule;
 use Ulams\TopicTypes\Events\TopicTypeChanged;
@@ -41,6 +42,9 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
      *            All possible classes that can store content
      */
     private array $resourceClasses = [];
+
+    /** @var TopicContentDeleter[] */
+    private array $contentDeleters = [];
 
     /**
      * @var array
@@ -94,6 +98,31 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         }
 
         return $this->contentClasses;
+    }
+
+    public function registerContentDeleter(TopicContentDeleter $deleter): void
+    {
+        $this->contentDeleters[] = $deleter;
+    }
+
+    /**
+     * Deletes the content row of a topic through the registered deleter of its class, or directly.
+     */
+    public function deleteTopicContent(?Model $content): void
+    {
+        if ($content === null || !$content->exists) {
+            return;
+        }
+
+        foreach ($this->contentDeleters as $deleter) {
+            if ($deleter->supports($content)) {
+                $deleter->delete($content);
+
+                return;
+            }
+        }
+
+        $content->delete();
     }
 
     public function registerResourceClass(string $topicTypeClass, string $resourceClass, string $type = 'client'): array
@@ -212,6 +241,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
     public function updateFromRequest(UpdateTopicAPIRequest $request): Topic
     {
         $topic = $request->getTopic()->loadMissing('topicable');
+        $replaced = null;
 
         if ($request->has('topicable_type')) {
             $class = $request->input('topicable_type');
@@ -222,8 +252,10 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
             if ($topic->topicable && $class === get_class($topic->topicable) && $request->hasAny(array_keys($class::rules()))) {
                 $this->updateTopicContentModelFromRequest($request, $topic->topicable);
             } else {
+                $previous = $topic->topicable;
                 $topicContent = $this->createTopicContentModelFromRequest($request, $topic);
                 $topic->topicable()->associate($topicContent);
+                $replaced = $previous;
             }
         }
 
@@ -233,6 +265,10 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         }
         $topic->fill($validated);
         $topic->save();
+
+        if ($replaced !== null && !$replaced->is($topic->topicable)) {
+            $this->deleteTopicContent($replaced);
+        }
 
         return $topic;
     }
@@ -339,6 +375,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
     {
         if ($topic->delete()) {
             $topicable = $topic->topicable;
+            $this->deleteTopicContent($topicable);
             if (is_a($topicable, AbstractTopicFileContent::class)) {
                 /** @var AbstractTopicFileContent $topicable */
                 $path = Storage::path($topicable->generateStoragePath());
