@@ -27,7 +27,8 @@ hostile input.
   ClamAV (`--profile av` in the example) and set `UPLOADS_SCANNER=clamd`. With
   `UPLOADS_CLAMD_FAIL_CLOSED=true` (the default) uploads are rejected while clamd is unreachable.
 - **Package code runs on the content origin** only: SCORM, cmi5, Adapt and LiaScript files are
-  served from a per-tenant host on a separate registrable domain, without cookies or API routes,
+  served from a per-tenant host (a separate registrable domain, or a same-site subdomain with the
+  `__Host-` cookie, exact-Origin, sandbox and CORP/COOP mitigations), without cookies or API routes,
   with its own CSP. See [Content origin](/operators/content-origin/).
 - **H5P runs in its own service** (`api/h5p`): the front and admin frame its embed pages and talk
   to them with `postMessage`; the embed pages send `frame-ancestors` limited to the tenant's front

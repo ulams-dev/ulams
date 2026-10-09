@@ -6,6 +6,8 @@ use Illuminate\Database\Events\MigrationsEnded;
 use Illuminate\Database\Events\SchemaLoaded;
 use Illuminate\Support\Facades\Event;
 use Ulams\Core\Support\SchemaColumns;
+use Ulams\Core\Http\Middleware\EnforceTrustedOrigin;
+use Ulams\Core\Http\Middleware\ProtectJsonResponses;
 use Ulams\Core\Http\Middleware\SetTimezoneForUserMiddleware;
 use Ulams\Core\Services\Contracts\HealthCheckServiceContract;
 use Ulams\Core\Services\HealthCheckService;
@@ -31,8 +33,10 @@ class UlamsServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->app->make(Kernel::class)
-            ->pushMiddleware(SetTimezoneForUserMiddleware::class);
+        $kernel = $this->app->make(Kernel::class);
+        $kernel->pushMiddleware(SetTimezoneForUserMiddleware::class);
+        $kernel->prependMiddleware(EnforceTrustedOrigin::class);
+        $kernel->pushMiddleware(ProtectJsonResponses::class);
 
         $this->loadConfig();
         $this->loadRoutesFrom(__DIR__ . '/routes.php');

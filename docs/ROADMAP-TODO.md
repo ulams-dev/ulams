@@ -22,6 +22,8 @@ small commits → tests → summary.
 - [x] (2026-10-09) Phase 1 defaults confirmed: students get `scorm_track-update`; SVG served as attachment
       with CSP (no sanitiser); LTI Instructor → tutor, never admin, no e-mail account linking; LiaScript player
       fetched at image build time; production content origin on a separate registrable domain
+- [x] (2026-10-09) Production content origin is a same-site subdomain (`{slug}.content.ulams.app`), not a
+      separate domain (supersedes the earlier default); mitigations shipped, ADR 0014 amended
 - [x] (2026-10-09) GHCR images are public; the upstream EscolaLMS security reports stay as public issues
 - [x] (2026-10-09) Replace the illustrative incident log on the On-Call landing with real course content
 - [x] (2026-10-09) Phase 1 and Phase 2 plans approved; ADRs 0008 (reference frontend: Astro SSR, plain TS SDK,
@@ -77,6 +79,9 @@ stale content.
 ---
 
 ## Phase 0: Foundation and audit
+
+Plan (new): `docs/plans/leftovers-0-2.md` (draft, waiting for approval; ADRs 0040–0056 Proposed) covers every
+open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41–#44, #46–#63.
 
 ### 0.1 Explore and report (no code)
 - [x] Map repo, packages, versions; course → lesson → topic model and topic types (see docs/reports/phase-0-audit.md)
@@ -164,6 +169,10 @@ stale content.
 - [x] (new) Cart on tenants crashes without a Stripe publishable key (`stripe.tsx` calls
       `stripeKey.includes` on null); show a configuration message instead
 - [ ] (new) Yarn install on Node 23 needs `--ignore-engines` (vitest engines); CI pins Node 22
+- [ ] (new) Replace MinIO with SeaweedFS (or RustFS) and give each tenant its own S3 identity (ADR 0041, plan L0-03)
+- [ ] (new) `ulams:upgrade`: one idempotent per-tenant upgrade command (plan L0-19)
+- [ ] (new) Fix `Cmi5Policy::delete` checking the read permission (plan L0-09)
+- [ ] (new) Five packages with `@OA\` annotations are missing from the Swagger scan paths (plan L0-11)
 
 ### 0.2 Framework upgrade
 - [x] Upgrade plan from Laravel 9 (EOL) to supported Laravel/PHP: order, breaking changes,
@@ -186,7 +195,7 @@ stale content.
 
 Plan (new): `docs/plans/phase-1.md` (approved 2026-10-09; decisions to confirm in its section 14): M1.1
 upload hardening and content origin → M1.2–M1.4 LTI 1.3 → M1.5 LiaScript → M1.6–M1.7 Adapt → M1.8 H5P
-items → M1.9 conformance. Work branch: `phase-1/content-formats`.
+items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: `docs/plans/leftovers-0-2.md` section 4.
 
 ### 1.1 LiaScript
 - [x] Versioned Markdown + assets as course source (`packages/liascript`)
@@ -250,7 +259,10 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`.
       `PermissionsSeeder` on existing tenants). SCORM completion now completes the SCORM topics using the SCO
 - [ ] (new) Production: serve content origins from a separate registrable domain (not same-site with the
       app), and add registered LTI tool origins to the front/admin `frame-src` (documented in
-      `api/docs/content-origin.md`; deployment pending)
+      `api/docs/content-origin.md`; deployment pending). Note 2026-10-09: the owner chose the same-site
+      `*.content.ulams.app` instead; the separate domain stays supported (ADR 0014, amended)
+- [x] (new) Same-site content subdomain hardening: `__Host-` cookies, exact-Origin checks on front and API,
+      sandboxed player frames, COOP/CORP headers, both modes documented
 - [ ] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector
 - [x] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket) (env-file
       resolver; per-tenant `H5P_INTERNAL_TOKEN`; library administration limited to the platform; production
@@ -272,6 +284,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`.
       H5P token from the BFF, or state through the BFF)
 - [ ] (new) Production: set `H5P_SERVICE_CONFIG_DIR`, run `ulams:h5p:export-config` and start the H5P service
       with `compose.h5p.prod.yml`
+- [ ] (new) H5P xAPI progress endpoint rejects statement objects (`ProgressService::h5p()` typed `string`) (plan L1-06)
 - [ ] (new) `yarn install` on Node 24 fails in admin's postinstall (`max setup`: umi's esmi feature loads
       `http-deceiver`, which needs the removed `http_parser` binding); CI and `.nvmrc` use Node 22
 
@@ -286,7 +299,7 @@ roadmap; Phase 2 is re-planned from this spec after Phases 0–1.
 Plan (new): `docs/plans/phase-2.md` (approved 2026-10-09; follows Phase 1). First milestone
 M2.1 "chat course building": upload → interview → outline diff → approved generation with citations →
 approved apply through domain services → element chat edits. Designs:
-`front/docs/design/stitch/course-builder/`.
+`front/docs/design/stitch/course-builder/`. Open items and M2.2–M2.5: `docs/plans/leftovers-0-2.md` sections 2 and 5.
 
 - [x] (new) Course Builder author area in the reference web app (`front/web`, `/studio`); the admin only
       links to it (M2.1, branch `phase-2/course-builder`; ADR 0022)
@@ -443,6 +456,11 @@ M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
 
 ## Phase 4: Personalisation
 
+Plan (new): `docs/plans/phase-4.md` (draft, waiting for approval; ADRs 0057–0062 Proposed). Milestones M4.1 signal
+stream → M4.2 risk scoring → M4.3 privacy and transparency → M4.4 nudges and recovery → M4.5 remediations →
+M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments, evals. Designs:
+`front/docs/design/stitch/personalisation/`. Owner questions #59–#63.
+
 ### 4.1 `learner-insights` package
 - [ ] Append-only learner signal stream mapped to blueprint element IDs; queues; backfill
 - [ ] Rule-based risk scoring with human-readable reasons; per-tenant thresholds
@@ -454,6 +472,10 @@ M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
 - [ ] Author analytics; high-struggle elements → update proposals
 - [ ] Privacy: per-tenant toggle, retention, explanations, minimal data to LLM
 - [ ] Rule unit tests, synthetic learner journeys, tenant isolation
+- [ ] (new) Streaming tutor answers (LLM client streaming over the SSE event log)
+- [ ] (new) Partition `learner_signals` by month when a tenant exceeds 50M rows
+- [ ] (new) Remediations for courses not built with the Course Builder
+- [ ] (new) `TopicProgressUpdated` event in `courses` for non-completion progress (ids only)
 
 ### 4.2 AI tutor
 - [ ] Answers only from course sources with citations; says when out of scope

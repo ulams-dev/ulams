@@ -8,7 +8,10 @@ import {
   ULAMS_PLATFORM_HOSTS,
   ULAMS_TENANT_HOSTS,
   ULAMS_WARM_TENANTS,
+  ULAMS_COOKIE_SECURE,
+  ULAMS_COOKIE_FALLBACK_PREFIX,
 } from "astro:env/server";
+import { parseSecureMode } from "./cookies.ts";
 
 /** Runtime settings (process env, see .env.example). Read once. */
 export const config = {
@@ -31,6 +34,10 @@ export const config = {
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean),
+  /** `auto` (default) detects https from the request / x-forwarded-proto; `true`/`false` force it. */
+  cookieSecure: parseSecureMode(ULAMS_COOKIE_SECURE),
+  /** Cookie name prefix over plain http (dev), where `__Host-` is rejected by browsers. */
+  cookieFallbackPrefix: ULAMS_COOKIE_FALLBACK_PREFIX ?? "",
   demoStudentEmail: DEMO_STUDENT_EMAIL || "student1@{slug}.ulams.app",
   /** Never logged or sent to the browser. */
   demoStudentPassword: DEMO_STUDENT_PASSWORD || "",

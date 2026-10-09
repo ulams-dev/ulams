@@ -77,6 +77,9 @@ export const Editor: React.FC<{
           title="H5P editor"
           style={{ width: '100%', height: Math.max(height, 400), border: 0, display: 'block' }}
           allow="fullscreen"
+          // allow-same-origin is required: the H5P embed page calls its own service with fetch and a
+          // bearer token and checks the parent's real origin (see front/sdk/src/frames.ts, SANDBOX_H5P)
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals allow-presentation"
           allowFullScreen
           referrerPolicy="no-referrer"
         />

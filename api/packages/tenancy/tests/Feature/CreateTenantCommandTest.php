@@ -230,7 +230,11 @@ class CreateTenantCommandTest extends TestCase
         File::deleteDirectory($this->storage);
         $this->runner->calls = [];
 
-        $this->domains->shouldReceive('add')->once()->withArgs(fn ($host, $values) => $host === 'acme.localhost' && $values['DB_DATABASE'] === 'ulams_acme');
+        config(['ulams_tenancy.scheme' => 'https', 'ulams_tenancy.content_host' => '{slug}.content.ulams.app']);
+        // sync-env writes the content origin of the current naming patterns to existing tenants
+        $this->domains->shouldReceive('add')->once()->withArgs(fn ($host, $values) => $host === 'acme.localhost'
+            && $values['DB_DATABASE'] === 'ulams_acme'
+            && $values['CONTENT_ORIGIN'] === 'https://acme.content.ulams.app');
         $this->artisan('ulams:tenant:sync-env', ['--migrate' => true])->assertExitCode(0);
 
         $this->assertSame(['migrate'], $this->runner->commands());

@@ -1,0 +1,111 @@
+<?php
+
+namespace Tests\Integrations;
+
+use PHPUnit\Framework\Attributes\DataProvider;
+use Tests\TestCase;
+
+/**
+ * Static checks of the proxy configuration for the content origin (docs/content-origin.md,
+ * "Same-site content origin"). The live behaviour is covered by the opt-in
+ * packages/scorm/tests/Integration/ContentOriginHeadersTest.php against Caddy.
+ */
+class ContentOriginHeadersConfigTest extends TestCase
+{
+    public static function caddyfiles(): array
+    {
+        return [
+            'development' => [__DIR__ . '/../../docker/conf/Caddyfile'],
+            'production example' => [__DIR__ . '/../../../front/docs-site/examples/production/Caddyfile'],
+        ];
+    }
+
+    private function read(string $path): string
+    {
+        if (!is_file($path)) {
+            $this->markTestSkipped("{$path} is outside the mounted api/ directory");
+        }
+
+        return file_get_contents($path);
+    }
+
+    /** The body of the `(content_origin) { ... }` snippet. */
+    private function snippet(string $caddyfile): string
+    {
+        $this->assertSame(1, preg_match('/^\(content_origin\) \{\n(.*?)^\}$/ms', $caddyfile, $m));
+
+        return $m[1];
+    }
+
+    #[DataProvider('caddyfiles')]
+    public function testTheContentOriginKeepsItsCspAndAddsIsolationHeaders(string $path): void
+    {
+        $snippet = $this->snippet($this->read($path));
+
+        $this->assertStringContainsString('Content-Security-Policy "default-src \'self\'', $snippet);
+        $this->assertStringContainsString("frame-ancestors 'self' {args[2]}", $snippet);
+        $this->assertMatchesRegularExpression('/>X-Content-Type-Options nosniff/', $snippet);
+        $this->assertMatchesRegularExpression('/>Cross-Origin-Opener-Policy same-origin/', $snippet);
+        $this->assertMatchesRegularExpression('/>Cross-Origin-Resource-Policy cross-origin/', $snippet);
+        $this->assertMatchesRegularExpression('/>Access-Control-Allow-Origin \*/', $snippet);
+        $this->assertStringContainsString('request_header -Cookie', $snippet);
+        $this->assertStringContainsString('header_down -Set-Cookie', $snippet);
+    }
+
+    #[DataProvider('caddyfiles')]
+    public function testNoSiteReflectsAContentOrigin(string $path): void
+    {
+        $caddyfile = $this->read($path);
+
+        // reflecting the request Origin is only allowed behind a matcher that excludes `null` and
+        // content origins; the old bare `header Origin {http.request.header.Origin}` is gone
+        $this->assertDoesNotMatchRegularExpression('/@origin\w*\s+header Origin \{http\.request\.header\.Origin\}/', $caddyfile);
+        preg_match_all('/@(origin\w*) \{(.*?)\}/s', $caddyfile, $matchers, PREG_SET_ORDER);
+        $this->assertNotEmpty($matchers);
+        foreach ($matchers as $matcher) {
+            $this->assertStringContainsString('not header_regexp Origin ^(null|https?://([^/:]+\.)*content\.)', $matcher[2], "@{$matcher[1]}");
+        }
+        // credentials only on those reflected answers
+        $this->assertDoesNotMatchRegularExpression('/^\s*header Access-Control-Allow-Credentials/m', $caddyfile);
+    }
+
+    #[DataProvider('caddyfiles')]
+    public function testOnlyTheTrackingEndpointsAreOpenToContentOriginsAndTakeNoCookies(string $path): void
+    {
+        $caddyfile = $this->read($path);
+
+        $this->assertSame(1, preg_match('/@tracking path (.*)\n/', $caddyfile, $m));
+        $this->assertSame('/api/scorm/content/* /api/liascript/progress/*', trim($m[1]));
+        $this->assertSame(1, preg_match('/handle @tracking \{\n\s*request_header -Cookie\n\s*request_header -Authorization/', $caddyfile));
+    }
+
+    #[DataProvider('caddyfiles')]
+    public function testTheFrontsRefuseNoCorsEmbeddingOfTheirJson(string $path): void
+    {
+        $caddyfile = $this->read($path);
+
+        $this->assertStringContainsString('header /bff/* Cross-Origin-Resource-Policy same-origin', $caddyfile);
+        $this->assertStringContainsString('header /studio/api/* Cross-Origin-Resource-Policy same-origin', $caddyfile);
+    }
+
+    public function testNoCorsAllowListContainsAContentOrigin(): void
+    {
+        $cors = config('cors');
+        $listed = array_merge((array) $cors['allowed_origins'], (array) $cors['allowed_origins_patterns']);
+
+        foreach ($listed as $entry) {
+            $this->assertDoesNotMatchRegularExpression('/(^|[.\/])content\./', (string) $entry, 'CORS allow-list names a content origin');
+        }
+        // credentials are never allowed together with the wildcard
+        $this->assertFalse($cors['supports_credentials']);
+    }
+
+    public function testTheTenantEnvFileNeverFeedsTheCorsAllowListsWithTheContentOrigin(): void
+    {
+        // the H5P service derives its CORS list from FRONTEND_URL and ADMIN_URL only (and drops
+        // content origins, api/h5p/test/cors-content-origin.test.ts); the API reads the origins
+        // above from config. Check that the keys written to the tenant env file keep it that way.
+        $source = file_get_contents(__DIR__ . '/../../packages/tenancy/src/Support/TenantNaming.php');
+        $this->assertDoesNotMatchRegularExpression('/(CORS|TRUSTED_ORIGINS)[A-Z_]*.{0,40}content_host/s', $source);
+    }
+}

@@ -1,4 +1,5 @@
 ---
+import { SANDBOX_THIRD_PARTY } from "@ulams/sdk/frames";
 import Icon from "./Icon.astro";
 
 interface Props {
@@ -32,6 +33,7 @@ const src = embedUrl(url);
         src={src}
         title={title}
         loading="lazy"
+        sandbox={SANDBOX_THIRD_PARTY}
         allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
         referrerpolicy="strict-origin-when-cross-origin"
         allowfullscreen

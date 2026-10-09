@@ -53,7 +53,8 @@ The H5P service re-reads the env files every `TENANT_RELOAD_CHECK_MS` (2 s).
 | Redis protocol | `api`, `h5p` | `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`; prefixes are set per tenant |
 | Object storage | `api`, `h5p` | `FILESYSTEM_DRIVER=s3`, `AWS_*`; `TENANCY_S3_*` for bucket creation; `S3_*` on `h5p` |
 | Tenancy | `api` | `TENANCY_*` host patterns, `TENANCY_PLATFORM_HOSTS`, `TENANT_DEMO_PASSWORD` |
-| Content origin | `api` | `CONTENT_ORIGIN` (platform), `TENANCY_CONTENT_HOST` (tenants) |
+| Content origin | `api` | `CONTENT_ORIGIN` (platform), `TENANCY_CONTENT_HOST` (tenants; `{slug}.content.<app domain>` for the same-site mode) |
+| Cookies and origins | `api`, `web` | `SESSION_COOKIE_PREFIX`, `TRUSTED_ORIGINS`, `ORIGIN_CHECK` (`api`); `ULAMS_COOKIE_SECURE`, `ULAMS_COOKIE_FALLBACK_PREFIX` (`web`) |
 | Services | `api`, `h5p`, `pdf` | `H5P_SERVICE_URL`, `H5P_INTERNAL_TOKEN`, `PDF_SERVICE_URL`, `PDF_INTERNAL_TOKEN` |
 | E-mail | `api` | `MAIL_*`, `MJML_API_URL` |
 | First admin | `api` | `INITIAL_USER_EMAIL`, `INITIAL_USER_PASSWORD` |

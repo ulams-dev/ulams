@@ -7,7 +7,7 @@ import { apiFor, getSettings, getSiteModel, publicData } from "../../lib/data.ts
 import { chromeFor, withSessionLink } from "../../lib/docs.ts";
 import { themeFor } from "../../lib/theme.ts";
 import { consultationModels } from "../../lib/view-model.ts";
-import { SESSION_COOKIE } from "../../lib/session.ts";
+import { hasSession } from "../../lib/session.ts";
 
 const tenant = Astro.locals.tenant;
 if (!tenant) return Astro.redirect("/");
@@ -37,7 +37,7 @@ const empty = webinars.length + inPerson.length + oneToOne.length === 0;
 ---
 
 <Base theme={theme} accent={settings?.theme?.accent} title={`Live sessions and events — ${site.tenant.name}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
-  {chrome.header && <Render doc={withSessionLink(chrome.header, Astro.cookies.has(SESSION_COOKIE))} data={site} />}
+  {chrome.header && <Render doc={withSessionLink(chrome.header, hasSession(Astro.cookies, Astro.locals.secure))} data={site} />}
   <main id="main" tabindex="-1">
     <header class="u-container u-events-head">
       <p class="u-eyebrow">{site.tenant.name}</p>

@@ -27,7 +27,9 @@ return [
     'front_host' => env('TENANCY_FRONT_HOST', '{slug}.app.localhost'),
     'admin_host' => env('TENANCY_ADMIN_HOST', '{slug}.admin.localhost'),
     // Content origin: serves SCORM/cmi5/... packages and their players, nothing else (no cookies,
-    // no API). Written as CONTENT_ORIGIN to the tenant env file.
+    // no API). Written as CONTENT_ORIGIN to the tenant env file. Production: a separate registrable
+    // domain ({slug}.ulams-content.net, strongest) or a subdomain of the app's site
+    // ({slug}.content.ulams.app, supported with the mitigations of api/docs/content-origin.md).
     'content_host' => env('TENANCY_CONTENT_HOST', '{slug}.content.localhost'),
     'email_domain' => env('TENANCY_EMAIL_DOMAIN', '{slug}.ulams.app'),
     'database' => env('TENANCY_DATABASE', 'ulams_{slug}'),
