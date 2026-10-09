@@ -633,7 +633,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       log, `Idempotency-Key`, `X-Request-Id`, `GET /api/meta`; admin "API tokens" page (ADR 0074)
 - [ ] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075; pending #74)
 - [ ] (new) S3 platform tenant API with queued provisioning (ADR 0078; pending #79)
-- [ ] (new) S4 course builder run-status endpoint `GET /api/admin/course-builder/runs/{run}`
+- [x] (new) S4 course builder run-status endpoint `GET /api/admin/course-builder/runs/{run}`
 - [ ] (new) S5 OpenAPI response schemas for the top 60 operations the CLI uses, after L0-11; stable operationIds
 - [ ] `npx create-ulams` / `docker compose up` with seed data
 - [ ] Docs site with runnable examples; free cloud sandbox tenant (partial: Starlight site in `front/docs-site` on branch `docs/starlight-site`; runnable examples and the sandbox tenant pending)
