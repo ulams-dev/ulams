@@ -58,6 +58,12 @@ class AdaptSourceTest extends TestCase
         $this->actingAs($admin, 'api')->postJson("/api/admin/adapt/{$id}/versions", ['source' => $v2, 'change_note' => 'wording'])
             ->assertCreated()
             ->assertJsonPath('data.current_version', 2);
+        $this->actingAs($admin, 'api')->getJson("/api/admin/adapt/{$id}/versions")
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('data.0.version', 2)
+            ->assertJsonPath('data.0.change_note', 'wording')
+            ->assertJsonMissingPath('data.0.source');
         $this->actingAs($admin, 'api')->getJson("/api/admin/adapt/{$id}/source?version=1")->assertOk()->assertJsonPath('components.0.body', 'Hello');
 
         // the build worker answers with a spoor SCORM export
