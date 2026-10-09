@@ -177,6 +177,8 @@ virus-scan hook), see [packages/uploads/README.md](../packages/uploads/README.md
 | `UPLOADS_LIASCRIPT_MAX_MB`                  | Largest LiaScript `.md` or `.zip` upload                        | `128`             |
 | `LIASCRIPT_MAX_MARKDOWN_KB`                 | Largest LiaScript Markdown source (`packages/liascript`)        | `2048`            |
 | `LIASCRIPT_DISK`                            | Disk for LiaScript assets                                       | `FILESYSTEM_DRIVER` |
+| `LIASCRIPT_PROGRESS_TOKEN_TTL`              | Lifetime of the LiaScript player's progress token, seconds      | `14400`           |
+| `LIASCRIPT_PLAYER_BUILD_PATH`               | Folder of the fetched LiaScript build                           | `packages/liascript/resources/player/build` |
 
 ## LTI 1.3 (`packages/lti`)
 
@@ -194,3 +196,14 @@ virus-scan hook), see [packages/uploads/README.md](../packages/uploads/README.md
 | `LTI_HTTP_TIMEOUT`            | Timeout of outgoing LTI requests, seconds                                   | `10`      |
 | `LTI_JWKS_CACHE_TTL`          | Cache lifetime of fetched key sets, seconds                                 | `600`     |
 | `LTI_TOOL_LANDING_URL`        | Where a tool-side launch lands (`{front}`, `{code}`, `{course}`)            | `{front}/lti/launch?code={code}&course={course}` |
+
+## Adapt Path B (`packages/adapt`, ADR 0013)
+
+| Variable name           | Description                                                        | Default                     |
+| ----------------------- | ------------------------------------------------------------------ | --------------------------- |
+| `ADAPT_SOURCE_ENABLED`  | Adapt JSON sources and builds (off: the API answers 404)           | `false`                     |
+| `ADAPT_BUILDER_URL`     | Build worker (GPL-3.0 service, compose profile `adapt`)            | `http://adapt-builder:8080` |
+| `ADAPT_BUILDER_TOKEN`   | `X-Internal-Token` for the worker                                  | (empty)                     |
+| `ADAPT_BUILDER_TIMEOUT` | Seconds to wait for a build                                        | `300`                       |
+| `ADAPT_MAX_SOURCE_KB`   | Largest JSON source                                                | `4096`                      |
+

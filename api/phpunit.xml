@@ -124,6 +124,9 @@
     <testsuite name="translations">
       <directory suffix="Test.php">./packages/translations</directory>
     </testsuite>
+    <testsuite name="adapt">
+      <directory suffix="Test.php">./packages/adapt/tests</directory>
+    </testsuite>
     <testsuite name="liascript">
       <directory suffix="Test.php">./packages/liascript/tests</directory>
     </testsuite>
@@ -210,6 +213,7 @@
       <directory suffix=".php">./packages/uploads/</directory>
       <directory suffix=".php">./packages/lti/</directory>
       <directory suffix=".php">./packages/liascript/</directory>
+      <directory suffix=".php">./packages/adapt/</directory>
       <directory suffix=".php">./packages/vouchers/</directory>
       <directory suffix=".php">./packages/consultations/</directory>
       <directory suffix=".php">./packages/consultation-access/</directory>
