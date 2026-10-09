@@ -1,4 +1,4 @@
-# 0014. Public comparison with other learning platforms: sourced data, neutral values
+# 0020. Public comparison with other learning platforms: sourced data, neutral values
 
 - Status: Proposed
 - Date: 2026-10-09
