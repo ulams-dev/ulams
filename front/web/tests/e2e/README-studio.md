@@ -47,6 +47,24 @@ tests/e2e/studio-updates.spec.ts`. The updates spec builds a course from `coffee
 uploads `coffee-brewing.v2.md` through the sources API, then reviews and applies the proposal; it
 needs the queue to run jobs (`QUEUE_CONNECTION=sync`).
 
-Variables: `STUDIO_BASE_URL` (default `http://e2e.app.localhost:4329`), `STUDIO_API_URL`
+`studio-living-course.spec.ts` is the end-to-end test of the whole Living Course (build and publish a
+course, a learner completes a lesson and its quiz through the learner API, the author uploads
+`coffee-brewing.v2.md`, reviews, applies, the learner sees the notices with progress unchanged, the audit
+page verifies the chain). It also needs a verified learner:
+
+```bash
+php artisan tinker --execute='$u = Ulams\Core\Models\User::firstOrCreate(["email" => "learner@e2e.test"], ["first_name" => "Lee", "last_name" => "Learner", "password" => bcrypt("e2e-learner-secret"), "is_active" => true, "email_verified_at" => now()]); $u->syncRoles(["student"]);'
+```
+
+Extra API settings for this spec: `LIVING_COURSE_WEBHOOK_DEBOUNCE_SECONDS=0` and
+`COURSE_BUILDER_SESSIONS_PER_DAY=500` (every project builds its own course; the default limit is 10 sessions per author
+and day, counting the ones a refused connect removed). A learner's quiz attempt schedules a delayed job that ends it, and
+the `sync` queue runs that job at once, which ends the attempt as soon as it starts. So run this spec with a real queue
+(`QUEUE_CONNECTION=database` and one `php artisan queue:work database` in the API container) instead of `sync`, and run
+it with `--workers=1` (the two projects would otherwise build two courses with the same author at once, and the API
+allows one AI run at a time per author). Its second test fills the "Add web pages" form with a private address and
+checks the readable refusal.
+
+Variables: `STUDIO_LEARNER_EMAIL`, `STUDIO_LEARNER_PASSWORD`, `STUDIO_BASE_URL` (default `http://e2e.app.localhost:4329`), `STUDIO_API_URL`
 (`http://127.0.0.1:18081`), `STUDIO_AUTHOR_EMAIL`, `STUDIO_AUTHOR_PASSWORD`. Each run creates one
 course in the database.
