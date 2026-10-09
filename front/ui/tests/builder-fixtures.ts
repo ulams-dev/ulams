@@ -80,6 +80,12 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
     warnings: [{ code: "accessibility", message: "“Grinding”: heading level jumps from h2 to h4." }],
     notes: [],
   },
+  SitePicker: {
+    questionKey: "site",
+    label: "Where should the course be published?",
+    status: "open",
+    defaultValue: { mode: "current" },
+  },
   DecideForMe: { label: "Decide the rest for me", open: 3 },
   SourceCard: {
     sourceId: "01src",

@@ -77,7 +77,9 @@ export function mountThread(root: HTMLElement): void {
     if (!state.aiEnabled) {
       dropError.textContent = "AI features are disabled on this installation. Ask your admin to configure them.";
     }
-    const brief = state.briefRows ?? [];
+    const brief = [...(state.briefRows ?? [])];
+    // operators can choose a new site even before the brief has a site row
+    if (state.canCreateSite && !brief.some((row) => row.key === "site")) brief.push({ key: "site", label: "Site", value: "This site" });
     const decided = (state.brief?.decidedBy ?? {}) as Record<string, string>;
     const editing = panel.dataset.editing ?? "";
     const stopEditing = () => {

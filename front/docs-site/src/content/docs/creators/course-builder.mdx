@@ -167,6 +167,23 @@ for a paid course makes its product purchasable (see [Pricing](/creators/pricing
 the course's own content and replaces the standard course page; if it is ever not valid, learners see the
 standard page. The success page also links to the course form in the admin, the learner preview and the landing preview.
 
+### Publish on a new site
+
+Platform operators (people with the `platform_admin` permission, on an installation that sets
+`TENANCY_NEW_SITES=true`) can give a course its own site. Press **Edit** on the **Site** row of the Course
+brief and choose **A new site**, with a short name (letters, digits and dashes). On the success page,
+**Create the site and move this course** then:
+
+1. creates the site (its own database, storage, theme and accounts; this takes a few minutes and the page shows
+   the progress),
+2. moves your session to it: the brief, the latest version, your sources and all their passages, so every citation
+   still points to the same passage,
+3. creates your account in the new site as an administrator and e-mails you an invitation.
+
+Then **Continue in the new site** and finish there: apply the course, pick the theme, publish. Nothing is
+applied or published on the new site before you do, and the course in the original site is not touched. Everyone
+else publishes into the current site.
+
 ## 10. Keep the course in sync with its sources
 
 Once the course exists, the **Sources** page (in the left navigation) shows each source of the

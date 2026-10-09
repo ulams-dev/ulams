@@ -59,3 +59,89 @@ if (root) {
   };
   void show();
 }
+
+/**
+ * "New site": for platform operators who chose a new site in the brief. Creates the site, moves this
+ * session there and links to the studio of the new site; progress is polled from the session state.
+ */
+const siteRoot = document.querySelector<HTMLElement>("[data-new-site]");
+if (siteRoot) {
+  const id = siteRoot.dataset.session!;
+  const cb = studioClient();
+  const labels: Record<string, string> = {
+    queued: "Waiting for a worker…",
+    provisioning: "Creating the site (database, storage, accounts). This takes a few minutes.",
+    transferring: "Moving your course to the new site…",
+  };
+  const render = (state: Awaited<ReturnType<typeof cb.sessions.get>>): boolean => {
+    const site = state.brief?.site;
+    if (!state.canCreateSite || (site?.mode !== "new" && !state.newSite)) {
+      siteRoot.hidden = true;
+      return false;
+    }
+    siteRoot.hidden = false;
+    const slug = state.newSite?.slug ?? site?.slug ?? "";
+    const section = document.createElement("section");
+    section.className = "cb-card";
+    section.setAttribute("aria-labelledby", "st-newsite-title");
+    const heading = document.createElement("h2");
+    heading.id = "st-newsite-title";
+    heading.className = "cb-h3";
+    heading.textContent = "New site";
+    section.append(heading);
+    const status = state.newSite?.status;
+    const note = document.createElement("p");
+    note.setAttribute("role", "status");
+    if (status === "done") {
+      note.textContent = `The site ${slug} is ready. Your course moved there; ${state.newSite?.invited ? "an invitation was sent to your e-mail address." : "sign in with your usual e-mail address (ask an admin for a password link)."}`;
+      section.append(note);
+      if (state.newSite?.studioUrl) {
+        const link = document.createElement("a");
+        link.className = "cb-btn cb-btn-primary";
+        link.href = state.newSite.studioUrl;
+        link.textContent = "Continue in the new site";
+        section.append(link);
+      }
+    } else if (status === "queued" || status === "provisioning" || status === "transferring") {
+      note.textContent = labels[status] ?? "Working…";
+      section.append(note);
+    } else {
+      note.textContent = `Create the site ${slug} and move this course to it. You apply, choose the theme and publish there.`;
+      section.append(note);
+      if (status === "failed") {
+        const error = document.createElement("p");
+        error.className = "cb-error";
+        error.setAttribute("role", "alert");
+        error.textContent = state.newSite?.error ?? "Creating the site failed.";
+        section.append(error);
+      }
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "cb-btn cb-btn-primary";
+      button.textContent = status === "failed" ? "Try again" : `Create ${slug} and move this course`;
+      button.addEventListener("click", async () => {
+        button.disabled = true;
+        try {
+          await cb.newSite(id, slug);
+          await tick();
+        } catch (error) {
+          announce(message(error, "The site could not be created."));
+          button.disabled = false;
+        }
+      });
+      section.append(button);
+    }
+    siteRoot.replaceChildren(section);
+
+    return status === "queued" || status === "provisioning" || status === "transferring";
+  };
+  const tick = async (): Promise<void> => {
+    try {
+      const busy = render(await cb.sessions.get(id));
+      if (busy) window.setTimeout(() => void tick(), 3000);
+    } catch {
+      window.setTimeout(() => void tick(), 8000);
+    }
+  };
+  void tick();
+}

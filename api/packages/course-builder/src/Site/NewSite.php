@@ -9,7 +9,7 @@ use Throwable;
 use Ulams\CourseBuilder\Jobs\MoveToNewSiteJob;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Transfer\SessionArchive;
-use Ulams\Tenancy\Enums\TenancyPermissionsEnum;
+use Ulams\Auth\Enums\AuthPermissionsEnum;
 use Ulams\Tenancy\Models\Tenant;
 use Ulams\Tenancy\Services\Contracts\TenantCommandRunnerContract;
 use Ulams\Tenancy\Support\TenantNaming;
@@ -17,7 +17,7 @@ use Ulams\Tenancy\Support\TenantNaming;
 /**
  * "New site" for a course (ADR 0048): provisions a tenant on the platform, moves the builder session
  * to it and invites the author there, so the author continues (apply, theme, publish) in the new site.
- * Switched on with TENANCY_NEW_SITES and open to people holding `tenancy_manage`; the progress is kept
+ * Switched on with TENANCY_NEW_SITES and open to people holding `platform_admin`; the progress is kept
  * in the session state (`newSite`) for the studio.
  */
 final class NewSite
@@ -30,7 +30,7 @@ final class NewSite
     {
         return class_exists(Tenant::class)
             && (bool) config('ulams_tenancy.new_sites', false)
-            && $user !== null && method_exists($user, 'can') && $user->can(TenancyPermissionsEnum::TENANCY_MANAGE);
+            && $user !== null && method_exists($user, 'can') && $user->can(AuthPermissionsEnum::PLATFORM_ADMIN);
     }
 
     /** @return array<string,mixed> */

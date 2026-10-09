@@ -13,7 +13,7 @@ use Ulams\CourseBuilder\Models\Source;
 use Ulams\CourseBuilder\Models\Version;
 use Ulams\CourseBuilder\Tests\TestCase;
 use Ulams\CourseBuilder\Transfer\SessionArchive;
-use Ulams\Tenancy\Enums\TenancyPermissionsEnum;
+use Ulams\Auth\Enums\AuthPermissionsEnum;
 use Ulams\Tenancy\Services\Contracts\TenantCommandRunnerContract;
 
 /** Moving a builder session to another site: the archive round trip and the "new site" flow (ADR 0048). */
@@ -29,8 +29,8 @@ class NewSiteTest extends TestCase
     private function operator()
     {
         $user = $this->author();
-        Permission::findOrCreate(TenancyPermissionsEnum::TENANCY_MANAGE, 'api');
-        $user->givePermissionTo(TenancyPermissionsEnum::TENANCY_MANAGE);
+        Permission::findOrCreate(AuthPermissionsEnum::PLATFORM_ADMIN, 'api');
+        $user->givePermissionTo(AuthPermissionsEnum::PLATFORM_ADMIN);
 
         return $user;
     }
