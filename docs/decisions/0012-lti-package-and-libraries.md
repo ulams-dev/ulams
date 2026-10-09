@@ -1,6 +1,6 @@
 # 0012. LTI 1.3: one `lti` package, first-party platform side, packbackbooks tool side
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement
