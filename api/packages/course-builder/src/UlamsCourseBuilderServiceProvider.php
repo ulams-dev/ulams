@@ -8,6 +8,7 @@ use Ulams\Ai\Prompts\PromptRegistry;
 use Ulams\Ai\UlamsAiServiceProvider;
 use Ulams\CourseBuilder\Apply\BlueprintApplier;
 use Ulams\CourseBuilder\Apply\DeleteEverything;
+use Ulams\CourseBuilder\Apply\SiteTheme;
 use Ulams\CourseBuilder\Contracts\FragmentArchive;
 use Ulams\CourseBuilder\Contracts\RemovalPolicy;
 use Ulams\CourseBuilder\Ingestion\NoFragmentArchive;
@@ -30,6 +31,7 @@ use Ulams\CourseBuilder\Ui\Surfaces;
 use Ulams\CourseBuilder\Ui\UiCatalogue;
 use Ulams\Courses\UlamsCourseServiceProvider;
 use Ulams\Pages\UlamsPagesServiceProvider;
+use Ulams\Settings\UlamsSettingsServiceProvider;
 use Ulams\TopicTypeGift\UlamsTopicTypeGiftServiceProvider;
 use Ulams\TopicTypes\UlamsTopicTypesServiceProvider;
 use Ulams\Uploads\UlamsUploadsServiceProvider;
@@ -56,6 +58,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         GenerationService::class => GenerationService::class,
         PatchService::class => PatchService::class,
         BlueprintApplier::class => BlueprintApplier::class,
+        SiteTheme::class => SiteTheme::class,
         RunService::class => RunService::class,
         RemovalPolicy::class => DeleteEverything::class,
         FragmentArchive::class => NoFragmentArchive::class,
@@ -64,7 +67,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/course_builder.php', 'course_builder');
-        foreach ([UlamsAiServiceProvider::class, UlamsUploadsServiceProvider::class, UlamsCourseServiceProvider::class, UlamsTopicTypesServiceProvider::class, UlamsTopicTypeGiftServiceProvider::class, UlamsPagesServiceProvider::class] as $provider) {
+        foreach ([UlamsAiServiceProvider::class, UlamsUploadsServiceProvider::class, UlamsCourseServiceProvider::class, UlamsTopicTypesServiceProvider::class, UlamsTopicTypeGiftServiceProvider::class, UlamsPagesServiceProvider::class, UlamsSettingsServiceProvider::class] as $provider) {
             $this->app->register($provider);
         }
     }

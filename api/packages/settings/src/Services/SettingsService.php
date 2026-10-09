@@ -53,4 +53,12 @@ class SettingsService implements SettingsServiceContract
     {
         return DB::table('settings')->select('group')->distinct()->pluck('group');
     }
+
+    public function put(string $group, string $key, string $value, string $type = 'text', bool $public = true): Model
+    {
+        return Setting::query()->updateOrCreate(
+            ['group' => $group, 'key' => $key],
+            ['value' => $value, 'type' => $type, 'public' => $public, 'enumerable' => true]
+        );
+    }
 }

@@ -85,10 +85,25 @@ final class PromptContext
         return $blocks;
     }
 
+    /**
+     * The brief fields that shape the writing. Price, theme and site do not, so they stay out of the
+     * prompt (and the cache key): changing them never invalidates generated content.
+     */
+    public static function contentBrief(array $brief): array
+    {
+        $drop = ['pricing', 'theme', 'site'];
+        $brief = array_diff_key($brief, array_flip($drop));
+        if (is_array($brief['decidedBy'] ?? null)) {
+            $brief['decidedBy'] = array_diff_key($brief['decidedBy'], array_flip($drop));
+        }
+
+        return $brief;
+    }
+
     /** Brief + outline, the second cache breakpoint. */
     public function contextBlock(Session $session, ?array $outline = null): ContentBlock
     {
-        $text = '<course_brief>' . json_encode($session->brief, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "</course_brief>\n";
+        $text = '<course_brief>' . json_encode(self::contentBrief((array) $session->brief), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "</course_brief>\n";
         if ($outline !== null) {
             $text .= '<approved_outline>' . json_encode(self::compactOutline($outline), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</approved_outline>';
         }

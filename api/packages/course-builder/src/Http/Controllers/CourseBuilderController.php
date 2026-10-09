@@ -26,6 +26,7 @@ use Ulams\CourseBuilder\Pipeline\BriefService;
 use Ulams\CourseBuilder\Pipeline\GenerationService;
 use Ulams\CourseBuilder\Pipeline\OutlineService;
 use Ulams\CourseBuilder\Pipeline\PatchService;
+use Ulams\CourseBuilder\Pipeline\PromptContext;
 use Ulams\CourseBuilder\Services\RunService;
 use Ulams\CourseBuilder\Services\RunStatus;
 use Ulams\CourseBuilder\Services\SessionState;
@@ -209,8 +210,21 @@ class CourseBuilderController extends Controller
     public function updateBrief(Request $request, string $session): JsonResponse
     {
         $s = $this->sessionFor($request, $session, 'update');
-        $brief = array_replace_recursive($this->briefs->current($s), (array) $request->input('brief', $request->except('brief')));
-        foreach (array_keys((array) $request->input('brief', $request->except('brief'))) as $field) {
+        $before = $this->briefs->current($s);
+        $patch = (array) $request->input('brief', $request->except('brief'));
+        try {
+            // price, theme and site are replaced as a whole (a merge would keep a stale amount)
+            foreach (['pricing' => 'pricing', 'theme' => 'theme', 'site' => 'site'] as $field => $normalise) {
+                if (array_key_exists($field, $patch)) {
+                    $patch[$field] = BriefService::$normalise($patch[$field]);
+                    unset($before[$field]);
+                }
+            }
+        } catch (InvalidArgumentException $e) {
+            return self::fail($e->getMessage(), 422);
+        }
+        $brief = array_replace_recursive($before, $patch);
+        foreach (array_keys($patch) as $field) {
             if ($field !== 'decidedBy') {
                 $brief['decidedBy'][$field] = 'author';
             }
@@ -222,8 +236,12 @@ class CourseBuilderController extends Controller
         }
         $s->brief = $brief;
         $s->brief_version++;
-        $stale = in_array($s->status, [Session::OUTLINE_REVIEW, Session::GENERATING, Session::APPLY_REVIEW, Session::APPLIED], true);
-        $s->putState('briefStale', $stale);
+        // only fields that shape the writing make stages stale: not price, theme or site
+        $changesContent = PromptContext::contentBrief($before) !== PromptContext::contentBrief($brief);
+        $stale = $changesContent && in_array($s->status, [Session::OUTLINE_REVIEW, Session::GENERATING, Session::APPLY_REVIEW, Session::APPLIED], true);
+        if ($stale) {
+            $s->putState('briefStale', true);
+        }
         $s->save();
         $this->events->stateDelta($s, null, [['op' => 'replace', 'path' => '/brief', 'value' => $brief], ['op' => 'replace', 'path' => '/briefRows', 'value' => BriefService::rows($brief)]]);
         if ($stale) {

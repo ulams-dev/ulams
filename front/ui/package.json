@@ -17,7 +17,8 @@
     "./styles/*": "./src/styles/*",
     "./html": "./src/lib/html.ts",
     "./builder/*": "./src/builder/*",
-    "./brand/*": "./src/brand/*"
+    "./brand/*": "./src/brand/*",
+    "./theme/*": "./src/theme/*"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
