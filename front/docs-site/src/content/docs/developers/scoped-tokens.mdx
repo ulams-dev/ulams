@@ -136,6 +136,5 @@ Learners, authors and admins manage their own tokens on the account page of the 
 it. The page posts plain forms to `/account` and calls `GET|POST /api/auth/tokens` and
 `DELETE /api/auth/tokens/{id}` with the user's own login token; the API enforces every rule above.
 
-<Aside type="note" title="Coming">
-  The platform tenant API is a separate step of the plan.
-</Aside>
+The `platform` scopes are for the [platform tenant API](/operators/platform-api/), which exists on platform
+hosts only and only when `TENANCY_PLATFORM_API=true`.

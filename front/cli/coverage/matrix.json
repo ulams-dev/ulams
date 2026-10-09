@@ -1,5 +1,5 @@
 {
- "summary": "494/536 covered, 42 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "504/547 covered, 43 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -467,6 +467,12 @@
    "key": "GET /api/admin/courses/{id}/export",
    "summary": "",
    "command": "courses.export",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/csp-reports",
+   "summary": "List the aggregated CSP violation reports",
+   "command": "csp-reports.list",
    "status": "covered"
   },
   {
@@ -2516,6 +2522,12 @@
    "status": "excluded: browser-only"
   },
   {
+   "key": "POST /api/csp-report",
+   "summary": "Collect a Content Security Policy violation report",
+   "command": "public.csp-report-create",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/demo",
    "summary": "Demo mode status and the accounts used for the automatic login",
    "command": "public.demo-list",
@@ -2600,6 +2612,12 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/lti/frame-origins",
+   "summary": "Origins of the enabled external tools of this tenant",
+   "command": "public.lti-frame-origins",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/lti/jwks",
    "summary": "Public key set of this tenant (LTI platform and tool side)",
    "command": "",
@@ -2662,6 +2680,12 @@
   {
    "key": "POST /api/lti/platform/deep-links",
    "summary": "Deep-linking return URL (the tool posts the author's selection here)",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/lti/platform/nrps/{course}",
+   "summary": "NRPS: members of a course (membership container)",
    "command": "",
    "status": "excluded: browser-only"
   },
@@ -2807,6 +2831,48 @@
    "key": "GET /api/pdfs/{id}",
    "summary": "Display the specified generated PDF",
    "command": "my.pdfs-get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/platform/operations",
+   "summary": "The latest tenant operations",
+   "command": "tenants.operations.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/platform/operations/{id}",
+   "summary": "Status and steps of a tenant operation (poll it)",
+   "command": "tenants.operations.get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/platform/tenants",
+   "summary": "List the tenants",
+   "command": "tenants.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/platform/tenants",
+   "summary": "Create a tenant (queued; poll the operation)",
+   "command": "tenants.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/platform/tenants/{slug}",
+   "summary": "One tenant",
+   "command": "tenants.get",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/platform/tenants/{slug}",
+   "summary": "Delete a tenant and all its data (queued; send the slug as confirm)",
+   "command": "tenants.delete",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/platform/tenants/{slug}/env",
+   "summary": "Override or reset inheritable settings (AI driver, models) of a tenant",
+   "command": "tenants.set-env",
    "status": "covered"
   },
   {

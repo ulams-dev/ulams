@@ -3,6 +3,9 @@
 namespace Ulams\Tenancy;
 
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Ulams\Tenancy\Console\CreateTenantCommand;
 use Ulams\Tenancy\Console\DeleteTenantCommand;
@@ -61,6 +64,8 @@ class UlamsTenancyServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        RateLimiter::for('ulams-platform', fn (Request $request) => Limit::perMinute(60)->by('platform:' . ($request->user('api')?->getAuthIdentifier() ?? $request->ip())));
 
         $kernel = $this->app->make(HttpKernel::class);
         if (method_exists($kernel, 'prependMiddleware')) {

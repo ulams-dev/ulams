@@ -2313,6 +2313,155 @@
     ],
     "type": "object"
    },
+   "PlatformOperation": {
+    "properties": {
+     "created_at": {
+      "type": "string"
+     },
+     "error": {
+      "nullable": true,
+      "type": "string"
+     },
+     "finished_at": {
+      "nullable": true,
+      "type": "string"
+     },
+     "id": {
+      "example": "01j9z3k8m2x4q7r5t6v8w0y1ab",
+      "type": "string"
+     },
+     "kind": {
+      "enum": [
+       "create",
+       "delete"
+      ],
+      "type": "string"
+     },
+     "requested_by": {
+      "nullable": true,
+      "type": "integer"
+     },
+     "started_at": {
+      "nullable": true,
+      "type": "string"
+     },
+     "status": {
+      "enum": [
+       "queued",
+       "running",
+       "succeeded",
+       "failed"
+      ],
+      "type": "string"
+     },
+     "steps": {
+      "items": {
+       "properties": {
+        "error": {
+         "nullable": true,
+         "type": "string"
+        },
+        "finishedAt": {
+         "nullable": true,
+         "type": "string"
+        },
+        "name": {
+         "type": "string"
+        },
+        "startedAt": {
+         "nullable": true,
+         "type": "string"
+        },
+        "status": {
+         "enum": [
+          "pending",
+          "running",
+          "succeeded",
+          "skipped",
+          "failed"
+         ],
+         "type": "string"
+        }
+       },
+       "type": "object"
+      },
+      "type": "array"
+     },
+     "tenant": {
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "PlatformTenant": {
+    "properties": {
+     "accent": {
+      "nullable": true,
+      "type": "string"
+     },
+     "created_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "demo": {
+      "type": "boolean"
+     },
+     "env_override_keys": {
+      "description": "Names only, never values",
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "last_error": {
+      "nullable": true,
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "slug": {
+      "description": "The platform tenant API (ADR 0078): only on a platform host with TENANCY_PLATFORM_API=true (404\notherwise), for users with the `platform_admin` permission; scoped tokens need `platform:read|write`.",
+      "example": "coffee",
+      "type": "string"
+     },
+     "status": {
+      "enum": [
+       "provisioning",
+       "active",
+       "failed"
+      ],
+      "type": "string"
+     },
+     "steps": {
+      "description": "Finished provisioning steps with their time",
+      "type": "object"
+     },
+     "theme": {
+      "nullable": true,
+      "type": "string"
+     },
+     "updated_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "urls": {
+      "properties": {
+       "admin": {
+        "type": "string"
+       },
+       "api": {
+        "type": "string"
+       },
+       "front": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     }
+    },
+    "type": "object"
+   },
    "Product": {
     "properties": {
      "id": {
@@ -7179,6 +7328,93 @@
     ],
     "tags": [
      "Admin Courses"
+    ]
+   }
+  },
+  "/api/admin/csp-reports": {
+   "get": {
+    "description": "Admins only. Newest first.",
+    "operationId": "1019392d092cea54f12c8fe80cccf2bf",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "per_page",
+      "required": false,
+      "schema": {
+       "maximum": 100,
+       "minimum": 1,
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "properties": {
+             "blocked_host": {
+              "example": "tool.example.test",
+              "type": "string"
+             },
+             "count": {
+              "type": "integer"
+             },
+             "directive": {
+              "example": "frame-src",
+              "type": "string"
+             },
+             "document_path": {
+              "example": "/learn/1/2",
+              "type": "string"
+             },
+             "first_seen_at": {
+              "format": "date-time",
+              "type": "string"
+             },
+             "id": {
+              "type": "integer"
+             },
+             "last_seen_at": {
+              "format": "date-time",
+              "type": "string"
+             }
+            },
+            "type": "object"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "successful operation"
+     },
+     "401": {
+      "description": "Endpoint requires authentication"
+     },
+     "403": {
+      "description": "User is not an admin"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List the aggregated CSP violation reports",
+    "tags": [
+     "Core Admin"
     ]
    }
   },
@@ -23839,6 +24075,50 @@
     ]
    }
   },
+  "/api/csp-report": {
+   "post": {
+    "description": "Public, rate limited (60 per minute and IP), body up to 16 KB. Accepts `application/csp-report` (report-uri) and `application/reports+json` (Reporting API). Only the directive, the host of the blocked resource and the path of the page are kept, aggregated with a counter, and pruned after 30 days.",
+    "operationId": "85f7ae7cab7ab8ec520e63e6c427b339",
+    "requestBody": {
+     "content": {
+      "application/csp-report": {
+       "schema": {
+        "type": "object"
+       }
+      },
+      "application/reports+json": {
+       "schema": {
+        "items": {
+         "type": "object"
+        },
+        "type": "array"
+       }
+      }
+     }
+    },
+    "responses": {
+     "204": {
+      "description": "Report accepted"
+     },
+     "400": {
+      "description": "The body is not a JSON report"
+     },
+     "413": {
+      "description": "The body is larger than 16 KB"
+     },
+     "415": {
+      "description": "Unsupported content type"
+     },
+     "429": {
+      "description": "Too many reports"
+     }
+    },
+    "summary": "Collect a Content Security Policy violation report",
+    "tags": [
+     "Core"
+    ]
+   }
+  },
   "/api/demo": {
    "get": {
     "description": "Exists only on a tenant with DEMO_MODE=true; 404 everywhere else.",
@@ -24538,6 +24818,43 @@
     ]
    }
   },
+  "/api/lti/frame-origins": {
+   "get": {
+    "description": "For the front's Content Security Policy: the `frame-src` of a learner page must name the origins a tool launch loads (its OIDC login, launch and deep-linking URLs). Public and cached for 5 minutes; it reveals only the origins of tools the tenant registered for its learners.",
+    "operationId": "9501c319c6b2b356ec601963caad0176",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "example": "https://www.geogebra.org",
+            "type": "string"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Sorted, unique origins (`scheme://host[:port]`)"
+     }
+    },
+    "summary": "Origins of the enabled external tools of this tenant",
+    "tags": [
+     "LTI"
+    ]
+   }
+  },
   "/api/lti/jwks": {
    "get": {
     "description": "Also served at /.well-known/jwks.json. Contains the next, active and recently retired keys.",
@@ -24838,6 +25155,66 @@
      }
     },
     "summary": "Deep-linking return URL (the tool posts the author's selection here)",
+    "tags": [
+     "LTI"
+    ]
+   }
+  },
+  "/api/lti/platform/nrps/{course}": {
+   "get": {
+    "description": "Bearer token from /api/lti/platform/token with scope https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly. Names and e-mails only when the tool registration shares them. Paged by `limit` (max 100) and `page`; a Link header with rel=next points to the next page. `role` filters by LTI role.",
+    "operationId": "d7b8c3bdee515c8afd8f24fc61ec218c",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "maximum": 100,
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "page",
+      "required": false,
+      "schema": {
+       "minimum": 1,
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "role",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "application/vnd.ims.lti-nrps.v2.membershipcontainer+json"
+     },
+     "401": {
+      "description": "invalid token"
+     },
+     "403": {
+      "description": "scope missing or NRPS not enabled for the tool"
+     },
+     "404": {
+      "description": "the course holds no link of this tool"
+     }
+    },
+    "summary": "NRPS: members of a course (membership container)",
     "tags": [
      "LTI"
     ]
@@ -25836,6 +26213,432 @@
     "summary": "Display the specified generated PDF",
     "tags": [
      "Template PDFs"
+    ]
+   }
+  },
+  "/api/platform/operations": {
+   "get": {
+    "operationId": "fd8a8310786cb7d3b749da1945c41573",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "$ref": "#/components/schemas/PlatformOperation"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Up to 50 operations, newest first"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The latest tenant operations",
+    "tags": [
+     "Platform"
+    ]
+   }
+  },
+  "/api/platform/operations/{id}": {
+   "get": {
+    "operationId": "63486428fcc1835220898ec2e1775315",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/PlatformOperation"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The operation"
+     },
+     "404": {
+      "description": "Unknown operation"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Status and steps of a tenant operation (poll it)",
+    "tags": [
+     "Platform"
+    ]
+   }
+  },
+  "/api/platform/tenants": {
+   "get": {
+    "operationId": "4ee59d29162c33be46676ac192fea763",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "$ref": "#/components/schemas/PlatformTenant"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Tenants"
+     },
+     "403": {
+      "description": "Not a platform administrator, or the token lacks platform:read"
+     },
+     "404": {
+      "description": "The platform API is off, or this is a tenant host"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List the tenants",
+    "tags": [
+     "Platform"
+    ]
+   },
+   "post": {
+    "operationId": "135135c2c7a8b3f064f45fc65b42e3e2",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "accent": {
+          "example": "#C2552D",
+          "type": "string"
+         },
+         "demo": {
+          "type": "boolean"
+         },
+         "name": {
+          "type": "string"
+         },
+         "slug": {
+          "description": "2-30 lowercase letters and digits, starting with a letter",
+          "example": "acme",
+          "type": "string"
+         },
+         "theme": {
+          "example": "coffee",
+          "type": "string"
+         },
+         "users": {
+          "maximum": 50,
+          "minimum": 0,
+          "type": "integer"
+         }
+        },
+        "required": [
+         "slug"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "operation": {
+             "$ref": "#/components/schemas/PlatformOperation"
+            },
+            "tenant": {
+             "$ref": "#/components/schemas/PlatformTenant"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Queued"
+     },
+     "409": {
+      "description": "The tenant exists, or an operation for it is in progress"
+     },
+     "422": {
+      "description": "Invalid slug or option"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create a tenant (queued; poll the operation)",
+    "tags": [
+     "Platform"
+    ]
+   }
+  },
+  "/api/platform/tenants/{slug}": {
+   "delete": {
+    "operationId": "7e5d0171cf58c83d4e39f68c56ab1f6d",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "confirm": {
+          "description": "Must equal the slug",
+          "type": "string"
+         }
+        },
+        "required": [
+         "confirm"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "operation": {
+             "$ref": "#/components/schemas/PlatformOperation"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Queued"
+     },
+     "409": {
+      "description": "An operation for this tenant is in progress"
+     },
+     "422": {
+      "description": "confirm does not equal the slug"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete a tenant and all its data (queued; send the slug as confirm)",
+    "tags": [
+     "Platform"
+    ]
+   },
+   "get": {
+    "operationId": "2008e0e13e05d2463e87c51103f3e725",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/PlatformTenant"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The tenant"
+     },
+     "404": {
+      "description": "Unknown tenant, or the platform API is off"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One tenant",
+    "tags": [
+     "Platform"
+    ]
+   }
+  },
+  "/api/platform/tenants/{slug}/env": {
+   "patch": {
+    "operationId": "fc7c9945e536e6e4e77fc034a89aeada",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "set": {
+          "additionalProperties": {
+           "type": "string"
+          },
+          "example": {
+           "AI_DRIVER": "fake"
+          },
+          "type": "object"
+         },
+         "unset": {
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/PlatformTenant"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The tenant"
+     },
+     "422": {
+      "description": "A key outside the allow-list"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Override or reset inheritable settings (AI driver, models) of a tenant",
+    "tags": [
+     "Platform"
     ]
    }
   },
@@ -29397,6 +30200,10 @@
    "name": "Core Admin"
   },
   {
+   "description": "Core",
+   "name": "Core"
+  },
+  {
    "description": "Api",
    "name": "Api"
   },
@@ -29595,6 +30402,10 @@
   {
    "description": "Templates",
    "name": "Templates"
+  },
+  {
+   "description": "Platform",
+   "name": "Platform"
   },
   {
    "description": "Admin Gift Quiz Attempt",

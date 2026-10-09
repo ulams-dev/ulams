@@ -84,6 +84,12 @@ return [
      */
     'scheduler_lock' => filter_var(env('TENANCY_SCHEDULER_LOCK', true), FILTER_VALIDATE_BOOLEAN),
 
+    /*
+     * The platform tenant API (`/api/platform/*`, ADR 0078): manage tenants over HTTP. Off by
+     * default; when off, and always on tenant hosts, every route answers 404 as if it did not exist.
+     */
+    'platform_api' => filter_var(env('TENANCY_PLATFORM_API', false), FILTER_VALIDATE_BOOLEAN),
+
     'php_binary' => env('TENANCY_PHP_BINARY', PHP_BINARY ?: 'php'),
     'process_timeout' => (int) env('TENANCY_PROCESS_TIMEOUT', 900),
 

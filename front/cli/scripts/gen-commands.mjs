@@ -25,8 +25,8 @@ const AREAS = [
   [/^\/api\/admin\/course-builder/, "builder"],
 ];
 
-/** Areas with hand-written commands only (src/commands/builder.ts, living.ts): the builder is driven through runs, not CRUD. */
-const HAND_WRITTEN = ["/api/admin/course-builder/", "/api/admin/living-course/"];
+/** Areas with hand-written commands only (builder.ts, living.ts, tenants.ts): runs and operations, not CRUD. */
+const HAND_WRITTEN = ["/api/admin/course-builder/", "/api/admin/living-course/", "/api/platform/"];
 
 const kebab = (s) =>
   s

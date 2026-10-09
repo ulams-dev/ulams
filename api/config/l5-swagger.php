@@ -67,6 +67,7 @@ return [
                     base_path('packages/consultations/src'),
                     base_path('packages/consultation-access/src'),
                     base_path('packages/webinar/src'),
+                    base_path('packages/tenancy/src'),
                     base_path('packages/cmi5/src'),
                     base_path('packages/vouchers/src'),
                     base_path('packages/invoices/src'),

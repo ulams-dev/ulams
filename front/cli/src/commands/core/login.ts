@@ -121,10 +121,15 @@ export const login = defineCommand({
       throw error;
     }
 
+    // A platform host (tenant management) is a different kind of profile; older servers have no /api/meta.
+    const hostKind = await verified
+      .call<{ kind?: string }>("GET", "/api/meta", { idempotent: true })
+      .then((r) => (r.data?.kind === "platform" ? "platform" : "tenant"))
+      .catch(() => "tenant" as const);
     const name = ctx.flags.profile ?? profileNameFromUrl(url);
     const profile: Profile = {
       url,
-      kind: "tenant",
+      kind: hostKind,
       ...(me.email ? { user: me.email } : {}),
       tokenId,
       expiresAt,

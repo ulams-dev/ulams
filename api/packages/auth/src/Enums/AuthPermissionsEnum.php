@@ -40,4 +40,7 @@ class AuthPermissionsEnum extends BasicEnum
 
     /** List and revoke every user's scoped API tokens and read the agent audit log (ADR 0074). */
     const TOKEN_MANAGE = 'token_manage';
+
+    /** Manage tenants over the platform API (ADR 0078); only effective on a platform host with TENANCY_PLATFORM_API=true. */
+    const PLATFORM_ADMIN = 'platform_admin';
 }
