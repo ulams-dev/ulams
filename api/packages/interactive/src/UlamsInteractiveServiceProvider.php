@@ -9,7 +9,6 @@ use Ulams\CoursesImportExport\Services\ExportImportService;
 use Ulams\Interactive\Http\Resources\InteractiveTopicExportResource;
 use Ulams\Interactive\Http\Resources\InteractiveTopicResource;
 use Ulams\Interactive\Models\InteractiveTopic;
-use Ulams\Interactive\Observers\InteractiveTopicObserver;
 use Ulams\Interactive\Services\Contracts\InteractivePackageServiceContract;
 use Ulams\Interactive\Services\InteractiveCsp;
 use Ulams\Interactive\Services\InteractivePackageService;
@@ -55,7 +54,6 @@ class UlamsInteractiveServiceProvider extends ServiceProvider
             'admin' => InteractiveTopicResource::class,
             'export' => InteractiveTopicExportResource::class,
         ]);
-        InteractiveTopic::observe(InteractiveTopicObserver::class);
         // course export/import carries the package (topic/<id>/interactive/ in the export)
         if (class_exists(ExportImportService::class)) {
             ExportImportService::registerTopicStrategy(InteractiveTopic::class, Import\InteractiveTopicImportStrategy::class);

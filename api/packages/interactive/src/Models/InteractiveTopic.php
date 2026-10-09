@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 use Ulams\Interactive\Enums\CompletionRule;
 use Ulams\Interactive\Enums\DisplayMode;
+use Ulams\Interactive\Observers\InteractiveTopicObserver;
 use Ulams\TopicTypes\Models\TopicContent\AbstractTopicContent;
 
 /**
@@ -63,6 +64,17 @@ class InteractiveTopic extends AbstractTopicContent
         'display' => 'inline',
         'height' => 640,
     ];
+
+    /**
+     * The observer is attached when the model first boots, not in the provider: booting an
+     * AbstractTopicContent asks the guard for the current user, which needs the Passport keys, and the
+     * provider also runs for `package:discover` during `composer install`, where there are none.
+     */
+    protected static function booted()
+    {
+        parent::booted();
+        static::observe(InteractiveTopicObserver::class);
+    }
 
     public static function rules(): array
     {
