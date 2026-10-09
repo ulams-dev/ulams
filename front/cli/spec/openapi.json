@@ -241,6 +241,208 @@
     },
     "type": "object"
    },
+   "AgentAuditEntry": {
+    "properties": {
+     "agent_name": {
+      "nullable": true,
+      "type": "string"
+     },
+     "client": {
+      "nullable": true,
+      "type": "string"
+     },
+     "created_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "dry_run": {
+      "type": "boolean"
+     },
+     "duration_ms": {
+      "nullable": true,
+      "type": "integer"
+     },
+     "id": {
+      "type": "integer"
+     },
+     "idempotency_key": {
+      "nullable": true,
+      "type": "string"
+     },
+     "ip": {
+      "nullable": true,
+      "type": "string"
+     },
+     "method": {
+      "type": "string"
+     },
+     "path": {
+      "type": "string"
+     },
+     "request_id": {
+      "nullable": true,
+      "type": "string"
+     },
+     "route_name": {
+      "nullable": true,
+      "type": "string"
+     },
+     "route_params": {
+      "nullable": true,
+      "type": "object"
+     },
+     "status": {
+      "type": "integer"
+     },
+     "token_id": {
+      "nullable": true,
+      "type": "string"
+     },
+     "user_agent": {
+      "nullable": true,
+      "type": "string"
+     },
+     "user_id": {
+      "nullable": true,
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   },
+   "AgentAuditList": {
+    "properties": {
+     "data": {
+      "items": {
+       "$ref": "#/components/schemas/AgentAuditEntry"
+      },
+      "type": "array"
+     },
+     "message": {
+      "type": "string"
+     },
+     "meta": {
+      "type": "object"
+     },
+     "success": {
+      "type": "boolean"
+     }
+    },
+    "type": "object"
+   },
+   "ApiToken": {
+    "properties": {
+     "agent_name": {
+      "nullable": true,
+      "type": "string"
+     },
+     "created_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "created_via": {
+      "enum": [
+       "admin",
+       "cli",
+       "device"
+      ],
+      "type": "string"
+     },
+     "expires_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "id": {
+      "description": "Reusable OpenAPI schemas of the scoped token endpoints (ADR 0074).",
+      "type": "string"
+     },
+     "kind": {
+      "enum": [
+       "cli",
+       "agent",
+       "ci",
+       "integration"
+      ],
+      "type": "string"
+     },
+     "last_used_at": {
+      "format": "date-time",
+      "nullable": true,
+      "type": "string"
+     },
+     "last_used_ip": {
+      "nullable": true,
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "rate_limit_per_minute": {
+      "nullable": true,
+      "type": "integer"
+     },
+     "revoked": {
+      "type": "boolean"
+     },
+     "scopes": {
+      "items": {
+       "example": "courses:write",
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "user_id": {
+      "nullable": true,
+      "type": "integer"
+     }
+    },
+    "required": [
+     "id",
+     "name",
+     "scopes",
+     "kind",
+     "expires_at",
+     "revoked"
+    ],
+    "type": "object"
+   },
+   "ApiTokenCreated": {
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ApiToken"
+     },
+     {
+      "properties": {
+       "token": {
+        "description": "The secret, prefixed ulams_pat_. Shown once.",
+        "example": "ulams_pat_eyJ0eXAi...",
+        "type": "string"
+       }
+      },
+      "type": "object"
+     }
+    ],
+    "type": "object"
+   },
+   "ApiTokenList": {
+    "properties": {
+     "data": {
+      "items": {
+       "$ref": "#/components/schemas/ApiToken"
+      },
+      "type": "array"
+     },
+     "message": {
+      "type": "string"
+     },
+     "meta": {
+      "type": "object"
+     },
+     "success": {
+      "type": "boolean"
+     }
+    },
+    "type": "object"
+   },
    "BookmarkCreateRequest": {
     "properties": {
      "bookmarkable_id": {
@@ -1125,6 +1327,149 @@
     "required": [
      "topic_id",
      "file"
+    ],
+    "type": "object"
+   },
+   "DeviceCodeResponse": {
+    "properties": {
+     "device_code": {
+      "description": "Secret of the polling client; never shown to the user",
+      "type": "string"
+     },
+     "expires_in": {
+      "example": 600,
+      "type": "integer"
+     },
+     "interval": {
+      "example": 5,
+      "type": "integer"
+     },
+     "user_code": {
+      "example": "BDWP-HQPK",
+      "type": "string"
+     },
+     "verification_uri": {
+      "example": "https://coffee.app.ulams.app/cli/authorize",
+      "type": "string"
+     },
+     "verification_uri_complete": {
+      "example": "https://coffee.app.ulams.app/cli/authorize?code=BDWP-HQPK",
+      "type": "string"
+     }
+    },
+    "required": [
+     "device_code",
+     "user_code",
+     "verification_uri",
+     "verification_uri_complete",
+     "expires_in",
+     "interval"
+    ],
+    "type": "object"
+   },
+   "DeviceError": {
+    "properties": {
+     "error": {
+      "enum": [
+       "authorization_pending",
+       "slow_down",
+       "access_denied",
+       "expired_token",
+       "invalid_scope"
+      ],
+      "type": "string"
+     },
+     "error_description": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "error"
+    ],
+    "type": "object"
+   },
+   "DeviceRequest": {
+    "properties": {
+     "agent_name": {
+      "nullable": true,
+      "type": "string"
+     },
+     "client_name": {
+      "type": "string"
+     },
+     "created_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "default_expires_in_days": {
+      "type": "integer"
+     },
+     "expires_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "expires_in": {
+      "type": "integer"
+     },
+     "expiry_options_days": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array"
+     },
+     "ip": {
+      "nullable": true,
+      "type": "string"
+     },
+     "max_expires_in_days": {
+      "type": "integer"
+     },
+     "requested_scopes": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "user_agent": {
+      "nullable": true,
+      "type": "string"
+     },
+     "user_code": {
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "DeviceTokenResponse": {
+    "properties": {
+     "access_token": {
+      "description": "ulams_pat_... shown once",
+      "type": "string"
+     },
+     "expires_at": {
+      "format": "date-time",
+      "nullable": true,
+      "type": "string"
+     },
+     "scopes": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "token_id": {
+      "type": "string"
+     },
+     "token_type": {
+      "example": "Bearer",
+      "type": "string"
+     }
+    },
+    "required": [
+     "access_token",
+     "token_type",
+     "scopes",
+     "token_id"
     ],
     "type": "object"
    },
@@ -2252,6 +2597,34 @@
      "topic_gift_question_id",
      "answer"
     ],
+    "type": "object"
+   },
+   "ScopeError": {
+    "properties": {
+     "error": {
+      "enum": [
+       "scope_missing",
+       "scope_forbidden",
+       "scope_unmapped",
+       "rate_limited"
+      ],
+      "type": "string"
+     },
+     "message": {
+      "type": "string"
+     },
+     "required": {
+      "items": {
+       "example": "courses:write",
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "success": {
+      "example": false,
+      "type": "boolean"
+     }
+    },
     "type": "object"
    },
    "SendMulticastBulkNotificationRequest": {
@@ -3475,6 +3848,70 @@
     "summary": "Add a version",
     "tags": [
      "Admin Adapt"
+    ]
+   }
+  },
+  "/api/admin/agent-audit": {
+   "get": {
+    "operationId": "e05f3171d6b8ada25c8975c3aa362d9c",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "token_id",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "user_id",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "from",
+      "schema": {
+       "format": "date-time",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "to",
+      "schema": {
+       "format": "date-time",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AgentAuditList"
+        }
+       }
+      },
+      "description": "Paginated audit rows"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "description": "Needs token_manage"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Agent audit log",
+    "tags": [
+     "Admin Tokens"
     ]
    }
   },
@@ -14548,6 +14985,172 @@
     ]
    }
   },
+  "/api/admin/tokens": {
+   "get": {
+    "operationId": "c97e7ee722008f1f0aae83ea70b29fa6",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "user_id",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "kind",
+      "schema": {
+       "enum": [
+        "cli",
+        "agent",
+        "ci",
+        "integration"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "include_revoked",
+      "schema": {
+       "type": "boolean"
+      }
+     },
+     {
+      "in": "query",
+      "name": "per_page",
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiTokenList"
+        }
+       }
+      },
+      "description": "Paginated tokens"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "description": "Needs token_manage"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Every user's scoped API tokens",
+    "tags": [
+     "Admin Tokens"
+    ]
+   }
+  },
+  "/api/admin/tokens/{id}": {
+   "delete": {
+    "operationId": "86c0bd374d2c2016525af40c59f2a18e",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Revoked"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "description": "Needs token_manage"
+     },
+     "404": {
+      "description": "Unknown token"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Revoke any scoped token",
+    "tags": [
+     "Admin Tokens"
+    ]
+   }
+  },
+  "/api/admin/tokens/{id}/audit": {
+   "get": {
+    "operationId": "a0d644a176215e6a71e0c442eebedd6c",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AgentAuditList"
+        }
+       }
+      },
+      "description": "Paginated audit rows"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "description": "Needs token_manage or token owner"
+     },
+     "404": {
+      "description": "Unknown token"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Audit log of one token",
+    "tags": [
+     "Admin Tokens"
+    ]
+   }
+  },
   "/api/admin/topic-project-solutions": {
    "get": {
     "description": "Get all project solutions",
@@ -17425,6 +18028,371 @@
     ]
    }
   },
+  "/api/auth/device/code": {
+   "post": {
+    "description": "No authentication. Throttled to 10 requests per minute per IP.",
+    "operationId": "ea404fe1bfc1d7cec2c000550cba8005",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "agent": {
+          "nullable": true,
+          "type": "string"
+         },
+         "client_name": {
+          "example": "ulams-cli on mateusz-mbp",
+          "type": "string"
+         },
+         "scopes": {
+          "items": {
+           "example": "courses:write",
+           "type": "string"
+          },
+          "type": "array"
+         }
+        },
+        "required": [
+         "client_name",
+         "scopes"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DeviceCodeResponse"
+        }
+       }
+      },
+      "description": "Codes and polling interval"
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DeviceError"
+        }
+       }
+      },
+      "description": "invalid_scope"
+     },
+     "422": {
+      "description": "Validation error"
+     },
+     "429": {
+      "description": "Too many requests"
+     }
+    },
+    "summary": "Start a device login (RFC 8628)",
+    "tags": [
+     "Auth"
+    ]
+   }
+  },
+  "/api/auth/device/requests/{user_code}": {
+   "get": {
+    "description": "Needs a login token of the approving user (not a scoped token). Throttled to 5 requests per minute per user.",
+    "operationId": "d11c076f4f258f272b9d2f54496ba17a",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "user_code",
+      "required": true,
+      "schema": {
+       "example": "BDWP-HQPK",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/DeviceRequest"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The request"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScopeError"
+        }
+       }
+      },
+      "description": "Scoped tokens cannot approve"
+     },
+     "404": {
+      "description": "Unknown, expired or already answered code"
+     },
+     "429": {
+      "description": "Too many requests"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Details of a pending device request (for the approval page)",
+    "tags": [
+     "Auth"
+    ]
+   }
+  },
+  "/api/auth/device/requests/{user_code}/approve": {
+   "post": {
+    "description": "Mints a scoped token for the approving user with the approved scopes that the client requested. The CLI collects it on its next poll.",
+    "operationId": "ed52f6a54e88ba0eec1daea558b8ba56",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "user_code",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "expires_in_days": {
+          "example": 90,
+          "type": "integer"
+         },
+         "scopes": {
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         }
+        },
+        "required": [
+         "scopes"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "scopes": {
+             "items": {
+              "type": "string"
+             },
+             "type": "array"
+            },
+            "status": {
+             "example": "approved",
+             "type": "string"
+            },
+            "token_id": {
+             "type": "string"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Approved"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "description": "Scoped tokens cannot approve"
+     },
+     "404": {
+      "description": "Unknown, expired or already answered code"
+     },
+     "422": {
+      "description": "No requested scope approved, or invalid lifetime"
+     },
+     "429": {
+      "description": "Too many requests"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Approve a device request",
+    "tags": [
+     "Auth"
+    ]
+   }
+  },
+  "/api/auth/device/requests/{user_code}/deny": {
+   "post": {
+    "operationId": "502ca62527836cb88f1a6fa63b7f32be",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "user_code",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "status": {
+             "example": "denied",
+             "type": "string"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Denied"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "description": "Scoped tokens cannot deny"
+     },
+     "404": {
+      "description": "Unknown, expired or already answered code"
+     },
+     "429": {
+      "description": "Too many requests"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Deny a device request",
+    "tags": [
+     "Auth"
+    ]
+   }
+  },
+  "/api/auth/device/token": {
+   "post": {
+    "description": "No authentication. Poll every `interval` seconds. Errors are HTTP 400 with an RFC 8628 error code. The token is returned once.",
+    "operationId": "d021d1c83eb5b155962e28f33d742868",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "device_code": {
+          "type": "string"
+         },
+         "grant_type": {
+          "example": "urn:ietf:params:oauth:grant-type:device_code",
+          "type": "string"
+         }
+        },
+        "required": [
+         "device_code"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DeviceTokenResponse"
+        }
+       }
+      },
+      "description": "Approved: the scoped token"
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DeviceError"
+        }
+       }
+      },
+      "description": "authorization_pending, slow_down, access_denied or expired_token"
+     },
+     "422": {
+      "description": "Validation error"
+     },
+     "429": {
+      "description": "Too many requests"
+     }
+    },
+    "summary": "Poll for the token of a device login (RFC 8628)",
+    "tags": [
+     "Auth"
+    ]
+   }
+  },
   "/api/auth/email/resend": {
    "post": {
     "operationId": "42a28136c9d40d8417c8d8cab59ba33b",
@@ -17905,6 +18873,329 @@
      }
     },
     "summary": "Redirect after sucessfull login",
+    "tags": [
+     "Auth"
+    ]
+   }
+  },
+  "/api/auth/tokens": {
+   "get": {
+    "operationId": "f59ede12ce38c91320ace16e57f0a1d9",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "include_revoked",
+      "schema": {
+       "type": "boolean"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "$ref": "#/components/schemas/ApiToken"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Active scoped tokens of the signed-in user"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScopeError"
+        }
+       }
+      },
+      "description": "Token lacks the tokens:read scope"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "My scoped API tokens",
+    "tags": [
+     "Auth"
+    ]
+   },
+   "post": {
+    "operationId": "a875828dc5b276a102378c005eb05829",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "agent_name": {
+          "nullable": true,
+          "type": "string"
+         },
+         "expires_in_days": {
+          "example": 90,
+          "maximum": 365,
+          "minimum": 1,
+          "type": "integer"
+         },
+         "kind": {
+          "enum": [
+           "cli",
+           "agent",
+           "ci",
+           "integration"
+          ],
+          "type": "string"
+         },
+         "name": {
+          "example": "ulams-cli on my laptop",
+          "maxLength": 100,
+          "type": "string"
+         },
+         "rate_limit_per_minute": {
+          "nullable": true,
+          "type": "integer"
+         },
+         "scopes": {
+          "description": "Scopes or @presets (read-only, author, admin, learner, ci)",
+          "items": {
+           "example": "courses:write",
+           "type": "string"
+          },
+          "type": "array"
+         }
+        },
+        "required": [
+         "name",
+         "scopes"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/ApiTokenCreated"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Created"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScopeError"
+        }
+       }
+      },
+      "description": "Token lacks tokens:write"
+     },
+     "422": {
+      "description": "Invalid scopes, lifetime, limit reached or scopes exceed the calling token's"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create a scoped API token (the secret is returned once)",
+    "tags": [
+     "Auth"
+    ]
+   }
+  },
+  "/api/auth/tokens/current": {
+   "get": {
+    "operationId": "939c4d8f2959e9d3fe7536b5174c1a78",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "agent_name": {
+             "nullable": true,
+             "type": "string"
+            },
+            "created_via": {
+             "nullable": true,
+             "type": "string"
+            },
+            "expires_at": {
+             "format": "date-time",
+             "nullable": true,
+             "type": "string"
+            },
+            "host": {
+             "type": "string"
+            },
+            "host_kind": {
+             "enum": [
+              "tenant",
+              "platform"
+             ],
+             "type": "string"
+            },
+            "id": {
+             "nullable": true,
+             "type": "string"
+            },
+            "kind": {
+             "nullable": true,
+             "type": "string"
+            },
+            "last_used_at": {
+             "format": "date-time",
+             "nullable": true,
+             "type": "string"
+            },
+            "name": {
+             "nullable": true,
+             "type": "string"
+            },
+            "scoped": {
+             "type": "boolean"
+            },
+            "scopes": {
+             "items": {
+              "type": "string"
+             },
+             "type": "array"
+            },
+            "user": {
+             "properties": {
+              "email": {
+               "type": "string"
+              },
+              "id": {
+               "type": "integer"
+              },
+              "name": {
+               "type": "string"
+              }
+             },
+             "type": "object"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Token, user and host"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The token this request is authenticated with",
+    "tags": [
+     "Auth"
+    ]
+   }
+  },
+  "/api/auth/tokens/{id}": {
+   "delete": {
+    "operationId": "fef5ceb391432c3471ee2e3223e7db42",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Revoked"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "description": "Somebody else's token"
+     },
+     "404": {
+      "description": "Unknown token"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Revoke one of my scoped tokens",
     "tags": [
      "Auth"
     ]
@@ -21527,6 +22818,90 @@
     "summary": "Sends request for mattermost to send reset password link with email",
     "tags": [
      "Mattermost"
+    ]
+   }
+  },
+  "/api/meta": {
+   "get": {
+    "operationId": "49809d821fe8d943f2c8ea0d7f2347ac",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "api": {
+             "example": "ulams",
+             "type": "string"
+            },
+            "contract": {
+             "example": 1,
+             "type": "integer"
+            },
+            "features": {
+             "properties": {
+              "ai": {
+               "type": "boolean"
+              },
+              "courseBuilder": {
+               "type": "boolean"
+              },
+              "demo": {
+               "type": "boolean"
+              },
+              "deviceLogin": {
+               "type": "boolean"
+              },
+              "idempotency": {
+               "type": "boolean"
+              },
+              "livingCourse": {
+               "type": "boolean"
+              },
+              "platformApi": {
+               "type": "boolean"
+              },
+              "scopedTokens": {
+               "type": "boolean"
+              }
+             },
+             "type": "object"
+            },
+            "host": {
+             "type": "string"
+            },
+            "kind": {
+             "enum": [
+              "tenant",
+              "platform"
+             ],
+             "type": "string"
+            },
+            "version": {
+             "type": "string"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "API name, version, contract, host kind and feature flags"
+     }
+    },
+    "summary": "Capabilities of this host",
+    "tags": [
+     "Auth"
     ]
    }
   },
@@ -25726,6 +27101,10 @@
   {
    "description": "Assign Without Account",
    "name": "Assign Without Account"
+  },
+  {
+   "description": "Admin Tokens",
+   "name": "Admin Tokens"
   },
   {
    "description": "Admin User Groups",
