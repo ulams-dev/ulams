@@ -85,7 +85,8 @@ class ContentOriginHeadersConfigTest extends TestCase
         $caddyfile = $this->read($path);
 
         $this->assertSame(1, preg_match('/@cmi5 path (.*)\n/', $caddyfile, $m));
-        $this->assertSame('/api/cmi5/fetch /trax/api/*/xapi/std/*', trim($m[1]));
+        // a `*` does not cross a `/`: statements are one segment, state and profiles are two
+        $this->assertSame('/api/cmi5/fetch /trax/api/*/xapi/std/* /trax/api/*/xapi/std/*/*', trim($m[1]));
         $this->assertSame(1, preg_match('/handle @cmi5 \{\n\s*request_header -Cookie\n\s*header Access-Control-Allow-Origin \*\n/', $caddyfile));
         // the session token travels in Authorization, so it is not dropped here, and the preflight
         // names the header explicitly (a wildcard does not cover it)

@@ -214,6 +214,27 @@ class Cmi5LaunchTokenTest extends TestCase
         $this->xapi('POST', $agent, '{"a":1}', $session)->assertForbidden();
     }
 
+    public function test_the_launch_data_template_builds_statements_the_lrs_accepts(): void
+    {
+        [$params, $oneTime] = $this->launch();
+        app(LrsServiceContract::class)->saveState($params); // the LMS writes it before the AU starts
+        $session = $this->asSession($this->sessionToken($oneTime));
+        $state = '/activities/state?' . http_build_query([
+            'stateId' => 'LMS.LaunchData',
+            'activityId' => $params['activityId'],
+            'agent' => json_encode($params['actor']),
+            'registration' => $params['registration'],
+        ]);
+
+        $launchData = $this->xapi('GET', $state, null, $session)->assertOk()->json();
+
+        // what an AU does (cmi5 specification): the template is the context of its statements
+        $this->assertSame($params['registration'], $launchData['contextTemplate']['registration']);
+        $this->assertArrayNotHasKey('context', $launchData['contextTemplate']);
+        $statement = $this->statement(['context' => $launchData['contextTemplate']]);
+        $this->xapi('POST', '/statements', $statement, $session)->assertOk();
+    }
+
     public function test_completed_and_passed_statements_report_the_completion_of_the_au(): void
     {
         Event::fake([AuCompletionReported::class]);

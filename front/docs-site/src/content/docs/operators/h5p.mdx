@@ -1,0 +1,103 @@
+---
+title: H5P service in production
+description: Run the isolated H5P service with a least-privilege config directory - exporting per-tenant settings, the production mounts, new tenants, connections, libraries and learner sessions.
+sidebar:
+  order: 6
+modules:
+  - api-h5p
+  - tenancy
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+H5P content is served by its own Node service (`api/h5p`, GPL, reached over HTTP only; see
+[Licensing](/operators/licensing/)). It is multi-tenant: the request host selects the tenant's
+database, bucket and Passport public key. This page covers running it in production; the service
+itself is described in `api/h5p/README.md`.
+
+## Production mounts
+
+The development stack mounts the whole `api/` folder into the service, which also exposes the
+application code, every secret of every env file and the Passport private keys. In production the
+service reads a **config directory** that holds, per tenant, only the database, bucket and URL
+settings it needs and the Passport **public** key. The API writes it (`H5PServiceConfigExporter`):
+
+```text
+<dir>/.env                  platform subset
+<dir>/.env.<host>           tenant subset
+<dir>/keys/oauth-public.key and <dir>/keys/<host_with_underscores>/oauth-public.key
+```
+
+<Steps>
+
+1. Set the directory on the API, in the platform environment (the
+   [production example](/operators/self-hosting/) does this with a dedicated volume):
+
+   ```text
+   LARAVEL_H5P_SERVICE_CONFIG_DIR=/var/www/html/storage/h5p-service
+   ```
+
+   That becomes `H5P_SERVICE_CONFIG_DIR` in the platform `.env`. Empty means "not exported"
+   (development).
+
+2. Start the API, then export once:
+
+   ```bash
+   docker compose exec api php artisan ulams:h5p:export-config
+   ```
+
+   The export also runs at start (`ulams:tenant:sync-env`) and whenever a tenant is created,
+   synced or deleted. `ulams:upgrade` runs it as a step too, so after every release the directory
+   matches the tenants table. Run it by hand after **creating tenants outside those commands** or
+   after restoring a backup.
+
+3. Mount the directory read-only into the service with the production override
+   (`api/h5p/compose.h5p.prod.yml`; the example `docker-compose.yml` already contains the same
+   settings):
+
+   ```bash
+   docker compose -f docker-compose.yml -f h5p/compose.h5p.prod.yml up -d h5p
+   ```
+
+   It sets `ENV_DIR=/config`, `KEYS_DIR=/config/keys` and
+   `JWT_PUBLIC_KEY_PATH=/config/keys/oauth-public.key`, mounts
+   `${H5P_SERVICE_CONFIG_HOST_DIR:-./storage/h5p-service}` at `/config:ro`, makes the container's
+   root file system read-only and gives it a `tmpfs` for `/tmp`. The override uses `!override`
+   (Docker Compose 2.24 or newer).
+
+</Steps>
+
+The service re-reads the files every `TENANT_RELOAD_CHECK_MS`, so a new tenant works without a
+restart. The files are written atomically and, when the command runs as root, handed to the
+owner and group of the Laravel storage directory; the service reads them through the same group
+(`group_add: ["82"]` in the example).
+
+<Aside type="caution">
+  The directory still contains credentials (database password, bucket key, internal token). Keep
+  it readable by the service only, and back it up like the env files (it can always be rebuilt with
+  `ulams:h5p:export-config`).
+</Aside>
+
+## Connections
+
+A tenant with no H5P request for 30 minutes (`TENANT_IDLE_EVICT_MS`) releases its database pool
+and S3 client; its next request reconnects with a short delay and no visible error. Set it to `0`
+to keep every tenant connected.
+
+## Libraries
+
+Installing, updating or deleting H5P libraries changes them for **all** tenants, so the service
+accepts it only on the platform host (the platform admin, see
+[H5P libraries](/admin/h5p-libraries/)). The `h5p_libraries` volume holds them; back it up with the
+other volumes ([Backups](/operators/backups/)).
+
+## Learner sessions
+
+Access tokens live about 5 minutes. The admin and the React front refresh them in the background
+and hand every new token to the H5P frame, which keeps saving the learner's state without
+reloading the content. The Astro front plays H5P without a token: learners' answers count for
+progress, but the content does not restore where they left off.
+
+H5P runs on the application origin, not on the content origin (it calls its service with `fetch`),
+so a separate content domain does not change anything here; see
+[Content origin](/operators/content-origin/).

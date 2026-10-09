@@ -129,8 +129,9 @@
 	# cmi5 AUs on the content origin (ADR 0046): the one-time launch token in the fetch URL and the LRS
 	# session token (`Authorization: Basic ulrs1.<...>`, valid on the LRS only) are the credentials, never
 	# cookies. Any origin may call these routes without credentials; no cookie is passed on, and
-	# Authorization stays because the session token travels in it.
-	@cmi5 path /api/cmi5/fetch /trax/api/*/xapi/std/*
+	# Authorization stays because the session token travels in it. A `*` does not cross a `/`, so the
+	# two-segment documents (activities/state, agents/profile) need their own pattern.
+	@cmi5 path /api/cmi5/fetch /trax/api/*/xapi/std/* /trax/api/*/xapi/std/*/*
 	handle @cmi5 {
 		request_header -Cookie
 		header Access-Control-Allow-Origin *

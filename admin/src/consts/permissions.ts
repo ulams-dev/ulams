@@ -208,10 +208,6 @@ enum PERMISSIONS {
   StationaryEventsRead = 'stationary-event_read',
   StationaryEventsDelete = 'stationary-event_delete',
 
-  /* -------- Ulams/Tracker -------- */
-
-  TrackerList = 'tracker_route-list',
-
   /* -------- Ulams/Vouchers -------- */
 
   VoucherList = 'coupon_list',

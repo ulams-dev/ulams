@@ -139,7 +139,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] (new) Authenticate the Jitsi recording webhook and restrict the downloaded URL (SSRF)
 - [x] (new) Verify JWT signatures in the LRS guard
 - [x] (new) Fix the ungrouped `orWhere` in `CourseAccessService::getUserCourseIds` and similar queries
-- [ ] (new) Remove the tracker Logs screen in admin and other tracker leftovers
+- [x] (new) Remove the tracker Logs screen in admin and other tracker leftovers
 - [x] (new) Fix the tenant video processing queue (jobs dispatched to a queue no tenant worker consumes)
 - [ ] (new) `Relation::enforceMorphMap` for topic types so class renames never orphan data
 - [x] (new) ADR for the tenancy package (docs/decisions/0007)
@@ -276,6 +276,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       app), and add registered LTI tool origins to the front/admin `frame-src` (documented in
       `api/docs/content-origin.md`; deployment pending). Note 2026-10-09: the owner chose the same-site
       `*.content.ulams.app` instead; the separate domain stays supported (ADR 0014, amended)
+      (partial: deployment docs with DNS and TLS steps done (operators/content-origin); the real domain is owner decision #24 and `frame-src` is L1-05)
 - [x] (new) Same-site content subdomain hardening: `__Host-` cookies, exact-Origin checks on front and API,
       sandboxed player frames, COOP/CORP headers, both modes documented
 - [ ] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector
@@ -297,7 +298,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [ ] (new) Adapt Path B admin screen (sources, versions, build status)
 - [ ] (new) Astro front: H5P plays without a token, so learner state is not restored (decide: a short-lived
       H5P token from the BFF, or state through the BFF)
-- [ ] (new) Production: set `H5P_SERVICE_CONFIG_DIR`, run `ulams:h5p:export-config` and start the H5P service
+- [x] (new) Production: set `H5P_SERVICE_CONFIG_DIR`, run `ulams:h5p:export-config` and start the H5P service
       with `compose.h5p.prod.yml`
 - [ ] (new) H5P xAPI progress endpoint rejects statement objects (`ProgressService::h5p()` typed `string`) (plan L1-06)
 - [ ] (new) `yarn install` on Node 24 fails in admin's postinstall (`max setup`: umi's esmi feature loads
@@ -620,7 +621,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Git merge triggers Living Course update proposal
 - [ ] (new) CLI plan `docs/plans/cli.md`: agent-first `ulams` CLI and MCP server (draft, waiting for approval;
       ADRs 0072–0079)
-- [ ] (new) M1 CLI core: `front/cli` workspace, command registry, output contract and exit codes, profiles,
+- [x] (new) M1 CLI core: `front/cli` workspace, command registry, output contract and exit codes, profiles,
       `login` (token/password/demo), `whoami`, `ulams api`, `schema`, `describe`
 - [ ] (new) M2 noun commands generated from OpenAPI + overrides, topic uploads of every type, pagination,
       `--dry-run`, `--wait`, `apply -f`, coverage matrix enforced in CI
@@ -641,7 +642,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Scoped API keys with rate limits and usage stats
 - [x] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit
       log, `Idempotency-Key`, `X-Request-Id`, `GET /api/meta`; admin "API tokens" page (ADR 0074)
-- [ ] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075; pending #74)
+- [x] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075; pending #74)
 - [ ] (new) S3 platform tenant API with queued provisioning (ADR 0078; pending #79)
 - [x] (new) S4 course builder run-status endpoint `GET /api/admin/course-builder/runs/{run}`
 - [ ] (new) S5 OpenAPI response schemas for the top 60 operations the CLI uses, after L0-11; stable operationIds

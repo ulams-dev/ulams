@@ -119,9 +119,6 @@
       <directory suffix="Test.php">./packages/assign-without-account/tests</directory>
     </testsuite>
     <!--
-    <testsuite name="tracker">
-      <directory suffix="Test.php">./packages/tracker/tests</directory>
-    </testsuite>
     -->
     <testsuite name="translations">
       <directory suffix="Test.php">./packages/translations/tests</directory>
@@ -199,7 +196,6 @@
       <directory suffix=".php">./packages/templates-pdf/src</directory>
       <directory suffix=".php">./packages/questionnaire/src</directory>
       <directory suffix=".php">./packages/assign-without-account/src</directory>
-      <!-- <directory suffix=".php">./packages/tracker/src</directory> -->
       <directory suffix=".php">./packages/translations/src</directory>
       <directory suffix=".php">./packages/vouchers/src</directory>
       <directory suffix=".php">./packages/consultations/src</directory>

@@ -40,7 +40,6 @@ use Ulams\Templates\Database\Seeders\PermissionTableSeeder as TemplatesPermissio
 use Ulams\TemplatesPdf\Database\Seeders\PermissionTableSeeder as TemplatesPdfPermissionTableSeeder;
 use Ulams\TopicTypeGift\Database\Seeders\TopicTypeGiftPermissionSeeder;
 use Ulams\TopicTypeProject\Database\Seeders\TopicTypeProjectPermissionSeeder;
-use Ulams\Tracker\Database\Seeders\TrackerPermissionSeeder;
 use Ulams\Translations\Database\Seeders\TranslationsPermissionSeeder;
 use Ulams\Video\Database\Seeders\VideoPermissionSeeder;
 use Ulams\Vouchers\Database\Seeders\VoucherPermissionsSeeder;
@@ -85,9 +84,6 @@ class PermissionsSeeder extends Seeder
         $this->call(AssignWithoutAccountPermissionSeeder::class);
         $this->call(StationaryEventPermissionSeeder::class);
         $this->call(WebinarsPermissionSeeder::class);
-        if (class_exists(TrackerPermissionSeeder::class)) {
-            $this->call(TrackerPermissionSeeder::class);
-        }
         $this->call(ModelFieldsPermissionTableSeeder::class);
         $this->call(VoucherPermissionsSeeder::class);
         $this->call(LrsPermissionSeeder::class);

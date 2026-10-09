@@ -28,7 +28,7 @@ env:
     tasks-topics=tasks,topic-types,topic-type-project,categories,tags,stationary-events
     gift-reports=topic-type-gift,reports,dictionaries
     commerce=cart,vouchers,payments,invoices,consultations,consultation-access,webinar,jitsi,assign-without-account
-    platform=Integrations,auth,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,tracker,ai
+    platform=Integrations,auth,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,ai
     content=templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
 
 jobs:
@@ -157,6 +157,14 @@ jobs:
           corepack yarn turbo run typecheck lint test
           --filter=@ulams/web --filter=@ulams/ui --filter=@ulams/sdk
           --concurrency=2
+
+      # The ulams CLI and MCP server (front/cli): typecheck, lint, build and unit tests.
+      - name: Typecheck, lint, build, test (ulams CLI)
+        run: corepack yarn turbo run typecheck lint build test --filter=ulams --concurrency=2
+
+      # Every operation of the API's OpenAPI snapshot has a CLI command or a reasoned exclusion.
+      - name: CLI endpoint coverage
+        run: corepack yarn workspace ulams coverage
 
   php:
     name: PHPUnit (${{ matrix.shard }})

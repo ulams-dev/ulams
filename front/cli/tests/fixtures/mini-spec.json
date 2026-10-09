@@ -1,0 +1,23 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/admin/widgets": {
+      "get": { "summary": "List widgets", "parameters": [
+        { "name": "page", "in": "query", "schema": { "type": "number" } },
+        { "name": "per_page", "in": "query", "schema": { "type": "number" } },
+        { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["a", "b"] } } ],
+        "security": [{ "passport": [] }], "responses": { "200": { "content": { "application/json": {} } } } },
+      "post": { "summary": "Create a widget", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Widget" } } } },
+        "security": [{ "passport": [] }], "responses": { "200": {} } }
+    },
+    "/api/admin/widgets/{id}": {
+      "get": { "summary": "Get a widget", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }], "security": [{ "passport": [] }], "responses": { "200": {} } },
+      "delete": { "summary": "Delete a widget", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }], "security": [{ "passport": [] }], "responses": { "200": {} } }
+    },
+    "/api/admin/widgets/{id}/export": {
+      "get": { "summary": "Export a widget", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }], "security": [{ "passport": [] }],
+        "responses": { "200": { "content": { "application/pdf": {} } } } }
+    }
+  },
+  "components": { "schemas": { "Widget": { "required": ["name"], "type": "object", "properties": { "name": { "type": "string", "description": "Widget name" }, "size": { "type": "integer" } } } } }
+}
