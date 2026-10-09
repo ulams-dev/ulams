@@ -750,7 +750,9 @@ notebook look), copied into each package's `vendor/` by `sync-bridge`, and `test
 every package must pass). The package fetches its own manifest, which is the one source of step titles and texts, and hands the shell any
 data it loads with `load` so `ready` waits for it.
 The lesson page asks for `chrome: full` when it plays a package inline, so the package shows its step card;
-with `none` (background display) only the interactive shows. Done so far: `spiral` (M5a), `monte-carlo` (M5b), `automaton` (M5c), `scottish-book` (M5d, placeholder data).
+with `none` (background display) only the interactive shows. Done so far: `spiral` (M5a), `monte-carlo` (M5b), `automaton` (M5c), `scottish-book` (M5d, placeholder data), `lwow-map` (M5e, placeholder data). The map engine gained `fit: "stage"`
+(the map fills an element instead of the window) and an outline colour for labels; `lwow-map` uses a copy of the
+poland map (`sync-bridge` copies it, the lint checks it).
 
 ```
 demo-content/ulam/
