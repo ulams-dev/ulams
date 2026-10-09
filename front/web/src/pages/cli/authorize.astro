@@ -1,0 +1,300 @@
+---
+/**
+ * Approve or deny a `ulams login` from a terminal (device login, ADR 0075). Plain HTML forms, no
+ * JavaScript: the page is server-rendered and every write is a same-origin POST (the middleware
+ * refuses anything else). The signed-in user's own token calls the API; a demo or unauthenticated
+ * visitor is sent to the login first.
+ */
+import Base from "../../layouts/Base.astro";
+import { getSettings } from "../../lib/data.ts";
+import { clearSessionCookie, readSession } from "../../lib/session.ts";
+import { themeFor } from "../../lib/theme.ts";
+import { CLI_AUTHORIZE_PATH, REASON_TEXT, answerRequest, describeScope, lookupRequest, normalizeUserCode, parseDecision } from "../../lib/cli-authorize.ts";
+import type { DeviceRequest } from "../../lib/cli-authorize.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/tenants");
+const secure = Astro.locals.secure;
+const token = readSession(Astro.cookies, secure);
+
+const typed = Astro.url.searchParams.get("code");
+const posted = Astro.request.method === "POST" ? await Astro.request.formData() : null;
+const code = normalizeUserCode(posted ? String(posted.get("code") ?? "") : typed);
+const here = code ? `${CLI_AUTHORIZE_PATH}?code=${code}` : CLI_AUTHORIZE_PATH;
+
+if (!token) return Astro.redirect(`/login?next=${encodeURIComponent(here)}`, 303);
+
+const settings = await getSettings(tenant).catch(() => null);
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+
+type View =
+  | { kind: "enter"; invalid: boolean }
+  | { kind: "confirm"; request: DeviceRequest }
+  | { kind: "approved" | "denied" }
+  | { kind: "error"; message: string };
+
+let view: View;
+if (!code) {
+  view = { kind: "enter", invalid: Boolean((typed ?? "").trim() || (posted && String(posted.get("code") ?? "").trim())) };
+} else {
+  const found = await lookupRequest(tenant, token, code);
+  if (!found.ok) {
+    if (found.reason === "unauthenticated") {
+      clearSessionCookie(Astro.cookies, secure);
+      return Astro.redirect(`/login?next=${encodeURIComponent(here)}`, 303);
+    }
+    view = { kind: "error", message: REASON_TEXT[found.reason] };
+  } else if (posted && posted.get("decision")) {
+    const choice = parseDecision(posted, found.request);
+    if (choice.decision === "approve" && choice.scopes.length === 0) {
+      view = { kind: "confirm", request: found.request };
+    } else if (choice.decision) {
+      const answered = await answerRequest(tenant, token, code, choice.decision, choice.scopes, choice.days);
+      view = answered.ok ? { kind: choice.decision === "approve" ? "approved" : "denied" } : { kind: "error", message: answered.message ?? REASON_TEXT[answered.reason] };
+    } else {
+      view = { kind: "confirm", request: found.request };
+    }
+  } else {
+    view = { kind: "confirm", request: found.request };
+  }
+}
+
+const noScopeChosen = Boolean(posted && posted.get("decision") === "approve" && view.kind === "confirm");
+const minutes = view.kind === "confirm" ? Math.max(1, Math.ceil(view.request.expires_in / 60)) : 0;
+---
+
+<Base theme={theme} accent={settings?.theme?.accent} title="Authorize the ulams CLI" noindex demo={null}>
+  <main id="main" class="u-container u-cli" tabindex="-1">
+    <h1>Authorize the ulams CLI</h1>
+
+    {
+      view.kind === "enter" && (
+        <form method="get" class="u-card u-cli__card">
+          <p>Type the code shown in your terminal.</p>
+          {view.invalid && (
+            <p class="u-cli__error" role="alert">
+              That is not a valid code. It has 8 letters, like BDWP-HQPK.
+            </p>
+          )}
+          <label for="code">Code</label>
+          <input id="code" name="code" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text" required aria-describedby="code-hint" maxlength="12" />
+          <p id="code-hint" class="u-cli__hint">Letters only, with or without the dash.</p>
+          <button class="u-btn" type="submit">Continue</button>
+        </form>
+      )
+    }
+
+    {
+      view.kind === "confirm" && (
+        <form method="post" action={CLI_AUTHORIZE_PATH} class="u-card u-cli__card">
+          <input type="hidden" name="code" value={view.request.user_code} />
+          <p class="u-cli__lead">
+            <strong>{view.request.client_name}</strong>
+            {view.request.agent_name ? <> (agent {view.request.agent_name})</> : null} asks to sign in to <strong>{settings?.global?.companyName ?? tenant.slug}</strong> as you.
+          </p>
+          <dl class="u-cli__facts">
+            <div>
+              <dt>Code</dt>
+              <dd class="u-cli__code">{view.request.user_code}</dd>
+            </div>
+            <div>
+              <dt>Requested from</dt>
+              <dd>{view.request.ip ?? "unknown address"}</dd>
+            </div>
+            <div>
+              <dt>Expires in</dt>
+              <dd>
+                {minutes} {minutes === 1 ? "minute" : "minutes"}
+              </dd>
+            </div>
+          </dl>
+          <p class="u-cli__hint">Only approve if this code is shown in a terminal you started just now. If you did not, choose Deny.</p>
+
+          {noScopeChosen && (
+            <p class="u-cli__error" role="alert">
+              Tick at least one permission, or deny the request.
+            </p>
+          )}
+          <fieldset>
+            <legend>Permissions</legend>
+            <p class="u-cli__hint">Untick what the CLI does not need. It can never do more than your own account can.</p>
+            <ul class="u-cli__scopes">
+              {view.request.requested_scopes.map((scope) => {
+                const s = describeScope(scope);
+                return (
+                  <li>
+                    <label>
+                      <input type="checkbox" name="scope" value={scope} checked />
+                      <span>
+                        {s.label}
+                        {s.sensitive && <strong class="u-cli__warn"> (sensitive)</strong>}
+                        <code>{scope}</code>
+                      </span>
+                    </label>
+                  </li>
+                );
+              })}
+            </ul>
+          </fieldset>
+
+          <fieldset>
+            <legend>How long should it stay signed in?</legend>
+            <div class="u-cli__days">
+              {view.request.expiry_options_days.map((d) => (
+                <label>
+                  <input type="radio" name="days" value={String(d)} checked={d === view.request.default_expires_in_days} />
+                  {d} days
+                </label>
+              ))}
+            </div>
+            <p class="u-cli__hint">You can revoke the token at any time in your account.</p>
+          </fieldset>
+
+          <div class="u-cli__actions">
+            <button class="u-btn" type="submit" name="decision" value="approve">Approve</button>
+            <button class="u-btn u-btn--ghost" type="submit" name="decision" value="deny" formnovalidate>Deny</button>
+          </div>
+        </form>
+      )
+    }
+
+    {
+      view.kind === "approved" && (
+        <section class="u-card u-cli__card" role="status">
+          <h2>Approved</h2>
+          <p>Go back to your terminal: the CLI signs in within a few seconds. You can close this page.</p>
+        </section>
+      )
+    }
+    {
+      view.kind === "denied" && (
+        <section class="u-card u-cli__card" role="status">
+          <h2>Denied</h2>
+          <p>Nothing was signed in. You can close this page.</p>
+        </section>
+      )
+    }
+    {
+      view.kind === "error" && (
+        <section class="u-card u-cli__card">
+          <p class="u-cli__error" role="alert">{view.message}</p>
+          <p><a href={CLI_AUTHORIZE_PATH}>Enter another code</a></p>
+        </section>
+      )
+    }
+  </main>
+</Base>
+
+<style>
+  .u-cli {
+    max-width: 560px;
+    display: grid;
+    gap: 20px;
+    padding-block: 56px;
+  }
+  .u-cli__card {
+    display: grid;
+    gap: 14px;
+    padding: 24px;
+  }
+  .u-cli label {
+    font-weight: 600;
+  }
+  .u-cli input[type="text"] {
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-input);
+    background: var(--ulams-color-input-bg, var(--ulams-color-bg));
+    font-family: monospace;
+    font-size: 1.25rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .u-cli__lead {
+    font-size: 1.0625rem;
+  }
+  .u-cli__facts {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+  }
+  .u-cli__facts div {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+  }
+  .u-cli__facts dt {
+    font-weight: 600;
+  }
+  .u-cli__facts dd {
+    margin: 0;
+  }
+  .u-cli__code {
+    font-family: monospace;
+    font-size: 1.25rem;
+    letter-spacing: 0.1em;
+  }
+  .u-cli fieldset {
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-input);
+    padding: 12px 16px;
+    display: grid;
+    gap: 8px;
+  }
+  .u-cli legend {
+    font-weight: 700;
+    padding-inline: 6px;
+  }
+  .u-cli__scopes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .u-cli__scopes label {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-weight: 400;
+    min-height: 44px;
+  }
+  .u-cli__scopes input,
+  .u-cli__days input {
+    width: 24px;
+    height: 24px;
+    margin-top: 2px;
+  }
+  .u-cli__scopes code {
+    display: block;
+    font-size: 0.8125rem;
+    opacity: 0.85;
+  }
+  .u-cli__days {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .u-cli__days label {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 400;
+  }
+  .u-cli__warn,
+  .u-cli__error {
+    color: var(--ulams-color-error);
+    font-weight: 600;
+  }
+  .u-cli__hint {
+    font-size: 0.875rem;
+    margin: 0;
+  }
+  .u-cli__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+</style>

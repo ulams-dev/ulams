@@ -1,6 +1,5 @@
 <?php
 
-use Ulams\Tracker\Http\Controllers\TrackerController;
 use Ulams\Video\Http\Controllers\VideoController;
 use Illuminate\Support\Facades\Route;
 

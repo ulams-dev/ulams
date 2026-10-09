@@ -114,7 +114,6 @@ export default {
   'menu.Other activities': 'Autres activités',
   'menu.Other activities.Consultations': 'Consultations',
   'menu.Other activities.StationaryEvents': 'Événements fixes',
-  'menu.Analytics.Logs': 'Journaux',
   'menu.Sales.Vouchers': 'Bons de réduction',
   'stationary_event.edit': 'Modifier un événement fixe',
   stationary_event: 'Événement fixe',
@@ -504,7 +503,6 @@ export default {
   categories_and_tags: 'Catégories et étiquettes',
   course_edit_warning_message:
     'Cet enregistrement est déjà en cours, si vous souhaitez modifier, cliquez sur Confirmer. Vous modifiez à vos propres risques',
-  user_logs: "Journaux d'utilisateurs",
   http_method: 'Méthode HTTP',
   path: 'Chemin',
   generated_pdfs: 'PDF générés',

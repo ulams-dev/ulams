@@ -57,6 +57,8 @@
         "$TURBO_ROOT$/front/README.md",
         "$TURBO_ROOT$/front/docs/adr/**",
         "$TURBO_ROOT$/front/web/README.md",
+        "$TURBO_ROOT$/front/cli/src/**",
+        "$TURBO_ROOT$/front/cli/spec/**",
         "$TURBO_ROOT$/front/web/src/pages/**",
         "$TURBO_ROOT$/front/ui/src/**"
       ],
@@ -98,6 +100,8 @@
         "$TURBO_ROOT$/front/README.md",
         "$TURBO_ROOT$/front/docs/adr/**",
         "$TURBO_ROOT$/front/web/README.md",
+        "$TURBO_ROOT$/front/cli/src/**",
+        "$TURBO_ROOT$/front/cli/spec/**",
         "$TURBO_ROOT$/front/web/src/pages/**",
         "$TURBO_ROOT$/front/ui/src/**"
       ],
@@ -122,6 +126,8 @@
         "$TURBO_ROOT$/front/README.md",
         "$TURBO_ROOT$/front/docs/adr/**",
         "$TURBO_ROOT$/front/web/README.md",
+        "$TURBO_ROOT$/front/cli/src/**",
+        "$TURBO_ROOT$/front/cli/spec/**",
         "$TURBO_ROOT$/front/web/src/pages/**",
         "$TURBO_ROOT$/front/ui/src/**"
       ],

@@ -12,7 +12,7 @@ modules:
   - tenancy
 ---
 
-import { Aside } from "@astrojs/starlight/components";
+import { Aside, Steps } from "@astrojs/starlight/components";
 
 Uploaded packages (SCORM, cmi5, Adapt builds, LiaScript) run arbitrary third-party JavaScript.
 ulams serves them from a **content origin**: a host per tenant that holds nothing but package
@@ -69,6 +69,52 @@ also on in the separate-domain mode:
 Existing tenants pick up a changed `TENANCY_CONTENT_HOST` on the next
 `php artisan ulams:tenant:sync-env` (it runs on every `api` start). A tenant without
 `CONTENT_ORIGIN` falls back to the legacy SCORM player on the API origin.
+
+## Set up a separate content domain
+
+The strongest mode needs a second registrable domain. The domain below is a placeholder
+(`example-content.net`) until the real one is chosen; use yours everywhere it appears.
+
+<Steps>
+
+1. Register the domain. Do not use a subdomain of the application's registrable domain: that is the
+   same-site mode.
+
+2. Create DNS records pointing at the server (A and AAAA, or a CNAME to your load balancer):
+
+   | Record | Purpose |
+   |---|---|
+   | `*.example-content.net` | One content origin per tenant (`<slug>.example-content.net`) |
+   | `platform.example-content.net` | The platform's own content origin |
+   | `storage.example-content.net` | Browser-facing object storage, only with the bundled MinIO |
+
+   A wildcard record does not cover the bare domain; it is not used.
+
+3. Set `ULAMS_CONTENT_DOMAIN=example-content.net` in the `.env` of the
+   [production example](/operators/self-hosting/). The compose file turns it into
+   `TENANCY_CONTENT_HOST={slug}.example-content.net` and `CONTENT_ORIGIN=https://platform.example-content.net`
+   on the API, and the Caddyfile into the `*.example-content.net`, `platform.` and `storage.`
+   sites.
+
+4. Certificates: with the default on-demand TLS, Caddy issues one for each tenant content host the
+   first time it is requested, after the tenant check. With wildcard certificates (DNS-01) add
+   `*.example-content.net` to the wildcard list. See [DNS and TLS](/operators/dns-and-tls/).
+
+5. Apply it to existing tenants and check the result:
+
+   ```bash
+   docker compose up -d
+   docker compose exec api php artisan ulams:upgrade
+   curl -sI https://<slug>.example-content.net/scorm/x | head -5
+   ```
+
+   `ulams:tenant:sync-env` (a step of `ulams:upgrade`, and run at start) rewrites each tenant's
+   `CONTENT_ORIGIN`. The `curl` should answer from Caddy with the content headers and
+   `404` (no such package), not `5xx` and not a certificate error.
+
+</Steps>
+
+H5P is not served from the content origin; see [H5P in production](/operators/h5p/).
 
 ## What the proxy must do
 

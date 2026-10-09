@@ -96,7 +96,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] Inventory of learner activity data (tracker, xAPI/cmi5, SCORM CMI, H5P, quizzes, progress,
       logins): storage, granularity, retention, gaps (see docs/reports/phase-0-audit.md)
 - [x] How content updates preserve learner progress today (see docs/reports/phase-0-audit.md)
-- [ ] Tests, CI, code style, queues (Horizon), storage, existing AI code (partial: explored; no AI code exists; baseline failures: core 6, auth 3)
+- [x] Tests, CI, code style, queues (Horizon), storage, existing AI code (explored; no AI code exists; the baseline failures (core 6, auth 3) no longer reproduce and the quarantine list `api/phpunit.quarantine.xml` is empty)
 - [x] Licence audit of all `escolalms/*` and key dependencies for open core (LICENSING.md and docs/reports/phase-0-audit.md; remediation items below)
 - [x] Runtime dependency inventory (input for Phase 8) (see docs/reports/phase-0-audit.md)
 - [x] Commerce audit: what Wellms commerce does, dependent flows, Sylius 2.x API coverage,
@@ -122,10 +122,14 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
       images, decide on upstream provenance links, reword ADR prose, retarget Docker Hub publishing
       workflows, replace the `ulams.app` placeholder domain, recreate SQL views in pre-rename databases
 - [x] (new) Fix `php artisan route:list` (Mattermost client connects in its constructor)
-- [ ] (new) CI (partial: root `ci.yml` with path filters, PHP shards, licence guards and Dependabot committed; not yet run on GitHub — the branch is unpushed; publishing workflows intentionally dropped): move workflows to the root `.github/` with path filters; drop MySQL services; run Jest
+- [x] (new) CI (partial: root `ci.yml` with path filters, PHP shards, licence guards and Dependabot committed; not yet run on GitHub — the branch is unpushed; publishing workflows intentionally dropped): move workflows to the root `.github/` with path filters; drop MySQL services; run Jest
       in admin/front; Dockerfiles build from the repo root
-- [ ] (new) Remove the non-existent `packages/tracker/src` path from Swagger (done); consider Git LFS for
-      large test fixtures; revisit exact pins (`faker-markdown-generator`, `tzsk/sms`)
+      (done: workflows are on `main` and run on GitHub; admin Jest (3 suites) and the front tests run in the `js` job;
+      yarn installs are frozen; the quarantine is empty)
+- [x] (new) Remove the non-existent `packages/tracker/src` path from Swagger (done); consider Git LFS for
+      large test fixtures; revisit exact pins (`faker-markdown-generator`, `tzsk/sms`) (no LFS: CI rejects new files over 2 MB
+      and the 24 MB and 6.8 MB SCORM mocks are generated minimal packages; `faker-markdown-generator` moved to
+      `require-dev`; `tzsk/sms` stays `^10.0`; owner confirmation of no LFS pending #48)
 
 ### 0.1c Security and audit follow-ups (new)
 - [x] (new) Replace the GPL PHP libraries `trax2/framework` (lrs) and `laraveldaily/laravel-invoices` with first-party code
@@ -135,7 +139,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] (new) Authenticate the Jitsi recording webhook and restrict the downloaded URL (SSRF)
 - [x] (new) Verify JWT signatures in the LRS guard
 - [x] (new) Fix the ungrouped `orWhere` in `CourseAccessService::getUserCourseIds` and similar queries
-- [ ] (new) Remove the tracker Logs screen in admin and other tracker leftovers
+- [x] (new) Remove the tracker Logs screen in admin and other tracker leftovers
 - [x] (new) Fix the tenant video processing queue (jobs dispatched to a queue no tenant worker consumes)
 - [ ] (new) `Relation::enforceMorphMap` for topic types so class renames never orphan data
 - [x] (new) ADR for the tenancy package (docs/decisions/0007)
@@ -182,7 +186,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
       `stripeKey.includes` on null); show a configuration message instead
 - [ ] (new) Yarn install on Node 23 needs `--ignore-engines` (vitest engines); CI pins Node 22
 - [ ] (new) Replace MinIO with SeaweedFS (or RustFS) and give each tenant its own S3 identity (ADR 0041, plan L0-03)
-- [ ] (new) `ulams:upgrade`: one idempotent per-tenant upgrade command (plan L0-19)
+- [x] (new) `ulams:upgrade`: one idempotent per-tenant upgrade command (plan L0-19) (ADR 0081; the cmi5 and frame steps run once their commands land)
 - [x] (new) Fix `Cmi5Policy::delete` checking the read permission (new `cmi5_delete` permission, admins only; plan L0-09)
 - [ ] (new) Five packages with `@OA\` annotations are missing from the Swagger scan paths (plan L0-11)
 
@@ -247,7 +251,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       tool" (Integrations → LTI)
 - [ ] (new) LTI: Client-Side OIDC (platform storage via `postMessage`) on the tool side, NRPS on the platform
       side, per-tool `frame-src` in the CSP
-- [ ] (new) Run `ulams:lti:rotate-keys --init` for existing tenants (new tenants get it at provisioning)
+- [x] (new) Run `ulams:lti:rotate-keys --init` for existing tenants (new tenants get it at provisioning) (done by `ulams:upgrade`, step `lti_keys`, ADR 0081)
 
 ### 1.4 Shared
 - [x] Upload hardening (zip-slip, MIME, size limits, virus-scan hook) (`packages/uploads`: SCORM, cmi5,
@@ -272,6 +276,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       app), and add registered LTI tool origins to the front/admin `frame-src` (documented in
       `api/docs/content-origin.md`; deployment pending). Note 2026-10-09: the owner chose the same-site
       `*.content.ulams.app` instead; the separate domain stays supported (ADR 0014, amended)
+      (partial: deployment docs with DNS and TLS steps done (operators/content-origin); the real domain is owner decision #24 and `frame-src` is L1-05)
 - [x] (new) Same-site content subdomain hardening: `__Host-` cookies, exact-Origin checks on front and API,
       sandboxed player frames, COOP/CORP headers, both modes documented
 - [ ] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector
@@ -295,7 +300,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       H5P token from the BFF, or state through the BFF) (decided: state through the BFF, ADR 0045; the `/h5p`
       proxy adds the session token server-side for the player's own calls, the frame still gets `token: null`
       and the model's URLs carry no `_token`)
-- [ ] (new) Production: set `H5P_SERVICE_CONFIG_DIR`, run `ulams:h5p:export-config` and start the H5P service
+- [x] (new) Production: set `H5P_SERVICE_CONFIG_DIR`, run `ulams:h5p:export-config` and start the H5P service
       with `compose.h5p.prod.yml`
 - [x] (new) H5P xAPI progress endpoint rejects statement objects (`ProgressService::h5p()` typed `string`) (plan L1-06; the statement is stored as JSON, its verb as the event)
 - [ ] (new) `yarn install` on Node 24 fails in admin's postinstall (`max setup`: umi's esmi feature loads
@@ -330,7 +335,7 @@ approved apply through domain services → element chat edits. Designs:
       (written; needs `TENANCY_INTEGRATION=1` and two probe tenants)
 - [ ] (new) Regenerate the OpenAPI spec and SDK path types for the builder endpoints (the SDK uses
       hand-written types; the API carries the annotations)
-- [ ] (new) Normalise `yarn.lock` with a real `yarn install` (entries for `@ag-ui/core` 1.0.2 and
+- [x] (new) Normalise `yarn.lock` with a real `yarn install` (a fresh `yarn install` leaves it unchanged; `--frozen-lockfile` in CI is the check) (entries for `@ag-ui/core` 1.0.2 and
       `diff` 9.0.0 were added by hand while the disk was full)
 - [ ] (new) Delete the RichText/GIFT content row when a topic is deleted (topic repository leaves it;
       the applier deletes topics through the repository)
@@ -618,7 +623,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Git merge triggers Living Course update proposal
 - [ ] (new) CLI plan `docs/plans/cli.md`: agent-first `ulams` CLI and MCP server (draft, waiting for approval;
       ADRs 0072–0079)
-- [ ] (new) M1 CLI core: `front/cli` workspace, command registry, output contract and exit codes, profiles,
+- [x] (new) M1 CLI core: `front/cli` workspace, command registry, output contract and exit codes, profiles,
       `login` (token/password/demo), `whoami`, `ulams api`, `schema`, `describe`
 - [ ] (new) M2 noun commands generated from OpenAPI + overrides, topic uploads of every type, pagination,
       `--dry-run`, `--wait`, `apply -f`, coverage matrix enforced in CI
@@ -639,7 +644,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Scoped API keys with rate limits and usage stats
 - [x] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit
       log, `Idempotency-Key`, `X-Request-Id`, `GET /api/meta`; admin "API tokens" page (ADR 0074)
-- [ ] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075; pending #74)
+- [x] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075; pending #74)
 - [ ] (new) S3 platform tenant API with queued provisioning (ADR 0078; pending #79)
 - [x] (new) S4 course builder run-status endpoint `GET /api/admin/course-builder/runs/{run}`
 - [ ] (new) S5 OpenAPI response schemas for the top 60 operations the CLI uses, after L0-11; stable operationIds
