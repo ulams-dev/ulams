@@ -42,6 +42,27 @@ class PaymentProcessingTest extends TestCase
         $this->assertEquals($payable->getUser()->getKey(), $payment->user->getKey());
     }
 
+    public function testClientSuppliedCurrencyIsIgnoredOnPurchase(): void
+    {
+        PaymentGateway::fake();
+
+        $billable = $this->createBillableStudent();
+        $payable = new Payable(1000, Currency::USD(), 'asdf', 1337);
+        $payable->setUser($billable);
+
+        $processor = $payable->process();
+        $processor->purchase([
+            'gateway' => 'stripe',
+            'return_url' => 'https://localhost.test',
+            'payment_method' => '123',
+            'currency' => Currency::EUR,
+        ]);
+
+        $payment = $processor->getPayment()->refresh();
+        $this->assertEquals(Currency::USD(), $payment->currency);
+        $this->assertSame(1000, $payment->amount);
+    }
+
     public function testPayableCanBecomePaymentAndBePaidUsingMockedStripe(): void
     {
         PaymentGateway::fake();
