@@ -13,8 +13,12 @@ use Ulams\Courses\Repositories\Contracts\CourseRepositoryContract;
 use Ulams\Courses\Repositories\Contracts\TopicRepositoryContract;
 use Ulams\Courses\Services\Contracts\ProgressServiceContract;
 use Ulams\Courses\ValueObjects\CourseProgressCollection;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Ulams\Courses\Models\Course;
+use Ulams\Courses\Models\Topic;
 
 class CourseProgressAPIController extends AppBaseController implements CourseProgressAPISwagger
 {
@@ -65,6 +69,8 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
     {
         $course = $this->courseRepositoryContract->getById($course_id);
 
+        $this->authorizeAttend($request, $course);
+
         if ($course->status !== CourseStatusEnum::PUBLISHED) {
             // We only check $course->status !== CourseStatusEnum::PUBLISHED, and not is_active, because if course has deadline we still want to return progress
             return $this->sendError(__('Course is not active'), 403);
@@ -80,8 +86,16 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
     {
         $course = $this->courseRepositoryContract->getById($course_id);
 
+        $this->authorizeAttend($request, $course);
+
         if ($course->status !== CourseStatusEnum::PUBLISHED) {
             return $this->sendError(__('Course is not active'), 403);
+        }
+
+        // topics of another course are not this user's to progress
+        $topicIds = array_unique(array_map('intval', array_column($request->get('progress', []), 'topic_id')));
+        if ($topicIds !== [] && $course->topics()->whereIn('topics.id', $topicIds)->count() !== count($topicIds)) {
+            return $this->sendError(__('You do not have access to this course'), 403);
         }
 
         $courseProgressCollection = $this->progressServiceContract->update($course, $request->user(), $request->get('progress'));
@@ -96,6 +110,8 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
     public function ping($topic_id, Request $request): JsonResponse
     {
         $topic = $this->topicRepositoryContract->getById($topic_id);
+
+        $this->authorizeAttend($request, $topic);
 
         if ($topic->course->status !== CourseStatusEnum::PUBLISHED) {
             return $this->sendError(__('Course is not active'), 403);
@@ -131,10 +147,7 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
 
         $topic = $this->topicRepositoryContract->getById($topic_id);
 
-        // enrolled in the course (directly or through a group), or allowed to edit it
-        if (!\Illuminate\Support\Facades\Gate::forUser($request->user())->allows('attend', $topic)) {
-            return $this->sendError(__('You do not have access to this course'), 403);
-        }
+        $this->authorizeAttend($request, $topic);
         if (!$topic->course->is_active) {
             return $this->sendError(__('Course is not active'), 403);
         }
@@ -154,5 +167,16 @@ class CourseProgressAPIController extends AppBaseController implements CoursePro
         }
         return $this->sendError(__('Deadline missed'), 403);
 
+    }
+
+    /**
+     * Progress is only read and written for a course the user attends: enrolled directly or through
+     * a group, allowed to edit it, or the course is public. Everyone else gets 403.
+     */
+    private function authorizeAttend(Request $request, Course|Topic $subject): void
+    {
+        if (!Gate::forUser($request->user())->allows('attend', $subject)) {
+            throw new HttpResponseException($this->sendError(__('You do not have access to this course'), 403));
+        }
     }
 }

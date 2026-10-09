@@ -308,7 +308,7 @@ class CourseRepository extends BaseRepository implements CourseRepositoryContrac
 
     public function getById(int $id): Course
     {
-        return $this->model->newQuery()->find($id);
+        return $this->model->newQuery()->findOrFail($id);
     }
 
     public function delete(int $id): ?bool
