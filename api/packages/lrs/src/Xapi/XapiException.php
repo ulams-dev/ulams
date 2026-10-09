@@ -26,6 +26,11 @@ class XapiException extends RuntimeException
         return new self($message, Response::HTTP_UNAUTHORIZED);
     }
 
+    public static function forbidden(string $message = 'Forbidden.'): self
+    {
+        return new self($message, Response::HTTP_FORBIDDEN);
+    }
+
     public static function notFound(string $message = 'xAPI resource not found.'): self
     {
         return new self($message, Response::HTTP_NOT_FOUND);

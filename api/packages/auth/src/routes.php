@@ -1,5 +1,6 @@
 <?php
 
+use Ulams\Auth\Http\Controllers\Admin\TokenAdminController;
 use Ulams\Auth\Http\Controllers\Admin\UserController;
 use Ulams\Auth\Http\Controllers\Admin\UserGroupsController;
 use Ulams\Auth\Http\Controllers\Admin\UserInterestsController;
@@ -8,11 +9,27 @@ use Ulams\Auth\Http\Controllers\AuthApiController;
 use Ulams\Auth\Http\Controllers\LoginApiController;
 use Ulams\Auth\Http\Controllers\LogoutApiController;
 use Ulams\Auth\Http\Controllers\ProfileAPIController;
+use Ulams\Auth\Http\Controllers\MetaController;
 use Ulams\Auth\Http\Controllers\RegisterApiController;
+use Ulams\Auth\Http\Controllers\TokenController;
 use Ulams\Auth\Http\Middleware\RegistrationEnabled;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api'], function () {
+    Route::get('meta', [MetaController::class, 'show'])->middleware('throttle:60,1')->name('meta');
+
+    Route::middleware(['auth:api', 'throttle:60,1'])->group(function () {
+        Route::get('auth/tokens', [TokenController::class, 'index']);
+        Route::post('auth/tokens', [TokenController::class, 'store']);
+        Route::get('auth/tokens/current', [TokenController::class, 'current']);
+        Route::delete('auth/tokens/{id}', [TokenController::class, 'destroy']);
+
+        Route::get('admin/tokens', [TokenAdminController::class, 'index']);
+        Route::delete('admin/tokens/{id}', [TokenAdminController::class, 'destroy']);
+        Route::get('admin/tokens/{id}/audit', [TokenAdminController::class, 'audit']);
+        Route::get('admin/agent-audit', [TokenAdminController::class, 'agentAudit']);
+    });
+
     Route::prefix('admin/auth')->group(function () {
         Route::post('/impersonate', [LoginApiController::class, 'impersonate'])->middleware(['auth:api'])->name('impersonate');
     });
