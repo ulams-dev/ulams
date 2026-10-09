@@ -20,6 +20,8 @@ that has no closer licence file. This page is an engineering summary, not legal 
 | `admin/` | MIT | The copyright holder of the original admin confirmed MIT for the monorepo |
 | `admin/src/lib/markdown-editor` | BSD-3-Clause, © General Outline, Inc. | The notice must be reproduced in distributed builds |
 | `admin/src/lib/gift-pegjs` | MIT, © Christopher P. Fuhrman | |
+| `front/interactive-bridge` | MIT | The `ulams-ix` bridge (ADR 0087); packages under any licence may include it |
+| `demo-content/*` | MIT for code, CC BY 4.0 for course text and data; exceptions are named in each package's `NOTICE` | Content packages for the demo academies, played only as sandboxed content (ADR 0088); nothing outside the folder imports them (lint) |
 
 ## Rules for an open-core codebase
 
@@ -58,6 +60,16 @@ that has no closer licence file. This page is an engineering summary, not legal 
 DOCX is read by a first-party converter (no PhpWord, which is LGPL-3.0-only; ADR 0026). No A2UI renderer or
 CopilotKit code is bundled: the studio renders its own catalogue (only the A2UI message schemas are
 vendored, see above).
+
+## Demo content packages (`demo-content/`)
+
+Interactive packages for the demo academies (ADR 0088, amended 2026-10-09). Each package folder has its own
+`LICENSE` and `NOTICE`. They run only as sandboxed content in a frame and are never linked into the API,
+admin or front (`demo-content/scripts/check-demo-content-boundary.mjs`, part of `yarn lint`).
+
+| Package | Code | Provenance and third-party material |
+|---|---|---|
+| `gravity` | MIT, © 2026 Mateusz Wojczal | The owner's own simulator (`github.com/qunabu/Gravity`, originally GPL-3.0), relicensed by its copyright holder (#147). Left out: commits bc9d770 and 9db0edc (David Frankel, Docker files), commit 4adaa1b (jin, the Chinese translation), the music track and the Moon photograph (no stated licence). Earth day map: Solar System Scope, CC BY 4.0. Three.js: MIT. Inter and Roboto Mono: SIL OFL 1.1 (via `@fontsource`), licence texts ship in the package |
 
 ## PDF templates and certificates
 
