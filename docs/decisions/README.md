@@ -104,5 +104,6 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0090](0090-living-course-implementation-choices.md) | Living Course: choices made during implementation | Proposed |
 | [0091](0091-shared-hosting-cron-workers-and-manual-tenant-database.md) | Shared hosting: cron-driven workers and an operator-created tenant database | Proposed |
 | [0092](0092-vps-cloudflare-hosting-reference.md) | Production reference: one VPS behind Cloudflare, flat tenant hosts, a tunnel and R2 | Proposed |
+| [0093](0093-public-showcase-endpoint-and-landing-hero-interactives.md) | A public showcase endpoint and hero interactives on the demo landings | Proposed |
 
 <!-- END GENERATED: adr-index -->
