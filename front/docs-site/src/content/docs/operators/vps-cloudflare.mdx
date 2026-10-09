@@ -144,7 +144,7 @@ Everything here can be done by hand (checklist) or with `scripts/cloudflare-setu
 `CLOUDFLARE_API_TOKEN` from the environment and never prints it. Run `scripts/cloudflare-setup.sh --dry-run all` to see
 the plan without a token.
 
-**API token** (dashboard, My Profile, API Tokens, scope it to the zone and the account):
+**API token** (dashboard, My Profile, API Tokens, scope it to the zone and the account; an account-owned token works too, set `CLOUDFLARE_ACCOUNT_ID` so that the script can verify it):
 Zone: Zone Read, DNS Edit, Zone Settings Edit, SSL and Certificates Edit, Cache Rules Edit.
 Account: Cloudflare Tunnel Edit, Workers R2 Storage Edit.
 

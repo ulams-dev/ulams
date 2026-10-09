@@ -98,7 +98,15 @@ resolve_zone() {
 do_check() {
   ulams_log "token and zone"
   if ((dry)); then echo "    would verify the token and look up the zone $domain"; return; fi
-  cf GET /user/tokens/verify | jq -r '"    token: " + .result.status'
+  # user tokens verify at /user/tokens/verify, account-owned tokens (cfat_...) at /accounts/<id>/tokens/verify
+  local res
+  if res="$(CF_QUIET=1 cf GET /user/tokens/verify)"; then
+    jq -r '"    user token: " + .result.status' <<<"$res"
+  elif [[ -n "$account_id" ]] && res="$(CF_QUIET=1 cf GET "/accounts/$account_id/tokens/verify")"; then
+    jq -r '"    account token: " + .result.status' <<<"$res"
+  else
+    ulams_die "the token did not verify as a user token or as an account token (set CLOUDFLARE_ACCOUNT_ID for account tokens)"
+  fi
   echo "    zone: $domain ($zone_id), account: $account_id"
 }
 
