@@ -409,6 +409,10 @@ jobs:
             prefix: VITE_APP_
     steps:
       - uses: actions/checkout@v7
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build
         run: docker build -f ${{ matrix.name }}/Dockerfile -t smoke-${{ matrix.name }} .
       - name: Start, request and check
