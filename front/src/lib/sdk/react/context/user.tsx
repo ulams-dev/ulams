@@ -17,6 +17,7 @@ import { defaultConfig } from "./defaults";
 import { fetchDataType } from "./states";
 
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { refreshDelayMs } from "../../utils/tokenRefresh";
 import * as API from "../../types";
 import { getDefaultData } from "./index";
 
@@ -323,6 +324,17 @@ export const UserContextProvider: FunctionComponent<
           })
       : Promise.reject("noToken");
   }, [token]);
+
+  // Refresh the short-lived token before it expires; the H5P player frame
+  // receives every new token from the context (ulams-h5p:token).
+  useEffect(() => {
+    const delay = refreshDelayMs(token, Date.now());
+    if (delay === undefined) return undefined;
+    const timer = window.setTimeout(() => {
+      getRefreshedToken().catch(() => undefined);
+    }, delay);
+    return () => window.clearTimeout(timer);
+  }, [token, getRefreshedToken]);
 
   const changePassword = useCallback(
     (body: API.ChangePasswordRequest) => {
