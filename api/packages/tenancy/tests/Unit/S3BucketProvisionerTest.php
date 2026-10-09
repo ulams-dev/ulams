@@ -59,6 +59,28 @@ class S3BucketProvisionerTest extends TestCase
         $this->assertSame(['arn:aws:s3:::ulams-coffee/*'], $policy['Statement'][0]['Resource']);
     }
 
+    public function testSkipsThePolicyForStoresWithoutBucketPolicies(): void
+    {
+        $client = new S3Client([
+            'version' => 'latest',
+            'region' => 'auto',
+            'endpoint' => 'https://account.r2.cloudflarestorage.com',
+            'use_path_style_endpoint' => true,
+            'credentials' => ['key' => 'k', 'secret' => 's'],
+            'handler' => function (CommandInterface $command) {
+                $this->commands[] = $command->getName() . ':' . ($command['Bucket'] ?? '');
+
+                return $command->getName() === 'HeadBucket'
+                    ? new S3Exception('Not Found', $command, ['response' => new Response(404)])
+                    : new Result();
+            },
+        ]);
+
+        (new S3BucketProvisioner($client, publicPolicy: false))->ensure('ulams-coffee');
+
+        $this->assertSame(['HeadBucket:ulams-coffee', 'CreateBucket:ulams-coffee'], $this->commands);
+    }
+
     public function testExistingBucketIsNotCreatedAgain(): void
     {
         $this->handler->append(new Result(), new Result());

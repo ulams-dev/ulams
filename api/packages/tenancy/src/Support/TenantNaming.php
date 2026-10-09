@@ -14,7 +14,7 @@ class TenantNaming
 {
     public const SLUG_PATTERN = '/^[a-z][a-z0-9]{1,29}$/';
 
-    public const RESERVED_SLUGS = ['api', 'app', 'admin', 'www', 'storage', 'minio', 'ws', 'metrics', 'platform', 'default', 'test', 'postgres'];
+    public const RESERVED_SLUGS = ['api', 'app', 'admin', 'www', 'storage', 'minio', 'ws', 'metrics', 'platform', 'default', 'test', 'postgres', 'docs', 'files', 'content', 'status', 'mail', 'cdn', 'assets'];
 
     public static function assertValidSlug(string $slug): void
     {
@@ -128,7 +128,7 @@ class TenantNaming
             'DB_PASSWORD' => $tenant->db_password,
             'FILESYSTEM_DRIVER' => 's3',
             'AWS_BUCKET' => $tenant->bucket,
-            'AWS_URL' => rtrim((string) config('ulams_tenancy.storage_public_url'), '/') . '/' . $tenant->bucket,
+            'AWS_URL' => self::bucketPublicUrl($tenant),
             'REDIS_PREFIX' => $prefix,
             'CACHE_PREFIX' => $prefix . 'cache',
             'HORIZON_PREFIX' => $prefix . 'horizon:',
@@ -137,6 +137,20 @@ class TenantNaming
             'INITIAL_USER_EMAIL' => self::adminEmail($tenant),
             'INITIAL_USER_PASSWORD' => (string) config('ulams_tenancy.demo_password'),
         ];
+    }
+
+    /**
+     * Browser-facing base URL of the tenant bucket: the `bucket_public_url` pattern when the store gives
+     * every bucket its own host name (R2 custom domain), else the store URL with the bucket in the path.
+     */
+    public static function bucketPublicUrl(Tenant $tenant): string
+    {
+        $pattern = config('ulams_tenancy.bucket_public_url');
+        if (is_string($pattern) && $pattern !== '') {
+            return rtrim(str_replace('{slug}', $tenant->slug, $pattern), '/');
+        }
+
+        return rtrim((string) config('ulams_tenancy.storage_public_url'), '/') . '/' . $tenant->bucket;
     }
 
     /**

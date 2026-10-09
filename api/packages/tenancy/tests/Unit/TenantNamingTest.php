@@ -80,6 +80,26 @@ class TenantNamingTest extends TestCase
         $this->assertSame('https://coffee.ulams-content.net', $values['CONTENT_ORIGIN']);
     }
 
+    public function testBucketPublicUrlPatternGivesEveryTenantItsOwnHost(): void
+    {
+        config(['ulams_tenancy.bucket_public_url' => 'https://{slug}-files.ulams.app/']);
+
+        $coffee = TenantNaming::envValues(new Tenant(TenantNaming::newTenantAttributes('coffee')));
+        $tea = TenantNaming::envValues(new Tenant(TenantNaming::newTenantAttributes('tea')));
+
+        $this->assertSame('https://coffee-files.ulams.app', $coffee['AWS_URL']);
+        $this->assertSame('https://tea-files.ulams.app', $tea['AWS_URL']);
+    }
+
+    public function testBucketPublicUrlFallsBackToTheStoreUrlWithTheBucket(): void
+    {
+        config(['ulams_tenancy.bucket_public_url' => null, 'ulams_tenancy.storage_public_url' => 'https://files.ulams.app/']);
+
+        $values = TenantNaming::envValues(new Tenant(TenantNaming::newTenantAttributes('coffee')));
+
+        $this->assertSame('https://files.ulams.app/ulams-coffee', $values['AWS_URL']);
+    }
+
     public function testEveryTenantGetsItsOwnH5PInternalToken(): void
     {
         $coffee = TenantNaming::envValues(new Tenant(TenantNaming::newTenantAttributes('coffee')));
@@ -98,7 +118,7 @@ class TenantNamingTest extends TestCase
 
     public static function invalidSlugs(): array
     {
-        return [['a'], ['Coffee'], ['1abc'], ['with-dash'], ['under_score'], ['a.b'], [str_repeat('a', 31)], ['admin'], ['api']];
+        return [['a'], ['Coffee'], ['1abc'], ['with-dash'], ['under_score'], ['a.b'], [str_repeat('a', 31)], ['admin'], ['api'], ['docs'], ['files'], ['content']];
     }
 
     public function testQuotesEnvValuesOnlyWhenNeeded(): void

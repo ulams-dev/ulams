@@ -8,13 +8,13 @@ use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 
 class S3BucketProvisioner implements BucketProvisionerContract
 {
-    public function __construct(private S3Client $client)
+    public function __construct(private S3Client $client, private bool $publicPolicy = true)
     {
     }
 
     public static function fromConfig(array $config): self
     {
-        return new self(new S3Client(array_filter([
+        return new self(client: new S3Client(array_filter([
             'version' => 'latest',
             'region' => $config['region'] ?? 'us-east-1',
             'endpoint' => isset($config['endpoint']) ? trim((string) $config['endpoint'], '"') : null,
@@ -23,13 +23,17 @@ class S3BucketProvisioner implements BucketProvisionerContract
                 'key' => (string) ($config['key'] ?? ''),
                 'secret' => (string) ($config['secret'] ?? ''),
             ],
-        ], fn ($value) => $value !== null)));
+        ], fn ($value) => $value !== null)), publicPolicy: (bool) ($config['public_policy'] ?? true));
     }
 
     public function ensure(string $bucket): void
     {
         if (!$this->exists($bucket)) {
             $this->client->createBucket(['Bucket' => $bucket]);
+        }
+
+        if (!$this->publicPolicy) {
+            return;
         }
 
         $this->client->putBucketPolicy([
