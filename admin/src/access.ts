@@ -213,7 +213,6 @@ export default function (initialState: {
     productsDetailsPermission: havePermissionsInDashboard(PERMISSIONS.ProductsList),
     productsListPermission: havePermissionsInDashboard(PERMISSIONS.ProductsManage),
 
-
     voucherListPermission: havePermissionsInDashboard(PERMISSIONS.VoucherList),
     voucherDetailPermission: havePermissionsInDashboard(PERMISSIONS.VoucherRead),
 
