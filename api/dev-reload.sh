@@ -1,16 +1,23 @@
 #!/bin/bash
 # Applies code and config edits to a running container (`make dev-reload`):
-#  - rebuilds the config/route/event/view caches when they are in use (DEMO_PERF=1, production);
+#  - rebuilds the class map (composer dump-autoload -o --no-scripts) and the package manifest, so
+#    packages merged since the last start are found without manual steps;
+#  - rebuilds the config/route/event/view caches per domain (optimize.sh) when they are in use
+#    (DEMO_PERF=1, production), and clears stale ones in development;
 #  - resets opcache: php-fpm reloads gracefully (USR2), the CLI file cache is emptied;
 #  - restarts the long-lived queue workers, Horizon and scheduler loops (workers.sh starts them again).
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR" || exit 1
 set -e
-# 1. package manifest from the vendor/ this container has (after any composer change)
+# 1. class map and package manifest from the vendor/ this container has (after any composer change)
+./php-profile.sh autoload
 ./php-profile.sh manifest
-# 2. framework caches, when this profile uses them
-if ls bootstrap/cache/config*.php >/dev/null 2>&1; then
+# 2. framework caches per domain: rebuilt when this profile uses them, otherwise any stale
+#    route/config cache (left by an earlier demo run or a manual optimize) is removed
+if ls bootstrap/cache/config*.php bootstrap/cache/routes*.php >/dev/null 2>&1; then
   ./optimize.sh
+else
+  ./optimize.sh --clear
 fi
 # 3. opcache: CLI file cache and php-fpm (graceful reload, no dropped requests)
 rm -rf /tmp/opcache/* 2>/dev/null || true
