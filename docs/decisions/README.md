@@ -46,3 +46,26 @@ replacement.
 | [0034](0034-tamper-evident-audit-trail.md) | A tamper-evident audit trail for Living Course | Accepted |
 | [0038](0038-brand-identity-orbital-folio.md) | Brand identity: Orbital Folio, drawn logo, brand tokens, orange as accent only | Proposed |
 | [0039](0039-author-preview-of-draft-courses.md) | Author preview of draft courses on its own routes with the author's token | Proposed |
+| [0040](0040-postgresql-17.md) | PostgreSQL 17 with a tested dump-and-restore upgrade | Proposed |
+| [0041](0041-seaweedfs-and-per-tenant-s3-identities.md) | SeaweedFS replaces MinIO; per-tenant S3 identities; server-side reads use the internal endpoint | Proposed |
+| [0042](0042-no-websocket-server.md) | No WebSocket server: Soketi and Pusher removed, Reverb only when a feature needs push | Proposed |
+| [0043](0043-enforced-morph-map.md) | An enforced morph map with stable aliases for polymorphic types | Proposed |
+| [0044](0044-content-security-policy-enforcement.md) | Content Security Policy: report collector, enforcement, tool origins from the API | Proposed |
+| [0045](0045-h5p-state-through-bff.md) | H5P learner state through the BFF; no API token in the browser | Proposed |
+| [0046](0046-cmi5-content-origin-and-launch-token.md) | cmi5 on the content origin with a one-time launch token and an LRS-only session token | Proposed |
+| [0047](0047-openapi-attributes.md) | OpenAPI as PHP attributes; doctrine/annotations removed; spec snapshot test | Proposed |
+| [0048](0048-course-sites.md) | Course sites: publish into the current site by default; new sites through provisioning and session transfer | Proposed |
+| [0049](0049-commerce-provider-before-sylius.md) | A CommerceProvider interface before Sylius, with a Wellms cart adapter | Proposed |
+| [0050](0050-lesson-content-type-registry.md) | Lesson content-type registry: deterministic LiaScript rendering and allow-listed H5P libraries | Proposed |
+| [0051](0051-critic-loop-and-solvability-runner.md) | Critic loop with a retry budget and an isolated Playwright solvability runner | Proposed |
+| [0052](0052-layout-topic-type.md) | Learner layouts as a Layout topic type rendered from the catalogue | Proposed |
+| [0053](0053-simulations-sandbox.md) | Simulations: single-file HTML on the content origin, sandboxed, typed postMessage, off by default | Proposed |
+| [0054](0054-component-playground-in-docs-site.md) | Component playground in the docs site instead of Storybook | Proposed |
+| [0055](0055-course-experiments.md) | Course experiments with delayed retention, surveys and a tenant-level consent model | Proposed |
+| [0056](0056-nginx-unprivileged-images.md) | Admin and legacy front served by nginx-unprivileged with runtime JSON config | Proposed |
+| [0057](0057-learner-insights-signal-stream.md) | learner-insights package: an append-only signal stream keyed by blueprint element IDs | Proposed |
+| [0058](0058-rule-based-risk-scoring.md) | Rule-based risk scoring with reasons behind a RiskScorer interface | Proposed |
+| [0059](0059-personal-remediations.md) | Personal remediations: learner-scoped, grounded, cached per struggle pattern | Proposed |
+| [0060](0060-ai-tutor.md) | AI tutor: course-scoped full-text retrieval, citations and an attempt guard | Proposed |
+| [0061](0061-personalisation-privacy.md) | Personalisation privacy: off by default, opt-out or consent, minimal data, explainable, erasable | Proposed |
+| [0062](0062-adaptive-interface-profile.md) | Adaptive interface as a presentation profile over catalogue components | Proposed |
