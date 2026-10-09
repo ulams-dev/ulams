@@ -3,7 +3,7 @@ import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import mermaid from "astro-mermaid";
 import starlightLinksValidator from "starlight-links-validator";
-import { rehypeBaseLinks } from "./src/plugins/rehype-base-links.mjs";
+import baseLinks from "./src/plugins/base-links.mjs";
 
 /**
  * Where the site is published. GitHub Pages sets both from actions/configure-pages
@@ -11,8 +11,11 @@ import { rehypeBaseLinks } from "./src/plugins/rehype-base-links.mjs";
  */
 const site = process.env.DOCS_SITE || "https://ulams-dev.github.io";
 const base = process.env.DOCS_BASE || "/";
-/** Link validation runs on every build unless explicitly turned off. */
-const validateLinks = process.env.DOCS_VALIDATE_LINKS !== "0";
+/**
+ * Links are written without the base path and validated on root builds (local, PR checks);
+ * a build under a base path only prefixes them (src/plugins/base-links.mjs).
+ */
+const validateLinks = process.env.DOCS_VALIDATE_LINKS !== "0" && base === "/";
 
 const repo = "https://github.com/ulams-dev/ulams";
 
@@ -21,10 +24,8 @@ export default defineConfig({
   base,
   trailingSlash: "always",
   server: { port: 4322 },
-  markdown: {
-    rehypePlugins: [[rehypeBaseLinks, { base }]],
-  },
   integrations: [
+    baseLinks(),
     mermaid({ autoTheme: true }),
     starlight({
       title: "ulams docs",
