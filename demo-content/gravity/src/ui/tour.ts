@@ -367,7 +367,7 @@ const STEPS_SOURCE: TourStep[] = [
     id: 'exoplanet',
     title: 'How we find other worlds',
     body:
-      'A planet doesn’t simply orbit its star — both swing around their shared center of mass, the barycenter. The star traces a tiny circle in response to the planet’s pull. We can’t see most exoplanets directly, but we can detect that wobble: the star’s light shifts blue then red as it approaches and recedes. Jupiter makes our own Sun loop by about its own radius; that telltale dance is how thousands of distant worlds were discovered.',
+      'A planet doesn’t simply orbit its star — both swing around their shared center of mass, the barycenter. The star traces a tiny circle in response to the planet’s pull. We can’t see most exoplanets directly, but we can detect that wobble: the star’s light shifts blue then red as it approaches and recedes. Jupiter makes our own Sun loop by about one solar radius; that telltale dance is how thousands of distant worlds were discovered.',
     scale: 'visual', physics: 'kepler', twoD: false, demo: 'exoplanet',
     showMoons: false, showOrbits: false, showProjection: false, spin: false, daysPerSecond: 0,
     visible: [],
@@ -376,7 +376,7 @@ const STEPS_SOURCE: TourStep[] = [
     id: 'lensing',
     title: 'Bending starlight',
     body:
-      'If mass curves spacetime, then even light — which has no mass — must follow that curve. Einstein predicted the Sun would deflect the light of stars passing near its edge, shifting their apparent positions. During the total eclipse of 1919, Eddington measured exactly that bend, and Einstein became world-famous overnight. Today this “gravitational lensing” turns whole galaxies into cosmic magnifying glasses. Here a star sits directly behind the Sun, yet we see it offset — its light bent around the mass.',
+      'If mass curves spacetime, then even light — which has no mass — must follow that curve. Einstein predicted the Sun would deflect the light of stars passing near its edge, shifting their apparent positions. During the total eclipse of 1919, Eddington measured a bend consistent with it, later measurements confirmed it, and Einstein became world-famous overnight. Today this “gravitational lensing” turns whole galaxies into cosmic magnifying glasses. Here a star sits directly behind the Sun, yet we see it offset — its light bent around the mass.',
     scale: 'visual', physics: 'kepler', twoD: true, demo: 'lensing',
     showMoons: false, showOrbits: false, showProjection: false, spin: false, daysPerSecond: 0,
     visible: [],
@@ -412,7 +412,7 @@ const STEPS_SOURCE: TourStep[] = [
     id: 'milky-way',
     title: 'The Milky Way and the galactic year',
     body:
-      'Pull back further than any orbit so far. Our Sun is one of a few hundred billion stars in the Milky Way, riding a spiral arm about two-thirds of the way out from the center. It orbits the galaxy at roughly 230 kilometres per second — yet the galaxy is so vast that one lap, a “galactic year”, takes about 230 million years. The last time the Sun was here, dinosaurs were just beginning. The same gravity that holds a moon holds a galaxy together.',
+      'Pull back further than any orbit so far. Our Sun is one of a few hundred billion stars in the Milky Way, riding a spiral arm some 26,000 to 28,000 light-years from the center. It orbits the galaxy at roughly 230 kilometres per second — yet the galaxy is so vast that one lap, a “galactic year”, takes about 230 million years. The last time the Sun was here, dinosaurs were just beginning. The same gravity that holds a moon holds a galaxy together.',
     scale: 'visual', physics: 'kepler', twoD: false, demo: 'milkyway',
     showMoons: false, showOrbits: false, showProjection: false, spin: false, daysPerSecond: 0,
     visible: [],
@@ -421,7 +421,7 @@ const STEPS_SOURCE: TourStep[] = [
     id: 'sagittarius-a',
     title: 'Sagittarius A*: the monster at the center',
     body:
-      'At the heart of the Milky Way lurks a supermassive black hole, Sagittarius A*, with the mass of about four million Suns. We know it’s there because we’ve watched stars whip around it for decades. The star S2 swings past on a wild ellipse every sixteen years, reaching 3% of the speed of light at closest approach — pure Kepler-and-Einstein motion around an invisible point. Those orbits won a Nobel Prize and weighed the unseen giant.',
+      'At the heart of the Milky Way lurks a supermassive black hole, Sagittarius A*, with the mass of about four million Suns. We know it’s there because we’ve watched stars whip around it for decades. The star S2 swings past on a wild ellipse every sixteen years, reaching about 2.5% of the speed of light at closest approach — pure Kepler-and-Einstein motion around an invisible point. Those orbits won a Nobel Prize and weighed the unseen giant.',
     // 3-D: the 2-D lock would force the camera overhead, and the lensed halo
     // only reads with the disk edge-on.
     scale: 'visual', physics: 'kepler', twoD: false, demo: 'sgra',
@@ -432,7 +432,7 @@ const STEPS_SOURCE: TourStep[] = [
     id: 'dark-matter',
     title: 'The missing mass',
     body:
-      'Here gravity hands us a mystery. By the very law from slide one, stars far from a galaxy’s center should orbit slower than those close in — just as Neptune crawls while Mercury races. But they don’t: the outer stars move just as fast as the inner ones, their speed curve staying stubbornly flat. The only fix is enormous amounts of unseen mass — “dark matter” — outweighing all the stars five to one. We’ve mapped the whole solar system, yet most of the universe is still something we cannot see.',
+      'Here gravity hands us a mystery. By the very law from slide one, stars far from a galaxy’s center should orbit slower than those close in — just as Neptune crawls while Mercury races. But they don’t: the outer stars move just as fast as the inner ones, their speed curve staying stubbornly flat. The only fix is enormous amounts of unseen mass — “dark matter” — outweighing all ordinary matter about five to one. We’ve mapped the whole solar system, yet most of the universe is still something we cannot see.',
     scale: 'visual', physics: 'kepler', twoD: true, demo: 'darkmatter',
     showMoons: false, showOrbits: false, showProjection: false, spin: false, daysPerSecond: 0,
     visible: [],
@@ -658,11 +658,11 @@ export const PL: Record<string, { title: string; body: string }> = {
   },
   'exoplanet': {
     title: 'Jak znajdujemy inne światy',
-    body: 'Planeta nie krąży po prostu wokół gwiazdy — oba ciała obiegają wspólny środek masy, barycentrum. Gwiazda kreśli maleńkie kółko w odpowiedzi na przyciąganie planety. Większości egzoplanet nie widzimy wprost, ale potrafimy wykryć to drżenie: światło gwiazdy przesuwa się ku błękitowi, gdy się zbliża, i ku czerwieni, gdy oddala. Jowisz sprawia, że nasze Słońce zatacza pętlę wielkości jego własnego promienia; właśnie ten taniec pozwolił odkryć tysiące odległych światów.',
+    body: 'Planeta nie krąży po prostu wokół gwiazdy — oba ciała obiegają wspólny środek masy, barycentrum. Gwiazda kreśli maleńkie kółko w odpowiedzi na przyciąganie planety. Większości egzoplanet nie widzimy wprost, ale potrafimy wykryć to drżenie: światło gwiazdy przesuwa się ku błękitowi, gdy się zbliża, i ku czerwieni, gdy oddala. Jowisz sprawia, że nasze Słońce zatacza pętlę wielkości mniej więcej jednego promienia Słońca; właśnie ten taniec pozwolił odkryć tysiące odległych światów.',
   },
   'lensing': {
     title: 'Zaginanie światła gwiazd',
-    body: 'Skoro masa zakrzywia czasoprzestrzeń, to nawet światło — które nie ma masy — musi podążać za tym zakrzywieniem. Einstein przewidział, że Słońce odchyli światło gwiazd przechodzące tuż obok jego brzegu, przesuwając ich pozorne położenia. Podczas całkowitego zaćmienia w 1919 roku Eddington zmierzył dokładnie takie ugięcie i Einstein z dnia na dzień stał się sławny na cały świat. Dziś to „soczewkowanie grawitacyjne” zamienia całe galaktyki w kosmiczne szkła powiększające. Tu gwiazda jest dokładnie za Słońcem, a jednak widzimy ją przesuniętą — jej światło zostało zagięte wokół masy.',
+    body: 'Skoro masa zakrzywia czasoprzestrzeń, to nawet światło — które nie ma masy — musi podążać za tym zakrzywieniem. Einstein przewidział, że Słońce odchyli światło gwiazd przechodzące tuż obok jego brzegu, przesuwając ich pozorne położenia. Podczas całkowitego zaćmienia w 1919 roku Eddington zmierzył ugięcie zgodne z tym przewidywaniem, późniejsze pomiary je potwierdziły, a Einstein z dnia na dzień stał się sławny na cały świat. Dziś to „soczewkowanie grawitacyjne” zamienia całe galaktyki w kosmiczne szkła powiększające. Tu gwiazda jest dokładnie za Słońcem, a jednak widzimy ją przesuniętą — jej światło zostało zagięte wokół masy.',
   },
   'black-hole': {
     title: 'Czarne dziury: studnia bez dna',
@@ -678,15 +678,15 @@ export const PL: Record<string, { title: string; body: string }> = {
   },
   'milky-way': {
     title: 'Droga Mleczna i rok galaktyczny',
-    body: 'Cofnij się dalej niż w jakiejkolwiek dotychczasowej orbicie. Nasze Słońce to jedna z kilkuset miliardów gwiazd Drogi Mlecznej, sunąca po ramieniu spiralnym mniej więcej w dwóch trzecich drogi od środka. Okrąża galaktykę z prędkością około 230 kilometrów na sekundę — a jednak galaktyka jest tak ogromna, że jedno okrążenie, „rok galaktyczny”, trwa około 230 milionów lat. Gdy Słońce było tu ostatnio, dinozaury dopiero się zaczynały. Ta sama grawitacja, która trzyma księżyc, spaja całą galaktykę.',
+    body: 'Cofnij się dalej niż w jakiejkolwiek dotychczasowej orbicie. Nasze Słońce to jedna z kilkuset miliardów gwiazd Drogi Mlecznej, sunąca po ramieniu spiralnym w odległości 26–28 tysięcy lat świetlnych od środka. Okrąża galaktykę z prędkością około 230 kilometrów na sekundę — a jednak galaktyka jest tak ogromna, że jedno okrążenie, „rok galaktyczny”, trwa około 230 milionów lat. Gdy Słońce było tu ostatnio, dinozaury dopiero się zaczynały. Ta sama grawitacja, która trzyma księżyc, spaja całą galaktykę.',
   },
   'sagittarius-a': {
     title: 'Sagittarius A*: potwór w centrum',
-    body: 'W sercu Drogi Mlecznej czai się supermasywna czarna dziura, Sagittarius A*, o masie około czterech milionów Słońc. Wiemy, że tam jest, bo od dziesięcioleci obserwujemy gwiazdy okrążające ją z zawrotną prędkością. Gwiazda S2 przemyka po dzikiej elipsie co szesnaście lat, osiągając w peryhelium 3% prędkości światła — czysty ruch Keplera i Einsteina wokół niewidzialnego punktu. Te orbity przyniosły Nagrodę Nobla i pozwoliły zważyć niewidzialnego olbrzyma.',
+    body: 'W sercu Drogi Mlecznej czai się supermasywna czarna dziura, Sagittarius A*, o masie około czterech milionów Słońc. Wiemy, że tam jest, bo od dziesięcioleci obserwujemy gwiazdy okrążające ją z zawrotną prędkością. Gwiazda S2 przemyka po dzikiej elipsie co szesnaście lat, osiągając w peryhelium około 2,5% prędkości światła — czysty ruch Keplera i Einsteina wokół niewidzialnego punktu. Te orbity przyniosły Nagrodę Nobla i pozwoliły zważyć niewidzialnego olbrzyma.',
   },
   'dark-matter': {
     title: 'Brakująca masa',
-    body: 'Tu grawitacja stawia nas wobec zagadki. Według tego samego prawa z pierwszego slajdu gwiazdy daleko od środka galaktyki powinny krążyć wolniej niż te bliżej — tak jak Neptun się wlecze, a Merkury pędzi. A jednak tak nie jest: zewnętrzne gwiazdy poruszają się równie szybko jak wewnętrzne, a ich krzywa prędkości pozostaje uparcie płaska. Jedyne wyjaśnienie to ogromne ilości niewidzialnej masy — „ciemnej materii” — przeważającej nad wszystkimi gwiazdami pięć do jednego. Zmapowaliśmy cały Układ Słoneczny, a większość wszechświata wciąż jest czymś, czego nie potrafimy zobaczyć.',
+    body: 'Tu grawitacja stawia nas wobec zagadki. Według tego samego prawa z pierwszego slajdu gwiazdy daleko od środka galaktyki powinny krążyć wolniej niż te bliżej — tak jak Neptun się wlecze, a Merkury pędzi. A jednak tak nie jest: zewnętrzne gwiazdy poruszają się równie szybko jak wewnętrzne, a ich krzywa prędkości pozostaje uparcie płaska. Jedyne wyjaśnienie to ogromne ilości niewidzialnej masy — „ciemnej materii” — przeważającej nad całą zwykłą materią mniej więcej pięć do jednego. Zmapowaliśmy cały Układ Słoneczny, a większość wszechświata wciąż jest czymś, czego nie potrafimy zobaczyć.',
   },
   'geoid': {
     title: 'Grawitacja Ziemi jest nierówna',
