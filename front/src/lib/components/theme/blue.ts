@@ -1,5 +1,5 @@
 import type { ThemeTokens } from "./types";
-import chroma, { blend } from "chroma-js";
+import chroma from "chroma-js";
 import { sharedTheme } from "./shared";
 
 export const blueTheme: ThemeTokens = {
@@ -8,8 +8,8 @@ export const blueTheme: ThemeTokens = {
   primaryColor: "#56CCF2",
   dm__primaryColor: "#56CCF2",
 
-  secondaryColor: blend("#56CCF2", "#BDBDBD", "multiply").hex(),
-  dm__secondaryColor: blend("#56CCF2", "#BDBDBD", "multiply").hex(),
+  secondaryColor: chroma.blend("#56CCF2", "#BDBDBD", "multiply").hex(),
+  dm__secondaryColor: chroma.blend("#56CCF2", "#BDBDBD", "multiply").hex(),
 
   headerColor: "#111111",
 

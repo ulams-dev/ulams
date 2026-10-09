@@ -4,7 +4,7 @@ import { Title } from "../../atoms/Typography/Title";
 import { Link } from "../../atoms/Link/Link";
 import { Button } from "../../atoms/Button/Button";
 import { ReactNode } from "react";
-import { contrast } from "chroma-js";
+import chroma from "chroma-js";
 import { useThemeTokens } from "../../../theme/applyTheme";
 import { ExtendableStyledComponent } from "@ulams/components/types/component";
 import styles from "./QuizCta.module.css";
@@ -59,7 +59,7 @@ export const QuizCta: React.FC<QuizCtaCardProps> = (props) => {
 
   const cts = React.useMemo(() => {
     if (!primaryColor) return false;
-    return contrast("#fff", primaryColor) >= 1.85;
+    return chroma.contrast("#fff", primaryColor) >= 1.85;
   }, [primaryColor]);
 
   return (
