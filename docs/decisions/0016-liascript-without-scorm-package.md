@@ -1,6 +1,6 @@
 # 0016. LiaScript: versioned Markdown documents played without a SCORM package
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement

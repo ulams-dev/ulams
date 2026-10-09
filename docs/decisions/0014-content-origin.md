@@ -1,6 +1,6 @@
 # 0014. Third-party packages run on a per-tenant content origin, files served through the API
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement

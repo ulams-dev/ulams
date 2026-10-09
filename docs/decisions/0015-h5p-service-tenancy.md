@@ -1,6 +1,6 @@
 # 0015. H5P service per tenant: derived internal token, platform-only libraries, least-privilege mounts
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement

@@ -1,6 +1,6 @@
 # 0022. Course Builder studio in the reference web app, with its own author session
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement

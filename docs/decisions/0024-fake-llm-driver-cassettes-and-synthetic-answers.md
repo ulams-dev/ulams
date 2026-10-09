@@ -1,6 +1,6 @@
 # 0024. Fake LLM driver: normalised cassettes and synthetic answers
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement

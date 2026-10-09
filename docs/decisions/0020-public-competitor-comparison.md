@@ -1,6 +1,6 @@
 # 0020. Public comparison with other learning platforms: sourced data, neutral values
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement

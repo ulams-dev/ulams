@@ -1,6 +1,6 @@
 # 0017. One upload guard and safe extractor for every upload path
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement

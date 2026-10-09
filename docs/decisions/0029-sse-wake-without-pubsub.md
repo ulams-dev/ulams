@@ -1,6 +1,6 @@
 # 0029. The SSE endpoint wakes on a cache key, not Valkey pub/sub
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement
