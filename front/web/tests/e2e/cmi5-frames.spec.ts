@@ -64,7 +64,7 @@ test.beforeAll(async () => {
       }
       if (req.headers.authorization !== `Basic ${SESSION}`) return void res.writeHead(401, cors).end();
       if (url.pathname.endsWith("/activities/state")) {
-        return void res.writeHead(200, { ...cors, "Content-Type": "application/json" }).end(JSON.stringify({ contextTemplate: { context: { extensions: {} } }, launchMode: "Normal" }));
+        return void res.writeHead(200, { ...cors, "Content-Type": "application/json" }).end(JSON.stringify({ contextTemplate: { registration: "11111111-2222-4333-8444-555555555555", extensions: {} }, launchMode: "Normal" }));
       }
       res.writeHead(200, { ...cors, "Content-Type": "application/json" }).end("[]");
     });
