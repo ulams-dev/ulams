@@ -113,9 +113,9 @@ class PlatformApiTest extends TestCase
     {
         $this->getJson('/api/platform/tenants')->assertUnauthorized();
         $this->actingAs($this->makeStudent(), 'api')->getJson('/api/platform/tenants')->assertForbidden();
-        // an admin of a tenant is not a platform administrator
-        $this->actingAs($this->makeAdmin(), 'api')->getJson('/api/platform/tenants')->assertForbidden();
-        $this->actingAs($this->makeAdmin(), 'api')->postJson('/api/platform/tenants', ['slug' => 'acme'])->assertForbidden();
+        // only the permission opens it, not a role by itself
+        $this->actingAs($this->makeInstructor(), 'api')->getJson('/api/platform/tenants')->assertForbidden();
+        $this->actingAs($this->makeInstructor(), 'api')->postJson('/api/platform/tenants', ['slug' => 'acme'])->assertForbidden();
         $this->assertSame(0, Tenant::query()->count());
     }
 

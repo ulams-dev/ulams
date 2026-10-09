@@ -23,6 +23,18 @@ class DeleteTenantJob implements ShouldQueue
 
     public function __construct(public readonly string $operationId)
     {
+        $this->routeToLongQueue();
+    }
+
+    /** Provisioning outlasts the default queues' retry_after: use the long-job connection (ADR 0083). */
+    private function routeToLongQueue(): void
+    {
+        if ($c = config('queue.long_job.connection')) {
+            $this->onConnection($c);
+        }
+        if ($q = config('queue.long_job.queue')) {
+            $this->onQueue($q);
+        }
     }
 
     public function handle(TenantLifecycle $lifecycle): void

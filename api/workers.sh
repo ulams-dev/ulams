@@ -43,6 +43,10 @@ wanted() {
   if [ "$KIND" = scheduler ] && [ -z "${MULTI_DOMAINS:-}" ]; then
     echo "schedule|"
   fi
+  if [ "$KIND" = queue ] && [ -z "${MULTI_DOMAINS:-}" ]; then
+    # the platform runs tenant provisioning (platform API, ADR 0078) on the long-job queue
+    echo "long|"
+  fi
   while read -r domain; do
     case "$KIND" in
       queue) echo "default|$domain"; echo "builder|$domain"; echo "long|$domain" ;;
