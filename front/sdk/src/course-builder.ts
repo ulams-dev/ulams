@@ -35,6 +35,22 @@ export interface CourseBrief {
   decidedBy: Record<string, "author" | "default"> | [];
 }
 
+export interface PublishCheck {
+  blocking: Array<{ code: string; message: string }>;
+  warnings: Array<{ code: string; message: string; elementId?: string }>;
+  facts: {
+    courseId: number | null;
+    title: string | null;
+    url: string | null;
+    published: boolean;
+    price: { mode: "free" | "paid"; amountMinor: number | null; currency: string | null; label: string; suggestion: { amountMinor: number; currency: string; rationale: string } | null };
+    theme: { preset: string; accent?: string; adjustedAccent: string | null } | null;
+    counts: { modules?: number; lessons?: number; minutes?: number; questions?: number };
+    applyNotes: string[];
+    landingValid: boolean;
+  };
+}
+
 export interface BuilderCost {
   usedMicroUsd: number;
   budgetMicroUsd: number;
@@ -345,7 +361,10 @@ export function createCourseBuilderClient(options: ClientOptions & { prefix?: st
       redo: (sessionId: string) => call<{ currentVersionId: string; runId: string | null; state: BuilderState }>("POST", `/sessions/${id(sessionId)}/redo`),
     },
     apply: (sessionId: string) => call<{ runId: string }>("POST", `/sessions/${id(sessionId)}/apply`),
-    publish: (sessionId: string) => call<{ courseId: number; published: boolean }>("POST", `/sessions/${id(sessionId)}/publish`),
+    publish: (sessionId: string, acknowledgedWarnings = false) =>
+      call<{ courseId: number; published: boolean }>("POST", `/sessions/${id(sessionId)}/publish`, acknowledgedWarnings ? { acknowledgedWarnings: true } : {}),
+    /** Blocking items and warnings before publishing (the publish summary). */
+    publishCheck: (sessionId: string) => call<PublishCheck>("GET", `/sessions/${id(sessionId)}/publish-check`),
     usage: (sessionId: string) => call<{ total: BuilderCost; byTask: UsageRow[] }>("GET", `/sessions/${id(sessionId)}/usage`),
     /** AG-UI event stream with resume; resolves when `signal` aborts or access is refused. */
     events: (

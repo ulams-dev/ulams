@@ -542,6 +542,46 @@ const SYNC_STATE: Record<string, { label: string; icon: "check" | "plus" | "cloc
   paused: { label: "Paused", icon: "minus" },
 };
 
+const PublishSummary: Renderer = (p, ctx, id) => {
+  const blocking: Props[] = p.blocking ?? [];
+  const warnings: Props[] = p.warnings ?? [];
+  const headingId = uid("pub");
+  const counts = p.counts ?? {};
+  const facts: Array<[string, string]> = [
+    ["Address", p.url ? String(p.url) : "Available after you publish"],
+    ["Price", `${p.price.label}${p.price.suggested ? " (suggested, confirm it in the brief)" : ""}`],
+    ...(p.theme ? ([["Theme", `${p.theme.preset}${p.theme.adjustedAccent ? ` · accent shown as ${p.theme.adjustedAccent}` : p.theme.accent ? ` · ${p.theme.accent}` : ""}`]] as Array<[string, string]>) : []),
+    ...(counts.lessons ? ([["Course", `${counts.modules ?? 0} modules · ${counts.lessons} lessons · ${counts.minutes ?? 0} min · ${counts.questions ?? 0} questions`]] as Array<[string, string]>) : []),
+  ];
+  const list = (items: Props[], kind: "blocking" | "warning") =>
+    h("ul", { class: `cb-publish-list cb-publish-${kind}`, "aria-label": kind === "blocking" ? "Items that block publishing" : "Warnings" },
+      items.map((item) => h("li", {}, icon("alert"), h("span", { class: "cb-tag" }, kind === "blocking" ? "Blocking" : "Warning"), " ", String(item.message))));
+  const acknowledgeId = uid("ack");
+  const acknowledge = warnings.length && !blocking.length && !p.published
+    ? h("label", { class: "cb-check", for: acknowledgeId }, h("input", { type: "checkbox", id: acknowledgeId }), `I have read the ${warnings.length} warning${warnings.length > 1 ? "s" : ""} and want to publish anyway`)
+    : null;
+  const button = h("button", { type: "button", class: "cb-btn cb-btn-primary", disabled: true }, p.published ? "Published" : "Publish course");
+  const ack = acknowledge?.querySelector("input") as HTMLInputElement | null;
+  const sync = () => {
+    button.disabled = Boolean(p.published) || blocking.length > 0 || (warnings.length > 0 && !ack?.checked);
+  };
+  ack?.addEventListener("change", sync);
+  sync();
+  button.addEventListener("click", () => {
+    button.disabled = true;
+    act(ctx, id, "publish", { acknowledgedWarnings: Boolean(ack?.checked) });
+  });
+  return h("section", { class: "cb-card cb-publish", "aria-labelledby": headingId },
+    h("h2", { id: headingId, class: "cb-h3" }, p.published ? "Published" : "Before you publish"),
+    h("dl", { class: "cb-publish-facts" }, facts.flatMap(([k, v]) => [h("dt", {}, k), h("dd", {}, v)])),
+    blocking.length ? h("div", {}, h("h3", { class: "cb-h3" }, "Fix before publishing"), list(blocking, "blocking")) : null,
+    warnings.length ? h("div", {}, h("h3", { class: "cb-h3" }, "Review"), list(warnings, "warning")) : null,
+    !blocking.length && !warnings.length && !p.published ? h("p", { class: "cb-muted" }, icon("check"), " Nothing blocks publishing and nothing needs review.") : null,
+    ...((p.notes as string[] | undefined) ?? []).map((n) => h("p", { class: "cb-muted cb-small" }, n)),
+    acknowledge,
+    h("div", { class: "cb-actions" }, button));
+};
+
 const SourceConnectionCard: Renderer = (p, ctx, id) => {
   const state = SYNC_STATE[String(p.state)] ?? SYNC_STATE.up_to_date!;
   const headingId = uid("src");
@@ -976,6 +1016,7 @@ export const builderComponents: Record<string, Renderer> = {
   DiffView,
   ApplySummary,
   VersionList,
+  PublishSummary,
   SourceConnectionCard,
   RevisionTimeline,
   FragmentChange,

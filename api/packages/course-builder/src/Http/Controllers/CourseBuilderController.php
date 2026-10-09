@@ -27,6 +27,7 @@ use Ulams\CourseBuilder\Pipeline\GenerationService;
 use Ulams\CourseBuilder\Pipeline\OutlineService;
 use Ulams\CourseBuilder\Pipeline\PatchService;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
+use Ulams\CourseBuilder\Publish\PublishCheck;
 use Ulams\CourseBuilder\Services\RunService;
 use Ulams\CourseBuilder\Services\RunStatus;
 use Ulams\CourseBuilder\Services\SessionState;
@@ -82,7 +83,8 @@ use Ulams\Uploads\Exceptions\UploadRejected;
  * @OA\Post(path="/api/admin/course-builder/sessions/{session}/undo", summary="Undo the last content change", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="current version"))
  * @OA\Post(path="/api/admin/course-builder/sessions/{session}/redo", summary="Redo", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="current version"))
  * @OA\Post(path="/api/admin/course-builder/sessions/{session}/apply", summary="Approve the apply of the current version", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=202, description="apply run"))
- * @OA\Post(path="/api/admin/course-builder/sessions/{session}/publish", summary="Publish the applied course", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="published"))
+ * @OA\Get(path="/api/admin/course-builder/sessions/{session}/publish-check", summary="Blocking items and warnings before publishing", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="blocking, warnings and facts"))
+ * @OA\Post(path="/api/admin/course-builder/sessions/{session}/publish", summary="Publish the applied course (409 while blocking items or unacknowledged warnings remain; body acknowledgedWarnings)", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="published"))
  * @OA\Get(path="/api/admin/course-builder/sessions/{session}/usage", summary="AI calls of the session by task and model", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="usage"))
  */
 class CourseBuilderController extends Controller
@@ -93,6 +95,7 @@ class CourseBuilderController extends Controller
         private readonly RunService $runs,
         private readonly VersionService $versions,
         private readonly BriefService $briefs,
+        private readonly PublishCheck $publishChecks,
         private readonly SourceIngestor $ingestor,
         private readonly BlueprintApplier $applier,
         private readonly EventLog $events,
@@ -440,11 +443,23 @@ class CourseBuilderController extends Controller
         return self::ok(['runId' => $run->id], 202);
     }
 
+    public function publishCheck(Request $request, string $session): JsonResponse
+    {
+        return self::ok($this->publishChecks->run($this->sessionFor($request, $session, 'update')));
+    }
+
     public function publish(Request $request, string $session): JsonResponse
     {
         $s = $this->sessionFor($request, $session, 'update');
         if ($s->course_id === null) {
             return self::fail('Apply the course before publishing it.', 409);
+        }
+        $check = $this->publishChecks->run($s);
+        if ($check['blocking'] !== []) {
+            return response()->json(['success' => false, 'message' => $check['blocking'][0]['message'], 'data' => $check], 409);
+        }
+        if ($check['warnings'] !== [] && !$request->boolean('acknowledgedWarnings')) {
+            return response()->json(['success' => false, 'message' => 'Review the warnings and acknowledge them to publish.', 'data' => $check], 409);
         }
         $this->applier->publish($s, $request->user());
         $s->putState('published', true);

@@ -390,9 +390,9 @@ approved apply through domain services → element chat edits. Designs:
       GIFT rendered by our code, support check against the cited text)
 - [x] Metadata (title, description, SEO, pricing) (a suggested price for a paid course, confirmed by
       the author; ADR 0049)
-- [ ] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (partial: theme
-      and the product (inactive at apply, active at publish) done; publish-check, landing and the new
-      site are L2-08 and L2-09)
+- [ ] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (partial: theme,
+      the product (inactive at apply, active at publish), the publish check and the generated landing
+      on the current site done; a new site for platform admins is L2-09)
 - [x] **Course Blueprint**: versioned JSON, stable IDs, citations; entities created via domain
       services; persisted per stage; progress streamed (SSE/websockets) (ADR 0010, 0025)
 - [x] (new) Long jobs on dedicated queue connections: `<driver>-builder` (retry_after 2400) for Course
@@ -428,7 +428,8 @@ Builder components (MVP)
 - [ ] Lesson preview card · variant comparison · quiz question card (partial: lesson preview and quiz
       question cards done; variant comparison M2.3)
 - [ ] Diff view · generation progress with retry and cost · publish summary with warnings (partial:
-      diff view, progress and the apply summary with warnings done; publish summary M2.2/M2.4)
+      diff view, progress, the apply summary and the publish summary with blocking items and warnings
+      done; critique results in the summary are M2.4)
 
 Learner layouts (feature flag)
 - [ ] AI-composed declarative lesson layouts from approved components, stored in blueprint
