@@ -26,7 +26,9 @@
       "inputs": [
         "$TURBO_DEFAULT$",
         ".env*",
-        "$TURBO_ROOT$/front/src/lib/**"
+        "$TURBO_ROOT$/front/src/lib/**",
+        "$TURBO_ROOT$/front/ui/src/schema.ts",
+        "$TURBO_ROOT$/front/ui/catalogue/learner-layout-manifest.json"
       ],
       "env": [
         "REACT_APP_*",
@@ -77,7 +79,9 @@
     "admin#typecheck": {
       "inputs": [
         "$TURBO_DEFAULT$",
-        "$TURBO_ROOT$/front/src/lib/**"
+        "$TURBO_ROOT$/front/src/lib/**",
+        "$TURBO_ROOT$/front/ui/src/schema.ts",
+        "$TURBO_ROOT$/front/ui/catalogue/learner-layout-manifest.json"
       ],
       "outputs": []
     },
@@ -144,7 +148,9 @@
     "admin#test": {
       "inputs": [
         "$TURBO_DEFAULT$",
-        "$TURBO_ROOT$/front/src/lib/**"
+        "$TURBO_ROOT$/front/src/lib/**",
+        "$TURBO_ROOT$/front/ui/src/schema.ts",
+        "$TURBO_ROOT$/front/ui/catalogue/learner-layout-manifest.json"
       ],
       "outputs": [
         "coverage/**"

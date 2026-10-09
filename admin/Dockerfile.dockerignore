@@ -12,3 +12,5 @@ api
 front
 !front/package.json
 !front/src/lib
+!front/ui/src/schema.ts
+!front/ui/catalogue/learner-layout-manifest.json
