@@ -190,6 +190,20 @@ class CreateTenantCommandTest extends TestCase
         $this->assertSame('nightsky', Tenant::query()->firstWhere('slug', 'acme')->theme);
     }
 
+    public function testTheNewDemoPresetsAreAcceptedAsThemes(): void
+    {
+        $this->database->shouldReceive('ensure')->times(3);
+        $this->buckets->shouldReceive('ensure')->times(3);
+        $this->domains->shouldReceive('add')->times(3);
+
+        foreach (['gravity' => '#3DD6F5', 'poland' => '#C8102E', 'ulam' => '#1D3B8F'] as $slug => $accent) {
+            $this->artisan('ulams:tenant:create', ['slug' => $slug, '--theme' => $slug, '--accent' => $accent])->assertExitCode(0);
+            $tenant = Tenant::query()->firstWhere('slug', $slug);
+            $this->assertSame($slug, $tenant->theme);
+            $this->assertSame($accent, $tenant->accent);
+        }
+    }
+
     public function testDemoModeIsWrittenToTheEnvFileAndCanBeToggled(): void
     {
         $this->database->shouldReceive('ensure')->once();

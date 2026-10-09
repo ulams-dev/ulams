@@ -31,12 +31,12 @@ export const config = {
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean),
   /** Demo tenants shown on the platform landing. */
-  demoTenants: (ULAMS_DEMO_TENANTS ?? "coffee,oncall,nightsky")
+  demoTenants: (ULAMS_DEMO_TENANTS ?? "coffee,oncall,nightsky,gravity,poland,ulam")
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean),
   cacheTtlMs: Math.max(5, ULAMS_CACHE_TTL ?? 45) * 1000,
-  warmTenants: (ULAMS_WARM_TENANTS ?? "coffee,oncall,nightsky")
+  warmTenants: (ULAMS_WARM_TENANTS ?? "coffee,oncall,nightsky,gravity,poland,ulam")
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean),

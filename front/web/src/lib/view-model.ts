@@ -22,6 +22,7 @@ import {
 } from "@ulams/sdk";
 import type { Format } from "@ulams/ui/registry";
 import { formatEventDate, formatMinutes } from "@ulams/ui/format";
+import { showcaseProps, type InteractiveLaunch } from "./interactive.ts";
 
 export const FORMAT_BY_KIND: Record<TopicKind, Format | undefined> = {
   richtext: "reading",
@@ -171,6 +172,8 @@ export interface SiteModel {
   inPerson?: EventModel;
   /** Console hero panel (On-Call): course modules and the next live session. */
   consoleLog: ConsoleLog;
+  /** Props of the landing hero's live interactive package (Hero `showcase`); absent when there is none. */
+  showcase?: Record<string, unknown>;
 }
 
 const clean = (value: string | null | undefined): string | undefined => {
@@ -300,7 +303,9 @@ const sentence = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 function stringLists(landing: Record<string, unknown>): Record<string, Array<{ title: string }>> {
   const out: Record<string, Array<{ title: string }>> = {};
-  for (const [key, value] of Object.entries(landing)) {
+  // lists sit either directly under `landing` (for_parents) or in a nested `lists` object (sources, features)
+  const nested = landing.lists && typeof landing.lists === "object" && !Array.isArray(landing.lists) ? (landing.lists as Record<string, unknown>) : {};
+  for (const [key, value] of [...Object.entries(landing), ...Object.entries(nested)]) {
     const list = strings(value);
     if (list.length) out[key] = list.map((title) => ({ title: sentence(title) }));
   }
@@ -430,6 +435,8 @@ export interface RawSiteData {
   webinars: Webinar[];
   events: StationaryEvent[];
   products: Product[];
+  /** The public showcase of the tenant's first interactive topic (landing hero), when it has one. */
+  showcase?: InteractiveLaunch | null;
 }
 
 export function siteModel(raw: RawSiteData, tenant: { slug: string; adminUrl: string }, links: CourseLinks = LEARNER_LINKS): SiteModel {
@@ -456,5 +463,6 @@ export function siteModel(raw: RawSiteData, tenant: { slug: string; adminUrl: st
     webinar: events.find((e) => e.kind === "webinar"),
     inPerson: events.find((e) => e.kind === "in-person"),
     consoleLog: consoleLog(course, events),
+    showcase: raw.showcase ? showcaseProps(raw.showcase, raw.course?.language) : undefined,
   };
 }

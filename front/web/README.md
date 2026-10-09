@@ -22,6 +22,16 @@ Caddy change needed):
 - http://coffee.app.localhost:4321/
 - http://oncall.app.localhost:4321/
 - http://nightsky.app.localhost:4321/
+- http://gravity.app.localhost:4321/
+- http://poland.app.localhost:4321/
+- http://ulam.app.localhost:4321/
+
+The six demos are the Coffee Atlas, On-Call, Night Sky Explorers and the three free interactive academies Gravity
+Lab (`gravity`, dark space theme), Poland, Measured (`poland`, cartographic) and The Scottish Book (`ulam`,
+squared-paper notebook). Each tenant also answers on `<slug>.localhost` (API) and `<slug>.admin.localhost` (admin);
+the wildcard hosts in the Caddyfile and `*.localhost` need no change for a new slug. The landing hero of the three new
+demos shows a live interactive package through the public `GET /api/interactive/showcase` endpoint, and a drawing
+(orbits, a map graticule or an Ulam spiral) while the tenant has none.
 
 Production build and server:
 
@@ -48,10 +58,10 @@ the client build.
 | `ULAMS_TENANT_HOSTS` | `{slug}.app.localhost=>http://{slug}.localhost` | host rules, same syntax as the old front |
 | `ULAMS_ADMIN_URL` | `http://{slug}.admin.localhost` | tenant admin (demo badge link) |
 | `ULAMS_PLATFORM_HOSTS` | `app.localhost,localhost,127.0.0.1` | hosts (port ignored) that serve the platform product landing |
-| `ULAMS_DEMO_TENANTS` | `coffee,oncall,nightsky` | demo academies shown on the platform landing |
+| `ULAMS_DEMO_TENANTS` | `coffee,oncall,nightsky,gravity,poland,ulam` | demo academies shown on the platform landing |
 | `ULAMS_DEFAULT_TENANT` | `coffee` | tenant for other hosts without a rule (e.g. a LAN IP); empty shows a picker |
 | `ULAMS_CACHE_TTL` | `45` | seconds public API data is fresh; it is served stale for 30 min while refreshing |
-| `ULAMS_WARM_TENANTS` | `coffee,oncall,nightsky` | tenants fetched when the server starts |
+| `ULAMS_WARM_TENANTS` | `coffee,oncall,nightsky,gravity,poland,ulam` | tenants fetched when the server starts |
 | `ULAMS_COOKIE_SECURE` | `auto` | `auto` detects https from the request / `X-Forwarded-Proto`; `true` forces Secure cookies (proxy without the header), `false` only for a plain-http trial install |
 | `ULAMS_COOKIE_FALLBACK_PREFIX` | empty | name prefix of the session cookies over plain http (dev on `*.localhost`), where the browser rejects `__Host-` |
 | `DEMO_STUDENT_EMAIL` | `student1@{slug}.ulams.app` | fallback demo account when the tenant has no demo mode |

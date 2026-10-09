@@ -209,6 +209,10 @@
             "area": "public"
         },
         {
+            "pattern": "api/interactive/showcase",
+            "area": "public"
+        },
+        {
             "pattern": ".well-known/*",
             "area": "public"
         },

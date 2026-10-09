@@ -1,6 +1,6 @@
 ---
 title: Demo academies
-description: The three demo tenants (The Coffee Atlas, On-Call, Night Sky Explorers), what each one shows, and how demo mode logs you in and resets hourly.
+description: The six demo tenants (The Coffee Atlas, On-Call, Night Sky Explorers, Gravity Lab, Poland, Measured and The Scottish Book), what each one shows, and how demo mode logs you in and resets hourly.
 sidebar:
   order: 2
 modules:
@@ -10,24 +10,27 @@ modules:
 import { Aside, Steps } from "@astrojs/starlight/components";
 import Screenshot from "../../../components/Screenshot.astro";
 
-ulams ships with three demo academies. Each one is a separate tenant with its own database,
+ulams ships with six demo academies. Each one is a separate tenant with its own database,
 theme, landing page and one seeded course, designed to look and feel deliberately different. The
-course content is written in
+content of the first three is written in
 [`front/docs/design/experiences.md`](https://github.com/ulams-dev/ulams/blob/main/front/docs/design/experiences.md)
 and created by `DemoCoursesSeeder`.
 
 There is no public hosted demo yet: the demos run on your machine once you follow the
 [quick start](/getting-started/quick-start/).
 
-<Screenshot name="learner-platform" alt="The ulams platform landing with cards for the three demo academies" />
+<Screenshot name="learner-platform" alt="The ulams platform landing with cards for the six demo academies" />
 
-## The three academies
+## The six academies
 
 | Academy | Slug | Style | Learner site | Admin | API |
 |---|---|---|---|---|---|
 | The Coffee Atlas | `coffee` | Editorial, self-paced, long-form | http://coffee.app.localhost | http://coffee.admin.localhost | http://coffee.localhost |
 | On-Call | `oncall` | Professional cohort, dark, dense, keyboard-first | http://oncall.app.localhost | http://oncall.admin.localhost | http://oncall.localhost |
 | Night Sky Explorers | `nightsky` | Playful, gamified, mobile-first, for kids 10-14 | http://nightsky.app.localhost | http://nightsky.admin.localhost | http://nightsky.localhost |
+| Gravity Lab | `gravity` | Dark space, a live 3D solar system, free | http://gravity.app.localhost | http://gravity.admin.localhost | http://gravity.localhost |
+| Poland, Measured | `poland` | Cartographic paper, maps and charts, free | http://poland.app.localhost | http://poland.admin.localhost | http://poland.localhost |
+| The Scottish Book | `ulam` | Archival squared-paper notebook, mathematics and history, free | http://ulam.app.localhost | http://ulam.admin.localhost | http://ulam.localhost |
 
 The platform host (`localhost:4321` or `app.localhost:4321` with the reference frontend's dev
 server) shows the ulams product landing with a card per demo. Each card has "Open as learner"
@@ -54,12 +57,40 @@ pricing and a postmortem teardown webinar.
 type. Two topics are free previews. The landing has a mission map, "For parents" and "For
 teachers" sections and a star party event.
 
+### Gravity Lab
+
+"How gravity shapes the solar system": a free course built around a live 3D simulation of the
+solar system. The theme is dark space with a calm starfield and thin orbit rules, and the landing
+hero is a ring-and-planet scene. When the course has an interactive topic, the landing plays it
+as the hero (see [Interactive topics](/creators/interactive/)); until then the hero shows a
+drawn scene. The seeded course is a placeholder with one welcome lesson: the lessons arrive
+with the course content milestones.
+
+### Poland, Measured
+
+"Poland, measured": a free course of maps and charts of public data. The theme is cartographic
+paper with graticule hairlines and legend-style badges, and the landing table of contents reads
+like an atlas. The header will link the English course and the Polish one ("Polska w liczbach");
+for now only the English course exists, with one welcome lesson.
+
+### The Scottish Book
+
+"Stanisław Ulam and the Lwów School of Mathematics": a free course on the mathematics and
+history behind the Scottish Book. The theme is an archival squared-paper notebook with a ruled
+margin. The product is named in honour of Stanisław Ulam; the demo suggests no endorsement by
+his estate or any institution. There is no account in his name and no invented quote: the
+landing has no testimonials section.
+
+These three demos are free: they have no products, prices or events, and the landing shows no
+pricing. Their course is public, so the landing and the catalogue work without an enrolment.
+Each has a themed certificate and the usual demo users.
+
 ### What every demo contains
 
-Each seeded course covers the topic types the reference frontend renders: rich text (with tables
+The three paid demos' seeded courses cover the topic types the reference frontend renders: rich text (with tables
 and maths), video, audio, image, PDF, embed, H5P, SCORM, cmi5, LiaScript, a GIFT quiz with all
-eight question types, and a project. Each tenant also has a webinar, an in-person event, shop
-products, tutors and five demo students. Exact counts depend on the seed; open the course page to
+eight question types, and a project. Each paid tenant also has a webinar, an in-person event, shop
+products, tutors and five demo students; the free tenants have a tutor and five demo students. Exact counts depend on the seed; open the course page to
 see them.
 
 See [what learners see](/learners/) for a walk through the pages.
@@ -149,5 +180,5 @@ For the admin side of demo mode see [demo mode in the admin](/admin/demo-mode/).
 
 ## Setting up the demos
 
-Creating the three tenants, seeding them and turning demo mode on is part of the
+Creating the six tenants, seeding them and turning demo mode on is part of the
 [quick start](/getting-started/quick-start/#create-the-demo-academies).

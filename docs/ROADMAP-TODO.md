@@ -602,17 +602,22 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       School, five MIT interactives), each with a preset, landing, certificate, demo users and the hourly reset
       (ADR 0089; `docs/plans/interactive-demos.md` M3–M9) (partial: M9a Ulam research done as docs,
       `docs/plans/interactive-demos-ulam-facts.md` and `docs/plans/interactive-demos-ulam-outline.md`; owner review
-      in #151; `demo-content/ulam/{facts,sources}.json` and `CREDITS.md` are written in M9b from the sheet)
+      in #151; `demo-content/ulam/{facts,sources}.json` and `CREDITS.md` are written in M9b from the sheet;
+      M7 done: the three tenants, presets, landings, certificates, demo users, hourly reset and placeholder free
+      courses (ADR 0093: public showcase endpoint behind the landing heroes); the course content arrives in M8
+      and M9)
 - [ ] (new) Six demos on the platform landing with one-click learner and admin login; `make demo-seed-tenants`
       seeds all six; README and docs site updated (M10)
 - [ ] (new) `demo-content/`: content packages (ADR 0088, amended 2026-10-09) with a boundary lint (partial:
-      workspace, lint, harness, the gravity (M3) and poland (M4) packages done; the five Ulam interactives (M5)
-      follow)
+      workspace, lint, harness, the gravity (M3) and poland (M4) packages done; the Ulam interactives (M5) are
+      in progress)
   - [x] (new) gravity package: the owner's simulator, MIT, 44 steps EN and PL, posters, bridge adapter, Playwright
         and axe on a throwaway server (M3)
   - [x] (new) poland package: map and charts in EN and PL, 40 steps, regenerated Natural Earth map, primary
         sources only, shared map engine, posters, Playwright and axe (M4); figures not yet re-checked at their
         publishers are listed in `demo-content/poland/README.md` (M8b)
+  - [ ] (new) five Ulam interactives, MIT (M5: `spiral` done; `monte-carlo`, `automaton`, `scottish-book`, `lwow-map`
+        follow, the last two with placeholder text until the fact sheet is cleared, M9a)
 
 ---
 

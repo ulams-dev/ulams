@@ -28,7 +28,7 @@ Set it through the tenant registry so that `ulams:tenant:sync-env` keeps it:
 
 ```bash
 php artisan ulams:tenant:create coffee --demo=on    # or --demo=off; only the env file is rewritten
-make demo-mode-on                                   # coffee, oncall and nightsky
+make demo-mode-on                                   # the six demo tenants: coffee, oncall, nightsky, gravity, poland, ulam
 ```
 
 ## Accounts

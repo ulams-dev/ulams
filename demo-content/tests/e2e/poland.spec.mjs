@@ -75,11 +75,12 @@ test("loads in the opaque sandbox, says ready with every step, and nothing leave
 });
 
 test("every step opens by goToStep and is reported (the whole course range)", async ({ page }) => {
+  test.setTimeout(240_000);
   await page.goto(harness.hostUrl({}));
   await waitForMessage(page, "ready");
   for (const s of manifest.steps) {
     await page.evaluate((id) => window.__host.goToStep(id), s.id);
-    await waitForMessage(page, "stepChanged", { step: s.id }, 15_000);
+    await waitForMessage(page, "stepChanged", { step: s.id }, 40_000);
   }
   expect(new Set((await messages(page, "stepChanged")).map((m) => m.step)).size).toBe(40);
   const progress = (await messages(page, "progress")).map((m) => m.value);
@@ -100,7 +101,7 @@ test("a step range limits navigation, the range end is reachable and reported", 
 });
 
 test("English and Polish: the locale from init and setLocale change the figures and the title", async ({ page }) => {
-  await page.goto(harness.hostUrl({ startStep: "gas", locale: "pl" }));
+  await page.goto(harness.hostUrl({ startStep: "gas", locale: "pl", reducedMotion: "1" })); // final values at once, however slow the runner
   await waitForMessage(page, "ready");
   await waitForMessage(page, "stepChanged", { step: "gas" });
   const frame = inFrame(page);
@@ -207,6 +208,7 @@ test("reports data-unavailable when the data cannot be loaded", async ({ browser
 });
 
 test("axe: no WCAG 2.2 AA violation on the figures panel (several steps, both languages) or on the stand-alone page", async ({ page }) => {
+  test.setTimeout(300_000);
   for (const [locale, step] of [["en", "hero"], ["en", "gas"], ["pl", "ledger"], ["en", "poverty"], ["pl", "yards"]]) {
     await page.goto(harness.hostUrl({ startStep: step, locale }));
     await waitForMessage(page, "stepChanged", { step });

@@ -3,8 +3,11 @@
 namespace Tests\Integrations;
 
 use Database\Seeders\Demo\CoffeeAtlasExperience;
+use Database\Seeders\Demo\GravityExperience;
 use Database\Seeders\Demo\NightSkyExperience;
 use Database\Seeders\Demo\OnCallExperience;
+use Database\Seeders\Demo\PolandExperience;
+use Database\Seeders\Demo\UlamExperience;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionMethod;
 use Tests\TestCase;
@@ -22,6 +25,9 @@ class DemoCourseDeadlineTest extends TestCase
             'coffee' => [CoffeeAtlasExperience::class],
             'oncall' => [OnCallExperience::class],
             'nightsky' => [NightSkyExperience::class],
+            'gravity' => [GravityExperience::class],
+            'poland' => [PolandExperience::class],
+            'ulam' => [UlamExperience::class],
         ];
     }
 

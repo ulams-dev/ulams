@@ -27,6 +27,9 @@ const STYLE: Record<string, { label: string; fallbackTitle: string; text: string
   coffee: { label: "Editorial · self-paced", fallbackTitle: "The Coffee Atlas", text: "A slow, magazine-style course from seed to cup: film, podcast, interactive diagrams, a quiz and a final project." },
   oncall: { label: "Cohort · dark pro tool", fallbackTitle: "On-Call", text: "Incident command for platform engineers: a 4-week cohort with an outage simulator, a live drill and a reviewed postmortem." },
   nightsky: { label: "Gamified · kids 10–14", fallbackTitle: "Night Sky Explorers", text: "Seven short missions to the stars with Orbi the robot guide, badges and a printable diploma." },
+  gravity: { label: "3D simulation", fallbackTitle: "Gravity Lab", text: "A real-data solar system you learn inside." },
+  poland: { label: "Map and charts", fallbackTitle: "Poland, Measured", text: "35 years of Poland in cited public data, in English and Polish." },
+  ulam: { label: "Mathematics and history", fallbackTitle: "The Scottish Book", text: "Ulam, the Lwów School and the Scottish Book, with five live interactives." },
 };
 
 export async function platformModel(current: URL, status: LandingStatus = config.landingStatus) {
@@ -42,12 +45,14 @@ export async function platformModel(current: URL, status: LandingStatus = config
       ]);
       const style = STYLE[slug];
       const course = site?.course;
-      const theme = (["coffee", "oncall", "nightsky"].includes(slug) ? slug : "platform") as DemoCard["theme"];
+      const theme = (["coffee", "oncall", "nightsky", "gravity", "poland", "ulam"].includes(slug) ? slug : "platform") as DemoCard["theme"];
       const facts: DemoCard["facts"] = [];
       if (style) facts.push({ label: "Style", value: style.label });
       if (course) {
         facts.push({ label: "Lessons", value: String(course.lessonCount) });
         facts.push({ label: "Topics", value: String(course.topicCount) });
+        // the interactive demos are free courses: show that instead of a price
+        if (!course.price) facts.push({ label: "Price", value: "Free" });
       }
       return {
         title: site?.tenant.name ?? style?.fallbackTitle ?? slug,

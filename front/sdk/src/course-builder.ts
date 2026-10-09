@@ -29,7 +29,7 @@ export interface CourseBrief {
   language: string;
   notes?: string;
   /** Brief v2: a v1 brief has none of these (price reads as free, the site is left as it is). */
-  theme?: { preset: "coffee" | "oncall" | "nightsky"; accent?: string };
+  theme?: { preset: "coffee" | "oncall" | "nightsky" | "gravity" | "poland" | "ulam"; accent?: string };
   pricing?: { mode: "free" | "paid"; amountMinor?: number; currency?: string };
   site?: { mode: "current" | "new"; slug?: string };
   decidedBy: Record<string, "author" | "default"> | [];

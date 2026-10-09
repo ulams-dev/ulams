@@ -11,10 +11,13 @@ import { validate } from "@ulams/ui/schema";
 import { interactiveNode, type InteractiveResult } from "./interactive.ts";
 import { FORMAT_BY_KIND, type CourseModel, type SiteModel } from "./view-model.ts";
 
-export const SYLLABUS_VARIANT: Record<ThemeName, "folio" | "timeline" | "missions"> = {
+export const SYLLABUS_VARIANT: Record<ThemeName, "folio" | "timeline" | "missions" | "orbits" | "atlas"> = {
   coffee: "folio",
   oncall: "timeline",
   nightsky: "missions",
+  gravity: "orbits",
+  poland: "atlas",
+  ulam: "timeline",
   platform: "folio",
 };
 
@@ -22,10 +25,13 @@ export const HERO_VARIANT: Record<ThemeName, "editorial" | "console" | "adventur
   coffee: "editorial",
   oncall: "console",
   nightsky: "adventure",
+  gravity: "editorial",
+  poland: "editorial",
+  ulam: "editorial",
   platform: "product",
 };
 
-const LESSON_NOUN: Record<ThemeName, string> = { coffee: "Chapter", oncall: "Module", nightsky: "Mission", platform: "Lesson" };
+const LESSON_NOUN: Record<ThemeName, string> = { coffee: "Chapter", oncall: "Module", nightsky: "Mission", gravity: "Module", poland: "Chapter", ulam: "Notebook", platform: "Lesson" };
 
 export function courseHeaderDoc(theme: ThemeName, course: CourseModel, progress: number | undefined, resumeHref: string): UiNode {
   return {
@@ -55,7 +61,7 @@ export function syllabusDoc(theme: ThemeName, course: CourseModel): UiNode {
     props: {
       variant: SYLLABUS_VARIANT[theme],
       eyebrow: "Program",
-      title: theme === "nightsky" ? "Your mission map" : "What you will do",
+      title: { nightsky: "Your mission map", gravity: "Your flight plan", poland: "Contents", ulam: "The notebooks" }[theme as string] ?? "What you will do",
       lessons: course.lessons,
       totalLabel: course.lessonsLabel,
     },

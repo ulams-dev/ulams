@@ -10,7 +10,7 @@ import { demoCourse } from "./demo-data.ts";
  * Needs CSP_ENFORCE unset (development default) or `true` on the front being tested.
  */
 const port = process.env.WEB_BASE_PORT ?? "4321";
-const TENANTS = ["coffee", "oncall", "nightsky"];
+const TENANTS = ["coffee", "oncall", "nightsky", "gravity", "poland", "ulam"];
 
 for (const slug of TENANTS) {
   test.describe(`CSP on ${slug}`, () => {

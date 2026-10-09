@@ -13,7 +13,7 @@ Demo mode turns a [tenant](/admin/tenants/) into a public demo that anyone can t
 account. Visitors of the learner site are logged in as the demo student, visitors of the admin
 panel as the demo admin, and the whole tenant is wiped and seeded again every hour.
 
-The three demo tenants of the reference setup, `coffee`, `oncall` and `nightsky`, run in demo
+The six demo tenants of the reference setup, `coffee`, `oncall`, `nightsky`, `gravity`, `poland` and `ulam`, run in demo
 mode (see [Demos](/getting-started/demos/)).
 
 <Aside type="danger">
@@ -31,14 +31,14 @@ is off. Set it through the tenant registry, so that `ulams:tenant:sync-env` keep
 php artisan ulams:tenant:create coffee --demo=on    # or --demo=off
 ```
 
-Only the env file is rewritten; no data changes. To turn it on for the three demo tenants at
+Only the env file is rewritten; no data changes. To turn it on for the six demo tenants at
 once, run from `api/`:
 
 ```bash
 make demo-mode-on
 ```
 
-This runs `ulams:tenant:create <slug> --demo=on` for `coffee`, `oncall` and `nightsky`.
+This runs `ulams:tenant:create <slug> --demo=on` for all six.
 `ulams:tenant:list` shows the current state in the `demo` column.
 
 When demo mode is off, none of it exists: the demo routes answer 404, `GET /api/config` has no
@@ -140,7 +140,7 @@ php artisan ulams:demo:seed --domain=coffee.localhost
 php artisan ulams:demo:seed --skip-content --domain=coffee.localhost
 ```
 
-`--experience=` picks the demo content (`coffee`, `oncall`, `nightsky` or `all`; default
+`--experience=` picks the demo content (`coffee`, `oncall`, `nightsky`, `gravity`, `poland`, `ulam` or `all`; default
 `ULAMS_DEMO_EXPERIENCE`, then the tenant slug). `--skip-content` only grants the demo student
 access to the published courses, for example after courses were created by hand.
 

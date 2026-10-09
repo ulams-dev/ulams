@@ -151,6 +151,14 @@ not exist in the played version.
   poster of the step is shown instead of the live frame, with a button to play it anyway.
 - When WebGL is missing, or the package does not answer within 10 seconds, the poster and the text.
 
+## As the hero of a landing page
+
+The landing pages of the free demo academies (`gravity`, `poland`, `ulam`) can open with the course's own
+interactive. The reference frontend asks the public, throttled endpoint `GET /api/interactive/showcase`, which
+returns the launch data of the first interactive topic of the first public course, with no sign-in and no
+progress recorded. The hero plays it in the usual sandbox, with the poster and the text version. A tenant
+without such a topic answers 404 and the hero shows a drawn scene instead.
+
 ## Limits and the CSP
 
 - The upload goes through the upload guard: at most `UPLOADS_INTERACTIVE_MAX_MB` (50 MB by default), zip
@@ -186,6 +194,7 @@ which the demo academies use. They are also the best templates for your own.
 |---|---|---|
 | `gravity` | A Three.js solar system with a guided tour; built with Vite, so it bundles the bridge from source | 44, English and Polish; a poster per step |
 | `poland` | A map and charts of public statistics, plain JavaScript with no build; loads its data with `fetch`, so it holds `ready` back with `whenReady` | 40, English and Polish; a poster per step; honours reduced motion |
+| `ulam/spiral` | A small inline interactive: whole numbers on a square spiral with the primes marked; plain ES modules with a shared step card, keyboard navigation of a canvas, no animation | 4, English; completes when the last step is visited |
 
 Build one and use it in a lesson (the posters are rendered with Chromium, so it needs
 `npx playwright install chromium` once):

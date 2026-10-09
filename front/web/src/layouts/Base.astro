@@ -9,6 +9,9 @@ import fallbackCss from "@ulams/ui/styles/fallbacks.css?inline";
 import coffeeCss from "@ulams/ui/styles/themes/coffee.css?inline";
 import oncallCss from "@ulams/ui/styles/themes/oncall.css?inline";
 import nightskyCss from "@ulams/ui/styles/themes/nightsky.css?inline";
+import gravityCss from "@ulams/ui/styles/themes/gravity.css?inline";
+import polandCss from "@ulams/ui/styles/themes/poland.css?inline";
+import ulamCss from "@ulams/ui/styles/themes/ulam.css?inline";
 import platformCss from "@ulams/ui/styles/themes/platform.css?inline";
 import type { ThemeName } from "@ulams/ui/registry";
 import DemoBadge from "../components/DemoBadge.astro";
@@ -34,7 +37,7 @@ interface Props {
 
 const { theme, title, description, lang = "en", demo, bodyClass, accent, noindex = false, baseTarget } = Astro.props;
 const tenantCss = accentCss(theme, accent);
-const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, platform: platformCss }[theme];
+const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, gravity: gravityCss, poland: polandCss, ulam: ulamCss, platform: platformCss }[theme];
 ---
 
 <!doctype html>
@@ -80,6 +83,33 @@ const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, 
           <Font cssVariable="--font-space-grotesk" preload={[{ weight: "600" }]} />
           <Font cssVariable="--font-inter" preload={[{ weight: "400" }]} />
           <Font cssVariable="--font-jetbrains" preload={[{ weight: "400" }]} />
+        </>
+      )
+    }
+    {
+      theme === "gravity" && (
+        <>
+          <Font cssVariable="--font-space-grotesk" preload={[{ weight: "600" }]} />
+          <Font cssVariable="--font-inter" preload={[{ weight: "400" }]} />
+          <Font cssVariable="--font-jetbrains" />
+        </>
+      )
+    }
+    {
+      theme === "poland" && (
+        <>
+          <Font cssVariable="--font-source-serif" preload={[{ weight: "600" }]} />
+          <Font cssVariable="--font-plex-sans" preload={[{ weight: "400" }]} />
+          <Font cssVariable="--font-plex-mono" />
+        </>
+      )
+    }
+    {
+      theme === "ulam" && (
+        <>
+          <Font cssVariable="--font-eb-garamond" preload={[{ weight: "500" }]} />
+          <Font cssVariable="--font-plex-sans" preload={[{ weight: "400" }]} />
+          <Font cssVariable="--font-plex-mono" />
         </>
       )
     }

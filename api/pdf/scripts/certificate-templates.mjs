@@ -149,6 +149,30 @@ const themes = {
         display: 'Baloo2-Bold', body: 'Nunito-Regular',
         background: '#13153A', ink: '#FFFFFF', muted: '#3DDC97', accent: '#FFD23F', rule: '#9B8CFF', name: '#FFD23F',
         qrBar: '#13153A', qrBackground: '#FFFFFF'
+    },
+    // Gravity Lab: dark space (Space Grotesk, JetBrains Mono, cyan and gold on near-black)
+    gravity: {
+        title: 'Escape Velocity Reached', titleSize: 30, intro: 'Gravity Lab certifies that', completed: 'has completed every module of',
+        dateLabel: 'Completed on', idLabel: 'Certificate no.', signatureLabel: 'Mission control', verifyLabel: 'Scan to verify',
+        display: 'SpaceGrotesk-Bold', body: 'JetBrainsMono-Regular', mono: 'JetBrainsMono-Regular',
+        background: '#05070F', ink: '#E8ECF5', muted: '#8E9BB5', accent: '#3DD6F5', rule: '#1B2742', name: '#FFB547',
+        qrBar: '#05070F', qrBackground: '#E8ECF5'
+    },
+    // Poland, Measured: cartographic paper (Playfair Display, Noto Sans, red on warm paper)
+    poland: {
+        title: 'Certificate of Completion', titleSize: 32, intro: 'Poland, Measured certifies that', completed: 'has read the map, checked the sources and completed',
+        dateLabel: 'Completed on', idLabel: 'Certificate no.', signatureLabel: 'Cartographer', verifyLabel: 'Scan to verify',
+        display: 'PlayfairDisplay-Bold', body: 'NotoSans-Regular',
+        background: '#F4EFE6', ink: '#1B2A3A', muted: '#5E8C8A', accent: '#C8102E', rule: '#D6CDBB', name: '#C8102E',
+        qrBar: '#1B2A3A', qrBackground: '#F4EFE6'
+    },
+    // The Scottish Book: archival notebook (Playfair Display, JetBrains Mono, blue ink with a red margin)
+    ulam: {
+        title: 'Problem Solved', titleSize: 34, intro: 'The Scottish Book records that', completed: 'has worked through the notebook of',
+        dateLabel: 'Solved on', idLabel: 'Entry no.', signatureLabel: 'Keeper of the book', verifyLabel: 'Scan to verify',
+        display: 'PlayfairDisplay-Bold', body: 'JetBrainsMono-Regular', mono: 'JetBrainsMono-Regular',
+        background: '#F7F3E8', ink: '#1E2230', muted: '#6B5B4A', accent: '#1D3B8F', rule: '#D9D2BE', name: '#1D3B8F',
+        qrBar: '#1E2230', qrBackground: '#F7F3E8'
     }
 };
 

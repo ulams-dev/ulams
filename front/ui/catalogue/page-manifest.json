@@ -13,6 +13,9 @@
               "coffee",
               "oncall",
               "nightsky",
+              "gravity",
+              "poland",
+              "ulam",
               "platform"
             ],
             "description": "Tenant theme preset"
@@ -94,6 +97,9 @@
               "wordmark",
               "terminal",
               "rocket",
+              "orbit",
+              "compass",
+              "sigma",
               "logo"
             ],
             "description": "Brand mark style; logo = the ulams mark",
@@ -233,7 +239,7 @@
       }
     },
     "Hero": {
-      "description": "First screen of a landing page. editorial = magazine cover with a photo; console = dark split with a log panel; adventure = playful with an illustration.",
+      "description": "First screen of a landing page. editorial = magazine cover with a photo; console = dark split with a log panel; adventure = playful with an illustration; cosmos, atlas and notebook = copy on the left and a live interactive package (or a drawing of orbits, a map graticule or an Ulam spiral) on the right.",
       "children": false,
       "props": {
         "type": "object",
@@ -244,7 +250,10 @@
               "editorial",
               "console",
               "adventure",
-              "product"
+              "product",
+              "cosmos",
+              "atlas",
+              "notebook"
             ],
             "description": "Layout",
             "default": "editorial"
@@ -506,6 +515,8 @@
                     "medal",
                     "book",
                     "terminal",
+                    "compass",
+                    "sigma",
                     "pager",
                     "chart",
                     "print",
@@ -572,6 +583,125 @@
             "description": "Capability orbit for the product variant: cards on up to three orbits around the logo, one highlighted at a time",
             "default": [],
             "maxItems": 12
+          },
+          "showcase": {
+            "type": "object",
+            "properties": {
+              "src": {
+                "type": "string",
+                "format": "href",
+                "description": "Entry file of the interactive package on the content origin",
+                "maxLength": 2048
+              },
+              "title": {
+                "type": "string",
+                "description": "Title of the frame",
+                "maxLength": 160
+              },
+              "steps": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Step id",
+                      "maxLength": 64
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "Step title",
+                      "maxLength": 255
+                    },
+                    "text": {
+                      "type": "string",
+                      "description": "Text alternative of the step",
+                      "maxLength": 4000
+                    },
+                    "poster": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Poster image of the step",
+                      "maxLength": 2048
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "text"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Steps with their text alternatives and posters",
+                "default": [],
+                "maxItems": 200,
+                "minItems": 1
+              },
+              "height": {
+                "type": "integer",
+                "description": "Frame height px",
+                "minimum": 240,
+                "default": 440,
+                "maximum": 1000
+              },
+              "startStep": {
+                "type": "string",
+                "description": "First step of the range",
+                "maxLength": 64
+              },
+              "endStep": {
+                "type": "string",
+                "description": "Last step of the range",
+                "maxLength": 64
+              },
+              "locale": {
+                "type": "string",
+                "description": "Language of the step texts",
+                "maxLength": 16,
+                "default": "en"
+              },
+              "requires": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "webgl"
+                  ],
+                  "description": "Browser capability the package needs"
+                },
+                "description": "Capabilities the package needs",
+                "default": [],
+                "maxItems": 5
+              },
+              "reducedMotionSupported": {
+                "type": "boolean",
+                "description": "The package handles reduced motion itself",
+                "default": false
+              },
+              "licence": {
+                "type": "string",
+                "description": "SPDX licence id",
+                "maxLength": 64
+              },
+              "attribution": {
+                "type": "string",
+                "description": "Attribution line",
+                "maxLength": 1000
+              },
+              "sourceUrl": {
+                "type": "string",
+                "format": "href",
+                "description": "Source code or origin of the package",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "src",
+              "title",
+              "steps"
+            ],
+            "description": "A live interactive package for the cosmos, atlas and notebook variants; without it the variant draws its own picture. Nothing is tracked.",
+            "additionalProperties": false
           },
           "diff": {
             "type": "object",
@@ -657,7 +787,7 @@
       }
     },
     "Syllabus": {
-      "description": "Course program. folio = magazine table of contents with roman numerals; timeline = horizontal modules with week labels; missions = winding adventure path.",
+      "description": "Course program, laid out as a contents page, a timeline, a mission path, orbits or an atlas. folio = magazine table of contents with roman numerals; timeline = horizontal modules with week labels; missions = winding adventure path; orbits = modules on concentric rings (a list on phones); atlas = atlas table of contents with chapter numbers.",
       "children": false,
       "props": {
         "type": "object",
@@ -667,7 +797,9 @@
             "enum": [
               "folio",
               "timeline",
-              "missions"
+              "missions",
+              "orbits",
+              "atlas"
             ],
             "description": "Layout",
             "default": "folio"
@@ -1561,6 +1693,8 @@
                     "medal",
                     "book",
                     "terminal",
+                    "compass",
+                    "sigma",
                     "pager",
                     "chart",
                     "print",
@@ -1697,6 +1831,8 @@
                     "medal",
                     "book",
                     "terminal",
+                    "compass",
+                    "sigma",
                     "pager",
                     "chart",
                     "print",
@@ -1946,6 +2082,8 @@
                     "medal",
                     "book",
                     "terminal",
+                    "compass",
+                    "sigma",
                     "pager",
                     "chart",
                     "print",
@@ -2043,6 +2181,9 @@
                     "coffee",
                     "oncall",
                     "nightsky",
+                    "gravity",
+                    "poland",
+                    "ulam",
                     "platform"
                   ],
                   "description": "Colour swatch of the card"

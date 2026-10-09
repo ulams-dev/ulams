@@ -420,7 +420,7 @@
           "component": "Showcase",
           "props": {
             "eyebrow": "live demos",
-            "title": "Three academies, one platform",
+            "title": "Six academies, one platform",
             "intro": "Each demo is a separate tenant with its own theme, course and data, running on the same ulams install. Open it as a learner or step into its admin.",
             "items": {
               "$data": "/demos"

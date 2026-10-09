@@ -3,6 +3,10 @@
 namespace Tests\Integrations;
 
 use Database\Seeders\Demo\DemoExperience;
+use Database\Seeders\Demo\GravityExperience;
+use Database\Seeders\Demo\PolandExperience;
+use Database\Seeders\Demo\UlamExperience;
+use ReflectionMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 use Ulams\Cart\Models\Product;
@@ -37,6 +41,24 @@ class DemoPricesTest extends TestCase
         $this->assertSame($gross, $product->getGrossPrice());
         // front formatPrice(price, tax_rate): net in units × (1 + rate), two decimals
         $this->assertSame(number_format($gross / 100, 2, '.', ''), number_format(round($net / 100, 2) * (1 + DemoExperience::TAX_RATE / 100), 2, '.', ''));
+    }
+
+    public static function freeExperiences(): array
+    {
+        return ['gravity' => [GravityExperience::class], 'poland' => [PolandExperience::class], 'ulam' => [UlamExperience::class]];
+    }
+
+    /** The three interactive academies are free and public: no product, no event, no voucher. */
+    #[DataProvider('freeExperiences')]
+    public function testTheInteractiveAcademiesAreFreeAndHaveNoProducts(string $class): void
+    {
+        $fields = (new ReflectionMethod($class, 'courseFields'))->invoke(new $class());
+        $this->assertTrue($fields['public']);
+        $this->assertSame([], (new ReflectionMethod($class, 'commerce'))->getParameters());
+        $body = (string) file_get_contents((string) (new ReflectionMethod($class, 'commerce'))->getFileName());
+        $this->assertStringNotContainsString('$this->product(', $body);
+        $this->assertStringNotContainsString('$this->webinar(', $body);
+        $this->assertStringNotContainsString('$this->coupon(', $body);
     }
 
     public function testNoTaxKeepsThePrice(): void

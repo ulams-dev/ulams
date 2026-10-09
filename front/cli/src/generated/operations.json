@@ -2640,6 +2640,12 @@
   "tag": "Interactive"
  },
  {
+  "method": "GET",
+  "path": "/api/interactive/showcase",
+  "summary": "The interactive shown on a landing page",
+  "tag": "Interactive"
+ },
+ {
   "method": "POST",
   "path": "/api/interactive/topics/{topic}/events",
   "summary": "Progress events from the lesson page",

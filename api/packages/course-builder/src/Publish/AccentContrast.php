@@ -8,7 +8,7 @@ namespace Ulams\CourseBuilder\Publish;
  */
 final class AccentContrast
 {
-    public const BACKGROUNDS = ['coffee' => '#f6f1e9', 'oncall' => '#0b0f14', 'nightsky' => '#13153a'];
+    public const BACKGROUNDS = ['coffee' => '#f6f1e9', 'oncall' => '#0b0f14', 'nightsky' => '#13153a', 'gravity' => '#05070f', 'poland' => '#f4efe6', 'ulam' => '#f7f3e8'];
 
     /** @return array{value:string,adjusted:bool}|null */
     public static function adjust(string $accent, string $preset, float $ratio = 5.0): ?array

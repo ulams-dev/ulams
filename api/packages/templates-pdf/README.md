@@ -34,7 +34,7 @@ Config (`ulams_templates_pdf`): `pdf.service_url` (`PDF_SERVICE_URL`, default `h
 `{FRONTEND_URL}`, `{id}`).
 
 Certificate templates (`resources/pdfme`, built by `api/pdf/scripts/certificate-templates.mjs`): `default`
-(A4 landscape; seeded as the default `CourseFinished` template) and `coffee`, `oncall`, `nightsky` for the
+(A4 landscape; seeded as the default `CourseFinished` template) and `coffee`, `oncall`, `nightsky`, `gravity`, `poland`, `ulam` for the
 demo experiences — `CertificateTemplates::content('coffee')` returns the JSON for a template's `content`
 section. A template's `title` section must contain `@VarCourseTitle` for `CourseFinished` templates to be valid.
 

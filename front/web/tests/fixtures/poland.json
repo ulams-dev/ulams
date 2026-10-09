@@ -1,0 +1,139 @@
+{
+  "settings": {
+    "global": {
+      "companyName": "Poland, Measured",
+      "frontURL": "http://poland.app.localhost"
+    },
+    "theme": {
+      "theme": "poland",
+      "accent": "#C8102E"
+    }
+  },
+  "course": {
+    "id": 2,
+    "created_at": "2026-10-08T15:00:48.000000Z",
+    "updated_at": "2026-10-08T15:00:55.000000Z",
+    "title": "Poland, measured",
+    "summary": "Explore 35 years of Poland through maps and charts built from cited public data, with a quiz after each chapter.",
+    "image_path": null,
+    "video_path": null,
+    "duration": "1 welcome lesson (placeholder)",
+    "author_id": 2,
+    "author": {
+      "id": 2,
+      "first_name": "Zofia",
+      "last_name": "Wrona",
+      "email": "tutor@poland.ulams.app",
+      "path_avatar": null,
+      "url_avatar": null,
+      "interests": [],
+      "categories": []
+    },
+    "authors": [
+      {
+        "id": 2,
+        "first_name": "Zofia",
+        "last_name": "Wrona",
+        "email": "tutor@poland.ulams.app",
+        "path_avatar": null,
+        "url_avatar": null,
+        "interests": [],
+        "categories": []
+      }
+    ],
+    "status": "published",
+    "subtitle": "A map and charts you can read for yourself.",
+    "language": "en",
+    "description": "**Poland in 35 years of public data.** Explore 35 years of Poland through maps and charts built from cited public data, with a quiz after each chapter.",
+    "categories": [],
+    "tags": [],
+    "level": "Beginner",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Welcome to the atlas",
+        "summary": "A short welcome. The full course arrives soon.",
+        "duration": "5 min",
+        "active": true,
+        "order": 1,
+        "course_id": 2,
+        "active_from": null,
+        "active_to": null,
+        "lessons": [],
+        "topics": [
+          {
+            "id": 1,
+            "title": "Welcome",
+            "lesson_id": 1,
+            "active": true,
+            "preview": true,
+            "topicable_id": 1,
+            "topicable_type": "Ulams\\TopicTypes\\Models\\TopicContent\\RichText",
+            "summary": "What this course is about.",
+            "introduction": null,
+            "description": null,
+            "order": 1,
+            "json": null,
+            "can_skip": false,
+            "duration": "5 min"
+          }
+        ]
+      }
+    ],
+    "poster_path": null,
+    "active_from": null,
+    "active_to": null,
+    "hours_to_complete": 3,
+    "findable": true,
+    "scorm_sco_id": null,
+    "target_group": "Curious kids, homeschool families, teachers running a club",
+    "users_count": 0,
+    "image_url": null,
+    "video_url": null,
+    "poster_url": null,
+    "teaser_url": null,
+    "public": true,
+    "fields": {
+      "experience": "poland",
+      "landing": {
+        "headline": "Poland in 35 years of public data",
+        "subheadline": "A map and charts you can read for yourself.",
+        "cta": "Open the atlas",
+        "faq": [
+          {
+            "q": "Is there a Polish version?",
+            "a": "Yes. Polska w liczbach is the Polish course; use the Polski link in the header."
+          }
+        ],
+        "lists": {
+          "sources": [
+            "population and economy from GUS and Eurostat",
+            "borders and boundaries from Natural Earth"
+          ],
+          "features": [
+            "an interactive map and charts",
+            "every figure cited to its source",
+            "English and Polish versions"
+          ]
+        }
+      }
+    },
+    "product": null,
+    "related_product": null
+  },
+  "products": [],
+  "webinars": [],
+  "events": [],
+  "tutors": [
+    {
+      "id": 2,
+      "first_name": "Zofia",
+      "last_name": "Wrona",
+      "email": "tutor@poland.ulams.app",
+      "path_avatar": null,
+      "url_avatar": null,
+      "interests": [],
+      "categories": []
+    }
+  ]
+}

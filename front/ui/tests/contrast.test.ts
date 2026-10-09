@@ -39,7 +39,7 @@ const UI_PAIRS: Array<[string, string]> = [
 ];
 
 describe("theme contrast (WCAG 2.2 AA)", () => {
-  for (const theme of ["coffee", "oncall", "nightsky"]) {
+  for (const theme of ["coffee", "oncall", "nightsky", "gravity", "poland", "ulam"]) {
     const t = tokens(theme);
     it(`${theme}: body text pairs reach 4.5:1`, () => {
       for (const [fg, bg] of TEXT_PAIRS) {

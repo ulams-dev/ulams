@@ -44,14 +44,18 @@ corepack yarn dev                           # admin on :8000 and front on :3000
 
 ### Demo tenants
 
-Three demo sites, each with its own database, bucket, theme, landing page and seeded course
-(designs and content: [`front/docs/design/experiences.md`](front/docs/design/experiences.md)):
+Six demo sites, each with its own database, bucket, theme, landing page and seeded course
+(designs and content: [`front/docs/design/experiences.md`](front/docs/design/experiences.md)). The last three are free
+and interactive; their courses are placeholders until the content milestones land:
 
 | Tenant | Learner site | Admin | API |
 |---|---|---|---|
 | The Coffee Atlas | http://coffee.app.localhost | http://coffee.admin.localhost | http://coffee.localhost |
 | On-Call | http://oncall.app.localhost | http://oncall.admin.localhost | http://oncall.localhost |
 | Night Sky Explorers | http://nightsky.app.localhost | http://nightsky.admin.localhost | http://nightsky.localhost |
+| Gravity Lab | http://gravity.app.localhost | http://gravity.admin.localhost | http://gravity.localhost |
+| Poland, Measured | http://poland.app.localhost | http://poland.admin.localhost | http://poland.localhost |
+| The Scottish Book | http://ulam.app.localhost | http://ulam.admin.localhost | http://ulam.localhost |
 
 Create them and their content (inside the API container):
 
@@ -60,9 +64,14 @@ docker compose -f api/docker-compose.yml exec api bash
 php artisan ulams:tenant:create coffee --name="The Coffee Atlas" --theme=coffee --accent="#C2552D"
 php artisan ulams:tenant:create oncall --name="On-Call" --theme=oncall --accent="#58A6FF"
 php artisan ulams:tenant:create nightsky --name="Night Sky Explorers" --theme=nightsky --accent="#FFD23F"
+php artisan ulams:tenant:create gravity --name="Gravity Lab" --theme=gravity --accent="#3DD6F5"
+php artisan ulams:tenant:create poland --name="Poland, Measured" --theme=poland --accent="#C8102E"
+php artisan ulams:tenant:create ulam --name="The Scottish Book" --theme=ulam --accent="#1D3B8F"
 exit
 make -C api demo-seed demo-seed-tenants
 ```
+
+`make -C api demo-create-tenants` runs the six create commands in one go.
 
 Demo users per tenant: `admin@<slug>.ulams.app`, `tutor@<slug>.ulams.app`,
 `student1…5@<slug>.ulams.app`, password `TENANT_DEMO_PASSWORD` (dev only, see `api/.env.example`).

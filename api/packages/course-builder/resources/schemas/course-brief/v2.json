@@ -105,7 +105,10 @@
           "enum": [
             "coffee",
             "oncall",
-            "nightsky"
+            "nightsky",
+            "gravity",
+            "poland",
+            "ulam"
           ]
         },
         "accent": {
