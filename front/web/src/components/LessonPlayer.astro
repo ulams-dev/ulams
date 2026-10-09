@@ -120,7 +120,7 @@ const resources = topic.resources ?? [];
 
     <details class="u-player__tree" data-tree>
       <summary><Icon name="menu" /> Program <span>{nav.index + 1} / {nav.total}</span></summary>
-      <nav aria-label="Course program">
+      <nav aria-label="Course program" tabindex="0">
         <ol class="u-tree" role="list">
           {
             lessons.map((l, li) => {
@@ -339,11 +339,18 @@ const resources = topic.resources ?? [];
     position: sticky;
     top: 65px;
     align-self: start;
-    max-height: calc(100dvh - 65px);
-    overflow-y: auto;
     border-right: 1px solid var(--ulams-color-border);
     background: var(--ulams-color-surface);
+  }
+  /* the program scrolls inside a focusable, labelled region (WCAG 2.1.1: keyboard users can scroll it) */
+  .u-player__tree nav {
+    max-height: calc(100dvh - 65px);
+    overflow-y: auto;
     scrollbar-width: thin;
+  }
+  .u-player__tree nav:focus-visible {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: -3px;
   }
   .u-player__tree summary {
     display: none;
@@ -552,9 +559,11 @@ const resources = topic.resources ?? [];
         "main"
         "bar";
     }
+    .u-player__tree nav {
+      max-height: none;
+    }
     .u-player__tree {
       position: static;
-      max-height: none;
       border-right: 0;
       border-bottom: 1px solid var(--ulams-color-border);
     }
