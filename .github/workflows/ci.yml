@@ -236,7 +236,7 @@ jobs:
     services:
       # Same major as api/docker-compose.yml; move together when Postgres is upgraded.
       postgres:
-        image: postgres:12
+        image: mirror.gcr.io/library/postgres:12
         env:
           # Matches the <env> defaults in api/phpunit.xml (DB default/default/secret on 127.0.0.1).
           POSTGRES_DB: default
@@ -249,7 +249,7 @@ jobs:
           --health-cmd "pg_isready -U default -d default"
           --health-interval 5s --health-timeout 5s --health-retries 20
       valkey:
-        image: valkey/valkey:8-alpine
+        image: mirror.gcr.io/valkey/valkey:8-alpine
         ports:
           - 6379:6379
         options: >-
@@ -443,6 +443,10 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
       - run: deploy/vps-cloudflare/scripts/validate.sh
 
   ci-ok:

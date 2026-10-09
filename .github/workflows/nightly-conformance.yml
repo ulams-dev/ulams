@@ -61,7 +61,7 @@ jobs:
     timeout-minutes: 40
     services:
       postgres:
-        image: postgres:12
+        image: mirror.gcr.io/library/postgres:12
         env:
           POSTGRES_DB: default
           POSTGRES_USER: default
@@ -72,7 +72,7 @@ jobs:
           --health-cmd "pg_isready -U default -d default"
           --health-interval 5s --health-timeout 5s --health-retries 20
       valkey:
-        image: valkey/valkey:8-alpine
+        image: mirror.gcr.io/valkey/valkey:8-alpine
         ports:
           - 6379:6379
     steps:
@@ -136,7 +136,7 @@ jobs:
     timeout-minutes: 45
     services:
       postgres:
-        image: postgres:12
+        image: mirror.gcr.io/library/postgres:12
         env:
           POSTGRES_DB: default
           POSTGRES_USER: default
@@ -147,7 +147,7 @@ jobs:
           --health-cmd "pg_isready -U default -d default"
           --health-interval 5s --health-timeout 5s --health-retries 20
       valkey:
-        image: valkey/valkey:8-alpine
+        image: mirror.gcr.io/valkey/valkey:8-alpine
         ports:
           - 6379:6379
     env:
@@ -248,7 +248,7 @@ jobs:
     timeout-minutes: 45
     services:
       postgres:
-        image: postgres:12
+        image: mirror.gcr.io/library/postgres:12
         env:
           POSTGRES_DB: default
           POSTGRES_USER: default
@@ -259,7 +259,7 @@ jobs:
           --health-cmd "pg_isready -U default -d default"
           --health-interval 5s --health-timeout 5s --health-retries 20
       valkey:
-        image: valkey/valkey:8-alpine
+        image: mirror.gcr.io/valkey/valkey:8-alpine
         ports:
           - 6379:6379
     env:
