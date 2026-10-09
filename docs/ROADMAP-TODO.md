@@ -271,60 +271,95 @@ M2.1 "chat course building": upload → interview → outline diff → approved 
 approved apply through domain services → element chat edits. Designs:
 `front/docs/design/stitch/course-builder/`.
 
-- [ ] (new) Course Builder author area in the reference web app (`front/web`, `/studio`); the admin only
-      links to it
-- [ ] (new) AG-UI event log and SSE stream from Laravel, carrying A2UI surfaces (ADR 0011)
-- [ ] (new) Builder components in `@ulams/ui` and the course landing document in the catalogue format
+- [x] (new) Course Builder author area in the reference web app (`front/web`, `/studio`); the admin only
+      links to it (M2.1, branch `phase-2/course-builder`; ADR 0022)
+- [x] (new) AG-UI event log and SSE stream from Laravel, carrying A2UI surfaces (ADR 0011; A2UI as
+      `a2ui-surface` activity snapshots, ADR 0023; cache-key wake instead of pub/sub, ADR 0029)
+- [x] (new) Builder components in `@ulams/ui` and the course landing document in the catalogue format
+- [ ] (new) Studio: edit the Course Brief from the brief panel (partial: `PUT …/brief` with stale
+      marking done; the panel is read-only)
+- [ ] (new) Detect admin edits made after an apply before re-applying (ADR 0010 drift check)
+- [ ] (new) Vendor the A2UI v0.9 JSON Schemas in `@ulams/ui` for dev-mode validation (plan 13.2); the
+      builder catalogue is validated, the A2UI envelope is not
+- [ ] (new) Operations for the builder: a separate PHP-FPM pool and Caddy route for
+      `…/sessions/{id}/events`, a daily `course-builder:prune-events`, a Horizon queue for builder jobs
+- [ ] (new) Run the opt-in cross-tenant check `TenantIsolationTest::testCourseBuilderSessionsDoNotCrossTenants`
+      (written; needs `TENANCY_INTEGRATION=1` and two probe tenants)
+- [ ] (new) Regenerate the OpenAPI spec and SDK path types for the builder endpoints (the SDK uses
+      hand-written types; the API carries the annotations)
+- [ ] (new) Normalise `yarn.lock` with a real `yarn install` (entries for `@ag-ui/core` 1.0.2 and
+      `diff` 9.0.0 were added by hand while the disk was full)
+- [ ] (new) Delete the RichText/GIFT content row when a topic is deleted (topic repository leaves it;
+      the applier deletes topics through the repository)
 
 ### 2.1 LLM layer
-- [ ] Provider abstraction, model per task via config (Sonnet default, Haiku for light steps)
-- [ ] Structured outputs validated by JSON Schema, retry then graceful failure
-- [ ] Prompt caching for sources
-- [ ] Per-call logging: model, tokens, cost, latency, tenant, course; running cost per course
-- [ ] Hard limits (source size, tokens per course, concurrency)
-- [ ] Versioned prompt files with README
+- [x] Provider abstraction, model per task via config (Sonnet default, Haiku for light steps)
+      (`api/packages/ai`; Anthropic, fake and disabled drivers; other providers in 8.2)
+- [x] Structured outputs validated by JSON Schema, retry then graceful failure
+- [x] Prompt caching for sources (live eval: lesson and quiz calls after the first read ~4.8k cached
+      tokens)
+- [x] Per-call logging: model, tokens, cost, latency, tenant, course; running cost per course
+      (`ai_calls`, `ai:usage`, cost streamed to the studio)
+- [x] Hard limits (source size, tokens per course, concurrency) (plus per-session cost, daily sessions,
+      tenant monthly spend, eval spend)
+- [x] Versioned prompt files with README (`api/packages/course-builder/resources/prompts`)
 
 ### 2.2 Ingestion
-- [ ] PDF, Markdown, DOCX → **Source Document** with stable fragment IDs
-- [ ] Untrusted content handling + prompt-injection tests
-- [ ] Design (don't build) image/video ingestion
+- [x] PDF, Markdown, DOCX → **Source Document** with stable fragment IDs (first-party DOCX converter,
+      ADR 0026)
+- [x] Untrusted content handling + prompt-injection tests (feature tests and a live eval fixture)
+- [x] Design (don't build) image/video ingestion (design note in `docs/plans/phase-2.md` 6.4)
 
 ### 2.3 Interview
-- [ ] Adaptive chips/buttons with defaults and "decide for me"
+- [x] Adaptive chips/buttons with defaults and "decide for me"
 - [ ] Audience, duration, tone, theme preset + accent, free/paid (via `CommerceProvider`;
-      interim: existing `payments`), assessments, language
-- [ ] Editable **Course Brief**
+      interim: existing `payments`), assessments, language (partial: audience, level, duration and
+      lesson length, tone, assessments, language done; theme and free/paid are M2.2)
+- [ ] Editable **Course Brief** (partial: schema-validated brief with decided-by per field, editable
+      through the API with stale marking; studio panel read-only, see the new item above)
 
 ### 2.4 Generation pipeline (queued, resumable, streamed)
-- [ ] **Learning objectives** proposed and **approved by the author** first
-- [ ] Outline mapped to source fragments and objectives
-- [ ] Lessons in parallel from the component registry (rich text, LiaScript, H5P)
-- [ ] Assessments with explanations, each traceable to a fragment
-- [ ] Metadata (title, description, SEO, pricing)
-- [ ] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid
-- [ ] **Course Blueprint**: versioned JSON, stable IDs, citations; entities created via domain
-      services; persisted per stage; progress streamed (SSE/websockets)
+- [x] **Learning objectives** proposed and **approved by the author** first (with inline edits)
+- [x] Outline mapped to source fragments and objectives
+- [ ] Lessons in parallel from the component registry (rich text, LiaScript, H5P) (partial: rich text
+      in a concurrency window; LiaScript and H5P lessons are M2.3)
+- [x] Assessments with explanations, each traceable to a fragment (per-lesson quizzes and a final test,
+      GIFT rendered by our code, support check against the cited text)
+- [ ] Metadata (title, description, SEO, pricing) (partial: no pricing, M2.2)
+- [ ] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (M2.2; publish
+      is done as a separate action)
+- [x] **Course Blueprint**: versioned JSON, stable IDs, citations; entities created via domain
+      services; persisted per stage; progress streamed (SSE/websockets) (ADR 0010, 0025)
 
 ### 2.5 Element-level chat editing
-- [ ] Select element → chat → structured patch → diff → apply
-- [ ] Blueprint versions: undo/redo/restore; global edits via queued pipeline
+- [x] Select element → chat → structured patch → diff → apply (course, module, lesson, block, question)
+- [ ] Blueprint versions: undo/redo/restore; global edits via queued pipeline (partial: undo, redo and
+      restore with re-apply done; global edits are M2.3)
 
 ### 2.6 Author UX
-- [ ] Upload → interview → live progress → tree + preview → element chat
-- [ ] Sources panel; retry a single failed step; themed learner frontend
+- [x] Upload → interview → live progress → tree + preview → element chat (e2e on the fake driver)
+- [ ] Sources panel; retry a single failed step; themed learner frontend (partial: retry of a single
+      step and source passages behind every citation done; the learner front is the existing one with
+      the tenant theme; a full sources panel in the workspace is missing)
 
 ### 2.7 Generative UI
 Architecture
-- [ ] Verify current A2UI / AG-UI versions and choose renderer (CopilotKit vs own)
+- [x] Verify current A2UI / AG-UI versions and choose renderer (CopilotKit vs own) (A2UI v0.9,
+      `@ag-ui/core` 1.0.2, own renderer; ADR 0011, 0023)
 - [ ] UI component catalogue: name, props JSON Schema, model description, accessible
-      implementation, text fallback
-- [ ] `render_ui` validated server-side; invalid/unknown → text fallback
-- [ ] Progressive streaming with skeletons; interactions sent back as structured events
+      implementation, text fallback (partial: the 17 builder components; learner layout components
+      are M2.5)
+- [x] `render_ui` validated server-side; invalid/unknown → text fallback (structured output choice
+      validated against the `@ulams/ui` manifest)
+- [x] Progressive streaming with skeletons; interactions sent back as structured events
 
 Builder components (MVP)
-- [ ] Interview controls · theme picker with live preview · drag-and-drop outline editor
-- [ ] Lesson preview card · variant comparison · quiz question card
-- [ ] Diff view · generation progress with retry and cost · publish summary with warnings
+- [ ] Interview controls · theme picker with live preview · drag-and-drop outline editor (partial:
+      interview controls done; theme picker M2.2, drag-and-drop editor M2.3)
+- [ ] Lesson preview card · variant comparison · quiz question card (partial: lesson preview and quiz
+      question cards done; variant comparison M2.3)
+- [ ] Diff view · generation progress with retry and cost · publish summary with warnings (partial:
+      diff view, progress and the apply summary with warnings done; publish summary M2.2/M2.4)
 
 Learner layouts (feature flag)
 - [ ] AI-composed declarative lesson layouts from approved components, stored in blueprint
@@ -356,8 +391,11 @@ Impact measurement
 
 Quality
 - [ ] Component playground (Storybook) with model-facing descriptions
-- [ ] Schema, fallback, interaction round-trip and accessibility tests per component
+- [x] Schema, fallback, interaction round-trip and accessibility tests per component (builder
+      catalogue: vitest + axe in jsdom; axe on every studio screen in the e2e)
 - [ ] Evals: right component choice, no raw markup outside `simulation`, simulation pass rate
+      (partial: `course-builder:eval` checks interview component choice, DiffView for chat edits and no
+      raw markup; simulations are M2.5)
 
 ---
 

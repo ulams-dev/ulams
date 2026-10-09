@@ -42,6 +42,19 @@ that has no closer licence file. This page is an engineering summary, not legal 
 4. New dependencies are checked for their licence before they are added (see `CLAUDE.md`).
 5. Imported code keeps its original copyright notices.
 
+## AI Course Builder dependencies
+
+| Package | Licence | Where | Notes |
+|---|---|---|---|
+| `anthropic-ai/sdk` | MIT | `api/packages/ai` | Official Claude SDK; only used with `AI_DRIVER=anthropic` |
+| `opis/json-schema` | Apache-2.0 | `api/packages/ai` | JSON Schema validation of model outputs, briefs and blueprints |
+| `smalot/pdfparser` | LGPL-3.0 | `api/packages/course-builder` | Already in the lock file; used unmodified as a library to read PDF text (LGPL permits linking; changes to the library itself would have to be shared) |
+| `@ag-ui/core` | MIT | `front/sdk` | AG-UI event types; its schemas subpath (zod) is only used in tests |
+| `diff` (jsdiff) | BSD-3-Clause | `front/ui` | Word-level diffs in the builder's DiffView; keep its notice in distributed bundles |
+
+DOCX is read by a first-party converter (no PhpWord, which is LGPL-3.0-only; ADR 0026). No A2UI or
+CopilotKit code is bundled: the studio renders its own catalogue.
+
 ## PDF templates and certificates
 
 PDF templates are designed in admin with the pdfme designer (`@pdfme/ui`, MIT) and rendered by

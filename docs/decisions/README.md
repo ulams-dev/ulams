@@ -29,3 +29,11 @@ replacement.
 | [0017](0017-upload-guard.md) | One upload guard and safe extractor for every upload path | Proposed |
 | [0018](0018-completion-events.md) | External content completes topics; completion events fire after progress is saved | Proposed |
 | [0019](0019-nightly-conformance.md) | Conformance against real LMSs and builders in an opt-in nightly workflow | Proposed |
+| [0022](0022-course-builder-studio-in-web-app.md) | Course Builder studio in the reference web app, with its own author session | Proposed |
+| [0023](0023-a2ui-surfaces-as-ag-ui-activity-snapshots.md) | A2UI surfaces travel as AG-UI activity snapshots (`a2ui-surface`) | Proposed |
+| [0024](0024-fake-llm-driver-cassettes-and-synthetic-answers.md) | Fake LLM driver: normalised cassettes and synthetic answers | Proposed |
+| [0025](0025-blueprint-to-lms-mapping.md) | How a Course Blueprint maps to LMS entities | Proposed |
+| [0026](0026-first-party-docx-converter.md) | A first-party DOCX converter instead of PhpWord | Proposed |
+| [0027](0027-course-builder-access.md) | Course Builder access: one permission, author acts, admins look | Proposed |
+| [0028](0028-generation-stages-and-grounding.md) | Generation stages, grounding check and quiz support check | Proposed |
+| [0029](0029-sse-wake-without-pubsub.md) | The SSE endpoint wakes on a cache key, not Valkey pub/sub | Proposed |
