@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import axe from "axe-core";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 const S = "01m4fj5zsgfxhzh3cantwevncw";
 
@@ -64,6 +64,14 @@ const violations = async (root: HTMLElement) =>
   );
 
 const button = (root: HTMLElement, text: string) => [...root.querySelectorAll("button")].find((b) => b.textContent?.startsWith(text))!;
+
+// The first axe run and the first import of the island are cold and slow on a loaded CI runner, which used to
+// land inside the first test and trip its 5 s limit. Pay that cost here, under its own generous hook timeout.
+beforeAll(async () => {
+  document.body.innerHTML = "<main></main>";
+  await axe.run(document.body, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
+  await import("../../src/studio/audit.ts");
+}, 60_000);
 
 afterEach(() => vi.unstubAllGlobals());
 
