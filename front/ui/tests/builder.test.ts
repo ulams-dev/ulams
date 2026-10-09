@@ -464,3 +464,48 @@ describe("interactions round-trip as A2UI actions", () => {
     expect(main.textContent).toContain("Changed");
   });
 });
+
+describe("brief v2 controls", () => {
+  it("the price control sends free, or paid with an amount in minor units", () => {
+    const c = ctx();
+    const main = mount(single("PriceInput"), c);
+    main.querySelector("form")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    expect(c.actions.at(-1)!.context).toEqual({ key: "pricing", value: { mode: "free" } });
+    (main.querySelector('input[value="paid"]') as HTMLInputElement).click();
+    (main.querySelector('input[type="text"]') as HTMLInputElement).value = "49,5";
+    main.querySelector("form")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    expect(c.actions.at(-1)!.context).toEqual({ key: "pricing", value: { mode: "paid", amountMinor: 4950, currency: "USD" } });
+  });
+
+  it("the price control rejects an invalid amount with an alert", () => {
+    const c = ctx();
+    const main = mount(single("PriceInput"), c);
+    (main.querySelector('input[value="paid"]') as HTMLInputElement).click();
+    (main.querySelector('input[type="text"]') as HTMLInputElement).value = "free!";
+    main.querySelector("form")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    expect(c.actions.at(-1)!.name).toBe("decide_for_me");
+    expect(main.querySelector('[role="alert"]')!.textContent).toMatch(/positive amount/);
+  });
+
+  it("the theme picker previews every preset and shows an adjusted accent", () => {
+    const c = ctx();
+    const main = mount(single("ThemePicker"), c);
+    expect(main.querySelectorAll(".cb-theme-card")).toHaveLength(3);
+    (main.querySelector('input[value="coffee"]') as HTMLInputElement).click();
+    const accent = main.querySelector(".cb-accent") as HTMLInputElement;
+    accent.value = "#f5f0e6"; // nearly the paper colour: fails AA text contrast
+    accent.dispatchEvent(new Event("input"));
+    expect(main.querySelector(".cb-accent + p")!.textContent).toMatch(/will be shown as #[0-9a-f]{6}/);
+    main.querySelector("form")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    expect(c.actions.at(-1)!.context).toEqual({ key: "theme", value: { preset: "coffee", accent: "#f5f0e6" } });
+  });
+
+  it("the theme picker rejects a malformed accent", () => {
+    const c = ctx();
+    const main = mount(single("ThemePicker"), c);
+    (main.querySelector(".cb-accent") as HTMLInputElement).value = "red";
+    main.querySelector("form")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    expect(c.actions.at(-1)!.name).toBe("decide_for_me");
+    expect(main.querySelector(".cb-accent")!.getAttribute("aria-invalid")).toBe("true");
+  });
+});

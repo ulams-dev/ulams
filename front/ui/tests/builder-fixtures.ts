@@ -51,6 +51,24 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
     value: "en",
     defaultValue: "en",
   },
+  PriceInput: {
+    questionKey: "pricing",
+    label: "Will the course be free or paid?",
+    status: "open",
+    currency: "USD",
+    defaultValue: { mode: "free" },
+  },
+  ThemePicker: {
+    questionKey: "theme",
+    label: "Which look should the site have?",
+    status: "open",
+    presets: [
+      { value: "coffee", label: "Coffee" },
+      { value: "oncall", label: "Oncall" },
+      { value: "nightsky", label: "Nightsky" },
+    ],
+    defaultValue: { preset: "coffee" },
+  },
   DecideForMe: { label: "Decide the rest for me", open: 3 },
   SourceCard: {
     sourceId: "01src",

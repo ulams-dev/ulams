@@ -46,6 +46,7 @@ export type Format = (typeof FORMATS)[number];
 
 export const THEMES = ["coffee", "oncall", "nightsky", "platform"] as const;
 export type ThemeName = (typeof THEMES)[number];
+export { THEME_PRESETS, TENANT_THEMES } from "./theme/presets.ts";
 
 export const ICONS = [
   "check",
