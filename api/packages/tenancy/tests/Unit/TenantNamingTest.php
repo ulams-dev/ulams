@@ -50,6 +50,15 @@ class TenantNamingTest extends TestCase
         $this->assertSame('no-reply@coffee.ulams.app', $values['MAIL_FROM_ADDRESS']);
     }
 
+    public function testEveryTenantGetsItsOwnH5PInternalToken(): void
+    {
+        $coffee = TenantNaming::envValues(new Tenant(TenantNaming::newTenantAttributes('coffee')));
+        $tea = TenantNaming::envValues(new Tenant(TenantNaming::newTenantAttributes('tea')));
+
+        $this->assertSame(64, strlen($coffee['H5P_INTERNAL_TOKEN']));
+        $this->assertNotSame($coffee['H5P_INTERNAL_TOKEN'], $tea['H5P_INTERNAL_TOKEN']);
+    }
+
     #[DataProvider('invalidSlugs')]
     public function testRejectsInvalidSlugs(string $slug): void
     {
