@@ -121,8 +121,9 @@ export default function generate() {
         editUrl: `${EDIT}/docs/ROADMAP-TODO.md`,
         tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 2 },
       },
-      `The full specification is [\`docs/ROADMAP-PROMPT.md\`](https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-PROMPT.md). Items marked "Coming" across this site link back to the phases below.\n\n${rewriteLinks(
-        roadmap.body,
+      `The full specification is [\`docs/ROADMAP-PROMPT.md\`](https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-PROMPT.md). Items marked "Coming" across this site link back to the phases below. ✓ marks a done item, ☐ an open one.\n\n${rewriteLinks(
+        // Task-list checkboxes would render as unlabelled disabled inputs; use plain marks.
+        roadmap.body.replace(/^(\s*[-*] )\[[xX]\] /gm, "$1✓ ").replace(/^(\s*[-*] )\[ \] /gm, "$1☐ "),
         "docs/ROADMAP-TODO.md",
         (p) => {
           for (const s of SETS) if (p.startsWith(`${s.dir}/`) && /\d{4}-.+\.md$/.test(p)) return pagePath(s, p.slice(s.dir.length + 1));
