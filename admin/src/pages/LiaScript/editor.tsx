@@ -13,7 +13,7 @@ import {
   Typography,
   message,
 } from 'antd';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, useIntl, useParams } from 'umi';
 
 import type { LiaScriptDocument, LiaScriptVersion } from '@/services/ulams/liascript';
@@ -22,9 +22,13 @@ import {
   liascriptDocument,
   liascriptSource,
   liascriptVersions,
+  previewLiaScript,
   renameLiaScript,
   restoreLiaScriptVersion,
 } from '@/services/ulams/liascript';
+
+/** Pause in typing after which an open preview refreshes. */
+const PREVIEW_DELAY_MS = 1500;
 
 const errorText = (error: any) =>
   error?.data?.message ||
@@ -52,8 +56,10 @@ const diffLines = (before: string, after: string) => {
 };
 
 /**
- * LiaScript editor: Markdown source, save as a new version with a note, version history with the
- * changes of each version and restore. Learners see the course in lessons of type LiaScript.
+ * LiaScript editor: Markdown source with a live preview of the unsaved text (played from the
+ * tenant content origin, refreshed when typing pauses), save as a new version with a note,
+ * version history with the changes of each version and restore. Learners see the saved course in
+ * lessons of type LiaScript.
  */
 const LiaScriptEditor: React.FC = () => {
   const intl = useIntl();
@@ -67,6 +73,11 @@ const LiaScriptEditor: React.FC = () => {
   const [title, setTitle] = useState('');
   const [selected, setSelected] = useState<{ version: number; text: string }>();
   const [busy, setBusy] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [preview, setPreview] = useState<{ url: string; warnings: string[] }>();
+  const [previewError, setPreviewError] = useState<string>();
+  const [previewing, setPreviewing] = useState(false);
+  const previewed = useRef<string>();
 
   const load = useCallback(async () => {
     try {
@@ -96,6 +107,31 @@ const LiaScriptEditor: React.FC = () => {
     window.addEventListener('beforeunload', warn);
     return () => window.removeEventListener('beforeunload', warn);
   }, [dirty]);
+
+  const refreshPreview = useCallback(
+    async (text: string) => {
+      if (!text.trim()) return;
+      setPreviewing(true);
+      try {
+        const response = await previewLiaScript(id, text);
+        previewed.current = text;
+        setPreview({ url: response.data.url, warnings: response.data.warnings ?? [] });
+        setPreviewError(undefined);
+      } catch (e) {
+        setPreviewError(errorText(e));
+      } finally {
+        setPreviewing(false);
+      }
+    },
+    [id],
+  );
+
+  // live preview: refresh when typing pauses
+  useEffect(() => {
+    if (!previewOpen || previewed.current === source) return undefined;
+    const timer = window.setTimeout(() => refreshPreview(source), PREVIEW_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [previewOpen, source, refreshPreview]);
 
   const save = async () => {
     setBusy(true);
@@ -204,6 +240,21 @@ const LiaScriptEditor: React.FC = () => {
             <Button type="primary" onClick={save} disabled={!dirty} loading={busy}>
               <FormattedMessage id="liascript.save_version" defaultMessage="Save as new version" />
             </Button>
+            <Button
+              onClick={() => {
+                const next = !previewOpen;
+                setPreviewOpen(next);
+                if (next) refreshPreview(source);
+              }}
+              aria-expanded={previewOpen}
+              aria-controls="liascript-preview"
+            >
+              {previewOpen ? (
+                <FormattedMessage id="liascript.preview_close" defaultMessage="Close preview" />
+              ) : (
+                <FormattedMessage id="liascript.preview_open" defaultMessage="Preview" />
+              )}
+            </Button>
             {dirty && (
               <Typography.Text type="warning">
                 <FormattedMessage id="liascript.unsaved" defaultMessage="Unsaved changes" />
@@ -213,9 +264,34 @@ const LiaScriptEditor: React.FC = () => {
           <Typography.Paragraph type="secondary" style={{ marginTop: 12 }}>
             <FormattedMessage
               id="liascript.preview_hint"
-              defaultMessage="Learners see the saved version in lessons of type LiaScript; open such a lesson in the course preview to check it."
+              defaultMessage="The preview shows the text as typed, with the current version's files, and records no progress. Learners see the saved version in lessons of type LiaScript."
             />
           </Typography.Paragraph>
+          {previewOpen && (
+            <section id="liascript-preview" aria-live="polite" aria-busy={previewing}>
+              {previewError && (
+                <Alert type="error" showIcon message={previewError} style={{ marginBottom: 8 }} />
+              )}
+              {(preview?.warnings ?? []).map((w) => (
+                <Alert key={w} type="warning" showIcon message={w} style={{ marginBottom: 8 }} />
+              ))}
+              {preview ? (
+                <iframe
+                  key={preview.url}
+                  src={preview.url}
+                  title={intl.formatMessage({
+                    id: 'liascript.preview_title',
+                    defaultMessage: 'Preview of the unsaved course text',
+                  })}
+                  style={{ width: '100%', height: 640, border: '1px solid #d9d9d9' }}
+                  allow="fullscreen; autoplay; clipboard-write"
+                  sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                />
+              ) : (
+                <Spin />
+              )}
+            </section>
+          )}
         </Col>
         <Col xs={24} lg={8}>
           <Typography.Title level={5}>

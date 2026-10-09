@@ -76,3 +76,10 @@ export const restoreLiaScriptVersion = (id: number, version: number) =>
 
 export const deleteLiaScript = (id: number) =>
   request<Response<null>>(`/api/admin/liascript/${id}`, { method: 'DELETE' });
+
+/** Live preview of unsaved text: a short-lived draft on the tenant content origin (no tracking). */
+export const previewLiaScript = (id: number, markdown: string) =>
+  request<Response<{ url: string; sections: number; warnings: string[] }>>(
+    `/api/admin/liascript/${id}/preview`,
+    { method: 'POST', data: { markdown } },
+  );
