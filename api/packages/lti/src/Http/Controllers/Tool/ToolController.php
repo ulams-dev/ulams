@@ -28,17 +28,28 @@ class ToolController extends Controller
      *     path="/api/lti/tool/login",
      *     summary="OIDC login initiation from a registered platform (also POST)",
      *     tags={"LTI"},
+     *     @OA\Parameter(name="lti_storage_target", in="query", required=false, description="Client Side postMessage Storage: the platform's storage frame. Present: the response is a page that puts the nonce in the platform's storage before it continues.", @OA\Schema(type="string")),
      *     @OA\Response(response=302, description="redirect to the platform's OIDC auth URL"),
+     *     @OA\Response(response=200, description="storage page that continues to the platform's OIDC auth URL (lti_storage_target given)"),
      *     @OA\Response(response=400, description="unknown platform or missing login_hint")
      * )
      */
     public function login(Request $request): RedirectResponse|Response
     {
         try {
-            return redirect()->away($this->tool->loginRedirect($request->all()));
+            $login = $this->tool->login($request->all());
         } catch (LtiRequestException $e) {
             return $this->htmlError($e);
         }
+
+        if ($login['storage'] === null) {
+            return redirect()->away($login['url']);
+        }
+
+        // the platform offers a storage frame: put the nonce there, then continue to the platform
+        return response()->view('lti::storage-login', ['url' => $login['url'], 'storage' => $login['storage']])
+            ->header('Cache-Control', 'no-store')
+            ->header('Referrer-Policy', 'no-referrer');
     }
 
     /**
@@ -54,8 +65,47 @@ class ToolController extends Controller
      */
     public function launch(Request $request): RedirectResponse|Response
     {
+        $params = $request->all();
+        $challenge = $this->tool->storageChallenge($params);
+        if ($challenge !== null && !empty($params['id_token'])) {
+            // the login used the platform's storage: read the value back in the browser first
+            return response()->view('lti::storage-launch', [
+                'action' => Lti::url('api/lti/tool/launch/verify'),
+                'idToken' => (string) $params['id_token'],
+                'state' => (string) $params['state'],
+                'storage' => $challenge,
+            ])->header('Cache-Control', 'no-store')->header('Referrer-Policy', 'no-referrer');
+        }
+
+        return $this->completeLaunch($params);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/lti/tool/launch/verify",
+     *     summary="Second step of a launch whose login used the platform's storage (Client Side postMessage Storage)",
+     *     description="Posted by the storage page with the id_token, the state and the value read from the platform's storage. A different value is refused; an empty one (storage unavailable) falls back to the server-side state. Then it behaves like /api/lti/tool/launch.",
+     *     tags={"LTI"},
+     *     @OA\Response(response=302, description="redirect to the front landing page"),
+     *     @OA\Response(response=200, description="course picker (deep linking)"),
+     *     @OA\Response(response=401, description="the value does not match, or the login expired")
+     * )
+     */
+    public function verify(Request $request): RedirectResponse|Response
+    {
         try {
-            $result = $this->tool->launch($request->all());
+            $this->tool->verifyStorage((string) $request->input('state', ''), $request->input('stored'));
+        } catch (LtiRequestException $e) {
+            return $this->htmlError($e);
+        }
+
+        return $this->completeLaunch($request->only(['id_token', 'state']));
+    }
+
+    private function completeLaunch(array $params): RedirectResponse|Response
+    {
+        try {
+            $result = $this->tool->launch($params);
         } catch (LtiRequestException $e) {
             return $this->htmlError($e);
         }

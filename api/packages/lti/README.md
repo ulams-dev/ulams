@@ -23,6 +23,7 @@ Both directions of LTI 1.3 for every tenant (ADR 0012):
 | tool | `GET /api/lti/platform/nrps/{course}` | NRPS 2.0 membership container (scope `contextmembership.readonly`, `nrps_enabled` on the tool; `limit`, `page`, `role`; `Link` rel=next) |
 | tool | `POST /api/lti/platform/deep-links` | Deep-linking response: creates `LtiLink` topics |
 | platform | `GET/POST /api/lti/tool/login`, `POST /api/lti/tool/launch` | OIDC login initiation and launch |
+| learner's browser | `POST /api/lti/tool/launch/verify` | Second step when the login used the platform's storage (`lti_storage_target`, Client Side postMessage Storage): checks the value read from the platform against the login's nonce |
 | learner's browser | `POST /api/lti/tool/deep-link` | Returns the picked courses to the platform |
 | front | `POST /api/lti/tool/exchange` | One-time launch code to a Passport token |
 

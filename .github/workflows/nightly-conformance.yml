@@ -210,6 +210,13 @@ jobs:
           NODE_PATH: /tmp/pw/node_modules
         run: sh .github/conformance/lti/run-moodle.sh
 
+      # a fake platform page embeds the tool login and answers lti.capabilities / put_data / get_data;
+      # the API fetches its JWKS from the runner host (LTI_ALLOW_INSECURE_URLS)
+      - name: Client Side postMessage Storage (fake platform, browser)
+        env:
+          NODE_PATH: /tmp/pw/node_modules
+        run: sh .github/conformance/lti/run-client-side-storage.sh
+
       - name: Logs
         if: failure()
         run: |
