@@ -6,6 +6,7 @@ use Ulams\Auth\Http\Controllers\Admin\UserGroupsController;
 use Ulams\Auth\Http\Controllers\Admin\UserInterestsController;
 use Ulams\Auth\Http\Controllers\Admin\UserSettingsController;
 use Ulams\Auth\Http\Controllers\AuthApiController;
+use Ulams\Auth\Http\Controllers\DeviceAuthController;
 use Ulams\Auth\Http\Controllers\LoginApiController;
 use Ulams\Auth\Http\Controllers\LogoutApiController;
 use Ulams\Auth\Http\Controllers\ProfileAPIController;
@@ -17,6 +18,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api'], function () {
     Route::get('meta', [MetaController::class, 'show'])->middleware('throttle:60,1')->name('meta');
+
+    // Device login (ADR 0075): code and token are public and throttled; approval needs the user's own login token.
+    Route::post('auth/device/code', [DeviceAuthController::class, 'code'])->middleware('throttle:10,1')->name('auth.device.code');
+    Route::post('auth/device/token', [DeviceAuthController::class, 'token'])->middleware('throttle:60,1')->name('auth.device.token');
+    Route::middleware(['auth:api', 'throttle:ulams-device-approve'])->prefix('auth/device/requests')->where(['user_code' => '[A-Za-z0-9-]{4,16}'])->group(function () {
+        Route::get('{user_code}', [DeviceAuthController::class, 'show'])->name('auth.device.show');
+        Route::post('{user_code}/approve', [DeviceAuthController::class, 'approve'])->name('auth.device.approve');
+        Route::post('{user_code}/deny', [DeviceAuthController::class, 'deny'])->name('auth.device.deny');
+    });
 
     Route::middleware(['auth:api', 'throttle:60,1'])->group(function () {
         Route::get('auth/tokens', [TokenController::class, 'index']);
