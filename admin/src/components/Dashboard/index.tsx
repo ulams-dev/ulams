@@ -3,7 +3,7 @@ import { createHavePackageInstalled } from '@/utils/access';
 import { CloseSquareOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';
-import { Responsive, WidthProvider, type Layout } from 'react-grid-layout';
+import { Responsive, useContainerWidth, type Layout } from 'react-grid-layout';
 import { useModel } from 'umi';
 
 import 'react-grid-layout/css/styles.css';
@@ -19,7 +19,6 @@ import Tutorial from './Tutorial';
 import YourCourses from './YourCourses';
 import './index.css';
 
-const ResponsiveGridLayout = WidthProvider(Responsive);
 const COLS = 2;
 const ROW_HEIGHT = 150;
 
@@ -153,6 +152,7 @@ interface LayoutConfigObject {
 }
 
 export const Dashboard: React.FC = () => {
+  const { width, containerRef } = useContainerWidth();
   const { initialState } = useModel('@@initialState');
   const havePackageInstalled = useCallback(createHavePackageInstalled(initialState?.packages), [
     initialState?.packages,
@@ -219,7 +219,7 @@ export const Dashboard: React.FC = () => {
     }
   }
 
-  const onLayoutChange = (layout: Layout[]) => {
+  const onLayoutChange = (layout: Layout) => {
     const data = layout.map<LayoutConfig>(({ i, x, y, w, h, maxH }) => ({
       i,
       x,
@@ -240,38 +240,41 @@ export const Dashboard: React.FC = () => {
 
   return (
     <main>
-      <ResponsiveGridLayout
-        rowHeight={ROW_HEIGHT}
-        autoSize={true}
-        cols={{ lg: 2, md: 2, sm: 2, xs: 1, xxs: 1 }}
-        className="layout dashboard-draggable"
-        layouts={layouts}
-        onLayoutChange={onLayoutChange}
-      >
-        {stageComponents
-          .filter((key) => key !== 'add')
-          .map((key) => {
-            const Component = components[key].component;
-            return (
-              <div key={key}>
-                <Component {...components[key].props} />
-                <Button
-                  size="small"
-                  type="default"
-                  icon={<CloseSquareOutlined />}
-                  className="dashboard-draggable__remove_btn"
-                  onClick={() => onRemove(key)}
-                  onMouseDown={(e) => e.stopPropagation()}
-                />
-              </div>
-            );
-          })}
-        {keysToAdd.length > 0 && (
-          <div key="add">
-            <Add onAddButtonClick={onAdd} keys={keysToAdd} />
-          </div>
-        )}
-      </ResponsiveGridLayout>
+      <div ref={containerRef as React.RefObject<HTMLDivElement>}>
+        <Responsive
+          width={width}
+          rowHeight={ROW_HEIGHT}
+          autoSize={true}
+          cols={{ lg: 2, md: 2, sm: 2, xs: 1, xxs: 1 }}
+          className="layout dashboard-draggable"
+          layouts={layouts}
+          onLayoutChange={onLayoutChange}
+        >
+          {stageComponents
+            .filter((key) => key !== 'add')
+            .map((key) => {
+              const Component = components[key].component;
+              return (
+                <div key={key}>
+                  <Component {...components[key].props} />
+                  <Button
+                    size="small"
+                    type="default"
+                    icon={<CloseSquareOutlined />}
+                    className="dashboard-draggable__remove_btn"
+                    onClick={() => onRemove(key)}
+                    onMouseDown={(e) => e.stopPropagation()}
+                  />
+                </div>
+              );
+            })}
+          {keysToAdd.length > 0 && (
+            <div key="add">
+              <Add onAddButtonClick={onAdd} keys={keysToAdd} />
+            </div>
+          )}
+        </Responsive>
+      </div>
     </main>
   );
 };
