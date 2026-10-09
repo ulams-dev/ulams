@@ -1,0 +1,100 @@
+---
+title: Access, prices and publishing
+description: Control who sees and opens a course with its status, dates and public flag, grant access to users and groups, handle access requests, invite by e-mail and sell it.
+sidebar:
+  order: 31
+modules:
+  - course-access
+  - assign-without-account
+  - courses
+adminRoutes:
+  - /courses/access
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+Two questions decide what a learner can do with a course: **can they see it** (the catalogue and the
+course page) and **can they open it** (the lessons). Status and visibility answer the first; access
+answers the second.
+
+## Course status
+
+Set the status on the course's **Attributes** tab.
+
+| Status | Effect |
+|---|---|
+| Draft | Only in the admin panel. Learners cannot see or open it. |
+| Published | Visible in the catalogue; people with access can take it. Publishing sends the "course published" event. |
+| `published_unactivated` | Counts as published, and a daily job switches it to Published once **Active from** has passed (and **Active to** has not). In the English admin it is currently labelled "Opublikowany nieaktywny". |
+| Archived | Hidden from learners; set it back to Published to reopen the course. |
+
+Whether a published course shows up for people who are not signed in depends on the platform's
+visibility setting (`platform_visibility`, set by an administrator). With `public` (the default) new
+courses are listed for everyone; with `registered`, new courses are only visible to people who have
+access to them.
+
+### Public courses
+
+When an administrator enables the **Is public** switch for course forms, you can mark a course as
+public on the **Attributes** tab. A course that is both public and published can be opened by anyone,
+without an account and without being granted access.
+
+### Free preview topics
+
+Topics marked **Able to preview** open for everyone who can see the course, so learners can try it
+before they get access. See [Lessons and topics](/creators/lessons-and-topics/#fields-every-topic-has).
+
+## Give access to users and groups
+
+<Steps>
+
+1. Open the course editor's **Access** tab (`/courses/list/<id>/access`).
+2. Add people under **Users** and whole groups under **Groups**.
+3. Click **Submit**. The lists you submit replace the previous ones.
+
+</Steps>
+
+Removing a user or a group takes their access away. Adding and removing access sends the course
+assigned/unassigned notifications, which an administrator can turn into e-mails in
+[Notifications](/admin/notifications/).
+
+<Screenshot name="admin-courses-list-course-access" alt="The Access tab with users and groups" />
+
+## Access requests
+
+Learners can ask for access to a course and add a message. The requests appear in
+**Courses → Access Requests** (`/courses/access`) with the course, the learner, the date, the status
+(pending or approved) and the extra data the learner sent.
+
+- **Approve** grants the learner access to the course.
+- **Delete** removes the request.
+
+People with the approval permission are notified about new requests. An administrator can switch on
+automatic approval in the settings (`auto_accept_access_request`), which grants access as soon as a
+request arrives; use it for free courses that only require a sign-up.
+
+<Screenshot name="admin-courses-access" alt="Access Requests with pending and approved requests" />
+
+The request button is part of the legacy learner app; the reference front does not offer it yet.
+
+## Invite people without an account
+
+The **Users Attached without Account** tab (`/courses/list/<id>/user_submission`) takes e-mail
+addresses of people who do not have an account yet. Each person receives an e-mail with instructions;
+once they create an account with that address, they get access to the course.
+
+The invitation e-mail uses a notification template that an administrator has to set up; see
+[Notifications](/admin/notifications/).
+
+## Prices and products
+
+To sell a course, open its **Product** tab (shown with the sales permission). It is the same product
+form as **Sales → Products**: name, price and tax, whether the product can be purchased, limits per
+user and in total, related products and the product's media, categories and tags. Learners who buy
+the product get access to the course once the payment is confirmed.
+
+<Aside>
+The product and payment screens are described in the [administrator guide](/admin/). Commerce is planned
+to move to a separate service later ([roadmap](/roadmap/)); the LMS keeps deciding who has access.
+</Aside>

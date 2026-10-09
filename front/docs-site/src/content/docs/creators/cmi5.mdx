@@ -1,0 +1,51 @@
+---
+title: cmi5 packages
+description: What cmi5 support exists today, how cmi5 packages and assignable units are uploaded through the API, and what is still missing for authors and learners.
+sidebar:
+  order: 17
+modules:
+  - cmi5
+  - lrs
+  - topic-types
+topicTypes:
+  - Cmi5Au
+needsReview: "cmi5 has no admin screen and no learner player yet; re-check this page when the cmi5 admin UI and the learner launch (ROADMAP-TODO 0.1c 'cmi5 for learners') land."
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+[cmi5](https://aicc.github.io/CMI-5_Spec_Current/) is the xAPI profile for launching tracked learning
+content from an LMS. A cmi5 package is a zip with a `cmi5.xml` course structure and one or more
+**assignable units** (AUs). ulams can store cmi5 packages, has a cmi5 topic type and includes its own
+xAPI learning record store (LRS) for the statements the content sends.
+
+<Aside type="caution" title="Not usable from the admin panel yet">
+There is no cmi5 screen in the admin panel and cmi5 is not offered when you add a topic. Learner
+launch is also incomplete: learners still need the launch permission, and AU files must be served
+from object storage. Both are open items on the [roadmap](/roadmap/). Until then cmi5 content is set up
+through the API by an administrator or developer.
+</Aside>
+
+## What exists today
+
+| Piece | Where |
+|---|---|
+| Upload a cmi5 zip; it is checked by the upload guard (zip only, 512 MB by default, safe extraction) and its AUs are read from `cmi5.xml` | `POST /api/admin/cmi5` (field `file`) |
+| List and delete uploaded packages | `GET /api/admin/cmi5`, `DELETE /api/admin/cmi5/{id}` |
+| Topic type `Cmi5Au` whose `value` is the ID of one AU | created through the topics API |
+| Launch parameters for a course (endpoint, fetch URL, actor, registration) | `GET /api/cmi5/courses/{id}` |
+| Statements received for cmi5 content | `GET /api/admin/cmi5/statements` |
+| The xAPI LRS the content talks to | `/trax/api/<access>/xapi/std` |
+
+The full endpoint list is in the [API endpoints reference](/reference/api-endpoints/).
+
+## How it is meant to work
+
+1. Upload the cmi5 zip; ulams stores the package and creates one record per AU.
+2. Add a topic of type cmi5 for an AU.
+3. When the learner opens the topic, the front asks for launch parameters and opens the AU with the
+   cmi5 `endpoint`, `fetch`, `actor`, `registration` and `activityId`.
+4. The AU sends xAPI statements to the built-in LRS, authenticated with the learner's token.
+
+The reference front already shows cmi5 topics as a tracked activity card that "opens outside this page",
+and the learner marks them complete with **Mark as complete**.

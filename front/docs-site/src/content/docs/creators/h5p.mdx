@@ -1,0 +1,87 @@
+---
+title: H5P content
+description: Create, upload, preview and export interactive H5P content in the admin library and use it in H5P topics, with completion reported by xAPI.
+sidebar:
+  order: 15
+modules:
+  - h5p
+  - topic-types
+topicTypes:
+  - H5P
+adminRoutes:
+  - /courses/h5ps
+  - /courses/h5ps/:h5p
+  - /courses/h5ps/preview/:h5p
+learnerRoutes:
+  - /h5p/[...path]
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+[H5P](https://h5p.org) is interactive HTML5 content: interactive videos, drag and drop, flashcards,
+course presentations and many more content types. In ulams, H5P content lives in a library under
+**Courses → H5Ps** and is placed in lessons with **H5P** topics. The same content can be used in
+several topics.
+
+The H5P editor and player are provided by a separate H5P service and shown inside the admin and the
+learner front in a frame (see [ADR 0003](/decisions/0003-h5p-as-isolated-gpl-service/)); the
+reference front loads the player through its own `/h5p/...` proxy. For you this only means that the
+editor looks like the standard H5P editor.
+
+## The H5P library
+
+**Courses → H5Ps** (`/courses/h5ps`) lists all H5P content with its title and content type (library).
+Each row has:
+
+- **Edit** (`/courses/h5ps/<id>`): opens the content in the H5P editor;
+- **Delete**;
+- **Preview** (`/courses/h5ps/preview/<id>`): plays the content as a learner would see it;
+- **Export**: downloads the content as an `.h5p` file.
+
+The toolbar has:
+
+- **New**: create content in the editor (`/courses/h5ps/new`);
+- an upload field for an existing **`.h5p`** file (exported from ulams, Lumi, Moodle or h5p.com);
+- **Remove unused**: deletes every H5P content that no topic uses, after a confirmation;
+- **Libraries** (with the permission): the H5P content types installed on the platform. Installing and
+  updating them is an administrator task, see [H5P libraries](/admin/h5p-libraries/).
+
+<Screenshot name="admin-courses-h5ps" alt="The H5P library with upload, Remove unused and New buttons" />
+
+## Create content
+
+<Steps>
+
+1. Click **New**.
+2. In the H5P editor, choose a content type (only the installed ones are offered), fill it in and save.
+3. The address changes to the new content's ID; use **Preview** to try it.
+
+</Steps>
+
+<Screenshot name="admin-courses-h5ps-h5p" alt="The H5P editor inside the admin panel" />
+
+## Use content in a lesson
+
+<Steps>
+
+1. In the program, add a topic and choose **H5P**.
+2. Either click **Create new** and build the content in the editor shown below, or pick existing
+   content under **or reuse existing**.
+3. Save the topic.
+
+</Steps>
+
+Editing content from a topic changes it everywhere it is used.
+
+## Completion and progress
+
+The H5P content reports what the learner does as xAPI statements. In the reference front the topic
+completes when the content sends a completing statement (for example, the learner finishes an
+interactive exercise), or with **Mark as complete**. H5P keeps the learner's state, so they can
+continue where they left off.
+
+<Aside>
+Content types without a "completed" event (for example a plain accordion) never complete the topic by
+themselves; learners then use **Mark as complete**.
+</Aside>

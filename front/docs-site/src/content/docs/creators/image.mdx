@@ -1,0 +1,37 @@
+---
+title: Image topics
+description: Show a diagram, infographic or photo as a lesson topic, and give it alternative text and a caption through the topic summary.
+sidebar:
+  order: 13
+modules:
+  - topic-types
+topicTypes:
+  - Image
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+An image topic (`Image`) shows one uploaded image.
+
+<Steps>
+
+1. In the program, add a topic and choose **Image**.
+2. Click **Click to upload** and choose an image file. The server accepts the usual image formats
+   (JPEG, PNG, GIF, BMP, WebP) and SVG.
+3. The upload saves the topic and shows a preview.
+4. Open **Description → Open editor** and write a **Summary** that describes the image, then save.
+
+</Steps>
+
+<Aside type="tip">
+In the reference front the topic **Summary** is the image's alternative text and its caption. Without
+a summary the topic title is used as the alternative text, which rarely describes the picture. Write a
+summary for every image so screen-reader users get the same information.
+</Aside>
+
+SVG files are stored so that opening their address downloads them instead of running scripts inside
+them; they still display normally as images.
+
+## Completion
+
+An image topic completes when the learner reaches the end of the page, or with **Mark as complete**.

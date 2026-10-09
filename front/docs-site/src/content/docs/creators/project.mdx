@@ -1,0 +1,53 @@
+---
+title: Project topics
+description: Let learners hand in files with a project topic, notify tutors about new submissions, and review, download or delete the files in the course editor.
+sidebar:
+  order: 21
+modules:
+  - topic-type-project
+topicTypes:
+  - Project
+needsReview: "Check where learners see the task text: the reference front renders the project's stored value (the admin stores the placeholder 'theProject' when empty) and not the topic description."
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+import Screenshot from "../../../components/Screenshot.astro";
+
+A **Project** topic is an assignment: learners upload a file with their solution, and tutors review the
+submissions.
+
+## Add a project topic
+
+<Steps>
+
+1. In the program, add a topic and choose **Project**.
+2. Describe the task in the topic's **Description** (Open editor): what to do, what to hand in, in
+   which format.
+3. In **Users to notify**, pick the people who should get a notification when someone uploads a
+   solution, usually the course tutors.
+4. Save the topic.
+
+</Steps>
+
+<Aside>
+The notification is sent by e-mail through the "project solution created" template. An administrator
+has to set up that template; see [Notifications](/admin/notifications/) and [Templates](/admin/templates/).
+</Aside>
+
+## Review submissions
+
+Open the course editor's **User projects** tab (`/courses/list/<id>/user_projects`). The table lists
+every uploaded file with the topic, the learner and the upload date, with **Download** and **Delete**.
+
+<Screenshot name="admin-courses-list-course-user_projects" alt="The User projects tab listing uploaded solutions" />
+
+Learners can upload a file of any type, and can see and delete their own submissions. The upload form
+exists in the legacy learner app; the reference front does not offer the upload yet.
+
+The API also stores a grade and written feedback per submission
+(`/api/admin/topic-project-solutions`), but the admin panel does not show these fields yet.
+
+## Completion
+
+A project topic is not completed automatically when a file is uploaded. In the reference front the
+learner presses **Mark as complete**.
