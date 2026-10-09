@@ -395,7 +395,7 @@ export const registry = {
   },
   Syllabus: {
     description:
-      "Course program. folio = magazine table of contents with roman numerals; timeline = horizontal modules with week labels; missions = winding adventure path; orbits = modules on concentric rings (a list on phones); atlas = atlas table of contents with chapter numbers.",
+      "Course program, laid out as a contents page, a timeline, a mission path, orbits or an atlas. folio = magazine table of contents with roman numerals; timeline = horizontal modules with week labels; missions = winding adventure path; orbits = modules on concentric rings (a list on phones); atlas = atlas table of contents with chapter numbers.",
     category: "course",
     interactive: false,
     children: false,
