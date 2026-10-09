@@ -73,7 +73,7 @@ final class RevisionService
                 'raw_path' => $source->path,
                 'markdown_path' => $source->markdown_path,
                 'normalised_sha256' => Normaliser::hash($markdown ?? $fragments->pluck('text')->implode("\n\n")),
-                'metadata' => ['name' => $source->original_name, 'sha256' => $source->sha256, 'size' => (int) $source->size, 'title' => $source->metadata['title'] ?? null],
+                'metadata' => ['name' => $source->original_name, 'sha256' => $source->sha256, 'size' => (int) $source->size, 'title' => $source->metadata['title'] ?? null, 'sourceMeta' => $source->metadata],
                 'fragment_count' => $fragments->count(),
                 'token_estimate' => (int) $source->token_estimate,
                 'detected_at' => now(),
@@ -185,7 +185,7 @@ final class RevisionService
                 'raw_path' => count($files) === 1 ? $dir . '/raw/' . ltrim((string) preg_replace('/[^A-Za-z0-9._\/-]+/', '_', str_replace('..', '_', $files[0]['path'])), '/') : "{$dir}/raw",
                 'markdown_path' => $markdownPath,
                 'normalised_sha256' => Normaliser::hash($built['markdown']),
-                'metadata' => $meta + ['title' => $built['meta']['title'] ?? null, 'language' => $built['meta']['language'] ?? null, 'files' => $files],
+                'metadata' => $meta + ['title' => $built['meta']['title'] ?? null, 'language' => $built['meta']['language'] ?? null, 'files' => $files, 'sourceMeta' => $built['meta']],
                 'fragment_count' => count($built['rows']),
                 'token_estimate' => $built['tokens'],
                 'detected_at' => now(),
@@ -213,6 +213,44 @@ final class RevisionService
             $connection->forceFill(['latest_revision_id' => $revision->id, 'last_checked_at' => now()])->save();
 
             return $revision;
+        });
+    }
+
+    /**
+     * Makes a revision the one the course reflects: its fragments become the live fragments of the
+     * source (the text citations and prompts read), and the synced pointer moves. Fragments that
+     * disappear stay readable through the fragment archive (ADR 0030). The only writer of the live
+     * fragment table for synced sources.
+     */
+    public function promote(Revision $revision, ?int $userId = null): void
+    {
+        $source = Source::query()->findOrFail($revision->source_id);
+        $connection = Connection::query()->findOrFail($revision->connection_id);
+        $rows = RevisionFragment::query()->where('revision_id', $revision->id)->orderBy('ordinal')->get()->map(fn (RevisionFragment $f) => [
+            'id' => $f->fragment_id, 'source_id' => $source->id, 'file_path' => $f->file_path, 'heading_path' => $f->heading_path,
+            'section' => $f->section, 'level' => $f->level, 'text' => $f->text, 'char_start' => $f->char_start, 'char_end' => $f->char_end,
+            'page_start' => $f->page_start, 'page_end' => $f->page_end, 'token_estimate' => $f->token_estimate, 'content_hash' => $f->content_hash,
+        ])->all();
+        $meta = array_merge((array) $source->metadata, (array) ($revision->metadata['sourceMeta'] ?? []));
+        $files = (array) ($revision->metadata['files'] ?? []);
+
+        DB::transaction(function () use ($source, $connection, $revision, $rows, $meta, $files, $userId) {
+            $this->ingestor->writeLive($source, $rows, $meta, (string) $revision->markdown_path, (int) $revision->token_estimate);
+            if ($revision->origin !== 'initial' && count($files) === 1 && $revision->raw_path !== null) {
+                // single-file sources keep pointing at their current file (native PDF blocks read it)
+                $source->forceFill([
+                    'path' => $revision->raw_path,
+                    'sha256' => $files[0]['sha256'],
+                    'size' => $files[0]['size'],
+                    'mime' => (string) ($revision->metadata['mime'] ?? $source->mime),
+                ])->save();
+            }
+            $connection->forceFill(['synced_revision_id' => $revision->id])->save();
+            $this->audit->record('revision.promoted', [
+                'session_id' => $connection->session_id, 'subject_type' => 'revision', 'subject_id' => $revision->id, 'source_id' => $source->id,
+                'revision_id' => $revision->id, 'origin_ref' => $revision->origin_ref, 'data' => ['revision' => $revision->number, 'fragments' => count($rows)],
+                ...($userId === null ? ['actor_type' => 'system'] : ['actor_id' => $userId]),
+            ]);
         });
     }
 }

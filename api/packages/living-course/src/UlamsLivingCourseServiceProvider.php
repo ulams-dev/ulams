@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Ulams\CourseBuilder\Events\SourceIngested;
 use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
+use Ulams\LivingCourse\Console\BackfillCommand;
 use Ulams\LivingCourse\Services\AuditLog;
 use Ulams\LivingCourse\Services\RevisionService;
 
@@ -32,6 +33,10 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([BackfillCommand::class]);
+        }
 
         // revision 1 of every source of a builder session
         Event::listen(SourceIngested::class, fn (SourceIngested $e) => $this->app->make(RevisionService::class)->ensureInitial($e->source));

@@ -228,4 +228,21 @@ class SourcesTest extends TestCase
         $this->actingAs($this->readOnlyAdmin(), 'api')->getJson("/api/admin/living-course/sessions/{$session->id}/sources")->assertOk();
         $this->assertSame(2, Revision::query()->where('source_id', $source->id)->count());
     }
+
+    public function testBackfillRecordsRevisionOneForSourcesBuiltBeforePhaseThree(): void
+    {
+        $session = $this->sessionWithSource($this->author());
+        $source = $this->sourceOf($session);
+        // a session built before Phase 3 has no connection
+        Revision::query()->where('source_id', $source->id)->delete();
+        RevisionFragment::query()->delete();
+        Connection::query()->where('source_id', $source->id)->delete();
+
+        $this->artisan('living-course:backfill', ['--session' => $session->id])->expectsOutputToContain('1 new revision(s) recorded')->assertSuccessful();
+        $this->artisan('living-course:backfill')->expectsOutputToContain('0 new revision(s) recorded')->assertSuccessful();
+
+        $connection = $this->connectionOf($session);
+        $this->assertSame(1, Revision::query()->findOrFail($connection->synced_revision_id)->number);
+        $this->assertSame(Fragment::query()->where('source_id', $source->id)->count(), RevisionFragment::query()->where('revision_id', $connection->synced_revision_id)->count());
+    }
 }

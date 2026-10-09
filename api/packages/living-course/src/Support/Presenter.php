@@ -5,6 +5,7 @@ namespace Ulams\LivingCourse\Support;
 use Ulams\CourseBuilder\Models\Source;
 use Ulams\LivingCourse\Models\Connection;
 use Ulams\LivingCourse\Models\Revision;
+use Ulams\LivingCourse\Models\RevisionFragment;
 
 /** API shapes (camelCase) of Living Course rows. Secrets never leave the server. */
 final class Presenter
@@ -76,5 +77,37 @@ final class Presenter
             'connection' => $c !== null ? self::connection($c) : null,
             'revisionCount' => $c !== null ? $c->revisions()->count() : 0,
         ];
+    }
+
+    /**
+     * Changes between two revisions with the old and new fragment text.
+     *
+     * @param array<int,array<string,mixed>> $changes rows as stored by ChangeDetection (kind, old, new, magnitude, similarity, signals, word_diff)
+     * @return array<int,array<string,mixed>>
+     */
+    public static function changes(Revision $from, Revision $to, array $changes): array
+    {
+        $fragment = function (?string $id, Revision $revision) {
+            if ($id === null) {
+                return null;
+            }
+            $f = RevisionFragment::query()->where('revision_id', $revision->id)->where('fragment_id', $id)->first();
+
+            return $f === null ? null : [
+                'fragmentId' => $f->fragment_id, 'label' => $f->label(), 'section' => $f->section, 'headingPath' => $f->heading_path,
+                'file' => $f->file_path, 'text' => mb_substr($f->text, 0, 6000), 'pages' => $f->page_start ? [$f->page_start, $f->page_end] : null,
+            ];
+        };
+
+        return array_map(fn (array $c, int $i) => [
+            'id' => $c['id'] ?? $i + 1,
+            'kind' => $c['kind'],
+            'magnitude' => $c['magnitude'],
+            'similarity' => (float) $c['similarity'],
+            'signals' => $c['signals'] ?? [],
+            'wordDiff' => $c['word_diff'] ?? null,
+            'old' => $fragment($c['old'], $from),
+            'new' => $fragment($c['new'], $to),
+        ], $changes, array_keys($changes));
     }
 }

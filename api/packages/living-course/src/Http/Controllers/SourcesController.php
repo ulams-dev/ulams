@@ -6,9 +6,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use RuntimeException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Ulams\LivingCourse\Diff\FragmentDiff;
 use Ulams\LivingCourse\Http\Controllers\Concerns\ResolvesLivingCourse;
 use Ulams\LivingCourse\Models\Connection;
-use Ulams\LivingCourse\Services\RevisionService;
+use Ulams\LivingCourse\Models\FragmentChange;
+use Ulams\LivingCourse\Models\Revision;
+use Ulams\LivingCourse\Services\SourceSync;
 use Ulams\LivingCourse\Support\Presenter;
 use Ulams\Uploads\Exceptions\UploadRejected;
 
@@ -25,6 +29,9 @@ use Ulams\Uploads\Exceptions\UploadRejected;
  *     @OA\Parameter(name="source", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\RequestBody(@OA\MediaType(mediaType="multipart/form-data", @OA\Schema(@OA\Property(property="file", type="string", format="binary")))),
  *     @OA\Response(response=201, description="the new revision"), @OA\Response(response=200, description="the file is the latest revision already (unchanged: true)"), @OA\Response(response=422, description="rejected upload"))
+ * @OA\Get(path="/api/admin/living-course/revisions/{revision}/changes", summary="Fragment changes of a revision against the synced revision it was compared with (or ?against=<revision id>)", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="revision", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="against", in="query", @OA\Schema(type="string")),
+ *     @OA\Response(response=200, description="counts and changes with old and new text and word diffs"), @OA\Response(response=404, description="unknown revision"))
  * @OA\Get(path="/api/admin/living-course/revisions/{revision}", summary="One revision", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="revision", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\Response(response=200, description="revision"), @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown revision"))
@@ -33,7 +40,7 @@ class SourcesController extends Controller
 {
     use ResolvesLivingCourse;
 
-    public function __construct(private readonly RevisionService $revisions)
+    public function __construct(private readonly SourceSync $sync)
     {
     }
 
@@ -62,7 +69,7 @@ class SourcesController extends Controller
             return self::fail('This source is not ready yet. Wait for its first import to finish.', 409);
         }
         try {
-            $result = $this->revisions->createFromUpload($src, $request->file('file'), (int) $request->user()->getKey());
+            $result = $this->sync->upload($src, $request->file('file'), (int) $request->user()->getKey());
         } catch (UploadRejected $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage(), 'errors' => ['file' => [$e->getMessage()]], 'reason' => $e->reason], 422);
         } catch (RuntimeException $e) {
@@ -70,7 +77,37 @@ class SourcesController extends Controller
         }
         $connection = $result['revision']->connection;
 
-        return self::ok(['unchanged' => $result['unchanged'], 'revision' => Presenter::revision($result['revision'], $connection)], $result['unchanged'] ? 200 : 201);
+        return self::ok(['unchanged' => $result['unchanged'], 'revision' => Presenter::revision($result['revision'], $connection)], $result['created'] ? 201 : 200);
+    }
+
+    public function changes(Request $request, string $revision): JsonResponse
+    {
+        [, $to] = $this->revisionFor($request, $revision);
+        $against = $request->query('against');
+        if (is_string($against) && $against !== '') {
+            $from = Revision::query()->where('source_id', $to->source_id)->find(strtolower($against));
+            if ($from === null) {
+                throw new NotFoundHttpException('Revision not found.');
+            }
+            $set = (new FragmentDiff())->compareRevisions($from, $to);
+            $rows = $set->changes;
+            $counts = $set->counts();
+        } else {
+            $stored = FragmentChange::query()->where('to_revision_id', $to->id)->orderBy('id')->get();
+            $fromId = $stored->first()?->from_revision_id
+                ?? (isset($to->metadata['against']) ? Revision::query()->where('source_id', $to->source_id)->where('number', (int) $to->metadata['against'])->value('id') : null);
+            $from = $fromId !== null ? Revision::query()->find($fromId) : null;
+            $rows = $stored->map(fn (FragmentChange $c) => ['id' => $c->id, 'kind' => $c->kind, 'old' => $c->old_fragment_id, 'new' => $c->new_fragment_id, 'magnitude' => $c->magnitude, 'similarity' => $c->similarity, 'signals' => $c->signals ?? [], 'word_diff' => $c->word_diff])->all();
+            $counts = $to->metadata['counts'] ?? null;
+        }
+        $connection = $to->connection;
+
+        return self::ok([
+            'from' => $from ? Presenter::revision($from, $connection) : null,
+            'to' => Presenter::revision($to, $connection),
+            'counts' => $counts,
+            'changes' => $from ? Presenter::changes($from, $to, $rows) : [],
+        ]);
     }
 
     public function revision(Request $request, string $revision): JsonResponse
