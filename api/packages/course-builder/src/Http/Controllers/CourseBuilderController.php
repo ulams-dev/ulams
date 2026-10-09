@@ -392,7 +392,7 @@ class CourseBuilderController extends Controller
             return self::fail('There is no generated content to apply yet.', 409);
         }
         $this->surfaces->apply($s, null, $v, $this->applier->plan($s, $v->document), 'applying');
-        $run = $this->runs->start($s, 'apply', ['versionId' => $v->id], (int) $request->user()->getKey());
+        $run = $this->runs->start($s, 'apply', ['versionId' => $v->id, 'overwrite' => $request->boolean('overwrite')], (int) $request->user()->getKey());
 
         return self::ok(['runId' => $run->id], 202);
     }

@@ -217,7 +217,7 @@ final class RunService
         }
         $first = $session->course_id === null;
         $plan = $this->applier->plan($session, $version->document);
-        $courseId = $this->applier->apply($session, $version, $author);
+        $courseId = $this->applier->apply($session, $version, $author, (bool) ($run->input['overwrite'] ?? false));
         $session->forceFill(['course_id' => $courseId, 'applied_version_id' => $version->id, 'status' => Session::APPLIED])->save();
         $this->surfaces->apply($session, $run, $version, ['courseId' => $courseId] + $plan, 'applied');
         $this->events->stepFinished($run, 'apply');

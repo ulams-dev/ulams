@@ -3,11 +3,13 @@
 namespace Ulams\CourseBuilder\Apply;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Blueprint\Checks;
+use Ulams\CourseBuilder\Exceptions\BuilderException;
 use Ulams\CourseBuilder\Models\EntityMapEntry;
 use Ulams\CourseBuilder\Models\Fragment;
 use Ulams\CourseBuilder\Models\Session;
@@ -147,6 +149,9 @@ final class BlueprintApplier
         }
         $known = array_fill_keys($session->fragmentIds(), true);
         $warnings = array_map(fn ($e) => str_starts_with($e, 'warning: ') ? substr($e, 9) : $e, Checks::blueprint($doc, $known));
+        foreach ($this->drift($session, $doc) as $title) {
+            $warnings[] = "Edited in the admin after the last apply: {$title}. The apply stops until you confirm overwriting it.";
+        }
 
         return [
             'firstApply' => $session->course_id === null,
@@ -157,9 +162,49 @@ final class BlueprintApplier
         ] + ($session->course_id ? ['courseId' => (int) $session->course_id] : []);
     }
 
-    /** Applies a version as the author. Returns the course id. */
-    public function apply(Session $session, Version $version, Authenticatable $author): int
+    /**
+     * Elements the apply would change although someone edited the LMS entity (in the admin) after
+     * the last apply: an apply over them would destroy that work (ADR 0010 drift check).
+     *
+     * @return array<string,string> "type:element id" => title or type
+     */
+    public function drift(Session $session, array $doc): array
     {
+        $desired = $this->desired($doc, (array) $session->brief);
+        $drift = [];
+        foreach ($this->map($session) as $key => $entry) {
+            if (!isset($desired[$key]) || $entry->fingerprint === $desired[$key]['fingerprint']) {
+                continue;
+            }
+            $model = match ($entry->entity_type) {
+                'course' => \Ulams\Courses\Models\Course::class,
+                'lesson' => \Ulams\Courses\Models\Lesson::class,
+                'topic', 'quiz_topic' => \Ulams\Courses\Models\Topic::class,
+                'gift_question' => \Ulams\TopicTypeGift\Models\GiftQuestion::class,
+                'page' => \Ulams\Pages\Models\Page::class,
+                default => null,
+            };
+            $updated = $model !== null ? $model::query()->whereKey($entry->entity_id)->value('updated_at') : null;
+            if ($updated !== null && $entry->updated_at !== null && Carbon::parse($updated)->gt($entry->updated_at)) {
+                $drift[$key] = (string) ($desired[$key]['data']['title'] ?? $entry->entity_type);
+            }
+        }
+
+        return $drift;
+    }
+
+    /**
+     * Applies a version as the author. Returns the course id. Stops (409) when an element to change
+     * was edited in the admin after the last apply, unless the author confirmed with `$overwrite`.
+     */
+    public function apply(Session $session, Version $version, Authenticatable $author, bool $overwrite = false): int
+    {
+        if (!$overwrite && ($drift = $this->drift($session, $version->document)) !== []) {
+            throw new BuilderException(sprintf(
+                'The course was edited in the admin after the last apply (%s). Applying now would overwrite those edits; confirm to overwrite, or copy the edits into the blueprint first.',
+                implode(', ', array_slice(array_values($drift), 0, 5)),
+            ), 409);
+        }
         $previous = Auth::user();
         Auth::setUser($author);
         try {
@@ -229,6 +274,8 @@ final class BlueprintApplier
 
         $courseId = (int) $ids["course:{$doc['course']['id']}"];
         $this->sort($desired, $ids);
+        // everything above was written by this apply: later edits in the admin are newer than this mark
+        EntityMapEntry::query()->where('session_id', $session->id)->update(['updated_at' => now()]);
 
         return $courseId;
     }
