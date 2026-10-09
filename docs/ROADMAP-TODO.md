@@ -182,7 +182,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
       `stripeKey.includes` on null); show a configuration message instead
 - [ ] (new) Yarn install on Node 23 needs `--ignore-engines` (vitest engines); CI pins Node 22
 - [ ] (new) Replace MinIO with SeaweedFS (or RustFS) and give each tenant its own S3 identity (ADR 0041, plan L0-03)
-- [ ] (new) `ulams:upgrade`: one idempotent per-tenant upgrade command (plan L0-19)
+- [x] (new) `ulams:upgrade`: one idempotent per-tenant upgrade command (plan L0-19) (ADR 0081; the cmi5 and frame steps run once their commands land)
 - [x] (new) Fix `Cmi5Policy::delete` checking the read permission (new `cmi5_delete` permission, admins only; plan L0-09)
 - [ ] (new) Five packages with `@OA\` annotations are missing from the Swagger scan paths (plan L0-11)
 
@@ -247,7 +247,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       tool" (Integrations → LTI)
 - [ ] (new) LTI: Client-Side OIDC (platform storage via `postMessage`) on the tool side, NRPS on the platform
       side, per-tool `frame-src` in the CSP
-- [ ] (new) Run `ulams:lti:rotate-keys --init` for existing tenants (new tenants get it at provisioning)
+- [x] (new) Run `ulams:lti:rotate-keys --init` for existing tenants (new tenants get it at provisioning) (done by `ulams:upgrade`, step `lti_keys`, ADR 0081)
 
 ### 1.4 Shared
 - [x] Upload hardening (zip-slip, MIME, size limits, virus-scan hook) (`packages/uploads`: SCORM, cmi5,
